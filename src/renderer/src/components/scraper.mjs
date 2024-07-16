@@ -54,7 +54,7 @@ async function searchGameDetails(gameName) {
     }
 }
 
-async function searchGameList(keyword, pageNum = 1, pageSize = 30) {
+async function searchGameList(keyword, pageNum = 1, pageSize = 20) {
     const clientId = 'ymgal';
     const clientSecret = 'luna0327';
     try {
