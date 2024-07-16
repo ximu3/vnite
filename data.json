@@ -1,0 +1,171 @@
+[
+    {   
+        "detail":{
+            "name": "金色ラブリッチェ",
+            "chineseName": "金辉恋曲四重奏",
+            "extensionName": [
+                "Kinkoi", "金恋", "金色Loveriche"
+            ],
+            "introduction": "私立诺布尔学园——走出这里的学生，都将是未来的绅士淑女。在这所全宿制的学校，他们不仅要学习文化，还要培养优良的素养。特别是在今年，由于北欧某小国的王族入学，校内更是弥漫着前所未有的紧张感。就在这时，主人公市松央路意外得到该国公主的赏识，并被迫走进了诺布尔学园的大门。与之同时，他不得不搬进了女生宿舍一角剩余的空房间....",
+            "gId": 27702,
+            "vndbId": 27702,
+            "cover": "./27702/cover.webp",
+            "backgroundImage": "./27702/background.webp",
+            "archivePath": "./27702/archive",
+            "moreEntry": [
+                {
+                "key": "发行商",
+                "value": "HIKARI FIELD"
+                },
+                {
+                "key": "官方限制级补丁",
+                "value": "有"
+                }
+            ],
+            "typeDesc": "金色学园恋爱冒险游戏",
+            "releaseDate": "2017-12-22",
+            "restricted": true,
+            "website": [
+                {
+                "title": "官方网站",
+                "link": "http://sagaplanets.product.co.jp/works/kinkoigt/"
+                },
+                {
+                "title": "Steam",
+                "link": "https://store.steampowered.com/app/1277940/_/"
+                },
+                {
+                "title": "HIKARI FIELD 中文官网",
+                "link": "https://hikarifield.co.jp/kinkoi/"
+                },
+                {
+                "title": "HIKARI FIELD STORE",
+                "link": "https://store.hikarifield.co.jp/shop/kinkoi"
+                },
+                {
+                "title": "官方限制级补丁下载地址",
+                "link": "https://nekonyansoft.com/shop/product/41"
+                }
+            ],
+            "releases": [
+                {
+                "id": 529804,
+                "releaseName": "金辉恋曲四重奏",
+                "relatedLink": "http://kinkoi.nekonyansoft.com/",
+                "platform": "Windows",
+                "releaseDate": "2021-06-11",
+                "releaseLanguage": "Japanese",
+                "restrictionLevel": "全年龄"
+                },
+                {
+                "id": 529805,
+                "releaseName": "Kinkoi: Golden Loveriche 18+ Steam Patch",
+                "relatedLink": "https://nekonyansoft.com/shop/product/41",
+                "platform": "Windows",
+                "releaseDate": "2021-06-11",
+                "releaseLanguage": "Japanese",
+                "restrictionLevel": "R18+"
+                },
+                {
+                "id": 529806,
+                "releaseName": "Kinkoi: Golden Loveriche - 1440p patch",
+                "relatedLink": "https://nekonyansoft.com/shop/product/42",
+                "platform": "Windows",
+                "releaseDate": "2021-06-11",
+                "releaseLanguage": "Japanese",
+                "restrictionLevel": "R18+"
+                }
+            ],
+            "staff": {
+                "脚本":[
+                    {
+                        "name": "柚子乃",
+                        "pId": 27702,
+                        "empDesc": "ED lyrics"
+                    }
+                ],
+                "音乐": [
+                    {
+                        "name": "Elements Garden",
+                        "pId": 27702,
+                        "empDesc": "主题曲作曲"
+                    }
+                ],
+                "原画": [
+                    {
+                        "name": "こぶいち",
+                        "pId": 27702,
+                        "empDesc": "SD原画"
+                    }
+                ],
+                "歌曲": [
+                    {
+                        "name": "Duca",
+                        "pId": 27702,
+                        "empDesc": "ED演唱"
+                    }
+                ],
+                "人物设计": [
+                    {
+                        "name": "こぶいち",
+                        "pId": 27702,
+                        "empDesc": "SD原画"
+                    }
+                ],
+                "监督": [
+                    {
+                        "name": "松永和也",
+                        "pId": 27702,
+                        "empDesc": "制作人员"
+                    }
+                ],
+                "其他": [
+                    {
+                        "name": "松永和也",
+                        "pId": 27702,
+                        "empDesc": "制作人员"
+                    }
+                ]
+            }
+        },
+        "characters": [
+            {
+                "name": "市松央",
+                "chineseName": "市松央",
+                "introduction": "dwadwad",
+                "cId": 27702,
+                "vndbId": 27702,
+                "cover": "./27702/character/27702.webp",
+                "extensionName": [
+                    "Ichimatsu Hajime"
+                ],
+                "birthday": "1999-12-24",
+                "gender": "男",
+                "website":[
+                    {
+                        "title": "官方网站",
+                        "link": "http://sagaplanets.product.co.jp/works/kinkoigt/chara/hajime.html"
+                    }
+                ]
+            }
+        ],
+        "saves": [
+            {
+                "time": "2021-06-11",
+                "tips": "第一次存档"
+            }
+        ],
+        "memory": [
+            {
+                "img": "./27702/memory/27702.webp",
+                "tips": "少女与天台与夕阳"
+            }
+        ]
+    },
+    {
+
+    },
+    {
+
+    }
+]

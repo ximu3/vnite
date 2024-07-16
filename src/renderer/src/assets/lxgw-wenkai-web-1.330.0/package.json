@@ -1,0 +1,34 @@
+{
+    "name": "@callmebill/lxgw-wenkai-web",
+    "version": "1.330.0",
+    "description": "Web font package for LXGW WenKai",
+    "main": "style.css",
+    "style": "style.css",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/CMBill/lxgw-wenkai-web.git"
+    },
+    "files": [
+        "lxgwwenkai-bold",
+        "lxgwwenkai-light",
+        "lxgwwenkai-regular",
+        "lxgwwenkaimono-bold",
+        "lxgwwenkaimono-light",
+        "lxgwwenkaimono-regular",
+        "*.css",
+        "VERSION"
+    ],
+    "keywords": [
+        "lxgw-wenkai",
+        "cjk",
+        "font",
+        "webfont",
+        "css"
+    ],
+    "author": "CM_Bill <callmebill@billw.cn>",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/CMBill/lxgw-wenkai-web/issues"
+    },
+    "homepage": "https://github.com/CMBill/lxgw-wenkai-web"
+}

@@ -1,0 +1,10 @@
+@import "./lxgw-wenkai-web-1.330.0/style.css";
+
+html {
+  scrollbar-gutter: auto !important;
+}
+
+/* body {
+    font-family: "LXGW WenKai";
+    font-weight: normal;
+} */
