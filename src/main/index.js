@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -88,3 +88,28 @@ ipcMain.on('maximize', () => {
     mainWindow.maximize()
   }
 })
+
+ipcMain.handle('open-file-dialog', async (event) => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openFile'],
+    filters: [
+      { name: '可执行文件', extensions: ['exe'] }
+    ]
+  });
+  if (result.canceled) {
+    return null;
+  } else {
+    return result.filePaths[0];
+  }
+});
+
+ipcMain.handle('open-file-folder-dialog', async (event) => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openFile', 'openDirectory'],
+  });
+  if (result.canceled) {
+    return null;
+  } else {
+    return result.filePaths[0];
+  }
+});

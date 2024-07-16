@@ -46,7 +46,7 @@ function AddGame() {
                 <Route index element={<Navigate to={'/info'} />} />
                 <Route path='/info' element={<Info />} />
                 <Route path='/list' element={<GameList />} />
-                {/* <Route path='/path' element={<GamePath />} /> */}
+                <Route path='/path' element={<GamePath />} />
               </Routes>
             </div>
             {alert && 
@@ -86,12 +86,12 @@ function Info() {
                 </label>
                 <label className="flex items-center h-10 gap-2 input input-bordered input-primary focus-within:outline-none focus-within:border-primary focus-within:border-2">
                 <div className='font-semibold'>GID |</div>
-                <input type="text" name='gid' className="grow" placeholder="月幕Galgame档案id，带GA" value={gid} onChange={(e)=>{setGID(e.target.value)}} />
+                <input type="text" name='gid' className="grow" placeholder="月幕Galgame档案id，不带GA" value={gid} onChange={(e)=>{setGID(e.target.value)}} />
                 <span className="badge badge-info">可选</span>
                 </label>
                 <label className="flex items-center h-10 gap-2 input input-bordered input-primary focus-within:outline-none focus-within:border-primary focus-within:border-2">
                 <div className='font-semibold'>VID |</div>
-                <input type="text" name='vid' className="grow" placeholder="VNDB档案id，带v" value={vid} onChange={(e)=>{setVID(e.target.value)}} />
+                <input type="text" name='vid' className="grow" placeholder="VNDB档案id，不带v" value={vid} onChange={(e)=>{setVID(e.target.value)}} />
                 <span className="badge badge-info">可选</span>
                 </label>
                 <div className='pt-1'>填写&nbsp;<span className='bg-info'> GID </span>&nbsp;和&nbsp;<span className='bg-info'> VNDB ID </span>&nbsp;项可大幅提高识别正确率。</div>
@@ -106,7 +106,7 @@ function Info() {
 
 function GameList(){
   let navigate = useNavigate();
-  const {gid, gameList, setGID} = useAddGame();
+  const {gid, gameList, setGID, setGameName} = useAddGame();
   return(
     <div className='flex flex-col w-full h-full gap-5'>
       <div className='pb-3 text-2xl font-bold text-center'>识别结果</div>
@@ -126,8 +126,11 @@ function GameList(){
             {
               gameList.map((gameData, index) => {
                 return (
-                  <tr className={gid === gameData["id"] ? "bg-success" : "bg-base-300"} key={index} onClick={()=>{setGID(gameData["id"])}}>
-                    <td>{gameData["chineseName"]}</td>
+                  <tr className={gid === gameData["id"] ? "bg-success" : "bg-base-300"} key={index} onClick={()=>{
+                    setGID(gameData["id"])
+                    setGameName(gameData["name"])
+                  }}>
+                    <td>{gameData["chineseName"] ? gameData["chineseName"] : "无"}</td>
                     <td>{gameData["name"]}</td>
                     <td>{gameData["id"]}</td>
                     <td>{gameData["chineseName"]}</td>
@@ -148,16 +151,84 @@ function GameList(){
   )
 }
 
-// function GamePath(){
-//   const {gamePath, savePath, setGamePath, setSavePath} = useAddGame();
-//   return(
-//     <div className='w-full h-full'>
-//       <div className='flex flex-row'>
-//         <button className='btn btn-primary text-base-100'>选择游戏路径</button>
-//         <input type='text' className='input input-bordered input-primary focus-within:outline-none focus-within:border-primary' value={gamePath} onChange={(e)=>{setGamePath(e.target.value)}} />
-//       </div>
-//     </div>
-//   )
-// }
+function GamePath(){
+  const {gamePath, savePath, setGamePath, setSavePath, setAlert} = useAddGame();
+  let navigate = useNavigate();
+
+  async function selectGamePath(){
+    const path = await window.electron.ipcRenderer.invoke("open-file-dialog")
+    setGamePath(path);
+  }
+
+  async function selectSavePath(){
+    const path = await window.electron.ipcRenderer.invoke("open-file-folder-dialog")
+    setSavePath(path);
+  }
+
+  function handleDragOver(e){
+    e.preventDefault();
+  }
+
+  function getGamePathByDrag(e){
+    e.preventDefault();
+    const files = Array.from(e.dataTransfer.files);
+    if(files.length > 1){
+      setAlert('只能选择一个路径');
+      setTimeout(() => {setAlert('');}, 3000);
+      return
+    }
+    const file = files[0];
+    const fileExtension = file.name.split('.').pop();
+    if(fileExtension !== 'exe'){
+      setAlert('请选择可执行文件');
+      setTimeout(() => {setAlert('');}, 3000);
+      return
+    }
+    setGamePath(file.path);
+  }
+
+  function getSavePathByDrag(e){
+    e.preventDefault();
+    const files = Array.from(e.dataTransfer.files);
+    if(files.length > 1){
+      setAlert('只能选择一个路径');
+      setTimeout(() => {setAlert('');}, 3000);
+      return
+    }
+    setSavePath(files[0].path);
+  }
+
+  function submitGamePath(){
+    if(gamePath === '' || gamePath === undefined){
+      setAlert('请填写游戏路径');
+      setTimeout(() => {setAlert('')}, 3000);
+      return
+    }
+    if(savePath === '' || savePath === undefined){
+      setAlert('请填写存档路径');
+      setTimeout(() => {setAlert('')}, 3000);
+      return
+    }
+    // navigate('/info');
+  }
+
+  return(
+    <div className='flex flex-col w-full h-full gap-5'>
+      <div className='pb-3 text-2xl font-bold text-center'>选择路径</div>
+      <div className='join'>
+        <button className='btn btn-primary text-base-100 no-animation' onClick={selectGamePath}>选择游戏路径</button>
+        <input type='text' placeholder='拖拽获取路径' onDrop={getGamePathByDrag} onDragOver={handleDragOver} className='input input-bordered input-primary focus-within:outline-none focus-within:border-primary' value={gamePath} onChange={(e)=>{setGamePath(e.target.value)}} />
+      </div>
+      <div className='join'>
+        <button className='btn btn-primary text-base-100 no-animation' onClick={selectSavePath}>选择存档路径</button>
+        <input type='text' placeholder='拖拽获取路径' onDrop={getSavePathByDrag} onDragOver={handleDragOver} className='input input-bordered input-primary focus-within:outline-none focus-within:border-primary' value={savePath} onChange={(e)=>{setSavePath(e.target.value)}} />
+      </div>
+      <div className='flex flex-row-reverse items-end gap-5 pt-3'>
+        <button className='btn btn-primary text-base-100' onClick={()=>{submitGamePath}}>下一步</button>
+        <button className='btn btn-primary text-base-100' onClick={()=>{navigate(-1)}}>上一步</button>
+      </div>
+    </div>
+  )
+}
 
 export default AddGame
