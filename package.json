@@ -20,6 +20,7 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.0",
     "@electron-toolkit/utils": "^3.0.0",
+    "axios": "^1.7.2",
     "node-fetch": "^3.3.2",
     "react-router-dom": "^6.23.1",
     "zustand": "^4.5.2"
@@ -27,23 +28,23 @@
   "devDependencies": {
     "@electron-toolkit/eslint-config": "^1.0.2",
     "@electron-toolkit/eslint-config-prettier": "^2.0.0",
+    "@iconify/json": "^2.2.216",
+    "@iconify/react": "^5.0.1",
+    "@iconify/tailwind": "^1.1.1",
     "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.19",
+    "daisyui": "^4.12.10",
     "electron": "^28.2.0",
     "electron-builder": "^24.9.1",
     "electron-vite": "^2.0.0",
     "eslint": "^8.56.0",
     "eslint-plugin-react": "^7.33.2",
+    "postcss": "^8.4.38",
     "prettier": "^3.2.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "vite": "^5.0.12",
-    "@iconify/json": "^2.2.216",
-    "@iconify/react": "^5.0.1",
-    "@iconify/tailwind": "^1.1.1",
-    "autoprefixer": "^10.4.19",
-    "daisyui": "^4.12.10",
     "tailwind-scrollbar": "^3.1.0",
     "tailwindcss": "^3.4.3",
-    "postcss": "^8.4.38"
+    "vite": "^5.0.12"
   }
 }
