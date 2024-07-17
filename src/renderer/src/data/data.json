@@ -11,7 +11,7 @@
             "vndbId": 27702,
             "cover": "./27702/cover.webp",
             "backgroundImage": "./27702/background.webp",
-            "savePath": "./27702/saves",
+            "savePath": "",
             "gamePath": "",
             "moreEntry": [
                 {
