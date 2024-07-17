@@ -11,7 +11,8 @@
             "vndbId": 27702,
             "cover": "./27702/cover.webp",
             "backgroundImage": "./27702/background.webp",
-            "archivePath": "./27702/archive",
+            "savePath": "./27702/saves",
+            "gamePath": "",
             "moreEntry": [
                 {
                 "key": "发行商",
@@ -152,12 +153,13 @@
         "saves": [
             {
                 "time": "2021-06-11",
-                "tips": "第一次存档"
+                "tips": "第一次存档",
+                "path": "./27702/saves/1"
             }
         ],
         "memory": [
             {
-                "img": "./27702/memory/27702.webp",
+                "img": "./27702/memory/1.webp",
                 "tips": "少女与天台与夕阳"
             }
         ]
