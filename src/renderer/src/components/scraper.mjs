@@ -110,6 +110,75 @@ async function searchGameId(gid) {
     }
 }
 
+// 封装API请求函数
+async function queryVNDB(filters, fields) {
+  const response = await fetch('https://api.vndb.org/kana/vn', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      filters: filters,
+      fields: fields
+    }),
+  });
+  return await response.json();
+}
+
+// 获取游戏截图
+async function getScreenshotsByTitle(title) {
+  try {
+    const data = await queryVNDB(["search", "=", title], "title, screenshots{url}");
+    if (data.results.length > 0) {
+      const vn = data.results[0];
+      console.log(`获取到 "${vn.title}" 的截图:`);
+      return vn.screenshots.map(screenshot => screenshot.url);
+    } else {
+      console.log(`未找到标题为 "${title}" 的视觉小说。`);
+      return [];
+    }
+  } catch (error) {
+    console.error("获取截图时出错:", error);
+    return [];
+  }
+}
+
+// 获取游戏封面
+async function getCoverByTitle(title) {
+  try {
+    const data = await queryVNDB(["search", "=", title], "title, image{url}");
+    if (data.results.length > 0) {
+      const vn = data.results[0];
+      if (vn.image) {
+        console.log(`获取到 "${vn.title}" 的封面:`);
+        return vn.image.url;
+      } else {
+        console.log(`"${vn.title}" 没有封面图片。`);
+        return null;
+      }
+    } else {
+      console.log(`未找到标题为 "${title}" 的视觉小说。`);
+      return null;
+    }
+  } catch (error) {
+    console.error("获取封面时出错:", error);
+    return null;
+  }
+}
+
+// 使用示例
+// async function example() {
+//   const title = "Steins;Gate";
+  
+//   const screenshots = await getScreenshotsByTitle(title);
+//   console.log(screenshots);
+  
+//   const cover = await getCoverByTitle(title);
+//   console.log(cover);
+// }
+
+// example();
+
 // 使用示例
 // searchGameDetails('月に寄りそう乙女の作法').then(data => {
 //     console.log('Game Details:', data);
@@ -168,4 +237,4 @@ async function searchGameId(gid) {
 //     console.error('Failed to fetch game ID:', error);
 // });
 
-export { searchGameList, searchGameId };
+export { searchGameList, searchGameId, searchGameDetails, getScreenshotsByTitle, getCoverByTitle };
