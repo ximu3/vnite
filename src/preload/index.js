@@ -1,11 +1,13 @@
 import { contextBridge } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { searchGameList, searchGameId } from "../renderer/src/components/scraper.mjs"
+import { searchGameList, searchGameId, getScreenshotsByTitle, getCoverByTitle } from "../renderer/src/components/scraper.mjs"
 
 // Custom APIs for renderer
 const api = {
   searchGameList,
-  searchGameId
+  searchGameId,
+  getScreenshotsByTitle,
+  getCoverByTitle
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

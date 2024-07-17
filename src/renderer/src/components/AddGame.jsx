@@ -10,6 +10,8 @@ const useAddGame = create(set => ({
     isLoading: false,
     gamePath: '',
     savePath: '',
+    gameBgList: [],
+    gameBg: '',
     setGameName: (gameName) => set({gameName}),
     setGID: (gid) => set({gid}),
     setVID: (vid) => set({vid}),
@@ -18,6 +20,8 @@ const useAddGame = create(set => ({
     setIsLoading: (isLoading) => set({isLoading}),
     setGamePath: (gamePath) => set({gamePath}),
     setSavePath: (savePath) => set({savePath}),
+    setGameBgList: (gameBgList) => set({gameBgList}),
+    setGameBg: (gameBg) => set({gameBg})
 }));
 
 
@@ -47,6 +51,7 @@ function AddGame() {
                 <Route path='/info' element={<Info />} />
                 <Route path='/list' element={<GameList />} />
                 <Route path='/path' element={<GamePath />} />
+                <Route path='/bg' element={<GameBg />} />
               </Routes>
             </div>
             {alert && 
@@ -152,7 +157,7 @@ function GameList(){
 }
 
 function GamePath(){
-  const {gamePath, savePath, setGamePath, setSavePath, setAlert} = useAddGame();
+  const {gamePath, savePath, gameName, setGamePath, setSavePath, setAlert, setIsLoading, setGameBgList} = useAddGame();
   let navigate = useNavigate();
 
   async function selectGamePath(){
@@ -198,7 +203,7 @@ function GamePath(){
     setSavePath(files[0].path);
   }
 
-  function submitGamePath(){
+  async function submitGamePath(){
     if(gamePath === '' || gamePath === undefined){
       setAlert('请填写游戏路径');
       setTimeout(() => {setAlert('')}, 3000);
@@ -209,7 +214,11 @@ function GamePath(){
       setTimeout(() => {setAlert('')}, 3000);
       return
     }
-    // navigate('/info');
+    setIsLoading(true);
+    const gameBgList = await window.api.getScreenshotsByTitle(gameName);
+    setGameBgList(gameBgList);
+    navigate('/bg');
+    setIsLoading(false);
   }
 
   return(
@@ -224,7 +233,34 @@ function GamePath(){
         <input type='text' placeholder='拖拽获取路径' onDrop={getSavePathByDrag} onDragOver={handleDragOver} className='input input-bordered input-primary focus-within:outline-none focus-within:border-primary' value={savePath} onChange={(e)=>{setSavePath(e.target.value)}} />
       </div>
       <div className='flex flex-row-reverse items-end gap-5 pt-3'>
-        <button className='btn btn-primary text-base-100' onClick={()=>{submitGamePath}}>下一步</button>
+        <button className='btn btn-primary text-base-100' onClick={submitGamePath}>下一步</button>
+        <button className='btn btn-primary text-base-100' onClick={()=>{navigate(-1)}}>上一步</button>
+      </div>
+    </div>
+  )
+}
+
+function GameBg(){
+  const {gameBgList, setGameBg, gameBg} = useAddGame();
+  let navigate = useNavigate();
+  return(
+    <div className='h-full w-270'>
+      <div className='pb-5 text-2xl font-bold text-center'>选择背景图</div>
+      <div className='overflow-x-auto h-120 scrollbar-base'>
+        <div className='flex flex-wrap gap-3'>
+          {
+            gameBgList.map((bg, index) => {
+              return(
+                <div key={index} className={gameBg === bg ? 'w-86 p-3 bg-success' : 'w-86 p-3 bg-base-300'} onClick={()=>{setGameBg(bg)}}>
+                  <img src={bg} alt={index} className='w-full h-auto' />
+                </div>
+              )
+            })
+          }
+        </div>
+      </div>
+      <div className='flex flex-row-reverse items-end gap-5 pt-5'>
+        <button className='btn btn-primary text-base-100' onClick={()=>{navigate('/list')}}>确定</button>
         <button className='btn btn-primary text-base-100' onClick={()=>{navigate(-1)}}>上一步</button>
       </div>
     </div>
