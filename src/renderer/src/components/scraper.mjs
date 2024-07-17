@@ -1,4 +1,5 @@
 import fetch from 'node-fetch';
+import { addCharacterImgToData, addNewGameToData } from '..data/dataManager.mjs';
 
 // 定义获取Access Token的函数
 async function getAccessToken(clientId, clientSecret) {
@@ -106,6 +107,114 @@ async function searchGameId(gid) {
         return data;
     } catch (error) {
         console.error('Error in searchGameId:', error);
+        throw error;
+    }
+}
+
+async function searchCharacterId(cid) {
+    const clientId = 'ymgal';
+    const clientSecret = 'luna0327';
+    try {
+        const accessToken = await getAccessToken(clientId, clientSecret);
+        const baseURL = 'https://www.ymgal.games';
+        const url = new URL('/open/archive', baseURL);
+        // url.searchParams.append('mode', 'character');
+        url.searchParams.append('cid', cid);
+
+        const headers = new Headers();
+        headers.append('Accept', 'application/json;charset=utf-8');
+        headers.append('Authorization', `Bearer ${accessToken}`);
+        headers.append('version', '1');
+
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: headers
+        });
+        const data = await response.json();
+        return data;
+    
+    } catch (error) {
+        console.error('Error in searchCharacterId:', error);
+        throw error;
+    }
+}
+
+async function organizeGameData(gid, savePath, gamePath) {
+    try {
+        const Details = await searchGameId(gid);
+        const gameDetails = Details.data.game;
+        const characters = [];
+        for (const character of gameDetails.characters) {
+            const characterDetails = await searchCharacterId(character.cid);
+            await addCharacterImgToData(gid, character.cid, characterDetails.data.character.mainImg);
+            let extensionName = []
+            for (const extension of characterDetails.data.character.extensionName) {
+                extensionName.push(extension.name);
+            }
+            characters.push({
+                name: character.name,
+                chineseName: character.chineseName,
+                introduction: character.introduction,
+                cId: character.cid,
+                // vndbId: character.vndbId,
+                cover: `./${gid}/characters/${character.cid}.webp`,
+                extensionName: extensionName,
+                birthday: character.birthday,
+                gender: character.gender,
+                website: [{"title": "月幕Galgame", "url": `https://www.ymgal.games/ca${character.cid}`}]
+            });
+        }
+        const saves = [];
+        // for (const save of gameDetails.saves) {
+        //     saves.push({
+        //         time: save.time,
+        //         tips: save.tips,
+        //         path: save.path
+        //     });
+        // }
+        const memory = [];
+        // for (const mem of gameDetails.memory) {
+        //     memory.push({
+        //         img: mem.img,
+        //         tips: mem.tips
+        //     });
+        // }
+        const extensionName = []
+        for (const extension of gameDetails.extensionName) {
+            extensionName.push(extension.name);
+        }
+        let website = []
+        for (const web of gameDetails.website) {
+            website.push({"title": web.title, "url": web.link});
+        }
+        website.push({"title": "月幕Galgame", "url": `https://www.ymgal.games/ga${gid}`}, {"title": "VNDB", "url": `https://vndb.org/v${vndbId}`});
+        const data = {
+            detail: {
+                name: gameDetails.name,
+                chineseName: gameDetails.chineseName,
+                extensionName: extensionName,
+                introduction: gameDetails.introduction,
+                gId: gameDetails.gid,
+                vndbId: vndbId,
+                cover: `./${gid}/cover.webp`,
+                backgroundImage: `./${gid}/background.webp`,
+                savePath: savePath,
+                gamePath: gamePath,
+                moreEntry: gameDetails.moreEntry,
+                typeDesc: gameDetails.typeDesc,
+                releaseDate: gameDetails.releaseDate,
+                restricted: gameDetails.restricted,
+                website: website,
+                releases: gameDetails.releases,
+                staff: gameDetails.detail.staff
+            },
+            characters: characters,
+            saves: saves,
+            memory: memory
+        };
+        return data;
+    } catch (error) {
+        console.error('Error in organizeGameData:', error);
         throw error;
     }
 }
@@ -237,4 +346,4 @@ async function getCoverByTitle(title) {
 //     console.error('Failed to fetch game ID:', error);
 // });
 
-export { searchGameList, searchGameId, searchGameDetails, getScreenshotsByTitle, getCoverByTitle };
+export { searchGameList, searchGameId, searchGameDetails, getScreenshotsByTitle, getCoverByTitle }
