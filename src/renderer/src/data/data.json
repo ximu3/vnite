@@ -1,173 +1,3680 @@
 [
-    {   
-        "detail":{
-            "name": "金色ラブリッチェ",
-            "chineseName": "金辉恋曲四重奏",
-            "extensionName": [
-                "Kinkoi", "金恋", "金色Loveriche"
-            ],
-            "introduction": "私立诺布尔学园——走出这里的学生，都将是未来的绅士淑女。在这所全宿制的学校，他们不仅要学习文化，还要培养优良的素养。特别是在今年，由于北欧某小国的王族入学，校内更是弥漫着前所未有的紧张感。就在这时，主人公市松央路意外得到该国公主的赏识，并被迫走进了诺布尔学园的大门。与之同时，他不得不搬进了女生宿舍一角剩余的空房间....",
-            "gId": 27702,
-            "vndbId": 27702,
-            "cover": "./27702/cover.webp",
-            "backgroundImage": "./27702/background.webp",
-            "savePath": "",
-            "gamePath": "",
-            "moreEntry": [
-                {
-                "key": "发行商",
-                "value": "HIKARI FIELD"
-                },
-                {
-                "key": "官方限制级补丁",
-                "value": "有"
-                }
-            ],
-            "typeDesc": "金色学园恋爱冒险游戏",
-            "releaseDate": "2017-12-22",
-            "restricted": true,
-            "website": [
-                {
-                "title": "官方网站",
-                "link": "http://sagaplanets.product.co.jp/works/kinkoigt/"
-                },
-                {
-                "title": "Steam",
-                "link": "https://store.steampowered.com/app/1277940/_/"
-                },
-                {
-                "title": "HIKARI FIELD 中文官网",
-                "link": "https://hikarifield.co.jp/kinkoi/"
-                },
-                {
-                "title": "HIKARI FIELD STORE",
-                "link": "https://store.hikarifield.co.jp/shop/kinkoi"
-                },
-                {
-                "title": "官方限制级补丁下载地址",
-                "link": "https://nekonyansoft.com/shop/product/41"
-                }
-            ],
-            "releases": [
-                {
-                "id": 529804,
-                "releaseName": "金辉恋曲四重奏",
-                "relatedLink": "http://kinkoi.nekonyansoft.com/",
-                "platform": "Windows",
-                "releaseDate": "2021-06-11",
-                "releaseLanguage": "Japanese",
-                "restrictionLevel": "全年龄"
-                },
-                {
-                "id": 529805,
-                "releaseName": "Kinkoi: Golden Loveriche 18+ Steam Patch",
-                "relatedLink": "https://nekonyansoft.com/shop/product/41",
-                "platform": "Windows",
-                "releaseDate": "2021-06-11",
-                "releaseLanguage": "Japanese",
-                "restrictionLevel": "R18+"
-                },
-                {
-                "id": 529806,
-                "releaseName": "Kinkoi: Golden Loveriche - 1440p patch",
-                "relatedLink": "https://nekonyansoft.com/shop/product/42",
-                "platform": "Windows",
-                "releaseDate": "2021-06-11",
-                "releaseLanguage": "Japanese",
-                "restrictionLevel": "R18+"
-                }
-            ],
-            "staff": {
-                "脚本":[
-                    {
-                        "name": "柚子乃",
-                        "pId": 27702,
-                        "empDesc": "ED lyrics"
-                    }
-                ],
-                "音乐": [
-                    {
-                        "name": "Elements Garden",
-                        "pId": 27702,
-                        "empDesc": "主题曲作曲"
-                    }
-                ],
-                "原画": [
-                    {
-                        "name": "こぶいち",
-                        "pId": 27702,
-                        "empDesc": "SD原画"
-                    }
-                ],
-                "歌曲": [
-                    {
-                        "name": "Duca",
-                        "pId": 27702,
-                        "empDesc": "ED演唱"
-                    }
-                ],
-                "人物设计": [
-                    {
-                        "name": "こぶいち",
-                        "pId": 27702,
-                        "empDesc": "SD原画"
-                    }
-                ],
-                "监督": [
-                    {
-                        "name": "松永和也",
-                        "pId": 27702,
-                        "empDesc": "制作人员"
-                    }
-                ],
-                "其他": [
-                    {
-                        "name": "松永和也",
-                        "pId": 27702,
-                        "empDesc": "制作人员"
-                    }
-                ]
-            }
+  {
+    "detail": {
+      "name": "STEINS;GATE",
+      "chineseName": "命运石之门",
+      "extensionName": [
+        "シュタインズゲート",
+        "S;G",
+        "石头门"
+      ],
+      "introduction": "宇宙虽有其起源，却没有终结——无限。\n\n星球也有起源，却因其自身之力走向毁灭——有限。\n\n历史上拥有智慧的人类往往是最愚昧的。\n\n生活在海中的鱼不知道陆地的存在，如果它们拥有智慧也会走向毁灭。\n\n人类如果想要超越光速，比鱼类生活在陆地更为滑稽。\n\n这就是，对于反抗神人们的最后通牒。",
+      "gid": 11843,
+      "vid": "v2002",
+      "cover": "./11843/cover.webp",
+      "backgroundImage": "./11843/background.webp",
+      "savePath": "",
+      "gamePath": "",
+      "moreEntry": [],
+      "typeDesc": "ADV 剧情作",
+      "releaseDate": "2009-10-15",
+      "restricted": true,
+      "website": [
+        {
+          "title": "游戏官网",
+          "url": "http://steinsgate.jp/"
         },
-        "characters": [
-            {
-                "name": "市松央",
-                "chineseName": "市松央",
-                "introduction": "dwadwad",
-                "cId": 27702,
-                "vndbId": 27702,
-                "cover": "./27702/character/27702.webp",
-                "extensionName": [
-                    "Ichimatsu Hajime"
-                ],
-                "birthday": "1999-12-24",
-                "gender": "男",
-                "website":[
-                    {
-                        "title": "官方网站",
-                        "link": "http://sagaplanets.product.co.jp/works/kinkoigt/chara/hajime.html"
-                    }
-                ]
-            }
+        {
+          "title": "steam游戏界面",
+          "url": "https://store.steampowered.com/app/412830/STEINSGATE/"
+        },
+        {
+          "title": "月幕Galgame",
+          "url": "https://www.ymgal.games/ga11843"
+        },
+        {
+          "title": "VNDB",
+          "url": "https://vndb.org/v2002"
+        }
+      ],
+      "releases": [
+        {
+          "id": 127857,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "",
+          "platform": "Android",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127858,
+          "releaseName": "Steins; Gate Elite",
+          "relatedLink": "https://www.zoneofgames.ru/games/steinsgate_elite/",
+          "platform": "Windows",
+          "releaseLanguage": "Russian",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127859,
+          "releaseName": "Steins;Gate (Steam)",
+          "relatedLink": "http://comitedumoe.fr/",
+          "platform": "Windows",
+          "releaseLanguage": "French",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127860,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "https://bakayumeceviri.wordpress.com/steins-gate/",
+          "platform": "Windows",
+          "releaseLanguage": "Turkish",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127861,
+          "releaseName": "STEINS;GATE ELITE",
+          "relatedLink": "https://gall.dcinside.com/steinsgate/21059",
+          "platform": "Windows",
+          "releaseDate": "2021-02-12",
+          "releaseLanguage": "Korean",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127862,
+          "releaseName": "STEINS;GATE ELITE",
+          "relatedLink": "",
+          "platform": "Windows",
+          "releaseDate": "2020-10-30",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127863,
+          "releaseName": "Steins;Gate Elite",
+          "relatedLink": "https://committeeofelite.club/",
+          "platform": "Windows",
+          "releaseDate": "2020-05-03",
+          "releaseLanguage": "Italian",
+          "restrictionLevel": "全年龄"
+        },
+        {
+          "id": 127864,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "https://www.zoneofgames.ru/games/steinsgate/files/6469.html",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2019-11-21",
+          "releaseLanguage": "Russian",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127865,
+          "releaseName": "シュタインズ・ゲート エリート",
+          "relatedLink": "http://5pb.jp/games/smapho/app_steinsgate_elite.html",
+          "platform": "Apple iProduct",
+          "releaseDate": "2019-10-15",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127866,
+          "releaseName": "STEINS;GATE ELITE",
+          "relatedLink": "",
+          "platform": "Nintendo Switch",
+          "releaseDate": "2019-03-28",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127867,
+          "releaseName": "STEINS;GATE ELITE + Linear Bounded Phenogram",
+          "relatedLink": "https://www.spike-chunsoft.com/SteinsGateElite/",
+          "platform": "Windows",
+          "releaseDate": "2019-03-28",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127868,
+          "releaseName": "STEINS;GATE ELITE",
+          "relatedLink": "",
+          "platform": "Nintendo Switch",
+          "releaseDate": "2019-03-28",
+          "releaseLanguage": "Chinese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127869,
+          "releaseName": "STEINS;GATE ELITE + Linear Bounded Phenogram",
+          "relatedLink": "https://www.spike-chunsoft.com/SteinsGateElite/",
+          "platform": "Windows",
+          "releaseDate": "2019-03-28",
+          "releaseLanguage": "Chinese",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127870,
+          "releaseName": "STEINS;GATE ELITE + Linear Bounded Phenogram",
+          "relatedLink": "https://www.spike-chunsoft.com/SteinsGateElite/",
+          "platform": "Windows",
+          "releaseDate": "2019-03-28",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127871,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "https://steins.uvnworks.com/traducao-steinsgate-lancada/",
+          "platform": "Windows",
+          "releaseDate": "2019-03-24",
+          "releaseLanguage": "Portuguese (Brazil)",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127872,
+          "releaseName": "Steins;Gate - Steam Edition",
+          "relatedLink": "https://steins.uvnworks.com/traducao-steinsgate-lancada/",
+          "platform": "Windows",
+          "releaseDate": "2019-03-24",
+          "releaseLanguage": "Portuguese (Brazil)",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127873,
+          "releaseName": "Steins;Gate Elite",
+          "relatedLink": "https://gbatemp.net/threads/release-steins-gate-elite-psvita-english-translation-patch.534136/",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2019-03-21",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R16+"
+        },
+        {
+          "id": 127874,
+          "releaseName": "STEINS;GATE ELITE",
+          "relatedLink": "https://www.spike-chunsoft.com/SteinsGateElite/",
+          "platform": "Windows",
+          "releaseDate": "2019-02-19",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127875,
+          "releaseName": "STEINS;GATE ELITE",
+          "relatedLink": "https://www.spike-chunsoft.com/SteinsGateElite/",
+          "platform": "PlayStation 4",
+          "releaseDate": "2019-02-19",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R16+"
+        },
+        {
+          "id": 127876,
+          "releaseName": "STEINS;GATE ELITE",
+          "relatedLink": "https://www.spike-chunsoft.com/SteinsGateElite/",
+          "platform": "Nintendo Switch",
+          "releaseDate": "2019-02-19",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127877,
+          "releaseName": "STEINS;GATE ELITE",
+          "relatedLink": "https://www.spike-chunsoft.com/SteinsGateElite/",
+          "platform": "Windows",
+          "releaseDate": "2019-02-19",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127878,
+          "releaseName": "STEINS;GATE ELITE",
+          "relatedLink": "https://www.spike-chunsoft.com/SteinsGateElite/",
+          "platform": "PlayStation 4",
+          "releaseDate": "2019-02-19",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127879,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "https://old.reddit.com/r/steinsgate/comments/a8qfnd/steinsgate_vn_psp_english_patch/",
+          "platform": "PlayStation Portable",
+          "releaseDate": "2019-01-04",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127880,
+          "releaseName": "シュタインズ・ゲート エリート",
+          "relatedLink": "http://steinsgate.jp/elite/",
+          "platform": "PlayStation 4",
+          "releaseDate": "2018-09-20",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127881,
+          "releaseName": "シュタインズ・ゲート エリート",
+          "relatedLink": "http://steinsgate.jp/elite/",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2018-09-20",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127882,
+          "releaseName": "シュタインズ・ゲート エリート",
+          "relatedLink": "http://steinsgate.jp/elite/",
+          "platform": "Nintendo Switch",
+          "releaseDate": "2018-09-20",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127883,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "https://4pda.ru/forum/index.php?showtopic=476039&amp;st=180#entry75742743",
+          "platform": "Android",
+          "releaseDate": "2018-08-05",
+          "releaseLanguage": "Russian",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127884,
+          "releaseName": "STEINS;GATE - Steam Edition",
+          "relatedLink": "http://5pb.jp/games/steam/steinsgate/en/",
+          "platform": "Windows",
+          "releaseDate": "2017-09-11",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127885,
+          "releaseName": "STEINS;GATE - Steam Edition",
+          "relatedLink": "http://5pb.jp/games/steam/steinsgate/en/",
+          "platform": "Windows",
+          "releaseDate": "2017-09-11",
+          "releaseLanguage": "Chinese",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127886,
+          "releaseName": "STEINS;GATE - Steam Edition",
+          "relatedLink": "http://5pb.jp/games/steam/steinsgate/en/",
+          "platform": "Windows",
+          "releaseDate": "2017-09-11",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127887,
+          "releaseName": "Steins;Gate tiếng Việt",
+          "relatedLink": "https://hako.re/forum/threads/steins-gate-tieng-viet-partial-patch-dang-tiep-tuc.30488/",
+          "platform": "Windows",
+          "releaseDate": "2017-09-10",
+          "releaseLanguage": "Vietnamese",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127888,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "http://steinsgatecesky.webnode.cz/preklad/",
+          "platform": "Windows",
+          "releaseDate": "2017-02-05",
+          "releaseLanguage": "Czech",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127889,
+          "releaseName": "STEINS;GATE Steam Improvement Patch",
+          "relatedLink": "http://sonome.dareno.me/projects/sghd.html",
+          "platform": "Windows",
+          "releaseDate": "2016-11-21",
+          "releaseLanguage": "English",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127890,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "",
+          "platform": "Apple iProduct",
+          "releaseDate": "2016-09-09",
+          "releaseLanguage": "English",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127891,
+          "releaseName": "STEINS;GATE - Steam Edition",
+          "relatedLink": "http://5pb.jp/games/steam/steinsgate/en/",
+          "platform": "Windows",
+          "releaseDate": "2016-09-08",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127892,
+          "releaseName": "STEINS;GATE - Steam Edition",
+          "relatedLink": "http://5pb.jp/games/steam/steinsgate/en/",
+          "platform": "Windows",
+          "releaseDate": "2016-09-08",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127893,
+          "releaseName": "슈타인즈 게이트 HD",
+          "relatedLink": "",
+          "platform": "PlayStation 4",
+          "releaseDate": "2016-06-23",
+          "releaseLanguage": "Korean",
+          "restrictionLevel": "R18+"
+        },
+        {
+          "id": 127894,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "https://cafe.naver.com/hansicgu/17220",
+          "platform": "Android",
+          "releaseDate": "2016-06-11",
+          "releaseLanguage": "Korean",
+          "restrictionLevel": "R12+"
+        },
+        {
+          "id": 127895,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "https://www.zoneofgames.ru/games/steinsgate/files/6705.html",
+          "platform": "Windows",
+          "releaseDate": "2016-01-15",
+          "releaseLanguage": "Russian",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127896,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "https://web.archive.org/web/20160128231201/http://kiboyami.net/steinsgate-vn-projekteintrag-005-download/",
+          "platform": "Windows",
+          "releaseDate": "2015-12-27",
+          "releaseLanguage": "German",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127897,
+          "releaseName": "Steins;Gate HD",
+          "relatedLink": "http://steinsgate0.jp/",
+          "platform": "PlayStation 4",
+          "releaseDate": "2015-12-10",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127898,
+          "releaseName": "Steins;Gate - El Psy Kongroo Edition (US version)",
+          "relatedLink": "http://www.ricedigital.co.uk/store/steins-gate-el-psy-kongroo-edition-us-version-ps-vita",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2015-09-18",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127899,
+          "releaseName": "Steins;Gate - El Psy Kongroo Edition (US version)",
+          "relatedLink": "http://www.ricedigital.co.uk/store/steins-gate-el-psy-kongroo-edition-us-version-ps3",
+          "platform": "PlayStation 3",
+          "releaseDate": "2015-09-18",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127900,
+          "releaseName": "Steins;Gate - NA Package Edition",
+          "relatedLink": "http://www.pqube.co.uk/steinsgate/",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2015-08-31",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127901,
+          "releaseName": "Steins;Gate - NA Package Edition",
+          "relatedLink": "http://www.pqube.co.uk/steinsgate/",
+          "platform": "PlayStation 3",
+          "releaseDate": "2015-08-31",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127902,
+          "releaseName": "Steins;Gate - NA Download Edition",
+          "relatedLink": "http://www.pqube.co.uk/steinsgate/",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2015-08-25",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127903,
+          "releaseName": "Steins;Gate - NA Download Edition",
+          "relatedLink": "http://www.pqube.co.uk/steinsgate/",
+          "platform": "PlayStation 3",
+          "releaseDate": "2015-08-25",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127904,
+          "releaseName": "Steins;Gate - EU Package Edition",
+          "relatedLink": "http://www.pqube.co.uk/steinsgate/",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2015-06-05",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R16+"
+        },
+        {
+          "id": 127905,
+          "releaseName": "Steins;Gate - EU Package Edition",
+          "relatedLink": "http://www.pqube.co.uk/steinsgate/",
+          "platform": "PlayStation 3",
+          "releaseDate": "2015-06-05",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R16+"
+        },
+        {
+          "id": 127906,
+          "releaseName": "Steins;Gate - El Psy Kongroo Edition (EU version)",
+          "relatedLink": "http://www.ricedigital.co.uk/store/steins-gate-el-psy-kongroo-edition-ps-vita",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2015-06-05",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R16+"
+        },
+        {
+          "id": 127907,
+          "releaseName": "Steins;Gate - El Psy Kongroo Edition (EU version)",
+          "relatedLink": "http://www.ricedigital.co.uk/store/steins-gate-el-psy-kongroo-edition-ps3",
+          "platform": "PlayStation 3",
+          "releaseDate": "2015-06-05",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R16+"
+        },
+        {
+          "id": 127908,
+          "releaseName": "Steins;Gate - EU Download Edition",
+          "relatedLink": "http://www.pqube.co.uk/steinsgate/",
+          "platform": "PlayStation 3",
+          "releaseDate": "2015-06-05",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R16+"
+        },
+        {
+          "id": 127909,
+          "releaseName": "Steins;Gate - EU Download Edition",
+          "relatedLink": "http://www.pqube.co.uk/steinsgate/",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2015-06-05",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R16+"
+        },
+        {
+          "id": 127910,
+          "releaseName": "Steins;Gate - Best Edition",
+          "relatedLink": "http://steins-gate.us/",
+          "platform": "Windows",
+          "releaseDate": "2014-11-26",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127911,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "http://gateofsteiner.net/foro/showthread.php?tid=53",
+          "platform": "Windows",
+          "releaseDate": "2014-11-15",
+          "releaseLanguage": "Spanish",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127912,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "",
+          "platform": "Apple iProduct",
+          "releaseDate": "2014-08-11",
+          "releaseLanguage": "Chinese",
+          "restrictionLevel": "R12+"
+        },
+        {
+          "id": 127913,
+          "releaseName": "Steins;Gate - Standard Edition",
+          "relatedLink": "http://steins-gate.us/",
+          "platform": "Windows",
+          "releaseDate": "2014-04-30",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127914,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "",
+          "platform": "PlayStation 3",
+          "releaseDate": "2014-04-15",
+          "releaseLanguage": "Korean",
+          "restrictionLevel": "R18+"
+        },
+        {
+          "id": 127915,
+          "releaseName": "Steins;Gate v1.0.5 (beta)",
+          "relatedLink": "https://tldrunix.wordpress.com/2014/01/19/steinsgate-for-android-beta-english-patch-released/",
+          "platform": "Android",
+          "releaseDate": "2014-04-05",
+          "releaseLanguage": "English",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127916,
+          "releaseName": "Steins;Gate - Limited Edition",
+          "relatedLink": "http://steins-gate.us/",
+          "platform": "Windows",
+          "releaseDate": "2014-03-31",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127917,
+          "releaseName": "Steins;Gate - Download Edition",
+          "relatedLink": "http://steins-gate.us/",
+          "platform": "Windows",
+          "releaseDate": "2014-03-31",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127918,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "http://i-vntp.blogspot.com/",
+          "platform": "Android",
+          "releaseDate": "2014-01-17",
+          "releaseLanguage": "English",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127919,
+          "releaseName": "Steins;Gate Сhap 2",
+          "relatedLink": "http://darkgates.blogspot.ru/2013/06/pc-2.html",
+          "platform": "Windows",
+          "releaseDate": "2013-06-23",
+          "releaseLanguage": "Russian",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127920,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "http://i-vntp.blogspot.com/",
+          "platform": "Apple iProduct",
+          "releaseDate": "2013-04-06",
+          "releaseLanguage": "English",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127921,
+          "releaseName": "Steins;Gate Prologue",
+          "relatedLink": "http://darkgates.blogspot.ru/2013/03/pc.html",
+          "platform": "Windows",
+          "releaseDate": "2013-03-27",
+          "releaseLanguage": "Russian",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127922,
+          "releaseName": "STEINS;GATE ダブルパック 通常版",
+          "relatedLink": "http://steinsgate.jp/vita/",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2013-03-14",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127923,
+          "releaseName": "STEINS;GATE ダブルパック 初回限定版セット",
+          "relatedLink": "http://steinsgate.jp/vita/",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2013-03-14",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127924,
+          "releaseName": "STEINS;GATE",
+          "relatedLink": "http://steinsgate.jp/vita/",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2013-03-14",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127925,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "https://polaris.hided.net/2258655",
+          "platform": "Windows",
+          "releaseDate": "2013-02-10",
+          "releaseLanguage": "Korean",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127926,
+          "releaseName": "命運石之門",
+          "relatedLink": "http://steinsgate.tw/",
+          "platform": "Xbox 360",
+          "releaseDate": "2013-02-07",
+          "releaseLanguage": "Chinese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127927,
+          "releaseName": "命運石之門 中文特典版",
+          "relatedLink": "http://steinsgate.tw/",
+          "platform": "Xbox 360",
+          "releaseDate": "2013-02-07",
+          "releaseLanguage": "Chinese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127928,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "http://steinsgatevn.forumcommunity.net/",
+          "platform": "Windows",
+          "releaseDate": "2013-01-29",
+          "releaseLanguage": "Italian",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127929,
+          "releaseName": "Steins;Gate Сhap 2",
+          "relatedLink": "http://darkgates.blogspot.ru/2012/12/2.html",
+          "platform": "Apple iProduct",
+          "releaseDate": "2012-12-24",
+          "releaseLanguage": "Russian",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127930,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "http://5pb.jp/games/smapho/",
+          "platform": "Apple iProduct",
+          "releaseDate": "2012-12-06",
+          "releaseLanguage": "Korean",
+          "restrictionLevel": "R12+"
+        },
+        {
+          "id": 127931,
+          "releaseName": "命運石之門",
+          "relatedLink": "http://steinsgate.tw/",
+          "platform": "PlayStation 3",
+          "releaseDate": "2012-11-15",
+          "releaseLanguage": "Chinese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127932,
+          "releaseName": "命運石之門 中文特典版",
+          "relatedLink": "http://steinsgate.tw/",
+          "platform": "PlayStation 3",
+          "releaseDate": "2012-11-15",
+          "releaseLanguage": "Chinese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127933,
+          "releaseName": "Steins;Gate Сhap 1",
+          "relatedLink": "http://darkgates.blogspot.ru/2012/06/1_29.html",
+          "platform": "Apple iProduct",
+          "releaseDate": "2012-06-29",
+          "releaseLanguage": "Russian",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127934,
+          "releaseName": "命运石之门",
+          "relatedLink": "https://tieba.baidu.com/p/1662659874",
+          "platform": "Windows",
+          "releaseDate": "2012-06-14",
+          "releaseLanguage": "Chinese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127935,
+          "releaseName": "STEINS;GATE ダブルパック",
+          "relatedLink": "http://steinsgate.jp/ps3_wpack/",
+          "platform": "PlayStation 3",
+          "releaseDate": "2012-05-24",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127936,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "http://steinsgate.jp/",
+          "platform": "PlayStation 3",
+          "releaseDate": "2012-05-24",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127937,
+          "releaseName": "Steins;Gate Prologue",
+          "relatedLink": "http://darkgates.blogspot.com/2011/11/blog-post_20.html",
+          "platform": "Apple iProduct",
+          "releaseDate": "2011-11-20",
+          "releaseLanguage": "Russian",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127938,
+          "releaseName": "STEINS;GATE　Nitro The Best! Vol.5",
+          "relatedLink": "http://steinsgate.jp/",
+          "platform": "Windows",
+          "releaseDate": "2011-09-16",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127939,
+          "releaseName": "STEINS;GATE Nitro The Best! ダウンロード版",
+          "relatedLink": "http://www.nitroplus.co.jp/game/steinsgate/",
+          "platform": "Windows",
+          "releaseDate": "2011-09-16",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127940,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "",
+          "platform": "Apple iProduct",
+          "releaseDate": "2011-08-25",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127941,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "http://steinsgate.jp/psp/",
+          "platform": "PlayStation Portable",
+          "releaseDate": "2011-06-23",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127942,
+          "releaseName": "シュタインズ・ゲート 限定版",
+          "relatedLink": "http://steinsgate.jp/psp/",
+          "platform": "PlayStation Portable",
+          "releaseDate": "2011-06-23",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127943,
+          "releaseName": "Steins;Gate Platinum collection",
+          "relatedLink": "http://steinsgate.jp/",
+          "platform": "Xbox 360",
+          "releaseDate": "2011-06-16",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127944,
+          "releaseName": "STEINS;GATE ダブルパック",
+          "relatedLink": "http://steinsgate.jp/",
+          "platform": "Xbox 360",
+          "releaseDate": "2011-06-16",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127945,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "http://steinsgate.jp/",
+          "platform": "Windows",
+          "releaseDate": "2010-08-26",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127946,
+          "releaseName": "Steins; Gate（シュタインズ・ゲート） 数量限定版",
+          "relatedLink": "http://steinsgate.jp/",
+          "platform": "Xbox 360",
+          "releaseDate": "2009-10-15",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127947,
+          "releaseName": "Steins; Gate（シュタインズ・ゲート） 通常版",
+          "relatedLink": "http://steinsgate.jp/",
+          "platform": "Xbox 360",
+          "releaseDate": "2009-10-15",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        }
+      ],
+      "staff": {
+        "脚本": [
+          {
+            "name": "谷崎 央佳",
+            "pid": 11718,
+            "empDesc": "Assistant"
+          },
+          {
+            "name": "下倉 バイオ",
+            "pid": 10377,
+            "empDesc": "Suzuha's ending; uncredited"
+          },
+          {
+            "name": "林 直孝",
+            "pid": 10375,
+            "empDesc": ""
+          }
         ],
-        "saves": [
-            {
-                "time": "2021-06-11",
-                "tips": "第一次存档",
-                "path": "./27702/saves/1"
-            }
+        "音乐": [
+          {
+            "name": "阿保 剛",
+            "pid": 31435,
+            "empDesc": "BGM"
+          },
+          {
+            "name": "いとう かなこ",
+            "pid": 10191,
+            "empDesc": "Insert song 'technovision' lyrics"
+          },
+          {
+            "name": "林 達志",
+            "pid": 22948,
+            "empDesc": "ED 'Unmei no Farfalla' composition, arrangement"
+          },
+          {
+            "name": "Akirastar",
+            "pid": 23552,
+            "empDesc": "Insert song 'technovision' composition"
+          },
+          {
+            "name": "須田 悦弘",
+            "pid": 23553,
+            "empDesc": "True ED 'Another Heaven'"
+          },
+          {
+            "name": "志倉 千代丸",
+            "pid": 10101,
+            "empDesc": "OP 'Skyclad no Kansokusha' & PC OP “A.R.” & PSP OP 'Uchuu Engineer' & PS3 OP 'Hisenkei Jeniakku' & ELITE OP composition & lyrics, Insert song 'Masquerade' lyrics"
+          }
         ],
-        "memory": [
-            {
-                "img": "./27702/memory/1.webp",
-                "tips": "少女与天台与夕阳"
-            }
+        "原画": [
+          {
+            "name": "大空 若葉",
+            "pid": 13763,
+            "empDesc": ""
+          },
+          {
+            "name": "石井 久雄",
+            "pid": 10382,
+            "empDesc": ""
+          },
+          {
+            "name": "樋口 聡一",
+            "pid": 10383,
+            "empDesc": ""
+          },
+          {
+            "name": "みんめい",
+            "pid": 25254,
+            "empDesc": ""
+          }
+        ],
+        "歌曲": [
+          {
+            "name": "いとう かなこ",
+            "pid": 10191,
+            "empDesc": "OP 'Skyclad no Kansokusha', PC OP “A.R.”, PSP OP 'Uchuu Engineer', PS3 OP 'Hisenkei Jeniakku', ELITE OP 'COSMIC LOOPER', True ED 'Another Heaven', Insert song 'technovision'"
+          },
+          {
+            "name": "榊原 ゆい",
+            "pid": 10127,
+            "empDesc": "ED 'Unmei no Farfalla', PSP ED 'Preghiera no Tsukiyo Ni', Insert song 'Masquerade', ELITE ED 'Annie no Yubiwa'"
+          }
+        ],
+        "人物设计": [],
+        "监督": [
+          {
+            "name": "松原 達也",
+            "pid": 26277,
+            "empDesc": ""
+          }
+        ],
+        "其他": [
+          {
+            "name": "福家 亮平",
+            "pid": 31425,
+            "empDesc": ""
+          },
+          {
+            "name": "みんめい",
+            "pid": 25254,
+            "empDesc": "2D graphics supervision"
+          },
+          {
+            "name": "池田 靖宏",
+            "pid": 25318,
+            "empDesc": "2D graphics"
+          },
+          {
+            "name": "山田 外朗",
+            "pid": 25874,
+            "empDesc": "2D graphics"
+          },
+          {
+            "name": "松原 達也",
+            "pid": 26277,
+            "empDesc": "Producer, 2D graphics, movie"
+          },
+          {
+            "name": "松本 裕介",
+            "pid": 26495,
+            "empDesc": "Progress management"
+          },
+          {
+            "name": "三杜 シノヴ",
+            "pid": 12485,
+            "empDesc": "2D graphics"
+          },
+          {
+            "name": "大空 若葉",
+            "pid": 13763,
+            "empDesc": "Colouring"
+          },
+          {
+            "name": "大熊 猫介",
+            "pid": 14440,
+            "empDesc": "2D graphics"
+          },
+          {
+            "name": "しま うん",
+            "pid": 15002,
+            "empDesc": "2D graphics, photography assistance"
+          },
+          {
+            "name": "永井 岳人",
+            "pid": 15864,
+            "empDesc": "2D graphics"
+          },
+          {
+            "name": "小坂 崇氣",
+            "pid": 11016,
+            "empDesc": "Producer"
+          },
+          {
+            "name": "上野 亮",
+            "pid": 16977,
+            "empDesc": "2D graphics"
+          },
+          {
+            "name": "市川 和弘",
+            "pid": 11239,
+            "empDesc": "General producer"
+          },
+          {
+            "name": "下倉 バイオ",
+            "pid": 10377,
+            "empDesc": "Scenario composition assistance, time leap concept assistance"
+          },
+          {
+            "name": "志倉 千代丸",
+            "pid": 10101,
+            "empDesc": "Planning, original concept, producer"
+          }
         ]
+      }
     },
-    {
-
+    "characters": [
+      {
+        "name": "牧瀬 紅莉栖",
+        "introduction": "Kurisu is a neuroscience researcher at an American university, and can speak and read English well. Having had her research published in the academic journal Science at the young age of 18, Makise is extremely talented. She skipped a grade in the American school system. She does not get along with her father and has not spoken to him in many years. Okabe often just calls her assistant or one of a number of nicknames he comes up with, such as \"Christina\", \"the Zombie\", and \"Celeb Sev\", none of which she likes. She is considered a tsundere character; she dislikes this characterization as well, strongly objecting whenever Daru mentions it.",
+        "cid": 16391,
+        "vid": "c6487",
+        "cover": "./11843/characters/16391.webp",
+        "extensionName": [
+          "Christina",
+          "Chris",
+          "Assistant",
+          "Celeb 17",
+          "The Zombie",
+          "Perverted Genius Girl"
+        ],
+        "birthday": "3000-07-25",
+        "gender": 2,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca16391"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6487"
+          }
+        ]
+      },
+      {
+        "name": "椎名 まゆり",
+        "introduction": "Mayuri is a long-time childhood friend of Okabe and a bit of an airhead. Mayuri enjoys creating cosplay costumes and has a part-time job at a maid cafe called \"Mayqueen Nyannyan\". She often calls herself Mayushii, a portmanteau of her given name and surname, which is also what Daru calls her. She has a distinctive sing-song way of speaking, and she typically sings \"tutturuu\" when she arrives or introduces herself.",
+        "cid": 16395,
+        "vid": "c6491",
+        "cover": "./11843/characters/16395.webp",
+        "extensionName": [
+          "Mayushii",
+          "Mayushii NyanNyan"
+        ],
+        "birthday": "3000-02-01",
+        "gender": 2,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca16395"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6491"
+          }
+        ]
+      },
+      {
+        "name": "阿万音 鈴羽",
+        "introduction": "Amane Suzuha works part-time for the landlord of Rintarou's flat and is on a search for her father in Akihabara. She enjoys riding her bicycle and appears to be at odds with Kurisu.\n\nShe is in fact a Time Traveller from 2036 who, using the guise of John *****, seeks to prevent SERN from creating a Time Machine that will lead to dystopia. Though she is unaware of it, she is the daughter of Hashida Itaru./\n\nFrom Wiki",
+        "cid": 16396,
+        "vid": "c6492",
+        "cover": "./11843/characters/16396.webp",
+        "extensionName": [
+          "Working Warrior",
+          "バイト戦士",
+          "Part-Time Warrior",
+          "Alpha Suzuha"
+        ],
+        "birthday": "3000-09-27",
+        "gender": 2,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca16396"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6492"
+          }
+        ]
+      },
+      {
+        "name": "橋田 至",
+        "introduction": "Daru is an experienced hacker who has known Okabe since high school. He is very skilled at computer programming and with old and new computer hardware. He is also well-versed in things pertaining to otaku culture. Okabe and Shiina refer to him by the nickname \"Daru\", a portmanteau of his given name and surname. Okabe sometimes also calls him Super Haker, mispronouncing the word \"hacker\" to his chagrin. He is a big fan of Faris and he frequently says things which could be taken as sexual harassment. Daru is often annoyed with Okabe's frequent delusional behavior.",
+        "cid": 16397,
+        "vid": "c6493",
+        "cover": "./11843/characters/16397.webp",
+        "extensionName": [
+          "Daru",
+          "DaSH",
+          "DaSP",
+          "Supah Hakah"
+        ],
+        "birthday": "3000-05-19",
+        "gender": 1,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca16397"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6493"
+          }
+        ]
+      },
+      {
+        "name": "秋葉 留未穂",
+        "introduction": "Faris Nyannyan works at the maid cafe \"Mayqueen Nyannyan\", the same maid cafe that Shiina works at, and is the most popular waitress there. Her real name is Akiha Rumiho, whose family owns Akihabara, her being the one suggested it become the city of moe and anime. She tends to add \"nyan\" to her sentences.",
+        "cid": 16398,
+        "vid": "c6494",
+        "cover": "./11843/characters/16398.webp",
+        "extensionName": [
+          "Faris NyanNyan",
+          "Feris"
+        ],
+        "birthday": "3000-04-03",
+        "gender": 2,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca16398"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6494"
+          }
+        ]
+      },
+      {
+        "name": "天王寺 裕吾",
+        "introduction": "He is Okabe's landlord, who owns a TV repair store beneath his apartment, living with his daughter, Nae. Okabe often gives him the nickname \"Mr. Braun\" for his passion to Braun tube TV.\nAfter seeing a gel-i-fied human in the sewers he was residing in, he was recruited by SERN, which provided the money he needed to get out of the slums. After a while SERN ordered him to go to Akihabara in Japan. It was here that he met Suzuha Hashida, his neighbour, and Tsuzuri Imamiya, his future wife.\nSometime prior to the first D-Mail, Tennouji recruited Moeka Kiryuu into the Rounders and communicated with her as \"FB\". It was only until Rintarou and Moeka discovers his identity was FB revealed to be a man, as FB introduced themselves as a woman to all Rounders recruits./",
+        "cid": 16399,
+        "vid": "c6495",
+        "cover": "./11843/characters/16399.webp",
+        "extensionName": [
+          "Mr. Braun"
+        ],
+        "birthday": "3000-03-12",
+        "gender": 1,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca16399"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6495"
+          }
+        ]
+      },
+      {
+        "name": "桐生 萌郁",
+        "introduction": "Moeka is a part-time editor whom Rintarou encounters in Akiba. She is practically glued to her phone and cannot function without it. Even when face to face, Moeka prefers to communicate by email.\nShe is searching for the legendary retro PC known as the IBN 5100.\n\nSteins;Gate Official Site\n\nMoeka was a constantly bullied social outcast; she desperately tried to make friends and find a place to belong, but failed miserably due to her social paranoia. In 2004, she fell into a deep depression due to hating everything and being hopeless, thinking that she no longer had a reason to live, Moeka decided to *******. She drank several sleeping pills, hoping that she would die, but to no avail. As the pills were not working, her final attempt was to jump off a large building. At that moment, she received a mail from the enigmatic FB recruiting her to the Rounders, a SERN unit, changing her life forever. As FB often communicated with Moeka and acted as a mother figure towards her, speaking with Moeka about her problems and comforting her, she came to see FB as the person that gave her life meaning and devoted every waking moment to sending mails to them and carrying out their given orders, developing a dependency on FB and their mails. When that relationship which meant life to Moeka required her to kill someone, she killed. By taking another’s life, her life retained meaning. While Moeka is capable of carrying out atrocities for acceptance, she strives to be loved and has the potential to be a good person if led in the right direction.\n/",
+        "cid": 16400,
+        "vid": "c6496",
+        "cover": "./11843/characters/16400.webp",
+        "extensionName": [
+          "Shining Finger, Glowing Masseuse",
+          "Mail Demon",
+          "Moe",
+          "M4",
+          "SHININGFINGER_MK"
+        ],
+        "birthday": "3000-06-06",
+        "gender": 2,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca16400"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6496"
+          }
+        ]
+      },
+      {
+        "name": "漆原 るか",
+        "introduction": "Ruka is a friend of Okabe. His appearance is that of a female and he acts in a feminine way due to his upbringing, wearing girl's clothing within and outside his father's temple. He is also a close friend and classmate of Mayuri's and is often asked to try on her cosplay costumes, but as he is quite shy, he generally refuses. He is unsure of his feelings towards Okabe, who calls him by his nickname, Rukako, containing the feminine suffix -ko, to denote his feminine appearance, and thinks of Ruka as his pupil.",
+        "cid": 16401,
+        "vid": "c6497",
+        "cover": "./11843/characters/16401.webp",
+        "extensionName": [
+          "Urushibara Luka",
+          "Lukako",
+          "Rukako"
+        ],
+        "birthday": "3000-08-30",
+        "gender": 1,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca16401"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6497"
+          }
+        ]
+      },
+      {
+        "name": "岡部 倫太郎",
+        "introduction": "Rintarou is an eccentric individual, a self-proclaimed mad scientist and often refers to himself under the alias of Hououin Kyouma, which is also the name he uses to introduce himself to other people. Mayuri and Daru refer to him by the nickname Okarin, a portmanteau of his surname and given name. He is the founder of what he calls the \"Future Gadget Laboratory\" in Akihabara where he spends most of his time. Rintarou gives off the appearance of being delusional and paranoid, frequently referring to the \"organization\" that is after him, talking to himself on his phone, and engaging in fits of maniacal laughter. Most of the time he takes on a fairly arrogant personality. He is usually seen wearing a lab coat. As he experiments with time travel, he learns that he is the only one who possesses the ability to determine changes between different timelines, which he dubs \"Reading Steiner\"./ The character is 18 years old and a first year student at Tokyo Denki University.\n\nModified from .",
+        "cid": 16402,
+        "vid": "c6498",
+        "cover": "./11843/characters/16402.webp",
+        "extensionName": [
+          "Okabe Rintaro",
+          "Hououin Kyouma",
+          "鳳凰院凶真",
+          "Okarin",
+          "オカリン"
+        ],
+        "birthday": "3000-12-14",
+        "gender": 1,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca16402"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6498"
+          }
+        ]
+      },
+      {
+        "name": "天王寺 綯",
+        "introduction": "Yuugo's daughter who lives with him in the TV repair store and gets along well with Shiina.",
+        "cid": 25229,
+        "vid": "c15469",
+        "cover": "./11843/characters/25229.webp",
+        "extensionName": [
+          "Sister Braun",
+          "Chipmunk"
+        ],
+        "birthday": "3000-11-09",
+        "gender": 2,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca25229"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c15469"
+          }
+        ]
+      },
+      {
+        "name": "秋葉 幸孝",
+        "introduction": "Father of Akiha Rumiho (a.k.a Faris NyanNyan). His family owns a large area in the downtown districts of Tokyo, hence \"Akihabara\".\n\nYukitaka died in a plane crash several years before the events of Steins;Gate. He was the only victim of the crash. However, his daughter later uses a D-Mail to save his life, by making him believe she was kidnapped and forcing him to take the bullet train instead. However, due to the D-Mail, the Rounders were able to approach him and take his IBN 5100, which he had received from Amane Suzuha.\nHis survival led to a world line where Faris is a RaiNetter and Akihabara is still an Electric Town instead of a moe hub./",
+        "cid": 34609,
+        "vid": "c24992",
+        "cover": "./11843/characters/34609.webp",
+        "extensionName": [
+          "Papa"
+        ],
+        "gender": 1,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca34609"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c24992"
+          }
+        ]
+      },
+      {
+        "name": "鈴木功一",
+        "introduction": "Kouichi is a minor antagonist who first appeared in the Steins;Gate visual novel as the cheating opponent and sore loser to Faris in the Rai-Net Access Battlers Championship.",
+        "cid": 34611,
+        "vid": "c24994",
+        "cover": "./11843/characters/34611.webp",
+        "extensionName": [
+          "4℃",
+          "Shido"
+        ],
+        "gender": 1,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca34611"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c24994"
+          }
+        ]
+      },
+      {
+        "name": "アルパカマン",
+        "introduction": "An unimportant character from a videogame in Steins;Gate. An ally of justice in Linear Bounded Phenogram.",
+        "cid": 67673,
+        "vid": "c43791",
+        "cover": "./11843/characters/67673.webp",
+        "extensionName": [
+          "Alpaca commander"
+        ],
+        "gender": 0,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca67673"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c43791"
+          }
+        ]
+      }
+    ],
+    "saves": [],
+    "memory": []
+  },
+  {
+    "detail": {
+      "name": "STEINS;GATE",
+      "chineseName": "命运石之门",
+      "extensionName": [
+        "シュタインズゲート",
+        "S;G",
+        "石头门"
+      ],
+      "introduction": "宇宙虽有其起源，却没有终结——无限。\n\n星球也有起源，却因其自身之力走向毁灭——有限。\n\n历史上拥有智慧的人类往往是最愚昧的。\n\n生活在海中的鱼不知道陆地的存在，如果它们拥有智慧也会走向毁灭。\n\n人类如果想要超越光速，比鱼类生活在陆地更为滑稽。\n\n这就是，对于反抗神人们的最后通牒。",
+      "gid": 11843,
+      "vid": "v2002",
+      "cover": "./11843/cover.webp",
+      "backgroundImage": "./11843/background.webp",
+      "savePath": "",
+      "gamePath": "",
+      "moreEntry": [],
+      "typeDesc": "ADV 剧情作",
+      "releaseDate": "2009-10-15",
+      "restricted": true,
+      "website": [
+        {
+          "title": "游戏官网",
+          "url": "http://steinsgate.jp/"
+        },
+        {
+          "title": "steam游戏界面",
+          "url": "https://store.steampowered.com/app/412830/STEINSGATE/"
+        },
+        {
+          "title": "月幕Galgame",
+          "url": "https://www.ymgal.games/ga11843"
+        },
+        {
+          "title": "VNDB",
+          "url": "https://vndb.org/v2002"
+        }
+      ],
+      "releases": [
+        {
+          "id": 127857,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "",
+          "platform": "Android",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127858,
+          "releaseName": "Steins; Gate Elite",
+          "relatedLink": "https://www.zoneofgames.ru/games/steinsgate_elite/",
+          "platform": "Windows",
+          "releaseLanguage": "Russian",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127859,
+          "releaseName": "Steins;Gate (Steam)",
+          "relatedLink": "http://comitedumoe.fr/",
+          "platform": "Windows",
+          "releaseLanguage": "French",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127860,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "https://bakayumeceviri.wordpress.com/steins-gate/",
+          "platform": "Windows",
+          "releaseLanguage": "Turkish",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127861,
+          "releaseName": "STEINS;GATE ELITE",
+          "relatedLink": "https://gall.dcinside.com/steinsgate/21059",
+          "platform": "Windows",
+          "releaseDate": "2021-02-12",
+          "releaseLanguage": "Korean",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127862,
+          "releaseName": "STEINS;GATE ELITE",
+          "relatedLink": "",
+          "platform": "Windows",
+          "releaseDate": "2020-10-30",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127863,
+          "releaseName": "Steins;Gate Elite",
+          "relatedLink": "https://committeeofelite.club/",
+          "platform": "Windows",
+          "releaseDate": "2020-05-03",
+          "releaseLanguage": "Italian",
+          "restrictionLevel": "全年龄"
+        },
+        {
+          "id": 127864,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "https://www.zoneofgames.ru/games/steinsgate/files/6469.html",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2019-11-21",
+          "releaseLanguage": "Russian",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127865,
+          "releaseName": "シュタインズ・ゲート エリート",
+          "relatedLink": "http://5pb.jp/games/smapho/app_steinsgate_elite.html",
+          "platform": "Apple iProduct",
+          "releaseDate": "2019-10-15",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127866,
+          "releaseName": "STEINS;GATE ELITE",
+          "relatedLink": "",
+          "platform": "Nintendo Switch",
+          "releaseDate": "2019-03-28",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127867,
+          "releaseName": "STEINS;GATE ELITE + Linear Bounded Phenogram",
+          "relatedLink": "https://www.spike-chunsoft.com/SteinsGateElite/",
+          "platform": "Windows",
+          "releaseDate": "2019-03-28",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127868,
+          "releaseName": "STEINS;GATE ELITE",
+          "relatedLink": "",
+          "platform": "Nintendo Switch",
+          "releaseDate": "2019-03-28",
+          "releaseLanguage": "Chinese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127869,
+          "releaseName": "STEINS;GATE ELITE + Linear Bounded Phenogram",
+          "relatedLink": "https://www.spike-chunsoft.com/SteinsGateElite/",
+          "platform": "Windows",
+          "releaseDate": "2019-03-28",
+          "releaseLanguage": "Chinese",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127870,
+          "releaseName": "STEINS;GATE ELITE + Linear Bounded Phenogram",
+          "relatedLink": "https://www.spike-chunsoft.com/SteinsGateElite/",
+          "platform": "Windows",
+          "releaseDate": "2019-03-28",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127871,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "https://steins.uvnworks.com/traducao-steinsgate-lancada/",
+          "platform": "Windows",
+          "releaseDate": "2019-03-24",
+          "releaseLanguage": "Portuguese (Brazil)",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127872,
+          "releaseName": "Steins;Gate - Steam Edition",
+          "relatedLink": "https://steins.uvnworks.com/traducao-steinsgate-lancada/",
+          "platform": "Windows",
+          "releaseDate": "2019-03-24",
+          "releaseLanguage": "Portuguese (Brazil)",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127873,
+          "releaseName": "Steins;Gate Elite",
+          "relatedLink": "https://gbatemp.net/threads/release-steins-gate-elite-psvita-english-translation-patch.534136/",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2019-03-21",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R16+"
+        },
+        {
+          "id": 127874,
+          "releaseName": "STEINS;GATE ELITE",
+          "relatedLink": "https://www.spike-chunsoft.com/SteinsGateElite/",
+          "platform": "Windows",
+          "releaseDate": "2019-02-19",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127875,
+          "releaseName": "STEINS;GATE ELITE",
+          "relatedLink": "https://www.spike-chunsoft.com/SteinsGateElite/",
+          "platform": "PlayStation 4",
+          "releaseDate": "2019-02-19",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R16+"
+        },
+        {
+          "id": 127876,
+          "releaseName": "STEINS;GATE ELITE",
+          "relatedLink": "https://www.spike-chunsoft.com/SteinsGateElite/",
+          "platform": "Nintendo Switch",
+          "releaseDate": "2019-02-19",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127877,
+          "releaseName": "STEINS;GATE ELITE",
+          "relatedLink": "https://www.spike-chunsoft.com/SteinsGateElite/",
+          "platform": "Windows",
+          "releaseDate": "2019-02-19",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127878,
+          "releaseName": "STEINS;GATE ELITE",
+          "relatedLink": "https://www.spike-chunsoft.com/SteinsGateElite/",
+          "platform": "PlayStation 4",
+          "releaseDate": "2019-02-19",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127879,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "https://old.reddit.com/r/steinsgate/comments/a8qfnd/steinsgate_vn_psp_english_patch/",
+          "platform": "PlayStation Portable",
+          "releaseDate": "2019-01-04",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127880,
+          "releaseName": "シュタインズ・ゲート エリート",
+          "relatedLink": "http://steinsgate.jp/elite/",
+          "platform": "PlayStation 4",
+          "releaseDate": "2018-09-20",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127881,
+          "releaseName": "シュタインズ・ゲート エリート",
+          "relatedLink": "http://steinsgate.jp/elite/",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2018-09-20",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127882,
+          "releaseName": "シュタインズ・ゲート エリート",
+          "relatedLink": "http://steinsgate.jp/elite/",
+          "platform": "Nintendo Switch",
+          "releaseDate": "2018-09-20",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127883,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "https://4pda.ru/forum/index.php?showtopic=476039&amp;st=180#entry75742743",
+          "platform": "Android",
+          "releaseDate": "2018-08-05",
+          "releaseLanguage": "Russian",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127884,
+          "releaseName": "STEINS;GATE - Steam Edition",
+          "relatedLink": "http://5pb.jp/games/steam/steinsgate/en/",
+          "platform": "Windows",
+          "releaseDate": "2017-09-11",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127885,
+          "releaseName": "STEINS;GATE - Steam Edition",
+          "relatedLink": "http://5pb.jp/games/steam/steinsgate/en/",
+          "platform": "Windows",
+          "releaseDate": "2017-09-11",
+          "releaseLanguage": "Chinese",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127886,
+          "releaseName": "STEINS;GATE - Steam Edition",
+          "relatedLink": "http://5pb.jp/games/steam/steinsgate/en/",
+          "platform": "Windows",
+          "releaseDate": "2017-09-11",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127887,
+          "releaseName": "Steins;Gate tiếng Việt",
+          "relatedLink": "https://hako.re/forum/threads/steins-gate-tieng-viet-partial-patch-dang-tiep-tuc.30488/",
+          "platform": "Windows",
+          "releaseDate": "2017-09-10",
+          "releaseLanguage": "Vietnamese",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127888,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "http://steinsgatecesky.webnode.cz/preklad/",
+          "platform": "Windows",
+          "releaseDate": "2017-02-05",
+          "releaseLanguage": "Czech",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127889,
+          "releaseName": "STEINS;GATE Steam Improvement Patch",
+          "relatedLink": "http://sonome.dareno.me/projects/sghd.html",
+          "platform": "Windows",
+          "releaseDate": "2016-11-21",
+          "releaseLanguage": "English",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127890,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "",
+          "platform": "Apple iProduct",
+          "releaseDate": "2016-09-09",
+          "releaseLanguage": "English",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127891,
+          "releaseName": "STEINS;GATE - Steam Edition",
+          "relatedLink": "http://5pb.jp/games/steam/steinsgate/en/",
+          "platform": "Windows",
+          "releaseDate": "2016-09-08",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127892,
+          "releaseName": "STEINS;GATE - Steam Edition",
+          "relatedLink": "http://5pb.jp/games/steam/steinsgate/en/",
+          "platform": "Windows",
+          "releaseDate": "2016-09-08",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127893,
+          "releaseName": "슈타인즈 게이트 HD",
+          "relatedLink": "",
+          "platform": "PlayStation 4",
+          "releaseDate": "2016-06-23",
+          "releaseLanguage": "Korean",
+          "restrictionLevel": "R18+"
+        },
+        {
+          "id": 127894,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "https://cafe.naver.com/hansicgu/17220",
+          "platform": "Android",
+          "releaseDate": "2016-06-11",
+          "releaseLanguage": "Korean",
+          "restrictionLevel": "R12+"
+        },
+        {
+          "id": 127895,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "https://www.zoneofgames.ru/games/steinsgate/files/6705.html",
+          "platform": "Windows",
+          "releaseDate": "2016-01-15",
+          "releaseLanguage": "Russian",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127896,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "https://web.archive.org/web/20160128231201/http://kiboyami.net/steinsgate-vn-projekteintrag-005-download/",
+          "platform": "Windows",
+          "releaseDate": "2015-12-27",
+          "releaseLanguage": "German",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127897,
+          "releaseName": "Steins;Gate HD",
+          "relatedLink": "http://steinsgate0.jp/",
+          "platform": "PlayStation 4",
+          "releaseDate": "2015-12-10",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127898,
+          "releaseName": "Steins;Gate - El Psy Kongroo Edition (US version)",
+          "relatedLink": "http://www.ricedigital.co.uk/store/steins-gate-el-psy-kongroo-edition-us-version-ps-vita",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2015-09-18",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127899,
+          "releaseName": "Steins;Gate - El Psy Kongroo Edition (US version)",
+          "relatedLink": "http://www.ricedigital.co.uk/store/steins-gate-el-psy-kongroo-edition-us-version-ps3",
+          "platform": "PlayStation 3",
+          "releaseDate": "2015-09-18",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127900,
+          "releaseName": "Steins;Gate - NA Package Edition",
+          "relatedLink": "http://www.pqube.co.uk/steinsgate/",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2015-08-31",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127901,
+          "releaseName": "Steins;Gate - NA Package Edition",
+          "relatedLink": "http://www.pqube.co.uk/steinsgate/",
+          "platform": "PlayStation 3",
+          "releaseDate": "2015-08-31",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127902,
+          "releaseName": "Steins;Gate - NA Download Edition",
+          "relatedLink": "http://www.pqube.co.uk/steinsgate/",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2015-08-25",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127903,
+          "releaseName": "Steins;Gate - NA Download Edition",
+          "relatedLink": "http://www.pqube.co.uk/steinsgate/",
+          "platform": "PlayStation 3",
+          "releaseDate": "2015-08-25",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127904,
+          "releaseName": "Steins;Gate - EU Package Edition",
+          "relatedLink": "http://www.pqube.co.uk/steinsgate/",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2015-06-05",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R16+"
+        },
+        {
+          "id": 127905,
+          "releaseName": "Steins;Gate - EU Package Edition",
+          "relatedLink": "http://www.pqube.co.uk/steinsgate/",
+          "platform": "PlayStation 3",
+          "releaseDate": "2015-06-05",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R16+"
+        },
+        {
+          "id": 127906,
+          "releaseName": "Steins;Gate - El Psy Kongroo Edition (EU version)",
+          "relatedLink": "http://www.ricedigital.co.uk/store/steins-gate-el-psy-kongroo-edition-ps-vita",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2015-06-05",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R16+"
+        },
+        {
+          "id": 127907,
+          "releaseName": "Steins;Gate - El Psy Kongroo Edition (EU version)",
+          "relatedLink": "http://www.ricedigital.co.uk/store/steins-gate-el-psy-kongroo-edition-ps3",
+          "platform": "PlayStation 3",
+          "releaseDate": "2015-06-05",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R16+"
+        },
+        {
+          "id": 127908,
+          "releaseName": "Steins;Gate - EU Download Edition",
+          "relatedLink": "http://www.pqube.co.uk/steinsgate/",
+          "platform": "PlayStation 3",
+          "releaseDate": "2015-06-05",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R16+"
+        },
+        {
+          "id": 127909,
+          "releaseName": "Steins;Gate - EU Download Edition",
+          "relatedLink": "http://www.pqube.co.uk/steinsgate/",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2015-06-05",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R16+"
+        },
+        {
+          "id": 127910,
+          "releaseName": "Steins;Gate - Best Edition",
+          "relatedLink": "http://steins-gate.us/",
+          "platform": "Windows",
+          "releaseDate": "2014-11-26",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127911,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "http://gateofsteiner.net/foro/showthread.php?tid=53",
+          "platform": "Windows",
+          "releaseDate": "2014-11-15",
+          "releaseLanguage": "Spanish",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127912,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "",
+          "platform": "Apple iProduct",
+          "releaseDate": "2014-08-11",
+          "releaseLanguage": "Chinese",
+          "restrictionLevel": "R12+"
+        },
+        {
+          "id": 127913,
+          "releaseName": "Steins;Gate - Standard Edition",
+          "relatedLink": "http://steins-gate.us/",
+          "platform": "Windows",
+          "releaseDate": "2014-04-30",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127914,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "",
+          "platform": "PlayStation 3",
+          "releaseDate": "2014-04-15",
+          "releaseLanguage": "Korean",
+          "restrictionLevel": "R18+"
+        },
+        {
+          "id": 127915,
+          "releaseName": "Steins;Gate v1.0.5 (beta)",
+          "relatedLink": "https://tldrunix.wordpress.com/2014/01/19/steinsgate-for-android-beta-english-patch-released/",
+          "platform": "Android",
+          "releaseDate": "2014-04-05",
+          "releaseLanguage": "English",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127916,
+          "releaseName": "Steins;Gate - Limited Edition",
+          "relatedLink": "http://steins-gate.us/",
+          "platform": "Windows",
+          "releaseDate": "2014-03-31",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127917,
+          "releaseName": "Steins;Gate - Download Edition",
+          "relatedLink": "http://steins-gate.us/",
+          "platform": "Windows",
+          "releaseDate": "2014-03-31",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 127918,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "http://i-vntp.blogspot.com/",
+          "platform": "Android",
+          "releaseDate": "2014-01-17",
+          "releaseLanguage": "English",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127919,
+          "releaseName": "Steins;Gate Сhap 2",
+          "relatedLink": "http://darkgates.blogspot.ru/2013/06/pc-2.html",
+          "platform": "Windows",
+          "releaseDate": "2013-06-23",
+          "releaseLanguage": "Russian",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127920,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "http://i-vntp.blogspot.com/",
+          "platform": "Apple iProduct",
+          "releaseDate": "2013-04-06",
+          "releaseLanguage": "English",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127921,
+          "releaseName": "Steins;Gate Prologue",
+          "relatedLink": "http://darkgates.blogspot.ru/2013/03/pc.html",
+          "platform": "Windows",
+          "releaseDate": "2013-03-27",
+          "releaseLanguage": "Russian",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127922,
+          "releaseName": "STEINS;GATE ダブルパック 通常版",
+          "relatedLink": "http://steinsgate.jp/vita/",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2013-03-14",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127923,
+          "releaseName": "STEINS;GATE ダブルパック 初回限定版セット",
+          "relatedLink": "http://steinsgate.jp/vita/",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2013-03-14",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127924,
+          "releaseName": "STEINS;GATE",
+          "relatedLink": "http://steinsgate.jp/vita/",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2013-03-14",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127925,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "https://polaris.hided.net/2258655",
+          "platform": "Windows",
+          "releaseDate": "2013-02-10",
+          "releaseLanguage": "Korean",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127926,
+          "releaseName": "命運石之門",
+          "relatedLink": "http://steinsgate.tw/",
+          "platform": "Xbox 360",
+          "releaseDate": "2013-02-07",
+          "releaseLanguage": "Chinese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127927,
+          "releaseName": "命運石之門 中文特典版",
+          "relatedLink": "http://steinsgate.tw/",
+          "platform": "Xbox 360",
+          "releaseDate": "2013-02-07",
+          "releaseLanguage": "Chinese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127928,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "http://steinsgatevn.forumcommunity.net/",
+          "platform": "Windows",
+          "releaseDate": "2013-01-29",
+          "releaseLanguage": "Italian",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127929,
+          "releaseName": "Steins;Gate Сhap 2",
+          "relatedLink": "http://darkgates.blogspot.ru/2012/12/2.html",
+          "platform": "Apple iProduct",
+          "releaseDate": "2012-12-24",
+          "releaseLanguage": "Russian",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127930,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "http://5pb.jp/games/smapho/",
+          "platform": "Apple iProduct",
+          "releaseDate": "2012-12-06",
+          "releaseLanguage": "Korean",
+          "restrictionLevel": "R12+"
+        },
+        {
+          "id": 127931,
+          "releaseName": "命運石之門",
+          "relatedLink": "http://steinsgate.tw/",
+          "platform": "PlayStation 3",
+          "releaseDate": "2012-11-15",
+          "releaseLanguage": "Chinese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127932,
+          "releaseName": "命運石之門 中文特典版",
+          "relatedLink": "http://steinsgate.tw/",
+          "platform": "PlayStation 3",
+          "releaseDate": "2012-11-15",
+          "releaseLanguage": "Chinese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127933,
+          "releaseName": "Steins;Gate Сhap 1",
+          "relatedLink": "http://darkgates.blogspot.ru/2012/06/1_29.html",
+          "platform": "Apple iProduct",
+          "releaseDate": "2012-06-29",
+          "releaseLanguage": "Russian",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127934,
+          "releaseName": "命运石之门",
+          "relatedLink": "https://tieba.baidu.com/p/1662659874",
+          "platform": "Windows",
+          "releaseDate": "2012-06-14",
+          "releaseLanguage": "Chinese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127935,
+          "releaseName": "STEINS;GATE ダブルパック",
+          "relatedLink": "http://steinsgate.jp/ps3_wpack/",
+          "platform": "PlayStation 3",
+          "releaseDate": "2012-05-24",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127936,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "http://steinsgate.jp/",
+          "platform": "PlayStation 3",
+          "releaseDate": "2012-05-24",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127937,
+          "releaseName": "Steins;Gate Prologue",
+          "relatedLink": "http://darkgates.blogspot.com/2011/11/blog-post_20.html",
+          "platform": "Apple iProduct",
+          "releaseDate": "2011-11-20",
+          "releaseLanguage": "Russian",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 127938,
+          "releaseName": "STEINS;GATE　Nitro The Best! Vol.5",
+          "relatedLink": "http://steinsgate.jp/",
+          "platform": "Windows",
+          "releaseDate": "2011-09-16",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127939,
+          "releaseName": "STEINS;GATE Nitro The Best! ダウンロード版",
+          "relatedLink": "http://www.nitroplus.co.jp/game/steinsgate/",
+          "platform": "Windows",
+          "releaseDate": "2011-09-16",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127940,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "",
+          "platform": "Apple iProduct",
+          "releaseDate": "2011-08-25",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127941,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "http://steinsgate.jp/psp/",
+          "platform": "PlayStation Portable",
+          "releaseDate": "2011-06-23",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127942,
+          "releaseName": "シュタインズ・ゲート 限定版",
+          "relatedLink": "http://steinsgate.jp/psp/",
+          "platform": "PlayStation Portable",
+          "releaseDate": "2011-06-23",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127943,
+          "releaseName": "Steins;Gate Platinum collection",
+          "relatedLink": "http://steinsgate.jp/",
+          "platform": "Xbox 360",
+          "releaseDate": "2011-06-16",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127944,
+          "releaseName": "STEINS;GATE ダブルパック",
+          "relatedLink": "http://steinsgate.jp/",
+          "platform": "Xbox 360",
+          "releaseDate": "2011-06-16",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127945,
+          "releaseName": "Steins;Gate",
+          "relatedLink": "http://steinsgate.jp/",
+          "platform": "Windows",
+          "releaseDate": "2010-08-26",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127946,
+          "releaseName": "Steins; Gate（シュタインズ・ゲート） 数量限定版",
+          "relatedLink": "http://steinsgate.jp/",
+          "platform": "Xbox 360",
+          "releaseDate": "2009-10-15",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 127947,
+          "releaseName": "Steins; Gate（シュタインズ・ゲート） 通常版",
+          "relatedLink": "http://steinsgate.jp/",
+          "platform": "Xbox 360",
+          "releaseDate": "2009-10-15",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        }
+      ],
+      "staff": {
+        "脚本": [
+          {
+            "name": "谷崎 央佳",
+            "pid": 11718,
+            "empDesc": "Assistant"
+          },
+          {
+            "name": "下倉 バイオ",
+            "pid": 10377,
+            "empDesc": "Suzuha's ending; uncredited"
+          },
+          {
+            "name": "林 直孝",
+            "pid": 10375,
+            "empDesc": ""
+          }
+        ],
+        "音乐": [
+          {
+            "name": "阿保 剛",
+            "pid": 31435,
+            "empDesc": "BGM"
+          },
+          {
+            "name": "いとう かなこ",
+            "pid": 10191,
+            "empDesc": "Insert song 'technovision' lyrics"
+          },
+          {
+            "name": "林 達志",
+            "pid": 22948,
+            "empDesc": "ED 'Unmei no Farfalla' composition, arrangement"
+          },
+          {
+            "name": "Akirastar",
+            "pid": 23552,
+            "empDesc": "Insert song 'technovision' composition"
+          },
+          {
+            "name": "須田 悦弘",
+            "pid": 23553,
+            "empDesc": "True ED 'Another Heaven'"
+          },
+          {
+            "name": "志倉 千代丸",
+            "pid": 10101,
+            "empDesc": "OP 'Skyclad no Kansokusha' & PC OP “A.R.” & PSP OP 'Uchuu Engineer' & PS3 OP 'Hisenkei Jeniakku' & ELITE OP composition & lyrics, Insert song 'Masquerade' lyrics"
+          }
+        ],
+        "原画": [
+          {
+            "name": "大空 若葉",
+            "pid": 13763,
+            "empDesc": ""
+          },
+          {
+            "name": "石井 久雄",
+            "pid": 10382,
+            "empDesc": ""
+          },
+          {
+            "name": "樋口 聡一",
+            "pid": 10383,
+            "empDesc": ""
+          },
+          {
+            "name": "みんめい",
+            "pid": 25254,
+            "empDesc": ""
+          }
+        ],
+        "歌曲": [
+          {
+            "name": "いとう かなこ",
+            "pid": 10191,
+            "empDesc": "OP 'Skyclad no Kansokusha', PC OP “A.R.”, PSP OP 'Uchuu Engineer', PS3 OP 'Hisenkei Jeniakku', ELITE OP 'COSMIC LOOPER', True ED 'Another Heaven', Insert song 'technovision'"
+          },
+          {
+            "name": "榊原 ゆい",
+            "pid": 10127,
+            "empDesc": "ED 'Unmei no Farfalla', PSP ED 'Preghiera no Tsukiyo Ni', Insert song 'Masquerade', ELITE ED 'Annie no Yubiwa'"
+          }
+        ],
+        "人物设计": [],
+        "监督": [
+          {
+            "name": "松原 達也",
+            "pid": 26277,
+            "empDesc": ""
+          }
+        ],
+        "其他": [
+          {
+            "name": "福家 亮平",
+            "pid": 31425,
+            "empDesc": ""
+          },
+          {
+            "name": "みんめい",
+            "pid": 25254,
+            "empDesc": "2D graphics supervision"
+          },
+          {
+            "name": "池田 靖宏",
+            "pid": 25318,
+            "empDesc": "2D graphics"
+          },
+          {
+            "name": "山田 外朗",
+            "pid": 25874,
+            "empDesc": "2D graphics"
+          },
+          {
+            "name": "松原 達也",
+            "pid": 26277,
+            "empDesc": "Producer, 2D graphics, movie"
+          },
+          {
+            "name": "松本 裕介",
+            "pid": 26495,
+            "empDesc": "Progress management"
+          },
+          {
+            "name": "三杜 シノヴ",
+            "pid": 12485,
+            "empDesc": "2D graphics"
+          },
+          {
+            "name": "大空 若葉",
+            "pid": 13763,
+            "empDesc": "Colouring"
+          },
+          {
+            "name": "大熊 猫介",
+            "pid": 14440,
+            "empDesc": "2D graphics"
+          },
+          {
+            "name": "しま うん",
+            "pid": 15002,
+            "empDesc": "2D graphics, photography assistance"
+          },
+          {
+            "name": "永井 岳人",
+            "pid": 15864,
+            "empDesc": "2D graphics"
+          },
+          {
+            "name": "小坂 崇氣",
+            "pid": 11016,
+            "empDesc": "Producer"
+          },
+          {
+            "name": "上野 亮",
+            "pid": 16977,
+            "empDesc": "2D graphics"
+          },
+          {
+            "name": "市川 和弘",
+            "pid": 11239,
+            "empDesc": "General producer"
+          },
+          {
+            "name": "下倉 バイオ",
+            "pid": 10377,
+            "empDesc": "Scenario composition assistance, time leap concept assistance"
+          },
+          {
+            "name": "志倉 千代丸",
+            "pid": 10101,
+            "empDesc": "Planning, original concept, producer"
+          }
+        ]
+      }
     },
-    {
-
-    }
+    "characters": [
+      {
+        "name": "牧瀬 紅莉栖",
+        "introduction": "Kurisu is a neuroscience researcher at an American university, and can speak and read English well. Having had her research published in the academic journal Science at the young age of 18, Makise is extremely talented. She skipped a grade in the American school system. She does not get along with her father and has not spoken to him in many years. Okabe often just calls her assistant or one of a number of nicknames he comes up with, such as \"Christina\", \"the Zombie\", and \"Celeb Sev\", none of which she likes. She is considered a tsundere character; she dislikes this characterization as well, strongly objecting whenever Daru mentions it.",
+        "cid": 16391,
+        "vid": "c6487",
+        "cover": "./11843/characters/16391.webp",
+        "extensionName": [
+          "Christina",
+          "Chris",
+          "Assistant",
+          "Celeb 17",
+          "The Zombie",
+          "Perverted Genius Girl"
+        ],
+        "birthday": "3000-07-25",
+        "gender": 2,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca16391"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6487"
+          }
+        ]
+      },
+      {
+        "name": "椎名 まゆり",
+        "introduction": "Mayuri is a long-time childhood friend of Okabe and a bit of an airhead. Mayuri enjoys creating cosplay costumes and has a part-time job at a maid cafe called \"Mayqueen Nyannyan\". She often calls herself Mayushii, a portmanteau of her given name and surname, which is also what Daru calls her. She has a distinctive sing-song way of speaking, and she typically sings \"tutturuu\" when she arrives or introduces herself.",
+        "cid": 16395,
+        "vid": "c6491",
+        "cover": "./11843/characters/16395.webp",
+        "extensionName": [
+          "Mayushii",
+          "Mayushii NyanNyan"
+        ],
+        "birthday": "3000-02-01",
+        "gender": 2,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca16395"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6491"
+          }
+        ]
+      },
+      {
+        "name": "阿万音 鈴羽",
+        "introduction": "Amane Suzuha works part-time for the landlord of Rintarou's flat and is on a search for her father in Akihabara. She enjoys riding her bicycle and appears to be at odds with Kurisu.\n\nShe is in fact a Time Traveller from 2036 who, using the guise of John *****, seeks to prevent SERN from creating a Time Machine that will lead to dystopia. Though she is unaware of it, she is the daughter of Hashida Itaru./\n\nFrom Wiki",
+        "cid": 16396,
+        "vid": "c6492",
+        "cover": "./11843/characters/16396.webp",
+        "extensionName": [
+          "Working Warrior",
+          "バイト戦士",
+          "Part-Time Warrior",
+          "Alpha Suzuha"
+        ],
+        "birthday": "3000-09-27",
+        "gender": 2,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca16396"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6492"
+          }
+        ]
+      },
+      {
+        "name": "橋田 至",
+        "introduction": "Daru is an experienced hacker who has known Okabe since high school. He is very skilled at computer programming and with old and new computer hardware. He is also well-versed in things pertaining to otaku culture. Okabe and Shiina refer to him by the nickname \"Daru\", a portmanteau of his given name and surname. Okabe sometimes also calls him Super Haker, mispronouncing the word \"hacker\" to his chagrin. He is a big fan of Faris and he frequently says things which could be taken as sexual harassment. Daru is often annoyed with Okabe's frequent delusional behavior.",
+        "cid": 16397,
+        "vid": "c6493",
+        "cover": "./11843/characters/16397.webp",
+        "extensionName": [
+          "Daru",
+          "DaSH",
+          "DaSP",
+          "Supah Hakah"
+        ],
+        "birthday": "3000-05-19",
+        "gender": 1,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca16397"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6493"
+          }
+        ]
+      },
+      {
+        "name": "秋葉 留未穂",
+        "introduction": "Faris Nyannyan works at the maid cafe \"Mayqueen Nyannyan\", the same maid cafe that Shiina works at, and is the most popular waitress there. Her real name is Akiha Rumiho, whose family owns Akihabara, her being the one suggested it become the city of moe and anime. She tends to add \"nyan\" to her sentences.",
+        "cid": 16398,
+        "vid": "c6494",
+        "cover": "./11843/characters/16398.webp",
+        "extensionName": [
+          "Faris NyanNyan",
+          "Feris"
+        ],
+        "birthday": "3000-04-03",
+        "gender": 2,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca16398"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6494"
+          }
+        ]
+      },
+      {
+        "name": "天王寺 裕吾",
+        "introduction": "He is Okabe's landlord, who owns a TV repair store beneath his apartment, living with his daughter, Nae. Okabe often gives him the nickname \"Mr. Braun\" for his passion to Braun tube TV.\nAfter seeing a gel-i-fied human in the sewers he was residing in, he was recruited by SERN, which provided the money he needed to get out of the slums. After a while SERN ordered him to go to Akihabara in Japan. It was here that he met Suzuha Hashida, his neighbour, and Tsuzuri Imamiya, his future wife.\nSometime prior to the first D-Mail, Tennouji recruited Moeka Kiryuu into the Rounders and communicated with her as \"FB\". It was only until Rintarou and Moeka discovers his identity was FB revealed to be a man, as FB introduced themselves as a woman to all Rounders recruits./",
+        "cid": 16399,
+        "vid": "c6495",
+        "cover": "./11843/characters/16399.webp",
+        "extensionName": [
+          "Mr. Braun"
+        ],
+        "birthday": "3000-03-12",
+        "gender": 1,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca16399"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6495"
+          }
+        ]
+      },
+      {
+        "name": "桐生 萌郁",
+        "introduction": "Moeka is a part-time editor whom Rintarou encounters in Akiba. She is practically glued to her phone and cannot function without it. Even when face to face, Moeka prefers to communicate by email.\nShe is searching for the legendary retro PC known as the IBN 5100.\n\nSteins;Gate Official Site\n\nMoeka was a constantly bullied social outcast; she desperately tried to make friends and find a place to belong, but failed miserably due to her social paranoia. In 2004, she fell into a deep depression due to hating everything and being hopeless, thinking that she no longer had a reason to live, Moeka decided to *******. She drank several sleeping pills, hoping that she would die, but to no avail. As the pills were not working, her final attempt was to jump off a large building. At that moment, she received a mail from the enigmatic FB recruiting her to the Rounders, a SERN unit, changing her life forever. As FB often communicated with Moeka and acted as a mother figure towards her, speaking with Moeka about her problems and comforting her, she came to see FB as the person that gave her life meaning and devoted every waking moment to sending mails to them and carrying out their given orders, developing a dependency on FB and their mails. When that relationship which meant life to Moeka required her to kill someone, she killed. By taking another’s life, her life retained meaning. While Moeka is capable of carrying out atrocities for acceptance, she strives to be loved and has the potential to be a good person if led in the right direction.\n/",
+        "cid": 16400,
+        "vid": "c6496",
+        "cover": "./11843/characters/16400.webp",
+        "extensionName": [
+          "Shining Finger, Glowing Masseuse",
+          "Mail Demon",
+          "Moe",
+          "M4",
+          "SHININGFINGER_MK"
+        ],
+        "birthday": "3000-06-06",
+        "gender": 2,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca16400"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6496"
+          }
+        ]
+      },
+      {
+        "name": "漆原 るか",
+        "introduction": "Ruka is a friend of Okabe. His appearance is that of a female and he acts in a feminine way due to his upbringing, wearing girl's clothing within and outside his father's temple. He is also a close friend and classmate of Mayuri's and is often asked to try on her cosplay costumes, but as he is quite shy, he generally refuses. He is unsure of his feelings towards Okabe, who calls him by his nickname, Rukako, containing the feminine suffix -ko, to denote his feminine appearance, and thinks of Ruka as his pupil.",
+        "cid": 16401,
+        "vid": "c6497",
+        "cover": "./11843/characters/16401.webp",
+        "extensionName": [
+          "Urushibara Luka",
+          "Lukako",
+          "Rukako"
+        ],
+        "birthday": "3000-08-30",
+        "gender": 1,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca16401"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6497"
+          }
+        ]
+      },
+      {
+        "name": "岡部 倫太郎",
+        "introduction": "Rintarou is an eccentric individual, a self-proclaimed mad scientist and often refers to himself under the alias of Hououin Kyouma, which is also the name he uses to introduce himself to other people. Mayuri and Daru refer to him by the nickname Okarin, a portmanteau of his surname and given name. He is the founder of what he calls the \"Future Gadget Laboratory\" in Akihabara where he spends most of his time. Rintarou gives off the appearance of being delusional and paranoid, frequently referring to the \"organization\" that is after him, talking to himself on his phone, and engaging in fits of maniacal laughter. Most of the time he takes on a fairly arrogant personality. He is usually seen wearing a lab coat. As he experiments with time travel, he learns that he is the only one who possesses the ability to determine changes between different timelines, which he dubs \"Reading Steiner\"./ The character is 18 years old and a first year student at Tokyo Denki University.\n\nModified from .",
+        "cid": 16402,
+        "vid": "c6498",
+        "cover": "./11843/characters/16402.webp",
+        "extensionName": [
+          "Okabe Rintaro",
+          "Hououin Kyouma",
+          "鳳凰院凶真",
+          "Okarin",
+          "オカリン"
+        ],
+        "birthday": "3000-12-14",
+        "gender": 1,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca16402"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6498"
+          }
+        ]
+      },
+      {
+        "name": "天王寺 綯",
+        "introduction": "Yuugo's daughter who lives with him in the TV repair store and gets along well with Shiina.",
+        "cid": 25229,
+        "vid": "c15469",
+        "cover": "./11843/characters/25229.webp",
+        "extensionName": [
+          "Sister Braun",
+          "Chipmunk"
+        ],
+        "birthday": "3000-11-09",
+        "gender": 2,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca25229"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c15469"
+          }
+        ]
+      },
+      {
+        "name": "秋葉 幸孝",
+        "introduction": "Father of Akiha Rumiho (a.k.a Faris NyanNyan). His family owns a large area in the downtown districts of Tokyo, hence \"Akihabara\".\n\nYukitaka died in a plane crash several years before the events of Steins;Gate. He was the only victim of the crash. However, his daughter later uses a D-Mail to save his life, by making him believe she was kidnapped and forcing him to take the bullet train instead. However, due to the D-Mail, the Rounders were able to approach him and take his IBN 5100, which he had received from Amane Suzuha.\nHis survival led to a world line where Faris is a RaiNetter and Akihabara is still an Electric Town instead of a moe hub./",
+        "cid": 34609,
+        "vid": "c24992",
+        "cover": "./11843/characters/34609.webp",
+        "extensionName": [
+          "Papa"
+        ],
+        "gender": 1,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca34609"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c24992"
+          }
+        ]
+      },
+      {
+        "name": "鈴木功一",
+        "introduction": "Kouichi is a minor antagonist who first appeared in the Steins;Gate visual novel as the cheating opponent and sore loser to Faris in the Rai-Net Access Battlers Championship.",
+        "cid": 34611,
+        "vid": "c24994",
+        "cover": "./11843/characters/34611.webp",
+        "extensionName": [
+          "4℃",
+          "Shido"
+        ],
+        "gender": 1,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca34611"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c24994"
+          }
+        ]
+      },
+      {
+        "name": "アルパカマン",
+        "introduction": "An unimportant character from a videogame in Steins;Gate. An ally of justice in Linear Bounded Phenogram.",
+        "cid": 67673,
+        "vid": "c43791",
+        "cover": "./11843/characters/67673.webp",
+        "extensionName": [
+          "Alpaca commander"
+        ],
+        "gender": 0,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca67673"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c43791"
+          }
+        ]
+      }
+    ],
+    "saves": [],
+    "memory": []
+  },
+  {
+    "detail": {
+      "name": "Steins;Gate 0",
+      "chineseName": "命运石之门0",
+      "extensionName": [
+        "シュタインズ・ゲート・ゼロ",
+        "シュタゲゼロ",
+        "S;G 0",
+        "Shutage 0"
+      ],
+      "introduction": "——这是“凤凰院凶真”救助失败的“未来”的故事。\n是2009年发售的科学幻想ADV游戏《STEINS;GATE》的正统续篇\n故事背景位于其作品中登场的世界线之一，俗称“β世界线”\n主人公冈部伦太郎经历无数的苦难，跨越了尽头悲哀的放弃了挽救“她”的世界线的故事。\n失意至底的冈部伦太郎。\n被“封印”的“凤凰院凶真”。\n担心他的伙伴们。\n新登场的角色们。\n未被拯救的“她”到底怎么了？\n《STEINS;GATE》中没有登场的新的角色迎来被描绘的“0”的故事。\n是的，那里的“她”现在也在—。",
+      "gid": 24669,
+      "vid": "v2002",
+      "cover": "./24669/cover.webp",
+      "backgroundImage": "./24669/background.webp",
+      "savePath": "",
+      "gamePath": "",
+      "moreEntry": [],
+      "typeDesc": "",
+      "releaseDate": "2015-12-10",
+      "restricted": true,
+      "website": [
+        {
+          "title": "官网",
+          "url": "http://steinsgate0-pc.jp/"
+        },
+        {
+          "title": "月幕Galgame",
+          "url": "https://www.ymgal.games/ga24669"
+        },
+        {
+          "title": "VNDB",
+          "url": "https://vndb.org/v2002"
+        }
+      ],
+      "releases": [
+        {
+          "id": 120465,
+          "releaseName": "Steins;Gate 0",
+          "relatedLink": "https://steins.uvnworks.com/",
+          "platform": "Windows",
+          "releaseLanguage": "Portuguese (Brazil)",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 120466,
+          "releaseName": "Steins;Gate 0 Translation Improvement Patch for Vita",
+          "relatedLink": "https://www.reddit.com/r/VitaPiracy/comments/nge0pe/release_steinsgate_0_english_translation/",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2021-05-19",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R16+"
+        },
+        {
+          "id": 120467,
+          "releaseName": "Steins;Gate 0",
+          "relatedLink": "https://m.vk.com/wall-78042391_6639",
+          "platform": "Windows",
+          "releaseDate": "2020-07-01",
+          "releaseLanguage": "Russian",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 120468,
+          "releaseName": "STEINS;GATE 0",
+          "relatedLink": "",
+          "platform": "Nintendo Switch",
+          "releaseDate": "2019-12-10",
+          "releaseLanguage": "English",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 120469,
+          "releaseName": "STEINS;GATE 0",
+          "relatedLink": "",
+          "platform": "Windows",
+          "releaseDate": "2019-04-29",
+          "releaseLanguage": "English",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 120470,
+          "releaseName": "STEINS;GATE 0",
+          "relatedLink": "",
+          "platform": "Windows",
+          "releaseDate": "2019-04-29",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 120471,
+          "releaseName": "STEINS;GATE 0",
+          "relatedLink": "",
+          "platform": "Windows",
+          "releaseDate": "2019-04-29",
+          "releaseLanguage": "Chinese",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 120472,
+          "releaseName": "STEINS;GATE ダイバージェンシズアソート",
+          "relatedLink": "http://steinsgate.jp/assort/",
+          "platform": "Nintendo Switch",
+          "releaseDate": "2019-03-20",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 120473,
+          "releaseName": "STEINS;GATE 0",
+          "relatedLink": "",
+          "platform": "Windows",
+          "releaseDate": "2018-05-08",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 120474,
+          "releaseName": "STEINS;GATE 0",
+          "relatedLink": "",
+          "platform": "Windows",
+          "releaseDate": "2018-05-08",
+          "releaseLanguage": "English",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 120475,
+          "releaseName": "STEINS;GATE 0 普及版",
+          "relatedLink": "",
+          "platform": "Windows",
+          "releaseDate": "2018-04-27",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 120476,
+          "releaseName": "STEINS;GATE 0",
+          "relatedLink": "https://gateofsteiner.net/steinsgate-0-traduccion-al-espanol/",
+          "platform": "Windows",
+          "releaseDate": "2018-04-09",
+          "releaseLanguage": "Spanish",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 120477,
+          "releaseName": "STEINS;GATE 0",
+          "relatedLink": "",
+          "platform": "Xbox One",
+          "releaseDate": "2017-02-22",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 120478,
+          "releaseName": "STEINS;GATE 0 Improvement Patch (Steam &amp; DMM)",
+          "relatedLink": "http://sonome.dareno.me/projects/sg0-steam.html",
+          "platform": "Windows",
+          "releaseDate": "2017-02-19",
+          "releaseLanguage": "English",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 120479,
+          "releaseName": "命运石之门0 PC",
+          "relatedLink": "https://tieba.baidu.com/p/5243044166",
+          "platform": "Windows",
+          "releaseDate": "2017-02-04",
+          "releaseLanguage": "Chinese",
+          "restrictionLevel": "未分级"
+        },
+        {
+          "id": 120480,
+          "releaseName": "STEINS;GATE 0",
+          "relatedLink": "https://www.nyaa.se/?page=view&amp;tid=876739#c603213",
+          "platform": "Windows",
+          "releaseDate": "2016-12-17",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 120481,
+          "releaseName": "STEINS;GATE 0",
+          "relatedLink": "https://www.nyaa.se/?page=view&amp;tid=876739#c603213",
+          "platform": "PlayStation 3",
+          "releaseDate": "2016-12-17",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 120482,
+          "releaseName": "Steins;Gate 0 - US Amadeus Edition (Rice Exclusive)",
+          "relatedLink": "http://www.ricedigital.co.uk/store/steins-gate-0-ps4-amadeus-edition-collectors-edition-us-version",
+          "platform": "PlayStation 4",
+          "releaseDate": "2016-11-29",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 120483,
+          "releaseName": "Steins;Gate 0 - US Amadeus Edition (Rice Exclusive)",
+          "relatedLink": "http://www.ricedigital.co.uk/store/steins-gate-0-ps-vita-amadeus-edition-collectors-edition-us-version",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2016-11-29",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R17+"
+        },
+        {
+          "id": 120484,
+          "releaseName": "Steins;Gate 0 - NA Package Edition",
+          "relatedLink": "http://www.ricedigital.co.uk/store/steins-gate-0-ps-vita",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2016-11-29",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R16+"
+        },
+        {
+          "id": 120485,
+          "releaseName": "Steins;Gate 0 - NA Package Edition",
+          "relatedLink": "http://www.ricedigital.co.uk/store/steins-gate-0-ps4",
+          "platform": "PlayStation 4",
+          "releaseDate": "2016-11-29",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R16+"
+        },
+        {
+          "id": 120486,
+          "releaseName": "Steins;Gate 0 - NA Download Edition",
+          "relatedLink": "https://store.playstation.com/en-us/product/UP4293-CUSA05894_00-STEINSGATEZEROP4",
+          "platform": "PlayStation 4",
+          "releaseDate": "2016-11-29",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R18+"
+        },
+        {
+          "id": 120487,
+          "releaseName": "Steins;Gate 0 - EU Package Edition",
+          "relatedLink": "http://www.ricedigital.co.uk/store/steins-gate-0-ps-vita",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2016-11-25",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R16+"
+        },
+        {
+          "id": 120488,
+          "releaseName": "Steins;Gate 0 - EU Package Edition",
+          "relatedLink": "http://www.ricedigital.co.uk/store/steins-gate-0-ps4",
+          "platform": "PlayStation 4",
+          "releaseDate": "2016-11-25",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R16+"
+        },
+        {
+          "id": 120489,
+          "releaseName": "Steins;Gate 0 - EU Amadeus Edition (Rice Exclusive)",
+          "relatedLink": "http://www.ricedigital.co.uk/store/steins-gate-0-ps4-amadeus-edition-collectors-edition",
+          "platform": "PlayStation 4",
+          "releaseDate": "2016-11-25",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R16+"
+        },
+        {
+          "id": 120490,
+          "releaseName": "Steins;Gate 0 - EU Amadeus Edition (Rice Exclusive)",
+          "relatedLink": "http://www.ricedigital.co.uk/store/steins-gate-0-ps-vita-amadeus-edition-collectors-edition",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2016-11-25",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R16+"
+        },
+        {
+          "id": 120491,
+          "releaseName": "Steins;Gate 0 - EU Download Edition",
+          "relatedLink": "",
+          "platform": "PlayStation 4",
+          "releaseDate": "2016-11-25",
+          "releaseLanguage": "English",
+          "restrictionLevel": "R16+"
+        },
+        {
+          "id": 120492,
+          "releaseName": "STEINS;GATE 0 パッケージ通常版",
+          "relatedLink": "http://steinsgate0-pc.jp/",
+          "platform": "Windows",
+          "releaseDate": "2016-08-26",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 120493,
+          "releaseName": "STEINS;GATE 0 パッケージ豪華限定版",
+          "relatedLink": "http://steinsgate0-pc.jp/",
+          "platform": "Windows",
+          "releaseDate": "2016-08-26",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 120494,
+          "releaseName": "STEINS;GATE 0 ＤＬ版",
+          "relatedLink": "http://steinsgate0-pc.jp/",
+          "platform": "Windows",
+          "releaseDate": "2016-08-26",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 120495,
+          "releaseName": "STEINS;GATE 0",
+          "relatedLink": "http://digital-touch.co.kr/bbs/board.php?bo_table=03_01&amp;wr_id=125&amp;page=2",
+          "platform": "PlayStation 4",
+          "releaseDate": "2016-06-23",
+          "releaseLanguage": "Korean",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 120496,
+          "releaseName": "STEINS;GATE 0",
+          "relatedLink": "http://digital-touch.co.kr/bbs/board.php?bo_table=03_01&amp;wr_id=125&amp;page=2",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2016-06-23",
+          "releaseLanguage": "Korean",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 120497,
+          "releaseName": "命运石之门零",
+          "relatedLink": "http://tieba.baidu.com/p/4236993161",
+          "platform": "PlayStation 3",
+          "releaseDate": "2016-02-14",
+          "releaseLanguage": "Chinese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 120498,
+          "releaseName": "命运石之门零",
+          "relatedLink": "http://www.bilibili.com/video/av3834470/",
+          "platform": "Website",
+          "releaseDate": "2016-02-14",
+          "releaseLanguage": "Chinese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 120499,
+          "releaseName": "STEINS;GATE 0",
+          "relatedLink": "http://steinsgate0.jp/",
+          "platform": "PlayStation 4",
+          "releaseDate": "2015-12-10",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 120500,
+          "releaseName": "STEINS;GATE 0",
+          "relatedLink": "http://steinsgate0.jp/",
+          "platform": "PlayStation 3",
+          "releaseDate": "2015-12-10",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        },
+        {
+          "id": 120501,
+          "releaseName": "STEINS;GATE 0",
+          "relatedLink": "http://steinsgate0.jp/",
+          "platform": "PlayStation Vita",
+          "releaseDate": "2015-12-10",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R15+"
+        }
+      ],
+      "staff": {
+        "脚本": [
+          {
+            "name": "林 直孝",
+            "pid": 10375,
+            "empDesc": "Absolute Zero, Closed Epigraph, X-day Protocol, Pandora’s Box, Gehenna's Stigma, Presage or Recognize, Vega and Altair, Milky-Way Crossing"
+          },
+          {
+            "name": "安本 了",
+            "pid": 23604,
+            "empDesc": "A Stray Sheep, The Orbital Eclipse, Antinomic Dual, Promised Rinascimento"
+          },
+          {
+            "name": "たきもと まさし",
+            "pid": 23605,
+            "empDesc": "Base scenario, overall scenario supervisor"
+          },
+          {
+            "name": "土屋つかさ",
+            "pid": 23606,
+            "empDesc": "Twin Automata, Recursive Mother Goose"
+          }
+        ],
+        "音乐": [
+          {
+            "name": "阿保 剛",
+            "pid": 31435,
+            "empDesc": "BGM, ED 'GATE OF STEINER' composition"
+          },
+          {
+            "name": "悠木 真一",
+            "pid": 28557,
+            "empDesc": "ED 'GATE OF STEINER' arrangement"
+          },
+          {
+            "name": "流歌",
+            "pid": 22214,
+            "empDesc": "ED 'Hoshi no Kanaderu Uta' arrangement"
+          },
+          {
+            "name": "志倉 千代丸",
+            "pid": 10101,
+            "empDesc": "OP composition & lyrics, ED 'Lyra' & ED 'GATE OF STEINER' lyrics"
+          },
+          {
+            "name": "寺谷 知己",
+            "pid": 31419,
+            "empDesc": "ED 'Hoshi no Kanaderu Uta'"
+          }
+        ],
+        "原画": [
+          {
+            "name": "池田 靖宏",
+            "pid": 25318,
+            "empDesc": ""
+          },
+          {
+            "name": "甚六",
+            "pid": 26032,
+            "empDesc": "Assistant artist"
+          },
+          {
+            "name": "すずき めい",
+            "pid": 27140,
+            "empDesc": "Assistant artist"
+          },
+          {
+            "name": "撫荒 武吉",
+            "pid": 12632,
+            "empDesc": "Assistant artist"
+          },
+          {
+            "name": "只野 和子",
+            "pid": 15697,
+            "empDesc": "Main"
+          },
+          {
+            "name": "福田 知則",
+            "pid": 13782,
+            "empDesc": ""
+          },
+          {
+            "name": "上野 こけもも‏",
+            "pid": 15278,
+            "empDesc": ""
+          },
+          {
+            "name": "松尾 ゆきひろ",
+            "pid": 10378,
+            "empDesc": ""
+          }
+        ],
+        "歌曲": [
+          {
+            "name": "Zwei",
+            "pid": 20403,
+            "empDesc": "ED 'Lyra'"
+          },
+          {
+            "name": "潘 めぐみ",
+            "pid": 25486,
+            "empDesc": "Recursive Mother Goose ED 'Hoshi no Kanaderu Uta'"
+          },
+          {
+            "name": "いとう かなこ",
+            "pid": 10191,
+            "empDesc": "OP 'Amadeus'"
+          },
+          {
+            "name": "佐々木 恵梨",
+            "pid": 24103,
+            "empDesc": "Milky-way Crossing ED 'GATE OF STEINER'"
+          }
+        ],
+        "人物设计": [],
+        "监督": [
+          {
+            "name": "松本 裕介",
+            "pid": 26495,
+            "empDesc": ""
+          },
+          {
+            "name": "西村 卓也",
+            "pid": 13729,
+            "empDesc": "Main"
+          },
+          {
+            "name": "梶岡 俊彦",
+            "pid": 12764,
+            "empDesc": ""
+          }
+        ],
+        "其他": [
+          {
+            "name": "松原 達也",
+            "pid": 26277,
+            "empDesc": "Producer"
+          },
+          {
+            "name": "若林 漢二",
+            "pid": 13821,
+            "empDesc": "Graphics supervision, storyboards"
+          },
+          {
+            "name": "林 直孝",
+            "pid": 10375,
+            "empDesc": "Scenario supervision"
+          },
+          {
+            "name": "村上 純",
+            "pid": 21180,
+            "empDesc": "Sound producer"
+          },
+          {
+            "name": "北原 史尋",
+            "pid": 22188,
+            "empDesc": "Art director"
+          },
+          {
+            "name": "ポイント・ピクチャーズ",
+            "pid": 23290,
+            "empDesc": "OP movie"
+          },
+          {
+            "name": "福家 亮平",
+            "pid": 31425,
+            "empDesc": ""
+          },
+          {
+            "name": "たきもと まさし",
+            "pid": 23605,
+            "empDesc": "Scenario supervision"
+          },
+          {
+            "name": "志倉 千代丸",
+            "pid": 10101,
+            "empDesc": "Planning, original concept, lead sound producer"
+          },
+          {
+            "name": "佐々木 恵梨",
+            "pid": 24103,
+            "empDesc": "ED 'Hoshi no Kanaderu Uta' lyrics, ED 'GATE OF STEINER' English lyrics"
+          }
+        ]
+      }
+    },
+    "characters": [
+      {
+        "name": "牧瀬 紅莉栖",
+        "introduction": "Kurisu is a neuroscience researcher at an American university, and can speak and read English well. Having had her research published in the academic journal Science at the young age of 18, Makise is extremely talented. She skipped a grade in the American school system. She does not get along with her father and has not spoken to him in many years. Okabe often just calls her assistant or one of a number of nicknames he comes up with, such as \"Christina\", \"the Zombie\", and \"Celeb Sev\", none of which she likes. She is considered a tsundere character; she dislikes this characterization as well, strongly objecting whenever Daru mentions it.",
+        "cid": 16391,
+        "vid": "c6487",
+        "cover": "./24669/characters/16391.webp",
+        "extensionName": [
+          "Christina",
+          "Chris",
+          "Assistant",
+          "Celeb 17",
+          "The Zombie",
+          "Perverted Genius Girl"
+        ],
+        "birthday": "3000-07-25",
+        "gender": 2,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca16391"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6487"
+          }
+        ]
+      },
+      {
+        "name": "阿万音 鈴羽",
+        "introduction": "Amane Suzuha works part-time for the landlord of Rintarou's flat and is on a search for her father in Akihabara. She enjoys riding her bicycle and appears to be at odds with Kurisu.\n\nShe is in fact a Time Traveller from 2036 who, using the guise of John *****, seeks to prevent SERN from creating a Time Machine that will lead to dystopia. Though she is unaware of it, she is the daughter of Hashida Itaru./\n\nFrom Wiki",
+        "cid": 16396,
+        "vid": "c6492",
+        "cover": "./24669/characters/16396.webp",
+        "extensionName": [
+          "Working Warrior",
+          "バイト戦士",
+          "Part-Time Warrior",
+          "Alpha Suzuha"
+        ],
+        "birthday": "3000-09-27",
+        "gender": 2,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca16396"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6492"
+          }
+        ]
+      },
+      {
+        "name": "橋田 至",
+        "introduction": "Daru is an experienced hacker who has known Okabe since high school. He is very skilled at computer programming and with old and new computer hardware. He is also well-versed in things pertaining to otaku culture. Okabe and Shiina refer to him by the nickname \"Daru\", a portmanteau of his given name and surname. Okabe sometimes also calls him Super Haker, mispronouncing the word \"hacker\" to his chagrin. He is a big fan of Faris and he frequently says things which could be taken as sexual harassment. Daru is often annoyed with Okabe's frequent delusional behavior.",
+        "cid": 16397,
+        "vid": "c6493",
+        "cover": "./24669/characters/16397.webp",
+        "extensionName": [
+          "Daru",
+          "DaSH",
+          "DaSP",
+          "Supah Hakah"
+        ],
+        "birthday": "3000-05-19",
+        "gender": 1,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca16397"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6493"
+          }
+        ]
+      },
+      {
+        "name": "天王寺 裕吾",
+        "introduction": "He is Okabe's landlord, who owns a TV repair store beneath his apartment, living with his daughter, Nae. Okabe often gives him the nickname \"Mr. Braun\" for his passion to Braun tube TV.\nAfter seeing a gel-i-fied human in the sewers he was residing in, he was recruited by SERN, which provided the money he needed to get out of the slums. After a while SERN ordered him to go to Akihabara in Japan. It was here that he met Suzuha Hashida, his neighbour, and Tsuzuri Imamiya, his future wife.\nSometime prior to the first D-Mail, Tennouji recruited Moeka Kiryuu into the Rounders and communicated with her as \"FB\". It was only until Rintarou and Moeka discovers his identity was FB revealed to be a man, as FB introduced themselves as a woman to all Rounders recruits./",
+        "cid": 16399,
+        "vid": "c6495",
+        "cover": "./24669/characters/16399.webp",
+        "extensionName": [
+          "Mr. Braun"
+        ],
+        "birthday": "3000-03-12",
+        "gender": 1,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca16399"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6495"
+          }
+        ]
+      },
+      {
+        "name": "桐生 萌郁",
+        "introduction": "Moeka is a part-time editor whom Rintarou encounters in Akiba. She is practically glued to her phone and cannot function without it. Even when face to face, Moeka prefers to communicate by email.\nShe is searching for the legendary retro PC known as the IBN 5100.\n\nSteins;Gate Official Site\n\nMoeka was a constantly bullied social outcast; she desperately tried to make friends and find a place to belong, but failed miserably due to her social paranoia. In 2004, she fell into a deep depression due to hating everything and being hopeless, thinking that she no longer had a reason to live, Moeka decided to *******. She drank several sleeping pills, hoping that she would die, but to no avail. As the pills were not working, her final attempt was to jump off a large building. At that moment, she received a mail from the enigmatic FB recruiting her to the Rounders, a SERN unit, changing her life forever. As FB often communicated with Moeka and acted as a mother figure towards her, speaking with Moeka about her problems and comforting her, she came to see FB as the person that gave her life meaning and devoted every waking moment to sending mails to them and carrying out their given orders, developing a dependency on FB and their mails. When that relationship which meant life to Moeka required her to kill someone, she killed. By taking another’s life, her life retained meaning. While Moeka is capable of carrying out atrocities for acceptance, she strives to be loved and has the potential to be a good person if led in the right direction.\n/",
+        "cid": 16400,
+        "vid": "c6496",
+        "cover": "./24669/characters/16400.webp",
+        "extensionName": [
+          "Shining Finger, Glowing Masseuse",
+          "Mail Demon",
+          "Moe",
+          "M4",
+          "SHININGFINGER_MK"
+        ],
+        "birthday": "3000-06-06",
+        "gender": 2,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca16400"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6496"
+          }
+        ]
+      },
+      {
+        "name": "漆原 るか",
+        "introduction": "Ruka is a friend of Okabe. His appearance is that of a female and he acts in a feminine way due to his upbringing, wearing girl's clothing within and outside his father's temple. He is also a close friend and classmate of Mayuri's and is often asked to try on her cosplay costumes, but as he is quite shy, he generally refuses. He is unsure of his feelings towards Okabe, who calls him by his nickname, Rukako, containing the feminine suffix -ko, to denote his feminine appearance, and thinks of Ruka as his pupil.",
+        "cid": 16401,
+        "vid": "c6497",
+        "cover": "./24669/characters/16401.webp",
+        "extensionName": [
+          "Urushibara Luka",
+          "Lukako",
+          "Rukako"
+        ],
+        "birthday": "3000-08-30",
+        "gender": 1,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca16401"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6497"
+          }
+        ]
+      },
+      {
+        "name": "比屋定 真帆",
+        "introduction": "Kurisu's senior and fellow researcher who attended university with her. She works as a research assistant to Professor Alexis Leskinen and specializes in neuroscience and artificial intelligence.\nDue to her short stature and young appearance, she's often mistaken for a child.",
+        "cid": 47527,
+        "vid": null,
+        "cover": "./24669/characters/47527.webp",
+        "extensionName": [
+          "Salieri"
+        ],
+        "birthday": "3000-11-02",
+        "gender": 2,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca47527"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/null"
+          }
+        ]
+      },
+      {
+        "name": "阿万音 由季",
+        "introduction": "She's a carefree girl with a very positive outlook on life.\n\nShe's also the future wife of Daru and mother of Suzuha./",
+        "cid": 47530,
+        "vid": null,
+        "cover": "./24669/characters/47530.webp",
+        "extensionName": [],
+        "birthday": "3000-05-31",
+        "gender": 2,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca47530"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/null"
+          }
+        ]
+      },
+      {
+        "name": "中瀬 克美",
+        "introduction": "One of Mayuri's cosplayer friends.\nHer stage name is \"Fubuki.\" She's popular for her boyish charms.",
+        "cid": 47532,
+        "vid": null,
+        "cover": "./24669/characters/47532.webp",
+        "extensionName": [
+          "Fubuki"
+        ],
+        "birthday": "3000-01-14",
+        "gender": 2,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca47532"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/null"
+          }
+        ]
+      },
+      {
+        "name": "来嶋 かえで",
+        "introduction": "One of Mayuri's cosplayer friends.\nWhen attending events, she likes to wear the costumes Mayuri makes.",
+        "cid": 47533,
+        "vid": null,
+        "cover": "./24669/characters/47533.webp",
+        "extensionName": [],
+        "birthday": "3000-10-04",
+        "gender": 2,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca47533"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/null"
+          }
+        ]
+      },
+      {
+        "name": "岡部 倫太郎",
+        "introduction": "Unable to overcome the first failure in saving Kurisu, Okabe accepted and lived miserably in Beta Worldline, ignored the warning about the 3rd World War of Suzuha - a traveler from 2036 to help him reach Steins Gate. He chooses to live a normal life with severe PTSD whenever he remembers his assistant./",
+        "cid": 50733,
+        "vid": "c6498",
+        "cover": "./24669/characters/50733.webp",
+        "extensionName": [
+          "Okabe Rintaro",
+          "Hououin Kyouma",
+          "鳳凰院凶真",
+          "Okarin",
+          "オカリン"
+        ],
+        "birthday": "3000-12-14",
+        "gender": 1,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca50733"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6498"
+          }
+        ]
+      },
+      {
+        "name": "椎名 まゆり",
+        "introduction": "Mayuri is a long-time childhood friend of Okabe and a bit of an airhead. Mayuri enjoys creating cosplay costumes and has a part-time job at a maid cafe called \"Mayqueen Nyannyan\". She often calls herself Mayushii, a portmanteau of her given name and surname, which is also what Daru calls her. She has a distinctive sing-song way of speaking, and she typically sings \"tutturuu\" when she arrives or introduces herself.",
+        "cid": 57161,
+        "vid": "c6491",
+        "cover": "./24669/characters/57161.webp",
+        "extensionName": [
+          "Mayushii",
+          "Mayushii NyanNyan"
+        ],
+        "birthday": "3000-02-01",
+        "gender": 2,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca57161"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6491"
+          }
+        ]
+      },
+      {
+        "name": "秋葉 留未穂",
+        "introduction": "Faris Nyannyan works at the maid cafe \"Mayqueen Nyannyan\", the same maid cafe that Shiina works at, and is the most popular waitress there. Her real name is Akiha Rumiho, whose family owns Akihabara, her being the one suggested it become the city of moe and anime. She tends to add \"nyan\" to her sentences.",
+        "cid": 57162,
+        "vid": "c6494",
+        "cover": "./24669/characters/57162.webp",
+        "extensionName": [
+          "Faris NyanNyan",
+          "Feris"
+        ],
+        "birthday": "3000-04-03",
+        "gender": 2,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca57162"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6494"
+          }
+        ]
+      },
+      {
+        "name": "天王寺 綯",
+        "introduction": "Yuugo's daughter who lives with him in the TV repair store and gets along well with Shiina.",
+        "cid": 57163,
+        "vid": "c15469",
+        "cover": "./24669/characters/57163.webp",
+        "extensionName": [],
+        "birthday": "3000-11-09",
+        "gender": 2,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca57163"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c15469"
+          }
+        ]
+      },
+      {
+        "name": "アレクシス・レスキネン",
+        "introduction": "Alexis Leskinen is a professor at Victor Chondria University and the mentor of Hiyajou Maho and  Makise Kurisu. He is also a senior researcher at the Brain Research Institute.",
+        "cid": 67672,
+        "vid": null,
+        "cover": "./24669/characters/67672.webp",
+        "extensionName": [],
+        "birthday": "3004-08-23",
+        "gender": 1,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca67672"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/null"
+          }
+        ]
+      },
+      {
+        "name": "ジュディ・レイエス",
+        "introduction": "",
+        "cid": 75258,
+        "vid": null,
+        "cover": "./24669/characters/75258.webp",
+        "extensionName": [],
+        "birthday": "3004-06-13",
+        "gender": 2,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca75258"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/null"
+          }
+        ]
+      },
+      {
+        "name": "アマデウス",
+        "introduction": "An artificial intelligence created for the Amadeus system based on the memories of Kurisu is a neuroscience researcher at an American university. The program essentially has the same personality as the original Kurisu.",
+        "cid": 95514,
+        "vid": null,
+        "cover": "./24669/characters/95514.webp",
+        "extensionName": [
+          "Christina",
+          "Chris",
+          "Assistant",
+          "Makise Kurisu"
+        ],
+        "gender": 2,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca95514"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/null"
+          }
+        ]
+      },
+      {
+        "name": "阿万音 鈴羽",
+        "introduction": "Time traveller from 2036, daughter of Hashida Itaru with a mission to reach Steins Gate.",
+        "cid": 95515,
+        "vid": "c6492",
+        "cover": "./24669/characters/95515.webp",
+        "extensionName": [
+          "Beta Suzuha"
+        ],
+        "birthday": "3004-09-27",
+        "gender": 2,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca95515"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c6492"
+          }
+        ]
+      },
+      {
+        "name": "椎名 かがり",
+        "introduction": "The adopted daughter of Mayuri in the future.",
+        "cid": 95516,
+        "vid": null,
+        "cover": "./24669/characters/95516.webp",
+        "extensionName": [],
+        "gender": 2,
+        "website": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca95516"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/null"
+          }
+        ]
+      }
+    ],
+    "saves": [],
+    "memory": []
+  }
 ]
