@@ -1,5 +1,6 @@
 import { useStore, create } from 'zustand';
 import { MemoryRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const useAddGame = create(set => ({
     gameName: '',
@@ -27,14 +28,23 @@ const useAddGame = create(set => ({
 
 
 function AddGame() {
-  const {alert, setGameName, setGameList, setGID, setVID} = useAddGame();
+  const {alert, setGameName, setGameList, setGID, setVID, isLoading, setAlert, setGameBg, setGameBgList, setSavePath, setGamePath} = useAddGame();
   let navigate = useNavigate();
   function quit(){
+    if(isLoading){
+      setAlert('请等待操作完成');
+      setTimeout(() => {setAlert('');}, 3000);
+      return
+    }
     setTimeout(() => {
       setGameName('');
       setGID('');
       setVID('');
       setGameList([]);
+      setGameBgList([]);
+      setGameBg('');
+      setSavePath('');
+      setGamePath('');
       navigate('/info');
     }, 1000);
   }
@@ -52,6 +62,7 @@ function AddGame() {
                 <Route path='/list' element={<GameList />} />
                 <Route path='/path' element={<GamePath />} />
                 <Route path='/bg' element={<GameBg />} />
+                <Route path='/load' element={<GameLoad />} />
               </Routes>
             </div>
             {alert && 
@@ -157,7 +168,7 @@ function GameList(){
 }
 
 function GamePath(){
-  const {gamePath, savePath, gameName, setGamePath, setSavePath, setAlert, setIsLoading, setGameBgList} = useAddGame();
+  const {gamePath, savePath, gameName, setGamePath, setSavePath, setAlert, setIsLoading, setGameBgList, isLoading} = useAddGame();
   let navigate = useNavigate();
 
   async function selectGamePath(){
@@ -204,16 +215,6 @@ function GamePath(){
   }
 
   async function submitGamePath(){
-    if(gamePath === '' || gamePath === undefined){
-      setAlert('请填写游戏路径');
-      setTimeout(() => {setAlert('')}, 3000);
-      return
-    }
-    if(savePath === '' || savePath === undefined){
-      setAlert('请填写存档路径');
-      setTimeout(() => {setAlert('')}, 3000);
-      return
-    }
     setIsLoading(true);
     const gameBgList = await window.api.getScreenshotsByTitle(gameName);
     setGameBgList(gameBgList);
@@ -232,8 +233,10 @@ function GamePath(){
         <button className='btn btn-primary text-base-100 no-animation' onClick={selectSavePath}>选择存档路径</button>
         <input type='text' placeholder='拖拽获取路径' onDrop={getSavePathByDrag} onDragOver={handleDragOver} className='input input-bordered input-primary focus-within:outline-none focus-within:border-primary' value={savePath} onChange={(e)=>{setSavePath(e.target.value)}} />
       </div>
+      <div className='pt-1'>可暂时跳过此步，后续可在该游戏设置页填写</div>
       <div className='flex flex-row-reverse items-end gap-5 pt-3'>
-        <button className='btn btn-primary text-base-100' onClick={submitGamePath}>下一步</button>
+        <button className='btn btn-primary text-base-100' onClick={submitGamePath}>
+          {isLoading && <span className='loading loading-spinner'></span>}下一步</button>
         <button className='btn btn-primary text-base-100' onClick={()=>{navigate(-1)}}>上一步</button>
       </div>
     </div>
@@ -241,8 +244,20 @@ function GamePath(){
 }
 
 function GameBg(){
-  const {gameBgList, setGameBg, gameBg} = useAddGame();
+  const {gameBgList, gameName, savePath, isLoading, gamePath, setGameBg, gameBg, gid, setIsLoading} = useAddGame();
   let navigate = useNavigate();
+  async function submitAllData(){
+    if(gameBg === ''){
+      setAlert('请选择背景图');
+      setTimeout(() => {setAlert('');}, 3000);
+      return
+    }
+    setIsLoading(true);
+    const coverUrl = await window.api.getCoverByTitle(gameName);
+    await window.electron.ipcRenderer.send('add-new-game-to-data', gid, coverUrl, gameBg);
+    await window.electron.ipcRenderer.send('organize-game-data', gid, savePath, gamePath);
+    navigate('/load')
+  }
   return(
     <div className='h-full w-270'>
       <div className='pb-5 text-2xl font-bold text-center'>选择背景图</div>
@@ -260,9 +275,26 @@ function GameBg(){
         </div>
       </div>
       <div className='flex flex-row-reverse items-end gap-5 pt-5'>
-        <button className='btn btn-primary text-base-100' onClick={()=>{navigate('/list')}}>确定</button>
+        <button className='btn btn-primary text-base-100' onClick={submitAllData}>确定</button>
         <button className='btn btn-primary text-base-100' onClick={()=>{navigate(-1)}}>上一步</button>
       </div>
+    </div>
+  )
+}
+
+function GameLoad(){
+  const {isLoading, setIsLoading} = useAddGame();
+  useEffect(() => {
+    window.electron.ipcRenderer.on('game-data-organized', () => {
+      setIsLoading(false);
+    })
+    return () => {
+      window.electron.ipcRenderer.removeAllListeners('game-data-organized');
+    }
+  }, [])
+  return(
+    <div className='flex items-center justify-center w-full h-full'>
+      {isLoading ? <progress className="w-56 progress"></progress> : <div className='text-2xl font-bold'>添加成功</div>}
     </div>
   )
 }
