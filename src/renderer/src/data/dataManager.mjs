@@ -4,9 +4,11 @@ import { dirname } from 'path';
 import axios from 'axios';
 import path from 'path';
 
-const filePath = 'data.json';
 
-async function addObjectToJsonFile(filePath, newObject) {
+async function addObjectToJsonFile(newObject) {
+  // const __filename = fileURLToPath(import.meta.url);
+  // const __dirname = dirname(__filename);
+  const filePath = 'src/renderer/src/data/data.json'
   try {
     // 读取 JSON 文件
     const data = await fs.readFile(filePath, 'utf8');
@@ -34,11 +36,24 @@ async function addObjectToJsonFile(filePath, newObject) {
   }
 }
 
+async function getGameData() {
+    const filePath = 'src/renderer/src/data/data.json'
+    try {
+        // Read the JSON file
+        const data = await fs.readFile(filePath, 'utf8');
+        return JSON.parse(data);
+    } catch (error) {
+        console.error('Error reading JSON file:', error);
+        return [];
+    }
+
+}
+
 async function addNewGameToData(gid, coverUrl, bgUrl){
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = dirname(__filename);
 
-    const folderPath = path.join(__dirname, gid);
+    const folderPath = `src/renderer/src/data/${gid}`;
     const memoryFolderPath = path.join(folderPath, 'memory');
     const savesFolderPath = path.join(folderPath, 'saves');
     const characterFolderPath = path.join(folderPath, 'characters');
@@ -72,7 +87,7 @@ async function addCharacterImgToData(gid, cid, imgUrls){
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = dirname(__filename);
 
-    const folderPath = path.join(__dirname, gid);
+    const folderPath = `src/renderer/src/data/${gid}`;
     const characterFolderPath = path.join(folderPath, 'characters');
     const characterImgPath = path.join(characterFolderPath, `${cid}.webp`);
 
@@ -93,8 +108,8 @@ async function addCharacterImgToData(gid, cid, imgUrls){
 
 }
 
-// addNewGameToData('123', 'https://t.vndb.org/sf/23/8523.jpg', 'https://t.vndb.org/sf/24/8524.jpg');
+// addNewGameToData('27702', 'https://t.vndb.org/sf/23/8523.jpg', 'https://t.vndb.org/sf/24/8524.jpg');
 
-addCharacterImgToData('123', '456', 'https://t.vndb.org/cv/23/8523.jpg');
+// addCharacterImgToData('123', '456', 'https://t.vndb.org/cv/23/8523.jpg');
 
-export { addObjectToJsonFile, addNewGameToData, addCharacterImgToData };
+export { addObjectToJsonFile, addNewGameToData, addCharacterImgToData, getGameData };

@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
-import { addCharacterImgToData, addNewGameToData } from '..data/dataManager.mjs';
+import { addCharacterImgToData, addNewGameToData, addObjectToJsonFile } from '../data/dataManager.mjs';
+import fs from 'fs';
 
 // 定义获取Access Token的函数
 async function getAccessToken(clientId, clientSecret) {
@@ -132,40 +133,44 @@ async function searchCharacterId(cid) {
         });
         const data = await response.json();
         return data;
-    
+
     } catch (error) {
         console.error('Error in searchCharacterId:', error);
         throw error;
     }
 }
 
+
+
 async function organizeGameData(gid, savePath, gamePath) {
     try {
         const Details = await searchGameId(gid);
-        const gameDetails = Details.data.game;
+        const gameData = Details.data;
         const characters = [];
-        for (const character of gameDetails.characters) {
+        const vid = await getVIDByTitle(gameData.game.name);
+        for (const character of gameData.game.characters) {
             const characterDetails = await searchCharacterId(character.cid);
             await addCharacterImgToData(gid, character.cid, characterDetails.data.character.mainImg);
             let extensionName = []
             for (const extension of characterDetails.data.character.extensionName) {
                 extensionName.push(extension.name);
             }
+            const vidc = await getCharacterIDByName(characterDetails.data.character.name, vid);
             characters.push({
-                name: character.name,
-                chineseName: character.chineseName,
-                introduction: character.introduction,
-                cId: character.cid,
-                // vndbId: character.vndbId,
+                name: characterDetails.data.character.name,
+                chineseName: characterDetails.data.character.chineseName,
+                introduction: characterDetails.data.character.introduction,
+                cid: character.cid,
+                vid: vidc,
                 cover: `./${gid}/characters/${character.cid}.webp`,
                 extensionName: extensionName,
-                birthday: character.birthday,
-                gender: character.gender,
-                website: [{"title": "月幕Galgame", "url": `https://www.ymgal.games/ca${character.cid}`}]
+                birthday: characterDetails.data.character.birthday,
+                gender: characterDetails.data.character.gender,
+                website: [{ "title": "月幕Galgame", "url": `https://www.ymgal.games/ca${character.cid}` }, { "title": "VNDB", "url": `https://vndb.org/${vidc}` }]
             });
         }
         const saves = [];
-        // for (const save of gameDetails.saves) {
+        // for (const save of gameData.saves) {
         //     saves.push({
         //         time: save.time,
         //         tips: save.tips,
@@ -173,45 +178,90 @@ async function organizeGameData(gid, savePath, gamePath) {
         //     });
         // }
         const memory = [];
-        // for (const mem of gameDetails.memory) {
+        // for (const mem of gameData.memory) {
         //     memory.push({
         //         img: mem.img,
         //         tips: mem.tips
         //     });
         // }
         const extensionName = []
-        for (const extension of gameDetails.extensionName) {
+        for (const extension of gameData.game.extensionName) {
             extensionName.push(extension.name);
         }
         let website = []
-        for (const web of gameDetails.website) {
-            website.push({"title": web.title, "url": web.link});
+        for (const web of gameData.game.website) {
+            website.push({ "title": web.title, "url": web.link });
         }
-        website.push({"title": "月幕Galgame", "url": `https://www.ymgal.games/ga${gid}`}, {"title": "VNDB", "url": `https://vndb.org/v${vndbId}`});
+        website.push({ "title": "月幕Galgame", "url": `https://www.ymgal.games/ga${gid}` }, { "title": "VNDB", "url": `https://vndb.org/${vid}` });
+        const staff = {
+            "脚本": [],
+            "音乐": [],
+            "原画": [],
+            "歌曲": [],
+            "人物设计": [],
+            "监督": [],
+            "其他": []
+        };
+        gameData.game.staff.forEach(staffMember => {
+            const person = gameData.pidMapping[staffMember.pid];
+            const name = person ? person.name : staffMember.empName;
+            const staffInfo = {
+                name: name,
+                pid: staffMember.pid,
+                empDesc: staffMember.empDesc
+            };
+
+            switch (staffMember.jobName) {
+                case "脚本":
+                    staff.脚本.push(staffInfo);
+                    break;
+                case "音乐":
+                    staff.音乐.push(staffInfo);
+                    break;
+                case "原画":
+                    staff.原画.push(staffInfo);
+                    break;
+                case "歌曲":
+                    staff.歌曲.push(staffInfo);
+                    break;
+                case "导演/监督":
+                    staff.监督.push(staffInfo);
+                    break;
+                default:
+                    if (staffMember.empDesc.includes("人物设计")) {
+                        staff.人物设计.push(staffInfo);
+                    } else {
+                        staff.其他.push(staffInfo);
+                    }
+            }
+        });
+
+        // console.log(staff);
         const data = {
             detail: {
-                name: gameDetails.name,
-                chineseName: gameDetails.chineseName,
+                name: gameData.game.name,
+                chineseName: gameData.game.chineseName,
                 extensionName: extensionName,
-                introduction: gameDetails.introduction,
-                gId: gameDetails.gid,
-                vndbId: vndbId,
+                introduction: gameData.game.introduction,
+                gid: gameData.game.gid,
+                vid: vid,
                 cover: `./${gid}/cover.webp`,
                 backgroundImage: `./${gid}/background.webp`,
                 savePath: savePath,
                 gamePath: gamePath,
-                moreEntry: gameDetails.moreEntry,
-                typeDesc: gameDetails.typeDesc,
-                releaseDate: gameDetails.releaseDate,
-                restricted: gameDetails.restricted,
+                moreEntry: gameData.game.moreEntry,
+                typeDesc: gameData.game.typeDesc,
+                releaseDate: gameData.game.releaseDate,
+                restricted: gameData.game.restricted,
                 website: website,
-                releases: gameDetails.releases,
-                staff: gameDetails.detail.staff
+                releases: gameData.game.releases,
+                staff: staff
             },
             characters: characters,
             saves: saves,
             memory: memory
         };
+        await addObjectToJsonFile(data);
         return data;
     } catch (error) {
         console.error('Error in organizeGameData:', error);
@@ -221,67 +271,139 @@ async function organizeGameData(gid, savePath, gamePath) {
 
 // 封装API请求函数
 async function queryVNDB(filters, fields) {
-  const response = await fetch('https://api.vndb.org/kana/vn', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      filters: filters,
-      fields: fields
-    }),
-  });
-  return await response.json();
+    const response = await fetch('https://api.vndb.org/kana/vn', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            filters: filters,
+            fields: fields
+        }),
+    });
+    return await response.json();
 }
 
 // 获取游戏截图
 async function getScreenshotsByTitle(title) {
-  try {
-    const data = await queryVNDB(["search", "=", title], "title, screenshots{url}");
-    if (data.results.length > 0) {
-      const vn = data.results[0];
-      console.log(`获取到 "${vn.title}" 的截图:`);
-      return vn.screenshots.map(screenshot => screenshot.url);
-    } else {
-      console.log(`未找到标题为 "${title}" 的视觉小说。`);
-      return [];
+    try {
+        const data = await queryVNDB(["search", "=", title], "title, screenshots{url}");
+        if (data.results.length > 0) {
+            const vn = data.results[0];
+            console.log(`获取到 "${vn.title}" 的截图:`);
+            return vn.screenshots.map(screenshot => screenshot.url);
+        } else {
+            console.log(`未找到标题为 "${title}" 的视觉小说。`);
+            return [];
+        }
+    } catch (error) {
+        console.error("获取截图时出错:", error);
+        return [];
     }
-  } catch (error) {
-    console.error("获取截图时出错:", error);
-    return [];
-  }
 }
 
 // 获取游戏封面
 async function getCoverByTitle(title) {
-  try {
-    const data = await queryVNDB(["search", "=", title], "title, image{url}");
-    if (data.results.length > 0) {
-      const vn = data.results[0];
-      if (vn.image) {
-        console.log(`获取到 "${vn.title}" 的封面:`);
-        return vn.image.url;
-      } else {
-        console.log(`"${vn.title}" 没有封面图片。`);
+    try {
+        const data = await queryVNDB(["search", "=", title], "title, image{url}");
+        if (data.results.length > 0) {
+            const vn = data.results[0];
+            if (vn.image) {
+                console.log(`获取到 "${vn.title}" 的封面:`);
+                return vn.image.url;
+            } else {
+                console.log(`"${vn.title}" 没有封面图片。`);
+                return null;
+            }
+        } else {
+            console.log(`未找到标题为 "${title}" 的视觉小说。`);
+            return null;
+        }
+    } catch (error) {
+        console.error("获取封面时出错:", error);
         return null;
-      }
-    } else {
-      console.log(`未找到标题为 "${title}" 的视觉小说。`);
-      return null;
     }
-  } catch (error) {
-    console.error("获取封面时出错:", error);
-    return null;
-  }
 }
+
+async function getVIDByTitle(title) {
+    try {
+        const data = await queryVNDB(["search", "=", title], "id, title");
+        if (data.results.length > 0) {
+            const vn = data.results[0];
+            console.log(`获取到 "${vn.title}" 的ID:`);
+            return vn.id;
+        } else {
+            console.log(`未找到标题为 "${title}" 的视觉小说。`);
+            return null;
+        }
+    } catch (error) {
+        console.error("获取ID时出错:", error);
+        return null;
+    }
+}
+
+async function queryVNDBc(filters, fields) {
+    const response = await fetch('https://api.vndb.org/kana/character', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            filters: filters,
+            fields: fields
+        }),
+    });
+    return await response.json();
+}
+
+async function getCharacterIDByName(name, vnId) {
+    try {
+        const filters = ["and",
+            ["search", "=", name],
+            ["vn", "=", ["id", "=", vnId]]
+        ];
+        const fields = "id,name";
+        console.log("发送到 API 的过滤器:", JSON.stringify(filters));
+        console.log("发送到 API 的字段:", fields);
+
+        const data = await queryVNDBc(filters, fields);
+
+        if (data.results && data.results.length > 0) {
+            const character = data.results[0];
+            console.log(`获取到角色 "${character.name}" 的ID: ${character.id}`);
+            return character.id;
+        } else {
+            console.log(`未找到名为 "${name}" 的角色。`);
+            return null;
+        }
+    } catch (error) {
+        console.error("获取角色ID时出错:", error);
+        return null;
+    }
+}
+
+// let data = {};
+
+// data = await organizeGameData(27702, 11, 'C:\\Users\\Administrator\\AppData\\Roaming\\RenPy\\月に寄りそう乙女の作法\\saves', 'C:\\Users\\Administrator\\AppData\\Roaming\\RenPy\\月に寄りそう乙女の作法');
+// // 将数据转换为JSON字符串
+// const jsonData = JSON.stringify(data, null, 2); // 第二个参数null和第三个参数2确保JSON文件格式化美观
+
+// // 写入文件
+// fs.writeFile('data.json', jsonData, 'utf8', (err) => {
+//     if (err) {
+//         console.error('Failed to write to file:', err);
+//     } else {
+//         console.log('Data successfully written to file');
+//     }
+// });
 
 // 使用示例
 // async function example() {
 //   const title = "Steins;Gate";
-  
+
 //   const screenshots = await getScreenshotsByTitle(title);
 //   console.log(screenshots);
-  
+
 //   const cover = await getCoverByTitle(title);
 //   console.log(cover);
 // }
@@ -318,7 +440,7 @@ async function getCoverByTitle(title) {
 //     const jsonData = JSON.stringify(data, null, 2); // 第二个参数null和第三个参数2确保JSON文件格式化美观
 
 //     // 写入文件
-//     fs.writeFile('gameDetails.json', jsonData, 'utf8', (err) => {
+//     fs.writeFile('gameData.json', jsonData, 'utf8', (err) => {
 //         if (err) {
 //             console.error('Failed to write to file:', err);
 //         } else {
@@ -346,4 +468,4 @@ async function getCoverByTitle(title) {
 //     console.error('Failed to fetch game ID:', error);
 // });
 
-export { searchGameList, searchGameId, searchGameDetails, getScreenshotsByTitle, getCoverByTitle }
+export { searchGameList, searchGameId, searchGameDetails, getScreenshotsByTitle, getCoverByTitle, organizeGameData, searchCharacterId };

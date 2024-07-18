@@ -2,6 +2,8 @@ import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { addObjectToJsonFile, addNewGameToData, addCharacterImgToData, getGameData } from '../renderer/src/data/dataManager.mjs'
+import { searchGameList, searchGameId, getScreenshotsByTitle, getCoverByTitle, organizeGameData } from "../renderer/src/components/scraper.mjs"
 
 let mainWindow
 
@@ -112,4 +114,13 @@ ipcMain.handle('open-file-folder-dialog', async (event) => {
   } else {
     return result.filePaths[0];
   }
+});
+
+ipcMain.on('add-new-game-to-data', async (event, gid, coverUrl, bgUrl) => {
+  await addNewGameToData(gid, coverUrl, bgUrl);
+});
+
+ipcMain.on('organize-game-data', async (event, gid, savePath, gamePath) => {
+  await organizeGameData(gid, savePath, gamePath);
+  event.sender.send('game-data-organized');
 });
