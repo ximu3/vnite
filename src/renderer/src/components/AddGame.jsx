@@ -1,8 +1,9 @@
 import { useStore, create } from 'zustand';
 import { MemoryRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import { useRootStore } from './Root';
 
-const useAddGame = create(set => ({
+export const useAddGame = create(set => ({
     gameName: '',
     gid: '',
     vid: '',
@@ -283,10 +284,14 @@ function GameBg(){
 }
 
 function GameLoad(){
+  const {setData} = useRootStore();
   const {isLoading, setIsLoading} = useAddGame();
   useEffect(() => {
     window.electron.ipcRenderer.on('game-data-organized', () => {
       setIsLoading(false);
+      window.electron.ipcRenderer.invoke('get-game-data').then((data) => {
+        setData(data);
+      })
     })
     return () => {
       window.electron.ipcRenderer.removeAllListeners('game-data-organized');
