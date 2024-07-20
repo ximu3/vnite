@@ -50,10 +50,10 @@ async function getGameData() {
 }
 
 async function addNewGameToData(gid, coverUrl, bgUrl){
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = dirname(__filename);
+    // const __filename = fileURLToPath(import.meta.url);
+    // const __dirname = dirname(__filename);
 
-    const folderPath = `src/renderer/src/data/${gid}`;
+    const folderPath = `src/renderer/public/${gid}`;
     const memoryFolderPath = path.join(folderPath, 'memory');
     const savesFolderPath = path.join(folderPath, 'saves');
     const characterFolderPath = path.join(folderPath, 'characters');
@@ -84,10 +84,10 @@ async function addNewGameToData(gid, coverUrl, bgUrl){
 }
 
 async function addCharacterImgToData(gid, cid, imgUrls){
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = dirname(__filename);
+    // const __filename = fileURLToPath(import.meta.url);
+    // const __dirname = dirname(__filename);
 
-    const folderPath = `src/renderer/src/data/${gid}`;
+    const folderPath = `src/renderer/public/${gid}`;
     const characterFolderPath = path.join(folderPath, 'characters');
     const characterImgPath = path.join(characterFolderPath, `${cid}.webp`);
 
