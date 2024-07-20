@@ -202,11 +202,11 @@ async function organizeGameData(gid, savePath, gamePath) {
                 introduction: characterDetails.data.character.introduction,
                 cid: character.cid,
                 vid: vidc,
-                cover: `./${gid}/characters/${character.cid}.webp`,
+                cover: cover,
                 extensionName: extensionName,
-                birthday: characterDetails.data.character.birthday,
+                birthday: characterDetails.data.character.birthday && characterDetails.data.character.birthday.replace(/^.{5}/, ''),
                 gender: characterDetails.data.character.gender,
-                website: [{ "title": "月幕Galgame", "url": `https://www.ymgal.games/ca${character.cid}` }, { "title": "VNDB", "url": `https://vndb.org/${vidc}` }]
+                websites: [{ "title": "月幕Galgame", "url": `https://www.ymgal.games/ca${character.cid}` }, { "title": "VNDB", "url": `https://vndb.org/${vidc}` }]
             });
         }
         const saves = [];
