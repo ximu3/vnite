@@ -183,7 +183,14 @@ async function organizeGameData(gid, savePath, gamePath) {
         const vid = await getVIDByTitle(gameData.game.name);
         for (const character of gameData.game.characters) {
             const characterDetails = await searchCharacterId(character.cid);
-            await addCharacterImgToData(gid, character.cid, characterDetails.data.character.mainImg);
+            let cover = `/${gid}/characters/${character.cid}.webp`
+            if (!characterDetails.data.character.mainImg) {
+                console.log(`未找到角色 ${character.cid} 的主图。`);
+                cover = ''
+                continue;
+            }else{
+                await addCharacterImgToData(gid, character.cid, characterDetails.data.character.mainImg);
+            }
             let extensionName = []
             for (const extension of characterDetails.data.character.extensionName) {
                 extensionName.push(extension.name);
