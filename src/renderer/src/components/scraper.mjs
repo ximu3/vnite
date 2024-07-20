@@ -1,6 +1,5 @@
 import fetch from 'node-fetch';
 import { addCharacterImgToData, addNewGameToData, addObjectToJsonFile } from '../data/dataManager.mjs';
-import fs from 'fs';
 
 // 定义获取Access Token的函数
 async function getAccessToken(clientId, clientSecret) {
@@ -140,7 +139,41 @@ async function searchCharacterId(cid) {
     }
 }
 
+async function searchDeveloperId(oid) {
+    const clientId = 'ymgal';
+    const clientSecret = 'luna0327';
+    try {
+        const accessToken = await getAccessToken(clientId, clientSecret);
+        const baseURL = 'https://www.ymgal.games';
+        const url = new URL('/open/archive', baseURL);
+        // url.searchParams.append('mode', 'developer');
+        url.searchParams.append('orgId', oid);
 
+        const headers = new Headers();
+        headers.append('Accept', 'application/json;charset=utf-8');
+        headers.append('Authorization', `Bearer ${accessToken}`);
+        headers.append('version', '1');
+
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: headers
+        });
+        const data = await response.json();
+        return data.data.org.name;
+    } catch (error) {
+        console.error('Error in searchDeveloperId:', error);
+        throw error;
+    }
+}
+
+function getCurrentDate() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  
+  return `${year}.${month}.${day}`;
+}
 
 async function organizeGameData(gid, savePath, gamePath) {
     try {
@@ -188,11 +221,11 @@ async function organizeGameData(gid, savePath, gamePath) {
         for (const extension of gameData.game.extensionName) {
             extensionName.push(extension.name);
         }
-        let website = []
+        let websites = []
         for (const web of gameData.game.website) {
-            website.push({ "title": web.title, "url": web.link });
+            websites.push({ "title": web.title, "url": web.link });
         }
-        website.push({ "title": "月幕Galgame", "url": `https://www.ymgal.games/ga${gid}` }, { "title": "VNDB", "url": `https://vndb.org/${vid}` });
+        websites.push({ "title": "月幕Galgame", "url": `https://www.ymgal.games/ga${gid}` }, { "title": "VNDB", "url": `https://vndb.org/${vid}` });
         const staff = {
             "脚本": [],
             "音乐": [],
@@ -236,6 +269,13 @@ async function organizeGameData(gid, savePath, gamePath) {
             }
         });
 
+        // Remove empty staff categories
+        for (const category in staff) {
+            if (staff[category].length === 0) {
+                delete staff[category];
+            }
+        }
+
         // console.log(staff);
         const data = {
             detail: {
@@ -245,15 +285,20 @@ async function organizeGameData(gid, savePath, gamePath) {
                 introduction: gameData.game.introduction,
                 gid: gameData.game.gid,
                 vid: vid,
-                cover: `./${gid}/cover.webp`,
-                backgroundImage: `./${gid}/background.webp`,
+                cover: `/${gid}/cover.webp`,
+                backgroundImage: `/${gid}/background.webp`,
                 savePath: savePath,
                 gamePath: gamePath,
+                addDate: getCurrentDate(),
+                gameDuration: "",
+                lastVisitDate: "",
                 moreEntry: gameData.game.moreEntry,
                 typeDesc: gameData.game.typeDesc,
+                developer: await searchDeveloperId(gameData.game.developerId),
+                developerId: gameData.game.developerId,
                 releaseDate: gameData.game.releaseDate,
                 restricted: gameData.game.restricted,
-                website: website,
+                websites: websites,
                 releases: gameData.game.releases,
                 staff: staff
             },
