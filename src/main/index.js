@@ -124,3 +124,7 @@ ipcMain.on('organize-game-data', async (event, gid, savePath, gamePath) => {
   await organizeGameData(gid, savePath, gamePath);
   event.sender.send('game-data-organized');
 });
+
+ipcMain.handle('get-game-data', async (event) => {
+  return await getGameData();
+});
