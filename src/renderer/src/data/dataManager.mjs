@@ -49,6 +49,21 @@ async function getGameData() {
 
 }
 
+async function updateGameData(newData) {
+    const filePath = 'src/renderer/src/data/data.json'
+    try {
+        // 将更新后的数组转换回 JSON 字符串
+        const updatedJsonString = JSON.stringify(newData, null, 2);
+        
+        // 将更新后的 JSON 写回文件
+        await fs.writeFile(filePath, updatedJsonString, 'utf8');
+        
+        console.log('游戏数据已成功更新');
+    } catch (error) {
+        console.error('更新游戏数据时出错:', error);
+    }
+}
+
 async function addNewGameToData(gid, coverUrl, bgUrl){
     // const __filename = fileURLToPath(import.meta.url);
     // const __dirname = dirname(__filename);
@@ -112,4 +127,4 @@ async function addCharacterImgToData(gid, cid, imgUrls){
 
 // addCharacterImgToData('123', '456', 'https://t.vndb.org/cv/23/8523.jpg');
 
-export { addObjectToJsonFile, addNewGameToData, addCharacterImgToData, getGameData };
+export { addObjectToJsonFile, addNewGameToData, addCharacterImgToData, getGameData, updateGameData };

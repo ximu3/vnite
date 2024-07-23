@@ -287,11 +287,9 @@ function GameLoad(){
   const {setData} = useRootStore();
   const {isLoading, setIsLoading} = useAddGame();
   useEffect(() => {
-    window.electron.ipcRenderer.on('game-data-organized', () => {
+    window.electron.ipcRenderer.on('game-data-organized', (event, gameData) => {
       setIsLoading(false);
-      window.electron.ipcRenderer.invoke('get-game-data').then((data) => {
-        setData(data);
-      })
+      setData(gameData);
     })
     return () => {
       window.electron.ipcRenderer.removeAllListeners('game-data-organized');

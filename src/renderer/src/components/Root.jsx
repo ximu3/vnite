@@ -8,6 +8,16 @@ import { useAddGame } from './AddGame';
 export const useRootStore = create(set => ({
   data: [],
   setData: (data) => set({ data }),
+  updateData: (path, value) => set((state) => {
+    const newData = JSON.parse(JSON.stringify(state.data));
+    let current = newData;
+    for (let i = 0; i < path.length - 1; i++) {
+      current = current[path[i]];
+    }
+    current[path[path.length - 1]] = value;
+    return { data: newData };
+  }),
+  setAlert: (alert) => set({ alert })
 }));
 
 function NavButton({ to, name }) {
@@ -27,13 +37,21 @@ function NavButton({ to, name }) {
 }
 
 function Root() {
-  const { data, setData } = useRootStore();
+  const { data, setData, alert } = useRootStore();
   const { isloading } = useAddGame();
   useEffect(() => {
     window.electron.ipcRenderer.invoke('get-game-data').then((data) => {
       setData(data);
     })
+    window.electron.ipcRenderer.on('game-data-updated', (event, data) => {
+      setData(data);
+    })
   }, [isloading])
+  useEffect(() => {
+    if (data.length !== 0) {
+      window.electron.ipcRenderer.send('save-game-data', data)
+    }
+  }, [data])
   return (
     <div className='flex flex-row w-full h-full'>
       <ul className="w-14 menu bg-base-300 rounded-box shrink-0">

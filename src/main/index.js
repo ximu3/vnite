@@ -161,3 +161,11 @@ app.on('will-quit', () => {
   }
 });
 
+ipcMain.on('update-game-data', async (event, newData) => {
+  await updateGameData(newData);
+  mainWindow.webContents.send('game-data-updated', newData);
+})
+
+ipcMain.on('save-game-data', async (event, data) => {
+  await updateGameData(data);
+})
