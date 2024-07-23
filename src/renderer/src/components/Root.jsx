@@ -7,6 +7,7 @@ import { useAddGame } from './AddGame';
 
 export const useRootStore = create(set => ({
   data: [],
+  alert: "",
   setData: (data) => set({ data }),
   updateData: (path, value) => set((state) => {
     const newData = JSON.parse(JSON.stringify(state.data));
@@ -54,6 +55,13 @@ function Root() {
   }, [data])
   return (
     <div className='flex flex-row w-full h-full'>
+      {alert && 
+        <div className="toast toast-center">
+          <div className="alert alert-error">
+            <span className='text-base-100'>{alert}</span>
+          </div>
+        </div>
+      }
       <ul className="w-14 menu bg-base-300 rounded-box shrink-0">
         <li><NavButton to="/library" className="bg-primary" name="l" /></li>
         <li><NavButton to="/record" className="bg-primary" name="r" /></li>
