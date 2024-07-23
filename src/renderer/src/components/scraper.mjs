@@ -296,6 +296,8 @@ async function organizeGameData(gid, savePath, gamePath) {
                 backgroundImage: `/${gid}/background.webp`,
                 savePath: savePath,
                 gamePath: gamePath,
+                savePath: savePath.replace(/\\/g, '/'),
+                gamePath: gamePath.replace(/\\/g, '/'),
                 addDate: getCurrentDate(),
                 gameDuration: "",
                 lastVisitDate: "",
