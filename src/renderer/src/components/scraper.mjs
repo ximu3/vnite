@@ -283,6 +283,8 @@ async function organizeGameData(gid, savePath, gamePath) {
             }
         }
 
+
+
         // console.log(staff);
         const data = {
             detail: {
@@ -294,12 +296,10 @@ async function organizeGameData(gid, savePath, gamePath) {
                 vid: vid,
                 cover: `/${gid}/cover.webp`,
                 backgroundImage: `/${gid}/background.webp`,
-                savePath: savePath,
-                gamePath: gamePath,
                 savePath: savePath.replace(/\\/g, '/'),
                 gamePath: gamePath.replace(/\\/g, '/'),
                 addDate: getCurrentDate(),
-                gameDuration: "",
+                gameDuration: 0,
                 lastVisitDate: "",
                 moreEntry: gameData.game.moreEntry,
                 typeDesc: gameData.game.typeDesc,
