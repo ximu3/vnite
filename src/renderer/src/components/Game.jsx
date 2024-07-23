@@ -122,8 +122,6 @@ function Game({index}) {
                     <div className="self-center font-normal badge badge-outline badge-success">云存档：最新</div>
                     <div className="self-center font-normal badge badge-outline badge-accent">游玩中</div>
                 </div>
-                <button className='absolute w-28 btn left-14 -bottom-32 btn-success'>开始</button>
-                <button className='absolute w-28 btn left-48 -bottom-32 btn-accent'>设置</button>
                 <button className='absolute w-28 btn left-14 -bottom-32 btn-success' onClick={handleStart}>开始</button>
                 <button className='absolute w-28 btn left-48 -bottom-32 btn-accent' onClick={()=>{document.getElementById('my_modal_2').showModal()}}>设置</button>
 
@@ -204,26 +202,6 @@ function Detail({gameData}){
                                 </div>
                             )
                         })}
-                        {/* <div className='flex flex-row justify-between'>
-                            <div>
-                                <a className='link link-hover' href='http://kinkoi.nekonyansoft.com/' target='_blank'>金辉恋曲四重奏</a>
-                                <div className='text-xs'>发行时间：2021-06-11&nbsp;&nbsp;发行语言：Japanese</div>
-                            </div>
-                            <div className='flex gap-2'>
-                                <div className='badge-outline badge badge-info'>Windows</div>
-                                <div className='badge-outline badge badge-success'>全年龄</div>
-                            </div>
-                        </div>
-                        <div className='flex flex-row justify-between'>
-                            <div>
-                                <a className='link link-hover' href='http://kinkoi.nekonyansoft.com/' target='_blank'>Kinkoi: Golden Loveriche 18+ Steam Patch</a>
-                                <div className='text-xs'>发行时间：2021-06-11&nbsp;&nbsp;发行语言：Japanese</div>
-                            </div>
-                            <div className='flex gap-2'>
-                                <div className='badge-outline badge badge-info'>Windows</div>
-                                <div className='badge-outline badge badge-error'>R18+</div>
-                            </div>
-                        </div> */}
                     </div>
                 </div>
             </div>
@@ -244,9 +222,6 @@ function Detail({gameData}){
                         {gameData['websites'].map((website, index) => {
                             return <div key={index}>▪<a className='link link-secondary' href={website['url']} target='_blank'>{website['title']}</a></div>
                         })}
-                        {/* <div>▪官网：<a className='link link-secondary' href="http://sagaplanets.product.co.jp/works/kinkoigt/" target="_blank" rel="noreferrer">http://sagaplanets.product.co.jp/works/kinkoigt/</a></div>
-                        <div>▪Steam：<a className='link link-secondary' href="https://store.steampowered.com/app/1277940/_/" target="_blank" rel="noreferrer">https://store.steampowered.com/app/1277940/_/</a></div>
-                        <div>▪月幕Galgame：<a className='link link-secondary' href="https://www.ymgal.games/ga27702" target="_blank" rel="noreferrer">https://www.ymgal.games/ga27702</a></div> */}
                     </div>
                 </div>
                 <div className='p-3 bg-base-300'>
@@ -268,28 +243,6 @@ function Detail({gameData}){
                                 )
                             })
                         }
-                        {/* <div>脚本：</div>
-                        <div>&nbsp;▪<a className='link link-secondary' href="https://www.ymgal.games/pa12298" target="_blank" rel="noreferrer">さかき 傘</a></div>
-                        <div>&nbsp;▪<a className='link link-secondary' href="https://www.ymgal.games/pa12298" target="_blank" rel="noreferrer">にっし～</a><span className='text-xs'>（Akane）</span></div>
-                        <div>音乐：</div>
-                        <div>&nbsp;▪<a className='link link-secondary' href="https://www.ymgal.games/pa12298" target="_blank" rel="noreferrer">松本 慎一郎</a><span className='text-xs'>（BGM）</span></div>
-                        <div>&nbsp;▪<a className='link link-secondary' href="https://www.ymgal.games/pa12298" target="_blank" rel="noreferrer">尾崎武士</a><span className='text-xs'>（ED guitar）</span></div>
-                        <div>&nbsp;▪<a className='link link-secondary' href="https://www.ymgal.games/pa12298" target="_blank" rel="noreferrer">高瀬 一矢</a><span className='text-xs'>（ED）</span></div>
-                        <div>原画：</div>
-                        <div>&nbsp;▪<a className='link link-secondary' href="https://www.ymgal.games/pa12298" target="_blank" rel="noreferrer">アトリエ空機関</a><span className='text-xs'>（Backgrounds）</span></div>
-                        <div>&nbsp;▪<a className='link link-secondary' href="https://www.ymgal.games/pa12298" target="_blank" rel="noreferrer">ぴこぴこぐらむ</a><span className='text-xs'>（Chieka, SD）</span></div> */}
-                        {/* <div>歌曲：</div>
-                        <div>&nbsp;▪<a className='link link-secondary' href="https://www.ymgal.games/pa12298" target="_blank" rel="noreferrer">さかき 傘</a></div>
-                        <div>&nbsp;▪<a className='link link-secondary' href="https://www.ymgal.games/pa12298" target="_blank" rel="noreferrer">にっし～</a><span className='text-xs'>（Akane）</span></div>
-                        <div>人物设计：</div>
-                        <div>&nbsp;▪<a className='link link-secondary' href="https://www.ymgal.games/pa12298" target="_blank" rel="noreferrer">さかき 傘</a></div>
-                        <div>&nbsp;▪<a className='link link-secondary' href="https://www.ymgal.games/pa12298" target="_blank" rel="noreferrer">にっし～</a><span className='text-xs'>（Akane）</span></div>
-                        <div>监督：</div>
-                        <div>&nbsp;▪<a className='link link-secondary' href="https://www.ymgal.games/pa12298" target="_blank" rel="noreferrer">さかき 傘</a></div>
-                        <div>&nbsp;▪<a className='link link-secondary' href="https://www.ymgal.games/pa12298" target="_blank" rel="noreferrer">にっし～</a><span className='text-xs'>（Akane）</span></div>
-                        <div>其他：</div>
-                        <div>&nbsp;▪<a className='link link-secondary' href="https://www.ymgal.games/pa12298" target="_blank" rel="noreferrer">さかき 傘</a></div>
-                        <div>&nbsp;▪<a className='link link-secondary' href="https://www.ymgal.games/pa12298" target="_blank" rel="noreferrer">にっし～</a><span className='text-xs'>（Akane）</span></div> */}
                     </div>
                 </div>
             </div>
@@ -332,55 +285,6 @@ function Character({characterData}){
                     </div>
                 )
             })}
-            {/* <div className='flex flex-row items-start justify-between gap-5'>
-                <div className='flex flex-row w-3/4 bg-base-300 grow'>
-                    <img src={c1} alt="c1" className="bg-cover"></img>
-                    <div className='flex flex-col'>
-                        <div className='p-3 text-lg font-bold'>玛里亚·毕肖普</div>
-                        <div className='p-3 pt-0 text-sm'>主人公无比痴迷的歌手。<br />自从于网络发布歌曲,迄今在全世界已有过亿下载量,<br />包揽了美国、英国、日本的无数音乐大奖。<br />被称为日本音乐界最后的女歌手。<br />没有与艺人事务所签约,<br />除了歌曲无法查询她的任何个人信息。</div>
-                    </div>
-                </div>
-                <div className='flex flex-col w-1/4 gap-5 text-sm'>
-                    <div className='p-3 bg-base-300'>
-                        <div className='pb-2 font-bold'>基本信息</div>
-                        <div>原名：マリア・ビショップ</div>
-                        <div>中文名：玛里亚·毕肖普</div>
-                        <div>别名：Maria Bishop</div>
-                        <div>生日：03-03</div>
-                        <div>性别：女</div>
-                    </div>
-                    <div className='p-3 bg-base-300'>
-                        <div className='pb-2 font-bold'>相关网站</div>
-                        <div>▪<a className='link link-secondary' href="http://sagaplanets.product.co.jp/works/kinkoigt/" target="_blank" rel="noreferrer">月幕Galgame</a></div>
-                        <div>▪<a className='link link-secondary' href="http://sagaplanets.product.co.jp/works/kinkoigt/" target="_blank" rel="noreferrer">VNDB</a></div>
-                    </div>
-                </div>
-            </div>
-            <div className='m-0 divider'></div>
-            <div className='flex flex-row items-start justify-between gap-5'>
-                <div className='flex flex-row w-3/4 bg-base-300 grow'>
-                    <img src={c2} alt="c1" className="bg-cover"></img>
-                    <div className='flex flex-col'>
-                        <div className='p-3 text-lg font-bold'>僧间理亚</div>
-                        <div className='p-3 pt-0 text-sm'>生性阴郁的混混少女,与央路不同班。<br />爱抽烟,因此数次受到停学处分。<br />嘴非常毒,对任何事都表现得毫无兴趣,性格乖僻。<br />是全校闻名的不良学生,除了玲奈等生性开朗的人以外没有人接近她</div>
-                    </div>
-                </div>
-                <div className='flex flex-col w-1/4 gap-5 text-sm'>
-                    <div className='p-3 bg-base-300'>
-                        <div className='pb-2 font-bold'>基本信息</div>
-                        <div>原名：僧間 理亜</div>
-                        <div>中文名：僧间理亚</div>
-                        <div>别名： ソーマ君 、 Souma-kun 、 Soma Ria 、 そうま りあ 、 Souma Ria 、 ソーマ君</div>
-                        <div>生日：03-03</div>
-                        <div>性别：女</div>
-                    </div>
-                    <div className='p-3 bg-base-300'>
-                        <div className='pb-2 font-bold'>相关网站</div>
-                        <div>▪<a className='link link-secondary' href="http://sagaplanets.product.co.jp/works/kinkoigt/" target="_blank" rel="noreferrer">月幕Galgame</a></div>
-                        <div>▪<a className='link link-secondary' href="http://sagaplanets.product.co.jp/works/kinkoigt/" target="_blank" rel="noreferrer">VNDB</a></div>
-                    </div>
-                </div>
-            </div> */}
         </div> 
     )
 }
