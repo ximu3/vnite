@@ -63,6 +63,17 @@ function Game({index}) {
             window.electron.ipcRenderer.removeAllListeners('exe-running-time');
         };
     }, []);
+    function handleStart(){
+        if (gameData['gamePath']) {
+            window.electron.ipcRenderer.send('start-game', gameData['gamePath'], index)
+        } else {
+            setAlert('游戏路径未设置，请前往设置!')
+            setTimeout(() => {setAlert('')}, 3000)
+        }
+    }
+    function quitSetting(){
+        setSettingData(data[index])
+    }
     function formatTime(seconds) {
         if (seconds < 0) {
             return "无效时间";
@@ -83,6 +94,19 @@ function Game({index}) {
     }
     return (
         <div className="flex flex-col w-full h-full overflow-auto scrollbar-base scrollbar-w-2">
+
+            <dialog id="my_modal_2" className="modal">
+                <div className="w-3/5 max-w-full max-h-full h-5/6 modal-box">
+                <form method="dialog">
+                    {/* if there is a button in form, it will close the modal */}
+                    <button className="absolute btn btn-sm btn-ghost right-2 top-2" onClick={quitSetting}>✕</button>
+                </form>
+                    <div className='w-full h-full p-6 pl-10 pr-10'>
+                        <Setting index={index} />
+                    </div>
+                </div>
+            </dialog>
+            
             <div className="relative w-full h-96">
                 
                 <img src={gameData['backgroundImage']} alt="bg" className="object-cover w-full h-full"></img>
@@ -100,6 +124,8 @@ function Game({index}) {
                 </div>
                 <button className='absolute w-28 btn left-14 -bottom-32 btn-success'>开始</button>
                 <button className='absolute w-28 btn left-48 -bottom-32 btn-accent'>设置</button>
+                <button className='absolute w-28 btn left-14 -bottom-32 btn-success' onClick={handleStart}>开始</button>
+                <button className='absolute w-28 btn left-48 -bottom-32 btn-accent' onClick={()=>{document.getElementById('my_modal_2').showModal()}}>设置</button>
 
                 {/* <div className="absolute z-0 w-full divider -bottom-44"></div> */}
                 <div className="absolute z-0 flex flex-row items-center w-full pl-8 h-28 -bottom-67 ">
@@ -432,6 +458,146 @@ function Memory(){
                 <div className='p-3 bg-base-300'>夕阳与少女与死亡</div>
             </div>
         </div>
+    )
+}
+
+function NavTabWithoutRouter({name}){
+    return (
+        <div className="tab tab-active" role="tab">
+            {name}
+        </div>
+    )
+}
+
+const useGameSetting = create(set => ({
+    activeTab: 'general',
+    setActiveTab: (activeTab) => set({activeTab}),
+    settingData: {},
+    setSettingData: (settingData) => set({settingData}),
+    updateSettiongData: (path, value) => set((state) => {
+        const newData = JSON.parse(JSON.stringify(state.settingData));
+        let current = newData;
+        for (let i = 0; i < path.length - 1; i++) {
+        current = current[path[i]];
+        }
+        current[path[path.length - 1]] = value;
+        return { settingData: newData };
+    }),
+    settingAlert: "",
+    setSettingAlert: (settingAlert) => set({settingAlert})
+}))
+
+
+function Setting({index}){
+    const { activeTab, setActiveTab } = useGameSetting()
+    const { updateData, data, setAlert, alert } = useRootStore()
+    const { settingData, updateSettiongData, setSettingData, settingAlert, setSettingAlert } = useGameSetting()
+    useEffect(() => {
+        setSettingData(data[index])
+    }, [data, index])
+    function quitSetting(){
+        setSettingData(data[index])
+        document.getElementById('my_modal_2').close()
+    }
+    function saveSetting(){
+        updateData([index], settingData)
+        setSettingAlert('保存成功')
+        setTimeout(() => {setSettingAlert('')}, 3000)
+    }
+    const tabs = ['general', 'advanced', 'media', 'archive'];
+    const renderContent = () => {
+        switch(activeTab) {
+            case 'general':
+                return <GeneralSettings index={index} />;
+            case 'advanced':
+                return <AdvancedSettings />;
+            case 'media':
+                return <MediaSettings />;
+            case 'archive':
+                return <ArchiveSettings />;
+            default:
+                return null;
+        }
+    };
+    return (
+        <div className='flex flex-col w-full gap-5'>
+            <div role="tablist" className="tabs tabs-bordered">
+                {tabs.map((tab) => (
+                    <a 
+                        key={tab}
+                        role="tab" 
+                        className={`tab ${activeTab === tab ? 'tab-active' : ''}`}
+                        onClick={() => setActiveTab(tab)}
+                    >
+                        {tab === 'general' ? '通用' : 
+                         tab === 'advanced' ? '高级' : 
+                         tab === 'media' ? '媒体' : '存档'}
+                    </a>
+                ))}
+            </div>
+            <div>
+                {renderContent()}
+            </div>
+            <div className='absolute flex flex-row gap-5 right-10 bottom-10'>
+                <button className='btn btn-primary' onClick={saveSetting}>保存</button>
+                <button className='btn btn-error' onClick={quitSetting}>取消</button>
+            </div>
+            {settingAlert &&
+                <div className="toast toast-center">
+                    <div className="alert alert-error">
+                        <span className='text-base-100'>{settingAlert}</span>
+                    </div>
+                </div>
+            }
+        </div>
+    )
+}
+
+function GeneralSettings({index}){
+    const { updateData, data } = useRootStore()
+    const { settingData, updateSettiongData, setSettingData } = useGameSetting()
+    // useEffect(() => {
+    //     setSettingData(data[index])
+    // }, [data, index])
+    // function quitSetting(){
+    //     setSettingData(data[index])
+    //     document.getElementById('my_modal_2').close()
+    // }
+    return(
+        <div className='flex flex-row w-full h-full gap-3'>
+            <div className='flex flex-col gap-3'>
+                <label className="flex items-center gap-2 input-sm input input-bordered focus-within:outline-none">
+                <div className='font-semibold'>原名 |</div>
+                <input type="text" name='gameName' className="grow" value={settingData?.detail?.name || ''} onChange={(e)=>{updateSettiongData(['detail', 'name'], e.target.value)}} />
+                </label>
+                <label className="flex items-center gap-2 input-sm input input-bordered focus-within:outline-none">
+                <div className='font-semibold'>中文名 |</div>
+                <input type="text" name='gameChineseName' className="grow" value={settingData?.detail?.chineseName || ''} onChange={(e)=>{updateSettiongData(['detail', 'chineseName'], e.target.value)}} />
+                </label>
+            </div>
+            {/* <div className='absolute flex flex-row gap-5 right-10 bottom-10'>
+                <button className='btn btn-primary' onClick={() => updateData([index], settingData)}>保存</button>
+                <button className='btn btn-error' onClick={quitSetting}>取消</button>
+            </div> */}
+        </div>
+    )
+}
+
+function AdvancedSettings(){
+    return(
+        <div>高级</div>
+    )
+}
+
+function MediaSettings(){
+    return(
+        <div>媒体</div>
+    )
+}
+
+function ArchiveSettings(){
+    return(
+        <div>存档</div>
     )
 }
 
