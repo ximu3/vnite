@@ -6,6 +6,8 @@ import mem from '../assets/mem.webp'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import { BrowserRouter, Routes, Route, Navigate, NavLink } from 'react-router-dom';
 import { useRootStore } from './Root'
+import { useEffect } from 'react'
+import { create } from 'zustand'
 
 function NavTab({to, name}){
     return (
@@ -23,9 +25,62 @@ function NavTab({to, name}){
 }
 
 function Game({index}) {
-    const { data, setData } = useRootStore();
+    const { data, setData, setAlert, updateData } = useRootStore();
     const gameData = data[index]['detail'];
     const characterData = data[index]['characters'];
+    const { settingData, setSettingData } = useGameSetting();
+    function getFormattedDate(date = new Date()) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        
+        return `${year}.${month}.${day}`;
+    }
+    useEffect(() => {
+        window.electron.ipcRenderer.on('game-start-result', (event, result) => {
+        if (result.success) {
+            return
+        } else {
+            setAlert(result.error);
+            setTimeout(() => {setAlert('')}, 3000);
+        }
+        });
+
+        window.electron.ipcRenderer.on('game-running-time', (event, { processId, runningTime }) => {
+            if (processId === index) {
+                updateData([index, 'detail', 'gameDuration'], data[index]['detail']['gameDuration'] + runningTime);
+                updateData([index, 'detail', 'lastVisitDate'], getFormattedDate());
+                if (runningTime >= 180){
+                    updateData([index, 'detail', 'frequency'], data[index]['detail']['frequency'] + 1);
+                }
+            }else{
+                return
+            }
+        });
+
+        return () => {
+            window.electron.ipcRenderer.removeAllListeners('exe-open-result');
+            window.electron.ipcRenderer.removeAllListeners('exe-running-time');
+        };
+    }, []);
+    function formatTime(seconds) {
+        if (seconds < 0) {
+            return "无效时间";
+        }
+        
+        if (seconds < 60) {
+            return "小于一分钟";
+        }
+        
+        const minutes = Math.floor(seconds / 60);
+        const hours = minutes / 60;
+
+        if (hours < 1) {
+            return `${minutes}分钟`;
+        } else {
+            return `${hours.toFixed(1)}小时`;
+        }
+    }
     return (
         <div className="flex flex-col w-full h-full overflow-auto scrollbar-base scrollbar-w-2">
             <div className="relative w-full h-96">
@@ -61,7 +116,7 @@ function Game({index}) {
                                 <span className="icon-[material-symbols-light--avg-time-outline-sharp] w-14 h-14"></span>
                             </div>
                             <div className="stat-title">游戏时长</div>
-                            <div className="stat-value text-secondary">17.3小时</div>
+                            <div className="stat-value text-secondary">{formatTime(gameData['gameDuration'])}</div>
                             {/* <div className="stat-desc">21% more than last month</div> */}
                         </div>
                         <div className="stat">

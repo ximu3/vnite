@@ -2,8 +2,9 @@ import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { addObjectToJsonFile, addNewGameToData, addCharacterImgToData, getGameData } from '../renderer/src/data/dataManager.mjs'
+import { addNewGameToData, getGameData, updateGameData } from '../renderer/src/data/dataManager.mjs'
 import { searchGameList, searchGameId, getScreenshotsByTitle, getCoverByTitle, organizeGameData } from "../renderer/src/components/scraper.mjs"
+import { spawn } from 'child_process';
 
 let mainWindow
 
@@ -122,9 +123,41 @@ ipcMain.on('add-new-game-to-data', async (event, gid, coverUrl, bgUrl) => {
 
 ipcMain.on('organize-game-data', async (event, gid, savePath, gamePath) => {
   await organizeGameData(gid, savePath, gamePath);
-  event.sender.send('game-data-organized');
+  gameData = await getGameData();
+  mainWindow.webContents.send('game-data-organized', gameData);
 });
 
 ipcMain.handle('get-game-data', async (event) => {
   return await getGameData();
 });
+
+let processes = new Map();
+
+ipcMain.on('start-game', (event, gamePath, gameId) => {
+  const processId = gameId
+  const startTime = Date.now();
+  
+  const exeProcess = spawn(gamePath);
+  processes.set(processId, { process: exeProcess, startTime });
+
+  exeProcess.on('error', (error) => {
+    event.reply('game-start-result', { processId, success: false, error: error.message });
+    processes.delete(processId);
+  });
+
+  exeProcess.on('exit', (code, signal) => {
+    const endTime = Date.now();
+    const runningTime = Math.floor((endTime - startTime) / 1000); // 转换为秒
+    mainWindow.webContents.send('game-running-time', { processId, runningTime });
+    processes.delete(processId);
+  });
+
+  event.reply('game-start-result', { processId, success: true });
+});
+
+app.on('will-quit', () => {
+  for (let [id, { process }] of processes) {
+    process.kill();
+  }
+});
+
