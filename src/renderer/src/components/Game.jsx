@@ -92,6 +92,16 @@ function Game({index}) {
             return `${hours.toFixed(1)}小时`;
         }
     }
+    function convertStatus(status) {
+        const statusMap = {
+            0: "未开始",
+            1: "游玩中",
+            2: "已完成",
+            3: "N周目"
+        };
+        
+        return statusMap[status] || "未知状态";
+    }
     return (
         <div className="flex flex-col w-full h-full overflow-auto scrollbar-base scrollbar-w-2">
 
@@ -120,7 +130,7 @@ function Game({index}) {
                 <div className="absolute flex flex-row gap-2 text-4xl font-bold left-14 -bottom-14">
                     {gameData['chineseName'] ? gameData['chineseName'] : gameData['name']}
                     <div className="self-center font-normal badge badge-outline badge-success">云存档：最新</div>
-                    <div className="self-center font-normal badge badge-outline badge-accent">游玩中</div>
+                    <div className="self-center font-normal badge badge-outline badge-accent">{convertStatus(gameData['playtStatus'])}</div>
                 </div>
                 <button className='absolute w-28 btn left-14 -bottom-32 btn-success' onClick={handleStart}>开始</button>
                 <button className='absolute w-28 btn left-48 -bottom-32 btn-accent' onClick={()=>{document.getElementById('my_modal_2').showModal()}}>设置</button>

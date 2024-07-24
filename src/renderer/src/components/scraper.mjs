@@ -302,6 +302,7 @@ async function organizeGameData(gid, savePath, gamePath) {
                 gameDuration: 0,
                 lastVisitDate: "",
                 frequency: 0,
+                playStatus: 0,
                 moreEntry: gameData.game.moreEntry,
                 typeDesc: gameData.game.typeDesc,
                 developer: await searchDeveloperId(gameData.game.developerId),
