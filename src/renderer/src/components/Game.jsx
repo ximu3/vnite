@@ -468,21 +468,64 @@ function GeneralSettings({index}){
     //     document.getElementById('my_modal_2').close()
     // }
     return(
-        <div className='flex flex-row w-full h-full gap-3'>
-            <div className='flex flex-col gap-3'>
-                <label className="flex items-center gap-2 input-sm input input-bordered focus-within:outline-none">
-                <div className='font-semibold'>原名 |</div>
-                <input type="text" name='gameName' className="grow" value={settingData?.detail?.name || ''} onChange={(e)=>{updateSettiongData(['detail', 'name'], e.target.value)}} />
-                </label>
-                <label className="flex items-center gap-2 input-sm input input-bordered focus-within:outline-none">
-                <div className='font-semibold'>中文名 |</div>
-                <input type="text" name='gameChineseName' className="grow" value={settingData?.detail?.chineseName || ''} onChange={(e)=>{updateSettiongData(['detail', 'chineseName'], e.target.value)}} />
-                </label>
+        <div className='flex flex-col w-full h-full gap-3'>
+            <div className='flex flex-row gap-3'>
+                <div className='flex flex-col w-1/2 gap-3'>
+                    <label className="flex items-center w-full gap-2 input-sm input input-bordered focus-within:outline-none">
+                        <div className='font-semibold'>原名 |</div>
+                        <input type="text" name='gameName' className="grow" value={settingData?.detail?.name || ''} onChange={(e)=>{updateSettiongData(['detail', 'name'], e.target.value)}} />
+                    </label>
+                    <label className="flex items-center gap-2 input-sm input input-bordered focus-within:outline-none">
+                        <div className='font-semibold'>中文名 |</div>
+                        <input type="text" name='gameChineseName' className="grow" value={settingData?.detail?.chineseName || ''} onChange={(e)=>{updateSettiongData(['detail', 'chineseName'], e.target.value)}} />
+                    </label>
+                    <label className="flex items-center gap-2 input-sm input input-bordered focus-within:outline-none">
+                        <div className='font-semibold'>GID |</div>
+                        <input type="text" name='gid' className="grow" value={settingData?.detail?.gid || ''} onChange={(e)=>{updateSettiongData(['detail', 'gid'], e.target.value)}} />
+                    </label>
+                    <label className="flex items-center gap-2 input-sm input input-bordered focus-within:outline-none">
+                        <div className='font-semibold'>VID |</div>
+                        <input type="text" name='vid' className="grow" value={settingData?.detail?.vid || ''} onChange={(e)=>{updateSettiongData(['detail', 'vid'], e.target.value)}} />
+                    </label>
+                </div>
+                <div className='flex flex-col w-1/2 gap-3'>
+                    <label className="flex items-center gap-2 input-sm input input-bordered focus-within:outline-none">
+                        <div className='font-semibold'>发行日期 |</div>
+                        <input type="text" name='releaseDate' className="grow" value={settingData?.detail?.releaseDate || ''} onChange={(e)=>{updateSettiongData(['detail', 'releaseDate'], e.target.value)}} />
+                    </label>
+                    <label className="flex items-center gap-2 input-sm input input-bordered focus-within:outline-none">
+                        <div className='font-semibold'>开发者 |</div>
+                        <input type="text" name='developer' className="grow" value={settingData?.detail?.developer || ''} onChange={(e)=>{updateSettiongData(['detail', 'developer'], e.target.value)}} />
+                    </label>
+                    <label className="flex items-center gap-2 input-sm input input-bordered focus-within:outline-none">
+                        <div className='font-semibold'>类型 |</div>
+                        <input type="text" name='typeDesc' className="grow" value={settingData?.detail?.typeDesc || ''} onChange={(e)=>{updateSettiongData(['detail', 'typeDesc'], e.target.value)}} />
+                    </label>
+                    {/* <label className="flex items-center gap-2 pr-2 mr-0 input-sm input-bordered input focus-within:outline-none">
+                        <div className='text-sm font-semibold'>游玩状态 |</div>
+                        <select className="outline-none grow bg-base-100" value={settingData?.detail?.playtStatus || 0} onChange={(e)=>{updateSettiongData(['detail', 'playtStatus'], Number(e.target.value))}}>
+                            <option value={0}>未开始</option>
+                            <option value={1}>游玩中</option>
+                            <option value={2}>已完成</option>
+                            <option value={3}>N周目</option>
+                        </select>
+                    </label> */}
+                    <label className="flex items-center gap-2 pr-2 mr-0 input-sm input-bordered input focus-within:outline-none">
+                        <div className='text-sm font-semibold'>限制级 |</div>
+                        <select className="outline-none grow bg-base-100" value={settingData?.detail?.restricted ?? true} onChange={(e)=>{
+                            const boolValue = e.target.value === "true";
+                            updateSettiongData(['detail', 'restricted'], boolValue)
+                        }}>
+                            <option value={true}>是</option>
+                            <option value={false}>否</option>
+                        </select>
+                    </label>
+                </div>
             </div>
-            {/* <div className='absolute flex flex-row gap-5 right-10 bottom-10'>
-                <button className='btn btn-primary' onClick={() => updateData([index], settingData)}>保存</button>
-                <button className='btn btn-error' onClick={quitSetting}>取消</button>
-            </div> */}
+            <label className="flex flex-col items-start self-stretch h-full pt-2 border-1 input-bordered grow">
+                <div className='self-center text-sm font-semibold'>简介</div>
+                <textarea className="self-stretch p-2 overflow-auto text-sm outline-none bg-base-100 grow scrollbar-base" placeholder="Bio" value={settingData?.detail?.introduction || ''} onChange={(e)=>{updateSettiongData(['detail', 'introduction'], e.target.value)}} />
+            </label>
         </div>
     )
 }
