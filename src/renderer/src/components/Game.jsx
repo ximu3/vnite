@@ -34,7 +34,7 @@ function Game({index}) {
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
         
-        return `${year}.${month}.${day}`;
+        return `${year}-${month}-${day}`;
     }
     useEffect(() => {
         window.electron.ipcRenderer.on('game-start-result', (event, result) => {
@@ -133,7 +133,7 @@ function Game({index}) {
                                 <span className="icon-[material-symbols-light--menu-open] w-14 h-14"></span>
                             </div>
                             <div className="stat-title">最后运行日期</div>
-                            <div className="stat-value text-secondary">{gameData['lastVisitDate'] ? gameData['lastVisitDate'] : "还未运行过"}</div>
+                            <div className="stat-value text-secondary">{gameData['lastVisitDate'] ? gameData['lastVisitDate'].replace(/-/g, '.') : "还未运行过"}</div>
                         </div>
                         <div className="stat">
                             <div className="flex items-center justify-center stat-figure text-secondary">
@@ -148,7 +148,7 @@ function Game({index}) {
                                 <span className="icon-[material-symbols-light--calendar-add-on-outline-sharp] w-14 h-14"></span>
                             </div>
                             <div className="stat-title">添加日期</div>
-                            <div className="stat-value text-secondary">{gameData['addDate']}</div>
+                            <div className="stat-value text-secondary">{gameData['addDate'].replace(/-/g, '.')}</div>
                         </div>
                     </div>
                 </div>
