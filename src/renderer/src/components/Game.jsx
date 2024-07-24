@@ -265,13 +265,13 @@ function Character({characterData}){
         <div className='flex flex-col w-full gap-5'>
             { characterData.map((character, index) => {
                 return (
-                    <div>
-                        <div key={index} className='flex flex-row items-start gap-5'>
-                            <div className='flex flex-row w-3/4 bg-base-300 grow'>
-                                {character['cover'] && <img src={character['cover']} alt="c1" className="bg-cover"></img>}
-                                <div className='flex flex-col'>
+                    <div key={index}>
+                        <div className='flex flex-row items-start gap-5'>
+                            <div className='flex flex-row w-3/4 bg-base-300'>
+                                {character['cover'] && <img src={character['cover']} alt="c1" className="w-auto h-67"></img>}
+                                <div className='flex flex-col h-67'>
                                     <div className='p-3 text-lg font-bold'>{character['chineseName'] ? character['chineseName'] : character['name']}</div>
-                                    <div className='p-3 pt-0 text-sm'>{character['introduction']}</div>
+                                    <div className='p-3 pt-0 overflow-auto text-sm scrollbar-base scrollbar-track-base-300'>{character['introduction']}</div>
                                 </div>
                             </div>
                             <div className='flex flex-col w-1/4 gap-5 text-sm'>
@@ -434,7 +434,7 @@ function Setting({index}){
         }
     };
     return (
-        <div className='flex flex-col w-full gap-5'>
+        <div className='flex flex-col w-full h-full gap-5'>
             <div role="tablist" className="tabs tabs-bordered">
                 {tabs.map((tab) => (
                     <a 
@@ -449,7 +449,7 @@ function Setting({index}){
                     </a>
                 ))}
             </div>
-            <div>
+            <div className='w-full h-full pb-20'>
                 {renderContent()}
             </div>
             <div className='absolute flex flex-row gap-5 right-10 bottom-10'>
