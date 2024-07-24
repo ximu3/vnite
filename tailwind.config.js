@@ -84,6 +84,7 @@ module.exports = {
         '120': '30rem',
       },
       borderWidth: {
+        '1': '1px',
         '3': '3px',
       },
       gridTemplateRows: {
