@@ -470,13 +470,6 @@ function Setting({index}){
 function GeneralSettings({index}){
     const { updateData, data } = useRootStore()
     const { settingData, updateSettiongData, setSettingData } = useGameSetting()
-    // useEffect(() => {
-    //     setSettingData(data[index])
-    // }, [data, index])
-    // function quitSetting(){
-    //     setSettingData(data[index])
-    //     document.getElementById('my_modal_2').close()
-    // }
     return(
         <div className='flex flex-col w-full h-full gap-3'>
             <div className='flex flex-row gap-3'>
