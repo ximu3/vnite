@@ -292,7 +292,7 @@ async function organizeGameData(gid, savePath, gamePath) {
                 chineseName: gameData.game.chineseName,
                 extensionName: extensionName,
                 introduction: gameData.game.introduction,
-                gid: gameData.game.gid,
+                gid: `ga${gameData.game.gid}`,
                 vid: vid,
                 cover: `/${gid}/cover.webp`,
                 backgroundImage: `/${gid}/background.webp`,
