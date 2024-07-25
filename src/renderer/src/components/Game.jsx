@@ -399,21 +399,37 @@ const useGameSetting = create(set => ({
     }),
     settingAlert: "",
     setSettingAlert: (settingAlert) => set({settingAlert})
+    setSettingAlert: (settingAlert) => set({settingAlert}),
+    dataString: "",
+    setDataString: (dataString) => set({dataString}),
 }))
 
 
 function Setting({index}){
     const { activeTab, setActiveTab } = useGameSetting()
     const { updateData, data, setAlert, alert } = useRootStore()
-    const { settingData, updateSettiongData, setSettingData, settingAlert, setSettingAlert } = useGameSetting()
+    const { settingData, updateSettiongData, setSettingData, settingAlert, setSettingAlert, setDataString, dataString } = useGameSetting()
     useEffect(() => {
         setSettingData(data[index])
+        setDataString(JSON.stringify(data[index], null, 2))
     }, [data, index])
     function quitSetting(){
         setSettingData(data[index])
         document.getElementById('my_modal_2').close()
     }
     function saveSetting(){
+        if(activeTab === 'advanced'){
+            try {
+                const newData = JSON.parse(dataString)
+                updateData([index], newData)
+                setSettingAlert('保存成功')
+                setTimeout(() => {setSettingAlert('')}, 3000)
+            } catch (error) {
+                setSettingAlert('保存失败，请检查数据格式')
+                setTimeout(() => {setSettingAlert('')}, 3000)
+            }
+            return
+        }
         updateData([index], settingData)
         setSettingAlert('保存成功')
         setTimeout(() => {setSettingAlert('')}, 3000)
@@ -534,8 +550,70 @@ function GeneralSettings({index}){
 }
 
 function AdvancedSettings(){
+    const { settingData, updateSettiongData, setSettingData, dataString, setDataString } = useGameSetting()
+    function formatTime(seconds) {
+        if (seconds < 0) {
+            return "无效时间";
+        }
+        
+        if (seconds < 60) {
+            return "小于一分钟";
+        }
+        
+        const minutes = Math.floor(seconds / 60);
+        const hours = minutes / 60;
+
+        if (hours < 1) {
+            return `${minutes}分钟`;
+        } else {
+            return `${hours.toFixed(1)}小时`;
+        }
+    }
     return(
-        <div>高级</div>
+        <div className='flex flex-col w-full h-full gap-3'>
+            <div className='flex flex-row gap-3'>
+                <div className='flex flex-col w-1/2 gap-3'>
+                    <label className="flex items-center w-full gap-2 input-sm input input-bordered focus-within:outline-none">
+                        <div className='font-semibold'>添加日期 |</div>
+                        <input type="text" name='addDate' className="grow" value={settingData?.detail?.addDate || ''} onChange={(e)=>{updateSettiongData(['detail', 'addDate'], e.target.value)}} />
+                    </label>
+                    <label className="flex items-center w-full gap-2 input-sm input input-bordered focus-within:outline-none">
+                        <div className='font-semibold'>游玩时间 |</div>
+                        <input type="text" name='gameDuration' className="grow" value={settingData?.detail?.gameDuration || ''} onChange={(e)=>{updateSettiongData(['detail', 'gameDuration'], Number(e.target.value))}} />
+                        <div>{formatTime(settingData?.detail?.gameDuration || '')}</div>
+                    </label>
+                    <label className="flex items-center w-full gap-2 input-sm input input-bordered focus-within:outline-none">
+                        <div className='font-semibold'>游玩次数 |</div>
+                        <input type="text" name='frequency' className="grow" value={settingData?.detail?.frequency || '0'} onChange={(e)=>{updateSettiongData(['detail', 'frequency'], Number(e.target.value))}} />
+                    </label>
+                </div>
+                <div className='flex flex-col w-1/2 gap-3'>
+                    <label className="flex items-center w-full gap-2 input-sm input focus-within:outline-none input-bordered">
+                        <div className='font-semibold'>数据库ID |</div>
+                        <div>{(settingData?.detail?.gid || '').replace('ga','')}</div>
+                        {/* <input disabled type="text" name='gid' className="grow" value={settingData?.detail?.gid || ''} onChange={(e)=>{updateSettiongData(['detail', 'gid'], e.target.value)}} /> */}
+                    </label>
+                    <label className="flex items-center gap-2 pr-2 mr-0 input-sm input-bordered input focus-within:outline-none">
+                        <div className='text-sm font-semibold'>游玩状态 |</div>
+                        <select className="outline-none grow bg-base-100" value={settingData?.detail?.playtStatus || 0} onChange={(e)=>{updateSettiongData(['detail', 'playtStatus'], Number(e.target.value))}}>
+                            <option value={0}>未开始</option>
+                            <option value={1}>游玩中</option>
+                            <option value={2}>已完成</option>
+                            <option value={3}>N周目</option>
+                        </select>
+                    </label>
+                    <label className="flex items-center w-full gap-2 input-sm input focus-within:outline-none bg-error text-base-100">
+                        <div className='font-semibold'>警告⚠️ |</div>
+                        <div>随意修改数据库内容会导致程序崩溃！</div>
+                        {/* <input disabled type="text" name='gid' className="grow" value={settingData?.detail?.gid || ''} onChange={(e)=>{updateSettiongData(['detail', 'gid'], e.target.value)}} /> */}
+                    </label>
+                </div>
+            </div>
+            <label className="flex flex-col items-start self-stretch h-full pt-2 border-1 input-bordered grow">
+                <div className='self-center text-sm font-semibold'>数据库内容</div>
+                <textarea spellCheck='false' className="self-stretch p-2 overflow-auto text-sm outline-none bg-base-100 grow scrollbar-base" placeholder="Bio" value={dataString || ''} onChange={(e)=>{setDataString(e.target.value)}} />
+            </label>
+        </div>
     )
 }
 
