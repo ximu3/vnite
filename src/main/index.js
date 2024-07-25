@@ -5,6 +5,8 @@ import icon from '../../resources/icon.png?asset'
 import { addNewGameToData, getGameData, updateGameData } from '../renderer/src/data/dataManager.mjs'
 import { searchGameList, searchGameId, getScreenshotsByTitle, getCoverByTitle, organizeGameData } from "../renderer/src/components/scraper.mjs"
 import { spawn } from 'child_process';
+import sharp from 'sharp';
+import fs from 'fs/promises';
 
 let mainWindow
 
@@ -106,6 +108,20 @@ ipcMain.handle('open-file-dialog', async (event) => {
   }
 });
 
+ipcMain.handle('open-img-dialog', async (event) => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openFile'],
+    filters: [
+      { name: '图片文件', extensions: ['jpg', 'jpeg', 'png', 'webp', 'avif'] }
+    ]
+  });
+  if (result.canceled) {
+    return null;
+  } else {
+    return result.filePaths[0];
+  }
+});
+
 ipcMain.handle('open-file-folder-dialog', async (event) => {
   const result = await dialog.showOpenDialog({
     properties: ['openFile', 'openDirectory'],
@@ -168,4 +184,49 @@ ipcMain.on('update-game-data', async (event, newData) => {
 
 ipcMain.on('save-game-data', async (event, data) => {
   await updateGameData(data);
+})
+
+ipcMain.on('open-folder', async (event, path) => {
+  shell.openPath(join(app.getAppPath(), path));
+  console.log(join(app.getAppPath(), path));
+})
+
+ipcMain.handle('update-game-cover', async (event, gameId, imgPath) => {
+  try {
+    const coverDir = join(app.getAppPath(), `src/renderer/public/${gameId}/`);
+    const coverPath = join(coverDir, 'cover.webp');
+
+    // 确保目标文件夹存在
+    await fs.mkdir(coverDir, { recursive: true });
+
+    // 处理图片：只转换为WebP格式，不改变分辨率
+    await sharp(imgPath)
+      .webp({ quality: 100 })  // 可以根据需要调整质量
+      .toFile(coverPath);
+
+    return coverPath;
+  } catch (error) {
+    console.error('更新游戏封面时出错:', error);
+    throw error; // 将错误传回渲染进程
+  }
+});
+
+ipcMain.handle('update-game-background', async (event, gameId, imgPath) => {
+  try {
+    const bgDir = join(app.getAppPath(), `src/renderer/public/${gameId}/`);
+    const bgPath = join(bgDir, 'background.webp');
+
+    // 确保目标文件夹存在
+    await fs.mkdir(bgDir, { recursive: true });
+
+    // 处理图片：只转换为WebP格式，不改变分辨率
+    await sharp(imgPath)
+      .webp({ quality: 100 })  // 可以根据需要调整质量
+      .toFile(bgPath);
+
+    return bgPath;
+  } catch (error) {
+    console.error('更新游戏背景时出错:', error);
+    throw error; // 将错误传回渲染进程
+  }
 })

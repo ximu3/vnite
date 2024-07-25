@@ -540,8 +540,76 @@ function AdvancedSettings(){
 }
 
 function MediaSettings(){
+    const { settingData, updateSettiongData, setSettingData, dataString, setDataString, setSettingAlert } = useGameSetting()
+    const { timestamp, setTimestamp } = useRootStore()
+    async function updateCover(gameId){
+        try {
+            // 打开文件选择对话框
+            const selectedPath = await window.electron.ipcRenderer.invoke('open-img-dialog');
+            
+            if (selectedPath) {
+                // 调用更新游戏封面的方法
+                await window.electron.ipcRenderer.invoke('update-game-cover', gameId, selectedPath);
+                
+                // console.log('新的封面路径:', newCoverPath);
+                
+                // 这里可以添加更新UI或通知用户的逻辑
+                setTimestamp()
+                setSettingAlert('更换图片成功');
+                setTimeout(() => {setSettingAlert('')}, 3000);
+            } else {
+                // 用户取消了选择
+                console.log('用户取消了文件选择');
+            }
+        } catch (error) {
+            console.error('更换图片时发生错误:', error);
+            setSettingAlert('更换图片失败');
+            setTimeout(() => {setSettingAlert('')}, 3000);
+        }
+    }
+    async function updateBackgroundImage(gameId){
+        try {
+            // 打开文件选择对话框
+            const selectedPath = await window.electron.ipcRenderer.invoke('open-img-dialog');
+            
+            if (selectedPath) {
+                // 调用更新游戏背景的方法
+                await window.electron.ipcRenderer.invoke('update-game-background', gameId, selectedPath);
+                
+                // console.log('新的背景路径:', newCoverPath);
+                
+                // 这里可以添加更新UI或通知用户的逻辑
+                setTimestamp()
+                setSettingAlert('更换图片成功');
+                setTimeout(() => {setSettingAlert('')}, 3000);
+            } else {
+                // 用户取消了选择
+                console.log('用户取消了文件选择');
+            }
+        } catch (error) {
+            console.error('更换图片时发生错误:', error);
+            setSettingAlert('更换图片失败');
+            setTimeout(() => {setSettingAlert('')}, 3000);
+        }
+    }
     return(
-        <div>媒体</div>
+        <div className='flex flex-col w-full h-full gap-3'>
+            <button className='btn btn-sm' onClick={()=>window.electron.ipcRenderer.send('open-folder', `src/renderer/public/${settingData?.detail?.id || ''}/`)}>打开媒体文件夹</button>
+            <div className='flex flex-row gap-3 grow'>
+                <div className='flex flex-col w-1/2 font-bold'>
+                    <div>封面</div>
+                    <div className='m-0 divider'></div>
+                    <button className='btn btn-sm' onClick={()=>{updateCover(settingData?.detail?.id || '')}}>更换</button>
+                    <img src={`${settingData?.detail?.cover || ''}?t=${timestamp}`} alt="" className='w-1/2 h-auto pt-2'/>
+                </div>
+                <div className='flex flex-col w-1/2 font-bold'>
+                    <div>背景</div>
+                    <div className='m-0 divider'></div>
+                    <button className='btn btn-sm' onClick={()=>{updateBackgroundImage(settingData?.detail?.id || '')}}>更换</button>
+                    <img src={`${settingData?.detail?.backgroundImage || ''}?t=${timestamp}`} alt="" className='w-full h-auto pt-2'/>
+                </div>
+            </div>
+        </div>
     )
 }
 
