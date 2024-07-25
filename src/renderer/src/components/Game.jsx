@@ -25,7 +25,7 @@ function NavTab({to, name}){
 }
 
 function Game({index}) {
-    const { data, setData, setAlert, updateData } = useRootStore();
+    const { data, setData, setAlert, updateData, timestamp } = useRootStore();
     const gameData = data[index]['detail'];
     const characterData = data[index]['characters'];
     const { settingData, setSettingData } = useGameSetting();
@@ -119,7 +119,7 @@ function Game({index}) {
             
             <div className="relative w-full h-96">
                 
-                <img src={gameData['backgroundImage']} alt="bg" className="object-cover w-full h-full"></img>
+                <img src={`${gameData['backgroundImage']}?t=${timestamp}`} alt="bg" className="object-cover w-full h-full"></img>
                 
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-base-100"></div>
                 
@@ -398,7 +398,6 @@ const useGameSetting = create(set => ({
         return { settingData: newData };
     }),
     settingAlert: "",
-    setSettingAlert: (settingAlert) => set({settingAlert})
     setSettingAlert: (settingAlert) => set({settingAlert}),
     dataString: "",
     setDataString: (dataString) => set({dataString}),

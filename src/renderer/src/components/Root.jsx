@@ -8,6 +8,7 @@ import { useAddGame } from './AddGame';
 export const useRootStore = create(set => ({
   data: [],
   alert: "",
+  timestamp: Date.now(),
   setData: (data) => set({ data }),
   updateData: (path, value) => set((state) => {
     const newData = JSON.parse(JSON.stringify(state.data));
@@ -18,7 +19,8 @@ export const useRootStore = create(set => ({
     current[path[path.length - 1]] = value;
     return { data: newData };
   }),
-  setAlert: (alert) => set({ alert })
+  setAlert: (alert) => set({ alert }),
+  setTimestamp: () => set({ timestamp: Date.now() })
 }));
 
 function NavButton({ to, name }) {
