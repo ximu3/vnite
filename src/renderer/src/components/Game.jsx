@@ -36,6 +36,20 @@ function Game({index}) {
         
         return `${year}-${month}-${day}`;
     }
+    function getFormattedDateTimeWithSeconds() {
+        const now = new Date();
+        
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    }
+
+// 使用示例
     useEffect(() => {
         window.electron.ipcRenderer.on('game-start-result', (event, result) => {
         if (result.success) {
@@ -50,7 +64,6 @@ function Game({index}) {
             if (processId === index) {
                 updateData([index, 'detail', 'gameDuration'], data[index]['detail']['gameDuration'] + runningTime);
                 updateData([index, 'detail', 'lastVisitDate'], getFormattedDate());
-                if (runningTime >= 180){
                 if (runningTime >= 1){
                     updateData([index, 'detail', 'frequency'], data[index]['detail']['frequency'] + 1);
                     try{
@@ -75,7 +88,6 @@ function Game({index}) {
             window.electron.ipcRenderer.removeAllListeners('exe-open-result');
             window.electron.ipcRenderer.removeAllListeners('exe-running-time');
         };
-    }, []);
     }, [data]);
     function handleStart(){
         if (gameData['gamePath']) {
@@ -190,7 +202,6 @@ function Game({index}) {
                         <Route index element={<Navigate to='./detail' />} />
                         <Route path='/detail' element={<Detail gameData={gameData} />} />
                         <Route path='/character' element={<Character characterData={characterData} />} />
-                        <Route path='/save' element={<Save />} />
                         <Route path='/save' element={<Save index={index} />} />
                         <Route path='/memory' element={<Memory />} />
                     </Routes>
@@ -314,7 +325,6 @@ function Character({characterData}){
     )
 }
 
-function Save(){
 function Save({index}){
     const { data, setData, setAlert, updateData, timestamp } = useRootStore();
     async function switchSave(id){
@@ -401,14 +411,6 @@ function Memory(){
     )
 }
 
-function NavTabWithoutRouter({name}){
-    return (
-        <div className="tab tab-active" role="tab">
-            {name}
-        </div>
-    )
-}
-
 const useGameSetting = create(set => ({
     activeTab: 'general',
     setActiveTab: (activeTab) => set({activeTab}),
@@ -459,7 +461,7 @@ function Setting({index}){
         setSettingAlert('保存成功')
         setTimeout(() => {setSettingAlert('')}, 3000)
     }
-    const tabs = ['general', 'advanced', 'media', 'archive'];
+    const tabs = ['general', 'advanced', 'media', 'startup'];
     const renderContent = () => {
         switch(activeTab) {
             case 'general':
@@ -468,8 +470,8 @@ function Setting({index}){
                 return <AdvancedSettings />;
             case 'media':
                 return <MediaSettings />;
-            case 'archive':
-                return <ArchiveSettings />;
+            case 'startup':
+                return <StartupSettings />;
             default:
                 return null;
         }
@@ -486,7 +488,7 @@ function Setting({index}){
                     >
                         {tab === 'general' ? '通用' : 
                          tab === 'advanced' ? '高级' : 
-                         tab === 'media' ? '媒体' : '存档'}
+                         tab === 'media' ? '媒体' : '启动'}
                     </a>
                 ))}
             </div>
@@ -545,15 +547,6 @@ function GeneralSettings({index}){
                         <div className='font-semibold'>类型 |</div>
                         <input type="text" name='typeDesc' className="grow" value={settingData?.detail?.typeDesc || ''} onChange={(e)=>{updateSettiongData(['detail', 'typeDesc'], e.target.value)}} />
                     </label>
-                    {/* <label className="flex items-center gap-2 pr-2 mr-0 input-sm input-bordered input focus-within:outline-none">
-                        <div className='text-sm font-semibold'>游玩状态 |</div>
-                        <select className="outline-none grow bg-base-100" value={settingData?.detail?.playtStatus || 0} onChange={(e)=>{updateSettiongData(['detail', 'playtStatus'], Number(e.target.value))}}>
-                            <option value={0}>未开始</option>
-                            <option value={1}>游玩中</option>
-                            <option value={2}>已完成</option>
-                            <option value={3}>N周目</option>
-                        </select>
-                    </label> */}
                     <label className="flex items-center gap-2 pr-2 mr-0 input-sm input-bordered input focus-within:outline-none">
                         <div className='text-sm font-semibold'>限制级 |</div>
                         <select className="outline-none grow bg-base-100" value={settingData?.detail?.restricted ?? true} onChange={(e)=>{
@@ -716,9 +709,71 @@ function MediaSettings(){
     )
 }
 
-function ArchiveSettings(){
+function StartupSettings(){
+    const { settingData, updateSettiongData, setSettingData, setSettingAlert } = useGameSetting()
+    async function selectGamePath(){
+        const path = await window.electron.ipcRenderer.invoke("open-file-dialog")
+        if(path){
+            updateSettiongData(['detail', 'gamePath'], path)
+        }else{
+            return
+        }
+    }
+
+    async function selectSavePath(){
+        const path = await window.electron.ipcRenderer.invoke("open-file-folder-dialog")
+        if(path){
+            updateSettiongData(['detail', 'savePath'], path)
+        }else{
+            return
+        }
+    }
+
+    function handleDragOver(e){
+        e.preventDefault();
+    }
+
+    function getGamePathByDrag(e){
+        e.preventDefault();
+        const files = Array.from(e.dataTransfer.files);
+        if(files.length > 1){
+            setSettingAlert('只能选择一个路径');
+            setTimeout(() => {setSettingAlert('');}, 3000);
+            return
+        }
+        const file = files[0];
+        const fileExtension = file.name.split('.').pop();
+        if(fileExtension !== 'exe'){
+            setSettingAlert('请选择可执行文件');
+            setTimeout(() => {setSettingAlert('');}, 3000);
+            return
+        }
+        updateSettiongData(['detail', 'gamePath'], file.path)
+    }
+
+    function getSavePathByDrag(e){
+        e.preventDefault();
+        const files = Array.from(e.dataTransfer.files);
+        if(files.length > 1){
+            setSettingAlert('只能选择一个路径');
+            setTimeout(() => {setSettingAlert('');}, 3000);
+            return
+        }
+        updateSettiongData(['detail', 'savePath'], files[0].path)
+    }
     return(
-        <div>存档</div>
+        <div className='flex flex-col w-full h-full gap-3'>
+            <label className="flex items-center w-full gap-2 input-sm input input-bordered focus-within:outline-none">
+                <div className='font-semibold'>游戏路径 |</div>
+                <input type='text' placeholder='拖拽获取路径' onDrop={getGamePathByDrag} onDragOver={handleDragOver} className='grow' value={settingData?.detail?.gamePath || '0'} onChange={(e)=>{updateSettiongData(['detail', 'gamePath'], e.target.value)}} />
+                <span className="icon-[material-symbols-light--folder-open-outline-sharp] w-5 h-5 self-center" onClick={selectGamePath}></span>
+            </label>
+            <label className="flex items-center w-full gap-2 input-sm input input-bordered focus-within:outline-none">
+                <div className='font-semibold'>存档路径 |</div>
+                <input type='text' placeholder='拖拽获取路径' onDrop={getSavePathByDrag} onDragOver={handleDragOver} className='grow' value={settingData?.detail?.savePath || '0'} onChange={(e)=>{updateSettiongData(['detail', 'savePath'], e.target.value)}} />
+                <span className="icon-[material-symbols-light--folder-open-outline-sharp] w-5 h-5 self-center" onClick={selectSavePath}></span>
+            </label>
+        </div>
     )
 }
 
