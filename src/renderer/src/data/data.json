@@ -14,12 +14,12 @@
       "vid": "v21852",
       "cover": "/27702/cover.webp",
       "backgroundImage": "/27702/background.webp",
-      "savePath": "",
+      "savePath": "F:\\game\\VisualNovels\\金色ラブリッチェ\\savedata",
       "gamePath": "F:\\game\\VisualNovels\\金色ラブリッチェ\\SiglusEngineCHS.exe",
       "addDate": "2024-07-20",
-      "gameDuration": 62199,
-      "lastVisitDate": "2024-07-23",
-      "frequency": 15,
+      "gameDuration": 62447,
+      "lastVisitDate": "2024-07-26",
+      "frequency": 40,
       "playtStatus": 2,
       "moreEntry": [
         {
@@ -777,7 +777,6 @@
         ]
       }
     ],
-    "saves": [],
     "saves": [
       {
         "id": 1,
