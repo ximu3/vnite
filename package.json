@@ -21,6 +21,7 @@
     "@electron-toolkit/preload": "^3.0.0",
     "@electron-toolkit/utils": "^3.0.0",
     "axios": "^1.7.2",
+    "fs-extra": "^11.2.0",
     "node-fetch": "^3.3.2",
     "react-router-dom": "^6.23.1",
     "sharp": "^0.33.4",
