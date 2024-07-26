@@ -7,6 +7,7 @@ import { searchGameList, searchGameId, getScreenshotsByTitle, getCoverByTitle, o
 import { spawn } from 'child_process';
 import sharp from 'sharp';
 import fs from 'fs/promises';
+import fse from 'fs-extra';
 
 let mainWindow
 
@@ -164,6 +165,7 @@ ipcMain.on('start-game', (event, gamePath, gameId) => {
   exeProcess.on('exit', (code, signal) => {
     const endTime = Date.now();
     const runningTime = Math.floor((endTime - startTime) / 1000); // 转换为秒
+    console.log(`Game ${processId} exited. Running time: ${runningTime} seconds`);
     mainWindow.webContents.send('game-running-time', { processId, runningTime });
     processes.delete(processId);
   });
@@ -228,5 +230,44 @@ ipcMain.handle('update-game-background', async (event, gameId, imgPath) => {
   } catch (error) {
     console.error('更新游戏背景时出错:', error);
     throw error; // 将错误传回渲染进程
+  }
+})
+
+ipcMain.handle('copy-save', async (event, savePath, gameId, saveId) => {
+  const saveDir = join(app.getAppPath(), `src/renderer/public/${gameId}/saves/${saveId}/`);
+  try {
+    // 首先确保目标目录存在
+    await fse.ensureDir(saveDir);
+    
+    // 清空目标目录
+    await fse.emptyDir(saveDir);
+    
+    // 然后复制文件
+    await fse.copy(savePath, saveDir, { overwrite: true });
+    
+  } catch (error) {
+    console.error('复制存档时出错:', error);
+  }
+});
+
+ipcMain.on('delete-save', async (event, gameId, saveId) => {
+  const saveDir = join(app.getAppPath(), `src/renderer/public/${gameId}/saves/${saveId}/`);
+  try {
+    await fse.remove(saveDir);
+    event.reply('delete-save-reply', 'success');
+  } catch (error) {
+    console.error('删除存档时出错:', error);
+    event.reply('delete-save-reply', 'error', error.message);
+  }
+})
+
+ipcMain.on('switch-save', async(event, gameId, saveId, realSavePath)=>{
+  const savePath = join(app.getAppPath(), `src/renderer/public/${gameId}/saves/${saveId}/`);
+  try {
+    await fse.move(savePath, realSavePath, { overwrite: true });
+    event.reply('switch-save-reply', 'success');
+  } catch (error) {
+    console.error('切换存档时出错:', error);
+    event.reply('switch-save-reply', 'error', error.message);
   }
 })

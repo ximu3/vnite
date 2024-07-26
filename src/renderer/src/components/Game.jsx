@@ -51,7 +51,20 @@ function Game({index}) {
                 updateData([index, 'detail', 'gameDuration'], data[index]['detail']['gameDuration'] + runningTime);
                 updateData([index, 'detail', 'lastVisitDate'], getFormattedDate());
                 if (runningTime >= 180){
+                if (runningTime >= 1){
                     updateData([index, 'detail', 'frequency'], data[index]['detail']['frequency'] + 1);
+                    try{
+                        const saveId = (data[index]['saves'][0] ? data[index]['saves'][data[index]['saves'].length - 1]['id'] + 1 : 1) // 使用时间戳作为唯一标识符
+                        window.electron.ipcRenderer.invoke('copy-save', data[index]['detail']['savePath'], data[index]['detail']['id'], saveId);
+                        updateData([index, 'saves'], [...data[index]['saves'], {
+                            id: saveId,
+                            date: getFormattedDateTimeWithSeconds(),
+                            note: '',
+                            path: `/${data[index]['detail']['id']}/saves/${saveId}`
+                        }]);
+                    }catch(e){
+                        console.log(e)
+                    }
                 }
             }else{
                 return
@@ -63,6 +76,7 @@ function Game({index}) {
             window.electron.ipcRenderer.removeAllListeners('exe-running-time');
         };
     }, []);
+    }, [data]);
     function handleStart(){
         if (gameData['gamePath']) {
             window.electron.ipcRenderer.send('start-game', gameData['gamePath'], index)
@@ -177,6 +191,7 @@ function Game({index}) {
                         <Route path='/detail' element={<Detail gameData={gameData} />} />
                         <Route path='/character' element={<Character characterData={characterData} />} />
                         <Route path='/save' element={<Save />} />
+                        <Route path='/save' element={<Save index={index} />} />
                         <Route path='/memory' element={<Memory />} />
                     </Routes>
                 </div>
@@ -300,6 +315,30 @@ function Character({characterData}){
 }
 
 function Save(){
+function Save({index}){
+    const { data, setData, setAlert, updateData, timestamp } = useRootStore();
+    async function switchSave(id){
+        try{
+            window.electron.ipcRenderer.send('switch-save', data[index]['detail']['id'], id, data[index]['detail']['savePath']);
+            setAlert('切换存档成功')
+            setTimeout(() => {setAlert('')}, 3000)
+        }catch(e){
+            setAlert('切换存档失败')
+            setTimeout(() => {setAlert('')}, 3000)
+        }
+    }
+    async function deleteSave(id){
+        try{
+            window.electron.ipcRenderer.send('delete-save', data[index]['detail']['id'], id);
+            updateData([index, 'saves'], data[index]['saves'].filter(save => save['id'] !== id))
+            setAlert('删除存档成功')
+            setTimeout(() => {setAlert('')}, 3000)
+        }
+        catch(e){
+            setAlert('删除存档失败')
+            setTimeout(() => {setAlert('')}, 3000)
+        }
+    }
     return (
         <div className='w-full'>
             <div className="overflow-x-auto bg-base-300">
@@ -315,44 +354,31 @@ function Save(){
                     </thead>
                     <tbody>
                     {/* row 1 */}
-                    <tr>
-                        <th>1</th>
-                        <td>2024-7-14 12:59:32</td>
-                        <td>第一次存档</td>
-                        <td>
-                            <div className='flex flex-row gap-2'>
-                                <button className="h-6 min-h-0 btn btn-success">切换</button>
-                                <button className="h-6 min-h-0 btn btn-accent">编辑</button>
-                                <button className="h-6 min-h-0 btn btn-error">删除</button>
-                            </div>
-                        </td>
-                    </tr>
-                    {/* row 2 */}
-                    <tr>
-                        <th>2</th>
-                        <td>2024-7-14 13:09:11</td>
-                        <td></td>
-                        <td>
-                            <div className='flex flex-row gap-2'>
-                                <button className="h-6 min-h-0 btn btn-success">切换</button>
-                                <button className="h-6 min-h-0 btn btn-accent">编辑</button>
-                                <button className="h-6 min-h-0 btn btn-error">删除</button>
-                            </div>
-                        </td>
-                    </tr>
-                    {/* row 3 */}
-                    <tr>
-                        <th>3</th>
-                        <td>2024-7-14 13:10:03</td>
-                        <td></td>
-                        <td>
-                            <div className='flex flex-row gap-2'>
-                                <button className="h-6 min-h-0 btn btn-success">切换</button>
-                                <button className="h-6 min-h-0 btn btn-accent">编辑</button>
-                                <button className="h-6 min-h-0 btn btn-error">删除</button>
-                            </div>
-                        </td>
-                    </tr>
+                    {   
+                        data[index]['saves'] ?
+                        data[index]['saves'].map((save, i) => {
+                            return (
+                                <tr key={i}>
+                                    <th>{i + 1}</th>
+                                    <td>{save['date']}</td>
+                                    <td>
+                                        <input type="text" className='w-4/5 outline-none input-ghost input-sm input' value={save['note']} onChange={(e)=>{updateData([index, 'saves', i, 'note'], e.target.value)}} />
+                                    </td>
+                                    <td>
+                                        <div className='flex flex-row gap-2'>
+                                            <button className="h-6 min-h-0 btn btn-success" onClick={()=>{switchSave(save['id'])}}>切换</button>
+                                            {/* <button className="h-6 min-h-0 btn btn-accent">编辑</button> */}
+                                            <button className="h-6 min-h-0 btn btn-error" onClick={()=>{deleteSave(save['id'])}}>删除</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            )
+                        }) :
+                        <tr>
+                            <td>暂无存档</td>
+                        </tr>
+                    }
+                    
                     </tbody>
                 </table>
             </div>
