@@ -270,7 +270,7 @@ ipcMain.on('switch-save', async(event, gameId, saveId, realSavePath)=>{
     console.error('切换存档时出错:', error);
     event.reply('switch-save-reply', 'error', error.message);
   }
-})})
+})
 
 ipcMain.on('save-memory-img', async (event, gameId, imgId, imgPath) => {
   const imgDir = join(app.getAppPath(), `src/renderer/public/${gameId}/memories/`);
