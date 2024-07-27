@@ -270,4 +270,24 @@ ipcMain.on('switch-save', async(event, gameId, saveId, realSavePath)=>{
     console.error('切换存档时出错:', error);
     event.reply('switch-save-reply', 'error', error.message);
   }
-})
+})})
+
+ipcMain.on('save-memory-img', async (event, gameId, imgId, imgPath) => {
+  const imgDir = join(app.getAppPath(), `src/renderer/public/${gameId}/memories/`);
+  const webpFileName = `${imgId}.webp`; // 使用imgId作为文件名
+  const webpFilePath = join(imgDir, webpFileName);
+
+  try {
+    // 确保目标文件夹存在
+    await fse.ensureDir(imgDir);
+
+    // 使用sharp读取原图片，转换为WebP格式，然后保存
+    await sharp(imgPath)
+      .webp({ quality: 100 }) // 设置WebP质量，范围0-100
+      .toFile(webpFilePath);
+
+    console.log(`图片已保存为WebP格式：${webpFilePath}`);
+  } catch (error) {
+    console.error('保存记忆图片时出错:', error);
+  }
+});

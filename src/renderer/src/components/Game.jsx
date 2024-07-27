@@ -6,7 +6,7 @@ import mem from '../assets/mem.webp'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import { BrowserRouter, Routes, Route, Navigate, NavLink } from 'react-router-dom';
 import { useRootStore } from './Root'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { create } from 'zustand'
 
 function NavTab({to, name}){
@@ -203,7 +203,7 @@ function Game({index}) {
                         <Route path='/detail' element={<Detail gameData={gameData} />} />
                         <Route path='/character' element={<Character characterData={characterData} />} />
                         <Route path='/save' element={<Save index={index} />} />
-                        <Route path='/memory' element={<Memory />} />
+                        <Route path='/memory' element={<Memory index={index} />} />
                     </Routes>
                 </div>
             </div>
@@ -396,17 +396,75 @@ function Save({index}){
     )
 }
 
-function Memory(){
+function Memory({index}){
+    const { data, setData, setAlert, updateData, timestamp, setTimestamp } = useRootStore();
+    const [memoryImg, setMemoryImg] = useState('')
+    const [memory, setMemory] = useState('')
+    async function selectImgPath(){
+        const path = await window.electron.ipcRenderer.invoke("open-img-dialog")
+        if(path){
+            setMemoryImg(path)
+        }else{
+            return
+        }
+    }
+    async function saveMemory(){
+        try{
+            const id = Date.now().toString()
+            await window.electron.ipcRenderer.send('save-memory-img', data[index]['detail']['id'], id, memoryImg)
+            updateData([index, 'memories'], [...data[index]['memories'], {id: id, imgPath: `/${data[index]['detail']['id']}/memories/${id}.webp`, note: memory}])
+            document.getElementById('my_modal_1').close()
+            setAlert('保存成功')
+            setTimeout(() => {setAlert('')}, 3000)
+            setTimeout(() => {
+                setTimestamp()
+            }, 500);
+        }catch(e){
+            document.getElementById('my_modal_1').close()
+            setAlert('保存失败')
+            setTimeout(() => {setAlert('')}, 3000)
+        }
+    }
+    function quitMemory(){
+        setMemoryImg('')
+        setMemory('')
+        document.getElementById('my_modal_1').close()
+    }
     return(
         <div className='flex flex-col w-full gap-7'>
-            <div className='flex flex-col w-full'>
-                <img src={bg} className='w-full h-auto'></img>
-                <div className='p-3 bg-base-300'>夕阳与少女与烟</div>
-            </div>
-            <div className='flex flex-col w-full'>
-                <img src={mem} className='w-full h-auto'></img>
-                <div className='p-3 bg-base-300'>夕阳与少女与死亡</div>
-            </div>
+            <dialog id="my_modal_1" className="modal">
+                <div className="w-auto max-w-full max-h-full h-1/4 modal-box">
+                <form method="dialog">
+                    {/* if there is a button in form, it will close the modal */}
+                    <button className="absolute btn btn-sm btn-ghost right-2 top-2">✕</button>
+                </form>
+                    <div className='flex flex-col w-full h-full gap-3 p-5'>
+                        <label className="flex items-center w-full gap-2 input-sm input input-bordered focus-within:outline-none">
+                            <div className='font-semibold'>图片路径 |</div>
+                            <input type='text' className='grow' value={memoryImg || ''} onChange={(e)=>{setMemoryImg(e.target.value)}} />
+                            <span className="icon-[material-symbols-light--folder-open-outline-sharp] w-5 h-5 self-center" onClick={selectImgPath}></span>
+                        </label>
+                        <label className="flex items-center w-full gap-2 input-sm input input-bordered focus-within:outline-none">
+                            <div className='font-semibold'>文字 |</div>
+                            <input type="text" name='gameName' className="grow" value={memory || ''} onChange={(e)=>{setMemory(e.target.value)}} />
+                        </label>
+                        <div className='absolute flex flex-row gap-5 right-9 bottom-5'>
+                            <button className='btn btn-primary btn-sm' onClick={saveMemory}>保存</button>
+                            <button className='btn btn-error btn-sm' onClick={quitMemory}>取消</button>
+                        </div>
+                    </div>
+                </div>
+            </dialog>
+
+            <button className='btn btn-secondary text-base-100' onClick={()=>{document.getElementById('my_modal_1').showModal()}}>添加</button>
+            {data[index]['memories'] && data[index]['memories'].map((memory, index) => {
+                return (
+                    <div key={index} className='flex flex-col w-auto'>
+                        <img src={`${memory['imgPath']}?t=${timestamp}`} className='w-auto h-auto'></img>
+                        <div className='p-3 bg-base-300'>{memory['note']}</div>
+                    </div>
+                )
+            })}
         </div>
     )
 }

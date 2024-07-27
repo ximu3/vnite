@@ -316,7 +316,7 @@ async function organizeGameData(gid, savePath, gamePath) {
             },
             characters: characters,
             saves: saves,
-            memory: memory
+            memories: memory
         };
         await addObjectToJsonFile(data);
         return data;
