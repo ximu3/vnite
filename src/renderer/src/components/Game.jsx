@@ -248,7 +248,7 @@ function Detail({gameData}){
                         <div>原名：{gameData['name']}</div>
                         <div>中文名：{gameData['chineseName']}</div>
                         <div>发行日期：{gameData['releaseDate']}</div>
-                        <div>会社：<a className='link link-hover' href={`https://www.ymgal.games/oa${gameData['developerId']}`}>{gameData['developer']}</a></div>
+                        <div>会社：<a className='link link-hover' href={`https://www.ymgal.games/oa${gameData['developerId']}` } target='_blank'>{gameData['developer']}</a></div>
                         <div>类型：{gameData['typeDesc']}</div>
                     </div>
                 </div>
