@@ -5,6 +5,7 @@ import { useStore, create } from 'zustand';
 import Root from './components/Root';
 import AddGame from './components/AddGame';
 import { MemoryRouter, BrowserRouter, Routes, Route, Navigate, NavLink, useNavigate } from 'react-router-dom';
+import Config from './components/Config';
 
 
 
@@ -26,6 +27,10 @@ function App() {
       <MemoryRouter>
         <AddGame />
       </MemoryRouter>
+
+      <MemoryRouter>
+        <Config />
+      </MemoryRouter>
       
       <div className='absolute top-0 left-0 z-20 w-full h-8'>
         <div className='absolute top-0 left-0 z-20 flex items-center justify-between w-full h-8 border-b-2 border-primary title-bar'>
@@ -33,7 +38,7 @@ function App() {
             <div tabIndex={0} role='button' className='h-full min-h-0 pt-0 pb-0 pl-4 pr-4 text-lg font-bold border-0 btn-ghost no-drag'>my-gal</div>
             <ul tabIndex={0} className="dropdown-content menu z-[1] w-52 p-2 shadow rounded-none border-base-300 border-2 bg-base-100">
               <li onClick={()=>{document.getElementById('my_modal_3').showModal()}}><a>添加游戏</a></li>
-              <li ><a>Item 2</a></li>
+              <li onClick={()=>{document.getElementById('my_modal_0').showModal()}}><a>设置</a></li>
             </ul>
           </div>
           <div className='flex no-drag'>

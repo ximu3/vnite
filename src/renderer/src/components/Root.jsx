@@ -53,7 +53,7 @@ function NavButton({ to, name }) {
 }
 
 function Root() {
-  const { data, setData, alert } = useRootStore();
+  const { data, setData, alert, config, setConfig } = useRootStore();
   const { isloading } = useAddGame();
   useEffect(() => {
     window.electron.ipcRenderer.invoke('get-game-data').then((data) => {

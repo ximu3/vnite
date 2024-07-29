@@ -306,4 +306,23 @@ ipcMain.on('save-config-data', async (event, data) => {
   await updateConfigData(data);
 })
 
+ipcMain.handle('start-auth-process', async (event, clientId, clientSecret) => {
+  try {
+    const result = await startAuthProcess(mainWindow, clientId, clientSecret);
+    return result;
+  } catch (error) {
+    console.error('Authentication process failed:', error);
+    throw error; // 这将把错误传回渲染进程
+  }
+});
+
+ipcMain.handle('initialize-repo', async (event, token, owner) => {
+  try {
+    const path = join(app.getAppPath(), 'src/renderer/public/');
+    return await initializeRepo(token, owner, path);
+  } catch (error) {
+    console.error('Error initializing repository:', error);
+    mainWindow.webContents.send('initialize-error', error.message);
+    throw error;
+  }
 });
