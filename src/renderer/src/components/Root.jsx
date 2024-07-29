@@ -22,7 +22,6 @@ export const useRootStore = create(set => ({
     return { data: newData };
   }),
   setAlert: (alert) => set({ alert }),
-  setTimestamp: () => set({ timestamp: Date.now() })
   setTimestamp: () => set({ timestamp: Date.now() }),
   setConfig: (config) => set({ config }),
   updateConfig: (path, value) => set((state) => {
