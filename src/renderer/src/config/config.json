@@ -1,0 +1,19 @@
+{
+  "cloudSync": {
+    "enabled": false,
+    "mode": "github",
+    "webdav": {
+      "url": "",
+      "path": "",
+      "username": "",
+      "password": ""
+    },
+    "github": {
+      "clientId": "Ov23ctL31btY3I1PFNYW",
+      "clientSecret": "",
+      "username": "ximu3",
+      "accessToken": "",
+      "repoUrl": "https://github.com/ximu3/my-gal.git"
+    }
+  }
+}

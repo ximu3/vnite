@@ -3,11 +3,13 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { addNewGameToData, getGameData, updateGameData } from '../renderer/src/data/dataManager.mjs'
-import { searchGameList, searchGameId, getScreenshotsByTitle, getCoverByTitle, organizeGameData } from "../renderer/src/components/scraper.mjs"
+import { organizeGameData } from "../renderer/src/components/scraper.mjs"
 import { spawn } from 'child_process';
 import sharp from 'sharp';
 import fs from 'fs/promises';
 import fse from 'fs-extra';
+import { getConfigData, updateConfigData } from '../renderer/src/config/configManager.mjs';
+import { startAuthProcess, initializeRepo } from '../renderer/src/components/cloudSync.mjs';
 
 let mainWindow
 
@@ -153,7 +155,7 @@ let processes = new Map();
 ipcMain.on('start-game', (event, gamePath, gameId) => {
   const processId = gameId
   const startTime = Date.now();
-  
+
   const exeProcess = spawn(gamePath);
   processes.set(processId, { process: exeProcess, startTime });
 
@@ -238,13 +240,13 @@ ipcMain.handle('copy-save', async (event, savePath, gameId, saveId) => {
   try {
     // 首先确保目标目录存在
     await fse.ensureDir(saveDir);
-    
+
     // 清空目标目录
     await fse.emptyDir(saveDir);
-    
+
     // 然后复制文件
     await fse.copy(savePath, saveDir, { overwrite: true });
-    
+
   } catch (error) {
     console.error('复制存档时出错:', error);
   }
@@ -261,7 +263,7 @@ ipcMain.on('delete-save', async (event, gameId, saveId) => {
   }
 })
 
-ipcMain.on('switch-save', async(event, gameId, saveId, realSavePath)=>{
+ipcMain.on('switch-save', async (event, gameId, saveId, realSavePath) => {
   const savePath = join(app.getAppPath(), `src/renderer/public/${gameId}/saves/${saveId}/`);
   try {
     await fse.move(savePath, realSavePath, { overwrite: true });
@@ -290,4 +292,18 @@ ipcMain.on('save-memory-img', async (event, gameId, imgId, imgPath) => {
   } catch (error) {
     console.error('保存记忆图片时出错:', error);
   }
+});
+
+ipcMain.handle('get-config-data', async (event) => {
+  return await getConfigData();
+});
+
+ipcMain.handle('update-config-data', async (event, newData) => {
+  await updateConfigData(newData);
+});
+
+ipcMain.on('save-config-data', async (event, data) => {
+  await updateConfigData(data);
+})
+
 });

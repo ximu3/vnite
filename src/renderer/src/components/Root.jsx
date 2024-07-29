@@ -4,11 +4,13 @@ import Record from './Record';
 import { create } from 'zustand';
 import { useEffect } from 'react';
 import { useAddGame } from './AddGame';
+import Config from './Config';
 
 export const useRootStore = create(set => ({
   data: [],
   alert: "",
   timestamp: Date.now(),
+  config: {},
   setData: (data) => set({ data }),
   updateData: (path, value) => set((state) => {
     const newData = JSON.parse(JSON.stringify(state.data));
@@ -21,6 +23,17 @@ export const useRootStore = create(set => ({
   }),
   setAlert: (alert) => set({ alert }),
   setTimestamp: () => set({ timestamp: Date.now() })
+  setTimestamp: () => set({ timestamp: Date.now() }),
+  setConfig: (config) => set({ config }),
+  updateConfig: (path, value) => set((state) => {
+    const newConfig = JSON.parse(JSON.stringify(state.config));
+    let current = newConfig;
+    for (let i = 0; i < path.length - 1; i++) {
+      current = current[path[i]];
+    }
+    current[path[path.length - 1]] = value;
+    return { config: newConfig };
+  }),
 }));
 
 function NavButton({ to, name }) {
@@ -55,6 +68,17 @@ function Root() {
       window.electron.ipcRenderer.send('save-game-data', data)
     }
   }, [data])
+
+  useEffect(() => {
+    window.electron.ipcRenderer.invoke('get-config-data').then((config) => {
+      setConfig(config);
+    })
+  }, [])
+  useEffect(() => {
+    if (config['cloudSync']) {
+      window.electron.ipcRenderer.send('save-config-data', config)
+    }
+  }, [config])
   return (
     <div className='flex flex-row w-full h-full'>
       {alert && 
@@ -67,12 +91,14 @@ function Root() {
       <ul className="w-14 menu bg-base-300 rounded-box shrink-0">
         <li><NavButton to="/library" className="bg-primary" name="l" /></li>
         <li><NavButton to="/record" className="bg-primary" name="r" /></li>
+        <li><NavButton to="/config" className="bg-primary" name="c" /></li>
       </ul>
       <div className='grow'>
         <Routes>
           <Route index element={<Navigate to='/library' />} />
           <Route path='/library/*' element={<Library />} />
-          <Route path='/record' element={<Record />} />
+          <Route path='/record/*' element={<Record />} />
+          {/* <Route path='/config/*' element={<Config />} /> */}
         </Routes>
       </div>
     </div>
