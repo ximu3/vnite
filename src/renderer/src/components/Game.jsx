@@ -26,6 +26,7 @@ function NavTab({to, name}){
 
 function Game({index}) {
     const { data, setData, setAlert, updateData, timestamp } = useRootStore();
+    const { data, setData, setAlert, updateData, timestamp, config, updateConfig } = useRootStore();
     const gameData = data[index]['detail'];
     const characterData = data[index]['characters'];
     const { settingData, setSettingData } = useGameSetting();
@@ -66,6 +67,23 @@ function Game({index}) {
                 updateData([index, 'detail', 'lastVisitDate'], getFormattedDate());
                 if (runningTime >= 1){
                     updateData([index, 'detail', 'frequency'], data[index]['detail']['frequency'] + 1);
+                    if(config['cloudSync']['enabled']){
+                        if(config['cloudSync']['mode'] === 'github'){
+                            if(config['cloudSync']['github']['repoUrl']){
+                                const time = getFormattedDateTimeWithSeconds()
+                                window.electron.ipcRenderer.invoke('cloud-sync-github', time).then((data) => {
+                                    if(data === 'success'){
+                                        setAlert('云同步成功')
+                                        updateConfig(['cloudSync', 'github', 'lastSyncTime'], time)
+                                        setTimeout(() => {setAlert('')}, 3000)
+                                    }else{
+                                        setAlert('云同步失败，请检查设置')
+                                        setTimeout(() => {setAlert('')}, 3000)
+                                    }
+                                })
+                            }
+                        }
+                    }
                     try{
                         const saveId = (data[index]['saves'][0] ? data[index]['saves'][data[index]['saves'].length - 1]['id'] + 1 : 1) // 使用时间戳作为唯一标识符
                         window.electron.ipcRenderer.invoke('copy-save', data[index]['detail']['savePath'], data[index]['detail']['id'], saveId);
