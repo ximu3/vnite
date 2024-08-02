@@ -115,7 +115,10 @@ export async function initializeRepo(token, user, path) {
     const exists = await checkRepoExists(token, user);
     if (exists) {
       console.log('仓库已存在');
-      return;
+      await fse.remove(path);
+      console.log('清空本地文件夹');
+      clonePrivateRepo(token, `https://github.com/${user}/my-gal.git`, path);
+      return `https://github.com/${user}/my-gal.git`;
     }
     // createRepo(repo, token);
     // 创建远程空仓库并推送本地文件

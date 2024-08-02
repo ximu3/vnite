@@ -9,7 +9,7 @@ import sharp from 'sharp';
 import fs from 'fs/promises';
 import fse from 'fs-extra';
 import { getConfigData, updateConfigData } from '../renderer/src/config/configManager.mjs';
-import { startAuthProcess, initializeRepo } from '../renderer/src/components/cloudSync.mjs';
+import { startAuthProcess, initializeRepo, commitAndPush } from '../renderer/src/components/cloudSync.mjs';
 
 let mainWindow
 
@@ -325,4 +325,15 @@ ipcMain.handle('initialize-repo', async (event, token, owner) => {
     mainWindow.webContents.send('initialize-error', error.message);
     throw error;
   }
-});
+})
+
+ipcMain.handle('cloud-sync-github', async (event, message) => {
+  try {
+    const path = join(app.getAppPath(), 'src/renderer/public/');
+    await commitAndPush(path, message);
+    return 'success';
+  } catch (error) {
+    console.error('Error committing and pushing changes:', error);
+    return error.message;
+  }
+})
