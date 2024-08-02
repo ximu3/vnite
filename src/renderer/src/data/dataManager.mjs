@@ -1,39 +1,37 @@
 import { promises as fs } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 import axios from 'axios';
 import path from 'path';
 
 
 async function addObjectToJsonFile(newObject) {
-  // const __filename = fileURLToPath(import.meta.url);
-  // const __dirname = dirname(__filename);
-  const filePath = 'src/renderer/src/data/data.json'
-  try {
-    // 读取 JSON 文件
-    const data = await fs.readFile(filePath, 'utf8');
-    
-    // 解析 JSON 数据
-    let jsonArray = JSON.parse(data);
-    
-    // 确保 jsonArray 是一个数组
-    if (!Array.isArray(jsonArray)) {
-      jsonArray = [];
+    // const __filename = fileURLToPath(import.meta.url);
+    // const __dirname = dirname(__filename);
+    const filePath = 'src/renderer/src/data/data.json'
+    try {
+        // 读取 JSON 文件
+        const data = await fs.readFile(filePath, 'utf8');
+
+        // 解析 JSON 数据
+        let jsonArray = JSON.parse(data);
+
+        // 确保 jsonArray 是一个数组
+        if (!Array.isArray(jsonArray)) {
+            jsonArray = [];
+        }
+
+        // 添加新对象到数组
+        jsonArray.push(newObject);
+
+        // 将更新后的数组转换回 JSON 字符串
+        const updatedJsonString = JSON.stringify(jsonArray, null, 2);
+
+        // 将更新后的 JSON 写回文件
+        await fs.writeFile(filePath, updatedJsonString, 'utf8');
+
+        console.log('新对象已成功添加到 JSON 文件');
+    } catch (error) {
+        console.error('添加对象到 JSON 文件时出错:', error);
     }
-    
-    // 添加新对象到数组
-    jsonArray.push(newObject);
-    
-    // 将更新后的数组转换回 JSON 字符串
-    const updatedJsonString = JSON.stringify(jsonArray, null, 2);
-    
-    // 将更新后的 JSON 写回文件
-    await fs.writeFile(filePath, updatedJsonString, 'utf8');
-    
-    console.log('新对象已成功添加到 JSON 文件');
-  } catch (error) {
-    console.error('添加对象到 JSON 文件时出错:', error);
-  }
 }
 
 async function getGameData() {
@@ -54,17 +52,17 @@ async function updateGameData(newData) {
     try {
         // 将更新后的数组转换回 JSON 字符串
         const updatedJsonString = JSON.stringify(newData, null, 2);
-        
+
         // 将更新后的 JSON 写回文件
         await fs.writeFile(filePath, updatedJsonString, 'utf8');
-        
+
         console.log('游戏数据已成功更新');
     } catch (error) {
         console.error('更新游戏数据时出错:', error);
     }
 }
 
-async function addNewGameToData(gid, coverUrl, bgUrl){
+async function addNewGameToData(gid, coverUrl, bgUrl) {
     // const __filename = fileURLToPath(import.meta.url);
     // const __dirname = dirname(__filename);
 
@@ -98,7 +96,7 @@ async function addNewGameToData(gid, coverUrl, bgUrl){
     }
 }
 
-async function addCharacterImgToData(gid, cid, imgUrls){
+async function addCharacterImgToData(gid, cid, imgUrls) {
     // const __filename = fileURLToPath(import.meta.url);
     // const __dirname = dirname(__filename);
 
