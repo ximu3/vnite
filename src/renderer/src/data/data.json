@@ -17,9 +17,9 @@
       "savePath": "F:\\game\\VisualNovels\\金色ラブリッチェ\\savedata",
       "gamePath": "F:\\game\\VisualNovels\\金色ラブリッチェ\\SiglusEngineCHS.exe",
       "addDate": "2024-07-20",
-      "gameDuration": 62447,
-      "lastVisitDate": "2024-07-26",
-      "frequency": 40,
+      "gameDuration": 62496,
+      "lastVisitDate": "2024-08-02",
+      "frequency": 46,
       "playtStatus": 2,
       "moreEntry": [
         {
@@ -795,6 +795,42 @@
         "date": "2024-07-26 17:41:32",
         "note": "",
         "path": "/27702/saves/4"
+      },
+      {
+        "id": 5,
+        "date": "2024-08-02 15:53:26",
+        "note": "",
+        "path": "/27702/saves/5"
+      },
+      {
+        "id": 6,
+        "date": "2024-08-02 15:54:44",
+        "note": "",
+        "path": "/27702/saves/6"
+      },
+      {
+        "id": 7,
+        "date": "2024-08-02 16:04:01",
+        "note": "",
+        "path": "/27702/saves/7"
+      },
+      {
+        "id": 8,
+        "date": "2024-08-02 16:04:35",
+        "note": "",
+        "path": "/27702/saves/8"
+      },
+      {
+        "id": 9,
+        "date": "2024-08-02 16:05:17",
+        "note": "",
+        "path": "/27702/saves/9"
+      },
+      {
+        "id": 10,
+        "date": "2024-08-02 16:08:12",
+        "note": "",
+        "path": "/27702/saves/10"
       }
     ],
     "memories": [
