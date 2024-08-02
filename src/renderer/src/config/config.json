@@ -1,6 +1,6 @@
 {
   "cloudSync": {
-    "enabled": false,
+    "enabled": true,
     "mode": "github",
     "webdav": {
       "url": "",
@@ -13,7 +13,8 @@
       "clientSecret": "",
       "username": "ximu3",
       "accessToken": "",
-      "repoUrl": "https://github.com/ximu3/my-gal.git"
+      "repoUrl": "https://github.com/ximu3/my-gal.git",
+      "lastSyncTime": "2024-08-02 17:29:48"
     }
   }
 }

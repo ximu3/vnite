@@ -110,7 +110,6 @@ function Config() {
 function CloudSync(){
     const { configSetting, updateConfigSetting, setConfigAlert } = useConfigStore();
     const { updateConfig, config } = useRootStore();
-    function loginGithub() {
     async function loginGithub() {
         window.electron.ipcRenderer.invoke('start-auth-process', configSetting.cloudSync.github.clientId, configSetting.cloudSync.github.clientSecret).then((data) => {
             updateConfig(['cloudSync', 'github', 'username'], data.username);
@@ -127,7 +126,6 @@ function CloudSync(){
             setTimeout(() => {
                 setConfigAlert('');
             }, 5000);
-            window.electron.ipcRenderer.invoke('initialize-repo', config['cloudSync']['github']['accessToken'], data.username).then((data) => {
             window.electron.ipcRenderer.invoke('initialize-repo', data.accessToken, data.username).then((data) => {
                 if (data) {
                     setConfigAlert('Github仓库初始化成功');
@@ -135,6 +133,7 @@ function CloudSync(){
                         setConfigAlert('');
                     }, 5000);
                     updateConfig(['cloudSync', 'github', 'repoUrl'], data);
+                    updateConfig(['cloudSync', 'github', 'lastSyncTime'], getFormattedDateTimeWithSeconds());
                 }
             })
         })
@@ -144,7 +143,35 @@ function CloudSync(){
                 setConfigAlert('');
             }, 5000);
         })
+    }
+    function getFormattedDateTimeWithSeconds() {
+        const now = new Date();
         
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    }
+    function githubSync() {
+        const time = getFormattedDateTimeWithSeconds();
+        window.electron.ipcRenderer.invoke('cloud-sync-github', time).then((data) => {
+            if (data === 'success') {
+                setConfigAlert('Github同步成功');
+                updateConfig(['cloudSync', 'github', 'lastSyncTime'], time);
+                setTimeout(() => {
+                    setConfigAlert('');
+                }, 3000);
+            } else {
+                setConfigAlert('Github同步失败：' + data);
+                setTimeout(() => {
+                    setConfigAlert('');
+                }, 3000);
+            }
+        })
     }
     return (
         <div className='flex flex-col w-full h-full gap-5 p-7'>
@@ -176,6 +203,12 @@ function CloudSync(){
                             <div className='flex flex-row items-center'>
                                 <span className="text-sm font-semibold grow">仓库</span>
                                 <a className="p-1 text-sm font-semibold link-hover" href={config['cloudSync']['github']['repoUrl']} target='_blank'>{`${config['cloudSync']['github']['username']}/my-gal`}</a>
+                            </div>
+                            <div className='m-0 divider'></div>
+                            <div className='flex flex-row items-center gap-2'>
+                                <span className="text-sm font-semibold grow">最后同步时间</span>
+                                <span className="p-1 text-sm font-semibold">{config['cloudSync']['github']['lastSyncTime']}</span>
+                                <button className='btn btn-xs' onClick={githubSync}>同步</button>
                             </div>
                         </div>
                     :

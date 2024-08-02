@@ -25,7 +25,6 @@ function NavTab({to, name}){
 }
 
 function Game({index}) {
-    const { data, setData, setAlert, updateData, timestamp } = useRootStore();
     const { data, setData, setAlert, updateData, timestamp, config, updateConfig } = useRootStore();
     const gameData = data[index]['detail'];
     const characterData = data[index]['characters'];
