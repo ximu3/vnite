@@ -111,6 +111,7 @@ function CloudSync(){
     const { configSetting, updateConfigSetting, setConfigAlert } = useConfigStore();
     const { updateConfig, config } = useRootStore();
     function loginGithub() {
+    async function loginGithub() {
         window.electron.ipcRenderer.invoke('start-auth-process', configSetting.cloudSync.github.clientId, configSetting.cloudSync.github.clientSecret).then((data) => {
             updateConfig(['cloudSync', 'github', 'username'], data.username);
             updateConfig(['cloudSync', 'github', 'accessToken'], data.accessToken);
@@ -127,6 +128,7 @@ function CloudSync(){
                 setConfigAlert('');
             }, 5000);
             window.electron.ipcRenderer.invoke('initialize-repo', config['cloudSync']['github']['accessToken'], data.username).then((data) => {
+            window.electron.ipcRenderer.invoke('initialize-repo', data.accessToken, data.username).then((data) => {
                 if (data) {
                     setConfigAlert('Github仓库初始化成功');
                     setTimeout(() => {

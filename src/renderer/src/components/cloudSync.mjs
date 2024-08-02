@@ -6,6 +6,7 @@ import { shell } from 'electron';
 import simpleGit from 'simple-git';
 import { promises as fs } from 'fs';
 import path from 'path';
+import fse from 'fs-extra';
 
 const PORT = 20721;
 let server;
@@ -74,7 +75,7 @@ async function exchangeCodeForToken(code, mainWindow, clientId, clientSecret) {
 
     const username = userResponse.data.login;
     // 存储用户名
-    mainWindow.webContents.send('auth-success', { username });
+    mainWindow.webContents.send('auth-success', { username: username, accessToken: accessToken });
     return { username: username, accessToken: accessToken };
 
   } catch (error) {
@@ -85,10 +86,11 @@ async function exchangeCodeForToken(code, mainWindow, clientId, clientSecret) {
 
 async function checkRepoExists(token, owner) {
   const repo = 'my-gal'
+  console.log(`开始检查仓库: ${owner}/my-gal, token: ${token}`);
   try {
     const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}`, {
       headers: {
-        'Authorization': `token ${token}`,
+        'Authorization': `Bearer ${token}`,
         'Accept': 'application/vnd.github.v3+json'
       }
     });
