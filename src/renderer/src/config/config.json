@@ -1,12 +1,13 @@
 {
   "cloudSync": {
     "enabled": true,
-    "mode": "github",
+    "mode": "webdav",
     "webdav": {
-      "url": "",
-      "path": "",
-      "username": "",
-      "password": ""
+      "url": "https://pan.timero.xyz/dav",
+      "path": "/onedrive/adv_lib_001/my-gal",
+      "username": "admin",
+      "password": "",
+      "lastSyncTime": "2024-08-03 18:23:46"
     },
     "github": {
       "clientId": "Ov23ctL31btY3I1PFNYW",
@@ -14,7 +15,7 @@
       "username": "ximu3",
       "accessToken": "",
       "repoUrl": "https://github.com/ximu3/my-gal.git",
-      "lastSyncTime": "2024-08-02 17:29:48"
+      "lastSyncTime": "2024-08-03 15:06:09"
     }
   }
 }

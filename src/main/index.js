@@ -9,7 +9,7 @@ import sharp from 'sharp';
 import fs from 'fs/promises';
 import fse from 'fs-extra';
 import { getConfigData, updateConfigData } from '../renderer/src/config/configManager.mjs';
-import { startAuthProcess, initializeRepo, commitAndPush } from '../renderer/src/components/cloudSync.mjs';
+import { startAuthProcess, initializeRepo, commitAndPush, createWebDavClient, uploadDirectory, downloadDirectory } from '../renderer/src/components/cloudSync.mjs';
 
 let mainWindow
 
@@ -334,6 +334,31 @@ ipcMain.handle('cloud-sync-github', async (event, message) => {
     return 'success';
   } catch (error) {
     console.error('Error committing and pushing changes:', error);
+    return error.message;
+  }
+})
+
+ipcMain.handle('cloud-sync-webdav-upload', async (event, webdavUrl, webdavUser, webdavPass, remotePath) => {
+  try {
+    const path = join(app.getAppPath(), 'src/renderer/public/');
+    const client = await createWebDavClient(webdavUrl, webdavUser, webdavPass);
+    await uploadDirectory(client, path, remotePath);
+    return 'success';
+  } catch (error) {
+    console.error('Error uploading to WebDAV:', error);
+    return error.message;
+  }
+})
+
+ipcMain.handle('cloud-sync-webdav-download', async (event, webdavUrl, webdavUser, webdavPass, remotePath) => {
+  try {
+    const path = join(app.getAppPath(), 'src/renderer/public/');
+    await fse.emptyDir(path); // 清空本地目录
+    const client = await createWebDavClient(webdavUrl, webdavUser, webdavPass);
+    await downloadDirectory(client, remotePath, path);
+    return 'success';
+  } catch (error) {
+    console.error('Error downloading from WebDAV:', error);
     return error.message;
   }
 })

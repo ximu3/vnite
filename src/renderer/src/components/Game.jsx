@@ -81,6 +81,20 @@ function Game({index}) {
                                     }
                                 })
                             }
+                        }else if(config['cloudSync']['mode'] === 'webdav'){
+                            if(config['cloudSync']['webdav']['url']){
+                                const time = getFormattedDateTimeWithSeconds()
+                                window.electron.ipcRenderer.invoke('cloud-sync-webdav-upload', config['cloudSync']['webdav']['url'], config['cloudSync']['webdav']['username'], config['cloudSync']['webdav']['password'], config['cloudSync']['webdav']['path']).then((data) => {
+                                    if(data === 'success'){
+                                        setAlert('云同步成功')
+                                        updateConfig(['cloudSync', 'webdav', 'lastSyncTime'], time)
+                                        setTimeout(() => {setAlert('')}, 3000)
+                                    }else{
+                                        setAlert('云同步失败，请检查设置')
+                                        setTimeout(() => {setAlert('')}, 3000)
+                                    }
+                                })
+                            }
                         }
                     }
                     try{

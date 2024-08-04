@@ -198,54 +198,125 @@ export async function pullChanges(localPath) {
   console.log('已从远程仓库拉取最新更改');
 }
 
-export async function createRepo(repoName, token) {
-  try {
-    const response = await axios.post('https://api.github.com/user/repos', {
-      name: repoName,
-      private: true
-    }, {
-      headers: {
-        Authorization: `token ${token}`,
-        Accept: 'application/vnd.github.v3+json'
+
+import { createClient } from 'webdav';
+
+export async function createWebDavClient(url, username, password) {
+  console.log(`创建 WebDAV 客户端: ${url}`);
+  return createClient(url, {
+    username: username,
+    password: password
+  });
+}
+
+async function createDirectoryRecursive(client, path) {
+  const parts = path.split('/').filter(Boolean);
+  let currentPath = '';
+  for (const part of parts) {
+    currentPath += '/' + part;
+    try {
+      await createDirectoryWithRetry(client, currentPath);
+    } catch (error) {
+      if (error.status !== 405) { // 忽略"已存在"的错误
+        throw error;
       }
-    });
-    return response.data.html_url;
+    }
+  }
+}
+
+async function createDirectoryWithRetry(client, path, retries = 5, delay = 1000) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      await client.createDirectory(path);
+      return;
+    } catch (error) {
+      if (error.status === 423 && i < retries - 1) {
+        console.log(`Directory ${path} is locked. Retrying in ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      } else {
+        throw error;
+      }
+    }
+  }
+}
+
+async function retry(fn, retries) {
+  try {
+    return await fn();
   } catch (error) {
-    console.error('Error creating repository:', error);
+    if (retries > 0) {
+      console.log(`操作失败，${1000 / 1000}秒后重试。剩余重试次数：${retries - 1}`);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      return retry(fn, retries - 1);
+    }
     throw error;
   }
 }
 
-export async function uploadFile(repoName, path, content, token) {
+export async function uploadDirectory(client, localDir, remoteDir) {
   try {
-    const encodedContent = Buffer.from(content).toString('base64');
-    const response = await axios.put(`https://api.github.com/repos/${repoName}/contents/${path}`, {
-      message: 'Upload file',
-      content: encodedContent
-    }, {
-      headers: {
-        Authorization: `token ${token}`,
-        Accept: 'application/vnd.github.v3+json'
+    const stats = await fs.stat(localDir);
+
+    // 忽略 .git 目录
+    if (path.basename(localDir) === '.git') {
+      console.log(`Skipping .git directory: ${localDir}`);
+      return;
+    }
+
+    if (stats.isDirectory()) {
+      // 如果是目录，先创建远程目录
+      await createDirectoryRecursive(client, remoteDir).catch(err => {
+        if (err.status !== 405) { // 忽略"已存在"的错误
+          console.warn(`Warning: Could not create directory ${remoteDir}:`, err);
+        }
+      });
+
+      // 读取目录内容
+      const files = await fs.readdir(localDir);
+
+      // 递归上传每个文件/子目录
+      for (const file of files) {
+        await uploadDirectory(client, path.join(localDir, file), path.join(remoteDir, file));
       }
-    });
-    return response.data.content.html_url;
+    } else {
+      // 如果是文件，直接上传
+      const fileContent = await fs.readFile(localDir);
+      await retry(() => client.putFileContents(remoteDir, fileContent), 5);
+      console.log(`Uploaded: ${remoteDir}`);
+    }
   } catch (error) {
-    console.error('Error uploading file:', error);
-    throw error;
+    if (error.code === 'ENOENT') {
+      console.warn(`Warning: File or directory not found: ${localDir}. Skipping.`);
+    } else {
+      console.error(`Error processing ${localDir}:`, error);
+    }
   }
 }
 
-export async function downloadFile(repoName, path, token) {
+
+export async function downloadDirectory(client, remoteDir, localDir) {
   try {
-    const response = await axios.get(`https://api.github.com/repos/${repoName}/contents/${path}`, {
-      headers: {
-        Authorization: `token ${token}`,
-        Accept: 'application/vnd.github.v3+json'
+    // 确保本地目录存在
+    await fs.mkdir(localDir, { recursive: true });
+
+    // 获取远程目录内容列表
+    const directoryItems = await client.getDirectoryContents(remoteDir);
+
+    for (const item of directoryItems) {
+      const remotePath = item.filename;
+      const localPath = path.join(localDir, path.basename(remotePath));
+
+      if (item.type === 'directory') {
+        // 如果是目录，递归下载
+        await downloadDirectory(client, remotePath, localPath);
+      } else {
+        // 如果是文件，下载文件内容
+        const fileContent = await retry(() => client.getFileContents(remotePath), 5);
+        await fs.writeFile(localPath, fileContent);
+        console.log(`Downloaded: ${remotePath} to ${localPath}`);
       }
-    });
-    return Buffer.from(response.data.content, 'base64').toString('utf-8');
+    }
   } catch (error) {
-    console.error('Error downloading file:', error);
-    throw error;
+    console.error(`Error downloading ${remoteDir}:`, error);
   }
 }

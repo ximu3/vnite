@@ -37,8 +37,8 @@ const useConfigStore = create(set => ({
 }));
 
 function Config() {
-    const { config, setConfig } = useRootStore();
-    const { configSetting, setConfigSetting, configAlert } = useConfigStore();
+    const { config, setConfig, updateConfig } = useRootStore();
+    const { configSetting, setConfigSetting, configAlert, updateConfigSetting } = useConfigStore();
     const keyToName = {
         cloudSync: "云同步",
     };
@@ -46,7 +46,12 @@ function Config() {
         setConfigSetting(config);
     }, [config]);
     function saveConfig() {
-        setConfig(configSetting);
+        if(configSetting.cloudSync.webdav.path.endsWith('/my-gal')){
+            setConfig(configSetting);
+        }else{
+            setConfig(configSetting);
+            updateConfig(['cloudSync', 'webdav', 'path'], config.cloudSync.webdav.path + '/my-gal');
+        }
     }
     function quit() {
         setConfigSetting(config);
@@ -173,8 +178,43 @@ function CloudSync(){
             }
         })
     }
+    function webdavUpload() {
+        const time = getFormattedDateTimeWithSeconds();
+        window.electron.ipcRenderer.invoke('cloud-sync-webdav-upload', config['cloudSync']['webdav']['url'], config['cloudSync']['webdav']['username'], config['cloudSync']['webdav']['password'], config['cloudSync']['webdav']['path']).then((data) => {
+            if (data === 'success') {
+                setConfigAlert('WebDav上传成功');
+                updateConfig(['cloudSync', 'webdav', 'lastSyncTime'], time);
+                setTimeout(() => {
+                    setConfigAlert('');
+                }, 3000);
+            } else {
+                setConfigAlert('WebDav上传失败：' + data);
+                setTimeout(() => {
+                    setConfigAlert('');
+                }, 3000);
+            }
+        })
+    }
+
+    function webdavDownload() {
+        const time = getFormattedDateTimeWithSeconds();
+        window.electron.ipcRenderer.invoke('cloud-sync-webdav-download', config['cloudSync']['webdav']['url'], config['cloudSync']['webdav']['username'], config['cloudSync']['webdav']['password'], config['cloudSync']['webdav']['path']).then((data) => {
+            if (data === 'success') {
+                setConfigAlert('WebDav下载成功');
+                updateConfig(['cloudSync', 'webdav', 'lastSyncTime'], time);
+                setTimeout(() => {
+                    setConfigAlert('');
+                }, 3000);
+            } else {
+                setConfigAlert('WebDav下载失败：' + data);
+                setTimeout(() => {
+                    setConfigAlert('');
+                }, 3000);
+            }
+        })
+    }
     return (
-        <div className='flex flex-col w-full h-full gap-5 p-7'>
+        <div className='flex flex-col w-full h-full gap-5 pb-32 overflow-auto p-7 scrollbar-base'>
             <div className='text-2xl font-bold'>云同步</div>
             <div className='flex flex-col gap-2'>
                 <label className="p-0 cursor-pointer label">
@@ -191,7 +231,7 @@ function CloudSync(){
                 </label>
             </div>
             <div className='flex flex-col gap-2'>
-                <div className='pb-2 font-bold'>Github</div>
+                <div className='flex flex-row gap-2 pb-2 font-bold'>Github<div className="self-center badge badge-secondary badge-outline badge-sm">推荐</div></div>
                 {
                     config['cloudSync']['github']['username'] ?
                         <div>
@@ -217,6 +257,35 @@ function CloudSync(){
                             <button className='self-center btn-sm btn btn-secondary' onClick={loginGithub}>登录</button>
                         </div>
                 }
+            </div>
+            <div className='flex flex-col gap-2'>
+                <div className='pb-2 font-bold'>WebDav</div>
+                <div className='flex flex-row items-center'>
+                    <span className="text-sm font-semibold grow">地址</span>
+                    <input className="w-1/2 min-h-0 outline-none input input-bordered input-sm" spellCheck='false' placeholder='示例：https://pan.example.xyz' value={configSetting?.cloudSync?.webdav?.url || ''} onChange={(e)=>{updateConfigSetting(['cloudSync', 'webdav', 'url'], e.target.value)}} />
+                </div>
+                <div className='m-0 divider'></div>
+                <div className='flex flex-row items-center'>
+                    <span className="text-sm font-semibold grow">路径</span>
+                    <input className="w-1/2 min-h-0 outline-none input input-bordered input-sm" spellCheck='false' placeholder='示例：/dav/my-gal' value={configSetting?.cloudSync?.webdav?.path || ''} onChange={(e)=>{updateConfigSetting(['cloudSync', 'webdav', 'path'], e.target.value)}} />
+                </div>
+                <div className='m-0 divider'></div>
+                <div className='flex flex-row items-center'>
+                    <span className="text-sm font-semibold grow">用户名</span>
+                    <input className="w-1/3 min-h-0 outline-none input input-bordered input-sm" spellCheck='false' value={configSetting?.cloudSync?.webdav?.username || ''} onChange={(e)=>{updateConfigSetting(['cloudSync', 'webdav', 'username'], e.target.value)}} />
+                </div>
+                <div className='m-0 divider'></div>
+                <div className='flex flex-row items-center'>
+                    <span className="text-sm font-semibold grow">密码</span>
+                    <input className="w-1/3 min-h-0 outline-none input input-bordered input-sm" spellCheck='false' value={configSetting?.cloudSync?.webdav?.password || ''} onChange={(e)=>{updateConfigSetting(['cloudSync', 'webdav', 'password'], e.target.value)}} />
+                </div>
+                <div className='m-0 divider'></div>
+                <div className='flex flex-row items-center gap-2'>
+                    <span className="text-sm font-semibold grow">最后同步时间</span>
+                    <span className="p-1 text-sm font-semibold">{config['cloudSync']['webdav']['lastSyncTime']}</span>
+                    <button className='btn btn-xs' onClick={webdavUpload}>上传</button>
+                    <button className='btn btn-xs' onClick={webdavDownload}>下载</button>
+                </div>
             </div>
         </div>
     );
