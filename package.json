@@ -21,11 +21,13 @@
     "@electron-toolkit/preload": "^3.0.0",
     "@electron-toolkit/utils": "^3.0.0",
     "axios": "^1.7.2",
+    "fetch": "^1.1.0",
     "fs-extra": "^11.2.0",
     "node-fetch": "^3.3.2",
     "react-router-dom": "^6.23.1",
     "sharp": "^0.33.4",
     "simple-git": "^3.25.0",
+    "webdav": "^5.7.0",
     "zustand": "^4.5.2"
   },
   "devDependencies": {
