@@ -545,6 +545,14 @@ function Setting({index}){
                 setTimeout(() => {setSettingAlert('')}, 3000)
             }
             return
+        } else if (activeTab === 'startup') {
+            await window.electron.ipcRenderer.invoke('get-folder-size', settingData['detail']['gamePath']).then((data) => {
+                updateData([index], settingData)
+                updateData([index, 'detail', 'volume'], data)
+                setSettingAlert('保存成功')
+                setTimeout(() => { setSettingAlert('') }, 3000)
+            })
+            return
         }
         updateData([index], settingData)
         setSettingAlert('保存成功')

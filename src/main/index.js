@@ -10,6 +10,8 @@ import fs from 'fs/promises';
 import fse from 'fs-extra';
 import { getConfigData, updateConfigData } from '../renderer/src/config/configManager.mjs';
 import { startAuthProcess, initializeRepo, commitAndPush, createWebDavClient, uploadDirectory, downloadDirectory } from '../renderer/src/components/cloudSync.mjs';
+import getFolderSize from 'get-folder-size';
+import path from 'path';
 
 let mainWindow
 
@@ -362,3 +364,18 @@ ipcMain.handle('cloud-sync-webdav-download', async (event, webdavUrl, webdavUser
     return error.message;
   }
 })
+
+
+ipcMain.handle('get-folder-size', async (event, inputPath) => {
+  try {
+    // 获取上一级目录的路径
+    const parentPath = path.dirname(inputPath);
+
+    const size = await getFolderSize(parentPath);
+    const sizeInMB = Math.round(size.size / (1024 * 1024));
+    return sizeInMB;
+  } catch (err) {
+    console.error('计算文件夹大小时出错:', err);
+    throw err;
+  }
+});

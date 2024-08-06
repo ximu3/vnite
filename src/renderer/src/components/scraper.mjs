@@ -283,7 +283,13 @@ async function organizeGameData(gid, savePath, gamePath) {
             }
         }
 
+        let sizeInMB = 0;
 
+        if (gamePath !== '') {
+            const gamePath = gamePath.replace(/\\/g, '/');
+            const size = await getFolderSize(path.dirname(gamePath));
+            sizeInMB = Math.round(size.size / 1024 / 1024);
+        }
 
         // console.log(staff);
         const data = {
@@ -299,6 +305,7 @@ async function organizeGameData(gid, savePath, gamePath) {
                 backgroundImage: `/${gid}/background.webp`,
                 savePath: savePath.replace(/\\/g, '/'),
                 gamePath: gamePath.replace(/\\/g, '/'),
+                volume: sizeInMB,
                 addDate: getCurrentDate(),
                 gameDuration: 0,
                 lastVisitDate: "",
