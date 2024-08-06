@@ -1,5 +1,7 @@
 import fetch from 'node-fetch';
 import { addCharacterImgToData, addNewGameToData, addObjectToJsonFile } from '../data/dataManager.mjs';
+import path from 'path';
+import { getFolderSize } from 'get-folder-size';
 
 // 定义获取Access Token的函数
 async function getAccessToken(clientId, clientSecret) {
@@ -167,12 +169,12 @@ async function searchDeveloperId(oid) {
 }
 
 function getCurrentDate() {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
-  
-  return `${year}-${month}-${day}`;
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
 }
 
 async function organizeGameData(gid, savePath, gamePath) {
@@ -188,7 +190,7 @@ async function organizeGameData(gid, savePath, gamePath) {
                 console.log(`未找到角色 ${character.cid} 的主图。`);
                 cover = ''
                 continue;
-            }else{
+            } else {
                 await addCharacterImgToData(gid, character.cid, characterDetails.data.character.mainImg);
             }
             let extensionName = []

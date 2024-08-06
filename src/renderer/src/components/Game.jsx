@@ -9,22 +9,22 @@ import { useRootStore } from './Root'
 import { useEffect, useState } from 'react'
 import { create } from 'zustand'
 
-function NavTab({to, name}){
+function NavTab({ to, name }) {
     return (
-    <NavLink className={({ isActive, isPending }) =>
-      isPending
-        ? "tab"
-        : isActive
-        ? "tab tab-active"
-        : "tab"
-    }
-    to={to} role="tab">
-      {name}
-    </NavLink>
-  )
+        <NavLink className={({ isActive, isPending }) =>
+            isPending
+                ? "tab"
+                : isActive
+                    ? "tab tab-active"
+                    : "tab"
+        }
+            to={to} role="tab">
+            {name}
+        </NavLink>
+    )
 }
 
-function Game({index}) {
+function Game({ index }) {
     const { data, setData, setAlert, updateData, timestamp, config, updateConfig } = useRootStore();
     const gameData = data[index]['detail'];
     const characterData = data[index]['characters'];
@@ -33,12 +33,12 @@ function Game({index}) {
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
-        
+
         return `${year}-${month}-${day}`;
     }
     function getFormattedDateTimeWithSeconds() {
         const now = new Date();
-        
+
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0');
         const day = String(now.getDate()).padStart(2, '0');
@@ -49,55 +49,55 @@ function Game({index}) {
         return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     }
 
-// 使用示例
+    // 使用示例
     useEffect(() => {
         window.electron.ipcRenderer.on('game-start-result', (event, result) => {
-        if (result.success) {
-            return
-        } else {
-            setAlert(result.error);
-            setTimeout(() => {setAlert('')}, 3000);
-        }
+            if (result.success) {
+                return
+            } else {
+                setAlert(result.error);
+                setTimeout(() => { setAlert('') }, 3000);
+            }
         });
 
         window.electron.ipcRenderer.on('game-running-time', (event, { processId, runningTime }) => {
             if (processId === index) {
                 updateData([index, 'detail', 'gameDuration'], data[index]['detail']['gameDuration'] + runningTime);
                 updateData([index, 'detail', 'lastVisitDate'], getFormattedDate());
-                if (runningTime >= 1){
+                if (runningTime >= 1) {
                     updateData([index, 'detail', 'frequency'], data[index]['detail']['frequency'] + 1);
-                    if(config['cloudSync']['enabled']){
-                        if(config['cloudSync']['mode'] === 'github'){
-                            if(config['cloudSync']['github']['repoUrl']){
+                    if (config['cloudSync']['enabled']) {
+                        if (config['cloudSync']['mode'] === 'github') {
+                            if (config['cloudSync']['github']['repoUrl']) {
                                 const time = getFormattedDateTimeWithSeconds()
                                 window.electron.ipcRenderer.invoke('cloud-sync-github', time).then((data) => {
-                                    if(data === 'success'){
+                                    if (data === 'success') {
                                         setAlert('云同步成功')
                                         updateConfig(['cloudSync', 'github', 'lastSyncTime'], time)
-                                        setTimeout(() => {setAlert('')}, 3000)
-                                    }else{
+                                        setTimeout(() => { setAlert('') }, 3000)
+                                    } else {
                                         setAlert('云同步失败，请检查设置')
-                                        setTimeout(() => {setAlert('')}, 3000)
+                                        setTimeout(() => { setAlert('') }, 3000)
                                     }
                                 })
                             }
-                        }else if(config['cloudSync']['mode'] === 'webdav'){
-                            if(config['cloudSync']['webdav']['url']){
+                        } else if (config['cloudSync']['mode'] === 'webdav') {
+                            if (config['cloudSync']['webdav']['url']) {
                                 const time = getFormattedDateTimeWithSeconds()
                                 window.electron.ipcRenderer.invoke('cloud-sync-webdav-upload', config['cloudSync']['webdav']['url'], config['cloudSync']['webdav']['username'], config['cloudSync']['webdav']['password'], config['cloudSync']['webdav']['path']).then((data) => {
-                                    if(data === 'success'){
+                                    if (data === 'success') {
                                         setAlert('云同步成功')
                                         updateConfig(['cloudSync', 'webdav', 'lastSyncTime'], time)
-                                        setTimeout(() => {setAlert('')}, 3000)
-                                    }else{
+                                        setTimeout(() => { setAlert('') }, 3000)
+                                    } else {
                                         setAlert('云同步失败，请检查设置')
-                                        setTimeout(() => {setAlert('')}, 3000)
+                                        setTimeout(() => { setAlert('') }, 3000)
                                     }
                                 })
                             }
                         }
                     }
-                    try{
+                    try {
                         const saveId = (data[index]['saves'][0] ? data[index]['saves'][data[index]['saves'].length - 1]['id'] + 1 : 1) // 使用时间戳作为唯一标识符
                         window.electron.ipcRenderer.invoke('copy-save', data[index]['detail']['savePath'], data[index]['detail']['id'], saveId);
                         updateData([index, 'saves'], [...data[index]['saves'], {
@@ -106,11 +106,11 @@ function Game({index}) {
                             note: '',
                             path: `/${data[index]['detail']['id']}/saves/${saveId}`
                         }]);
-                    }catch(e){
+                    } catch (e) {
                         console.log(e)
                     }
                 }
-            }else{
+            } else {
                 return
             }
         });
@@ -120,26 +120,26 @@ function Game({index}) {
             window.electron.ipcRenderer.removeAllListeners('exe-running-time');
         };
     }, [data]);
-    function handleStart(){
+    function handleStart() {
         if (gameData['gamePath']) {
             window.electron.ipcRenderer.send('start-game', gameData['gamePath'], index)
         } else {
             setAlert('游戏路径未设置，请前往设置!')
-            setTimeout(() => {setAlert('')}, 3000)
+            setTimeout(() => { setAlert('') }, 3000)
         }
     }
-    function quitSetting(){
+    function quitSetting() {
         setSettingData(data[index])
     }
     function formatTime(seconds) {
         if (seconds < 0) {
             return "无效时间";
         }
-        
+
         if (seconds < 60) {
             return "小于一分钟";
         }
-        
+
         const minutes = Math.floor(seconds / 60);
         const hours = minutes / 60;
 
@@ -154,9 +154,9 @@ function Game({index}) {
             0: "未开始",
             1: "游玩中",
             2: "已完成",
-            3: "N周目"
+            3: "多周目"
         };
-        
+
         return statusMap[status] || "未知状态";
     }
     return (
@@ -164,33 +164,33 @@ function Game({index}) {
 
             <dialog id="my_modal_2" className="modal">
                 <div className="w-3/5 max-w-full max-h-full h-5/6 modal-box">
-                <form method="dialog">
-                    {/* if there is a button in form, it will close the modal */}
-                    <button className="absolute btn btn-sm btn-ghost right-2 top-2" onClick={quitSetting}>✕</button>
-                </form>
+                    <form method="dialog">
+                        {/* if there is a button in form, it will close the modal */}
+                        <button className="absolute btn btn-sm btn-ghost right-2 top-2" onClick={quitSetting}>✕</button>
+                    </form>
                     <div className='w-full h-full p-6 pl-10 pr-10'>
                         <Setting index={index} />
                     </div>
                 </div>
             </dialog>
-            
+
             <div className="relative w-full h-96">
-                
+
                 <img src={`${gameData['backgroundImage']}?t=${timestamp}`} alt="bg" className="object-cover w-full h-full"></img>
-                
+
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-base-100"></div>
-                
+
                 {/* <img alt="cover image" src={gameData['cover']} className="absolute z-10 object-cover w-56 h-auto transform border-2 right-16 lg:right-24 2xl:right-40 2xl:-bottom-60 -bottom-16 lg:-bottom-48 lg:w-64 2xl:w-80 border-primary"></img> */}
-                
+
                 {/* <div class="absolute right-16 lg:right-28 -bottom-16 lg:-bottom-40 transform w-56 h-72 lg:w-64 lg:h-96 bg-base-100 bg-opacity-15 z-20"></div> */}
-           
+
                 <div className="absolute flex flex-row gap-2 text-4xl font-bold left-14 -bottom-14">
                     {gameData['chineseName'] ? gameData['chineseName'] : gameData['name']}
                     <div className="self-center font-normal badge badge-outline badge-success">云存档：最新</div>
                     <div className="self-center font-normal badge badge-outline badge-accent">{convertStatus(gameData['playtStatus'])}</div>
                 </div>
                 <button className='absolute w-28 btn left-14 -bottom-32 btn-success' onClick={handleStart}>开始</button>
-                <button className='absolute w-28 btn left-48 -bottom-32 btn-accent' onClick={()=>{document.getElementById('my_modal_2').showModal()}}>设置</button>
+                <button className='absolute w-28 btn left-48 -bottom-32 btn-accent' onClick={() => { document.getElementById('my_modal_2').showModal() }}>设置</button>
 
                 {/* <div className="absolute z-0 w-full divider -bottom-44"></div> */}
                 <div className="absolute z-0 flex flex-row items-center w-full pl-8 h-28 -bottom-67 ">
@@ -242,7 +242,7 @@ function Game({index}) {
     )
 }
 
-function Detail({gameData}){
+function Detail({ gameData }) {
     return (
         <div className='flex flex-row items-start w-full gap-5 grow-0'>
             <div className='flex flex-col w-2/3 gap-5 grow-0'>
@@ -279,7 +279,7 @@ function Detail({gameData}){
                         <div>原名：{gameData['name']}</div>
                         <div>中文名：{gameData['chineseName']}</div>
                         <div>发行日期：{gameData['releaseDate']}</div>
-                        <div>会社：<a className='link link-hover' href={`https://www.ymgal.games/oa${gameData['developerId']}` } target='_blank'>{gameData['developer']}</a></div>
+                        <div>会社：<a className='link link-hover' href={`https://www.ymgal.games/oa${gameData['developerId']}`} target='_blank'>{gameData['developer']}</a></div>
                         <div>类型：{gameData['typeDesc']}</div>
                     </div>
                 </div>
@@ -317,10 +317,10 @@ function Detail({gameData}){
     )
 }
 
-function Character({characterData}){
+function Character({ characterData }) {
     return (
         <div className='flex flex-col w-full gap-5'>
-            { characterData.map((character, index) => {
+            {characterData.map((character, index) => {
                 return (
                     <div key={index}>
                         <div className='flex flex-row items-start gap-5'>
@@ -352,32 +352,32 @@ function Character({characterData}){
                     </div>
                 )
             })}
-        </div> 
+        </div>
     )
 }
 
-function Save({index}){
+function Save({ index }) {
     const { data, setData, setAlert, updateData, timestamp } = useRootStore();
-    async function switchSave(id){
-        try{
+    async function switchSave(id) {
+        try {
             window.electron.ipcRenderer.send('switch-save', data[index]['detail']['id'], id, data[index]['detail']['savePath']);
             setAlert('切换存档成功')
-            setTimeout(() => {setAlert('')}, 3000)
-        }catch(e){
+            setTimeout(() => { setAlert('') }, 3000)
+        } catch (e) {
             setAlert('切换存档失败')
-            setTimeout(() => {setAlert('')}, 3000)
+            setTimeout(() => { setAlert('') }, 3000)
         }
     }
-    async function deleteSave(id){
-        try{
+    async function deleteSave(id) {
+        try {
             window.electron.ipcRenderer.send('delete-save', data[index]['detail']['id'], id);
             updateData([index, 'saves'], data[index]['saves'].filter(save => save['id'] !== id))
             setAlert('删除存档成功')
-            setTimeout(() => {setAlert('')}, 3000)
+            setTimeout(() => { setAlert('') }, 3000)
         }
-        catch(e){
+        catch (e) {
             setAlert('删除存档失败')
-            setTimeout(() => {setAlert('')}, 3000)
+            setTimeout(() => { setAlert('') }, 3000)
         }
     }
     return (
@@ -386,40 +386,40 @@ function Save({index}){
                 <table className="table">
                     {/* head */}
                     <thead>
-                    <tr>
-                        <th></th>
-                        <th>存档时间</th>
-                        <th className='w-1/2'>备注</th>
-                        <th>操作</th>
-                    </tr>
+                        <tr>
+                            <th></th>
+                            <th>存档时间</th>
+                            <th className='w-1/2'>备注</th>
+                            <th>操作</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    {/* row 1 */}
-                    {   
-                        data[index]['saves'] ?
-                        data[index]['saves'].map((save, i) => {
-                            return (
-                                <tr key={i}>
-                                    <th>{i + 1}</th>
-                                    <td>{save['date']}</td>
-                                    <td>
-                                        <input type="text" className='w-4/5 outline-none input-ghost input-sm input' value={save['note']} onChange={(e)=>{updateData([index, 'saves', i, 'note'], e.target.value)}} />
-                                    </td>
-                                    <td>
-                                        <div className='flex flex-row gap-2'>
-                                            <button className="h-6 min-h-0 btn btn-success" onClick={()=>{switchSave(save['id'])}}>切换</button>
-                                            {/* <button className="h-6 min-h-0 btn btn-accent">编辑</button> */}
-                                            <button className="h-6 min-h-0 btn btn-error" onClick={()=>{deleteSave(save['id'])}}>删除</button>
-                                        </div>
-                                    </td>
+                        {/* row 1 */}
+                        {
+                            data[index]['saves'] ?
+                                data[index]['saves'].map((save, i) => {
+                                    return (
+                                        <tr key={i}>
+                                            <th>{i + 1}</th>
+                                            <td>{save['date']}</td>
+                                            <td>
+                                                <input type="text" className='w-4/5 outline-none input-ghost input-sm input' value={save['note']} onChange={(e) => { updateData([index, 'saves', i, 'note'], e.target.value) }} />
+                                            </td>
+                                            <td>
+                                                <div className='flex flex-row gap-2'>
+                                                    <button className="h-6 min-h-0 btn btn-success" onClick={() => { switchSave(save['id']) }}>切换</button>
+                                                    {/* <button className="h-6 min-h-0 btn btn-accent">编辑</button> */}
+                                                    <button className="h-6 min-h-0 btn btn-error" onClick={() => { deleteSave(save['id']) }}>删除</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )
+                                }) :
+                                <tr>
+                                    <td>暂无存档</td>
                                 </tr>
-                            )
-                        }) :
-                        <tr>
-                            <td>暂无存档</td>
-                        </tr>
-                    }
-                    
+                        }
+
                     </tbody>
                 </table>
             </div>
@@ -427,57 +427,57 @@ function Save({index}){
     )
 }
 
-function Memory({index}){
+function Memory({ index }) {
     const { data, setData, setAlert, updateData, timestamp, setTimestamp } = useRootStore();
     const [memoryImg, setMemoryImg] = useState('')
     const [memory, setMemory] = useState('')
-    async function selectImgPath(){
+    async function selectImgPath() {
         const path = await window.electron.ipcRenderer.invoke("open-img-dialog")
-        if(path){
+        if (path) {
             setMemoryImg(path)
-        }else{
+        } else {
             return
         }
     }
-    async function saveMemory(){
-        try{
+    async function saveMemory() {
+        try {
             const id = Date.now().toString()
             await window.electron.ipcRenderer.send('save-memory-img', data[index]['detail']['id'], id, memoryImg)
-            updateData([index, 'memories'], [...data[index]['memories'], {id: id, imgPath: `/${data[index]['detail']['id']}/memories/${id}.webp`, note: memory}])
+            updateData([index, 'memories'], [...data[index]['memories'], { id: id, imgPath: `/${data[index]['detail']['id']}/memories/${id}.webp`, note: memory }])
             document.getElementById('my_modal_1').close()
             setAlert('保存成功')
-            setTimeout(() => {setAlert('')}, 3000)
+            setTimeout(() => { setAlert('') }, 3000)
             setTimeout(() => {
                 setTimestamp()
             }, 500);
-        }catch(e){
+        } catch (e) {
             document.getElementById('my_modal_1').close()
             setAlert('保存失败')
-            setTimeout(() => {setAlert('')}, 3000)
+            setTimeout(() => { setAlert('') }, 3000)
         }
     }
-    function quitMemory(){
+    function quitMemory() {
         setMemoryImg('')
         setMemory('')
         document.getElementById('my_modal_1').close()
     }
-    return(
+    return (
         <div className='flex flex-col w-full gap-7'>
             <dialog id="my_modal_1" className="modal">
                 <div className="w-auto max-w-full max-h-full h-1/4 modal-box">
-                <form method="dialog">
-                    {/* if there is a button in form, it will close the modal */}
-                    <button className="absolute btn btn-sm btn-ghost right-2 top-2">✕</button>
-                </form>
+                    <form method="dialog">
+                        {/* if there is a button in form, it will close the modal */}
+                        <button className="absolute btn btn-sm btn-ghost right-2 top-2">✕</button>
+                    </form>
                     <div className='flex flex-col w-full h-full gap-3 p-5'>
                         <label className="flex items-center w-full gap-2 input-sm input input-bordered focus-within:outline-none">
                             <div className='font-semibold'>图片路径 |</div>
-                            <input type='text' className='grow' value={memoryImg || ''} onChange={(e)=>{setMemoryImg(e.target.value)}} />
+                            <input type='text' className='grow' value={memoryImg || ''} onChange={(e) => { setMemoryImg(e.target.value) }} />
                             <span className="icon-[material-symbols-light--folder-open-outline-sharp] w-5 h-5 self-center" onClick={selectImgPath}></span>
                         </label>
                         <label className="flex items-center w-full gap-2 input-sm input input-bordered focus-within:outline-none">
                             <div className='font-semibold'>文字 |</div>
-                            <input type="text" name='gameName' className="grow" value={memory || ''} onChange={(e)=>{setMemory(e.target.value)}} />
+                            <input type="text" name='gameName' className="grow" value={memory || ''} onChange={(e) => { setMemory(e.target.value) }} />
                         </label>
                         <div className='absolute flex flex-row gap-5 right-9 bottom-5'>
                             <button className='btn btn-primary btn-sm' onClick={saveMemory}>保存</button>
@@ -487,7 +487,7 @@ function Memory({index}){
                 </div>
             </dialog>
 
-            <button className='btn btn-secondary text-base-100' onClick={()=>{document.getElementById('my_modal_1').showModal()}}>添加</button>
+            <button className='btn btn-secondary text-base-100' onClick={() => { document.getElementById('my_modal_1').showModal() }}>添加</button>
             {data[index]['memories'] && data[index]['memories'].map((memory, index) => {
                 return (
                     <div key={index} className='flex flex-col w-auto'>
@@ -502,47 +502,49 @@ function Memory({index}){
 
 const useGameSetting = create(set => ({
     activeTab: 'general',
-    setActiveTab: (activeTab) => set({activeTab}),
+    setActiveTab: (activeTab) => set({ activeTab }),
     settingData: {},
-    setSettingData: (settingData) => set({settingData}),
+    setSettingData: (settingData) => set({ settingData }),
     updateSettiongData: (path, value) => set((state) => {
         const newData = JSON.parse(JSON.stringify(state.settingData));
         let current = newData;
         for (let i = 0; i < path.length - 1; i++) {
-        current = current[path[i]];
+            current = current[path[i]];
         }
         current[path[path.length - 1]] = value;
         return { settingData: newData };
     }),
     settingAlert: "",
-    setSettingAlert: (settingAlert) => set({settingAlert}),
+    setSettingAlert: (settingAlert) => set({ settingAlert }),
     dataString: "",
-    setDataString: (dataString) => set({dataString}),
+    setDataString: (dataString) => set({ dataString }),
+    isDataStringChanged: false,
+    setIsDataStringChanged: (isDataStringChanged) => set({ isDataStringChanged }),
 }))
 
 
-function Setting({index}){
+function Setting({ index }) {
     const { activeTab, setActiveTab } = useGameSetting()
     const { updateData, data, setAlert, alert } = useRootStore()
-    const { settingData, updateSettiongData, setSettingData, settingAlert, setSettingAlert, setDataString, dataString } = useGameSetting()
+    const { settingData, updateSettiongData, setSettingData, settingAlert, setSettingAlert, setDataString, dataString, isDataStringChanged, setIsDataStringChanged } = useGameSetting()
     useEffect(() => {
         setSettingData(data[index])
         setDataString(JSON.stringify(data[index], null, 2))
     }, [data, index])
-    function quitSetting(){
+    function quitSetting() {
         setSettingData(data[index])
         document.getElementById('my_modal_2').close()
     }
-    function saveSetting(){
-        if(activeTab === 'advanced'){
+    async function saveSetting() {
+        if (activeTab === 'advanced') {
             try {
                 const newData = JSON.parse(dataString)
                 updateData([index], newData)
                 setSettingAlert('保存成功')
-                setTimeout(() => {setSettingAlert('')}, 3000)
+                setTimeout(() => { setSettingAlert('') }, 3000)
             } catch (error) {
                 setSettingAlert('保存失败，请检查数据格式')
-                setTimeout(() => {setSettingAlert('')}, 3000)
+                setTimeout(() => { setSettingAlert('') }, 3000)
             }
             return
         } else if (activeTab === 'startup') {
@@ -556,11 +558,11 @@ function Setting({index}){
         }
         updateData([index], settingData)
         setSettingAlert('保存成功')
-        setTimeout(() => {setSettingAlert('')}, 3000)
+        setTimeout(() => { setSettingAlert('') }, 3000)
     }
     const tabs = ['general', 'advanced', 'media', 'startup'];
     const renderContent = () => {
-        switch(activeTab) {
+        switch (activeTab) {
             case 'general':
                 return <GeneralSettings index={index} />;
             case 'advanced':
@@ -577,15 +579,15 @@ function Setting({index}){
         <div className='flex flex-col w-full h-full gap-5'>
             <div role="tablist" className="tabs tabs-bordered">
                 {tabs.map((tab) => (
-                    <a 
+                    <a
                         key={tab}
-                        role="tab" 
+                        role="tab"
                         className={`tab ${activeTab === tab ? 'tab-active' : ''}`}
                         onClick={() => setActiveTab(tab)}
                     >
-                        {tab === 'general' ? '通用' : 
-                         tab === 'advanced' ? '高级' : 
-                         tab === 'media' ? '媒体' : '启动'}
+                        {tab === 'general' ? '通用' :
+                            tab === 'advanced' ? '高级' :
+                                tab === 'media' ? '媒体' : '启动'}
                     </a>
                 ))}
             </div>
@@ -607,46 +609,46 @@ function Setting({index}){
     )
 }
 
-function GeneralSettings({index}){
+function GeneralSettings({ index }) {
     const { updateData, data } = useRootStore()
     const { settingData, updateSettiongData, setSettingData } = useGameSetting()
-    return(
+    return (
         <div className='flex flex-col w-full h-full gap-3'>
             <div className='flex flex-row gap-3'>
                 <div className='flex flex-col w-1/2 gap-3'>
                     <label className="flex items-center w-full gap-2 input-sm input input-bordered focus-within:outline-none">
                         <div className='font-semibold'>原名 |</div>
-                        <input type="text" name='gameName' className="grow" value={settingData?.detail?.name || ''} onChange={(e)=>{updateSettiongData(['detail', 'name'], e.target.value)}} />
+                        <input type="text" name='gameName' className="grow" value={settingData?.detail?.name || ''} onChange={(e) => { updateSettiongData(['detail', 'name'], e.target.value) }} />
                     </label>
                     <label className="flex items-center gap-2 input-sm input input-bordered focus-within:outline-none">
                         <div className='font-semibold'>中文名 |</div>
-                        <input type="text" name='gameChineseName' className="grow" value={settingData?.detail?.chineseName || ''} onChange={(e)=>{updateSettiongData(['detail', 'chineseName'], e.target.value)}} />
+                        <input type="text" name='gameChineseName' className="grow" value={settingData?.detail?.chineseName || ''} onChange={(e) => { updateSettiongData(['detail', 'chineseName'], e.target.value) }} />
                     </label>
                     <label className="flex items-center gap-2 input-sm input input-bordered focus-within:outline-none">
                         <div className='font-semibold'>GID |</div>
-                        <input type="text" name='gid' className="grow" value={settingData?.detail?.gid || ''} onChange={(e)=>{updateSettiongData(['detail', 'gid'], e.target.value)}} />
+                        <input type="text" name='gid' className="grow" value={settingData?.detail?.gid || ''} onChange={(e) => { updateSettiongData(['detail', 'gid'], e.target.value) }} />
                     </label>
                     <label className="flex items-center gap-2 input-sm input input-bordered focus-within:outline-none">
                         <div className='font-semibold'>VID |</div>
-                        <input type="text" name='vid' className="grow" value={settingData?.detail?.vid || ''} onChange={(e)=>{updateSettiongData(['detail', 'vid'], e.target.value)}} />
+                        <input type="text" name='vid' className="grow" value={settingData?.detail?.vid || ''} onChange={(e) => { updateSettiongData(['detail', 'vid'], e.target.value) }} />
                     </label>
                 </div>
                 <div className='flex flex-col w-1/2 gap-3'>
                     <label className="flex items-center gap-2 input-sm input input-bordered focus-within:outline-none">
                         <div className='font-semibold'>发行日期 |</div>
-                        <input type="text" name='releaseDate' className="grow" value={settingData?.detail?.releaseDate || ''} onChange={(e)=>{updateSettiongData(['detail', 'releaseDate'], e.target.value)}} />
+                        <input type="text" name='releaseDate' className="grow" value={settingData?.detail?.releaseDate || ''} onChange={(e) => { updateSettiongData(['detail', 'releaseDate'], e.target.value) }} />
                     </label>
                     <label className="flex items-center gap-2 input-sm input input-bordered focus-within:outline-none">
                         <div className='font-semibold'>开发者 |</div>
-                        <input type="text" name='developer' className="grow" value={settingData?.detail?.developer || ''} onChange={(e)=>{updateSettiongData(['detail', 'developer'], e.target.value)}} />
+                        <input type="text" name='developer' className="grow" value={settingData?.detail?.developer || ''} onChange={(e) => { updateSettiongData(['detail', 'developer'], e.target.value) }} />
                     </label>
                     <label className="flex items-center gap-2 input-sm input input-bordered focus-within:outline-none">
                         <div className='font-semibold'>类型 |</div>
-                        <input type="text" name='typeDesc' className="grow" value={settingData?.detail?.typeDesc || ''} onChange={(e)=>{updateSettiongData(['detail', 'typeDesc'], e.target.value)}} />
+                        <input type="text" name='typeDesc' className="grow" value={settingData?.detail?.typeDesc || ''} onChange={(e) => { updateSettiongData(['detail', 'typeDesc'], e.target.value) }} />
                     </label>
                     <label className="flex items-center gap-2 pr-2 mr-0 input-sm input-bordered input focus-within:outline-none">
                         <div className='text-sm font-semibold'>限制级 |</div>
-                        <select className="outline-none grow bg-base-100" value={settingData?.detail?.restricted ?? true} onChange={(e)=>{
+                        <select className="outline-none grow bg-base-100" value={settingData?.detail?.restricted ?? true} onChange={(e) => {
                             const boolValue = e.target.value === "true";
                             updateSettiongData(['detail', 'restricted'], boolValue)
                         }}>
@@ -658,23 +660,23 @@ function GeneralSettings({index}){
             </div>
             <label className="flex flex-col items-start self-stretch h-full pt-2 border-1 input-bordered grow">
                 <div className='self-center text-sm font-semibold'>简介</div>
-                <textarea className="self-stretch p-2 overflow-auto text-sm outline-none bg-base-100 grow scrollbar-base" placeholder="Bio" value={settingData?.detail?.introduction || ''} onChange={(e)=>{updateSettiongData(['detail', 'introduction'], e.target.value)}} />
+                <textarea className="self-stretch p-2 overflow-auto text-sm outline-none bg-base-100 grow scrollbar-base" placeholder="Bio" value={settingData?.detail?.introduction || ''} onChange={(e) => { updateSettiongData(['detail', 'introduction'], e.target.value) }} />
             </label>
         </div>
     )
 }
 
-function AdvancedSettings(){
+function AdvancedSettings() {
     const { settingData, updateSettiongData, setSettingData, dataString, setDataString } = useGameSetting()
     function formatTime(seconds) {
         if (seconds < 0) {
             return "无效时间";
         }
-        
+
         if (seconds < 60) {
             return "小于一分钟";
         }
-        
+
         const minutes = Math.floor(seconds / 60);
         const hours = minutes / 60;
 
@@ -684,33 +686,33 @@ function AdvancedSettings(){
             return `${hours.toFixed(1)}小时`;
         }
     }
-    return(
+    return (
         <div className='flex flex-col w-full h-full gap-3'>
             <div className='flex flex-row gap-3'>
                 <div className='flex flex-col w-1/2 gap-3'>
                     <label className="flex items-center w-full gap-2 input-sm input input-bordered focus-within:outline-none">
                         <div className='font-semibold'>添加日期 |</div>
-                        <input type="text" name='addDate' className="grow" value={settingData?.detail?.addDate || ''} onChange={(e)=>{updateSettiongData(['detail', 'addDate'], e.target.value)}} />
+                        <input type="text" name='addDate' className="grow" value={settingData?.detail?.addDate || ''} onChange={(e) => { updateSettiongData(['detail', 'addDate'], e.target.value) }} />
                     </label>
                     <label className="flex items-center w-full gap-2 input-sm input input-bordered focus-within:outline-none">
                         <div className='font-semibold'>游玩时间 |</div>
-                        <input type="text" name='gameDuration' className="grow" value={settingData?.detail?.gameDuration || ''} onChange={(e)=>{updateSettiongData(['detail', 'gameDuration'], Number(e.target.value))}} />
+                        <input type="text" name='gameDuration' className="grow" value={settingData?.detail?.gameDuration || ''} onChange={(e) => { updateSettiongData(['detail', 'gameDuration'], Number(e.target.value)) }} />
                         <div>{formatTime(settingData?.detail?.gameDuration || '')}</div>
                     </label>
                     <label className="flex items-center w-full gap-2 input-sm input input-bordered focus-within:outline-none">
                         <div className='font-semibold'>游玩次数 |</div>
-                        <input type="text" name='frequency' className="grow" value={settingData?.detail?.frequency || '0'} onChange={(e)=>{updateSettiongData(['detail', 'frequency'], Number(e.target.value))}} />
+                        <input type="text" name='frequency' className="grow" value={settingData?.detail?.frequency || '0'} onChange={(e) => { updateSettiongData(['detail', 'frequency'], Number(e.target.value)) }} />
                     </label>
                 </div>
                 <div className='flex flex-col w-1/2 gap-3'>
                     <label className="flex items-center w-full gap-2 input-sm input focus-within:outline-none input-bordered">
                         <div className='font-semibold'>数据库ID |</div>
-                        <div>{(settingData?.detail?.gid || '').replace('ga','')}</div>
+                        <div>{(settingData?.detail?.gid || '').replace('ga', '')}</div>
                         {/* <input disabled type="text" name='gid' className="grow" value={settingData?.detail?.gid || ''} onChange={(e)=>{updateSettiongData(['detail', 'gid'], e.target.value)}} /> */}
                     </label>
                     <label className="flex items-center gap-2 pr-2 mr-0 input-sm input-bordered input focus-within:outline-none">
                         <div className='text-sm font-semibold'>游玩状态 |</div>
-                        <select className="outline-none grow bg-base-100" value={settingData?.detail?.playtStatus || 0} onChange={(e)=>{updateSettiongData(['detail', 'playtStatus'], Number(e.target.value))}}>
+                        <select className="outline-none grow bg-base-100" value={settingData?.detail?.playtStatus || 0} onChange={(e) => { updateSettiongData(['detail', 'playtStatus'], Number(e.target.value)) }}>
                             <option value={0}>未开始</option>
                             <option value={1}>游玩中</option>
                             <option value={2}>已完成</option>
@@ -726,30 +728,30 @@ function AdvancedSettings(){
             </div>
             <label className="flex flex-col items-start self-stretch h-full pt-2 border-1 input-bordered grow">
                 <div className='self-center text-sm font-semibold'>数据库内容</div>
-                <textarea spellCheck='false' className="self-stretch p-2 overflow-auto text-sm outline-none bg-base-100 grow scrollbar-base" placeholder="Bio" value={dataString || ''} onChange={(e)=>{setDataString(e.target.value)}} />
+                <textarea spellCheck='false' className="self-stretch p-2 overflow-auto text-sm outline-none bg-base-100 grow scrollbar-base" placeholder="Bio" value={dataString || ''} onChange={(e) => { setDataString(e.target.value) }} />
             </label>
         </div>
     )
 }
 
-function MediaSettings(){
+function MediaSettings() {
     const { settingData, updateSettiongData, setSettingData, dataString, setDataString, setSettingAlert } = useGameSetting()
     const { timestamp, setTimestamp } = useRootStore()
-    async function updateCover(gameId){
+    async function updateCover(gameId) {
         try {
             // 打开文件选择对话框
             const selectedPath = await window.electron.ipcRenderer.invoke('open-img-dialog');
-            
+
             if (selectedPath) {
                 // 调用更新游戏封面的方法
                 await window.electron.ipcRenderer.invoke('update-game-cover', gameId, selectedPath);
-                
+
                 // console.log('新的封面路径:', newCoverPath);
-                
+
                 // 这里可以添加更新UI或通知用户的逻辑
                 setTimestamp()
                 setSettingAlert('更换图片成功');
-                setTimeout(() => {setSettingAlert('')}, 3000);
+                setTimeout(() => { setSettingAlert('') }, 3000);
             } else {
                 // 用户取消了选择
                 console.log('用户取消了文件选择');
@@ -757,24 +759,24 @@ function MediaSettings(){
         } catch (error) {
             console.error('更换图片时发生错误:', error);
             setSettingAlert('更换图片失败');
-            setTimeout(() => {setSettingAlert('')}, 3000);
+            setTimeout(() => { setSettingAlert('') }, 3000);
         }
     }
-    async function updateBackgroundImage(gameId){
+    async function updateBackgroundImage(gameId) {
         try {
             // 打开文件选择对话框
             const selectedPath = await window.electron.ipcRenderer.invoke('open-img-dialog');
-            
+
             if (selectedPath) {
                 // 调用更新游戏背景的方法
                 await window.electron.ipcRenderer.invoke('update-game-background', gameId, selectedPath);
-                
+
                 // console.log('新的背景路径:', newCoverPath);
-                
+
                 // 这里可以添加更新UI或通知用户的逻辑
                 setTimestamp()
                 setSettingAlert('更换图片成功');
-                setTimeout(() => {setSettingAlert('')}, 3000);
+                setTimeout(() => { setSettingAlert('') }, 3000);
             } else {
                 // 用户取消了选择
                 console.log('用户取消了文件选择');
@@ -782,92 +784,92 @@ function MediaSettings(){
         } catch (error) {
             console.error('更换图片时发生错误:', error);
             setSettingAlert('更换图片失败');
-            setTimeout(() => {setSettingAlert('')}, 3000);
+            setTimeout(() => { setSettingAlert('') }, 3000);
         }
     }
-    return(
+    return (
         <div className='flex flex-col w-full h-full gap-3'>
-            <button className='btn btn-sm' onClick={()=>window.electron.ipcRenderer.send('open-folder', `src/renderer/public/${settingData?.detail?.id || ''}/`)}>打开媒体文件夹</button>
+            <button className='btn btn-sm' onClick={() => window.electron.ipcRenderer.send('open-folder', `src/renderer/public/${settingData?.detail?.id || ''}/`)}>打开媒体文件夹</button>
             <div className='flex flex-row gap-3 grow'>
                 <div className='flex flex-col w-1/2 font-bold'>
                     <div>封面</div>
                     <div className='m-0 divider'></div>
-                    <button className='btn btn-sm' onClick={()=>{updateCover(settingData?.detail?.id || '')}}>更换</button>
-                    <img src={`${settingData?.detail?.cover || ''}?t=${timestamp}`} alt="" className='w-1/2 h-auto pt-2'/>
+                    <button className='btn btn-sm' onClick={() => { updateCover(settingData?.detail?.id || '') }}>更换</button>
+                    <img src={`${settingData?.detail?.cover || ''}?t=${timestamp}`} alt="" className='w-1/2 h-auto pt-2' />
                 </div>
                 <div className='flex flex-col w-1/2 font-bold'>
                     <div>背景</div>
                     <div className='m-0 divider'></div>
-                    <button className='btn btn-sm' onClick={()=>{updateBackgroundImage(settingData?.detail?.id || '')}}>更换</button>
-                    <img src={`${settingData?.detail?.backgroundImage || ''}?t=${timestamp}`} alt="" className='w-full h-auto pt-2'/>
+                    <button className='btn btn-sm' onClick={() => { updateBackgroundImage(settingData?.detail?.id || '') }}>更换</button>
+                    <img src={`${settingData?.detail?.backgroundImage || ''}?t=${timestamp}`} alt="" className='w-full h-auto pt-2' />
                 </div>
             </div>
         </div>
     )
 }
 
-function StartupSettings(){
+function StartupSettings() {
     const { settingData, updateSettiongData, setSettingData, setSettingAlert } = useGameSetting()
-    async function selectGamePath(){
+    async function selectGamePath() {
         const path = await window.electron.ipcRenderer.invoke("open-file-dialog")
-        if(path){
+        if (path) {
             updateSettiongData(['detail', 'gamePath'], path)
-        }else{
+        } else {
             return
         }
     }
 
-    async function selectSavePath(){
+    async function selectSavePath() {
         const path = await window.electron.ipcRenderer.invoke("open-file-folder-dialog")
-        if(path){
+        if (path) {
             updateSettiongData(['detail', 'savePath'], path)
-        }else{
+        } else {
             return
         }
     }
 
-    function handleDragOver(e){
+    function handleDragOver(e) {
         e.preventDefault();
     }
 
-    function getGamePathByDrag(e){
+    function getGamePathByDrag(e) {
         e.preventDefault();
         const files = Array.from(e.dataTransfer.files);
-        if(files.length > 1){
+        if (files.length > 1) {
             setSettingAlert('只能选择一个路径');
-            setTimeout(() => {setSettingAlert('');}, 3000);
+            setTimeout(() => { setSettingAlert(''); }, 3000);
             return
         }
         const file = files[0];
         const fileExtension = file.name.split('.').pop();
-        if(fileExtension !== 'exe'){
+        if (fileExtension !== 'exe') {
             setSettingAlert('请选择可执行文件');
-            setTimeout(() => {setSettingAlert('');}, 3000);
+            setTimeout(() => { setSettingAlert(''); }, 3000);
             return
         }
         updateSettiongData(['detail', 'gamePath'], file.path)
     }
 
-    function getSavePathByDrag(e){
+    function getSavePathByDrag(e) {
         e.preventDefault();
         const files = Array.from(e.dataTransfer.files);
-        if(files.length > 1){
+        if (files.length > 1) {
             setSettingAlert('只能选择一个路径');
-            setTimeout(() => {setSettingAlert('');}, 3000);
+            setTimeout(() => { setSettingAlert(''); }, 3000);
             return
         }
         updateSettiongData(['detail', 'savePath'], files[0].path)
     }
-    return(
+    return (
         <div className='flex flex-col w-full h-full gap-3'>
             <label className="flex items-center w-full gap-2 input-sm input input-bordered focus-within:outline-none">
                 <div className='font-semibold'>游戏路径 |</div>
-                <input type='text' placeholder='拖拽获取路径' onDrop={getGamePathByDrag} onDragOver={handleDragOver} className='grow' value={settingData?.detail?.gamePath || '0'} onChange={(e)=>{updateSettiongData(['detail', 'gamePath'], e.target.value)}} />
+                <input type='text' placeholder='拖拽获取路径' onDrop={getGamePathByDrag} onDragOver={handleDragOver} className='grow' value={settingData?.detail?.gamePath || '0'} onChange={(e) => { updateSettiongData(['detail', 'gamePath'], e.target.value) }} />
                 <span className="icon-[material-symbols-light--folder-open-outline-sharp] w-5 h-5 self-center" onClick={selectGamePath}></span>
             </label>
             <label className="flex items-center w-full gap-2 input-sm input input-bordered focus-within:outline-none">
                 <div className='font-semibold'>存档路径 |</div>
-                <input type='text' placeholder='拖拽获取路径' onDrop={getSavePathByDrag} onDragOver={handleDragOver} className='grow' value={settingData?.detail?.savePath || '0'} onChange={(e)=>{updateSettiongData(['detail', 'savePath'], e.target.value)}} />
+                <input type='text' placeholder='拖拽获取路径' onDrop={getSavePathByDrag} onDragOver={handleDragOver} className='grow' value={settingData?.detail?.savePath || '0'} onChange={(e) => { updateSettiongData(['detail', 'savePath'], e.target.value) }} />
                 <span className="icon-[material-symbols-light--folder-open-outline-sharp] w-5 h-5 self-center" onClick={selectSavePath}></span>
             </label>
         </div>
