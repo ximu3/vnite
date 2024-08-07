@@ -378,6 +378,25 @@ ipcMain.handle('get-folder-size', async (event, inputPath) => {
     console.error('计算文件夹大小时出错:', err);
     throw err;
   }
+});
+
+ipcMain.on('open-folder-in-explorer', async (event, inputPath) => {
+  try {
+    if (inputPath.endsWith('.exe')) {
+      shell.openPath(path.dirname(inputPath));
+      return;
+    }
+    if (inputPath.startsWith('/')) {
+      shell.openPath(join(app.getAppPath(), `src/renderer/public${inputPath}`));
+      return;
+    }
+    shell.openPath(inputPath);
+  } catch (err) {
+    console.error('打开文件夹时出错:', err);
+    throw err;
+  }
+});
+
 ipcMain.on('delete-game', async (event, index) => {
   await deleteGame(index);
   const gameData = await getGameData();

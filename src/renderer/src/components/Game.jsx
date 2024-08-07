@@ -4,7 +4,6 @@ import c1 from '../assets/c1.jpg'
 import c2 from '../assets/c2.jpg'
 import mem from '../assets/mem.webp'
 import { Icon } from '@iconify/react/dist/iconify.js'
-import { BrowserRouter, Routes, Route, Navigate, NavLink } from 'react-router-dom';
 import { BrowserRouter, Routes, Route, Navigate, NavLink, useNavigate } from 'react-router-dom';
 import { useRootStore } from './Root'
 import { useEffect, useState } from 'react'
@@ -26,6 +25,7 @@ function NavTab({ to, name }) {
 }
 
 function Game({ index }) {
+    const naivgate = useNavigate();
     const { data, setData, setAlert, updateData, timestamp, config, updateConfig } = useRootStore();
     const gameData = data[index]['detail'];
     const characterData = data[index]['characters'];
@@ -160,6 +160,13 @@ function Game({ index }) {
 
         return statusMap[status] || "未知状态";
     }
+    function openFolderInExplorer(path) {
+        window.electron.ipcRenderer.send('open-folder-in-explorer', path);
+    }
+    function deleteGame() {
+        window.electron.ipcRenderer.send('delete-game', index);
+        naivgate(`../${index - 1}`)
+    }
     return (
         <div className="flex flex-col w-full h-full overflow-auto scrollbar-base scrollbar-w-2">
             <dialog id="deleteGame" className="modal">
@@ -203,7 +210,22 @@ function Game({ index }) {
                 <div className="absolute flex flex-row gap-2 text-4xl font-bold left-14 -bottom-14">
                     {gameData['chineseName'] ? gameData['chineseName'] : gameData['name']}
                     <div className="self-center font-normal badge badge-outline badge-success">云存档：最新</div>
-                    <div className="self-center font-normal badge badge-outline badge-accent">{convertStatus(gameData['playtStatus'])}</div>
+                    <div className="self-center font-normal badge badge-outline badge-accent">{convertStatus(gameData['playStatus'])}</div>
+                </div>
+                <div className='absolute flex flex-row items-center gap-5 left-14 -bottom-32 justify-items-center'>
+                    <button className='w-28 btn btn-success' onClick={handleStart}>开始</button>
+                    <button className='w-28 btn btn-accent' onClick={() => { document.getElementById('my_modal_2').showModal() }}>设置</button>
+                    <div className="dropdown">
+                        <div tabIndex={0} role="button" className="m-1 btn btn-outline btn-square btn-secondary">
+                            <span className="icon-[material-symbols-light--more-horiz] w-10 h-10"></span>
+                        </div>
+                        <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                            <li onClick={() => { openFolderInExplorer(gameData['gamePath']) }}><a>浏览本地文件</a></li>
+                            <li onClick={() => { openFolderInExplorer(gameData['savePath']) }}><a>打开存档文件夹</a></li>
+                            <li onClick={() => { openFolderInExplorer(`/${gameData['id']}`) }}><a>打开数据文件夹</a></li>
+                            <li onClick={() => { document.getElementById('deleteGame').showModal() }} className='hover:bg-error hover:text-base-100'><a>删除游戏</a></li>
+                        </ul>
+                    </div>
                 </div>
 
                 {/* <div className="absolute z-0 w-full divider -bottom-44"></div> */}
