@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 import { addCharacterImgToData, addNewGameToData, addObjectToJsonFile } from '../data/dataManager.mjs';
 import path from 'path';
-import { getFolderSize } from 'get-folder-size';
+import getFolderSize from 'get-folder-size';
 
 // 定义获取Access Token的函数
 async function getAccessToken(clientId, clientSecret) {
@@ -288,9 +288,13 @@ async function organizeGameData(gid, savePath, gamePath) {
         let sizeInMB = 0;
 
         if (gamePath !== '') {
-            const gamePath = gamePath.replace(/\\/g, '/');
+            gamePath = gamePath.replace(/\\/g, '/');
             const size = await getFolderSize(path.dirname(gamePath));
-            sizeInMB = Math.round(size.size / 1024 / 1024);
+            sizeInMB = Math.round(Number(size.size) / 1024 / 1024);
+        }
+
+        if (savePath !== '') {
+            savePath = savePath.replace(/\\/g, '/');
         }
 
         // console.log(staff);
@@ -305,8 +309,8 @@ async function organizeGameData(gid, savePath, gamePath) {
                 vid: vid,
                 cover: `/${gid}/cover.webp`,
                 backgroundImage: `/${gid}/background.webp`,
-                savePath: savePath.replace(/\\/g, '/'),
-                gamePath: gamePath.replace(/\\/g, '/'),
+                savePath: savePath,
+                gamePath: gamePath,
                 volume: sizeInMB,
                 addDate: getCurrentDate(),
                 gameDuration: 0,
