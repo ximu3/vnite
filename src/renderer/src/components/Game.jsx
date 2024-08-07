@@ -565,8 +565,10 @@ function Setting({ index }) {
     const { settingData, updateSettiongData, setSettingData, settingAlert, setSettingAlert, setDataString, dataString, isDataStringChanged, setIsDataStringChanged } = useGameSetting()
     useEffect(() => {
         setSettingData(data[index])
-        setDataString(JSON.stringify(data[index], null, 2))
     }, [data, index])
+    useEffect(() => {
+        setDataString(JSON.stringify(settingData, null, 2))
+    }, [settingData])
     function quitSetting() {
         setSettingData(data[index])
         document.getElementById('my_modal_2').close()
