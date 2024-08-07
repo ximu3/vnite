@@ -5,6 +5,7 @@ import c2 from '../assets/c2.jpg'
 import mem from '../assets/mem.webp'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import { BrowserRouter, Routes, Route, Navigate, NavLink } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, NavLink, useNavigate } from 'react-router-dom';
 import { useRootStore } from './Root'
 import { useEffect, useState } from 'react'
 import { create } from 'zustand'
@@ -161,6 +162,21 @@ function Game({ index }) {
     }
     return (
         <div className="flex flex-col w-full h-full overflow-auto scrollbar-base scrollbar-w-2">
+            <dialog id="deleteGame" className="modal">
+                <div className="w-1/3 h-auto modal-box">
+                    <form method="dialog">
+                        {/* if there is a button in form, it will close the modal */}
+                        <button className="absolute btn btn-sm btn-ghost right-2 top-2" onClick={quitSetting}>✕</button>
+                    </form>
+                    <div className='w-full h-full p-3'>
+                        <div className='font-bold'>确定要删除游戏？</div>
+                        <div className='flex flex-row-reverse gap-5 pt-7'>
+                            <button className='btn btn-secondary' onClick={() => { document.getElementById('deleteGame').close() }}>取消</button>
+                            <button className='btn btn-error' onClick={deleteGame} >确定</button>
+                        </div>
+                    </div>
+                </div>
+            </dialog>
 
             <dialog id="my_modal_2" className="modal">
                 <div className="w-3/5 max-w-full max-h-full h-5/6 modal-box">
@@ -189,8 +205,6 @@ function Game({ index }) {
                     <div className="self-center font-normal badge badge-outline badge-success">云存档：最新</div>
                     <div className="self-center font-normal badge badge-outline badge-accent">{convertStatus(gameData['playtStatus'])}</div>
                 </div>
-                <button className='absolute w-28 btn left-14 -bottom-32 btn-success' onClick={handleStart}>开始</button>
-                <button className='absolute w-28 btn left-48 -bottom-32 btn-accent' onClick={() => { document.getElementById('my_modal_2').showModal() }}>设置</button>
 
                 {/* <div className="absolute z-0 w-full divider -bottom-44"></div> */}
                 <div className="absolute z-0 flex flex-row items-center w-full pl-8 h-28 -bottom-67 ">

@@ -1,4 +1,5 @@
 import { promises as fs } from 'fs';
+import fse from 'fs-extra';
 import axios from 'axios';
 import path from 'path';
 
@@ -121,8 +122,44 @@ async function addCharacterImgToData(gid, cid, imgUrls) {
 
 }
 
+async function deleteGame(index) {
+    const filePath = 'src/renderer/src/data/data.json'
+    try {
+        // 读取 JSON 文件
+        const data = await fs.readFile(filePath, 'utf8');
+
+        // 解析 JSON 数据
+        let jsonArray = JSON.parse(data);
+
+        let id = jsonArray[index].detail.id;
+
+        // 删除文件夹
+        const folderPath = `src/renderer/public/${id}`;
+        await fse.remove(folderPath);
+
+        // 确保 jsonArray 是一个数组
+        if (!Array.isArray(jsonArray)) {
+            jsonArray = [];
+        }
+
+        // 删除数组中的对象
+        jsonArray.splice(index, 1);
+
+        // 将更新后的数组转换回 JSON 字符串
+        const updatedJsonString = JSON.stringify(jsonArray, null, 2);
+
+        // 将更新后的 JSON 写回文件
+        await fs.writeFile(filePath, updatedJsonString, 'utf8');
+
+        console.log('游戏已成功删除');
+
+    } catch (error) {
+        console.error('删除游戏时出错:', error);
+    }
+}
+
 // addNewGameToData('27702', 'https://t.vndb.org/sf/23/8523.jpg', 'https://t.vndb.org/sf/24/8524.jpg');
 
 // addCharacterImgToData('123', '456', 'https://t.vndb.org/cv/23/8523.jpg');
 
-export { addObjectToJsonFile, addNewGameToData, addCharacterImgToData, getGameData, updateGameData };
+export { addObjectToJsonFile, addNewGameToData, addCharacterImgToData, getGameData, updateGameData, deleteGame };

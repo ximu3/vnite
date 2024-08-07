@@ -2,7 +2,7 @@ import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { addNewGameToData, getGameData, updateGameData } from '../renderer/src/data/dataManager.mjs'
+import { addNewGameToData, getGameData, updateGameData, deleteGame } from '../renderer/src/data/dataManager.mjs'
 import { organizeGameData } from "../renderer/src/components/scraper.mjs"
 import { spawn } from 'child_process';
 import sharp from 'sharp';
@@ -10,7 +10,7 @@ import fs from 'fs/promises';
 import fse from 'fs-extra';
 import { getConfigData, updateConfigData } from '../renderer/src/config/configManager.mjs';
 import { startAuthProcess, initializeRepo, commitAndPush, createWebDavClient, uploadDirectory, downloadDirectory } from '../renderer/src/components/cloudSync.mjs';
-import getFolderSize from 'get-folder-size';
+import getFolderSize from "get-folder-size";
 import path from 'path';
 
 let mainWindow
@@ -372,10 +372,14 @@ ipcMain.handle('get-folder-size', async (event, inputPath) => {
     const parentPath = path.dirname(inputPath);
 
     const size = await getFolderSize(parentPath);
-    const sizeInMB = Math.round(size.size / (1024 * 1024));
+    const sizeInMB = Math.round(Number(size.size) / (1024 * 1024));
     return sizeInMB;
   } catch (err) {
     console.error('计算文件夹大小时出错:', err);
     throw err;
   }
+ipcMain.on('delete-game', async (event, index) => {
+  await deleteGame(index);
+  const gameData = await getGameData();
+  mainWindow.webContents.send('game-data-updated', gameData);
 });
