@@ -9,7 +9,7 @@ function NavButton({ to, name }) {
             isPending
                 ? ""
                 : isActive
-                    ? "bg-primary text-base-100"
+                    ? "bg-custom-blue-4/20 text-custom-text-light"
                     : ""
         }
             to={to}>
@@ -68,8 +68,8 @@ function Record() {
     }, [data]);
     return (
         <div className="flex flex-row w-full h-full">
-            <div className="flex flex-col h-full border-l-2 border-r-2 w-72 border-primary shrink-0">
-                <div className="w-full grow">
+            <div className="flex flex-col h-full border-black border-r-0.5 border-l-0.5 w-72 shrink-0">
+                <div className="w-full grow bg-custom-main-2">
                     <ul className="w-full menu rounded-box">
                         <li><NavButton to={"./global"} name={"全局"} /></li>
                         <li><NavButton to={"./ranking"} name={"排行"} /></li>
@@ -77,7 +77,7 @@ function Record() {
 
                 </div>
             </div>
-            <div className="grow">
+            <div className="grow bg-custom-main">
                 <Routes>
                     <Route index element={<Navigate to='./global' />} />
                     <Route path='/global/*' element={<Global />} />
@@ -112,7 +112,7 @@ function Ranking() {
         <div className='w-full h-full p-3'>
             <div className='flex flex-col gap-3'>
                 <div className='flex flex-row gap-3 h-1/2'>
-                    <div className="w-1/3 shadow-sm card bg-base-300">
+                    <div className="w-1/3 shadow-sm card bg-custom-main-7">
                         <figure>
                             {
                                 //找到最多游玩时间的游戏封面并显示
@@ -147,7 +147,7 @@ function Ranking() {
                             </div>
                         </div>
                     </div>
-                    <div className="w-1/3 shadow-sm card bg-base-300">
+                    <div className="w-1/3 shadow-sm card bg-custom-main-7">
                         <figure>
                             {
                                 data.map((game, index) => {
@@ -221,10 +221,10 @@ function Global() {
     return (
         <div className='w-full h-full p-3'>
             <div className='flex flex-row gap-7'>
-                <div className='w-1/3 p-3 bg-base-300'>
+                <div className='w-1/3 p-3 bg-custom-main-7'>
                     <div className='text-lg font-bold'>总览</div>
                     <div className='m-0 divider'></div>
-                    <div className='flex flex-col gap-3 text-base'>
+                    <div className='flex flex-col gap-3 text-custom-text-light'>
                         <div className='flex flex-row justify-between'>
                             <div>全部</div>
                             <div>{quantity}</div>
@@ -271,10 +271,10 @@ function Global() {
                         </div>
                     </div>
                 </div>
-                <div className='w-1/3 p-3 bg-base-300'>
+                <div className='w-1/3 p-3 bg-custom-main-7'>
                     <div className='text-lg font-bold'>最多游玩时间</div>
                     <div className='m-0 divider'></div>
-                    <div className='flex flex-col gap-1 overflow-auto text-base scrollbar-base'>
+                    <div className='flex flex-col gap-1 overflow-auto text-custom-text-light scrollbar-base'>
                         {data.map((game, index) => {
                             return <div key={index} className='flex flex-row justify-between'>
                                 <span>{game.detail.chineseName ? game.detail.chineseName : game.detail.name}</span>
@@ -283,10 +283,10 @@ function Global() {
                         })}
                     </div>
                 </div>
-                <div className='w-1/3 p-3 bg-base-300'>
+                <div className='w-1/3 p-3 bg-custom-main-7'>
                     <div className='text-lg font-bold'>最近游玩</div>
                     <div className='m-0 divider'></div>
-                    <div className='flex flex-col gap-1 overflow-auto text-base scrollbar-base'>
+                    <div className='flex flex-col gap-1 overflow-auto text-custom-text-light scrollbar-base'>
                         {sortedData.map((game, index) => {
                             return <div key={index} className='flex flex-row justify-between'>
                                 <span>{game.detail.chineseName ? game.detail.chineseName : game.detail.name}</span>

@@ -13,10 +13,10 @@ function NavTab({ to, name }) {
     return (
         <NavLink className={({ isActive, isPending }) =>
             isPending
-                ? "tab"
+                ? "tab text-custom-text"
                 : isActive
-                    ? "tab tab-active"
-                    : "tab"
+                    ? "tab tab-active text-custom-text"
+                    : "tab text-custom-text"
         }
             to={to} role="tab">
             {name}
@@ -122,7 +122,7 @@ function Game({ index }) {
         };
     }, [data]);
     function handleStart() {
-        if (gameData['gamePath']) {
+        if (gameData['gamePath'] !== '') {
             window.electron.ipcRenderer.send('start-game', gameData['gamePath'], index)
         } else {
             setAlert('游戏路径未设置，请前往设置!')
@@ -168,7 +168,7 @@ function Game({ index }) {
         naivgate(`../${index - 1}`)
     }
     return (
-        <div className="flex flex-col w-full h-full overflow-auto scrollbar-base scrollbar-w-2">
+        <div className="flex flex-col w-full h-full overflow-auto scrollbar-base scrollbar-w-2 bg-custom-main text-custom-text">
             <dialog id="deleteGame" className="modal">
                 <div className="w-1/3 h-auto modal-box">
                     <form method="dialog">
@@ -185,8 +185,8 @@ function Game({ index }) {
                 </div>
             </dialog>
 
-            <dialog id="my_modal_2" className="modal">
-                <div className="w-3/5 max-w-full max-h-full h-5/6 modal-box">
+            <dialog id="gameSetting" className="modal">
+                <div className="w-3/5 max-w-full max-h-full h-5/6 modal-box bg-custom-main-6">
                     <form method="dialog">
                         {/* if there is a button in form, it will close the modal */}
                         <button className="absolute btn btn-sm btn-ghost right-2 top-2" onClick={quitSetting}>✕</button>
@@ -197,84 +197,128 @@ function Game({ index }) {
                 </div>
             </dialog>
 
-            <div className="relative w-full h-96">
+            <div className="relative w-full h-full bg-fixed bg-center bg-cover" style={{ backgroundImage: `url(${gameData['backgroundImage']})` }}>
+                {/* <div className="absolute inset-0 bg-custom-main"></div> */}
+                <img src={`${gameData['backgroundImage']}?t=${timestamp}`} alt="bg" className="w-full h-full bg-cover"></img>
+                <div className="absolute inset-0 shadow-t-lg top-104 border-t-1 border-white/30 shadow-black/80 bg-gradient-to-b from-custom-main/40 to-custom-main to-50% backdrop-blur-lg"></div>
 
-                <img src={`${gameData['backgroundImage']}?t=${timestamp}`} alt="bg" className="object-cover w-full h-full"></img>
-
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-base-100"></div>
 
                 {/* <img alt="cover image" src={gameData['cover']} className="absolute z-10 object-cover w-56 h-auto transform border-2 right-16 lg:right-24 2xl:right-40 2xl:-bottom-60 -bottom-16 lg:-bottom-48 lg:w-64 2xl:w-80 border-primary"></img> */}
 
                 {/* <div class="absolute right-16 lg:right-28 -bottom-16 lg:-bottom-40 transform w-56 h-72 lg:w-64 lg:h-96 bg-base-100 bg-opacity-15 z-20"></div> */}
 
-                <div className="absolute flex flex-row gap-2 text-4xl font-bold left-14 -bottom-14">
-                    {gameData['chineseName'] ? gameData['chineseName'] : gameData['name']}
-                    <div className="self-center font-normal badge badge-outline badge-success">云存档：最新</div>
-                    <div className="self-center font-normal badge badge-outline badge-accent">{convertStatus(gameData['playStatus'])}</div>
-                </div>
-                <div className='absolute flex flex-row items-center gap-5 left-14 -bottom-32 justify-items-center'>
-                    <button className='w-28 btn btn-success' onClick={handleStart}>开始</button>
-                    <button className='w-28 btn btn-accent' onClick={() => { document.getElementById('my_modal_2').showModal() }}>设置</button>
-                    <div className="dropdown">
-                        <div tabIndex={0} role="button" className="m-1 btn btn-outline btn-square btn-secondary">
-                            <span className="icon-[material-symbols-light--more-horiz] w-10 h-10"></span>
+                <div className='absolute flex flex-col w-full gap-7 top-112'>
+                    <div className='flex flex-row justify-between'>
+                        <div className='flex flex-col w-full gap-7'>
+                            <div className="flex flex-row gap-2 text-4xl font-bold text-custom-text-light pl-14">
+                                {gameData['chineseName'] ? `${gameData['chineseName']} ${gameData['name']}` : gameData['name']}
+                            </div>
+                            <div className='flex flex-row items-center gap-3 justify-items-center pl-14'>
+                                <button className='w-48 text-lg transition-all border-0 shadow-sm btn bg-custom-green text-custom-text-light hover:brightness-110' onClick={handleStart}>
+                                    <span className="icon-[mdi--play] w-7 h-7"></span>
+                                    开始游戏
+                                </button>
+                                <div className='flex flex-row items-center pl-7 gap-7'>
+                                    <div className='flex flex-row items-center gap-2 pl-2'>
+                                        <span className="icon-[material-symbols--cloud] w-9 h-9"></span>
+                                        <div className='flex flex-col items-start text-xs'>
+                                            <div className='font-semibold'>云状态</div>
+                                            <div className=' text-custom-text/80'>已是最新</div>
+                                        </div>
+                                    </div>
+                                    <div className='flex flex-row items-center gap-2 pl-2'>
+                                        <span className="icon-[fluent--calendar-48-filled] w-9 h-9"></span>
+                                        <div className='flex flex-col items-start text-xs'>
+                                            <div className='font-semibold'>最后运行日期</div>
+                                            <div className=' text-custom-text/80'>{gameData['lastVisitDate'] ? gameData['lastVisitDate'].replace(/-/g, '.') : "还未运行过"}</div>
+                                        </div>
+                                    </div>
+                                    {/* <div className='flex flex-col items-start pl-1 text-xs'>
+                                        <div className='font-semibold'>最后运行日期</div>
+                                        <div className=' text-custom-text/80'>2024年8月1日</div>
+                                    </div> */}
+                                    <div className='flex flex-row items-center gap-2 pl-2'>
+                                        <span className="icon-[uil--clock] w-9 h-9"></span>
+                                        <div className='flex flex-col items-start text-xs'>
+                                            <div className='font-semibold'>游戏时间</div>
+                                            <div className=' text-custom-text/80'>{formatTime(gameData['gameDuration'])}</div>
+                                        </div>
+                                    </div>
+                                    <div className='flex flex-row items-center gap-2 pl-2'>
+                                        <span className="icon-[typcn--flow-switch] w-9 h-8"></span>
+                                        <div className='flex flex-col items-start text-xs'>
+                                            <div className='font-semibold'>游戏状态</div>
+                                            <div className=' text-custom-text/80'>{convertStatus(gameData['playStatus'])}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-                            <li onClick={() => { openFolderInExplorer(gameData['gamePath']) }}><a>浏览本地文件</a></li>
-                            <li onClick={() => { openFolderInExplorer(gameData['savePath']) }}><a>打开存档文件夹</a></li>
-                            <li onClick={() => { openFolderInExplorer(`/${gameData['id']}`) }}><a>打开数据文件夹</a></li>
-                            <li onClick={() => { document.getElementById('deleteGame').showModal() }} className='hover:bg-error hover:text-base-100'><a>删除游戏</a></li>
-                        </ul>
+                        <div className='flex flex-row self-end gap-3 pr-6'>
+                            <button className='min-h-0 border-0 shadow-sm w-9 h-9 btn btn-square text-custom-text-light bg-custom-text/40 hover:bg-custom-text/65 backdrop-blur-2xl' onClick={() => { document.getElementById('gameSetting').showModal() }}>
+                                <span className="icon-[ic--sharp-settings] w-6 h-6"></span>
+                            </button>
+                            <div className="dropdown dropdown-end">
+                                <div tabIndex={0} role="button" className="min-h-0 mb-1 border-0 w-9 h-9 btn btn-square text-custom-text-light bg-custom-text/40 hover:bg-custom-text/65 backdrop-blur-2xl">
+                                    <span className="icon-[mingcute--more-1-fill] w-6 h-6"></span>
+                                </div>
+                                <ul tabIndex={0} className="dropdown-content menu bg-custom-main-5 rounded-box z-[1] w-52 p-2 shadow">
+                                    <li onClick={() => { openFolderInExplorer(gameData['gamePath']) }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none'>浏览本地文件</a></li>
+                                    <li onClick={() => { openFolderInExplorer(gameData['savePath']) }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none'>打开存档文件夹</a></li>
+                                    <li onClick={() => { openFolderInExplorer(`/${gameData['id']}`) }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none'>打开数据文件夹</a></li>
+                                    <li onClick={() => { document.getElementById('deleteGame').showModal() }} className='hover:bg-custom-red'><a className='transition-none'>删除游戏</a></li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                {/* <div className="absolute z-0 w-full divider -bottom-44"></div> */}
-                <div className="absolute z-0 flex flex-row items-center w-full pl-8 h-28 -bottom-67 ">
-                    <div className="stats bg-base-300">
-                        <div className="stat">
-                            <div className="stat-figure text-secondary">
-                                <span className="icon-[material-symbols-light--menu-open] w-14 h-14"></span>
+                    {/* <div className="absolute z-0 w-full divider -bottom-44"></div> */}
+                    {/* <div className="z-0 flex flex-row items-center w-full pl-8 h-28">
+                        <div className="stats bg-custom-main-3/80 backdrop-blur-sm text-custom-text">
+                            <div className="stat hover:shadow-lg hover:brightness-125">
+                                <div className="stat-figure text-custom-text">
+                                    <span className="icon-[material-symbols-light--menu-open] w-14 h-14 text-custom-text"></span>
+                                </div>
+                                <div className="stat-title text-custom-text">最后运行日期</div>
+                                <div className="stat-value text-custom-text">{gameData['lastVisitDate'] ? gameData['lastVisitDate'].replace(/-/g, '.') : "还未运行过"}</div>
                             </div>
-                            <div className="stat-title">最后运行日期</div>
-                            <div className="stat-value text-secondary">{gameData['lastVisitDate'] ? gameData['lastVisitDate'].replace(/-/g, '.') : "还未运行过"}</div>
+                            <div className="stat hover:shadow-lg hover:brightness-125">
+                                <div className="flex items-center justify-center stat-figure text-custom-text">
+                                    <span className="icon-[material-symbols-light--avg-time-outline-sharp] w-14 h-14"></span>
+                                </div>
+                                <div className="stat-title text-custom-text">游戏时长</div>
+                                <div className="stat-value text-custom-text">{formatTime(gameData['gameDuration'])}</div>
+                            </div>
+                            <div className="stat hover:shadow-lg hover:brightness-125">
+                                <div className="stat-figure text-custom-text">
+                                    <span className="icon-[material-symbols-light--calendar-add-on-outline-sharp] w-14 h-14"></span>
+                                </div>
+                                <div className="stat-title text-custom-text">添加日期</div>
+                                <div className="stat-value text-custom-text">{gameData['addDate'].replace(/-/g, '.')}</div>
+                            </div>
                         </div>
-                        <div className="stat">
-                            <div className="flex items-center justify-center stat-figure text-secondary">
-                                <span className="icon-[material-symbols-light--avg-time-outline-sharp] w-14 h-14"></span>
-                            </div>
-                            <div className="stat-title">游戏时长</div>
-                            <div className="stat-value text-secondary">{formatTime(gameData['gameDuration'])}</div>
-                            {/* <div className="stat-desc">21% more than last month</div> */}
+                    </div> */}
+                    <div className="flex flex-col w-full pt-8">
+                        <div role="tablist" className="pl-44 pr-44 tabs tabs-bordered">
+                            <NavTab to="./detail" name="详情" />
+                            <NavTab to="./character" name="角色" />
+                            {/* <NavTab to="./2.5" name="版本" /> */}
+                            <NavTab to="./save" name="存档" />
+                            <NavTab to="./memory" name="回忆" />
                         </div>
-                        <div className="stat">
-                            <div className="stat-figure text-secondary">
-                                <span className="icon-[material-symbols-light--calendar-add-on-outline-sharp] w-14 h-14"></span>
-                            </div>
-                            <div className="stat-title">添加日期</div>
-                            <div className="stat-value text-secondary">{gameData['addDate'].replace(/-/g, '.')}</div>
+                        <div className='flex pl-8 pr-8 pt-7 pb-7 grow-0'>
+                            <Routes>
+                                <Route index element={<Navigate to='./detail' />} />
+                                <Route path='/detail' element={<Detail gameData={gameData} />} />
+                                <Route path='/character' element={<Character characterData={characterData} />} />
+                                <Route path='/save' element={<Save index={index} />} />
+                                <Route path='/memory' element={<Memory index={index} />} />
+                            </Routes>
                         </div>
                     </div>
                 </div>
             </div>
-            <div className="flex flex-col w-full pt-77">
-                <div role="tablist" className="pl-44 pr-44 tabs tabs-bordered">
-                    <NavTab to="./detail" name="详情" />
-                    <NavTab to="./character" name="角色" />
-                    {/* <NavTab to="./2.5" name="版本" /> */}
-                    <NavTab to="./save" name="存档" />
-                    <NavTab to="./memory" name="回忆" />
-                </div>
-                <div className='flex pl-8 pr-8 pt-7 pb-7 grow-0'>
-                    <Routes>
-                        <Route index element={<Navigate to='./detail' />} />
-                        <Route path='/detail' element={<Detail gameData={gameData} />} />
-                        <Route path='/character' element={<Character characterData={characterData} />} />
-                        <Route path='/save' element={<Save index={index} />} />
-                        <Route path='/memory' element={<Memory index={index} />} />
-                    </Routes>
-                </div>
-            </div>
-        </div>
+        </div >
     )
 }
 
@@ -282,35 +326,38 @@ function Detail({ gameData }) {
     return (
         <div className='flex flex-row items-start w-full gap-5 grow-0'>
             <div className='flex flex-col w-2/3 gap-5 grow-0'>
-                <div className='p-3 bg-base-300'>
+                <div className='p-5 '>
                     <div className='font-bold'>游戏简介</div>
+                    <div className='p-0 m-0 divider'></div>
                     <div className='pt-2 text-sm whitespace-pre-wrap'>
                         {gameData['introduction']}
                     </div>
                 </div>
-                <div className='p-3 bg-base-300'>
+                <div className='p-5 '>
                     <div className='font-bold'>发行列表</div>
+                    <div className='p-0 m-0 divider'></div>
                     <div className="flex flex-col gap-2 pt-2 text-sm">
                         {gameData['releases'].map((release, index) => {
                             return (
-                                <div key={index} className='flex flex-row justify-between'>
+                                <a key={index} className='flex flex-row justify-between p-2 hover:bg-custom-blue-4/20 group' href={release['relatedLink']} target='_blank'>
                                     <div>
-                                        <a className='link link-hover' href={release['relatedLink']} target='_blank'>{release['releaseName']}</a>
+                                        <div className=''>{release['releaseName']}</div>
                                         <div className='text-xs'>发行时间：{release['releaseDate']}&nbsp;&nbsp;发行语言：{release['releaseLanguage']}</div>
                                     </div>
                                     <div className='flex gap-2'>
-                                        <div className='badge-outline badge badge-info'>{release['platform']}</div>
-                                        <div className={release['restrictionLevel'] === 'R18+' ? "badge-outline badge badge-error" : "badge-outline badge badge-success"}>{release['restrictionLevel']}</div>
+                                        <div className='transition-none badge-outline badge text-custom-blue-2 group-hover:brightness-150'>{release['platform']}</div>
+                                        <div className={release['restrictionLevel'] === 'R18+' ? "transition-none badge-outline badge text-custom-red/50 group-hover:text-custom-red" : "transition-none badge-outline badge text-custom-green/50 group-hover:text-custom-green"}>{release['restrictionLevel']}</div>
                                     </div>
-                                </div>
+                                </a>
                             )
                         })}
                     </div>
                 </div>
             </div>
             <div className='flex flex-col w-1/3 gap-5'>
-                <div className='p-3 bg-base-300'>
+                <div className='p-5 '>
                     <div className='font-bold'>作品信息</div>
+                    <div className='p-0 m-0 divider'></div>
                     <div className='pt-2 text-sm'>
                         <div>原名：{gameData['name']}</div>
                         <div>中文名：{gameData['chineseName']}</div>
@@ -319,16 +366,18 @@ function Detail({ gameData }) {
                         <div>类型：{gameData['typeDesc']}</div>
                     </div>
                 </div>
-                <div className='p-3 bg-base-300'>
+                <div className='p-5 '>
                     <div className='font-bold'>相关网站</div>
-                    <div className="pt-2 text-sm">
+                    <div className='p-0 m-0 divider'></div>
+                    <div className="flex flex-col gap-1 pt-2 text-s">
                         {gameData['websites'].map((website, index) => {
-                            return <div key={index}>▪<a className='link link-secondary' href={website['url']} target='_blank'>{website['title']}</a></div>
+                            return <a key={index} className='p-1 group bg-custom-blue-4/20 hover:brightness-125 hover:text-custom-text' href={website['url']} target='_blank'><div className='text-xs text-custom-blue-4 group-hover:text-custom-text' href={website['url']} target='_blank'>{website['title']}</div></a>
                         })}
                     </div>
                 </div>
-                <div className='p-3 bg-base-300'>
+                <div className='p-5 '>
                     <div className='font-bold'>STAFF</div>
+                    <div className='p-0 m-0 divider'></div>
                     <div className='pt-1 text-sm'>
                         {
                             Object.keys(gameData['staff']).map((key, index) => {
@@ -338,7 +387,7 @@ function Detail({ gameData }) {
                                         {
                                             gameData['staff'][key].map((staff, index) => {
                                                 return (
-                                                    <div key={index}>&nbsp;▪<a className='link link-secondary' href={`https://www.ymgal.games/pa${staff['pid']}`} target='_blank'>{staff['name']}</a><span className='text-xs'>{staff['empDesc'] && `(${staff['empDesc']})`}</span></div>
+                                                    <div key={index}>&nbsp;▪<a className='link link-hover text-custom-blue-4/90' href={`https://www.ymgal.games/pa${staff['pid']}`} target='_blank'>{staff['name']}</a><span className='text-xs'>{staff['empDesc'] && `(${staff['empDesc']})`}</span></div>
                                                 )
                                             })
                                         }
@@ -360,7 +409,7 @@ function Character({ characterData }) {
                 return (
                     <div key={index}>
                         <div className='flex flex-row items-start gap-5'>
-                            <div className='flex flex-row w-3/4 bg-base-300'>
+                            <div className='flex flex-row w-3/4 shadow-md bg-custom-main group'>
                                 {character['cover'] && <img src={character['cover']} alt="c1" className="w-auto h-67"></img>}
                                 <div className='flex flex-col h-67'>
                                     <div className='p-3 text-lg font-bold'>{character['chineseName'] ? character['chineseName'] : character['name']}</div>
@@ -368,7 +417,7 @@ function Character({ characterData }) {
                                 </div>
                             </div>
                             <div className='flex flex-col w-1/4 gap-5 text-sm'>
-                                <div className='p-3 bg-base-300'>
+                                <div className='p-5 shadow-md bg-custom-main'>
                                     <div className='pb-2 font-bold'>基本信息</div>
                                     <div>原名：{character['name']}</div>
                                     <div>中文名：{character['chineseName'] ? character['chineseName'] : "未知"}</div>
@@ -376,11 +425,13 @@ function Character({ characterData }) {
                                     <div>生日：{character['birthday'] ? character['birthday'] : "未知"}</div>
                                     <div>性别：{character['gender'] === 0 ? "未知" : character['gender'] === 1 ? "男" : character['gender'] === 2 ? "女" : "扶她"}</div>
                                 </div>
-                                <div className='p-3 bg-base-300'>
+                                <div className='p-5 shadow-md bg-custom-main'>
                                     <div className='pb-2 font-bold'>相关网站</div>
-                                    {character['websites'].map((website, index) => {
-                                        return <div key={index}>▪<a className='link link-secondary' href={website['url']} target="_blank" rel="noreferrer">{website['title']}</a></div>
-                                    })}
+                                    <div className='flex flex-col gap-1'>
+                                        {character['websites'].map((website, index) => {
+                                            return <a key={index} className='p-1 group bg-custom-blue-4/20 hover:brightness-125 hover:text-custom-text' href={website['url']} target="_blank" rel="noreferrer"><div className='text-xs text-custom-blue-4 group-hover:text-custom-text'>{website['title']}</div></a>
+                                        })}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -418,7 +469,7 @@ function Save({ index }) {
     }
     return (
         <div className='w-full'>
-            <div className="overflow-x-auto bg-base-300">
+            <div className="overflow-x-auto bg-custom-main">
                 <table className="table">
                     {/* head */}
                     <thead>
@@ -429,7 +480,7 @@ function Save({ index }) {
                             <th>操作</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody className=''>
                         {/* row 1 */}
                         {
                             data[index]['saves'] ?
@@ -443,9 +494,9 @@ function Save({ index }) {
                                             </td>
                                             <td>
                                                 <div className='flex flex-row gap-2'>
-                                                    <button className="h-6 min-h-0 btn btn-success" onClick={() => { switchSave(save['id']) }}>切换</button>
+                                                    <button className="h-6 min-h-0 text-xs font-thin border-0 btn bg-custom-blue-4/20 text-custom-text-light hover:brightness-125" onClick={() => { switchSave(save['id']) }}>切换</button>
                                                     {/* <button className="h-6 min-h-0 btn btn-accent">编辑</button> */}
-                                                    <button className="h-6 min-h-0 btn btn-error" onClick={() => { deleteSave(save['id']) }}>删除</button>
+                                                    <button className="h-6 min-h-0 text-xs font-thin border-0 btn bg-custom-blue-4/20 text-custom-text-light hover:bg-custom-red" onClick={() => { deleteSave(save['id']) }}>删除</button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -523,12 +574,12 @@ function Memory({ index }) {
                 </div>
             </dialog>
 
-            <button className='btn btn-secondary text-base-100' onClick={() => { document.getElementById('my_modal_1').showModal() }}>添加</button>
+            <button className='border-0 btn bg-custom-blue-2/50 text-custom-text-light hover:brightness-125' onClick={() => { document.getElementById('my_modal_1').showModal() }}>添加</button>
             {data[index]['memories'] && data[index]['memories'].map((memory, index) => {
                 return (
-                    <div key={index} className='flex flex-col w-auto'>
+                    <div key={index} className='flex flex-col w-auto shadow-md'>
                         <img src={`${memory['imgPath']}?t=${timestamp}`} className='w-auto h-auto'></img>
-                        <div className='p-3 bg-base-300'>{memory['note']}</div>
+                        <div className='p-3 bg-custom-blue-3/60'>{memory['note']}</div>
                     </div>
                 )
             })}
@@ -571,7 +622,7 @@ function Setting({ index }) {
     }, [settingData])
     function quitSetting() {
         setSettingData(data[index])
-        document.getElementById('my_modal_2').close()
+        document.getElementById('gameSetting').close()
     }
     async function saveSetting() {
         if (activeTab === 'advanced') {
@@ -615,12 +666,12 @@ function Setting({ index }) {
     };
     return (
         <div className='flex flex-col w-full h-full gap-5'>
-            <div role="tablist" className="tabs tabs-bordered">
+            <div role="tablist" className="tabs tabs-bordered text-custom-text-light">
                 {tabs.map((tab) => (
                     <a
                         key={tab}
                         role="tab"
-                        className={`tab ${activeTab === tab ? 'tab-active' : ''}`}
+                        className={`tab text-custom-text-light ${activeTab === tab ? 'tab-active' : ''}`}
                         onClick={() => setActiveTab(tab)}
                     >
                         {tab === 'general' ? '通用' :
@@ -633,8 +684,8 @@ function Setting({ index }) {
                 {renderContent()}
             </div>
             <div className='absolute flex flex-row gap-5 right-10 bottom-10'>
-                <button className='btn btn-primary' onClick={saveSetting}>保存</button>
-                <button className='btn btn-error' onClick={quitSetting}>取消</button>
+                <button className='transition-all btn bg-custom-main-7 text-custom-text-light hover:brightness-125' onClick={saveSetting}>保存</button>
+                <button className='transition-all btn bg-custom-main-7 text-custom-text-light hover:brightness-125' onClick={quitSetting}>取消</button>
             </div>
             {settingAlert &&
                 <div className="toast toast-center">
@@ -654,51 +705,54 @@ function GeneralSettings({ index }) {
         <div className='flex flex-col w-full h-full gap-3'>
             <div className='flex flex-row gap-3'>
                 <div className='flex flex-col w-1/2 gap-3'>
-                    <label className="flex items-center w-full gap-2 input-sm input input-bordered focus-within:outline-none">
+                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:text-custom-text-light/80 focus-within:hover:brightness-100">
                         <div className='font-semibold'>原名 |</div>
                         <input type="text" name='gameName' className="grow" value={settingData?.detail?.name || ''} onChange={(e) => { updateSettiongData(['detail', 'name'], e.target.value) }} />
                     </label>
-                    <label className="flex items-center gap-2 input-sm input input-bordered focus-within:outline-none">
+                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:hover:brightness-100 focus-within:text-custom-text-light/80">
                         <div className='font-semibold'>中文名 |</div>
                         <input type="text" name='gameChineseName' className="grow" value={settingData?.detail?.chineseName || ''} onChange={(e) => { updateSettiongData(['detail', 'chineseName'], e.target.value) }} />
                     </label>
-                    <label className="flex items-center gap-2 input-sm input input-bordered focus-within:outline-none">
+                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:hover:brightness-100 focus-within:text-custom-text-light/80">
                         <div className='font-semibold'>GID |</div>
                         <input type="text" name='gid' className="grow" value={settingData?.detail?.gid || ''} onChange={(e) => { updateSettiongData(['detail', 'gid'], e.target.value) }} />
                     </label>
-                    <label className="flex items-center gap-2 input-sm input input-bordered focus-within:outline-none">
+                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:hover:brightness-100 focus-within:text-custom-text-light/80">
                         <div className='font-semibold'>VID |</div>
                         <input type="text" name='vid' className="grow" value={settingData?.detail?.vid || ''} onChange={(e) => { updateSettiongData(['detail', 'vid'], e.target.value) }} />
                     </label>
                 </div>
                 <div className='flex flex-col w-1/2 gap-3'>
-                    <label className="flex items-center gap-2 input-sm input input-bordered focus-within:outline-none">
+                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:hover:brightness-100 focus-within:text-custom-text-light/80">
                         <div className='font-semibold'>发行日期 |</div>
                         <input type="text" name='releaseDate' className="grow" value={settingData?.detail?.releaseDate || ''} onChange={(e) => { updateSettiongData(['detail', 'releaseDate'], e.target.value) }} />
                     </label>
-                    <label className="flex items-center gap-2 input-sm input input-bordered focus-within:outline-none">
+                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:hover:brightness-100 focus-within:text-custom-text-light/80">
                         <div className='font-semibold'>开发者 |</div>
                         <input type="text" name='developer' className="grow" value={settingData?.detail?.developer || ''} onChange={(e) => { updateSettiongData(['detail', 'developer'], e.target.value) }} />
                     </label>
-                    <label className="flex items-center gap-2 input-sm input input-bordered focus-within:outline-none">
+                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:hover:brightness-100 focus-within:text-custom-text-light/80">
                         <div className='font-semibold'>类型 |</div>
                         <input type="text" name='typeDesc' className="grow" value={settingData?.detail?.typeDesc || ''} onChange={(e) => { updateSettiongData(['detail', 'typeDesc'], e.target.value) }} />
                     </label>
-                    <label className="flex items-center gap-2 pr-2 mr-0 input-sm input-bordered input focus-within:outline-none">
-                        <div className='text-sm font-semibold'>限制级 |</div>
-                        <select className="outline-none grow bg-base-100" value={settingData?.detail?.restricted ?? true} onChange={(e) => {
-                            const boolValue = e.target.value === "true";
-                            updateSettiongData(['detail', 'restricted'], boolValue)
-                        }}>
-                            <option value={true}>是</option>
-                            <option value={false}>否</option>
-                        </select>
-                    </label>
+                    <div className="dropdown dropdown-end">
+                        <div tabIndex={0} role="button" className="flex flex-row items-center justify-between w-full gap-2 mb-1 text-sm font-semibold border-0 input-sm bg-custom-main-7 hover:brightness-125">
+                            <div className="flex items-center gap-2">
+                                <div>限制级 |</div>
+                                <div>{settingData?.detail?.restricted ? '是' : '否'}</div>
+                            </div>
+                            <span className="icon-[material-symbols-light--keyboard-arrow-down] w-6 h-6"></span>
+                        </div>
+                        <ul tabIndex={0} className="dropdown-content menu bg-custom-main-5 rounded-box z-[1] w-3/4 p-2 shadow">
+                            <li onClick={() => { updateSettiongData(['detail', 'restricted'], true) }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none'>是</a></li>
+                            <li onClick={() => { updateSettiongData(['detail', 'restricted'], false) }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none'>否</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-            <label className="flex flex-col items-start self-stretch h-full pt-2 border-1 input-bordered grow">
+            <label className="flex flex-col items-start self-stretch h-full pt-2 outline-none grow bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:hover:brightness-100 focus-within:text-custom-text-light/80">
                 <div className='self-center text-sm font-semibold'>简介</div>
-                <textarea className="self-stretch p-2 overflow-auto text-sm outline-none bg-base-100 grow scrollbar-base" placeholder="Bio" value={settingData?.detail?.introduction || ''} onChange={(e) => { updateSettiongData(['detail', 'introduction'], e.target.value) }} />
+                <textarea spellCheck='false' className="self-stretch p-2 overflow-auto text-sm border-0 outline-none textarea textarea-ghost focus-within:text-custom-text-light/80 bg-custom-main-7 grow scrollbar-base focus:bg-custom-main-3" placeholder="Bio" value={settingData?.detail?.introduction || ''} onChange={(e) => { updateSettiongData(['detail', 'introduction'], e.target.value) }} />
             </label>
         </div>
     )
@@ -724,31 +778,60 @@ function AdvancedSettings() {
             return `${hours.toFixed(1)}小时`;
         }
     }
+    function playStatus(status) {
+        switch (status) {
+            case 0:
+                return '未开始'
+            case 1:
+                return '游玩中'
+            case 2:
+                return '已完成'
+            case 3:
+                return '多周目'
+            default:
+                return '未知'
+        }
+    }
     return (
         <div className='flex flex-col w-full h-full gap-3'>
             <div className='flex flex-row gap-3'>
                 <div className='flex flex-col w-1/2 gap-3'>
-                    <label className="flex items-center w-full gap-2 input-sm input input-bordered focus-within:outline-none">
+                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:text-custom-text-light/80 focus-within:hover:brightness-100">
                         <div className='font-semibold'>添加日期 |</div>
                         <input type="text" name='addDate' className="grow" value={settingData?.detail?.addDate || ''} onChange={(e) => { updateSettiongData(['detail', 'addDate'], e.target.value) }} />
                     </label>
-                    <label className="flex items-center w-full gap-2 input-sm input input-bordered focus-within:outline-none">
+                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:text-custom-text-light/80 focus-within:hover:brightness-100">
                         <div className='font-semibold'>游玩时间 |</div>
                         <input type="text" name='gameDuration' className="grow" value={settingData?.detail?.gameDuration || ''} onChange={(e) => { updateSettiongData(['detail', 'gameDuration'], Number(e.target.value)) }} />
                         <div>{formatTime(settingData?.detail?.gameDuration || '')}</div>
                     </label>
-                    <label className="flex items-center w-full gap-2 input-sm input input-bordered focus-within:outline-none">
+                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:text-custom-text-light/80 focus-within:hover:brightness-100">
                         <div className='font-semibold'>游玩次数 |</div>
                         <input type="text" name='frequency' className="grow" value={settingData?.detail?.frequency || '0'} onChange={(e) => { updateSettiongData(['detail', 'frequency'], Number(e.target.value)) }} />
                     </label>
                 </div>
                 <div className='flex flex-col w-1/2 gap-3'>
-                    <label className="flex items-center w-full gap-2 input-sm input focus-within:outline-none input-bordered">
+                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:text-custom-text-light/80 focus-within:hover:brightness-100">
                         <div className='font-semibold'>数据库ID |</div>
                         <div>{(settingData?.detail?.gid || '').replace('ga', '')}</div>
                         {/* <input disabled type="text" name='gid' className="grow" value={settingData?.detail?.gid || ''} onChange={(e)=>{updateSettiongData(['detail', 'gid'], e.target.value)}} /> */}
                     </label>
-                    <label className="flex items-center gap-2 pr-2 mr-0 input-sm input-bordered input focus-within:outline-none">
+                    <div className="dropdown dropdown-end">
+                        <div tabIndex={0} role="button" className="flex flex-row items-center justify-between w-full gap-2 mb-1 text-sm font-semibold border-0 input-sm bg-custom-main-7 hover:brightness-125">
+                            <div className="flex items-center gap-2">
+                                <div>游玩状态 |</div>
+                                <div>{playStatus(settingData?.detail?.playtStatus || 0)}</div>
+                            </div>
+                            <span className="icon-[material-symbols-light--keyboard-arrow-down] w-6 h-6"></span>
+                        </div>
+                        <ul tabIndex={0} className="dropdown-content menu bg-custom-main-5 rounded-box z-[1] w-3/4 p-2 shadow">
+                            <li onClick={() => { updateSettiongData(['detail', 'playtStatus'], 0) }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none'>未开始</a></li>
+                            <li onClick={() => { updateSettiongData(['detail', 'playtStatus'], 1) }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none'>游玩中</a></li>
+                            <li onClick={() => { updateSettiongData(['detail', 'playtStatus'], 2) }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none'>已完成</a></li>
+                            <li onClick={() => { updateSettiongData(['detail', 'playtStatus'], 3) }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none'>多周目</a></li>
+                        </ul>
+                    </div>
+                    {/* <label className="flex items-center gap-2 pr-2 mr-0 input-sm input-bordered input focus-within:outline-none">
                         <div className='text-sm font-semibold'>游玩状态 |</div>
                         <select className="outline-none grow bg-base-100" value={settingData?.detail?.playtStatus || 0} onChange={(e) => { updateSettiongData(['detail', 'playtStatus'], Number(e.target.value)) }}>
                             <option value={0}>未开始</option>
@@ -756,17 +839,17 @@ function AdvancedSettings() {
                             <option value={2}>已完成</option>
                             <option value={3}>N周目</option>
                         </select>
-                    </label>
-                    <label className="flex items-center w-full gap-2 input-sm input focus-within:outline-none bg-error text-base-100">
+                    </label> */}
+                    <label className="flex items-center w-full gap-2 -mt-1 input-sm input focus-within:outline-none bg-custom-red text-custom-text-light/90">
                         <div className='font-semibold'>警告⚠️ |</div>
                         <div>随意修改数据库内容会导致程序崩溃！</div>
                         {/* <input disabled type="text" name='gid' className="grow" value={settingData?.detail?.gid || ''} onChange={(e)=>{updateSettiongData(['detail', 'gid'], e.target.value)}} /> */}
                     </label>
                 </div>
             </div>
-            <label className="flex flex-col items-start self-stretch h-full pt-2 border-1 input-bordered grow">
+            <label className="flex flex-col items-start self-stretch h-full pt-2 outline-none grow bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:hover:brightness-100 focus-within:text-custom-text-light/80">
                 <div className='self-center text-sm font-semibold'>数据库内容</div>
-                <textarea spellCheck='false' className="self-stretch p-2 overflow-auto text-sm outline-none bg-base-100 grow scrollbar-base" placeholder="Bio" value={dataString || ''} onChange={(e) => { setDataString(e.target.value) }} />
+                <textarea spellCheck='false' className="self-stretch p-2 overflow-auto text-sm border-0 outline-none textarea textarea-ghost focus-within:text-custom-text-light/80 bg-custom-main-7 grow scrollbar-base focus:bg-custom-main-3" placeholder="Bio" value={dataString || ''} onChange={(e) => { setDataString(e.target.value) }} />
             </label>
         </div>
     )
@@ -827,18 +910,18 @@ function MediaSettings() {
     }
     return (
         <div className='flex flex-col w-full h-full gap-3'>
-            <button className='btn btn-sm' onClick={() => window.electron.ipcRenderer.send('open-folder', `src/renderer/public/${settingData?.detail?.id || ''}/`)}>打开媒体文件夹</button>
+            <button className='transition-all btn btn-sm bg-custom-main-7 hover:brightness-125' onClick={() => window.electron.ipcRenderer.send('open-folder', `src/renderer/public/${settingData?.detail?.id || ''}/`)}>打开媒体文件夹</button>
             <div className='flex flex-row gap-3 grow'>
                 <div className='flex flex-col w-1/2 font-bold'>
                     <div>封面</div>
                     <div className='m-0 divider'></div>
-                    <button className='btn btn-sm' onClick={() => { updateCover(settingData?.detail?.id || '') }}>更换</button>
+                    <button className='transition-all btn btn-sm bg-custom-main-7 hover:brightness-125' onClick={() => { updateCover(settingData?.detail?.id || '') }}>更换</button>
                     <img src={`${settingData?.detail?.cover || ''}?t=${timestamp}`} alt="" className='w-1/2 h-auto pt-2' />
                 </div>
                 <div className='flex flex-col w-1/2 font-bold'>
                     <div>背景</div>
                     <div className='m-0 divider'></div>
-                    <button className='btn btn-sm' onClick={() => { updateBackgroundImage(settingData?.detail?.id || '') }}>更换</button>
+                    <button className='transition-all btn btn-sm bg-custom-main-7 hover:brightness-125' onClick={() => { updateBackgroundImage(settingData?.detail?.id || '') }}>更换</button>
                     <img src={`${settingData?.detail?.backgroundImage || ''}?t=${timestamp}`} alt="" className='w-full h-auto pt-2' />
                 </div>
             </div>
@@ -900,12 +983,12 @@ function StartupSettings() {
     }
     return (
         <div className='flex flex-col w-full h-full gap-3'>
-            <label className="flex items-center w-full gap-2 input-sm input input-bordered focus-within:outline-none">
+            <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:text-custom-text-light/80 focus-within:hover:brightness-100">
                 <div className='font-semibold'>游戏路径 |</div>
                 <input type='text' placeholder='拖拽获取路径' onDrop={getGamePathByDrag} onDragOver={handleDragOver} className='grow' value={settingData?.detail?.gamePath || '0'} onChange={(e) => { updateSettiongData(['detail', 'gamePath'], e.target.value) }} />
                 <span className="icon-[material-symbols-light--folder-open-outline-sharp] w-5 h-5 self-center" onClick={selectGamePath}></span>
             </label>
-            <label className="flex items-center w-full gap-2 input-sm input input-bordered focus-within:outline-none">
+            <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:text-custom-text-light/80 focus-within:hover:brightness-100">
                 <div className='font-semibold'>存档路径 |</div>
                 <input type='text' placeholder='拖拽获取路径' onDrop={getSavePathByDrag} onDragOver={handleDragOver} className='grow' value={settingData?.detail?.savePath || '0'} onChange={(e) => { updateSettiongData(['detail', 'savePath'], e.target.value) }} />
                 <span className="icon-[material-symbols-light--folder-open-outline-sharp] w-5 h-5 self-center" onClick={selectSavePath}></span>

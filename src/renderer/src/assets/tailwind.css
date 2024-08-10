@@ -27,9 +27,9 @@
     }
 
     .scrollbar-base {
-        @apply scrollbar-track-base-100 scrollbar-thumb-secondary scrollbar scrollbar-w-1 scrollbar-h-1;
-        @apply hover:scrollbar-thumb-primary;
-        @apply active:scrollbar-thumb-primary;
+        @apply scrollbar-track-custom-main-4 scrollbar-thumb-custom-text scrollbar scrollbar-w-0.5 scrollbar-h-0.5;
+        @apply hover:scrollbar-thumb-custom-text-light;
+        @apply active:scrollbar-thumb-custom-text;
     }
 }
 

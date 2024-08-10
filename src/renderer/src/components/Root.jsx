@@ -41,10 +41,10 @@ function NavButton({ to, name }) {
       isPending
         ? ""
         : isActive
-        ? "bg-primary text-base-100"
-        : ""
+          ? "bg-custom-blue-4/20 text-custom-text-light"
+          : ""
     }
-    to={to}>
+      to={to}>
       {name}
     </NavLink>
   )
@@ -79,15 +79,15 @@ function Root() {
     }
   }, [config])
   return (
-    <div className='flex flex-row w-full h-full'>
-      {alert && 
-        <div className="toast toast-center">
-          <div className="alert alert-error">
-            <span className='text-base-100'>{alert}</span>
+    <div className='flex flex-row w-full h-full text-custom-text-light'>
+      {alert &&
+        <div className="z-20 toast toast-center">
+          <div className="alert bg-custom-blue-6">
+            <span className='text-custom-text-light'>{alert}</span>
           </div>
         </div>
       }
-      <ul className="w-14 menu bg-base-300 rounded-box shrink-0">
+      <ul className="shadow-lg w-14 menu bg-custom-main-3 rounded-box shrink-0">
         <li><NavButton to="/library" className="bg-primary" name="l" /></li>
         <li><NavButton to="/record" className="bg-primary" name="r" /></li>
         <li><NavButton to="/config" className="bg-primary" name="c" /></li>

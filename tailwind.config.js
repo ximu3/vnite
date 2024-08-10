@@ -7,9 +7,32 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['LXGW WenKai', 'sans-serif'],
+        // sans: ['LXGW WenKai', 'sans-serif'],
       },
       colors: {
+        'custom': {
+          'main': '#23272E',
+          'text': '#B8B9B9',
+          'text-light': '#F4F5F7',
+          'main-1': '#292D34',
+          'main-2': '#24282F',
+          'main-3': '#25272C',
+          'main-4': '#171D25',
+          'main-5': '#3D4450',
+          'main-6': '#171D25',
+          'main-7': '#2A2D34',
+          'blue': '#67C1F5',
+          'green': '#1EB44B',
+          'blue-1': '#3E4E69',
+          'blue-2': '#38709A',
+          'blue-3': '#1B2838',
+          'blue-4': '#2995D8',
+          'blue-5': '#243D50',
+          'blue-6': '#1A9FFF',
+          'blue1': '#1A9FFF',
+          'red': '#E22A27',
+          'hover': '#3D4450',
+        },
         'chestnut': {
           '50': '#fdf4f3',
           '100': '#faece9',
@@ -56,7 +79,14 @@ module.exports = {
         "270": "67.5rem",
 
       },
-      spacing:{
+      boxShadow: {
+        'inner-sm': 'inset 0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        'inner-md': 'inset 0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+        'inner-lg': 'inset 0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+        'inner-xl': 'inset 0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+        'inner-2xl': 'inset 0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+      },
+      spacing: {
         "58": "14.5rem",
         "59": "14.75rem",
         "65": "16.25rem",
@@ -75,6 +105,17 @@ module.exports = {
         "102": "25.5rem",
         "104": "26rem",
         "106": "26.5rem",
+        "108": "27rem",
+        "110": "27.5rem",
+        "112": "28rem",
+        "114": "28.5rem",
+        "116": "29rem",
+        "118": "29.5rem",
+        "120": "30rem",
+        "140": "35rem",
+        "160": "40rem",
+        "165": "41.25rem",
+        "170": "42.5rem",
       },
       height: {
         '1/10': '10%',
@@ -84,6 +125,7 @@ module.exports = {
         '120': '30rem',
       },
       borderWidth: {
+        '0.5': '0.5px',
         '1': '1px',
         '3': '3px',
       },
@@ -162,7 +204,7 @@ module.exports = {
     themes: [
       {
         light: {
-          ...require("daisyui/src/theming/themes")["nord"],
+          ...require("daisyui/src/theming/themes")["dark"],
           "--rounded-box": "0rem", // border radius rounded-box utility class, used in card and other large boxes
           "--rounded-btn": "0rem", // border radius rounded-btn utility class, used in buttons and similar element
           "--rounded-badge": "0rem", // border radius rounded-badge utility class, used in badges and similar
@@ -173,7 +215,7 @@ module.exports = {
           "--tab-border": "1px", // border width of tabs
           "--tab-radius": "0rem", // border radius of tabs
         },
-      },"dark"
+      }, "dark"
     ],
   },
   important: true,

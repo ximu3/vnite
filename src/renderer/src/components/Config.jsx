@@ -4,19 +4,19 @@ import { useRootStore } from './Root'
 import { useEffect, useState } from 'react'
 
 
-function NavButton({ to, name }) {
-  return (
-    <NavLink className={({ isActive, isPending }) =>
-      isPending
-        ? ""
-        : isActive
-        ? "bg-primary text-base-100"
-        : ""
-    }
-    to={to}>
-      {name}
-    </NavLink>
-  )
+function NavButton({ to, name, icon }) {
+    return (
+        <NavLink className={({ isActive, isPending }) =>
+            isPending
+                ? ""
+                : isActive
+                    ? "bg-custom-hover text-custom-text-light transition-none font-semibold"
+                    : "hover:bg-custom-text hover:text-black/80 transition-none font-semibold"
+        }
+            to={to}>
+            {icon}{name}
+        </NavLink>
+    )
 
 }
 
@@ -28,7 +28,7 @@ const useConfigStore = create(set => ({
         const newConfigSetting = JSON.parse(JSON.stringify(state.configSetting));
         let current = newConfigSetting;
         for (let i = 0; i < path.length - 1; i++) {
-        current = current[path[i]];
+            current = current[path[i]];
         }
         current[path[path.length - 1]] = value;
         return { configSetting: newConfigSetting };
@@ -46,9 +46,9 @@ function Config() {
         setConfigSetting(config);
     }, [config]);
     function saveConfig() {
-        if(configSetting.cloudSync.webdav.path.endsWith('/my-gal')){
+        if (configSetting.cloudSync.webdav.path.endsWith('/my-gal')) {
             setConfig(configSetting);
-        }else{
+        } else {
             setConfig(configSetting);
             updateConfig(['cloudSync', 'webdav', 'path'], config.cloudSync.webdav.path + '/my-gal');
         }
@@ -57,7 +57,7 @@ function Config() {
         setConfigSetting(config);
     }
     return (
-        <dialog id="my_modal_0" className="modal">
+        <dialog id="setting" className="modal">
             <div className="w-1/2 max-w-full max-h-full p-0 h-5/6 modal-box">
                 <form method="dialog">
                     {/* if there is a button in form, it will close the modal */}
@@ -66,42 +66,45 @@ function Config() {
 
 
                 <div className="flex flex-row w-full h-full">
-                    <div className="flex flex-col h-full p-3 w-52 bg-base-300 shrink-0">
+                    <div className="flex flex-col h-full p-3 w-52 bg-custom-main-7 shrink-0">
                         <div className="w-full grow">
-                            <div className='pt-2 pb-2 pl-4 text-xl font-bold'>设置</div>
-                            <ul className="w-full menu rounded-box">
-                                {
+                            <div className='pt-2 pb-2 pl-4 text-xl font-bold text-custom-blue-6'>my-gal设置</div>
+                            <ul className="w-full menu rounded-box text-custom-text">
+                                {/* {
                                     Object.keys(config).map(key => (
                                         <li key={key}>
                                             <NavButton to={`./${key}`} name={keyToName[key]} />
                                         </li>
                                     ))
-                                }
+                                } */}
+                                <li className=''>
+                                    <NavButton to={`./cloudSync`} name={'云同步'} icon={<span className="icon-[material-symbols-light--cloud] w-6 h-6"></span>} />
+                                </li>
                             </ul>
-                            
+
                         </div>
                     </div>
                     <div className="grow">
                         <Routes>
                             <Route index element={<Navigate to='./cloudSync' />} />
-                                {
-                                    Object.keys(config).map(key => (
-                                        <Route key={key} path={`/${key}/*`} element={<CloudSync />} />
-                                    ))
-                                }
+                            {
+                                Object.keys(config).map(key => (
+                                    <Route key={key} path={`/${key}/*`} element={<CloudSync />} />
+                                ))
+                            }
                         </Routes>
                         <div className='absolute flex flex-row gap-3 right-5 bottom-5'>
-                            <button className="btn btn-success" onClick={saveConfig}>保存</button>
-                            <button className="btn btn-error" onClick={quit}>取消</button>
+                            <button className="transition-all border-0 btn bg-custom-main-7 text-custom-text-light hover:brightness-125" onClick={saveConfig}>保存</button>
+                            <button className="transition-all border-0 btn bg-custom-main-7 text-custom-text-light hover:brightness-125" onClick={quit}>取消</button>
                         </div>
                     </div>
                     {
                         configAlert &&
-                            <div className="toast toast-center">
-                                <div className="alert alert-error">
-                                    <span className='text-base-100'>{configAlert}</span>
-                                </div>
+                        <div className="toast toast-center">
+                            <div className="alert bg-custom-blue-6">
+                                <span className='text-custom-text-light'>{configAlert}</span>
                             </div>
+                        </div>
                     }
                 </div>
 
@@ -112,7 +115,7 @@ function Config() {
 }
 
 
-function CloudSync(){
+function CloudSync() {
     const { configSetting, updateConfigSetting, setConfigAlert } = useConfigStore();
     const { updateConfig, config } = useRootStore();
     async function loginGithub() {
@@ -151,7 +154,7 @@ function CloudSync(){
     }
     function getFormattedDateTimeWithSeconds() {
         const now = new Date();
-        
+
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0');
         const day = String(now.getDate()).padStart(2, '0');
@@ -213,31 +216,55 @@ function CloudSync(){
             }
         })
     }
+    function modeConvert(mode) {
+        switch (mode) {
+            case 'github':
+                return 'Github';
+            case 'webdav':
+                return 'WebDav';
+            default:
+                return 'Github';
+        }
+    }
     return (
-        <div className='flex flex-col w-full h-full gap-5 pb-32 overflow-auto p-7 scrollbar-base'>
-            <div className='text-2xl font-bold'>云同步</div>
+        <div className='flex flex-col w-full h-full gap-5 pb-32 overflow-auto p-7 scrollbar-base bg-custom-main-6'>
+            <div className='text-2xl font-bold text-custom-text-light'>
+                云同步
+            </div>
             <div className='flex flex-col gap-2'>
                 <label className="p-0 cursor-pointer label">
                     <span className="text-sm font-semibold">是否开启</span>
-                    <input type="checkbox" className="toggle" checked={configSetting?.cloudSync?.enabled || false} onChange={(e)=>{updateConfigSetting(['cloudSync', 'enabled'], e.target.checked)}} />
+                    <input type="checkbox" className="toggle checked:bg-custom-text-light bg-custom-text checked:[--tglbg:theme(colors.custom.blue-6)] [--tglbg:theme(colors.custom.main-7)] border-0 hover:brightness-125 checked:hover:brightness-100" checked={configSetting?.cloudSync?.enabled || false} onChange={(e) => { updateConfigSetting(['cloudSync', 'enabled'], e.target.checked) }} />
                 </label>
                 <div className='m-0 divider'></div>
                 <label className="flex p-0 label">
                     <span className="flex-grow text-sm font-semibold">同步模式</span>
-                    <select className="w-full outline-none bg-base-100 select select-bordered select-sm max-w-32" value={configSetting?.cloudSync?.mode || 'github'} onChange={(e)=>{updateConfigSetting(['cloudSync', 'mode'], e.target.value)}}>
+                    <div className="dropdown dropdown-end">
+                        <div tabIndex={0} role="button" className="flex flex-row items-center justify-between w-full gap-2 pr-1 mb-1 text-sm font-semibold border-0 input-sm bg-custom-main-7 hover:brightness-125">
+                            <div className="flex items-center gap-3">
+                                <div>{modeConvert(configSetting?.cloudSync?.mode || 'github')}</div>
+                            </div>
+                            <span className="icon-[material-symbols-light--keyboard-arrow-down] w-6 h-6"></span>
+                        </div>
+                        <ul tabIndex={0} className="dropdown-content menu bg-custom-main-5 rounded-box z-[1] w-auto p-2 shadow">
+                            <li onClick={() => { updateConfigSetting(['cloudSync', 'mode'], 'github') }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none hover:text-black/80'>Github</a></li>
+                            <li onClick={() => { updateConfigSetting(['cloudSync', 'mode'], 'webdav') }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none hover:text-black/80'>WebDav</a></li>
+                        </ul>
+                    </div>
+                    {/* <select className="w-full outline-none bg-base-100 select select-bordered select-sm max-w-32" value={configSetting?.cloudSync?.mode || 'github'} onChange={(e) => { updateConfigSetting(['cloudSync', 'mode'], e.target.value) }}>
                         <option value={'github'}>Github</option>
                         <option value={'webdav'}>WebDav</option>
-                    </select>
+                    </select> */}
                 </label>
             </div>
             <div className='flex flex-col gap-2'>
-                <div className='flex flex-row gap-2 pb-2 font-bold'>Github<div className="self-center badge badge-secondary badge-outline badge-sm">推荐</div></div>
+                <div className='flex flex-row gap-2 pb-2 font-bold text-custom-text-light'>Github<div className="self-center badge text-custom-text badge-outline badge-sm">推荐</div></div>
                 {
                     config['cloudSync']['github']['username'] ?
                         <div>
                             <div className='flex flex-row items-center'>
                                 <span className="text-sm font-semibold grow">账号</span>
-                                <span className="p-1 text-sm font-semibold bg-base-300">{config['cloudSync']['github']['username']}</span>
+                                <span className="p-1 text-sm font-semibold bg-custom-main-7">{config['cloudSync']['github']['username']}</span>
                             </div>
                             <div className='m-0 divider'></div>
                             <div className='flex flex-row items-center'>
@@ -248,10 +275,10 @@ function CloudSync(){
                             <div className='flex flex-row items-center gap-2'>
                                 <span className="text-sm font-semibold grow">最后同步时间</span>
                                 <span className="p-1 text-sm font-semibold">{config['cloudSync']['github']['lastSyncTime']}</span>
-                                <button className='btn btn-xs' onClick={githubSync}>同步</button>
+                                <button className='transition-all btn btn-xs bg-custom-main-7 hover:brightness-125' onClick={githubSync}>同步</button>
                             </div>
                         </div>
-                    :
+                        :
                         <div className='flex flex-row'>
                             <span className="text-sm font-semibold grow">账号</span>
                             <button className='self-center btn-sm btn btn-secondary' onClick={loginGithub}>登录</button>
@@ -259,32 +286,32 @@ function CloudSync(){
                 }
             </div>
             <div className='flex flex-col gap-2'>
-                <div className='pb-2 font-bold'>WebDav</div>
+                <div className='pb-2 font-bold text-custom-text-light'>WebDav</div>
                 <div className='flex flex-row items-center'>
                     <span className="text-sm font-semibold grow">地址</span>
-                    <input className="w-1/2 min-h-0 outline-none input input-bordered input-sm" spellCheck='false' placeholder='示例：https://pan.example.xyz' value={configSetting?.cloudSync?.webdav?.url || ''} onChange={(e)=>{updateConfigSetting(['cloudSync', 'webdav', 'url'], e.target.value)}} />
+                    <input className="w-1/2 min-h-0 border-0 outline-none input focus:bg-custom-main-3 focus:text-custom-text-light/80 bg-custom-main-7 input-sm hover:brightness-125 focus:shadow-inner-sm focus:shadow-black/80 focus:hover:brightness-100" spellCheck='false' placeholder='示例：https://pan.example.xyz' value={configSetting?.cloudSync?.webdav?.url || ''} onChange={(e) => { updateConfigSetting(['cloudSync', 'webdav', 'url'], e.target.value) }} />
                 </div>
                 <div className='m-0 divider'></div>
                 <div className='flex flex-row items-center'>
                     <span className="text-sm font-semibold grow">路径</span>
-                    <input className="w-1/2 min-h-0 outline-none input input-bordered input-sm" spellCheck='false' placeholder='示例：/dav/my-gal' value={configSetting?.cloudSync?.webdav?.path || ''} onChange={(e)=>{updateConfigSetting(['cloudSync', 'webdav', 'path'], e.target.value)}} />
+                    <input className="w-1/2 min-h-0 border-0 outline-none input focus:bg-custom-main-3 focus:text-custom-text-light/80 bg-custom-main-7 input-sm hover:brightness-125 focus:shadow-inner-sm focus:shadow-black/80 focus:hover:brightness-100" spellCheck='false' placeholder='示例：/dav/my-gal' value={configSetting?.cloudSync?.webdav?.path || ''} onChange={(e) => { updateConfigSetting(['cloudSync', 'webdav', 'path'], e.target.value) }} />
                 </div>
                 <div className='m-0 divider'></div>
                 <div className='flex flex-row items-center'>
                     <span className="text-sm font-semibold grow">用户名</span>
-                    <input className="w-1/3 min-h-0 outline-none input input-bordered input-sm" spellCheck='false' value={configSetting?.cloudSync?.webdav?.username || ''} onChange={(e)=>{updateConfigSetting(['cloudSync', 'webdav', 'username'], e.target.value)}} />
+                    <input className="w-1/3 min-h-0 border-0 outline-none input focus:bg-custom-main-3 focus:text-custom-text-light/80 bg-custom-main-7 input-sm hover:brightness-125 focus:shadow-inner-sm focus:shadow-black/80 focus:hover:brightness-100" spellCheck='false' value={configSetting?.cloudSync?.webdav?.username || ''} onChange={(e) => { updateConfigSetting(['cloudSync', 'webdav', 'username'], e.target.value) }} />
                 </div>
                 <div className='m-0 divider'></div>
                 <div className='flex flex-row items-center'>
                     <span className="text-sm font-semibold grow">密码</span>
-                    <input className="w-1/3 min-h-0 outline-none input input-bordered input-sm" spellCheck='false' value={configSetting?.cloudSync?.webdav?.password || ''} onChange={(e)=>{updateConfigSetting(['cloudSync', 'webdav', 'password'], e.target.value)}} />
+                    <input className="w-1/3 min-h-0 border-0 outline-none input focus:bg-custom-main-3 focus:text-custom-text-light/80 bg-custom-main-7 input-sm hover:brightness-125 focus:shadow-inner-sm focus:shadow-black/80 focus:hover:brightness-100" spellCheck='false' value={configSetting?.cloudSync?.webdav?.password || ''} onChange={(e) => { updateConfigSetting(['cloudSync', 'webdav', 'password'], e.target.value) }} />
                 </div>
                 <div className='m-0 divider'></div>
                 <div className='flex flex-row items-center gap-2'>
                     <span className="text-sm font-semibold grow">最后同步时间</span>
                     <span className="p-1 text-sm font-semibold">{config['cloudSync']['webdav']['lastSyncTime']}</span>
-                    <button className='btn btn-xs' onClick={webdavUpload}>上传</button>
-                    <button className='btn btn-xs' onClick={webdavDownload}>下载</button>
+                    <button className='transition-all btn btn-xs bg-custom-main-7 hover:brightness-125' onClick={webdavUpload}>上传</button>
+                    <button className='transition-all btn btn-xs bg-custom-main-7 hover:brightness-125' onClick={webdavDownload}>下载</button>
                 </div>
             </div>
         </div>
