@@ -170,16 +170,16 @@ function Game({ index }) {
     return (
         <div className="flex flex-col w-full h-full overflow-auto scrollbar-base scrollbar-w-2 bg-custom-main text-custom-text">
             <dialog id="deleteGame" className="modal">
-                <div className="w-1/3 h-auto modal-box">
+                <div className="w-1/3 h-auto modal-box bg-custom-main-6">
                     <form method="dialog">
                         {/* if there is a button in form, it will close the modal */}
                         <button className="absolute btn btn-sm btn-ghost right-2 top-2" onClick={quitSetting}>✕</button>
                     </form>
                     <div className='w-full h-full p-3'>
-                        <div className='font-bold'>确定要删除游戏？</div>
+                        <div className='font-bold'>确定要删除该游戏？</div>
                         <div className='flex flex-row-reverse gap-5 pt-7'>
-                            <button className='btn btn-secondary' onClick={() => { document.getElementById('deleteGame').close() }}>取消</button>
-                            <button className='btn btn-error' onClick={deleteGame} >确定</button>
+                            <button className='transition-all btn bg-custom-main-7 text-custom-text-light hover:brightness-125' onClick={() => { document.getElementById('deleteGame').close() }}>取消</button>
+                            <button className='transition-all btn bg-custom-main-7 text-custom-text-light hover:bg-custom-red' onClick={deleteGame} >确定</button>
                         </div>
                     </div>
                 </div>
