@@ -4082,5 +4082,359 @@
     ],
     "saves": [],
     "memories": []
+  },
+  {
+    "detail": {
+      "name": "ハミダシクリエイティブ 凸",
+      "chineseName": "灵感满溢的甜蜜创想 凸",
+      "extensionName": [
+        "富婆妹FD"
+      ],
+      "introduction": "「とりま、次の生徒会長は和泉クンにけってー！」\n\nこのひと言でくじ引き生徒会長の勲章を手に入れた主人公「和泉智宏」は、\n対外シンポジウムを乗り越え、内部崩壊の危機をやり過ごし、\n学園で巻きおこる大騒ぎの事件をまとめきり、\nいよいよリーダーとしての実力を付けはじめてきたところ。\n\nこれから先、智宏と愉快な生徒会メンバー、妹の「和泉妃愛」や同級生の「常磐華乃」、後輩の「錦あすみ」、前生徒会長の「鎌倉詩桜」、そして最近よく絡んでくる「竜閑天梨」と、 どんな日々を過ごしていくのか……？",
+      "id": 41353,
+      "gid": "ga41353",
+      "vid": "v33205",
+      "cover": "/41353/cover.webp",
+      "backgroundImage": "/41353/background.webp",
+      "savePath": "",
+      "gamePath": "",
+      "volume": 0,
+      "addDate": "2024-08-11",
+      "gameDuration": 0,
+      "lastVisitDate": "",
+      "frequency": 0,
+      "playStatus": 0,
+      "moreEntry": [],
+      "typeDesc": "学園に来てくれる美少女と青春を謳歌する学園恋愛ADV",
+      "developer": "まどそふと",
+      "developerId": 13052,
+      "releaseDate": "2022-11-25",
+      "restricted": true,
+      "websites": [
+        {
+          "title": "官网",
+          "url": "https://madosoft.net/totsu/"
+        },
+        {
+          "title": "月幕Galgame",
+          "url": "https://www.ymgal.games/ga41353"
+        },
+        {
+          "title": "VNDB",
+          "url": "https://vndb.org/v33205"
+        }
+      ],
+      "releases": [
+        {
+          "id": 790919,
+          "releaseName": "ハミダシクリエイティブ 凸",
+          "relatedLink": "",
+          "platform": "Windows",
+          "releaseDate": "2022-11-25",
+          "releaseLanguage": "Japanese",
+          "restrictionLevel": "R18+"
+        }
+      ],
+      "staff": {
+        "脚本": [
+          {
+            "name": "甲木 順之助",
+            "pid": 19765,
+            "empDesc": ""
+          }
+        ],
+        "音乐": [
+          {
+            "name": "堀江 晶太",
+            "pid": 31681,
+            "empDesc": "OP composition, arrangement"
+          },
+          {
+            "name": "まつむー",
+            "pid": 22754,
+            "empDesc": "BGM Production"
+          }
+        ],
+        "原画": [
+          {
+            "name": "宇都宮 つみれ",
+            "pid": 22842,
+            "empDesc": ""
+          },
+          {
+            "name": "茜屋",
+            "pid": 23162,
+            "empDesc": "SD"
+          }
+        ],
+        "歌曲": [
+          {
+            "name": "櫻川 めぐ",
+            "pid": 10536,
+            "empDesc": "OP Theme"
+          }
+        ],
+        "其他": [
+          {
+            "name": "もじゃすびい",
+            "pid": 22753,
+            "empDesc": ""
+          },
+          {
+            "name": "宇都宮 つみれ",
+            "pid": 22842,
+            "empDesc": ""
+          }
+        ]
+      }
+    },
+    "characters": [
+      {
+        "name": "和泉 妃愛",
+        "chineseName": "和泉妃爱",
+        "introduction": "智宏的妹妹，童星出身的霸权声优。\n作为一家的领头羊，完全掌握了家里的生计问题。\n结果，为了抽卡而一直低三下四的智宏和娇纵他的妃爱，\n这样的构图就这么形成了。\n实际上，如果不照顾智宏的话就会状态失常的是妃爱，\n知道那件事的只有智宏一个人。",
+        "cid": 58310,
+        "vid": "c87837",
+        "cover": "/41353/characters/58310.webp",
+        "extensionName": [
+          "Hiyorin",
+          "ひよりん",
+          "Koizumi Hiyori",
+          "小泉 妃愛"
+        ],
+        "birthday": "09-05",
+        "gender": 2,
+        "websites": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca58310"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c87837"
+          }
+        ]
+      },
+      {
+        "name": "常磐 華乃",
+        "introduction": "今年年初，来到智宏班上的神秘转学生。\n从转学的第二天起她就不上学了，使得谜团又深了一层。\n其真实身份是在全世界也广为人知的人气插画家。\n最近一边做着社交手游的工作一边在SNS上上传涂鸦，\n充满自尊心。\n过去似乎和智宏见过面……？\n喜欢的东西是章鱼烧。因为太过喜欢，就连自己的自画像都章鱼烧化了。",
+        "cid": 58311,
+        "vid": "c87838",
+        "cover": "/41353/characters/58311.webp",
+        "extensionName": [
+          "かのちん",
+          "ののか"
+        ],
+        "birthday": "01-31",
+        "gender": 2,
+        "websites": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca58311"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c87838"
+          }
+        ]
+      },
+      {
+        "name": "錦 あすみ",
+        "chineseName": "锦亚澄",
+        "introduction": "智宏在便利店遇到的后辈。\n但是，是在学园里很少能见到的，像是稀有角色那样的，外表和性格都少见的「好孩子」，\n正因为如此，不去上学的理由完全不清楚。\n暗地里以『雪景式』为名正在Vtuber活动中。\n因有不亚于专业歌手的歌唱能力而广受好评，\n以将飞鸟击落的气势增加着频道关注人数。\n非常喜欢肉包子，\n这份爱即使是夏天也不会淡薄。",
+        "cid": 58312,
+        "vid": "c87839",
+        "cover": "/41353/characters/58312.webp",
+        "extensionName": [
+          "雪景シキ",
+          "Yukige Shiki",
+          "すみぴっぴ"
+        ],
+        "birthday": "12-01",
+        "gender": 2,
+        "websites": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca58312"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c87839"
+          }
+        ]
+      },
+      {
+        "name": "鎌倉 詩桜",
+        "chineseName": "镰仓诗樱",
+        "introduction": "智宏所遭受灾难的罪魁祸首，同时也是前学生会长。\n在她担任会长一职时，以其高超的魅力而被簇拥，\n甚至在其他学校也有她的粉丝。\n但是，有过将其他的所有学生会成员都辞退的事件，性情乖僻。\n同时也是职业作家，是将自己的生活经历活用于描写中的类型，\n会长一职也是其中的一环。\n悄悄地在意着「姓氏容易被用于历史段子玩弄」这件事。",
+        "cid": 58313,
+        "vid": "c87840",
+        "cover": "/41353/characters/58313.webp",
+        "extensionName": [
+          "Hoshi Shion",
+          "星しをん",
+          "しおぽよ"
+        ],
+        "birthday": "02-18",
+        "gender": 2,
+        "websites": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca58313"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c87840"
+          }
+        ]
+      },
+      {
+        "name": "竜閑 天梨",
+        "chineseName": "龙闲天梨",
+        "introduction": "在智宏的同学中，\n她处于班上的最高等级。\n作为读者模特也在活动中，\n经常登上杂志封面。\n人气正在迅速上升。\n只是，最近好像不知如何把握朋友与工作之间的天平……?",
+        "cid": 61920,
+        "vid": "c91566",
+        "cover": "/41353/characters/61920.webp",
+        "extensionName": [],
+        "birthday": "03-17",
+        "gender": 2,
+        "websites": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca61920"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c91566"
+          }
+        ]
+      },
+      {
+        "name": "和泉 里",
+        "chineseName": "和泉里",
+        "introduction": "智宏的表姐。\n既是班级的班主任，又兼任学生会的顾问。\n她的美貌足以证明她在学生时代当过读者模特。\n今天也吸引了男生的目光。\n可能还很年轻吧，说话的语气有点像以前的辣妹。",
+        "cid": 61921,
+        "vid": "c91567",
+        "cover": "/41353/characters/61921.webp",
+        "extensionName": [
+          "ミリ"
+        ],
+        "birthday": "04-16",
+        "gender": 2,
+        "websites": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca61921"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c91567"
+          }
+        ]
+      },
+      {
+        "name": "新川 広夢",
+        "chineseName": "新川广梦",
+        "introduction": "坐在智宏座位后面的男孩子。\n在班上也很少见地积极地缠上智宏。\n那可爱的脸，与其说是中性，不如说是女孩子。\n体格也不太高大，声音也适度明亮。\n经常会让人心跳加速。",
+        "cid": 61922,
+        "vid": "c91568",
+        "cover": "/41353/characters/61922.webp",
+        "extensionName": [],
+        "birthday": "11-22",
+        "gender": 1,
+        "websites": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca61922"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c91568"
+          }
+        ]
+      },
+      {
+        "name": "聖 莉々子",
+        "chineseName": "圣莉莉子",
+        "introduction": "千玉首屈一指的大小姐、百合峰学园的学生会长。\n用礼貌而略带居高临下的方式说话，\n由于其地位之高，\n在学生之间化作了同调压力的魔鬼。\n对诗樱抱有竞争意识，\n诗樱则持有同样的态度。",
+        "cid": 61923,
+        "vid": "c91569",
+        "cover": "/41353/characters/61923.webp",
+        "extensionName": [],
+        "birthday": "08-15",
+        "gender": 2,
+        "websites": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca61923"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c91569"
+          }
+        ]
+      },
+      {
+        "name": "雪景 シキ",
+        "introduction": "Nishiki Asumi's virtual avatar.\n\nTomohiro is a fan of her, having subbed to her channel when her subscriber count was three digits.",
+        "cid": 107137,
+        "vid": "c101936",
+        "cover": "/41353/characters/107137.webp",
+        "extensionName": [],
+        "gender": 2,
+        "websites": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca107137"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c101936"
+          }
+        ]
+      },
+      {
+        "name": "飯田 伊々奈",
+        "introduction": "A new member of the student council led by Tomohiro.\nShe is a shy literary girl, but actually becoming an idol voice actress was her childhood dream. At the time, she made up a play on her name \"Iina, ii na! (Iina, likes it)\", which she thought cute and became a habit to say. She has been trying to correct it, but it still comes out of her mouth even now, which is a worry for her.\n\nofficial website",
+        "cid": 110506,
+        "vid": "c109413",
+        "cover": "/41353/characters/110506.webp",
+        "extensionName": [],
+        "birthday": "07-25",
+        "gender": 2,
+        "websites": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca110506"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c109413"
+          }
+        ]
+      },
+      {
+        "name": "神田 柑凪",
+        "introduction": "A new member of the student council led by Tomohiro. \nHer quality of having a blunt personality is refreshing for the existing members, so direct that she sometimes freezes the entire student council. \nEven so, she's really attentive to small details, and has the strength to survive even in an athletic organization.\n\nofficial website",
+        "cid": 110508,
+        "vid": "c109412",
+        "cover": "/41353/characters/110508.webp",
+        "extensionName": [],
+        "birthday": "10-12",
+        "gender": 2,
+        "websites": [
+          {
+            "title": "月幕Galgame",
+            "url": "https://www.ymgal.games/ca110508"
+          },
+          {
+            "title": "VNDB",
+            "url": "https://vndb.org/c109412"
+          }
+        ]
+      }
+    ],
+    "saves": [],
+    "memories": []
   }
 ]
