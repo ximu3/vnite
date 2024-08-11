@@ -165,6 +165,7 @@ function Game({ index }) {
     }
     function deleteGame() {
         window.electron.ipcRenderer.send('delete-game', index);
+        document.getElementById('deleteGame').close();
         naivgate(`../${index - 1}`)
     }
     return (
@@ -214,7 +215,7 @@ function Game({ index }) {
                                 {gameData['chineseName'] ? `${gameData['chineseName']} ${gameData['name']}` : gameData['name']}
                             </div>
                             <div className='flex flex-row items-center gap-3 justify-items-center pl-14'>
-                                <button className='w-48 text-lg transition-all border-0 shadow-sm btn bg-custom-green text-custom-text-light hover:brightness-110' onClick={handleStart}>
+                                <button className='text-lg transition-all border-0 shadow-sm w-52 btn bg-custom-green text-custom-text-light hover:brightness-110' onClick={handleStart}>
                                     <span className="icon-[mdi--play] w-7 h-7"></span>
                                     开始游戏
                                 </button>
@@ -327,14 +328,14 @@ function Detail({ gameData }) {
         <div className='flex flex-row items-start w-full gap-5 grow-0'>
             <div className='flex flex-col w-2/3 gap-5 grow-0'>
                 <div className='p-5 '>
-                    <div className='font-bold'>游戏简介</div>
+                    <div className='font-bold text-custom-text-light'>游戏简介</div>
                     <div className='p-0 m-0 divider'></div>
                     <div className='pt-2 text-sm whitespace-pre-wrap'>
                         {gameData['introduction']}
                     </div>
                 </div>
                 <div className='p-5 '>
-                    <div className='font-bold'>发行列表</div>
+                    <div className='font-bold text-custom-text-light'>发行列表</div>
                     <div className='p-0 m-0 divider'></div>
                     <div className="flex flex-col gap-2 pt-2 text-sm">
                         {gameData['releases'].map((release, index) => {
@@ -356,7 +357,7 @@ function Detail({ gameData }) {
             </div>
             <div className='flex flex-col w-1/3 gap-5'>
                 <div className='p-5 '>
-                    <div className='font-bold'>作品信息</div>
+                    <div className='font-bold text-custom-text-light'>作品信息</div>
                     <div className='p-0 m-0 divider'></div>
                     <div className='pt-2 text-sm'>
                         <div>原名：{gameData['name']}</div>
@@ -367,7 +368,7 @@ function Detail({ gameData }) {
                     </div>
                 </div>
                 <div className='p-5 '>
-                    <div className='font-bold'>相关网站</div>
+                    <div className='font-bold text-custom-text-light'>相关网站</div>
                     <div className='p-0 m-0 divider'></div>
                     <div className="flex flex-col gap-1 pt-2 text-s">
                         {gameData['websites'].map((website, index) => {
@@ -376,7 +377,7 @@ function Detail({ gameData }) {
                     </div>
                 </div>
                 <div className='p-5 '>
-                    <div className='font-bold'>STAFF</div>
+                    <div className='font-bold text-custom-text-light'>STAFF</div>
                     <div className='p-0 m-0 divider'></div>
                     <div className='pt-1 text-sm'>
                         {
@@ -412,13 +413,13 @@ function Character({ characterData }) {
                             <div className='flex flex-row w-3/4 shadow-md bg-custom-main group'>
                                 {character['cover'] && <img src={character['cover']} alt="c1" className="w-auto h-67"></img>}
                                 <div className='flex flex-col h-67'>
-                                    <div className='p-3 text-lg font-bold'>{character['chineseName'] ? character['chineseName'] : character['name']}</div>
+                                    <div className='p-3 text-lg font-bold text-custom-text-light'>{character['chineseName'] ? character['chineseName'] : character['name']}</div>
                                     <div className='p-3 pt-0 overflow-auto text-sm scrollbar-base scrollbar-track-base-300'>{character['introduction']}</div>
                                 </div>
                             </div>
                             <div className='flex flex-col w-1/4 gap-5 text-sm'>
                                 <div className='p-5 shadow-md bg-custom-main'>
-                                    <div className='pb-2 font-bold'>基本信息</div>
+                                    <div className='pb-2 font-bold text-custom-text-light'>基本信息</div>
                                     <div>原名：{character['name']}</div>
                                     <div>中文名：{character['chineseName'] ? character['chineseName'] : "未知"}</div>
                                     <div>别名：{character['extensionName'][0] ? character['extensionName'].join('、') : "未知"}</div>
@@ -426,7 +427,7 @@ function Character({ characterData }) {
                                     <div>性别：{character['gender'] === 0 ? "未知" : character['gender'] === 1 ? "男" : character['gender'] === 2 ? "女" : "扶她"}</div>
                                 </div>
                                 <div className='p-5 shadow-md bg-custom-main'>
-                                    <div className='pb-2 font-bold'>相关网站</div>
+                                    <div className='pb-2 font-bold text-custom-text-light'>相关网站</div>
                                     <div className='flex flex-col gap-1'>
                                         {character['websites'].map((website, index) => {
                                             return <a key={index} className='p-1 group bg-custom-blue-4/20 hover:brightness-125 hover:text-custom-text' href={website['url']} target="_blank" rel="noreferrer"><div className='text-xs text-custom-blue-4 group-hover:text-custom-text'>{website['title']}</div></a>
