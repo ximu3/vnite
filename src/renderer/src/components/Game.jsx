@@ -15,7 +15,7 @@ function NavTab({ to, name }) {
             isPending
                 ? "tab text-custom-text"
                 : isActive
-                    ? "tab tab-active text-custom-text"
+                    ? "tab tab-active text-custom-text-light"
                     : "tab text-custom-text"
         }
             to={to} role="tab">
