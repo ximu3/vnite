@@ -4,7 +4,7 @@ import { useEffect, ipcRenderer } from 'react';
 import { useStore, create } from 'zustand';
 import Root from './components/Root';
 import AddGame from './components/AddGame';
-import { MemoryRouter, BrowserRouter, Routes, Route, Navigate, NavLink, useNavigate } from 'react-router-dom';
+import { MemoryRouter, HashRouter } from 'react-router-dom';
 import Config from './components/Config';
 
 
@@ -55,9 +55,9 @@ function App() {
         </div>
       </div>
       <div className="absolute top-8 left-0 w-full h-[calc(100%-2rem)] z-10 md:text-lg">
-        <BrowserRouter>
+        <HashRouter>
           <Root />
-        </BrowserRouter>
+        </HashRouter>
       </div>
     </div>
   )

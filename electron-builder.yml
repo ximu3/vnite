@@ -3,11 +3,16 @@ productName: my-gal-3
 directories:
   buildResources: build
 files:
+  # - "out/**/*"
   - '!**/.vscode/*'
   - '!src/*'
   - '!electron.vite.config.{js,ts,mjs,cjs}'
   - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
   - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
+extraFiles:
+  - from: "src/renderer/public/app"
+    to: "app"
+    filter: ["**/*"]
 asarUnpack:
   - resources/**
 win:

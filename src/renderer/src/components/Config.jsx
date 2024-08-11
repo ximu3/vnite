@@ -281,7 +281,7 @@ function CloudSync() {
                         :
                         <div className='flex flex-row'>
                             <span className="text-sm font-semibold grow">账号</span>
-                            <button className='self-center btn-sm btn btn-secondary' onClick={loginGithub}>登录</button>
+                            <button className='self-center transition-all btn-sm btn bg-custom-main-7 hover:brightness-125' onClick={loginGithub}>登录</button>
                         </div>
                 }
             </div>

@@ -33,12 +33,16 @@ const useRecordStore = create(set => ({
     setPlayed: (played) => set({ played }),
     playAgain: 0,
     setPlayAgain: (playAgain) => set({ playAgain }),
+    cover: [],
+    setCover: (cover) => set({ cover }),
+    addCover: (cover) => set(state => ({ cover: [...state.cover, cover] })),
 }));
 
 function Record() {
-    const { quantity, setQuantity, volume, setVolume, time, setTime, setNotPlay, setPlaying, setPlayed, setPlayAgain } = useRecordStore();
+    const { quantity, setQuantity, volume, setVolume, time, setTime, setNotPlay, setPlaying, setPlayed, setPlayAgain, addCover, setCover } = useRecordStore();
     const { data, setData, alert, config, setConfig } = useRootStore();
     useEffect(() => {
+        setCover([]);
         let volume = 0;
         let time = 0;
         let notPlay = 0;
@@ -65,6 +69,11 @@ function Record() {
         setPlaying(playing);
         setPlayed(played);
         setPlayAgain(playAgain);
+        data.forEach(async (game, index) => {
+            const path = await window.electron.ipcRenderer.invoke('get-data-path', game.detail.cover);
+            addCover(path);
+        })
+
     }, [data]);
     return (
         <div className="flex flex-row w-full h-full">
@@ -90,6 +99,7 @@ function Record() {
 
 function Ranking() {
     const { data } = useRootStore();
+    const { cover } = useRecordStore();
     function formatTime(seconds) {
         if (seconds < 0) {
             return "无效时间";
@@ -108,6 +118,14 @@ function Ranking() {
             return `${hours.toFixed(1)}小时`;
         }
     }
+    const longestGameIndex = data.reduce((maxIndex, game, currentIndex) =>
+        game.detail.gameDuration > data[maxIndex].detail.gameDuration ? currentIndex : maxIndex
+        , 0);
+
+    const mostPlayedIndex = data.reduce((maxIndex, game, currentIndex) =>
+        game.detail.frequency > data[maxIndex].detail.frequency ? currentIndex : maxIndex
+        , 0);
+
     return (
         <div className='w-full h-full p-3'>
             <div className='flex flex-col gap-3'>
@@ -116,32 +134,23 @@ function Ranking() {
                         <figure>
                             {
                                 //找到最多游玩时间的游戏封面并显示
-                                data.map((game, index) => {
-                                    if (game.detail.gameDuration === Math.max(...data.map(game => game.detail.gameDuration))) {
-                                        return <img src={game.detail.cover} alt="Cover" className='' />
-                                    }
-                                })
+                                data[longestGameIndex]?.detail.cover && (
+                                    <img
+                                        src={cover[longestGameIndex]}
+                                        alt={`Cover`}
+                                        className=''
+                                    />
+                                )
                             }
                         </figure>
                         <div className="p-5 card-body">
-                            {
-                                data.map((game, index) => {
-                                    if (game.detail.gameDuration === Math.max(...data.map(game => game.detail.gameDuration))) {
-                                        return <h2 className="flex flex-row justify-between text-center card-title">
-                                            <div>最多游玩时间！</div>
-                                            <div className=''>{formatTime(game.detail.gameDuration)}</div>
-                                        </h2>
-                                    }
-                                })
-                            }
-                            {
-                                //找到最多游玩时间的游戏名并显示
-                                data.map((game, index) => {
-                                    if (game.detail.gameDuration === Math.max(...data.map(game => game.detail.gameDuration))) {
-                                        return <div className='flex justify-center pt-2'><span className='self-center font-bold'>《{game.detail.chineseName ? game.detail.chineseName : game.detail.name}》</span></div>
-                                    }
-                                })
-                            }
+                            <h2 className="flex flex-row justify-between text-center card-title">
+                                <div>最多游玩时间！</div>
+                                <div className=''>{formatTime(data[longestGameIndex]['detail']['gameDuration'])}</div>
+                            </h2>
+
+                            <div className='flex justify-center pt-2'><span className='self-center font-bold'>《{data[longestGameIndex].detail.chineseName ? data[longestGameIndex].detail.chineseName : data[longestGameIndex].detail.name}》</span></div>
+
                             <div className="justify-end card-actions">
                                 {/* <button className="btn btn-primary">Buy Now</button> */}
                             </div>
@@ -149,33 +158,14 @@ function Ranking() {
                     </div>
                     <div className="w-1/3 shadow-sm card bg-custom-main-7">
                         <figure>
-                            {
-                                data.map((game, index) => {
-                                    if (game.detail.frequency === Math.max(...data.map(game => game.detail.frequency))) {
-                                        return <img src={game.detail.cover} alt="Cover" className='' />
-                                    }
-                                })
-                            }
+                            <img src={cover[mostPlayedIndex]} alt="Cover" className='' />
                         </figure>
                         <div className="p-5 card-body">
-                            {
-                                data.map((game, index) => {
-                                    if (game.detail.frequency === Math.max(...data.map(game => game.detail.frequency))) {
-                                        return <h2 className="flex flex-row justify-between text-center card-title">
-                                            <div>最多游玩次数！</div>
-                                            <div className=''>{game.detail.frequency}</div>
-                                        </h2>
-                                    }
-                                })
-
-                            }
-                            {
-                                data.map((game, index) => {
-                                    if (game.detail.frequency === Math.max(...data.map(game => game.detail.frequency))) {
-                                        return <div className='flex justify-center pt-2'><span className='self-center font-bold'>《{game.detail.chineseName ? game.detail.chineseName : game.detail.name}》</span></div>
-                                    }
-                                })
-                            }
+                            <h2 className="flex flex-row justify-between text-center card-title">
+                                <div>最多游玩次数！</div>
+                                <div className=''>{data[mostPlayedIndex].detail.frequency}</div>
+                            </h2>
+                            <div className='flex justify-center pt-2'><span className='self-center font-bold'>《{data[mostPlayedIndex].detail.chineseName ? data[mostPlayedIndex].detail.chineseName : data[mostPlayedIndex].detail.name}》</span></div>
                             <div className="justify-end card-actions">
                                 {/* <button className="btn btn-primary">Buy Now</button> */}
                             </div>

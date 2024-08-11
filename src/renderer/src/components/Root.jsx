@@ -61,6 +61,9 @@ function Root() {
     window.electron.ipcRenderer.on('game-data-updated', (event, data) => {
       setData(data);
     })
+    window.electron.ipcRenderer.on('path-log', (event, alert) => {
+      console.log(alert);
+    })
   }, [isloading])
   useEffect(() => {
     if (data.length !== 0) {

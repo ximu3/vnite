@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { addCharacterImgToData, addNewGameToData, addObjectToJsonFile } from '../data/dataManager.mjs';
+import { addCharacterImgToData, addNewGameToData, addObjectToJsonFile } from '../../public/app/data/dataManager.mjs';
 import path from 'path';
 import getFolderSize from 'get-folder-size';
 
@@ -191,7 +191,7 @@ function getCurrentDate() {
     return `${year}-${month}-${day}`;
 }
 
-async function organizeGameData(gid, savePath, gamePath, mainWindow) {
+async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath) {
     try {
         const Details = await retry(() => searchGameId(gid), 3, mainWindow);
         const gameData = Details.data;
@@ -202,7 +202,7 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow) {
                 mainWindow.webContents.send('add-game-log', `[info] 正在获取角色 ${character.cid} 的数据...`);
                 const characterDetails = await retry(() => searchCharacterId(character.cid), 3, mainWindow);
                 mainWindow.webContents.send('add-game-log', `[info] 成功获取角色 ${character.cid} 的数据。`);
-                let cover = `/${gid}/characters/${character.cid}.webp`
+                let cover = `/games/${gid}/characters/${character.cid}.webp`
                 if (!characterDetails.data.character.mainImg) {
                     console.log(`未找到角色 ${character.cid} 的主图。`);
                     mainWindow.webContents.send('add-game-log', `[warning] 未找到角色 ${character.cid} 的主图。`);
@@ -210,7 +210,7 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow) {
                     continue;
                 } else {
                     mainWindow.webContents.send('add-game-log', `[info] 正在下载角色 ${character.cid} 的图片...`);
-                    await retry(() => addCharacterImgToData(gid, character.cid, characterDetails.data.character.mainImg), 3);
+                    await retry(() => addCharacterImgToData(gid, character.cid, characterDetails.data.character.mainImg, path.join(dataPath, 'games')), 3);
                     mainWindow.webContents.send('add-game-log', `[info] 成功下载角色 ${character.cid} 的图片。`);
                 }
                 let extensionName = []
@@ -333,8 +333,8 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow) {
                 id: gameData.game.gid,
                 gid: `ga${gameData.game.gid}`,
                 vid: vid,
-                cover: `/${gid}/cover.webp`,
-                backgroundImage: `/${gid}/background.webp`,
+                cover: `/games/${gid}/cover.webp`,
+                backgroundImage: `/games/${gid}/background.webp`,
                 savePath: savePath,
                 gamePath: gamePath,
                 volume: sizeInMB,
@@ -345,7 +345,7 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow) {
                 playStatus: 0,
                 moreEntry: gameData.game.moreEntry,
                 typeDesc: gameData.game.typeDesc,
-                developer: await searchDeveloperId(gameData.game.developerId),
+                developer: await retry(() => searchDeveloperId(gameData.game.developerId), 3, mainWindow),
                 developerId: gameData.game.developerId,
                 releaseDate: gameData.game.releaseDate,
                 restricted: gameData.game.restricted,
@@ -357,8 +357,8 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow) {
             saves: saves,
             memories: memory
         };
-        await retry(() => addObjectToJsonFile(data), 3, mainWindow);
-        mainWindow.webContents.send('add-game-log', `[info] 成功处理游戏 ${gameData.game.name} 的数据。`);
+        await retry(() => addObjectToJsonFile(data, path.join(dataPath, 'data.json')), 3, mainWindow);
+        mainWindow.webContents.send('add-game-log', `[success] 成功处理游戏 ${gameData.game.name} 的数据。`);
         return data;
     } catch (error) {
         mainWindow.webContents.send('add-game-log', `[error] 获取游戏数据时出错：${error}`);

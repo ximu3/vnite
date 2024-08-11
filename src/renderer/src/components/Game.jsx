@@ -24,8 +24,19 @@ function NavTab({ to, name }) {
     )
 }
 
+const useGameStore = create(set => ({
+    backgroundImage: '',
+    setBackgroundImage: (backgroundImage) => set({ backgroundImage }),
+    characterImage: [],
+    updateCharacterImage: (characterImage) => set(state => ({ characterImage: [...state.characterImage, characterImage] })),
+    setCharacterImage: (characterImage) => set({ characterImage }),
+    coverImage: '',
+    setCoverImage: (coverImage) => set({ coverImage }),
+}));
+
 function Game({ index }) {
     const naivgate = useNavigate();
+    const { backgroundImage, setBackgroundImage, characterImage, updateCharacterImage, setCharacterImage, setCoverImage } = useGameStore();
     const { data, setData, setAlert, updateData, timestamp, config, updateConfig } = useRootStore();
     const gameData = data[index]['detail'];
     const characterData = data[index]['characters'];
@@ -49,7 +60,32 @@ function Game({ index }) {
 
         return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     }
+    useEffect(() => {
+        setCharacterImage([]);
+        async function loadImagePath() {
+            const path = await window.electron.ipcRenderer.invoke('get-data-path', gameData.backgroundImage);
+            setBackgroundImage(path);
+        }
+        loadImagePath();
+    }, [gameData.backgroundImage]);
 
+    useEffect(() => {
+        async function loadImagePath() {
+            characterData.forEach(async (character) => {
+                const path = await window.electron.ipcRenderer.invoke('get-data-path', character['cover']);
+                updateCharacterImage(path);
+            })
+        }
+        loadImagePath();
+    }, [characterData]);
+
+    useEffect(() => {
+        async function loadImagePath() {
+            const path = await window.electron.ipcRenderer.invoke('get-data-path', gameData.cover);
+            setCoverImage(path);
+        }
+        loadImagePath();
+    }, [gameData.cover]);
     // 使用示例
     useEffect(() => {
         window.electron.ipcRenderer.on('game-start-result', (event, result) => {
@@ -198,9 +234,9 @@ function Game({ index }) {
                 </div>
             </dialog>
 
-            <div className="relative w-full h-full bg-fixed bg-center bg-cover" style={{ backgroundImage: `url(${gameData['backgroundImage']})` }}>
+            <div className="relative w-full h-full bg-fixed bg-center bg-cover">
                 {/* <div className="absolute inset-0 bg-custom-main"></div> */}
-                <img src={`${gameData['backgroundImage']}?t=${timestamp}`} alt="bg" className="w-full h-full bg-cover"></img>
+                <img src={`${backgroundImage}?t=${timestamp}`} alt="bg" className="w-full h-full bg-cover"></img>
                 <div className="absolute inset-0 shadow-t-lg top-104 border-t-1 border-white/30 shadow-black/80 bg-gradient-to-b from-custom-main/40 to-custom-main to-50% backdrop-blur-lg"></div>
 
 
@@ -225,7 +261,7 @@ function Game({ index }) {
                                         <div className='flex flex-col items-start text-xs'>
                                             <div className='font-semibold'>云状态</div>
                                             <div className=' text-custom-text/80'>{
-                                                config['cloudSync']['enabled'] ? config['cloudSync']['mode'] === 'github' ? config['cloudSync']['github']['repoUrl'] ? '已是最新' : '未设置' : config['cloudSync']['mode'] === 'webdav' ? config['cloudSync']['webdav']['url'] ? '已是最新' : '未设置' : '未开启' : '未开启'
+                                                config?.cloudSync?.enabled || false ? config['cloudSync']['mode'] === 'github' ? config['cloudSync']['github']['repoUrl'] ? '已是最新' : '未设置' : config['cloudSync']['mode'] === 'webdav' ? config['cloudSync']['webdav']['url'] ? '已是最新' : '未设置' : '未开启' : '未开启'
                                             }</div>
                                         </div>
                                     </div>
@@ -417,6 +453,8 @@ function Detail({ gameData }) {
 }
 
 function Character({ characterData }) {
+    const { characterImage, updateCharacterImage } = useGameStore();
+
     return (
         <div className='flex flex-col w-full gap-5'>
             {characterData.map((character, index) => {
@@ -424,7 +462,7 @@ function Character({ characterData }) {
                     <div key={index}>
                         <div className='flex flex-row items-start gap-5'>
                             <div className='flex flex-row w-3/4 shadow-md bg-custom-main group'>
-                                {character['cover'] && <img src={character['cover']} alt="c1" className="w-auto h-67"></img>}
+                                {character['cover'] && <img src={characterImage[index]} alt="c1" className="w-auto h-67"></img>}
                                 <div className='flex flex-col h-67'>
                                     <div className='p-3 text-lg font-bold text-custom-text-light'>{character['chineseName'] ? character['chineseName'] : character['name']}</div>
                                     <div className='p-3 pt-0 overflow-auto text-sm scrollbar-base scrollbar-track-base-300'>{character['introduction']}</div>
@@ -871,6 +909,7 @@ function AdvancedSettings() {
 
 function MediaSettings() {
     const { settingData, updateSettiongData, setSettingData, dataString, setDataString, setSettingAlert } = useGameSetting()
+    const { coverImage, backgroundImage } = useGameStore()
     const { timestamp, setTimestamp } = useRootStore()
     async function updateCover(gameId) {
         try {
@@ -930,13 +969,13 @@ function MediaSettings() {
                     <div>封面</div>
                     <div className='m-0 divider'></div>
                     <button className='transition-all btn btn-sm bg-custom-main-7 hover:brightness-125' onClick={() => { updateCover(settingData?.detail?.id || '') }}>更换</button>
-                    <img src={`${settingData?.detail?.cover || ''}?t=${timestamp}`} alt="" className='w-1/2 h-auto pt-2' />
+                    <img src={`${coverImage || ''}?t=${timestamp}`} alt="" className='w-1/2 h-auto pt-2' />
                 </div>
                 <div className='flex flex-col w-1/2 font-bold'>
                     <div>背景</div>
                     <div className='m-0 divider'></div>
                     <button className='transition-all btn btn-sm bg-custom-main-7 hover:brightness-125' onClick={() => { updateBackgroundImage(settingData?.detail?.id || '') }}>更换</button>
-                    <img src={`${settingData?.detail?.backgroundImage || ''}?t=${timestamp}`} alt="" className='w-full h-auto pt-2' />
+                    <img src={`${backgroundImage || ''}?t=${timestamp}`} alt="" className='w-full h-auto pt-2' />
                 </div>
             </div>
         </div>

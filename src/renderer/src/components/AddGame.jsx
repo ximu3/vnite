@@ -32,7 +32,7 @@ export const useAddGame = create(set => ({
 
 
 function AddGame() {
-  const { alert, setGameName, setGameList, setGID, setVID, isLoading, setAlert, setGameBg, setGameBgList, setSavePath, setGamePath } = useAddGame();
+  const { alert, setGameName, setGameList, setGID, setVID, isLoading, setAlert, setGameBg, setGameBgList, setSavePath, setGamePath, setAddGameLog } = useAddGame();
   let navigate = useNavigate();
   function quit() {
     if (isLoading) {
@@ -49,6 +49,7 @@ function AddGame() {
       setGameBg('');
       setSavePath('');
       setGamePath('');
+      setAddGameLog(['[start] 开始处理游戏数据']);
       navigate('/info');
     }, 1000);
   }

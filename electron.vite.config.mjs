@@ -5,21 +5,25 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   main: {
     plugins: [externalizeDepsPlugin()],
+    publicDir: false,
     build: {
       rollupOptions: {
         output: {
           format: 'es'
-        }
+        },
+        external: [/\.git\/.*/] // 忽略 .git 文件夹
       }
     }
   },
   preload: {
     plugins: [externalizeDepsPlugin()],
+    publicDir: false,
     build: {
       rollupOptions: {
         output: {
           format: 'es'
-        }
+        },
+        external: [/\.git\/.*/] // 忽略 .git 文件夹
       }
     }
   },
@@ -29,6 +33,12 @@ export default defineConfig({
         '@renderer': resolve('src/renderer/src')
       }
     },
-    plugins: [react()]
+    publicDir: false,
+    plugins: [react()],
+    build: {
+      rollupOptions: {
+        external: [/\.git\/.*/] // 忽略 .git 文件夹
+      }
+    }
   }
 })
