@@ -224,7 +224,9 @@ function Game({ index }) {
                                         <span className="icon-[material-symbols--cloud] w-9 h-9"></span>
                                         <div className='flex flex-col items-start text-xs'>
                                             <div className='font-semibold'>云状态</div>
-                                            <div className=' text-custom-text/80'>已是最新</div>
+                                            <div className=' text-custom-text/80'>{
+                                                config['cloudSync']['enabled'] ? config['cloudSync']['mode'] === 'github' ? config['cloudSync']['github']['repoUrl'] ? '已是最新' : '未设置' : config['cloudSync']['mode'] === 'webdav' ? config['cloudSync']['webdav']['url'] ? '已是最新' : '未设置' : '未开启' : '未开启'
+                                            }</div>
                                         </div>
                                     </div>
                                     <div className='flex flex-row items-center gap-2 pl-2'>
@@ -259,6 +261,17 @@ function Game({ index }) {
                             <button className='min-h-0 border-0 shadow-sm w-9 h-9 btn btn-square text-custom-text-light bg-custom-text/40 hover:bg-custom-text/65 backdrop-blur-2xl' onClick={() => { document.getElementById('gameSetting').showModal() }}>
                                 <span className="icon-[ic--sharp-settings] w-6 h-6"></span>
                             </button>
+                            <div className="dropdown dropdown-end">
+                                <div tabIndex={0} role="button" className="min-h-0 mb-1 border-0 w-9 h-9 btn btn-square text-custom-text-light bg-custom-text/40 hover:bg-custom-text/65 backdrop-blur-2xl">
+                                    <span className="icon-[typcn--flow-switch] w-6 h-6"></span>
+                                </div>
+                                <ul tabIndex={0} className="dropdown-content menu bg-custom-main-5 rounded-box z-[1] w-52 p-2 shadow">
+                                    <li onClick={() => { updateData([index, 'detail', 'playStatus'], 0) }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none'>未开始</a></li>
+                                    <li onClick={() => { updateData([index, 'detail', 'playStatus'], 1) }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none'>游玩中</a></li>
+                                    <li onClick={() => { updateData([index, 'detail', 'playStatus'], 2) }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none'>已完成</a></li>
+                                    <li onClick={() => { updateData([index, 'detail', 'playStatus'], 3) }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none'>多周目</a></li>
+                                </ul>
+                            </div>
                             <div className="dropdown dropdown-end">
                                 <div tabIndex={0} role="button" className="min-h-0 mb-1 border-0 w-9 h-9 btn btn-square text-custom-text-light bg-custom-text/40 hover:bg-custom-text/65 backdrop-blur-2xl">
                                     <span className="icon-[mingcute--more-1-fill] w-6 h-6"></span>
@@ -690,8 +703,8 @@ function Setting({ index }) {
             </div>
             {settingAlert &&
                 <div className="toast toast-center">
-                    <div className="alert alert-error">
-                        <span className='text-base-100'>{settingAlert}</span>
+                    <div className="alert bg-custom-blue-6">
+                        <span className='text-custom-text-light'>{settingAlert}</span>
                     </div>
                 </div>
             }
