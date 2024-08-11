@@ -3,6 +3,19 @@ import { addCharacterImgToData, addNewGameToData, addObjectToJsonFile } from '..
 import path from 'path';
 import getFolderSize from 'get-folder-size';
 
+async function retry(fn, retries, mainWindow) {
+    try {
+        return await fn();
+    } catch (error) {
+        if (retries > 0) {
+            console.log(`操作失败，${1000 / 1000}秒后重试。剩余重试次数：${retries - 1}`);
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            return retry(fn, retries - 1);
+        }
+        throw error;
+    }
+}
+
 // 定义获取Access Token的函数
 async function getAccessToken(clientId, clientSecret) {
     const tokenEndpoint = 'https://www.ymgal.games/oauth/token';
@@ -177,39 +190,43 @@ function getCurrentDate() {
     return `${year}-${month}-${day}`;
 }
 
-async function organizeGameData(gid, savePath, gamePath) {
+async function organizeGameData(gid, savePath, gamePath, mainWindow) {
     try {
-        const Details = await searchGameId(gid);
+        const Details = await retry(() => searchGameId(gid), 3, mainWindow);
         const gameData = Details.data;
         const characters = [];
-        const vid = await getVIDByTitle(gameData.game.name);
+        const vid = await retry(() => getVIDByTitle(gameData.game.name), 3, mainWindow);
         for (const character of gameData.game.characters) {
-            const characterDetails = await searchCharacterId(character.cid);
-            let cover = `/${gid}/characters/${character.cid}.webp`
-            if (!characterDetails.data.character.mainImg) {
-                console.log(`未找到角色 ${character.cid} 的主图。`);
-                cover = ''
-                continue;
-            } else {
-                await addCharacterImgToData(gid, character.cid, characterDetails.data.character.mainImg);
+            try {
+                const characterDetails = await retry(() => searchCharacterId(character.cid), 3, mainWindow);
+                let cover = `/${gid}/characters/${character.cid}.webp`
+                if (!characterDetails.data.character.mainImg) {
+                    console.log(`未找到角色 ${character.cid} 的主图。`);
+                    cover = ''
+                    continue;
+                } else {
+                    await retry(() => addCharacterImgToData(gid, character.cid, characterDetails.data.character.mainImg), 3);
+                }
+                let extensionName = []
+                for (const extension of characterDetails.data.character.extensionName) {
+                    extensionName.push(extension.name);
+                }
+                const vidc = await retry(() => getCharacterIDByName(characterDetails.data.character.name, vid), 3, mainWindow);
+                characters.push({
+                    name: characterDetails.data.character.name,
+                    chineseName: characterDetails.data.character.chineseName,
+                    introduction: characterDetails.data.character.introduction,
+                    cid: character.cid,
+                    vid: vidc,
+                    cover: cover,
+                    extensionName: extensionName,
+                    birthday: characterDetails.data.character.birthday && characterDetails.data.character.birthday.replace(/^.{5}/, ''),
+                    gender: characterDetails.data.character.gender,
+                    websites: [{ "title": "月幕Galgame", "url": `https://www.ymgal.games/ca${character.cid}` }, { "title": "VNDB", "url": `https://vndb.org/${vidc}` }]
+                });
+            } catch (error) {
+                console.error(`获取角色 ${character.cid} 的数据时出错：`, error);
             }
-            let extensionName = []
-            for (const extension of characterDetails.data.character.extensionName) {
-                extensionName.push(extension.name);
-            }
-            const vidc = await getCharacterIDByName(characterDetails.data.character.name, vid);
-            characters.push({
-                name: characterDetails.data.character.name,
-                chineseName: characterDetails.data.character.chineseName,
-                introduction: characterDetails.data.character.introduction,
-                cid: character.cid,
-                vid: vidc,
-                cover: cover,
-                extensionName: extensionName,
-                birthday: characterDetails.data.character.birthday && characterDetails.data.character.birthday.replace(/^.{5}/, ''),
-                gender: characterDetails.data.character.gender,
-                websites: [{ "title": "月幕Galgame", "url": `https://www.ymgal.games/ca${character.cid}` }, { "title": "VNDB", "url": `https://vndb.org/${vidc}` }]
-            });
         }
         const saves = [];
         // for (const save of gameData.saves) {
@@ -331,7 +348,7 @@ async function organizeGameData(gid, savePath, gamePath) {
             saves: saves,
             memories: memory
         };
-        await addObjectToJsonFile(data);
+        await retry(() => addObjectToJsonFile(data), 3, mainWindow);
         return data;
     } catch (error) {
         console.error('Error in organizeGameData:', error);
@@ -413,17 +430,33 @@ async function getVIDByTitle(title) {
 }
 
 async function queryVNDBc(filters, fields) {
-    const response = await fetch('https://api.vndb.org/kana/character', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            filters: filters,
-            fields: fields
-        }),
-    });
-    return await response.json();
+    try {
+        const response = await fetch('https://api.vndb.org/kana/character', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                filters: filters,
+                fields: fields
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            throw new TypeError("Oops, we haven't got JSON!");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("查询 VNDB API 时出错:", error);
+        throw error; // 重新抛出错误，让调用者处理
+    }
 }
 
 async function getCharacterIDByName(name, vnId) {
