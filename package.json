@@ -1,9 +1,9 @@
 {
   "name": "my-gal-3",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "An Electron application with React",
   "main": "./out/main/index.mjs",
-  "author": "example.com",
+  "author": "ximu3",
   "homepage": "https://electron-vite.org",
   "scripts": {
     "format": "prettier --write .",
