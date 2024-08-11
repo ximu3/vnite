@@ -143,7 +143,7 @@ ipcMain.on('add-new-game-to-data', async (event, gid, coverUrl, bgUrl) => {
 });
 
 ipcMain.on('organize-game-data', async (event, gid, savePath, gamePath) => {
-  await organizeGameData(gid, savePath, gamePath);
+  await organizeGameData(gid, savePath, gamePath, mainWindow);
   const gameData = await getGameData();
   mainWindow.webContents.send('game-data-organized', gameData);
 });

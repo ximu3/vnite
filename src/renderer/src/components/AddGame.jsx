@@ -1,6 +1,6 @@
 import { useStore, create } from 'zustand';
 import { MemoryRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useRootStore } from './Root';
 
 export const useAddGame = create(set => ({
@@ -14,6 +14,7 @@ export const useAddGame = create(set => ({
   savePath: '',
   gameBgList: [],
   gameBg: '',
+  addGameLog: ['[start] 开始处理游戏数据'],
   setGameName: (gameName) => set({ gameName }),
   setGID: (gid) => set({ gid }),
   setVID: (vid) => set({ vid }),
@@ -23,7 +24,9 @@ export const useAddGame = create(set => ({
   setGamePath: (gamePath) => set({ gamePath }),
   setSavePath: (savePath) => set({ savePath }),
   setGameBgList: (gameBgList) => set({ gameBgList }),
-  setGameBg: (gameBg) => set({ gameBg })
+  setGameBg: (gameBg) => set({ gameBg }),
+  setAddGameLog: (addGameLog) => set({ addGameLog }),
+  updateAddGameLog: (log) => set(state => ({ addGameLog: [...state.addGameLog, log] })),
 }));
 
 
@@ -93,6 +96,22 @@ function Info() {
     navigate('/list');
     setIsLoading(false);
   }
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Enter') {
+        // 模拟按钮点击
+        document.getElementById('discern').click();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    // 清理函数
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   return (
     <div className='w-full h-full'>
       <div className='pb-5 text-2xl font-bold text-center text-custom-text-light'>基本信息</div>
@@ -113,7 +132,7 @@ function Info() {
         </label>
         <div className='pt-1'>填写&nbsp;<span className='bg-custom-blue/50'> GID </span>&nbsp;和&nbsp;<span className='bg-custom-blue/50'> VNDB ID </span>&nbsp;项可大幅提高识别正确率。</div>
       </div>
-      <button className='w-full h-10 transition-all mt-9 btn bg-custom-main-7 text-custom-text-light hover:brightness-125' onClick={submitInfo}>
+      <button id='discern' className='w-full h-10 transition-all mt-9 btn bg-custom-main-7 text-custom-text-light hover:brightness-125' onClick={submitInfo}>
         {isLoading && <span className='loading loading-spinner'></span>}
         识别
       </button>
@@ -150,7 +169,7 @@ function GameList() {
                     <td>{gameData["chineseName"] ? gameData["chineseName"] : "无"}</td>
                     <td>{gameData["name"]}</td>
                     <td>{gameData["id"]}</td>
-                    <td>{gameData["chineseName"]}</td>
+                    <td>{gameData["releaseDate"]}</td>
                     <td>{gameData["orgName"]}</td>
                     <td>{gameData["haveChinese"] ? "有" : "无"}</td>
                   </tr>
@@ -285,19 +304,38 @@ function GameBg() {
 
 function GameLoad() {
   const { setData } = useRootStore();
-  const { isLoading, setIsLoading } = useAddGame();
+  const { isLoading, setIsLoading, addGameLog, setAddGameLog, updateAddGameLog } = useAddGame();
+  const logContainerRef = useRef(null);
+  useEffect(() => {
+    if (logContainerRef.current) {
+      logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
+    }
+  }, [addGameLog]); // 每当日志更新时执行
   useEffect(() => {
     window.electron.ipcRenderer.on('game-data-organized', (event, gameData) => {
       setIsLoading(false);
       setData(gameData);
     })
+    window.electron.ipcRenderer.on('add-game-log', (event, log) => {
+      updateAddGameLog(log);
+    })
     return () => {
       window.electron.ipcRenderer.removeAllListeners('game-data-organized');
+      window.electron.ipcRenderer.removeAllListeners('add-game-log');
     }
   }, [])
   return (
-    <div className='flex items-center justify-center w-full h-full'>
-      {isLoading ? <progress className="w-56 progress"></progress> : <div className='text-2xl font-bold'>添加成功</div>}
+    <div className='flex flex-col items-center justify-center gap-9 w-165 h-140'>
+      <div ref={logContainerRef} className='flex flex-col items-start w-11/12 gap-1 p-3 overflow-auto bg-custom-main-7 h-5/6 scrollbar-base'>
+        {
+          addGameLog.map((log, index) => {
+            return (
+              <div key={index} className='text-custom-text'>{log}</div>
+            )
+          })
+        }
+      </div>
+      {isLoading ? <progress className="w-140 progress"></progress> : <div className='text-2xl font-bold text-custom-text-light'>添加成功</div>}
     </div>
   )
 }

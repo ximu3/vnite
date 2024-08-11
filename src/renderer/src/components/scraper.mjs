@@ -9,6 +9,7 @@ async function retry(fn, retries, mainWindow) {
     } catch (error) {
         if (retries > 0) {
             console.log(`操作失败，${1000 / 1000}秒后重试。剩余重试次数：${retries - 1}`);
+            mainWindow.webContents.send('add-game-log', `[warning] 操作失败，1秒后重试。剩余重试次数：${retries - 1}`);
             await new Promise(resolve => setTimeout(resolve, 1000));
             return retry(fn, retries - 1);
         }
@@ -198,20 +199,27 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow) {
         const vid = await retry(() => getVIDByTitle(gameData.game.name), 3, mainWindow);
         for (const character of gameData.game.characters) {
             try {
+                mainWindow.webContents.send('add-game-log', `[info] 正在获取角色 ${character.cid} 的数据...`);
                 const characterDetails = await retry(() => searchCharacterId(character.cid), 3, mainWindow);
+                mainWindow.webContents.send('add-game-log', `[info] 成功获取角色 ${character.cid} 的数据。`);
                 let cover = `/${gid}/characters/${character.cid}.webp`
                 if (!characterDetails.data.character.mainImg) {
                     console.log(`未找到角色 ${character.cid} 的主图。`);
+                    mainWindow.webContents.send('add-game-log', `[warning] 未找到角色 ${character.cid} 的主图。`);
                     cover = ''
                     continue;
                 } else {
+                    mainWindow.webContents.send('add-game-log', `[info] 正在下载角色 ${character.cid} 的图片...`);
                     await retry(() => addCharacterImgToData(gid, character.cid, characterDetails.data.character.mainImg), 3);
+                    mainWindow.webContents.send('add-game-log', `[info] 成功下载角色 ${character.cid} 的图片。`);
                 }
                 let extensionName = []
                 for (const extension of characterDetails.data.character.extensionName) {
                     extensionName.push(extension.name);
                 }
+                mainWindow.webContents.send('add-game-log', `[info] 正在获取角色 ${character.cid} 的VID...`);
                 const vidc = await retry(() => getCharacterIDByName(characterDetails.data.character.name, vid), 3, mainWindow);
+                mainWindow.webContents.send('add-game-log', `[info] 成功获取角色 ${character.cid} 的VID。`);
                 characters.push({
                     name: characterDetails.data.character.name,
                     chineseName: characterDetails.data.character.chineseName,
@@ -225,6 +233,7 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow) {
                     websites: [{ "title": "月幕Galgame", "url": `https://www.ymgal.games/ca${character.cid}` }, { "title": "VNDB", "url": `https://vndb.org/${vidc}` }]
                 });
             } catch (error) {
+                mainWindow.webContents.send('add-game-log', `[error] 获取角色 ${character.cid} 的数据时出错：${error}`);
                 console.error(`获取角色 ${character.cid} 的数据时出错：`, error);
             }
         }
@@ -349,8 +358,10 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow) {
             memories: memory
         };
         await retry(() => addObjectToJsonFile(data), 3, mainWindow);
+        mainWindow.webContents.send('add-game-log', `[info] 成功处理游戏 ${gameData.game.name} 的数据。`);
         return data;
     } catch (error) {
+        mainWindow.webContents.send('add-game-log', `[error] 获取游戏数据时出错：${error}`);
         console.error('Error in organizeGameData:', error);
         throw error;
     }
