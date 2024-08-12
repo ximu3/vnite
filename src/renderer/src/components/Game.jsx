@@ -583,14 +583,14 @@ function Memory({ index }) {
             const id = Date.now().toString()
             await window.electron.ipcRenderer.send('save-memory-img', data[index]['detail']['id'], id, memoryImg)
             updateData([index, 'memories'], [...data[index]['memories'], { id: id, imgPath: `/${data[index]['detail']['id']}/memories/${id}.webp`, note: memory }])
-            document.getElementById('my_modal_1').close()
+            document.getElementById('addMemory').close()
             setAlert('保存成功')
             setTimeout(() => { setAlert('') }, 3000)
             setTimeout(() => {
                 setTimestamp()
             }, 500);
         } catch (e) {
-            document.getElementById('my_modal_1').close()
+            document.getElementById('addMemory').close()
             setAlert('保存失败')
             setTimeout(() => { setAlert('') }, 3000)
         }
@@ -598,35 +598,35 @@ function Memory({ index }) {
     function quitMemory() {
         setMemoryImg('')
         setMemory('')
-        document.getElementById('my_modal_1').close()
+        document.getElementById('addMemory').close()
     }
     return (
         <div className='flex flex-col w-full gap-7'>
-            <dialog id="my_modal_1" className="modal">
-                <div className="w-auto max-w-full max-h-full h-1/4 modal-box">
+            <dialog id="addMemory" className="modal">
+                <div className="w-1/3 max-w-full max-h-full h-1/4 modal-box bg-custom-main-6">
                     <form method="dialog">
                         {/* if there is a button in form, it will close the modal */}
                         <button className="absolute btn btn-sm btn-ghost right-2 top-2">✕</button>
                     </form>
                     <div className='flex flex-col w-full h-full gap-3 p-5'>
-                        <label className="flex items-center w-full gap-2 input-sm input input-bordered focus-within:outline-none">
+                        <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:text-custom-text-light/80 focus-within:hover:brightness-100">
                             <div className='font-semibold'>图片路径 |</div>
                             <input type='text' className='grow' value={memoryImg || ''} onChange={(e) => { setMemoryImg(e.target.value) }} />
                             <span className="icon-[material-symbols-light--folder-open-outline-sharp] w-5 h-5 self-center" onClick={selectImgPath}></span>
                         </label>
-                        <label className="flex items-center w-full gap-2 input-sm input input-bordered focus-within:outline-none">
+                        <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:text-custom-text-light/80 focus-within:hover:brightness-100">
                             <div className='font-semibold'>文字 |</div>
                             <input type="text" name='gameName' className="grow" value={memory || ''} onChange={(e) => { setMemory(e.target.value) }} />
                         </label>
                         <div className='absolute flex flex-row gap-5 right-9 bottom-5'>
-                            <button className='btn btn-primary btn-sm' onClick={saveMemory}>保存</button>
-                            <button className='btn btn-error btn-sm' onClick={quitMemory}>取消</button>
+                            <button className='transition-all border-0 btn bg-custom-main-7 text-custom-text-light hover:brightness-125' onClick={saveMemory}>保存</button>
+                            <button className='transition-all border-0 btn bg-custom-main-7 text-custom-text-light hover:brightness-125' onClick={quitMemory}>取消</button>
                         </div>
                     </div>
                 </div>
             </dialog>
 
-            <button className='border-0 btn bg-custom-blue-2/50 text-custom-text-light hover:brightness-125' onClick={() => { document.getElementById('my_modal_1').showModal() }}>添加</button>
+            <button className='border-0 btn bg-custom-blue-2/50 text-custom-text-light hover:brightness-125' onClick={() => { document.getElementById('addMemory').showModal() }}>添加</button>
             {data[index]['memories'] && data[index]['memories'].map((memory, index) => {
                 return (
                     <div key={index} className='flex flex-col w-auto shadow-md'>
