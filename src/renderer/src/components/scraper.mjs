@@ -11,7 +11,7 @@ async function retry(fn, retries, mainWindow) {
             console.log(`操作失败，${1000 / 1000}秒后重试。剩余重试次数：${retries - 1}`);
             mainWindow.webContents.send('add-game-log', `[warning] 操作失败，1秒后重试。剩余重试次数：${retries - 1}`);
             await new Promise(resolve => setTimeout(resolve, 1000));
-            return retry(fn, retries - 1);
+            return retry(fn, retries - 1, mainWindow);
         }
         throw error;
     }
@@ -210,7 +210,7 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath) {
                     continue;
                 } else {
                     mainWindow.webContents.send('add-game-log', `[info] 正在下载角色 ${character.cid} 的图片...`);
-                    await retry(() => addCharacterImgToData(gid, character.cid, characterDetails.data.character.mainImg, path.join(dataPath, 'games')), 3);
+                    await retry(() => addCharacterImgToData(gid, character.cid, characterDetails.data.character.mainImg, path.join(dataPath, 'games')), 3, mainWindow);
                     mainWindow.webContents.send('add-game-log', `[info] 成功下载角色 ${character.cid} 的图片。`);
                 }
                 let extensionName = []
