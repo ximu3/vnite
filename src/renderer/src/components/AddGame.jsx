@@ -54,7 +54,7 @@ function AddGame() {
     }, 1000);
   }
   return (
-    <dialog id="my_modal_3" className="modal">
+    <dialog id="addGame" className="modal">
       <div className="w-auto h-auto max-w-full max-h-full modal-box bg-custom-main-6">
         <form method="dialog">
           {/* if there is a button in form, it will close the modal */}

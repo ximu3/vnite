@@ -1,9 +1,3 @@
-import bg from '../assets/bg.webp'
-import cover from '../assets/cover.webp'
-import c1 from '../assets/c1.jpg'
-import c2 from '../assets/c2.jpg'
-import mem from '../assets/mem.webp'
-import { Icon } from '@iconify/react/dist/iconify.js'
 import { BrowserRouter, Routes, Route, Navigate, NavLink, useNavigate } from 'react-router-dom';
 import { useRootStore } from './Root'
 import { useEffect, useState } from 'react'
@@ -155,6 +149,7 @@ function Game({ index }) {
         return () => {
             window.electron.ipcRenderer.removeAllListeners('exe-open-result');
             window.electron.ipcRenderer.removeAllListeners('exe-running-time');
+            window.electron.ipcRenderer.removeAllListeners('monitoring-result');
         };
     }, [data]);
     function handleStart() {

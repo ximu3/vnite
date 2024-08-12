@@ -4,7 +4,6 @@ import Record from './Record';
 import { create } from 'zustand';
 import { useEffect } from 'react';
 import { useAddGame } from './AddGame';
-import Config from './Config';
 
 export const useRootStore = create(set => ({
   data: [],
@@ -60,6 +59,9 @@ function Root() {
     })
     window.electron.ipcRenderer.on('game-data-updated', (event, data) => {
       setData(data);
+    })
+    window.electron.ipcRenderer.on('config-data-updated', (event, data) => {
+      setConfig(data);
     })
     window.electron.ipcRenderer.on('path-log', (event, alert) => {
       console.log(alert);
