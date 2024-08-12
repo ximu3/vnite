@@ -21,6 +21,7 @@
     "@electron-toolkit/preload": "^3.0.0",
     "@electron-toolkit/utils": "^3.0.0",
     "axios": "^1.7.2",
+    "chokidar": "^3.6.0",
     "fetch": "^1.1.0",
     "fs-extra": "^11.2.0",
     "get-folder-size": "^5.0.0",
