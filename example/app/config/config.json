@@ -1,0 +1,21 @@
+{
+  "cloudSync": {
+    "enabled": false,
+    "mode": "github",
+    "webdav": {
+      "url": "",
+      "path": "",
+      "username": "",
+      "password": "",
+      "lastSyncTime": ""
+    },
+    "github": {
+      "clientId": "Ov23ctL31btY3I1PFNYW",
+      "clientSecret": "292ac7be15478abe7107fe97aa85adf12f57c736",
+      "username": "",
+      "accessToken": "",
+      "repoUrl": "",
+      "lastSyncTime": ""
+    }
+  }
+}
