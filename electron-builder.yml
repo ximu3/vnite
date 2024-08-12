@@ -10,7 +10,7 @@ files:
   - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
   - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
 extraFiles:
-  - from: "src/renderer/public/app"
+  - from: "example/app"
     to: "app"
     filter: ["**/*"]
 asarUnpack:
@@ -22,6 +22,9 @@ nsis:
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
+  oneClick: false  # 禁用一键安装
+  allowToChangeInstallationDirectory: true  # 允许更改安装目录
+  perMachine: true  # 允许选择为所有用户安装或仅为当前用户安装
 mac:
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
