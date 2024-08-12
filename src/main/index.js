@@ -4,7 +4,7 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { addNewGameToData, getGameData, updateGameData, deleteGame } from '../renderer/public/app/data/dataManager.mjs'
 import { organizeGameData } from "../renderer/src/components/scraper.mjs"
-import { spawn } from 'child_process';
+import { spawn, exec } from 'child_process';
 import sharp from 'sharp';
 import fs from 'fs/promises';
 import fse from 'fs-extra';
@@ -398,10 +398,16 @@ app.whenReady().then(() => {
     return getDataPath(file);
   });
 
-
-
   ipcMain.handle('get-config-path', (event, file) => {
     return getConfigPath(file);
+  });
+
+  ipcMain.on('open-and-monitor', async (event, programPath, id) => {
+    try {
+      await openExternalProgram(programPath, id);
+    } catch (error) {
+      console.error('Error opening external program:', error);
+    }
   });
 })
 
@@ -450,5 +456,113 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
+
+let startTime = null;
+let endTime = null;
+let runningPrograms = new Set();
+let monitoringInterval;
+
+async function openExternalProgram(programPath, id) {
+  try {
+    const programDir = path.dirname(programPath);
+    const programName = path.basename(programPath);
+
+    const child = spawn(programName, [], {
+      cwd: programDir,
+      detached: true,
+      stdio: 'ignore'
+    });
+
+    child.on('error', (error) => {
+      console.error('启动程序时出错:', error);
+      mainWindow.webContents.send('game-start-result', { id: id, success: false, error: error.message });
+    });
+
+    child.unref();
+
+    // 假设程序成功启动
+    mainWindow.webContents.send('game-start-result', { id: id, success: true });
+
+    const parentDir = path.dirname(programPath);
+    await scanDirectory(parentDir);
+    startMonitoring(id);
+  } catch (error) {
+    console.error('打开外部程序时出错:', error);
+    mainWindow.webContents.send('game-start-result', { id: id, success: false, error: error.message });
+  }
+}
+
+async function scanDirectory(dirPath) {
+  try {
+    const files = await fs.readdir(dirPath);
+    for (const file of files) {
+      const filePath = path.join(dirPath, file);
+      if (await isExecutable(filePath)) {
+        runningPrograms.add(path.basename(file).toLowerCase());
+      }
+    }
+  } catch (error) {
+    console.error('扫描目录时出错:', error);
+  }
+}
+
+async function isExecutable(filePath) {
+  const stats = await fs.stat(filePath);
+
+  if (!stats.isFile()) {
+    return false;
+  }
+
+  switch (process.platform) {
+    case 'win32':
+      const ext = path.extname(filePath).toLowerCase();
+      return ['.exe', '.bat', '.cmd', '.com'].includes(ext);
+
+    case 'darwin':
+    case 'linux':
+      return (stats.mode & fs.constants.S_IXUSR) !== 0 ||
+        (stats.mode & fs.constants.S_IXGRP) !== 0 ||
+        (stats.mode & fs.constants.S_IXOTH) !== 0;
+
+    default:
+      console.warn('未知操作系统，无法确定文件是否可执行');
+      return false;
+  }
+}
+
+function startMonitoring(id) {
+  startTime = Date.now();
+  monitoringInterval = setInterval(() => checkRunningPrograms(id), 1000);
+}
+
+function checkRunningPrograms(id) {
+  exec('tasklist /fo csv /nh', (error, stdout) => {
+    if (error) {
+      console.error(`执行错误: ${error}`);
+      // 可能需要在这里添加一些错误处理逻辑
+      return;
+    }
+    const runningProcesses = stdout.toLowerCase().split('\n');
+    let allStopped = true;
+
+    for (let program of runningPrograms) {
+      if (runningProcesses.some(process => process.startsWith(`"${program.toLowerCase()}"`))) {
+        allStopped = false;
+        break;
+      }
+    }
+
+    if (allStopped) {
+      endTime = Date.now();
+      clearInterval(monitoringInterval);
+      reportTotalRunTime(id);
+    }
+  });
+}
+
+function reportTotalRunTime(id) {
+  const totalRunTime = Math.floor((endTime - startTime) / 1000) // 转换为秒
+  mainWindow.webContents.send('monitoring-result', { id, totalRunTime });
+}
 
 

@@ -97,11 +97,11 @@ function Game({ index }) {
             }
         });
 
-        window.electron.ipcRenderer.on('game-running-time', (event, { processId, runningTime }) => {
-            if (processId === index) {
-                updateData([index, 'detail', 'gameDuration'], data[index]['detail']['gameDuration'] + runningTime);
+        window.electron.ipcRenderer.on('monitoring-result', (event, { id, totalRunTime }) => {
+            if (id === gameData['id']) {
+                updateData([index, 'detail', 'gameDuration'], data[index]['detail']['gameDuration'] + totalRunTime);
                 updateData([index, 'detail', 'lastVisitDate'], getFormattedDate());
-                if (runningTime >= 1) {
+                if (totalRunTime >= 1) {
                     updateData([index, 'detail', 'frequency'], data[index]['detail']['frequency'] + 1);
                     if (config['cloudSync']['enabled']) {
                         if (config['cloudSync']['mode'] === 'github') {
@@ -159,7 +159,7 @@ function Game({ index }) {
     }, [data]);
     function handleStart() {
         if (gameData['gamePath'] !== '') {
-            window.electron.ipcRenderer.send('start-game', gameData['gamePath'], index)
+            window.electron.ipcRenderer.send('open-and-monitor', gameData['gamePath'], gameData['id'])
         } else {
             setAlert('游戏路径未设置，请前往设置!')
             setTimeout(() => { setAlert('') }, 3000)
