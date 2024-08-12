@@ -108,21 +108,28 @@ async function checkRepoExists(token, owner) {
   }
 }
 
-export async function initializeRepo(token, user, path) {
+export async function initializeRepo(token, user, localPath, mainWindow) {
   const repo = 'my-gal'
   try {
     // 检查仓库是否存在
     const exists = await checkRepoExists(token, user);
+    const data = await fs.readFile(path.join(localPath, 'data/data.json'));
+    const jsonData = JSON.parse(data);
     if (exists) {
       console.log('仓库已存在');
-      await fse.remove(path);
-      console.log('清空本地文件夹');
-      clonePrivateRepo(token, `https://github.com/${user}/my-gal.git`, path);
-      return `https://github.com/${user}/my-gal.git`;
+      if (Object.keys(jsonData).length === 0) {
+        await fse.remove(localPath);
+        console.log('清空本地文件夹');
+        clonePrivateRepo(token, `https://github.com/${user}/my-gal.git`, localPath);
+        return `https://github.com/${user}/my-gal.git`;
+      } else {
+        mainWindow.webContents.send('initialize-diff-data');
+        return
+      }
     }
     // createRepo(repo, token);
     // 创建远程空仓库并推送本地文件
-    const repoUrl = await createEmptyRepoAndPushLocalFiles(token, repo, path);
+    const repoUrl = await createEmptyRepoAndPushLocalFiles(token, repo, localPath, user);
     console.log(`成功创建仓库并推送本地文件: ${repoUrl}`);
     return repoUrl;
   }
@@ -132,7 +139,29 @@ export async function initializeRepo(token, user, path) {
   }
 }
 
-async function createEmptyRepoAndPushLocalFiles(token, repoName, localPath) {
+
+export async function initAndPushLocalRepo(token, localPath, user) {
+  try {
+    const git = simpleGit(localPath, { config: ['safe.directory=*'] });
+    await git.init().then(() => git.checkoutLocalBranch('main'));
+    console.log(`初始化了本地仓库: ${localPath}`);
+    let repoUrlWithToken = `https://${token}@github.com/${user}/my-gal.git`
+    await git.addRemote('origin', repoUrlWithToken);
+    console.log('添加了远程仓库链接');
+    await git.add('./*');
+    await git.commit(`${Date.now()}`);
+    console.log('添加并提交了本地文件');
+    await git.push(['--force', 'origin', 'main']);
+    console.log('成功推送到远程仓库');
+    return repoUrlWithToken;
+  } catch (error) {
+    console.error('操作过程中出错:', error);
+    throw error;
+  }
+  //把本地文件推送到远程仓库
+}
+
+async function createEmptyRepoAndPushLocalFiles(token, repoName, localPath, user) {
   try {
     // 1. 创建远程空仓库
     const response = await axios.post('https://api.github.com/user/repos', {
@@ -148,12 +177,12 @@ async function createEmptyRepoAndPushLocalFiles(token, repoName, localPath) {
     console.log(`创建了空的远程仓库: ${repoUrl}`);
 
     // 2. 初始化本地仓库
-    const git = simpleGit(localPath);
+    const git = simpleGit(localPath, { config: ['safe.directory=*'] });
     await git.init().then(() => git.checkoutLocalBranch('main'));
     console.log(`初始化了本地仓库: ${localPath}`);
 
     // 3. 添加远程仓库链接
-    let repoUrlWithToken = `https://${token}@github.com/ximu3/my-gal.git`
+    let repoUrlWithToken = `https://${token}@github.com/${user}/my-gal.git`
     await git.addRemote('origin', repoUrlWithToken);
     console.log('添加了远程仓库链接');
 
@@ -175,7 +204,7 @@ async function createEmptyRepoAndPushLocalFiles(token, repoName, localPath) {
 
 // 克隆私有仓库
 export async function clonePrivateRepo(token, repoUrl, localPath) {
-  const git = simpleGit();
+  const git = simpleGit({ config: ['safe.directory=*'] });
   const authRepoUrl = repoUrl.replace('https://', `https://${token}@`);
   await git.clone(authRepoUrl, localPath);
   console.log(`仓库克隆到 ${localPath}`);
@@ -184,7 +213,7 @@ export async function clonePrivateRepo(token, repoUrl, localPath) {
 
 // 提交更改并推送到远程仓库
 export async function commitAndPush(localPath, message) {
-  const git = simpleGit(localPath);
+  const git = simpleGit(localPath, { config: ['safe.directory=*'] });
   await git.add('.')
     .commit(message)
     .push('origin', 'main');

@@ -23,6 +23,7 @@ function NavButton({ to, name, icon }) {
 const useConfigStore = create(set => ({
     configSetting: {},
     configAlert: "",
+    isLoading: false,
     setConfigSetting: (configSetting) => set({ configSetting }),
     updateConfigSetting: (path, value) => set((state) => {
         const newConfigSetting = JSON.parse(JSON.stringify(state.configSetting));
@@ -34,6 +35,7 @@ const useConfigStore = create(set => ({
         return { configSetting: newConfigSetting };
     }),
     setConfigAlert: (configAlert) => set({ configAlert }),
+    setIsLoading: (isLoading) => set({ isLoading }),
 }));
 
 function Config() {
@@ -57,6 +59,7 @@ function Config() {
         setConfigSetting(config);
     }
     return (
+
         <dialog id="setting" className="modal">
             <div className="w-1/2 max-w-full max-h-full p-0 h-5/6 modal-box">
                 <form method="dialog">
@@ -87,11 +90,7 @@ function Config() {
                     <div className="grow">
                         <Routes>
                             <Route index element={<Navigate to='./cloudSync' />} />
-                            {
-                                Object.keys(config).map(key => (
-                                    <Route key={key} path={`/${key}/*`} element={<CloudSync />} />
-                                ))
-                            }
+                            <Route path={`/cloudSync/*`} element={<CloudSync />} />
                         </Routes>
                         <div className='absolute flex flex-row gap-3 right-5 bottom-5'>
                             <button className="transition-all border-0 btn bg-custom-main-7 text-custom-text-light hover:brightness-125" onClick={saveConfig}>保存</button>
@@ -116,13 +115,9 @@ function Config() {
 
 
 function CloudSync() {
-    const { configSetting, updateConfigSetting, setConfigAlert } = useConfigStore();
-    const { updateConfig, config } = useRootStore();
-    async function loginGithub() {
-        window.electron.ipcRenderer.invoke('start-auth-process', configSetting.cloudSync.github.clientId, configSetting.cloudSync.github.clientSecret).then((data) => {
-            updateConfig(['cloudSync', 'github', 'username'], data.username);
-            updateConfig(['cloudSync', 'github', 'accessToken'], data.accessToken);
-        })
+    const { configSetting, updateConfigSetting, setConfigAlert, isLoading, setIsLoading } = useConfigStore();
+    const { updateConfig, config, setData } = useRootStore();
+    useEffect(() => {
         window.electron.ipcRenderer.on('auth-error', (event, message) => {
             setConfigAlert('Github登录失败：' + message);
             setTimeout(() => {
@@ -136,12 +131,18 @@ function CloudSync() {
             }, 5000);
             window.electron.ipcRenderer.invoke('initialize-repo', data.accessToken, data.username).then((data) => {
                 if (data) {
-                    setConfigAlert('Github仓库初始化成功');
+                    setConfigAlert('Github仓库初始化成功，5秒后重启应用生效！');
                     setTimeout(() => {
                         setConfigAlert('');
                     }, 5000);
                     updateConfig(['cloudSync', 'github', 'repoUrl'], data);
                     updateConfig(['cloudSync', 'github', 'lastSyncTime'], getFormattedDateTimeWithSeconds());
+                    window.electron.ipcRenderer.invoke('get-game-data').then((data) => {
+                        setData(data);
+                    })
+                    setTimeout(() => {
+                        window.electron.ipcRenderer.send('restart-app');
+                    }, 5000);
                 }
             })
         })
@@ -151,6 +152,22 @@ function CloudSync() {
                 setConfigAlert('');
             }, 5000);
         })
+        window.electron.ipcRenderer.on('initialize-diff-data', (event) => {
+            document.getElementById('initializeDiffData').showModal();
+        })
+        return () => {
+            window.electron.ipcRenderer.removeAllListeners('auth-error');
+            window.electron.ipcRenderer.removeAllListeners('auth-success');
+            window.electron.ipcRenderer.removeAllListeners('initialize-error');
+        }
+    }, []);
+    async function loginGithub() {
+        setIsLoading(true);
+        await window.electron.ipcRenderer.invoke('start-auth-process', configSetting.cloudSync.github.clientId, configSetting.cloudSync.github.clientSecret).then((data) => {
+            updateConfig(['cloudSync', 'github', 'username'], data.username);
+            updateConfig(['cloudSync', 'github', 'accessToken'], data.accessToken);
+        })
+        setIsLoading(false);
     }
     function getFormattedDateTimeWithSeconds() {
         const now = new Date();
@@ -164,9 +181,10 @@ function CloudSync() {
 
         return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     }
-    function githubSync() {
+    async function githubSync() {
         const time = getFormattedDateTimeWithSeconds();
-        window.electron.ipcRenderer.invoke('cloud-sync-github', time).then((data) => {
+        setIsLoading(true);
+        await window.electron.ipcRenderer.invoke('cloud-sync-github', time).then((data) => {
             if (data === 'success') {
                 setConfigAlert('Github同步成功');
                 updateConfig(['cloudSync', 'github', 'lastSyncTime'], time);
@@ -180,6 +198,7 @@ function CloudSync() {
                 }, 3000);
             }
         })
+        setIsLoading(false);
     }
     function webdavUpload() {
         const time = getFormattedDateTimeWithSeconds();
@@ -226,8 +245,75 @@ function CloudSync() {
                 return 'Github';
         }
     }
+    async function useLocalData() {
+        try {
+            setIsLoading(true);
+            await window.electron.ipcRenderer.send('initialize-use-local-data', config.cloudSync.github.accessToken, config.cloudSync.github.username);
+            setIsLoading(false);
+            document.getElementById('initializeDiffData').close();
+            updateConfig(['cloudSync', 'github', 'repoUrl'], `https://github.com/${config.cloudSync.github.username}/my-gal.git`);
+            updateConfig(['cloudSync', 'github', 'lastSyncTime'], getFormattedDateTimeWithSeconds());
+            window.electron.ipcRenderer.invoke('get-game-data').then((data) => {
+                setData(data);
+            })
+        } catch (e) {
+            setIsLoading(false);
+            console.log(e);
+            setConfigAlert('使用本地数据失败：' + e);
+            setTimeout(() => {
+                setConfigAlert('');
+            }, 3000);
+        }
+    }
+    async function useCloudData() {
+        try {
+            setIsLoading(true);
+            await window.electron.ipcRenderer.send('initialize-use-cloud-data', config.cloudSync.github.accessToken, config.cloudSync.github.username);
+            setIsLoading(false);
+            document.getElementById('initializeDiffData').close();
+            updateConfig(['cloudSync', 'github', 'repoUrl'], `https://github.com/${config.cloudSync.github.username}/my-gal.git`);
+            updateConfig(['cloudSync', 'github', 'lastSyncTime'], getFormattedDateTimeWithSeconds());
+            window.electron.ipcRenderer.invoke('get-game-data').then((data) => {
+                setData(data);
+            })
+            setConfigAlert('云端数据已成功同步到本地，5秒后重启应用生效！');
+            setTimeout(() => {
+                setConfigAlert('');
+                window.electron.ipcRenderer.send('restart-app');
+            }, 5000);
+        } catch (e) {
+            setIsLoading(false);
+            console.log(e);
+            setConfigAlert('使用云端数据失败：' + e);
+            setTimeout(() => {
+                setConfigAlert('');
+            }, 3000);
+        }
+    }
     return (
         <div className='flex flex-col w-full h-full gap-5 pb-32 overflow-auto p-7 scrollbar-base bg-custom-main-6'>
+            <dialog id="initializeDiffData" className="modal">
+                <div className="w-1/3 h-auto modal-box bg-custom-main-6">
+                    <form method="dialog">
+                        {/* if there is a button in form, it will close the modal */}
+                        <button className="absolute btn btn-sm btn-ghost right-2 top-2">✕</button>
+                    </form>
+                    <div className='w-full h-full p-3'>
+                        <div className='font-bold'>本地数据与远程仓库不一致！</div>
+                        <div className='pt-2'>该选择将覆盖某一端数据，请做好数据备份！</div>
+                        <div className='flex flex-row-reverse gap-5 pt-7'>
+                            <button className='transition-all btn bg-custom-main-7 text-custom-text-light hover:brightness-125' onClick={useLocalData}>
+                                {isLoading && <span className='loading loading-spinner'></span>}
+                                使用本地数据
+                            </button>
+                            <button className='transition-all btn bg-custom-main-7 text-custom-text-light hover:brightness-125' onClick={useCloudData} >
+                                {isLoading && <span className='loading loading-spinner'></span>}
+                                使用云端数据
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </dialog>
             <div className='text-2xl font-bold text-custom-text-light'>
                 云同步
             </div>
@@ -260,7 +346,7 @@ function CloudSync() {
             <div className='flex flex-col gap-2'>
                 <div className='flex flex-row gap-2 pb-2 font-bold text-custom-text-light'>Github<div className="self-center badge text-custom-text badge-outline badge-sm">推荐</div></div>
                 {
-                    config['cloudSync']['github']['username'] ?
+                    config?.cloudSync?.github?.username ?
                         <div>
                             <div className='flex flex-row items-center'>
                                 <span className="text-sm font-semibold grow">账号</span>
@@ -275,7 +361,10 @@ function CloudSync() {
                             <div className='flex flex-row items-center gap-2'>
                                 <span className="text-sm font-semibold grow">最后同步时间</span>
                                 <span className="p-1 text-sm font-semibold">{config['cloudSync']['github']['lastSyncTime']}</span>
-                                <button className='transition-all btn btn-xs bg-custom-main-7 hover:brightness-125' onClick={githubSync}>同步</button>
+                                <button className='transition-all btn btn-xs bg-custom-main-7 hover:brightness-125' onClick={githubSync}>
+                                    {isLoading && <span className='loading loading-spinner loading-xs'></span>}
+                                    同步
+                                </button>
                             </div>
                         </div>
                         :
@@ -309,7 +398,7 @@ function CloudSync() {
                 <div className='m-0 divider'></div>
                 <div className='flex flex-row items-center gap-2'>
                     <span className="text-sm font-semibold grow">最后同步时间</span>
-                    <span className="p-1 text-sm font-semibold">{config['cloudSync']['webdav']['lastSyncTime']}</span>
+                    <span className="p-1 text-sm font-semibold">{config?.cloudSync?.webdav?.lastSyncTime}</span>
                     <button className='transition-all btn btn-xs bg-custom-main-7 hover:brightness-125' onClick={webdavUpload}>上传</button>
                     <button className='transition-all btn btn-xs bg-custom-main-7 hover:brightness-125' onClick={webdavDownload}>下载</button>
                 </div>
