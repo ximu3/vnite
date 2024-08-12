@@ -9,9 +9,10 @@ import sharp from 'sharp';
 import fs from 'fs/promises';
 import fse from 'fs-extra';
 import { getConfigData, updateConfigData } from '../renderer/public/app/config/configManager.mjs';
-import { startAuthProcess, initializeRepo, commitAndPush, createWebDavClient, uploadDirectory, downloadDirectory } from '../renderer/src/components/cloudSync.mjs';
+import { startAuthProcess, initializeRepo, commitAndPush, createWebDavClient, uploadDirectory, downloadDirectory, initAndPushLocalRepo, clonePrivateRepo } from '../renderer/src/components/cloudSync.mjs';
 import getFolderSize from "get-folder-size";
 import path from 'path';
+import chokidar from 'chokidar';
 
 let mainWindow
 
@@ -47,6 +48,19 @@ function createWindow() {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+
+  // const dataPath = getDataPath('data.json');
+  // const configPath = getConfigPath('config.json');
+  // const dataWatcher = chokidar.watch(dataPath);
+  // const configWatcher = chokidar.watch(configPath);
+  // dataWatcher.on('change', async () => {
+  //   const gameData = await getGameData(dataPath);
+  //   mainWindow.webContents.send('game-data-updated', gameData);
+  // });
+  // configWatcher.on('change', async () => {
+  //   const configData = await getConfigData();
+  //   mainWindow.webContents.send('config-data-updated', configData);
+  // });
 }
 
 
@@ -322,6 +336,15 @@ app.whenReady().then(() => {
       throw error;
     }
   })
+
+  ipcMain.on('restart-app', () => {
+    if (app.isPackaged) {
+      app.relaunch();
+      app.exit(0);
+    } else {
+      return;
+    }
+  });
 
   ipcMain.on('initialize-use-local-data', async (event, token, owner) => {
     try {

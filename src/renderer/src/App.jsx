@@ -6,12 +6,39 @@ import Root from './components/Root';
 import AddGame from './components/AddGame';
 import { MemoryRouter, HashRouter } from 'react-router-dom';
 import Config from './components/Config';
+import { useRootStore } from './components/Root';
 
 
 
 
 function App() {
+  const { updateConfig, config } = useRootStore();
+  function getFormattedDateTimeWithSeconds() {
+    const now = new Date();
 
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  }
+  async function quit() {
+    if (config.cloudSync.enabled && config.cloudSync.github.username) {
+      const time = getFormattedDateTimeWithSeconds();
+      document.getElementById('syncDataAtQuit').showModal();
+      await window.electron.ipcRenderer.invoke('cloud-sync-github', time).then((data) => {
+        if (data === 'success') {
+          updateConfig(['cloudSync', 'github', 'lastSyncTime'], time);
+        } else {
+          console.log('cloud sync failed')
+        }
+      })
+    }
+    window.electron.ipcRenderer.send('close');
+  }
 
   return (
     <div className='relative w-screen h-screen font-mono'>
@@ -20,7 +47,17 @@ function App() {
           <span>New mail arrived.</span>
         </div>
       </div> */}
-
+      <dialog id="syncDataAtQuit" className="modal">
+        <div className="w-1/3 h-auto modal-box bg-custom-main-6">
+          <form method="dialog">
+            {/* if there is a button in form, it will close the modal */}
+            {/* <button className="absolute btn btn-sm btn-ghost right-2 top-2">✕</button> */}
+          </form>
+          <div className='flex w-full h-full p-3'>
+            <progress className="self-center w-full progress"></progress>
+          </div>
+        </div>
+      </dialog>
 
       {/* You can open the modal using document.getElementById('ID').showModal() method */}
 
@@ -37,7 +74,7 @@ function App() {
           <div className='h-full p-0 dropdown no-drag bg-custom-main-4'>
             <div tabIndex={0} role='button' className='w-full h-full gap-2 mb-1 text-lg font-semibold text-center border-0 input-sm bg-custom-main-4 hover:brightness-125'>my-gal</div>
             <ul tabIndex={0} className="dropdown-content menu z-[1] w-52 p-2 shadow rounded-none bg-custom-main-5">
-              <li className='hover:bg-custom-text hover:text-black/80' onClick={() => { document.getElementById('my_modal_3').showModal() }}><a className='transition-none'>添加游戏</a></li>
+              <li className='hover:bg-custom-text hover:text-black/80' onClick={() => { document.getElementById('addGame').showModal() }}><a className='transition-none'>添加游戏</a></li>
               <li className='hover:bg-custom-text hover:text-black/80' onClick={() => { document.getElementById('setting').showModal() }}><a className='transition-none'>设置</a></li>
             </ul>
           </div>
@@ -48,7 +85,7 @@ function App() {
             <button className='w-8 h-8 p-0 btn-ghost hover:bg-custom-text/30' onClick={() => window.electron.ipcRenderer.send('maximize')}>
               <span className='icon-[material-symbols-light--maximize] w-full h-full'></span>
             </button>
-            <button className='w-8 h-8 p-0 btn-ghost hover:bg-custom-red' onClick={() => window.electron.ipcRenderer.send('close')}>
+            <button className='w-8 h-8 p-0 btn-ghost hover:bg-custom-red' onClick={quit}>
               <span className='icon-[material-symbols-light--close] w-full h-full'></span>
             </button>
           </div>
