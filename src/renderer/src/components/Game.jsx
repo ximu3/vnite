@@ -200,7 +200,7 @@ function Game({ index }) {
         naivgate(`../${index - 1}`)
     }
     return (
-        <div className="flex flex-col w-full h-full overflow-auto scrollbar-base scrollbar-w-2 bg-custom-main text-custom-text">
+        <div className="flex flex-col w-full h-full overflow-auto scrollbar-base scrollbar-w-2 bg-custom-main/90 text-custom-text">
             <dialog id="deleteGame" className="modal">
                 <div className="w-1/3 h-auto modal-box bg-custom-main-6">
                     <form method="dialog">
@@ -232,7 +232,7 @@ function Game({ index }) {
             <div className="relative w-full h-full bg-fixed bg-center bg-cover">
                 {/* <div className="absolute inset-0 bg-custom-main"></div> */}
                 <img src={`${backgroundImage}?t=${timestamp}`} alt="bg" className="w-full h-full bg-cover"></img>
-                <div className="absolute inset-0 shadow-t-lg top-104 border-t-1 border-white/30 shadow-black/80 bg-gradient-to-b from-custom-main/40 to-custom-main to-50% backdrop-blur-lg"></div>
+                <div className="absolute inset-0 shadow-t-lg top-104 border-t-1 border-white/30 shadow-black/80 bg-gradient-to-b from-custom-main/40 via-40% via-custom-main/90 to-custom-main to-95% backdrop-blur-lg"></div>
 
 
                 {/* <img alt="cover image" src={gameData['cover']} className="absolute z-10 object-cover w-56 h-auto transform border-2 right-16 lg:right-24 2xl:right-40 2xl:-bottom-60 -bottom-16 lg:-bottom-48 lg:w-64 2xl:w-80 border-primary"></img> */}

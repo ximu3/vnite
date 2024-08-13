@@ -50,15 +50,15 @@ function Record() {
         let played = 0;
         let playAgain = 0;
         data.forEach((game, index) => {
-            volume += game.detail.volume;
-            time += game.detail.gameDuration;
-            if (game.detail.playtStatus === 0) {
+            volume += game?.detail.volume;
+            time += game?.detail.gameDuration;
+            if (game?.detail.playtStatus === 0) {
                 notPlay++;
-            } else if (game.detail.playtStatus === 1) {
+            } else if (game?.detail.playtStatus === 1) {
                 playing++;
-            } else if (game.detail.playtStatus === 2) {
+            } else if (game?.detail.playtStatus === 2) {
                 played++;
-            } else if (game.detail.playtStatus === 3) {
+            } else if (game?.detail.playtStatus === 3) {
                 playAgain++;
             }
         })
@@ -70,7 +70,7 @@ function Record() {
         setPlayed(played);
         setPlayAgain(playAgain);
         data.forEach(async (game, index) => {
-            const path = await window.electron.ipcRenderer.invoke('get-data-path', game.detail.cover);
+            const path = await window.electron.ipcRenderer.invoke('get-data-path', game?.detail.cover);
             addCover(path);
         })
 
@@ -119,11 +119,11 @@ function Ranking() {
         }
     }
     const longestGameIndex = data.reduce((maxIndex, game, currentIndex) =>
-        game.detail.gameDuration > data[maxIndex].detail.gameDuration ? currentIndex : maxIndex
+        game?.detail.gameDuration > data[maxIndex]?.detail.gameDuration ? currentIndex : maxIndex
         , 0);
 
     const mostPlayedIndex = data.reduce((maxIndex, game, currentIndex) =>
-        game.detail.frequency > data[maxIndex].detail.frequency ? currentIndex : maxIndex
+        game?.detail.frequency > data[maxIndex]?.detail.frequency ? currentIndex : maxIndex
         , 0);
 
     return (
@@ -146,10 +146,10 @@ function Ranking() {
                         <div className="p-5 card-body">
                             <h2 className="flex flex-row justify-between text-center card-title">
                                 <div>最多游玩时间！</div>
-                                <div className=''>{formatTime(data[longestGameIndex]['detail']['gameDuration'])}</div>
+                                <div className=''>{formatTime(data[longestGameIndex]?.detail['gameDuration'])}</div>
                             </h2>
 
-                            <div className='flex justify-center pt-2'><span className='self-center font-bold'>《{data[longestGameIndex].detail.chineseName ? data[longestGameIndex].detail.chineseName : data[longestGameIndex].detail.name}》</span></div>
+                            <div className='flex justify-center pt-2'><span className='self-center font-bold'>《{data[longestGameIndex]?.detail.chineseName ? data[longestGameIndex]?.detail.chineseName : data[longestGameIndex]?.detail.name}》</span></div>
 
                             <div className="justify-end card-actions">
                                 {/* <button className="btn btn-primary">Buy Now</button> */}
@@ -158,14 +158,23 @@ function Ranking() {
                     </div>
                     <div className="w-1/3 shadow-sm card bg-custom-main-7">
                         <figure>
-                            <img src={cover[mostPlayedIndex]} alt="Cover" className='' />
+                            {
+                                //找到最多游玩时间的游戏封面并显示
+                                data[mostPlayedIndex]?.detail.cover && (
+                                    <img
+                                        src={cover[mostPlayedIndex]}
+                                        alt={`Cover`}
+                                        className=''
+                                    />
+                                )
+                            }
                         </figure>
                         <div className="p-5 card-body">
                             <h2 className="flex flex-row justify-between text-center card-title">
                                 <div>最多游玩次数！</div>
-                                <div className=''>{data[mostPlayedIndex].detail.frequency}</div>
+                                <div className=''>{data[mostPlayedIndex]?.detail.frequency}</div>
                             </h2>
-                            <div className='flex justify-center pt-2'><span className='self-center font-bold'>《{data[mostPlayedIndex].detail.chineseName ? data[mostPlayedIndex].detail.chineseName : data[mostPlayedIndex].detail.name}》</span></div>
+                            <div className='flex justify-center pt-2'><span className='self-center font-bold'>《{data[mostPlayedIndex]?.detail.chineseName ? data[mostPlayedIndex]?.detail.chineseName : data[mostPlayedIndex]?.detail.name}》</span></div>
                             <div className="justify-end card-actions">
                                 {/* <button className="btn btn-primary">Buy Now</button> */}
                             </div>
@@ -267,8 +276,8 @@ function Global() {
                     <div className='flex flex-col gap-1 overflow-auto text-custom-text-light scrollbar-base'>
                         {data.map((game, index) => {
                             return <div key={index} className='flex flex-row justify-between'>
-                                <span>{game.detail.chineseName ? game.detail.chineseName : game.detail.name}</span>
-                                <span>{formatTime(game.detail.gameDuration)}</span>
+                                <span>{game?.detail.chineseName ? game?.detail.chineseName : game?.detail.name}</span>
+                                <span>{formatTime(game?.detail.gameDuration)}</span>
                             </div>
                         })}
                     </div>
@@ -279,8 +288,8 @@ function Global() {
                     <div className='flex flex-col gap-1 overflow-auto text-custom-text-light scrollbar-base'>
                         {sortedData.map((game, index) => {
                             return <div key={index} className='flex flex-row justify-between'>
-                                <span>{game.detail.chineseName ? game.detail.chineseName : game.detail.name}</span>
-                                <span>{game.detail.lastVisitDate}</span>
+                                <span>{game?.detail.chineseName ? game?.detail.chineseName : game?.detail.name}</span>
+                                <span>{game?.detail.lastVisitDate}</span>
                             </div>
                         })}
                     </div>

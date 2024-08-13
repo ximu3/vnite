@@ -41,7 +41,7 @@ function Library() {
 
         </div>
       </div>
-      <div className="grow">
+      <div className="grow bg-custom-main">
         <Routes>
           <Route index element={<Navigate to='./0' />} />
           {data.map((game, index) => {
