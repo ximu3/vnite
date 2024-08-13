@@ -7,6 +7,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
+        sans: ['"Microsoft JhengHei UI"', 'sans-serif'],
         // sans: ['LXGW WenKai', 'sans-serif'],
         // 23272E
       },

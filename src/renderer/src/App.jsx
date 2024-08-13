@@ -65,7 +65,7 @@ function App() {
   }, [])
 
   return (
-    <div className='relative w-screen h-screen font-mono'>
+    <div className='relative w-screen h-screen'>
       {/* <div className="toast toast-center">
         <div className="alert alert-info">
           <span>New mail arrived.</span>

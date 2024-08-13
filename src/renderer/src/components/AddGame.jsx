@@ -117,21 +117,21 @@ function Info() {
     <div className='w-full h-full'>
       <div className='pb-5 text-2xl font-bold text-center text-custom-text-light'>基本信息</div>
       <div className='flex flex-col gap-5'>
-        <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:text-custom-text-light/80 focus-within:hover:brightness-100">
+        <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
           <div className='font-semibold'>游戏名 |</div>
           <input type="text" name='gameName' className="grow" placeholder="推荐使用原名，请准确填写" value={gameName} onChange={(e) => { setGameName(e.target.value) }} />
         </label>
-        <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:text-custom-text-light/80 focus-within:hover:brightness-100">
+        <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
           <div className='font-semibold'>GID |</div>
           <input type="text" name='gid' className="grow" placeholder="月幕Galgame档案id，不带GA" value={gid} onChange={(e) => { setGID(e.target.value) }} />
-          <span className="border-0 badge bg-custom-blue/50">可选</span>
+          <span className="border-0 badge bg-custom-blue-6 text-custom-text-light">可选</span>
         </label>
-        <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:text-custom-text-light/80 focus-within:hover:brightness-100">
+        <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
           <div className='font-semibold'>VID |</div>
           <input type="text" name='vid' className="grow" placeholder="VNDB档案id，不带v" value={vid} onChange={(e) => { setVID(e.target.value) }} />
-          <span className="border-0 badge bg-custom-blue/50">可选</span>
+          <span className="border-0 badge bg-custom-blue-6 text-custom-text-light">可选</span>
         </label>
-        <div className='pt-1'>填写&nbsp;<span className='bg-custom-blue/50'> GID </span>&nbsp;和&nbsp;<span className='bg-custom-blue/50'> VNDB ID </span>&nbsp;项可大幅提高识别正确率。</div>
+        <div className='pt-1'>填写&nbsp;<span className='bg-custom-blue-6 text-custom-text-light'> GID </span>&nbsp;和&nbsp;<span className='text-custom-text-light bg-custom-blue-6'> VNDB ID </span>&nbsp;项可大幅提高识别正确率。</div>
       </div>
       <button id='discern' className='w-full h-10 transition-all mt-9 btn bg-custom-main-7 text-custom-text-light hover:brightness-125' onClick={submitInfo}>
         {isLoading && <span className='loading loading-spinner'></span>}
@@ -163,7 +163,7 @@ function GameList() {
             {
               gameList.map((gameData, index) => {
                 return (
-                  <tr className={gid === gameData["id"] ? "bg-custom-blue-4/20" : ""} key={index} onClick={() => {
+                  <tr className={gid === gameData["id"] ? "bg-custom-blue-4/20 text-custom-text-light" : ""} key={index} onClick={() => {
                     setGID(gameData["id"])
                     setGameName(gameData["name"])
                   }}>
@@ -248,11 +248,11 @@ function GamePath() {
       <div className='pb-3 text-2xl font-bold text-center text-custom-text-light'>选择路径</div>
       <div className='flex flex-row'>
         <button className='transition-all btn bg-custom-main-7 border-1 border-custom-main-7 text-custom-text-light hover:brightness-125 no-animation' onClick={selectGamePath}>选择游戏路径</button>
-        <input type='text' placeholder='拖拽获取路径' onDrop={getGamePathByDrag} onDragOver={handleDragOver} className='w-full border-0 hover:brightness-125 input bg-custom-main-7 focus-within:outline-none focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:hover:brightness-100 focus-within:text-custom-text-light/80' value={gamePath} onChange={(e) => { setGamePath(e.target.value) }} />
+        <input type='text' placeholder='拖拽获取路径' onDrop={getGamePathByDrag} onDragOver={handleDragOver} className='w-full border-0 hover:brightness-125 input bg-custom-main-7 focus-within:outline-none focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:hover:brightness-100 focus-within:text-custom-text-light/95' value={gamePath} onChange={(e) => { setGamePath(e.target.value) }} />
       </div>
       <div className='flex flex-row'>
         <button className='transition-all btn bg-custom-main-7 border-1 border-custom-main-7 text-custom-text-light hover:brightness-125 no-animation' onClick={selectSavePath}>选择存档路径</button>
-        <input type='text' placeholder='拖拽获取路径' onDrop={getSavePathByDrag} onDragOver={handleDragOver} className='w-full border-0 hover:brightness-125 input bg-custom-main-7 focus-within:outline-none focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:hover:brightness-100 focus-within:text-custom-text-light/80' value={savePath} onChange={(e) => { setSavePath(e.target.value) }} />
+        <input type='text' placeholder='拖拽获取路径' onDrop={getSavePathByDrag} onDragOver={handleDragOver} className='w-full border-0 hover:brightness-125 input bg-custom-main-7 focus-within:outline-none focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:hover:brightness-100 focus-within:text-custom-text-light/95' value={savePath} onChange={(e) => { setSavePath(e.target.value) }} />
       </div>
       <div className='pt-1'>可暂时跳过此步，后续可在该游戏设置页填写</div>
       <div className='flex flex-row-reverse items-end gap-5 pt-3'>
