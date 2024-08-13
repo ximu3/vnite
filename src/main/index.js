@@ -533,7 +533,15 @@ app.whenReady().then(() => {
       console.error('Error opening external program:', error);
     }
   });
+
+  mainWindow.on('close', async (event) => {
+    event.preventDefault(); // 阻止默认的关闭行为
+    // 执行自定义的关闭逻辑
+    await handleAppExit();
+  });
+
 })
+
 
 function getAppRootPath() {
   if (app.isPackaged) {
@@ -566,6 +574,31 @@ export function getSyncPath(file) {
   } else {
     return path.join(app.getAppPath(), '/src/renderer/public/app', file);
   }
+}
+
+async function handleAppExit() {
+  try {
+    await waitExitInRenderer();
+    app.exit(0); // 正常退出
+  } catch (error) {
+    console.error('退出过程中出错:', error);
+    app.exit(1); // 异常退出
+  }
+}
+
+function waitExitInRenderer() {
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      reject(new Error('等待渲染进程响应超时'));
+    }, 50000); // 设置50秒超时
+
+    mainWindow.webContents.send('app-exiting');
+
+    ipcMain.once('app-exit-processed', (event, result) => {
+      clearTimeout(timeout);
+      resolve(result);
+    });
+  });
 }
 
 

@@ -1,5 +1,5 @@
 
-import { useEffect, ipcRenderer } from 'react';
+import { useEffect, ipcRenderer, useRef } from 'react';
 
 import { useStore, create } from 'zustand';
 import Root from './components/Root';
@@ -13,6 +13,11 @@ import { useRootStore } from './components/Root';
 
 function App() {
   const { updateConfig, config } = useRootStore();
+  const configRef = useRef(config);
+
+  useEffect(() => {
+    configRef.current = config;
+  }, [config]);
   function getFormattedDateTimeWithSeconds() {
     const now = new Date();
 
@@ -26,19 +31,38 @@ function App() {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
   async function quit() {
-    if (config.cloudSync.enabled && config.cloudSync.github.username) {
-      const time = getFormattedDateTimeWithSeconds();
-      document.getElementById('syncDataAtQuit').showModal();
-      await window.electron.ipcRenderer.invoke('cloud-sync-github', time).then((data) => {
-        if (data === 'success') {
-          updateConfig(['cloudSync', 'github', 'lastSyncTime'], time);
-        } else {
-          console.log('cloud sync failed')
-        }
-      })
+    try {
+      const currentConfig = configRef.current;
+      if (currentConfig?.cloudSync.enabled && currentConfig?.cloudSync.github.username) {
+        const time = getFormattedDateTimeWithSeconds();
+        document.getElementById('syncDataAtQuit').showModal();
+        await window.electron.ipcRenderer.invoke('cloud-sync-github', time).then((data) => {
+          if (data === 'success') {
+            updateConfig(['cloudSync', 'github', 'lastSyncTime'], time);
+          } else {
+            console.log('cloud sync failed')
+          }
+        })
+      }
+    } catch (error) {
+      console.log(error)
+      throw error
     }
-    window.electron.ipcRenderer.send('close');
   }
+  useEffect(() => {
+    window.electron.ipcRenderer.on('app-exiting', async (event) => {
+      try {
+        // 执行必要的清理操作
+        await quit();
+        window.electron.ipcRenderer.send('app-exit-processed', { success: true });
+      } catch (error) {
+        window.electron.ipcRenderer.send('app-exit-processed', { success: false, error: error.message });
+      }
+    });
+    return () => {
+      window.electron.ipcRenderer.removeAllListeners('app-exiting');
+    }
+  }, [])
 
   return (
     <div className='relative w-screen h-screen font-mono'>
@@ -85,7 +109,7 @@ function App() {
             <button className='w-8 h-8 p-0 btn-ghost hover:bg-custom-text/30' onClick={() => window.electron.ipcRenderer.send('maximize')}>
               <span className='icon-[material-symbols-light--maximize] w-full h-full'></span>
             </button>
-            <button className='w-8 h-8 p-0 btn-ghost hover:bg-custom-red' onClick={quit}>
+            <button className='w-8 h-8 p-0 btn-ghost hover:bg-custom-red' onClick={() => window.electron.ipcRenderer.send('close')}>
               <span className='icon-[material-symbols-light--close] w-full h-full'></span>
             </button>
           </div>
