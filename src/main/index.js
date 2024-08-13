@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, dialog, Tray, Menu, globalShortcut } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -15,6 +15,7 @@ import path from 'path';
 import chokidar from 'chokidar';
 
 let mainWindow
+let tray = null;
 
 function createWindow() {
   // Create the browser window.
@@ -63,6 +64,41 @@ function createWindow() {
   // });
 }
 
+function toggleFullScreen() {
+  if (mainWindow) {
+    const isFullScreen = mainWindow.isFullScreen();
+    mainWindow.setFullScreen(!isFullScreen);
+  }
+}
+
+function exitFullScreen() {
+  if (mainWindow) {
+    mainWindow.setFullScreen(false);
+  }
+}
+
+function toFullScreen() {
+  if (mainWindow) {
+    mainWindow.setFullScreen(true);
+  }
+}
+
+function bringApplicationToFront() {
+  const win = BrowserWindow.getAllWindows()[0];
+  if (win) {
+    if (win.isMinimized()) win.restore();
+    if (process.platform === 'darwin') {
+      app.dock.show();
+      app.focus({ steal: true });
+    } else {
+      win.setAlwaysOnTop(true);
+      win.show();
+      win.focus();
+      win.setAlwaysOnTop(false);
+    }
+  }
+}
+
 
 let processes = new Map();
 // This method will be called when Electron has finished
@@ -89,6 +125,35 @@ app.whenReady().then(() => {
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
+
+  // globalShortcut.register('F11', () => {
+  //   toggleFullScreen();
+  // });
+
+  tray = new Tray(icon);
+
+  tray.setToolTip('我的 Electron 应用');
+
+  const contextMenu = Menu.buildFromTemplate([
+    { label: '显示主窗口', click: () => { bringApplicationToFront() } },
+    { type: 'separator' },
+    {
+      label: '切换至全屏/窗口',
+      click: () => { toggleFullScreen(); }
+    },
+    { type: 'separator' },
+    {
+      label: '退出',
+      click: () => { app.quit(); }
+    }
+  ]);
+
+  tray.setContextMenu(contextMenu);
+
+  tray.on('click', () => {
+    // 处理左键点击
+  });
+
 
   ipcMain.on('close', () => app.quit())
 
