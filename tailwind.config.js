@@ -8,10 +8,11 @@ module.exports = {
     extend: {
       fontFamily: {
         // sans: ['LXGW WenKai', 'sans-serif'],
+        // 23272E
       },
       colors: {
         'custom': {
-          'main': '#23272E',
+          'main': '#22262D',
           'text': '#B8B9B9',
           'text-light': '#F4F5F7',
           'main-1': '#292D34',
