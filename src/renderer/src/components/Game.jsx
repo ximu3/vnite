@@ -231,9 +231,9 @@ function Game({ index }) {
 
             <div className="relative w-full h-full bg-fixed bg-center bg-cover">
                 {/* <div className="absolute inset-0 bg-custom-main"></div> */}
-                <img src={`${backgroundImage}?t=${timestamp}`} alt="bg" className="w-full h-full bg-cover"></img>
-                <div className="absolute inset-0 shadow-t-lg top-104 border-t-1 border-white/30 shadow-black/80 bg-gradient-to-b from-custom-main/40 via-40% via-custom-main/90 to-custom-main to-95% backdrop-blur-lg"></div>
-
+                <img src={`${backgroundImage}?t=${timestamp}`} alt="bg" className="object-cover w-full h-full"></img>
+                <div className="absolute inset-0 shadow-t-lg top-104 border-t-1 border-white/30 shadow-black/80 bg-gradient-to-b from-custom-main/40 via-45% via-custom-main/95 to-custom-main to-60% backdrop-blur-lg"></div>
+                <div className="sticky inset-0 pointer-events-none bg-custom-main/90"></div>
 
                 {/* <img alt="cover image" src={gameData['cover']} className="absolute z-10 object-cover w-56 h-auto transform border-2 right-16 lg:right-24 2xl:right-40 2xl:-bottom-60 -bottom-16 lg:-bottom-48 lg:w-64 2xl:w-80 border-primary"></img> */}
 
