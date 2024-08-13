@@ -50,6 +50,13 @@ function createWindow() {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 
+  mainWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.key === 'F11' && input.type === 'keyDown') {
+      toggleFullScreen();
+      event.preventDefault();
+    }
+  });
+
   // const dataPath = getDataPath('data.json');
   // const configPath = getConfigPath('config.json');
   // const dataWatcher = chokidar.watch(dataPath);
