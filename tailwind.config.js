@@ -7,9 +7,10 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Microsoft JhengHei UI"', 'sans-serif'],
+        sans: ['"Microsoft YaHei UI"', 'sans-serif'],
         // sans: ['LXGW WenKai', 'sans-serif'],
         // 23272E
+        // 1EB44B
       },
       colors: {
         'custom': {
@@ -23,13 +24,14 @@ module.exports = {
           'modal': '#171D25',
           'stress': '#2A2D34',
           'focus': '#25272C',
-          'green': '#1EB44B',
+          'green': '#4FC830',
           'blue-2': '#38709A',
           'blue-3': '#1B2838',
           'blue-4': '#2995D8',
           'blue-6': '#1A9FFF',
           'red': '#E22A27',
           'hover': '#3D4450',
+          'blue-5': '#3E4E69',
         },
         'chestnut': {
           '50': '#fdf4f3',
