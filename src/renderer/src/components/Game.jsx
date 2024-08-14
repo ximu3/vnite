@@ -889,7 +889,7 @@ function MediaSettings() {
 
                 // 这里可以添加更新UI或通知用户的逻辑
                 setTimestamp()
-                setSettingAlert('更换图片成功');
+                setSettingAlert('更换图片成功！');
                 setTimeout(() => { setSettingAlert('') }, 3000);
             } else {
                 // 用户取消了选择
@@ -897,7 +897,7 @@ function MediaSettings() {
             }
         } catch (error) {
             console.error('更换图片时发生错误:', error);
-            setSettingAlert('更换图片失败');
+            setSettingAlert('更换图片失败！');
             setTimeout(() => { setSettingAlert('') }, 3000);
         }
     }
@@ -914,15 +914,15 @@ function MediaSettings() {
 
                 // 这里可以添加更新UI或通知用户的逻辑
                 setTimestamp()
-                setSettingAlert('更换图片成功');
+                setSettingAlert('更换图片成功！');
                 setTimeout(() => { setSettingAlert('') }, 3000);
             } else {
                 // 用户取消了选择
-                console.log('用户取消了文件选择');
+                console.log('用户取消了文件选择！');
             }
         } catch (error) {
             console.error('更换图片时发生错误:', error);
-            setSettingAlert('更换图片失败');
+            setSettingAlert('更换图片失败！');
             setTimeout(() => { setSettingAlert('') }, 3000);
         }
     }
@@ -975,14 +975,14 @@ function StartupSettings() {
         e.preventDefault();
         const files = Array.from(e.dataTransfer.files);
         if (files.length > 1) {
-            setSettingAlert('只能选择一个路径');
+            setSettingAlert('只能选择一个路径！');
             setTimeout(() => { setSettingAlert(''); }, 3000);
             return
         }
         const file = files[0];
         const fileExtension = file.name.split('.').pop();
         if (fileExtension !== 'exe') {
-            setSettingAlert('请选择可执行文件');
+            setSettingAlert('请选择可执行文件！');
             setTimeout(() => { setSettingAlert(''); }, 3000);
             return
         }
@@ -993,7 +993,7 @@ function StartupSettings() {
         e.preventDefault();
         const files = Array.from(e.dataTransfer.files);
         if (files.length > 1) {
-            setSettingAlert('只能选择一个路径');
+            setSettingAlert('只能选择一个路径！');
             setTimeout(() => { setSettingAlert(''); }, 3000);
             return
         }
