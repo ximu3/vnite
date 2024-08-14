@@ -113,7 +113,7 @@ function Game({ index }) {
                 setIsGameRunning(false);
                 if (totalRunTime >= 1) {
                     updateData([index, 'detail', 'frequency'], data[index]['detail']['frequency'] + 1);
-                    if (config['cloudSync']['enabled']) {
+                    if (config?.cloudSync?.enabled) {
                         if (config['cloudSync']['mode'] === 'github') {
                             if (config['cloudSync']['github']['repoUrl']) {
                                 const time = getFormattedDateTimeWithSeconds()
@@ -128,7 +128,7 @@ function Game({ index }) {
                                     }
                                 })
                             }
-                        } else if (config['cloudSync']['mode'] === 'webdav') {
+                        } else if (config?.cloudSync?.mode === 'webdav') {
                             if (config['cloudSync']['webdav']['url']) {
                                 const time = getFormattedDateTimeWithSeconds()
                                 window.electron.ipcRenderer.invoke('cloud-sync-webdav-upload', config['cloudSync']['webdav']['url'], config['cloudSync']['webdav']['username'], config['cloudSync']['webdav']['password'], config['cloudSync']['webdav']['path']).then((data) => {
