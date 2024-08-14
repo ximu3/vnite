@@ -26,6 +26,9 @@ const useGameStore = create(set => ({
     setCharacterImage: (characterImage) => set({ characterImage }),
     coverImage: '',
     setCoverImage: (coverImage) => set({ coverImage }),
+    memoryImagePath: [],
+    setMemoryImagePath: (memoryImagePath) => set({ memoryImagePath }),
+    updateMemoryImagePath: (memoryImagePath) => set(state => ({ memoryImagePath: [...state.memoryImagePath, memoryImagePath] })),
 }));
 
 function Game({ index }) {
@@ -34,6 +37,7 @@ function Game({ index }) {
     const { data, setData, setAlert, updateData, timestamp, config, updateConfig } = useRootStore();
     const gameData = data[index]['detail'];
     const characterData = data[index]['characters'];
+    const memoryData = data[index]['memories'];
     const { settingData, setSettingData } = useGameSetting();
     function getFormattedDate(date = new Date()) {
         const year = date.getFullYear();
@@ -537,6 +541,7 @@ function Save({ index }) {
 
 function Memory({ index }) {
     const { data, setData, setAlert, updateData, timestamp, setTimestamp } = useRootStore();
+    const { memoryImagePath } = useGameStore();
     const [memoryImg, setMemoryImg] = useState('')
     const [memory, setMemory] = useState('')
     async function selectImgPath() {
@@ -551,7 +556,7 @@ function Memory({ index }) {
         try {
             const id = Date.now().toString()
             await window.electron.ipcRenderer.send('save-memory-img', data[index]['detail']['id'], id, memoryImg)
-            updateData([index, 'memories'], [...data[index]['memories'], { id: id, imgPath: `/${data[index]['detail']['id']}/memories/${id}.webp`, note: memory }])
+            updateData([index, 'memories'], [...data[index]['memories'], { id: id, imgPath: `/games/${data[index]['detail']['id']}/memories/${id}.webp`, note: memory }])
             document.getElementById('addMemory').close()
             setAlert('保存成功')
             setTimeout(() => { setAlert('') }, 3000)
@@ -599,7 +604,7 @@ function Memory({ index }) {
             {data[index]['memories'] && data[index]['memories'].map((memory, index) => {
                 return (
                     <div key={index} className='flex flex-col w-auto shadow-md'>
-                        <img src={`${memory['imgPath']}?t=${timestamp}`} className='w-auto h-auto'></img>
+                        <img src={`${memoryImagePath[index]}?t=${timestamp}`} className='w-auto h-auto'></img>
                         <div className='p-3 bg-custom-blue-3/60'>{memory['note']}</div>
                     </div>
                 )

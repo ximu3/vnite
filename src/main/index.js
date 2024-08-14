@@ -362,7 +362,7 @@ app.whenReady().then(() => {
   })
 
   ipcMain.on('save-memory-img', async (event, gameId, imgId, imgPath) => {
-    const imgDir = getDataPath(`games/${gameId}/memory/`); // 存储记忆图片的目录
+    const imgDir = getDataPath(`games/${gameId}/memories/`); // 存储记忆图片的目录
     const webpFileName = `${imgId}.webp`; // 使用imgId作为文件名
     const webpFilePath = join(imgDir, webpFileName);
 
