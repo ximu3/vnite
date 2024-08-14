@@ -33,7 +33,7 @@ const useGameStore = create(set => ({
 
 function Game({ index }) {
     const naivgate = useNavigate();
-    const { backgroundImage, setBackgroundImage, characterImage, updateCharacterImage, setCharacterImage, setCoverImage } = useGameStore();
+    const { backgroundImage, setBackgroundImage, characterImage, updateCharacterImage, setCharacterImage, setCoverImage, updateMemoryImagePath, setMemoryImagePath, setIsGameRunning, isGameRunning } = useGameStore();
     const { data, setData, setAlert, updateData, timestamp, config, updateConfig } = useRootStore();
     const gameData = data[index]['detail'];
     const characterData = data[index]['characters'];
@@ -58,32 +58,40 @@ function Game({ index }) {
 
         return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     }
-    useEffect(() => {
-        setCharacterImage([]);
-        async function loadImagePath() {
-            const path = await window.electron.ipcRenderer.invoke('get-data-path', gameData.backgroundImage);
-            setBackgroundImage(path);
-        }
-        loadImagePath();
-    }, [gameData.backgroundImage]);
 
     useEffect(() => {
-        async function loadImagePath() {
-            characterData.forEach(async (character) => {
-                const path = await window.electron.ipcRenderer.invoke('get-data-path', character['cover']);
-                updateCharacterImage(path);
-            })
-        }
-        loadImagePath();
-    }, [characterData]);
+        async function loadImages() {
+            setCharacterImage([]);
+            setMemoryImagePath([]);
 
-    useEffect(() => {
-        async function loadImagePath() {
-            const path = await window.electron.ipcRenderer.invoke('get-data-path', gameData.cover);
-            setCoverImage(path);
+            const [coverPath, bgPath] = await Promise.all([
+                window.electron.ipcRenderer.invoke('get-data-path', gameData.cover),
+                window.electron.ipcRenderer.invoke('get-data-path', gameData.backgroundImage)
+            ]);
+
+            setCoverImage(coverPath);
+            setBackgroundImage(bgPath);
+
+            const memoryPaths = await Promise.all(
+                memoryData.map(memory =>
+                    window.electron.ipcRenderer.invoke('get-data-path', memory.imgPath)
+                )
+            );
+
+            setMemoryImagePath(memoryPaths);
+
+            const characterPaths = await Promise.all(
+                characterData.map(character =>
+                    window.electron.ipcRenderer.invoke('get-data-path', character.cover)
+                )
+            );
+
+            setCharacterImage(characterPaths);
         }
-        loadImagePath();
-    }, [gameData.cover]);
+
+
+        loadImages();
+    }, [gameData]);
     // 使用示例
     useEffect(() => {
         window.electron.ipcRenderer.on('game-start-result', (event, result) => {
