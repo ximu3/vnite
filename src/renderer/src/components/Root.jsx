@@ -87,7 +87,7 @@ function Root() {
     <div className='flex flex-row w-full h-full text-custom-text-light'>
       {alert &&
         <div className="z-20 toast toast-center">
-          <div className="alert bg-custom-blue-6">
+          <div className="pr-0 alert bg-custom-blue-6">
             <span className='text-custom-text-light'>{alert}</span>
           </div>
         </div>

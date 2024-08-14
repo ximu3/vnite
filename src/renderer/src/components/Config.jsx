@@ -100,7 +100,7 @@ function Config() {
                     {
                         configAlert &&
                         <div className="toast toast-center">
-                            <div className="alert bg-custom-blue-6">
+                            <div className="pr-0 alert bg-custom-blue-6">
                                 <span className='text-custom-text-light'>{configAlert}</span>
                             </div>
                         </div>
@@ -188,7 +188,7 @@ function CloudSync() {
         setIsLoading(true);
         await window.electron.ipcRenderer.invoke('cloud-sync-github', time).then((data) => {
             if (data === 'success') {
-                setConfigAlert('Github同步成功');
+                setConfigAlert('Github同步成功！');
                 updateConfig(['cloudSync', 'github', 'lastSyncTime'], time);
                 setTimeout(() => {
                     setConfigAlert('');
@@ -206,7 +206,7 @@ function CloudSync() {
         const time = getFormattedDateTimeWithSeconds();
         window.electron.ipcRenderer.invoke('cloud-sync-webdav-upload', config['cloudSync']['webdav']['url'], config['cloudSync']['webdav']['username'], config['cloudSync']['webdav']['password'], config['cloudSync']['webdav']['path']).then((data) => {
             if (data === 'success') {
-                setConfigAlert('WebDav上传成功');
+                setConfigAlert('WebDav上传成功！');
                 updateConfig(['cloudSync', 'webdav', 'lastSyncTime'], time);
                 setTimeout(() => {
                     setConfigAlert('');
@@ -224,7 +224,7 @@ function CloudSync() {
         const time = getFormattedDateTimeWithSeconds();
         window.electron.ipcRenderer.invoke('cloud-sync-webdav-download', config['cloudSync']['webdav']['url'], config['cloudSync']['webdav']['username'], config['cloudSync']['webdav']['password'], config['cloudSync']['webdav']['path']).then((data) => {
             if (data === 'success') {
-                setConfigAlert('WebDav下载成功');
+                setConfigAlert('WebDav下载成功！');
                 updateConfig(['cloudSync', 'webdav', 'lastSyncTime'], time);
                 setTimeout(() => {
                     setConfigAlert('');
@@ -299,7 +299,7 @@ function CloudSync() {
                 updateConfig(['cloudSync', 'github', 'username'], '');
                 updateConfig(['cloudSync', 'github', 'accessToken'], '');
                 updateConfig(['cloudSync', 'github', 'repoUrl'], '');
-                setConfigAlert('Github账号已退出');
+                setConfigAlert('Github账号已退出！');
             } else {
                 setConfigAlert('退出Github账号失败：' + data);
             }
@@ -316,7 +316,7 @@ function CloudSync() {
                 updateConfig(['cloudSync', 'github', 'username'], '');
                 updateConfig(['cloudSync', 'github', 'accessToken'], '');
                 updateConfig(['cloudSync', 'github', 'repoUrl'], '');
-                setConfigAlert('Github账号已退出');
+                setConfigAlert('Github账号已退出！');
             } else {
                 setConfigAlert('退出Github账号失败：' + data);
             }

@@ -107,11 +107,11 @@ function Game({ index }) {
                                 const time = getFormattedDateTimeWithSeconds()
                                 window.electron.ipcRenderer.invoke('cloud-sync-github', time).then((data) => {
                                     if (data === 'success') {
-                                        setAlert('云同步成功')
+                                        setAlert('云同步成功！')
                                         updateConfig(['cloudSync', 'github', 'lastSyncTime'], time)
                                         setTimeout(() => { setAlert('') }, 3000)
                                     } else {
-                                        setAlert('云同步失败，请检查设置')
+                                        setAlert('云同步失败，请检查设置！')
                                         setTimeout(() => { setAlert('') }, 3000)
                                     }
                                 })
@@ -121,11 +121,11 @@ function Game({ index }) {
                                 const time = getFormattedDateTimeWithSeconds()
                                 window.electron.ipcRenderer.invoke('cloud-sync-webdav-upload', config['cloudSync']['webdav']['url'], config['cloudSync']['webdav']['username'], config['cloudSync']['webdav']['password'], config['cloudSync']['webdav']['path']).then((data) => {
                                     if (data === 'success') {
-                                        setAlert('云同步成功')
+                                        setAlert('云同步成功！')
                                         updateConfig(['cloudSync', 'webdav', 'lastSyncTime'], time)
                                         setTimeout(() => { setAlert('') }, 3000)
                                     } else {
-                                        setAlert('云同步失败，请检查设置')
+                                        setAlert('云同步失败，请检查设置！')
                                         setTimeout(() => { setAlert('') }, 3000)
                                     }
                                 })
@@ -473,10 +473,10 @@ function Save({ index }) {
     async function switchSave(id) {
         try {
             window.electron.ipcRenderer.send('switch-save', data[index]['detail']['id'], id, data[index]['detail']['savePath']);
-            setAlert('切换存档成功')
+            setAlert('切换存档成功！')
             setTimeout(() => { setAlert('') }, 3000)
         } catch (e) {
-            setAlert('切换存档失败')
+            setAlert('切换存档失败！')
             setTimeout(() => { setAlert('') }, 3000)
         }
     }
@@ -484,11 +484,11 @@ function Save({ index }) {
         try {
             window.electron.ipcRenderer.send('delete-save', data[index]['detail']['id'], id);
             updateData([index, 'saves'], data[index]['saves'].filter(save => save['id'] !== id))
-            setAlert('删除存档成功')
+            setAlert('删除存档成功！')
             setTimeout(() => { setAlert('') }, 3000)
         }
         catch (e) {
-            setAlert('删除存档失败')
+            setAlert('删除存档失败！')
             setTimeout(() => { setAlert('') }, 3000)
         }
     }
@@ -558,14 +558,14 @@ function Memory({ index }) {
             await window.electron.ipcRenderer.send('save-memory-img', data[index]['detail']['id'], id, memoryImg)
             updateData([index, 'memories'], [...data[index]['memories'], { id: id, imgPath: `/games/${data[index]['detail']['id']}/memories/${id}.webp`, note: memory }])
             document.getElementById('addMemory').close()
-            setAlert('保存成功')
+            setAlert('保存成功！')
             setTimeout(() => { setAlert('') }, 3000)
             setTimeout(() => {
                 setTimestamp()
             }, 500);
         } catch (e) {
             document.getElementById('addMemory').close()
-            setAlert('保存失败')
+            setAlert('保存失败！')
             setTimeout(() => { setAlert('') }, 3000)
         }
     }
@@ -655,10 +655,10 @@ function Setting({ index }) {
             try {
                 const newData = JSON.parse(dataString)
                 updateData([index], newData)
-                setSettingAlert('保存成功')
+                setSettingAlert('保存成功！')
                 setTimeout(() => { setSettingAlert('') }, 3000)
             } catch (error) {
-                setSettingAlert('保存失败，请检查数据格式')
+                setSettingAlert('保存失败，请检查数据格式！')
                 setTimeout(() => { setSettingAlert('') }, 3000)
             }
             return
@@ -666,13 +666,13 @@ function Setting({ index }) {
             await window.electron.ipcRenderer.invoke('get-folder-size', settingData['detail']['gamePath']).then((data) => {
                 updateData([index], settingData)
                 updateData([index, 'detail', 'volume'], data)
-                setSettingAlert('保存成功')
+                setSettingAlert('保存成功！')
                 setTimeout(() => { setSettingAlert('') }, 3000)
             })
             return
         }
         updateData([index], settingData)
-        setSettingAlert('保存成功')
+        setSettingAlert('保存成功！')
         setTimeout(() => { setSettingAlert('') }, 3000)
     }
     const tabs = ['general', 'advanced', 'media', 'startup'];
@@ -715,7 +715,7 @@ function Setting({ index }) {
             </div>
             {settingAlert &&
                 <div className="toast toast-center">
-                    <div className="alert bg-custom-blue-6">
+                    <div className="pr-0 alert bg-custom-blue-6">
                         <span className='text-custom-text-light'>{settingAlert}</span>
                     </div>
                 </div>

@@ -36,7 +36,7 @@ function AddGame() {
   let navigate = useNavigate();
   function quit() {
     if (isLoading) {
-      setAlert('请等待操作完成');
+      setAlert('请等待操作完成！');
       setTimeout(() => { setAlert(''); }, 3000);
       return
     }
@@ -72,7 +72,7 @@ function AddGame() {
         </div>
         {alert &&
           <div className="toast toast-center">
-            <div className="alert bg-custom-blue-6">
+            <div className="pr-0 alert bg-custom-blue-6">
               <span className='text-custom-text-light'>{alert}</span>
             </div>
           </div>
@@ -210,14 +210,14 @@ function GamePath() {
     e.preventDefault();
     const files = Array.from(e.dataTransfer.files);
     if (files.length > 1) {
-      setAlert('只能选择一个路径');
+      setAlert('只能选择一个路径！');
       setTimeout(() => { setAlert(''); }, 3000);
       return
     }
     const file = files[0];
     const fileExtension = file.name.split('.').pop();
     if (fileExtension !== 'exe') {
-      setAlert('请选择可执行文件');
+      setAlert('请选择可执行文件！');
       setTimeout(() => { setAlert(''); }, 3000);
       return
     }
@@ -228,7 +228,7 @@ function GamePath() {
     e.preventDefault();
     const files = Array.from(e.dataTransfer.files);
     if (files.length > 1) {
-      setAlert('只能选择一个路径');
+      setAlert('只能选择一个路径！');
       setTimeout(() => { setAlert(''); }, 3000);
       return
     }
@@ -269,7 +269,7 @@ function GameBg() {
   let navigate = useNavigate();
   async function submitAllData() {
     if (gameBg === '') {
-      setAlert('请选择背景图');
+      setAlert('请选择背景图！');
       setTimeout(() => { setAlert(''); }, 3000);
       return
     }
