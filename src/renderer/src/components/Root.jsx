@@ -92,8 +92,8 @@ function Root() {
           </div>
         </div>
       }
-      <ul className="flex flex-col shadow-lg w-14 menu bg-custom-main-3 rounded-box shrink-0">
-        <li><NavButton to="/library" className="" name={<span className="icon-[uil--books] w-6 h-6"></span>} /></li>
+      <ul className="flex flex-col gap-2 shadow-lg w-14 menu bg-custom-main-3 rounded-box shrink-0">
+        <li><NavButton to="/library" className="" name={<span className="icon-[fluent--library-20-filled] w-6 h-6"></span>} /></li>
         <li><NavButton to="/record" className="" name={<span className="icon-[fa--pie-chart] w-6 h-6"></span>} /></li>
         {/* <li><NavButton to="/config" className="bg-primary" name="c" /></li> */}
       </ul>
