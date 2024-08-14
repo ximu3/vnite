@@ -161,6 +161,14 @@ app.whenReady().then(() => {
     // 处理左键点击
   });
 
+  mainWindow.on('maximize', () => {
+    mainWindow.webContents.send('window-maximized');
+  });
+
+  mainWindow.on('unmaximize', () => {
+    mainWindow.webContents.send('window-unmaximized');
+  });
+
 
   ipcMain.on('close', () => app.quit())
 

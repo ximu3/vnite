@@ -1,5 +1,5 @@
 
-import { useEffect, ipcRenderer, useRef } from 'react';
+import { useEffect, ipcRenderer, useRef, useState } from 'react';
 
 import { useStore, create } from 'zustand';
 import Root from './components/Root';
@@ -14,6 +14,7 @@ import { useRootStore } from './components/Root';
 function App() {
   const { updateConfig, config } = useRootStore();
   const configRef = useRef(config);
+  const [ismaximize, setIsmaximize] = useState(false);
 
   useEffect(() => {
     configRef.current = config;
@@ -59,6 +60,15 @@ function App() {
         window.electron.ipcRenderer.send('app-exit-processed', { success: false, error: error.message });
       }
     });
+
+    window.electron.ipcRenderer.on('window-maximized', async (event) => {
+      setIsmaximize(true);
+    });
+
+    window.electron.ipcRenderer.on('window-unmaximized', async (event) => {
+      setIsmaximize(false);
+    });
+
     return () => {
       window.electron.ipcRenderer.removeAllListeners('app-exiting');
     }
@@ -85,23 +95,28 @@ function App() {
       </MemoryRouter>
 
       <div className='absolute top-0 left-0 z-20 w-full h-8'>
-        <div className='absolute top-0 left-0 z-20 flex items-center justify-between w-full h-8 title-bar text-custom-text-light bg-custom-titlebar'>
+        <div className='absolute top-0 left-0 z-20 flex items-center justify-between w-full h-8 title-bar text-custom-text-light bg-custom-titlebar border-b-0.5 border-black'>
           <div className='h-full p-0 dropdown no-drag bg-custom-titlebar'>
             <div tabIndex={0} role='button' className='w-full h-full gap-2 mb-1 text-lg font-semibold text-center border-0 text-custom-text-light input-sm bg-custom-titlebar hover:brightness-125'>my-gal</div>
-            <ul tabIndex={0} className="dropdown-content menu z-[1] w-52 p-2 shadow rounded-none bg-custom-dropdown">
+            <ul tabIndex={0} className="dropdown-content menu z-[1] w-52 p-2 ml-1 shadow rounded-none bg-custom-dropdown">
               <li className='hover:bg-custom-text hover:text-black' onClick={() => { document.getElementById('addGame').showModal() }}><a className='transition-none'>添加游戏</a></li>
               <li className='hover:bg-custom-text hover:text-black' onClick={() => { document.getElementById('setting').showModal() }}><a className='transition-none'>设置</a></li>
             </ul>
           </div>
-          <div className='flex no-drag'>
-            <button className='w-8 h-8 p-0 btn-ghost hover:bg-custom-text/30' onClick={() => window.electron.ipcRenderer.send('minimize')}>
-              <span className='icon-[material-symbols-light--minimize] w-full h-full'></span>
+          <div className='flex items-start justify-center no-drag'>
+            <button className='flex items-center justify-center w-8 h-8 p-0 btn-ghost hover:bg-custom-text/30' onClick={() => window.electron.ipcRenderer.send('minimize')}>
+              <span className='icon-[mdi-light--minus] w-5 h-5'></span>
             </button>
-            <button className='w-8 h-8 p-0 btn-ghost hover:bg-custom-text/30' onClick={() => window.electron.ipcRenderer.send('maximize')}>
-              <span className='icon-[material-symbols-light--maximize] w-full h-full'></span>
+            <button className='flex items-center justify-center w-8 h-8 p-0 btn-ghost hover:bg-custom-text/30' onClick={() => window.electron.ipcRenderer.send('maximize')}>
+              {ismaximize ? <span className='icon-[material-symbols-light--select-window-2-outline-sharp] w-4 h-4'></span>
+                : <span className='icon-[mdi-light--square] w-4 h-4'></span>
+              }
             </button>
-            <button className='w-8 h-8 p-0 btn-ghost hover:bg-custom-red' onClick={() => window.electron.ipcRenderer.send('close')}>
-              <span className='icon-[material-symbols-light--close] w-full h-full'></span>
+            {/* <button className='flex items-center justify-center w-8 h-8 p-0 btn-ghost hover:bg-custom-text/30' onClick={() => window.electron.ipcRenderer.send('maximize')}>
+              <span className='icon-[material-symbols-light--square-outline] w-4 h-4'></span>
+            </button> */}
+            <button className='flex items-center justify-center w-8 h-8 p-0 btn-ghost hover:bg-custom-red' onClick={() => window.electron.ipcRenderer.send('close')}>
+              <span className='icon-[material-symbols-light--close] w-5 h-5'></span>
             </button>
           </div>
         </div>
