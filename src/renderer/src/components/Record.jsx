@@ -223,7 +223,7 @@ function Global() {
                 <div className='w-1/3 p-3 bg-custom-stress'>
                     <div className='text-lg font-bold'>总览</div>
                     <div className='m-0 divider'></div>
-                    <div className='flex flex-col gap-3 text-custom-text-light'>
+                    <div className='flex flex-col gap-3 text-base text-custom-text-light'>
                         <div className='flex flex-row justify-between'>
                             <div>全部</div>
                             <div>{quantity}</div>
@@ -273,7 +273,7 @@ function Global() {
                 <div className='w-1/3 p-3 bg-custom-stress'>
                     <div className='text-lg font-bold'>最多游玩时间</div>
                     <div className='m-0 divider'></div>
-                    <div className='flex flex-col gap-1 overflow-auto text-custom-text-light scrollbar-base'>
+                    <div className='flex flex-col gap-1 overflow-auto text-base text-custom-text-light scrollbar-base'>
                         {data.map((game, index) => {
                             return <div key={index} className='flex flex-row justify-between'>
                                 <span>{game?.detail.chineseName ? game?.detail.chineseName : game?.detail.name}</span>
@@ -285,7 +285,7 @@ function Global() {
                 <div className='w-1/3 p-3 bg-custom-stress'>
                     <div className='text-lg font-bold'>最近游玩</div>
                     <div className='m-0 divider'></div>
-                    <div className='flex flex-col gap-1 overflow-auto text-custom-text-light scrollbar-base'>
+                    <div className='flex flex-col gap-1 overflow-auto text-base text-custom-text-light scrollbar-base'>
                         {sortedData.map((game, index) => {
                             return <div key={index} className='flex flex-row justify-between'>
                                 <span>{game?.detail.chineseName ? game?.detail.chineseName : game?.detail.name}</span>
