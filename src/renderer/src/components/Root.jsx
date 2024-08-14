@@ -40,8 +40,8 @@ function NavButton({ to, name }) {
       isPending
         ? ""
         : isActive
-          ? "bg-custom-blue-4/20 text-custom-text-light"
-          : ""
+          ? "p-2 flex items-center justify-center transition-none bg-gradient-to-br from-custom-blue-5 to-custom-blue-5/80 text-custom-text-light text-xs hover:bg-custom-blue-5 hover:brightness-125"
+          : "p-2 flex items-center justify-center active:bg-gradient-to-br active:from-custom-blue-5 active:to-custom-blue-5/80 hover:bg-gradient-to-br hover:from-custom-blue-5/50 hover:to-custom-blue-5/30 active:text-custom-text-light"
     }
       to={to}>
       {name}
@@ -92,10 +92,10 @@ function Root() {
           </div>
         </div>
       }
-      <ul className="shadow-lg w-14 menu bg-custom-main-3 rounded-box shrink-0">
-        <li><NavButton to="/library" className="bg-primary" name="l" /></li>
-        <li><NavButton to="/record" className="bg-primary" name="r" /></li>
-        <li><NavButton to="/config" className="bg-primary" name="c" /></li>
+      <ul className="flex flex-col shadow-lg w-14 menu bg-custom-main-3 rounded-box shrink-0">
+        <li><NavButton to="/library" className="" name={<span className="icon-[uil--books] w-6 h-6"></span>} /></li>
+        <li><NavButton to="/record" className="" name={<span className="icon-[fa--pie-chart] w-6 h-6"></span>} /></li>
+        {/* <li><NavButton to="/config" className="bg-primary" name="c" /></li> */}
       </ul>
       <div className='grow'>
         <Routes>
