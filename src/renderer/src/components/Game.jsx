@@ -9,8 +9,8 @@ function NavTab({ to, name }) {
             isPending
                 ? "tab text-custom-text"
                 : isActive
-                    ? "tab tab-active text-custom-text-light"
-                    : "tab text-custom-text"
+                    ? "tab tab-active text-custom-text-light bg-transparent bg-gradient-to-br from-custom-blue-6/80 to-custom-blue-6/70 hover:bg-custom-blue-6"
+                    : "tab text-custom-text hover:text-custom-text-light"
         }
             to={to} role="tab">
             {name}
@@ -248,7 +248,7 @@ function Game({ index }) {
             <div className="relative w-full h-full bg-fixed bg-center bg-cover">
                 {/* <div className="absolute inset-0 bg-custom-main"></div> */}
                 <img src={`${backgroundImage}?t=${timestamp}`} alt="bg" className="object-cover w-full h-full"></img>
-                <div className="absolute inset-0 shadow-t-lg top-104 border-t-1 border-white/30 shadow-black/80 bg-gradient-to-b from-custom-main/40 via-45% via-custom-main/95 to-custom-main to-60% backdrop-blur-lg"></div>
+                <div className="absolute inset-0 shadow-t-lg top-104 border-t-1 border-white/30 shadow-black/80 bg-gradient-to-b from-custom-main/40 via-45% via-custom-main/85 to-custom-main backdrop-blur-lg"></div>
                 <div className="sticky inset-0 pointer-events-none bg-custom-main/90"></div>
 
                 {/* <img alt="cover image" src={gameData['cover']} className="absolute z-10 object-cover w-56 h-auto transform border-2 right-16 lg:right-24 2xl:right-40 2xl:-bottom-60 -bottom-16 lg:-bottom-48 lg:w-64 2xl:w-80 border-primary"></img> */}
@@ -342,14 +342,14 @@ function Game({ index }) {
                     </div>
 
                     <div className="flex flex-col w-full pt-8">
-                        <div role="tablist" className="pl-44 pr-44 tabs tabs-bordered">
+                        <div role="tablist" className="self-center w-1/2 pl-2 pr-2 font-semibold transition-all bg-transparent shadow-lg tabs tabs-boxed backdrop-blur-3xl">
                             <NavTab to="./detail" name="详情" />
                             <NavTab to="./character" name="角色" />
                             {/* <NavTab to="./2.5" name="版本" /> */}
                             <NavTab to="./save" name="存档" />
                             <NavTab to="./memory" name="回忆" />
                         </div>
-                        <div className='flex pl-8 pr-8 pt-7 pb-7 grow-0'>
+                        <div className='flex pl-8 pr-8 bg-transparent pt-7 pb-7 grow-0'>
                             <Routes>
                                 <Route index element={<Navigate to='./detail' />} />
                                 <Route path='/detail' element={<Detail gameData={gameData} />} />
@@ -401,7 +401,7 @@ function Detail({ gameData }) {
                 <div className='p-5 '>
                     <div className='font-bold text-custom-text-light'>作品信息</div>
                     <div className='p-0 m-0 divider'></div>
-                    <div className='pt-2 text-sm'>
+                    <div className='flex flex-col gap-1 pt-2 text-sm'>
                         <div>原名：{gameData['name']}</div>
                         <div>中文名：{gameData['chineseName']}</div>
                         <div>发行日期：{gameData['releaseDate']}</div>
@@ -430,7 +430,7 @@ function Detail({ gameData }) {
                                         {
                                             gameData['staff'][key].map((staff, index) => {
                                                 return (
-                                                    <div key={index}>&nbsp;▪<a className='link link-hover text-custom-blue-4/90' href={`https://www.ymgal.games/pa${staff['pid']}`} target='_blank'>{staff['name']}</a><span className='text-xs'>{staff['empDesc'] && `(${staff['empDesc']})`}</span></div>
+                                                    <div key={index}>&nbsp;▪ <a className='link link-hover text-custom-blue-4/90' href={`https://www.ymgal.games/pa${staff['pid']}`} target='_blank'>{staff['name']}</a><span className='text-xs'>{staff['empDesc'] && ` (${staff['empDesc']})`}</span></div>
                                                 )
                                             })
                                         }
@@ -462,8 +462,8 @@ function Character({ characterData }) {
                                 </div>
                             </div>
                             <div className='flex flex-col w-1/4 gap-5 text-sm'>
-                                <div className='p-5 shadow-md bg-custom-main'>
-                                    <div className='pb-2 font-bold text-custom-text-light'>基本信息</div>
+                                <div className='flex flex-col gap-1 p-5 shadow-md bg-custom-main'>
+                                    <div className='pb-1 font-bold text-custom-text-light'>基本信息</div>
                                     <div>原名：{character['name']}</div>
                                     <div>中文名：{character['chineseName'] ? character['chineseName'] : "未知"}</div>
                                     <div>别名：{character['extensionName'][0] ? character['extensionName'].join('、') : "未知"}</div>
@@ -518,7 +518,7 @@ function Save({ index }) {
                 <table className="table">
                     {/* head */}
                     <thead>
-                        <tr>
+                        <tr className='text-custom-text-light'>
                             <th></th>
                             <th>存档时间</th>
                             <th className='w-1/2'>备注</th>
@@ -535,7 +535,7 @@ function Save({ index }) {
                                             <th>{i + 1}</th>
                                             <td>{save['date']}</td>
                                             <td>
-                                                <input type="text" className='w-4/5 outline-none input-ghost input-sm input' value={save['note']} onChange={(e) => { updateData([index, 'saves', i, 'note'], e.target.value) }} />
+                                                <input spellCheck='false' type="text" className='w-4/5 outline-none hover:brightness-125 bg-custom-stress input-ghost input-sm input focus:border-0 focus:shadow-inner focus:shadow-black/80 focus:hover:brightness-100 focus:text-custom-text-light/95' value={save['note']} onChange={(e) => { updateData([index, 'saves', i, 'note'], e.target.value) }} />
                                             </td>
                                             <td>
                                                 <div className='flex flex-row gap-2'>
@@ -620,7 +620,9 @@ function Memory({ index }) {
                 </div>
             </dialog>
 
-            <button className='border-0 btn bg-custom-blue-2/50 text-custom-text-light hover:brightness-125' onClick={() => { document.getElementById('addMemory').showModal() }}>添加</button>
+            <button className='border-0 btn-square btn bg-custom-blue-2/50 text-custom-text-light hover:brightness-125' onClick={() => { document.getElementById('addMemory').showModal() }}>
+                <span className="icon-[ic--sharp-plus] w-8 h-8 text-custom-text-light"></span>
+            </button>
             {data[index]['memories'] && data[index]['memories'].map((memory, index) => {
                 return (
                     <div key={index} className='flex flex-col w-auto shadow-md'>
@@ -913,7 +915,7 @@ function MediaSettings() {
                 setTimeout(() => { setSettingAlert('') }, 3000);
             } else {
                 // 用户取消了选择
-                console.log('用户取消了文件选择');
+                console.log('用户取消了文件选择！');
             }
         } catch (error) {
             console.error('更换图片时发生错误:', error);
@@ -938,7 +940,7 @@ function MediaSettings() {
                 setTimeout(() => { setSettingAlert('') }, 3000);
             } else {
                 // 用户取消了选择
-                console.log('用户取消了文件选择！');
+                console.log('用户取消了文件选择');
             }
         } catch (error) {
             console.error('更换图片时发生错误:', error);
