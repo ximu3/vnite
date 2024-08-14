@@ -29,6 +29,8 @@ const useGameStore = create(set => ({
     memoryImagePath: [],
     setMemoryImagePath: (memoryImagePath) => set({ memoryImagePath }),
     updateMemoryImagePath: (memoryImagePath) => set(state => ({ memoryImagePath: [...state.memoryImagePath, memoryImagePath] })),
+    isGameRunning: false,
+    setIsGameRunning: (isGameRunning) => set({ isGameRunning }),
 }));
 
 function Game({ index }) {
@@ -96,6 +98,7 @@ function Game({ index }) {
     useEffect(() => {
         window.electron.ipcRenderer.on('game-start-result', (event, result) => {
             if (result.success) {
+                setIsGameRunning(true);
                 return
             } else {
                 setAlert(result.error);
@@ -107,6 +110,7 @@ function Game({ index }) {
             if (id === gameData['id']) {
                 updateData([index, 'detail', 'gameDuration'], data[index]['detail']['gameDuration'] + totalRunTime);
                 updateData([index, 'detail', 'lastVisitDate'], getFormattedDate());
+                setIsGameRunning(false);
                 if (totalRunTime >= 1) {
                     updateData([index, 'detail', 'frequency'], data[index]['detail']['frequency'] + 1);
                     if (config['cloudSync']['enabled']) {
@@ -258,10 +262,18 @@ function Game({ index }) {
                                 {gameData['chineseName'] ? `${gameData['chineseName']} ${gameData['name']}` : gameData['name']}
                             </div>
                             <div className='flex flex-row items-center gap-3 justify-items-center pl-14'>
-                                <button className='text-lg transition-all border-0 shadow-sm w-52 btn bg-custom-green text-custom-text-light hover:brightness-110' onClick={handleStart}>
-                                    <span className="icon-[mdi--play] w-7 h-7"></span>
-                                    开始游戏
-                                </button>
+                                {
+                                    isGameRunning ?
+                                        <button className='flex flex-row items-center text-lg text-center transition-all border-0 shadow-sm w-52 btn bg-gradient-to-br from-custom-blue-6 to-custom-blue-6/70 text-custom-text-light hover:bg-custom-blue-6'>
+                                            <span className="icon-[mingcute--game-2-fill] w-7 h-7"></span>
+                                            <div className='font-medium'>正在运行</div>
+                                        </button>
+                                        :
+                                        <button className='flex flex-row items-center text-lg text-center transition-all border-0 shadow-sm w-52 btn bg-gradient-to-br from-custom-green to-custom-green/70 text-custom-text-light hover:bg-custom-green' onClick={handleStart}>
+                                            <span className="icon-[mdi--play] w-7 h-7"></span>
+                                            <div className='font-medium'>开始游戏</div>
+                                        </button>
+                                }
                                 <div className='flex flex-row items-center pl-7 gap-7'>
                                     <div className='flex flex-row items-center gap-2 pl-2'>
                                         <span className="icon-[material-symbols--cloud] w-9 h-9"></span>
