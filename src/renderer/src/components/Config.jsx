@@ -11,7 +11,7 @@ function NavButton({ to, name, icon }) {
                 ? ""
                 : isActive
                     ? "bg-custom-hover text-custom-text-light transition-none font-semibold"
-                    : "hover:bg-custom-text hover:text-black/80 transition-none font-semibold"
+                    : "hover:bg-custom-text hover:text-black transition-none font-semibold"
         }
             to={to}>
             {icon}{name}
@@ -69,7 +69,7 @@ function Config() {
 
 
                 <div className="flex flex-row w-full h-full">
-                    <div className="flex flex-col h-full p-3 w-52 bg-custom-main-7 shrink-0">
+                    <div className="flex flex-col h-full p-3 w-52 bg-custom-stress shrink-0">
                         <div className="w-full grow">
                             <div className='pt-2 pb-2 pl-4 text-xl font-bold text-custom-blue-6'>my-gal设置</div>
                             <ul className="w-full menu rounded-box text-custom-text">
@@ -93,8 +93,8 @@ function Config() {
                             <Route path={`/cloudSync/*`} element={<CloudSync />} />
                         </Routes>
                         <div className='absolute flex flex-row gap-3 right-5 bottom-5'>
-                            <button className="transition-all border-0 btn bg-custom-main-7 text-custom-text-light hover:brightness-125" onClick={saveConfig}>保存</button>
-                            <button className="transition-all border-0 btn bg-custom-main-7 text-custom-text-light hover:brightness-125" onClick={quit}>取消</button>
+                            <button className="transition-all border-0 btn bg-custom-stress text-custom-text-light hover:brightness-125" onClick={saveConfig}>保存</button>
+                            <button className="transition-all border-0 btn bg-custom-stress text-custom-text-light hover:brightness-125" onClick={quit}>取消</button>
                         </div>
                     </div>
                     {
@@ -328,9 +328,9 @@ function CloudSync() {
         setIsLoading(false);
     }
     return (
-        <div className='flex flex-col w-full h-full gap-5 pb-32 overflow-auto p-7 scrollbar-base bg-custom-main-6'>
+        <div className='flex flex-col w-full h-full gap-5 pb-32 overflow-auto p-7 scrollbar-base bg-custom-modal'>
             <dialog id="initializeDiffData" className="modal">
-                <div className="w-1/3 h-auto modal-box bg-custom-main-6">
+                <div className="w-1/3 h-auto modal-box bg-custom-modal">
                     <form method="dialog">
                         {/* if there is a button in form, it will close the modal */}
                         <button className="absolute btn btn-sm btn-ghost right-2 top-2">✕</button>
@@ -339,11 +339,11 @@ function CloudSync() {
                         <div className='font-bold'>本地数据与远程仓库不一致！</div>
                         <div className='pt-2'>该选择将覆盖某一端数据，请做好数据备份！</div>
                         <div className='flex flex-row-reverse gap-5 pt-7'>
-                            <button className='transition-all btn bg-custom-main-7 text-custom-text-light hover:brightness-125' onClick={useLocalData}>
+                            <button className='transition-all btn bg-custom-stress text-custom-text-light hover:brightness-125' onClick={useLocalData}>
                                 {isLoading && <span className='loading loading-spinner'></span>}
                                 使用本地数据
                             </button>
-                            <button className='transition-all btn bg-custom-main-7 text-custom-text-light hover:brightness-125' onClick={useCloudData} >
+                            <button className='transition-all btn bg-custom-stress text-custom-text-light hover:brightness-125' onClick={useCloudData} >
                                 {isLoading && <span className='loading loading-spinner'></span>}
                                 使用云端数据
                             </button>
@@ -357,21 +357,21 @@ function CloudSync() {
             <div className='flex flex-col gap-2'>
                 <label className="p-0 cursor-pointer label">
                     <span className="text-sm font-semibold">是否开启</span>
-                    <input type="checkbox" className="toggle checked:bg-custom-text-light bg-custom-text checked:[--tglbg:theme(colors.custom.blue-6)] [--tglbg:theme(colors.custom.main-7)] border-0 hover:brightness-125 checked:hover:brightness-100" checked={configSetting?.cloudSync?.enabled || false} onChange={(e) => { updateConfigSetting(['cloudSync', 'enabled'], e.target.checked) }} />
+                    <input type="checkbox" className="toggle checked:bg-custom-text-light bg-custom-text checked:[--tglbg:theme(colors.custom.blue-6)] [--tglbg:theme(colors.custom.stress)] border-0 hover:brightness-125 checked:hover:brightness-100" checked={configSetting?.cloudSync?.enabled || false} onChange={(e) => { updateConfigSetting(['cloudSync', 'enabled'], e.target.checked) }} />
                 </label>
                 <div className='m-0 divider'></div>
                 <label className="flex p-0 label">
                     <span className="flex-grow text-sm font-semibold">同步模式</span>
                     <div className="dropdown dropdown-end">
-                        <div tabIndex={0} role="button" className="flex flex-row items-center justify-between w-full gap-2 pr-1 mb-1 text-sm font-semibold border-0 hover:text-custom-text-light input-sm bg-custom-main-7 hover:brightness-125">
+                        <div tabIndex={0} role="button" className="flex flex-row items-center justify-between w-full gap-2 pr-1 mb-1 text-sm font-semibold border-0 hover:text-custom-text-light input-sm bg-custom-stress hover:brightness-125">
                             <div className="flex items-center gap-3">
                                 <div>{modeConvert(configSetting?.cloudSync?.mode || 'github')}</div>
                             </div>
                             <span className="icon-[material-symbols-light--keyboard-arrow-down] w-6 h-6"></span>
                         </div>
-                        <ul tabIndex={0} className="dropdown-content menu bg-custom-main-5 rounded-box z-[1] w-auto p-2 shadow">
-                            <li onClick={() => { updateConfigSetting(['cloudSync', 'mode'], 'github') }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none hover:text-black/80'>Github</a></li>
-                            <li onClick={() => { updateConfigSetting(['cloudSync', 'mode'], 'webdav') }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none hover:text-black/80'>WebDav</a></li>
+                        <ul tabIndex={0} className="dropdown-content menu bg-custom-dropdown rounded-box z-[1] w-auto p-2 shadow">
+                            <li onClick={() => { updateConfigSetting(['cloudSync', 'mode'], 'github') }} className='hover:bg-custom-text hover:text-black'><a className='transition-none hover:text-black'>Github</a></li>
+                            <li onClick={() => { updateConfigSetting(['cloudSync', 'mode'], 'webdav') }} className='hover:bg-custom-text hover:text-black'><a className='transition-none hover:text-black'>WebDav</a></li>
                         </ul>
                     </div>
                 </label>
@@ -384,14 +384,14 @@ function CloudSync() {
                             <div className='flex flex-row items-center'>
                                 <span className="text-sm font-semibold grow">账号</span>
                                 <div className="dropdown dropdown-end">
-                                    <div tabIndex={0} role="button" className="flex flex-row items-center justify-between w-full gap-2 mb-1 text-sm font-semibold border-0 hover:text-custom-text-light input-sm bg-custom-main-7 hover:brightness-125">
+                                    <div tabIndex={0} role="button" className="flex flex-row items-center justify-between w-full gap-2 mb-1 text-sm font-semibold border-0 hover:text-custom-text-light input-sm bg-custom-stress hover:brightness-125">
                                         <div className="flex items-center gap-3">
                                             <div>{config['cloudSync']['github']['username']}</div>
                                         </div>
                                     </div>
-                                    <ul tabIndex={0} className="dropdown-content menu bg-custom-main-5 rounded-box z-[1] w-auto p-2 shadow">
-                                        <li onClick={switchGithub} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none hover:text-black/80'>切换</a></li>
-                                        <li onClick={signoutGithub} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none hover:text-black/80'>退出</a></li>
+                                    <ul tabIndex={0} className="dropdown-content menu bg-custom-dropdown rounded-box z-[1] w-auto p-2 shadow">
+                                        <li onClick={switchGithub} className='hover:bg-custom-text hover:text-black'><a className='transition-none hover:text-black'>切换</a></li>
+                                        <li onClick={signoutGithub} className='hover:bg-custom-text hover:text-black'><a className='transition-none hover:text-black'>退出</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -404,7 +404,7 @@ function CloudSync() {
                             <div className='flex flex-row items-center gap-2'>
                                 <span className="text-sm font-semibold grow">最后同步时间</span>
                                 <span className="p-1 text-sm font-semibold">{config['cloudSync']['github']['lastSyncTime']}</span>
-                                <button className='transition-all btn btn-xs bg-custom-main-7 hover:brightness-125 hover:text-custom-text-light' onClick={githubSync}>
+                                <button className='transition-all btn btn-xs bg-custom-stress hover:brightness-125 hover:text-custom-text-light' onClick={githubSync}>
                                     {isLoading && <span className='loading loading-spinner loading-xs'></span>}
                                     同步
                                 </button>
@@ -413,7 +413,7 @@ function CloudSync() {
                         :
                         <div className='flex flex-row'>
                             <span className="text-sm font-semibold grow">账号</span>
-                            <button className='self-center transition-all btn-sm btn bg-custom-main-7 hover:brightness-125' onClick={loginGithub}>登录</button>
+                            <button className='self-center transition-all btn-sm btn bg-custom-stress hover:brightness-125' onClick={loginGithub}>登录</button>
                         </div>
                 }
             </div>
@@ -421,29 +421,29 @@ function CloudSync() {
                 <div className='pb-2 font-bold text-custom-text-light'>WebDav</div>
                 <div className='flex flex-row items-center'>
                     <span className="text-sm font-semibold grow">地址</span>
-                    <input className="w-1/2 min-h-0 border-0 outline-none input focus:bg-custom-main-3 focus:text-custom-text-light/95 bg-custom-main-7 input-sm hover:brightness-125 focus:shadow-inner-sm focus:shadow-black/80 focus:hover:brightness-100" spellCheck='false' placeholder='示例：https://pan.example.xyz' value={configSetting?.cloudSync?.webdav?.url || ''} onChange={(e) => { updateConfigSetting(['cloudSync', 'webdav', 'url'], e.target.value) }} />
+                    <input className="w-1/2 min-h-0 border-0 outline-none input focus:bg-custom-focus focus:text-custom-text-light/95 bg-custom-stress input-sm hover:brightness-125 focus:shadow-inner-sm focus:shadow-black/80 focus:hover:brightness-100" spellCheck='false' placeholder='示例：https://pan.example.xyz' value={configSetting?.cloudSync?.webdav?.url || ''} onChange={(e) => { updateConfigSetting(['cloudSync', 'webdav', 'url'], e.target.value) }} />
                 </div>
                 <div className='m-0 divider'></div>
                 <div className='flex flex-row items-center'>
                     <span className="text-sm font-semibold grow">路径</span>
-                    <input className="w-1/2 min-h-0 border-0 outline-none input focus:bg-custom-main-3 focus:text-custom-text-light/95 bg-custom-main-7 input-sm hover:brightness-125 focus:shadow-inner-sm focus:shadow-black/80 focus:hover:brightness-100" spellCheck='false' placeholder='示例：/dav/my-gal' value={configSetting?.cloudSync?.webdav?.path || ''} onChange={(e) => { updateConfigSetting(['cloudSync', 'webdav', 'path'], e.target.value) }} />
+                    <input className="w-1/2 min-h-0 border-0 outline-none input focus:bg-custom-focus focus:text-custom-text-light/95 bg-custom-stress input-sm hover:brightness-125 focus:shadow-inner-sm focus:shadow-black/80 focus:hover:brightness-100" spellCheck='false' placeholder='示例：/dav/my-gal' value={configSetting?.cloudSync?.webdav?.path || ''} onChange={(e) => { updateConfigSetting(['cloudSync', 'webdav', 'path'], e.target.value) }} />
                 </div>
                 <div className='m-0 divider'></div>
                 <div className='flex flex-row items-center'>
                     <span className="text-sm font-semibold grow">用户名</span>
-                    <input className="w-1/3 min-h-0 border-0 outline-none input focus:bg-custom-main-3 focus:text-custom-text-light/95 bg-custom-main-7 input-sm hover:brightness-125 focus:shadow-inner-sm focus:shadow-black/80 focus:hover:brightness-100" spellCheck='false' value={configSetting?.cloudSync?.webdav?.username || ''} onChange={(e) => { updateConfigSetting(['cloudSync', 'webdav', 'username'], e.target.value) }} />
+                    <input className="w-1/3 min-h-0 border-0 outline-none input focus:bg-custom-focus focus:text-custom-text-light/95 bg-custom-stress input-sm hover:brightness-125 focus:shadow-inner-sm focus:shadow-black/80 focus:hover:brightness-100" spellCheck='false' value={configSetting?.cloudSync?.webdav?.username || ''} onChange={(e) => { updateConfigSetting(['cloudSync', 'webdav', 'username'], e.target.value) }} />
                 </div>
                 <div className='m-0 divider'></div>
                 <div className='flex flex-row items-center'>
                     <span className="text-sm font-semibold grow">密码</span>
-                    <input className="w-1/3 min-h-0 border-0 outline-none input focus:bg-custom-main-3 focus:text-custom-text-light/95 bg-custom-main-7 input-sm hover:brightness-125 focus:shadow-inner-sm focus:shadow-black/80 focus:hover:brightness-100" spellCheck='false' value={configSetting?.cloudSync?.webdav?.password || ''} onChange={(e) => { updateConfigSetting(['cloudSync', 'webdav', 'password'], e.target.value) }} />
+                    <input className="w-1/3 min-h-0 border-0 outline-none input focus:bg-custom-focus focus:text-custom-text-light/95 bg-custom-stress input-sm hover:brightness-125 focus:shadow-inner-sm focus:shadow-black/80 focus:hover:brightness-100" spellCheck='false' value={configSetting?.cloudSync?.webdav?.password || ''} onChange={(e) => { updateConfigSetting(['cloudSync', 'webdav', 'password'], e.target.value) }} />
                 </div>
                 <div className='m-0 divider'></div>
                 <div className='flex flex-row items-center gap-2'>
                     <span className="text-sm font-semibold grow">最后同步时间</span>
                     <span className="p-1 text-sm font-semibold">{config?.cloudSync?.webdav?.lastSyncTime}</span>
-                    <button className='transition-all btn btn-xs bg-custom-main-7 hover:brightness-125 hover:text-custom-text-light' onClick={webdavUpload}>上传</button>
-                    <button className='transition-all btn btn-xs bg-custom-main-7 hover:brightness-125 hover:text-custom-text-light' onClick={webdavDownload}>下载</button>
+                    <button className='transition-all btn btn-xs bg-custom-stress hover:brightness-125 hover:text-custom-text-light' onClick={webdavUpload}>上传</button>
+                    <button className='transition-all btn btn-xs bg-custom-stress hover:brightness-125 hover:text-custom-text-light' onClick={webdavDownload}>下载</button>
                 </div>
             </div>
         </div>

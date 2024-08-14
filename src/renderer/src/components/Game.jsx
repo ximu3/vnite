@@ -202,7 +202,7 @@ function Game({ index }) {
     return (
         <div className="flex flex-col w-full h-full overflow-auto scrollbar-base scrollbar-w-2 bg-custom-main/90 text-custom-text">
             <dialog id="deleteGame" className="modal">
-                <div className="w-1/3 h-auto modal-box bg-custom-main-6">
+                <div className="w-1/3 h-auto modal-box bg-custom-modal">
                     <form method="dialog">
                         {/* if there is a button in form, it will close the modal */}
                         <button className="absolute btn btn-sm btn-ghost right-2 top-2" onClick={quitSetting}>✕</button>
@@ -210,15 +210,15 @@ function Game({ index }) {
                     <div className='w-full h-full p-3'>
                         <div className='font-bold'>确定要删除该游戏？</div>
                         <div className='flex flex-row-reverse gap-5 pt-7'>
-                            <button className='transition-all btn bg-custom-main-7 text-custom-text-light hover:brightness-125' onClick={() => { document.getElementById('deleteGame').close() }}>取消</button>
-                            <button className='transition-all btn bg-custom-main-7 text-custom-text-light hover:bg-custom-red' onClick={deleteGame} >确定</button>
+                            <button className='transition-all btn bg-custom-stress text-custom-text-light hover:brightness-125' onClick={() => { document.getElementById('deleteGame').close() }}>取消</button>
+                            <button className='transition-all btn bg-custom-stress text-custom-text-light hover:bg-custom-red' onClick={deleteGame} >确定</button>
                         </div>
                     </div>
                 </div>
             </dialog>
 
             <dialog id="gameSetting" className="modal">
-                <div className="w-3/5 max-w-full max-h-full h-5/6 modal-box bg-custom-main-6">
+                <div className="w-3/5 max-w-full max-h-full h-5/6 modal-box bg-custom-modal">
                     <form method="dialog">
                         {/* if there is a button in form, it will close the modal */}
                         <button className="absolute btn btn-sm btn-ghost right-2 top-2" onClick={quitSetting}>✕</button>
@@ -296,22 +296,22 @@ function Game({ index }) {
                                 <div tabIndex={0} role="button" className="min-h-0 mb-1 border-0 w-9 h-9 btn btn-square text-custom-text-light bg-custom-text/40 hover:bg-custom-text/65 backdrop-blur-2xl">
                                     <span className="icon-[typcn--flow-switch] w-6 h-6"></span>
                                 </div>
-                                <ul tabIndex={0} className="dropdown-content menu bg-custom-main-5 rounded-box z-[1] w-52 p-2 shadow">
-                                    <li onClick={() => { updateData([index, 'detail', 'playStatus'], 0) }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none'>未开始</a></li>
-                                    <li onClick={() => { updateData([index, 'detail', 'playStatus'], 1) }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none'>游玩中</a></li>
-                                    <li onClick={() => { updateData([index, 'detail', 'playStatus'], 2) }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none'>已完成</a></li>
-                                    <li onClick={() => { updateData([index, 'detail', 'playStatus'], 3) }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none'>多周目</a></li>
+                                <ul tabIndex={0} className="dropdown-content menu bg-custom-dropdown rounded-box z-[1] w-52 p-2 shadow">
+                                    <li onClick={() => { updateData([index, 'detail', 'playStatus'], 0) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>未开始</a></li>
+                                    <li onClick={() => { updateData([index, 'detail', 'playStatus'], 1) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>游玩中</a></li>
+                                    <li onClick={() => { updateData([index, 'detail', 'playStatus'], 2) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>已完成</a></li>
+                                    <li onClick={() => { updateData([index, 'detail', 'playStatus'], 3) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>多周目</a></li>
                                 </ul>
                             </div>
                             <div className="dropdown dropdown-end">
                                 <div tabIndex={0} role="button" className="min-h-0 mb-1 border-0 w-9 h-9 btn btn-square text-custom-text-light bg-custom-text/40 hover:bg-custom-text/65 backdrop-blur-2xl">
                                     <span className="icon-[mingcute--more-1-fill] w-6 h-6"></span>
                                 </div>
-                                <ul tabIndex={0} className="dropdown-content menu bg-custom-main-5 rounded-box z-[1] w-52 p-2 shadow">
-                                    <li onClick={() => { openFolderInExplorer(gameData['gamePath']) }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none'>浏览本地文件</a></li>
-                                    <li onClick={() => { openFolderInExplorer(gameData['savePath']) }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none'>打开存档文件夹</a></li>
-                                    <li onClick={() => { openFolderInExplorer(`/${gameData['id']}`) }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none'>打开数据文件夹</a></li>
-                                    <li onClick={() => { document.getElementById('deleteGame').showModal() }} className='hover:bg-custom-red'><a className='transition-none'>删除游戏</a></li>
+                                <ul tabIndex={0} className="dropdown-content menu bg-custom-dropdown rounded-box z-[1] w-52 p-2 shadow">
+                                    <li onClick={() => { openFolderInExplorer(gameData['gamePath']) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>浏览本地文件</a></li>
+                                    <li onClick={() => { openFolderInExplorer(gameData['savePath']) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>打开存档文件夹</a></li>
+                                    <li onClick={() => { openFolderInExplorer(`/${gameData['id']}`) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>打开数据文件夹</a></li>
+                                    <li onClick={() => { document.getElementById('deleteGame').showModal() }} className='hover:bg-custom-red hover:text-custom-text-light'><a className='transition-none'>删除游戏</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -572,24 +572,24 @@ function Memory({ index }) {
     return (
         <div className='flex flex-col w-full gap-7'>
             <dialog id="addMemory" className="modal">
-                <div className="w-1/3 max-w-full max-h-full h-1/4 modal-box bg-custom-main-6">
+                <div className="w-1/3 max-w-full max-h-full h-1/4 modal-box bg-custom-modal">
                     <form method="dialog">
                         {/* if there is a button in form, it will close the modal */}
                         <button className="absolute btn btn-sm btn-ghost right-2 top-2">✕</button>
                     </form>
                     <div className='flex flex-col w-full h-full gap-3 p-5'>
-                        <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:text-custom-text-light/80 focus-within:hover:brightness-100">
+                        <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/80 focus-within:hover:brightness-100">
                             <div className='font-semibold'>图片路径 |</div>
                             <input type='text' className='grow' value={memoryImg || ''} onChange={(e) => { setMemoryImg(e.target.value) }} />
                             <span className="icon-[material-symbols-light--folder-open-outline-sharp] w-5 h-5 self-center" onClick={selectImgPath}></span>
                         </label>
-                        <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:text-custom-text-light/80 focus-within:hover:brightness-100">
+                        <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/80 focus-within:hover:brightness-100">
                             <div className='font-semibold'>文字 |</div>
                             <input type="text" name='gameName' className="grow" value={memory || ''} onChange={(e) => { setMemory(e.target.value) }} />
                         </label>
                         <div className='absolute flex flex-row gap-5 right-9 bottom-5'>
-                            <button className='transition-all border-0 btn bg-custom-main-7 text-custom-text-light hover:brightness-125' onClick={saveMemory}>保存</button>
-                            <button className='transition-all border-0 btn bg-custom-main-7 text-custom-text-light hover:brightness-125' onClick={quitMemory}>取消</button>
+                            <button className='transition-all border-0 btn bg-custom-stress text-custom-text-light hover:brightness-125' onClick={saveMemory}>保存</button>
+                            <button className='transition-all border-0 btn bg-custom-stress text-custom-text-light hover:brightness-125' onClick={quitMemory}>取消</button>
                         </div>
                     </div>
                 </div>
@@ -705,8 +705,8 @@ function Setting({ index }) {
                 {renderContent()}
             </div>
             <div className='absolute flex flex-row gap-5 right-10 bottom-10'>
-                <button className='transition-all btn bg-custom-main-7 text-custom-text-light hover:brightness-125' onClick={saveSetting}>保存</button>
-                <button className='transition-all btn bg-custom-main-7 text-custom-text-light hover:brightness-125' onClick={quitSetting}>取消</button>
+                <button className='transition-all btn bg-custom-stress text-custom-text-light hover:brightness-125' onClick={saveSetting}>保存</button>
+                <button className='transition-all btn bg-custom-stress text-custom-text-light hover:brightness-125' onClick={quitSetting}>取消</button>
             </div>
             {settingAlert &&
                 <div className="toast toast-center">
@@ -726,54 +726,54 @@ function GeneralSettings({ index }) {
         <div className='flex flex-col w-full h-full gap-3'>
             <div className='flex flex-row gap-3'>
                 <div className='flex flex-col w-1/2 gap-3'>
-                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
+                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
                         <div className='font-semibold'>原名 |</div>
                         <input type="text" name='gameName' className="grow" value={settingData?.detail?.name || ''} onChange={(e) => { updateSettiongData(['detail', 'name'], e.target.value) }} />
                     </label>
-                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:hover:brightness-100 focus-within:text-custom-text-light/95">
+                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:hover:brightness-100 focus-within:text-custom-text-light/95">
                         <div className='font-semibold'>中文名 |</div>
                         <input type="text" name='gameChineseName' className="grow" value={settingData?.detail?.chineseName || ''} onChange={(e) => { updateSettiongData(['detail', 'chineseName'], e.target.value) }} />
                     </label>
-                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:hover:brightness-100 focus-within:text-custom-text-light/95">
+                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:hover:brightness-100 focus-within:text-custom-text-light/95">
                         <div className='font-semibold'>GID |</div>
                         <input type="text" name='gid' className="grow" value={settingData?.detail?.gid || ''} onChange={(e) => { updateSettiongData(['detail', 'gid'], e.target.value) }} />
                     </label>
-                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:hover:brightness-100 focus-within:text-custom-text-light/95">
+                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:hover:brightness-100 focus-within:text-custom-text-light/95">
                         <div className='font-semibold'>VID |</div>
                         <input type="text" name='vid' className="grow" value={settingData?.detail?.vid || ''} onChange={(e) => { updateSettiongData(['detail', 'vid'], e.target.value) }} />
                     </label>
                 </div>
                 <div className='flex flex-col w-1/2 gap-3'>
-                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:hover:brightness-100 focus-within:text-custom-text-light/95">
+                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:hover:brightness-100 focus-within:text-custom-text-light/95">
                         <div className='font-semibold'>发行日期 |</div>
                         <input type="text" name='releaseDate' className="grow" value={settingData?.detail?.releaseDate || ''} onChange={(e) => { updateSettiongData(['detail', 'releaseDate'], e.target.value) }} />
                     </label>
-                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:hover:brightness-100 focus-within:text-custom-text-light/95">
+                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:hover:brightness-100 focus-within:text-custom-text-light/95">
                         <div className='font-semibold'>开发者 |</div>
                         <input type="text" name='developer' className="grow" value={settingData?.detail?.developer || ''} onChange={(e) => { updateSettiongData(['detail', 'developer'], e.target.value) }} />
                     </label>
-                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:hover:brightness-100 focus-within:text-custom-text-light/95">
+                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:hover:brightness-100 focus-within:text-custom-text-light/95">
                         <div className='font-semibold'>类型 |</div>
                         <input type="text" name='typeDesc' className="grow" value={settingData?.detail?.typeDesc || ''} onChange={(e) => { updateSettiongData(['detail', 'typeDesc'], e.target.value) }} />
                     </label>
                     <div className="dropdown dropdown-end">
-                        <div tabIndex={0} role="button" className="flex flex-row items-center justify-between w-full gap-2 mb-1 text-sm font-semibold border-0 input-sm bg-custom-main-7 hover:brightness-125">
+                        <div tabIndex={0} role="button" className="flex flex-row items-center justify-between w-full gap-2 mb-1 text-sm font-semibold border-0 input-sm bg-custom-stress hover:brightness-125">
                             <div className="flex items-center gap-2">
                                 <div>限制级 |</div>
                                 <div>{settingData?.detail?.restricted ? '是' : '否'}</div>
                             </div>
                             <span className="icon-[material-symbols-light--keyboard-arrow-down] w-6 h-6"></span>
                         </div>
-                        <ul tabIndex={0} className="dropdown-content menu bg-custom-main-5 rounded-box z-[1] w-3/4 p-2 shadow">
-                            <li onClick={() => { updateSettiongData(['detail', 'restricted'], true) }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none'>是</a></li>
-                            <li onClick={() => { updateSettiongData(['detail', 'restricted'], false) }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none'>否</a></li>
+                        <ul tabIndex={0} className="dropdown-content menu bg-custom-dropdown rounded-box z-[1] w-3/4 p-2 shadow">
+                            <li onClick={() => { updateSettiongData(['detail', 'restricted'], true) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>是</a></li>
+                            <li onClick={() => { updateSettiongData(['detail', 'restricted'], false) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>否</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
-            <label className="flex flex-col items-start self-stretch h-full pt-2 outline-none grow bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:hover:brightness-100 focus-within:text-custom-text-light/80">
+            <label className="flex flex-col items-start self-stretch h-full pt-2 outline-none grow bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:hover:brightness-100 focus-within:text-custom-text-light/80">
                 <div className='self-center text-sm font-semibold'>简介</div>
-                <textarea spellCheck='false' className="self-stretch p-2 overflow-auto text-sm border-0 outline-none textarea textarea-ghost focus-within:text-custom-text-light/95 bg-custom-main-7 grow scrollbar-base focus:bg-custom-main-3" placeholder="Bio" value={settingData?.detail?.introduction || ''} onChange={(e) => { updateSettiongData(['detail', 'introduction'], e.target.value) }} />
+                <textarea spellCheck='false' className="self-stretch p-2 overflow-auto text-sm border-0 outline-none textarea textarea-ghost focus-within:text-custom-text-light/95 bg-custom-stress grow scrollbar-base focus:bg-custom-focus" placeholder="Bio" value={settingData?.detail?.introduction || ''} onChange={(e) => { updateSettiongData(['detail', 'introduction'], e.target.value) }} />
             </label>
         </div>
     )
@@ -817,39 +817,39 @@ function AdvancedSettings() {
         <div className='flex flex-col w-full h-full gap-3'>
             <div className='flex flex-row gap-3'>
                 <div className='flex flex-col w-1/2 gap-3'>
-                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
+                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
                         <div className='font-semibold'>添加日期 |</div>
                         <input type="text" name='addDate' className="grow" value={settingData?.detail?.addDate || ''} onChange={(e) => { updateSettiongData(['detail', 'addDate'], e.target.value) }} />
                     </label>
-                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
+                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
                         <div className='font-semibold'>游玩时间 |</div>
                         <input type="text" name='gameDuration' className="grow" value={settingData?.detail?.gameDuration || ''} onChange={(e) => { updateSettiongData(['detail', 'gameDuration'], Number(e.target.value)) }} />
                         <div>{formatTime(settingData?.detail?.gameDuration || '')}</div>
                     </label>
-                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
+                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
                         <div className='font-semibold'>游玩次数 |</div>
                         <input type="text" name='frequency' className="grow" value={settingData?.detail?.frequency || '0'} onChange={(e) => { updateSettiongData(['detail', 'frequency'], Number(e.target.value)) }} />
                     </label>
                 </div>
                 <div className='flex flex-col w-1/2 gap-3'>
-                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
+                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
                         <div className='font-semibold'>数据库ID |</div>
                         <div>{(settingData?.detail?.gid || '').replace('ga', '')}</div>
                         {/* <input disabled type="text" name='gid' className="grow" value={settingData?.detail?.gid || ''} onChange={(e)=>{updateSettiongData(['detail', 'gid'], e.target.value)}} /> */}
                     </label>
                     <div className="dropdown dropdown-end">
-                        <div tabIndex={0} role="button" className="flex flex-row items-center justify-between w-full gap-2 mb-1 text-sm font-semibold border-0 input-sm bg-custom-main-7 hover:brightness-125">
+                        <div tabIndex={0} role="button" className="flex flex-row items-center justify-between w-full gap-2 mb-1 text-sm font-semibold border-0 input-sm bg-custom-stress hover:brightness-125">
                             <div className="flex items-center gap-2">
                                 <div>游玩状态 |</div>
                                 <div>{playStatus(settingData?.detail?.playtStatus || 0)}</div>
                             </div>
                             <span className="icon-[material-symbols-light--keyboard-arrow-down] w-6 h-6"></span>
                         </div>
-                        <ul tabIndex={0} className="dropdown-content menu bg-custom-main-5 rounded-box z-[1] w-3/4 p-2 shadow">
-                            <li onClick={() => { updateSettiongData(['detail', 'playtStatus'], 0) }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none'>未开始</a></li>
-                            <li onClick={() => { updateSettiongData(['detail', 'playtStatus'], 1) }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none'>游玩中</a></li>
-                            <li onClick={() => { updateSettiongData(['detail', 'playtStatus'], 2) }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none'>已完成</a></li>
-                            <li onClick={() => { updateSettiongData(['detail', 'playtStatus'], 3) }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none'>多周目</a></li>
+                        <ul tabIndex={0} className="dropdown-content menu bg-custom-dropdown rounded-box z-[1] w-3/4 p-2 shadow">
+                            <li onClick={() => { updateSettiongData(['detail', 'playtStatus'], 0) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>未开始</a></li>
+                            <li onClick={() => { updateSettiongData(['detail', 'playtStatus'], 1) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>游玩中</a></li>
+                            <li onClick={() => { updateSettiongData(['detail', 'playtStatus'], 2) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>已完成</a></li>
+                            <li onClick={() => { updateSettiongData(['detail', 'playtStatus'], 3) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>多周目</a></li>
                         </ul>
                     </div>
                     <label className="flex items-center w-full gap-2 -mt-1 input-sm input focus-within:outline-none bg-custom-red text-custom-text-light/90">
@@ -859,9 +859,9 @@ function AdvancedSettings() {
                     </label>
                 </div>
             </div>
-            <label className="flex flex-col items-start self-stretch h-full pt-2 outline-none grow bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:hover:brightness-100 focus-within:text-custom-text-light/95">
+            <label className="flex flex-col items-start self-stretch h-full pt-2 outline-none grow bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:hover:brightness-100 focus-within:text-custom-text-light/95">
                 <div className='self-center text-sm font-semibold'>数据库内容</div>
-                <textarea spellCheck='false' className="self-stretch p-2 overflow-auto text-sm border-0 outline-none textarea textarea-ghost focus-within:text-custom-text-light/95 bg-custom-main-7 grow scrollbar-base focus:bg-custom-main-3" placeholder="Bio" value={dataString || ''} onChange={(e) => { setDataString(e.target.value) }} />
+                <textarea spellCheck='false' className="self-stretch p-2 overflow-auto text-sm border-0 outline-none textarea textarea-ghost focus-within:text-custom-text-light/95 bg-custom-stress grow scrollbar-base focus:bg-custom-focus" placeholder="Bio" value={dataString || ''} onChange={(e) => { setDataString(e.target.value) }} />
             </label>
         </div>
     )
@@ -923,18 +923,18 @@ function MediaSettings() {
     }
     return (
         <div className='flex flex-col w-full h-full gap-3'>
-            <button className='transition-all btn btn-sm bg-custom-main-7 hover:brightness-125 text-custom-text-light' onClick={() => window.electron.ipcRenderer.send('open-folder', `src/renderer/public/${settingData?.detail?.id || ''}/`)}>打开媒体文件夹</button>
+            <button className='transition-all btn btn-sm bg-custom-stress hover:brightness-125 text-custom-text-light' onClick={() => window.electron.ipcRenderer.send('open-folder', `src/renderer/public/${settingData?.detail?.id || ''}/`)}>打开媒体文件夹</button>
             <div className='flex flex-row gap-3 grow'>
                 <div className='flex flex-col w-1/2 font-bold text-custom-text-light'>
                     <div>封面</div>
                     <div className='m-0 divider'></div>
-                    <button className='transition-all btn btn-sm bg-custom-main-7 hover:brightness-125 text-custom-text-light' onClick={() => { updateCover(settingData?.detail?.id || '') }}>更换</button>
+                    <button className='transition-all btn btn-sm bg-custom-stress hover:brightness-125 text-custom-text-light' onClick={() => { updateCover(settingData?.detail?.id || '') }}>更换</button>
                     <img src={`${coverImage || ''}?t=${timestamp}`} alt="" className='w-1/2 h-auto pt-2' />
                 </div>
                 <div className='flex flex-col w-1/2 font-bold text-custom-text-light'>
                     <div>背景</div>
                     <div className='m-0 divider'></div>
-                    <button className='transition-all btn btn-sm bg-custom-main-7 hover:brightness-125 text-custom-text-light' onClick={() => { updateBackgroundImage(settingData?.detail?.id || '') }}>更换</button>
+                    <button className='transition-all btn btn-sm bg-custom-stress hover:brightness-125 text-custom-text-light' onClick={() => { updateBackgroundImage(settingData?.detail?.id || '') }}>更换</button>
                     <img src={`${backgroundImage || ''}?t=${timestamp}`} alt="" className='w-full h-auto pt-2' />
                 </div>
             </div>
@@ -996,12 +996,12 @@ function StartupSettings() {
     }
     return (
         <div className='flex flex-col w-full h-full gap-3'>
-            <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
+            <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
                 <div className='font-semibold'>游戏路径 |</div>
                 <input type='text' placeholder='拖拽获取路径' onDrop={getGamePathByDrag} onDragOver={handleDragOver} className='grow' value={settingData?.detail?.gamePath || '0'} onChange={(e) => { updateSettiongData(['detail', 'gamePath'], e.target.value) }} />
                 <span className="icon-[material-symbols-light--folder-open-outline-sharp] w-5 h-5 self-center" onClick={selectGamePath}></span>
             </label>
-            <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-main-7 focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-main-3 focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
+            <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
                 <div className='font-semibold'>存档路径 |</div>
                 <input type='text' placeholder='拖拽获取路径' onDrop={getSavePathByDrag} onDragOver={handleDragOver} className='grow' value={settingData?.detail?.savePath || '0'} onChange={(e) => { updateSettiongData(['detail', 'savePath'], e.target.value) }} />
                 <span className="icon-[material-symbols-light--folder-open-outline-sharp] w-5 h-5 self-center" onClick={selectSavePath}></span>

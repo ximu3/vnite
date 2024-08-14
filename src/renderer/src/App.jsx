@@ -66,24 +66,15 @@ function App() {
 
   return (
     <div className='relative w-screen h-screen'>
-      {/* <div className="toast toast-center">
-        <div className="alert alert-info">
-          <span>New mail arrived.</span>
-        </div>
-      </div> */}
       <dialog id="syncDataAtQuit" className="modal">
-        <div className="w-1/3 h-auto modal-box bg-custom-main-6">
+        <div className="w-1/3 h-auto modal-box bg-custom-modal">
           <form method="dialog">
-            {/* if there is a button in form, it will close the modal */}
-            {/* <button className="absolute btn btn-sm btn-ghost right-2 top-2">✕</button> */}
           </form>
           <div className='flex w-full h-full p-3'>
             <progress className="self-center w-full progress"></progress>
           </div>
         </div>
       </dialog>
-
-      {/* You can open the modal using document.getElementById('ID').showModal() method */}
 
       <MemoryRouter>
         <AddGame />
@@ -94,12 +85,12 @@ function App() {
       </MemoryRouter>
 
       <div className='absolute top-0 left-0 z-20 w-full h-8'>
-        <div className='absolute top-0 left-0 z-20 flex items-center justify-between w-full h-8 title-bar text-custom-text-light bg-custom-main-4'>
-          <div className='h-full p-0 dropdown no-drag bg-custom-main-4'>
-            <div tabIndex={0} role='button' className='w-full h-full gap-2 mb-1 text-lg font-semibold text-center border-0 input-sm bg-custom-main-4 hover:brightness-125'>my-gal</div>
-            <ul tabIndex={0} className="dropdown-content menu z-[1] w-52 p-2 shadow rounded-none bg-custom-main-5">
-              <li className='hover:bg-custom-text hover:text-black/80' onClick={() => { document.getElementById('addGame').showModal() }}><a className='transition-none'>添加游戏</a></li>
-              <li className='hover:bg-custom-text hover:text-black/80' onClick={() => { document.getElementById('setting').showModal() }}><a className='transition-none'>设置</a></li>
+        <div className='absolute top-0 left-0 z-20 flex items-center justify-between w-full h-8 title-bar text-custom-text-light bg-custom-titlebar'>
+          <div className='h-full p-0 dropdown no-drag bg-custom-titlebar'>
+            <div tabIndex={0} role='button' className='w-full h-full gap-2 mb-1 text-lg font-semibold text-center border-0 text-custom-text-light input-sm bg-custom-titlebar hover:brightness-125'>my-gal</div>
+            <ul tabIndex={0} className="dropdown-content menu z-[1] w-52 p-2 shadow rounded-none bg-custom-dropdown">
+              <li className='hover:bg-custom-text hover:text-black' onClick={() => { document.getElementById('addGame').showModal() }}><a className='transition-none'>添加游戏</a></li>
+              <li className='hover:bg-custom-text hover:text-black' onClick={() => { document.getElementById('setting').showModal() }}><a className='transition-none'>设置</a></li>
             </ul>
           </div>
           <div className='flex no-drag'>

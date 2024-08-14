@@ -130,7 +130,7 @@ function Ranking() {
         <div className='w-full h-full p-3'>
             <div className='flex flex-col gap-3'>
                 <div className='flex flex-row gap-3 h-1/2'>
-                    <div className="w-1/3 shadow-sm card bg-custom-main-7">
+                    <div className="w-1/3 shadow-sm card bg-custom-stress">
                         <figure>
                             {
                                 //找到最多游玩时间的游戏封面并显示
@@ -156,7 +156,7 @@ function Ranking() {
                             </div>
                         </div>
                     </div>
-                    <div className="w-1/3 shadow-sm card bg-custom-main-7">
+                    <div className="w-1/3 shadow-sm card bg-custom-stress">
                         <figure>
                             {
                                 //找到最多游玩时间的游戏封面并显示
@@ -220,7 +220,7 @@ function Global() {
     return (
         <div className='w-full h-full p-3'>
             <div className='flex flex-row gap-7'>
-                <div className='w-1/3 p-3 bg-custom-main-7'>
+                <div className='w-1/3 p-3 bg-custom-stress'>
                     <div className='text-lg font-bold'>总览</div>
                     <div className='m-0 divider'></div>
                     <div className='flex flex-col gap-3 text-custom-text-light'>
@@ -270,7 +270,7 @@ function Global() {
                         </div>
                     </div>
                 </div>
-                <div className='w-1/3 p-3 bg-custom-main-7'>
+                <div className='w-1/3 p-3 bg-custom-stress'>
                     <div className='text-lg font-bold'>最多游玩时间</div>
                     <div className='m-0 divider'></div>
                     <div className='flex flex-col gap-1 overflow-auto text-custom-text-light scrollbar-base'>
@@ -282,7 +282,7 @@ function Global() {
                         })}
                     </div>
                 </div>
-                <div className='w-1/3 p-3 bg-custom-main-7'>
+                <div className='w-1/3 p-3 bg-custom-stress'>
                     <div className='text-lg font-bold'>最近游玩</div>
                     <div className='m-0 divider'></div>
                     <div className='flex flex-col gap-1 overflow-auto text-custom-text-light scrollbar-base'>
