@@ -418,29 +418,30 @@ app.whenReady().then(() => {
     }
   });
 
-  ipcMain.on('initialize-use-local-data', async (event, token, owner) => {
+  ipcMain.handle('initialize-use-local-data', async (event, token, owner) => {
     try {
       const path = getSyncPath('')
       await initAndPushLocalRepo(token, path, owner);
       const gameData = await getGameData(getDataPath('data.json'));
       mainWindow.webContents.send('game-data-updated', gameData);
+      return
     } catch (error) {
       console.error('Error initializing repository:', error);
       mainWindow.webContents.send('initialize-error', error.message);
     }
   })
 
-  ipcMain.on('initialize-use-cloud-data', async (event, token, owner) => {
+  ipcMain.handle('initialize-use-cloud-data', async (event, token, owner) => {
     try {
       const path = getSyncPath('')
       await fse.remove(path);
       await clonePrivateRepo(token, `https://github.com/${owner}/my-gal.git`, path);
       const gameData = await getGameData(getDataPath('data.json'));
       mainWindow.webContents.send('game-data-updated', gameData);
+      return
     } catch (error) {
       console.error('Error initializing repository:', error);
-      mainWindow.webContents.send('initialize-error', error.message
-      );
+      mainWindow.webContents.send('initialize-error', error.message);
     }
   })
 
@@ -451,6 +452,17 @@ app.whenReady().then(() => {
       return 'success';
     } catch (error) {
       console.error('Error committing and pushing changes:', error);
+      return error.message;
+    }
+  })
+
+  ipcMain.handle('sign-out-github', async (event) => {
+    try {
+      const path = getSyncPath('.git')
+      await fse.remove(path);
+      return 'success';
+    } catch (error) {
+      console.error('Error signing out of GitHub:', error);
       return error.message;
     }
   })

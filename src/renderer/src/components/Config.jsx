@@ -124,12 +124,13 @@ function CloudSync() {
                 setConfigAlert('');
             }, 5000);
         })
-        window.electron.ipcRenderer.on('auth-success', (event, data) => {
+        window.electron.ipcRenderer.on('auth-success', async (event, data) => {
             setConfigAlert('Github登录成功：' + data.username);
             setTimeout(() => {
                 setConfigAlert('');
             }, 5000);
-            window.electron.ipcRenderer.invoke('initialize-repo', data.accessToken, data.username).then((data) => {
+            setIsLoading(true);
+            await window.electron.ipcRenderer.invoke('initialize-repo', data.accessToken, data.username).then((data) => {
                 if (data) {
                     setConfigAlert('Github仓库初始化成功，5秒后重启应用生效！');
                     setTimeout(() => {
@@ -145,6 +146,7 @@ function CloudSync() {
                     }, 5000);
                 }
             })
+            setIsLoading(false);
         })
         window.electron.ipcRenderer.on('initialize-error', (event, message) => {
             setConfigAlert('Github仓库初始化失败：' + message);
@@ -248,7 +250,7 @@ function CloudSync() {
     async function useLocalData() {
         try {
             setIsLoading(true);
-            await window.electron.ipcRenderer.send('initialize-use-local-data', config.cloudSync.github.accessToken, config.cloudSync.github.username);
+            await window.electron.ipcRenderer.invoke('initialize-use-local-data', config.cloudSync.github.accessToken, config.cloudSync.github.username);
             setIsLoading(false);
             document.getElementById('initializeDiffData').close();
             updateConfig(['cloudSync', 'github', 'repoUrl'], `https://github.com/${config.cloudSync.github.username}/my-gal.git`);
@@ -268,7 +270,7 @@ function CloudSync() {
     async function useCloudData() {
         try {
             setIsLoading(true);
-            await window.electron.ipcRenderer.send('initialize-use-cloud-data', config.cloudSync.github.accessToken, config.cloudSync.github.username);
+            await window.electron.ipcRenderer.invoke('initialize-use-cloud-data', config.cloudSync.github.accessToken, config.cloudSync.github.username);
             setIsLoading(false);
             document.getElementById('initializeDiffData').close();
             updateConfig(['cloudSync', 'github', 'repoUrl'], `https://github.com/${config.cloudSync.github.username}/my-gal.git`);
@@ -289,6 +291,41 @@ function CloudSync() {
                 setConfigAlert('');
             }, 3000);
         }
+    }
+    async function signoutGithub() {
+        setIsLoading(true);
+        await window.electron.ipcRenderer.invoke('sign-out-github', config.cloudSync.github.accessToken, config.cloudSync.github.username).then((data) => {
+            if (data === 'success') {
+                updateConfig(['cloudSync', 'github', 'username'], '');
+                updateConfig(['cloudSync', 'github', 'accessToken'], '');
+                updateConfig(['cloudSync', 'github', 'repoUrl'], '');
+                setConfigAlert('Github账号已退出');
+            } else {
+                setConfigAlert('退出Github账号失败：' + data);
+            }
+            setTimeout(() => {
+                setConfigAlert('');
+            }, 3000);
+        })
+        setIsLoading(false);
+    }
+    async function switchGithub() {
+        setIsLoading(true);
+        await window.electron.ipcRenderer.invoke('sign-out-github', config.cloudSync.github.accessToken, config.cloudSync.github.username).then((data) => {
+            if (data === 'success') {
+                updateConfig(['cloudSync', 'github', 'username'], '');
+                updateConfig(['cloudSync', 'github', 'accessToken'], '');
+                updateConfig(['cloudSync', 'github', 'repoUrl'], '');
+                setConfigAlert('Github账号已退出');
+            } else {
+                setConfigAlert('退出Github账号失败：' + data);
+            }
+            setTimeout(() => {
+                setConfigAlert('');
+            }, 3000);
+        })
+        await loginGithub();
+        setIsLoading(false);
     }
     return (
         <div className='flex flex-col w-full h-full gap-5 pb-32 overflow-auto p-7 scrollbar-base bg-custom-main-6'>
@@ -326,7 +363,7 @@ function CloudSync() {
                 <label className="flex p-0 label">
                     <span className="flex-grow text-sm font-semibold">同步模式</span>
                     <div className="dropdown dropdown-end">
-                        <div tabIndex={0} role="button" className="flex flex-row items-center justify-between w-full gap-2 pr-1 mb-1 text-sm font-semibold border-0 input-sm bg-custom-main-7 hover:brightness-125">
+                        <div tabIndex={0} role="button" className="flex flex-row items-center justify-between w-full gap-2 pr-1 mb-1 text-sm font-semibold border-0 hover:text-custom-text-light input-sm bg-custom-main-7 hover:brightness-125">
                             <div className="flex items-center gap-3">
                                 <div>{modeConvert(configSetting?.cloudSync?.mode || 'github')}</div>
                             </div>
@@ -337,10 +374,6 @@ function CloudSync() {
                             <li onClick={() => { updateConfigSetting(['cloudSync', 'mode'], 'webdav') }} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none hover:text-black/80'>WebDav</a></li>
                         </ul>
                     </div>
-                    {/* <select className="w-full outline-none bg-base-100 select select-bordered select-sm max-w-32" value={configSetting?.cloudSync?.mode || 'github'} onChange={(e) => { updateConfigSetting(['cloudSync', 'mode'], e.target.value) }}>
-                        <option value={'github'}>Github</option>
-                        <option value={'webdav'}>WebDav</option>
-                    </select> */}
                 </label>
             </div>
             <div className='flex flex-col gap-2'>
@@ -350,18 +383,28 @@ function CloudSync() {
                         <div>
                             <div className='flex flex-row items-center'>
                                 <span className="text-sm font-semibold grow">账号</span>
-                                <span className="p-1 text-sm font-semibold bg-custom-main-7">{config['cloudSync']['github']['username']}</span>
+                                <div className="dropdown dropdown-end">
+                                    <div tabIndex={0} role="button" className="flex flex-row items-center justify-between w-full gap-2 mb-1 text-sm font-semibold border-0 hover:text-custom-text-light input-sm bg-custom-main-7 hover:brightness-125">
+                                        <div className="flex items-center gap-3">
+                                            <div>{config['cloudSync']['github']['username']}</div>
+                                        </div>
+                                    </div>
+                                    <ul tabIndex={0} className="dropdown-content menu bg-custom-main-5 rounded-box z-[1] w-auto p-2 shadow">
+                                        <li onClick={switchGithub} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none hover:text-black/80'>切换</a></li>
+                                        <li onClick={signoutGithub} className='hover:bg-custom-text hover:text-black/80'><a className='transition-none hover:text-black/80'>退出</a></li>
+                                    </ul>
+                                </div>
                             </div>
                             <div className='m-0 divider'></div>
                             <div className='flex flex-row items-center'>
                                 <span className="text-sm font-semibold grow">仓库</span>
-                                <a className="p-1 text-sm font-semibold link-hover" href={config['cloudSync']['github']['repoUrl']} target='_blank'>{`${config['cloudSync']['github']['username']}/my-gal`}</a>
+                                <a className="p-1 text-sm font-semibold link-hover hover:text-custom-text-light" href={config['cloudSync']['github']['repoUrl']} target='_blank'>{`${config['cloudSync']['github']['username']}/my-gal`}</a>
                             </div>
                             <div className='m-0 divider'></div>
                             <div className='flex flex-row items-center gap-2'>
                                 <span className="text-sm font-semibold grow">最后同步时间</span>
                                 <span className="p-1 text-sm font-semibold">{config['cloudSync']['github']['lastSyncTime']}</span>
-                                <button className='transition-all btn btn-xs bg-custom-main-7 hover:brightness-125' onClick={githubSync}>
+                                <button className='transition-all btn btn-xs bg-custom-main-7 hover:brightness-125 hover:text-custom-text-light' onClick={githubSync}>
                                     {isLoading && <span className='loading loading-spinner loading-xs'></span>}
                                     同步
                                 </button>
@@ -378,29 +421,29 @@ function CloudSync() {
                 <div className='pb-2 font-bold text-custom-text-light'>WebDav</div>
                 <div className='flex flex-row items-center'>
                     <span className="text-sm font-semibold grow">地址</span>
-                    <input className="w-1/2 min-h-0 border-0 outline-none input focus:bg-custom-main-3 focus:text-custom-text-light/80 bg-custom-main-7 input-sm hover:brightness-125 focus:shadow-inner-sm focus:shadow-black/80 focus:hover:brightness-100" spellCheck='false' placeholder='示例：https://pan.example.xyz' value={configSetting?.cloudSync?.webdav?.url || ''} onChange={(e) => { updateConfigSetting(['cloudSync', 'webdav', 'url'], e.target.value) }} />
+                    <input className="w-1/2 min-h-0 border-0 outline-none input focus:bg-custom-main-3 focus:text-custom-text-light/95 bg-custom-main-7 input-sm hover:brightness-125 focus:shadow-inner-sm focus:shadow-black/80 focus:hover:brightness-100" spellCheck='false' placeholder='示例：https://pan.example.xyz' value={configSetting?.cloudSync?.webdav?.url || ''} onChange={(e) => { updateConfigSetting(['cloudSync', 'webdav', 'url'], e.target.value) }} />
                 </div>
                 <div className='m-0 divider'></div>
                 <div className='flex flex-row items-center'>
                     <span className="text-sm font-semibold grow">路径</span>
-                    <input className="w-1/2 min-h-0 border-0 outline-none input focus:bg-custom-main-3 focus:text-custom-text-light/80 bg-custom-main-7 input-sm hover:brightness-125 focus:shadow-inner-sm focus:shadow-black/80 focus:hover:brightness-100" spellCheck='false' placeholder='示例：/dav/my-gal' value={configSetting?.cloudSync?.webdav?.path || ''} onChange={(e) => { updateConfigSetting(['cloudSync', 'webdav', 'path'], e.target.value) }} />
+                    <input className="w-1/2 min-h-0 border-0 outline-none input focus:bg-custom-main-3 focus:text-custom-text-light/95 bg-custom-main-7 input-sm hover:brightness-125 focus:shadow-inner-sm focus:shadow-black/80 focus:hover:brightness-100" spellCheck='false' placeholder='示例：/dav/my-gal' value={configSetting?.cloudSync?.webdav?.path || ''} onChange={(e) => { updateConfigSetting(['cloudSync', 'webdav', 'path'], e.target.value) }} />
                 </div>
                 <div className='m-0 divider'></div>
                 <div className='flex flex-row items-center'>
                     <span className="text-sm font-semibold grow">用户名</span>
-                    <input className="w-1/3 min-h-0 border-0 outline-none input focus:bg-custom-main-3 focus:text-custom-text-light/80 bg-custom-main-7 input-sm hover:brightness-125 focus:shadow-inner-sm focus:shadow-black/80 focus:hover:brightness-100" spellCheck='false' value={configSetting?.cloudSync?.webdav?.username || ''} onChange={(e) => { updateConfigSetting(['cloudSync', 'webdav', 'username'], e.target.value) }} />
+                    <input className="w-1/3 min-h-0 border-0 outline-none input focus:bg-custom-main-3 focus:text-custom-text-light/95 bg-custom-main-7 input-sm hover:brightness-125 focus:shadow-inner-sm focus:shadow-black/80 focus:hover:brightness-100" spellCheck='false' value={configSetting?.cloudSync?.webdav?.username || ''} onChange={(e) => { updateConfigSetting(['cloudSync', 'webdav', 'username'], e.target.value) }} />
                 </div>
                 <div className='m-0 divider'></div>
                 <div className='flex flex-row items-center'>
                     <span className="text-sm font-semibold grow">密码</span>
-                    <input className="w-1/3 min-h-0 border-0 outline-none input focus:bg-custom-main-3 focus:text-custom-text-light/80 bg-custom-main-7 input-sm hover:brightness-125 focus:shadow-inner-sm focus:shadow-black/80 focus:hover:brightness-100" spellCheck='false' value={configSetting?.cloudSync?.webdav?.password || ''} onChange={(e) => { updateConfigSetting(['cloudSync', 'webdav', 'password'], e.target.value) }} />
+                    <input className="w-1/3 min-h-0 border-0 outline-none input focus:bg-custom-main-3 focus:text-custom-text-light/95 bg-custom-main-7 input-sm hover:brightness-125 focus:shadow-inner-sm focus:shadow-black/80 focus:hover:brightness-100" spellCheck='false' value={configSetting?.cloudSync?.webdav?.password || ''} onChange={(e) => { updateConfigSetting(['cloudSync', 'webdav', 'password'], e.target.value) }} />
                 </div>
                 <div className='m-0 divider'></div>
                 <div className='flex flex-row items-center gap-2'>
                     <span className="text-sm font-semibold grow">最后同步时间</span>
                     <span className="p-1 text-sm font-semibold">{config?.cloudSync?.webdav?.lastSyncTime}</span>
-                    <button className='transition-all btn btn-xs bg-custom-main-7 hover:brightness-125' onClick={webdavUpload}>上传</button>
-                    <button className='transition-all btn btn-xs bg-custom-main-7 hover:brightness-125' onClick={webdavDownload}>下载</button>
+                    <button className='transition-all btn btn-xs bg-custom-main-7 hover:brightness-125 hover:text-custom-text-light' onClick={webdavUpload}>上传</button>
+                    <button className='transition-all btn btn-xs bg-custom-main-7 hover:brightness-125 hover:text-custom-text-light' onClick={webdavDownload}>下载</button>
                 </div>
             </div>
         </div>
