@@ -97,7 +97,7 @@ function App() {
       <div className='absolute top-0 left-0 z-20 w-full h-8'>
         <div className='absolute top-0 left-0 z-20 flex items-center justify-between w-full h-8 title-bar text-custom-text-light bg-custom-titlebar border-b-0.5 border-black'>
           <div className='h-full p-0 dropdown no-drag bg-custom-titlebar'>
-            <div tabIndex={0} role='button' className='w-full h-full gap-2 mb-1 text-lg font-semibold text-center border-0 text-custom-text-light input-sm bg-custom-titlebar hover:brightness-125'>my-gal</div>
+            <div tabIndex={0} role='button' className='w-full h-full gap-2 p-1 pt-1.5 pl-4 pr-4 mb-1 text-sm text-center border-0 text-smfont-semibold text-custom-text-light bg-custom-titlebar hover:brightness-125'>my-gal</div>
             <ul tabIndex={0} className="dropdown-content menu z-[1] w-52 p-2 ml-1 shadow rounded-none bg-custom-dropdown">
               <li className='hover:bg-custom-text hover:text-black' onClick={() => { document.getElementById('addGame').showModal() }}><a className='transition-none'>添加游戏</a></li>
               <li className='hover:bg-custom-text hover:text-black' onClick={() => { document.getElementById('setting').showModal() }}><a className='transition-none'>设置</a></li>

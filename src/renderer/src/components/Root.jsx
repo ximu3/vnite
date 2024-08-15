@@ -32,6 +32,8 @@ export const useRootStore = create(set => ({
     current[path[path.length - 1]] = value;
     return { config: newConfig };
   }),
+  icons: [],
+  setIcons: (icons) => set({ icons }),
 }));
 
 function NavButton({ to, name }) {

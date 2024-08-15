@@ -78,15 +78,25 @@ function toggleFullScreen() {
   }
 }
 
-function exitFullScreen() {
-  if (mainWindow) {
-    mainWindow.setFullScreen(false);
-  }
-}
+async function getFileIcon(filePath, id) {
+  try {
+    const icon = await app.getFileIcon(filePath, { size: 'large' });
 
-function toFullScreen() {
-  if (mainWindow) {
-    mainWindow.setFullScreen(true);
+    // 转换为 PNG 格式的 Buffer
+    const pngBuffer = icon.toPNG();
+
+    // 获取完整的文件路径
+    const fullPath = getDataPath(`/games/${id}/icon.png`);
+
+    // 确保目录存在
+    await fs.mkdir(path.dirname(fullPath), { recursive: true });
+
+    // 写入文件
+    await fs.writeFile(fullPath, pngBuffer);
+
+    console.log(`成功保存图标到 ${fullPath}`);
+  } catch (error) {
+    console.error('获取或保存文件图标时出错:', error);
   }
 }
 
@@ -183,6 +193,31 @@ app.whenReady().then(() => {
       mainWindow.maximize()
     }
   })
+
+  ipcMain.handle('get-game-icon', async (event, filePath, id) => {
+    await getFileIcon(filePath, id);
+  });
+
+  ipcMain.handle('update-game-icon', async (event, gameId, imgPath) => {
+    try {
+      const iconDir = getDataPath(`games/${gameId}/`);
+      const iconPath = join(iconDir, 'icon.png');
+
+      // 确保目标文件夹存在
+      await fs.mkdir(iconDir, { recursive: true });
+
+      // 处理图片：只转换为PNG格式，不改变分辨率
+      await sharp(imgPath)
+        .resize(256, 256) // 将图片调整为 256x256 像素
+        .png() // 转换为 PNG 格式
+        .toFile(iconPath);
+
+      return iconPath;
+    } catch (error) {
+      console.error('更新游戏图标时出错:', error);
+      throw error; // 将错误传回渲染进程
+    }
+  });
 
   ipcMain.handle('open-file-dialog', async (event) => {
     const result = await dialog.showOpenDialog({

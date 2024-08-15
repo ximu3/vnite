@@ -313,10 +313,13 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath) {
 
         let sizeInMB = 0;
 
+        let icon = ''
+
         if (gamePath !== '') {
             gamePath = gamePath.replace(/\\/g, '/');
             const size = await getFolderSize(path.dirname(gamePath));
             sizeInMB = Math.round(Number(size.size) / 1024 / 1024);
+            icon = `/games/${gid}/icon.png`
         }
 
         if (savePath !== '') {
@@ -334,6 +337,7 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath) {
                 gid: `ga${gameData.game.gid}`,
                 vid: vid,
                 cover: `/games/${gid}/cover.webp`,
+                icon: icon,
                 backgroundImage: `/games/${gid}/background.webp`,
                 savePath: savePath,
                 gamePath: gamePath,

@@ -1,41 +1,57 @@
 import { BrowserRouter, Routes, Route, Navigate, NavLink } from 'react-router-dom';
 import Game from './Game';
 import { useRootStore } from './Root';
+import { useEffect, useState } from 'react';
 
-function NavButton({ to, name }) {
+function NavButton({ to, name, icon }) {
   return (
     <NavLink className={({ isActive, isPending }) =>
       isPending
         ? ""
         : isActive
-          ? "transition-none bg-gradient-to-r from-custom-blue-5 to-custom-blue-5/80 text-custom-text-light text-xs hover:bg-custom-blue-5 hover:brightness-125"
-          : "transition-none active:bg-gradient-to-r active:from-custom-blue-5 active:to-custom-blue-5/80 hover:bg-gradient-to-r hover:from-custom-blue-5/50 hover:to-custom-blue-5/30 active:text-custom-text-light text-xs"
+          ? "transition-none p-2 pl-4 bg-gradient-to-r from-custom-blue-5 to-custom-blue-5/80 text-custom-text-light text-xs hover:bg-custom-blue-5 hover:brightness-125"
+          : "transition-none p-2 pl-4 active:bg-gradient-to-r active:from-custom-blue-5 active:to-custom-blue-5/80 hover:bg-gradient-to-r hover:from-custom-blue-5/50 hover:to-custom-blue-5/30 active:text-custom-text-light text-xs"
     }
       to={to}>
-      {name}
+      {icon}{name}
     </NavLink>
   )
 
 }
 
 function Library() {
-  const { data } = useRootStore();
+  const { data, icons, setIcons, timestamp } = useRootStore();
+  useEffect(() => {
+    async function loadImages() {
+      setIcons([]);
+      const iconPaths = await Promise.all(
+        data?.map(async game => {
+          if (!game?.detail.icon) {
+            return null; // 如果icon为空，直接返回null
+          }
+          return await window.electron.ipcRenderer.invoke('get-data-path', game.detail.icon);
+        })
+      );
+      setIcons(iconPaths);
+    }
+    loadImages();
+  }, [data]);
   return (
     <div className="flex flex-row w-full h-full">
-      <div className="flex flex-col h-full border-black border-r-0.5 border-l-0.5 w-72 shrink-0 bg-gradient-to-b from-custom-stress via-15% via-custom-blue-5/20 to-30% to-custom-main-2">
+      <div className="flex flex-col h-full border-black border-r-0.5 border-l-0.5 w-72 shrink-0 bg-gradient-to-b from-custom-stress-2 via-15% via-custom-blue-5/20 to-30% to-custom-main-2">
         <div className="flex flex-row w-full gap-2 p-2 pt-3 h-14">
-          <label className="flex items-center min-w-0 min-h-0 gap-3 pl-3 border-0 h-9 input bg-custom-main-3 focus-within:outline-none group focus-within:shadow-inner focus-within:border-0 focus-within:shadow-black/80 hover:shadow-inner hover:shadow-black/80 focus-within:hover:brightness-100">
+          <label className="flex items-center min-w-0 min-h-0 gap-3 pl-3 transition-all border-0 active:transition-none h-9 input bg-custom-stress-1 focus-within:outline-none group focus-within:shadow-inner focus-within:border-0 focus-within:shadow-black/80 hover:shadow-inner hover:shadow-black/80 focus-within:hover:brightness-100">
             <span className="icon-[material-symbols--search] w-7 h-7 text-custom-text-light"></span>
-            <input type="text" className="min-w-0 min-h-0 grow focus:outline-transparent caret-custom-text-light" placeholder="Search" />
+            <input type="text" className="min-w-0 min-h-0 grow focus:outline-transparent caret-custom-text-light" placeholder="" />
           </label>
-          <button className='min-w-0 min-h-0 border-0 w-9 h-9 btn btn-square bg-custom-main-3' onClick={() => { document.getElementById('addGame').showModal() }}>
-            <span className="icon-[ic--sharp-plus] w-8 h-8 text-custom-text hover:text-custom-text-light"></span>
+          <button className='min-w-0 min-h-0 transition-all border-0 w-9 h-9 btn btn-square bg-custom-stress-1' onClick={() => { document.getElementById('addGame').showModal() }}>
+            <span className="transition-all icon-[ic--sharp-plus] w-8 h-8 text-custom-text hover:text-custom-text-light"></span>
           </button>
         </div>
         <div className="self-center object-center w-full grow">
-          <ul className="w-full pl-0 menu rounded-box text-custom-text-light gap-0.5">
+          <ul className="w-full pl-0 pr-0 menu rounded-box text-custom-text-light gap-0.5">
             {data.map((game, index) => {
-              return <li key={index} className='transition-none'><NavButton to={`./${index}`} name={game.detail.chineseName ? game.detail.chineseName : game.detail.name} /></li>
+              return <li key={index} className='transition-none'><NavButton to={`./${index}`} name={game.detail.chineseName ? game.detail.chineseName : game.detail.name} icon={icons[index] ? <img src={`${icons[index]}?t=${timestamp}`} className='w-4.5 h-4.5' alt="" /> : <span className="icon-[mingcute--game-2-fill] w-4.5 h-4.5"></span>} /></li>
             })
             }
             {/* <li><NavButton to={"./v1"} name={"v1"} /></li>

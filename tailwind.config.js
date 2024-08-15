@@ -23,6 +23,8 @@ module.exports = {
           'dropdown': '#3D4450',
           'modal': '#171D25',
           'stress': '#2A2D34',
+          'stress-1': '#24272C',
+          'stress-2': '#2A3038',
           'focus': '#25272C',
           'green': '#4FC830',
           'blue-2': '#38709A',
@@ -78,6 +80,7 @@ module.exports = {
         "100": "25rem",
         "170": "42.5rem",
         "270": "67.5rem",
+        '4.5': '1.125rem',
 
       },
       boxShadow: {
@@ -124,6 +127,7 @@ module.exports = {
         '1/8': '12.5%',
         '1/7': '14.285714%',
         '120': '30rem',
+        '4.5': '1.125rem',
       },
       borderWidth: {
         '0.5': '0.5px',

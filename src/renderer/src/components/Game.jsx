@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate, NavLink, useNavigate } from 're
 import { useRootStore } from './Root'
 import { useEffect, useState } from 'react'
 import { create } from 'zustand'
+import { data } from 'autoprefixer';
 
 function NavTab({ to, name }) {
     return (
@@ -705,7 +706,7 @@ function Setting({ index }) {
             case 'advanced':
                 return <AdvancedSettings />;
             case 'media':
-                return <MediaSettings />;
+                return <MediaSettings index={index} />;
             case 'startup':
                 return <StartupSettings />;
             default:
@@ -894,10 +895,10 @@ function AdvancedSettings() {
     )
 }
 
-function MediaSettings() {
+function MediaSettings({ index }) {
     const { settingData, updateSettiongData, setSettingData, dataString, setDataString, setSettingAlert } = useGameSetting()
     const { coverImage, backgroundImage } = useGameStore()
-    const { timestamp, setTimestamp } = useRootStore()
+    const { timestamp, setTimestamp, icons, updateData } = useRootStore()
     async function updateCover(gameId) {
         try {
             // 打开文件选择对话框
@@ -906,6 +907,33 @@ function MediaSettings() {
             if (selectedPath) {
                 // 调用更新游戏封面的方法
                 await window.electron.ipcRenderer.invoke('update-game-cover', gameId, selectedPath);
+
+                // console.log('新的封面路径:', newCoverPath);
+
+                // 这里可以添加更新UI或通知用户的逻辑
+                setTimestamp()
+                setSettingAlert('更换图片成功！');
+                setTimeout(() => { setSettingAlert('') }, 3000);
+            } else {
+                // 用户取消了选择
+                console.log('用户取消了文件选择！');
+            }
+        } catch (error) {
+            console.error('更换图片时发生错误:', error);
+            setSettingAlert('更换图片失败！');
+            setTimeout(() => { setSettingAlert('') }, 3000);
+        }
+    }
+    async function updateIcon(gameId) {
+        try {
+            // 打开文件选择对话框
+            const selectedPath = await window.electron.ipcRenderer.invoke('open-img-dialog');
+
+            if (selectedPath) {
+                // 调用更新游戏封面的方法
+                const iconPath = await window.electron.ipcRenderer.invoke('update-game-icon', gameId, selectedPath);
+
+                updateData([index, 'detail', 'icon'], iconPath)
 
                 // console.log('新的封面路径:', newCoverPath);
 
@@ -958,11 +986,22 @@ function MediaSettings() {
                     <button className='transition-all btn btn-sm bg-custom-stress hover:brightness-125 text-custom-text-light' onClick={() => { updateCover(settingData?.detail?.id || '') }}>更换</button>
                     <img src={`${coverImage || ''}?t=${timestamp}`} alt="" className='w-1/2 h-auto pt-2' />
                 </div>
-                <div className='flex flex-col w-1/2 font-bold text-custom-text-light'>
-                    <div>背景</div>
-                    <div className='m-0 divider'></div>
-                    <button className='transition-all btn btn-sm bg-custom-stress hover:brightness-125 text-custom-text-light' onClick={() => { updateBackgroundImage(settingData?.detail?.id || '') }}>更换</button>
-                    <img src={`${backgroundImage || ''}?t=${timestamp}`} alt="" className='w-full h-auto pt-2' />
+                <div className='flex flex-col w-1/2 gap-2 font-bold text-custom-text-light'>
+                    <div className='flex flex-col h-1/2'>
+                        <div>图标</div>
+                        <div className='m-0 divider'></div>
+                        <button className='transition-all btn btn-sm bg-custom-stress hover:brightness-125 text-custom-text-light' onClick={() => { updateIcon(settingData?.detail?.id || '') }}>更换</button>
+                        <div>
+
+                            <img src={`${icons[index] || ''}?t=${timestamp}`} alt="" className='w-auto h-20 pt-2' />
+                        </div>
+                    </div>
+                    <div className='flex flex-col'>
+                        <div>背景</div>
+                        <div className='m-0 divider'></div>
+                        <button className='transition-all btn btn-sm bg-custom-stress hover:brightness-125 text-custom-text-light' onClick={() => { updateBackgroundImage(settingData?.detail?.id || '') }}>更换</button>
+                        <img src={`${backgroundImage || ''}?t=${timestamp}`} alt="" className='w-full h-auto pt-2' />
+                    </div>
                 </div>
             </div>
         </div>
@@ -971,10 +1010,13 @@ function MediaSettings() {
 
 function StartupSettings() {
     const { settingData, updateSettiongData, setSettingData, setSettingAlert } = useGameSetting()
+    const { setTimestamp } = useRootStore()
     async function selectGamePath() {
         const path = await window.electron.ipcRenderer.invoke("open-file-dialog")
         if (path) {
             updateSettiongData(['detail', 'gamePath'], path)
+            await window.electron.ipcRenderer.invoke('get-game-icon', path, settingData['detail']['id'])
+            setTimestamp()
         } else {
             return
         }

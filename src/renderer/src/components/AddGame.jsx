@@ -189,12 +189,15 @@ function GameList() {
 }
 
 function GamePath() {
-  const { gamePath, savePath, gameName, setGamePath, setSavePath, setAlert, setIsLoading, setGameBgList, isLoading } = useAddGame();
+  const { gamePath, savePath, gameName, setGamePath, setSavePath, setAlert, setIsLoading, setGameBgList, isLoading, gid } = useAddGame();
   let navigate = useNavigate();
 
   async function selectGamePath() {
     const path = await window.electron.ipcRenderer.invoke("open-file-dialog")
     setGamePath(path);
+    if (path !== '') {
+      await window.electron.ipcRenderer.invoke('get-game-icon', path, gid);
+    }
   }
 
   async function selectSavePath() {
@@ -206,7 +209,7 @@ function GamePath() {
     e.preventDefault();
   }
 
-  function getGamePathByDrag(e) {
+  async function getGamePathByDrag(e) {
     e.preventDefault();
     const files = Array.from(e.dataTransfer.files);
     if (files.length > 1) {
@@ -221,6 +224,7 @@ function GamePath() {
       setTimeout(() => { setAlert(''); }, 3000);
       return
     }
+    await window.electron.ipcRenderer.invoke('get-game-icon', path, gid);
     setGamePath(file.path);
   }
 
