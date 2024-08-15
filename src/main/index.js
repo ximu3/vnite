@@ -116,6 +116,20 @@ function bringApplicationToFront() {
   }
 }
 
+async function retry(fn, retries, mainWindow) {
+  try {
+    return await fn();
+  } catch (error) {
+    if (retries > 0) {
+      console.log(`操作失败，${1000 / 1000}秒后重试。剩余重试次数：${retries - 1}`);
+      mainWindow.webContents.send('add-game-log', `[warning] 操作失败，1秒后重试。剩余重试次数：${retries - 1}`);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      return retry(fn, retries - 1, mainWindow);
+    }
+    throw error;
+  }
+}
+
 
 let processes = new Map();
 // This method will be called when Electron has finished
@@ -259,7 +273,7 @@ app.whenReady().then(() => {
   });
 
   ipcMain.on('add-new-game-to-data', async (event, gid, coverUrl, bgUrl) => {
-    await addNewGameToData(gid, coverUrl, bgUrl, getDataPath('games'));
+    await retry(() => addNewGameToData(gid, coverUrl, bgUrl, getDataPath('games')), 3, mainWindow);
   });
 
   ipcMain.on('organize-game-data', async (event, gid, savePath, gamePath) => {
