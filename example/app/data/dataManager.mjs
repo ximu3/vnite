@@ -5,26 +5,26 @@ import path from 'path';
 
 
 async function addObjectToJsonFile(newObject, filePath) {
-    // const __filename = fileURLToPath(import.meta.url);
-    // const __dirname = dirname(__filename);
-    // const filePath = getDataPath('data.json');
     try {
         // 读取 JSON 文件
         const data = await fs.readFile(filePath, 'utf8');
 
         // 解析 JSON 数据
-        let jsonArray = JSON.parse(data);
+        let jsonObject = JSON.parse(data);
 
-        // 确保 jsonArray 是一个数组
-        if (!Array.isArray(jsonArray)) {
-            jsonArray = [];
+        // 确保 jsonObject 是一个对象
+        if (typeof jsonObject !== 'object' || jsonObject === null) {
+            jsonObject = {};
         }
 
-        // 添加新对象到数组
-        jsonArray.push(newObject);
+        // 获取 newObject 的键和值
+        const [[key, value]] = Object.entries(newObject);
 
-        // 将更新后的数组转换回 JSON 字符串
-        const updatedJsonString = JSON.stringify(jsonArray, null, 2);
+        // 将新的键值对添加到 jsonObject
+        jsonObject[key] = value;
+
+        // 将更新后的对象转换回 JSON 字符串
+        const updatedJsonString = JSON.stringify(jsonObject, null, 2);
 
         // 将更新后的 JSON 写回文件
         await fs.writeFile(filePath, updatedJsonString, 'utf8');
@@ -68,7 +68,7 @@ async function addNewGameToData(gid, coverUrl, bgUrl, fliePath) {
     // const __dirname = dirname(__filename);
 
     const folderPath = path.join(fliePath, `${gid}`);
-    const memoryFolderPath = path.join(folderPath, 'memory');
+    const memoryFolderPath = path.join(folderPath, 'memories');
     const savesFolderPath = path.join(folderPath, 'saves');
     const characterFolderPath = path.join(folderPath, 'characters');
     const coverFilePath = path.join(folderPath, 'cover.webp');
@@ -76,12 +76,12 @@ async function addNewGameToData(gid, coverUrl, bgUrl, fliePath) {
 
     try {
         // Create the gid folder
-        await fs.mkdir(folderPath);
+        await fs.mkdir(folderPath, { recursive: true });
 
         // Create the memory and saves folders
-        await fs.mkdir(memoryFolderPath);
-        await fs.mkdir(savesFolderPath);
-        await fs.mkdir(characterFolderPath);
+        await fs.mkdir(memoryFolderPath, { recursive: true });
+        await fs.mkdir(savesFolderPath, { recursive: true });
+        await fs.mkdir(characterFolderPath, { recursive: true });
 
         // Download and save the cover image
         const coverResponse = await axios.get(coverUrl, { responseType: 'arraybuffer' });
