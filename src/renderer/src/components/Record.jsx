@@ -232,10 +232,10 @@ function Global() {
     return (
         <div className='w-full h-full p-3'>
             <div className='flex flex-row gap-7'>
-                <div className='w-1/3 p-3 bg-custom-stress'>
+                <div className='w-1/3 p-5 bg-custom-stress'>
                     <div className='text-lg font-bold'>总览</div>
                     <div className='m-0 divider'></div>
-                    <div className='flex flex-col gap-3 text-base text-custom-text-light'>
+                    <div className='flex flex-col gap-3 pt-3 text-xs text-custom-text-light'>
                         <div className='flex flex-row justify-between'>
                             <div>全部</div>
                             <div>{quantity}</div>
@@ -282,10 +282,10 @@ function Global() {
                         </div>
                     </div>
                 </div>
-                <div className='w-1/3 p-3 bg-custom-stress'>
+                <div className='w-1/3 p-5 bg-custom-stress'>
                     <div className='text-lg font-bold'>最多游玩时间</div>
                     <div className='m-0 divider'></div>
-                    <div className='flex flex-col gap-1 overflow-auto text-base text-custom-text-light scrollbar-base'>
+                    <div className='flex flex-col gap-3 pt-3 overflow-auto text-xs text-custom-text-light scrollbar-base'>
                         {Object.entries(data).map(([key, game]) => {
                             return (
                                 <div key={key} className='flex flex-row justify-between'>
@@ -296,10 +296,10 @@ function Global() {
                         })}
                     </div>
                 </div>
-                <div className='w-1/3 p-3 bg-custom-stress'>
+                <div className='w-1/3 p-5 bg-custom-stress'>
                     <div className='text-lg font-bold'>最近游玩</div>
                     <div className='m-0 divider'></div>
-                    <div className='flex flex-col gap-1 overflow-auto text-base text-custom-text-light scrollbar-base'>
+                    <div className='flex flex-col gap-3 pt-3 overflow-auto text-xs text-custom-text-light scrollbar-base'>
                         {Object.entries(sortedData).map(([key, game]) => {
                             return (
                                 <div key={key} className='flex flex-row justify-between'>
