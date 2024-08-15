@@ -9,8 +9,8 @@ function NavButton({ to, name }) {
             isPending
                 ? ""
                 : isActive
-                    ? "bg-custom-blue-4/20 text-custom-text-light"
-                    : ""
+                    ? "transition-none bg-gradient-to-r active:bg-gradient-to-r active:from-custom-blue-5 active:to-custom-blue-5/80 from-custom-blue-5 to-custom-blue-5/80 text-custom-text-light text-xs hover:bg-custom-blue-5 hover:brightness-125 focus:bg-transparent"
+                    : "transition-none active:bg-gradient-to-r active:from-custom-blue-5 active:to-custom-blue-5/80 hover:bg-gradient-to-r hover:from-custom-blue-5/50 hover:to-custom-blue-5/30 active:text-custom-text-light text-xs focus:bg-transparent"
         }
             to={to}>
             {name}
@@ -86,7 +86,7 @@ function Record() {
         <div className="flex flex-row w-full h-full">
             <div className="flex flex-col h-full border-black border-r-0.5 border-l-0.5 w-72 shrink-0">
                 <div className="w-full grow bg-custom-main-2">
-                    <ul className="w-full menu rounded-box">
+                    <ul className="flex flex-col w-full gap-1 menu rounded-box">
                         <li><NavButton to={"./global"} name={"全局"} /></li>
                         <li><NavButton to={"./ranking"} name={"排行"} /></li>
                     </ul>
