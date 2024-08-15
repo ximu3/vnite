@@ -213,7 +213,7 @@ function Game({ index }) {
     function deleteGame() {
         window.electron.ipcRenderer.send('delete-game', index);
         document.getElementById('deleteGame').close();
-        naivgate(`../${index - 1}`)
+        naivgate(`../posterwall`)
     }
     return (
         <div className="flex flex-col w-full h-full overflow-auto scrollbar-base scrollbar-w-2 bg-custom-main/90 text-custom-text">
@@ -707,7 +707,7 @@ function Setting({ index }) {
             case 'media':
                 return <MediaSettings index={index} />;
             case 'startup':
-                return <StartupSettings />;
+                return <StartupSettings index={index} />;
             default:
                 return null;
         }
@@ -1007,13 +1007,13 @@ function MediaSettings({ index }) {
     )
 }
 
-function StartupSettings() {
+function StartupSettings({ index }) {
     const { settingData, updateSettiongData, setSettingData, setSettingAlert } = useGameSetting()
     const { setTimestamp, updateData } = useRootStore()
     async function selectGamePath() {
         const path = await window.electron.ipcRenderer.invoke("open-file-dialog")
         if (path) {
-            updateSettiongData(['detail', 'gamePath'], path)
+            updateData([index, 'detail', 'gamePath'], path)
             await window.electron.ipcRenderer.invoke('get-game-icon', path, settingData['detail']['id'])
             updateData([index, 'detail', 'icon'], `/games/${settingData['detail']['id']}/icon.png`)
             setTimestamp()
@@ -1025,7 +1025,7 @@ function StartupSettings() {
     async function selectSavePath() {
         const path = await window.electron.ipcRenderer.invoke("open-file-folder-dialog")
         if (path) {
-            updateSettiongData(['detail', 'savePath'], path)
+            updateData([index, 'detail', 'savePath'], path)
         } else {
             return
         }
