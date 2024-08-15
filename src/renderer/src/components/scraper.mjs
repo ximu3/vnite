@@ -328,38 +328,40 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath) {
 
         // console.log(staff);
         const data = {
-            detail: {
-                name: gameData.game.name,
-                chineseName: gameData.game.chineseName,
-                extensionName: extensionName,
-                introduction: gameData.game.introduction,
-                id: gameData.game.gid,
-                gid: `ga${gameData.game.gid}`,
-                vid: vid,
-                cover: `/games/${gid}/cover.webp`,
-                icon: icon,
-                backgroundImage: `/games/${gid}/background.webp`,
-                savePath: savePath,
-                gamePath: gamePath,
-                volume: sizeInMB,
-                addDate: getCurrentDate(),
-                gameDuration: 0,
-                lastVisitDate: "",
-                frequency: 0,
-                playStatus: 0,
-                moreEntry: gameData.game.moreEntry,
-                typeDesc: gameData.game.typeDesc,
-                developer: await retry(() => searchDeveloperId(gameData.game.developerId), 3, mainWindow),
-                developerId: gameData.game.developerId,
-                releaseDate: gameData.game.releaseDate,
-                restricted: gameData.game.restricted,
-                websites: websites,
-                releases: gameData.game.releases,
-                staff: staff
-            },
-            characters: characters,
-            saves: saves,
-            memories: memory
+            [`${gameData.game.gid}`]: {
+                detail: {
+                    name: gameData.game.name,
+                    chineseName: gameData.game.chineseName,
+                    extensionName: extensionName,
+                    introduction: gameData.game.introduction,
+                    id: gameData.game.gid,
+                    gid: `ga${gameData.game.gid}`,
+                    vid: vid,
+                    cover: `/games/${gid}/cover.webp`,
+                    icon: icon,
+                    backgroundImage: `/games/${gid}/background.webp`,
+                    savePath: savePath,
+                    gamePath: gamePath,
+                    volume: sizeInMB,
+                    addDate: getCurrentDate(),
+                    gameDuration: 0,
+                    lastVisitDate: "",
+                    frequency: 0,
+                    playStatus: 0,
+                    moreEntry: gameData.game.moreEntry,
+                    typeDesc: gameData.game.typeDesc,
+                    developer: await retry(() => searchDeveloperId(gameData.game.developerId), 3, mainWindow),
+                    developerId: gameData.game.developerId,
+                    releaseDate: gameData.game.releaseDate,
+                    restricted: gameData.game.restricted,
+                    websites: websites,
+                    releases: gameData.game.releases,
+                    staff: staff
+                },
+                characters: characters,
+                saves: saves,
+                memories: memory
+            }
         };
         await retry(() => addObjectToJsonFile(data, path.join(dataPath, 'data.json')), 3, mainWindow);
         mainWindow.webContents.send('add-game-log', `[success] 成功处理游戏 ${gameData.game.name} 的数据。`);

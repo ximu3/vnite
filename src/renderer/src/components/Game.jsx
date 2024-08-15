@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route, Navigate, NavLink, useNavigate } from 're
 import { useRootStore } from './Root'
 import { useEffect, useState } from 'react'
 import { create } from 'zustand'
-import { data } from 'autoprefixer';
 
 function NavTab({ to, name }) {
     return (
@@ -235,12 +234,12 @@ function Game({ index }) {
             </dialog>
 
             <dialog id="gameSetting" className="modal">
-                <div className="w-3/5 max-w-full max-h-full h-5/6 modal-box bg-custom-modal">
+                <div className="w-3/5 max-w-full max-h-full overflow-auto h-5/6 modal-box bg-custom-modal scrollbar-base">
                     <form method="dialog">
                         {/* if there is a button in form, it will close the modal */}
                         <button className="absolute btn btn-sm btn-ghost right-2 top-2" onClick={quitSetting}>✕</button>
                     </form>
-                    <div className='w-full h-full p-6 pl-10 pr-10'>
+                    <div className='w-full h-full p-6 pl-10 pr-10 '>
                         <Setting index={index} />
                     </div>
                 </div>
@@ -933,7 +932,7 @@ function MediaSettings({ index }) {
                 // 调用更新游戏封面的方法
                 const iconPath = await window.electron.ipcRenderer.invoke('update-game-icon', gameId, selectedPath);
 
-                updateData([index, 'detail', 'icon'], iconPath)
+                updateData([index, 'detail', 'icon'], `/games/${gameId}/icon.png`)
 
                 // console.log('新的封面路径:', newCoverPath);
 
@@ -1010,12 +1009,13 @@ function MediaSettings({ index }) {
 
 function StartupSettings() {
     const { settingData, updateSettiongData, setSettingData, setSettingAlert } = useGameSetting()
-    const { setTimestamp } = useRootStore()
+    const { setTimestamp, updateData } = useRootStore()
     async function selectGamePath() {
         const path = await window.electron.ipcRenderer.invoke("open-file-dialog")
         if (path) {
             updateSettiongData(['detail', 'gamePath'], path)
             await window.electron.ipcRenderer.invoke('get-game-icon', path, settingData['detail']['id'])
+            updateData([index, 'detail', 'icon'], `/games/${settingData['detail']['id']}/icon.png`)
             setTimestamp()
         } else {
             return
@@ -1035,7 +1035,7 @@ function StartupSettings() {
         e.preventDefault();
     }
 
-    function getGamePathByDrag(e) {
+    async function getGamePathByDrag(e) {
         e.preventDefault();
         const files = Array.from(e.dataTransfer.files);
         if (files.length > 1) {
@@ -1051,6 +1051,8 @@ function StartupSettings() {
             return
         }
         updateSettiongData(['detail', 'gamePath'], file.path)
+        await window.electron.ipcRenderer.invoke('get-game-icon', path, settingData['detail']['id'])
+        updateData([index, 'detail', 'icon'], `/games/${settingData['detail']['id']}/icon.png`)
     }
 
     function getSavePathByDrag(e) {

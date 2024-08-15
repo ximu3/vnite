@@ -119,16 +119,16 @@ function Info() {
       <div className='flex flex-col gap-5'>
         <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
           <div className='font-semibold'>游戏名 |</div>
-          <input type="text" name='gameName' className="grow" placeholder="推荐使用原名，请准确填写" value={gameName} onChange={(e) => { setGameName(e.target.value) }} />
+          <input type="text" spellCheck='false' name='gameName' className="grow" placeholder="推荐使用原名，请准确填写" value={gameName} onChange={(e) => { setGameName(e.target.value) }} />
         </label>
         <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
           <div className='font-semibold'>GID |</div>
-          <input type="text" name='gid' className="grow" placeholder="月幕Galgame档案id，不带GA" value={gid} onChange={(e) => { setGID(e.target.value) }} />
+          <input type="text" spellCheck='false' name='gid' className="grow" placeholder="月幕Galgame档案id，不带GA" value={gid} onChange={(e) => { setGID(e.target.value) }} />
           <span className="border-0 badge bg-custom-blue-6 text-custom-text-light">可选</span>
         </label>
         <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
           <div className='font-semibold'>VID |</div>
-          <input type="text" name='vid' className="grow" placeholder="VNDB档案id，不带v" value={vid} onChange={(e) => { setVID(e.target.value) }} />
+          <input type="text" spellCheck='false' name='vid' className="grow" placeholder="VNDB档案id，不带v" value={vid} onChange={(e) => { setVID(e.target.value) }} />
           <span className="border-0 badge bg-custom-blue-6 text-custom-text-light">可选</span>
         </label>
         <div className='pt-1'>填写&nbsp;<span className='bg-custom-blue-6 text-custom-text-light'> GID </span>&nbsp;和&nbsp;<span className='text-custom-text-light bg-custom-blue-6'> VNDB ID </span>&nbsp;项可大幅提高识别正确率。</div>

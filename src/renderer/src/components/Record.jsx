@@ -33,46 +33,53 @@ const useRecordStore = create(set => ({
     setPlayed: (played) => set({ played }),
     playAgain: 0,
     setPlayAgain: (playAgain) => set({ playAgain }),
-    cover: [],
+    cover: {},
     setCover: (cover) => set({ cover }),
-    addCover: (cover) => set(state => ({ cover: [...state.cover, cover] })),
+    addCover: (key, path) => set((state) => {
+        const newCover = { ...state.cover };
+        newCover[key] = path;
+        return { cover: newCover };
+    }),
 }));
 
 function Record() {
     const { quantity, setQuantity, volume, setVolume, time, setTime, setNotPlay, setPlaying, setPlayed, setPlayAgain, addCover, setCover } = useRecordStore();
     const { data, setData, alert, config, setConfig } = useRootStore();
     useEffect(() => {
-        setCover([]);
+        setCover({});  // 将 setCover([]) 改为 setCover({})
         let volume = 0;
         let time = 0;
         let notPlay = 0;
         let playing = 0;
         let played = 0;
         let playAgain = 0;
-        data.forEach((game, index) => {
-            volume += game?.detail.volume;
-            time += game?.detail.gameDuration;
-            if (game?.detail.playtStatus === 0) {
-                notPlay++;
-            } else if (game?.detail.playtStatus === 1) {
-                playing++;
-            } else if (game?.detail.playtStatus === 2) {
-                played++;
-            } else if (game?.detail.playtStatus === 3) {
-                playAgain++;
+
+        Object.values(data).forEach((game) => {
+            volume += game?.detail.volume || 0;
+            time += game?.detail.gameDuration || 0;
+            switch (game?.detail.playtStatus) {
+                case 0: notPlay++; break;
+                case 1: playing++; break;
+                case 2: played++; break;
+                case 3: playAgain++; break;
             }
-        })
+        });
+
         setVolume(volume);
         setTime(time);
-        setQuantity(data.length);
+        setQuantity(Object.keys(data).length);
         setNotPlay(notPlay);
         setPlaying(playing);
         setPlayed(played);
         setPlayAgain(playAgain);
-        data.forEach(async (game, index) => {
-            const path = await window.electron.ipcRenderer.invoke('get-data-path', game?.detail.cover);
-            addCover(path);
-        })
+
+        // 修改这部分来处理 cover 作为键值对
+        Object.entries(data).forEach(async ([key, game]) => {
+            if (game?.detail.cover) {
+                const path = await window.electron.ipcRenderer.invoke('get-data-path', game.detail.cover);
+                addCover(key, path);  // 使用对象形式添加 cover
+            }
+        });
 
     }, [data]);
     return (
@@ -118,13 +125,13 @@ function Ranking() {
             return `${hours.toFixed(1)}小时`;
         }
     }
-    const longestGameIndex = data.reduce((maxIndex, game, currentIndex) =>
-        game?.detail.gameDuration > data[maxIndex]?.detail.gameDuration ? currentIndex : maxIndex
-        , 0);
+    const longestGameKey = Object.keys(data).reduce((maxKey, currentKey) =>
+        data[currentKey]?.detail.gameDuration > data[maxKey]?.detail.gameDuration ? currentKey : maxKey
+        , Object.keys(data)[0]);
 
-    const mostPlayedIndex = data.reduce((maxIndex, game, currentIndex) =>
-        game?.detail.frequency > data[maxIndex]?.detail.frequency ? currentIndex : maxIndex
-        , 0);
+    const mostPlayedKey = Object.keys(data).reduce((maxKey, currentKey) =>
+        data[currentKey]?.detail.frequency > data[maxKey]?.detail.frequency ? currentKey : maxKey
+        , Object.keys(data)[0]);
 
     return (
         <div className='w-full h-full p-3'>
@@ -134,9 +141,9 @@ function Ranking() {
                         <figure>
                             {
                                 //找到最多游玩时间的游戏封面并显示
-                                data[longestGameIndex]?.detail.cover && (
+                                data[longestGameKey]?.detail.cover && (
                                     <img
-                                        src={cover[longestGameIndex]}
+                                        src={cover[longestGameKey]}
                                         alt={`Cover`}
                                         className=''
                                     />
@@ -146,10 +153,10 @@ function Ranking() {
                         <div className="p-5 card-body">
                             <h2 className="flex flex-row justify-between text-center card-title">
                                 <div>最多游玩时间！</div>
-                                <div className=''>{formatTime(data[longestGameIndex]?.detail['gameDuration'])}</div>
+                                <div className=''>{formatTime(data[longestGameKey]?.detail['gameDuration'])}</div>
                             </h2>
 
-                            <div className='flex justify-center pt-2'><span className='self-center font-bold'>《{data[longestGameIndex]?.detail.chineseName ? data[longestGameIndex]?.detail.chineseName : data[longestGameIndex]?.detail.name}》</span></div>
+                            <div className='flex justify-center pt-2'><span className='self-center font-bold'>《{data[longestGameKey]?.detail.chineseName ? data[longestGameKey]?.detail.chineseName : data[longestGameKey]?.detail.name}》</span></div>
 
                             <div className="justify-end card-actions">
                                 {/* <button className="btn btn-primary">Buy Now</button> */}
@@ -160,9 +167,9 @@ function Ranking() {
                         <figure>
                             {
                                 //找到最多游玩时间的游戏封面并显示
-                                data[mostPlayedIndex]?.detail.cover && (
+                                data[mostPlayedKey]?.detail.cover && (
                                     <img
-                                        src={cover[mostPlayedIndex]}
+                                        src={cover[mostPlayedKey]}
                                         alt={`Cover`}
                                         className=''
                                     />
@@ -172,9 +179,9 @@ function Ranking() {
                         <div className="p-5 card-body">
                             <h2 className="flex flex-row justify-between text-center card-title">
                                 <div>最多游玩次数！</div>
-                                <div className=''>{data[mostPlayedIndex]?.detail.frequency}</div>
+                                <div className=''>{data[mostPlayedKey]?.detail.frequency}</div>
                             </h2>
-                            <div className='flex justify-center pt-2'><span className='self-center font-bold'>《{data[mostPlayedIndex]?.detail.chineseName ? data[mostPlayedIndex]?.detail.chineseName : data[mostPlayedIndex]?.detail.name}》</span></div>
+                            <div className='flex justify-center pt-2'><span className='self-center font-bold'>《{data[mostPlayedKey]?.detail.chineseName ? data[mostPlayedKey]?.detail.chineseName : data[mostPlayedKey]?.detail.name}》</span></div>
                             <div className="justify-end card-actions">
                                 {/* <button className="btn btn-primary">Buy Now</button> */}
                             </div>
@@ -214,9 +221,14 @@ function Global() {
             return `${(volume / 1024).toFixed(2)}GB`;
         }
     }
-    const sortedData = data.sort((a, b) => {
-        return new Date(b.detail.lastVisitDate) - new Date(a.detail.lastVisitDate);
-    });
+    const sortedData = Object.entries(data)
+        .sort(([, a], [, b]) => {
+            return new Date(b.detail.lastVisitDate) - new Date(a.detail.lastVisitDate);
+        })
+        .reduce((acc, [key, value]) => {
+            acc[key] = value;
+            return acc;
+        }, {});
     return (
         <div className='w-full h-full p-3'>
             <div className='flex flex-row gap-7'>
@@ -274,11 +286,13 @@ function Global() {
                     <div className='text-lg font-bold'>最多游玩时间</div>
                     <div className='m-0 divider'></div>
                     <div className='flex flex-col gap-1 overflow-auto text-base text-custom-text-light scrollbar-base'>
-                        {data.map((game, index) => {
-                            return <div key={index} className='flex flex-row justify-between'>
-                                <span>{game?.detail.chineseName ? game?.detail.chineseName : game?.detail.name}</span>
-                                <span>{formatTime(game?.detail.gameDuration)}</span>
-                            </div>
+                        {Object.entries(data).map(([key, game]) => {
+                            return (
+                                <div key={key} className='flex flex-row justify-between'>
+                                    <span>{game?.detail.chineseName || game?.detail.name}</span>
+                                    <span>{formatTime(game?.detail.gameDuration)}</span>
+                                </div>
+                            );
                         })}
                     </div>
                 </div>
@@ -286,11 +300,13 @@ function Global() {
                     <div className='text-lg font-bold'>最近游玩</div>
                     <div className='m-0 divider'></div>
                     <div className='flex flex-col gap-1 overflow-auto text-base text-custom-text-light scrollbar-base'>
-                        {sortedData.map((game, index) => {
-                            return <div key={index} className='flex flex-row justify-between'>
-                                <span>{game?.detail.chineseName ? game?.detail.chineseName : game?.detail.name}</span>
-                                <span>{game?.detail.lastVisitDate}</span>
-                            </div>
+                        {Object.entries(sortedData).map(([key, game]) => {
+                            return (
+                                <div key={key} className='flex flex-row justify-between'>
+                                    <span>{game?.detail.chineseName || game?.detail.name}</span>
+                                    <span>{game?.detail.lastVisitDate}</span>
+                                </div>
+                            );
                         })}
                     </div>
                 </div>

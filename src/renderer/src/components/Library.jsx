@@ -9,8 +9,8 @@ function NavButton({ to, name, icon }) {
       isPending
         ? ""
         : isActive
-          ? "transition-none p-2 pl-4 bg-gradient-to-r from-custom-blue-5 to-custom-blue-5/80 text-custom-text-light text-xs hover:bg-custom-blue-5 hover:brightness-125"
-          : "transition-none p-2 pl-4 active:bg-gradient-to-r active:from-custom-blue-5 active:to-custom-blue-5/80 hover:bg-gradient-to-r hover:from-custom-blue-5/50 hover:to-custom-blue-5/30 active:text-custom-text-light text-xs"
+          ? "transition-none p-2 pl-4 bg-gradient-to-r active:bg-gradient-to-r active:from-custom-blue-5 active:to-custom-blue-5/80 from-custom-blue-5 to-custom-blue-5/80 text-custom-text-light text-xs hover:bg-custom-blue-5 hover:brightness-125 focus:bg-transparent"
+          : "transition-none p-2 pl-4 active:bg-gradient-to-r active:from-custom-blue-5 active:to-custom-blue-5/80 hover:bg-gradient-to-r hover:from-custom-blue-5/50 hover:to-custom-blue-5/30 active:text-custom-text-light text-xs focus:bg-transparent"
     }
       to={to}>
       {icon}{name}
@@ -23,16 +23,17 @@ function Library() {
   const { data, icons, setIcons, timestamp } = useRootStore();
   useEffect(() => {
     async function loadImages() {
-      setIcons([]);
+      setIcons({});  // 将初始值设置为空对象而不是空数组
       const iconPaths = await Promise.all(
-        data?.map(async game => {
-          if (!game?.detail.icon) {
-            return null; // 如果icon为空，直接返回null
+        Object.entries(data || {}).map(async ([key, game]) => {
+          if (!game?.detail?.icon) {
+            return [key, null];  // 如果icon为空，返回键和null值
           }
-          return await window.electron.ipcRenderer.invoke('get-data-path', game.detail.icon);
+          const path = await window.electron.ipcRenderer.invoke('get-data-path', game.detail.icon);
+          return [key, path];  // 返回键和路径
         })
       );
-      setIcons(iconPaths);
+      setIcons(Object.fromEntries(iconPaths));  // 将结果转换回对象
     }
     loadImages();
   }, [data]);
@@ -50,23 +51,37 @@ function Library() {
         </div>
         <div className="self-center object-center w-full grow">
           <ul className="w-full pl-0 pr-0 menu rounded-box text-custom-text-light gap-0.5">
-            {data.map((game, index) => {
-              return <li key={index} className='transition-none'><NavButton to={`./${index}`} name={game.detail.chineseName ? game.detail.chineseName : game.detail.name} icon={icons[index] ? <img src={`${icons[index]}?t=${timestamp}`} className='w-4.5 h-4.5' alt="" /> : <span className="icon-[mingcute--game-2-fill] w-4.5 h-4.5"></span>} /></li>
-            })
-            }
-            {/* <li><NavButton to={"./v1"} name={"v1"} /></li>
-                    <li><NavButton to={"./v2"} name={"v2"} /></li> */}
+            {Object.entries(data).map(([key, game], index) => {
+              return (
+                <li key={key} className='transition-none'>
+                  <NavButton
+                    to={`./${key}`}
+                    name={game.detail.chineseName || game.detail.name}
+                    icon={
+                      icons[key]
+                        ? <img src={`${icons[key]}?t=${timestamp}`} className='w-4.5 h-4.5' alt="" />
+                        : <span className="icon-[mingcute--game-2-fill] w-4.5 h-4.5"></span>
+                    }
+                  />
+                </li>
+              );
+            })}
           </ul>
 
         </div>
       </div>
       <div className="grow bg-custom-main">
         <Routes>
-          <Route index element={<Navigate to='./0' />} />
-          {data.map((game, index) => {
-            return <Route key={index} path={`/${index}/*`} element={<Game index={index} />} />
-          })
-          }
+          <Route
+            index
+            element={
+              data && Object.keys(data).length > 0 &&
+              <Navigate to={`./${Object.keys(data)[0]}`} />
+            }
+          />
+          {Object.entries(data).map(([key, game]) => {
+            return <Route key={key} path={`/${key}/*`} element={<Game index={key} />} />
+          })}
         </Routes>
       </div>
     </div>
