@@ -357,7 +357,7 @@ function CloudSync() {
             <div className='flex flex-col gap-2'>
                 <label className="p-0 cursor-pointer label">
                     <span className="text-sm font-semibold">是否开启</span>
-                    <input type="checkbox" className="toggle checked:bg-custom-text-light bg-custom-text checked:[--tglbg:theme(colors.custom.blue-6)] [--tglbg:theme(colors.custom.stress)] border-0 hover:brightness-125 checked:hover:brightness-100" checked={configSetting?.cloudSync?.enabled || false} onChange={(e) => { updateConfigSetting(['cloudSync', 'enabled'], e.target.checked) }} />
+                    <input type="checkbox" className="toggle checked:bg-custom-text-light bg-custom-text checked:[--tglbg:theme(colors.custom.blue-6)] [--tglbg:theme(colors.custom.stress)] border-0 hover:brightness-125 checked:hover:brightness-100" checked={config?.cloudSync?.enabled || false} onChange={(e) => { updateConfig(['cloudSync', 'enabled'], e.target.checked) }} />
                 </label>
                 <div className='m-0 divider'></div>
                 <label className="flex p-0 label">
@@ -390,8 +390,8 @@ function CloudSync() {
                                         </div>
                                     </div>
                                     <ul tabIndex={0} className="dropdown-content menu bg-custom-dropdown rounded-box z-[1] w-auto p-2 shadow">
-                                        <li onClick={switchGithub} className='hover:bg-custom-text hover:text-black'><a className='transition-none hover:text-black'>切换</a></li>
-                                        <li onClick={signoutGithub} className='hover:bg-custom-text hover:text-black'><a className='transition-none hover:text-black'>退出</a></li>
+                                        <li onClick={switchGithub} className='p-0 text-xs hover:bg-custom-text hover:text-black'><a className='transition-none hover:text-black'>切换</a></li>
+                                        <li onClick={signoutGithub} className='p-0 text-xs hover:bg-custom-text hover:text-black'><a className='transition-none hover:text-black'>退出</a></li>
                                     </ul>
                                 </div>
                             </div>
