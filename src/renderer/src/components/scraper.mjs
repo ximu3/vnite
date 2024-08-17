@@ -2,6 +2,7 @@ import fetch from 'node-fetch';
 import { addCharacterImgToData, addNewGameToData, addObjectToJsonFile } from '../../public/app/data/dataManager.mjs';
 import path from 'path';
 import getFolderSize from 'get-folder-size';
+import log from 'electron-log/main.js';
 
 async function retry(fn, retries, mainWindow) {
     try {
@@ -9,6 +10,7 @@ async function retry(fn, retries, mainWindow) {
     } catch (error) {
         if (retries > 0) {
             console.log(`操作失败，${1000 / 1000}秒后重试。剩余重试次数：${retries - 1}`);
+            log.error(`操作失败，1秒后重试。剩余重试次数：${retries - 1} ${error}`);
             mainWindow.webContents.send('add-game-log', `[warning] 操作失败，1秒后重试。剩余重试次数：${retries - 1}`);
             await new Promise(resolve => setTimeout(resolve, 1000));
             return retry(fn, retries - 1, mainWindow);
@@ -37,7 +39,7 @@ async function getAccessToken(clientId, clientSecret) {
             throw new Error('Failed to obtain access token: ' + data.error_description);
         }
     } catch (error) {
-        console.error('Error in getAccessToken:', error);
+        log.error('Error in getAccessToken:', error);
         throw error;
     }
 }
@@ -66,7 +68,7 @@ async function searchGameDetails(gameName) {
         const data = await response.json();
         return data;
     } catch (error) {
-        console.error('Error in searchGameDetails:', error);
+        log.error('Error in searchGameDetails:', error);
         throw error;
     }
 }
@@ -95,7 +97,7 @@ async function searchGameList(keyword, pageNum = 1, pageSize = 20) {
         const data = await response.json();
         return data;
     } catch (error) {
-        console.error('Error in searchGameList:', error);
+        log.error('Error in searchGameList:', error);
         throw error;
     }
 }
@@ -122,7 +124,7 @@ async function searchGameId(gid) {
         const data = await response.json();
         return data;
     } catch (error) {
-        console.error('Error in searchGameId:', error);
+        log.error('Error in searchGameId:', error);
         throw error;
     }
 }
@@ -150,7 +152,7 @@ async function searchCharacterId(cid) {
         return data;
 
     } catch (error) {
-        console.error('Error in searchCharacterId:', error);
+        log.error('Error in searchCharacterId:', error);
         throw error;
     }
 }
@@ -177,7 +179,7 @@ async function searchDeveloperId(oid) {
         const data = await response.json();
         return data.data.org.name;
     } catch (error) {
-        console.error('Error in searchDeveloperId:', error);
+        log.error('Error in searchDeveloperId:', error);
         throw error;
     }
 }
@@ -234,7 +236,7 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath) {
                 });
             } catch (error) {
                 mainWindow.webContents.send('add-game-log', `[error] 获取角色 ${character.cid} 的数据时出错：${error}`);
-                console.error(`获取角色 ${character.cid} 的数据时出错：`, error);
+                log.error(`获取角色 ${character.cid} 的数据时出错：`, error);
             }
         }
         const saves = [];
@@ -368,24 +370,29 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath) {
         return data;
     } catch (error) {
         mainWindow.webContents.send('add-game-log', `[error] 获取游戏数据时出错：${error}`);
-        console.error('Error in organizeGameData:', error);
+        log.error('Error in organizeGameData:', error);
         throw error;
     }
 }
 
 // 封装API请求函数
 async function queryVNDB(filters, fields) {
-    const response = await fetch('https://api.vndb.org/kana/vn', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            filters: filters,
-            fields: fields
-        }),
-    });
-    return await response.json();
+    try {
+        const response = await fetch('https://api.vndb.org/kana/vn', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                filters: filters,
+                fields: fields
+            }),
+        });
+        return await response.json();
+    } catch (error) {
+        log.error("查询 VNDB API 时出错:", error);
+        throw error; // 重新抛出错误，让调用者处理
+    }
 }
 
 // 获取游戏截图
@@ -401,8 +408,8 @@ async function getScreenshotsByTitle(title) {
             return [];
         }
     } catch (error) {
-        console.error("获取截图时出错:", error);
-        return [];
+        log.error("获取截图时出错:", error);
+        throw error;
     }
 }
 
@@ -424,8 +431,8 @@ async function getCoverByTitle(title) {
             return null;
         }
     } catch (error) {
-        console.error("获取封面时出错:", error);
-        return null;
+        log.error("获取封面时出错:", error);
+        throw error;
     }
 }
 
@@ -441,8 +448,8 @@ async function getVIDByTitle(title) {
             return null;
         }
     } catch (error) {
-        console.error("获取ID时出错:", error);
-        return null;
+        log.error("获取ID时出错:", error);
+        throw error;
     }
 }
 
@@ -471,7 +478,7 @@ async function queryVNDBc(filters, fields) {
 
         return await response.json();
     } catch (error) {
-        console.error("查询 VNDB API 时出错:", error);
+        log.error("查询 VNDB API 时出错:", error);
         throw error; // 重新抛出错误，让调用者处理
     }
 }
@@ -497,8 +504,8 @@ async function getCharacterIDByName(name, vnId) {
             return null;
         }
     } catch (error) {
-        console.error("获取角色ID时出错:", error);
-        return null;
+        log.error("获取角色ID时出错:", error);
+        throw error;
     }
 }
 

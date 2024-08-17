@@ -1,5 +1,6 @@
 import { promises as fs } from 'fs';
 import { getConfigPath } from '../../../../main';
+import log from 'electron-log/main.js';
 
 
 async function addObjectToJsonFile(newObject) {
@@ -27,9 +28,10 @@ async function addObjectToJsonFile(newObject) {
     // 将更新后的 JSON 写回文件
     await fs.writeFile(filePath, updatedJsonString, 'utf8');
 
-    console.log('新对象已成功添加到 JSON 文件');
+    log.info('新对象已成功添加到 JSON 文件');
   } catch (error) {
-    console.error('添加对象到 JSON 文件时出错:', error);
+    log.error('添加对象到 JSON 文件时出错:', error);
+    throw error;
   }
 }
 
@@ -40,7 +42,7 @@ async function getConfigData() {
     const data = await fs.readFile(filePath, 'utf8');
     return JSON.parse(data);
   } catch (error) {
-    console.error('Error reading JSON file:', error);
+    log.error('Error reading JSON file:', error);
     return [];
   }
 
@@ -55,9 +57,10 @@ async function updateConfigData(newData) {
     // 将更新后的 JSON 写回文件
     await fs.writeFile(filePath, updatedJsonString, 'utf8');
 
-    console.log('设置已成功更新');
+    log.info('设置已成功更新');
   } catch (error) {
-    console.error('更新设置时出错:', error);
+    log.error('更新设置时出错:', error);
+    throw error;
   }
 }
 

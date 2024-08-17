@@ -13,6 +13,12 @@ import { startAuthProcess, initializeRepo, commitAndPush, createWebDavClient, up
 import getFolderSize from "get-folder-size";
 import path from 'path';
 import chokidar from 'chokidar';
+import log from 'electron-log/main.js';
+
+
+log.initialize();
+
+log.errorHandler.startCatching();
 
 let mainWindow
 let tray = null;
@@ -94,9 +100,9 @@ async function getFileIcon(filePath, id) {
     // 写入文件
     await fs.writeFile(fullPath, pngBuffer);
 
-    console.log(`成功保存图标到 ${fullPath}`);
+    log.info(`成功保存图标到 ${fullPath}`);
   } catch (error) {
-    console.error('获取或保存文件图标时出错:', error);
+    log.error('获取或保存文件图标时出错:', error);
   }
 }
 
@@ -121,7 +127,7 @@ async function retry(fn, retries, mainWindow) {
     return await fn();
   } catch (error) {
     if (retries > 0) {
-      console.log(`操作失败，${1000 / 1000}秒后重试。剩余重试次数：${retries - 1}`);
+      log.warn(`操作失败，${1000 / 1000}秒后重试。剩余重试次数：${retries - 1}`);
       mainWindow.webContents.send('add-game-log', `[warning] 操作失败，1秒后重试。剩余重试次数：${retries - 1}`);
       await new Promise(resolve => setTimeout(resolve, 1000));
       return retry(fn, retries - 1, mainWindow);
@@ -150,6 +156,10 @@ app.whenReady().then(() => {
   ipcMain.on('ping', () => console.log('pong'))
 
   createWindow()
+
+  log.transports.file.resolvePathFn = () => getLogsPath();
+
+  log.info('App started 应用已启动');
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
@@ -226,9 +236,11 @@ app.whenReady().then(() => {
         .png() // 转换为 PNG 格式
         .toFile(iconPath);
 
+      log.info(`成功保存游戏 ${gameId} 图标到 ${iconPath}`);
+
       return iconPath;
     } catch (error) {
-      console.error('更新游戏图标时出错:', error);
+      log.error(`更新游戏 ${gameId} 图标时出错:`, error);
       throw error; // 将错误传回渲染进程
     }
   });
@@ -303,7 +315,7 @@ app.whenReady().then(() => {
     exeProcess.on('exit', (code, signal) => {
       const endTime = Date.now();
       const runningTime = Math.floor((endTime - startTime) / 1000); // 转换为秒
-      console.log(`Game ${processId} exited. Running time: ${runningTime} seconds`);
+      log.info(`Game ${processId} exited. Running time: ${runningTime} seconds`);
       mainWindow.webContents.send('game-running-time', { processId, runningTime });
       processes.delete(processId);
     });
@@ -328,7 +340,7 @@ app.whenReady().then(() => {
 
   ipcMain.on('open-folder', async (event, path) => {
     shell.openPath(join(app.getAppPath(), path));
-    console.log(join(app.getAppPath(), path));
+    log.info(`打开文件夹: ${path}`);
   })
 
   ipcMain.handle('update-game-cover', async (event, gameId, imgPath) => {
@@ -344,9 +356,10 @@ app.whenReady().then(() => {
         .webp({ quality: 100 })  // 可以根据需要调整质量
         .toFile(coverPath);
 
+      log.info(`成功保存游戏 ${gameId} 封面到 ${coverPath}`);
       return coverPath;
     } catch (error) {
-      console.error('更新游戏封面时出错:', error);
+      log.error(`更新游戏 ${gameId} 封面时出错:`, error);
       throw error; // 将错误传回渲染进程
     }
   });
@@ -364,9 +377,10 @@ app.whenReady().then(() => {
         .webp({ quality: 100 })  // 可以根据需要调整质量
         .toFile(bgPath);
 
+      log.info(`成功保存游戏 ${gameId} 背景到 ${bgPath}`);
       return bgPath;
     } catch (error) {
-      console.error('更新游戏背景时出错:', error);
+      log.error(`更新游戏 ${gameId} 背景时出错:`, error);
       throw error; // 将错误传回渲染进程
     }
   })
@@ -383,8 +397,9 @@ app.whenReady().then(() => {
       // 然后复制文件
       await fse.copy(savePath, saveDir, { overwrite: true });
 
+      log.info(`成功复制游戏 ${gameId} 存档到 ${saveDir}`);
     } catch (error) {
-      console.error('复制存档时出错:', error);
+      log.error(`复制游戏 ${gameId} 存档时出错:`, error);
     }
   });
 
@@ -392,9 +407,10 @@ app.whenReady().then(() => {
     const saveDir = getDataPath(`games/${gameId}/saves/${saveId}/`);
     try {
       await fse.remove(saveDir);
+      log.info(`成功删除游戏 ${gameId} 存档 ${saveId}`);
       event.reply('delete-save-reply', 'success');
     } catch (error) {
-      console.error('删除存档时出错:', error);
+      log.error(`删除游戏 ${gameId} 存档时出错:`, error);
       event.reply('delete-save-reply', 'error', error.message);
     }
   })
@@ -403,9 +419,10 @@ app.whenReady().then(() => {
     const savePath = getDataPath(`games/${gameId}/saves/${saveId}/`);
     try {
       await fse.move(savePath, realSavePath, { overwrite: true });
+      log.info(`成功切换游戏 ${gameId} 存档 ${saveId}`);
       event.reply('switch-save-reply', 'success');
     } catch (error) {
-      console.error('切换存档时出错:', error);
+      log.error(`切换游戏 ${gameId} 存档时出错:`, error);
       event.reply('switch-save-reply', 'error', error.message);
     }
   })
@@ -424,9 +441,9 @@ app.whenReady().then(() => {
         .webp({ quality: 100 }) // 设置WebP质量，范围0-100
         .toFile(webpFilePath);
 
-      console.log(`图片已保存为WebP格式：${webpFilePath}`);
+      log.info(`成功保存游戏 ${gameId} 记忆图片 ${imgId} 到 ${webpFilePath}`);
     } catch (error) {
-      console.error('保存记忆图片时出错:', error);
+      log.error(`保存游戏 ${gameId} 记忆图片时出错:`, error);
     }
   });
 
@@ -445,9 +462,10 @@ app.whenReady().then(() => {
   ipcMain.handle('start-auth-process', async (event, clientId, clientSecret) => {
     try {
       const result = await startAuthProcess(mainWindow, clientId, clientSecret);
+      log.info('Github认证成功:', result);
       return result;
     } catch (error) {
-      console.error('Authentication process failed:', error);
+      log.error('Github认证错误:', error);
       throw error; // 这将把错误传回渲染进程
     }
   });
@@ -458,9 +476,10 @@ app.whenReady().then(() => {
       const data = await initializeRepo(token, owner, path, mainWindow);
       const gameData = await getGameData(getDataPath('data.json'));
       mainWindow.webContents.send('game-data-updated', gameData);
+      log.info('初始化仓库成功:', data);
       return data
     } catch (error) {
-      console.error('Error initializing repository:', error);
+      log.error('初始化仓库时出错:', error);
       mainWindow.webContents.send('initialize-error', error.message);
       throw error;
     }
@@ -481,9 +500,10 @@ app.whenReady().then(() => {
       await initAndPushLocalRepo(token, path, owner);
       const gameData = await getGameData(getDataPath('data.json'));
       mainWindow.webContents.send('game-data-updated', gameData);
+      log.info('使用本地数据初始化仓库成功');
       return
     } catch (error) {
-      console.error('Error initializing repository:', error);
+      log.error('使用本地数据初始化仓库出错', error);
       mainWindow.webContents.send('initialize-error', error.message);
     }
   })
@@ -495,9 +515,10 @@ app.whenReady().then(() => {
       await clonePrivateRepo(token, `https://github.com/${owner}/my-gal.git`, path);
       const gameData = await getGameData(getDataPath('data.json'));
       mainWindow.webContents.send('game-data-updated', gameData);
+      log.info('使用云端数据初始化仓库成功');
       return
     } catch (error) {
-      console.error('Error initializing repository:', error);
+      log.error('使用云端数据初始化仓库出错', error);
       mainWindow.webContents.send('initialize-error', error.message);
     }
   })
@@ -506,9 +527,10 @@ app.whenReady().then(() => {
     try {
       const path = getSyncPath('')
       await commitAndPush(path, message);
+      log.info('Github同步成功');
       return 'success';
     } catch (error) {
-      console.error('Error committing and pushing changes:', error);
+      log.error('Github同步失败：', error);
       return error.message;
     }
   })
@@ -517,9 +539,10 @@ app.whenReady().then(() => {
     try {
       const path = getSyncPath('.git')
       await fse.remove(path);
+      log.info('退出Github成功');
       return 'success';
     } catch (error) {
-      console.error('Error signing out of GitHub:', error);
+      log.error('退出Github失败：', error);
       return error.message;
     }
   })
@@ -529,9 +552,10 @@ app.whenReady().then(() => {
       const path = getSyncPath('')
       const client = await createWebDavClient(webdavUrl, webdavUser, webdavPass);
       await uploadDirectory(client, path, remotePath);
+      log.info('WebDav同步（上传）成功');
       return 'success';
     } catch (error) {
-      console.error('Error uploading to WebDAV:', error);
+      log.error('WebDav同步（上传）失败：', error);
       return error.message;
     }
   })
@@ -542,9 +566,10 @@ app.whenReady().then(() => {
       await fse.emptyDir(path); // 清空本地目录
       const client = await createWebDavClient(webdavUrl, webdavUser, webdavPass);
       await downloadDirectory(client, remotePath, path);
+      log.info('WebDav同步（下载）成功');
       return 'success';
     } catch (error) {
-      console.error('Error downloading from WebDAV:', error);
+      log.error('WebDav同步（下载）失败：', error);
       return error.message;
     }
   })
@@ -557,9 +582,10 @@ app.whenReady().then(() => {
 
       const size = await getFolderSize(parentPath);
       const sizeInMB = Math.round(Number(size.size) / (1024 * 1024));
+      log.info(`文件夹 ${parentPath} 的大小为 ${sizeInMB} MB`);
       return sizeInMB;
     } catch (err) {
-      console.error('计算文件夹大小时出错:', err);
+      log.error('获取文件夹大小时出错:', err);
       throw err;
     }
   });
@@ -568,15 +594,18 @@ app.whenReady().then(() => {
     try {
       if (inputPath.endsWith('.exe')) {
         shell.openPath(path.dirname(inputPath));
+        log.info(`打开文件夹: ${path.dirname(inputPath)}`);
         return;
       }
       if (inputPath.startsWith('/')) {
-        shell.openPath(join(app.getAppPath(), `src/renderer/public${inputPath}`));
+        shell.openPath(getDataPath(inputPath));
+        log.info(`打开文件夹: ${getDataPath(inputPath)}`);
         return;
       }
       shell.openPath(inputPath);
+      log.info(`打开文件夹: ${inputPath}`);
     } catch (err) {
-      console.error('打开文件夹时出错:', err);
+      log.error('打开文件夹时出错:', err);
       throw err;
     }
   });
@@ -584,6 +613,7 @@ app.whenReady().then(() => {
   ipcMain.on('delete-game', async (event, index) => {
     await deleteGame(index, getDataPath(''));
     const gameData = await getGameData(getDataPath('data.json'));
+    log.info(`成功删除游戏 ${index}`);
     mainWindow.webContents.send('game-data-updated', gameData);
   });
 
@@ -598,8 +628,9 @@ app.whenReady().then(() => {
   ipcMain.on('open-and-monitor', async (event, programPath, id) => {
     try {
       await openExternalProgram(programPath, id);
+      log.info(`成功打开游戏 ${id}`);
     } catch (error) {
-      console.error('Error opening external program:', error);
+      log.error(`打开游戏 ${id} 时出错:`, error);
     }
   });
 
@@ -645,12 +676,21 @@ export function getSyncPath(file) {
   }
 }
 
+function getLogsPath() {
+  if (app.isPackaged) {
+    return path.join(getAppRootPath(), '/logs/app.log');
+  } else {
+    return path.join(app.getAppPath(), '/logs/app.log');
+  }
+}
+
 async function handleAppExit() {
   try {
     await waitExitInRenderer();
+    log.info('应用已退出');
     app.exit(0); // 正常退出
   } catch (error) {
-    console.error('退出过程中出错:', error);
+    log.error('退出过程中出错:', error);
     app.exit(1); // 异常退出
   }
 }
@@ -700,7 +740,7 @@ async function openExternalProgram(programPath, id) {
     });
 
     child.on('error', (error) => {
-      console.error('启动程序时出错:', error);
+      log.error(`启动游戏 ${id} 时出错:`, error);
       mainWindow.webContents.send('game-start-result', { id: id, success: false, error: error.message });
     });
 
@@ -713,7 +753,7 @@ async function openExternalProgram(programPath, id) {
     await scanDirectory(parentDir);
     startMonitoring(id);
   } catch (error) {
-    console.error('打开外部程序时出错:', error);
+    log.error(`启动游戏 ${id} 时出错:`, error);
     mainWindow.webContents.send('game-start-result', { id: id, success: false, error: error.message });
   }
 }
@@ -728,7 +768,7 @@ async function scanDirectory(dirPath) {
       }
     }
   } catch (error) {
-    console.error('扫描目录时出错:', error);
+    log.error(`扫描目录 ${dirPath} 时出错:`, error);
   }
 }
 
@@ -751,7 +791,7 @@ async function isExecutable(filePath) {
         (stats.mode & fs.constants.S_IXOTH) !== 0;
 
     default:
-      console.warn('未知操作系统，无法确定文件是否可执行');
+      log.warn(`未知操作系统，无法确定文件 ${filePath} 是否可执行`);
       return false;
   }
 }
@@ -764,7 +804,7 @@ function startMonitoring(id) {
 function checkRunningPrograms(id) {
   exec('tasklist /fo csv /nh', (error, stdout) => {
     if (error) {
-      console.error(`执行错误: ${error}`);
+      log.error(`执行 ${id} 错误: ${error}`);
       // 可能需要在这里添加一些错误处理逻辑
       return;
     }

@@ -2,6 +2,7 @@ import { promises as fs } from 'fs';
 import fse from 'fs-extra';
 import axios from 'axios';
 import path from 'path';
+import log from 'electron-log/main.js';
 
 
 async function addObjectToJsonFile(newObject, filePath) {
@@ -29,9 +30,10 @@ async function addObjectToJsonFile(newObject, filePath) {
         // 将更新后的 JSON 写回文件
         await fs.writeFile(filePath, updatedJsonString, 'utf8');
 
-        console.log('新对象已成功添加到 JSON 文件');
+        log.info('新对象已成功添加到 JSON 文件');
     } catch (error) {
-        console.error('添加对象到 JSON 文件时出错:', error);
+        log.error('添加对象到 JSON 文件时出错:', error);
+
     }
 }
 
@@ -42,7 +44,7 @@ async function getGameData(filePath) {
         const data = await fs.readFile(filePath, 'utf8');
         return JSON.parse(data);
     } catch (error) {
-        console.error('Error reading JSON file:', error);
+        log.error('Error reading JSON file:', error);
         return [];
     }
 
@@ -57,9 +59,9 @@ async function updateGameData(newData, filePath) {
         // 将更新后的 JSON 写回文件
         await fs.writeFile(filePath, updatedJsonString, 'utf8');
 
-        console.log('游戏数据已成功更新');
+        log.info('游戏数据已成功更新');
     } catch (error) {
-        console.error('更新游戏数据时出错:', error);
+        log.error('更新游戏数据时出错:', error);
     }
 }
 
@@ -91,9 +93,9 @@ async function addNewGameToData(gid, coverUrl, bgUrl, fliePath) {
         const bgResponse = await axios.get(bgUrl, { responseType: 'arraybuffer' });
         await fs.writeFile(bgFilePath, bgResponse.data);
 
-        console.log('New game data has been added successfully');
+        log.info('New game data has been added successfully');
     } catch (error) {
-        console.error('Error adding new game data:', error);
+        log.error('Error adding new game data:', error);
         throw error;
     }
 }
@@ -116,39 +118,41 @@ async function addCharacterImgToData(gid, cid, imgUrls, filePath) {
         const characterResponse = await axios.get(imgUrls, { responseType: 'arraybuffer' });
         await fs.writeFile(characterImgPath, characterResponse.data);
 
-        console.log('New character image has been added successfully');
+        log, info('New character image has been added successfully');
     } catch (error) {
-        console.error('Error adding new character image:', error);
+        log.error('Error adding new character image:', error);
         throw error;
     }
 
 }
 
-async function deleteGame(index, filePath) {
-    // const filePath = getDataPath('data.json');
+async function deleteGame(id, filePath) {
     try {
         // 读取 JSON 文件
         const data = await fs.readFile(path.join(filePath, 'data.json'), 'utf8');
 
         // 解析 JSON 数据
-        let jsonArray = JSON.parse(data);
+        let jsonObject = JSON.parse(data);
 
-        let id = jsonArray[index].detail.id;
+        // 确保 jsonObject 是一个对象
+        if (typeof jsonObject !== 'object' || jsonObject === null) {
+            throw new Error('Invalid data structure');
+        }
+
+        // 检查游戏 ID 是否存在
+        if (!jsonObject.hasOwnProperty(id)) {
+            throw new Error('Game not found');
+        }
 
         // 删除文件夹
         const folderPath = path.join(filePath, 'games', `${id}`);
         await fse.remove(folderPath);
 
-        // 确保 jsonArray 是一个数组
-        if (!Array.isArray(jsonArray)) {
-            jsonArray = [];
-        }
+        // 从对象中删除游戏
+        delete jsonObject[id];
 
-        // 删除数组中的对象
-        jsonArray.splice(index, 1);
-
-        // 将更新后的数组转换回 JSON 字符串
-        const updatedJsonString = JSON.stringify(jsonArray, null, 2);
+        // 将更新后的对象转换回 JSON 字符串
+        const updatedJsonString = JSON.stringify(jsonObject, null, 2);
 
         // 将更新后的 JSON 写回文件
         await fs.writeFile(path.join(filePath, 'data.json'), updatedJsonString, 'utf8');
@@ -157,6 +161,7 @@ async function deleteGame(index, filePath) {
 
     } catch (error) {
         console.error('删除游戏时出错:', error);
+        throw error;
     }
 }
 
