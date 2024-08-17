@@ -334,7 +334,7 @@ function Game({ index }) {
                                 <ul tabIndex={0} className="dropdown-content menu bg-custom-dropdown rounded-box z-[1] w-52 p-2 shadow">
                                     <li onClick={() => { openFolderInExplorer(gameData['gamePath']) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>浏览本地文件</a></li>
                                     <li onClick={() => { openFolderInExplorer(gameData['savePath']) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>打开存档文件夹</a></li>
-                                    <li onClick={() => { openFolderInExplorer(`/${gameData['id']}`) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>打开数据文件夹</a></li>
+                                    <li onClick={() => { openFolderInExplorer(`/games/${gameData['id']}`) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>打开数据文件夹</a></li>
                                     <li onClick={() => { document.getElementById('deleteGame').showModal() }} className='hover:bg-custom-red hover:text-custom-text-light'><a className='transition-none'>删除游戏</a></li>
                                 </ul>
                             </div>
