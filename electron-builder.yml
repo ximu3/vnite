@@ -1,5 +1,5 @@
-appId: com.electron.app
-productName: my-gal-3
+appId: vnite
+productName: vnite
 directories:
   buildResources: build
 files:
@@ -16,7 +16,7 @@ extraFiles:
 asarUnpack:
   - resources/**
 win:
-  executableName: my-gal-3
+  executableName: vnite
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
