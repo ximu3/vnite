@@ -95,13 +95,29 @@ function Library() {
         </div>
       </div>
       <div className="grow bg-custom-main">
-        <Routes>
-          <Route index element={<Navigate to={`./posterwall`} />} />
-          {Object.entries(data).map(([key, game]) => {
-            return <Route key={key} path={`/${key}/*`} element={<Game index={key} />} />
-          })}
-          <Route path={`/posterwall/*`} element={<PosterWall />} />
-        </Routes>
+        {
+          Object.keys(data).length === 0 ?
+            <div className="flex flex-row items-center justify-center w-full h-full">
+              <div className="flex flex-col items-center justify-center gap-2">
+                <span className="icon-[mingcute--game-2-fill] w-24 h-24"></span>
+                {/* <div className='text-5xl'>{'Ciallo～(∠・ω< )⌒☆'}</div> */}
+                <span className=" text-custom-text-light">{'暂无游戏，请点击下方按钮添加 ～(∠・ω< )⌒☆'}</span>
+                <div className='pt-3'>
+                  <button className='min-w-0 min-h-0 transition-all border-0 w-9 h-9 btn btn-square bg-custom-blue-6' onClick={() => { document.getElementById('addGame').showModal() }}>
+                    <span className="transition-all icon-[ic--sharp-plus] w-8 h-8 text-custom-text-light hover:text-custom-text-light"></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            :
+            <Routes>
+              <Route index element={<Navigate to={`./posterwall`} />} />
+              {Object.entries(data).map(([key, game]) => {
+                return <Route key={key} path={`/${key}/*`} element={<Game index={key} />} />
+              })}
+              <Route path={`/posterwall/*`} element={<PosterWall />} />
+            </Routes>
+        }
       </div>
     </div>
   );

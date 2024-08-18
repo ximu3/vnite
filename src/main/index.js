@@ -3,7 +3,7 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { addNewGameToData, getGameData, updateGameData, deleteGame } from '../renderer/public/app/data/dataManager.mjs'
-import { organizeGameData } from "../renderer/src/components/scraper.mjs"
+import { organizeGameData, searchGameNamebyId } from "../renderer/src/components/scraper.mjs"
 import { spawn, exec } from 'child_process';
 import sharp from 'sharp';
 import fs from 'fs/promises';
@@ -19,6 +19,8 @@ import log from 'electron-log/main.js';
 log.initialize();
 
 log.errorHandler.startCatching();
+
+log.transports.file.maxSize = 10 * 1024 * 1024; // 10MB
 
 let mainWindow
 let tray = null;
@@ -217,6 +219,15 @@ app.whenReady().then(() => {
       mainWindow.maximize()
     }
   })
+
+  ipcMain.handle('get-game-name', async (event, id) => {
+    try {
+      return await searchGameNamebyId(id);
+    } catch (error) {
+      log.error('获取游戏名称时出错(gid错误):', error);
+      throw error;
+    }
+  });
 
   ipcMain.handle('get-game-icon', async (event, filePath, id) => {
     await getFileIcon(filePath, id);

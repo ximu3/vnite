@@ -129,6 +129,33 @@ async function searchGameId(gid) {
     }
 }
 
+async function searchGameNamebyId(gid) {
+    const clientId = 'ymgal';
+    const clientSecret = 'luna0327';
+    try {
+        const accessToken = await getAccessToken(clientId, clientSecret);
+        const baseURL = 'https://www.ymgal.games';
+        const url = new URL('/open/archive', baseURL);
+        // url.searchParams.append('mode', 'id');
+        url.searchParams.append('gid', gid);
+
+        const headers = new Headers();
+        headers.append('Accept', 'application/json;charset=utf-8');
+        headers.append('Authorization', `Bearer ${accessToken}`);
+        headers.append('version', '1');
+
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: headers
+        });
+        const data = await response.json();
+        return data.data.game.name;
+    } catch (error) {
+        log.error('Error in searchGameNamebyId:', error);
+        throw error;
+    }
+}
+
 async function searchCharacterId(cid) {
     const clientId = 'ymgal';
     const clientSecret = 'luna0327';
@@ -405,7 +432,11 @@ async function getScreenshotsByTitle(title) {
             return vn.screenshots.map(screenshot => screenshot.url);
         } else {
             console.log(`未找到标题为 "${title}" 的视觉小说。`);
-            return [];
+            if (title.includes('/')) {
+                return await getScreenshotsByTitle(title.split('/')[0]);
+            } else {
+                return [];
+            }
         }
     } catch (error) {
         log.error("获取截图时出错:", error);
@@ -428,7 +459,11 @@ async function getCoverByTitle(title) {
             }
         } else {
             console.log(`未找到标题为 "${title}" 的视觉小说。`);
-            return null;
+            if (title.includes('/')) {
+                return await getCoverByTitle(title.split('/')[0]);
+            } else {
+                return null;
+            }
         }
     } catch (error) {
         log.error("获取封面时出错:", error);
@@ -445,7 +480,11 @@ async function getVIDByTitle(title) {
             return vn.id;
         } else {
             console.log(`未找到标题为 "${title}" 的视觉小说。`);
-            return null;
+            if (title.includes('/')) {
+                return await getVIDByTitle(title.split('/')[0]);
+            } else {
+                return null;
+            }
         }
     } catch (error) {
         log.error("获取ID时出错:", error);
@@ -595,4 +634,4 @@ async function getCharacterIDByName(name, vnId) {
 //     console.error('Failed to fetch game ID:', error);
 // });
 
-export { searchGameList, searchGameId, searchGameDetails, getScreenshotsByTitle, getCoverByTitle, organizeGameData, searchCharacterId };
+export { searchGameList, searchGameId, searchGameDetails, getScreenshotsByTitle, getCoverByTitle, organizeGameData, searchCharacterId, searchGameNamebyId };

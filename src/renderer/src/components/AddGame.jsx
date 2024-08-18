@@ -86,12 +86,36 @@ function Info() {
   let navigate = useNavigate();
   const { gameName, gid, vid, setGameName, setGID, setVID, setAlert, setGameList, isLoading, setIsLoading } = useAddGame();
   async function submitInfo() {
-    if (gameName === '') {
+    setIsLoading(true);
+    if (gameName === '' && gid === '') {
       setAlert('请填写游戏原名!');
       setTimeout(() => { setAlert(''); }, 3000);
       return
     }
-    setIsLoading(true);
+    if (gid) {
+      if (gid.toLowerCase().startsWith('ga')) {
+        try {
+          const Gid = Number(gid.slice(2));
+          setGID(Number(gid.slice(2)));
+          await window.electron.ipcRenderer.invoke('get-game-name', Gid).then((name) => {
+            setGameName(name);
+          })
+          navigate('/path')
+          setIsLoading(false);
+          return
+        } catch (error) {
+          setAlert('GID不存在，请重新填写！');
+          setTimeout(() => { setAlert(''); }, 3000);
+          setIsLoading(false);
+          return
+        }
+      } else {
+        setAlert('GID格式错误，请重新填写！');
+        setTimeout(() => { setAlert(''); }, 3000);
+        setIsLoading(false);
+        return
+      }
+    }
     const gameList = await window.api.searchGameList(gameName)
     setGameList(gameList["data"]["result"]);
     navigate('/list');
@@ -114,7 +138,7 @@ function Info() {
   }, []);
 
   return (
-    <div className='w-full h-full'>
+    <div className='h-full w-120'>
       <div className='pb-5 text-2xl font-bold text-center text-custom-text-light'>基本信息</div>
       <div className='flex flex-col gap-5'>
         <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
@@ -126,12 +150,12 @@ function Info() {
           <input type="text" spellCheck='false' name='gid' className="grow" placeholder="月幕Galgame档案id，不带GA" value={gid} onChange={(e) => { setGID(e.target.value) }} />
           <span className="border-0 badge bg-custom-blue-6 text-custom-text-light">可选</span>
         </label>
-        <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
+        {/* <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
           <div className='font-semibold'>VID |</div>
           <input type="text" spellCheck='false' name='vid' className="grow" placeholder="VNDB档案id，不带v" value={vid} onChange={(e) => { setVID(e.target.value) }} />
           <span className="border-0 badge bg-custom-blue-6 text-custom-text-light">可选</span>
-        </label>
-        <div className='pt-1'>填写&nbsp;<span className='bg-custom-blue-6 text-custom-text-light'> GID </span>&nbsp;和&nbsp;<span className='text-custom-text-light bg-custom-blue-6'> VNDB ID </span>&nbsp;项可大幅提高识别正确率。</div>
+        </label> */}
+        <div className='pt-1'>填写&nbsp;<span className='bg-custom-blue-6 text-custom-text-light'> GID </span>&nbsp;项可大幅提高识别正确率。</div>
       </div>
       <button id='discern' className='w-full h-10 transition-all mt-9 btn bg-custom-stress text-custom-text-light hover:brightness-125' onClick={submitInfo}>
         {isLoading && <span className='loading loading-spinner'></span>}
