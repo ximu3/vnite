@@ -10,11 +10,14 @@ function NavButton({ to, name, icon }) {
       isPending
         ? ""
         : isActive
-          ? "transition-none p-2 pl-4 bg-gradient-to-r active:bg-gradient-to-r active:from-custom-blue-5 active:to-custom-blue-5/80 from-custom-blue-5 to-custom-blue-5/80 text-custom-text-light text-xs hover:bg-custom-blue-5 hover:brightness-125 focus:bg-transparent"
-          : "transition-none p-2 pl-4 active:bg-gradient-to-r active:from-custom-blue-5 active:to-custom-blue-5/80 hover:bg-gradient-to-r hover:from-custom-blue-5/50 hover:to-custom-blue-5/30 active:text-custom-text-light text-xs focus:bg-transparent"
+          ? "transition-none p-1.5 pl-4 bg-gradient-to-r active:bg-gradient-to-r active:from-custom-blue-5 active:to-custom-blue-5/80 from-custom-blue-5 to-custom-blue-5/80 text-custom-text-light text-xs hover:bg-custom-blue-5 hover:brightness-125 focus:bg-transparent"
+          : "transition-none p-1.5 pl-4 active:bg-gradient-to-r active:from-custom-blue-5 active:to-custom-blue-5/80 hover:bg-gradient-to-r hover:from-custom-blue-5/50 hover:to-custom-blue-5/30 active:text-custom-text-light text-xs focus:bg-transparent"
     }
       to={to}>
-      {icon}{name}
+      {icon}
+      <div className='overflow-hidden truncate'>
+        {name}
+      </div>
     </NavLink>
   )
 

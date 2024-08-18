@@ -161,21 +161,26 @@ function GameList() {
           </thead>
           <tbody>
             {
-              gameList.map((gameData, index) => {
-                return (
-                  <tr className={gid === gameData["id"] ? "bg-custom-blue-4/20 text-custom-text-light" : ""} key={index} onClick={() => {
-                    setGID(gameData["id"])
-                    setGameName(gameData["name"])
-                  }}>
-                    <td>{gameData["chineseName"] ? gameData["chineseName"] : "无"}</td>
-                    <td>{gameData["name"]}</td>
-                    <td>{gameData["id"]}</td>
-                    <td>{gameData["releaseDate"]}</td>
-                    <td>{gameData["orgName"]}</td>
-                    <td>{gameData["haveChinese"] ? "有" : "无"}</td>
-                  </tr>
-                )
-              })
+              gameList.length === 0 ?
+                <tr>
+                  <td colSpan='6' className='text-center text-custom-text-light'>未找到相关游戏</td>
+                </tr>
+                :
+                gameList.map((gameData, index) => {
+                  return (
+                    <tr className={gid === gameData["id"] ? "bg-custom-blue-4/20 text-custom-text-light" : ""} key={index} onClick={() => {
+                      setGID(gameData["id"])
+                      setGameName(gameData["name"])
+                    }}>
+                      <td>{gameData["chineseName"] ? gameData["chineseName"] : "无"}</td>
+                      <td>{gameData["name"]}</td>
+                      <td>{gameData["id"]}</td>
+                      <td>{gameData["releaseDate"]}</td>
+                      <td>{gameData["orgName"]}</td>
+                      <td>{gameData["haveChinese"] ? "有" : "无"}</td>
+                    </tr>
+                  )
+                })
             }
           </tbody>
         </table>
