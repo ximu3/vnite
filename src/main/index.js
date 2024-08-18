@@ -146,7 +146,7 @@ let processes = new Map();
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   // Set app user model id for windows
-  electronApp.setAppUserModelId('com.electron')
+  electronApp.setAppUserModelId('vnite')
 
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
@@ -176,7 +176,7 @@ app.whenReady().then(() => {
 
   tray = new Tray(icon);
 
-  tray.setToolTip('我的 Electron 应用');
+  tray.setToolTip('vnite');
 
   const contextMenu = Menu.buildFromTemplate([
     { label: '显示主窗口', click: () => { bringApplicationToFront() } },
