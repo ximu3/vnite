@@ -15,6 +15,7 @@ extraFiles:
     filter: ["**/*"]
 asarUnpack:
   - resources/**
+icon: build/icon.png
 win:
   executableName: vnite
 nsis:

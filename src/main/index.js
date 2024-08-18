@@ -33,7 +33,8 @@ function createWindow() {
     show: false,
     autoHideMenuBar: true,
     frame: false,
-    ...(process.platform === 'linux' ? { icon } : {}),
+    icon: icon,
+    // ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.mjs'),
       sandbox: false,
