@@ -138,8 +138,8 @@ function CloudSync() {
                     }, 5000);
                     updateConfig(['cloudSync', 'github', 'repoUrl'], data);
                     updateConfig(['cloudSync', 'github', 'lastSyncTime'], getFormattedDateTimeWithSeconds());
-                    window.electron.ipcRenderer.invoke('get-game-data').then((data) => {
-                        setData(data);
+                    window.electron.ipcRenderer.invoke('get-game-data').then((gameData) => {
+                        setData(gameData);
                     })
                     setTimeout(() => {
                         window.electron.ipcRenderer.send('restart-app');

@@ -125,7 +125,7 @@ export async function initializeRepo(token, user, localPath, mainWindow) {
       if (Object.keys(jsonData).length === 0) {
         await fse.remove(localPath);
         console.log('清空本地文件夹');
-        clonePrivateRepo(token, `https://github.com/${user}/my-gal.git`, localPath);
+        await clonePrivateRepo(token, `https://github.com/${user}/my-gal.git`, localPath);
         return `https://github.com/${user}/my-gal.git`;
       } else {
         mainWindow.webContents.send('initialize-diff-data');
