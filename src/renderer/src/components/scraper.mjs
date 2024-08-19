@@ -44,7 +44,6 @@ async function getAccessToken(clientId, clientSecret) {
     }
 }
 
-// 定义查询游戏详情的函数
 async function searchGameDetails(gameName) {
     const clientId = 'ymgal';
     const clientSecret = 'luna0327';
@@ -267,21 +266,11 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath) {
             }
         }
         const saves = [];
-        // for (const save of gameData.saves) {
-        //     saves.push({
-        //         time: save.time,
-        //         tips: save.tips,
-        //         path: save.path
-        //     });
-        // }
+
         const memory = [];
-        // for (const mem of gameData.memory) {
-        //     memory.push({
-        //         img: mem.img,
-        //         tips: mem.tips
-        //     });
-        // }
+
         const extensionName = []
+
         for (const extension of gameData.game.extensionName) {
             extensionName.push(extension.name);
         }
@@ -355,7 +344,6 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath) {
             savePath = savePath.replace(/\\/g, '/');
         }
 
-        // console.log(staff);
         const data = {
             [`${gameData.game.gid}`]: {
                 detail: {
@@ -418,7 +406,7 @@ async function queryVNDB(filters, fields) {
         return await response.json();
     } catch (error) {
         log.error("查询 VNDB API 时出错:", error);
-        throw error; // 重新抛出错误，让调用者处理
+        throw error;
     }
 }
 
@@ -518,7 +506,7 @@ async function queryVNDBc(filters, fields) {
         return await response.json();
     } catch (error) {
         log.error("查询 VNDB API 时出错:", error);
-        throw error; // 重新抛出错误，让调用者处理
+        throw error;
     }
 }
 
@@ -547,91 +535,5 @@ async function getCharacterIDByName(name, vnId) {
         throw error;
     }
 }
-
-// let data = {};
-
-// data = await organizeGameData(27702, 11, 'C:\\Users\\Administrator\\AppData\\Roaming\\RenPy\\月に寄りそう乙女の作法\\saves', 'C:\\Users\\Administrator\\AppData\\Roaming\\RenPy\\月に寄りそう乙女の作法');
-// // 将数据转换为JSON字符串
-// const jsonData = JSON.stringify(data, null, 2); // 第二个参数null和第三个参数2确保JSON文件格式化美观
-
-// // 写入文件
-// fs.writeFile('data.json', jsonData, 'utf8', (err) => {
-//     if (err) {
-//         console.error('Failed to write to file:', err);
-//     } else {
-//         console.log('Data successfully written to file');
-//     }
-// });
-
-// 使用示例
-// async function example() {
-//   const title = "Steins;Gate";
-
-//   const screenshots = await getScreenshotsByTitle(title);
-//   console.log(screenshots);
-
-//   const cover = await getCoverByTitle(title);
-//   console.log(cover);
-// }
-
-// example();
-
-// 使用示例
-// searchGameDetails('月に寄りそう乙女の作法').then(data => {
-//     console.log('Game Details:', data);
-// }).catch(error => {
-//     console.error('Failed to fetch game details:', error);
-// });
-
-// searchGameList('月に寄りそう乙女の作法').then(data => {
-//     console.log('Game List:', data);
-//     // 将数据转换为JSON字符串
-//     const jsonData = JSON.stringify(data, null, 2); // 第二个参数null和第三个参数2确保JSON文件格式化美观
-
-//     // 写入文件
-//     fs.writeFile('gameList.json', jsonData, 'utf8', (err) => {
-//         if (err) {
-//             console.error('Failed to write to file:', err);
-//         } else {
-//             console.log('Data successfully written to file');
-//         }
-//     });
-// }).catch(error => {
-//     console.error('Failed to fetch game list:', error);
-// });
-
-// searchGameDetails('月に寄りそう乙女の作法').then(data => {
-//     console.log('Game Details:', data);
-//     // 将数据转换为JSON字符串
-//     const jsonData = JSON.stringify(data, null, 2); // 第二个参数null和第三个参数2确保JSON文件格式化美观
-
-//     // 写入文件
-//     fs.writeFile('gameData.json', jsonData, 'utf8', (err) => {
-//         if (err) {
-//             console.error('Failed to write to file:', err);
-//         } else {
-//             console.log('Data successfully written to file');
-//         }
-//     });
-// }).catch(error => {
-//     console.error('Failed to fetch game details:', error);
-// });
-
-// searchGameId(27702).then(data => {
-//     console.log('Game ID:', data);
-//     // 将数据转换为JSON字符串
-//     const jsonData = JSON.stringify(data, null, 2); // 第二个参数null和第三个参数2确保JSON文件格式化美观
-
-//     // 写入文件
-//     fs.writeFile('gameId.json', jsonData, 'utf8', (err) => {
-//         if (err) {
-//             console.error('Failed to write to file:', err);
-//         } else {
-//             console.log('Data successfully written to file');
-//         }
-//     });
-// }).catch(error => {
-//     console.error('Failed to fetch game ID:', error);
-// });
 
 export { searchGameList, searchGameId, searchGameDetails, getScreenshotsByTitle, getCoverByTitle, organizeGameData, searchCharacterId, searchGameNamebyId };

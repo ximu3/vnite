@@ -46,7 +46,7 @@ function Record() {
     const { quantity, setQuantity, volume, setVolume, time, setTime, setNotPlay, setPlaying, setPlayed, setPlayAgain, addCover, setCover } = useRecordStore();
     const { data, setData, alert, config, setConfig } = useRootStore();
     useEffect(() => {
-        setCover({});  // 将 setCover([]) 改为 setCover({})
+        setCover({});
         let volume = 0;
         let time = 0;
         let notPlay = 0;
@@ -73,11 +73,10 @@ function Record() {
         setPlayed(played);
         setPlayAgain(playAgain);
 
-        // 修改这部分来处理 cover 作为键值对
         Object.entries(data).forEach(async ([key, game]) => {
             if (game?.detail.cover) {
                 const path = await window.electron.ipcRenderer.invoke('get-data-path', game.detail.cover);
-                addCover(key, path);  // 使用对象形式添加 cover
+                addCover(key, path);
             }
         });
 
@@ -159,7 +158,6 @@ function Ranking() {
                             <div className='flex justify-center pt-2'><span className='self-center font-bold'>《{data[longestGameKey]?.detail.chineseName ? data[longestGameKey]?.detail.chineseName : data[longestGameKey]?.detail.name}》</span></div>
 
                             <div className="justify-end card-actions">
-                                {/* <button className="btn btn-primary">Buy Now</button> */}
                             </div>
                         </div>
                     </div>
@@ -183,7 +181,6 @@ function Ranking() {
                             </h2>
                             <div className='flex justify-center pt-2'><span className='self-center font-bold'>《{data[mostPlayedKey]?.detail.chineseName ? data[mostPlayedKey]?.detail.chineseName : data[mostPlayedKey]?.detail.name}》</span></div>
                             <div className="justify-end card-actions">
-                                {/* <button className="btn btn-primary">Buy Now</button> */}
                             </div>
                         </div>
                     </div>

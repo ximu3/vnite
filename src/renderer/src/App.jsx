@@ -1,6 +1,4 @@
-
 import { useEffect, ipcRenderer, useRef, useState } from 'react';
-
 import { useStore, create } from 'zustand';
 import Root from './components/Root';
 import AddGame from './components/AddGame';
@@ -53,7 +51,6 @@ function App() {
   useEffect(() => {
     window.electron.ipcRenderer.on('app-exiting', async (event) => {
       try {
-        // 执行必要的清理操作
         await quit();
         window.electron.ipcRenderer.send('app-exit-processed', { success: true });
       } catch (error) {
@@ -112,9 +109,6 @@ function App() {
                 : <span className='icon-[mdi-light--square] w-4 h-4'></span>
               }
             </button>
-            {/* <button className='flex items-center justify-center w-8 h-8 p-0 btn-ghost hover:bg-custom-text/30' onClick={() => window.electron.ipcRenderer.send('maximize')}>
-              <span className='icon-[material-symbols-light--square-outline] w-4 h-4'></span>
-            </button> */}
             <button className='flex items-center justify-center w-8 h-8 p-0 btn-ghost hover:bg-custom-red' onClick={() => window.electron.ipcRenderer.send('close')}>
               <span className='icon-[material-symbols-light--close] w-5 h-5'></span>
             </button>

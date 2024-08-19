@@ -124,7 +124,6 @@ function Info() {
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'Enter') {
-        // 模拟按钮点击
         document.getElementById('discern').click();
       }
     };
@@ -150,11 +149,6 @@ function Info() {
           <input type="text" spellCheck='false' name='gid' className="grow" placeholder="月幕Galgame档案id，不带GA" value={gid} onChange={(e) => { setGID(e.target.value) }} />
           <span className="border-0 badge bg-custom-blue-6 text-custom-text-light">可选</span>
         </label>
-        {/* <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
-          <div className='font-semibold'>VID |</div>
-          <input type="text" spellCheck='false' name='vid' className="grow" placeholder="VNDB档案id，不带v" value={vid} onChange={(e) => { setVID(e.target.value) }} />
-          <span className="border-0 badge bg-custom-blue-6 text-custom-text-light">可选</span>
-        </label> */}
         <div className='pt-1'>填写&nbsp;<span className='bg-custom-blue-6 text-custom-text-light'> GID </span>&nbsp;项可大幅提高识别正确率。</div>
       </div>
       <button id='discern' className='w-full h-10 transition-all mt-9 btn bg-custom-stress text-custom-text-light hover:brightness-125' onClick={submitInfo}>
@@ -344,7 +338,7 @@ function GameLoad() {
     if (logContainerRef.current) {
       logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
     }
-  }, [addGameLog]); // 每当日志更新时执行
+  }, [addGameLog]);
   useEffect(() => {
     window.electron.ipcRenderer.on('game-data-organized', (event, gameData) => {
       setIsLoading(false);

@@ -94,7 +94,7 @@ function Game({ index }) {
 
         loadImages();
     }, [gameData]);
-    // 使用示例
+
     useEffect(() => {
         window.electron.ipcRenderer.on('game-start-result', (event, result) => {
             if (result.success) {
@@ -246,14 +246,9 @@ function Game({ index }) {
             </dialog>
 
             <div className="relative w-full h-full bg-fixed bg-center bg-cover">
-                {/* <div className="absolute inset-0 bg-custom-main"></div> */}
                 <img src={`${backgroundImage}?t=${timestamp}`} alt="bg" className="object-cover w-full h-full"></img>
                 <div className="absolute inset-0 shadow-t-lg top-104 border-t-1 border-white/30 shadow-black/80 bg-gradient-to-b from-custom-main/40 via-45% via-custom-main/85 to-custom-main backdrop-blur-lg"></div>
                 <div className="sticky inset-0 pointer-events-none bg-custom-main/90"></div>
-
-                {/* <img alt="cover image" src={gameData['cover']} className="absolute z-10 object-cover w-56 h-auto transform border-2 right-16 lg:right-24 2xl:right-40 2xl:-bottom-60 -bottom-16 lg:-bottom-48 lg:w-64 2xl:w-80 border-primary"></img> */}
-
-                {/* <div class="absolute right-16 lg:right-28 -bottom-16 lg:-bottom-40 transform w-56 h-72 lg:w-64 lg:h-96 bg-base-100 bg-opacity-15 z-20"></div> */}
 
                 <div className='absolute flex flex-col w-full gap-7 top-112'>
                     <div className='flex flex-row justify-between'>
@@ -291,10 +286,6 @@ function Game({ index }) {
                                             <div className=' text-custom-text/80'>{gameData['lastVisitDate'] ? gameData['lastVisitDate'].replace(/-/g, '.') : "还未运行过"}</div>
                                         </div>
                                     </div>
-                                    {/* <div className='flex flex-col items-start pl-1 text-xs'>
-                                        <div className='font-semibold'>最后运行日期</div>
-                                        <div className=' text-custom-text/80'>2024年8月1日</div>
-                                    </div> */}
                                     <div className='flex flex-row items-center gap-2 pl-2'>
                                         <span className="icon-[uil--clock] w-9 h-9"></span>
                                         <div className='flex flex-col items-start text-xs'>
@@ -345,7 +336,6 @@ function Game({ index }) {
                         <div role="tablist" className="self-center w-1/2 pl-2 pr-2 font-semibold transition-all bg-transparent shadow-lg tabs tabs-boxed backdrop-blur-3xl">
                             <NavTab to="./detail" name="详情" />
                             <NavTab to="./character" name="角色" />
-                            {/* <NavTab to="./2.5" name="版本" /> */}
                             <NavTab to="./save" name="存档" />
                             <NavTab to="./memory" name="回忆" />
                         </div>
@@ -526,7 +516,6 @@ function Save({ index }) {
                         </tr>
                     </thead>
                     <tbody className=''>
-                        {/* row 1 */}
                         {
                             data[index]['saves'] ?
                                 data[index]['saves'].map((save, i) => {
@@ -862,7 +851,6 @@ function AdvancedSettings() {
                     <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
                         <div className='font-semibold'>数据库ID |</div>
                         <div>{(settingData?.detail?.gid || '').replace('ga', '')}</div>
-                        {/* <input disabled type="text" name='gid' className="grow" value={settingData?.detail?.gid || ''} onChange={(e)=>{updateSettiongData(['detail', 'gid'], e.target.value)}} /> */}
                     </label>
                     <div className="dropdown dropdown-end">
                         <div tabIndex={0} role="button" className="flex flex-row items-center justify-between w-full gap-2 mb-1 text-sm font-semibold border-0 input-sm bg-custom-stress hover:brightness-125">
@@ -882,7 +870,6 @@ function AdvancedSettings() {
                     <label className="flex items-center w-full gap-2 -mt-1 input-sm input focus-within:outline-none bg-custom-red text-custom-text-light/90">
                         <div className='font-semibold'>警告⚠️ |</div>
                         <div>随意修改数据库内容会导致程序崩溃！</div>
-                        {/* <input disabled type="text" name='gid' className="grow" value={settingData?.detail?.gid || ''} onChange={(e)=>{updateSettiongData(['detail', 'gid'], e.target.value)}} /> */}
                     </label>
                 </div>
             </div>
@@ -900,21 +887,13 @@ function MediaSettings({ index }) {
     const { timestamp, setTimestamp, icons, updateData } = useRootStore()
     async function updateCover(gameId) {
         try {
-            // 打开文件选择对话框
             const selectedPath = await window.electron.ipcRenderer.invoke('open-img-dialog');
-
             if (selectedPath) {
-                // 调用更新游戏封面的方法
                 await window.electron.ipcRenderer.invoke('update-game-cover', gameId, selectedPath);
-
-                // console.log('新的封面路径:', newCoverPath);
-
-                // 这里可以添加更新UI或通知用户的逻辑
                 setTimestamp()
                 setSettingAlert('更换图片成功！');
                 setTimeout(() => { setSettingAlert('') }, 3000);
             } else {
-                // 用户取消了选择
                 console.log('用户取消了文件选择！');
             }
         } catch (error) {
@@ -929,19 +908,12 @@ function MediaSettings({ index }) {
             const selectedPath = await window.electron.ipcRenderer.invoke('open-img-dialog');
 
             if (selectedPath) {
-                // 调用更新游戏封面的方法
                 const iconPath = await window.electron.ipcRenderer.invoke('update-game-icon', gameId, selectedPath);
-
                 updateData([index, 'detail', 'icon'], `/games/${gameId}/icon.png`)
-
-                // console.log('新的封面路径:', newCoverPath);
-
-                // 这里可以添加更新UI或通知用户的逻辑
                 setTimestamp()
                 setSettingAlert('更换图片成功！');
                 setTimeout(() => { setSettingAlert('') }, 3000);
             } else {
-                // 用户取消了选择
                 console.log('用户取消了文件选择！');
             }
         } catch (error) {
@@ -952,21 +924,14 @@ function MediaSettings({ index }) {
     }
     async function updateBackgroundImage(gameId) {
         try {
-            // 打开文件选择对话框
             const selectedPath = await window.electron.ipcRenderer.invoke('open-img-dialog');
-
             if (selectedPath) {
                 // 调用更新游戏背景的方法
                 await window.electron.ipcRenderer.invoke('update-game-background', gameId, selectedPath);
-
-                // console.log('新的背景路径:', newCoverPath);
-
-                // 这里可以添加更新UI或通知用户的逻辑
                 setTimestamp()
                 setSettingAlert('更换图片成功！');
                 setTimeout(() => { setSettingAlert('') }, 3000);
             } else {
-                // 用户取消了选择
                 console.log('用户取消了文件选择');
             }
         } catch (error) {

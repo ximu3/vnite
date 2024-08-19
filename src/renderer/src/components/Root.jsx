@@ -114,14 +114,12 @@ function Root() {
       <ul className="flex flex-col gap-2 shadow-lg w-14 menu bg-custom-main-3 rounded-box shrink-0">
         <li><NavButton to="/library" className="" name={<span className="icon-[ion--library-sharp] w-5 h-5"></span>} /></li>
         <li><NavButton to="/record" className="" name={<span className="icon-[fa--pie-chart] w-5 h-5"></span>} /></li>
-        {/* <li><NavButton to="/config" className="bg-primary" name="c" /></li> */}
       </ul>
       <div className='grow'>
         <Routes>
           <Route index element={<Navigate to='/library' />} />
           <Route path='/library/*' element={<Library />} />
           <Route path='/record/*' element={<Record />} />
-          {/* <Route path='/config/*' element={<Config />} /> */}
         </Routes>
       </div>
     </div>

@@ -73,13 +73,6 @@ function Config() {
                         <div className="w-full grow">
                             <div className='pt-2 pb-2 pl-4 text-xl font-bold text-custom-blue-6'>my-gal设置</div>
                             <ul className="w-full menu rounded-box text-custom-text">
-                                {/* {
-                                    Object.keys(config).map(key => (
-                                        <li key={key}>
-                                            <NavButton to={`./${key}`} name={keyToName[key]} />
-                                        </li>
-                                    ))
-                                } */}
                                 <li className=''>
                                     <NavButton to={`./cloudSync`} name={'云同步'} icon={<span className="icon-[material-symbols-light--cloud] w-6 h-6"></span>} />
                                 </li>

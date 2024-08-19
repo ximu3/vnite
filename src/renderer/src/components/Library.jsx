@@ -42,7 +42,7 @@ function Library() {
   const { data, icons, setIcons, timestamp } = useRootStore();
   useEffect(() => {
     async function loadImages() {
-      setIcons({});  // 将初始值设置为空对象而不是空数组
+      setIcons({});
       const iconPaths = await Promise.all(
         Object.entries(data || {}).map(async ([key, game]) => {
           if (!game?.detail?.icon) {
@@ -100,7 +100,6 @@ function Library() {
             <div className="flex flex-row items-center justify-center w-full h-full">
               <div className="flex flex-col items-center justify-center gap-2">
                 <span className="icon-[mingcute--game-2-fill] w-24 h-24"></span>
-                {/* <div className='text-5xl'>{'Ciallo～(∠・ω< )⌒☆'}</div> */}
                 <span className=" text-custom-text-light">{'暂无游戏，请点击下方按钮添加 ～(∠・ω< )⌒☆'}</span>
                 <div className='pt-3'>
                   <button className='min-w-0 min-h-0 transition-all border-0 w-9 h-9 btn btn-square bg-custom-blue-6' onClick={() => { document.getElementById('addGame').showModal() }}>
