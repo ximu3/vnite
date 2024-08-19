@@ -2,9 +2,19 @@
   <img src="https://img.timero.xyz/i/2024/08/19/66c30441f1841.ico" alt="图片描述">
 </p>
 
-<h1 align="center">Vnite</h1>
+![Electron](https://img.shields.io/badge/Electron-47848F?style=for-the-badge&logo=electron&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![GPL-3.0 License](https://img.shields.io/badge/License-GPL%203.0-blue.svg?style=for-the-badge&logo=gnu&logoColor=white)
 
-Vnite 是一个 视觉小说 / Galgame 管理软件。支持以Github为核心的账号系统，可进行游戏元数据与存档的多端云同步。Vnite 内置基本的统计模块，默默记录你的游戏之旅。Vnite 的用户界面模仿了 Steam，给仓鼠党一个赏心悦目的海报墙。
+# Vnite
+
+Vnite 是一个 视觉小说 / Galgame 管理软件。
+
+支持以Github为核心的账号系统，可进行游戏元数据与存档的多端云同步。
+
+内置基本的统计模块，默默记录你的游戏之旅。
+
+用户界面模仿了 Steam，给仓鼠党一个赏心悦目的海报墙。
 
 ## 功能
 
