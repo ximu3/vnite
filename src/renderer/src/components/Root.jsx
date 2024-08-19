@@ -56,7 +56,7 @@ function NavButton({ to, name }) {
 }
 
 function Root() {
-  const { data, setData, alert, config, setConfig, isPulling, setIsPulling } = useRootStore();
+  const { data, setData, alert, config, setConfig, isPulling, setIsPulling, setTimestamp } = useRootStore();
   const { isloading } = useAddGame();
   useEffect(() => {
     window.electron.ipcRenderer.invoke('get-game-data').then((data) => {
@@ -93,6 +93,7 @@ function Root() {
           setIsPulling(true);
           document.getElementById('syncDataAtQuit').showModal();
           await window.electron.ipcRenderer.invoke('pull-changes')
+          setTimestamp(Date.now());
           document.getElementById('syncDataAtQuit').close();
         } catch (error) {
           setIsPulling(true);
