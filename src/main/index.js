@@ -9,7 +9,7 @@ import sharp from 'sharp';
 import fs from 'fs/promises';
 import fse from 'fs-extra';
 import { getConfigData, updateConfigData } from '../renderer/public/app/config/configManager.mjs';
-import { startAuthProcess, initializeRepo, commitAndPush, createWebDavClient, uploadDirectory, downloadDirectory, initAndPushLocalRepo, clonePrivateRepo } from '../renderer/src/components/cloudSync.mjs';
+import { startAuthProcess, initializeRepo, commitAndPush, createWebDavClient, uploadDirectory, downloadDirectory, initAndPushLocalRepo, clonePrivateRepo, pullChanges } from '../renderer/src/components/cloudSync.mjs';
 import getFolderSize from "get-folder-size";
 import path from 'path';
 import chokidar from 'chokidar';
@@ -144,7 +144,7 @@ let processes = new Map();
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('vnite')
 
@@ -220,6 +220,20 @@ app.whenReady().then(() => {
       mainWindow.maximize()
     }
   })
+
+  ipcMain.handleOnce('pull-changes', async (event) => {
+    try {
+      const localPath = getSyncPath('');
+      await pullChanges(localPath);
+      const gameData = await getGameData(getDataPath('data.json'));
+      const configData = await getConfigData();
+      mainWindow.webContents.send('config-data-updated', configData);
+      mainWindow.webContents.send('game-data-updated', gameData);
+    } catch (error) {
+      log.error('同步云端数据时出错:', error);
+      throw error;
+    }
+  });
 
   ipcMain.handle('get-game-name', async (event, id) => {
     try {

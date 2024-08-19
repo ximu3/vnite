@@ -7,6 +7,7 @@ import simpleGit from 'simple-git';
 import { promises as fs } from 'fs';
 import path from 'path';
 import fse from 'fs-extra';
+import log from 'electron-log/main.js';
 
 const PORT = 20721;
 let server;
@@ -225,10 +226,33 @@ export async function clonePrivateRepo(token, repoUrl, localPath) {
 export async function commitAndPush(localPath, message) {
   try {
     const git = simpleGit(localPath, { config: ['safe.directory=*'] });
-    await git.add('.').commit(message).push('origin', 'main');
-    console.log('更改已提交并推送到远程仓库');
+
+    // 先尝试拉取最新更改
+    log.info('正在拉取远程更改...');
+    await git.pull('origin', 'main', { '--rebase': 'false' });
+
+    // 添加所有更改
+    await git.add('.');
+
+    // 检查是否有需要提交的更改
+    const status = await git.status();
+    if (status.files.length > 0) {
+      // 有更改需要提交
+      await git.commit(message);
+      console.log('更改已提交到本地仓库');
+    } else {
+      console.log('没有需要提交的更改');
+    }
+
+    // 尝试推送更改
+    console.log('正在推送更改到远程仓库...');
+    await git.push('origin', 'main');
+    console.log('更改已成功推送到远程仓库');
   } catch (error) {
     console.error('操作过程中出错:', error);
+    if (error.message.includes('fetch first')) {
+      console.log('远程仓库有新的更改，请先拉取最新代码');
+    }
     throw error;
   }
 }
@@ -237,10 +261,12 @@ export async function commitAndPush(localPath, message) {
 export async function pullChanges(localPath) {
   try {
     const git = simpleGit(localPath);
+    await git.reset('hard', ['origin/main']);
+    // 然后执行拉取操作
     await git.pull('origin', 'main');
-    console.log('已从远程仓库拉取最新更改');
+    log.info('拉取最新数据成功');
   } catch (error) {
-    console.error('操作过程中出错:', error);
+    log.error('操作过程中出错:', error);
     throw error;
   }
 }

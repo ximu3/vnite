@@ -4,6 +4,7 @@ import Record from './Record';
 import { create } from 'zustand';
 import { useEffect } from 'react';
 import { useAddGame } from './AddGame';
+import log from 'electron-log/renderer.js';
 
 export const useRootStore = create(set => ({
   data: [],
@@ -34,6 +35,8 @@ export const useRootStore = create(set => ({
   }),
   icons: [],
   setIcons: (icons) => set({ icons }),
+  isPulling: false,
+  setIsPulling: (isPulling) => set({ isPulling }),
 }));
 
 function NavButton({ to, name }) {
@@ -53,7 +56,7 @@ function NavButton({ to, name }) {
 }
 
 function Root() {
-  const { data, setData, alert, config, setConfig } = useRootStore();
+  const { data, setData, alert, config, setConfig, isPulling, setIsPulling } = useRootStore();
   const { isloading } = useAddGame();
   useEffect(() => {
     window.electron.ipcRenderer.invoke('get-game-data').then((data) => {
@@ -83,6 +86,20 @@ function Root() {
   useEffect(() => {
     if (config['cloudSync']) {
       window.electron.ipcRenderer.send('save-config-data', config)
+    }
+    if (config['cloudSync']?.enabled && config['cloudSync']?.github?.username && !isPulling) {
+      (async () => {
+        try {
+          setIsPulling(true);
+          document.getElementById('syncDataAtQuit').showModal();
+          await window.electron.ipcRenderer.invoke('pull-changes')
+          document.getElementById('syncDataAtQuit').close();
+        } catch (error) {
+          setIsPulling(true);
+          log.error(error);
+          document.getElementById('syncDataAtQuit').close();
+        }
+      })()
     }
   }, [config])
   return (
