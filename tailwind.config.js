@@ -1,5 +1,4 @@
 import { addDynamicIconSelectors } from '@iconify/tailwind'
-import { styled } from '@mui/material'
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
