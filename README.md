@@ -62,7 +62,7 @@ Vnite 是一个 视觉小说 / Galgame 管理软件。
 
 ## 致谢
 
-- [electron-vite](https://electron-vite.org)
 - [月幕Galgame-开放API](https://www.ymgal.games/developer)
 - [VNDB API](https://api.vndb.org/kana)
+- ……
 
