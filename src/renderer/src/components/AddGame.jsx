@@ -331,7 +331,7 @@ function GameBg() {
 }
 
 function GameLoad() {
-  const { setData } = useRootStore();
+  const { setData, setTimestamp } = useRootStore();
   const { isLoading, setIsLoading, addGameLog, setAddGameLog, updateAddGameLog } = useAddGame();
   const logContainerRef = useRef(null);
   useEffect(() => {
@@ -343,6 +343,7 @@ function GameLoad() {
     window.electron.ipcRenderer.on('game-data-organized', (event, gameData) => {
       setIsLoading(false);
       setData(gameData);
+      setTimestamp(Date.now());
     })
     window.electron.ipcRenderer.on('add-game-log', (event, log) => {
       updateAddGameLog(log);
