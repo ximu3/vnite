@@ -66,8 +66,16 @@ function App() {
       setIsmaximize(false);
     });
 
+    const handleRightMenu = (event) => {
+      event.preventDefault();
+      window.electron.ipcRenderer.send('show-right-menu', event);
+    }
+
+    window.addEventListener('contextmenu', handleRightMenu);
+
     return () => {
       window.electron.ipcRenderer.removeAllListeners('app-exiting');
+      window.removeEventListener('contextmenu', handleRightMenu);
     }
   }, [])
 
@@ -123,5 +131,7 @@ function App() {
     </div>
   )
 }
+
+
 
 export default App

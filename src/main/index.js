@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain, dialog, Tray, Menu, globalShortcut } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, dialog, Tray, Menu, globalShortcut, nativeTheme } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -65,6 +65,7 @@ function createWindow() {
       event.preventDefault();
     }
   });
+
 
   // const dataPath = getDataPath('data.json');
   // const configPath = getConfigPath('config.json');
@@ -178,6 +179,13 @@ app.whenReady().then(async () => {
 
   tray.setToolTip('vnite');
 
+  nativeTheme.themeSource = 'dark';
+
+  const rightMenu = Menu.buildFromTemplate([
+    { label: '复制', role: 'copy', accelerator: 'CmdOrCtrl+C' },
+    { label: '粘贴', role: 'paste', accelerator: 'CmdOrCtrl+V' }
+  ]);
+
   const contextMenu = Menu.buildFromTemplate([
     { label: '显示主窗口', click: () => { bringApplicationToFront() } },
     { type: 'separator' },
@@ -220,6 +228,10 @@ app.whenReady().then(async () => {
       mainWindow.maximize()
     }
   })
+
+  ipcMain.on('show-right-menu', (event) => {
+    rightMenu.popup({ window: mainWindow });
+  });
 
   ipcMain.handleOnce('pull-changes', async (event) => {
     try {
