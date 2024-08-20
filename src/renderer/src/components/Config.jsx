@@ -57,6 +57,7 @@ function Config() {
     }
     function quit() {
         setConfigSetting(config);
+        document.getElementById('setting').close();
     }
     return (
 
