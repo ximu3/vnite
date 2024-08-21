@@ -118,7 +118,7 @@ async function addCharacterImgToData(gid, cid, imgUrls, filePath) {
         const characterResponse = await axios.get(imgUrls, { responseType: 'arraybuffer' });
         await fs.writeFile(characterImgPath, characterResponse.data);
 
-        log, info('New character image has been added successfully');
+        log.info('New character image has been added successfully');
     } catch (error) {
         log.error('Error adding new character image:', error);
         throw error;

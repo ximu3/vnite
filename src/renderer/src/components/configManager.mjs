@@ -1,5 +1,5 @@
 import { promises as fs } from 'fs';
-import { getConfigPath } from '../../../../main';
+import { getConfigPath } from '../../../main';
 import log from 'electron-log/main.js';
 
 

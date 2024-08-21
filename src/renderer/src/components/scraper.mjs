@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { addCharacterImgToData, addNewGameToData, addObjectToJsonFile } from '../../public/app/data/dataManager.mjs';
+import { addCharacterImgToData, addNewGameToData, addObjectToJsonFile } from './dataManager.mjs';
 import path from 'path';
 import getFolderSize from 'get-folder-size';
 import log from 'electron-log/main.js';

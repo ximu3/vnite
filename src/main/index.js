@@ -2,13 +2,13 @@ import { app, shell, BrowserWindow, ipcMain, dialog, Tray, Menu, globalShortcut,
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { addNewGameToData, getGameData, updateGameData, deleteGame } from '../renderer/public/app/data/dataManager.mjs'
+import { addNewGameToData, getGameData, updateGameData, deleteGame } from '../renderer/src/components/dataManager.mjs'
 import { organizeGameData, searchGameNamebyId } from "../renderer/src/components/scraper.mjs"
 import { spawn, exec } from 'child_process';
 import sharp from 'sharp';
 import fs from 'fs/promises';
 import fse from 'fs-extra';
-import { getConfigData, updateConfigData } from '../renderer/public/app/config/configManager.mjs';
+import { getConfigData, updateConfigData } from '../renderer/src/components/configManager.mjs';
 import { startAuthProcess, initializeRepo, commitAndPush, createWebDavClient, uploadDirectory, downloadDirectory, initAndPushLocalRepo, clonePrivateRepo, pullChanges } from '../renderer/src/components/cloudSync.mjs';
 import getFolderSize from "get-folder-size";
 import path from 'path';
