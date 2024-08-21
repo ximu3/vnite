@@ -81,6 +81,27 @@ function createWindow() {
   // });
 }
 
+async function initAppData() {
+  if (!app.isPackaged) {
+    console.log('应用未打包，跳过初始化');
+    return;
+  }
+
+  try {
+    const syncPath = getSyncPath('');
+    const exists = await fs.access(syncPath).then(() => true).catch(() => false);
+
+    if (!exists) {
+      await fse.copy(join(app.getAppPath(), 'example/app'), syncPath);
+      log.info('应用数据初始化完成');
+    } else {
+      console.log('应用数据已存在，无需初始化');
+    }
+  } catch (error) {
+    log.error('初始化数据时出错:', error);
+  }
+}
+
 function toggleFullScreen() {
   if (mainWindow) {
     const isFullScreen = mainWindow.isFullScreen();
@@ -147,6 +168,8 @@ let processes = new Map();
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(async () => {
   // Set app user model id for windows
+  log.transports.file.resolvePathFn = () => getLogsPath();
+
   electronApp.setAppUserModelId('vnite')
 
   // Default open or close DevTools by F12 in development
@@ -159,9 +182,9 @@ app.whenReady().then(async () => {
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
 
-  createWindow()
+  await initAppData();
 
-  log.transports.file.resolvePathFn = () => getLogsPath();
+  createWindow()
 
   log.info('App started 应用已启动');
 
@@ -691,26 +714,25 @@ function getAppRootPath() {
 
 export function getDataPath(file) {
   if (app.isPackaged) {
-    mainWindow.webContents.send('path-log', `${path.join(getAppRootPath(), '/app/data', file)}`);
-    return path.join(getAppRootPath(), '/app/data', file);
+    return path.join(app.getPath('userData'), '/app/data', file);
   } else {
-    return path.join(app.getAppPath(), '/src/renderer/public/app/data', file);
+    return path.join(getAppRootPath(), '/src/renderer/public/app/data', file);
   }
 }
 
 export function getConfigPath(file) {
   if (app.isPackaged) {
-    return path.join(getAppRootPath(), '/app/config', file);
+    return path.join(app.getPath('userData'), '/app/config', file);
   } else {
-    return path.join(app.getAppPath(), '/src/renderer/public/app/config', file);
+    return path.join(getAppRootPath(), '/src/renderer/public/app/config', file);
   }
 }
 
 export function getSyncPath(file) {
   if (app.isPackaged) {
-    return path.join(getAppRootPath(), '/app', file);
+    return path.join(app.getPath('userData'), '/app', file);
   } else {
-    return path.join(app.getAppPath(), '/src/renderer/public/app', file);
+    return path.join(getAppRootPath(), '/src/renderer/public/app', file);
   }
 }
 
@@ -718,7 +740,7 @@ function getLogsPath() {
   if (app.isPackaged) {
     return path.join(getAppRootPath(), '/logs/app.log');
   } else {
-    return path.join(app.getAppPath(), '/logs/app.log');
+    return path.join(getAppRootPath(), '/logs/app.log');
   }
 }
 

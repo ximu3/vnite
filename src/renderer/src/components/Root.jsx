@@ -68,9 +68,10 @@ function Root() {
     window.electron.ipcRenderer.on('config-data-updated', (event, data) => {
       setConfig(data);
     })
-    window.electron.ipcRenderer.on('path-log', (event, alert) => {
-      console.log(alert);
-    })
+    return () => {
+      window.electron.ipcRenderer.removeAllListeners('game-data-updated');
+      window.electron.ipcRenderer.removeAllListeners('config-data-updated');
+    }
   }, [isloading])
   useEffect(() => {
     if (data.length !== 0) {
