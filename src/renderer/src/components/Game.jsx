@@ -247,10 +247,10 @@ function Game({ index }) {
 
             <div className="relative w-full h-full bg-fixed bg-center bg-cover">
                 <img src={`${backgroundImage}?t=${timestamp}`} alt="bg" className="object-cover w-full h-full"></img>
-                <div className="absolute inset-0 shadow-t-lg top-104 border-t-1 border-white/30 shadow-black/80 bg-gradient-to-b from-custom-main/40 via-45% via-custom-main/85 to-custom-main backdrop-blur-lg"></div>
+                <div className="absolute inset-0 shadow-t-lg top-[49.5%] border-t-1 border-white/30 shadow-black/80 bg-gradient-to-b from-custom-main/40 via-45% via-custom-main/85 to-custom-main backdrop-blur-lg"></div>
                 <div className="sticky inset-0 pointer-events-none bg-custom-main/90"></div>
 
-                <div className='absolute flex flex-col w-full gap-7 top-112'>
+                <div className='absolute flex flex-col w-full gap-7 top-[53%]'>
                     <div className='flex flex-row justify-between'>
                         <div className='flex flex-col w-full gap-7'>
                             <div className="flex flex-row gap-2 text-4xl font-bold text-custom-text-light pl-14">
