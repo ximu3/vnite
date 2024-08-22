@@ -242,7 +242,7 @@ function GamePath() {
     }
     const file = files[0];
     const fileExtension = file.name.split('.').pop();
-    if (fileExtension !== 'exe') {
+    if (fileExtension !== 'exe' && fileExtension !== 'bat') {
       setAlert('请选择可执行文件！');
       setTimeout(() => { setAlert(''); }, 3000);
       return

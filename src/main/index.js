@@ -310,7 +310,8 @@ app.whenReady().then(async () => {
     const result = await dialog.showOpenDialog({
       properties: ['openFile'],
       filters: [
-        { name: '可执行文件', extensions: ['exe'] }
+        { name: '可执行文件', extensions: ['exe'] },
+        { name: '批处理文件', extensions: ['bat'] }
       ]
     });
     if (result.canceled) {
