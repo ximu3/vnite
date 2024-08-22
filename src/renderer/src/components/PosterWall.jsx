@@ -1,6 +1,6 @@
 import { useStore, create } from 'zustand';
 import { MemoryRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import { useRootStore } from './Root';
 
 const usePosterStore = create(set => ({
@@ -15,6 +15,8 @@ const usePosterStore = create(set => ({
     setRecentPlay: (recentPlay) => set({ recentPlay }),
     backgrounds: {},
     setBackgrounds: (backgrounds) => set({ backgrounds }),
+    sortedGames: [],
+    setSortedGames: (sortedGames) => set({ sortedGames })
 }));
 
 function formatTime(seconds) {
@@ -38,8 +40,10 @@ function formatTime(seconds) {
 
 export default function PosterWall() {
     const navigate = useNavigate();
-    const { posters, setPosters, addPoster, recentPlay, setRecentPlay, setBackgrounds, backgrounds } = usePosterStore();
+    const { posters, setPosters, addPoster, recentPlay, setRecentPlay, setBackgrounds, backgrounds, sortedGames, setSortedGames } = usePosterStore();
     const { data, icons, setIcons, timestamp } = useRootStore();
+    const [sortBy, setSortBy] = useState('name'); // 默认按名称排序
+    const [sortOrder, setSortOrder] = useState('asc'); // 默认升序
     useEffect(() => {
         async function loadImages() {
             setPosters({});
@@ -80,7 +84,50 @@ export default function PosterWall() {
         setRecentPlay(recentPlays);
         loadImages();
     }, [data]);
+    useEffect(() => {
+        const sortGames = Object.entries(data)?.sort((a, b) => {
+            const [keyA, gameA] = a;
+            const [keyB, gameB] = b;
+            let comparison = 0;
 
+            switch (sortBy) {
+                case 'name':
+                    comparison = (gameA.detail.chineseName || gameA.detail.name).localeCompare(gameB.detail.chineseName || gameB.detail.name);
+                    break;
+                case 'lastPlayed':
+                    comparison = new Date(gameA.detail.lastVisitDate || 0) - new Date(gameB.detail.lastVisitDate || 0);
+                    break;
+                case 'playTime':
+                    comparison = (gameA.detail.gameDuration || 0) - (gameB.detail.gameDuration || 0);
+                    break;
+                case 'addDate':
+                    comparison = new Date(gameA.detail.addDate || 0) - new Date(gameB.detail.addDate || 0);
+                    break;
+                default:
+                    comparison = 0;
+            }
+
+            return sortOrder === 'asc' ? comparison : -comparison;
+        });
+        setSortedGames(sortGames);
+    }, [data, sortBy, sortOrder]);
+    function convertSortName(sortBy) {
+        switch (sortBy) {
+            case 'name':
+                return '名称';
+            case 'lastPlayed':
+                return '最后运行日期';
+            case 'playTime':
+                return '游玩时间';
+            case 'addDate':
+                return '添加日期';
+            default:
+                return '名称';
+        }
+    }
+    function toggleSortOrder() {
+        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    }
     return (
         <div className='w-full h-full overflow-auto p-7 bg-custom-main scrollbar-base'>
             <div className='flex flex-col w-full h-full gap-16'>
@@ -123,12 +170,31 @@ export default function PosterWall() {
                     </div>
                 </div>
                 <div className='flex flex-col gap-5 pb-9'>
-                    <div className='flex flex-row m-0 divider-start divider'>
+                    <div className='flex flex-row items-center justify-center m-0 divider-start divider'>
                         <div>所有游戏</div>
                         <div className='-ml-2 text-sm text-custom-text'>({Object.keys(data)?.length})</div>
+                        <div className="z-50 dropdown">
+                            <div tabIndex={0} role="button" className="flex flex-row w-auto h-5 min-h-0 pr-2 text-xs font-normal border-0 no-animation btn text-custom-text bg-custom-stress-2 hover:text-custom-text-light">
+                                <div className='flex flex-row items-center justify-center gap-1'>
+                                    按{convertSortName(sortBy)}排序
+                                    <span className="icon-[material-symbols-light--keyboard-arrow-down] w-4 h-4"></span>
+                                </div>
+                            </div>
+                            <ul tabIndex={0} className="dropdown-content menu bg-custom-dropdown rounded-box z-[1] w-52 p-2 shadow mt-1">
+                                <li onClick={() => { setSortBy('name') }} className='hover:bg-custom-text hover:text-black active:bg-custom-text'><a className='transition-none active:bg-custom-text active:text-black'>按名称排序</a></li>
+                                <li onClick={() => { setSortBy('lastPlayed') }} className='hover:bg-custom-text hover:text-black'><a className='transition-none active:bg-custom-text active:text-black'>按最后运行日期排序</a></li>
+                                <li onClick={() => { setSortBy('playTime') }} className='hover:bg-custom-text hover:text-black'><a className='transition-none active:bg-custom-text active:text-black'>按游玩时间排序</a></li>
+                                <li onClick={() => { setSortBy('addDate') }} className='hover:bg-custom-text hover:text-black'><a className='transition-none active:bg-custom-text active:text-black'>按添加日期排序</a></li>
+                            </ul>
+                        </div>
+                        <label className="w-auto h-5 p-1 -m-2 swap bg-custom-stress-2 text-custom-text">
+                            <input type="checkbox" onChange={toggleSortOrder} />
+                            <div className="flex items-center justify-center text-xs swap-on"><span className="icon-[ic--sharp-arrow-downward] w-4 h-4"></span></div>
+                            <div className="flex items-center justify-center text-xs swap-off"><span className="icon-[ic--sharp-arrow-upward] w-4 h-4"></span></div>
+                        </label>
                     </div>
                     <div className='flex flex-row flex-wrap gap-7'>
-                        {Object.keys(posters).map((index) => (
+                        {sortedGames?.map(([index, game]) => (
                             <Poster key={index} index={index} />
                         ))}
                     </div>
@@ -168,7 +234,7 @@ function Poster({ index }) {
     return (
         <div className="relative group" ref={ref}>
             <div onClick={() => navigate(`../${index}`)} className='relative z-10 w-40 overflow-visible transition-all ease-in-out shadow-md cursor-pointer group duration-400 h-60 shadow-black/80 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/80 transform-gpu shine-effect'>
-                <img src={posters[index]} alt={index} className='object-cover w-full h-full' />
+                <img src={posters[index]} alt={index} loading='lazying' onLoad={() => setImageLoaded(true)} className='object-cover w-full h-full' />
             </div>
 
             <div className={`w-60 absolute -top-1 z-20 invisible h-61 transition-opacity duration-300 ease-in-out delay-500 shadow-lg shadow-black/80 opacity-0 group-hover:opacity-100 group-hover:visible overflow-hidden
