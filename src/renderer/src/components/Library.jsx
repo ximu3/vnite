@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, NavLink } from 'react-router-dom';
 import Game from './Game';
 import { useRootStore } from './Root';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import PosterWall from './PosterWall';
 
 function NavButton({ to, name, icon }) {
@@ -40,6 +40,7 @@ function NavTab({ to, name, icon }) {
 
 function Library() {
   const { data, icons, setIcons, timestamp } = useRootStore();
+  const [searchTerm, setSearchTerm] = useState('');
   useEffect(() => {
     async function loadImages() {
       setIcons({});
@@ -56,6 +57,24 @@ function Library() {
     }
     loadImages();
   }, [data]);
+  const filteredGames = useMemo(() => {
+    return Object.entries(data).filter(([key, game]) => {
+      const searchTermLower = searchTerm.toLowerCase();
+
+      // 检查主要名称
+      const mainNameMatch =
+        game.detail?.chineseName?.toLowerCase().includes(searchTermLower) ||
+        game.detail?.name?.toLowerCase().includes(searchTermLower);
+
+      // 检查扩展名称（别名）数组
+      const extensionNameMatch = game.detail?.extensionName?.some(alias =>
+        alias.toLowerCase().includes(searchTermLower)
+      );
+
+      // 如果主要名称或任何别名匹配，则返回 true
+      return mainNameMatch || extensionNameMatch;
+    });
+  }, [data, searchTerm]);
   return (
     <div className="flex flex-row w-full h-full">
       <div className="flex flex-col h-full border-black border-r-0.5 border-l-0.5 w-72 shrink-0 bg-gradient-to-b from-custom-stress-2 via-15% via-custom-blue-5/20 to-30% to-custom-main-2">
@@ -66,7 +85,7 @@ function Library() {
           <div className="flex flex-row w-full gap-2 p-2 h-14">
             <label className="flex items-center min-w-0 min-h-0 gap-3 pl-3 transition-all border-0 active:transition-none h-9 input bg-custom-stress-1 focus-within:outline-none group focus-within:shadow-inner focus-within:border-0 focus-within:shadow-black/80 hover:shadow-inner hover:shadow-black/80 focus-within:hover:brightness-100">
               <span className="icon-[material-symbols--search] w-7 h-7 text-custom-text-light"></span>
-              <input type="text" className="min-w-0 min-h-0 grow focus:outline-transparent caret-custom-text-light" placeholder="" />
+              <input type="text" className="min-w-0 min-h-0 grow focus:outline-transparent caret-custom-text-light" placeholder="" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
             </label>
             <button className='min-w-0 min-h-0 transition-all border-0 w-9 h-9 btn btn-square bg-custom-stress-1' onClick={() => { document.getElementById('addGame').showModal() }}>
               <span className="transition-all icon-[ic--sharp-plus] w-8 h-8 text-custom-text hover:text-custom-text-light"></span>
@@ -75,7 +94,12 @@ function Library() {
         </div>
         <div className="self-center object-center w-full grow">
           <ul className="w-full pl-0 pr-0 menu rounded-box text-custom-text-light gap-0.5">
-            {Object.entries(data).map(([key, game], index) => {
+            {searchTerm && (
+              <div className="p-2 text-sm text-custom-text-light">
+                找到 {filteredGames.length} 个结果
+              </div>
+            )}
+            {filteredGames.map(([key, game], index) => {
               return (
                 <li key={key} className='transition-none'>
                   <NavButton
@@ -111,7 +135,7 @@ function Library() {
             :
             <Routes>
               <Route index element={<Navigate to={`./posterwall`} />} />
-              {Object.entries(data).map(([key, game]) => {
+              {filteredGames.map(([key, game]) => {
                 return <Route key={key} path={`/${key}/*`} element={<Game index={key} />} />
               })}
               <Route path={`/posterwall/*`} element={<PosterWall />} />
