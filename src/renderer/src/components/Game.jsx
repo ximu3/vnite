@@ -318,10 +318,10 @@ function Game({ index }) {
                                     <span className="icon-[typcn--flow-switch] w-6 h-6"></span>
                                 </div>
                                 <ul tabIndex={0} className="dropdown-content menu bg-custom-dropdown rounded-box z-[1] w-52 p-2 shadow">
-                                    <li onClick={() => { updateData([index, 'detail', 'playStatus'], 0) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>未开始</a></li>
-                                    <li onClick={() => { updateData([index, 'detail', 'playStatus'], 1) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>游玩中</a></li>
-                                    <li onClick={() => { updateData([index, 'detail', 'playStatus'], 2) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>已完成</a></li>
-                                    <li onClick={() => { updateData([index, 'detail', 'playStatus'], 3) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>多周目</a></li>
+                                    <li onClick={() => { updateData([index, 'detail', 'playStatus'], 0) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none active:bg-custom-text active:text-black'>未开始</a></li>
+                                    <li onClick={() => { updateData([index, 'detail', 'playStatus'], 1) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none active:bg-custom-text active:text-black'>游玩中</a></li>
+                                    <li onClick={() => { updateData([index, 'detail', 'playStatus'], 2) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none active:bg-custom-text active:text-black'>已完成</a></li>
+                                    <li onClick={() => { updateData([index, 'detail', 'playStatus'], 3) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none active:bg-custom-text active:text-black'>多周目</a></li>
                                 </ul>
                             </div>
                             <div className="dropdown dropdown-end">
