@@ -187,7 +187,7 @@ export default function PosterWall() {
                                 <li onClick={() => { setSortBy('addDate') }} className='hover:bg-custom-text hover:text-black'><a className='transition-none active:bg-custom-text active:text-black'>按添加日期排序</a></li>
                             </ul>
                         </div>
-                        <label className="w-auto h-5 p-1 -m-2 swap bg-custom-stress-2 text-custom-text">
+                        <label className="w-auto h-5 p-1 -m-2 swap bg-custom-stress-2 text-custom-text hover:text-custom-text-light">
                             <input type="checkbox" onChange={toggleSortOrder} />
                             <div className="flex items-center justify-center text-xs swap-on"><span className="icon-[ic--sharp-arrow-downward] w-4 h-4"></span></div>
                             <div className="flex items-center justify-center text-xs swap-off"><span className="icon-[ic--sharp-arrow-upward] w-4 h-4"></span></div>
