@@ -37,6 +37,8 @@ export const useRootStore = create(set => ({
   setIcons: (icons) => set({ icons }),
   isPulling: false,
   setIsPulling: (isPulling) => set({ isPulling }),
+  isGameRunning: { status: false, id: null },
+  setIsGameRunning: (status, id) => set({ isGameRunning: { status, id } })
 }));
 
 function NavButton({ to, name }) {

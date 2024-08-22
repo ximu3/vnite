@@ -29,14 +29,12 @@ const useGameStore = create(set => ({
     memoryImagePath: [],
     setMemoryImagePath: (memoryImagePath) => set({ memoryImagePath }),
     updateMemoryImagePath: (memoryImagePath) => set(state => ({ memoryImagePath: [...state.memoryImagePath, memoryImagePath] })),
-    isGameRunning: false,
-    setIsGameRunning: (isGameRunning) => set({ isGameRunning }),
 }));
 
 function Game({ index }) {
     const naivgate = useNavigate();
-    const { backgroundImage, setBackgroundImage, characterImage, updateCharacterImage, setCharacterImage, setCoverImage, updateMemoryImagePath, setMemoryImagePath, setIsGameRunning, isGameRunning } = useGameStore();
-    const { data, setData, setAlert, updateData, timestamp, config, updateConfig } = useRootStore();
+    const { backgroundImage, setBackgroundImage, characterImage, updateCharacterImage, setCharacterImage, setCoverImage, updateMemoryImagePath, setMemoryImagePath } = useGameStore();
+    const { data, setData, setAlert, updateData, timestamp, config, updateConfig, isGameRunning, setIsGameRunning } = useRootStore();
     const gameData = data[index]['detail'];
     const characterData = data[index]['characters'];
     const memoryData = data[index]['memories'];
@@ -97,9 +95,9 @@ function Game({ index }) {
 
     useEffect(() => {
         window.electron.ipcRenderer.on('game-start-result', (event, result) => {
+            console.log(`Game ${index} received result:`, result);
             if (result.success) {
-                setIsGameRunning(true);
-                return
+                setIsGameRunning(true, `${index}`);
             } else {
                 setAlert(result.error);
                 setTimeout(() => { setAlert('') }, 3000);
@@ -107,68 +105,76 @@ function Game({ index }) {
         });
 
         window.electron.ipcRenderer.on('monitoring-result', (event, { id, totalRunTime }) => {
-            if (id === gameData['id']) {
-                updateData([index, 'detail', 'gameDuration'], data[index]['detail']['gameDuration'] + totalRunTime);
-                updateData([index, 'detail', 'lastVisitDate'], getFormattedDate());
-                setIsGameRunning(false);
-                if (totalRunTime >= 1) {
-                    updateData([index, 'detail', 'frequency'], data[index]['detail']['frequency'] + 1);
-                    if (config?.cloudSync?.enabled) {
-                        if (config['cloudSync']['mode'] === 'github') {
-                            if (config['cloudSync']['github']['repoUrl']) {
-                                const time = getFormattedDateTimeWithSeconds()
-                                window.electron.ipcRenderer.invoke('cloud-sync-github', time).then((data) => {
-                                    if (data === 'success') {
-                                        setAlert('云同步成功！')
-                                        updateConfig(['cloudSync', 'github', 'lastSyncTime'], time)
-                                        setTimeout(() => { setAlert('') }, 3000)
-                                    } else {
-                                        setAlert('云同步失败，请检查设置！')
-                                        setTimeout(() => { setAlert('') }, 3000)
-                                    }
-                                })
-                            }
-                        } else if (config?.cloudSync?.mode === 'webdav') {
-                            if (config['cloudSync']['webdav']['url']) {
-                                const time = getFormattedDateTimeWithSeconds()
-                                window.electron.ipcRenderer.invoke('cloud-sync-webdav-upload', config['cloudSync']['webdav']['url'], config['cloudSync']['webdav']['username'], config['cloudSync']['webdav']['password'], config['cloudSync']['webdav']['path']).then((data) => {
-                                    if (data === 'success') {
-                                        setAlert('云同步成功！')
-                                        updateConfig(['cloudSync', 'webdav', 'lastSyncTime'], time)
-                                        setTimeout(() => { setAlert('') }, 3000)
-                                    } else {
-                                        setAlert('云同步失败，请检查设置！')
-                                        setTimeout(() => { setAlert('') }, 3000)
-                                    }
-                                })
-                            }
+            console.log(`Game ${index} received monitoring result:`, id, totalRunTime);
+            setIsGameRunning(false, null)
+            updateData([id, 'detail', 'gameDuration'], data[id]['detail']['gameDuration'] + totalRunTime);
+            updateData([id, 'detail', 'lastVisitDate'], getFormattedDate());
+            setIsGameRunning(false);
+            if (totalRunTime >= 1) {
+                updateData([id, 'detail', 'frequency'], data[id]['detail']['frequency'] + 1);
+                if (config?.cloudSync?.enabled) {
+                    if (config['cloudSync']['mode'] === 'github') {
+                        if (config['cloudSync']['github']['repoUrl']) {
+                            const time = getFormattedDateTimeWithSeconds()
+                            window.electron.ipcRenderer.invoke('cloud-sync-github', time).then((data) => {
+                                if (data === 'success') {
+                                    setAlert('云同步成功！')
+                                    updateConfig(['cloudSync', 'github', 'lastSyncTime'], time)
+                                    setTimeout(() => { setAlert('') }, 3000)
+                                } else {
+                                    setAlert('云同步失败，请检查设置！')
+                                    setTimeout(() => { setAlert('') }, 3000)
+                                }
+                            })
+                        }
+                    } else if (config?.cloudSync?.mode === 'webdav') {
+                        if (config['cloudSync']['webdav']['url']) {
+                            const time = getFormattedDateTimeWithSeconds()
+                            window.electron.ipcRenderer.invoke('cloud-sync-webdav-upload', config['cloudSync']['webdav']['url'], config['cloudSync']['webdav']['username'], config['cloudSync']['webdav']['password'], config['cloudSync']['webdav']['path']).then((data) => {
+                                if (data === 'success') {
+                                    setAlert('云同步成功！')
+                                    updateConfig(['cloudSync', 'webdav', 'lastSyncTime'], time)
+                                    setTimeout(() => { setAlert('') }, 3000)
+                                } else {
+                                    setAlert('云同步失败，请检查设置！')
+                                    setTimeout(() => { setAlert('') }, 3000)
+                                }
+                            })
                         }
                     }
-                    try {
-                        const saveId = (data[index]['saves'][0] ? data[index]['saves'][data[index]['saves'].length - 1]['id'] + 1 : 1) // 使用时间戳作为唯一标识符
-                        window.electron.ipcRenderer.invoke('copy-save', data[index]['detail']['savePath'], data[index]['detail']['id'], saveId);
-                        updateData([index, 'saves'], [...data[index]['saves'], {
-                            id: saveId,
-                            date: getFormattedDateTimeWithSeconds(),
-                            note: '',
-                            path: `/${data[index]['detail']['id']}/saves/${saveId}`
-                        }]);
-                    } catch (e) {
-                        console.log(e)
-                    }
                 }
-            } else {
-                return
+                try {
+                    const saveId = (data[id]['saves'][0] ? data[id]['saves'][data[id]['saves'].length - 1]['id'] + 1 : 1) // 使用时间戳作为唯一标识符
+                    window.electron.ipcRenderer.invoke('copy-save', data[id]['detail']['savePath'], data[id]['detail']['id'], saveId);
+                    updateData([id, 'saves'], [...data[id]['saves'], {
+                        id: saveId,
+                        date: getFormattedDateTimeWithSeconds(),
+                        note: '',
+                        path: `/${data[id]['detail']['id']}/saves/${saveId}`
+                    }]);
+                } catch (e) {
+                    console.log(e)
+                }
             }
         });
 
         return () => {
-            window.electron.ipcRenderer.removeAllListeners('exe-open-result');
-            window.electron.ipcRenderer.removeAllListeners('exe-running-time');
+            window.electron.ipcRenderer.removeAllListeners('game-start-result');
             window.electron.ipcRenderer.removeAllListeners('monitoring-result');
         };
     }, [data]);
     function handleStart() {
+        if (isGameRunning.status) {
+            if (index === isGameRunning.id) {
+                setAlert('游戏正在运行中！')
+                setTimeout(() => { setAlert('') }, 3000)
+                return
+            } else {
+                setAlert('其它游戏正在运行中！')
+                setTimeout(() => { setAlert('') }, 3000)
+                return
+            }
+        }
         if (gameData['gamePath'] !== '') {
             window.electron.ipcRenderer.send('open-and-monitor', gameData['gamePath'], gameData['id'])
         } else {
@@ -258,8 +264,8 @@ function Game({ index }) {
                             </div>
                             <div className='flex flex-row items-center gap-3 justify-items-center pl-14'>
                                 {
-                                    isGameRunning ?
-                                        <button className='flex flex-row items-center text-lg text-center transition-all border-0 shadow-sm w-52 btn bg-gradient-to-br from-custom-blue-6 to-custom-blue-6/70 text-custom-text-light hover:bg-custom-blue-6'>
+                                    isGameRunning.status && index === isGameRunning.id ?
+                                        <button className='flex flex-row items-center text-lg text-center transition-all border-0 shadow-sm w-52 btn bg-gradient-to-br from-custom-blue-6 to-custom-blue-6/70 text-custom-text-light hover:bg-custom-blue-6' onClick={handleStart}>
                                             <span className="icon-[mingcute--game-2-fill] w-7 h-7"></span>
                                             <div className='font-medium'>正在运行</div>
                                         </button>

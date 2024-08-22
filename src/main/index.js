@@ -689,7 +689,7 @@ app.whenReady().then(async () => {
 
   ipcMain.on('open-and-monitor', async (event, programPath, id) => {
     try {
-      await openExternalProgram(programPath, id);
+      await openExternalProgram(programPath, id, event);
       log.info(`成功打开游戏 ${id}`);
     } catch (error) {
       log.error(`打开游戏 ${id} 时出错:`, error);
@@ -789,7 +789,7 @@ let endTime = null;
 let runningPrograms = new Set();
 let monitoringInterval;
 
-async function openExternalProgram(programPath, id) {
+async function openExternalProgram(programPath, id, event) {
   try {
     const programDir = path.dirname(programPath);
     const programName = path.basename(programPath);
@@ -802,20 +802,20 @@ async function openExternalProgram(programPath, id) {
 
     child.on('error', (error) => {
       log.error(`启动游戏 ${id} 时出错:`, error);
-      mainWindow.webContents.send('game-start-result', { id: id, success: false, error: error.message });
+      event.reply('game-start-result', { id: id, success: false, error: error.message });
     });
 
     child.unref();
 
     // 假设程序成功启动
-    mainWindow.webContents.send('game-start-result', { id: id, success: true });
+    event.reply('game-start-result', { id: id, success: true });
 
     const parentDir = path.dirname(programPath);
     await scanDirectory(parentDir);
-    startMonitoring(id);
+    startMonitoring(id, event);
   } catch (error) {
     log.error(`启动游戏 ${id} 时出错:`, error);
-    mainWindow.webContents.send('game-start-result', { id: id, success: false, error: error.message });
+    event.reply('game-start-result', { id: id, success: false, error: error.message });
   }
 }
 
@@ -857,12 +857,12 @@ async function isExecutable(filePath) {
   }
 }
 
-function startMonitoring(id) {
+function startMonitoring(id, event) {
   startTime = Date.now();
-  monitoringInterval = setInterval(() => checkRunningPrograms(id), 1000);
+  monitoringInterval = setInterval(() => checkRunningPrograms(id, event), 1000);
 }
 
-function checkRunningPrograms(id) {
+function checkRunningPrograms(id, event) {
   exec('tasklist /fo csv /nh', (error, stdout) => {
     if (error) {
       log.error(`执行 ${id} 错误: ${error}`);
@@ -882,14 +882,18 @@ function checkRunningPrograms(id) {
     if (allStopped) {
       endTime = Date.now();
       clearInterval(monitoringInterval);
-      reportTotalRunTime(id);
+      reportTotalRunTime(id, event);
     }
   });
 }
 
-function reportTotalRunTime(id) {
+function reportTotalRunTime(id, event) {
   const totalRunTime = Math.floor((endTime - startTime) / 1000) // 转换为秒
-  mainWindow.webContents.send('monitoring-result', { id, totalRunTime });
+  id = `${id}`;
+  event.reply('monitoring-result', { id, totalRunTime });
+  startTime = null;
+  endTime = null;
+  runningPrograms.clear();
 }
 
 
