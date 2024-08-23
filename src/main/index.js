@@ -194,10 +194,6 @@ app.whenReady().then(async () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 
-  // globalShortcut.register('F11', () => {
-  //   toggleFullScreen();
-  // });
-
   tray = new Tray(icon);
 
   tray.setToolTip('vnite');
@@ -226,7 +222,7 @@ app.whenReady().then(async () => {
   tray.setContextMenu(contextMenu);
 
   tray.on('click', () => {
-    // 处理左键点击
+    bringApplicationToFront()
   });
 
   mainWindow.on('maximize', () => {
@@ -291,7 +287,6 @@ app.whenReady().then(async () => {
       // 确保目标文件夹存在
       await fs.mkdir(iconDir, { recursive: true });
 
-      // 处理图片：只转换为PNG格式，不改变分辨率
       await sharp(imgPath)
         .resize(256, 256) // 将图片调整为 256x256 像素
         .png() // 转换为 PNG 格式
@@ -302,7 +297,7 @@ app.whenReady().then(async () => {
       return iconPath;
     } catch (error) {
       log.error(`更新游戏 ${gameId} 图标时出错:`, error);
-      throw error; // 将错误传回渲染进程
+      throw error;
     }
   });
 
@@ -415,14 +410,14 @@ app.whenReady().then(async () => {
 
       // 处理图片：只转换为WebP格式，不改变分辨率
       await sharp(imgPath)
-        .webp({ quality: 100 })  // 可以根据需要调整质量
+        .webp({ quality: 100 })
         .toFile(coverPath);
 
       log.info(`成功保存游戏 ${gameId} 封面到 ${coverPath}`);
       return coverPath;
     } catch (error) {
       log.error(`更新游戏 ${gameId} 封面时出错:`, error);
-      throw error; // 将错误传回渲染进程
+      throw error;
     }
   });
 
@@ -436,14 +431,14 @@ app.whenReady().then(async () => {
 
       // 处理图片：只转换为WebP格式，不改变分辨率
       await sharp(imgPath)
-        .webp({ quality: 100 })  // 可以根据需要调整质量
+        .webp({ quality: 100 })
         .toFile(bgPath);
 
       log.info(`成功保存游戏 ${gameId} 背景到 ${bgPath}`);
       return bgPath;
     } catch (error) {
       log.error(`更新游戏 ${gameId} 背景时出错:`, error);
-      throw error; // 将错误传回渲染进程
+      throw error;
     }
   })
 
@@ -500,7 +495,7 @@ app.whenReady().then(async () => {
 
       // 使用sharp读取原图片，转换为WebP格式，然后保存
       await sharp(imgPath)
-        .webp({ quality: 100 }) // 设置WebP质量，范围0-100
+        .webp({ quality: 100 })
         .toFile(webpFilePath);
 
       log.info(`成功保存游戏 ${gameId} 记忆图片 ${imgId} 到 ${webpFilePath}`);
@@ -528,7 +523,7 @@ app.whenReady().then(async () => {
       return result;
     } catch (error) {
       log.error('Github认证错误:', error);
-      throw error; // 这将把错误传回渲染进程
+      throw error;
     }
   });
 
@@ -697,8 +692,7 @@ app.whenReady().then(async () => {
   });
 
   mainWindow.on('close', async (event) => {
-    event.preventDefault(); // 阻止默认的关闭行为
-    // 执行自定义的关闭逻辑
+    event.preventDefault();
     await handleAppExit();
   });
 
@@ -803,11 +797,11 @@ async function openExternalProgram(programPath, id, event) {
     child.on('error', (error) => {
       log.error(`启动游戏 ${id} 时出错:`, error);
       event.reply('game-start-result', { id: id, success: false, error: error.message });
+      return
     });
 
     child.unref();
 
-    // 假设程序成功启动
     event.reply('game-start-result', { id: id, success: true });
 
     const parentDir = path.dirname(programPath);
@@ -866,7 +860,6 @@ function checkRunningPrograms(id, event) {
   exec('tasklist /fo csv /nh', (error, stdout) => {
     if (error) {
       log.error(`执行 ${id} 错误: ${error}`);
-      // 可能需要在这里添加一些错误处理逻辑
       return;
     }
     const runningProcesses = stdout.toLowerCase().split('\n');
