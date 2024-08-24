@@ -190,10 +190,8 @@ function About() {
                                             case 1:
                                                 return (
                                                     <div className='flex flex-row-reverse pt-1'>
-                                                        <a href={release.assets[0].downloadUrl} target='_blank' rel="noopener noreferrer">
-                                                            <button className='p-1.5 text-xs border-0 bg-custom-blue-6/80 text-custom-text-light/90 hover:text-custom-text-light hover:bg-custom-blue-6'>
-                                                                更新
-                                                            </button>
+                                                        <a href={release.assets[0].downloadUrl} target='_blank' rel="noopener noreferrer" className='p-1 text-xs link-hover text-custom-text-light/90'>
+                                                            更新
                                                         </a>
                                                     </div>
                                                 );
@@ -208,10 +206,8 @@ function About() {
                                             case -1:
                                                 return (
                                                     <div className='flex flex-row-reverse pt-1'>
-                                                        <a href={release.assets[0].downloadUrl} target='_blank' rel="noopener noreferrer">
-                                                            <button className='p-1.5 text-xs border-0 bg-custom-yellow-6/80 text-custom-text-light/90 hover:text-custom-text-light hover:bg-custom-yellow-6'>
-                                                                回滚
-                                                            </button>
+                                                        <a href={release.assets[0].downloadUrl} target='_blank' rel="noopener noreferrer" className='p-1 text-xs link-hover text-custom-text-light/90'>
+                                                            回滚
                                                         </a>
                                                     </div>
                                                 );
