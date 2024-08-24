@@ -28,6 +28,7 @@
     "get-folder-size": "^5.0.0",
     "node-fetch": "^3.3.2",
     "react-router-dom": "^6.23.1",
+    "semver": "^7.6.3",
     "sharp": "^0.33.4",
     "simple-git": "^3.25.0",
     "webdav": "^5.7.0",
