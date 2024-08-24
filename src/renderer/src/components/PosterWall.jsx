@@ -234,7 +234,7 @@ function Poster({ index }) {
     return (
         <div className="relative group" ref={ref}>
             <div onClick={() => navigate(`../${index}`)} className='relative z-10 w-40 overflow-visible transition-all ease-in-out shadow-md cursor-pointer group duration-400 h-60 shadow-black/80 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/80 transform-gpu shine-effect'>
-                <img src={posters[index]} alt={index} loading='lazying' onLoad={() => setImageLoaded(true)} className='object-cover w-full h-full' />
+                <img src={posters[index]} alt={index} loading='lazying' className='object-cover w-full h-full' />
             </div>
 
             <div className={`w-60 absolute -top-1 z-20 invisible h-61 transition-opacity duration-300 ease-in-out delay-500 shadow-lg shadow-black/80 opacity-0 group-hover:opacity-100 group-hover:visible overflow-hidden
