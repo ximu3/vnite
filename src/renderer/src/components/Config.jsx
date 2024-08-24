@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate, NavLink } from 'react-router-do
 import { create } from 'zustand';
 import { useRootStore } from './Root'
 import { useEffect, useState } from 'react'
+import { useAboutStore } from '../App'
 
 
 function NavButton({ to, name, icon }) {
@@ -10,8 +11,8 @@ function NavButton({ to, name, icon }) {
             isPending
                 ? ""
                 : isActive
-                    ? "bg-custom-hover text-custom-text-light transition-none font-semibold"
-                    : "hover:bg-custom-text hover:text-black transition-none font-semibold"
+                    ? "bg-custom-hover text-custom-text-light transition-none"
+                    : "hover:bg-custom-text hover:text-custom-stress/95 transition-none"
         }
             to={to}>
             {icon}{name}
@@ -70,12 +71,13 @@ function Config() {
 
 
                 <div className="flex flex-row w-full h-full">
-                    <div className="flex flex-col h-full p-3 w-52 bg-custom-stress shrink-0">
+                    <div className="flex flex-col h-full p-3 pt-4 w-52 bg-custom-stress shrink-0">
                         <div className="w-full grow">
-                            <div className='pt-2 pb-2 pl-4 text-xl font-bold text-custom-blue-6'>my-gal设置</div>
+                            <div className='pt-6 pb-3 pl-6 font-bold text-custom-blue-6'>VNITE 设置</div>
                             <ul className="w-full menu rounded-box text-custom-text">
                                 <li className=''>
                                     <NavButton to={`./cloudSync`} name={'云同步'} icon={<span className="icon-[material-symbols-light--cloud] w-6 h-6"></span>} />
+                                    <NavButton to={`./about`} name={'关于'} icon={<span className="icon-[material-symbols-light--info] w-6 h-6"></span>} />
                                 </li>
                             </ul>
 
@@ -85,6 +87,7 @@ function Config() {
                         <Routes>
                             <Route index element={<Navigate to='./cloudSync' />} />
                             <Route path={`/cloudSync/*`} element={<CloudSync />} />
+                            <Route path={`/about`} element={<About />} />
                         </Routes>
                         <div className='absolute flex flex-row gap-3 right-5 bottom-5'>
                             <button className="transition-all border-0 btn bg-custom-stress text-custom-text-light hover:brightness-125" onClick={saveConfig}>保存</button>
@@ -104,6 +107,125 @@ function Config() {
 
             </div>
         </dialog>
+    );
+}
+
+
+function About() {
+    const { version, setVersion, releases, setReleases } = useAboutStore();
+    const [versionComparisons, setVersionComparisons] = useState({});
+
+    async function compareVersions(version1, version2) {
+        try {
+            return await window.electron.ipcRenderer.invoke('compare-versions', version1, version2);
+        } catch (error) {
+            console.error('版本比较错误:', error);
+            return 0; // 出错时返回0，表示版本相同
+        }
+    }
+
+    useEffect(() => {
+        const compareAllVersions = async () => {
+            const comparisons = {};
+            for (const release of releases) {
+                const result = await compareVersions(release.version, version);
+                comparisons[release.version] = result;
+            }
+            setVersionComparisons(comparisons);
+        };
+
+        compareAllVersions();
+    }, [releases, version]);
+
+
+    return (
+        <div className='flex flex-col w-full h-full pb-32 overflow-auto gap-7 p-7 scrollbar-base bg-custom-modal'>
+            <div className='text-2xl font-bold text-custom-text-light'>
+                关于
+            </div>
+            <div className='flex flex-col gap-2'>
+                <div className='flex flex-row items-center gap-12'>
+                    <span className='text-sm font-semibold'>版本</span>
+                    <span className='text-sm'>{version}</span>
+                </div>
+                <div className='m-0 divider'></div>
+                <div className='flex flex-row items-center gap-12'>
+                    <span className='text-sm font-semibold'>作者</span>
+                    <span className='text-sm'><a className='link-hover' href='https://github.com/ximu3' target='_blank'>ximu3</a></span>
+                </div>
+            </div>
+            <div className='flex flex-col gap-2'>
+                <div className='pb-2 font-bold text-custom-text-light'>支援</div>
+                <div className='flex flex-col gap-2'>
+                    <div className='flex flex-row items-center gap-12'>
+                        <span className='text-sm font-semibold'>主页</span>
+                        <a className='text-sm link-hover' href='https://github.com/ximu3/vnite' target='_blank'>https://github.com/ximu3/vnite</a>
+                    </div>
+                    <div className='m-0 divider'></div>
+                    <div className='flex flex-row items-center gap-12'>
+                        <span className='text-sm font-semibold'>反馈</span>
+                        <a className='text-sm link-hover' href='https://github.com/ximu3/vnite/issues/new' target='_blank'>https://github.com/ximu3/vnite/issues/new</a>
+                    </div>
+                </div>
+            </div>
+            <div className='flex flex-col gap-2'>
+                <div className='pb-2 font-bold text-custom-text-light'>版本</div>
+                <div className='flex flex-col gap-2'>
+                    {
+                        releases.map((release, index) => {
+                            return (
+                                <div key={index} className='flex flex-col p-3 bg-custom-stress'>
+                                    <div className='flex flex-row items-center justify-between'>
+                                        <span className='flex flex-row items-center gap-2 text-sm font-semibold'>
+                                            {release.version}
+                                            {`v${version}` === release.version && <div className="text-xs font-normal border-custom-blue-6 badge badge-outline text-custom-blue-6 badge-sm">当前版本</div>}
+                                            {index === 0 && <div className="text-xs font-normal border-custom-green badge badge-outline text-custom-green badge-sm">最新版本</div>}
+                                        </span>
+                                        <span className='text-xs'>{release.publishedAt.split('T')[0]}</span>
+                                    </div>
+                                    <div className='m-0 divider'></div>
+                                    <div className='pt-1 text-sm'>{release.description}</div>
+                                    {(() => {
+                                        switch (versionComparisons[release.version]) {
+                                            case 1:
+                                                return (
+                                                    <div className='flex flex-row-reverse pt-1'>
+                                                        <a href={release.assets[0].downloadUrl} target='_blank' rel="noopener noreferrer">
+                                                            <button className='p-1.5 text-xs border-0 bg-custom-blue-6/80 text-custom-text-light/90 hover:text-custom-text-light hover:bg-custom-blue-6'>
+                                                                更新
+                                                            </button>
+                                                        </a>
+                                                    </div>
+                                                );
+                                            case 0:
+                                                return (
+                                                    <div className='flex flex-row-reverse pt-1'>
+                                                        <span className='p-1.5 text-xs text-custom-text-light/60'>
+                                                            当前版本
+                                                        </span>
+                                                    </div>
+                                                );
+                                            case -1:
+                                                return (
+                                                    <div className='flex flex-row-reverse pt-1'>
+                                                        <a href={release.assets[0].downloadUrl} target='_blank' rel="noopener noreferrer">
+                                                            <button className='p-1.5 text-xs border-0 bg-custom-yellow-6/80 text-custom-text-light/90 hover:text-custom-text-light hover:bg-custom-yellow-6'>
+                                                                回滚
+                                                            </button>
+                                                        </a>
+                                                    </div>
+                                                );
+                                            default:
+                                                return null;
+                                        }
+                                    })()}
+                                </div>
+                            )
+                        })
+                    }
+                </div>
+            </div>
+        </div>
     );
 }
 

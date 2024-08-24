@@ -7,6 +7,12 @@ import Config from './components/Config';
 import { useRootStore } from './components/Root';
 
 
+export const useAboutStore = create(set => ({
+  version: '',
+  setVersion: (version) => set({ version }),
+  releases: [],
+  setReleases: (releases) => set({ releases }),
+}));
 
 
 function App() {
@@ -17,6 +23,16 @@ function App() {
   useEffect(() => {
     configRef.current = config;
   }, [config]);
+
+  const { version, setVersion, releases, setReleases } = useAboutStore();
+  useEffect(() => {
+    window.electron.ipcRenderer.invoke('get-app-version').then((data) => {
+      setVersion(data);
+    })
+    window.electron.ipcRenderer.invoke('get-github-releases', 'ximu3', 'vnite').then((data) => {
+      setReleases(data);
+    })
+  }, []);
   function getFormattedDateTimeWithSeconds() {
     const now = new Date();
 

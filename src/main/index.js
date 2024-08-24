@@ -14,6 +14,8 @@ import getFolderSize from "get-folder-size";
 import path from 'path';
 import chokidar from 'chokidar';
 import log from 'electron-log/main.js';
+import axios from 'axios';
+import semver from 'semver';
 
 
 log.initialize();
@@ -264,6 +266,10 @@ app.whenReady().then(async () => {
       log.error('同步云端数据时出错:', error);
       throw error;
     }
+  });
+
+  ipcMain.handle('get-app-version', async (event) => {
+    return app.getVersion();
   });
 
   ipcMain.handle('get-game-name', async (event, id) => {
@@ -691,12 +697,56 @@ app.whenReady().then(async () => {
     }
   });
 
+  ipcMain.handle('get-github-releases', async (event, owner, repo) => {
+    const releases = await getGitHubReleases(owner, repo);
+    return parseReleases(releases);
+  });
+
+  ipcMain.handle('compare-versions', async (event, version1, version2) => {
+    return semver.compare(version1, version2);
+  });
+
   mainWindow.on('close', async (event) => {
     event.preventDefault();
     await handleAppExit();
   });
 
 })
+
+async function getGitHubReleases(owner, repo) {
+  try {
+    const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/releases`, {
+      headers: {
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'YourAppName/1.0'
+      },
+      params: {
+        per_page: 100  // 获取最多100个releases
+      }
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.status === 403) {
+      log.error('访问被拒绝。可能达到了 GitHub API 的速率限制。');
+    } else {
+      log.error('获取 GitHub releases 时出错:', error.message);
+    }
+    return [];
+  }
+}
+
+function parseReleases(releases) {
+  return releases.map(release => ({
+    version: release.tag_name,
+    publishedAt: release.published_at,
+    description: release.body,
+    assets: release.assets.map(asset => ({
+      name: asset.name,
+      downloadUrl: asset.browser_download_url,
+      size: asset.size
+    }))
+  }));
+}
 
 
 function getAppRootPath() {
