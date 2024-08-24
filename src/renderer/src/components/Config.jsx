@@ -373,6 +373,11 @@ function CloudSync() {
             window.electron.ipcRenderer.invoke('get-game-data').then((data) => {
                 setData(data);
             })
+            setConfigAlert('本地数据已成功同步至云端，5秒后重启应用生效！');
+            setTimeout(() => {
+                setConfigAlert('');
+                window.electron.ipcRenderer.send('restart-app');
+            }, 5000);
         } catch (e) {
             setIsLoading(false);
             console.log(e);
