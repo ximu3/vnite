@@ -73,7 +73,7 @@ function Config() {
                 <div className="flex flex-row w-full h-full">
                     <div className="flex flex-col h-full p-3 pt-4 w-52 bg-custom-stress shrink-0">
                         <div className="w-full grow">
-                            <div className='pt-6 pb-3 pl-6 font-bold text-custom-blue-6'>VNITE 设置</div>
+                            <div className='pt-4 pb-3 pl-6 font-bold text-custom-blue-6'>VNITE 设置</div>
                             <ul className="w-full menu rounded-box text-custom-text">
                                 <li className=''>
                                     <NavButton to={`./cloudSync`} name={'云同步'} icon={<span className="icon-[material-symbols-light--cloud] w-6 h-6"></span>} />
@@ -184,12 +184,15 @@ function About() {
                                         <span className='text-xs'>{release.publishedAt.split('T')[0]}</span>
                                     </div>
                                     <div className='m-0 divider'></div>
-                                    <div className='pt-1 text-sm'>{release.description}</div>
+                                    <div
+                                        className='text-sm markdown-content'
+                                        dangerouslySetInnerHTML={{ __html: release.description }}
+                                    />
                                     {(() => {
                                         switch (versionComparisons[release.version]) {
                                             case 1:
                                                 return (
-                                                    <div className='flex flex-row-reverse pt-1'>
+                                                    <div className='flex flex-row-reverse pt-2'>
                                                         <a href={release.assets[0].downloadUrl} target='_blank' rel="noopener noreferrer" className='p-1 text-xs link-hover text-custom-text-light/90'>
                                                             更新
                                                         </a>
@@ -197,15 +200,15 @@ function About() {
                                                 );
                                             case 0:
                                                 return (
-                                                    <div className='flex flex-row-reverse pt-1'>
-                                                        <span className='p-1.5 text-xs text-custom-text-light/60'>
+                                                    <div className='flex flex-row-reverse pt-2'>
+                                                        <span className='p-1 text-xs text-custom-text-light/60'>
                                                             当前版本
                                                         </span>
                                                     </div>
                                                 );
                                             case -1:
                                                 return (
-                                                    <div className='flex flex-row-reverse pt-1'>
+                                                    <div className='flex flex-row-reverse pt-2'>
                                                         <a href={release.assets[0].downloadUrl} target='_blank' rel="noopener noreferrer" className='p-1 text-xs link-hover text-custom-text-light/90'>
                                                             回滚
                                                         </a>

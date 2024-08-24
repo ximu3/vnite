@@ -735,11 +735,21 @@ async function getGitHubReleases(owner, repo) {
   }
 }
 
+import { marked } from 'marked';
+
+marked.setOptions({
+  gfm: true,
+  breaks: true,
+  pedantic: false,
+  sanitize: false,
+  smartLists: true
+});
+
 function parseReleases(releases) {
   return releases.map(release => ({
     version: release.tag_name,
     publishedAt: release.published_at,
-    description: release.body,
+    description: marked(release.body),
     assets: release.assets.map(asset => ({
       name: asset.name,
       downloadUrl: asset.browser_download_url,

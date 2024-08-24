@@ -31,6 +31,36 @@
         @apply hover:scrollbar-thumb-custom-text-light;
         @apply active:scrollbar-thumb-custom-text;
     }
+
+    .markdown-content h2 {
+        font-size: 1em;
+        font-weight: bold;
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+    }
+
+    .markdown-content ul {
+        list-style-type: disc;
+        padding-left: 2em;
+        margin-bottom: 1em;
+    }
+
+    .markdown-content li {
+        margin-bottom: 0.5em;
+    }
+
+    .markdown-content p {
+        margin-bottom: 1em;
+    }
+
+    .markdown-content a {
+        color: #F4F5F7;
+        text-decoration: none;
+    }
+
+    .markdown-content a:hover {
+        text-decoration: underline;
+    }
 }
 
 @layer utilities {
