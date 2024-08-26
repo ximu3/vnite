@@ -348,7 +348,7 @@ app.whenReady().then(async () => {
   });
 
   ipcMain.on('add-new-game-to-data', async (event, gid, coverUrl, bgUrl) => {
-    await retry(() => addNewGameToData(gid, coverUrl, bgUrl, getDataPath('games')), 3, mainWindow);
+    await retry(() => addNewGameToData(gid, coverUrl, bgUrl, getDataPath('games'), getAppRootPath('resources')), 3, mainWindow);
   });
 
   ipcMain.on('organize-game-data', async (event, gid, savePath, gamePath) => {

@@ -65,7 +65,7 @@ async function updateGameData(newData, filePath) {
     }
 }
 
-async function addNewGameToData(gid, coverUrl, bgUrl, fliePath) {
+async function addNewGameToData(gid, coverUrl, bgUrl, fliePath, resPath) {
     // const __filename = fileURLToPath(import.meta.url);
     // const __dirname = dirname(__filename);
 
@@ -86,12 +86,20 @@ async function addNewGameToData(gid, coverUrl, bgUrl, fliePath) {
         await fs.mkdir(characterFolderPath, { recursive: true });
 
         // Download and save the cover image
-        const coverResponse = await axios.get(coverUrl, { responseType: 'arraybuffer' });
-        await fs.writeFile(coverFilePath, coverResponse.data);
+        if (coverUrl) {
+            const coverResponse = await axios.get(coverUrl, { responseType: 'arraybuffer' });
+            await fs.writeFile(coverFilePath, coverResponse.data);
+        } else {
+            await fs.copyFile(path.join(resPath, 'cover.webp'), coverFilePath);
+        }
 
         // Download and save the background image
-        const bgResponse = await axios.get(bgUrl, { responseType: 'arraybuffer' });
-        await fs.writeFile(bgFilePath, bgResponse.data);
+        if (bgUrl) {
+            const bgResponse = await axios.get(bgUrl, { responseType: 'arraybuffer' });
+            await fs.writeFile(bgFilePath, bgResponse.data);
+        } else {
+            await fs.copyFile(path.join(resPath, 'background.webp'), bgFilePath);
+        }
 
         log.info('New game data has been added successfully');
     } catch (error) {

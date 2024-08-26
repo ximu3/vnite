@@ -146,7 +146,7 @@ function Info() {
         </label>
         <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
           <div className='font-semibold'>GID |</div>
-          <input type="text" spellCheck='false' name='gid' className="grow" placeholder="月幕Galgame档案id，不带GA" value={gid} onChange={(e) => { setGID(e.target.value) }} />
+          <input type="text" spellCheck='false' name='gid' className="grow" placeholder="月幕Galgame档案id，带GA" value={gid} onChange={(e) => { setGID(e.target.value) }} />
           <span className="border-0 badge bg-custom-blue-6 text-custom-text-light">可选</span>
         </label>
         <div className='pt-1'>填写&nbsp;<span className='bg-custom-blue-6 text-custom-text-light'> GID </span>&nbsp;项可大幅提高识别正确率。</div>
@@ -163,7 +163,7 @@ function GameList() {
   let navigate = useNavigate();
   const { gid, gameList, setGID, setGameName } = useAddGame();
   return (
-    <div className='flex flex-col w-full h-full gap-5'>
+    <div className='flex flex-col w-full h-full gap-5 min-w-170'>
       <div className='pb-3 text-2xl font-bold text-center text-custom-text-light'>识别结果</div>
       <div className='overflow-x-auto h-100 scrollbar-base'>
         <table className="table bg-custom-stress table-pin-rows">
@@ -295,7 +295,7 @@ function GameBg() {
   const { gameBgList, gameName, savePath, isLoading, gamePath, setGameBg, gameBg, gid, setIsLoading } = useAddGame();
   let navigate = useNavigate();
   async function submitAllData() {
-    if (gameBg === '') {
+    if (gameBg === '' && gameBgList.length !== 0) {
       setAlert('请选择背景图！');
       setTimeout(() => { setAlert(''); }, 3000);
       return
@@ -309,24 +309,26 @@ function GameBg() {
   return (
     <div className='h-full w-270'>
       <div className='pb-5 text-2xl font-bold text-center text-custom-text-light'>选择背景图</div>
-      <div className='overflow-x-auto h-120 scrollbar-base'>
-        <div className='flex flex-wrap gap-3'>
-          {
-            gameBgList.map((bg, index) => {
-              return (
-                <div key={index} className={gameBg === bg ? 'w-86 p-3 bg-custom-blue-4/20' : 'w-86 p-3 bg-custom-stress'} onClick={() => { setGameBg(bg) }}>
-                  <img src={bg} alt={index} className='w-full h-auto' />
-                </div>
-              )
-            })
-          }
+      {gameBgList.length === 0 ? <div className='text-custom-text-light'>未找到相关背景图</div> :
+        < div className='overflow-x-auto h-120 scrollbar-base'>
+          <div className='flex flex-wrap gap-3'>
+            {
+              gameBgList.map((bg, index) => {
+                return (
+                  <div key={index} className={gameBg === bg ? 'w-86 p-3 bg-custom-blue-4/20' : 'w-86 p-3 bg-custom-stress'} onClick={() => { setGameBg(bg) }}>
+                    <img src={bg} alt={index} className='w-full h-auto' />
+                  </div>
+                )
+              })
+            }
+          </div>
         </div>
-      </div>
+      }
       <div className='flex flex-row-reverse items-end gap-5 pt-5'>
         <button className='transition-all btn bg-custom-stress text-custom-text-light hover:brightness-125' onClick={submitAllData}>确定</button>
         <button className='transition-all btn bg-custom-stress text-custom-text-light hover:brightness-125' onClick={() => { navigate(-1) }}>上一步</button>
       </div>
-    </div>
+    </div >
   )
 }
 

@@ -443,14 +443,14 @@ async function getCoverByTitle(title) {
                 return vn.image.url;
             } else {
                 console.log(`"${vn.title}" 没有封面图片。`);
-                return null;
+                return '';
             }
         } else {
             console.log(`未找到标题为 "${title}" 的视觉小说。`);
             if (title.includes('/')) {
                 return await getCoverByTitle(title.split('/')[0]);
             } else {
-                return null;
+                return '';
             }
         }
     } catch (error) {

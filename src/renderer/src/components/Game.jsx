@@ -252,7 +252,7 @@ function Game({ index }) {
             </dialog>
 
             <div className="relative w-full h-full bg-fixed bg-center bg-cover">
-                <img src={`${backgroundImage}?t=${timestamp}`} alt="bg" className="object-cover w-full h-full"></img>
+                {backgroundImage && <img src={`${backgroundImage}?t=${timestamp}`} alt="bg" className="object-cover w-full h-full"></img>}
                 <div className="absolute inset-0 shadow-t-lg top-[49.5%] border-t-1 border-white/30 shadow-black/80 bg-gradient-to-b from-custom-main/40 via-45% via-custom-main/85 to-custom-main backdrop-blur-lg"></div>
                 <div className="sticky inset-0 pointer-events-none bg-custom-main/90"></div>
 
@@ -840,16 +840,15 @@ function AdvancedSettings() {
                 <div className='flex flex-col w-1/2 gap-3'>
                     <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
                         <div className='font-semibold'>添加日期 |</div>
-                        <input spellCheck='false' type="text" name='addDate' className="grow" value={settingData?.detail?.addDate || ''} onChange={(e) => { updateSettiongData(['detail', 'addDate'], e.target.value) }} />
+                        <div>{settingData?.detail?.addDate || ''}</div>
                     </label>
                     <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
                         <div className='font-semibold'>游玩时间 |</div>
-                        <input spellCheck='false' type="text" name='gameDuration' className="grow" value={settingData?.detail?.gameDuration || ''} onChange={(e) => { updateSettiongData(['detail', 'gameDuration'], Number(e.target.value)) }} />
                         <div>{formatTime(settingData?.detail?.gameDuration || '')}</div>
                     </label>
                     <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
                         <div className='font-semibold'>游玩次数 |</div>
-                        <input spellCheck='false' type="text" name='frequency' className="grow" value={settingData?.detail?.frequency || '0'} onChange={(e) => { updateSettiongData(['detail', 'frequency'], Number(e.target.value)) }} />
+                        <div>{settingData?.detail?.frequency || '0'}</div>
                     </label>
                 </div>
                 <div className='flex flex-col w-1/2 gap-3'>
@@ -857,22 +856,11 @@ function AdvancedSettings() {
                         <div className='font-semibold'>数据库ID |</div>
                         <div>{(settingData?.detail?.gid || '').replace('ga', '')}</div>
                     </label>
-                    <div className="dropdown dropdown-end">
-                        <div tabIndex={0} role="button" className="flex flex-row items-center justify-between w-full gap-2 mb-1 text-sm font-semibold border-0 input-sm bg-custom-stress hover:brightness-125">
-                            <div className="flex items-center gap-2">
-                                <div>游玩状态 |</div>
-                                <div>{playStatus(settingData?.detail?.playtStatus || 0)}</div>
-                            </div>
-                            <span className="icon-[material-symbols-light--keyboard-arrow-down] w-6 h-6"></span>
-                        </div>
-                        <ul tabIndex={0} className="dropdown-content menu bg-custom-dropdown rounded-box z-[1] w-3/4 p-2 shadow">
-                            <li onClick={() => { updateSettiongData(['detail', 'playtStatus'], 0) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>未开始</a></li>
-                            <li onClick={() => { updateSettiongData(['detail', 'playtStatus'], 1) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>游玩中</a></li>
-                            <li onClick={() => { updateSettiongData(['detail', 'playtStatus'], 2) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>已完成</a></li>
-                            <li onClick={() => { updateSettiongData(['detail', 'playtStatus'], 3) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>多周目</a></li>
-                        </ul>
-                    </div>
-                    <label className="flex items-center w-full gap-2 -mt-1 input-sm input focus-within:outline-none bg-custom-red text-custom-text-light/90">
+                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
+                        <div className='font-semibold'>游玩状态 |</div>
+                        <div>{playStatus(settingData?.detail?.playtStatus || 0)}</div>
+                    </label>
+                    <label className="flex items-center w-full gap-2 input-sm input focus-within:outline-none bg-custom-red text-custom-text-light/90">
                         <div className='font-semibold'>警告⚠️ |</div>
                         <div>随意修改数据库内容会导致程序崩溃！</div>
                     </label>
