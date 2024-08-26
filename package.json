@@ -1,6 +1,6 @@
 {
   "name": "vnite",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Visual Novel Management Software",
   "main": "./out/main/index.mjs",
   "author": "ximu3",
