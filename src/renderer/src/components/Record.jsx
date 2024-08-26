@@ -218,17 +218,9 @@ function Global() {
             return `${(volume / 1024).toFixed(2)}GB`;
         }
     }
-    const sortedData = Object.entries(data)
-        .sort(([, a], [, b]) => {
-            return new Date(b.detail.lastVisitDate) - new Date(a.detail.lastVisitDate);
-        })
-        .reduce((acc, [key, value]) => {
-            acc[key] = value;
-            return acc;
-        }, {});
     return (
         <div className='w-full h-full p-3'>
-            <div className='flex flex-row gap-7'>
+            <div className='flex flex-row items-start gap-7'>
                 <div className='w-1/3 p-5 bg-custom-stress'>
                     <div className='text-lg font-bold'>总览</div>
                     <div className='m-0 divider'></div>
@@ -283,28 +275,38 @@ function Global() {
                     <div className='text-lg font-bold'>最多游玩时间</div>
                     <div className='m-0 divider'></div>
                     <div className='flex flex-col gap-3 pt-3 overflow-auto text-xs text-custom-text-light scrollbar-base'>
-                        {Object.entries(data).map(([key, game]) => {
-                            return (
-                                <div key={key} className='flex flex-row justify-between'>
-                                    <span>{game?.detail.chineseName || game?.detail.name}</span>
-                                    <span>{formatTime(game?.detail.gameDuration)}</span>
-                                </div>
-                            );
-                        })}
+                        {Object.entries(data)
+                            ?.sort(([, a], [, b]) => b.detail.gameDuration - a.detail.gameDuration)
+                            ?.map(([key, game]) => {
+                                return (
+                                    <div key={key} className='flex flex-row justify-between'>
+                                        <span>{game?.detail.chineseName || game?.detail.name}</span>
+                                        <span>{formatTime(game?.detail.gameDuration)}</span>
+                                    </div>
+                                );
+                            })
+                        }
                     </div>
                 </div>
                 <div className='w-1/3 p-5 bg-custom-stress'>
                     <div className='text-lg font-bold'>最近游玩</div>
                     <div className='m-0 divider'></div>
                     <div className='flex flex-col gap-3 pt-3 overflow-auto text-xs text-custom-text-light scrollbar-base'>
-                        {Object.entries(sortedData).map(([key, game]) => {
-                            return (
-                                <div key={key} className='flex flex-row justify-between'>
-                                    <span>{game?.detail.chineseName || game?.detail.name}</span>
-                                    <span>{game?.detail.lastVisitDate}</span>
-                                </div>
-                            );
-                        })}
+                        {Object.entries(data)
+                            ?.sort(([, a], [, b]) => {
+                                const dateA = a.detail.lastVisitDate ? new Date(a.detail.lastVisitDate) : new Date(0);
+                                const dateB = b.detail.lastVisitDate ? new Date(b.detail.lastVisitDate) : new Date(0);
+                                return dateB - dateA; // 从新到旧排序
+                            })
+                            ?.map(([key, game]) => {
+                                return (
+                                    <div key={key} className='flex flex-row justify-between'>
+                                        <span>{game?.detail.chineseName || game?.detail.name}</span>
+                                        <span>{game?.detail.lastVisitDate || '从未游玩'}</span>
+                                    </div>
+                                );
+                            })
+                        }
                     </div>
                 </div>
             </div>
