@@ -24,7 +24,7 @@ body:
       description: 请提供问题截图（可选）
     validations:
       required: false
-  - type: input
+  - type: textarea
     id: bug_log
     attributes:
       label: 日志
