@@ -329,15 +329,18 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath) {
             }
         }
 
-        let sizeInMB = 0;
-
-        let icon = ''
+        let sizeInMB;
+        let icon = '';
 
         if (gamePath !== '') {
-            gamePath = gamePath.replace(/\\/g, '/');
-            const size = await getFolderSize(path.dirname(gamePath));
-            sizeInMB = Math.round(Number(size.size) / 1024 / 1024);
-            icon = `/games/${gid}/icon.png`
+            try {
+                gamePath = gamePath.replace(/\\/g, '/');
+                const size = await getFolderSize.loose(path.dirname(gamePath), { bigint: true });
+                sizeInMB = Number((size / BigInt(1024 * 1024))).toFixed(0);
+                icon = `/games/${gid}/icon.png`;
+            } catch (error) {
+                console.error('Error calculating folder size:', error);
+            }
         }
 
         if (savePath !== '') {

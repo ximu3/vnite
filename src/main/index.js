@@ -643,8 +643,8 @@ app.whenReady().then(async () => {
       // 获取上一级目录的路径
       const parentPath = path.dirname(inputPath);
 
-      const size = await getFolderSize(parentPath);
-      const sizeInMB = Math.round(Number(size.size) / (1024 * 1024));
+      const size = await getFolderSize.loose(parentPath, { bigint: true });
+      sizeInMB = Number((size / BigInt(1024 * 1024))).toFixed(0);
       log.info(`文件夹 ${parentPath} 的大小为 ${sizeInMB} MB`);
       return sizeInMB;
     } catch (err) {
