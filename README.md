@@ -42,7 +42,7 @@ Vnite 是一个 视觉小说 / Galgame 管理软件。
 
 ![screenshot_4](https://img.timero.xyz/i/2024/08/19/66c314790e20e.webp)
 
-## 💡 开发中
+## 💡 计划中
 
 - 不依赖刮削器，由用户自行添加游戏
 
