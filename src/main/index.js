@@ -575,7 +575,7 @@ app.whenReady().then(async () => {
     try {
       const path = getSyncPath('')
       await fse.remove(path);
-      await clonePrivateRepo(token, `https://github.com/${owner}/my-gal.git`, path);
+      await clonePrivateRepo(token, `https://github.com/${owner}/my-vnite.git`, path);
       const gameData = await getGameData(getDataPath('data.json'));
       mainWindow.webContents.send('game-data-updated', gameData);
       log.info('使用云端数据初始化仓库成功');

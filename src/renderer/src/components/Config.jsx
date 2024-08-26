@@ -49,11 +49,11 @@ function Config() {
         setConfigSetting(config);
     }, [config]);
     function saveConfig() {
-        if (configSetting.cloudSync.webdav.path.endsWith('/my-gal')) {
+        if (configSetting.cloudSync.webdav.path.endsWith('/my-vnite')) {
             setConfig(configSetting);
         } else {
             setConfig(configSetting);
-            updateConfig(['cloudSync', 'webdav', 'path'], config.cloudSync.webdav.path + '/my-gal');
+            updateConfig(['cloudSync', 'webdav', 'path'], config.cloudSync.webdav.path + '/my-vnite');
         }
     }
     function quit() {
@@ -368,7 +368,7 @@ function CloudSync() {
             await window.electron.ipcRenderer.invoke('initialize-use-local-data', config.cloudSync.github.accessToken, config.cloudSync.github.username);
             setIsLoading(false);
             document.getElementById('initializeDiffData').close();
-            updateConfig(['cloudSync', 'github', 'repoUrl'], `https://github.com/${config.cloudSync.github.username}/my-gal.git`);
+            updateConfig(['cloudSync', 'github', 'repoUrl'], `https://github.com/${config.cloudSync.github.username}/my-vnite.git`);
             updateConfig(['cloudSync', 'github', 'lastSyncTime'], getFormattedDateTimeWithSeconds());
             window.electron.ipcRenderer.invoke('get-game-data').then((data) => {
                 setData(data);
@@ -393,7 +393,7 @@ function CloudSync() {
             await window.electron.ipcRenderer.invoke('initialize-use-cloud-data', config.cloudSync.github.accessToken, config.cloudSync.github.username);
             setIsLoading(false);
             document.getElementById('initializeDiffData').close();
-            updateConfig(['cloudSync', 'github', 'repoUrl'], `https://github.com/${config.cloudSync.github.username}/my-gal.git`);
+            updateConfig(['cloudSync', 'github', 'repoUrl'], `https://github.com/${config.cloudSync.github.username}/my-vnite.git`);
             updateConfig(['cloudSync', 'github', 'lastSyncTime'], getFormattedDateTimeWithSeconds());
             window.electron.ipcRenderer.invoke('get-game-data').then((data) => {
                 setData(data);
@@ -518,7 +518,7 @@ function CloudSync() {
                             <div className='m-0 divider'></div>
                             <div className='flex flex-row items-center'>
                                 <span className="text-sm font-semibold grow">仓库</span>
-                                <a className="p-1 text-sm font-semibold link-hover hover:text-custom-text-light" href={config['cloudSync']['github']['repoUrl']} target='_blank'>{`${config['cloudSync']['github']['username']}/my-gal`}</a>
+                                <a className="p-1 text-sm font-semibold link-hover hover:text-custom-text-light" href={config['cloudSync']['github']['repoUrl']} target='_blank'>{`${config['cloudSync']['github']['username']}/my-vnite`}</a>
                             </div>
                             <div className='m-0 divider'></div>
                             <div className='flex flex-row items-center gap-2'>
@@ -546,7 +546,7 @@ function CloudSync() {
                 <div className='m-0 divider'></div>
                 <div className='flex flex-row items-center'>
                     <span className="text-sm font-semibold grow">路径</span>
-                    <input spellCheck='false' className="w-1/2 min-h-0 border-0 outline-none input focus:bg-custom-focus focus:text-custom-text-light/95 bg-custom-stress input-sm hover:brightness-125 focus:shadow-inner-sm focus:shadow-black/80 focus:hover:brightness-100" placeholder='示例：/dav/my-gal' value={configSetting?.cloudSync?.webdav?.path || ''} onChange={(e) => { updateConfigSetting(['cloudSync', 'webdav', 'path'], e.target.value) }} />
+                    <input spellCheck='false' className="w-1/2 min-h-0 border-0 outline-none input focus:bg-custom-focus focus:text-custom-text-light/95 bg-custom-stress input-sm hover:brightness-125 focus:shadow-inner-sm focus:shadow-black/80 focus:hover:brightness-100" placeholder='示例：/dav/my-vnite' value={configSetting?.cloudSync?.webdav?.path || ''} onChange={(e) => { updateConfigSetting(['cloudSync', 'webdav', 'path'], e.target.value) }} />
                 </div>
                 <div className='m-0 divider'></div>
                 <div className='flex flex-row items-center'>

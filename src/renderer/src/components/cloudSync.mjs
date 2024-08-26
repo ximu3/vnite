@@ -91,8 +91,8 @@ async function exchangeCodeForToken(code, mainWindow, clientId, clientSecret) {
 }
 
 async function checkRepoExists(token, owner) {
-  const repo = 'my-gal'
-  console.log(`开始检查仓库: ${owner}/my-gal, token: ${token}`);
+  const repo = 'my-vnite'
+  console.log(`开始检查仓库: ${owner}/my-vnite, token: ${token}`);
   try {
     const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}`, {
       headers: {
@@ -115,7 +115,7 @@ async function checkRepoExists(token, owner) {
 }
 
 export async function initializeRepo(token, user, localPath, mainWindow) {
-  const repo = 'my-gal'
+  const repo = 'my-vnite'
   try {
     // 检查仓库是否存在
     const exists = await checkRepoExists(token, user);
@@ -126,8 +126,8 @@ export async function initializeRepo(token, user, localPath, mainWindow) {
       if (Object.keys(jsonData).length === 0) {
         await fse.remove(localPath);
         console.log('清空本地文件夹');
-        await clonePrivateRepo(token, `https://github.com/${user}/my-gal.git`, localPath);
-        return `https://github.com/${user}/my-gal.git`;
+        await clonePrivateRepo(token, `https://github.com/${user}/my-vnite.git`, localPath);
+        return `https://github.com/${user}/my-vnite.git`;
       } else {
         mainWindow.webContents.send('initialize-diff-data');
         return
@@ -151,7 +151,7 @@ export async function initAndPushLocalRepo(token, localPath, user) {
     const git = simpleGit(localPath, { config: ['safe.directory=*'] });
     await git.init().then(() => git.checkoutLocalBranch('main'));
     console.log(`初始化了本地仓库: ${localPath}`);
-    let repoUrlWithToken = `https://${token}@github.com/${user}/my-gal.git`
+    let repoUrlWithToken = `https://${token}@github.com/${user}/my-vnite.git`
     await git.addRemote('origin', repoUrlWithToken);
     console.log('添加了远程仓库链接');
     await git.add('./*');
@@ -188,7 +188,7 @@ async function createEmptyRepoAndPushLocalFiles(token, repoName, localPath, user
     console.log(`初始化了本地仓库: ${localPath}`);
 
     // 3. 添加远程仓库链接
-    let repoUrlWithToken = `https://${token}@github.com/${user}/my-gal.git`
+    let repoUrlWithToken = `https://${token}@github.com/${user}/my-vnite.git`
     await git.addRemote('origin', repoUrlWithToken);
     console.log('添加了远程仓库链接');
 
