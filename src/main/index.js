@@ -644,7 +644,7 @@ app.whenReady().then(async () => {
       const parentPath = path.dirname(inputPath);
 
       const size = await getFolderSize.loose(parentPath, { bigint: true });
-      sizeInMB = Number((size / BigInt(1024 * 1024))).toFixed(0);
+      const sizeInMB = Number((size / BigInt(1024 * 1024))).toFixed(0);
       log.info(`文件夹 ${parentPath} 的大小为 ${sizeInMB} MB`);
       return Number(sizeInMB);
     } catch (err) {

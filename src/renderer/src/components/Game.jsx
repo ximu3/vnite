@@ -974,6 +974,8 @@ function StartupSettings({ index }) {
             updateData([index, 'detail', 'gamePath'], path)
             await window.electron.ipcRenderer.invoke('get-game-icon', path, settingData['detail']['id'])
             updateData([index, 'detail', 'icon'], `/games/${settingData['detail']['id']}/icon.png`)
+            const size = await window.electron.ipcRenderer.invoke('get-folder-size', path)
+            updateData([index, 'detail', 'volume'], size)
             setTimestamp()
         } else {
             return
@@ -1010,7 +1012,9 @@ function StartupSettings({ index }) {
         }
         updateSettiongData(['detail', 'gamePath'], file.path)
         await window.electron.ipcRenderer.invoke('get-game-icon', path, settingData['detail']['id'])
+        const size = await window.electron.ipcRenderer.invoke('get-folder-size', path)
         updateData([index, 'detail', 'icon'], `/games/${settingData['detail']['id']}/icon.png`)
+        updateData([index, 'detail', 'volume'], size)
     }
 
     function getSavePathByDrag(e) {
