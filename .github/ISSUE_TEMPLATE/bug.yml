@@ -18,16 +18,16 @@ body:
     validations:
       required: true
   - type: textarea
+    id: bug_log
+    attributes:
+      label: 问题日志
+      description: 请提供问题日志（位于软件安装目录下的logs文件夹中）
+    validations:
+      required: true
+  - type: textarea
     id: bug_screenshot
     attributes:
       label: 问题截图
       description: 请提供问题截图（可选）
     validations:
       required: false
-  - type: textarea
-    id: bug_log
-    attributes:
-      label: 日志
-      description: 请提供问题日志（位于软件安装目录下的logs文件夹中）
-    validations:
-      required: true
