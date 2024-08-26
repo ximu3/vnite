@@ -28,6 +28,6 @@ body:
     id: bug_log
     attributes:
       label: 日志
-      description: 请提供问题日志(位于软件安装目录下的logs文件夹中)
+      description: 请提供问题日志（位于软件安装目录下的logs文件夹中）
     validations:
       required: true
