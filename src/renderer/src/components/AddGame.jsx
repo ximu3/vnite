@@ -186,7 +186,7 @@ function GameList() {
                 :
                 gameList.map((gameData, index) => {
                   return (
-                    <tr className={gid === gameData["id"] ? "bg-custom-blue-4/20 text-custom-text-light" : ""} key={index} onClick={() => {
+                    <tr className={gid === gameData["id"] ? "bg-custom-blue-4/50 text-custom-text-light" : ""} key={index} onClick={() => {
                       setGID(gameData["id"])
                       setGameName(gameData["name"])
                     }}>
@@ -315,7 +315,7 @@ function GameBg() {
             {
               gameBgList.map((bg, index) => {
                 return (
-                  <div key={index} className={gameBg === bg ? 'w-86 p-3 bg-custom-blue-4/20' : 'w-86 p-3 bg-custom-stress'} onClick={() => { setGameBg(bg) }}>
+                  <div key={index} className={gameBg === bg ? 'w-86 p-3 bg-custom-blue-4/50' : 'w-86 p-3 bg-custom-stress'} onClick={() => { setGameBg(bg) }}>
                     <img src={bg} alt={index} className='w-full h-auto' />
                   </div>
                 )
