@@ -1,0 +1,33 @@
+name: 错误报告 | Bug Report
+title: "[Bug]: "
+description: 这里有只虫子 | Report a bug in the application
+labels: "bug"
+body:
+  - type: input
+    id: bug_version
+    attributes:
+      label: 软件版本
+      description: 请填写软件版本号
+    validations:
+      required: true
+  - type: textarea
+    id: bug_description
+    attributes:
+      label: 问题描述
+      description: 描述一下你遇到的问题
+    validations:
+      required: true
+  - type: textarea
+    id: bug_screenshot
+    attributes:
+      label: 问题截图
+      description: 请提供问题截图（可选）
+    validations:
+      required: false
+  - type: input
+    id: bug_log
+    attributes:
+      label: 日志
+      description: 请提供问题日志(位于软件安装目录下的logs文件夹中)
+    validations:
+      required: true
