@@ -646,7 +646,7 @@ app.whenReady().then(async () => {
       const size = await getFolderSize.loose(parentPath, { bigint: true });
       sizeInMB = Number((size / BigInt(1024 * 1024))).toFixed(0);
       log.info(`文件夹 ${parentPath} 的大小为 ${sizeInMB} MB`);
-      return sizeInMB;
+      return Number(sizeInMB);
     } catch (err) {
       log.error('获取文件夹大小时出错:', err);
       throw err;

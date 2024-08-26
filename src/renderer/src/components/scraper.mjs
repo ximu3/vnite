@@ -329,7 +329,7 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath) {
             }
         }
 
-        let sizeInMB;
+        let sizeInMB = 0;
         let icon = '';
 
         if (gamePath !== '') {
@@ -362,7 +362,7 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath) {
                     backgroundImage: `/games/${gid}/background.webp`,
                     savePath: savePath,
                     gamePath: gamePath,
-                    volume: sizeInMB,
+                    volume: Number(sizeInMB),
                     addDate: getCurrentDate(),
                     gameDuration: 0,
                     lastVisitDate: "",
