@@ -314,7 +314,7 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath) {
                     staff.监督.push(staffInfo);
                     break;
                 default:
-                    if (staffMember.empDesc.includes("人物设计")) {
+                    if (staffMember?.empDesc?.includes("人物设计")) {
                         staff.人物设计.push(staffInfo);
                     } else {
                         staff.其他.push(staffInfo);
