@@ -15,6 +15,7 @@ export const useAddGame = create(set => ({
   gameBgList: [],
   gameBg: '',
   addGameLog: ['[start] 开始处理游戏数据'],
+  isError: false,
   setGameName: (gameName) => set({ gameName }),
   setGID: (gid) => set({ gid }),
   setVID: (vid) => set({ vid }),
@@ -27,6 +28,7 @@ export const useAddGame = create(set => ({
   setGameBg: (gameBg) => set({ gameBg }),
   setAddGameLog: (addGameLog) => set({ addGameLog }),
   updateAddGameLog: (log) => set(state => ({ addGameLog: [...state.addGameLog, log] })),
+  setIsError: (isError) => set({ isError }),
 }));
 
 
@@ -334,8 +336,9 @@ function GameBg() {
 
 function GameLoad() {
   const { setData, setTimestamp } = useRootStore();
-  const { isLoading, setIsLoading, addGameLog, setAddGameLog, updateAddGameLog } = useAddGame();
+  const { isLoading, setIsLoading, addGameLog, setAddGameLog, savePath, gamePath, updateAddGameLog, gid, isError, setIsError, setSavePath, setGID, setGameBg, setGameBgList, setGameList, setGameName, setGamePath } = useAddGame();
   const logContainerRef = useRef(null);
+  let navigate = useNavigate();
   useEffect(() => {
     if (logContainerRef.current) {
       logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
@@ -348,6 +351,10 @@ function GameLoad() {
       setTimestamp(Date.now());
     })
     window.electron.ipcRenderer.on('add-game-log', (event, log) => {
+      if (log.startsWith('[error]')) {
+        setIsLoading(false);
+        setIsError(true);
+      }
       updateAddGameLog(log);
     })
     return () => {
@@ -355,6 +362,27 @@ function GameLoad() {
       window.electron.ipcRenderer.removeAllListeners('add-game-log');
     }
   }, [])
+  function back() {
+    setIsError(false);
+    setIsLoading(false);
+    setSavePath('');
+    setGID('');
+    setGameBg('');
+    setGameBgList([]);
+    setGameList([]);
+    setGameName('');
+    setGamePath('');
+    // window.electron.ipcRenderer.send('delete-game', gid);
+    setAddGameLog(['[start] 开始处理游戏数据']);
+    navigate('/info');
+  }
+  function retry() {
+    setIsError(false);
+    setIsLoading(true);
+    // window.electron.ipcRenderer.send('delete-game', gid);
+    window.electron.ipcRenderer.send('organize-game-data', gid, savePath, gamePath);
+    setAddGameLog(['[start] 开始处理游戏数据']);
+  }
   return (
     <div className='flex flex-col items-center justify-center gap-9 w-165 h-140'>
       <div ref={logContainerRef} className='flex flex-col items-start w-11/12 gap-1 p-3 overflow-auto bg-custom-stress h-5/6 scrollbar-base'>
@@ -366,8 +394,19 @@ function GameLoad() {
           })
         }
       </div>
-      {isLoading ? <progress className="w-140 progress"></progress> : <div className='text-2xl font-bold text-custom-text-light'>添加成功</div>}
-    </div>
+      {isError ? (
+        <div className='flex flex-row-reverse items-end gap-5'>
+          <button className='transition-all btn bg-custom-stress text-custom-text-light hover:brightness-125' onClick={retry}>重试</button>
+          <button className='transition-all btn bg-custom-stress text-custom-text-light hover:brightness-125' onClick={back}>返回</button>
+        </div>
+      ) : (
+        isLoading ? (
+          <progress className="w-140 progress"></progress>
+        ) : (
+          <div className='text-2xl font-bold text-custom-text-light'>添加成功</div>
+        )
+      )}
+    </div >
   )
 }
 
