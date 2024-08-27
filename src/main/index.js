@@ -564,7 +564,7 @@ app.whenReady().then(async () => {
       const gameData = await getGameData(getDataPath('data.json'));
       mainWindow.webContents.send('game-data-updated', gameData);
       log.info('使用本地数据初始化仓库成功');
-      return
+      return `https://github.com/${owner}/my-vnite.git`;
     } catch (error) {
       log.error('使用本地数据初始化仓库出错', error);
       mainWindow.webContents.send('initialize-error', error.message);
@@ -579,7 +579,7 @@ app.whenReady().then(async () => {
       const gameData = await getGameData(getDataPath('data.json'));
       mainWindow.webContents.send('game-data-updated', gameData);
       log.info('使用云端数据初始化仓库成功');
-      return
+      return `https://github.com/${owner}/my-vnite.git`;
     } catch (error) {
       log.error('使用云端数据初始化仓库出错', error);
       mainWindow.webContents.send('initialize-error', error.message);

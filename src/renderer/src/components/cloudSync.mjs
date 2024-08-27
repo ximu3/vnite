@@ -130,7 +130,7 @@ export async function initializeRepo(token, user, localPath, mainWindow) {
         return `https://github.com/${user}/my-vnite.git`;
       } else {
         mainWindow.webContents.send('initialize-diff-data');
-        return
+        return `https://github.com/${user}/my-vnite.git`
       }
     }
     // createRepo(repo, token);

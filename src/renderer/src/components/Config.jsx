@@ -518,7 +518,7 @@ function CloudSync() {
                             <div className='m-0 divider'></div>
                             <div className='flex flex-row items-center'>
                                 <span className="text-sm font-semibold grow">仓库</span>
-                                <a className="p-1 text-sm font-semibold link-hover hover:text-custom-text-light" href={config['cloudSync']['github']['repoUrl']} target='_blank'>{`${config['cloudSync']['github']['username']}/my-vnite`}</a>
+                                <a className="p-1 text-sm font-semibold link-hover hover:text-custom-text-light" href={`https://github.com/${config['cloudSync']['github']['username']}/my-vnite`} target='_blank'>{`${config['cloudSync']['github']['username']}/my-vnite`}</a>
                             </div>
                             <div className='m-0 divider'></div>
                             <div className='flex flex-row items-center gap-2'>
