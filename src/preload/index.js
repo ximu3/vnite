@@ -8,7 +8,7 @@ const api = {
   searchGameId: withRetry(searchGameId, 3),
   getScreenshotsByTitle: withRetry(getScreenshotsByTitle, 3),
   getCoverByTitle: withRetry(getCoverByTitle, 3),
-  organizeGameData: withRetry(organizeGameData, 3)
+  organizeGameData: organizeGameData
 };
 
 function withRetry(fn, retries = 3) {

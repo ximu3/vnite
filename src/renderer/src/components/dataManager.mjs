@@ -149,7 +149,8 @@ async function deleteGame(id, filePath) {
 
         // 检查游戏 ID 是否存在
         if (!jsonObject.hasOwnProperty(id)) {
-            throw new Error('Game not found');
+            log.error('Game not found');
+            return
         }
 
         // 删除文件夹

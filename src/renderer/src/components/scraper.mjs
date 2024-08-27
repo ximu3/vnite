@@ -263,6 +263,7 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath) {
             } catch (error) {
                 mainWindow.webContents.send('add-game-log', `[error] 获取角色 ${character.cid} 的数据时出错：${error}`);
                 log.error(`获取角色 ${character.cid} 的数据时出错：`, error);
+                throw error;
             }
         }
         const saves = [];
@@ -515,6 +516,9 @@ async function queryVNDBc(filters, fields) {
 
 async function getCharacterIDByName(name, vnId) {
     try {
+        if (vnId === null) {
+            return null;
+        }
         const filters = ["and",
             ["search", "=", name],
             ["vn", "=", ["id", "=", vnId]]
