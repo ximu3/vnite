@@ -933,9 +933,12 @@ function MediaSettings({ index }) {
             setTimeout(() => { setSettingAlert('') }, 3000);
         }
     }
+    function openFolderInExplorer(path) {
+        window.electron.ipcRenderer.send('open-folder-in-explorer', path);
+    }
     return (
         <div className='flex flex-col w-full h-full gap-3'>
-            <button className='transition-all btn btn-sm bg-custom-stress hover:brightness-125 text-custom-text-light' onClick={() => window.electron.ipcRenderer.send('open-folder', `src/renderer/public/${settingData?.detail?.id || ''}/`)}>打开媒体文件夹</button>
+            <button className='transition-all btn btn-sm bg-custom-stress hover:brightness-125 text-custom-text-light' onClick={() => openFolderInExplorer(`/games/${settingData?.detail?.id}` || '')}>打开媒体文件夹</button>
             <div className='flex flex-row gap-3 grow'>
                 <div className='flex flex-col w-1/2 font-bold text-custom-text-light'>
                     <div>封面</div>
