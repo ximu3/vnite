@@ -916,17 +916,16 @@ function startMonitoring(id, event) {
   monitoringInterval = setInterval(() => checkRunningPrograms(id, event), 1000);
 }
 
-function checkRunningPrograms(id, event) {
-  exec('tasklist /fo csv /nh', (error, stdout) => {
-    if (error) {
-      log.error(`执行 ${id} 错误: ${error}`);
-      return;
-    }
-    const runningProcesses = stdout.toLowerCase().split('\n');
-    let allStopped = true;
+import psList from 'ps-list';
 
-    for (let program of runningPrograms) {
-      if (runningProcesses.some(process => process.startsWith(`"${program.toLowerCase()}"`))) {
+async function checkRunningPrograms(id, event) {
+  try {
+    const processes = await psList();
+    const runningProcesses = new Set(processes.map(p => p.name.toLowerCase()));
+
+    let allStopped = true;
+    for (const program of runningPrograms) {
+      if (runningProcesses.has(program)) {
         allStopped = false;
         break;
       }
@@ -936,8 +935,14 @@ function checkRunningPrograms(id, event) {
       endTime = Date.now();
       clearInterval(monitoringInterval);
       reportTotalRunTime(id, event);
+    } else {
+      // 可以添加更多的信息日志
+      const runningTargetProcesses = processes.filter(p => runningPrograms.has(p.name.toLowerCase()));
+      console.log(`仍在运行的目标进程: ${JSON.stringify(runningTargetProcesses)}`);
     }
-  });
+  } catch (error) {
+    log.error(`执行 ${id} 错误: ${error}`);
+  }
 }
 
 function reportTotalRunTime(id, event) {
