@@ -28,6 +28,7 @@
     "get-folder-size": "^5.0.0",
     "marked": "^14.0.0",
     "node-fetch": "^3.3.2",
+    "ps-list": "^8.1.1",
     "react-router-dom": "^6.23.1",
     "semver": "^7.6.3",
     "sharp": "^0.33.4",
