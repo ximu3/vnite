@@ -706,6 +706,10 @@ app.whenReady().then(async () => {
     return semver.compare(version1, version2);
   });
 
+  ipcMain.on('search-game-in-adv3', (event, name) => {
+    searchInADV3(name);
+  });
+
   mainWindow.on('close', async (event) => {
     event.preventDefault();
     await handleAppExit();
@@ -952,6 +956,23 @@ function reportTotalRunTime(id, event) {
   startTime = null;
   endTime = null;
   runningPrograms.clear();
+}
+
+function searchInADV3(name) {
+  // 对搜索词进行 URL 编码，确保特殊字符被正确处理
+  const encodedName = encodeURIComponent(name);
+
+  // 构造搜索 URL
+  const searchUrl = `https://adv.acg3.org/search/?q=${encodedName}`;
+
+  // 使用默认浏览器打开搜索 URL
+  shell.openExternal(searchUrl)
+    .then(() => {
+      console.log(`搜索 "${name}" 的页面已在浏览器中打开`);
+    })
+    .catch(err => {
+      console.error('打开浏览器时发生错误:', err);
+    });
 }
 
 
