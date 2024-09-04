@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, NavLink } from 'react-router-dom';
 import Game from './Game';
 import { useRootStore } from './Root';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import PosterWall from './PosterWall';
 
 function NavButton({ to, name, icon }) {
@@ -20,7 +20,6 @@ function NavButton({ to, name, icon }) {
       </div>
     </NavLink>
   )
-
 }
 
 function NavTab({ to, name, icon }) {
@@ -39,8 +38,38 @@ function NavTab({ to, name, icon }) {
 }
 
 function Library() {
-  const { data, icons, setIcons, timestamp } = useRootStore();
+  const { data, icons, setIcons, timestamp, setData, setTimestamp, setAlert } = useRootStore();
   const [searchTerm, setSearchTerm] = useState('');
+  const dragRef = useRef(null);
+  useEffect(() => {
+    dragRef.current.addEventListener('drop', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const files = event.dataTransfer.files;
+      if (files.length > 0) {
+        const file = files[0];
+        if (file.name.endsWith('.exe') || file.name.endsWith('.bat')) {
+          window.electron.ipcRenderer.send('organize-game-data-empty', file.path);
+        } else {
+          setAlert('不支持的文件类型！');
+          setTimeout(() => {
+            setAlert('');
+          }, 3000);
+        }
+      }
+    });
+    dragRef.current.addEventListener('dragover', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+    });
+    window.electron.ipcRenderer.on('game-data-organized', (event, gameData) => {
+      setData(gameData);
+      setTimestamp(Date.now());
+    })
+    return () => {
+      window.electron.ipcRenderer.removeAllListeners('game-data-organized');
+    }
+  }, []);
   useEffect(() => {
     async function loadImages() {
       setIcons({});
@@ -76,7 +105,7 @@ function Library() {
     });
   }, [data, searchTerm]);
   return (
-    <div className="flex flex-row w-full h-full">
+    <div ref={dragRef} className="flex flex-row w-full h-full">
       <div className="flex flex-col h-full border-black border-r-0.5 border-l-0.5 w-72 shrink-0 bg-gradient-to-b from-custom-stress-2 via-15% via-custom-blue-5/20 to-30% to-custom-main-2">
         <div className='flex flex-col items-center justify-start w-full'>
           <div className='w-full h-12 pt-2 pl-2 '>

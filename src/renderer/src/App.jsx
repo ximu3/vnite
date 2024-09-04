@@ -5,6 +5,8 @@ import AddGame from './components/AddGame';
 import { MemoryRouter, HashRouter } from 'react-router-dom';
 import Config from './components/Config';
 import { useRootStore } from './components/Root';
+import UpdateGame from './components/UpdateGame';
+
 
 
 export const useAboutStore = create(set => ({
@@ -97,6 +99,7 @@ function App() {
 
   return (
     <div className='relative w-screen h-screen'>
+      {/* <DragDropArea className='z-[99999]' /> */}
       <dialog id="syncDataAtQuit" className="modal">
         <div className="w-1/3 h-auto modal-box bg-custom-modal">
           <form method="dialog">
@@ -109,6 +112,10 @@ function App() {
 
       <MemoryRouter>
         <AddGame />
+      </MemoryRouter>
+
+      <MemoryRouter>
+        <UpdateGame />
       </MemoryRouter>
 
       <MemoryRouter>

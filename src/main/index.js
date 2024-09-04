@@ -3,7 +3,7 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { addNewGameToData, getGameData, updateGameData, deleteGame } from '../renderer/src/components/dataManager.mjs'
-import { organizeGameData, searchGameNamebyId } from "../renderer/src/components/scraper.mjs"
+import { organizeGameData, searchGameNamebyId, organizeGameDataEmpty, updateGameMetaData } from "../renderer/src/components/scraper.mjs"
 import { spawn, exec } from 'child_process';
 import sharp from 'sharp';
 import fs from 'fs/promises';
@@ -347,14 +347,34 @@ app.whenReady().then(async () => {
     }
   });
 
-  ipcMain.on('add-new-game-to-data', async (event, gid, coverUrl, bgUrl) => {
+  ipcMain.handle('add-new-game-to-data', async (event, gid, coverUrl, bgUrl) => {
     await retry(() => addNewGameToData(gid, coverUrl, bgUrl, getDataPath('games'), join(getAppRootPath(), 'assets')), 3, mainWindow);
+    return
   });
 
   ipcMain.on('organize-game-data', async (event, gid, savePath, gamePath) => {
     await organizeGameData(gid, savePath, gamePath, mainWindow, getDataPath(''));
     const gameData = await getGameData(getDataPath('data.json'));
     mainWindow.webContents.send('game-data-organized', gameData);
+  });
+
+  ipcMain.on('update-game-meta-data', async (event, id, gid) => {
+    await updateGameMetaData(id, gid, mainWindow, getDataPath(''));
+    const gameData = await getGameData(getDataPath('data.json'));
+    mainWindow.webContents.send('game-data-organized', gameData);
+  });
+
+  ipcMain.on('organize-game-data-empty', async (event, filePath) => {
+    const name = path.basename(filePath, path.extname(filePath));
+    const id = generateNineDigitNumber(name)
+    await organizeGameDataEmpty(name, id, mainWindow, getDataPath(''), getDataPath('games'), join(getAppRootPath(), 'assets'), filePath);
+    await getFileIcon(filePath, id);
+    const gameData = await getGameData(getDataPath('data.json'));
+    mainWindow.webContents.send('game-data-organized', gameData);
+  });
+
+  ipcMain.handle('generate-id', async (event, name) => {
+    return generateNineDigitNumber(name);
   });
 
   ipcMain.handle('get-game-data', async (event) => {
@@ -716,6 +736,21 @@ app.whenReady().then(async () => {
   });
 
 })
+
+import crypto from 'crypto';
+
+function generateNineDigitNumber(inputString) {
+  // 计算输入字符串的MD5哈希值
+  const hash = crypto.createHash('md5').update(inputString).digest('hex');
+
+  // 将哈希值转换为数字（取前8位十六进制，转为十进制）
+  const number = parseInt(hash.slice(0, 8), 16);
+
+  // 对900000000取模，然后加上100000000，确保结果为9位数且不以0开头
+  const nineDigitNumber = (number % 900000000) + 100000000;
+
+  return nineDigitNumber.toString();
+}
 
 async function getGitHubReleases(owner, repo) {
   try {

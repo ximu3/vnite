@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate, NavLink, useNavigate } from 're
 import { useRootStore } from './Root'
 import { useEffect, useState } from 'react'
 import { create } from 'zustand'
+import { useUpdateGame } from './UpdateGame'
 
 function NavTab({ to, name }) {
     return (
@@ -33,6 +34,7 @@ const useGameStore = create(set => ({
 
 function Game({ index }) {
     const naivgate = useNavigate();
+    const { setId, setGameName } = useUpdateGame();
     const { backgroundImage, setBackgroundImage, characterImage, updateCharacterImage, setCharacterImage, setCoverImage, updateMemoryImagePath, setMemoryImagePath } = useGameStore();
     const { data, setData, setAlert, updateData, timestamp, config, updateConfig, isGameRunning, setIsGameRunning } = useRootStore();
     const gameData = data[index]['detail'];
@@ -221,6 +223,11 @@ function Game({ index }) {
         document.getElementById('deleteGame').close();
         naivgate(`../posterwall`)
     }
+    function updateGame() {
+        setId(index);
+        setGameName(gameData['name']);
+        document.getElementById('updateGame').showModal();
+    }
     return (
         <div className="flex flex-col w-full h-full overflow-auto scrollbar-base scrollbar-w-2 bg-custom-main/90 text-custom-text">
             <dialog id="deleteGame" className="modal">
@@ -330,6 +337,7 @@ function Game({ index }) {
                                 </div>
                                 <ul tabIndex={0} className="dropdown-content menu bg-custom-dropdown rounded-box z-[1] w-52 p-2 shadow">
                                     <li onClick={() => { window.electron.ipcRenderer.send('search-game-in-adv3', gameData['name']) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>搜索游戏资源</a></li>
+                                    <li onClick={updateGame} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>下载资料数据</a></li>
                                     <li onClick={() => { openFolderInExplorer(gameData['gamePath']) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>浏览本地文件</a></li>
                                     <li onClick={() => { openFolderInExplorer(gameData['savePath']) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>打开存档文件夹</a></li>
                                     <li onClick={() => { openFolderInExplorer(`/games/${gameData['id']}`) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>打开数据文件夹</a></li>
@@ -855,7 +863,7 @@ function AdvancedSettings() {
                 <div className='flex flex-col w-1/2 gap-3'>
                     <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
                         <div className='font-semibold'>数据库ID |</div>
-                        <div>{(settingData?.detail?.gid || '').replace('ga', '')}</div>
+                        <div>{(settingData?.detail?.id || '')}</div>
                     </label>
                     <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
                         <div className='font-semibold'>游玩状态 |</div>

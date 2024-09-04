@@ -1,8 +1,9 @@
 import fetch from 'node-fetch';
-import { addCharacterImgToData, addNewGameToData, addObjectToJsonFile } from './dataManager.mjs';
+import { addCharacterImgToData, addNewGameToData, addObjectToJsonFile, getGameData, updateGameData } from './dataManager.mjs';
 import path from 'path';
 import getFolderSize from 'get-folder-size';
 import log from 'electron-log/main.js';
+import { get } from 'http';
 
 async function retry(fn, retries, mainWindow) {
     try {
@@ -219,7 +220,78 @@ function getCurrentDate() {
     return `${year}-${month}-${day}`;
 }
 
-async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath) {
+//organize一个游戏的数据结构，但数据为空，只有游戏名
+async function organizeGameDataEmpty(name, id, mainWindow, dataPath, filePath, resPath, gamePath) {
+    try {
+        //不请求API，直接组织数据
+        //根据name生成一个由0和4位正整数组成的字符串
+        if (gamePath !== '') {
+            gamePath = gamePath.replace(/\\/g, '/');
+        }
+        retry(() => addNewGameToData(id, '', '', filePath, resPath), 3, mainWindow);
+        const data = {
+            [`${id}`]: {
+                detail: {
+                    name: name,
+                    chineseName: "",
+                    extensionName: [],
+                    introduction: "",
+                    id: id,
+                    gid: "",
+                    vid: 0,
+                    cover: `/games/${id}/cover.webp`,
+                    icon: `/games/${id}/icon.png`,
+                    backgroundImage: `/games/${id}/background.webp`,
+                    savePath: "",
+                    gamePath: gamePath,
+                    volume: 0,
+                    addDate: getCurrentDate(),
+                    gameDuration: 0,
+                    lastVisitDate: "",
+                    frequency: 0,
+                    playStatus: 0,
+                    moreEntry: "",
+                    typeDesc: "",
+                    developer: "",
+                    developerId: 0,
+                    releaseDate: "",
+                    restricted: "",
+                    websites: [],
+                    releases: [],
+                    staff: {}
+                },
+                characters: [],
+                saves: [],
+                memories: []
+            }
+        };
+        await retry(() => addObjectToJsonFile(data, path.join(dataPath, 'data.json')), 3, mainWindow);
+        mainWindow.webContents.send('add-game-log', `[success] 成功处理游戏 ${name} 的数据。`);
+        return data;
+    } catch (error) {
+        mainWindow.webContents.send('add-game-log', `[error] 获取游戏数据时出错：${error}`);
+        log.error('Error in organizeGameData:', error);
+        throw error;
+    }
+}
+
+import crypto from 'crypto';
+
+function generateNineDigitNumber(inputString) {
+    // 计算输入字符串的MD5哈希值
+    const hash = crypto.createHash('md5').update(inputString).digest('hex');
+
+    // 将哈希值转换为数字（取前8位十六进制，转为十进制）
+    const number = parseInt(hash.slice(0, 8), 16);
+
+    // 对900000000取模，然后加上100000000，确保结果为9位数且不以0开头
+    const nineDigitNumber = (number % 900000000) + 100000000;
+
+    return nineDigitNumber.toString();
+}
+
+//更新一个游戏的数据，传入id，gid，主窗口，数据路径
+async function updateGameMetaData(id, gid, mainWindow, dataPath) {
     try {
         const Details = await retry(() => searchGameId(gid), 3, mainWindow);
         const gameData = Details.data;
@@ -230,7 +302,7 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath) {
                 mainWindow.webContents.send('add-game-log', `[info] 正在获取角色 ${character.cid} 的数据...`);
                 const characterDetails = await retry(() => searchCharacterId(character.cid), 3, mainWindow);
                 mainWindow.webContents.send('add-game-log', `[info] 成功获取角色 ${character.cid} 的数据。`);
-                let cover = `/games/${gid}/characters/${character.cid}.webp`
+                let cover = `/games/${id}/characters/${character.cid}.webp`
                 if (!characterDetails.data.character.mainImg) {
                     console.log(`未找到角色 ${character.cid} 的主图。`);
                     mainWindow.webContents.send('add-game-log', `[warning] 未找到角色 ${character.cid} 的主图。`);
@@ -238,7 +310,203 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath) {
                     continue;
                 } else {
                     mainWindow.webContents.send('add-game-log', `[info] 正在下载角色 ${character.cid} 的图片...`);
-                    await retry(() => addCharacterImgToData(gid, character.cid, characterDetails.data.character.mainImg, path.join(dataPath, 'games')), 3, mainWindow);
+                    await retry(() => addCharacterImgToData(id, character.cid, characterDetails.data.character.mainImg, path.join(dataPath, 'games')), 3, mainWindow);
+                    mainWindow.webContents.send('add-game-log', `[info] 成功下载角色 ${character.cid} 的图片。`);
+                }
+                let extensionName = []
+                for (const extension of characterDetails.data.character.extensionName) {
+                    extensionName.push(extension.name);
+                }
+                mainWindow.webContents.send('add-game-log', `[info] 正在获取角色 ${character.cid} 的VID...`);
+                const vidc = await retry(() => getCharacterIDByName(characterDetails.data.character.name, vid), 3, mainWindow);
+                mainWindow.webContents.send('add-game-log', `[info] 成功获取角色 ${character.cid} 的VID。`);
+                characters.push({
+                    name: characterDetails.data.character.name,
+                    chineseName: characterDetails.data.character.chineseName,
+                    introduction: characterDetails.data.character.introduction,
+                    cid: character.cid,
+                    vid: vidc,
+                    cover: cover,
+                    extensionName: extensionName,
+                    birthday: characterDetails.data.character.birthday && characterDetails.data.character.birthday.replace(/^.{5}/, ''),
+                    gender: characterDetails.data.character.gender,
+                    websites: [{ "title": "月幕Galgame", "url": `https://www.ymgal.games/ca${character.cid}` }, { "title": "VNDB", "url": `https://vndb.org/${vidc}` }]
+                });
+            } catch (error) {
+                mainWindow.webContents.send('add-game-log', `[error] 获取角色 ${character.cid} 的数据时出错：${error}`);
+                log.error(`获取角色 ${character.cid} 的数据时出错：`, error);
+                throw error;
+            }
+        }
+        const saves = [];
+
+        const memory = [];
+
+        const extensionName = []
+
+        for (const extension of gameData.game.extensionName) {
+            extensionName.push(extension.name);
+        }
+        let websites = []
+        for (const web of gameData.game.website) {
+            websites.push({ "title": web.title, "url": web.link });
+        }
+        websites.push({ "title": "月幕Galgame", "url": `https://www.ymgal.games/ga${gid}` }, { "title": "VNDB", "url": `https://vndb.org/${vid}` });
+        const staff = {
+            "脚本": [],
+            "音乐": [],
+            "原画": [],
+            "歌曲": [],
+            "人物设计": [],
+            "监督": [],
+            "其他": []
+        };
+        gameData.game.staff.forEach(staffMember => {
+            const person = gameData.pidMapping[staffMember.pid];
+            const name = person ? person.name : staffMember.empName;
+            const staffInfo = {
+                name: name,
+                pid: staffMember.pid,
+                empDesc: staffMember.empDesc
+            };
+
+            switch (staffMember.jobName) {
+                case "脚本":
+                    staff.脚本.push(staffInfo);
+                    break;
+                case "音乐":
+                    staff.音乐.push(staffInfo);
+                    break;
+                case "原画":
+                    staff.原画.push(staffInfo);
+                    break;
+                case "歌曲":
+                    staff.歌曲.push(staffInfo);
+                    break;
+                case "导演/监督":
+                    staff.监督.push(staffInfo);
+                    break;
+                default:
+                    if (staffMember?.empDesc?.includes("人物设计")) {
+                        staff.人物设计.push(staffInfo);
+                    } else {
+                        staff.其他.push(staffInfo);
+                    }
+            }
+        });
+
+        // Remove empty staff categories
+        for (const category in staff) {
+            if (staff[category].length === 0) {
+                delete staff[category];
+            }
+        }
+
+        let sizeInMB = 0;
+        let icon = '';
+
+        // 更新data.json文件中的数据，保留原有数据中的游戏时长、最后访问日期、访问频率、游戏状态
+        // 在函数末尾，return data; 之前添加以下代码：
+
+        // 读取现有的 data.json 文件
+        let existingData = {};
+        try {
+            const dataFilePath = path.join(dataPath, 'data.json');
+            existingData = await getGameData(dataFilePath);
+        } catch (error) {
+            console.error('读取现有 data.json 文件时出错:', error);
+            mainWindow.webContents.send('add-game-log', `[error] 读取现有 data.json 文件时出错: ${error}`);
+        }
+
+        // 准备新的游戏数据
+        const newGameData = {
+            detail: {
+                name: gameData.game.name,
+                chineseName: gameData.game.chineseName,
+                extensionName: extensionName,
+                introduction: gameData.game.introduction,
+                id: id,
+                gid: `ga${gameData.game.gid}`,
+                vid: vid,
+                cover: `/games/${id}/cover.webp`,
+                icon: icon,
+                backgroundImage: `/games/${id}/background.webp`,
+                savePath: '',
+                gamePath: '',
+                volume: Number(sizeInMB),
+                addDate: getCurrentDate(),
+                gameDuration: 0,
+                lastVisitDate: "",
+                frequency: 0,
+                playStatus: 0,
+                moreEntry: gameData.game.moreEntry,
+                typeDesc: gameData.game.typeDesc,
+                developer: await retry(() => searchDeveloperId(gameData.game.developerId), 3, mainWindow),
+                developerId: gameData.game.developerId,
+                releaseDate: gameData.game.releaseDate,
+                restricted: gameData.game.restricted,
+                websites: websites,
+                releases: gameData.game.releases,
+                staff: staff
+            },
+            characters: characters,
+            saves: saves,
+            memories: memory
+        };
+
+        // 保留原有数据中的特定字段
+        if (existingData[id]) {
+            newGameData.detail.gameDuration = existingData[id].detail.gameDuration || 0;
+            newGameData.detail.savePath = existingData[id].detail.savePath || 0;
+            newGameData.detail.gamePath = existingData[id].detail.gamePath || 0;
+            newGameData.detail.icon = existingData[id].detail.icon || '';
+            newGameData.detail.lastVisitDate = existingData[id].detail.lastVisitDate || "";
+            newGameData.detail.frequency = existingData[id].detail.frequency || 0;
+            newGameData.detail.playStatus = existingData[id].detail.playStatus || 0;
+        }
+
+        // 更新 data 对象
+        existingData[id] = newGameData;
+
+        // 将更新后的数据写入 data.json 文件
+        try {
+            const dataFilePath = path.join(dataPath, 'data.json');
+            await updateGameData(existingData, dataFilePath);
+        } catch (error) {
+            console.error('写入 data.json 文件时出错:', error);
+            mainWindow.webContents.send('add-game-log', `[error] 写入 data.json 文件时出错: ${error}`);
+        }
+
+        mainWindow.webContents.send('add-game-log', `[success] 成功处理游戏 ${gameData.game.name} 的数据。`);
+        return existingData;
+    } catch (error) {
+        mainWindow.webContents.send('add-game-log', `[error] 获取游戏数据时出错：${error}`);
+        log.error('Error in organizeGameData:', error);
+        throw error;
+    }
+}
+
+async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath) {
+    try {
+        const Details = await retry(() => searchGameId(gid), 3, mainWindow);
+        const gameData = Details.data;
+        const id = generateNineDigitNumber(gameData.game.name);
+        const characters = [];
+        const vid = await retry(() => getVIDByTitle(gameData.game.name), 3, mainWindow);
+        for (const character of gameData.game.characters) {
+            try {
+                mainWindow.webContents.send('add-game-log', `[info] 正在获取角色 ${character.cid} 的数据...`);
+                const characterDetails = await retry(() => searchCharacterId(character.cid), 3, mainWindow);
+                mainWindow.webContents.send('add-game-log', `[info] 成功获取角色 ${character.cid} 的数据。`);
+                let cover = `/games/${id}/characters/${character.cid}.webp`
+                if (!characterDetails.data.character.mainImg) {
+                    console.log(`未找到角色 ${character.cid} 的主图。`);
+                    mainWindow.webContents.send('add-game-log', `[warning] 未找到角色 ${character.cid} 的主图。`);
+                    cover = ''
+                    continue;
+                } else {
+                    mainWindow.webContents.send('add-game-log', `[info] 正在下载角色 ${character.cid} 的图片...`);
+                    await retry(() => addCharacterImgToData(id, character.cid, characterDetails.data.character.mainImg, path.join(dataPath, 'games')), 3, mainWindow);
                     mainWindow.webContents.send('add-game-log', `[info] 成功下载角色 ${character.cid} 的图片。`);
                 }
                 let extensionName = []
@@ -348,19 +616,20 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath) {
             savePath = savePath.replace(/\\/g, '/');
         }
 
+
         const data = {
-            [`${gameData.game.gid}`]: {
+            [`${id}`]: {
                 detail: {
                     name: gameData.game.name,
                     chineseName: gameData.game.chineseName,
                     extensionName: extensionName,
                     introduction: gameData.game.introduction,
-                    id: gameData.game.gid,
+                    id: id,
                     gid: `ga${gameData.game.gid}`,
                     vid: vid,
-                    cover: `/games/${gid}/cover.webp`,
+                    cover: `/games/${id}/cover.webp`,
                     icon: icon,
-                    backgroundImage: `/games/${gid}/background.webp`,
+                    backgroundImage: `/games/${id}/background.webp`,
                     savePath: savePath,
                     gamePath: gamePath,
                     volume: Number(sizeInMB),
@@ -543,4 +812,4 @@ async function getCharacterIDByName(name, vnId) {
     }
 }
 
-export { searchGameList, searchGameId, searchGameDetails, getScreenshotsByTitle, getCoverByTitle, organizeGameData, searchCharacterId, searchGameNamebyId };
+export { searchGameList, searchGameId, searchGameDetails, getScreenshotsByTitle, getCoverByTitle, organizeGameData, searchCharacterId, searchGameNamebyId, organizeGameDataEmpty, updateGameMetaData };

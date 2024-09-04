@@ -304,7 +304,8 @@ function GameBg() {
     }
     setIsLoading(true);
     const coverUrl = await window.api.getCoverByTitle(gameName);
-    await window.electron.ipcRenderer.send('add-new-game-to-data', gid, coverUrl, gameBg);
+    const id = await window.electron.ipcRenderer.invoke('generate-id', gameName);
+    await window.electron.ipcRenderer.invoke('add-new-game-to-data', id, coverUrl, gameBg);
     await window.electron.ipcRenderer.send('organize-game-data', gid, savePath, gamePath);
     navigate('/load')
   }
@@ -327,7 +328,10 @@ function GameBg() {
         </div>
       }
       <div className='flex flex-row-reverse items-end gap-5 pt-5'>
-        <button className='transition-all btn bg-custom-stress text-custom-text-light hover:brightness-125' onClick={submitAllData}>确定</button>
+        <button className='transition-all btn bg-custom-stress text-custom-text-light hover:brightness-125' onClick={submitAllData}>
+          {isLoading && <span className='loading loading-spinner'></span>}
+          确定
+        </button>
         <button className='transition-all btn bg-custom-stress text-custom-text-light hover:brightness-125' onClick={() => { navigate(-1) }}>上一步</button>
       </div>
     </div >

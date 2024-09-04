@@ -45,7 +45,7 @@ async function getGameData(filePath) {
         return JSON.parse(data);
     } catch (error) {
         log.error('Error reading JSON file:', error);
-        return [];
+        return {};
     }
 
 }
@@ -65,11 +65,11 @@ async function updateGameData(newData, filePath) {
     }
 }
 
-async function addNewGameToData(gid, coverUrl, bgUrl, fliePath, resPath) {
+async function addNewGameToData(id, coverUrl, bgUrl, filePath, resPath) {
     // const __filename = fileURLToPath(import.meta.url);
     // const __dirname = dirname(__filename);
 
-    const folderPath = path.join(fliePath, `${gid}`);
+    const folderPath = path.join(filePath, `${id}`);
     const memoryFolderPath = path.join(folderPath, 'memories');
     const savesFolderPath = path.join(folderPath, 'saves');
     const characterFolderPath = path.join(folderPath, 'characters');
@@ -77,7 +77,7 @@ async function addNewGameToData(gid, coverUrl, bgUrl, fliePath, resPath) {
     const bgFilePath = path.join(folderPath, 'background.webp');
 
     try {
-        // Create the gid folder
+        // Create the id folder
         await fs.mkdir(folderPath, { recursive: true });
 
         // Create the memory and saves folders
@@ -108,11 +108,11 @@ async function addNewGameToData(gid, coverUrl, bgUrl, fliePath, resPath) {
     }
 }
 
-async function addCharacterImgToData(gid, cid, imgUrls, filePath) {
+async function addCharacterImgToData(id, cid, imgUrls, filePath) {
     // const __filename = fileURLToPath(import.meta.url);
     // const __dirname = dirname(__filename);
 
-    const folderPath = path.join(filePath, `${gid}`);
+    const folderPath = path.join(filePath, `${id}`);
     const characterFolderPath = path.join(folderPath, 'characters');
     const characterImgPath = path.join(characterFolderPath, `${cid}.webp`);
 
