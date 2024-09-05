@@ -737,6 +737,46 @@ app.whenReady().then(async () => {
 
 })
 
+async function openGameWithLe(gamePath, lePath) {
+  // 获取游戏路径的上级目录
+  try {
+    // 获取游戏路径的上级目录
+    const gameDir = path.dirname(gamePath);
+
+    // 创建bat文件内容
+    const batContent = `
+      chcp 65001
+      cd /d "${gameDir.replace(/\\/g, '\\\\')}"
+      "${lePath.replace(/\\/g, '\\\\')}" "${gamePath.replace(/\\/g, '\\\\')}"
+    `;
+
+    // 创建临时bat文件
+    const tempBatPath = path.join(app.getPath('temp'), 'run_game.bat');
+    await fs.writeFile(tempBatPath, batContent);
+
+    // 使用spawn执行bat文件
+    const bat = spawn(tempBatPath, [], { shell: true });
+
+    bat.stdout.on('data', (data) => {
+      console.log(`输出: ${data}`);
+    });
+
+    bat.stderr.on('data', (data) => {
+      console.error(`错误: ${data}`);
+    });
+
+    bat.on('close', async (code) => {
+      console.log(`子进程退出，退出码 ${code}`);
+      // 删除临时bat文件
+      await fs.unlink(tempBatPath);
+    });
+
+  } catch (error) {
+    log.error(`执行错误: ${error}`);
+  }
+}
+
+
 import crypto from 'crypto';
 
 function generateNineDigitNumber(inputString) {
