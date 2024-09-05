@@ -245,22 +245,19 @@ function CloudSync() {
                 setConfigAlert('');
             }, 5000);
             setIsLoading(true);
-            await window.electron.ipcRenderer.invoke('initialize-repo', data.accessToken, data.username).then((data) => {
-                if (data) {
-                    setConfigAlert('Github仓库初始化成功，5秒后重启应用生效！');
-                    setTimeout(() => {
-                        setConfigAlert('');
-                    }, 5000);
-                    updateConfig(['cloudSync', 'github', 'repoUrl'], data);
-                    updateConfig(['cloudSync', 'github', 'lastSyncTime'], getFormattedDateTimeWithSeconds());
-                    window.electron.ipcRenderer.invoke('get-game-data').then((gameData) => {
-                        setData(gameData);
-                    })
-                    setTimeout(() => {
-                        window.electron.ipcRenderer.send('restart-app');
-                    }, 5000);
-                }
-            })
+            const initData = await window.electron.ipcRenderer.invoke('initialize-repo', data.accessToken, data.username)
+            if (initData) {
+                setConfigAlert('数据即将完成初始化，请稍候...');
+                setTimeout(() => {
+                    setConfigAlert('');
+                }, 5000);
+                await window.electron.ipcRenderer.invoke('get-game-data').then((gameData) => {
+                    setData(gameData);
+                })
+                updateConfig(['cloudSync', 'github', 'repoUrl'], initData);
+                updateConfig(['cloudSync', 'github', 'lastSyncTime'], getFormattedDateTimeWithSeconds());
+            }
+
             setIsLoading(false);
         })
         window.electron.ipcRenderer.on('initialize-error', (event, message) => {
@@ -370,13 +367,12 @@ function CloudSync() {
             document.getElementById('initializeDiffData').close();
             updateConfig(['cloudSync', 'github', 'repoUrl'], `https://github.com/${config.cloudSync.github.username}/my-vnite.git`);
             updateConfig(['cloudSync', 'github', 'lastSyncTime'], getFormattedDateTimeWithSeconds());
-            window.electron.ipcRenderer.invoke('get-game-data').then((data) => {
+            await window.electron.ipcRenderer.invoke('get-game-data').then((data) => {
                 setData(data);
             })
-            setConfigAlert('本地数据已成功同步至云端，5秒后重启应用生效！');
+            setConfigAlert('本地数据已成功同步至云端！');
             setTimeout(() => {
                 setConfigAlert('');
-                window.electron.ipcRenderer.send('restart-app');
             }, 5000);
         } catch (e) {
             setIsLoading(false);
@@ -395,13 +391,12 @@ function CloudSync() {
             document.getElementById('initializeDiffData').close();
             updateConfig(['cloudSync', 'github', 'repoUrl'], `https://github.com/${config.cloudSync.github.username}/my-vnite.git`);
             updateConfig(['cloudSync', 'github', 'lastSyncTime'], getFormattedDateTimeWithSeconds());
-            window.electron.ipcRenderer.invoke('get-game-data').then((data) => {
+            await window.electron.ipcRenderer.invoke('get-game-data').then((data) => {
                 setData(data);
             })
-            setConfigAlert('云端数据已成功同步到本地，5秒后重启应用生效！');
+            setConfigAlert('云端数据已成功同步到本地！');
             setTimeout(() => {
                 setConfigAlert('');
-                window.electron.ipcRenderer.send('restart-app');
             }, 5000);
         } catch (e) {
             setIsLoading(false);
