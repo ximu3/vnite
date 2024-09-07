@@ -77,6 +77,7 @@ function Config() {
                             <ul className="w-full menu rounded-box text-custom-text">
                                 <li className=''>
                                     <NavButton to={`./cloudSync`} name={'云同步'} icon={<span className="icon-[material-symbols-light--cloud] w-6 h-6"></span>} />
+                                    <NavButton to={`./advanced`} name={'高级'} icon={<span className="icon-[material-symbols-light--settings] w-6 h-6"></span>} />
                                     <NavButton to={`./about`} name={'关于'} icon={<span className="icon-[material-symbols-light--info] w-6 h-6"></span>} />
                                 </li>
                             </ul>
@@ -87,6 +88,7 @@ function Config() {
                         <Routes>
                             <Route index element={<Navigate to='./cloudSync' />} />
                             <Route path={`/cloudSync/*`} element={<CloudSync />} />
+                            <Route path={`/advanced`} element={<Advanced />} />
                             <Route path={`/about`} element={<About />} />
                         </Routes>
                         <div className='absolute flex flex-row gap-3 right-5 bottom-5'>
@@ -107,6 +109,38 @@ function Config() {
 
             </div>
         </dialog>
+    );
+}
+
+function Advanced() {
+    const { configSetting, updateConfigSetting, setConfigAlert, isLoading, setIsLoading } = useConfigStore();
+    const { updateConfig, config } = useRootStore();
+    function selectLePath() {
+        window.electron.ipcRenderer.invoke('open-le-dialog').then((path) => {
+            if (path) {
+                updateConfig(['advance', 'lePath'], path);
+            }
+        })
+    }
+    return (
+        <div className='flex flex-col w-full h-full gap-5 pb-32 overflow-auto p-7 scrollbar-base bg-custom-modal'>
+            <div className='text-2xl font-bold text-custom-text-light'>
+                高级
+            </div>
+            <div className='flex flex-col gap-2'>
+                <div className='pb-2 font-bold text-custom-text-light'>Locale Emulator</div>
+                <div className='flex flex-row items-center justify-between gap-12'>
+                    <span className='text-sm font-semibold'>LEProc路径</span>
+                    <label className="flex items-center w-3/4 gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
+                        <input type='text' placeholder='请绑定LEProc.exe' spellCheck='false' className='grow' value={config?.advance?.lePath} onChange={(e) => { updateConfig(['advance', 'lePath'], e.target.value) }} />
+                        <span className="icon-[material-symbols-light--folder-open-outline-sharp] w-5 h-5 self-center" onClick={selectLePath}></span>
+                    </label>
+                </div>
+            </div>
+            <div>
+
+            </div>
+        </div>
     );
 }
 

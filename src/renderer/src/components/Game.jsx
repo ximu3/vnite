@@ -178,7 +178,19 @@ function Game({ index }) {
             }
         }
         if (gameData['gamePath'] !== '') {
-            window.electron.ipcRenderer.send('open-and-monitor', gameData['gamePath'], gameData['id'])
+            if (gameData['startWithLe']) {
+                if (config['advance']['lePath'] === '') {
+                    setAlert('LE路径未设置，请前往设置!')
+                    setTimeout(() => { setAlert('') }, 3000)
+                    return
+                }
+                if (!config['advance']['lePath'].endsWith('LEProc.exe')) {
+                    setAlert('LE路径设置错误!')
+                    setTimeout(() => { setAlert('') }, 3000)
+                    return
+                }
+            }
+            window.electron.ipcRenderer.send('open-and-monitor', gameData['gamePath'], gameData['id'], gameData['startWithLe'], config['advance']['lePath']);
         } else {
             setAlert('游戏路径未设置，请前往设置!')
             setTimeout(() => { setAlert('') }, 3000)
@@ -979,7 +991,7 @@ function MediaSettings({ index }) {
 
 function StartupSettings({ index }) {
     const { settingData, updateSettiongData, setSettingData, setSettingAlert } = useGameSetting()
-    const { setTimestamp, updateData } = useRootStore()
+    const { setTimestamp, updateData, data } = useRootStore()
     async function selectGamePath() {
         const path = await window.electron.ipcRenderer.invoke("open-file-dialog")
         if (path) {
@@ -1051,6 +1063,19 @@ function StartupSettings({ index }) {
                 <input type='text' spellCheck='false' placeholder='拖拽获取路径' onDrop={getSavePathByDrag} onDragOver={handleDragOver} className='grow' value={settingData?.detail?.savePath || '0'} onChange={(e) => { updateSettiongData(['detail', 'savePath'], e.target.value) }} />
                 <span className="icon-[material-symbols-light--folder-open-outline-sharp] w-5 h-5 self-center" onClick={selectSavePath}></span>
             </label>
+            <div className="dropdown dropdown-bottom">
+                <div tabIndex={0} role="button" className="flex flex-row items-center justify-between w-1/3 gap-2 mb-1 text-sm font-semibold border-0 input-sm bg-custom-stress hover:brightness-125">
+                    <div className="flex items-center gap-2">
+                        <div>LE启动 |</div>
+                        <div>{data[index]?.detail?.startWithLe ? '是' : '否'}</div>
+                    </div>
+                    <span className="icon-[material-symbols-light--keyboard-arrow-down] w-6 h-6"></span>
+                </div>
+                <ul tabIndex={0} className="dropdown-content menu bg-custom-dropdown rounded-box w-1/3 z-[1] p-2 shadow">
+                    <li onClick={() => { updateData([index, 'detail', 'startWithLe'], true) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>是</a></li>
+                    <li onClick={() => { updateData([index, 'detail', 'startWithLe'], false) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>否</a></li>
+                </ul>
+            </div>
         </div>
     )
 }

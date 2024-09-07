@@ -4,7 +4,7 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { addNewGameToData, getGameData, updateGameData, deleteGame } from '../renderer/src/components/dataManager.mjs'
 import { organizeGameData, searchGameNamebyId, organizeGameDataEmpty, updateGameMetaData } from "../renderer/src/components/scraper.mjs"
-import { spawn, exec } from 'child_process';
+import { spawn, exec, execFile } from 'child_process';
 import sharp from 'sharp';
 import fs from 'fs/promises';
 import fse from 'fs-extra';
@@ -17,6 +17,20 @@ import log from 'electron-log/main.js';
 import axios from 'axios';
 import semver from 'semver';
 
+
+if (process.argv.length > 1) {
+  const scriptPath = process.argv[1];
+  if (path.basename(scriptPath) === 'update-json.js') {
+    try {
+      require(scriptPath);
+    } catch (error) {
+      console.error('脚本执行失败:', error);
+      // 可以在这里添加代码来显示错误对话框或写入错误日志
+      dialog.showErrorBox('安装错误', `更新脚本执行失败: ${error.message}`);
+    }
+    app.quit();
+  }
+}
 
 log.initialize();
 
@@ -313,6 +327,20 @@ app.whenReady().then(async () => {
       filters: [
         { name: '可执行文件', extensions: ['exe'] },
         { name: '批处理文件', extensions: ['bat'] }
+      ]
+    });
+    if (result.canceled) {
+      return null;
+    } else {
+      return result.filePaths[0];
+    }
+  });
+
+  ipcMain.handle('open-le-dialog', async (event) => {
+    const result = await dialog.showOpenDialog({
+      properties: ['openFile'],
+      filters: [
+        { name: '可执行文件', extensions: ['exe'] }
       ]
     });
     if (result.canceled) {
@@ -708,9 +736,9 @@ app.whenReady().then(async () => {
     return getConfigPath(file);
   });
 
-  ipcMain.on('open-and-monitor', async (event, programPath, id) => {
+  ipcMain.on('open-and-monitor', async (event, programPath, id, startWithLe, lePath) => {
     try {
-      await openExternalProgram(programPath, id, event);
+      await openExternalProgram(programPath, id, event, startWithLe, lePath);
       log.info(`成功打开游戏 ${id}`);
     } catch (error) {
       log.error(`打开游戏 ${id} 时出错:`, error);
@@ -738,44 +766,46 @@ app.whenReady().then(async () => {
 })
 
 async function openGameWithLe(gamePath, lePath) {
-  // 获取游戏路径的上级目录
   try {
     // 获取游戏路径的上级目录
     const gameDir = path.dirname(gamePath);
 
-    // 创建bat文件内容
-    const batContent = `
-      chcp 65001
-      cd /d "${gameDir.replace(/\\/g, '\\\\')}"
-      "${lePath.replace(/\\/g, '\\\\')}" "${gamePath.replace(/\\/g, '\\\\')}"
-    `;
+    // 构造命令
+    const command = 'cmd.exe';
+    const args = [
+      '/c',
+      'chcp 65001 >nul && ' +
+      `cd /d "${gameDir}" && ` +
+      `"${lePath}" "${gamePath}"`
+    ];
 
-    // 创建临时bat文件
-    const tempBatPath = path.join(app.getPath('temp'), 'run_game.bat');
-    await fs.writeFile(tempBatPath, batContent);
-
-    // 使用spawn执行bat文件
-    const bat = spawn(tempBatPath, [], { shell: true });
-
-    bat.stdout.on('data', (data) => {
-      console.log(`输出: ${data}`);
+    // 使用spawn执行命令，这里将变量名从 process 改为 childProcess
+    const childProcess = spawn(command, args, {
+      shell: true,
+      windowsHide: true,
+      env: { ...process.env, LANG: 'zh_CN.UTF-8' }
     });
 
-    bat.stderr.on('data', (data) => {
-      console.error(`错误: ${data}`);
+    childProcess.stdout.on('data', (data) => {
+      console.log(`输出: ${data.toString('utf8')}`);
     });
 
-    bat.on('close', async (code) => {
+    childProcess.stderr.on('data', (data) => {
+      console.error(`错误: ${data.toString('utf8')}`);
+    });
+
+    childProcess.on('close', (code) => {
       console.log(`子进程退出，退出码 ${code}`);
-      // 删除临时bat文件
-      await fs.unlink(tempBatPath);
+    });
+
+    childProcess.on('error', (error) => {
+      console.error(`执行错误: ${error.message}`);
     });
 
   } catch (error) {
-    log.error(`执行错误: ${error}`);
+    console.error(`执行错误: ${error.message}`);
   }
 }
-
 
 import crypto from 'crypto';
 
@@ -922,24 +952,31 @@ let endTime = null;
 let runningPrograms = new Set();
 let monitoringInterval;
 
-async function openExternalProgram(programPath, id, event) {
+async function openExternalProgram(programPath, id, event, startWithLe, lePath) {
   try {
     const programDir = path.dirname(programPath);
     const programName = path.basename(programPath);
 
-    const child = spawn(programName, [], {
-      cwd: programDir,
-      detached: true,
-      stdio: 'ignore'
-    });
+    if (startWithLe) {
+      if (!lePath) {
+        throw new Error('未提供LE路径');
+      }
+      await openGameWithLe(programPath, lePath);
+    } else {
+      const child = spawn(programName, [], {
+        cwd: programDir,
+        detached: true,
+        stdio: 'ignore'
+      });
 
-    child.on('error', (error) => {
-      log.error(`启动游戏 ${id} 时出错:`, error);
-      event.reply('game-start-result', { id: id, success: false, error: error.message });
-      return
-    });
+      child.on('error', (error) => {
+        log.error(`启动游戏 ${id} 时出错:`, error);
+        event.reply('game-start-result', { id: id, success: false, error: error.message });
+        return
+      });
 
-    child.unref();
+      child.unref();
+    }
 
     event.reply('game-start-result', { id: id, success: true });
 
