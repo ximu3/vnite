@@ -135,7 +135,7 @@ function Ranking() {
     return (
         <div className='w-full h-full p-3'>
             <div className='flex flex-col gap-3'>
-                <div className='flex flex-row gap-3 h-1/2'>
+                <div className='flex flex-row items-start gap-3 h-1/2'>
                     <div className="w-1/3 shadow-sm card bg-custom-stress">
                         <figure>
                             {
@@ -271,10 +271,10 @@ function Global() {
                         </div>
                     </div>
                 </div>
-                <div className='w-1/3 p-5 bg-custom-stress'>
+                <div className='w-1/3 p-5 pr-2 overflow-auto bg-custom-stress'>
                     <div className='text-lg font-bold'>最多游玩时间</div>
                     <div className='m-0 divider'></div>
-                    <div className='flex flex-col gap-3 pt-3 overflow-auto text-xs text-custom-text-light scrollbar-base'>
+                    <div className='flex flex-col gap-3 pt-3 pr-3 overflow-auto text-xs text-custom-text-light max-h-100 scrollbar-base'>
                         {Object.entries(data)
                             ?.sort(([, a], [, b]) => b.detail.gameDuration - a.detail.gameDuration)
                             ?.map(([key, game]) => {
@@ -288,10 +288,10 @@ function Global() {
                         }
                     </div>
                 </div>
-                <div className='w-1/3 p-5 bg-custom-stress'>
+                <div className='w-1/3 p-5 pr-2 bg-custom-stress'>
                     <div className='text-lg font-bold'>最近游玩</div>
                     <div className='m-0 divider'></div>
-                    <div className='flex flex-col gap-3 pt-3 overflow-auto text-xs text-custom-text-light scrollbar-base'>
+                    <div className='flex flex-col gap-3 pt-3 pr-3 overflow-auto text-xs text-custom-text-light max-h-100 scrollbar-base'>
                         {Object.entries(data)
                             ?.sort(([, a], [, b]) => {
                                 const dateA = a.detail.lastVisitDate ? new Date(a.detail.lastVisitDate) : new Date(0);
