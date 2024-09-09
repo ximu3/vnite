@@ -38,7 +38,18 @@ export const useRootStore = create(set => ({
   isPulling: false,
   setIsPulling: (isPulling) => set({ isPulling }),
   isGameRunning: { status: false, id: null },
-  setIsGameRunning: (status, id) => set({ isGameRunning: { status, id } })
+  setIsGameRunning: (status, id) => set({ isGameRunning: { status, id } }),
+  categoryData: [],
+  setCategoryData: (categoryData) => set({ categoryData }),
+  updateCategoryData: (path, value) => set((state) => {
+    const newCategoryData = JSON.parse(JSON.stringify(state.categoryData));
+    let current = newCategoryData;
+    for (let i = 0; i < path.length - 1; i++) {
+      current = current[path[i]];
+    }
+    current[path[path.length - 1]] = value;
+    return { categoryData: newCategoryData };
+  }),
 }));
 
 function NavButton({ to, name }) {
@@ -58,7 +69,7 @@ function NavButton({ to, name }) {
 }
 
 function Root() {
-  const { data, setData, alert, config, setConfig, isPulling, setIsPulling, setTimestamp } = useRootStore();
+  const { data, setData, alert, config, setConfig, isPulling, setIsPulling, setTimestamp, setCategoryData, categoryData } = useRootStore();
   const { isloading } = useAddGame();
   useEffect(() => {
     window.electron.ipcRenderer.invoke('get-game-data').then((data) => {
@@ -70,9 +81,13 @@ function Root() {
     window.electron.ipcRenderer.on('config-data-updated', (event, data) => {
       setConfig(data);
     })
+    window.electron.ipcRenderer.on('category-data-updated', (event, data) => {
+      setCategoryData(data);
+    })
     return () => {
       window.electron.ipcRenderer.removeAllListeners('game-data-updated');
       window.electron.ipcRenderer.removeAllListeners('config-data-updated');
+      window.electron.ipcRenderer.removeAllListeners('category-data-updated');
     }
   }, [isloading])
   useEffect(() => {
@@ -85,6 +100,19 @@ function Root() {
     window.electron.ipcRenderer.invoke('get-config-data').then((config) => {
       setConfig(config);
     })
+
+  }, [])
+
+  useEffect(() => {
+    window.electron.ipcRenderer.invoke('get-category-data').then((categoryData) => {
+      setCategoryData(categoryData);
+    })
+    window.electron.ipcRenderer.on('category-data-updated', (event, data) => {
+      setCategoryData(data);
+    })
+    return () => {
+      window.electron.ipcRenderer.removeAllListeners('category-data-updated');
+    }
   }, [])
   useEffect(() => {
     if (config['cloudSync']) {
@@ -106,6 +134,11 @@ function Root() {
       })()
     }
   }, [config])
+  // useEffect(() => {
+  //   if (categoryData.length !== 0) {
+  //     window.electron.ipcRenderer.send('save-category-data', categoryData)
+  //   }
+  // }, [categoryData])
   return (
     <div className='flex flex-row w-full h-full text-custom-text-light'>
       {alert &&

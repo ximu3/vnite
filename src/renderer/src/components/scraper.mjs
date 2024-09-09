@@ -2,8 +2,8 @@ import fetch from 'node-fetch';
 import { addCharacterImgToData, addNewGameToData, addObjectToJsonFile, getGameData, updateGameData } from './dataManager.mjs';
 import path from 'path';
 import getFolderSize from 'get-folder-size';
-import log from 'electron-log/main.js';
-import { get } from 'http';
+import log from 'electron-log/main.js'
+import { addNewGameToCategory } from './categoryManager.mjs';
 
 async function retry(fn, retries, mainWindow) {
     try {
@@ -267,6 +267,7 @@ async function organizeGameDataEmpty(name, id, mainWindow, dataPath, filePath, r
             }
         };
         await retry(() => addObjectToJsonFile(data, path.join(dataPath, 'data.json')), 3, mainWindow);
+        await retry(() => addNewGameToCategory(path.join(dataPath, 'categories.json'), 0, id), 3, mainWindow);
         mainWindow.webContents.send('add-game-log', `[success] 成功处理游戏 ${name} 的数据。`);
         return data;
     } catch (error) {
@@ -657,6 +658,7 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath) {
             }
         };
         await retry(() => addObjectToJsonFile(data, path.join(dataPath, 'data.json')), 3, mainWindow);
+        await retry(() => addNewGameToCategory(path.join(dataPath, 'categories.json'), 0, id), 3, mainWindow);
         mainWindow.webContents.send('add-game-log', `[success] 成功处理游戏 ${gameData.game.name} 的数据。`);
         return data;
     } catch (error) {

@@ -89,11 +89,11 @@ function App() {
       window.electron.ipcRenderer.send('show-right-menu', event);
     }
 
-    window.addEventListener('contextmenu', handleRightMenu);
+    // window.addEventListener('contextmenu', handleRightMenu);
 
     return () => {
       window.electron.ipcRenderer.removeAllListeners('app-exiting');
-      window.removeEventListener('contextmenu', handleRightMenu);
+      // window.removeEventListener('contextmenu', handleRightMenu);
     }
   }, [])
 

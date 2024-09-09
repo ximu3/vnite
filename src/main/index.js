@@ -16,6 +16,7 @@ import chokidar from 'chokidar';
 import log from 'electron-log/main.js';
 import axios from 'axios';
 import semver from 'semver';
+import { getCategoryData, deleteGameFromAllCategories, updateCategoryData, addNewCategory, addNewGameToCategory, deleteCategory, deleteGameFromCategory, moveCategoryUp, moveCategoryDown, moveGameUp, moveGameDown } from '../renderer/src/components/categoryManager.mjs';
 
 
 if (process.argv.length > 1) {
@@ -24,7 +25,7 @@ if (process.argv.length > 1) {
     try {
       require(scriptPath);
     } catch (error) {
-      console.error('脚本执行失败:', error);
+      log.error('脚本执行失败:', error);
       // 可以在这里添加代码来显示错误对话框或写入错误日志
       dialog.showErrorBox('安装错误', `更新脚本执行失败: ${error.message}`);
     }
@@ -198,7 +199,7 @@ app.whenReady().then(async () => {
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
 
-  await initAppData();
+  // await initAppData();
 
   createWindow()
 
@@ -281,6 +282,54 @@ app.whenReady().then(async () => {
       throw error;
     }
   });
+
+  ipcMain.on('add-new-category', async (event, categoryName) => {
+    await addNewCategory(getDataPath('categories.json'), categoryName);
+    const categoryData = await getCategoryData(getDataPath('categories.json'));
+    mainWindow.webContents.send('category-data-updated', categoryData);
+  });
+
+  ipcMain.on('add-new-game-in-category', async (event, categoryId, gameId) => {
+    await addNewGameToCategory(getDataPath('categories.json'), categoryId, gameId);
+    const categoryData = await getCategoryData(getDataPath('categories.json'));
+    mainWindow.webContents.send('category-data-updated', categoryData);
+  });
+
+  ipcMain.on('delete-category', async (event, categoryId) => {
+    await deleteCategory(getDataPath('categories.json'), categoryId);
+    const categoryData = await getCategoryData(getDataPath('categories.json'));
+    mainWindow.webContents.send('category-data-updated', categoryData);
+  })
+
+  ipcMain.on('delete-game-from-category', async (event, categoryId, gameId) => {
+    await deleteGameFromCategory(getDataPath('categories.json'), categoryId, gameId);
+    const categoryData = await getCategoryData(getDataPath('categories.json'));
+    mainWindow.webContents.send('category-data-updated', categoryData);
+  })
+
+  ipcMain.on('move-category-up', async (event, categoryId) => {
+    await moveCategoryUp(getDataPath('categories.json'), categoryId);
+    const categoryData = await getCategoryData(getDataPath('categories.json'));
+    mainWindow.webContents.send('category-data-updated', categoryData);
+  })
+
+  ipcMain.on('move-category-down', async (event, categoryId) => {
+    await moveCategoryDown(getDataPath('categories.json'), categoryId);
+    const categoryData = await getCategoryData(getDataPath('categories.json'));
+    mainWindow.webContents.send('category-data-updated', categoryData);
+  })
+
+  ipcMain.on('move-game-up', async (event, categoryId, gameId) => {
+    await moveGameUp(getDataPath('categories.json'), categoryId, gameId);
+    const categoryData = await getCategoryData(getDataPath('categories.json'));
+    mainWindow.webContents.send('category-data-updated', categoryData);
+  })
+
+  ipcMain.on('move-game-down', async (event, categoryId, gameId) => {
+    await moveGameDown(getDataPath('categories.json'), categoryId, gameId);
+    const categoryData = await getCategoryData(getDataPath('categories.json'));
+    mainWindow.webContents.send('category-data-updated', categoryData);
+  })
 
   ipcMain.handle('get-app-version', async (event) => {
     return app.getVersion();
@@ -384,6 +433,8 @@ app.whenReady().then(async () => {
     await organizeGameData(gid, savePath, gamePath, mainWindow, getDataPath(''));
     const gameData = await getGameData(getDataPath('data.json'));
     mainWindow.webContents.send('game-data-organized', gameData);
+    const categoryData = await getCategoryData(getDataPath('categories.json'));
+    mainWindow.webContents.send('category-data-updated', categoryData);
   });
 
   ipcMain.on('update-game-meta-data', async (event, id, gid) => {
@@ -399,6 +450,8 @@ app.whenReady().then(async () => {
     await getFileIcon(filePath, id);
     const gameData = await getGameData(getDataPath('data.json'));
     mainWindow.webContents.send('game-data-organized', gameData);
+    const categoryData = await getCategoryData(getDataPath('categories.json'));
+    mainWindow.webContents.send('category-data-updated', categoryData);
   });
 
   ipcMain.handle('generate-id', async (event, name) => {
@@ -444,6 +497,14 @@ app.whenReady().then(async () => {
     await updateGameData(newData, getDataPath('data.json'));
     mainWindow.webContents.send('game-data-updated', newData);
   })
+
+  ipcMain.on('save-category-data', async (event, newData) => {
+    await updateCategoryData(getDataPath('categories.json'), newData);
+  })
+
+  ipcMain.handle('get-category-data', async (event) => {
+    return await getCategoryData(getDataPath('categories.json'));
+  });
 
   ipcMain.on('save-game-data', async (event, data) => {
     await updateGameData(data, getDataPath('data.json'));
@@ -723,9 +784,12 @@ app.whenReady().then(async () => {
 
   ipcMain.on('delete-game', async (event, index) => {
     await deleteGame(index, getDataPath(''));
+    await deleteGameFromAllCategories(getDataPath('categories.json'), index);
     const gameData = await getGameData(getDataPath('data.json'));
     log.info(`成功删除游戏 ${index}`);
     mainWindow.webContents.send('game-data-updated', gameData);
+    const categoryData = await getCategoryData(getDataPath('categories.json'));
+    mainWindow.webContents.send('category-data-updated', categoryData);
   });
 
   ipcMain.handle('get-data-path', (event, file) => {

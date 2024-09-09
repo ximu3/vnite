@@ -265,7 +265,7 @@ function About() {
 
 function CloudSync() {
     const { configSetting, updateConfigSetting, setConfigAlert, isLoading, setIsLoading } = useConfigStore();
-    const { updateConfig, config, setData } = useRootStore();
+    const { updateConfig, config, setData, setCategoryData } = useRootStore();
     useEffect(() => {
         window.electron.ipcRenderer.on('auth-error', (event, message) => {
             setConfigAlert('Github登录失败：' + message);
@@ -287,6 +287,9 @@ function CloudSync() {
                 }, 5000);
                 await window.electron.ipcRenderer.invoke('get-game-data').then((gameData) => {
                     setData(gameData);
+                })
+                await window.electron.ipcRenderer.invoke('get-category-data').then((categoryData) => {
+                    setCategoryData(categoryData);
                 })
                 updateConfig(['cloudSync', 'github', 'repoUrl'], initData);
                 updateConfig(['cloudSync', 'github', 'lastSyncTime'], getFormattedDateTimeWithSeconds());
@@ -404,6 +407,9 @@ function CloudSync() {
             await window.electron.ipcRenderer.invoke('get-game-data').then((data) => {
                 setData(data);
             })
+            await window.electron.ipcRenderer.invoke('get-category-data').then((categoryData) => {
+                setCategoryData(categoryData);
+            })
             setConfigAlert('本地数据已成功同步至云端！');
             setTimeout(() => {
                 setConfigAlert('');
@@ -427,6 +433,9 @@ function CloudSync() {
             updateConfig(['cloudSync', 'github', 'lastSyncTime'], getFormattedDateTimeWithSeconds());
             await window.electron.ipcRenderer.invoke('get-game-data').then((data) => {
                 setData(data);
+            })
+            await window.electron.ipcRenderer.invoke('get-category-data').then((categoryData) => {
+                setCategoryData(categoryData);
             })
             setConfigAlert('云端数据已成功同步到本地！');
             setTimeout(() => {
