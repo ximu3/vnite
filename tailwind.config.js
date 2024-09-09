@@ -11,6 +11,13 @@ module.exports = {
         // 23272E
         // 1EB44B
       },
+      fontSize: {
+        '2xs': '.625rem',
+        '3xs': '.5rem',
+        '4xs': '.375rem',
+        '5xs': '.3125rem',
+        '6xs': '.25rem',
+      },
       transitionDuration: {
         '400': '400ms',
         '350': '350ms',
@@ -22,6 +29,7 @@ module.exports = {
           'main-3': '#25272C',
           'text': '#B8B9B9',
           'text-light': '#F4F5F7',
+          'text-blue': '#C7E0F7',
           'titlebar': '#171D25',
           'dropdown': '#3D4450',
           'modal': '#171D25',
