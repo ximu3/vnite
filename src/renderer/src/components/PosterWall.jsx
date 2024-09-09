@@ -129,11 +129,11 @@ export default function PosterWall() {
         setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     }
     return (
-        <div className='w-full h-full overflow-auto p-7 bg-custom-main scrollbar-base'>
+        <div className='w-full h-full overflow-auto p-7 bg-custom-main-2 scrollbar-base'>
             <div className='flex flex-col w-full h-full gap-16'>
-                <div className='flex flex-col gap-5 pt-7'>
+                <div className='flex flex-col w-full gap-5 pt-7'>
                     <div className='m-0 divider-start divider'>最近游戏</div>
-                    <div className='flex flex-row flex-wrap gap-7'>
+                    <div className='flex flex-row flex-wrap w-full gap-7'>
                         {recentPlay.map((index, arrayIndex) => (
                             arrayIndex === 0 ? (
                                 <div key={index} className='relative overflow-hidden shadow-md cursor-pointer w-87 h-60 group shadow-black/80 shine-effect-large' onClick={() => navigate(`../${index}`)}>
@@ -172,7 +172,7 @@ export default function PosterWall() {
                 <div className='flex flex-col gap-5 pb-9'>
                     <div className='flex flex-row items-center justify-center m-0 divider-start divider'>
                         <div>所有游戏</div>
-                        <div className='-ml-2 text-sm text-custom-text'>({Object.keys(data)?.length})</div>
+                        <div className='-ml-4 -mr-3 text-sm text-custom-text/90'>（{Object.keys(data)?.length}）</div>
                         <div className="z-50 dropdown">
                             <div tabIndex={0} role="button" className="flex flex-row w-auto h-5 min-h-0 pr-2 text-xs font-normal border-0 no-animation btn text-custom-text bg-custom-stress-2 hover:text-custom-text-light">
                                 <div className='flex flex-row items-center justify-center gap-1'>
