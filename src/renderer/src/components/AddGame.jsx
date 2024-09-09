@@ -249,7 +249,8 @@ function GamePath() {
       setTimeout(() => { setAlert(''); }, 3000);
       return
     }
-    await window.electron.ipcRenderer.invoke('get-game-icon', path, gid);
+    const id = await window.electron.ipcRenderer.invoke('generate-id', gameName);
+    await window.electron.ipcRenderer.invoke('get-game-icon', file.path, id);
     setGamePath(file.path);
   }
 
