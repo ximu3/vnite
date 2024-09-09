@@ -77,7 +77,6 @@ function CategoryItem({ category, index, data, icons, timestamp, searchTerm, onC
         return null;
     }
 
-    //求出分类下游戏个数
     let gameCount = 0;
     if (category.games) {
         gameCount += category.games.length;

@@ -111,7 +111,6 @@ function Game({ index }) {
             setIsGameRunning(false, null)
             updateData([id, 'detail', 'gameDuration'], data[id]['detail']['gameDuration'] + totalRunTime);
             updateData([id, 'detail', 'lastVisitDate'], getFormattedDate());
-            setIsGameRunning(false);
             if (totalRunTime >= 1) {
                 updateData([id, 'detail', 'frequency'], data[id]['detail']['frequency'] + 1);
                 if (config?.cloudSync?.enabled) {

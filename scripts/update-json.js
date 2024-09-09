@@ -54,7 +54,6 @@ const dataJsonPath = path.join(process.env.APPDATA, 'vnite', 'app', 'data', 'dat
 const configJsonPath = path.join(process.env.APPDATA, 'vnite', 'app', 'config', 'config.json');
 const categoryJsonPath = path.join(process.env.APPDATA, 'vnite', 'app', 'data', 'categories.json');
 
-// 先检测数据路径是否存在，不存在则创建并设置，存在则不做任何操作
 const initDirPath = path.join(process.env.APPDATA, 'vnite', 'app');
 if (!fs.existsSync(initDirPath)) {
     const initDataPath = path.join(process.env.APPDATA, 'vnite', 'app', 'data');
@@ -100,7 +99,6 @@ const dataNewPairs = {
 updateJsonFile(dataJsonPath, dataNewPairs);
 
 // 更新 config.json
-
 const configNewPairs = {
     advance: {
         lePath: ''
@@ -110,12 +108,9 @@ const configNewPairs = {
 };
 updateJsonFile(configJsonPath, configNewPairs, true);
 
-// 创建categories.json，先检测是否存在，不存在则创建并设置，存在则不做任何操作
 if (!fs.existsSync(categoryJsonPath)) {
-    // 创建格式如下的 category.json [{"id":0,"name":"所有游戏","games":[包含所有游戏的id]}] 请获取所有游戏的id并填入
     const categoryJson = [{ id: 0, name: '所有游戏', games: [] }];
     const dataJson = JSON.parse(fs.readFileSync(dataJsonPath, 'utf8'));
-    // data格式为{"游戏id":{游戏信息}}
     for (const gameId in dataJson) {
         if (dataJson.hasOwnProperty(gameId)) {
             categoryJson[0].games.push(gameId);
