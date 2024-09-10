@@ -22,8 +22,8 @@ win:
   target:
     - nsis
   extraFiles:
-    - from: scripts/update-json.js
-      to: resources/update-json.js
+    - from: scripts/update-json.mjs
+      to: resources/update-json.mjs
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}

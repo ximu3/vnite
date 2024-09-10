@@ -16,14 +16,16 @@ import chokidar from 'chokidar';
 import log from 'electron-log/main.js';
 import axios from 'axios';
 import semver from 'semver';
+import { initData } from '../../scripts/update-json.mjs';
 import { getCategoryData, deleteGameFromAllCategories, updateCategoryData, addNewCategory, addNewGameToCategory, deleteCategory, deleteGameFromCategory, moveCategoryUp, moveCategoryDown, moveGameUp, moveGameDown } from '../renderer/src/components/categoryManager.mjs';
 
 
 if (process.argv.length > 1) {
   const scriptPath = process.argv[1];
-  if (path.basename(scriptPath) === 'update-json.js') {
+  if (path.basename(scriptPath) === 'update-json.mjs') {
     try {
-      require(scriptPath);
+      await initData();
+      log.info('数据初始化完成');
     } catch (error) {
       log.error('脚本执行失败:', error);
       // 可以在这里添加代码来显示错误对话框或写入错误日志
