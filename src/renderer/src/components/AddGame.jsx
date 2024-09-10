@@ -319,7 +319,7 @@ function GameBg() {
             {
               gameBgList.map((bg, index) => {
                 return (
-                  <div key={index} className={gameBg === bg ? 'w-86 p-3 bg-custom-blue-4/50' : 'w-86 p-3 bg-custom-stress'} onClick={() => { setGameBg(bg) }}>
+                  <div key={index} className={gameBg === bg ? 'w-86 p-3 bg-custom-blue-4/50 cursor-pointer' : 'w-86 p-3 bg-custom-stress cursor-pointer'} onClick={() => { setGameBg(bg) }}>
                     <img src={bg} alt={index} className='w-full h-auto' />
                   </div>
                 )
