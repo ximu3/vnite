@@ -347,7 +347,7 @@ function Game({ index }) {
                                     <span className="icon-[mingcute--more-1-fill] w-6 h-6"></span>
                                 </div>
                                 <ul tabIndex={0} className="dropdown-content menu bg-custom-dropdown rounded-box z-[1] w-52 p-2 shadow">
-                                    <li onClick={() => { window.electron.ipcRenderer.send('search-game-in-adv3', gameData['name']) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>搜索游戏资源</a></li>
+                                    {/* <li onClick={() => { window.electron.ipcRenderer.send('search-game-in-adv3', gameData['name']) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>搜索游戏资源</a></li> */}
                                     <li onClick={updateGame} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>下载资料数据</a></li>
                                     <li onClick={() => { openFolderInExplorer(gameData['gamePath']) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>浏览本地文件</a></li>
                                     <li onClick={() => { openFolderInExplorer(gameData['savePath']) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>打开存档文件夹</a></li>
