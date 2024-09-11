@@ -527,8 +527,9 @@ function CloudSync() {
                     </div>
                 </div>
             </dialog>
-            <div className='text-2xl font-bold text-custom-text-light'>
+            <div className='flex gap-2 text-2xl font-bold text-custom-text-light'>
                 云同步
+                <div className="self-center badge text-custom-text badge-outline badge-sm">beta</div>
             </div>
             <div className='flex flex-col gap-2'>
                 <label className="p-0 cursor-pointer label">

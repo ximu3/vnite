@@ -167,7 +167,7 @@ function bringApplicationToFront() {
   }
 }
 
-async function retry(fn, retries, mainWindow) {
+async function retryAddGame(fn, retries, mainWindow) {
   try {
     return await fn();
   } catch (error) {
@@ -175,7 +175,20 @@ async function retry(fn, retries, mainWindow) {
       log.warn(`操作失败，${1000 / 1000}秒后重试。剩余重试次数：${retries - 1}`);
       mainWindow.webContents.send('add-game-log', `[warning] 操作失败，1秒后重试。剩余重试次数：${retries - 1}`);
       await new Promise(resolve => setTimeout(resolve, 1000));
-      return retry(fn, retries - 1, mainWindow);
+      return retryAddGame(fn, retries - 1, mainWindow);
+    }
+    throw error;
+  }
+}
+
+async function retry(fn, retries) {
+  try {
+    return await fn();
+  } catch (error) {
+    if (retries > 0) {
+      log.warn(`操作失败，${1000 / 1000}秒后重试。剩余重试次数：${retries - 1}`);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      return retry(fn, retries - 1);
     }
     throw error;
   }
@@ -206,7 +219,11 @@ app.whenReady().then(async () => {
 
   createWindow()
 
+  // 获取版本号
+  const version = app.getVersion();
+
   log.info('App started 应用已启动');
+  log.info('Version 版本:', version);
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
@@ -428,7 +445,7 @@ app.whenReady().then(async () => {
   });
 
   ipcMain.handle('add-new-game-to-data', async (event, gid, coverUrl, bgUrl) => {
-    await retry(() => addNewGameToData(gid, coverUrl, bgUrl, getDataPath('games'), join(getAppRootPath(), 'assets')), 3, mainWindow);
+    await retryAddGame(() => addNewGameToData(gid, coverUrl, bgUrl, getDataPath('games'), join(getAppRootPath(), 'assets')), 3, mainWindow);
     return
   });
 
@@ -704,7 +721,7 @@ app.whenReady().then(async () => {
     try {
       const path = getSyncPath('')
       await fse.remove(path);
-      await clonePrivateRepo(token, `https://github.com/${owner}/my-vnite.git`, path);
+      await retry(() => clonePrivateRepo(token, `https://github.com/${owner}/my-vnite.git`, path), 5);
       const gameData = await getGameData(getDataPath('data.json'));
       mainWindow.webContents.send('game-data-updated', gameData);
       log.info('使用云端数据初始化仓库成功');

@@ -16,7 +16,7 @@ export function startAuthProcess(mainWindow, clientId, clientSecret) {
   return new Promise((resolve, reject) => {
     try {
       const state = crypto.randomBytes(16).toString('hex');
-      const authUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo&state=${state}`;
+      const authUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo user:email&state=${state}`;
 
       server = http.createServer((req, res) => {
         const parsedUrl = url.parse(req.url, true);
@@ -126,7 +126,7 @@ export async function initializeRepo(token, user, localPath, mainWindow) {
       if (Object.keys(jsonData).length === 0) {
         await fse.remove(localPath);
         console.log('清空本地文件夹');
-        await clonePrivateRepo(token, `https://github.com/${user}/my-vnite.git`, localPath);
+        await retry(() => clonePrivateRepo(token, `https://github.com/${user}/my-vnite.git`, localPath), 5);
         return `https://github.com/${user}/my-vnite.git`;
       } else {
         mainWindow.webContents.send('initialize-diff-data');
@@ -145,11 +145,38 @@ export async function initializeRepo(token, user, localPath, mainWindow) {
   }
 }
 
+//获取github用户的用户名与邮箱
+export async function getUserInfo(token) {
+  try {
+    const response = await axios.get('https://api.github.com/user', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+    const emailResponse = await axios.get('https://api.github.com/user/emails', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+    const primaryEmail = emailResponse.data.find(email => email.primary).email;
+    return { username: response.data.login, email: primaryEmail };
+  } catch (error) {
+    console.error('获取用户信息时出错:', error);
+    throw error;
+  }
+}
+
+
 
 export async function initAndPushLocalRepo(token, localPath, user) {
   try {
+    const gitConfig = await getUserInfo(token);
     const git = simpleGit(localPath, { config: ['safe.directory=*'] });
     await git.init().then(() => git.checkoutLocalBranch('main'));
+    await git.addConfig('user.name', gitConfig.username, false);
+    await git.addConfig('user.email', gitConfig.email, false);
     console.log(`初始化了本地仓库: ${localPath}`);
     let repoUrlWithToken = `https://${token}@github.com/${user}/my-vnite.git`
     await git.addRemote('origin', repoUrlWithToken);
@@ -183,8 +210,11 @@ async function createEmptyRepoAndPushLocalFiles(token, repoName, localPath, user
     console.log(`创建了空的远程仓库: ${repoUrl}`);
 
     // 2. 初始化本地仓库
+    const gitConfig = await getUserInfo(token);
     const git = simpleGit(localPath, { config: ['safe.directory=*'] });
     await git.init().then(() => git.checkoutLocalBranch('main'));
+    await git.addConfig('user.name', gitConfig.username, false);
+    await git.addConfig('user.email', gitConfig.email, false);
     console.log(`初始化了本地仓库: ${localPath}`);
 
     // 3. 添加远程仓库链接
@@ -208,12 +238,33 @@ async function createEmptyRepoAndPushLocalFiles(token, repoName, localPath, user
   }
 }
 
+async function retry(fn, retries) {
+  try {
+    return await fn();
+  } catch (error) {
+    if (retries > 0) {
+      log.warn(`操作失败，${1000 / 1000}秒后重试。剩余重试次数：${retries - 1}`);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      return retry(fn, retries - 1);
+    }
+    throw error;
+  }
+}
+
 // 克隆私有仓库
 export async function clonePrivateRepo(token, repoUrl, localPath) {
   try {
     const git = simpleGit({ config: ['safe.directory=*'] });
     const authRepoUrl = repoUrl.replace('https://', `https://${token}@`);
     await git.clone(authRepoUrl, localPath);
+
+    // 创建一个新的 simpleGit 实例，明确指定工作目录
+    const localGit = simpleGit(localPath, { config: ['safe.directory=*'] });
+
+    const gitConfig = await getUserInfo(token);
+    await localGit.addConfig('user.name', gitConfig.username, false, 'local');
+    await localGit.addConfig('user.email', gitConfig.email, false, 'local');
+
     log.info(`仓库克隆到 ${localPath}`);
   } catch (error) {
     log.error('仓库克隆过程中出错:', error);
