@@ -316,6 +316,15 @@ function CloudSync() {
         }
     }, []);
     async function loginGithub() {
+        const isGitInstalled = await window.electron.ipcRenderer.invoke('check-git-installed');
+        if (!isGitInstalled) {
+            setConfigAlert('请先安装Git！');
+            setTimeout(() => {
+                setConfigAlert('');
+            }, 5000);
+            window.electron.ipcRenderer.send('open-external', 'https://git-scm.com/downloads');
+            return;
+        }
         setIsLoading(true);
         await window.electron.ipcRenderer.invoke('start-auth-process', configSetting.cloudSync.github.clientId, configSetting.cloudSync.github.clientSecret).then((data) => {
             updateConfig(['cloudSync', 'github', 'username'], data.username);

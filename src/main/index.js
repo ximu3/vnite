@@ -17,6 +17,7 @@ import log from 'electron-log/main.js';
 import axios from 'axios';
 import semver from 'semver';
 import { initData } from '../../scripts/update-json.mjs';
+import util from 'util';
 import { getCategoryData, deleteGameFromAllCategories, updateCategoryData, addNewCategory, addNewGameToCategory, deleteCategory, deleteGameFromCategory, moveCategoryUp, moveCategoryDown, moveGameUp, moveGameDown } from '../renderer/src/components/categoryManager.mjs';
 
 
@@ -619,6 +620,23 @@ app.whenReady().then(async () => {
     } catch (error) {
       log.error(`保存游戏 ${gameId} 记忆图片时出错:`, error);
     }
+  });
+
+  const execFileAsync = util.promisify(execFile);
+
+  ipcMain.handle('check-git-installed', async () => {
+    try {
+      const { stdout } = await execFileAsync('git', ['--version']);
+      log.info('Git 版本:', stdout.trim());
+      return true;
+    } catch (error) {
+      log.error('Git 检测错误:', error.message);
+      return false;
+    }
+  });
+
+  ipcMain.on('open-external', (event, url) => {
+    shell.openExternal(url);
   });
 
   ipcMain.handle('get-config-data', async (event) => {

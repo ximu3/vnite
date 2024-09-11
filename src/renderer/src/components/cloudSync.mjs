@@ -214,9 +214,9 @@ export async function clonePrivateRepo(token, repoUrl, localPath) {
     const git = simpleGit({ config: ['safe.directory=*'] });
     const authRepoUrl = repoUrl.replace('https://', `https://${token}@`);
     await git.clone(authRepoUrl, localPath);
-    console.log(`仓库克隆到 ${localPath}`);
+    log.info(`仓库克隆到 ${localPath}`);
   } catch (error) {
-    console.error('操作过程中出错:', error);
+    log.error('仓库克隆过程中出错:', error);
     throw error;
   }
 }
