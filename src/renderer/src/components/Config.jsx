@@ -265,7 +265,7 @@ function About() {
 
 function CloudSync() {
     const { configSetting, updateConfigSetting, setConfigAlert, isLoading, setIsLoading } = useConfigStore();
-    const { updateConfig, config, setData, setCategoryData } = useRootStore();
+    const { updateConfig, config, setData, setCategoryData, setConfig } = useRootStore();
     useEffect(() => {
         window.electron.ipcRenderer.on('auth-error', (event, message) => {
             setConfigAlert('Github登录失败：' + message);
@@ -290,6 +290,9 @@ function CloudSync() {
                 })
                 await window.electron.ipcRenderer.invoke('get-category-data').then((categoryData) => {
                     setCategoryData(categoryData);
+                })
+                await window.electron.ipcRenderer.invoke('get-config-data').then((configData) => {
+                    setConfig(configData);
                 })
                 updateConfig(['cloudSync', 'github', 'repoUrl'], initData);
                 updateConfig(['cloudSync', 'github', 'lastSyncTime'], getFormattedDateTimeWithSeconds());
@@ -410,6 +413,9 @@ function CloudSync() {
             await window.electron.ipcRenderer.invoke('get-category-data').then((categoryData) => {
                 setCategoryData(categoryData);
             })
+            await window.electron.ipcRenderer.invoke('get-config-data').then((configData) => {
+                setConfig(configData);
+            })
             setConfigAlert('本地数据已成功同步至云端！');
             setTimeout(() => {
                 setConfigAlert('');
@@ -436,6 +442,9 @@ function CloudSync() {
             })
             await window.electron.ipcRenderer.invoke('get-category-data').then((categoryData) => {
                 setCategoryData(categoryData);
+            })
+            await window.electron.ipcRenderer.invoke('get-config-data').then((configData) => {
+                setConfig(configData);
             })
             setConfigAlert('云端数据已成功同步到本地！');
             setTimeout(() => {
