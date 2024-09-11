@@ -98,7 +98,7 @@ function Library() {
         {
           label: '删除分类',
           onClick: () => {
-            if (categoryId === '0') {
+            if (categoryId === 0) {
               setAlert('无法删除默认分类！');
               setTimeout(() => {
                 setAlert('');
