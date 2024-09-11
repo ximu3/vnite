@@ -609,7 +609,7 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath) {
                 gamePath = gamePath.replace(/\\/g, '/');
                 const size = await getFolderSize.loose(path.dirname(gamePath), { bigint: true });
                 sizeInMB = Number((size / BigInt(1024 * 1024))).toFixed(0);
-                icon = `/games/${gid}/icon.png`;
+                icon = `/games/${id}/icon.png`;
             } catch (error) {
                 console.error('Error calculating folder size:', error);
             }
