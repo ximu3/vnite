@@ -114,19 +114,19 @@ async function checkRepoExists(token, owner) {
   }
 }
 
-export async function initializeRepo(token, user, localPath, mainWindow) {
+export async function initializeRepo(token, user, localPath, mainWindow, dataPath) {
   const repo = 'my-vnite'
   try {
     // 检查仓库是否存在
-    const exists = await checkRepoExists(token, user);
-    const data = await fs.readFile(path.join(localPath, 'data/data.json'));
+    const exists = await retry(() => checkRepoExists(token, user), 3);
+    const data = await fs.readFile(dataPath);
     const jsonData = JSON.parse(data);
     if (exists) {
       console.log('仓库已存在');
       if (Object.keys(jsonData).length === 0) {
         await fse.remove(localPath);
         console.log('清空本地文件夹');
-        await retry(() => clonePrivateRepo(token, `https://github.com/${user}/my-vnite.git`, localPath), 5);
+        await clonePrivateRepo(token, `https://github.com/${user}/my-vnite.git`, localPath)
         return `https://github.com/${user}/my-vnite.git`;
       } else {
         mainWindow.webContents.send('initialize-diff-data');
@@ -148,18 +148,24 @@ export async function initializeRepo(token, user, localPath, mainWindow) {
 //获取github用户的用户名与邮箱
 export async function getUserInfo(token) {
   try {
-    const response = await axios.get('https://api.github.com/user', {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json'
-      }
-    });
-    const emailResponse = await axios.get('https://api.github.com/user/emails', {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json'
-      }
-    });
+    const response = await retry(() => {
+      return axios.get('https://api.github.com/user', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+    }, 3);
+
+    const emailResponse = await retry(() => {
+      return axios.get('https://api.github.com/user/emails', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+    }, 3);
+
     const primaryEmail = emailResponse.data.find(email => email.primary).email;
     return { username: response.data.login, email: primaryEmail };
   } catch (error) {
@@ -174,24 +180,35 @@ export async function initAndPushLocalRepo(token, localPath, user) {
   try {
     const gitConfig = await getUserInfo(token);
     const git = simpleGit(localPath, { config: ['safe.directory=*'] });
-    await git.init().then(() => git.checkoutLocalBranch('main'));
+
+    // 检查仓库是否已经初始化
+    await git.init()
+
+    // 检查 'main' 分支是否存在，如果不存在则创建
+    const branches = await git.branchLocal();
+    if (!branches.all.includes('main')) {
+      await git.checkoutLocalBranch('main');
+    } else {
+      await git.checkout('main');
+    }
+    console.log('已切换到 main 分支');
+
     await git.addConfig('user.name', gitConfig.username, false);
     await git.addConfig('user.email', gitConfig.email, false);
-    console.log(`初始化了本地仓库: ${localPath}`);
+    console.log('仓库初始化完成');
     let repoUrlWithToken = `https://${token}@github.com/${user}/my-vnite.git`
     await git.addRemote('origin', repoUrlWithToken);
     console.log('添加了远程仓库链接');
     await git.add('./*');
     await git.commit(`${Date.now()}`);
     console.log('添加并提交了本地文件');
-    await git.push(['--force', 'origin', 'main']);
+    await retry(() => git.push(['--force', 'origin', 'main']), 3);
     console.log('成功推送到远程仓库');
     return repoUrlWithToken;
   } catch (error) {
     console.error('操作过程中出错:', error);
     throw error;
   }
-  //把本地文件推送到远程仓库
 }
 
 async function createEmptyRepoAndPushLocalFiles(token, repoName, localPath, user) {
@@ -228,7 +245,7 @@ async function createEmptyRepoAndPushLocalFiles(token, repoName, localPath, user
     console.log('添加并提交了本地文件');
 
     // 5. 推送到远程仓库
-    await git.push('origin', 'main');
+    await retry(() => git.push('origin', 'main'), 3);
     console.log('成功推送到远程仓库');
 
     return repoUrl;
@@ -238,25 +255,13 @@ async function createEmptyRepoAndPushLocalFiles(token, repoName, localPath, user
   }
 }
 
-async function retry(fn, retries) {
-  try {
-    return await fn();
-  } catch (error) {
-    if (retries > 0) {
-      log.warn(`操作失败，${1000 / 1000}秒后重试。剩余重试次数：${retries - 1}`);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      return retry(fn, retries - 1);
-    }
-    throw error;
-  }
-}
 
 // 克隆私有仓库
 export async function clonePrivateRepo(token, repoUrl, localPath) {
   try {
     const git = simpleGit({ config: ['safe.directory=*'] });
     const authRepoUrl = repoUrl.replace('https://', `https://${token}@`);
-    await git.clone(authRepoUrl, localPath);
+    await retry(() => git.clone(authRepoUrl, localPath), 3);
 
     // 创建一个新的 simpleGit 实例，明确指定工作目录
     const localGit = simpleGit(localPath, { config: ['safe.directory=*'] });
@@ -278,10 +283,6 @@ export async function commitAndPush(localPath, message) {
   try {
     const git = simpleGit(localPath, { config: ['safe.directory=*'] });
 
-    // 先尝试拉取最新更改
-    log.info('正在拉取远程更改...');
-    await git.pull('origin', 'main', { '--rebase': 'false' });
-
     // 添加所有更改
     await git.add('.');
 
@@ -297,7 +298,7 @@ export async function commitAndPush(localPath, message) {
 
     // 尝试推送更改
     console.log('正在推送更改到远程仓库...');
-    await git.push('origin', 'main');
+    await retry(() => git.push('origin', 'main'), 3);
     console.log('更改已成功推送到远程仓库');
   } catch (error) {
     console.error('操作过程中出错:', error);
@@ -314,7 +315,7 @@ export async function pullChanges(localPath) {
     const git = simpleGit(localPath);
     await git.reset('hard', ['origin/main']);
     // 然后执行拉取操作
-    await git.pull('origin', 'main');
+    await retry(() => git.pull('origin', 'main'), 3);
     log.info('拉取最新数据成功');
   } catch (error) {
     log.error('操作过程中出错:', error);

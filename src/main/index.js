@@ -1,10 +1,10 @@
-import { app, shell, BrowserWindow, ipcMain, dialog, Tray, Menu, globalShortcut, nativeTheme } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, dialog, Tray, Menu, nativeTheme } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { addNewGameToData, getGameData, updateGameData, deleteGame } from '../renderer/src/components/dataManager.mjs'
 import { organizeGameData, searchGameNamebyId, organizeGameDataEmpty, updateGameMetaData } from "../renderer/src/components/scraper.mjs"
-import { spawn, exec, execFile } from 'child_process';
+import { spawn, execFile } from 'child_process';
 import sharp from 'sharp';
 import fs from 'fs/promises';
 import fse from 'fs-extra';
@@ -12,7 +12,6 @@ import { getConfigData, updateConfigData } from '../renderer/src/components/conf
 import { startAuthProcess, initializeRepo, commitAndPush, createWebDavClient, uploadDirectory, downloadDirectory, initAndPushLocalRepo, clonePrivateRepo, pullChanges } from '../renderer/src/components/cloudSync.mjs';
 import getFolderSize from "get-folder-size";
 import path from 'path';
-import chokidar from 'chokidar';
 import log from 'electron-log/main.js';
 import axios from 'axios';
 import semver from 'semver';
@@ -85,20 +84,6 @@ function createWindow() {
       event.preventDefault();
     }
   });
-
-
-  // const dataPath = getDataPath('data.json');
-  // const configPath = getConfigPath('config.json');
-  // const dataWatcher = chokidar.watch(dataPath);
-  // const configWatcher = chokidar.watch(configPath);
-  // dataWatcher.on('change', async () => {
-  //   const gameData = await getGameData(dataPath);
-  //   mainWindow.webContents.send('game-data-updated', gameData);
-  // });
-  // configWatcher.on('change', async () => {
-  //   const configData = await getConfigData();
-  //   mainWindow.webContents.send('config-data-updated', configData);
-  // });
 }
 
 async function initAppData() {
@@ -112,13 +97,13 @@ async function initAppData() {
     const exists = await fs.access(syncPath).then(() => true).catch(() => false);
 
     if (!exists) {
-      await fse.copy(join(app.getAppPath(), 'example/app'), syncPath);
-      log.info('应用数据初始化完成');
+      await fs.mkdir(syncPath, { recursive: true });
+      log.info('同步目录初始化完成');
     } else {
-      console.log('应用数据已存在，无需初始化');
+      console.log('同步目录已存在，无需初始化');
     }
   } catch (error) {
-    log.error('初始化数据时出错:', error);
+    log.error('初始化同步目录时出错:', error);
   }
 }
 
@@ -194,6 +179,39 @@ async function retry(fn, retries) {
   }
 }
 
+async function appToSync() {
+  //将app文件夹下的文件同步到sync文件夹下
+  try {
+    const appPath = getAppPath('');
+    const syncPath = getSyncPath('');
+    await fse.copy(appPath, syncPath);
+    log.info('本地同步完成，app -> sync');
+  } catch (error) {
+    log.error('本地同步出错，app -> sync:', error);
+  }
+}
+
+async function syncToApp() {
+  //将sync文件夹下的文件同步到app文件夹下
+  try {
+    const appPath = getAppPath('');
+    const syncPath = getSyncPath('');
+    //排除.git文件夹
+    const files = await fs.readdir(syncPath);
+    for (const file of files) {
+      if (file === '.git') {
+        continue;
+      }
+      const syncFilePath = join(syncPath, file);
+      const appFilePath = join(appPath, file);
+      await fse.copy(syncFilePath, appFilePath);
+    }
+    log.info('本地同步完成，sync -> app');
+  } catch (error) {
+    log.error('本地同步出错，sync -> app:', error);
+  }
+}
+
 
 let processes = new Map();
 // This method will be called when Electron has finished
@@ -215,7 +233,7 @@ app.whenReady().then(async () => {
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
 
-  // await initAppData();
+  await initAppData();
 
   createWindow()
 
@@ -224,6 +242,8 @@ app.whenReady().then(async () => {
 
   log.info('App started 应用已启动');
   log.info('Version 版本:', version);
+
+  await appToSync();
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
@@ -293,6 +313,7 @@ app.whenReady().then(async () => {
     try {
       const localPath = getSyncPath('');
       await pullChanges(localPath);
+      await syncToApp();
       const gameData = await getGameData(getDataPath('data.json'));
       const configData = await getConfigData();
       mainWindow.webContents.send('config-data-updated', configData);
@@ -675,14 +696,17 @@ app.whenReady().then(async () => {
       return result;
     } catch (error) {
       log.error('Github认证错误:', error);
-      throw error;
+      return error;
     }
   });
 
   ipcMain.handle('initialize-repo', async (event, token, owner) => {
     try {
-      const path = getSyncPath('')
-      const data = await initializeRepo(token, owner, path, mainWindow);
+      const syncPath = getSyncPath('')
+      const dataPath = getDataPath('data.json');
+      await appToSync();
+      const data = await initializeRepo(token, owner, syncPath, mainWindow, dataPath);
+      await syncToApp();
       const gameData = await getGameData(getDataPath('data.json'));
       mainWindow.webContents.send('game-data-updated', gameData);
       log.info('初始化仓库成功:', data);
@@ -706,6 +730,7 @@ app.whenReady().then(async () => {
   ipcMain.handle('initialize-use-local-data', async (event, token, owner) => {
     try {
       const path = getSyncPath('')
+      await appToSync();
       await initAndPushLocalRepo(token, path, owner);
       const gameData = await getGameData(getDataPath('data.json'));
       mainWindow.webContents.send('game-data-updated', gameData);
@@ -721,7 +746,8 @@ app.whenReady().then(async () => {
     try {
       const path = getSyncPath('')
       await fse.remove(path);
-      await retry(() => clonePrivateRepo(token, `https://github.com/${owner}/my-vnite.git`, path), 5);
+      await clonePrivateRepo(token, `https://github.com/${owner}/my-vnite.git`, path)
+      await syncToApp();
       const gameData = await getGameData(getDataPath('data.json'));
       mainWindow.webContents.send('game-data-updated', gameData);
       log.info('使用云端数据初始化仓库成功');
@@ -735,6 +761,7 @@ app.whenReady().then(async () => {
   ipcMain.handle('cloud-sync-github', async (event, message) => {
     try {
       const path = getSyncPath('')
+      await appToSync();
       await commitAndPush(path, message);
       log.info('Github同步成功');
       return 'success';
@@ -995,6 +1022,14 @@ export function getConfigPath(file) {
 
 export function getSyncPath(file) {
   if (app.isPackaged) {
+    return path.join(getAppRootPath(), '/sync', file);
+  } else {
+    return path.join(getAppRootPath(), '/src/renderer/public/sync', file);
+  }
+}
+
+export function getAppPath(file) {
+  if (app.isPackaged) {
     return path.join(app.getPath('userData'), '/app', file);
   } else {
     return path.join(getAppRootPath(), '/src/renderer/public/app', file);
@@ -1011,6 +1046,7 @@ function getLogsPath() {
 
 async function handleAppExit() {
   try {
+    await appToSync();
     await waitExitInRenderer();
     log.info('应用已退出');
     app.exit(0); // 正常退出

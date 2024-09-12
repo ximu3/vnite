@@ -267,19 +267,41 @@ function CloudSync() {
     const { configSetting, updateConfigSetting, setConfigAlert, isLoading, setIsLoading } = useConfigStore();
     const { updateConfig, config, setData, setCategoryData, setConfig } = useRootStore();
     useEffect(() => {
-        window.electron.ipcRenderer.on('auth-error', (event, message) => {
-            setConfigAlert('Github登录失败：' + message);
+        window.electron.ipcRenderer.on('initialize-error', (event, message) => {
+            setConfigAlert('Github仓库初始化失败：' + message);
             setTimeout(() => {
                 setConfigAlert('');
             }, 5000);
         })
-        window.electron.ipcRenderer.on('auth-success', async (event, data) => {
-            setConfigAlert('Github登录成功：' + data.username);
+        window.electron.ipcRenderer.on('initialize-diff-data', (event) => {
+            document.getElementById('initializeDiffData').showModal();
+        })
+        return () => {
+            window.electron.ipcRenderer.removeAllListeners('initialize-error');
+        }
+    }, []);
+    async function loginGithub() {
+        const isGitInstalled = await window.electron.ipcRenderer.invoke('check-git-installed');
+        if (!isGitInstalled) {
+            setConfigAlert('请先安装Git！');
             setTimeout(() => {
                 setConfigAlert('');
             }, 5000);
+            window.electron.ipcRenderer.send('open-external', 'https://git-scm.com/downloads');
+            return;
+        }
+        setIsLoading(true);
+        const authData = await window.electron.ipcRenderer.invoke('start-auth-process', config.cloudSync.github.clientId, config.cloudSync.github.clientSecret)
+        if (authData.username) {
+            updateConfig(['cloudSync', 'github', 'username'], authData.username);
+            updateConfig(['cloudSync', 'github', 'accessToken'], authData.accessToken);
+            setConfigAlert('Github登录成功：' + authData.username);
+            setTimeout(() => {
+                setConfigAlert('');
+            }, 5000);
+            await window.electron.ipcRenderer.invoke('update-config-data', config);
             setIsLoading(true);
-            const initData = await window.electron.ipcRenderer.invoke('initialize-repo', data.accessToken, data.username)
+            const initData = await window.electron.ipcRenderer.invoke('initialize-repo', authData.accessToken, authData.username)
             if (initData) {
                 setConfigAlert('数据即将完成初始化，请稍候...');
                 setTimeout(() => {
@@ -297,40 +319,14 @@ function CloudSync() {
                 updateConfig(['cloudSync', 'github', 'repoUrl'], initData);
                 updateConfig(['cloudSync', 'github', 'lastSyncTime'], getFormattedDateTimeWithSeconds());
             }
-
             setIsLoading(false);
-        })
-        window.electron.ipcRenderer.on('initialize-error', (event, message) => {
-            setConfigAlert('Github仓库初始化失败：' + message);
+        } else {
+            setConfigAlert('Github登录失败：' + authData);
             setTimeout(() => {
                 setConfigAlert('');
             }, 5000);
-        })
-        window.electron.ipcRenderer.on('initialize-diff-data', (event) => {
-            document.getElementById('initializeDiffData').showModal();
-        })
-        return () => {
-            window.electron.ipcRenderer.removeAllListeners('auth-error');
-            window.electron.ipcRenderer.removeAllListeners('auth-success');
-            window.electron.ipcRenderer.removeAllListeners('initialize-error');
+            setIsLoading(false);
         }
-    }, []);
-    async function loginGithub() {
-        const isGitInstalled = await window.electron.ipcRenderer.invoke('check-git-installed');
-        if (!isGitInstalled) {
-            setConfigAlert('请先安装Git！');
-            setTimeout(() => {
-                setConfigAlert('');
-            }, 5000);
-            window.electron.ipcRenderer.send('open-external', 'https://git-scm.com/downloads');
-            return;
-        }
-        setIsLoading(true);
-        await window.electron.ipcRenderer.invoke('start-auth-process', configSetting.cloudSync.github.clientId, configSetting.cloudSync.github.clientSecret).then((data) => {
-            updateConfig(['cloudSync', 'github', 'username'], data.username);
-            updateConfig(['cloudSync', 'github', 'accessToken'], data.accessToken);
-        })
-        setIsLoading(false);
     }
     function getFormattedDateTimeWithSeconds() {
         const now = new Date();
@@ -501,7 +497,29 @@ function CloudSync() {
             }, 3000);
         })
         await loginGithub();
+
         setIsLoading(false);
+    }
+    async function openCloudSync(e) {
+        const isChecked = e.target.checked;
+        if (isChecked) {
+            if (config.cloudSync.github.username) {
+                setConfigAlert('正在同步数据，请稍候...');
+                setTimeout(() => {
+                    setConfigAlert('');
+                }, 5000);
+                await githubSync();
+                updateConfig(['cloudSync', 'enabled'], isChecked);
+            } else {
+                setConfigAlert('请先登录Github账号！');
+                setTimeout(() => {
+                    setConfigAlert('');
+                }, 3000);
+                return
+            }
+        } else {
+            updateConfig(['cloudSync', 'enabled'], isChecked);
+        }
     }
     return (
         <div className='flex flex-col w-full h-full gap-5 pb-32 overflow-auto p-7 scrollbar-base bg-custom-modal'>
@@ -534,7 +552,7 @@ function CloudSync() {
             <div className='flex flex-col gap-2'>
                 <label className="p-0 cursor-pointer label">
                     <span className="text-sm font-semibold">是否开启</span>
-                    <input type="checkbox" className="toggle checked:bg-custom-text-light bg-custom-text checked:[--tglbg:theme(colors.custom.blue-6)] [--tglbg:theme(colors.custom.stress)] border-0 hover:brightness-125 checked:hover:brightness-100" checked={config?.cloudSync?.enabled || false} onChange={(e) => { updateConfig(['cloudSync', 'enabled'], e.target.checked) }} />
+                    <input type="checkbox" className="toggle checked:bg-custom-text-light bg-custom-text checked:[--tglbg:theme(colors.custom.blue-6)] [--tglbg:theme(colors.custom.stress)] border-0 hover:brightness-125 checked:hover:brightness-100" checked={config?.cloudSync?.enabled || false} onChange={(e) => { openCloudSync(e) }} />
                 </label>
                 <div className='m-0 divider'></div>
                 <label className="flex p-0 label">
@@ -566,9 +584,9 @@ function CloudSync() {
                                             <div>{config['cloudSync']['github']['username']}</div>
                                         </div>
                                     </div>
-                                    <ul tabIndex={0} className="dropdown-content menu bg-custom-dropdown rounded-box z-[1] w-auto p-2 shadow">
-                                        <li onClick={switchGithub} className='p-0 text-xs hover:bg-custom-text hover:text-black'><a className='transition-none hover:text-black'>切换</a></li>
-                                        <li onClick={signoutGithub} className='p-0 text-xs hover:bg-custom-text hover:text-black'><a className='transition-none hover:text-black'>退出</a></li>
+                                    <ul tabIndex={0} className="dropdown-content menu bg-custom-dropdown rounded-box z-[1] p-2 shadow w-20">
+                                        <li onClick={switchGithub} className='flex items-center justify-center p-0 text-xs hover:bg-custom-text hover:text-black'><a className='transition-none hover:text-black'>切换</a></li>
+                                        <li onClick={signoutGithub} className='flex items-center justify-center p-0 text-xs hover:bg-custom-text hover:text-black'><a className='transition-none hover:text-black'>退出</a></li>
                                     </ul>
                                 </div>
                             </div>
