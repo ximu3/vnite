@@ -707,8 +707,6 @@ app.whenReady().then(async () => {
       await appToSync();
       const data = await initializeRepo(token, owner, syncPath, mainWindow, dataPath);
       await syncToApp();
-      const gameData = await getGameData(getDataPath('data.json'));
-      mainWindow.webContents.send('game-data-updated', gameData);
       log.info('初始化仓库成功:', data);
       return data
     } catch (error) {

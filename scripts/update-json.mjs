@@ -96,6 +96,16 @@ export async function initData() {
         console.log(`${initDirPath} 文件夹已成功创建。`);
     }
 
+    //如果app下存在.git文件夹，将其删除
+    const gitPath = path.join(process.env.APPDATA, 'vnite', 'app', '.git');
+    try {
+        await fs.access(gitPath);
+        await fs.rm(gitPath, { recursive: true, force: true });
+        console.log(`${gitPath} 文件夹已删除。`);
+    } catch (error) {
+        console.log(`${gitPath} 文件夹不存在，无需删除。`);
+    }
+
     // 更新 data.json
     const dataNewPairs = {
         startWithLe: false
@@ -126,3 +136,5 @@ export async function initData() {
         console.log(`${categoryJsonPath} 文件已成功创建。`);
     }
 }
+
+await initData();
