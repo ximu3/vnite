@@ -137,4 +137,4 @@ export async function initData() {
     }
 }
 
-await initData();
+// await initData();
