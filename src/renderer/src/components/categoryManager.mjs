@@ -56,6 +56,11 @@ async function addNewGameToCategory(dataPath, categoryId, gameId) {
     try {
         const data = await getCategoryData(dataPath);
         const category = data.find(category => category.id === categoryId);
+        // Check if the game is already in the category
+        if (category.games.includes(gameId)) {
+            log.warn(`Game ${gameId} is already in category ${categoryId}`);
+            return
+        }
         category.games.push(gameId);
         await updateCategoryData(dataPath, data);
         return
