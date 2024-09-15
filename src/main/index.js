@@ -402,6 +402,41 @@ app.whenReady().then(async () => {
     await getFileIcon(filePath, id);
   });
 
+  ipcMain.handle('update-character-img', async (event, gameId, imgId) => {
+    //dialog获取图片路径
+    const result = await dialog.showOpenDialog({
+      properties: ['openFile'],
+      filters: [
+        { name: '图片文件', extensions: ['jpg', 'jpeg', 'png', 'webp'] }
+      ]
+    });
+    if (result.canceled) {
+      return;
+    } else {
+      const imgPath = result.filePaths[0];
+      const imgDir = getDataPath(`games/${gameId}/characters/`); // 存储角色图片的目录
+      const webpFileName = `${imgId}.webp`; // 使用imgId作为文件名
+      const webpFilePath = join(imgDir, webpFileName);
+
+      try {
+        // 确保目标文件夹存在
+        await fse.ensureDir(imgDir);
+
+        // 使用sharp读取原图片，转换为WebP格式，然后保存
+        await sharp(imgPath)
+          .webp({ quality: 100 })
+          .toFile(webpFilePath);
+
+        log.info(`成功保存游戏 ${gameId} 角色图片 ${imgId} 到 ${webpFilePath}`);
+
+        return webpFilePath;
+      }
+      catch (error) {
+        log.error(`保存游戏 ${gameId} 角色图片时出错:`, error);
+      }
+    }
+  });
+
   ipcMain.handle('update-game-icon', async (event, gameId, imgPath) => {
     try {
       const iconDir = getDataPath(`games/${gameId}/`);

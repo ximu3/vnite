@@ -3,6 +3,7 @@ import { useRootStore } from './Root'
 import { useEffect, useState } from 'react'
 import { create } from 'zustand'
 import { useUpdateGame } from './UpdateGame'
+import { use } from 'marked';
 
 function NavTab({ to, name }) {
     return (
@@ -30,6 +31,17 @@ const useGameStore = create(set => ({
     memoryImagePath: [],
     setMemoryImagePath: (memoryImagePath) => set({ memoryImagePath }),
     updateMemoryImagePath: (memoryImagePath) => set(state => ({ memoryImagePath: [...state.memoryImagePath, memoryImagePath] })),
+    characterData: [],
+    setCharacterData: (characterData) => set({ characterData }),
+    updateCharacterData: (path, value) => set((state) => {
+        const newCharacterData = JSON.parse(JSON.stringify(state.characterData));
+        let current = newCharacterData;
+        for (let i = 0; i < path.length - 1; i++) {
+            current = current[path[i]];
+        }
+        current[path[path.length - 1]] = value;
+        return { characterData: newCharacterData };
+    }),
 }));
 
 function Game({ index }) {
@@ -369,7 +381,7 @@ function Game({ index }) {
                             <Routes>
                                 <Route index element={<Navigate to='./detail' />} />
                                 <Route path='/detail' element={<Detail gameData={gameData} />} />
-                                <Route path='/character' element={<Character characterData={characterData} />} />
+                                <Route path='/character' element={<Character characterData={characterData} gid={index} />} />
                                 <Route path='/save' element={<Save index={index} />} />
                                 <Route path='/memory' element={<Memory index={index} />} />
                             </Routes>
@@ -461,8 +473,38 @@ function Detail({ gameData }) {
     )
 }
 
-function Character({ characterData }) {
-    const { characterImage, updateCharacterImage } = useGameStore();
+function Character({ gid }) {
+    const { characterImage, updateCharacterImage, characterData, updateCharacterData, setCharacterData } = useGameStore();
+    const { updateData, data, timestamp, setTimestamp } = useRootStore();
+
+    useEffect(() => {
+        setCharacterData(data[gid]['characters']);
+    }, [data]);
+
+    async function updateCharacterImg(cid) {
+        await window.electron.ipcRenderer.invoke('update-character-img', gid, cid);
+        setTimestamp(Date.now());
+    }
+
+    function save() {
+        updateData([gid, 'characters'], characterData)
+    }
+
+    function updateExtensionName(index, value) {
+        const extensionName = value.split('、');
+        updateCharacterData([index, 'extensionName'], extensionName)
+    }
+
+    function updateGender(index, value) {
+        if (value === '男') {
+            updateCharacterData([index, 'gender'], 1)
+        } else if (value === '女') {
+            updateCharacterData([index, 'gender'], 2)
+        } else {
+            updateCharacterData([index, 'gender'], 0)
+        }
+    }
+
 
     return (
         <div className='flex flex-col w-full gap-5'>
@@ -470,24 +512,86 @@ function Character({ characterData }) {
                 return (
                     <div key={index}>
                         <div className='flex flex-row items-start gap-5'>
-                            <div className='flex flex-row w-3/4 shadow-md bg-custom-main group'>
-                                {character['cover'] && <img src={characterImage[index]} alt="c1" className="w-auto h-67"></img>}
-                                <div className='flex flex-col h-67'>
+                            <div className='flex flex-row w-3/4 shadow-md bg-custom-main'>
+                                <div className="relative w-auto h-67 shrink-0 group">
+                                    {character['cover'] && (
+                                        <img
+                                            src={`${characterImage[index]}?t=${timestamp}`}
+                                            alt="c1"
+                                            className="w-auto h-67"
+                                        />
+                                    )}
+
+                                    <button onClick={() => updateCharacterImg(character['cid'])} className='absolute top-0 right-0 flex items-center justify-center invisible p-1 group-hover:visible'>
+                                        <span className="icon-[heroicons-solid--pencil-alt] w-6 h-6"></span>
+                                    </button>
+
+                                </div>
+                                <div className='flex flex-col w-full h-67'>
+
                                     <div className='p-3 text-lg font-bold text-custom-text-light'>{character['chineseName'] ? character['chineseName'] : character['name']}</div>
-                                    <div className='p-3 pt-0 overflow-auto text-sm scrollbar-base scrollbar-track-base-300'>{character['introduction']}</div>
+                                    {/* <div className='p-3 pt-0 overflow-auto text-sm scrollbar-base scrollbar-track-base-300'>{character['introduction']}</div> */}
+                                    <label className="relative flex items-start self-stretch w-full h-full pt-0 outline-none group grow bg-custom-main focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:bg-custom-stress focus-within:hover:brightness-100 focus-within:text-custom-text-light/80">
+                                        <textarea spellCheck='false' className="self-stretch w-full p-2 overflow-auto text-sm border-0 outline-none resize-none scrollbar-base scrollbar-track-base-300 textarea textarea-ghost focus-within:text-custom-text-light/95 focus:shadow-inner-sm focus:shadow-black bg-custom-main grow focus:bg-custom-stress" value={character['introduction'] || ''} onChange={(e) => { updateCharacterData([index, 'introduction'], e.target.value) }} />
+                                        <button onClick={save} className='absolute bottom-0 right-0 flex items-center justify-center invisible p-1 text-xs btn-sm btn group-focus-within:visible hover:text-custom-text-light'>
+                                            保存
+                                        </button>
+                                    </label>
                                 </div>
                             </div>
                             <div className='flex flex-col w-1/4 gap-5 text-sm'>
-                                <div className='flex flex-col gap-1 p-5 shadow-md bg-custom-main'>
-                                    <div className='pb-1 font-bold text-custom-text-light'>基本信息</div>
-                                    <div>原名：{character['name']}</div>
-                                    <div>中文名：{character['chineseName'] ? character['chineseName'] : "未知"}</div>
-                                    <div>别名：{character['extensionName'][0] ? character['extensionName'].join('、') : "未知"}</div>
-                                    <div>生日：{character['birthday'] ? character['birthday'] : "未知"}</div>
-                                    <div>性别：{character['gender'] === 0 ? "未知" : character['gender'] === 1 ? "男" : character['gender'] === 2 ? "女" : "扶她"}</div>
+                                <div className='flex flex-col p-5 shadow-md bg-custom-main'>
+                                    <div className='pb-2 font-bold text-custom-text-light'>基本信息</div>
+                                    <label className="relative flex items-center w-full px-1 py-0 my-0 border-0 group input-sm input bg-custom-main focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-stress focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
+                                        <div className=''>原名：</div>
+                                        <input type="text" spellCheck='false' name='gameName' className="p-0 m-0 grow" value={character['name']} onChange={(e) => { updateCharacterData([index, 'name'], e.target.value) }} />
+                                        <button onClick={save} className='absolute bottom-0 right-0 flex items-center justify-center invisible p-1 text-xs btn-sm btn group-focus-within:visible hover:text-custom-text-light'>
+                                            保存
+                                        </button>
+                                    </label>
+
+                                    <label className="relative flex items-center w-full px-1 py-0 my-0 border-0 group input-sm input bg-custom-main focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-stress focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
+                                        <div className=''>中文名：</div>
+                                        <input type="text" spellCheck='false' name='gameName' className="grow" value={character['chineseName'] ? character['chineseName'] : "未知"} onChange={(e) => { updateCharacterData([index, 'chineseName'], e.target.value) }} />
+                                        <button onClick={save} className='absolute bottom-0 right-0 flex items-center justify-center invisible p-1 text-xs btn-sm btn group-focus-within:visible hover:text-custom-text-light'>
+                                            保存
+                                        </button>
+                                    </label>
+
+                                    <label className="relative flex items-center w-full px-1 py-0 my-0 border-0 group input-sm input bg-custom-main focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-stress focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
+                                        <div className=''>别名：</div>
+                                        <input type="text" spellCheck='false' name='gameName' className="grow" value={character['extensionName'].join('、')} onChange={(e) => { updateExtensionName(index, e.target.value) }} />
+                                        <button onClick={save} className='absolute bottom-0 right-0 flex items-center justify-center invisible p-1 text-xs btn-sm btn group-focus-within:visible hover:text-custom-text-light'>
+                                            保存
+                                        </button>
+                                    </label>
+
+                                    <label className="relative flex items-center w-full px-1 py-0 my-0 border-0 group input-sm input bg-custom-main focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-stress focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
+                                        <div className=''>生日：</div>
+                                        <input type="text" spellCheck='false' name='gameName' className="grow" value={character['birthday'] ? character['birthday'] : "未知"} onChange={(e) => { updateCharacterData([index, 'birthday'], e.target.value) }} />
+                                        <button onClick={save} className='absolute bottom-0 right-0 flex items-center justify-center invisible p-1 text-xs btn-sm btn group-focus-within:visible hover:text-custom-text-light'>
+                                            保存
+                                        </button>
+                                    </label>
+
+                                    <div className="py-0 my-0 dropdown dropdown-end">
+                                        <div tabIndex={0} role="button" className="flex flex-row items-center justify-between w-full px-1 py-0 my-0 mb-1 text-sm font-semibold border-0 input-sm bg-custom-main hover:brightness-125">
+                                            <div className="flex items-center py-0 my-0 font-normal">
+                                                <div>性别：</div>
+                                                <div>{character['gender'] === 0 ? "未知" : character['gender'] === 1 ? "男" : character['gender'] === 2 ? "女" : "扶她"}</div>
+                                            </div>
+                                            <span className="icon-[material-symbols-light--keyboard-arrow-down] w-6 h-6"></span>
+                                        </div>
+                                        <ul tabIndex={0} className="dropdown-content menu bg-custom-dropdown rounded-box z-[1] w-3/4 p-2 shadow">
+                                            <li onClick={() => { updateData([gid, 'characters', index, 'gender'], 1) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>男</a></li>
+                                            <li onClick={() => { updateData([gid, 'characters', index, 'gender'], 2) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>女</a></li>
+                                            <li onClick={() => { updateData([gid, 'characters', index, 'gender'], 3) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>扶她</a></li>
+                                        </ul>
+                                    </div>
+
                                 </div>
                                 <div className='p-5 shadow-md bg-custom-main'>
-                                    <div className='pb-2 font-bold text-custom-text-light'>相关网站</div>
+                                    <div className='pb-4 font-bold text-custom-text-light'>相关网站</div>
                                     <div className='flex flex-col gap-1'>
                                         {character['websites'].map((website, index) => {
                                             return <a key={index} className='p-1 group bg-custom-blue-4/20 hover:brightness-125 hover:text-custom-text' href={website['url']} target="_blank" rel="noreferrer"><div className='text-xs text-custom-blue-4 group-hover:text-custom-text'>{website['title']}</div></a>
@@ -496,7 +600,7 @@ function Character({ characterData }) {
                                 </div>
                             </div>
                         </div>
-                        {index + 1 !== characterData.length && <div className='pt-6 divider'></div>}
+                        {index + 1 !== data[gid]['characters']?.length && <div className='pt-6 divider'></div>}
                     </div>
                 )
             })}
