@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useRootStore } from './Root';
 
@@ -22,6 +22,35 @@ function NavButton({ to, name, icon }) {
 
 function CategoryTree({ categories, data, icons, timestamp, searchTerm, onCategoryContextMenu, onGameContextMenu }) {
     const { categoryData } = useRootStore();
+    const [gid, setGid] = useState(null);
+    const [cid, setCid] = useState(null);
+
+    const handleKeyDown = useCallback((e) => {
+        // 检查是否按下了 Ctrl 键（在 Mac 上是 Command 键）
+        const ctrlPressed = e.ctrlKey || e.metaKey;
+
+        if (ctrlPressed) {
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                // 上移操作
+                window.electron.ipcRenderer.send('move-game-up', cid, gid);
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                // 下移操作
+                window.electron.ipcRenderer.send('move-game-down', cid, gid);
+            }
+        }
+    }, [cid, gid]);
+
+    useEffect(() => {
+        // 添加键盘事件监听器
+        document.addEventListener('keydown', handleKeyDown);
+
+        // 清理函数
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [handleKeyDown]);
     return (
         <ul className="w-full pl-0 pr-0 menu rounded-box text-custom-text-light gap-0.5">
             {categoryData?.map((category, index) => (
@@ -35,13 +64,15 @@ function CategoryTree({ categories, data, icons, timestamp, searchTerm, onCatego
                     searchTerm={searchTerm}
                     onCategoryContextMenu={onCategoryContextMenu}
                     onGameContextMenu={onGameContextMenu}
+                    setCid={setCid}
+                    setGid={setGid}
                 />
             ))}
         </ul>
     );
 }
 
-function CategoryItem({ category, index, data, icons, timestamp, searchTerm, onCategoryContextMenu, onGameContextMenu }) {
+function CategoryItem({ category, index, data, icons, timestamp, searchTerm, onCategoryContextMenu, onGameContextMenu, setCid, setGid }) {
     const [isOpen, setIsOpen] = useState(true);
 
     const filteredGames = category.games ? category.games.filter(gameId => {
@@ -130,6 +161,8 @@ function CategoryItem({ category, index, data, icons, timestamp, searchTerm, onC
                                     icons={icons}
                                     timestamp={timestamp}
                                     onContextMenu={onGameContextMenu}
+                                    setCid={setCid}
+                                    setGid={setGid}
                                 />
                             ))}
                         </ul>
@@ -140,12 +173,15 @@ function CategoryItem({ category, index, data, icons, timestamp, searchTerm, onC
     );
 }
 
-function GameItem({ gameId, index, category, data, icons, timestamp, onContextMenu }) {
+function GameItem({ gameId, index, category, data, icons, timestamp, onContextMenu, setCid, setGid }) {
     const game = data[gameId];
     if (!game) return null;
 
     return (
-        <li onContextMenu={(e) => onContextMenu(e, gameId, category.id)}>
+        <li onContextMenu={(e) => onContextMenu(e, gameId, category.id)} onClick={() => {
+            setCid(category.id);
+            setGid(gameId);
+        }}>
             <NavButton
                 to={`./${gameId}`}
                 name={game.detail.chineseName || game.detail.name}
