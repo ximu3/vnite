@@ -248,6 +248,8 @@ app.whenReady().then(async () => {
 
   await initAppData();
 
+  await appToSync();
+
   createWindow()
 
   // 获取版本号
@@ -255,8 +257,6 @@ app.whenReady().then(async () => {
 
   log.info('App started 应用已启动');
   log.info('Version 版本:', version);
-
-  await appToSync();
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
@@ -778,8 +778,6 @@ app.whenReady().then(async () => {
       const path = getSyncPath('')
       await appToSync();
       await initAndPushLocalRepo(token, path, owner);
-      const gameData = await getGameData(getDataPath('data.json'));
-      mainWindow.webContents.send('game-data-updated', gameData);
       log.info('使用本地数据初始化仓库成功');
       return `https://github.com/${owner}/my-vnite.git`;
     } catch (error) {
@@ -794,8 +792,6 @@ app.whenReady().then(async () => {
       await fse.remove(path);
       await clonePrivateRepo(token, `https://github.com/${owner}/my-vnite.git`, path)
       await syncToApp();
-      const gameData = await getGameData(getDataPath('data.json'));
-      mainWindow.webContents.send('game-data-updated', gameData);
       log.info('使用云端数据初始化仓库成功');
       return `https://github.com/${owner}/my-vnite.git`;
     } catch (error) {
