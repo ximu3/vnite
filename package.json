@@ -20,6 +20,7 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.0",
     "@electron-toolkit/utils": "^3.0.0",
+    "archiver": "^7.0.1",
     "axios": "^1.7.2",
     "chokidar": "^3.6.0",
     "crypto": "^1.0.1",
@@ -34,6 +35,7 @@
     "semver": "^7.6.3",
     "sharp": "^0.33.4",
     "simple-git": "^3.25.0",
+    "unzipper": "^0.12.3",
     "webdav": "^5.7.0",
     "zustand": "^4.5.2"
   },
