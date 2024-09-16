@@ -62,6 +62,8 @@ Vnite 是一个 视觉小说 / Galgame 管理软件。
 
 - 由于大陆地区网络问题，Github云同步功能需要科学上网后才能使用
 
+- 每次更新后都需要重新登录Github开启云同步功能，否则会报错，未来会修复
+
 ## ☎️ 联系我
 
 - [Twitter](https://x.com/Ximu_simo)
