@@ -148,15 +148,16 @@ function Root() {
   return (
     <div className='flex flex-row w-full h-full text-custom-text-light'>
       {alert &&
-        <div className="z-20 toast toast-center">
-          <div className="pr-0 alert bg-custom-blue-6">
+        <div className="z-20 border-0 toast toast-center">
+          <div className="pr-0 border-0 alert bg-custom-blue-6">
             <span className='text-custom-text-light'>{alert}</span>
           </div>
         </div>
       }
-      <ul className="flex flex-col gap-2 shadow-lg w-14 menu bg-custom-main-3 rounded-box shrink-0">
+      <ul className="relative flex flex-col items-center gap-2 shadow-lg w-14 menu bg-custom-main-3 rounded-box shrink-0">
         <li><NavButton to="/library" className="" name={<span className="icon-[ion--library-sharp] w-5 h-5"></span>} /></li>
         <li><NavButton to="/record" className="" name={<span className="icon-[fa--pie-chart] w-5 h-5"></span>} /></li>
+        <button onClick={() => { document.getElementById('setting').showModal() }} className='absolute w-full transition-all bg-transparent bottom-3 hover:text-custom-blue-6'><span className="icon-[material-symbols-light--settings] w-6.5 h-6.5"></span></button>
       </ul>
       <div className='grow'>
         <Routes>

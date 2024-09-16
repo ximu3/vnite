@@ -574,13 +574,13 @@ function Character({ gid }) {
                                         </button>
                                     </label>
 
-                                    <div className="py-0 my-0 dropdown dropdown-end">
+                                    <div className="py-0 my-0 dropdown dropdown-end group">
                                         <div tabIndex={0} role="button" className="flex flex-row items-center justify-between w-full px-1 py-0 my-0 mb-1 text-sm font-semibold border-0 input-sm bg-custom-main hover:brightness-125">
                                             <div className="flex items-center py-0 my-0 font-normal">
                                                 <div>性别：</div>
                                                 <div>{character['gender'] === 0 ? "未知" : character['gender'] === 1 ? "男" : character['gender'] === 2 ? "女" : "扶她"}</div>
                                             </div>
-                                            <span className="icon-[material-symbols-light--keyboard-arrow-down] w-6 h-6"></span>
+                                            <span className="icon-[material-symbols-light--keyboard-arrow-down] w-6 h-6 invisible group-hover:visible"></span>
                                         </div>
                                         <ul tabIndex={0} className="dropdown-content menu bg-custom-dropdown rounded-box z-[1] w-3/4 p-2 shadow">
                                             <li onClick={() => { updateData([gid, 'characters', index, 'gender'], 1) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>男</a></li>

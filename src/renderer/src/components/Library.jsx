@@ -27,6 +27,19 @@ function Library() {
   const [contextMenu, setContextMenu] = useState(null);
   const dragRef = React.useRef(null);
 
+  async function addGameEmpty() {
+    //dialog获取文件路径
+    const file = await window.electron.ipcRenderer.invoke('open-file-dialog');
+    if (file) {
+      window.electron.ipcRenderer.send('organize-game-data-empty', file);
+    } else {
+      setAlert('未选择文件！');
+      setTimeout(() => {
+        setAlert('');
+      }, 3000);
+    }
+  }
+
   useEffect(() => {
     dragRef.current.addEventListener('drop', (event) => {
       event.preventDefault();
@@ -154,13 +167,13 @@ function Library() {
           },
         },
         {
-          label: '上移',
+          label: '上移（Ctrl+↑）',
           onClick: () => {
             window.electron.ipcRenderer.send('move-game-up', categoryId, gameId);
           }
         },
         {
-          label: '下移',
+          label: '下移（Ctrl+↓）',
           onClick: () => {
             window.electron.ipcRenderer.send('move-game-down', categoryId, gameId);
           }
@@ -327,9 +340,18 @@ function Library() {
               <span className="icon-[material-symbols--search] w-7 h-7 text-custom-text-light"></span>
               <input type="text" className="min-w-0 min-h-0 grow focus:outline-transparent caret-custom-text-light" placeholder="" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
             </label>
-            <button className='min-w-0 min-h-0 transition-all border-0 w-9 h-9 btn btn-square bg-custom-stress-1' onClick={() => { document.getElementById('addGame').showModal() }}>
+            <div className="dropdown dropdown-end">
+              <div tabIndex={0} role="button" className="min-w-0 min-h-0 border-0 w-9 h-9 btn btn-square bg-custom-stress-1">
+                <span className="transition-all icon-[ic--sharp-plus] w-8 h-8 text-custom-text hover:text-custom-text-light"></span>
+              </div>
+              <ul tabIndex={0} className="dropdown-content menu bg-custom-dropdown rounded-box z-[1] p-2 shadow w-44">
+                <li onClick={() => { document.getElementById('addGame').showModal() }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>刮削器添加</a></li>
+                <li onClick={() => { addGameEmpty() }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>直接添加</a></li>
+              </ul>
+            </div>
+            {/* <button className='min-w-0 min-h-0 transition-all border-0 w-9 h-9 btn btn-square bg-custom-stress-1' onClick={() => { document.getElementById('addGame').showModal() }}>
               <span className="transition-all icon-[ic--sharp-plus] w-8 h-8 text-custom-text hover:text-custom-text-light"></span>
-            </button>
+            </button> */}
           </div>
         </div>
         <div className="flex flex-col self-center object-center w-full overflow-auto grow scrollbar-base scrollbar-thumb-custom-text/70">
