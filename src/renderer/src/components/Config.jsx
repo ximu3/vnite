@@ -76,8 +76,9 @@ function Config() {
                             <div className='pt-4 pb-3 pl-6 font-bold text-custom-blue-6'>VNITE 设置</div>
                             <ul className="w-full menu rounded-box text-custom-text">
                                 <li className=''>
+                                    <NavButton to={`./general`} name={'通用'} icon={<span className="icon-[icon-park-solid--computer] w-6 h-6"></span>} />
                                     <NavButton to={`./cloudSync`} name={'云同步'} icon={<span className="icon-[material-symbols-light--cloud] w-6 h-6"></span>} />
-                                    <NavButton to={`./advanced`} name={'高级'} icon={<span className="icon-[material-symbols-light--settings] w-6 h-6"></span>} />
+                                    <NavButton to={`./advanced`} name={'高级'} icon={<span className="icon-[mingcute--settings-2-line] w-6 h-6"></span>} />
                                     <NavButton to={`./about`} name={'关于'} icon={<span className="icon-[material-symbols-light--info] w-6 h-6"></span>} />
                                 </li>
                             </ul>
@@ -86,7 +87,8 @@ function Config() {
                     </div>
                     <div className="grow">
                         <Routes>
-                            <Route index element={<Navigate to='./cloudSync' />} />
+                            <Route index element={<Navigate to='./general' />} />
+                            <Route path={`/general`} element={<General />} />
                             <Route path={`/cloudSync/*`} element={<CloudSync />} />
                             <Route path={`/advanced`} element={<Advanced />} />
                             <Route path={`/about`} element={<About />} />
@@ -110,6 +112,46 @@ function Config() {
             </div>
         </dialog>
     );
+}
+
+function General() {
+    function modeConvert(mode) {
+        switch (mode) {
+            case true:
+                return '最小化到托盘';
+            case false:
+                return '直接退出';
+            default:
+                return '直接退出';
+        }
+    }
+    return (
+        <div className='flex flex-col w-full h-full gap-5 pb-32 overflow-auto p-7 scrollbar-base bg-custom-modal'>
+            <div className='text-2xl font-bold text-custom-text-light'>
+                通用
+            </div>
+            <div className='flex flex-col gap-2'>
+                <label className="flex p-0 label">
+                    <span className="flex-grow text-sm font-semibold">关闭主面板</span>
+                    <div className="dropdown dropdown-end">
+                        <div tabIndex={0} role="button" className="flex flex-row items-center justify-between gap-2 pr-1 mb-1 text-sm font-semibold border-0 w-36 hover:text-custom-text-light input-sm bg-custom-stress hover:brightness-125">
+                            <div className="flex items-center gap-3">
+                                <div>{modeConvert(config?.general?.quitToTray || '直接退出')}</div>
+                            </div>
+                            <span className="icon-[material-symbols-light--keyboard-arrow-down] w-6 h-6"></span>
+                        </div>
+                        <ul tabIndex={0} className="dropdown-content menu bg-custom-dropdown rounded-box z-[1] w-auto p-2 shadow">
+                            <li onClick={() => { updateConfig(['general', 'quitToTray'], false) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none hover:text-black'>直接退出</a></li>
+                            <li onClick={() => { updateConfig(['general', 'quitToTray'], true) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none hover:text-black'>最小化到托盘</a></li>
+                        </ul>
+                    </div>
+                </label>
+            </div>
+            <div>
+
+            </div>
+        </div>
+    )
 }
 
 function Advanced() {

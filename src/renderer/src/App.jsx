@@ -69,6 +69,20 @@ function App() {
   useEffect(() => {
     window.electron.ipcRenderer.on('app-exiting', async (event) => {
       try {
+        const currentConfig = configRef.current;
+        if (currentConfig?.general?.quitToTray) {
+          window.electron.ipcRenderer.send('quit-to-tray');
+          return;
+        }
+        await quit();
+        window.electron.ipcRenderer.send('app-exit-processed', { success: true });
+      } catch (error) {
+        window.electron.ipcRenderer.send('app-exit-processed', { success: false, error: error.message });
+      }
+    });
+
+    window.electron.ipcRenderer.on('app-exiting-without-tray', async (event) => {
+      try {
         await quit();
         window.electron.ipcRenderer.send('app-exit-processed', { success: true });
       } catch (error) {

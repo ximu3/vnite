@@ -114,6 +114,11 @@ export async function initData() {
 
     // 更新 config.json
     const configNewPairs = {
+        general: {
+            theme: "default",
+            language: "en",
+            quitToTray: true
+        },
         advance: {
             lePath: ''
         }

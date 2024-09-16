@@ -285,7 +285,7 @@ app.whenReady().then(async () => {
     { type: 'separator' },
     {
       label: '退出',
-      click: () => { app.quit(); }
+      click: () => { handleAppExitWithOutTray() }
     }
   ]);
 
@@ -1096,6 +1096,33 @@ async function handleAppExit() {
     log.error('退出过程中出错:', error);
     app.exit(1); // 异常退出
   }
+}
+
+async function handleAppExitWithOutTray() {
+  try {
+    await appToSync();
+    await waitExitInRendererWithoutTray();
+    log.info('应用已退出');
+    app.exit(0); // 正常退出
+  } catch (error) {
+    log.error('退出过程中出错:', error);
+    app.exit(1); // 异常退出
+  }
+}
+
+function waitExitInRendererWithoutTray() {
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      reject(new Error('等待渲染进程响应超时'));
+    }, 50000); // 设置50秒超时
+
+    mainWindow.webContents.send('app-exiting-without-tray');
+
+    ipcMain.once('app-exit-processed', (event, result) => {
+      clearTimeout(timeout);
+      resolve(result);
+    });
+  });
 }
 
 function waitExitInRenderer() {
