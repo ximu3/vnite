@@ -18,7 +18,7 @@ import semver from 'semver';
 import { initData } from '../../scripts/update-json.mjs';
 import util from 'util';
 import { getCategoryData, deleteGameFromAllCategories, updateCategoryData, addNewCategory, addNewGameToCategory, deleteCategory, deleteGameFromCategory, moveCategoryUp, moveCategoryDown, moveGameUp, moveGameDown } from '../renderer/src/components/categoryManager.mjs';
-
+import AutoLaunch from 'auto-launch'
 
 if (process.argv.length > 1) {
   const scriptPath = process.argv[1];
@@ -34,6 +34,11 @@ if (process.argv.length > 1) {
     app.quit();
   }
 }
+
+const autoLauncher = new AutoLaunch({
+  name: 'vnite',
+  path: app.getPath('exe'),
+});
 
 log.initialize();
 
@@ -320,6 +325,26 @@ app.whenReady().then(async () => {
 
   ipcMain.on('show-right-menu', (event) => {
     rightMenu.popup({ window: mainWindow });
+  });
+
+  ipcMain.handle('get-auto-start', async () => {
+    log.info('获取自动启动状态:', await autoLauncher.isEnabled());
+    return await autoLauncher.isEnabled();
+  });
+
+  ipcMain.on('quit-to-tray', () => {
+    mainWindow.hide();
+  });
+
+  ipcMain.handle('set-auto-start', async (event, enable) => {
+    if (enable) {
+      log.info('启用自动启动');
+      await autoLauncher.enable();
+    } else {
+      log.info('禁用自动启动');
+      await autoLauncher.disable();
+    }
+    return await autoLauncher.isEnabled();
   });
 
   ipcMain.handleOnce('pull-changes', async (event) => {

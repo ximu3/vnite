@@ -115,6 +115,13 @@ function Config() {
 }
 
 function General() {
+    const { config, updateConfig, isAutoStartEnabled, setIsAutoStartEnabled } = useRootStore();
+
+    const handleToggle = async () => {
+        const newState = !isAutoStartEnabled;
+        await window.electron.ipcRenderer.invoke('set-auto-start', newState);
+        setIsAutoStartEnabled(newState);
+    };
     function modeConvert(mode) {
         switch (mode) {
             case true:
@@ -131,6 +138,11 @@ function General() {
                 通用
             </div>
             <div className='flex flex-col gap-2'>
+                <label className="p-0 cursor-pointer label">
+                    <span className="text-sm font-semibold">开机自启动</span>
+                    <input type="checkbox" className="toggle checked:bg-custom-text-light bg-custom-text checked:[--tglbg:theme(colors.custom.blue-6)] [--tglbg:theme(colors.custom.stress)] border-0 hover:brightness-125 checked:hover:brightness-100" checked={isAutoStartEnabled} onChange={handleToggle} />
+                </label>
+                <div className='m-0 divider'></div>
                 <label className="flex p-0 label">
                     <span className="flex-grow text-sm font-semibold">关闭主面板</span>
                     <div className="dropdown dropdown-end">

@@ -50,6 +50,8 @@ export const useRootStore = create(set => ({
     current[path[path.length - 1]] = value;
     return { categoryData: newCategoryData };
   }),
+  isAutoStartEnabled: false,
+  setIsAutoStartEnabled: (isAutoStartEnabled) => set({ isAutoStartEnabled }),
 }));
 
 function NavButton({ to, name }) {
@@ -69,7 +71,7 @@ function NavButton({ to, name }) {
 }
 
 function Root() {
-  const { data, setData, alert, config, setConfig, isPulling, setIsPulling, setTimestamp, setCategoryData, categoryData } = useRootStore();
+  const { data, setData, alert, config, setConfig, isPulling, setIsPulling, setTimestamp, setCategoryData, categoryData, setIsAutoStartEnabled } = useRootStore();
   const { isloading } = useAddGame();
   useEffect(() => {
     window.electron.ipcRenderer.invoke('get-game-data').then((data) => {
@@ -102,6 +104,10 @@ function Root() {
     })
 
   }, [])
+  useEffect(() => {
+    // 获取当前自启动状态
+    window.electron.ipcRenderer.invoke('get-auto-start').then(setIsAutoStartEnabled);
+  }, []);
 
   useEffect(() => {
     window.electron.ipcRenderer.invoke('get-category-data').then((categoryData) => {
