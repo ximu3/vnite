@@ -217,6 +217,73 @@ async function syncToApp() {
   }
 }
 
+// 导出数据库，以压缩文件形式
+import archiver from 'archiver';
+async function exportDatabase() {
+  const databasePath = getAppPath('');
+  const { canceled, filePath } = await dialog.showSaveDialog({
+    title: '导出数据库',
+    defaultPath: 'vnite-database.zip',
+    filters: [{ name: 'Zip 文件', extensions: ['zip'] }]
+  });
+
+  if (canceled) {
+    return;
+  }
+
+  try {
+    const output = fse.createWriteStream(filePath);
+    const archive = archiver('zip', {
+      zlib: { level: 9 } // 设置压缩级别
+    });
+
+    output.on('close', () => {
+      log.info('成功导出数据库，大小：', archive.pointer() + ' 字节');
+    });
+
+    archive.on('error', (err) => {
+      throw err;
+    });
+
+    archive.pipe(output);
+
+    // 将整个数据库文件夹添加到 ZIP 文件
+    archive.directory(databasePath, false);
+
+    await archive.finalize();
+
+  } catch (error) {
+    log.error('导出数据库时出错:', error);
+  }
+}
+
+// 导入数据库，从压缩文件中
+import unzipper from 'unzipper';
+async function importDatabase() {
+  const databasePath = getAppPath('');
+  const { canceled, filePaths } = await dialog.showOpenDialog({
+    title: '导入数据库',
+    properties: ['openFile'],
+    filters: [{ name: 'Zip 文件', extensions: ['zip'] }]
+  });
+
+  if (canceled) {
+    return;
+  }
+
+  const filePath = filePaths[0];
+
+  try {
+    const zip = await unzipper.Open.file(filePath);
+    await zip.extract({ path: databasePath });
+
+    log.info('成功导入数据库');
+  } catch (error) {
+    log.error('导入数据库时出错:', error);
+  }
+}
+
+
 
 let processes = new Map();
 // This method will be called when Electron has finished
@@ -345,6 +412,18 @@ app.whenReady().then(async () => {
       await autoLauncher.disable();
     }
     return await autoLauncher.isEnabled();
+  });
+
+  ipcMain.on('open-database-path-in-explorer', () => {
+    shell.openPath(getAppPath(''));
+  });
+
+  ipcMain.on('export-database', async () => {
+    await exportDatabase();
+  });
+
+  ipcMain.handle('import-database', async () => {
+    await importDatabase();
   });
 
   ipcMain.handleOnce('pull-changes', async (event) => {

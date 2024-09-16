@@ -77,6 +77,7 @@ function Config() {
                             <ul className="w-full menu rounded-box text-custom-text">
                                 <li className=''>
                                     <NavButton to={`./general`} name={'通用'} icon={<span className="icon-[icon-park-solid--computer] w-6 h-6"></span>} />
+                                    <NavButton to={`./database`} name={'数据库'} icon={<span className="icon-[mdi--database] w-6 h-6"></span>} />
                                     <NavButton to={`./cloudSync`} name={'云同步'} icon={<span className="icon-[material-symbols-light--cloud] w-6 h-6"></span>} />
                                     <NavButton to={`./advanced`} name={'高级'} icon={<span className="icon-[mingcute--settings-2-line] w-6 h-6"></span>} />
                                     <NavButton to={`./about`} name={'关于'} icon={<span className="icon-[material-symbols-light--info] w-6 h-6"></span>} />
@@ -89,6 +90,7 @@ function Config() {
                         <Routes>
                             <Route index element={<Navigate to='./general' />} />
                             <Route path={`/general`} element={<General />} />
+                            <Route path={`/database`} element={<DataBase />} />
                             <Route path={`/cloudSync/*`} element={<CloudSync />} />
                             <Route path={`/advanced`} element={<Advanced />} />
                             <Route path={`/about`} element={<About />} />
@@ -112,6 +114,58 @@ function Config() {
             </div>
         </dialog>
     );
+}
+
+function DataBase() {
+    const { setCategoryData, setData, setConfig } = useRootStore();
+    const { setConfigAlert } = useConfigStore();
+    async function importDatabase() {
+        try {
+            await window.electron.ipcRenderer.invoke('import-database');
+            await window.electron.ipcRenderer.invoke('get-game-data').then((data) => {
+                setData(data);
+            })
+            await window.electron.ipcRenderer.invoke('get-category-data').then((categoryData) => {
+                setCategoryData(categoryData);
+            })
+            await window.electron.ipcRenderer.invoke('get-config-data').then((configData) => {
+                setConfig(configData);
+            })
+            setConfigAlert('数据库导入成功！');
+            setTimeout(() => {
+                setConfigAlert('');
+            }, 3000);
+        } catch (e) {
+            console.log(e);
+            setConfigAlert('数据库导入失败：' + e);
+            setTimeout(() => {
+                setConfigAlert('');
+            }, 5000);
+        }
+    }
+    return (
+        <div className='flex flex-col w-full h-full gap-5 pb-32 overflow-auto p-7 scrollbar-base bg-custom-modal'>
+            <div className='text-2xl font-bold text-custom-text-light'>
+                数据库
+            </div>
+            <div className='flex flex-col gap-2'>
+                <button className='transition-all btn btn-sm bg-custom-stress hover:brightness-125 text-custom-text' onClick={() => window.electron.ipcRenderer.send("open-database-path-in-explorer")}>打开数据文件夹</button>
+                <div className='flex flex-row gap-2'>
+                    <button className='transition-all grow btn btn-sm bg-custom-stress hover:brightness-125 text-custom-text' onClick={() => window.electron.ipcRenderer.send("export-database")}>
+                        <span className="icon-[material-symbols--upload-sharp] w-5 h-5"></span>
+                        导出数据库
+                    </button>
+                    <button className='transition-all grow btn btn-sm bg-custom-stress hover:brightness-125 text-custom-text' onClick={importDatabase}>
+                        <span className="icon-[material-symbols--download-sharp] w-5 h-5"></span>
+                        导入数据库
+                    </button>
+                </div>
+            </div>
+            <div>
+
+            </div>
+        </div>
+    )
 }
 
 function General() {
