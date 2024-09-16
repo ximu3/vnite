@@ -90,7 +90,7 @@ function Config() {
                         <Routes>
                             <Route index element={<Navigate to='./general' />} />
                             <Route path={`/general`} element={<General />} />
-                            <Route path={`/database`} element={<DataBase />} />
+                            <Route path={`/database`} element={<Database />} />
                             <Route path={`/cloudSync/*`} element={<CloudSync />} />
                             <Route path={`/advanced`} element={<Advanced />} />
                             <Route path={`/about`} element={<About />} />
@@ -116,7 +116,7 @@ function Config() {
     );
 }
 
-function DataBase() {
+function Database() {
     const { setCategoryData, setData, setConfig } = useRootStore();
     const { setConfigAlert } = useConfigStore();
     async function importDatabase() {
