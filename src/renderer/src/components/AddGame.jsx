@@ -221,7 +221,8 @@ function GamePath() {
     const path = await window.electron.ipcRenderer.invoke("open-file-dialog")
     setGamePath(path);
     if (path !== '') {
-      await window.electron.ipcRenderer.invoke('get-game-icon', path, gid);
+      const id = await window.electron.ipcRenderer.invoke('generate-id', gameName);
+      await window.electron.ipcRenderer.invoke('get-game-icon', path, id);
     }
   }
 
