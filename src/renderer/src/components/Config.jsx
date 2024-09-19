@@ -721,7 +721,7 @@ function CloudSync() {
                 }
             </div>
             <div className='flex flex-col gap-2'>
-                <div className='pb-2 font-bold text-custom-text-light'>WebDav</div>
+                <div className='flex flex-row gap-2 pb-2 font-bold text-custom-text-light'>WebDav<div className="self-center badge text-custom-text badge-outline badge-sm">未完成</div></div>
                 <div className='flex flex-row items-center'>
                     <span className="text-sm font-semibold grow">地址</span>
                     <input spellCheck='false' className="w-1/2 min-h-0 border-0 outline-none input focus:bg-custom-focus focus:text-custom-text-light/95 bg-custom-stress input-sm hover:brightness-125 focus:shadow-inner-sm focus:shadow-black/80 focus:hover:brightness-100" placeholder='示例：https://pan.example.xyz' value={configSetting?.cloudSync?.webdav?.url || ''} onChange={(e) => { updateConfigSetting(['cloudSync', 'webdav', 'url'], e.target.value) }} />
