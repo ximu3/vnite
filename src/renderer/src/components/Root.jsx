@@ -35,7 +35,7 @@ export const useRootStore = create(set => ({
   }),
   icons: [],
   setIcons: (icons) => set({ icons }),
-  isPulling: false,
+  isPulling: true,
   setIsPulling: (isPulling) => set({ isPulling }),
   isGameRunning: { status: false, id: null },
   setIsGameRunning: (status, id) => set({ isGameRunning: { status, id } }),

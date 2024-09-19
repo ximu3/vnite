@@ -659,7 +659,7 @@ function CloudSync() {
             </div>
             <div className='flex flex-col gap-2'>
                 <label className="p-0 cursor-pointer label">
-                    <span className="text-sm font-semibold">是否开启</span>
+                    <span className="text-sm font-semibold">自动同步</span>
                     <input type="checkbox" className="toggle checked:bg-custom-text-light bg-custom-text checked:[--tglbg:theme(colors.custom.blue-6)] [--tglbg:theme(colors.custom.stress)] border-0 hover:brightness-125 checked:hover:brightness-100" checked={config?.cloudSync?.enabled || false} onChange={(e) => { openCloudSync(e) }} />
                 </label>
                 <div className='m-0 divider'></div>
