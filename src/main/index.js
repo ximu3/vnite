@@ -638,7 +638,7 @@ app.whenReady().then(async () => {
 
   ipcMain.on('organize-game-data-empty', async (event, filePath) => {
     const name = path.basename(filePath, path.extname(filePath));
-    const id = generateNineDigitNumber(name)
+    const id = generateNineDigitNumber(filePath)
     await organizeGameDataEmpty(name, id, mainWindow, getDataPath(''), getDataPath('games'), join(getAppRootPath(), 'assets'), filePath);
     await getFileIcon(filePath, id);
     const gameData = await getGameData(getDataPath('data.json'));
