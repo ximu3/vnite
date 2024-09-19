@@ -567,8 +567,7 @@ app.whenReady().then(async () => {
     const result = await dialog.showOpenDialog({
       properties: ['openFile'],
       filters: [
-        { name: '可执行文件', extensions: ['exe'] },
-        { name: '批处理文件', extensions: ['bat'] }
+        { name: '启动文件', extensions: ['exe', 'bat'] }
       ]
     });
     if (result.canceled) {
@@ -596,7 +595,7 @@ app.whenReady().then(async () => {
     const result = await dialog.showOpenDialog({
       properties: ['openFile'],
       filters: [
-        { name: '图片文件', extensions: ['jpg', 'jpeg', 'png', 'webp', 'avif'] }
+        { name: '图片文件', extensions: ['jpg', 'jpeg', 'png', 'webp', 'avif', 'ico'] }
       ]
     });
     if (result.canceled) {
