@@ -982,7 +982,7 @@ function AdvancedSettings() {
                     </label>
                     <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
                         <div className='font-semibold'>游玩状态 |</div>
-                        <div>{playStatus(settingData?.detail?.playtStatus || 0)}</div>
+                        <div>{playStatus(settingData?.detail?.playStatus || 0)}</div>
                     </label>
                     <label className="flex items-center w-full gap-2 input-sm input focus-within:outline-none bg-custom-red text-custom-text-light/90">
                         <div className='font-semibold'>警告⚠️ |</div>
