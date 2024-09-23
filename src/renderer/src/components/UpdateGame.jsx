@@ -88,7 +88,7 @@ function UpdateGame() {
 
 function Info() {
     let navigate = useNavigate();
-    const { gameName, gid, vid, setGameName, setGID, setVID, setAlert, setGameList, isLoading, setIsLoading } = useUpdateGame();
+    const { gameName, gid, vid, setGameName, setGID, setVID, setAlert, setGameList, isLoading, setIsLoading, setGameBgList } = useUpdateGame();
     async function submitInfo() {
         setIsLoading(true);
         if (gameName === '' && gid === '') {
@@ -101,10 +101,14 @@ function Info() {
                 try {
                     const Gid = Number(gid.slice(2));
                     setGID(Number(gid.slice(2)));
+                    let GameName = ""
                     await window.electron.ipcRenderer.invoke('get-game-name', Gid).then((name) => {
                         setGameName(name);
+                        GameName = name;
                     })
-                    navigate('/path')
+                    const gameBgList = await window.api.getScreenshotsByTitle(GameName);
+                    setGameBgList(gameBgList);
+                    navigate('/bg');
                     setIsLoading(false);
                     return
                 } catch (error) {
