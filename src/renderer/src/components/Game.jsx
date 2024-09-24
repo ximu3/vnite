@@ -791,7 +791,7 @@ function Setting({ index }) {
         document.getElementById('gameSetting').close()
     }
     async function saveSetting() {
-        if (activeTab === 'advanced') {
+        if (activeTab === 'database') {
             try {
                 const newData = JSON.parse(dataString)
                 updateData([index], newData)
@@ -815,17 +815,19 @@ function Setting({ index }) {
         setSettingAlert('保存成功！')
         setTimeout(() => { setSettingAlert('') }, 3000)
     }
-    const tabs = ['general', 'advanced', 'media', 'startup'];
+    const tabs = ['general', 'advanced', 'media', 'startup', 'database'];
     const renderContent = () => {
         switch (activeTab) {
             case 'general':
                 return <GeneralSettings index={index} />;
             case 'advanced':
-                return <AdvancedSettings />;
+                return <AdvancedSettings index={index} />;
             case 'media':
                 return <MediaSettings index={index} />;
             case 'startup':
                 return <StartupSettings index={index} />;
+            case 'database':
+                return <DatabaseSettings index={index} />;
             default:
                 return null;
         }
@@ -842,7 +844,8 @@ function Setting({ index }) {
                     >
                         {tab === 'general' ? '通用' :
                             tab === 'advanced' ? '高级' :
-                                tab === 'media' ? '媒体' : '启动'}
+                                tab === 'media' ? '媒体' :
+                                    tab === 'startup' ? '启动' : '数据库'}
                     </a>
                 ))}
             </div>
@@ -924,8 +927,9 @@ function GeneralSettings({ index }) {
     )
 }
 
-function AdvancedSettings() {
+function AdvancedSettings({ index }) {
     const { settingData, updateSettiongData, setSettingData, dataString, setDataString } = useGameSetting()
+    const { updateData, data } = useRootStore()
     function formatTime(seconds) {
         if (seconds < 0) {
             return "无效时间";
@@ -964,34 +968,62 @@ function AdvancedSettings() {
                 <div className='flex flex-col w-1/2 gap-3'>
                     <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
                         <div className='font-semibold'>添加日期 |</div>
-                        <div>{settingData?.detail?.addDate || ''}</div>
+                        <input type="text" spellCheck='false' name='' className="grow" value={settingData?.detail?.addDate || ''} onChange={(e) => { updateSettiongData(['detail', 'addDate'], e.target.value) }} />
                     </label>
                     <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
                         <div className='font-semibold'>游玩时间 |</div>
+                        <input type="text" spellCheck='false' name='' className="grow" value={settingData?.detail?.gameDuration || ''} onChange={(e) => { updateSettiongData(['detail', 'gameDuration'], Number(e.target.value)) }} />
                         <div>{formatTime(settingData?.detail?.gameDuration || '')}</div>
                     </label>
+                </div>
+                <div className='flex flex-col w-1/2 gap-3'>
                     <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
                         <div className='font-semibold'>游玩次数 |</div>
-                        <div>{settingData?.detail?.frequency || '0'}</div>
+                        <input type="text" spellCheck='false' name='' className="grow" value={settingData?.detail?.frequency || '0'} onChange={(e) => { updateSettiongData(['detail', 'frequency'], Number(e.target.value)) }} />
                     </label>
+                    <div className="dropdown dropdown-end">
+                        <div tabIndex={0} role="button" className="flex flex-row items-center justify-between w-full gap-2 mb-1 text-sm font-semibold border-0 input-sm bg-custom-stress hover:brightness-125">
+                            <div className="flex items-center gap-2">
+                                <div>游玩状态 |</div>
+                                <div>{playStatus(data[index]?.detail?.playStatus || 0)}</div>
+                            </div>
+                            <span className="icon-[material-symbols-light--keyboard-arrow-down] w-6 h-6"></span>
+                        </div>
+                        <ul tabIndex={0} className="dropdown-content menu bg-custom-dropdown rounded-box z-[1] w-3/4 p-2 shadow">
+                            <li onClick={() => { updateData([index, 'detail', 'playStatus'], 0) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none active:bg-custom-text active:text-black'>未开始</a></li>
+                            <li onClick={() => { updateData([index, 'detail', 'playStatus'], 1) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none active:bg-custom-text active:text-black'>游玩中</a></li>
+                            <li onClick={() => { updateData([index, 'detail', 'playStatus'], 2) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none active:bg-custom-text active:text-black'>已完成</a></li>
+                            <li onClick={() => { updateData([index, 'detail', 'playStatus'], 3) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none active:bg-custom-text active:text-black'>多周目</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    )
+}
+
+function DatabaseSettings({ index }) {
+    const { settingData, updateSettiongData, setSettingData, setSettingAlert } = useGameSetting()
+    const { dataString, setDataString } = useGameSetting()
+    return (
+        <div className='flex flex-col items-center justify-center w-full h-full gap-3'>
+            <div className='flex flex-row w-full gap-3'>
+                <div className='flex flex-col w-1/2 gap-3'>
+                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
+                        <div className='font-semibold'>警告⚠️ |</div>
+                        <div>随意修改数据库内容会导致程序崩溃！</div>
+                    </label>
+
                 </div>
                 <div className='flex flex-col w-1/2 gap-3'>
                     <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
                         <div className='font-semibold'>数据库ID |</div>
                         <div>{(settingData?.detail?.id || '')}</div>
                     </label>
-                    <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
-                        <div className='font-semibold'>游玩状态 |</div>
-                        <div>{playStatus(settingData?.detail?.playStatus || 0)}</div>
-                    </label>
-                    <label className="flex items-center w-full gap-2 input-sm input focus-within:outline-none bg-custom-red text-custom-text-light/90">
-                        <div className='font-semibold'>警告⚠️ |</div>
-                        <div>随意修改数据库内容会导致程序崩溃！</div>
-                    </label>
                 </div>
             </div>
             <label className="flex flex-col items-start self-stretch h-full pt-2 outline-none grow bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:hover:brightness-100 focus-within:text-custom-text-light/95">
-                <div className='self-center text-sm font-semibold'>数据库内容</div>
                 <textarea spellCheck='false' className="self-stretch p-2 overflow-auto text-sm border-0 outline-none textarea textarea-ghost focus-within:text-custom-text-light/95 bg-custom-stress grow scrollbar-base focus:bg-custom-focus" placeholder="Bio" value={dataString || ''} onChange={(e) => { setDataString(e.target.value) }} />
             </label>
         </div>
