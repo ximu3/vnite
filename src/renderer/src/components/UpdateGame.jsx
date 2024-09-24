@@ -169,8 +169,13 @@ function Info() {
 
 function GameList() {
     let navigate = useNavigate();
-    const { gid, gameList, setGID, setGameName, setGameBgList, gameName, setIsLoading, isLoading } = useUpdateGame();
+    const { gid, gameList, setGID, setGameName, setGameBgList, gameName, setIsLoading, isLoading, setAlert } = useUpdateGame();
     async function next() {
+        if (gameList.length === 0) {
+            setAlert('未找到相关游戏，请重新填写！');
+            setTimeout(() => { setAlert(''); }, 3000);
+            return
+        }
         setIsLoading(true);
         const gameBgList = await window.api.getScreenshotsByTitle(gameName);
         setGameBgList(gameBgList);

@@ -163,7 +163,15 @@ function Info() {
 
 function GameList() {
   let navigate = useNavigate();
-  const { gid, gameList, setGID, setGameName } = useAddGame();
+  const { gid, gameList, setGID, setGameName, setAlert } = useAddGame();
+  function next() {
+    if (gameList.length === 0) {
+      setAlert('未找到相关游戏，请重新填写！');
+      setTimeout(() => { setAlert(''); }, 3000);
+      return
+    }
+    navigate('/path');
+  }
   return (
     <div className='flex flex-col w-full h-full gap-5 min-w-170'>
       <div className='pb-3 text-2xl font-bold text-center text-custom-text-light'>识别结果</div>
@@ -206,7 +214,7 @@ function GameList() {
         </table>
       </div>
       <div className='flex flex-row-reverse items-end gap-5 pt-3'>
-        <button className='transition-all btn bg-custom-stress text-custom-text-light hover:brightness-125' onClick={() => { navigate('/path') }}>下一步</button>
+        <button className='transition-all btn bg-custom-stress text-custom-text-light hover:brightness-125' onClick={() => { next() }}>下一步</button>
         <button className='transition-all btn bg-custom-stress text-custom-text-light hover:brightness-125' onClick={() => { navigate(-1) }}>上一步</button>
       </div>
     </div>
