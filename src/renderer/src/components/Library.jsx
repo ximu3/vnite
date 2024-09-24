@@ -109,6 +109,20 @@ function Library() {
       y: e.clientY,
       options: [
         {
+          label: '重命名',
+          onClick: () => {
+            if (categoryId === 0) {
+              setAlert('无法重命名默认分类！');
+              setTimeout(() => {
+                setAlert('');
+              }, 3000);
+              return;
+            }
+            document.getElementById('renameCategory').showModal();
+            setCategoryId(categoryId);
+          },
+        },
+        {
           label: '删除分类',
           onClick: () => {
             if (categoryId === 0) {
@@ -230,6 +244,13 @@ function Library() {
     console.log('移除游戏', gameId, '从分类', categoryId);
   };
 
+  const renameCategory = () => {
+    window.electron.ipcRenderer.send('rename-category', categoryId, newCategoryName);
+    document.getElementById('renameCategory').close();
+    setNewCategoryName('');
+    console.log('重命名分类', categoryId);
+  };
+
   //获取分类名
   const getCategoryName = () => {
     const category = categoryData.find(category => category.id === categoryId);
@@ -326,6 +347,26 @@ function Library() {
                 setCategoryId(null)
               }}>取消</button>
               <button className='min-w-0 min-h-0 p-0 m-0 text-xs transition-all h-9 w-13 btn bg-custom-stress text-custom-text-light hover:brightness-125' onClick={() => { addGameToCategory() }} >确定</button>
+            </div>
+          </div>
+        </div>
+      </dialog>
+      <dialog id="renameCategory" className="modal">
+        <div className="w-1/3 h-auto modal-box bg-custom-modal">
+          <form method="dialog">
+            {/* if there is a button in form, it will close the modal */}
+            {/* <button className="absolute btn btn-sm btn-ghost right-2 top-2">✕</button> */}
+          </form>
+          <div className='w-full h-full p-1 pt-3'>
+            <div className='flex flex-row items-center justify-between'>
+              <div className='text-sm text-custom-text-light'>分类名</div>
+              <label className="flex items-center w-3/4 gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
+                <input type='text' placeholder='' spellCheck='false' className='grow' value={newCategoryName} onChange={(e) => { setNewCategoryName(e.target.value) }} />
+              </label>
+            </div>
+            <div className='flex flex-row-reverse gap-5 pt-7'>
+              <button className='min-w-0 min-h-0 p-0 m-0 text-xs transition-all h-9 w-13 btn bg-custom-stress text-custom-text-light hover:brightness-125' onClick={() => { document.getElementById('renameCategory').close() }}>取消</button>
+              <button className='min-w-0 min-h-0 p-0 m-0 text-xs transition-all h-9 w-13 btn bg-custom-stress text-custom-text-light hover:brightness-125' onClick={() => { renameCategory() }} >确定</button>
             </div>
           </div>
         </div>

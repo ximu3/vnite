@@ -17,7 +17,7 @@ import axios from 'axios';
 import semver from 'semver';
 import { initData } from '../../scripts/update-json.mjs';
 import util from 'util';
-import { getCategoryData, deleteGameFromAllCategories, updateCategoryData, addNewCategory, addNewGameToCategory, deleteCategory, deleteGameFromCategory, moveCategoryUp, moveCategoryDown, moveGameUp, moveGameDown } from '../renderer/src/components/categoryManager.mjs';
+import { renameCategory, getCategoryData, deleteGameFromAllCategories, updateCategoryData, addNewCategory, addNewGameToCategory, deleteCategory, deleteGameFromCategory, moveCategoryUp, moveCategoryDown, moveGameUp, moveGameDown } from '../renderer/src/components/categoryManager.mjs';
 import AutoLaunch from 'auto-launch'
 
 if (process.argv.length > 1) {
@@ -485,6 +485,12 @@ app.whenReady().then(async () => {
 
   ipcMain.on('move-game-down', async (event, categoryId, gameId) => {
     await moveGameDown(getDataPath('categories.json'), categoryId, gameId);
+    const categoryData = await getCategoryData(getDataPath('categories.json'));
+    mainWindow.webContents.send('category-data-updated', categoryData);
+  })
+
+  ipcMain.on('rename-category', async (event, categoryId, newName) => {
+    await renameCategory(getDataPath('categories.json'), categoryId, newName);
     const categoryData = await getCategoryData(getDataPath('categories.json'));
     mainWindow.webContents.send('category-data-updated', categoryData);
   })

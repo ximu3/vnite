@@ -133,6 +133,21 @@ async function moveCategoryUp(dataPath, categoryId) {
     }
 }
 
+// 重命名分类
+async function renameCategory(dataPath, categoryId, newName) {
+    try {
+        const data = await getCategoryData(dataPath);
+        const category = data.find(category => category.id === categoryId);
+        category.name = newName;
+        await updateCategoryData(dataPath, data);
+        return
+    }
+    catch (error) {
+        log.error('Error renaming category:', error);
+        throw error;
+    }
+}
+
 // 把指定id的分类下移一位
 async function moveCategoryDown(dataPath, categoryId) {
     try {
@@ -196,5 +211,5 @@ async function moveGameDown(dataPath, categoryId, gameId) {
 }
 
 
-export { getCategoryData, updateCategoryData, addNewCategory, addNewGameToCategory, deleteCategory, deleteGameFromCategory, moveCategoryUp, moveCategoryDown, moveGameUp, moveGameDown, deleteGameFromAllCategories };
+export { renameCategory, getCategoryData, updateCategoryData, addNewCategory, addNewGameToCategory, deleteCategory, deleteGameFromCategory, moveCategoryUp, moveCategoryDown, moveGameUp, moveGameDown, deleteGameFromAllCategories };
 
