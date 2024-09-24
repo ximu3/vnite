@@ -47,7 +47,7 @@ function Library() {
       const files = event.dataTransfer.files;
       if (files.length > 0) {
         const file = files[0];
-        if (file.name.endsWith('.exe') || file.name.endsWith('.bat')) {
+        if (file.name.endsWith('.exe') || file.name.endsWith('.bat') || file.name.endsWith('.lnk')) {
           window.electron.ipcRenderer.send('organize-game-data-empty', file.path);
         } else {
           setAlert('不支持的文件类型！');

@@ -573,7 +573,7 @@ app.whenReady().then(async () => {
     const result = await dialog.showOpenDialog({
       properties: ['openFile'],
       filters: [
-        { name: '启动文件', extensions: ['exe', 'bat'] }
+        { name: '启动文件', extensions: ['exe', 'bat', 'lnk'] }
       ]
     });
     if (result.canceled) {
@@ -1059,7 +1059,7 @@ async function openGameWithLe(gamePath, lePath) {
     ];
 
     // 使用spawn执行命令，这里将变量名从 process 改为 childProcess
-    const childProcess = spawn(command, args, {
+    const childProcess = spawn('start', [command, ...args], {
       shell: true,
       windowsHide: true,
       env: { ...process.env, LANG: 'zh_CN.UTF-8' }
@@ -1278,10 +1278,11 @@ async function openExternalProgram(programPath, id, event, startWithLe, lePath) 
       }
       await openGameWithLe(programPath, lePath);
     } else {
-      const child = spawn(programName, [], {
+      const child = spawn('start', ['""', programName], {
         cwd: programDir,
         detached: true,
-        stdio: 'ignore'
+        stdio: 'ignore',
+        shell: true
       });
 
       child.on('error', (error) => {
@@ -1297,7 +1298,7 @@ async function openExternalProgram(programPath, id, event, startWithLe, lePath) 
 
     const parentDir = path.dirname(programPath);
     await scanDirectory(parentDir);
-    startMonitoring(id, event);
+    setTimeout(() => startMonitoring(id, event), 10000);
   } catch (error) {
     log.error(`启动游戏 ${id} 时出错:`, error);
     event.reply('game-start-result', { id: id, success: false, error: error.message });
