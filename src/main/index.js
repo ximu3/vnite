@@ -630,7 +630,7 @@ app.whenReady().then(async () => {
   ipcMain.on('organize-game-data', async (event, gid, savePath, gamePath) => {
     await organizeGameData(gid, savePath, gamePath, mainWindow, getDataPath(''));
     const gameData = await getGameData(getDataPath('data.json'));
-    mainWindow.webContents.send('game-data-organized', gameData);
+    mainWindow.webContents.send('game-data-updated', gameData);
     const categoryData = await getCategoryData(getDataPath('categories.json'));
     mainWindow.webContents.send('category-data-updated', categoryData);
   });
@@ -638,7 +638,7 @@ app.whenReady().then(async () => {
   ipcMain.on('update-game-meta-data', async (event, id, gid) => {
     await updateGameMetaData(id, gid, mainWindow, getDataPath(''));
     const gameData = await getGameData(getDataPath('data.json'));
-    mainWindow.webContents.send('game-data-organized', gameData);
+    mainWindow.webContents.send('game-data-updated', gameData);
   });
 
   ipcMain.on('organize-game-data-empty', async (event, filePath) => {
@@ -647,7 +647,7 @@ app.whenReady().then(async () => {
     await organizeGameDataEmpty(name, id, mainWindow, getDataPath(''), getDataPath('games'), join(getAppRootPath(), 'assets'), filePath);
     await getFileIcon(filePath, id);
     const gameData = await getGameData(getDataPath('data.json'));
-    mainWindow.webContents.send('game-data-organized', gameData);
+    mainWindow.webContents.send('game-data-updated', gameData);
     const categoryData = await getCategoryData(getDataPath('categories.json'));
     mainWindow.webContents.send('category-data-updated', categoryData);
   });

@@ -288,12 +288,9 @@ function GameLoad() {
         }
     }, [addGameLog]);
     useEffect(() => {
-        window.electron.ipcRenderer.on('game-data-organized', async (event, gameData) => {
+        window.electron.ipcRenderer.on('game-data-updated', (event, gameData) => {
             setIsLoading(false);
-            await setData(gameData);
             setTimestamp(Date.now());
-            // setTimeout(() => {
-            // }, 100);
         })
         window.electron.ipcRenderer.on('add-game-log', (event, log) => {
             if (log.startsWith('[error]')) {

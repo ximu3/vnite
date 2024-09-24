@@ -351,9 +351,8 @@ function GameLoad() {
     }
   }, [addGameLog]);
   useEffect(() => {
-    window.electron.ipcRenderer.on('game-data-organized', (event, gameData) => {
+    window.electron.ipcRenderer.on('game-data-updated', (event, gameData) => {
       setIsLoading(false);
-      setData(gameData);
       setTimestamp(Date.now());
     })
     window.electron.ipcRenderer.on('add-game-log', (event, log) => {
