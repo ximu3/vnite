@@ -1278,7 +1278,7 @@ async function openExternalProgram(programPath, id, event, startWithLe, lePath) 
       }
       await openGameWithLe(programPath, lePath);
     } else {
-      const child = spawn('start', ['""', programName], {
+      const child = spawn('start', ['""', `"${programName}"`], {
         cwd: programDir,
         detached: true,
         stdio: 'ignore',
