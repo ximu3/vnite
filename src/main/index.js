@@ -997,6 +997,41 @@ app.whenReady().then(async () => {
     }
   });
 
+  //用户批量选择文件夹，返回文件夹名称数组
+  ipcMain.handle('get-folder-names-in-explorer', async (event) => {
+    try {
+      const result = await dialog.showOpenDialog({
+        properties: ['openDirectory', 'multiSelections']
+      });
+      if (result.canceled) {
+        return [];
+      } else {
+        return result.filePaths;
+      }
+    } catch (err) {
+      log.error('获取文件夹名称时出错:', err);
+      throw err;
+    }
+  });
+
+  //用户选择一个文件夹，返回其下所有一级文件夹名称数组
+  ipcMain.handle('get-folder-names-in-folder', async (event) => {
+    try {
+      const result = await dialog.showOpenDialog({
+        properties: ['openDirectory']
+      });
+      if (result.canceled) {
+        return [];
+      } else {
+        const folders = await fse.readdir(result.filePaths[0], { withFileTypes: true });
+        return folders.filter(dirent => dirent.isDirectory()).map(dirent => dirent.name);
+      }
+    } catch (err) {
+      log.error('获取文件夹名称时出错:', err);
+      throw err;
+    }
+  });
+
   ipcMain.on('delete-game', async (event, index) => {
     await deleteGame(index, getDataPath(''));
     await deleteGameFromAllCategories(getDataPath('categories.json'), index);

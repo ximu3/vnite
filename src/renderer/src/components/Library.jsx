@@ -5,6 +5,7 @@ import { useRootStore } from './Root';
 import PosterWall from './PosterWall';
 import CategoryTree from './CategoryTree';
 import ContextMenu from './ContextMenu';
+import { useBatchAddGame } from './BatchAddGame';
 
 function NavTab({ to, name, icon }) {
   return (
@@ -257,6 +258,16 @@ function Library() {
     return category?.name || '未分类';
   };
 
+  const { batchAddGameData, addBatchAddGameData } = useBatchAddGame();
+
+  async function batchAddGame() {
+    const games = await window.electron.ipcRenderer.invoke('get-folder-names-in-folder')
+    games.forEach(game => {
+      addBatchAddGameData({ name: game })
+    })
+    document.getElementById('batchAddGame').showModal();
+  }
+
   return (
     <div ref={dragRef} className="flex flex-row w-full h-full">
       <dialog id="addCategory" className="modal">
@@ -388,6 +399,7 @@ function Library() {
               <ul tabIndex={0} className="dropdown-content menu bg-custom-dropdown rounded-box z-[1] p-2 shadow w-44">
                 <li onClick={() => { document.getElementById('addGame').showModal() }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>刮削器添加</a></li>
                 <li onClick={() => { addGameEmpty() }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>直接添加</a></li>
+                <li onClick={() => { batchAddGame() }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>批量添加</a></li>
               </ul>
             </div>
             {/* <button className='min-w-0 min-h-0 transition-all border-0 w-9 h-9 btn btn-square bg-custom-stress-1' onClick={() => { document.getElementById('addGame').showModal() }}>

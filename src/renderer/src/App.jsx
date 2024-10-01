@@ -6,6 +6,7 @@ import { MemoryRouter, HashRouter } from 'react-router-dom';
 import Config from './components/Config';
 import { useRootStore } from './components/Root';
 import UpdateGame from './components/UpdateGame';
+import BatchAddGame from './components/BatchAddGame';
 
 
 
@@ -126,6 +127,10 @@ function App() {
 
       <MemoryRouter>
         <AddGame />
+      </MemoryRouter>
+
+      <MemoryRouter>
+        <BatchAddGame />
       </MemoryRouter>
 
       <MemoryRouter>
