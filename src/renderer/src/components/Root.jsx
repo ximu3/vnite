@@ -52,6 +52,17 @@ export const useRootStore = create(set => ({
   }),
   isAutoStartEnabled: false,
   setIsAutoStartEnabled: (isAutoStartEnabled) => set({ isAutoStartEnabled }),
+  pathData: {},
+  setPathData: (pathData) => set({ pathData }),
+  updatePathData: (path, value) => set((state) => {
+    const newPathData = JSON.parse(JSON.stringify(state.pathData));
+    let current = newPathData;
+    for (let i = 0; i < path.length - 1; i++) {
+      current = current[path[i]];
+    }
+    current[path[path.length - 1]] = value;
+    return { pathData: newPathData };
+  }),
 }));
 
 function NavButton({ to, name }) {
@@ -71,11 +82,19 @@ function NavButton({ to, name }) {
 }
 
 function Root() {
-  const { data, setData, alert, config, setConfig, isPulling, setIsPulling, setTimestamp, setCategoryData, categoryData, setIsAutoStartEnabled } = useRootStore();
-  const { isloading } = useAddGame();
+  const { data, setData, alert, config, setConfig, isPulling, setIsPulling, setTimestamp, setCategoryData, categoryData, setIsAutoStartEnabled, pathData, setPathData } = useRootStore();
   useEffect(() => {
     window.electron.ipcRenderer.invoke('get-game-data').then((data) => {
       setData(data);
+    })
+    window.electron.ipcRenderer.invoke('get-config-data').then((config) => {
+      setConfig(config);
+    })
+    window.electron.ipcRenderer.invoke('get-category-data').then((categoryData) => {
+      setCategoryData(categoryData);
+    })
+    window.electron.ipcRenderer.invoke('get-path-data').then((pathData) => {
+      setPathData(pathData);
     })
     window.electron.ipcRenderer.on('game-data-updated', (event, data) => {
       setData(data);
@@ -86,40 +105,33 @@ function Root() {
     window.electron.ipcRenderer.on('category-data-updated', (event, data) => {
       setCategoryData(data);
     })
+    window.electron.ipcRenderer.on('path-data-updated', (event, data) => {
+      setPathData(data);
+    })
     return () => {
       window.electron.ipcRenderer.removeAllListeners('game-data-updated');
       window.electron.ipcRenderer.removeAllListeners('config-data-updated');
       window.electron.ipcRenderer.removeAllListeners('category-data-updated');
+      window.electron.ipcRenderer.removeAllListeners('path-data-updated');
     }
-  }, [isloading])
+  }, [])
   useEffect(() => {
-    if (data.length !== 0) {
+    if (Object.keys(data).length !== 0) {
       window.electron.ipcRenderer.send('save-game-data', data)
     }
   }, [data])
 
   useEffect(() => {
-    window.electron.ipcRenderer.invoke('get-config-data').then((config) => {
-      setConfig(config);
-    })
+    if (Object.keys(pathData).length !== 0) {
+      window.electron.ipcRenderer.send('save-path-data', pathData)
+    }
+  }, [pathData])
 
-  }, [])
   useEffect(() => {
     // 获取当前自启动状态
     window.electron.ipcRenderer.invoke('get-auto-start').then(setIsAutoStartEnabled);
   }, []);
 
-  useEffect(() => {
-    window.electron.ipcRenderer.invoke('get-category-data').then((categoryData) => {
-      setCategoryData(categoryData);
-    })
-    window.electron.ipcRenderer.on('category-data-updated', (event, data) => {
-      setCategoryData(data);
-    })
-    return () => {
-      window.electron.ipcRenderer.removeAllListeners('category-data-updated');
-    }
-  }, [])
   useEffect(() => {
     if (config['cloudSync']) {
       window.electron.ipcRenderer.send('save-config-data', config)

@@ -48,8 +48,9 @@ function Game({ index }) {
     const naivgate = useNavigate();
     const { setId, setGameName } = useUpdateGame();
     const { backgroundImage, setBackgroundImage, characterImage, updateCharacterImage, setCharacterImage, setCoverImage, updateMemoryImagePath, setMemoryImagePath } = useGameStore();
-    const { data, setData, setAlert, updateData, timestamp, config, updateConfig, isGameRunning, setIsGameRunning } = useRootStore();
+    const { data, setData, setAlert, updateData, timestamp, config, updateConfig, isGameRunning, setIsGameRunning, pathData } = useRootStore();
     const gameData = data[index]['detail'];
+    const gamePathData = pathData[index];
     const characterData = data[index]['characters'];
     const memoryData = data[index]['memories'];
     const { settingData, setSettingData } = useGameSetting();
@@ -188,7 +189,7 @@ function Game({ index }) {
                 return
             }
         }
-        if (gameData['gamePath'] !== '') {
+        if (gamePathData['gamePath'] !== '') {
             if (gameData['startWithLe']) {
                 if (config['advance']['lePath'] === '') {
                     setAlert('LE路径未设置，请前往设置!')
@@ -201,7 +202,7 @@ function Game({ index }) {
                     return
                 }
             }
-            window.electron.ipcRenderer.send('open-and-monitor', gameData['gamePath'], gameData['id'], gameData['startWithLe'], config['advance']['lePath']);
+            window.electron.ipcRenderer.send('open-and-monitor', gamePathData['gamePath'], gameData['id'], gameData['startWithLe'], config['advance']['lePath']);
         } else {
             setAlert('游戏路径未设置，请前往设置!')
             setTimeout(() => { setAlert('') }, 3000)
@@ -1126,11 +1127,11 @@ function MediaSettings({ index }) {
 
 function StartupSettings({ index }) {
     const { settingData, updateSettiongData, setSettingData, setSettingAlert } = useGameSetting()
-    const { setTimestamp, updateData, data } = useRootStore()
+    const { setTimestamp, updateData, data, pathData, updatePathData } = useRootStore()
     async function selectGamePath() {
         const path = await window.electron.ipcRenderer.invoke("open-file-dialog")
         if (path) {
-            updateData([index, 'detail', 'gamePath'], path)
+            updatePathData([index, 'gamePath'], path)
             await window.electron.ipcRenderer.invoke('get-game-icon', path, settingData['detail']['id'])
             updateData([index, 'detail', 'icon'], `/games/${settingData['detail']['id']}/icon.png`)
             const size = await window.electron.ipcRenderer.invoke('get-folder-size', path)
@@ -1144,7 +1145,7 @@ function StartupSettings({ index }) {
     async function selectSavePath() {
         const path = await window.electron.ipcRenderer.invoke("open-file-folder-dialog")
         if (path) {
-            updateData([index, 'detail', 'savePath'], path)
+            updatePathData([index, 'savePath'], path)
         } else {
             return
         }
@@ -1169,7 +1170,7 @@ function StartupSettings({ index }) {
             setTimeout(() => { setSettingAlert(''); }, 3000);
             return
         }
-        updateSettiongData(['detail', 'gamePath'], file.path)
+        updatePathData([index, 'gamePath'], file.path)
         await window.electron.ipcRenderer.invoke('get-game-icon', path, settingData['detail']['id'])
         const size = await window.electron.ipcRenderer.invoke('get-folder-size', path)
         updateData([index, 'detail', 'icon'], `/games/${settingData['detail']['id']}/icon.png`)
@@ -1184,18 +1185,18 @@ function StartupSettings({ index }) {
             setTimeout(() => { setSettingAlert(''); }, 3000);
             return
         }
-        updateSettiongData(['detail', 'savePath'], files[0].path)
+        updatePathData([index, 'savePath'], files[0].path)
     }
     return (
         <div className='flex flex-col w-full h-full gap-3'>
             <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
                 <div className='font-semibold'>游戏路径 |</div>
-                <input type='text' spellCheck='false' placeholder='拖拽获取路径' onDrop={getGamePathByDrag} onDragOver={handleDragOver} className='grow' value={settingData?.detail?.gamePath || '0'} onChange={(e) => { updateSettiongData(['detail', 'gamePath'], e.target.value) }} />
+                <input type='text' spellCheck='false' placeholder='拖拽获取路径' onDrop={getGamePathByDrag} onDragOver={handleDragOver} className='grow' value={pathData[index]?.gamePath || '0'} onChange={(e) => { updatePathData([index, 'gamePath'], e.target.value) }} />
                 <span className="icon-[material-symbols-light--folder-open-outline-sharp] w-5 h-5 self-center" onClick={selectGamePath}></span>
             </label>
             <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
                 <div className='font-semibold'>存档路径 |</div>
-                <input type='text' spellCheck='false' placeholder='拖拽获取路径' onDrop={getSavePathByDrag} onDragOver={handleDragOver} className='grow' value={settingData?.detail?.savePath || '0'} onChange={(e) => { updateSettiongData(['detail', 'savePath'], e.target.value) }} />
+                <input type='text' spellCheck='false' placeholder='拖拽获取路径' onDrop={getSavePathByDrag} onDragOver={handleDragOver} className='grow' value={pathData[index]?.savePath || '0'} onChange={(e) => { updatePathData([index, 'savePath'], e.target.value) }} />
                 <span className="icon-[material-symbols-light--folder-open-outline-sharp] w-5 h-5 self-center" onClick={selectSavePath}></span>
             </label>
             <div className="dropdown dropdown-bottom">

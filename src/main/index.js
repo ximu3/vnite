@@ -19,6 +19,7 @@ import { initData } from '../../scripts/update-json.mjs';
 import util from 'util';
 import { renameCategory, getCategoryData, deleteGameFromAllCategories, updateCategoryData, addNewCategory, addNewGameToCategory, deleteCategory, deleteGameFromCategory, moveCategoryUp, moveCategoryDown, moveGameUp, moveGameDown } from '../renderer/src/components/categoryManager.mjs';
 import AutoLaunch from 'auto-launch'
+import { getPathData, updatePathData, addNewGameToPath } from '../renderer/src/components/pathManager.mjs'
 
 if (process.argv.length > 1) {
   const scriptPath = process.argv[1];
@@ -91,6 +92,21 @@ function createWindow() {
   });
 }
 
+async function syncDataToPath() {
+  // 获取data.json的所有key， 补全path.json中的key
+  try {
+    const data = await getGameData(getDataPath('data.json'));
+    const paths = await getPathData(getPathsPath('paths.json'));
+    for (const key in data) {
+      if (!paths[key]) {
+        await addNewGameToPath(key, '', '', getPathsPath('paths.json'));
+      }
+    }
+  } catch (error) {
+    log.error('同步游戏路径时出错:', error);
+  }
+}
+
 async function initAppData() {
   if (!app.isPackaged) {
     console.log('应用未打包，跳过初始化');
@@ -98,6 +114,7 @@ async function initAppData() {
   }
 
   try {
+
     const syncPath = getSyncPath('');
     const exists = await fs.access(syncPath).then(() => true).catch(() => false);
 
@@ -189,7 +206,16 @@ async function appToSync() {
   try {
     const appPath = getAppPath('');
     const syncPath = getSyncPath('');
-    await fse.copy(appPath, syncPath);
+    //排除path文件夹
+    const files = await fs.readdir(appPath);
+    for (const file of files) {
+      if (file === 'path') {
+        continue;
+      }
+      const appFilePath = join(appPath, file);
+      const syncFilePath = join(syncPath, file);
+      await fse.copy(appFilePath, syncFilePath);
+    }
     log.info('本地同步完成，app -> sync');
   } catch (error) {
     log.error('本地同步出错，app -> sync:', error);
@@ -317,6 +343,8 @@ app.whenReady().then(async () => {
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
+
+  await syncDataToPath();
 
   await initAppData();
 
@@ -622,43 +650,51 @@ app.whenReady().then(async () => {
     }
   });
 
-  ipcMain.handle('add-new-game-to-data', async (event, gid, coverUrl, bgUrl) => {
-    await retryAddGame(() => addNewGameToData(gid, coverUrl, bgUrl, getDataPath('games'), join(getAppRootPath(), 'assets')), 3, mainWindow);
+  ipcMain.handle('add-new-game-to-data', async (event, id, coverUrl, bgUrl) => {
+    await retryAddGame(() => addNewGameToData(id, coverUrl, bgUrl, getDataPath('games'), join(getAppRootPath(), 'assets')), 3, mainWindow);
     return
   });
 
   ipcMain.on('organize-game-data', async (event, gid, savePath, gamePath) => {
-    await organizeGameData(gid, savePath, gamePath, mainWindow, getDataPath(''));
+    await organizeGameData(gid, savePath, gamePath, mainWindow, getDataPath(''), getPathsPath('paths.json'));
     const gameData = await getGameData(getDataPath('data.json'));
     mainWindow.webContents.send('game-data-updated', gameData);
     const categoryData = await getCategoryData(getDataPath('categories.json'));
     mainWindow.webContents.send('category-data-updated', categoryData);
+    const pathData = await getPathData(getPathsPath('paths.json'));
+    mainWindow.webContents.send('path-data-updated', pathData);
   });
 
   ipcMain.handle('organize-game-data-handle', async (event, gid, savePath, gamePath) => {
-    await organizeGameData(gid, savePath, gamePath, mainWindow, getDataPath(''));
+    await organizeGameData(gid, savePath, gamePath, mainWindow, getDataPath(''), getPathsPath('paths.json'));
     const gameData = await getGameData(getDataPath('data.json'));
     mainWindow.webContents.send('game-data-updated', gameData);
     const categoryData = await getCategoryData(getDataPath('categories.json'));
     mainWindow.webContents.send('category-data-updated', categoryData);
+    const pathData = await getPathData(getPathsPath('paths.json'));
+    mainWindow.webContents.send('path-data-updated', pathData);
     return
   });
 
   ipcMain.on('update-game-meta-data', async (event, id, gid) => {
-    await updateGameMetaData(id, gid, mainWindow, getDataPath(''));
+    await updateGameMetaData(id, gid, mainWindow, getDataPath(''), getPathsPath('paths.json'));
     const gameData = await getGameData(getDataPath('data.json'));
     mainWindow.webContents.send('game-data-updated', gameData);
+    const pathData = await getPathData(getPathsPath('paths.json'));
+    mainWindow.webContents.send('path-data-updated', pathData);
   });
 
   ipcMain.on('organize-game-data-empty', async (event, filePath) => {
     const name = path.basename(filePath, path.extname(filePath));
     const id = generateNineDigitNumber(filePath)
-    await organizeGameDataEmpty(name, id, mainWindow, getDataPath(''), getDataPath('games'), join(getAppRootPath(), 'assets'), filePath);
+    await organizeGameDataEmpty(name, id, mainWindow, getDataPath(''), getDataPath('games'), join(getAppRootPath(), 'assets'), filePath, getPathsPath('paths.json'));
     await getFileIcon(filePath, id);
     const gameData = await getGameData(getDataPath('data.json'));
     mainWindow.webContents.send('game-data-updated', gameData);
     const categoryData = await getCategoryData(getDataPath('categories.json'));
     mainWindow.webContents.send('category-data-updated', categoryData);
+    const pathData = await getPathData(getPathsPath('paths.json'));
+    mainWindow.webContents.send('path-data-updated', pathData);
   });
 
   ipcMain.handle('generate-id', async (event, name) => {
@@ -697,6 +733,24 @@ app.whenReady().then(async () => {
   app.on('will-quit', () => {
     for (let [id, { process }] of processes) {
       process.kill();
+    }
+  });
+
+  ipcMain.handle('get-path-data', async (event) => {
+    return await getPathData(getPathsPath('paths.json'));
+  });
+
+  ipcMain.on('save-path-data', async (event, data) => {
+    await updatePathData(getPathsPath('paths.json'), data);
+  });
+
+  ipcMain.handle('add-new-game-path', async (event, id, gamePath, savePath) => {
+    try {
+      await addNewGameToPath(id, gamePath, savePath, getPathsPath('paths.json'));
+      return
+    } catch (error) {
+      log.error('Error adding new game path:', error);
+      throw error;
     }
   });
 
@@ -1236,6 +1290,14 @@ function getLogsPath() {
     return path.join(getAppRootPath(), '/logs/app.log');
   } else {
     return path.join(getAppRootPath(), '/logs/app.log');
+  }
+}
+
+function getPathsPath(file) {
+  if (app.isPackaged) {
+    return path.join(app.getPath('userData'), '/app/path', file);
+  } else {
+    return path.join(getAppRootPath(), '/src/renderer/public/app/path', file);
   }
 }
 

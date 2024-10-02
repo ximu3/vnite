@@ -55,6 +55,7 @@ export async function initData() {
     const configJsonPath = path.join(process.env.APPDATA, 'vnite', 'app', 'config', 'config.json');
     const categoryJsonPath = path.join(process.env.APPDATA, 'vnite', 'app', 'data', 'categories.json');
     const initDirPath = path.join(process.env.APPDATA, 'vnite', 'app');
+    const pathsJsonPath = path.join(process.env.APPDATA, 'vnite', 'app', 'path');
 
     try {
         await fs.access(initDirPath);
@@ -140,6 +141,30 @@ export async function initData() {
         await fs.writeFile(categoryJsonPath, JSON.stringify(categoryJson, null, 2));
         console.log(`${categoryJsonPath} 文件已成功创建。`);
     }
+
+    // paths.json不存在时创建
+    try {
+        await fs.access(pathsJsonPath);
+        console.log(`${pathsJsonPath} 文件已存在，无需创建。`);
+    } catch (error) {
+        // 将data.json中的gamePath和savePath添加到paths.json，格式为{id: {id: '', gamePath: data中对应的gamePath, savePath: data中对应的savePath}}
+        await fs.mkdir(pathsJsonPath, { recursive: true });
+        const pathsJson = {};
+        const dataJsonContent = await fs.readFile(dataJsonPath, 'utf8');
+        const dataJson = JSON.parse(dataJsonContent);
+        for (const gameId in dataJson) {
+            if (dataJson.hasOwnProperty(gameId)) {
+                pathsJson[gameId] = {
+                    id: gameId,
+                    gamePath: dataJson[gameId].detail.gamePath,
+                    savePath: dataJson[gameId].detail.savePath
+                };
+            }
+        }
+        await fs.writeFile(path.join(pathsJsonPath, 'paths.json'), JSON.stringify(pathsJson, null, 2));
+        console.log(`${pathsJsonPath} 文件已成功创建。`);
+    }
+
 }
 
 // await initData();

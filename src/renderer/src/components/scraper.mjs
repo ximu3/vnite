@@ -4,6 +4,7 @@ import path from 'path';
 import getFolderSize from 'get-folder-size';
 import log from 'electron-log/main.js'
 import { addNewGameToCategory } from './categoryManager.mjs';
+import { addNewGameToPath } from './pathManager.mjs';
 
 async function retry(fn, retries, mainWindow) {
     try {
@@ -221,7 +222,7 @@ function getCurrentDate() {
 }
 
 //organize一个游戏的数据结构，但数据为空，只有游戏名
-async function organizeGameDataEmpty(name, id, mainWindow, dataPath, filePath, resPath, gamePath) {
+async function organizeGameDataEmpty(name, id, mainWindow, dataPath, filePath, resPath, gamePath, pathDataPath) {
     try {
         //不请求API，直接组织数据
         //根据name生成一个由0和4位正整数组成的字符串
@@ -242,8 +243,6 @@ async function organizeGameDataEmpty(name, id, mainWindow, dataPath, filePath, r
                     cover: `/games/${id}/cover.webp`,
                     icon: `/games/${id}/icon.png`,
                     backgroundImage: `/games/${id}/background.webp`,
-                    savePath: "",
-                    gamePath: gamePath,
                     startWithLe: false,
                     volume: 0,
                     addDate: getCurrentDate(),
@@ -268,6 +267,7 @@ async function organizeGameDataEmpty(name, id, mainWindow, dataPath, filePath, r
         };
         await retry(() => addObjectToJsonFile(data, path.join(dataPath, 'data.json')), 3, mainWindow);
         await retry(() => addNewGameToCategory(path.join(dataPath, 'categories.json'), 0, id), 3, mainWindow);
+        await retry(() => addNewGameToPath(id, '', '', pathDataPath), 3, mainWindow);
         mainWindow.webContents.send('add-game-log', `[success] 成功处理游戏 ${name} 的数据。`);
         return data;
     } catch (error) {
@@ -293,7 +293,7 @@ function generateNineDigitNumber(inputString) {
 }
 
 //更新一个游戏的数据，传入id，gid，主窗口，数据路径
-async function updateGameMetaData(id, gid, mainWindow, dataPath) {
+async function updateGameMetaData(id, gid, mainWindow, dataPath, pathDataPath) {
     try {
         const Details = await retry(() => searchGameId(gid), 3, mainWindow);
         const gameData = Details.data;
@@ -433,8 +433,6 @@ async function updateGameMetaData(id, gid, mainWindow, dataPath) {
                 cover: `/games/${id}/cover.webp`,
                 icon: icon,
                 backgroundImage: `/games/${id}/background.webp`,
-                savePath: '',
-                gamePath: '',
                 startWithLe: false,
                 volume: Number(sizeInMB),
                 addDate: getCurrentDate(),
@@ -460,8 +458,6 @@ async function updateGameMetaData(id, gid, mainWindow, dataPath) {
         // 保留原有数据中的特定字段
         if (existingData[id]) {
             newGameData.detail.gameDuration = existingData[id].detail.gameDuration || 0;
-            newGameData.detail.savePath = existingData[id].detail.savePath || 0;
-            newGameData.detail.gamePath = existingData[id].detail.gamePath || 0;
             newGameData.detail.icon = existingData[id].detail.icon || '';
             newGameData.detail.lastVisitDate = existingData[id].detail.lastVisitDate || "";
             newGameData.detail.frequency = existingData[id].detail.frequency || 0;
@@ -479,7 +475,7 @@ async function updateGameMetaData(id, gid, mainWindow, dataPath) {
             console.error('写入 data.json 文件时出错:', error);
             mainWindow.webContents.send('add-game-log', `[error] 写入 data.json 文件时出错: ${error}`);
         }
-
+        await retry(() => addNewGameToPath(id, '', '', pathDataPath), 3, mainWindow);
         mainWindow.webContents.send('add-game-log', `[success] 成功处理游戏 ${gameData.game.name} 的数据。`);
         return existingData;
     } catch (error) {
@@ -489,13 +485,13 @@ async function updateGameMetaData(id, gid, mainWindow, dataPath) {
     }
 }
 
-async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath, id = '') {
+async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath, pathDataPath) {
     try {
         const Details = await retry(() => searchGameId(gid), 3, mainWindow);
         const gameData = Details.data;
-        if (id === '') {
-            id = generateNineDigitNumber(gameData.game.name);
-        }
+
+        const id = generateNineDigitNumber(gameData.game.name);
+
         const characters = [];
         const vid = await retry(() => getVIDByTitle(gameData.game.name), 3, mainWindow);
         for (const character of gameData.game.characters) {
@@ -635,8 +631,6 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath, i
                     cover: `/games/${id}/cover.webp`,
                     icon: icon,
                     backgroundImage: `/games/${id}/background.webp`,
-                    savePath: savePath,
-                    gamePath: gamePath,
                     startWithLe: false,
                     volume: Number(sizeInMB),
                     addDate: getCurrentDate(),
@@ -661,6 +655,7 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath, i
         };
         await retry(() => addObjectToJsonFile(data, path.join(dataPath, 'data.json')), 3, mainWindow);
         await retry(() => addNewGameToCategory(path.join(dataPath, 'categories.json'), 0, id), 3, mainWindow);
+        await retry(() => addNewGameToPath(id, gamePath, savePath, pathDataPath), 3, mainWindow);
         mainWindow.webContents.send('add-game-log', `[success] 成功处理游戏 ${gameData.game.name} 的数据。`);
         return data;
     } catch (error) {
@@ -668,20 +663,6 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath, i
         log.error('Error in organizeGameData:', error);
         throw error;
     }
-}
-
-async function organizeOneGameData(name, gid, vid, mainWindow, dataPath, assetsPath) {
-    try {
-        // 获取游戏封面
-        const cover = await retry(() => getCoverByTitle(name), 3, mainWindow);
-        // 获取游戏截图
-        const screenshots = await retry(() => getScreenshotsByTitle(name), 3, mainWindow);
-        const screenshot = screenshots.length > 0 ? screenshots[0] : '';
-
-    } catch (error) {
-
-    }
-
 }
 
 // 封装API请求函数
