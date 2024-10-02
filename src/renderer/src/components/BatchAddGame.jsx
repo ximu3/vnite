@@ -26,8 +26,10 @@ export const useBatchAddGame = create(set => ({
 }));
 
 export default function BatchAddGame() {
-    const { alert, setAlert } = useBatchAddGame();
+    const { alert, setAlert, setBatchAddGameData } = useBatchAddGame();
     function quit() {
+        setBatchAddGameData([]);
+        setAlert('');
     }
     return (
         <dialog id="batchAddGame" className="modal">
