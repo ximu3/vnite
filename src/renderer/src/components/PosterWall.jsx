@@ -45,7 +45,7 @@ function formatTime(seconds) {
 export default function PosterWall() {
     const navigate = useNavigate();
     const { posters, setPosters, addPoster, recentPlay, setRecentPlay, setBackgrounds, backgrounds, sortedGames, setSortedGames, sortOrder, sortBy, setSortBy, setSortOrder } = usePosterStore();
-    const { data, icons, setIcons, timestamp } = useRootStore();
+    const { data, icons, setIcons, timestamp, config, updateConfig } = useRootStore();
     useEffect(() => {
         async function loadImages() {
             setPosters({});
@@ -92,12 +92,12 @@ export default function PosterWall() {
             const [keyB, gameB] = b;
             let comparison = 0;
 
-            switch (sortBy) {
+            switch (config?.others?.posterWall?.sortBy) {
                 case 'name':
                     comparison = (gameA.detail.chineseName || gameA.detail.name).localeCompare(gameB.detail.chineseName || gameB.detail.name);
                     break;
                 case 'lastPlayed':
-                    comparison = new Date(gameA.detail.lastVisitDate || 0) - new Date(gameB.detail.lastVisitDate || 0);
+                    comparison = (gameA.detail.lastVisitDate || 0) - (gameB.detail.lastVisitDate || 0);
                     break;
                 case 'playTime':
                     comparison = (gameA.detail.gameDuration || 0) - (gameB.detail.gameDuration || 0);
@@ -109,10 +109,10 @@ export default function PosterWall() {
                     comparison = 0;
             }
 
-            return sortOrder === 'asc' ? comparison : -comparison;
+            return config?.others?.posterWall?.sortOrder === 'asc' ? comparison : -comparison;
         });
         setSortedGames(sortGames);
-    }, [data, sortBy, sortOrder]);
+    }, [data, config?.others?.posterWall?.sortBy, config?.others?.posterWall?.sortOrder]);
     function convertSortName(sortBy) {
         switch (sortBy) {
             case 'name':
@@ -128,7 +128,7 @@ export default function PosterWall() {
         }
     }
     function toggleSortOrder() {
-        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+        updateConfig(['others', 'posterWall', 'sortOrder'], config?.others?.posterWall?.sortOrder === 'asc' ? 'desc' : 'asc');
     }
     return (
         <div className='w-full h-full overflow-auto p-7 bg-custom-main-2 scrollbar-base'>
@@ -183,16 +183,16 @@ export default function PosterWall() {
                                 </div>
                             </div>
                             <ul tabIndex={0} className="dropdown-content menu bg-custom-dropdown rounded-box z-[1] w-52 p-2 shadow mt-1">
-                                <li onClick={() => { setSortBy('name') }} className='hover:bg-custom-text hover:text-black active:bg-custom-text'><a className='transition-none active:bg-custom-text active:text-black'>按名称排序</a></li>
-                                <li onClick={() => { setSortBy('lastPlayed') }} className='hover:bg-custom-text hover:text-black'><a className='transition-none active:bg-custom-text active:text-black'>按最后运行日期排序</a></li>
-                                <li onClick={() => { setSortBy('playTime') }} className='hover:bg-custom-text hover:text-black'><a className='transition-none active:bg-custom-text active:text-black'>按游玩时间排序</a></li>
-                                <li onClick={() => { setSortBy('addDate') }} className='hover:bg-custom-text hover:text-black'><a className='transition-none active:bg-custom-text active:text-black'>按添加日期排序</a></li>
+                                <li onClick={() => { updateConfig(['others', 'posterWall', 'sortBy'], 'name') }} className='hover:bg-custom-text hover:text-black active:bg-custom-text'><a className='transition-none active:bg-custom-text active:text-black'>按名称排序</a></li>
+                                <li onClick={() => { updateConfig(['others', 'posterWall', 'sortBy'], 'lastPlayed') }} className='hover:bg-custom-text hover:text-black'><a className='transition-none active:bg-custom-text active:text-black'>按最后运行日期排序</a></li>
+                                <li onClick={() => { updateConfig(['others', 'posterWall', 'sortBy'], 'playTime') }} className='hover:bg-custom-text hover:text-black'><a className='transition-none active:bg-custom-text active:text-black'>按游玩时间排序</a></li>
+                                <li onClick={() => { updateConfig(['others', 'posterWall', 'sortBy'], 'addDate') }} className='hover:bg-custom-text hover:text-black'><a className='transition-none active:bg-custom-text active:text-black'>按添加日期排序</a></li>
                             </ul>
                         </div>
                         <label className="w-auto h-5 p-1 -m-2 swap bg-custom-stress-2 text-custom-text hover:text-custom-text-light">
                             <input type="checkbox" onChange={toggleSortOrder} />
-                            <div className="flex items-center justify-center text-xs swap-on"><span className="icon-[ic--sharp-arrow-downward] w-4 h-4"></span></div>
-                            <div className="flex items-center justify-center text-xs swap-off"><span className="icon-[ic--sharp-arrow-upward] w-4 h-4"></span></div>
+                            <div className="flex items-center justify-center text-xs swap-off"><span className="icon-[ic--sharp-arrow-downward] w-4 h-4"></span></div>
+                            <div className="flex items-center justify-center text-xs swap-on"><span className="icon-[ic--sharp-arrow-upward] w-4 h-4"></span></div>
                         </label>
                     </div>
                     <div className='flex flex-row flex-wrap gap-7'>
@@ -209,7 +209,7 @@ export default function PosterWall() {
 function useElementPosition() {
     const [position, setPosition] = useState('right');
     const ref = useRef(null);
-    const { sortBy, sortOrder } = usePosterStore();
+    const { config } = useRootStore();
 
     useLayoutEffect(() => {
         const checkPosition = () => {
@@ -227,7 +227,7 @@ function useElementPosition() {
             window.removeEventListener('resize', checkPosition);
             clearTimeout(timer);
         };
-    }, [sortBy, sortOrder]);
+    }, [config?.others?.posterWall?.sortBy, config?.others?.posterWall?.sortOrder]);
 
     return [ref, position];
 }

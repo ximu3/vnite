@@ -122,6 +122,12 @@ export async function initData() {
         },
         advance: {
             lePath: ''
+        },
+        others: {
+            posterWall: {
+                sortOrder: 'desc',
+                sortBy: 'name'
+            }
         }
     };
     await updateJsonFile(configJsonPath, configNewPairs, true);
