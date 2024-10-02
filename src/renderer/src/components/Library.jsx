@@ -263,7 +263,7 @@ function Library() {
   async function batchAddGame() {
     const games = await window.electron.ipcRenderer.invoke('get-folder-names-in-folder')
     games.forEach(game => {
-      addBatchAddGameData({ name: game })
+      addBatchAddGameData({ name: game, gid: '', vid: '', status: 'waiting' })
     })
     document.getElementById('batchAddGame').showModal();
   }

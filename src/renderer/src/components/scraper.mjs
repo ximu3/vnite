@@ -489,11 +489,13 @@ async function updateGameMetaData(id, gid, mainWindow, dataPath) {
     }
 }
 
-async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath) {
+async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath, id = '') {
     try {
         const Details = await retry(() => searchGameId(gid), 3, mainWindow);
         const gameData = Details.data;
-        const id = generateNineDigitNumber(gameData.game.name);
+        if (id === '') {
+            id = generateNineDigitNumber(gameData.game.name);
+        }
         const characters = [];
         const vid = await retry(() => getVIDByTitle(gameData.game.name), 3, mainWindow);
         for (const character of gameData.game.characters) {
@@ -668,6 +670,20 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath) {
     }
 }
 
+async function organizeOneGameData(name, gid, vid, mainWindow, dataPath, assetsPath) {
+    try {
+        // 获取游戏封面
+        const cover = await retry(() => getCoverByTitle(name), 3, mainWindow);
+        // 获取游戏截图
+        const screenshots = await retry(() => getScreenshotsByTitle(name), 3, mainWindow);
+        const screenshot = screenshots.length > 0 ? screenshots[0] : '';
+
+    } catch (error) {
+
+    }
+
+}
+
 // 封装API请求函数
 async function queryVNDB(filters, fields) {
     try {
@@ -706,6 +722,53 @@ async function getScreenshotsByTitle(title) {
         }
     } catch (error) {
         log.error("获取截图时出错:", error);
+        throw error;
+    }
+}
+
+async function getScreenshotsByVID(vid) {
+    try {
+        const data = await queryVNDB(["id", "=", vid], "title, screenshots{url}");
+        if (data.results.length > 0) {
+            const vn = data.results[0];
+            console.log(`获取到 "${vn.title}" 的截图:`);
+            return vn.screenshots.map(screenshot => screenshot.url);
+        } else {
+            console.log(`未找到ID为 "${vid}" 的视觉小说。`);
+            if (title.includes('/')) {
+                return await getScreenshotsByVID(title.split('/')[0]);
+            } else {
+                return [];
+            }
+        }
+    } catch (error) {
+        log.error("获取截图时出错:", error);
+        throw error;
+    }
+}
+
+async function getCoverByVID(vid) {
+    try {
+        const data = await queryVNDB(["id", "=", vid], "title, image{url}");
+        if (data.results.length > 0) {
+            const vn = data.results[0];
+            if (vn.image) {
+                console.log(`获取到 "${vn.title}" 的封面:`);
+                return vn.image.url;
+            } else {
+                console.log(`"${vn.title}" 没有封面图片。`);
+                return '';
+            }
+        } else {
+            console.log(`未找到ID为 "${vid}" 的视觉小说。`);
+            if (title.includes('/')) {
+                return await getCoverByVID(title.split('/')[0]);
+            } else {
+                return '';
+            }
+        }
+    } catch (error) {
+        log.error("获取封面时出错:", error);
         throw error;
     }
 }
@@ -817,4 +880,4 @@ async function getCharacterIDByName(name, vnId) {
     }
 }
 
-export { searchGameList, searchGameId, searchGameDetails, getScreenshotsByTitle, getCoverByTitle, organizeGameData, searchCharacterId, searchGameNamebyId, organizeGameDataEmpty, updateGameMetaData };
+export { getVIDByTitle, getCoverByVID, getScreenshotsByVID, searchGameList, searchGameId, searchGameDetails, getScreenshotsByTitle, getCoverByTitle, organizeGameData, searchCharacterId, searchGameNamebyId, organizeGameDataEmpty, updateGameMetaData };

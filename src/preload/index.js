@@ -1,6 +1,6 @@
 import { contextBridge } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { searchGameList, searchGameId, getScreenshotsByTitle, getCoverByTitle, organizeGameData } from "../renderer/src/components/scraper.mjs"
+import { getVIDByTitle, searchGameList, searchGameId, getScreenshotsByTitle, getCoverByTitle, organizeGameData, getScreenshotsByVID, getCoverByVID } from "../renderer/src/components/scraper.mjs"
 
 // Custom APIs for renderer
 const api = {
@@ -8,6 +8,9 @@ const api = {
   searchGameId: withRetry(searchGameId, 3),
   getScreenshotsByTitle: withRetry(getScreenshotsByTitle, 3),
   getCoverByTitle: withRetry(getCoverByTitle, 3),
+  getScreenshotsByVID: withRetry(getScreenshotsByVID, 3),
+  getCoverByVID: withRetry(getCoverByVID, 3),
+  getVIDByTitle: withRetry(getVIDByTitle, 3),
   organizeGameData: organizeGameData
 };
 

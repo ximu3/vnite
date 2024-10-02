@@ -635,6 +635,15 @@ app.whenReady().then(async () => {
     mainWindow.webContents.send('category-data-updated', categoryData);
   });
 
+  ipcMain.handle('organize-game-data-handle', async (event, gid, savePath, gamePath) => {
+    await organizeGameData(gid, savePath, gamePath, mainWindow, getDataPath(''));
+    const gameData = await getGameData(getDataPath('data.json'));
+    mainWindow.webContents.send('game-data-updated', gameData);
+    const categoryData = await getCategoryData(getDataPath('categories.json'));
+    mainWindow.webContents.send('category-data-updated', categoryData);
+    return
+  });
+
   ipcMain.on('update-game-meta-data', async (event, id, gid) => {
     await updateGameMetaData(id, gid, mainWindow, getDataPath(''));
     const gameData = await getGameData(getDataPath('data.json'));
