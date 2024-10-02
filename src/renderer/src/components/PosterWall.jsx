@@ -1,6 +1,6 @@
 import { useStore, create } from 'zustand';
 import { MemoryRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import { useEffect, useRef, useState, useMemo, useCallback, useLayoutEffect } from 'react';
 import { useRootStore } from './Root';
 
 const usePosterStore = create(set => ({
@@ -16,7 +16,11 @@ const usePosterStore = create(set => ({
     backgrounds: {},
     setBackgrounds: (backgrounds) => set({ backgrounds }),
     sortedGames: [],
-    setSortedGames: (sortedGames) => set({ sortedGames })
+    setSortedGames: (sortedGames) => set({ sortedGames }),
+    sortOrder: 'asc',
+    setSortOrder: (sortOrder) => set({ sortOrder }),
+    sortBy: 'name',
+    setSortBy: (sortBy) => set({ sortBy }),
 }));
 
 function formatTime(seconds) {
@@ -40,10 +44,8 @@ function formatTime(seconds) {
 
 export default function PosterWall() {
     const navigate = useNavigate();
-    const { posters, setPosters, addPoster, recentPlay, setRecentPlay, setBackgrounds, backgrounds, sortedGames, setSortedGames } = usePosterStore();
+    const { posters, setPosters, addPoster, recentPlay, setRecentPlay, setBackgrounds, backgrounds, sortedGames, setSortedGames, sortOrder, sortBy, setSortBy, setSortOrder } = usePosterStore();
     const { data, icons, setIcons, timestamp } = useRootStore();
-    const [sortBy, setSortBy] = useState('name'); // 默认按名称排序
-    const [sortOrder, setSortOrder] = useState('asc'); // 默认升序
     useEffect(() => {
         async function loadImages() {
             setPosters({});
@@ -207,9 +209,9 @@ export default function PosterWall() {
 function useElementPosition() {
     const [position, setPosition] = useState('right');
     const ref = useRef(null);
+    const { sortBy, sortOrder } = usePosterStore();
 
-
-    useEffect(() => {
+    useLayoutEffect(() => {
         const checkPosition = () => {
             if (ref.current) {
                 const rect = ref.current.getBoundingClientRect();
@@ -218,10 +220,14 @@ function useElementPosition() {
             }
         };
 
-        checkPosition();
+        const timer = setTimeout(checkPosition, 0);
+
         window.addEventListener('resize', checkPosition);
-        return () => window.removeEventListener('resize', checkPosition);
-    }, []);
+        return () => {
+            window.removeEventListener('resize', checkPosition);
+            clearTimeout(timer);
+        };
+    }, [sortBy, sortOrder]);
 
     return [ref, position];
 }
