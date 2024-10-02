@@ -218,6 +218,14 @@ function Global() {
             return `${(volume / 1024).toFixed(2)}GB`;
         }
     }
+    function switchTimestampToFomattedTime(timestamp) {
+        const date = new Date(timestamp);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份从0开始，需要+1
+        const day = String(date.getDate()).padStart(2, '0');
+
+        return `${year}.${month}.${day}`;
+    }
     return (
         <div className='w-full h-full p-3'>
             <div className='flex flex-row items-start gap-7'>
@@ -294,15 +302,15 @@ function Global() {
                     <div className='flex flex-col gap-3 pt-3 pr-3 overflow-auto text-xs text-custom-text-light max-h-100 scrollbar-base'>
                         {Object.entries(data)
                             ?.sort(([, a], [, b]) => {
-                                const dateA = a.detail.lastVisitDate ? new Date(a.detail.lastVisitDate) : new Date(0);
-                                const dateB = b.detail.lastVisitDate ? new Date(b.detail.lastVisitDate) : new Date(0);
+                                const dateA = a.detail.lastVisitDate ? a.detail.lastVisitDate : new Date(0);
+                                const dateB = b.detail.lastVisitDate ? b.detail.lastVisitDate : new Date(0);
                                 return dateB - dateA; // 从新到旧排序
                             })
                             ?.map(([key, game]) => {
                                 return (
                                     <div key={key} className='flex flex-row justify-between'>
                                         <span>{game?.detail.chineseName || game?.detail.name}</span>
-                                        <span>{game?.detail.lastVisitDate || '从未游玩'}</span>
+                                        <span>{game?.detail.lastVisitDate ? switchTimestampToFomattedTime(game?.detail.lastVisitDate) : "从未运行"}</span>
                                     </div>
                                 );
                             })

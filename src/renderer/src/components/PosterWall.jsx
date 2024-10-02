@@ -245,6 +245,14 @@ function Poster({ index }) {
     const { posters, backgrounds } = usePosterStore();
     const [ref, position] = useElementPosition();
     const { data } = useRootStore();
+    function switchTimestampToFomattedTime(timestamp) {
+        const date = new Date(timestamp);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份从0开始，需要+1
+        const day = String(date.getDate()).padStart(2, '0');
+
+        return `${year}-${month}-${day}`;
+    }
     return (
         <div className="relative group" ref={ref}>
             <div onClick={() => navigate(`../${index}`)} className='relative z-10 w-40 overflow-visible transition-all ease-in-out shadow-md cursor-pointer group duration-400 h-60 shadow-black/80 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/80 transform-gpu shine-effect'>
@@ -280,7 +288,7 @@ function Poster({ index }) {
                                 最后运行日期：
                             </div>
                             <div className=''>
-                                {data[index]?.detail?.lastVisitDate || '从未运行'}
+                                {data[index]?.detail?.lastVisitDate ? switchTimestampToFomattedTime(data[index]?.detail?.lastVisitDate) : '从未运行'}
                             </div>
                         </div>
                     </div>
