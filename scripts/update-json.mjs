@@ -171,6 +171,23 @@ export async function initData() {
         console.log(`${pathsJsonPath} 文件已成功创建。`);
     }
 
+    //检测data.json中游戏的lastVisitDate格式，若格式为年份-月份-日，则转换为时间戳
+    try {
+        const dataJsonContent = await fs.readFile(dataJsonPath, 'utf8');
+        const dataJson = JSON.parse(dataJsonContent);
+        for (const gameId in dataJson) {
+            if (dataJson.hasOwnProperty(gameId)) {
+                if (dataJson[gameId].detail.lastVisitDate && !isNaN(Date.parse(dataJson[gameId].detail.lastVisitDate))) {
+                    dataJson[gameId].detail.lastVisitDate = Date.parse(dataJson[gameId].detail.lastVisitDate);
+                }
+            }
+        }
+        await fs.writeFile(dataJsonPath, JSON.stringify(dataJson, null, 2));
+        console.log(`data.json时间戳已成功更新。`);
+    } catch (error) {
+        console.log(`data.json时间戳更新失败：${error.message}`);
+    }
+
 }
 
 // await initData();

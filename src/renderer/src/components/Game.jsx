@@ -123,7 +123,7 @@ function Game({ index }) {
             console.log(`Game ${index} received monitoring result:`, id, totalRunTime);
             setIsGameRunning(false, null)
             updateData([id, 'detail', 'gameDuration'], data[id]['detail']['gameDuration'] + totalRunTime);
-            updateData([id, 'detail', 'lastVisitDate'], getFormattedDate());
+            updateData([id, 'detail', 'lastVisitDate'], Date.now());
             if (totalRunTime >= 1) {
                 updateData([id, 'detail', 'frequency'], data[id]['detail']['frequency'] + 1);
                 if (config?.cloudSync?.enabled) {
@@ -252,6 +252,14 @@ function Game({ index }) {
         setGameName(gameData['name']);
         document.getElementById('updateGame').showModal();
     }
+    function switchTimestampToFomattedTime(timestamp) {
+        const date = new Date(timestamp);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份从0开始，需要+1
+        const day = String(date.getDate()).padStart(2, '0');
+
+        return `${year}.${month}.${day}`;
+    }
     return (
         <div className="flex flex-col w-full h-full overflow-auto scrollbar-base scrollbar-w-2 bg-custom-main/90 text-custom-text">
             <dialog id="deleteGame" className="modal">
@@ -320,7 +328,7 @@ function Game({ index }) {
                                         <span className="icon-[fluent--calendar-48-filled] w-9 h-9"></span>
                                         <div className='flex flex-col items-start text-xs'>
                                             <div className='font-semibold'>最后运行日期</div>
-                                            <div className=' text-custom-text/80'>{gameData['lastVisitDate'] ? gameData['lastVisitDate'].replace(/-/g, '.') : "还未运行过"}</div>
+                                            <div className=' text-custom-text/80'>{gameData['lastVisitDate'] ? switchTimestampToFomattedTime(gameData['lastVisitDate']) : "还未运行过"}</div>
                                         </div>
                                     </div>
                                     <div className='flex flex-row items-center gap-2 pl-2'>

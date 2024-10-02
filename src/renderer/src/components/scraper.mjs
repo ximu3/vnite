@@ -247,7 +247,7 @@ async function organizeGameDataEmpty(name, id, mainWindow, dataPath, filePath, r
                     volume: 0,
                     addDate: getCurrentDate(),
                     gameDuration: 0,
-                    lastVisitDate: "",
+                    lastVisitDate: 0,
                     frequency: 0,
                     playStatus: 0,
                     moreEntry: "",
@@ -437,7 +437,7 @@ async function updateGameMetaData(id, gid, mainWindow, dataPath, pathDataPath) {
                 volume: Number(sizeInMB),
                 addDate: getCurrentDate(),
                 gameDuration: 0,
-                lastVisitDate: "",
+                lastVisitDate: 0,
                 frequency: 0,
                 playStatus: 0,
                 moreEntry: gameData.game.moreEntry,
@@ -459,7 +459,7 @@ async function updateGameMetaData(id, gid, mainWindow, dataPath, pathDataPath) {
         if (existingData[id]) {
             newGameData.detail.gameDuration = existingData[id].detail.gameDuration || 0;
             newGameData.detail.icon = existingData[id].detail.icon || '';
-            newGameData.detail.lastVisitDate = existingData[id].detail.lastVisitDate || "";
+            newGameData.detail.lastVisitDate = existingData[id].detail.lastVisitDate || 0;
             newGameData.detail.frequency = existingData[id].detail.frequency || 0;
             newGameData.detail.playStatus = existingData[id].detail.playStatus || 0;
         }
@@ -635,7 +635,7 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath, p
                     volume: Number(sizeInMB),
                     addDate: getCurrentDate(),
                     gameDuration: 0,
-                    lastVisitDate: "",
+                    lastVisitDate: 0,
                     frequency: 0,
                     playStatus: 0,
                     moreEntry: gameData.game.moreEntry,

@@ -74,9 +74,9 @@ export default function PosterWall() {
         }
         //找到最近游玩的最多8个游戏，按时间远近排序，将key存入recentPlay数组，"lastVisitDate"格式为"2024-08-14"
         const recentPlays = Object.entries(data || {}).sort((a, b) => {
-            if (!a[1].detail.lastVisitDate) return 1;
-            if (!b[1].detail.lastVisitDate) return -1;
-            const dateComparison = new Date(b[1].detail.lastVisitDate) - new Date(a[1].detail.lastVisitDate);
+            if (!a[1].detail?.lastVisitDate) return 1;
+            if (!b[1].detail?.lastVisitDate) return -1;
+            const dateComparison = b[1].detail.lastVisitDate - a[1].detail.lastVisitDate;
             if (dateComparison === 0) {
                 // 如果日期相同，可以使用游戏名称或ID作为次要排序标准
                 return a[0].localeCompare(b[0]);
@@ -127,6 +127,14 @@ export default function PosterWall() {
                 return '名称';
         }
     }
+    function switchTimestampToFomattedTime(timestamp) {
+        const date = new Date(timestamp);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份从0开始，需要+1
+        const day = String(date.getDate()).padStart(2, '0');
+
+        return `${year}-${month}-${day}`;
+    }
     function toggleSortOrder() {
         updateConfig(['others', 'posterWall', 'sortOrder'], config?.others?.posterWall?.sortOrder === 'asc' ? 'desc' : 'asc');
     }
@@ -159,7 +167,7 @@ export default function PosterWall() {
                                                     最后运行日期：
                                                 </div>
                                                 <div className='font-semibold'>
-                                                    {data[index]?.detail?.lastVisitDate}
+                                                    {switchTimestampToFomattedTime(data[index]?.detail?.lastVisitDate)}
                                                 </div>
                                             </div>
                                         </div>
@@ -178,7 +186,7 @@ export default function PosterWall() {
                         <div className="z-50 dropdown">
                             <div tabIndex={0} role="button" className="flex flex-row w-auto h-5 min-h-0 pr-2 text-xs font-normal border-0 no-animation btn text-custom-text bg-custom-stress-2 hover:text-custom-text-light">
                                 <div className='flex flex-row items-center justify-center gap-1'>
-                                    按{convertSortName(sortBy)}排序
+                                    按{convertSortName(config?.others?.posterWall?.sortBy)}排序
                                     <span className="icon-[material-symbols-light--keyboard-arrow-down] w-4 h-4"></span>
                                 </div>
                             </div>
