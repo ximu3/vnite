@@ -226,9 +226,9 @@ async function organizeGameDataEmpty(name, id, mainWindow, dataPath, filePath, r
     try {
         //不请求API，直接组织数据
         //根据name生成一个由0和4位正整数组成的字符串
-        if (gamePath !== '') {
-            gamePath = gamePath.replace(/\\/g, '/');
-        }
+        // if (gamePath !== '') {
+        //     gamePath = gamePath.replace(/\\/g, '/');
+        // }
         retry(() => addNewGameToData(id, '', '', filePath, resPath), 3, mainWindow);
         const data = {
             [`${id}`]: {
@@ -267,7 +267,7 @@ async function organizeGameDataEmpty(name, id, mainWindow, dataPath, filePath, r
         };
         await retry(() => addObjectToJsonFile(data, path.join(dataPath, 'data.json')), 3, mainWindow);
         await retry(() => addNewGameToCategory(path.join(dataPath, 'categories.json'), 0, id), 3, mainWindow);
-        await retry(() => addNewGameToPath(id, '', '', pathDataPath), 3, mainWindow);
+        await retry(() => addNewGameToPath(id, gamePath, '', pathDataPath), 3, mainWindow);
         mainWindow.webContents.send('add-game-log', `[success] 成功处理游戏 ${name} 的数据。`);
         return data;
     } catch (error) {
@@ -613,9 +613,9 @@ async function organizeGameData(gid, savePath, gamePath, mainWindow, dataPath, p
             }
         }
 
-        if (savePath !== '') {
-            savePath = savePath.replace(/\\/g, '/');
-        }
+        // if (savePath !== '') {
+        //     savePath = savePath.replace(/\\/g, '/');
+        // }
 
 
         const data = {

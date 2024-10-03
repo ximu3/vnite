@@ -19,7 +19,7 @@ import { initData } from '../../scripts/update-json.mjs';
 import util from 'util';
 import { renameCategory, getCategoryData, deleteGameFromAllCategories, updateCategoryData, addNewCategory, addNewGameToCategory, deleteCategory, deleteGameFromCategory, moveCategoryUp, moveCategoryDown, moveGameUp, moveGameDown } from '../renderer/src/components/categoryManager.mjs';
 import AutoLaunch from 'auto-launch'
-import { getPathData, updatePathData, addNewGameToPath } from '../renderer/src/components/pathManager.mjs'
+import { getPathData, updatePathData, addNewGameToPath, deleteGameFromPath } from '../renderer/src/components/pathManager.mjs'
 
 if (process.argv.length > 1) {
   const scriptPath = process.argv[1];
@@ -1098,6 +1098,7 @@ app.whenReady().then(async () => {
   ipcMain.on('delete-game', async (event, index) => {
     await deleteGame(index, getDataPath(''));
     await deleteGameFromAllCategories(getDataPath('categories.json'), index);
+    await deleteGameFromPath(index, getPathsPath('paths.json'));
     const gameData = await getGameData(getDataPath('data.json'));
     log.info(`成功删除游戏 ${index}`);
     mainWindow.webContents.send('game-data-updated', gameData);

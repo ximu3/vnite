@@ -159,7 +159,7 @@ function Game({ index }) {
                 }
                 try {
                     const saveId = (data[id]['saves'][0] ? data[id]['saves'][data[id]['saves'].length - 1]['id'] + 1 : 1) // 使用时间戳作为唯一标识符
-                    window.electron.ipcRenderer.invoke('copy-save', data[id]['detail']['savePath'], data[id]['detail']['id'], saveId);
+                    window.electron.ipcRenderer.invoke('copy-save', gamePathData['savePath'], data[id]['detail']['id'], saveId);
                     updateData([id, 'saves'], [...data[id]['saves'], {
                         id: saveId,
                         date: getFormattedDateTimeWithSeconds(),
@@ -370,8 +370,8 @@ function Game({ index }) {
                                 <ul tabIndex={0} className="dropdown-content menu bg-custom-dropdown rounded-box z-[1] w-52 p-2 shadow">
                                     {/* <li onClick={() => { window.electron.ipcRenderer.send('search-game-in-adv3', gameData['name']) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>搜索游戏资源</a></li> */}
                                     <li onClick={updateGame} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>下载资料数据</a></li>
-                                    <li onClick={() => { openFolderInExplorer(gameData['gamePath']) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>浏览本地文件</a></li>
-                                    <li onClick={() => { openFolderInExplorer(gameData['savePath']) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>打开存档文件夹</a></li>
+                                    <li onClick={() => { openFolderInExplorer(gamePathData['gamePath']) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>浏览本地文件</a></li>
+                                    <li onClick={() => { openFolderInExplorer(gamePathData['savePath']) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>打开存档文件夹</a></li>
                                     <li onClick={() => { openFolderInExplorer(`/games/${gameData['id']}`) }} className='hover:bg-custom-text hover:text-black'><a className='transition-none'>打开数据文件夹</a></li>
                                     <li onClick={() => { document.getElementById('deleteGame').showModal() }} className='hover:bg-custom-red hover:text-custom-text-light'><a className='transition-none'>删除游戏</a></li>
                                 </ul>
@@ -618,10 +618,10 @@ function Character({ gid }) {
 }
 
 function Save({ index }) {
-    const { data, setData, setAlert, updateData, timestamp } = useRootStore();
+    const { data, setData, setAlert, updateData, timestamp, pathData } = useRootStore();
     async function switchSave(id) {
         try {
-            window.electron.ipcRenderer.send('switch-save', data[index]['detail']['id'], id, data[index]['detail']['savePath']);
+            window.electron.ipcRenderer.send('switch-save', data[index]['detail']['id'], id, pathData[index]['savePath']);
             setAlert('切换存档成功！')
             setTimeout(() => { setAlert('') }, 3000)
         } catch (e) {
@@ -656,7 +656,7 @@ function Save({ index }) {
                     </thead>
                     <tbody className=''>
                         {
-                            data[index]['saves'] ?
+                            data[index]['saves'].length > 0 ?
                                 data[index]['saves'].map((save, i) => {
                                     return (
                                         <tr key={i}>
@@ -675,7 +675,7 @@ function Save({ index }) {
                                     )
                                 }) :
                                 <tr>
-                                    <td>暂无存档</td>
+                                    <td colSpan={4}>暂无存档</td>
                                 </tr>
                         }
 
@@ -812,12 +812,6 @@ function Setting({ index }) {
             }
             return
         } else if (activeTab === 'startup') {
-            await window.electron.ipcRenderer.invoke('get-folder-size', settingData['detail']['gamePath']).then((data) => {
-                updateData([index], settingData)
-                updateData([index, 'detail', 'volume'], data)
-                setSettingAlert('保存成功！')
-                setTimeout(() => { setSettingAlert('') }, 3000)
-            })
             return
         }
         updateData([index], settingData)

@@ -38,3 +38,15 @@ export async function addNewGameToPath(id, gamePath = '', savePath = '', dataPat
         throw error;
     }
 }
+
+export async function deleteGameFromPath(id, dataPath) {
+    try {
+        const data = await getPathData(dataPath);
+        delete data[id];
+        await updatePathData(dataPath, data);
+        return
+    } catch (error) {
+        log.error('Error deleting game path:', error);
+        throw error;
+    }
+}

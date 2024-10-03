@@ -265,7 +265,8 @@ function GamePath() {
     }
     const id = await window.electron.ipcRenderer.invoke('generate-id', gameName);
     await window.electron.ipcRenderer.invoke('get-game-icon', file.path, id);
-    setGamePath(file.path);
+    const path = file.path.replace(/\//g, '\\');
+    setGamePath(path);
   }
 
   function getSavePathByDrag(e) {
@@ -276,7 +277,8 @@ function GamePath() {
       setTimeout(() => { setAlert(''); }, 3000);
       return
     }
-    setSavePath(files[0].path);
+    const path = files[0].path.replace(/\//g, '\\');
+    setSavePath(path);
   }
 
   async function submitGamePath() {
