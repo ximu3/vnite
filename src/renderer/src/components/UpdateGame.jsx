@@ -106,7 +106,12 @@ function Info() {
                         setGameName(name);
                         GameName = name;
                     })
-                    const gameBgList = await window.api.getScreenshotsByTitle(GameName);
+                    let gameBgList = [];
+                    if (vid) {
+                        gameBgList = await window.api.getScreenshotsByVID(vid);
+                    } else {
+                        gameBgList = await window.api.getScreenshotsByTitle(GameName);
+                    }
                     setGameBgList(gameBgList);
                     navigate('/bg');
                     setIsLoading(false);
@@ -157,6 +162,11 @@ function Info() {
                     <input type="text" spellCheck='false' name='gid' className="grow" placeholder="月幕Galgame档案id，带GA" value={gid} onChange={(e) => { setGID(e.target.value) }} />
                     <span className="border-0 badge bg-custom-blue-6 text-custom-text-light">可选</span>
                 </label>
+                <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
+                    <div className='font-semibold'>VID |</div>
+                    <input type="text" spellCheck='false' name='gid' className="grow" placeholder="VNDB id，带v" value={vid} onChange={(e) => { setVID(e.target.value) }} />
+                    <span className="border-0 badge bg-custom-blue-6 text-custom-text-light">可选</span>
+                </label>
                 <div className='pt-1'>填写&nbsp;<span className='bg-custom-blue-6 text-custom-text-light'> GID </span>&nbsp;项可大幅提高识别正确率。</div>
             </div>
             <button id='discernup' className='w-full h-10 transition-all mt-9 btn bg-custom-stress text-custom-text-light hover:brightness-125' onClick={submitInfo}>
@@ -169,7 +179,7 @@ function Info() {
 
 function GameList() {
     let navigate = useNavigate();
-    const { gid, gameList, setGID, setGameName, setGameBgList, gameName, setIsLoading, isLoading, setAlert } = useUpdateGame();
+    const { gid, gameList, setGID, setGameName, setGameBgList, gameName, setIsLoading, isLoading, setAlert, vid } = useUpdateGame();
     async function next() {
         if (gameList.length === 0) {
             setAlert('未找到相关游戏，请重新填写！');
@@ -177,7 +187,12 @@ function GameList() {
             return
         }
         setIsLoading(true);
-        const gameBgList = await window.api.getScreenshotsByTitle(gameName);
+        let gameBgList = [];
+        if (vid) {
+            gameBgList = await window.api.getScreenshotsByVID(vid);
+        } else {
+            gameBgList = await window.api.getScreenshotsByTitle(GameName);
+        }
         setGameBgList(gameBgList);
         navigate('/bg');
         setIsLoading(false);
@@ -235,7 +250,7 @@ function GameList() {
 }
 
 function GameBg() {
-    const { gameBgList, gameName, savePath, isLoading, gamePath, setGameBg, gameBg, gid, setIsLoading, id } = useUpdateGame();
+    const { gameBgList, gameName, savePath, isLoading, gamePath, setGameBg, gameBg, gid, setIsLoading, id, vid } = useUpdateGame();
     let navigate = useNavigate();
     async function submitAllData() {
         try {
@@ -245,7 +260,12 @@ function GameBg() {
                 return
             }
             setIsLoading(true);
-            const coverUrl = await window.api.getCoverByTitle(gameName);
+            let coverUrl = '';
+            if (vid) {
+                coverUrl = await window.api.getCoverByVID(vid);
+            } else {
+                coverUrl = await window.api.getCoverByTitle(gameName);
+            }
             await window.electron.ipcRenderer.invoke('add-new-game-to-data', id, coverUrl, gameBg);
             await window.electron.ipcRenderer.send('update-game-meta-data', id, gid);
             navigate('/load')
