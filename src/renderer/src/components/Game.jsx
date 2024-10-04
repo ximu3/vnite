@@ -298,8 +298,8 @@ function Game({ index }) {
                 <div className='absolute flex flex-col w-full gap-7 top-[53%]'>
                     <div className='flex flex-row justify-between'>
                         <div className='flex flex-col w-full gap-7'>
-                            <div className="flex flex-row gap-2 text-4xl font-bold text-custom-text-light pl-14">
-                                {gameData['chineseName'] ? `${gameData['chineseName']} ${gameData['name']}` : gameData['name']}
+                            <div className="flex flex-col gap-2 text-4xl font-bold text-custom-text-light pl-14">
+                                {gameData['chineseName'] ? <div className='flex flex-col gap-3'><div>{gameData['chineseName']}</div><div className='text-xl font-semibold text-custom-text-light'>{gameData['name']}</div></div> : <div>{gameData['name']}</div>}
                             </div>
                             <div className='flex flex-row items-center gap-3 justify-items-center pl-14'>
                                 {
