@@ -404,7 +404,7 @@ app.whenReady().then(async () => {
   });
 
 
-  ipcMain.on('close', () => app.quit())
+  // ipcMain.on('close', () => app.quit())
 
   ipcMain.on('minimize', () => {
     mainWindow.minimize();
@@ -1136,7 +1136,7 @@ app.whenReady().then(async () => {
     searchInADV3(name);
   });
 
-  mainWindow.on('close', async (event) => {
+  ipcMain.on('close', async (event) => {
     event.preventDefault();
     await handleAppExit();
   });
@@ -1306,8 +1306,8 @@ async function handleAppExit() {
   try {
     await appToSync();
     await waitExitInRenderer();
-    log.info('应用已退出');
-    app.exit(0); // 正常退出
+    // log.info('应用已退出');
+    // app.exit(0); // 正常退出
   } catch (error) {
     log.error('退出过程中出错:', error);
     app.exit(1); // 异常退出
@@ -1352,6 +1352,10 @@ function waitExitInRenderer() {
     ipcMain.once('app-exit-processed', (event, result) => {
       clearTimeout(timeout);
       resolve(result);
+    });
+    ipcMain.once('app-exit-exited', (event, result) => {
+      log.info('应用已退出');
+      app.exit(0); // 正常退出
     });
   });
 }

@@ -73,12 +73,13 @@ function App() {
         const currentConfig = configRef.current;
         if (currentConfig?.general?.quitToTray) {
           window.electron.ipcRenderer.send('quit-to-tray');
+          window.electron.ipcRenderer.send('app-exit-processed', { success: true });
           return;
         }
         await quit();
-        window.electron.ipcRenderer.send('app-exit-processed', { success: true });
+        window.electron.ipcRenderer.send('app-exit-exited', { success: true });
       } catch (error) {
-        window.electron.ipcRenderer.send('app-exit-processed', { success: false, error: error.message });
+        window.electron.ipcRenderer.send('app-exit-exited', { success: false, error: error.message });
       }
     });
 
