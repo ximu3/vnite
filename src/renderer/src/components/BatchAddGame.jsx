@@ -86,22 +86,26 @@ function GameList() {
             if (game.gid) {
                 let cover = ''
                 let bg = ''
+                let gameName = ''
                 if (!game.gid.toLowerCase().startsWith('ga')) {
                     setAlert('GID格式错误');
                     updateBatchAddGameData([index, 'status'], 'error');
                     return;
                 }
+                const gid = Number(game.gid.slice(2));
+                await window.electron.ipcRenderer.invoke('get-game-name', gid).then((name) => {
+                    gameName = name;
+                })
                 if (game.vid) {
                     cover = await window.api.getCoverByVID(game.vid);
                     const bgs = await window.api.getScreenshotsByVID(game.vid);
                     bg = bgs[0];
                 } else {
-                    cover = await window.api.getCoverByTitle(game.name);
-                    const bgs = await window.api.getScreenshotsByTitle(game.name);
+                    cover = await window.api.getCoverByTitle(gameName);
+                    const bgs = await window.api.getScreenshotsByTitle(gameName);
                     bg = bgs[0];
                 }
-                const gid = Number(game.gid.slice(2));
-                const id = await window.electron.ipcRenderer.invoke('generate-id', game.name);
+                const id = await window.electron.ipcRenderer.invoke('generate-id', gameName);
                 await window.electron.ipcRenderer.invoke('add-new-game-to-data', id, cover, bg);
                 await window.electron.ipcRenderer.invoke('organize-game-data-handle', gid, '', '', id);
             } else {
