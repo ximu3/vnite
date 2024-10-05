@@ -191,7 +191,7 @@ function GameList() {
         if (vid) {
             gameBgList = await window.api.getScreenshotsByVID(vid);
         } else {
-            gameBgList = await window.api.getScreenshotsByTitle(GameName);
+            gameBgList = await window.api.getScreenshotsByTitle(gameName);
         }
         setGameBgList(gameBgList);
         navigate('/bg');
