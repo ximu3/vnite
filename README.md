@@ -70,7 +70,7 @@ Vnite 是一个 视觉小说 / Galgame 管理软件。
 
 ## ☎️ 联系我
 
-- [Twitter](https://x.com/_ximu3)
+- [Twitter](https://x.com/ximu3_)
 - [Telegram群组](https://t.me/+d65-R_xRx1JlYWZh)
 
 ## 致谢
