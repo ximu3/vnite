@@ -239,8 +239,13 @@ function GamePath() {
     }
   }
 
-  async function selectSavePath() {
-    const path = await window.electron.ipcRenderer.invoke("open-file-folder-dialog")
+  async function selectSaveFolderPath() {
+    const path = await window.electron.ipcRenderer.invoke("open-save-folder-dialog")
+    setSavePath(path);
+  }
+
+  async function selectSaveFilePath() {
+    const path = await window.electron.ipcRenderer.invoke("open-save-file-dialog")
     setSavePath(path);
   }
 
@@ -295,15 +300,31 @@ function GamePath() {
   }
 
   return (
-    <div className='flex flex-col gap-5 w-140 h-77'>
+    <div className='flex flex-col gap-3 w-140 h-60'>
       <div className='pb-3 text-2xl font-bold text-center text-custom-text-light'>选择路径</div>
-      <div className='flex flex-row'>
-        <button className='transition-all btn bg-custom-stress border-1 border-custom-stress text-custom-text-light hover:brightness-125 no-animation' onClick={selectGamePath}>选择游戏路径</button>
-        <input type='text' placeholder='拖拽获取路径' onDrop={getGamePathByDrag} onDragOver={handleDragOver} className='w-full border-0 hover:brightness-125 input bg-custom-stress focus-within:outline-none focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:hover:brightness-100 focus-within:text-custom-text-light/95' value={gamePath} onChange={(e) => { setGamePath(e.target.value) }} />
+      <div className='flex flex-row gap-2'>
+        <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
+          <div className='font-semibold'>游戏路径 |</div>
+          <input type='text' spellCheck='false' placeholder='' onDrop={getGamePathByDrag} onDragOver={handleDragOver} className='grow' value={gamePath} onChange={(e) => { setGamePath(e.target.value) }} />
+        </label>
+        <div onClick={selectGamePath} className="w-8 h-8 min-h-0 mb-1 border-0 text-custom-text btn btn-square bg-custom-stress hover:brightness-125">
+          <span className="icon-[material-symbols-light--folder-open-outline-sharp] w-5 h-5 self-center"></span>
+        </div>
       </div>
-      <div className='flex flex-row'>
-        <button className='transition-all btn bg-custom-stress border-1 border-custom-stress text-custom-text-light hover:brightness-125 no-animation' onClick={selectSavePath}>选择存档路径</button>
-        <input type='text' placeholder='拖拽获取路径' onDrop={getSavePathByDrag} onDragOver={handleDragOver} className='w-full border-0 hover:brightness-125 input bg-custom-stress focus-within:outline-none focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:hover:brightness-100 focus-within:text-custom-text-light/95' value={savePath} onChange={(e) => { setSavePath(e.target.value) }} />
+      <div className='flex flex-row gap-2'>
+        <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
+          <div className='font-semibold'>存档路径 |</div>
+          <input type='text' spellCheck='false' placeholder='' onDrop={getSavePathByDrag} onDragOver={handleDragOver} className='grow' value={savePath} onChange={(e) => { setSavePath(e.target.value) }} />
+        </label>
+        <div className="dropdown dropdown-end">
+          <div tabIndex={0} role="button" className="w-8 h-8 min-h-0 mb-1 border-0 text-custom-text btn btn-square bg-custom-stress hover:brightness-125">
+            <span className="icon-[material-symbols-light--folder-open-outline-sharp] w-5 h-5 self-center"></span>
+          </div>
+          <ul tabIndex={0} className="dropdown-content menu bg-custom-dropdown rounded-box z-[1] w-52 p-2 shadow">
+            <li onClick={() => { selectSaveFilePath() }} className='hover:bg-custom-text hover:text-black'><a className='transition-none active:bg-custom-text active:text-black'>单文件</a></li>
+            <li onClick={() => { selectSaveFolderPath() }} className='hover:bg-custom-text hover:text-black'><a className='transition-none active:bg-custom-text active:text-black'>目录</a></li>
+          </ul>
+        </div>
       </div>
       <div className='pt-1'>可暂时跳过此步，后续可在该游戏设置页填写</div>
       <div className='flex flex-row-reverse items-end gap-5 pt-3'>

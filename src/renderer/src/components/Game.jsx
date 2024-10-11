@@ -1144,8 +1144,17 @@ function StartupSettings({ index }) {
         }
     }
 
-    async function selectSavePath() {
-        const path = await window.electron.ipcRenderer.invoke("open-file-folder-dialog")
+    async function selectSaveFolderPath() {
+        const path = await window.electron.ipcRenderer.invoke("open-save-folder-dialog")
+        if (path) {
+            updatePathData([index, 'savePath'], path)
+        } else {
+            return
+        }
+    }
+
+    async function selectSaveFilePath() {
+        const path = await window.electron.ipcRenderer.invoke("open-save-file-dialog")
         if (path) {
             updatePathData([index, 'savePath'], path)
         } else {
@@ -1191,16 +1200,30 @@ function StartupSettings({ index }) {
     }
     return (
         <div className='flex flex-col w-full h-full gap-3'>
-            <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
-                <div className='font-semibold'>游戏路径 |</div>
-                <input type='text' spellCheck='false' placeholder='拖拽获取路径' onDrop={getGamePathByDrag} onDragOver={handleDragOver} className='grow' value={pathData[index]?.gamePath || '0'} onChange={(e) => { updatePathData([index, 'gamePath'], e.target.value) }} />
-                <span className="icon-[material-symbols-light--folder-open-outline-sharp] w-5 h-5 self-center" onClick={selectGamePath}></span>
-            </label>
-            <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
-                <div className='font-semibold'>存档路径 |</div>
-                <input type='text' spellCheck='false' placeholder='拖拽获取路径' onDrop={getSavePathByDrag} onDragOver={handleDragOver} className='grow' value={pathData[index]?.savePath || '0'} onChange={(e) => { updatePathData([index, 'savePath'], e.target.value) }} />
-                <span className="icon-[material-symbols-light--folder-open-outline-sharp] w-5 h-5 self-center" onClick={selectSavePath}></span>
-            </label>
+            <div className='flex flex-row gap-2'>
+                <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
+                    <div className='font-semibold'>游戏路径 |</div>
+                    <input type='text' spellCheck='false' placeholder='拖拽获取路径' onDrop={getGamePathByDrag} onDragOver={handleDragOver} className='grow' value={pathData[index]?.gamePath || '0'} onChange={(e) => { updatePathData([index, 'gamePath'], e.target.value) }} />
+                </label>
+                <div onClick={selectGamePath} className="w-8 h-8 min-h-0 mb-1 border-0 text-custom-text btn btn-square bg-custom-stress hover:brightness-125">
+                    <span className="icon-[material-symbols-light--folder-open-outline-sharp] w-5 h-5 self-center"></span>
+                </div>
+            </div>
+            <div className='flex flex-row gap-2'>
+                <label className="flex items-center w-full gap-2 border-0 input-sm input bg-custom-stress focus-within:outline-none hover:brightness-125 focus-within:border-0 focus-within:shadow-inner-sm focus-within:shadow-black focus-within:bg-custom-focus focus-within:text-custom-text-light/95 focus-within:hover:brightness-100">
+                    <div className='font-semibold'>存档路径 |</div>
+                    <input type='text' spellCheck='false' placeholder='拖拽获取路径' onDrop={getSavePathByDrag} onDragOver={handleDragOver} className='grow' value={pathData[index]?.savePath || '0'} onChange={(e) => { updatePathData([index, 'savePath'], e.target.value) }} />
+                </label>
+                <div className="dropdown dropdown-end">
+                    <div tabIndex={0} role="button" className="w-8 h-8 min-h-0 mb-1 border-0 text-custom-text btn btn-square bg-custom-stress hover:brightness-125">
+                        <span className="icon-[material-symbols-light--folder-open-outline-sharp] w-5 h-5 self-center"></span>
+                    </div>
+                    <ul tabIndex={0} className="dropdown-content menu bg-custom-dropdown rounded-box z-[1] w-52 p-2 shadow">
+                        <li onClick={() => { selectSaveFilePath() }} className='hover:bg-custom-text hover:text-black'><a className='transition-none active:bg-custom-text active:text-black'>单文件</a></li>
+                        <li onClick={() => { selectSaveFolderPath() }} className='hover:bg-custom-text hover:text-black'><a className='transition-none active:bg-custom-text active:text-black'>目录</a></li>
+                    </ul>
+                </div>
+            </div>
             <div className="dropdown dropdown-bottom">
                 <div tabIndex={0} role="button" className="flex flex-row items-center justify-between w-1/3 gap-2 mb-1 text-sm font-semibold border-0 input-sm bg-custom-stress hover:brightness-125">
                     <div className="flex items-center gap-2">

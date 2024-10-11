@@ -639,9 +639,20 @@ app.whenReady().then(async () => {
     }
   });
 
-  ipcMain.handle('open-file-folder-dialog', async (event) => {
+  ipcMain.handle('open-save-folder-dialog', async (event) => {
     const result = await dialog.showOpenDialog({
-      properties: ['openFile', 'openDirectory'],
+      properties: ['openDirectory'],
+    });
+    if (result.canceled) {
+      return null;
+    } else {
+      return result.filePaths[0];
+    }
+  });
+
+  ipcMain.handle('open-save-file-dialog', async (event) => {
+    const result = await dialog.showOpenDialog({
+      properties: ['openFile'],
     });
     if (result.canceled) {
       return null;
