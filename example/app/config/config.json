@@ -1,10 +1,15 @@
 {
+  "general": {
+    "theme": "default",
+    "language": "en",
+    "quitToTray": true
+  },
   "cloudSync": {
     "enabled": false,
     "mode": "github",
     "webdav": {
       "url": "",
-      "path": "",
+      "path": "/my-vnite",
       "username": "",
       "password": "",
       "lastSyncTime": ""
@@ -16,9 +21,15 @@
       "accessToken": "",
       "repoUrl": "",
       "lastSyncTime": ""
-    },
-    "advance": {
-      "lePath": ""
+    }
+  },
+  "advance": {
+    "lePath": ""
+  },
+  "others": {
+    "posterWall": {
+      "sortOrder": "desc",
+      "sortBy": "playTime"
     }
   }
 }
