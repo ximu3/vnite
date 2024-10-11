@@ -820,6 +820,8 @@ app.whenReady().then(async () => {
 
   ipcMain.handle('copy-save', async (event, savePath, gameId, saveId) => {
     const saveDir = getDataPath(`games/${gameId}/saves/${saveId}/`);
+    const fileName = path.basename(savePath);
+    const fullSaveDir = join(saveDir, fileName);
     try {
       // 首先确保目标目录存在
       await fse.ensureDir(saveDir);
@@ -828,7 +830,7 @@ app.whenReady().then(async () => {
       await fse.emptyDir(saveDir);
 
       // 然后复制文件
-      await fse.copy(savePath, saveDir, { overwrite: true });
+      await fse.copy(savePath, fullSaveDir, { overwrite: true });
 
       log.info(`成功复制游戏 ${gameId} 存档到 ${saveDir}`);
     } catch (error) {
@@ -850,8 +852,9 @@ app.whenReady().then(async () => {
 
   ipcMain.on('switch-save', async (event, gameId, saveId, realSavePath) => {
     const savePath = getDataPath(`games/${gameId}/saves/${saveId}/`);
+    const realSaveDir = path.dirname(realSavePath);
     try {
-      await fse.move(savePath, realSavePath, { overwrite: true });
+      await fse.copy(savePath, realSaveDir, { overwrite: true });
       log.info(`成功切换游戏 ${gameId} 存档 ${saveId}`);
       event.reply('switch-save-reply', 'success');
     } catch (error) {
