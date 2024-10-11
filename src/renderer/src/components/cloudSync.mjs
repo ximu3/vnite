@@ -81,7 +81,7 @@ async function exchangeCodeForToken(code, mainWindow, clientId, clientSecret) {
 
     const username = userResponse.data.login;
     // 存储用户名
-    mainWindow.webContents.send('auth-success', { username: username, accessToken: accessToken });
+    mainWindow.webContents.send('auth-success', { username: username, accessToken: "***" });
     return { username: username, accessToken: accessToken };
 
   } catch (error) {
@@ -245,7 +245,7 @@ async function createEmptyRepoAndPushLocalFiles(token, repoName, localPath, user
     console.log('添加并提交了本地文件');
 
     // 5. 推送到远程仓库
-    await retry(() => git.push('origin', 'main'), 3);
+    await retry(() => git.push('--force', 'origin', 'main'), 3);
     console.log('成功推送到远程仓库');
 
     return repoUrl;
@@ -298,7 +298,7 @@ export async function commitAndPush(localPath, message) {
 
     // 尝试推送更改
     console.log('正在推送更改到远程仓库...');
-    await retry(() => git.push('origin', 'main'), 3);
+    await retry(() => git.push('--force', 'origin', 'main'), 3);
     console.log('更改已成功推送到远程仓库');
   } catch (error) {
     console.error('操作过程中出错:', error);
