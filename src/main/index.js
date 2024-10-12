@@ -206,6 +206,8 @@ async function appToSync() {
   try {
     const appPath = getAppPath('');
     const syncPath = getSyncPath('');
+    // 清空sync文件夹
+    await fse.emptyDir(syncPath);
     //排除path文件夹
     const files = await fs.readdir(appPath);
     for (const file of files) {
@@ -926,7 +928,7 @@ app.whenReady().then(async () => {
   ipcMain.handle('start-auth-process', async (event, clientId, clientSecret) => {
     try {
       const result = await startAuthProcess(mainWindow, clientId, clientSecret);
-      log.info('Github认证成功:', result);
+      log.info('Github认证成功:', result.username);
       return result;
     } catch (error) {
       log.error('Github认证错误:', error);

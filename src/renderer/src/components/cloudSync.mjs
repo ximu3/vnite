@@ -81,7 +81,7 @@ async function exchangeCodeForToken(code, mainWindow, clientId, clientSecret) {
 
     const username = userResponse.data.login;
     // 存储用户名
-    mainWindow.webContents.send('auth-success', { username: username, accessToken: "***" });
+    mainWindow.webContents.send('auth-success', { username: username, accessToken: accessToken });
     return { username: username, accessToken: accessToken };
 
   } catch (error) {
