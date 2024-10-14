@@ -12,7 +12,12 @@ export default defineConfig({
     plugins: [externalizeDepsPlugin({ exclude: ['lowdb'] })]
   },
   preload: {
-    plugins: [externalizeDepsPlugin()]
+    resolve: {
+      alias: {
+        '~': resolve('src/main')
+      }
+    },
+    plugins: [externalizeDepsPlugin({ exclude: ['lowdb'] })]
   },
   renderer: {
     resolve: {

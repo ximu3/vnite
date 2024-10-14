@@ -16,6 +16,12 @@ export async function setValue(filePath: string, path: string[], value: any): Pr
 
   await db.read()
 
+  if ('#all' in path) {
+    db.data = value
+    await db.write()
+    return
+  }
+
   let current = db.data
   for (let i = 0; i < path.length; i++) {
     const key = path[i]
@@ -48,6 +54,10 @@ export async function getValue(filePath: string, path: string[], defaultValue: a
 
   // 读取当前的数据
   await db.read()
+
+  if ('#all' in path) {
+    return db.data
+  }
 
   let current = db.data
   for (let i = 0; i < path.length; i++) {
