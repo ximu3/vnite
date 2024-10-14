@@ -3,36 +3,21 @@ productName: vnite
 directories:
   buildResources: build
 files:
-  # - "out/**/*"
   - '!**/.vscode/*'
   - '!src/*'
   - '!electron.vite.config.{js,ts,mjs,cjs}'
   - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
   - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
-extraFiles:
-  - from: "assets/"
-    to: "assets"
-    filter:
-      - "**/*"
+  - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
 asarUnpack:
   - resources/**
-icon: build/icon.png
 win:
   executableName: vnite
-  target:
-    - nsis
-  extraFiles:
-    - from: scripts/update-json.mjs
-      to: resources/update-json.mjs
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
-  oneClick: false  # 禁用一键安装
-  allowToChangeInstallationDirectory: true  # 允许更改安装目录
-  perMachine: true  # 允许选择为所有用户安装或仅为当前用户安装
-  include: installer.nsh
 mac:
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:

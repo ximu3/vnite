@@ -10,12 +10,11 @@
       "windows": {
         "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron-vite.cmd"
       },
-      "runtimeArgs": [
-        "--sourcemap"
-      ],
+      "runtimeArgs": ["--sourcemap"],
       "env": {
         "REMOTE_DEBUGGING_PORT": "9222"
-      }
+      },
+      "timeout": 60000
     },
     {
       "name": "Debug Renderer Process",
@@ -32,10 +31,7 @@
   "compounds": [
     {
       "name": "Debug All",
-      "configurations": [
-        "Debug Main Process",
-        "Debug Renderer Process"
-      ],
+      "configurations": ["Debug Main Process", "Debug Renderer Process"],
       "presentation": {
         "order": 1
       }
