@@ -4,11 +4,11 @@ directories:
   buildResources: build
 files:
   # - "out/**/*"
-  - '!**/.vscode/*'
-  - '!src/*'
-  - '!electron.vite.config.{js,ts,mjs,cjs}'
-  - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
-  - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
+  - "!**/.vscode/*"
+  - "!src/*"
+  - "!electron.vite.config.{js,ts,mjs,cjs}"
+  - "!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}"
+  - "!{.env,.env.*,.npmrc,pnpm-lock.yaml}"
 extraFiles:
   - from: "assets/"
     to: "assets"
@@ -29,9 +29,9 @@ nsis:
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
-  oneClick: false  # 禁用一键安装
-  allowToChangeInstallationDirectory: true  # 允许更改安装目录
-  perMachine: true  # 允许选择为所有用户安装或仅为当前用户安装
+  oneClick: false # 禁用一键安装
+  allowToChangeInstallationDirectory: true # 允许更改安装目录
+  perMachine: true # 允许选择为所有用户安装或仅为当前用户安装
   include: installer.nsh
 mac:
   entitlementsInherit: build/entitlements.mac.plist
