@@ -31,7 +31,9 @@
     "electron-updater": "^6.1.7",
     "fs-extra": "^11.2.0",
     "lowdb": "^7.0.1",
+    "next-themes": "^0.3.0",
     "react-router-dom": "^6.27.0",
+    "sonner": "^1.5.0",
     "tailwind-merge": "^2.5.3",
     "tailwindcss-animate": "^1.0.7",
     "zustand": "^5.0.0-rc.2"

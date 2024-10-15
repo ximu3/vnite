@@ -1,39 +1,73 @@
 import { create } from 'zustand'
-import { ipcInvoke, debouncedIpcInvoke } from '~/utils/ipc'
+import { ipcInvoke, debouncedIpcInvoke, ipcOnUnique } from '~/utils/ipc'
 import { useEffect } from 'react'
+import { toast } from 'sonner'
+
+const UPDATE_DB_VALUE_CHANNEL = 'updateDBValue'
+const NOT_SET = Symbol('NOT_SET')
 
 type DBSyncStore = {
   [key: string]: any
-  setDBState: (key: string, value: any) => void
 }
 
-// 重新设计 Zustand store
-const useDBSyncStore = create<DBSyncStore>((set) => ({
-  // 直接在顶层设置状态
-  setDBState: (key: string, value: any): void => set({ [key]: value })
-}))
+// 将 setDBState 移到 store 外部
+const setDBState = (key: string, value: any): void => useDBSyncStore.setState({ [key]: value })
 
-export function useDBSyncedState(
-  initialValue: any,
+const useDBSyncStore = create<DBSyncStore>(() => ({}))
+
+export function useDBSyncedState<T>(
+  initialValue: T,
   dbName: string,
   path: string[]
-): [any, (value: any) => void] {
+): [T, (value: T) => void] {
   const key = `${dbName}:${path.join('.')}`
-  const storeState = useDBSyncStore((state) => state)
-  const setDBState = useDBSyncStore((state) => state.setDBState)
+  const storeValue = useDBSyncStore((state) => state[key] ?? NOT_SET)
 
   useEffect(() => {
-    if (!(key in storeState)) {
-      ipcInvoke('getDBValue', dbName, path, initialValue).then((value) => {
+    const fetchAndSetValue = async (): Promise<void> => {
+      try {
+        const value = await ipcInvoke<T>('getDBValue', dbName, path, initialValue)
         setDBState(key, value)
-      })
+      } catch (error) {
+        console.error('Failed to get DB value:', error)
+        if (error instanceof Error) {
+          toast.error(`Failed to get DB value: ${error.message}`)
+        } else {
+          toast.error('Failed to get DB value: An unknown error occurred')
+        }
+        setDBState(key, initialValue)
+      }
     }
-  }, [key, storeState, dbName, path.join('.'), initialValue, setDBState])
 
-  const setValue = (newValue: any): void => {
+    if (storeValue === NOT_SET) {
+      fetchAndSetValue()
+    }
+
+    const updateListener = async (
+      _event: Electron.IpcRendererEvent,
+      updatedDbName: string
+    ): Promise<void> => {
+      if (updatedDbName === dbName) {
+        await fetchAndSetValue()
+      }
+    }
+
+    const removeListener = ipcOnUnique(UPDATE_DB_VALUE_CHANNEL, updateListener)
+
+    return removeListener
+  }, [key, initialValue, dbName, path, storeValue])
+
+  const setValue = (newValue: T): void => {
     setDBState(key, newValue)
-    debouncedIpcInvoke('setDBValue', dbName, path, newValue)
+    debouncedIpcInvoke('setDBValue', dbName, path, newValue)?.catch((error) => {
+      console.error('Failed to set DB value:', error)
+      if (error instanceof Error) {
+        toast.error(`Failed to get DB value: ${error.message}`)
+      } else {
+        toast.error('Failed to get DB value: An unknown error occurred')
+      }
+    })
   }
 
-  return [storeState[key] ?? initialValue, setValue]
+  return [storeValue === NOT_SET ? initialValue : (storeValue as T), setValue]
 }
