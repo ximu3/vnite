@@ -20,14 +20,21 @@ export function getAppRootPath(): string {
  * @returns The path of the file in the database folder
  */
 export async function getDataPath(file: string): Promise<string> {
-  if (app.isPackaged) {
-    const dataPath = path.join(app.getPath('userData'), 'app/database', file)
-    await fse.ensureDir(path.dirname(dataPath))
-    return dataPath
-  } else {
-    const dataPath = path.join(getAppRootPath(), '/dev/database', file)
-    await fse.ensureDir(path.dirname(dataPath))
-    return dataPath
+  try {
+    if (app.isPackaged) {
+      const dataPath = path.join(app.getPath('userData'), 'app/database', file)
+      const dataDir = path.dirname(dataPath)
+      await fse.ensureDir(dataDir)
+      return dataPath
+    } else {
+      const dataPath = path.join(getAppRootPath(), '/dev/database', file)
+      const dataDir = path.dirname(dataPath)
+      await fse.ensureDir(dataDir)
+      return dataPath
+    }
+  } catch (error) {
+    console.error('Failed to get data path', error)
+    throw error
   }
 }
 

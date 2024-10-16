@@ -1,4 +1,4 @@
-import { setupDatabaseIPC } from './databaseIPC'
+import { setupDatabaseIPC } from './database'
 import { BrowserWindow } from 'electron'
 import log from 'electron-log/main.js'
 

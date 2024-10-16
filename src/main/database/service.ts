@@ -1,5 +1,6 @@
 import { setValue, getValue } from './common.js'
 import { getDataPath } from '~/utils'
+import { getMetadata } from './metadata.js'
 import log from 'electron-log/main.js'
 
 /**
@@ -29,5 +30,17 @@ export async function getDBValue(dbName: string, path: string[], defaultValue: a
     return await getValue(await getDataPath(`${dbName}.json`), path, defaultValue)
   } catch (error) {
     log.error(`Failed to get value for ${dbName} at ${path.join('.')}`, error)
+  }
+}
+
+/**
+ * Get the metadata of the games
+ * @returns A promise that resolves with the metadata of the games.
+ */
+export async function getGamesMetadata(): Promise<any> {
+  try {
+    return await getMetadata()
+  } catch (error) {
+    log.error('Failed to get metadata for games', error)
   }
 }

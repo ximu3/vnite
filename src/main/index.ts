@@ -4,9 +4,11 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { setupIPC } from './ipc'
 import log from 'electron-log/main.js'
-import { getLogsPath } from './utils'
+import { getLogsPath, Watcher, getDataPath } from './utils'
 
 let mainWindow: BrowserWindow
+
+let gameWatcher: Watcher
 
 log.initialize()
 
@@ -47,7 +49,7 @@ function createWindow(): void {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('vnite')
 
@@ -63,6 +65,11 @@ app.whenReady().then(() => {
 
   createWindow()
 
+  // Watch for changes in the data directory
+  gameWatcher = new Watcher('games', await getDataPath('games'))
+
+  gameWatcher.start()
+
   setupIPC(mainWindow)
 
   app.on('activate', function () {
@@ -77,6 +84,7 @@ app.whenReady().then(() => {
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
+    gameWatcher.stop()
     app.quit()
   }
 })
