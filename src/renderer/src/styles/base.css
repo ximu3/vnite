@@ -1,1 +1,16 @@
-/*  */
+.draggable-area {
+  -webkit-app-region: drag;
+  height: 50px; /* 设置可拖拽区域的高度 */
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: transparent; /* 确保背景透明 */
+  z-index: 1000; /* 确保在最上层 */
+  pointer-events: none; /* 确保不影响其他元素的点击事件 */
+}
+
+.non-draggable {
+  -webkit-app-region: no-drag;
+  pointer-events: auto;
+}

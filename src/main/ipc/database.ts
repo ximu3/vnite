@@ -22,5 +22,5 @@ export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
     mainWindow.webContents.send('rebuild-index')
   })
 
-  mainWindow.webContents.send('databaseReady')
+  mainWindow.webContents.send('databaseIPCReady')
 }
