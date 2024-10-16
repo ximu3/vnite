@@ -17,8 +17,8 @@ log.transports.file.resolvePathFn = (): string => getLogsPath()
 function createWindow(): void {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+    width: 1600,
+    height: 900,
     show: false,
     frame: false,
     autoHideMenuBar: true,
