@@ -12,7 +12,7 @@ import log from 'electron-log/main.js'
  */
 export async function setDBValue(dbName: string, path: string[], value: any): Promise<void> {
   try {
-    await setValue(await getDataPath(`${dbName}.json`), path, value)
+    await setValue(await getDataPath(dbName), path, value)
   } catch (error) {
     log.error(`Failed to set value for ${dbName} at ${path.join('.')}`, error)
   }
@@ -27,7 +27,7 @@ export async function setDBValue(dbName: string, path: string[], value: any): Pr
  */
 export async function getDBValue(dbName: string, path: string[], defaultValue: any): Promise<any> {
   try {
-    return await getValue(await getDataPath(`${dbName}.json`), path, defaultValue)
+    return await getValue(await getDataPath(dbName), path, defaultValue)
   } catch (error) {
     log.error(`Failed to get value for ${dbName} at ${path.join('.')}`, error)
   }

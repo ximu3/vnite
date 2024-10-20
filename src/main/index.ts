@@ -4,11 +4,10 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { setupIPC } from './ipc'
 import log from 'electron-log/main.js'
-import { getLogsPath, Watcher, getDataPath } from './utils'
+import { getLogsPath } from './utils'
+import { setupWatcher, stopWatcher } from './watcher'
 
 let mainWindow: BrowserWindow
-
-let gameWatcher: Watcher
 
 log.initialize()
 
@@ -67,9 +66,7 @@ app.whenReady().then(async () => {
   createWindow()
 
   // Watch for changes in the data directory
-  gameWatcher = new Watcher('games', await getDataPath('games'))
-
-  gameWatcher.start()
+  setupWatcher(mainWindow)
 
   setupIPC(mainWindow)
 
@@ -85,7 +82,7 @@ app.whenReady().then(async () => {
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    gameWatcher.stop()
+    stopWatcher()
     app.quit()
   }
 })

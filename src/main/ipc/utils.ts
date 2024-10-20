@@ -1,4 +1,5 @@
 import { ipcMain, BrowserWindow } from 'electron'
+import { generateUUID } from '~/utils'
 
 export function setupUtilsIPC(mainWindow: BrowserWindow): void {
   ipcMain.on('minimize', () => {
@@ -15,6 +16,10 @@ export function setupUtilsIPC(mainWindow: BrowserWindow): void {
 
   ipcMain.on('close', () => {
     mainWindow.close()
+  })
+
+  ipcMain.handle('generate-uuid', () => {
+    return generateUUID()
   })
 
   mainWindow.on('maximize', () => {

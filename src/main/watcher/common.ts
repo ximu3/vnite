@@ -1,14 +1,16 @@
 import * as chokidar from 'chokidar'
-import { ipcMain } from 'electron'
+import { BrowserWindow } from 'electron'
 
 export class Watcher {
   private watcher: chokidar.FSWatcher | null = null
   private path: string
   private watcherName: string
+  private mainWindow: BrowserWindow
 
-  constructor(watcherName: string, path: string) {
+  constructor(watcherName: string, path: string, mainWindow: BrowserWindow) {
     this.watcherName = watcherName
     this.path = path
+    this.mainWindow = mainWindow
   }
 
   start(): void {
@@ -43,8 +45,8 @@ export class Watcher {
   }
 
   private handleChange(changedPath: string): void {
-    console.log(`Detected change in: ${changedPath}`)
-    // 发送 IPC 消息到主进程
-    ipcMain.emit(`${this.watcherName}-changed`, changedPath)
+    console.log(`Detected change in: ${changedPath} with name ${this.watcherName}`)
+    this.mainWindow.webContents.send('rebuild-index')
+    this.mainWindow.webContents.send('reload-db-values', this.watcherName)
   }
 }

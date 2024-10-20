@@ -1,4 +1,4 @@
-import { Button } from '@ui'
+import { Button } from '@ui/button'
 import { cn, ipcSend, ipcOnUnique } from '~/utils'
 import { useState, useEffect } from 'react'
 

@@ -1,5 +1,7 @@
 // 定义 gameMetadata 对象
 const gameIndexdata = {
+  id: 'id',
+  name: 'name',
   developer: 'developer',
   category: 'category'
   // 其他可能的字段
