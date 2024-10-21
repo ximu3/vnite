@@ -9,10 +9,11 @@ export function Collection(): JSX.Element {
   const { collections } = useCollections()
   return (
     <ScrollArea className={cn('w-full h-full')}>
-      <Accordion type="multiple" className={cn('w-full text-xs flex flex-col gap-2')}>
+      <Accordion type="multiple" className={cn('w-full text-xs flex flex-col gap-2 ')}>
+        <AllGame />
         {Object.entries(collections).map(([key, value]) => (
           <AccordionItem key={key} value={key}>
-            <AccordionTrigger className={cn('bg-accent/30 text-xs rounded-sm p-1 pl-2')}>
+            <AccordionTrigger className={cn('bg-accent/30 text-xs p-1 pl-2 rounded-none')}>
               {value.name}
             </AccordionTrigger>
             <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
@@ -22,7 +23,6 @@ export function Collection(): JSX.Element {
             </AccordionContent>
           </AccordionItem>
         ))}
-        <AllGame />
       </Accordion>
     </ScrollArea>
   )

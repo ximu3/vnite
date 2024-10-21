@@ -25,7 +25,7 @@
     --destructive: 2 80% 58%;
     --destructive-foreground: 0 0% 100%;
     --ring: 223 45% 44%;
-    --radius: 0rem;
+    --radius: 0.3rem;
   }
 
   .dark {

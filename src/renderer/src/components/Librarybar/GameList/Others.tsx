@@ -11,9 +11,10 @@ export function Others({ fieldName }: { fieldName: string }): JSX.Element {
   return (
     <ScrollArea className={cn('w-full h-full')}>
       <Accordion type="multiple" className={cn('w-full text-xs flex flex-col gap-2')}>
+        <AllGame />
         {fields.map((field) => (
           <AccordionItem key={field} value={field}>
-            <AccordionTrigger className={cn('bg-accent/30 text-xs rounded-sm p-1 pl-2')}>
+            <AccordionTrigger className={cn('bg-accent/30 text-xs p-1 pl-2')}>
               {field}
             </AccordionTrigger>
             <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
@@ -23,7 +24,6 @@ export function Others({ fieldName }: { fieldName: string }): JSX.Element {
             </AccordionContent>
           </AccordionItem>
         ))}
-        <AllGame />
       </Accordion>
     </ScrollArea>
   )
