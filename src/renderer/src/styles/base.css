@@ -14,3 +14,7 @@
   -webkit-app-region: no-drag;
   pointer-events: auto;
 }
+
+.scrollbar-base {
+  @apply scrollbar-track-transparent scrollbar-thumb-muted scrollbar scrollbar-w-1 scrollbar-h-1 rounded-sm;
+}

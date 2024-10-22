@@ -6,9 +6,18 @@ import {
   ContextMenuSubContent,
   ContextMenuSubTrigger
 } from '@ui/context-menu'
-import { Button } from '../ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@ui/dialog'
+
+import { Button } from '@ui/button'
 import { cn } from '~/utils'
-import { useCollections } from '~/utils'
+import { useCollections } from '~/hooks'
 
 export function GameNavCM({ gameId, groupId }: { gameId: string; groupId: string }): JSX.Element {
   const { collections, addGameToCollection, removeGameFromCollection } = useCollections()
@@ -22,14 +31,27 @@ export function GameNavCM({ gameId, groupId }: { gameId: string; groupId: string
   }
   return (
     <ContextMenuContent className={cn('w-40')}>
-      <div className={cn('w-full flex justify-center items-center')}>
-        <Button variant="default" className={cn('w-full flex items-center pl-1')}>
-          <div className={cn('flex flex-row gap-1 items-center justify-start')}>
-            <span className={cn('icon-[mdi--play-outline] w-6 h-6')}></span>
-            开始游戏
+      <Dialog>
+        <DialogTrigger className={cn('w-full')}>
+          <div className={cn('w-full flex justify-center items-center')}>
+            <Button variant="default" className={cn('w-full flex items-center pl-1')}>
+              <div className={cn('flex flex-row gap-1 items-center justify-start')}>
+                <span className={cn('icon-[mdi--play-outline] w-6 h-6')}></span>
+                开始游戏
+              </div>
+            </Button>
           </div>
-        </Button>
-      </div>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Are you absolutely sure?</DialogTitle>
+            <DialogDescription>
+              This action cannot be undone. This will permanently delete your account and remove
+              your data from our servers.
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
       <ContextMenuSeparator />
       {collectionId && (
         <ContextMenuItem onClick={() => removeGameFromCollection(collectionId, gameId)} inset>

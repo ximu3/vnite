@@ -81,10 +81,19 @@ export function useGameIndexManager(): GameIndexManagerHook {
 
       for (const [gameId, metadata] of gameIndex) {
         const matchesAllCriteria = Object.entries(criteria).every(([field, values]) => {
-          const metadataValue = metadata[field]?.toString().toLowerCase()
-          return (
-            metadataValue && values.some((value) => metadataValue.includes(value.toLowerCase()))
-          )
+          const metadataValue = metadata[field]
+          if (Array.isArray(metadataValue)) {
+            // 如果元数据值是数组，检查是否有任何元素匹配任何条件值
+            return metadataValue.some((item) =>
+              values.some((value) => item.toString().toLowerCase().includes(value.toLowerCase()))
+            )
+          } else if (metadataValue) {
+            // 如果元数据值不是数组，保持原来的逻辑
+            return values.some((value) =>
+              metadataValue.toString().toLowerCase().includes(value.toLowerCase())
+            )
+          }
+          return false
         })
 
         if (matchesAllCriteria) {
@@ -103,7 +112,15 @@ export function useGameIndexManager(): GameIndexManagerHook {
 
       for (const metadata of gameIndex.values()) {
         const value = metadata[key]
-        if (value) {
+        if (Array.isArray(value)) {
+          // 如果值是数组，添加所有元素
+          value.forEach((item) => {
+            if (item) {
+              values.add(item.toString())
+            }
+          })
+        } else if (value) {
+          // 如果值不是数组，保持原来的逻辑
           values.add(value.toString())
         }
       }

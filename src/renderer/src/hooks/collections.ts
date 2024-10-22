@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
-import { useDBSyncedState, ipcInvoke } from '~/utils'
+import { ipcInvoke } from '~/utils'
+import { useDBSyncedState } from '~/hooks'
 import { toast } from 'sonner'
 
 interface Collection {

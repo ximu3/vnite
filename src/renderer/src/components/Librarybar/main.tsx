@@ -20,7 +20,7 @@ export function Librarybar(): JSX.Element {
   const [selectedGroup, setSelectedGroup] = useState('collection')
   const [query, setQuery] = useState('')
   return (
-    <div className={cn('flex flex-col gap-6 bg-card w-full h-full pt-2')}>
+    <div className={cn('flex flex-col gap-6 bg-card w-full h-full pt-2 ')}>
       <div className={cn('flex flex-col gap-3 p-3 pb-0')}>
         <div className={cn('flex flex-row gap-2')}>
           <div className={cn('grow')}>
@@ -86,7 +86,7 @@ export function Librarybar(): JSX.Element {
               <SelectLabel>分组依据</SelectLabel>
               <SelectItem value="collection">收藏</SelectItem>
               <SelectItem value="developer">开发商</SelectItem>
-              <SelectItem value="category">类别</SelectItem>
+              <SelectItem value="genres">类别</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>

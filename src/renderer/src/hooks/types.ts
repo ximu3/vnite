@@ -3,7 +3,8 @@ const gameIndexdata = {
   id: 'id',
   name: 'name',
   developer: 'developer',
-  category: 'category'
+  category: 'category',
+  genres: ['genres']
   // 其他可能的字段
 }
 

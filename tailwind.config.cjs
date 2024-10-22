@@ -13,6 +13,12 @@ module.exports = {
         '2xl': '1400px'
       }
     },
+    fontFamily: {
+      sans: ['"Microsoft YaHei UI"', 'sans-serif']
+      // sans: ['LXGW WenKai', 'sans-serif'],
+      // 23272E
+      // 1EB44B
+    },
     extend: {
       colors: {
         border: 'hsl(var(--border))',
@@ -67,8 +73,15 @@ module.exports = {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out'
+      },
+      screens: {
+        '3xl': '1920px'
       }
     }
   },
-  plugins: [require('tailwindcss-animate'), addDynamicIconSelectors()]
+  plugins: [
+    require('tailwindcss-animate'),
+    addDynamicIconSelectors(),
+    require('tailwind-scrollbar')({ nocompatible: true, preferredStrategy: 'pseudoelements' })
+  ]
 }
