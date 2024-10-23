@@ -7,6 +7,7 @@ import { Badge } from '@ui/badge'
 import { RecordCard } from './RecordCard'
 import { IntroductionCard } from './IntroductionCard'
 import { InformationCard } from './InformationCard'
+import { RelatedSiteCard } from './RelatedSiteCard'
 
 type JsonObject = { [key: string]: JsonObject | any }
 
@@ -105,7 +106,10 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
                           className={cn('w-[calc(75%-4px)]', '3xl:w-[calc(75%-6px)]')}
                           index="1"
                         />
-                        <InformationCard className={cn('grow')} index="1" />
+                        <div className={cn('flex flex-col gap-5 grow', '3xl:gap-7')}>
+                          <InformationCard className={cn('')} index="1" />
+                          <RelatedSiteCard className={cn('')} index="1" />
+                        </div>
                       </div>
                     </div>
                   </TabsContent>
