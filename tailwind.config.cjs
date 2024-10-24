@@ -14,7 +14,7 @@ module.exports = {
       }
     },
     fontFamily: {
-      sans: ['Source Han Sans VF', 'OPPOSans', 'sans-serif']
+      sans: ['Source Han Sans VF', 'sans-serif']
     },
     extend: {
       colors: {
