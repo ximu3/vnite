@@ -18,3 +18,25 @@
 .scrollbar-base {
   @apply scrollbar-track-transparent scrollbar-thumb-muted scrollbar scrollbar-w-1 scrollbar-h-1 rounded-sm;
 }
+
+@font-face {
+  font-family: 'OPPOSans';
+  src: url('~/assets/fonts/OPPO Sans 4.0.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'NotoSansJP';
+  src: url('~/assets/fonts/NotoSansJP-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Source Han Sans VF';
+  src: url('~/assets/fonts/SourceHanSans-VF.otf.ttc') format('truetype-variations');
+  /* 支持的字重范围 */
+  font-weight: 100 900;
+  font-style: normal;
+}

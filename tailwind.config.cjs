@@ -14,10 +14,7 @@ module.exports = {
       }
     },
     fontFamily: {
-      sans: ['"Microsoft YaHei UI"', 'sans-serif']
-      // sans: ['LXGW WenKai', 'sans-serif'],
-      // 23272E
-      // 1EB44B
+      sans: ['Source Han Sans VF', 'OPPOSans', 'sans-serif']
     },
     extend: {
       colors: {

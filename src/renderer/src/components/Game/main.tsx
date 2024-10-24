@@ -5,9 +5,10 @@ import { ScrollArea } from '@ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
 import { Badge } from '@ui/badge'
 import { RecordCard } from './RecordCard'
-import { IntroductionCard } from './IntroductionCard'
-import { InformationCard } from './InformationCard'
-import { RelatedSiteCard } from './RelatedSiteCard'
+import { Introduction } from './Introduction'
+import { Information } from './Information'
+import { RelatedSites } from './RelatedSites'
+import { Tags } from './Tags'
 
 type JsonObject = { [key: string]: JsonObject | any }
 
@@ -102,13 +103,18 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
                       <div
                         className={cn('flex flex-row gap-5 items-start justify-start', '3xl:gap-7')}
                       >
-                        <IntroductionCard
-                          className={cn('w-[calc(75%-4px)]', '3xl:w-[calc(75%-6px)]')}
-                          index="1"
-                        />
+                        <div
+                          className={cn(
+                            'w-[calc(75%-4px)] flex flex-col gap-5',
+                            '3xl:w-[calc(75%-6px)] 3xl:gap-7'
+                          )}
+                        >
+                          <Introduction gameId={gameId} />
+                          <Tags gameId={gameId} />
+                        </div>
                         <div className={cn('flex flex-col gap-5 grow', '3xl:gap-7')}>
-                          <InformationCard className={cn('')} index="1" />
-                          <RelatedSiteCard className={cn('')} index="1" />
+                          <Information gameId={gameId} />
+                          <RelatedSites gameId={gameId} />
                         </div>
                       </div>
                     </div>

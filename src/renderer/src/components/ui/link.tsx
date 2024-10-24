@@ -6,7 +6,11 @@ export function Link({ name, url }: { name: string; url: string }): JSX.Element 
   return (
     <Tooltip>
       <TooltipTrigger>
-        <Button variant="link" className={cn('p-0 h-7')}>
+        <Button
+          onClick={() => window.open(url, '_blank', 'noopener,noreferrer')}
+          variant="link"
+          className={cn('p-0 h-7')}
+        >
           {name}
         </Button>
       </TooltipTrigger>
