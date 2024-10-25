@@ -39,7 +39,7 @@ export const TimerChart = ({ data }: { data: DailyPlayTime }): JSX.Element => {
   const chartConfig = {
     playTime: {
       label: '游玩时长',
-      color: 'var(--primary)' // 使用你的主题色
+      color: 'var(--primary)'
     }
   }
 

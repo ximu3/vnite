@@ -17,7 +17,7 @@ export function RecordCard({
       <CardHeader>
         <CardTitle>
           <div className={cn('flex flex-row justify-between items-center')}>
-            <div className={cn('pb-1')}>{title}</div>
+            <div className={cn('')}>{title}</div>
             <span className={cn('w-6 h-6', icon)}></span>
           </div>
         </CardTitle>

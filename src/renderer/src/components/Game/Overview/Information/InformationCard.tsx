@@ -20,7 +20,7 @@ export function InformationCard({
       <CardHeader>
         <CardTitle>
           <div className={cn('flex flex-row justify-between items-center')}>
-            <div className={cn('pb-1')}>基本信息</div>
+            <div className={cn('')}>基本信息</div>
             <InformationDialog gameId={gameId} />
           </div>
         </CardTitle>

@@ -4,6 +4,7 @@ import { cn } from '~/utils'
 import { useGameTimers } from '~/hooks'
 import { useState, useEffect } from 'react'
 import { TimerChart } from './TimerChart'
+import { isEqual } from 'lodash'
 
 export function ChartCard({
   gameId,
@@ -32,20 +33,26 @@ export function ChartCard({
   }
   return (
     <Card className={cn(className, 'p-3 flex flex-col gap-3')}>
-      <div className={cn('flex flex-row gap-2 items-center')}>
-        <DateInput
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          className={cn('')}
-        />
-        <div>-</div>
-        <DateInput
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-          className={cn('')}
-        />
-      </div>
-      <TimerChart data={playTimeByDateRange} />
+      {isEqual(playTimeByDateRange, {}) ? (
+        '暂无数据'
+      ) : (
+        <>
+          <div className={cn('flex flex-row gap-2 items-center')}>
+            <DateInput
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className={cn('')}
+            />
+            <div>-</div>
+            <DateInput
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className={cn('')}
+            />
+          </div>
+          <TimerChart data={playTimeByDateRange} />
+        </>
+      )}
     </Card>
   )
 }
