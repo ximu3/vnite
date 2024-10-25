@@ -95,7 +95,7 @@ function Info() {
       return
     }
     if (gid) {
-      if (gid.toLowerCase().startsWith('ga')) {
+      if (String(gid).toLowerCase().startsWith('ga')) {
         try {
           const Gid = Number(gid.slice(2));
           setGID(Number(gid.slice(2)));
