@@ -1,5 +1,5 @@
 import { ipcMain, BrowserWindow } from 'electron'
-import { setDBValue, getDBValue, getGamesMetadata } from '~/database'
+import { setDBValue, getDBValue, getGamesMetadata, getGamesTimerdata } from '~/database'
 
 export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
   ipcMain.handle('set-db-value', async (_, dbName: string, path: string[], value: any) => {
@@ -12,6 +12,10 @@ export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
 
   ipcMain.handle('get-games-metadata', async () => {
     return await getGamesMetadata()
+  })
+
+  ipcMain.handle('get-games-timerdata', async () => {
+    return await getGamesTimerdata()
   })
 
   ipcMain.on('reload-db-values', (_, dbName: string) => {

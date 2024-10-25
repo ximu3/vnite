@@ -4,11 +4,8 @@ import { Button } from '@ui/button'
 import { ScrollArea } from '@ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
 import { Badge } from '@ui/badge'
-import { RecordCard } from './RecordCard'
-import { Introduction } from './Introduction'
-import { Information } from './Information'
-import { RelatedSites } from './RelatedSites'
-import { Tags } from './Tags'
+import { Overview } from './Overview'
+import { Record } from './Record'
 
 type JsonObject = { [key: string]: JsonObject | any }
 
@@ -60,66 +57,24 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
               </div>
               {/* 内容放在这里 */}
               <div className={cn('p-5')}>
-                <Tabs defaultValue="account" className="w-full">
+                <Tabs defaultValue="overview" className="w-full">
                   <TabsList className={cn('w-[250px]')}>
-                    <TabsTrigger className={cn('w-1/3')} value="account">
+                    <TabsTrigger className={cn('w-1/3')} value="overview">
                       概览
                     </TabsTrigger>
-                    <TabsTrigger className={cn('w-1/3')} value="password">
+                    <TabsTrigger className={cn('w-1/3')} value="record">
                       记录
                     </TabsTrigger>
                     <TabsTrigger className={cn('w-1/3')} value="save">
                       存档
                     </TabsTrigger>
                   </TabsList>
-                  <TabsContent value="account">
-                    <div className={cn('w-full h-full flex flex-col gap-5 pt-2', '3xl:gap-7')}>
-                      <div className={cn('flex flex-row gap-5', '3xl:gap-7')}>
-                        <RecordCard
-                          title="游玩时间"
-                          content="19.3 h"
-                          icon="icon-[mdi--timer-outline] w-[20px] h-[20px]"
-                          className={cn('w-1/4')}
-                        />
-                        <RecordCard
-                          title="最后运行日期"
-                          content="2024-10-20"
-                          icon="icon-[mdi--calendar-blank-multiple] w-[18px] h-[18px]"
-                          className={cn('w-1/4')}
-                        />
-                        <RecordCard
-                          title="状态"
-                          content="游玩中"
-                          icon="icon-[mdi--bookmark-outline] w-[20px] h-[20px]"
-                          className={cn('w-1/4')}
-                        />
-                        <RecordCard
-                          title="我的评分"
-                          content="8.5 分"
-                          icon="icon-[mdi--starburst-outline] w-[18px] h-[18px]"
-                          className={cn('w-1/4')}
-                        />
-                      </div>
-                      <div
-                        className={cn('flex flex-row gap-5 items-start justify-start', '3xl:gap-7')}
-                      >
-                        <div
-                          className={cn(
-                            'w-[calc(75%-4px)] flex flex-col gap-5',
-                            '3xl:w-[calc(75%-6px)] 3xl:gap-7'
-                          )}
-                        >
-                          <Introduction gameId={gameId} />
-                          <Tags gameId={gameId} />
-                        </div>
-                        <div className={cn('flex flex-col gap-5 grow', '3xl:gap-7')}>
-                          <Information gameId={gameId} />
-                          <RelatedSites gameId={gameId} />
-                        </div>
-                      </div>
-                    </div>
+                  <TabsContent value="overview">
+                    <Overview gameId={gameId} />
                   </TabsContent>
-                  <TabsContent value="password">Change your password here.</TabsContent>
+                  <TabsContent value="record">
+                    <Record gameId={gameId} />
+                  </TabsContent>
                 </Tabs>
               </div>
             </div>

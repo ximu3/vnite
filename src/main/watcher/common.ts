@@ -6,11 +6,18 @@ export class Watcher {
   private path: string
   private watcherName: string
   private mainWindow: BrowserWindow
+  private addtionalHandler?: () => void
 
-  constructor(watcherName: string, path: string, mainWindow: BrowserWindow) {
+  constructor(
+    watcherName: string,
+    path: string,
+    mainWindow: BrowserWindow,
+    addtionalHandler?: () => void
+  ) {
     this.watcherName = watcherName
     this.path = path
     this.mainWindow = mainWindow
+    this.addtionalHandler = addtionalHandler
   }
 
   start(): void {
@@ -46,7 +53,7 @@ export class Watcher {
 
   private handleChange(changedPath: string): void {
     console.log(`Detected change in: ${changedPath} with name ${this.watcherName}`)
-    this.mainWindow.webContents.send('rebuild-index')
     this.mainWindow.webContents.send('reload-db-values', this.watcherName)
+    this.addtionalHandler && this.addtionalHandler()
   }
 }

@@ -8,7 +8,8 @@ const watchers: Watcher[] = []
 
 export async function setupDBWatcher(
   targetFileNames: string[],
-  mainWindow: BrowserWindow
+  mainWindow: BrowserWindow,
+  addtionalHandler?: () => void
 ): Promise<void> {
   const maxDepth = 3
   const basePath = await getDataPath('')
@@ -27,7 +28,12 @@ export async function setupDBWatcher(
       if (item.isDirectory()) {
         queue.push({ path: fullPath, depth: depth + 1 })
       } else if (item.isFile() && targetFileNames.includes(item.name)) {
-        const dbWatcher = new Watcher(path.relative(basePath, fullPath), fullPath, mainWindow)
+        const dbWatcher = new Watcher(
+          path.relative(basePath, fullPath),
+          fullPath,
+          mainWindow,
+          addtionalHandler
+        )
         dbWatcher.start()
         watchers.push(dbWatcher)
       }

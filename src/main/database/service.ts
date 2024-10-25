@@ -1,6 +1,7 @@
-import { setValue, getValue } from './common.js'
+import { setValue, getValue } from './common'
 import { getDataPath } from '~/utils'
-import { getMetadata } from './metadata.js'
+import { getMetadata } from './metadata'
+import { getTimerdata } from './timer'
 import log from 'electron-log/main.js'
 
 /**
@@ -42,5 +43,17 @@ export async function getGamesMetadata(): Promise<any> {
     return await getMetadata()
   } catch (error) {
     log.error('Failed to get metadata for games', error)
+  }
+}
+
+/**
+ * Get the timer data of the games
+ * @returns A promise that resolves with the timer data of the games.
+ */
+export async function getGamesTimerdata(): Promise<any> {
+  try {
+    return await getTimerdata()
+  } catch (error) {
+    log.error('Failed to get timer data for games', error)
   }
 }
