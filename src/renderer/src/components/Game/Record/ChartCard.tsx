@@ -14,28 +14,41 @@ export function ChartCard({
   className?: string
 }): JSX.Element {
   const { getGamePlayTimeByDateRange, getGameStartAndEndDate } = useGameTimers()
-  const timers = getGameStartAndEndDate(gameId)
-
+  const [timers, setTimers] = useState(getGameStartAndEndDate(gameId))
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
 
-  // 使用 useEffect 监听 timers 的变化
-  useEffect(() => {
-    if (timers.start && timers.end) {
-      setStartDate(timers.start)
-      setEndDate(timers.end)
-    }
-  }, [timers.start, timers.end])
+  const [playTimeByDateRange, setPlayTimeByDateRange] = useState<Record<string, number>>({})
 
-  let playTimeByDateRange = {}
-  if (startDate && endDate) {
-    playTimeByDateRange = getGamePlayTimeByDateRange(gameId, startDate, endDate)
+  useEffect(() => {
+    const startAndEndDate = getGameStartAndEndDate(gameId)
+    setTimers(startAndEndDate)
+    setStartDate(startAndEndDate.start)
+    setEndDate(startAndEndDate.end)
+  }, [gameId])
+
+  const isDateInRange = (date: string): boolean => {
+    if (!date || !timers.start || !timers.end) return false
+    return date >= timers.start && date <= timers.end
   }
+
+  useEffect(() => {
+    // 只有当两个日期都有效且在允许的范围内时才获取数据
+    if (
+      startDate &&
+      endDate &&
+      isDateInRange(startDate) &&
+      isDateInRange(endDate) &&
+      startDate <= endDate
+    ) {
+      const data = getGamePlayTimeByDateRange(gameId, startDate, endDate)
+      setPlayTimeByDateRange(data)
+    }
+  }, [startDate, endDate, timers.start, timers.end, gameId])
+
   return (
     <Card className={cn(className, 'p-3 flex flex-col gap-3')}>
-      {isEqual(playTimeByDateRange, {}) ? (
-        '暂无数据'
-      ) : (
+      {!isEqual(timers, { start: '', end: '' }) ? (
         <>
           <div className={cn('flex flex-row gap-2 items-center')}>
             <DateInput
@@ -50,8 +63,20 @@ export function ChartCard({
               className={cn('')}
             />
           </div>
-          <TimerChart data={playTimeByDateRange} />
+          {!startDate || !endDate ? (
+            '请选择日期范围'
+          ) : startDate > endDate ? (
+            <div>开始日期不能晚于结束日期</div>
+          ) : !isDateInRange(startDate) || !isDateInRange(endDate) ? (
+            <div>
+              请选择在 {timers.start} 到 {timers.end} 之间的日期
+            </div>
+          ) : (
+            <TimerChart data={playTimeByDateRange} />
+          )}
         </>
+      ) : (
+        <div>暂无数据</div>
       )}
     </Card>
   )

@@ -28,12 +28,8 @@ export async function setupDBWatcher(
       if (item.isDirectory()) {
         queue.push({ path: fullPath, depth: depth + 1 })
       } else if (item.isFile() && targetFileNames.includes(item.name)) {
-        const dbWatcher = new Watcher(
-          path.relative(basePath, fullPath),
-          fullPath,
-          mainWindow,
-          addtionalHandler
-        )
+        const relativePath = path.relative(basePath, fullPath).replace(/\\/g, '/')
+        const dbWatcher = new Watcher(relativePath, fullPath, mainWindow, addtionalHandler)
         dbWatcher.start()
         watchers.push(dbWatcher)
       }
