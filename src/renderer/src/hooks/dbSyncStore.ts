@@ -27,6 +27,7 @@ export function useDBSyncedState<T>(
       try {
         const value = await ipcInvoke<T>('get-db-value', dbName, path, initialValue)
         setDBState(key, value)
+        console.log(`Fetched DB ${key} value:`, value)
       } catch (error) {
         console.error('Failed to get DB value:', error)
         if (error instanceof Error) {
@@ -48,6 +49,7 @@ export function useDBSyncedState<T>(
     ): Promise<void> => {
       if (updatedDbName === dbName) {
         await fetchAndSetValue()
+        console.log(`Reloaded DB ${key} value`)
       }
     }
 

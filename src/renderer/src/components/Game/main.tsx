@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
 import { Badge } from '@ui/badge'
 import { Overview } from './Overview'
 import { Record } from './Record'
+import { Config } from './Config'
 
 type JsonObject = { [key: string]: JsonObject | any }
 
@@ -50,9 +51,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
                   <Button variant="outline" size={'icon'} className="non-draggable">
                     <span className={cn('icon-[mdi--bookmark-outline] w-4 h-4')}></span>
                   </Button>
-                  <Button variant="outline" size={'icon'} className="non-draggable">
-                    <span className={cn('icon-[mdi--settings-outline] w-4 h-4')}></span>
-                  </Button>
+                  <Config gameId={gameId} />
                 </div>
               </div>
               {/* 内容放在这里 */}

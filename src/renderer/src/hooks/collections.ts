@@ -15,7 +15,7 @@ interface Collections {
 
 interface CollectionsHook {
   collections: Collections
-  addCollection: (name: string) => Promise<void>
+  addCollection: (name: string, gameId?: string) => Promise<string>
   removeCollection: (id: string) => void
   renameCollection: (id: string, name: string) => void
   addGameToCollection: (collectionId: string, gameId: string) => void
@@ -35,12 +35,17 @@ export function useCollections(): CollectionsHook {
   )
 
   const addCollection = useCallback(
-    async (name: string): Promise<void> => {
+    async (name: string, gameId?: string): Promise<string> => {
       try {
         const id = await ipcInvoke<string>('generate-uuid')
-        const newCollection = { id, name, games: [] }
+        const newCollection = {
+          id,
+          name,
+          games: gameId ? [gameId] : []
+        }
         const newCollections = { ...collections, [id]: newCollection }
         typedSetCollections(newCollections)
+        return id
       } catch (error) {
         console.error('Failed to add collection:', error)
         if (error instanceof Error) {
@@ -48,9 +53,10 @@ export function useCollections(): CollectionsHook {
         } else {
           toast.error('Failed to add collection: An unknown error occurred')
         }
+        return ''
       }
     },
-    [typedSetCollections]
+    [typedSetCollections, collections]
   )
 
   const removeCollection = useCallback(
@@ -68,7 +74,7 @@ export function useCollections(): CollectionsHook {
         }
       }
     },
-    [typedSetCollections]
+    [typedSetCollections, collections]
   )
 
   const renameCollection = useCallback(
@@ -86,7 +92,7 @@ export function useCollections(): CollectionsHook {
         }
       }
     },
-    [typedSetCollections]
+    [typedSetCollections, collections]
   )
 
   const addGameToCollection = useCallback(
@@ -111,7 +117,7 @@ export function useCollections(): CollectionsHook {
         }
       }
     },
-    [typedSetCollections]
+    [typedSetCollections, collections]
   )
 
   const removeGameFromCollection = useCallback(
@@ -143,7 +149,7 @@ export function useCollections(): CollectionsHook {
         }
       }
     },
-    [removeCollection, typedSetCollections]
+    [removeCollection, typedSetCollections, collections]
   )
 
   return {

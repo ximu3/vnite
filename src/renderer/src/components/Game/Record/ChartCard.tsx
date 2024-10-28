@@ -14,18 +14,16 @@ export function ChartCard({
   className?: string
 }): JSX.Element {
   const { getGamePlayTimeByDateRange, getGameStartAndEndDate } = useGameTimers()
-  const [timers, setTimers] = useState(getGameStartAndEndDate(gameId))
+  const timers = getGameStartAndEndDate(gameId)
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
 
   const [playTimeByDateRange, setPlayTimeByDateRange] = useState<Record<string, number>>({})
 
   useEffect(() => {
-    const startAndEndDate = getGameStartAndEndDate(gameId)
-    setTimers(startAndEndDate)
-    setStartDate(startAndEndDate.start)
-    setEndDate(startAndEndDate.end)
-  }, [gameId])
+    setStartDate(timers.start)
+    setEndDate(timers.end)
+  }, [timers.start, timers.end])
 
   const isDateInRange = (date: string): boolean => {
     if (!date || !timers.start || !timers.end) return false

@@ -14,10 +14,10 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@ui/dialog'
-
 import { Button } from '@ui/button'
 import { cn } from '~/utils'
 import { useCollections } from '~/hooks'
+import { AddCollectionDialog } from '../dialog/AddCollectionDialog'
 
 export function GameNavCM({ gameId, groupId }: { gameId: string; groupId: string }): JSX.Element {
   const { collections, addGameToCollection, removeGameFromCollection } = useCollections()
@@ -70,12 +70,14 @@ export function GameNavCM({ gameId, groupId }: { gameId: string; groupId: string
             ))}
           {Object.entries(collections).filter(([key]) => !gameInCollectionsId.includes(key))
             .length > 0 && <ContextMenuSeparator />}
-          <ContextMenuItem inset>
-            <div className={cn('flex flex-row gap-2 items-center')}>
-              <span className={cn('icon-[mdi--add] w-4 h-4')}></span>
-              <div>新收藏</div>
-            </div>
-          </ContextMenuItem>
+          <AddCollectionDialog gameId={gameId}>
+            <ContextMenuItem onSelect={(e) => e.preventDefault()} inset>
+              <div className={cn('flex flex-row gap-2 items-center w-full')}>
+                <span className={cn('icon-[mdi--add] w-4 h-4')}></span>
+                <div>新收藏</div>
+              </div>
+            </ContextMenuItem>
+          </AddCollectionDialog>
         </ContextMenuSubContent>
       </ContextMenuSub>
       <ContextMenuSeparator />
