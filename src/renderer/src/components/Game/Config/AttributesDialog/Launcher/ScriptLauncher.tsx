@@ -17,20 +17,20 @@ import { ipcInvoke } from '~/utils'
 
 export function ScriptLauncher({ gameId }: { gameId: string }): JSX.Element {
   const [command, setCommand] = useDBSyncedState([''], `games/${gameId}/launcher.json`, [
-    'script',
+    'scriptConfig',
     'command'
   ])
   const [workingDirectory, setWorkingDirectory] = useDBSyncedState(
     '',
     `games/${gameId}/launcher.json`,
-    ['script', 'workingDirectory']
+    ['scriptConfig', 'workingDirectory']
   )
   const [timerMode, setTimerMode] = useDBSyncedState('folder', `games/${gameId}/launcher.json`, [
-    'script',
+    'scriptConfig',
     'timerMode'
   ])
   const [timerPath, setTimerPath] = useDBSyncedState('', `games/${gameId}/launcher.json`, [
-    'script',
+    'scriptConfig',
     'timerPath'
   ])
 

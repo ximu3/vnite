@@ -4,7 +4,7 @@ import path from 'path'
 export async function defaultPreset(gameId: string): Promise<void> {
   const gamePath = await getDBValue(`games/${gameId}/path.json`, ['gamePath'], '')
 
-  const mode = 'file'
+  const mode = 'fileConfig'
   const workingDirectory = path.dirname(gamePath)
   const timerMode = 'folder'
   const timerPath = path.dirname(gamePath)

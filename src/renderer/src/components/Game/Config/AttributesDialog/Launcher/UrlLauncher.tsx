@@ -15,17 +15,17 @@ import {
 import { ipcInvoke } from '~/utils'
 
 export function UrlLauncher({ gameId }: { gameId: string }): JSX.Element {
-  const [url, setUrl] = useDBSyncedState('', `games/${gameId}/launcher.json`, ['url', 'url'])
+  const [url, setUrl] = useDBSyncedState('', `games/${gameId}/launcher.json`, ['urlConfig', 'url'])
   const [browserPath, setBrowserPath] = useDBSyncedState('', `games/${gameId}/launcher.json`, [
-    'url',
+    'urlConfig',
     'browserPath'
   ])
   const [timerMode, setTimerMode] = useDBSyncedState('folder', `games/${gameId}/launcher.json`, [
-    'url',
+    'urlConfig',
     'timerMode'
   ])
   const [timerPath, setTimerPath] = useDBSyncedState('', `games/${gameId}/launcher.json`, [
-    'url',
+    'urlConfig',
     'timerPath'
   ])
   async function selectBorwserPath(): Promise<void> {

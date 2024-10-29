@@ -35,6 +35,7 @@ export function ArrayTextarea({
 
   return (
     <Textarea
+      spellCheck={false}
       value={arrayToText(value)}
       onChange={handleChange}
       placeholder={placeholder}

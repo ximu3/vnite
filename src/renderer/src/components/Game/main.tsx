@@ -7,6 +7,7 @@ import { Badge } from '@ui/badge'
 import { Overview } from './Overview'
 import { Record } from './Record'
 import { Config } from './Config'
+import { StartGame } from './StartGame'
 
 type JsonObject = { [key: string]: JsonObject | any }
 
@@ -39,12 +40,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
                   </div>
                 </div>
                 <div className={cn('flex flex-row gap-3 justify-center items-center', '3xl:gap-5')}>
-                  <Button className={cn('')}>
-                    <div className={cn('flex flex-row gap-1 justify-center items-center p-3')}>
-                      <span className={cn('icon-[mdi--play] w-6 h-6 -ml-2')}></span>
-                      <div className={cn('')}>开始游戏</div>
-                    </div>
-                  </Button>
+                  <StartGame gameId={gameId} />
                   <Button variant="outline" size={'icon'} className="non-draggable">
                     <span className={cn('icon-[mdi--starburst-edit-outline] w-4 h-4')}></span>
                   </Button>

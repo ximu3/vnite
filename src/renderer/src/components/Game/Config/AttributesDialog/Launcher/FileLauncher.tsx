@@ -15,18 +15,21 @@ import {
 import { ipcInvoke } from '~/utils'
 
 export function FileLauncher({ gameId }: { gameId: string }): JSX.Element {
-  const [path, setPath] = useDBSyncedState('', `games/${gameId}/launcher.json`, ['file', 'path'])
+  const [path, setPath] = useDBSyncedState('', `games/${gameId}/launcher.json`, [
+    'fileConfig',
+    'path'
+  ])
   const [workingDirectory, setWorkingDirectory] = useDBSyncedState(
     '',
     `games/${gameId}/launcher.json`,
-    ['file', 'workingDirectory']
+    ['fileConfig', 'workingDirectory']
   )
   const [timerMode, setTimerMode] = useDBSyncedState('folder', `games/${gameId}/launcher.json`, [
-    'file',
+    'fileConfig',
     'timerMode'
   ])
   const [timerPath, setTimerPath] = useDBSyncedState('', `games/${gameId}/launcher.json`, [
-    'file',
+    'fileConfig',
     'timerPath'
   ])
   async function selectFilePath(): Promise<void> {
