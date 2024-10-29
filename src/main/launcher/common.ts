@@ -1,5 +1,6 @@
 import { spawn } from 'child_process'
 import { getDBValue } from '~/database'
+import { startMonitor } from '~/monitor'
 
 export async function fileLuancher(gameId: string): Promise<void> {
   try {
@@ -20,6 +21,9 @@ export async function fileLuancher(gameId: string): Promise<void> {
 
     // 让子进程独立运行
     launcher.unref()
+
+    // 启动监视器
+    startMonitor(gameId, fileConfig.timerPath)
   } catch (error) {
     console.error(`Error in fileLauncher for game ${gameId}:`, error)
     throw error
@@ -50,6 +54,13 @@ export async function urlLauncher(gameId: string): Promise<void> {
     })
 
     launcher.unref()
+
+    // 启动监视器
+    if (urlConfig.timerMode === 'browser') {
+      startMonitor(gameId, urlConfig.browserPath)
+    } else {
+      startMonitor(gameId, urlConfig.timerPath)
+    }
   } catch (err) {
     console.error(`Error in urlLauncher for game ${gameId}:`, err)
     throw err
@@ -87,6 +98,9 @@ export async function scriptLauncher(gameId: string): Promise<void> {
     })
 
     launcher.unref()
+
+    // 启动监视器
+    startMonitor(gameId, scriptConfig.timerPath)
   } catch (err) {
     console.error(`Error in scriptLauncher for game ${gameId}:`, err)
     throw err

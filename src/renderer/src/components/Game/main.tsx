@@ -8,10 +8,19 @@ import { Overview } from './Overview'
 import { Record } from './Record'
 import { Config } from './Config'
 import { StartGame } from './StartGame'
+import { StopGame } from './StopGame'
 
 type JsonObject = { [key: string]: JsonObject | any }
 
-export function Game({ gameId }: { gameId: string }): JSX.Element {
+export function Game({
+  gameId,
+  runningGames,
+  setRunningGames
+}: {
+  gameId: string
+  runningGames: string[]
+  setRunningGames: (value: string[]) => void
+}): JSX.Element {
   const [gameData] = useDBSyncedState<JsonObject>({}, `games/${gameId}/metadata.json`, ['#all'])
   return (
     <div className={cn('w-full h-full')}>
@@ -40,7 +49,15 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
                   </div>
                 </div>
                 <div className={cn('flex flex-row gap-3 justify-center items-center', '3xl:gap-5')}>
-                  <StartGame gameId={gameId} />
+                  {runningGames.includes(gameId) ? (
+                    <StopGame gameId={gameId} />
+                  ) : (
+                    <StartGame
+                      gameId={gameId}
+                      runningGames={runningGames}
+                      setRunningGames={setRunningGames}
+                    />
+                  )}
                   <Button variant="outline" size={'icon'} className="non-draggable">
                     <span className={cn('icon-[mdi--starburst-edit-outline] w-4 h-4')}></span>
                   </Button>

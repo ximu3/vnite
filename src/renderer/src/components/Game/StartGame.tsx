@@ -4,7 +4,15 @@ import { Button } from '@ui/button'
 import { ipcSend } from '~/utils'
 import { toast } from 'sonner'
 
-export function StartGame({ gameId }: { gameId: string }): JSX.Element {
+export function StartGame({
+  gameId,
+  runningGames,
+  setRunningGames
+}: {
+  gameId: string
+  runningGames: string[]
+  setRunningGames: (value: string[]) => void
+}): JSX.Element {
   const [mode] = useDBSyncedState('file', `games/${gameId}/launcher.json`, ['mode'])
   const [fileConfig] = useDBSyncedState(
     {
@@ -46,6 +54,7 @@ export function StartGame({ gameId }: { gameId: string }): JSX.Element {
         fileConfig.timerMode
       ) {
         ipcSend('start-game', gameId)
+        setRunningGames([...runningGames, gameId])
       } else {
         toast.error('运行配置错误，请检查！')
       }
@@ -57,12 +66,14 @@ export function StartGame({ gameId }: { gameId: string }): JSX.Element {
         scriptConfig.timerMode
       ) {
         ipcSend('start-game', gameId)
+        setRunningGames([...runningGames, gameId])
       } else {
         toast.error('运行配置错误，请检查！')
       }
     } else if (mode === 'url') {
       if (urlConfig.url) {
         ipcSend('start-game', gameId)
+        setRunningGames([...runningGames, gameId])
       } else {
         toast.error('运行配置错误，请检查！')
       }
