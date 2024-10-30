@@ -88,12 +88,12 @@ function Info() {
   let navigate = useNavigate();
   const { gameName, gid, vid, setGameName, setGID, setVID, setAlert, setGameList, isLoading, setIsLoading } = useAddGame();
   async function submitInfo() {
-    setIsLoading(true);
     if (gameName === '' && gid === '') {
       setAlert('请填写游戏原名!');
       setTimeout(() => { setAlert(''); }, 3000);
       return
     }
+    setIsLoading(true);
     if (gid) {
       if (String(gid).toLowerCase().startsWith('ga')) {
         try {
@@ -219,7 +219,19 @@ function GameList() {
         </table>
       </div>
       <div className='flex flex-row-reverse items-end gap-5 pt-3'>
-        <button className='transition-all btn bg-custom-stress text-custom-text-light hover:brightness-125' onClick={() => { next() }}>下一步</button>
+        <button className='transition-all btn bg-custom-stress text-custom-text-light hover:brightness-125' onClick={() => {
+          if (gid === '') {
+            if (gameList.length === 1) {
+              setGID(gameList[0]["id"])
+              setGameName(gameList[0]["name"])
+            } else {
+              setAlert("请选择游戏！")
+              setTimeout(() => { setAlert(''); }, 3000);
+              return;
+            }
+          }
+          next()
+        }}>下一步</button>
         <button className='transition-all btn bg-custom-stress text-custom-text-light hover:brightness-125' onClick={() => { navigate(-1) }}>上一步</button>
       </div>
     </div>
@@ -337,7 +349,7 @@ function GamePath() {
 }
 
 function GameBg() {
-  const { gameBgList, gameName, savePath, isLoading, gamePath, setGameBg, gameBg, gid, setIsLoading, vid } = useAddGame();
+  const { gameBgList, gameName, savePath, isLoading, setAlert, gamePath, setGameBg, gameBg, gid, setIsLoading, vid } = useAddGame();
   let navigate = useNavigate();
   async function submitAllData() {
     if (gameBg === '' && gameBgList.length !== 0) {

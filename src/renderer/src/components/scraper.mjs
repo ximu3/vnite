@@ -688,10 +688,11 @@ async function queryVNDB(filters, fields) {
 // 获取游戏截图
 async function getScreenshotsByTitle(title) {
     try {
-        const data = await queryVNDB(["search", "=", title], "title, screenshots{url}");
+        const data = await queryVNDB(["search", "=", title], "titles.title, screenshots{url}");
         if (data.results.length > 0) {
-            const vn = data.results[0];
-            console.log(`获取到 "${vn.title}" 的截图:`);
+            let vn = data.results.find(vn => vn.titles.some(titleJson => titleJson.title === title));
+            vn = vn ? vn : data.results[0]; // 不确定会不会找不到对应名称，目前没有测试到这种情况
+            console.log(`获取到 "${title}" 的截图:`);
             return vn.screenshots.map(screenshot => screenshot.url);
         } else {
             console.log(`未找到标题为 "${title}" 的视觉小说。`);
@@ -757,14 +758,15 @@ async function getCoverByVID(vid) {
 // 获取游戏封面
 async function getCoverByTitle(title) {
     try {
-        const data = await queryVNDB(["search", "=", title], "title, image{url}");
+        const data = await queryVNDB(["search", "=", title], "titles.title, image{url}");
         if (data.results.length > 0) {
-            const vn = data.results[0];
+            let vn = data.results.find(vn => vn.titles.some(titleJson => titleJson.title === title));
+            vn = vn ? vn : data.results[0]; // 不确定会不会找不到对应名称，目前没有测试到这种情况
             if (vn.image) {
-                console.log(`获取到 "${vn.title}" 的封面:`);
+                console.log(`获取到 "${title}" 的封面:`);
                 return vn.image.url;
             } else {
-                console.log(`"${vn.title}" 没有封面图片。`);
+                console.log(`"${title}" 没有封面图片。`);
                 return '';
             }
         } else {
@@ -783,10 +785,11 @@ async function getCoverByTitle(title) {
 
 async function getVIDByTitle(title) {
     try {
-        const data = await queryVNDB(["search", "=", title], "id, title");
+        const data = await queryVNDB(["search", "=", title], "id, titles.title");
         if (data.results.length > 0) {
-            const vn = data.results[0];
-            console.log(`获取到 "${vn.title}" 的ID:`);
+            let vn = data.results.find(vn => vn.titles.some(titleJson => titleJson.title === title));
+            vn = vn ? vn : data.results[0]; // 不确定会不会找不到对应名称，目前没有测试到这种情况
+            console.log(`获取到 "${title}" 的ID:`);
             return vn.id;
         } else {
             console.log(`未找到标题为 "${title}" 的视觉小说。`);
