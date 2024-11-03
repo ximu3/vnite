@@ -21,6 +21,8 @@
     "build:linux": "electron-vite build && electron-builder --linux"
   },
   "dependencies": {
+    "@bbob/html": "^4.1.1",
+    "@bbob/preset-html5": "^4.1.1",
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^3.0.0",
     "@radix-ui/react-accordion": "^1.2.1",
@@ -67,6 +69,7 @@
     "@electron-toolkit/tsconfig": "^1.0.1",
     "@iconify/json": "^2.2.216",
     "@iconify/tailwind": "^1.1.1",
+    "@types/bbob__preset-html5": "^3.0.1",
     "@types/lodash": "^4.17.10",
     "@types/node": "^20.14.8",
     "@types/react": "^18.3.3",

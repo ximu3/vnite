@@ -6,13 +6,16 @@ import { useState } from 'react'
 import { ipcOnUnique } from '~/utils'
 import { useGameIndexManager } from '~/hooks'
 import { Game } from '~/components/Game'
+import { useEffect } from 'react'
 
 export function Library(): JSX.Element {
   const { gameIndex } = useGameIndexManager()
   const [runningGames, setRunningGames] = useState<string[]>([])
-  ipcOnUnique('game-exit', (_, gameId: string) => {
-    setRunningGames((prev) => prev.filter((id) => id !== gameId))
-  })
+  useEffect(() => {
+    ipcOnUnique('game-exit', (_, gameId: string) => {
+      setRunningGames((prev) => prev.filter((id) => id !== gameId))
+    })
+  }, [])
   return (
     <ResizablePanelGroup direction="horizontal" className={cn('w-full h-full')}>
       <ResizablePanel defaultSize={18} maxSize={30} minSize={12}>

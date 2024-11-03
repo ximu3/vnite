@@ -1,4 +1,4 @@
-export * from './service.js'
+export * from './services.js'
 
 export interface DatabaseAPI {
   setDBValue: (dbName: string, path: string[], value: any) => Promise<void>

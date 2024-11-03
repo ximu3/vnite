@@ -10,11 +10,11 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
   const [originalName, setOriginalName] = useDBSyncedState('', `games/${gameId}/metadata.json`, [
     'originalName'
   ])
-  const [developer, setDeveloper] = useDBSyncedState('', `games/${gameId}/metadata.json`, [
-    'developer'
+  const [developers, setDevelopers] = useDBSyncedState([''], `games/${gameId}/metadata.json`, [
+    'developers'
   ])
-  const [publisher, setPublisher] = useDBSyncedState('', `games/${gameId}/metadata.json`, [
-    'publisher'
+  const [publishers, setPublishers] = useDBSyncedState([''], `games/${gameId}/metadata.json`, [
+    'publishers'
   ])
   const [releaseDate, setReleaseDate] = useDBSyncedState('', `games/${gameId}/metadata.json`, [
     'releaseDate'
@@ -37,6 +37,40 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
 
     setGenres(uniqueGenres)
   }
+  const handleDeveloperChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    const value = e.target.value
+    const endsWithComma = value.endsWith(',')
+
+    const newDeveloper = value
+      .split(',')
+      .map((v) => v.trim())
+      .filter((v) => v !== '')
+
+    const uniqueDeveloper = [...new Set(newDeveloper)]
+
+    if (endsWithComma && newDeveloper[newDeveloper.length - 1] !== '') {
+      uniqueDeveloper.push('')
+    }
+
+    setDevelopers(uniqueDeveloper)
+  }
+  const handlePublisherChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    const value = e.target.value
+    const endsWithComma = value.endsWith(',')
+
+    const newPublisher = value
+      .split(',')
+      .map((v) => v.trim())
+      .filter((v) => v !== '')
+
+    const uniquePublisher = [...new Set(newPublisher)]
+
+    if (endsWithComma && newPublisher[newPublisher.length - 1] !== '') {
+      uniquePublisher.push('')
+    }
+
+    setPublishers(uniquePublisher)
+  }
 
   return (
     <Dialog>
@@ -58,21 +92,35 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
           </div>
           <div className={cn('flex flex-row gap-3 items-center justify-center')}>
             <div className={cn('grow whitespace-nowrap')}>开发商</div>
-            <Input
-              value={developer}
-              onChange={(e) => setDeveloper(e.target.value)}
-              placeholder="暂无开发商"
-              className={cn(' text-sm')}
-            />
+            <Tooltip>
+              <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
+                <Input
+                  value={developers.join(', ')}
+                  onChange={handleDeveloperChange}
+                  placeholder="暂无开发商"
+                  className={cn('')}
+                />
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <div className={cn('text-xs')}>开发商之间用英文逗号分隔</div>
+              </TooltipContent>
+            </Tooltip>
           </div>
           <div className={cn('flex flex-row gap-3 items-center justify-center')}>
             <div className={cn('grow whitespace-nowrap')}>发行商</div>
-            <Input
-              value={publisher}
-              onChange={(e) => setPublisher(e.target.value)}
-              placeholder="暂无发行商"
-              className={cn(' text-sm')}
-            />
+            <Tooltip>
+              <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
+                <Input
+                  value={publishers.join(', ')}
+                  onChange={handlePublisherChange}
+                  placeholder="暂无发行商"
+                  className={cn('')}
+                />
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <div className={cn('text-xs')}>发行商之间用英文逗号分隔</div>
+              </TooltipContent>
+            </Tooltip>
           </div>
           <div className={cn('flex flex-row gap-3 items-center justify-start')}>
             <div className={cn('whitespace-nowrap')}>发行日期</div>

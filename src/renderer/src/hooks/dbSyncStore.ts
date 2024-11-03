@@ -62,6 +62,7 @@ export function useDBSyncedState<T>(
     setDBState(key, newValue)
     debouncedIpcInvoke('set-db-value', dbName, path, newValue)?.catch((error) => {
       console.error('Failed to set DB value:', error)
+      setDBState(key, storeValue)
       if (error instanceof Error) {
         toast.error(`Failed to get DB value: ${error.message}`)
       } else {

@@ -13,7 +13,7 @@ export function RelatedSitesCard({
   className?: string
 }): JSX.Element {
   const [relatedSites] = useDBSyncedState(
-    [{ name: '', url: '' }],
+    [{ label: '', url: '' }],
     `games/${gameId}/metadata.json`,
     ['relatedSites']
   )
@@ -34,9 +34,11 @@ export function RelatedSitesCard({
             '3xl:max-h-[408px]'
           )}
         >
-          {isEqual(relatedSites, [{ name: '', url: '' }])
+          {isEqual(relatedSites, [{ label: '', url: '' }])
             ? '暂无相关网站'
-            : relatedSites.map((site) => <Link key={site.name} name={site.name} url={site.url} />)}
+            : relatedSites.map((site) => (
+                <Link key={site.label} name={site.label} url={site.url} />
+              ))}
         </div>
       </CardContent>
     </Card>

@@ -3,9 +3,9 @@ import { Textarea } from '@ui/textarea'
 import { cn } from '~/utils'
 import { useDBSyncedState } from '~/hooks'
 
-export function IntroductionDialog({ gameId }: { gameId: string }): JSX.Element {
-  const [introduction, setIntroduction] = useDBSyncedState('', `games/${gameId}/metadata.json`, [
-    'introduction'
+export function DescriptionDialog({ gameId }: { gameId: string }): JSX.Element {
+  const [description, setDescription] = useDBSyncedState('', `games/${gameId}/metadata.json`, [
+    'description'
   ])
   return (
     <Dialog>
@@ -19,8 +19,8 @@ export function IntroductionDialog({ gameId }: { gameId: string }): JSX.Element 
         <Textarea
           spellCheck={false}
           className={cn('grow resize-none')}
-          value={introduction}
-          onChange={(e) => setIntroduction(e.target.value)}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
         />
       </DialogContent>
     </Dialog>

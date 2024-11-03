@@ -1,7 +1,7 @@
 import { cn } from '~/utils'
 import { useDBSyncedState } from '~/hooks'
 import { Button } from '@ui/button'
-import { ipcSend } from '~/utils'
+import { ipcSend, ipcInvoke } from '~/utils'
 import { toast } from 'sonner'
 
 export function StartGame({
@@ -14,6 +14,7 @@ export function StartGame({
   setRunningGames: (value: string[]) => void
 }): JSX.Element {
   const [mode] = useDBSyncedState('file', `games/${gameId}/launcher.json`, ['mode'])
+  const [gamePath, setGamePath] = useDBSyncedState('', `games/${gameId}/path.json`, ['gamePath'])
   const [fileConfig] = useDBSyncedState(
     {
       path: '',
@@ -45,7 +46,14 @@ export function StartGame({
     ['urlConfig']
   )
 
-  function startGame(): void {
+  async function startGame(): Promise<void> {
+    if (gamePath === '') {
+      toast.warning('请先设置游戏路径')
+      const filePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
+      setGamePath(filePath)
+      ipcSend('launcher-preset', 'default', gameId)
+      return
+    }
     if (mode === 'file') {
       if (
         fileConfig.path &&

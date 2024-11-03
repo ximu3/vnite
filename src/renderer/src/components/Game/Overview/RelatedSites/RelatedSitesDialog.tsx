@@ -6,7 +6,7 @@ import { useDBSyncedState } from '~/hooks'
 
 export function RelatedSitesDialog({ gameId }: { gameId: string }): JSX.Element {
   const [relatedSites, setRelatedSites] = useDBSyncedState(
-    [{ name: '', url: '' }],
+    [{ label: '', url: '' }],
     `games/${gameId}/metadata.json`,
     ['relatedSites']
   )
@@ -21,7 +21,7 @@ export function RelatedSitesDialog({ gameId }: { gameId: string }): JSX.Element 
         <Button
           variant="outline"
           onClick={() => {
-            setRelatedSites([...relatedSites, { name: '链接名', url: '地址' }])
+            setRelatedSites([...relatedSites, { label: '链接名', url: '地址' }])
           }}
           className={cn('w-[fit-content] ml-3')}
         >
@@ -31,11 +31,11 @@ export function RelatedSitesDialog({ gameId }: { gameId: string }): JSX.Element 
           {relatedSites.map((site, i) => (
             <div key={i} className={cn('flex flex-row gap-3')}>
               <Input
-                value={site.name}
+                value={site.label}
                 className={cn('w-1/4')}
                 onChange={(e) => {
                   const newRelatedSites = [...relatedSites]
-                  newRelatedSites[i].name = e.target.value
+                  newRelatedSites[i].label = e.target.value
                   setRelatedSites(newRelatedSites)
                 }}
                 placeholder="网站名称"
