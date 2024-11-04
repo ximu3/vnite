@@ -34,10 +34,14 @@ export function RelatedSitesCard({
             '3xl:max-h-[408px]'
           )}
         >
-          {isEqual(relatedSites, [{ label: '', url: '' }])
+          {isEqual(relatedSites, [])
             ? '暂无相关网站'
-            : relatedSites.map((site) => (
-                <Link key={site.label} name={site.label} url={site.url} />
+            : relatedSites.map((site, index) => (
+                <Link
+                  key={`${gameId}-${site.label}-${site.url}-${index}`}
+                  name={site.label}
+                  url={site.url}
+                />
               ))}
         </div>
       </CardContent>

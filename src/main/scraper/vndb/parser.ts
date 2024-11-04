@@ -5,6 +5,7 @@
 /*eslint no-useless-escape: "off"*/
 const urlMatcher = /\[url=(.*?)\](.*?)\[\/url\]/g
 const bMatcher = /\[b\](.*?)\[\/b\]/g
+const spoilerMatcher = /\[spoiler\](.*?)\[\/spoiler\]/g
 
 /**
  * 格式化描述文本,将BBCode转换为HTML标签
@@ -20,6 +21,9 @@ export function formatDescription(description: string): string {
 
   // 将[b]标签转换为HTML的strong标签
   formatted = formatted.replace(bMatcher, '<strong>$1</strong>')
+
+  // 将[spoiler]标签转换为HTML的details标签
+  formatted = formatted.replace(spoilerMatcher, '<details><summary>展开</summary>$1</details>')
 
   return formatted
 }

@@ -1,5 +1,5 @@
 import { GameList, GameMetadata } from '../types'
-import { SteamAppDetailsResponse, SteamSearchResponse } from './types'
+import { SteamAppDetailsResponse, SteamStoreSearchResponse } from './types'
 import { formatDate } from '~/utils'
 import * as cheerio from 'cheerio'
 
@@ -16,22 +16,34 @@ async function fetchSteamAPI(url: string): Promise<any> {
 // 搜索游戏函数
 export async function searchSteamGames(gameName: string): Promise<GameList> {
   try {
-    const searchUrl = `https://steamcommunity.com/actions/SearchApps/${encodeURIComponent(gameName)}`
-    const searchResults = (await fetchSteamAPI(searchUrl)) as SteamSearchResponse[]
+    // 使用 Steam Store API 搜索接口
+    const searchUrl = `https://store.steampowered.com/api/storesearch/?term=${encodeURIComponent(gameName)}&l=schinese&cc=CN`
+    const response = (await fetchSteamAPI(searchUrl)) as SteamStoreSearchResponse
 
-    const releaseDate = await getSteamMetadata(searchResults[0].appid.toString()).then(
-      (metadata) => metadata.releaseDate
+    if (!response.items || response.items.length === 0) {
+      throw new Error('No games found')
+    }
+
+    // 获取所有游戏的元数据
+    const gamesMetadata = await Promise.all(
+      response.items.map((game) =>
+        getSteamMetadata(game.id.toString()).catch((error) => {
+          console.error(`Error fetching metadata for game ${game.id}:`, error)
+          // 如果获取元数据失败，返回一个带有默认值的对象
+          return {
+            releaseDate: '',
+            developers: []
+          }
+        })
+      )
     )
 
-    const developers = await getSteamMetadata(searchResults[0].appid.toString()).then(
-      (metadata) => metadata.developers
-    )
-
-    return searchResults.map((game) => ({
-      id: game.appid.toString(),
+    // 将搜索结果与对应的元数据组合
+    return response.items.map((game, index) => ({
+      id: game.id.toString(),
       name: game.name,
-      releaseDate: releaseDate,
-      developers: developers
+      releaseDate: gamesMetadata[index].releaseDate,
+      developers: gamesMetadata[index].developers
     }))
   } catch (error) {
     console.error('Error fetching Steam games:', error)

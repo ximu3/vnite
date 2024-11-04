@@ -30,10 +30,10 @@ export function formatDateToISO(dateString: string): string {
 
   // 获取年、月、日
   const year = date.getFullYear()
-  const month = date.getMonth() + 1 // 月份从0开始，所以需要加1
-  const day = date.getDate()
+  const month = String(date.getMonth() + 1).padStart(2, '0') // 补零到两位
+  const day = String(date.getDate()).padStart(2, '0') // 补零到两位
 
-  // 格式化为日期格式
+  // 格式化为 YYYY-MM-DD 格式
   return `${year}-${month}-${day}`
 }
 
@@ -52,4 +52,9 @@ export function formatPlayStatusToChinese(status: string): string {
     default:
       return '未知'
   }
+}
+
+export function formatScoreToChinese(score: string): string {
+  if (score === '') return '未评分'
+  return `${score} 分`
 }

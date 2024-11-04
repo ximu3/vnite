@@ -24,7 +24,7 @@ export function DescriptionCard({
       </CardHeader>
       <CardContent className={cn('')}>
         <div
-          className={cn('max-h-[300px] text-sm overflow-auto scrollbar-base', '3xl:max-h-[400px]')}
+          className={cn('max-h-[310px] text-sm overflow-auto scrollbar-base', '3xl:max-h-[500px]')}
         >
           {description ? parse(description) : '暂无简介'}
         </div>

@@ -24,8 +24,7 @@ export function TagsCard({
       <CardContent>
         <div
           className={cn(
-            'flex flex-col text-sm justify-start items-start overflow-auto scrollbar-base max-h-[52px] text-wrap',
-            '3xl:max-h-[200px]'
+            'flex flex-col text-sm justify-start items-start overflow-auto scrollbar-base max-h-[54px] text-wrap'
           )}
         >
           {tags.join(', ') === '' ? '暂无标签' : tags.join(', ')}

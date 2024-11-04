@@ -9,7 +9,11 @@ export function Collection(): JSX.Element {
   const { collections } = useCollections()
   return (
     <ScrollArea className={cn('w-full h-full')}>
-      <Accordion type="multiple" className={cn('w-full text-xs flex flex-col gap-2 ')}>
+      <Accordion
+        type="multiple"
+        defaultValue={['all']}
+        className={cn('w-full text-xs flex flex-col gap-2 ')}
+      >
         <AllGame />
         {Object.entries(collections).map(([key, value]) => (
           <AccordionItem key={key} value={key}>

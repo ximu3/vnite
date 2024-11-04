@@ -29,6 +29,11 @@ export function ScreenshotList(): JSX.Element {
     toast.promise(
       (async (): Promise<string[]> => {
         const result = (await ipcInvoke('get-game-screenshots', dataSource, id)) as string[]
+        if (result.length === 0) {
+          toast.error('未找到游戏图片')
+          setScreenshotUrl('')
+          return []
+        }
         setScreenshotUrl(result[0])
         setScreenshotList(result)
         return result
@@ -69,23 +74,27 @@ export function ScreenshotList(): JSX.Element {
         <div className="w-full h-full">
           <div className={cn('scrollbar-base overflow-auto pr-3')}>
             <div className={cn('grid grid-cols-2 gap-3 h-[630px]', '3xl:h-[790px]')}>
-              {screenshotList.map((image) => (
-                <div
-                  key={image}
-                  onClick={() => {
-                    setScreenshotUrl(image)
-                    toast.success(`已选择图片: ${image}`)
-                  }}
-                  className={cn(
-                    'cursor-pointer p-3 bg-muted text-muted-foreground rounded-[0.3rem]',
-                    image === screenshotUrl
-                      ? 'bg-accent text-accent-foreground'
-                      : 'hover:bg-accent hover:text-accent-foreground'
-                  )}
-                >
-                  <img src={image} alt={image} className="w-full h-auto" />
-                </div>
-              ))}
+              {screenshotList.length !== 0 ? (
+                screenshotList.map((image) => (
+                  <div
+                    key={image}
+                    onClick={() => {
+                      setScreenshotUrl(image)
+                      toast.success(`已选择图片: ${image}`)
+                    }}
+                    className={cn(
+                      'cursor-pointer p-3 bg-muted text-muted-foreground rounded-[0.3rem]',
+                      image === screenshotUrl
+                        ? 'bg-accent text-accent-foreground'
+                        : 'hover:bg-accent hover:text-accent-foreground'
+                    )}
+                  >
+                    <img src={image} alt={image} className="w-full h-auto" />
+                  </div>
+                ))
+              ) : (
+                <div>暂无图片</div>
+              )}
             </div>
           </div>
         </div>

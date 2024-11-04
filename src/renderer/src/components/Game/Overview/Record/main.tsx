@@ -1,11 +1,17 @@
 import { cn } from '~/utils'
 import { RecordCard } from './RecordCard'
 import { useDBSyncedState, useGameTimers } from '~/hooks'
-import { formatTimeToChinese, formatDateToISO, formatPlayStatusToChinese } from '~/utils'
+import {
+  formatTimeToChinese,
+  formatDateToISO,
+  formatPlayStatusToChinese,
+  formatScoreToChinese
+} from '~/utils'
 
 export function Record({ gameId }: { gameId: string }): JSX.Element {
   const [lastRunDate] = useDBSyncedState('', `games/${gameId}/record.json`, ['lastRunDate'])
   const [playStatus] = useDBSyncedState('unplayed', `games/${gameId}/record.json`, ['playStatus'])
+  const [score] = useDBSyncedState('', `games/${gameId}/record.json`, ['score'])
   const { getGamePlayingTime } = useGameTimers()
   const playingTime = getGamePlayingTime(gameId)
   return (
@@ -18,7 +24,7 @@ export function Record({ gameId }: { gameId: string }): JSX.Element {
       />
       <RecordCard
         title="最后运行日期"
-        content={lastRunDate ? formatDateToISO(lastRunDate) : '还未开始'}
+        content={lastRunDate ? formatDateToISO(lastRunDate) : '从未运行'}
         icon="icon-[mdi--calendar-blank-multiple] w-[18px] h-[18px]"
         className={cn('w-1/4')}
       />
@@ -30,7 +36,7 @@ export function Record({ gameId }: { gameId: string }): JSX.Element {
       />
       <RecordCard
         title="我的评分"
-        content="8.5 分"
+        content={formatScoreToChinese(score)}
         icon="icon-[mdi--starburst-outline] w-[18px] h-[18px]"
         className={cn('w-1/4')}
       />

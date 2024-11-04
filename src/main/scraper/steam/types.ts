@@ -1,7 +1,15 @@
-// Steam API 响应类型定义
-export type SteamSearchResponse = {
-  appid: number
-  name: string
+export interface SteamStoreSearchResponse {
+  items: {
+    id: number
+    name: string
+    tiny_image: string
+    price?: {
+      final: number
+      initial: number
+      discount_percent: number
+    }
+  }[]
+  total: number
 }
 
 type SteamAppDetailsData = {

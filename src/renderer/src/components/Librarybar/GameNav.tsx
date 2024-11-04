@@ -16,7 +16,7 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
         >
           <div className={cn('flex flex-row gap-2 items-center')}>
             <span className={cn('icon-[mdi--gamepad-variant] w-5 h-5')}></span>
-            <div>{gameIndex.get(gameId)?.name}</div>
+            <div className={cn('truncate')}>{gameIndex.get(gameId)?.name}</div>
           </div>
         </Nav>
       </ContextMenuTrigger>

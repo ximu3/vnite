@@ -12,11 +12,11 @@ export function Overview({ gameId }: { gameId: string }): JSX.Element {
       <div className={cn('flex flex-row gap-5 items-start justify-start ', '3xl:gap-7')}>
         <div
           className={cn(
-            'w-[calc(75%-4px)] flex flex-col gap-5 shrink-0',
+            'w-[calc(75%-4px)] flex flex-col gap-5 shrink-0 h-full',
             '3xl:w-[calc(75%-6px)] 3xl:gap-7'
           )}
         >
-          <Description gameId={gameId} />
+          <Description gameId={gameId} className={cn('grow')} />
           <Tags gameId={gameId} />
         </div>
         <div className={cn('flex flex-col gap-5 grow', '3xl:gap-7')}>

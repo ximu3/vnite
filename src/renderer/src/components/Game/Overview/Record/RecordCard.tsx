@@ -13,17 +13,17 @@ export function RecordCard({
   className?: string
 }): JSX.Element {
   return (
-    <Card className={cn(className)}>
-      <CardHeader>
+    <Card className={cn(className, 'h-[96px]')}>
+      <CardHeader className={cn('-mt-1')}>
         <CardTitle>
           <div className={cn('flex flex-row justify-between items-center')}>
-            <div className={cn('')}>{title}</div>
-            <span className={cn('w-6 h-6', icon)}></span>
+            <div className={cn('font-normal text-sm')}>{title}</div>
+            <span className={cn('w-3 h-3', icon)}></span>
           </div>
         </CardTitle>
       </CardHeader>
       <CardContent className={cn('-mt-4')}>
-        <div className={cn('text-3xl font-bold')}>{content}</div>
+        <div className={cn('text-xl font-bold')}>{content}</div>
       </CardContent>
     </Card>
   )
