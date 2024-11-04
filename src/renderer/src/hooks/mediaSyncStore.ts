@@ -73,7 +73,7 @@ interface UseGameMediaResult {
 export function useGameMedia({
   gameId,
   type,
-  defaultProtocol = 'file'
+  defaultProtocol = 'app'
 }: UseGameMediaOptions): UseGameMediaResult {
   const { setMediaData, getMediaData, updateTimestamp } = useMediaStore()
   const [isLoading, setIsLoading] = useState(true)
@@ -165,8 +165,10 @@ export function useGameMedia({
 
   // 构建多媒体 URL
   const mediaUrl = useMemo(() => {
-    if (!currentMediaData) return undefined // 返回 undefined 而不是 null
-    return `${currentMediaData.protocol}://${currentMediaData.path}?t=${currentMediaData.timestamp}`
+    if (!currentMediaData) return undefined
+    // 将反斜杠转换为正斜杠，确保 URL 格式正确
+    const normalizedPath = currentMediaData.path.replace(/\\/g, '/')
+    return `${defaultProtocol}:///${normalizedPath}?t=${currentMediaData.timestamp}`
   }, [currentMediaData])
 
   // 手动刷新多媒体（更新时间戳）
