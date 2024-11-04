@@ -6,10 +6,18 @@ import { getDataPath } from '~/utils'
 
 let indexWatcher: Watcher
 
+const imageFileExtensions = ['jpg', 'jpeg', 'png', 'webp']
+
+const imageFileNames = ['cover', 'background', 'icon']
+
+const imageFullNames = imageFileNames
+  .map((name) => imageFileExtensions.map((ext) => `${name}.${ext}`))
+  .flat()
+
 export async function setupWatcher(mainWindow: BrowserWindow): Promise<void> {
   try {
     await setupDBWatcher(
-      ['metadata.json', 'collections.json', 'launcher.json', 'path.json'],
+      ['metadata.json', 'collections.json', 'launcher.json', 'path.json', ...imageFullNames],
       mainWindow
     )
     await setupDBWatcher(['record.json'], mainWindow, () =>

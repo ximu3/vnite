@@ -5,6 +5,13 @@ import {
   getGameScreenshotsFromVNDB,
   getGameCoverFromVNDB
 } from './vndb'
+import {
+  searchGamesFromSteam,
+  checkGameExistsOnSteam,
+  getGameMetadataFromSteam,
+  getGameScreenshotsFromSteam,
+  getGameCoverFromSteam
+} from './steam'
 import { GameList, GameMetadata } from './types'
 
 export async function searchGamesFromDataSource(
@@ -14,6 +21,8 @@ export async function searchGamesFromDataSource(
   switch (dataSource) {
     case 'vndb':
       return await searchGamesFromVNDB(gameName)
+    case 'steam':
+      return await searchGamesFromSteam(gameName)
     default:
       throw new Error('Invalid data source')
   }
@@ -26,6 +35,8 @@ export async function checkGameExistsInDataSource(
   switch (dataSource) {
     case 'vndb':
       return await checkGameExistsOnVNDB(gameId)
+    case 'steam':
+      return await checkGameExistsOnSteam(gameId)
     default:
       throw new Error('Invalid data source')
   }
@@ -38,6 +49,8 @@ export async function getGameMetadataFromDataSource(
   switch (dataSource) {
     case 'vndb':
       return await getGameMetadataFromVNDB(gameId)
+    case 'steam':
+      return await getGameMetadataFromSteam(gameId)
     default:
       throw new Error('Invalid data source')
   }
@@ -50,6 +63,8 @@ export async function getGameScreenshotsFromDataSource(
   switch (dataSource) {
     case 'vndb':
       return await getGameScreenshotsFromVNDB(gameId)
+    case 'steam':
+      return await getGameScreenshotsFromSteam(gameId)
     default:
       throw new Error('Invalid data source')
   }
@@ -62,6 +77,8 @@ export async function getGameCoverFromDataSource(
   switch (dataSource) {
     case 'vndb':
       return await getGameCoverFromVNDB(gameId)
+    case 'steam':
+      return await getGameCoverFromSteam(gameId)
     default:
       throw new Error('Invalid data source')
   }

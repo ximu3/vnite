@@ -2,7 +2,7 @@ export type GameList = {
   id: string
   name: string
   releaseDate: string
-  developer: string[]
+  developers: string[]
 }[]
 
 export type GameMetadata = {
@@ -11,6 +11,8 @@ export type GameMetadata = {
   releaseDate: string
   description: string
   developers: string[]
+  publishers?: string[]
+  genres?: string[]
   relatedSites: {
     label: string
     url: string

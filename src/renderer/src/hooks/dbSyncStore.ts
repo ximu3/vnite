@@ -18,7 +18,7 @@ export function useDBSyncedState<T>(
   initialValue: T,
   dbName: string,
   path: string[]
-): [T, (value: T) => void] {
+): [T, (value: T) => Promise<void>] {
   const key = `${dbName}:${path.join('.')}`
   const storeValue = useDBSyncStore((state) => state[key] ?? NOT_SET)
 
@@ -58,9 +58,9 @@ export function useDBSyncedState<T>(
     return removeListener
   }, [key, initialValue, dbName, path, storeValue])
 
-  const setValue = (newValue: T): void => {
+  const setValue = async (newValue: T): Promise<void> => {
     setDBState(key, newValue)
-    debouncedIpcInvoke('set-db-value', dbName, path, newValue)?.catch((error) => {
+    await debouncedIpcInvoke('set-db-value', dbName, path, newValue)?.catch((error) => {
       console.error('Failed to set DB value:', error)
       setDBState(key, storeValue)
       if (error instanceof Error) {

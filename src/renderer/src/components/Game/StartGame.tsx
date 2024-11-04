@@ -50,7 +50,7 @@ export function StartGame({
     if (gamePath === '') {
       toast.warning('请先设置游戏路径')
       const filePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
-      setGamePath(filePath)
+      await setGamePath(filePath)
       ipcSend('launcher-preset', 'default', gameId)
       return
     }

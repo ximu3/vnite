@@ -28,7 +28,7 @@ export function Search({ className }: { className?: string }): JSX.Element {
         id: string
         name: string
         releaseDate: string
-        developer: string[]
+        developers: string[]
       }[]
 
       toast.promise(
@@ -101,6 +101,7 @@ export function Search({ className }: { className?: string }): JSX.Element {
                   <SelectLabel>数据来源</SelectLabel>
                   <SelectItem value="vndb">VNDB</SelectItem>
                   <SelectItem value="igdb">IGDB</SelectItem>
+                  <SelectItem value="steam">Steam</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>

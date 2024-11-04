@@ -121,13 +121,13 @@ export class GameMonitor {
         const files = await this.getExecutableFiles(this.options.target)
         this.monitoredProcesses = files.map((file) => ({
           path: file,
-          isRunning: true
+          isRunning: false
         }))
       } else {
         this.monitoredProcesses = [
           {
             path: this.options.target,
-            isRunning: true
+            isRunning: false
           }
         ]
       }

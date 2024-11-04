@@ -55,7 +55,7 @@ export function List(): JSX.Element {
                         </TableCell>
                         <TableCell>
                           <div className={cn('w-[150px] truncate', '3xl:w-[200px]')}>
-                            {game.developer.join(', ')}
+                            {game.developers.join(', ')}
                           </div>
                         </TableCell>
                       </TableRow>

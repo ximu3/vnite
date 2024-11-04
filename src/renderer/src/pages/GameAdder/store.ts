@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-export type DataSource = 'vndb' | 'igdb'
+export type DataSource = 'vndb' | 'igdb' | 'steam'
 
 interface GameAdderState {
   isOpen: boolean
@@ -17,14 +17,14 @@ interface GameAdderState {
     id: string
     name: string
     releaseDate: string
-    developer: string[]
+    developers: string[]
   }[]
   setGameList: (
     gameList: {
       id: string
       name: string
       releaseDate: string
-      developer: string[]
+      developers: string[]
     }[]
   ) => void
   id: string

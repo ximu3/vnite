@@ -40,7 +40,7 @@ export async function searchVNDBGames(gameName: string): Promise<GameList> {
       id: game.id,
       name: game.titles.find((t) => t.main)?.title || game.titles[0].title,
       releaseDate: game?.released || '',
-      developer: game.developers?.map((d) => d.name) || ['']
+      developers: game.developers?.map((d) => d.name) || ['']
     }))
   } catch (error) {
     console.error('Error fetching VNDB ', error)

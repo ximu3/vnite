@@ -1,5 +1,5 @@
 import { cn } from '~/utils'
-import { useDBSyncedState } from '~/hooks'
+import { useDBSyncedState, useGameMedia } from '~/hooks'
 import { Button } from '@ui/button'
 import { ScrollArea } from '@ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
@@ -22,15 +22,15 @@ export function Game({
   setRunningGames: (value: string[]) => void
 }): JSX.Element {
   const [gameData] = useDBSyncedState<JsonObject>({}, `games/${gameId}/metadata.json`, ['#all'])
+  const { mediaUrl: background } = useGameMedia({ gameId, type: 'background' })
   return (
     <div className={cn('w-full h-full')}>
       <div className={cn('pt-[30px]')}></div>
 
       <div className={cn('relative w-full h-screen overflow-hidden')}>
-        <img
-          src="https://img.timero.xyz/i/2024/10/20/67150a8c70c36.webp"
-          className={cn('absolute top-0 left-0 w-full object-cover')}
-        />
+        {background && (
+          <img src={background} className={cn('absolute top-0 left-0 w-full object-cover')} />
+        )}
         <ScrollArea className={cn('w-full h-full absolute top-0 left-0')}>
           <div className={cn('relative h-full')}>
             <div className={cn('h-[45vh]')}></div>
