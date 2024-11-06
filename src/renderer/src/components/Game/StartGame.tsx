@@ -3,18 +3,18 @@ import { useDBSyncedState } from '~/hooks'
 import { Button } from '@ui/button'
 import { ipcSend, ipcInvoke } from '~/utils'
 import { toast } from 'sonner'
+import { useRunningGames } from '~/pages/Library/store'
 
 export function StartGame({
   gameId,
-  runningGames,
-  setRunningGames
+  className
 }: {
   gameId: string
-  runningGames: string[]
-  setRunningGames: (value: string[]) => void
+  className?: string
 }): JSX.Element {
   const [mode] = useDBSyncedState('file', `games/${gameId}/launcher.json`, ['mode'])
   const [gamePath, setGamePath] = useDBSyncedState('', `games/${gameId}/path.json`, ['gamePath'])
+  const { runningGames, setRunningGames } = useRunningGames()
   const [fileConfig] = useDBSyncedState(
     {
       path: '',
@@ -91,7 +91,7 @@ export function StartGame({
   }
 
   return (
-    <Button className={cn('')}>
+    <Button className={cn('', className)}>
       <div
         className={cn('flex flex-row gap-1 justify-center items-center p-3')}
         onClick={startGame}

@@ -4,7 +4,12 @@ import { startMonitor } from '~/monitor'
 
 export async function fileLuancher(gameId: string): Promise<void> {
   try {
-    const fileConfig = await getDBValue(`games/${gameId}/launcher.json`, ['fileConfig'], '')
+    const fileConfig = await getDBValue(`games/${gameId}/launcher.json`, ['fileConfig'], {
+      path: '',
+      workingDirectory: '',
+      timerMode: '',
+      timerPath: ''
+    })
 
     const launcher = spawn('start', ['""', `"${fileConfig.path}"`], {
       shell: true,
@@ -32,7 +37,12 @@ export async function fileLuancher(gameId: string): Promise<void> {
 
 export async function urlLauncher(gameId: string): Promise<void> {
   try {
-    const urlConfig = await getDBValue(`games/${gameId}/launcher.json`, ['urlConfig'], '')
+    const urlConfig = await getDBValue(`games/${gameId}/launcher.json`, ['urlConfig'], {
+      url: '',
+      browserPath: '',
+      timerMode: '',
+      timerPath: ''
+    })
 
     if (!urlConfig || !urlConfig.url) {
       throw new Error(`Invalid URL configuration for game ${gameId}`)
@@ -69,7 +79,12 @@ export async function urlLauncher(gameId: string): Promise<void> {
 
 export async function scriptLauncher(gameId: string): Promise<void> {
   try {
-    const scriptConfig = await getDBValue(`games/${gameId}/launcher.json`, ['scriptConfig'], '')
+    const scriptConfig = await getDBValue(`games/${gameId}/launcher.json`, ['scriptConfig'], {
+      command: [],
+      workingDirectory: '',
+      timerMode: '',
+      timerPath: ''
+    })
 
     if (!scriptConfig || !scriptConfig.command || !Array.isArray(scriptConfig.command)) {
       throw new Error(`Invalid script configuration for game ${gameId}`)

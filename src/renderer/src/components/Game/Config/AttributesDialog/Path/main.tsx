@@ -18,15 +18,15 @@ import { ArrayTextarea } from '@ui/array-textarea'
 export function Path({ gameId }: { gameId: string }): JSX.Element {
   const [gamePath, setGamePath] = useDBSyncedState('', `games/${gameId}/path.json`, ['gamePath'])
   const [saveMode, setSaveMode] = useDBSyncedState('folder', `games/${gameId}/path.json`, [
-    'save',
+    'savePath',
     'mode'
   ])
   const [saveFolderPath, setSaveFolderPath] = useDBSyncedState([''], `games/${gameId}/path.json`, [
-    'save',
+    'savePath',
     'folder'
   ])
   const [saveFilePath, setSaveFilePath] = useDBSyncedState([''], `games/${gameId}/path.json`, [
-    'save',
+    'savePath',
     'file'
   ])
   async function selectGamePath(): Promise<void> {

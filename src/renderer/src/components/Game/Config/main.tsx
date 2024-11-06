@@ -9,6 +9,7 @@ import {
 import { cn } from '~/utils'
 import { CollectionMenu } from './CollectionMenu'
 import { AttributesDialog } from './AttributesDialog'
+import { ManageMenu } from './ManageMenu'
 
 export function Config({ gameId }: { gameId: string }): JSX.Element {
   return (
@@ -20,6 +21,8 @@ export function Config({ gameId }: { gameId: string }): JSX.Element {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-44 mr-5">
         <CollectionMenu gameId={gameId} />
+        <DropdownMenuSeparator />
+        <ManageMenu gameId={gameId} />
         <DropdownMenuSeparator />
         <AttributesDialog gameId={gameId}>
           <DropdownMenuItem onSelect={(e) => e.preventDefault()}>

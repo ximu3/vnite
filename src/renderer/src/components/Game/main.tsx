@@ -4,17 +4,10 @@ import { ScrollArea } from '@ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
 import { Overview } from './Overview'
 import { Record } from './Record'
+import { Save } from './Save'
 import { Header } from './Header'
 
-export function Game({
-  gameId,
-  runningGames,
-  setRunningGames
-}: {
-  gameId: string
-  runningGames: string[]
-  setRunningGames: (value: string[]) => void
-}): JSX.Element {
+export function Game({ gameId }: { gameId: string }): JSX.Element {
   const { mediaUrl: background } = useGameMedia({ gameId, type: 'background' })
   return (
     <div className={cn('w-full h-full')}>
@@ -34,12 +27,7 @@ export function Game({
                   : 'relative bg-background h-[calc(100-64pxvh)]'
               )}
             >
-              <Header
-                gameId={gameId}
-                runningGames={runningGames}
-                setRunningGames={setRunningGames}
-                className={cn('-top-16 left-0 right-0')}
-              />
+              <Header gameId={gameId} className={cn('-top-16 left-0 right-0')} />
               {/* 内容放在这里 */}
               <div className={cn(background ? 'p-5' : 'p-5 border-t-[1px]')}>
                 <Tabs defaultValue="overview" className="w-full">
@@ -59,6 +47,9 @@ export function Game({
                   </TabsContent>
                   <TabsContent value="record">
                     <Record gameId={gameId} />
+                  </TabsContent>
+                  <TabsContent value="save">
+                    <Save gameId={gameId} />
                   </TabsContent>
                 </Tabs>
               </div>

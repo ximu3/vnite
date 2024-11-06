@@ -17,18 +17,10 @@ import { StartGame } from './StartGame'
 import { StopGame } from './StopGame'
 import { toast } from 'sonner'
 import { useState } from 'react'
+import { useRunningGames } from '~/pages/Library/store'
 
-export function Header({
-  gameId,
-  runningGames,
-  setRunningGames,
-  className
-}: {
-  gameId: string
-  runningGames: string[]
-  setRunningGames: (value: string[]) => void
-  className?: string
-}): JSX.Element {
+export function Header({ gameId, className }: { gameId: string; className?: string }): JSX.Element {
+  const { runningGames } = useRunningGames()
   const [name] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
   const [gamePath] = useDBSyncedState('', `games/${gameId}/path.json`, ['gamePath'])
   const [playStatus, setPlayStatus] = useDBSyncedState('stopped', `games/${gameId}/record.json`, [
@@ -88,11 +80,7 @@ export function Header({
         {runningGames.includes(gameId) ? (
           <StopGame gameId={gameId} />
         ) : (
-          <StartGame
-            gameId={gameId}
-            runningGames={runningGames}
-            setRunningGames={setRunningGames}
-          />
+          <StartGame gameId={gameId} />
         )}
 
         <Select value={playStatus} onValueChange={setPlayStatus}>
@@ -119,7 +107,10 @@ export function Header({
               variant="outline"
               size={'icon'}
               className="non-draggable"
-              onClick={() => setIsScoreDialogOpen(true)}
+              onClick={() => {
+                setIsScoreDialogOpen(true)
+                setPreScore(score)
+              }}
             >
               <span className={cn('icon-[mdi--starburst-edit-outline] w-4 h-4')}></span>
             </Button>

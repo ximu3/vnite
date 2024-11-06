@@ -6,21 +6,18 @@ import {
   ContextMenuSubContent,
   ContextMenuSubTrigger
 } from '@ui/context-menu'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@ui/dialog'
-import { Button } from '@ui/button'
 import { cn } from '~/utils'
 import { useCollections } from '~/hooks'
-import { AddCollectionDialog } from '../dialog/AddCollectionDialog'
+import { AddCollectionDialog } from '../../dialog/AddCollectionDialog'
+import { AttributesDialog } from '../../Game/Config/AttributesDialog'
+import { ManageMenu } from './ManageMenu'
+import { StartGame } from '../../Game/StartGame'
+import { StopGame } from '../../Game/StopGame'
+import { useRunningGames } from '~/pages/Library/store'
 
 export function GameNavCM({ gameId, groupId }: { gameId: string; groupId: string }): JSX.Element {
   const { collections, addGameToCollection, removeGameFromCollection } = useCollections()
+  const { runningGames } = useRunningGames()
   // 获取该游戏所在的所有收藏ID
   const gameInCollectionsId = Object.entries(collections)
     .filter(([, value]) => value.games.includes(gameId))
@@ -31,36 +28,22 @@ export function GameNavCM({ gameId, groupId }: { gameId: string; groupId: string
   }
   return (
     <ContextMenuContent className={cn('w-40')}>
-      <Dialog>
-        <DialogTrigger className={cn('w-full')}>
-          <div className={cn('w-full flex justify-center items-center')}>
-            <Button variant="default" className={cn('w-full flex items-center pl-1')}>
-              <div className={cn('flex flex-row gap-1 items-center justify-start')}>
-                <span className={cn('icon-[mdi--play-outline] w-6 h-6')}></span>
-                开始游戏
-              </div>
-            </Button>
-          </div>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Are you absolutely sure?</DialogTitle>
-            <DialogDescription>
-              This action cannot be undone. This will permanently delete your account and remove
-              your data from our servers.
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
+      <div className={cn('flex flex-row w-full')}>
+        {runningGames.includes(gameId) ? (
+          <StopGame className={cn('w-full max-w-none flex')} gameId={gameId} />
+        ) : (
+          <StartGame className={cn('w-full max-w-none flex')} gameId={gameId} />
+        )}
+      </div>
       <ContextMenuSeparator />
       {collectionId && (
-        <ContextMenuItem onClick={() => removeGameFromCollection(collectionId, gameId)} inset>
+        <ContextMenuItem onClick={() => removeGameFromCollection(collectionId, gameId)}>
           <div>移出该收藏</div>
         </ContextMenuItem>
       )}
       <ContextMenuSub>
-        <ContextMenuSubTrigger inset>添加至</ContextMenuSubTrigger>
-        <ContextMenuSubContent className="w-40">
+        <ContextMenuSubTrigger>添加至</ContextMenuSubTrigger>
+        <ContextMenuSubContent>
           {Object.entries(collections)
             .filter(([key]) => !gameInCollectionsId.includes(key))
             .map(([key, value]) => (
@@ -71,7 +54,7 @@ export function GameNavCM({ gameId, groupId }: { gameId: string; groupId: string
           {Object.entries(collections).filter(([key]) => !gameInCollectionsId.includes(key))
             .length > 0 && <ContextMenuSeparator />}
           <AddCollectionDialog gameId={gameId}>
-            <ContextMenuItem onSelect={(e) => e.preventDefault()} inset>
+            <ContextMenuItem onSelect={(e) => e.preventDefault()}>
               <div className={cn('flex flex-row gap-2 items-center w-full')}>
                 <span className={cn('icon-[mdi--add] w-4 h-4')}></span>
                 <div>新收藏</div>
@@ -81,9 +64,13 @@ export function GameNavCM({ gameId, groupId }: { gameId: string; groupId: string
         </ContextMenuSubContent>
       </ContextMenuSub>
       <ContextMenuSeparator />
-      <ContextMenuItem className={cn('text-sm')} inset>
-        属性
-      </ContextMenuItem>
+      <ManageMenu gameId={gameId} />
+      <ContextMenuSeparator />
+      <AttributesDialog gameId={gameId}>
+        <ContextMenuItem onSelect={(e) => e.preventDefault()}>
+          <div>属性</div>
+        </ContextMenuItem>
+      </AttributesDialog>
     </ContextMenuContent>
   )
 }

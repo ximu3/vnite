@@ -21,17 +21,26 @@ export function getAppRootPath(): string {
  */
 export async function getDataPath(file: string): Promise<string> {
   try {
-    if (app.isPackaged) {
-      const dataPath = path.join(app.getPath('userData'), 'app/database', file)
-      const dataDir = path.dirname(dataPath)
-      await fse.ensureDir(dataDir)
-      return dataPath
+    // 判断是否为打包环境
+    const basePath = app.isPackaged
+      ? path.join(app.getPath('userData'), 'app/database')
+      : path.join(getAppRootPath(), '/dev/database')
+
+    const fullPath = path.join(basePath, file)
+
+    // 判断是否为文件路径（检查是否有扩展名）
+    const isFile = path.extname(file) !== ''
+
+    if (isFile) {
+      // 如果是文件路径，确保父目录存在
+      const dirPath = path.dirname(fullPath)
+      await fse.ensureDir(dirPath)
     } else {
-      const dataPath = path.join(getAppRootPath(), '/dev/database', file)
-      const dataDir = path.dirname(dataPath)
-      await fse.ensureDir(dataDir)
-      return dataPath
+      // 如果是文件夹路径，直接确保该目录存在
+      await fse.ensureDir(fullPath)
     }
+
+    return fullPath
   } catch (error) {
     console.error('Failed to get data path', error)
     throw error

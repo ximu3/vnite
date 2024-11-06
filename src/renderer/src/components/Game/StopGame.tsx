@@ -2,9 +2,15 @@ import { cn } from '~/utils'
 import { Button } from '@ui/button'
 import { ipcSend } from '~/utils'
 
-export function StopGame({ gameId }: { gameId: string }): JSX.Element {
+export function StopGame({
+  gameId,
+  className
+}: {
+  gameId: string
+  className?: string
+}): JSX.Element {
   return (
-    <Button className={cn('')} variant={'secondary'}>
+    <Button className={cn('', className)} variant={'secondary'}>
       <div
         className={cn('flex flex-row gap-1 justify-center items-center p-3')}
         onClick={() => ipcSend('stop-game', gameId)}

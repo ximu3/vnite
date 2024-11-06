@@ -20,6 +20,7 @@ interface CollectionsHook {
   renameCollection: (id: string, name: string) => void
   addGameToCollection: (collectionId: string, gameId: string) => void
   removeGameFromCollection: (collectionId: string, gameId: string) => void
+  removeGameFromAllCollections: (gameId: string) => void
 }
 
 export function useCollections(): CollectionsHook {
@@ -152,12 +153,24 @@ export function useCollections(): CollectionsHook {
     [removeCollection, typedSetCollections, collections]
   )
 
+  const removeGameFromAllCollections = useCallback(
+    (gameId: string): void => {
+      Object.entries(collections).forEach(([collectionId, collection]) => {
+        if (collection.games.includes(gameId)) {
+          removeGameFromCollection(collectionId, gameId)
+        }
+      })
+    },
+    [collections, removeGameFromCollection]
+  )
+
   return {
     collections,
     addCollection,
     removeCollection,
     renameCollection,
     addGameToCollection,
-    removeGameFromCollection
+    removeGameFromCollection,
+    removeGameFromAllCollections
   }
 }

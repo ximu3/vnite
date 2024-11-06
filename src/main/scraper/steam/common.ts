@@ -46,8 +46,16 @@ export async function searchSteamGames(gameName: string): Promise<GameList> {
       developers: gamesMetadata[index].developers
     }))
   } catch (error) {
-    console.error('Error fetching Steam games:', error)
-    throw error
+    if (error instanceof Error) {
+      if (error.message === 'No games found') {
+        return []
+      }
+      console.error('Error fetching Steam games:', error.message)
+      throw error
+    } else {
+      console.log('An unknown error occurred')
+      throw new Error('An unknown error occurred')
+    }
   }
 }
 

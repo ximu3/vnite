@@ -7,7 +7,6 @@ import { Search } from './Search'
 
 export function List(): JSX.Element {
   const { setName, id, setId, gameList } = useGameAdderStore()
-
   return (
     <div className={cn('w-[726px] h-[750px] p-3', '3xl:w-[876px] 3xl:h-[1000px]')}>
       <div className={cn('flex flex-col w-full h-full gap-3')}>

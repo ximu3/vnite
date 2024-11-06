@@ -2,18 +2,19 @@ import { Librarybar } from '~/components/Librarybar'
 import { cn } from '~/utils'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@ui/resizable'
 import { Routes, Route, Navigate } from 'react-router-dom'
-import { useState } from 'react'
 import { ipcOnUnique } from '~/utils'
 import { useGameIndexManager } from '~/hooks'
 import { Game } from '~/components/Game'
 import { useEffect } from 'react'
+import { useRunningGames } from './store'
 
 export function Library(): JSX.Element {
   const { gameIndex } = useGameIndexManager()
-  const [runningGames, setRunningGames] = useState<string[]>([])
+  const { runningGames, setRunningGames } = useRunningGames()
   useEffect(() => {
     ipcOnUnique('game-exit', (_, gameId: string) => {
-      setRunningGames((prev) => prev.filter((id) => id !== gameId))
+      const newRunningGames = runningGames.filter((id) => id !== gameId)
+      setRunningGames(newRunningGames)
     })
   }, [])
   return (
@@ -27,17 +28,7 @@ export function Library(): JSX.Element {
           <Route index element={<Navigate to="./home" />} />
           <Route path="/home/*" element={1} />
           {Array.from(gameIndex, ([key, game]) => (
-            <Route
-              key={key}
-              path={`/${game.id}/*`}
-              element={
-                <Game
-                  gameId={game.id || ''}
-                  runningGames={runningGames}
-                  setRunningGames={setRunningGames}
-                />
-              }
-            />
+            <Route key={key} path={`/${game.id}/*`} element={<Game gameId={game.id || ''} />} />
           ))}
         </Routes>
       </ResizablePanel>

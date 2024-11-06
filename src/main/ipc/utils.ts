@@ -1,5 +1,11 @@
 import { ipcMain, BrowserWindow, OpenDialogOptions } from 'electron'
-import { generateUUID, selectPathDialog, selectMultiplePathDialog } from '~/utils'
+import {
+  generateUUID,
+  selectPathDialog,
+  selectMultiplePathDialog,
+  openPathInExplorer,
+  openGameDBPathInExplorer
+} from '~/utils'
 
 export function setupUtilsIPC(mainWindow: BrowserWindow): void {
   ipcMain.on('minimize', () => {
@@ -35,6 +41,14 @@ export function setupUtilsIPC(mainWindow: BrowserWindow): void {
       return await selectMultiplePathDialog(properties, extensions)
     }
   )
+
+  ipcMain.handle('open-path-in-explorer', async (_, filePath: string) => {
+    await openPathInExplorer(filePath)
+  })
+
+  ipcMain.handle('open-game-db-path-in-explorer', async (_, gameId: string) => {
+    await openGameDBPathInExplorer(gameId)
+  })
 
   mainWindow.on('maximize', () => {
     mainWindow.webContents.send('window-maximized')

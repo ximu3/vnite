@@ -17,7 +17,14 @@ const imageFullNames = imageFileNames
 export async function setupWatcher(mainWindow: BrowserWindow): Promise<void> {
   try {
     await setupDBWatcher(
-      ['metadata.json', 'collections.json', 'launcher.json', 'path.json', ...imageFullNames],
+      [
+        'metadata.json',
+        'collections.json',
+        'launcher.json',
+        'path.json',
+        'save.json',
+        ...imageFullNames
+      ],
       mainWindow
     )
     await setupDBWatcher(['record.json'], mainWindow, () =>

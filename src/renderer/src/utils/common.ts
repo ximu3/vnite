@@ -58,3 +58,18 @@ export function formatScoreToChinese(score: string): string {
   if (score === '') return '未评分'
   return `${score} 分`
 }
+
+export function formatDateToChineseWithSeconds(dateString: string): string {
+  const date = new Date(dateString)
+
+  // 获取年、月、日
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1 // 月份从0开始，所以需要加1
+  const day = date.getDate()
+  const hours = date.getHours()
+  const minutes = date.getMinutes()
+  const seconds = date.getSeconds()
+
+  // 格式化为中文日期格式
+  return `${year}年${month}月${day}日 ${hours}时${minutes}分${seconds}秒`
+}

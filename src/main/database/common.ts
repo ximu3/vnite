@@ -55,13 +55,13 @@ class DBManager {
     })
   }
 
-  static async getValue(filePath: string, path: string[], defaultValue: any): Promise<any> {
+  static async getValue<T>(filePath: string, path: string[], defaultValue: T): Promise<T> {
     return this.executeOperation(filePath, async () => {
       const db = this.getInstance(filePath)
       await db.read()
 
       if (path[0] === '#all') {
-        return db.data
+        return db.data as T
       }
 
       let current = db.data
@@ -72,7 +72,7 @@ class DBManager {
             current[key] = defaultValue
             await db.write()
           }
-          return current[key]
+          return current[key] as T
         } else {
           if (!(key in current)) {
             current[key] = {}

@@ -5,6 +5,7 @@ import { setDBValue, getDBValue } from '~/database'
 import log from 'electron-log/main.js'
 import { exec } from 'child_process'
 import { promisify } from 'util'
+import { backupGameSaveData } from '~/database'
 
 const execAsync = promisify(exec)
 
@@ -241,7 +242,7 @@ export class GameMonitor {
       window.webContents.send('game-exit', this.options.gameId)
     }
 
-    const timer = await getDBValue(`games/${this.options.gameId}/record.json`, ['timer'], [])
+    const timer = await getDBValue(`games/${this.options.gameId}/record.json`, ['timer'], [{}])
     timer.push({
       start: this.startTime,
       end: this.endTime
@@ -251,6 +252,21 @@ export class GameMonitor {
 
     // 停止监控
     this.stop()
+
+    const savePathMode = await getDBValue(
+      `games/${this.options.gameId}/path.json`,
+      ['savePath', 'mode'],
+      'folder'
+    )
+    const savePath = await getDBValue(
+      `games/${this.options.gameId}/path.json`,
+      ['savePath', savePathMode],
+      ['']
+    )
+
+    if (savePath.length > 0 && savePath[0] !== '') {
+      await backupGameSaveData(this.options.gameId)
+    }
   }
 
   public getStatus(): GameStatus {
