@@ -82,6 +82,43 @@ export function useGameIndexManager(): GameIndexManagerHook {
       for (const [gameId, metadata] of gameIndex) {
         const matchesAllCriteria = Object.entries(criteria).every(([field, values]) => {
           const metadataValue = metadata[field]
+
+          // 处理日期区间过滤
+          if (
+            field === 'releaseDate' &&
+            Array.isArray(values) &&
+            values.length === 2 &&
+            metadataValue
+          ) {
+            const [start, end] = values
+
+            // 验证日期格式和有效性
+            const isValidDate = (dateStr: string): boolean => {
+              const date = new Date(dateStr)
+              return date instanceof Date && !isNaN(date.getTime())
+            }
+
+            // 检查所有日期是否有效
+            if (
+              !isValidDate(start) ||
+              !isValidDate(end) ||
+              !isValidDate(metadataValue.toString())
+            ) {
+              return false
+            }
+
+            const releaseDate = new Date(metadataValue.toString())
+            const startDate = new Date(start)
+            const endDate = new Date(end)
+
+            // 检查日期区间是否有效（开始日期不能晚于结束日期）
+            if (startDate > endDate) {
+              return false
+            }
+
+            return releaseDate >= startDate && releaseDate <= endDate
+          }
+          // 处理普通数组过滤
           if (Array.isArray(metadataValue)) {
             // 如果元数据值是数组，检查是否有任何元素匹配任何条件值
             return metadataValue.some((item) =>
@@ -93,6 +130,7 @@ export function useGameIndexManager(): GameIndexManagerHook {
               metadataValue.toString().toLowerCase().includes(value.toLowerCase())
             )
           }
+
           return false
         })
 

@@ -80,7 +80,7 @@ async function fetchStoreTags(appId: string): Promise<string[]> {
       }
     })
 
-    return tags
+    return tags.filter((tag) => tag !== '+')
   } catch (error) {
     console.error('Error fetching store tags:', error)
     return [] // 如果获取失败，返回空数组

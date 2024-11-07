@@ -1,0 +1,34 @@
+import { cn } from '~/utils'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@ui/accordion'
+import { ScrollArea } from '@ui/scroll-area'
+import { GameNav } from '../GameNav'
+import { useFilterStore } from '../Filter/store'
+import { useGameIndexManager } from '~/hooks'
+
+export function FilterGame(): JSX.Element {
+  const { filter } = useFilterStore()
+  const { filter: filterGame } = useGameIndexManager()
+  const games = filterGame(filter)
+  return (
+    <ScrollArea className={cn('w-full h-full')}>
+      <Accordion
+        type="multiple"
+        defaultValue={['all']}
+        className={cn('w-full text-xs flex flex-col gap-2 ')}
+      >
+        <AccordionItem value="all">
+          <AccordionTrigger className={cn('bg-accent/30 text-xs p-1 pl-2')}>
+            筛选结果
+          </AccordionTrigger>
+          <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
+            {games.length !== 0 ? (
+              games.map((game) => <GameNav key={game} gameId={game} groupId={'0'} />)
+            ) : (
+              <div className={cn('text-center text-xs mt-2')}>没有找到符合条件的游戏</div>
+            )}
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    </ScrollArea>
+  )
+}

@@ -16,7 +16,7 @@ export function Collection(): JSX.Element {
       >
         <AllGame />
         {Object.entries(collections).map(([key, value]) => (
-          <AccordionItem key={key} value={key}>
+          <AccordionItem key={key} value={'all'}>
             <AccordionTrigger className={cn('bg-accent/30 text-xs p-1 pl-2 rounded-none')}>
               {value.name}
             </AccordionTrigger>

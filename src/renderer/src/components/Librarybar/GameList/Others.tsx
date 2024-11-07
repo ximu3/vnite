@@ -13,7 +13,7 @@ export function Others({ fieldName }: { fieldName: string }): JSX.Element {
       <Accordion type="multiple" className={cn('w-full text-xs flex flex-col gap-2')}>
         <AllGame />
         {fields.map((field) => (
-          <AccordionItem key={field} value={field}>
+          <AccordionItem key={field} value={'all'}>
             <AccordionTrigger className={cn('bg-accent/30 text-xs p-1 pl-2')}>
               {field}
             </AccordionTrigger>

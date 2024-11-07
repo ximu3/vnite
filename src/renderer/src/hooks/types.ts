@@ -2,9 +2,12 @@
 const gameIndexdata = {
   id: 'id',
   name: 'name',
-  developer: 'developer',
+  releaseDate: 'releaseDate',
+  developers: ['developers'],
   category: 'category',
-  genres: ['genres']
+  publishers: ['publishers'],
+  genres: ['genres'],
+  tags: ['tags']
   // 其他可能的字段
 }
 

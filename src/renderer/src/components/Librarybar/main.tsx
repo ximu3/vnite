@@ -13,12 +13,15 @@ import {
   SelectValue
 } from '@ui/select'
 import { useState } from 'react'
-import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
-import { GameList } from './GameList/index'
+import { GameList } from './GameList'
+import { Filter } from './Filter'
+import { useFilterStore } from './Filter/store'
+import { isEqual } from 'lodash'
 
 export function Librarybar(): JSX.Element {
   const [selectedGroup, setSelectedGroup] = useState('collection')
   const [query, setQuery] = useState('')
+  const { toggleFilterMenu, filter } = useFilterStore()
   return (
     <div className={cn('flex flex-col gap-6 bg-card w-full h-full pt-2 ')}>
       <div className={cn('flex flex-col gap-3 p-3 pb-0')}>
@@ -62,19 +65,17 @@ export function Librarybar(): JSX.Element {
             </Tooltip>
           </div>
           <div>
-            <Popover>
-              <Tooltip>
-                <TooltipTrigger>
-                  <PopoverTrigger asChild>
-                    <Button variant="default" size={'icon'}>
-                      <span className={cn('icon-[mdi--filter-variant] w-5 h-5')}></span>
-                    </Button>
-                  </PopoverTrigger>
-                </TooltipTrigger>
-                <TooltipContent side="right">高级筛选</TooltipContent>
-              </Tooltip>
-              <PopoverContent className="w-80 h-80"></PopoverContent>
-            </Popover>
+            <Filter>
+              <Button onClick={toggleFilterMenu} variant="default" size={'icon'}>
+                <span
+                  className={cn(
+                    isEqual(filter, {})
+                      ? 'icon-[mdi--filter-variant] w-5 h-5'
+                      : 'icon-[mdi--filter-variant-plus] w-5 h-5'
+                  )}
+                ></span>
+              </Button>
+            </Filter>
           </div>
         </div>
         <Select value={selectedGroup} onValueChange={setSelectedGroup}>

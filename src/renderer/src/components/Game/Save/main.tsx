@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import { ipcInvoke } from '~/utils'
 import { useDBSyncedState } from '~/hooks'
 import { formatDateToChineseWithSeconds } from '~/utils'
+import { isEqual } from 'lodash'
 
 export function Save({ gameId }: { gameId: string }): JSX.Element {
   const [saveList, setSaveList] = useDBSyncedState(
@@ -60,40 +61,47 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {Object.entries(saveList).map(([saveId, save]) => (
-                <TableRow key={saveId}>
-                  <TableCell className={cn('w-1/5')}>
-                    <div>{formatDateToChineseWithSeconds(save.date)}</div>
-                  </TableCell>
-                  <TableCell className={cn('pr-10', '3xl:pr-24')}>
-                    <Input
-                      value={save.note}
-                      onChange={(e) =>
-                        setSaveList({ ...saveList, [saveId]: { ...save, note: e.target.value } })
-                      }
-                      className={cn('h-8')}
-                    />
-                  </TableCell>
-                  <TableCell className={cn('w-1/6')}>
-                    <div className="flex flex-row gap-2">
-                      <Button
-                        variant={'outline'}
-                        className={cn('min-h-0 h-8')}
-                        onClick={() => restoreGameSave(saveId)}
-                      >
-                        切换
-                      </Button>
-                      <Button
-                        variant={'outline'}
-                        className={cn('min-h-0 h-8')}
-                        onClick={() => deleteGameSave(saveId)}
-                      >
-                        删除
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {isEqual(saveList, {}) ? (
+                <div className={cn('mt-1')}>暂无存档</div>
+              ) : (
+                Object.entries(saveList).map(([saveId, save]) => (
+                  <TableRow key={saveId}>
+                    <TableCell className={cn('w-1/5')}>
+                      <div>{formatDateToChineseWithSeconds(save.date)}</div>
+                    </TableCell>
+                    <TableCell className={cn('pr-10', '3xl:pr-24')}>
+                      <Input
+                        value={save.note}
+                        onChange={(e) =>
+                          setSaveList({
+                            ...saveList,
+                            [saveId]: { ...save, note: e.target.value }
+                          })
+                        }
+                        className={cn('h-8')}
+                      />
+                    </TableCell>
+                    <TableCell className={cn('w-1/6')}>
+                      <div className="flex flex-row gap-2">
+                        <Button
+                          variant={'outline'}
+                          className={cn('min-h-0 h-8')}
+                          onClick={() => restoreGameSave(saveId)}
+                        >
+                          切换
+                        </Button>
+                        <Button
+                          variant={'outline'}
+                          className={cn('min-h-0 h-8')}
+                          onClick={() => deleteGameSave(saveId)}
+                        >
+                          删除
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </div>

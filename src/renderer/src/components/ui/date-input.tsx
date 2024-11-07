@@ -2,7 +2,7 @@
 
 import { cn } from '~/utils'
 import { Input } from '@ui/input'
-import { CalendarIcon } from '@radix-ui/react-icons'
+import { CalendarIcon } from 'lucide-react'
 import { forwardRef } from 'react'
 
 interface DateInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {
