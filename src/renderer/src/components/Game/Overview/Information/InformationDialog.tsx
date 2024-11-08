@@ -2,9 +2,9 @@ import { Dialog, DialogContent, DialogTrigger } from '@ui/dialog'
 import { Input } from '@ui/input'
 import { DateInput } from '@ui/date-input'
 import { TooltipContent, TooltipTrigger, Tooltip } from '@ui/tooltip'
+import { ArrayInput } from '@ui/array-input'
 import { cn } from '~/utils'
 import { useDBSyncedState } from '~/hooks'
-import { ChangeEvent } from 'react'
 
 export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
   const [originalName, setOriginalName] = useDBSyncedState('', `games/${gameId}/metadata.json`, [
@@ -20,57 +20,6 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
     'releaseDate'
   ])
   const [genres, setGenres] = useDBSyncedState([''], `games/${gameId}/metadata.json`, ['genres'])
-  const handleGenresChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const value = e.target.value
-    const endsWithComma = value.endsWith(',')
-
-    const newGenres = value
-      .split(',')
-      .map((v) => v.trim())
-      .filter((v) => v !== '')
-
-    const uniqueGenres = [...new Set(newGenres)]
-
-    if (endsWithComma && newGenres[newGenres.length - 1] !== '') {
-      uniqueGenres.push('')
-    }
-
-    setGenres(uniqueGenres)
-  }
-  const handleDeveloperChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const value = e.target.value
-    const endsWithComma = value.endsWith(',')
-
-    const newDeveloper = value
-      .split(',')
-      .map((v) => v.trim())
-      .filter((v) => v !== '')
-
-    const uniqueDeveloper = [...new Set(newDeveloper)]
-
-    if (endsWithComma && newDeveloper[newDeveloper.length - 1] !== '') {
-      uniqueDeveloper.push('')
-    }
-
-    setDevelopers(uniqueDeveloper)
-  }
-  const handlePublisherChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const value = e.target.value
-    const endsWithComma = value.endsWith(',')
-
-    const newPublisher = value
-      .split(',')
-      .map((v) => v.trim())
-      .filter((v) => v !== '')
-
-    const uniquePublisher = [...new Set(newPublisher)]
-
-    if (endsWithComma && newPublisher[newPublisher.length - 1] !== '') {
-      uniquePublisher.push('')
-    }
-
-    setPublishers(uniquePublisher)
-  }
 
   return (
     <Dialog>
@@ -94,12 +43,7 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
             <div className={cn('grow whitespace-nowrap')}>开发商</div>
             <Tooltip>
               <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
-                <Input
-                  value={developers.join(', ')}
-                  onChange={handleDeveloperChange}
-                  placeholder="暂无开发商"
-                  className={cn('')}
-                />
+                <ArrayInput value={developers} onChange={setDevelopers} placeholder="暂无开发商" />
               </TooltipTrigger>
               <TooltipContent side="right">
                 <div className={cn('text-xs')}>开发商之间用英文逗号分隔</div>
@@ -110,12 +54,7 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
             <div className={cn('grow whitespace-nowrap')}>发行商</div>
             <Tooltip>
               <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
-                <Input
-                  value={publishers.join(', ')}
-                  onChange={handlePublisherChange}
-                  placeholder="暂无发行商"
-                  className={cn('')}
-                />
+                <ArrayInput value={publishers} onChange={setPublishers} placeholder="暂无发行商" />
               </TooltipTrigger>
               <TooltipContent side="right">
                 <div className={cn('text-xs')}>发行商之间用英文逗号分隔</div>
@@ -135,12 +74,7 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
             <div className={cn('whitespace-nowrap')}>类型</div>
             <Tooltip>
               <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
-                <Input
-                  value={genres.join(', ')}
-                  onChange={handleGenresChange}
-                  placeholder="暂无类型"
-                  className={cn('')}
-                />
+                <ArrayInput value={genres} onChange={setGenres} placeholder="暂无类型" />
               </TooltipTrigger>
               <TooltipContent side="right">
                 <div className={cn('text-xs')}>类型之间用英文逗号分隔</div>

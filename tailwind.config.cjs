@@ -17,6 +17,15 @@ module.exports = {
       sans: ['Source Han Sans VF', 'sans-serif']
     },
     extend: {
+      fontSize: {
+        '2xs': [
+          '0.625rem',
+          {
+            // 10px
+            lineHeight: '0.875rem' // 14px
+          }
+        ]
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

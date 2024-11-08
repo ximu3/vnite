@@ -15,6 +15,10 @@
   pointer-events: auto;
 }
 
+.no-hover-effect:hover {
+  text-decoration: none !important;
+}
+
 .scrollbar-base {
   @apply scrollbar-track-transparent scrollbar-thumb-muted scrollbar scrollbar-w-1 scrollbar-h-1 rounded-sm;
 }

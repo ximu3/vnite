@@ -1,6 +1,5 @@
 import { cn } from '~/utils'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@ui/accordion'
-import { ScrollArea } from '@ui/scroll-area'
 import { useGameIndexManager } from '~/hooks'
 import { GameNav } from '../GameNav'
 import { AllGame } from './AllGame'
@@ -8,23 +7,36 @@ import { AllGame } from './AllGame'
 export function Others({ fieldName }: { fieldName: string }): JSX.Element {
   const { getAllValuesInKey, filter } = useGameIndexManager()
   const fields = getAllValuesInKey(fieldName)
+  const defaultValues = [...fields, 'all']
   return (
-    <ScrollArea className={cn('w-full h-full')}>
-      <Accordion type="multiple" className={cn('w-full text-xs flex flex-col gap-2')}>
-        <AllGame />
-        {fields.map((field) => (
-          <AccordionItem key={field} value={'all'}>
-            <AccordionTrigger className={cn('bg-accent/30 text-xs p-1 pl-2')}>
-              {field}
-            </AccordionTrigger>
-            <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
-              {filter({ [fieldName]: [field] }).map((game) => (
-                <GameNav key={game} gameId={game} groupId={`${fieldName}:${field}`} />
-              ))}
-            </AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
-    </ScrollArea>
+    <div className={cn('w-full h-[700px] overflow-auto scrollbar-base pr-1', '3xl:h-[900px]')}>
+      {defaultValues.length > 1 && (
+        <Accordion
+          key={fieldName}
+          type="multiple"
+          className={cn('w-full text-xs flex flex-col gap-2')}
+          defaultValue={defaultValues}
+        >
+          {fields.map((field) => (
+            <AccordionItem key={field} value={field}>
+              <AccordionTrigger defaultChecked className={cn('bg-accent/30 text-xs p-1 pl-2')}>
+                <div className={cn('flex flex-row items-center justify-start gap-1')}>
+                  <div className={cn('text-xs')}>{field}</div>
+                  <div className={cn('text-2xs text-foreground/50')}>
+                    ({filter({ [fieldName]: [field] }).length})
+                  </div>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
+                {filter({ [fieldName]: [field] }).map((game) => (
+                  <GameNav key={game} gameId={game} groupId={`${fieldName}:${field}`} />
+                ))}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+          <AllGame />
+        </Accordion>
+      )}
+    </div>
   )
 }

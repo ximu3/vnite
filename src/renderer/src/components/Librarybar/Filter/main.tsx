@@ -85,60 +85,24 @@ export function Filter({ children }: { children: React.ReactNode }): JSX.Element
           <div className={cn('flex flex-col gap-1 items-start justify-start')}>
             <div className={cn('flex flex-row justify-between items-center w-full')}>
               <div className={cn('whitespace-nowrap text-sm text-foreground ml-[6px]')}>开发商</div>
-              {/* <Button
-                className={cn('p-0 -mb-2 -mt-2')}
-                variant={'link'}
-                onClick={() => {
-                  deleteFilter('developers', '#all')
-                }}
-              >
-                清除
-              </Button> */}
             </div>
             <FilterCombobox filed="developers" placeholder="开发商" />
           </div>
           <div className={cn('flex flex-col gap-1 items-start justify-start')}>
             <div className={cn('flex flex-row justify-between items-center w-full')}>
               <div className={cn('whitespace-nowrap text-sm text-foreground ml-[6px]')}>发行商</div>
-              {/* <Button
-                className={cn('p-0 -mb-2 -mt-2')}
-                variant={'link'}
-                onClick={() => {
-                  deleteFilter('publishers', '#all')
-                }}
-              >
-                清除
-              </Button> */}
             </div>
             <FilterCombobox filed="publishers" placeholder="发行商" />
           </div>
           <div className={cn('flex flex-col gap-1 items-start justify-start')}>
             <div className={cn('flex flex-row justify-between items-center w-full')}>
               <div className={cn('whitespace-nowrap text-sm text-foreground ml-[6px]')}>类别</div>
-              {/* <Button
-                className={cn('p-0 -mb-2 -mt-2')}
-                variant={'link'}
-                onClick={() => {
-                  deleteFilter('genres', '#all')
-                }}
-              >
-                清除
-              </Button> */}
             </div>
             <FilterCombobox filed="genres" placeholder="类别" />
           </div>
           <div className={cn('flex flex-col gap-1 items-start justify-start')}>
             <div className={cn('flex flex-row justify-between items-center w-full')}>
               <div className={cn('whitespace-nowrap text-sm text-foreground ml-[6px]')}>标签</div>
-              {/* <Button
-                className={cn('p-0 -mb-2 -mt-2')}
-                variant={'link'}
-                onClick={() => {
-                  deleteFilter('tags', '#all')
-                }}
-              >
-                清除
-              </Button> */}
             </div>
             <FilterCombobox filed="tags" placeholder="标签" />
           </div>

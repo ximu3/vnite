@@ -33,7 +33,22 @@ export function FilterCombobox({
   const { getAllValuesInKey } = useGameIndexManager()
   const { filter, deleteFilter, addFilter } = useFilterStore()
   const selectedValues = filter[filed] || []
-  const options: Option[] = getAllValuesInKey(filed).map((value) => ({ value, label: value }))
+  const options: Option[] = React.useMemo(() => {
+    const allOptions = getAllValuesInKey(filed).map((value) => ({
+      value,
+      label: value
+    }))
+
+    // 对选项进行排序：已选择的排在前面
+    return allOptions.sort((a, b) => {
+      const aSelected = selectedValues.includes(a.value)
+      const bSelected = selectedValues.includes(b.value)
+
+      if (aSelected && !bSelected) return -1
+      if (!aSelected && bSelected) return 1
+      return 0
+    })
+  }, [getAllValuesInKey, filed, selectedValues])
 
   const handleSelect = (value: string): void => {
     if (selectedValues.includes(value)) {

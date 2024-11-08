@@ -86,7 +86,7 @@ export function Librarybar(): JSX.Element {
             <SelectGroup>
               <SelectLabel>分组依据</SelectLabel>
               <SelectItem value="collection">收藏</SelectItem>
-              <SelectItem value="developer">开发商</SelectItem>
+              <SelectItem value="developers">开发商</SelectItem>
               <SelectItem value="genres">类别</SelectItem>
             </SelectGroup>
           </SelectContent>

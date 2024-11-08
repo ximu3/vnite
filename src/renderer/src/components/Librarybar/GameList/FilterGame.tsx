@@ -13,10 +13,10 @@ export function FilterGame(): JSX.Element {
     <ScrollArea className={cn('w-full h-full')}>
       <Accordion
         type="multiple"
-        defaultValue={['all']}
+        defaultValue={['filter']}
         className={cn('w-full text-xs flex flex-col gap-2 ')}
       >
-        <AccordionItem value="all">
+        <AccordionItem value="filter">
           <AccordionTrigger className={cn('bg-accent/30 text-xs p-1 pl-2')}>
             筛选结果
           </AccordionTrigger>

@@ -2,6 +2,8 @@ import { cn } from '~/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { useDBSyncedState } from '~/hooks'
 import { TagsDialog } from './TagsDialog'
+import { FilterAdder } from '../../FilterAdder'
+import React from 'react'
 
 export function TagsCard({
   gameId,
@@ -24,10 +26,21 @@ export function TagsCard({
       <CardContent>
         <div
           className={cn(
-            'flex flex-col text-sm justify-start items-start overflow-auto scrollbar-base max-h-[54px] text-wrap'
+            'text-sm justify-start items-start overflow-auto scrollbar-base max-h-[54px] -mb-2'
           )}
         >
-          {tags.join(', ') === '' ? '暂无标签' : tags.join(', ')}
+          <div className={cn('flex flex-wrap mb-[8px]')}>
+            {tags.join(', ') === ''
+              ? '暂无标签'
+              : tags.map((tag, index) => (
+                  <React.Fragment key={tag}>
+                    <FilterAdder filed="tags" value={tag} className={cn('')} />
+                    {index < tags.length - 1 && (
+                      <span className="text-primary align-top">{', '}</span>
+                    )}
+                  </React.Fragment>
+                ))}
+          </div>
         </div>
       </CardContent>
     </Card>
