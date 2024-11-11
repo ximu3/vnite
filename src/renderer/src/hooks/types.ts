@@ -7,7 +7,9 @@ const gameIndexdata = {
   category: 'category',
   publishers: ['publishers'],
   genres: ['genres'],
-  tags: ['tags']
+  tags: ['tags'],
+  addDate: 'addDate',
+  lastRunDate: 'lastRunDate'
   // 其他可能的字段
 }
 

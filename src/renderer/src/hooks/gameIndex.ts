@@ -6,6 +6,7 @@ interface GameIndexManagerHook {
   gameIndex: Map<string, Partial<GameIndexdata>>
   rebuildIndex: () => Promise<void>
   search: (query: string) => string[]
+  sort: (by: string, order?: 'asc' | 'desc') => string[]
   filter: (criteria: Record<string, string[]>) => string[]
   getAllValuesInKey: (key: string) => string[]
 }
@@ -69,6 +70,37 @@ export function useGameIndexManager(): GameIndexManagerHook {
           results.push(gameId)
         }
       }
+
+      return results
+    },
+    [gameIndex]
+  )
+
+  const sort = useCallback(
+    (by: string, order: 'asc' | 'desc' = 'asc'): string[] => {
+      const results = Array.from(gameIndex.keys())
+      results.sort((a, b) => {
+        const valueA = gameIndex.get(a)?.[by]
+        const valueB = gameIndex.get(b)?.[by]
+
+        if (valueA === undefined && valueB === undefined) {
+          return 0
+        }
+
+        if (valueA === undefined) {
+          return order === 'asc' ? 1 : -1
+        }
+
+        if (valueB === undefined) {
+          return order === 'asc' ? -1 : 1
+        }
+
+        if (valueA === valueB) {
+          return 0
+        }
+
+        return order === 'asc' ? (valueA > valueB ? 1 : -1) : valueA > valueB ? -1 : 1
+      })
 
       return results
     },
@@ -173,6 +205,7 @@ export function useGameIndexManager(): GameIndexManagerHook {
       gameIndex,
       rebuildIndex,
       search,
+      sort,
       filter,
       getAllValuesInKey
     }),

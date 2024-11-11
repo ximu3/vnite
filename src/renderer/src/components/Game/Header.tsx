@@ -1,7 +1,7 @@
 import { cn } from '~/utils'
 import { useDBSyncedState } from '~/hooks'
 import { Button } from '@ui/button'
-import { Badge } from '@ui/badge'
+// import { Badge } from '@ui/badge'
 import {
   Select,
   SelectContent,
@@ -22,7 +22,7 @@ import { useRunningGames } from '~/pages/Library/store'
 export function Header({ gameId, className }: { gameId: string; className?: string }): JSX.Element {
   const { runningGames } = useRunningGames()
   const [name] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
-  const [gamePath] = useDBSyncedState('', `games/${gameId}/path.json`, ['gamePath'])
+  // const [gamePath] = useDBSyncedState('', `games/${gameId}/path.json`, ['gamePath'])
   const [playStatus, setPlayStatus] = useDBSyncedState('stopped', `games/${gameId}/record.json`, [
     'playStatus'
   ])
@@ -71,16 +71,16 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
       )}
     >
       <div className={cn('flex flex-row gap-5 items-center justify-center')}>
-        <div className={cn('font-bold text-xl text-accent-foreground')}>{name}</div>
-        <div className={cn('flex flex-row gap-2 items-center justify-center')}>
+        <div className={cn('font-bold text-2xl text-accent-foreground')}>{name}</div>
+        {/* <div className={cn('flex flex-row gap-2 items-center justify-center')}>
           <Badge variant="secondary">{gamePath === '' ? '未安装' : '已安装'}</Badge>
-        </div>
+        </div> */}
       </div>
       <div className={cn('flex flex-row gap-3 justify-center items-center', '3xl:gap-5')}>
         {runningGames.includes(gameId) ? (
-          <StopGame gameId={gameId} />
+          <StopGame gameId={gameId} className={cn('')} />
         ) : (
-          <StartGame gameId={gameId} />
+          <StartGame gameId={gameId} className={cn('')} />
         )}
 
         <Select value={playStatus} onValueChange={setPlayStatus}>

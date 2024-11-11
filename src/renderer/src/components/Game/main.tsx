@@ -15,7 +15,15 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
 
       <div className={cn('relative w-full h-screen overflow-hidden')}>
         {background && (
-          <img src={background} className={cn('absolute top-0 left-0 w-full object-cover')} />
+          <>
+            <img src={background} className={cn('absolute top-0 left-0 w-full object-cover')} />
+            <div
+              className={cn(
+                'absolute top-0 left-0 w-full h-full',
+                'bg-background/15' // 确保蒙版不会影响交互
+              )}
+            />
+          </>
         )}
         <ScrollArea className={cn('w-full h-full absolute top-0 left-0')}>
           <div className={cn('relative h-full')}>

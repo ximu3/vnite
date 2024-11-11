@@ -20,7 +20,7 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
           </div>
         </Nav>
       </ContextMenuTrigger>
-      <GameNavCM gameId={gameId} groupId={groupId} />
+      <GameNavCM gameId={gameId} />
     </ContextMenu>
   )
 }

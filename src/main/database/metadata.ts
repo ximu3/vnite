@@ -1,4 +1,4 @@
-import { getValue } from './common'
+import { getDBValue } from './services'
 import { getDataPath } from '~/utils'
 import fse from 'fs-extra'
 
@@ -13,8 +13,15 @@ export async function getMetadata(): Promise<Record<string, any>> {
 
   const metadata = await Promise.all(
     gameFolders.map(async (gameId) => {
-      const dbPath = await getDataPath(`games/${gameId}/metadata.json`)
-      return await getValue(dbPath, ['#all'], {})
+      const data = await getDBValue(`games/${gameId}/metadata.json`, ['#all'], {})
+      const addDate = await getDBValue(`games/${gameId}/record.json`, ['addDate'], {})
+      const lastRunDate = await getDBValue(`games/${gameId}/record.json`, ['lastRunDate'], {})
+
+      return {
+        ...data,
+        addDate,
+        lastRunDate
+      }
     })
   )
 

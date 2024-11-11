@@ -23,7 +23,7 @@ export function Librarybar(): JSX.Element {
   const [query, setQuery] = useState('')
   const { toggleFilterMenu, filter } = useFilterStore()
   return (
-    <div className={cn('flex flex-col gap-6 bg-card w-full h-full pt-2 ')}>
+    <div className={cn('flex flex-col gap-6 bg-card w-full h-full pt-2')}>
       <div className={cn('flex flex-col gap-3 p-3 pb-0')}>
         <div className={cn('flex flex-row gap-2')}>
           <div className={cn('grow')}>
@@ -48,8 +48,8 @@ export function Librarybar(): JSX.Element {
           </div>
         </div>
       </div>
-      <div className={cn('flex flex-col gap-3 p-3 pt-0')}>
-        <div className={cn('flex flex-row gap-2')}>
+      <div className={cn('flex flex-col gap-3 p-3 pt-0 pr-0')}>
+        <div className={cn('flex flex-row gap-2 pr-3')}>
           <div className={cn('grow')}>
             <Tooltip>
               <TooltipTrigger className={cn('w-full')}>
@@ -78,19 +78,21 @@ export function Librarybar(): JSX.Element {
             </Filter>
           </div>
         </div>
-        <Select value={selectedGroup} onValueChange={setSelectedGroup}>
-          <SelectTrigger className="w-full">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>分组依据</SelectLabel>
-              <SelectItem value="collection">收藏</SelectItem>
-              <SelectItem value="developers">开发商</SelectItem>
-              <SelectItem value="genres">类别</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <div className={cn('pr-3')}>
+          <Select value={selectedGroup} onValueChange={setSelectedGroup}>
+            <SelectTrigger className="pr-3">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>分组依据</SelectLabel>
+                <SelectItem value="collection">收藏</SelectItem>
+                <SelectItem value="developers">开发商</SelectItem>
+                <SelectItem value="genres">类别</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
         <GameList query={query} selectedGroup={selectedGroup} />
       </div>
     </div>

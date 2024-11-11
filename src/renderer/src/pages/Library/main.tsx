@@ -7,6 +7,7 @@ import { useGameIndexManager } from '~/hooks'
 import { Game } from '~/components/Game'
 import { useEffect } from 'react'
 import { useRunningGames } from './store'
+import { Showcase } from './Showcase'
 
 export function Library(): JSX.Element {
   const { gameIndex } = useGameIndexManager()
@@ -26,7 +27,7 @@ export function Library(): JSX.Element {
       <ResizablePanel>
         <Routes>
           <Route index element={<Navigate to="./home" />} />
-          <Route path="/home/*" element={1} />
+          <Route path="/home/*" element={<Showcase />} />
           {Array.from(gameIndex, ([key, game]) => (
             <Route key={key} path={`/${game.id}/*`} element={<Game gameId={game.id || ''} />} />
           ))}

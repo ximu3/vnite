@@ -1,5 +1,6 @@
 import { cn } from '~/utils'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@ui/accordion'
+import { ScrollArea } from '@ui/scroll-area'
 import { useGameIndexManager } from '~/hooks'
 import { GameNav } from '../GameNav'
 import { AllGame } from './AllGame'
@@ -9,7 +10,7 @@ export function Others({ fieldName }: { fieldName: string }): JSX.Element {
   const fields = getAllValuesInKey(fieldName)
   const defaultValues = [...fields, 'all']
   return (
-    <div className={cn('w-full h-[700px] overflow-auto scrollbar-base pr-1', '3xl:h-[900px]')}>
+    <ScrollArea className={cn('w-full h-[700px] pr-3 -mr-3', '3xl:h-[900px]')}>
       {defaultValues.length > 1 && (
         <Accordion
           key={fieldName}
@@ -37,6 +38,6 @@ export function Others({ fieldName }: { fieldName: string }): JSX.Element {
           <AllGame />
         </Accordion>
       )}
-    </div>
+    </ScrollArea>
   )
 }

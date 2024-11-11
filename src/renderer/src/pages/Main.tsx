@@ -1,7 +1,7 @@
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Sidebar } from '~/components/Sidebar'
 import { cn } from '~/utils'
-import { Library } from './Library/main'
+import { Library } from './Library'
 
 export function Main(): JSX.Element {
   return (
