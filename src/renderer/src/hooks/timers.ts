@@ -29,6 +29,7 @@ interface GameTimersHook {
   getGameMaxPlayTimeDay: (gameId: string) => MaxPlayTimeDay | null
   getGameTimer: (gameId: string) => TimerEntry[]
   getGameStartAndEndDate: (gameId: string) => { start: string; end: string }
+  getSortedGameIds: (order: 'asc' | 'desc') => string[]
 }
 
 // 自定义 Hook
@@ -267,6 +268,24 @@ export const useGameTimers = (): GameTimersHook => {
     [gameTimers]
   )
 
+  const getSortedGameIds = useCallback(
+    (order: 'asc' | 'desc'): string[] => {
+      return Object.keys(gameTimers).sort((a, b) => {
+        const timeA = getGamePlayingTime(a)
+        const timeB = getGamePlayingTime(b)
+
+        if (timeA < timeB) {
+          return order === 'asc' ? -1 : 1
+        } else if (timeA > timeB) {
+          return order === 'asc' ? 1 : -1
+        }
+
+        return 0
+      })
+    },
+    [gameTimers, getGamePlayingTime]
+  )
+
   return useMemo(
     () => ({
       gameTimers,
@@ -276,7 +295,8 @@ export const useGameTimers = (): GameTimersHook => {
       getGamePlayDays,
       getGameMaxPlayTimeDay,
       getGameTimer,
-      getGameStartAndEndDate
+      getGameStartAndEndDate,
+      getSortedGameIds
     }),
     [
       gameTimers,
@@ -286,7 +306,8 @@ export const useGameTimers = (): GameTimersHook => {
       getGamePlayDays,
       getGameMaxPlayTimeDay,
       getGameTimer,
-      getGameStartAndEndDate
+      getGameStartAndEndDate,
+      getSortedGameIds
     ]
   )
 }

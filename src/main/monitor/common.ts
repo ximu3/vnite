@@ -89,9 +89,29 @@ export class GameMonitor {
   }
 
   private async terminateProcesses(): Promise<void> {
+    const maxRetries = 3
+    const retryDelay = 1000 // 1秒
+
     for (const monitored of this.monitoredProcesses) {
       if (monitored.isRunning && monitored.pid) {
-        await this.terminateProcess(monitored)
+        let retries = 0
+        let terminated = false
+
+        while (retries < maxRetries && !terminated) {
+          terminated = await this.terminateProcess(monitored)
+
+          if (!terminated) {
+            retries++
+            if (retries < maxRetries) {
+              console.log(`尝试终止进程 ${monitored.pid} 失败，${maxRetries - retries} 次重试机会`)
+              await new Promise((resolve) => setTimeout(resolve, retryDelay))
+            }
+          }
+        }
+
+        if (!terminated) {
+          log.error(`无法终止进程 ${monitored.pid}，已达到最大重试次数`)
+        }
       }
     }
   }
@@ -99,19 +119,65 @@ export class GameMonitor {
   private async terminateProcess(process: MonitoredProcess): Promise<boolean> {
     if (!process.pid) return false
 
+    const methods = [
+      // 方法1: 使用WMIC
+      async (): Promise<void> => {
+        await execAsync(`wmic process where ProcessId=${process.pid} call terminate`)
+      },
+      // 方法2: 使用taskkill终止进程树
+      async (): Promise<void> => {
+        await execAsync(`taskkill /F /PID ${process.pid}`)
+      },
+      // 方法3: 使用taskkill
+      async (): Promise<void> => {
+        await execAsync(`taskkill /T /F /PID ${process.pid}`)
+      },
+      // 方法4: 使用PowerShell
+      async (): Promise<void> => {
+        await execAsync(`powershell -Command "Stop-Process -Id ${process.pid} -Force"`)
+      }
+    ]
+
+    for (const method of methods) {
+      try {
+        await method()
+        console.log(`进程 ${process.pid} 已成功终止`)
+        return true
+      } catch (error) {
+        const errorMessage = (error as any)?.message?.toLowerCase() || ''
+
+        // 如果进程已经不存在，认为终止成功
+        if (
+          errorMessage.includes('不存在') ||
+          errorMessage.includes('找不到') ||
+          errorMessage.includes('no process') ||
+          errorMessage.includes('cannot find')
+        ) {
+          console.log(`进程 ${process.pid} 已经不存在`)
+          return true
+        }
+
+        // 记录错误但继续尝试下一个方法
+        console.warn(`使用当前方法终止进程 ${process.pid} 失败:`, error)
+        continue
+      }
+    }
+
+    // 如果所有方法都失败，再次检查进程是否还在运行
     try {
-      await execAsync(`taskkill /PID ${process.pid} /F`)
-      console.log(`进程 ${process.pid} 已终止.`)
-      return true
-    } catch (error) {
-      const errorMessage = (error as any)?.message?.toLowerCase() || ''
-      if (errorMessage.includes('不存在') || errorMessage.includes('找不到')) {
-        console.log(`进程 ${process.pid} 已经不存在`)
+      const processes = await getProcessList()
+      const processStillExists = processes.some((p) => p.pid === process.pid)
+
+      if (!processStillExists) {
+        console.log(`进程 ${process.pid} 已不存在，视为终止成功`)
         return true
       }
-      console.error(`无法终止进程 ${process.pid}:`, error)
-      return false
+    } catch (error) {
+      console.error(`检查进程 ${process.pid} 状态时出错:`, error)
     }
+
+    console.error(`无法终止进程 ${process.pid}，所有方法都失败`)
+    return false
   }
 
   public async init(): Promise<void> {

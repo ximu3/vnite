@@ -26,6 +26,12 @@ module.exports = {
           }
         ]
       },
+      boxShadow: {
+        'custom-initial': '0 4px 8px rgba(0, 0, 0, 0.7)'
+      },
+      transitionProperty: {
+        border: 'border-color, border-width'
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

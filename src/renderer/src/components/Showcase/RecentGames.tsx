@@ -2,7 +2,8 @@ import { cn } from '~/utils'
 import { Button } from '@ui/button'
 import { Separator } from '@ui/separator'
 import { useGameIndexManager } from '~/hooks'
-import { Poster } from './Poster'
+import { GamePoster } from './posters/GamePoster'
+import { BigGamePoster } from './posters/BigGamePoster'
 import { useRef } from 'react'
 
 export function RecentGames(): JSX.Element {
@@ -21,12 +22,17 @@ export function RecentGames(): JSX.Element {
   }
 
   return (
-    <div className={cn('w-full flex flex-col gap-2 pt-3')}>
-      <div className={cn('flex flex-row items-center justify-between pl-5')}>
-        <div className={cn('text-accent-foreground')}>最近游戏</div>
-        <div className={cn('flex flex-row gap-2')}>
+    <div className={cn('w-full flex flex-col gap-1 pt-3')}>
+      <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>
+        <div className={cn('text-accent-foreground flex-shrink-0')}>最近游戏</div>
+
+        {/* 分割线容器 */}
+        <div className={cn('flex items-center justify-center flex-grow')}>
+          <Separator className={cn('flex-grow')} />
+        </div>
+        <div className={cn('flex flex-row gap-2 items-center justify-center pr-5')}>
           <Button
-            className={cn('hover:bg-transparent')}
+            className={cn('hover:bg-transparent p-0 -mt-2 -mb-2')}
             variant={'ghost'}
             size={'icon'}
             onClick={() => scroll('left')}
@@ -34,7 +40,7 @@ export function RecentGames(): JSX.Element {
             <span className={cn('icon-[mdi--keyboard-arrow-left] w-6 h-6')}></span>
           </Button>
           <Button
-            className={cn('hover:bg-transparent')}
+            className={cn('hover:bg-transparent p-0 -mt-2 -mb-2')}
             variant={'ghost'}
             size={'icon'}
             onClick={() => scroll('right')}
@@ -43,27 +49,37 @@ export function RecentGames(): JSX.Element {
           </Button>
         </div>
       </div>
-      <Separator className={cn('ml-5')} />
       {/* 游戏列表容器 */}
       <div
         ref={scrollContainerRef}
         className={cn(
           'flex flex-row gap-6 grow',
           'w-full overflow-x-auto scrollbar-none scroll-smooth',
-          'pt-3 pb-6 pl-5' // 添加内边距以显示阴影
+          'pt-2 pb-6 pl-5' // 添加内边距以显示阴影
         )}
       >
         {/* 包装器确保每个 Poster 保持固定宽度 */}
-        {games.map((game) => (
-          <div
-            key={game}
-            className={cn(
-              'flex-shrink-0' // 防止压缩
-            )}
-          >
-            <Poster gameId={game} />
-          </div>
-        ))}
+        {games.map((game, index) =>
+          index === 0 ? (
+            <div
+              key={game}
+              className={cn(
+                'flex-shrink-0' // 防止压缩
+              )}
+            >
+              <BigGamePoster gameId={game} />
+            </div>
+          ) : (
+            <div
+              key={game}
+              className={cn(
+                'flex-shrink-0' // 防止压缩
+              )}
+            >
+              <GamePoster gameId={game} />
+            </div>
+          )
+        )}
       </div>
     </div>
   )

@@ -7,7 +7,15 @@ import { useNavigate } from 'react-router-dom'
 import { useGameMedia, useGameIndexManager, useGameTimers } from '~/hooks'
 import { formatTimeToChinese, formatDateToChinese } from '~/utils'
 
-export function Poster({ gameId, className }: { gameId: string; className?: string }): JSX.Element {
+export function GamePoster({
+  gameId,
+  collectionId,
+  className
+}: {
+  gameId: string
+  collectionId?: string
+  className?: string
+}): JSX.Element {
   const navigate = useNavigate()
   const { mediaUrl: cover } = useGameMedia({ gameId, type: 'cover' })
   const { mediaUrl: background } = useGameMedia({ gameId, type: 'background' })
@@ -23,7 +31,13 @@ export function Poster({ gameId, className }: { gameId: string; className?: stri
           <ContextMenuTrigger>
             <HoverCardAnimation>
               <img
-                onClick={() => navigate(`/library/${gameId}/0`)}
+                onClick={() =>
+                  navigate(
+                    collectionId
+                      ? `/library/games/${gameId}/collection:${collectionId}`
+                      : `/library/games/${gameId}/0`
+                  )
+                }
                 src={cover}
                 alt={gameId}
                 className={cn(

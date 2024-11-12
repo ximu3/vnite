@@ -37,7 +37,7 @@ export function Librarybar(): JSX.Element {
           <div>
             <Tooltip>
               <TooltipTrigger>
-                <Nav variant="librarybar" to="./collection" className={cn('')}>
+                <Nav variant="librarybar" to="./collections" className={cn('')}>
                   <div className={cn('flex flex-row gap-2 items-center justify-start')}>
                     <span className={cn('icon-[mdi--collection] w-5 h-5')}></span>
                   </div>

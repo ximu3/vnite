@@ -12,7 +12,7 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
         <Nav
           variant="sidebar"
           className={cn('text-xs p-3 h-4 rounded-none')}
-          to={`./${gameId}/${groupId}`}
+          to={`./games/${gameId}/${groupId}`}
         >
           <div className={cn('flex flex-row gap-2 items-center')}>
             <span className={cn('icon-[mdi--gamepad-variant] w-5 h-5')}></span>
