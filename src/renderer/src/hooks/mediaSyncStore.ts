@@ -21,7 +21,7 @@ interface MediaStore {
   getMediaData: (gameId: string, type: MediaType) => MediaData | undefined
 }
 
-export const useMediaStore = create<MediaStore>((set, get) => ({
+const useMediaStore = create<MediaStore>((set, get) => ({
   setMediaData: (
     gameId: string,
     type: MediaType,
@@ -67,7 +67,7 @@ interface UseGameMediaResult {
   mediaUrl: string | undefined // 改为 undefined 而不是 null
   isLoading: boolean
   error: Error | null
-  refreshMedia: () => void
+  refreshMedia: () => Promise<void>
 }
 
 export function useGameMedia({
@@ -159,7 +159,7 @@ export function useGameMedia({
       }
     }
 
-    const removeListener = ipcOnUnique('reload-db-value', updateListener)
+    const removeListener = ipcOnUnique('reload-db-values', updateListener)
     return removeListener
   }, [gameId, type, defaultProtocol])
 
@@ -172,8 +172,30 @@ export function useGameMedia({
   }, [currentMediaData])
 
   // 手动刷新多媒体（更新时间戳）
-  const refreshMedia = (): void => {
-    updateTimestamp(gameId, type)
+  const refreshMedia = async (): Promise<void> => {
+    try {
+      setIsLoading(true)
+      setError(null)
+
+      // 重新从主进程获取多媒体路径
+      const mediaPath = await ipcInvoke<string>('get-game-media-path', gameId, type)
+
+      if (mediaPath) {
+        setMediaData(gameId, type, {
+          protocol: defaultProtocol,
+          path: mediaPath
+        })
+      } else {
+        throw new Error(`No media path found for game ${gameId} ${type}`)
+      }
+      updateTimestamp(gameId, type)
+    } catch (error) {
+      console.error('Failed to update media:', error)
+      setError(error instanceof Error ? error : new Error('Unknown error'))
+      if (error instanceof Error) {
+        toast.error(`Failed to update media: ${error.message}`)
+      }
+    }
   }
 
   return {

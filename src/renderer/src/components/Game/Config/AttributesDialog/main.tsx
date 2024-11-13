@@ -1,8 +1,10 @@
-import { Dialog, DialogContent, DialogTrigger } from '@ui/dialog'
+import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogHeader } from '@ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
 import { cn } from '~/utils'
 import { Launcher } from './Launcher'
 import { Path } from './Path'
+import { Media } from './Media'
+import { useDBSyncedState } from '~/hooks'
 
 export function AttributesDialog({
   gameId,
@@ -11,10 +13,14 @@ export function AttributesDialog({
   gameId: string
   children: React.ReactNode
 }): JSX.Element {
+  const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
   return (
     <Dialog>
       <DialogTrigger className={cn('w-full')}>{children}</DialogTrigger>
-      <DialogContent className={cn('w-[1000px] h-[700px] max-w-none')}>
+      <DialogContent className={cn('w-[1000px] h-[700px] max-w-none flex flex-col')}>
+        <DialogHeader>
+          <DialogTitle>{`${gameName} - 属性`}</DialogTitle>
+        </DialogHeader>
         <Tabs defaultValue="launcher" className={cn('w-full')}>
           <TabsList className={cn('w-[250px]')}>
             <TabsTrigger className={cn('w-1/3')} value="launcher">
@@ -23,8 +29,8 @@ export function AttributesDialog({
             <TabsTrigger className={cn('w-1/3')} value="path">
               路径
             </TabsTrigger>
-            <TabsTrigger className={cn('w-1/3')} value="save">
-              存档
+            <TabsTrigger className={cn('w-1/3')} value="media">
+              媒体
             </TabsTrigger>
           </TabsList>
           <TabsContent value="launcher">
@@ -32,6 +38,9 @@ export function AttributesDialog({
           </TabsContent>
           <TabsContent value="path">
             <Path gameId={gameId} />
+          </TabsContent>
+          <TabsContent value="media">
+            <Media gameId={gameId} />
           </TabsContent>
         </Tabs>
       </DialogContent>
