@@ -15,7 +15,7 @@ export async function getMetadata(): Promise<Record<string, any>> {
     gameFolders.map(async (gameId) => {
       const data = await getDBValue(`games/${gameId}/metadata.json`, ['#all'], {})
       const addDate = await getDBValue(`games/${gameId}/record.json`, ['addDate'], {})
-      const lastRunDate = await getDBValue(`games/${gameId}/record.json`, ['lastRunDate'], {})
+      const lastRunDate = await getDBValue(`games/${gameId}/record.json`, ['lastRunDate'], '')
 
       return {
         ...data,

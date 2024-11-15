@@ -21,7 +21,11 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
     type: 'background'
   })
   const [mediaUrl, setMediaUrl] = useState<string>('')
-  const [isUrlDialogOpen, setIsUrlDialogOpen] = useState<boolean>(false)
+  const [isUrlDialogOpen, setIsUrlDialogOpen] = useState({
+    icon: false,
+    cover: false,
+    background: false
+  })
   async function setMediaWithFile(type: string): Promise<void> {
     const filePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
     toast.promise(
@@ -47,7 +51,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
     )
   }
   async function setMediaWithUrl(type: string): Promise<void> {
-    setIsUrlDialogOpen(false)
+    setIsUrlDialogOpen({ ...isUrlDialogOpen, [type]: false })
     toast.promise(
       async () => {
         await ipcInvoke('set-game-media', gameId, type, mediaUrl)
@@ -105,7 +109,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
               </div>
               <div className={cn('self-center')}>
                 {icon ? (
-                  <img src={icon} alt="icon" className={cn('w-16 h-16')} />
+                  <img src={icon} alt="icon" className={cn('w-16 h-16 object-cover')} />
                 ) : (
                   <div>暂无图标</div>
                 )}

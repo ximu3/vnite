@@ -16,6 +16,7 @@ export function ScreenshotList(): JSX.Element {
     dataSource,
     setIsOpen,
     setDataSource,
+    dbId,
     setDbId,
     setId,
     setName,
@@ -49,9 +50,9 @@ export function ScreenshotList(): JSX.Element {
   async function addGameToDB(): Promise<void> {
     toast.promise(
       (async (): Promise<void> => {
-        await ipcInvoke('add-game-to-db', dataSource, id, screenshotUrl)
+        await ipcInvoke('add-game-to-db', dataSource, id, dbId, screenshotUrl)
         setIsOpen(false)
-        setDataSource('vndb')
+        setDataSource('steam')
         setDbId('')
         setId('')
         setName('')

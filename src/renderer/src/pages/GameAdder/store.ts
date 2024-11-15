@@ -42,7 +42,7 @@ export const useGameAdderStore = create<GameAdderState>((set) => ({
   setIsLoading: (isLoading): void => set({ isLoading }),
   dbId: '',
   setDbId: (dbId): void => set({ dbId }),
-  dataSource: 'vndb',
+  dataSource: 'steam',
   setDataSource: (source): void => set({ dataSource: source }),
   name: '',
   setName: (name): void => set({ name }),

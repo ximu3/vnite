@@ -83,3 +83,15 @@ export async function getGameCoverFromDataSource(
       throw new Error('Invalid data source')
   }
 }
+
+export async function getGameIconFromDataSource(
+  dataSource: string,
+  _gameId: string
+): Promise<string> {
+  switch (dataSource) {
+    // case 'steam':
+    //   return await getGameIconFromSteam(gameId)
+    default:
+      return ''
+  }
+}

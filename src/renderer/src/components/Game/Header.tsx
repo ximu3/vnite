@@ -23,7 +23,7 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
   const { runningGames } = useRunningGames()
   const [name] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
   // const [gamePath] = useDBSyncedState('', `games/${gameId}/path.json`, ['gamePath'])
-  const [playStatus, setPlayStatus] = useDBSyncedState('stopped', `games/${gameId}/record.json`, [
+  const [playStatus, setPlayStatus] = useDBSyncedState('unplayed', `games/${gameId}/record.json`, [
     'playStatus'
   ])
   const [score, setScore] = useDBSyncedState('', `games/${gameId}/record.json`, ['score'])

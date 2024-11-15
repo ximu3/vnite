@@ -2,6 +2,7 @@ import { HoverSquareCardAnimation } from '~/components/animations/HoverSquareCar
 import { cn } from '~/utils'
 import { useNavigate } from 'react-router-dom'
 import { useGameMedia, useCollections } from '~/hooks'
+import { CollectionCM } from '~/components/contextMenu/CollectionCM'
 
 export function CollectionPoster({
   collctionId,
@@ -15,7 +16,7 @@ export function CollectionPoster({
   const collectionName = collections[collctionId].name
   const gameId = collections[collctionId].games[0]
   const length = collections[collctionId].games.length
-  const { mediaUrl: cover } = useGameMedia({ gameId, type: 'cover' })
+  const { mediaUrl: cover } = useGameMedia({ gameId, type: 'cover', noToastError: true })
 
   return (
     <div
@@ -36,19 +37,21 @@ export function CollectionPoster({
       />
 
       {/* HoverBigCardAnimation 层 */}
-      <div className="relative z-0">
-        <HoverSquareCardAnimation className={cn('rounded-none')}>
-          <img
-            src={cover}
-            alt={gameId}
-            className={cn(
-              'w-full h-full cursor-pointer object-cover',
-              '3xl:w-full 3xl:h-full',
-              className
-            )}
-          />
-        </HoverSquareCardAnimation>
-      </div>
+      <CollectionCM collectionId={collctionId}>
+        <div className="relative z-0">
+          <HoverSquareCardAnimation className={cn('rounded-none')}>
+            <img
+              src={cover}
+              alt={gameId}
+              className={cn(
+                'w-full h-full cursor-pointer object-cover',
+                '3xl:w-full 3xl:h-full',
+                className
+              )}
+            />
+          </HoverSquareCardAnimation>
+        </div>
+      </CollectionCM>
 
       {/* 文字内容层 */}
       <div

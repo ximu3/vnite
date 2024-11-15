@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 import { useGameAdderStore } from './store'
 import { Search } from './Search'
 
-export function List(): JSX.Element {
+export function GameList(): JSX.Element {
   const { setName, id, setId, gameList } = useGameAdderStore()
   return (
     <div className={cn('w-[726px] h-[750px] p-3', '3xl:w-[876px] 3xl:h-[1000px]')}>
@@ -49,12 +49,14 @@ export function List(): JSX.Element {
                         </TableCell>
                         <TableCell>
                           <div className={cn('w-[150px] truncate', '3xl:w-[200px]')}>
-                            {game.releaseDate}
+                            {game.releaseDate === '' ? '未知' : game.releaseDate}
                           </div>
                         </TableCell>
                         <TableCell>
                           <div className={cn('w-[150px] truncate', '3xl:w-[200px]')}>
-                            {game.developers.join(', ')}
+                            {game.developers.join(', ') === ''
+                              ? '未知'
+                              : game.developers.join(', ')}
                           </div>
                         </TableCell>
                       </TableRow>

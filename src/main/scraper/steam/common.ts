@@ -182,3 +182,38 @@ export async function getGameCover(appId: string): Promise<string> {
     return ''
   }
 }
+
+export type IconSize = 'small' | 'medium' | 'large'
+
+export async function getGameIcon(appId: string, size: IconSize = 'small'): Promise<string> {
+  try {
+    // 不同尺寸的图标 URL
+    const iconUrls = {
+      // 32x32 像素的小图标
+      small: `https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/${appId}/icon.jpg`,
+      // 184x69 像素的中等图标
+      medium: `https://cdn.cloudflare.steamstatic.com/steam/apps/${appId}/capsule_231x87.jpg`,
+      // 460x215 像素的大图标/横幅
+      large: `https://cdn.cloudflare.steamstatic.com/steam/apps/${appId}/header.jpg`
+    }
+
+    const iconUrl = iconUrls[size]
+
+    // 检查图标是否存在
+    const response = await fetch(iconUrl, { method: 'HEAD' })
+
+    if (!response.ok) {
+      // 如果请求的尺寸不可用，尝试回退到小图标
+      if (size !== 'small') {
+        const fallbackResponse = await fetch(iconUrls.small, { method: 'HEAD' })
+        return fallbackResponse.ok ? iconUrls.small : ''
+      }
+      return ''
+    }
+
+    return iconUrl
+  } catch (error) {
+    console.error(`Error fetching icon for game ${appId}:`, error)
+    return ''
+  }
+}

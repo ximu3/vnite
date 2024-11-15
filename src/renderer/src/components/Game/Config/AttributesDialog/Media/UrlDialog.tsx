@@ -14,19 +14,19 @@ export function UrlDialog({
   mediaUrl: string
   setMediaUrl: (url: string) => void
   setMediaWithUrl: (type: string) => void
-  isUrlDialogOpen: boolean
-  setIsUrlDialogOpen: (isOpen: boolean) => void
+  isUrlDialogOpen: { icon: boolean; cover: boolean; background: boolean }
+  setIsUrlDialogOpen: (isOpen: { icon: boolean; cover: boolean; background: boolean }) => void
   type: string
 }): JSX.Element {
   return (
-    <Dialog open={isUrlDialogOpen}>
+    <Dialog open={isUrlDialogOpen[type]}>
       <DialogTrigger>
         <Button
           variant={'outline'}
           size={'icon'}
           className={cn('w-7 h-7')}
           onClick={() => {
-            setIsUrlDialogOpen(true)
+            setIsUrlDialogOpen({ ...isUrlDialogOpen, [type]: true })
           }}
         >
           <span className={cn('icon-[mdi--link-variant] w-4 h-4')}></span>

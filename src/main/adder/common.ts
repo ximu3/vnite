@@ -1,29 +1,37 @@
 import { setDBValue } from '~/database'
-import { getGameMetadata, getGameCover } from '~/scraper'
-import { generateUUID, getDataPath } from '~/utils'
-import fse from 'fs-extra'
+import { getGameMetadata, getGameCover, getGameIcon, getGameScreenshots } from '~/scraper'
+import { setMedia } from '~/media'
+import { generateUUID, selectPathDialog, getFirstLevelSubfolders } from '~/utils'
+import { BrowserWindow } from 'electron'
 
 export async function addGameToDB(
   dataSource: string,
   id: string,
-  screenshotUrl: string
+  dbId: string,
+  screenshotUrl?: string
 ): Promise<void> {
   const metadata = await getGameMetadata(dataSource, id)
   const coverUrl = await getGameCover(dataSource, id)
-  const dbId = generateUUID()
+  const iconUrl = await getGameIcon(dataSource, id)
+  if (dbId === '') {
+    dbId = generateUUID()
+  }
 
   if (coverUrl) {
-    const coverPath = await getDataPath(`games/${dbId}/cover.webp`)
-    const coverResponse = await fetch(coverUrl)
-    const coverBuffer = Buffer.from(await coverResponse.arrayBuffer())
-    await fse.writeFile(coverPath, coverBuffer)
+    await setMedia(dbId, 'cover', coverUrl)
   }
 
   if (screenshotUrl) {
-    const backgroundPath = await getDataPath(`games/${dbId}/background.webp`)
-    const screenshotResponse = await fetch(screenshotUrl)
-    const screenshotBuffer = Buffer.from(await screenshotResponse.arrayBuffer())
-    await fse.writeFile(backgroundPath, screenshotBuffer)
+    await setMedia(dbId, 'background', screenshotUrl)
+  } else {
+    const screenshots = await getGameScreenshots(dataSource, id)
+    if (screenshots.length > 0) {
+      await setMedia(dbId, 'background', screenshots[0])
+    }
+  }
+
+  if (iconUrl) {
+    await setMedia(dbId, 'icon', iconUrl)
   }
 
   await setDBValue(`games/${dbId}/metadata.json`, ['#all'], {
@@ -32,4 +40,29 @@ export async function addGameToDB(
   })
 
   await setDBValue(`games/${dbId}/record.json`, ['addDate'], new Date().toISOString())
+
+  const windows = BrowserWindow.getAllWindows()
+  windows.forEach((window) => {
+    window.webContents.send('reload-db-values', `games/${dbId}/cover.webp`)
+    window.webContents.send('reload-db-values', `games/${dbId}/background.webp`)
+    window.webContents.send('reload-db-values', `games/${dbId}/icon.png`)
+  })
+}
+
+export async function getBatchGameAdderData(): Promise<
+  { name: string; id: string; status: string }[]
+> {
+  const dirPath = await selectPathDialog(['openDirectory'])
+  if (!dirPath) {
+    return []
+  }
+  const gameNames = await getFirstLevelSubfolders(dirPath)
+  const data = gameNames.map((gameName) => {
+    return {
+      name: gameName,
+      id: '',
+      status: '未添加'
+    }
+  })
+  return data
 }

@@ -13,10 +13,13 @@ import { NameEditorDialog } from './NameEditorDialog'
 import { DeleteGameAlert } from './DeleteGameAlert'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { useGameAdderStore } from '~/pages/GameAdder/store'
 
 export function ManageMenu({ gameId }: { gameId: string }): JSX.Element {
   const [gamePath] = useDBSyncedState('', `games/${gameId}/path.json`, ['gamePath'])
+  const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
   const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = useState(false)
+  const { setIsOpen, setDbId, setName } = useGameAdderStore()
   return (
     <DropdownMenuGroup>
       <DropdownMenuSub>
@@ -37,6 +40,15 @@ export function ManageMenu({ gameId }: { gameId: string }): JSX.Element {
                 重命名
               </DropdownMenuItem>
             </NameEditorDialog>
+            <DropdownMenuItem
+              onClick={() => {
+                setDbId(gameId)
+                setName(gameName)
+                setIsOpen(true)
+              }}
+            >
+              下载资料数据
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => {

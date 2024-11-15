@@ -3,7 +3,8 @@ import {
   getGameMetadataFromDataSource,
   checkGameExistsInDataSource,
   getGameScreenshotsFromDataSource,
-  getGameCoverFromDataSource
+  getGameCoverFromDataSource,
+  getGameIconFromDataSource
 } from './common'
 import { GameList, GameMetadata } from './types'
 import log from 'electron-log/main.js'
@@ -49,6 +50,15 @@ export async function getGameCover(dataSource: string, gameId: string): Promise<
     return await getGameCoverFromDataSource(dataSource, gameId)
   } catch (error) {
     log.error(`Failed to get cover for ${gameId} from ${dataSource}`, error)
+    throw error
+  }
+}
+
+export async function getGameIcon(dataSource: string, gameId: string): Promise<string> {
+  try {
+    return await getGameIconFromDataSource(dataSource, gameId)
+  } catch (error) {
+    log.error(`Failed to get icon for ${gameId} from ${dataSource}`, error)
     throw error
   }
 }

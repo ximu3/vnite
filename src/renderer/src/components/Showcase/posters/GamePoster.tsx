@@ -17,8 +17,8 @@ export function GamePoster({
   className?: string
 }): JSX.Element {
   const navigate = useNavigate()
-  const { mediaUrl: cover } = useGameMedia({ gameId, type: 'cover' })
-  const { mediaUrl: background } = useGameMedia({ gameId, type: 'background' })
+  const { mediaUrl: cover } = useGameMedia({ gameId, type: 'cover', noToastError: true })
+  const { mediaUrl: background } = useGameMedia({ gameId, type: 'background', noToastError: true })
   const { gameIndex } = useGameIndexManager()
   const gameData = gameIndex.get(gameId)
   const { getGamePlayingTime } = useGameTimers()

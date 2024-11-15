@@ -6,6 +6,7 @@ import { GameNavCM } from '~/components/contextMenu/GameNavCM'
 import { useNavigate } from 'react-router-dom'
 import { useGameMedia, useGameIndexManager, useGameTimers } from '~/hooks'
 import { formatTimeToChinese, formatDateToChinese } from '~/utils'
+import { useState, useEffect } from 'react'
 
 export function BigGamePoster({
   gameId,
@@ -15,11 +16,16 @@ export function BigGamePoster({
   className?: string
 }): JSX.Element {
   const navigate = useNavigate()
-  const { mediaUrl: background } = useGameMedia({ gameId, type: 'background' })
+  const { mediaUrl: background } = useGameMedia({ gameId, type: 'background', noToastError: true })
   const { gameIndex } = useGameIndexManager()
-  const gameData = gameIndex.get(gameId)
   const { getGamePlayingTime } = useGameTimers()
-  const playingTime = getGamePlayingTime(gameId)
+  const [gameData, setGameData] = useState(gameIndex.get(gameId))
+  const [playingTime, setPlayingTime] = useState(getGamePlayingTime(gameId))
+  useEffect(() => {
+    setGameData(gameIndex.get(gameId))
+    setPlayingTime(getGamePlayingTime(gameId))
+  }),
+    [gameId, gameIndex, getGamePlayingTime]
 
   return (
     <HoverCard>

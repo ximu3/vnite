@@ -2,25 +2,11 @@ import { cn } from '~/utils'
 import { Dialog, DialogContent } from '@ui/dialog'
 import { toast } from 'sonner'
 import { MemoryRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
-import { useGameAdderStore } from './store'
+import { useGameBatchAdderStore } from './store'
 import { GameList } from './GameList'
-import { Search } from './Search'
-import { ScreenshotList } from './ScreenshotList'
 
-function GameAdderContent(): JSX.Element {
-  const {
-    isOpen,
-    setIsOpen,
-    isLoading,
-    setDataSource,
-    setDbId,
-    setId,
-    setName,
-    setScreenshotList,
-    setScreenshotUrl,
-    setGameList,
-    setIsLoading
-  } = useGameAdderStore()
+function GameBatchAdderContent(): JSX.Element {
+  const { isOpen, setIsOpen, isLoading, setGameList, setIsLoading } = useGameBatchAdderStore()
   const navigate = useNavigate()
   function handleClose(): void {
     if (isLoading) {
@@ -28,12 +14,6 @@ function GameAdderContent(): JSX.Element {
       return
     }
     setIsOpen(false)
-    setDataSource('steam')
-    setDbId('')
-    setId('')
-    setName('')
-    setScreenshotList([])
-    setScreenshotUrl('')
     setGameList([])
     setIsLoading(false)
     navigate('/')
@@ -48,20 +28,18 @@ function GameAdderContent(): JSX.Element {
         onClose={handleClose}
       >
         <Routes>
-          <Route index element={<Navigate to={'search'} />} />
-          <Route path="/search" element={<Search />} />
+          <Route index element={<Navigate to={'games'} />} />
           <Route path="/games" element={<GameList />} />
-          <Route path="/screenshots" element={<ScreenshotList />} />
         </Routes>
       </DialogContent>
     </Dialog>
   )
 }
 
-export function GameAdder(): JSX.Element {
+export function GameeBatchAdder(): JSX.Element {
   return (
     <MemoryRouter>
-      <GameAdderContent />
+      <GameBatchAdderContent />
     </MemoryRouter>
   )
 }

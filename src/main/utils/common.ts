@@ -46,3 +46,33 @@ export function formatDate(dateString: string): string {
     return ''
   }
 }
+
+/**
+ * 获取指定目录下的所有一级子文件夹名称
+ * @param dirPath 目录路径
+ * @returns Promise<string[]> 子文件夹名称数组
+ */
+export async function getFirstLevelSubfolders(dirPath: string): Promise<string[]> {
+  // 确保目录存在
+  if (!(await fse.pathExists(dirPath))) {
+    throw new Error('目录不存在')
+  }
+
+  // 读取目录内容
+  const items = await fse.readdir(dirPath)
+
+  // 过滤出文件夹
+  const subfolders = await Promise.all(
+    items.map(async (item) => {
+      const fullPath = path.join(dirPath, item)
+      const stats = await fse.stat(fullPath)
+      return {
+        name: item,
+        isDirectory: stats.isDirectory()
+      }
+    })
+  )
+
+  // 返回文件夹名称数组
+  return subfolders.filter((item) => item.isDirectory).map((item) => item.name)
+}

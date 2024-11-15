@@ -1,13 +1,17 @@
 import { ipcMain, BrowserWindow } from 'electron'
-import { addGameToDB } from '~/adder/common'
+import { addGameToDatabase, getBatchGameAdderDataFromDirectory } from '~/adder'
 
 export function setupAdderIPC(mainWindow: BrowserWindow): void {
   ipcMain.handle(
     'add-game-to-db',
-    async (_, dataSource: string, id: string, screenshotUrl: string) => {
-      await addGameToDB(dataSource, id, screenshotUrl)
+    async (_, dataSource: string, id: string, dbId?: string, screenshotUrl?: string) => {
+      await addGameToDatabase(dataSource, id, dbId || '', screenshotUrl)
     }
   )
+
+  ipcMain.handle('get-batch-game-adder-data', async () => {
+    return await getBatchGameAdderDataFromDirectory()
+  })
 
   mainWindow.webContents.send('adderIPCReady')
 }

@@ -83,6 +83,9 @@ export async function setBackgroundWithUrl(gameId: string, url: string): Promise
   const baseFolder = await getDataPath(`games/${gameId}`)
   const baseName = 'background'
 
+  //去除参数
+  url = url.split('?')[0]
+
   // 检查 URL 格式
   const ext = path.extname(url).slice(1).toLowerCase()
   if (!IMAGE_FORMATS.includes(ext as any)) {
@@ -132,6 +135,9 @@ export async function setCoverWithUrl(gameId: string, url: string): Promise<void
   const baseFolder = await getDataPath(`games/${gameId}`)
   const baseName = 'cover'
 
+  //去除参数
+  url = url.split('?')[0]
+
   // 检查 URL 格式
   const ext = path.extname(url).slice(1).toLowerCase()
   if (!IMAGE_FORMATS.includes(ext as any)) {
@@ -180,6 +186,9 @@ export async function setIconWithFile(gameId: string, filePath: string): Promise
 export async function setIconWithUrl(gameId: string, url: string): Promise<void> {
   const baseFolder = await getDataPath(`games/${gameId}`)
   const baseName = 'icon'
+
+  //去除参数
+  url = url.split('?')[0]
 
   // 检查 URL 格式
   const ext = path.extname(url).slice(1).toLowerCase()

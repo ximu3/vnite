@@ -10,6 +10,8 @@ import {
   setIconWithUrl
 } from './image'
 import fse from 'fs-extra'
+import { getDataPath } from '~/utils'
+import { app } from 'electron'
 
 export async function getMediaPath(
   gameId: string,
@@ -78,5 +80,42 @@ function isValidUrl(str: string): boolean {
     return ['http:', 'https:'].includes(url.protocol)
   } catch {
     return false
+  }
+}
+
+export async function saveFileIcon(gameId: string, filePath: string): Promise<void> {
+  try {
+    const isIconExists = await checkIconExists(gameId)
+
+    if (isIconExists) {
+      console.log('图标已存在')
+      return
+    }
+
+    // 获取文件图标
+    const icon = await app.getFileIcon(filePath)
+
+    // 获取保存路径
+    const iconPath = await getDataPath(`games/${gameId}/icon.png`)
+
+    // 将 NativeImage 转换为 PNG Buffer
+    const pngBuffer = icon.toPNG()
+
+    // 保存 PNG 文件
+    await fse.writeFile(iconPath, pngBuffer)
+
+    console.log(`图标已保存至: ${iconPath}`)
+  } catch (error) {
+    console.error('保存图标失败:', error)
+    throw error // 可以选择向上抛出错误
+  }
+}
+
+export async function checkIconExists(gameId: string): Promise<boolean> {
+  const iconPath = await getIconPath(gameId)
+  if (!iconPath) {
+    return false
+  } else {
+    return true
   }
 }

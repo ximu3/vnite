@@ -1,4 +1,11 @@
-import { getMediaPath, setMediaWithFile, setMediaWithUrl, detectSourceType } from './common'
+import {
+  getMediaPath,
+  setMediaWithFile,
+  setMediaWithUrl,
+  detectSourceType,
+  saveFileIcon,
+  checkIconExists
+} from './common'
 import log from 'electron-log/main.js'
 
 export async function getMedia(
@@ -43,5 +50,30 @@ export async function setMedia(
       error
     })
     throw error
+  }
+}
+
+export async function saveIcon(gameId: string, filePath: string): Promise<void> {
+  try {
+    await saveFileIcon(gameId, filePath)
+  } catch (error) {
+    log.error('Failed to save icon', {
+      gameId,
+      filePath,
+      error
+    })
+    throw error
+  }
+}
+
+export async function checkIcon(gameId: string): Promise<boolean> {
+  try {
+    return await checkIconExists(gameId)
+  } catch (error) {
+    log.error('Failed to check icon', {
+      gameId,
+      error
+    })
+    return false
   }
 }

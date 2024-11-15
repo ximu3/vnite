@@ -61,6 +61,7 @@ interface UseGameMediaOptions {
   gameId: string
   type: MediaType
   defaultProtocol?: string
+  noToastError?: boolean
 }
 
 interface UseGameMediaResult {
@@ -73,7 +74,8 @@ interface UseGameMediaResult {
 export function useGameMedia({
   gameId,
   type,
-  defaultProtocol = 'app'
+  defaultProtocol = 'app',
+  noToastError = false
 }: UseGameMediaOptions): UseGameMediaResult {
   const { setMediaData, getMediaData, updateTimestamp } = useMediaStore()
   const [isLoading, setIsLoading] = useState(true)
@@ -105,7 +107,9 @@ export function useGameMedia({
           console.error('Failed to initialize media:', error)
           setError(error instanceof Error ? error : new Error('Unknown error'))
           if (error instanceof Error) {
-            toast.error(`Failed to initialize media: ${error.message}`)
+            if (!noToastError) {
+              toast.error(`Failed to initialize media: ${error.message}`)
+            }
           }
         } finally {
           setIsLoading(false)
@@ -147,11 +151,14 @@ export function useGameMedia({
           } else {
             throw new Error(`No media path found for game ${gameId} ${type}`)
           }
+          updateTimestamp(gameId, type)
         } catch (error) {
           console.error('Failed to update media:', error)
           setError(error instanceof Error ? error : new Error('Unknown error'))
           if (error instanceof Error) {
-            toast.error(`Failed to update media: ${error.message}`)
+            if (!noToastError) {
+              toast.error(`Failed to update media: ${error.message}`)
+            }
           }
         } finally {
           setIsLoading(false)
@@ -193,7 +200,9 @@ export function useGameMedia({
       console.error('Failed to update media:', error)
       setError(error instanceof Error ? error : new Error('Unknown error'))
       if (error instanceof Error) {
-        toast.error(`Failed to update media: ${error.message}`)
+        if (!noToastError) {
+          toast.error(`Failed to update media: ${error.message}`)
+        }
       }
     }
   }
