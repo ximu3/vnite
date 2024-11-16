@@ -39,16 +39,18 @@ export function BigGamePoster({
               )}
             >
               <HoverBigCardAnimation className={cn('rounded-none')}>
-                <img
-                  onClick={() => navigate(`/library/games/${gameId}/0`)}
-                  src={background}
-                  alt={gameId}
-                  className={cn(
-                    'w-full h-full cursor-pointer object-cover',
-                    '3xl:w-full 3xl:h-full',
-                    className
-                  )}
-                />
+                {
+                  <img
+                    onClick={() => navigate(`/library/games/${gameId}/0`)}
+                    src={background}
+                    alt={gameId}
+                    className={cn(
+                      'w-full h-full cursor-pointer object-cover',
+                      '3xl:w-full 3xl:h-full',
+                      className
+                    )}
+                  />
+                }
               </HoverBigCardAnimation>
 
               <div className="rounded-none absolute bg-muted/60 flex items-center pl-5 flex-row justify-start bottom-0 w-full transform-gpu will-change-opacity h-1/3 backdrop-blur-2xl border-t-0.5 border-white/30">

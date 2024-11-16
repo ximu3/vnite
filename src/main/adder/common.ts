@@ -1,7 +1,7 @@
 import { setDBValue } from '~/database'
 import { getGameMetadata, getGameCover, getGameIcon, getGameScreenshots } from '~/scraper'
 import { setMedia } from '~/media'
-import { generateUUID, selectPathDialog, getFirstLevelSubfolders } from '~/utils'
+import { generateUUID, selectPathDialog, getFirstLevelSubfolders, getDataPath } from '~/utils'
 import { BrowserWindow } from 'electron'
 
 export async function addGameToDB(
@@ -16,6 +16,8 @@ export async function addGameToDB(
   if (dbId === '') {
     dbId = generateUUID()
   }
+
+  await getDataPath(`games/${dbId}/`, true)
 
   if (coverUrl) {
     await setMedia(dbId, 'cover', coverUrl)
@@ -59,6 +61,8 @@ export async function getBatchGameAdderData(): Promise<
   const gameNames = await getFirstLevelSubfolders(dirPath)
   const data = gameNames.map((gameName) => {
     return {
+      dataId: generateUUID(),
+      dataSource: 'steam',
       name: gameName,
       id: '',
       status: '未添加'

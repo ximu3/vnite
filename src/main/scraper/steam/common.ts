@@ -104,7 +104,10 @@ export async function getSteamMetadata(appId: string): Promise<GameMetadata> {
     const gameDataEN = englishData[appId].data
 
     const tags =
-      (await fetchStoreTags(appId)) || gameDataCN.genres.map((genre) => genre.description)
+      (await fetchStoreTags(appId)) ||
+      (gameDataCN.genres && gameDataCN.genres.length !== 0
+        ? gameDataCN.genres.map((genre) => genre.description)
+        : [])
 
     return {
       name: gameDataCN.name,
@@ -116,7 +119,10 @@ export async function getSteamMetadata(appId: string): Promise<GameMetadata> {
         gameDataCN.short_description,
       developers: gameDataCN.developers,
       publishers: gameDataCN.publishers, // 添加发行商
-      genres: gameDataCN.genres.map((genre) => genre.description), // 游戏类型
+      genres:
+        gameDataCN.genres && gameDataCN.genres.length !== 0
+          ? gameDataCN.genres.map((genre) => genre.description)
+          : [], // 游戏类型
       relatedSites: [
         ...(gameDataCN.website ? [{ label: '官方网站', url: gameDataCN.website }] : []),
         ...(gameDataCN.metacritic?.url

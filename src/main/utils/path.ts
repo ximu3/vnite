@@ -19,7 +19,7 @@ export function getAppRootPath(): string {
  * @param file The path of the file to be attached
  * @returns The path of the file in the database folder
  */
-export async function getDataPath(file: string): Promise<string> {
+export async function getDataPath(file: string, forceCreate?: boolean): Promise<string> {
   try {
     // 判断是否为打包环境
     const basePath = app.isPackaged
@@ -27,6 +27,24 @@ export async function getDataPath(file: string): Promise<string> {
       : path.join(getAppRootPath(), '/dev/database')
 
     const fullPath = path.join(basePath, file)
+
+    // 检查是否包含 games/{gameid} 模式
+
+    if (!forceCreate) {
+      const regex = /games\/([^/]+)/
+      const match = file.match(regex)
+
+      if (match) {
+        // 获取到 games/{gameid} 的完整路径
+        const gamesFolderPath = path.join(basePath, 'games', match[1])
+
+        // 检查游戏目录是否存在
+        const exists = await fse.pathExists(gamesFolderPath)
+        if (!exists) {
+          throw new Error(`Game directory not found: ${match[1]}`)
+        }
+      }
+    }
 
     // 判断是否为文件路径（检查是否有扩展名）
     const isFile = path.extname(file) !== ''

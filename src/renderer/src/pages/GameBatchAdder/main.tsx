@@ -36,7 +36,7 @@ function GameBatchAdderContent(): JSX.Element {
   )
 }
 
-export function GameeBatchAdder(): JSX.Element {
+export function GameBatchAdder(): JSX.Element {
   return (
     <MemoryRouter>
       <GameBatchAdderContent />

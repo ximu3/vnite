@@ -9,6 +9,8 @@ interface GameIndexManagerHook {
   sort: (by: string, order?: 'asc' | 'desc') => string[]
   filter: (criteria: Record<string, string[]>) => string[]
   getAllValuesInKey: (key: string) => string[]
+  checkGameExists: (gameId: string) => Promise<boolean>
+  deleteGame: (gameId: string) => Promise<void>
 }
 
 export function useGameIndexManager(): GameIndexManagerHook {
@@ -200,6 +202,30 @@ export function useGameIndexManager(): GameIndexManagerHook {
     [gameIndex]
   )
 
+  const checkGameExists = useCallback(async (gameId: string): Promise<boolean> => {
+    try {
+      const metadata: Record<string, GameIndexdata> = await ipcInvoke('get-games-metadata')
+      return metadata[gameId] !== undefined
+    } catch (error) {
+      console.error('Error checking if game exists:', error)
+      throw error
+    }
+  }, [])
+
+  const deleteGame = useCallback(
+    async (gameId: string): Promise<void> => {
+      try {
+        const updatedIndex = new Map(gameIndex)
+        updatedIndex.delete(gameId)
+        setGameIndex(updatedIndex)
+      } catch (error) {
+        console.error('Error deleting game:', error)
+        throw error
+      }
+    },
+    [gameIndex]
+  )
+
   return useMemo(
     (): GameIndexManagerHook => ({
       gameIndex,
@@ -207,7 +233,9 @@ export function useGameIndexManager(): GameIndexManagerHook {
       search,
       sort,
       filter,
-      getAllValuesInKey
+      getAllValuesInKey,
+      checkGameExists,
+      deleteGame
     }),
     [gameIndex, rebuildIndex, search, filter, getAllValuesInKey]
   )

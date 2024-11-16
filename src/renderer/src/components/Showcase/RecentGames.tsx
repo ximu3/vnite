@@ -13,7 +13,7 @@ export function RecentGames(): JSX.Element {
 
   const scroll = (direction: 'left' | 'right'): void => {
     if (!scrollContainerRef.current) return
-    const scrollAmount = 300
+    const scrollAmount = 872
     const container = scrollContainerRef.current
     container.scrollTo({
       left: container.scrollLeft + (direction === 'left' ? -scrollAmount : scrollAmount),

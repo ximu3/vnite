@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { ipcInvoke, debouncedIpcInvoke, ipcOnUnique } from '~/utils/ipc'
+import { ipcInvoke, debouncedIpcInvoke, ipcOnUnique } from '~/utils'
 import { useEffect } from 'react'
 import { toast } from 'sonner'
 

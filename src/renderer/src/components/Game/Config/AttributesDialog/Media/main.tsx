@@ -146,11 +146,15 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                 />
               </div>
               <div className={cn('self-center')}>
-                <img
-                  src={background}
-                  alt="background"
-                  className={cn('w-[500px] h-[264px] object-cover')}
-                />
+                {background ? (
+                  <img
+                    src={background}
+                    alt="background"
+                    className={cn('w-[500px] h-[264px] object-cover')}
+                  />
+                ) : (
+                  <div>暂无背景</div>
+                )}
               </div>
             </div>
           </CardContent>
@@ -186,7 +190,11 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                 />
               </div>
               <div className={cn('self-center')}>
-                <img src={cover} alt="cover" className={cn('w-[300px] h-[458px] object-cover')} />
+                {cover ? (
+                  <img src={cover} alt="cover" className={cn('w-[300px] h-[458px] object-cover')} />
+                ) : (
+                  <div>暂无封面</div>
+                )}
               </div>
             </div>
           </CardContent>

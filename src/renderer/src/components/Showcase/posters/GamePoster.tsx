@@ -30,22 +30,41 @@ export function GamePoster({
         <ContextMenu>
           <ContextMenuTrigger>
             <HoverCardAnimation>
-              <img
-                onClick={() =>
-                  navigate(
-                    collectionId
-                      ? `/library/games/${gameId}/collection:${collectionId}`
-                      : `/library/games/${gameId}/0`
-                  )
-                }
-                src={cover}
-                alt={gameId}
-                className={cn(
-                  'w-[148px] h-[222px] cursor-pointer object-cover',
-                  '3xl:w-[176px] 3xl:h-[264px]',
-                  className
-                )}
-              />
+              {cover ? (
+                <img
+                  onClick={() =>
+                    navigate(
+                      collectionId
+                        ? `/library/games/${gameId}/collection:${collectionId}`
+                        : `/library/games/${gameId}/0`
+                    )
+                  }
+                  src={cover}
+                  alt={gameId}
+                  className={cn(
+                    'w-[148px] h-[222px] cursor-pointer object-cover',
+                    '3xl:w-[176px] 3xl:h-[264px]',
+                    className
+                  )}
+                />
+              ) : (
+                <div
+                  className={cn(
+                    'w-[148px] h-[222px] cursor-pointer object-cover flex items-center justify-center',
+                    '3xl:w-[176px] 3xl:h-[264px]',
+                    className
+                  )}
+                  onClick={() =>
+                    navigate(
+                      collectionId
+                        ? `/library/games/${gameId}/collection:${collectionId}`
+                        : `/library/games/${gameId}/0`
+                    )
+                  }
+                >
+                  <div className={cn('font-bold')}>{gameData?.name}</div>
+                </div>
+              )}
             </HoverCardAnimation>
           </ContextMenuTrigger>
           <GameNavCM gameId={gameId} />
@@ -73,14 +92,22 @@ export function GamePoster({
 
           {/* 游戏预览图 */}
           <div className={cn('relative w-full h-[128px]', '3xl:h-[164px]')}>
-            <img
-              src={background}
-              className={cn('object-cover w-full h-full absolute')}
-              style={{
-                maskImage: 'linear-gradient(to top, transparent 0%, black 30%)'
-              }}
-              alt={`${gameData?.name} preview`}
-            />
+            {background ? (
+              <img
+                src={background}
+                className={cn('object-cover w-full h-full absolute')}
+                style={{
+                  maskImage: 'linear-gradient(to top, transparent 0%, black 30%)'
+                }}
+                alt={`${gameData?.name} preview`}
+              />
+            ) : (
+              <div className={cn('w-full h-full absolute')}>
+                <div className={cn('flex items-center justify-center w-full h-full font-bold')}>
+                  {gameData?.name}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* 游戏信息 */}

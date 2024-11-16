@@ -13,6 +13,8 @@ import { ipcInvoke } from '~/utils'
 import { useDBSyncedState } from '~/hooks'
 import { toast } from 'sonner'
 import { useCollections } from '~/hooks'
+import { useGameIndexManager } from '~/hooks'
+import { useNavigate } from 'react-router-dom'
 
 export function DeleteGameAlert({
   gameId,
@@ -21,13 +23,19 @@ export function DeleteGameAlert({
   gameId: string
   children: React.ReactNode
 }): JSX.Element {
+  const navigate = useNavigate()
   const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
   const { removeGameFromAllCollections } = useCollections()
+  const { deleteGame: deleteGameFromIndex } = useGameIndexManager()
   async function deleteGame(): Promise<void> {
     toast.promise(
       async () => {
-        await ipcInvoke('delete-game-from-db', gameId)
+        await deleteGameFromIndex(gameId)
+        await new Promise((resolve) => setTimeout(resolve, 100))
         removeGameFromAllCollections(gameId)
+        await new Promise((resolve) => setTimeout(resolve, 100))
+        await ipcInvoke('delete-game-from-db', gameId)
+        navigate('/library')
       },
       {
         loading: `正在删除游戏 ${gameName}...`,

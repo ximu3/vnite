@@ -9,6 +9,7 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
   const { mediaUrl: icon } = useGameMedia({ gameId, type: 'icon', noToastError: true })
   const { mediaUrl: _cover } = useGameMedia({ gameId, type: 'cover', noToastError: true })
   const { mediaUrl: _background } = useGameMedia({ gameId, type: 'background', noToastError: true })
+  const gameName = gameIndex.get(gameId)?.name
   return (
     <ContextMenu>
       <ContextMenuTrigger>
@@ -31,7 +32,7 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
             ) : (
               <span className={cn('icon-[mdi--gamepad-variant] w-5 h-5')}></span>
             )}
-            <div className={cn('truncate')}>{gameIndex.get(gameId)?.name}</div>
+            <div className={cn('truncate')}>{gameName}</div>
           </div>
         </Nav>
       </ContextMenuTrigger>

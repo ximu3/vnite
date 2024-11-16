@@ -45,7 +45,7 @@ export async function getGamesMetadata(): Promise<any> {
   try {
     return await getMetadata()
   } catch (error) {
-    log.error('Failed to get metadata for games', error)
+    console.error('Failed to get metadata for games', error)
   }
 }
 

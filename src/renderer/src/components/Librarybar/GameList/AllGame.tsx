@@ -14,8 +14,8 @@ export function AllGame(): JSX.Element {
         </div>
       </AccordionTrigger>
       <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
-        {Array.from(gameIndex, ([key, game]) => (
-          <GameNav key={key} gameId={game.id || ''} groupId={'0'} />
+        {Array.from(gameIndex).map(([gameId]) => (
+          <GameNav key={gameId} gameId={gameId} groupId="all" />
         ))}
       </AccordionContent>
     </AccordionItem>
