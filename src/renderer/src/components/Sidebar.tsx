@@ -17,6 +17,7 @@ import { useGameAdderStore } from '~/pages/GameAdder/store'
 import { useGameBatchAdderStore, DataSource } from '~/pages/GameBatchAdder/store'
 import { ipcInvoke } from '~/utils'
 import { useGameIndexManager } from '~/hooks'
+import { ConfigDialog } from './Config'
 
 interface GameItem {
   dataId: string
@@ -147,13 +148,15 @@ export function Sidebar(): JSX.Element {
         </DropdownMenu>
         <Tooltip>
           <TooltipTrigger>
-            <Button
-              variant="ghost"
-              size={'icon'}
-              className={cn('min-h-0 min-w-0 p-2 non-draggable')}
-            >
-              <span className={cn('icon-[mdi--settings-outline] w-5 h-5')}></span>
-            </Button>
+            <ConfigDialog>
+              <Button
+                variant="ghost"
+                size={'icon'}
+                className={cn('min-h-0 min-w-0 p-2 non-draggable')}
+              >
+                <span className={cn('icon-[mdi--settings-outline] w-5 h-5')}></span>
+              </Button>
+            </ConfigDialog>
           </TooltipTrigger>
           <TooltipContent side="right">设置</TooltipContent>
         </Tooltip>

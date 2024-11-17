@@ -7,7 +7,9 @@ import {
   backupGameSaveData,
   restoreGameSaveData,
   deleteGameSaveData,
-  deleteGameFromDB
+  deleteGameFromDB,
+  backupDatabaseData,
+  restoreDatabaseData
 } from '~/database'
 
 export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
@@ -41,6 +43,14 @@ export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
 
   ipcMain.handle('delete-game-from-db', async (_, gameId: string) => {
     await deleteGameFromDB(gameId)
+  })
+
+  ipcMain.handle('backup-database', async (_, targetPath: string) => {
+    await backupDatabaseData(targetPath)
+  })
+
+  ipcMain.handle('restore-database', async (_, sourcePath: string) => {
+    await restoreDatabaseData(sourcePath)
   })
 
   ipcMain.on('reload-db-values', (_, dbName: string) => {

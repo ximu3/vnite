@@ -68,6 +68,7 @@
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.5.3",
     "tailwindcss-animate": "^1.0.7",
+    "unzipper": "^0.12.3",
     "uuid": "^10.0.0",
     "zustand": "^5.0.0-rc.2"
   },
@@ -85,6 +86,7 @@
     "@types/react-dom": "^18.3.0",
     "@types/react-stickynode": "^4.0.3",
     "@types/sharp": "^0.32.0",
+    "@types/unzipper": "^0.10.10",
     "@types/uuid": "^10.0.0",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.20",

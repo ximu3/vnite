@@ -4,6 +4,7 @@ import { getMetadata } from './metadata'
 import { getTimerdata } from './timer'
 import { backupGameSave, restoreGameSave, deleteGameSave } from './save'
 import { deleteGame } from './utils'
+import { backupDatabase, restoreDatabase } from './backup'
 import log from 'electron-log/main.js'
 
 /**
@@ -119,6 +120,36 @@ export async function deleteGameFromDB(gameId: string): Promise<void> {
     log.info(`Delete game ${gameId}`)
   } catch (error) {
     log.error(`Failed to delete game ${gameId}`, error)
+    throw error
+  }
+}
+
+/**
+ * Backup the database
+ * @param targetPath The path to the target file.
+ * @returns A promise that resolves when the operation is complete.
+ */
+export async function backupDatabaseData(targetPath: string): Promise<void> {
+  try {
+    await backupDatabase(targetPath)
+    log.info(`Backup database to ${targetPath}`)
+  } catch (error) {
+    log.error(`Failed to backup database to ${targetPath}`, error)
+    throw error
+  }
+}
+
+/**
+ * Restore the database
+ * @param sourcePath The path to the source file.
+ * @returns A promise that resolves when the operation is complete.
+ */
+export async function restoreDatabaseData(sourcePath: string): Promise<void> {
+  try {
+    await restoreDatabase(sourcePath)
+    log.info(`Restore database from ${sourcePath}`)
+  } catch (error) {
+    log.error(`Failed to restore database from ${sourcePath}`, error)
     throw error
   }
 }

@@ -31,6 +31,13 @@ export async function openGameDBPathInExplorer(gameId: string): Promise<void> {
   }
 }
 
+export async function openDatabasePathInExplorer(): Promise<void> {
+  const databasePath = await getDataPath('')
+  if (databasePath) {
+    await openPathInExplorer(databasePath)
+  }
+}
+
 export function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
