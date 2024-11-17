@@ -4,7 +4,8 @@ import {
   selectPathDialog,
   selectMultiplePathDialog,
   openPathInExplorer,
-  openGameDBPathInExplorer
+  openGameDBPathInExplorer,
+  createGameShortcut
 } from '~/utils'
 
 export function setupUtilsIPC(mainWindow: BrowserWindow): void {
@@ -48,6 +49,10 @@ export function setupUtilsIPC(mainWindow: BrowserWindow): void {
 
   ipcMain.handle('open-game-db-path-in-explorer', async (_, gameId: string) => {
     await openGameDBPathInExplorer(gameId)
+  })
+
+  ipcMain.handle('create-game-shortcut', async (_, gameId: string, targetPath: string) => {
+    await createGameShortcut(gameId, targetPath)
   })
 
   mainWindow.on('maximize', () => {

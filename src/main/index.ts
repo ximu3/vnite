@@ -6,7 +6,7 @@ import { setupIPC } from './ipc'
 import log from 'electron-log/main.js'
 import { getLogsPath } from './utils'
 import { setupWatcher, stopWatcher } from './watcher'
-import { setupProtocols } from './utils'
+import { setupProtocols, setupTempDirectory } from './utils'
 
 let mainWindow: BrowserWindow
 
@@ -74,6 +74,9 @@ app.whenReady().then(async () => {
   setupWatcher(mainWindow)
 
   setupIPC(mainWindow)
+
+  // Setup temporary directory
+  await setupTempDirectory()
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the

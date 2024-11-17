@@ -34,7 +34,7 @@ export function RelatedSitesCard({
             '3xl:max-h-[408px]'
           )}
         >
-          {isEqual(relatedSites, [])
+          {isEqual(relatedSites, []) || isEqual(relatedSites, [{ label: '', url: '' }])
             ? '暂无相关网站'
             : relatedSites.map((site, index) => (
                 <Link

@@ -30,6 +30,7 @@ export function Sidebar(): JSX.Element {
   const { setIsOpen: setIsGameAdderOpen } = useGameAdderStore()
   const { setIsOpen: setIsGameBatchAdderOpen, setGameList } = useGameBatchAdderStore()
   const { gameIndex: _ } = useGameIndexManager()
+
   return (
     <div className={cn('flex flex-col p-[10px] pt-3 pb-3 h-full bg-background justify-between')}>
       <div className={cn('flex flex-col gap-2')}>
@@ -125,7 +126,21 @@ export function Sidebar(): JSX.Element {
                 </DropdownMenuSubContent>
               </DropdownMenuPortal>
             </DropdownMenuSub>
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={async () => {
+                try {
+                  toast.info('请选择游戏路径')
+                  const gamePath = await ipcInvoke('select-path-dialog', ['openFile'])
+                  if (!gamePath) {
+                    return
+                  }
+                  await ipcInvoke('add-game-to-db-without-metadata', gamePath)
+                  toast.success('添加成功')
+                } catch (error) {
+                  toast.error('添加游戏时出错')
+                }
+              }}
+            >
               <div>不使用刮削器</div>
             </DropdownMenuItem>
           </DropdownMenuContent>

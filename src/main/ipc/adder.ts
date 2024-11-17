@@ -1,5 +1,9 @@
 import { ipcMain, BrowserWindow } from 'electron'
-import { addGameToDatabase, getBatchGameAdderDataFromDirectory } from '~/adder'
+import {
+  addGameToDatabase,
+  getBatchGameAdderDataFromDirectory,
+  addGameToDatabaseWithoutMetadata
+} from '~/adder'
 
 export function setupAdderIPC(mainWindow: BrowserWindow): void {
   ipcMain.handle(
@@ -11,6 +15,10 @@ export function setupAdderIPC(mainWindow: BrowserWindow): void {
 
   ipcMain.handle('get-batch-game-adder-data', async () => {
     return await getBatchGameAdderDataFromDirectory()
+  })
+
+  ipcMain.handle('add-game-to-db-without-metadata', async (_, gamePath: string) => {
+    await addGameToDatabaseWithoutMetadata(gamePath)
   })
 
   mainWindow.webContents.send('adderIPCReady')

@@ -4,7 +4,7 @@ import { HoverBigCardAnimation } from '~/components/animations/HoverBigCard'
 import { cn } from '~/utils'
 import { GameNavCM } from '~/components/contextMenu/GameNavCM'
 import { useNavigate } from 'react-router-dom'
-import { useGameMedia, useGameIndexManager, useGameTimers } from '~/hooks'
+import { useGameMedia, useGameIndexManager, useGameTimers, useDBSyncedState } from '~/hooks'
 import { formatTimeToChinese, formatDateToChinese } from '~/utils'
 import { useState, useEffect } from 'react'
 
@@ -21,6 +21,8 @@ export function BigGamePoster({
   const { getGamePlayingTime } = useGameTimers()
   const [gameData, setGameData] = useState(gameIndex.get(gameId))
   const [playingTime, setPlayingTime] = useState(getGamePlayingTime(gameId))
+  const [lastRunDate] = useDBSyncedState('', `games/${gameId}/record.json`, ['lastRunDate'])
+  const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
   useEffect(() => {
     setGameData(gameIndex.get(gameId))
     setPlayingTime(getGamePlayingTime(gameId))
@@ -39,9 +41,9 @@ export function BigGamePoster({
               )}
             >
               <HoverBigCardAnimation className={cn('rounded-none')}>
-                {
+                {background ? (
                   <img
-                    onClick={() => navigate(`/library/games/${gameId}/0`)}
+                    onClick={() => navigate(`/library/games/${gameId}/all`)}
                     src={background}
                     alt={gameId}
                     className={cn(
@@ -50,7 +52,18 @@ export function BigGamePoster({
                       className
                     )}
                   />
-                }
+                ) : (
+                  <div
+                    className={cn(
+                      'w-full h-full cursor-pointer object-cover flex items-center justify-center',
+                      '3xl:w-full 3xl:h-full',
+                      className
+                    )}
+                    onClick={() => navigate(`/library/games/${gameId}/all`)}
+                  >
+                    {gameName}
+                  </div>
+                )}
               </HoverBigCardAnimation>
 
               <div className="rounded-none absolute bg-muted/60 flex items-center pl-5 flex-row justify-start bottom-0 w-full transform-gpu will-change-opacity h-1/3 backdrop-blur-2xl border-t-0.5 border-white/30">
@@ -68,9 +81,7 @@ export function BigGamePoster({
                   <div className="flex flex-row text-xs">
                     <div className="font-semibold">最后运行日期：</div>
                     <div className="font-semibold">
-                      {gameData?.lastRunDate
-                        ? formatDateToChinese(gameData.lastRunDate)
-                        : '从未运行'}
+                      {lastRunDate !== '' ? formatDateToChinese(lastRunDate) : '从未运行'}
                     </div>
                   </div>
                 </div>
@@ -102,14 +113,22 @@ export function BigGamePoster({
 
           {/* 游戏预览图 */}
           <div className={cn('relative w-full h-[128px]', '3xl:h-[164px]')}>
-            <img
-              src={background}
-              className={cn('object-cover w-full h-full absolute')}
-              style={{
-                maskImage: 'linear-gradient(to top, transparent 0%, black 30%)'
-              }}
-              alt={`${gameData?.name} preview`}
-            />
+            {background ? (
+              <img
+                src={background}
+                className={cn('object-cover w-full h-full absolute')}
+                style={{
+                  maskImage: 'linear-gradient(to top, transparent 0%, black 30%)'
+                }}
+                alt={`${gameData?.name} preview`}
+              />
+            ) : (
+              <div className={cn('w-full h-full absolute')}>
+                <div className={cn('flex items-center justify-center w-full h-full font-bold')}>
+                  {gameData?.name}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* 游戏信息 */}

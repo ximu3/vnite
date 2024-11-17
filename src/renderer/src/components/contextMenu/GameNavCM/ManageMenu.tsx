@@ -50,6 +50,25 @@ export function ManageMenu({ gameId }: { gameId: string }): JSX.Element {
             下载资料数据
           </ContextMenuItem>
 
+          {gamePath !== '' && (
+            <ContextMenuItem
+              onClick={async () => {
+                try {
+                  const targetPath = await ipcInvoke('select-path-dialog', ['openDirectory'])
+                  if (!targetPath) {
+                    return
+                  }
+                  await ipcInvoke('create-game-shortcut', gameId, targetPath)
+                  toast.success('已创建快捷方式')
+                } catch (error) {
+                  toast.error('创建快捷方式时出错')
+                }
+              }}
+            >
+              创建快捷方式
+            </ContextMenuItem>
+          )}
+
           <ContextMenuSeparator />
 
           <ContextMenuItem

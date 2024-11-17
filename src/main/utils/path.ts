@@ -1,6 +1,7 @@
 import { app } from 'electron'
 import path from 'path'
 import fse from 'fs-extra'
+import os from 'os'
 
 /**
  * Get the path of the root directory of the application
@@ -71,4 +72,53 @@ export async function getDataPath(file: string, forceCreate?: boolean): Promise<
  */
 export function getLogsPath(): string {
   return path.join(getAppRootPath(), '/logs/app.log')
+}
+
+/**
+ * 获取应用程序临时目录
+ * @param subDir 子目录名称（可选）
+ * @returns 临时目录路径
+ */
+export function getAppTempPath(subDir?: string): string {
+  // 使用 electron 的 app.getPath('temp') 获取系统临时目录
+  // 如果在主进程中无法访问 app，则使用 os.tmpdir()
+  const tempDir = app?.getPath?.('temp') || os.tmpdir()
+
+  // 创建应用特定的临时目录路径
+  const appTempDir = path.join(
+    tempDir,
+    'vnite', // 替换为你的应用名称
+    subDir || ''
+  )
+
+  return appTempDir
+}
+
+/**
+ * 设置和初始化应用程序临时目录
+ */
+export async function setupTempDirectory(): Promise<string> {
+  try {
+    const fs = require('fs-extra')
+    const tempPath = getAppTempPath()
+
+    // 确保临时目录存在
+    await fs.ensureDir(tempPath)
+
+    // 可选：在应用退出时清理临时目录
+    app.on('quit', async () => {
+      try {
+        await fs.remove(tempPath)
+        console.log('临时目录已清理')
+      } catch (error) {
+        console.error('清理临时目录失败:', error)
+      }
+    })
+
+    console.log('临时目录已设置:', tempPath)
+    return tempPath
+  } catch (error) {
+    console.error('设置临时目录失败:', error)
+    throw error
+  }
 }

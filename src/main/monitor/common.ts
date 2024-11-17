@@ -3,31 +3,120 @@ import fse from 'fs-extra'
 import { ipcMain, IpcMainEvent, BrowserWindow } from 'electron'
 import { setDBValue, getDBValue } from '~/database'
 import log from 'electron-log/main.js'
-import { exec } from 'child_process'
-import { promisify } from 'util'
 import { backupGameSaveData } from '~/database'
+import { v4 as uuidv4 } from 'uuid'
+import { exec } from 'child_process'
+import { getAppTempPath } from '~/utils'
 
-const execAsync = promisify(exec)
-
-async function getProcessList(): Promise<
-  Array<{ name: string; pid: number; executablePath: string; cmd: string }>
-> {
-  const { stdout } = await execAsync(
-    'wmic process get ExecutablePath,ProcessId,CommandLine /format:csv'
-  )
-  return stdout
-    .split('\n')
-    .slice(1)
-    .filter(Boolean)
-    .map((line) => {
-      const [, executablePath, commandLine, pid] = line.split(',')
-      return {
-        name: executablePath ? path.basename(executablePath) : '',
-        cmd: commandLine || '',
-        pid: Number(pid),
-        executablePath: executablePath || ''
+const execAsync = (command: string, options?: any): Promise<{ stdout: string; stderr: string }> => {
+  return new Promise<{ stdout: string; stderr: string }>((resolve, reject) => {
+    exec(command, options, (error, stdout, stderr) => {
+      if (error) {
+        reject(error)
+      } else {
+        resolve({ stdout: stdout.toString(), stderr: stderr.toString() })
       }
     })
+  })
+}
+
+async function getProcessList(): Promise<
+  Array<{
+    name: string
+    pid: number
+    executablePath: string
+    cmd: string
+  }>
+> {
+  // 创建临时 PS1 脚本文件
+  const scriptContent = `
+    # 设置输出编码为 UTF-8
+    [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+
+    $processes = Get-Process | Select-Object Name, Id, Path, CommandLine
+    $processes | ForEach-Object {
+      $obj = @{
+        Name = $_.Name
+        Id = $_.Id
+        Path = $_.Path
+        CommandLine = $_.CommandLine
+      }
+      $obj | ConvertTo-Json -Compress
+    }
+  `
+
+  const tempScriptPath = getAppTempPath(`get-process-${uuidv4()}.ps1`)
+
+  try {
+    // 写入临时脚本文件
+    await fse.writeFile(tempScriptPath, scriptContent, { encoding: 'utf8' })
+
+    // 执行 PowerShell 脚本
+    const { stdout } = await execAsync(
+      `powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "${tempScriptPath}"`,
+      { encoding: 'utf8' }
+    )
+
+    // 解析输出结果
+    const processes = stdout
+      .split('\n')
+      .filter((line) => line.trim())
+      .map((line) => {
+        try {
+          return JSON.parse(line)
+        } catch (e) {
+          console.error('解析进程信息失败:', { line, error: e })
+          return null
+        }
+      })
+      .filter((proc): proc is NonNullable<typeof proc> => proc !== null)
+      .map((proc) => ({
+        name: proc.Name || '',
+        pid: proc.Id || 0,
+        executablePath: proc.Path || '',
+        cmd: proc.CommandLine || proc.Path || ''
+      }))
+
+    // console.debug('进程列表示例:', {
+    //   总数: processes.length,
+    //   示例: processes.slice(0, 2)
+    // })
+
+    return processes
+  } catch (error) {
+    console.error('PowerShell 脚本执行失败，尝试使用 WMIC:', error)
+
+    // 回退到 WMIC 方案
+    const { stdout } = await execAsync(
+      'wmic process get ExecutablePath,ProcessId,CommandLine,Name /FORMAT:CSV',
+      { shell: 'cmd.exe' }
+    )
+
+    return stdout
+      .split('\n')
+      .slice(1)
+      .filter(Boolean)
+      .map((line) => {
+        const [, executablePath, commandLine, pidStr, name] = line.split(',')
+        return {
+          name: name?.trim() || '',
+          cmd: commandLine?.trim() || '',
+          pid: parseInt(pidStr?.trim() || '0', 10),
+          executablePath:
+            executablePath
+              ?.trim()
+              .replace(/^["']|["']$/g, '')
+              .replace(/\\+/g, '\\') || ''
+        }
+      })
+  } finally {
+    // 清理临时脚本文件
+    try {
+      await fse.remove(tempScriptPath)
+    } catch (e) {
+      console.error('清理临时脚本文件失败:', e)
+    }
+  }
 }
 
 interface GameMonitorOptions {
@@ -268,32 +357,57 @@ export class GameMonitor {
 
   private async checkProcesses(): Promise<void> {
     try {
-      const processes = await getProcessList() // 使用之前定义的 getProcessList 函数
+      const processes = await getProcessList()
       const previousStates = this.monitoredProcesses.map((p) => p.isRunning)
 
-      // 更新所有进程的运行状态
       for (const monitored of this.monitoredProcesses) {
-        const processInfo = processes.find(
-          (proc) =>
-            proc.executablePath.toLowerCase() === monitored.path.toLowerCase() ||
-            (proc.cmd && proc.cmd.includes(monitored.path))
-        )
+        // 规范化监控的路径
+        const normalizedMonitoredPath = this.normalizePath(monitored.path)
 
+        const processInfo = processes.find((proc) => {
+          if (!proc.executablePath) return false
+
+          // 规范化进程路径
+          const normalizedExecPath = this.normalizePath(proc.executablePath)
+          const normalizedCmdPath = this.normalizePath(proc.cmd)
+
+          // 路径匹配检查
+          return (
+            normalizedExecPath === normalizedMonitoredPath ||
+            normalizedCmdPath === normalizedMonitoredPath
+          )
+        })
+
+        // 更新进程状态
+        // if (processInfo) {
+        //   log.info(`游戏 ${this.options.gameId} 进程 ${processInfo.pid} 正在运行`)
+        // }
         monitored.isRunning = !!processInfo
-        if (processInfo) {
-          monitored.pid = processInfo.pid
-        }
+        monitored.pid = processInfo?.pid || monitored.pid
       }
 
-      // 检查是否所有进程都已停止
+      // 检查游戏是否退出
       const allStopped = this.monitoredProcesses.every((p) => !p.isRunning)
       const wasSomeRunning = previousStates.some((state) => state)
 
       if (allStopped && wasSomeRunning) {
-        this.handleGameExit()
+        await this.handleGameExit()
       }
     } catch (error) {
-      console.error('进程检查错误:', error)
+      log.error('进程检查错误:', error)
+    }
+  }
+
+  // 添加路径规范化方法
+  private normalizePath(filePath: string): string {
+    try {
+      return path
+        .normalize(filePath)
+        .toLowerCase()
+        .replace(/\\+/g, '\\') // 规范化反斜杠
+        .replace(/^["']|["']$/g, '') // 移除首尾引号
+    } catch {
+      return filePath.toLowerCase()
     }
   }
 

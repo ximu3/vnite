@@ -3,6 +3,7 @@ import { getGameMetadata, getGameCover, getGameIcon, getGameScreenshots } from '
 import { setMedia } from '~/media'
 import { generateUUID, selectPathDialog, getFirstLevelSubfolders, getDataPath } from '~/utils'
 import { BrowserWindow } from 'electron'
+import { launcherPreset } from '~/launcher'
 
 export async function addGameToDB(
   dataSource: string,
@@ -49,6 +50,19 @@ export async function addGameToDB(
     window.webContents.send('reload-db-values', `games/${dbId}/background.webp`)
     window.webContents.send('reload-db-values', `games/${dbId}/icon.png`)
   })
+}
+
+export async function addGameToDBWithoutMetadata(gamePath: string): Promise<void> {
+  const dbId = generateUUID()
+  await getDataPath(`games/${dbId}/`, true)
+  await setDBValue(`games/${dbId}/record.json`, ['addDate'], new Date().toISOString())
+  await setDBValue(`games/${dbId}/path.json`, ['gamePath'], gamePath)
+  const gameName = gamePath.split('\\').pop()?.split('.')?.slice(0, -1).join('.')
+  await setDBValue(`games/${dbId}/metadata.json`, ['#all'], {
+    id: dbId,
+    name: gameName
+  })
+  await launcherPreset('default', dbId)
 }
 
 export async function getBatchGameAdderData(): Promise<

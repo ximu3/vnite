@@ -4,7 +4,7 @@ import { HoverCardAnimation } from '~/components/animations/HoverCard'
 import { cn } from '~/utils'
 import { GameNavCM } from '~/components/contextMenu/GameNavCM'
 import { useNavigate } from 'react-router-dom'
-import { useGameMedia, useGameIndexManager, useGameTimers } from '~/hooks'
+import { useGameMedia, useGameIndexManager, useGameTimers, useDBSyncedState } from '~/hooks'
 import { formatTimeToChinese, formatDateToChinese } from '~/utils'
 
 export function GamePoster({
@@ -23,6 +23,7 @@ export function GamePoster({
   const gameData = gameIndex.get(gameId)
   const { getGamePlayingTime } = useGameTimers()
   const playingTime = getGamePlayingTime(gameId)
+  const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
 
   return (
     <HoverCard>
@@ -36,7 +37,7 @@ export function GamePoster({
                     navigate(
                       collectionId
                         ? `/library/games/${gameId}/collection:${collectionId}`
-                        : `/library/games/${gameId}/0`
+                        : `/library/games/${gameId}/all`
                     )
                   }
                   src={cover}
@@ -58,11 +59,11 @@ export function GamePoster({
                     navigate(
                       collectionId
                         ? `/library/games/${gameId}/collection:${collectionId}`
-                        : `/library/games/${gameId}/0`
+                        : `/library/games/${gameId}/all`
                     )
                   }
                 >
-                  <div className={cn('font-bold')}>{gameData?.name}</div>
+                  <div className={cn('font-bold')}>{gameName}</div>
                 </div>
               )}
             </HoverCardAnimation>

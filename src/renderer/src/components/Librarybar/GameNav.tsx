@@ -1,15 +1,14 @@
 import { Nav } from '../ui/nav'
 import { cn } from '~/utils'
-import { useGameIndexManager, useGameMedia } from '~/hooks'
+import { useGameMedia, useDBSyncedState } from '~/hooks'
 import { GameNavCM } from '../contextMenu/GameNavCM'
 import { ContextMenu, ContextMenuTrigger } from '@ui/context-menu'
 
 export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }): JSX.Element {
-  const { gameIndex } = useGameIndexManager()
   const { mediaUrl: icon } = useGameMedia({ gameId, type: 'icon', noToastError: true })
   const { mediaUrl: _cover } = useGameMedia({ gameId, type: 'cover', noToastError: true })
   const { mediaUrl: _background } = useGameMedia({ gameId, type: 'background', noToastError: true })
-  const gameName = gameIndex.get(gameId)?.name
+  const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
   return (
     <ContextMenu>
       <ContextMenuTrigger>

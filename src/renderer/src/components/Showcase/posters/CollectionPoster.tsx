@@ -40,15 +40,25 @@ export function CollectionPoster({
       <CollectionCM collectionId={collctionId}>
         <div className="relative z-0">
           <HoverSquareCardAnimation className={cn('rounded-none')}>
-            <img
-              src={cover}
-              alt={gameId}
-              className={cn(
-                'w-full h-full cursor-pointer object-cover',
-                '3xl:w-full 3xl:h-full',
-                className
-              )}
-            />
+            {cover ? (
+              <img
+                src={cover}
+                alt={gameId}
+                className={cn(
+                  'w-full h-full cursor-pointer object-cover',
+                  '3xl:w-full 3xl:h-full',
+                  className
+                )}
+              />
+            ) : (
+              <div
+                className={cn(
+                  'w-full h-full cursor-pointer object-cover flex items-center justify-center',
+                  '3xl:w-full 3xl:h-full',
+                  className
+                )}
+              ></div>
+            )}
           </HoverSquareCardAnimation>
         </div>
       </CollectionCM>
