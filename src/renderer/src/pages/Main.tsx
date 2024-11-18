@@ -5,9 +5,11 @@ import { Library } from './Library'
 import { useEffect } from 'react'
 import { toast } from 'sonner'
 import { useRunningGames } from './Library/store'
+import { useCloudSyncStore, SyncStatus } from '~/components/Config/CloudSync/store'
 
 export function Main(): JSX.Element {
   const { runningGames, setRunningGames } = useRunningGames()
+  const { setStatus } = useCloudSyncStore()
   useEffect(() => {
     const handleStartGameFromUrl = (
       _event: any,
@@ -25,6 +27,18 @@ export function Main(): JSX.Element {
       removeListener()
     }
   }, [runningGames, setRunningGames])
+
+  useEffect(() => {
+    const handleSyncStatus = (_event: any, status: SyncStatus): void => {
+      setStatus(status)
+    }
+
+    const removeListener = ipcOnUnique('cloud-sync-status', handleSyncStatus)
+
+    return (): void => {
+      removeListener()
+    }
+  }, [setStatus])
 
   async function startGame(
     gameId: string,

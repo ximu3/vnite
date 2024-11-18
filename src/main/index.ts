@@ -7,6 +7,7 @@ import log from 'electron-log/main.js'
 import { getLogsPath } from './utils'
 import { setupWatcher, stopWatcher } from './watcher'
 import { setupProtocols, setupTempDirectory } from './utils'
+import { initializeCloudsyncServices } from './cloudSync'
 
 let mainWindow: BrowserWindow
 
@@ -71,12 +72,15 @@ app.whenReady().then(async () => {
   createWindow()
 
   // Watch for changes in the data directory
-  setupWatcher(mainWindow)
+  await setupWatcher(mainWindow)
 
   setupIPC(mainWindow)
 
   // Setup temporary directory
   await setupTempDirectory()
+
+  // Initialize cloud sync services
+  await initializeCloudsyncServices()
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the

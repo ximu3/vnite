@@ -13,11 +13,14 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger
 } from '@ui/dropdown-menu'
+import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
 import { useGameAdderStore } from '~/pages/GameAdder/store'
 import { useGameBatchAdderStore, DataSource } from '~/pages/GameBatchAdder/store'
 import { ipcInvoke } from '~/utils'
-import { useGameIndexManager } from '~/hooks'
+import { useGameIndexManager, useDBSyncedState } from '~/hooks'
 import { ConfigDialog } from './Config'
+import { useCloudSyncStore } from './Config/CloudSync/store'
+import { CloudSyncInfo } from './Config/CloudSync/Info'
 
 interface GameItem {
   dataId: string
@@ -31,6 +34,8 @@ export function Sidebar(): JSX.Element {
   const { setIsOpen: setIsGameAdderOpen } = useGameAdderStore()
   const { setIsOpen: setIsGameBatchAdderOpen, setGameList } = useGameBatchAdderStore()
   const { gameIndex: _ } = useGameIndexManager()
+  const { status } = useCloudSyncStore()
+  const [cloudSyncEnabled] = useDBSyncedState(false, 'config.json', ['cloudSync', 'enabled'])
 
   return (
     <div className={cn('flex flex-col p-[10px] pt-3 pb-3 h-full bg-background justify-between')}>
@@ -60,6 +65,55 @@ export function Sidebar(): JSX.Element {
         </Tooltip>
       </div>
       <div className={cn('flex flex-col gap-2')}>
+        {cloudSyncEnabled ? (
+          <Popover>
+            <PopoverTrigger>
+              {status?.status === 'syncing' ? (
+                <Button
+                  variant="ghost"
+                  size={'icon'}
+                  className={cn('min-h-0 min-w-0 p-2 non-draggable')}
+                >
+                  <span className={cn('icon-[mdi--cloud-sync-outline] w-5 h-5')}></span>
+                </Button>
+              ) : status?.status === 'success' ? (
+                <Button
+                  variant="ghost"
+                  size={'icon'}
+                  className={cn('min-h-0 min-w-0 p-2 non-draggable')}
+                >
+                  <span className={cn('icon-[mdi--cloud-check-outline] w-5 h-5')}></span>
+                </Button>
+              ) : status?.status === 'error' ? (
+                <Button
+                  variant="ghost"
+                  size={'icon'}
+                  className={cn('min-h-0 min-w-0 p-2 non-draggable')}
+                >
+                  <span className={cn('icon-[mdi--cloud-remove-outline] w-5 h-5')}></span>
+                </Button>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size={'icon'}
+                  className={cn('min-h-0 min-w-0 p-2 non-draggable')}
+                >
+                  <span className={cn('icon-[mdi--cloud-outline] w-5 h-5')}></span>
+                </Button>
+              )}
+            </PopoverTrigger>
+            <PopoverContent side="right">
+              <CloudSyncInfo isWithAction className={cn('text-sm')} />
+            </PopoverContent>
+          </Popover>
+        ) : (
+          <Tooltip>
+            <TooltipTrigger>
+              <span className={cn('icon-[mdi--cloud-cancel-outline] w-5 h-5')}></span>
+            </TooltipTrigger>
+            <TooltipContent side="right">云同步未开启</TooltipContent>
+          </Tooltip>
+        )}
         <DropdownMenu>
           <Tooltip>
             <TooltipTrigger>

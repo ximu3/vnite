@@ -9,7 +9,7 @@ export default defineConfig({
         '~': resolve('src/main')
       }
     },
-    plugins: [externalizeDepsPlugin({ exclude: ['lowdb'] })]
+    plugins: [externalizeDepsPlugin({ exclude: ['lowdb', 'webdav'] })]
   },
   preload: {
     resolve: {
@@ -17,7 +17,7 @@ export default defineConfig({
         '~': resolve('src/main')
       }
     },
-    plugins: [externalizeDepsPlugin({ exclude: ['lowdb'] })]
+    plugins: [externalizeDepsPlugin({ exclude: ['lowdb', 'webdav'] })]
   },
   renderer: {
     resolve: {
