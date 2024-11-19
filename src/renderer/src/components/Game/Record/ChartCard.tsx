@@ -1,7 +1,7 @@
 import { Card } from '@ui/card'
 import { DateInput } from '@ui/date-input'
 import { cn } from '~/utils'
-import { useGameTimers } from '~/hooks'
+import { useGameRecords } from '~/hooks'
 import { useState, useEffect } from 'react'
 import { TimerChart } from './TimerChart'
 import { isEqual } from 'lodash'
@@ -13,7 +13,7 @@ export function ChartCard({
   gameId: string
   className?: string
 }): JSX.Element {
-  const { getGamePlayTimeByDateRange, getGameStartAndEndDate } = useGameTimers()
+  const { getGamePlayTimeByDateRange, getGameStartAndEndDate } = useGameRecords()
   const timers = getGameStartAndEndDate(gameId)
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')

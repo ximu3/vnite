@@ -10,16 +10,23 @@ import {
   SelectTrigger,
   SelectValue
 } from '@ui/select'
-import { useGameIndexManager, useGameTimers } from '~/hooks'
+import { useGameIndexManager, useGameRecords, useDBSyncedState } from '~/hooks'
 import { GamePoster } from './posters/GamePoster'
 import { useEffect, useState } from 'react'
 
 export function AllGames(): JSX.Element {
-  const [by, setBy] = useState('name')
-  const [order, setOrder] = useState<'asc' | 'desc'>('desc')
+  const [by, setBy] = useDBSyncedState<
+    'name' | 'releaseDate' | 'lastRunDate' | 'addDate' | 'playingTime'
+  >('name', 'config.json', ['others', 'showcase', 'sort', 'by'])
+  const [order, setOrder] = useDBSyncedState<'desc' | 'asc'>('desc', 'config.json', [
+    'others',
+    'showcase',
+    'sort',
+    'order'
+  ])
   const { sort } = useGameIndexManager()
   const [games, setGames] = useState(sort(by, order))
-  const { getSortedGameIds } = useGameTimers()
+  const { getSortedGameIds } = useGameRecords()
   const toggleOrder = (): void => {
     setOrder(order === 'asc' ? 'desc' : 'asc')
   }

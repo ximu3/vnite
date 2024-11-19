@@ -2,9 +2,12 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { ipcInvoke, ipcOnUnique } from '~/utils'
 
 // 定义类型
-interface TimerEntry {
-  start: string
-  end: string
+interface Record {
+  playingTime: number
+  timer: {
+    start: string
+    end: string
+  }[]
 }
 
 interface MaxPlayTimeDay {
@@ -12,72 +15,63 @@ interface MaxPlayTimeDay {
   playingTime: number
 }
 
-interface GameTimers {
-  [gameId: string]: TimerEntry[]
+interface GameRecords {
+  [gameId: string]: Record
 }
 
-interface GameTimersHook {
-  gameTimers: GameTimers
+interface GameRecordsHook {
+  gameRecords: GameRecords
   getGamePlayingTime: (gameId: string) => number
   getGamePlayingTimeFormatted: (gameId: string) => string
   getGamePlayTimeByDateRange: (
     gameId: string,
     startDate: string,
     endDate: string
-  ) => Record<string, number>
+  ) => { [date: string]: number }
   getGamePlayDays: (gameId: string) => number
   getGameMaxPlayTimeDay: (gameId: string) => MaxPlayTimeDay | null
-  getGameTimer: (gameId: string) => TimerEntry[]
+  getGameRecord: (gameId: string) => Record
   getGameStartAndEndDate: (gameId: string) => { start: string; end: string }
   getSortedGameIds: (order: 'asc' | 'desc') => string[]
 }
 
 // 自定义 Hook
-export const useGameTimers = (): GameTimersHook => {
-  const [gameTimers, setGameTimers] = useState<GameTimers>({})
+export const useGameRecords = (): GameRecordsHook => {
+  const [gameRecords, setGameRecords] = useState<GameRecords>({})
 
   // 获取计时器数据的函数
-  const fetchTimers = useCallback(async (): Promise<void> => {
+  const fetchRecords = useCallback(async (): Promise<void> => {
     try {
-      const timers = (await ipcInvoke('get-games-timerdata')) as GameTimers
-      setGameTimers(timers)
+      const records = (await ipcInvoke('get-games-record-data')) as GameRecords
+      setGameRecords(records)
     } catch (error) {
-      console.error('Failed to fetch games timers:', error)
+      console.error('Failed to fetch games records:', error)
     }
   }, [])
 
   useEffect(() => {
     // 初始化时获取数据
-    fetchTimers()
+    fetchRecords()
 
     // 监听更新信号
-    const handleTimerUpdate = (): void => {
-      fetchTimers()
+    const handleRecordUpdate = (): void => {
+      fetchRecords()
     }
 
     // 注册 IPC 监听器
-    const removeListener = ipcOnUnique('timer-update', handleTimerUpdate)
+    const removeListener = ipcOnUnique('record-update', handleRecordUpdate)
 
     // 清理函数
     return (): void => {
       removeListener()
     }
-  }, [fetchTimers])
+  }, [fetchRecords])
 
   const getGamePlayingTime = useCallback(
     (gameId: string): number => {
-      const gameTimer = gameTimers[gameId]
-      if (!gameTimer) {
-        return 0
-      }
-
-      return gameTimer.reduce((acc, timer) => {
-        const startingTime = new Date(timer.start).getTime()
-        const endingTime = new Date(timer.end).getTime()
-        return acc + (endingTime - startingTime)
-      }, 0)
+      return gameRecords[gameId]?.playingTime || 0
     },
-    [gameTimers]
+    [gameRecords]
   )
 
   const getGamePlayingTimeFormatted = useCallback(
@@ -103,13 +97,13 @@ export const useGameTimers = (): GameTimersHook => {
     [date: string]: number
   }
 
-  const calculateDailyPlayTime = (date: Date, timers: TimerEntry[]): number => {
+  const calculateDailyPlayTime = (date: Date, record: Record): number => {
     const dayStart = new Date(date)
     dayStart.setHours(0, 0, 0, 0)
     const dayEnd = new Date(date)
     dayEnd.setHours(23, 59, 59, 999)
 
-    return timers.reduce((totalPlayTime, timer) => {
+    return record.timer.reduce((totalPlayTime, timer) => {
       const timerStart = new Date(timer.start)
       const timerEnd = new Date(timer.end)
 
@@ -126,8 +120,8 @@ export const useGameTimers = (): GameTimersHook => {
   // 使用 calculateDailyPlayTime 函数来计算日期范围内的游玩时间
   const getGamePlayTimeByDateRange = useCallback(
     (gameId: string, startDate: string, endDate: string): DailyPlayTime => {
-      const gameTimer = gameTimers[gameId]
-      if (!gameTimer || gameTimer.length === 0) {
+      const gameRecord = gameRecords[gameId]
+      if (!gameRecord?.timer || gameRecord?.timer.length === 0) {
         return {}
       }
 
@@ -139,27 +133,27 @@ export const useGameTimers = (): GameTimersHook => {
       while (current <= end) {
         const dateStr = current.toISOString().split('T')[0]
         // 直接使用指定游戏的计时器数据
-        const dayPlayTime = calculateDailyPlayTime(current, gameTimer)
+        const dayPlayTime = calculateDailyPlayTime(current, gameRecord)
         result[dateStr] = dayPlayTime
         current.setDate(current.getDate() + 1)
       }
 
       return result
     },
-    [gameTimers]
+    [gameRecords]
   )
 
   const getGamePlayDays = useCallback(
     (gameId: string): number => {
-      const gameTimer = gameTimers[gameId]
-      if (!gameTimer || gameTimer.length === 0) {
+      const gameRecord = gameRecords[gameId]
+      if (!gameRecord?.timer || gameRecord?.timer.length === 0) {
         return 0
       }
 
       // 使用 Set 来存储不重复的日期
       const playDays = new Set<string>()
 
-      gameTimer.forEach((timer) => {
+      gameRecord.timer.forEach((timer) => {
         // 获取开始时间的日期部分
         const startDay = timer.start.split('T')[0]
         // 获取结束时间的日期部分
@@ -187,19 +181,19 @@ export const useGameTimers = (): GameTimersHook => {
 
       return playDays.size
     },
-    [gameTimers]
+    [gameRecords]
   )
 
   const getGameMaxPlayTimeDay = useCallback(
     (gameId: string): MaxPlayTimeDay | null => {
-      const gameTimer = gameTimers[gameId]
-      if (!gameTimer || gameTimer.length === 0) {
+      const gameRecord = gameRecords[gameId]
+      if (!gameRecord?.timer || gameRecord?.timer.length === 0) {
         return null
       }
 
       // 获取所有游戏记录的日期范围
       const allDates = new Set<string>()
-      gameTimer.forEach((timer) => {
+      gameRecord.timer.forEach((timer) => {
         const start = new Date(timer.start)
         const end = new Date(timer.end)
         const current = new Date(start)
@@ -216,7 +210,7 @@ export const useGameTimers = (): GameTimersHook => {
 
       allDates.forEach((dateStr) => {
         const currentDate = new Date(dateStr)
-        const playTime = calculateDailyPlayTime(currentDate, gameTimer)
+        const playTime = calculateDailyPlayTime(currentDate, gameRecord)
 
         if (playTime > maxTime) {
           maxDate = dateStr
@@ -233,20 +227,20 @@ export const useGameTimers = (): GameTimersHook => {
         playingTime: maxTime
       }
     },
-    [gameTimers]
+    [gameRecords]
   )
 
-  const getGameTimer = useCallback(
-    (gameId: string): TimerEntry[] => {
-      return gameTimers[gameId] || []
+  const getGameRecord = useCallback(
+    (gameId: string): Record => {
+      return gameRecords[gameId] || []
     },
-    [gameTimers]
+    [gameRecords]
   )
 
   const getGameStartAndEndDate = useCallback(
     (gameId: string): { start: string; end: string } => {
-      const gameTimer = gameTimers[gameId]
-      if (!gameTimer || gameTimer.length === 0) {
+      const gameRecord = gameRecords[gameId]
+      if (!gameRecord?.timer || gameRecord?.timer.length === 0) {
         return { start: '', end: '' }
       }
 
@@ -257,20 +251,20 @@ export const useGameTimers = (): GameTimersHook => {
         return `${year}-${month}-${day}`
       }
 
-      const start = new Date(gameTimer[0].start)
-      const end = new Date(gameTimer[gameTimer.length - 1].end)
+      const start = new Date(gameRecord.timer[0].start)
+      const end = new Date(gameRecord.timer[gameRecord.timer.length - 1].end)
 
       return {
         start: formatDate(start),
         end: formatDate(end)
       }
     },
-    [gameTimers]
+    [gameRecords]
   )
 
   const getSortedGameIds = useCallback(
     (order: 'asc' | 'desc'): string[] => {
-      return Object.keys(gameTimers).sort((a, b) => {
+      return Object.keys(gameRecords).sort((a, b) => {
         const timeA = getGamePlayingTime(a)
         const timeB = getGamePlayingTime(b)
 
@@ -283,29 +277,29 @@ export const useGameTimers = (): GameTimersHook => {
         return 0
       })
     },
-    [gameTimers, getGamePlayingTime]
+    [gameRecords, getGamePlayingTime]
   )
 
   return useMemo(
     () => ({
-      gameTimers,
+      gameRecords,
       getGamePlayingTime,
       getGamePlayingTimeFormatted,
       getGamePlayTimeByDateRange,
       getGamePlayDays,
       getGameMaxPlayTimeDay,
-      getGameTimer,
+      getGameRecord,
       getGameStartAndEndDate,
       getSortedGameIds
     }),
     [
-      gameTimers,
+      gameRecords,
       getGamePlayingTime,
       getGamePlayingTimeFormatted,
       getGamePlayTimeByDateRange,
       getGamePlayDays,
       getGameMaxPlayTimeDay,
-      getGameTimer,
+      getGameRecord,
       getGameStartAndEndDate,
       getSortedGameIds
     ]

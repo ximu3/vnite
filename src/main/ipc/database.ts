@@ -3,7 +3,7 @@ import {
   setDBValue,
   getDBValue,
   getGamesMetadata,
-  getGamesTimerdata,
+  getGamesRecordData,
   backupGameSaveData,
   restoreGameSaveData,
   deleteGameSaveData,
@@ -37,8 +37,8 @@ export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
     await deleteGameSaveData(gameId, saveId)
   })
 
-  ipcMain.handle('get-games-timerdata', async () => {
-    return await getGamesTimerdata()
+  ipcMain.handle('get-games-record-data', async () => {
+    return await getGamesRecordData()
   })
 
   ipcMain.handle('delete-game-from-db', async (_, gameId: string) => {

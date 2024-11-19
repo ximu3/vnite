@@ -1,6 +1,6 @@
 import { Card } from '@ui/card'
 import { cn } from '~/utils'
-import { useGameTimers, useDBSyncedState } from '~/hooks'
+import { useGameRecords, useDBSyncedState } from '~/hooks'
 import { formatTimeToChinese, formatDateToChinese } from '~/utils'
 
 export function RecordCard({
@@ -11,11 +11,12 @@ export function RecordCard({
   className?: string
 }): JSX.Element {
   const [addDate] = useDBSyncedState('', `games/${gameId}/record.json`, ['addDate'])
-  const { gameTimers, getGamePlayDays, getGamePlayingTime, getGameMaxPlayTimeDay } = useGameTimers()
+  const { getGameMaxPlayTimeDay, getGamePlayDays } = useGameRecords()
   const playDays = getGamePlayDays(gameId)
-  const playingTime = getGamePlayingTime(gameId)
-  const equalPlayingTime = getGamePlayingTime(gameId) / getGamePlayDays(gameId)
-  const lastRunDate = gameTimers[gameId]?.at(-1)?.start
+  const [playingTime] = useDBSyncedState(0, `games/${gameId}/record.json`, ['playingTime'])
+  const [timer] = useDBSyncedState([], `games/${gameId}/record.json`, ['timer']) as any
+  const equalPlayingTime = playingTime / playDays
+  const lastRunDate = timer[timer.length - 1]?.start
   const maxPlayTimeDay = getGameMaxPlayTimeDay(gameId)
   return (
     <Card className={cn(className, 'p-3 w-auto')}>

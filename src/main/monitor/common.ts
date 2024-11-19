@@ -151,7 +151,7 @@ export class GameMonitor {
 
   constructor(options: GameMonitorOptions) {
     this.options = {
-      checkInterval: 2000,
+      checkInterval: 1000,
       executableExtensions: ['.exe', '.bat', '.cmd'],
       ...options
     }
@@ -429,6 +429,14 @@ export class GameMonitor {
     })
     await setDBValue(`games/${this.options.gameId}/record.json`, ['timer'], timer)
     await setDBValue(`games/${this.options.gameId}/record.json`, ['lastRunDate'], this.endTime)
+
+    let playingTime = await getDBValue(
+      `games/${this.options.gameId}/record.json`,
+      ['playingTime'],
+      0
+    )
+    playingTime += new Date(this.endTime).getTime() - new Date(this.startTime!).getTime()
+    await setDBValue(`games/${this.options.gameId}/record.json`, ['playingTime'], playingTime)
 
     // 停止监控
     this.stop()

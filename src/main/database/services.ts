@@ -1,7 +1,7 @@
 import { setValue, getValue } from './common'
 import { getDataPath } from '~/utils'
 import { getMetadata } from './metadata'
-import { getTimerdata } from './timer'
+import { getRecordData } from './record'
 import { backupGameSave, restoreGameSave, deleteGameSave } from './save'
 import { deleteGame } from './utils'
 import { backupDatabase, restoreDatabase } from './backup'
@@ -51,14 +51,14 @@ export async function getGamesMetadata(): Promise<any> {
 }
 
 /**
- * Get the timer data of the games
- * @returns A promise that resolves with the timer data of the games.
+ * Get the record data of the games
+ * @returns A promise that resolves with the record data of the games.
  */
-export async function getGamesTimerdata(): Promise<any> {
+export async function getGamesRecordData(): Promise<any> {
   try {
-    return await getTimerdata()
+    return await getRecordData()
   } catch (error) {
-    log.error('Failed to get timer data for games', error)
+    log.error('Failed to get record data for games', error)
   }
 }
 

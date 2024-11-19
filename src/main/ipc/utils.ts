@@ -1,4 +1,5 @@
 import { ipcMain, BrowserWindow, OpenDialogOptions } from 'electron'
+import { trayManager } from '../index'
 import {
   generateUUID,
   selectPathDialog,
@@ -6,7 +7,8 @@ import {
   openPathInExplorer,
   openGameDBPathInExplorer,
   createGameShortcut,
-  openDatabasePathInExplorer
+  openDatabasePathInExplorer,
+  updateOpenAtLogin
 } from '~/utils'
 
 export function setupUtilsIPC(mainWindow: BrowserWindow): void {
@@ -58,6 +60,14 @@ export function setupUtilsIPC(mainWindow: BrowserWindow): void {
 
   ipcMain.handle('create-game-shortcut', async (_, gameId: string, targetPath: string) => {
     await createGameShortcut(gameId, targetPath)
+  })
+
+  ipcMain.handle('update-open-at-login', async () => {
+    await updateOpenAtLogin()
+  })
+
+  ipcMain.handle('update-tray-config', async () => {
+    await trayManager.updateConfig()
   })
 
   mainWindow.on('maximize', () => {

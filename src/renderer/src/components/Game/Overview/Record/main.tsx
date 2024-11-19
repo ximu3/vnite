@@ -1,6 +1,6 @@
 import { cn } from '~/utils'
 import { RecordCard } from './RecordCard'
-import { useDBSyncedState, useGameTimers } from '~/hooks'
+import { useDBSyncedState } from '~/hooks'
 import {
   formatTimeToChinese,
   formatDateToISO,
@@ -12,8 +12,7 @@ export function Record({ gameId }: { gameId: string }): JSX.Element {
   const [lastRunDate] = useDBSyncedState('', `games/${gameId}/record.json`, ['lastRunDate'])
   const [playStatus] = useDBSyncedState('unplayed', `games/${gameId}/record.json`, ['playStatus'])
   const [score] = useDBSyncedState('', `games/${gameId}/record.json`, ['score'])
-  const { getGamePlayingTime } = useGameTimers()
-  const playingTime = getGamePlayingTime(gameId)
+  const [playingTime] = useDBSyncedState(0, `games/${gameId}/record.json`, ['playingTime'])
   return (
     <div className={cn('flex flex-row gap-5', '3xl:gap-7')}>
       <RecordCard

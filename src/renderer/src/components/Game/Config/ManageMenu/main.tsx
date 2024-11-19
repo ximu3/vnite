@@ -10,6 +10,7 @@ import {
 import { useDBSyncedState } from '~/hooks'
 import { ipcInvoke } from '~/utils'
 import { NameEditorDialog } from './NameEditorDialog'
+import { PlayingTimeEditorDialog } from './PlayingTimeEditorDialog'
 import { DeleteGameAlert } from './DeleteGameAlert'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -19,6 +20,7 @@ export function ManageMenu({ gameId }: { gameId: string }): JSX.Element {
   const [gamePath] = useDBSyncedState('', `games/${gameId}/path.json`, ['gamePath'])
   const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
   const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = useState(false)
+  const [isPlayingTimeEditorDialogOpen, setIsPlayingTimeEditorDialogOpen] = useState(false)
   const { setIsOpen, setDbId, setName } = useGameAdderStore()
   return (
     <DropdownMenuGroup>
@@ -40,6 +42,20 @@ export function ManageMenu({ gameId }: { gameId: string }): JSX.Element {
                 重命名
               </DropdownMenuItem>
             </NameEditorDialog>
+            <PlayingTimeEditorDialog
+              gameId={gameId}
+              isOpen={isPlayingTimeEditorDialogOpen}
+              setIsOpen={setIsPlayingTimeEditorDialogOpen}
+            >
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.preventDefault()
+                  setIsPlayingTimeEditorDialogOpen(true)
+                }}
+              >
+                修改游玩时间
+              </DropdownMenuItem>
+            </PlayingTimeEditorDialog>
             <DropdownMenuItem
               onClick={() => {
                 setDbId(gameId)

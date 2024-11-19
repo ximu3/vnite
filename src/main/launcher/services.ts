@@ -1,4 +1,4 @@
-import { defaultPreset } from './preset'
+import { defaultPreset, lePreset } from './preset'
 import { getDBValue } from '../database'
 import { fileLuancher, urlLauncher, scriptLauncher } from './common'
 import log from 'electron-log/main.js'
@@ -7,6 +7,8 @@ export async function launcherPreset(presetName: string, gameId: string): Promis
   try {
     if (presetName === 'default') {
       await defaultPreset(gameId)
+    } else if (presetName === 'le') {
+      await lePreset(gameId)
     }
   } catch (error) {
     log.error(`Failed to set preset for ${gameId}`, error)

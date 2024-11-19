@@ -53,18 +53,20 @@ export function CloudSync(): JSX.Element {
   }
   return (
     <div className={cn('flex flex-col gap-5')}>
-      <Card className={cn('group')}>
-        <CardHeader>
-          <CardTitle className={cn('relative')}>
-            <div className={cn('flex flex-row justify-between items-center')}>
-              <div className={cn('flex items-center')}>云同步信息</div>
-            </div>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className={cn('')}>
-          <CloudSyncInfo />
-        </CardContent>
-      </Card>
+      {enabled && (
+        <Card className={cn('group')}>
+          <CardHeader>
+            <CardTitle className={cn('relative')}>
+              <div className={cn('flex flex-row justify-between items-center')}>
+                <div className={cn('flex items-center')}>云同步信息</div>
+              </div>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className={cn('')}>
+            <CloudSyncInfo />
+          </CardContent>
+        </Card>
+      )}
       <Card className={cn('group')}>
         <CardHeader>
           <CardTitle className={cn('relative')}>

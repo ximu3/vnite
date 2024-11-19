@@ -9,6 +9,7 @@ import {
 import { useDBSyncedState } from '~/hooks'
 import { ipcInvoke } from '~/utils'
 import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
+import { PlayingTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayingTimeEditorDialog'
 import { DeleteGameAlert } from '~/components/Game/Config/ManageMenu/DeleteGameAlert'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -19,6 +20,7 @@ export function ManageMenu({ gameId }: { gameId: string }): JSX.Element {
   const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
   const { setIsOpen, setDbId, setName } = useGameAdderStore()
   const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = useState(false)
+  const [isPlayingTimeEditorDialogOpen, setIsPlayingTimeEditorDialogOpen] = useState(false)
 
   return (
     <ContextMenuGroup>
@@ -39,6 +41,21 @@ export function ManageMenu({ gameId }: { gameId: string }): JSX.Element {
               重命名
             </ContextMenuItem>
           </NameEditorDialog>
+
+          <PlayingTimeEditorDialog
+            gameId={gameId}
+            isOpen={isPlayingTimeEditorDialogOpen}
+            setIsOpen={setIsPlayingTimeEditorDialogOpen}
+          >
+            <ContextMenuItem
+              onClick={(e) => {
+                e.preventDefault()
+                setIsPlayingTimeEditorDialogOpen(true)
+              }}
+            >
+              修改游玩时间
+            </ContextMenuItem>
+          </PlayingTimeEditorDialog>
 
           <ContextMenuItem
             onClick={() => {

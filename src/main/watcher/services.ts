@@ -23,12 +23,13 @@ export async function setupWatcher(mainWindow: BrowserWindow): Promise<void> {
         'launcher.json',
         'path.json',
         'save.json',
+        'config.json',
         ...imageFullNames
       ],
       mainWindow
     )
     await setupDBWatcher(['record.json'], mainWindow, () =>
-      mainWindow.webContents.send('timer-update')
+      mainWindow.webContents.send('record-update')
     )
     indexWatcher = new Watcher('games', await getDataPath('games'), mainWindow, () =>
       mainWindow.webContents.send('rebuild-index')

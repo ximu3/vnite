@@ -1,5 +1,5 @@
 import fse from 'fs-extra'
-import { shell } from 'electron'
+import { shell, app } from 'electron'
 import path from 'path'
 import { getDataPath } from './path'
 import { getDBValue } from '~/database'
@@ -8,6 +8,28 @@ import log from 'electron-log/main.js'
 import sharp from 'sharp'
 import pngToIco from 'png-to-ico'
 import { getAppTempPath } from './path'
+
+export async function setupOpenAtLogin(): Promise<void> {
+  try {
+    const isEnabled = await getDBValue('config.json', ['general', 'openAtLogin'], false)
+    app.setLoginItemSettings({
+      openAtLogin: isEnabled
+    })
+  } catch (error) {
+    log.error('Error toggling open at login:', error)
+  }
+}
+
+export async function updateOpenAtLogin(): Promise<void> {
+  try {
+    const isEnabled = await getDBValue('config.json', ['general', 'openAtLogin'], false)
+    app.setLoginItemSettings({
+      openAtLogin: isEnabled
+    })
+  } catch (error) {
+    log.error('Error setting open at login:', error)
+  }
+}
 
 export async function openPathInExplorer(filePath: string): Promise<void> {
   try {

@@ -1,5 +1,5 @@
 export * from './collections'
 export * from './gameIndex'
 export * from './dbSyncStore'
-export * from './timers'
+export * from './records'
 export * from './mediaSyncStore'

@@ -4,7 +4,7 @@ import { HoverCardAnimation } from '~/components/animations/HoverCard'
 import { cn } from '~/utils'
 import { GameNavCM } from '~/components/contextMenu/GameNavCM'
 import { useNavigate } from 'react-router-dom'
-import { useGameMedia, useGameIndexManager, useGameTimers, useDBSyncedState } from '~/hooks'
+import { useGameMedia, useGameIndexManager, useDBSyncedState } from '~/hooks'
 import { formatTimeToChinese, formatDateToChinese } from '~/utils'
 
 export function GamePoster({
@@ -21,8 +21,7 @@ export function GamePoster({
   const { mediaUrl: background } = useGameMedia({ gameId, type: 'background', noToastError: true })
   const { gameIndex } = useGameIndexManager()
   const gameData = gameIndex.get(gameId)
-  const { getGamePlayingTime } = useGameTimers()
-  const playingTime = getGamePlayingTime(gameId)
+  const [playingTime] = useDBSyncedState(0, `games/${gameId}/record.json`, ['playingTime'])
   const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
 
   return (

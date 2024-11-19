@@ -55,12 +55,12 @@ export class CloudSyncService {
         if (this.validateCloudSyncConfig(config.cloudSync.config)) {
           this.instance = await setupCloudSync(config.cloudSync.config, mainWindow)
 
-          // 设置定期同步（每5分钟）
+          // 设置定期同步（每10分钟）
           setInterval(
             () => {
               this.sync().catch(console.error)
             },
-            5 * 60 * 1000
+            10 * 60 * 1000
           )
 
           // 首次同步(等待渲染进程准备好)

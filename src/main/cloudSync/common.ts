@@ -739,32 +739,6 @@ export class CloudSync {
   }
 
   /**
-   * 获取设备ID
-   */
-  private async getDeviceId(): Promise<string> {
-    const deviceIdPath = await getDataPath(CloudSync.DEVICE_ID_FILE)
-
-    try {
-      // 尝试读取现有的设备ID
-      if (fse.existsSync(deviceIdPath)) {
-        const data = fse.readJsonSync(deviceIdPath)
-        if (data.deviceId) {
-          return data.deviceId
-        }
-      }
-
-      // 如果不存在，创建新的设备ID
-      const deviceId = crypto.randomUUID()
-      fse.writeJsonSync(deviceIdPath, { deviceId }, { spaces: 2 })
-      return deviceId
-    } catch (error) {
-      console.error('Failed to get/create device ID:', error)
-      // 如果出现错误，生成一个临时ID
-      return `temp-${Date.now()}-${crypto.randomUUID()}`
-    }
-  }
-
-  /**
    * 更新同步状态
    */
   private updateSyncStatus(status: SyncStatus): void {

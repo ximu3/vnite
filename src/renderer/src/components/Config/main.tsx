@@ -3,6 +3,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
 import { cn } from '~/utils'
 import { Database } from './Database'
 import { CloudSync } from './CloudSync'
+import { General } from './General'
+import { Advanced } from './Advanced'
 
 export function ConfigDialog({ children }: { children: React.ReactNode }): JSX.Element {
   return (
@@ -27,8 +29,12 @@ export function ConfigDialog({ children }: { children: React.ReactNode }): JSX.E
               数据库
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="general"></TabsContent>
-          <TabsContent value="advanced"></TabsContent>
+          <TabsContent value="general">
+            <General />
+          </TabsContent>
+          <TabsContent value="advanced">
+            <Advanced />
+          </TabsContent>
           <TabsContent value="cloudSync">
             <CloudSync />
           </TabsContent>

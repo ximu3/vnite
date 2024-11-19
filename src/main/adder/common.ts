@@ -49,6 +49,7 @@ export async function addGameToDB(
     window.webContents.send('reload-db-values', `games/${dbId}/cover.webp`)
     window.webContents.send('reload-db-values', `games/${dbId}/background.webp`)
     window.webContents.send('reload-db-values', `games/${dbId}/icon.png`)
+    window.webContents.send('rebuild-index')
   })
 }
 

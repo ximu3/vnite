@@ -6,10 +6,18 @@ import { setupIPC } from './ipc'
 import log from 'electron-log/main.js'
 import { getLogsPath } from './utils'
 import { setupWatcher, stopWatcher } from './watcher'
-import { setupProtocols, setupTempDirectory } from './utils'
+import {
+  setupProtocols,
+  setupTempDirectory,
+  setupOpenAtLogin,
+  setupTray,
+  TrayManager
+} from './utils'
 import { initializeCloudsyncServices } from './cloudSync'
 
 let mainWindow: BrowserWindow
+
+export let trayManager: TrayManager
 
 log.initialize()
 
@@ -24,6 +32,7 @@ function createWindow(): void {
     minHeight: 900,
     show: false,
     frame: false,
+    icon: icon,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
@@ -71,6 +80,9 @@ app.whenReady().then(async () => {
 
   createWindow()
 
+  // Setup tray
+  trayManager = await setupTray(mainWindow)
+
   // Watch for changes in the data directory
   await setupWatcher(mainWindow)
 
@@ -78,6 +90,9 @@ app.whenReady().then(async () => {
 
   // Setup temporary directory
   await setupTempDirectory()
+
+  // Setup open at login
+  await setupOpenAtLogin()
 
   // Initialize cloud sync services
   await initializeCloudsyncServices()
