@@ -4,6 +4,7 @@ import { setMedia } from '~/media'
 import { generateUUID, selectPathDialog, getFirstLevelSubfolders, getDataPath } from '~/utils'
 import { BrowserWindow } from 'electron'
 import { launcherPreset } from '~/launcher'
+import { setupWatcher, stopWatcher } from '~/watcher'
 
 export async function addGameToDB(
   dataSource: string,
@@ -44,13 +45,18 @@ export async function addGameToDB(
 
   await setDBValue(`games/${dbId}/record.json`, ['addDate'], new Date().toISOString())
 
-  const windows = BrowserWindow.getAllWindows()
-  windows.forEach((window) => {
-    window.webContents.send('reload-db-values', `games/${dbId}/cover.webp`)
-    window.webContents.send('reload-db-values', `games/${dbId}/background.webp`)
-    window.webContents.send('reload-db-values', `games/${dbId}/icon.png`)
-    window.webContents.send('rebuild-index')
-  })
+  const mainWindow = BrowserWindow.getAllWindows()[0]
+
+  stopWatcher()
+
+  await setupWatcher(mainWindow)
+
+  mainWindow.webContents.send('reload-db-values', `games/${dbId}/cover.webp`)
+  mainWindow.webContents.send('reload-db-values', `games/${dbId}/background.webp`)
+  mainWindow.webContents.send('reload-db-values', `games/${dbId}/icon.png`)
+  mainWindow.webContents.send('reload-db-values', `games/${dbId}/metadata.json`)
+  mainWindow.webContents.send('reload-db-values', `games/${dbId}/record.json`)
+  mainWindow.webContents.send('rebuild-index')
 }
 
 export async function addGameToDBWithoutMetadata(gamePath: string): Promise<void> {
@@ -64,6 +70,16 @@ export async function addGameToDBWithoutMetadata(gamePath: string): Promise<void
     name: gameName
   })
   await launcherPreset('default', dbId)
+
+  const mainWindow = BrowserWindow.getAllWindows()[0]
+
+  stopWatcher()
+
+  await setupWatcher(mainWindow)
+
+  mainWindow.webContents.send('reload-db-values', `games/${dbId}/metadata.json`)
+  mainWindow.webContents.send('reload-db-values', `games/${dbId}/record.json`)
+  mainWindow.webContents.send('rebuild-index')
 }
 
 export async function getBatchGameAdderData(): Promise<

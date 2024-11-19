@@ -15,6 +15,12 @@ export interface CloudSyncConfig {
   remotePath: string // 用户自定义的远程路径
 }
 
+interface GetLatestModifiedTimeOptions {
+  maxDepth?: number
+  ignore?: string[] // 忽略的文件或目录
+  followSymlinks?: boolean
+}
+
 // 修改元数据接口
 export interface SyncMetadata {
   version: string
@@ -235,7 +241,7 @@ export class CloudSync {
       // 3. 压缩数据库文件
       const dataPath = await getDataPath('')
       await zipFolder(dataPath, tempZipPath, 'vnite-database', {
-        exclude: ['path.json']
+        exclude: ['path.json', 'device-id.json']
       })
 
       tempZipPath = path.join(tempZipPath, 'vnite-database.zip')
@@ -595,6 +601,53 @@ export class CloudSync {
     }
   }
 
+  async getLatestModifiedTime(
+    dirPath: string,
+    currentDepth: number = 0,
+    options: GetLatestModifiedTimeOptions = {}
+  ): Promise<number> {
+    const {
+      maxDepth = 3,
+      ignore = ['.git', 'node_modules', '.DS_Store'],
+      followSymlinks = false
+    } = options
+
+    if (currentDepth > maxDepth) {
+      return 0
+    }
+
+    try {
+      const entries = await fse.readdir(dirPath, { withFileTypes: true })
+      let latestTime = (await fse.stat(dirPath)).mtime.getTime()
+
+      for (const entry of entries) {
+        // 忽略指定的文件和目录
+        if (ignore.includes(entry.name)) {
+          continue
+        }
+
+        const fullPath = path.join(dirPath, entry.name)
+        const stats = await fse.stat(fullPath)
+
+        if (entry.isDirectory() || (followSymlinks && entry.isSymbolicLink())) {
+          const subdirLatestTime = await this.getLatestModifiedTime(
+            fullPath,
+            currentDepth + 1,
+            options
+          )
+          latestTime = Math.max(latestTime, subdirLatestTime)
+        } else if (entry.isFile()) {
+          latestTime = Math.max(latestTime, stats.mtime.getTime())
+        }
+      }
+
+      return latestTime
+    } catch (error) {
+      console.error(`Error getting latest modified time for ${dirPath}:`, error)
+      return 0
+    }
+  }
+
   /**
    * 同步方法
    */
@@ -620,7 +673,11 @@ export class CloudSync {
 
       // 比较本地和远程的最后修改时间
       const dataPath = await getDataPath('')
-      const localLastModified = (await fse.stat(dataPath)).mtime.getTime()
+      const localLastModified = await this.getLatestModifiedTime(dataPath, 0, {
+        maxDepth: 3,
+        ignore: ['.git', 'node_modules', '.DS_Store'],
+        followSymlinks: false
+      })
       const remoteLastModified = new Date(remoteMetadata.lastModified).getTime()
 
       if (localLastModified > remoteLastModified) {
