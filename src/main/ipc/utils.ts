@@ -8,7 +8,8 @@ import {
   openGameDBPathInExplorer,
   createGameShortcut,
   openDatabasePathInExplorer,
-  updateOpenAtLogin
+  updateOpenAtLogin,
+  getAppVersion
 } from '~/utils'
 
 export function setupUtilsIPC(mainWindow: BrowserWindow): void {
@@ -68,6 +69,10 @@ export function setupUtilsIPC(mainWindow: BrowserWindow): void {
 
   ipcMain.handle('update-tray-config', async () => {
     await trayManager.updateConfig()
+  })
+
+  ipcMain.handle('get-app-version', async () => {
+    return getAppVersion()
   })
 
   mainWindow.on('maximize', () => {

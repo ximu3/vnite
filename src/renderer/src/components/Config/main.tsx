@@ -5,6 +5,7 @@ import { Database } from './Database'
 import { CloudSync } from './CloudSync'
 import { General } from './General'
 import { Advanced } from './Advanced'
+import { About } from './About'
 
 export function ConfigDialog({ children }: { children: React.ReactNode }): JSX.Element {
   return (
@@ -15,18 +16,21 @@ export function ConfigDialog({ children }: { children: React.ReactNode }): JSX.E
           <DialogTitle>{`Vnite 设置`}</DialogTitle>
         </DialogHeader>
         <Tabs defaultValue="general" className={cn('w-full')}>
-          <TabsList className={cn('w-[330px]')}>
-            <TabsTrigger className={cn('w-1/4')} value="general">
+          <TabsList className={cn('w-[400px]')}>
+            <TabsTrigger className={cn('w-1/5')} value="general">
               通用
             </TabsTrigger>
-            <TabsTrigger className={cn('w-1/4')} value="advanced">
+            <TabsTrigger className={cn('w-1/5')} value="advanced">
               高级
             </TabsTrigger>
-            <TabsTrigger className={cn('w-1/4')} value="cloudSync">
+            <TabsTrigger className={cn('w-1/5')} value="cloudSync">
               云同步
             </TabsTrigger>
-            <TabsTrigger className={cn('w-1/4')} value="database">
+            <TabsTrigger className={cn('w-1/5')} value="database">
               数据库
+            </TabsTrigger>
+            <TabsTrigger className={cn('w-1/5')} value="about">
+              关于
             </TabsTrigger>
           </TabsList>
           <TabsContent value="general">
@@ -40,6 +44,9 @@ export function ConfigDialog({ children }: { children: React.ReactNode }): JSX.E
           </TabsContent>
           <TabsContent value="database">
             <Database />
+          </TabsContent>
+          <TabsContent value="about">
+            <About />
           </TabsContent>
         </Tabs>
       </DialogContent>

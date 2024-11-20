@@ -11,7 +11,7 @@ import { Showcase } from '~/components/Showcase'
 import { CollectionGames } from '~/components/Showcase/CollectionGames'
 import { CollectionPage } from '~/components/Showcase/CollectionPage'
 
-export function Library(): JSX.Element {
+export function Library({ className }: { className?: string }): JSX.Element {
   const { gameIndex } = useGameIndexManager()
   const { collections } = useCollections()
   const { runningGames, setRunningGames } = useRunningGames()
@@ -22,7 +22,7 @@ export function Library(): JSX.Element {
     })
   }, [])
   return (
-    <ResizablePanelGroup direction="horizontal" className={cn('w-full h-full')}>
+    <ResizablePanelGroup direction="horizontal" className={cn('w-full h-full', className)}>
       <ResizablePanel defaultSize={18} maxSize={30} minSize={12}>
         <Librarybar />
       </ResizablePanel>

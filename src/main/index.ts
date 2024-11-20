@@ -14,6 +14,7 @@ import {
   TrayManager
 } from './utils'
 import { initializeCloudsyncServices } from './cloudSync'
+import { setupUpdater } from './updater'
 
 let mainWindow: BrowserWindow
 
@@ -96,6 +97,9 @@ app.whenReady().then(async () => {
 
   // Initialize cloud sync services
   await initializeCloudsyncServices()
+
+  // Setup auto updater
+  setupUpdater(mainWindow)
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the

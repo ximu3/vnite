@@ -9,6 +9,10 @@ import sharp from 'sharp'
 import pngToIco from 'png-to-ico'
 import { getAppTempPath } from './path'
 
+export function getAppVersion(): string {
+  return app.getVersion()
+}
+
 export async function setupOpenAtLogin(): Promise<void> {
   try {
     const isEnabled = await getDBValue('config.json', ['general', 'openAtLogin'], false)
