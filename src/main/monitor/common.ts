@@ -4,17 +4,18 @@ import { ipcMain, IpcMainEvent, BrowserWindow } from 'electron'
 import { setDBValue, getDBValue } from '~/database'
 import log from 'electron-log/main.js'
 import { backupGameSaveData } from '~/database'
-import { v4 as uuidv4 } from 'uuid'
 import { exec } from 'child_process'
-import { getAppTempPath } from '~/utils'
+import iconv from 'iconv-lite'
 
 const execAsync = (command: string, options?: any): Promise<{ stdout: string; stderr: string }> => {
   return new Promise<{ stdout: string; stderr: string }>((resolve, reject) => {
-    exec(command, options, (error, stdout, stderr) => {
+    exec(command, { ...options, encoding: 'buffer' }, (error, stdout, stderr) => {
       if (error) {
         reject(error)
       } else {
-        resolve({ stdout: stdout.toString(), stderr: stderr.toString() })
+        // 将输出从GBK转换为UTF-8
+        const decodedStdout = iconv.decode(stdout, 'gbk')
+        resolve({ stdout: decodedStdout, stderr: stderr.toString() })
       }
     })
   })
@@ -28,73 +29,18 @@ async function getProcessList(): Promise<
     cmd: string
   }>
 > {
-  // 创建临时 PS1 脚本文件
-  const scriptContent = `
-    # 设置输出编码为 UTF-8
-    [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-
-    $processes = Get-Process | Select-Object Name, Id, Path, CommandLine
-    $processes | ForEach-Object {
-      $obj = @{
-        Name = $_.Name
-        Id = $_.Id
-        Path = $_.Path
-        CommandLine = $_.CommandLine
-      }
-      $obj | ConvertTo-Json -Compress
-    }
-  `
-
-  const tempScriptPath = getAppTempPath(`get-process-${uuidv4()}.ps1`)
-
   try {
-    // 写入临时脚本文件
-    await fse.writeFile(tempScriptPath, scriptContent, { encoding: 'utf8' })
-
-    // 执行 PowerShell 脚本
-    const { stdout } = await execAsync(
-      `powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "${tempScriptPath}"`,
-      { encoding: 'utf8' }
-    )
-
-    // 解析输出结果
-    const processes = stdout
-      .split('\n')
-      .filter((line) => line.trim())
-      .map((line) => {
-        try {
-          return JSON.parse(line)
-        } catch (e) {
-          console.error('解析进程信息失败:', { line, error: e })
-          return null
-        }
-      })
-      .filter((proc): proc is NonNullable<typeof proc> => proc !== null)
-      .map((proc) => ({
-        name: proc.Name || '',
-        pid: proc.Id || 0,
-        executablePath: proc.Path || '',
-        cmd: proc.CommandLine || proc.Path || ''
-      }))
-
-    // console.debug('进程列表示例:', {
-    //   总数: processes.length,
-    //   示例: processes.slice(0, 2)
-    // })
-
-    return processes
-  } catch (error) {
-    console.error('PowerShell 脚本执行失败，尝试使用 WMIC:', error)
-
-    // 回退到 WMIC 方案
+    // 执行 WMIC 命令
     const { stdout } = await execAsync(
       'wmic process get ExecutablePath,ProcessId,CommandLine,Name /FORMAT:CSV',
-      { shell: 'cmd.exe' }
+      {
+        shell: 'cmd.exe'
+      }
     )
 
     return stdout
       .split('\n')
-      .slice(1)
+      .slice(1) // 跳过标题行
       .filter(Boolean)
       .map((line) => {
         const [, executablePath, commandLine, pidStr, name] = line.split(',')
@@ -105,17 +51,13 @@ async function getProcessList(): Promise<
           executablePath:
             executablePath
               ?.trim()
-              .replace(/^["']|["']$/g, '')
-              .replace(/\\+/g, '\\') || ''
+              .replace(/^["']|["']$/g, '') // 移除引号
+              .replace(/\\+/g, '\\') || '' // 规范化路径分隔符
         }
       })
-  } finally {
-    // 清理临时脚本文件
-    try {
-      await fse.remove(tempScriptPath)
-    } catch (e) {
-      console.error('清理临时脚本文件失败:', e)
-    }
+  } catch (error) {
+    console.error('获取进程列表失败:', error)
+    throw error
   }
 }
 
@@ -182,7 +124,7 @@ export class GameMonitor {
     const retryDelay = 1000 // 1秒
 
     for (const monitored of this.monitoredProcesses) {
-      if (monitored.isRunning && monitored.pid) {
+      if (monitored.isRunning) {
         let retries = 0
         let terminated = false
 
@@ -206,67 +148,67 @@ export class GameMonitor {
   }
 
   private async terminateProcess(process: MonitoredProcess): Promise<boolean> {
-    if (!process.pid) return false
-
-    const methods = [
-      // 方法1: 使用WMIC
-      async (): Promise<void> => {
-        await execAsync(`wmic process where ProcessId=${process.pid} call terminate`)
-      },
-      // 方法2: 使用taskkill终止进程树
-      async (): Promise<void> => {
-        await execAsync(`taskkill /F /PID ${process.pid}`)
-      },
-      // 方法3: 使用taskkill
-      async (): Promise<void> => {
-        await execAsync(`taskkill /T /F /PID ${process.pid}`)
-      },
-      // 方法4: 使用PowerShell
-      async (): Promise<void> => {
-        await execAsync(`powershell -Command "Stop-Process -Id ${process.pid} -Force"`)
-      }
-    ]
-
-    for (const method of methods) {
-      try {
-        await method()
-        console.log(`进程 ${process.pid} 已成功终止`)
-        return true
-      } catch (error) {
-        const errorMessage = (error as any)?.message?.toLowerCase() || ''
-
-        // 如果进程已经不存在，认为终止成功
-        if (
-          errorMessage.includes('不存在') ||
-          errorMessage.includes('找不到') ||
-          errorMessage.includes('no process') ||
-          errorMessage.includes('cannot find')
-        ) {
-          console.log(`进程 ${process.pid} 已经不存在`)
-          return true
-        }
-
-        // 记录错误但继续尝试下一个方法
-        console.warn(`使用当前方法终止进程 ${process.pid} 失败:`, error)
-        continue
-      }
-    }
-
-    // 如果所有方法都失败，再次检查进程是否还在运行
     try {
+      // 规范化路径
+      const normalizedPath = this.normalizePath(process.path)
+      const processName = path.basename(normalizedPath)
+
+      console.log(`尝试终止进程: ${normalizedPath}`)
+
+      const methods = [
+        // 方法2: 使用 PowerShell 通过路径精确匹配
+        async (): Promise<void> => {
+          const psCommand = `Get-Process | Where-Object {$_.Path -eq '${normalizedPath}'} | Stop-Process -Force`
+          await execAsync(`powershell -Command "${psCommand}"`, {
+            encoding: 'cp936',
+            shell: 'cmd.exe'
+          })
+        }
+      ]
+
+      for (const method of methods) {
+        try {
+          await method()
+          console.log(`进程 ${processName} 已成功终止`)
+          return true
+        } catch (error) {
+          const errorMessage = (error as any)?.message?.toLowerCase() || ''
+
+          // 如果进程已经不存在，认为终止成功
+          if (
+            errorMessage.includes('不存在') ||
+            errorMessage.includes('找不到') ||
+            errorMessage.includes('no process') ||
+            errorMessage.includes('cannot find') ||
+            errorMessage.includes('没有找到进程')
+          ) {
+            console.log(`进程 ${processName} 已经不存在`)
+            return true
+          }
+
+          // 记录错误但继续尝试下一个方法
+          console.warn(`当前方法终止进程 ${processName} 失败:`, error)
+          continue
+        }
+      }
+
+      // 最后验证进程是否还在运行
       const processes = await getProcessList()
-      const processStillExists = processes.some((p) => p.pid === process.pid)
+      const processStillExists = processes.some(
+        (p) => this.normalizePath(p.executablePath) === normalizedPath
+      )
 
       if (!processStillExists) {
-        console.log(`进程 ${process.pid} 已不存在，视为终止成功`)
+        console.log(`进程 ${processName} 已不存在，视为终止成功`)
         return true
       }
-    } catch (error) {
-      console.error(`检查进程 ${process.pid} 状态时出错:`, error)
-    }
 
-    console.error(`无法终止进程 ${process.pid}，所有方法都失败`)
-    return false
+      console.error(`无法终止进程 ${processName}，所有方法都失败`)
+      return false
+    } catch (error) {
+      console.error('终止进程失败:', error)
+      return false
+    }
   }
 
   public async init(): Promise<void> {
@@ -360,6 +302,8 @@ export class GameMonitor {
       const processes = await getProcessList()
       const previousStates = this.monitoredProcesses.map((p) => p.isRunning)
 
+      // log.info(processes)
+
       for (const monitored of this.monitoredProcesses) {
         // 规范化监控的路径
         const normalizedMonitoredPath = this.normalizePath(monitored.path)
@@ -378,10 +322,9 @@ export class GameMonitor {
           )
         })
 
-        // 更新进程状态
-        // if (processInfo) {
-        //   log.info(`游戏 ${this.options.gameId} 进程 ${processInfo.pid} 正在运行`)
-        // }
+        if (processInfo) {
+          console.log(`游戏 ${this.options.gameId} 进程 ${processInfo.executablePath} 正在运行`)
+        }
         monitored.isRunning = !!processInfo
         monitored.pid = processInfo?.pid || monitored.pid
       }
