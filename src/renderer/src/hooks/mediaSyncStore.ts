@@ -75,7 +75,7 @@ export function useGameMedia({
   gameId,
   type,
   defaultProtocol = 'app',
-  noToastError = false
+  noToastError = true
 }: UseGameMediaOptions): UseGameMediaResult {
   const { setMediaData, getMediaData, updateTimestamp } = useMediaStore()
   const [isLoading, setIsLoading] = useState(true)

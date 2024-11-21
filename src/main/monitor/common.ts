@@ -365,7 +365,17 @@ export class GameMonitor {
       window.webContents.send('game-exit', this.options.gameId)
     }
 
-    const timer = await getDBValue(`games/${this.options.gameId}/record.json`, ['timer'], [{}])
+    type TimerRecord = {
+      start: string | undefined
+      end: string
+    }
+
+    const timer: TimerRecord[] = await getDBValue(
+      `games/${this.options.gameId}/record.json`,
+      ['timer'],
+      []
+    )
+
     timer.push({
       start: this.startTime,
       end: this.endTime
