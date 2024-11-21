@@ -11,9 +11,9 @@ export function Others({ fieldName }: { fieldName: string }): JSX.Element {
   const defaultValues = [...fields, 'all']
   return (
     <ScrollArea className={cn('w-full h-[700px] pr-3 -mr-3', '3xl:h-[900px]')}>
-      {defaultValues.length > 1 && (
+      {defaultValues.length > 1 ? (
         <Accordion
-          key={fieldName}
+          key={`${fieldName}_yes`}
           type="multiple"
           className={cn('w-full text-xs flex flex-col gap-2')}
           defaultValue={defaultValues}
@@ -35,6 +35,15 @@ export function Others({ fieldName }: { fieldName: string }): JSX.Element {
               </AccordionContent>
             </AccordionItem>
           ))}
+          <AllGame />
+        </Accordion>
+      ) : (
+        <Accordion
+          key={`${fieldName}_no`}
+          type="multiple"
+          className={cn('w-full text-xs flex flex-col gap-2')}
+          defaultValue={defaultValues}
+        >
           <AllGame />
         </Accordion>
       )}

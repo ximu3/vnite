@@ -45,6 +45,10 @@ export async function addGameToDB(
 
   await setDBValue(`games/${dbId}/record.json`, ['addDate'], new Date().toISOString())
 
+  await setDBValue(`games/${dbId}/launcher.json`, ['#all'], {})
+  await setDBValue(`games/${dbId}/path.json`, ['#all'], {})
+  await setDBValue(`games/${dbId}/save.json`, ['#all'], {})
+
   const mainWindow = BrowserWindow.getAllWindows()[0]
 
   stopWatcher()
