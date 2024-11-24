@@ -70,7 +70,12 @@ export function ChartCard({
               请选择在 {timers.start} 到 {timers.end} 之间的日期
             </div>
           ) : (
-            <TimerChart data={playTimeByDateRange} />
+            <Card className={cn('p-5 max-h-full rounded-[0.3rem]', '3xl:max-h-full')}>
+              <TimerChart
+                data={playTimeByDateRange}
+                className={cn('max-h-[500px] w-full -ml-3', '3xl:max-h-[680px]')}
+              />
+            </Card>
           )}
         </>
       ) : (

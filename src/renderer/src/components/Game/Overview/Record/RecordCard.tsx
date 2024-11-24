@@ -9,7 +9,7 @@ export function RecordCard({
 }: {
   title: string
   content: string
-  icon: string
+  icon?: string
   className?: string
 }): JSX.Element {
   return (

@@ -54,9 +54,14 @@ export function formatPlayStatusToChinese(status: string): string {
   }
 }
 
-export function formatScoreToChinese(score: string): string {
-  if (score === '') return '未评分'
-  return `${score} 分`
+export function formatScoreToChinese(score: number): string {
+  if (score === -1) return '未评分'
+
+  // 如果是10分，直接返回整数
+  if (score === 10) return '10 分'
+
+  // 其他分数保留1位小数
+  return `${score.toFixed(1)} 分`
 }
 
 export function formatDateToChineseWithSeconds(dateString: string): string {

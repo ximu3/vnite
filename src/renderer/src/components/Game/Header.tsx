@@ -26,8 +26,8 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
   const [playStatus, setPlayStatus] = useDBSyncedState('unplayed', `games/${gameId}/record.json`, [
     'playStatus'
   ])
-  const [score, setScore] = useDBSyncedState('', `games/${gameId}/record.json`, ['score'])
-  const [preScore, setPreScore] = useState(score)
+  const [score, setScore] = useDBSyncedState(-1, `games/${gameId}/record.json`, ['score'])
+  const [preScore, setPreScore] = useState(score.toString())
   const [isScoreDialogOpen, setIsScoreDialogOpen] = useState(false)
 
   function confirmScore(): void {
@@ -35,29 +35,25 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
 
     if (isNaN(scoreNum)) {
       toast.error('请输入有效数字')
-      setPreScore(score)
+      setPreScore(score.toString())
       return
     }
 
     if (scoreNum > 10) {
       toast.error('评分不能超过10分')
-      setPreScore(score)
+      setPreScore(score.toString())
       return
     }
 
+    // 保留1位小数，10分保持整数
     const formattedScore = scoreNum === 10 ? '10' : scoreNum.toFixed(1)
 
-    // 检查原始输入是否已经是标准格式（包括带小数点零的情况）
-    if (preScore !== formattedScore) {
-      if (Number.isInteger(scoreNum) && scoreNum < 10 && !preScore.includes('.')) {
-        toast.warning('已自动补零')
-      } else if (!preScore.endsWith('.0')) {
-        // 如果不是以 .0 结尾
-        toast.warning('已自动保留1位小数')
-      }
+    // 检查是否需要格式化，且输入不是整数
+    if (preScore !== formattedScore && !Number.isInteger(scoreNum)) {
+      toast.warning('已自动保留1位小数')
     }
 
-    setScore(formattedScore)
+    setScore(Number(formattedScore))
     setPreScore(formattedScore)
     setIsScoreDialogOpen(false)
     toast.success('评分已保存')
@@ -101,7 +97,7 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
           </SelectContent>
         </Select>
 
-        <Dialog open={isScoreDialogOpen}>
+        <Dialog open={isScoreDialogOpen} onOpenChange={setIsScoreDialogOpen}>
           <DialogTrigger asChild>
             <Button
               variant="outline"
@@ -109,7 +105,7 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
               className="non-draggable"
               onClick={() => {
                 setIsScoreDialogOpen(true)
-                setPreScore(score)
+                setPreScore(score.toString())
               }}
             >
               <span className={cn('icon-[mdi--starburst-edit-outline] w-4 h-4')}></span>

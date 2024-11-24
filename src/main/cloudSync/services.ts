@@ -4,6 +4,7 @@ import fse from 'fs-extra'
 import { CloudSync, setupCloudSync } from './common'
 import type { CloudSyncConfig, SyncMetadata } from './common'
 import { getDataPath } from '~/utils'
+import log from 'electron-log/main.js'
 
 interface AppConfig {
   cloudSync?: {
@@ -74,7 +75,7 @@ export class CloudSyncService {
         console.log('Cloud sync is not enabled')
       }
     } catch (error) {
-      console.error('Failed to setup cloud sync service:', error)
+      log.error('Failed to setup cloud sync service:', error)
     }
   }
 
@@ -91,7 +92,7 @@ export class CloudSyncService {
       }
       return { cloudSync: { enabled: false } }
     } catch (error) {
-      console.error('Failed to read app config:', error)
+      log.error('Failed to read app config:', error)
       return { cloudSync: { enabled: false } }
     }
   }
@@ -132,10 +133,14 @@ export class CloudSyncService {
    * 执行同步
    */
   static async sync(): Promise<void> {
-    if (!this.instance) {
-      throw new Error('Cloud sync is not initialized')
+    try {
+      if (!this.instance) {
+        throw new Error('Cloud sync is not initialized')
+      }
+      await this.instance.sync()
+    } catch (error) {
+      log.error('Failed to sync cloud:', error)
     }
-    await this.instance.sync()
   }
 
   /**

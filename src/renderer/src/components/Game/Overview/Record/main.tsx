@@ -11,7 +11,7 @@ import {
 export function Record({ gameId }: { gameId: string }): JSX.Element {
   const [lastRunDate] = useDBSyncedState('', `games/${gameId}/record.json`, ['lastRunDate'])
   const [playStatus] = useDBSyncedState('unplayed', `games/${gameId}/record.json`, ['playStatus'])
-  const [score] = useDBSyncedState('', `games/${gameId}/record.json`, ['score'])
+  const [score] = useDBSyncedState(-1, `games/${gameId}/record.json`, ['score'])
   const [playingTime] = useDBSyncedState(0, `games/${gameId}/record.json`, ['playingTime'])
   return (
     <div className={cn('flex flex-row gap-5', '3xl:gap-7')}>

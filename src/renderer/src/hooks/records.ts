@@ -33,6 +33,12 @@ interface GameRecordsHook {
   getGameRecord: (gameId: string) => Record
   getGameStartAndEndDate: (gameId: string) => { start: string; end: string }
   getSortedGameIds: (order: 'asc' | 'desc') => string[]
+  getMaxOrdinalGameId: () => string | null
+  getPlayedDaysYearly: () => { [date: string]: number }
+  getTotalPlayingTimeYearly: () => number
+  getTotalPlayingTime: number
+  getTotalOrdinalNumber: number
+  getTotalPlayedDays: number
 }
 
 // 自定义 Hook
@@ -280,6 +286,108 @@ export const useGameRecords = (): GameRecordsHook => {
     [gameRecords, getGamePlayingTime]
   )
 
+  interface PlayedDaysYearly {
+    [date: string]: number
+  }
+
+  const getPlayedDaysYearly = useCallback((): PlayedDaysYearly => {
+    const currentDate = new Date()
+    const lastYearDate = new Date(currentDate)
+    lastYearDate.setFullYear(lastYearDate.getFullYear() - 1)
+
+    const result: PlayedDaysYearly = {}
+    const current = new Date(currentDate)
+
+    // 收集所有日期的数据
+    const datesArray: { date: string; playTime: number }[] = []
+
+    while (current.getTime() >= lastYearDate.getTime()) {
+      const dateStr = current.toISOString().split('T')[0]
+
+      const playTime = Object.values(gameRecords).reduce((total, record) => {
+        return total + calculateDailyPlayTime(current, record)
+      }, 0)
+
+      // 将日期和游玩时间保存到数组中
+      datesArray.push({
+        date: dateStr,
+        playTime: playTime
+      })
+
+      current.setDate(current.getDate() - 1)
+    }
+
+    // 按日期排序（从早到晚）
+    datesArray.sort((a, b) => a.date.localeCompare(b.date))
+
+    // 转换为最终的对象格式
+    datesArray.forEach(({ date, playTime }) => {
+      result[date] = playTime
+    })
+
+    return result
+  }, [gameRecords])
+
+  const getTotalPlayingTimeYearly = useCallback((): number => {
+    const currentDate = new Date()
+    const lastYearDate = new Date(currentDate)
+    lastYearDate.setFullYear(lastYearDate.getFullYear() - 1)
+
+    const current = new Date(currentDate)
+    let totalPlayTime = 0
+
+    while (current.getTime() >= lastYearDate.getTime()) {
+      const playTime = Object.values(gameRecords).reduce((total, record) => {
+        return total + calculateDailyPlayTime(current, record)
+      }, 0)
+
+      totalPlayTime += playTime
+
+      current.setDate(current.getDate() - 1)
+    }
+
+    return totalPlayTime
+  }, [gameRecords])
+
+  const getMaxOrdinalGameId = useCallback((): string | null => {
+    // 获取游玩次数最多的游戏 ID
+    let maxOrdinalNumber = 0
+    let maxOrdinalGameId: null | string = null
+
+    for (const [gameId, record] of Object.entries(gameRecords)) {
+      if (record.timer && record.timer.length > maxOrdinalNumber) {
+        maxOrdinalNumber = record.timer.length
+        maxOrdinalGameId = gameId
+      }
+    }
+
+    return maxOrdinalGameId
+  }, [gameRecords])
+
+  const getTotalPlayingTime = useMemo((): number => {
+    return Object.values(gameRecords).reduce((total, record) => {
+      return total + record.playingTime
+    }, 0)
+  }, [gameRecords])
+
+  const getTotalOrdinalNumber = useMemo((): number => {
+    // 获取总游玩次数，既所有计时器的数量
+    return Object.values(gameRecords).reduce((total, record) => {
+      if (record.timer) {
+        return total + record.timer.length
+      } else {
+        return total
+      }
+    }, 0)
+  }, [gameRecords])
+
+  const getTotalPlayedDays = useMemo((): number => {
+    // 获取总游玩天数
+    return Object.keys(gameRecords).reduce((total, gameId) => {
+      return total + getGamePlayDays(gameId)
+    }, 0)
+  }, [gameRecords, getGamePlayDays])
+
   return useMemo(
     () => ({
       gameRecords,
@@ -290,7 +398,13 @@ export const useGameRecords = (): GameRecordsHook => {
       getGameMaxPlayTimeDay,
       getGameRecord,
       getGameStartAndEndDate,
-      getSortedGameIds
+      getSortedGameIds,
+      getMaxOrdinalGameId,
+      getPlayedDaysYearly,
+      getTotalPlayingTimeYearly,
+      getTotalPlayingTime,
+      getTotalOrdinalNumber,
+      getTotalPlayedDays
     }),
     [
       gameRecords,
@@ -301,7 +415,13 @@ export const useGameRecords = (): GameRecordsHook => {
       getGameMaxPlayTimeDay,
       getGameRecord,
       getGameStartAndEndDate,
-      getSortedGameIds
+      getSortedGameIds,
+      getMaxOrdinalGameId,
+      getPlayedDaysYearly,
+      getTotalPlayingTimeYearly,
+      getTotalPlayingTime,
+      getTotalOrdinalNumber,
+      getTotalPlayedDays
     ]
   )
 }

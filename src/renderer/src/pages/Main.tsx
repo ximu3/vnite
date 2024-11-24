@@ -2,6 +2,7 @@ import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Sidebar } from '~/components/Sidebar'
 import { cn, ipcOnUnique, ipcSend } from '~/utils'
 import { Library } from './Library'
+import { Record } from './Record'
 import { useEffect } from 'react'
 import { toast } from 'sonner'
 import { useRunningGames } from './Library/store'
@@ -82,7 +83,7 @@ export function Main(): JSX.Element {
         <Routes>
           <Route index element={<Navigate to="/library" />} />
           <Route path="/library/*" element={<Library />} />
-          <Route path="/record/*" element={<div></div>} />
+          <Route path="/record/*" element={<Record />} />
         </Routes>
       </div>
     </HashRouter>

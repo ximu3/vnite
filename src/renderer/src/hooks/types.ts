@@ -9,7 +9,9 @@ const gameIndexdata = {
   genres: ['genres'],
   tags: ['tags'],
   addDate: 'addDate',
-  lastRunDate: 'lastRunDate'
+  lastRunDate: 'lastRunDate',
+  score: -1,
+  playingTime: 0
   // 其他可能的字段
 }
 

@@ -55,14 +55,14 @@ export function Sidebar(): JSX.Element {
           </TooltipTrigger>
           <TooltipContent side="right">游戏库</TooltipContent>
         </Tooltip>
-        {/* <Tooltip>
+        <Tooltip>
           <TooltipTrigger>
             <Nav variant="sidebar" to="./record">
               <span className={cn('icon-[mdi--report-box-multiple] w-5 h-5')}></span>
             </Nav>
           </TooltipTrigger>
           <TooltipContent side="right">记录</TooltipContent>
-        </Tooltip> */}
+        </Tooltip>
       </div>
       <div className={cn('flex flex-col gap-2')}>
         {cloudSyncEnabled ? (
