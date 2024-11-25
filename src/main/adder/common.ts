@@ -61,6 +61,7 @@ export async function addGameToDB(
   mainWindow.webContents.send('reload-db-values', `games/${dbId}/metadata.json`)
   mainWindow.webContents.send('reload-db-values', `games/${dbId}/record.json`)
   mainWindow.webContents.send('rebuild-index')
+  mainWindow.webContents.send('record-update')
 }
 
 export async function addGameToDBWithoutMetadata(gamePath: string): Promise<void> {

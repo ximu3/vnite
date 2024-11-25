@@ -18,13 +18,16 @@ export async function getMetadata(): Promise<Record<string, any>> {
       const lastRunDate = await getDBValue(`games/${gameId}/record.json`, ['lastRunDate'], '')
       const score = await getDBValue(`games/${gameId}/record.json`, ['score'], -1)
       const playingTime = await getDBValue(`games/${gameId}/record.json`, ['playingTime'], 0)
+      const timer = await getDBValue(`games/${gameId}/record.json`, ['timer'], [])
+      const playedTimes = timer.length
 
       return {
         ...data,
         addDate,
         lastRunDate,
         score,
-        playingTime
+        playingTime,
+        playedTimes
       }
     })
   )

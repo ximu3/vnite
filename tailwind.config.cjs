@@ -14,7 +14,17 @@ module.exports = {
       }
     },
     fontFamily: {
-      sans: ['Source Han Sans VF', 'sans-serif']
+      sans: ['Source Han Sans VF', 'sans-serif'],
+      mono: [
+        'ui-monospace',
+        'SFMono-Regular',
+        'Menlo',
+        'Monaco',
+        'Consolas',
+        'Liberation Mono',
+        'Courier New',
+        'monospace'
+      ]
     },
     extend: {
       fontSize: {

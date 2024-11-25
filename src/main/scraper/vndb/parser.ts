@@ -13,6 +13,9 @@ const spoilerMatcher = /\[spoiler\](.*?)\[\/spoiler\]/g
  * @returns 格式化后的文本
  */
 export function formatDescription(description: string): string {
+  if (description === null) {
+    return ''
+  }
   // 替换换行符为HTML换行标签
   let formatted = description.replace('\n', '<br>' + '\n')
 

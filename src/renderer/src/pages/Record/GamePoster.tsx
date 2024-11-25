@@ -7,12 +7,16 @@ export function GamePoster({
   gameId,
   className,
   isShowGameName = false,
-  additionalInfo
+  additionalInfo,
+  infoStyle,
+  fontStyles
 }: {
   gameId: string
   className?: string
   isShowGameName?: boolean
   additionalInfo?: string
+  infoStyle?: string
+  fontStyles?: { name: string; additionalInfo: string }
 }): JSX.Element {
   const navigate = useNavigate()
   const { mediaUrl: cover } = useGameMedia({ gameId, type: 'cover', noToastError: true })
@@ -27,13 +31,13 @@ export function GamePoster({
         'hover:border-primary hover:border-2', // hover时显示主题色边框
         className
       )}
-      onClick={() => navigate(`/library/games/${gameId}/#all`)}
+      onClick={() => navigate(`/library/games/${gameId}/all`)}
     >
       {/* 添加一个背景遮罩层 */}
       {isShowGameName && (
         <div
           className={cn(
-            'absolute inset-0 bg-muted/40 backdrop-blur-sm z-10 border-t-0.5 border-white/30 pointer-events-none'
+            'absolute inset-0 bg-muted/40 backdrop-blur-md z-10 border-t-0.5 border-white/30 pointer-events-none'
           )}
         />
       )}
@@ -68,14 +72,17 @@ export function GamePoster({
       {isShowGameName && (
         <div
           className={cn(
-            'absolute inset-0 z-20 mt-7',
-            'flex items-center justify-center',
-            'pointer-events-none' // 确保点击事件传递到底层
+            'absolute inset-0 z-20',
+            'flex flex-col gap-1 items-center justify-center',
+            'pointer-events-none', // 确保点击事件传递到底层
+            infoStyle
           )}
         >
-          <div className="flex flex-col gap-1 items-center justify-center">
-            <div className={cn('text-accent-foreground text-xl font-bold')}>{gameName}</div>
-            <div className={cn('text-accent-foreground/80 text-lg')}>{additionalInfo}</div>
+          <div className={cn('text-accent-foreground text-xl font-bold', fontStyles?.name)}>
+            {gameName}
+          </div>
+          <div className={cn('text-accent-foreground/80 text-lg', fontStyles?.additionalInfo)}>
+            {additionalInfo}
           </div>
         </div>
       )}

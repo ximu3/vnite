@@ -5,16 +5,18 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@ui/c
 import { ScrollArea } from '@ui/scroll-area'
 import { RecordCard } from '~/components/Game/Overview/Record/RecordCard'
 import { GamePoster } from './GamePoster'
+import { PlayingTimeRank } from './PlayingTimeRank'
+import { ScoreRank } from './ScoreRank'
+import { PlayedTimesRank } from './PlayedTimesRank'
 
 export function Record({ className }: { className?: string }): JSX.Element {
   const {
     getTotalPlayingTime,
     getPlayedDaysYearly,
     getTotalPlayingTimeYearly,
-    getTotalOrdinalNumber,
+    getTotalPlayedTimes,
     gameRecords,
-    getTotalPlayedDays,
-    getMaxOrdinalGameId
+    getTotalPlayedDays
   } = useGameRecords()
   const { sort, gameIndex } = useGameIndexManager()
   const maxScoreGame = sort('score', 'desc').length > 0 ? sort('score', 'desc')[0] : null
@@ -22,10 +24,9 @@ export function Record({ className }: { className?: string }): JSX.Element {
   const maxPlayingTimeGame =
     sort('playingTime', 'desc').length > 0 ? sort('playingTime', 'desc')[0] : null
   const maxPlayingTime = maxPlayingTimeGame ? gameIndex.get(maxPlayingTimeGame)?.playingTime : 0
-  const maxOrdinalNumberGameId = getMaxOrdinalGameId()
-  const maxOrdinalNumber = maxOrdinalNumberGameId
-    ? gameRecords[maxOrdinalNumberGameId]?.timer.length
-    : 0
+  const maxPlayedTimesGameId =
+    sort('playedTimes', 'desc').length > 0 ? sort('playedTimes', 'desc')[0] : null
+  const maxPlayedTimes = maxPlayedTimesGameId ? gameRecords[maxPlayedTimesGameId]?.timer.length : 0
   const maxSoonGame = sort('lastRunDate', 'desc').length > 0 ? sort('lastRunDate', 'desc')[0] : null
   const maxSoonDate = maxSoonGame ? gameIndex.get(maxSoonGame)?.lastRunDate : ''
   const playedDaysYearly = getPlayedDaysYearly()
@@ -57,7 +58,7 @@ export function Record({ className }: { className?: string }): JSX.Element {
             />
             <RecordCard
               title="总游戏次数"
-              content={`${getTotalOrdinalNumber} 次` || '0 次'}
+              content={`${getTotalPlayedTimes} 次` || '0 次'}
               className={cn('w-1/4')}
             />
           </div>
@@ -88,7 +89,7 @@ export function Record({ className }: { className?: string }): JSX.Element {
                     gameId={maxScoreGame}
                     isShowGameName
                     additionalInfo={`${maxScore} 分`}
-                    className={cn('w-full')}
+                    className={cn('w-full h-[460px]', '3xl:h-[630px]')}
                   />
                 ) : (
                   '暂无'
@@ -105,7 +106,7 @@ export function Record({ className }: { className?: string }): JSX.Element {
                     gameId={maxPlayingTimeGame}
                     isShowGameName
                     additionalInfo={formatTimeToChinese(maxPlayingTime as number)}
-                    className={cn('w-full')}
+                    className={cn('w-full h-[460px]', '3xl:h-[630px]')}
                   />
                 ) : (
                   '暂无'
@@ -117,12 +118,12 @@ export function Record({ className }: { className?: string }): JSX.Element {
                 <CardTitle>最多游戏次数</CardTitle>
               </CardHeader>
               <CardContent>
-                {maxOrdinalNumberGameId ? (
+                {maxPlayedTimesGameId ? (
                   <GamePoster
-                    gameId={maxOrdinalNumberGameId}
+                    gameId={maxPlayedTimesGameId}
                     isShowGameName
-                    additionalInfo={`${maxOrdinalNumber} 次`}
-                    className={cn('w-full')}
+                    additionalInfo={`${maxPlayedTimes} 次`}
+                    className={cn('w-full h-[460px]', '3xl:h-[630px]')}
                   />
                 ) : (
                   '暂无'
@@ -136,14 +137,47 @@ export function Record({ className }: { className?: string }): JSX.Element {
               <CardContent>
                 {maxSoonGame ? (
                   <GamePoster
+                    key={`maxSoonGame-${maxSoonGame}`}
                     gameId={maxSoonGame}
                     isShowGameName
                     additionalInfo={formatDateToChinese(maxSoonDate as string)}
-                    className={cn('w-full')}
+                    className={cn('w-full h-[460px]', '3xl:h-[630px]')}
                   />
                 ) : (
                   '暂无'
                 )}
+              </CardContent>
+            </Card>
+          </div>
+          <div className={cn('flex flex-row gap-3 h-[500px]', '3xl:h-[600px]')}>
+            <Card className={cn('w-1/3')}>
+              <CardHeader>
+                <CardTitle>评分排行</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ScoreRank
+                  className={cn('overflow-auto scrollbar-base h-[400px] pr-1', '3xl:h-[500px]')}
+                />
+              </CardContent>
+            </Card>
+            <Card className={cn('w-1/3')}>
+              <CardHeader>
+                <CardTitle>时间排行</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <PlayingTimeRank
+                  className={cn('overflow-auto scrollbar-base h-[400px] pr-1', '3xl:h-[500px]')}
+                />
+              </CardContent>
+            </Card>
+            <Card className={cn('w-1/3')}>
+              <CardHeader>
+                <CardTitle>次数排行</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <PlayedTimesRank
+                  className={cn('overflow-auto scrollbar-base h-[400px] pr-1', '3xl:h-[500px]')}
+                />
               </CardContent>
             </Card>
           </div>

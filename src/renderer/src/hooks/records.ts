@@ -37,8 +37,9 @@ interface GameRecordsHook {
   getPlayedDaysYearly: () => { [date: string]: number }
   getTotalPlayingTimeYearly: () => number
   getTotalPlayingTime: number
-  getTotalOrdinalNumber: number
+  getTotalPlayedTimes: number
   getTotalPlayedDays: number
+  getSortedGameByPlayedTimes: (order: 'asc' | 'desc') => string[]
 }
 
 // 自定义 Hook
@@ -108,6 +109,10 @@ export const useGameRecords = (): GameRecordsHook => {
     dayStart.setHours(0, 0, 0, 0)
     const dayEnd = new Date(date)
     dayEnd.setHours(23, 59, 59, 999)
+
+    if (!record.timer || record.timer.length === 0) {
+      return 0
+    }
 
     return record.timer.reduce((totalPlayTime, timer) => {
       const timerStart = new Date(timer.start)
@@ -351,12 +356,12 @@ export const useGameRecords = (): GameRecordsHook => {
 
   const getMaxOrdinalGameId = useCallback((): string | null => {
     // 获取游玩次数最多的游戏 ID
-    let maxOrdinalNumber = 0
+    let maxPlayedTimes = 0
     let maxOrdinalGameId: null | string = null
 
     for (const [gameId, record] of Object.entries(gameRecords)) {
-      if (record.timer && record.timer.length > maxOrdinalNumber) {
-        maxOrdinalNumber = record.timer.length
+      if (record.timer && record.timer.length > maxPlayedTimes) {
+        maxPlayedTimes = record.timer.length
         maxOrdinalGameId = gameId
       }
     }
@@ -370,7 +375,7 @@ export const useGameRecords = (): GameRecordsHook => {
     }, 0)
   }, [gameRecords])
 
-  const getTotalOrdinalNumber = useMemo((): number => {
+  const getTotalPlayedTimes = useMemo((): number => {
     // 获取总游玩次数，既所有计时器的数量
     return Object.values(gameRecords).reduce((total, record) => {
       if (record.timer) {
@@ -388,6 +393,24 @@ export const useGameRecords = (): GameRecordsHook => {
     }, 0)
   }, [gameRecords, getGamePlayDays])
 
+  const getSortedGameByPlayedTimes = useCallback(
+    (order: 'asc' | 'desc'): string[] => {
+      return Object.keys(gameRecords).sort((a, b) => {
+        const ordinalA = gameRecords[a]?.timer?.length || 0
+        const ordinalB = gameRecords[b]?.timer?.length || 0
+
+        if (ordinalA < ordinalB) {
+          return order === 'asc' ? -1 : 1
+        } else if (ordinalA > ordinalB) {
+          return order === 'asc' ? 1 : -1
+        }
+
+        return 0
+      })
+    },
+    [gameRecords]
+  )
+
   return useMemo(
     () => ({
       gameRecords,
@@ -403,8 +426,9 @@ export const useGameRecords = (): GameRecordsHook => {
       getPlayedDaysYearly,
       getTotalPlayingTimeYearly,
       getTotalPlayingTime,
-      getTotalOrdinalNumber,
-      getTotalPlayedDays
+      getTotalPlayedTimes,
+      getTotalPlayedDays,
+      getSortedGameByPlayedTimes
     }),
     [
       gameRecords,
@@ -420,8 +444,9 @@ export const useGameRecords = (): GameRecordsHook => {
       getPlayedDaysYearly,
       getTotalPlayingTimeYearly,
       getTotalPlayingTime,
-      getTotalOrdinalNumber,
-      getTotalPlayedDays
+      getTotalPlayedTimes,
+      getTotalPlayedDays,
+      getSortedGameByPlayedTimes
     ]
   )
 }

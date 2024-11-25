@@ -53,8 +53,8 @@ export function BigGamePoster({
                 ) : (
                   <div
                     className={cn(
-                      'w-full h-full cursor-pointer object-cover flex items-center justify-center',
-                      '3xl:w-full 3xl:h-full',
+                      'w-[333px] h-[222px] cursor-pointer object-cover flex items-center justify-center pb-10 font-bold',
+                      '3xl:w-[396px] 3xl:h-[264px]',
                       className
                     )}
                     onClick={() => navigate(`/library/games/${gameId}/all`)}
