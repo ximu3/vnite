@@ -67,7 +67,14 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
       )}
     >
       <div className={cn('flex flex-row gap-5 items-center justify-center')}>
-        <div className={cn('font-bold text-2xl text-accent-foreground')}>{name}</div>
+        <div
+          className={cn(
+            'font-bold text-2xl text-accent-foreground truncate max-w-[800px]',
+            '3xl:max-w-[1000px]'
+          )}
+        >
+          {name}
+        </div>
         {/* <div className={cn('flex flex-row gap-2 items-center justify-center')}>
           <Badge variant="secondary">{gamePath === '' ? '未安装' : '已安装'}</Badge>
         </div> */}

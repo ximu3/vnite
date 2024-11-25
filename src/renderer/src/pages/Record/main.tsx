@@ -86,9 +86,10 @@ export function Record({ className }: { className?: string }): JSX.Element {
               <CardContent>
                 {maxScoreGame ? (
                   <GamePoster
+                    fontStyles={{ name: 'w-[300px] text-center', additionalInfo: '' }}
                     gameId={maxScoreGame}
                     isShowGameName
-                    additionalInfo={`${maxScore} 分`}
+                    additionalInfo={maxScore == -1 ? '暂无评分' : `${maxScore} 分`}
                     className={cn('w-full h-[460px]', '3xl:h-[630px]')}
                   />
                 ) : (
@@ -103,9 +104,14 @@ export function Record({ className }: { className?: string }): JSX.Element {
               <CardContent>
                 {maxPlayingTimeGame ? (
                   <GamePoster
+                    fontStyles={{ name: 'w-[300px] text-center', additionalInfo: '' }}
                     gameId={maxPlayingTimeGame}
                     isShowGameName
-                    additionalInfo={formatTimeToChinese(maxPlayingTime as number)}
+                    additionalInfo={
+                      maxPlayingTime == 0
+                        ? '从未游玩'
+                        : formatTimeToChinese(maxPlayingTime as number)
+                    }
                     className={cn('w-full h-[460px]', '3xl:h-[630px]')}
                   />
                 ) : (
@@ -120,9 +126,10 @@ export function Record({ className }: { className?: string }): JSX.Element {
               <CardContent>
                 {maxPlayedTimesGameId ? (
                   <GamePoster
+                    fontStyles={{ name: 'w-[300px] text-center', additionalInfo: '' }}
                     gameId={maxPlayedTimesGameId}
                     isShowGameName
-                    additionalInfo={`${maxPlayedTimes} 次`}
+                    additionalInfo={maxPlayedTimes == 0 ? '从未游玩' : `${maxPlayedTimes} 次`}
                     className={cn('w-full h-[460px]', '3xl:h-[630px]')}
                   />
                 ) : (
@@ -137,10 +144,12 @@ export function Record({ className }: { className?: string }): JSX.Element {
               <CardContent>
                 {maxSoonGame ? (
                   <GamePoster
-                    key={`maxSoonGame-${maxSoonGame}`}
+                    fontStyles={{ name: 'w-[300px] text-center', additionalInfo: '' }}
                     gameId={maxSoonGame}
                     isShowGameName
-                    additionalInfo={formatDateToChinese(maxSoonDate as string)}
+                    additionalInfo={
+                      maxSoonDate ? formatDateToChinese(maxSoonDate as string) : '从未运行'
+                    }
                     className={cn('w-full h-[460px]', '3xl:h-[630px]')}
                   />
                 ) : (

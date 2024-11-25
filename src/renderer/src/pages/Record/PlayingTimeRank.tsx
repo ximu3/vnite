@@ -18,7 +18,7 @@ export function PlayingTimeRank({ className }: { className?: string }): JSX.Elem
               <GamePoster
                 isShowGameName
                 infoStyle={cn('flex-row text-sm gap-3 justify-start items-center pl-3')}
-                fontStyles={{ name: 'text-lg', additionalInfo: 'text-sm' }}
+                fontStyles={{ name: 'text-lg w-[330px]', additionalInfo: 'text-sm' }}
                 className={cn('w-full h-[50px]')}
                 key={gameId}
                 gameId={gameId}

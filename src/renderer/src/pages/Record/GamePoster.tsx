@@ -78,7 +78,9 @@ export function GamePoster({
             infoStyle
           )}
         >
-          <div className={cn('text-accent-foreground text-xl font-bold', fontStyles?.name)}>
+          <div
+            className={cn('text-accent-foreground text-xl font-bold truncate', fontStyles?.name)}
+          >
             {gameName}
           </div>
           <div className={cn('text-accent-foreground/80 text-lg', fontStyles?.additionalInfo)}>
