@@ -41,3 +41,19 @@ export async function lePreset(gameId: string): Promise<void> {
     command: script
   })
 }
+
+export async function steamPreset(gameId: string, steamId: string): Promise<void> {
+  const gamePath = await getDBValue(`games/${gameId}/path.json`, ['gamePath'], '')
+
+  const mode = 'url'
+  const url = `steam://rungameid/${steamId}`
+  const timerMode = 'folder'
+  const timerPath = path.dirname(gamePath)
+
+  await setDBValue(`games/${gameId}/launcher.json`, ['mode'], mode)
+  await setDBValue(`games/${gameId}/launcher.json`, [`${mode}Config`], {
+    url,
+    timerMode,
+    timerPath
+  })
+}

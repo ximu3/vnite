@@ -11,7 +11,6 @@ export async function deleteGame(gameId: string): Promise<void> {
     await fse.emptyDir(gameDBPath)
     await fse.remove(gameDBPath)
     await setupWatcher(mainWindow)
-    mainWindow.webContents.send('rebuild-index')
     mainWindow.webContents.send('record-update')
   }
 }

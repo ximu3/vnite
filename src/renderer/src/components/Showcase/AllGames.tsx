@@ -31,11 +31,7 @@ export function AllGames(): JSX.Element {
     setOrder(order === 'asc' ? 'desc' : 'asc')
   }
   useEffect(() => {
-    if (by === 'playingTime') {
-      setGames(getSortedGameIds(order))
-    } else {
-      setGames(sort(by, order))
-    }
+    setGames(sort(by, order))
   }, [by, order, sort, getSortedGameIds])
 
   return (

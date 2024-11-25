@@ -62,7 +62,7 @@ export function GamePoster({
                     )
                   }
                 >
-                  <div className={cn('font-bold')}>{gameName}</div>
+                  <div className={cn('font-bold truncate p-1')}>{gameName}</div>
                 </div>
               )}
             </HoverCardAnimation>

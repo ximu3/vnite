@@ -14,8 +14,11 @@ import {
   CommandList
 } from '@ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
+import { toast } from 'sonner'
 
 import { ipcSend } from '~/utils'
+
+import { useSteamIdDialogStore, SteamIdDialog } from './SteamIdDialog'
 
 const presets = [
   {
@@ -25,6 +28,10 @@ const presets = [
   {
     value: 'le',
     label: 'LE转区启动'
+  },
+  {
+    value: 'steam',
+    label: 'Steam启动'
   }
 ]
 
@@ -37,47 +44,57 @@ export function PresetSelecter({
 }): JSX.Element {
   const [open, setOpen] = React.useState(false)
   const [value] = React.useState('')
+  const { setIsOpen, setGameId } = useSteamIdDialogStore()
 
   function setPreset(presetName: string, gameId: string): void {
+    if (presetName === 'steam') {
+      setIsOpen(true)
+      setGameId(gameId)
+      toast.info('请输入Steam ID')
+      return
+    }
     ipcSend('launcher-preset', presetName, gameId)
   }
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger className={cn(className)} asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="w-[150px] justify-between"
-        >
-          {value ? presets.find((preset) => preset.value === value)?.label : '预设配置'}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[150px] p-0">
-        <Command>
-          <CommandInput placeholder="搜索配置" />
-          <CommandList>
-            <CommandEmpty>No preset found.</CommandEmpty>
-            <CommandGroup>
-              {presets.map((preset) => (
-                <CommandItem
-                  key={preset.value}
-                  value={preset.value}
-                  onSelect={(currentValue) => {
-                    setPreset(currentValue, gameId)
-                    setOpen(false)
-                  }}
-                  className={cn('pl-5')}
-                >
-                  {preset.label}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+    <>
+      <SteamIdDialog />
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger className={cn(className)} asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="w-[150px] justify-between"
+          >
+            {value ? presets.find((preset) => preset.value === value)?.label : '预设配置'}
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[150px] p-0">
+          <Command>
+            <CommandInput placeholder="搜索配置" />
+            <CommandList>
+              <CommandEmpty>No preset found.</CommandEmpty>
+              <CommandGroup>
+                {presets.map((preset) => (
+                  <CommandItem
+                    key={preset.value}
+                    value={preset.value}
+                    onSelect={(currentValue) => {
+                      setPreset(currentValue, gameId)
+                      setOpen(false)
+                    }}
+                    className={cn('pl-5')}
+                  >
+                    {preset.label}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
+    </>
   )
 }

@@ -1,14 +1,23 @@
-import { defaultPreset, lePreset } from './preset'
+import { defaultPreset, lePreset, steamPreset } from './preset'
 import { getDBValue } from '../database'
 import { fileLuancher, urlLauncher, scriptLauncher } from './common'
 import log from 'electron-log/main.js'
 
-export async function launcherPreset(presetName: string, gameId: string): Promise<void> {
+export async function launcherPreset(
+  presetName: string,
+  gameId: string,
+  steamId?: string
+): Promise<void> {
   try {
     if (presetName === 'default') {
       await defaultPreset(gameId)
     } else if (presetName === 'le') {
       await lePreset(gameId)
+    } else if (presetName === 'steam') {
+      if (!steamId) {
+        throw new Error('Steam ID is required for steam preset')
+      }
+      await steamPreset(gameId, steamId)
     }
   } catch (error) {
     log.error(`Failed to set preset for ${gameId}`, error)

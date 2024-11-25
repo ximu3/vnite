@@ -1,6 +1,6 @@
 import { app, Tray, Menu, nativeImage, BrowserWindow } from 'electron'
 import { getDBValue, setDBValue } from '~/database'
-import icon from '../../../resources/icon.ico?asset'
+import icon from '../../../resources/icon.png?asset'
 
 export async function setupTray(mainWindow: BrowserWindow): Promise<TrayManager> {
   const trayManager = new TrayManager(mainWindow)
