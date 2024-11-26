@@ -7,6 +7,7 @@ import { General } from './General'
 import { Advanced } from './Advanced'
 import { About } from './About'
 import { Scraper } from './Scraper'
+import { Theme } from './Theme'
 
 export function ConfigDialog({ children }: { children: React.ReactNode }): JSX.Element {
   return (
@@ -17,23 +18,26 @@ export function ConfigDialog({ children }: { children: React.ReactNode }): JSX.E
           <DialogTitle>{`Vnite 设置`}</DialogTitle>
         </DialogHeader>
         <Tabs defaultValue="general" className={cn('w-full')}>
-          <TabsList className={cn('w-[500px]')}>
-            <TabsTrigger className={cn('w-1/6')} value="general">
+          <TabsList className={cn('w-[600px]')}>
+            <TabsTrigger className={cn('w-full')} value="general">
               通用
             </TabsTrigger>
-            <TabsTrigger className={cn('w-1/6')} value="advanced">
+            <TabsTrigger className={cn('w-full')} value="advanced">
               高级
             </TabsTrigger>
-            <TabsTrigger className={cn('w-1/6')} value="cloudSync">
+            <TabsTrigger className={cn('w-full')} value="theme">
+              主题
+            </TabsTrigger>
+            <TabsTrigger className={cn('w-full')} value="cloudSync">
               云同步
             </TabsTrigger>
-            <TabsTrigger className={cn('w-1/6')} value="scraper">
+            <TabsTrigger className={cn('w-full')} value="scraper">
               刮削器
             </TabsTrigger>
-            <TabsTrigger className={cn('w-1/6')} value="database">
+            <TabsTrigger className={cn('w-full')} value="database">
               数据库
             </TabsTrigger>
-            <TabsTrigger className={cn('w-1/6')} value="about">
+            <TabsTrigger className={cn('w-full')} value="about">
               关于
             </TabsTrigger>
           </TabsList>
@@ -42,6 +46,9 @@ export function ConfigDialog({ children }: { children: React.ReactNode }): JSX.E
           </TabsContent>
           <TabsContent value="advanced">
             <Advanced />
+          </TabsContent>
+          <TabsContent value="theme">
+            <Theme />
           </TabsContent>
           <TabsContent value="cloudSync">
             <CloudSync />

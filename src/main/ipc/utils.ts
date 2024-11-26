@@ -9,7 +9,8 @@ import {
   createGameShortcut,
   openDatabasePathInExplorer,
   updateOpenAtLogin,
-  getAppVersion
+  getAppVersion,
+  ThemeManager
 } from '~/utils'
 
 export function setupUtilsIPC(mainWindow: BrowserWindow): void {
@@ -73,6 +74,16 @@ export function setupUtilsIPC(mainWindow: BrowserWindow): void {
 
   ipcMain.handle('get-app-version', async () => {
     return getAppVersion()
+  })
+
+  ipcMain.handle('save-theme', async (_, cssContent: string) => {
+    const themeManager = await ThemeManager.getInstance()
+    await themeManager.saveTheme(cssContent)
+  })
+
+  ipcMain.handle('load-theme', async () => {
+    const themeManager = await ThemeManager.getInstance()
+    return await themeManager.loadTheme()
   })
 
   mainWindow.on('maximize', () => {

@@ -7,6 +7,7 @@ import { UpdateDialog } from './pages/Updater'
 import { useUpdaterStore } from './pages/Updater/store'
 import { useEffect } from 'react'
 import { ipcOnUnique } from './utils'
+import { ThemeProvider } from './components/ThemeProvider'
 
 function App(): JSX.Element {
   const { setIsOpen: setIsUpdateDialogOpen } = useUpdaterStore()
@@ -19,14 +20,14 @@ function App(): JSX.Element {
     }
   }, [setIsUpdateDialogOpen])
   return (
-    <>
+    <ThemeProvider>
       <Titlebar />
       <Main />
       <GameAdder />
       <GameBatchAdder />
       <Toaster />
       <UpdateDialog />
-    </>
+    </ThemeProvider>
   )
 }
 
