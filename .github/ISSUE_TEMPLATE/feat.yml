@@ -1,0 +1,19 @@
+name: 功能请求 | Feature Request
+title: "[Feat]: "
+description: 我想要一个新功能 | Request a feature in the application
+labels: "enhancement"
+body:
+  - type: textarea
+    id: feature_description
+    attributes:
+      label: 功能描述
+      description: 简单描述一下你想要的功能
+    validations:
+      required: true
+  - type: textarea
+    id: implementation_idea
+    attributes:
+      label: 实现思路
+      description: 你有什么实现这个功能的思路吗？（可选）
+    validations:
+      required: false
