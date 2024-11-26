@@ -99,9 +99,10 @@ export function Search({ className }: { className?: string }): JSX.Element {
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>数据来源</SelectLabel>
-                  <SelectItem value="vndb">VNDB</SelectItem>
-                  <SelectItem value="igdb">IGDB</SelectItem>
                   <SelectItem value="steam">Steam</SelectItem>
+                  <SelectItem value="vndb">VNDB</SelectItem>
+                  <SelectItem value="bangumi">Bangumi</SelectItem>
+                  <SelectItem value="igdb">IGDB</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>

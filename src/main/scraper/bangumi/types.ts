@@ -5,6 +5,7 @@ export interface BangumiSubject {
   name_cn: string
   summary: string
   air_date: string
+  date: string
   images: {
     large: string
     common: string
@@ -21,6 +22,12 @@ export interface BangumiSubject {
     count: number
   }>
   url: string
+  infobox: [
+    {
+      key: string
+      value: string
+    }
+  ]
 }
 
 export interface BangumiSearchResult {

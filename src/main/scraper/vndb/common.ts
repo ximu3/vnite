@@ -130,6 +130,23 @@ export async function getGameScreenshots(vnId: string): Promise<string[]> {
   }
 }
 
+export async function getGameScreenshotsByTitle(title: string): Promise<string[]> {
+  const fields = ['screenshots{url}'] as const
+
+  try {
+    const data = await fetchVNDB({
+      filters: ['search', '=', title],
+      fields,
+      results: 1
+    })
+
+    return data.results[0].screenshots.map((screenshot) => screenshot.url)
+  } catch (error) {
+    console.error(`Error fetching images for VN ${title}:`, error)
+    return []
+  }
+}
+
 export async function getGameCover(vnId: string): Promise<string> {
   const formattedId = vnId.startsWith('v') ? vnId : `v${vnId}`
 
@@ -145,6 +162,23 @@ export async function getGameCover(vnId: string): Promise<string> {
     return data.results[0].image.url
   } catch (error) {
     console.error(`Error fetching cover for VN ${vnId}:`, error)
+    return ''
+  }
+}
+
+export async function getGameCoverByTitle(title: string): Promise<string> {
+  const fields = ['image{url}'] as const
+
+  try {
+    const data = (await fetchVNDB({
+      filters: ['search', '=', title],
+      fields,
+      results: 1
+    })) as any
+
+    return data.results[0].image.url
+  } catch (error) {
+    console.error(`Error fetching cover for VN ${title}:`, error)
     return ''
   }
 }

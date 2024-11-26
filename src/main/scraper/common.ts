@@ -12,6 +12,21 @@ import {
   getGameScreenshotsFromSteam,
   getGameCoverFromSteam
 } from './steam'
+import {
+  searchGamesFromBangumi,
+  checkGameExistsOnBangumi,
+  getGameMetadataFromBangumi,
+  getGameScreenshotsFromBangumi,
+  getGameCoverFromBangumi
+} from './bangumi'
+import {
+  searchGamesFromIGDB,
+  checkGameExistsOnIGDB,
+  getGameMetadataFromIGDB,
+  getGameScreenshotsFromIGDB,
+  getGameCoverFromIGDB,
+  initIGDBService
+} from './igdb'
 import { GameList, GameMetadata } from './types'
 
 export async function searchGamesFromDataSource(
@@ -23,6 +38,10 @@ export async function searchGamesFromDataSource(
       return await searchGamesFromVNDB(gameName)
     case 'steam':
       return await searchGamesFromSteam(gameName)
+    case 'bangumi':
+      return await searchGamesFromBangumi(gameName)
+    case 'igdb':
+      return await searchGamesFromIGDB(gameName)
     default:
       throw new Error('Invalid data source')
   }
@@ -37,6 +56,10 @@ export async function checkGameExistsInDataSource(
       return await checkGameExistsOnVNDB(gameId)
     case 'steam':
       return await checkGameExistsOnSteam(gameId)
+    case 'bangumi':
+      return await checkGameExistsOnBangumi(gameId)
+    case 'igdb':
+      return await checkGameExistsOnIGDB(gameId)
     default:
       throw new Error('Invalid data source')
   }
@@ -51,6 +74,10 @@ export async function getGameMetadataFromDataSource(
       return await getGameMetadataFromVNDB(gameId)
     case 'steam':
       return await getGameMetadataFromSteam(gameId)
+    case 'bangumi':
+      return await getGameMetadataFromBangumi(gameId)
+    case 'igdb':
+      return await getGameMetadataFromIGDB(gameId)
     default:
       throw new Error('Invalid data source')
   }
@@ -65,6 +92,10 @@ export async function getGameScreenshotsFromDataSource(
       return await getGameScreenshotsFromVNDB(gameId)
     case 'steam':
       return await getGameScreenshotsFromSteam(gameId)
+    case 'bangumi':
+      return await getGameScreenshotsFromBangumi(gameId)
+    case 'igdb':
+      return await getGameScreenshotsFromIGDB(gameId)
     default:
       throw new Error('Invalid data source')
   }
@@ -79,6 +110,10 @@ export async function getGameCoverFromDataSource(
       return await getGameCoverFromVNDB(gameId)
     case 'steam':
       return await getGameCoverFromSteam(gameId)
+    case 'bangumi':
+      return await getGameCoverFromBangumi(gameId)
+    case 'igdb':
+      return await getGameCoverFromIGDB(gameId)
     default:
       throw new Error('Invalid data source')
   }
@@ -94,4 +129,8 @@ export async function getGameIconFromDataSource(
     default:
       return ''
   }
+}
+
+export async function initScraperServices(): Promise<void> {
+  initIGDBService()
 }

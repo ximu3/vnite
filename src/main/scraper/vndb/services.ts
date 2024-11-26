@@ -3,7 +3,9 @@ import {
   getVNMetadata,
   checkVNExists,
   getGameScreenshots,
-  getGameCover
+  getGameCover,
+  getGameScreenshotsByTitle,
+  getGameCoverByTitle
 } from './common'
 import { GameList, GameMetadata } from '../types'
 import log from 'electron-log/main.js'
@@ -54,6 +56,26 @@ export async function getGameCoverFromVNDB(vnId: string): Promise<string> {
     return cover
   } catch (error) {
     log.error('Error fetching game cover:', error)
+    throw error
+  }
+}
+
+export async function getGameScreenshotsByTitleFromVNDB(title: string): Promise<string[]> {
+  try {
+    const images = await getGameScreenshotsByTitle(title)
+    return images
+  } catch (error) {
+    log.error('Error fetching game images by title:', error)
+    throw error
+  }
+}
+
+export async function getGameCoverByTitleFromVNDB(title: string): Promise<string> {
+  try {
+    const cover = await getGameCoverByTitle(title)
+    return cover
+  } catch (error) {
+    log.error('Error fetching game cover by title:', error)
     throw error
   }
 }

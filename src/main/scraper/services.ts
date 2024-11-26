@@ -4,7 +4,8 @@ import {
   checkGameExistsInDataSource,
   getGameScreenshotsFromDataSource,
   getGameCoverFromDataSource,
-  getGameIconFromDataSource
+  getGameIconFromDataSource,
+  initScraperServices
 } from './common'
 import { GameList, GameMetadata } from './types'
 import log from 'electron-log/main.js'
@@ -59,6 +60,15 @@ export async function getGameIcon(dataSource: string, gameId: string): Promise<s
     return await getGameIconFromDataSource(dataSource, gameId)
   } catch (error) {
     log.error(`Failed to get icon for ${gameId} from ${dataSource}`, error)
+    throw error
+  }
+}
+
+export async function initScraper(): Promise<void> {
+  try {
+    await initScraperServices()
+  } catch (error) {
+    log.error('Failed to initialize scraper services', error)
     throw error
   }
 }

@@ -10,11 +10,11 @@ export function FilterGame(): JSX.Element {
   const { filter: filterGame } = useGameIndexManager()
   const games = filterGame(filter)
   return (
-    <ScrollArea className={cn('w-full h-full')}>
+    <ScrollArea className={cn('w-full h-[700px] pr-3 -mr-3', '3xl:h-[900px]')}>
       <Accordion
         type="multiple"
         defaultValue={['filter']}
-        className={cn('w-full text-xs flex flex-col gap-2 ')}
+        className={cn('w-full text-xs flex flex-col gap-2')}
       >
         <AccordionItem value="filter">
           <AccordionTrigger className={cn('bg-accent/30 text-xs p-1 pl-2')}>

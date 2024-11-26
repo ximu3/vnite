@@ -1,4 +1,4 @@
-import { setDBValue } from '~/database'
+import { setDBValue, getDBValue } from '~/database'
 import { getGameMetadata, getGameCover, getGameIcon, getGameScreenshots } from '~/scraper'
 import { setMedia } from '~/media'
 import { generateUUID, selectPathDialog, getFirstLevelSubfolders, getDataPath } from '~/utils'
@@ -94,11 +94,16 @@ export async function getBatchGameAdderData(): Promise<
   if (!dirPath) {
     return []
   }
+  const defaultDataSource = await getDBValue(
+    'config.json',
+    ['scraper', 'defaultDataSource'],
+    'steam'
+  )
   const gameNames = await getFirstLevelSubfolders(dirPath)
   const data = gameNames.map((gameName) => {
     return {
       dataId: generateUUID(),
-      dataSource: 'steam',
+      dataSource: defaultDataSource,
       name: gameName,
       id: '',
       status: '未添加'

@@ -31,7 +31,11 @@ interface GameItem {
 }
 
 export function Sidebar(): JSX.Element {
-  const { setIsOpen: setIsGameAdderOpen } = useGameAdderStore()
+  const { setIsOpen: setIsGameAdderOpen, setDataSource } = useGameAdderStore()
+  const [defaultDataSource] = useDBSyncedState<DataSource>('steam', 'config.json', [
+    'scraper',
+    'defaultDataSource'
+  ])
   const { setIsOpen: setIsGameBatchAdderOpen, setGameList } = useGameBatchAdderStore()
   const { gameIndex: _ } = useGameIndexManager()
   const { status } = useCloudSyncStore()
@@ -134,7 +138,12 @@ export function Sidebar(): JSX.Element {
               <DropdownMenuSubTrigger>使用刮削器</DropdownMenuSubTrigger>
               <DropdownMenuPortal>
                 <DropdownMenuSubContent>
-                  <DropdownMenuItem onClick={() => setIsGameAdderOpen(true)}>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setDataSource(defaultDataSource)
+                      setIsGameAdderOpen(true)
+                    }}
+                  >
                     <div>单个添加</div>
                   </DropdownMenuItem>
                   <DropdownMenuItem

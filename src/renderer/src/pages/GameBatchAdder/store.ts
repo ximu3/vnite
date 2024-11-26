@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-export type DataSource = 'vndb' | 'igdb' | 'steam'
+export type DataSource = 'vndb' | 'igdb' | 'steam' | 'bangumi'
 
 interface GameBatchAdderState {
   isOpen: boolean

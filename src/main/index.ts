@@ -15,6 +15,7 @@ import {
 } from './utils'
 import { initializeCloudsyncServices } from './cloudSync'
 import { setupUpdater } from './updater'
+import { initScraper } from './scraper'
 
 let mainWindow: BrowserWindow
 
@@ -100,6 +101,9 @@ app.whenReady().then(async () => {
 
   // Setup auto updater
   setupUpdater(mainWindow)
+
+  // Initialize the scraper
+  initScraper()
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
