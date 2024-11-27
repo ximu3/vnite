@@ -43,6 +43,8 @@ function createWindow(): void {
     }
   })
 
+  setupIPC(mainWindow)
+
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
   })
@@ -87,8 +89,6 @@ app.whenReady().then(async () => {
 
   // Watch for changes in the data directory
   await setupWatcher(mainWindow)
-
-  setupIPC(mainWindow)
 
   // Setup temporary directory
   await setupTempDirectory()
