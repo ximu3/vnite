@@ -19,6 +19,7 @@ export class TrayManager {
   private tray: Tray | null = null
   private mainWindow: BrowserWindow
   private config: AppConfig | null = null
+  private isQuitting: boolean = false
 
   constructor(mainWindow: BrowserWindow) {
     this.mainWindow = mainWindow
@@ -46,10 +47,16 @@ export class TrayManager {
   private async setupWindowEvents(): Promise<void> {
     // 处理窗口关闭事件
     this.mainWindow.on('close', (event) => {
-      if (this.config?.quitToTray) {
+      // 如果不是退出操作且启用了最小化到托盘
+      if (!this.isQuitting && this.config?.quitToTray) {
         event.preventDefault()
         this.mainWindow.hide()
       }
+    })
+
+    // 监听应用退出事件
+    app.on('before-quit', () => {
+      this.isQuitting = true
     })
   }
 
@@ -107,6 +114,7 @@ export class TrayManager {
       {
         label: '退出',
         click: (): void => {
+          this.isQuitting = true // 设置退出标志
           app.quit()
         }
       }
