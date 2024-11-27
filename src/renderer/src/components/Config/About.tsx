@@ -1,4 +1,4 @@
-import { cn } from '~/utils'
+import { cn, ipcSend } from '~/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { Separator } from '@ui/separator'
 import { Link } from '@ui/link'
@@ -40,7 +40,10 @@ export function About(): JSX.Element {
                 variant="outline"
                 size="icon"
                 className={cn('w-6 h-6')}
-                onClick={() => setUpdateDialogIsOpen(true)}
+                onClick={() => {
+                  ipcSend('check-update')
+                  setUpdateDialogIsOpen(true)
+                }}
               >
                 <span className={cn('icon-[mdi--reload] w-4 h-4')}></span>
               </Button>

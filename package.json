@@ -1,6 +1,6 @@
 {
   "name": "vnite",
-  "version": "2.0.0-alpha.0",
+  "version": "2.0.0-alpha.1",
   "description": "Visual Novel Management Software",
   "main": "./out/main/index.js",
   "author": "ximu3",
@@ -87,6 +87,7 @@
     "@electron-toolkit/tsconfig": "^1.0.1",
     "@iconify/json": "^2.2.216",
     "@iconify/tailwind": "^1.1.1",
+    "@tailwindcss/typography": "^0.5.15",
     "@types/archiver": "^6.0.3",
     "@types/bbob__preset-html5": "^3.0.1",
     "@types/lodash": "^4.17.10",

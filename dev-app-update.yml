@@ -1,3 +1,3 @@
-provider: generic
-url: https://example.com/auto-updates
-updaterCacheDirName: vnite-2-updater
+provider: github
+owner: ximu3
+repo: vnite
