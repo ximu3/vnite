@@ -1,6 +1,6 @@
 import { setDBValue, getDBValue } from '~/database'
 import { getGameMetadata, getGameCover, getGameIcon, getGameScreenshots } from '~/scraper'
-import { setMedia } from '~/media'
+import { setMedia, saveIcon } from '~/media'
 import { generateUUID, selectPathDialog, getFirstLevelSubfolders, getDataPath } from '~/utils'
 import { BrowserWindow } from 'electron'
 import { launcherPreset } from '~/launcher'
@@ -75,6 +75,7 @@ export async function addGameToDBWithoutMetadata(gamePath: string): Promise<void
     name: gameName
   })
   await launcherPreset('default', dbId)
+  await saveIcon(dbId, gamePath)
 
   const mainWindow = BrowserWindow.getAllWindows()[0]
 
@@ -84,6 +85,8 @@ export async function addGameToDBWithoutMetadata(gamePath: string): Promise<void
 
   mainWindow.webContents.send('reload-db-values', `games/${dbId}/metadata.json`)
   mainWindow.webContents.send('reload-db-values', `games/${dbId}/record.json`)
+  mainWindow.webContents.send('reload-db-values', `games/${dbId}/launcher.json`)
+  mainWindow.webContents.send('reload-db-values', `games/${dbId}/icon.png`)
   mainWindow.webContents.send('rebuild-index')
 }
 
