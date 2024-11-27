@@ -14,9 +14,8 @@ export function RecordCard({
   const { getGameMaxPlayTimeDay, getGamePlayDays } = useGameRecords()
   const playDays = getGamePlayDays(gameId)
   const [playingTime] = useDBSyncedState(0, `games/${gameId}/record.json`, ['playingTime'])
-  const [timer] = useDBSyncedState([], `games/${gameId}/record.json`, []) as any
+  const [lastRunDate] = useDBSyncedState('', `games/${gameId}/record.json`, ['lastRunDate'])
   const equalPlayingTime = playingTime / playDays
-  const lastRunDate = timer[timer.length - 1]?.start
   const maxPlayTimeDay = getGameMaxPlayTimeDay(gameId)
   return (
     <Card className={cn(className, 'p-3 w-auto')}>
