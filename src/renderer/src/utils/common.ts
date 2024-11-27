@@ -1,4 +1,5 @@
 import * as csstree from 'css-tree'
+import { HTMLReactParserOptions, Element } from 'html-react-parser'
 
 interface CSSValidationResult {
   isValid: boolean
@@ -19,6 +20,17 @@ export function isValidCSS(cssContent: string): CSSValidationResult {
     return {
       isValid: false,
       error: `CSS语法错误: ${error.message}`
+    }
+  }
+}
+
+export const HTMLParserOptions: HTMLReactParserOptions = {
+  replace: (domNode) => {
+    if (domNode instanceof Element && domNode.name === 'a') {
+      // 确保链接打开在新标签页中
+      domNode.attribs.target = '_blank'
+      // 可选：添加 rel="noopener noreferrer" 以提高安全性
+      domNode.attribs.rel = 'noopener noreferrer'
     }
   }
 }

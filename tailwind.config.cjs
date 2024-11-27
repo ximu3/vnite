@@ -104,6 +104,7 @@ module.exports = {
   plugins: [
     require('tailwindcss-animate'),
     addDynamicIconSelectors(),
-    require('tailwind-scrollbar')({ nocompatible: true, preferredStrategy: 'pseudoelements' })
+    require('tailwind-scrollbar')({ nocompatible: true, preferredStrategy: 'pseudoelements' }),
+    require('@tailwindcss/typography')
   ]
 }
