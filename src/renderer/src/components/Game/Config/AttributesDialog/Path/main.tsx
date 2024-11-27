@@ -1,5 +1,5 @@
 import { cn } from '~/utils'
-import { useDBSyncedState } from '~/hooks'
+import { useDBSyncedState, useGameMedia } from '~/hooks'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import {
   Select,
@@ -12,10 +12,33 @@ import {
 } from '@ui/select'
 import { Input } from '@ui/input'
 import { Button } from '@ui/button'
-import { ipcInvoke } from '~/utils'
+import { ipcInvoke, ipcSend } from '~/utils'
 import { ArrayTextarea } from '@ui/array-textarea'
 
 export function Path({ gameId }: { gameId: string }): JSX.Element {
+  const [_path] = useDBSyncedState('', `games/${gameId}/launcher.json`, ['fileConfig', 'path'])
+  const [_workingDirectory] = useDBSyncedState('', `games/${gameId}/launcher.json`, [
+    'fileConfig',
+    'workingDirectory'
+  ])
+  const [_timerMode] = useDBSyncedState('folder', `games/${gameId}/launcher.json`, [
+    'fileConfig',
+    'timerMode'
+  ])
+  const [_timerPath] = useDBSyncedState('', `games/${gameId}/launcher.json`, [
+    'fileConfig',
+    'timerPath'
+  ])
+  const { mediaUrl: icon, refreshMedia } = useGameMedia({
+    gameId,
+    type: 'icon',
+    noToastError: true
+  })
+  const [launcherMode] = useDBSyncedState('file', `games/${gameId}/launcher.json`, ['mode'])
+  const [timerPath] = useDBSyncedState('', `games/${gameId}/launcher.json`, [
+    `${launcherMode}Config`,
+    'timerPath'
+  ])
   const [gamePath, setGamePath] = useDBSyncedState('', `games/${gameId}/path.json`, ['gamePath'])
   const [saveMode, setSaveMode] = useDBSyncedState('folder', `games/${gameId}/path.json`, [
     'savePath',
@@ -34,8 +57,14 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
     if (!filePath) {
       return
     }
-    setGamePath(filePath)
-    await ipcInvoke('save-game-icon', gameId, filePath)
+    await setGamePath(filePath)
+    if (!icon) {
+      await ipcInvoke('save-game-icon', gameId, filePath)
+      await refreshMedia()
+    }
+    if (!timerPath) {
+      ipcSend('launcher-preset', 'default', gameId)
+    }
   }
   async function selectSaveFolderPath(): Promise<void> {
     const folderPath: string[] = await ipcInvoke('select-multiple-path-dialog', ['openDirectory'])
