@@ -1,5 +1,6 @@
 import { cn } from '~/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
+import { Separator } from '@ui/separator'
 import { Button } from '@ui/button'
 import {
   AlertDialog,
@@ -36,6 +37,20 @@ export function Database(): JSX.Element {
         const sourcePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
         if (!sourcePath) return
         await ipcInvoke('restore-database', sourcePath)
+      },
+      {
+        loading: '正在导入数据库...',
+        success: '数据库导入成功',
+        error: '数据库导入失败'
+      }
+    )
+  }
+  const importV1Data = async (): Promise<void> => {
+    toast.promise(
+      async () => {
+        const sourcePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
+        if (!sourcePath) return
+        await ipcInvoke('import-v1-data', sourcePath)
       },
       {
         loading: '正在导入数据库...',
@@ -81,6 +96,26 @@ export function Database(): JSX.Element {
                 <AlertDialogFooter>
                   <AlertDialogCancel>取消</AlertDialogCancel>
                   <AlertDialogAction onClick={restore}>确定</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+          <Separator />
+          <div className={cn('flex flex-row gap-5 items-center')}>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant={'outline'}>导入v1版本数据库</Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>确定要导入v1版本数据库吗？</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    导入v1版本数据库将覆盖当前数据库，此操作不可逆！操作结束后应用将自动重启。
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>取消</AlertDialogCancel>
+                  <AlertDialogAction onClick={importV1Data}>确定</AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
