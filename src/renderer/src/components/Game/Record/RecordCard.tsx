@@ -15,11 +15,12 @@ export function RecordCard({
   const playDays = getGamePlayDays(gameId)
   const [playingTime] = useDBSyncedState(0, `games/${gameId}/record.json`, ['playingTime'])
   const [lastRunDate] = useDBSyncedState('', `games/${gameId}/record.json`, ['lastRunDate'])
+  const [timer] = useDBSyncedState([], `games/${gameId}/record.json`, ['timer'])
   const equalPlayingTime = playingTime / playDays
   const maxPlayTimeDay = getGameMaxPlayTimeDay(gameId)
   return (
     <Card className={cn(className, 'p-3 w-auto')}>
-      {lastRunDate ? (
+      {lastRunDate && timer.length !== 0 ? (
         <>
           <div className={cn('flex flex-row')}>
             <div>

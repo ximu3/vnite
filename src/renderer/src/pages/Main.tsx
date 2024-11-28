@@ -1,4 +1,4 @@
-import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import { Sidebar } from '~/components/Sidebar'
 import { cn, ipcOnUnique, ipcSend } from '~/utils'
 import { Library } from './Library'
@@ -11,6 +11,7 @@ import { useCloudSyncStore, SyncStatus } from '~/components/Config/CloudSync/sto
 export function Main(): JSX.Element {
   const { runningGames, setRunningGames } = useRunningGames()
   const { setStatus } = useCloudSyncStore()
+  const navigate = useNavigate()
   useEffect(() => {
     const handleStartGameFromUrl = (
       _event: any,
@@ -47,6 +48,7 @@ export function Main(): JSX.Element {
     mode: string,
     config: any
   ): Promise<void> {
+    navigate(`/library/games/${gameId}/all`)
     if (gamePath === '') {
       toast.warning('请先设置游戏路径')
       return
@@ -77,15 +79,13 @@ export function Main(): JSX.Element {
     }
   }
   return (
-    <HashRouter>
-      <div className={cn('flex flex-row w-screen h-screen')}>
-        <Sidebar />
-        <Routes>
-          <Route index element={<Navigate to="/library" />} />
-          <Route path="/library/*" element={<Library />} />
-          <Route path="/record/*" element={<Record />} />
-        </Routes>
-      </div>
-    </HashRouter>
+    <div className={cn('flex flex-row w-screen h-screen')}>
+      <Sidebar />
+      <Routes>
+        <Route index element={<Navigate to="/library" />} />
+        <Route path="/library/*" element={<Library />} />
+        <Route path="/record/*" element={<Record />} />
+      </Routes>
+    </div>
   )
 }

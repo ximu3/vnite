@@ -30,6 +30,13 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
   const [preScore, setPreScore] = useState(score.toString())
   const [isScoreDialogOpen, setIsScoreDialogOpen] = useState(false)
 
+  const [_saveList] = useDBSyncedState(
+    { ['']: { id: '', date: '', note: '' } },
+    `games/${gameId}/save.json`,
+    ['#all']
+  )
+  const [_timer] = useDBSyncedState([], `games/${gameId}/record.json`, ['timer'])
+
   function confirmScore(): void {
     const scoreNum = parseFloat(preScore)
 

@@ -8,6 +8,7 @@ import { useUpdaterStore } from './pages/Updater/store'
 import { useEffect } from 'react'
 import { ipcOnUnique } from './utils'
 import { ThemeProvider } from './components/ThemeProvider'
+import { HashRouter } from 'react-router-dom'
 
 function App(): JSX.Element {
   const { setIsOpen: setIsUpdateDialogOpen } = useUpdaterStore()
@@ -22,7 +23,9 @@ function App(): JSX.Element {
   return (
     <ThemeProvider>
       <Titlebar />
-      <Main />
+      <HashRouter>
+        <Main />
+      </HashRouter>
       <GameAdder />
       <GameBatchAdder />
       <Toaster />
