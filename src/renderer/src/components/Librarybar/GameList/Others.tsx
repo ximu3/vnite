@@ -4,20 +4,22 @@ import { ScrollArea } from '@ui/scroll-area'
 import { useGameIndexManager } from '~/hooks'
 import { GameNav } from '../GameNav'
 import { AllGame } from './AllGame'
+import { RecentGames } from './RecentGames'
 
 export function Others({ fieldName }: { fieldName: string }): JSX.Element {
   const { getAllValuesInKey, filter } = useGameIndexManager()
   const fields = getAllValuesInKey(fieldName)
-  const defaultValues = [...fields, 'all']
+  const defaultValues = [...fields, 'all', 'recentGames']
   return (
     <ScrollArea className={cn('w-full h-[700px] pr-3 -mr-3', '3xl:h-[900px]')}>
-      {defaultValues.length > 1 ? (
+      {defaultValues.length > 2 ? (
         <Accordion
           key={`${fieldName}_yes`}
           type="multiple"
           className={cn('w-full text-xs flex flex-col gap-2')}
           defaultValue={defaultValues}
         >
+          <RecentGames />
           {fields.map((field) => (
             <AccordionItem key={field} value={field}>
               <AccordionTrigger defaultChecked className={cn('bg-accent/30 text-xs p-1 pl-2')}>

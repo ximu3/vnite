@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@ui/select'
-import { useGameIndexManager, useGameRecords, useDBSyncedState } from '~/hooks'
+import { useGameIndexManager, useDBSyncedState } from '~/hooks'
 import { GamePoster } from './posters/GamePoster'
 import { useEffect, useState } from 'react'
 
@@ -26,13 +26,12 @@ export function AllGames(): JSX.Element {
   ])
   const { sort } = useGameIndexManager()
   const [games, setGames] = useState(sort(by, order))
-  const { getSortedGameIds } = useGameRecords()
   const toggleOrder = (): void => {
     setOrder(order === 'asc' ? 'desc' : 'asc')
   }
   useEffect(() => {
     setGames(sort(by, order))
-  }, [by, order, sort, getSortedGameIds])
+  }, [by, order, sort])
 
   return (
     <div className={cn('w-full flex flex-col gap-1 pt-3')}>
