@@ -262,7 +262,7 @@ export async function importV1Data(zipFilePath: string, outputDir: string): Prom
       await fse.writeJson(path.join(gameDir, 'metadata.json'), v2Metadata, { spaces: 2 })
 
       // 复制图片文件
-      const imageFiles = ['background.webp', 'cover.webp', 'icon.png']
+      const imageFiles = ['background.webp', 'cover.webp', 'icon.png', 'icon.ico']
       for (const file of imageFiles) {
         const srcPath = path.join(tempDir, 'data', 'games', oldGameId, file)
         const destPath = path.join(gameDir, file)
@@ -300,7 +300,7 @@ export async function importV1Data(zipFilePath: string, outputDir: string): Prom
           ? new Date(gameDetail.lastVisitDate).toISOString()
           : '',
         score: -1, // 假设没有评分信息
-        playingTime: gameDetail?.gameDuration || 0, // 假设没有游戏时间信息
+        playingTime: gameDetail?.gameDuration * 1000 || 0, // 假设没有游戏时间信息
         timer: [], // 假设没有计时器信息
         playStatus: convertPlayStatus(gameDetail.playStatus)
       }
