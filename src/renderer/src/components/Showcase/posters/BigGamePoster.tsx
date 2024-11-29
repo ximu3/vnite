@@ -28,7 +28,7 @@ export function BigGamePoster({
     [gameId, gameIndex]
 
   return (
-    <HoverCard>
+    <HoverCard openDelay={300} closeDelay={100}>
       <HoverCardTrigger className={cn('rounded-none')}>
         <ContextMenu>
           <ContextMenuTrigger className={cn('rounded-none')}>

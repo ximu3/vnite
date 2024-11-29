@@ -19,14 +19,14 @@ export function HoverCardAnimation({
   children,
   className,
   onClick,
-  liftAmount = 4,
+  liftAmount = 6,
   shadowConfig = {
     initial: '0 4px 8px rgba(0, 0, 0, 0.7)',
     hover: '0 8px 16px rgba(0, 0, 0, 1)'
   },
   animationConfig = {
-    tension: 600,
-    friction: 90
+    tension: 730,
+    friction: 100
   },
   ...rest
 }: HoverCardProps): JSX.Element {

@@ -27,8 +27,8 @@ export function HoverSquareCardAnimation({
     }
   },
   animationConfig = {
-    tension: 600,
-    friction: 90
+    tension: 730,
+    friction: 100
   },
   ...rest
 }: HoverSquareCardProps): JSX.Element {

@@ -43,12 +43,12 @@ export function HoverBigCardAnimation({
   imageConfig = {
     scale: {
       initial: 1,
-      hover: 1.01
+      hover: 1.03
     }
   },
   animationConfig = {
-    tension: 600,
-    friction: 90
+    tension: 730,
+    friction: 100
   },
   ...rest
 }: HoverBigCardProps): JSX.Element {
