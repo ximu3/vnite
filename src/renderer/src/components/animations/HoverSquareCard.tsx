@@ -27,7 +27,7 @@ export function HoverSquareCardAnimation({
     }
   },
   animationConfig = {
-    tension: 730,
+    tension: 750,
     friction: 95
   },
   ...rest

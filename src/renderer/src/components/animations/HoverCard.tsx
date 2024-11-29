@@ -25,7 +25,7 @@ export function HoverCardAnimation({
     hover: '0 8px 16px rgba(0, 0, 0, 1)'
   },
   animationConfig = {
-    tension: 730,
+    tension: 750,
     friction: 95
   },
   ...rest
