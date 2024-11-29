@@ -25,7 +25,7 @@ export function GamePoster({
   const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
 
   return (
-    <HoverCard openDelay={300} closeDelay={100}>
+    <HoverCard openDelay={250} closeDelay={100}>
       <HoverCardTrigger>
         <ContextMenu>
           <ContextMenuTrigger>

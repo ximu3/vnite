@@ -48,7 +48,7 @@ export function HoverBigCardAnimation({
   },
   animationConfig = {
     tension: 730,
-    friction: 100
+    friction: 95
   },
   ...rest
 }: HoverBigCardProps): JSX.Element {
