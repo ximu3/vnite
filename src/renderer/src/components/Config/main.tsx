@@ -8,6 +8,7 @@ import { Advanced } from './Advanced'
 import { About } from './About'
 import { Scraper } from './Scraper'
 import { Theme } from './Theme'
+import { Appearances } from './Appearances'
 
 export function ConfigDialog({ children }: { children: React.ReactNode }): JSX.Element {
   return (
@@ -21,6 +22,9 @@ export function ConfigDialog({ children }: { children: React.ReactNode }): JSX.E
           <TabsList className={cn('w-[600px]')}>
             <TabsTrigger className={cn('w-full')} value="general">
               通用
+            </TabsTrigger>
+            <TabsTrigger className={cn('w-full')} value="appearances">
+              外观
             </TabsTrigger>
             <TabsTrigger className={cn('w-full')} value="advanced">
               高级
@@ -43,6 +47,9 @@ export function ConfigDialog({ children }: { children: React.ReactNode }): JSX.E
           </TabsList>
           <TabsContent value="general">
             <General />
+          </TabsContent>
+          <TabsContent value="appearances">
+            <Appearances />
           </TabsContent>
           <TabsContent value="advanced">
             <Advanced />
