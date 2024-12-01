@@ -12,6 +12,7 @@ import {
 import fse from 'fs-extra'
 import { getDataPath } from '~/utils'
 import { app } from 'electron'
+import path from 'path'
 
 export async function getMediaPath(
   gameId: string,
@@ -38,6 +39,9 @@ export async function setMediaWithFile(
     case 'background':
       return setBackgroundWithFile(gameId, filePath)
     case 'icon':
+      if (path.extname(filePath).slice(1).toLowerCase() === 'exe') {
+        return saveFileIcon(gameId, filePath)
+      }
       return setIconWithFile(gameId, filePath)
   }
 }
@@ -85,13 +89,6 @@ function isValidUrl(str: string): boolean {
 
 export async function saveFileIcon(gameId: string, filePath: string): Promise<void> {
   try {
-    const isIconExists = await checkIconExists(gameId)
-
-    if (isIconExists) {
-      console.log('图标已存在')
-      return
-    }
-
     // 获取文件图标
     const icon = await app.getFileIcon(filePath)
 
