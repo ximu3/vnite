@@ -23,7 +23,7 @@ export function setupAutoUpdater(mainWindow: BrowserWindow): void {
   })
 
   autoUpdater.on('update-available', (info) => {
-    log.info('发现新版本:', info)
+    log.info('发现新版本:', info.version)
     const updateInfo = {
       version: info.version,
       releaseNotes: Array.isArray(info.releaseNotes)
@@ -34,12 +34,11 @@ export function setupAutoUpdater(mainWindow: BrowserWindow): void {
   })
 
   autoUpdater.on('update-not-available', (info) => {
-    log.info('当前已是最新版本:', info)
+    log.info('当前已是最新版本:', info.version)
     mainWindow?.webContents.send('update-not-available')
   })
 
   autoUpdater.on('download-progress', (progressObj) => {
-    log.info('下载进度:', progressObj)
     mainWindow?.webContents.send('update-progress', progressObj)
   })
 
