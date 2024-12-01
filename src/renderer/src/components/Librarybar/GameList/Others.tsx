@@ -46,6 +46,7 @@ export function Others({ fieldName }: { fieldName: string }): JSX.Element {
           className={cn('w-full text-xs flex flex-col gap-2')}
           defaultValue={defaultValues}
         >
+          <RecentGames />
           <AllGame />
         </Accordion>
       )}

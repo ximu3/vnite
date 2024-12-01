@@ -44,9 +44,10 @@ export function Collection(): JSX.Element {
         <Accordion
           key={'collection-no'}
           type="multiple"
-          defaultValue={['all']}
+          defaultValue={defaultValues}
           className={cn('w-full text-xs flex flex-col gap-2 ')}
         >
+          <RecentGames />
           <AllGame />
         </Accordion>
       )}

@@ -17,10 +17,26 @@ import { GameList } from './GameList'
 import { Filter } from './Filter'
 import { useFilterStore } from './Filter/store'
 import { isEqual } from 'lodash'
+import { create } from 'zustand'
+
+interface LibrarybarStore {
+  query: string
+  setQuery: (query: string) => void
+  refreshGameList: () => void
+}
+
+export const useLibrarybarStore = create<LibrarybarStore>((set) => ({
+  query: '',
+  setQuery: (query: string): void => set({ query }),
+  refreshGameList: (): void => {
+    set({ query: '-1' })
+    setTimeout(() => set({ query: '' }), 1)
+  }
+}))
 
 export function Librarybar(): JSX.Element {
   const [selectedGroup, setSelectedGroup] = useState('collection')
-  const [query, setQuery] = useState('')
+  const { query, setQuery } = useLibrarybarStore()
   const { toggleFilterMenu, filter } = useFilterStore()
   return (
     <div className={cn('flex flex-col gap-6 bg-card w-full h-full pt-2')}>

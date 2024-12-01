@@ -14,6 +14,7 @@ import { useDBSyncedState } from '~/hooks'
 import { toast } from 'sonner'
 import { useCollections } from '~/hooks'
 import { useGameIndexManager } from '~/hooks'
+import { useLibrarybarStore } from '~/components/Librarybar'
 import { useNavigate } from 'react-router-dom'
 
 export function DeleteGameAlert({
@@ -26,21 +27,25 @@ export function DeleteGameAlert({
   const navigate = useNavigate()
   const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
   const { removeGameFromAllCollections } = useCollections()
-  const { deleteGame: deleteGameFromIndex } = useGameIndexManager()
+  const { rebuildIndex } = useGameIndexManager()
+  const { refreshGameList } = useLibrarybarStore()
   async function deleteGame(): Promise<void> {
     toast.promise(
       async () => {
-        await deleteGameFromIndex(gameId)
+        console.log(`Deleting game ${gameId}...`)
         await new Promise((resolve) => setTimeout(resolve, 100))
         removeGameFromAllCollections(gameId)
         await new Promise((resolve) => setTimeout(resolve, 100))
         await ipcInvoke('delete-game-from-db', gameId)
+        await rebuildIndex()
+        refreshGameList()
+        console.log(`Game ${gameId} deleted`)
         navigate('/library')
       },
       {
         loading: `正在删除游戏 ${gameName}...`,
         success: `游戏 ${gameName} 已删除`,
-        error: `删除游戏 ${gameName} 时出错`
+        error: (err) => `删除游戏 ${gameName} 失败: ${err.message}`
       }
     )
   }

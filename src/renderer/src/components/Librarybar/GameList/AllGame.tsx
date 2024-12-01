@@ -13,7 +13,6 @@ import {
 import { ContextMenuContent, ContextMenuTrigger, ContextMenu } from '@ui/context-menu'
 import { useGameIndexManager, useDBSyncedState } from '~/hooks'
 import { GameNav } from '../GameNav'
-import { useEffect, useState } from 'react'
 
 export function AllGame(): JSX.Element {
   const [by, setBy] = useDBSyncedState<
@@ -29,12 +28,7 @@ export function AllGame(): JSX.Element {
     setOrder(order === 'asc' ? 'desc' : 'asc')
   }
   const { sort } = useGameIndexManager()
-  const [games, setGames] = useState(sort(by, order))
-
-  useEffect(() => {
-    setGames(sort(by, order))
-  }, [by, order, sort])
-
+  const games = sort(by, order)
   return (
     <AccordionItem value="all">
       <ContextMenu>

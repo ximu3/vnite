@@ -37,7 +37,7 @@ export function RecentGames(): JSX.Element {
           </ContextMenu>
           <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
             {games.map((gameId) => (
-              <GameNav key={gameId} gameId={gameId} groupId="all" />
+              <GameNav key={gameId} gameId={gameId} groupId="recentGames" />
             ))}
           </AccordionContent>
         </AccordionItem>
