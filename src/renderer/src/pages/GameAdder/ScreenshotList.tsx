@@ -16,7 +16,6 @@ export function ScreenshotList(): JSX.Element {
     id,
     dataSource,
     setIsOpen,
-    setDataSource,
     dbId,
     setDbId,
     setId,
@@ -56,7 +55,6 @@ export function ScreenshotList(): JSX.Element {
         await ipcInvoke('add-game-to-db', dataSource, id, dbId, screenshotUrl)
         await rebuildIndex()
         setIsOpen(false)
-        setDataSource('steam')
         setDbId('')
         setId('')
         setName('')

@@ -31,16 +31,11 @@ interface GameItem {
 }
 
 export function Sidebar(): JSX.Element {
-  const { setIsOpen: setIsGameAdderOpen, setDataSource } = useGameAdderStore()
-  const [defaultDataSource] = useDBSyncedState<DataSource>('steam', 'config.json', [
-    'scraper',
-    'defaultDataSource'
-  ])
+  const { setIsOpen: setIsGameAdderOpen } = useGameAdderStore()
   const { setIsOpen: setIsGameBatchAdderOpen, setGameList } = useGameBatchAdderStore()
   const { gameIndex: _ } = useGameIndexManager()
   const { status } = useCloudSyncStore()
   const [cloudSyncEnabled] = useDBSyncedState(false, 'config.json', ['cloudSync', 'enabled'])
-
   return (
     <div className={cn('flex flex-col p-[10px] pt-3 pb-3 h-full bg-background justify-between')}>
       <div className={cn('flex flex-col gap-2')}>
@@ -140,7 +135,6 @@ export function Sidebar(): JSX.Element {
                 <DropdownMenuSubContent>
                   <DropdownMenuItem
                     onClick={() => {
-                      setDataSource(defaultDataSource)
                       setIsGameAdderOpen(true)
                     }}
                   >

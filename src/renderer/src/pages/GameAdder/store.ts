@@ -55,3 +55,7 @@ export const useGameAdderStore = create<GameAdderState>((set) => ({
   screenshotUrl: '',
   setScreenshotUrl: (screenshotUrl): void => set({ screenshotUrl })
 }))
+
+export const initializeStore = (defaultDataSource: DataSource): void => {
+  useGameAdderStore.setState({ dataSource: defaultDataSource })
+}

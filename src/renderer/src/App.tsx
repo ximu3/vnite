@@ -9,9 +9,17 @@ import { useEffect } from 'react'
 import { ipcOnUnique } from './utils'
 import { ThemeProvider } from './components/ThemeProvider'
 import { HashRouter } from 'react-router-dom'
+import { initializeStore, DataSource, useGameAdderStore } from './pages/GameAdder/store'
+import { useDBSyncedState, useGameIndexManager } from './hooks'
 
 function App(): JSX.Element {
   const { setIsOpen: setIsUpdateDialogOpen } = useUpdaterStore()
+  const [defaultDataSource] = useDBSyncedState<DataSource>('steam', 'config.json', [
+    'scraper',
+    'defaultDataSource'
+  ])
+  const { gameIndex: _ } = useGameIndexManager()
+  const { isOpen: isGameAdderDialogOpen } = useGameAdderStore()
   useEffect(() => {
     const removeUpdateAvailableListener = ipcOnUnique('update-available', (_event, _updateInfo) => {
       setIsUpdateDialogOpen(true)
@@ -20,6 +28,12 @@ function App(): JSX.Element {
       removeUpdateAvailableListener()
     }
   }, [setIsUpdateDialogOpen])
+  useEffect(() => {
+    const initStore = async (): Promise<void> => {
+      initializeStore(defaultDataSource)
+    }
+    initStore()
+  }, [defaultDataSource, isGameAdderDialogOpen])
   return (
     <ThemeProvider>
       <Titlebar />

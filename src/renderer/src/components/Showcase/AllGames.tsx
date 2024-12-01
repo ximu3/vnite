@@ -12,7 +12,6 @@ import {
 } from '@ui/select'
 import { useGameIndexManager, useDBSyncedState } from '~/hooks'
 import { GamePoster } from './posters/GamePoster'
-import { useEffect, useState } from 'react'
 
 export function AllGames(): JSX.Element {
   const [by, setBy] = useDBSyncedState<
@@ -25,14 +24,10 @@ export function AllGames(): JSX.Element {
     'order'
   ])
   const { sort } = useGameIndexManager()
-  const [games, setGames] = useState(sort(by, order))
+  const games = sort(by, order)
   const toggleOrder = (): void => {
     setOrder(order === 'asc' ? 'desc' : 'asc')
   }
-  useEffect(() => {
-    setGames(sort(by, order))
-  }, [by, order, sort])
-
   return (
     <div className={cn('w-full flex flex-col gap-1 pt-3')}>
       <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>
