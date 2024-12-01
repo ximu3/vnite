@@ -30,7 +30,11 @@ export class Watcher {
       ignored: /(^|[/\\])\./, // 忽略点文件
       persistent: true,
       ignoreInitial: true,
-      depth: 5 // 监控嵌套子目录到2层
+      depth: 5, // 监控嵌套子目录到2层
+      awaitWriteFinish: {
+        stabilityThreshold: 2000,
+        pollInterval: 100
+      }
     })
 
     this.watcher
