@@ -21,7 +21,6 @@ export function ManageMenu({ gameId }: { gameId: string }): JSX.Element {
   const { setIsOpen, setDbId, setName } = useGameAdderStore()
   const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = useState(false)
   const [isPlayingTimeEditorDialogOpen, setIsPlayingTimeEditorDialogOpen] = useState(false)
-
   return (
     <ContextMenuGroup>
       <ContextMenuSub>

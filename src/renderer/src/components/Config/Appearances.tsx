@@ -9,7 +9,6 @@ export function Appearances(): JSX.Element {
     'config.json',
     ['appearances', 'gameList', 'showRecentGamesInGameList']
   )
-
   return (
     <div className={cn('flex flex-col w-full h-full')}>
       <Card className={cn('group')}>
