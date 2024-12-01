@@ -19,7 +19,7 @@ export function ConfigDialog({ children }: { children: React.ReactNode }): JSX.E
           <DialogTitle>{`Vnite 设置`}</DialogTitle>
         </DialogHeader>
         <Tabs defaultValue="general" className={cn('w-full')}>
-          <TabsList className={cn('w-[600px]')}>
+          <TabsList className={cn('w-[700px]')}>
             <TabsTrigger className={cn('w-full')} value="general">
               通用
             </TabsTrigger>
