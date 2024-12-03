@@ -4,3 +4,6 @@ out
 .DS_Store
 *.log*
 dev
+.env
+.env.local
+.env.*.local

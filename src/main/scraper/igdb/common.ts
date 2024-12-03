@@ -9,12 +9,15 @@ import {
 } from './types'
 import { formatDate } from '~/utils'
 import { getIGDBClient, initIGDBClient } from './client'
+import * as dotenv from 'dotenv'
+
+dotenv.config()
 
 // 初始化客户端（在应用启动时调用）
 export function initIGDB(): void {
   initIGDBClient({
-    clientId: '6b8jg4hj77ob126dw3w6noih0vz6b5',
-    clientSecret: '6xlsuzodsrsxy7x1cd4fpmhny0cnbu'
+    clientId: import.meta.env.VITE_IGDB_API_ID,
+    clientSecret: import.meta.env.VITE_IGDB_API_KEY
   })
 }
 
