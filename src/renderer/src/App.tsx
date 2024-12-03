@@ -11,6 +11,7 @@ import { ThemeProvider } from './components/ThemeProvider'
 import { HashRouter } from 'react-router-dom'
 import { initializeStore, DataSource, useGameAdderStore } from './pages/GameAdder/store'
 import { useDBSyncedState, useGameIndexManager } from './hooks'
+import { Importer } from './pages/Importer'
 
 function App(): JSX.Element {
   const { setIsOpen: setIsUpdateDialogOpen } = useUpdaterStore()
@@ -44,6 +45,7 @@ function App(): JSX.Element {
       <GameBatchAdder />
       <Toaster />
       <UpdateDialog />
+      <Importer />
     </ThemeProvider>
   )
 }

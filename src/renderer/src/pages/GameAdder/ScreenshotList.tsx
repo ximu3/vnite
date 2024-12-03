@@ -52,7 +52,7 @@ export function ScreenshotList(): JSX.Element {
   async function addGameToDB(): Promise<void> {
     toast.promise(
       (async (): Promise<void> => {
-        await ipcInvoke('add-game-to-db', dataSource, id, dbId, screenshotUrl)
+        await ipcInvoke('add-game-to-db', { dataSource, id, dbId, screenshotUrl })
         await rebuildIndex()
         setIsOpen(false)
         setDbId('')

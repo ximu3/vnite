@@ -1,14 +1,21 @@
 import { addGameToDB, getBatchGameAdderData, addGameToDBWithoutMetadata } from './common'
 import log from 'electron-log/main.js'
 
-export async function addGameToDatabase(
-  dataSource: string,
-  id: string,
-  dbId: string,
+export async function addGameToDatabase({
+  dataSource,
+  id,
+  dbId,
+  screenshotUrl,
+  playingTime
+}: {
+  dataSource: string
+  id: string
+  dbId?: string
   screenshotUrl?: string
-): Promise<void> {
+  playingTime?: number
+}): Promise<void> {
   try {
-    await addGameToDB(dataSource, id, dbId, screenshotUrl)
+    await addGameToDB({ dataSource, id, dbId, screenshotUrl, playingTime })
   } catch (error) {
     log.error('Error adding game to database:', error)
     throw error

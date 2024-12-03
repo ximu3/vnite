@@ -76,7 +76,7 @@ export function GameList(): JSX.Element {
         setGameList(newGameList)
       }
 
-      await ipcInvoke('add-game-to-db', game.dataSource, gameId)
+      await ipcInvoke('add-game-to-db', { dataSource: game.dataSource, gameId })
       newGameList = newGameList.map((item) =>
         item.dataId === dataId ? { ...item, status: 'success' } : item
       )

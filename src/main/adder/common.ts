@@ -6,16 +6,23 @@ import { BrowserWindow } from 'electron'
 import { launcherPreset } from '~/launcher'
 import { setupWatcher, stopWatcher } from '~/watcher'
 
-export async function addGameToDB(
-  dataSource: string,
-  id: string,
-  dbId: string,
+export async function addGameToDB({
+  dataSource,
+  id,
+  dbId,
+  screenshotUrl,
+  playingTime
+}: {
+  dataSource: string
+  id: string
+  dbId?: string
   screenshotUrl?: string
-): Promise<void> {
+  playingTime?: number
+}): Promise<void> {
   const metadata = await getGameMetadata(dataSource, id)
   const coverUrl = await getGameCover(dataSource, id)
   const iconUrl = await getGameIcon(dataSource, id)
-  if (dbId === '') {
+  if (!dbId) {
     dbId = generateUUID()
   }
 
@@ -38,8 +45,13 @@ export async function addGameToDB(
     await setMedia(dbId, 'icon', iconUrl)
   }
 
+  if (playingTime) {
+    await setDBValue(`games/${dbId}/record.json`, ['playingTime'], playingTime)
+  }
+
   await setDBValue(`games/${dbId}/metadata.json`, ['#all'], {
     id: dbId,
+    [`${dataSource}Id`]: id,
     ...metadata
   })
 
@@ -51,9 +63,9 @@ export async function addGameToDB(
 
   const mainWindow = BrowserWindow.getAllWindows()[0]
 
-  stopWatcher()
+  // stopWatcher()
 
-  await setupWatcher(mainWindow)
+  // await setupWatcher(mainWindow)
 
   mainWindow.webContents.send('reload-db-values', `games/${dbId}/cover.webp`)
   mainWindow.webContents.send('reload-db-values', `games/${dbId}/background.webp`)

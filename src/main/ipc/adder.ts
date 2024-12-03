@@ -8,8 +8,21 @@ import {
 export function setupAdderIPC(mainWindow: BrowserWindow): void {
   ipcMain.handle(
     'add-game-to-db',
-    async (_, dataSource: string, id: string, dbId?: string, screenshotUrl?: string) => {
-      await addGameToDatabase(dataSource, id, dbId || '', screenshotUrl)
+    async (
+      _,
+      {
+        dataSource,
+        id,
+        dbId,
+        screenshotUrl
+      }: {
+        dataSource: string
+        id: string
+        dbId?: string
+        screenshotUrl?: string
+      }
+    ) => {
+      await addGameToDatabase({ dataSource, id, dbId, screenshotUrl })
     }
   )
 
