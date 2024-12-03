@@ -31,58 +31,30 @@
   font-style: normal;
 }
 
-.shine-effect {
-  position: relative;
-  overflow: hidden;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.shine-effect::before,
-.shine-effect::after {
-  content: '';
-  position: absolute;
-  top: -40%;
-  right: -40%;
-  width: 150%;
-  height: 150%;
-  transition: all 0.4s ease-out;
-  transform: translate(40%, -40%) rotate(-45deg);
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
 }
 
-.shine-effect::before {
-  background: linear-gradient(
-    225deg,
-    rgba(255, 255, 255, 0.4) 0%,
-    rgba(255, 255, 255, 0.2) 30%,
-    rgba(255, 255, 255, 0.1) 40%,
-    rgba(255, 255, 255, 0) 60%
-  );
-  opacity: 0.9;
-  filter: blur(5px);
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
 }
 
-.shine-effect::after {
-  background: linear-gradient(
-    225deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.15) 69.9%,
-    rgba(255, 255, 255, 0.15) 90%,
-    rgba(255, 255, 255, 0.05) 100%,
-    transparent 100%
-  );
-  opacity: 0.7;
-  filter: blur(3px);
-}
-
-.shine-effect:hover::before,
-.shine-effect:hover::after {
-  transform: translate(30%, -30%) rotate(-45deg) scale(1.2);
-}
-
-.shine-effect:hover::before {
-  opacity: 1;
-}
-
-.shine-effect:hover::after {
-  opacity: 1;
-  filter: blur(3px);
+.animate-scaleIn {
+  animation: scaleIn 0.3s ease-out;
 }

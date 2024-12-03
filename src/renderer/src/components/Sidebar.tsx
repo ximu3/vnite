@@ -20,6 +20,7 @@ import { ipcInvoke } from '~/utils'
 import { useGameIndexManager, useDBSyncedState } from '~/hooks'
 import { ConfigDialog } from './Config'
 import { useCloudSyncStore } from './Config/CloudSync/store'
+import { useSteamImporterStore } from '~/pages/Importer/SteamImporter/store'
 import { CloudSyncInfo } from './Config/CloudSync/Info'
 
 interface GameItem {
@@ -33,6 +34,7 @@ interface GameItem {
 export function Sidebar(): JSX.Element {
   const { setIsOpen: setIsGameAdderOpen } = useGameAdderStore()
   const { setIsOpen: setIsGameBatchAdderOpen, setGameList } = useGameBatchAdderStore()
+  const { setIsOpen: setIsSteamImporterOpen } = useSteamImporterStore()
   const { gameIndex: _ } = useGameIndexManager()
   const { status } = useCloudSyncStore()
   const [cloudSyncEnabled] = useDBSyncedState(false, 'config.json', ['cloudSync', 'enabled'])
@@ -201,6 +203,20 @@ export function Sidebar(): JSX.Element {
             >
               <div>不使用刮削器</div>
             </DropdownMenuItem>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>从第三方导入</DropdownMenuSubTrigger>
+              <DropdownMenuPortal>
+                <DropdownMenuSubContent>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setIsSteamImporterOpen(true)
+                    }}
+                  >
+                    <div>Steam</div>
+                  </DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuPortal>
+            </DropdownMenuSub>
           </DropdownMenuContent>
         </DropdownMenu>
         <Tooltip>
