@@ -131,16 +131,21 @@ export async function getGameScreenshots(vnId: string): Promise<string[]> {
 }
 
 export async function getGameScreenshotsByTitle(title: string): Promise<string[]> {
-  const fields = ['screenshots{url}'] as const
+  const fields = ['titles{title}', 'screenshots{url}'] as const
 
   try {
     const data = await fetchVNDB({
       filters: ['search', '=', title],
-      fields,
-      results: 1
+      fields
     })
-
-    return data.results[0].screenshots.map((screenshot) => screenshot.url)
+    if (data.results.length > 0) {
+      let vn = data.results.find((result) =>
+        result.titles.some((titleJson) => titleJson.title.toLowerCase() === title.toLowerCase())
+      )
+      vn = vn || data.results[0]
+      return vn.screenshots.map((screenshot) => screenshot.url)
+    }
+    return []
   } catch (error) {
     console.error(`Error fetching images for VN ${title}:`, error)
     return []
