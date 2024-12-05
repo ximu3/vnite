@@ -1,11 +1,7 @@
-import { useEffect, useMemo, useState } from 'react'
-import { toast } from 'sonner'
 import { create } from 'zustand'
-import { ipcInvoke, ipcOnUnique } from '~/utils/ipc'
+import { ipcInvoke, ipcOnUnique } from '~/utils'
+import { useMemo } from 'react'
 
-export type MediaType = 'icon' | 'cover' | 'background' | 'screenshot'
-
-// 在 store 中重新定义需要的接口
 interface MediaData {
   protocol: string
   path: string
@@ -14,46 +10,96 @@ interface MediaData {
 
 type MediaKey = `game_${string}_${MediaType}`
 
+export type MediaType = 'cover' | 'background' | 'icon'
+
 interface MediaStore {
-  [key: MediaKey]: MediaData | undefined
-  setMediaData: (gameId: string, type: MediaType, data: Omit<MediaData, 'timestamp'>) => void
-  updateTimestamp: (gameId: string, type: MediaType) => void
+  media: Record<MediaKey, MediaData | undefined>
+  ensureMediaSubscription: (gameId: string, type: MediaType, defaultProtocol: string) => void
   getMediaData: (gameId: string, type: MediaType) => MediaData | undefined
+  refreshMedia: (gameId: string, type: MediaType, defaultProtocol: string) => Promise<void>
 }
 
 const useMediaStore = create<MediaStore>((set, get) => ({
-  setMediaData: (
-    gameId: string,
-    type: MediaType,
-    mediaData: Omit<MediaData, 'timestamp'>
-  ): void => {
+  media: {},
+
+  ensureMediaSubscription: (gameId, type, defaultProtocol): void => {
     const key = `game_${gameId}_${type}` as MediaKey
-    set({
-      [key]: {
-        ...mediaData,
-        timestamp: Date.now()
+    if (get().media[key]) return // Already subscribed
+
+    const fetchAndSetMedia = async (): Promise<void> => {
+      try {
+        const mediaPath = await ipcInvoke<string>('get-game-media-path', gameId, type)
+        if (mediaPath) {
+          set((state) => ({
+            media: {
+              ...state.media,
+              [key]: {
+                protocol: defaultProtocol,
+                path: mediaPath,
+                timestamp: Date.now()
+              }
+            }
+          }))
+        } else {
+          throw new Error(`No media path found for game ${gameId} ${type}`)
+        }
+      } catch (error) {
+        console.error('Failed to fetch media:', error)
+      }
+    }
+
+    // Set up IPC listener
+    const removeListener = ipcOnUnique('reload-db-values', async (_event, updatedMediaPath) => {
+      const match = updatedMediaPath.match(/games\/([^/]+)\/([^.]+)/)
+      if (!match) return
+
+      const [, updatedGameId, mediaType] = match
+      if (updatedGameId === gameId && mediaType === type) {
+        await fetchAndSetMedia()
       }
     })
-  },
 
-  updateTimestamp: (gameId: string, type: MediaType): void => {
-    const key = `game_${gameId}_${type}` as MediaKey
-    set((state) => {
-      const currentData = state[key]
-      if (!currentData) return state
+    // Initialize media data
+    fetchAndSetMedia()
 
-      return {
+    // Store subscription details
+    set((state) => ({
+      media: {
+        ...state.media,
         [key]: {
-          ...currentData,
-          timestamp: Date.now()
+          ...state.media[key],
+          removeListener
         }
       }
-    })
+    }))
   },
 
-  getMediaData: (gameId: string, type: MediaType): MediaData | undefined => {
+  getMediaData: (gameId, type): MediaData | undefined => {
     const key = `game_${gameId}_${type}` as MediaKey
-    return get()[key]
+    return get().media[key]
+  },
+
+  refreshMedia: async (gameId, type, defaultProtocol): Promise<void> => {
+    const key = `game_${gameId}_${type}` as MediaKey
+    try {
+      const mediaPath = await ipcInvoke<string>('get-game-media-path', gameId, type)
+      if (mediaPath) {
+        set((state) => ({
+          media: {
+            ...state.media,
+            [key]: {
+              protocol: defaultProtocol,
+              path: mediaPath,
+              timestamp: Date.now()
+            }
+          }
+        }))
+      } else {
+        throw new Error(`No media path found for game ${gameId} ${type}`)
+      }
+    } catch (error) {
+      console.error('Failed to refresh media:', error)
+    }
   }
 }))
 
@@ -65,7 +111,7 @@ interface UseGameMediaOptions {
 }
 
 interface UseGameMediaResult {
-  mediaUrl: string | undefined // 改为 undefined 而不是 null
+  mediaUrl: string | undefined
   isLoading: boolean
   error: Error | null
   refreshMedia: () => Promise<void>
@@ -74,143 +120,32 @@ interface UseGameMediaResult {
 export function useGameMedia({
   gameId,
   type,
-  defaultProtocol = 'app',
-  noToastError = true
+  defaultProtocol = 'app'
 }: UseGameMediaOptions): UseGameMediaResult {
-  const { setMediaData, getMediaData, updateTimestamp } = useMediaStore()
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<Error | null>(null)
+  const { ensureMediaSubscription, getMediaData, refreshMedia } = useMediaStore()
 
-  // 获取当前多媒体数据
+  // Ensure subscription on first render
+  ensureMediaSubscription(gameId, type, defaultProtocol)
+
+  // Get current media data
   const currentMediaData = getMediaData(gameId, type)
 
-  // 从主进程获取多媒体路径并初始化
-  useEffect(() => {
-    const initializeMedia = async (): Promise<void> => {
-      if (!currentMediaData) {
-        try {
-          setIsLoading(true)
-          setError(null)
-
-          // 从主进程获取多媒体路径
-          const mediaPath = await ipcInvoke<string>('get-game-media-path', gameId, type)
-
-          if (mediaPath) {
-            setMediaData(gameId, type, {
-              protocol: defaultProtocol,
-              path: mediaPath
-            })
-          } else {
-            throw new Error(`No media path found for game ${gameId} ${type}`)
-          }
-        } catch (error) {
-          console.error('Failed to initialize media:', error)
-          setError(error instanceof Error ? error : new Error('Unknown error'))
-          if (error instanceof Error) {
-            if (!noToastError) {
-              toast.error(`Failed to initialize media: ${error.message}`)
-            }
-          }
-        } finally {
-          setIsLoading(false)
-        }
-      } else {
-        setIsLoading(false)
-      }
-    }
-
-    initializeMedia()
-  }, [gameId, type, defaultProtocol, currentMediaData])
-
-  // 监听特定游戏和多媒体类型的 IPC 更新信号
-  useEffect(() => {
-    const updateListener = async (
-      _event: Electron.IpcRendererEvent,
-      updatedMediaPath: string
-    ): Promise<void> => {
-      // 解析路径中的 gameId
-      const match = updatedMediaPath.match(/games\/([^/]+)\/([^.]+)/)
-      if (!match) return
-
-      const [, updatedGameId, mediaType] = match
-
-      // 检查 gameId 和 mediaType 是否匹配
-      if (updatedGameId === gameId && mediaType === type) {
-        try {
-          setIsLoading(true)
-          setError(null)
-
-          // 重新从主进程获取多媒体路径
-          const mediaPath = await ipcInvoke<string>('get-game-media-path', gameId, type)
-
-          if (mediaPath) {
-            setMediaData(gameId, type, {
-              protocol: defaultProtocol,
-              path: mediaPath
-            })
-          } else {
-            throw new Error(`No media path found for game ${gameId} ${type}`)
-          }
-          updateTimestamp(gameId, type)
-        } catch (error) {
-          console.error('Failed to update media:', error)
-          setError(error instanceof Error ? error : new Error('Unknown error'))
-          if (error instanceof Error) {
-            if (!noToastError) {
-              toast.error(`Failed to update media: ${error.message}`)
-            }
-          }
-        } finally {
-          setIsLoading(false)
-        }
-      }
-    }
-
-    const removeListener = ipcOnUnique('reload-db-values', updateListener)
-    return removeListener
-  }, [gameId, type, defaultProtocol])
-
-  // 构建多媒体 URL
+  // Construct media URL
   const mediaUrl = useMemo(() => {
-    if (!currentMediaData) return undefined
-    // 将反斜杠转换为正斜杠，确保 URL 格式正确
+    if (!currentMediaData?.path) return undefined
     const normalizedPath = currentMediaData.path.replace(/\\/g, '/')
-    return `${defaultProtocol}:///${normalizedPath}?t=${currentMediaData.timestamp}`
+    return `${currentMediaData.protocol}:///${normalizedPath}?t=${currentMediaData.timestamp}`
   }, [currentMediaData])
 
-  // 手动刷新多媒体（更新时间戳）
-  const refreshMedia = async (): Promise<void> => {
-    try {
-      setIsLoading(true)
-      setError(null)
-
-      // 重新从主进程获取多媒体路径
-      const mediaPath = await ipcInvoke<string>('get-game-media-path', gameId, type)
-
-      if (mediaPath) {
-        setMediaData(gameId, type, {
-          protocol: defaultProtocol,
-          path: mediaPath
-        })
-      } else {
-        throw new Error(`No media path found for game ${gameId} ${type}`)
-      }
-      updateTimestamp(gameId, type)
-    } catch (error) {
-      console.error('Failed to update media:', error)
-      setError(error instanceof Error ? error : new Error('Unknown error'))
-      if (error instanceof Error) {
-        if (!noToastError) {
-          toast.error(`Failed to update media: ${error.message}`)
-        }
-      }
-    }
+  // Manual refresh function
+  const refresh = async (): Promise<void> => {
+    await refreshMedia(gameId, type, defaultProtocol)
   }
 
   return {
     mediaUrl,
-    isLoading,
-    error,
-    refreshMedia
+    isLoading: !currentMediaData,
+    error: null, // Error handling can be improved based on specific needs
+    refreshMedia: refresh
   }
 }

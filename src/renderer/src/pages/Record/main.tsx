@@ -15,20 +15,20 @@ export function Record({ className }: { className?: string }): JSX.Element {
     getPlayedDaysYearly,
     getTotalPlayingTimeYearly,
     getTotalPlayedTimes,
-    gameRecords,
+    records,
     getTotalPlayedDays
   } = useGameRecords()
   const { sort, gameIndex } = useGameIndexManager()
   const maxScoreGame = sort('score', 'desc').length > 0 ? sort('score', 'desc')[0] : null
-  const maxScore = maxScoreGame ? gameIndex.get(maxScoreGame)?.score : 0
+  const maxScore = maxScoreGame ? gameIndex[maxScoreGame]?.score : 0
   const maxPlayingTimeGame =
     sort('playingTime', 'desc').length > 0 ? sort('playingTime', 'desc')[0] : null
-  const maxPlayingTime = maxPlayingTimeGame ? gameIndex.get(maxPlayingTimeGame)?.playingTime : 0
+  const maxPlayingTime = maxPlayingTimeGame ? gameIndex[maxPlayingTimeGame]?.playingTime : 0
   const maxPlayedTimesGameId =
     sort('playedTimes', 'desc').length > 0 ? sort('playedTimes', 'desc')[0] : null
-  const maxPlayedTimes = maxPlayedTimesGameId ? gameRecords[maxPlayedTimesGameId]?.timer.length : 0
+  const maxPlayedTimes = maxPlayedTimesGameId ? records[maxPlayedTimesGameId]?.timer.length : 0
   const maxSoonGame = sort('lastRunDate', 'desc').length > 0 ? sort('lastRunDate', 'desc')[0] : null
-  const maxSoonDate = maxSoonGame ? gameIndex.get(maxSoonGame)?.lastRunDate : ''
+  const maxSoonDate = maxSoonGame ? gameIndex[maxSoonGame]?.lastRunDate : ''
   const playedDaysYearly = getPlayedDaysYearly()
   return (
     <div
@@ -43,22 +43,22 @@ export function Record({ className }: { className?: string }): JSX.Element {
           <div className={cn('flex flex-row gap-3')}>
             <RecordCard
               title="总游戏数"
-              content={`${Object.keys(gameRecords)?.length} 个` || '0 个'}
+              content={`${Object.keys(records)?.length} 个` || '0 个'}
               className={cn('w-1/4')}
             />
             <RecordCard
               title="总游戏时间"
-              content={formatTimeToChinese(getTotalPlayingTime)}
+              content={formatTimeToChinese(getTotalPlayingTime())}
               className={cn('w-1/4')}
             />
             <RecordCard
               title="总游戏天数"
-              content={`${getTotalPlayedDays} 天`}
+              content={`${getTotalPlayedDays()} 天`}
               className={cn('w-1/4')}
             />
             <RecordCard
               title="总游戏次数"
-              content={`${getTotalPlayedTimes} 次` || '0 次'}
+              content={`${getTotalPlayedTimes()} 次` || '0 次'}
               className={cn('w-1/4')}
             />
           </div>

@@ -12,7 +12,7 @@ export function Showcase(): JSX.Element {
   const { setIsOpen } = useGameAdderStore()
   return (
     <div className={cn('flex flex-col gap-3 h-[100vh] pt-[30px]')}>
-      {gameIndex.size !== 0 ? (
+      {Object.keys(gameIndex).length !== 0 ? (
         <ScrollArea className={cn('w-full')}>
           <RecentGames />
           <Collections />

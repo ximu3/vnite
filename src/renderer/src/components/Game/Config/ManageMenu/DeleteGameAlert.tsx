@@ -13,7 +13,6 @@ import { ipcInvoke } from '~/utils'
 import { useDBSyncedState } from '~/hooks'
 import { toast } from 'sonner'
 import { useCollections } from '~/hooks'
-import { useGameIndexManager } from '~/hooks'
 import { useLibrarybarStore } from '~/components/Librarybar'
 import { useNavigate } from 'react-router-dom'
 
@@ -27,7 +26,6 @@ export function DeleteGameAlert({
   const navigate = useNavigate()
   const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
   const { removeGameFromAllCollections } = useCollections()
-  const { rebuildIndex } = useGameIndexManager()
   const { refreshGameList } = useLibrarybarStore()
   async function deleteGame(): Promise<void> {
     toast.promise(
@@ -37,7 +35,6 @@ export function DeleteGameAlert({
         removeGameFromAllCollections(gameId)
         await new Promise((resolve) => setTimeout(resolve, 100))
         await ipcInvoke('delete-game-from-db', gameId)
-        await rebuildIndex()
         refreshGameList()
         console.log(`Game ${gameId} deleted`)
         navigate('/library')

@@ -1,13 +1,15 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { create } from 'zustand'
 import { ipcInvoke, ipcOnUnique } from '~/utils'
 
-// 定义类型
+// 类型定义
+interface Timer {
+  start: string
+  end: string
+}
+
 interface Record {
   playingTime: number
-  timer: {
-    start: string
-    end: string
-  }[]
+  timer: Timer[]
 }
 
 interface MaxPlayTimeDay {
@@ -19,8 +21,9 @@ interface GameRecords {
   [gameId: string]: Record
 }
 
-interface GameRecordsHook {
-  gameRecords: GameRecords
+interface GameRecordsState {
+  records: GameRecords
+  setRecords: (records: GameRecords) => void
   getGamePlayingTime: (gameId: string) => number
   getGamePlayingTimeFormatted: (gameId: string) => string
   getGamePlayTimeByDateRange: (
@@ -36,304 +39,261 @@ interface GameRecordsHook {
   getMaxOrdinalGameId: () => string | null
   getPlayedDaysYearly: () => { [date: string]: number }
   getTotalPlayingTimeYearly: () => number
-  getTotalPlayingTime: number
-  getTotalPlayedTimes: number
-  getTotalPlayedDays: number
+  getTotalPlayingTime: () => number
+  getTotalPlayedTimes: () => number
+  getTotalPlayedDays: () => number
   getSortedGameByPlayedTimes: (order: 'asc' | 'desc') => string[]
 }
 
-// 自定义 Hook
-export const useGameRecords = (): GameRecordsHook => {
-  const [gameRecords, setGameRecords] = useState<GameRecords>({})
+// 辅助函数
+const calculateDailyPlayTime = (date: Date, record: Record): number => {
+  const dayStart = new Date(date)
+  dayStart.setHours(0, 0, 0, 0)
+  const dayEnd = new Date(date)
+  dayEnd.setHours(23, 59, 59, 999)
 
-  // 获取计时器数据的函数
-  const fetchRecords = useCallback(async (): Promise<void> => {
-    try {
-      const records = (await ipcInvoke('get-games-record-data')) as GameRecords
-      setGameRecords(records)
-    } catch (error) {
-      console.error('Failed to fetch games records:', error)
-    }
-  }, [])
-
-  useEffect(() => {
-    // 初始化时获取数据
-    fetchRecords()
-
-    // 监听更新信号
-    const handleRecordUpdate = (): void => {
-      fetchRecords()
-    }
-
-    // 注册 IPC 监听器
-    const removeListener = ipcOnUnique('record-update', handleRecordUpdate)
-
-    // 清理函数
-    return (): void => {
-      removeListener()
-    }
-  }, [fetchRecords])
-
-  const getGamePlayingTime = useCallback(
-    (gameId: string): number => {
-      return gameRecords[gameId]?.playingTime || 0
-    },
-    [gameRecords]
-  )
-
-  const getGamePlayingTimeFormatted = useCallback(
-    (gameId: string): string => {
-      const playingTime = getGamePlayingTime(gameId)
-      const hours = Math.floor(playingTime / 3600000)
-      const minutes = Math.floor((playingTime % 3600000) / 60000)
-      const seconds = Math.floor((playingTime % 60000) / 1000)
-
-      if (hours >= 1) {
-        const fractionalHours = (playingTime / 3600000).toFixed(1)
-        return `${fractionalHours} h`
-      } else if (minutes >= 1) {
-        return `${minutes} min`
-      } else {
-        return `${seconds} s`
-      }
-    },
-    [getGamePlayingTime]
-  )
-
-  interface DailyPlayTime {
-    [date: string]: number
+  if (!record.timer || record.timer.length === 0) {
+    return 0
   }
 
-  const calculateDailyPlayTime = (date: Date, record: Record): number => {
-    const dayStart = new Date(date)
-    dayStart.setHours(0, 0, 0, 0)
-    const dayEnd = new Date(date)
-    dayEnd.setHours(23, 59, 59, 999)
+  return record.timer.reduce((totalPlayTime, timer) => {
+    const timerStart = new Date(timer.start)
+    const timerEnd = new Date(timer.end)
 
-    if (!record.timer || record.timer.length === 0) {
+    if (timerStart <= dayEnd && timerEnd >= dayStart) {
+      const overlapStart = Math.max(dayStart.getTime(), timerStart.getTime())
+      const overlapEnd = Math.min(dayEnd.getTime(), timerEnd.getTime())
+      return totalPlayTime + (overlapEnd - overlapStart)
+    }
+
+    return totalPlayTime
+  }, 0)
+}
+
+// 创建 Zustand store
+export const useGameRecords = create<GameRecordsState>((set, get) => ({
+  records: {},
+
+  setRecords: (records): void => {
+    if (records && typeof records === 'object') {
+      set({ records: { ...records } })
+    } else {
+      console.warn('Attempted to set invalid records:', records)
+      set({ records: {} })
+    }
+  },
+
+  getGamePlayingTime: (gameId): number => {
+    const { records } = get()
+    return records[gameId]?.playingTime || 0
+  },
+
+  getGamePlayingTimeFormatted: (gameId): string => {
+    const playingTime = get().getGamePlayingTime(gameId)
+    const hours = Math.floor(playingTime / 3600000)
+    const minutes = Math.floor((playingTime % 3600000) / 60000)
+    const seconds = Math.floor((playingTime % 60000) / 1000)
+
+    if (hours >= 1) {
+      const fractionalHours = (playingTime / 3600000).toFixed(1)
+      return `${fractionalHours} h`
+    } else if (minutes >= 1) {
+      return `${minutes} min`
+    } else {
+      return `${seconds} s`
+    }
+  },
+
+  getGamePlayTimeByDateRange: (
+    gameId,
+    startDate,
+    endDate
+  ): {
+    [date: string]: number
+  } => {
+    const { records } = get()
+    const gameRecord = records[gameId]
+    if (!gameRecord?.timer || gameRecord.timer.length === 0) {
+      return {}
+    }
+
+    const start = new Date(startDate)
+    const end = new Date(endDate)
+    const result: { [date: string]: number } = {}
+    const current = new Date(start)
+
+    while (current <= end) {
+      const dateStr = current.toISOString().split('T')[0]
+      result[dateStr] = calculateDailyPlayTime(current, gameRecord)
+      current.setDate(current.getDate() + 1)
+    }
+
+    return result
+  },
+
+  getGamePlayDays: (gameId): number => {
+    const { records } = get()
+    const gameRecord = records[gameId]
+    if (!gameRecord?.timer || gameRecord.timer.length === 0) {
       return 0
     }
 
-    return record.timer.reduce((totalPlayTime, timer) => {
-      const timerStart = new Date(timer.start)
-      const timerEnd = new Date(timer.end)
+    const playDays = new Set<string>()
 
-      if (timerStart <= dayEnd && timerEnd >= dayStart) {
-        const overlapStart = Math.max(dayStart.getTime(), timerStart.getTime())
-        const overlapEnd = Math.min(dayEnd.getTime(), timerEnd.getTime())
-        return totalPlayTime + (overlapEnd - overlapStart)
-      }
+    gameRecord.timer.forEach((timer) => {
+      const startDay = timer.start.split('T')[0]
+      const endDay = timer.end.split('T')[0]
 
-      return totalPlayTime
-    }, 0)
-  }
-
-  // 使用 calculateDailyPlayTime 函数来计算日期范围内的游玩时间
-  const getGamePlayTimeByDateRange = useCallback(
-    (gameId: string, startDate: string, endDate: string): DailyPlayTime => {
-      const gameRecord = gameRecords[gameId]
-      if (!gameRecord?.timer || gameRecord?.timer.length === 0) {
-        return {}
-      }
-
-      const start = new Date(startDate)
-      const end = new Date(endDate)
-      const result: DailyPlayTime = {}
-      const current = new Date(start)
-
-      while (current <= end) {
-        const dateStr = current.toISOString().split('T')[0]
-        // 直接使用指定游戏的计时器数据
-        const dayPlayTime = calculateDailyPlayTime(current, gameRecord)
-        result[dateStr] = dayPlayTime
-        current.setDate(current.getDate() + 1)
-      }
-
-      return result
-    },
-    [gameRecords]
-  )
-
-  const getGamePlayDays = useCallback(
-    (gameId: string): number => {
-      const gameRecord = gameRecords[gameId]
-      if (!gameRecord?.timer || gameRecord?.timer.length === 0) {
-        return 0
-      }
-
-      // 使用 Set 来存储不重复的日期
-      const playDays = new Set<string>()
-
-      gameRecord.timer.forEach((timer) => {
-        // 获取开始时间的日期部分
-        const startDay = timer.start.split('T')[0]
-        // 获取结束时间的日期部分
-        const endDay = timer.end.split('T')[0]
-
-        // 如果开始和结束是同一天，只添加一次
-        if (startDay === endDay) {
-          playDays.add(startDay)
-        } else {
-          // 如果跨天，需要计算中间的所有天数
-          const start = new Date(timer.start)
-          const end = new Date(timer.end)
-          const current = new Date(start)
-
-          // 设置时间为当天开始
-          current.setHours(0, 0, 0, 0)
-
-          // 遍历所有涉及的天数
-          while (current <= end) {
-            playDays.add(current.toISOString().split('T')[0])
-            current.setDate(current.getDate() + 1)
-          }
-        }
-      })
-
-      return playDays.size
-    },
-    [gameRecords]
-  )
-
-  const getGameMaxPlayTimeDay = useCallback(
-    (gameId: string): MaxPlayTimeDay | null => {
-      const gameRecord = gameRecords[gameId]
-      if (!gameRecord?.timer || gameRecord?.timer.length === 0) {
-        return null
-      }
-
-      // 获取所有游戏记录的日期范围
-      const allDates = new Set<string>()
-      gameRecord.timer.forEach((timer) => {
+      if (startDay === endDay) {
+        playDays.add(startDay)
+      } else {
         const start = new Date(timer.start)
         const end = new Date(timer.end)
         const current = new Date(start)
+        current.setHours(0, 0, 0, 0)
 
         while (current <= end) {
-          allDates.add(current.toISOString().split('T')[0])
+          playDays.add(current.toISOString().split('T')[0])
           current.setDate(current.getDate() + 1)
         }
-      })
-
-      // 使用 calculateDailyPlayTime 计算每天的游玩时间
-      let maxDate = ''
-      let maxTime = 0
-
-      allDates.forEach((dateStr) => {
-        const currentDate = new Date(dateStr)
-        const playTime = calculateDailyPlayTime(currentDate, gameRecord)
-
-        if (playTime > maxTime) {
-          maxDate = dateStr
-          maxTime = playTime
-        }
-      })
-
-      if (maxDate === '') {
-        return null
       }
+    })
 
-      return {
-        date: maxDate,
-        playingTime: maxTime
+    return playDays.size
+  },
+
+  getGameMaxPlayTimeDay: (gameId): MaxPlayTimeDay | null => {
+    const { records } = get()
+    const gameRecord = records[gameId]
+    if (!gameRecord?.timer || gameRecord.timer.length === 0) {
+      return null
+    }
+
+    const allDates = new Set<string>()
+    gameRecord.timer.forEach((timer) => {
+      const start = new Date(timer.start)
+      const end = new Date(timer.end)
+      const current = new Date(start)
+
+      while (current <= end) {
+        allDates.add(current.toISOString().split('T')[0])
+        current.setDate(current.getDate() + 1)
       }
-    },
-    [gameRecords]
-  )
+    })
 
-  const getGameRecord = useCallback(
-    (gameId: string): Record => {
-      return gameRecords[gameId] || []
-    },
-    [gameRecords]
-  )
+    let maxDate = ''
+    let maxTime = 0
 
-  const getGameStartAndEndDate = useCallback(
-    (gameId: string): { start: string; end: string } => {
-      const gameRecord = gameRecords[gameId]
-      if (!gameRecord?.timer || gameRecord?.timer.length === 0) {
-        return { start: '', end: '' }
+    allDates.forEach((dateStr) => {
+      const currentDate = new Date(dateStr)
+      const playTime = calculateDailyPlayTime(currentDate, gameRecord)
+
+      if (playTime > maxTime) {
+        maxDate = dateStr
+        maxTime = playTime
       }
+    })
 
-      const formatDate = (date: Date): string => {
-        const year = date.getFullYear()
-        const month = String(date.getMonth() + 1).padStart(2, '0')
-        const day = String(date.getDate()).padStart(2, '0')
-        return `${year}-${month}-${day}`
+    return maxDate ? { date: maxDate, playingTime: maxTime } : null
+  },
+
+  getGameRecord: (gameId): Record => {
+    const { records } = get()
+    return records[gameId] || { playingTime: 0, timer: [] }
+  },
+
+  getGameStartAndEndDate: (
+    gameId
+  ): {
+    start: string
+    end: string
+  } => {
+    const { records } = get()
+    const gameRecord = records[gameId]
+    if (!gameRecord?.timer || gameRecord.timer.length === 0) {
+      return { start: '', end: '' }
+    }
+
+    const formatDate = (date: Date): string => {
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const day = String(date.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
+    }
+
+    const start = new Date(gameRecord.timer[0].start)
+    const end = new Date(gameRecord.timer[gameRecord.timer.length - 1].end)
+
+    return {
+      start: formatDate(start),
+      end: formatDate(end)
+    }
+  },
+
+  getSortedGameIds: (order): string[] => {
+    const { records } = get()
+    const getPlayingTime = get().getGamePlayingTime
+
+    return Object.keys(records).sort((a, b) => {
+      const timeA = getPlayingTime(a)
+      const timeB = getPlayingTime(b)
+
+      if (timeA < timeB) {
+        return order === 'asc' ? -1 : 1
+      } else if (timeA > timeB) {
+        return order === 'asc' ? 1 : -1
       }
+      return 0
+    })
+  },
 
-      const start = new Date(gameRecord.timer[0].start)
-      const end = new Date(gameRecord.timer[gameRecord.timer.length - 1].end)
+  getMaxOrdinalGameId: (): string | null => {
+    const { records } = get()
+    let maxPlayedTimes = 0
+    let maxOrdinalGameId: string | null = null
 
-      return {
-        start: formatDate(start),
-        end: formatDate(end)
+    Object.entries(records).forEach(([gameId, record]) => {
+      if (record.timer && record.timer.length > maxPlayedTimes) {
+        maxPlayedTimes = record.timer.length
+        maxOrdinalGameId = gameId
       }
-    },
-    [gameRecords]
-  )
+    })
 
-  const getSortedGameIds = useCallback(
-    (order: 'asc' | 'desc'): string[] => {
-      return Object.keys(gameRecords).sort((a, b) => {
-        const timeA = getGamePlayingTime(a)
-        const timeB = getGamePlayingTime(b)
+    return maxOrdinalGameId
+  },
 
-        if (timeA < timeB) {
-          return order === 'asc' ? -1 : 1
-        } else if (timeA > timeB) {
-          return order === 'asc' ? 1 : -1
-        }
-
-        return 0
-      })
-    },
-    [gameRecords, getGamePlayingTime]
-  )
-
-  interface PlayedDaysYearly {
+  getPlayedDaysYearly: (): {
     [date: string]: number
-  }
-
-  const getPlayedDaysYearly = useCallback((): PlayedDaysYearly => {
+  } => {
+    const { records } = get()
     const currentDate = new Date()
     const lastYearDate = new Date(currentDate)
     lastYearDate.setFullYear(lastYearDate.getFullYear() - 1)
 
-    const result: PlayedDaysYearly = {}
+    const result: { [date: string]: number } = {}
     const current = new Date(currentDate)
-
-    // 收集所有日期的数据
     const datesArray: { date: string; playTime: number }[] = []
 
     while (current.getTime() >= lastYearDate.getTime()) {
       const dateStr = current.toISOString().split('T')[0]
-
-      const playTime = Object.values(gameRecords).reduce((total, record) => {
+      const playTime = Object.values(records).reduce((total, record) => {
         return total + calculateDailyPlayTime(current, record)
       }, 0)
 
-      // 将日期和游玩时间保存到数组中
-      datesArray.push({
-        date: dateStr,
-        playTime: playTime
-      })
-
+      datesArray.push({ date: dateStr, playTime })
       current.setDate(current.getDate() - 1)
     }
 
-    // 按日期排序（从早到晚）
     datesArray.sort((a, b) => a.date.localeCompare(b.date))
-
-    // 转换为最终的对象格式
     datesArray.forEach(({ date, playTime }) => {
       result[date] = playTime
     })
 
     return result
-  }, [gameRecords])
+  },
 
-  const getTotalPlayingTimeYearly = useCallback((): number => {
+  getTotalPlayingTimeYearly: (): number => {
+    const { records } = get()
     const currentDate = new Date()
     const lastYearDate = new Date(currentDate)
     lastYearDate.setFullYear(lastYearDate.getFullYear() - 1)
@@ -342,111 +302,78 @@ export const useGameRecords = (): GameRecordsHook => {
     let totalPlayTime = 0
 
     while (current.getTime() >= lastYearDate.getTime()) {
-      const playTime = Object.values(gameRecords).reduce((total, record) => {
+      totalPlayTime += Object.values(records).reduce((total, record) => {
         return total + calculateDailyPlayTime(current, record)
       }, 0)
-
-      totalPlayTime += playTime
-
       current.setDate(current.getDate() - 1)
     }
 
     return totalPlayTime
-  }, [gameRecords])
+  },
 
-  const getMaxOrdinalGameId = useCallback((): string | null => {
-    // 获取游玩次数最多的游戏 ID
-    let maxPlayedTimes = 0
-    let maxOrdinalGameId: null | string = null
+  getTotalPlayingTime: (): number => {
+    const { records } = get()
+    return Object.values(records).reduce((total, record) => {
+      return total + (record.playingTime || 0)
+    }, 0)
+  },
 
-    for (const [gameId, record] of Object.entries(gameRecords)) {
-      if (record.timer && record.timer.length > maxPlayedTimes) {
-        maxPlayedTimes = record.timer.length
-        maxOrdinalGameId = gameId
+  getTotalPlayedTimes: (): number => {
+    const { records } = get()
+    return Object.values(records).reduce((total, record) => {
+      return total + (record.timer?.length || 0)
+    }, 0)
+  },
+
+  getTotalPlayedDays: (): number => {
+    const { records } = get()
+    return Object.keys(records).reduce((total, gameId) => {
+      return total + get().getGamePlayDays(gameId)
+    }, 0)
+  },
+
+  getSortedGameByPlayedTimes: (order): string[] => {
+    const { records } = get()
+    return Object.keys(records).sort((a, b) => {
+      const timesA = records[a]?.timer?.length || 0
+      const timesB = records[b]?.timer?.length || 0
+
+      if (timesA < timesB) {
+        return order === 'asc' ? -1 : 1
+      } else if (timesA > timesB) {
+        return order === 'asc' ? 1 : -1
       }
+      return 0
+    })
+  }
+}))
+
+// 初始化记录数据
+ipcInvoke('get-games-record-data')
+  .then((records) => {
+    if (records && typeof records === 'object') {
+      useGameRecords.getState().setRecords(records as GameRecords)
+    } else {
+      console.error('Invalid initial records received:', records)
+      useGameRecords.getState().setRecords({})
     }
+  })
+  .catch((error) => {
+    console.error('Failed to initialize game records:', error)
+    useGameRecords.getState().setRecords({})
+  })
 
-    return maxOrdinalGameId
-  }, [gameRecords])
-
-  const getTotalPlayingTime = useMemo((): number => {
-    return Object.values(gameRecords).reduce((total, record) => {
-      return total + record.playingTime
-    }, 0)
-  }, [gameRecords])
-
-  const getTotalPlayedTimes = useMemo((): number => {
-    // 获取总游玩次数，既所有计时器的数量
-    return Object.values(gameRecords).reduce((total, record) => {
-      if (record.timer) {
-        return total + record.timer.length
+// 监听记录更新
+ipcOnUnique('record-update', () => {
+  ipcInvoke('get-games-record-data')
+    .then((records) => {
+      if (records && typeof records === 'object') {
+        useGameRecords.getState().setRecords(records as GameRecords)
       } else {
-        return total
+        console.error('Invalid updated records received:', records)
       }
-    }, 0)
-  }, [gameRecords])
-
-  const getTotalPlayedDays = useMemo((): number => {
-    // 获取总游玩天数
-    return Object.keys(gameRecords).reduce((total, gameId) => {
-      return total + getGamePlayDays(gameId)
-    }, 0)
-  }, [gameRecords, getGamePlayDays])
-
-  const getSortedGameByPlayedTimes = useCallback(
-    (order: 'asc' | 'desc'): string[] => {
-      return Object.keys(gameRecords).sort((a, b) => {
-        const ordinalA = gameRecords[a]?.timer?.length || 0
-        const ordinalB = gameRecords[b]?.timer?.length || 0
-
-        if (ordinalA < ordinalB) {
-          return order === 'asc' ? -1 : 1
-        } else if (ordinalA > ordinalB) {
-          return order === 'asc' ? 1 : -1
-        }
-
-        return 0
-      })
-    },
-    [gameRecords]
-  )
-
-  return useMemo(
-    () => ({
-      gameRecords,
-      getGamePlayingTime,
-      getGamePlayingTimeFormatted,
-      getGamePlayTimeByDateRange,
-      getGamePlayDays,
-      getGameMaxPlayTimeDay,
-      getGameRecord,
-      getGameStartAndEndDate,
-      getSortedGameIds,
-      getMaxOrdinalGameId,
-      getPlayedDaysYearly,
-      getTotalPlayingTimeYearly,
-      getTotalPlayingTime,
-      getTotalPlayedTimes,
-      getTotalPlayedDays,
-      getSortedGameByPlayedTimes
-    }),
-    [
-      gameRecords,
-      getGamePlayingTime,
-      getGamePlayingTimeFormatted,
-      getGamePlayTimeByDateRange,
-      getGamePlayDays,
-      getGameMaxPlayTimeDay,
-      getGameRecord,
-      getGameStartAndEndDate,
-      getSortedGameIds,
-      getMaxOrdinalGameId,
-      getPlayedDaysYearly,
-      getTotalPlayingTimeYearly,
-      getTotalPlayingTime,
-      getTotalPlayedTimes,
-      getTotalPlayedDays,
-      getSortedGameByPlayedTimes
-    ]
-  )
-}
+    })
+    .catch((error) => {
+      console.error('Error handling record update:', error)
+    })
+})

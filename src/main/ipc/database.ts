@@ -2,7 +2,7 @@ import { ipcMain, BrowserWindow } from 'electron'
 import {
   setDBValue,
   getDBValue,
-  getGamesMetadata,
+  getGameIndexData,
   getGamesRecordData,
   backupGameSaveData,
   restoreGameSaveData,
@@ -21,8 +21,8 @@ export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
     return await getDBValue(dbName, path, defaultValue)
   })
 
-  ipcMain.handle('get-games-metadata', async () => {
-    return await getGamesMetadata()
+  ipcMain.handle('get-games-index', () => {
+    return getGameIndexData()
   })
 
   ipcMain.handle('backup-game-save', async (_, gameId: string) => {
@@ -55,10 +55,6 @@ export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
 
   ipcMain.on('reload-db-values', (_, dbName: string) => {
     mainWindow.webContents.send('reload-db-values', dbName)
-  })
-
-  ipcMain.on('games-changed', () => {
-    mainWindow.webContents.send('rebuild-index')
   })
 
   mainWindow.webContents.send('databaseIPCReady')

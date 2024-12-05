@@ -16,6 +16,8 @@ import {
 import { initializeCloudsyncServices } from './cloudSync'
 import { setupUpdater } from './updater'
 import { initScraper } from './scraper'
+import { initializeIndex } from './database/gameIndex'
+import { initializeRecords } from './database/record'
 
 let mainWindow: BrowserWindow
 
@@ -81,6 +83,12 @@ app.whenReady().then(async () => {
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
+
+  // Initialize metadata
+  await initializeIndex()
+
+  // Initialize records
+  await initializeRecords()
 
   createWindow()
 

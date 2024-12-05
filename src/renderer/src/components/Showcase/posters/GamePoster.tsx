@@ -20,7 +20,7 @@ export function GamePoster({
   const { mediaUrl: cover } = useGameMedia({ gameId, type: 'cover', noToastError: true })
   const { mediaUrl: background } = useGameMedia({ gameId, type: 'background', noToastError: true })
   const { gameIndex } = useGameIndexManager()
-  const gameData = gameIndex.get(gameId)
+  const gameData = gameIndex[gameId]
   const [playingTime] = useDBSyncedState(0, `games/${gameId}/record.json`, ['playingTime'])
   const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
 

@@ -5,6 +5,8 @@ import { generateUUID, selectPathDialog, getFirstLevelSubfolders, getDataPath } 
 import { BrowserWindow } from 'electron'
 import { launcherPreset } from '~/launcher'
 import { setupWatcher, stopWatcher } from '~/watcher'
+import { rebuildIndex } from '~/database/gameIndex'
+import { rebuildRecords } from '~/database/record'
 
 export async function addGameToDB({
   dataSource,
@@ -72,8 +74,8 @@ export async function addGameToDB({
   mainWindow.webContents.send('reload-db-values', `games/${dbId}/icon.png`)
   mainWindow.webContents.send('reload-db-values', `games/${dbId}/metadata.json`)
   mainWindow.webContents.send('reload-db-values', `games/${dbId}/record.json`)
-  mainWindow.webContents.send('rebuild-index')
-  mainWindow.webContents.send('record-update')
+  await rebuildIndex()
+  await rebuildRecords()
 }
 
 export async function addGameToDBWithoutMetadata(gamePath: string): Promise<void> {
@@ -99,7 +101,7 @@ export async function addGameToDBWithoutMetadata(gamePath: string): Promise<void
   mainWindow.webContents.send('reload-db-values', `games/${dbId}/record.json`)
   mainWindow.webContents.send('reload-db-values', `games/${dbId}/launcher.json`)
   mainWindow.webContents.send('reload-db-values', `games/${dbId}/icon.png`)
-  mainWindow.webContents.send('rebuild-index')
+  await rebuildIndex()
 }
 
 export async function getBatchGameAdderData(): Promise<

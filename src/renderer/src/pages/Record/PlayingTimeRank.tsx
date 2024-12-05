@@ -12,7 +12,7 @@ export function PlayingTimeRank({ className }: { className?: string }): JSX.Elem
       ) : (
         <div className={cn('flex flex-col gap-2')}>
           {sortedGameIds.map((gameId) => {
-            const game = gameIndex.get(gameId)
+            const game = gameIndex[gameId]
             if (!game) return null
             return (
               <GamePoster

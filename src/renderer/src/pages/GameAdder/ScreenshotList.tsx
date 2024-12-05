@@ -4,7 +4,6 @@ import { toast } from 'sonner'
 import { useGameAdderStore } from './store'
 import { useEffect } from 'react'
 import { ipcInvoke } from '~/utils'
-import { useGameIndexManager } from '~/hooks'
 import { useNavigate } from 'react-router-dom'
 
 export function ScreenshotList(): JSX.Element {
@@ -25,8 +24,6 @@ export function ScreenshotList(): JSX.Element {
   } = useGameAdderStore()
 
   const navigate = useNavigate()
-
-  const { rebuildIndex } = useGameIndexManager()
 
   useEffect(() => {
     toast.promise(
@@ -53,7 +50,6 @@ export function ScreenshotList(): JSX.Element {
     toast.promise(
       (async (): Promise<void> => {
         await ipcInvoke('add-game-to-db', { dataSource, id, dbId, screenshotUrl })
-        await rebuildIndex()
         setIsOpen(false)
         setDbId('')
         setId('')

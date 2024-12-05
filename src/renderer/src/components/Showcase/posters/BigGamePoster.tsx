@@ -6,7 +6,6 @@ import { GameNavCM } from '~/components/contextMenu/GameNavCM'
 import { useNavigate } from 'react-router-dom'
 import { useGameMedia, useGameIndexManager, useDBSyncedState } from '~/hooks'
 import { formatTimeToChinese, formatDateToChinese } from '~/utils'
-import { useState, useEffect } from 'react'
 
 export function BigGamePoster({
   gameId,
@@ -19,13 +18,9 @@ export function BigGamePoster({
   const { mediaUrl: background } = useGameMedia({ gameId, type: 'background', noToastError: true })
   const { gameIndex } = useGameIndexManager()
   const [playingTime] = useDBSyncedState(0, `games/${gameId}/record.json`, ['playingTime'])
-  const [gameData, setGameData] = useState(gameIndex.get(gameId))
+  const gameData = gameIndex[gameId]
   const [lastRunDate] = useDBSyncedState('', `games/${gameId}/record.json`, ['lastRunDate'])
   const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
-  useEffect(() => {
-    setGameData(gameIndex.get(gameId))
-  }),
-    [gameId, gameIndex]
 
   return (
     <HoverCard openDelay={250} closeDelay={100}>

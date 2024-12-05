@@ -1,7 +1,7 @@
 import { setValue, getValue } from './common'
 import { getDataPath } from '~/utils'
-import { getMetadata } from './metadata'
-import { getRecordData } from './record'
+import { getGameIndex } from './gameIndex'
+import { getGameRecords } from './record'
 import { backupGameSave, restoreGameSave, deleteGameSave } from './save'
 import { deleteGame } from './utils'
 import { backupDatabase, restoreDatabase } from './backup'
@@ -42,9 +42,9 @@ export async function getDBValue<T>(dbName: string, path: string[], defaultValue
  * Get the metadata of the games
  * @returns A promise that resolves with the metadata of the games.
  */
-export async function getGamesMetadata(): Promise<any> {
+export function getGameIndexData(): any {
   try {
-    return await getMetadata()
+    return getGameIndex()
   } catch (error) {
     console.error('Failed to get metadata for games', error)
   }
@@ -54,9 +54,9 @@ export async function getGamesMetadata(): Promise<any> {
  * Get the record data of the games
  * @returns A promise that resolves with the record data of the games.
  */
-export async function getGamesRecordData(): Promise<any> {
+export function getGamesRecordData(): any {
   try {
-    return await getRecordData()
+    return getGameRecords()
   } catch (error) {
     log.error('Failed to get record data for games', error)
   }

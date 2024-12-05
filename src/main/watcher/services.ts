@@ -3,6 +3,8 @@ import { setupDBWatcher, stopWatchers } from './setup'
 import log from 'electron-log/main.js'
 import { Watcher } from './common'
 import { getDataPath } from '~/utils'
+import { rebuildIndex } from '~/database/gameIndex'
+import { rebuildRecords } from '~/database/record'
 
 let indexWatcher: Watcher
 
@@ -28,11 +30,12 @@ export async function setupWatcher(mainWindow: BrowserWindow): Promise<void> {
       ],
       mainWindow
     )
-    await setupDBWatcher(['record.json'], mainWindow, () =>
-      mainWindow.webContents.send('record-update')
-    )
-    indexWatcher = new Watcher('games', await getDataPath('games'), mainWindow, () =>
-      mainWindow.webContents.send('rebuild-index')
+    await setupDBWatcher(['record.json'], mainWindow, async () => await rebuildRecords())
+    indexWatcher = new Watcher(
+      'games',
+      await getDataPath('games'),
+      mainWindow,
+      async () => await rebuildIndex()
     )
     indexWatcher.start()
   } catch (error) {

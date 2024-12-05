@@ -32,20 +32,25 @@ export function Library({ className }: { className?: string }): JSX.Element {
           <Route index element={<Navigate to="./home" />} />
           <Route path="/home/*" element={<Showcase />} />
           <Route path="/collections/*" element={<CollectionPage />} />
-          {Array.from(gameIndex, ([key, game]) => (
-            <Route
-              key={key}
-              path={`games/${game.id}/*`}
-              element={<Game gameId={game.id || ''} />}
-            />
-          ))}
-          {Object.values(collections).map((collection) => (
-            <Route
-              key={collection.id}
-              path={`collections/${collection.id}/*`}
-              element={<CollectionGames collectionId={collection.id} />}
-            />
-          ))}
+          {gameIndex &&
+            Object.values(gameIndex)?.map(
+              (game) =>
+                game.id && (
+                  <Route
+                    key={game.id}
+                    path={`games/${game.id}/*`}
+                    element={<Game gameId={game.id} />}
+                  />
+                )
+            )}
+          {gameIndex &&
+            Object.values(collections)?.map((collection) => (
+              <Route
+                key={collection.id}
+                path={`collections/${collection.id}/*`}
+                element={<CollectionGames collectionId={collection.id} />}
+              />
+            ))}
         </Routes>
       </ResizablePanel>
     </ResizablePanelGroup>

@@ -6,6 +6,7 @@ declare global {
     electron: ElectronAPI
     api: {
       database: DatabaseAPI
+      getGameIndex: any
     }
   }
 }
