@@ -15,7 +15,7 @@ import {
 } from '@ui/dropdown-menu'
 import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
 import { useGameAdderStore } from '~/pages/GameAdder/store'
-import { useGameBatchAdderStore, DataSource } from '~/pages/GameBatchAdder/store'
+import { useGameBatchAdderStore, Game } from '~/pages/GameBatchAdder/store'
 import { ipcInvoke } from '~/utils'
 import { useGameIndexManager, useDBSyncedState } from '~/hooks'
 import { ConfigDialog } from './Config'
@@ -23,17 +23,9 @@ import { useCloudSyncStore } from './Config/CloudSync/store'
 import { useSteamImporterStore } from '~/pages/Importer/SteamImporter/store'
 import { CloudSyncInfo } from './Config/CloudSync/Info'
 
-interface GameItem {
-  dataId: string
-  dataSource: DataSource
-  name: string
-  id: string
-  status: string
-}
-
 export function Sidebar(): JSX.Element {
   const { setIsOpen: setIsGameAdderOpen } = useGameAdderStore()
-  const { setIsOpen: setIsGameBatchAdderOpen, setGameList } = useGameBatchAdderStore()
+  const { actions: gameBatchAdderActions } = useGameBatchAdderStore()
   const { setIsOpen: setIsSteamImporterOpen } = useSteamImporterStore()
   const { gameIndex: _ } = useGameIndexManager()
   const { status } = useCloudSyncStore()
@@ -147,9 +139,7 @@ export function Sidebar(): JSX.Element {
                       toast.promise(
                         (async (): Promise<void> => {
                           try {
-                            const result = (await ipcInvoke(
-                              'get-batch-game-adder-data'
-                            )) as GameItem[]
+                            const result = (await ipcInvoke('get-batch-game-adder-data')) as Game[]
 
                             if (!Array.isArray(result)) {
                               throw new Error('返回数据格式错误')
@@ -160,8 +150,8 @@ export function Sidebar(): JSX.Element {
                               return
                             }
 
-                            setGameList(result)
-                            setIsGameBatchAdderOpen(true)
+                            gameBatchAdderActions.setGames(result)
+                            gameBatchAdderActions.setIsOpen(true)
                           } catch (error) {
                             // 确保错误是 Error 类型
                             if (error instanceof Error) {

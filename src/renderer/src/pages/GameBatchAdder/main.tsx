@@ -1,23 +1,28 @@
 import { cn } from '~/utils'
 import { Dialog, DialogContent } from '@ui/dialog'
 import { toast } from 'sonner'
-import { MemoryRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
+
 import { useGameBatchAdderStore } from './store'
 import { GameList } from './GameList'
 
-function GameBatchAdderContent(): JSX.Element {
-  const { isOpen, setIsOpen, isLoading, setGameList, setIsLoading } = useGameBatchAdderStore()
-  const navigate = useNavigate()
-  function handleClose(): void {
+export function GameBatchAdder(): JSX.Element {
+  const {
+    isOpen,
+    isLoading,
+    actions: { setIsOpen, setGames, setIsLoading }
+  } = useGameBatchAdderStore()
+
+  const handleClose = (): void => {
     if (isLoading) {
       toast.warning('请等待游戏添加完成')
       return
     }
+
     setIsOpen(false)
-    setGameList([])
+    setGames([]) // 使用新的 actions
     setIsLoading(false)
-    navigate('/')
   }
+
   return (
     <Dialog open={isOpen}>
       <DialogContent
@@ -27,19 +32,8 @@ function GameBatchAdderContent(): JSX.Element {
         }}
         onClose={handleClose}
       >
-        <Routes>
-          <Route index element={<Navigate to={'games'} />} />
-          <Route path="/games" element={<GameList />} />
-        </Routes>
+        <GameList />
       </DialogContent>
     </Dialog>
-  )
-}
-
-export function GameBatchAdder(): JSX.Element {
-  return (
-    <MemoryRouter>
-      <GameBatchAdderContent />
-    </MemoryRouter>
   )
 }
