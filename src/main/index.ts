@@ -162,6 +162,7 @@ app.whenReady().then(async () => {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     stopWatcher()
+    trayManager.destroy()
     app.quit()
   }
 })
