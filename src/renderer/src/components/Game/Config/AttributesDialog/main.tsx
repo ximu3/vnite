@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogHeader } from '@ui/dialog'
+import { Dialog, DialogContent, DialogTitle, DialogHeader } from '@ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
 import { cn } from '~/utils'
 import { Launcher } from './Launcher'
@@ -8,15 +8,14 @@ import { useDBSyncedState } from '~/hooks'
 
 export function AttributesDialog({
   gameId,
-  children
+  setIsOpen
 }: {
   gameId: string
-  children: React.ReactNode
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }): JSX.Element {
   const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
   return (
-    <Dialog>
-      <DialogTrigger className={cn('w-full')}>{children}</DialogTrigger>
+    <Dialog open={true} onOpenChange={(state) => setIsOpen(state)}>
       <DialogContent className={cn('w-[1000px] h-[700px] max-w-none flex flex-col')}>
         <DialogHeader>
           <DialogTitle>{`${gameName} - 属性`}</DialogTitle>
