@@ -364,7 +364,7 @@ ipcInvoke('get-games-record-data')
   })
 
 // 监听记录更新
-ipcOnUnique('record-update', () => {
+ipcOnUnique('game-records-changed', () => {
   ipcInvoke('get-games-record-data')
     .then((records) => {
       if (records && typeof records === 'object') {
