@@ -28,6 +28,7 @@ module.exports = {
     },
     extend: {
       fontSize: {
+        '7xl': '5rem',
         '2xs': [
           '0.625rem',
           {
@@ -90,11 +91,18 @@ module.exports = {
         'accordion-up': {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' }
+        },
+        slideInfinite: {
+          '0%': { left: '-40%' },
+          '50%': { left: '90%' },
+          '50.01%': { left: '90%' },
+          '100%': { left: '-40%' }
         }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
-        'accordion-up': 'accordion-up 0.2s ease-out'
+        'accordion-up': 'accordion-up 0.2s ease-out',
+        'slide-infinite': 'slideInfinite 2.5s ease-in-out infinite'
       },
       screens: {
         '3xl': '1920px'

@@ -20,6 +20,7 @@ import { initializeIndex } from './database/gameIndex'
 import { initializeRecords } from './database/record'
 
 let mainWindow: BrowserWindow
+let splashWindow: BrowserWindow
 
 export let trayManager: TrayManager
 
@@ -47,8 +48,14 @@ function createWindow(): void {
 
   setupIPC(mainWindow)
 
-  mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
+  mainWindow.once('ready-to-show', () => {
+    // 设置固定延时
+    setTimeout(() => {
+      if (splashWindow) {
+        splashWindow.destroy()
+      }
+      mainWindow.show()
+    }, 7000)
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -65,6 +72,33 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+}
+
+function createSplashWindow(): void {
+  splashWindow = new BrowserWindow({
+    width: 600,
+    height: 300,
+    frame: false,
+    transparent: true,
+    show: false,
+    alwaysOnTop: true,
+    icon: icon,
+    webPreferences: {
+      preload: join(__dirname, '../preload/index.js'),
+      sandbox: false
+    }
+  })
+
+  // 加载启动屏页面
+  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+    splashWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/splash.html`)
+  } else {
+    splashWindow.loadFile(join(__dirname, '../renderer/splash.html'))
+  }
+
+  splashWindow.once('ready-to-show', () => {
+    splashWindow.show()
+  })
 }
 
 // This method will be called when Electron has finished
@@ -91,6 +125,8 @@ app.whenReady().then(async () => {
   await initializeRecords()
 
   createWindow()
+
+  createSplashWindow()
 
   // Setup tray
   trayManager = await setupTray(mainWindow)

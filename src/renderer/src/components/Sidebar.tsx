@@ -43,7 +43,7 @@ export function Sidebar(): JSX.Element {
       <div className={cn('flex flex-col gap-2')}>
         <div
           className={cn(
-            'pb-3 font-mono text-xs font-bold flex justify-center items-center text-blue-600'
+            'pb-2 font-mono text-xs font-bold flex justify-center items-center text-primary'
           )}
         >
           vnite

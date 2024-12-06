@@ -7,6 +7,8 @@ import { useEffect } from 'react'
 import { toast } from 'sonner'
 import { useRunningGames } from './Library/store'
 import { useCloudSyncStore, SyncStatus } from '~/components/Config/CloudSync/store'
+import { Icon } from './arts/Icon'
+import { Logo } from './arts/Logo'
 
 export function Main(): JSX.Element {
   const { runningGames, setRunningGames } = useRunningGames()
@@ -85,6 +87,8 @@ export function Main(): JSX.Element {
         <Route index element={<Navigate to="/library" />} />
         <Route path="/library/*" element={<Library />} />
         <Route path="/record/*" element={<Record />} />
+        <Route path="/icon" element={<Icon />} />
+        <Route path="/logo" element={<Logo />} />
       </Routes>
     </div>
   )

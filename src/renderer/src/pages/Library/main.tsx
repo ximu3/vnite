@@ -29,7 +29,7 @@ export function Library({ className }: { className?: string }): JSX.Element {
       <ResizableHandle />
       <ResizablePanel>
         <Routes>
-          <Route index element={<Navigate to="./home" />} />
+          <Route index element={<Navigate to="./home" replace />} />
           <Route path="/home/*" element={<Showcase />} />
           <Route path="/collections/*" element={<CollectionPage />} />
           {gameIndex &&
