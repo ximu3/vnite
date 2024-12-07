@@ -78,13 +78,13 @@ export function GamePoster({
             openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
           />
         </ContextMenu>
-        {isAttributesDialogOpen && (
-          <AttributesDialog gameId={gameId} setIsOpen={setIsAttributesDialogOpen} />
-        )}
-        {isAddCollectionDialogOpen && (
-          <AddCollectionDialog gameId={gameId} setIsOpen={setIsAddCollectionDialogOpen} />
-        )}
       </HoverCardTrigger>
+      {isAttributesDialogOpen && (
+        <AttributesDialog gameId={gameId} setIsOpen={setIsAttributesDialogOpen} />
+      )}
+      {isAddCollectionDialogOpen && (
+        <AddCollectionDialog gameId={gameId} setIsOpen={setIsAddCollectionDialogOpen} />
+      )}
       <HoverCardContent
         side="right"
         className={cn(
