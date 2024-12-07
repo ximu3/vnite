@@ -9,6 +9,11 @@ import sharp from 'sharp'
 import pngToIco from 'png-to-ico'
 import { getAppTempPath } from './path'
 
+export function parseGameIdFromUrl(url: string): string | null {
+  const match = url.match(/vnite:\/\/rungameid\/([^/\s]+)/)
+  return match ? match[1] : null
+}
+
 export function getAppVersion(): string {
   return app.getVersion()
 }
