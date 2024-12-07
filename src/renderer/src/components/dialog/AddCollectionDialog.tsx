@@ -1,7 +1,6 @@
 import {
   Dialog,
   DialogContent,
-  DialogTrigger,
   DialogClose,
   DialogFooter,
   DialogDescription,
@@ -16,19 +15,19 @@ import { useState } from 'react'
 
 export function AddCollectionDialog({
   gameId,
-  children
+  setIsOpen
 }: {
   gameId: string
-  children: React.ReactNode
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }): JSX.Element {
   const [name, setName] = useState('')
   const { addCollection } = useCollections()
   const addGameToNewCollection = (): void => {
     addCollection(name, gameId)
   }
+
   return (
-    <Dialog>
-      <DialogTrigger className={cn('w-full')}>{children}</DialogTrigger>
+    <Dialog open={true} onOpenChange={(state) => setIsOpen(state)}>
       <DialogContent className={cn('')}>
         <DialogHeader>
           <DialogTitle>新收藏</DialogTitle>

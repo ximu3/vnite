@@ -8,10 +8,15 @@ import {
   ContextMenuSubTrigger
 } from '@ui/context-menu'
 import { useCollections } from '~/hooks'
-import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { cn } from '~/utils'
 
-export function CollectionMenu({ gameId }: { gameId: string }): JSX.Element {
+export function CollectionMenu({
+  gameId,
+  openAddCollectionDialog
+}: {
+  gameId: string
+  openAddCollectionDialog: () => void
+}): JSX.Element {
   const { collections, addGameToCollection, removeGameFromCollection } = useCollections()
 
   const gameInCollectionsId = Object.entries(collections)
@@ -35,14 +40,12 @@ export function CollectionMenu({ gameId }: { gameId: string }): JSX.Element {
             {Object.entries(collections).filter(([key]) => !gameInCollectionsId.includes(key))
               .length > 0 && <ContextMenuSeparator />}
 
-            <AddCollectionDialog gameId={gameId}>
-              <ContextMenuItem onSelect={(e) => e.preventDefault()}>
-                <div className={cn('flex flex-row gap-2 items-center w-full')}>
-                  <span className={cn('icon-[mdi--add] w-4 h-4')}></span>
-                  <div>新收藏</div>
-                </div>
-              </ContextMenuItem>
-            </AddCollectionDialog>
+            <ContextMenuItem onSelect={openAddCollectionDialog}>
+              <div className={cn('flex flex-row gap-2 items-center w-full')}>
+                <span className={cn('icon-[mdi--add] w-4 h-4')}></span>
+                <div>新收藏</div>
+              </div>
+            </ContextMenuItem>
           </ContextMenuSubContent>
         </ContextMenuPortal>
       </ContextMenuSub>
@@ -55,7 +58,7 @@ export function CollectionMenu({ gameId }: { gameId: string }): JSX.Element {
               {Object.entries(collections)
                 .filter(([key]) => gameInCollectionsId.includes(key))
                 .map(([key, value]) => (
-                  <ContextMenuItem key={key} onClick={() => removeGameFromCollection(key, gameId)}>
+                  <ContextMenuItem key={key} onSelect={() => removeGameFromCollection(key, gameId)}>
                     {value.name}
                   </ContextMenuItem>
                 ))}
