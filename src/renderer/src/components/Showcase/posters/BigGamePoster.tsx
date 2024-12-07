@@ -6,6 +6,9 @@ import { GameNavCM } from '~/components/contextMenu/GameNavCM'
 import { useNavigate } from 'react-router-dom'
 import { useGameMedia, useGameIndexManager, useDBSyncedState } from '~/hooks'
 import { formatTimeToChinese, formatDateToChinese } from '~/utils'
+import { AttributesDialog } from '~/components/Game/Config/AttributesDialog'
+import React from 'react'
+import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 
 export function BigGamePoster({
   gameId,
@@ -21,6 +24,8 @@ export function BigGamePoster({
   const gameData = gameIndex[gameId]
   const [lastRunDate] = useDBSyncedState('', `games/${gameId}/record.json`, ['lastRunDate'])
   const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
+  const [isAttributesDialogOpen, setIsAttributesDialogOpen] = React.useState(false)
+  const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
 
   return (
     <HoverCard openDelay={250} closeDelay={100}>
@@ -81,8 +86,18 @@ export function BigGamePoster({
               </div>
             </div>
           </ContextMenuTrigger>
-          <GameNavCM gameId={gameId} />
+          <GameNavCM
+            gameId={gameId}
+            openAttributesDialog={() => setIsAttributesDialogOpen(true)}
+            openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
+          />
         </ContextMenu>
+        {isAttributesDialogOpen && (
+          <AttributesDialog gameId={gameId} setIsOpen={setIsAttributesDialogOpen} />
+        )}
+        {isAddCollectionDialogOpen && (
+          <AddCollectionDialog gameId={gameId} setIsOpen={setIsAddCollectionDialogOpen} />
+        )}
       </HoverCardTrigger>
       <HoverCardContent
         side="right"

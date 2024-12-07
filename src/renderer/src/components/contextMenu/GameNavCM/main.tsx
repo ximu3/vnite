@@ -1,13 +1,20 @@
 import { ContextMenuContent, ContextMenuItem, ContextMenuSeparator } from '@ui/context-menu'
 import { cn } from '~/utils'
-import { AttributesDialog } from '../../Game/Config/AttributesDialog'
 import { ManageMenu } from './ManageMenu'
 import { CollectionMenu } from './CollectionMenu'
 import { StartGame } from '../../Game/StartGame'
 import { StopGame } from '../../Game/StopGame'
 import { useRunningGames } from '~/pages/Library/store'
 
-export function GameNavCM({ gameId }: { gameId: string }): JSX.Element {
+export function GameNavCM({
+  gameId,
+  openAttributesDialog,
+  openAddCollectionDialog
+}: {
+  gameId: string
+  openAttributesDialog: () => void
+  openAddCollectionDialog: () => void
+}): JSX.Element {
   const { runningGames } = useRunningGames()
 
   return (
@@ -20,15 +27,13 @@ export function GameNavCM({ gameId }: { gameId: string }): JSX.Element {
         )}
       </div>
       <ContextMenuSeparator />
-      <CollectionMenu gameId={gameId} />
+      <CollectionMenu gameId={gameId} openAddCollectionDialog={openAddCollectionDialog} />
       <ContextMenuSeparator />
       <ManageMenu gameId={gameId} />
       <ContextMenuSeparator />
-      <AttributesDialog gameId={gameId}>
-        <ContextMenuItem onSelect={(e) => e.preventDefault()}>
-          <div>属性</div>
-        </ContextMenuItem>
-      </AttributesDialog>
+      <ContextMenuItem onSelect={openAttributesDialog}>
+        <div>属性</div>
+      </ContextMenuItem>
     </ContextMenuContent>
   )
 }
