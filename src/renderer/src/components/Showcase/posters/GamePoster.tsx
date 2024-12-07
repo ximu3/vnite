@@ -31,8 +31,8 @@ export function GamePoster({
 
   return (
     <HoverCard openDelay={200} closeDelay={100}>
-      <HoverCardTrigger>
-        <ContextMenu>
+      <ContextMenu>
+        <HoverCardTrigger>
           <ContextMenuTrigger>
             <HoverCardAnimation>
               {cover ? (
@@ -72,19 +72,21 @@ export function GamePoster({
               )}
             </HoverCardAnimation>
           </ContextMenuTrigger>
-          <GameNavCM
-            gameId={gameId}
-            openAttributesDialog={() => setIsAttributesDialogOpen(true)}
-            openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
-          />
-        </ContextMenu>
-        {isAttributesDialogOpen && (
-          <AttributesDialog gameId={gameId} setIsOpen={setIsAttributesDialogOpen} />
-        )}
-        {isAddCollectionDialogOpen && (
-          <AddCollectionDialog gameId={gameId} setIsOpen={setIsAddCollectionDialogOpen} />
-        )}
-      </HoverCardTrigger>
+        </HoverCardTrigger>
+        <GameNavCM
+          gameId={gameId}
+          openAttributesDialog={() => setIsAttributesDialogOpen(true)}
+          openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
+        />
+      </ContextMenu>
+
+      {isAttributesDialogOpen && (
+        <AttributesDialog gameId={gameId} setIsOpen={setIsAttributesDialogOpen} />
+      )}
+      {isAddCollectionDialogOpen && (
+        <AddCollectionDialog gameId={gameId} setIsOpen={setIsAddCollectionDialogOpen} />
+      )}
+
       <HoverCardContent
         side="right"
         className={cn(

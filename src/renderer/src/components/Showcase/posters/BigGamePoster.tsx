@@ -29,8 +29,8 @@ export function BigGamePoster({
 
   return (
     <HoverCard openDelay={250} closeDelay={100}>
-      <HoverCardTrigger className={cn('rounded-none')}>
-        <ContextMenu>
+      <ContextMenu>
+        <HoverCardTrigger className={cn('rounded-none')}>
           <ContextMenuTrigger className={cn('rounded-none')}>
             <div
               className={cn(
@@ -86,19 +86,21 @@ export function BigGamePoster({
               </div>
             </div>
           </ContextMenuTrigger>
-          <GameNavCM
-            gameId={gameId}
-            openAttributesDialog={() => setIsAttributesDialogOpen(true)}
-            openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
-          />
-        </ContextMenu>
-        {isAttributesDialogOpen && (
-          <AttributesDialog gameId={gameId} setIsOpen={setIsAttributesDialogOpen} />
-        )}
-        {isAddCollectionDialogOpen && (
-          <AddCollectionDialog gameId={gameId} setIsOpen={setIsAddCollectionDialogOpen} />
-        )}
-      </HoverCardTrigger>
+        </HoverCardTrigger>
+        <GameNavCM
+          gameId={gameId}
+          openAttributesDialog={() => setIsAttributesDialogOpen(true)}
+          openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
+        />
+      </ContextMenu>
+
+      {isAttributesDialogOpen && (
+        <AttributesDialog gameId={gameId} setIsOpen={setIsAttributesDialogOpen} />
+      )}
+      {isAddCollectionDialogOpen && (
+        <AddCollectionDialog gameId={gameId} setIsOpen={setIsAddCollectionDialogOpen} />
+      )}
+
       <HoverCardContent
         side="right"
         className={cn(
