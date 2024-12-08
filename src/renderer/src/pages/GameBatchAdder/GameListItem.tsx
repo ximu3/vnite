@@ -28,7 +28,6 @@ export function GameListItem({ game }: { game: Game }): JSX.Element {
       error: (error) => error.message
     })
   }
-
   return (
     <TableRow className={cn('w-full')}>
       <TableCell className={cn(TABLE_COLUMN_WIDTHS.dataSource)}>

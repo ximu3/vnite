@@ -15,7 +15,6 @@ export function GameList(): JSX.Element {
       error: '添加游戏失败'
     })
   }
-
   return (
     <div className="w-[870px] h-[670px] 3xl:h-[812px]">
       <div className="py-[10px]">

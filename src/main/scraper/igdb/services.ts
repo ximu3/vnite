@@ -10,6 +10,12 @@ import {
 import { GameList, GameMetadata } from '../types'
 import log from 'electron-log/main.js'
 
+/**
+ * Search for games on IGDB
+ * @param gameName The name of the game to search for
+ * @returns A list of games
+ * @throws An error if the operation fails
+ */
 export async function searchGamesFromIGDB(gameName: string): Promise<GameList> {
   try {
     const games = await searchIGDBGames(gameName)
@@ -20,6 +26,12 @@ export async function searchGamesFromIGDB(gameName: string): Promise<GameList> {
   }
 }
 
+/**
+ * Get game metadata from IGDB
+ * @param gameId The id of the game on IGDB
+ * @returns The metadata for the game
+ * @throws An error if the operation fails
+ */
 export async function getGameMetadataFromIGDB(gameId: string): Promise<GameMetadata> {
   try {
     const metadata = await getIGDBMetadata(gameId)
@@ -30,6 +42,12 @@ export async function getGameMetadataFromIGDB(gameId: string): Promise<GameMetad
   }
 }
 
+/**
+ * Check if a game exists on IGDB
+ * @param gameId The id of the game on IGDB
+ * @returns A boolean indicating if the game exists
+ * @throws An error if the operation fails
+ */
 export async function checkGameExistsOnIGDB(gameId: string): Promise<boolean> {
   try {
     const exists = await checkIGDBGameExists(gameId)
@@ -40,6 +58,12 @@ export async function checkGameExistsOnIGDB(gameId: string): Promise<boolean> {
   }
 }
 
+/**
+ * Get game screenshots from IGDB
+ * @param gameId The id of the game on IGDB
+ * @returns A list of screenshots
+ * @throws An error if the operation fails
+ */
 export async function getGameScreenshotsFromIGDB(gameId: string): Promise<string[]> {
   try {
     const images = await getGameScreenshots(gameId)
@@ -50,6 +74,12 @@ export async function getGameScreenshotsFromIGDB(gameId: string): Promise<string
   }
 }
 
+/**
+ * Get the game cover from IGDB
+ * @param gameId The id of the game on IGDB
+ * @returns The URL of the game cover
+ * @throws An error if the operation fails
+ */
 export async function getGameCoverFromIGDB(gameId: string): Promise<string> {
   try {
     const cover = await getGameCover(gameId)
@@ -60,6 +90,10 @@ export async function getGameCoverFromIGDB(gameId: string): Promise<string> {
   }
 }
 
+/**
+ * Initialize the IGDB service
+ * @throws An error if the operation fails
+ */
 export function initIGDBService(): void {
   try {
     initIGDB()

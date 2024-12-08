@@ -2,7 +2,7 @@ import { protocol, net, app } from 'electron'
 import path from 'path'
 
 export function setupProtocols(): void {
-  // 注册 app 协议处理
+  // Registered app protocol processing
   protocol.handle('app', async (request) => {
     try {
       const urlObj = new URL(request.url)
@@ -30,7 +30,7 @@ export function setupProtocols(): void {
     }
   })
 
-  // 注册 vnite 协议处理
+  // Registering for vnite protocol processing
   if (process.defaultApp) {
     if (process.argv.length >= 2) {
       app.setAsDefaultProtocolClient('vnite', process.execPath, [path.resolve(process.argv[1])])

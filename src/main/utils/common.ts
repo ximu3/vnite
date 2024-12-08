@@ -9,15 +9,28 @@ import sharp from 'sharp'
 import pngToIco from 'png-to-ico'
 import { getAppTempPath } from './path'
 
+/**
+ * Parse the game ID from a URL
+ * @param url The URL
+ * @returns The game ID or null if not found
+ */
 export function parseGameIdFromUrl(url: string): string | null {
   const match = url.match(/vnite:\/\/rungameid\/([^/\s]+)/)
   return match ? match[1] : null
 }
 
+/**
+ * Get the version of the application
+ * @returns The version of the application
+ */
 export function getAppVersion(): string {
   return app.getVersion()
 }
 
+/**
+ * Get the path to the application log file
+ * @returns The path to the application log file
+ */
 export async function setupOpenAtLogin(): Promise<void> {
   try {
     const isEnabled = await getDBValue('config.json', ['general', 'openAtLogin'], false)
@@ -29,6 +42,10 @@ export async function setupOpenAtLogin(): Promise<void> {
   }
 }
 
+/**
+ * Open a path in the file explorer
+ * @param filePath The path to open
+ */
 export async function updateOpenAtLogin(): Promise<void> {
   try {
     const isEnabled = await getDBValue('config.json', ['general', 'openAtLogin'], false)
@@ -40,21 +57,29 @@ export async function updateOpenAtLogin(): Promise<void> {
   }
 }
 
+/**
+ * Open a path in the file explorer
+ * @param filePath The path to open
+ */
 export async function openPathInExplorer(filePath: string): Promise<void> {
   try {
-    // 检查路径是否存在
+    // Check if the path exists
     const stats = await fse.stat(filePath)
 
-    // 如果是文件，获取其目录路径
+    // If it's a file, get its directory path
     const dirPath = stats.isFile() ? path.dirname(filePath) : filePath
 
-    // 使用Electron的shell模块打开路径
+    // Open the path using Electron's shell module
     shell.openPath(dirPath)
   } catch (error) {
     console.error('Error opening path:', error)
   }
 }
 
+/**
+ * Open the game database path in the file explorer
+ * @param gameId The ID of the game
+ */
 export async function openGameDBPathInExplorer(gameId: string): Promise<void> {
   const gameDBPath = await getDataPath(`games/${gameId}/`)
   if (gameDBPath) {
@@ -73,18 +98,23 @@ export function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
+/**
+ * Format a date string as YYYY-MM-DD
+ * @param dateString The date string
+ * @returns The formatted date string
+ */
 export function formatDate(dateString: string): string {
   if (!dateString) return ''
 
   try {
     const date = new Date(dateString)
 
-    // 检查日期是否有效
+    // Check if the date is valid
     if (isNaN(date.getTime())) {
       return ''
     }
 
-    // 格式化为 YYYY-MM-DD
+    // Formatted as YYYY-MM-DD
     return date.toISOString().split('T')[0]
   } catch {
     return ''
@@ -92,20 +122,20 @@ export function formatDate(dateString: string): string {
 }
 
 /**
- * 获取指定目录下的所有一级子文件夹名称
- * @param dirPath 目录路径
- * @returns Promise<string[]> 子文件夹名称数组
+ * Get the names of all first-level subfolders in the specified directory.
+ * @param dirPath Directory Path
+ * @returns Promise<string[]> Array of subfolder names
  */
 export async function getFirstLevelSubfolders(dirPath: string): Promise<string[]> {
-  // 确保目录存在
+  // Make sure the catalog exists
   if (!(await fse.pathExists(dirPath))) {
     throw new Error('目录不存在')
   }
 
-  // 读取目录内容
+  // Read the contents of the catalog
   const items = await fse.readdir(dirPath)
 
-  // 过滤出文件夹
+  // Filter out folders
   const subfolders = await Promise.all(
     items.map(async (item) => {
       const fullPath = path.join(dirPath, item)
@@ -117,7 +147,7 @@ export async function getFirstLevelSubfolders(dirPath: string): Promise<string[]
     })
   )
 
-  // 返回文件夹名称数组
+  // Returns an array of folder names
   return subfolders.filter((item) => item.isDirectory).map((item) => item.name)
 }
 
@@ -130,22 +160,27 @@ interface UrlShortcutOptions {
   categories?: string[]
 }
 
+/**
+ * Create a shortcut for a game
+ * @param gameId The ID of the game
+ * @param targetPath The path to save the shortcut
+ */
 export async function createGameShortcut(gameId: string, targetPath: string): Promise<void> {
   try {
-    // 获取游戏信息
+    // Get game information
     const gameName = await getDBValue(`games/${gameId}/metadata.json`, ['name'], '')
 
     const originalIconPath = await getMedia(gameId, 'icon')
 
-    // ico图标路径
+    // ico icon path
     const iconPath = await getDataPath(`games/${gameId}/icon.ico`)
 
-    // 转换图标为 ico 格式
+    // Convert icons to ico format
     await convertToIcon(originalIconPath, iconPath, {
       sizes: [32],
       quality: 100
     })
-    // 创建 URL 快捷方式
+    // Creating URL shortcuts
     await createUrlShortcut({
       url: `vnite://rungameid/${gameId}`,
       iconPath: iconPath,
@@ -160,14 +195,14 @@ export async function createGameShortcut(gameId: string, targetPath: string): Pr
 }
 
 /**
- * 创建 URL 快捷方式文件
- * @param options UrlShortcutOptions 配置选项
+ * Creating URL shortcut files
+ * @param options UrlShortcutOptions Configuration options
  */
 async function createUrlShortcut(options: UrlShortcutOptions): Promise<string> {
   const { url, iconPath, targetPath, name = 'url_shortcut', description = '' } = options
 
   try {
-    // 确保目标目录存在
+    // Ensure that the target directory exists
     await fse.ensureDir(targetPath)
 
     const tempName = `${name}_${Date.now()}`
@@ -177,7 +212,7 @@ async function createUrlShortcut(options: UrlShortcutOptions): Promise<string> {
     await fse.remove(finalPath)
 
     if (process.platform === 'win32') {
-      // Windows URL 快捷方式格式
+      // Windows URL shortcut format
       const normalizedIconPath = iconPath ? path.resolve(iconPath).split(path.sep).join('\\') : ''
 
       const content = [
@@ -194,7 +229,7 @@ async function createUrlShortcut(options: UrlShortcutOptions): Promise<string> {
 
       await fse.writeFile(tempPath, content, 'utf-8')
     } else {
-      // Linux/macOS .desktop 文件
+      // Linux/macOS .desktop file
       const content = [
         '[Desktop Entry]',
         'Version=1.0',
@@ -213,7 +248,7 @@ async function createUrlShortcut(options: UrlShortcutOptions): Promise<string> {
       await fse.chmod(desktopPath, 0o755)
     }
 
-    // 验证文件是否创建成功
+    // Verify that the file was created successfully
     const exists = await fse.pathExists(tempPath)
     if (!exists) {
       throw new Error('Failed to create shortcut file')
@@ -235,10 +270,10 @@ interface IconConversionOptions {
 }
 
 /**
- * 将图片转换为 ICO 格式
- * @param inputPath 输入图片路径
- * @param outputPath 输出图片路径
- * @param options 转换选项
+ * Converting images to ICO format
+ * @param inputPath Input image path
+ * @param outputPath Output Image Path
+ * @param options Conversion options
  */
 async function convertToIcon(
   inputPath: string,
@@ -246,21 +281,17 @@ async function convertToIcon(
   options: IconConversionOptions = {}
 ): Promise<string> {
   try {
-    const {
-      sizes = [32], // Windows 快捷方式通常使用 32x32
-      quality = 100,
-      background = { r: 0, g: 0, b: 0, alpha: 0 }
-    } = options
+    const { sizes = [32], quality = 100, background = { r: 0, g: 0, b: 0, alpha: 0 } } = options
 
-    // 确保输出目录存在
+    // Make sure the output directory exists
     await fse.ensureDir(path.dirname(outputPath))
 
-    // 检查输入文件是否存在
+    // Check if the input file exists
     if (!(await fse.pathExists(inputPath))) {
       throw new Error(`Input file not found: ${inputPath}`)
     }
 
-    // 创建临时 PNG 文件路径
+    // Creating a Temporary PNG File Path
     const tempPngPaths = await Promise.all(
       sizes.map(async (size) => {
         const tempPngPath = getAppTempPath(`icon_${size}.png`)
@@ -275,16 +306,16 @@ async function convertToIcon(
       })
     )
 
-    // 转换 PNG 文件为 ICO 格式
+    // Convert PNG files to ICO format
     const icoBuffer = await pngToIco(tempPngPaths)
     await fse.writeFile(outputPath, icoBuffer)
 
-    // 删除临时 PNG 文件
+    // Deleting Temporary PNG Files
     try {
       await Promise.all(tempPngPaths.map((tempPath) => fse.remove(tempPath)))
     } catch (cleanupError) {
       console.warn('清理临时文件时出错:', cleanupError)
-      // 继续执行，因为主要任务已完成
+      // Continued implementation as the main tasks have been completed
     }
 
     return outputPath

@@ -21,24 +21,24 @@ export class IGDBAuthManager {
     this.clientSecret = config.clientSecret
   }
 
-  // 获取有效的访问令牌
+  // Obtaining a valid access token
   async getValidToken(): Promise<string> {
-    // 如果令牌不存在或已过期，则获取新令牌
+    // If the token does not exist or has expired, get a new one
     if (!this.accessToken || !this.tokenExpiration || this.isTokenExpired()) {
       await this.refreshToken()
     }
     return this.accessToken!
   }
 
-  // 检查令牌是否过期
+  // Check for expired tokens
   private isTokenExpired(): boolean {
     if (!this.tokenExpiration) return true
-    // 提前5分钟刷新令牌
+    // Refresh the token 5 minutes early
     const expirationBuffer = 5 * 60 * 1000
     return this.tokenExpiration.getTime() - expirationBuffer < Date.now()
   }
 
-  // 刷新访问令牌
+  // Refresh Access Token
   private async refreshToken(): Promise<void> {
     try {
       const response = await fetch(
@@ -60,7 +60,7 @@ export class IGDBAuthManager {
       const data = (await response.json()) as IGDBAuthResponse
 
       this.accessToken = data.access_token
-      // 计算令牌过期时间
+      // Calculate token expiration time
       this.tokenExpiration = new Date(Date.now() + data.expires_in * 1000)
     } catch (error) {
       console.error('获取IGDB访问令牌失败:', error)
@@ -68,7 +68,7 @@ export class IGDBAuthManager {
     }
   }
 
-  // 获取请求头
+  // Get request header
   async getHeaders(): Promise<HeadersInit> {
     const token = await this.getValidToken()
     return {

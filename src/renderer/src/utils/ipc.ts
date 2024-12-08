@@ -1,4 +1,5 @@
-// types
+import { debounce } from 'lodash'
+
 export interface IpcRenderer {
   send: (channel: string, ...args: any[]) => void
   invoke: (channel: string, ...args: any[]) => Promise<any>
@@ -14,10 +15,7 @@ declare global {
   }
 }
 
-// ipc
-import { debounce } from 'lodash'
-
-// 创建支持异步的防抖函数
+// Creating an anti-aliasing function that supports asynchrony
 function createAsyncDebounce<F extends (...args: any[]) => Promise<any>>(func: F, wait: number) {
   const debounced = debounce(
     (resolve: (value: any) => void, reject: (error: any) => void, args: Parameters<F>) => {
@@ -35,12 +33,12 @@ function createAsyncDebounce<F extends (...args: any[]) => Promise<any>>(func: F
 }
 
 /**
- * IPC 通信管理类
+ * IPC Communications Management Category
  */
 class IpcManager {
   private registeredListeners: Record<string, Map<(...args: any[]) => void, () => void>> = {}
 
-  // 将方法定义改为箭头函数，以保持 this 绑定
+  // Change the method definition to an arrow function to keep this binding
   public send = (channel: string, ...args: any[]): void => {
     window.electron.ipcRenderer.send(channel, ...args)
   }
@@ -99,10 +97,10 @@ class IpcManager {
   }
 }
 
-// 创建单例
+// Creating a Single Case
 export const ipc = new IpcManager()
 
-// 导出绑定到实例的方法
+// Exporting bindings to instances
 export const ipcSend = ipc.send.bind(ipc)
 export const debouncedIpcSend = ipc.debouncedSend.bind(ipc)
 export const ipcInvoke = ipc.invoke.bind(ipc)

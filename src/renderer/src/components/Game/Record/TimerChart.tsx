@@ -34,39 +34,38 @@ export const TimerChart = ({
     return value
   }
 
-  // 将数据转换为 Recharts 需要的格式
+  // Converting data into the format Recharts needs
   const chartData: ChartData[] = Object.entries(data).map(([date, playTime]) => ({
     date,
-    playTime: Math.round(playTime / 1000 / 60) // 将毫秒转换为分钟
+    playTime: Math.round(playTime / 1000 / 60) // Converting milliseconds to minutes
   }))
 
-  // 图表配置
+  // Chart Configuration
   const chartConfig = {
     playTime: {
       label: '游玩时长',
       color: 'var(--primary)'
     }
   }
-
   return (
     <ChartContainer config={chartConfig} className={cn(className)}>
       <BarChart data={chartData}>
-        {/* 添加网格线 */}
+        {/* Adding Grid Lines */}
         <CartesianGrid strokeDasharray="3 3" vertical={false} />
 
-        {/* X轴配置 */}
+        {/* X-shaft alignment */}
         <XAxis
           dataKey="date"
           tickLine={false}
           axisLine={false}
           tickMargin={10}
-          tickFormatter={(value) => value.slice(5)} // 只显示月-日
+          tickFormatter={(value) => value.slice(5)} // Month-Day only
         />
 
-        {/* Y轴配置 */}
+        {/* Y-shaft arrangement */}
         <YAxis tickLine={false} axisLine={false} tickMargin={10} />
 
-        {/* 添加交互提示 */}
+        {/* Adding Interactive Tips */}
         <ChartTooltip
           content={
             <ChartTooltipContent
@@ -77,11 +76,11 @@ export const TimerChart = ({
           }
         />
 
-        {/* 柱状图 */}
+        {/* histogram */}
         <Bar
           dataKey="playTime"
           fill="hsl(var(--primary))"
-          radius={[4, 4, 0, 0]} // 圆角柱状
+          radius={[4, 4, 0, 0]} // terete
         />
       </BarChart>
     </ChartContainer>

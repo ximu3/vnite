@@ -9,7 +9,7 @@ class IGDBClient {
     this.authManager = new IGDBAuthManager(config)
   }
 
-  // 发送 API 请求
+  // Send API request
   async request<T>(endpoint: string, query: string): Promise<T> {
     try {
       const headers = await this.authManager.getHeaders()
@@ -31,10 +31,10 @@ class IGDBClient {
   }
 }
 
-// 创建单例实例
+// Creating a Singleton Instance
 let igdbClient: IGDBClient | null = null
 
-// 初始化 IGDB 客户端
+// Initializing the IGDB Client
 export function initIGDBClient(config: IGDBAuthConfig): IGDBClient {
   if (!igdbClient) {
     igdbClient = new IGDBClient(config)
@@ -42,7 +42,7 @@ export function initIGDBClient(config: IGDBAuthConfig): IGDBClient {
   return igdbClient
 }
 
-// 获取客户端实例
+// Get Client Instance
 export function getIGDBClient(): IGDBClient {
   if (!igdbClient) {
     throw new Error('IGDB 客户端未初始化')

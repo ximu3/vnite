@@ -17,29 +17,29 @@ export function getAppRootPath(): string {
 
 /**
  * Get the file in database folder
+ * Automatically create the parent directory if it does not exist
  * @param file The path of the file to be attached
  * @returns The path of the file in the database folder
  */
 export async function getDataPath(file: string, forceCreate?: boolean): Promise<string> {
   try {
-    // 判断是否为打包环境
+    // Determine if it is a packaged environment
     const basePath = app.isPackaged
       ? path.join(app.getPath('userData'), 'app/database')
       : path.join(getAppRootPath(), '/dev/database')
 
     const fullPath = path.join(basePath, file)
 
-    // 检查是否包含 games/{gameid} 模式
-
+    // Checks if the games/{gameid} pattern is included.
     if (!forceCreate) {
       const regex = /games\/([^/]+)/
       const match = file.match(regex)
 
       if (match) {
-        // 获取到 games/{gameid} 的完整路径
+        // Get the full path to games/{gameid}.
         const gamesFolderPath = path.join(basePath, 'games', match[1])
 
-        // 检查游戏目录是否存在
+        // Check if the game directory exists
         const exists = await fse.pathExists(gamesFolderPath)
         if (!exists) {
           throw new Error(`Game directory not found: ${match[1]}`)
@@ -47,15 +47,15 @@ export async function getDataPath(file: string, forceCreate?: boolean): Promise<
       }
     }
 
-    // 判断是否为文件路径（检查是否有扩展名）
+    // Determine if it is a file path (check for extension)
     const isFile = path.extname(file) !== ''
 
     if (isFile) {
-      // 如果是文件路径，确保父目录存在
+      // If it's a file path, make sure the parent directory exists
       const dirPath = path.dirname(fullPath)
       await fse.ensureDir(dirPath)
     } else {
-      // 如果是文件夹路径，直接确保该目录存在
+      // If it is a folder path, it is straightforward to ensure that the directory exists
       await fse.ensureDir(fullPath)
     }
 
@@ -75,37 +75,34 @@ export function getLogsPath(): string {
 }
 
 /**
- * 获取应用程序临时目录
- * @param subDir 子目录名称（可选）
- * @returns 临时目录路径
+ * Get the path to the application log file
+ * @param subDir The subdirectory to use
+ * @returns The path to the application log file
  */
 export function getAppTempPath(subDir?: string): string {
-  // 使用 electron 的 app.getPath('temp') 获取系统临时目录
-  // 如果在主进程中无法访问 app，则使用 os.tmpdir()
+  // Use electron's app.getPath('temp') to get the system temp directory.
+  // If the app is not accessible in the main process, use os.tmpdir()
   const tempDir = app?.getPath?.('temp') || os.tmpdir()
 
-  // 创建应用特定的临时目录路径
-  const appTempDir = path.join(
-    tempDir,
-    'vnite', // 替换为你的应用名称
-    subDir || ''
-  )
+  // Creating application-specific temporary directory paths
+  const appTempDir = path.join(tempDir, 'vnite', subDir || '')
 
   return appTempDir
 }
 
 /**
- * 设置和初始化应用程序临时目录
+ * Set up the temporary directory for the application
+ * @returns The path of the temporary directory
  */
 export async function setupTempDirectory(): Promise<string> {
   try {
     const fs = require('fs-extra')
     const tempPath = getAppTempPath()
 
-    // 确保临时目录存在
+    // Ensure that the temporary directory exists
     await fs.ensureDir(tempPath)
 
-    // 可选：在应用退出时清理临时目录
+    // Clean up the temporary directory when the app exits
     app.on('quit', async () => {
       try {
         await fs.remove(tempPath)

@@ -16,7 +16,6 @@ export function GameNavCM({
   openAddCollectionDialog: () => void
 }): JSX.Element {
   const { runningGames } = useRunningGames()
-
   return (
     <ContextMenuContent className={cn('w-40')}>
       <div className={cn('flex flex-row w-full')}>

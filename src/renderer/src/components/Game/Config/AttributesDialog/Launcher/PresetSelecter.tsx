@@ -55,7 +55,6 @@ export function PresetSelecter({
     }
     ipcSend('launcher-preset', presetName, gameId)
   }
-
   return (
     <>
       <SteamIdDialog />

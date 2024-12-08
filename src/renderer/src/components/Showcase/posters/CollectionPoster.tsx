@@ -17,26 +17,25 @@ export function CollectionPoster({
   const gameId = collections[collctionId].games[0]
   const length = collections[collctionId].games.length
   const { mediaUrl: cover } = useGameMedia({ gameId, type: 'cover', noToastError: true })
-
   return (
     <div
       className={cn(
         'group relative overflow-hidden shadow-custom-initial cursor-pointer w-[160px] h-[160px] rounded-[0.3rem]',
         'transition-border duration-300 ease-in-out',
-        'border-2 border-transparent', // 默认透明边框
-        'hover:border-primary hover:border-2', // hover时显示主题色边框
+        'border-2 border-transparent',
+        'hover:border-primary hover:border-2',
         '3xl:w-[190px] 3xl:h-[190px]'
       )}
       onClick={() => navigate(`/library/collections/${collctionId}`)}
     >
-      {/* 添加一个背景遮罩层 */}
+      {/* background mask layer */}
       <div
         className={cn(
           'absolute inset-0 bg-muted/40 backdrop-blur-sm z-10 border-t-0.5 border-white/30 pointer-events-none'
         )}
       />
 
-      {/* HoverBigCardAnimation 层 */}
+      {/* HoverBigCardAnimation layer */}
       <CollectionCM collectionId={collctionId}>
         <div className="relative z-0">
           <HoverSquareCardAnimation className={cn('rounded-none')}>
@@ -63,12 +62,12 @@ export function CollectionPoster({
         </div>
       </CollectionCM>
 
-      {/* 文字内容层 */}
+      {/* text content layer */}
       <div
         className={cn(
           'absolute inset-0 z-20 mt-7',
           'flex items-center justify-center',
-          'pointer-events-none' // 确保点击事件传递到底层
+          'pointer-events-none'
         )}
       >
         <div className="flex flex-col gap-1 items-center justify-center">

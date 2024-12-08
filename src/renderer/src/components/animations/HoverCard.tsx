@@ -30,7 +30,6 @@ export function HoverCardAnimation({
   },
   ...rest
 }: HoverCardProps): JSX.Element {
-  // 保持原有的动画配置
   const springConfig = {
     tension: animationConfig.tension,
     friction: animationConfig.friction,
@@ -39,7 +38,6 @@ export function HoverCardAnimation({
     clamp: true
   }
 
-  // 合并动画状态为单个 useSpring
   const [springs, api] = useSpring(() => ({
     y: 0,
     boxShadow: shadowConfig.initial,
@@ -82,7 +80,7 @@ export function HoverCardAnimation({
     <animated.div
       className={cn(
         'relative overflow-hidden',
-        'transform-gpu', // 使用 GPU 加速
+        'transform-gpu', // Accelerating with the GPU
         'will-change-transform',
         className
       )}
@@ -97,7 +95,7 @@ export function HoverCardAnimation({
       onMouseLeave={handleMouseLeave}
       {...rest}
     >
-      {/* 光泽效果 - 模糊层 */}
+      {/* Glossy Effects - Blur Layer */}
       <animated.div
         style={{
           position: 'absolute',
@@ -122,7 +120,7 @@ export function HoverCardAnimation({
         }}
       />
 
-      {/* 光泽效果 - 主层 */}
+      {/* Glossy Effects - Main Layer */}
       <animated.div
         style={{
           position: 'absolute',

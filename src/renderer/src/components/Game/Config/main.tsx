@@ -16,7 +16,6 @@ import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 export function Config({ gameId }: { gameId: string }): JSX.Element {
   const [isAttributesDialogOpen, setIsAttributesDialogOpen] = React.useState(false)
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
-
   return (
     <>
       <DropdownMenu>

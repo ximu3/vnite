@@ -26,7 +26,6 @@ export function BigGamePoster({
   const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
   const [isAttributesDialogOpen, setIsAttributesDialogOpen] = React.useState(false)
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
-
   return (
     <HoverCard openDelay={250} closeDelay={100}>
       <ContextMenu>

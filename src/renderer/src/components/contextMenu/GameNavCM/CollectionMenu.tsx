@@ -18,11 +18,9 @@ export function CollectionMenu({
   openAddCollectionDialog: () => void
 }): JSX.Element {
   const { collections, addGameToCollection, removeGameFromCollection } = useCollections()
-
   const gameInCollectionsId = Object.entries(collections)
     .filter(([, value]) => value.games.includes(gameId))
     .map(([key]) => key)
-
   return (
     <ContextMenuGroup>
       <ContextMenuSub>

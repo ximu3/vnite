@@ -11,7 +11,6 @@ import { Separator } from '@ui/separator'
 export function Filter({ children }: { children: React.ReactNode }): JSX.Element {
   const { isFilterMenuOpen, setIsFilterMenuOpen, clearFilter, filter, updateFilter, deleteFilter } =
     useFilterStore()
-
   return (
     <Popover open={isFilterMenuOpen}>
       <Tooltip>

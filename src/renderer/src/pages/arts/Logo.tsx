@@ -22,7 +22,6 @@ export function Logo(): JSX.Element {
       link.click()
     }
   }
-
   return (
     <div
       className={cn('h-screen w-screen flex flex-col items-center justify-center bg-transparent')}

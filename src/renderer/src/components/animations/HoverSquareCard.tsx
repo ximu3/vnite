@@ -32,7 +32,7 @@ export function HoverSquareCardAnimation({
   },
   ...rest
 }: HoverSquareCardProps): JSX.Element {
-  // 动画配置
+  // Animation Configuration
   const springConfig = {
     tension: animationConfig.tension,
     friction: animationConfig.friction,
@@ -41,7 +41,7 @@ export function HoverSquareCardAnimation({
     clamp: true
   }
 
-  // 图片缩放动画状态
+  // Image zoom animation state
   const [springs, api] = useSpring(() => ({
     imageScale: imageConfig.scale.initial,
     config: springConfig,
@@ -72,7 +72,7 @@ export function HoverSquareCardAnimation({
       onMouseLeave={handleMouseLeave}
       {...rest}
     >
-      {/* 图片层 */}
+      {/* image layer */}
       <animated.div
         style={{
           transform: springs.imageScale.to((s) => `scale(${s})`),

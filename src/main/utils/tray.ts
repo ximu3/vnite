@@ -4,15 +4,13 @@ import icon from '../../../resources/icon.png?asset'
 
 export async function setupTray(mainWindow: BrowserWindow): Promise<TrayManager> {
   const trayManager = new TrayManager(mainWindow)
-  await trayManager.init() // 初始化
+  await trayManager.init()
   return trayManager
 }
 
 export interface AppConfig {
   openAtLogin: boolean
-  quitToTray: boolean // 添加最小化到托盘的配置项
-
-  // ... 其他配置
+  quitToTray: boolean
 }
 
 export class TrayManager {
@@ -25,7 +23,7 @@ export class TrayManager {
     this.mainWindow = mainWindow
   }
 
-  // 异步初始化方法
+  // Asynchronous initialization methods
   public async init(): Promise<void> {
     this.config = await getDBValue('config.json', ['general'], {
       openAtLogin: false,
@@ -45,16 +43,16 @@ export class TrayManager {
   }
 
   private async setupWindowEvents(): Promise<void> {
-    // 处理窗口关闭事件
+    // Handling window close events
     this.mainWindow.on('close', (event) => {
-      // 如果不是退出操作且启用了最小化到托盘
+      // If it is not an exit operation and minimize to tray is enabled
       if (!this.isQuitting && this.config?.quitToTray) {
         event.preventDefault()
         this.mainWindow.hide()
       }
     })
 
-    // 监听应用退出事件
+    // Listening for application exit events
     app.on('before-quit', () => {
       this.isQuitting = true
     })
@@ -65,13 +63,13 @@ export class TrayManager {
 
     this.tray = new Tray(icon)
 
-    // 设置托盘图标提示
+    // Setting up tray icon alerts
     this.tray.setToolTip('vnite')
 
-    // 创建上下文菜单
+    // Creating Context Menus
     this.setTrayMenu()
 
-    // 绑定事件
+    // bind an event
     this.bindTrayEvents()
   }
 
@@ -114,7 +112,7 @@ export class TrayManager {
       {
         label: '退出',
         click: (): void => {
-          this.isQuitting = true // 设置退出标志
+          this.isQuitting = true // Setting the exit flag
           app.quit()
         }
       }
@@ -126,14 +124,14 @@ export class TrayManager {
   private bindTrayEvents(): void {
     if (!this.tray) return
 
-    // Windows 和 Linux 下单击显示主窗口
+    // Click to show main window on Windows and Linux
     if (process.platform !== 'darwin') {
       this.tray.on('click', () => {
         this.showMainWindow()
       })
     }
 
-    // macOS 下右键点击显示菜单
+    // Right-click to show menu on macOS
     if (process.platform === 'darwin') {
       this.tray.on('right-click', () => {
         if (this.tray) {
@@ -153,7 +151,7 @@ export class TrayManager {
     this.mainWindow.focus()
   }
 
-  // 更新托盘图标
+  // Update tray icon
   public updateTrayIcon(iconPath: string): void {
     if (this.tray) {
       const icon = nativeImage.createFromPath(iconPath)
@@ -161,12 +159,12 @@ export class TrayManager {
     }
   }
 
-  // 更新托盘菜单
+  // Updated tray menu
   public updateTrayMenu(): void {
     this.setTrayMenu()
   }
 
-  // 销毁托盘
+  // Destruction of pallets
   public destroy(): void {
     if (this.tray) {
       this.tray.destroy()

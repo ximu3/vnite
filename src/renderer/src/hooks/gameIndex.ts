@@ -12,18 +12,16 @@ interface GameIndexManagerState {
   setGameIndex: (metadata: Record<string, Partial<GameIndexdata>>) => void
 }
 
-// 创建 Zustand store
 export const useGameIndexManager = create<GameIndexManagerState>((set, get) => ({
   gameIndex: {},
-  // 修改 setGameIndex 以确保安全更新
   setGameIndex: (metadata): void => {
-    // 确保 metadata 是有效的对象
+    // Make sure the metadata is a valid object
     if (metadata && typeof metadata === 'object') {
-      set({ gameIndex: { ...metadata } }) // 创建新对象以避免引用问题
+      set({ gameIndex: { ...metadata } }) // Creating new objects to avoid reference problems
       console.log('Game index updated:', metadata)
     } else {
       console.warn('Attempted to set invalid gameIndex:', metadata)
-      set({ gameIndex: {} }) // 设置为空对象而不是 null 或 undefined
+      set({ gameIndex: {} }) // Set to null instead of null or undefined.
     }
   },
   search: (query): string[] => {
@@ -48,7 +46,7 @@ export const useGameIndexManager = create<GameIndexManagerState>((set, get) => (
         const valueA = a[by]
         const valueB = b[by]
 
-        // 检查 valueA 和 valueB 是否为 undefined 或 null
+        // Checks if valueA and valueB are undefined or null.
         if (valueA == null && valueB == null) {
           return 0
         }
@@ -139,7 +137,7 @@ export const useGameIndexManager = create<GameIndexManagerState>((set, get) => (
   }
 }))
 
-// 初始化游戏索引数据
+// Initializing Game Index Data
 ipcInvoke('get-games-index')
   .then((metadata) => {
     if (metadata && typeof metadata === 'object') {
@@ -156,7 +154,7 @@ ipcInvoke('get-games-index')
     useGameIndexManager.getState().setGameIndex({})
   })
 
-// 监听游戏索引变化
+// Listening to game index changes
 ipcOnUnique('game-index-changed', () => {
   try {
     ipcInvoke('get-games-index').then((metadata) => {

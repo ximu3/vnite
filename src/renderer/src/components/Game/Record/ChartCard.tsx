@@ -17,21 +17,17 @@ export function ChartCard({
   const timers = getGameStartAndEndDate(gameId)
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
-
   const [playTimeByDateRange, setPlayTimeByDateRange] = useState<Record<string, number>>({})
-
   useEffect(() => {
     setStartDate(timers.start)
     setEndDate(timers.end)
   }, [timers.start, timers.end])
-
   const isDateInRange = (date: string): boolean => {
     if (!date || !timers.start || !timers.end) return false
     return date >= timers.start && date <= timers.end
   }
-
   useEffect(() => {
-    // 只有当两个日期都有效且在允许的范围内时才获取数据
+    // Get data only if both dates are valid and within the allowed range
     if (
       startDate &&
       endDate &&
@@ -43,7 +39,6 @@ export function ChartCard({
       setPlayTimeByDateRange(data)
     }
   }, [startDate, endDate, timers.start, timers.end, gameId])
-
   return (
     <Card className={cn(className, 'p-3 flex flex-col gap-3')}>
       {!isEqual(timers, { start: '', end: '' }) ? (

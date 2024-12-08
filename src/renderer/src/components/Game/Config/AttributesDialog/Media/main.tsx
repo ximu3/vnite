@@ -75,7 +75,6 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
     )
     setMediaUrl('')
   }
-
   return (
     <div className={cn('flex flex-row gap-3 w-full')}>
       <div className={cn('flex flex-col gap-3 w-full')}>

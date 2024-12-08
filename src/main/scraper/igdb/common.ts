@@ -13,7 +13,7 @@ import * as dotenv from 'dotenv'
 
 dotenv.config()
 
-// 初始化客户端（在应用启动时调用）
+// Initialize the client (called at application startup)
 export function initIGDB(): void {
   initIGDBClient({
     clientId: import.meta.env.VITE_IGDB_API_ID,
@@ -21,7 +21,6 @@ export function initIGDB(): void {
   })
 }
 
-// 搜索游戏函数
 export async function searchIGDBGames(gameName: string): Promise<GameList> {
   try {
     const query = `
@@ -53,7 +52,6 @@ export async function searchIGDBGames(gameName: string): Promise<GameList> {
   }
 }
 
-// 获取游戏元数据函数
 export async function getIGDBMetadata(gameId: string): Promise<GameMetadata> {
   try {
     const query = `
@@ -104,7 +102,6 @@ export async function getIGDBMetadata(gameId: string): Promise<GameMetadata> {
   }
 }
 
-// 获取游戏截图
 export async function getGameScreenshots(gameId: string): Promise<string[]> {
   try {
     const query = `
@@ -144,7 +141,6 @@ export async function checkIGDBGameExists(gameId: string): Promise<boolean> {
   }
 }
 
-// 获取游戏封面
 export async function getGameCover(gameId: string): Promise<string> {
   try {
     const query = `

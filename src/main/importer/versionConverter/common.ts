@@ -6,7 +6,7 @@ import { stopWatcher } from '~/watcher'
 import { launcherPreset } from '~/launcher'
 import { app } from 'electron'
 
-// 接口定义
+// interface definition
 interface V1GameDetail {
   name: string
   chineseName: string
@@ -137,7 +137,7 @@ interface V2Config {
 async function convertConfig(tempDir: string, outputDir: string): Promise<void> {
   const v1ConfigPath = path.join(tempDir, 'config', 'config.json')
 
-  // 默认的v2配置
+  // Default v2 configuration
   const defaultV2Config: V2Config = {
     general: {
       openAtLogin: false,
@@ -172,51 +172,51 @@ async function convertConfig(tempDir: string, outputDir: string): Promise<void> 
     }
   }
 
-  // 如果v1配置文件存在，则读取并转换
+  // If the v1 configuration file exists, it reads and converts the
   if (await fse.pathExists(v1ConfigPath)) {
     const v1Config: V1Config = await fse.readJson(v1ConfigPath)
 
-    // 创建v2配置，合并默认值和需要保留的v1值
+    // Create v2 configurations, merge defaults and v1 values that need to be preserved
     const v2Config: V2Config = {
       ...defaultV2Config,
       general: {
         ...defaultV2Config.general,
-        quitToTray: v1Config.general.quitToTray // 保留 quitToTray
+        quitToTray: v1Config.general.quitToTray
       },
       others: {
         showcase: {
           sort: {
-            by: v1Config.others.posterWall.sortBy, // 保留 sortBy
-            order: v1Config.others.posterWall.sortOrder // 保留 sortOrder
+            by: v1Config.others.posterWall.sortBy,
+            order: v1Config.others.posterWall.sortOrder
           }
         }
       },
       advanced: {
         linkage: {
           localeEmulator: {
-            path: v1Config.advance.lePath // 将 lePath 存储在新的位置
+            path: v1Config.advance.lePath
           }
         }
       }
     }
 
-    // 保存v2配置文件
+    // Save v2 configuration file
     await fse.writeJson(path.join(outputDir, 'config.json'), v2Config, { spaces: 2 })
   } else {
-    // 如果v1配置文件不存在，则使用默认配置
+    // If the v1 configuration file does not exist, the default configuration is used
     await fse.writeJson(path.join(outputDir, 'config.json'), defaultV2Config, { spaces: 2 })
   }
 }
 
 export async function importV1Data(zipFilePath: string, outputDir: string): Promise<void> {
-  // 停止监视器
+  // Stop Monitor
   stopWatcher()
-  // 创建临时解压目录
+  // Create a temporary decompression directory
   const tempDir = path.join(outputDir, '_temp')
   await fse.ensureDir(tempDir)
 
   try {
-    // 解压缩文件
+    // decompress a file
     await fse
       .createReadStream(zipFilePath)
       .pipe(unzipper.Extract({ path: tempDir }))
@@ -224,7 +224,7 @@ export async function importV1Data(zipFilePath: string, outputDir: string): Prom
 
     await convertConfig(tempDir, outputDir)
 
-    // 读取v1数据
+    // Read v1 data
     const dataJsonPath = path.join(tempDir, 'data', 'data.json')
     const pathsJsonPath = path.join(tempDir, 'path', 'paths.json')
     const categoriesJsonPath = path.join(tempDir, 'data', 'categories.json')
@@ -233,10 +233,10 @@ export async function importV1Data(zipFilePath: string, outputDir: string): Prom
     const pathsJson = await fse.readJson(pathsJsonPath)
     const categories: V1Category[] = await fse.readJson(categoriesJsonPath)
 
-    // 创建游戏ID映射表
+    // Creating a Game ID Mapping Table
     const gameIdMap: Record<string, string> = {}
 
-    // 转换游戏数据
+    // Convert game data
     for (const oldGameId in dataJson) {
       const newGameId = generateUUID()
       gameIdMap[oldGameId] = newGameId
@@ -256,12 +256,12 @@ export async function importV1Data(zipFilePath: string, outputDir: string): Prom
         }))
       }
 
-      // 创建游戏目录和保存元数据
+      // Creating game catalogs and saving metadata
       const gameDir = path.join(outputDir, 'games', newGameId)
       await fse.ensureDir(gameDir)
       await fse.writeJson(path.join(gameDir, 'metadata.json'), v2Metadata, { spaces: 2 })
 
-      // 复制图片文件
+      // Copying Image Files
       const imageFiles = ['background.webp', 'cover.webp', 'icon.png', 'icon.ico']
       for (const file of imageFiles) {
         const srcPath = path.join(tempDir, 'data', 'games', oldGameId, file)
@@ -271,7 +271,7 @@ export async function importV1Data(zipFilePath: string, outputDir: string): Prom
         }
       }
 
-      // 处理路径信息
+      // Processing path information
       const pathInfo = pathsJson[oldGameId]
       if (pathInfo) {
         const gamePath = pathInfo.gamePath || ''
@@ -293,20 +293,20 @@ export async function importV1Data(zipFilePath: string, outputDir: string): Prom
         }
       }
 
-      // 创建记录文件
+      // Creating Record Files
       const v2Record: V2Record = {
         addDate: new Date(gameDetail.addDate).toISOString(),
         lastRunDate: gameDetail.lastVisitDate
           ? new Date(gameDetail.lastVisitDate).toISOString()
           : '',
-        score: -1, // 假设没有评分信息
-        playingTime: gameDetail?.gameDuration * 1000 || 0, // 假设没有游戏时间信息
-        timer: [], // 假设没有计时器信息
+        score: -1,
+        playingTime: gameDetail?.gameDuration * 1000 || 0,
+        timer: [],
         playStatus: convertPlayStatus(gameDetail.playStatus)
       }
       await fse.writeJson(path.join(gameDir, 'record.json'), v2Record, { spaces: 2 })
 
-      // 转换存档数据
+      // Converting archived data
       const v2Saves: Record<string, V2Save> = {}
       if (Array.isArray(gameSaves)) {
         for (const v1Save of gameSaves) {
@@ -317,7 +317,7 @@ export async function importV1Data(zipFilePath: string, outputDir: string): Prom
             note: v1Save.note
           }
 
-          // 复制存档文件
+          // Copying archive files
           const oldSavePath = path.join(
             tempDir,
             'data',
@@ -339,18 +339,18 @@ export async function importV1Data(zipFilePath: string, outputDir: string): Prom
         }
       }
 
-      // 保存v2存档信息
+      // Save v2 archive information
       await fse.writeJson(path.join(gameDir, 'save.json'), v2Saves, { spaces: 2 })
     }
 
-    // 转换分类为集合
+    // Converting Categories to Sets
     const collections: Record<string, V2Collection> = {}
     categories.forEach((category) => {
-      // 跳过id为0的分类
+      // Skip categories with id 0
       if (category.id === 0) {
         return
       }
-      // 跳过空分类
+      // Skip empty classification
       if (category.games.length === 0) {
         return
       }
@@ -359,30 +359,29 @@ export async function importV1Data(zipFilePath: string, outputDir: string): Prom
         id: collectionId,
         name: category.name,
         games: category.games
-          .filter((oldGameId) => gameIdMap[oldGameId]) // 确保游戏ID存在
-          .map((oldGameId) => gameIdMap[oldGameId]) // 转换为新UUID
+          .filter((oldGameId) => gameIdMap[oldGameId])
+          .map((oldGameId) => gameIdMap[oldGameId])
       }
     })
 
-    // 保存collections.json
     await fse.writeJson(path.join(outputDir, 'collections.json'), collections, { spaces: 2 })
 
     return
   } finally {
-    // 清理临时目录
+    // Clean up the temporary catalog
     await fse.remove(tempDir)
     app.relaunch()
     app.exit()
   }
 }
 
-// 判断路径是否为文件路径
+// Determine if the path is a file path
 function isFilePath(filePath: string): boolean {
-  // 简单判断：如果路径有文件扩展名，则认为是文件路径
+  // Simple judgment: if the path has a file extension, it is considered a file path
   return path.extname(filePath) !== ''
 }
 
-// 将v1的playStatus转换为v2的格式
+// Convert the playStatus of v1 to the format of v2
 function convertPlayStatus(playStatus: number): string {
   switch (playStatus) {
     case 0:

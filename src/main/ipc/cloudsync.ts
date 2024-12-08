@@ -14,12 +14,12 @@ export function setupCloudsyncIPC(mainWindow: BrowserWindow): void {
     return await CloudSyncService.getBackupList()
   })
 
-  // 恢复历史版本
+  // Restore Historical Versions
   ipcMain.handle('restore-history-version', async (_, filename: string) => {
     await CloudSyncService.restoreHistoryVersion(filename)
   })
 
-  // 手动触发备份
+  // Manually triggered backups
   ipcMain.handle('trigger-backup', async () => {
     await CloudSyncService.uploadBackup()
   })

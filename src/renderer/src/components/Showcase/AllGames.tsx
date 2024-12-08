@@ -65,26 +65,26 @@ export function AllGames(): JSX.Element {
           </Button>
         </div>
 
-        {/* 分割线容器 */}
+        {/* Split Line Container */}
         <div className={cn('flex items-center justify-center flex-grow pr-5')}>
           <Separator className={cn('flex-grow')} />
         </div>
       </div>
 
-      {/* 游戏列表容器 */}
+      {/* Game List Container */}
       <div
         className={cn(
           'flex flex-row grow flex-wrap gap-6 justify-between',
           'w-full',
-          'pt-2 pl-5 pr-5' // 添加内边距以显示阴影
+          'pt-2 pl-5 pr-5'
         )}
       >
-        {/* 包装器确保每个 Poster 保持固定宽度 */}
+        {/* The wrapper ensures that each Poster maintains a fixed width */}
         {games.map((gameId) => (
           <div
             key={gameId}
             className={cn(
-              'flex-shrink-0' // 防止压缩
+              'flex-shrink-0' // Preventing compression
             )}
           >
             <GamePoster gameId={gameId} />

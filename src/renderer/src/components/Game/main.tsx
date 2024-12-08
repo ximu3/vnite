@@ -17,12 +17,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
         {background && (
           <>
             <img src={background} className={cn('absolute top-0 left-0 w-full object-cover')} />
-            <div
-              className={cn(
-                'absolute top-0 left-0 w-full h-full',
-                'bg-background/15' // 确保蒙版不会影响交互
-              )}
-            />
+            <div className={cn('absolute top-0 left-0 w-full h-full', 'bg-background/15')} />
           </>
         )}
         <ScrollArea className={cn('w-full h-full absolute top-0 left-0')}>
@@ -36,7 +31,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
               )}
             >
               <Header gameId={gameId} className={cn('-top-16 left-0 right-0')} />
-              {/* 内容放在这里 */}
+              {/* The content is placed here */}
               <div className={cn(background ? 'p-5' : 'p-5 border-t-[1px]')}>
                 <Tabs defaultValue="overview" className="w-full">
                   <TabsList className={cn('w-[250px]')}>

@@ -13,7 +13,7 @@ const execAsync = (command: string, options?: any): Promise<{ stdout: string; st
       if (error) {
         reject(error)
       } else {
-        // 将输出从GBK转换为UTF-8
+        // Convert output from GBK to UTF-8
         const decodedStdout = iconv.decode(stdout, 'gbk')
         resolve({ stdout: decodedStdout, stderr: stderr.toString() })
       }
@@ -30,7 +30,7 @@ async function getProcessList(): Promise<
   }>
 > {
   try {
-    // 执行 WMIC 命令
+    // Execute WMIC commands
     const { stdout } = await execAsync(
       'wmic process get ExecutablePath,ProcessId,CommandLine,Name /FORMAT:CSV',
       {
@@ -40,7 +40,7 @@ async function getProcessList(): Promise<
 
     return stdout
       .split('\n')
-      .slice(1) // 跳过标题行
+      .slice(1) // Skip title line
       .filter(Boolean)
       .map((line) => {
         const [, executablePath, commandLine, pidStr, name] = line.split(',')
@@ -51,8 +51,8 @@ async function getProcessList(): Promise<
           executablePath:
             executablePath
               ?.trim()
-              .replace(/^["']|["']$/g, '') // 移除引号
-              .replace(/\\+/g, '\\') || '' // 规范化路径分隔符
+              .replace(/^["']|["']$/g, '') // Remove quotes
+              .replace(/\\+/g, '\\') || '' // Normalized path separator
         }
       })
   } catch (error) {
@@ -78,8 +78,8 @@ interface GameStatus {
   gameId: string
   isRunning: boolean
   processes: MonitoredProcess[]
-  startTime?: string // ISO 格式的开始时间
-  endTime?: string // ISO 格式的结束时间
+  startTime?: string // Start time in ISO format
+  endTime?: string // End time of ISO format
 }
 
 export class GameMonitor {
@@ -121,7 +121,7 @@ export class GameMonitor {
 
   private async terminateProcesses(): Promise<void> {
     const maxRetries = 3
-    const retryDelay = 1000 // 1秒
+    const retryDelay = 1000 // 1 second
 
     for (const monitored of this.monitoredProcesses) {
       if (monitored.isRunning) {
@@ -149,14 +149,14 @@ export class GameMonitor {
 
   private async terminateProcess(process: MonitoredProcess): Promise<boolean> {
     try {
-      // 规范化路径
+      // Normalization path
       const normalizedPath = this.normalizePath(process.path)
       const processName = path.basename(normalizedPath)
 
       console.log(`尝试终止进程: ${normalizedPath}`)
 
       const methods = [
-        // 方法2: 使用 PowerShell 通过路径精确匹配
+        // Method 2: Exact Match by Path using PowerShell
         async (): Promise<void> => {
           const psCommand = `Get-Process | Where-Object {$_.Path -eq '${normalizedPath}'} | Stop-Process -Force`
           await execAsync(`powershell -Command "${psCommand}"`, {
@@ -174,7 +174,7 @@ export class GameMonitor {
         } catch (error) {
           const errorMessage = (error as any)?.message?.toLowerCase() || ''
 
-          // 如果进程已经不存在，认为终止成功
+          // If the process no longer exists, termination is considered successful
           if (
             errorMessage.includes('不存在') ||
             errorMessage.includes('找不到') ||
@@ -186,13 +186,13 @@ export class GameMonitor {
             return true
           }
 
-          // 记录错误但继续尝试下一个方法
+          // Log the error but keep trying the next method
           console.warn(`当前方法终止进程 ${processName} 失败:`, error)
           continue
         }
       }
 
-      // 最后验证进程是否还在运行
+      // Finally verify that the process is still running
       const processes = await getProcessList()
       const processStillExists = processes.some(
         (p) => this.normalizePath(p.executablePath) === normalizedPath
@@ -269,7 +269,7 @@ export class GameMonitor {
     }
 
     this.isRunning = true
-    // 记录开始时间
+    // Record start time
     this.startTime = new Date().toISOString()
     this.endTime = undefined
 
@@ -288,7 +288,7 @@ export class GameMonitor {
       this.intervalId = undefined
     }
 
-    // 如果是手动停止且没有结束时间，记录结束时间
+    // If it was stopped manually and there is no end time, record the end time
     if (this.isRunning && !this.endTime) {
       this.endTime = new Date().toISOString()
     }
@@ -302,20 +302,18 @@ export class GameMonitor {
       const processes = await getProcessList()
       const previousStates = this.monitoredProcesses.map((p) => p.isRunning)
 
-      // log.info(processes)
-
       for (const monitored of this.monitoredProcesses) {
-        // 规范化监控的路径
+        // Path to normalized monitoring
         const normalizedMonitoredPath = this.normalizePath(monitored.path)
 
         const processInfo = processes.find((proc) => {
           if (!proc.executablePath) return false
 
-          // 规范化进程路径
+          // Normative process pathway
           const normalizedExecPath = this.normalizePath(proc.executablePath)
           const normalizedCmdPath = this.normalizePath(proc.cmd)
 
-          // 路径匹配检查
+          // Path Matching Check
           return (
             normalizedExecPath === normalizedMonitoredPath ||
             normalizedCmdPath === normalizedMonitoredPath
@@ -329,7 +327,7 @@ export class GameMonitor {
         monitored.pid = processInfo?.pid || monitored.pid
       }
 
-      // 检查游戏是否退出
+      // Check if the game exits
       const allStopped = this.monitoredProcesses.every((p) => !p.isRunning)
       const wasSomeRunning = previousStates.some((state) => state)
 
@@ -341,14 +339,14 @@ export class GameMonitor {
     }
   }
 
-  // 添加路径规范化方法
+  // Adding a path normalization method
   private normalizePath(filePath: string): string {
     try {
       return path
         .normalize(filePath)
         .toLowerCase()
-        .replace(/\\+/g, '\\') // 规范化反斜杠
-        .replace(/^["']|["']$/g, '') // 移除首尾引号
+        .replace(/\\+/g, '\\') // Normalized backslash
+        .replace(/^["']|["']$/g, '') // Remove opening and closing quotation marks
     } catch {
       return filePath.toLowerCase()
     }
@@ -357,7 +355,7 @@ export class GameMonitor {
   private async handleGameExit(): Promise<void> {
     log.info(`游戏 ${this.options.gameId} 退出`)
 
-    // 记录结束时间
+    // Record end time
     this.endTime = new Date().toISOString()
 
     const windows = BrowserWindow.getAllWindows()
@@ -391,7 +389,7 @@ export class GameMonitor {
     playingTime += new Date(this.endTime).getTime() - new Date(this.startTime!).getTime()
     await setDBValue(`games/${this.options.gameId}/record.json`, ['playingTime'], playingTime)
 
-    // 停止监控
+    // Stop monitoring
     this.stop()
 
     const savePathMode = await getDBValue(

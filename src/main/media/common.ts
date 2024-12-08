@@ -64,12 +64,12 @@ export async function setMediaWithUrl(
 type SourceType = 'url' | 'file' | 'invalid'
 
 export async function detectSourceType(source: string): Promise<SourceType> {
-  // 1. 首先检查是否是有效的 URL
+  // 1. First check if it is a valid URL
   if (isValidUrl(source)) {
     return 'url'
   }
 
-  // 2. 检查是否是有效的文件路径
+  // 2. Check if it is a valid file path
   try {
     const stats = await fse.stat(source)
     return stats.isFile() ? 'file' : 'invalid'
@@ -89,22 +89,22 @@ function isValidUrl(str: string): boolean {
 
 export async function saveFileIcon(gameId: string, filePath: string): Promise<void> {
   try {
-    // 获取文件图标
+    // Get file icon
     const icon = await app.getFileIcon(filePath)
 
-    // 获取保存路径
+    // Get save path
     const iconPath = await getDataPath(`games/${gameId}/icon.png`)
 
-    // 将 NativeImage 转换为 PNG Buffer
+    // Convert NativeImage to PNG Buffer
     const pngBuffer = icon.toPNG()
 
-    // 保存 PNG 文件
+    // Saving PNG files
     await fse.writeFile(iconPath, pngBuffer)
 
     console.log(`图标已保存至: ${iconPath}`)
   } catch (error) {
     console.error('保存图标失败:', error)
-    throw error // 可以选择向上抛出错误
+    throw error
   }
 }
 

@@ -8,6 +8,15 @@ import { setupWatcher, stopWatcher } from '~/watcher'
 import { rebuildIndex } from '~/database/gameIndex'
 import { rebuildRecords } from '~/database/record'
 
+/**
+ * Add a game to the database
+ * @param dataSource - The data source of the game
+ * @param id - The ID of the game
+ * @param dbId - The ID of the game in the database
+ * @param screenshotUrl - The URL of the screenshot of the game
+ * @param playingTime - The playing time of the game
+ * @returns void
+ */
 export async function addGameToDB({
   dataSource,
   id,
@@ -78,6 +87,11 @@ export async function addGameToDB({
   await rebuildRecords()
 }
 
+/**
+ * Add a game to the database without metadata
+ * @param gamePath - The path of the game
+ * @returns void
+ */
 export async function addGameToDBWithoutMetadata(gamePath: string): Promise<void> {
   const dbId = generateUUID()
   await getDataPath(`games/${dbId}/`, true)
@@ -104,6 +118,10 @@ export async function addGameToDBWithoutMetadata(gamePath: string): Promise<void
   await rebuildIndex()
 }
 
+/**
+ * Get the data for batch game adding
+ * @returns The data for batch game adding
+ */
 export async function getBatchGameAdderData(): Promise<
   { name: string; id: string; status: string }[]
 > {

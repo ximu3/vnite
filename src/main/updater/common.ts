@@ -3,20 +3,20 @@ import { autoUpdater } from 'electron-updater'
 import log from 'electron-log/main.js'
 
 export function setupAutoUpdater(mainWindow: BrowserWindow): void {
-  // 开发环境配置
+  // Development Environment Configuration
   if (process.env.NODE_ENV === 'development') {
     autoUpdater.forceDevUpdateConfig = true
   }
 
   autoUpdater.autoDownload = false
 
-  // 添加错误处理
+  // Add error handling
   autoUpdater.on('error', (error) => {
     log.error('更新错误:', error)
     mainWindow?.webContents.send('update-error', error.message)
   })
 
-  // 添加检查更新开始的处理
+  // Add processing to check for the start of an update
   autoUpdater.on('checking-for-update', () => {
     log.info('正在检查更新...')
     mainWindow?.webContents.send('checking-for-update')
@@ -60,7 +60,7 @@ export function setupAutoUpdater(mainWindow: BrowserWindow): void {
     autoUpdater.quitAndInstall(false, true)
   })
 
-  // 添加手动检查更新的处理器
+  // Add a processor for manually checking for updates
   ipcMain.handle('check-for-updates', async () => {
     try {
       return await autoUpdater.checkForUpdates()
@@ -70,7 +70,7 @@ export function setupAutoUpdater(mainWindow: BrowserWindow): void {
     }
   })
 
-  // 延迟检查更新，确保窗口已完全加载
+  // Delay checking for updates to make sure the window is fully loaded
   setTimeout(() => {
     autoUpdater.checkForUpdates().catch((error) => {
       log.error('自动检查更新失败:', error)

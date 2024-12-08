@@ -5,21 +5,21 @@ import unzipper from 'unzipper'
 import log from 'electron-log/main.js'
 
 interface ZipOptions {
-  /** 压缩级别 1-9，默认为 9 (最佳压缩) */
+  // Compression level 1-9, default 9 (best compression)
   compressionLevel?: number
-  /** 是否包含根文件夹，默认为 false */
+  // If or not the root folder is included, default is false
   includeRoot?: boolean
-  /** 排除的文件或文件夹模式 */
+  // Excluded file or folder patterns
   exclude?: string[]
 }
 
 /**
- * 压缩文件夹
- * @param sourcePath 要压缩的文件夹路径
- * @param targetDir 压缩文件保存目录
- * @param zipName 压缩文件名称（不需要包含.zip扩展名）
- * @param options 压缩选项
- * @returns 返回生成的压缩文件完整路径
+ * compressed file
+ * @param sourcePath Path to the folder to be compressed
+ * @param targetDir Save directory for zip files
+ * @param zipName Name of the compressed file (does not need to contain the .zip extension)
+ * @param options Compression Options
+ * @returns Returns the full path of the generated zip file
  */
 export async function zipFolder(
   sourcePath: string,
@@ -28,45 +28,45 @@ export async function zipFolder(
   options: ZipOptions = {}
 ): Promise<string> {
   try {
-    // 规范化路径
+    // Normalization path
     const normalizedSourcePath = path.resolve(sourcePath)
     const normalizedTargetDir = path.resolve(targetDir)
 
-    // 检查源文件夹是否存在
+    // Check if the source folder exists
     const sourceExists = await fse.pathExists(normalizedSourcePath)
     if (!sourceExists) {
       throw new Error(`Source folder not found: ${normalizedSourcePath}`)
     }
 
-    // 确保目标目录存在
+    // Ensure that the target directory exists
     await fse.ensureDir(normalizedTargetDir)
 
-    // 设置默认选项
+    // Setting the default options
     const { compressionLevel = 9, includeRoot = false, exclude = [] } = options
 
-    // 构建输出文件路径
+    // Build the output file path
     const zipFileName = zipName.endsWith('.zip') ? zipName : `${zipName}.zip`
     const outputPath = path.join(normalizedTargetDir, zipFileName)
 
-    // 创建压缩
+    // Creating Compression
     const archive = archiver('zip', {
       zlib: { level: compressionLevel }
     })
 
-    // 创建写入流
+    // Creating a Write Stream
     const output = fse.createWriteStream(outputPath)
 
-    // 将输出流连接到压缩器
+    // Connect the output stream to the compressor
     archive.pipe(output)
 
-    // 获取源文件夹名称
+    // Get source folder name
     const folderName = path.basename(normalizedSourcePath)
 
-    // 添加文件到压缩包
+    // Add files to zip
     if (includeRoot) {
-      // 包含根文件夹
+      // Include root folder
       archive.directory(normalizedSourcePath, folderName, (entry) => {
-        // 检查是否应该排除该文件
+        // Check if the file should be excluded
         if (
           exclude.some(
             (pattern) => entry.name.includes(pattern) || entry.name.match(new RegExp(pattern))
@@ -77,7 +77,7 @@ export async function zipFolder(
         return entry
       })
     } else {
-      // 不包含根文件夹
+      // Root folder not included
       archive.directory(normalizedSourcePath, false, (entry) => {
         if (
           exclude.some(
@@ -90,7 +90,7 @@ export async function zipFolder(
       })
     }
 
-    // 等待压缩完成
+    // Waiting for compression to complete
     await new Promise<void>((resolve, reject) => {
       output.on('close', resolve)
       archive.on('error', reject)
@@ -105,16 +105,16 @@ export async function zipFolder(
 }
 
 interface UnzipOptions {
-  /** 是否覆盖已存在的文件，默认为 true */
+  // Whether to overwrite existing files, default is true.
   overwrite?: boolean
 }
 
 /**
- * 解压缩 ZIP 文件
- * @param zipPath ZIP 文件路径
- * @param targetDir 解压缩目标目录
- * @param options 解压缩选项
- * @returns 返回解压缩后的文件路径列表
+ * Decompressing ZIP files
+ * @param zipPath ZIP file path
+ * @param targetDir Unzip the target directory
+ * @param options Decompression options
+ * @returns Returns a list of the paths to the extracted files
  */
 export async function unzipFile(
   zipPath: string,
@@ -124,12 +124,12 @@ export async function unzipFile(
   try {
     const { overwrite = true } = options
 
-    // 确保目标目录存在
+    // Ensure that the target directory exists
     await fse.ensureDir(targetDir)
 
     const extractedFiles: string[] = []
 
-    // 解压缩文件
+    // decompress a file
     await fse
       .createReadStream(zipPath)
       .pipe(unzipper.Parse())

@@ -13,7 +13,6 @@ export const TABLE_COLUMN_WIDTHS = {
 
 export function GameListTable(): JSX.Element {
   const { games } = useGameBatchAdderStore()
-
   return (
     <>
       <Table>

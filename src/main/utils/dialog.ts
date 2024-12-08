@@ -1,6 +1,12 @@
 import { dialog } from 'electron'
 import { OpenDialogOptions } from 'electron'
 
+/**
+ * Show a dialog to select a path
+ * @param properties The properties of the dialog
+ * @param extensions The extensions to filter by
+ * @returns A promise that resolves with the selected path.
+ */
 export async function selectPathDialog(
   properties: NonNullable<OpenDialogOptions['properties']>,
   extensions?: string[]
@@ -12,6 +18,12 @@ export async function selectPathDialog(
   return result.filePaths[0]
 }
 
+/**
+ * Show a dialog to select multiple paths
+ * @param properties The properties of the dialog
+ * @param extensions The extensions to filter by
+ * @returns A promise that resolves with the selected paths.
+ */
 export async function selectMultiplePathDialog(
   properties: NonNullable<OpenDialogOptions['properties']>,
   extensions?: string[]

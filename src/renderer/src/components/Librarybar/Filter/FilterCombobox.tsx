@@ -39,7 +39,7 @@ export function FilterCombobox({
       label: value
     }))
 
-    // 对选项进行排序：已选择的排在前面
+    // Sorting the options: selected ones come first
     return allOptions.sort((a, b) => {
       const aSelected = selectedValues.includes(a.value)
       const bSelected = selectedValues.includes(b.value)
@@ -52,14 +52,13 @@ export function FilterCombobox({
 
   const handleSelect = (value: string): void => {
     if (selectedValues.includes(value)) {
-      // 如果已选中，则移除
+      // Remove if checked
       deleteFilter(filed, value)
     } else {
-      // 如果未选中，则添加
+      // If unchecked, add
       addFilter(filed, value)
     }
   }
-
   return (
     <div className={cn('flex flex-row gap-2')}>
       <Popover open={open} onOpenChange={setOpen}>

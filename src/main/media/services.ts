@@ -8,6 +8,12 @@ import {
 } from './common'
 import log from 'electron-log/main.js'
 
+/**
+ * Get the media path for a game
+ * @param gameId The id of the game
+ * @param type The type of media
+ * @returns The path to the media
+ */
 export async function getMedia(
   gameId: string,
   type: 'cover' | 'background' | 'icon'
@@ -24,6 +30,14 @@ export async function getMedia(
   }
 }
 
+/**
+ * Set the media for a game
+ * @param gameId The id of the game
+ * @param type The type of media
+ * @param source The source of the media
+ * @returns A promise that resolves when the operation is complete.
+ * @throws An error if the operation fails.
+ */
 export async function setMedia(
   gameId: string,
   type: 'cover' | 'background' | 'icon',
@@ -53,6 +67,13 @@ export async function setMedia(
   }
 }
 
+/**
+ * Save the icon for a game
+ * @param gameId The id of the game
+ * @param filePath The path to the icon
+ * @returns A promise that resolves when the operation is complete.
+ * @throws An error if the operation fails.
+ */
 export async function saveIcon(gameId: string, filePath: string): Promise<void> {
   try {
     await saveFileIcon(gameId, filePath)
@@ -66,6 +87,11 @@ export async function saveIcon(gameId: string, filePath: string): Promise<void> 
   }
 }
 
+/**
+ * Check if the icon exists for a game
+ * @param gameId The id of the game
+ * @returns A promise that resolves with a boolean indicating if the icon exists.
+ */
 export async function checkIcon(gameId: string): Promise<boolean> {
   try {
     return await checkIconExists(gameId)

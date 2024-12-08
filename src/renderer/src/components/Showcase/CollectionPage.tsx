@@ -13,26 +13,26 @@ export function CollectionPage(): JSX.Element {
           <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>
             <div className={cn('text-accent-foreground flex-shrink-0')}>我的收藏</div>
 
-            {/* 分割线容器 */}
+            {/* Split Line Container */}
             <div className={cn('flex items-center justify-center flex-grow pr-5')}>
               <Separator className={cn('flex-grow')} />
             </div>
           </div>
 
-          {/* 游戏列表容器 */}
+          {/* Game List Container */}
           <div
             className={cn(
               'flex flex-row gap-6 grow flex-wrap',
               'w-full',
-              'pt-2 pb-6 pl-5' // 添加内边距以显示阴影
+              'pt-2 pb-6 pl-5' // Add inner margins to show shadows
             )}
           >
-            {/* 包装器确保每个 Poster 保持固定宽度 */}
+            {/* The wrapper ensures that each Poster maintains a fixed width */}
             {Object.keys(collections).map((collectionId) => (
               <div
                 key={collectionId}
                 className={cn(
-                  'flex-shrink-0' // 防止压缩
+                  'flex-shrink-0' // Preventing compression
                 )}
               >
                 <CollectionPoster collctionId={collectionId} />

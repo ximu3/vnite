@@ -22,7 +22,6 @@ export function GameBatchAdder(): JSX.Element {
     setGames([]) // 使用新的 actions
     setIsLoading(false)
   }
-
   return (
     <Dialog open={isOpen}>
       <DialogContent

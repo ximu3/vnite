@@ -16,7 +16,7 @@ export interface FormattedGameInfo {
   totalPlayingTime: number
 }
 
-// 进度消息的类型定义
+// Type Definitions for Progress Messages
 export interface ProgressMessage {
   current: number
   total: number

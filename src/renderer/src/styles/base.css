@@ -1,13 +1,13 @@
 .draggable-area {
   -webkit-app-region: drag;
-  height: 50px; /* 设置可拖拽区域的高度 */
+  height: 50px; /* Set the height of the draggable area */
   width: 100%;
   position: fixed;
   top: 0;
   left: 0;
-  background-color: transparent; /* 确保背景透明 */
-  z-index: 1000; /* 确保在最上层 */
-  pointer-events: none; /* 确保不影响其他元素的点击事件 */
+  background-color: transparent;
+  z-index: 1000; /* Make sure it's at the top */
+  pointer-events: none; /* Ensure that click events on other elements are not affected */
 }
 
 .non-draggable {
@@ -26,7 +26,7 @@
 @font-face {
   font-family: 'Source Han Sans VF';
   src: url('~/assets/fonts/SourceHanSans-VF.otf.ttc') format('truetype-variations');
-  /* 支持的字重范围 */
+  /* Supported word weight ranges */
   font-weight: 100 900;
   font-style: normal;
 }

@@ -14,7 +14,6 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
   const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
   const [isAttributesDialogOpen, setIsAttributesDialogOpen] = React.useState(false)
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
-
   return (
     <>
       <ContextMenu>

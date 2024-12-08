@@ -45,7 +45,7 @@ interface GameRecordsState {
   getSortedGameByPlayedTimes: (order: 'asc' | 'desc') => string[]
 }
 
-// 辅助函数
+// helper function
 const calculateDailyPlayTime = (date: Date, record: Record): number => {
   const dayStart = new Date(date)
   dayStart.setHours(0, 0, 0, 0)
@@ -70,7 +70,6 @@ const calculateDailyPlayTime = (date: Date, record: Record): number => {
   }, 0)
 }
 
-// 创建 Zustand store
 export const useGameRecords = create<GameRecordsState>((set, get) => ({
   records: {},
 
@@ -348,7 +347,7 @@ export const useGameRecords = create<GameRecordsState>((set, get) => ({
   }
 }))
 
-// 初始化记录数据
+// Initialize record data
 ipcInvoke('get-games-record-data')
   .then((records) => {
     if (records && typeof records === 'object') {
@@ -363,7 +362,7 @@ ipcInvoke('get-games-record-data')
     useGameRecords.getState().setRecords({})
   })
 
-// 监听记录更新
+// Listening record update
 ipcOnUnique('game-records-changed', () => {
   ipcInvoke('get-games-record-data')
     .then((records) => {

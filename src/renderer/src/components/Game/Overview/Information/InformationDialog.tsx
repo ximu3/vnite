@@ -20,7 +20,6 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
     'releaseDate'
   ])
   const [genres, setGenres] = useDBSyncedState([''], `games/${gameId}/metadata.json`, ['genres'])
-
   return (
     <Dialog>
       <DialogTrigger>

@@ -10,6 +10,13 @@ import {
 import { GameList, GameMetadata } from './types'
 import log from 'electron-log/main.js'
 
+/**
+ * Search for games on a data source
+ * @param dataSource The data source to search
+ * @param gameName The name of the game to search for
+ * @returns A list of games
+ * @throws An error if the operation fails
+ */
 export async function searchGames(dataSource: string, gameName: string): Promise<GameList> {
   try {
     return await searchGamesFromDataSource(dataSource, gameName)
@@ -19,6 +26,13 @@ export async function searchGames(dataSource: string, gameName: string): Promise
   }
 }
 
+/**
+ * Check if a game exists on a data source
+ * @param dataSource The data source to check
+ * @param gameId The id of the game
+ * @returns A boolean indicating if the game exists
+ * @throws An error if the operation fails
+ */
 export async function checkGameExists(dataSource: string, gameId: string): Promise<boolean> {
   try {
     return await checkGameExistsInDataSource(dataSource, gameId)
@@ -28,6 +42,13 @@ export async function checkGameExists(dataSource: string, gameId: string): Promi
   }
 }
 
+/**
+ * Get game metadata from a data source
+ * @param dataSource The data source to get metadata from
+ * @param gameId The id of the game
+ * @returns The metadata for the game
+ * @throws An error if the operation fails
+ */
 export async function getGameMetadata(dataSource: string, gameId: string): Promise<GameMetadata> {
   try {
     return await getGameMetadataFromDataSource(dataSource, gameId)
@@ -37,6 +58,13 @@ export async function getGameMetadata(dataSource: string, gameId: string): Promi
   }
 }
 
+/**
+ * Get game screenshots from a data source
+ * @param dataSource The data source to get screenshots from
+ * @param gameId The id of the game
+ * @returns A list of screenshots
+ * @throws An error if the operation fails
+ */
 export async function getGameScreenshots(dataSource: string, gameId: string): Promise<string[]> {
   try {
     return await getGameScreenshotsFromDataSource(dataSource, gameId)
@@ -46,6 +74,13 @@ export async function getGameScreenshots(dataSource: string, gameId: string): Pr
   }
 }
 
+/**
+ * Get game cover from a data source
+ * @param dataSource The data source to get cover from
+ * @param gameId The id of the game
+ * @returns The cover for the game
+ * @throws An error if the operation fails
+ */
 export async function getGameCover(dataSource: string, gameId: string): Promise<string> {
   try {
     return await getGameCoverFromDataSource(dataSource, gameId)
@@ -55,6 +90,13 @@ export async function getGameCover(dataSource: string, gameId: string): Promise<
   }
 }
 
+/**
+ * Get game icon from a data source
+ * @param dataSource The data source to get icon from
+ * @param gameId The id of the game
+ * @returns The icon for the game
+ * @throws An error if the operation fails
+ */
 export async function getGameIcon(dataSource: string, gameId: string): Promise<string> {
   try {
     return await getGameIconFromDataSource(dataSource, gameId)
@@ -64,6 +106,10 @@ export async function getGameIcon(dataSource: string, gameId: string): Promise<s
   }
 }
 
+/**
+ * Initialize the scraper services
+ * @throws An error if the operation fails
+ */
 export async function initScraper(): Promise<void> {
   try {
     await initScraperServices()

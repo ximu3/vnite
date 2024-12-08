@@ -13,7 +13,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }): JSX.
   const [theme, setTheme] = useState<string | null>(null)
 
   useEffect(() => {
-    // 初始加载主题
+    // Initial loading of the theme
     ipcInvoke('load-theme').then((savedTheme) => {
       if (savedTheme) {
         setTheme(savedTheme as string)
@@ -49,7 +49,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }): JSX.
 
 /* shadcn-ui END */
         `.trimStart()
-        // 默认主题
+        // Default Theme
         updateTheme(defaultTheme)
       }
     })
@@ -62,7 +62,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }): JSX.
   }
 
   const applyTheme = (css: string): void => {
-    // 创建或更新样式标签
+    // Create or update style labels
     let styleEl = document.getElementById('custom-theme')
     if (!styleEl) {
       styleEl = document.createElement('style')

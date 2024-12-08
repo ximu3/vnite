@@ -22,7 +22,6 @@ import { useRunningGames } from '~/pages/Library/store'
 export function Header({ gameId, className }: { gameId: string; className?: string }): JSX.Element {
   const { runningGames } = useRunningGames()
   const [name] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
-  // const [gamePath] = useDBSyncedState('', `games/${gameId}/path.json`, ['gamePath'])
   const [playStatus, setPlayStatus] = useDBSyncedState('unplayed', `games/${gameId}/record.json`, [
     'playStatus'
   ])
@@ -52,10 +51,10 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
       return
     }
 
-    // 保留1位小数，10分保持整数
+    // Retain 1 decimal place and keep 10 cents in whole numbers
     const formattedScore = scoreNum === 10 ? '10' : scoreNum.toFixed(1)
 
-    // 检查是否需要格式化，且输入不是整数
+    // Check if formatting is required and the input is not an integer
     if (preScore !== formattedScore && !Number.isInteger(scoreNum)) {
       toast.warning('已自动保留1位小数')
     }
@@ -65,7 +64,6 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
     setIsScoreDialogOpen(false)
     toast.success('评分已保存')
   }
-
   return (
     <div
       className={cn(

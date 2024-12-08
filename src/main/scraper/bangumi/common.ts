@@ -26,13 +26,11 @@ async function fetchBangumi<T>(
   return response.json()
 }
 
-// 搜索游戏函数
 export async function searchBangumiGames(gameName: string): Promise<GameList> {
   try {
-    // 对游戏名进行 URL 编码
+    // URL encoding of game names
     const encodedGameName = encodeURIComponent(gameName)
 
-    // 使用正确的 URL 格式
     const data = await fetchBangumi<BangumiSearchResult>(`search/subject/${encodedGameName}`, {
       type: 4,
       max_results: 25
@@ -52,15 +50,15 @@ export async function searchBangumiGames(gameName: string): Promise<GameList> {
 
 const DEVELOPER_FIELDS = ['开发', '游戏开发商', '开发商', 'Developer', 'Developers']
 
-// 辅助函数：从 infoBox 中获取开发商信息
+// helper function: get developer info from infoBox
 function getDevelopers(infobox: { key: string; value: string }[] | undefined): string[] {
   if (!infobox) return []
 
-  // 遍历所有可能的字段名，返回第一个存在的值
+  // Iterates over all possible field names, returning the first value that exists
   for (const field of DEVELOPER_FIELDS) {
     const developerEntry = infobox.find((entry) => entry.key === field)
     if (developerEntry) {
-      // 将字符串值转换为数组
+      // Converting String Values to Arrays
       return developerEntry.value.split('、')
     }
   }
@@ -70,15 +68,15 @@ function getDevelopers(infobox: { key: string; value: string }[] | undefined): s
 
 const PUBLISHER_FIELDS = ['发行', '发行商', 'Publisher', 'Publishers']
 
-// 辅助函数：从 infoBox 中获取发行商信息
+// helper function: get publisher info from infoBox
 function getPublishers(infobox: { key: string; value: string }[] | undefined): string[] {
   if (!infobox) return []
 
-  // 遍历所有可能的字段名，返回第一个存在的值
+  // Iterates over all possible field names, returning the first value that exists
   for (const field of PUBLISHER_FIELDS) {
     const publisherEntry = infobox.find((entry) => entry.key === field)
     if (publisherEntry) {
-      // 将字符串值转换为数组
+      // Converting String Values to Arrays
       return publisherEntry.value.split('、')
     }
   }
@@ -86,13 +84,13 @@ function getPublishers(infobox: { key: string; value: string }[] | undefined): s
   return []
 }
 
-// 辅助函数：从 infoBox 中获取网站信息
+// helper function: get site info from infoBox
 function getRelatedSites(
   infobox: { key: string; value: string }[] | undefined
 ): { label: string; url: string }[] {
   if (!infobox) return []
 
-  // 查找 key 为 'websites' 的条目
+  // Find entries with key 'websites
   const websiteEntry = infobox.find((entry) => entry.key === 'website')
   if (websiteEntry) {
     return [{ label: '官方网站', url: websiteEntry.value }]
@@ -106,11 +104,11 @@ const GENRE_FIELDS = ['类型', '游戏类型']
 function getGenres(infobox: { key: string; value: string }[] | undefined): string[] {
   if (!infobox) return []
 
-  // 遍历所有可能的字段名，返回第一个存在的值
+  // Iterates over all possible field names, returning the first value that exists
   for (const field of GENRE_FIELDS) {
     const genreEntry = infobox.find((entry) => entry.key === field)
     if (genreEntry) {
-      // 将字符串值转换为数组
+      // Converting String Values to Arrays
       return genreEntry.value.split(' / ')
     }
   }
@@ -118,7 +116,6 @@ function getGenres(infobox: { key: string; value: string }[] | undefined): strin
   return []
 }
 
-// 获取游戏元数据函数
 export async function getBangumiMetadata(gameId: string): Promise<GameMetadata> {
   try {
     const game = await fetchBangumi<BangumiSubject>(`v0/subjects/${gameId}`)
@@ -140,7 +137,6 @@ export async function getBangumiMetadata(gameId: string): Promise<GameMetadata> 
   }
 }
 
-// 检查游戏是否存在
 export async function checkGameExists(gameId: string): Promise<boolean> {
   try {
     await fetchBangumi<BangumiSubject>(`v0/subjects/${gameId}`)
@@ -151,7 +147,6 @@ export async function checkGameExists(gameId: string): Promise<boolean> {
   }
 }
 
-// 获取游戏截图
 export async function getGameScreenshots(gameId: string): Promise<string[]> {
   try {
     const gameName = (await getBangumiMetadata(gameId)).originalName
@@ -162,7 +157,6 @@ export async function getGameScreenshots(gameId: string): Promise<string[]> {
   }
 }
 
-// 获取游戏封面
 export async function getGameCover(gameId: string): Promise<string> {
   try {
     const game = await fetchBangumi<BangumiSubject>(`v0/subjects/${gameId}`)

@@ -28,7 +28,6 @@ export function GamePoster({
   const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
   const [isAttributesDialogOpen, setIsAttributesDialogOpen] = React.useState(false)
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
-
   return (
     <HoverCard openDelay={200} closeDelay={100}>
       <ContextMenu>
@@ -94,20 +93,20 @@ export function GamePoster({
           '3xl:w-[300px] 3xl:h-[272px]'
         )}
       >
-        {/* 背景图层 */}
+        {/* background layer */}
         <div className="absolute inset-0">
           <img src={background} alt={gameId} className="object-cover w-full h-full" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/80 backdrop-blur-xl" />
         </div>
 
-        {/* 内容区域 */}
+        {/* content area */}
         <div className="relative flex flex-col h-full w-full gap-2">
-          {/* 游戏标题 */}
+          {/* Game Title */}
           <div className={cn('font-bold text-accent-foreground truncate text-sm px-3 pt-2')}>
             {gameData?.name}
           </div>
 
-          {/* 游戏预览图 */}
+          {/* Game Preview Image */}
           <div className={cn('relative w-full h-[128px]', '3xl:h-[164px]')}>
             {background ? (
               <img
@@ -127,10 +126,10 @@ export function GamePoster({
             )}
           </div>
 
-          {/* 游戏信息 */}
+          {/* Game Information */}
 
           <div className={cn('flex flex-col gap-2 text-xs justify-center grow px-3 pb-2')}>
-            {/* 游玩时间 */}
+            {/* Playing time */}
             <div className="flex flex-row items-center justify-start gap-2">
               <span className={cn('icon-[mdi--access-time] w-4 h-4')}></span>
               <div>
@@ -138,7 +137,7 @@ export function GamePoster({
               </div>
             </div>
 
-            {/* 最后运行时间 */}
+            {/* Last running time */}
             <div className="flex flex-row items-center justify-start gap-2">
               <span className={cn('icon-[mdi--calendar-blank-outline] w-4 h-4')}></span>
               <div>

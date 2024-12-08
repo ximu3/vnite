@@ -27,7 +27,7 @@ export function SteamImporter(): JSX.Element {
     reset
   } = useSteamImporterStore()
 
-  // 设置 IPC 监听器
+  // Setting the IPC Listener
   useEffect(() => {
     const handleProgress = (_event: any, data: any): void => {
       updateProgress(data)
@@ -40,12 +40,11 @@ export function SteamImporter(): JSX.Element {
     }
   }, [updateProgress])
 
-  // 开始导入
   const startImport = async (): Promise<void> => {
     if (!steamId) return
 
     try {
-      setIsLoading(true) // 开始加载
+      setIsLoading(true)
       reset()
       await ipcInvoke('import-user-steam-games', steamId)
     } catch (error) {
@@ -57,15 +56,15 @@ export function SteamImporter(): JSX.Element {
         message: '导入失败，请重试'
       })
     } finally {
-      setIsLoading(false) // 结束加载
+      setIsLoading(false)
     }
   }
 
-  // 计算成功和失败数量
+  // Calculate the number of successes and failures
   const successCount = gameLogs.filter((g) => g.status === 'success').length
   const errorCount = gameLogs.filter((g) => g.status === 'error').length
 
-  // 处理对话框关闭
+  // Processing dialog box closes
   const handleClose = (): void => {
     if (status !== 'processing') {
       setIsOpen(false)
@@ -74,7 +73,6 @@ export function SteamImporter(): JSX.Element {
       toast.warning('请等待导入完成')
     }
   }
-
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent
@@ -91,7 +89,7 @@ export function SteamImporter(): JSX.Element {
           </DialogDescription>
         </DialogHeader>
 
-        {/* Steam ID 输入 */}
+        {/* Steam ID input */}
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Input
@@ -128,14 +126,14 @@ export function SteamImporter(): JSX.Element {
           </div>
         </div>
 
-        {/* 进度显示 */}
+        {/* progress indicator */}
         <div
           className={cn(
             'space-y-4 overflow-hidden transition-all duration-300',
             status === 'started' ? 'max-h-0 opacity-0' : 'max-h-[600px] opacity-100'
           )}
         >
-          {/* 进度条 */}
+          {/* progress bar */}
           <div className={cn('space-y-2')}>
             <Progress
               value={progress}
@@ -151,7 +149,7 @@ export function SteamImporter(): JSX.Element {
             </p>
           </div>
 
-          {/* 状态信息 */}
+          {/* status message */}
           <Alert
             variant={status === 'error' ? 'destructive' : 'default'}
             className={cn('transition-all duration-300')}
@@ -165,7 +163,7 @@ export function SteamImporter(): JSX.Element {
             <AlertDescription>{message}</AlertDescription>
           </Alert>
 
-          {/* 游戏导入日志 */}
+          {/* Game Import Log */}
           <div className={cn('border rounded-lg', 'transition-all duration-300')}>
             <ScrollArea className={cn('h-[200px] p-4')}>
               <div className={cn('space-y-2')}>
@@ -175,18 +173,13 @@ export function SteamImporter(): JSX.Element {
                     className={cn(
                       'flex items-center justify-between',
                       'p-2 border rounded',
-                      'animate-fadeIn', // 添加淡入动画
+                      'animate-fadeIn',
                       'transition-all duration-200'
                     )}
                   >
                     <div className={cn('flex items-center gap-2')}>
                       {game.status === 'success' ? (
-                        <CheckCircle2
-                          className={cn(
-                            'h-4 w-4 text-primary',
-                            'animate-scaleIn' // 添加缩放动画
-                          )}
-                        />
+                        <CheckCircle2 className={cn('h-4 w-4 text-primary', 'animate-scaleIn')} />
                       ) : (
                         <XCircle className={cn('h-4 w-4 text-destructive', 'animate-scaleIn')} />
                       )}
@@ -203,7 +196,7 @@ export function SteamImporter(): JSX.Element {
             </ScrollArea>
           </div>
 
-          {/* 完成统计 */}
+          {/* Completion statistics */}
           {status === 'completed' && (
             <Alert className={cn('animate-fadeIn')}>
               <CheckCircle2 className={cn('h-4 w-4')} />

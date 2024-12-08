@@ -6,13 +6,18 @@ interface CSSValidationResult {
   error?: string
 }
 
+/**
+ * Verify CSS content
+ * @param cssContent
+ * @returns CSSValidationResult
+ */
 export function isValidCSS(cssContent: string): CSSValidationResult {
   try {
-    // 使用 csstree 解析 CSS
+    // Parsing CSS with csstree
     csstree.parse(cssContent, {
-      parseAtrulePrelude: false, // 避免对 @规则 进行严格解析
-      parseRulePrelude: false, // 避免对选择器进行严格解析
-      parseValue: false // 避免对值进行严格解析
+      parseAtrulePrelude: false, // Avoid strict parsing of @rules
+      parseRulePrelude: false, // Avoid strict parsing of selectors
+      parseValue: false // Avoid strict parsing of values
     })
 
     return { isValid: true }
@@ -27,9 +32,9 @@ export function isValidCSS(cssContent: string): CSSValidationResult {
 export const HTMLParserOptions: HTMLReactParserOptions = {
   replace: (domNode) => {
     if (domNode instanceof Element && domNode.name === 'a') {
-      // 确保链接打开在新标签页中
+      // Make sure the link opens in a new tab
       domNode.attribs.target = '_blank'
-      // 可选：添加 rel="noopener noreferrer" 以提高安全性
+      // Add rel="noopener noreferrer" for added security
       domNode.attribs.rel = 'noopener noreferrer'
     }
   }

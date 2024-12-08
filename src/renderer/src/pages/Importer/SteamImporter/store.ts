@@ -15,17 +15,14 @@ interface ProgressMessage {
 }
 
 interface SteamImporterState {
-  // 对话框状态
   isOpen: boolean
-  // Steam ID
   steamId: string
-  // 进度相关
+  // Progress-related
   progress: number
   status: ProgressMessage['status']
   message: string
   gameLogs: GameLog[]
-
-  // 操作方法
+  // Operating Methods
   setIsOpen: (open: boolean) => void
   setSteamId: (id: string) => void
   updateProgress: (ProgressMessage) => void
@@ -33,7 +30,7 @@ interface SteamImporterState {
 }
 
 export const useSteamImporterStore = create<SteamImporterState>((set) => ({
-  // 初始状态
+  // initial state
   isOpen: false,
   steamId: '',
   progress: 0,
@@ -41,11 +38,9 @@ export const useSteamImporterStore = create<SteamImporterState>((set) => ({
   message: '',
   gameLogs: [],
 
-  // 方法
+  // methods
   setIsOpen: (open): void => set({ isOpen: open }),
-
   setSteamId: (id): void => set({ steamId: id }),
-
   updateProgress: (data): void => {
     const { current, total, status, message, game } = data
     set((state) => ({

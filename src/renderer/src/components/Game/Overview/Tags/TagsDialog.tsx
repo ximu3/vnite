@@ -5,7 +5,6 @@ import { ArrayInput } from '~/components/ui/array-input'
 
 export function TagsDialog({ gameId }: { gameId: string }): JSX.Element {
   const [tags, setTags] = useDBSyncedState([''], `games/${gameId}/metadata.json`, ['tags'])
-
   return (
     <Dialog>
       <DialogTrigger>

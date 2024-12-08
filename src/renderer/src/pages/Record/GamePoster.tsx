@@ -27,13 +27,13 @@ export function GamePoster({
       className={cn(
         'group relative overflow-hidden cursor-pointer rounded-[0.3rem]',
         'transition-border duration-300 ease-in-out',
-        'border-2 border-transparent', // 默认透明边框
-        'hover:border-primary hover:border-2', // hover时显示主题色边框
+        'border-2 border-transparent',
+        'hover:border-primary hover:border-2',
         className
       )}
       onClick={() => navigate(`/library/games/${gameId}/all`)}
     >
-      {/* 添加一个背景遮罩层 */}
+      {/* Add a background mask layer */}
       {isShowGameName && (
         <div
           className={cn(
@@ -42,7 +42,7 @@ export function GamePoster({
         />
       )}
 
-      {/* HoverBigCardAnimation 层 */}
+      {/* HoverBigCardAnimation layer */}
 
       <div className="relative z-0">
         <HoverSquareCardAnimation className={cn('rounded-none shadow-none')}>
@@ -68,13 +68,13 @@ export function GamePoster({
         </HoverSquareCardAnimation>
       </div>
 
-      {/* 文字内容层 */}
+      {/* text content layer */}
       {isShowGameName && (
         <div
           className={cn(
             'absolute inset-0 z-20',
             'flex flex-col gap-1 items-center justify-center',
-            'pointer-events-none', // 确保点击事件传递到底层
+            'pointer-events-none',
             infoStyle
           )}
         >

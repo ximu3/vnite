@@ -1,6 +1,6 @@
 /**
- * URL标签的正则表达式
- * 匹配格式: [url=链接]文本[/url]
+ * Regular expressions for URL tags
+ * Match format: [url=link]text[/url]
  */
 /*eslint no-useless-escape: "off"*/
 const urlMatcher = /\[url=(.*?)\](.*?)\[\/url\]/g
@@ -8,39 +8,39 @@ const bMatcher = /\[b\](.*?)\[\/b\]/g
 const spoilerMatcher = /\[spoiler\](.*?)\[\/spoiler\]/g
 
 /**
- * 格式化描述文本,将BBCode转换为HTML标签
- * @param description 需要格式化的文本
- * @returns 格式化后的文本
+ * Formatting description text, converting BBCode to HTML tags
+ * @param description Text to be formatted
+ * @returns Formatted text
  */
 export function formatDescription(description: string): string {
   if (description === null) {
     return ''
   }
-  // 替换换行符为HTML换行标签
+  // Replacing line breaks with HTML line break tags
   let formatted = description.replace('\n', '<br>' + '\n')
 
-  // 将[url]标签转换为HTML的a标签
+  // Converting [url] tags to HTML a tags
   formatted = formatted.replace(urlMatcher, '<a href="$1" target="_blank">$2</a>')
 
-  // 将[b]标签转换为HTML的strong标签
+  // Converting [b] tags to HTML strong tags
   formatted = formatted.replace(bMatcher, '<strong>$1</strong>')
 
-  // 将[spoiler]标签转换为HTML的details标签
+  // Converting [spoiler] tags to HTML details tags
   formatted = formatted.replace(spoilerMatcher, '<details><summary>展开</summary>$1</details>')
 
   return formatted
 }
 
 /**
- * 移除所有URL标签,只保留文本内容
- * @param description 包含标签的文本
- * @returns 移除标签后的纯文本
+ * Remove all URL tags and keep only the text content.
+ * @param description Text containing labels
+ * @returns Plain text after removing labels
  */
 export function removeDescriptionTags(description: string | null): string {
   if (description === null) {
     return ''
   }
 
-  // 只保留URL标签中的文本内容
+  // Keep only the text content in the URL tag
   return description.replace(urlMatcher, '$2')
 }

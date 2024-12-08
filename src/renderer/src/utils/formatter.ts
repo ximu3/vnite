@@ -1,3 +1,8 @@
+/**
+ * Format time to HH:MM:SS in Chinese
+ * @param time The time in milliseconds.
+ * @returns The formatted time.
+ */
 export function formatTimeToChinese(time: number): string {
   const hours = Math.floor(time / 3600000)
   const minutes = Math.floor((time % 3600000) / 60000)
@@ -13,30 +18,44 @@ export function formatTimeToChinese(time: number): string {
   }
 }
 
+/**
+ * Format date to YYYY年MM月DD日
+ * @param dateString The date string.
+ * @returns The formatted date.
+ */
 export function formatDateToChinese(dateString: string): string {
   const date = new Date(dateString)
 
-  // 获取年、月、日
+  // Access to year, month and day
   const year = date.getFullYear()
-  const month = date.getMonth() + 1 // 月份从0开始，所以需要加1
+  const month = date.getMonth() + 1
   const day = date.getDate()
 
-  // 格式化为中文日期格式
+  // Formatting to Chinese date format
   return `${year}年${month}月${day}日`
 }
 
+/**
+ * Format date to YYYY-MM-DD
+ * @param dateString The date string.
+ * @returns The formatted date.
+ */
 export function formatDateToISO(dateString: string): string {
   const date = new Date(dateString)
 
-  // 获取年、月、日
+  // Access to year, month and day
   const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0') // 补零到两位
-  const day = String(date.getDate()).padStart(2, '0') // 补零到两位
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
 
-  // 格式化为 YYYY-MM-DD 格式
   return `${year}-${month}-${day}`
 }
 
+/**
+ * Format play status to Chinese
+ * @param status The play status.
+ * @returns The formatted play status.
+ */
 export function formatPlayStatusToChinese(status: string): string {
   switch (status) {
     case 'unplayed':
@@ -54,27 +73,35 @@ export function formatPlayStatusToChinese(status: string): string {
   }
 }
 
+/**
+ * Format score to Chinese
+ * @param score The score.
+ * @returns The formatted score.
+ */
 export function formatScoreToChinese(score: number): string {
   if (score === -1) return '未评分'
 
-  // 如果是10分，直接返回整数
+  // If it is 10 points, return the integer directly
   if (score === 10) return '10 分'
 
-  // 其他分数保留1位小数
+  // Other fractions retain 1 decimal place
   return `${score.toFixed(1)} 分`
 }
 
+/**
+ * Format date to YYYY年MM月DD日 HH时MM分
+ * @param dateString The date string.
+ * @returns The formatted date.
+ */
 export function formatDateToChineseWithSeconds(dateString: string): string {
   const date = new Date(dateString)
 
-  // 获取年、月、日
   const year = date.getFullYear()
-  const month = date.getMonth() + 1 // 月份从0开始，所以需要加1
+  const month = date.getMonth() + 1
   const day = date.getDate()
   const hours = date.getHours()
   const minutes = date.getMinutes()
   const seconds = date.getSeconds()
 
-  // 格式化为中文日期格式
   return `${year}年${month}月${day}日 ${hours}时${minutes}分${seconds}秒`
 }

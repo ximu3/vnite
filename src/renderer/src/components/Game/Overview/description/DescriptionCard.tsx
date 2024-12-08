@@ -27,8 +27,8 @@ export function DescriptionCard({
           className={cn(
             'max-h-[310px] text-sm overflow-auto scrollbar-base',
             '3xl:max-h-[500px]',
-            'prose-a:text-primary', // 链接颜色
-            'prose-a:no-underline hover:prose-a:underline' // 下划线效果
+            'prose-a:text-primary', // Link Color
+            'prose-a:no-underline hover:prose-a:underline' // underline effect
           )}
         >
           {description ? parse(description, HTMLParserOptions) : '暂无简介'}

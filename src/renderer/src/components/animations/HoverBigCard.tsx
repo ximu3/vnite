@@ -52,7 +52,7 @@ export function HoverBigCardAnimation({
   },
   ...rest
 }: HoverBigCardProps): JSX.Element {
-  // 动画配置
+  // Animation Configuration
   const springConfig = {
     tension: animationConfig.tension,
     friction: animationConfig.friction,
@@ -61,7 +61,7 @@ export function HoverBigCardAnimation({
     clamp: true
   }
 
-  // 合并shine和image的动画状态
+  // Merge shine and image animation states
   const [springs, api] = useSpring(() => ({
     shineX: 50,
     shineY: -30,
@@ -109,7 +109,7 @@ export function HoverBigCardAnimation({
       onMouseLeave={handleMouseLeave}
       {...rest}
     >
-      {/* 图片层 */}
+      {/* image layer */}
       <animated.div
         style={{
           transform: springs.imageScale.to((s) => `scale(${s})`),
@@ -119,7 +119,7 @@ export function HoverBigCardAnimation({
         {children}
       </animated.div>
 
-      {/* 光泽效果 - 模糊层 */}
+      {/* Glossy Effects - Blur Layer */}
       <animated.div
         style={{
           position: 'absolute',
@@ -144,7 +144,7 @@ export function HoverBigCardAnimation({
         }}
       />
 
-      {/* 光泽效果 - 主层 */}
+      {/* Glossy Effects - Main Layer */}
       <animated.div
         style={{
           position: 'absolute',

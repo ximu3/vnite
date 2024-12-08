@@ -28,7 +28,7 @@ const useDBSyncStore = create<DBSyncStore>((set, get) => ({
   ensureSubscription: (key, dbName, path, initialValue): void => {
     const state = get()
 
-    // 如果订阅已存在，直接返回
+    // If the subscription already exists, return it directly
     if (state.subscriptions[key]) {
       return
     }
@@ -53,7 +53,7 @@ const useDBSyncStore = create<DBSyncStore>((set, get) => ({
       }
     }
 
-    // 设置更新监听器
+    // Setting up an update listener
     const removeListener = ipcOnUnique('reload-db-values', async (_event, updatedDbName) => {
       if (updatedDbName === dbName) {
         await fetchAndSetValue()
@@ -61,7 +61,7 @@ const useDBSyncStore = create<DBSyncStore>((set, get) => ({
       }
     })
 
-    // 保存订阅信息
+    // Save subscription information
     set((state) => ({
       subscriptions: {
         ...state.subscriptions,
@@ -74,7 +74,7 @@ const useDBSyncStore = create<DBSyncStore>((set, get) => ({
       }
     }))
 
-    // 初始化值
+    // initialization value
     if (get().values[key] === undefined) {
       fetchAndSetValue()
     }
@@ -105,17 +105,17 @@ const useDBSyncStore = create<DBSyncStore>((set, get) => ({
   setValue: async (key, value, dbName, path): Promise<void> => {
     const previousValue = get().values[key]
 
-    // 立即更新本地状态
+    // Immediate local status update
     set((state) => ({
       values: { ...state.values, [key]: value }
     }))
 
-    // 尝试更新数据库
+    // Trying to update the database
     try {
       await debouncedIpcInvoke('set-db-value', dbName, path, value)
     } catch (error) {
       console.error('Failed to set DB value:', error)
-      // 恢复之前的值
+      // Restore the previous value
       set((state) => ({
         values: { ...state.values, [key]: previousValue }
       }))
@@ -136,13 +136,13 @@ export function useDBSyncedState<T>(
 ): [T, (value: T) => Promise<void>] {
   const key = `${dbName}:${path.join('.')}`
 
-  // 确保订阅存在
+  // Ensure subscription exists
   useDBSyncStore.getState().ensureSubscription(key, dbName, path, initialValue)
 
-  // 获取值
+  // get a value
   const value = useDBSyncStore((state) => state.getValue(key))
 
-  // 创建更新函数
+  // Creating an Update Function
   const setValue = async (newValue: T): Promise<void> => {
     await useDBSyncStore.getState().setValue(key, newValue, dbName, path)
   }

@@ -153,7 +153,6 @@ export function Sidebar(): JSX.Element {
                             gameBatchAdderActions.setGames(result)
                             gameBatchAdderActions.setIsOpen(true)
                           } catch (error) {
-                            // 确保错误是 Error 类型
                             if (error instanceof Error) {
                               toast.error(`获取游戏失败: ${error.message}`)
                               throw error

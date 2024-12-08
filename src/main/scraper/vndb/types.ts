@@ -11,7 +11,7 @@ export type VNDBBaseField =
   | 'rating'
   | 'popularity'
 
-// 定义可嵌套字段的子字段
+// Defining subfields of nestable fields
 export type VNDBNestedFields = {
   titles: {
     title: string
@@ -44,7 +44,7 @@ export type VNDBNestedFields = {
   }
 }
 
-// 基础字段类型
+// Base Field Type
 type VNDBBaseFieldTypes = {
   id: string
   title: string
@@ -58,13 +58,13 @@ type VNDBBaseFieldTypes = {
   popularity: number
 }
 
-// 提取指定的属性
+// Extract the specified attributes
 type PickProperties<T, K extends string> = K extends keyof T ? Pick<T, K & keyof T> : never
 
-// 获取字段名（去除花括号语法）
+// Get field names (remove the curly bracket syntax)
 type GetFieldName<T extends string> = T extends `${infer Field}{${string}}` ? Field : T
 
-// 解析花括号内的属性
+// Parsing attributes in curly braces
 type ParseBraceProps<
   Field extends keyof VNDBNestedFields,
   Props extends string
@@ -73,7 +73,7 @@ type ParseBraceProps<
       ParseBraceProps<Field, Rest>
   : PickProperties<VNDBNestedFields[Field], Props & keyof VNDBNestedFields[Field]>
 
-// 解析字段
+// parsed field
 type ParseField<T extends string> = T extends `${infer Field}{${infer Props}}`
   ? Field extends keyof VNDBNestedFields
     ? Array<ParseBraceProps<Field, Props>>
@@ -90,14 +90,14 @@ type ParseField<T extends string> = T extends `${infer Field}{${infer Props}}`
         ? VNDBBaseFieldTypes[T]
         : never
 
-// 组合所有可能的字段类型
+// Combine all possible field types
 export type VNDBField =
   | VNDBBaseField
   | keyof VNDBNestedFields
   | `${keyof VNDBNestedFields}.${string}`
   | `${keyof VNDBNestedFields}{${string}}`
 
-// 定义响应类型
+// Define the response type
 export type VNDBResponse<T extends readonly VNDBField[]> = {
   results: Array<{
     [K in T[number] as GetFieldName<K>]: ParseField<K>

@@ -25,7 +25,6 @@ export const useSteamIdDialogStore = create<SteamIdState>((set) => ({
 
 export function SteamIdDialog(): JSX.Element {
   const { isOpen, setIsOpen, steamId, setSteamId, gameId, setGameId } = useSteamIdDialogStore()
-
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent showCloseButton={false}>

@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* shadcn-ui */
-
 @layer base {
   * {
     @apply border-border;

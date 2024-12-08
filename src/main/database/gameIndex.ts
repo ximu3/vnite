@@ -73,7 +73,7 @@ export class GameIndexManager {
             const playedTimes = timer.length
 
             const fullData = {
-              id: gameId, // 确保 id 字段存在
+              id: gameId,
               ...metadata,
               addDate,
               lastRunDate,
@@ -84,7 +84,7 @@ export class GameIndexManager {
 
             const indexedData: Partial<GameIndexdata> = {}
 
-            // 只包含定义的字段
+            // Contains only defined fields
             this.gameIndexdataKeys.forEach((field) => {
               if (fullData[field] !== undefined) {
                 indexedData[field] = fullData[field]
@@ -94,18 +94,15 @@ export class GameIndexManager {
             indexData[gameId] = indexedData
           } catch (error) {
             console.error(`Error processing game ${gameId}:`, error)
-            indexData[gameId] = { id: gameId } // 返回最小数据集
+            indexData[gameId] = { id: gameId } // Returns the smallest data set
           }
         })
       )
 
       this.gameIndex = indexData
-
-      // 储存在本地
-      // await this.saveIndex()
     } catch (error) {
       console.error('Error initializing game index:', error)
-      // 发生错误时保持现有索引不变
+      // Keeping existing indexes intact in the event of an error
     }
   }
 
@@ -127,14 +124,12 @@ export class GameIndexManager {
     mainWindow.webContents.send('game-index-changed')
   }
 
-  // 新增：删除游戏索引
   public async removeGame(gameId: string): Promise<void> {
     delete this.gameIndex[gameId]
     await this.saveIndex()
   }
 }
 
-// 导出实例方法
 export const getGameIndex = GameIndexManager.getInstance().getGameIndex.bind(
   GameIndexManager.getInstance()
 )

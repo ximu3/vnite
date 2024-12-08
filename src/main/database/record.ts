@@ -9,8 +9,8 @@ export interface GameRecordData {
   lastRunDate?: string
   score?: number
   playingTime?: number
-  timer?: string[] // 用于计算 playedTimes
-  // 可以添加其他记录相关的字段
+  timer?: string[]
+  // Additional record-related fields can be added
 }
 
 export class GameRecordManager {
@@ -32,7 +32,7 @@ export class GameRecordManager {
     try {
       const gamesPath = await getDataPath('games')
 
-      // 读取所有游戏文件夹
+      // Read all game folders
       const gameFolders = await fse
         .readdir(gamesPath, { withFileTypes: true })
         .then((entries) =>
@@ -41,18 +41,18 @@ export class GameRecordManager {
 
       const recordsData: Record<string, GameRecordData> = {}
 
-      // 并行处理所有游戏记录
+      // Parallel processing of all game records
       await Promise.all(
         gameFolders.map(async (gameId) => {
           try {
-            // 读取记录文件中的所有数据
+            // Read all data in the log file
             const record = (await getDBValue(
               `games/${gameId}/record.json`,
               ['#all'],
               {}
             )) as GameRecordData
 
-            // 构建记录数据对象
+            // Constructing Recorded Data Objects
             recordsData[gameId] = {
               addDate: record.addDate,
               lastRunDate: record.lastRunDate,
@@ -62,7 +62,7 @@ export class GameRecordManager {
             }
           } catch (error) {
             console.error(`Error processing record for game ${gameId}:`, error)
-            // 出错时设置默认值
+            // Setting default values on error
             recordsData[gameId] = {
               addDate: '',
               lastRunDate: '',
@@ -75,9 +75,6 @@ export class GameRecordManager {
       )
 
       this.recordData = recordsData
-
-      // 可以选择是否保存到本地
-      // await this.saveRecords()
     } catch (error) {
       console.error('Error initializing game records:', error)
     }
@@ -97,16 +94,16 @@ export class GameRecordManager {
 
   public async updateRecord(gameId: string, data: Partial<GameRecordData>): Promise<void> {
     try {
-      // 更新内存中的数据
+      // Updating data in memory
       this.recordData[gameId] = {
         ...this.recordData[gameId],
         ...data
       }
 
-      // 更新文件系统中的数据
+      // Updating data in the file system
       await setDBValue(`games/${gameId}/record.json`, Object.keys(data), data)
 
-      // 通知渲染进程记录已更新
+      // Notification that the rendering process record has been updated
       const mainWindow = BrowserWindow.getAllWindows()[0]
       mainWindow.webContents.send('game-records-changed', this.recordData)
     } catch (error) {
@@ -126,7 +123,6 @@ export class GameRecordManager {
   }
 }
 
-// 导出实例方法
 export const getGameRecords = GameRecordManager.getInstance().getRecords.bind(
   GameRecordManager.getInstance()
 )

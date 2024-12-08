@@ -72,8 +72,8 @@ export function UpdateDialog(): JSX.Element {
                 'prose-p:my-0',
                 'prose-ul:list-disc prose-ul:ml-0',
                 'prose-li:mb-0',
-                'prose-a:text-primary', // 链接颜色
-                'prose-a:no-underline hover:prose-a:underline' // 下划线效果
+                'prose-a:text-primary', // Link Color
+                'prose-a:no-underline hover:prose-a:underline' // underline effect
               )}
             >
               {parse(updateInfo?.releaseNotes, HTMLParserOptions) || '无更新说明'}

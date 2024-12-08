@@ -25,7 +25,6 @@ async function fetchVNDB<T extends readonly VNDBField[]>(params: {
   return response.json()
 }
 
-// 搜索游戏函数
 export async function searchVNDBGames(gameName: string): Promise<GameList> {
   const fields = ['titles{main,title}', 'released', 'developers{name}', 'id'] as const
 
@@ -48,7 +47,6 @@ export async function searchVNDBGames(gameName: string): Promise<GameList> {
   }
 }
 
-// 获取游戏元数据函数
 export async function getVNMetadata(vnId: string): Promise<GameMetadata> {
   const formattedId = vnId.startsWith('v') ? vnId : `v${vnId}`
 

@@ -1,6 +1,9 @@
 import * as chokidar from 'chokidar'
 import { BrowserWindow } from 'electron'
 
+/**
+ * Watcher class
+ */
 export class Watcher {
   private watcher: chokidar.FSWatcher | null = null
   private path: string
@@ -20,7 +23,7 @@ export class Watcher {
     this.mainWindow = mainWindow
     this.addtionalHandler = addtionalHandler
 
-    // 监听窗口关闭事件
+    // Listening for window close events
     this.mainWindow.on('closed', () => {
       this.stop()
     })
@@ -39,10 +42,10 @@ export class Watcher {
 
     try {
       this.watcher = chokidar.watch(this.path, {
-        ignored: /(^|[/\\])\./, // 忽略点文件
+        ignored: /(^|[/\\])\./, // Ignore the dot file.
         persistent: true,
         ignoreInitial: true,
-        depth: 1, // 监控嵌套子目录到1层
+        depth: 1, // Monitor nested subdirectories to level 1
         awaitWriteFinish: {
           stabilityThreshold: 2000,
           pollInterval: 100
@@ -81,7 +84,7 @@ export class Watcher {
   }
 
   private handleChange(changedPath: string): void {
-    // 检查对象和窗口状态
+    // Checking object and window status
     if (this.isDestroyed || !this.mainWindow || this.mainWindow.isDestroyed()) {
       this.stop()
       return
@@ -90,25 +93,25 @@ export class Watcher {
     try {
       console.log(`Detected change in: ${changedPath} with name ${this.watcherName}`)
 
-      // 检查 webContents 是否可用
+      // Check if webContents are available
       if (this.mainWindow.webContents && !this.mainWindow.webContents.isDestroyed()) {
         this.mainWindow.webContents.send('reload-db-values', this.watcherName)
       }
 
-      // 执行额外的处理函数
+      // Perform additional handler functions
       if (this.addtionalHandler && !this.isDestroyed) {
         this.addtionalHandler()
       }
     } catch (error) {
       console.error(`Error handling change in ${this.watcherName}:`, error)
-      // 如果发生错误，考虑是否需要停止监听
+      // If an error occurs, consider whether you need to stop listening
       if (error instanceof Error && error.message.includes('destroyed')) {
         this.stop()
       }
     }
   }
 
-  // 添加检查方法
+  // Add checking method
   isWatching(): boolean {
     return !this.isDestroyed && this.watcher !== null
   }

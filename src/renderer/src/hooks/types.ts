@@ -15,10 +15,10 @@ const gameIndexdata = {
   playedTimes: Number()
 }
 
-// 使用 typeof 获取 gameMetadata 的类型
+// Getting the type of gameMetadata using typeof
 type GameIndexdataKeys = keyof typeof gameIndexdata
 
-// 使用类型别名定义 GameMetadata
+// Defining GameMetadata with Type Aliases
 export type GameIndexdata = {
   [K in GameIndexdataKeys]?: (typeof gameIndexdata)[K]
 }

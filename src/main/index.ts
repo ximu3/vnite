@@ -48,7 +48,7 @@ async function handleGameUrl(url: string): Promise<void> {
     console.log('Launching game with ID:', gameId)
 
     if (mainWindow) {
-      // 确保窗口可见
+      // Make sure the window is visible
       if (mainWindow.isMinimized()) {
         mainWindow.restore()
       }
@@ -90,7 +90,7 @@ function createWindow(): void {
   setupIPC(mainWindow)
 
   mainWindow.once('ready-to-show', () => {
-    // 设置固定延时
+    // Setting a fixed delay
     setTimeout(async () => {
       if (splashWindow) {
         splashWindow.destroy()
@@ -144,7 +144,7 @@ function createSplashWindow(): void {
     splashWindow = null
   })
 
-  // 加载启动屏页面
+  // Loading the Launch Screen Page
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     splashWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/splash.html`)
   } else {
@@ -159,12 +159,12 @@ function createSplashWindow(): void {
 const gotTheLock = app.requestSingleInstanceLock()
 
 if (!gotTheLock) {
-  // 如果不是第一个实例，直接退出
+  // If it's not the first instance, just exit
   app.quit()
 } else {
-  // 处理第二个实例的启动
+  // Handling the startup of the second instance
   app.on('second-instance', (_event, commandLine) => {
-    // 如果主窗口存在，激活它
+    // If the main window exists, activate it
     if (mainWindow) {
       if (mainWindow.isMinimized()) {
         mainWindow.restore()
@@ -175,17 +175,17 @@ if (!gotTheLock) {
         mainWindow.show()
       }
 
-      // 临时置顶以引起注意
+      // Temporary placement to draw attention to
       mainWindow.setAlwaysOnTop(true)
       setTimeout(() => {
         mainWindow.setAlwaysOnTop(false)
       }, 300)
     }
 
-    // 检查是否有协议 URL
+    // Check for protocol URLs
     const url = commandLine.find((arg) => arg.startsWith('vnite://'))
     if (url) {
-      // 处理协议 URL
+      // Processing Protocol URL
       handleGameUrl(url)
     }
   })

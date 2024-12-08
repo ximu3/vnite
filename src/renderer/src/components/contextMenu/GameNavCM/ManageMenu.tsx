@@ -40,7 +40,6 @@ export function ManageMenu({ gameId }: { gameId: string }): JSX.Element {
               重命名
             </ContextMenuItem>
           </NameEditorDialog>
-
           <PlayingTimeEditorDialog
             gameId={gameId}
             isOpen={isPlayingTimeEditorDialogOpen}
@@ -55,7 +54,6 @@ export function ManageMenu({ gameId }: { gameId: string }): JSX.Element {
               修改游玩时间
             </ContextMenuItem>
           </PlayingTimeEditorDialog>
-
           <ContextMenuItem
             onClick={() => {
               setDbId(gameId)
@@ -65,7 +63,6 @@ export function ManageMenu({ gameId }: { gameId: string }): JSX.Element {
           >
             下载资料数据
           </ContextMenuItem>
-
           {gamePath !== '' && (
             <ContextMenuItem
               onClick={async () => {
@@ -84,9 +81,7 @@ export function ManageMenu({ gameId }: { gameId: string }): JSX.Element {
               创建快捷方式
             </ContextMenuItem>
           )}
-
           <ContextMenuSeparator />
-
           <ContextMenuItem
             onClick={() => {
               if (gamePath) {
@@ -98,7 +93,6 @@ export function ManageMenu({ gameId }: { gameId: string }): JSX.Element {
           >
             浏览本地文件
           </ContextMenuItem>
-
           <ContextMenuItem
             onClick={() => {
               ipcInvoke('open-game-db-path-in-explorer', gameId)
@@ -106,9 +100,7 @@ export function ManageMenu({ gameId }: { gameId: string }): JSX.Element {
           >
             浏览数据库
           </ContextMenuItem>
-
           <ContextMenuSeparator />
-
           <DeleteGameAlert gameId={gameId}>
             <ContextMenuItem onSelect={(e) => e.preventDefault()}>删除</ContextMenuItem>
           </DeleteGameAlert>

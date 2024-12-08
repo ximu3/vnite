@@ -13,14 +13,13 @@ interface AppConfig {
   }
 }
 
-// 添加版本列表接口
 interface BackupList {
   main: SyncMetadata
   history: { filename: string; timestamp: string }[]
 }
 
 export async function initializeCloudsyncServices(mainWindow: BrowserWindow): Promise<void> {
-  // 初始化云同步服务,等待渲染进程准备好
+  // Initialize the cloud synchronization service and wait for the rendering process to be ready.
   setTimeout(async () => {
     await CloudSyncService.setup(mainWindow)
   }, 10000)
@@ -31,7 +30,8 @@ export class CloudSyncService {
   private static configPath: string | null = null
 
   /**
-   * 初始化服务配置
+   * Initialize Service Configuration
+   * @returns Promise<void>
    */
   private static async initialize(): Promise<void> {
     if (!this.configPath) {
@@ -40,21 +40,23 @@ export class CloudSyncService {
   }
 
   /**
-   * 初始化云同步服务
+   * Initializing the Cloud Sync Service
+   * @param mainWindow
+   * @returns Promise<void>
    */
   static async setup(mainWindow: BrowserWindow): Promise<void> {
     try {
-      // 确保配置路径已初始化
+      // Ensure that the configuration path is initialized
       await this.initialize()
 
       const config = await this.getAppConfig()
 
       if (config.cloudSync?.enabled && config.cloudSync.config) {
-        // 验证配置的完整性
+        // Verify the integrity of the configuration
         if (this.validateCloudSyncConfig(config.cloudSync.config)) {
           this.instance = await setupCloudSync(config.cloudSync.config, mainWindow)
 
-          // 设置定期同步（每10分钟）
+          // Set up periodic synchronization (every 10 minutes)
           setInterval(
             () => {
               this.sync().catch(console.error)
@@ -62,7 +64,7 @@ export class CloudSyncService {
             10 * 60 * 1000
           )
 
-          // 首次同步(等待渲染进程准备好)
+          // First time synchronization (waiting for the rendering process to be ready)
           setTimeout(() => {
             this.sync().catch(console.error)
           }, 5000)
@@ -78,11 +80,12 @@ export class CloudSyncService {
   }
 
   /**
-   * 获取应用配置
+   * Getting the Application Configuration
+   * @returns Promise<AppConfig>
    */
   static async getAppConfig(): Promise<AppConfig> {
     try {
-      // 确保配置路径已初始化
+      // Ensure that the configuration path is initialized
       await this.initialize()
 
       if (await fse.pathExists(this.configPath!)) {
@@ -96,7 +99,9 @@ export class CloudSyncService {
   }
 
   /**
-   * 保存应用配置
+   * Save Application Configuration
+   * @param config
+   * @returns Promise<void>
    */
   static async saveAppConfig(config: AppConfig): Promise<void> {
     await this.initialize()
@@ -104,7 +109,9 @@ export class CloudSyncService {
   }
 
   /**
-   * 更新云同步配置
+   * Updating Cloud Synchronization Configuration
+   * @param mainWindow
+   * @returns Promise<void>
    */
   static async updateCloudSyncConfig(mainWindow: BrowserWindow): Promise<void> {
     const appConfig = await this.getAppConfig()
@@ -118,7 +125,8 @@ export class CloudSyncService {
   }
 
   /**
-   * 禁用云同步
+   * Disable cloud synchronization
+   * @returns Promise<void>
    */
   static async disable(): Promise<void> {
     const appConfig = await this.getAppConfig()
@@ -128,7 +136,8 @@ export class CloudSyncService {
   }
 
   /**
-   * 执行同步
+   * Execute a synchronization
+   * @returns Promise<void>
    */
   static async sync(): Promise<void> {
     try {
@@ -142,21 +151,25 @@ export class CloudSyncService {
   }
 
   /**
-   * 获取云同步实例
+   * Getting a Cloud Synchronization Instance
+   * @returns CloudSync | null
    */
   static getInstance(): CloudSync | null {
     return this.instance
   }
 
   /**
-   * 验证云同步配置
+   * Verify Cloud Synchronization Configuration
+   * @param config
+   * @returns boolean
    */
   private static validateCloudSyncConfig(config: CloudSyncConfig): boolean {
     return !!(config.webdavUrl && config.username && config.password && config.remotePath)
   }
 
   /**
-   * 获取备份版本列表
+   * Getting a list of backup versions
+   * @returns Promise<BackupList>
    */
   static async getBackupList(): Promise<BackupList> {
     if (!this.instance) {
@@ -166,7 +179,9 @@ export class CloudSyncService {
   }
 
   /**
-   * 恢复历史版本
+   * Restore Historical Versions
+   * @param filename
+   * @returns Promise<void>
    */
   static async restoreHistoryVersion(filename: string): Promise<void> {
     if (!this.instance) {
@@ -176,7 +191,8 @@ export class CloudSyncService {
   }
 
   /**
-   * 手动触发上传备份
+   * Manually triggered upload backups
+   * @returns Promise<void>
    */
   static async uploadBackup(): Promise<void> {
     if (!this.instance) {

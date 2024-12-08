@@ -7,17 +7,16 @@ import crypto from 'crypto'
 import fse from 'fs-extra'
 import os from 'os'
 
-// types.ts
 export interface CloudSyncConfig {
   webdavUrl: string
   username: string
   password: string
-  remotePath: string // 用户自定义的远程路径
+  remotePath: string
 }
 
 interface GetLatestModifiedTimeOptions {
   maxDepth?: number
-  ignore?: string[] // 忽略的文件或目录
+  ignore?: string[]
   followSymlinks?: boolean
 }
 
@@ -27,9 +26,9 @@ export interface SyncMetadata {
   timestamp: string
   devices: Array<{
     id: string
-    name: string // 设备名称
-    lastSync: string // 最后同步时间
-    platform: string // 操作系统平台
+    name: string
+    lastSync: string
+    platform: string
   }>
   checksum: string
   lastModified: string
@@ -41,8 +40,12 @@ export interface SyncStatus {
   timestamp: string
 }
 
-// cloudSync.ts
-
+/**
+ * Setup cloud sync
+ * @param config
+ * @param mainWindow
+ * @returns CloudSync
+ */
 export async function setupCloudSync(
   config: CloudSyncConfig,
   mainWindow: BrowserWindow
@@ -52,6 +55,14 @@ export async function setupCloudSync(
   return cloudSync
 }
 
+/**
+ * CloudSync class
+ * @class CloudSync
+ * @constructor CloudSync
+ * @param config
+ * @param mainWindow
+ * @returns CloudSync
+ */
 export class CloudSync {
   private client: WebDAVClient
   private deviceId!: string
@@ -70,52 +81,53 @@ export class CloudSync {
   }
 
   /**
-   * 异步初始化方法
+   * Initialize cloud sync service
+   * @returns void
    */
   async initialize(): Promise<void> {
     try {
-      // 1. 检查本地设备 ID
+      // 1. Check device ID
       const deviceIdPath = await getDataPath(CloudSync.DEVICE_ID_FILE)
       const deviceIdExists = await fse.pathExists(deviceIdPath)
 
-      // 2. 检查远程元数据
+      // 2. Check remote metadata
       const remoteMetadataPath = this.normalizeWebDAVPath(this.config.remotePath, 'metadata.json')
       const remoteExists = await this.client.exists(remoteMetadataPath)
 
       if (remoteExists) {
-        // 远程存在数据
+        // Remote metadata exists
         const remoteMetadata = await this.getRemoteJson<SyncMetadata>(remoteMetadataPath)
 
         if (!deviceIdExists) {
-          // 本地没有设备 ID，创建新的设备 ID
+          // Device ID does not exist locally, create a new one
           this.deviceId = crypto.randomUUID()
           await fse.writeJson(deviceIdPath, { deviceId: this.deviceId }, { spaces: 2 })
           this.isNewDevice = true
         } else {
-          // 本地有设备 ID
+          // Use existing device ID
           const localData = await fse.readJson(deviceIdPath)
           this.deviceId = localData.deviceId
 
-          // 检查设备是否已在远程注册
+          // Check if the device exists in the remote metadata
           const deviceExists = remoteMetadata.devices.some((device) => device.id === this.deviceId)
           if (!deviceExists) {
             this.isNewDevice = true
           }
         }
       } else {
-        // 远程不存在数据
+        // Remote metadata does not exist
         if (!deviceIdExists) {
-          // 完全新的开始，创建新的设备 ID
+          // Device ID does not exist locally, create a new one
           this.deviceId = crypto.randomUUID()
           await fse.writeJson(deviceIdPath, { deviceId: this.deviceId }, { spaces: 2 })
         } else {
-          // 使用现有的设备 ID
+          // Use existing device ID
           const localData = await fse.readJson(deviceIdPath)
           this.deviceId = localData.deviceId
         }
       }
 
-      // 如果是新设备，立即同步数据
+      // If it's a new device, perform initial sync
       if (this.isNewDevice) {
         await this.initialSync()
       }
@@ -126,8 +138,8 @@ export class CloudSync {
   }
 
   /**
-   * 初始同步
-   * 用于新设备的首次同步
+   * Initialize cloud sync
+   * @returns void
    */
   private async initialSync(): Promise<void> {
     try {
@@ -141,23 +153,23 @@ export class CloudSync {
       const remoteExists = await this.client.exists(remoteMetadataPath)
 
       if (remoteExists) {
-        // 获取远程元数据
+        // Get remote metadata
         const remoteMetadata = await this.getRemoteJson<SyncMetadata>(remoteMetadataPath)
 
-        // 更新设备信息到远程元数据
+        // Update metadata with device information
         await this.updateMetadata(remoteMetadata)
 
-        // 如果远程有数据，下载到本地
+        // If remote data exists, download it
         await this.downloadDatabase()
       } else {
-        // 如果远程没有数据，创建新的元数据并上传本地数据
+        // If remote data does not exist, upload local data
         const dataPath = await getDataPath('')
         const checksum = await this.calculateFileChecksum(dataPath)
 
         const metadata: SyncMetadata = {
           version: new Date().toISOString(),
           timestamp: new Date().toISOString(),
-          devices: [], // 将在 updateMetadata 中添加当前设备
+          devices: [],
           checksum,
           lastModified: (await fse.stat(dataPath)).mtime.toISOString()
         }
@@ -183,7 +195,8 @@ export class CloudSync {
   }
 
   /**
-   * 获取当前设备信息
+   * Get device information
+   * @returns device information
    */
   private async getDeviceInfo(): Promise<{
     id: string
@@ -193,19 +206,21 @@ export class CloudSync {
   }> {
     return {
       id: this.deviceId,
-      name: os.hostname(), // 使用系统主机名
+      name: os.hostname(),
       platform: process.platform,
       lastSync: new Date().toISOString()
     }
   }
 
   /**
-   * 更新元数据
+   * Update metadata
+   * @param metadata
+   * @returns void
    */
   private async updateMetadata(metadata: SyncMetadata): Promise<void> {
     const deviceInfo = await this.getDeviceInfo()
 
-    // 更新设备信息
+    // Update device information
     const deviceIndex = metadata.devices.findIndex((device) => device.id === this.deviceId)
     if (deviceIndex >= 0) {
       metadata.devices[deviceIndex] = deviceInfo
@@ -213,21 +228,22 @@ export class CloudSync {
       metadata.devices.push(deviceInfo)
     }
 
-    // 更新时间戳
+    // Update timestamp
     metadata.timestamp = new Date().toISOString()
 
-    // 保存更新后的元数据
+    // Update metadata file
     await this.putJson(this.normalizeWebDAVPath(this.config.remotePath, 'metadata.json'), metadata)
   }
 
   /**
-   * 上传数据库到WebDAV
+   * Upload database
+   * @returns void
    */
   async uploadDatabase(): Promise<void> {
     let tempZipPath = path.join(getAppTempPath(), `vnite-backup-${Date.now()}`)
 
     try {
-      // 1. 停止文件监视
+      // 1. Stop file watcher
       stopWatcher()
       this.updateSyncStatus({
         status: 'syncing',
@@ -235,10 +251,10 @@ export class CloudSync {
         timestamp: new Date().toISOString()
       })
 
-      // 2. 确保临时目录存在
+      // 2. Ensure temp directory
       await fse.ensureDir(path.dirname(tempZipPath))
 
-      // 3. 压缩数据库文件
+      // 3. Zip database
       const dataPath = await getDataPath('')
       await zipFolder(dataPath, tempZipPath, 'vnite-database', {
         exclude: ['path.json', 'device-id.json']
@@ -246,10 +262,10 @@ export class CloudSync {
 
       tempZipPath = path.join(tempZipPath, 'vnite-database.zip')
 
-      // 4. 计算校验和
+      // 4. Calculate checksum
       const checksum = await this.calculateFileChecksum(tempZipPath)
 
-      // 5. 创建元数据
+      // 5. Create metadata
       const metadata: SyncMetadata = {
         version: new Date().toISOString(),
         timestamp: new Date().toISOString(),
@@ -258,35 +274,35 @@ export class CloudSync {
         lastModified: (await fse.stat(dataPath)).mtime.toISOString()
       }
 
-      // 如果远程已存在元数据，则保留现有的设备列表
+      // If metadata file exists, keep existing device information
       const mainMetadataPath = this.normalizeWebDAVPath(this.config.remotePath, 'metadata.json')
       if (await this.client.exists(mainMetadataPath)) {
         const existingMetadata = await this.getRemoteJson<SyncMetadata>(mainMetadataPath)
         metadata.devices = existingMetadata.devices
       }
 
-      // 更新元数据中的设备信息
+      // Update device information in metadata
       await this.updateMetadata(metadata)
 
       await this.ensureRemoteDirectory()
 
-      // 6. 检查是否存在主备份，如果存在则重命名为历史版本
+      // 6. Check if main backup exists, if so, rename it to history
       const timestamp = new Date().toISOString().replace(/[:]/g, '-').replace(/\..+/, '')
       const mainBackupPath = this.normalizeWebDAVPath(this.config.remotePath, 'database.zip')
 
       if (await this.client.exists(mainBackupPath)) {
-        // 重命名主备份为历史版本，使用完整的时间戳
+        // Rename existing main backup to history
         await this.client.moveFile(
           mainBackupPath,
           this.normalizeWebDAVPath(this.config.remotePath, `database-${timestamp}.zip`)
         )
       }
 
-      // 7. 上传新的主备份
+      // 7. Upload new main backup
       const zipContent = await fse.readFile(tempZipPath)
       await this.putFileContents(mainBackupPath, zipContent)
 
-      // 9. 清理旧的历史版本（保留最近7个和30天内）
+      // 9. Cleanup old versions(keep latest 7 versions and versions within 30 days)
       await this.cleanupOldVersions()
 
       this.updateSyncStatus({
@@ -303,20 +319,20 @@ export class CloudSync {
       })
       throw error
     } finally {
-      // 清理临时文件
+      // Cleanup temp files
       await fse.remove(tempZipPath).catch(console.error)
-      // 恢复文件监视
+      // Restart file watcher
       await setupWatcher(this.mainWindow)
     }
   }
 
   /**
-   * 获取目录内容并处理响应
+   * Get directory files
    */
   private async getDirectoryFiles(remotePath: string): Promise<FileStat[]> {
     const response = await this.client.getDirectoryContents(remotePath)
 
-    // 处理不同的响应类型
+    // Handling different response types
     if (Array.isArray(response)) {
       return response
     } else if (response && typeof response === 'object' && 'data' in response) {
@@ -327,15 +343,16 @@ export class CloudSync {
   }
 
   /**
-   * 清理旧的历史版本
-   * 保留：1. 今天的最近7次备份 2. 30天内每天的备份
+   * Cleanup old versions
+   * Keep the latest 7 versions and the versions within 30 days
+   * @returns void
    */
   private async cleanupOldVersions(): Promise<void> {
     try {
-      // 获取目录下所有文件
+      // Get all files in the directory
       const files = await this.getDirectoryFiles(this.config.remotePath)
 
-      // 筛选出历史版本文件并按日期时间排序
+      // Filter out historical versions of files and sort them by date and time
       const historyFiles = files
         .filter(
           (file) =>
@@ -346,21 +363,21 @@ export class CloudSync {
         .map((file) => ({
           basename: file.basename,
           date: new Date(file.basename.replace('database-', '').replace('.zip', '')),
-          // 添加日期字符串用于分组
+          // Adding date strings for grouping
           dateString: new Date(file.basename.replace('database-', '').replace('.zip', ''))
             .toISOString()
             .split('T')[0]
         }))
         .sort((a, b) => b.date.getTime() - a.date.getTime())
 
-      // 获取30天前的日期
+      // Get the date 30 days ago
       const thirtyDaysAgo = new Date()
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
-      // 获取今天的日期字符串
+      // Get today's date string
       const today = new Date().toISOString().split('T')[0]
 
-      // 按日期分组
+      // Grouping by date
       const filesByDate = new Map<string, typeof historyFiles>()
       historyFiles.forEach((file) => {
         if (!filesByDate.has(file.dateString)) {
@@ -369,23 +386,23 @@ export class CloudSync {
         filesByDate.get(file.dateString)!.push(file)
       })
 
-      // 要保留的文件集合
+      // Collection of documents to be retained
       const filesToKeep = new Set<string>()
 
-      // 处理每一天的文件
+      // Processing of documents for each day
       filesByDate.forEach((dailyFiles, dateString) => {
         if (dateString === today) {
-          // 今天的文件：保留最近7次
+          // Today's document: retention of the last seven
           dailyFiles.slice(0, 7).forEach((file) => {
             filesToKeep.add(file.basename)
           })
         } else if (new Date(dateString) >= thirtyDaysAgo) {
-          // 30天内的其他天：每天保留最新的一次备份
+          // Other days within 30 days: keep the latest backup once a day
           filesToKeep.add(dailyFiles[0].basename)
         }
       })
 
-      // 删除不需要保留的文件
+      // Deletion of documents not required for retention
       for (const file of historyFiles) {
         if (!filesToKeep.has(file.basename)) {
           try {
@@ -399,7 +416,7 @@ export class CloudSync {
         }
       }
 
-      // 打印保留的备份信息
+      // Printing retained backup information
       console.log('Retained backups:', {
         total: filesToKeep.size,
         todayBackups: filesByDate.get(today)?.slice(0, 7).length || 0,
@@ -411,19 +428,20 @@ export class CloudSync {
   }
 
   /**
-   * 获取所有备份版本列表
+   * Get backup list
+   * @returns backup list
    */
   async getBackupList(): Promise<{
     main: SyncMetadata
     history: { filename: string; timestamp: string }[]
   }> {
     try {
-      // 获取主备份元数据
+      // Get primary backup metadata
       const mainMetadata = await this.getRemoteJson<SyncMetadata>(
         this.normalizeWebDAVPath(this.config.remotePath, 'metadata.json')
       )
 
-      // 获取历史版本列表
+      // Get the list of historical versions
       const files = await this.getDirectoryFiles(this.config.remotePath)
       const historyFiles = files
         .filter(
@@ -452,7 +470,9 @@ export class CloudSync {
   }
 
   /**
-   * 恢复指定的历史版本
+   * Restore history version
+   * @param filename
+   * @returns Promise<void>
    */
   async restoreHistoryVersion(filename: string): Promise<void> {
     const tempZipPath = path.join(getAppTempPath(), `vnite-restore-${Date.now()}.zip`)
@@ -465,7 +485,7 @@ export class CloudSync {
         timestamp: new Date().toISOString()
       })
 
-      // 下载历史版本
+      // Download historical versions
       const zipContent = await this.client.getFileContents(
         this.normalizeWebDAVPath(this.config.remotePath, filename)
       )
@@ -473,12 +493,12 @@ export class CloudSync {
       const zipBuffer = Buffer.isBuffer(zipContent) ? zipContent : Buffer.from(zipContent as any)
       await fse.writeFile(tempZipPath, zipBuffer)
 
-      // 创建当前版本的备份
+      // Create a backup of the current version
       const dataPath = await getDataPath('')
       const backupPath = path.join(app.getPath('userData'), 'backups', `backup-${Date.now()}`)
       await fse.copy(dataPath, backupPath)
 
-      // 恢复历史版本
+      // Restore Historical Versions
       await unzipFile(tempZipPath, dataPath)
 
       this.updateSyncStatus({
@@ -487,7 +507,7 @@ export class CloudSync {
         timestamp: new Date().toISOString()
       })
 
-      // 重启应用
+      // Restart the application
       setTimeout(() => {
         app.relaunch()
         app.exit(0)
@@ -506,12 +526,14 @@ export class CloudSync {
   }
 
   /**
-   * 从WebDAV获取文件内容并解析为JSON
+   * Get remote JSON data
+   * @param remotePath
+   * @returns Promise<T>
    */
   private async getRemoteJson<T>(remotePath: string): Promise<T> {
     const response = await this.client.getFileContents(remotePath, { format: 'text' })
 
-    // 处理不同的响应类型
+    // Handling different response types
     if (typeof response === 'string') {
       return JSON.parse(response)
     } else if (Buffer.isBuffer(response)) {
@@ -528,7 +550,8 @@ export class CloudSync {
   }
 
   /**
-   * 从WebDAV下载并恢复数据库
+   * Download database and restore
+   * @returns Promise<void>
    */
   async downloadDatabase(): Promise<void> {
     const tempZipPath = path.join(getAppTempPath(), `vnite-download-${Date.now()}.zip`)
@@ -541,33 +564,33 @@ export class CloudSync {
         timestamp: new Date().toISOString()
       })
 
-      // 使用新的getRemoteJson方法获取元数据
+      // Getting metadata
       const metadata = await this.getRemoteJson<SyncMetadata>(
         this.normalizeWebDAVPath(this.config.remotePath, 'metadata.json')
       )
 
-      // 下载数据库文件
+      // Download database files
       const zipContent = await this.client.getFileContents(
         this.normalizeWebDAVPath(this.config.remotePath, 'database.zip')
       )
 
-      // 处理不同的响应类型
+      // Handling different response types
       const zipBuffer = Buffer.isBuffer(zipContent) ? zipContent : Buffer.from(zipContent as any)
 
       await fse.writeFile(tempZipPath, zipBuffer)
 
-      // 4. 验证校验和
+      // verify a checksum
       const checksum = await this.calculateFileChecksum(tempZipPath)
       if (checksum !== metadata.checksum) {
         throw new Error('校验和验证失败，文件可能已损坏')
       }
 
-      // 5. 创建备份
+      // Creating a Backup
       const dataPath = await getDataPath('')
       const backupPath = path.join(getAppTempPath(), 'backups', `backup-${Date.now()}`)
       await fse.copy(dataPath, backupPath)
 
-      // 6. 解压并恢复数据库
+      // Unzip and restore the database
       this.updateSyncStatus({
         status: 'syncing',
         message: '正在恢复数据库...',
@@ -582,7 +605,7 @@ export class CloudSync {
         timestamp: new Date().toISOString()
       })
 
-      // 7. 重启应用
+      // Restart the application
       setTimeout(() => {
         app.relaunch()
         app.exit(0)
@@ -596,11 +619,18 @@ export class CloudSync {
       })
       throw error
     } finally {
-      // 8. 清理临时文件
+      // Cleaning up temporary files
       await fse.remove(tempZipPath).catch(console.error)
     }
   }
 
+  /**
+   * Get latest modified time
+   * @param dirPath
+   * @param currentDepth
+   * @param options
+   * @returns Promise<number>
+   */
   async getLatestModifiedTime(
     dirPath: string,
     currentDepth: number = 0,
@@ -649,7 +679,8 @@ export class CloudSync {
   }
 
   /**
-   * 同步方法
+   * Sync database
+   * @returns Promise<void>
    */
   async sync(): Promise<void> {
     try {
@@ -661,17 +692,17 @@ export class CloudSync {
         return
       }
 
-      // 获取远程元数据
+      // Getting remote metadata
       const remoteMetadata = await this.getRemoteJson<SyncMetadata>(remoteMetadataPath)
 
-      // 确保当前设备在设备列表中
+      // Make sure the current device is in the device list
       if (!remoteMetadata.devices.some((device) => device.id === this.deviceId)) {
-        // 如果是新设备，先下载远程数据
+        // If it's a new device, download the remote data first
         await this.downloadDatabase()
         return
       }
 
-      // 比较本地和远程的最后修改时间
+      // Compare local and remote last modification times
       const dataPath = await getDataPath('')
       const localLastModified = await this.getLatestModifiedTime(dataPath, 0, {
         maxDepth: 3,
@@ -685,7 +716,7 @@ export class CloudSync {
       } else if (localLastModified < remoteLastModified) {
         await this.downloadDatabase()
       } else {
-        // 即使数据没有变化，也更新设备的最后同步时间
+        // Update the last synchronization time of the device even if the data has not changed
         await this.updateMetadata(remoteMetadata)
 
         this.updateSyncStatus({
@@ -701,13 +732,11 @@ export class CloudSync {
   }
 
   /**
-   * 规范化 WebDAV 路径
+   * Normalize WebDAV path
+   * @param parts
+   * @returns string
    */
   private normalizeWebDAVPath(...parts: string[]): string {
-    // 1. 合并路径部分
-    // 2. 将反斜杠转换为正斜杠
-    // 3. 确保路径以正斜杠开头
-    // 4. 移除重复的正斜杠
     const normalized =
       '/' +
       parts
@@ -721,20 +750,23 @@ export class CloudSync {
   }
 
   /**
-   * 上传文件内容
+   * Put file contents
+   * @param remotePath
+   * @param content
+   * @returns Promise<void>
    */
   private async putFileContents(remotePath: string, content: Buffer | string): Promise<void> {
     try {
-      // 规范化路径
+      // Normalization path
       console.log('Uploading file to normalized path:', remotePath)
 
-      // 确保父目录存在
+      // Make sure the parent directory exists
       const parentDir = path.dirname(remotePath)
       if (parentDir !== '/') {
         await this.ensureRemoteDirectory()
       }
 
-      // 尝试上传文件
+      // Trying to upload a file
       await this.client.putFileContents(remotePath, content, {
         overwrite: true,
         onUploadProgress: (progress) => {
@@ -748,13 +780,14 @@ export class CloudSync {
   }
 
   /**
-   * 测试 WebDAV 连接
+   * Test WebDAV connection
+   * @returns Promise<boolean>
    */
   async testConnection(): Promise<boolean> {
     try {
       console.log('Testing WebDAV connection...')
 
-      // 测试基本连接
+      // Test Basic Connections
       const testPath = this.normalizeWebDAVPath(this.config.remotePath, '.test')
       await this.putFileContents(testPath, 'test')
       await this.client.deleteFile(testPath)
@@ -768,14 +801,19 @@ export class CloudSync {
   }
 
   /**
-   * 上传JSON数据
+   * Put JSON data
+   * @param remotePath
+   * @param data
+   * @returns Promise<void>
    */
   private async putJson(remotePath: string, data: any): Promise<void> {
     await this.putFileContents(remotePath, JSON.stringify(data))
   }
 
   /**
-   * 计算文件校验和
+   * Calculate file checksum
+   * @param filePath
+   * @returns Promise<string>
    */
   private async calculateFileChecksum(filePath: string): Promise<string> {
     const hash = crypto.createHash('sha256')
@@ -789,14 +827,17 @@ export class CloudSync {
   }
 
   /**
-   * 确保远程目录存在
+   * Ensure remote directory
+   * @returns Promise<void>
    */
   private async ensureRemoteDirectory(): Promise<void> {
     await this.client.createDirectory(this.config.remotePath, { recursive: true })
   }
 
   /**
-   * 更新同步状态
+   * Update sync status
+   * @param status
+   * @returns void
    */
   private updateSyncStatus(status: SyncStatus): void {
     this.mainWindow.webContents.send('cloud-sync-status', status)

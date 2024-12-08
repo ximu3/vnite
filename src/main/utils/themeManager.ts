@@ -2,6 +2,9 @@ import { getDataPath } from './path'
 import fse from 'fs-extra'
 import log from 'electron-log/main.js'
 
+/**
+ * A class to manage the theme of the application
+ */
 export class ThemeManager {
   private static instance: ThemeManager | null = null
   private themePath: string

@@ -18,16 +18,16 @@ export async function fileLuancher(gameId: string): Promise<void> {
       stdio: 'ignore'
     })
 
-    // 错误处理
+    // error handling
     launcher.on('error', (err) => {
       console.error(`Failed to launch file for game ${gameId}:`, err)
       throw err
     })
 
-    // 让子进程独立运行
+    // Letting sub-processes run independently
     launcher.unref()
 
-    // 启动监视器
+    // Startup Monitor
     startMonitor(gameId, fileConfig.timerPath)
   } catch (error) {
     console.error(`Error in fileLauncher for game ${gameId}:`, error)
@@ -49,8 +49,8 @@ export async function urlLauncher(gameId: string): Promise<void> {
     }
 
     const args = urlConfig.browserPath
-      ? ['""', urlConfig.browserPath, urlConfig.url] // 使用指定浏览器
-      : ['""', urlConfig.url] // 使用默认浏览器
+      ? ['""', urlConfig.browserPath, urlConfig.url] // Use the specified browser
+      : ['""', urlConfig.url] // Use the specified browser
 
     const launcher = spawn('start', args, {
       shell: true,
@@ -65,7 +65,7 @@ export async function urlLauncher(gameId: string): Promise<void> {
 
     launcher.unref()
 
-    // 启动监视器
+    // Startup Monitor
     if (urlConfig.timerMode === 'browser') {
       startMonitor(gameId, urlConfig.browserPath)
     } else {
@@ -90,7 +90,7 @@ export async function scriptLauncher(gameId: string): Promise<void> {
       throw new Error(`Invalid script configuration for game ${gameId}`)
     }
 
-    // 构建命令字符串
+    // Building command strings
     const commands = [
       '/c',
       'chcp 65001',
@@ -114,7 +114,7 @@ export async function scriptLauncher(gameId: string): Promise<void> {
 
     launcher.unref()
 
-    // 启动监视器
+    // Startup Monitor
     startMonitor(gameId, scriptConfig.timerPath)
   } catch (err) {
     console.error(`Error in scriptLauncher for game ${gameId}:`, err)

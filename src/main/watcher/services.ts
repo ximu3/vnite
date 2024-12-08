@@ -16,6 +16,11 @@ const imageFullNames = imageFileNames
   .map((name) => imageFileExtensions.map((ext) => `${name}.${ext}`))
   .flat()
 
+/**
+ * Set up the watcher
+ * @param mainWindow The main window
+ * @returns A promise that resolves when the operation is complete.
+ */
 export async function setupWatcher(mainWindow: BrowserWindow): Promise<void> {
   try {
     await setupDBWatcher(
@@ -43,6 +48,9 @@ export async function setupWatcher(mainWindow: BrowserWindow): Promise<void> {
   }
 }
 
+/**
+ * Stop the watcher
+ */
 export function stopWatcher(): void {
   try {
     stopWatchers()

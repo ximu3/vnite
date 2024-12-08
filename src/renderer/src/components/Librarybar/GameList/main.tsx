@@ -15,15 +15,12 @@ export function GameList({
   // 从 store 获取 filter
   const { filter } = useFilterStore()
 
-  // 直接返回条件渲染的结果
   if (!isEqual(filter, {})) {
     return <FilterGame />
   }
-
   if (query && query.trim() !== '') {
     return <Search query={query} />
   }
-
   if (selectedGroup === 'collection') {
     return <Collection />
   }
