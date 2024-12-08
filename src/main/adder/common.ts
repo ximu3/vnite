@@ -65,9 +65,9 @@ export async function addGameToDB({
 
   const mainWindow = BrowserWindow.getAllWindows()[0]
 
-  // stopWatcher()
+  stopWatcher()
 
-  // await setupWatcher(mainWindow)
+  await setupWatcher(mainWindow)
 
   mainWindow.webContents.send('reload-db-values', `games/${dbId}/cover.webp`)
   mainWindow.webContents.send('reload-db-values', `games/${dbId}/background.webp`)
