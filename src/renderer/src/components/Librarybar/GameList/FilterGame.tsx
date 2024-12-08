@@ -10,7 +10,7 @@ export function FilterGame(): JSX.Element {
   const { filter: filterGame } = useGameIndexManager()
   const games = filterGame(filter)
   return (
-    <ScrollArea className={cn('w-full h-[700px] pr-3 -mr-3', '3xl:h-[900px]')}>
+    <ScrollArea className={cn('w-full h-full pr-3 -mr-3')}>
       <Accordion
         type="multiple"
         defaultValue={['filter']}

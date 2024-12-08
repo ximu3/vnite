@@ -8,7 +8,7 @@ export function Search({ query }: { query: string }): JSX.Element {
   const { search } = useGameIndexManager()
   const games = search(query)
   return (
-    <ScrollArea className={cn('w-full h-[700px] pr-3 -mr-3', '3xl:h-[900px]')}>
+    <ScrollArea className={cn('w-full h-full pr-3 -mr-3')}>
       <Accordion
         type="multiple"
         defaultValue={['all']}

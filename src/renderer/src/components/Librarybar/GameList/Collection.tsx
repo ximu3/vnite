@@ -11,7 +11,7 @@ export function Collection(): JSX.Element {
   const { collections } = useCollections()
   const defaultValues = [...Object.keys(collections), 'all', 'recentGames']
   return (
-    <ScrollArea className={cn('w-full h-[700px] pr-3 -mr-3', '3xl:h-[900px]')}>
+    <ScrollArea className={cn('w-full h-full pr-3 -mr-3')}>
       {defaultValues.length > 2 ? (
         <Accordion
           key={'collection-yes'}
