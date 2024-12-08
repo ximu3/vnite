@@ -231,7 +231,7 @@ if (!gotTheLock) {
     await setupOpenAtLogin()
 
     // Initialize cloud sync services
-    await initializeCloudsyncServices()
+    await initializeCloudsyncServices(mainWindow)
 
     // Setup auto updater
     setupUpdater(mainWindow)

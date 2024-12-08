@@ -19,9 +19,7 @@ interface BackupList {
   history: { filename: string; timestamp: string }[]
 }
 
-export async function initializeCloudsyncServices(): Promise<void> {
-  const mainWindow = BrowserWindow.getAllWindows()[0]
-
+export async function initializeCloudsyncServices(mainWindow: BrowserWindow): Promise<void> {
   // 初始化云同步服务,等待渲染进程准备好
   setTimeout(async () => {
     await CloudSyncService.setup(mainWindow)
