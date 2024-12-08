@@ -74,9 +74,9 @@ export function AllGames(): JSX.Element {
       {/* 游戏列表容器 */}
       <div
         className={cn(
-          'flex flex-row gap-6 grow flex-wrap',
+          'flex flex-row grow flex-wrap gap-6 justify-between',
           'w-full',
-          'pt-2 pb-6 pl-5' // 添加内边距以显示阴影
+          'pt-2 pl-5 pr-5' // 添加内边距以显示阴影
         )}
       >
         {/* 包装器确保每个 Poster 保持固定宽度 */}
@@ -89,6 +89,9 @@ export function AllGames(): JSX.Element {
           >
             <GamePoster gameId={gameId} />
           </div>
+        ))}
+        {Array.from({ length: 14 }).map((_, index) => (
+          <div key={index} className={cn('w-[148px] h-0', '3xl:w-[176px]')}></div>
         ))}
       </div>
     </div>
