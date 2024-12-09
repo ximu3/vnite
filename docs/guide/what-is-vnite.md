@@ -1,6 +1,6 @@
 # Vnite 是什么？
 
-Vnite 是一个 视觉小说 / Galgame 管理软件，旨在为玩家提供统一的用户界面来管理、启动、记录本地的视觉小说。
+Vnite 是一个多功能的游戏管理软件，旨在为用户提供一个统一的用户界面来 记录、管理、同步 游戏之旅。
 
 <div class="tip custom-block" style="padding-top: 8px">
 
@@ -10,30 +10,32 @@ Vnite 是一个 视觉小说 / Galgame 管理软件，旨在为玩家提供统�
 
 ## 功能
 
-- 完善的 视觉小说 / Galgame 元数据刮削器
+- 现代化的用户界面（支持自定义主题）
 
-- 现代化的用户界面
+- 支持多种数据源（Steam、IGDB、Bangumi、VNDB）
 
-- 简单易用的批量刮削器
+- 多样化的启动方式（文件、链接、脚本），支持高度自定义和预设配置
 
-- 直观的游戏分类逻辑
+- 支持动态分类（按开发商、标签等）
 
-- 基于 Github 的账号系统
+- 所有游戏数据，软件设置均可使用 WebDav 进行多端云同步
 
-- 所有游戏数据，设置均可多端云同步
+- 按次记录的计时器，支持记录单个文件或文件夹
 
-- 专为 中文化 视觉小说 / Galgame 优化的计时器
+- 提供细致的报告功能，便于回顾您的游戏之旅。
 
-- 可为游戏单独设置LE转区启动
+- 支持与其他程序联动（如一键 LE 转区启动）
 
 - 数据与程序完全分离，便于备份和自定义
 
 ## 预览
 
-![screenshot_1](https://img.timero.xyz/i/2024/10/06/6701f06e89465.webp)
+![home](https://img.timero.xyz/i/2024/12/09/6756a383367c8.png)
 
-![screenshot_2](https://img.timero.xyz/i/2024/10/06/6701f0d3b6a22.webp)
+![gameDetail](https://img.timero.xyz/i/2024/12/09/6756a39448b3c.png)
 
-![screenshot_3](https://img.timero.xyz/i/2024/10/06/6701f0e87b7f2.webp)
+![gameRecord](https://img.timero.xyz/i/2024/12/09/6756a3c29eb47.png)
 
-![screenshot_4](https://img.timero.xyz/i/2024/10/06/6701f0b7d964b.webp)
+![gameSave](https://img.timero.xyz/i/2024/12/09/6756a3b85e3ab.png)
+
+![record](https://img.timero.xyz/i/2024/12/09/6756a3aadaf97.png)
