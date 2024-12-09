@@ -22,6 +22,12 @@ import { useRunningGames } from '~/pages/Library/store'
 export function Header({ gameId, className }: { gameId: string; className?: string }): JSX.Element {
   const { runningGames } = useRunningGames()
   const [name] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
+  const [originalName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['originalName'])
+  const [showOriginalNameInGameHeader] = useDBSyncedState(false, 'config.json', [
+    'appearances',
+    'gameHeader',
+    'showOriginalNameInGameHeader'
+  ])
   const [playStatus, setPlayStatus] = useDBSyncedState('unplayed', `games/${gameId}/record.json`, [
     'playStatus'
   ])
@@ -71,18 +77,13 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
         className
       )}
     >
-      <div className={cn('flex flex-row gap-5 items-center justify-center')}>
-        <div
-          className={cn(
-            'font-bold text-2xl text-accent-foreground truncate max-w-[800px]',
-            '3xl:max-w-[1000px]'
+      <div className={cn('flex flex-row gap-3 justify-center max-w-[800px]', '3xl:max-w-[1000px]')}>
+        <div className={cn('truncate')}>
+          <span className={cn('font-bold text-2xl text-accent-foreground')}>{name}</span>
+          {showOriginalNameInGameHeader && originalName && originalName !== name && (
+            <span className={cn('font-bold text-accent-foreground ml-3')}>{originalName}</span>
           )}
-        >
-          {name}
         </div>
-        {/* <div className={cn('flex flex-row gap-2 items-center justify-center')}>
-          <Badge variant="secondary">{gamePath === '' ? '未安装' : '已安装'}</Badge>
-        </div> */}
       </div>
       <div className={cn('flex flex-row gap-3 justify-center items-center', '3xl:gap-5')}>
         {runningGames.includes(gameId) ? (
