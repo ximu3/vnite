@@ -104,13 +104,13 @@ export function Database(): JSX.Element {
           <div className={cn('flex flex-row gap-5 items-center')}>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant={'outline'}>导入v1版本数据库</Button>
+                <Button variant={'outline'}>导入v1数据库</Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>确定要导入v1版本数据库吗？</AlertDialogTitle>
+                  <AlertDialogTitle>确定要导入v1数据库吗？</AlertDialogTitle>
                   <AlertDialogDescription>
-                    导入v1版本数据库将覆盖当前数据库，此操作不可逆！操作结束后应用将自动重启。
+                    导入v1数据库将覆盖当前数据库，此操作不可逆！操作结束后应用将自动重启。
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
