@@ -5,7 +5,7 @@ layout: home
 hero:
   name: 'Vnite'
   text: '本地游戏管理器'
-  tagline: 简单，强大，有点萌。
+  tagline: 记录、管理、同步您的游戏之旅。
   image:
     src: /icon.png
     alt: Vnite
