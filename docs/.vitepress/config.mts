@@ -42,6 +42,7 @@ export default defineConfig({
       {
         text: '高级',
         items: [
+          { text: '自定义主题', link: '/guide/custom-theme' },
           { text: '链接唤醒', link: '/guide/link-wakeup' },
           { text: '启动器', link: '/guide/launcher' }
         ]
