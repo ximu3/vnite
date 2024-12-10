@@ -1,13 +1,5 @@
-<style>
-  .centered-image {
-    max-width: 100%;
-    max-height: 230px;
-    height: auto;
-  }
-</style>
-
 <p align="center">
-  <img src="https://img.timero.xyz/i/2024/12/09/67569c2a322be.png" alt="cover" class="centered-image">
+  <img src="https://img.timero.xyz/i/2024/12/09/67569c2a322be.png" alt="cover" width="60%">
 </p>
 
 <p align="center">
