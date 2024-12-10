@@ -1,6 +1,6 @@
 # Vnite 是什么？
 
-Vnite 是一个多功能的游戏管理软件，旨在为用户提供一个统一的用户界面来 记录、管理、同步 游戏之旅。
+Vnite 是一个多功能的游戏管理软件，旨在提供一个统一的用户界面来 记录、管理、同步 您的游戏之旅。
 
 <div class="tip custom-block" style="padding-top: 8px">
 
