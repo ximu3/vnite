@@ -55,6 +55,7 @@
     "dotenv": "^16.4.6",
     "electron-log": "^5.2.0",
     "electron-updater": "^6.1.7",
+    "electron-window-state": "^5.0.3",
     "fs-extra": "^11.2.0",
     "html-react-parser": "^5.1.18",
     "html2canvas": "^1.4.1",

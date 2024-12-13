@@ -4,6 +4,7 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { setupIPC } from './ipc'
 import log from 'electron-log/main.js'
+import windowStateKeeper from 'electron-window-state'
 import { getLogsPath } from './utils'
 import { setupWatcher, stopWatcher } from './watcher'
 import {
@@ -12,7 +13,8 @@ import {
   setupOpenAtLogin,
   setupTray,
   TrayManager,
-  parseGameIdFromUrl
+  parseGameIdFromUrl,
+  calculateWindowSize
 } from './utils'
 import { initializeCloudsyncServices } from './cloudSync'
 import { setupUpdater } from './updater'
@@ -70,12 +72,23 @@ async function handleGameUrl(url: string): Promise<void> {
 }
 
 function createWindow(): void {
+  const windowSize = calculateWindowSize(0.8, 0.6)
+
+  const mainWindowState = windowStateKeeper({
+    defaultWidth: windowSize.width,
+    defaultHeight: windowSize.height,
+    maximize: false,
+    fullScreen: false
+  })
+
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 1600,
-    height: 900,
-    minWidth: 1600,
-    minHeight: 900,
+    x: mainWindowState.x,
+    y: mainWindowState.y,
+    width: mainWindowState.width,
+    height: mainWindowState.height,
+    minWidth: windowSize.minWidth,
+    minHeight: windowSize.minHeight,
     show: false,
     frame: false,
     icon: icon,
@@ -86,6 +99,8 @@ function createWindow(): void {
       sandbox: false
     }
   })
+
+  mainWindowState.manage(mainWindow)
 
   setupIPC(mainWindow)
 
@@ -126,9 +141,10 @@ function createWindow(): void {
 }
 
 function createSplashWindow(): void {
+  const windowSize = calculateWindowSize(0.25, 0)
   splashWindow = new BrowserWindow({
-    width: 600,
-    height: 300,
+    width: windowSize.width,
+    height: windowSize.height,
     frame: false,
     transparent: true,
     show: false,
