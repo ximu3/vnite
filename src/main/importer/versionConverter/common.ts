@@ -369,7 +369,8 @@ export async function importV1Data(zipFilePath: string, outputDir: string): Prom
     return
   } finally {
     // Clean up the temporary catalog
-    await fse.remove(tempDir)
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    fse.removeSync(tempDir)
     app.relaunch()
     app.exit()
   }
