@@ -51,12 +51,12 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
   return (
     <div className="pt-2">
       <Card className="group w-full p-3">
-        <div className={cn('overflow-auto h-[684px] scrollbar-base', '3xl:h-[870px]')}>
+        <div className={cn('overflow-auto h-[684px] scrollbar-base', '3xl:h-[870px] sm:h-[70vh]')}>
           <Table className="table-fixed">
             <TableHeader>
-              <TableRow className={cn('hover:bg-transparent')}>
+              <TableRow className={cn('bg-card')}>
                 <TableHead className={cn('w-1/5')}>日期</TableHead>
-                <TableHead className={cn('w-2/3')}>备注</TableHead>
+                <TableHead className={cn('w-2/3', 'sm:w-1/3')}>备注</TableHead>
                 <TableHead className={cn('w-1/6')}>操作</TableHead>
               </TableRow>
             </TableHeader>

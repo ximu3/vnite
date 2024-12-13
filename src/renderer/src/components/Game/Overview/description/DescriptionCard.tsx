@@ -26,7 +26,7 @@ export function DescriptionCard({
         <div
           className={cn(
             'max-h-[310px] text-sm overflow-auto scrollbar-base',
-            '3xl:max-h-[500px]',
+            '3xl:max-h-[500px] sm:max-h-[20vh]',
             'prose-a:text-primary', // Link Color
             'prose-a:no-underline hover:prose-a:underline', // underline effect
             'whitespace-pre-line'

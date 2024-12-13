@@ -26,7 +26,7 @@ export function TagsCard({
       <CardContent>
         <div
           className={cn(
-            'text-sm justify-start items-start overflow-auto scrollbar-base max-h-[54px] -mb-2'
+            'text-sm justify-start items-start overflow-auto scrollbar-base sm:max-h-[5vh] max-h-[54px] -mb-2'
           )}
         >
           <div className={cn('flex flex-wrap mb-[8px]')}>

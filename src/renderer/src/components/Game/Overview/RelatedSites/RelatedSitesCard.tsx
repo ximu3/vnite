@@ -31,7 +31,7 @@ export function RelatedSitesCard({
         <div
           className={cn(
             'flex flex-col text-sm justify-start items-start overflow-auto scrollbar-base max-h-[220px]',
-            '3xl:max-h-[408px]'
+            '3xl:max-h-[408px] sm:max-h-[3vh] '
           )}
         >
           {isEqual(relatedSites, []) || isEqual(relatedSites, [{ label: '', url: '' }])

@@ -68,7 +68,7 @@ export function ChartCard({
             <Card className={cn('p-5 max-h-full rounded-[0.3rem]', '3xl:max-h-full')}>
               <TimerChart
                 data={playTimeByDateRange}
-                className={cn('max-h-[500px] w-full -ml-3', '3xl:max-h-[680px]')}
+                className={cn('max-h-[500px] w-full -ml-3', '3xl:max-h-[680px] sm:max-h-[42vh]')}
               />
             </Card>
           )}

@@ -72,7 +72,7 @@ export function ScreenshotList(): JSX.Element {
       <div className={cn('flex flex-col w-full h-full gap-3')}>
         <div className="w-full h-full">
           <div className={cn('scrollbar-base overflow-auto pr-3')}>
-            <div className={cn('grid grid-cols-2 gap-3 h-[630px]', '3xl:h-[790px]')}>
+            <div className={cn('grid grid-cols-2 gap-3 h-[72vh]')}>
               {screenshotList.length !== 0 ? (
                 screenshotList.map((image) => (
                   <div

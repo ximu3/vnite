@@ -14,7 +14,7 @@ export function GameList(): JSX.Element {
         <Card className={cn('grow pt-3')}>
           <CardContent className="h-full">
             <div className="w-full">
-              <ScrollArea className={cn('h-[54vh]', '3xl:h-[60vh]')}>
+              <ScrollArea className={cn('h-[54vh]', '3xl:h-[60vh]', 'sm:h-[48vh]')}>
                 <Table>
                   <TableHeader className={cn('bg-card')}>
                     <TableRow>
