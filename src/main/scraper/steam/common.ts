@@ -143,7 +143,7 @@ export async function checkSteamGameExists(appId: string): Promise<boolean> {
     return data[appId]?.success || false
   } catch (error) {
     console.error(`Error checking game existence for ID ${appId}:`, error)
-    return false
+    throw error
   }
 }
 

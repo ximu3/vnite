@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { toast } from 'sonner'
 
 export type DataSource = 'vndb' | 'igdb' | 'steam' | 'bangumi'
 
@@ -33,9 +34,10 @@ interface GameAdderState {
   setScreenshotList: (screenshotList: string[]) => void
   screenshotUrl: string
   setScreenshotUrl: (screenshotUrl: string) => void
+  handleClose: () => void
 }
 
-export const useGameAdderStore = create<GameAdderState>((set) => ({
+export const useGameAdderStore = create<GameAdderState>((set, get) => ({
   isOpen: false,
   setIsOpen: (isOpen): void => set({ isOpen }),
   isLoading: false,
@@ -53,7 +55,34 @@ export const useGameAdderStore = create<GameAdderState>((set) => ({
   screenshotList: [],
   setScreenshotList: (screenshotList): void => set({ screenshotList }),
   screenshotUrl: '',
-  setScreenshotUrl: (screenshotUrl): void => set({ screenshotUrl })
+  setScreenshotUrl: (screenshotUrl): void => set({ screenshotUrl }),
+  handleClose: (): void => {
+    const {
+      isLoading,
+      setIsOpen,
+      setDataSource,
+      setDbId,
+      setId,
+      setName,
+      setScreenshotList,
+      setScreenshotUrl,
+      setGameList,
+      setIsLoading
+    } = get()
+    if (isLoading) {
+      toast.warning('请等待游戏添加完成')
+      return
+    }
+    setIsOpen(false)
+    setDataSource('steam')
+    setDbId('')
+    setId('')
+    setName('')
+    setScreenshotList([])
+    setScreenshotUrl('')
+    setGameList([])
+    setIsLoading(false)
+  }
 }))
 
 export const initializeStore = (defaultDataSource: DataSource): void => {

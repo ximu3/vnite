@@ -87,7 +87,7 @@ export function Search({ className }: { className?: string }): JSX.Element {
     }
   }
   return (
-    <div className={cn('w-[600px] h-[170px]', className)}>
+    <div className={cn('w-[36vw] h-auto', '3xl:w-[30vw]', className)}>
       <div className={cn('flex flex-col w-full h-full gap-3 p-3 justify-center')}>
         <div className={cn('flex flex-row gap-3 items-center justify-start')}>
           <div>数据来源</div>
