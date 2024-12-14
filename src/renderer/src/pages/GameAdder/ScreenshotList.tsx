@@ -2,7 +2,7 @@ import { cn } from '~/utils'
 import { Button } from '@ui/button'
 import { toast } from 'sonner'
 import { useGameAdderStore } from './store'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { ipcInvoke } from '~/utils'
 import { useNavigate } from 'react-router-dom'
 
@@ -24,6 +24,7 @@ export function ScreenshotList(): JSX.Element {
   } = useGameAdderStore()
 
   const navigate = useNavigate()
+  const [isAdding, setIsAdding] = useState(false)
 
   useEffect(() => {
     toast.promise(
@@ -47,9 +48,12 @@ export function ScreenshotList(): JSX.Element {
   }, [])
 
   async function addGameToDB(): Promise<void> {
+    if (isAdding) return
+    setIsAdding(true)
     toast.promise(
       (async (): Promise<void> => {
         await ipcInvoke('add-game-to-db', { dataSource, id, dbId, screenshotUrl })
+        setIsAdding(false)
         setIsOpen(false)
         setDbId('')
         setId('')
@@ -63,7 +67,10 @@ export function ScreenshotList(): JSX.Element {
       {
         loading: '添加游戏中...',
         success: '添加游戏成功',
-        error: (err) => `添加游戏失败: ${err.message}`
+        error: (err) => {
+          setIsAdding(false)
+          return `添加游戏失败: ${err.message}`
+        }
       }
     )
   }
