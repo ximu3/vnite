@@ -35,7 +35,7 @@ export function Theme(): JSX.Element {
           <Textarea
             value={cssContent}
             onChange={(e) => setCssContent(e.target.value)}
-            className={cn('w-full h-[450px] resize-none font-mono')}
+            className={cn('w-full max-h-[450px] h-[calc(90vh-280px)] resize-none font-mono')}
           />
           <div className={cn('flex flex-row-reverse')}>
             <Button onClick={handleSave} className="mt-4">

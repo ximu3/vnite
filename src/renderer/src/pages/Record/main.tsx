@@ -90,7 +90,7 @@ export function Record({ className }: { className?: string }): JSX.Element {
                     gameId={maxScoreGame}
                     isShowGameName
                     additionalInfo={maxScore == -1 ? '暂无评分' : `${maxScore} 分`}
-                    className={cn('w-full h-[460px]', '3xl:h-[630px]')}
+                    className={cn('w-full aspect-[0.667]')}
                   />
                 ) : (
                   '暂无'
@@ -112,7 +112,7 @@ export function Record({ className }: { className?: string }): JSX.Element {
                         ? '从未游玩'
                         : formatTimeToChinese(maxPlayingTime as number)
                     }
-                    className={cn('w-full h-[460px]', '3xl:h-[630px]')}
+                    className={cn('w-full aspect-[0.667]')}
                   />
                 ) : (
                   '暂无'
@@ -130,7 +130,7 @@ export function Record({ className }: { className?: string }): JSX.Element {
                     gameId={maxPlayedTimesGameId}
                     isShowGameName
                     additionalInfo={maxPlayedTimes == 0 ? '从未游玩' : `${maxPlayedTimes} 次`}
-                    className={cn('w-full h-[460px]', '3xl:h-[630px]')}
+                    className={cn('w-full aspect-[0.667]')}
                   />
                 ) : (
                   '暂无'
@@ -150,7 +150,7 @@ export function Record({ className }: { className?: string }): JSX.Element {
                     additionalInfo={
                       maxSoonDate ? formatDateToChinese(maxSoonDate as string) : '从未运行'
                     }
-                    className={cn('w-full h-[460px]', '3xl:h-[630px]')}
+                    className={cn('w-full aspect-[0.667]')}
                   />
                 ) : (
                   '暂无'
