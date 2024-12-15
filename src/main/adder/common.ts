@@ -20,22 +20,20 @@ import { rebuildRecords } from '~/database/record'
 export async function addGameToDB({
   dataSource,
   id,
-  dbId,
+  preExistingDbId,
   screenshotUrl,
   playingTime
 }: {
   dataSource: string
   id: string
-  dbId?: string
+  preExistingDbId?: string
   screenshotUrl?: string
   playingTime?: number
 }): Promise<void> {
   const metadata = await getGameMetadata(dataSource, id)
   const coverUrl = await getGameCover(dataSource, id)
   const iconUrl = await getGameIcon(dataSource, id)
-  if (!dbId) {
-    dbId = generateUUID()
-  }
+  const dbId = preExistingDbId || generateUUID()
 
   await getDataPath(`games/${dbId}/`, true)
 
@@ -66,11 +64,12 @@ export async function addGameToDB({
     ...metadata
   })
 
-  await setDBValue(`games/${dbId}/record.json`, ['addDate'], new Date().toISOString())
-
-  await setDBValue(`games/${dbId}/launcher.json`, ['#all'], {})
-  await setDBValue(`games/${dbId}/path.json`, ['#all'], {})
-  await setDBValue(`games/${dbId}/save.json`, ['#all'], {})
+  if (!preExistingDbId) {
+    await setDBValue(`games/${dbId}/record.json`, ['addDate'], new Date().toISOString())
+    await setDBValue(`games/${dbId}/launcher.json`, ['#all'], {})
+    await setDBValue(`games/${dbId}/path.json`, ['#all'], {})
+    await setDBValue(`games/${dbId}/save.json`, ['#all'], {})
+  }
 
   const mainWindow = BrowserWindow.getAllWindows()[0]
 

@@ -13,16 +13,16 @@ export function setupAdderIPC(mainWindow: BrowserWindow): void {
       {
         dataSource,
         id,
-        dbId,
+        preExistingDbId,
         screenshotUrl
       }: {
         dataSource: string
         id: string
-        dbId?: string
+        preExistingDbId?: string
         screenshotUrl?: string
       }
     ) => {
-      await addGameToDatabase({ dataSource, id, dbId, screenshotUrl })
+      await addGameToDatabase({ dataSource, id, preExistingDbId, screenshotUrl })
     }
   )
 

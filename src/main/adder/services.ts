@@ -12,18 +12,18 @@ import log from 'electron-log/main.js'
 export async function addGameToDatabase({
   dataSource,
   id,
-  dbId,
+  preExistingDbId,
   screenshotUrl,
   playingTime
 }: {
   dataSource: string
   id: string
-  dbId?: string
+  preExistingDbId?: string
   screenshotUrl?: string
   playingTime?: number
 }): Promise<void> {
   try {
-    await addGameToDB({ dataSource, id, dbId, screenshotUrl, playingTime })
+    await addGameToDB({ dataSource, id, preExistingDbId, screenshotUrl, playingTime })
   } catch (error) {
     log.error('Error adding game to database:', error)
     throw error
