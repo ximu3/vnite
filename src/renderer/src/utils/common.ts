@@ -1,6 +1,16 @@
 import * as csstree from 'css-tree'
 import { HTMLReactParserOptions, Element } from 'html-react-parser'
 
+export async function canAccessImageFile(gameId: string, type: string): Promise<boolean> {
+  try {
+    const response = await fetch(`img:///games/${gameId}/${type}`)
+    return response.ok
+  } catch (error) {
+    console.error('Error checking image access:', error)
+    return false
+  }
+}
+
 interface CSSValidationResult {
   isValid: boolean
   error?: string

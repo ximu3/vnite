@@ -6,6 +6,7 @@ import {
   saveFileIcon,
   checkIconExists
 } from './common'
+import { BrowserWindow } from 'electron'
 import log from 'electron-log/main.js'
 
 /**
@@ -56,6 +57,8 @@ export async function setMedia(
       default:
         throw new Error(`Invalid source type: ${source}`)
     }
+    const mainWindow = BrowserWindow.getAllWindows()[0]
+    mainWindow.webContents.send('reload-db-values', `games/${gameId}/${type}`)
   } catch (error) {
     log.error('Failed to set media', {
       gameId,
@@ -77,6 +80,8 @@ export async function setMedia(
 export async function saveIcon(gameId: string, filePath: string): Promise<void> {
   try {
     await saveFileIcon(gameId, filePath)
+    const mainWindow = BrowserWindow.getAllWindows()[0]
+    mainWindow.webContents.send('reload-db-values', `games/${gameId}/icon`)
   } catch (error) {
     log.error('Failed to save icon', {
       gameId,

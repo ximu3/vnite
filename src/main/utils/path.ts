@@ -66,6 +66,14 @@ export async function getDataPath(file: string, forceCreate?: boolean): Promise<
   }
 }
 
+export function getDataPathSync(file: string): string {
+  const basePath = app.isPackaged
+    ? path.join(app.getPath('userData'), 'app/database')
+    : path.join(getAppRootPath(), '/dev/database')
+
+  return path.join(basePath, file)
+}
+
 /**
  * Get the logs file path
  * @returns The path of the logs file

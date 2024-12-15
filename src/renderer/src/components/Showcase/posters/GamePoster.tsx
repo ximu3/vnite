@@ -1,10 +1,11 @@
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@ui/hover-card'
 import { ContextMenu, ContextMenuTrigger } from '@ui/context-menu'
+import { GameImage } from '@ui/game-image'
 import { HoverCardAnimation } from '~/components/animations/HoverCard'
 import { cn } from '~/utils'
 import { GameNavCM } from '~/components/contextMenu/GameNavCM'
 import { useNavigate } from 'react-router-dom'
-import { useGameMedia, useGameIndexManager, useDBSyncedState } from '~/hooks'
+import { useGameIndexManager, useDBSyncedState } from '~/hooks'
 import { formatTimeToChinese, formatDateToChinese } from '~/utils'
 import React from 'react'
 import { AttributesDialog } from '~/components/Game/Config/AttributesDialog'
@@ -20,8 +21,6 @@ export function GamePoster({
   className?: string
 }): JSX.Element {
   const navigate = useNavigate()
-  const { mediaUrl: cover } = useGameMedia({ gameId, type: 'cover', noToastError: true })
-  const { mediaUrl: background } = useGameMedia({ gameId, type: 'background', noToastError: true })
   const { gameIndex } = useGameIndexManager()
   const gameData = gameIndex[gameId]
   const [playingTime] = useDBSyncedState(0, `games/${gameId}/record.json`, ['playingTime'])
@@ -34,41 +33,41 @@ export function GamePoster({
         <HoverCardTrigger>
           <ContextMenuTrigger>
             <HoverCardAnimation>
-              {cover ? (
-                <img
-                  onClick={() =>
-                    navigate(
-                      collectionId
-                        ? `/library/games/${gameId}/collection:${collectionId}`
-                        : `/library/games/${gameId}/all`
-                    )
-                  }
-                  src={cover}
-                  alt={gameId}
-                  className={cn(
-                    'w-[148px] h-[222px] cursor-pointer object-cover',
-                    '3xl:w-[176px] 3xl:h-[264px]',
-                    className
-                  )}
-                />
-              ) : (
-                <div
-                  className={cn(
-                    'w-[148px] h-[222px] cursor-pointer object-cover flex items-center justify-center',
-                    '3xl:w-[176px] 3xl:h-[264px]',
-                    className
-                  )}
-                  onClick={() =>
-                    navigate(
-                      collectionId
-                        ? `/library/games/${gameId}/collection:${collectionId}`
-                        : `/library/games/${gameId}/all`
-                    )
-                  }
-                >
-                  <div className={cn('font-bold truncate p-1')}>{gameName}</div>
-                </div>
-              )}
+              <GameImage
+                onClick={() =>
+                  navigate(
+                    collectionId
+                      ? `/library/games/${gameId}/collection:${collectionId}`
+                      : `/library/games/${gameId}/all`
+                  )
+                }
+                gameId={gameId}
+                type="cover"
+                alt={gameId}
+                className={cn(
+                  'w-[148px] h-[222px] cursor-pointer object-cover',
+                  '3xl:w-[176px] 3xl:h-[264px]',
+                  className
+                )}
+                fallback={
+                  <div
+                    className={cn(
+                      'w-[148px] h-[222px] cursor-pointer object-cover flex items-center justify-center',
+                      '3xl:w-[176px] 3xl:h-[264px]',
+                      className
+                    )}
+                    onClick={() =>
+                      navigate(
+                        collectionId
+                          ? `/library/games/${gameId}/collection:${collectionId}`
+                          : `/library/games/${gameId}/all`
+                      )
+                    }
+                  >
+                    <div className={cn('font-bold truncate p-1')}>{gameName}</div>
+                  </div>
+                }
+              />
             </HoverCardAnimation>
           </ContextMenuTrigger>
         </HoverCardTrigger>
@@ -95,7 +94,12 @@ export function GamePoster({
       >
         {/* background layer */}
         <div className="absolute inset-0">
-          <img src={background} alt={gameId} className="object-cover w-full h-full" />
+          <GameImage
+            gameId={gameId}
+            type="background"
+            alt={gameId}
+            className="object-cover w-full h-full"
+          />
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/80 backdrop-blur-xl" />
         </div>
 
@@ -108,22 +112,22 @@ export function GamePoster({
 
           {/* Game Preview Image */}
           <div className={cn('relative w-full h-[128px]', '3xl:h-[164px]')}>
-            {background ? (
-              <img
-                src={background}
-                className={cn('object-cover w-full h-full absolute')}
-                style={{
-                  maskImage: 'linear-gradient(to top, transparent 0%, black 30%)'
-                }}
-                alt={`${gameData?.name} preview`}
-              />
-            ) : (
-              <div className={cn('w-full h-full absolute')}>
-                <div className={cn('flex items-center justify-center w-full h-full font-bold')}>
-                  {gameData?.name}
+            <GameImage
+              gameId={gameId}
+              type="background"
+              className={cn('object-cover w-full h-full')}
+              style={{
+                maskImage: 'linear-gradient(to top, transparent 0%, black 30%)'
+              }}
+              alt={`${gameData?.name} preview`}
+              fallback={
+                <div className={cn('w-full h-full absolute')}>
+                  <div className={cn('flex items-center justify-center w-full h-full font-bold')}>
+                    {gameData?.name}
+                  </div>
                 </div>
-              </div>
-            )}
+              }
+            />
           </div>
 
           {/* Game Information */}

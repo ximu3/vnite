@@ -1,6 +1,6 @@
 import { cn } from '~/utils'
-import { useGameMedia } from '~/hooks'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
+import { GameImage } from '@ui/game-image'
 import { Button } from '@ui/button'
 import { ipcInvoke } from '~/utils'
 import { toast } from 'sonner'
@@ -8,18 +8,6 @@ import { useState } from 'react'
 import { UrlDialog } from './UrlDialog'
 
 export function Media({ gameId }: { gameId: string }): JSX.Element {
-  const { mediaUrl: icon, refreshMedia: refreshIcon } = useGameMedia({
-    gameId: gameId,
-    type: 'icon'
-  })
-  const { mediaUrl: cover, refreshMedia: refreshCover } = useGameMedia({
-    gameId: gameId,
-    type: 'cover'
-  })
-  const { mediaUrl: background, refreshMedia: refreshBackground } = useGameMedia({
-    gameId: gameId,
-    type: 'background'
-  })
   const [mediaUrl, setMediaUrl] = useState<string>('')
   const [isUrlDialogOpen, setIsUrlDialogOpen] = useState({
     icon: false,
@@ -31,17 +19,6 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
     toast.promise(
       async () => {
         await ipcInvoke('set-game-media', gameId, type, filePath)
-        switch (type) {
-          case 'icon':
-            await refreshIcon()
-            break
-          case 'cover':
-            await refreshCover()
-            break
-          case 'background':
-            await refreshBackground()
-            break
-        }
       },
       {
         loading: `正在设置 ${type}...`,
@@ -55,17 +32,6 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
     toast.promise(
       async () => {
         await ipcInvoke('set-game-media', gameId, type, mediaUrl)
-        switch (type) {
-          case 'icon':
-            await refreshIcon()
-            break
-          case 'cover':
-            await refreshCover()
-            break
-          case 'background':
-            await refreshBackground()
-            break
-        }
       },
       {
         loading: `正在设置 ${type}...`,
@@ -107,11 +73,12 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                 />
               </div>
               <div className={cn('self-center')}>
-                {icon ? (
-                  <img src={icon} alt="icon" className={cn('w-16 h-16 object-cover')} />
-                ) : (
-                  <div>暂无图标</div>
-                )}
+                <GameImage
+                  gameId={gameId}
+                  type="icon"
+                  className={cn('w-16 h-16 object-cover')}
+                  fallback={<div>暂无图标</div>}
+                />
               </div>
             </div>
           </CardContent>
@@ -145,15 +112,12 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                 />
               </div>
               <div className={cn('self-center')}>
-                {background ? (
-                  <img
-                    src={background}
-                    alt="background"
-                    className={cn('w-[500px] h-[264px] object-cover')}
-                  />
-                ) : (
-                  <div>暂无背景</div>
-                )}
+                <GameImage
+                  gameId={gameId}
+                  type="background"
+                  className={cn('w-[500px] h-[264px] object-cover')}
+                  fallback={<div>暂无背景</div>}
+                />
               </div>
             </div>
           </CardContent>
@@ -189,11 +153,12 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                 />
               </div>
               <div className={cn('self-center')}>
-                {cover ? (
-                  <img src={cover} alt="cover" className={cn('w-[300px] h-[458px] object-cover')} />
-                ) : (
-                  <div>暂无封面</div>
-                )}
+                <GameImage
+                  gameId={gameId}
+                  type="cover"
+                  className={cn('w-[300px] h-[458px] object-cover')}
+                  fallback={<div>暂无封面</div>}
+                />
               </div>
             </div>
           </CardContent>

@@ -1,5 +1,5 @@
 import { cn } from '~/utils'
-import { useDBSyncedState, useGameMedia } from '~/hooks'
+import { useDBSyncedState } from '~/hooks'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import {
   Select,
@@ -12,7 +12,7 @@ import {
 } from '@ui/select'
 import { Input } from '@ui/input'
 import { Button } from '@ui/button'
-import { ipcInvoke, ipcSend } from '~/utils'
+import { ipcInvoke, ipcSend, canAccessImageFile } from '~/utils'
 import { ArrayTextarea } from '@ui/array-textarea'
 
 export function Path({ gameId }: { gameId: string }): JSX.Element {
@@ -29,11 +29,7 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
     'fileConfig',
     'timerPath'
   ])
-  const { mediaUrl: icon, refreshMedia } = useGameMedia({
-    gameId,
-    type: 'icon',
-    noToastError: true
-  })
+
   const [launcherMode] = useDBSyncedState('file', `games/${gameId}/launcher.json`, ['mode'])
   const [timerPath] = useDBSyncedState('', `games/${gameId}/launcher.json`, [
     `${launcherMode}Config`,
@@ -58,9 +54,9 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
       return
     }
     await setGamePath(filePath)
+    const icon = await canAccessImageFile(gameId, 'icon')
     if (!icon) {
       await ipcInvoke('save-game-icon', gameId, filePath)
-      await refreshMedia()
     }
     if (!timerPath) {
       ipcSend('launcher-preset', 'default', gameId)

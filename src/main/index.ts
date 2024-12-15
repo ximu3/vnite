@@ -123,7 +123,7 @@ function createWindow(): void {
         mainWindow.webContents.send('start-game-from-url', launchGameId, gamePath, mode, config)
         launchGameId = null
       }
-    }, 7000)
+    }, 3000)
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {

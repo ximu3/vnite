@@ -1,7 +1,8 @@
 import { HoverSquareCardAnimation } from '~/components/animations/HoverSquareCard'
 import { cn } from '~/utils'
 import { useNavigate } from 'react-router-dom'
-import { useGameMedia, useDBSyncedState } from '~/hooks'
+import { useDBSyncedState } from '~/hooks'
+import { GameImage } from '~/components/ui/game-image'
 
 export function GamePoster({
   gameId,
@@ -19,9 +20,7 @@ export function GamePoster({
   fontStyles?: { name: string; additionalInfo: string }
 }): JSX.Element {
   const navigate = useNavigate()
-  const { mediaUrl: cover } = useGameMedia({ gameId, type: 'cover', noToastError: true })
   const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
-
   return (
     <div
       className={cn(
@@ -46,25 +45,25 @@ export function GamePoster({
 
       <div className="relative z-0">
         <HoverSquareCardAnimation className={cn('rounded-none shadow-none')}>
-          {cover ? (
-            <img
-              src={cover}
-              alt={gameId}
-              className={cn(
-                'w-full h-full cursor-pointer object-cover',
-                '3xl:w-full 3xl:h-full',
-                className
-              )}
-            />
-          ) : (
-            <div
-              className={cn(
-                'w-full h-full cursor-pointer object-cover flex items-center justify-center',
-                '3xl:w-full 3xl:h-full',
-                className
-              )}
-            ></div>
-          )}
+          <GameImage
+            gameId={gameId}
+            type="cover"
+            alt={gameId}
+            className={cn(
+              'w-full h-full cursor-pointer object-cover',
+              '3xl:w-full 3xl:h-full',
+              className
+            )}
+            fallback={
+              <div
+                className={cn(
+                  'w-full h-full cursor-pointer object-cover flex items-center justify-center',
+                  '3xl:w-full 3xl:h-full',
+                  className
+                )}
+              ></div>
+            }
+          />
         </HoverSquareCardAnimation>
       </div>
 
