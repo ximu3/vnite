@@ -86,7 +86,6 @@ export function ScreenshotList(): JSX.Element {
                     key={image}
                     onClick={() => {
                       setScreenshotUrl(image)
-                      toast.success(`已选择图片: ${image}`)
                     }}
                     className={cn(
                       'cursor-pointer p-3 bg-muted text-muted-foreground rounded-[0.3rem]',
