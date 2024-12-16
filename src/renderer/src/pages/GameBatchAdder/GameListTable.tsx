@@ -28,7 +28,7 @@ export function GameListTable(): JSX.Element {
       </Table>
       <Table>
         <TableBody>
-          <div className={cn('overflow-auto scrollbar-base w-full', 'h-[570px] 3xl:h-[712px]')}>
+          <div className={cn('overflow-auto scrollbar-base w-full', 'h-[calc(75vh-100px)]')}>
             {games.map((game) => (
               <GameListItem key={game.dataId} game={game} />
             ))}

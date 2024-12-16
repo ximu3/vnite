@@ -16,7 +16,7 @@ export function GameList(): JSX.Element {
     })
   }
   return (
-    <div className="w-[870px] h-[670px] 3xl:h-[812px]">
+    <div className="w-[870px] h-[75vh]">
       <div className="py-[10px]">
         <GameListTable />
         <div className="flex flex-row-reverse pt-[20px]">
