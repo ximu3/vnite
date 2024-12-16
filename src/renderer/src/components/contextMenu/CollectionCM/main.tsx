@@ -21,7 +21,7 @@ import {
 } from '@ui/alert-dialog'
 import { useCollections } from '~/hooks'
 import { cn } from '~/utils'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export function CollectionCM({
   collectionId,
@@ -33,6 +33,13 @@ export function CollectionCM({
   const { renameCollection, removeCollection, collections } = useCollections()
   const [newName, setNewName] = useState<string>('')
   const [isOpen, setIsOpen] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (collections[collectionId].name !== newName) {
+      setNewName(collections[collectionId].name)
+    }
+  }, [collections[collectionId].name])
+
   return (
     <ContextMenu>
       <ContextMenuTrigger>{children}</ContextMenuTrigger>
@@ -59,11 +66,18 @@ export function CollectionCM({
             <Button
               onClick={() => {
                 renameCollection(collectionId, newName)
-                setNewName('')
                 setIsOpen(false)
               }}
             >
               确定
+            </Button>
+            <Button
+              onClick={() => {
+                setIsOpen(false)
+                setNewName(collections[collectionId].name)
+              }}
+            >
+              取消
             </Button>
           </DialogContent>
         </Dialog>
