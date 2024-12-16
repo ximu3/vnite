@@ -77,7 +77,7 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
         className
       )}
     >
-      <div className={cn('flex flex-row gap-3 justify-center max-w-[46vw]')}>
+      <div className={cn('flex flex-row gap-3 grow overflow-hidden')}>
         <div className={cn('truncate')}>
           <span className={cn('font-bold text-2xl text-accent-foreground')}>{name}</span>
           {showOriginalNameInGameHeader && originalName && originalName !== name && (
