@@ -76,7 +76,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                 <GameImage
                   gameId={gameId}
                   type="icon"
-                  className={cn('w-16 h-16 object-cover')}
+                  className={cn('max-h-16 h-[calc(30vh-160px)] aspect-[1] object-cover')}
                   fallback={<div>暂无图标</div>}
                 />
               </div>
@@ -115,7 +115,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                 <GameImage
                   gameId={gameId}
                   type="background"
-                  className={cn('w-[500px] h-[264px] object-cover')}
+                  className={cn('max-h-[264px] h-[calc(60vh-200px)] aspect-[2] object-cover')}
                   fallback={<div>暂无背景</div>}
                 />
               </div>
@@ -156,7 +156,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                 <GameImage
                   gameId={gameId}
                   type="cover"
-                  className={cn('w-[300px] h-[458px] object-cover')}
+                  className={cn('max-h-[458px] h-[calc(90vh-230px)] aspect-[2/3] object-cover')}
                   fallback={<div>暂无封面</div>}
                 />
               </div>
