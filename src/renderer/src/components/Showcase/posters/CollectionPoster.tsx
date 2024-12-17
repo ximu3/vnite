@@ -6,19 +6,19 @@ import { CollectionCM } from '~/components/contextMenu/CollectionCM'
 import { GameImage } from '@ui/game-image'
 
 export function CollectionPoster({
-  collctionId,
+  collectionId,
   className
 }: {
-  collctionId: string
+  collectionId: string
   className?: string
 }): JSX.Element {
   const navigate = useNavigate()
   const { collections } = useCollections()
-  const collectionName = collections[collctionId].name
-  const gameId = collections[collctionId].games[0]
-  const length = collections[collctionId].games.length
+  const collectionName = collections[collectionId].name
+  const gameId = collections[collectionId].games[0]
+  const length = collections[collectionId].games.length
   return (
-    <CollectionCM collectionId={collctionId}>
+    <CollectionCM collectionId={collectionId}>
       <div
         className={cn(
           'group relative overflow-hidden shadow-custom-initial cursor-pointer w-[160px] h-[160px] rounded-[0.3rem]',
@@ -27,7 +27,7 @@ export function CollectionPoster({
           'hover:border-primary hover:border-2',
           '3xl:w-[190px] 3xl:h-[190px]'
         )}
-        onClick={() => navigate(`/library/collections/${collctionId}`)}
+        onClick={() => navigate(`/library/collections/${collectionId}`)}
       >
         {/* background mask layer */}
         <div

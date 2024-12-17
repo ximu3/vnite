@@ -66,7 +66,7 @@ export function Collections(): JSX.Element {
               'flex-shrink-0' // Preventing compression
             )}
           >
-            <CollectionPoster collctionId={collectionId} />
+            <CollectionPoster collectionId={collectionId} />
           </div>
         ))}
       </div>
