@@ -56,13 +56,10 @@ export class CloudSyncService {
         if (this.validateCloudSyncConfig(config.cloudSync.config)) {
           this.instance = await setupCloudSync(config.cloudSync.config, mainWindow)
 
-          // Set up periodic synchronization (every 10 minutes)
-          setInterval(
-            () => {
-              this.sync().catch(console.error)
-            },
-            10 * 60 * 1000
-          )
+          // Set up periodic synchronization
+          setInterval(() => {
+            this.sync().catch(console.error)
+          }, config.cloudSync.config.syncInterval)
 
           // First time synchronization (waiting for the rendering process to be ready)
           setTimeout(() => {

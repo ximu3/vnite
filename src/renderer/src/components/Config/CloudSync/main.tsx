@@ -30,6 +30,15 @@ export function CloudSync(): JSX.Element {
     'config',
     'remotePath'
   ])
+  const [syncInterval, setSyncInterval] = useDBSyncedState(30 * 60 * 1000, 'config.json', [
+    'cloudSync',
+    'config',
+    'syncInterval'
+  ])
+  function convertIntervalToMilliseconds(interval: number): number {
+    // Convert minutes to milliseconds
+    return interval * 60 * 1000
+  }
   const updateCloudSyncConfig = async (): Promise<void> => {
     if (enabled) {
       if (!webdavUrl || !username || !password || !remotePath) {
@@ -39,10 +48,7 @@ export function CloudSync(): JSX.Element {
     }
     toast.promise(
       async () => {
-        await ipcInvoke('update-cloud-sync-config', {
-          enabled,
-          config: { webdavUrl, username, password, remotePath }
-        })
+        await ipcInvoke('update-cloud-sync-config')
       },
       {
         loading: '正在更新云同步配置...',
@@ -128,6 +134,21 @@ export function CloudSync(): JSX.Element {
                     value={remotePath}
                     onChange={(e) => setRemotePath(e.target.value)}
                   />
+                </div>
+              </div>
+            )}
+            {enabled && (
+              <div className={cn('flex flex-row gap-5 justify-between items-center')}>
+                <div>同步间隔</div>
+                <div className={cn('flex flex-row gap-3 justify-between items-center w-[400px]')}>
+                  <Input
+                    className={cn('grow')}
+                    value={syncInterval / 60 / 1000}
+                    onChange={(e) =>
+                      setSyncInterval(convertIntervalToMilliseconds(Number(e.target.value)))
+                    }
+                  />
+                  <div className={cn('whitespace-nowrap')}>分钟</div>
                 </div>
               </div>
             )}
