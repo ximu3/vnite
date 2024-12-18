@@ -105,6 +105,7 @@ export function Librarybar(): JSX.Element {
                 <SelectItem value="collection">收藏</SelectItem>
                 <SelectItem value="developers">开发商</SelectItem>
                 <SelectItem value="genres">类别</SelectItem>
+                <SelectItem value="playStatus">游玩状态</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>

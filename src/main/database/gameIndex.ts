@@ -17,6 +17,7 @@ export interface GameIndexdata {
   score: number
   playingTime: number
   playedTimes: number
+  playStatus: string
 }
 
 export class GameIndexManager {
@@ -35,7 +36,8 @@ export class GameIndexManager {
     'lastRunDate',
     'score',
     'playingTime',
-    'playedTimes'
+    'playedTimes',
+    'playStatus'
   ]
 
   private constructor() {
@@ -65,12 +67,17 @@ export class GameIndexManager {
         gameFolders.map(async (gameId) => {
           try {
             const metadata = await getDBValue(`games/${gameId}/metadata.json`, ['#all'], {})
-            const addDate = await getDBValue(`games/${gameId}/record.json`, ['addDate'], {})
+            const addDate = await getDBValue(`games/${gameId}/record.json`, ['addDate'], '')
             const lastRunDate = await getDBValue(`games/${gameId}/record.json`, ['lastRunDate'], '')
             const score = await getDBValue(`games/${gameId}/record.json`, ['score'], -1)
             const playingTime = await getDBValue(`games/${gameId}/record.json`, ['playingTime'], 0)
             const timer = await getDBValue(`games/${gameId}/record.json`, ['timer'], [])
             const playedTimes = timer.length
+            const playStatus = await getDBValue(
+              `games/${gameId}/record.json`,
+              ['playStatus'],
+              'unplayed'
+            )
 
             const fullData = {
               id: gameId,
@@ -79,7 +86,8 @@ export class GameIndexManager {
               lastRunDate,
               score,
               playingTime,
-              playedTimes
+              playedTimes,
+              playStatus
             }
 
             const indexedData: Partial<GameIndexdata> = {}

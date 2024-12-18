@@ -12,7 +12,8 @@ const gameIndexdata = {
   lastRunDate: String(),
   score: Number(),
   playingTime: Number(),
-  playedTimes: Number()
+  playedTimes: Number(),
+  playStatus: String()
 }
 
 // Getting the type of gameMetadata using typeof

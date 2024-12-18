@@ -66,6 +66,7 @@ export async function addGameToDB({
 
   if (!preExistingDbId) {
     await setDBValue(`games/${dbId}/record.json`, ['addDate'], new Date().toISOString())
+    await setDBValue(`games/${dbId}/record.json`, ['playStatus'], 'unplayed')
     await setDBValue(`games/${dbId}/launcher.json`, ['#all'], {})
     await setDBValue(`games/${dbId}/path.json`, ['#all'], {})
     await setDBValue(`games/${dbId}/save.json`, ['#all'], {})
@@ -95,6 +96,7 @@ export async function addGameToDBWithoutMetadata(gamePath: string): Promise<void
   const dbId = generateUUID()
   await getDataPath(`games/${dbId}/`, true)
   await setDBValue(`games/${dbId}/record.json`, ['addDate'], new Date().toISOString())
+  await setDBValue(`games/${dbId}/record.json`, ['playStatus'], 'unplayed')
   await setDBValue(`games/${dbId}/path.json`, ['gamePath'], gamePath)
   const gameName = gamePath.split('\\').pop()?.split('.')?.slice(0, -1).join('.')
   await setDBValue(`games/${dbId}/metadata.json`, ['#all'], {
