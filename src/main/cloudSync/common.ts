@@ -12,6 +12,7 @@ export interface CloudSyncConfig {
   username: string
   password: string
   remotePath: string
+  syncInterval: number
 }
 
 interface GetLatestModifiedTimeOptions {
@@ -247,7 +248,7 @@ export class CloudSync {
       stopWatcher()
       this.updateSyncStatus({
         status: 'syncing',
-        message: '正在准备上传数据库...',
+        message: '正在上传数据库...',
         timestamp: new Date().toISOString()
       })
 
@@ -302,7 +303,7 @@ export class CloudSync {
       const zipContent = await fse.readFile(tempZipPath)
       await this.putFileContents(mainBackupPath, zipContent)
 
-      // 9. Cleanup old versions(keep latest 7 versions and versions within 30 days)
+      // 9. Cleanup old versions
       await this.cleanupOldVersions()
 
       this.updateSyncStatus({
@@ -344,7 +345,7 @@ export class CloudSync {
 
   /**
    * Cleanup old versions
-   * Keep the latest 7 versions and the versions within 30 days
+   * Keep only the backups from the last 7 days
    * @returns void
    */
   private async cleanupOldVersions(): Promise<void> {
@@ -360,24 +361,48 @@ export class CloudSync {
             file.basename.startsWith('database-') &&
             file.basename.endsWith('.zip')
         )
-        .map((file) => ({
-          basename: file.basename,
-          date: new Date(file.basename.replace('database-', '').replace('.zip', '')),
-          // Adding date strings for grouping
-          dateString: new Date(file.basename.replace('database-', '').replace('.zip', ''))
-            .toISOString()
-            .split('T')[0]
-        }))
+        .map((file) => {
+          try {
+            // 使用正则表达式匹配日期和时间部分
+            const match = file.basename.match(
+              /database-(\d{4})-(\d{2})-(\d{2})T(\d{2})-(\d{2})-(\d{2})\.zip/
+            )
+
+            if (!match) {
+              console.warn(`Filename does not match expected format: ${file.basename}`)
+              return null
+            }
+
+            // 解构匹配结果
+            const [_, year, month, day, hour, minute, second] = match
+
+            // 构建标准的日期时间字符串
+            const dateStr = `${year}-${month}-${day}T${hour}:${minute}:${second}`
+            const date = new Date(dateStr)
+
+            if (isNaN(date.getTime())) {
+              console.warn(`Invalid date components in filename: ${file.basename}`)
+              return null
+            }
+
+            return {
+              basename: file.basename,
+              date: date,
+              dateString: `${year}-${month}-${day}`
+            }
+          } catch (err) {
+            console.warn(`Error parsing date from filename: ${file.basename}`, err)
+            return null
+          }
+        })
+        .filter((item): item is NonNullable<typeof item> => item !== null)
         .sort((a, b) => b.date.getTime() - a.date.getTime())
 
-      // Get the date 30 days ago
-      const thirtyDaysAgo = new Date()
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+      // Get the date 7 days ago
+      const sevenDaysAgo = new Date()
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
 
-      // Get today's date string
-      const today = new Date().toISOString().split('T')[0]
-
-      // Grouping by date
+      // Group files by date
       const filesByDate = new Map<string, typeof historyFiles>()
       historyFiles.forEach((file) => {
         if (!filesByDate.has(file.dateString)) {
@@ -386,23 +411,18 @@ export class CloudSync {
         filesByDate.get(file.dateString)!.push(file)
       })
 
-      // Collection of documents to be retained
+      // Collection of files to keep
       const filesToKeep = new Set<string>()
 
-      // Processing of documents for each day
+      // Keep only files from the last 7 days
       filesByDate.forEach((dailyFiles, dateString) => {
-        if (dateString === today) {
-          // Today's document: retention of the last seven
-          dailyFiles.slice(0, 7).forEach((file) => {
-            filesToKeep.add(file.basename)
-          })
-        } else if (new Date(dateString) >= thirtyDaysAgo) {
-          // Other days within 30 days: keep the latest backup once a day
+        if (new Date(dateString) >= sevenDaysAgo) {
+          // Keep the latest backup for each day within the 7-day period
           filesToKeep.add(dailyFiles[0].basename)
         }
       })
 
-      // Deletion of documents not required for retention
+      // Delete files that are not in the keep list
       for (const file of historyFiles) {
         if (!filesToKeep.has(file.basename)) {
           try {
@@ -416,14 +436,16 @@ export class CloudSync {
         }
       }
 
-      // Printing retained backup information
+      // Log retention information
       console.log('Retained backups:', {
         total: filesToKeep.size,
-        todayBackups: filesByDate.get(today)?.slice(0, 7).length || 0,
-        daysWithinMonth: filesByDate.size
+        retainedDays: filesByDate.size,
+        oldestRetainedDate: sevenDaysAgo.toISOString().split('T')[0],
+        files: Array.from(filesToKeep)
       })
     } catch (error) {
       console.error('Failed to cleanup old versions:', error)
+      throw error
     }
   }
 
