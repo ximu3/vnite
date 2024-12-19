@@ -1,7 +1,6 @@
 import {
   Dialog,
   DialogContent,
-  DialogClose,
   DialogFooter,
   DialogDescription,
   DialogHeader,
@@ -22,8 +21,10 @@ export function AddCollectionDialog({
 }): JSX.Element {
   const [name, setName] = useState('')
   const { addCollection } = useCollections()
+
   const addGameToNewCollection = (): void => {
     addCollection(name, gameId)
+    setIsOpen(false)
   }
 
   return (
@@ -33,11 +34,16 @@ export function AddCollectionDialog({
           <DialogTitle>新收藏</DialogTitle>
           <DialogDescription>输入新收藏的名称</DialogDescription>
         </DialogHeader>
-        <Input className={cn('grow')} value={name} onChange={(e) => setName(e.target.value)} />
+        <Input
+          className={cn('grow')}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') addGameToNewCollection()
+          }}
+        />
         <DialogFooter>
-          <DialogClose asChild>
-            <Button onClick={addGameToNewCollection}>添加</Button>
-          </DialogClose>
+          <Button onClick={addGameToNewCollection}>添加</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
