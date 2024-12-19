@@ -114,12 +114,22 @@ export function Search({ className }: { className?: string }): JSX.Element {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="请输入游戏名称"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') searchGames()
+            }}
           />
           <Button onClick={searchGames}>搜索</Button>
         </div>
         <div className={cn('flex flex-row gap-3 items-center justify-start')}>
           <div className={cn('flex-shrink-0 mr-4')}>游戏ID</div>
-          <Input value={id} onChange={(e) => setId(e.target.value)} placeholder="请输入游戏ID" />
+          <Input
+            value={id}
+            onChange={(e) => setId(e.target.value)}
+            placeholder="请输入游戏ID"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') recognizeGame()
+            }}
+          />
           <Button onClick={recognizeGame}>识别</Button>
         </div>
       </div>
