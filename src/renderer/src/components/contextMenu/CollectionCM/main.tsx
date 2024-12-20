@@ -31,8 +31,8 @@ export function CollectionCM({
 }): JSX.Element {
   const { renameCollection, removeCollection, collections } = useCollections()
   const [newName, setNewName] = useState<string>('')
-  const [isRenaming, setisRenaming] = useState<boolean>(false)
-  const [isDeleting, setisDeleting] = useState<boolean>(false)
+  const [isRenaming, setIsRenaming] = useState<boolean>(false)
+  const [isDeleting, setIsDeleting] = useState<boolean>(false)
 
   useEffect(() => {
     if (collections[collectionId].name !== newName) {
@@ -40,14 +40,19 @@ export function CollectionCM({
     }
   }, [collections[collectionId].name])
 
+  const handleRename = (): void => {
+    renameCollection(collectionId, newName)
+    setIsRenaming(false)
+  }
+
   return (
     <ContextMenu>
       <ContextMenuTrigger>{children}</ContextMenuTrigger>
 
       <ContextMenuContent className={cn('w-40')}>
-        <ContextMenuItem onSelect={() => setisRenaming(true)}>重命名</ContextMenuItem>
+        <ContextMenuItem onSelect={() => setIsRenaming(true)}>重命名</ContextMenuItem>
         <ContextMenuSeparator />
-        <ContextMenuItem onSelect={() => setisDeleting(true)}>删除</ContextMenuItem>
+        <ContextMenuItem onSelect={() => setIsDeleting(true)}>删除</ContextMenuItem>
       </ContextMenuContent>
 
       <Dialog open={isRenaming}>
@@ -58,18 +63,14 @@ export function CollectionCM({
             onChange={(e) => {
               setNewName(e.target.value)
             }}
-          />
-          <Button
-            onClick={() => {
-              renameCollection(collectionId, newName)
-              setisRenaming(false)
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleRename()
             }}
-          >
-            确定
-          </Button>
+          />
+          <Button onClick={handleRename}>确定</Button>
           <Button
             onClick={() => {
-              setisRenaming(false)
+              setIsRenaming(false)
               setNewName(collections[collectionId].name)
             }}
           >
@@ -87,7 +88,7 @@ export function CollectionCM({
           <AlertDialogFooter>
             <AlertDialogCancel
               onClick={() => {
-                setisDeleting(false)
+                setIsDeleting(false)
               }}
             >
               取消

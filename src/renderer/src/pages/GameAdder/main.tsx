@@ -12,7 +12,7 @@ function GameAdderContent(): JSX.Element {
   return (
     <Dialog open={isOpen}>
       <DialogContent
-        className={cn('w-auto h-auto max-w-none flex flex-col gap-5')}
+        className={cn('w-auto h-auto max-w-none flex flex-col gap-5 outline-none')}
         onInteractOutside={(e) => {
           e.preventDefault()
         }}
