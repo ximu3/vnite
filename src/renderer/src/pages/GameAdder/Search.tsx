@@ -14,10 +14,22 @@ import { toast } from 'sonner'
 import { useGameAdderStore } from './store'
 import { ipcInvoke } from '~/utils'
 import { useNavigate } from 'react-router-dom'
+import React from 'react'
 
 export function Search({ className }: { className?: string }): JSX.Element {
   const { dataSource, setDataSource, name, setName, id, setId, setGameList } = useGameAdderStore()
   const navigate = useNavigate()
+
+  const gameNameInput = React.useRef<HTMLInputElement>(null)
+  const gameIdInput = React.useRef<HTMLInputElement>(null)
+  React.useEffect(() => {
+    setTimeout(() => {
+      if (gameNameInput.current) {
+        gameNameInput.current.focus()
+      }
+    })
+  }, [])
+
   async function searchGames(): Promise<void> {
     if (!name) {
       toast.warning('请输入游戏名称')
@@ -111,11 +123,13 @@ export function Search({ className }: { className?: string }): JSX.Element {
         <div className={cn('flex flex-row gap-3 items-center justify-start')}>
           <div className={cn('flex-shrink-0')}>游戏名称</div>
           <Input
+            ref={gameNameInput}
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="请输入游戏名称"
             onKeyDown={(e) => {
               if (e.key === 'Enter') searchGames()
+              if (e.key === 'ArrowUp' || e.key === 'ArrowDown') gameIdInput.current?.focus()
             }}
           />
           <Button onClick={searchGames}>搜索</Button>
@@ -123,11 +137,13 @@ export function Search({ className }: { className?: string }): JSX.Element {
         <div className={cn('flex flex-row gap-3 items-center justify-start')}>
           <div className={cn('flex-shrink-0 mr-4')}>游戏ID</div>
           <Input
+            ref={gameIdInput}
             value={id}
             onChange={(e) => setId(e.target.value)}
             placeholder="请输入游戏ID"
             onKeyDown={(e) => {
               if (e.key === 'Enter') recognizeGame()
+              if (e.key === 'ArrowUp' || e.key === 'ArrowDown') gameNameInput.current?.focus()
             }}
           />
           <Button onClick={recognizeGame}>识别</Button>

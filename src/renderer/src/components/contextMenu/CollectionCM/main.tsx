@@ -32,7 +32,7 @@ export function CollectionCM({
   const { renameCollection, removeCollection, collections } = useCollections()
   const [newName, setNewName] = useState<string>('')
   const [isRenaming, setIsRenaming] = useState<boolean>(false)
-  const [isDeleting, setisDeleting] = useState<boolean>(false)
+  const [isDeleting, setIsDeleting] = useState<boolean>(false)
 
   useEffect(() => {
     if (collections[collectionId].name !== newName) {
@@ -52,7 +52,7 @@ export function CollectionCM({
       <ContextMenuContent className={cn('w-40')}>
         <ContextMenuItem onSelect={() => setIsRenaming(true)}>重命名</ContextMenuItem>
         <ContextMenuSeparator />
-        <ContextMenuItem onSelect={() => setisDeleting(true)}>删除</ContextMenuItem>
+        <ContextMenuItem onSelect={() => setIsDeleting(true)}>删除</ContextMenuItem>
       </ContextMenuContent>
 
       <Dialog open={isRenaming}>
@@ -88,7 +88,7 @@ export function CollectionCM({
           <AlertDialogFooter>
             <AlertDialogCancel
               onClick={() => {
-                setisDeleting(false)
+                setIsDeleting(false)
               }}
             >
               取消

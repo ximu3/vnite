@@ -47,6 +47,39 @@ export function ScreenshotList(): JSX.Element {
     )
   }, [])
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent): void => {
+      const index = screenshotList.findIndex((image) => image === screenshotUrl)
+      if (index === -1) return
+
+      if (e.key === 'Enter') {
+        addGameToDB()
+        return
+      }
+
+      let targetIndex: number | null = null
+      if (e.key === 'ArrowRight') targetIndex = index + 1
+      else if (e.key === 'ArrowDown') targetIndex = index + 2
+      else if (e.key === 'ArrowLeft') targetIndex = index - 1 + screenshotList.length
+      else if (e.key === 'ArrowUp') targetIndex = index - 2 + screenshotList.length
+
+      if (targetIndex !== null) {
+        const targetGame = screenshotList[targetIndex % screenshotList.length]
+        setScreenshotUrl(targetGame)
+        const targetElement = document.querySelector(`[data-image="${targetGame}"]`)
+        targetElement?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'center'
+        })
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return (): void => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [screenshotUrl, screenshotList])
+
   async function addGameToDB(): Promise<void> {
     if (isAdding) return
     setIsAdding(true)
@@ -84,6 +117,7 @@ export function ScreenshotList(): JSX.Element {
                 screenshotList.map((image) => (
                   <div
                     key={image}
+                    data-image={image}
                     onClick={() => {
                       setScreenshotUrl(image)
                     }}

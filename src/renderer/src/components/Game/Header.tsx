@@ -127,7 +127,13 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
           <DialogContent showCloseButton={false} className="w-[500px]">
             <div className={cn('flex flex-row gap-3 items-center justify-center')}>
               <div className={cn('whitespace-nowrap')}>我的评分</div>
-              <Input value={preScore} onChange={(e) => setPreScore(e.target.value)} />
+              <Input
+                value={preScore}
+                onChange={(e) => setPreScore(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') confirmScore()
+                }}
+              />
               <Button onClick={confirmScore}>确定</Button>
             </div>
           </DialogContent>
