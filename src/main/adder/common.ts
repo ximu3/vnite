@@ -22,13 +22,17 @@ export async function addGameToDB({
   id,
   preExistingDbId,
   screenshotUrl,
-  playingTime
+  playingTime,
+  noWatcherAction = false,
+  noIpcAction = false
 }: {
   dataSource: string
   id: string
   preExistingDbId?: string
   screenshotUrl?: string
   playingTime?: number
+  noWatcherAction?: boolean
+  noIpcAction?: boolean
 }): Promise<void> {
   const metadata = await getGameMetadata(dataSource, id)
   const coverUrl = await getGameCover(dataSource, id)
@@ -74,17 +78,20 @@ export async function addGameToDB({
 
   const mainWindow = BrowserWindow.getAllWindows()[0]
 
-  stopWatcher()
+  if (!noWatcherAction) {
+    stopWatcher()
+    await setupWatcher(mainWindow)
+  }
 
-  await setupWatcher(mainWindow)
-
-  mainWindow.webContents.send('reload-db-values', `games/${dbId}/cover.webp`)
-  mainWindow.webContents.send('reload-db-values', `games/${dbId}/background.webp`)
-  mainWindow.webContents.send('reload-db-values', `games/${dbId}/icon.png`)
-  mainWindow.webContents.send('reload-db-values', `games/${dbId}/metadata.json`)
-  mainWindow.webContents.send('reload-db-values', `games/${dbId}/record.json`)
-  await rebuildIndex()
-  await rebuildRecords()
+  if (!noIpcAction) {
+    mainWindow.webContents.send('reload-db-values', `games/${dbId}/cover.webp`)
+    mainWindow.webContents.send('reload-db-values', `games/${dbId}/background.webp`)
+    mainWindow.webContents.send('reload-db-values', `games/${dbId}/icon.png`)
+    mainWindow.webContents.send('reload-db-values', `games/${dbId}/metadata.json`)
+    mainWindow.webContents.send('reload-db-values', `games/${dbId}/record.json`)
+    await rebuildIndex()
+    await rebuildRecords()
+  }
 }
 
 /**

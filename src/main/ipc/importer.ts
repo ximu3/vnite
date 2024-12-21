@@ -1,5 +1,6 @@
 import { importV1DataToV2 } from '~/importer/versionConverter'
-import { importUserSteamGamesToDB } from '~/importer/steam'
+import { getSteamGames, importSteamGames } from '~/importer/steam'
+import { FormattedGameInfo } from '~/importer/steam/types'
 import { ipcMain, BrowserWindow } from 'electron'
 
 export function setupImporterIPC(mainWindow: BrowserWindow): void {
@@ -7,8 +8,12 @@ export function setupImporterIPC(mainWindow: BrowserWindow): void {
     return await importV1DataToV2(dataPath)
   })
 
-  ipcMain.handle('import-user-steam-games', async (_, steamId: string) => {
-    return await importUserSteamGamesToDB(steamId)
+  ipcMain.handle('get-steam-games', async (_event, steamId: string) => {
+    return await getSteamGames(steamId)
+  })
+
+  ipcMain.handle('import-selected-steam-games', async (_event, games: FormattedGameInfo[]) => {
+    return await importSteamGames(games)
   })
 
   mainWindow.webContents.send('importerIPCReady')

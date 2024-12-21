@@ -2,15 +2,14 @@ import { FormattedGameInfo, GetOwnedGamesResponse } from './types'
 import { addGameToDatabase } from '~/adder'
 import { BrowserWindow } from 'electron'
 import { stopWatcher, setupWatcher } from '~/watcher'
+import { rebuildIndex } from '~/database/gameIndex'
+import { rebuildRecords } from '~/database/record'
 
 /**
  * Getting information about a user's Steam library
- * @param steamId - Steam User ID
- * @returns Formatted Game Information Array
  */
 export async function getUserSteamGames(steamId: string): Promise<FormattedGameInfo[]> {
   try {
-    // Building API URLs
     const url = new URL('https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/')
     url.searchParams.append('key', import.meta.env.VITE_STEAM_API_KEY)
     url.searchParams.append('steamid', steamId)
@@ -18,7 +17,6 @@ export async function getUserSteamGames(steamId: string): Promise<FormattedGameI
     url.searchParams.append('include_appinfo', '1')
     url.searchParams.append('include_played_free_games', '1')
 
-    // initiate a request
     const response = await fetch(url.toString())
 
     if (!response.ok) {
@@ -27,16 +25,14 @@ export async function getUserSteamGames(steamId: string): Promise<FormattedGameI
 
     const data = (await response.json()) as GetOwnedGamesResponse
 
-    // Check response data
     if (!data.response || !data.response.games) {
       throw new Error('Invalid response format or empty game library')
     }
 
-    // Formatting game data
     return data.response.games.map((game) => ({
       appId: game.appid,
       name: game.name,
-      totalPlayingTime: game.playtime_forever * 60 * 1000 // Convert to milliseconds
+      totalPlayingTime: game.playtime_forever * 60 * 1000
     }))
   } catch (error) {
     console.error('获取 Steam 游戏库失败:', error)
@@ -45,32 +41,26 @@ export async function getUserSteamGames(steamId: string): Promise<FormattedGameI
 }
 
 /**
- * Add user's Steam games to database
- * @param steamId - Steam User ID
- * @returns Number of games added
+ * Importing selected Steam games into the database
  */
-export async function importUserSteamGamesToDatabase(steamId: string): Promise<number> {
-  // Get window instance
+export async function importSelectedSteamGames(games: FormattedGameInfo[]): Promise<number> {
   const mainWindow = BrowserWindow.getAllWindows()[0]
   stopWatcher()
 
   try {
-    // Get user's Steam game list
-    const games = await getUserSteamGames(steamId)
     const totalGames = games.length
 
-    // If there is no game, return directly to
     if (totalGames === 0) {
       mainWindow.webContents.send('import-steam-games-progress', {
         current: 0,
         total: 0,
         status: 'completed',
-        message: '没有找到游戏'
+        message: '没有选择要导入的游戏'
       })
       return 0
     }
 
-    // Send Initial Progress
+    // Send initial progress
     mainWindow.webContents.send('import-steam-games-progress', {
       current: 0,
       total: totalGames,
@@ -85,7 +75,9 @@ export async function importUserSteamGamesToDatabase(steamId: string): Promise<n
         await addGameToDatabase({
           dataSource: 'steam',
           id: game.appId.toString(),
-          playingTime: game.totalPlayingTime
+          playingTime: game.totalPlayingTime,
+          noWatcherAction: true,
+          noIpcAction: true
         })
 
         // Send progress updates
@@ -100,7 +92,7 @@ export async function importUserSteamGamesToDatabase(steamId: string): Promise<n
           }
         })
       } catch (error) {
-        // Send error message but continue processing
+        // Send an error message but continue processing
         mainWindow.webContents.send('import-steam-games-progress', {
           current: i + 1,
           total: totalGames,
@@ -118,7 +110,11 @@ export async function importUserSteamGamesToDatabase(steamId: string): Promise<n
       await new Promise((resolve) => setTimeout(resolve, 300))
     }
 
-    // Send Completion Message
+    await rebuildIndex()
+    await rebuildRecords()
+    await setupWatcher(mainWindow)
+
+    // Send a completion message
     mainWindow.webContents.send('import-steam-games-progress', {
       current: totalGames,
       total: totalGames,
@@ -128,15 +124,13 @@ export async function importUserSteamGamesToDatabase(steamId: string): Promise<n
 
     return totalGames
   } catch (error) {
-    // Send error message
+    // Send an error message
     mainWindow.webContents.send('import-steam-games-progress', {
       current: 0,
       total: 0,
       status: 'error',
-      message: error instanceof Error ? error.message : '获取游戏列表失败'
+      message: error instanceof Error ? error.message : '导入游戏失败'
     })
     throw error
-  } finally {
-    await setupWatcher(mainWindow)
   }
 }
