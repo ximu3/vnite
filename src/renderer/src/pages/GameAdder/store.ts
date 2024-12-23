@@ -3,6 +3,13 @@ import { toast } from 'sonner'
 
 export type DataSource = 'vndb' | 'igdb' | 'steam' | 'bangumi'
 
+export type GameList = {
+  id: string
+  name: string
+  releaseDate: string
+  developers: string[]
+}[]
+
 interface GameAdderState {
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void
@@ -14,20 +21,8 @@ interface GameAdderState {
   setDataSource: (source: DataSource) => void
   name: string
   setName: (name: string) => void
-  gameList: {
-    id: string
-    name: string
-    releaseDate: string
-    developers: string[]
-  }[]
-  setGameList: (
-    gameList: {
-      id: string
-      name: string
-      releaseDate: string
-      developers: string[]
-    }[]
-  ) => void
+  gameList: GameList
+  setGameList: (gameList: GameList) => void
   id: string
   setId: (id: string) => void
   screenshotList: string[]
