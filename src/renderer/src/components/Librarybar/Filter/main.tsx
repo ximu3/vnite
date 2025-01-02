@@ -14,9 +14,9 @@ export function Filter({ children }: { children: React.ReactNode }): JSX.Element
   return (
     <Popover open={isFilterMenuOpen}>
       <Tooltip>
-        <TooltipTrigger>
-          <PopoverTrigger asChild>{children}</PopoverTrigger>
-        </TooltipTrigger>
+        <PopoverTrigger>
+          <TooltipTrigger asChild>{children}</TooltipTrigger>
+        </PopoverTrigger>
         <TooltipContent side="right">高级筛选</TooltipContent>
       </Tooltip>
       <PopoverContent side="right" className="w-80 h-screen">
