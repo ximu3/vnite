@@ -17,8 +17,11 @@ export function PlayedTimesRank({ className }: { className?: string }): JSX.Elem
             return (
               <GamePoster
                 isShowGameName
-                infoStyle={cn('flex-row text-sm gap-3 justify-start items-center pl-3')}
-                fontStyles={{ name: 'text-lg w-[330px]', additionalInfo: 'text-sm' }}
+                infoStyle={cn('flex-row gap-3 justify-between items-center pl-3 pr-3')}
+                fontStyles={{
+                  name: 'text-lg grow',
+                  additionalInfo: 'text-sm w-[40px] text-end flex-shrink-0 xl:w-auto'
+                }}
                 className={cn('w-full h-[50px]')}
                 key={gameId}
                 gameId={gameId}
