@@ -30,6 +30,7 @@ export async function launcherPreset(
     }
   } catch (error) {
     log.error(`Failed to set preset for ${gameId}`, error)
+    throw error
   }
 }
 

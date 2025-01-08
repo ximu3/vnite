@@ -12,8 +12,9 @@ import {
 } from '@ui/select'
 import { Input } from '@ui/input'
 import { Button } from '@ui/button'
-import { ipcInvoke, ipcSend, canAccessImageFile } from '~/utils'
+import { ipcInvoke, canAccessImageFile } from '~/utils'
 import { ArrayTextarea } from '@ui/array-textarea'
+import { toast } from 'sonner'
 
 export function Path({ gameId }: { gameId: string }): JSX.Element {
   const [_path] = useDBSyncedState('', `games/${gameId}/launcher.json`, ['fileConfig', 'path'])
@@ -59,7 +60,16 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
       await ipcInvoke('save-game-icon', gameId, filePath)
     }
     if (!timerPath) {
-      ipcSend('launcher-preset', 'default', gameId)
+      toast.promise(
+        async () => {
+          await ipcInvoke('launcher-preset', 'default', gameId)
+        },
+        {
+          loading: '正在配置预设...',
+          success: '预设配置成功',
+          error: (error) => `${error}`
+        }
+      )
     }
   }
   async function selectSaveFolderPath(): Promise<void> {

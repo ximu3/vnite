@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { ChevronsUpDown } from 'lucide-react'
 
-import { cn } from '~/utils'
+import { cn, ipcInvoke } from '~/utils'
 import { Button } from '@ui/button'
 import {
   Command,
@@ -15,8 +15,6 @@ import {
 } from '@ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
 import { toast } from 'sonner'
-
-import { ipcSend } from '~/utils'
 
 import { useSteamIdDialogStore, SteamIdDialog } from './SteamIdDialog'
 
@@ -50,14 +48,23 @@ export function PresetSelecter({
   const [value] = React.useState('')
   const { setIsOpen, setGameId } = useSteamIdDialogStore()
 
-  function setPreset(presetName: string, gameId: string): void {
+  async function setPreset(presetName: string, gameId: string): Promise<void> {
     if (presetName === 'steam') {
       setIsOpen(true)
       setGameId(gameId)
       toast.info('请输入Steam ID')
       return
     }
-    ipcSend('launcher-preset', presetName, gameId)
+    toast.promise(
+      async () => {
+        await ipcInvoke('launcher-preset', presetName, gameId)
+      },
+      {
+        loading: '正在配置预设...',
+        success: '预设配置成功',
+        error: (error) => `${error}`
+      }
+    )
   }
   return (
     <>

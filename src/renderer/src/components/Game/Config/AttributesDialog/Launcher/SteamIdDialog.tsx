@@ -1,9 +1,9 @@
-import { cn } from '~/utils'
+import { cn, ipcInvoke } from '~/utils'
 import { Button } from '@ui/button'
 import { Dialog, DialogContent } from '@ui/dialog'
 import { Input } from '@ui/input'
 import { create } from 'zustand'
-import { ipcSend } from '~/utils'
+import { toast } from 'sonner'
 
 interface SteamIdState {
   isOpen: boolean
@@ -36,9 +36,18 @@ export function SteamIdDialog(): JSX.Element {
             }}
           />
           <Button
-            onClick={() => {
+            onClick={async () => {
               setIsOpen(false)
-              ipcSend('launcher-preset', 'steam', gameId, steamId)
+              toast.promise(
+                async () => {
+                  await ipcInvoke('launcher-preset', 'steam', gameId, steamId)
+                },
+                {
+                  loading: '正在配置预设...',
+                  success: '预设配置成功',
+                  error: (error) => `${error}`
+                }
+              )
               setSteamId('')
               setGameId('')
             }}

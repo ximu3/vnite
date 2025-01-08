@@ -31,6 +31,9 @@ export async function lePreset(gameId: string): Promise<void> {
     ['advanced', 'linkage', 'localeEmulator', 'path'],
     ''
   )
+  if (!lePath) {
+    throw new Error('Locale Emulator path not set')
+  }
   const script = [`"${lePath}" "${gamePath}"`]
 
   await setDBValue(`games/${gameId}/launcher.json`, ['mode'], mode)
@@ -65,6 +68,10 @@ export async function vbaPreset(gameId: string): Promise<void> {
     ['advanced', 'linkage', 'visualBoyAdvance', 'path'],
     ''
   )
+
+  if (!vbaPath) {
+    throw new Error('VisualBoyAdvance path not set')
+  }
 
   const mode = 'script'
   const workingDirectory = path.dirname(vbaPath)

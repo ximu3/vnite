@@ -56,7 +56,16 @@ export function StartGame({
       if (!isIconAccessible) {
         await ipcInvoke('save-game-icon', gameId, filePath)
       }
-      ipcSend('launcher-preset', 'default', gameId)
+      toast.promise(
+        async () => {
+          await ipcInvoke('launcher-preset', 'default', gameId)
+        },
+        {
+          loading: '正在配置启动器...',
+          success: '启动器配置成功',
+          error: (error) => `${error}`
+        }
+      )
       return
     }
     if (mode === 'file') {
