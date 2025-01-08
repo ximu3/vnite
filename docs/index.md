@@ -38,7 +38,7 @@ features:
     details: 按次记录的计时器，支持记录单个文件或文件夹。
   - title: 联动
     icon: 🕹️
-    details: 支持与其他程序联动（如一键 LE 转区启动）。
+    details: 支持与其他程序联动（如一键 LE 转区启动、模拟器启动等）。
   - title: 快速启动
     icon: 🔗
     details: 支持通过系统链接唤醒 Vnite 并启动游戏。
