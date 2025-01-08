@@ -12,9 +12,19 @@ export function Advanced(): JSX.Element {
     'localeEmulator',
     'path'
   ])
+  const [vbaPath, setVbaPath] = useDBSyncedState('', 'config.json', [
+    'advanced',
+    'linkage',
+    'visualBoyAdvance',
+    'path'
+  ])
   async function selectLePath(): Promise<void> {
     const lePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
     setLePath(lePath)
+  }
+  async function selectVbaPath(): Promise<void> {
+    const vbaPath: string = await ipcInvoke('select-path-dialog', ['openFile'])
+    setVbaPath(vbaPath)
   }
   return (
     <Card className={cn('group')}>
@@ -41,6 +51,24 @@ export function Advanced(): JSX.Element {
               size={'icon'}
               className={cn('-ml-3')}
               onClick={selectLePath}
+            >
+              <span className={cn('icon-[mdi--file-outline] w-5 h-5')}></span>
+            </Button>
+          </div>
+          <div className={cn('flex flex-row justify-between items-center')}>
+            <div>VisualBoyAdvance</div>
+            <div className={cn('w-1/2 -mr-[236px]')}>
+              <Input
+                value={vbaPath}
+                onChange={(e) => setVbaPath(e.target.value)}
+                placeholder="请输入visualboyadvance.exe的路径"
+              />
+            </div>
+            <Button
+              variant={'outline'}
+              size={'icon'}
+              className={cn('-ml-3')}
+              onClick={selectVbaPath}
             >
               <span className={cn('icon-[mdi--file-outline] w-5 h-5')}></span>
             </Button>

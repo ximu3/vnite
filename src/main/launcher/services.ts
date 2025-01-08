@@ -1,4 +1,4 @@
-import { defaultPreset, lePreset, steamPreset } from './preset'
+import { defaultPreset, lePreset, steamPreset, vbaPreset } from './preset'
 import { getDBValue } from '../database'
 import { fileLuancher, urlLauncher, scriptLauncher } from './common'
 import log from 'electron-log/main.js'
@@ -25,6 +25,8 @@ export async function launcherPreset(
         throw new Error('Steam ID is required for steam preset')
       }
       await steamPreset(gameId, steamId)
+    } else if (presetName === 'vba') {
+      await vbaPreset(gameId)
     }
   } catch (error) {
     log.error(`Failed to set preset for ${gameId}`, error)

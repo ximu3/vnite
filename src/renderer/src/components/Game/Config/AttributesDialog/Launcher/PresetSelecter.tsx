@@ -32,6 +32,10 @@ const presets = [
   {
     value: 'steam',
     label: 'Steam启动'
+  },
+  {
+    value: 'vba',
+    label: 'VBA启动'
   }
 ]
 
