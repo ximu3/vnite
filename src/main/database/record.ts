@@ -80,7 +80,7 @@ export class GameRecordManager {
     }
   }
 
-  private async saveRecords(): Promise<void> {
+  public async saveRecords(): Promise<void> {
     try {
       await setDBValue('gameRecords.json', ['#all'], this.recordData)
     } catch (error) {
@@ -92,18 +92,22 @@ export class GameRecordManager {
     return this.recordData
   }
 
-  public async updateRecord(gameId: string, data: Partial<GameRecordData>): Promise<void> {
+  public async updateRecord(gameId: string): Promise<void> {
     try {
-      // Updating data in memory
+      const record = (await getDBValue(
+        `games/${gameId}/record.json`,
+        ['#all'],
+        {}
+      )) as GameRecordData
+
       this.recordData[gameId] = {
-        ...this.recordData[gameId],
-        ...data
+        addDate: record.addDate,
+        lastRunDate: record.lastRunDate,
+        score: record.score ?? -1,
+        playingTime: record.playingTime ?? 0,
+        timer: record.timer ?? []
       }
 
-      // Updating data in the file system
-      await setDBValue(`games/${gameId}/record.json`, Object.keys(data), data)
-
-      // Notification that the rendering process record has been updated
       const mainWindow = BrowserWindow.getAllWindows()[0]
       mainWindow.webContents.send('game-records-changed', this.recordData)
     } catch (error) {
@@ -119,7 +123,8 @@ export class GameRecordManager {
 
   public async removeGameRecord(gameId: string): Promise<void> {
     delete this.recordData[gameId]
-    await this.saveRecords()
+    const mainWindow = BrowserWindow.getAllWindows()[0]
+    mainWindow.webContents.send('game-records-changed', this.recordData)
   }
 }
 
@@ -140,5 +145,9 @@ export const initializeRecords = GameRecordManager.getInstance().initialize.bind
 )
 
 export const removeGameRecord = GameRecordManager.getInstance().removeGameRecord.bind(
+  GameRecordManager.getInstance()
+)
+
+export const saveGameRecords = GameRecordManager.getInstance().saveRecords.bind(
   GameRecordManager.getInstance()
 )

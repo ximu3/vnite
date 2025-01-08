@@ -5,8 +5,8 @@ import { generateUUID, selectPathDialog, getFirstLevelSubfolders, getDataPath } 
 import { BrowserWindow } from 'electron'
 import { launcherPreset } from '~/launcher'
 import { setupWatcher, stopWatcher } from '~/watcher'
-import { rebuildIndex } from '~/database/gameIndex'
-import { rebuildRecords } from '~/database/record'
+import { updateGameIndex } from '~/database/gameIndex'
+import { updateGameRecord } from '~/database/record'
 
 /**
  * Add a game to the database
@@ -69,10 +69,41 @@ export async function addGameToDB({
   })
 
   if (!preExistingDbId) {
-    await setDBValue(`games/${dbId}/record.json`, ['addDate'], new Date().toISOString())
-    await setDBValue(`games/${dbId}/record.json`, ['playStatus'], 'unplayed')
-    await setDBValue(`games/${dbId}/launcher.json`, ['#all'], {})
-    await setDBValue(`games/${dbId}/path.json`, ['#all'], {})
+    await setDBValue(`games/${dbId}/record.json`, ['#all'], {
+      addDate: new Date().toISOString(),
+      lastRunDate: '',
+      score: -1,
+      playingTime: 0,
+      playStatus: 'unplayed'
+    })
+    await setDBValue(`games/${dbId}/launcher.json`, ['#all'], {
+      mode: 'file',
+      fileConfig: {
+        path: '',
+        workingDirectory: '',
+        timerMode: 'folder',
+        timerPath: ''
+      },
+      scriptConfig: {
+        command: [],
+        workingDirectory: '',
+        timerMode: 'folder',
+        timerPath: ''
+      },
+      urlConfig: {
+        url: '',
+        timerMode: 'folder',
+        timerPath: '',
+        browserPath: ''
+      }
+    })
+    await setDBValue(`games/${dbId}/path.json`, ['#all'], {
+      gamePath: '',
+      savePath: {
+        mode: 'folder',
+        folder: []
+      }
+    })
     await setDBValue(`games/${dbId}/save.json`, ['#all'], {})
   }
 
@@ -89,8 +120,8 @@ export async function addGameToDB({
     mainWindow.webContents.send('reload-db-values', `games/${dbId}/icon.png`)
     mainWindow.webContents.send('reload-db-values', `games/${dbId}/metadata.json`)
     mainWindow.webContents.send('reload-db-values', `games/${dbId}/record.json`)
-    await rebuildIndex()
-    await rebuildRecords()
+    await updateGameIndex(dbId)
+    await updateGameRecord(dbId)
   }
 }
 
@@ -102,9 +133,41 @@ export async function addGameToDB({
 export async function addGameToDBWithoutMetadata(gamePath: string): Promise<void> {
   const dbId = generateUUID()
   await getDataPath(`games/${dbId}/`, true)
-  await setDBValue(`games/${dbId}/record.json`, ['addDate'], new Date().toISOString())
-  await setDBValue(`games/${dbId}/record.json`, ['playStatus'], 'unplayed')
-  await setDBValue(`games/${dbId}/path.json`, ['gamePath'], gamePath)
+  await setDBValue(`games/${dbId}/record.json`, ['#all'], {
+    addDate: new Date().toISOString(),
+    lastRunDate: '',
+    score: -1,
+    playingTime: 0,
+    playStatus: 'unplayed'
+  })
+  await setDBValue(`games/${dbId}/launcher.json`, ['#all'], {
+    mode: 'file',
+    fileConfig: {
+      path: '',
+      workingDirectory: '',
+      timerMode: 'folder',
+      timerPath: ''
+    },
+    scriptConfig: {
+      command: [],
+      workingDirectory: '',
+      timerMode: 'folder',
+      timerPath: ''
+    },
+    urlConfig: {
+      url: '',
+      timerMode: 'folder',
+      timerPath: '',
+      browserPath: ''
+    }
+  })
+  await setDBValue(`games/${dbId}/path.json`, ['#all'], {
+    gamePath: gamePath,
+    savePath: {
+      mode: 'folder',
+      folder: []
+    }
+  })
   const gameName = gamePath.split('\\').pop()?.split('.')?.slice(0, -1).join('.')
   await setDBValue(`games/${dbId}/metadata.json`, ['#all'], {
     id: dbId,
@@ -123,7 +186,7 @@ export async function addGameToDBWithoutMetadata(gamePath: string): Promise<void
   mainWindow.webContents.send('reload-db-values', `games/${dbId}/record.json`)
   mainWindow.webContents.send('reload-db-values', `games/${dbId}/launcher.json`)
   mainWindow.webContents.send('reload-db-values', `games/${dbId}/icon.png`)
-  await rebuildIndex()
+  await updateGameIndex(dbId)
 }
 
 /**

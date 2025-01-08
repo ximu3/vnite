@@ -155,7 +155,7 @@ ipcInvoke('get-games-index')
   })
 
 // Listening to game index changes
-ipcOnUnique('game-index-changed', () => {
+ipcOnUnique('game-index-changed', async () => {
   try {
     ipcInvoke('get-games-index').then((metadata) => {
       if (metadata && typeof metadata === 'object') {

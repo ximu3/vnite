@@ -1,7 +1,8 @@
 import { setValue, getValue } from './common'
+import { BrowserWindow } from 'electron'
 import { getDataPath } from '~/utils'
-import { getGameIndex } from './gameIndex'
-import { getGameRecords } from './record'
+import { getGameIndex, updateGameIndex } from './gameIndex'
+import { getGameRecords, updateGameRecord } from './record'
 import { backupGameSave, restoreGameSave, deleteGameSave } from './save'
 import { deleteGame } from './utils'
 import { backupDatabase, restoreDatabase } from './backup'
@@ -14,9 +15,25 @@ import log from 'electron-log/main.js'
  * @param value — The value to set.
  * @returns A promise that resolves when the operation is complete.
  */
-export async function setDBValue(dbName: string, path: string[], value: any): Promise<void> {
+export async function setDBValue(
+  dbName: string,
+  path: string[],
+  value: any,
+  noIpcAction?: boolean
+): Promise<void> {
   try {
     await setValue(await getDataPath(dbName), path, value)
+    if (noIpcAction) {
+      return
+    }
+    const mainWindow = BrowserWindow.getAllWindows()[0]
+    mainWindow.webContents.send('reload-db-values', dbName)
+    if (dbName.startsWith('games/')) {
+      if (dbName.includes('record.json')) {
+        await updateGameRecord(dbName.split('/')[1])
+      }
+      await updateGameIndex(dbName.split('/')[1])
+    }
   } catch (error) {
     log.error(`Failed to set value for ${dbName} at ${path.join('.')}`, error)
   }

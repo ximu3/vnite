@@ -13,9 +13,12 @@ import {
 } from '~/database'
 
 export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
-  ipcMain.handle('set-db-value', async (_, dbName: string, path: string[], value: any) => {
-    await setDBValue(dbName, path, value)
-  })
+  ipcMain.handle(
+    'set-db-value',
+    async (_, dbName: string, path: string[], value: any, noIpcAction?: boolean) => {
+      await setDBValue(dbName, path, value, noIpcAction)
+    }
+  )
 
   ipcMain.handle('get-db-value', async (_, dbName: string, path: string[], defaultValue: any) => {
     return await getDBValue(dbName, path, defaultValue)

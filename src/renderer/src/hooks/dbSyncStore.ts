@@ -112,7 +112,7 @@ const useDBSyncStore = create<DBSyncStore>((set, get) => ({
 
     // Trying to update the database
     try {
-      await debouncedIpcInvoke('set-db-value', dbName, path, value)
+      await debouncedIpcInvoke('set-db-value', dbName, path, value, true)
     } catch (error) {
       console.error('Failed to set DB value:', error)
       // Restore the previous value

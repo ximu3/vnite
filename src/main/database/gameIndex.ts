@@ -114,7 +114,7 @@ export class GameIndexManager {
     }
   }
 
-  private async saveIndex(): Promise<void> {
+  public async saveIndex(): Promise<void> {
     try {
       await setDBValue('gameIndex.json', ['#all'], this.gameIndex)
     } catch (error) {
@@ -132,9 +132,48 @@ export class GameIndexManager {
     mainWindow.webContents.send('game-index-changed')
   }
 
+  public async updateGame(gameId: string): Promise<void> {
+    try {
+      const metadata = await getDBValue(`games/${gameId}/metadata.json`, ['#all'], {})
+      const addDate = await getDBValue(`games/${gameId}/record.json`, ['addDate'], '')
+      const lastRunDate = await getDBValue(`games/${gameId}/record.json`, ['lastRunDate'], '')
+      const score = await getDBValue(`games/${gameId}/record.json`, ['score'], -1)
+      const playingTime = await getDBValue(`games/${gameId}/record.json`, ['playingTime'], 0)
+      const timer = await getDBValue(`games/${gameId}/record.json`, ['timer'], [])
+      const playedTimes = timer.length
+      const playStatus = await getDBValue(`games/${gameId}/record.json`, ['playStatus'], 'unplayed')
+
+      const fullData = {
+        id: gameId,
+        ...metadata,
+        addDate,
+        lastRunDate,
+        score,
+        playingTime,
+        playedTimes,
+        playStatus
+      }
+
+      const indexedData: Partial<GameIndexdata> = {}
+
+      this.gameIndexdataKeys.forEach((field) => {
+        if (fullData[field] !== undefined) {
+          indexedData[field] = fullData[field]
+        }
+      })
+
+      this.gameIndex[gameId] = indexedData
+      const mainWindow = BrowserWindow.getAllWindows()[0]
+      mainWindow.webContents.send('game-index-changed')
+    } catch (error) {
+      console.error(`Error updating game ${gameId}:`, error)
+    }
+  }
+
   public async removeGame(gameId: string): Promise<void> {
     delete this.gameIndex[gameId]
-    await this.saveIndex()
+    const mainWindow = BrowserWindow.getAllWindows()[0]
+    mainWindow.webContents.send('game-index-changed')
   }
 }
 
@@ -151,5 +190,13 @@ export const initializeIndex = GameIndexManager.getInstance().initialize.bind(
 )
 
 export const removeGameIndex = GameIndexManager.getInstance().removeGame.bind(
+  GameIndexManager.getInstance()
+)
+
+export const updateGameIndex = GameIndexManager.getInstance().updateGame.bind(
+  GameIndexManager.getInstance()
+)
+
+export const saveIndex = GameIndexManager.getInstance().saveIndex.bind(
   GameIndexManager.getInstance()
 )
