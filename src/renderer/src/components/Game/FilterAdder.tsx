@@ -12,7 +12,7 @@ export function FilterAdder({
   value: string
   className?: string
 }): JSX.Element {
-  const { addFilter, updateFilter } = useFilterStore()
+  const { filter, addFilter, updateFilter } = useFilterStore()
   return (
     <Button
       variant="link"
@@ -24,7 +24,9 @@ export function FilterAdder({
         if (filed === 'releaseDate') {
           updateFilter(filed, [value, value])
         } else {
-          addFilter(filed, value)
+          if (!filter[filed]?.includes(value)) {
+            addFilter(filed, value)
+          }
         }
         toast.info(`已添加筛选器，${filed}: ${value}`)
       }}

@@ -5,6 +5,13 @@ import { useGameIndexManager } from '~/hooks'
 export function PlayingTimeRank({ className }: { className?: string }): JSX.Element {
   const { sort, gameIndex } = useGameIndexManager()
   const sortedGameIds = sort('playingTime', 'desc')
+  const formatTime = (time: number): string => {
+    let res: string = formatTimeToChinese(time)
+    if (!res.endsWith('秒')) {
+      if (res.split(' ')[0].length >= 2) res = res.replace(' ', '\n')
+    }
+    return res
+  }
   return (
     <div className={cn(className)}>
       {sortedGameIds.length === 0 ? (
@@ -17,15 +24,17 @@ export function PlayingTimeRank({ className }: { className?: string }): JSX.Elem
             return (
               <GamePoster
                 isShowGameName
-                infoStyle={cn('flex-row text-sm gap-3 justify-start items-center pl-3')}
-                fontStyles={{ name: 'text-lg w-[330px]', additionalInfo: 'text-sm' }}
+                infoStyle={cn('flex-row gap-3 justify-between items-center pl-3 pr-3')}
+                fontStyles={{
+                  name: 'text-lg grow',
+                  additionalInfo:
+                    'whitespace-pre-wrap text-sm w-[40px] text-end flex-shrink-0 xl:w-auto xl:whitespace-normal'
+                }}
                 className={cn('w-full h-[50px]')}
                 key={gameId}
                 gameId={gameId}
                 additionalInfo={
-                  game.playingTime == 0
-                    ? '从未游玩'
-                    : formatTimeToChinese(game.playingTime as number)
+                  game.playingTime == 0 ? '从未游玩' : formatTime(game.playingTime as number)
                 }
               />
             )

@@ -22,8 +22,12 @@ export function Library({ className }: { className?: string }): JSX.Element {
     })
   }, [])
   return (
-    <ResizablePanelGroup direction="horizontal" className={cn('w-full h-full', className)}>
-      <ResizablePanel defaultSize={18} maxSize={30} minSize={12}>
+    <ResizablePanelGroup
+      autoSaveId="LibraryPanelGroup"
+      direction="horizontal"
+      className={cn('w-full h-full', className)}
+    >
+      <ResizablePanel defaultSize={18} maxSize={26} minSize={10} className={cn('min-w-[150px]')}>
         <Librarybar />
       </ResizablePanel>
       <ResizableHandle />
