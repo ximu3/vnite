@@ -34,7 +34,8 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
     'playStatus'
   ])
   const [score, setScore] = useDBSyncedState(-1, `games/${gameId}/record.json`, ['score'])
-  const [preScore, setPreScore] = useState(score.toString())
+  const [preScore, setPreScore] = useState(score === -1 ? '' : score.toString())
+  const resetPreScore = (): void => setPreScore(score === -1 ? '' : score.toString())
   const [isScoreDialogOpen, setIsScoreDialogOpen] = useState(false)
 
   const [_saveList] = useDBSyncedState(
@@ -45,22 +46,34 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
   const [_timer] = useDBSyncedState([], `games/${gameId}/record.json`, ['timer'])
 
   function confirmScore(): void {
+    if (preScore === '') {
+      setScore(-1)
+      setIsScoreDialogOpen(false)
+      toast.success('评分已清除')
+      return
+    }
+
     const scoreNum = parseFloat(preScore)
 
     if (isNaN(scoreNum)) {
       toast.error('请输入有效数字')
-      setPreScore(score.toString())
+      resetPreScore()
+      return
+    }
+
+    if (scoreNum < 0) {
+      toast.error('评分不能为负数')
+      resetPreScore()
       return
     }
 
     if (scoreNum > 10) {
       toast.error('评分不能超过10分')
-      setPreScore(score.toString())
+      resetPreScore()
       return
     }
 
-    // Retain 1 decimal place and keep 10 cents in whole numbers
-    const formattedScore = scoreNum === 10 ? '10' : scoreNum.toFixed(1)
+    const formattedScore = scoreNum.toFixed(1)
 
     // Check if formatting is required and the input is not an integer
     if (preScore !== formattedScore && !Number.isInteger(scoreNum)) {
@@ -68,7 +81,7 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
     }
 
     setScore(Number(formattedScore))
-    setPreScore(formattedScore)
+    setPreScore(Number(formattedScore).toString())
     setIsScoreDialogOpen(false)
     toast.success('评分已保存')
   }
@@ -122,8 +135,8 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
               size={'icon'}
               className="non-draggable"
               onClick={() => {
+                resetPreScore()
                 setIsScoreDialogOpen(true)
-                setPreScore(score.toString())
               }}
             >
               <span className={cn('icon-[mdi--starburst-edit-outline] w-4 h-4')}></span>
