@@ -1,12 +1,9 @@
 import { app, Tray, Menu, nativeImage, BrowserWindow } from 'electron'
-import { getDBValue, setDBValue } from '~/database'
+import { getDBValue, setDBValue, getGameIndexData } from '~/database'
+import { sortGameIndex } from '~/database/gameIndex'
+import { getMedia } from '~/media'
+import { shell } from 'electron'
 import icon from '../../../resources/icon.png?asset'
-
-export async function setupTray(mainWindow: BrowserWindow): Promise<TrayManager> {
-  const trayManager = new TrayManager(mainWindow)
-  await trayManager.init()
-  return trayManager
-}
 
 export interface AppConfig {
   openAtLogin: boolean
@@ -14,17 +11,35 @@ export interface AppConfig {
 }
 
 export class TrayManager {
+  private static instance: TrayManager | null = null
   private tray: Tray | null = null
-  private mainWindow: BrowserWindow
+  private mainWindow: BrowserWindow | null = null
   private config: AppConfig | null = null
   private isQuitting: boolean = false
 
-  constructor(mainWindow: BrowserWindow) {
-    this.mainWindow = mainWindow
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  private constructor() {}
+
+  public static async getInstance(mainWindow?: BrowserWindow): Promise<TrayManager> {
+    if (!TrayManager.instance) {
+      TrayManager.instance = new TrayManager()
+      if (mainWindow) {
+        await TrayManager.instance.init(mainWindow)
+      }
+    } else if (mainWindow) {
+      TrayManager.instance.mainWindow = mainWindow
+    }
+    return TrayManager.instance
   }
 
-  // Asynchronous initialization methods
-  public async init(): Promise<void> {
+  public static async updateRecentGames(): Promise<void> {
+    if (TrayManager.instance) {
+      TrayManager.instance.updateTrayMenu()
+    }
+  }
+
+  private async init(mainWindow: BrowserWindow): Promise<void> {
+    this.mainWindow = mainWindow
     this.config = await getDBValue('config.json', ['general'], {
       openAtLogin: false,
       quitToTray: false
@@ -43,16 +58,15 @@ export class TrayManager {
   }
 
   private async setupWindowEvents(): Promise<void> {
-    // Handling window close events
+    if (!this.mainWindow) return
+
     this.mainWindow.on('close', (event) => {
-      // If it is not an exit operation and minimize to tray is enabled
       if (!this.isQuitting && this.config?.quitToTray) {
         event.preventDefault()
-        this.mainWindow.hide()
+        this.mainWindow?.hide()
       }
     })
 
-    // Listening for application exit events
     app.on('before-quit', () => {
       this.isQuitting = true
     })
@@ -62,27 +76,41 @@ export class TrayManager {
     if (this.tray) return
 
     this.tray = new Tray(icon)
-
-    // Setting up tray icon alerts
     this.tray.setToolTip('vnite')
-
-    // Creating Context Menus
     this.setTrayMenu()
-
-    // bind an event
     this.bindTrayEvents()
   }
 
-  private setTrayMenu(): void {
+  private async setTrayMenu(): Promise<void> {
     if (!this.tray) return
 
-    const contextMenu = Menu.buildFromTemplate([
+    const recentGames = await this.getRecentGames()
+    const template: Array<Electron.MenuItemConstructorOptions> = []
+
+    if (recentGames.length > 0) {
+      recentGames.forEach((game) => {
+        template.push({
+          label: this.truncateText(game.name, 10),
+          icon: game.icon
+            ? nativeImage.createFromPath(game.icon).resize({ width: 16, height: 16 })
+            : undefined,
+          click: () => {
+            shell.openExternal(`vnite://rungameid/${game.id}`)
+          }
+        })
+      })
+
+      template.push({ type: 'separator' })
+    }
+
+    template.push(
       {
         label: '显示主窗口',
         click: (): void => {
           this.showMainWindow()
         }
       },
+      { type: 'separator' },
       {
         label: '设置',
         submenu: [
@@ -112,26 +140,55 @@ export class TrayManager {
       {
         label: '退出',
         click: (): void => {
-          this.isQuitting = true // Setting the exit flag
+          this.isQuitting = true
           app.quit()
         }
       }
-    ])
+    )
 
+    const contextMenu = Menu.buildFromTemplate(template)
     this.tray.setContextMenu(contextMenu)
+  }
+
+  private truncateText(text: string, maxLength: number): string {
+    if (!text) return ''
+    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text
+  }
+
+  private async getRecentGames(): Promise<Array<{ id: string; name: string; icon: string }>> {
+    try {
+      const gameIndex = await getGameIndexData()
+      const recentGameIds = sortGameIndex('lastRunDate', 'desc').slice(0, 5)
+
+      const recentGames = await Promise.all(
+        recentGameIds.map(async (gameId) => {
+          const game = gameIndex[gameId]
+          const iconPath = await getMedia(gameId, 'icon')
+
+          return {
+            id: gameId,
+            name: game?.name || gameId,
+            icon: iconPath
+          }
+        })
+      )
+
+      return recentGames.filter((game) => game.name)
+    } catch (error) {
+      console.error('Failed to get recent games:', error)
+      return []
+    }
   }
 
   private bindTrayEvents(): void {
     if (!this.tray) return
 
-    // Click to show main window on Windows and Linux
     if (process.platform !== 'darwin') {
       this.tray.on('click', () => {
         this.showMainWindow()
       })
     }
 
-    // Right-click to show menu on macOS
     if (process.platform === 'darwin') {
       this.tray.on('right-click', () => {
         if (this.tray) {
@@ -142,6 +199,8 @@ export class TrayManager {
   }
 
   private showMainWindow(): void {
+    if (!this.mainWindow) return
+
     if (this.mainWindow.isMinimized()) {
       this.mainWindow.restore()
     }
@@ -151,7 +210,6 @@ export class TrayManager {
     this.mainWindow.focus()
   }
 
-  // Update tray icon
   public updateTrayIcon(iconPath: string): void {
     if (this.tray) {
       const icon = nativeImage.createFromPath(iconPath)
@@ -159,12 +217,10 @@ export class TrayManager {
     }
   }
 
-  // Updated tray menu
-  public updateTrayMenu(): void {
+  private updateTrayMenu(): void {
     this.setTrayMenu()
   }
 
-  // Destruction of pallets
   public destroy(): void {
     if (this.tray) {
       this.tray.destroy()
@@ -172,3 +228,11 @@ export class TrayManager {
     }
   }
 }
+
+// 导出初始化函数
+export async function setupTray(mainWindow: BrowserWindow): Promise<TrayManager> {
+  return await TrayManager.getInstance(mainWindow)
+}
+
+// 导出更新最近游戏的方法
+export const updateRecentGames = TrayManager.updateRecentGames

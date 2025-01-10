@@ -175,6 +175,31 @@ export class GameIndexManager {
     const mainWindow = BrowserWindow.getAllWindows()[0]
     mainWindow.webContents.send('game-index-changed')
   }
+
+  public sort(by: keyof GameIndexdata, order: 'asc' | 'desc' = 'asc'): string[] {
+    return Object.entries(this.gameIndex)
+      .sort(([, a], [, b]) => {
+        const valueA = a[by]
+        const valueB = b[by]
+
+        // 检查 valueA 和 valueB 是否为 undefined 或 null
+        if (valueA == null && valueB == null) {
+          return 0
+        }
+        if (valueA == null) {
+          return order === 'asc' ? 1 : -1
+        }
+        if (valueB == null) {
+          return order === 'asc' ? -1 : 1
+        }
+
+        if (valueA === valueB) {
+          return 0
+        }
+        return order === 'asc' ? (valueA > valueB ? 1 : -1) : valueA > valueB ? -1 : 1
+      })
+      .map(([gameId]) => gameId)
+  }
 }
 
 export const getGameIndex = GameIndexManager.getInstance().getGameIndex.bind(
@@ -198,5 +223,9 @@ export const updateGameIndex = GameIndexManager.getInstance().updateGame.bind(
 )
 
 export const saveIndex = GameIndexManager.getInstance().saveIndex.bind(
+  GameIndexManager.getInstance()
+)
+
+export const sortGameIndex = GameIndexManager.getInstance().sort.bind(
   GameIndexManager.getInstance()
 )

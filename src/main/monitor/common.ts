@@ -1,6 +1,7 @@
 import path from 'path'
 import fse from 'fs-extra'
 import { ipcMain, IpcMainEvent, BrowserWindow } from 'electron'
+import { updateRecentGames } from '~/utils'
 import { setDBValue, getDBValue } from '~/database'
 import log from 'electron-log/main.js'
 import { backupGameSaveData } from '~/database'
@@ -391,6 +392,8 @@ export class GameMonitor {
 
     // Stop monitoring
     this.stop()
+
+    updateRecentGames()
 
     const savePathMode = await getDBValue(
       `games/${this.options.gameId}/path.json`,
