@@ -229,10 +229,8 @@ export class TrayManager {
   }
 }
 
-// 导出初始化函数
 export async function setupTray(mainWindow: BrowserWindow): Promise<TrayManager> {
   return await TrayManager.getInstance(mainWindow)
 }
 
-// 导出更新最近游戏的方法
 export const updateRecentGames = TrayManager.updateRecentGames
