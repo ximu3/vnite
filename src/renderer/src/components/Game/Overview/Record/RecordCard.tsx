@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { cn } from '~/utils'
+import { Separator } from '@ui/separator'
 
 export function RecordCard({
   title,
@@ -13,18 +13,19 @@ export function RecordCard({
   className?: string
 }): JSX.Element {
   return (
-    <Card className={cn(className, 'h-[96px]')}>
-      <CardHeader className={cn('-mt-1')}>
-        <CardTitle>
-          <div className={cn('flex flex-row justify-between items-center')}>
-            <div className={cn('font-normal text-sm')}>{title}</div>
-            <span className={cn('w-3 h-3', icon)}></span>
-          </div>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className={cn('-mt-4')}>
-        <div className={cn('text-xl font-bold')}>{content}</div>
-      </CardContent>
-    </Card>
+    <div className={cn('flex flex-row justify-center items-center', className)}>
+      <div
+        className={cn(
+          'flex flex-col gap-1 text-xs text-accent-foreground/90 justify-center items-center'
+        )}
+      >
+        <div className={cn('font-bold text-accent-foreground self-center')}>{title}</div>
+        <div className={cn('flex flex-row gap-1 items-center justify-start text-center')}>
+          <span className={cn(icon)}></span>
+          <div>{content}</div>
+        </div>
+      </div>
+      <Separator orientation="vertical" className={cn('mx-5 bg-primary h-7 self-center')} />
+    </div>
   )
 }

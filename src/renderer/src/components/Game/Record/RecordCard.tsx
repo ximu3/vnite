@@ -1,7 +1,7 @@
-import { Card } from '@ui/card'
 import { cn } from '~/utils'
 import { useGameRecords, useDBSyncedState } from '~/hooks'
 import { formatTimeToChinese, formatDateToChinese } from '~/utils'
+import { Separator } from '@ui/separator'
 
 export function RecordCard({
   gameId,
@@ -19,7 +19,9 @@ export function RecordCard({
   const equalPlayingTime = playingTime / playDays
   const maxPlayTimeDay = getGameMaxPlayTimeDay(gameId)
   return (
-    <Card className={cn(className, 'p-3 w-auto')}>
+    <div className={cn(className, 'w-auto')}>
+      <div className={cn('font-bold')}>游玩数据</div>
+      <Separator className={cn('my-3 bg-primary')} />
       {lastRunDate && timer.length !== 0 ? (
         <>
           <div className={cn('flex flex-row')}>
@@ -66,6 +68,6 @@ export function RecordCard({
       ) : (
         '你还没有开始游玩这个游戏。'
       )}
-    </Card>
+    </div>
   )
 }

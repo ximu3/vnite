@@ -7,6 +7,7 @@ interface GameImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src'
   type: 'background' | 'cover' | 'icon'
   onUpdated?: () => void
   fallback?: React.ReactNode
+  shadow?: boolean
 }
 
 export const GameImage: React.FC<GameImageProps> = ({
@@ -16,6 +17,7 @@ export const GameImage: React.FC<GameImageProps> = ({
   onError,
   onUpdated,
   fallback = <div>暂无图标</div>,
+  shadow = false,
   ...imgProps
 }) => {
   const [timestamp, setTimestamp] = useState(Date.now())
@@ -49,6 +51,7 @@ export const GameImage: React.FC<GameImageProps> = ({
         src={`img:///games/${gameId}/${type}?t=${timestamp}`}
         className={cn(
           'transition-opacity duration-300',
+          shadow && 'shadow-md shadow-black/50',
           isLoaded ? 'opacity-100' : 'opacity-0',
           className
         )}

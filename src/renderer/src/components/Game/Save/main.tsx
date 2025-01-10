@@ -1,4 +1,3 @@
-import { Card } from '@ui/card'
 import { cn } from '~/utils'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@ui/table'
 import { Input } from '@ui/input'
@@ -50,11 +49,11 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
   }
   return (
     <div className="pt-2">
-      <Card className="group w-full p-3">
-        <div className={cn('overflow-auto h-[684px] scrollbar-base', '3xl:h-[870px] sm:h-[70vh]')}>
+      <div className="group w-full">
+        <div className={cn()}>
           <Table className="table-fixed">
             <TableHeader>
-              <TableRow className={cn('bg-card')}>
+              <TableRow className={cn('')}>
                 <TableHead className={cn('w-1/5')}>日期</TableHead>
                 <TableHead className={cn('w-2/3', 'sm:w-1/3')}>备注</TableHead>
                 <TableHead className={cn('w-1/6')}>操作</TableHead>
@@ -105,7 +104,7 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
             </TableBody>
           </Table>
         </div>
-      </Card>
+      </div>
     </div>
   )
 }

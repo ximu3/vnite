@@ -106,10 +106,10 @@ export function StartGame({
   return (
     <Button className={cn('', className)}>
       <div
-        className={cn('flex flex-row gap-1 justify-center items-center p-3')}
+        className={cn('flex flex-row justify-center gap-1 items-center w-full h-full p-3')}
         onClick={startGame}
       >
-        <span className={cn('icon-[mdi--play] w-6 h-6 -ml-2')}></span>
+        <span className={cn('icon-[mdi--play] w-6 h-6 -ml-1')}></span>
         <div className={cn('')}>开始游戏</div>
       </div>
     </Button>

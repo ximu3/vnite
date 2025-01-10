@@ -1,6 +1,7 @@
 import { cn } from '~/utils'
 import { useDBSyncedState } from '~/hooks'
 import { Button } from '@ui/button'
+import { GameImage } from '@ui/game-image'
 // import { Badge } from '@ui/badge'
 import {
   Select,
@@ -15,6 +16,7 @@ import { Input } from '@ui/input'
 import { Config } from './Config'
 import { StartGame } from './StartGame'
 import { StopGame } from './StopGame'
+import { Record } from './Overview/Record'
 import { toast } from 'sonner'
 import { useState } from 'react'
 import { useRunningGames } from '~/pages/Library/store'
@@ -71,13 +73,15 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
     toast.success('评分已保存')
   }
   return (
-    <div
-      className={cn(
-        'h-16 bg-gradient-to-b bg-background/80 absolute flex-row flex justify-between items-center pl-7 pr-7',
-        className
-      )}
-    >
-      <div className={cn('flex flex-row gap-3 grow overflow-hidden')}>
+    <div className={cn('bg-gradient-to-b bg-background/70 flex-col flex gap-5', className)}>
+      <GameImage
+        gameId={gameId}
+        type="cover"
+        shadow
+        className={cn('object-cover w-auto h-[200px] rounded-[0.3rem]', '3xl:h-[250px]')}
+        fallback={<div className={cn('w-full h-full', 'bg-background/15')} />}
+      />
+      <div className={cn('flex flex-row gap-3 grow overflow-hidden items-end justify-between')}>
         <div className={cn('truncate')}>
           <span className={cn('font-bold text-2xl text-accent-foreground')}>{name}</span>
           {showOriginalNameInGameHeader && originalName && originalName !== name && (
@@ -85,7 +89,8 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
           )}
         </div>
       </div>
-      <div className={cn('flex flex-row gap-3 justify-center items-center', '3xl:gap-5')}>
+      <Record gameId={gameId} />
+      <div className={cn('flex flex-row gap-3', '3xl:gap-5')}>
         {runningGames.includes(gameId) ? (
           <StopGame gameId={gameId} className={cn('')} />
         ) : (

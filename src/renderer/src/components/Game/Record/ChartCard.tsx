@@ -1,5 +1,5 @@
-import { Card } from '@ui/card'
 import { DateInput } from '@ui/date-input'
+import { Separator } from '@ui/separator'
 import { cn } from '~/utils'
 import { useGameRecords } from '~/hooks'
 import { useState, useEffect } from 'react'
@@ -40,7 +40,9 @@ export function ChartCard({
     }
   }, [startDate, endDate, timers.start, timers.end, gameId])
   return (
-    <Card className={cn(className, 'p-3 flex flex-col gap-3')}>
+    <div className={cn(className, 'flex flex-col')}>
+      <div className={cn('font-bold')}>时长图表</div>
+      <Separator className={cn('my-3 bg-primary')} />
       {!isEqual(timers, { start: '', end: '' }) ? (
         <>
           <div className={cn('flex flex-row gap-2 items-center')}>
@@ -65,17 +67,14 @@ export function ChartCard({
               请选择在 {timers.start} 到 {timers.end} 之间的日期
             </div>
           ) : (
-            <Card className={cn('p-5 max-h-full rounded-[0.3rem]', '3xl:max-h-full')}>
-              <TimerChart
-                data={playTimeByDateRange}
-                className={cn('max-h-[500px] w-full -ml-3', '3xl:max-h-[680px] sm:max-h-[42vh]')}
-              />
-            </Card>
+            <div className={cn('max-h-full rounded-[0.3rem] py-3', '3xl:max-h-full')}>
+              <TimerChart data={playTimeByDateRange} className={cn('w-full -ml-3')} />
+            </div>
           )}
         </>
       ) : (
         <div>暂无数据</div>
       )}
-    </Card>
+    </div>
   )
 }

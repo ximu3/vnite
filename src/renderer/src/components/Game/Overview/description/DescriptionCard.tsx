@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
+import { Separator } from '@ui/separator'
 import { DescriptionDialog } from './DescriptionDialog'
 import { cn, HTMLParserOptions } from '~/utils'
 import { useDBSyncedState } from '~/hooks'
@@ -13,28 +13,24 @@ export function DescriptionCard({
 }): JSX.Element {
   const [description] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['description'])
   return (
-    <Card className={cn(className, 'group')}>
-      <CardHeader>
-        <CardTitle>
-          <div className={cn('flex flex-row justify-between items-center')}>
-            <div>简介</div>
-            <DescriptionDialog gameId={gameId} />
-          </div>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className={cn('')}>
-        <div
-          className={cn(
-            'max-h-[310px] text-sm overflow-auto scrollbar-base',
-            '3xl:max-h-[500px] sm:max-h-[20vh]',
-            'prose-a:text-primary', // Link Color
-            'prose-a:no-underline hover:prose-a:underline', // underline effect
-            'whitespace-pre-line'
-          )}
-        >
-          {description ? parse(description, HTMLParserOptions) : '暂无简介'}
-        </div>
-      </CardContent>
-    </Card>
+    <div className={cn('bg-transparent border-0 shadow-none', className, 'group')}>
+      <div className={cn('flex flex-row justify-between items-center')}>
+        <div className={cn('font-bold')}>简介</div>
+        <DescriptionDialog gameId={gameId} />
+      </div>
+      <Separator className={cn('my-3 bg-primary')} />
+
+      <div
+        className={cn(
+          'text-sm',
+          'prose-a:text-primary', // Link Color
+          'prose-a:no-underline hover:prose-a:underline', // underline effect
+          'space-before-0',
+          'whitespace-pre-line'
+        )}
+      >
+        {description ? parse(description, HTMLParserOptions) : '暂无简介'}
+      </div>
+    </div>
   )
 }
