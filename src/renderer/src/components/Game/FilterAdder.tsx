@@ -1,4 +1,3 @@
-import { Button } from '@ui/button'
 import { cn } from '~/utils'
 import { useFilterStore } from '~/components/Librarybar/Filter/store'
 import { toast } from 'sonner'
@@ -14,10 +13,9 @@ export function FilterAdder({
 }): JSX.Element {
   const { filter, addFilter, updateFilter } = useFilterStore()
   return (
-    <Button
-      variant="link"
+    <button
       className={cn(
-        'p-0 m-0 -mt-2 -mb-2 hover:text-primary/90 transition-none hover:no-underline leading-none',
+        'py-[1px] px-[4px] bg-accent/70 rounded-[0.3rem] text-xs text-accent-foreground/70 hover:text-accent-foreground hover:bg-accent',
         className
       )}
       onClick={() => {
@@ -32,6 +30,6 @@ export function FilterAdder({
       }}
     >
       {value}
-    </Button>
+    </button>
   )
 }

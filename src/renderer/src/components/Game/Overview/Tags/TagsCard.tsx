@@ -21,15 +21,12 @@ export function TagsCard({
       </div>
       <Separator className={cn('my-3 bg-primary')} />
       <div className={cn('text-sm justify-start items-start')}>
-        <div className={cn('flex flex-wrap')}>
+        <div className={cn('flex flex-wrap gap-x-1 gap-y-1')}>
           {tags.join(', ') === ''
             ? '暂无标签'
-            : tags.map((tag, index) => (
+            : tags.map((tag) => (
                 <React.Fragment key={tag}>
                   <FilterAdder filed="tags" value={tag} className={cn('')} />
-                  {index < tags.length - 1 && (
-                    <span className="text-primary align-top">{', '}</span>
-                  )}
                 </React.Fragment>
               ))}
         </div>
