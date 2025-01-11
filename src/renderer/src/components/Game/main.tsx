@@ -18,7 +18,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
           <Header gameId={gameId} className={cn('w-full bg-transparent')} />
           <div className={cn('')}>
             <Tabs defaultValue="overview" className="w-full">
-              <TabsList className={cn('w-[250px]')}>
+              <TabsList className={cn('w-[250px] bg-muted/90')}>
                 <TabsTrigger className={cn('w-1/3')} value="overview">
                   概览
                 </TabsTrigger>

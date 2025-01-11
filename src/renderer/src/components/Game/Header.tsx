@@ -102,62 +102,64 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
           )}
         </div>
       </div>
-      <Record gameId={gameId} />
-      <div className={cn('flex flex-row gap-3', '3xl:gap-5')}>
-        {runningGames.includes(gameId) ? (
-          <StopGame gameId={gameId} className={cn('')} />
-        ) : (
-          <StartGame gameId={gameId} className={cn('')} />
-        )}
+      <div className={cn('flex flex-row justify-between', '3xl:gap-5')}>
+        <Record gameId={gameId} />
+        <div className={cn('flex flex-row gap-3 items-center', '3xl:gap-5')}>
+          {runningGames.includes(gameId) ? (
+            <StopGame gameId={gameId} className={cn('')} />
+          ) : (
+            <StartGame gameId={gameId} className={cn('')} />
+          )}
 
-        <Select value={playStatus} onValueChange={setPlayStatus}>
-          <SelectTrigger noIcon className={cn('p-0 h-auto w-auto border-0 shadow-none')}>
-            <Button variant="outline" size={'icon'} className="non-draggable">
-              <span className={cn('icon-[mdi--bookmark-outline] w-4 h-4')}></span>
-            </Button>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>游玩状态</SelectLabel>
-              <SelectItem value="unplayed">未开始</SelectItem>
-              <SelectItem value="playing">游玩中</SelectItem>
-              <SelectItem value="finished">已完成</SelectItem>
-              <SelectItem value="multiple">多周目</SelectItem>
-              <SelectItem value="shelved">搁置中</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+          <Select value={playStatus} onValueChange={setPlayStatus}>
+            <SelectTrigger noIcon className={cn('p-0 h-auto w-auto border-0 shadow-none')}>
+              <Button variant="outline" size={'icon'} className="non-draggable">
+                <span className={cn('icon-[mdi--bookmark-outline] w-4 h-4')}></span>
+              </Button>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>游玩状态</SelectLabel>
+                <SelectItem value="unplayed">未开始</SelectItem>
+                <SelectItem value="playing">游玩中</SelectItem>
+                <SelectItem value="finished">已完成</SelectItem>
+                <SelectItem value="multiple">多周目</SelectItem>
+                <SelectItem value="shelved">搁置中</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
 
-        <Dialog open={isScoreDialogOpen} onOpenChange={setIsScoreDialogOpen}>
-          <DialogTrigger asChild>
-            <Button
-              variant="outline"
-              size={'icon'}
-              className="non-draggable"
-              onClick={() => {
-                resetPreScore()
-                setIsScoreDialogOpen(true)
-              }}
-            >
-              <span className={cn('icon-[mdi--starburst-edit-outline] w-4 h-4')}></span>
-            </Button>
-          </DialogTrigger>
-          <DialogContent showCloseButton={false} className="w-[500px]">
-            <div className={cn('flex flex-row gap-3 items-center justify-center')}>
-              <div className={cn('whitespace-nowrap')}>我的评分</div>
-              <Input
-                value={preScore}
-                onChange={(e) => setPreScore(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') confirmScore()
+          <Dialog open={isScoreDialogOpen} onOpenChange={setIsScoreDialogOpen}>
+            <DialogTrigger asChild>
+              <Button
+                variant="outline"
+                size={'icon'}
+                className="non-draggable"
+                onClick={() => {
+                  resetPreScore()
+                  setIsScoreDialogOpen(true)
                 }}
-              />
-              <Button onClick={confirmScore}>确定</Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+              >
+                <span className={cn('icon-[mdi--starburst-edit-outline] w-4 h-4')}></span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent showCloseButton={false} className="w-[500px]">
+              <div className={cn('flex flex-row gap-3 items-center justify-center')}>
+                <div className={cn('whitespace-nowrap')}>我的评分</div>
+                <Input
+                  value={preScore}
+                  onChange={(e) => setPreScore(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') confirmScore()
+                  }}
+                />
+                <Button onClick={confirmScore}>确定</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
 
-        <Config gameId={gameId} />
+          <Config gameId={gameId} />
+        </div>
       </div>
     </div>
   )
