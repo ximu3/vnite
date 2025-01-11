@@ -16,6 +16,19 @@ export function getAppRootPath(): string {
 }
 
 /**
+ * Check the path of the application having folder named portable or not
+ * @returns have folder named portable or not
+ */
+export function isPortable(): Boolean {
+  try {
+    fse.accessSync(path.join(getAppRootPath(), '/portable'), fse.constants.W_OK)
+  } catch (error) {
+    return false
+  }
+  return fse.statSync(path.join(getAppRootPath(), '/portable')).isDirectory()
+}
+
+/**
  * Get the file in database folder
  * Automatically create the parent directory if it does not exist
  * @param file The path of the file to be attached
@@ -24,9 +37,11 @@ export function getAppRootPath(): string {
 export async function getDataPath(file: string, forceCreate?: boolean): Promise<string> {
   try {
     // Determine if it is a packaged environment
-    const basePath = app.isPackaged
-      ? path.join(app.getPath('userData'), 'app/database')
-      : path.join(getAppRootPath(), '/dev/database')
+    const basePath = 
+      isPortable() ? path.join(getAppRootPath(), '/portable/database')
+      : (app.isPackaged
+        ? path.join(app.getPath('userData'), 'app/database')
+        : path.join(getAppRootPath(), '/dev/database'))
 
     const fullPath = path.join(basePath, file)
 
@@ -67,9 +82,13 @@ export async function getDataPath(file: string, forceCreate?: boolean): Promise<
 }
 
 export function getDataPathSync(file: string): string {
-  const basePath = app.isPackaged
-    ? path.join(app.getPath('userData'), 'app/database')
-    : path.join(getAppRootPath(), '/dev/database')
+
+  // Determine if it is a packaged environment
+  const basePath = 
+    isPortable() ? path.join(getAppRootPath(), '/portable/database')
+    : (app.isPackaged
+      ? path.join(app.getPath('userData'), 'app/database')
+      : path.join(getAppRootPath(), '/dev/database'))
 
   return path.join(basePath, file)
 }
