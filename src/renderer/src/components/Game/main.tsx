@@ -44,6 +44,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
         {/* Background Image Layer */}
         <GameImage
           gameId={gameId}
+          key={`${gameId}-background`}
           type="background"
           className={cn('w-full h-full object-cover')}
           onError={() => setIsImageError(true)}
