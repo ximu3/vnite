@@ -17,6 +17,7 @@ export function InformationCard({
   const [publishers] = useDBSyncedState([''], `games/${gameId}/metadata.json`, ['publishers'])
   const [releaseDate] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['releaseDate'])
   const [genres] = useDBSyncedState([''], `games/${gameId}/metadata.json`, ['genres'])
+  const [platforms] = useDBSyncedState([''], `games/${gameId}/metadata.json`, ['platforms'])
   return (
     <div className={cn(className, 'group')}>
       <div className={cn('flex flex-row justify-between items-center')}>
@@ -67,6 +68,19 @@ export function InformationCard({
                 value={releaseDate}
               />
             )}
+          </div>
+        </div>
+        <div className={cn('flex flex-row gap-3 items-center justify-start')}>
+          <div className={cn('whitespace-nowrap')}>平台</div>
+          <div className={cn('truncate')}>
+            {platforms.join(',') === ''
+              ? '暂无'
+              : platforms.map((platform, index) => (
+                  <React.Fragment key={platform}>
+                    <FilterAdder filed="platforms" value={platform} />
+                    {index < platforms.length - 1 && <span className="text-primary">{', '}</span>}
+                  </React.Fragment>
+                ))}
           </div>
         </div>
         <div className={cn('flex flex-row gap-3 items-center justify-start')}>

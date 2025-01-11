@@ -20,6 +20,9 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
     'releaseDate'
   ])
   const [genres, setGenres] = useDBSyncedState([''], `games/${gameId}/metadata.json`, ['genres'])
+  const [platforms, setPlatforms] = useDBSyncedState([''], `games/${gameId}/metadata.json`, [
+    'platforms'
+  ])
   return (
     <Dialog>
       <DialogTrigger>
@@ -68,6 +71,17 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
               placeholder="暂无发行日期"
               className={cn('text-sm grow')}
             />
+          </div>
+          <div className={cn('flex flex-row gap-3 items-center justify-center')}>
+            <div className={cn('grow whitespace-nowrap')}>平台</div>
+            <Tooltip>
+              <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
+                <ArrayInput value={platforms} onChange={setPlatforms} placeholder="暂无平台" />
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <div className={cn('text-xs')}>平台之间用英文逗号分隔</div>
+              </TooltipContent>
+            </Tooltip>
           </div>
           <div className={cn('flex flex-row gap-3 items-center justify-center')}>
             <div className={cn('whitespace-nowrap')}>类型</div>

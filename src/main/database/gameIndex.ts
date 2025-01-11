@@ -18,6 +18,7 @@ export interface GameIndexdata {
   playingTime: number
   playedTimes: number
   playStatus: string
+  platforms: string[]
 }
 
 export class GameIndexManager {
@@ -37,7 +38,8 @@ export class GameIndexManager {
     'score',
     'playingTime',
     'playedTimes',
-    'playStatus'
+    'playStatus',
+    'platforms'
   ]
 
   private constructor() {
@@ -78,6 +80,7 @@ export class GameIndexManager {
               ['playStatus'],
               'unplayed'
             )
+            const platforms = await getDBValue(`games/${gameId}/metadata.json`, ['platforms'], [])
 
             const fullData = {
               id: gameId,
@@ -87,7 +90,8 @@ export class GameIndexManager {
               score,
               playingTime,
               playedTimes,
-              playStatus
+              playStatus,
+              platforms
             }
 
             const indexedData: Partial<GameIndexdata> = {}
@@ -142,6 +146,7 @@ export class GameIndexManager {
       const timer = await getDBValue(`games/${gameId}/record.json`, ['timer'], [])
       const playedTimes = timer.length
       const playStatus = await getDBValue(`games/${gameId}/record.json`, ['playStatus'], 'unplayed')
+      const platforms = await getDBValue(`games/${gameId}/metadata.json`, ['platforms'], [])
 
       const fullData = {
         id: gameId,
@@ -151,7 +156,8 @@ export class GameIndexManager {
         score,
         playingTime,
         playedTimes,
-        playStatus
+        playStatus,
+        platforms
       }
 
       const indexedData: Partial<GameIndexdata> = {}

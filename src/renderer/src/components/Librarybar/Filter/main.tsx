@@ -101,6 +101,12 @@ export function Filter({ children }: { children: React.ReactNode }): JSX.Element
           </div>
           <div className={cn('flex flex-col gap-1 items-start justify-start')}>
             <div className={cn('flex flex-row justify-between items-center w-full')}>
+              <div className={cn('whitespace-nowrap text-sm text-foreground ml-[6px]')}>平台</div>
+            </div>
+            <FilterCombobox filed="platforms" placeholder="平台" />
+          </div>
+          <div className={cn('flex flex-col gap-1 items-start justify-start')}>
+            <div className={cn('flex flex-row justify-between items-center w-full')}>
               <div className={cn('whitespace-nowrap text-sm text-foreground ml-[6px]')}>标签</div>
             </div>
             <FilterCombobox filed="tags" placeholder="标签" />
