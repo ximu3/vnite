@@ -23,17 +23,17 @@ export async function setDBValue(
 ): Promise<void> {
   try {
     await setValue(await getDataPath(dbName), path, value)
-    if (noIpcAction) {
-      return
-    }
-    const mainWindow = BrowserWindow.getAllWindows()[0]
-    mainWindow.webContents.send('reload-db-values', dbName)
     if (dbName.startsWith('games/')) {
       if (dbName.includes('record.json')) {
         await updateGameRecord(dbName.split('/')[1])
       }
       await updateGameIndex(dbName.split('/')[1])
     }
+    if (noIpcAction) {
+      return
+    }
+    const mainWindow = BrowserWindow.getAllWindows()[0]
+    mainWindow.webContents.send('reload-db-values', dbName)
   } catch (error) {
     log.error(`Failed to set value for ${dbName} at ${path.join('.')}`, error)
   }
