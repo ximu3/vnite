@@ -1,7 +1,6 @@
 import { cn } from '~/utils'
 import { useDBSyncedState } from '~/hooks'
 import { Button } from '@ui/button'
-import { GameImage } from '@ui/game-image'
 // import { Badge } from '@ui/badge'
 import {
   Select,
@@ -86,14 +85,12 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
     toast.success('评分已保存')
   }
   return (
-    <div className={cn('bg-gradient-to-b bg-background/70 flex-col flex gap-5', className)}>
-      <GameImage
-        gameId={gameId}
-        type="cover"
-        shadow
-        className={cn('object-cover w-auto h-[200px] rounded-[0.3rem]', '3xl:h-[250px]')}
-        fallback={<div className={cn('w-full h-full', 'bg-background/15')} />}
-      />
+    <div
+      className={cn(
+        'bg-gradient-to-b from-background/60 to-background flex-col flex gap-5 px-7 py-5 pb-11 backdrop-blur-sm border-t-[1px] border-accent-foreground/10',
+        className
+      )}
+    >
       <div className={cn('flex flex-row gap-3 grow overflow-hidden items-end justify-between')}>
         <div className={cn('truncate')}>
           <span className={cn('font-bold text-2xl text-accent-foreground')}>{name}</span>

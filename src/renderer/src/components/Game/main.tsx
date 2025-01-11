@@ -14,9 +14,9 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
       <div className={cn(!isImageError ? 'pt-[30px]' : 'pt-[30px] border-b-[1px]')}></div>
       <div className={cn('relative h-full overflow-auto scrollbar-base')}>
         {/* content container */}
-        <div className={cn('absolute top-[15%] z-20 p-7 flex flex-col gap-5', 'w-full h-full')}>
-          <Header gameId={gameId} className={cn('w-full bg-transparent')} />
-          <div className={cn('')}>
+        <div className={cn('absolute top-[45%] z-20 flex flex-col', 'w-full h-full')}>
+          <Header gameId={gameId} className={cn('w-full')} />
+          <div className={cn('p-7 pt-3 bg-background h-full')}>
             <Tabs defaultValue="overview" className="w-full">
               <TabsList className={cn('w-[250px] bg-muted/90')}>
                 <TabsTrigger className={cn('w-1/3')} value="overview">
@@ -52,7 +52,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
           fallback={<div className={cn('w-full h-full', 'bg-background/15')} />}
         />
         {/* gradient mask layer */}
-        <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-transparent via-70% via-background to-background backdrop-blur-md" />
+        {/* <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-transparent via-70% via-background to-background backdrop-blur-sm" /> */}
       </div>
     </div>
   )

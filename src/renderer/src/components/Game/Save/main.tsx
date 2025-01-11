@@ -48,7 +48,7 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
     )
   }
   return (
-    <div className="pt-2">
+    <div className="pt-2 bg-background">
       <div className="group w-full">
         <div className={cn()}>
           <Table className="table-fixed">
