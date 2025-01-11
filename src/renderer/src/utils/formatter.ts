@@ -84,6 +84,8 @@ export function formatScoreToChinese(score: number): string {
   // If it is 10 points, return the integer directly
   if (score === 10) return '10 分'
 
+  if (score === 0) return '0 分'
+
   // Other fractions retain 1 decimal place
   return `${score.toFixed(1)} 分`
 }
