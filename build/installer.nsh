@@ -8,3 +8,37 @@
   WriteRegStr HKCR "vnite\shell\Open" "" ""
   WriteRegStr HKCR "vnite\shell\Open\command" "" "$INSTDIR\${APP_EXECUTABLE_FILENAME} %1"
 !macroend
+
+!macro customRemoveFiles
+  DeleteRegKey HKCR "vnite"
+  Push $R1
+  Push $R2
+
+  FindFirst $R1 $R2 "$INSTDIR\*.*"
+
+  ;IfFileExists "$INSTDIR\portable\*.*" loop not_portable
+  ;not_portable:
+  ;  RMDir /r $INSTDIR
+  ;  Goto done
+
+  loop:
+    StrCmp $R2 "" done
+
+    StrCmp $R2 "." continue
+    StrCmp $R2 ".." continue
+    StrCmp $R2 "portable" continue
+
+    Delete "$INSTDIR\$R2"
+    RMDir /r "$INSTDIR\$R2"
+    
+    Goto continue
+
+    continue:
+      FindNext $R1 $R2
+      Goto loop
+
+  done:
+    FindClose $R1
+    Pop $R1
+    Pop $R2
+!macroend
