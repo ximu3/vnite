@@ -15,12 +15,15 @@ interface Collections {
 
 interface CollectionsHook {
   collections: Collections
-  addCollection: (name: string, gameId?: string) => Promise<string>
+  addCollection: (name: string, gameId?: string[]) => Promise<string>
   removeCollection: (id: string) => void
   renameCollection: (id: string, name: string) => void
   addGameToCollection: (collectionId: string, gameId: string) => void
+  addGamesToCollection: (collectionId: string, gameIds: string[]) => void
   removeGameFromCollection: (collectionId: string, gameId: string) => void
+  removeGamesFromCollection: (collectionId: string, gameIds: string[]) => void
   removeGameFromAllCollections: (gameId: string) => void
+  removeGamesFromAllCollections: (gameIds: string[]) => void
 }
 
 export function useCollections(): CollectionsHook {
@@ -36,16 +39,19 @@ export function useCollections(): CollectionsHook {
   )
 
   const addCollection = useCallback(
-    async (name: string, gameId?: string): Promise<string> => {
+    async (name: string, gameIds?: string[]): Promise<string> => {
       try {
         const id = await ipcInvoke<string>('generate-uuid')
+
         const newCollection = {
           id,
           name,
-          games: gameId ? [gameId] : []
+          games: gameIds ? [...gameIds] : []
         }
+
         const newCollections = { ...collections, [id]: newCollection }
         typedSetCollections(newCollections)
+
         return id
       } catch (error) {
         console.error('Failed to add collection:', error)
@@ -121,6 +127,37 @@ export function useCollections(): CollectionsHook {
     [typedSetCollections, collections]
   )
 
+  const addGamesToCollection = useCallback(
+    (collectionId: string, gameIds: string[]): void => {
+      try {
+        const collection = collections[collectionId]
+
+        if (!collection) {
+          throw new Error('Collection not found')
+        }
+
+        // Use Set to Avoid Adding the Same Game ID Over and Over Again
+        const updatedGames = new Set([...collection.games, ...gameIds])
+
+        const newCollection = {
+          ...collection,
+          games: Array.from(updatedGames) // Converting a Set back to an Array
+        }
+
+        const newCollections = { ...collections, [collectionId]: newCollection }
+        typedSetCollections(newCollections)
+      } catch (error) {
+        console.error('Failed to add games to collection:', error)
+        if (error instanceof Error) {
+          toast.error(`Failed to add games to collection: ${error.message}`)
+        } else {
+          toast.error('Failed to add games to collection: An unknown error occurred')
+        }
+      }
+    },
+    [typedSetCollections, collections]
+  )
+
   const removeGameFromCollection = useCallback(
     (collectionId: string, gameId: string): void => {
       try {
@@ -153,9 +190,40 @@ export function useCollections(): CollectionsHook {
     [removeCollection, typedSetCollections, collections]
   )
 
+  const removeGamesFromCollection = useCallback(
+    (collectionId: string, gameIds: string[]): void => {
+      try {
+        const collection = collections[collectionId]
+        if (!collection) {
+          throw new Error('Collection not found')
+        }
+
+        const updatedGames = collection.games.filter((id) => !gameIds.includes(id))
+
+        if (updatedGames.length === 0) {
+          removeCollection(collectionId)
+        } else {
+          const newCollections = {
+            ...collections,
+            [collectionId]: { ...collection, games: updatedGames }
+          }
+          typedSetCollections(newCollections)
+          toast.success(`Games removed from collection "${collection.name}"`)
+        }
+      } catch (error) {
+        console.error('Failed to remove games from collection:', error)
+        if (error instanceof Error) {
+          toast.error(`Failed to remove games from collection: ${error.message}`)
+        } else {
+          toast.error('Failed to remove games from collection: An unknown error occurred')
+        }
+      }
+    },
+    [removeCollection, typedSetCollections, collections]
+  )
+
   const removeGameFromAllCollections = useCallback(
     (gameId: string): void => {
-      //创建副本处理完毕后，只使用一次typedSetCollections
       const newCollections = { ...collections }
       for (const [collectionId, collection] of Object.entries(collections)) {
         const updatedGames = collection.games.filter((id) => id !== gameId)
@@ -170,13 +238,32 @@ export function useCollections(): CollectionsHook {
     [collections, removeGameFromCollection]
   )
 
+  const removeGamesFromAllCollections = useCallback(
+    (gameIds: string[]): void => {
+      const newCollections = { ...collections }
+      for (const [collectionId, collection] of Object.entries(collections)) {
+        const updatedGames = collection.games.filter((id) => !gameIds.includes(id))
+        if (updatedGames.length === 0) {
+          delete newCollections[collectionId]
+        } else {
+          newCollections[collectionId] = { ...collection, games: updatedGames }
+        }
+      }
+      typedSetCollections(newCollections)
+    },
+    [removeGameFromAllCollections]
+  )
+
   return {
     collections,
     addCollection,
     removeCollection,
     renameCollection,
     addGameToCollection,
+    addGamesToCollection,
     removeGameFromCollection,
-    removeGameFromAllCollections
+    removeGamesFromCollection,
+    removeGameFromAllCollections,
+    removeGamesFromAllCollections
   }
 }

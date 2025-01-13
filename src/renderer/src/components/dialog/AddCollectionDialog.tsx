@@ -13,17 +13,17 @@ import { useCollections } from '~/hooks'
 import { useState } from 'react'
 
 export function AddCollectionDialog({
-  gameId,
+  gameIds,
   setIsOpen
 }: {
-  gameId: string
+  gameIds: string[]
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }): JSX.Element {
   const [name, setName] = useState('')
   const { addCollection } = useCollections()
 
   const addGameToNewCollection = (): void => {
-    addCollection(name, gameId)
+    addCollection(name, gameIds)
     setIsOpen(false)
   }
 
