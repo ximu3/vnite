@@ -155,11 +155,17 @@ export function useCollections(): CollectionsHook {
 
   const removeGameFromAllCollections = useCallback(
     (gameId: string): void => {
-      Object.entries(collections).forEach(([collectionId, collection]) => {
-        if (collection.games.includes(gameId)) {
-          removeGameFromCollection(collectionId, gameId)
+      //创建副本处理完毕后，只使用一次typedSetCollections
+      const newCollections = { ...collections }
+      for (const [collectionId, collection] of Object.entries(collections)) {
+        const updatedGames = collection.games.filter((id) => id !== gameId)
+        if (updatedGames.length === 0) {
+          delete newCollections[collectionId]
+        } else {
+          newCollections[collectionId] = { ...collection, games: updatedGames }
         }
-      })
+      }
+      typedSetCollections(newCollections)
     },
     [collections, removeGameFromCollection]
   )
