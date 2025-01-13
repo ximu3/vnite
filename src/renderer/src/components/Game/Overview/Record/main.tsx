@@ -14,7 +14,7 @@ export function Record({ gameId }: { gameId: string }): JSX.Element {
   const [score] = useDBSyncedState(-1, `games/${gameId}/record.json`, ['score'])
   const [playingTime] = useDBSyncedState(0, `games/${gameId}/record.json`, ['playingTime'])
   return (
-    <div className={cn('flex flex-row')}>
+    <div className={cn('flex flex-row items-center')}>
       <RecordCard
         className={cn('')}
         title="游玩时间"

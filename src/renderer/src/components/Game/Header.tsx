@@ -99,7 +99,7 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
           )}
         </div>
       </div>
-      <div className={cn('flex flex-row justify-between', '3xl:gap-5')}>
+      <div className={cn('flex flex-row justify-between items-center', '3xl:gap-5')}>
         <Record gameId={gameId} />
         <div className={cn('flex flex-row gap-3 items-center', '3xl:gap-5')}>
           {runningGames.includes(gameId) ? (
