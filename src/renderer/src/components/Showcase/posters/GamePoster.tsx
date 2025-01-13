@@ -82,7 +82,7 @@ export function GamePoster({
         <AttributesDialog gameId={gameId} setIsOpen={setIsAttributesDialogOpen} />
       )}
       {isAddCollectionDialogOpen && (
-        <AddCollectionDialog gameId={gameId} setIsOpen={setIsAddCollectionDialogOpen} />
+        <AddCollectionDialog gameIds={[gameId]} setIsOpen={setIsAddCollectionDialogOpen} />
       )}
 
       <HoverCardContent
