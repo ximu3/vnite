@@ -20,7 +20,7 @@ export function Library({ className }: { className?: string }): JSX.Element {
       const newRunningGames = runningGames.filter((id) => id !== gameId)
       setRunningGames(newRunningGames)
     })
-  }, [])
+  }, [runningGames, setRunningGames])
   return (
     <ResizablePanelGroup
       autoSaveId="LibraryPanelGroup"

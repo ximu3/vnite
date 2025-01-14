@@ -7,5 +7,7 @@ interface RunningGamesState {
 
 export const useRunningGames = create<RunningGamesState>((set) => ({
   runningGames: [],
-  setRunningGames: (runningGames): void => set({ runningGames })
+  setRunningGames: (runningGames): void => {
+    set({ runningGames })
+  }
 }))
