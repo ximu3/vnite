@@ -35,7 +35,8 @@ export async function setupOpenAtLogin(): Promise<void> {
   try {
     const isEnabled = await getDBValue('config.json', ['general', 'openAtLogin'], false)
     app.setLoginItemSettings({
-      openAtLogin: isEnabled
+      openAtLogin: isEnabled,
+      args: ['--hidden']
     })
   } catch (error) {
     log.error('Error toggling open at login:', error)
@@ -50,7 +51,8 @@ export async function updateOpenAtLogin(): Promise<void> {
   try {
     const isEnabled = await getDBValue('config.json', ['general', 'openAtLogin'], false)
     app.setLoginItemSettings({
-      openAtLogin: isEnabled
+      openAtLogin: isEnabled,
+      args: ['--hidden']
     })
   } catch (error) {
     log.error('Error setting open at login:', error)

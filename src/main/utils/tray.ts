@@ -121,7 +121,8 @@ export class TrayManager {
             click: async (menuItem): Promise<void> => {
               await setDBValue('config.json', ['general', 'openAtLogin'], menuItem.checked)
               app.setLoginItemSettings({
-                openAtLogin: menuItem.checked
+                openAtLogin: menuItem.checked,
+                args: ['--hidden']
               })
             }
           },

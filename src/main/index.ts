@@ -111,7 +111,10 @@ function createWindow(): void {
         splashWindow.destroy()
         splashWindow = null
       }
-      mainWindow.show()
+      const isHidden = process.argv.includes('--hidden')
+      if (!isHidden) {
+        mainWindow.show()
+      }
       if (launchGameId) {
         const gamePath = await getDBValue(`games/${launchGameId}/path.json`, ['gamePath'], '')
         const mode = await getDBValue(`games/${launchGameId}/launcher.json`, ['mode'], '')
@@ -168,7 +171,8 @@ function createSplashWindow(): void {
   }
 
   splashWindow.once('ready-to-show', () => {
-    splashWindow && splashWindow.show()
+    const isHidden = process.argv.includes('--hidden')
+    splashWindow && !isHidden && splashWindow.show()
   })
 }
 
