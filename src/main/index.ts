@@ -14,7 +14,10 @@ import {
   setupTray,
   TrayManager,
   parseGameIdFromUrl,
-  calculateWindowSize
+  calculateWindowSize,
+  portableStore,
+  getAppRootPath,
+  checkPortableMode
 } from './utils'
 import { initializeCloudsyncServices } from './cloudSync'
 import { setupUpdater } from './updater'
@@ -225,6 +228,20 @@ if (!gotTheLock) {
 
     // IPC test
     ipcMain.on('ping', () => console.log('pong'))
+
+    await checkPortableMode()
+
+    // Set the userData directory to a different location in development
+    if (!app.isPackaged) {
+      app.setPath('userData', join(getAppRootPath(), 'dev'))
+    }
+
+    // Check if the app is running in portable mode
+    if (portableStore.isPortableMode) {
+      log.info('Running in portable mode')
+    } else {
+      log.info('Running in normal mode')
+    }
 
     // Initialize metadata
     await initializeIndex()

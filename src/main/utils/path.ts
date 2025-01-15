@@ -1,4 +1,5 @@
 import { app } from 'electron'
+import { portableStore } from './portable'
 import path from 'path'
 import fse from 'fs-extra'
 import os from 'os'
@@ -24,9 +25,9 @@ export function getAppRootPath(): string {
 export async function getDataPath(file: string, forceCreate?: boolean): Promise<string> {
   try {
     // Determine if it is a packaged environment
-    const basePath = app.isPackaged
-      ? path.join(app.getPath('userData'), 'app/database')
-      : path.join(getAppRootPath(), '/dev/database')
+    const basePath = portableStore.isPortableMode
+      ? path.join(getAppRootPath(), 'portable/app/database')
+      : path.join(app.getPath('userData'), 'app/database')
 
     const fullPath = path.join(basePath, file)
 
@@ -67,9 +68,9 @@ export async function getDataPath(file: string, forceCreate?: boolean): Promise<
 }
 
 export function getDataPathSync(file: string): string {
-  const basePath = app.isPackaged
-    ? path.join(app.getPath('userData'), 'app/database')
-    : path.join(getAppRootPath(), '/dev/database')
+  const basePath = portableStore.isPortableMode
+    ? path.join(getAppRootPath(), 'portable/app/database')
+    : path.join(app.getPath('userData'), 'app/database')
 
   return path.join(basePath, file)
 }

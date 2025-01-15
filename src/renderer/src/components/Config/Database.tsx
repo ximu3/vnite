@@ -13,8 +13,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from '@ui/alert-dialog'
-import { ipcInvoke } from '~/utils'
+import { Switch } from '@ui/switch'
+import { ipcInvoke, ipcSend } from '~/utils'
 import { toast } from 'sonner'
+import { useEffect, useState } from 'react'
 
 export function Database(): JSX.Element {
   const backup = async (): Promise<void> => {
@@ -59,6 +61,29 @@ export function Database(): JSX.Element {
       }
     )
   }
+  const [isPortable, setIsPortable] = useState<boolean>(false)
+  useEffect(() => {
+    ipcInvoke('is-portable-mode').then((isPortable) => {
+      setIsPortable(isPortable as boolean)
+    })
+  }, [])
+  const switchDatabaseMode = async (): Promise<void> => {
+    toast.promise(
+      async () => {
+        await ipcInvoke('switch-database-mode')
+        setIsPortable((prev) => !prev)
+        toast.info('应用将在 3 秒后重启')
+        setTimeout(() => {
+          ipcSend('relaunch-app')
+        }, 3000)
+      },
+      {
+        loading: '正在切换数据库模式...',
+        success: '数据库模式切换成功',
+        error: '数据库模式切换失败'
+      }
+    )
+  }
   return (
     <Card className={cn('group')}>
       <CardHeader>
@@ -70,6 +95,27 @@ export function Database(): JSX.Element {
       </CardHeader>
       <CardContent className={cn('')}>
         <div className={cn('flex flex-col gap-5 w-full')}>
+          <div className={cn('flex flex-row gap-5 items-center justify-between')}>
+            <div>便携模式</div>
+            <AlertDialog>
+              <AlertDialogTrigger>
+                <Switch checked={isPortable} />
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    确定要转换为 {isPortable ? '普通模式' : '便携模式'} 吗？
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>转换完成后将自动重启应用。</AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>取消</AlertDialogCancel>
+                  <AlertDialogAction onClick={switchDatabaseMode}>确定</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+          <Separator />
           <div className={cn('flex flex-row gap-5 items-center')}>
             <Button
               variant={'outline'}
@@ -100,7 +146,6 @@ export function Database(): JSX.Element {
               </AlertDialogContent>
             </AlertDialog>
           </div>
-          <Separator />
           <div className={cn('flex flex-row gap-5 items-center')}>
             <AlertDialog>
               <AlertDialogTrigger asChild>

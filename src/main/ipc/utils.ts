@@ -10,8 +10,11 @@ import {
   openDatabasePathInExplorer,
   updateOpenAtLogin,
   getAppVersion,
-  ThemeManager
+  ThemeManager,
+  portableStore,
+  switchDatabaseMode
 } from '~/utils'
+import { app } from 'electron'
 
 export function setupUtilsIPC(mainWindow: BrowserWindow): void {
   ipcMain.on('minimize', () => {
@@ -28,6 +31,11 @@ export function setupUtilsIPC(mainWindow: BrowserWindow): void {
 
   ipcMain.on('close', () => {
     mainWindow.close()
+  })
+
+  ipcMain.on('relaunch-app', () => {
+    app.relaunch()
+    app.exit()
   })
 
   ipcMain.handle('generate-uuid', () => {
@@ -84,6 +92,14 @@ export function setupUtilsIPC(mainWindow: BrowserWindow): void {
   ipcMain.handle('load-theme', async () => {
     const themeManager = await ThemeManager.getInstance()
     return await themeManager.loadTheme()
+  })
+
+  ipcMain.handle('is-portable-mode', async () => {
+    return portableStore.isPortableMode
+  })
+
+  ipcMain.handle('switch-database-mode', async () => {
+    return await switchDatabaseMode()
   })
 
   mainWindow.on('maximize', () => {
