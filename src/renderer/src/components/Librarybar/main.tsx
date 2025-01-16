@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@ui/select'
-import { useState } from 'react'
+import { useDBSyncedState } from '~/hooks'
 import { GameList } from './GameList'
 import { Filter } from './Filter'
 import { useFilterStore } from './Filter/store'
@@ -35,7 +35,11 @@ export const useLibrarybarStore = create<LibrarybarStore>((set) => ({
 }))
 
 export function Librarybar(): JSX.Element {
-  const [selectedGroup, setSelectedGroup] = useState('collection')
+  const [selectedGroup, setSelectedGroup] = useDBSyncedState('collection', 'config.json', [
+    'others',
+    'gameList',
+    'selectedGroup'
+  ])
   const { query, setQuery } = useLibrarybarStore()
   const { toggleFilterMenu, filter } = useFilterStore()
   return (
