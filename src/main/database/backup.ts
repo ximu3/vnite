@@ -19,4 +19,5 @@ export async function restoreDatabase(sourcePath: string): Promise<void> {
   const mainWindow = BrowserWindow.getAllWindows()[0]
   setupWatcher(mainWindow)
   app.relaunch()
+  app.exit()
 }
