@@ -146,9 +146,9 @@ export async function deleteGameFromDB(gameId: string): Promise<void> {
  * @param targetPath The path to the target file.
  * @returns A promise that resolves when the operation is complete.
  */
-export async function backupDatabaseData(targetPath: string): Promise<void> {
+export async function backupDatabaseData(targetPath: string, exclude?: string[]): Promise<void> {
   try {
-    await backupDatabase(targetPath)
+    await backupDatabase(targetPath, exclude)
     log.info(`Backup database to ${targetPath}`)
   } catch (error) {
     log.error(`Failed to backup database to ${targetPath}`, error)

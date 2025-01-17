@@ -2,11 +2,11 @@ import { getDataPath, zipFolder, unzipFile } from '~/utils'
 import { stopWatcher, setupWatcher } from '~/watcher'
 import { BrowserWindow, app } from 'electron'
 
-export async function backupDatabase(targetPath: string): Promise<void> {
+export async function backupDatabase(targetPath: string, exclude?: string[]): Promise<void> {
   stopWatcher()
   const dataPath = await getDataPath('')
   await zipFolder(dataPath, targetPath, 'vnite-database', {
-    exclude: ['path.json']
+    exclude: exclude
   })
   const mainWindow = BrowserWindow.getAllWindows()[0]
   setupWatcher(mainWindow)
