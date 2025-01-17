@@ -250,7 +250,8 @@ export class GameMonitor {
         } else if (entry.isFile()) {
           const ext = path.extname(entry.name).toLowerCase()
           if (extensions.includes(ext)) {
-            executableFiles.push(fullPath)
+            const replacedPath = fullPath.replace(/・/g, '?')
+            executableFiles.push(replacedPath)
           }
         }
       }
