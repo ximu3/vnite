@@ -36,7 +36,7 @@ Vnite 是一个多功能的游戏管理软件，旨在提供一个统一的用�
 
 ![home](https://img.timero.xyz/i/2024/12/09/6756a383367c8.png)
 
-![gameDetail](https://img.timero.xyz/i/2024/12/09/6756a39448b3c.png)
+![gameDetail](https://img.timero.xyz/i/2025/01/17/6789e2ee429b9.png)
 
 ![gameRecord](https://img.timero.xyz/i/2024/12/09/6756a3c29eb47.png)
 
