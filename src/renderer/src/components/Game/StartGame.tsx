@@ -51,6 +51,9 @@ export function StartGame({
     if (gamePath === '') {
       toast.warning('请先设置游戏路径')
       const filePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
+      if (!filePath) {
+        return
+      }
       await setGamePath(filePath)
       const isIconAccessible = await canAccessImageFile(gameId, 'icon')
       if (!isIconAccessible) {
