@@ -7,7 +7,7 @@ async function fetchVNDB<T extends readonly VNDBField[]>(params: {
   fields: T
   results?: number
 }): Promise<VNDBResponse<T>> {
-  const endpoints = ['1', 'https://api.ximu.dev/vndb/kana/vn']
+  const endpoints = ['https://api.vndb.org/kana/vn', 'https://api.ximu.dev/vndb/kana/vn']
 
   const requestConfig = {
     method: 'POST',

@@ -57,7 +57,16 @@ function getDevelopers(infobox: { key: string; value: string }[] | undefined): s
   // Iterates over all possible field names, returning the first value that exists
   for (const field of DEVELOPER_FIELDS) {
     const developerEntry = infobox.find((entry) => entry.key === field)
-    if (developerEntry) {
+    if (developerEntry?.value) {
+      // If it's an array then it returns directly
+      if (Array.isArray(developerEntry.value)) {
+        // Determine if it is an array of strings
+        if (typeof developerEntry.value[0] === 'string') {
+          return developerEntry.value
+        }
+        // Determine whether it is an array of objects, quasi-exchange for an array of strings, the key is not determined, directly take the value of the
+        return developerEntry.value.map((item: { [key: string]: string }) => Object.values(item)[0])
+      }
       // Converting String Values to Arrays
       return developerEntry.value.split('、')
     }
