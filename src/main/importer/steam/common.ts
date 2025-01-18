@@ -9,35 +9,47 @@ import { rebuildRecords } from '~/database/record'
  * Getting information about a user's Steam library
  */
 export async function getUserSteamGames(steamId: string): Promise<FormattedGameInfo[]> {
-  try {
-    const url = new URL('https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/')
-    url.searchParams.append('key', import.meta.env.VITE_STEAM_API_KEY)
-    url.searchParams.append('steamid', steamId)
-    url.searchParams.append('format', 'json')
-    url.searchParams.append('include_appinfo', '1')
-    url.searchParams.append('include_played_free_games', '1')
+  const endpoints = ['https://api.steampowered.com', 'https://api.ximu.dev/steam/api']
 
-    const response = await fetch(url.toString())
+  const searchParams = new URLSearchParams({
+    key: import.meta.env.VITE_STEAM_API_KEY,
+    steamid: steamId,
+    format: 'json',
+    include_appinfo: '1',
+    include_played_free_games: '1'
+  })
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
+  let lastError: Error | null = null
+
+  for (const baseUrl of endpoints) {
+    try {
+      const url = `${baseUrl}/IPlayerService/GetOwnedGames/v0001/?${searchParams}`
+      const response = await fetch(url)
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const data = (await response.json()) as GetOwnedGamesResponse
+
+      if (!data.response || !data.response.games) {
+        throw new Error('Invalid response format or empty game library')
+      }
+
+      return data.response.games.map((game) => ({
+        appId: game.appid,
+        name: game.name,
+        totalPlayingTime: game.playtime_forever * 60 * 1000
+      }))
+    } catch (error) {
+      lastError = error as Error
+      console.warn(`Failed to fetch from ${baseUrl}:`, error)
+      continue
     }
-
-    const data = (await response.json()) as GetOwnedGamesResponse
-
-    if (!data.response || !data.response.games) {
-      throw new Error('Invalid response format or empty game library')
-    }
-
-    return data.response.games.map((game) => ({
-      appId: game.appid,
-      name: game.name,
-      totalPlayingTime: game.playtime_forever * 60 * 1000
-    }))
-  } catch (error) {
-    console.error('获取 Steam 游戏库失败:', error)
-    throw error
   }
+
+  console.error('获取 Steam 游戏库失败:', lastError)
+  throw lastError || new Error('All endpoints failed')
 }
 
 /**

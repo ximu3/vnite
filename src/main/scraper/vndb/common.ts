@@ -7,7 +7,9 @@ async function fetchVNDB<T extends readonly VNDBField[]>(params: {
   fields: T
   results?: number
 }): Promise<VNDBResponse<T>> {
-  const response = await fetch('https://api.vndb.org/kana/vn', {
+  const endpoints = ['1', 'https://api.ximu.dev/vndb/kana/vn']
+
+  const requestConfig = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -16,13 +18,30 @@ async function fetchVNDB<T extends readonly VNDBField[]>(params: {
       ...params,
       fields: params.fields.join(',')
     })
-  })
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`)
   }
 
-  return response.json()
+  let lastError: Error | null = null
+
+  // Try each endpoint in turn
+  for (const endpoint of endpoints) {
+    try {
+      const response = await fetch(endpoint, requestConfig)
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      return response.json()
+    } catch (error) {
+      lastError = error as Error
+      console.warn(`Failed to fetch from ${endpoint}:`, error)
+      // Continue to try the next endpoint
+      continue
+    }
+  }
+
+  // If all attempts fail, throw a final error
+  throw new Error(`All endpoints failed. Last error: ${lastError?.message}`)
 }
 
 export async function searchVNDBGames(gameName: string): Promise<GameList> {
@@ -109,9 +128,28 @@ export async function checkVNExists(vnId: string): Promise<boolean> {
   }
 }
 
+// helper function: replace image domain name
+function getAlternativeImageUrl(originalUrl: string): string {
+  return originalUrl.replace('https://t.vndb.org/', 'https://api.ximu.dev/vndb/img/')
+}
+
+// helper function: try to get the image
+async function tryFetchImage(url: string): Promise<string> {
+  try {
+    const response = await fetch(url, { method: 'HEAD' })
+    if (response.ok) {
+      return url
+    }
+    throw new Error(`Failed to fetch image: ${response.status}`)
+  } catch (error) {
+    const alternativeUrl = getAlternativeImageUrl(url)
+    console.warn(`Retrying with alternative URL: ${alternativeUrl}`)
+    return alternativeUrl
+  }
+}
+
 export async function getGameScreenshots(vnId: string): Promise<string[]> {
   const formattedId = vnId.startsWith('v') ? vnId : `v${vnId}`
-
   const fields = ['screenshots{url}'] as const
 
   try {
@@ -121,7 +159,9 @@ export async function getGameScreenshots(vnId: string): Promise<string[]> {
       results: 1
     })
 
-    return data.results[0].screenshots.map((screenshot) => screenshot.url)
+    // Process all screenshot URLs
+    const urls = data.results[0].screenshots.map((screenshot) => screenshot.url)
+    return await Promise.all(urls.map((url) => tryFetchImage(url)))
   } catch (error) {
     console.error(`Error fetching images for VN ${vnId}:`, error)
     return []
@@ -136,12 +176,16 @@ export async function getGameScreenshotsByTitle(title: string): Promise<string[]
       filters: ['search', '=', title],
       fields
     })
+
     if (data.results.length > 0) {
       let vn = data.results.find((result) =>
         result.titles.some((titleJson) => titleJson.title.toLowerCase() === title.toLowerCase())
       )
       vn = vn || data.results[0]
-      return vn.screenshots.map((screenshot) => screenshot.url)
+
+      // Process all screenshot URLs
+      const urls = vn.screenshots.map((screenshot) => screenshot.url)
+      return await Promise.all(urls.map((url) => tryFetchImage(url)))
     }
     return []
   } catch (error) {
@@ -152,7 +196,6 @@ export async function getGameScreenshotsByTitle(title: string): Promise<string[]
 
 export async function getGameCover(vnId: string): Promise<string> {
   const formattedId = vnId.startsWith('v') ? vnId : `v${vnId}`
-
   const fields = ['image{url}'] as const
 
   try {
@@ -162,7 +205,7 @@ export async function getGameCover(vnId: string): Promise<string> {
       results: 1
     })) as any
 
-    return data.results[0].image.url
+    return await tryFetchImage(data.results[0].image.url)
   } catch (error) {
     console.error(`Error fetching cover for VN ${vnId}:`, error)
     return ''
@@ -179,7 +222,7 @@ export async function getGameCoverByTitle(title: string): Promise<string> {
       results: 1
     })) as any
 
-    return data.results[0].image.url
+    return await tryFetchImage(data.results[0].image.url)
   } catch (error) {
     console.error(`Error fetching cover for VN ${title}:`, error)
     return ''
