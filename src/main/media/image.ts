@@ -1,9 +1,9 @@
 import fse from 'fs-extra'
 import path from 'path'
-import { getDataPath } from '~/utils'
+import { getDataPath, getAppTempPath } from '~/utils'
 
 const IMAGE_FORMATS = [
-  'webp', // 最优先使用 webp
+  'webp', // Top priority is given to the use of webp
   'jpg',
   'jpeg',
   'jfif',
@@ -210,4 +210,30 @@ export async function setIconWithUrl(gameId: string, url: string): Promise<void>
       await fse.remove(otherPath)
     }
   }
+}
+
+export async function downloadTempImage(url: string): Promise<string> {
+  const tempPath = path.join(getAppTempPath(), `${Date.now()}.png`)
+
+  // Download file
+  const response = await fetch(url)
+  const arrayBuffer = await response.arrayBuffer()
+  const buffer = Buffer.from(arrayBuffer)
+  await fse.writeFile(tempPath, buffer)
+
+  return tempPath
+}
+
+export async function saveTempImage(data: Uint8Array): Promise<string> {
+  const tempPath = path.join(getAppTempPath(), `${Date.now()}.png`)
+  // Convert Uint8Array to Buffer
+  const buffer = Buffer.from(data)
+  await fse.writeFile(tempPath, buffer)
+  return tempPath
+}
+
+export async function getImageBlob(filePath: string): Promise<string> {
+  // Returns base64
+  const buffer = await fse.readFile(filePath)
+  return `image/jpeg;base64,${buffer.toString('base64')}`
 }

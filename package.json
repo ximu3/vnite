@@ -66,6 +66,7 @@
     "medium-zoom": "^1.1.0",
     "next-themes": "^0.3.0",
     "png-to-ico": "^2.1.8",
+    "react-image-crop": "^11.0.7",
     "react-resizable-panels": "^2.1.4",
     "react-router-dom": "^6.27.0",
     "recharts": "^2.13.0",

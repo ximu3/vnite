@@ -1,4 +1,12 @@
-import { getMedia, setMedia, saveIcon, checkIcon } from '~/media'
+import {
+  getMedia,
+  setMedia,
+  saveIcon,
+  checkIcon,
+  downloadImage,
+  saveImage,
+  getImage
+} from '~/media'
 import { ipcMain, BrowserWindow } from 'electron'
 
 export function setupMediaIPC(mainWindow: BrowserWindow): void {
@@ -22,6 +30,18 @@ export function setupMediaIPC(mainWindow: BrowserWindow): void {
 
   ipcMain.handle('check-game-icon', async (_, gameId: string) => {
     return await checkIcon(gameId)
+  })
+
+  ipcMain.handle('download-temp-image', async (_, url: string) => {
+    return await downloadImage(url)
+  })
+
+  ipcMain.handle('save-temp-image', async (_, blobBuffer: Uint8Array) => {
+    return await saveImage(blobBuffer)
+  })
+
+  ipcMain.handle('get-image-blob', async (_, filePath: string) => {
+    return await getImage(filePath)
   })
 
   mainWindow.webContents.send('mediaIPCReady')

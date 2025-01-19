@@ -32,7 +32,12 @@ export function UrlDialog({
           <span className={cn('icon-[mdi--link-variant] w-4 h-4')}></span>
         </Button>
       </DialogTrigger>
-      <DialogContent showCloseButton={false}>
+      <DialogContent
+        showCloseButton={false}
+        onInteractOutside={(e) => {
+          e.preventDefault()
+        }}
+      >
         <div className={cn('flex flex-row gap-2')}>
           <Input
             value={mediaUrl}

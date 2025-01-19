@@ -6,6 +6,7 @@ import { ipcInvoke } from '~/utils'
 import { toast } from 'sonner'
 import { useState } from 'react'
 import { UrlDialog } from './UrlDialog'
+import { CropDialog } from './CropDialog'
 
 export function Media({ gameId }: { gameId: string }): JSX.Element {
   const [mediaUrl, setMediaUrl] = useState<string>('')
@@ -14,33 +15,124 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
     cover: false,
     background: false
   })
-  async function setMediaWithFile(type: string): Promise<void> {
-    const filePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
+
+  const [cropDialogState, setCropDialogState] = useState<{
+    isOpen: boolean
+    type: string
+    imagePath: string | null
+    isResizing: boolean
+  }>({
+    isOpen: false,
+    type: '',
+    imagePath: null,
+    isResizing: false
+  })
+
+  // Processing file selection
+  async function handleFileSelect(type: string): Promise<void> {
+    try {
+      const filePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
+      setCropDialogState({
+        isOpen: true,
+        type,
+        imagePath: filePath,
+        isResizing: false
+      })
+    } catch (error) {
+      toast.error(`选择文件失败: ${error}`)
+    }
+  }
+
+  // Handling of resizing
+  async function handleResize(type: string): Promise<void> {
+    try {
+      // Get current image path
+      const currentPath: string = await ipcInvoke('get-game-media-path', gameId, type)
+      if (!currentPath) {
+        toast.error('未找到当前图片')
+        return
+      }
+
+      setCropDialogState({
+        isOpen: true,
+        type,
+        imagePath: currentPath,
+        isResizing: true
+      })
+    } catch (error) {
+      toast.error(`获取当前图片失败: ${error}`)
+    }
+  }
+
+  // Processing URL Input
+  function setMediaWithUrl(type: string): void {
+    toast.promise(
+      async () => {
+        setIsUrlDialogOpen({ ...isUrlDialogOpen, [type]: false })
+        if (!mediaUrl.trim()) return
+        const tempFilePath = await ipcInvoke('download-temp-image', mediaUrl)
+        setCropDialogState({
+          isOpen: true,
+          type,
+          imagePath: tempFilePath as string,
+          isResizing: false
+        })
+        setMediaUrl('')
+      },
+      {
+        loading: `正在获取图片...`,
+        success: `图片获取成功`,
+        error: (err) => `图片获取失败: ${err.message}`
+      }
+    )
+  }
+
+  // Processing cuts are complete
+  async function handleCropComplete(type: string, filePath: string): Promise<void> {
+    setCropDialogState({ isOpen: false, type: '', imagePath: null, isResizing: false })
+
     toast.promise(
       async () => {
         await ipcInvoke('set-game-media', gameId, type, filePath)
       },
       {
-        loading: `正在设置 ${type}...`,
-        success: `${type} 设置成功`,
-        error: (err) => `${type} 设置失败: ${err.message}`
+        loading: `正在${cropDialogState.isResizing ? '调整' : '设置'}${type}...`,
+        success: `${type}${cropDialogState.isResizing ? '调整' : '设置'}成功`,
+        error: (err) => `${type}${cropDialogState.isResizing ? '调整' : '设置'}失败: ${err.message}`
       }
     )
   }
-  async function setMediaWithUrl(type: string): Promise<void> {
-    setIsUrlDialogOpen({ ...isUrlDialogOpen, [type]: false })
-    toast.promise(
-      async () => {
-        await ipcInvoke('set-game-media', gameId, type, mediaUrl)
-      },
-      {
-        loading: `正在设置 ${type}...`,
-        success: `${type} 设置成功`,
-        error: (err) => `${type} 设置失败: ${err.message}`
-      }
-    )
-    setMediaUrl('')
-  }
+
+  // Media Control Button Component
+  const MediaControls = ({ type }: { type: string }): JSX.Element => (
+    <div className={cn('flex flex-row gap-2')}>
+      <Button
+        onClick={() => handleFileSelect(type)}
+        variant={'outline'}
+        size={'icon'}
+        className={cn('w-7 h-7')}
+      >
+        <span className={cn('icon-[mdi--file-outline] w-4 h-4')}></span>
+      </Button>
+      <UrlDialog
+        mediaUrl={mediaUrl}
+        setMediaUrl={setMediaUrl}
+        setMediaWithUrl={setMediaWithUrl}
+        isUrlDialogOpen={isUrlDialogOpen}
+        setIsUrlDialogOpen={setIsUrlDialogOpen}
+        type={type}
+      />
+      <Button
+        onClick={() => handleResize(type)}
+        variant={'outline'}
+        size={'icon'}
+        className={cn('w-7 h-7')}
+      >
+        <span className={cn('icon-[mdi--resize] w-4 h-4')}></span>
+      </Button>
+    </div>
+  )
+
   return (
     <div className={cn('flex flex-row gap-3 w-full')}>
       <div className={cn('flex flex-col gap-3 w-full')}>
@@ -50,28 +142,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
           </CardHeader>
           <CardContent className={cn('-mt-2')}>
             <div className={cn('flex flex-col gap-2')}>
-              <div className={cn('flex flex-row gap-2')}>
-                <Button
-                  onClick={() => {
-                    setMediaWithFile('icon')
-                  }}
-                  variant={'outline'}
-                  size={'icon'}
-                  className={cn('w-7 h-7')}
-                >
-                  <span className={cn('icon-[mdi--file-outline] w-4 h-4')}></span>
-                </Button>
-                <UrlDialog
-                  {...{
-                    mediaUrl,
-                    setMediaUrl,
-                    setMediaWithUrl,
-                    isUrlDialogOpen,
-                    setIsUrlDialogOpen,
-                    type: 'icon'
-                  }}
-                />
-              </div>
+              <MediaControls type="icon" />
               <div className={cn('self-center')}>
                 <GameImage
                   gameId={gameId}
@@ -83,34 +154,14 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
             </div>
           </CardContent>
         </Card>
+
         <Card>
           <CardHeader>
             <CardTitle>背景</CardTitle>
           </CardHeader>
           <CardContent className={cn('-mt-2')}>
             <div className={cn('flex flex-col gap-2')}>
-              <div className={cn('flex flex-row gap-2')}>
-                <Button
-                  variant={'outline'}
-                  size={'icon'}
-                  className={cn('w-7 h-7')}
-                  onClick={() => {
-                    setMediaWithFile('background')
-                  }}
-                >
-                  <span className={cn('icon-[mdi--file-outline] w-4 h-4')}></span>
-                </Button>
-                <UrlDialog
-                  {...{
-                    mediaUrl,
-                    setMediaUrl,
-                    setMediaWithUrl,
-                    isUrlDialogOpen,
-                    setIsUrlDialogOpen,
-                    type: 'background'
-                  }}
-                />
-              </div>
+              <MediaControls type="background" />
               <div className={cn('self-center')}>
                 <GameImage
                   gameId={gameId}
@@ -123,6 +174,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
           </CardContent>
         </Card>
       </div>
+
       <div className={cn('flex flex-col gap-3 w-full')}>
         <Card>
           <CardHeader>
@@ -130,28 +182,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
           </CardHeader>
           <CardContent className={cn('-mt-2')}>
             <div className={cn('flex flex-col gap-2')}>
-              <div className={cn('flex flex-row gap-2')}>
-                <Button
-                  variant={'outline'}
-                  size={'icon'}
-                  className={cn('w-7 h-7')}
-                  onClick={() => {
-                    setMediaWithFile('cover')
-                  }}
-                >
-                  <span className={cn('icon-[mdi--file-outline] w-4 h-4')}></span>
-                </Button>
-                <UrlDialog
-                  {...{
-                    mediaUrl,
-                    setMediaUrl,
-                    setMediaWithUrl,
-                    isUrlDialogOpen,
-                    setIsUrlDialogOpen,
-                    type: 'cover'
-                  }}
-                />
-              </div>
+              <MediaControls type="cover" />
               <div className={cn('self-center')}>
                 <GameImage
                   gameId={gameId}
@@ -164,6 +195,15 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
           </CardContent>
         </Card>
       </div>
+
+      <CropDialog
+        isOpen={cropDialogState.isOpen}
+        onClose={() =>
+          setCropDialogState({ isOpen: false, type: '', imagePath: null, isResizing: false })
+        }
+        imagePath={cropDialogState.imagePath}
+        onCropComplete={(filePath) => handleCropComplete(cropDialogState.type, filePath)}
+      />
     </div>
   )
 }
