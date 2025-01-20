@@ -100,7 +100,7 @@ export function GamePoster({
             alt={gameId}
             className="object-cover w-full h-full"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/80 backdrop-blur-xl" />
+          <div className="absolute inset-0 bg-gradient-to-b from-accent/40 to-accent/80 backdrop-blur-xl" />
         </div>
 
         {/* content area */}

@@ -22,18 +22,16 @@ export function CollectionPoster({
       <div
         className={cn(
           'group relative overflow-hidden shadow-custom-initial cursor-pointer w-[160px] h-[160px] rounded-[0.3rem]',
-          'transition-border duration-300 ease-in-out',
-          'border-2 border-transparent',
-          'hover:border-primary hover:border-2',
+          'transition-all duration-300 ease-in-out',
+          'ring-0 ring-transparent',
+          'hover:ring-2 hover:ring-primary',
           '3xl:w-[190px] 3xl:h-[190px]'
         )}
         onClick={() => navigate(`/library/collections/${collectionId}`)}
       >
         {/* background mask layer */}
         <div
-          className={cn(
-            'absolute inset-0 bg-muted/40 backdrop-blur-sm z-10 border-t-0.5 border-white/30 pointer-events-none'
-          )}
+          className={cn('absolute inset-0 bg-muted/40 backdrop-blur-sm z-10 pointer-events-none')}
         />
 
         {/* HoverBigCardAnimation layer */}

@@ -1,4 +1,5 @@
-import { getDataPath } from './path'
+import { getDataPath } from '../utils/path'
+import { themePreset } from './services'
 import fse from 'fs-extra'
 import log from 'electron-log/main.js'
 
@@ -32,9 +33,14 @@ export class ThemeManager {
   async loadTheme(): Promise<string | null> {
     try {
       if (await fse.pathExists(this.themePath)) {
-        return await fse.readFile(this.themePath, 'utf-8')
+        const themeContent = await fse.readFile(this.themePath, 'utf-8')
+        if (!themeContent || !themeContent.includes('dark')) {
+          return await themePreset('default')
+        } else {
+          return themeContent
+        }
       } else {
-        return null
+        return await themePreset('default')
       }
     } catch (error) {
       log.error('读取主题失败:', error)

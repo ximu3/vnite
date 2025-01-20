@@ -13,6 +13,7 @@ import {
 import { useDBSyncedState } from '~/hooks'
 import { ipcInvoke } from '~/utils'
 import { toast } from 'sonner'
+import { useTheme } from '../ThemeProvider'
 
 export function General(): JSX.Element {
   const [openAtLogin, setOpenAtLogin] = useDBSyncedState(false, 'config.json', [
@@ -23,6 +24,7 @@ export function General(): JSX.Element {
     'general',
     'quitToTray'
   ])
+  const { toggleTheme, isDark } = useTheme()
   return (
     <Card className={cn('group')}>
       <CardHeader>
@@ -50,6 +52,10 @@ export function General(): JSX.Element {
                 }
               }}
             />
+          </div>
+          <div className={cn('flex flex-row justify-between items-center')}>
+            <div>暗色模式</div>
+            <Switch checked={isDark} onCheckedChange={toggleTheme} />
           </div>
           <div className={cn('flex flex-row justify-between items-center')}>
             <div className={cn('grow')}>关闭主面板</div>

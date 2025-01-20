@@ -62,8 +62,8 @@ export function BigGamePoster({
                 />
               </HoverBigCardAnimation>
               <div className="rounded-none absolute bg-muted/60 flex items-center pl-5 flex-row justify-start bottom-0 w-full transform-gpu will-change-opacity h-1/3 backdrop-blur-2xl border-t-0.5 border-white/30">
-                <div className="flex items-center justify-center shadow-sm shadow-black/50 w-14 h-14 bg-gradient-to-tl from-primary to-accent">
-                  <span className="icon-[mdi--clock-star-four-points] w-8 h-8"></span>
+                <div className="flex items-center justify-center shadow-sm shadow-black/50 w-14 h-14 bg-primary">
+                  <span className="icon-[mdi--clock-star-four-points] w-8 h-8 text-primary-foreground/70"></span>
                 </div>
                 <div className="flex flex-col gap-1 p-4">
                   <div className="text-xs font-semibold text-accent-foreground/80">游玩记录</div>
@@ -108,7 +108,7 @@ export function BigGamePoster({
         {/* background layer */}
         <div className="absolute inset-0">
           <GameImage gameId={gameId} type="background" className="object-cover w-full h-full" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/80 backdrop-blur-xl" />
+          <div className="absolute inset-0 bg-gradient-to-b from-accent/40 to-accent/80 backdrop-blur-xl" />
         </div>
 
         {/* content area */}

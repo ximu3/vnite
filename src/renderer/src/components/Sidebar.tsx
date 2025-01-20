@@ -22,6 +22,7 @@ import { ConfigDialog } from './Config'
 import { useCloudSyncStore } from './Config/CloudSync/store'
 import { useSteamImporterStore } from '~/pages/Importer/SteamImporter/store'
 import { CloudSyncInfo } from './Config/CloudSync/Info'
+import { useTheme } from './ThemeProvider'
 
 export function Sidebar(): JSX.Element {
   const { setIsOpen: setIsGameAdderOpen } = useGameAdderStore()
@@ -30,6 +31,12 @@ export function Sidebar(): JSX.Element {
   const { gameIndex: _ } = useGameIndexManager()
   const { status } = useCloudSyncStore()
   const [cloudSyncEnabled] = useDBSyncedState(false, 'config.json', ['cloudSync', 'enabled'])
+  const { toggleTheme, isDark } = useTheme()
+  const [showThemeSwitchInSidebar] = useDBSyncedState(true, 'config.json', [
+    'appearances',
+    'sidebar',
+    'showThemeSwitchInSidebar'
+  ])
   return (
     <div className={cn('flex flex-col p-[10px] pt-3 pb-3 h-full bg-background justify-between')}>
       <div className={cn('flex flex-col gap-2')}>
@@ -58,6 +65,20 @@ export function Sidebar(): JSX.Element {
         </Tooltip>
       </div>
       <div className={cn('flex flex-col gap-2')}>
+        {showThemeSwitchInSidebar && (
+          <Button
+            variant="ghost"
+            size={'icon'}
+            className={cn('min-h-0 min-w-0 p-2 non-draggable')}
+            onClick={toggleTheme}
+          >
+            {isDark ? (
+              <span className={cn('icon-[mdi--weather-night] w-5 h-5')}></span>
+            ) : (
+              <span className={cn('icon-[mdi--weather-sunny] w-6 h-6 -m-1')}></span>
+            )}
+          </Button>
+        )}
         {cloudSyncEnabled ? (
           <Popover>
             <PopoverTrigger>
@@ -102,7 +123,13 @@ export function Sidebar(): JSX.Element {
         ) : (
           <Tooltip>
             <TooltipTrigger>
-              <span className={cn('icon-[mdi--cloud-cancel-outline] w-5 h-5')}></span>
+              <Button
+                variant="ghost"
+                size={'icon'}
+                className={cn('min-h-0 min-w-0 p-2 non-draggable')}
+              >
+                <span className={cn('icon-[mdi--cloud-cancel-outline] w-5 h-5')}></span>
+              </Button>
             </TooltipTrigger>
             <TooltipContent side="right">云同步未开启</TooltipContent>
           </Tooltip>

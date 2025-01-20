@@ -7,6 +7,7 @@ import { setupMediaIPC } from './media'
 import { setupCloudsyncIPC } from './cloudsync'
 import { setupUpdaterIPC } from './updater'
 import { setupImporterIPC } from './importer'
+import { setupThemeIPC } from './theme'
 import { BrowserWindow } from 'electron'
 import log from 'electron-log/main.js'
 
@@ -21,6 +22,7 @@ export function setupIPC(mainWindow: BrowserWindow): void {
     setupCloudsyncIPC(mainWindow)
     setupUpdaterIPC(mainWindow)
     setupImporterIPC(mainWindow)
+    setupThemeIPC(mainWindow)
   } catch (error) {
     log.error('Failed to set up IPC', error)
   }
