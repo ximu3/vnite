@@ -49,7 +49,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
           className={cn('w-full h-full object-cover')}
           onError={() => setIsImageError(true)}
           onUpdated={() => setIsImageError(false)}
-          fallback={<div className={cn('w-full h-full', 'bg-background/15')} />}
+          fallback={<div className={cn('w-full h-auto max-h-[100vh]', 'bg-background/15')} />}
         />
         {/* gradient mask layer */}
         {/* <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-transparent via-70% via-background to-background backdrop-blur-sm" /> */}
