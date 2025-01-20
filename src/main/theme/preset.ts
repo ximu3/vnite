@@ -63,3 +63,72 @@ export async function defaultPreset(): Promise<string> {
   await themeManager.saveTheme(cssContent)
   return cssContent
 }
+
+export async function mutsumiPreset(): Promise<string> {
+  const themeManager = await ThemeManager.getInstance()
+  const cssContent = `
+/* shadcn-ui START */
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 20%;
+    --muted: 0 12% 90%;
+    --muted-foreground: 0 12% 30%;
+    --popover: 0 0% 97%;
+    --popover-foreground: 0 0% 10%;
+    --card: 0 0% 98%;
+    --card-foreground: 0 0% 15%;
+    --border: 0 0% 95%;
+    --input: 0 0% 92%;
+    --primary: 174 42% 65%;
+    --primary-foreground: 174 42% 5%;
+    --secondary: 174 30% 25%;
+    --secondary-foreground: 174 30% 85%;
+    --accent: 0 0% 85%;
+    --accent-foreground: 0 0% 25%;
+    --destructive: 2 80% 24%;
+    --destructive-foreground: 2 80% 84%;
+    --ring: 174 42% 65%;
+    --chart-1: 174 42% 65%;
+    --chart-2: 174 30% 25%;
+    --chart-3: 0 0% 85%;
+    --chart-4: 174 30% 28%;
+    --chart-5: 174 45% 65%;
+    --radius: 0.3rem;
+  }
+
+  .dark {
+    --background: 229 20% 20%;
+    --foreground: 231 28% 73%;
+    --muted: 229 12% 24%;
+    --muted-foreground: 229 12% 74%;
+    --popover: 229 20% 17%;
+    --popover-foreground: 231 28% 83%;
+    --card: 229 20% 18%;
+    --card-foreground: 231 28% 78%;
+    --border: 229 10% 25%;
+    --input: 229 10% 28%;
+    --primary: 174 42% 65%;
+    --primary-foreground: 174 42% 5%;
+    --secondary: 174 30% 25%;
+    --secondary-foreground: 174 30% 85%;
+    --accent: 229 20% 35%;
+    --accent-foreground: 229 20% 95%;
+    --destructive: 10 91% 58%;
+    --destructive-foreground: 0 0% 0%;
+    --ring: 174 42% 65%;
+    --chart-1: 174 42% 65%;
+    --chart-2: 174 30% 25%;
+    --chart-3: 229 20% 35%;
+    --chart-4: 174 30% 28%;
+    --chart-5: 174 45% 65%;
+    --radius: 0.3rem;
+  }
+}
+
+/* shadcn-ui END */
+  `.trimStart()
+  await themeManager.saveTheme(cssContent)
+  return cssContent
+}
