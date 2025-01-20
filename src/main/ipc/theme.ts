@@ -12,5 +12,9 @@ export function setupThemeIPC(mainWindow: BrowserWindow): void {
     return await themeManager.loadTheme()
   })
 
+  ipcMain.handle('theme-preset', async (_, preset: string) => {
+    return await themePreset(preset)
+  })
+
   mainWindow.webContents.send('themeIPCReady')
 }
