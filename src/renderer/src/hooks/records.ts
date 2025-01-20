@@ -133,6 +133,7 @@ export const useGameRecords = create<GameRecordsState>((set, get) => ({
   getGamePlayDays: (gameId): number => {
     const { records } = get()
     const gameRecord = records[gameId]
+
     if (!gameRecord?.timer || gameRecord.timer.length === 0) {
       return 0
     }
@@ -140,19 +141,23 @@ export const useGameRecords = create<GameRecordsState>((set, get) => ({
     const playDays = new Set<string>()
 
     gameRecord.timer.forEach((timer) => {
-      const startDay = timer.start.split('T')[0]
-      const endDay = timer.end.split('T')[0]
+      // Convert to time in the user's local time zone
+      const start = new Date(timer.start)
+      const end = new Date(timer.end)
+
+      // Get a date string in the local time zone
+      const startDay = start.toLocaleDateString()
+      const endDay = end.toLocaleDateString()
 
       if (startDay === endDay) {
         playDays.add(startDay)
       } else {
-        const start = new Date(timer.start)
-        const end = new Date(timer.end)
         const current = new Date(start)
+        // Set to the start time of the day (local time zone)
         current.setHours(0, 0, 0, 0)
 
         while (current <= end) {
-          playDays.add(current.toISOString().split('T')[0])
+          playDays.add(current.toLocaleDateString())
           current.setDate(current.getDate() + 1)
         }
       }
