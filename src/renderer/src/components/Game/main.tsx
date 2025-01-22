@@ -9,13 +9,30 @@ import { useState } from 'react'
 
 export function Game({ gameId }: { gameId: string }): JSX.Element {
   const [isImageError, setIsImageError] = useState(false)
+
   return (
-    <div className={cn('w-full h-full pb-7')}>
+    <div className={cn('w-full h-full pb-7 relative overflow-hidden')}>
       <div className={cn(!isImageError ? 'pt-[30px]' : 'pt-[30px] border-b-[1px]')}></div>
+
+      {/* Background Image Layer - Absolute */}
+      <div className={cn('absolute inset-0 w-full h-full pt-[30px] pr-2')}>
+        <GameImage
+          gameId={gameId}
+          key={`${gameId}-background`}
+          type="background"
+          className={cn('w-full h-auto max-h-[90vh] object-cover')}
+          onError={() => setIsImageError(true)}
+          onUpdated={() => setIsImageError(false)}
+          fallback={<div className={cn('w-full h-full bg-background/15')} />}
+        />
+      </div>
+
+      {/* Scrollable Content */}
       <div className={cn('relative h-full overflow-auto scrollbar-base')}>
         {/* content container */}
-        <div className={cn('absolute top-[45%] z-20 flex flex-col', 'w-full')}>
+        <div className={cn('relative top-[45%] z-20 flex flex-col', 'w-full')}>
           <Header gameId={gameId} className={cn('w-full')} />
+
           <div className={cn('p-7 pt-3 bg-background')}>
             <Tabs defaultValue="overview" className="w-full">
               <TabsList className={cn('w-[250px] bg-muted/90')}>
@@ -29,6 +46,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
                   存档
                 </TabsTrigger>
               </TabsList>
+
               <TabsContent value="overview">
                 <Overview gameId={gameId} />
               </TabsContent>
@@ -41,18 +59,6 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
             </Tabs>
           </div>
         </div>
-        {/* Background Image Layer */}
-        <GameImage
-          gameId={gameId}
-          key={`${gameId}-background`}
-          type="background"
-          className={cn('w-full h-auto max-h-[90vh] object-cover')}
-          onError={() => setIsImageError(true)}
-          onUpdated={() => setIsImageError(false)}
-          fallback={<div className={cn('w-full h-auto max-h-[100vh]', 'bg-background/15')} />}
-        />
-        {/* gradient mask layer */}
-        {/* <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-transparent via-70% via-background to-background backdrop-blur-sm" /> */}
       </div>
     </div>
   )
