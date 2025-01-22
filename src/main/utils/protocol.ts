@@ -1,16 +1,15 @@
 import { protocol, app } from 'electron'
-import { getDataPathSync, getAppTempPath } from './path'
+import { getDataPathSync } from './path'
+import { MemoryImageCache } from './imgCache'
 import path from 'path'
 import fse from 'fs-extra'
 
 export function setupProtocols(): void {
   const IMAGE_EXTENSIONS = ['.webp', '.png', '.jpg', '.jpeg', '.ico', '.gif']
 
-  // 创建缓存目录
-  const CACHE_DIR = getAppTempPath('images')
-  fse.ensureDirSync(CACHE_DIR)
+  const imageCache = new MemoryImageCache()
 
-  protocol.handle('img', async (request) => {
+  protocol.handle('img', async (request: Request) => {
     try {
       const urlObj = new URL(request.url)
       const relativePath = decodeURIComponent(urlObj.pathname).replace(/^\//, '')
@@ -18,15 +17,21 @@ export function setupProtocols(): void {
 
       const dataPath = getDataPathSync('')
       const baseFilePath = path.join(dataPath, relativePath)
-
-      // Use hash to create cached filenames to avoid long paths or special characters.
       const cacheKey = Buffer.from(relativePath).toString('base64')
-      const cachePath = path.join(CACHE_DIR, `${cacheKey}.${timestamp}`)
 
-      // Check the cache
-      if (await fse.pathExists(cachePath)) {
-        console.log('Serving from cache:', cachePath)
-        const cachedData = await fse.readFile(cachePath)
+      // Checking the memory cache
+      const cachedData = imageCache.get(cacheKey, timestamp)
+
+      // If there are cached results (including non-existent tokens)
+      if (cachedData !== undefined) {
+        // If the cache shows that the image does not exist
+        if (cachedData === null) {
+          console.log('Serving negative cache:', cacheKey)
+          return new Response('Error loading file', { status: 404 })
+        }
+
+        // If there is image data in the cache
+        console.log('Serving from memory cache:', cacheKey)
         return new Response(cachedData, {
           status: 200,
           headers: {
@@ -42,11 +47,8 @@ export function setupProtocols(): void {
 
         if (await fse.pathExists(fullPath)) {
           try {
-            // Read the original file
             const fileData = await fse.readFile(fullPath)
-
-            // Write to cache
-            await fse.writeFile(cachePath, fileData)
+            imageCache.set(cacheKey, fileData, timestamp)
 
             return new Response(fileData, {
               status: 200,
@@ -56,13 +58,16 @@ export function setupProtocols(): void {
               }
             })
           } catch (error) {
-            console.error('Error reading/caching file:', error)
+            console.error('Error reading file:', error)
             continue
           }
         }
       }
 
-      throw new Error('No matching image file found')
+      // Image does not exist, set negative caching
+      console.log('Setting negative cache:', cacheKey)
+      imageCache.set(cacheKey, null, timestamp)
+      return new Response('Error loading file', { status: 404 })
     } catch (error) {
       console.error('Protocol error:', error)
       return new Response('Error loading file', { status: 404 })
@@ -82,47 +87,11 @@ export function setupProtocols(): void {
     return mimeTypes[ext.toLowerCase()] || 'application/octet-stream'
   }
 
-  // Clear expired cache
-  async function cleanupOldCache(): Promise<void> {
-    try {
-      const files = await fse.readdir(CACHE_DIR)
-      const now = Date.now()
-
-      for (const file of files) {
-        const filePath = path.join(CACHE_DIR, file)
-        const stats = await fse.stat(filePath)
-
-        // Delete cached files older than 30 days
-        if (now - stats.mtimeMs > 30 * 24 * 60 * 60 * 1000) {
-          await fse.remove(filePath)
-        }
-      }
-    } catch (error) {
-      console.error('Error cleaning up cache:', error)
-    }
-  }
-
-  // Clean cache regularly (run once a day)
-  setInterval(cleanupOldCache, 24 * 60 * 60 * 1000)
-
-  // Run a cleanup on startup as well
-  cleanupOldCache()
-
   if (process.defaultApp) {
     if (process.argv.length >= 2) {
       app.setAsDefaultProtocolClient('vnite', process.execPath, [path.resolve(process.argv[1])])
     }
   } else {
     app.setAsDefaultProtocolClient('vnite')
-  }
-}
-
-// Export the cache cleanup methods to be called manually if needed.
-export async function clearImageCache(): Promise<void> {
-  const CACHE_DIR = path.join(getDataPathSync(''), '.cache', 'images')
-  try {
-    await fse.emptyDir(CACHE_DIR)
-  } catch (error) {
-    console.error('Error clearing cache:', error)
   }
 }

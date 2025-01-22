@@ -1,6 +1,7 @@
 // renderer/components/GameImage.tsx
 import React, { useState, useEffect, ImgHTMLAttributes } from 'react'
 import { ipcOnUnique, cn } from '~/utils'
+import { useImageStore } from '~/hooks/imageStore'
 
 interface GameImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src'> {
   gameId: string
@@ -20,23 +21,27 @@ export const GameImage: React.FC<GameImageProps> = ({
   shadow = false,
   ...imgProps
 }) => {
-  const [timestamp, setTimestamp] = useState(Date.now())
   const [hasError, setHasError] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
+  const timestamp = useImageStore((state) => state.getTimestamp(gameId, type))
+  const updateTimestamp = useImageStore((state) => state.updateTimestamp)
+
   useEffect(() => {
     const handleImageUpdate = (_event: any, updatedPath: string): void => {
       if (updatedPath.includes(`games/${gameId}/${type}`)) {
-        setTimestamp(Date.now())
+        updateTimestamp(gameId, type)
         setHasError(false)
         setIsLoaded(false)
         onUpdated?.()
       }
     }
+
     const remove = ipcOnUnique('reload-db-values', handleImageUpdate)
     return (): void => {
       remove()
     }
-  }, [gameId, type, onUpdated])
+  }, [gameId, type, onUpdated, updateTimestamp])
+
   if (hasError) {
     return <>{fallback}</>
   }
