@@ -210,8 +210,16 @@ export function Sidebar(): JSX.Element {
                   if (!gamePath) {
                     return
                   }
-                  await ipcInvoke('add-game-to-db-without-metadata', gamePath)
-                  toast.success('添加成功')
+                  toast.promise(
+                    (async (): Promise<void> => {
+                      await ipcInvoke('add-game-to-db-without-metadata', gamePath)
+                    })(),
+                    {
+                      loading: '正在添加游戏...',
+                      success: '添加游戏成功',
+                      error: '添加游戏时出错'
+                    }
+                  )
                 } catch (error) {
                   toast.error('添加游戏时出错')
                 }
