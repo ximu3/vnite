@@ -98,6 +98,7 @@ export function Search({ className }: { className?: string }): JSX.Element {
                   <SelectItem value="vndb">VNDB</SelectItem>
                   <SelectItem value="bangumi">Bangumi</SelectItem>
                   <SelectItem value="igdb">IGDB</SelectItem>
+                  <SelectItem value="ymgal">YMgal</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>

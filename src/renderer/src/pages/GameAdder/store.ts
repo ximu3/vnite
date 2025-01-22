@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { toast } from 'sonner'
 
-export type DataSource = 'vndb' | 'igdb' | 'steam' | 'bangumi'
+export type DataSource = 'vndb' | 'igdb' | 'steam' | 'bangumi' | 'ymgal'
 
 export type GameList = {
   id: string

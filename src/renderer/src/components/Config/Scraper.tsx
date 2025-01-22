@@ -29,10 +29,7 @@ export function Scraper(): JSX.Element {
         <div className={cn('flex flex-col gap-5 justify-center')}>
           <div className={cn('flex flex-row justify-between items-center')}>
             <div className={cn('grow')}>默认数据源</div>
-            <Select
-              value={defaultDataSource} // 转换为字符串
-              onValueChange={setDefaultDataSource}
-            >
+            <Select value={defaultDataSource} onValueChange={setDefaultDataSource}>
               <SelectTrigger className={cn('w-[200px]')}>
                 <SelectValue />
               </SelectTrigger>
@@ -43,6 +40,7 @@ export function Scraper(): JSX.Element {
                   <SelectItem value="vndb">VNDB</SelectItem>
                   <SelectItem value="bangumi">Bangumi</SelectItem>
                   <SelectItem value="igdb">IGDB</SelectItem>
+                  <SelectItem value="ymgal">YMgal</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>

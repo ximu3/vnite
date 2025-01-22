@@ -27,6 +27,13 @@ import {
   getGameCoverFromIGDB,
   initIGDBService
 } from './igdb'
+import {
+  searchGamesFromYMGal,
+  checkGameExistsOnYMGal,
+  getGameMetadataFromYMGal,
+  getGameScreenshotsFromYMGal,
+  getGameCoverFromYMGal
+} from './ymgal'
 import { GameList, GameMetadata } from './types'
 
 export async function searchGamesFromDataSource(
@@ -42,6 +49,8 @@ export async function searchGamesFromDataSource(
       return await searchGamesFromBangumi(gameName)
     case 'igdb':
       return await searchGamesFromIGDB(gameName)
+    case 'ymgal':
+      return await searchGamesFromYMGal(gameName)
     default:
       throw new Error('Invalid data source')
   }
@@ -60,6 +69,8 @@ export async function checkGameExistsInDataSource(
       return await checkGameExistsOnBangumi(gameId)
     case 'igdb':
       return await checkGameExistsOnIGDB(gameId)
+    case 'ymgal':
+      return await checkGameExistsOnYMGal(gameId)
     default:
       throw new Error('Invalid data source')
   }
@@ -78,6 +89,8 @@ export async function getGameMetadataFromDataSource(
       return await getGameMetadataFromBangumi(gameId)
     case 'igdb':
       return await getGameMetadataFromIGDB(gameId)
+    case 'ymgal':
+      return await getGameMetadataFromYMGal(gameId)
     default:
       throw new Error('Invalid data source')
   }
@@ -96,6 +109,8 @@ export async function getGameScreenshotsFromDataSource(
       return await getGameScreenshotsFromBangumi(gameId)
     case 'igdb':
       return await getGameScreenshotsFromIGDB(gameId)
+    case 'ymgal':
+      return await getGameScreenshotsFromYMGal(gameId)
     default:
       throw new Error('Invalid data source')
   }
@@ -114,6 +129,8 @@ export async function getGameCoverFromDataSource(
       return await getGameCoverFromBangumi(gameId)
     case 'igdb':
       return await getGameCoverFromIGDB(gameId)
+    case 'ymgal':
+      return await getGameCoverFromYMGal(gameId)
     default:
       throw new Error('Invalid data source')
   }
