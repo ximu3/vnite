@@ -32,6 +32,11 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
   async function handleFileSelect(type: string): Promise<void> {
     try {
       const filePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
+      if (!filePath) return
+      if (filePath.endsWith('.exe') && type == 'icon') {
+        await ipcInvoke('set-game-media', gameId, type, filePath)
+        return
+      }
       setCropDialogState({
         isOpen: true,
         type,
