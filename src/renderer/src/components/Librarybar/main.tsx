@@ -68,7 +68,7 @@ export function Librarybar(): JSX.Element {
           </div>
         </div>
       </div>
-      <div className={cn('flex flex-col gap-3 p-3 pt-0 pr-0 grow h-0')}>
+      <div className={cn('flex flex-col gap-3 p-3 pt-0 pr-0 grow h-0 pb-0')}>
         <div className={cn('flex flex-row gap-2 pr-3')}>
           <div className={cn('grow')}>
             <Tooltip>

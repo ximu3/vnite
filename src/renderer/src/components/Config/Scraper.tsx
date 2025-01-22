@@ -35,7 +35,7 @@ export function Scraper(): JSX.Element {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>操作</SelectLabel>
+                  <SelectLabel>默认数据源</SelectLabel>
                   <SelectItem value="steam">Steam</SelectItem>
                   <SelectItem value="vndb">VNDB</SelectItem>
                   <SelectItem value="bangumi">Bangumi</SelectItem>
