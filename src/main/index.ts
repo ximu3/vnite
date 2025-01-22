@@ -6,7 +6,6 @@ import { setupIPC } from './ipc'
 import log from 'electron-log/main.js'
 import windowStateKeeper from 'electron-window-state'
 import { getLogsPath } from './utils'
-import { setupWatcher, stopWatcher } from './watcher'
 import {
   setupProtocols,
   setupTempDirectory,
@@ -259,9 +258,6 @@ if (!gotTheLock) {
     // Setup tray
     trayManager = await setupTray(mainWindow)
 
-    // Watch for changes in the data directory
-    await setupWatcher(mainWindow)
-
     // Setup temporary directory
     await setupTempDirectory()
 
@@ -289,7 +285,6 @@ if (!gotTheLock) {
   // explicitly with Cmd + Q.
   app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
-      stopWatcher()
       trayManager.destroy()
       app.quit()
     }

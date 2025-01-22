@@ -1,3 +1,5 @@
+// discontinue
+
 import { BrowserWindow } from 'electron'
 import { setupDBWatcher, stopWatchers } from './setup'
 import log from 'electron-log/main.js'

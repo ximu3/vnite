@@ -2,7 +2,6 @@ import fse from 'fs-extra'
 import { getDataPathSync, getAppRootPath } from './path'
 import path from 'path'
 import log from 'electron-log/main.js'
-import { stopWatcher } from '~/watcher'
 import { app } from 'electron'
 
 let _isPortableMode: boolean = false
@@ -58,7 +57,6 @@ export async function checkPortableMode(): Promise<void> {
 
 export async function switchDatabaseMode(): Promise<void> {
   try {
-    stopWatcher()
     if (portableStore.isPortableMode) {
       await switch2NormalMode()
     } else {

@@ -1,7 +1,6 @@
 import { FormattedGameInfo, GetOwnedGamesResponse } from './types'
 import { addGameToDatabase } from '~/adder'
 import { BrowserWindow } from 'electron'
-import { stopWatcher, setupWatcher } from '~/watcher'
 import { rebuildIndex } from '~/database/gameIndex'
 import { rebuildRecords } from '~/database/record'
 
@@ -57,7 +56,6 @@ export async function getUserSteamGames(steamId: string): Promise<FormattedGameI
  */
 export async function importSelectedSteamGames(games: FormattedGameInfo[]): Promise<number> {
   const mainWindow = BrowserWindow.getAllWindows()[0]
-  stopWatcher()
 
   try {
     const totalGames = games.length
@@ -88,7 +86,6 @@ export async function importSelectedSteamGames(games: FormattedGameInfo[]): Prom
           dataSource: 'steam',
           id: game.appId.toString(),
           playingTime: game.totalPlayingTime,
-          noWatcherAction: true,
           noIpcAction: true
         })
 
@@ -124,7 +121,6 @@ export async function importSelectedSteamGames(games: FormattedGameInfo[]): Prom
 
     await rebuildIndex()
     await rebuildRecords()
-    await setupWatcher(mainWindow)
 
     // Send a completion message
     mainWindow.webContents.send('import-steam-games-progress', {

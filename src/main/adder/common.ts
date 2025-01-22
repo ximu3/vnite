@@ -4,7 +4,6 @@ import { setMedia, saveIcon } from '~/media'
 import { generateUUID, selectPathDialog, getFirstLevelSubfolders, getDataPath } from '~/utils'
 import { BrowserWindow } from 'electron'
 import { launcherPreset } from '~/launcher'
-import { setupWatcher, stopWatcher } from '~/watcher'
 import { updateGameIndex } from '~/database/gameIndex'
 import { updateGameRecord } from '~/database/record'
 
@@ -23,7 +22,6 @@ export async function addGameToDB({
   preExistingDbId,
   screenshotUrl,
   playingTime,
-  noWatcherAction = false,
   noIpcAction = false
 }: {
   dataSource: string
@@ -109,11 +107,6 @@ export async function addGameToDB({
 
   const mainWindow = BrowserWindow.getAllWindows()[0]
 
-  if (!noWatcherAction) {
-    stopWatcher()
-    await setupWatcher(mainWindow)
-  }
-
   if (!noIpcAction) {
     mainWindow.webContents.send('reload-db-values', `games/${dbId}/cover.webp`)
     mainWindow.webContents.send('reload-db-values', `games/${dbId}/background.webp`)
@@ -177,10 +170,6 @@ export async function addGameToDBWithoutMetadata(gamePath: string): Promise<void
   await saveIcon(dbId, gamePath)
 
   const mainWindow = BrowserWindow.getAllWindows()[0]
-
-  stopWatcher()
-
-  await setupWatcher(mainWindow)
 
   mainWindow.webContents.send('reload-db-values', `games/${dbId}/metadata.json`)
   mainWindow.webContents.send('reload-db-values', `games/${dbId}/record.json`)

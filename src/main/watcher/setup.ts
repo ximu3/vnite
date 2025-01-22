@@ -1,3 +1,5 @@
+// discontinue
+
 import * as fse from 'fs-extra'
 import * as path from 'path'
 import { Watcher } from './common'

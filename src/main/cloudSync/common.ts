@@ -1,6 +1,5 @@
 import { createClient, WebDAVClient, ResponseDataDetailed, FileStat } from 'webdav'
 import { getDataPath, zipFolder, unzipFile, getAppTempPath } from '~/utils'
-import { stopWatcher, setupWatcher } from '~/watcher'
 import { BrowserWindow, app } from 'electron'
 import path from 'path'
 import crypto from 'crypto'
@@ -245,7 +244,6 @@ export class CloudSync {
 
     try {
       // 1. Stop file watcher
-      stopWatcher()
       this.updateSyncStatus({
         status: 'syncing',
         message: '正在上传数据库...',
@@ -322,8 +320,6 @@ export class CloudSync {
     } finally {
       // Cleanup temp files
       await fse.remove(tempZipPath).catch(console.error)
-      // Restart file watcher
-      await setupWatcher(this.mainWindow)
     }
   }
 
@@ -500,7 +496,6 @@ export class CloudSync {
     const tempZipPath = path.join(getAppTempPath(), `vnite-restore-${Date.now()}.zip`)
 
     try {
-      stopWatcher()
       this.updateSyncStatus({
         status: 'syncing',
         message: '正在准备恢复历史版本...',
@@ -579,7 +574,6 @@ export class CloudSync {
     const tempZipPath = path.join(getAppTempPath(), `vnite-download-${Date.now()}.zip`)
 
     try {
-      stopWatcher()
       this.updateSyncStatus({
         status: 'syncing',
         message: '正在准备下载数据库...',

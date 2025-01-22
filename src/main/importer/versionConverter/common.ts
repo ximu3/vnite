@@ -2,7 +2,6 @@ import * as fse from 'fs-extra'
 import * as path from 'path'
 import * as unzipper from 'unzipper'
 import { generateUUID } from '~/utils'
-import { stopWatcher } from '~/watcher'
 import { launcherPreset } from '~/launcher'
 import { app } from 'electron'
 
@@ -209,8 +208,6 @@ async function convertConfig(tempDir: string, outputDir: string): Promise<void> 
 }
 
 export async function importV1Data(zipFilePath: string, outputDir: string): Promise<void> {
-  // Stop Monitor
-  stopWatcher()
   // Create a temporary decompression directory
   const tempDir = path.join(outputDir, '_temp')
   await fse.ensureDir(tempDir)
