@@ -100,7 +100,7 @@ export function Header({
           ? 'bg-gradient-to-t from-background/80 to-background py-5 backdrop-blur-sm'
           : 'bg-gradient-to-b from-background/60 to-background backdrop-blur-md duration-100',
         className,
-        'transition-all duration-300'
+        'transition-all duration-100'
       )}
     >
       <div
