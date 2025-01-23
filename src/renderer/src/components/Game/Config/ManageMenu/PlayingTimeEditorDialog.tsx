@@ -5,6 +5,7 @@ import { cn, formatTimeToChinese } from '~/utils'
 import { useDBSyncedState } from '~/hooks'
 import { toNumber } from 'lodash'
 import { useState } from 'react'
+import { Parser } from 'expr-eval'
 
 export function PlayingTimeEditorDialog({
   gameId,
@@ -22,19 +23,42 @@ export function PlayingTimeEditorDialog({
   ])
 
   // Initial value converted to seconds
-  const [inputSeconds, setInputSeconds] = useState(Math.floor(playingTime / 1000).toString())
+  const playingTime_sec = Math.floor(playingTime / 1000).toString()
+  const [inputSeconds, setInputSeconds] = useState(playingTime_sec)
+  const [inputExpression, setInputExpression] = useState(playingTime_sec)
 
   // Processing Input Changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const value = e.target.value
     // Allows only numbers to be entered
-    if (/^\d*$/.test(value)) {
-      setInputSeconds(value)
+    if (/^[\d+\-*/. ]*$/.test(value)) {
+      setInputExpression(value)
+      if (/^\d*$/.test(value)) {
+        setInputSeconds(value)
+      } else {
+        try {
+          const parser = new Parser()
+          const cal_result = parser.evaluate(value)
+          if (!isNaN(cal_result)) {
+            setInputSeconds(Math.floor(cal_result).toString())
+          } else {
+            setInputSeconds('NaN')
+          }
+        } catch (error) {
+          setInputSeconds('NaN')
+        }
+      }
     }
   }
 
   // Processing Confirmation Button Click
   const handleConfirm = (): void => {
+    if (inputSeconds === 'NaN') {
+      setInputExpression(playingTime_sec)
+      setInputSeconds(playingTime_sec)
+      return
+    }
+
     const seconds = toNumber(inputSeconds)
     if (seconds >= 0) {
       // Convert seconds to milliseconds and save
@@ -42,6 +66,7 @@ export function PlayingTimeEditorDialog({
       setIsOpen(false)
     }
   }
+
   return (
     <Dialog open={isOpen}>
       <DialogTrigger className={cn('w-full')}>{children}</DialogTrigger>
@@ -50,14 +75,17 @@ export function PlayingTimeEditorDialog({
         className={cn('w-[500px] flex flex-row gap-3 items-center')}
       >
         <div className={cn('grow whitespace-nowrap')}>
-          {formatTimeToChinese(Number(inputSeconds) * 1000)}
+          {isNaN(Number(inputSeconds)) ? 'NaN' : formatTimeToChinese(Number(inputSeconds) * 1000)}
         </div>
         <Input
           className={cn('w-full')}
-          value={inputSeconds}
+          value={inputExpression}
           onChange={handleInputChange}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') handleConfirm()
+          }}
           type="text"
-          placeholder="请输入秒数"
+          placeholder="请输入秒数或表达式"
         />
         <Button onClick={handleConfirm}>确定</Button>
       </DialogContent>
