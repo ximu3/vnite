@@ -125,7 +125,7 @@ export function Header({
           )}
         </div>
         {isSticky && (
-          <div className={cn('flex flex-row gap-3 items-center duration-300', '3xl:gap-5')}>
+          <div className={cn('flex flex-row gap-3 items-center duration-300 z-20', '3xl:gap-5')}>
             {runningGames.includes(gameId) ? (
               <StopGame gameId={gameId} className={cn('')} />
             ) : (
@@ -186,7 +186,7 @@ export function Header({
       {!isSticky && (
         <div className={cn('flex flex-row justify-between items-center duration-300', '3xl:gap-5')}>
           <Record gameId={gameId} />
-          <div className={cn('flex flex-row gap-3 items-center', '3xl:gap-5')}>
+          <div className={cn('flex flex-row gap-3 items-center z-20', '3xl:gap-5')}>
             {runningGames.includes(gameId) ? (
               <StopGame gameId={gameId} className={cn('')} />
             ) : (
