@@ -1,5 +1,6 @@
 import { getDataPath, zipFolder, unzipFile } from '~/utils'
 import { app } from 'electron'
+import fse from 'fs-extra'
 
 export async function backupDatabase(targetPath: string, exclude?: string[]): Promise<void> {
   const dataPath = await getDataPath('')
@@ -10,6 +11,7 @@ export async function backupDatabase(targetPath: string, exclude?: string[]): Pr
 
 export async function restoreDatabase(sourcePath: string): Promise<void> {
   const dataPath = await getDataPath('')
+  await fse.remove(dataPath)
   await unzipFile(sourcePath, dataPath)
   app.relaunch()
   app.exit()
