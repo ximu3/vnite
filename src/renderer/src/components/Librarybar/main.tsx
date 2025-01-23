@@ -18,6 +18,9 @@ import { Filter } from './Filter'
 import { useFilterStore } from './Filter/store'
 import { isEqual } from 'lodash'
 import { create } from 'zustand'
+import { useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
+import { useGameBatchEditorStore } from '../GameBatchEditor/store'
 
 interface LibrarybarStore {
   query: string
@@ -35,6 +38,7 @@ export const useLibrarybarStore = create<LibrarybarStore>((set) => ({
 }))
 
 export function Librarybar(): JSX.Element {
+  const location = useLocation()
   const [selectedGroup, setSelectedGroup] = useDBSyncedState('collection', 'config.json', [
     'others',
     'gameList',
@@ -42,6 +46,15 @@ export function Librarybar(): JSX.Element {
   ])
   const { query, setQuery } = useLibrarybarStore()
   const { toggleFilterMenu, filter } = useFilterStore()
+  const { clearGameIds, gameIds } = useGameBatchEditorStore()
+
+  useEffect(() => {
+    // clear batchEditor gameList when switching to a non-game-detail page and not in batchMode
+    if (!location.pathname.includes(`/library/games/`) && gameIds.length < 2) {
+      clearGameIds()
+    }
+  }, [location.pathname])
+
   return (
     <div className={cn('flex flex-col gap-6 bg-card w-full h-full pt-2')}>
       <div className={cn('flex flex-col gap-3 p-3 pb-0')}>

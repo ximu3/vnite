@@ -9,8 +9,10 @@ import React from 'react'
 import { AddCollectionDialog } from '../dialog/AddCollectionDialog'
 import { useGameBatchEditorStore } from '../GameBatchEditor/store'
 import { BatchGameNavCM } from '../GameBatchEditor/BatchGameNavCM'
+import { useLocation } from 'react-router-dom'
 
 export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }): JSX.Element {
+  const location = useLocation()
   const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
   const [isAttributesDialogOpen, setIsAttributesDialogOpen] = React.useState(false)
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
@@ -28,7 +30,7 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
     if (event.ctrlKey || event.metaKey) {
       // If Ctrl/Command is held down, toggles the selection state
       if (isSelected) {
-        removeGameId(gameId)
+        if (!location.pathname.includes(`/games/${gameId}/${groupId}`)) removeGameId(gameId)
       } else {
         addGameId(gameId)
       }
@@ -47,7 +49,7 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
               variant="sidebar"
               className={cn(
                 'text-xs p-3 h-5 rounded-none',
-                isSelected && isBatchMode && 'bg-accent text-accent-foreground'
+                isSelected && 'bg-accent text-accent-foreground'
               )}
               to={`./games/${gameId}/${groupId}`}
             >
