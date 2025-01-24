@@ -73,14 +73,24 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
     }
   }
   async function selectSaveFolderPath(): Promise<void> {
-    const folderPath: string[] = await ipcInvoke('select-multiple-path-dialog', ['openDirectory'])
+    const folderPath: string[] = await ipcInvoke(
+      'select-multiple-path-dialog',
+      ['openDirectory'],
+      undefined,
+      gamePath
+    )
     if (!folderPath) {
       return
     }
     setSaveFolderPath(folderPath)
   }
   async function selectSaveFilePath(): Promise<void> {
-    const filePath: string[] = await ipcInvoke('select-multiple-path-dialog', ['openFile'])
+    const filePath: string[] = await ipcInvoke(
+      'select-multiple-path-dialog',
+      ['openFile'],
+      undefined,
+      gamePath
+    )
     if (!filePath) {
       return
     }
