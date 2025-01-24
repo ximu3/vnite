@@ -70,24 +70,26 @@ export function PlayingTimeEditorDialog({
   return (
     <Dialog open={isOpen}>
       <DialogTrigger className={cn('w-full')}>{children}</DialogTrigger>
-      <DialogContent
-        showCloseButton={false}
-        className={cn('w-[500px] flex flex-row gap-3 items-center')}
-      >
-        <div className={cn('grow whitespace-nowrap')}>
-          {isNaN(Number(inputSeconds)) ? 'NaN' : formatTimeToChinese(Number(inputSeconds) * 1000)}
+      <DialogContent showCloseButton={false} className={cn('w-[500px] flex flex-col gap-3 py-5')}>
+        <div className={cn('text-xs')}>支持四则运算表达式</div>
+        <div className={cn('flex flex-row gap-3 items-center')}>
+          <div className={cn('')}>
+            {isNaN(Number(inputSeconds)) ? 'NaN' : formatTimeToChinese(Number(inputSeconds) * 1000)}
+          </div>
+          <div className={cn('flex flex-row gap-3 items-center grow')}>
+            <Input
+              className={cn('w-full')}
+              value={inputExpression}
+              onChange={handleInputChange}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleConfirm()
+              }}
+              type="text"
+              placeholder="请输入秒数或表达式"
+            />
+            <Button onClick={handleConfirm}>确定</Button>
+          </div>
         </div>
-        <Input
-          className={cn('w-full')}
-          value={inputExpression}
-          onChange={handleInputChange}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') handleConfirm()
-          }}
-          type="text"
-          placeholder="请输入秒数或表达式"
-        />
-        <Button onClick={handleConfirm}>确定</Button>
       </DialogContent>
     </Dialog>
   )
