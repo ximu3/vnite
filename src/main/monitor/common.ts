@@ -4,7 +4,7 @@ import { ipcMain, IpcMainEvent, BrowserWindow } from 'electron'
 import { updateRecentGames } from '~/utils'
 import { setDBValue, getDBValue } from '~/database'
 import log from 'electron-log/main.js'
-import { backupGameSaveData, checkPathJsonVersion } from '~/database'
+import { backupGameSaveData } from '~/database'
 import { exec } from 'child_process'
 import iconv from 'iconv-lite'
 
@@ -396,7 +396,6 @@ export class GameMonitor {
 
     updateRecentGames()
 
-    await checkPathJsonVersion(this.options.gameId)
     const savePath = await getDBValue<{ pathInGame: string; pathInDB: string }[]>(
       `games/${this.options.gameId}/path.json`,
       ['savePath'],

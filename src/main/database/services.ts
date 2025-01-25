@@ -9,7 +9,7 @@ import { backupDatabase, restoreDatabase } from './backup'
 import log from 'electron-log/main.js'
 
 /**
- * Get the value of the database
+ * Set the value of the database
  * @param dbName The name of the database
  * @param path The path to the key.
  * @param value — The value to set.
@@ -44,10 +44,24 @@ export async function setDBValue(
  * @param dbName The name of the database
  * @param path The path to the key.
  * @param defaultValue The default value to set and return if the key does not exist.
+ * @param withoutCheck Check the json version and upgrade it.(now only used for path.json)
  * @returns A promise that resolves with the value of the key.
  */
-export async function getDBValue<T>(dbName: string, path: string[], defaultValue: T): Promise<T> {
+export async function getDBValue<T>(
+  dbName: string,
+  path: string[],
+  defaultValue: T,
+  withoutCheck: boolean = false
+): Promise<T> {
   try {
+    if (!withoutCheck) {
+      if (dbName.startsWith('games/')) {
+        if (dbName.includes('path.json')) {
+          await checkPathJsonVersion(dbName.split('/')[1])
+        }
+      }
+    }
+
     return await getValue(await getDataPath(dbName), path, defaultValue)
   } catch (error) {
     log.error(`Failed to get value for ${dbName} at ${path.join('.')}`, error)
@@ -177,7 +191,7 @@ export async function restoreDatabaseData(sourcePath: string): Promise<void> {
  * @returns A promise that resolves when the operation is complete.
  */
 export async function checkPathJsonVersion(gameId: string): Promise<void> {
-  const pathJsonVersion = await getDBValue(`games/${gameId}/path.json`, ['version'], 1)
+  const pathJsonVersion = await getDBValue(`games/${gameId}/path.json`, ['version'], 1, true)
 
   if (pathJsonVersion === 1) {
     await upgradePathJson1to2(gameId)

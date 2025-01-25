@@ -4,9 +4,19 @@ import { getDataPath, generateUUID } from '~/utils'
 import fse from 'fs-extra'
 
 export async function upgradePathJson1to2(gameId: string): Promise<void> {
-  const gamePath = await getDBValue(`games/${gameId}/path.json`, ['gamePath'], '')
-  const savePathMode = await getDBValue(`games/${gameId}/path.json`, ['savePath', 'mode'], 'folder')
-  const savePath = await getDBValue(`games/${gameId}/path.json`, ['savePath', savePathMode], [''])
+  const gamePath = await getDBValue(`games/${gameId}/path.json`, ['gamePath'], '', true)
+  const savePathMode = await getDBValue(
+    `games/${gameId}/path.json`,
+    ['savePath', 'mode'],
+    'folder',
+    true
+  )
+  const savePath = await getDBValue(
+    `games/${gameId}/path.json`,
+    ['savePath', savePathMode],
+    [''],
+    true
+  )
 
   const newPathJson: {
     version: number
