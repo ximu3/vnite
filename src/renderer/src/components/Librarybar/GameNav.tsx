@@ -16,7 +16,8 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
   const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
   const [isAttributesDialogOpen, setIsAttributesDialogOpen] = React.useState(false)
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
-  const { addGameId, removeGameId, clearGameIds, gameIds } = useGameBatchEditorStore()
+  const { addGameId, removeGameId, clearGameIds, gameIds, lastSelectedId, setLastSelectedId } =
+    useGameBatchEditorStore()
 
   // Check if the current game is selected
   const isSelected = gameIds.includes(gameId)
@@ -27,29 +28,70 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
   const handleGameClick = (event: React.MouseEvent): void => {
     event.preventDefault()
 
-    if (event.ctrlKey || event.metaKey) {
-      // If Ctrl/Command is held down, toggles the selection state
+    if (event.shiftKey && lastSelectedId) {
+      // Get all games in the currently visible AccordionContent
+      const accordionContent = (event.currentTarget as HTMLElement).closest('.accordion-content')
+
+      if (accordionContent) {
+        const visibleGameElements = Array.from(
+          accordionContent.querySelectorAll('[data-game-id]')
+        ) as HTMLElement[]
+
+        const currentGameIds = visibleGameElements
+          .map((el) => el.dataset.gameId)
+          .filter(Boolean) as string[]
+
+        const currentIndex = currentGameIds.indexOf(gameId)
+        const lastSelectedIndex = currentGameIds.indexOf(lastSelectedId)
+
+        if (currentIndex !== -1 && lastSelectedIndex !== -1) {
+          const start = Math.min(currentIndex, lastSelectedIndex)
+          const end = Math.max(currentIndex, lastSelectedIndex)
+
+          const selectedRange = currentGameIds.slice(start, end + 1)
+
+          if (event.ctrlKey || event.metaKey) {
+            // Shift + Ctrl/Cmd: Add to existing selection
+            selectedRange.forEach((id) => {
+              if (!gameIds.includes(id)) {
+                addGameId(id)
+              }
+            })
+          } else {
+            // Shift: Replacement of existing options
+            clearGameIds()
+            selectedRange.forEach((id) => addGameId(id))
+          }
+        }
+      }
+    } else if (event.ctrlKey || event.metaKey) {
+      // Ctrl/Cmd Click
       if (isSelected) {
-        if (!location.pathname.includes(`/games/${gameId}/${groupId}`)) removeGameId(gameId)
+        if (!location.pathname.includes(`/games/${gameId}/${groupId}`)) {
+          removeGameId(gameId)
+        }
       } else {
         addGameId(gameId)
       }
     } else {
-      // If Ctrl/Command is not held down, all selections are cleared and only the current item is selected.
+      // normal click
       clearGameIds()
       addGameId(gameId)
     }
+
+    setLastSelectedId(gameId)
   }
+
   return (
     <>
       <ContextMenu>
         <ContextMenuTrigger>
-          <div onClick={handleGameClick}>
+          <div onClick={handleGameClick} data-game-id={gameId}>
             <Nav
               variant="sidebar"
               className={cn(
                 'text-xs p-3 h-5 rounded-none',
-                isSelected && 'bg-accent text-accent-foreground'
+                isSelected && isBatchMode && 'bg-accent text-accent-foreground'
               )}
               to={`./games/${gameId}/${groupId}`}
             >

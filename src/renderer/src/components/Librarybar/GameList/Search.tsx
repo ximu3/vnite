@@ -12,7 +12,7 @@ export function Search({ query }: { query: string }): JSX.Element {
       <Accordion
         type="multiple"
         defaultValue={['all']}
-        className={cn('w-full text-xs flex flex-col gap-2 ')}
+        className={cn('w-full text-xs flex flex-col gap-2')}
       >
         <AccordionItem value="all">
           <AccordionTrigger className={cn('bg-accent/30 text-xs p-1 pl-2')}>

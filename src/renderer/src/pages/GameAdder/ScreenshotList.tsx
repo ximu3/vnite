@@ -87,7 +87,6 @@ export function ScreenshotList(): JSX.Element {
       (async (): Promise<void> => {
         await ipcInvoke('add-game-to-db', { dataSource, id, preExistingDbId: dbId, screenshotUrl })
         setIsAdding(false)
-        setIsOpen(false)
         setDbId('')
         setId('')
         setName('')
@@ -95,6 +94,7 @@ export function ScreenshotList(): JSX.Element {
         setScreenshotUrl('')
         setGameList([])
         setIsLoading(false)
+        setIsOpen(false)
         navigate('/')
       })(),
       {
