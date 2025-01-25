@@ -22,24 +22,61 @@ const STEAM_URLS = {
 }
 
 // Generic fetch function with retry logic
+async function fetchWithTimeout(
+  url: string,
+  options: RequestInit = {},
+  timeout = 5000
+): Promise<Response> {
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), timeout)
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal
+    })
+    clearTimeout(timeoutId)
+    return response
+  } catch (error) {
+    clearTimeout(timeoutId)
+    throw error
+  }
+}
+
 async function fetchWithFallback(
   primaryUrl: string,
   fallbackUrl: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  timeout = 5000
 ): Promise<Response> {
   try {
-    const primaryResponse = await fetch(primaryUrl, options)
+    const primaryResponse = await fetchWithTimeout(primaryUrl, options, timeout)
     if (primaryResponse.ok) {
       return primaryResponse
     }
     throw new Error(`Primary request failed with status: ${primaryResponse.status}`)
   } catch (error) {
-    console.warn(`Primary request failed, trying fallback: ${error}`)
-    const fallbackResponse = await fetch(fallbackUrl, options)
-    if (!fallbackResponse.ok) {
-      throw new Error(`Fallback request failed with status: ${fallbackResponse.status}`)
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    if (errorMessage.includes('abort')) {
+      console.warn(`Primary request timeout (${timeout}ms) for URL: ${primaryUrl}`)
+    } else {
+      console.warn(`Primary request failed, trying fallback: ${error}`)
     }
-    return fallbackResponse
+
+    try {
+      const fallbackResponse = await fetchWithTimeout(fallbackUrl, options, timeout)
+      if (!fallbackResponse.ok) {
+        throw new Error(`Fallback request failed with status: ${fallbackResponse.status}`)
+      }
+      return fallbackResponse
+    } catch (fallbackError) {
+      const fallbackErrorMessage =
+        fallbackError instanceof Error ? fallbackError.message : String(fallbackError)
+      if (fallbackErrorMessage.includes('abort')) {
+        throw new Error(`Both primary and fallback requests timed out after ${timeout}ms`)
+      }
+      throw fallbackError
+    }
   }
 }
 
@@ -185,6 +222,15 @@ export async function getGameScreenshots(appId: string): Promise<string[]> {
   }
 }
 
+async function checkImageUrl(url: string, timeout = 5000): Promise<boolean> {
+  try {
+    const response = await fetchWithTimeout(url, { method: 'HEAD' }, timeout)
+    return response.ok
+  } catch (error) {
+    return false
+  }
+}
+
 export async function getGameCover(appId: string): Promise<string> {
   const urls = {
     primary: {
@@ -198,21 +244,18 @@ export async function getGameCover(appId: string): Promise<string> {
   }
 
   try {
-    // Try the major HD versions
-    const hdResponse = await fetch(urls.primary.hd, { method: 'HEAD' })
-    if (hdResponse.ok) return urls.primary.hd
+    const urlsToCheck = [
+      urls.primary.hd,
+      urls.primary.standard,
+      urls.fallback.hd,
+      urls.fallback.standard
+    ]
 
-    // Try the major standards version
-    const standardResponse = await fetch(urls.primary.standard, { method: 'HEAD' })
-    if (standardResponse.ok) return urls.primary.standard
-
-    // Try the alternate HD version
-    const fallbackHdResponse = await fetch(urls.fallback.hd, { method: 'HEAD' })
-    if (fallbackHdResponse.ok) return urls.fallback.hd
-
-    // Try the alternate standard version
-    const fallbackStandardResponse = await fetch(urls.fallback.standard, { method: 'HEAD' })
-    if (fallbackStandardResponse.ok) return urls.fallback.standard
+    for (const url of urlsToCheck) {
+      if (await checkImageUrl(url)) {
+        return url
+      }
+    }
 
     return ''
   } catch (error) {
@@ -238,21 +281,21 @@ export async function getGameIcon(appId: string, size: IconSize = 'small'): Prom
   }
 
   try {
-    // Try the main URL
-    const primaryResponse = await fetch(urls.primary[size], { method: 'HEAD' })
-    if (primaryResponse.ok) return urls.primary[size]
+    if (await checkImageUrl(urls.primary[size])) {
+      return urls.primary[size]
+    }
 
-    // Try alternate URLs
-    const fallbackResponse = await fetch(urls.fallback[size], { method: 'HEAD' })
-    if (fallbackResponse.ok) return urls.fallback[size]
+    if (await checkImageUrl(urls.fallback[size])) {
+      return urls.fallback[size]
+    }
 
-    // If the requested size is not small, try to downgrade to small size
     if (size !== 'small') {
-      const smallResponse = await fetch(urls.primary.small, { method: 'HEAD' })
-      if (smallResponse.ok) return urls.primary.small
-
-      const fallbackSmallResponse = await fetch(urls.fallback.small, { method: 'HEAD' })
-      if (fallbackSmallResponse.ok) return urls.fallback.small
+      if (await checkImageUrl(urls.primary.small)) {
+        return urls.primary.small
+      }
+      if (await checkImageUrl(urls.fallback.small)) {
+        return urls.fallback.small
+      }
     }
 
     return ''

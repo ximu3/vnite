@@ -8,6 +8,7 @@ async function fetchVNDB<T extends readonly VNDBField[]>(params: {
   results?: number
 }): Promise<VNDBResponse<T>> {
   const endpoints = ['https://api.vndb.org/kana/vn', 'https://api.ximu.dev/vndb/kana/vn']
+  const TIMEOUT_MS = 5000
 
   const requestConfig = {
     method: 'POST',
@@ -22,10 +23,17 @@ async function fetchVNDB<T extends readonly VNDBField[]>(params: {
 
   let lastError: Error | null = null
 
-  // Try each endpoint in turn
   for (const endpoint of endpoints) {
     try {
-      const response = await fetch(endpoint, requestConfig)
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS)
+
+      const response = await fetch(endpoint, {
+        ...requestConfig,
+        signal: controller.signal
+      })
+
+      clearTimeout(timeoutId)
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
@@ -34,13 +42,18 @@ async function fetchVNDB<T extends readonly VNDBField[]>(params: {
       return response.json()
     } catch (error) {
       lastError = error as Error
-      console.warn(`Failed to fetch from ${endpoint}:`, error)
-      // Continue to try the next endpoint
+      const errorMessage = error instanceof Error ? error.message : String(error)
+
+      if (errorMessage.includes('abort')) {
+        console.warn(`Timeout exceeded (${TIMEOUT_MS}ms) for ${endpoint}`)
+      } else {
+        console.warn(`Failed to fetch from ${endpoint}:`, error)
+      }
+
       continue
     }
   }
 
-  // If all attempts fail, throw a final error
   throw new Error(`All endpoints failed. Last error: ${lastError?.message}`)
 }
 
@@ -135,15 +148,52 @@ function getAlternativeImageUrl(originalUrl: string): string {
 
 // helper function: try to get the image
 async function tryFetchImage(url: string): Promise<string> {
+  const TIMEOUT_MS = 5000
+
+  async function fetchWithTimeout(fetchUrl: string): Promise<Response> {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS)
+
+    try {
+      const response = await fetch(fetchUrl, {
+        method: 'HEAD',
+        signal: controller.signal
+      })
+      clearTimeout(timeoutId)
+      return response
+    } catch (error) {
+      clearTimeout(timeoutId)
+      throw error
+    }
+  }
+
   try {
-    const response = await fetch(url, { method: 'HEAD' })
+    const response = await fetchWithTimeout(url)
     if (response.ok) {
       return url
     }
     throw new Error(`Failed to fetch image: ${response.status}`)
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+
+    if (errorMessage.includes('abort')) {
+      console.warn(`Image fetch timeout (${TIMEOUT_MS}ms) for URL: ${url}`)
+    } else {
+      console.warn(`Failed to fetch image from primary URL: ${url}`, error)
+    }
+
     const alternativeUrl = getAlternativeImageUrl(url)
     console.warn(`Retrying with alternative URL: ${alternativeUrl}`)
+
+    try {
+      const alternativeResponse = await fetchWithTimeout(alternativeUrl)
+      if (alternativeResponse.ok) {
+        return alternativeUrl
+      }
+    } catch (altError) {
+      console.warn(`Alternative URL also failed: ${alternativeUrl}`, altError)
+    }
+
     return alternativeUrl
   }
 }
