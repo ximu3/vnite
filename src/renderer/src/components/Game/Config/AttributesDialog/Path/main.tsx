@@ -1,15 +1,6 @@
 import { cn } from '~/utils'
 import { useDBSyncedState } from '~/hooks'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue
-} from '@ui/select'
 import { Input } from '@ui/input'
 import { Button } from '@ui/button'
 import { ipcInvoke, canAccessImageFile } from '~/utils'
@@ -37,18 +28,19 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
     'timerPath'
   ])
   const [gamePath, setGamePath] = useDBSyncedState('', `games/${gameId}/path.json`, ['gamePath'])
-  const [saveMode, setSaveMode] = useDBSyncedState('folder', `games/${gameId}/path.json`, [
-    'savePath',
-    'mode'
-  ])
-  const [saveFolderPath, setSaveFolderPath] = useDBSyncedState([''], `games/${gameId}/path.json`, [
-    'savePath',
-    'folder'
-  ])
-  const [saveFilePath, setSaveFilePath] = useDBSyncedState([''], `games/${gameId}/path.json`, [
-    'savePath',
-    'file'
-  ])
+
+  const [_savePathInDB, setSavePathInDB] = useDBSyncedState<string[]>(
+    [],
+    `games/${gameId}/path.json`,
+    ['savePathInDB']
+  )
+
+  const [savePathInGame, setSavePathInGame] = useDBSyncedState<string[]>(
+    [],
+    `games/${gameId}/path.json`,
+    ['savePathInGame']
+  )
+
   async function selectGamePath(): Promise<void> {
     const filePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
     if (!filePath) {
@@ -82,7 +74,8 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
     if (!folderPath) {
       return
     }
-    setSaveFolderPath(folderPath)
+    const newSavePathInGame = savePathInGame.concat(folderPath)
+    handlleSavePathInGameChange(newSavePathInGame)
   }
   async function selectSaveFilePath(): Promise<void> {
     const filePath: string[] = await ipcInvoke(
@@ -94,8 +87,16 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
     if (!filePath) {
       return
     }
-    setSaveFilePath(filePath)
+    const newSavePathInGame = savePathInGame.concat(filePath)
+    handlleSavePathInGameChange(newSavePathInGame)
   }
+
+  async function handlleSavePathInGameChange(value: string[]): Promise<void> {
+    await setSavePathInGame(value)
+    const newSavePathInDB = Array.from({ length: value.length }, () => '')
+    await setSavePathInDB(newSavePathInDB)
+  }
+
   return (
     <Card className={cn('group')}>
       <CardHeader>
@@ -117,62 +118,32 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
               <span className={cn('icon-[mdi--file-outline] w-5 h-5')}></span>
             </Button>
           </div>
-          <div className={cn('flex flex-row gap-5 items-center')}>
-            <div>存档模式</div>
-            <div className={cn('w-[120px]')}>
-              <Select value={saveMode} onValueChange={setSaveMode}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>存档模式</SelectLabel>
-                    <SelectItem value="folder">目录</SelectItem>
-                    <SelectItem value="file">文件</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+          <div className={cn('flex flex-row gap-5 items-start')}>
+            <div>存档路径</div>
+            <div className={cn('w-3/4')}>
+              <ArrayTextarea
+                value={savePathInGame}
+                onChange={handlleSavePathInGameChange}
+                className={cn('max-h-[400px] min-h-[100px]')}
+              />
             </div>
+            <Button
+              variant={'outline'}
+              size={'icon'}
+              className={cn('-ml-3')}
+              onClick={selectSaveFolderPath}
+            >
+              <span className={cn('icon-[mdi--folder-open-outline] w-5 h-5')}></span>
+            </Button>
+            <Button
+              variant={'outline'}
+              size={'icon'}
+              className={cn('-ml-3')}
+              onClick={selectSaveFilePath}
+            >
+              <span className={cn('icon-[mdi--file-outline] w-5 h-5')}></span>
+            </Button>
           </div>
-          {saveMode === 'folder' ? (
-            <div className={cn('flex flex-row gap-5 items-start')}>
-              <div>存档路径</div>
-              <div className={cn('w-3/4')}>
-                <ArrayTextarea
-                  value={saveFolderPath}
-                  onChange={setSaveFolderPath}
-                  className={cn('max-h-[400px] min-h-[100px]')}
-                />
-              </div>
-              <Button
-                variant={'outline'}
-                size={'icon'}
-                className={cn('-ml-3')}
-                onClick={selectSaveFolderPath}
-              >
-                <span className={cn('icon-[mdi--folder-open-outline] w-5 h-5')}></span>
-              </Button>
-            </div>
-          ) : (
-            <div className={cn('flex flex-row gap-5 items-start')}>
-              <div>存档路径</div>
-              <div className={cn('w-3/4')}>
-                <ArrayTextarea
-                  value={saveFilePath}
-                  onChange={setSaveFilePath}
-                  className={cn('max-h-[400px] min-h-[100px]')}
-                />
-              </div>
-              <Button
-                variant={'outline'}
-                size={'icon'}
-                className={cn('-ml-3')}
-                onClick={selectSaveFilePath}
-              >
-                <span className={cn('icon-[mdi--file-outline] w-5 h-5')}></span>
-              </Button>
-            </div>
-          )}
         </div>
       </CardContent>
     </Card>
