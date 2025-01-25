@@ -1,13 +1,43 @@
-import { getDBValue, setDBValue } from './services'
+import { getDBValue, setDBValue, checkPathJsonVersion } from './services'
 import path from 'path'
 import { getDataPath, generateUUID } from '~/utils'
 import fse from 'fs-extra'
 
+export async function upgradePathJson1to2(gameId: string): Promise<void> {
+  const gamePath = await getDBValue(`games/${gameId}/path.json`, ['gamePath'], '')
+  const savePathMode = await getDBValue(`games/${gameId}/path.json`, ['savePath', 'mode'], 'folder')
+  const savePath = await getDBValue(`games/${gameId}/path.json`, ['savePath', savePathMode], [''])
+
+  const newPathJson: {
+    version: number
+    gamePath: string
+    savePath: { pathInGame: string; pathInDB: string }[]
+  } = {
+    version: 2,
+    gamePath: gamePath,
+    savePath: []
+  }
+
+  savePath.forEach((filePath: string) => {
+    newPathJson.savePath.push({
+      pathInGame: filePath,
+      pathInDB: path.basename(filePath)
+    })
+  })
+
+  await setDBValue(`games/${gameId}/path.json`, ['#all'], newPathJson)
+}
+
 export async function backupGameSave(gameId: string): Promise<void> {
   const saveId = generateUUID()
 
-  const savePathMode = await getDBValue(`games/${gameId}/path.json`, ['savePath', 'mode'], 'folder')
-  const savePath = await getDBValue(`games/${gameId}/path.json`, ['savePath', savePathMode], [''])
+  await checkPathJsonVersion(gameId)
+  const savePath = await getDBValue<{ pathInGame: string; pathInDB: string }[]>(
+    `games/${gameId}/path.json`,
+    ['savePath'],
+    []
+  )
+
   const backupPath = await getDataPath(`games/${gameId}/saves/${saveId}/`)
 
   // Get a list of the current archives
@@ -26,9 +56,8 @@ export async function backupGameSave(gameId: string): Promise<void> {
   }
 
   // Backup new archive
-  savePath.forEach(async (filePath) => {
-    const fileName = path.basename(filePath)
-    await fse.copy(filePath, path.join(backupPath, fileName))
+  savePath.forEach(async ({ pathInGame, pathInDB }) => {
+    await fse.copy(pathInGame, path.join(backupPath, pathInDB))
   })
 
   // Add a new archive to the list
@@ -37,12 +66,16 @@ export async function backupGameSave(gameId: string): Promise<void> {
 }
 
 export async function restoreGameSave(gameId: string, saveId: string): Promise<void> {
-  const savePathMode = await getDBValue(`games/${gameId}/path.json`, ['savePath', 'mode'], 'folder')
-  const savePath = await getDBValue(`games/${gameId}/path.json`, ['savePath', savePathMode], [''])
+  await checkPathJsonVersion(gameId)
+  const savePath = await getDBValue<{ pathInGame: string; pathInDB: string }[]>(
+    `games/${gameId}/path.json`,
+    ['savePath'],
+    []
+  )
+
   const backupPath = await getDataPath(`games/${gameId}/saves/${saveId}/`)
-  savePath.forEach(async (filePath) => {
-    const fileName = path.basename(filePath)
-    await fse.copy(path.join(backupPath, fileName), filePath)
+  savePath.forEach(async ({ pathInGame, pathInDB }) => {
+    await fse.copy(path.join(backupPath, pathInDB), pathInGame)
   })
 }
 
