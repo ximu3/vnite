@@ -11,29 +11,40 @@ export async function upgradePathJson1to2(gameId: string): Promise<void> {
     'folder',
     true
   )
-  const savePath = await getDBValue(
+  const savePathOld = await getDBValue<string[]>(
     `games/${gameId}/path.json`,
     ['savePath', savePathMode],
-    [''],
+    [],
     true
   )
 
   const newPathJson: {
     version: number
     gamePath: string
-    savePath: { pathInGame: string; pathInDB: string }[]
+    savePathInGame: string[]
+    savePathInDB: string[]
   } = {
     version: 2,
     gamePath: gamePath,
-    savePath: []
+    savePathInGame: savePathOld,
+    savePathInDB: []
   }
 
-  savePath.forEach((filePath: string) => {
-    newPathJson.savePath.push({
-      pathInGame: filePath,
-      pathInDB: path.basename(filePath)
-    })
-  })
+  const backupPathRoot = await getDataPath(`games/${gameId}/saves/`)
+  const saveList = await getDBValue(`games/${gameId}/save.json`, ['#all'], {})
+  const saveIds = Object.keys(saveList)
+  for (let i = 0; i < savePathOld.length; i++) {
+    newPathJson.savePathInDB.push(`${i + 1}_${path.basename(savePathOld[i])}`)
+
+    // Rename the old saves with new version prefix.
+    for (let j = 0; j < saveIds.length; j++) {
+      const backupPath = path.join(backupPathRoot, saveIds[j])
+      await fse.move(
+        path.join(backupPath, path.basename(savePathOld[i])),
+        path.join(backupPath, `${i + 1}_${path.basename(savePathOld[i])}`)
+      )
+    }
+  }
 
   await setDBValue(`games/${gameId}/path.json`, ['#all'], newPathJson)
 }
@@ -42,11 +53,16 @@ export async function backupGameSave(gameId: string): Promise<void> {
   const saveId = generateUUID()
 
   await checkPathJsonVersion(gameId)
-  const savePath = await getDBValue<{ pathInGame: string; pathInDB: string }[]>(
+
+  const savePathInGame = await getDBValue<string[]>(
     `games/${gameId}/path.json`,
-    ['savePath'],
+    ['savePathInGame'],
     []
   )
+  const savePathInDB = await getDBValue<string[]>(`games/${gameId}/path.json`, ['savePathInDB'], [])
+  if (savePathInDB.length !== savePathInGame.length) {
+    // TODO: Throw error
+  }
 
   const backupPath = await getDataPath(`games/${gameId}/saves/${saveId}/`)
 
@@ -65,9 +81,24 @@ export async function backupGameSave(gameId: string): Promise<void> {
     await fse.remove(await getDataPath(`games/${gameId}/saves/${oldestSaveId}/`))
   }
 
-  // Backup new archive
-  savePath.forEach(async ({ pathInGame, pathInDB }) => {
-    await fse.copy(pathInGame, path.join(backupPath, pathInDB))
+  // If pathInDB is empty, assign basename and prepend a unique counter prefix
+  if (savePathInDB[0] === '') {
+    for (let i = 0; i < savePathInGame.length; i++) {
+      const pathInGame = savePathInGame[i]
+
+      const targetPath = `${i + 1}_${path.basename(pathInGame)}`
+
+      savePathInDB[i] = targetPath
+    }
+    await setDBValue(`games/${gameId}/path.json`, ['savePathInGame'], savePathInGame)
+    await setDBValue(`games/${gameId}/path.json`, ['savePathInDB'], savePathInDB)
+  }
+
+  savePathInGame.forEach(async (pathInGame, index) => {
+    const pathInDB = savePathInDB[index]
+    if (pathInDB) {
+      await fse.copy(pathInGame, path.join(backupPath, pathInDB))
+    }
   })
 
   // Add a new archive to the list
@@ -77,15 +108,23 @@ export async function backupGameSave(gameId: string): Promise<void> {
 
 export async function restoreGameSave(gameId: string, saveId: string): Promise<void> {
   await checkPathJsonVersion(gameId)
-  const savePath = await getDBValue<{ pathInGame: string; pathInDB: string }[]>(
-    `games/${gameId}/path.json`,
-    ['savePath'],
-    []
-  )
 
   const backupPath = await getDataPath(`games/${gameId}/saves/${saveId}/`)
-  savePath.forEach(async ({ pathInGame, pathInDB }) => {
-    await fse.copy(path.join(backupPath, pathInDB), pathInGame)
+  const savePathInGame = await getDBValue<string[]>(
+    `games/${gameId}/path.json`,
+    ['savePathInGame'],
+    []
+  )
+  const savePathInDB = await getDBValue<string[]>(`games/${gameId}/path.json`, ['savePathInDB'], [])
+  if (savePathInDB.length !== savePathInGame.length) {
+    // TODO: Throw error
+  }
+
+  savePathInGame.forEach(async (pathInGame, index) => {
+    const pathInDB = savePathInDB[index]
+    if (pathInDB) {
+      await fse.copy(path.join(backupPath, pathInDB), pathInGame)
+    }
   })
 }
 

@@ -98,11 +98,11 @@ export async function addGameToDB({
     await setDBValue(`games/${dbId}/path.json`, ['#all'], {
       version: 2,
       gamePath: '',
-      savePath: [
-        // {
-        //   pathInGame: '',
-        //   pathInDB: ''
-        // }
+      savePathInGame: [
+        /** string */
+      ],
+      savePathInDB: [
+        /** string */
       ]
     })
     await setDBValue(`games/${dbId}/save.json`, ['#all'], {})
@@ -160,11 +160,11 @@ export async function addGameToDBWithoutMetadata(gamePath: string): Promise<void
   await setDBValue(`games/${dbId}/path.json`, ['#all'], {
     version: 2,
     gamePath: '',
-    savePath: [
-      // {
-      //   pathInGame: '',
-      //   pathInDB: ''
-      // }
+    savePathInGame: [
+      /** string */
+    ],
+    savePathInDB: [
+      /** string */
     ]
   })
   const gameName = gamePath.split('\\').pop()?.split('.')?.slice(0, -1).join('.')

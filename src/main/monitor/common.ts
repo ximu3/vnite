@@ -396,13 +396,13 @@ export class GameMonitor {
 
     updateRecentGames()
 
-    const savePath = await getDBValue<{ pathInGame: string; pathInDB: string }[]>(
+    const savePathInGame = await getDBValue<string[]>(
       `games/${this.options.gameId}/path.json`,
-      ['savePath'],
+      ['savePathInGame'],
       []
     )
 
-    if (savePath.length > 0 && savePath[0].pathInDB !== '' && savePath[0].pathInGame !== '') {
+    if (savePathInGame.length > 0 && savePathInGame[0] !== '') {
       await backupGameSaveData(this.options.gameId)
     }
   }

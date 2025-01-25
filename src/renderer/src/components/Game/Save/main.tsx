@@ -14,10 +14,11 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
     `games/${gameId}/save.json`,
     ['#all']
   )
-  const [savePathMode] = useDBSyncedState('', `games/${gameId}/path.json`, ['savePath', 'mode'])
-  const [savePath] = useDBSyncedState([''], `games/${gameId}/path.json`, ['savePath', savePathMode])
+
+  const [savePathInGame] = useDBSyncedState([''], `games/${gameId}/path.json`, ['savePathInGame'])
+
   async function restoreGameSave(saveId: string): Promise<void> {
-    if (savePath.length === 0 && savePath[0] !== '') {
+    if (savePathInGame.length === 0 && savePathInGame[0] !== '') {
       toast.error('未找到存档路径')
       return
     }
