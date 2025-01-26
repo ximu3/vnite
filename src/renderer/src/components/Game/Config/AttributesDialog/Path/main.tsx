@@ -127,22 +127,38 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
                 className={cn('max-h-[400px] min-h-[100px]')}
               />
             </div>
-            <Button
-              variant={'outline'}
-              size={'icon'}
-              className={cn('-ml-3')}
-              onClick={selectSaveFolderPath}
-            >
-              <span className={cn('icon-[mdi--folder-open-outline] w-5 h-5')}></span>
-            </Button>
-            <Button
-              variant={'outline'}
-              size={'icon'}
-              className={cn('-ml-3')}
-              onClick={selectSaveFilePath}
-            >
-              <span className={cn('icon-[mdi--file-outline] w-5 h-5')}></span>
-            </Button>
+            <div className={cn('flex flex-col gap-3')}>
+              <Button
+                variant={'outline'}
+                size={'icon'}
+                className={cn('-ml-3 relative group/b1')}
+                onClick={selectSaveFolderPath}
+              >
+                <span className={cn('icon-[mdi--folder-plus-outline] w-5 h-5')}></span>
+                <span
+                  className={cn(
+                    'absolute hidden group-hover/b1:block text-xs left-full top-1/2 transform -translate-y-1/2 ml-2'
+                  )}
+                >
+                  添加文件夹
+                </span>
+              </Button>
+              <Button
+                variant={'outline'}
+                size={'icon'}
+                className={cn('-ml-3 relative group/b2')}
+                onClick={selectSaveFilePath}
+              >
+                <span className={cn('icon-[mdi--file-plus-outline] w-5 h-5')}></span>
+                <span
+                  className={cn(
+                    'absolute hidden group-hover/b2:block text-xs left-full top-1/2 transform -translate-y-1/2 ml-2'
+                  )}
+                >
+                  添加文件
+                </span>
+              </Button>
+            </div>
           </div>
         </div>
       </CardContent>
