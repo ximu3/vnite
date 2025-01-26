@@ -10,12 +10,13 @@ export function StopGame({
   className?: string
 }): JSX.Element {
   return (
-    <Button className={cn('', className)} variant={'secondary'}>
-      <div
-        className={cn('flex flex-row gap-1 justify-center items-center p-3')}
-        onClick={() => ipcSend('stop-game', gameId)}
-      >
-        <span className={cn('icon-[mdi--play] w-6 h-6 -ml-2')}></span>
+    <Button
+      className={cn('', className)}
+      variant={'secondary'}
+      onClick={() => ipcSend('stop-game', gameId)}
+    >
+      <div className={cn('flex flex-row gap-1 justify-center items-center p-3 w-full h-full')}>
+        <span className={cn('icon-[mdi--play] w-6 h-6 -ml-1')}></span>
         <div className={cn('')}>停止游戏</div>
       </div>
     </Button>
