@@ -1,4 +1,4 @@
-import { getDBValue, setDBValue, checkPathJsonVersion } from './services'
+import { getDBValue, setDBValue } from './services'
 import path from 'path'
 import { getDataPath, generateUUID } from '~/utils'
 import fse from 'fs-extra'
@@ -52,8 +52,6 @@ export async function upgradePathJson1to2(gameId: string): Promise<void> {
 export async function backupGameSave(gameId: string): Promise<void> {
   const saveId = generateUUID()
 
-  await checkPathJsonVersion(gameId)
-
   const savePathInGame = await getDBValue<string[]>(
     `games/${gameId}/path.json`,
     ['savePathInGame'],
@@ -61,7 +59,9 @@ export async function backupGameSave(gameId: string): Promise<void> {
   )
   const savePathInDB = await getDBValue<string[]>(`games/${gameId}/path.json`, ['savePathInDB'], [])
   if (savePathInDB.length !== savePathInGame.length) {
-    // TODO: Throw error
+    throw new Error(
+      `Length mismatch (in ${gameId}/path.json): savePathInDB (${savePathInDB.length}) does not match savePathInGame (${savePathInGame.length}).`
+    )
   }
 
   const backupPath = await getDataPath(`games/${gameId}/saves/${saveId}/`)
@@ -90,7 +90,6 @@ export async function backupGameSave(gameId: string): Promise<void> {
 
       savePathInDB[i] = targetPath
     }
-    await setDBValue(`games/${gameId}/path.json`, ['savePathInGame'], savePathInGame)
     await setDBValue(`games/${gameId}/path.json`, ['savePathInDB'], savePathInDB)
   }
 
@@ -107,8 +106,6 @@ export async function backupGameSave(gameId: string): Promise<void> {
 }
 
 export async function restoreGameSave(gameId: string, saveId: string): Promise<void> {
-  await checkPathJsonVersion(gameId)
-
   const backupPath = await getDataPath(`games/${gameId}/saves/${saveId}/`)
   const savePathInGame = await getDBValue<string[]>(
     `games/${gameId}/path.json`,
@@ -117,7 +114,9 @@ export async function restoreGameSave(gameId: string, saveId: string): Promise<v
   )
   const savePathInDB = await getDBValue<string[]>(`games/${gameId}/path.json`, ['savePathInDB'], [])
   if (savePathInDB.length !== savePathInGame.length) {
-    // TODO: Throw error
+    throw new Error(
+      `Length mismatch (in ${gameId}/path.json): savePathInDB (${savePathInDB.length}) does not match savePathInGame (${savePathInGame.length}).`
+    )
   }
 
   savePathInGame.forEach(async (pathInGame, index) => {
