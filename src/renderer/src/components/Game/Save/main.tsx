@@ -18,7 +18,7 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
   const [savePathInGame] = useDBSyncedState([''], `games/${gameId}/path.json`, ['savePathInGame'])
 
   async function restoreGameSave(saveId: string): Promise<void> {
-    if (savePathInGame.length === 0 && savePathInGame[0] !== '') {
+    if (isEqual(savePathInGame, [''])) {
       toast.error('未找到存档路径')
       return
     }
@@ -49,10 +49,10 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
     )
   }
   return (
-    <div className="pt-2 bg-background">
-      <div className="group w-full">
-        <div className={cn()}>
-          <Table className="table-fixed">
+    <div className="pt-2 bg-background w-full min-h-[25vh]">
+      <div className="w-full h-full">
+        <div className={cn('h-full')}>
+          <Table className="h-full">
             <TableHeader>
               <TableRow className={cn('')}>
                 <TableHead className={cn('w-1/5')}>日期</TableHead>
@@ -60,7 +60,7 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
                 <TableHead className={cn('w-1/6')}>操作</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
+            <TableBody className={cn('h-full')}>
               {isEqual(saveList, {}) ? (
                 <div className={cn('mt-1')}>暂无存档</div>
               ) : (
