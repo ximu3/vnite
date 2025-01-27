@@ -164,9 +164,7 @@ export function Record({ className }: { className?: string }): JSX.Element {
                 <CardTitle>评分排行</CardTitle>
               </CardHeader>
               <CardContent>
-                <ScoreRank
-                  className={cn('overflow-auto scrollbar-base h-[400px] pr-1', '3xl:h-[500px]')}
-                />
+                <ScoreRank className={cn('h-[400px]', '3xl:h-[500px]')} />
               </CardContent>
             </Card>
             <Card className={cn('w-1/3')}>
@@ -174,9 +172,7 @@ export function Record({ className }: { className?: string }): JSX.Element {
                 <CardTitle>时间排行</CardTitle>
               </CardHeader>
               <CardContent>
-                <PlayingTimeRank
-                  className={cn('overflow-auto scrollbar-base h-[400px] pr-1', '3xl:h-[500px]')}
-                />
+                <PlayingTimeRank className={cn('h-[400px]', '3xl:h-[500px]')} />
               </CardContent>
             </Card>
             <Card className={cn('w-1/3')}>
@@ -184,9 +180,7 @@ export function Record({ className }: { className?: string }): JSX.Element {
                 <CardTitle>次数排行</CardTitle>
               </CardHeader>
               <CardContent>
-                <PlayedTimesRank
-                  className={cn('overflow-auto scrollbar-base h-[400px] pr-1', '3xl:h-[500px]')}
-                />
+                <PlayedTimesRank className={cn('h-[400px]', '3xl:h-[500px]')} />
               </CardContent>
             </Card>
           </div>
