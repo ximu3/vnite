@@ -15,10 +15,10 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
     ['#all']
   )
 
-  const [savePathInGame] = useDBSyncedState([''], `games/${gameId}/path.json`, ['savePathInGame'])
+  const [savePath] = useDBSyncedState([''], `games/${gameId}/path.json`, ['savePath'])
 
   async function restoreGameSave(saveId: string): Promise<void> {
-    if (isEqual(savePathInGame, [''])) {
+    if (isEqual(savePath, [''])) {
       toast.error('未找到存档路径')
       return
     }
