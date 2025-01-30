@@ -27,10 +27,14 @@ export function GamePoster({
   const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
   const [isAttributesDialogOpen, setIsAttributesDialogOpen] = React.useState(false)
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
+  const [isOpen, setIsOpen] = React.useState(false)
   return (
-    <HoverCard openDelay={200} closeDelay={100}>
+    <HoverCard open={isOpen} openDelay={200} closeDelay={100}>
       <ContextMenu>
-        <HoverCardTrigger>
+        <HoverCardTrigger
+          onMouseEnter={() => setIsOpen(true)}
+          onMouseLeave={() => setIsOpen(false)}
+        >
           <ContextMenuTrigger>
             <HoverCardAnimation>
               <GameImage
