@@ -107,8 +107,6 @@ export class GameMonitor {
     this.ipcHandler = async (_, gameId: string): Promise<void> => {
       if (gameId === this.options.gameId) {
         await this.terminateProcesses()
-        await this.handleGameExit()
-        this.stop()
       }
     }
     ipcMain.handle('stop-game', this.ipcHandler)
