@@ -1,6 +1,6 @@
 import path from 'path'
 import fse from 'fs-extra'
-import { ipcMain, IpcMainEvent, BrowserWindow } from 'electron'
+import { ipcMain, BrowserWindow, IpcMainInvokeEvent } from 'electron'
 import { updateRecentGames } from '~/utils'
 import { setDBValue, getDBValue } from '~/database'
 import log from 'electron-log/main.js'
@@ -89,7 +89,7 @@ export class GameMonitor {
   private isRunning: boolean = false
   private intervalId?: NodeJS.Timeout
   private monitoredProcesses: MonitoredProcess[] = []
-  private ipcHandler?: (event: IpcMainEvent, gameId: string) => void
+  private ipcHandler?: (event: IpcMainInvokeEvent, gameId: string) => void
   private startTime?: string
   private endTime?: string
 
@@ -111,7 +111,7 @@ export class GameMonitor {
         this.stop()
       }
     }
-    ipcMain.on('stop-game', this.ipcHandler)
+    ipcMain.handle('stop-game', this.ipcHandler)
   }
 
   private cleanupIpcListener(): void {
@@ -123,7 +123,7 @@ export class GameMonitor {
 
   private async terminateProcesses(): Promise<void> {
     const maxRetries = 3
-    const retryDelay = 1000 // 1 second
+    const retryDelay = 100 // 1 second
 
     for (const monitored of this.monitoredProcesses) {
       if (monitored.isRunning) {
@@ -144,6 +144,7 @@ export class GameMonitor {
 
         if (!terminated) {
           log.error(`无法终止进程 ${monitored.pid}，已达到最大重试次数`)
+          throw new Error(`无法终止进程 ${monitored.pid}，已达到最大重试次数`)
         }
       }
     }
