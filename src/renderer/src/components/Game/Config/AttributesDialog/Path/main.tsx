@@ -3,6 +3,7 @@ import { useDBSyncedState } from '~/hooks'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { Input } from '@ui/input'
 import { Button } from '@ui/button'
+import { Tooltip, TooltipTrigger, TooltipContent } from '~/components/ui/tooltip'
 import { ipcInvoke, canAccessImageFile } from '~/utils'
 import { ArrayTextarea } from '@ui/array-textarea'
 import { toast } from 'sonner'
@@ -29,17 +30,9 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
   ])
   const [gamePath, setGamePath] = useDBSyncedState('', `games/${gameId}/path.json`, ['gamePath'])
 
-  const [_savePathInDB, setSavePathInDB] = useDBSyncedState<string[]>(
-    [],
-    `games/${gameId}/path.json`,
-    ['savePathInDB']
-  )
-
-  const [savePathInGame, setSavePathInGame] = useDBSyncedState<string[]>(
-    [],
-    `games/${gameId}/path.json`,
-    ['savePathInGame']
-  )
+  const [savePath, setSavePath] = useDBSyncedState<string[]>([], `games/${gameId}/path.json`, [
+    'savePath'
+  ])
 
   async function selectGamePath(): Promise<void> {
     const filePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
@@ -74,8 +67,8 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
     if (!folderPath) {
       return
     }
-    const newSavePathInGame = savePathInGame.concat(folderPath)
-    handlleSavePathInGameChange(newSavePathInGame)
+    const newSavePath = savePath.concat(folderPath)
+    await setSavePath(newSavePath)
   }
   async function selectSaveFilePath(): Promise<void> {
     const filePath: string[] = await ipcInvoke(
@@ -87,14 +80,8 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
     if (!filePath) {
       return
     }
-    const newSavePathInGame = savePathInGame.concat(filePath)
-    handlleSavePathInGameChange(newSavePathInGame)
-  }
-
-  async function handlleSavePathInGameChange(value: string[]): Promise<void> {
-    await setSavePathInGame(value)
-    const newSavePathInDB = Array.from({ length: value.length }, () => '')
-    await setSavePathInDB(newSavePathInDB)
+    const newSavePath = savePath.concat(filePath)
+    await setSavePath(newSavePath)
   }
 
   return (
@@ -122,42 +109,38 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
             <div>存档路径</div>
             <div className={cn('w-3/4')}>
               <ArrayTextarea
-                value={savePathInGame}
-                onChange={handlleSavePathInGameChange}
+                value={savePath}
+                onChange={setSavePath}
                 className={cn('max-h-[400px] min-h-[100px]')}
               />
             </div>
             <div className={cn('flex flex-col gap-3')}>
-              <Button
-                variant={'outline'}
-                size={'icon'}
-                className={cn('-ml-3 relative group/b1')}
-                onClick={selectSaveFolderPath}
-              >
-                <span className={cn('icon-[mdi--folder-plus-outline] w-5 h-5')}></span>
-                <span
-                  className={cn(
-                    'absolute hidden group-hover/b1:block text-xs left-full top-1/2 transform -translate-y-1/2 ml-2'
-                  )}
-                >
-                  添加文件夹
-                </span>
-              </Button>
-              <Button
-                variant={'outline'}
-                size={'icon'}
-                className={cn('-ml-3 relative group/b2')}
-                onClick={selectSaveFilePath}
-              >
-                <span className={cn('icon-[mdi--file-plus-outline] w-5 h-5')}></span>
-                <span
-                  className={cn(
-                    'absolute hidden group-hover/b2:block text-xs left-full top-1/2 transform -translate-y-1/2 ml-2'
-                  )}
-                >
-                  添加文件
-                </span>
-              </Button>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    variant={'outline'}
+                    size={'icon'}
+                    className={cn('-ml-3')}
+                    onClick={selectSaveFolderPath}
+                  >
+                    <span className={cn('icon-[mdi--folder-plus-outline] w-5 h-5')}></span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">添加文件夹</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    variant={'outline'}
+                    size={'icon'}
+                    className={cn('-ml-3')}
+                    onClick={selectSaveFilePath}
+                  >
+                    <span className={cn('icon-[mdi--file-plus-outline] w-5 h-5')}></span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">添加文件</TooltipContent>
+              </Tooltip>
             </div>
           </div>
         </div>

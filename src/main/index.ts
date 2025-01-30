@@ -19,7 +19,7 @@ import {
   checkPortableMode
 } from './utils'
 import { initializeCloudsyncServices } from './cloudSync'
-import { setupUpdater } from './updater'
+import { setupUpdater, upgradeDB } from './updater'
 import { initScraper } from './scraper'
 import { initializeIndex } from './database/gameIndex'
 import { initializeRecords } from './database/record'
@@ -242,6 +242,9 @@ if (!gotTheLock) {
     } else {
       log.info('Running in normal mode')
     }
+
+    // Upgrade the database
+    await upgradeDB()
 
     // Initialize metadata
     await initializeIndex()

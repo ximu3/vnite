@@ -3,7 +3,7 @@ import { BrowserWindow } from 'electron'
 import { getDataPath } from '~/utils'
 import { getGameIndex, updateGameIndex } from './gameIndex'
 import { getGameRecords, updateGameRecord } from './record'
-import { backupGameSave, restoreGameSave, deleteGameSave, upgradePathJson1to2 } from './save'
+import { backupGameSave, restoreGameSave, deleteGameSave } from './save'
 import { deleteGame } from './utils'
 import { backupDatabase, restoreDatabase } from './backup'
 import log from 'electron-log/main.js'
@@ -13,16 +13,22 @@ import log from 'electron-log/main.js'
  * @param dbName The name of the database
  * @param path The path to the key.
  * @param value — The value to set.
+ * @param noIpcAction — Whether to skip the IPC action.
+ * @param noGameAction — Whether to skip the game action and IPC action.
  * @returns A promise that resolves when the operation is complete.
  */
 export async function setDBValue(
   dbName: string,
   path: string[],
   value: any,
-  noIpcAction?: boolean
+  noIpcAction?: boolean,
+  noGameAction?: boolean
 ): Promise<void> {
   try {
     await setValue(await getDataPath(dbName), path, value)
+    if (noGameAction) {
+      return
+    }
     if (dbName.startsWith('games/')) {
       if (dbName.includes('record.json')) {
         await updateGameRecord(dbName.split('/')[1])
@@ -47,21 +53,8 @@ export async function setDBValue(
  * @param withoutCheck Check the json version and upgrade it.(now only used for path.json)
  * @returns A promise that resolves with the value of the key.
  */
-export async function getDBValue<T>(
-  dbName: string,
-  path: string[],
-  defaultValue: T,
-  withoutCheck: boolean = false
-): Promise<T> {
+export async function getDBValue<T>(dbName: string, path: string[], defaultValue: T): Promise<T> {
   try {
-    if (!withoutCheck) {
-      if (dbName.startsWith('games/')) {
-        if (dbName.includes('path.json')) {
-          await checkPathJsonVersion(dbName.split('/')[1])
-        }
-      }
-    }
-
     return await getValue(await getDataPath(dbName), path, defaultValue)
   } catch (error) {
     log.error(`Failed to get value for ${dbName} at ${path.join('.')}`, error)
@@ -182,18 +175,5 @@ export async function restoreDatabaseData(sourcePath: string): Promise<void> {
   } catch (error) {
     log.error(`Failed to restore database from ${sourcePath}`, error)
     throw error
-  }
-}
-
-/**
- * Check the version of `path.json` and upgrade it.
- * @param gameId The id of the game
- * @returns A promise that resolves when the operation is complete.
- */
-export async function checkPathJsonVersion(gameId: string): Promise<void> {
-  const pathJsonVersion = await getDBValue(`games/${gameId}/path.json`, ['version'], 1, true)
-
-  if (pathJsonVersion === 1) {
-    await upgradePathJson1to2(gameId)
   }
 }

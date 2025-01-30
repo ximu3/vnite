@@ -7,6 +7,7 @@ import log from 'electron-log/main.js'
 import { backupGameSaveData } from '~/database'
 import { exec } from 'child_process'
 import iconv from 'iconv-lite'
+import { isEqual } from 'lodash'
 
 const execAsync = (command: string, options?: any): Promise<{ stdout: string; stderr: string }> => {
   return new Promise<{ stdout: string; stderr: string }>((resolve, reject) => {
@@ -396,13 +397,13 @@ export class GameMonitor {
 
     updateRecentGames()
 
-    const savePathInGame = await getDBValue<string[]>(
+    const savePath = await getDBValue<string[]>(
       `games/${this.options.gameId}/path.json`,
-      ['savePathInGame'],
+      ['savePath'],
       []
     )
 
-    if (savePathInGame.length > 0 && savePathInGame[0] !== '') {
+    if (!isEqual(savePath, ['']) && savePath.length > 0) {
       await backupGameSaveData(this.options.gameId)
     }
   }

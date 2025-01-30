@@ -96,14 +96,8 @@ export async function addGameToDB({
       }
     })
     await setDBValue(`games/${dbId}/path.json`, ['#all'], {
-      version: 2,
       gamePath: '',
-      savePathInGame: [
-        /** string */
-      ],
-      savePathInDB: [
-        /** string */
-      ]
+      savePath: ['']
     })
     await setDBValue(`games/${dbId}/save.json`, ['#all'], {})
   }
@@ -158,14 +152,8 @@ export async function addGameToDBWithoutMetadata(gamePath: string): Promise<void
     }
   })
   await setDBValue(`games/${dbId}/path.json`, ['#all'], {
-    version: 2,
     gamePath: '',
-    savePathInGame: [
-      /** string */
-    ],
-    savePathInDB: [
-      /** string */
-    ]
+    savePath: ['']
   })
   const gameName = gamePath.split('\\').pop()?.split('.')?.slice(0, -1).join('.')
   await setDBValue(`games/${dbId}/metadata.json`, ['#all'], {
