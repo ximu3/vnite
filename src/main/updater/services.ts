@@ -1,4 +1,4 @@
-import { setupAutoUpdater } from './common'
+import { setupAutoUpdater, upgradeDBVersion } from './common'
 import { BrowserWindow } from 'electron'
 import log from 'electron-log/main.js'
 
@@ -11,5 +11,16 @@ export function setupUpdater(mainWindow: BrowserWindow): void {
     setupAutoUpdater(mainWindow)
   } catch (error) {
     log.error('Failed to setup updater:', error)
+  }
+}
+
+/**
+ * Upgrade the database version
+ */
+export async function upgradeDB(): Promise<void> {
+  try {
+    await upgradeDBVersion()
+  } catch (error) {
+    log.error('Failed to upgrade database:', error)
   }
 }
