@@ -256,7 +256,7 @@ export class CloudSync {
       // 3. Zip database
       const dataPath = await getDataPath('')
       await zipFolder(dataPath, tempZipPath, 'vnite-database', {
-        exclude: ['path.json', 'device-id.json']
+        exclude: ['path.json', 'device-id.json', 'launcher.json']
       })
 
       tempZipPath = path.join(tempZipPath, 'vnite-database.zip')
@@ -268,7 +268,7 @@ export class CloudSync {
       const metadata: SyncMetadata = {
         version: new Date().toISOString(),
         timestamp: new Date().toISOString(),
-        devices: [], // 将在 updateMetadata 中更新
+        devices: [], // Will be updated in updateMetadata
         checksum,
         lastModified: (await fse.stat(dataPath)).mtime.toISOString()
       }
