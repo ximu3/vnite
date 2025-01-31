@@ -29,11 +29,17 @@ export function GamePoster({
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
   const [isOpen, setIsOpen] = React.useState(false)
   return (
-    <HoverCard open={isOpen} openDelay={200} closeDelay={100}>
+    <HoverCard open={isOpen}>
       <ContextMenu>
         <HoverCardTrigger
-          onMouseEnter={() => setIsOpen(true)}
-          onMouseLeave={() => setIsOpen(false)}
+          onMouseEnter={() => {
+            setTimeout(() => {
+              setIsOpen(true)
+            }, 200)
+          }}
+          onMouseLeave={() => {
+            setIsOpen(false)
+          }}
         >
           <ContextMenuTrigger>
             <HoverCardAnimation>
