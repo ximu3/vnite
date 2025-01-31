@@ -8,10 +8,10 @@ export const InfiniteProgress = React.forwardRef<
   return (
     <div
       ref={ref}
-      className={cn('relative h-2 w-full overflow-hidden rounded-[0.3rem] bg-muted/50', className)}
+      className={cn('relative h-2 w-full overflow-hidden rounded-lg bg-muted/50', className)}
       {...props}
     >
-      <div className="animate-slide-infinite absolute h-full w-1/2 rounded-[0.3rem] bg-foreground" />
+      <div className="animate-slide-infinite absolute h-full w-1/2 rounded-lg bg-foreground" />
     </div>
   )
 })

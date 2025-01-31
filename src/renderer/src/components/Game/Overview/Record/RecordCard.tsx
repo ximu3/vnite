@@ -27,7 +27,7 @@ export function RecordCard({
       </div>
       <Separator
         orientation="vertical"
-        className={cn('mx-6 bg-primary h-7 self-center w-[2px] rounded-[0.3rem]')}
+        className={cn('mx-6 bg-primary h-7 self-center w-[2px] rounded-lg')}
       />
     </div>
   )

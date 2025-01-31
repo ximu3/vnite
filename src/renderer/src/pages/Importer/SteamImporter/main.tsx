@@ -235,7 +235,7 @@ export function SteamImporter(): JSX.Element {
                         <div className="flex items-center space-x-2">
                           <Checkbox
                             id="selectAll"
-                            className={cn('rounded-[0.3rem]')}
+                            className={cn('rounded-lg')}
                             checked={selectedCount === games.length}
                             onCheckedChange={(checked) => toggleAllGames(!!checked)}
                           />
@@ -261,7 +261,7 @@ export function SteamImporter(): JSX.Element {
                               <Checkbox
                                 id={`game-${game.appId}`}
                                 checked={game.selected}
-                                className={cn('rounded-[0.3rem]')}
+                                className={cn('rounded-lg')}
                                 onCheckedChange={() => toggleGameSelection(game.appId)}
                               />
                               <label htmlFor={`game-${game.appId}`} className="flex-1 text-sm">

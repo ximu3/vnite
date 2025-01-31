@@ -21,7 +21,7 @@ export function CollectionPoster({
     <CollectionCM collectionId={collectionId}>
       <div
         className={cn(
-          'group relative overflow-hidden shadow-custom-initial cursor-pointer w-[160px] h-[160px] rounded-[0.3rem]',
+          'group relative overflow-hidden shadow-custom-initial cursor-pointer w-[160px] h-[160px] rounded-lg',
           'transition-all duration-300 ease-in-out',
           'ring-0 ring-transparent',
           'hover:ring-2 hover:ring-primary',

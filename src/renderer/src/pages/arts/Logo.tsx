@@ -29,7 +29,7 @@ export function Logo(): JSX.Element {
       <div
         ref={logoRef}
         className={cn(
-          'w-[512px] h-[256px] flex flex-col items-center justify-center bg-gradient-to-r from-primary to-accent rounded-[0.3rem]'
+          'w-[512px] h-[256px] flex flex-col items-center justify-center bg-gradient-to-r from-primary to-accent rounded-lg'
         )}
       >
         <div className={cn('text-[128px] font-mono')}>VNITE</div>

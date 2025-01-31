@@ -24,7 +24,7 @@ export function GamePoster({
   return (
     <div
       className={cn(
-        'group relative overflow-hidden cursor-pointer rounded-[0.3rem]',
+        'group relative overflow-hidden cursor-pointer rounded-lg',
         'transition-border duration-300 ease-in-out',
         'border-2 border-transparent',
         'hover:border-primary hover:border-2',

@@ -66,7 +66,7 @@ export function UpdateDialog(): JSX.Element {
           <div className={cn('')}>
             <div
               className={cn(
-                'max-h-[300px] p-2 border-[1px] border-border pb-3 overflow-auto scrollbar-base text-sm bg-card text-card-foreground rounded-[0.3rem]',
+                'max-h-[300px] p-2 border-[1px] border-border pb-3 overflow-auto scrollbar-base text-sm bg-card text-card-foreground rounded-lg',
                 'prose max-w-none',
                 'prose-headings:font-bold prose-headings:text-lg prose-headings:m-0 prose-headings:text-card-foreground',
                 'prose-p:my-0',

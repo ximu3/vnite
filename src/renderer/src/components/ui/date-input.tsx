@@ -18,23 +18,23 @@ export const DateInput = forwardRef<HTMLInputElement, DateInputProps>(
           max={'9999-12-31'}
           ref={ref}
           className={cn(
-            // 基础样式
+            // Basic Style
             'pl-3 pr-10',
-            // 移除默认的日期选择器样式
+            // Remove the default date picker style
             '[&::-webkit-calendar-picker-indicator]:hidden',
-            // 年份字段高亮样式
+            // Year field highlighting style
             '[&::-webkit-datetime-edit-year-field:focus]:bg-primary',
             '[&::-webkit-datetime-edit-year-field:focus]:text-primary-foreground',
-            '[&::-webkit-datetime-edit-year-field:focus]:rounded-[0.3rem]',
+            '[&::-webkit-datetime-edit-year-field:focus]:rounded-lg',
 
             '[&::-webkit-datetime-edit-month-field:focus]:bg-primary',
             '[&::-webkit-datetime-edit-month-field:focus]:text-primary-foreground',
-            '[&::-webkit-datetime-edit-month-field:focus]:rounded-[0.3rem]',
+            '[&::-webkit-datetime-edit-month-field:focus]:rounded-lg',
 
             '[&::-webkit-datetime-edit-day-field:focus]:bg-primary',
             '[&::-webkit-datetime-edit-day-field:focus]:text-primary-foreground',
-            '[&::-webkit-datetime-edit-day-field:focus]:rounded-[0.3rem]',
-            // 错误状态样式
+            '[&::-webkit-datetime-edit-day-field:focus]:rounded-lg',
+            // Error Status Style
             error && 'border-destructive focus-visible:ring-destructive',
             className
           )}

@@ -55,7 +55,7 @@ export function GamePoster({
           className={cn('rounded-none')}
         >
           <ContextMenuTrigger>
-            <HoverCardAnimation>
+            <HoverCardAnimation className={cn('')}>
               <GameImage
                 onClick={() =>
                   navigate(
@@ -70,6 +70,7 @@ export function GamePoster({
                 className={cn(
                   'w-[148px] h-[222px] cursor-pointer object-cover',
                   '3xl:w-[176px] 3xl:h-[264px]',
+
                   className
                 )}
                 fallback={

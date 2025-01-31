@@ -122,7 +122,7 @@ export function ScreenshotList(): JSX.Element {
                       setScreenshotUrl(image)
                     }}
                     className={cn(
-                      'cursor-pointer p-3 bg-muted text-muted-foreground rounded-[0.3rem]',
+                      'cursor-pointer p-3 bg-muted text-muted-foreground rounded-lg',
                       image === screenshotUrl
                         ? 'bg-accent text-accent-foreground'
                         : 'hover:bg-accent hover:text-accent-foreground'

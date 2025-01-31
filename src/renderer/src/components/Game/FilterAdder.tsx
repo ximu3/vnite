@@ -15,7 +15,7 @@ export function FilterAdder({
   return (
     <button
       className={cn(
-        'py-[1px] px-[4px] bg-accent/70 rounded-[0.3rem] text-xs text-accent-foreground/70 hover:text-accent-foreground hover:bg-accent',
+        'py-[1px] px-[4px] bg-accent/70 rounded-lg text-xs text-accent-foreground/70 hover:text-accent-foreground hover:bg-accent',
         className
       )}
       onClick={() => {

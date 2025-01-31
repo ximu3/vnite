@@ -24,17 +24,17 @@ export function CloudSyncInfo({
                 <div className={cn('flex flex-row')}>
                   {status.status === 'syncing' ? (
                     <div className={cn('flex flex-row gap-1 items-center')}>
-                      <div className={cn('w-3 h-3 rounded-[0.3rem] bg-accent')}></div>
+                      <div className={cn('w-3 h-3 rounded-lg bg-accent')}></div>
                       <div>同步中</div>
                     </div>
                   ) : status.status === 'success' ? (
                     <div className={cn('flex flex-row gap-1 items-center')}>
-                      <div className={cn('w-3 h-3 rounded-[0.3rem] bg-primary')}></div>
+                      <div className={cn('w-3 h-3 rounded-lg bg-primary')}></div>
                       <div>同步成功</div>
                     </div>
                   ) : (
                     <div className={cn('flex flex-row gap-1 items-center')}>
-                      <div className={cn('w-3 h-3 rounded-[0.3rem] bg-destructive')}></div>
+                      <div className={cn('w-3 h-3 rounded-lg bg-destructive')}></div>
                       <div>同步失败</div>
                     </div>
                   )}

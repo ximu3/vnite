@@ -48,9 +48,7 @@ export const GameImage: React.FC<GameImageProps> = ({
   return (
     <div className={cn('relative', className)}>
       {!isLoaded && (
-        <div
-          className={cn('absolute inset-0', className?.includes('rounded') && 'rounded-[0.3rem]')}
-        />
+        <div className={cn('absolute inset-0', className?.includes('rounded') && 'rounded-lg')} />
       )}
       <img
         src={`img:///games/${gameId}/${type}?t=${timestamp}`}
