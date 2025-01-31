@@ -1,6 +1,6 @@
 import path from 'path'
 import fse from 'fs-extra'
-import { ipcMain, BrowserWindow, IpcMainInvokeEvent } from 'electron'
+import { ipcMain, BrowserWindow } from 'electron'
 import { updateRecentGames } from '~/utils'
 import { setDBValue, getDBValue } from '~/database'
 import log from 'electron-log/main.js'
@@ -89,7 +89,7 @@ export class GameMonitor {
   private isRunning: boolean = false
   private intervalId?: NodeJS.Timeout
   private monitoredProcesses: MonitoredProcess[] = []
-  private ipcHandler?: (event: IpcMainInvokeEvent, gameId: string) => void
+  private ipcHandler?: () => void
   private startTime?: string
   private endTime?: string
 
@@ -104,17 +104,15 @@ export class GameMonitor {
   }
 
   private setupIpcListener(): void {
-    this.ipcHandler = async (_, gameId: string): Promise<void> => {
-      if (gameId === this.options.gameId) {
-        await this.terminateProcesses()
-      }
+    this.ipcHandler = async (): Promise<void> => {
+      await this.terminateProcesses()
     }
-    ipcMain.handle('stop-game', this.ipcHandler)
+    ipcMain.handleOnce(`stop-game-${this.options.gameId}`, this.ipcHandler)
   }
 
   private cleanupIpcListener(): void {
     if (this.ipcHandler) {
-      ipcMain.removeListener('stop-game', this.ipcHandler)
+      ipcMain.removeHandler(`stop-game-${this.options.gameId}`)
       this.ipcHandler = undefined
     }
   }

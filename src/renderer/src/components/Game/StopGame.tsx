@@ -13,7 +13,7 @@ export function StopGame({
   function stopGame(): void {
     toast.promise(
       (async (): Promise<void> => {
-        await ipcInvoke('stop-game', gameId)
+        await ipcInvoke(`stop-game-${gameId}`)
       })(),
       {
         loading: '正在停止游戏...',

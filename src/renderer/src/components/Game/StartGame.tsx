@@ -14,6 +14,9 @@ export function StartGame({
 }): JSX.Element {
   const [mode] = useDBSyncedState('file', `games/${gameId}/launcher.json`, ['mode'])
   const [gamePath, setGamePath] = useDBSyncedState('', `games/${gameId}/path.json`, ['gamePath'])
+  const [playStatus, setPlayStatus] = useDBSyncedState('unplayed', `games/${gameId}/record.json`, [
+    'playStatus'
+  ])
   const { runningGames, setRunningGames } = useRunningGames()
 
   const [fileConfig] = useDBSyncedState(
@@ -80,6 +83,9 @@ export function StartGame({
       ) {
         ipcSend('start-game', gameId)
         setRunningGames([...runningGames, gameId])
+        if (playStatus === 'unplayed') {
+          setPlayStatus('playing')
+        }
       } else {
         toast.error('运行配置错误，请检查！')
       }
@@ -92,6 +98,9 @@ export function StartGame({
       ) {
         ipcSend('start-game', gameId)
         setRunningGames([...runningGames, gameId])
+        if (playStatus === 'unplayed') {
+          setPlayStatus('playing')
+        }
       } else {
         toast.error('运行配置错误，请检查！')
       }
@@ -99,6 +108,9 @@ export function StartGame({
       if (urlConfig.url) {
         ipcSend('start-game', gameId)
         setRunningGames([...runningGames, gameId])
+        if (playStatus === 'unplayed') {
+          setPlayStatus('playing')
+        }
       } else {
         toast.error('运行配置错误，请检查！')
       }
