@@ -21,8 +21,8 @@ export function HoverCardAnimation({
   onClick,
   liftAmount = 6,
   shadowConfig = {
-    initial: '0 4px 8px rgba(0, 0, 0, 0.7)',
-    hover: '0 8px 16px rgba(0, 0, 0, 1)'
+    initial: '0 2px 5px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.3)',
+    hover: '0 3px 6px rgba(0, 0, 0, 0.35), 0 8px 16px rgba(0, 0, 0, 0.6)'
   },
   animationConfig = {
     tension: 750,

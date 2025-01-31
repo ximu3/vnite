@@ -26,7 +26,8 @@ export function DescriptionCard({
           'prose-a:text-primary', // Link Color
           'prose-a:no-underline hover:prose-a:underline', // underline effect
           'space-before-0',
-          'whitespace-pre-line'
+          'whitespace-pre-line',
+          'leading-7'
         )}
       >
         {description ? parse(description, HTMLParserOptions) : '暂无简介'}

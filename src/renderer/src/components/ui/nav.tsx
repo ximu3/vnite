@@ -26,12 +26,12 @@ export function Nav({
         switch (variant) {
           case 'gameList':
             variantStyles = isActive
-              ? 'bg-accent text-accent-foreground rounded-none'
+              ? 'bg-accent text-accent-foreground rounded-none shadow-md'
               : 'hover:bg-accent hover:text-accent-foreground rounded-none'
             break
           case 'sidebar':
             variantStyles = isActive
-              ? 'bg-accent text-accent-foreground'
+              ? 'bg-accent text-accent-foreground shadow-md'
               : 'hover:bg-accent hover:text-accent-foreground'
             break
           case 'librarybar':
@@ -41,7 +41,7 @@ export function Nav({
             break
           default: // 'default'
             variantStyles = isActive
-              ? 'bg-primary text-primary-foreground'
+              ? 'bg-primary text-primary-foreground shadow-md'
               : 'hover:bg-primary hover:text-primary-foreground'
         }
 

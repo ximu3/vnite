@@ -74,9 +74,11 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
             <Header gameId={gameId} className={cn('w-full')} isSticky={isSticky} />
           </div>
 
-          <div className={cn('p-7 pt-3 bg-background', 'duration-100', isSticky && '-mt-12 pt-12')}>
-            <Tabs defaultValue="overview" className="w-full">
-              <TabsList className={cn('w-[250px] bg-muted/90')}>
+          <div
+            className={cn('p-7 pt-[6px] bg-background', 'duration-100', isSticky && '-mt-12 pt-12')}
+          >
+            <Tabs defaultValue="overview" className={cn('w-full')}>
+              <TabsList className={cn('w-[250px] shadow-md bg-accent/30')}>
                 <TabsTrigger className={cn('w-1/3')} value="overview">
                   概览
                 </TabsTrigger>

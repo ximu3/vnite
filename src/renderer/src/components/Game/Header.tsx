@@ -98,7 +98,7 @@ export function Header({
         'flex-col flex gap-5 px-7 py-5 pb-11 relative',
         isSticky
           ? 'bg-gradient-to-t from-background/80 to-background py-5 backdrop-blur-sm'
-          : 'bg-gradient-to-b from-background/60 to-background backdrop-blur-md duration-100',
+          : 'bg-gradient-to-b from-background/60 to-background backdrop-blur-lg duration-100',
         className,
         'transition-all duration-100'
       )}
@@ -108,7 +108,7 @@ export function Header({
           'absolute inset-0',
           isSticky
             ? 'border-0 border-b-[1px] border-accent-foreground/10'
-            : 'border-t-[1px] border-accent-foreground/10',
+            : 'border-t-[1px] translate-y-[1px] border-accent-foreground/10',
           'transition-none'
         )}
       ></div>
@@ -195,7 +195,7 @@ export function Header({
 
             <Select value={playStatus} onValueChange={setPlayStatus}>
               <SelectTrigger noIcon className={cn('p-0 h-auto w-auto border-0 shadow-none')}>
-                <Button variant="outline" size={'icon'} className="non-draggable">
+                <Button variant="outline" size={'icon'} className={cn('')}>
                   <span className={cn('icon-[mdi--bookmark-outline] w-4 h-4')}></span>
                 </Button>
               </SelectTrigger>

@@ -96,14 +96,12 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
               to={`./games/${gameId}/${groupId}`}
             >
               <div className={cn('flex flex-row gap-2 items-center')}>
-                <div className={cn('')}>
+                <div className={cn('flex items-center')}>
                   <GameImage
                     gameId={gameId}
                     type="icon"
                     alt="icon"
-                    className={cn(
-                      'w-[20px] h-[20px] rounded-[0.1rem] shadow-sm shadow-black/70 object-cover'
-                    )}
+                    className={cn('w-[18px] h-[18px] rounded-md object-cover bg-accent shadow-sm')}
                     fallback={<span className={cn('icon-[mdi--gamepad-variant] w-5 h-5')}></span>}
                   />
                 </div>

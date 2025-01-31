@@ -38,7 +38,7 @@ module.exports = {
         ]
       },
       boxShadow: {
-        'custom-initial': '0 4px 8px rgba(0, 0, 0, 0.7)'
+        'custom-initial': '0 2px 5px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.3)'
       },
       transitionProperty: {
         border: 'border-color, border-width'
