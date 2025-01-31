@@ -7,7 +7,7 @@ import { GameNavCM } from '~/components/contextMenu/GameNavCM'
 import { useNavigate } from 'react-router-dom'
 import { useGameIndexManager, useDBSyncedState } from '~/hooks'
 import { formatTimeToChinese, formatDateToChinese } from '~/utils'
-import React from 'react'
+import React, { useRef, MutableRefObject } from 'react'
 import { AttributesDialog } from '~/components/Game/Config/AttributesDialog'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 
@@ -28,18 +28,31 @@ export function GamePoster({
   const [isAttributesDialogOpen, setIsAttributesDialogOpen] = React.useState(false)
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
   const [isOpen, setIsOpen] = React.useState(false)
+  const openTimeoutRef: MutableRefObject<NodeJS.Timeout | undefined> = useRef(undefined)
+  const closeTimeoutRef: MutableRefObject<NodeJS.Timeout | undefined> = useRef(undefined)
+  const openDelay = 200
+  const closeDelay = 0
+
+  const handleMouseEnter = (): void => {
+    clearTimeout(closeTimeoutRef.current ?? undefined)
+    openTimeoutRef.current = setTimeout(() => {
+      setIsOpen(true)
+    }, openDelay)
+  }
+
+  const handleMouseLeave = (): void => {
+    clearTimeout(openTimeoutRef.current ?? undefined)
+    closeTimeoutRef.current = setTimeout(() => {
+      setIsOpen(false)
+    }, closeDelay)
+  }
   return (
     <HoverCard open={isOpen}>
       <ContextMenu>
         <HoverCardTrigger
-          onMouseEnter={() => {
-            setTimeout(() => {
-              setIsOpen(true)
-            }, 200)
-          }}
-          onMouseLeave={() => {
-            setIsOpen(false)
-          }}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          className={cn('rounded-none')}
         >
           <ContextMenuTrigger>
             <HoverCardAnimation>
