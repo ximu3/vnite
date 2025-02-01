@@ -279,7 +279,7 @@ export const useGameRecords = create<GameRecordsState>((set, get) => ({
     const datesArray: { date: string; playTime: number }[] = []
 
     while (current.getTime() >= lastYearDate.getTime()) {
-      const dateStr = current.toISOString().split('T')[0]
+      const dateStr = current.toLocaleDateString('en-CA')
       const playTime = Object.values(records).reduce((total, record) => {
         return total + calculateDailyPlayTime(current, record)
       }, 0)
