@@ -113,7 +113,7 @@ export function GamePoster({
         side="right"
         className={cn(
           'p-0 w-[250px] h-[230px] border-0 rounded-none overflow-hidden shadow-xl relative mx-2',
-          '3xl:w-[300px] 3xl:h-[272px]'
+          '3xl:w-[300px] 3xl:h-[272px] cursor-pointer'
         )}
       >
         {/* background layer */}
