@@ -7,6 +7,7 @@ import {
   ContextMenuItem,
   ContextMenuTrigger
 } from '@ui/context-menu'
+import { toast } from 'sonner'
 import { Overview } from './Overview'
 import { Record } from './Record'
 import { Save } from './Save'
@@ -29,8 +30,27 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
   const [logoPosition, setLogoPosition] = useDBSyncedState(
     initialPosition,
     `games/${gameId}/utils.json`,
-    ['logoPosition']
+    ['logo', 'position']
   )
+  const initialSize = 100 // Initial size is 100%
+  const [logoSize, setLogoSize] = useDBSyncedState(initialSize, `games/${gameId}/utils.json`, [
+    'logo',
+    'size'
+  ])
+  const [logoVisible, setLogoVisible] = useDBSyncedState(true, `games/${gameId}/utils.json`, [
+    'logo',
+    'visible'
+  ])
+
+  // Handling wheel events
+  const handleWheel = (e: React.WheelEvent<HTMLDivElement>): void => {
+    e.preventDefault()
+    if (!logoRef.current) return
+
+    const delta = e.deltaY * -0.01
+    const newSize = Math.min(Math.max(logoSize + delta * 5, 30), 200) // Limit size to between 30% and 200%
+    setLogoSize(newSize)
+  }
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>): void => {
     e.preventDefault()
@@ -140,32 +160,45 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
         />
       </div>
 
-      <ContextMenu>
-        <ContextMenuTrigger asChild>
-          <div
-            ref={logoRef}
-            onMouseDown={handleMouseDown}
-            style={{
-              transform: `translateY(-${scrollY * 0.7}px)`,
-              left: `${logoPosition.x}vw`,
-              top: `${logoPosition.y}vh`,
-              cursor: dragging ? 'grabbing' : 'grab'
-            }}
-            className={cn('absolute', 'will-change-transform', 'z-10')}
-          >
-            <GameImage
-              gameId={gameId}
-              key={`${gameId}-logo`}
-              type="logo"
-              className={cn('w-auto max-h-[15vh] object-contain')}
-              fallback={<div className={cn('')} />}
-            />
-          </div>
-        </ContextMenuTrigger>
-        <ContextMenuContent>
-          <ContextMenuItem onClick={handleReset}>重置</ContextMenuItem>
-        </ContextMenuContent>
-      </ContextMenu>
+      {logoVisible && (
+        <ContextMenu>
+          <ContextMenuTrigger asChild>
+            <div
+              ref={logoRef}
+              onMouseDown={handleMouseDown}
+              onWheel={handleWheel}
+              style={{
+                transform: `translateY(-${scrollY * 0.7}px) scale(${logoSize / 100})`,
+                left: `${logoPosition.x}vw`,
+                top: `${logoPosition.y}vh`,
+                cursor: dragging ? 'grabbing' : 'grab',
+                transformOrigin: 'center center'
+              }}
+              className={cn('absolute', 'will-change-transform', 'z-10')}
+            >
+              <GameImage
+                gameId={gameId}
+                key={`${gameId}-logo`}
+                type="logo"
+                className={cn('w-auto max-h-[15vh] object-contain')}
+                fallback={<div className={cn('')} />}
+              />
+            </div>
+          </ContextMenuTrigger>
+          <ContextMenuContent>
+            <ContextMenuItem onClick={handleReset}>重置位置</ContextMenuItem>
+            <ContextMenuItem onClick={() => setLogoSize(initialSize)}>重置大小</ContextMenuItem>
+            <ContextMenuItem
+              onClick={() => {
+                setLogoVisible(false)
+                toast.info('可在 游戏设置-管理 中恢复徽标显示')
+              }}
+            >
+              隐藏徽标
+            </ContextMenuItem>
+          </ContextMenuContent>
+        </ContextMenu>
+      )}
       {/* Scrollable Content */}
       <div className={cn('relative h-full overflow-auto scrollbar-base')}>
         {/* Spacer to push content down */}

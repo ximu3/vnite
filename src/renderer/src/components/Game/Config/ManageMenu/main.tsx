@@ -19,6 +19,10 @@ import { useGameAdderStore } from '~/pages/GameAdder/store'
 export function ManageMenu({ gameId }: { gameId: string }): JSX.Element {
   const [gamePath] = useDBSyncedState('', `games/${gameId}/path.json`, ['gamePath'])
   const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
+  const [logoVisible, setLogoVisible] = useDBSyncedState(true, `games/${gameId}/utils.json`, [
+    'logo',
+    'visible'
+  ])
   const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = useState(false)
   const [isPlayingTimeEditorDialogOpen, setIsPlayingTimeEditorDialogOpen] = useState(false)
   const { setIsOpen, setDbId, setName } = useGameAdderStore()
@@ -42,6 +46,15 @@ export function ManageMenu({ gameId }: { gameId: string }): JSX.Element {
                 重命名
               </DropdownMenuItem>
             </NameEditorDialog>
+            {!logoVisible && (
+              <DropdownMenuItem
+                onClick={() => {
+                  setLogoVisible(true)
+                }}
+              >
+                显示徽标
+              </DropdownMenuItem>
+            )}
             <PlayingTimeEditorDialog
               gameId={gameId}
               isOpen={isPlayingTimeEditorDialogOpen}
