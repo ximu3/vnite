@@ -42,7 +42,7 @@ export async function getMedia(
  */
 export async function setMedia(
   gameId: string,
-  type: 'cover' | 'background' | 'icon',
+  type: 'cover' | 'background' | 'icon' | 'logo',
   source: string
 ): Promise<void> {
   try {

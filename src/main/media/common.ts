@@ -2,12 +2,15 @@ import {
   getCoverPath,
   getBackgroundPath,
   getIconPath,
+  getLogoPath,
   setBackgroundWithFile,
   setBackgroundWithUrl,
   setCoverWithFile,
   setCoverWithUrl,
   setIconWithFile,
-  setIconWithUrl
+  setIconWithUrl,
+  setLogoWithFile,
+  setLogoWithUrl
 } from './image'
 import fse from 'fs-extra'
 import { getDataPath } from '~/utils'
@@ -16,7 +19,7 @@ import path from 'path'
 
 export async function getMediaPath(
   gameId: string,
-  type: 'cover' | 'background' | 'icon'
+  type: 'cover' | 'background' | 'icon' | 'logo'
 ): Promise<string> {
   switch (type) {
     case 'cover':
@@ -25,12 +28,14 @@ export async function getMediaPath(
       return getBackgroundPath(gameId)
     case 'icon':
       return getIconPath(gameId)
+    case 'logo':
+      return getLogoPath(gameId)
   }
 }
 
 export async function setMediaWithFile(
   gameId: string,
-  type: 'cover' | 'background' | 'icon',
+  type: 'cover' | 'background' | 'icon' | 'logo',
   filePath: string
 ): Promise<void> {
   switch (type) {
@@ -43,12 +48,14 @@ export async function setMediaWithFile(
         return saveFileIcon(gameId, filePath)
       }
       return setIconWithFile(gameId, filePath)
+    case 'logo':
+      return setLogoWithFile(gameId, filePath)
   }
 }
 
 export async function setMediaWithUrl(
   gameId: string,
-  type: 'cover' | 'background' | 'icon',
+  type: 'cover' | 'background' | 'icon' | 'logo',
   url: string
 ): Promise<void> {
   switch (type) {
@@ -58,6 +65,8 @@ export async function setMediaWithUrl(
       return setBackgroundWithUrl(gameId, url)
     case 'icon':
       return setIconWithUrl(gameId, url)
+    case 'logo':
+      return setLogoWithUrl(gameId, url)
   }
 }
 

@@ -34,6 +34,11 @@ import {
   getGameScreenshotsFromYMGal,
   getGameCoverFromYMGal
 } from './ymgal'
+import {
+  getIconFromSteamGridDB,
+  getHeroFromSteamGridDB,
+  getLogoFromSteamGridDB
+} from './steamGridDb'
 import { GameList, GameMetadata } from './types'
 
 export async function searchGamesFromDataSource(
@@ -138,13 +143,37 @@ export async function getGameCoverFromDataSource(
 
 export async function getGameIconFromDataSource(
   dataSource: string,
-  _gameId: string
+  identifier: string | number
 ): Promise<string> {
   switch (dataSource) {
-    // case 'steam':
-    //   return await getGameIconFromSteam(gameId)
+    case 'steamGridDb':
+      return await getIconFromSteamGridDB(identifier)
     default:
-      return ''
+      throw new Error('Invalid data source')
+  }
+}
+
+export async function getGameHeroFromDataSource(
+  dataSource: string,
+  identifier: string | number
+): Promise<string> {
+  switch (dataSource) {
+    case 'steamGridDb':
+      return await getHeroFromSteamGridDB(identifier)
+    default:
+      throw new Error('Invalid data source')
+  }
+}
+
+export async function getGameLogoFromDataSource(
+  dataSource: string,
+  identifier: string | number
+): Promise<string> {
+  switch (dataSource) {
+    case 'steamGridDb':
+      return await getLogoFromSteamGridDB(identifier)
+    default:
+      throw new Error('Invalid data source')
   }
 }
 

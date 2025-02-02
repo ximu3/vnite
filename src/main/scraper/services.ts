@@ -5,6 +5,8 @@ import {
   getGameScreenshotsFromDataSource,
   getGameCoverFromDataSource,
   getGameIconFromDataSource,
+  getGameHeroFromDataSource,
+  getGameLogoFromDataSource,
   initScraperServices
 } from './common'
 import { GameList, GameMetadata } from './types'
@@ -97,11 +99,52 @@ export async function getGameCover(dataSource: string, gameId: string): Promise<
  * @returns The icon for the game
  * @throws An error if the operation fails
  */
-export async function getGameIcon(dataSource: string, gameId: string): Promise<string> {
+export async function getGameIcon(
+  dataSource: string,
+  identifier: string | number
+): Promise<string> {
   try {
-    return await getGameIconFromDataSource(dataSource, gameId)
+    return await getGameIconFromDataSource(dataSource, identifier)
   } catch (error) {
-    log.error(`Failed to get icon for ${gameId} from ${dataSource}`, error)
+    log.error(`Failed to get icon for ${identifier} from ${dataSource}`, error)
+    throw error
+  }
+}
+
+/**
+ * Get game hero from a data source
+ * @param dataSource The data source to get hero from
+ * @param gameId The id of the game
+ * @returns The hero for the game
+ * @throws An error if the operation fails
+ */
+export async function getGameHero(
+  dataSource: string,
+  identifier: string | number
+): Promise<string> {
+  try {
+    return await getGameHeroFromDataSource(dataSource, identifier)
+  } catch (error) {
+    log.error(`Failed to get hero for ${identifier} from ${dataSource}`, error)
+    throw error
+  }
+}
+
+/**
+ * Get game logo from a data source
+ * @param dataSource The data source to get logo from
+ * @param gameId The id of the game
+ * @returns The logo for the game
+ * @throws An error if the operation fails
+ */
+export async function getGameLogo(
+  dataSource: string,
+  identifier: string | number
+): Promise<string> {
+  try {
+    return await getGameLogoFromDataSource(dataSource, identifier)
+  } catch (error) {
+    log.error(`Failed to get logo for ${identifier} from ${dataSource}`, error)
     throw error
   }
 }

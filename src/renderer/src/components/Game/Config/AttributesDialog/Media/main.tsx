@@ -192,8 +192,26 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                 <GameImage
                   gameId={gameId}
                   type="cover"
-                  className={cn('max-h-[458px] h-[calc(90vh-230px)] aspect-[2/3] object-cover')}
+                  className={cn('max-h-[170px] h-[calc(90vh-230px)] aspect-[2/3] object-cover')}
                   fallback={<div>暂无封面</div>}
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>徽标</CardTitle>
+          </CardHeader>
+          <CardContent className={cn('-mt-2')}>
+            <div className={cn('flex flex-col gap-2')}>
+              <MediaControls type="logo" />
+              <div className={cn('self-center')}>
+                <GameImage
+                  gameId={gameId}
+                  type="logo"
+                  className={cn('max-h-[158px] h-[calc(90vh-230px)] aspect-[2/3] object-contain')}
+                  fallback={<div>暂无徽标</div>}
                 />
               </div>
             </div>

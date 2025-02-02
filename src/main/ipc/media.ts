@@ -19,7 +19,7 @@ export function setupMediaIPC(mainWindow: BrowserWindow): void {
 
   ipcMain.handle(
     'set-game-media',
-    async (_, gameId: string, type: 'cover' | 'background' | 'icon', source: string) => {
+    async (_, gameId: string, type: 'cover' | 'background' | 'icon' | 'logo', source: string) => {
       return await setMedia(gameId, type, source)
     }
   )

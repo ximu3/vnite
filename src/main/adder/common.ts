@@ -1,5 +1,11 @@
 import { setDBValue, getDBValue } from '~/database'
-import { getGameMetadata, getGameCover, getGameIcon, getGameScreenshots } from '~/scraper'
+import {
+  getGameMetadata,
+  getGameCover,
+  getGameIcon,
+  getGameScreenshots,
+  getGameLogo
+} from '~/scraper'
 import { setMedia, saveIcon } from '~/media'
 import { generateUUID, selectPathDialog, getFirstLevelSubfolders, getDataPath } from '~/utils'
 import { BrowserWindow } from 'electron'
@@ -34,7 +40,16 @@ export async function addGameToDB({
 }): Promise<void> {
   const metadata = await getGameMetadata(dataSource, id)
   const coverUrl = await getGameCover(dataSource, id)
-  const iconUrl = await getGameIcon(dataSource, id)
+  let iconUrl = ''
+  let logoUrl = ''
+  if (dataSource == 'steam') {
+    iconUrl = await getGameIcon('steamGridDb', Number(id))
+    logoUrl = await getGameLogo('steamGridDb', Number(id))
+  } else {
+    iconUrl = await getGameIcon('steamGridDb', metadata.originalName || metadata.name)
+    logoUrl = await getGameLogo('steamGridDb', metadata.originalName || metadata.name)
+  }
+
   const dbId = preExistingDbId || generateUUID()
 
   await getDataPath(`games/${dbId}/`, true)
@@ -53,7 +68,11 @@ export async function addGameToDB({
   }
 
   if (iconUrl) {
-    await setMedia(dbId, 'icon', iconUrl)
+    await setMedia(dbId, 'icon', iconUrl.toString())
+  }
+
+  if (logoUrl) {
+    await setMedia(dbId, 'logo', logoUrl.toString())
   }
 
   if (playingTime) {
