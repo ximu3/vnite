@@ -9,7 +9,6 @@ import { UrlDialog } from './UrlDialog'
 import { CropDialog } from './CropDialog'
 
 export function Media({ gameId }: { gameId: string }): JSX.Element {
-  const [mediaUrl, setMediaUrl] = useState<string>('')
   const [isUrlDialogOpen, setIsUrlDialogOpen] = useState({
     icon: false,
     cover: false,
@@ -70,19 +69,18 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
   }
 
   // Processing URL Input
-  function setMediaWithUrl(type: string): void {
+  function setMediaWithUrl(type: string, URL: string): void {
     toast.promise(
       async () => {
         setIsUrlDialogOpen({ ...isUrlDialogOpen, [type]: false })
-        if (!mediaUrl.trim()) return
-        const tempFilePath = await ipcInvoke('download-temp-image', mediaUrl)
+        if (!URL.trim()) return
+        const tempFilePath = await ipcInvoke('download-temp-image', URL)
         setCropDialogState({
           isOpen: true,
           type,
           imagePath: tempFilePath as string,
           isResizing: false
         })
-        setMediaUrl('')
       },
       {
         loading: `正在获取图片...`,
@@ -120,8 +118,6 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
         <span className={cn('icon-[mdi--file-outline] w-4 h-4')}></span>
       </Button>
       <UrlDialog
-        mediaUrl={mediaUrl}
-        setMediaUrl={setMediaUrl}
         setMediaWithUrl={setMediaWithUrl}
         isUrlDialogOpen={isUrlDialogOpen}
         setIsUrlDialogOpen={setIsUrlDialogOpen}

@@ -2,22 +2,20 @@ import { cn } from '~/utils'
 import { Button } from '@ui/button'
 import { Dialog, DialogContent, DialogTrigger } from '@ui/dialog'
 import { Input } from '@ui/input'
+import { useState } from 'react'
 
 export function UrlDialog({
-  mediaUrl,
-  setMediaUrl,
   setMediaWithUrl,
   isUrlDialogOpen,
   setIsUrlDialogOpen,
   type
 }: {
-  mediaUrl: string
-  setMediaUrl: (url: string) => void
-  setMediaWithUrl: (type: string) => void
+  setMediaWithUrl: (type: string, URL: string) => void
   isUrlDialogOpen: { icon: boolean; cover: boolean; background: boolean }
   setIsUrlDialogOpen: (isOpen: { icon: boolean; cover: boolean; background: boolean }) => void
   type: string
 }): JSX.Element {
+  const [mediaUrl, setMediaUrl] = useState<string>('')
   return (
     <Dialog open={isUrlDialogOpen[type]}>
       <DialogTrigger>
@@ -47,7 +45,7 @@ export function UrlDialog({
           />
           <Button
             onClick={() => {
-              setMediaWithUrl(type)
+              setMediaWithUrl(type, mediaUrl)
             }}
           >
             确定
