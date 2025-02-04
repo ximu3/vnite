@@ -64,43 +64,45 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
               {isEqual(saveList, {}) ? (
                 <div className={cn('mt-1')}>暂无存档</div>
               ) : (
-                Object.entries(saveList).map(([saveId, save]) => (
-                  <TableRow key={saveId}>
-                    <TableCell className={cn('w-1/5')}>
-                      <div>{formatDateToChineseWithSeconds(save.date)}</div>
-                    </TableCell>
-                    <TableCell className={cn('pr-10', '3xl:pr-24')}>
-                      <Input
-                        value={save.note}
-                        onChange={(e) =>
-                          setSaveList({
-                            ...saveList,
-                            [saveId]: { ...save, note: e.target.value }
-                          })
-                        }
-                        className={cn('h-8')}
-                      />
-                    </TableCell>
-                    <TableCell className={cn('w-1/6')}>
-                      <div className="flex flex-row gap-2">
-                        <Button
-                          variant={'outline'}
-                          className={cn('min-h-0 h-8')}
-                          onClick={() => restoreGameSave(saveId)}
-                        >
-                          切换
-                        </Button>
-                        <Button
-                          variant={'outline'}
-                          className={cn('min-h-0 h-8')}
-                          onClick={() => deleteGameSave(saveId)}
-                        >
-                          删除
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
+                Object.entries(saveList)
+                  .sort(([, a], [, b]) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                  .map(([saveId, save]) => (
+                    <TableRow key={saveId}>
+                      <TableCell className={cn('w-1/5')}>
+                        <div>{formatDateToChineseWithSeconds(save.date)}</div>
+                      </TableCell>
+                      <TableCell className={cn('pr-10', '3xl:pr-24')}>
+                        <Input
+                          value={save.note}
+                          onChange={(e) =>
+                            setSaveList({
+                              ...saveList,
+                              [saveId]: { ...save, note: e.target.value }
+                            })
+                          }
+                          className={cn('h-8')}
+                        />
+                      </TableCell>
+                      <TableCell className={cn('w-1/6')}>
+                        <div className="flex flex-row gap-2">
+                          <Button
+                            variant={'outline'}
+                            className={cn('min-h-0 h-8')}
+                            onClick={() => restoreGameSave(saveId)}
+                          >
+                            切换
+                          </Button>
+                          <Button
+                            variant={'outline'}
+                            className={cn('min-h-0 h-8')}
+                            onClick={() => deleteGameSave(saveId)}
+                          >
+                            删除
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
               )}
             </TableBody>
           </Table>
