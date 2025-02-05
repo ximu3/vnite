@@ -13,9 +13,11 @@ import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 
 export function BigGamePoster({
   gameId,
+  groupId,
   className
 }: {
   gameId: string
+  groupId?: string
   className?: string
 }): JSX.Element {
   const navigate = useNavigate()
@@ -62,7 +64,11 @@ export function BigGamePoster({
             >
               <HoverBigCardAnimation className={cn('rounded-none')}>
                 <GameImage
-                  onClick={() => navigate(`/library/games/${gameId}/all`)}
+                  onClick={() =>
+                    groupId
+                      ? navigate(`/library/games/${gameId}/${groupId}`)
+                      : navigate(`/library/games/${gameId}/all`)
+                  }
                   gameId={gameId}
                   type="background"
                   className={cn(
@@ -77,7 +83,11 @@ export function BigGamePoster({
                         '3xl:w-[396px] 3xl:h-[264px]',
                         className
                       )}
-                      onClick={() => navigate(`/library/games/${gameId}/all`)}
+                      onClick={() =>
+                        groupId
+                          ? navigate(`/library/games/${gameId}/${groupId}`)
+                          : navigate(`/library/games/${gameId}/all`)
+                      }
                     >
                       {gameName}
                     </div>

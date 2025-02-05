@@ -13,11 +13,11 @@ import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 
 export function GamePoster({
   gameId,
-  collectionId,
+  groupId,
   className
 }: {
   gameId: string
-  collectionId?: string
+  groupId?: string
   className?: string
 }): JSX.Element {
   const navigate = useNavigate()
@@ -59,9 +59,7 @@ export function GamePoster({
               <GameImage
                 onClick={() =>
                   navigate(
-                    collectionId
-                      ? `/library/games/${gameId}/collection:${collectionId}`
-                      : `/library/games/${gameId}/all`
+                    groupId ? `/library/games/${gameId}/${groupId}` : `/library/games/${gameId}/all`
                   )
                 }
                 gameId={gameId}
@@ -82,8 +80,8 @@ export function GamePoster({
                     )}
                     onClick={() =>
                       navigate(
-                        collectionId
-                          ? `/library/games/${gameId}/collection:${collectionId}`
+                        groupId
+                          ? `/library/games/${gameId}/${groupId}`
                           : `/library/games/${gameId}/all`
                       )
                     }

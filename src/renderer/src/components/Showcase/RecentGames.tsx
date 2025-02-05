@@ -66,7 +66,7 @@ export function RecentGames(): JSX.Element {
                 'flex-shrink-0' // Preventing compression
               )}
             >
-              <BigGamePoster gameId={game} />
+              <BigGamePoster gameId={game} groupId="recentGames" />
             </div>
           ) : (
             <div
@@ -75,7 +75,11 @@ export function RecentGames(): JSX.Element {
                 'flex-shrink-0' // Preventing compression
               )}
             >
-              <GamePoster gameId={game} />
+              {index < 5 ? (
+                <GamePoster gameId={game} groupId="recentGames" />
+              ) : (
+                <GamePoster gameId={game} />
+              )}
             </div>
           )
         )}

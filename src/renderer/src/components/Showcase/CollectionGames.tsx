@@ -38,7 +38,7 @@ export function CollectionGames({ collectionId }: { collectionId: string }): JSX
                   'flex-shrink-0' // Preventing compression
                 )}
               >
-                <GamePoster gameId={gameId} collectionId={collectionId} />
+                <GamePoster gameId={gameId} groupId={`collection:${collectionId}`} />
               </div>
             ))}
           </div>
