@@ -12,11 +12,11 @@ export function PlayedTimesRank({ className }: { className?: string }): JSX.Elem
       {sortedGameIds.length === 0 ? (
         <div className={cn('text-center text-2xl')}>暂无游戏</div>
       ) : (
-        <AutoSizer>
-          {({ height, width }) => (
+        <AutoSizer disableWidth>
+          {({ height }) => (
             <FixedSizeList
               height={height}
-              width={width}
+              width="100%"
               itemSize={58}
               itemCount={sortedGameIds.length}
               className={cn('overflow-auto scrollbar-base')}
