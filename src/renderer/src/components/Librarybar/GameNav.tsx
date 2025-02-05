@@ -14,6 +14,12 @@ import { useLocation } from 'react-router-dom'
 export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }): JSX.Element {
   const location = useLocation()
   const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
+  const [gamePath] = useDBSyncedState('', `games/${gameId}/path.json`, ['gamePath'])
+  const [highlightLocalGames] = useDBSyncedState(true, 'config.json', [
+    'others',
+    'gameList',
+    'highlightLocalGames'
+  ])
   const [isAttributesDialogOpen, setIsAttributesDialogOpen] = React.useState(false)
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
   const { addGameId, removeGameId, clearGameIds, gameIds, lastSelectedId, setLastSelectedId } =
@@ -91,6 +97,7 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
               variant="sidebar"
               className={cn(
                 'text-xs p-3 h-5 rounded-none',
+                highlightLocalGames && gamePath && 'text-accent-foreground',
                 isSelected && isBatchMode && 'bg-accent text-accent-foreground'
               )}
               to={`./games/${gameId}/${groupId}`}

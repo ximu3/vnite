@@ -19,6 +19,11 @@ export function Appearances(): JSX.Element {
     'config.json',
     ['appearances', 'sidebar', 'showThemeSwitchInSidebar']
   )
+  const [highlightLocalGames, setHighlightLocalGames] = useDBSyncedState(true, 'config.json', [
+    'others',
+    'gameList',
+    'highlightLocalGames'
+  ])
   return (
     <Card className={cn('group')}>
       <CardHeader>
@@ -49,6 +54,13 @@ export function Appearances(): JSX.Element {
             <Switch
               checked={showThemeSwitchInSidebar}
               onCheckedChange={(checked) => setShowThemeSwitchInSidebar(checked)}
+            />
+          </div>
+          <div className={cn('flex flex-row justify-between items-center')}>
+            <div>是否在游戏列表中高亮本地游戏</div>
+            <Switch
+              checked={highlightLocalGames}
+              onCheckedChange={(checked) => setHighlightLocalGames(checked)}
             />
           </div>
         </div>
