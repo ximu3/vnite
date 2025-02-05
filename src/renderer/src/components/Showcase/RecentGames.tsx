@@ -5,13 +5,14 @@ import { useGameIndexManager } from '~/hooks'
 import { GamePoster } from './posters/GamePoster'
 import { BigGamePoster } from './posters/BigGamePoster'
 import { useRef } from 'react'
+import { throttle } from 'lodash'
 
 export function RecentGames(): JSX.Element {
   const { sort: sortGames } = useGameIndexManager()
   const games = sortGames('lastRunDate', 'desc')
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
-  const scroll = (direction: 'left' | 'right'): void => {
+  const scroll = throttle((direction: 'left' | 'right'): void => {
     if (!scrollContainerRef.current) return
     const scrollAmount = 872
     const container = scrollContainerRef.current
@@ -19,7 +20,7 @@ export function RecentGames(): JSX.Element {
       left: container.scrollLeft + (direction === 'left' ? -scrollAmount : scrollAmount),
       behavior: 'smooth'
     })
-  }
+  }, 750)
   return (
     <div className={cn('w-full flex flex-col gap-1 pt-3')}>
       <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>
