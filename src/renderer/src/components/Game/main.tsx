@@ -153,7 +153,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
           gameId={gameId}
           key={`${gameId}-background`}
           type="background"
-          className={cn('w-full h-auto max-h-[90vh] object-cover')}
+          className={cn('w-full h-auto max-h-[84vh] object-cover')}
           onError={() => setIsImageError(true)}
           onUpdated={() => setIsImageError(false)}
           fallback={<div className={cn('w-full h-full bg-background/15')} />}
