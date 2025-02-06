@@ -4,21 +4,22 @@ import { Button } from '@ui/button'
 import { useCollections } from '~/hooks'
 import { CollectionPoster } from './posters/CollectionPoster'
 import { useRef } from 'react'
+import { throttle } from 'lodash'
 
 export function Collections(): JSX.Element {
   const { collections } = useCollections()
 
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
-  const scroll = (direction: 'left' | 'right'): void => {
+  const scroll = throttle((direction: 'left' | 'right'): void => {
     if (!scrollContainerRef.current) return
-    const scrollAmount = 300
+    const scrollAmount = 872
     const container = scrollContainerRef.current
     container.scrollTo({
       left: container.scrollLeft + (direction === 'left' ? -scrollAmount : scrollAmount),
       behavior: 'smooth'
     })
-  }
+  }, 750)
   return (
     <div className={cn('w-full flex flex-col gap-1 pt-3')}>
       <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>
@@ -53,8 +54,8 @@ export function Collections(): JSX.Element {
       <div
         ref={scrollContainerRef}
         className={cn(
-          'flex flex-row gap-6 grow flex-wrap',
-          'w-full',
+          'flex flex-row gap-6 grow',
+          'w-full overflow-x-auto scrollbar-none scroll-smooth',
           'pt-2 pb-6 pl-5' // Add inner margins to show shadows
         )}
       >

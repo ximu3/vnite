@@ -146,9 +146,9 @@ export function CollectionPoster({
 
   return (
     <CollectionCM collectionId={collectionId}>
-      <div className={cn('group relative')} ref={ref_}>
+      <div className={cn('group relative rounded-lg')} ref={ref_}>
         {dragging ? (
-          <Preview collectionLength={length} collectionName={collectionName}/>
+          <Preview collectionLength={length} collectionName={collectionName} />
         ) : (
           <div
             className={cn(
@@ -163,14 +163,14 @@ export function CollectionPoster({
             {/* background mask layer */}
             <div
               className={cn(
-                'absolute inset-0 bg-muted/40 backdrop-blur-sm z-10 pointer-events-none'
+                'absolute inset-0 bg-muted/40 backdrop-blur-sm z-10 rounded-lg pointer-events-none'
               )}
             />
 
             {/* HoverBigCardAnimation layer */}
 
             <div className="relative z-0">
-              <HoverSquareCardAnimation className={cn('rounded-none')}>
+              <HoverSquareCardAnimation className={cn('rounded-lg')}>
                 <GameImage
                   gameId={gameId}
                   type="cover"
@@ -197,7 +197,7 @@ export function CollectionPoster({
             {/* text content layer */}
             <div
               className={cn(
-                'absolute inset-0 z-20 mt-7',
+                'absolute inset-0 z-20 mt-7 rounded-lg',
                 'flex items-center justify-center',
                 'pointer-events-none'
               )}
