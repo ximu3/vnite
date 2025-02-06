@@ -103,25 +103,52 @@ export function MemoryCard({
 
   const handleExportAsImage = async (): Promise<void> => {
     if (memoryRef.current) {
-      const canvas = await html2canvas(memoryRef.current, {
-        backgroundColor: null,
-        allowTaint: true,
-        useCORS: true,
-        removeContainer: true,
-        scale: 2
-      })
-      const dataUrl = canvas.toDataURL('image/png')
-      const link = document.createElement('a')
-      link.href = dataUrl
-      link.download = `${gameName}-memory-${formatDateToISO(date)}.png`
-      link.click()
+      try {
+        // Create a clone of the original element
+        const clone = memoryRef.current.cloneNode(true) as HTMLElement
+
+        // Setting the style of a cloned element
+        clone.style.width = '800px'
+        clone.style.position = 'absolute'
+        clone.style.left = '-9999px'
+
+        // Adds the cloned element to the body
+        document.body.appendChild(clone)
+
+        const canvas = await html2canvas(clone, {
+          backgroundColor: null,
+          allowTaint: true,
+          useCORS: true,
+          removeContainer: true,
+          scale: 2
+        })
+
+        const dataUrl = canvas.toDataURL('image/png')
+        const link = document.createElement('a')
+        link.href = dataUrl
+        link.download = `${gameName}-memory-${formatDateToISO(date)}.png`
+        link.click()
+      } finally {
+        // Remove temporarily cloned nodes
+        const clone = document.querySelector('[style*="left: -9999px"]')
+        if (clone) {
+          document.body.removeChild(clone)
+        }
+      }
     }
   }
 
   const handleExportAsImageToClipboard = async (): Promise<void> => {
     if (memoryRef.current) {
       try {
-        const canvas = await html2canvas(memoryRef.current, {
+        // Creating a Clone Node
+        const clone = memoryRef.current.cloneNode(true) as HTMLElement
+        clone.style.width = '800px'
+        clone.style.position = 'absolute'
+        clone.style.left = '-9999px'
+        document.body.appendChild(clone)
+
+        const canvas = await html2canvas(clone, {
           backgroundColor: null,
           allowTaint: true,
           useCORS: true,
@@ -135,7 +162,6 @@ export function MemoryCard({
             throw new Error('Failed to create blob from canvas')
           }
 
-          // Creates a ClipboardItem and writes it to the clipboard.
           const clipboardItem = new ClipboardItem({
             [blob.type]: blob
           })
@@ -149,8 +175,12 @@ export function MemoryCard({
               toast.error(`复制图片到剪切板失败: ${error}`)
             })
         }, 'image/png')
-      } catch (error) {
-        console.error('Error during canvas creation:', error)
+      } finally {
+        // Remove temporarily cloned nodes
+        const clone = document.querySelector('[style*="left: -9999px"]')
+        if (clone) {
+          document.body.removeChild(clone)
+        }
       }
     }
   }
