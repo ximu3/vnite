@@ -49,7 +49,7 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
     )
   }
   return (
-    <div className="pt-2 bg-background w-full min-h-[25vh]">
+    <div className="pt-2 bg-background w-full min-h-[22vh]">
       <div className="w-full h-full">
         <div className={cn('h-full')}>
           <Table className="h-full">

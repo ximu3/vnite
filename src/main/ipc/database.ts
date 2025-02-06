@@ -9,7 +9,11 @@ import {
   deleteGameSaveData,
   deleteGameFromDB,
   backupDatabaseData,
-  restoreDatabaseData
+  restoreDatabaseData,
+  addMemoryData,
+  deleteMemoryData,
+  updateMemoryCoverData,
+  getMemoryCoverPathData
 } from '~/database'
 
 export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
@@ -54,6 +58,25 @@ export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
 
   ipcMain.handle('restore-database', async (_, sourcePath: string) => {
     await restoreDatabaseData(sourcePath)
+  })
+
+  ipcMain.handle('add-memory', async (_, gameId: string) => {
+    await addMemoryData(gameId)
+  })
+
+  ipcMain.handle('delete-memory', async (_, gameId: string, memoryId: string) => {
+    await deleteMemoryData(gameId, memoryId)
+  })
+
+  ipcMain.handle(
+    'update-memory-cover',
+    async (_, gameId: string, memoryId: string, imgPath: string) => {
+      await updateMemoryCoverData(gameId, memoryId, imgPath)
+    }
+  )
+
+  ipcMain.handle('get-memory-cover-path', async (_, gameId: string, memoryId: string) => {
+    return await getMemoryCoverPathData(gameId, memoryId)
   })
 
   ipcMain.on('reload-db-values', (_, dbName: string) => {

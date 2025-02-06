@@ -5,7 +5,7 @@ import { useImageStore } from '~/hooks/imageStore'
 
 interface GameImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src'> {
   gameId: string
-  type: 'background' | 'cover' | 'icon' | 'logo'
+  type: 'background' | 'cover' | 'icon' | 'logo' | string
   onUpdated?: () => void
   fallback?: React.ReactNode
   shadow?: boolean

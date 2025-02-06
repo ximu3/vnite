@@ -119,6 +119,9 @@ export async function addGameToDB({
       savePath: ['']
     })
     await setDBValue(`games/${dbId}/save.json`, ['#all'], {})
+    await setDBValue(`games/${dbId}/memory.json`, ['#all'], {
+      memoryList: {}
+    })
   }
 
   const mainWindow = BrowserWindow.getAllWindows()[0]
@@ -173,6 +176,9 @@ export async function addGameToDBWithoutMetadata(gamePath: string): Promise<void
   await setDBValue(`games/${dbId}/path.json`, ['#all'], {
     gamePath: '',
     savePath: ['']
+  })
+  await setDBValue(`games/${dbId}/memory.json`, ['#all'], {
+    memoryList: {}
   })
   const gameName = gamePath.split('\\').pop()?.split('.')?.slice(0, -1).join('.')
   await setDBValue(`games/${dbId}/metadata.json`, ['#all'], {

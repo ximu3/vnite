@@ -58,3 +58,11 @@
 .animate-scaleIn {
   animation: scaleIn 0.3s ease-out;
 }
+
+.img-initial {
+  @layer base {
+    img {
+      display: initial;
+    }
+  }
+}

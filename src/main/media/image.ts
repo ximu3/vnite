@@ -2,7 +2,7 @@ import fse from 'fs-extra'
 import path from 'path'
 import { getDataPath, getAppTempPath } from '~/utils'
 
-const IMAGE_FORMATS = [
+export const IMAGE_FORMATS = [
   'webp', // Top priority is given to the use of webp
   'jpg',
   'jpeg',

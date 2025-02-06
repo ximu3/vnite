@@ -6,6 +6,7 @@ import { getGameRecords, updateGameRecord } from './record'
 import { backupGameSave, restoreGameSave, deleteGameSave } from './save'
 import { deleteGame } from './utils'
 import { backupDatabase, restoreDatabase } from './backup'
+import { addMemory, deleteMemory, updateMemoryCover, getMemoryCoverPath } from './memory'
 import log from 'electron-log/main.js'
 
 /**
@@ -174,6 +175,77 @@ export async function restoreDatabaseData(sourcePath: string): Promise<void> {
     log.info(`Restore database from ${sourcePath}`)
   } catch (error) {
     log.error(`Failed to restore database from ${sourcePath}`, error)
+    throw error
+  }
+}
+
+/**
+ * Add a memory
+ * @param gameId The id of the game
+ * @param note The note of the memory
+ * @param imgPath The path to the image
+ * @returns A promise that resolves when the operation is complete.
+ */
+export async function addMemoryData(gameId: string): Promise<void> {
+  try {
+    await addMemory(gameId)
+    log.info(`Add memory for game ${gameId}`)
+  } catch (error) {
+    log.error(`Failed to add memory for game ${gameId}`, error)
+    throw error
+  }
+}
+
+/**
+ * Delete a memory
+ * @param gameId The id of the game
+ * @param memoryId The id of the memory
+ * @returns A promise that resolves when the operation is complete.
+ */
+export async function deleteMemoryData(gameId: string, memoryId: string): Promise<void> {
+  try {
+    await deleteMemory(gameId, memoryId)
+    log.info(`Delete memory ${memoryId} for game ${gameId}`)
+  } catch (error) {
+    log.error(`Failed to delete memory ${memoryId} for game ${gameId}`, error)
+    throw error
+  }
+}
+
+/**
+ * Update the cover of a memory
+ * @param gameId The id of the game
+ * @param memoryId The id of the memory
+ * @param imgPath The path to the image
+ * @returns A promise that resolves when the operation is complete.
+ */
+export async function updateMemoryCoverData(
+  gameId: string,
+  memoryId: string,
+  imgPath: string
+): Promise<void> {
+  try {
+    await updateMemoryCover(gameId, memoryId, imgPath)
+    const mainWindow = BrowserWindow.getAllWindows()[0]
+    mainWindow.webContents.send('reload-db-values', `games/${gameId}/memories/${memoryId}/cover`)
+    log.info(`Update cover for memory ${memoryId} of game ${gameId}`)
+  } catch (error) {
+    log.error(`Failed to update cover for memory ${memoryId} of game ${gameId}`, error)
+    throw error
+  }
+}
+
+/**
+ * Get the path to the cover of a memory
+ * @param gameId The id of the game
+ * @param memoryId The id of the memory
+ * @returns A promise that resolves with the path to the cover.
+ */
+export async function getMemoryCoverPathData(gameId: string, memoryId: string): Promise<string> {
+  try {
+    return await getMemoryCoverPath(gameId, memoryId)
+  } catch (error) {
+    log.error(`Failed to get cover path for memory ${memoryId} of game ${gameId}`, error)
     throw error
   }
 }

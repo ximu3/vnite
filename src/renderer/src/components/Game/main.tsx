@@ -12,6 +12,7 @@ import { Overview } from './Overview'
 import { Record } from './Record'
 import { Save } from './Save'
 import { Header } from './Header'
+import { Memory } from './Memory'
 import { useState, useEffect, useRef } from 'react'
 import { throttle } from 'lodash'
 import { useDBSyncedState } from '~/hooks'
@@ -200,7 +201,11 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
         </ContextMenu>
       )}
       {/* Scrollable Content */}
-      <div className={cn('relative h-full overflow-auto scrollbar-base')}>
+      <div
+        className={cn(
+          'relative h-full w-full overflow-auto scrollbar-base scrollbar-track-background'
+        )}
+      >
         {/* Spacer to push content down */}
         <div className={cn('h-[45vh]')} />
 
@@ -215,7 +220,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
             className={cn('p-7 pt-[6px] bg-background', 'duration-100', isSticky && '-mt-12 pt-12')}
           >
             <Tabs defaultValue="overview" className={cn('w-full')}>
-              <TabsList className={cn('w-[250px] shadow-md bg-accent/30')}>
+              <TabsList className={cn('w-[350px] shadow-md bg-accent/30')}>
                 <TabsTrigger className={cn('w-1/3')} value="overview">
                   概览
                 </TabsTrigger>
@@ -224,6 +229,9 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
                 </TabsTrigger>
                 <TabsTrigger className={cn('w-1/3')} value="save">
                   存档
+                </TabsTrigger>
+                <TabsTrigger className={cn('w-1/3')} value="memory">
+                  回忆
                 </TabsTrigger>
               </TabsList>
 
@@ -235,6 +243,9 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
               </TabsContent>
               <TabsContent value="save">
                 <Save gameId={gameId} />
+              </TabsContent>
+              <TabsContent value="memory">
+                <Memory gameId={gameId} />
               </TabsContent>
             </Tabs>
           </div>

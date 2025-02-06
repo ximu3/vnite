@@ -1,5 +1,6 @@
 import * as csstree from 'css-tree'
 import { HTMLReactParserOptions, Element } from 'html-react-parser'
+import { v4 } from 'uuid'
 
 export async function canAccessImageFile(gameId: string, type: string): Promise<boolean> {
   try {
@@ -48,4 +49,8 @@ export const HTMLParserOptions: HTMLReactParserOptions = {
       domNode.attribs.rel = 'noopener noreferrer'
     }
   }
+}
+
+export function generateUUID(): string {
+  return v4()
 }
