@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { ipcInvoke } from '~/utils'
 import { useDBSyncedState } from '~/hooks'
 import { toast } from 'sonner'
@@ -18,6 +18,7 @@ interface CollectionsHook {
   addCollection: (name: string, gameId?: string[]) => Promise<string>
   removeCollection: (id: string) => void
   renameCollection: (id: string, name: string) => void
+  reorderCollections: (srcId: string, destId: string, edge: 'front' | 'back') => void
   addGameToCollection: (collectionId: string, gameId: string) => void
   addGamesToCollection: (collectionId: string, gameIds: string[]) => void
   removeGameFromCollection: (collectionId: string, gameId: string) => void
@@ -30,6 +31,11 @@ export function useCollections(): CollectionsHook {
   const [collections, setCollections] = useDBSyncedState<Collections>({}, 'collections.json', [
     '#all'
   ])
+
+  const collectionsRef = useRef(collections)
+  useEffect(() => {
+    collectionsRef.current = collections
+  }, [collections])
 
   const typedSetCollections = useCallback(
     (updater: Collections | ((prev: Collections) => Collections)) => {
@@ -100,6 +106,33 @@ export function useCollections(): CollectionsHook {
       }
     },
     [typedSetCollections, collections]
+  )
+
+  const reorderCollections = useCallback(
+    (srcId: string, destId: string, edge: 'front' | 'back'): void => {
+      try {
+        if (srcId === destId) return
+
+        const insertOffset = edge === 'back' ? 1 : 0
+        const prevCollections: Collections = { ...collectionsRef.current }
+        const newCollections: Collections = {}
+        const keys = Object.keys(prevCollections)
+        const [srcKey] = keys.splice(keys.indexOf(srcId), 1)
+        keys.splice(keys.indexOf(destId) + insertOffset, 0, srcKey)
+        keys.forEach((id) => {
+          newCollections[id] = prevCollections[id]
+        })
+        typedSetCollections({ ...newCollections })
+      } catch (error) {
+        console.error('Failed to reorder collections:', error)
+        if (error instanceof Error) {
+          toast.error(`Failed to reorder collections: ${error.message}`)
+        } else {
+          toast.error('Failed to reorder collections: An unknown error occurred')
+        }
+      }
+    },
+    [typedSetCollections]
   )
 
   const addGameToCollection = useCallback(
@@ -259,6 +292,7 @@ export function useCollections(): CollectionsHook {
     addCollection,
     removeCollection,
     renameCollection,
+    reorderCollections,
     addGameToCollection,
     addGamesToCollection,
     removeGameFromCollection,
