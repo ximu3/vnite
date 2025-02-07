@@ -28,9 +28,6 @@ type PreviewState =
       type: 'preview'
       container: HTMLElement
     }
-  | {
-      type: 'dragging'
-    }
 
 function Preview({
   collectionName,
@@ -169,8 +166,8 @@ export function CollectionPoster({
 
             {/* HoverBigCardAnimation layer */}
 
-            <div className="relative z-0">
-              <HoverSquareCardAnimation className={cn('rounded-lg')}>
+            <div className="relative z-0 w-full h-full">
+              <HoverSquareCardAnimation className={cn('rounded-lg w-full h-full')}>
                 <GameImage
                   gameId={gameId}
                   type="cover"
