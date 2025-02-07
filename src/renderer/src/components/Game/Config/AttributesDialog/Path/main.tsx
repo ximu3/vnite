@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { Input } from '@ui/input'
 import { Button } from '@ui/button'
 import { Tooltip, TooltipTrigger, TooltipContent } from '~/components/ui/tooltip'
-import { ipcInvoke, canAccessImageFile } from '~/utils'
+import { ipcInvoke } from '~/utils'
 import { ArrayTextarea } from '@ui/array-textarea'
 import { toast } from 'sonner'
 
@@ -40,7 +40,8 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
       return
     }
     await setGamePath(filePath)
-    const icon = await canAccessImageFile(gameId, 'icon')
+    // const icon = await canAccessImageFile(gameId, 'icon')
+    const icon = await ipcInvoke('check-game-icon', gameId)
     if (!icon) {
       await ipcInvoke('save-game-icon', gameId, filePath)
     }

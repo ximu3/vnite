@@ -76,7 +76,9 @@ export function HoverSquareCardAnimation({
       <animated.div
         style={{
           transform: springs.imageScale.to((s) => `scale(${s})`),
-          willChange: 'transform'
+          willChange: 'transform',
+          width: '100%',
+          height: '100%'
         }}
       >
         {children}
