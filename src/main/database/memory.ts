@@ -4,9 +4,7 @@ import { getDBValue, setDBValue } from './services'
 import { IMAGE_FORMATS } from '~/media/image'
 
 export async function addMemory(gameId: string): Promise<void> {
-  const memoryList = await getDBValue(`games/${gameId}/memory.json`, ['memoryList'], {
-    ['']: { id: '', date: '', note: '' }
-  })
+  const memoryList = await getDBValue(`games/${gameId}/memory.json`, ['memoryList'], {})
   const memoryId = generateUUID()
   const date = new Date().toISOString()
   const memory = { id: memoryId, date, note: '' }
