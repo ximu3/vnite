@@ -109,7 +109,9 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
                     type="icon"
                     alt="icon"
                     className={cn('w-[18px] h-[18px] rounded-md object-cover bg-accent shadow-sm')}
-                    fallback={<span className={cn('icon-[mdi--gamepad-variant] w-5 h-5')}></span>}
+                    fallback={
+                      <span className={cn('icon-[mdi--gamepad-variant] w-[18px] h-[18px]')}></span>
+                    }
                   />
                 </div>
                 <div className={cn('truncate')}>{gameName}</div>
