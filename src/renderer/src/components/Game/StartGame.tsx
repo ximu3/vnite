@@ -1,4 +1,4 @@
-import { cn, canAccessImageFile } from '~/utils'
+import { cn } from '~/utils'
 import { useDBSyncedState } from '~/hooks'
 import { Button } from '@ui/button'
 import { ipcSend, ipcInvoke } from '~/utils'
@@ -58,7 +58,8 @@ export function StartGame({
         return
       }
       await setGamePath(filePath)
-      const isIconAccessible = await canAccessImageFile(gameId, 'icon')
+      // const isIconAccessible = await canAccessImageFile(gameId, 'icon')
+      const isIconAccessible = await ipcInvoke('check-game-icon', gameId)
       if (!isIconAccessible) {
         await ipcInvoke('save-game-icon', gameId, filePath)
       }
