@@ -1,24 +1,18 @@
 import { Dialog, DialogContent } from '@ui/dialog'
 import { Textarea } from '@ui/textarea'
 import { cn } from '~/utils'
-import { useDBSyncedState } from '~/hooks'
 
 export function NoteDialog({
-  gameId,
-  memoryId,
   isOpen,
-  setIsOpen
+  setIsOpen,
+  note,
+  setNote
 }: {
-  gameId: string
-  memoryId: string
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void
+  note: string
+  setNote: (note: string) => void
 }): JSX.Element {
-  const [note, setNote] = useDBSyncedState('', `games/${gameId}/memory.json`, [
-    'memoryList',
-    memoryId,
-    'note'
-  ])
   return (
     <Dialog open={isOpen}>
       <DialogContent

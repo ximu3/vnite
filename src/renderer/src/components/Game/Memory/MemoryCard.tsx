@@ -26,24 +26,19 @@ import html2canvas from 'html2canvas'
 
 export function MemoryCard({
   gameId,
-  memoryId
+  memoryId,
+  handleDelete,
+  note,
+  date,
+  setNote
 }: {
   gameId: string
   memoryId: string
+  handleDelete: () => void
+  note: string
+  date: string
+  setNote: (note: string) => void
 }): JSX.Element {
-  const [note] = useDBSyncedState('', `games/${gameId}/memory.json`, [
-    'memoryList',
-    memoryId,
-    'note'
-  ])
-  const [date] = useDBSyncedState('', `games/${gameId}/memory.json`, [
-    'memoryList',
-    memoryId,
-    'date'
-  ])
-  const [memoryList, setMemoryList] = useDBSyncedState({}, `games/${gameId}/memory.json`, [
-    'memoryList'
-  ])
   const [isNoteDialogOpen, setIsNoteDialogOpen] = useState(false)
   const [cropDialogState, setCropDialogState] = useState<{
     isOpen: boolean
@@ -212,22 +207,6 @@ export function MemoryCard({
     }
   }
 
-  async function handleDelete(): Promise<void> {
-    toast.promise(
-      async () => {
-        const newMemoryList = { ...memoryList }
-        delete newMemoryList[memoryId]
-        setMemoryList(newMemoryList)
-        await ipcInvoke('delete-memory', gameId, memoryId)
-      },
-      {
-        loading: '正在删除...',
-        success: '删除成功',
-        error: '删除失败'
-      }
-    )
-  }
-
   return (
     <ContextMenu>
       <ContextMenuTrigger className={cn('w-full')}>
@@ -346,10 +325,10 @@ export function MemoryCard({
         onCropComplete={(filePath) => handleCropComplete(filePath)}
       />
       <NoteDialog
-        gameId={gameId}
-        memoryId={memoryId}
         isOpen={isNoteDialogOpen}
         setIsOpen={setIsNoteDialogOpen}
+        note={note}
+        setNote={setNote}
       ></NoteDialog>
     </ContextMenu>
   )
