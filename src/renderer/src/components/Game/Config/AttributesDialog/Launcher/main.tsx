@@ -1,4 +1,4 @@
-import { cn } from '~/utils'
+import { cn, ipcInvoke } from '~/utils'
 import { useDBSyncedState } from '~/hooks'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import {
@@ -10,6 +10,9 @@ import {
   SelectTrigger,
   SelectValue
 } from '@ui/select'
+import { Switch } from '@ui/switch'
+import { Separator } from '@ui/separator'
+import { toast } from 'sonner'
 import { FileLauncher } from './FileLauncher'
 import { UrlLauncher } from './UrlLauncher'
 import { ScriptLauncher } from './ScriptLauncher'
@@ -18,6 +21,27 @@ import { PresetSelecter } from './PresetSelecter'
 export function Launcher({ gameId }: { gameId: string }): JSX.Element {
   const [mode, setMode] = useDBSyncedState('file', `games/${gameId}/launcher.json`, ['mode'])
   const [gamePath] = useDBSyncedState('', `games/${gameId}/path.json`, ['gamePath'])
+  const [useMagpie, setUseMagpie] = useDBSyncedState(false, `games/${gameId}/launcher.json`, [
+    'useMagpie'
+  ])
+  const [magpiePath, setMagpiePath] = useDBSyncedState('', 'config.json', [
+    'advanced',
+    'linkage',
+    'magpie',
+    'path'
+  ])
+  async function selectMagpiePath(): Promise<void> {
+    const magpiePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
+    setMagpiePath(magpiePath)
+  }
+  async function switchUseMagpie(): Promise<void> {
+    if (!useMagpie && !magpiePath) {
+      toast.error('请先设置Magpie路径')
+      await selectMagpiePath()
+      await new Promise((resolve) => setTimeout(resolve, 300))
+    }
+    setUseMagpie(!useMagpie)
+  }
   return (
     <Card className={cn('group')}>
       {gamePath ? (
@@ -50,7 +74,7 @@ export function Launcher({ gameId }: { gameId: string }): JSX.Element {
                   </Select>
                 </div>
               </div>
-              <div className={cn('w-5/6')}>
+              <div className={cn('w-5/6 flex flex-col gap-5')}>
                 <div className={cn(mode === 'file' ? 'block' : 'hidden')}>
                   <FileLauncher gameId={gameId} />
                 </div>
@@ -59,6 +83,15 @@ export function Launcher({ gameId }: { gameId: string }): JSX.Element {
                 </div>
                 <div className={cn(mode === 'script' ? 'block' : 'hidden')}>
                   <ScriptLauncher gameId={gameId} />
+                </div>
+                <Separator className={cn('')} />
+                <div className={cn('flex flex-row gap-5 items-center')}>
+                  <div className={cn('text-center')}>Magpie缩放</div>
+                  <Switch
+                    className={cn('-mb-[2px]')}
+                    checked={useMagpie}
+                    onClick={switchUseMagpie}
+                  />
                 </div>
               </div>
             </div>

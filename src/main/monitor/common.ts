@@ -1,13 +1,14 @@
 import path from 'path'
 import fse from 'fs-extra'
 import { ipcMain, BrowserWindow } from 'electron'
-import { updateRecentGames } from '~/utils'
+import { updateRecentGames, simulateHotkey } from '~/utils'
 import { setDBValue, getDBValue } from '~/database'
 import log from 'electron-log/main.js'
 import { backupGameSaveData } from '~/database'
 import { exec } from 'child_process'
 import iconv from 'iconv-lite'
 import { isEqual } from 'lodash'
+import { spawn } from 'child_process'
 
 const execAsync = (command: string, options?: any): Promise<{ stdout: string; stderr: string }> => {
   return new Promise<{ stdout: string; stderr: string }>((resolve, reject) => {
@@ -45,7 +46,7 @@ async function getProcessList(): Promise<
       .slice(1) // Skip title line
       .filter(Boolean)
       .map((line) => {
-        const [, executablePath, commandLine, pidStr, name] = line.split(',')
+        const [, executablePath, commandLine, name, pidStr] = line.split(',')
         return {
           name: name?.trim() || '',
           cmd: commandLine?.trim() || '',
@@ -63,9 +64,50 @@ async function getProcessList(): Promise<
   }
 }
 
+async function checkIfProcessRunning(processName: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    const cmd = spawn('tasklist', ['/FI', `IMAGENAME eq ${processName}`])
+    let output = ''
+
+    cmd.stdout.on('data', (data) => {
+      output += data.toString()
+    })
+
+    cmd.on('close', () => {
+      resolve(output.toLowerCase().includes(processName.toLowerCase()))
+    })
+  })
+}
+
+async function startMagpie(): Promise<void> {
+  try {
+    const magpiePath = await getDBValue(
+      `config.json`,
+      ['advanced', 'linkage', 'magpie', 'path'],
+      ''
+    )
+    if (magpiePath) {
+      const isRunning = await checkIfProcessRunning('Magpie.exe')
+      if (isRunning) {
+        console.log('Magpie 已经在运行')
+        return
+      }
+      const magpie = spawn('start', ['""', `"${magpiePath}" -t`], {
+        shell: true,
+        detached: true,
+        stdio: 'ignore'
+      })
+      magpie.unref()
+    }
+  } catch (error) {
+    console.error('启动 Magpie 失败:', error)
+  }
+}
+
 interface GameMonitorOptions {
   target: string
   gameId: string
+  magpieHotkey?: string
   checkInterval?: number
   executableExtensions?: string[]
 }
@@ -74,6 +116,7 @@ interface MonitoredProcess {
   path: string
   isRunning: boolean
   pid?: number
+  isScaled?: boolean
 }
 
 interface GameStatus {
@@ -97,6 +140,7 @@ export class GameMonitor {
     this.options = {
       checkInterval: 1000,
       executableExtensions: ['.exe', '.bat', '.cmd'],
+      magpieHotkey: 'win+alt+a',
       ...options
     }
 
@@ -119,7 +163,7 @@ export class GameMonitor {
 
   private async terminateProcesses(): Promise<void> {
     const maxRetries = 3
-    const retryDelay = 100 // 1 second
+    const retryDelay = 100
 
     for (const monitored of this.monitoredProcesses) {
       if (monitored.isRunning) {
@@ -323,8 +367,47 @@ export class GameMonitor {
         if (processInfo) {
           console.log(`游戏 ${this.options.gameId} 进程 ${processInfo.executablePath} 正在运行`)
         }
+
+        const wasRunning = monitored.isRunning
         monitored.isRunning = !!processInfo
         monitored.pid = processInfo?.pid || monitored.pid
+
+        // If the process has just been started (not running before, now running)
+        if (!wasRunning && monitored.isRunning) {
+          console.log(`游戏 ${this.options.gameId} 进程已启动`)
+
+          // Check if Magpie scaling is enabled
+          const useMagpie = await getDBValue(
+            `games/${this.options.gameId}/launcher.json`,
+            ['useMagpie'],
+            false
+          )
+
+          const magpiePath = await getDBValue(
+            `config.json`,
+            ['advanced', 'linkage', 'magpie', 'path'],
+            ''
+          )
+
+          const magpieHotkey = await getDBValue(
+            `config.json`,
+            ['advanced', 'linkage', 'magpie', 'hotkey'],
+            'win+alt+a'
+          )
+
+          if (useMagpie && !monitored.isScaled && magpiePath) {
+            await startMagpie()
+            // Wait a while for the game window to fully load
+            await new Promise((resolve) => setTimeout(resolve, 1000))
+
+            // Simulate pressing the Magpie shortcut
+            await simulateHotkey(magpieHotkey)
+            monitored.isScaled = true
+          }
+        } else if (!monitored.isRunning) {
+          // Reset the zoom state if the process stops running
+          monitored.isScaled = false
+        }
       }
 
       // Check if the game exits
