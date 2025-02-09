@@ -19,6 +19,12 @@ interface CollectionsHook {
   removeCollection: (id: string) => void
   renameCollection: (id: string, name: string) => void
   reorderCollections: (srcId: string, destId: string, edge: 'front' | 'back') => void
+  reorderGamesInCollection: (
+    collectionId: string,
+    srcId: string,
+    destId: string,
+    edge: 'front' | 'back'
+  ) => void
   addGameToCollection: (collectionId: string, gameId: string) => void
   addGamesToCollection: (collectionId: string, gameIds: string[]) => void
   removeGameFromCollection: (collectionId: string, gameId: string) => void
@@ -129,6 +135,31 @@ export function useCollections(): CollectionsHook {
           toast.error(`Failed to reorder collections: ${error.message}`)
         } else {
           toast.error('Failed to reorder collections: An unknown error occurred')
+        }
+      }
+    },
+    [typedSetCollections]
+  )
+
+  const reorderGamesInCollection = useCallback(
+    (collectionId: string, srcId: string, destId: string, edge: 'front' | 'back'): void => {
+      try {
+        if (srcId === destId) return
+
+        const insertOffset = edge === 'back' ? 1 : 0
+        const newCollections: Collections = { ...collectionsRef.current }
+        const games = newCollections[collectionId]['games']
+
+        const [srcKey] = games.splice(games.indexOf(srcId), 1)
+        games.splice(games.indexOf(destId) + insertOffset, 0, srcKey)
+
+        typedSetCollections({ ...newCollections })
+      } catch (error) {
+        console.error('Failed to reorder games in collection:', error)
+        if (error instanceof Error) {
+          toast.error(`Failed to reorder games in collection: ${error.message}`)
+        } else {
+          toast.error('Failed to reorder games in collection: An unknown error occurred')
         }
       }
     },
@@ -293,6 +324,7 @@ export function useCollections(): CollectionsHook {
     removeCollection,
     renameCollection,
     reorderCollections,
+    reorderGamesInCollection,
     addGameToCollection,
     addGamesToCollection,
     removeGameFromCollection,

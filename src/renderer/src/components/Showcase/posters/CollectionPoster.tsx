@@ -1,33 +1,24 @@
-import { HoverSquareCardAnimation } from '~/components/animations/HoverSquareCard'
-import { cn } from '~/utils'
-import { useNavigate } from 'react-router-dom'
+import { GameImage } from '@ui/game-image'
 import { useEffect, useRef, useState } from 'react'
-
-import invariant from 'tiny-invariant'
-import { draggable, dropTargetForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter'
-import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine'
+import { useNavigate } from 'react-router-dom'
+import { HoverSquareCardAnimation } from '~/components/animations/HoverSquareCard'
+import { CollectionCM } from '~/components/contextMenu/CollectionCM'
+import { useCollections } from '~/hooks'
+import { cn } from '~/utils'
 import {
   attachClosestEdge,
+  calPreviewOffset,
+  combine,
+  createPortal,
+  draggable,
+  DropIndicator,
+  dropTargetForElements,
+  extractClosestEdge,
+  invariant,
+  setCustomNativeDragPreview,
   type Edge,
-  extractClosestEdge
-} from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge'
-import { DropIndicator } from '@ui/drop-indicator'
-import { setCustomNativeDragPreview } from '@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview'
-import { centerUnderPointer } from '@atlaskit/pragmatic-drag-and-drop/element/center-under-pointer'
-import { createPortal } from 'react-dom'
-
-import { useCollections } from '~/hooks'
-import { CollectionCM } from '~/components/contextMenu/CollectionCM'
-import { GameImage } from '@ui/game-image'
-
-type PreviewState =
-  | {
-      type: 'idle'
-    }
-  | {
-      type: 'preview'
-      container: HTMLElement
-    }
+  type PreviewState
+} from '~/utils/dnd-utills'
 
 function Preview({
   collectionName,
@@ -88,10 +79,7 @@ export function CollectionPoster({
         element: el,
         onGenerateDragPreview({ nativeSetDragImage }) {
           setCustomNativeDragPreview({
-            getOffset: (container) => {
-              const half = centerUnderPointer(container)
-              return { x: (half.x * 4) / 3, y: (half.y * 4) / 3 }
-            },
+            getOffset: calPreviewOffset(0.66, 0.66),
             render({ container }) {
               setPreviewState({ type: 'preview', container })
               return (): void => setPreviewState({ type: 'idle' })
@@ -99,40 +87,33 @@ export function CollectionPoster({
             nativeSetDragImage
           })
         },
-        getInitialData: () => ({ collectionId }),
+        getInitialData: () => ({ dragScenario: 'reorder-collections', uuid: collectionId }),
         onDragStart: () => setDragging(true),
         onDrop: () => setDragging(false)
       }),
+
       dropTargetForElements({
         element: el,
+        canDrop: ({ source }) => source.data.dragScenario === 'reorder-collections',
         getData: ({ input, element }) => {
           // your base data you want to attach to the drop target
-          const data = {
-            id: collectionId
-          }
+          const data = { uuid: collectionId }
           // this will 'attach' the closest edge to your `data` object
-          return attachClosestEdge(data, {
-            input,
-            element,
-            allowedEdges: ['right', 'left']
-          })
+          return attachClosestEdge(data, { input, element, allowedEdges: ['right', 'left'] })
         },
         onDrag({ self, source }) {
-          const isSource = source.element === el
-          if (isSource) {
+          if (source.element === el) {
             setClosestEdge(null)
             return
           }
           const closestEdge = extractClosestEdge(self.data)
           setClosestEdge(closestEdge)
         },
-        onDragLeave() {
-          setClosestEdge(null)
-        },
+        onDragLeave: () => setClosestEdge(null),
         onDrop({ self, source }) {
           reorderCollections(
-            source.data.collectionId as string,
-            self.data.id as string,
+            source.data.uuid as string,
+            self.data.uuid as string,
             extractClosestEdge(self.data) === 'left' ? 'front' : 'back'
           )
           setClosestEdge(null)
@@ -165,7 +146,6 @@ export function CollectionPoster({
             />
 
             {/* HoverBigCardAnimation layer */}
-
             <div className="relative z-0 w-full h-full">
               <HoverSquareCardAnimation className={cn('rounded-lg w-full h-full')}>
                 <GameImage
