@@ -25,7 +25,7 @@ const edgeStyles: Record<Edge, HTMLAttributes<HTMLElement>['className']> = {
   left: 'left-[--line-offset] before:left-[--offset-terminal]'
 }
 
-const strokeSize = 4
+const strokeSize = 2
 const terminalSize = 8
 const offsetToAlignTerminalWithLine = (strokeSize - terminalSize) / 2
 
@@ -37,7 +37,7 @@ export function DropIndicator({ edge, gap }: { edge: Edge; gap: string }): JSX.E
 
   const orientation = edgeToOrientationMap[edge]
 
-  return (
+  const indicator = (
     <div
       style={
         {
@@ -49,7 +49,13 @@ export function DropIndicator({ edge, gap }: { edge: Edge; gap: string }): JSX.E
           '--offset-terminal': `${offsetToAlignTerminalWithLine}px`
         } as CSSProperties
       }
-      className={`absolute z-10 bg-blue-700 pointer-events-none before:content-[''] before:w-[--terminal-size] before:h-[--terminal-size] box-border before:absolute before:border-[length:--line-thickness] before:border-solid before:border-blue-700 before:rounded-full ${orientationStyles[orientation]} ${[edgeStyles[edge]]}`}
+      className={`absolute z-10 bg-accent-foreground pointer-events-none 
+        before:content-[''] before:w-[--terminal-size] before:h-[--terminal-size] 
+        box-border before:absolute before:border-[length:--line-thickness] 
+        before:border-solid before:border-accent-foreground before:rounded-full 
+        ${orientationStyles[orientation]} ${[edgeStyles[edge]]} overflow-visible`}
     ></div>
   )
+
+  return indicator
 }
