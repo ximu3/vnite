@@ -174,15 +174,22 @@ export function CollectionPoster({
             {/* text content layer */}
             <div
               className={cn(
-                'absolute inset-0 z-20 mt-7 rounded-lg',
+                'absolute inset-0 z-20 mt-4 rounded-lg',
                 'flex items-center justify-center',
-                'pointer-events-none'
+                'pointer-events-none w-full h-full'
               )}
             >
-              <div className="flex flex-col gap-1 items-center justify-center">
-                <div className={cn('text-accent-foreground text-lg font-semibold')}>
+              <div className="flex flex-col gap-1 items-center justify-center w-full h-full">
+                <div
+                  className={cn(
+                    'text-accent-foreground text-lg font-semibold',
+                    'w-[90%] break-words whitespace-normal text-center',
+                    'max-h-[50%] overflow-hidden'
+                  )}
+                >
                   {collectionName}
                 </div>
+
                 <div className={cn('text-accent-foreground/70')}>{`( ${length} )`}</div>
               </div>
             </div>
