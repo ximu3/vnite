@@ -1,7 +1,7 @@
 import { cn } from '~/utils'
 import { Button } from '@ui/button'
 import { Separator } from '@ui/separator'
-import { useGameIndexManager } from '~/hooks'
+import { useGameIndexManager, useDBSyncedState } from '~/hooks'
 import { GamePoster } from './posters/GamePoster'
 import { BigGamePoster } from './posters/BigGamePoster'
 import { useRef } from 'react'
@@ -11,6 +11,11 @@ export function RecentGames(): JSX.Element {
   const { sort: sortGames } = useGameIndexManager()
   const games = sortGames('lastRunDate', 'desc')
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const [showRecentGamesInGameList] = useDBSyncedState(true, 'config.json', [
+    'appearances',
+    'gameList',
+    'showRecentGamesInGameList'
+  ])
 
   const scroll = throttle((direction: 'left' | 'right'): void => {
     if (!scrollContainerRef.current) return
@@ -67,7 +72,11 @@ export function RecentGames(): JSX.Element {
                 'flex-shrink-0' // Preventing compression
               )}
             >
-              <BigGamePoster gameId={game} groupId="recentGames" />
+              {showRecentGamesInGameList ? (
+                <BigGamePoster gameId={game} groupId="recentGames" />
+              ) : (
+                <BigGamePoster gameId={game} />
+              )}
             </div>
           ) : (
             <div
@@ -76,7 +85,7 @@ export function RecentGames(): JSX.Element {
                 'flex-shrink-0' // Preventing compression
               )}
             >
-              {index < 5 ? (
+              {index < 5 && showRecentGamesInGameList ? (
                 <GamePoster gameId={game} groupId="recentGames" />
               ) : (
                 <GamePoster gameId={game} />
