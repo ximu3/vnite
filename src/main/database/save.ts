@@ -1,23 +1,29 @@
-import { getDBValue, setDBValue } from './services'
-import path from 'path'
-import { getDataPath, generateUUID } from '~/utils'
 import fse from 'fs-extra'
+import path from 'path'
+import { generateUUID, getDataPath } from '~/utils'
+import { getDBValue, setDBValue } from './services'
 
 export async function backupGameSave(gameId: string): Promise<void> {
   const saveId = generateUUID()
   const savePaths = await getDBValue<string[]>(`games/${gameId}/path.json`, ['savePath'], [])
+  const maxSaveNumber = await getDBValue(`games/${gameId}/path.json`, ['maxSaveNumber'], '7')
   const backupPath = await getDataPath(`games/${gameId}/saves/${saveId}/`)
 
   const saveList = await getDBValue(`games/${gameId}/save.json`, ['#all'], {})
-  const saveIds = Object.keys(saveList)
+  const saveIds = Object.keys(saveList).filter((key) => !saveList[key].locked)
 
-  if (saveIds.length >= 7) {
+  if (saveIds.length >= Number(maxSaveNumber)) {
     saveIds.sort(
       (a, b) => new Date(saveList[a].date).getTime() - new Date(saveList[b].date).getTime()
     )
-    const oldestSaveId = saveIds[0]
-    delete saveList[oldestSaveId]
-    await fse.remove(await getDataPath(`games/${gameId}/saves/${oldestSaveId}/`))
+
+    const deleteCount = saveIds.length - Number(maxSaveNumber) + 1
+    const oldestSaveIds = saveIds.slice(0, deleteCount)
+
+    for (const saveId of oldestSaveIds) {
+      delete saveList[saveId]
+      await fse.remove(await getDataPath(`games/${gameId}/saves/${saveId}/`))
+    }
   }
 
   await Promise.all(
@@ -31,7 +37,7 @@ export async function backupGameSave(gameId: string): Promise<void> {
     })
   )
 
-  saveList[saveId] = { id: saveId, date: new Date().toISOString(), note: '' }
+  saveList[saveId] = { id: saveId, date: new Date().toISOString(), note: '', locked: false }
   await setDBValue(`games/${gameId}/save.json`, ['#all'], saveList)
 }
 
