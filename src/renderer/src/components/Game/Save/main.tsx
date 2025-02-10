@@ -118,7 +118,9 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
                           </Button>
                           <Button
                             variant={'outline'}
-                            className={cn('min-h-0 h-8 border-destructive')}
+                            className={cn(
+                              'min-h-0 h-8 hover:bg-destructive hover:text-destructive-foreground'
+                            )}
                             onClick={() => deleteGameSave(saveId)}
                           >
                             删除

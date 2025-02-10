@@ -11,8 +11,9 @@ import {
   SelectTrigger,
   SelectValue
 } from '@ui/select'
+import { Separator } from '@ui/separator'
 import { toast } from 'sonner'
-import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import { useDBSyncedState } from '~/hooks'
 import { cn, ipcInvoke } from '~/utils'
 
@@ -156,6 +157,7 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
               </Tooltip>
             </div>
           </div>
+          <Separator />
           <div className={cn('flex flex-row gap-5 items-center justify-start')}>
             <div>最大存档备份数量</div>
             <div className={cn('w-[120px]')}>
