@@ -27,7 +27,7 @@ export function Library({ className }: { className?: string }): JSX.Element {
       direction="horizontal"
       className={cn('w-full h-full', className)}
     >
-      <ResizablePanel defaultSize={18} maxSize={26} minSize={10} className={cn('min-w-[150px]')}>
+      <ResizablePanel defaultSize={18} maxSize={26} minSize={0} className={cn('')}>
         <Librarybar />
       </ResizablePanel>
       <ResizableHandle />
