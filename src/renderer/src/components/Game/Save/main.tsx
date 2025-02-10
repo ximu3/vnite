@@ -1,12 +1,10 @@
-import { cn } from '~/utils'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@ui/table'
-import { Input } from '@ui/input'
 import { Button } from '@ui/button'
-import { toast } from 'sonner'
-import { ipcInvoke } from '~/utils'
-import { useDBSyncedState } from '~/hooks'
-import { formatDateToChineseWithSeconds } from '~/utils'
+import { Input } from '@ui/input'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@ui/table'
 import { isEqual } from 'lodash'
+import { toast } from 'sonner'
+import { useDBSyncedState } from '~/hooks'
+import { cn, formatDateToChineseWithSeconds, ipcInvoke } from '~/utils'
 
 export function Save({ gameId }: { gameId: string }): JSX.Element {
   const [saveList, setSaveList] = useDBSyncedState(
@@ -34,6 +32,10 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
     )
   }
   async function deleteGameSave(saveId: string): Promise<void> {
+    if (saveList[saveId]?.locked) {
+      toast('该存档已锁定', { duration: 1000 })
+      return
+    }
     toast.promise(
       (async (): Promise<void> => {
         await ipcInvoke('delete-game-save', gameId, saveId)
@@ -48,6 +50,13 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
       }
     )
   }
+
+  const toggleLock = (saveId: string): void => {
+    const newSaveList = { ...saveList }
+    saveList[saveId].locked = !saveList[saveId]?.locked
+    setSaveList(newSaveList)
+  }
+
   return (
     <div className="pt-2 bg-background w-full min-h-[22vh]">
       <div className="w-full h-full">
@@ -87,6 +96,21 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
                         <div className="flex flex-row gap-2">
                           <Button
                             variant={'outline'}
+                            size={'icon'}
+                            className={cn(saveList[saveId]?.locked ? 'border-ring' : '')}
+                            onClick={() => toggleLock(saveId)}
+                          >
+                            <span
+                              className={cn(
+                                'w-5 h-5',
+                                saveList[saveId]?.locked
+                                  ? 'icon-[mdi--lock-outline]'
+                                  : 'icon-[mdi--lock-open-variant-outline]'
+                              )}
+                            />
+                          </Button>
+                          <Button
+                            variant={'outline'}
                             className={cn('min-h-0 h-8')}
                             onClick={() => restoreGameSave(saveId)}
                           >
@@ -94,7 +118,7 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
                           </Button>
                           <Button
                             variant={'outline'}
-                            className={cn('min-h-0 h-8')}
+                            className={cn('min-h-0 h-8 border-destructive')}
                             onClick={() => deleteGameSave(saveId)}
                           >
                             删除

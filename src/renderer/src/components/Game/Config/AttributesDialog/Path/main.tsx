@@ -1,12 +1,20 @@
-import { cn } from '~/utils'
-import { useDBSyncedState } from '~/hooks'
+import { ArrayTextarea } from '@ui/array-textarea'
+import { Button } from '@ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { Input } from '@ui/input'
-import { Button } from '@ui/button'
-import { Tooltip, TooltipTrigger, TooltipContent } from '~/components/ui/tooltip'
-import { ipcInvoke } from '~/utils'
-import { ArrayTextarea } from '@ui/array-textarea'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue
+} from '@ui/select'
 import { toast } from 'sonner'
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
+import { useDBSyncedState } from '~/hooks'
+import { cn, ipcInvoke } from '~/utils'
 
 export function Path({ gameId }: { gameId: string }): JSX.Element {
   const [_path] = useDBSyncedState('', `games/${gameId}/launcher.json`, ['fileConfig', 'path'])
@@ -32,6 +40,10 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
 
   const [savePath, setSavePath] = useDBSyncedState<string[]>([], `games/${gameId}/path.json`, [
     'savePath'
+  ])
+
+  const [maxSaveNumber, setMaxSaveNumber] = useDBSyncedState('7', `games/${gameId}/path.json`, [
+    'maxSaveNumber'
   ])
 
   async function selectGamePath(): Promise<void> {
@@ -69,7 +81,7 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
       return
     }
     const newSavePath = savePath.concat(folderPath)
-    await setSavePath(newSavePath)
+    await setSavePath(newSavePath.filter(Boolean))
   }
   async function selectSaveFilePath(): Promise<void> {
     const filePath: string[] = await ipcInvoke(
@@ -82,7 +94,7 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
       return
     }
     const newSavePath = savePath.concat(filePath)
-    await setSavePath(newSavePath)
+    await setSavePath(newSavePath.filter(Boolean))
   }
 
   return (
@@ -142,6 +154,30 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
                 </TooltipTrigger>
                 <TooltipContent side="right">添加文件</TooltipContent>
               </Tooltip>
+            </div>
+          </div>
+          <div className={cn('flex flex-row gap-5 items-center justify-start')}>
+            <div>最大存档备份数量</div>
+            <div className={cn('w-[120px]')}>
+              <Select value={maxSaveNumber} onValueChange={setMaxSaveNumber}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>最大存档备份数量</SelectLabel>
+                    <SelectItem value="1">1</SelectItem>
+                    <SelectItem value="2">2</SelectItem>
+                    <SelectItem value="3">3</SelectItem>
+                    <SelectItem value="4">4</SelectItem>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="6">6</SelectItem>
+                    <SelectItem value="7">7</SelectItem>
+                    <SelectItem value="8">8</SelectItem>
+                    <SelectItem value="9">9</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>
