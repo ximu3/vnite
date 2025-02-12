@@ -19,7 +19,7 @@ import { useFilterStore } from './Filter/store'
 import { isEqual } from 'lodash'
 import { create } from 'zustand'
 import { useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useGameBatchEditorStore } from '../GameBatchEditor/store'
 
 interface LibrarybarStore {
@@ -47,6 +47,8 @@ export function Librarybar(): JSX.Element {
   const { query, setQuery } = useLibrarybarStore()
   const { toggleFilterMenu, filter } = useFilterStore()
   const { clearGameIds, gameIds } = useGameBatchEditorStore()
+  const [isGameNavVisible, setIsGameNavVisible] = useState(true)
+  const visibilityTimeout = useRef<NodeJS.Timeout>()
 
   useEffect(() => {
     // clear batchEditor gameList when switching to a non-game-detail page and not in batchMode
@@ -55,8 +57,53 @@ export function Librarybar(): JSX.Element {
     }
   }, [location.pathname])
 
+  const scrollToCurrentGame = (): void => {
+    const currentGameId = location.pathname.split('/games/')[1]?.split('/')[0]
+    if (currentGameId) {
+      const element = document.querySelector(`[data-game-id="${currentGameId}"]`)
+      element?.scrollIntoView({ behavior: 'instant', block: 'center' })
+    }
+  }
+
+  useEffect(() => {
+    const currentGameId = location.pathname.split('/games/')[1]?.split('/')[0]
+    if (!currentGameId) return
+
+    const gameElement = document.querySelector(`[data-game-id="${currentGameId}"]`)
+    if (!gameElement) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (visibilityTimeout.current) {
+          clearTimeout(visibilityTimeout.current)
+        }
+
+        // Use requestAnimationFrame and setTimeout to reduce the frequency of state updates.
+        visibilityTimeout.current = setTimeout(() => {
+          requestAnimationFrame(() => {
+            setIsGameNavVisible(entry.isIntersecting)
+          })
+        }, 150)
+      },
+      {
+        root: null,
+        threshold: 0.5,
+        rootMargin: '20px'
+      }
+    )
+
+    observer.observe(gameElement)
+
+    return (): void => {
+      observer.disconnect()
+      if (visibilityTimeout.current) {
+        clearTimeout(visibilityTimeout.current)
+      }
+    }
+  }, [location.pathname])
+
   return (
-    <div className={cn('flex flex-col gap-6 bg-card w-full h-full pt-2')}>
+    <div className={cn('flex flex-col gap-6 bg-card w-full h-full pt-2 relative group')}>
       <div className={cn('flex flex-col gap-3 p-3 pb-0')}>
         <div className={cn('flex flex-row gap-2')}>
           <div className={cn('grow')}>
@@ -129,6 +176,21 @@ export function Librarybar(): JSX.Element {
         </div>
         <GameList query={query} selectedGroup={selectedGroup} />
       </div>
+      {location.pathname.includes('/library/games/') && (
+        <Button
+          size="icon"
+          className={cn(
+            'absolute bottom-4 right-4 transition-all duration-200 shadow-md hover:bg-primary',
+            'transform',
+            isGameNavVisible
+              ? 'opacity-0 translate-y-2 pointer-events-none'
+              : 'opacity-0 translate-y-0 group-hover:opacity-100'
+          )}
+          onClick={scrollToCurrentGame}
+        >
+          <span className={cn('icon-[mdi--crosshairs-gps] w-5 h-5')} />
+        </Button>
+      )}
     </div>
   )
 }
