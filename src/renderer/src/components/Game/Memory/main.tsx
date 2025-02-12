@@ -72,8 +72,8 @@ export function Memory({ gameId }: { gameId: string }): JSX.Element {
             gameId={gameId}
             memoryId={id}
             handleDelete={() => handleDelete(id)}
-            note={memoryList[id].note}
-            date={memoryList[id].date}
+            note={memoryList[id]?.note}
+            date={memoryList[id]?.date}
             setNote={(note) => setNote(id, note)}
           />
         ))}
