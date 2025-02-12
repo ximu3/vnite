@@ -66,18 +66,23 @@ export function Sidebar(): JSX.Element {
       </div>
       <div className={cn('flex flex-col gap-2')}>
         {showThemeSwitchInSidebar && (
-          <Button
-            variant="ghost"
-            size={'icon'}
-            className={cn('min-h-0 min-w-0 p-2 non-draggable')}
-            onClick={toggleTheme}
-          >
-            {isDark ? (
-              <span className={cn('icon-[mdi--weather-night] w-5 h-5')}></span>
-            ) : (
-              <span className={cn('icon-[mdi--weather-sunny] w-6 h-6 -m-1')}></span>
-            )}
-          </Button>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                variant="ghost"
+                size={'icon'}
+                className={cn('min-h-0 min-w-0 p-2 non-draggable')}
+                onClick={toggleTheme}
+              >
+                {isDark ? (
+                  <span className={cn('icon-[mdi--weather-night] w-5 h-5')}></span>
+                ) : (
+                  <span className={cn('icon-[mdi--weather-sunny] w-6 h-6 -m-1')}></span>
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="right">{isDark ? '暗色模式' : '亮色模式'}</TooltipContent>
+          </Tooltip>
         )}
         {cloudSyncEnabled ? (
           <Popover>
@@ -136,8 +141,8 @@ export function Sidebar(): JSX.Element {
         )}
         <DropdownMenu>
           <Tooltip>
-            <TooltipTrigger>
-              <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger>
+              <TooltipTrigger asChild>
                 <Button
                   variant="ghost"
                   size={'icon'}
@@ -145,8 +150,8 @@ export function Sidebar(): JSX.Element {
                 >
                   <span className={cn('icon-[mdi--plus-circle-outline] w-5 h-5')}></span>
                 </Button>
-              </DropdownMenuTrigger>
-            </TooltipTrigger>
+              </TooltipTrigger>
+            </DropdownMenuTrigger>
             <TooltipContent side="right">添加游戏</TooltipContent>
           </Tooltip>
           <DropdownMenuContent side="right" className="w-44">
@@ -244,8 +249,8 @@ export function Sidebar(): JSX.Element {
           </DropdownMenuContent>
         </DropdownMenu>
         <Tooltip>
-          <TooltipTrigger>
-            <ConfigDialog>
+          <ConfigDialog>
+            <TooltipTrigger>
               <Button
                 variant="ghost"
                 size={'icon'}
@@ -253,8 +258,8 @@ export function Sidebar(): JSX.Element {
               >
                 <span className={cn('icon-[mdi--settings-outline] w-5 h-5')}></span>
               </Button>
-            </ConfigDialog>
-          </TooltipTrigger>
+            </TooltipTrigger>
+          </ConfigDialog>
           <TooltipContent side="right">设置</TooltipContent>
         </Tooltip>
       </div>
