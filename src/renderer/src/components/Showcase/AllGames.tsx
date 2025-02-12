@@ -74,12 +74,12 @@ export function AllGames(): JSX.Element {
       {/* Game List Container */}
       <div
         className={cn(
-          'flex flex-row grow flex-wrap gap-6 justify-between',
-          'w-full',
-          'pt-2 pl-5 pr-5'
+          'grid grid-cols-[repeat(auto-fill,148px)]',
+          '3xl:grid-cols-[repeat(auto-fill,176px)]',
+          'justify-between gap-6 w-full',
+          'pt-2 pl-5 pr-5 pb-5'
         )}
       >
-        {/* The wrapper ensures that each Poster maintains a fixed width */}
         {games.map((gameId) => (
           <div
             key={gameId}
@@ -89,9 +89,6 @@ export function AllGames(): JSX.Element {
           >
             <GamePoster gameId={gameId} />
           </div>
-        ))}
-        {Array.from({ length: 14 }).map((_, index) => (
-          <div key={index} className={cn('w-[148px] h-0', '3xl:w-[176px]')}></div>
         ))}
       </div>
     </div>
