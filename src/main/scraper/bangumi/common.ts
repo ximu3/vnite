@@ -102,6 +102,9 @@ function getRelatedSites(
   // Find entries with key 'websites
   const websiteEntry = infobox.find((entry) => entry.key === 'website')
   if (websiteEntry) {
+    if (Array.isArray(websiteEntry.value)) {
+      return websiteEntry.value.map((site) => ({ label: site?.k, url: site?.v }))
+    }
     return [{ label: '官方网站', url: websiteEntry.value }]
   }
 
