@@ -124,6 +124,12 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
       >
         <span className={cn('icon-[mdi--file-outline] w-4 h-4')}></span>
       </Button>
+      <UrlDialog
+        setMediaWithUrl={setMediaWithUrl}
+        isUrlDialogOpen={isUrlDialogOpen}
+        setIsUrlDialogOpen={setIsUrlDialogOpen}
+        type={type}
+      />
       <Button
         onClick={() => {
           setSearchType(type)
@@ -135,12 +141,6 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
       >
         <span className={cn('icon-[mdi--search] w-4 h-4')}></span>
       </Button>
-      <UrlDialog
-        setMediaWithUrl={setMediaWithUrl}
-        isUrlDialogOpen={isUrlDialogOpen}
-        setIsUrlDialogOpen={setIsUrlDialogOpen}
-        type={type}
-      />
       <Button
         onClick={() => handleResize(type)}
         variant={'outline'}
