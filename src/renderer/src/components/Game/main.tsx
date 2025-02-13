@@ -145,15 +145,28 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
       <div className={cn('absolute top-0 h-[30px] w-full bg-background z-20')}></div>
       {/* Background Image Layer - Absolute */}
       <div
-        className={cn('absolute inset-0 w-full h-full pt-[30px] pr-2', 'will-change-transform')}
+        className={cn(
+          'absolute inset-0 w-full h-full max-h-[84vh] overflow-hidden pt-[30px] pr-2',
+          'will-change-transform'
+        )}
         style={{
           transform: `translateY(-${scrollY * 0.4}px)`
         }}
       >
         <GameImage
           gameId={gameId}
-          key={`${gameId}-background`}
+          key={`${gameId}-background-1`}
           type="background"
+          className={cn('w-full h-auto max-h-[84vh] object-cover')}
+          onError={() => setIsImageError(true)}
+          onUpdated={() => setIsImageError(false)}
+          fallback={<div className={cn('w-full h-full bg-background/15')} />}
+        />
+        <GameImage
+          gameId={gameId}
+          key={`${gameId}-background-2`}
+          type="background"
+          flips
           className={cn('w-full h-auto max-h-[84vh] object-cover')}
           onError={() => setIsImageError(true)}
           onUpdated={() => setIsImageError(false)}

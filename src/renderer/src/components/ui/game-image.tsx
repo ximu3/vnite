@@ -9,6 +9,7 @@ interface GameImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src'
   onUpdated?: () => void
   fallback?: React.ReactNode
   shadow?: boolean
+  flips?: boolean
 }
 
 export const GameImage: React.FC<GameImageProps> = ({
@@ -19,6 +20,7 @@ export const GameImage: React.FC<GameImageProps> = ({
   onUpdated,
   fallback = <div>暂无图标</div>,
   shadow = false,
+  flips = false,
   ...imgProps
 }) => {
   const [hasError, setHasError] = useState(false)
@@ -56,6 +58,7 @@ export const GameImage: React.FC<GameImageProps> = ({
           'transition-opacity duration-300',
           shadow && 'shadow-md shadow-black/50',
           isLoaded ? 'opacity-100' : 'opacity-0',
+          flips && '-scale-y-100',
           className
         )}
         loading="lazy"
