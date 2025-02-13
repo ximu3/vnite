@@ -140,7 +140,10 @@ export async function getBangumiMetadata(gameId: string): Promise<GameMetadata> 
       genres: getGenres(game.infobox),
       publishers: getPublishers(game.infobox),
       developers: getDevelopers(game.infobox),
-      relatedSites: getRelatedSites(game.infobox),
+      relatedSites: [
+        ...getRelatedSites(game.infobox),
+        { label: 'Bangumi', url: `https://bangumi.tv/subject/${gameId}` }
+      ],
       tags: game.tags?.map((tag) => tag.name) || []
     }
   } catch (error) {

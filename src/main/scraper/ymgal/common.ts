@@ -132,11 +132,13 @@ export async function getYMGalMetadata(gameId: string): Promise<GameMetadata> {
       releaseDate: game.releaseDate || '',
       description: game.introduction || '',
       developers: developerName ? [developerName] : [],
-      relatedSites:
-        game.website?.map((site) => ({
+      relatedSites: [
+        ...(game.website?.map((site) => ({
           label: site.title,
           url: site.link
-        })) || [],
+        })) || []),
+        { label: '月幕Galgame', url: `https://www.ymgal.games/ga${gameId}` }
+      ],
       tags: game.tags || []
     }
   } catch (error) {

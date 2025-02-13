@@ -194,7 +194,8 @@ export async function getSteamMetadata(appId: string): Promise<GameMetadata> {
         ...(gameDataCN.website ? [{ label: '官方网站', url: gameDataCN.website }] : []),
         ...(gameDataCN.metacritic?.url
           ? [{ label: 'Metacritic', url: gameDataCN.metacritic.url }]
-          : [])
+          : []),
+        { label: 'Steam', url: `${STEAM_URLS.PRIMARY.STORE}/app/${appId}` }
       ],
       tags: tags.length > 0 ? tags : gameDataCN.genres?.map((genre) => genre.description) || []
     }

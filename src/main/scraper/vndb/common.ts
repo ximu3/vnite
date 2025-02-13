@@ -109,7 +109,10 @@ export async function getVNMetadata(vnId: string): Promise<GameMetadata> {
       releaseDate: vn.released || '',
       description: formatDescription(vn.description),
       developers: vn.developers?.map((d) => d.name) || [''],
-      relatedSites: vn.extlinks?.map((link) => ({ label: link.label, url: link.url })) || [],
+      relatedSites: [
+        ...(vn.extlinks?.map((link) => ({ label: link.label, url: link.url })) || []),
+        { label: 'VNDB', url: `https://vndb.org/${vnId}` }
+      ],
       tags:
         vn.tags
           ?.sort((a, b) => b.rating - a.rating)
