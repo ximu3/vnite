@@ -1,5 +1,6 @@
 import { Separator } from '@ui/separator'
 import React from 'react'
+import { toast } from 'sonner'
 import { useDBSyncedState } from '~/hooks'
 import { cn } from '~/utils'
 import { FilterAdder } from '../../FilterAdder'
@@ -20,10 +21,44 @@ export function InformationCard({
   const [genres] = useDBSyncedState([''], `games/${gameId}/metadata.json`, ['genres'])
   const [platforms] = useDBSyncedState([''], `games/${gameId}/metadata.json`, ['platforms'])
 
+  const handleCopy = (): void => {
+    const titles = {
+      originalName: '原名',
+      name: '译名',
+      developers: '开发商',
+      publishers: '发行商',
+      releaseDate: '发行日期',
+      platforms: '平台',
+      genres: '类型'
+    }
+    navigator.clipboard
+      .writeText(
+        `${Object.entries({
+          originalName,
+          name,
+          developers,
+          publishers,
+          releaseDate,
+          genres,
+          platforms
+        })
+          .map(([key, value]) => `${titles[key]}: ${value}`)
+          .join('\n')}`
+      )
+      .then(() => {
+        toast.success('已复制到剪切板', { duration: 1000 })
+      })
+      .catch((error) => {
+        toast.error(`复制文本到剪切板失败: ${error}`)
+      })
+  }
+
   return (
     <div className={cn(className, 'group')}>
       <div className={cn('flex flex-row justify-between items-center')}>
-        <div className={cn('font-bold select-none')}>基本信息</div>
+        <div className={cn('font-bold select-none cursor-pointer')} onClick={handleCopy}>
+          基本信息
+        </div>
         <InformationDialog gameId={gameId} />
       </div>
 

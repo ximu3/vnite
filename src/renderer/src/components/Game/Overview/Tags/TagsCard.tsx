@@ -1,5 +1,6 @@
 import { Separator } from '@ui/separator'
 import React from 'react'
+import { toast } from 'sonner'
 import { useDBSyncedState } from '~/hooks'
 import { cn } from '~/utils'
 import { FilterAdder } from '../../FilterAdder'
@@ -13,10 +14,22 @@ export function TagsCard({
   className?: string
 }): JSX.Element {
   const [tags] = useDBSyncedState([''], `games/${gameId}/metadata.json`, ['tags'])
+  const handleCopy = (): void => {
+    navigator.clipboard
+      .writeText(`${tags}`)
+      .then(() => {
+        toast.success('已复制到剪切板', { duration: 1000 })
+      })
+      .catch((error) => {
+        toast.error(`复制文本到剪切板失败: ${error}`)
+      })
+  }
   return (
     <div className={cn(className, 'group')}>
-      <div className={cn('flex flex-row justify-between items-center select-none')}>
-        <div>标签</div>
+      <div className={cn('flex flex-row justify-between items-center')}>
+        <div className={cn('select-none cursor-pointer')} onClick={handleCopy}>
+          标签
+        </div>
         <TagsDialog gameId={gameId} />
       </div>
       <Separator className={cn('my-3 bg-primary')} />
