@@ -1,7 +1,9 @@
-import { cn } from '~/utils'
-import { useDBSyncedState } from '~/hooks'
 import { Button } from '@ui/button'
+import { useDBSyncedState } from '~/hooks'
+import { cn } from '~/utils'
 // import { Badge } from '@ui/badge'
+import { Dialog, DialogContent, DialogTrigger } from '@ui/dialog'
+import { Input } from '@ui/input'
 import {
   Select,
   SelectContent,
@@ -10,15 +12,13 @@ import {
   SelectLabel,
   SelectTrigger
 } from '@ui/select'
-import { Dialog, DialogContent, DialogTrigger } from '@ui/dialog'
-import { Input } from '@ui/input'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { useRunningGames } from '~/pages/Library/store'
 import { Config } from './Config'
+import { Record } from './Overview/Record'
 import { StartGame } from './StartGame'
 import { StopGame } from './StopGame'
-import { Record } from './Overview/Record'
-import { toast } from 'sonner'
-import { useState } from 'react'
-import { useRunningGames } from '~/pages/Library/store'
 
 export function Header({
   gameId,
@@ -92,6 +92,17 @@ export function Header({
     toast.success('评分已保存')
   }
 
+  const handleCopy = (text: string): void => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        toast.success('已复制到剪切板', { duration: 1000 })
+      })
+      .catch((error) => {
+        toast.error(`复制文本到剪切板失败: ${error}`)
+      })
+  }
+
   return (
     <div
       className={cn(
@@ -118,14 +129,33 @@ export function Header({
           showOriginalNameInGameHeader && originalName && originalName !== name && 'items-end'
         )}
       >
-        <div className={cn('truncate')}>
-          <span className={cn('font-bold text-2xl text-accent-foreground')}>{name}</span>
+        <div className={cn('select-none truncate z-10')}>
+          <span
+            className={cn('font-bold text-2xl text-accent-foreground cursor-pointer')}
+            onClick={() => {
+              handleCopy(name)
+            }}
+          >
+            {name}
+          </span>
           {showOriginalNameInGameHeader && originalName && originalName !== name && (
-            <span className={cn('font-bold text-accent-foreground ml-3')}>{originalName}</span>
+            <span
+              className={cn('font-bold text-accent-foreground ml-3 cursor-pointer')}
+              onClick={() => {
+                handleCopy(originalName)
+              }}
+            >
+              {originalName}
+            </span>
           )}
         </div>
         {isSticky && (
-          <div className={cn('flex flex-row gap-3 items-center duration-300 z-20', '3xl:gap-5')}>
+          <div
+            className={cn(
+              'flex flex-row gap-3 items-center duration-300 z-20 select-none',
+              '3xl:gap-5'
+            )}
+          >
             {runningGames.includes(gameId) ? (
               <StopGame gameId={gameId} className={cn('')} />
             ) : (
@@ -184,7 +214,12 @@ export function Header({
         )}
       </div>
       {!isSticky && (
-        <div className={cn('flex flex-row justify-between items-center duration-300', '3xl:gap-5')}>
+        <div
+          className={cn(
+            'flex flex-row justify-between items-center duration-300 select-none',
+            '3xl:gap-5'
+          )}
+        >
           <Record gameId={gameId} />
           <div className={cn('flex flex-row gap-3 items-center z-20', '3xl:gap-5')}>
             {runningGames.includes(gameId) ? (

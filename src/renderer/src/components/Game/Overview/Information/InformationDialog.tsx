@@ -1,15 +1,16 @@
+import { ArrayInput } from '@ui/array-input'
+import { DateInput } from '@ui/date-input'
 import { Dialog, DialogContent, DialogTrigger } from '@ui/dialog'
 import { Input } from '@ui/input'
-import { DateInput } from '@ui/date-input'
-import { TooltipContent, TooltipTrigger, Tooltip } from '@ui/tooltip'
-import { ArrayInput } from '@ui/array-input'
-import { cn } from '~/utils'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import { useDBSyncedState } from '~/hooks'
+import { cn } from '~/utils'
 
 export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
   const [originalName, setOriginalName] = useDBSyncedState('', `games/${gameId}/metadata.json`, [
     'originalName'
   ])
+  const [name, setName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
   const [developers, setDevelopers] = useDBSyncedState([''], `games/${gameId}/metadata.json`, [
     'developers'
   ])
@@ -33,7 +34,7 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
       <DialogContent className={cn('flex flex-col gap-5')}>
         <div className={cn('flex flex-col gap-3 p-4')}>
           <div className={cn('flex flex-row gap-3 items-center justify-center')}>
-            <div className={cn('grow whitespace-nowrap')}>原名</div>
+            <div className={cn('grow whitespace-nowrap select-none')}>原名</div>
             <Input
               value={originalName}
               onChange={(e) => setOriginalName(e.target.value)}
@@ -42,7 +43,16 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
             />
           </div>
           <div className={cn('flex flex-row gap-3 items-center justify-center')}>
-            <div className={cn('grow whitespace-nowrap')}>开发商</div>
+            <div className={cn('grow whitespace-nowrap select-none')}>译名</div>
+            <Input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="暂无译名"
+              className={cn(' text-sm')}
+            />
+          </div>
+          <div className={cn('flex flex-row gap-3 items-center justify-center')}>
+            <div className={cn('grow whitespace-nowrap select-none')}>开发商</div>
             <Tooltip>
               <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
                 <ArrayInput value={developers} onChange={setDevelopers} placeholder="暂无开发商" />
@@ -53,7 +63,7 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
             </Tooltip>
           </div>
           <div className={cn('flex flex-row gap-3 items-center justify-center')}>
-            <div className={cn('grow whitespace-nowrap')}>发行商</div>
+            <div className={cn('grow whitespace-nowrap select-none')}>发行商</div>
             <Tooltip>
               <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
                 <ArrayInput value={publishers} onChange={setPublishers} placeholder="暂无发行商" />
@@ -64,7 +74,7 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
             </Tooltip>
           </div>
           <div className={cn('flex flex-row gap-3 items-center justify-start')}>
-            <div className={cn('whitespace-nowrap')}>发行日期</div>
+            <div className={cn('whitespace-nowrap select-none')}>发行日期</div>
             <DateInput
               value={releaseDate}
               onChange={(e) => setReleaseDate(e.target.value)}
@@ -73,7 +83,7 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
             />
           </div>
           <div className={cn('flex flex-row gap-3 items-center justify-center')}>
-            <div className={cn('grow whitespace-nowrap')}>平台</div>
+            <div className={cn('grow whitespace-nowrap select-none')}>平台</div>
             <Tooltip>
               <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
                 <ArrayInput value={platforms} onChange={setPlatforms} placeholder="暂无平台" />
@@ -84,7 +94,7 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
             </Tooltip>
           </div>
           <div className={cn('flex flex-row gap-3 items-center justify-center')}>
-            <div className={cn('whitespace-nowrap')}>类型</div>
+            <div className={cn('whitespace-nowrap select-none')}>类型</div>
             <Tooltip>
               <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
                 <ArrayInput value={genres} onChange={setGenres} placeholder="暂无类型" />
