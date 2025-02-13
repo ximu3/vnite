@@ -1,9 +1,9 @@
 import { Separator } from '@ui/separator'
-import { cn } from '~/utils'
-import { useDBSyncedState } from '~/hooks'
-import { InformationDialog } from './InformationDialog'
-import { FilterAdder } from '../../FilterAdder'
 import React from 'react'
+import { useDBSyncedState } from '~/hooks'
+import { cn } from '~/utils'
+import { FilterAdder } from '../../FilterAdder'
+import { InformationDialog } from './InformationDialog'
 
 export function InformationCard({
   gameId,
@@ -13,6 +13,7 @@ export function InformationCard({
   className?: string
 }): JSX.Element {
   const [originalName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['originalName'])
+  const [name] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
   const [developers] = useDBSyncedState([''], `games/${gameId}/metadata.json`, ['developers'])
   const [publishers] = useDBSyncedState([''], `games/${gameId}/metadata.json`, ['publishers'])
   const [releaseDate] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['releaseDate'])
@@ -22,7 +23,7 @@ export function InformationCard({
   return (
     <div className={cn(className, 'group')}>
       <div className={cn('flex flex-row justify-between items-center')}>
-        <div className={cn('font-bold')}>基本信息</div>
+        <div className={cn('font-bold select-none')}>基本信息</div>
         <InformationDialog gameId={gameId} />
       </div>
 
@@ -30,11 +31,15 @@ export function InformationCard({
 
       <div className={cn('grid grid-cols-[60px_1fr] gap-x-3 gap-y-2 text-sm')}>
         {/* original name */}
-        <div className={cn('whitespace-nowrap')}>原名</div>
+        <div className={cn('whitespace-nowrap select-none')}>原名</div>
         <div>{originalName === '' ? '暂无' : originalName}</div>
 
+        {/* name */}
+        <div className={cn('whitespace-nowrap select-none')}>译名</div>
+        <div>{name === originalName || name === '' ? '暂无' : name}</div>
+
         {/* developers */}
-        <div className={cn('whitespace-nowrap')}>开发商</div>
+        <div className={cn('whitespace-nowrap select-none')}>开发商</div>
         <div
           className={cn(
             'flex flex-wrap gap-x-1 gap-y-[6px]',
@@ -51,7 +56,7 @@ export function InformationCard({
         </div>
 
         {/* publishers */}
-        <div className={cn('whitespace-nowrap')}>发行商</div>
+        <div className={cn('whitespace-nowrap select-none')}>发行商</div>
         <div
           className={cn(
             'flex flex-wrap gap-x-1 gap-y-1',
@@ -68,7 +73,7 @@ export function InformationCard({
         </div>
 
         {/* releaseDate */}
-        <div className={cn('whitespace-nowrap')}>发行日期</div>
+        <div className={cn('whitespace-nowrap select-none')}>发行日期</div>
         <div className={cn('flex flex-wrap gap-x-1 gap-y-1', releaseDate !== '' && 'mt-[2px]')}>
           {releaseDate === '' ? (
             '暂无'
@@ -82,7 +87,7 @@ export function InformationCard({
         </div>
 
         {/* platforms */}
-        <div className={cn('whitespace-nowrap')}>平台</div>
+        <div className={cn('whitespace-nowrap select-none')}>平台</div>
         <div
           className={cn('flex flex-wrap gap-x-1 gap-y-1', platforms.join(',') !== '' && 'mt-[2px]')}
         >
@@ -96,7 +101,7 @@ export function InformationCard({
         </div>
 
         {/* genres */}
-        <div className={cn('whitespace-nowrap')}>类型</div>
+        <div className={cn('whitespace-nowrap select-none')}>类型</div>
         <div
           className={cn('flex flex-wrap gap-x-1 gap-y-1', genres.join(',') !== '' && 'mt-[2px]')}
         >

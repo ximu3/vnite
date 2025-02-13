@@ -1,9 +1,9 @@
-import { cn } from '~/utils'
-import { useDBSyncedState } from '~/hooks'
 import { Separator } from '@ui/separator'
-import { TagsDialog } from './TagsDialog'
-import { FilterAdder } from '../../FilterAdder'
 import React from 'react'
+import { useDBSyncedState } from '~/hooks'
+import { cn } from '~/utils'
+import { FilterAdder } from '../../FilterAdder'
+import { TagsDialog } from './TagsDialog'
 
 export function TagsCard({
   gameId,
@@ -15,7 +15,7 @@ export function TagsCard({
   const [tags] = useDBSyncedState([''], `games/${gameId}/metadata.json`, ['tags'])
   return (
     <div className={cn(className, 'group')}>
-      <div className={cn('flex flex-row justify-between items-center')}>
+      <div className={cn('flex flex-row justify-between items-center select-none')}>
         <div>标签</div>
         <TagsDialog gameId={gameId} />
       </div>

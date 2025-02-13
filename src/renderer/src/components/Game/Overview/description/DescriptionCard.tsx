@@ -1,8 +1,8 @@
 import { Separator } from '@ui/separator'
-import { DescriptionDialog } from './DescriptionDialog'
-import { cn, HTMLParserOptions } from '~/utils'
-import { useDBSyncedState } from '~/hooks'
 import parse from 'html-react-parser'
+import { useDBSyncedState } from '~/hooks'
+import { cn, HTMLParserOptions } from '~/utils'
+import { DescriptionDialog } from './DescriptionDialog'
 
 export function DescriptionCard({
   gameId,
@@ -15,7 +15,7 @@ export function DescriptionCard({
   return (
     <div className={cn('bg-transparent border-0 shadow-none', className, 'group')}>
       <div className={cn('flex flex-row justify-between items-center')}>
-        <div className={cn('font-bold')}>简介</div>
+        <div className={cn('font-bold select-none')}>简介</div>
         <DescriptionDialog gameId={gameId} />
       </div>
       <Separator className={cn('my-3 bg-primary')} />
