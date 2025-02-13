@@ -54,13 +54,14 @@ export function RecentGames(): JSX.Element {
           </Button>
         </div>
       </div>
+
       {/* Game List Container */}
       <div
         ref={scrollContainerRef}
         className={cn(
           'flex flex-row gap-6 grow',
           'w-full overflow-x-auto scrollbar-none scroll-smooth',
-          'pt-2 pb-6 pl-5' // Add inner margins to show shadows
+          'pt-2 pb-6 pl-5 pr-5' // Add inner margins to show shadows
         )}
       >
         {/* The wrapper ensures that each Poster maintains a fixed width */}

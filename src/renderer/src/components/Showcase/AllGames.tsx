@@ -77,7 +77,7 @@ export function AllGames(): JSX.Element {
           'grid grid-cols-[repeat(auto-fill,148px)]',
           '3xl:grid-cols-[repeat(auto-fill,176px)]',
           'justify-between gap-6 w-full',
-          'pt-2 pl-5 pr-5 pb-5'
+          'pt-2 pl-5 pr-5 pb-6' // Add inner margins to show shadows
         )}
       >
         {games.map((gameId) => (

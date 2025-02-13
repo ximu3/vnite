@@ -46,12 +46,12 @@ export function CollectionGames({ collectionId }: { collectionId: string }): JSX
             {/* Game List Container */}
             <div
               className={cn(
-                'flex flex-row gap-6 grow flex-wrap',
-                'w-full',
-                'pt-2 pb-6 pl-5' // Add inner margins to show shadows
+                'grid grid-cols-[repeat(auto-fill,148px)]',
+                '3xl:grid-cols-[repeat(auto-fill,176px)]',
+                'justify-between gap-6 w-full',
+                'pt-2 pb-6 pl-5 pr-5' // Add inner margins to show shadows
               )}
             >
-              {/* The wrapper ensures that each Poster maintains a fixed width */}
               {games.map((gameId) => (
                 <div
                   key={gameId}
