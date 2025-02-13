@@ -184,3 +184,131 @@ export async function getSteamGridDBAssets(
     return result
   }
 }
+
+export async function getGameGrids(identifier: string | number): Promise<string[]> {
+  try {
+    let gameId: number | undefined
+
+    if (typeof identifier === 'string') {
+      const searchData = (await fetchSteamGridDb(
+        `search/autocomplete/${encodeURIComponent(identifier)}`
+      )) as { data: { id: number }[] }
+      gameId = searchData?.data?.[0]?.id
+    } else {
+      const idData = (await fetchSteamGridDb(`games/steam/${identifier}`)) as {
+        data: { id: number }
+      }
+      gameId = idData?.data?.id
+    }
+
+    if (!gameId) {
+      console.warn(`找不到游戏: ${identifier}`)
+      return []
+    }
+
+    const data = await fetchSteamGridDb(`grids/game/${gameId}`)
+
+    // check url
+    const urls = await Promise.all(data?.data?.map((grid: any) => checkImageUrl(grid.url)) || [])
+    return urls
+  } catch (error) {
+    console.error(`获取 SteamGridDB 封面时出错:`, error)
+    return []
+  }
+}
+
+export async function getGameHeros(identifier: string | number): Promise<string[]> {
+  try {
+    let gameId: number | undefined
+
+    if (typeof identifier === 'string') {
+      const searchData = (await fetchSteamGridDb(
+        `search/autocomplete/${encodeURIComponent(identifier)}`
+      )) as { data: { id: number }[] }
+      gameId = searchData?.data?.[0]?.id
+    } else {
+      const idData = (await fetchSteamGridDb(`games/steam/${identifier}`)) as {
+        data: { id: number }
+      }
+      gameId = idData?.data?.id
+    }
+
+    if (!gameId) {
+      console.warn(`找不到游戏: ${identifier}`)
+      return []
+    }
+
+    const data = await fetchSteamGridDb(`heroes/game/${gameId}`)
+
+    // check url
+    const urls = await Promise.all(data?.data?.map((hero: any) => checkImageUrl(hero.url)) || [])
+    return urls
+  } catch (error) {
+    console.error(`获取 SteamGridDB Hero 时出错:`, error)
+    return []
+  }
+}
+
+export async function getGameLogos(identifier: string | number): Promise<string[]> {
+  try {
+    let gameId: number | undefined
+
+    if (typeof identifier === 'string') {
+      const searchData = (await fetchSteamGridDb(
+        `search/autocomplete/${encodeURIComponent(identifier)}`
+      )) as { data: { id: number }[] }
+      gameId = searchData?.data?.[0]?.id
+    } else {
+      const idData = (await fetchSteamGridDb(`games/steam/${identifier}`)) as {
+        data: { id: number }
+      }
+      gameId = idData?.data?.id
+    }
+
+    if (!gameId) {
+      console.warn(`找不到游戏: ${identifier}`)
+      return []
+    }
+
+    const data = await fetchSteamGridDb(`logos/game/${gameId}`)
+
+    // check url
+    const urls = await Promise.all(data?.data?.map((logo: any) => checkImageUrl(logo.url)) || [])
+    return urls
+  } catch (error) {
+    console.error(`获取 SteamGridDB Logo 时出错:`, error)
+    return []
+  }
+}
+
+export async function getGameIcons(identifier: string | number): Promise<string[]> {
+  try {
+    let gameId: number | undefined
+
+    if (typeof identifier === 'string') {
+      const searchData = (await fetchSteamGridDb(
+        `search/autocomplete/${encodeURIComponent(identifier)}`
+      )) as { data: { id: number }[] }
+      gameId = searchData?.data?.[0]?.id
+    } else {
+      const idData = (await fetchSteamGridDb(`games/steam/${identifier}`)) as {
+        data: { id: number }
+      }
+      gameId = idData?.data?.id
+    }
+
+    if (!gameId) {
+      console.warn(`找不到游戏: ${identifier}`)
+      return []
+    }
+
+    const data = await fetchSteamGridDb(`icons/game/${gameId}`)
+
+    // check url
+    const urls = await Promise.all(data?.data?.map((icon: any) => checkImageUrl(icon.url)) || [])
+    return urls
+  } catch (error) {
+    console.error(`获取 SteamGridDB 图标时出错:`, error)
+    return []
+  }
+}

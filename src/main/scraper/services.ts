@@ -7,6 +7,10 @@ import {
   getGameIconFromDataSource,
   getGameHeroFromDataSource,
   getGameLogoFromDataSource,
+  getGameCoversByTitleFromDataSource,
+  getGameIconsByTitleFromDataSource,
+  getGameLogosByTitleFromDataSource,
+  getGameScreenshotsByTitleFromDataSource,
   initScraperServices
 } from './common'
 import { GameList, GameMetadata } from './types'
@@ -145,6 +149,76 @@ export async function getGameLogo(
     return await getGameLogoFromDataSource(dataSource, identifier)
   } catch (error) {
     log.error(`Failed to get logo for ${identifier} from ${dataSource}`, error)
+    throw error
+  }
+}
+
+/**
+ * Get game cover by title from a data source
+ * @param dataSource The data source to get cover from
+ * @param gameName The name of the game
+ * @returns The cover for the game
+ * @throws An error if the operation fails
+ */
+export async function getGameCoversByTitle(
+  dataSource: string,
+  gameName: string
+): Promise<string[]> {
+  try {
+    return await getGameCoversByTitleFromDataSource(dataSource, gameName)
+  } catch (error) {
+    log.error(`Failed to get cover for ${gameName} from ${dataSource}`, error)
+    throw error
+  }
+}
+
+/**
+ * Get game icons by title from a data source
+ * @param dataSource The data source to get icons from
+ * @param gameName The name of the game
+ * @returns The icons for the game
+ * @throws An error if the operation fails
+ */
+export async function getGameIconsByTitle(dataSource: string, gameName: string): Promise<string[]> {
+  try {
+    return await getGameIconsByTitleFromDataSource(dataSource, gameName)
+  } catch (error) {
+    log.error(`Failed to get icons for ${gameName} from ${dataSource}`, error)
+    throw error
+  }
+}
+
+/**
+ * Get game logos by title from a data source
+ * @param dataSource The data source to get logos from
+ * @param gameName The name of the game
+ * @returns The logos for the game
+ * @throws An error if the operation fails
+ */
+export async function getGameLogosByTitle(dataSource: string, gameName: string): Promise<string[]> {
+  try {
+    return await getGameLogosByTitleFromDataSource(dataSource, gameName)
+  } catch (error) {
+    log.error(`Failed to get logos for ${gameName} from ${dataSource}`, error)
+    throw error
+  }
+}
+
+/**
+ * Get game screenshots by title from a data source
+ * @param dataSource The data source to get screenshots from
+ * @param gameName The name of the game
+ * @returns A list of screenshots
+ * @throws An error if the operation fails
+ */
+export async function getGameScreenshotsByTitle(
+  dataSource: string,
+  gameName: string
+): Promise<string[]> {
+  try {
+    return await getGameScreenshotsByTitleFromDataSource(dataSource, gameName)
+  } catch (error) {
+    log.error(`Failed to get images for ${gameName} from ${dataSource}`, error)
     throw error
   }
 }

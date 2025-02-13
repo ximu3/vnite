@@ -3,7 +3,8 @@ import {
   getBangumiMetadata,
   getGameScreenshots,
   getGameCover,
-  checkGameExists
+  checkGameExists,
+  getGameCoverByTitle
 } from './common'
 import { GameList, GameMetadata } from '../types'
 import log from 'electron-log/main.js'
@@ -81,6 +82,22 @@ export async function getGameScreenshotsFromBangumi(bangumiId: string): Promise<
 export async function getGameCoverFromBangumi(bangumiId: string): Promise<string> {
   try {
     const cover = await getGameCover(bangumiId)
+    return cover
+  } catch (error) {
+    log.error('Error fetching game cover:', error)
+    throw error
+  }
+}
+
+/**
+ * Get game cover from Bangumi by title
+ * @param gameName The name of the game
+ * @returns The cover image for the game
+ * @throws An error if the operation fails
+ */
+export async function getGameCoverByTitleFromBangumi(gameName: string): Promise<string> {
+  try {
+    const cover = await getGameCoverByTitle(gameName)
     return cover
   } catch (error) {
     log.error('Error fetching game cover:', error)

@@ -4,7 +4,9 @@ import {
   getSteamMetadata,
   checkSteamGameExists,
   searchSteamGames,
-  getGameIcon
+  getGameIcon,
+  getGameCoverByTitle,
+  getGameScreenshotsByTitle
 } from './common'
 import { GameList, GameMetadata } from '../types'
 import log from 'electron-log/main.js'
@@ -101,6 +103,38 @@ export async function getGameIconFromSteam(appId: string): Promise<string> {
     return icon
   } catch (error) {
     log.error('Error fetching game icon:', error)
+    throw error
+  }
+}
+
+/**
+ * Get the cover of the game from Steam by title
+ * @param gameName The name of the game
+ * @returns The cover of the game
+ * @throws An error if the operation fails
+ */
+export async function getGameCoverByTitleFromSteam(gameName: string): Promise<string> {
+  try {
+    const cover = await getGameCoverByTitle(gameName)
+    return cover
+  } catch (error) {
+    log.error('Error fetching game cover:', error)
+    throw error
+  }
+}
+
+/**
+ * Get game screenshots from Steam by title
+ * @param gameName The name of the game
+ * @returns A list of screenshots
+ * @throws An error if the operation fails
+ */
+export async function getGameScreenshotsByTitleFromSteam(gameName: string): Promise<string[]> {
+  try {
+    const images = await getGameScreenshotsByTitle(gameName)
+    return images
+  } catch (error) {
+    log.error('Error fetching game images:', error)
     throw error
   }
 }

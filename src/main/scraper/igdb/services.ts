@@ -5,7 +5,9 @@ import {
   getIGDBMetadata,
   checkIGDBGameExists,
   searchIGDBGames,
-  initIGDB
+  initIGDB,
+  getGameCoverByTitle,
+  getGameScreenshotsByTitle
 } from './common'
 import { GameList, GameMetadata } from '../types'
 import log from 'electron-log/main.js'
@@ -99,6 +101,38 @@ export function initIGDBService(): void {
     initIGDB()
   } catch (error) {
     log.error('Error initializing IGDB service:', error)
+    throw error
+  }
+}
+
+/**
+ * Get the game cover from IGDB by title
+ * @param gameName The name of the game
+ * @returns The URL of the game cover
+ * @throws An error if the operation fails
+ */
+export async function getGameCoverByTitleFromIGDB(gameName: string): Promise<string> {
+  try {
+    const cover = await getGameCoverByTitle(gameName)
+    return cover
+  } catch (error) {
+    log.error('Error fetching game cover:', error)
+    throw error
+  }
+}
+
+/**
+ * Get game screenshots from IGDB by title
+ * @param gameName The name of the game
+ * @returns A list of screenshots
+ * @throws An error if the operation fails
+ */
+export async function getGameScreenshotsByTitleFromIGDB(gameName: string): Promise<string[]> {
+  try {
+    const images = await getGameScreenshotsByTitle(gameName)
+    return images
+  } catch (error) {
+    log.error('Error fetching game images:', error)
     throw error
   }
 }

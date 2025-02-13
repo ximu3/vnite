@@ -3,21 +3,26 @@ import {
   checkGameExistsOnVNDB,
   getGameMetadataFromVNDB,
   getGameScreenshotsFromVNDB,
-  getGameCoverFromVNDB
+  getGameCoverFromVNDB,
+  getGameCoverByTitleFromVNDB,
+  getGameScreenshotsByTitleFromVNDB
 } from './vndb'
 import {
   searchGamesFromSteam,
   checkGameExistsOnSteam,
   getGameMetadataFromSteam,
   getGameScreenshotsFromSteam,
-  getGameCoverFromSteam
+  getGameCoverFromSteam,
+  getGameCoverByTitleFromSteam,
+  getGameScreenshotsByTitleFromSteam
 } from './steam'
 import {
   searchGamesFromBangumi,
   checkGameExistsOnBangumi,
   getGameMetadataFromBangumi,
   getGameScreenshotsFromBangumi,
-  getGameCoverFromBangumi
+  getGameCoverFromBangumi,
+  getGameCoverByTitleFromBangumi
 } from './bangumi'
 import {
   searchGamesFromIGDB,
@@ -25,7 +30,9 @@ import {
   getGameMetadataFromIGDB,
   getGameScreenshotsFromIGDB,
   getGameCoverFromIGDB,
-  initIGDBService
+  initIGDBService,
+  getGameCoverByTitleFromIGDB,
+  getGameScreenshotsByTitleFromIGDB
 } from './igdb'
 import {
   searchGamesFromYMGal,
@@ -37,7 +44,11 @@ import {
 import {
   getIconFromSteamGridDB,
   getHeroFromSteamGridDB,
-  getLogoFromSteamGridDB
+  getLogoFromSteamGridDB,
+  getGameGridsFromSteamGridDB,
+  getGameHerosFromSteamGridDB,
+  getGameIconsFromSteamGridDB,
+  getGameLogosFromSteamGridDB
 } from './steamGridDb'
 import { GameList, GameMetadata } from './types'
 
@@ -172,6 +183,68 @@ export async function getGameLogoFromDataSource(
   switch (dataSource) {
     case 'steamGridDb':
       return await getLogoFromSteamGridDB(identifier)
+    default:
+      throw new Error('Invalid data source')
+  }
+}
+
+export async function getGameCoversByTitleFromDataSource(
+  dataSource: string,
+  gameName: string
+): Promise<string[]> {
+  switch (dataSource) {
+    case 'vndb':
+      return await getGameCoverByTitleFromVNDB(gameName).then((cover) => [cover])
+    case 'steam':
+      return await getGameCoverByTitleFromSteam(gameName).then((cover) => [cover])
+    case 'igdb':
+      return await getGameCoverByTitleFromIGDB(gameName).then((cover) => [cover])
+    case 'bangumi':
+      return await getGameCoverByTitleFromBangumi(gameName).then((cover) => [cover])
+    case 'steamGridDb':
+      return await getGameGridsFromSteamGridDB(gameName)
+    default:
+      throw new Error('Invalid data source')
+  }
+}
+
+export async function getGameScreenshotsByTitleFromDataSource(
+  dataSource: string,
+  gameName: string
+): Promise<string[]> {
+  switch (dataSource) {
+    case 'vndb':
+      return await getGameScreenshotsByTitleFromVNDB(gameName)
+    case 'steam':
+      return await getGameScreenshotsByTitleFromSteam(gameName)
+    case 'igdb':
+      return await getGameScreenshotsByTitleFromIGDB(gameName)
+    case 'steamGridDb':
+      return await getGameHerosFromSteamGridDB(gameName)
+    default:
+      throw new Error('Invalid data source')
+  }
+}
+
+export async function getGameIconsByTitleFromDataSource(
+  dataSource: string,
+  identifier: string | number
+): Promise<string[]> {
+  switch (dataSource) {
+    case 'steamGridDb':
+      return await getGameIconsFromSteamGridDB(identifier)
+    default:
+      throw new Error('Invalid data source')
+  }
+}
+
+export async function getGameLogosByTitleFromDataSource(
+  dataSource: string,
+  identifier: string | number
+): Promise<string[]> {
+  switch (dataSource) {
+    case 'steamGridDb':
+      return await getGameLogosFromSteamGridDB(identifier)
     default:
       throw new Error('Invalid data source')
   }

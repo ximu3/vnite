@@ -161,3 +161,23 @@ export async function getGameCover(gameId: string): Promise<string> {
     return ''
   }
 }
+
+export async function getGameCoverByTitle(gameName: string): Promise<string> {
+  try {
+    const games = await searchIGDBGames(gameName)
+    return await getGameCover(games[0].id)
+  } catch (error) {
+    console.error(`Error fetching cover for game ${gameName}:`, error)
+    return ''
+  }
+}
+
+export async function getGameScreenshotsByTitle(gameName: string): Promise<string[]> {
+  try {
+    const games = await searchIGDBGames(gameName)
+    return await getGameScreenshots(games[0].id)
+  } catch (error) {
+    console.error(`Error fetching screenshots for game ${gameName}:`, error)
+    return []
+  }
+}

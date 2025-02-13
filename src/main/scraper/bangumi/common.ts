@@ -178,3 +178,13 @@ export async function getGameCover(gameId: string): Promise<string> {
     return ''
   }
 }
+
+export async function getGameCoverByTitle(gameName: string): Promise<string> {
+  try {
+    const game = (await searchBangumiGames(gameName))[0]
+    return await getGameCover(game.id)
+  } catch (error) {
+    console.error(`Error fetching cover for game ${gameName}:`, error)
+    return ''
+  }
+}

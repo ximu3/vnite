@@ -7,6 +7,8 @@ import { toast } from 'sonner'
 import { useState } from 'react'
 import { UrlDialog } from './UrlDialog'
 import { CropDialog } from './CropDialog'
+import { SearchMediaDialog } from './SearchMediaDialog'
+import { useDBSyncedState } from '~/hooks'
 
 export function Media({ gameId }: { gameId: string }): JSX.Element {
   const [isUrlDialogOpen, setIsUrlDialogOpen] = useState({
@@ -26,6 +28,11 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
     imagePath: null,
     isResizing: false
   })
+
+  const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false)
+  const [searchType, setSearchType] = useState('')
+
+  const [originalName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['originalName'])
 
   // Processing file selection
   async function handleFileSelect(type: string): Promise<void> {
@@ -116,6 +123,17 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
         className={cn('w-7 h-7')}
       >
         <span className={cn('icon-[mdi--file-outline] w-4 h-4')}></span>
+      </Button>
+      <Button
+        onClick={() => {
+          setSearchType(type)
+          setIsSearchDialogOpen(true)
+        }}
+        variant={'outline'}
+        size={'icon'}
+        className={cn('w-7 h-7')}
+      >
+        <span className={cn('icon-[mdi--search] w-4 h-4')}></span>
       </Button>
       <UrlDialog
         setMediaWithUrl={setMediaWithUrl}
@@ -222,6 +240,21 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
         }
         imagePath={cropDialogState.imagePath}
         onCropComplete={(filePath) => handleCropComplete(cropDialogState.type, filePath)}
+      />
+      <SearchMediaDialog
+        isOpen={isSearchDialogOpen}
+        onClose={() => setIsSearchDialogOpen(false)}
+        type={searchType}
+        gameTitle={originalName}
+        onSelect={async (imagePath) => {
+          const tempFilePath = await ipcInvoke('download-temp-image', imagePath)
+          setCropDialogState({
+            isOpen: true,
+            type: searchType,
+            imagePath: tempFilePath as string,
+            isResizing: false
+          })
+        }}
       />
     </div>
   )
