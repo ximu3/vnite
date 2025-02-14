@@ -62,7 +62,7 @@ export function BigGamePoster({
                 '3xl:w-[396px] 3xl:h-[264px]'
               )}
             >
-              <HoverBigCardAnimation className={cn('rounded-none')}>
+              <HoverBigCardAnimation className={cn('rounded-none w-full h-full')}>
                 <GameImage
                   onClick={() =>
                     groupId

@@ -115,6 +115,7 @@ export function HoverBigCardAnimation({
           transform: springs.imageScale.to((s) => `scale(${s})`),
           willChange: 'transform'
         }}
+        className={cn('w-full h-full')}
       >
         {children}
       </animated.div>
