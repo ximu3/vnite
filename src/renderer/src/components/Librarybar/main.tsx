@@ -1,8 +1,6 @@
-import { cn } from '~/utils'
-import { Nav } from '@ui/nav'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
-import { Input } from '@ui/input'
 import { Button } from '@ui/button'
+import { Input } from '@ui/input'
+import { Nav } from '@ui/nav'
 import {
   Select,
   SelectContent,
@@ -12,15 +10,17 @@ import {
   SelectTrigger,
   SelectValue
 } from '@ui/select'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
+import { isEqual } from 'lodash'
+import { useEffect, useRef, useState } from 'react'
+import { useLocation } from 'react-router-dom'
+import { create } from 'zustand'
 import { useDBSyncedState } from '~/hooks'
-import { GameList } from './GameList'
+import { cn } from '~/utils'
+import { useGameBatchEditorStore } from '../GameBatchEditor/store'
 import { Filter } from './Filter'
 import { useFilterStore } from './Filter/store'
-import { isEqual } from 'lodash'
-import { create } from 'zustand'
-import { useLocation } from 'react-router-dom'
-import { useEffect, useState, useRef } from 'react'
-import { useGameBatchEditorStore } from '../GameBatchEditor/store'
+import { GameList } from './GameList'
 
 interface LibrarybarStore {
   query: string
@@ -166,6 +166,7 @@ export function Librarybar(): JSX.Element {
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>分组依据</SelectLabel>
+                <SelectItem value="none">无分组</SelectItem>
                 <SelectItem value="collection">收藏</SelectItem>
                 <SelectItem value="developers">开发商</SelectItem>
                 <SelectItem value="genres">类别</SelectItem>
