@@ -55,12 +55,16 @@ export function GamePoster({
   gameId,
   groupId,
   className,
-  dragScenario
+  dragScenario,
+  parentGap = 0,
+  position = 'center'
 }: {
   gameId: string
   groupId?: string
   className?: string
   dragScenario?: string
+  parentGap?: number
+  position?: 'right' | 'left' | 'center'
 }): JSX.Element {
   const navigate = useNavigate()
   const { gameIndex } = useGameIndexManager()
@@ -121,7 +125,7 @@ export function GamePoster({
             nativeSetDragImage
           })
         },
-        getInitialData: () => ({ dragScenario: 'reorder-collections', uuid: gameId }),
+        getInitialData: () => ({ dragScenario: dragScenario, uuid: gameId }),
         onDragStart: () => {
           setIsDraggingGlobal(true)
           setDragging(true)
@@ -142,7 +146,7 @@ export function GamePoster({
 
       dropTargetForElements({
         element: el,
-        canDrop: ({ source }) => source.data.dragScenario === 'reorder-collections',
+        canDrop: ({ source }) => source.data.dragScenario === dragScenario,
         getData: ({ input, element }) => {
           // your base data you want to attach to the drop target
           const data = { uuid: gameId }
@@ -312,7 +316,12 @@ export function GamePoster({
           </HoverCardContent>
         </HoverCard>
       )}
-      {closestEdge && <DropIndicator edge={closestEdge} gap="24px" />}
+      {closestEdge && (
+        <DropIndicator
+          edge={closestEdge}
+          gap={closestEdge === position ? '10px' : `${parentGap}px`}
+        />
+      )}
       {previewState.type === 'preview'
         ? createPortal(<Preview title={gameData.name ?? ''} />, previewState.container)
         : null}

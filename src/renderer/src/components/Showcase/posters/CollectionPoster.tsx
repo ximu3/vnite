@@ -54,10 +54,14 @@ function Preview({
 
 export function CollectionPoster({
   collectionId,
-  className
+  className,
+  parentGap = 24,
+  position = 'center'
 }: {
   collectionId: string
   className?: string
+  parentGap?: number
+  position?: 'right' | 'left' | 'center'
 }): JSX.Element {
   const navigate = useNavigate()
   const { collections, reorderCollections } = useCollections()
@@ -196,7 +200,12 @@ export function CollectionPoster({
           </div>
         )}
 
-        {closestEdge && <DropIndicator edge={closestEdge} gap="24px" />}
+        {closestEdge && (
+          <DropIndicator
+            edge={closestEdge}
+            gap={closestEdge === position ? '10px' : `${parentGap}px`}
+          />
+        )}
         {previewState.type === 'preview'
           ? createPortal(
               <Preview collectionLength={length} collectionName={collectionName} />,
