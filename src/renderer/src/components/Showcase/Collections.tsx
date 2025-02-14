@@ -1,10 +1,10 @@
-import { cn } from '~/utils'
-import { Separator } from '@ui/separator'
 import { Button } from '@ui/button'
-import { useCollections } from '~/hooks'
-import { CollectionPoster } from './posters/CollectionPoster'
-import { useRef } from 'react'
+import { Separator } from '@ui/separator'
 import { throttle } from 'lodash'
+import { useRef } from 'react'
+import { useCollections } from '~/hooks'
+import { cn } from '~/utils'
+import { CollectionPoster } from './posters/CollectionPoster'
 
 export function Collections(): JSX.Element {
   const { collections } = useCollections()
@@ -60,14 +60,21 @@ export function Collections(): JSX.Element {
         )}
       >
         {/* The wrapper ensures that each Poster maintains a fixed width */}
-        {Object.keys(collections).map((collectionId) => (
+        {Object.keys(collections).map((collectionId, index) => (
           <div
             key={collectionId}
             className={cn(
               'flex-shrink-0' // Preventing compression
             )}
           >
-            <CollectionPoster collectionId={collectionId} />
+            <CollectionPoster
+              collectionId={collectionId}
+              position={
+                (index === 0 && 'left') ||
+                (index === Object.keys(collections).length - 1 && 'right') ||
+                'center'
+              }
+            />
           </div>
         ))}
       </div>

@@ -203,7 +203,7 @@ export function CollectionPoster({
         {closestEdge && (
           <DropIndicator
             edge={closestEdge}
-            gap={closestEdge === position ? '10px' : `${parentGap}px`}
+            gap={closestEdge === position ? '16px' : `${parentGap}px`}
           />
         )}
         {previewState.type === 'preview'
