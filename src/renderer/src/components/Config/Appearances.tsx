@@ -24,7 +24,7 @@ export function Appearances(): JSX.Element {
     'gameList',
     'highlightLocalGames'
   ])
-  const [markLocalGames, setMarkLocalGames] = useDBSyncedState(true, 'config.json', [
+  const [markLocalGames, setMarkLocalGames] = useDBSyncedState(false, 'config.json', [
     'others',
     'gameList',
     'markLocalGames'

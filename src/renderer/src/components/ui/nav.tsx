@@ -46,10 +46,7 @@ export function Nav({
         }
 
         return (
-          <div
-            className={cn(baseStyles, variantStyles, className)} // 保留传入的 className
-            {...props}
-          >
+          <div className={cn(baseStyles, variantStyles, className)} {...props}>
             {children}
           </div>
         )

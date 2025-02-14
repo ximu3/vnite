@@ -20,7 +20,7 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
     'gameList',
     'highlightLocalGames'
   ])
-  const [markLocalGames] = useDBSyncedState(true, 'config.json', [
+  const [markLocalGames] = useDBSyncedState(false, 'config.json', [
     'others',
     'gameList',
     'markLocalGames'
@@ -128,7 +128,7 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
                 {markLocalGames && gamePath && (
                   <span
                     className={cn(
-                      'icon-[mdi--check-outline] w-[10px] h-[10px] mr-[-10px] flex-shrink-0'
+                      'icon-[mdi--check-outline] w-[10px] h-[10px] mr-[-6px] flex-shrink-0'
                     )}
                   ></span>
                 )}
