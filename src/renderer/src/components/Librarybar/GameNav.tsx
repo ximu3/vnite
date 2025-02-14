@@ -1,15 +1,15 @@
-import { Nav } from '../ui/nav'
-import { cn } from '~/utils'
-import { useDBSyncedState } from '~/hooks'
-import { GameNavCM } from '../contextMenu/GameNavCM'
 import { ContextMenu, ContextMenuTrigger } from '@ui/context-menu'
 import { GameImage } from '@ui/game-image'
-import { AttributesDialog } from '../Game/Config/AttributesDialog'
+import { Nav } from '@ui/nav'
 import React from 'react'
-import { AddCollectionDialog } from '../dialog/AddCollectionDialog'
-import { useGameBatchEditorStore } from '../GameBatchEditor/store'
-import { BatchGameNavCM } from '../GameBatchEditor/BatchGameNavCM'
 import { useLocation } from 'react-router-dom'
+import { useDBSyncedState } from '~/hooks'
+import { cn } from '~/utils'
+import { GameNavCM } from '../contextMenu/GameNavCM'
+import { AddCollectionDialog } from '../dialog/AddCollectionDialog'
+import { AttributesDialog } from '../Game/Config/AttributesDialog'
+import { BatchGameNavCM } from '../GameBatchEditor/BatchGameNavCM'
+import { useGameBatchEditorStore } from '../GameBatchEditor/store'
 
 export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }): JSX.Element {
   const location = useLocation()
@@ -20,10 +20,17 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
     'gameList',
     'highlightLocalGames'
   ])
+  const [markLocalGames] = useDBSyncedState(true, 'config.json', [
+    'others',
+    'gameList',
+    'markLocalGames'
+  ])
   const [isAttributesDialogOpen, setIsAttributesDialogOpen] = React.useState(false)
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
   const { addGameId, removeGameId, clearGameIds, gameIds, lastSelectedId, setLastSelectedId } =
     useGameBatchEditorStore()
+
+  const isLocated = location.pathname.includes(`/games/${gameId}`)
 
   // Check if the current game is selected
   const isSelected = gameIds.includes(gameId)
@@ -95,14 +102,16 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
           <div onClick={handleGameClick} data-game-id={gameId}>
             <Nav
               variant="sidebar"
-              className={cn(
-                'text-xs p-3 h-5 rounded-none',
-                highlightLocalGames && gamePath && 'text-accent-foreground',
-                isSelected && isBatchMode && 'bg-accent text-accent-foreground'
-              )}
+              className={cn('text-xs p-3 h-5 rounded-none', {
+                'text-accent-foreground':
+                  (highlightLocalGames && gamePath) ||
+                  (!highlightLocalGames && isSelected && isBatchMode) ||
+                  (!highlightLocalGames && isLocated),
+                'bg-accent': (isSelected && isBatchMode) || isLocated
+              })}
               to={`./games/${gameId}/${groupId}`}
             >
-              <div className={cn('flex flex-row gap-2 items-center')}>
+              <div className={cn('flex flex-row gap-2 items-center w-full')}>
                 <div className={cn('flex items-center')}>
                   <GameImage
                     gameId={gameId}
@@ -114,7 +123,14 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
                     }
                   />
                 </div>
-                <div className={cn('truncate')}>{gameName}</div>
+                <div className={cn('truncate flex-grow')}>{gameName}</div>
+                {markLocalGames && gamePath && (
+                  <span
+                    className={cn(
+                      'icon-[mdi--check-outline] w-[10px] h-[10px] mr-[-10px] flex-shrink-0'
+                    )}
+                  ></span>
+                )}
               </div>
             </Nav>
           </div>

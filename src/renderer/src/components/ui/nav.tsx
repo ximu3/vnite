@@ -30,9 +30,7 @@ export function Nav({
               : 'hover:bg-accent hover:text-accent-foreground rounded-none'
             break
           case 'sidebar':
-            variantStyles = isActive
-              ? 'bg-accent text-accent-foreground shadow-md'
-              : 'hover:bg-accent hover:text-accent-foreground'
+            variantStyles = isActive ? 'bg-accent shadow-md' : 'hover:bg-accent'
             break
           case 'librarybar':
             variantStyles = isActive

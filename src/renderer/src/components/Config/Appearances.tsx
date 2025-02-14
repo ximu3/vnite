@@ -1,7 +1,7 @@
-import { cn } from '~/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { Switch } from '@ui/switch'
 import { useDBSyncedState } from '~/hooks'
+import { cn } from '~/utils'
 
 export function Appearances(): JSX.Element {
   const [showRecentGamesInGameList, setShowRecentGamesInGameList] = useDBSyncedState(
@@ -23,6 +23,11 @@ export function Appearances(): JSX.Element {
     'others',
     'gameList',
     'highlightLocalGames'
+  ])
+  const [markLocalGames, setMarkLocalGames] = useDBSyncedState(true, 'config.json', [
+    'others',
+    'gameList',
+    'markLocalGames'
   ])
   return (
     <Card className={cn('group')}>
@@ -61,6 +66,13 @@ export function Appearances(): JSX.Element {
             <Switch
               checked={highlightLocalGames}
               onCheckedChange={(checked) => setHighlightLocalGames(checked)}
+            />
+          </div>
+          <div className={cn('flex flex-row justify-between items-center')}>
+            <div>是否在游戏列表中标记本地游戏</div>
+            <Switch
+              checked={markLocalGames}
+              onCheckedChange={(checked) => setMarkLocalGames(checked)}
             />
           </div>
         </div>
