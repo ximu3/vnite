@@ -59,17 +59,23 @@ export function Librarybar(): JSX.Element {
 
   const scrollToCurrentGame = (): void => {
     const currentGameId = location.pathname.split('/games/')[1]?.split('/')[0]
-    if (currentGameId) {
-      const element = document.querySelector(`[data-game-id="${currentGameId}"]`)
+    const currentGroupId = location.pathname.split('/games/')[1]?.split('/')[1]
+    if (currentGameId && currentGroupId) {
+      const element = document.querySelector(
+        `[data-game-id="${currentGameId}"][data-group-id="${currentGroupId}"]`
+      )
       element?.scrollIntoView({ behavior: 'instant', block: 'center' })
     }
   }
 
   useEffect(() => {
     const currentGameId = location.pathname.split('/games/')[1]?.split('/')[0]
-    if (!currentGameId) return
+    const currentGroupId = location.pathname.split('/games/')[1]?.split('/')[1]
+    if (!currentGameId && currentGroupId) return
 
-    const gameElement = document.querySelector(`[data-game-id="${currentGameId}"]`)
+    const gameElement = document.querySelector(
+      `[data-game-id="${currentGameId}"][data-group-id="${currentGroupId}"]`
+    )
     if (!gameElement) return
 
     const observer = new IntersectionObserver(

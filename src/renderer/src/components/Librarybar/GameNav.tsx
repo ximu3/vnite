@@ -97,7 +97,7 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
     <>
       <ContextMenu>
         <ContextMenuTrigger>
-          <div onClick={handleGameClick} data-game-id={gameId}>
+          <div onClick={handleGameClick} data-game-id={gameId} data-group-id={groupId}>
             <Nav
               variant="gameList"
               className={cn(
