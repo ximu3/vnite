@@ -30,8 +30,6 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
   const { addGameId, removeGameId, clearGameIds, gameIds, lastSelectedId, setLastSelectedId } =
     useGameBatchEditorStore()
 
-  const isLocated = location.pathname.includes(`/games/${gameId}`)
-
   // Check if the current game is selected
   const isSelected = gameIds.includes(gameId)
 
@@ -102,14 +100,11 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
           <div onClick={handleGameClick} data-game-id={gameId}>
             <Nav
               variant="gameList"
-              className={cn('text-xs p-3 h-5 rounded-none', {
-                'text-accent-foreground':
-                  (highlightLocalGames && gamePath) ||
-                  (!highlightLocalGames && isSelected && isBatchMode) ||
-                  (!highlightLocalGames && isLocated),
-                'hover:text-accent-foreground': !highlightLocalGames,
-                'bg-accent': (isSelected && isBatchMode) || isLocated
-              })}
+              className={cn(
+                'text-xs p-3 h-5 rounded-none',
+                highlightLocalGames && gamePath && 'text-accent-foreground',
+                isSelected && isBatchMode && 'bg-accent'
+              )}
               to={`./games/${gameId}/${groupId}`}
             >
               <div className={cn('flex flex-row gap-2 items-center w-full')}>
