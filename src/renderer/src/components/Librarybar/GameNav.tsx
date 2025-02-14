@@ -101,12 +101,13 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
         <ContextMenuTrigger>
           <div onClick={handleGameClick} data-game-id={gameId}>
             <Nav
-              variant="sidebar"
+              variant="gameList"
               className={cn('text-xs p-3 h-5 rounded-none', {
                 'text-accent-foreground':
                   (highlightLocalGames && gamePath) ||
                   (!highlightLocalGames && isSelected && isBatchMode) ||
                   (!highlightLocalGames && isLocated),
+                'hover:text-accent-foreground': !highlightLocalGames,
                 'bg-accent': (isSelected && isBatchMode) || isLocated
               })}
               to={`./games/${gameId}/${groupId}`}
