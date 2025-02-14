@@ -326,3 +326,40 @@ async function convertToIcon(
     throw error
   }
 }
+
+export async function readFileBuffer(filePath: string): Promise<Buffer> {
+  try {
+    return await fse.readFile(filePath)
+  } catch (error) {
+    console.error('Error reading file buffer:', error)
+    throw error
+  }
+}
+
+export async function cropImage({
+  sourcePath,
+  x,
+  y,
+  width,
+  height
+}: {
+  sourcePath: string
+  x: number
+  y: number
+  width: number
+  height: number
+}): Promise<string> {
+  try {
+    const ext = path.extname(sourcePath).slice(1)
+    const tempPath = getAppTempPath(`cropped_${Date.now()}.${ext}`)
+    sharp.cache(false)
+    await sharp(sourcePath, { animated: true, limitInputPixels: false })
+      .extract({ left: x, top: y, width, height })
+      .toFile(tempPath)
+
+    return tempPath
+  } catch (error) {
+    console.error('Error cropping image:', error)
+    throw error
+  }
+}

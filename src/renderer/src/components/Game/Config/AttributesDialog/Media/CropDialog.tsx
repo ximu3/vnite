@@ -3,6 +3,7 @@ import ReactCrop, { Crop } from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@ui/dialog'
 import { Button } from '@ui/button'
+import { toast } from 'sonner'
 import { cn } from '~/utils'
 import { ipcInvoke } from '~/utils'
 
@@ -55,78 +56,6 @@ export function CropDialog({
     setCompletedCrop(cropUpdate)
   }, [])
 
-  const getCroppedImg = useCallback(async (): Promise<string> => {
-    if (!imageRef.current || !completedCrop) {
-      throw new Error('裁剪未完成')
-    }
-
-    try {
-      const canvas = document.createElement('canvas')
-      const image = imageRef.current
-
-      // Calculating scaling
-      const scaleX = image.naturalWidth / image.width
-      const scaleY = image.naturalHeight / image.height
-
-      // Use actual pixel dimensions
-      const actualWidth = Math.round(completedCrop.width * scaleX)
-      const actualHeight = Math.round(completedCrop.height * scaleY)
-      const actualX = Math.round(completedCrop.x * scaleX)
-      const actualY = Math.round(completedCrop.y * scaleY)
-
-      console.log('裁剪区域显示尺寸:', completedCrop.width, completedCrop.height)
-      console.log('裁剪区域实际像素:', actualWidth, actualHeight)
-
-      // Set the canvas size to the actual output size
-      canvas.width = actualWidth
-      canvas.height = actualHeight
-
-      const ctx = canvas.getContext('2d')
-      if (!ctx) {
-        throw new Error('无法获取 2d 上下文')
-      }
-
-      // Setting Image Smoothing
-      ctx.imageSmoothingQuality = 'high'
-      ctx.imageSmoothingEnabled = true
-
-      // Drawing using actual pixel coordinates
-      ctx.drawImage(
-        image,
-        actualX,
-        actualY,
-        actualWidth,
-        actualHeight,
-        0,
-        0,
-        actualWidth,
-        actualHeight
-      )
-
-      // 转换为 ArrayBuffer
-      const arrayBuffer = await new Promise<ArrayBuffer>((resolve, reject) => {
-        canvas.toBlob(
-          (blob) => {
-            if (!blob) {
-              reject(new Error('画布为空'))
-              return
-            }
-            blob.arrayBuffer().then(resolve).catch(reject)
-          },
-          'image/png',
-          1.0
-        )
-      })
-
-      const uint8Array = new Uint8Array(arrayBuffer)
-      const tempFilePath = await ipcInvoke('save-temp-image', uint8Array)
-      return tempFilePath as string
-    } catch (error) {
-      console.error('裁剪过程出错:', error)
-      throw error
-    }
-  }, [completedCrop])
-
   // Add Size Display
   const displaySize = useMemo(() => {
     if (!completedCrop || !imageSize.width) return null
@@ -137,6 +66,46 @@ export function CropDialog({
 
     return `${actualWidth} × ${actualHeight} px`
   }, [completedCrop, imageSize])
+
+  const handleCrop = async (): Promise<void> => {
+    try {
+      if (!completedCrop || !imagePath || !imageRef.current) {
+        throw new Error('裁剪未完成')
+      }
+
+      const image = imageRef.current
+
+      const scaleX = image.naturalWidth / image.width
+      const scaleY = image.naturalHeight / image.height
+
+      // Calculate actual cut size
+      const actualWidth = Math.round(completedCrop.width * scaleX)
+      const actualHeight = Math.round(completedCrop.height * scaleY)
+      const actualX = Math.round(completedCrop.x * scaleX)
+      const actualY = Math.round(completedCrop.y * scaleY)
+
+      // If it is the original size then it returns directly
+      if (actualWidth === imageSize.width && actualHeight === imageSize.height) {
+        onCropComplete(imagePath)
+        return
+      }
+
+      const filePath = (await ipcInvoke('crop-image', {
+        sourcePath: imagePath,
+        x: actualX,
+        y: actualY,
+        width: actualWidth,
+        height: actualHeight
+      })) as string
+
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+
+      onCropComplete(filePath)
+    } catch (error) {
+      console.error('裁剪失败:', error)
+      // 添加错误提示
+    }
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -172,9 +141,17 @@ export function CropDialog({
               取消
             </Button>
             <Button
-              onClick={async () => {
-                const filePath = await getCroppedImg()
-                onCropComplete(filePath)
+              onClick={() => {
+                toast.promise(
+                  async () => {
+                    await handleCrop()
+                  },
+                  {
+                    loading: `正在裁剪...`,
+                    success: `裁剪成功`,
+                    error: `裁剪失败`
+                  }
+                )
               }}
             >
               确认

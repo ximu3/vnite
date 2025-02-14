@@ -11,7 +11,9 @@ import {
   updateOpenAtLogin,
   getAppVersion,
   portableStore,
-  switchDatabaseMode
+  switchDatabaseMode,
+  readFileBuffer,
+  cropImage
 } from '~/utils'
 import { app } from 'electron'
 
@@ -100,6 +102,32 @@ export function setupUtilsIPC(mainWindow: BrowserWindow): void {
   ipcMain.handle('switch-database-mode', async () => {
     return await switchDatabaseMode()
   })
+
+  ipcMain.handle('read-file-buffer', async (_, filePath: string) => {
+    return await readFileBuffer(filePath)
+  })
+
+  ipcMain.handle(
+    'crop-image',
+    async (
+      _,
+      {
+        sourcePath,
+        x,
+        y,
+        width,
+        height
+      }: {
+        sourcePath: string
+        x: number
+        y: number
+        width: number
+        height: number
+      }
+    ) => {
+      return await cropImage({ sourcePath, x, y, width, height })
+    }
+  )
 
   mainWindow.on('maximize', () => {
     mainWindow.webContents.send('window-maximized')
