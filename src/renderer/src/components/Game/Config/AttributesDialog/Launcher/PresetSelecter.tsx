@@ -15,6 +15,7 @@ import {
 } from '@ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
 import { toast } from 'sonner'
+import { useDBSyncedState } from '~/hooks'
 
 import { useSteamIdDialogStore, SteamIdDialog } from './SteamIdDialog'
 
@@ -45,11 +46,25 @@ export function PresetSelecter({
   className?: string
 }): JSX.Element {
   const [open, setOpen] = React.useState(false)
+  const [steamId] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['steamId'])
   const [value] = React.useState('')
   const { setIsOpen, setGameId } = useSteamIdDialogStore()
 
   async function setPreset(presetName: string, gameId: string): Promise<void> {
     if (presetName === 'steam') {
+      if (steamId) {
+        toast.promise(
+          async () => {
+            await ipcInvoke('launcher-preset', 'steam', gameId, steamId)
+          },
+          {
+            loading: '正在配置预设...',
+            success: '预设配置成功',
+            error: (error) => `${error}`
+          }
+        )
+        return
+      }
       setIsOpen(true)
       setGameId(gameId)
       toast.info('请输入Steam ID')
