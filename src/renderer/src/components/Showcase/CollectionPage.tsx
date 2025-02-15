@@ -1,11 +1,47 @@
-import { cn } from '~/utils'
 import { ScrollArea } from '@ui/scroll-area'
 import { Separator } from '@ui/separator'
+import { useEffect, useRef, useState } from 'react'
 import { useCollections } from '~/hooks'
+import { cn } from '~/utils'
 import { CollectionPoster } from './posters/CollectionPoster'
 
 export function CollectionPage(): JSX.Element {
   const { collections } = useCollections()
+
+  const [gap, setGap] = useState<number>(0)
+  const [columns, setColumns] = useState<number>(0)
+  const gridContainerRef = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+    const calculateGap = (): void => {
+      const gridContainer = gridContainerRef.current
+      if (gridContainer) {
+        const containerWidth = gridContainer.offsetWidth
+        const gridItems = gridContainer.children
+        const itemWidth = (gridItems[0] as HTMLDivElement).offsetWidth
+        const containerStyle = window.getComputedStyle(gridContainer)
+        const minGap = parseFloat(containerStyle.getPropertyValue('gap'))
+        const pL = parseFloat(containerStyle.paddingLeft)
+        const pR = parseFloat(containerStyle.paddingRight)
+
+        const columns = Math.floor((containerWidth - pL - pR + minGap) / (itemWidth + minGap))
+        setColumns(columns)
+        if (columns > 1) {
+          const gapTrue = (containerWidth - pL - pR - columns * itemWidth) / (columns - 1)
+          setGap(gapTrue)
+        }
+      }
+    }
+
+    calculateGap()
+    const observer = new ResizeObserver(calculateGap)
+    const gridContainer = gridContainerRef.current
+    if (gridContainer) {
+      observer.observe(gridContainer)
+    }
+
+    return (): void => observer.disconnect()
+  }, [])
+
   return (
     <div className={cn('flex flex-col gap-3 h-[100vh] pt-[30px]')}>
       <ScrollArea className={cn('w-full')}>
@@ -21,6 +57,7 @@ export function CollectionPage(): JSX.Element {
 
           {/* Game List Container */}
           <div
+            ref={gridContainerRef}
             className={cn(
               'grid grid-cols-[repeat(auto-fill,160px)]',
               '3xl:grid-cols-[repeat(auto-fill,190px)]',
@@ -28,14 +65,22 @@ export function CollectionPage(): JSX.Element {
               'pt-2 pb-6 pl-5 pr-5' // Add inner margins to show shadows
             )}
           >
-            {Object.keys(collections).map((collectionId) => (
+            {Object.keys(collections).map((collectionId, index) => (
               <div
                 key={collectionId}
                 className={cn(
                   'flex-shrink-0' // Preventing compression
                 )}
               >
-                <CollectionPoster collectionId={collectionId} />
+                <CollectionPoster
+                  collectionId={collectionId}
+                  parentGap={gap}
+                  position={
+                    (index % columns === 0 && 'left') ||
+                    (index % columns === columns - 1 && 'right') ||
+                    'center'
+                  }
+                />
               </div>
             ))}
           </div>

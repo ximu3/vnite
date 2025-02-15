@@ -1,9 +1,9 @@
-import { cn } from '~/utils'
-import { Separator } from '@ui/separator'
 import { ScrollArea } from '@ui/scroll-area'
+import { Separator } from '@ui/separator'
+import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { useCollections } from '~/hooks'
+import { cn } from '~/utils'
 import { GamePoster } from './posters/GamePoster'
-import { createContext, useContext, useState } from 'react'
 
 export type DragContextType = {
   isDraggingGlobal: boolean
@@ -27,6 +27,40 @@ export function CollectionGames({ collectionId }: { collectionId: string }): JSX
   const games = collections[collectionId].games
   const collectionName = collections[collectionId].name
 
+  const [gap, setGap] = useState<number>(0)
+  const [columns, setColumns] = useState<number>(0)
+  const gridContainerRef = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+    const calculateGap = (): void => {
+      const gridContainer = gridContainerRef.current
+      if (gridContainer) {
+        const containerWidth = gridContainer.offsetWidth
+        const gridItems = gridContainer.children
+        const itemWidth = (gridItems[0] as HTMLDivElement).offsetWidth
+        const containerStyle = window.getComputedStyle(gridContainer)
+        const minGap = parseFloat(containerStyle.getPropertyValue('gap'))
+        const pL = parseFloat(containerStyle.paddingLeft)
+        const pR = parseFloat(containerStyle.paddingRight)
+
+        const columns = Math.floor((containerWidth - pL - pR + minGap) / (itemWidth + minGap))
+        setColumns(columns)
+        if (columns > 1) {
+          const gapTrue = (containerWidth - pL - pR - columns * itemWidth) / (columns - 1)
+          setGap(gapTrue)
+        }
+      }
+    }
+
+    calculateGap()
+    const observer = new ResizeObserver(calculateGap)
+    const gridContainer = gridContainerRef.current
+    if (gridContainer) {
+      observer.observe(gridContainer)
+    }
+
+    return (): void => observer.disconnect()
+  }, [])
+
   const [isDraggingGlobal, setIsDraggingGlobal] = useState(false)
 
   return (
@@ -45,6 +79,7 @@ export function CollectionGames({ collectionId }: { collectionId: string }): JSX
 
             {/* Game List Container */}
             <div
+              ref={gridContainerRef}
               className={cn(
                 'grid grid-cols-[repeat(auto-fill,148px)]',
                 '3xl:grid-cols-[repeat(auto-fill,176px)]',
@@ -52,7 +87,7 @@ export function CollectionGames({ collectionId }: { collectionId: string }): JSX
                 'pt-2 pb-6 pl-5 pr-5' // Add inner margins to show shadows
               )}
             >
-              {games.map((gameId) => (
+              {games.map((gameId, index) => (
                 <div
                   key={gameId}
                   className={cn(
@@ -63,6 +98,12 @@ export function CollectionGames({ collectionId }: { collectionId: string }): JSX
                     gameId={gameId}
                     groupId={`collection:${collectionId}`}
                     dragScenario="reorder-games-in-collection"
+                    parentGap={gap}
+                    position={
+                      (index % columns === 0 && 'left') ||
+                      (index % columns === columns - 1 && 'right') ||
+                      'center'
+                    }
                   />
                 </div>
               ))}
