@@ -1,6 +1,7 @@
 import { GameList, GameMetadata } from '../types'
 import { SteamAppDetailsResponse, SteamStoreSearchResponse } from './types'
 import { formatDate } from '~/utils'
+import { getGameHerosFromSteamGridDB } from '../steamGridDb'
 import * as cheerio from 'cheerio'
 
 // Defining Base URL Constants
@@ -206,21 +207,19 @@ export async function getSteamMetadata(appId: string): Promise<GameMetadata> {
 }
 
 export async function getGameScreenshots(appId: string): Promise<string[]> {
-  try {
-    const primaryUrl = `${STEAM_URLS.PRIMARY.STORE}/api/appdetails?appids=${appId}`
-    const fallbackUrl = `${STEAM_URLS.FALLBACK.APP_DETAILS}?appids=${appId}`
-
-    const data = (await fetchSteamAPI(primaryUrl, fallbackUrl)) as SteamAppDetailsResponse
-
-    if (!data[appId].success) {
-      return []
-    }
-
-    return data[appId].data.screenshots.map((screenshot) => screenshot.path_full)
-  } catch (error) {
-    console.error(`Error fetching screenshots for game ${appId}:`, error)
-    return []
-  }
+  // try {
+  //   const primaryUrl = `${STEAM_URLS.PRIMARY.STORE}/api/appdetails?appids=${appId}`
+  //   const fallbackUrl = `${STEAM_URLS.FALLBACK.APP_DETAILS}?appids=${appId}`
+  //   const data = (await fetchSteamAPI(primaryUrl, fallbackUrl)) as SteamAppDetailsResponse
+  //   if (!data[appId].success) {
+  //     return []
+  //   }
+  //   return data[appId].data.screenshots.map((screenshot) => screenshot.path_full)
+  // } catch (error) {
+  //   console.error(`Error fetching screenshots for game ${appId}:`, error)
+  //   return []
+  // }
+  return await getGameHerosFromSteamGridDB(Number(appId))
 }
 
 async function checkImageUrl(url: string, timeout = 5000): Promise<boolean> {
