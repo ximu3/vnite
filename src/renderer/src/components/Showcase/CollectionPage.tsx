@@ -14,7 +14,7 @@ export function CollectionPage(): JSX.Element {
   useEffect(() => {
     const calculateGap = (): void => {
       const gridContainer = gridContainerRef.current
-      if (gridContainer) {
+      if (gridContainer && gridContainer.children.length > 0) {
         const containerWidth = gridContainer.offsetWidth
         const gridItems = gridContainer.children
         const itemWidth = (gridItems[0] as HTMLDivElement).offsetWidth
