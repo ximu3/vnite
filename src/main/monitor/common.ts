@@ -6,19 +6,17 @@ import { setDBValue, getDBValue } from '~/database'
 import log from 'electron-log/main.js'
 import { backupGameSaveData } from '~/database'
 import { exec } from 'child_process'
-import iconv from 'iconv-lite'
 import { isEqual } from 'lodash'
 import { spawn } from 'child_process'
 
 const execAsync = (command: string, options?: any): Promise<{ stdout: string; stderr: string }> => {
   return new Promise<{ stdout: string; stderr: string }>((resolve, reject) => {
-    exec(command, { ...options, encoding: 'buffer' }, (error, stdout, stderr) => {
+    exec(command, { ...options }, (error, stdout, stderr) => {
       if (error) {
         reject(error)
       } else {
         // Convert output from GBK to UTF-8
-        const decodedStdout = iconv.decode(stdout, 'gbk')
-        resolve({ stdout: decodedStdout, stderr: stderr.toString() })
+        resolve({ stdout: stdout.toString(), stderr: stderr.toString() })
       }
     })
   })
@@ -33,31 +31,22 @@ async function getProcessList(): Promise<
   }>
 > {
   try {
-    // Execute WMIC commands
+    // Getting process information with PowerShell
     const { stdout } = await execAsync(
-      'wmic process get ExecutablePath,ProcessId,CommandLine,Name /FORMAT:CSV',
+      `chcp 65001 | Out-Null; powershell -Command "Get-CimInstance Win32_Process | Select-Object Name,ProcessId,ExecutablePath,CommandLine | ConvertTo-Json"`,
       {
-        shell: 'cmd.exe'
+        shell: 'powershell.exe',
+        maxBuffer: 1024 * 1024 * 5 // 5MB buffer for large output
       }
     )
 
-    return stdout
-      .split('\n')
-      .slice(1) // Skip title line
-      .filter(Boolean)
-      .map((line) => {
-        const [, executablePath, commandLine, name, pidStr] = line.split(',')
-        return {
-          name: name?.trim() || '',
-          cmd: commandLine?.trim() || '',
-          pid: parseInt(pidStr?.trim() || '0', 10),
-          executablePath:
-            executablePath
-              ?.trim()
-              .replace(/^["']|["']$/g, '') // Remove quotes
-              .replace(/\\+/g, '\\') || '' // Normalized path separator
-        }
-      })
+    const processes = JSON.parse(stdout)
+    return processes.map((proc: any) => ({
+      name: proc.Name || '',
+      pid: proc.ProcessId || 0,
+      executablePath: (proc.ExecutablePath || '').replace(/^["']|["']$/g, '').replace(/\\+/g, '\\'),
+      cmd: proc.CommandLine || ''
+    }))
   } catch (error) {
     console.error('获取进程列表失败:', error)
     throw error
@@ -203,7 +192,6 @@ export class GameMonitor {
         async (): Promise<void> => {
           const psCommand = `Get-Process | Where-Object {$_.Path -eq '${normalizedPath}'} | Stop-Process -Force`
           await execAsync(`powershell -Command "${psCommand}"`, {
-            encoding: 'cp936',
             shell: 'cmd.exe'
           })
         }
@@ -292,8 +280,7 @@ export class GameMonitor {
         } else if (entry.isFile()) {
           const ext = path.extname(entry.name).toLowerCase()
           if (extensions.includes(ext)) {
-            const replacedPath = fullPath.replace(/・/g, '?')
-            executableFiles.push(replacedPath)
+            executableFiles.push(fullPath)
           }
         }
       }
@@ -401,7 +388,7 @@ export class GameMonitor {
             await new Promise((resolve) => setTimeout(resolve, 1000))
 
             // Simulate pressing the Magpie shortcut
-            await simulateHotkey(magpieHotkey)
+            simulateHotkey(magpieHotkey)
             monitored.isScaled = true
           }
         } else if (!monitored.isRunning) {

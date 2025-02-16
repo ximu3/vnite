@@ -64,7 +64,6 @@
     "fs-extra": "^11.2.0",
     "html-react-parser": "^5.1.18",
     "html2canvas": "^1.4.1",
-    "iconv-lite": "^0.6.3",
     "koffi": "^2.10.1",
     "lowdb": "^7.0.1",
     "lucide-react": "^0.453.0",
