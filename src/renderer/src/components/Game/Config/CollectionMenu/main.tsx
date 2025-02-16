@@ -26,12 +26,12 @@ export function CollectionMenu({
       <DropdownMenuSub>
         <DropdownMenuSubTrigger>添加至</DropdownMenuSubTrigger>
         <DropdownMenuPortal>
-          <DropdownMenuSubContent>
+          <DropdownMenuSubContent className="max-w-[300px]">
             {Object.entries(collections)
               .filter(([key]) => !gameInCollectionsId.includes(key))
               .map(([key, value]) => (
                 <DropdownMenuItem key={key} onClick={() => addGameToCollection(key, gameId)} inset>
-                  {value.name}
+                  <span className="truncate">{value.name}</span>
                 </DropdownMenuItem>
               ))}
             {Object.entries(collections).filter(([key]) => !gameInCollectionsId.includes(key))
@@ -49,7 +49,7 @@ export function CollectionMenu({
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>移除出</DropdownMenuSubTrigger>
           <DropdownMenuPortal>
-            <DropdownMenuSubContent>
+            <DropdownMenuSubContent className="max-w-[300px]">
               {Object.entries(collections)
                 .filter(([key]) => gameInCollectionsId.includes(key))
                 .map(([key, value]) => (
@@ -58,7 +58,7 @@ export function CollectionMenu({
                     onClick={() => removeGameFromCollection(key, gameId)}
                     className={cn('pl-3')}
                   >
-                    {value.name}
+                    <span className="truncate">{value.name}</span>
                   </DropdownMenuItem>
                 ))}
             </DropdownMenuSubContent>
