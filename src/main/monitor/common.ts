@@ -428,10 +428,9 @@ export class GameMonitor {
     // Record end time
     this.endTime = new Date().toISOString()
 
-    const windows = BrowserWindow.getAllWindows()
-    for (const window of windows) {
-      window.webContents.send('game-exit', this.options.gameId)
-    }
+    const mainWindow = BrowserWindow.getAllWindows()[0]
+
+    mainWindow.webContents.send('game-exiting', this.options.gameId)
 
     type TimerRecord = {
       start: string | undefined
@@ -473,6 +472,8 @@ export class GameMonitor {
     if (!isEqual(savePath, ['']) && savePath.length > 0) {
       await backupGameSaveData(this.options.gameId)
     }
+
+    mainWindow.webContents.send('game-exited', this.options.gameId)
   }
 
   public getStatus(): GameStatus {
