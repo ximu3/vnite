@@ -26,12 +26,12 @@ export function CollectionMenu({
       <ContextMenuSub>
         <ContextMenuSubTrigger>添加至</ContextMenuSubTrigger>
         <ContextMenuPortal>
-          <ContextMenuSubContent>
+          <ContextMenuSubContent className="max-w-[300px]">
             {Object.entries(collections)
               .filter(([key]) => !gameInCollectionsId.includes(key))
               .map(([key, value]) => (
-                <ContextMenuItem key={key} onClick={() => addGameToCollection(key, gameId)}>
-                  {value.name}
+                <ContextMenuItem key={key} onClick={() => addGameToCollection(key, gameId)} inset>
+                  <span className="truncate">{value.name}</span>
                 </ContextMenuItem>
               ))}
 
@@ -52,12 +52,16 @@ export function CollectionMenu({
         <ContextMenuSub>
           <ContextMenuSubTrigger>移除出</ContextMenuSubTrigger>
           <ContextMenuPortal>
-            <ContextMenuSubContent>
+            <ContextMenuSubContent className="max-w-[300px]">
               {Object.entries(collections)
                 .filter(([key]) => gameInCollectionsId.includes(key))
                 .map(([key, value]) => (
-                  <ContextMenuItem key={key} onSelect={() => removeGameFromCollection(key, gameId)}>
-                    {value.name}
+                  <ContextMenuItem
+                    key={key}
+                    onSelect={() => removeGameFromCollection(key, gameId)}
+                    className={cn('pl-3')}
+                  >
+                    <span className="truncate">{value.name}</span>
                   </ContextMenuItem>
                 ))}
             </ContextMenuSubContent>

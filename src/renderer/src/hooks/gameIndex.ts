@@ -60,7 +60,13 @@ export const useGameIndexManager = create<GameIndexManagerState>((set, get) => (
         if (valueA === valueB) {
           return 0
         }
-        return order === 'asc' ? (valueA > valueB ? 1 : -1) : valueA > valueB ? -1 : 1
+        if (by === 'name') {
+          return order === 'asc'
+            ? valueA.localeCompare(valueB, 'zh-CN')
+            : valueB.localeCompare(valueA, 'zh-CN')
+        } else {
+          return order === 'asc' ? (valueA > valueB ? 1 : -1) : valueA > valueB ? -1 : 1
+        }
       })
       .map(([gameId]) => gameId)
   },
