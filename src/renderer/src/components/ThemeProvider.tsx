@@ -21,9 +21,9 @@ const ThemeContext = createContext<{
 export const ThemeProvider = ({ children }: { children: React.ReactNode }): JSX.Element => {
   const [theme, setTheme] = useState<string | null>(null)
   const [isDark, setIsDark] = useState<boolean>(() => {
-    // 从 localStorage 中获取用户的主题选择
+    // Get user's theme selection from localStorage
     const savedThemeMode = localStorage.getItem('theme-mode')
-    return savedThemeMode ? savedThemeMode === 'dark' : true // 默认暗色模式
+    return savedThemeMode ? savedThemeMode === 'dark' : true // Default dark mode
   })
 
   const [themeSetting, setThemeSetting] = useState<'dark' | 'light' | 'follow-system'>(() => {
@@ -66,7 +66,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }): JSX.
       }
     })
 
-    // 应用用户选择的主题模式
+    // Apply user-selected theme patterns
     updateThemeMode(isDark)
   }, [isDark])
 
@@ -82,7 +82,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }): JSX.
     } else {
       document.documentElement.classList.remove('dark')
     }
-    // 保存用户的主题选择到 localStorage
+    // Save the user's topic selection to localStorage
     localStorage.setItem('theme-mode', dark ? 'dark' : 'light')
   }
 
