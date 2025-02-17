@@ -127,7 +127,7 @@ export class GameMonitor {
 
   constructor(options: GameMonitorOptions) {
     this.options = {
-      checkInterval: 1000,
+      checkInterval: 3000,
       executableExtensions: ['.exe', '.bat', '.cmd'],
       magpieHotkey: 'win+alt+a',
       ...options
