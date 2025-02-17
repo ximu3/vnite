@@ -1,17 +1,21 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { ipcInvoke } from '~/utils'
 import { toast } from 'sonner'
+import { ipcInvoke } from '~/utils'
 
 const ThemeContext = createContext<{
   theme: string | null
   updateTheme: (css: string) => void
   toggleTheme: () => void
   isDark: boolean
+  themeSetting: 'dark' | 'light' | 'follow-system'
+  setThemeSetting: React.Dispatch<React.SetStateAction<'dark' | 'light' | 'follow-system'>>
 }>({
   theme: null,
   updateTheme: () => {},
   toggleTheme: () => {},
-  isDark: true
+  isDark: true,
+  themeSetting: 'dark',
+  setThemeSetting: () => {}
 })
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }): JSX.Element => {
@@ -21,6 +25,36 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }): JSX.
     const savedThemeMode = localStorage.getItem('theme-mode')
     return savedThemeMode ? savedThemeMode === 'dark' : true // 默认暗色模式
   })
+
+  const [themeSetting, setThemeSetting] = useState<'dark' | 'light' | 'follow-system'>(() => {
+    const savedThemeSetting = localStorage.getItem('theme-setting')
+    if (
+      savedThemeSetting === 'dark' ||
+      savedThemeSetting === 'light' ||
+      savedThemeSetting === 'follow-system'
+    ) {
+      return savedThemeSetting
+    } else {
+      const savedThemeMode = localStorage.getItem('theme-mode')
+      return savedThemeMode === 'light' ? 'light' : 'dark'
+    }
+  })
+
+  useEffect(() => {
+    localStorage.setItem('theme-setting', themeSetting)
+    if (themeSetting === 'follow-system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+      setIsDark(mediaQuery.matches)
+
+      const handleSystemThemeChange = (e: MediaQueryListEvent): void => setIsDark(e.matches)
+      mediaQuery.addEventListener('change', handleSystemThemeChange)
+
+      return (): void => mediaQuery.removeEventListener('change', handleSystemThemeChange)
+    } else {
+      setIsDark(themeSetting === 'dark')
+      return (): void => {}
+    }
+  }, [themeSetting])
 
   useEffect(() => {
     ipcInvoke('load-theme').then((savedTheme) => {
@@ -53,7 +87,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }): JSX.
   }
 
   const toggleTheme = (): void => {
-    setIsDark((prevIsDark) => !prevIsDark)
+    setThemeSetting(isDark ? 'light' : 'dark')
   }
 
   const applyTheme = (css: string): void => {
@@ -67,7 +101,9 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }): JSX.
   }
 
   return (
-    <ThemeContext.Provider value={{ theme, updateTheme, toggleTheme, isDark }}>
+    <ThemeContext.Provider
+      value={{ theme, updateTheme, toggleTheme, isDark, themeSetting, setThemeSetting }}
+    >
       {children}
     </ThemeContext.Provider>
   )
@@ -78,4 +114,6 @@ export const useTheme = (): {
   updateTheme: (css: string) => void
   toggleTheme: () => void
   isDark: boolean
+  themeSetting: 'dark' | 'light' | 'follow-system'
+  setThemeSetting: React.Dispatch<React.SetStateAction<'dark' | 'light' | 'follow-system'>>
 } => useContext(ThemeContext)

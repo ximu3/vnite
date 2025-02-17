@@ -1,6 +1,4 @@
-import { cn } from '~/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
-import { Switch } from '@ui/switch'
 import {
   Select,
   SelectContent,
@@ -10,9 +8,10 @@ import {
   SelectTrigger,
   SelectValue
 } from '@ui/select'
-import { useDBSyncedState } from '~/hooks'
-import { ipcInvoke } from '~/utils'
+import { Switch } from '@ui/switch'
 import { toast } from 'sonner'
+import { useDBSyncedState } from '~/hooks'
+import { cn, ipcInvoke } from '~/utils'
 import { useTheme } from '../ThemeProvider'
 
 export function General(): JSX.Element {
@@ -24,7 +23,7 @@ export function General(): JSX.Element {
     'general',
     'quitToTray'
   ])
-  const { toggleTheme, isDark } = useTheme()
+  const { themeSetting, setThemeSetting } = useTheme()
   return (
     <Card className={cn('group')}>
       <CardHeader>
@@ -54,8 +53,24 @@ export function General(): JSX.Element {
             />
           </div>
           <div className={cn('flex flex-row justify-between items-center')}>
-            <div>暗色模式</div>
-            <Switch checked={isDark} onCheckedChange={toggleTheme} />
+            <div>主题样式</div>
+            <Select
+              value={themeSetting}
+              onValueChange={(value: 'dark' | 'light' | 'follow-system') => setThemeSetting(value)}
+            >
+              <SelectTrigger className={cn('w-[200px]')}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>主题样式</SelectLabel>
+                  <SelectItem value="dark">暗色</SelectItem>
+                  <SelectItem value="light">浅色</SelectItem>
+                  <SelectItem value="follow-system">跟随系统</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            {/* <Switch checked={isDark} onCheckedChange={toggleTheme} /> */}
           </div>
           <div className={cn('flex flex-row justify-between items-center')}>
             <div className={cn('grow')}>关闭主面板</div>
