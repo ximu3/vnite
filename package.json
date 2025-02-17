@@ -1,6 +1,6 @@
 {
   "name": "vnite",
-  "version": "2.6.7",
+  "version": "2.6.8",
   "description": "Game Management Software",
   "main": "./out/main/index.js",
   "author": "ximu3",
