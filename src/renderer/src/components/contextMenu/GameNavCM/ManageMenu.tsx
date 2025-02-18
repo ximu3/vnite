@@ -1,59 +1,36 @@
 import {
+  ContextMenuGroup,
   ContextMenuItem,
   ContextMenuSeparator,
   ContextMenuSub,
   ContextMenuSubContent,
-  ContextMenuSubTrigger,
-  ContextMenuGroup
+  ContextMenuSubTrigger
 } from '@ui/context-menu'
-import { useDBSyncedState } from '~/hooks'
-import { ipcInvoke } from '~/utils'
-import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
-import { PlayingTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayingTimeEditorDialog'
-import { DeleteGameAlert } from '~/components/Game/Config/ManageMenu/DeleteGameAlert'
-import { useState } from 'react'
 import { toast } from 'sonner'
+import { DeleteGameAlert } from '~/components/Game/Config/ManageMenu/DeleteGameAlert'
+import { useDBSyncedState } from '~/hooks'
 import { useGameAdderStore } from '~/pages/GameAdder/store'
+import { ipcInvoke } from '~/utils'
 
-export function ManageMenu({ gameId }: { gameId: string }): JSX.Element {
+export function ManageMenu({
+  gameId,
+  openNameEditorDialog,
+  openPlayingTimeEditorDialog
+}: {
+  gameId: string
+  openNameEditorDialog: () => void
+  openPlayingTimeEditorDialog: () => void
+}): JSX.Element {
   const [gamePath] = useDBSyncedState('', `games/${gameId}/path.json`, ['gamePath'])
   const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
   const { setIsOpen, setDbId, setName } = useGameAdderStore()
-  const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = useState(false)
-  const [isPlayingTimeEditorDialogOpen, setIsPlayingTimeEditorDialogOpen] = useState(false)
   return (
     <ContextMenuGroup>
       <ContextMenuSub>
         <ContextMenuSubTrigger>管理</ContextMenuSubTrigger>
         <ContextMenuSubContent>
-          <NameEditorDialog
-            gameId={gameId}
-            isOpen={isNameEditorDialogOpen}
-            setIsOpen={setIsNameEditorDialogOpen}
-          >
-            <ContextMenuItem
-              onSelect={(e) => {
-                e.preventDefault()
-                setIsNameEditorDialogOpen(true)
-              }}
-            >
-              重命名
-            </ContextMenuItem>
-          </NameEditorDialog>
-          <PlayingTimeEditorDialog
-            gameId={gameId}
-            isOpen={isPlayingTimeEditorDialogOpen}
-            setIsOpen={setIsPlayingTimeEditorDialogOpen}
-          >
-            <ContextMenuItem
-              onClick={(e) => {
-                e.preventDefault()
-                setIsPlayingTimeEditorDialogOpen(true)
-              }}
-            >
-              修改游玩时间
-            </ContextMenuItem>
-          </PlayingTimeEditorDialog>
+          <ContextMenuItem onSelect={openNameEditorDialog}>重命名</ContextMenuItem>
+          <ContextMenuItem onClick={openPlayingTimeEditorDialog}>修改游玩时间</ContextMenuItem>
           <ContextMenuItem
             onClick={() => {
               setDbId(gameId)

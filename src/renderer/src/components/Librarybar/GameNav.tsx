@@ -3,11 +3,13 @@ import { GameImage } from '@ui/game-image'
 import { Nav } from '@ui/nav'
 import React from 'react'
 import { useLocation } from 'react-router-dom'
+import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
+import { AttributesDialog } from '~/components/Game/Config/AttributesDialog'
+import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
+import { PlayingTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayingTimeEditorDialog'
 import { useDBSyncedState } from '~/hooks'
 import { cn } from '~/utils'
 import { GameNavCM } from '../contextMenu/GameNavCM'
-import { AddCollectionDialog } from '../dialog/AddCollectionDialog'
-import { AttributesDialog } from '../Game/Config/AttributesDialog'
 import { BatchGameNavCM } from '../GameBatchEditor/BatchGameNavCM'
 import { useGameBatchEditorStore } from '../GameBatchEditor/store'
 
@@ -27,6 +29,8 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
   ])
   const [isAttributesDialogOpen, setIsAttributesDialogOpen] = React.useState(false)
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
+  const [isPlayingTimeEditorDialogOpen, setIsPlayingTimeEditorDialogOpen] = React.useState(false)
+  const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = React.useState(false)
   const { addGameId, removeGameId, clearGameIds, gameIds, lastSelectedId, setLastSelectedId } =
     useGameBatchEditorStore()
 
@@ -142,6 +146,8 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
             gameId={gameId}
             openAttributesDialog={() => setIsAttributesDialogOpen(true)}
             openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
+            openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
+            openPlayingTimeEditorDialog={() => setIsPlayingTimeEditorDialogOpen(true)}
           />
         )}
       </ContextMenu>
@@ -150,6 +156,12 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
       )}
       {isAddCollectionDialogOpen && (
         <AddCollectionDialog gameIds={[gameId]} setIsOpen={setIsAddCollectionDialogOpen} />
+      )}
+      {isNameEditorDialogOpen && (
+        <NameEditorDialog gameId={gameId} setIsOpen={setIsNameEditorDialogOpen} />
+      )}
+      {isPlayingTimeEditorDialogOpen && (
+        <PlayingTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayingTimeEditorDialogOpen} />
       )}
     </>
   )

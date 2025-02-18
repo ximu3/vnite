@@ -7,6 +7,8 @@ import { HoverCardAnimation } from '~/components/animations/HoverCard'
 import { GameNavCM } from '~/components/contextMenu/GameNavCM'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { AttributesDialog } from '~/components/Game/Config/AttributesDialog'
+import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
+import { PlayingTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayingTimeEditorDialog'
 import { useDragContext } from '~/components/Showcase/CollectionGames'
 import { useCollections, useDBSyncedState, useGameIndexManager } from '~/hooks'
 import { cn, formatDateToChinese, formatTimeToChinese } from '~/utils'
@@ -75,6 +77,8 @@ export function GamePoster({
   const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
   const [isAttributesDialogOpen, setIsAttributesDialogOpen] = useState(false)
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = useState(false)
+  const [isPlayingTimeEditorDialogOpen, setIsPlayingTimeEditorDialogOpen] = useState(false)
+  const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const openTimeoutRef: MutableRefObject<NodeJS.Timeout | undefined> = useRef(undefined)
   const closeTimeoutRef: MutableRefObject<NodeJS.Timeout | undefined> = useRef(undefined)
@@ -233,6 +237,8 @@ export function GamePoster({
               gameId={gameId}
               openAttributesDialog={() => setIsAttributesDialogOpen(true)}
               openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
+              openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
+              openPlayingTimeEditorDialog={() => setIsPlayingTimeEditorDialogOpen(true)}
             />
           </ContextMenu>
 
@@ -241,6 +247,12 @@ export function GamePoster({
           )}
           {isAddCollectionDialogOpen && (
             <AddCollectionDialog gameIds={[gameId]} setIsOpen={setIsAddCollectionDialogOpen} />
+          )}
+          {isNameEditorDialogOpen && (
+            <NameEditorDialog gameId={gameId} setIsOpen={setIsNameEditorDialogOpen} />
+          )}
+          {isPlayingTimeEditorDialogOpen && (
+            <PlayingTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayingTimeEditorDialogOpen} />
           )}
 
           <HoverCardContent
