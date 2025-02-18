@@ -1,30 +1,33 @@
 import {
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuPortal,
+  DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger
 } from '@ui/dropdown-menu'
-import { useDBSyncedState } from '~/hooks'
-import { ipcInvoke } from '~/utils'
-import { NameEditorDialog } from './NameEditorDialog'
-import { PlayingTimeEditorDialog } from './PlayingTimeEditorDialog'
-import { DeleteGameAlert } from './DeleteGameAlert'
-import { useState } from 'react'
 import { toast } from 'sonner'
+import { useDBSyncedState } from '~/hooks'
 import { useGameAdderStore } from '~/pages/GameAdder/store'
+import { ipcInvoke } from '~/utils'
+import { DeleteGameAlert } from './DeleteGameAlert'
 
-export function ManageMenu({ gameId }: { gameId: string }): JSX.Element {
+export function ManageMenu({
+  gameId,
+  openNameEditorDialog,
+  openPlayingTimeEditorDialog
+}: {
+  gameId: string
+  openNameEditorDialog: () => void
+  openPlayingTimeEditorDialog: () => void
+}): JSX.Element {
   const [gamePath] = useDBSyncedState('', `games/${gameId}/path.json`, ['gamePath'])
   const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
   const [logoVisible, setLogoVisible] = useDBSyncedState(true, `games/${gameId}/utils.json`, [
     'logo',
     'visible'
   ])
-  const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = useState(false)
-  const [isPlayingTimeEditorDialogOpen, setIsPlayingTimeEditorDialogOpen] = useState(false)
   const { setIsOpen, setDbId, setName } = useGameAdderStore()
   return (
     <DropdownMenuGroup>
@@ -32,20 +35,7 @@ export function ManageMenu({ gameId }: { gameId: string }): JSX.Element {
         <DropdownMenuSubTrigger>管理</DropdownMenuSubTrigger>
         <DropdownMenuPortal>
           <DropdownMenuSubContent>
-            <NameEditorDialog
-              gameId={gameId}
-              isOpen={isNameEditorDialogOpen}
-              setIsOpen={setIsNameEditorDialogOpen}
-            >
-              <DropdownMenuItem
-                onSelect={(e) => {
-                  e.preventDefault()
-                  setIsNameEditorDialogOpen(true)
-                }}
-              >
-                重命名
-              </DropdownMenuItem>
-            </NameEditorDialog>
+            <DropdownMenuItem onSelect={openNameEditorDialog}>重命名</DropdownMenuItem>
             {!logoVisible && (
               <DropdownMenuItem
                 onClick={() => {
@@ -55,20 +45,7 @@ export function ManageMenu({ gameId }: { gameId: string }): JSX.Element {
                 显示徽标
               </DropdownMenuItem>
             )}
-            <PlayingTimeEditorDialog
-              gameId={gameId}
-              isOpen={isPlayingTimeEditorDialogOpen}
-              setIsOpen={setIsPlayingTimeEditorDialogOpen}
-            >
-              <DropdownMenuItem
-                onClick={(e) => {
-                  e.preventDefault()
-                  setIsPlayingTimeEditorDialogOpen(true)
-                }}
-              >
-                修改游玩时间
-              </DropdownMenuItem>
-            </PlayingTimeEditorDialog>
+            <DropdownMenuItem onClick={openPlayingTimeEditorDialog}>修改游玩时间</DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
                 setDbId(gameId)

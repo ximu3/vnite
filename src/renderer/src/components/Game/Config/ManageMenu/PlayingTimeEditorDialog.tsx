@@ -1,22 +1,18 @@
-import { Dialog, DialogContent, DialogTrigger } from '@ui/dialog'
-import { Input } from '@ui/input'
 import { Button } from '@ui/button'
-import { cn, formatTimeToChinese } from '~/utils'
-import { useDBSyncedState } from '~/hooks'
+import { Dialog, DialogContent } from '@ui/dialog'
+import { Input } from '@ui/input'
+import { Parser } from 'expr-eval'
 import { toNumber } from 'lodash'
 import { useState } from 'react'
-import { Parser } from 'expr-eval'
+import { useDBSyncedState } from '~/hooks'
+import { cn, formatTimeToChinese } from '~/utils'
 
 export function PlayingTimeEditorDialog({
   gameId,
-  isOpen,
-  setIsOpen,
-  children
+  setIsOpen
 }: {
   gameId: string
-  isOpen: boolean
   setIsOpen: (value: boolean) => void
-  children: React.ReactNode
 }): JSX.Element {
   const [playingTime, setPlayingTime] = useDBSyncedState(0, `games/${gameId}/record.json`, [
     'playingTime'
@@ -68,8 +64,7 @@ export function PlayingTimeEditorDialog({
   }
 
   return (
-    <Dialog open={isOpen}>
-      <DialogTrigger className={cn('w-full')}>{children}</DialogTrigger>
+    <Dialog open={true} onOpenChange={setIsOpen}>
       <DialogContent showCloseButton={false} className={cn('w-[500px] flex flex-col gap-3 py-5')}>
         <div className={cn('text-xs')}>支持四则运算表达式</div>
         <div className={cn('flex flex-row gap-3 items-center')}>

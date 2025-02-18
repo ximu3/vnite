@@ -1,15 +1,16 @@
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@ui/hover-card'
 import { ContextMenu, ContextMenuTrigger } from '@ui/context-menu'
-import { GameImage } from '~/components/ui/game-image'
-import { HoverBigCardAnimation } from '~/components/animations/HoverBigCard'
-import { cn } from '~/utils'
-import { GameNavCM } from '~/components/contextMenu/GameNavCM'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@ui/hover-card'
+import React, { MutableRefObject, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useGameIndexManager, useDBSyncedState } from '~/hooks'
-import { formatTimeToChinese, formatDateToChinese } from '~/utils'
-import { AttributesDialog } from '~/components/Game/Config/AttributesDialog'
-import React, { useRef, MutableRefObject } from 'react'
+import { HoverBigCardAnimation } from '~/components/animations/HoverBigCard'
+import { GameNavCM } from '~/components/contextMenu/GameNavCM'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
+import { AttributesDialog } from '~/components/Game/Config/AttributesDialog'
+import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
+import { PlayingTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayingTimeEditorDialog'
+import { GameImage } from '~/components/ui/game-image'
+import { useDBSyncedState, useGameIndexManager } from '~/hooks'
+import { cn, formatDateToChinese, formatTimeToChinese } from '~/utils'
 
 export function BigGamePoster({
   gameId,
@@ -28,6 +29,8 @@ export function BigGamePoster({
   const [gameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
   const [isAttributesDialogOpen, setIsAttributesDialogOpen] = React.useState(false)
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
+  const [isPlayingTimeEditorDialogOpen, setIsPlayingTimeEditorDialogOpen] = React.useState(false)
+  const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = React.useState(false)
   const [isOpen, setIsOpen] = React.useState(false)
   const openTimeoutRef: MutableRefObject<NodeJS.Timeout | undefined> = useRef(undefined)
   const closeTimeoutRef: MutableRefObject<NodeJS.Timeout | undefined> = useRef(undefined)
@@ -121,6 +124,8 @@ export function BigGamePoster({
           gameId={gameId}
           openAttributesDialog={() => setIsAttributesDialogOpen(true)}
           openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
+          openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
+          openPlayingTimeEditorDialog={() => setIsPlayingTimeEditorDialogOpen(true)}
         />
       </ContextMenu>
 
@@ -129,6 +134,12 @@ export function BigGamePoster({
       )}
       {isAddCollectionDialogOpen && (
         <AddCollectionDialog gameIds={[gameId]} setIsOpen={setIsAddCollectionDialogOpen} />
+      )}
+      {isNameEditorDialogOpen && (
+        <NameEditorDialog gameId={gameId} setIsOpen={setIsNameEditorDialogOpen} />
+      )}
+      {isPlayingTimeEditorDialogOpen && (
+        <PlayingTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayingTimeEditorDialogOpen} />
       )}
 
       <HoverCardContent

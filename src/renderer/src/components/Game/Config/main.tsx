@@ -6,16 +6,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@ui/dropdown-menu'
-import { cn } from '~/utils'
-import { CollectionMenu } from './CollectionMenu'
-import { AttributesDialog } from './AttributesDialog'
-import { ManageMenu } from './ManageMenu'
 import React from 'react'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
+import { cn } from '~/utils'
+import { AttributesDialog } from './AttributesDialog'
+import { CollectionMenu } from './CollectionMenu'
+import { ManageMenu } from './ManageMenu'
+import { NameEditorDialog } from './ManageMenu/NameEditorDialog'
+import { PlayingTimeEditorDialog } from './ManageMenu/PlayingTimeEditorDialog'
 
 export function Config({ gameId }: { gameId: string }): JSX.Element {
   const [isAttributesDialogOpen, setIsAttributesDialogOpen] = React.useState(false)
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
+  const [isPlayingTimeEditorDialogOpen, setIsPlayingTimeEditorDialogOpen] = React.useState(false)
+  const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = React.useState(false)
   return (
     <>
       <DropdownMenu>
@@ -30,7 +34,11 @@ export function Config({ gameId }: { gameId: string }): JSX.Element {
             openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
           />
           <DropdownMenuSeparator />
-          <ManageMenu gameId={gameId} />
+          <ManageMenu
+            gameId={gameId}
+            openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
+            openPlayingTimeEditorDialog={() => setIsPlayingTimeEditorDialogOpen(true)}
+          />
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={() => setIsAttributesDialogOpen(true)}>
             <div>属性</div>
@@ -42,6 +50,12 @@ export function Config({ gameId }: { gameId: string }): JSX.Element {
       )}
       {isAddCollectionDialogOpen && (
         <AddCollectionDialog gameIds={[gameId]} setIsOpen={setIsAddCollectionDialogOpen} />
+      )}
+      {isNameEditorDialogOpen && (
+        <NameEditorDialog gameId={gameId} setIsOpen={setIsNameEditorDialogOpen} />
+      )}
+      {isPlayingTimeEditorDialogOpen && (
+        <PlayingTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayingTimeEditorDialogOpen} />
       )}
     </>
   )

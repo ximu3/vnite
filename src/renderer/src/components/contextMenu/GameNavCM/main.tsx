@@ -1,19 +1,23 @@
 import { ContextMenuContent, ContextMenuItem, ContextMenuSeparator } from '@ui/context-menu'
+import { useRunningGames } from '~/pages/Library/store'
 import { cn } from '~/utils'
-import { ManageMenu } from './ManageMenu'
-import { CollectionMenu } from './CollectionMenu'
 import { StartGame } from '../../Game/StartGame'
 import { StopGame } from '../../Game/StopGame'
-import { useRunningGames } from '~/pages/Library/store'
+import { CollectionMenu } from './CollectionMenu'
+import { ManageMenu } from './ManageMenu'
 
 export function GameNavCM({
   gameId,
   openAttributesDialog,
-  openAddCollectionDialog
+  openAddCollectionDialog,
+  openNameEditorDialog,
+  openPlayingTimeEditorDialog
 }: {
   gameId: string
   openAttributesDialog: () => void
   openAddCollectionDialog: () => void
+  openNameEditorDialog: () => void
+  openPlayingTimeEditorDialog: () => void
 }): JSX.Element {
   const { runningGames } = useRunningGames()
   return (
@@ -28,7 +32,11 @@ export function GameNavCM({
       <ContextMenuSeparator />
       <CollectionMenu gameId={gameId} openAddCollectionDialog={openAddCollectionDialog} />
       <ContextMenuSeparator />
-      <ManageMenu gameId={gameId} />
+      <ManageMenu
+        gameId={gameId}
+        openNameEditorDialog={openNameEditorDialog}
+        openPlayingTimeEditorDialog={openPlayingTimeEditorDialog}
+      />
       <ContextMenuSeparator />
       <ContextMenuItem onSelect={openAttributesDialog}>
         <div>属性</div>

@@ -1,24 +1,19 @@
-import { Dialog, DialogContent, DialogTrigger } from '@ui/dialog'
-import { Input } from '@ui/input'
 import { Button } from '@ui/button'
-import { cn } from '~/utils'
+import { Dialog, DialogContent } from '@ui/dialog'
+import { Input } from '@ui/input'
 import { useDBSyncedState } from '~/hooks'
+import { cn } from '~/utils'
 
 export function NameEditorDialog({
   gameId,
-  isOpen,
-  setIsOpen,
-  children
+  setIsOpen
 }: {
   gameId: string
-  isOpen: boolean
   setIsOpen: (value: boolean) => void
-  children: React.ReactNode
 }): JSX.Element {
   const [gameName, setGameName] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['name'])
   return (
-    <Dialog open={isOpen}>
-      <DialogTrigger className={cn('w-full')}>{children}</DialogTrigger>
+    <Dialog open={true} onOpenChange={setIsOpen}>
       <DialogContent showCloseButton={false} className={cn('w-[500px] flex flex-row gap-3')}>
         <Input
           className={cn('w-full')}
@@ -30,13 +25,7 @@ export function NameEditorDialog({
             if (e.key === 'Enter') setIsOpen(false)
           }}
         />
-        <Button
-          onClick={() => {
-            setIsOpen(false)
-          }}
-        >
-          确定
-        </Button>
+        <Button onClick={() => setIsOpen(false)}>确定</Button>
       </DialogContent>
     </Dialog>
   )
