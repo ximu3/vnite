@@ -1,14 +1,14 @@
-import { cn } from '~/utils'
+import { Button } from '@ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { GameImage } from '@ui/game-image'
-import { Button } from '@ui/button'
-import { ipcInvoke } from '~/utils'
-import { toast } from 'sonner'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import { useState } from 'react'
-import { UrlDialog } from './UrlDialog'
+import { toast } from 'sonner'
+import { useDBSyncedState } from '~/hooks'
+import { cn, ipcInvoke } from '~/utils'
 import { CropDialog } from './CropDialog'
 import { SearchMediaDialog } from './SearchMediaDialog'
-import { useDBSyncedState } from '~/hooks'
+import { UrlDialog } from './UrlDialog'
 
 export function Media({ gameId }: { gameId: string }): JSX.Element {
   const [isUrlDialogOpen, setIsUrlDialogOpen] = useState({
@@ -116,39 +116,59 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
   // Media Control Button Component
   const MediaControls = ({ type }: { type: string }): JSX.Element => (
     <div className={cn('flex flex-row gap-2')}>
-      <Button
-        onClick={() => handleFileSelect(type)}
-        variant={'outline'}
-        size={'icon'}
-        className={cn('w-7 h-7')}
-      >
-        <span className={cn('icon-[mdi--file-outline] w-4 h-4')}></span>
-      </Button>
-      <UrlDialog
-        setMediaWithUrl={setMediaWithUrl}
-        isUrlDialogOpen={isUrlDialogOpen}
-        setIsUrlDialogOpen={setIsUrlDialogOpen}
-        type={type}
-      />
-      <Button
-        onClick={() => {
-          setSearchType(type)
-          setIsSearchDialogOpen(true)
-        }}
-        variant={'outline'}
-        size={'icon'}
-        className={cn('w-7 h-7')}
-      >
-        <span className={cn('icon-[mdi--search] w-4 h-4')}></span>
-      </Button>
-      <Button
-        onClick={() => handleResize(type)}
-        variant={'outline'}
-        size={'icon'}
-        className={cn('w-7 h-7')}
-      >
-        <span className={cn('icon-[mdi--resize] w-4 h-4')}></span>
-      </Button>
+      <Tooltip>
+        <TooltipTrigger>
+          <Button
+            onClick={() => handleFileSelect(type)}
+            variant={'outline'}
+            size={'icon'}
+            className={cn('w-7 h-7')}
+          >
+            <span className={cn('icon-[mdi--file-outline] w-4 h-4')}></span>
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">从文件导入</TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger>
+          <UrlDialog
+            setMediaWithUrl={setMediaWithUrl}
+            isUrlDialogOpen={isUrlDialogOpen}
+            setIsUrlDialogOpen={setIsUrlDialogOpen}
+            type={type}
+          />
+        </TooltipTrigger>
+        <TooltipContent side="bottom">从链接导入</TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger>
+          <Button
+            onClick={() => {
+              setSearchType(type)
+              setIsSearchDialogOpen(true)
+            }}
+            variant={'outline'}
+            size={'icon'}
+            className={cn('w-7 h-7')}
+          >
+            <span className={cn('icon-[mdi--search] w-4 h-4')}></span>
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">搜索图片</TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger>
+          <Button
+            onClick={() => handleResize(type)}
+            variant={'outline'}
+            size={'icon'}
+            className={cn('w-7 h-7')}
+          >
+            <span className={cn('icon-[mdi--resize] w-4 h-4')}></span>
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">裁剪图片</TooltipContent>
+      </Tooltip>
     </div>
   )
 
