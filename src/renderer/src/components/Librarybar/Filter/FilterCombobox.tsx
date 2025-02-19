@@ -1,8 +1,6 @@
 'use client'
 
-import * as React from 'react'
-import { Check, ChevronsUpDown } from 'lucide-react'
-import { cn } from '~/utils'
+import { Cross2Icon } from '@radix-ui/react-icons'
 import { Button } from '@ui/button'
 import {
   Command,
@@ -13,8 +11,10 @@ import {
   CommandList
 } from '@ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
-import { Cross2Icon } from '@radix-ui/react-icons'
+import { Check, ChevronsUpDown } from 'lucide-react'
+import * as React from 'react'
 import { useGameIndexManager } from '~/hooks'
+import { cn } from '~/utils'
 import { useFilterStore } from './store'
 
 interface Option {
@@ -46,7 +46,7 @@ export function FilterCombobox({
 
       if (aSelected && !bSelected) return -1
       if (!aSelected && bSelected) return 1
-      return 0
+      return a.label.localeCompare(b.label, 'zh-CN')
     })
   }, [getAllValuesInKey, filed, selectedValues])
 
