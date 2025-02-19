@@ -1,9 +1,8 @@
 import { Link } from '@ui/link'
 import { Separator } from '@ui/separator'
 import { isEqual } from 'lodash'
-import { toast } from 'sonner'
 import { useDBSyncedState } from '~/hooks'
-import { cn } from '~/utils'
+import { cn, copyWithToast } from '~/utils'
 import { RelatedSitesDialog } from './RelatedSitesDialog'
 
 export function RelatedSitesCard({
@@ -19,20 +18,15 @@ export function RelatedSitesCard({
     ['relatedSites']
   )
 
-  const handleCopy = (): void => {
-    navigator.clipboard
-      .writeText(relatedSites.map((item) => `${item.label}: ${item.url}`).join('\n'))
-      .then(() => {
-        toast.success('已复制到剪切板', { duration: 1000 })
-      })
-      .catch((error) => {
-        toast.error(`复制文本到剪切板失败: ${error}`)
-      })
-  }
   return (
     <div className={cn(className, 'group')}>
       <div className={cn('flex flex-row justify-between items-center')}>
-        <div className={cn('font-bold select-none cursor-pointer')} onClick={handleCopy}>
+        <div
+          className={cn('font-bold select-none cursor-pointer')}
+          onClick={() =>
+            copyWithToast(relatedSites.map((item) => `${item.label}: ${item.url}`).join('\n'))
+          }
+        >
           相关网站
         </div>
         <RelatedSitesDialog gameId={gameId} />

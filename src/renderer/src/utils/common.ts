@@ -1,5 +1,6 @@
 import * as csstree from 'css-tree'
-import { HTMLReactParserOptions, Element } from 'html-react-parser'
+import { Element, HTMLReactParserOptions } from 'html-react-parser'
+import { toast } from 'sonner'
 import { v4 } from 'uuid'
 
 export async function canAccessImageFile(gameId: string, type: string): Promise<boolean> {
@@ -53,4 +54,15 @@ export const HTMLParserOptions: HTMLReactParserOptions = {
 
 export function generateUUID(): string {
   return v4()
+}
+
+export function copyWithToast(content: string): void {
+  navigator.clipboard
+    .writeText(content)
+    .then(() => {
+      toast.success('已复制到剪切板', { duration: 1000 })
+    })
+    .catch((error) => {
+      toast.error(`复制文本到剪切板失败: ${error}`)
+    })
 }

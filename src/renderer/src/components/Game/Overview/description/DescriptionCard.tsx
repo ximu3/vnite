@@ -1,8 +1,7 @@
 import { Separator } from '@ui/separator'
 import parse from 'html-react-parser'
-import { toast } from 'sonner'
 import { useDBSyncedState } from '~/hooks'
-import { cn, HTMLParserOptions } from '~/utils'
+import { cn, copyWithToast, HTMLParserOptions } from '~/utils'
 import { DescriptionDialog } from './DescriptionDialog'
 
 export function DescriptionCard({
@@ -14,20 +13,13 @@ export function DescriptionCard({
 }): JSX.Element {
   const [description] = useDBSyncedState('', `games/${gameId}/metadata.json`, ['description'])
 
-  const handleCopy = (): void => {
-    navigator.clipboard
-      .writeText(description)
-      .then(() => {
-        toast.success('已复制到剪切板', { duration: 1000 })
-      })
-      .catch((error) => {
-        toast.error(`复制文本到剪切板失败: ${error}`)
-      })
-  }
   return (
     <div className={cn('bg-transparent border-0 shadow-none', className, 'group')}>
       <div className={cn('flex flex-row justify-between items-center')}>
-        <div className={cn('font-bold select-none cursor-pointer')} onClick={handleCopy}>
+        <div
+          className={cn('font-bold select-none cursor-pointer')}
+          onClick={() => copyWithToast(description)}
+        >
           简介
         </div>
         <DescriptionDialog gameId={gameId} />
