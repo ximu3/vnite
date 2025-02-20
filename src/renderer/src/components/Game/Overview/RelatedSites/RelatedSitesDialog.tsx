@@ -1,8 +1,8 @@
+import { Button } from '@ui/button'
 import { Dialog, DialogContent, DialogTrigger } from '@ui/dialog'
 import { Input } from '@ui/input'
-import { Button } from '@ui/button'
-import { cn } from '~/utils'
 import { useDBSyncedState } from '~/hooks'
+import { cn } from '~/utils'
 
 export function RelatedSitesDialog({ gameId }: { gameId: string }): JSX.Element {
   const [relatedSites, setRelatedSites] = useDBSyncedState(
@@ -21,7 +21,7 @@ export function RelatedSitesDialog({ gameId }: { gameId: string }): JSX.Element 
         <Button
           variant="outline"
           onClick={() => {
-            setRelatedSites([...relatedSites, { label: '链接名', url: '地址' }])
+            setRelatedSites([...relatedSites, { label: '', url: '' }])
           }}
           className={cn('w-[fit-content] ml-3')}
         >
@@ -53,6 +53,7 @@ export function RelatedSitesDialog({ gameId }: { gameId: string }): JSX.Element 
                 <Button
                   variant="outline"
                   size={'icon'}
+                  disabled={i === 0}
                   onClick={() => {
                     if (i === 0) return
                     const newRelatedSites = [...relatedSites]
@@ -67,6 +68,7 @@ export function RelatedSitesDialog({ gameId }: { gameId: string }): JSX.Element 
                 <Button
                   variant="outline"
                   size={'icon'}
+                  disabled={i === relatedSites.length - 1}
                   onClick={() => {
                     if (i === relatedSites.length - 1) return
                     const newRelatedSites = [...relatedSites]

@@ -1,8 +1,7 @@
 import { Separator } from '@ui/separator'
 import React from 'react'
-import { toast } from 'sonner'
 import { useDBSyncedState } from '~/hooks'
-import { cn } from '~/utils'
+import { cn, copyWithToast } from '~/utils'
 import { FilterAdder } from '../../FilterAdder'
 import { InformationDialog } from './InformationDialog'
 
@@ -21,7 +20,7 @@ export function InformationCard({
   const [genres] = useDBSyncedState([''], `games/${gameId}/metadata.json`, ['genres'])
   const [platforms] = useDBSyncedState([''], `games/${gameId}/metadata.json`, ['platforms'])
 
-  const handleCopy = (): void => {
+  const handleCopySummary = (): void => {
     const titles = {
       originalName: '原名',
       name: '译名',
@@ -31,32 +30,25 @@ export function InformationCard({
       platforms: '平台',
       genres: '类型'
     }
-    navigator.clipboard
-      .writeText(
-        `${Object.entries({
-          originalName,
-          name,
-          developers,
-          publishers,
-          releaseDate,
-          genres,
-          platforms
-        })
-          .map(([key, value]) => `${titles[key]}: ${value}`)
-          .join('\n')}`
-      )
-      .then(() => {
-        toast.success('已复制到剪切板', { duration: 1000 })
+    copyWithToast(
+      Object.entries({
+        originalName,
+        name,
+        developers,
+        publishers,
+        releaseDate,
+        genres,
+        platforms
       })
-      .catch((error) => {
-        toast.error(`复制文本到剪切板失败: ${error}`)
-      })
+        .map(([key, value]) => `${titles[key]}: ${value}`)
+        .join('\n')
+    )
   }
 
   return (
     <div className={cn(className, 'group')}>
       <div className={cn('flex flex-row justify-between items-center')}>
-        <div className={cn('font-bold select-none cursor-pointer')} onClick={handleCopy}>
+        <div className={cn('font-bold select-none cursor-pointer')} onClick={handleCopySummary}>
           基本信息
         </div>
         <InformationDialog gameId={gameId} />
@@ -66,15 +58,30 @@ export function InformationCard({
 
       <div className={cn('grid grid-cols-[60px_1fr] gap-x-3 gap-y-2 text-sm')}>
         {/* original name */}
-        <div className={cn('whitespace-nowrap select-none')}>原名</div>
+        <div
+          className={cn('whitespace-nowrap select-none cursor-pointer')}
+          onClick={() => copyWithToast(originalName)}
+        >
+          原名
+        </div>
         <div>{originalName === '' ? '暂无' : originalName}</div>
 
         {/* name */}
-        <div className={cn('whitespace-nowrap select-none')}>译名</div>
+        <div
+          className={cn('whitespace-nowrap select-none cursor-pointer')}
+          onClick={() => copyWithToast(name)}
+        >
+          译名
+        </div>
         <div>{name === originalName || name === '' ? '暂无' : name}</div>
 
         {/* developers */}
-        <div className={cn('whitespace-nowrap select-none')}>开发商</div>
+        <div
+          className={cn('whitespace-nowrap select-none cursor-pointer')}
+          onClick={() => copyWithToast(developers.join(','))}
+        >
+          开发商
+        </div>
         <div
           className={cn(
             'flex flex-wrap gap-x-1 gap-y-[6px]',
@@ -91,7 +98,12 @@ export function InformationCard({
         </div>
 
         {/* publishers */}
-        <div className={cn('whitespace-nowrap select-none')}>发行商</div>
+        <div
+          className={cn('whitespace-nowrap select-none cursor-pointer')}
+          onClick={() => copyWithToast(publishers.join(','))}
+        >
+          发行商
+        </div>
         <div
           className={cn(
             'flex flex-wrap gap-x-1 gap-y-1',
@@ -108,7 +120,12 @@ export function InformationCard({
         </div>
 
         {/* releaseDate */}
-        <div className={cn('whitespace-nowrap select-none')}>发行日期</div>
+        <div
+          className={cn('whitespace-nowrap select-none cursor-pointer')}
+          onClick={() => copyWithToast(releaseDate)}
+        >
+          发行日期
+        </div>
         <div className={cn('flex flex-wrap gap-x-1 gap-y-1', releaseDate !== '' && 'mt-[2px]')}>
           {releaseDate === '' ? (
             '暂无'
@@ -122,7 +139,12 @@ export function InformationCard({
         </div>
 
         {/* platforms */}
-        <div className={cn('whitespace-nowrap select-none')}>平台</div>
+        <div
+          className={cn('whitespace-nowrap select-none cursor-pointer')}
+          onClick={() => copyWithToast(platforms.join(','))}
+        >
+          平台
+        </div>
         <div
           className={cn('flex flex-wrap gap-x-1 gap-y-1', platforms.join(',') !== '' && 'mt-[2px]')}
         >
@@ -136,7 +158,12 @@ export function InformationCard({
         </div>
 
         {/* genres */}
-        <div className={cn('whitespace-nowrap select-none')}>类型</div>
+        <div
+          className={cn('whitespace-nowrap select-none cursor-pointer')}
+          onClick={() => copyWithToast(genres.join(','))}
+        >
+          类型
+        </div>
         <div
           className={cn('flex flex-wrap gap-x-1 gap-y-1', genres.join(',') !== '' && 'mt-[2px]')}
         >

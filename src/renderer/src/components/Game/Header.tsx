@@ -1,6 +1,6 @@
 import { Button } from '@ui/button'
 import { useDBSyncedState } from '~/hooks'
-import { cn } from '~/utils'
+import { cn, copyWithToast } from '~/utils'
 // import { Badge } from '@ui/badge'
 import { Dialog, DialogContent, DialogTrigger } from '@ui/dialog'
 import { Input } from '@ui/input'
@@ -92,17 +92,6 @@ export function Header({
     toast.success('评分已保存')
   }
 
-  const handleCopy = (text: string): void => {
-    navigator.clipboard
-      .writeText(text)
-      .then(() => {
-        toast.success('已复制到剪切板', { duration: 1000 })
-      })
-      .catch((error) => {
-        toast.error(`复制文本到剪切板失败: ${error}`)
-      })
-  }
-
   return (
     <div
       className={cn(
@@ -132,18 +121,14 @@ export function Header({
         <div className={cn('select-none truncate z-10')}>
           <span
             className={cn('font-bold text-2xl text-accent-foreground cursor-pointer')}
-            onClick={() => {
-              handleCopy(name)
-            }}
+            onClick={() => copyWithToast(name)}
           >
             {name}
           </span>
           {showOriginalNameInGameHeader && originalName && originalName !== name && (
             <span
               className={cn('font-bold text-accent-foreground ml-3 cursor-pointer')}
-              onClick={() => {
-                handleCopy(originalName)
-              }}
+              onClick={() => copyWithToast(originalName)}
             >
               {originalName}
             </span>
