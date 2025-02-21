@@ -114,9 +114,13 @@ export function Librarybar(): JSX.Element {
         <div className={cn('flex flex-row gap-2')}>
           <div className={cn('grow')}>
             <Nav variant="librarybar" to="./home" className={cn('')}>
-              <div className={cn('flex flex-row gap-2 items-center justify-start')}>
+              <div
+                className={cn(
+                  'flex flex-row gap-[min(calc(100%-48px),8px)] w-full items-center justify-start'
+                )}
+              >
                 <span className={cn('icon-[mdi--home] w-5 h-5')}></span>
-                <span>主页</span>
+                <span className={cn('whitespace-nowrap')}>主页</span>
               </div>
             </Nav>
           </div>
