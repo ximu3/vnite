@@ -31,13 +31,14 @@ export function Library({ className }: { className?: string }): JSX.Element {
       }, 4000)
     })
   }, [runningGames, setRunningGames])
+
   return (
     <ResizablePanelGroup
       autoSaveId="LibraryPanelGroup"
       direction="horizontal"
       className={cn('w-full h-full', className)}
     >
-      <ResizablePanel defaultSize={18} maxSize={26} minSize={0} className={cn('')}>
+      <ResizablePanel defaultSize={18} maxSize={26} minSize={13} collapsible={true}>
         <Librarybar />
       </ResizablePanel>
       <ResizableHandle />
