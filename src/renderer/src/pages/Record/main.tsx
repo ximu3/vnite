@@ -1,13 +1,13 @@
-import { cn, formatTimeToChinese, formatDateToChinese } from '~/utils'
-import { useGameRecords, useGameIndexManager } from '~/hooks'
-import { TimerChart } from '~/components/Game/Record/TimerChart'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/card'
 import { ScrollArea } from '@ui/scroll-area'
 import { RecordCard } from '~/components/Game/Overview/Record/RecordCard'
+import { TimerChart } from '~/components/Game/Record/TimerChart'
+import { useGameIndexManager, useGameRecords } from '~/hooks'
+import { cn, formatDateToChinese, formatTimeToChinese } from '~/utils'
 import { GamePoster } from './GamePoster'
+import { PlayedTimesRank } from './PlayedTimesRank'
 import { PlayingTimeRank } from './PlayingTimeRank'
 import { ScoreRank } from './ScoreRank'
-import { PlayedTimesRank } from './PlayedTimesRank'
 
 export function Record({ className }: { className?: string }): JSX.Element {
   const {
@@ -86,7 +86,10 @@ export function Record({ className }: { className?: string }): JSX.Element {
               <CardContent>
                 {maxScoreGame ? (
                   <GamePoster
-                    fontStyles={{ name: 'w-[300px] text-center', additionalInfo: '' }}
+                    fontStyles={{
+                      name: 'w-[90%] text-center break-words whitespace-normal max-h-[50%] overflow-hidden',
+                      additionalInfo: ''
+                    }}
                     gameId={maxScoreGame}
                     isShowGameName
                     additionalInfo={maxScore == -1 ? '暂无评分' : `${maxScore} 分`}
@@ -104,7 +107,10 @@ export function Record({ className }: { className?: string }): JSX.Element {
               <CardContent>
                 {maxPlayingTimeGame ? (
                   <GamePoster
-                    fontStyles={{ name: 'w-[300px] text-center', additionalInfo: '' }}
+                    fontStyles={{
+                      name: 'w-[90%] text-center break-words whitespace-normal max-h-[50%] overflow-hidden',
+                      additionalInfo: ''
+                    }}
                     gameId={maxPlayingTimeGame}
                     isShowGameName
                     additionalInfo={
@@ -126,7 +132,10 @@ export function Record({ className }: { className?: string }): JSX.Element {
               <CardContent>
                 {maxPlayedTimesGameId ? (
                   <GamePoster
-                    fontStyles={{ name: 'w-[300px] text-center', additionalInfo: '' }}
+                    fontStyles={{
+                      name: 'w-[90%] text-center break-words whitespace-normal max-h-[50%] overflow-hidden',
+                      additionalInfo: ''
+                    }}
                     gameId={maxPlayedTimesGameId}
                     isShowGameName
                     additionalInfo={maxPlayedTimes == 0 ? '从未游玩' : `${maxPlayedTimes} 次`}
@@ -144,7 +153,10 @@ export function Record({ className }: { className?: string }): JSX.Element {
               <CardContent>
                 {maxSoonGame ? (
                   <GamePoster
-                    fontStyles={{ name: 'w-[300px] text-center', additionalInfo: '' }}
+                    fontStyles={{
+                      name: 'w-[90%] text-center break-words whitespace-normal max-h-[50%] overflow-hidden',
+                      additionalInfo: ''
+                    }}
                     gameId={maxSoonGame}
                     isShowGameName
                     additionalInfo={

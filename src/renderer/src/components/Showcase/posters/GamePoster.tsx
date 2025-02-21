@@ -38,15 +38,18 @@ function Preview({ title }: { title: string }): JSX.Element {
     >
       <div
         className={cn(
-          'absolute top-1/3 -translate-y-1/2 z-20',
-          'flex items-center justify-center',
-          'pointer-events-none  w-full'
+          'absolute top-[25%] z-20',
+          'flex justify-center',
+          'pointer-events-none w-full h-[50%]'
         )}
       >
-        <div className="flex flex-col gap-1 items-center justify-center w-full">
-          <div className={cn('w-full text-accent-foreground text-lg font-semibold text-center')}>
-            {title}
-          </div>
+        <div
+          className={cn(
+            'text-accent-foreground text-lg font-semibold',
+            'w-[90%] text-center break-words whitespace-normal overflow-hidden'
+          )}
+        >
+          {title}
         </div>
       </div>
     </div>
