@@ -1,7 +1,16 @@
 // src/database/GameDBManager.ts
 import { DBManager } from './common'
 import { convertToWebP } from '~/media'
-import type { gameDoc, gameDocs, gameCollectionDoc } from '@appTypes/database'
+import {
+  gameDoc,
+  gameDocs,
+  PathsOf,
+  gameCollectionDoc,
+  gameCollection,
+  DEFAULT_GAME_VALUES
+} from '@appTypes/database'
+import { getNestedValue } from '~/utils'
+import type { Get } from 'type-fest'
 
 export class GameDBManager {
   private static readonly DB_NAME = 'game'
@@ -10,10 +19,8 @@ export class GameDBManager {
     return (await DBManager.getAllDocs(this.DB_NAME)) as gameDocs
   }
 
-  static async getGameCollection(): Promise<gameCollectionDoc> {
-    const docs = (await DBManager.getAllDocs(this.DB_NAME)) as gameDocs
-    const collections = docs.collections
-    return collections || []
+  static async getAllCollections(): Promise<gameCollectionDoc> {
+    return await DBManager.getValue(this.DB_NAME, 'collections', ['#all'], {} as gameCollectionDoc)
   }
 
   // 获取游戏数据
@@ -24,6 +31,43 @@ export class GameDBManager {
   // 设置游戏数据
   static async setGame(gameId: string, data: Partial<gameDoc>): Promise<void> {
     await DBManager.setValue(this.DB_NAME, gameId, ['#all'], data)
+  }
+
+  static async getCollection(collectionId: string): Promise<gameCollection> {
+    return await DBManager.getValue(
+      `${this.DB_NAME}-collection`,
+      collectionId,
+      ['#all'],
+      {} as gameCollection
+    )
+  }
+
+  static async setCollection(collectionId: string, data: Partial<gameCollection>): Promise<void> {
+    await DBManager.setValue(`${this.DB_NAME}-collection`, collectionId, ['#all'], data)
+  }
+
+  static async getGameValue<Path extends string[]>(
+    gameId: string,
+    path: Path & PathsOf<gameDoc>
+  ): Promise<Get<gameDoc, Path>> {
+    return (await DBManager.getValue(
+      this.DB_NAME,
+      gameId,
+      path,
+      getNestedValue(DEFAULT_GAME_VALUES, path)
+    )) as Get<gameDoc, Path>
+  }
+
+  static async setGameValue<Path extends string[]>(
+    gameId: string,
+    path: Path & PathsOf<gameDoc>,
+    value: Get<gameDoc, Path>
+  ): Promise<void> {
+    await DBManager.setValue(this.DB_NAME, gameId, path, value)
+  }
+
+  static async removeGame(gameId: string): Promise<void> {
+    await DBManager.removeDoc(this.DB_NAME, gameId)
   }
 
   // 处理游戏图片

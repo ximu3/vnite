@@ -1,13 +1,20 @@
 import { create } from 'zustand'
-import { ipcInvoke } from '~/utils/ipc'
-import { DocChange, gameDocs, gameDoc } from '@appTypes/database'
+import { ipcInvoke, getNestedValue } from '~/utils'
+import { DocChange, gameDocs, gameDoc, PathsOf, DEFAULT_GAME_VALUES } from '@appTypes/database'
+import type { Get } from 'type-fest'
 
 export interface GameState {
   documents: gameDocs
   initialized: boolean
-  setNestedValue: (obj: any, path: string[], value: any) => any
-  getValue: <T>(docId: string, path: string[], defaultValue: T) => T
-  setValue: (docId: string, path: string[], value: any) => Promise<void>
+  getGameValue: <Path extends string[]>(
+    gameId: string,
+    path: Path & PathsOf<gameDoc>
+  ) => Get<gameDoc, Path>
+  setGameValue: <Path extends string[]>(
+    gameId: string,
+    path: Path & PathsOf<gameDoc>,
+    value: Get<gameDoc, Path>
+  ) => Promise<void>
   initializeStore: (data: GameState['documents']) => void
   setDocument: (docId: string, data: gameDoc) => void
 }
@@ -38,70 +45,59 @@ export const useGameStore = create<GameState>((set, get) => ({
         [docId]: data
       }
     }))
-    updateDocument(docId, data)
   },
 
-  setNestedValue: (obj: any, path: string[], value: any): any => {
-    if (path.length === 0) return value
-
-    const result = { ...obj }
-    let current = result
-
-    for (let i = 0; i < path.length - 1; i++) {
-      const key = path[i]
-      current[key] = current[key] ?? {}
-      current[key] = { ...current[key] }
-      current = current[key]
-    }
-
-    const lastKey = path[path.length - 1]
-    current[lastKey] = value
-
-    return result
-  },
-
-  getValue: <T>(docId: string, path: string[], defaultValue: T): T => {
+  getGameValue: <Path extends string[]>(
+    gameId: string,
+    path: Path & PathsOf<gameDoc>
+  ): Get<gameDoc, Path> => {
     const state = get()
+    if (!state.initialized) {
+      return getNestedValue(DEFAULT_GAME_VALUES, path)
+    }
 
-    if (!state.initialized) return defaultValue
-
-    const doc = state.documents[docId]
+    const doc = state.documents[gameId]
     if (!doc) {
-      get().setValue(docId, path, defaultValue)
-      return defaultValue
+      return getNestedValue(DEFAULT_GAME_VALUES, path)
     }
 
-    let current = doc
-    for (const key of path) {
-      if (current === undefined || current === null) {
-        get().setValue(docId, path, defaultValue)
-        return defaultValue
-      }
-      current = current[key]
-    }
-
-    if (current === undefined) {
-      get().setValue(docId, path, defaultValue)
-      return defaultValue
-    }
-
-    return current as T
+    const value = getNestedValue(doc, path)
+    return value !== undefined ? value : getNestedValue(DEFAULT_GAME_VALUES, path)
   },
 
-  setValue: async (docId: string, path: string[], value: any): Promise<void> => {
+  // 设置游戏特定路径的值
+  setGameValue: async <Path extends string[]>(
+    gameId: string,
+    path: Path & PathsOf<gameDoc>,
+    value: Get<gameDoc, Path>
+  ): Promise<void> => {
+    // 先更新 store
     set((state) => {
       const newDocuments = { ...state.documents }
-
-      if (!newDocuments[docId]) {
-        newDocuments[docId] = {} as gameDoc
+      if (!newDocuments[gameId]) {
+        newDocuments[gameId] = { ...DEFAULT_GAME_VALUES } as gameDoc
       }
 
-      newDocuments[docId] = get().setNestedValue(newDocuments[docId], path, value)
+      let current = newDocuments[gameId]
+      const lastIndex = path.length - 1
 
-      updateDocument(docId, newDocuments[docId])
+      // 构建嵌套路径
+      for (let i = 0; i < lastIndex; i++) {
+        const key = path[i]
+        if (!(key in current)) {
+          current[key] = {}
+        }
+        current = current[key]
+      }
+
+      // 设置最终值
+      current[path[lastIndex]] = value
 
       return { documents: newDocuments }
     })
+
+    // 然后异步更新文档
+    await updateDocument(gameId, get().documents[gameId])
   },
 
   initializeStore: (data): void =>

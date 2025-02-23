@@ -7,6 +7,11 @@ import log from 'electron-log/main.js'
 import sharp from 'sharp'
 import pngToIco from 'png-to-ico'
 import { fileTypeFromBuffer } from 'file-type'
+import { get } from 'lodash'
+
+export function getNestedValue(obj: any, path: string[]): any {
+  return get(obj, path)
+}
 
 /**
  * Parse the game ID from a URL

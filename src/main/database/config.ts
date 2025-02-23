@@ -1,75 +1,11 @@
 // src/database/ConfigDBManager.ts
 import { DBManager } from './common'
-import type { configDocs } from '@appTypes/database'
+import { configDocs, PathsOf, DEFAULT_CONFIG_VALUES } from '@appTypes/database'
+import type { Get } from 'type-fest'
+import { getNestedValue } from '~/utils'
 
 export class ConfigDBManager {
   private static readonly DB_NAME = 'config'
-
-  // 默认配置值
-  private static readonly DEFAULT_VALUES = {
-    general: {
-      openAtLogin: false,
-      quitToTray: true
-    },
-    sync: {
-      enabled: true,
-      mode: 'offical',
-      officalConfig: {
-        auth: {
-          username: 'ximu',
-          password: '001500szm'
-        }
-      },
-      selfHostedConfig: {
-        url: '',
-        auth: {
-          username: '',
-          password: ''
-        }
-      }
-    },
-    game: {
-      scraper: {
-        defaultDatasSource: 'steam'
-      },
-      linkage: {
-        localeEmulator: {
-          path: ''
-        },
-        visualBoyAdvance: {
-          path: ''
-        },
-        magpie: {
-          path: '',
-          hotkey: 'win+shift+a'
-        }
-      },
-      showcase: {
-        sort: {
-          by: 'name',
-          order: 'desc' as const
-        }
-      },
-      gameList: {
-        sort: {
-          by: 'name',
-          order: 'desc' as const
-        },
-        selectedGroup: 'all',
-        highlightLocalGames: true,
-        markLocalGames: false,
-        showRecentGames: true
-      },
-      gameHeader: {
-        showOriginalName: false
-      }
-    },
-    appearances: {
-      sidebar: {
-        showThemeSwitcher: true
-      }
-    }
-  } satisfies configDocs
 
   /**
    * 获取所有配置
@@ -82,21 +18,26 @@ export class ConfigDBManager {
    * 获取通用配置
    */
   static async getGeneralConfig(): Promise<configDocs['general']> {
-    return await DBManager.getValue(this.DB_NAME, 'general', ['#all'], this.DEFAULT_VALUES.general)
+    return await DBManager.getValue(
+      this.DB_NAME,
+      'general',
+      ['#all'],
+      DEFAULT_CONFIG_VALUES.general
+    )
   }
 
   /**
    * 获取同步配置
    */
   static async getSyncConfig(): Promise<configDocs['sync']> {
-    return await DBManager.getValue(this.DB_NAME, 'sync', ['#all'], this.DEFAULT_VALUES.sync)
+    return await DBManager.getValue(this.DB_NAME, 'sync', ['#all'], DEFAULT_CONFIG_VALUES.sync)
   }
 
   /**
    * 获取游戏配置
    */
   static async getGameConfig(): Promise<configDocs['game']> {
-    return await DBManager.getValue(this.DB_NAME, 'game', ['#all'], this.DEFAULT_VALUES.game)
+    return await DBManager.getValue(this.DB_NAME, 'game', ['#all'], DEFAULT_CONFIG_VALUES.game)
   }
 
   /**
@@ -107,8 +48,26 @@ export class ConfigDBManager {
       this.DB_NAME,
       'appearances',
       ['#all'],
-      this.DEFAULT_VALUES.appearances
+      DEFAULT_CONFIG_VALUES.appearances
     )
+  }
+
+  static async getValue<Path extends string[]>(
+    path: Path & PathsOf<configDocs>
+  ): Promise<Get<configDocs, Path>> {
+    return (await DBManager.getValue(
+      this.DB_NAME,
+      path[0],
+      path.slice(1),
+      getNestedValue(DEFAULT_CONFIG_VALUES, path)
+    )) as Get<configDocs, Path>
+  }
+
+  static async setValue<Path extends string[]>(
+    path: Path & PathsOf<configDocs>,
+    value: Get<configDocs, Path>
+  ): Promise<void> {
+    await DBManager.setValue(this.DB_NAME, path[0], path.slice(1), value as any)
   }
 
   /**
@@ -150,16 +109,18 @@ export class ConfigDBManager {
    * 重置指定配置到默认值
    */
   static async resetConfig(docId: keyof configDocs): Promise<void> {
-    await DBManager.setValue(this.DB_NAME, docId, ['#all'], this.DEFAULT_VALUES[docId])
+    await DBManager.setValue(this.DB_NAME, docId, ['#all'], DEFAULT_CONFIG_VALUES[docId])
   }
 
   /**
    * 重置所有配置到默认值
    */
   static async resetAllConfigs(): Promise<void> {
-    const configs = Object.entries(this.DEFAULT_VALUES)
+    const configs = Object.entries(DEFAULT_CONFIG_VALUES)
     for (const [docId, _value] of configs) {
       await this.resetConfig(docId as keyof configDocs)
     }
   }
+
+  // 默认配置值
 }

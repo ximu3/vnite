@@ -23,7 +23,7 @@ export interface gameDoc {
   }
   path: {
     gamePath: string
-    savePath: string
+    savePaths: string[]
     maxSaveBackups: number
   }
   launcher: {
@@ -72,6 +72,7 @@ export interface gameDoc {
       id: string
       date: string
       note: string
+      locked: boolean
     }
   }
   memory: {
@@ -86,9 +87,77 @@ export interface gameDoc {
 }
 
 export interface gameCollectionDoc {
-  [gameCollectionId: string]: {
-    id: string
-    name: string
-    games: string[]
-  }
+  [gameCollectionId: string]: gameCollection
 }
+
+export interface gameCollection {
+  id: string
+  name: string
+  games: gameDoc[]
+}
+
+export const DEFAULT_GAME_VALUES = {
+  _id: '',
+  metadata: {
+    name: '',
+    originalName: '',
+    releaseDate: '2004-12-29',
+    description: '',
+    developers: [] as string[],
+    platforms: [] as string[],
+    publishers: [] as string[],
+    genres: [] as string[],
+    tags: [] as string[],
+    steamId: '',
+    vndbId: '',
+    igdbId: '',
+    ymgalId: ''
+  },
+  path: {
+    gamePath: '',
+    savePaths: [] as string[],
+    maxSaveBackups: 7
+  },
+  launcher: {
+    mode: 'file',
+    fileConfig: {
+      path: '',
+      workingDirectory: '',
+      args: [] as string[]
+    },
+    urlConfig: {
+      url: '',
+      browserPath: ''
+    },
+    scriptConfig: {
+      workingDirectory: '',
+      command: [] as string[]
+    },
+    useMagpie: false
+  },
+  monitor: {
+    mode: 'file',
+    fileConfig: {
+      path: ''
+    },
+    folderConfig: {
+      path: '',
+      deepth: 3
+    },
+    processConfig: {
+      name: ''
+    }
+  },
+  record: {
+    addDate: '2004-12-29T00:00:00.000Z',
+    lastRunDate: '2004-12-29T00:00:00.000Z',
+    score: -1,
+    playTime: 0,
+    playStatus: 'unplayed',
+    timers: []
+  },
+  save: {},
+  memory: {
+    memoryList: {}
+  }
+} satisfies gameDoc

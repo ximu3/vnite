@@ -62,3 +62,68 @@ export interface configDocs {
     }
   }
 }
+
+export const DEFAULT_CONFIG_VALUES = {
+  general: {
+    openAtLogin: false,
+    quitToTray: true
+  },
+  sync: {
+    enabled: true,
+    mode: 'offical',
+    officalConfig: {
+      auth: {
+        username: 'ximu',
+        password: '001500szm'
+      }
+    },
+    selfHostedConfig: {
+      url: '',
+      auth: {
+        username: '',
+        password: ''
+      }
+    }
+  },
+  game: {
+    scraper: {
+      defaultDatasSource: 'steam'
+    },
+    linkage: {
+      localeEmulator: {
+        path: ''
+      },
+      visualBoyAdvance: {
+        path: ''
+      },
+      magpie: {
+        path: '',
+        hotkey: 'win+shift+a'
+      }
+    },
+    showcase: {
+      sort: {
+        by: 'name',
+        order: 'desc' as const
+      }
+    },
+    gameList: {
+      sort: {
+        by: 'name',
+        order: 'desc' as const
+      },
+      selectedGroup: 'all',
+      highlightLocalGames: true,
+      markLocalGames: false,
+      showRecentGames: true
+    },
+    gameHeader: {
+      showOriginalName: false
+    }
+  },
+  appearances: {
+    sidebar: {
+      showThemeSwitcher: true
+    }
+  }
+} satisfies configDocs

@@ -177,6 +177,20 @@ export class DBManager {
     }
   }
 
+  static async removeDoc(dbName: string, docId: string): Promise<void> {
+    const db = this.getInstance(dbName)
+
+    try {
+      const doc = await db.get(docId)
+      await db.remove(docId, doc._rev)
+    } catch (error) {
+      if ((error as any).name === 'not_found') {
+        return
+      }
+      throw error
+    }
+  }
+
   static async getAllDocs(dbName: string): Promise<Record<string, any>> {
     const db = this.getInstance(dbName)
     const result = await db.allDocs({ include_docs: true })

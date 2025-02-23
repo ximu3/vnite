@@ -52,3 +52,9 @@ export interface SyncStatus {
 }
 
 export type AttachmentReturnType<T> = T extends { format: 'file' } ? string : Buffer
+
+export type PathsOf<T> = T extends object
+  ? {
+      [K in keyof T]: [K] | [K, ...PathsOf<T[K]>]
+    }[keyof T]
+  : never
