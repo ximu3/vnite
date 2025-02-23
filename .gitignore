@@ -8,3 +8,4 @@ data
 .env
 .env.local
 .env.*.local
+app
