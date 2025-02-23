@@ -6,34 +6,23 @@ export default defineConfig({
   main: {
     resolve: {
       alias: {
-        '~': resolve('src/main')
+        '~': resolve('src/main'),
+        '@types': resolve('src/types')
       }
     },
-    plugins: [externalizeDepsPlugin({ exclude: ['lowdb', 'webdav', 'file-type'] })]
+    plugins: [externalizeDepsPlugin({ exclude: ['file-type'] })]
   },
   preload: {
-    resolve: {
-      alias: {
-        '~': resolve('src/main')
-      }
-    },
-    plugins: [externalizeDepsPlugin({ exclude: ['lowdb', 'webdav', 'file-type'] })]
+    plugins: [externalizeDepsPlugin()]
   },
   renderer: {
     resolve: {
       alias: {
         '~': resolve('src/renderer/src'),
-        '@ui': resolve('src/renderer/src/components/ui')
+        '@ui': resolve('src/renderer/src/components/ui'),
+        '@appTypes': resolve('src/types')
       }
     },
-    plugins: [react()],
-    build: {
-      rollupOptions: {
-        input: {
-          index: resolve(__dirname, 'src/renderer/index.html'),
-          splash: resolve(__dirname, 'src/renderer/splash.html')
-        }
-      }
-    }
+    plugins: [react()]
   }
 })

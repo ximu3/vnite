@@ -7,14 +7,6 @@ export interface IpcRenderer {
   removeAllListeners: (channel: string) => void
 }
 
-declare global {
-  interface Window {
-    electron: {
-      ipcRenderer: IpcRenderer
-    }
-  }
-}
-
 // Creating an anti-aliasing function that supports asynchrony
 function createAsyncDebounce<F extends (...args: any[]) => Promise<any>>(func: F, wait: number) {
   const debounced = debounce(

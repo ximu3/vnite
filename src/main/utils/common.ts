@@ -1,13 +1,12 @@
 import fse from 'fs-extra'
 import { shell, app } from 'electron'
 import path from 'path'
-import { getDataPath } from './path'
-import { getDBValue } from '~/database'
-import { getMedia } from '~/media'
+import { getDataPath, getAppTempPath } from './path'
+import { DBManager } from '~/database'
 import log from 'electron-log/main.js'
 import sharp from 'sharp'
 import pngToIco from 'png-to-ico'
-import { getAppTempPath } from './path'
+import { fileTypeFromBuffer } from 'file-type'
 
 /**
  * Parse the game ID from a URL
@@ -17,6 +16,40 @@ import { getAppTempPath } from './path'
 export function parseGameIdFromUrl(url: string): string | null {
   const match = url.match(/vnite:\/\/rungameid\/([^/\s]+)/)
   return match ? match[1] : null
+}
+
+export async function convertBufferToFile(buffer: Buffer, filePath: string): Promise<string> {
+  try {
+    await fse.writeFile(filePath, buffer)
+    return filePath
+  } catch (error) {
+    console.error('Error converting buffer to file:', error)
+    throw error
+  }
+}
+
+export async function convertBufferToTempFile(buffer: Buffer, ext?: string): Promise<string> {
+  try {
+    if (!ext) {
+      ext = (await fileTypeFromBuffer(buffer as Uint8Array))?.ext || 'bin'
+    }
+    const tempPath = getAppTempPath(`temp_${Date.now()}.${ext}`)
+    await fse.writeFile(tempPath, buffer)
+    return tempPath
+  } catch (error) {
+    console.error('Error converting buffer to temp file:', error)
+    throw error
+  }
+}
+
+export async function convertFileToBuffer(filePath: string): Promise<Buffer> {
+  try {
+    const buffer = await fse.readFile(filePath)
+    return buffer
+  } catch (error) {
+    console.error('Error converting file to buffer:', error)
+    throw error
+  }
 }
 
 /**
@@ -33,7 +66,7 @@ export function getAppVersion(): string {
  */
 export async function setupOpenAtLogin(): Promise<void> {
   try {
-    const isEnabled = await getDBValue('config.json', ['general', 'openAtLogin'], false)
+    const isEnabled = await DBManager.getValue('config', 'general', ['openAtLogin'], false)
     app.setLoginItemSettings({
       openAtLogin: isEnabled,
       args: ['--hidden']
@@ -49,7 +82,7 @@ export async function setupOpenAtLogin(): Promise<void> {
  */
 export async function updateOpenAtLogin(): Promise<void> {
   try {
-    const isEnabled = await getDBValue('config.json', ['general', 'openAtLogin'], false)
+    const isEnabled = await DBManager.getValue('config', 'general', ['openAtLogin'], false)
     app.setLoginItemSettings({
       openAtLogin: isEnabled,
       args: ['--hidden']
@@ -78,19 +111,8 @@ export async function openPathInExplorer(filePath: string): Promise<void> {
   }
 }
 
-/**
- * Open the game database path in the file explorer
- * @param gameId The ID of the game
- */
-export async function openGameDBPathInExplorer(gameId: string): Promise<void> {
-  const gameDBPath = await getDataPath(`games/${gameId}/`)
-  if (gameDBPath) {
-    await openPathInExplorer(gameDBPath)
-  }
-}
-
 export async function openDatabasePathInExplorer(): Promise<void> {
-  const databasePath = await getDataPath('')
+  const databasePath = getDataPath()
   if (databasePath) {
     await openPathInExplorer(databasePath)
   }
@@ -170,12 +192,15 @@ interface UrlShortcutOptions {
 export async function createGameShortcut(gameId: string, targetPath: string): Promise<void> {
   try {
     // Get game information
-    const gameName = await getDBValue(`games/${gameId}/metadata.json`, ['name'], '')
+    const gameName = await DBManager.getValue('', gameId, ['name'], '')
 
-    const originalIconPath = await getMedia(gameId, 'icon')
+    const originalIconPath = await DBManager.getAttachment('game', gameId, 'icon', {
+      format: 'file',
+      filePath: getAppTempPath(`icon_${gameId}_${Date.now()}.png`)
+    })
 
     // ico icon path
-    const iconPath = await getDataPath(`games/${gameId}/icon.ico`)
+    const iconPath = getAppTempPath(`icon_${gameId}_${Date.now()}.ico`)
 
     // Convert icons to ico format
     await convertToIcon(originalIconPath, iconPath, {

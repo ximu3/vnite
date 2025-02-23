@@ -1,10 +1,10 @@
 import fse from 'fs-extra'
-import { getDataPathSync, getAppRootPath } from './path'
+import { getDataPath, getAppRootPath } from './path'
 import path from 'path'
-import log from 'electron-log/main.js'
+import log from 'electron-log/main'
 import { app } from 'electron'
 
-let _isPortableMode: boolean = false
+let _isPortableMode: boolean = true
 
 export const portableStore = {
   get isPortableMode(): boolean {
@@ -17,8 +17,8 @@ export const portableStore = {
 
 export async function switch2PortableMode(): Promise<void> {
   try {
-    const basePath = getDataPathSync('')
-    const portablePath = path.join(getAppRootPath(), 'portable/app/database')
+    const basePath = getDataPath('')
+    const portablePath = path.join(getAppRootPath(), 'app/database')
     await fse.ensureDir(portablePath)
     await fse.emptyDir(portablePath)
     await fse.copy(basePath, portablePath)
@@ -33,7 +33,7 @@ export async function switch2PortableMode(): Promise<void> {
 export async function switch2NormalMode(): Promise<void> {
   try {
     const basePath = path.join(app.getPath('userData'), 'app/database')
-    const portablePath = path.join(getAppRootPath(), 'portable/app/database')
+    const portablePath = path.join(getAppRootPath(), 'app/database')
     await fse.ensureDir(basePath)
     await fse.emptyDir(basePath)
     await fse.copy(portablePath, basePath)
@@ -47,7 +47,7 @@ export async function switch2NormalMode(): Promise<void> {
 
 export async function checkPortableMode(): Promise<void> {
   try {
-    const portablePath = path.join(getAppRootPath(), 'portable')
+    const portablePath = path.join(getAppRootPath(), 'app')
     portableStore.isPortableMode = await fse.pathExists(portablePath)
   } catch (error) {
     log.error('检查便携模式失败', error)

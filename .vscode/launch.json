@@ -13,8 +13,7 @@
       "runtimeArgs": ["--sourcemap"],
       "env": {
         "REMOTE_DEBUGGING_PORT": "9222"
-      },
-      "timeout": 60000
+      }
     },
     {
       "name": "Debug Renderer Process",

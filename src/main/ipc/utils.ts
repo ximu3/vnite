@@ -5,15 +5,13 @@ import {
   selectPathDialog,
   selectMultiplePathDialog,
   openPathInExplorer,
-  openGameDBPathInExplorer,
   createGameShortcut,
   openDatabasePathInExplorer,
   updateOpenAtLogin,
   getAppVersion,
   portableStore,
   switchDatabaseMode,
-  readFileBuffer,
-  cropImage
+  readFileBuffer
 } from '~/utils'
 import { app } from 'electron'
 
@@ -71,10 +69,6 @@ export function setupUtilsIPC(mainWindow: BrowserWindow): void {
     await openPathInExplorer(filePath)
   })
 
-  ipcMain.handle('open-game-db-path-in-explorer', async (_, gameId: string) => {
-    await openGameDBPathInExplorer(gameId)
-  })
-
   ipcMain.handle('open-database-path-in-explorer', async () => {
     await openDatabasePathInExplorer()
   })
@@ -106,28 +100,6 @@ export function setupUtilsIPC(mainWindow: BrowserWindow): void {
   ipcMain.handle('read-file-buffer', async (_, filePath: string) => {
     return await readFileBuffer(filePath)
   })
-
-  ipcMain.handle(
-    'crop-image',
-    async (
-      _,
-      {
-        sourcePath,
-        x,
-        y,
-        width,
-        height
-      }: {
-        sourcePath: string
-        x: number
-        y: number
-        width: number
-        height: number
-      }
-    ) => {
-      return await cropImage({ sourcePath, x, y, width, height })
-    }
-  )
 
   mainWindow.on('maximize', () => {
     mainWindow.webContents.send('window-maximized')

@@ -1,7 +1,6 @@
 // renderer/components/GameImage.tsx
-import React, { useState, useEffect, ImgHTMLAttributes } from 'react'
-import { ipcOnUnique, cn } from '~/utils'
-import { useImageStore } from '~/hooks/imageStore'
+import React, { useState, ImgHTMLAttributes } from 'react'
+import { cn } from '~/utils'
 
 interface GameImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src'> {
   gameId: string
@@ -25,35 +24,21 @@ export const GameImage: React.FC<GameImageProps> = ({
 }) => {
   const [hasError, setHasError] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
-  const timestamp = useImageStore((state) => state.getTimestamp(gameId, type))
-  const updateTimestamp = useImageStore((state) => state.updateTimestamp)
 
-  useEffect(() => {
-    const handleImageUpdate = (_event: any, updatedPath: string): void => {
-      if (updatedPath.includes(`games/${gameId}/${type}`)) {
-        updateTimestamp(gameId, type)
-        setHasError(false)
-        setIsLoaded(false)
-        onUpdated?.()
-      }
-    }
-
-    const remove = ipcOnUnique('reload-db-values', handleImageUpdate)
-    return (): void => {
-      remove()
-    }
-  }, [gameId, type, onUpdated, updateTimestamp])
+  // 直接使用附件协议URL
+  const attachmentUrl = `attachment://game/${gameId}/images/${type}.webp`
 
   if (hasError) {
     return <>{fallback}</>
   }
+
   return (
     <div className={cn('relative', className)}>
       {!isLoaded && (
         <div className={cn('absolute inset-0', className?.includes('rounded') && 'rounded-lg')} />
       )}
       <img
-        src={`img:///games/${gameId}/${type}?t=${timestamp}`}
+        src={attachmentUrl}
         className={cn(
           'transition-opacity duration-300',
           shadow && 'shadow-md shadow-black/50',
@@ -63,7 +48,11 @@ export const GameImage: React.FC<GameImageProps> = ({
         )}
         loading="lazy"
         decoding="async"
-        onLoad={() => setIsLoaded(true)}
+        onLoad={() => {
+          setIsLoaded(true)
+          setHasError(false)
+          onUpdated?.()
+        }}
         onError={(e) => {
           setHasError(true)
           setIsLoaded(false)

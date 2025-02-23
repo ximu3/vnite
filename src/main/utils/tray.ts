@@ -1,7 +1,5 @@
 import { app, Tray, Menu, nativeImage, BrowserWindow } from 'electron'
-import { getDBValue, setDBValue, getGameIndexData } from '~/database'
-import { sortGameIndex } from '~/database/gameIndex'
-import { getMedia } from '~/media'
+import { DBManager, GameDBManager, ConfigDBManager } from '~/database'
 import { shell } from 'electron'
 import icon from '../../../resources/icon.png?asset'
 
@@ -40,20 +38,14 @@ export class TrayManager {
 
   private async init(mainWindow: BrowserWindow): Promise<void> {
     this.mainWindow = mainWindow
-    this.config = await getDBValue('config.json', ['general'], {
-      openAtLogin: false,
-      quitToTray: false
-    })
+    this.config = await ConfigDBManager.getGeneralConfig()
 
     this.createTray()
     await this.setupWindowEvents()
   }
 
   public async updateConfig(): Promise<void> {
-    this.config = await getDBValue('config.json', ['general'], {
-      openAtLogin: false,
-      quitToTray: false
-    })
+    this.config = await ConfigDBManager.getGeneralConfig()
     this.updateTrayMenu()
   }
 
@@ -119,7 +111,7 @@ export class TrayManager {
             type: 'checkbox',
             checked: this.config?.openAtLogin,
             click: async (menuItem): Promise<void> => {
-              await setDBValue('config.json', ['general', 'openAtLogin'], menuItem.checked)
+              await DBManager.setValue('config', 'general', ['openAtLogin'], menuItem.checked)
               app.setLoginItemSettings({
                 openAtLogin: menuItem.checked,
                 args: ['--hidden']
@@ -131,7 +123,7 @@ export class TrayManager {
             type: 'checkbox',
             checked: this.config?.quitToTray,
             click: async (menuItem): Promise<void> => {
-              await setDBValue('config.json', ['general', 'quitToTray'], menuItem.checked)
+              await DBManager.setValue('config', 'general', ['quitToTray'], menuItem.checked)
               await this.updateConfig()
             }
           }
@@ -158,17 +150,19 @@ export class TrayManager {
 
   private async getRecentGames(): Promise<Array<{ id: string; name: string; icon: string }>> {
     try {
-      const gameIndex = await getGameIndexData()
-      const recentGameIds = sortGameIndex('lastRunDate', 'desc').slice(0, 5)
+      const gameDocs = await GameDBManager.getAllGames()
+      const recentGameIds = (
+        await GameDBManager.sortGames(['record', 'lastRunDate'], 'desc')
+      ).slice(0, 5)
 
       const recentGames = await Promise.all(
         recentGameIds.map(async (gameId) => {
-          const game = gameIndex[gameId]
-          const iconPath = await getMedia(gameId, 'icon')
+          const game = gameDocs[gameId]
+          const iconPath = await GameDBManager.getGameImage(gameId, 'icon', 'file')
 
           return {
             id: gameId,
-            name: game?.name || gameId,
+            name: game?.metadata.name || gameId,
             icon: iconPath
           }
         })

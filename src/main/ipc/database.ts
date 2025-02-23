@@ -1,87 +1,40 @@
 import { ipcMain, BrowserWindow } from 'electron'
-import {
-  setDBValue,
-  getDBValue,
-  getGameIndexData,
-  getGamesRecordData,
-  backupGameSaveData,
-  restoreGameSaveData,
-  deleteGameSaveData,
-  deleteGameFromDB,
-  backupDatabaseData,
-  restoreDatabaseData,
-  addMemoryData,
-  deleteMemoryData,
-  updateMemoryCoverData,
-  getMemoryCoverPathData
-} from '~/database'
+import { DBManager } from '~/database'
+import { DocChange } from '@appTypes/database'
 
 export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
   ipcMain.handle(
-    'set-db-value',
-    async (_, dbName: string, path: string[], value: any, noIpcAction?: boolean) => {
-      await setDBValue(dbName, path, value, noIpcAction)
+    'db-get-value',
+    async (_event, dbName: string, docId: string, path: string[], defaultValue: any) => {
+      return await DBManager.getValue(dbName, docId, path, defaultValue)
     }
   )
 
-  ipcMain.handle('get-db-value', async (_, dbName: string, path: string[], defaultValue: any) => {
-    return await getDBValue(dbName, path, defaultValue)
+  ipcMain.handle(
+    'db-set-value',
+    async (_event, dbName: string, docId: string, path: string[], value: any) => {
+      return await DBManager.setValue(dbName, docId, path, value)
+    }
+  )
+
+  ipcMain.handle('db-changed', async (_event, change: DocChange) => {
+    return await DBManager.setValue(change.dbName, change.docId, ['#all'], change.data)
   })
 
-  ipcMain.handle('get-games-index', () => {
-    return getGameIndexData()
+  ipcMain.handle('db-get-all-docs', async (_event, dbName: string) => {
+    return await DBManager.getAllDocs(dbName)
   })
 
-  ipcMain.handle('backup-game-save', async (_, gameId: string) => {
-    await backupGameSaveData(gameId)
-  })
-
-  ipcMain.handle('restore-game-save', async (_, gameId: string, saveId: string) => {
-    await restoreGameSaveData(gameId, saveId)
-  })
-
-  ipcMain.handle('delete-game-save', async (_, gameId: string, saveId: string) => {
-    await deleteGameSaveData(gameId, saveId)
-  })
-
-  ipcMain.handle('get-games-record-data', async () => {
-    return await getGamesRecordData()
-  })
-
-  ipcMain.handle('delete-game-from-db', async (_, gameId: string) => {
-    await deleteGameFromDB(gameId)
-  })
-
-  ipcMain.handle('backup-database', async (_, targetPath: string) => {
-    await backupDatabaseData(targetPath)
-  })
-
-  ipcMain.handle('restore-database', async (_, sourcePath: string) => {
-    await restoreDatabaseData(sourcePath)
-  })
-
-  ipcMain.handle('add-memory', async (_, gameId: string) => {
-    await addMemoryData(gameId)
-  })
-
-  ipcMain.handle('delete-memory', async (_, gameId: string, memoryId: string) => {
-    await deleteMemoryData(gameId, memoryId)
+  ipcMain.handle('db-set-all-docs', async (_event, dbName: string, docs: any[]) => {
+    return await DBManager.setAllDocs(dbName, docs)
   })
 
   ipcMain.handle(
-    'update-memory-cover',
-    async (_, gameId: string, memoryId: string, imgPath: string) => {
-      await updateMemoryCoverData(gameId, memoryId, imgPath)
+    'db-check-attachment',
+    async (_event, dbName: string, docId: string, attachmentId: string) => {
+      return await DBManager.checkAttachment(dbName, docId, attachmentId)
     }
   )
-
-  ipcMain.handle('get-memory-cover-path', async (_, gameId: string, memoryId: string) => {
-    return await getMemoryCoverPathData(gameId, memoryId)
-  })
-
-  ipcMain.on('reload-db-values', (_, dbName: string) => {
-    mainWindow.webContents.send('reload-db-values', dbName)
-  })
 
   mainWindow.webContents.send('databaseIPCReady')
 }

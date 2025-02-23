@@ -3,7 +3,7 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { setupIPC } from './ipc'
-import log from 'electron-log/main.js'
+import log from 'electron-log/main'
 import windowStateKeeper from 'electron-window-state'
 import { getLogsPath } from './utils'
 import {
@@ -18,12 +18,9 @@ import {
   getAppRootPath,
   checkPortableMode
 } from './utils'
-import { initializeCloudsyncServices } from './cloudSync'
-import { setupUpdater, upgradeDB } from './updater'
-import { initScraper } from './scraper'
-import { initializeIndex } from './database/gameIndex'
-import { initializeRecords } from './database/record'
-import { getDBValue } from '~/database'
+// import { setupUpdater } from './updater' todo
+// import { initScraper } from './scraper' todo
+import { startSync, DBManager } from '~/database'
 
 let mainWindow: BrowserWindow
 let splashWindow: BrowserWindow | null
@@ -61,9 +58,9 @@ async function handleGameUrl(url: string): Promise<void> {
       }
       mainWindow.focus()
 
-      const gamePath = await getDBValue(`games/${gameId}/path.json`, ['gamePath'], '')
-      const mode = await getDBValue(`games/${gameId}/launcher.json`, ['mode'], '')
-      const config = await getDBValue(`games/${gameId}/launcher.json`, [`${mode}Config`], {})
+      const gamePath = await DBManager.getValue('game', gameId, ['path', 'gamePath'], '')
+      const mode = await DBManager.getValue('game', gameId, ['launcher', 'mode'], '')
+      const config = await DBManager.getValue('game', gameId, ['launcher', `${mode}Config`], {})
       mainWindow.webContents.send('start-game-from-url', gameId, gamePath, mode, config)
     } else {
       launchGameId = gameId
@@ -119,11 +116,12 @@ function createWindow(): void {
         mainWindow.show()
       }
       if (launchGameId) {
-        const gamePath = await getDBValue(`games/${launchGameId}/path.json`, ['gamePath'], '')
-        const mode = await getDBValue(`games/${launchGameId}/launcher.json`, ['mode'], '')
-        const config = await getDBValue(
-          `games/${launchGameId}/launcher.json`,
-          [`${mode}Config`],
+        const gamePath = await DBManager.getValue('game', launchGameId, ['path', 'gamePath'], '')
+        const mode = await DBManager.getValue('game', launchGameId, ['launcher', 'mode'], '')
+        const config = await DBManager.getValue(
+          'game',
+          launchGameId,
+          ['launcher', `${mode}Config`],
           {}
         )
         mainWindow.webContents.send('start-game-from-url', launchGameId, gamePath, mode, config)
@@ -175,7 +173,9 @@ function createSplashWindow(): void {
 
   splashWindow.once('ready-to-show', () => {
     const isHidden = process.argv.includes('--hidden')
-    splashWindow && !isHidden && splashWindow.show()
+    if (splashWindow && !isHidden) {
+      splashWindow.show()
+    }
   })
 }
 
@@ -243,18 +243,12 @@ if (!gotTheLock) {
       log.info('Running in normal mode')
     }
 
-    // Upgrade the database
-    await upgradeDB()
-
-    // Initialize metadata
-    await initializeIndex()
-
-    // Initialize records
-    await initializeRecords()
-
     setupProtocols()
 
     createWindow()
+
+    // Sync all databases with remote
+    await startSync()
 
     createSplashWindow()
 
@@ -267,14 +261,11 @@ if (!gotTheLock) {
     // Setup open at login
     await setupOpenAtLogin()
 
-    // Initialize cloud sync services
-    await initializeCloudsyncServices(mainWindow)
-
     // Setup auto updater
-    setupUpdater(mainWindow)
+    // setupUpdater(mainWindow) todo
 
     // Initialize the scraper
-    initScraper()
+    // initScraper() todo
 
     app.on('activate', function () {
       // On macOS it's common to re-create a window in the app when the
