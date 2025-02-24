@@ -8,7 +8,13 @@ import {
   SyncStatus,
   AttachmentReturnType
 } from '@appTypes/database'
-import { convertBufferToFile, convertFileToBuffer, convertBufferToTempFile } from '~/utils'
+import {
+  convertBufferToFile,
+  convertFileToBuffer,
+  convertBufferToTempFile,
+  getValueByPath,
+  setValueByPath
+} from '~/utils'
 import { fileTypeFromBuffer } from 'file-type'
 import { getDataPath } from '~/utils'
 
@@ -44,62 +50,14 @@ export class DBManager {
     return this.instances[dbName]
   }
 
-  private static getNestedValue(obj: any, path: string[]): any {
-    let current = obj
-
-    // 遍历路径，无则返回undefined
-    for (const key of path) {
-      if (current === undefined || current === null) {
-        return undefined
-      }
-      current = current[key]
-    }
-
-    if (current === undefined || current === null) {
-      return undefined
-    }
-
-    return current
-  }
-
-  private static setNestedValue(obj: any, path: string[], value: any): void {
-    let current = obj
-
-    // 遍历路径，除了最后一个
-    for (let i = 0; i < path.length - 1; i++) {
-      const key = path[i]
-
-      // 如果当前节点不存在或为null，创建新对象
-      if (current === undefined || current === null) {
-        current = {}
-      }
-
-      // 如果key不存在，创建新对象
-      if (!(key in current)) {
-        current[key] = {}
-      }
-
-      current = current[key]
-    }
-
-    // 设置最后一个路径的值
-    const lastKey = path[path.length - 1]
-    if (current === undefined || current === null) {
-      current = {}
-    }
-    current[lastKey] = value
-  }
-
-  static async setValue(dbName: string, docId: string, path: string[], value: any): Promise<void> {
+  static async setValue(dbName: string, docId: string, path: string, value: any): Promise<void> {
     const db = this.getInstance(dbName)
 
     try {
-      // 尝试获取现有文档
       let doc: any
       try {
         doc = await db.get(docId)
       } catch (err: any) {
-        // 如果文档不存在，创建新文档
         if (err.name === 'not_found') {
           doc = { _id: docId }
         } else {
@@ -107,19 +65,18 @@ export class DBManager {
         }
       }
 
-      // 如果path是['#all']，则更新整个文档内容
-      if (path[0] === '#all') {
+      if (path === '#all') {
+        // 更新整个文档，保留 _id 和 _rev
         doc = {
           _id: docId,
-          _rev: doc._rev, // 保留revision
+          _rev: doc._rev,
           ...value
         }
       } else {
-        // 否则更新指定路径的值
-        this.setNestedValue(doc, path, value)
+        // 直接使用新版 setValueByPath
+        setValueByPath(doc, path, value)
       }
 
-      // 保存更新后的文档
       await db.put(doc)
     } catch (error) {
       console.error('Error setting value:', error)
@@ -130,7 +87,7 @@ export class DBManager {
   static async getValue<T>(
     dbName: string,
     docId: string,
-    path: string[],
+    path: string,
     defaultValue: T
   ): Promise<T> {
     const db = this.getInstance(dbName)
@@ -142,30 +99,31 @@ export class DBManager {
       } catch (err: any) {
         if (err.name === 'not_found') {
           doc = { _id: docId }
-          if (path[0] === '#all') {
+
+          if (path === '#all') {
             doc = {
               _id: docId,
-              ...(defaultValue as object)
+              ...defaultValue
             }
           } else {
-            // 使用修改后的setNestedValue来设置默认值
-            this.setNestedValue(doc, path, defaultValue)
+            // 直接使用新版 setValueByPath
+            setValueByPath(doc, path, defaultValue)
           }
+
           await db.put(doc)
           return defaultValue
         }
         throw err
       }
 
-      if (path[0] === '#all') {
-        const { _id, _rev, ...rest } = doc
-        return rest as T
+      if (path === '#all') {
+        return doc as T
       }
 
-      // 使用修改后的getNestedValue来获取值
-      const value = this.getNestedValue(doc, path)
+      // 直接使用新版 getValueByPath
+      const value = getValueByPath(doc, path)
+
       if (value === undefined) {
-        // 如果返回了undefined，说明路径不存在，需要更新文档
         await this.setValue(dbName, docId, path, defaultValue)
         return defaultValue
       }

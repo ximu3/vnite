@@ -1,5 +1,5 @@
 import { app, Tray, Menu, nativeImage, BrowserWindow } from 'electron'
-import { DBManager, GameDBManager, ConfigDBManager } from '~/database'
+import { GameDBManager, ConfigDBManager } from '~/database'
 import { shell } from 'electron'
 import icon from '../../../resources/icon.png?asset'
 
@@ -111,7 +111,7 @@ export class TrayManager {
             type: 'checkbox',
             checked: this.config?.openAtLogin,
             click: async (menuItem): Promise<void> => {
-              await DBManager.setValue('config', 'general', ['openAtLogin'], menuItem.checked)
+              await ConfigDBManager.setConfigValue('general.openAtLogin', menuItem.checked)
               app.setLoginItemSettings({
                 openAtLogin: menuItem.checked,
                 args: ['--hidden']
@@ -123,7 +123,7 @@ export class TrayManager {
             type: 'checkbox',
             checked: this.config?.quitToTray,
             click: async (menuItem): Promise<void> => {
-              await DBManager.setValue('config', 'general', ['quitToTray'], menuItem.checked)
+              await ConfigDBManager.setConfigValue('general.quitToTray', menuItem.checked)
               await this.updateConfig()
             }
           }
@@ -152,7 +152,7 @@ export class TrayManager {
     try {
       const gameDocs = await GameDBManager.getAllGames()
       const recentGameIds = (
-        await GameDBManager.sortGames(['record', 'lastRunDate'], 'desc')
+        await GameDBManager.sortGames({ by: 'record.lastRunDate', order: 'desc' })
       ).slice(0, 5)
 
       const recentGames = await Promise.all(

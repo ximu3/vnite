@@ -1,10 +1,10 @@
 import { get } from 'lodash'
 
-export function getNestedValue(obj: any, path: string[]): any {
+export function getValueByPath(obj: any, path: string[]): any {
   return get(obj, path)
 }
 
-export function setNestedValue(obj: any, path: string[], value: any): any {
+export function setValueByPath(obj: any, path: string[], value: any): any {
   if (path.length === 0) return value
 
   const result = { ...obj }

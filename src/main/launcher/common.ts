@@ -1,15 +1,14 @@
 import { spawn } from 'child_process'
-import { getDBValue } from '~/database'
+import { GameDBManager } from '~/database'
 import { startMonitor } from '~/monitor'
+
+//todo
 
 export async function fileLuancher(gameId: string): Promise<void> {
   try {
-    const fileConfig = await getDBValue(`games/${gameId}/launcher.json`, ['fileConfig'], {
-      path: '',
-      workingDirectory: '',
-      timerMode: '',
-      timerPath: ''
-    })
+    const fileConfig = await GameDBManager.getGameValue(gameId, 'launcher.fileConfig')
+
+    const monitorMode = await GameDBManager.getGameValue(gameId, 'monitor.mode')
 
     const launcher = spawn('start', ['""', `"${fileConfig.path}"`], {
       shell: true,
@@ -28,7 +27,16 @@ export async function fileLuancher(gameId: string): Promise<void> {
     launcher.unref()
 
     // Startup Monitor
-    startMonitor(gameId, fileConfig.timerPath)
+    if (monitorMode === 'file') {
+      const monitorConfig = await GameDBManager.getGameValue(gameId, 'monitor.fileConfig')
+      startMonitor(gameId, monitorConfig.path)
+    } else if (monitorMode === 'process') {
+      const monitorConfig = await GameDBManager.getGameValue(gameId, 'monitor.processConfig')
+      startMonitor(gameId, monitorConfig.name)
+    } else {
+      const monitorConfig = await GameDBManager.getGameValue(gameId, 'monitor.folderConfig')
+      startMonitor(gameId, monitorConfig.path)
+    }
   } catch (error) {
     console.error(`Error in fileLauncher for game ${gameId}:`, error)
     throw error
@@ -37,12 +45,9 @@ export async function fileLuancher(gameId: string): Promise<void> {
 
 export async function urlLauncher(gameId: string): Promise<void> {
   try {
-    const urlConfig = await getDBValue(`games/${gameId}/launcher.json`, ['urlConfig'], {
-      url: '',
-      browserPath: '',
-      timerMode: '',
-      timerPath: ''
-    })
+    const urlConfig = await GameDBManager.getGameValue(gameId, 'launcher.urlConfig')
+
+    const monitorMode = await GameDBManager.getGameValue(gameId, 'monitor.mode')
 
     if (!urlConfig || !urlConfig.url) {
       throw new Error(`Invalid URL configuration for game ${gameId}`)
@@ -66,10 +71,15 @@ export async function urlLauncher(gameId: string): Promise<void> {
     launcher.unref()
 
     // Startup Monitor
-    if (urlConfig.timerMode === 'browser') {
-      startMonitor(gameId, urlConfig.browserPath)
+    if (monitorMode === 'file') {
+      const monitorConfig = await GameDBManager.getGameValue(gameId, 'monitor.fileConfig')
+      startMonitor(gameId, monitorConfig.path)
+    } else if (monitorMode === 'process') {
+      const monitorConfig = await GameDBManager.getGameValue(gameId, 'monitor.processConfig')
+      startMonitor(gameId, monitorConfig.name)
     } else {
-      startMonitor(gameId, urlConfig.timerPath)
+      const monitorConfig = await GameDBManager.getGameValue(gameId, 'monitor.folderConfig')
+      startMonitor(gameId, monitorConfig.path)
     }
   } catch (err) {
     console.error(`Error in urlLauncher for game ${gameId}:`, err)
@@ -79,12 +89,9 @@ export async function urlLauncher(gameId: string): Promise<void> {
 
 export async function scriptLauncher(gameId: string): Promise<void> {
   try {
-    const scriptConfig = await getDBValue(`games/${gameId}/launcher.json`, ['scriptConfig'], {
-      command: [],
-      workingDirectory: '',
-      timerMode: '',
-      timerPath: ''
-    })
+    const scriptConfig = await GameDBManager.getGameValue(gameId, 'launcher.scriptConfig')
+
+    const monitorMode = await GameDBManager.getGameValue(gameId, 'monitor.mode')
 
     if (!scriptConfig || !scriptConfig.command || !Array.isArray(scriptConfig.command)) {
       throw new Error(`Invalid script configuration for game ${gameId}`)
@@ -115,7 +122,16 @@ export async function scriptLauncher(gameId: string): Promise<void> {
     launcher.unref()
 
     // Startup Monitor
-    startMonitor(gameId, scriptConfig.timerPath)
+    if (monitorMode === 'file') {
+      const monitorConfig = await GameDBManager.getGameValue(gameId, 'monitor.fileConfig')
+      startMonitor(gameId, monitorConfig.path)
+    } else if (monitorMode === 'process') {
+      const monitorConfig = await GameDBManager.getGameValue(gameId, 'monitor.processConfig')
+      startMonitor(gameId, monitorConfig.name)
+    } else {
+      const monitorConfig = await GameDBManager.getGameValue(gameId, 'monitor.folderConfig')
+      startMonitor(gameId, monitorConfig.path)
+    }
   } catch (err) {
     console.error(`Error in scriptLauncher for game ${gameId}:`, err)
     throw err

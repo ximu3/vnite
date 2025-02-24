@@ -1,18 +1,18 @@
 import { create } from 'zustand'
-import { ipcInvoke, getNestedValue } from '~/utils'
-import { DocChange, gameDocs, gameDoc, PathsOf, DEFAULT_GAME_VALUES } from '@appTypes/database'
-import type { Get } from 'type-fest'
+import { ipcInvoke, getValueByPath } from '~/utils'
+import { DocChange, gameDocs, gameDoc, DEFAULT_GAME_VALUES } from '@appTypes/database'
+import type { Get, Paths } from 'type-fest'
 
 export interface GameState {
   documents: gameDocs
   initialized: boolean
-  getGameValue: <Path extends string[]>(
+  getGameValue: <Path extends Paths<gameDoc, { bracketNotation: true }>>(
     gameId: string,
-    path: Path & PathsOf<gameDoc>
+    path: Path
   ) => Get<gameDoc, Path>
-  setGameValue: <Path extends string[]>(
+  setGameValue: <Path extends Paths<gameDoc, { bracketNotation: true }>>(
     gameId: string,
-    path: Path & PathsOf<gameDoc>,
+    path: Path,
     value: Get<gameDoc, Path>
   ) => Promise<void>
   initializeStore: (data: GameState['documents']) => void
@@ -47,31 +47,33 @@ export const useGameStore = create<GameState>((set, get) => ({
     }))
   },
 
-  getGameValue: <Path extends string[]>(
+  getGameValue: <Path extends Paths<gameDoc, { bracketNotation: true }>>(
     gameId: string,
-    path: Path & PathsOf<gameDoc>
+    path: Path
   ): Get<gameDoc, Path> => {
     const state = get()
+    const pathArray = path.replace(/$$(\d+)$$/g, '.$1').split('.')
     if (!state.initialized) {
-      return getNestedValue(DEFAULT_GAME_VALUES, path)
+      return getValueByPath(DEFAULT_GAME_VALUES, pathArray)
     }
 
     const doc = state.documents[gameId]
     if (!doc) {
-      return getNestedValue(DEFAULT_GAME_VALUES, path)
+      return getValueByPath(DEFAULT_GAME_VALUES, pathArray)
     }
 
-    const value = getNestedValue(doc, path)
-    return value !== undefined ? value : getNestedValue(DEFAULT_GAME_VALUES, path)
+    const value = getValueByPath(doc, pathArray)
+    return value !== undefined ? value : getValueByPath(DEFAULT_GAME_VALUES, pathArray)
   },
 
   // 设置游戏特定路径的值
-  setGameValue: async <Path extends string[]>(
+  setGameValue: async <Path extends Paths<gameDoc, { bracketNotation: true }>>(
     gameId: string,
-    path: Path & PathsOf<gameDoc>,
+    path: Path,
     value: Get<gameDoc, Path>
   ): Promise<void> => {
     // 先更新 store
+    const pathArray = path.replace(/$$(\d+)$$/g, '.$1').split('.')
     set((state) => {
       const newDocuments = { ...state.documents }
       if (!newDocuments[gameId]) {
@@ -79,11 +81,11 @@ export const useGameStore = create<GameState>((set, get) => ({
       }
 
       let current = newDocuments[gameId]
-      const lastIndex = path.length - 1
+      const lastIndex = pathArray.length - 1
 
       // 构建嵌套路径
       for (let i = 0; i < lastIndex; i++) {
-        const key = path[i]
+        const key = pathArray[i]
         if (!(key in current)) {
           current[key] = {}
         }
@@ -91,7 +93,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       }
 
       // 设置最终值
-      current[path[lastIndex]] = value
+      current[pathArray[lastIndex]] = value
 
       return { documents: newDocuments }
     })

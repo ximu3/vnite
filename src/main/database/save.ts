@@ -5,14 +5,14 @@ import { GameDBManager } from './game'
 
 export async function backupGameSave(gameId: string): Promise<void> {
   const saveId = generateUUID()
-  const savePaths = await GameDBManager.getGameValue(gameId, ['path', 'savePaths'])
-  const maxSaveNumber = await GameDBManager.getGameValue(gameId, ['path', 'maxSaveBackups'])
+  const savePaths = await GameDBManager.getGameValue(gameId, 'path.savePaths')
+  const maxSaveNumber = await GameDBManager.getGameValue(gameId, 'path.maxSaveBackups')
   const tempFilesPath = getAppTempPath(`save-files-${Date.now()}/`)
   const tempZipPath = getAppTempPath(`save-zip-${Date.now()}/`)
   await fse.ensureDir(tempFilesPath)
   await fse.ensureDir(tempZipPath)
 
-  const saveList = await GameDBManager.getGameValue(gameId, ['save'])
+  const saveList = await GameDBManager.getGameValue(gameId, 'save')
 
   const saveIds = Object.keys(saveList).filter((key) => !saveList[key].locked)
 
@@ -44,15 +44,15 @@ export async function backupGameSave(gameId: string): Promise<void> {
   const zipPath = await zipFolder(tempFilesPath, tempZipPath, saveId)
   await GameDBManager.setGameSave(gameId, saveId, zipPath)
 
-  saveList[saveId] = { id: saveId, date: new Date().toISOString(), note: '', locked: false }
-  await GameDBManager.setGameValue(gameId, ['save'], saveList)
+  saveList[saveId] = { _id: saveId, date: new Date().toISOString(), note: '', locked: false }
+  await GameDBManager.setGameValue(gameId, 'save', saveList)
 
   await fse.remove(tempFilesPath)
   await fse.remove(tempZipPath)
 }
 
 export async function restoreGameSave(gameId: string, saveId: string): Promise<void> {
-  const savePaths = await GameDBManager.getGameValue(gameId, ['path', 'savePaths'])
+  const savePaths = await GameDBManager.getGameValue(gameId, 'path.savePaths')
   const tempFilesPath = getAppTempPath(`save-files-${Date.now()}/`)
   const tempZipPath = await GameDBManager.getGameSave(gameId, saveId, 'file')
   await fse.ensureDir(tempFilesPath)
@@ -73,8 +73,8 @@ export async function restoreGameSave(gameId: string, saveId: string): Promise<v
 }
 
 export async function deleteGameSave(gameId: string, saveId: string): Promise<void> {
-  const saveList = await GameDBManager.getGameValue(gameId, ['save'])
+  const saveList = await GameDBManager.getGameValue(gameId, 'save')
   delete saveList[saveId]
-  await GameDBManager.setGameValue(gameId, ['save'], saveList)
+  await GameDBManager.setGameValue(gameId, 'save', saveList)
   await GameDBManager.removeGameSave(gameId, saveId)
 }

@@ -1,3 +1,5 @@
+import { Paths } from 'type-fest'
+
 export type gameDocs = {
   [K in Exclude<string, 'collections'>]: gameDoc
 } & {
@@ -69,7 +71,7 @@ export interface gameDoc {
   }
   save: {
     [saveId: string]: {
-      id: string
+      _id: string
       date: string
       note: string
       locked: boolean
@@ -78,7 +80,7 @@ export interface gameDoc {
   memory: {
     memoryList: {
       [memoryId: string]: {
-        id: string
+        _id: string
         date: string
         note: string
       }
@@ -161,3 +163,8 @@ export const DEFAULT_GAME_VALUES = {
     memoryList: {}
   }
 } satisfies gameDoc
+
+export interface SortConfig {
+  by: Paths<gameDoc, { bracketNotation: true }>
+  order?: 'asc' | 'desc'
+}

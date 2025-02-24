@@ -4,13 +4,13 @@ import { convertToWebP } from '~/media'
 import {
   gameDoc,
   gameDocs,
-  PathsOf,
   gameCollectionDoc,
   gameCollection,
-  DEFAULT_GAME_VALUES
+  DEFAULT_GAME_VALUES,
+  SortConfig
 } from '@appTypes/database'
-import { getNestedValue } from '~/utils'
-import type { Get } from 'type-fest'
+import { getValueByPath } from '~/utils'
+import type { Get, Paths } from 'type-fest'
 
 export class GameDBManager {
   private static readonly DB_NAME = 'game'
@@ -20,47 +20,47 @@ export class GameDBManager {
   }
 
   static async getAllCollections(): Promise<gameCollectionDoc> {
-    return await DBManager.getValue(this.DB_NAME, 'collections', ['#all'], {} as gameCollectionDoc)
+    return await DBManager.getValue(this.DB_NAME, 'collections', '#all', {} as gameCollectionDoc)
   }
 
   // 获取游戏数据
   static async getGame(gameId: string): Promise<gameDoc> {
-    return await DBManager.getValue(this.DB_NAME, gameId, ['#all'], {} as gameDoc)
+    return await DBManager.getValue(this.DB_NAME, gameId, '#all', {} as gameDoc)
   }
 
   // 设置游戏数据
   static async setGame(gameId: string, data: Partial<gameDoc>): Promise<void> {
-    await DBManager.setValue(this.DB_NAME, gameId, ['#all'], data)
+    await DBManager.setValue(this.DB_NAME, gameId, '#all', data)
   }
 
   static async getCollection(collectionId: string): Promise<gameCollection> {
     return await DBManager.getValue(
       `${this.DB_NAME}-collection`,
       collectionId,
-      ['#all'],
+      '#all',
       {} as gameCollection
     )
   }
 
   static async setCollection(collectionId: string, data: Partial<gameCollection>): Promise<void> {
-    await DBManager.setValue(`${this.DB_NAME}-collection`, collectionId, ['#all'], data)
+    await DBManager.setValue(`${this.DB_NAME}-collection`, collectionId, '#all', data)
   }
 
-  static async getGameValue<Path extends string[]>(
+  static async getGameValue<Path extends Paths<gameDoc, { bracketNotation: true }>>(
     gameId: string,
-    path: Path & PathsOf<gameDoc>
+    path: Path
   ): Promise<Get<gameDoc, Path>> {
     return (await DBManager.getValue(
       this.DB_NAME,
       gameId,
       path,
-      getNestedValue(DEFAULT_GAME_VALUES, path)
+      getValueByPath(DEFAULT_GAME_VALUES, path)
     )) as Get<gameDoc, Path>
   }
 
-  static async setGameValue<Path extends string[]>(
+  static async setGameValue<Path extends Paths<gameDoc, { bracketNotation: true }>>(
     gameId: string,
-    path: Path & PathsOf<gameDoc>,
+    path: Path,
     value: Get<gameDoc, Path>
   ): Promise<void> {
     await DBManager.setValue(this.DB_NAME, gameId, path, value)
@@ -183,53 +183,45 @@ export class GameDBManager {
    * @param by 排序字段路径数组，如 ['metadata', 'name'] 或 ['record', 'playTime']
    * @param order 排序顺序，默认为 'asc'
    */
-  static async sortGames(by: string[], order: 'asc' | 'desc' = 'asc'): Promise<string[]> {
+  static async sortGames(sortConfigs: SortConfig | SortConfig[]): Promise<string[]> {
     const docs = (await DBManager.getAllDocs(this.DB_NAME)) as gameDocs
     const games = Object.values(docs).filter((doc): doc is gameDoc => doc._id !== 'collections')
 
-    // 获取嵌套属性值的函数
-    const getNestedValue = (obj: any, path: string[]): any => {
-      return path.reduce((acc, part) => {
-        if (acc === null || acc === undefined) return acc
-        return acc[part]
-      }, obj)
-    }
+    // 确保 sortConfigs 是数组
+    const configs = Array.isArray(sortConfigs) ? sortConfigs : [sortConfigs]
 
     // 排序函数
     const sortedGames = games.sort((a, b) => {
-      const aValue = getNestedValue(a, by)
-      const bValue = getNestedValue(b, by)
+      for (const { by, order = 'asc' } of configs) {
+        const aValue = getValueByPath(a, by)
+        const bValue = getValueByPath(b, by)
 
-      // 处理空值
-      if (aValue === undefined || aValue === null) return order === 'asc' ? 1 : -1
-      if (bValue === undefined || bValue === null) return order === 'asc' ? -1 : 1
+        // 处理空值
+        if (aValue === undefined || aValue === null) return order === 'asc' ? 1 : -1
+        if (bValue === undefined || bValue === null) return order === 'asc' ? -1 : 1
 
-      // 根据值类型进行比较
-      if (typeof aValue === 'string' && typeof bValue === 'string') {
-        return order === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue)
+        let comparison = 0
+
+        // 根据值类型进行比较
+        if (typeof aValue === 'string' && typeof bValue === 'string') {
+          comparison = aValue.localeCompare(bValue)
+        } else if (typeof aValue === 'number' && typeof bValue === 'number') {
+          comparison = aValue - bValue
+        } else if (aValue instanceof Date && bValue instanceof Date) {
+          comparison = aValue.getTime() - bValue.getTime()
+        } else if (Array.isArray(aValue) && Array.isArray(bValue)) {
+          comparison = aValue.join(',').localeCompare(bValue.join(','))
+        } else {
+          comparison = String(aValue).localeCompare(String(bValue))
+        }
+
+        // 如果当前字段不相等，返回比较结果
+        if (comparison !== 0) {
+          return order === 'asc' ? comparison : -comparison
+        }
       }
 
-      if (typeof aValue === 'number' && typeof bValue === 'number') {
-        return order === 'asc' ? aValue - bValue : bValue - aValue
-      }
-
-      if (aValue instanceof Date && bValue instanceof Date) {
-        return order === 'asc'
-          ? aValue.getTime() - bValue.getTime()
-          : bValue.getTime() - aValue.getTime()
-      }
-
-      // 处理数组
-      if (Array.isArray(aValue) && Array.isArray(bValue)) {
-        const aStr = aValue.join(',')
-        const bStr = bValue.join(',')
-        return order === 'asc' ? aStr.localeCompare(bStr) : bStr.localeCompare(aStr)
-      }
-
-      // 默认转换为字符串比较
-      return order === 'asc'
-        ? String(aValue).localeCompare(String(bValue))
-        : String(bValue).localeCompare(String(aValue))
+      return 0 // 所有字段都相等
     })
 
     return sortedGames.map((game) => game._id)

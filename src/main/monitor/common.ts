@@ -70,7 +70,7 @@ async function checkIfProcessRunning(processName: string): Promise<boolean> {
 
 async function startMagpie(): Promise<void> {
   try {
-    const magpiePath = await ConfigDBManager.getValue(['game', 'linkage', 'magpie', 'path'])
+    const magpiePath = await ConfigDBManager.getConfigValue('game.linkage.magpie.path')
     if (magpiePath) {
       const isRunning = await checkIfProcessRunning('Magpie.exe')
       if (isRunning) {
@@ -360,19 +360,14 @@ export class GameMonitor {
           console.log(`游戏 ${this.options.gameId} 进程已启动`)
 
           // Check if Magpie scaling is enabled
-          const useMagpie = await GameDBManager.getGameValue(this.options.gameId, [
-            'launcher',
-            'useMagpie'
-          ])
+          const useMagpie = await GameDBManager.getGameValue(
+            this.options.gameId,
+            'launcher.useMagpie'
+          )
 
-          const magpiePath = await ConfigDBManager.getValue(['game', 'linkage', 'magpie', 'path'])
+          const magpiePath = await ConfigDBManager.getConfigValue('game.linkage.magpie.path')
 
-          const magpieHotkey = await ConfigDBManager.getValue([
-            'game',
-            'linkage',
-            'magpie',
-            'hotkey'
-          ])
+          const magpieHotkey = await ConfigDBManager.getConfigValue('game.linkage.magpie.hotkey')
 
           if (useMagpie && !monitored.isScaled && magpiePath) {
             await startMagpie()
@@ -424,25 +419,25 @@ export class GameMonitor {
 
     mainWindow.webContents.send('game-exiting', this.options.gameId)
 
-    const timers = await GameDBManager.getGameValue(this.options.gameId, ['record', 'timers'])
+    const timers = await GameDBManager.getGameValue(this.options.gameId, 'record.timers')
 
     timers.push({
       start: this.startTime || '',
       end: this.endTime
     })
-    await GameDBManager.setGameValue(this.options.gameId, ['record', 'timers'], timers)
-    await GameDBManager.setGameValue(this.options.gameId, ['record', 'lastRunDate'], this.endTime)
+    await GameDBManager.setGameValue(this.options.gameId, 'record.timers', timers)
+    await GameDBManager.setGameValue(this.options.gameId, 'record.lastRunDate', this.endTime)
 
-    let playTime = await GameDBManager.getGameValue(this.options.gameId, ['record', 'playTime'])
+    let playTime = await GameDBManager.getGameValue(this.options.gameId, 'record.playTime')
     playTime += new Date(this.endTime).getTime() - new Date(this.startTime!).getTime()
-    await GameDBManager.setGameValue(this.options.gameId, ['record', 'playTime'], playTime)
+    await GameDBManager.setGameValue(this.options.gameId, 'record.playTime', playTime)
 
     // Stop monitoring
     this.stop()
 
     updateRecentGames()
 
-    const savePaths = await GameDBManager.getGameValue(this.options.gameId, ['path', 'savePaths'])
+    const savePaths = await GameDBManager.getGameValue(this.options.gameId, 'path.savePaths')
 
     if (!isEqual(savePaths, ['']) && savePaths.length > 0) {
       await backupGameSave(this.options.gameId)

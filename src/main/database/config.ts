@@ -1,8 +1,8 @@
 // src/database/ConfigDBManager.ts
 import { DBManager } from './common'
-import { configDocs, PathsOf, DEFAULT_CONFIG_VALUES } from '@appTypes/database'
-import type { Get } from 'type-fest'
-import { getNestedValue } from '~/utils'
+import { configDocs, DEFAULT_CONFIG_VALUES } from '@appTypes/database'
+import type { Get, Paths } from 'type-fest'
+import { getValueByPath } from '~/utils'
 
 export class ConfigDBManager {
   private static readonly DB_NAME = 'config'
@@ -18,26 +18,21 @@ export class ConfigDBManager {
    * 获取通用配置
    */
   static async getGeneralConfig(): Promise<configDocs['general']> {
-    return await DBManager.getValue(
-      this.DB_NAME,
-      'general',
-      ['#all'],
-      DEFAULT_CONFIG_VALUES.general
-    )
+    return await DBManager.getValue(this.DB_NAME, 'general', '#all', DEFAULT_CONFIG_VALUES.general)
   }
 
   /**
    * 获取同步配置
    */
   static async getSyncConfig(): Promise<configDocs['sync']> {
-    return await DBManager.getValue(this.DB_NAME, 'sync', ['#all'], DEFAULT_CONFIG_VALUES.sync)
+    return await DBManager.getValue(this.DB_NAME, 'sync', '#all', DEFAULT_CONFIG_VALUES.sync)
   }
 
   /**
    * 获取游戏配置
    */
   static async getGameConfig(): Promise<configDocs['game']> {
-    return await DBManager.getValue(this.DB_NAME, 'game', ['#all'], DEFAULT_CONFIG_VALUES.game)
+    return await DBManager.getValue(this.DB_NAME, 'game', '#all', DEFAULT_CONFIG_VALUES.game)
   }
 
   /**
@@ -47,27 +42,39 @@ export class ConfigDBManager {
     return await DBManager.getValue(
       this.DB_NAME,
       'appearances',
-      ['#all'],
+      '#all',
       DEFAULT_CONFIG_VALUES.appearances
     )
   }
 
-  static async getValue<Path extends string[]>(
-    path: Path & PathsOf<configDocs>
+  static async getConfigValue<Path extends Paths<configDocs, { bracketNotation: true }>>(
+    path: Path
   ): Promise<Get<configDocs, Path>> {
+    // 直接分割路径获取 docId 和剩余路径
+    const [docId, ...restPath] = path.split('.')
+
+    // 构造剩余路径字符串，保持方括号表示法
+    const remainingPath = restPath.length > 0 ? restPath.join('.') : '#all'
+
     return (await DBManager.getValue(
       this.DB_NAME,
-      path[0],
-      path.slice(1),
-      getNestedValue(DEFAULT_CONFIG_VALUES, path)
+      docId,
+      remainingPath,
+      getValueByPath(DEFAULT_CONFIG_VALUES, path)
     )) as Get<configDocs, Path>
   }
 
-  static async setValue<Path extends string[]>(
-    path: Path & PathsOf<configDocs>,
+  static async setConfigValue<Path extends Paths<configDocs, { bracketNotation: true }>>(
+    path: Path,
     value: Get<configDocs, Path>
   ): Promise<void> {
-    await DBManager.setValue(this.DB_NAME, path[0], path.slice(1), value as any)
+    // 直接分割路径获取 docId 和剩余路径
+    const [docId, ...restPath] = path.split('.')
+
+    // 构造剩余路径字符串，保持方括号表示法
+    const remainingPath = restPath.length > 0 ? restPath.join('.') : '#all'
+
+    await DBManager.setValue(this.DB_NAME, docId, remainingPath, value as any)
   }
 
   /**
@@ -75,7 +82,7 @@ export class ConfigDBManager {
    */
   static async updateGeneralConfig(config: Partial<configDocs['general']>): Promise<void> {
     const currentConfig = await this.getGeneralConfig()
-    await DBManager.setValue(this.DB_NAME, 'general', ['#all'], { ...currentConfig, ...config })
+    await DBManager.setValue(this.DB_NAME, 'general', '#all', { ...currentConfig, ...config })
   }
 
   /**
@@ -83,7 +90,7 @@ export class ConfigDBManager {
    */
   static async updateSyncConfig(config: Partial<configDocs['sync']>): Promise<void> {
     const currentConfig = await this.getSyncConfig()
-    await DBManager.setValue(this.DB_NAME, 'sync', ['#all'], { ...currentConfig, ...config })
+    await DBManager.setValue(this.DB_NAME, 'sync', '#all', { ...currentConfig, ...config })
   }
 
   /**
@@ -91,7 +98,7 @@ export class ConfigDBManager {
    */
   static async updateGameConfig(config: Partial<configDocs['game']>): Promise<void> {
     const currentConfig = await this.getGameConfig()
-    await DBManager.setValue(this.DB_NAME, 'game', ['#all'], { ...currentConfig, ...config })
+    await DBManager.setValue(this.DB_NAME, 'game', '#all', { ...currentConfig, ...config })
   }
 
   /**
@@ -99,7 +106,7 @@ export class ConfigDBManager {
    */
   static async updateAppearancesConfig(config: Partial<configDocs['appearances']>): Promise<void> {
     const currentConfig = await this.getAppearancesConfig()
-    await DBManager.setValue(this.DB_NAME, 'appearances', ['#all'], {
+    await DBManager.setValue(this.DB_NAME, 'appearances', '#all', {
       ...currentConfig,
       ...config
     })
@@ -109,7 +116,7 @@ export class ConfigDBManager {
    * 重置指定配置到默认值
    */
   static async resetConfig(docId: keyof configDocs): Promise<void> {
-    await DBManager.setValue(this.DB_NAME, docId, ['#all'], DEFAULT_CONFIG_VALUES[docId])
+    await DBManager.setValue(this.DB_NAME, docId, '#all', DEFAULT_CONFIG_VALUES[docId])
   }
 
   /**

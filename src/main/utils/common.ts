@@ -2,15 +2,62 @@ import fse from 'fs-extra'
 import { shell, app } from 'electron'
 import path from 'path'
 import { getDataPath, getAppTempPath } from './path'
-import { DBManager } from '~/database'
+import { ConfigDBManager, GameDBManager } from '~/database'
 import log from 'electron-log/main.js'
 import sharp from 'sharp'
 import pngToIco from 'png-to-ico'
 import { fileTypeFromBuffer } from 'file-type'
 import { get } from 'lodash'
 
-export function getNestedValue(obj: any, path: string[]): any {
-  return get(obj, path)
+export function getValueByPath(obj: any, path: string): any {
+  if (path === '#all') {
+    return obj
+  }
+
+  const pathArray = path
+    .replace(/$$(\d+)$$/g, '.$1')
+    .split('.')
+    .filter(Boolean)
+
+  return get(obj, pathArray)
+}
+
+export function setValueByPath(obj: any, path: string, value: any): void {
+  if (path === '#all') {
+    obj = value
+    return
+  }
+
+  const pathArray = path
+    .replace(/$$(\d+)$$/g, '.$1')
+    .split('.')
+    .filter(Boolean)
+
+  let current = obj
+
+  // 遍历路径，除了最后一个
+  for (let i = 0; i < pathArray.length - 1; i++) {
+    const key = pathArray[i]
+
+    // 如果当前节点不存在或为null，创建新对象
+    if (current === undefined || current === null) {
+      current = {}
+    }
+
+    // 如果key不存在，创建新对象
+    if (!(key in current)) {
+      current[key] = {}
+    }
+
+    current = current[key]
+  }
+
+  // 设置最后一个路径的值
+  const lastKey = pathArray[pathArray.length - 1]
+  if (current === undefined || current === null) {
+    current = {}
+  }
+  current[lastKey] = value
 }
 
 /**
@@ -71,7 +118,7 @@ export function getAppVersion(): string {
  */
 export async function setupOpenAtLogin(): Promise<void> {
   try {
-    const isEnabled = await DBManager.getValue('config', 'general', ['openAtLogin'], false)
+    const isEnabled = await ConfigDBManager.getConfigValue('general.openAtLogin')
     app.setLoginItemSettings({
       openAtLogin: isEnabled,
       args: ['--hidden']
@@ -87,7 +134,7 @@ export async function setupOpenAtLogin(): Promise<void> {
  */
 export async function updateOpenAtLogin(): Promise<void> {
   try {
-    const isEnabled = await DBManager.getValue('config', 'general', ['openAtLogin'], false)
+    const isEnabled = await ConfigDBManager.getConfigValue('general.openAtLogin')
     app.setLoginItemSettings({
       openAtLogin: isEnabled,
       args: ['--hidden']
@@ -197,12 +244,9 @@ interface UrlShortcutOptions {
 export async function createGameShortcut(gameId: string, targetPath: string): Promise<void> {
   try {
     // Get game information
-    const gameName = await DBManager.getValue('', gameId, ['name'], '')
+    const gameName = await GameDBManager.getGameValue(gameId, 'metadata.name')
 
-    const originalIconPath = await DBManager.getAttachment('game', gameId, 'icon', {
-      format: 'file',
-      filePath: getAppTempPath(`icon_${gameId}_${Date.now()}.png`)
-    })
+    const originalIconPath = await GameDBManager.getGameImage(gameId, 'icon', 'file')
 
     // ico icon path
     const iconPath = getAppTempPath(`icon_${gameId}_${Date.now()}.ico`)
