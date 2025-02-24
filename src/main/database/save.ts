@@ -2,20 +2,17 @@ import fse from 'fs-extra'
 import path from 'path'
 import { generateUUID, zipFolder, unzipFile, getAppTempPath } from '~/utils'
 import { GameDBManager } from './game'
-import { DBManager } from './common'
-import { gameDoc } from '@appTypes/database'
 
 export async function backupGameSave(gameId: string): Promise<void> {
   const saveId = generateUUID()
   const savePaths = await GameDBManager.getGameValue(gameId, ['path', 'savePaths'])
   const maxSaveNumber = await GameDBManager.getGameValue(gameId, ['path', 'maxSaveBackups'])
-  const attachmentId = `saves/${saveId}.zip`
   const tempFilesPath = getAppTempPath(`save-files-${Date.now()}/`)
   const tempZipPath = getAppTempPath(`save-zip-${Date.now()}/`)
   await fse.ensureDir(tempFilesPath)
   await fse.ensureDir(tempZipPath)
 
-  const saveList = (await DBManager.getValue('game', gameId, ['save'], {})) as gameDoc['save']
+  const saveList = await GameDBManager.getGameValue(gameId, ['save'])
 
   const saveIds = Object.keys(saveList).filter((key) => !saveList[key].locked)
 
@@ -29,7 +26,7 @@ export async function backupGameSave(gameId: string): Promise<void> {
 
     for (const saveId of oldestSaveIds) {
       delete saveList[saveId]
-      await DBManager.removeAttachment('game', gameId, `saves/${saveId}.zip`)
+      await GameDBManager.removeGameSave(gameId, saveId)
     }
   }
 
@@ -45,10 +42,10 @@ export async function backupGameSave(gameId: string): Promise<void> {
   )
 
   const zipPath = await zipFolder(tempFilesPath, tempZipPath, saveId)
-  await DBManager.putAttachment('game', gameId, attachmentId, zipPath, 'application/zip')
+  await GameDBManager.setGameSave(gameId, saveId, zipPath)
 
   saveList[saveId] = { id: saveId, date: new Date().toISOString(), note: '', locked: false }
-  await DBManager.setValue('game', gameId, ['save'], saveList)
+  await GameDBManager.setGameValue(gameId, ['save'], saveList)
 
   await fse.remove(tempFilesPath)
   await fse.remove(tempZipPath)
@@ -56,12 +53,8 @@ export async function backupGameSave(gameId: string): Promise<void> {
 
 export async function restoreGameSave(gameId: string, saveId: string): Promise<void> {
   const savePaths = await GameDBManager.getGameValue(gameId, ['path', 'savePaths'])
-  const attachmentId = `saves/${saveId}.zip`
   const tempFilesPath = getAppTempPath(`save-files-${Date.now()}/`)
-  const tempZipPath = await DBManager.getAttachment('game', gameId, attachmentId, {
-    format: 'file',
-    filePath: '#temp'
-  })
+  const tempZipPath = await GameDBManager.getGameSave(gameId, saveId, 'file')
   await fse.ensureDir(tempFilesPath)
 
   await unzipFile(tempZipPath, tempFilesPath)
@@ -83,5 +76,5 @@ export async function deleteGameSave(gameId: string, saveId: string): Promise<vo
   const saveList = await GameDBManager.getGameValue(gameId, ['save'])
   delete saveList[saveId]
   await GameDBManager.setGameValue(gameId, ['save'], saveList)
-  await DBManager.removeAttachment('game', gameId, `saves/${saveId}.zip`)
+  await GameDBManager.removeGameSave(gameId, saveId)
 }

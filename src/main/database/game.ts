@@ -100,6 +100,77 @@ export class GameDBManager {
     }
   }
 
+  static async setGameMemoryImage(
+    gameId: string,
+    memoryId: string,
+    image: Buffer | string
+  ): Promise<void> {
+    image = await convertToWebP(image)
+    await DBManager.putAttachment(this.DB_NAME, gameId, `memories/${memoryId}.webp`, image)
+  }
+
+  static async getGameMemoryImage<T extends 'buffer' | 'file' = 'buffer'>(
+    gameId: string,
+    memoryId: string,
+    format: T = 'buffer' as T
+  ): Promise<T extends 'file' ? string : Buffer> {
+    if (format === 'file') {
+      return (await DBManager.getAttachment(this.DB_NAME, gameId, `memories/${memoryId}.webp`, {
+        format: 'file',
+        filePath: '#temp',
+        ext: 'webp'
+      })) as T extends 'file' ? string : Buffer
+    } else {
+      return (await DBManager.getAttachment(
+        this.DB_NAME,
+        gameId,
+        `memories/${memoryId}.webp`
+      )) as T extends 'file' ? string : Buffer
+    }
+  }
+
+  static async setGameSave(
+    gameId: string,
+    saveId: string,
+    saveData: Buffer | string
+  ): Promise<void> {
+    await DBManager.putAttachment(
+      this.DB_NAME,
+      gameId,
+      `saves/${saveId}.zip`,
+      saveData,
+      'application/zip'
+    )
+  }
+
+  static async getGameSave<T extends 'buffer' | 'file' = 'buffer'>(
+    gameId: string,
+    saveId: string,
+    format: T = 'buffer' as T
+  ): Promise<T extends 'file' ? string : Buffer> {
+    if (format === 'file') {
+      return (await DBManager.getAttachment(this.DB_NAME, gameId, `saves/${saveId}.zip`, {
+        format: 'file',
+        filePath: '#temp',
+        ext: 'zip'
+      })) as T extends 'file' ? string : Buffer
+    } else {
+      return (await DBManager.getAttachment(
+        this.DB_NAME,
+        gameId,
+        `saves/${saveId}.zip`
+      )) as T extends 'file' ? string : Buffer
+    }
+  }
+
+  static async removeGameSave(gameId: string, saveId: string): Promise<void> {
+    await DBManager.removeAttachment(this.DB_NAME, gameId, `saves/${saveId}.zip`)
+  }
+
+  static async removeGameMemoryImage(gameId: string, memoryId: string): Promise<void> {
+    await DBManager.removeAttachment(this.DB_NAME, gameId, `memories/${memoryId}.webp`)
+  }
+
   static async removeGameImage(
     gameId: string,
     type: 'background' | 'cover' | 'icon' | 'logo'
