@@ -14,17 +14,14 @@ export async function addGameToDatabase({
   id,
   preExistingDbId,
   screenshotUrl,
-  playingTime,
-  noWatcherAction = false,
-  noIpcAction = false
+  playTime
 }: {
   dataSource: string
   id: string
   preExistingDbId?: string
   screenshotUrl?: string
-  playingTime?: number
+  playTime?: number
   noWatcherAction?: boolean
-  noIpcAction?: boolean
 }): Promise<void> {
   try {
     await addGameToDB({
@@ -32,9 +29,7 @@ export async function addGameToDatabase({
       id,
       preExistingDbId,
       screenshotUrl,
-      playingTime,
-      noWatcherAction,
-      noIpcAction
+      playTime
     })
   } catch (error) {
     log.error('Error adding game to database:', error)

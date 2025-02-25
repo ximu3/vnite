@@ -1,4 +1,4 @@
-import { GameDBManager } from '~/database'
+import { GameDBManager, ConfigDBManager } from '~/database'
 import {
   getGameMetadata,
   getGameCover,
@@ -6,9 +6,10 @@ import {
   getGameScreenshots,
   getGameLogo
 } from '~/scraper'
-import { generateUUID, selectPathDialog, getFirstLevelSubfolders, getDataPath } from '~/utils'
-import { BrowserWindow } from 'electron'
+import { generateUUID, selectPathDialog, getFirstLevelSubfolders } from '~/utils'
 import { launcherPreset } from '~/launcher'
+import { saveGameIconByFile } from '~/media'
+import { DEFAULT_GAME_VALUES } from '@appTypes/database'
 
 /**
  * Add a game to the database
@@ -24,14 +25,13 @@ export async function addGameToDB({
   id,
   preExistingDbId,
   screenshotUrl,
-  playingTime,
-  noIpcAction = false
+  playTime
 }: {
   dataSource: string
   id: string
   preExistingDbId?: string
   screenshotUrl?: string
-  playingTime?: number
+  playTime?: number
   noWatcherAction?: boolean
   noIpcAction?: boolean
 }): Promise<void> {
@@ -49,89 +49,46 @@ export async function addGameToDB({
 
   const dbId = preExistingDbId || generateUUID()
 
-  await getDataPath(`games/${dbId}/`, true)
-
   if (coverUrl) {
-    await setMedia(dbId, 'cover', coverUrl)
+    await GameDBManager.setGameImage(dbId, 'cover', coverUrl)
   }
 
   if (screenshotUrl) {
-    await setMedia(dbId, 'background', screenshotUrl)
+    await GameDBManager.setGameImage(dbId, 'background', screenshotUrl)
   } else {
     const screenshots = await getGameScreenshots(dataSource, id)
     if (screenshots.length > 0) {
-      await setMedia(dbId, 'background', screenshots[0])
+      await GameDBManager.setGameImage(dbId, 'background', screenshots[0])
     }
   }
 
+  const gameDoc = DEFAULT_GAME_VALUES
+
   if (iconUrl) {
-    await setMedia(dbId, 'icon', iconUrl.toString())
+    await GameDBManager.setGameImage(dbId, 'icon', iconUrl.toString())
   }
 
   if (logoUrl) {
-    await setMedia(dbId, 'logo', logoUrl.toString())
+    await GameDBManager.setGameImage(dbId, 'logo', logoUrl.toString())
   }
 
-  if (playingTime) {
-    await setDBValue(`games/${dbId}/record.json`, ['playingTime'], playingTime)
+  if (playTime) {
+    gameDoc.record.playTime = playTime
   }
 
-  await setDBValue(`games/${dbId}/metadata.json`, ['#all'], {
-    id: dbId,
-    [`${dataSource}Id`]: id,
-    ...metadata
-  })
+  gameDoc._id = dbId
+  gameDoc.metadata = {
+    ...gameDoc.metadata,
+    ...metadata,
+    originalName: metadata.originalName ?? '',
+    [`${dataSource}Id`]: id
+  }
 
   if (!preExistingDbId) {
-    await setDBValue(`games/${dbId}/record.json`, ['#all'], {
-      addDate: new Date().toISOString(),
-      lastRunDate: '',
-      score: -1,
-      playingTime: 0,
-      playStatus: 'unplayed'
-    })
-    await setDBValue(`games/${dbId}/launcher.json`, ['#all'], {
-      mode: 'file',
-      fileConfig: {
-        path: '',
-        workingDirectory: '',
-        timerMode: 'folder',
-        timerPath: ''
-      },
-      scriptConfig: {
-        command: [],
-        workingDirectory: '',
-        timerMode: 'folder',
-        timerPath: ''
-      },
-      urlConfig: {
-        url: '',
-        timerMode: 'folder',
-        timerPath: '',
-        browserPath: ''
-      }
-    })
-    await setDBValue(`games/${dbId}/path.json`, ['#all'], {
-      gamePath: '',
-      savePath: ['']
-    })
-    await setDBValue(`games/${dbId}/save.json`, ['#all'], {})
-    await setDBValue(`games/${dbId}/memory.json`, ['#all'], {
-      memoryList: {}
-    })
+    gameDoc.record.addDate = new Date().toISOString()
   }
 
-  const mainWindow = BrowserWindow.getAllWindows()[0]
-
-  if (!noIpcAction) {
-    mainWindow.webContents.send('reload-db-values', `games/${dbId}/cover.webp`)
-    mainWindow.webContents.send('reload-db-values', `games/${dbId}/background.webp`)
-    mainWindow.webContents.send('reload-db-values', `games/${dbId}/icon.png`)
-    mainWindow.webContents.send('reload-db-values', `games/${dbId}/metadata.json`)
-    mainWindow.webContents.send('reload-db-values', `games/${dbId}/record.json`)
-    await updateGameIndex(dbId)
-    await updateGameRecord(dbId)
-  }
+  await GameDBManager.setGame(dbId, gameDoc)
 }
 
 /**
@@ -141,57 +98,13 @@ export async function addGameToDB({
  */
 export async function addGameToDBWithoutMetadata(gamePath: string): Promise<void> {
   const dbId = generateUUID()
-  await getDataPath(`games/${dbId}/`, true)
-  await setDBValue(`games/${dbId}/record.json`, ['#all'], {
-    addDate: new Date().toISOString(),
-    lastRunDate: '',
-    score: -1,
-    playingTime: 0,
-    playStatus: 'unplayed'
-  })
-  await setDBValue(`games/${dbId}/launcher.json`, ['#all'], {
-    mode: 'file',
-    fileConfig: {
-      path: '',
-      workingDirectory: '',
-      timerMode: 'folder',
-      timerPath: ''
-    },
-    scriptConfig: {
-      command: [],
-      workingDirectory: '',
-      timerMode: 'folder',
-      timerPath: ''
-    },
-    urlConfig: {
-      url: '',
-      timerMode: 'folder',
-      timerPath: '',
-      browserPath: ''
-    }
-  })
-  await setDBValue(`games/${dbId}/path.json`, ['#all'], {
-    gamePath: '',
-    savePath: ['']
-  })
-  await setDBValue(`games/${dbId}/memory.json`, ['#all'], {
-    memoryList: {}
-  })
-  const gameName = gamePath.split('\\').pop()?.split('.')?.slice(0, -1).join('.')
-  await setDBValue(`games/${dbId}/metadata.json`, ['#all'], {
-    id: dbId,
-    name: gameName
-  })
+  const gameDoc = DEFAULT_GAME_VALUES
+  gameDoc._id = dbId
+  gameDoc.record.addDate = new Date().toISOString()
+  GameDBManager.setGame(dbId, gameDoc)
+
   await launcherPreset('default', dbId)
-  await saveIcon(dbId, gamePath)
-
-  const mainWindow = BrowserWindow.getAllWindows()[0]
-
-  mainWindow.webContents.send('reload-db-values', `games/${dbId}/metadata.json`)
-  mainWindow.webContents.send('reload-db-values', `games/${dbId}/record.json`)
-  mainWindow.webContents.send('reload-db-values', `games/${dbId}/launcher.json`)
-  mainWindow.webContents.send('reload-db-values', `games/${dbId}/icon.png`)
-  await updateGameIndex(dbId)
+  await saveGameIconByFile(dbId, gamePath)
 }
 
 /**
@@ -205,11 +118,7 @@ export async function getBatchGameAdderData(): Promise<
   if (!dirPath) {
     return []
   }
-  const defaultDataSource = await getDBValue(
-    'config.json',
-    ['scraper', 'defaultDataSource'],
-    'steam'
-  )
+  const defaultDataSource = await ConfigDBManager.getConfigValue('game.scraper.defaultDatasSource')
   const gameNames = await getFirstLevelSubfolders(dirPath)
   const data = gameNames.map((gameName) => {
     return {

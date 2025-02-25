@@ -12,13 +12,31 @@ export async function convertToWebP(
 ): Promise<Buffer> {
   try {
     sharp.cache(false)
-    const metadata = await sharp(input).metadata()
+
+    // 处理输入是URL的情况
+    let imageBuffer: Buffer
+    if (typeof input === 'string' && input.startsWith('http')) {
+      const response = await fetch(input)
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.statusText}`)
+      }
+      imageBuffer = Buffer.from(await response.arrayBuffer())
+    } else if (typeof input === 'string') {
+      // 如果是本地文件路径
+      imageBuffer = Buffer.from(input)
+    } else {
+      // 如果已经是Buffer
+      imageBuffer = input
+    }
+
+    const metadata = await sharp(imageBuffer).metadata()
+
     let isAnimated = false
     if (metadata?.pages && metadata.pages > 1) {
       isAnimated = true
     }
 
-    return await sharp(input, {
+    return await sharp(imageBuffer, {
       animated: isAnimated && (options.animated ?? true),
       limitInputPixels: false
     })

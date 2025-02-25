@@ -103,7 +103,7 @@ export const DEFAULT_GAME_VALUES = {
   metadata: {
     name: '',
     originalName: '',
-    releaseDate: '2004-12-29',
+    releaseDate: '',
     description: '',
     developers: [] as string[],
     platforms: [] as string[],
@@ -151,8 +151,8 @@ export const DEFAULT_GAME_VALUES = {
     }
   },
   record: {
-    addDate: '2004-12-29T00:00:00.000Z',
-    lastRunDate: '2004-12-29T00:00:00.000Z',
+    addDate: '',
+    lastRunDate: '',
     score: -1,
     playTime: 0,
     playStatus: 'unplayed',
