@@ -16,6 +16,10 @@ export interface gameDoc {
     publishers: string[]
     genres: string[]
     tags: string[]
+    relatedSites: {
+      label: string
+      url: string
+    }[]
     steamId: string
     vndbId: string
     igdbId: string
@@ -33,11 +37,13 @@ export interface gameDoc {
     }[]
   }
   save: {
-    [saveId: string]: {
-      _id: string
-      date: string
-      note: string
-      locked: boolean
+    saveList: {
+      [saveId: string]: {
+        _id: string
+        date: string
+        note: string
+        locked: boolean
+      }
     }
   }
   memory: {
@@ -47,6 +53,16 @@ export interface gameDoc {
         date: string
         note: string
       }
+    }
+  }
+  apperance: {
+    logo: {
+      position: {
+        x: number
+        y: number
+      }
+      size: number
+      visible: boolean
     }
   }
 }
@@ -161,6 +177,7 @@ export const DEFAULT_GAME_VALUES = {
     publishers: [] as string[],
     genres: [] as string[],
     tags: [] as string[],
+    relatedSites: [] as { label: string; url: string }[],
     steamId: '',
     vndbId: '',
     igdbId: '',
@@ -174,9 +191,21 @@ export const DEFAULT_GAME_VALUES = {
     playStatus: 'unplayed',
     timers: []
   },
-  save: {},
+  save: {
+    saveList: {}
+  },
   memory: {
     memoryList: {}
+  },
+  apperance: {
+    logo: {
+      position: {
+        x: 2,
+        y: 29
+      },
+      size: 100,
+      visible: true
+    }
   }
 } satisfies gameDoc
 

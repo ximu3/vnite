@@ -1,52 +1,24 @@
-import { get } from 'lodash'
+import { toast } from 'sonner'
+import { Element, HTMLReactParserOptions } from 'html-react-parser'
 
-export function getValueByPath(obj: any, path: string): any {
-  if (path === '#all') {
-    return obj
-  }
-
-  const pathArray = path
-    .replace(/$$(\d+)$$/g, '.$1')
-    .split('.')
-    .filter(Boolean)
-
-  return get(obj, pathArray)
+export function copyWithToast(content: string): void {
+  navigator.clipboard
+    .writeText(content)
+    .then(() => {
+      toast.success('已复制到剪切板', { duration: 1000 })
+    })
+    .catch((error) => {
+      toast.error(`复制文本到剪切板失败: ${error}`)
+    })
 }
 
-export function setValueByPath(obj: any, path: string, value: any): void {
-  if (path === '#all') {
-    obj = value
-    return
-  }
-
-  const pathArray = path
-    .replace(/$$(\d+)$$/g, '.$1')
-    .split('.')
-    .filter(Boolean)
-
-  let current = obj
-
-  // 遍历路径，除了最后一个
-  for (let i = 0; i < pathArray.length - 1; i++) {
-    const key = pathArray[i]
-
-    // 如果当前节点不存在或为null，创建新对象
-    if (current === undefined || current === null) {
-      current = {}
+export const HTMLParserOptions: HTMLReactParserOptions = {
+  replace: (domNode) => {
+    if (domNode instanceof Element && domNode.name === 'a') {
+      // Make sure the link opens in a new tab
+      domNode.attribs.target = '_blank'
+      // Add rel="noopener noreferrer" for added security
+      domNode.attribs.rel = 'noopener noreferrer'
     }
-
-    // 如果key不存在，创建新对象
-    if (!(key in current)) {
-      current[key] = {}
-    }
-
-    current = current[key]
   }
-
-  // 设置最后一个路径的值
-  const lastKey = pathArray[pathArray.length - 1]
-  if (current === undefined || current === null) {
-    current = {}
-  }
-  current[lastKey] = value
 }

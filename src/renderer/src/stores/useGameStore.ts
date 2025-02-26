@@ -14,9 +14,16 @@ export interface GameState {
   documents: gameDocs
   initialized: boolean
   search: (query: string) => string[]
-  sort: (by: keyof gameDoc['metadata'], order?: 'asc' | 'desc') => string[]
-  filter: (criteria: Partial<gameDoc['metadata']>) => string[]
-  getAllValuesInKey: (key: keyof gameDoc['metadata']) => string[]
+  sort: <Path extends Paths<gameDoc, { bracketNotation: true }>>(
+    by: Path,
+    order?: 'asc' | 'desc'
+  ) => string[]
+  filter: (
+    criteria: Partial<Record<Paths<gameDoc, { bracketNotation: true }>, string[]>>
+  ) => string[]
+  getAllValuesInKey: <Path extends Paths<gameDoc, { bracketNotation: true }>>(
+    path: Path
+  ) => string[]
   checkGameExists: (gameId: string) => Promise<boolean>
   getGameValue: <Path extends Paths<gameDoc, { bracketNotation: true }>>(
     gameId: string,
@@ -135,12 +142,16 @@ export const useGameStore = create<GameState>((set, get) => ({
     }
     return results
   },
-  sort: (by: keyof gameDoc['metadata'], order: 'asc' | 'desc' = 'asc'): string[] => {
+  sort: <Path extends Paths<gameDoc, { bracketNotation: true }>>(
+    by: Path,
+    order?: 'asc' | 'desc'
+  ): string[] => {
     const { documents } = get()
+
     return Object.entries(documents)
       .sort(([, a], [, b]) => {
-        const valueA = a.metadata[by]
-        const valueB = b.metadata[by]
+        const valueA = getValueByPath(a, by)
+        const valueB = getValueByPath(b, by)
 
         if (valueA == null && valueB == null) {
           return 0
@@ -154,30 +165,39 @@ export const useGameStore = create<GameState>((set, get) => ({
         if (valueA === valueB) {
           return 0
         }
-        if (by === 'name') {
-          return order === 'asc'
-            ? (valueA as string).localeCompare(valueB as string, 'zh-CN')
-            : (valueB as string).localeCompare(valueA as string, 'zh-CN')
+
+        // 比较逻辑
+        if (typeof valueA === 'string' && typeof valueB === 'string') {
+          if (by === 'metadata.name') {
+            return order === 'asc'
+              ? valueA.localeCompare(valueB, 'zh-CN')
+              : valueB.localeCompare(valueA, 'zh-CN')
+          } else {
+            return order === 'asc' ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA)
+          }
+        } else if (typeof valueA === 'number' && typeof valueB === 'number') {
+          return order === 'asc' ? valueA - valueB : valueB - valueA
         } else {
-          return order === 'asc'
-            ? (valueA as string) > (valueB as string)
-              ? 1
-              : -1
-            : (valueA as string) > (valueB as string)
-              ? -1
-              : 1
+          // 如果类型不明确，可以尝试转换为字符串进行比较
+          const strA = String(valueA)
+          const strB = String(valueB)
+          return order === 'asc' ? strA.localeCompare(strB) : strB.localeCompare(strA)
         }
       })
       .map(([gameId]) => gameId)
   },
-  filter: (criteria: Partial<gameDoc['metadata']>): string[] => {
+  filter: (
+    criteria: Partial<Record<Paths<gameDoc, { bracketNotation: true }>, string[]>>
+  ): string[] => {
     const { documents } = get()
     const results: string[] = []
+
     for (const [gameId, game] of Object.entries(documents)) {
-      const matchesAllCriteria = Object.entries(criteria).every(([field, values]) => {
-        const metadataValue = game.metadata[field as keyof gameDoc['metadata']]
+      const matchesAllCriteria = Object.entries(criteria).every(([path, values]) => {
+        const metadataValue = getValueByPath(game, path)
+
         if (
-          field === 'releaseDate' &&
+          path === 'metadata.releaseDate' &&
           Array.isArray(values) &&
           values.length === 2 &&
           metadataValue
@@ -198,6 +218,7 @@ export const useGameStore = create<GameState>((set, get) => ({
           }
           return releaseDate >= startDate && releaseDate <= endDate
         }
+
         if (Array.isArray(metadataValue)) {
           return metadataValue.some((item) =>
             (values as string[]).some((value) =>
@@ -209,19 +230,26 @@ export const useGameStore = create<GameState>((set, get) => ({
             metadataValue.toString().toLowerCase().includes(value.toLowerCase())
           )
         }
+
         return false
       })
+
       if (matchesAllCriteria) {
         results.push(gameId)
       }
     }
+
     return results
   },
-  getAllValuesInKey: (key: keyof gameDoc['metadata']): string[] => {
+  getAllValuesInKey: <Path extends Paths<gameDoc, { bracketNotation: true }>>(
+    path: Path
+  ): string[] => {
     const { documents } = get()
     const values = new Set<string>()
+
     for (const game of Object.values(documents)) {
-      const value = game.metadata[key]
+      const value = getValueByPath(game, path)
+
       if (Array.isArray(value)) {
         value.forEach((item) => {
           if (item) {
@@ -232,6 +260,7 @@ export const useGameStore = create<GameState>((set, get) => ({
         values.add(value.toString())
       }
     }
+
     return Array.from(values)
   },
   checkGameExists: async (gameId): Promise<boolean> => {

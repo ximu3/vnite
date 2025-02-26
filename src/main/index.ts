@@ -20,7 +20,7 @@ import {
 } from './utils'
 // import { setupUpdater } from './updater' todo
 // import { initScraper } from './scraper' todo
-import { startSync, DBManager } from '~/database'
+import { startSync, GameDBManager } from '~/database'
 
 let mainWindow: BrowserWindow
 let splashWindow: BrowserWindow | null
@@ -58,9 +58,9 @@ async function handleGameUrl(url: string): Promise<void> {
       }
       mainWindow.focus()
 
-      const gamePath = await DBManager.getValue('game', gameId, ['path', 'gamePath'], '')
-      const mode = await DBManager.getValue('game', gameId, ['launcher', 'mode'], '')
-      const config = await DBManager.getValue('game', gameId, ['launcher', `${mode}Config`], {})
+      const gamePath = await GameDBManager.getGameLocalValue(gameId, 'path.gamePath')
+      const mode = await GameDBManager.getGameLocalValue(gameId, 'launcher.mode')
+      const config = await GameDBManager.getGameLocalValue(gameId, `launcher.${mode}Config`)
       mainWindow.webContents.send('start-game-from-url', gameId, gamePath, mode, config)
     } else {
       launchGameId = gameId
@@ -116,14 +116,9 @@ function createWindow(): void {
         mainWindow.show()
       }
       if (launchGameId) {
-        const gamePath = await DBManager.getValue('game', launchGameId, ['path', 'gamePath'], '')
-        const mode = await DBManager.getValue('game', launchGameId, ['launcher', 'mode'], '')
-        const config = await DBManager.getValue(
-          'game',
-          launchGameId,
-          ['launcher', `${mode}Config`],
-          {}
-        )
+        const gamePath = await GameDBManager.getGameLocalValue(launchGameId, 'path.gamePath')
+        const mode = await GameDBManager.getGameLocalValue(launchGameId, 'launcher.mode')
+        const config = await GameDBManager.getGameLocalValue(launchGameId, `launcher.${mode}Config`)
         mainWindow.webContents.send('start-game-from-url', launchGameId, gamePath, mode, config)
         launchGameId = null
       }

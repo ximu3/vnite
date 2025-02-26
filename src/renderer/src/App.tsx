@@ -1,35 +1,50 @@
-import { useConfigLocalState, useGameState } from './hooks'
+import { Toaster } from '@ui/sonner'
+import { Titlebar } from './components/Titlebar'
+import { Main } from './pages/Main'
+import { GameAdder } from './pages/GameAdder'
+import { GameBatchAdder } from './pages/GameBatchAdder'
+import { UpdateDialog } from './pages/Updater'
+import { useUpdaterStore } from './pages/Updater/store'
+import { HashRouter } from 'react-router-dom'
+import { initializeStore, useGameAdderStore } from './pages/GameAdder/store'
+import { Importer } from './pages/Importer'
+import { useConfigState } from './hooks'
 import { setupDBSync } from './stores/sync'
-import { Input } from '@ui/input'
-import { Button } from '@ui/button'
-import { GameImage } from '@ui/game-image'
 import { useEffect } from 'react'
-import { ipcInvoke } from '~/utils'
+import { ipcOnUnique } from '~/utils'
 
 function App(): JSX.Element {
-  const [value, setValue] = useConfigLocalState('game.linkage.localeEmulator.path')
-  const [name, setName] = useGameState('tets', 'metadata.name')
-
-  async function handleFileSelect(type: string): Promise<void> {
-    try {
-      const filePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
-      if (!filePath) return
-      await ipcInvoke('set-game-image', 'tets', type, filePath)
-      return
-    } catch (error) {
-      console.error(error)
+  const { setIsOpen: setIsUpdateDialogOpen } = useUpdaterStore()
+  const { isOpen: isGameAdderDialogOpen } = useGameAdderStore()
+  const [defaultDataSource] = useConfigState('game.scraper.defaultDatasSource')
+  useEffect(() => {
+    const removeUpdateAvailableListener = ipcOnUnique('update-available', (_event, _updateInfo) => {
+      setIsUpdateDialogOpen(true)
+    })
+    return (): void => {
+      removeUpdateAvailableListener()
     }
-  }
-
+  }, [setIsUpdateDialogOpen])
+  useEffect(() => {
+    const initStore = async (): Promise<void> => {
+      initializeStore(defaultDataSource)
+    }
+    initStore()
+  }, [defaultDataSource, isGameAdderDialogOpen])
   useEffect(() => {
     setupDBSync()
   }, [])
   return (
     <>
-      <Input value={value} onChange={(e) => setValue(e.target.value)} />
-      <Input value={name} onChange={(e) => setName(e.target.value)} />
-      <Button onClick={() => handleFileSelect('background')}>Select Icon</Button>
-      <GameImage gameId="tets" type="background" />
+      <Titlebar />
+      <HashRouter>
+        <Main />
+      </HashRouter>
+      <GameAdder />
+      <GameBatchAdder />
+      <Toaster />
+      <UpdateDialog />
+      <Importer />
     </>
   )
 }

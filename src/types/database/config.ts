@@ -5,23 +5,34 @@ export interface configDocs {
   }
   game: {
     scraper: {
-      defaultDatasSource: string
+      defaultDatasSource: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb'
     }
     showcase: {
       sort: {
-        by: string
+        by:
+          | 'metadata.name'
+          | 'metadata.releaseDate'
+          | 'record.lastRunDate'
+          | 'record.addDate'
+          | 'record.playTime'
         order: 'asc' | 'desc'
       }
     }
     gameList: {
       sort: {
-        by: string
+        by:
+          | 'metadata.name'
+          | 'metadata.releaseDate'
+          | 'record.lastRunDate'
+          | 'record.addDate'
+          | 'record.playTime'
         order: 'asc' | 'desc'
       }
-      selectedGroup: string
+      selectedGroup: 'collection' | 'developers' | 'genres'
       highlightLocalGames: boolean
       markLocalGames: boolean
       showRecentGames: boolean
+      playingStatusOrder: string[]
     }
     gameHeader: {
       showOriginalName: boolean
@@ -79,19 +90,20 @@ export const DEFAULT_CONFIG_VALUES = {
     },
     showcase: {
       sort: {
-        by: 'name',
+        by: 'metadata.name',
         order: 'desc' as const
       }
     },
     gameList: {
       sort: {
-        by: 'name',
+        by: 'metadata.name',
         order: 'desc' as const
       },
-      selectedGroup: 'all',
+      selectedGroup: 'collection',
       highlightLocalGames: true,
       markLocalGames: false,
-      showRecentGames: true
+      showRecentGames: true,
+      playingStatusOrder: ['unplayed', 'playing', 'finished', 'multiple', 'shelved']
     },
     gameHeader: {
       showOriginalName: false

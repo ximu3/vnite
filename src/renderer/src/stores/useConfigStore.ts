@@ -54,8 +54,12 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
       return getValueByPath(DEFAULT_CONFIG_VALUES, path)
     }
     const value = getValueByPath(state.documents, path)
+    if (value === undefined) {
+      get().setConfigValue(path, getValueByPath(DEFAULT_CONFIG_VALUES, path))
+      return getValueByPath(DEFAULT_CONFIG_VALUES, path)
+    }
     console.log('getConfigValue', path, value)
-    return value !== undefined ? value : getValueByPath(DEFAULT_CONFIG_VALUES, path)
+    return value
   },
 
   setConfigValue: async <Path extends Paths<configDocs, { bracketNotation: true }>>(
