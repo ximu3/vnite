@@ -5,11 +5,14 @@ import {
   gameDoc,
   gameDocs,
   gameCollectionDoc,
-  gameCollection,
+  gameCollectionDocs,
+  gameLocalDoc,
+  gameLocalDocs,
   DEFAULT_GAME_VALUES,
+  DEFAULT_GAME_COLLECTION_VALUES,
   SortConfig
 } from '@appTypes/database'
-import { getValueByPath } from '~/utils'
+import { getValueByPath } from '@appUtils'
 import type { Get, Paths } from 'type-fest'
 
 export class GameDBManager {
@@ -19,8 +22,12 @@ export class GameDBManager {
     return (await DBManager.getAllDocs(this.DB_NAME)) as gameDocs
   }
 
-  static async getAllCollections(): Promise<gameCollectionDoc> {
-    return await DBManager.getValue(this.DB_NAME, 'collections', '#all', {} as gameCollectionDoc)
+  static async getAllCollections(): Promise<gameCollectionDocs> {
+    return (await DBManager.getAllDocs(`${this.DB_NAME}-collection`)) as gameCollectionDocs
+  }
+
+  static async getAllGamesLocal(): Promise<gameLocalDocs> {
+    return (await DBManager.getAllDocs(`${this.DB_NAME}-local`)) as gameLocalDocs
   }
 
   // 获取游戏数据
@@ -33,16 +40,27 @@ export class GameDBManager {
     await DBManager.setValue(this.DB_NAME, gameId, '#all', data)
   }
 
-  static async getCollection(collectionId: string): Promise<gameCollection> {
+  static async getLocalGame(gameId: string): Promise<gameLocalDoc> {
+    return await DBManager.getValue(`${this.DB_NAME}-local`, gameId, '#all', {} as gameLocalDoc)
+  }
+
+  static async setLocalGame(gameId: string, data: Partial<gameLocalDoc>): Promise<void> {
+    await DBManager.setValue(`${this.DB_NAME}-local`, gameId, '#all', data)
+  }
+
+  static async getCollection(collectionId: string): Promise<gameCollectionDoc> {
     return await DBManager.getValue(
       `${this.DB_NAME}-collection`,
       collectionId,
       '#all',
-      {} as gameCollection
+      {} as gameCollectionDoc
     )
   }
 
-  static async setCollection(collectionId: string, data: Partial<gameCollection>): Promise<void> {
+  static async setCollection(
+    collectionId: string,
+    data: Partial<gameCollectionDoc>
+  ): Promise<void> {
     await DBManager.setValue(`${this.DB_NAME}-collection`, collectionId, '#all', data)
   }
 
@@ -66,8 +84,83 @@ export class GameDBManager {
     await DBManager.setValue(this.DB_NAME, gameId, path, value)
   }
 
+  static async getCollectionValue<Path extends Paths<gameCollectionDoc, { bracketNotation: true }>>(
+    collectionId: string,
+    path: Path
+  ): Promise<Get<gameCollectionDoc, Path>> {
+    return (await DBManager.getValue(
+      `${this.DB_NAME}-collection`,
+      collectionId,
+      path,
+      getValueByPath(DEFAULT_GAME_COLLECTION_VALUES, path)
+    )) as Get<gameCollectionDoc, Path>
+  }
+
+  static async setCollectionValue<Path extends Paths<gameCollectionDoc, { bracketNotation: true }>>(
+    collectionId: string,
+    path: Path,
+    value: Get<gameCollectionDoc, Path>
+  ): Promise<void> {
+    await DBManager.setValue(`${this.DB_NAME}-collection`, collectionId, path, value)
+  }
+
+  static async getGameLocalValue<Path extends Paths<gameLocalDoc, { bracketNotation: true }>>(
+    gameId: string,
+    path: Path
+  ): Promise<Get<gameLocalDoc, Path>> {
+    return (await DBManager.getValue(
+      `${this.DB_NAME}-local`,
+      gameId,
+      path,
+      getValueByPath(DEFAULT_GAME_VALUES, path)
+    )) as Get<gameLocalDoc, Path>
+  }
+
+  static async setGameLocalValue<Path extends Paths<gameLocalDoc, { bracketNotation: true }>>(
+    gameId: string,
+    path: Path,
+    value: Get<gameLocalDoc, Path>
+  ): Promise<void> {
+    await DBManager.setValue(`${this.DB_NAME}-local`, gameId, path, value)
+  }
+
   static async removeGame(gameId: string): Promise<void> {
     await DBManager.removeDoc(this.DB_NAME, gameId)
+    await DBManager.removeDoc(`${this.DB_NAME}-local`, gameId)
+  }
+
+  static async removeCollection(collectionId: string): Promise<void> {
+    await DBManager.removeDoc(`${this.DB_NAME}-collection`, collectionId)
+  }
+
+  static async removeGameFromCollection(gameId: string, collectionId: string): Promise<void> {
+    const collection = await this.getCollection(collectionId)
+    await this.setCollection(collectionId, {
+      games: collection.games.filter((id) => id !== gameId)
+    })
+  }
+
+  static async addGameToCollection(gameId: string, collectionId: string): Promise<void> {
+    const collection = await this.getCollection(collectionId)
+    await this.setCollection(collectionId, {
+      games: [...collection.games, gameId]
+    })
+  }
+
+  static async removeGameFromAllCollections(gameId: string): Promise<void> {
+    const collections = await this.getAllCollections()
+    for (const collectionId in collections) {
+      const collection = collections[collectionId]
+      if (collection.games.includes(gameId)) {
+        await this.setCollection(collectionId, {
+          games: collection.games.filter((id) => id !== gameId)
+        })
+      }
+    }
+  }
+
+  static async removeGameLocal(gameId: string): Promise<void> {
+    await DBManager.removeDoc(`${this.DB_NAME}-local`, gameId)
   }
 
   // 处理游戏图片

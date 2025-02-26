@@ -1,4 +1,4 @@
-import { generateUUID } from '~/utils'
+import { generateUUID } from '@appUtils'
 import { GameDBManager } from './game'
 
 export async function addMemory(gameId: string): Promise<void> {

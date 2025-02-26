@@ -24,12 +24,7 @@ export interface ExcludePath {
   condition?: (doc: any) => boolean
 }
 
-interface DBExcludeOptions {
-  [dbName: string]: ExcludePath[]
-}
-
 export interface SyncOptions {
-  excludePaths?: DBExcludeOptions
   auth?: CouchDBAuth
 }
 
@@ -41,7 +36,7 @@ export interface DatabaseSchemas {
 export interface AttachmentChange {
   dbName: string
   docId: string
-  attachments: string[]
+  attachmentId: string
   timestamp: number
 }
 

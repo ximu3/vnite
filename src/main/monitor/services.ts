@@ -6,13 +6,12 @@ import log from 'electron-log/main.js'
  * @param gameId The id of the game
  * @param target The target to monitor
  */
-export function startMonitor(gameId: string, target: string): void {
+export async function startMonitor(gameId: string): Promise<void> {
   try {
     const monitor = new GameMonitor({
-      gameId,
-      target
+      gameId
     })
-    monitor.init()
+    await monitor.init()
     monitor.start()
   } catch (error) {
     log.error(`Failed to start monitor ${gameId}`, error)

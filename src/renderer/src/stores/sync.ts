@@ -1,10 +1,16 @@
-import { useGameStore, GameState } from '~/stores/useGameStore'
+import { useGameStore } from './useGameStore'
+import { useConfigStore } from './useConfigStore'
+import { useGameLocalStore } from './useGameLocalStore'
+import { useConfigLocalStore } from './useConfigLocalStore'
 import { ipcOnUnique, ipcInvoke } from '~/utils/ipc'
 import { DocChange, AttachmentChange } from '@appTypes/database'
 import { isEqual } from 'lodash'
 
 const DB_STORE_MAP = {
-  game: useGameStore
+  game: useGameStore,
+  config: useConfigStore,
+  ['game-local']: useGameLocalStore,
+  ['config-local']: useConfigLocalStore
 } as const
 
 type DBName = keyof typeof DB_STORE_MAP
@@ -12,8 +18,9 @@ type DBName = keyof typeof DB_STORE_MAP
 export function setupDBSync(): void {
   // 初始化各个 store
   Object.entries(DB_STORE_MAP).forEach(([dbName, store]) => {
-    ipcInvoke<GameState['documents']>('db-get-all-docs', dbName).then((data) => {
-      store.getState().initializeStore(data)
+    ipcInvoke('db-get-all-docs', dbName).then((data) => {
+      store.getState().initializeStore(data as any)
+      console.log(`[DB] ${dbName} store initialized`)
     })
   })
 
@@ -28,7 +35,7 @@ export function setupDBSync(): void {
       return
     }
 
-    store.getState().setDocument(change.docId, change.data)
+    store.getState().setDocument(change.docId as any, change.data)
   })
 
   ipcOnUnique('attachment-changed', (_event, change: AttachmentChange) => {
@@ -50,5 +57,6 @@ export function setupDBSync(): void {
         el.setAttribute('src', url.toString())
       }
     })
+    console.log(`[DB] Attachment changed: ${change.dbName}/${change.docId}/${change.attachmentId}`)
   })
 }

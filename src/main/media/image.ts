@@ -23,7 +23,7 @@ export async function convertToWebP(
       imageBuffer = Buffer.from(await response.arrayBuffer())
     } else if (typeof input === 'string') {
       // 如果是本地文件路径
-      imageBuffer = Buffer.from(input)
+      imageBuffer = await fse.readFile(input)
     } else {
       // 如果已经是Buffer
       imageBuffer = input
@@ -41,10 +41,7 @@ export async function convertToWebP(
       limitInputPixels: false
     })
       .webp({
-        quality: options.quality ?? 100,
-        effort: 6,
-        lossless: true,
-        alphaQuality: 100
+        quality: options.quality ?? 100
       })
       .toBuffer()
   } catch (error) {

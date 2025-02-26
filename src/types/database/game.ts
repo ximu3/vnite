@@ -1,9 +1,7 @@
 import { Paths } from 'type-fest'
 
 export type gameDocs = {
-  [K in Exclude<string, 'collections'>]: gameDoc
-} & {
-  collections: gameCollectionDoc
+  [gameId: string]: gameDoc
 }
 
 export interface gameDoc {
@@ -23,6 +21,52 @@ export interface gameDoc {
     igdbId: string
     ymgalId: string
   }
+  record: {
+    addDate: string
+    lastRunDate: string
+    score: number
+    playTime: number
+    playStatus: 'unplayed' | 'playing' | 'finished' | 'multiple' | 'shelved'
+    timers: {
+      start: string
+      end: string
+    }[]
+  }
+  save: {
+    [saveId: string]: {
+      _id: string
+      date: string
+      note: string
+      locked: boolean
+    }
+  }
+  memory: {
+    memoryList: {
+      [memoryId: string]: {
+        _id: string
+        date: string
+        note: string
+      }
+    }
+  }
+}
+
+export interface gameCollectionDocs {
+  [gameCollectionId: string]: gameCollectionDoc
+}
+
+export interface gameCollectionDoc {
+  _id: string
+  name: string
+  games: string[]
+}
+
+export interface gameLocalDocs {
+  [gameId: string]: gameLocalDoc
+}
+
+export interface gameLocalDoc {
+  _id: string
   path: {
     gamePath: string
     savePaths: string[]
@@ -58,45 +102,52 @@ export interface gameDoc {
       name: string
     }
   }
-  record: {
-    addDate: string
-    lastRunDate: string
-    score: number
-    playTime: number
-    playStatus: 'unplayed' | 'playing' | 'finished' | 'multiple' | 'shelved'
-    timers: {
-      start: string
-      end: string
-    }[]
-  }
-  save: {
-    [saveId: string]: {
-      _id: string
-      date: string
-      note: string
-      locked: boolean
-    }
-  }
-  memory: {
-    memoryList: {
-      [memoryId: string]: {
-        _id: string
-        date: string
-        note: string
-      }
-    }
-  }
 }
 
-export interface gameCollectionDoc {
-  [gameCollectionId: string]: gameCollection
-}
+export const DEFAULT_GAME_LOCAL_VALUES = {
+  _id: '',
+  path: {
+    gamePath: '',
+    savePaths: [],
+    maxSaveBackups: 7
+  },
+  launcher: {
+    mode: 'file',
+    fileConfig: {
+      path: '',
+      workingDirectory: '',
+      args: []
+    },
+    urlConfig: {
+      url: '',
+      browserPath: ''
+    },
+    scriptConfig: {
+      workingDirectory: '',
+      command: []
+    },
+    useMagpie: false
+  },
+  monitor: {
+    mode: 'file',
+    fileConfig: {
+      path: ''
+    },
+    folderConfig: {
+      path: '',
+      deepth: 3
+    },
+    processConfig: {
+      name: ''
+    }
+  }
+} satisfies gameLocalDoc
 
-export interface gameCollection {
-  id: string
-  name: string
-  games: gameDoc[]
-}
+export const DEFAULT_GAME_COLLECTION_VALUES = {
+  _id: '',
+  name: '',
+  games: []
+} satisfies gameCollectionDoc
 
 export const DEFAULT_GAME_VALUES = {
   _id: '',
@@ -115,41 +166,6 @@ export const DEFAULT_GAME_VALUES = {
     igdbId: '',
     ymgalId: ''
   },
-  path: {
-    gamePath: '',
-    savePaths: [] as string[],
-    maxSaveBackups: 7
-  },
-  launcher: {
-    mode: 'file',
-    fileConfig: {
-      path: '',
-      workingDirectory: '',
-      args: [] as string[]
-    },
-    urlConfig: {
-      url: '',
-      browserPath: ''
-    },
-    scriptConfig: {
-      workingDirectory: '',
-      command: [] as string[]
-    },
-    useMagpie: false
-  },
-  monitor: {
-    mode: 'file',
-    fileConfig: {
-      path: ''
-    },
-    folderConfig: {
-      path: '',
-      deepth: 3
-    },
-    processConfig: {
-      name: ''
-    }
-  },
   record: {
     addDate: '',
     lastRunDate: '',
@@ -167,4 +183,14 @@ export const DEFAULT_GAME_VALUES = {
 export interface SortConfig {
   by: Paths<gameDoc, { bracketNotation: true }>
   order?: 'asc' | 'desc'
+}
+
+export interface Timer {
+  start: string
+  end: string
+}
+
+export interface MaxPlayTimeDay {
+  date: string
+  playTime: number
 }

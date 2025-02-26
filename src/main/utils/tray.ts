@@ -38,14 +38,14 @@ export class TrayManager {
 
   private async init(mainWindow: BrowserWindow): Promise<void> {
     this.mainWindow = mainWindow
-    this.config = await ConfigDBManager.getGeneralConfig()
+    this.config = await ConfigDBManager.getConfigValue('general')
 
     this.createTray()
     await this.setupWindowEvents()
   }
 
   public async updateConfig(): Promise<void> {
-    this.config = await ConfigDBManager.getGeneralConfig()
+    this.config = await ConfigDBManager.getConfigValue('general')
     this.updateTrayMenu()
   }
 

@@ -7,7 +7,8 @@ export default defineConfig({
     resolve: {
       alias: {
         '~': resolve('src/main'),
-        '@types': resolve('src/types')
+        '@appTypes': resolve('src/types'),
+        '@appUtils': resolve('src/utils')
       }
     },
     plugins: [externalizeDepsPlugin({ exclude: ['file-type'] })]
@@ -20,7 +21,8 @@ export default defineConfig({
       alias: {
         '~': resolve('src/renderer/src'),
         '@ui': resolve('src/renderer/src/components/ui'),
-        '@appTypes': resolve('src/types')
+        '@appTypes': resolve('src/types'),
+        '@appUtils': resolve('src/utils')
       }
     },
     plugins: [react()]

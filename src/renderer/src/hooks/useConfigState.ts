@@ -1,10 +1,10 @@
 import { useCallback } from 'react'
 import { useConfigStore } from '~/stores'
-import type { configDocs, PathsOf } from '@appTypes/database'
-import type { Get } from 'type-fest'
+import type { configDocs } from '@appTypes/database'
+import type { Get, Paths } from 'type-fest'
 
-export function useConfigState<Path extends string[]>(
-  path: Path & PathsOf<configDocs>
+export function useConfigState<Path extends Paths<configDocs, { bracketNotation: true }>>(
+  path: Path
 ): [Get<configDocs, Path>, (value: Get<configDocs, Path>) => Promise<void>] {
   const value = useConfigStore((state) => state.getConfigValue(path))
 

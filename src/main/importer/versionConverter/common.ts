@@ -1,7 +1,7 @@
 import * as fse from 'fs-extra'
 import * as path from 'path'
 import * as unzipper from 'unzipper'
-import { generateUUID } from '~/utils'
+import { generateUUID } from '@appUtils'
 import { launcherPreset } from '~/launcher'
 import { app } from 'electron'
 

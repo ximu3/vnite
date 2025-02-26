@@ -1,5 +1,5 @@
 import { defaultPreset, lePreset, steamPreset, vbaPreset } from './preset'
-import { getDBValue } from '../database'
+import { GameDBManager } from '../database'
 import { fileLuancher, urlLauncher, scriptLauncher } from './common'
 import log from 'electron-log/main.js'
 
@@ -41,7 +41,7 @@ export async function launcherPreset(
  */
 export async function launcher(gameId: string): Promise<void> {
   try {
-    const mode = await getDBValue(`games/${gameId}/launcher.json`, ['mode'], '')
+    const mode = await GameDBManager.getGameLocalValue(gameId, 'launcher.mode')
     if (mode === 'file') {
       await fileLuancher(gameId)
     } else if (mode === 'url') {

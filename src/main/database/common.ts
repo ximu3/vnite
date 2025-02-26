@@ -12,11 +12,10 @@ import {
   convertBufferToFile,
   convertFileToBuffer,
   convertBufferToTempFile,
-  getValueByPath,
-  setValueByPath
+  getDataPath
 } from '~/utils'
+import { getValueByPath, setValueByPath } from '@appUtils'
 import { fileTypeFromBuffer } from 'file-type'
-import { getDataPath } from '~/utils'
 
 export class DBManager {
   private static instances: { [key: string]: PouchDB.Database } = {}
@@ -27,9 +26,21 @@ export class DBManager {
       name: 'game',
       path: getDataPath('game')
     },
+    ['game-collection']: {
+      name: 'game-collection',
+      path: getDataPath('game-collection')
+    },
+    ['game-local']: {
+      name: 'game-local',
+      path: getDataPath('game-local')
+    },
     config: {
       name: 'config',
       path: getDataPath('config')
+    },
+    ['config-local']: {
+      name: 'config-local',
+      path: getDataPath('config-local')
     }
   }
 
@@ -53,12 +64,15 @@ export class DBManager {
   static async setValue(dbName: string, docId: string, path: string, value: any): Promise<void> {
     const db = this.getInstance(dbName)
 
+    let isCreate = false
+
     try {
       let doc: any
       try {
         doc = await db.get(docId)
       } catch (err: any) {
         if (err.name === 'not_found') {
+          isCreate = true
           doc = { _id: docId }
         } else {
           throw err
@@ -67,11 +81,7 @@ export class DBManager {
 
       if (path === '#all') {
         // 更新整个文档，保留 _id 和 _rev
-        doc = {
-          _id: docId,
-          _rev: doc._rev,
-          ...value
-        }
+        doc = isCreate ? { _id: docId, ...value } : { _id: docId, _rev: doc._rev, ...value }
       } else {
         // 直接使用新版 setValueByPath
         setValueByPath(doc, path, value)
@@ -195,22 +205,16 @@ export class DBManager {
     remoteUrl: string = 'http://localhost:5984',
     options: SyncOptions = {}
   ): Promise<void> {
+    if (dbName.includes('local')) {
+      return
+    }
     const localDb = this.getInstance(dbName)
-    const { excludePaths, auth } = options
-
-    const dbExcludePaths = excludePaths?.[dbName] || []
+    const { auth } = options
 
     const remoteDbName = `${auth?.username}-${dbName}`
 
     // 构建远程数据库URL
-    let remoteDbUrl = `${remoteUrl}/${remoteDbName}`
-    if (auth) {
-      const { username, password } = auth
-      const urlObj = new URL(remoteDbUrl)
-      urlObj.username = username
-      urlObj.password = password
-      remoteDbUrl = urlObj.toString()
-    }
+    const remoteDbUrl = `${remoteUrl}/${remoteDbName}`
 
     const remoteDb = new PouchDB(remoteDbUrl, {
       skip_setup: false,
@@ -237,94 +241,11 @@ export class DBManager {
         }
       }
 
-      // 创建过滤函数
-      const filterFunction = (doc: any): boolean => {
-        if (!dbExcludePaths || dbExcludePaths.length === 0) {
-          return true
-        }
-
-        const filteredDoc = JSON.parse(JSON.stringify(doc))
-
-        // 获取适用于当前文档的排除规则
-        const applicablePaths = dbExcludePaths.filter((exclude) => {
-          // 检查是否为全局排除规则
-          if (exclude.docId === '#all') {
-            return true
-          }
-          // 检查是否为特定文档的规则
-          if (exclude.docId && exclude.docId !== doc._id) {
-            return false
-          }
-          // 检查条件
-          if (exclude.condition && !exclude.condition(doc)) {
-            return false
-          }
-          return true
-        })
-
-        if (applicablePaths.length === 0) {
-          return true
-        }
-
-        // 检查是否有需要排除整个文档的规则
-        const shouldExcludeEntireDoc = applicablePaths.some(({ path }) => path[0] === '#all')
-
-        if (shouldExcludeEntireDoc) {
-          return false // 排除整个文档
-        }
-
-        // 应用排除规则
-        for (const { path } of applicablePaths) {
-          let current = filteredDoc
-          for (let i = 0; i < path.length - 1; i++) {
-            if (current === undefined || current === null) break
-            current = current[path[i]]
-          }
-
-          if (current && typeof current === 'object') {
-            const lastKey = path[path.length - 1]
-            delete current[lastKey]
-          }
-        }
-
-        return JSON.stringify(doc) === JSON.stringify(filteredDoc)
-      }
-
-      if (dbExcludePaths.length > 0) {
-        const filterName = `${dbName}_filter`
-        const designDocId = `_design/${dbName}_filters` // 为每个数据库创建独立的设计文档
-
-        // 尝试获取现有的设计文档
-        try {
-          const existingDoc = await localDb.get(designDocId)
-          await localDb.put({
-            _id: designDocId,
-            _rev: existingDoc._rev,
-            filters: {
-              [filterName]: filterFunction.toString()
-            }
-          })
-        } catch (err: any) {
-          if (err.name === 'not_found') {
-            // 如果设计文档不存在，创建新的
-            await localDb.put({
-              _id: designDocId,
-              filters: {
-                [filterName]: filterFunction.toString()
-              }
-            })
-          } else {
-            throw err
-          }
-        }
-      }
-
       // 设置同步
       this.syncHandlers[dbName] = localDb
         .sync(remoteDb, {
           live: true,
-          retry: true,
-          filter: dbExcludePaths.length > 0 ? `${dbName}_filters/${dbName}_filter` : undefined
+          retry: true
         })
         .on('change', (info) => {
           console.log(`[${dbName}] sync change:`, info)
@@ -437,6 +358,13 @@ export class DBManager {
           }
         })
       }
+      const mainWindow = BrowserWindow.getAllWindows()[0]
+      mainWindow.webContents.send('attachment-changed', {
+        dbName,
+        docId,
+        attachmentId: attachmentId,
+        timestamp: Date.now()
+      } as AttachmentChange)
     } catch (error) {
       console.error('Error putting attachment:', error)
       throw error
@@ -547,25 +475,17 @@ export class DBManager {
         try {
           if (!change.doc) return
 
-          const { _id: docId, _rev, _attachments, ...data } = change.doc
+          const { _id: docId, _rev, ...data } = change.doc
 
           // 发送文档级别的变化
           mainWindow.webContents.send('db-changed', {
             dbName,
             docId,
-            data,
+            data: { _id: docId, ...data },
             timestamp: Date.now()
           } as DocChange)
 
-          // 如果有附件变化,发送附件变化事件
-          if (_attachments) {
-            mainWindow.webContents.send('attachment-changed', {
-              dbName,
-              docId,
-              attachments: Object.keys(_attachments),
-              timestamp: Date.now()
-            } as AttachmentChange)
-          }
+          console.log('Database change:', dbName, docId, data)
         } catch (error) {
           console.error('Error handling database change:', error)
         }

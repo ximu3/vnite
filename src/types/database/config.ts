@@ -3,38 +3,9 @@ export interface configDocs {
     openAtLogin: boolean
     quitToTray: boolean
   }
-  sync: {
-    enabled: boolean
-    mode: 'offical' | 'selfHosted'
-    officalConfig: {
-      auth: {
-        username: string
-        password: string
-      }
-    }
-    selfHostedConfig: {
-      url: string
-      auth: {
-        username: string
-        password: string
-      }
-    }
-  }
   game: {
     scraper: {
       defaultDatasSource: string
-    }
-    linkage: {
-      localeEmulator: {
-        path: string
-      }
-      visualBoyAdvance: {
-        path: string
-      }
-      magpie: {
-        path: string
-        hotkey: string
-      }
     }
     showcase: {
       sort: {
@@ -63,43 +34,48 @@ export interface configDocs {
   }
 }
 
+export interface configLocalDocs {
+  sync: {
+    enabled: boolean
+    mode: 'offical' | 'selfHosted'
+    officalConfig: {
+      auth: {
+        username: string
+        password: string
+      }
+    }
+    selfHostedConfig: {
+      url: string
+      auth: {
+        username: string
+        password: string
+      }
+    }
+  }
+  game: {
+    linkage: {
+      localeEmulator: {
+        path: string
+      }
+      visualBoyAdvance: {
+        path: string
+      }
+      magpie: {
+        path: string
+        hotkey: string
+      }
+    }
+  }
+}
+
 export const DEFAULT_CONFIG_VALUES = {
   general: {
     openAtLogin: false,
     quitToTray: true
   },
-  sync: {
-    enabled: true,
-    mode: 'offical',
-    officalConfig: {
-      auth: {
-        username: 'ximu',
-        password: '001500szm'
-      }
-    },
-    selfHostedConfig: {
-      url: '',
-      auth: {
-        username: '',
-        password: ''
-      }
-    }
-  },
   game: {
     scraper: {
       defaultDatasSource: 'steam'
-    },
-    linkage: {
-      localeEmulator: {
-        path: ''
-      },
-      visualBoyAdvance: {
-        path: ''
-      },
-      magpie: {
-        path: '',
-        hotkey: 'win+shift+a'
-      }
     },
     showcase: {
       sort: {
@@ -127,3 +103,37 @@ export const DEFAULT_CONFIG_VALUES = {
     }
   }
 } satisfies configDocs
+
+export const DEFAULT_CONFIG_LOCAL_VALUES = {
+  sync: {
+    enabled: true,
+    mode: 'offical',
+    officalConfig: {
+      auth: {
+        username: 'ximu',
+        password: 'S%3WcHlrlA^PUl'
+      }
+    },
+    selfHostedConfig: {
+      url: '',
+      auth: {
+        username: '',
+        password: ''
+      }
+    }
+  },
+  game: {
+    linkage: {
+      localeEmulator: {
+        path: ''
+      },
+      visualBoyAdvance: {
+        path: ''
+      },
+      magpie: {
+        path: '',
+        hotkey: 'win+shift+a'
+      }
+    }
+  }
+} satisfies configLocalDocs

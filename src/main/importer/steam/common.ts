@@ -1,8 +1,6 @@
 import { FormattedGameInfo, GetOwnedGamesResponse } from './types'
 import { addGameToDatabase } from '~/adder'
 import { BrowserWindow } from 'electron'
-import { rebuildIndex } from '~/database/gameIndex'
-import { rebuildRecords } from '~/database/record'
 
 /**
  * Getting information about a user's Steam library
@@ -85,8 +83,7 @@ export async function importSelectedSteamGames(games: FormattedGameInfo[]): Prom
         await addGameToDatabase({
           dataSource: 'steam',
           id: game.appId.toString(),
-          playingTime: game.totalPlayingTime,
-          noIpcAction: true
+          playTime: game.totalPlayingTime
         })
 
         // Send progress updates
@@ -118,9 +115,6 @@ export async function importSelectedSteamGames(games: FormattedGameInfo[]): Prom
       // Add small delays to avoid database stress
       await new Promise((resolve) => setTimeout(resolve, 300))
     }
-
-    await rebuildIndex()
-    await rebuildRecords()
 
     // Send a completion message
     mainWindow.webContents.send('import-steam-games-progress', {

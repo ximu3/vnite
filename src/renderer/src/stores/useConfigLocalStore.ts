@@ -1,26 +1,26 @@
 import { create } from 'zustand'
 import { ipcInvoke } from '~/utils'
 import { getValueByPath, setValueByPath } from '@appUtils'
-import { DocChange, configDocs, DEFAULT_CONFIG_VALUES } from '@appTypes/database'
+import { DocChange, configLocalDocs, DEFAULT_CONFIG_LOCAL_VALUES } from '@appTypes/database'
 import type { Get, Paths } from 'type-fest'
 
-export interface ConfigState {
-  documents: configDocs
+export interface ConfigLocalState {
+  documents: configLocalDocs
   initialized: boolean
-  getConfigValue: <Path extends Paths<configDocs, { bracketNotation: true }>>(
+  getConfigLocalValue: <Path extends Paths<configLocalDocs, { bracketNotation: true }>>(
     path: Path
-  ) => Get<configDocs, Path>
-  setConfigValue: <Path extends Paths<configDocs, { bracketNotation: true }>>(
+  ) => Get<configLocalDocs, Path>
+  setConfigLocalValue: <Path extends Paths<configLocalDocs, { bracketNotation: true }>>(
     path: Path,
-    value: Get<configDocs, Path>
+    value: Get<configLocalDocs, Path>
   ) => Promise<void>
-  initializeStore: (data: ConfigState['documents']) => void
+  initializeStore: (data: ConfigLocalState['documents']) => void
   setDocument: (docId: string, data: any) => void
 }
 
-const updateDocument = async (docId: string, data: configDocs): Promise<void> => {
+const updateDocument = async (docId: string, data: configLocalDocs): Promise<void> => {
   const change: DocChange = {
-    dbName: 'config',
+    dbName: 'config-local',
     docId: docId,
     data,
     timestamp: Date.now()
@@ -33,8 +33,8 @@ const updateDocument = async (docId: string, data: configDocs): Promise<void> =>
   }
 }
 
-export const useConfigStore = create<ConfigState>((set, get) => ({
-  documents: {} as configDocs,
+export const useConfigLocalStore = create<ConfigLocalState>((set, get) => ({
+  documents: {} as configLocalDocs,
   initialized: false,
 
   setDocument: (docId: string, data: any): void => {
@@ -46,21 +46,21 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
     }))
   },
 
-  getConfigValue: <Path extends Paths<configDocs, { bracketNotation: true }>>(
+  getConfigLocalValue: <Path extends Paths<configLocalDocs, { bracketNotation: true }>>(
     path: Path
-  ): Get<configDocs, Path> => {
+  ): Get<configLocalDocs, Path> => {
     const state = get()
     if (!state.initialized) {
-      return getValueByPath(DEFAULT_CONFIG_VALUES, path)
+      return getValueByPath(DEFAULT_CONFIG_LOCAL_VALUES, path)
     }
     const value = getValueByPath(state.documents, path)
     console.log('getConfigValue', path, value)
-    return value !== undefined ? value : getValueByPath(DEFAULT_CONFIG_VALUES, path)
+    return value !== undefined ? value : getValueByPath(DEFAULT_CONFIG_LOCAL_VALUES, path)
   },
 
-  setConfigValue: async <Path extends Paths<configDocs, { bracketNotation: true }>>(
+  setConfigLocalValue: async <Path extends Paths<configLocalDocs, { bracketNotation: true }>>(
     path: Path,
-    value: Get<configDocs, Path>
+    value: Get<configLocalDocs, Path>
   ): Promise<void> => {
     // 先更新 store
     const pathArray = path.replace(/$$(\d+)$$/g, '.$1').split('.')

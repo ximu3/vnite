@@ -1,12 +1,13 @@
 import fse from 'fs-extra'
 import path from 'path'
-import { generateUUID, zipFolder, unzipFile, getAppTempPath } from '~/utils'
+import { zipFolder, unzipFile, getAppTempPath } from '~/utils'
+import { generateUUID } from '@appUtils'
 import { GameDBManager } from './game'
 
 export async function backupGameSave(gameId: string): Promise<void> {
   const saveId = generateUUID()
-  const savePaths = await GameDBManager.getGameValue(gameId, 'path.savePaths')
-  const maxSaveNumber = await GameDBManager.getGameValue(gameId, 'path.maxSaveBackups')
+  const savePaths = await GameDBManager.getGameLocalValue(gameId, 'path.savePaths')
+  const maxSaveNumber = await GameDBManager.getGameLocalValue(gameId, 'path.maxSaveBackups')
   const tempFilesPath = getAppTempPath(`save-files-${Date.now()}/`)
   const tempZipPath = getAppTempPath(`save-zip-${Date.now()}/`)
   await fse.ensureDir(tempFilesPath)
@@ -52,7 +53,7 @@ export async function backupGameSave(gameId: string): Promise<void> {
 }
 
 export async function restoreGameSave(gameId: string, saveId: string): Promise<void> {
-  const savePaths = await GameDBManager.getGameValue(gameId, 'path.savePaths')
+  const savePaths = await GameDBManager.getGameLocalValue(gameId, 'path.savePaths')
   const tempFilesPath = getAppTempPath(`save-files-${Date.now()}/`)
   const tempZipPath = await GameDBManager.getGameSave(gameId, saveId, 'file')
   await fse.ensureDir(tempFilesPath)

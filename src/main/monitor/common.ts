@@ -3,6 +3,7 @@ import fse from 'fs-extra'
 import { ipcMain, BrowserWindow } from 'electron'
 import { updateRecentGames, simulateHotkey } from '~/utils'
 import { GameDBManager, ConfigDBManager } from '~/database'
+import { gameLocalDoc } from '@appTypes/database'
 import log from 'electron-log/main.js'
 import { backupGameSave } from '~/database'
 import { exec } from 'child_process'
@@ -90,7 +91,6 @@ async function startMagpie(): Promise<void> {
 }
 
 interface GameMonitorOptions {
-  target: string
   gameId: string
   magpieHotkey?: string
   checkInterval?: number
@@ -115,6 +115,7 @@ interface GameStatus {
 export class GameMonitor {
   private options: Required<GameMonitorOptions>
   private isRunning: boolean = false
+  private config?: gameLocalDoc['monitor']
   private intervalId?: NodeJS.Timeout
   private monitoredProcesses: MonitoredProcess[] = []
   private ipcHandler?: () => void
@@ -240,18 +241,18 @@ export class GameMonitor {
 
   public async init(): Promise<void> {
     try {
-      const stat = await fse.stat(this.options.target)
+      this.config = await GameDBManager.getGameLocalValue(this.options.gameId, 'monitor')
 
-      if (stat.isDirectory()) {
-        const files = await this.getExecutableFiles(this.options.target)
+      if (this.config.mode === 'folder') {
+        const files = await this.getExecutableFiles(this.config.folderConfig.path)
         this.monitoredProcesses = files.map((file) => ({
           path: file,
           isRunning: false
         }))
-      } else {
+      } else if (this.config.mode === 'file') {
         this.monitoredProcesses = [
           {
-            path: this.options.target,
+            path: this.config.fileConfig.path,
             isRunning: false
           }
         ]
@@ -360,7 +361,7 @@ export class GameMonitor {
           console.log(`游戏 ${this.options.gameId} 进程已启动`)
 
           // Check if Magpie scaling is enabled
-          const useMagpie = await GameDBManager.getGameValue(
+          const useMagpie = await GameDBManager.getGameLocalValue(
             this.options.gameId,
             'launcher.useMagpie'
           )
@@ -437,7 +438,7 @@ export class GameMonitor {
 
     updateRecentGames()
 
-    const savePaths = await GameDBManager.getGameValue(this.options.gameId, 'path.savePaths')
+    const savePaths = await GameDBManager.getGameLocalValue(this.options.gameId, 'path.savePaths')
 
     if (!isEqual(savePaths, ['']) && savePaths.length > 0) {
       await backupGameSave(this.options.gameId)

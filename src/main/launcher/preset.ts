@@ -1,73 +1,76 @@
-import { setDBValue, getDBValue } from '~/database'
+import { GameDBManager, ConfigDBManager } from '~/database'
 import path from 'path'
 
 export async function defaultPreset(gameId: string): Promise<void> {
-  const gamePath = await getDBValue(`games/${gameId}/path.json`, ['gamePath'], '')
+  const gamePath = await GameDBManager.getGameLocalValue(gameId, 'path.gamePath')
 
   const mode = 'file'
   const workingDirectory = path.dirname(gamePath)
   const timerMode = 'folder'
   const timerPath = path.dirname(gamePath)
 
-  await setDBValue(`games/${gameId}/launcher.json`, ['mode'], mode)
-  await setDBValue(`games/${gameId}/launcher.json`, [`${mode}Config`], {
+  await GameDBManager.setGameLocalValue(gameId, 'launcher.mode', mode)
+  await GameDBManager.setGameLocalValue(gameId, `launcher.${mode}Config`, {
     path: gamePath,
     workingDirectory,
-    timerMode,
-    timerPath
+    args: []
+  })
+  await GameDBManager.setGameLocalValue(gameId, 'monitor.mode', timerMode)
+  await GameDBManager.setGameLocalValue(gameId, 'monitor.folderConfig', {
+    path: timerPath,
+    deepth: 3
   })
 }
 
 export async function lePreset(gameId: string): Promise<void> {
-  const gamePath = await getDBValue(`games/${gameId}/path.json`, ['gamePath'], '')
+  const gamePath = await GameDBManager.getGameLocalValue(gameId, 'path.gamePath')
 
   const mode = 'script'
   const workingDirectory = path.dirname(gamePath)
   const timerMode = 'folder'
   const timerPath = path.dirname(gamePath)
 
-  const lePath = await getDBValue(
-    'config.json',
-    ['advanced', 'linkage', 'localeEmulator', 'path'],
-    ''
-  )
+  const lePath = await ConfigDBManager.getConfigLocalValue('game.linkage.localeEmulator.path')
   if (!lePath) {
     throw new Error('Locale Emulator path not set')
   }
   const script = [`"${lePath}" "${gamePath}"`]
 
-  await setDBValue(`games/${gameId}/launcher.json`, ['mode'], mode)
-  await setDBValue(`games/${gameId}/launcher.json`, [`${mode}Config`], {
+  await GameDBManager.setGameLocalValue(gameId, 'launcher.mode', mode)
+  await GameDBManager.setGameLocalValue(gameId, `launcher.${mode}Config`, {
     workingDirectory,
-    timerMode,
-    timerPath,
     command: script
+  })
+  await GameDBManager.setGameLocalValue(gameId, 'monitor.mode', timerMode)
+  await GameDBManager.setGameLocalValue(gameId, 'monitor.folderConfig', {
+    path: timerPath,
+    deepth: 3
   })
 }
 
 export async function steamPreset(gameId: string, steamId: string): Promise<void> {
-  const gamePath = await getDBValue(`games/${gameId}/path.json`, ['gamePath'], '')
+  const gamePath = await GameDBManager.getGameLocalValue(gameId, 'path.gamePath')
 
   const mode = 'url'
   const url = `steam://rungameid/${steamId}`
   const timerMode = 'folder'
   const timerPath = path.dirname(gamePath)
 
-  await setDBValue(`games/${gameId}/launcher.json`, ['mode'], mode)
-  await setDBValue(`games/${gameId}/launcher.json`, [`${mode}Config`], {
+  await GameDBManager.setGameLocalValue(gameId, 'launcher.mode', mode)
+  await GameDBManager.setGameLocalValue(gameId, `launcher.${mode}Config`, {
     url,
-    timerMode,
-    timerPath
+    browserPath: ''
+  })
+  await GameDBManager.setGameLocalValue(gameId, 'monitor.mode', timerMode)
+  await GameDBManager.setGameLocalValue(gameId, 'monitor.folderConfig', {
+    path: timerPath,
+    deepth: 3
   })
 }
 
 export async function vbaPreset(gameId: string): Promise<void> {
-  const gamePath = await getDBValue(`games/${gameId}/path.json`, ['gamePath'], '')
-  const vbaPath = await getDBValue(
-    'config.json',
-    ['advanced', 'linkage', 'visualBoyAdvance', 'path'],
-    ''
-  )
+  const gamePath = await GameDBManager.getGameLocalValue(gameId, 'path.gamePath')
+  const vbaPath = await ConfigDBManager.getConfigLocalValue('game.linkage.visualBoyAdvance.path')
 
   if (!vbaPath) {
     throw new Error('VisualBoyAdvance path not set')
@@ -80,11 +83,14 @@ export async function vbaPreset(gameId: string): Promise<void> {
 
   const script = [`"${vbaPath}" "${gamePath}"`]
 
-  await setDBValue(`games/${gameId}/launcher.json`, ['mode'], mode)
-  await setDBValue(`games/${gameId}/launcher.json`, [`${mode}Config`], {
+  await GameDBManager.setGameLocalValue(gameId, 'launcher.mode', mode)
+  await GameDBManager.setGameLocalValue(gameId, `launcher.${mode}Config`, {
     workingDirectory,
-    timerMode,
-    timerPath,
     command: script
+  })
+  await GameDBManager.setGameLocalValue(gameId, 'monitor.mode', timerMode)
+  await GameDBManager.setGameLocalValue(gameId, 'monitor.folderConfig', {
+    path: timerPath,
+    deepth: 3
   })
 }

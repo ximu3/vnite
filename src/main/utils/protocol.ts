@@ -6,7 +6,20 @@ export function setupProtocols(): void {
   protocol.handle('attachment', async (request: Request) => {
     try {
       const url = new URL(request.url)
-      const [dbName, docId, attachmentId] = url.pathname.slice(1).split('/')
+      const dbName = url.host // 关键修改点
+
+      // 处理路径部分
+      const decodedPath = decodeURIComponent(url.pathname)
+      const pathSegments = decodedPath.split('/').filter((segment) => segment !== '')
+
+      // 验证路径有效性
+      if (pathSegments.length < 2) {
+        throw new Error(`路径段不足：${decodedPath}`)
+      }
+
+      // 提取文档ID和附件路径
+      const [docId, ...attachmentParts] = pathSegments
+      const attachmentId = attachmentParts.join('/').split('?')[0] // 移除查询参数
 
       const attachment = await DBManager.getAttachment(dbName, docId, attachmentId)
 

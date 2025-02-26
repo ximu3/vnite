@@ -1,4 +1,6 @@
 import { get } from 'lodash'
+import { v4 } from 'uuid'
+import { Timer } from '@appTypes/database'
 
 export function getValueByPath(obj: any, path: string): any {
   if (path === '#all') {
@@ -49,4 +51,32 @@ export function setValueByPath(obj: any, path: string, value: any): void {
     current = {}
   }
   current[lastKey] = value
+}
+
+export function generateUUID(): string {
+  return v4()
+}
+
+export const calculateDailyPlayTime = (date: Date, timer: Timer[]): number => {
+  const dayStart = new Date(date)
+  dayStart.setHours(0, 0, 0, 0)
+  const dayEnd = new Date(date)
+  dayEnd.setHours(23, 59, 59, 999)
+
+  if (!timer || timer.length === 0) {
+    return 0
+  }
+
+  return timer.reduce((totalPlayTime, timerItem) => {
+    const timerStart = new Date(timerItem.start)
+    const timerEnd = new Date(timerItem.end)
+
+    if (timerStart <= dayEnd && timerEnd >= dayStart) {
+      const overlapStart = Math.max(dayStart.getTime(), timerStart.getTime())
+      const overlapEnd = Math.min(dayEnd.getTime(), timerEnd.getTime())
+      return totalPlayTime + (overlapEnd - overlapStart)
+    }
+
+    return totalPlayTime
+  }, 0)
 }

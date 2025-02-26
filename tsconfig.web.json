@@ -5,7 +5,8 @@
     "src/renderer/src/**/*",
     "src/renderer/src/**/*.tsx",
     "src/preload/*.d.ts",
-    "src/types/**/*"
+    "src/types/**/*",
+    "src/utils/**/*"
   ],
   "compilerOptions": {
     "composite": true,
@@ -15,7 +16,8 @@
       "~/*": ["src/renderer/src/*"],
       "@ui": ["src/renderer/src/components/ui"],
       "@ui/*": ["src/renderer/src/components/ui/*"],
-      "@appTypes/*": ["src/types/*"]
+      "@appTypes/*": ["src/types/*"],
+      "@appUtils": ["src/utils"],
     }
   }
 }

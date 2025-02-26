@@ -1,7 +1,6 @@
 import { ipcMain, BrowserWindow, OpenDialogOptions } from 'electron'
 import { trayManager } from '../index'
 import {
-  generateUUID,
   selectPathDialog,
   selectMultiplePathDialog,
   openPathInExplorer,
@@ -13,6 +12,7 @@ import {
   switchDatabaseMode,
   readFileBuffer
 } from '~/utils'
+import { generateUUID } from '@appUtils'
 import { app } from 'electron'
 
 export function setupUtilsIPC(mainWindow: BrowserWindow): void {

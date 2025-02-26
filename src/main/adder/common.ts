@@ -6,7 +6,8 @@ import {
   getGameScreenshots,
   getGameLogo
 } from '~/scraper'
-import { generateUUID, selectPathDialog, getFirstLevelSubfolders } from '~/utils'
+import { selectPathDialog, getFirstLevelSubfolders } from '~/utils'
+import { generateUUID } from '@appUtils'
 import { launcherPreset } from '~/launcher'
 import { saveGameIconByFile } from '~/media'
 import { DEFAULT_GAME_VALUES } from '@appTypes/database'
