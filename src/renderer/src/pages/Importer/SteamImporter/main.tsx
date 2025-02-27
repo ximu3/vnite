@@ -166,7 +166,7 @@ export function SteamImporter(): JSX.Element {
 
         {/* Steam ID Input */}
         <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
+          <div className="grid items-center grid-cols-4 gap-4">
             <Input
               id="steamId"
               value={steamId}
@@ -181,9 +181,9 @@ export function SteamImporter(): JSX.Element {
               className="relative"
             >
               {isLoadingGames ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
-                <Search className="h-4 w-4" />
+                <Search className="w-4 h-4" />
               )}
               <span className="ml-2">获取</span>
             </Button>
@@ -198,7 +198,7 @@ export function SteamImporter(): JSX.Element {
                 case 'initial':
                   return (
                     <Alert>
-                      <AlertCircle className="h-4 w-4" />
+                      <AlertCircle className="w-4 h-4" />
                       <AlertTitle>开始导入</AlertTitle>
                       <AlertDescription>请输入你的 Steam ID 获取游戏列表</AlertDescription>
                     </Alert>
@@ -206,7 +206,7 @@ export function SteamImporter(): JSX.Element {
                 case 'ready':
                   return (
                     <Alert>
-                      <AlertCircle className="h-4 w-4" />
+                      <AlertCircle className="w-4 h-4" />
                       <AlertTitle>准备获取</AlertTitle>
                       <AlertDescription>{'请点击"获取"按钮来获取游戏列表'}</AlertDescription>
                     </Alert>
@@ -214,7 +214,7 @@ export function SteamImporter(): JSX.Element {
                 case 'loading':
                   return (
                     <Alert>
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <Loader2 className="w-4 h-4 animate-spin" />
                       <AlertTitle>加载中</AlertTitle>
                       <AlertDescription>正在获取游戏列表...</AlertDescription>
                     </Alert>
@@ -222,7 +222,7 @@ export function SteamImporter(): JSX.Element {
                 case 'empty':
                   return (
                     <Alert>
-                      <CheckCircle2 className="h-4 w-4" />
+                      <CheckCircle2 className="w-4 h-4" />
                       <AlertTitle>已全部导入</AlertTitle>
                       <AlertDescription>所有游戏都已成功导入</AlertDescription>
                     </Alert>
@@ -256,7 +256,7 @@ export function SteamImporter(): JSX.Element {
                           {filteredGames.map((game) => (
                             <div
                               key={game.appId}
-                              className="flex items-center space-x-2 p-2 hover:bg-accent rounded-lg"
+                              className="flex items-center p-2 space-x-2 rounded-lg hover:bg-accent"
                             >
                               <Checkbox
                                 id={`game-${game.appId}`}
@@ -278,11 +278,11 @@ export function SteamImporter(): JSX.Element {
                       <Button
                         onClick={startImport}
                         disabled={selectedCount === 0 || isImportLoading}
-                        className="w-full relative"
+                        className="relative w-full"
                       >
                         {isImportLoading ? (
                           <>
-                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                             <span>正在准备导入...</span>
                           </>
                         ) : (
@@ -301,11 +301,11 @@ export function SteamImporter(): JSX.Element {
           <div className="space-y-4">
             <div className="space-y-2">
               <Progress value={progress} className="w-full" />
-              <p className="text-sm text-muted-foreground text-center">{progress}%</p>
+              <p className="text-sm text-center text-muted-foreground">{progress}%</p>
             </div>
 
             <Alert variant="default">
-              <AlertCircle className="h-4 w-4" />
+              <AlertCircle className="w-4 h-4" />
               <AlertTitle>正在导入</AlertTitle>
               <AlertDescription>{message}</AlertDescription>
             </Alert>
@@ -315,18 +315,20 @@ export function SteamImporter(): JSX.Element {
                 {gameLogs.map((game, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between p-2 border rounded animate-fadeIn"
+                    className="flex flex-col gap-1 justify-between max-w-[500px] p-2 truncate border rounded animate-fadeIn"
                   >
                     <div className="flex items-center gap-2">
                       {game.status === 'success' ? (
-                        <CheckCircle2 className="h-4 w-4 text-primary animate-scaleIn" />
+                        <CheckCircle2 className="w-4 h-4 text-primary animate-scaleIn" />
                       ) : (
-                        <XCircle className="h-4 w-4 text-destructive animate-scaleIn" />
+                        <XCircle className="w-4 h-4 text-destructive animate-scaleIn" />
                       )}
-                      <span>{game.name}</span>
+                      <span className="truncate">{game.name}</span>
                     </div>
                     {game.error && (
-                      <span className="text-sm text-destructive animate-fadeIn">{game.error}</span>
+                      <span className="text-sm truncate text-destructive animate-fadeIn">
+                        {game.error}
+                      </span>
                     )}
                   </div>
                 ))}
@@ -338,7 +340,7 @@ export function SteamImporter(): JSX.Element {
         {/* 导入完成或错误状态显示，只在状态为 completed 或 error 时显示 */}
         {(status === 'completed' || status === 'error') && (
           <Alert variant={status === 'error' ? 'destructive' : 'default'}>
-            <AlertCircle className="h-4 w-4" />
+            <AlertCircle className="w-4 h-4" />
             <AlertTitle>{status === 'completed' ? '导入完成' : '导入错误'}</AlertTitle>
             <AlertDescription>
               {status === 'completed' ? `成功: ${successCount} 个 失败: ${errorCount} 个` : message}

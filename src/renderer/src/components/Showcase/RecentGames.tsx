@@ -10,7 +10,7 @@ import { throttle } from 'lodash'
 
 export function RecentGames(): JSX.Element {
   const { sort: sortGames } = useGameStore()
-  const games = sortGames('lastRunDate', 'desc')
+  const games = sortGames('record.lastRunDate', 'desc')
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [showRecentGamesInGameList] = useConfigState('game.gameList.showRecentGames')
 

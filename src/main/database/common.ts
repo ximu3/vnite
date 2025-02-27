@@ -1,5 +1,5 @@
 import PouchDB from 'pouchdb'
-import { BrowserWindow } from 'electron'
+import { BrowserWindow, app } from 'electron'
 import {
   DocChange,
   DBConfig,
@@ -58,8 +58,13 @@ export class DBManager {
       }
 
       const dbPath = config.path
-      this.instances[dbName] = new PouchDB(dbPath)
+      this.instances[dbName] = new PouchDB(dbPath, { auto_compaction: true })
       this.startChangeListener(dbName)
+      app.on('before-quit', () => {
+        this.stopChangeListener(dbName)
+        this.stopSync(dbName)
+        this.instances[dbName].close()
+      })
     }
     return this.instances[dbName]
   }
