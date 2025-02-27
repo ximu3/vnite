@@ -12,6 +12,7 @@ import type { Get, Paths } from 'type-fest'
 export interface GameLocalState {
   documents: gameLocalDocs
   initialized: boolean
+  setDocuments: (data: gameLocalDocs) => void
   getGameLocalValue: <Path extends Paths<gameLocalDoc, { bracketNotation: true }>>(
     gameId: string,
     path: Path
@@ -43,6 +44,10 @@ const updateDocument = async (docId: string, data: gameLocalDoc): Promise<void> 
 export const useGameLocalStore = create<GameLocalState>((set, get) => ({
   documents: {} as gameLocalDocs,
   initialized: false,
+
+  setDocuments: (data: gameLocalDocs): void => {
+    set({ documents: data })
+  },
 
   setDocument: (docId: string, data: gameLocalDoc): void => {
     set((state) => ({

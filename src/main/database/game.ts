@@ -40,11 +40,11 @@ export class GameDBManager {
     await DBManager.setValue(this.DB_NAME, gameId, '#all', data)
   }
 
-  static async getLocalGame(gameId: string): Promise<gameLocalDoc> {
+  static async getGameLocal(gameId: string): Promise<gameLocalDoc> {
     return await DBManager.getValue(`${this.DB_NAME}-local`, gameId, '#all', {} as gameLocalDoc)
   }
 
-  static async setLocalGame(gameId: string, data: Partial<gameLocalDoc>): Promise<void> {
+  static async setGameLocal(gameId: string, data: Partial<gameLocalDoc>): Promise<void> {
     await DBManager.setValue(`${this.DB_NAME}-local`, gameId, '#all', data)
   }
 
@@ -177,19 +177,22 @@ export class GameDBManager {
     gameId: string,
     type: 'background' | 'cover' | 'icon' | 'logo',
     format: T = 'buffer' as T
-  ): Promise<T extends 'file' ? string : Buffer> {
+  ): Promise<T extends 'file' ? string | null : Buffer | null> {
+    if ((await DBManager.checkAttachment(this.DB_NAME, gameId, `images/${type}.webp`)) === false) {
+      return null
+    }
     if (format === 'file') {
       return (await DBManager.getAttachment(this.DB_NAME, gameId, `images/${type}.webp`, {
         format: 'file',
         filePath: '#temp',
         ext: 'webp'
-      })) as T extends 'file' ? string : Buffer
+      })) as T extends 'file' ? string | null : Buffer | null
     } else {
       return (await DBManager.getAttachment(
         this.DB_NAME,
         gameId,
         `images/${type}.webp`
-      )) as T extends 'file' ? string : Buffer
+      )) as T extends 'file' ? string | null : Buffer | null
     }
   }
 
@@ -206,7 +209,12 @@ export class GameDBManager {
     gameId: string,
     memoryId: string,
     format: T = 'buffer' as T
-  ): Promise<T extends 'file' ? string : Buffer> {
+  ): Promise<T extends 'file' ? string | null : Buffer | null> {
+    if (
+      (await DBManager.checkAttachment(this.DB_NAME, gameId, `memories/${memoryId}.webp`)) === false
+    ) {
+      return null
+    }
     if (format === 'file') {
       return (await DBManager.getAttachment(this.DB_NAME, gameId, `memories/${memoryId}.webp`, {
         format: 'file',

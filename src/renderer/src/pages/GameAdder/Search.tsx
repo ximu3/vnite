@@ -22,11 +22,15 @@ export function Search({ className }: { className?: string }): JSX.Element {
 
   const [inputName, setInputName] = React.useState(name)
   React.useEffect(() => {
-    inputName !== name && setInputName(name)
+    if (inputName !== name) {
+      setInputName(name)
+    }
   }, [name])
   const [inputId, setInputId] = React.useState(id)
   React.useEffect(() => {
-    inputId !== id && setInputId(id)
+    if (inputId !== id) {
+      setInputId(id)
+    }
   }, [id])
 
   const gameNameInput = React.useRef<HTMLInputElement>(null)

@@ -81,7 +81,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
       document.removeEventListener('mousemove', handleMouseMove)
       document.removeEventListener('mouseup', handleMouseUp)
     }
-  }, [dragging, handleMouseMove])
+  }, [dragging])
 
   useEffect(() => {
     const handleScroll = (e: any): void => {

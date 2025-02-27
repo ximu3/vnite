@@ -7,6 +7,7 @@ import type { Get, Paths } from 'type-fest'
 export interface ConfigLocalState {
   documents: configLocalDocs
   initialized: boolean
+  setDocuments: (data: configLocalDocs) => void
   getConfigLocalValue: <Path extends Paths<configLocalDocs, { bracketNotation: true }>>(
     path: Path
   ) => Get<configLocalDocs, Path>
@@ -36,6 +37,10 @@ const updateDocument = async (docId: string, data: configLocalDocs): Promise<voi
 export const useConfigLocalStore = create<ConfigLocalState>((set, get) => ({
   documents: {} as configLocalDocs,
   initialized: false,
+
+  setDocuments: (data: configLocalDocs): void => {
+    set({ documents: data })
+  },
 
   setDocument: (docId: string, data: any): void => {
     set((state) => ({

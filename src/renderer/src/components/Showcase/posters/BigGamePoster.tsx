@@ -160,7 +160,7 @@ export function BigGamePoster({
         <div className="relative flex flex-col w-full h-full gap-2">
           {/* Game Title */}
           <div className={cn('font-bold text-accent-foreground truncate text-sm px-3 pt-2')}>
-            {gameData?.metadata.name}
+            {gameData?.metadata?.name}
           </div>
 
           {/* Game Preview Image */}
@@ -172,11 +172,11 @@ export function BigGamePoster({
               style={{
                 maskImage: 'linear-gradient(to top, transparent 0%, black 30%)'
               }}
-              alt={`${gameData?.metadata.name} preview`}
+              alt={`${gameData?.metadata?.name} preview`}
               fallback={
                 <div className={cn('w-full h-full absolute')}>
                   <div className={cn('flex items-center justify-center w-full h-full font-bold')}>
-                    {gameData?.metadata.name}
+                    {gameData?.metadata?.name}
                   </div>
                 </div>
               }
@@ -196,7 +196,7 @@ export function BigGamePoster({
             <div className="flex flex-row items-center justify-start gap-2">
               <span className={cn('icon-[mdi--calendar-blank-outline] w-4 h-4')}></span>
               <div>
-                {gameData?.record.lastRunDate
+                {gameData?.record?.lastRunDate
                   ? `最后运行于 ${formatDateToChinese(gameData?.record.lastRunDate)}`
                   : '从未运行过'}
               </div>

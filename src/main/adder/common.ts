@@ -10,7 +10,7 @@ import { selectPathDialog, getFirstLevelSubfolders } from '~/utils'
 import { generateUUID } from '@appUtils'
 import { launcherPreset } from '~/launcher'
 import { saveGameIconByFile } from '~/media'
-import { DEFAULT_GAME_VALUES } from '@appTypes/database'
+import { DEFAULT_GAME_VALUES, DEFAULT_GAME_LOCAL_VALUES } from '@appTypes/database'
 
 /**
  * Add a game to the database
@@ -37,6 +37,33 @@ export async function addGameToDB({
   noIpcAction?: boolean
 }): Promise<void> {
   const metadata = await getGameMetadata(dataSource, id)
+
+  const dbId = preExistingDbId || generateUUID()
+
+  const gameDoc = DEFAULT_GAME_VALUES
+
+  gameDoc._id = dbId
+  gameDoc.metadata = {
+    ...gameDoc.metadata,
+    ...metadata,
+    originalName: metadata.originalName ?? '',
+    [`${dataSource}Id`]: id
+  }
+
+  if (!preExistingDbId) {
+    gameDoc.record.addDate = new Date().toISOString()
+  }
+
+  if (playTime) {
+    gameDoc.record.playTime = playTime
+  }
+
+  await GameDBManager.setGame(dbId, gameDoc)
+
+  const gameLocalDoc = DEFAULT_GAME_LOCAL_VALUES
+  gameLocalDoc._id = dbId
+  GameDBManager.setGameLocal(dbId, gameLocalDoc)
+
   const coverUrl = await getGameCover(dataSource, id)
   let iconUrl = ''
   let logoUrl = ''
@@ -47,8 +74,6 @@ export async function addGameToDB({
     iconUrl = await getGameIcon('steamGridDb', metadata.originalName || metadata.name)
     logoUrl = await getGameLogo('steamGridDb', metadata.originalName || metadata.name)
   }
-
-  const dbId = preExistingDbId || generateUUID()
 
   if (coverUrl) {
     await GameDBManager.setGameImage(dbId, 'cover', coverUrl)
@@ -63,8 +88,6 @@ export async function addGameToDB({
     }
   }
 
-  const gameDoc = DEFAULT_GAME_VALUES
-
   if (iconUrl) {
     await GameDBManager.setGameImage(dbId, 'icon', iconUrl.toString())
   }
@@ -72,24 +95,6 @@ export async function addGameToDB({
   if (logoUrl) {
     await GameDBManager.setGameImage(dbId, 'logo', logoUrl.toString())
   }
-
-  if (playTime) {
-    gameDoc.record.playTime = playTime
-  }
-
-  gameDoc._id = dbId
-  gameDoc.metadata = {
-    ...gameDoc.metadata,
-    ...metadata,
-    originalName: metadata.originalName ?? '',
-    [`${dataSource}Id`]: id
-  }
-
-  if (!preExistingDbId) {
-    gameDoc.record.addDate = new Date().toISOString()
-  }
-
-  await GameDBManager.setGame(dbId, gameDoc)
 }
 
 /**
@@ -103,6 +108,11 @@ export async function addGameToDBWithoutMetadata(gamePath: string): Promise<void
   gameDoc._id = dbId
   gameDoc.record.addDate = new Date().toISOString()
   GameDBManager.setGame(dbId, gameDoc)
+
+  const gameLocalDoc = DEFAULT_GAME_LOCAL_VALUES
+  gameLocalDoc._id = dbId
+  gameLocalDoc.path.gamePath = gamePath
+  GameDBManager.setGameLocal(dbId, gameLocalDoc)
 
   await launcherPreset('default', dbId)
   await saveGameIconByFile(dbId, gamePath)

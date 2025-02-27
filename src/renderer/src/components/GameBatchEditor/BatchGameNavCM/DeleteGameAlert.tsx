@@ -12,7 +12,6 @@ import {
 import { ipcInvoke } from '~/utils'
 import { toast } from 'sonner'
 import { useGameCollectionStore, useGameStore } from '~/stores'
-import { useLibrarybarStore } from '~/components/Librarybar'
 import { useNavigate } from 'react-router-dom'
 
 export function DeleteGameAlert({
@@ -24,7 +23,6 @@ export function DeleteGameAlert({
 }): JSX.Element {
   const navigate = useNavigate()
   const { removeGamesFromAllCollections } = useGameCollectionStore()
-  const { refreshGameList } = useLibrarybarStore()
   const { documents } = useGameStore()
 
   async function deleteGames(): Promise<void> {
@@ -39,11 +37,10 @@ export function DeleteGameAlert({
 
         // Deleting games from the database
         for (const gameId of gameIds) {
-          await ipcInvoke('delete-game-from-db', gameId)
+          await ipcInvoke('delete-game', gameId)
           await new Promise((resolve) => setTimeout(resolve, 50))
         }
 
-        refreshGameList()
         console.log(`Games deleted: ${gameIds.join(', ')}`)
         navigate('/library')
       },

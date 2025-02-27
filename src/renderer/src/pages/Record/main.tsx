@@ -18,13 +18,15 @@ export function Record({ className }: { className?: string }): JSX.Element {
     getTotalPlayedDays
   } = useGameStore()
   const { sort, documents: gameIndex } = useGameStore()
-  const maxScoreGame = sort('score', 'desc').length > 0 ? sort('score', 'desc')[0] : null
-  const maxScore = maxScoreGame ? gameIndex[maxScoreGame]?.record.score : 0
+  const maxScoreGame =
+    sort('record.score', 'desc').length > 0 ? sort('record.score', 'desc')[0] : null
+  const maxScore = maxScoreGame ? gameIndex[maxScoreGame]?.record?.score : 0
   const maxPlayingTimeGame =
-    sort('playTime', 'desc').length > 0 ? sort('playTime', 'desc')[0] : null
-  const maxPlayingTime = maxPlayingTimeGame ? gameIndex[maxPlayingTimeGame]?.record.playTime : 0
-  const maxSoonGame = sort('lastRunDate', 'desc').length > 0 ? sort('lastRunDate', 'desc')[0] : null
-  const maxSoonDate = maxSoonGame ? gameIndex[maxSoonGame]?.record.lastRunDate : ''
+    sort('record.playTime', 'desc').length > 0 ? sort('record.playTime', 'desc')[0] : null
+  const maxPlayingTime = maxPlayingTimeGame ? gameIndex[maxPlayingTimeGame]?.record?.playTime : 0
+  const maxSoonGame =
+    sort('record.lastRunDate', 'desc').length > 0 ? sort('record.lastRunDate', 'desc')[0] : null
+  const maxSoonDate = maxSoonGame ? gameIndex[maxSoonGame]?.record?.lastRunDate : ''
   const playedDaysYearly = getPlayedDaysYearly()
   return (
     <div

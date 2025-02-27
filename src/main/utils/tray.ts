@@ -148,7 +148,9 @@ export class TrayManager {
     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text
   }
 
-  private async getRecentGames(): Promise<Array<{ id: string; name: string; icon: string }>> {
+  private async getRecentGames(): Promise<
+    Array<{ id: string; name: string; icon: string | null }>
+  > {
     try {
       const gameDocs = await GameDBManager.getAllGames()
       const recentGameIds = (

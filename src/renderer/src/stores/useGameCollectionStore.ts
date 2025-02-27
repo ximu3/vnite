@@ -13,6 +13,7 @@ import { toast } from 'sonner'
 export interface GameCollectionState {
   documents: gameCollectionDocs
   initialized: boolean
+  setDocuments: (data: gameCollectionDocs) => void
   getGameCollectionValue: <Path extends Paths<gameCollectionDoc, { bracketNotation: true }>>(
     collectionId: string,
     path: Path
@@ -62,6 +63,10 @@ const updateDocument = async (docId: string, data: gameCollectionDoc): Promise<v
 export const useGameCollectionStore = create<GameCollectionState>((set, get) => ({
   documents: {} as gameCollectionDocs,
   initialized: false,
+
+  setDocuments: (data: gameCollectionDocs): void => {
+    set({ documents: data })
+  },
 
   setDocument: (docId: string, data: gameCollectionDoc): void => {
     set((state) => ({

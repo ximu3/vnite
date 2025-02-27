@@ -16,6 +16,9 @@ import {
 } from '~/utils'
 import { getValueByPath, setValueByPath } from '@appUtils'
 import { fileTypeFromBuffer } from 'file-type'
+import upsertPlugin from 'pouchdb-upsert'
+
+PouchDB.plugin(upsertPlugin)
 
 export class DBManager {
   private static instances: { [key: string]: PouchDB.Database } = {}
@@ -64,32 +67,23 @@ export class DBManager {
   static async setValue(dbName: string, docId: string, path: string, value: any): Promise<void> {
     const db = this.getInstance(dbName)
 
-    let isCreate = false
-
     try {
-      let doc: any
-      try {
-        doc = await db.get(docId)
-      } catch (err: any) {
-        if (err.name === 'not_found') {
-          isCreate = true
-          doc = { _id: docId }
+      await db.upsert(docId, (doc: any) => {
+        // 对于新建文档，doc 将是一个空对象，只包含 _id
+        if (path === '#all') {
+          // 保留 _id 和 _rev (如果存在)
+          return {
+            ...doc,
+            ...value
+          }
         } else {
-          throw err
+          // 使用 setValueByPath 更新指定路径的值
+          setValueByPath(doc, path, value)
+          return doc
         }
-      }
-
-      if (path === '#all') {
-        // 更新整个文档，保留 _id 和 _rev
-        doc = isCreate ? { _id: docId, ...value } : { _id: docId, _rev: doc._rev, ...value }
-      } else {
-        // 直接使用新版 setValueByPath
-        setValueByPath(doc, path, value)
-      }
-
-      await db.put(doc)
+      })
     } catch (error) {
-      console.error('Error setting value:', error)
+      console.error('Error setting value with upsert:', error)
       throw error
     }
   }

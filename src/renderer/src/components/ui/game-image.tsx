@@ -1,5 +1,5 @@
-// renderer/components/GameImage.tsx
 import React, { useState, ImgHTMLAttributes } from 'react'
+import { useAttachmentStore } from '~/stores'
 import { cn } from '~/utils'
 
 interface GameImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src'> {
@@ -22,13 +22,17 @@ export const GameImage: React.FC<GameImageProps> = ({
   flips = false,
   ...imgProps
 }) => {
-  const [hasError, setHasError] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
+  const { getAttachmentInfo, setAttachmentError } = useAttachmentStore()
+
+  const attachmentInfo = getAttachmentInfo('game', gameId, `images/${type}.webp`)
 
   // 直接使用附件协议URL
-  const attachmentUrl = `attachment://game/${gameId}/images/${type}.webp`
+  const attachmentUrl = `attachment://game/${gameId}/images/${type}.webp?t=${
+    attachmentInfo?.timestamp
+  }`
 
-  if (hasError) {
+  if (attachmentInfo?.error) {
     return <>{fallback}</>
   }
 
@@ -50,11 +54,10 @@ export const GameImage: React.FC<GameImageProps> = ({
         decoding="async"
         onLoad={() => {
           setIsLoaded(true)
-          setHasError(false)
           onUpdated?.()
         }}
         onError={(e) => {
-          setHasError(true)
+          setAttachmentError('game', gameId, `images/${type}.webp`, true)
           setIsLoaded(false)
           onError?.(e)
         }}

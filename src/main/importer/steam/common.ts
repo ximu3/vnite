@@ -113,7 +113,7 @@ export async function importSelectedSteamGames(games: FormattedGameInfo[]): Prom
       }
 
       // Add small delays to avoid database stress
-      await new Promise((resolve) => setTimeout(resolve, 300))
+      await new Promise((resolve) => setTimeout(resolve, 1500))
     }
 
     // Send a completion message

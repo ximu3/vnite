@@ -13,6 +13,7 @@ import type { Get, Paths } from 'type-fest'
 export interface GameState {
   documents: gameDocs
   initialized: boolean
+  setDocuments: (data: gameDocs) => void
   search: (query: string) => string[]
   sort: <Path extends Paths<gameDoc, { bracketNotation: true }>>(
     by: Path,
@@ -77,6 +78,10 @@ export const useGameStore = create<GameState>((set, get) => ({
   documents: {} as gameDocs,
   initialized: false,
 
+  setDocuments: (data: gameDocs): void => {
+    set({ documents: data })
+  },
+
   setDocument: (docId: string, data: gameDoc): void => {
     set((state) => ({
       documents: {
@@ -132,14 +137,37 @@ export const useGameStore = create<GameState>((set, get) => ({
     const { documents } = get()
     const results: string[] = []
     const lowercaseQuery = query.toLowerCase()
-    for (const [gameId, game] of Object.entries(documents)) {
-      const matchFound = Object.values(game.metadata).some(
-        (value) => value && value.toString().toLowerCase().includes(lowercaseQuery)
-      )
-      if (matchFound) {
-        results.push(gameId)
+
+    // 安全的遍历方式
+    for (const gameId in documents) {
+      try {
+        const game = documents[gameId]
+
+        // 检查 game 和 metadata 是否存在
+        if (!game || !game.metadata) continue
+
+        // 安全地获取并处理 metadata 的值
+        const metadataValues = Object.values(game.metadata || {})
+        const matchFound = metadataValues.some((value) => {
+          // 确保值存在且可转为字符串
+          if (value == null) return false
+          try {
+            return value.toString().toLowerCase().includes(lowercaseQuery)
+          } catch (e) {
+            console.warn(`Error converting value to string in game ${gameId}:`, e)
+            return false
+          }
+        })
+
+        if (matchFound) {
+          results.push(gameId)
+        }
+      } catch (error) {
+        console.error(`Error processing game ${gameId} during search:`, error)
+        // 继续处理下一个游戏，不中断搜索
       }
     }
+
     return results
   },
   sort: <Path extends Paths<gameDoc, { bracketNotation: true }>>(
@@ -189,79 +217,170 @@ export const useGameStore = create<GameState>((set, get) => ({
   filter: (
     criteria: Partial<Record<Paths<gameDoc, { bracketNotation: true }>, string[]>>
   ): string[] => {
-    const { documents } = get()
-    const results: string[] = []
+    try {
+      const { documents } = get()
+      const results: string[] = []
 
-    for (const [gameId, game] of Object.entries(documents)) {
-      const matchesAllCriteria = Object.entries(criteria).every(([path, values]) => {
-        const metadataValue = getValueByPath(game, path)
+      for (const gameId in documents) {
+        try {
+          const game = documents[gameId]
+          if (!game) continue
 
-        if (
-          path === 'metadata.releaseDate' &&
-          Array.isArray(values) &&
-          values.length === 2 &&
-          metadataValue
-        ) {
-          const [start, end] = values
-          const isValidDate = (dateStr: string): boolean => {
-            const date = new Date(dateStr)
-            return date instanceof Date && !isNaN(date.getTime())
+          let matchesAllCriteria = true
+
+          for (const [path, values] of Object.entries(criteria)) {
+            try {
+              if (!Array.isArray(values) || values.length === 0) continue
+
+              const metadataValue = getValueByPath(game, path)
+
+              if (
+                path === 'metadata.releaseDate' &&
+                Array.isArray(values) &&
+                values.length === 2 &&
+                metadataValue
+              ) {
+                const [start, end] = values
+                const isValidDate = (dateStr: string): boolean => {
+                  try {
+                    const date = new Date(dateStr)
+                    return date instanceof Date && !isNaN(date.getTime())
+                  } catch {
+                    return false
+                  }
+                }
+
+                if (
+                  !isValidDate(start) ||
+                  !isValidDate(end) ||
+                  !isValidDate(metadataValue.toString())
+                ) {
+                  matchesAllCriteria = false
+                  break
+                }
+
+                try {
+                  const releaseDate = new Date(metadataValue.toString())
+                  const startDate = new Date(start)
+                  const endDate = new Date(end)
+
+                  if (startDate > endDate) {
+                    matchesAllCriteria = false
+                    break
+                  }
+
+                  if (!(releaseDate >= startDate && releaseDate <= endDate)) {
+                    matchesAllCriteria = false
+                    break
+                  }
+                } catch (error) {
+                  console.error(`Date comparison error for ${gameId}:`, error)
+                  matchesAllCriteria = false
+                  break
+                }
+              } else {
+                // 处理其他类型的过滤
+                let matches = false
+
+                if (Array.isArray(metadataValue)) {
+                  try {
+                    matches = metadataValue.some(
+                      (item) =>
+                        item != null &&
+                        values.some((value) =>
+                          item.toString().toLowerCase().includes(value.toLowerCase())
+                        )
+                    )
+                  } catch (error) {
+                    console.error(`Array filtering error for ${gameId}:`, error)
+                    matches = false
+                  }
+                } else if (metadataValue != null) {
+                  try {
+                    matches = values.some((value) =>
+                      metadataValue.toString().toLowerCase().includes(value.toLowerCase())
+                    )
+                  } catch (error) {
+                    console.error(`Value filtering error for ${gameId}:`, error)
+                    matches = false
+                  }
+                }
+
+                if (!matches) {
+                  matchesAllCriteria = false
+                  break
+                }
+              }
+            } catch (error) {
+              console.error(`Error processing criteria ${path} for ${gameId}:`, error)
+              matchesAllCriteria = false
+              break
+            }
           }
-          if (!isValidDate(start) || !isValidDate(end) || !isValidDate(metadataValue.toString())) {
-            return false
+
+          if (matchesAllCriteria) {
+            results.push(gameId)
           }
-          const releaseDate = new Date(metadataValue.toString())
-          const startDate = new Date(start)
-          const endDate = new Date(end)
-          if (startDate > endDate) {
-            return false
-          }
-          return releaseDate >= startDate && releaseDate <= endDate
+        } catch (error) {
+          console.error(`Error processing game ${gameId} during filtering:`, error)
+          continue
         }
-
-        if (Array.isArray(metadataValue)) {
-          return metadataValue.some((item) =>
-            (values as string[]).some((value) =>
-              item.toString().toLowerCase().includes(value.toLowerCase())
-            )
-          )
-        } else if (metadataValue) {
-          return (values as string[]).some((value) =>
-            metadataValue.toString().toLowerCase().includes(value.toLowerCase())
-          )
-        }
-
-        return false
-      })
-
-      if (matchesAllCriteria) {
-        results.push(gameId)
       }
-    }
 
-    return results
+      return results
+    } catch (error) {
+      console.error('Fatal error in filter function:', error)
+      return []
+    }
   },
   getAllValuesInKey: <Path extends Paths<gameDoc, { bracketNotation: true }>>(
     path: Path
   ): string[] => {
-    const { documents } = get()
-    const values = new Set<string>()
+    try {
+      const { documents } = get()
+      const values = new Set<string>()
 
-    for (const game of Object.values(documents)) {
-      const value = getValueByPath(game, path)
+      for (const gameId in documents) {
+        try {
+          const game = documents[gameId]
+          if (!game) continue
 
-      if (Array.isArray(value)) {
-        value.forEach((item) => {
-          if (item) {
-            values.add(item.toString())
+          let value: any
+          try {
+            value = getValueByPath(game, path)
+          } catch (error) {
+            console.error(`Error getting value at path ${String(path)} for game ${gameId}:`, error)
+            continue
           }
-        })
-      } else if (value) {
-        values.add(value.toString())
-      }
-    }
 
-    return Array.from(values)
+          if (Array.isArray(value)) {
+            try {
+              value.forEach((item) => {
+                if (item != null) {
+                  values.add(item.toString())
+                }
+              })
+            } catch (error) {
+              console.error(`Error processing array values for ${gameId}:`, error)
+            }
+          } else if (value != null) {
+            try {
+              values.add(value.toString())
+            } catch (error) {
+              console.error(`Error converting value to string for ${gameId}:`, error)
+            }
+          }
+        } catch (error) {
+          console.error(`Error processing game ${gameId}:`, error)
+          continue
+        }
+      }
+
+      return Array.from(values)
+    } catch (error) {
+      console.error('Fatal error in getAllValuesInKey:', error)
+      return []
+    }
   },
   checkGameExists: async (gameId): Promise<boolean> => {
     try {
@@ -273,22 +392,36 @@ export const useGameStore = create<GameState>((set, get) => ({
     }
   },
   getGameplayTime: (gameId): number => {
-    const { documents } = get()
-    return documents[gameId]?.record?.playTime || 0
+    try {
+      const { documents } = get()
+      if (!documents[gameId] || !documents[gameId]?.record) {
+        return 0
+      }
+      return documents[gameId].record?.playTime || 0
+    } catch (error) {
+      console.error(`Error in getGameplayTime for ${gameId}:`, error)
+      return 0
+    }
   },
   getGameplayTimeFormatted: (gameId): string => {
-    const playTime = get().getGameplayTime(gameId)
-    const hours = Math.floor(playTime / 3600000)
-    const minutes = Math.floor((playTime % 3600000) / 60000)
-    const seconds = Math.floor((playTime % 60000) / 1000)
+    try {
+      const playTime = get().getGameplayTime(gameId)
 
-    if (hours >= 1) {
-      const fractionalHours = (playTime / 3600000).toFixed(1)
-      return `${fractionalHours} h`
-    } else if (minutes >= 1) {
-      return `${minutes} min`
-    } else {
-      return `${seconds} s`
+      const hours = Math.floor(playTime / 3600000)
+      const minutes = Math.floor((playTime % 3600000) / 60000)
+      const seconds = Math.floor((playTime % 60000) / 1000)
+
+      if (hours >= 1) {
+        const fractionalHours = (playTime / 3600000).toFixed(1)
+        return `${fractionalHours} h`
+      } else if (minutes >= 1) {
+        return `${minutes} min`
+      } else {
+        return `${seconds} s`
+      }
+    } catch (error) {
+      console.error(`Error in getGameplayTimeFormatted for ${gameId}:`, error)
+      return '0 s'
     }
   },
   getGamePlayTimeByDateRange: (
@@ -298,24 +431,46 @@ export const useGameStore = create<GameState>((set, get) => ({
   ): {
     [date: string]: number
   } => {
-    const { documents } = get()
-    const game = documents[gameId]
-    if (!game?.record?.timers || game.record.timers.length === 0) {
+    try {
+      const { documents } = get()
+      const game = documents[gameId]
+      if (!game?.record?.timers || game.record.timers.length === 0) {
+        return {}
+      }
+
+      try {
+        const start = new Date(startDate)
+        const end = new Date(endDate)
+
+        // 验证日期
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+          console.error(`Invalid date range: ${startDate} to ${endDate}`)
+          return {}
+        }
+
+        const result: { [date: string]: number } = {}
+        const current = new Date(start)
+
+        while (current <= end) {
+          try {
+            const dateStr = current.toISOString().split('T')[0]
+            result[dateStr] = calculateDailyPlayTime(current, game.record.timers)
+            current.setDate(current.getDate() + 1)
+          } catch (error) {
+            console.error(`Error processing date in getGamePlayTimeByDateRange:`, error)
+            current.setDate(current.getDate() + 1)
+          }
+        }
+
+        return result
+      } catch (error) {
+        console.error(`Error in date range processing for ${gameId}:`, error)
+        return {}
+      }
+    } catch (error) {
+      console.error(`Fatal error in getGamePlayTimeByDateRange for ${gameId}:`, error)
       return {}
     }
-
-    const start = new Date(startDate)
-    const end = new Date(endDate)
-    const result: { [date: string]: number } = {}
-    const current = new Date(start)
-
-    while (current <= end) {
-      const dateStr = current.toISOString().split('T')[0]
-      result[dateStr] = calculateDailyPlayTime(current, game.record.timers)
-      current.setDate(current.getDate() + 1)
-    }
-
-    return result
   },
   getGamePlayDays: (gameId): number => {
     const { documents } = get()
@@ -447,6 +602,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     let maxOrdinalGameId: string | null = null
 
     Object.entries(documents).forEach(([gameId, game]) => {
+      if (!game?.record?.timers) return
       if (game.record.timers && game.record.timers.length > maxPlayedTimes) {
         maxPlayedTimes = game.record.timers.length
         maxOrdinalGameId = gameId
@@ -471,6 +627,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       const dateStr = current.toLocaleDateString('en-CA')
       let playTime = 0
       Object.values(documents).forEach((game) => {
+        if (!game?.record?.timers) return
         playTime += calculateDailyPlayTime(current, game.record.timers)
       })
 
@@ -496,6 +653,7 @@ export const useGameStore = create<GameState>((set, get) => ({
 
     while (current.getTime() >= lastYearDate.getTime()) {
       Object.values(documents).forEach((game) => {
+        if (!game?.record?.timers) return
         totalPlayTime += calculateDailyPlayTime(current, game.record.timers)
       })
       current.setDate(current.getDate() - 1)
@@ -506,18 +664,21 @@ export const useGameStore = create<GameState>((set, get) => ({
   getTotalplayTime: (): number => {
     const { documents } = get()
     return Object.values(documents).reduce((total, game) => {
+      if (!game?.record?.playTime) return total
       return total + (game.record?.playTime || 0)
     }, 0)
   },
   getTotalPlayedTimes: (): number => {
     const { documents } = get()
     return Object.values(documents).reduce((total, game) => {
+      if (!game?.record?.timers) return total
       return total + (game.record?.timers?.length || 0)
     }, 0)
   },
   getTotalPlayedDays: (): number => {
     const { documents } = get()
     return Object.keys(documents).reduce((total, gameId) => {
+      if (!documents[gameId]?.record?.timers) return total
       return total + get().getGamePlayDays(gameId)
     }, 0)
   },

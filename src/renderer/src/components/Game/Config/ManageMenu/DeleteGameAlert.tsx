@@ -13,7 +13,6 @@ import { ipcInvoke } from '~/utils'
 import { useGameState } from '~/hooks'
 import { toast } from 'sonner'
 import { useGameCollectionStore } from '~/stores'
-import { useLibrarybarStore } from '~/components/Librarybar'
 import { useNavigate } from 'react-router-dom'
 
 export function DeleteGameAlert({
@@ -26,16 +25,11 @@ export function DeleteGameAlert({
   const navigate = useNavigate()
   const [gameName] = useGameState(gameId, 'metadata.name')
   const { removeGameFromAllCollections } = useGameCollectionStore()
-  const { refreshGameList } = useLibrarybarStore()
   async function deleteGame(): Promise<void> {
     toast.promise(
       async () => {
-        console.log(`Deleting game ${gameId}...`)
-        await new Promise((resolve) => setTimeout(resolve, 100))
         removeGameFromAllCollections(gameId)
-        await new Promise((resolve) => setTimeout(resolve, 100))
-        await ipcInvoke('delete-game-from-db', gameId)
-        refreshGameList()
+        await ipcInvoke('delete-game', gameId)
         console.log(`Game ${gameId} deleted`)
         navigate('/library')
       },

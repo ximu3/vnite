@@ -51,7 +51,7 @@ export function Librarybar(): JSX.Element {
     if (!location.pathname.includes(`/library/games/`) && gameIds.length < 2) {
       clearGameIds()
     }
-  }, [location.pathname, clearGameIds, gameIds])
+  }, [location.pathname])
 
   const scrollToCurrentGame = (): void => {
     const currentGameId = location.pathname.split('/games/')[1]?.split('/')[0]

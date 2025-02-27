@@ -21,6 +21,11 @@ export function setupProtocols(): void {
       const [docId, ...attachmentParts] = pathSegments
       const attachmentId = attachmentParts.join('/').split('?')[0] // 移除查询参数
 
+      const isAttachmentExists = await DBManager.checkAttachment(dbName, docId, attachmentId)
+      if (!isAttachmentExists) {
+        return new Response(null, { status: 404 })
+      }
+
       const attachment = await DBManager.getAttachment(dbName, docId, attachmentId)
 
       return new Response(attachment, {

@@ -1,4 +1,5 @@
 import sharp from 'sharp'
+import ico from 'sharp-ico'
 import { getAppTempPath } from '~/utils'
 import { GameDBManager } from '~/database'
 import { app } from 'electron'
@@ -29,6 +30,28 @@ export async function convertToWebP(
       imageBuffer = input
     }
 
+    const isIco = isIcoFormat(imageBuffer)
+
+    if (isIco) {
+      // 使用sharp-ico处理ICO文件
+      // 获取ICO中最大尺寸的图像作为转换源
+      const sharpInstances = ico.sharpsFromIco(imageBuffer) as sharp.Sharp[]
+
+      if (sharpInstances.length === 0) {
+        throw new Error('No valid images found in ICO file')
+      }
+
+      // 选择分辨率最高的图像（通常是ICO文件中的第一个）
+      const largestIcon = sharpInstances[0]
+
+      // 转换为WebP
+      return await largestIcon
+        .webp({
+          quality: options.quality ?? 100
+        })
+        .toBuffer()
+    }
+
     const metadata = await sharp(imageBuffer).metadata()
 
     let isAnimated = false
@@ -48,6 +71,14 @@ export async function convertToWebP(
     console.error('Error converting image to WebP:', error)
     throw error
   }
+}
+
+function isIcoFormat(buffer: Buffer): boolean {
+  // ICO文件头标识: 前2字节为0和1，第3和第4字节为1和0
+  if (buffer.length >= 4) {
+    return buffer[0] === 0 && buffer[1] === 0 && buffer[2] === 1 && buffer[3] === 0
+  }
+  return false
 }
 
 export async function cropImage({

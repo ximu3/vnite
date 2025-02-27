@@ -103,7 +103,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
 
     toast.promise(
       async () => {
-        await ipcInvoke('set-game-media', gameId, type, filePath)
+        await ipcInvoke('set-game-image', gameId, type, filePath)
       },
       {
         loading: `正在${cropDialogState.isResizing ? '调整' : '设置'}${type}...`,

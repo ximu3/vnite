@@ -36,11 +36,11 @@ export function AllGames(): JSX.Element {
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>排序依据</SelectLabel>
-                  <SelectItem value="name">名称</SelectItem>
-                  <SelectItem value="releaseDate">发布日期</SelectItem>
-                  <SelectItem value="lastRunDate">最后运行日期</SelectItem>
-                  <SelectItem value="addDate">添加日期</SelectItem>
-                  <SelectItem value="playingTime">游玩时间</SelectItem>
+                  <SelectItem value="metadata.name">名称</SelectItem>
+                  <SelectItem value="metadata.releaseDate">发布日期</SelectItem>
+                  <SelectItem value="record.lastRunDate">最后运行日期</SelectItem>
+                  <SelectItem value="record.addDate">添加日期</SelectItem>
+                  <SelectItem value="record.playTime">游玩时间</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>

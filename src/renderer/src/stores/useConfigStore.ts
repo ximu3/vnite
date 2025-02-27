@@ -7,6 +7,7 @@ import type { Get, Paths } from 'type-fest'
 export interface ConfigState {
   documents: configDocs
   initialized: boolean
+  setDocuments: (data: configDocs) => void
   getConfigValue: <Path extends Paths<configDocs, { bracketNotation: true }>>(
     path: Path
   ) => Get<configDocs, Path>
@@ -36,6 +37,10 @@ const updateDocument = async (docId: string, data: configDocs): Promise<void> =>
 export const useConfigStore = create<ConfigState>((set, get) => ({
   documents: {} as configDocs,
   initialized: false,
+
+  setDocuments: (data: configDocs): void => {
+    set({ documents: data })
+  },
 
   setDocument: (docId: string, data: any): void => {
     set((state) => ({
