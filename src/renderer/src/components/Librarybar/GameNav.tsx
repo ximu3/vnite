@@ -26,8 +26,8 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
   const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = React.useState(false)
 
   // 只订阅当前游戏的选中状态和批量模式状态
-  const isSelected = useGameBatchEditorStore((state) => state.gameIds.includes(gameId))
-  const isBatchMode = useGameBatchEditorStore((state) => state.gameIds.length > 1)
+  const isSelected = useGameBatchEditorStore((state) => state.selectedGamesMap[gameId])
+  const isBatchMode = useGameBatchEditorStore((state) => state.isBatchMode)
 
   console.warn('[DEBUG] GameNav')
 
