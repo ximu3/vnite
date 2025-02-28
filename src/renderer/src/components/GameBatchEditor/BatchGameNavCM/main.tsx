@@ -8,15 +8,14 @@ import { useLocation } from 'react-router-dom'
 import { useGameBatchEditorStore } from '../store'
 
 export function BatchGameNavCM({
-  gameIds,
   openAddCollectionDialog
 }: {
-  gameIds: string[]
   openAttributesDialog: () => void
   openAddCollectionDialog: () => void
 }): JSX.Element {
   const [isInformationDialogOpen, setIsInformationDialogOpen] = useState(false)
-  const { clearGameIds } = useGameBatchEditorStore()
+  const { clearGameIds, selectedGamesMap } = useGameBatchEditorStore()
+  const gameIds = Object.keys(selectedGamesMap)
   const location = useLocation()
   useEffect(() => {
     // clear batchEditor gameList when switching to a non-game-detail page and not in batchMode

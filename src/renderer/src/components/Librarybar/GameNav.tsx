@@ -133,7 +133,6 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
         {/* 上下文菜单也可以使用 getState 优化 */}
         {isBatchMode ? (
           <BatchGameNavCM
-            gameIds={useGameBatchEditorStore.getState().gameIds}
             openAttributesDialog={() => setIsAttributesDialogOpen(true)}
             openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
           />
