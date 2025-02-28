@@ -22,7 +22,7 @@ export function AllGame(): JSX.Element {
     setOrder(order === 'asc' ? 'desc' : 'asc')
   }
   const games = sortGames(by, order)
-  console.log(`[DEBUG] AllGame: games=${games}`)
+  console.warn(`[DEBUG] AllGame`)
   return (
     <AccordionItem value="all">
       <ContextMenu>

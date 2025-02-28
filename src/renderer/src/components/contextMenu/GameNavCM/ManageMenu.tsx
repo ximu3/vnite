@@ -23,7 +23,9 @@ export function ManageMenu({
 }): JSX.Element {
   const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
   const [gameName] = useGameState(gameId, 'metadata.name')
-  const { setIsOpen, setDbId, setName } = useGameAdderStore()
+  const setIsOpen = useGameAdderStore((state) => state.setIsOpen)
+  const setName = useGameAdderStore((state) => state.setName)
+  const setDbId = useGameAdderStore((state) => state.setDbId)
   return (
     <ContextMenuGroup>
       <ContextMenuSub>

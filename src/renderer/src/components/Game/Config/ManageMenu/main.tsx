@@ -25,7 +25,9 @@ export function ManageMenu({
   const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [logoVisible, setLogoVisible] = useGameState(gameId, 'apperance.logo.visible')
-  const { setIsOpen, setDbId, setName } = useGameAdderStore()
+  const setIsOpen = useGameAdderStore((state) => state.setIsOpen)
+  const setName = useGameAdderStore((state) => state.setName)
+  const setDbId = useGameAdderStore((state) => state.setDbId)
   return (
     <DropdownMenuGroup>
       <DropdownMenuSub>

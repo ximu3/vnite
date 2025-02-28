@@ -25,10 +25,10 @@ import { CloudSyncInfo } from './Config/CloudSync/Info'
 import { useTheme } from './ThemeProvider'
 
 export function Sidebar(): JSX.Element {
-  const { setIsOpen: setIsGameAdderOpen } = useGameAdderStore()
-  const { actions: gameBatchAdderActions } = useGameBatchAdderStore()
-  const { setIsOpen: setIsSteamImporterOpen } = useSteamImporterStore()
-  const { status } = useCloudSyncStore()
+  const setIsGameAdderOpen = useGameAdderStore((state) => state.setIsOpen)
+  const gameBatchAdderActions = useGameBatchAdderStore((state) => state.actions)
+  const setIsSteamImporterOpen = useSteamImporterStore((state) => state.setIsOpen)
+  const syncStatus = useCloudSyncStore((state) => state.status)
   const [cloudSyncEnabled] = useConfigLocalState('sync.enabled')
   const { toggleTheme, isDark } = useTheme()
   const [showThemeSwitchInSidebar] = useConfigState('appearances.sidebar.showThemeSwitcher')
@@ -82,7 +82,7 @@ export function Sidebar(): JSX.Element {
         {cloudSyncEnabled ? (
           <Popover>
             <PopoverTrigger>
-              {status?.status === 'syncing' ? (
+              {syncStatus?.status === 'syncing' ? (
                 <Button
                   variant="ghost"
                   size={'icon'}
@@ -90,7 +90,7 @@ export function Sidebar(): JSX.Element {
                 >
                   <span className={cn('icon-[mdi--cloud-sync-outline] w-5 h-5')}></span>
                 </Button>
-              ) : status?.status === 'success' ? (
+              ) : syncStatus?.status === 'success' ? (
                 <Button
                   variant="ghost"
                   size={'icon'}
@@ -98,7 +98,7 @@ export function Sidebar(): JSX.Element {
                 >
                   <span className={cn('icon-[mdi--cloud-check-outline] w-5 h-5')}></span>
                 </Button>
-              ) : status?.status === 'error' ? (
+              ) : syncStatus?.status === 'error' ? (
                 <Button
                   variant="ghost"
                   size={'icon'}

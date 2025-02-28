@@ -64,9 +64,9 @@ export function DeleteGameAlert({
               <div className="mt-2">
                 <div className="mb-2 font-semibold">将要删除的游戏：</div>
                 <div className="overflow-y-auto text-sm max-h-32 scrollbar-base">
-                  {gameIds.map((gameId, _index) => (
-                    <div key={gameId} className="mb-1">
-                      {gameMetaIndex.gameId.name || '未命名游戏'}
+                  {gameIds.map((gameId) => (
+                    <div key={`batch-delete-${gameId}`} className="mb-1">
+                      {gameMetaIndex[gameId]?.name || '未命名游戏'}
                     </div>
                   ))}
                 </div>

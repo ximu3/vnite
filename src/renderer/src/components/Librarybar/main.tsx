@@ -12,97 +12,22 @@ import {
 } from '@ui/select'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import { isEqual } from 'lodash'
-import { useEffect, useRef, useState } from 'react'
-import { useLocation } from 'react-router-dom'
-import { create } from 'zustand'
 import { useConfigState } from '~/hooks'
 import { cn } from '~/utils'
-import { useGameBatchEditorStore } from '../GameBatchEditor/store'
 import { Filter } from './Filter'
 import { useFilterStore } from './Filter/store'
 import { GameList } from './GameList'
-
-interface LibrarybarStore {
-  query: string
-  setQuery: (query: string) => void
-  refreshGameList: () => void
-}
-
-export const useLibrarybarStore = create<LibrarybarStore>((set) => ({
-  query: '',
-  setQuery: (query: string): void => set({ query }),
-  refreshGameList: (): void => {
-    set({ query: '-1' })
-    setTimeout(() => set({ query: '' }), 1)
-  }
-}))
+import { useLibrarybarStore } from './store'
+import { PositionButton } from './PositionButton'
 
 export function Librarybar(): JSX.Element {
-  const location = useLocation()
   const [selectedGroup, setSelectedGroup] = useConfigState('game.gameList.selectedGroup')
-  const { query, setQuery } = useLibrarybarStore()
-  const { toggleFilterMenu, filter } = useFilterStore()
-  const { clearGameIds, gameIds } = useGameBatchEditorStore()
-  const [isGameNavVisible, setIsGameNavVisible] = useState(true)
-  const visibilityTimeout = useRef<NodeJS.Timeout>()
+  const query = useLibrarybarStore((state) => state.query)
+  const setQuery = useLibrarybarStore((state) => state.setQuery)
+  const filter = useFilterStore((state) => state.filter)
+  const toggleFilterMenu = useFilterStore((state) => state.toggleFilterMenu)
 
-  useEffect(() => {
-    // clear batchEditor gameList when switching to a non-game-detail page and not in batchMode
-    if (!location.pathname.includes(`/library/games/`) && gameIds.length < 2) {
-      clearGameIds()
-    }
-  }, [location.pathname])
-
-  const scrollToCurrentGame = (): void => {
-    const currentGameId = location.pathname.split('/games/')[1]?.split('/')[0]
-    const currentGroupId = location.pathname.split('/games/')[1]?.split('/')[1]
-    if (currentGameId && currentGroupId) {
-      const element = document.querySelector(
-        `[data-game-id="${currentGameId}"][data-group-id="${currentGroupId}"]`
-      )
-      element?.scrollIntoView({ behavior: 'instant', block: 'center' })
-    }
-  }
-
-  useEffect(() => {
-    const currentGameId = location.pathname.split('/games/')[1]?.split('/')[0]
-    const currentGroupId = location.pathname.split('/games/')[1]?.split('/')[1]
-    if (!currentGameId && currentGroupId) return
-
-    const gameElement = document.querySelector(
-      `[data-game-id="${currentGameId}"][data-group-id="${currentGroupId}"]`
-    )
-    if (!gameElement) return
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (visibilityTimeout.current) {
-          clearTimeout(visibilityTimeout.current)
-        }
-
-        // Use requestAnimationFrame and setTimeout to reduce the frequency of state updates.
-        visibilityTimeout.current = setTimeout(() => {
-          requestAnimationFrame(() => {
-            setIsGameNavVisible(entry.isIntersecting)
-          })
-        }, 150)
-      },
-      {
-        root: null,
-        threshold: 0.5,
-        rootMargin: '20px'
-      }
-    )
-
-    observer.observe(gameElement)
-
-    return (): void => {
-      observer.disconnect()
-      if (visibilityTimeout.current) {
-        clearTimeout(visibilityTimeout.current)
-      }
-    }
-  }, [location.pathname])
+  console.warn(`[DEBUG] Librarybar`)
 
   return (
     <div className={cn('flex flex-col gap-6 bg-card w-full h-full pt-2 relative group')}>
@@ -183,21 +108,7 @@ export function Librarybar(): JSX.Element {
         </div>
         <GameList query={query} selectedGroup={selectedGroup} />
       </div>
-      {location.pathname.includes('/library/games/') && (
-        <Button
-          size="icon"
-          className={cn(
-            'absolute bottom-4 right-4 transition-all duration-200 shadow-md hover:bg-primary',
-            'transform',
-            isGameNavVisible
-              ? 'opacity-0 translate-y-2 pointer-events-none'
-              : 'opacity-0 translate-y-0 group-hover:opacity-100'
-          )}
-          onClick={scrollToCurrentGame}
-        >
-          <span className={cn('icon-[mdi--crosshairs-gps] w-5 h-5')} />
-        </Button>
-      )}
+      <PositionButton />
     </div>
   )
 }

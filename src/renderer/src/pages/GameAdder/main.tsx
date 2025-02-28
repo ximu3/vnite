@@ -1,14 +1,23 @@
 import { cn } from '~/utils'
 import { Dialog, DialogContent } from '@ui/dialog'
 import { MemoryRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
-import { useGameAdderStore } from './store'
+import { useGameAdderStore, initializeStore } from './store'
 import { GameList } from './GameList'
 import { Search } from './Search'
 import { ScreenshotList } from './ScreenshotList'
+import { useEffect } from 'react'
+import { useConfigState } from '~/hooks'
 
 function GameAdderContent(): JSX.Element {
   const { isOpen, handleClose } = useGameAdderStore()
+  const [defaultDataSource] = useConfigState('game.scraper.defaultDatasSource')
   const navigate = useNavigate()
+  useEffect(() => {
+    const initStore = async (): Promise<void> => {
+      initializeStore(defaultDataSource)
+    }
+    initStore()
+  }, [defaultDataSource])
   return (
     <Dialog open={isOpen}>
       <DialogContent

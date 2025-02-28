@@ -13,7 +13,10 @@ export const useGameBatchEditorStore = create<GameBatchEditorStore>((set) => ({
   gameIds: [],
   lastSelectedId: null,
   setLastSelectedId: (id: string | null): void => set({ lastSelectedId: id }),
-  addGameId: (gameId: string): void => set((state) => ({ gameIds: [...state.gameIds, gameId] })),
+  addGameId: (gameId: string): void => {
+    set((state) => ({ gameIds: [...state.gameIds, gameId] }))
+    console.warn(`[DEBUG] Add game: ${gameId}`)
+  },
   removeGameId: (gameId: string): void =>
     set((state) => ({ gameIds: state.gameIds.filter((id) => id !== gameId) })),
   clearGameIds: (): void => set({ gameIds: [] })

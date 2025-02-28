@@ -9,7 +9,8 @@ import { useGameAdderStore } from '~/pages/GameAdder/store'
 
 export function Showcase(): JSX.Element {
   const gameIds = useGameRegistry((state) => state.gameIds)
-  const { setIsOpen } = useGameAdderStore()
+  const setIsOpen = useGameAdderStore((state) => state.setIsOpen)
+  console.warn('[DEBUG] Showcase')
   return (
     <div className={cn('flex flex-col gap-3 h-[100vh] pt-[30px]')}>
       {gameIds.length !== 0 ? (

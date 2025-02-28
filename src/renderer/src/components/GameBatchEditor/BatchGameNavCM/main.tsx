@@ -3,7 +3,9 @@ import { cn } from '~/utils'
 import { CollectionMenu } from './CollectionMenu'
 import { InformationDialog } from './InformationDialog'
 import { DeleteGameAlert } from './DeleteGameAlert'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
+import { useGameBatchEditorStore } from '../store'
 
 export function BatchGameNavCM({
   gameIds,
@@ -14,6 +16,14 @@ export function BatchGameNavCM({
   openAddCollectionDialog: () => void
 }): JSX.Element {
   const [isInformationDialogOpen, setIsInformationDialogOpen] = useState(false)
+  const { clearGameIds } = useGameBatchEditorStore()
+  const location = useLocation()
+  useEffect(() => {
+    // clear batchEditor gameList when switching to a non-game-detail page and not in batchMode
+    if (!location.pathname.includes(`/library/games/`) && gameIds.length < 2) {
+      clearGameIds()
+    }
+  }, [location.pathname])
   return (
     <ContextMenuContent className={cn('w-40')}>
       <CollectionMenu gameIds={gameIds} openAddCollectionDialog={openAddCollectionDialog} />
