@@ -1,12 +1,12 @@
 import { cn } from '~/utils'
 import { GamePoster } from './GamePoster'
-import { useGameStore } from '~/stores'
+import { useGameRegistry, sortGames } from '~/stores/game'
 import { FixedSizeList } from 'react-window'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
 export function ScoreRank({ className }: { className?: string }): JSX.Element {
-  const { sort, documents: gameIndex } = useGameStore()
-  const sortedGameIds = sort('score', 'desc')
+  const gameMetaIndex = useGameRegistry((state) => state.gameMetaIndex)
+  const sortedGameIds = sortGames('record.score', 'desc')
   return (
     <div className={cn(className)}>
       {sortedGameIds.length === 0 ? (
@@ -24,7 +24,7 @@ export function ScoreRank({ className }: { className?: string }): JSX.Element {
             >
               {({ index, style }) => {
                 const gameId = sortedGameIds[index]
-                const game = gameIndex[gameId]
+                const game = gameMetaIndex[gameId]
                 if (!game) return null
                 return (
                   <div style={style} key={gameId} className={cn('pr-1')}>
@@ -37,7 +37,7 @@ export function ScoreRank({ className }: { className?: string }): JSX.Element {
                       }}
                       className={cn('w-full h-[50px]')}
                       gameId={gameId}
-                      additionalInfo={game.score === -1 ? '暂无评分' : `${game.score} 分`}
+                      additionalInfo={game.name === '' ? '暂无评分' : `${game.name} 分`}
                     />
                   </div>
                 )

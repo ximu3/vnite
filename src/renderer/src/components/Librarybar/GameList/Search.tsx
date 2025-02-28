@@ -1,12 +1,11 @@
-import { useGameStore } from '~/stores'
+import { searchGames } from '~/stores/game'
 import { cn } from '~/utils'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@ui/accordion'
 import { ScrollArea } from '@ui/scroll-area'
 import { GameNav } from '../GameNav'
 
 export function Search({ query }: { query: string }): JSX.Element {
-  const { search } = useGameStore()
-  const games = search(query)
+  const games = searchGames(query)
   return (
     <ScrollArea className={cn('w-full h-full pr-3 -mr-3')}>
       <Accordion

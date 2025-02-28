@@ -2,13 +2,13 @@ import { create } from 'zustand'
 import { ipcInvoke } from '~/utils'
 import { getValueByPath, setValueByPath } from '@appUtils'
 import {
-  DocChange,
   gameCollectionDoc,
   gameCollectionDocs,
   DEFAULT_GAME_COLLECTION_VALUES
 } from '@appTypes/database'
 import type { Get, Paths } from 'type-fest'
 import { toast } from 'sonner'
+import { syncTo } from '../utils'
 
 export interface GameCollectionState {
   documents: gameCollectionDocs
@@ -43,21 +43,6 @@ export interface GameCollectionState {
   removeGamesFromCollection: (collectionId: string, gameIds: string[]) => void
   removeGameFromAllCollections: (gameId: string) => void
   removeGamesFromAllCollections: (gameIds: string[]) => void
-}
-
-const updateDocument = async (docId: string, data: gameCollectionDoc): Promise<void> => {
-  const change: DocChange = {
-    dbName: 'collection',
-    docId,
-    data,
-    timestamp: Date.now()
-  }
-
-  try {
-    await ipcInvoke('db-changed', change)
-  } catch (error) {
-    console.error('Failed to sync with database:', error)
-  }
 }
 
 export const useGameCollectionStore = create<GameCollectionState>((set, get) => ({
@@ -112,7 +97,7 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
     }))
 
     // 异步更新本地文档
-    await updateDocument(collectionId, get().documents[collectionId])
+    await syncTo('game-collection', collectionId, get().documents[collectionId])
   },
 
   initializeStore: (data): void =>

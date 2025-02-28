@@ -7,15 +7,14 @@ import {
   ContextMenuItem
 } from '@ui/context-menu'
 import { useConfigState } from '~/hooks'
-import { useGameStore } from '~/stores'
+import { sortGames } from '~/stores/game'
 import { GameNav } from '../GameNav'
 
 export function RecentGames(): JSX.Element {
   const [showRecentGamesInGameList, setShowRecentGamesInGameList] = useConfigState(
     'game.gameList.showRecentGames'
   )
-  const { sort: sortGames } = useGameStore()
-  const games = sortGames('lastRunDate', 'desc').slice(0, 5)
+  const games = sortGames('record.lastRunDate', 'desc').slice(0, 5)
   return (
     <>
       {showRecentGamesInGameList && (

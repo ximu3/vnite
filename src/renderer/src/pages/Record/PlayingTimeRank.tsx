@@ -1,19 +1,19 @@
-import { cn, formatTimeToChinese } from '~/utils'
+import { cn } from '~/utils'
 import { GamePoster } from './GamePoster'
-import { useGameStore } from '~/stores'
+import { sortGames, useGameRegistry } from '~/stores/game'
 import { FixedSizeList } from 'react-window'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
 export function PlayingTimeRank({ className }: { className?: string }): JSX.Element {
-  const { sort, documents: gameIndex } = useGameStore()
-  const sortedGameIds = sort('playingTime', 'desc')
-  const formatTime = (time: number): string => {
-    let res: string = formatTimeToChinese(time)
-    if (!res.endsWith('秒')) {
-      if (res.split(' ')[0].length >= 2) res = res.replace(' ', '\n')
-    }
-    return res
-  }
+  const gameMetaIndex = useGameRegistry((state) => state.gameMetaIndex)
+  const sortedGameIds = sortGames('record.playTime', 'desc')
+  // const formatTime = (time: number): string => {
+  //   let res: string = formatTimeToChinese(time)
+  //   if (!res.endsWith('秒')) {
+  //     if (res.split(' ')[0].length >= 2) res = res.replace(' ', '\n')
+  //   }
+  //   return res
+  // }
   return (
     <div className={cn(className)}>
       {sortedGameIds.length === 0 ? (
@@ -31,7 +31,7 @@ export function PlayingTimeRank({ className }: { className?: string }): JSX.Elem
             >
               {({ index, style }) => {
                 const gameId = sortedGameIds[index]
-                const game = gameIndex[gameId]
+                const game = gameMetaIndex[gameId]
                 if (!game) return null
                 return (
                   <div style={style} key={gameId} className={cn('pr-1')}>
@@ -45,9 +45,7 @@ export function PlayingTimeRank({ className }: { className?: string }): JSX.Elem
                       }}
                       className={cn('w-full h-[50px]')}
                       gameId={gameId}
-                      additionalInfo={
-                        game.playingTime == 0 ? '从未游玩' : formatTime(game.playingTime as number)
-                      }
+                      additionalInfo={game.name == '' ? '从未游玩' : ''}
                     />
                   </div>
                 )

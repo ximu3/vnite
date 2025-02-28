@@ -1,8 +1,8 @@
 import { create } from 'zustand'
-import { ipcInvoke } from '~/utils'
 import { getValueByPath, setValueByPath } from '@appUtils'
-import { DocChange, configLocalDocs, DEFAULT_CONFIG_LOCAL_VALUES } from '@appTypes/database'
+import { configLocalDocs, DEFAULT_CONFIG_LOCAL_VALUES } from '@appTypes/database'
 import type { Get, Paths } from 'type-fest'
+import { syncTo } from '../utils'
 
 export interface ConfigLocalState {
   documents: configLocalDocs
@@ -17,21 +17,6 @@ export interface ConfigLocalState {
   ) => Promise<void>
   initializeStore: (data: ConfigLocalState['documents']) => void
   setDocument: (docId: string, data: any) => void
-}
-
-const updateDocument = async (docId: string, data: configLocalDocs): Promise<void> => {
-  const change: DocChange = {
-    dbName: 'config-local',
-    docId: docId,
-    data,
-    timestamp: Date.now()
-  }
-
-  try {
-    await ipcInvoke('db-changed', change)
-  } catch (error) {
-    console.error('Failed to sync with database:', error)
-  }
 }
 
 export const useConfigLocalStore = create<ConfigLocalState>((set, get) => ({
@@ -74,7 +59,7 @@ export const useConfigLocalStore = create<ConfigLocalState>((set, get) => ({
     set({ documents: data })
 
     // 然后异步更新文档
-    await updateDocument(pathArray[0], get().documents[pathArray[0]])
+    await syncTo('config-local', pathArray[0], get().documents[pathArray[0]])
   },
 
   initializeStore: (data): void =>

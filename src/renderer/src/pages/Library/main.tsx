@@ -4,7 +4,7 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@ui/resiza
 import { toast } from 'sonner'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { ipcOnUnique } from '~/utils'
-import { useGameStore, useGameCollectionStore } from '~/stores'
+import { useGameRegistry, useGameCollectionStore } from '~/stores/game'
 import { Game } from '~/components/Game'
 import { useEffect } from 'react'
 import { useRunningGames } from './store'
@@ -13,7 +13,7 @@ import { CollectionGames } from '~/components/Showcase/CollectionGames'
 import { CollectionPage } from '~/components/Showcase/CollectionPage'
 
 export function Library({ className }: { className?: string }): JSX.Element {
-  const { documents: gameIndex } = useGameStore()
+  const gameIds = useGameRegistry((state) => state.gameIds)
   const { documents: collections } = useGameCollectionStore()
   const { runningGames, setRunningGames } = useRunningGames()
   useEffect(() => {
@@ -47,18 +47,18 @@ export function Library({ className }: { className?: string }): JSX.Element {
           <Route index element={<Navigate to="./home" replace />} />
           <Route path="/home/*" element={<Showcase />} />
           <Route path="/collections/*" element={<CollectionPage />} />
-          {gameIndex &&
-            Object.values(gameIndex)?.map(
-              (game) =>
-                game._id && (
+          {gameIds.length > 0 &&
+            gameIds.map(
+              (gameId) =>
+                gameId && (
                   <Route
-                    key={game._id}
-                    path={`games/${game._id}/*`}
-                    element={<Game gameId={game._id} />}
+                    key={gameId}
+                    path={`games/${gameId}/*`}
+                    element={<Game gameId={gameId} />}
                   />
                 )
             )}
-          {gameIndex &&
+          {gameIds.length > 0 &&
             Object.values(collections)?.map((collection) => (
               <Route
                 key={collection._id}

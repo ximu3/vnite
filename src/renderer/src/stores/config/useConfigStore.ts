@@ -1,8 +1,8 @@
 import { create } from 'zustand'
-import { ipcInvoke } from '~/utils'
 import { getValueByPath, setValueByPath } from '@appUtils'
-import { DocChange, configDocs, DEFAULT_CONFIG_VALUES } from '@appTypes/database'
+import { configDocs, DEFAULT_CONFIG_VALUES } from '@appTypes/database'
 import type { Get, Paths } from 'type-fest'
+import { syncTo } from '../utils'
 
 export interface ConfigState {
   documents: configDocs
@@ -17,21 +17,6 @@ export interface ConfigState {
   ) => Promise<void>
   initializeStore: (data: ConfigState['documents']) => void
   setDocument: (docId: string, data: any) => void
-}
-
-const updateDocument = async (docId: string, data: configDocs): Promise<void> => {
-  const change: DocChange = {
-    dbName: 'config',
-    docId: docId,
-    data,
-    timestamp: Date.now()
-  }
-
-  try {
-    await ipcInvoke('db-changed', change)
-  } catch (error) {
-    console.error('Failed to sync with database:', error)
-  }
 }
 
 export const useConfigStore = create<ConfigState>((set, get) => ({
@@ -78,7 +63,7 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
     set({ documents: data })
 
     // 然后异步更新文档
-    await updateDocument(pathArray[0], get().documents[pathArray[0]])
+    await syncTo('config', pathArray[0], get().documents[pathArray[0]])
   },
 
   initializeStore: (data): void =>

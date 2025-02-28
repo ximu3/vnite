@@ -2,14 +2,13 @@ import { cn } from '~/utils'
 import { Button } from '@ui/button'
 import { Separator } from '@ui/separator'
 import { useConfigState } from '~/hooks'
-import { useGameStore } from '~/stores'
+import { sortGames } from '~/stores/game'
 import { GamePoster } from './posters/GamePoster'
 import { BigGamePoster } from './posters/BigGamePoster'
 import { useRef } from 'react'
 import { throttle } from 'lodash'
 
 export function RecentGames(): JSX.Element {
-  const { sort: sortGames } = useGameStore()
   const games = sortGames('record.lastRunDate', 'desc')
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [showRecentGamesInGameList] = useConfigState('game.gameList.showRecentGames')

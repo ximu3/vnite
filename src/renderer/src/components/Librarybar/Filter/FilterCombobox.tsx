@@ -13,7 +13,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
 import { Check, ChevronsUpDown } from 'lucide-react'
 import * as React from 'react'
-import { useGameStore } from '~/stores'
+import { getAllValuesInKey } from '~/stores/game'
 import { cn } from '~/utils'
 import { useFilterStore } from './store'
 
@@ -30,7 +30,6 @@ export function FilterCombobox({
   placeholder: string
 }): JSX.Element {
   const [open, setOpen] = React.useState(false)
-  const { getAllValuesInKey } = useGameStore()
   const { filter, deleteFilter, addFilter } = useFilterStore()
   const selectedValues = filter[filed] || []
   const options: Option[] = React.useMemo(() => {

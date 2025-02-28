@@ -11,14 +11,13 @@ import {
   SelectValue
 } from '@ui/select'
 import { useConfigState } from '~/hooks'
-import { useGameStore } from '~/stores'
+import { sortGames } from '~/stores/game'
 import { GamePoster } from './posters/GamePoster'
 
 export function AllGames(): JSX.Element {
   const [by, setBy] = useConfigState('game.showcase.sort.by')
   const [order, setOrder] = useConfigState('game.showcase.sort.order')
-  const { sort } = useGameStore()
-  const games = sort(by, order)
+  const games = sortGames(by, order)
   const toggleOrder = (): void => {
     setOrder(order === 'asc' ? 'desc' : 'asc')
   }

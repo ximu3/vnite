@@ -12,7 +12,7 @@ import {
 } from '@ui/select'
 import { ContextMenuContent, ContextMenuTrigger, ContextMenu } from '@ui/context-menu'
 import { useConfigState } from '~/hooks'
-import { useGameStore } from '~/stores'
+import { sortGames } from '~/stores/game'
 import { GameNav } from '../GameNav'
 
 export function AllGame(): JSX.Element {
@@ -21,8 +21,8 @@ export function AllGame(): JSX.Element {
   const toggleOrder = (): void => {
     setOrder(order === 'asc' ? 'desc' : 'asc')
   }
-  const { sort } = useGameStore()
-  const games = sort(by, order)
+  const games = sortGames(by, order)
+  console.log(`[DEBUG] AllGame: games=${games}`)
   return (
     <AccordionItem value="all">
       <ContextMenu>

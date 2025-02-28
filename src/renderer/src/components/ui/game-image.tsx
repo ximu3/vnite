@@ -50,8 +50,6 @@ export const GameImage: React.FC<GameImageProps> = ({
           flips && '-scale-y-100',
           className
         )}
-        loading="lazy"
-        decoding="async"
         onLoad={() => {
           setIsLoaded(true)
           onUpdated?.()

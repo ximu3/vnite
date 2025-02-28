@@ -2,7 +2,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/c
 import { ScrollArea } from '@ui/scroll-area'
 import { RecordCard } from '~/components/Game/Overview/Record/RecordCard'
 import { TimerChart } from '~/components/Game/Record/TimerChart'
-import { useGameStore } from '~/stores'
+import {
+  getTotalplayTime,
+  getPlayedDaysYearly,
+  getTotalplayTimeYearly,
+  getTotalPlayedDays,
+  sortGames,
+  useGameRegistry
+} from '~/stores/game'
 import { cn, formatDateToChinese, formatTimeToChinese } from '~/utils'
 import { GamePoster } from './GamePoster'
 import { PlayedTimesRank } from './PlayedTimesRank'
@@ -10,23 +17,18 @@ import { PlayingTimeRank } from './PlayingTimeRank'
 import { ScoreRank } from './ScoreRank'
 
 export function Record({ className }: { className?: string }): JSX.Element {
-  const {
-    getTotalplayTime,
-    getPlayedDaysYearly,
-    getTotalplayTimeYearly,
-    documents: records,
-    getTotalPlayedDays
-  } = useGameStore()
-  const { sort, documents: gameIndex } = useGameStore()
+  const gameMetaIndex = useGameRegistry((state) => state.gameMetaIndex)
   const maxScoreGame =
-    sort('record.score', 'desc').length > 0 ? sort('record.score', 'desc')[0] : null
-  const maxScore = maxScoreGame ? gameIndex[maxScoreGame]?.record?.score : 0
+    sortGames('record.score', 'desc').length > 0 ? sortGames('record.score', 'desc')[0] : null
+  const maxScore = maxScoreGame ? gameMetaIndex[maxScoreGame]?.name : 0
   const maxPlayingTimeGame =
-    sort('record.playTime', 'desc').length > 0 ? sort('record.playTime', 'desc')[0] : null
-  const maxPlayingTime = maxPlayingTimeGame ? gameIndex[maxPlayingTimeGame]?.record?.playTime : 0
+    sortGames('record.playTime', 'desc').length > 0 ? sortGames('record.playTime', 'desc')[0] : null
+  const maxPlayingTime = maxPlayingTimeGame ? gameMetaIndex[maxPlayingTimeGame]?.name : 0
   const maxSoonGame =
-    sort('record.lastRunDate', 'desc').length > 0 ? sort('record.lastRunDate', 'desc')[0] : null
-  const maxSoonDate = maxSoonGame ? gameIndex[maxSoonGame]?.record?.lastRunDate : ''
+    sortGames('record.lastRunDate', 'desc').length > 0
+      ? sortGames('record.lastRunDate', 'desc')[0]
+      : null
+  const maxSoonDate = maxSoonGame ? gameMetaIndex[maxSoonGame]?.name : ''
   const playedDaysYearly = getPlayedDaysYearly()
   return (
     <div
@@ -41,7 +43,7 @@ export function Record({ className }: { className?: string }): JSX.Element {
           <div className={cn('flex flex-row gap-3')}>
             <RecordCard
               title="总游戏数"
-              content={`${Object.keys(records).length} 个`}
+              content={`${Object.keys(gameMetaIndex).length} 个`}
               className={cn('w-1/4')}
             />
             <RecordCard
@@ -83,7 +85,7 @@ export function Record({ className }: { className?: string }): JSX.Element {
                     }}
                     gameId={maxScoreGame}
                     isShowGameName
-                    additionalInfo={maxScore == -1 ? '暂无评分' : `${maxScore} 分`}
+                    additionalInfo={maxScore == '' ? '暂无评分' : `${maxScore} 分`}
                     className={cn('w-full aspect-[0.667]')}
                   />
                 ) : (
@@ -104,11 +106,7 @@ export function Record({ className }: { className?: string }): JSX.Element {
                     }}
                     gameId={maxPlayingTimeGame}
                     isShowGameName
-                    additionalInfo={
-                      maxPlayingTime == 0
-                        ? '从未游玩'
-                        : formatTimeToChinese(maxPlayingTime as number)
-                    }
+                    additionalInfo={maxPlayingTime == 0 ? '从未游玩' : ''}
                     className={cn('w-full aspect-[0.667]')}
                   />
                 ) : (

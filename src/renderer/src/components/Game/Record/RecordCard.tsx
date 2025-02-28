@@ -1,6 +1,6 @@
 import { cn } from '~/utils'
 import { useGameState } from '~/hooks'
-import { useGameStore } from '~/stores'
+import { getGameMaxPlayTimeDay, getGamePlayDays } from '~/stores/game'
 import { formatTimeToChinese, formatDateToChinese } from '~/utils'
 import { Separator } from '@ui/separator'
 
@@ -12,7 +12,6 @@ export function RecordCard({
   className?: string
 }): JSX.Element {
   const [addDate] = useGameState(gameId, 'record.addDate')
-  const { getGameMaxPlayTimeDay, getGamePlayDays } = useGameStore()
   const playDays = getGamePlayDays(gameId)
   const [playingTime] = useGameState(gameId, 'record.playTime')
   const [lastRunDate] = useGameState(gameId, 'record.lastRunDate')

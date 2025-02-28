@@ -10,7 +10,7 @@ import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditor
 import { PlayingTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayingTimeEditorDialog'
 import { GameImage } from '~/components/ui/game-image'
 import { useGameState } from '~/hooks'
-import { useGameStore } from '~/stores'
+import { useGameRegistry } from '~/stores/game'
 import { cn, formatDateToChinese, formatTimeToChinese } from '~/utils'
 
 export function BigGamePoster({
@@ -23,9 +23,9 @@ export function BigGamePoster({
   className?: string
 }): JSX.Element {
   const navigate = useNavigate()
-  const { documents } = useGameStore()
+  const gameMetaIndex = useGameRegistry((state) => state.gameMetaIndex)
   const [playTime] = useGameState(gameId, 'record.playTime')
-  const gameData = documents[gameId]
+  const gameData = gameMetaIndex[gameId]
   const [lastRunDate] = useGameState(gameId, 'record.lastRunDate')
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [isAttributesDialogOpen, setIsAttributesDialogOpen] = React.useState(false)
@@ -160,7 +160,7 @@ export function BigGamePoster({
         <div className="relative flex flex-col w-full h-full gap-2">
           {/* Game Title */}
           <div className={cn('font-bold text-accent-foreground truncate text-sm px-3 pt-2')}>
-            {gameData?.metadata?.name}
+            {gameData?.name}
           </div>
 
           {/* Game Preview Image */}
@@ -172,11 +172,11 @@ export function BigGamePoster({
               style={{
                 maskImage: 'linear-gradient(to top, transparent 0%, black 30%)'
               }}
-              alt={`${gameData?.metadata?.name} preview`}
+              alt={`${gameData?.name} preview`}
               fallback={
                 <div className={cn('w-full h-full absolute')}>
                   <div className={cn('flex items-center justify-center w-full h-full font-bold')}>
-                    {gameData?.metadata?.name}
+                    {gameData?.name}
                   </div>
                 </div>
               }
@@ -196,8 +196,8 @@ export function BigGamePoster({
             <div className="flex flex-row items-center justify-start gap-2">
               <span className={cn('icon-[mdi--calendar-blank-outline] w-4 h-4')}></span>
               <div>
-                {gameData?.record?.lastRunDate
-                  ? `最后运行于 ${formatDateToChinese(gameData?.record.lastRunDate)}`
+                {gameData?.lastRunDate
+                  ? `最后运行于 ${formatDateToChinese(gameData.lastRunDate)}`
                   : '从未运行过'}
               </div>
             </div>

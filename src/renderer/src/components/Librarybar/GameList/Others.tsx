@@ -4,7 +4,7 @@ import { ScrollArea } from '@ui/scroll-area'
 import { ContextMenuContent, ContextMenuTrigger, ContextMenu } from '@ui/context-menu'
 import { Button } from '@ui/button'
 import { useConfigState } from '~/hooks'
-import { useGameStore } from '~/stores'
+import { getAllValuesInKey, filterGames } from '~/stores/game'
 import { GameNav } from '../GameNav'
 import { AllGame } from './AllGame'
 import { RecentGames } from './RecentGames'
@@ -14,7 +14,6 @@ export function Others({
 }: {
   fieldName: 'metadata.developers' | 'metadata.genres' | 'record.playStatus'
 }): JSX.Element {
-  const { getAllValuesInKey, filter } = useGameStore()
   const [playStatusOrder, setPlayStatusOrder] = useConfigState('game.gameList.playingStatusOrder')
 
   const fields_tmp = getAllValuesInKey(fieldName)
@@ -78,7 +77,7 @@ export function Others({
                       <div className={cn('flex flex-row items-center justify-start gap-1')}>
                         <div className={cn('text-xs')}>{convertFieldToTitle(field)}</div>
                         <div className={cn('text-2xs text-foreground/50')}>
-                          ({filter({ [fieldName]: [field] }).length})
+                          ({filterGames({ [fieldName]: [field] }).length})
                         </div>
                       </div>
                     </AccordionTrigger>
@@ -112,13 +111,13 @@ export function Others({
                   <div className={cn('flex flex-row items-center justify-start gap-1')}>
                     <div className={cn('text-xs')}>{convertFieldToTitle(field)}</div>
                     <div className={cn('text-2xs text-foreground/50')}>
-                      ({filter({ [fieldName]: [field] }).length})
+                      ({filterGames({ [fieldName]: [field] }).length})
                     </div>
                   </div>
                 </AccordionTrigger>
               )}
               <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
-                {filter({ [fieldName]: [field] }).map((game) => (
+                {filterGames({ [fieldName]: [field] }).map((game) => (
                   <GameNav key={game} gameId={game} groupId={`${fieldName}:${field}`} />
                 ))}
               </AccordionContent>

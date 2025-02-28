@@ -3,12 +3,11 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@u
 import { ScrollArea } from '@ui/scroll-area'
 import { GameNav } from '../GameNav'
 import { useFilterStore } from '../Filter/store'
-import { useGameStore } from '~/stores'
+import { filterGames } from '~/stores/game'
 
 export function FilterGame(): JSX.Element {
   const { filter } = useFilterStore()
-  const { filter: filterGame } = useGameStore()
-  const games = filterGame(filter)
+  const games = filterGames(filter)
   return (
     <ScrollArea className={cn('w-full h-full pr-3 -mr-3')}>
       <Accordion

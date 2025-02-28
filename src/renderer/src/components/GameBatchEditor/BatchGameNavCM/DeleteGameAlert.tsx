@@ -11,7 +11,7 @@ import {
 } from '@ui/alert-dialog'
 import { ipcInvoke } from '~/utils'
 import { toast } from 'sonner'
-import { useGameCollectionStore, useGameStore } from '~/stores'
+import { useGameCollectionStore, useGameRegistry } from '~/stores/game'
 import { useNavigate } from 'react-router-dom'
 
 export function DeleteGameAlert({
@@ -23,7 +23,7 @@ export function DeleteGameAlert({
 }): JSX.Element {
   const navigate = useNavigate()
   const { removeGamesFromAllCollections } = useGameCollectionStore()
-  const { documents } = useGameStore()
+  const gameMetaIndex = useGameRegistry((state) => state.gameMetaIndex)
 
   async function deleteGames(): Promise<void> {
     const gamesCount = gameIds.length
@@ -66,7 +66,7 @@ export function DeleteGameAlert({
                 <div className="overflow-y-auto text-sm max-h-32 scrollbar-base">
                   {gameIds.map((gameId, _index) => (
                     <div key={gameId} className="mb-1">
-                      {documents.gameId.metadata.name || '未命名游戏'}
+                      {gameMetaIndex.gameId.name || '未命名游戏'}
                     </div>
                   ))}
                 </div>

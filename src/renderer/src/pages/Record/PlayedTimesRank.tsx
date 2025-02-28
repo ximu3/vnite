@@ -1,12 +1,12 @@
 import { cn } from '~/utils'
 import { GamePoster } from './GamePoster'
-import { useGameStore } from '~/stores'
+import { sortGames, useGameRegistry } from '~/stores/game'
 import { FixedSizeList } from 'react-window'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
 export function PlayedTimesRank({ className }: { className?: string }): JSX.Element {
-  const { documents: gameIndex, sort } = useGameStore()
-  const sortedGameIds = sort('playedTimes', 'desc')
+  const gameMetaIndex = useGameRegistry((state) => state.gameMetaIndex)
+  const sortedGameIds = sortGames('record.playTime', 'desc')
   return (
     <div className={cn(className)}>
       {sortedGameIds.length === 0 ? (
@@ -24,7 +24,7 @@ export function PlayedTimesRank({ className }: { className?: string }): JSX.Elem
             >
               {({ index, style }) => {
                 const gameId = sortedGameIds[index]
-                const game = gameIndex[gameId]
+                const game = gameMetaIndex[gameId]
                 if (!game) return null
                 return (
                   <div style={style} key={gameId} className={cn('pr-1')}>
@@ -37,7 +37,7 @@ export function PlayedTimesRank({ className }: { className?: string }): JSX.Elem
                       }}
                       className={cn('w-full h-[50px]')}
                       gameId={gameId}
-                      additionalInfo={game.playedTimes == 0 ? '从未游玩' : `${game.playedTimes} 次`}
+                      additionalInfo={game.name == '' ? '从未游玩' : `${game.name} 次`}
                     />
                   </div>
                 )

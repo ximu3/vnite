@@ -4,15 +4,15 @@ import { Button } from '@ui/button'
 import { RecentGames } from './RecentGames'
 import { Collections } from './Collections'
 import { AllGames } from './AllGames'
-import { useGameStore } from '~/stores'
+import { useGameRegistry } from '~/stores/game'
 import { useGameAdderStore } from '~/pages/GameAdder/store'
 
 export function Showcase(): JSX.Element {
-  const { documents: gameIndex } = useGameStore()
+  const gameIds = useGameRegistry((state) => state.gameIds)
   const { setIsOpen } = useGameAdderStore()
   return (
     <div className={cn('flex flex-col gap-3 h-[100vh] pt-[30px]')}>
-      {Object.keys(gameIndex).length !== 0 ? (
+      {gameIds.length !== 0 ? (
         <ScrollArea className={cn('w-full')}>
           <RecentGames />
           <Collections />
