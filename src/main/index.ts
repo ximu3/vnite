@@ -20,7 +20,7 @@ import {
 } from './utils'
 // import { setupUpdater } from './updater' todo
 // import { initScraper } from './scraper' todo
-import { startSync, GameDBManager } from '~/database'
+import { startSync, GameDBManager, DBManager } from '~/database'
 
 let mainWindow: BrowserWindow
 let splashWindow: BrowserWindow | null
@@ -241,6 +241,8 @@ if (!gotTheLock) {
     setupProtocols()
 
     createWindow()
+
+    DBManager.init()
 
     // Sync all databases with remote
     await startSync()

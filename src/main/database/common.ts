@@ -47,6 +47,12 @@ export class DBManager {
     }
   }
 
+  static init(): void {
+    for (const dbName in this.dbConfigs) {
+      this.getInstance(dbName)
+    }
+  }
+
   /**
    * 获取数据库实例
    */
