@@ -13,7 +13,8 @@ interface GameImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src'
   fallback?: React.ReactNode
   shadow?: boolean
   flips?: boolean
-  effect?: Effect // 修正：使用正确的Effect类型
+  effect?: Effect
+  scrollPosition?: { x: number; y: number }
 }
 
 export const GameImage: React.FC<GameImageProps> = ({
@@ -25,7 +26,8 @@ export const GameImage: React.FC<GameImageProps> = ({
   fallback = <div>暂无图标</div>,
   shadow = false,
   flips = false,
-  effect = 'blur' as Effect, // 修正：使用类型断言
+  effect = 'blur' as Effect,
+  scrollPosition, // 接收scrollPosition
   ...imgProps
 }) => {
   const { getAttachmentInfo, setAttachmentError } = useAttachmentStore()
@@ -55,6 +57,7 @@ export const GameImage: React.FC<GameImageProps> = ({
         src={attachmentUrl}
         effect={effect}
         placeholder={placeholder}
+        scrollPosition={scrollPosition}
         wrapperClassName={cn('w-full h-full')}
         className={cn(
           'transition-opacity duration-300',
@@ -69,7 +72,7 @@ export const GameImage: React.FC<GameImageProps> = ({
           setAttachmentError('game', gameId, `images/${type}.webp`, true)
           onError?.(e)
         }}
-        threshold={100} // 提前100px开始加载
+        threshold={300} // 增加阈值，提前加载更多
         wrapperProps={{
           style: {
             display: 'block',

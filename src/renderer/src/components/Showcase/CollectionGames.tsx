@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { useGameCollectionStore } from '~/stores'
 import { cn } from '~/utils'
 import { GamePoster } from './posters/GamePoster'
+import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
 
 export type DragContextType = {
   isDraggingGlobal: boolean
@@ -22,7 +23,14 @@ export const useDragContext = (): DragContextType => {
   )
 }
 
-export function CollectionGames({ collectionId }: { collectionId: string }): JSX.Element {
+// 拆分为组件和包装后的导出组件
+export function CollectionGamesComponent({
+  collectionId,
+  scrollPosition // 添加scrollPosition参数
+}: {
+  collectionId: string
+  scrollPosition: { x: number; y: number } // 接收滚动位置
+}): JSX.Element {
   const collections = useGameCollectionStore((state) => state.documents)
   const games = collections[collectionId].games
   const collectionName = collections[collectionId].name
@@ -30,12 +38,15 @@ export function CollectionGames({ collectionId }: { collectionId: string }): JSX
   const [gap, setGap] = useState<number>(0)
   const [columns, setColumns] = useState<number>(0)
   const gridContainerRef = useRef<HTMLDivElement | null>(null)
+
   useEffect(() => {
     const calculateGap = (): void => {
       const gridContainer = gridContainerRef.current
       if (gridContainer) {
         const containerWidth = gridContainer.offsetWidth
         const gridItems = gridContainer.children
+        if (gridItems.length === 0) return
+
         const itemWidth = (gridItems[0] as HTMLDivElement).offsetWidth
         const containerStyle = window.getComputedStyle(gridContainer)
         const minGap = parseFloat(containerStyle.getPropertyValue('gap'))
@@ -94,17 +105,21 @@ export function CollectionGames({ collectionId }: { collectionId: string }): JSX
                     'flex-shrink-0' // Preventing compression
                   )}
                 >
-                  <GamePoster
-                    gameId={gameId}
-                    groupId={`collection:${collectionId}`}
-                    dragScenario="reorder-games-in-collection"
-                    parentGap={gap}
-                    position={
-                      (index % columns === 0 && 'left') ||
-                      (index % columns === columns - 1 && 'right') ||
-                      'center'
-                    }
-                  />
+                  {/* 添加LazyLoadComponent包装 */}
+                  <LazyLoadComponent threshold={300} scrollPosition={scrollPosition}>
+                    <GamePoster
+                      gameId={gameId}
+                      groupId={`collection:${collectionId}`}
+                      dragScenario="reorder-games-in-collection"
+                      parentGap={gap}
+                      position={
+                        (index % columns === 0 && 'left') ||
+                        (index % columns === columns - 1 && 'right') ||
+                        'center'
+                      }
+                      scrollPosition={scrollPosition} // 传递给GamePoster
+                    />
+                  </LazyLoadComponent>
                 </div>
               ))}
             </div>
@@ -114,3 +129,6 @@ export function CollectionGames({ collectionId }: { collectionId: string }): JSX
     </DragContext.Provider>
   )
 }
+
+// 使用trackWindowScroll高阶组件包装CollectionGamesComponent
+export const CollectionGames = trackWindowScroll(CollectionGamesComponent)

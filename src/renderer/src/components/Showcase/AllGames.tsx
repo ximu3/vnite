@@ -13,8 +13,13 @@ import {
 import { useConfigState } from '~/hooks'
 import { sortGames } from '~/stores/game'
 import { GamePoster } from './posters/GamePoster'
+import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
 
-export function AllGames(): JSX.Element {
+export function AllGamesComponent({
+  scrollPosition
+}: {
+  scrollPosition: { x: number; y: number }
+}): JSX.Element {
   const [by, setBy] = useConfigState('game.showcase.sort.by')
   const [order, setOrder] = useConfigState('game.showcase.sort.order')
   const games = sortGames(by, order)
@@ -74,16 +79,15 @@ export function AllGames(): JSX.Element {
         )}
       >
         {games.map((gameId) => (
-          <div
-            key={gameId}
-            className={cn(
-              'flex-shrink-0' // Preventing compression
-            )}
-          >
-            <GamePoster gameId={gameId} />
+          <div key={gameId} className={cn('flex-shrink-0')}>
+            <LazyLoadComponent threshold={300} scrollPosition={scrollPosition}>
+              <GamePoster gameId={gameId} scrollPosition={scrollPosition} />
+            </LazyLoadComponent>
           </div>
         ))}
       </div>
     </div>
   )
 }
+
+export const AllGames = trackWindowScroll(AllGamesComponent)

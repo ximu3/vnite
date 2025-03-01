@@ -79,9 +79,16 @@ export class DBManager {
     const db = this.getInstance(dbName)
 
     try {
+      if (docId === '#all' && path === '#all') {
+        await this.setAllDocs(dbName, Object.values(value))
+        return
+      }
       await db.upsert(docId, (doc: any) => {
         // 对于新建文档，doc 将是一个空对象，只包含 _id
         if (path === '#all') {
+          if (value == '#delete') {
+            return { _id: docId, _deleted: true }
+          }
           // 保留 _id 和 _rev (如果存在)
           return {
             ...doc,

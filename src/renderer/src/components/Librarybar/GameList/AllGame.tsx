@@ -14,15 +14,21 @@ import { ContextMenuContent, ContextMenuTrigger, ContextMenu } from '@ui/context
 import { useConfigState } from '~/hooks'
 import { sortGames } from '~/stores/game'
 import { GameNav } from '../GameNav'
+import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
 
-export function AllGame(): JSX.Element {
+// 将组件拆分为内部组件和导出组件
+export function AllGameComponent({
+  scrollPosition
+}: {
+  scrollPosition: { x: number; y: number }
+}): JSX.Element {
   const [by, setBy] = useConfigState('game.gameList.sort.by')
   const [order, setOrder] = useConfigState('game.gameList.sort.order')
   const toggleOrder = (): void => {
     setOrder(order === 'asc' ? 'desc' : 'asc')
   }
   const games = sortGames(by, order)
-  console.warn(`[DEBUG] AllGame`)
+
   return (
     <AccordionItem value="all">
       <ContextMenu>
@@ -71,9 +77,14 @@ export function AllGame(): JSX.Element {
       </ContextMenu>
       <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
         {games.map((gameId) => (
-          <GameNav key={gameId} gameId={gameId} groupId="all" />
+          <LazyLoadComponent key={gameId} threshold={300} scrollPosition={scrollPosition}>
+            <GameNav gameId={gameId} groupId="all" scrollPosition={scrollPosition} />
+          </LazyLoadComponent>
         ))}
       </AccordionContent>
     </AccordionItem>
   )
 }
+
+// 使用trackWindowScroll高阶组件包装内部组件
+export const AllGame = trackWindowScroll(AllGameComponent)
