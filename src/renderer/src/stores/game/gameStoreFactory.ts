@@ -3,7 +3,7 @@ import { getValueByPath, setValueByPath } from '@appUtils'
 import { gameDoc, DEFAULT_GAME_VALUES } from '@appTypes/database'
 import { useGameRegistry } from './gameRegistry'
 import type { Get, Paths } from 'type-fest'
-import { syncTo, clearSyncDebounce } from '../utils'
+import { syncTo } from '../utils'
 
 // 单个游戏 store 的类型定义
 export interface SingleGameState {
@@ -154,7 +154,4 @@ export function deleteGameStore(gameId: string): void {
     delete gameStores[gameId]
     console.log(`[Store] 游戏 store ${gameId} 已删除`)
   }
-
-  // 同时清理该游戏的防抖函数(如果有的话)
-  clearSyncDebounce('game', gameId)
 }

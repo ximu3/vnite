@@ -2,7 +2,7 @@ import { create, StoreApi, UseBoundStore } from 'zustand'
 import { getValueByPath, setValueByPath } from '@appUtils'
 import { gameLocalDoc, DEFAULT_GAME_LOCAL_VALUES } from '@appTypes/database'
 import type { Get, Paths } from 'type-fest'
-import { syncTo, clearSyncDebounce } from '../utils'
+import { syncTo } from '../utils'
 
 // 单个游戏本地 store 的类型定义
 export interface SingleGameLocalState {
@@ -104,8 +104,6 @@ export function cleanupInactiveLocalStores(activeGameIds: string[]): void {
   Object.keys(gameLocalStores).forEach((id) => {
     if (!activeSet.has(id)) {
       delete gameLocalStores[id]
-      // 也清理防抖函数
-      clearSyncDebounce('game', id)
     }
   })
 }
@@ -126,7 +124,4 @@ export function deleteGameLocalStore(gameId: string): void {
     delete gameLocalStores[gameId]
     console.log(`[Store] 游戏本地 store ${gameId} 已删除`)
   }
-
-  // 同时清理该游戏的防抖函数(如果有的话)
-  clearSyncDebounce('game', gameId)
 }
