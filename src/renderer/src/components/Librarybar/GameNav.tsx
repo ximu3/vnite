@@ -120,7 +120,6 @@ export function GameNav({
                     gameId={gameId}
                     type="icon"
                     alt="icon"
-                    effect="opacity"
                     scrollPosition={scrollPosition}
                     className={cn('w-[18px] h-[18px] rounded-md object-cover bg-accent shadow-sm')}
                     fallback={
