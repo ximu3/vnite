@@ -64,7 +64,8 @@ export function CollectionPoster({
   position?: 'right' | 'left' | 'center'
 }): JSX.Element {
   const navigate = useNavigate()
-  const { documents: collections, reorderCollections } = useGameCollectionStore()
+  const collections = useGameCollectionStore((state) => state.documents)
+  const reorderCollections = useGameCollectionStore((state) => state.reorderCollections)
   const collectionName = collections[collectionId].name
   const gameId = collections[collectionId].games[0]
   const length = collections[collectionId].games.length

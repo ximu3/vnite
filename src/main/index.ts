@@ -58,10 +58,7 @@ async function handleGameUrl(url: string): Promise<void> {
       }
       mainWindow.focus()
 
-      const gamePath = await GameDBManager.getGameLocalValue(gameId, 'path.gamePath')
-      const mode = await GameDBManager.getGameLocalValue(gameId, 'launcher.mode')
-      const config = await GameDBManager.getGameLocalValue(gameId, `launcher.${mode}Config`)
-      mainWindow.webContents.send('start-game-from-url', gameId, gamePath, mode, config)
+      mainWindow.webContents.send('start-game-from-url', gameId)
     } else {
       launchGameId = gameId
     }

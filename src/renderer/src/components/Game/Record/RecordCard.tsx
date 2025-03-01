@@ -15,14 +15,14 @@ export function RecordCard({
   const playDays = getGamePlayDays(gameId)
   const [playingTime] = useGameState(gameId, 'record.playTime')
   const [lastRunDate] = useGameState(gameId, 'record.lastRunDate')
-  const [timer] = useGameState(gameId, 'record.timers')
+  const [timers] = useGameState(gameId, 'record.timers')
   const equalPlayingTime = playingTime / playDays
   const maxPlayTimeDay = getGameMaxPlayTimeDay(gameId)
   return (
     <div className={cn(className, 'w-auto')}>
       <div className={cn('font-bold')}>游玩数据</div>
       <Separator className={cn('my-3 bg-primary')} />
-      {lastRunDate && timer.length !== 0 ? (
+      {lastRunDate && timers.length !== 0 ? (
         <>
           <div className={cn('flex flex-row')}>
             <div>

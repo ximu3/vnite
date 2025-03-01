@@ -23,7 +23,7 @@ export const useDragContext = (): DragContextType => {
 }
 
 export function CollectionGames({ collectionId }: { collectionId: string }): JSX.Element {
-  const { documents: collections } = useGameCollectionStore()
+  const collections = useGameCollectionStore((state) => state.documents)
   const games = collections[collectionId].games
   const collectionName = collections[collectionId].name
 

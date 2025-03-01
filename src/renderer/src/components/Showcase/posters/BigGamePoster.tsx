@@ -23,9 +23,8 @@ export function BigGamePoster({
   className?: string
 }): JSX.Element {
   const navigate = useNavigate()
-  const gameMetaIndex = useGameRegistry((state) => state.gameMetaIndex)
+  const gameData = useGameRegistry((state) => state.gameMetaIndex[gameId])
   const [playTime] = useGameState(gameId, 'record.playTime')
-  const gameData = gameMetaIndex[gameId]
   const [lastRunDate] = useGameState(gameId, 'record.lastRunDate')
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [isAttributesDialogOpen, setIsAttributesDialogOpen] = React.useState(false)

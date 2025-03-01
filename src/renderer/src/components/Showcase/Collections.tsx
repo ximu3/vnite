@@ -7,7 +7,7 @@ import { cn } from '~/utils'
 import { CollectionPoster } from './posters/CollectionPoster'
 
 export function Collections(): JSX.Element {
-  const { documents: collections } = useGameCollectionStore()
+  const collections = useGameCollectionStore((state) => state.documents)
 
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 

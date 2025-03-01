@@ -33,6 +33,7 @@ export function DescriptionCard({
           'prose-a:no-underline hover:prose-a:underline', // underline effect
           'space-before-0',
           'whitespace-pre-line',
+          'break-words',
           'leading-7'
         )}
       >

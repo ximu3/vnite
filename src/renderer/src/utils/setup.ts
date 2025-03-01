@@ -11,14 +11,8 @@ import { useUpdaterStore } from '~/pages/Updater/store'
  * @param navigate 路由导航函数
  */
 export function setupGameUrlListener(navigate: (path: string) => void): () => void {
-  const handleStartGameFromUrl = (
-    _event: any,
-    gameId: string,
-    gamePath: string,
-    mode: string,
-    config: any
-  ): void => {
-    startGame(gameId, gamePath, mode, config, navigate)
+  const handleStartGameFromUrl = (_event: any, gameId: string): void => {
+    startGame(gameId, navigate)
   }
 
   return ipcOnUnique('start-game-from-url', handleStartGameFromUrl)

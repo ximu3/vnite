@@ -8,7 +8,7 @@ import { RecentGames } from './RecentGames'
 import { CollectionCM } from '~/components/contextMenu/CollectionCM'
 
 export function Collection(): JSX.Element {
-  const { documents: collections } = useGameCollectionStore()
+  const collections = useGameCollectionStore((state) => state.documents)
   const defaultValues = [...Object.keys(collections), 'all', 'recentGames']
   return (
     <ScrollArea className={cn('w-full h-full pr-3 -mr-3')}>

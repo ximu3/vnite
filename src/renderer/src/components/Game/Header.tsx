@@ -29,7 +29,7 @@ export function Header({
   className?: string
   isSticky: boolean
 }): JSX.Element {
-  const { runningGames } = useRunningGames()
+  const runningGames = useRunningGames((state) => state.runningGames)
   const [name] = useGameState(gameId, 'metadata.name')
   const [originalName] = useGameState(gameId, 'metadata.originalName')
   const [showOriginalNameInGameHeader] = useConfigState('game.gameHeader.showOriginalName')

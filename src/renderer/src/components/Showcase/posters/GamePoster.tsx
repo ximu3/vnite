@@ -73,9 +73,8 @@ export function GamePoster({
   position?: 'right' | 'left' | 'center'
 }): JSX.Element {
   const navigate = useNavigate()
-  const gameMetaIndex = useGameRegistry((state) => state.gameMetaIndex)
-  const { reorderGamesInCollection } = useGameCollectionStore()
-  const gameData = gameMetaIndex[gameId]
+  const gameData = useGameRegistry((state) => state.gameMetaIndex[gameId])
+  const reorderGamesInCollection = useGameCollectionStore((state) => state.reorderGamesInCollection)
   const collectionId = groupId?.split(':')[1]
   const [playTime] = useGameState(gameId, 'record.playTime')
   const [gameName] = useGameState(gameId, 'metadata.name')
