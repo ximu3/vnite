@@ -9,3 +9,4 @@ data
 .env.local
 .env.*.local
 app
+dev
