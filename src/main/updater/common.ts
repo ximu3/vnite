@@ -1,7 +1,5 @@
 import { BrowserWindow, ipcMain } from 'electron'
 import { autoUpdater } from 'electron-updater'
-import { upgradeAllGamesPathJson1to2 } from './utils'
-import { getDBValue, setDBValue } from '~/database'
 import log from 'electron-log/main.js'
 
 export function setupAutoUpdater(mainWindow: BrowserWindow): void {
@@ -80,19 +78,19 @@ export function setupAutoUpdater(mainWindow: BrowserWindow): void {
   }, 3000)
 }
 
-const DBVersion = {
-  pathJson: 2
-}
+// const DBVersion = {
+//   pathJson: 2
+// }
 
-export async function upgradeDBVersion(): Promise<void> {
-  const pathJsonVersion = await getDBValue('version.json', ['pathJson'], 1)
-  if (pathJsonVersion == 1) {
-    try {
-      await upgradeAllGamesPathJson1to2()
-      await setDBValue('version.json', ['pathJson'], DBVersion.pathJson)
-      log.info(`path.json 版本升级成功：${pathJsonVersion} -> ${DBVersion.pathJson}`)
-    } catch (error) {
-      log.error(`path.json 版本升级失败：${pathJsonVersion} -> ${DBVersion.pathJson}`, error)
-    }
-  }
-}
+// export async function upgradeDBVersion(): Promise<void> {
+//   const pathJsonVersion = await getDBValue('version.json', ['pathJson'], 1)
+//   if (pathJsonVersion == 1) {
+//     try {
+//       await upgradeAllGamesPathJson1to2()
+//       await setDBValue('version.json', ['pathJson'], DBVersion.pathJson)
+//       log.info(`path.json 版本升级成功：${pathJsonVersion} -> ${DBVersion.pathJson}`)
+//     } catch (error) {
+//       log.error(`path.json 版本升级失败：${pathJsonVersion} -> ${DBVersion.pathJson}`, error)
+//     }
+//   }
+// }

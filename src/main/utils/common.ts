@@ -252,10 +252,12 @@ export async function createGameShortcut(gameId: string, targetPath: string): Pr
     const iconPath = getAppTempPath(`icon_${gameId}_${Date.now()}.ico`)
 
     // Convert icons to ico format
-    await convertToIcon(originalIconPath, iconPath, {
-      sizes: [32],
-      quality: 100
-    })
+    if (originalIconPath) {
+      await convertToIcon(originalIconPath, iconPath, {
+        sizes: [32],
+        quality: 100
+      })
+    }
     // Creating URL shortcuts
     await createUrlShortcut({
       url: `vnite://rungameid/${gameId}`,

@@ -71,7 +71,7 @@ async function checkIfProcessRunning(processName: string): Promise<boolean> {
 
 async function startMagpie(): Promise<void> {
   try {
-    const magpiePath = await ConfigDBManager.getConfigValue('game.linkage.magpie.path')
+    const magpiePath = await ConfigDBManager.getConfigLocalValue('game.linkage.magpie.path')
     if (magpiePath) {
       const isRunning = await checkIfProcessRunning('Magpie.exe')
       if (isRunning) {
@@ -366,9 +366,11 @@ export class GameMonitor {
             'launcher.useMagpie'
           )
 
-          const magpiePath = await ConfigDBManager.getConfigValue('game.linkage.magpie.path')
+          const magpiePath = await ConfigDBManager.getConfigLocalValue('game.linkage.magpie.path')
 
-          const magpieHotkey = await ConfigDBManager.getConfigValue('game.linkage.magpie.hotkey')
+          const magpieHotkey = await ConfigDBManager.getConfigLocalValue(
+            'game.linkage.magpie.hotkey'
+          )
 
           if (useMagpie && !monitored.isScaled && magpiePath) {
             await startMagpie()
