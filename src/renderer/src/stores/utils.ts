@@ -14,7 +14,7 @@ import { DocChange } from '@appTypes/database'
 export async function syncTo<T extends Record<string, any>>(
   dbName: string,
   docId: string,
-  data: T
+  data: T | '#delete'
 ): Promise<void> {
   // 创建变更对象
   const change: DocChange = {

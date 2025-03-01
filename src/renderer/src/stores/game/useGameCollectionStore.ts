@@ -120,6 +120,8 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
       set((state) => ({
         documents: { ...state.documents, [id]: newCollection }
       }))
+
+      await syncTo('game-collection', id, newCollection)
       return id
     } catch (error) {
       console.error('Failed to add collection:', error)
@@ -131,13 +133,14 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
       return ''
     }
   },
-  removeCollection: (id: string): void => {
+  removeCollection: async (id: string): Promise<void> => {
     try {
       set((state) => {
         const newDocuments = { ...state.documents }
         delete newDocuments[id]
         return { documents: newDocuments }
       })
+      await syncTo('game-collection', id, '#delete')
     } catch (error) {
       console.error('Failed to remove collection:', error)
       if (error instanceof Error) {
@@ -147,7 +150,7 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
       }
     }
   },
-  renameCollection: (id: string, name: string): void => {
+  renameCollection: async (id: string, name: string): Promise<void> => {
     try {
       set((state) => {
         const newDocuments = { ...state.documents }
@@ -157,6 +160,7 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
         }
         return { documents: newDocuments }
       })
+      await syncTo('game-collection', id, get().documents[id])
     } catch (error) {
       console.error('Failed to rename collection:', error)
       if (error instanceof Error) {
@@ -166,7 +170,11 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
       }
     }
   },
-  reorderCollections: (srcId: string, destId: string, edge: 'front' | 'back'): void => {
+  reorderCollections: async (
+    srcId: string,
+    destId: string,
+    edge: 'front' | 'back'
+  ): Promise<void> => {
     try {
       if (srcId === destId) return
 
@@ -182,6 +190,7 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
         })
         return { documents: newDocuments }
       })
+      await syncTo('game-collection', '#all', get().documents)
     } catch (error) {
       console.error('Failed to reorder collections:', error)
       if (error instanceof Error) {
@@ -191,12 +200,12 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
       }
     }
   },
-  reorderGamesInCollection: (
+  reorderGamesInCollection: async (
     collectionId: string,
     srcId: string,
     destId: string,
     edge: 'front' | 'back'
-  ): void => {
+  ): Promise<void> => {
     try {
       if (srcId === destId) return
 
@@ -213,6 +222,8 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
         newDocuments[collectionId] = { ...collection, games }
         return { documents: newDocuments }
       })
+
+      await syncTo('game-collection', collectionId, get().documents[collectionId])
     } catch (error) {
       console.error('Failed to reorder games in collection:', error)
       if (error instanceof Error) {
@@ -222,7 +233,7 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
       }
     }
   },
-  addGameToCollection: (collectionId: string, gameId: string): void => {
+  addGameToCollection: async (collectionId: string, gameId: string): Promise<void> => {
     try {
       set((state) => {
         const newDocuments = { ...state.documents }
@@ -237,6 +248,7 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
         newDocuments[collectionId] = newCollection
         return { documents: newDocuments }
       })
+      await syncTo('game-collection', collectionId, get().documents[collectionId])
     } catch (error) {
       console.error('Failed to add game to collection:', error)
       if (error instanceof Error) {
@@ -246,7 +258,7 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
       }
     }
   },
-  addGamesToCollection: (collectionId: string, gameIds: string[]): void => {
+  addGamesToCollection: async (collectionId: string, gameIds: string[]): Promise<void> => {
     try {
       set((state) => {
         const newDocuments = { ...state.documents }
@@ -267,6 +279,7 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
         newDocuments[collectionId] = newCollection
         return { documents: newDocuments }
       })
+      await syncTo('game-collection', collectionId, get().documents[collectionId])
     } catch (error) {
       console.error('Failed to add games to collection:', error)
       if (error instanceof Error) {
@@ -276,7 +289,7 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
       }
     }
   },
-  removeGameFromCollection: (collectionId: string, gameId: string): void => {
+  removeGameFromCollection: async (collectionId: string, gameId: string): Promise<void> => {
     try {
       set((state) => {
         const newDocuments = { ...state.documents }
@@ -294,6 +307,7 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
         }
         return { documents: newDocuments }
       })
+      await syncTo('game-collection', collectionId, get().documents[collectionId])
     } catch (error) {
       console.error('Failed to remove game from collection:', error)
       if (error instanceof Error) {
@@ -303,7 +317,7 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
       }
     }
   },
-  removeGamesFromCollection: (collectionId: string, gameIds: string[]): void => {
+  removeGamesFromCollection: async (collectionId: string, gameIds: string[]): Promise<void> => {
     try {
       set((state) => {
         const newDocuments = { ...state.documents }
@@ -321,6 +335,7 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
         }
         return { documents: newDocuments }
       })
+      await syncTo('game-collection', collectionId, get().documents[collectionId])
     } catch (error) {
       console.error('Failed to remove games from collection:', error)
       if (error instanceof Error) {
@@ -330,7 +345,7 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
       }
     }
   },
-  removeGameFromAllCollections: (gameId: string): void => {
+  removeGameFromAllCollections: async (gameId: string): Promise<void> => {
     set((state) => {
       const newDocuments: gameCollectionDocs = { ...state.documents }
       for (const [collectionId, collection] of Object.entries(state.documents)) {
@@ -343,8 +358,9 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
       }
       return { documents: newDocuments }
     })
+    await syncTo('game-collection', '#all', get().documents)
   },
-  removeGamesFromAllCollections: (gameIds: string[]): void => {
+  removeGamesFromAllCollections: async (gameIds: string[]): Promise<void> => {
     set((state) => {
       const newDocuments: gameCollectionDocs = { ...state.documents }
       for (const [collectionId, collection] of Object.entries(state.documents)) {
@@ -357,5 +373,6 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
       }
       return { documents: newDocuments }
     })
+    await syncTo('game-collection', '#all', get().documents)
   }
 }))

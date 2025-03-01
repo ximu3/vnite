@@ -5,11 +5,18 @@ import {
   initializeGameLocalStores,
   deleteGameLocalStore
 } from './game/gameLocalStoreFactory'
+import { useGameCollectionStore } from './game'
 import { useConfigStore } from './config/useConfigStore'
 import { useConfigLocalStore } from './config/useConfigLocalStore'
 import { useAttachmentStore } from './useAttachmentStore'
 import { ipcOnUnique, ipcInvoke } from '~/utils/ipc'
-import { DocChange, AttachmentChange, gameDocs, gameLocalDocs } from '@appTypes/database'
+import {
+  DocChange,
+  AttachmentChange,
+  gameDocs,
+  gameLocalDocs,
+  gameCollectionDocs
+} from '@appTypes/database'
 import { isEqual } from 'lodash'
 
 /**
@@ -25,6 +32,11 @@ const DB_INITIALIZERS = {
     // 初始化游戏本地 stores
     initializeGameLocalStores(data)
     console.log(`[DB] game-local: 初始化了 ${Object.keys(data).length} 个游戏本地 store`)
+  },
+  'game-collection': async (data: gameCollectionDocs): Promise<void> => {
+    // 初始化游戏集合 store
+    useGameCollectionStore.getState().initializeStore(data)
+    console.log(`[DB] game-collection: 初始化了 ${Object.keys(data).length} 个游戏集合 store`)
   },
   config: async (data: any): Promise<void> => {
     // 保持原有的配置初始化
@@ -100,6 +112,24 @@ const DB_CHANGE_HANDLERS = {
     }
 
     console.log(`[DB] 游戏本地数据 ${docId} 已更新`)
+  },
+
+  'game-collection': (docId: string, data: any, deleted: boolean): void => {
+    const gameCollectionStore = useGameCollectionStore.getState()
+
+    if (deleted) {
+      // 处理游戏集合删除
+      gameCollectionStore.removeCollection(docId)
+      console.log(`[DB] 游戏集合 ${docId} 已删除`)
+      return
+    }
+
+    // 更新游戏集合
+    const currentCollection = gameCollectionStore.documents[docId]
+    if (isEqual(data, currentCollection)) return
+
+    gameCollectionStore.setDocument(docId, data)
+    console.log(`[DB] 游戏集合 ${docId} 已更新`)
   },
 
   config: (docId: string, data: any, deleted: boolean): void => {
