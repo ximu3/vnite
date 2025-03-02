@@ -5,11 +5,15 @@ import { cn } from '~/utils'
 export function Link({
   name,
   url,
-  noToolTip
+  className,
+  noToolTip,
+  tooltipSide = 'bottom'
 }: {
   name: string
   url: string
+  className?: string
   noToolTip?: boolean
+  tooltipSide?: 'top' | 'bottom' | 'left' | 'right'
 }): JSX.Element {
   return (
     <>
@@ -19,12 +23,12 @@ export function Link({
             <Button
               onClick={() => window.open(url, '_blank', 'noopener,noreferrer')}
               variant="link"
-              className={cn('p-0 h-7')}
+              className={cn('p-0 h-7', className)}
             >
               {name}
             </Button>
           </TooltipTrigger>
-          <TooltipContent side="bottom">
+          <TooltipContent side={tooltipSide}>
             <div>{url}</div>
           </TooltipContent>
         </Tooltip>
@@ -32,7 +36,7 @@ export function Link({
         <Button
           onClick={() => window.open(url, '_blank', 'noopener,noreferrer')}
           variant="link"
-          className={cn('p-0 h-7')}
+          className={cn('p-0 h-7', className)}
         >
           {name}
         </Button>

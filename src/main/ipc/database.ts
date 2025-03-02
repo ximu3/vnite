@@ -1,5 +1,5 @@
 import { ipcMain, BrowserWindow } from 'electron'
-import { DBManager, backupDatabase, restoreDatabase } from '~/database'
+import { DBManager, backupDatabase, restoreDatabase, startSync } from '~/database'
 import { DocChange } from '@appTypes/database'
 
 export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
@@ -9,6 +9,10 @@ export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
 
   ipcMain.handle('db-get-all-docs', async (_event, dbName: string) => {
     return await DBManager.getAllDocs(dbName)
+  })
+
+  ipcMain.handle('restart-sync', async (_) => {
+    await startSync()
   })
 
   ipcMain.handle(

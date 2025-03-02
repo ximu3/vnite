@@ -241,9 +241,6 @@ if (!gotTheLock) {
 
     DBManager.init()
 
-    // Sync all databases with remote
-    await startSync()
-
     createSplashWindow()
 
     // Setup tray
@@ -254,6 +251,9 @@ if (!gotTheLock) {
 
     // Setup open at login
     await setupOpenAtLogin()
+
+    // Sync all databases with remote
+    await startSync()
 
     // Setup auto updater
     // setupUpdater(mainWindow) todo

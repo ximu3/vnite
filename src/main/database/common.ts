@@ -250,6 +250,7 @@ export class DBManager {
           })
         } catch (err) {
           console.log('Database might already exist or creation failed:', err)
+          throw err
         }
       }
 
@@ -305,7 +306,7 @@ export class DBManager {
     }
   }
 
-  private static updateSyncStatus(status: SyncStatus): void {
+  static updateSyncStatus(status: SyncStatus): void {
     const mainWindow = BrowserWindow.getAllWindows()[0]
     mainWindow.webContents.send('cloud-sync-status', status)
   }

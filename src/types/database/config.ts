@@ -48,8 +48,8 @@ export interface configDocs {
 export interface configLocalDocs {
   sync: {
     enabled: boolean
-    mode: 'offical' | 'selfHosted'
-    officalConfig: {
+    mode: 'official' | 'selfHosted'
+    officialConfig: {
       auth: {
         username: string
         password: string
@@ -119,8 +119,8 @@ export const DEFAULT_CONFIG_VALUES = {
 export const DEFAULT_CONFIG_LOCAL_VALUES = {
   sync: {
     enabled: true,
-    mode: 'offical',
-    officalConfig: {
+    mode: 'official',
+    officialConfig: {
       auth: {
         username: 'ximu',
         password: 'S%3WcHlrlA^PUl'

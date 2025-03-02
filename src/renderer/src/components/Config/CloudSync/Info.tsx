@@ -1,16 +1,8 @@
 import { cn, formatDateToChineseWithSeconds } from '~/utils'
-import { Button } from '@ui/button'
-import { ipcInvoke } from '~/utils'
 
 import { useCloudSyncStore } from './store'
 
-export function CloudSyncInfo({
-  className,
-  isWithAction = false
-}: {
-  className?: string
-  isWithAction?: boolean
-}): JSX.Element {
+export function CloudSyncInfo({ className }: { className?: string }): JSX.Element {
   const { status } = useCloudSyncStore()
 
   return (
@@ -40,20 +32,10 @@ export function CloudSyncInfo({
                   )}
                 </div>
               </div>
-              {isWithAction && (
-                <Button
-                  className={cn('w-[58px] h-[20px] non-draggable text-xs self-end')}
-                  onClick={async () => {
-                    await ipcInvoke('trigger-sync')
-                  }}
-                >
-                  手动同步
-                </Button>
-              )}
             </div>
             <div className={cn('flex flex-row gap-2 items-center')}>
-              <div className={cn('')}>消息</div>
-              <div className={cn('')}>{status.message}</div>
+              <div className={cn('flex-shrink-0')}>消息</div>
+              <div className={cn('truncate')}>{status.message}</div>
             </div>
             <div className={cn('flex flex-row gap-2 items-center')}>
               <div className={cn('')}>时间</div>
