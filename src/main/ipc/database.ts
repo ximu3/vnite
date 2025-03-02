@@ -1,5 +1,5 @@
 import { ipcMain, BrowserWindow } from 'electron'
-import { DBManager } from '~/database'
+import { DBManager, backupDatabase, restoreDatabase } from '~/database'
 import { DocChange } from '@appTypes/database'
 
 export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
@@ -17,6 +17,14 @@ export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
       return await DBManager.checkAttachment(dbName, docId, attachmentId)
     }
   )
+
+  ipcMain.handle('backup-database', async (_, targetPath: string) => {
+    await backupDatabase(targetPath)
+  })
+
+  ipcMain.handle('restore-database', async (_, sourcePath: string) => {
+    await restoreDatabase(sourcePath)
+  })
 
   mainWindow.webContents.send('databaseIPCReady')
 }

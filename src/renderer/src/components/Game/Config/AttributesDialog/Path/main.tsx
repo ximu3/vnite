@@ -18,7 +18,7 @@ import { useGameLocalState } from '~/hooks'
 import { cn, ipcInvoke } from '~/utils'
 
 export function Path({ gameId }: { gameId: string }): JSX.Element {
-  const [monitorPath] = useGameLocalState(gameId, 'monitor.folderConfig.path')
+  const [monitorPath] = useGameLocalState(gameId, 'launcher.fileConfig.monitorPath')
   const [gamePath, setGamePath] = useGameLocalState(gameId, 'path.gamePath')
 
   const [savePath, setSavePath] = useGameLocalState(gameId, 'path.savePaths')
@@ -31,10 +31,14 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
       return
     }
     await setGamePath(filePath)
-    // const icon = await canAccessImageFile(gameId, 'icon')
-    const icon = await ipcInvoke('check-game-icon', gameId)
-    if (!icon) {
-      await ipcInvoke('save-game-icon', gameId, filePath)
+    const isIconAccessible = await ipcInvoke(
+      'db-check-attachment',
+      'game',
+      gameId,
+      'images/icon.webp'
+    )
+    if (!isIconAccessible) {
+      await ipcInvoke('save-game-icon-by-file', gameId, filePath)
     }
     if (!monitorPath) {
       toast.promise(
