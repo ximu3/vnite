@@ -3,7 +3,6 @@ import fse from 'fs-extra'
 import { ipcMain, BrowserWindow } from 'electron'
 import { updateRecentGames, simulateHotkey } from '~/utils'
 import { GameDBManager, ConfigDBManager } from '~/database'
-import { gameLocalDoc } from '@appTypes/database'
 import log from 'electron-log/main.js'
 import { backupGameSave } from '~/database'
 import { exec } from 'child_process'
@@ -92,6 +91,10 @@ async function startMagpie(): Promise<void> {
 
 interface GameMonitorOptions {
   gameId: string
+  config: {
+    mode: 'file' | 'folder' | 'process'
+    path: string
+  }
   magpieHotkey?: string
   checkInterval?: number
   executableExtensions?: string[]
@@ -102,6 +105,7 @@ interface MonitoredProcess {
   isRunning: boolean
   pid?: number
   isScaled?: boolean
+  isProcessNameMode?: boolean // 新增：标记是否为进程名监控模式
 }
 
 interface GameStatus {
@@ -115,7 +119,6 @@ interface GameStatus {
 export class GameMonitor {
   private options: Required<GameMonitorOptions>
   private isRunning: boolean = false
-  private config?: gameLocalDoc['monitor']
   private intervalId?: NodeJS.Timeout
   private monitoredProcesses: MonitoredProcess[] = []
   private ipcHandler?: () => void
@@ -178,61 +181,93 @@ export class GameMonitor {
 
   private async terminateProcess(process: MonitoredProcess): Promise<boolean> {
     try {
-      // Normalization path
-      const normalizedPath = this.normalizePath(process.path)
-      const processName = path.basename(normalizedPath)
+      const isProcessNameMode = process.isProcessNameMode === true
 
-      console.log(`尝试终止进程: ${normalizedPath}`)
+      if (isProcessNameMode) {
+        // 进程名模式：直接使用进程名
+        const processName = process.path
+        console.log(`尝试终止进程名: ${processName}`)
 
-      const methods = [
-        // Method 2: Exact Match by Path using PowerShell
-        async (): Promise<void> => {
-          const psCommand = `Get-Process | Where-Object {$_.Path -eq '${normalizedPath}'} | Stop-Process -Force`
-          await execAsync(`powershell -Command "${psCommand}"`, {
+        try {
+          // 使用taskkill按名称终止进程
+          await execAsync(`taskkill /F /IM "${processName}"`, {
             shell: 'cmd.exe'
           })
-        }
-      ]
-
-      for (const method of methods) {
-        try {
-          await method()
           console.log(`进程 ${processName} 已成功终止`)
           return true
         } catch (error) {
           const errorMessage = (error as any)?.message?.toLowerCase() || ''
 
-          // If the process no longer exists, termination is considered successful
+          // 如果进程不存在，视为终止成功
           if (
             errorMessage.includes('不存在') ||
             errorMessage.includes('找不到') ||
-            errorMessage.includes('no process') ||
-            errorMessage.includes('cannot find') ||
-            errorMessage.includes('没有找到进程')
+            errorMessage.includes('no process')
           ) {
             console.log(`进程 ${processName} 已经不存在`)
             return true
           }
 
-          // Log the error but keep trying the next method
-          console.warn(`当前方法终止进程 ${processName} 失败:`, error)
-          continue
+          console.error(`无法终止进程 ${processName}:`, error)
+          return false
         }
+      } else {
+        // Normalization path
+        const normalizedPath = this.normalizePath(process.path)
+        const processName = path.basename(normalizedPath)
+
+        console.log(`尝试终止进程: ${normalizedPath}`)
+
+        const methods = [
+          // Method 2: Exact Match by Path using PowerShell
+          async (): Promise<void> => {
+            const psCommand = `Get-Process | Where-Object {$_.Path -eq '${normalizedPath}'} | Stop-Process -Force`
+            await execAsync(`powershell -Command "${psCommand}"`, {
+              shell: 'cmd.exe'
+            })
+          }
+        ]
+
+        for (const method of methods) {
+          try {
+            await method()
+            console.log(`进程 ${processName} 已成功终止`)
+            return true
+          } catch (error) {
+            const errorMessage = (error as any)?.message?.toLowerCase() || ''
+
+            // If the process no longer exists, termination is considered successful
+            if (
+              errorMessage.includes('不存在') ||
+              errorMessage.includes('找不到') ||
+              errorMessage.includes('no process') ||
+              errorMessage.includes('cannot find') ||
+              errorMessage.includes('没有找到进程')
+            ) {
+              console.log(`进程 ${processName} 已经不存在`)
+              return true
+            }
+
+            // Log the error but keep trying the next method
+            console.warn(`当前方法终止进程 ${processName} 失败:`, error)
+            continue
+          }
+        }
+
+        // Finally verify that the process is still running
+        const processes = await getProcessList()
+        const processStillExists = processes.some(
+          (p) => this.normalizePath(p.executablePath) === normalizedPath
+        )
+
+        if (!processStillExists) {
+          console.log(`进程 ${processName} 已不存在，视为终止成功`)
+          return true
+        }
+
+        console.error(`无法终止进程 ${processName}，所有方法都失败`)
+        return false
       }
-
-      // Finally verify that the process is still running
-      const processes = await getProcessList()
-      const processStillExists = processes.some(
-        (p) => this.normalizePath(p.executablePath) === normalizedPath
-      )
-
-      if (!processStillExists) {
-        console.log(`进程 ${processName} 已不存在，视为终止成功`)
-        return true
-      }
-
-      console.error(`无法终止进程 ${processName}，所有方法都失败`)
-      return false
     } catch (error) {
       console.error('终止进程失败:', error)
       return false
@@ -241,19 +276,26 @@ export class GameMonitor {
 
   public async init(): Promise<void> {
     try {
-      this.config = await GameDBManager.getGameLocalValue(this.options.gameId, 'monitor')
-
-      if (this.config.mode === 'folder') {
-        const files = await this.getExecutableFiles(this.config.folderConfig.path)
+      if (this.options.config.mode === 'folder') {
+        const files = await this.getExecutableFiles(this.options.config.path)
         this.monitoredProcesses = files.map((file) => ({
           path: file,
           isRunning: false
         }))
-      } else if (this.config.mode === 'file') {
+      } else if (this.options.config.mode === 'file') {
         this.monitoredProcesses = [
           {
-            path: this.config.fileConfig.path,
+            path: this.options.config.path,
             isRunning: false
+          }
+        ]
+      } else if (this.options.config.mode === 'process') {
+        // 新增对进程名监控的支持
+        this.monitoredProcesses = [
+          {
+            path: this.options.config.path,
+            isRunning: false,
+            isProcessNameMode: true // 标记为进程名监控模式
           }
         ]
       }
@@ -331,32 +373,41 @@ export class GameMonitor {
       const previousStates = this.monitoredProcesses.map((p) => p.isRunning)
 
       for (const monitored of this.monitoredProcesses) {
-        // Path to normalized monitoring
-        const normalizedMonitoredPath = this.normalizePath(monitored.path)
+        // 检查是否是进程名监控模式
+        const isProcessNameMode = monitored.isProcessNameMode === true
 
         const processInfo = processes.find((proc) => {
-          if (!proc.executablePath) return false
+          if (isProcessNameMode) {
+            // 按进程名匹配
+            return proc.name.toLowerCase() === monitored.path.toLowerCase()
+          } else {
+            // 原有的路径匹配逻辑
+            if (!proc.executablePath) return false
 
-          // Normative process pathway
-          const normalizedExecPath = this.normalizePath(proc.executablePath)
-          const normalizedCmdPath = this.normalizePath(proc.cmd)
+            // 路径规范化
+            const normalizedMonitoredPath = this.normalizePath(monitored.path)
+            const normalizedExecPath = this.normalizePath(proc.executablePath)
+            const normalizedCmdPath = this.normalizePath(proc.cmd)
 
-          // Path Matching Check
-          return (
-            normalizedExecPath === normalizedMonitoredPath ||
-            normalizedCmdPath === normalizedMonitoredPath
-          )
+            // 路径匹配检查
+            return (
+              normalizedExecPath === normalizedMonitoredPath ||
+              normalizedCmdPath === normalizedMonitoredPath
+            )
+          }
         })
 
         if (processInfo) {
-          console.log(`游戏 ${this.options.gameId} 进程 ${processInfo.executablePath} 正在运行`)
+          console.log(
+            `游戏 ${this.options.gameId} 进程 ${isProcessNameMode ? processInfo.name : processInfo.executablePath} 正在运行`
+          )
         }
 
         const wasRunning = monitored.isRunning
         monitored.isRunning = !!processInfo
         monitored.pid = processInfo?.pid || monitored.pid
 
-        // If the process has just been started (not running before, now running)
+        // 如果进程刚刚启动（之前未运行，现在运行）
         if (!wasRunning && monitored.isRunning) {
           console.log(`游戏 ${this.options.gameId} 进程已启动`)
 

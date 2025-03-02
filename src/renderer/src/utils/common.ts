@@ -65,9 +65,14 @@ export async function startGame(gameId: string, navigate?: (path: string) => voi
     }
     await setGameLocalValue('path.gamePath', filePath)
     // const isIconAccessible = await canAccessImageFile(gameId, 'icon')
-    const isIconAccessible = await ipcInvoke('check-game-icon', gameId)
+    const isIconAccessible = await ipcInvoke(
+      'db-check-attachment',
+      'game',
+      gameId,
+      'images/icon.webp'
+    )
     if (!isIconAccessible) {
-      await ipcInvoke('save-game-icon', gameId, filePath)
+      await ipcInvoke('save-game-icon-by-file', gameId, filePath)
     }
     toast.promise(
       async () => {
@@ -82,33 +87,17 @@ export async function startGame(gameId: string, navigate?: (path: string) => voi
     return
   }
 
-  const monitorMode = getGameLocalValue('monitor.mode')
-  if (monitorMode === 'file') {
-    const monitorConfig = getGameLocalValue('monitor.fileConfig')
-    if (!monitorConfig.path) {
-      toast.error('计时器配置错误，请检查！')
-      return
-    }
-  } else if (monitorMode === 'folder') {
-    const monitorConfig = getGameLocalValue('monitor.folderConfig')
-    if (!monitorConfig.path) {
-      toast.error('计时器配置错误，请检查！')
-      return
-    }
-  } else {
-    const monitorConfig = getGameLocalValue('monitor.processConfig')
-    if (!monitorConfig.name) {
-      toast.error('计时器配置错误，请检查！')
-      return
-    }
-  }
-
   const launcherMode = getGameLocalValue('launcher.mode')
 
   // 根据不同模式验证配置
   if (launcherMode === 'file') {
-    const launcherconfig = getGameLocalValue(`launcher.${launcherMode}Config`)
-    if (launcherconfig.path && launcherconfig.workingDirectory) {
+    const launcherConfig = getGameLocalValue(`launcher.${launcherMode}Config`)
+    if (
+      launcherConfig.path &&
+      launcherConfig.workingDirectory &&
+      launcherConfig.monitorMode &&
+      launcherConfig.monitorPath
+    ) {
       ipcSend('start-game', gameId)
       setRunningGames([...runningGames, gameId])
       if (getGameValue('record.playStatus') === 'unplayed') {
@@ -118,8 +107,13 @@ export async function startGame(gameId: string, navigate?: (path: string) => voi
       toast.error('运行配置错误，请检查！')
     }
   } else if (launcherMode === 'script') {
-    const launcherconfig = getGameLocalValue(`launcher.${launcherMode}Config`)
-    if (launcherconfig.command && launcherconfig.workingDirectory) {
+    const launcherConfig = getGameLocalValue(`launcher.${launcherMode}Config`)
+    if (
+      launcherConfig.command &&
+      launcherConfig.workingDirectory &&
+      launcherConfig.monitorMode &&
+      launcherConfig.monitorPath
+    ) {
       ipcSend('start-game', gameId)
       setRunningGames([...runningGames, gameId])
       if (getGameValue('record.playStatus') === 'unplayed') {
@@ -129,8 +123,8 @@ export async function startGame(gameId: string, navigate?: (path: string) => voi
       toast.error('运行配置错误，请检查！')
     }
   } else if (launcherMode === 'url') {
-    const launcherconfig = getGameLocalValue(`launcher.${launcherMode}Config`)
-    if (launcherconfig.url) {
+    const launcherConfig = getGameLocalValue(`launcher.${launcherMode}Config`)
+    if (launcherConfig.url && launcherConfig.monitorMode && launcherConfig.monitorPath) {
       ipcSend('start-game', gameId)
       setRunningGames([...runningGames, gameId])
       if (getGameValue('record.playStatus') === 'unplayed') {

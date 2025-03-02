@@ -94,29 +94,22 @@ export interface gameLocalDoc {
       path: string
       workingDirectory: string
       args: string[]
+      monitorMode: 'file' | 'folder' | 'process'
+      monitorPath: string
     }
     urlConfig: {
       url: string
       browserPath: string
+      monitorMode: 'file' | 'folder' | 'process'
+      monitorPath: string
     }
     scriptConfig: {
       workingDirectory: string
       command: string[]
+      monitorMode: 'file' | 'folder' | 'process'
+      monitorPath: string
     }
     useMagpie: boolean
-  }
-  monitor: {
-    mode: 'file' | 'folder' | 'process'
-    fileConfig: {
-      path: string
-    }
-    folderConfig: {
-      path: string
-      deepth: number
-    }
-    processConfig: {
-      name: string
-    }
   }
 }
 
@@ -132,30 +125,23 @@ export const DEFAULT_GAME_LOCAL_VALUES = {
     fileConfig: {
       path: '',
       workingDirectory: '',
-      args: []
+      args: [],
+      monitorMode: 'folder',
+      monitorPath: ''
     },
     urlConfig: {
       url: '',
-      browserPath: ''
+      browserPath: '',
+      monitorMode: 'folder',
+      monitorPath: ''
     },
     scriptConfig: {
       workingDirectory: '',
-      command: []
+      command: [],
+      monitorMode: 'folder',
+      monitorPath: ''
     },
     useMagpie: false
-  },
-  monitor: {
-    mode: 'file',
-    fileConfig: {
-      path: ''
-    },
-    folderConfig: {
-      path: '',
-      deepth: 3
-    },
-    processConfig: {
-      name: ''
-    }
   }
 } satisfies gameLocalDoc
 

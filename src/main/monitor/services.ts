@@ -1,4 +1,5 @@
 import { GameMonitor } from './common'
+import { GameDBManager } from '~/database'
 import log from 'electron-log/main.js'
 
 /**
@@ -8,8 +9,21 @@ import log from 'electron-log/main.js'
  */
 export async function startMonitor(gameId: string): Promise<void> {
   try {
+    const launcherMode = await GameDBManager.getGameLocalValue(gameId, 'launcher.mode')
+    const monitorMode = await GameDBManager.getGameLocalValue(
+      gameId,
+      `launcher.${launcherMode}Config.monitorMode`
+    )
+    const monitorPath = await GameDBManager.getGameLocalValue(
+      gameId,
+      `launcher.${launcherMode}Config.monitorPath`
+    )
     const monitor = new GameMonitor({
-      gameId
+      gameId,
+      config: {
+        mode: monitorMode,
+        path: monitorPath
+      }
     })
     await monitor.init()
     monitor.start()

@@ -6,19 +6,16 @@ export async function defaultPreset(gameId: string): Promise<void> {
 
   const mode = 'file'
   const workingDirectory = path.dirname(gamePath)
-  const timerMode = 'folder'
-  const timerPath = path.dirname(gamePath)
+  const monitorMode = 'folder'
+  const monitorPath = path.dirname(gamePath)
 
   await GameDBManager.setGameLocalValue(gameId, 'launcher.mode', mode)
   await GameDBManager.setGameLocalValue(gameId, `launcher.${mode}Config`, {
     path: gamePath,
     workingDirectory,
-    args: []
-  })
-  await GameDBManager.setGameLocalValue(gameId, 'monitor.mode', timerMode)
-  await GameDBManager.setGameLocalValue(gameId, 'monitor.folderConfig', {
-    path: timerPath,
-    deepth: 3
+    args: [],
+    monitorMode,
+    monitorPath
   })
 }
 
@@ -27,8 +24,8 @@ export async function lePreset(gameId: string): Promise<void> {
 
   const mode = 'script'
   const workingDirectory = path.dirname(gamePath)
-  const timerMode = 'folder'
-  const timerPath = path.dirname(gamePath)
+  const monitorMode = 'folder'
+  const monitorPath = path.dirname(gamePath)
 
   const lePath = await ConfigDBManager.getConfigLocalValue('game.linkage.localeEmulator.path')
   if (!lePath) {
@@ -39,12 +36,9 @@ export async function lePreset(gameId: string): Promise<void> {
   await GameDBManager.setGameLocalValue(gameId, 'launcher.mode', mode)
   await GameDBManager.setGameLocalValue(gameId, `launcher.${mode}Config`, {
     workingDirectory,
-    command: script
-  })
-  await GameDBManager.setGameLocalValue(gameId, 'monitor.mode', timerMode)
-  await GameDBManager.setGameLocalValue(gameId, 'monitor.folderConfig', {
-    path: timerPath,
-    deepth: 3
+    command: script,
+    monitorMode,
+    monitorPath
   })
 }
 
@@ -53,18 +47,15 @@ export async function steamPreset(gameId: string, steamId: string): Promise<void
 
   const mode = 'url'
   const url = `steam://rungameid/${steamId}`
-  const timerMode = 'folder'
-  const timerPath = path.dirname(gamePath)
+  const monitorMode = 'folder'
+  const monitorPath = path.dirname(gamePath)
 
   await GameDBManager.setGameLocalValue(gameId, 'launcher.mode', mode)
   await GameDBManager.setGameLocalValue(gameId, `launcher.${mode}Config`, {
     url,
-    browserPath: ''
-  })
-  await GameDBManager.setGameLocalValue(gameId, 'monitor.mode', timerMode)
-  await GameDBManager.setGameLocalValue(gameId, 'monitor.folderConfig', {
-    path: timerPath,
-    deepth: 3
+    browserPath: '',
+    monitorMode,
+    monitorPath
   })
 }
 
@@ -78,19 +69,16 @@ export async function vbaPreset(gameId: string): Promise<void> {
 
   const mode = 'script'
   const workingDirectory = path.dirname(vbaPath)
-  const timerMode = 'folder'
-  const timerPath = path.dirname(vbaPath)
+  const monitorMode = 'folder'
+  const monitorPath = path.dirname(vbaPath)
 
   const script = [`"${vbaPath}" "${gamePath}"`]
 
   await GameDBManager.setGameLocalValue(gameId, 'launcher.mode', mode)
   await GameDBManager.setGameLocalValue(gameId, `launcher.${mode}Config`, {
     workingDirectory,
-    command: script
-  })
-  await GameDBManager.setGameLocalValue(gameId, 'monitor.mode', timerMode)
-  await GameDBManager.setGameLocalValue(gameId, 'monitor.folderConfig', {
-    path: timerPath,
-    deepth: 3
+    command: script,
+    monitorMode,
+    monitorPath
   })
 }
