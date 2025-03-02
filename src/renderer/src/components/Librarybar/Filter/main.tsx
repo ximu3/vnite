@@ -19,7 +19,7 @@ export function Filter({ children }: { children: React.ReactNode }): JSX.Element
         </PopoverTrigger>
         <TooltipContent side="right">高级筛选</TooltipContent>
       </Tooltip>
-      <PopoverContent side="right" className="w-80 h-screen">
+      <PopoverContent side="right" className="h-screen w-80">
         <div className={cn('flex flex-col gap-3')}>
           <div className={cn('flex flex-row justify-between items-center')}>
             <div className={cn('font-bold')}>筛选器</div>
@@ -30,7 +30,7 @@ export function Filter({ children }: { children: React.ReactNode }): JSX.Element
                 setIsFilterMenuOpen(false)
               }}
             >
-              <Cross2Icon className="h-4 w-4" />
+              <Cross2Icon className="w-4 h-4" />
             </Button>
           </div>
           <Button
@@ -85,31 +85,31 @@ export function Filter({ children }: { children: React.ReactNode }): JSX.Element
             <div className={cn('flex flex-row justify-between items-center w-full')}>
               <div className={cn('whitespace-nowrap text-sm text-foreground ml-[6px]')}>开发商</div>
             </div>
-            <FilterCombobox filed="developers" placeholder="开发商" />
+            <FilterCombobox filed="metadata.developers" placeholder="开发商" />
           </div>
           <div className={cn('flex flex-col gap-1 items-start justify-start')}>
             <div className={cn('flex flex-row justify-between items-center w-full')}>
               <div className={cn('whitespace-nowrap text-sm text-foreground ml-[6px]')}>发行商</div>
             </div>
-            <FilterCombobox filed="publishers" placeholder="发行商" />
+            <FilterCombobox filed="metadata.publishers" placeholder="发行商" />
           </div>
           <div className={cn('flex flex-col gap-1 items-start justify-start')}>
             <div className={cn('flex flex-row justify-between items-center w-full')}>
               <div className={cn('whitespace-nowrap text-sm text-foreground ml-[6px]')}>类别</div>
             </div>
-            <FilterCombobox filed="genres" placeholder="类别" />
+            <FilterCombobox filed="metadata.genres" placeholder="类别" />
           </div>
           <div className={cn('flex flex-col gap-1 items-start justify-start')}>
             <div className={cn('flex flex-row justify-between items-center w-full')}>
               <div className={cn('whitespace-nowrap text-sm text-foreground ml-[6px]')}>平台</div>
             </div>
-            <FilterCombobox filed="platforms" placeholder="平台" />
+            <FilterCombobox filed="metadata.platforms" placeholder="平台" />
           </div>
           <div className={cn('flex flex-col gap-1 items-start justify-start')}>
             <div className={cn('flex flex-row justify-between items-center w-full')}>
               <div className={cn('whitespace-nowrap text-sm text-foreground ml-[6px]')}>标签</div>
             </div>
-            <FilterCombobox filed="tags" placeholder="标签" />
+            <FilterCombobox filed="metadata.tags" placeholder="标签" />
           </div>
         </div>
       </PopoverContent>
