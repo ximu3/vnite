@@ -31,13 +31,15 @@ export function CollectionMenu({
         <ContextMenuSubTrigger>添加至</ContextMenuSubTrigger>
         <ContextMenuPortal>
           <ContextMenuSubContent className="max-w-[300px]">
-            {Object.entries(collections)
-              .filter(([key]) => !gameInCollectionsId.includes(key))
-              .map(([key, value]) => (
-                <ContextMenuItem key={key} onClick={() => addGameToCollection(key, gameId)} inset>
-                  <span className="truncate">{value.name}</span>
-                </ContextMenuItem>
-              ))}
+            <div className={cn('max-h-[224px] overflow-auto scrollbar-base-thin')}>
+              {Object.entries(collections)
+                .filter(([key]) => !gameInCollectionsId.includes(key))
+                .map(([key, value]) => (
+                  <ContextMenuItem key={key} onClick={() => addGameToCollection(key, gameId)} inset>
+                    <span className="truncate">{value.name}</span>
+                  </ContextMenuItem>
+                ))}
+            </div>
 
             {Object.entries(collections).filter(([key]) => !gameInCollectionsId.includes(key))
               .length > 0 && <ContextMenuSeparator />}

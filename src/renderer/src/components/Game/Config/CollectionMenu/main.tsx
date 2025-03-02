@@ -31,13 +31,19 @@ export function CollectionMenu({
         <DropdownMenuSubTrigger>添加至</DropdownMenuSubTrigger>
         <DropdownMenuPortal>
           <DropdownMenuSubContent className="max-w-[300px]">
-            {Object.entries(collections)
-              .filter(([key]) => !gameInCollectionsId.includes(key))
-              .map(([key, value]) => (
-                <DropdownMenuItem key={key} onClick={() => addGameToCollection(key, gameId)} inset>
-                  <span className="truncate">{value.name}</span>
-                </DropdownMenuItem>
-              ))}
+            <div className={cn('max-h-[224px] overflow-auto scrollbar-base-thin')}>
+              {Object.entries(collections)
+                .filter(([key]) => !gameInCollectionsId.includes(key))
+                .map(([key, value]) => (
+                  <DropdownMenuItem
+                    key={key}
+                    onClick={() => addGameToCollection(key, gameId)}
+                    inset
+                  >
+                    <span className="truncate">{value.name}</span>
+                  </DropdownMenuItem>
+                ))}
+            </div>
             {Object.entries(collections).filter(([key]) => !gameInCollectionsId.includes(key))
               .length > 0 && <DropdownMenuSeparator />}
             <DropdownMenuItem onSelect={openAddCollectionDialog}>
