@@ -16,6 +16,10 @@ import { sortGames } from '~/stores/game'
 import { GameNav } from '../GameNav'
 import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
 
+function PlaceHolder(): JSX.Element {
+  return <div className={cn('p-3 h-5 rounded-none bg-transparent')}></div>
+}
+
 // 将组件拆分为内部组件和导出组件
 export function AllGameComponent({
   scrollPosition
@@ -77,7 +81,12 @@ export function AllGameComponent({
       </ContextMenu>
       <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
         {games.map((gameId) => (
-          <LazyLoadComponent key={gameId} threshold={300} scrollPosition={scrollPosition}>
+          <LazyLoadComponent
+            key={gameId}
+            threshold={300}
+            scrollPosition={scrollPosition}
+            placeholder={<PlaceHolder />}
+          >
             <GameNav gameId={gameId} groupId="all" scrollPosition={scrollPosition} />
           </LazyLoadComponent>
         ))}

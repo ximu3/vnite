@@ -15,6 +15,17 @@ import { sortGames } from '~/stores/game'
 import { GamePoster } from './posters/GamePoster'
 import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
 
+function PlaceHolder(): JSX.Element {
+  return (
+    <div
+      className={cn(
+        'w-[148px] h-[222px] cursor-pointer object-cover',
+        '3xl:w-[176px] 3xl:h-[264px] bg-transparent'
+      )}
+    ></div>
+  )
+}
+
 export function AllGamesComponent({
   scrollPosition
 }: {
@@ -80,7 +91,11 @@ export function AllGamesComponent({
       >
         {games.map((gameId) => (
           <div key={gameId} className={cn('flex-shrink-0')}>
-            <LazyLoadComponent threshold={300} scrollPosition={scrollPosition}>
+            <LazyLoadComponent
+              threshold={300}
+              scrollPosition={scrollPosition}
+              placeholder={<PlaceHolder />}
+            >
               <GamePoster gameId={gameId} scrollPosition={scrollPosition} />
             </LazyLoadComponent>
           </div>
