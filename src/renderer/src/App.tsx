@@ -1,5 +1,6 @@
 import { Toaster } from '@ui/sonner'
 import { Titlebar } from './components/Titlebar'
+import { ThemeProvider } from './components/ThemeProvider'
 import { Main } from './pages/Main'
 import { GameAdder } from './pages/GameAdder'
 import { GameBatchAdder } from './pages/GameBatchAdder'
@@ -11,7 +12,7 @@ import { Setup } from './Setup'
 function App(): JSX.Element {
   console.warn('[DEBUG] app.tsx')
   return (
-    <>
+    <ThemeProvider>
       <Titlebar />
       <HashRouter>
         <Setup />
@@ -22,7 +23,7 @@ function App(): JSX.Element {
       <Toaster />
       <UpdateDialog />
       <Importer />
-    </>
+    </ThemeProvider>
   )
 }
 

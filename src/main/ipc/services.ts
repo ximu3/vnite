@@ -6,6 +6,7 @@ import { setupScraperIPC } from './scraper'
 import { setupAdderIPC } from './adder'
 import { setupMediaIPC } from './media'
 import { setupImporterIPC } from './importer'
+import { setupThemeIPC } from './theme'
 import { BrowserWindow } from 'electron'
 import log from 'electron-log/main'
 
@@ -19,6 +20,7 @@ export function setupIPC(mainWindow: BrowserWindow): void {
     setupAdderIPC(mainWindow)
     setupMediaIPC(mainWindow)
     setupImporterIPC(mainWindow)
+    setupThemeIPC(mainWindow)
   } catch (error) {
     log.error('Error setting up IPC:', error)
     throw error
