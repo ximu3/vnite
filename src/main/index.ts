@@ -19,7 +19,7 @@ import {
   checkPortableMode
 } from './utils'
 // import { setupUpdater } from './updater' todo
-// import { initScraper } from './scraper' todo
+import { initScraper } from './scraper'
 import { startSync, GameDBManager, DBManager } from '~/database'
 
 let mainWindow: BrowserWindow
@@ -259,7 +259,7 @@ if (!gotTheLock) {
     // setupUpdater(mainWindow) todo
 
     // Initialize the scraper
-    // initScraper() todo
+    initScraper()
 
     app.on('activate', function () {
       // On macOS it's common to re-create a window in the app when the

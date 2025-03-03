@@ -142,7 +142,7 @@ export async function getBangumiMetadata(gameId: string): Promise<GameMetadata> 
       developers: getDevelopers(game.infobox),
       relatedSites: [
         ...getRelatedSites(game.infobox),
-        { label: 'Bangumi', url: `https://bangumi.tv/subject/${gameId}` }
+        { label: 'Bangumi', url: `https://bgm.tv/subject/${gameId}` }
       ],
       tags: game.tags?.map((tag) => tag.name) || []
     }
