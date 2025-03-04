@@ -8,6 +8,7 @@ import { setupMediaIPC } from './media'
 import { setupImporterIPC } from './importer'
 import { setupThemeIPC } from './theme'
 import { setupUpdaterIPC } from './updater'
+import { setupAccountIPC } from './account'
 import { BrowserWindow } from 'electron'
 import log from 'electron-log/main'
 
@@ -23,6 +24,7 @@ export function setupIPC(mainWindow: BrowserWindow): void {
     setupImporterIPC(mainWindow)
     setupThemeIPC(mainWindow)
     setupUpdaterIPC(mainWindow)
+    setupAccountIPC(mainWindow)
   } catch (error) {
     log.error('Error setting up IPC:', error)
     throw error

@@ -21,6 +21,7 @@ import {
 // import { setupUpdater } from './updater' todo
 import { initScraper } from './scraper'
 import { startSync, GameDBManager, DBManager } from '~/database'
+import { AuthManager, handleAuthCallback } from './account'
 
 let mainWindow: BrowserWindow
 let splashWindow: BrowserWindow | null
@@ -198,10 +199,16 @@ if (!gotTheLock) {
     }
 
     // Check for protocol URLs
-    const url = commandLine.find((arg) => arg.startsWith('vnite://'))
+    const url = commandLine.find((arg) => arg.startsWith('vnite://rungameid'))
     if (url) {
       // Processing Protocol URL
       handleGameUrl(url)
+    }
+    // Check for auth callback URLs specifically
+    const authUrl = commandLine.find((arg) => arg.startsWith('vnite://casdoor/callback'))
+    if (authUrl) {
+      // Processing auth callback URL
+      handleAuthCallback(authUrl)
     }
   })
   // This method will be called when Electron has finished
@@ -237,11 +244,13 @@ if (!gotTheLock) {
 
     setupProtocols()
 
+    createSplashWindow()
+
     createWindow()
 
     DBManager.init()
 
-    createSplashWindow()
+    AuthManager.init()
 
     // Setup tray
     trayManager = await setupTray(mainWindow)
@@ -273,7 +282,7 @@ if (!gotTheLock) {
   // explicitly with Cmd + Q.
   app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
-      trayManager.destroy()
+      // trayManager.destroy()
       app.quit()
     }
   })

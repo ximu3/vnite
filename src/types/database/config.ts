@@ -46,6 +46,11 @@ export interface configDocs {
 }
 
 export interface configLocalDocs {
+  userInfo: {
+    id: string
+    accessToken: string
+    role: string
+  }
   sync: {
     enabled: boolean
     mode: 'official' | 'selfHosted'
@@ -117,6 +122,11 @@ export const DEFAULT_CONFIG_VALUES = {
 } satisfies configDocs
 
 export const DEFAULT_CONFIG_LOCAL_VALUES = {
+  userInfo: {
+    id: '',
+    accessToken: '',
+    role: 'community'
+  },
   sync: {
     enabled: true,
     mode: 'official',

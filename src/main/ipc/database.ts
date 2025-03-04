@@ -1,5 +1,6 @@
 import { ipcMain, BrowserWindow } from 'electron'
 import { DBManager, backupDatabase, restoreDatabase, startSync } from '~/database'
+import { calculateDBSize } from '~/utils'
 import { DocChange } from '@appTypes/database'
 
 export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
@@ -28,6 +29,10 @@ export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
 
   ipcMain.handle('restore-database', async (_, sourcePath: string) => {
     await restoreDatabase(sourcePath)
+  })
+
+  ipcMain.handle('calculate-db-size', async () => {
+    return await calculateDBSize()
   })
 
   mainWindow.webContents.send('databaseIPCReady')

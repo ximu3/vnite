@@ -20,15 +20,14 @@ import {
 import { User, LogOut, ChevronDown, HardDrive, Cloud, Key, InfoIcon } from 'lucide-react'
 import { Link } from '@ui/link'
 import { useCloudSyncStore } from './store'
+import { ROLE_QUOTAS } from '@appTypes/sync'
 
 export function CloudSync(): JSX.Element {
   const { status } = useCloudSyncStore()
   const [enabled, setEnabled] = useConfigLocalState('sync.enabled')
   const [syncMode, setSyncMode] = useConfigLocalState('sync.mode')
-  const [officalUsername, setOfficalUsername] = useConfigLocalState(
-    'sync.officialConfig.auth.username'
-  )
-  const [_, setOfficalPassword] = useConfigLocalState('sync.officialConfig.auth.password')
+  const [_1, setOfficialUsername] = useConfigLocalState('sync.officialConfig.auth.username')
+  const [_2, setOfficialPassword] = useConfigLocalState('sync.officialConfig.auth.password')
   const [selfHostedUrl, setSelfHostedUrl] = useConfigLocalState('sync.selfHostedConfig.url')
   const [selfHostedUsername, setSelfHostedUsername] = useConfigLocalState(
     'sync.selfHostedConfig.auth.username'
@@ -36,25 +35,24 @@ export function CloudSync(): JSX.Element {
   const [selfHostedPassword, setSelfHostedPassword] = useConfigLocalState(
     'sync.selfHostedConfig.auth.password'
   )
+  const [userId, setUserId] = useConfigLocalState('userInfo.id')
+  const [_3, setUserAccessToken] = useConfigLocalState('userInfo.accessToken')
+  const [userRole, setUserRole] = useConfigLocalState('userInfo.role')
 
-  // 存储容量相关状态
-  const [totalStorage, setTotalStorage] = useState(10 * 1024 * 1024 * 1024) // 默认10GB
-  const [usedStorage, setUsedStorage] = useState(0)
+  const totalQuota = ROLE_QUOTAS[userRole]
+
+  const [usedQuota, setUsedQuota] = useState(0)
   const [storagePercentage, setStoragePercentage] = useState(0)
 
   // 获取存储使用情况
   useEffect(() => {
-    if (enabled && officalUsername) {
+    if (enabled && userId) {
       const fetchStorageInfo = async (): Promise<void> => {
         try {
           // 这里应该替换为实际的API调用
-          const storageInfo = (await ipcInvoke('get-storage-info')) as {
-            totalStorage: number
-            usedStorage: number
-          }
-          if (storageInfo) {
-            setTotalStorage(storageInfo.totalStorage || totalStorage)
-            setUsedStorage(storageInfo.usedStorage || 0)
+          const dbSize = (await ipcInvoke('calculate-db-size')) as number
+          if (dbSize) {
+            setUsedQuota(dbSize)
           }
         } catch (error) {
           console.error('获取存储信息失败', error)
@@ -63,16 +61,16 @@ export function CloudSync(): JSX.Element {
 
       fetchStorageInfo()
     }
-  }, [enabled, officalUsername])
+  }, [enabled, userId])
 
   // 计算存储百分比
   useEffect(() => {
-    if (totalStorage > 0) {
-      setStoragePercentage((usedStorage / totalStorage) * 100)
+    if (totalQuota > 0) {
+      setStoragePercentage((usedQuota / totalQuota) * 100)
     } else {
       setStoragePercentage(0)
     }
-  }, [usedStorage, totalStorage])
+  }, [usedQuota, totalQuota])
 
   // 格式化存储大小
   const formatStorage = (bytes: number): string => {
@@ -95,7 +93,7 @@ export function CloudSync(): JSX.Element {
         return
       }
 
-      if (syncMode === 'official' && !officalUsername) {
+      if (syncMode === 'official' && !userId) {
         toast.error('请先登录官方账号')
         return
       }
@@ -113,19 +111,10 @@ export function CloudSync(): JSX.Element {
     )
   }
 
-  const handleOfficialLogin = async (): Promise<void> => {
+  const handleOfficialSignin = async (): Promise<void> => {
     toast.promise(
       async () => {
-        // 这里应该添加实际的登录逻辑
-        const result = (await ipcInvoke('login-official')) as { success: boolean; username: string }
-        if (result && result.success) {
-          setOfficalUsername(result.username || 'demo_user@example.com')
-          // 模拟获取存储信息
-          setTotalStorage(10 * 1024 * 1024 * 1024) // 10GB
-          setUsedStorage(3.5 * 1024 * 1024 * 1024) // 3.5GB
-        } else {
-          throw new Error('登录失败')
-        }
+        await ipcInvoke('auth-signin')
       },
       {
         loading: '正在登录...',
@@ -135,10 +124,26 @@ export function CloudSync(): JSX.Element {
     )
   }
 
+  const handleOfficialSignup = async (): Promise<void> => {
+    toast.promise(
+      async () => {
+        await ipcInvoke('auth-signup')
+      },
+      {
+        loading: '正在注册...',
+        success: '注册成功',
+        error: '注册失败'
+      }
+    )
+  }
+
   const handleOfficialLogout = (): void => {
-    setOfficalUsername('')
-    setOfficalPassword('')
-    setUsedStorage(0)
+    setOfficialUsername('')
+    setOfficialPassword('')
+    setUserId('')
+    setUserAccessToken('')
+    setUserRole('')
+    setUsedQuota(0)
     return
   }
 
@@ -190,7 +195,7 @@ export function CloudSync(): JSX.Element {
 
             {enabled && syncMode === 'official' && (
               <div className={cn('flex flex-col gap-4')}>
-                {!officalUsername ? (
+                {!userId ? (
                   <div
                     className={cn('flex flex-col gap-3 items-center p-6 bg-muted/50 rounded-lg')}
                   >
@@ -199,9 +204,14 @@ export function CloudSync(): JSX.Element {
                     <p className="mb-2 text-sm text-center text-muted-foreground">
                       登录账号以启用云同步功能，获取跨设备同步和数据备份
                     </p>
-                    <Button onClick={handleOfficialLogin} className="mt-2">
-                      登录
-                    </Button>
+                    <div className={cn('flex flex-row gap-3')}>
+                      <Button onClick={handleOfficialSignin} className="mt-2">
+                        登录
+                      </Button>
+                      <Button variant={'outline'} onClick={handleOfficialSignup} className="mt-2">
+                        注册
+                      </Button>
+                    </div>
                   </div>
                 ) : (
                   <Card className="border shadow-sm border-muted">
@@ -210,12 +220,12 @@ export function CloudSync(): JSX.Element {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
                             <Avatar className="w-12 h-12 border-2 bg-gradient-to-br from-primary to-primary/70 text-primary-foreground border-background">
-                              <AvatarFallback>{getInitials(officalUsername)}</AvatarFallback>
+                              <AvatarFallback>{getInitials(userId)}</AvatarFallback>
                             </Avatar>
                             <div>
                               <DropdownMenu>
                                 <DropdownMenuTrigger className="flex items-center gap-1 transition-colors outline-none hover:text-primary">
-                                  <span className="font-medium">{officalUsername}</span>
+                                  <span className="font-medium">{userId}</span>
                                   <ChevronDown size={16} className="text-muted-foreground" />
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="start">
@@ -270,7 +280,7 @@ export function CloudSync(): JSX.Element {
                               存储空间
                             </span>
                             <span className="text-sm">
-                              {formatStorage(usedStorage)} / {formatStorage(totalStorage)}
+                              {formatStorage(usedQuota)} / {formatStorage(totalQuota)}
                             </span>
                           </div>
 

@@ -9,6 +9,21 @@ import pngToIco from 'png-to-ico'
 import { fileTypeFromBuffer } from 'file-type'
 import { get } from 'lodash'
 
+/**
+ * Calculate the total size of the database
+ * @returns MB size of the database
+ */
+export async function calculateDBSize(): Promise<number> {
+  try {
+    const dbPath = getDataPath()
+    const stats = await fse.stat(dbPath)
+    return stats.size / (1024 * 1024)
+  } catch (error) {
+    console.error('Error calculating DB size:', error)
+    return 0
+  }
+}
+
 export function getValueByPath(obj: any, path: string): any {
   if (path === '#all') {
     return obj
