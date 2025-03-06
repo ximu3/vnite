@@ -1,9 +1,10 @@
 import { ConfigDBManager } from './config'
 import { DBManager } from './common'
 import { calculateDBSize } from '~/utils'
+import { CouchDBManager } from '~/account'
 import { ROLE_QUOTAS } from '@appTypes/sync'
 
-export async function startSync(): Promise<void> {
+export async function startSync(isStart = false): Promise<void> {
   try {
     const syncConfig = await ConfigDBManager.getConfigLocalValue('sync')
     const userInfo = await ConfigDBManager.getConfigLocalValue('userInfo')
@@ -14,33 +15,40 @@ export async function startSync(): Promise<void> {
       if (
         !syncConfig.officialConfig.auth.username ||
         !syncConfig.officialConfig.auth.password ||
-        !userInfo.id ||
+        !userInfo.name ||
         !userInfo.accessToken ||
         !userInfo.role
       ) {
         console.error('Missing official sync username or password')
-        setTimeout(() => {
-          DBManager.updateSyncStatus({
-            status: 'error',
-            message: 'Missing official sync username or password',
-            timestamp: new Date().toISOString()
-          })
-        }, 17000)
+        setTimeout(
+          () => {
+            DBManager.updateSyncStatus({
+              status: 'error',
+              message: 'Missing official sync username or password',
+              timestamp: new Date().toISOString()
+            })
+          },
+          isStart ? 17000 : 0
+        )
         return
       }
       const roleQuotas = ROLE_QUOTAS[userInfo.role]
       const dbSize = await calculateDBSize()
       if (dbSize > roleQuotas.dbSize) {
         console.error('Database size exceeds quota')
-        setTimeout(() => {
-          DBManager.updateSyncStatus({
-            status: 'error',
-            message: 'Database size exceeds quota',
-            timestamp: new Date().toISOString()
-          })
-        }, 17000)
+        setTimeout(
+          () => {
+            DBManager.updateSyncStatus({
+              status: 'error',
+              message: 'Database size exceeds quota',
+              timestamp: new Date().toISOString()
+            })
+          },
+          isStart ? 17000 : 0
+        )
         return
       }
+      await CouchDBManager.createDatabase(userInfo.name)
       await DBManager.syncAllWithRemote(import.meta.env.VITE_COUCHDB_SERVER_URL, {
         auth: {
           username: syncConfig.officialConfig.auth.username,
@@ -54,13 +62,16 @@ export async function startSync(): Promise<void> {
         !syncConfig.selfHostedConfig.auth.password
       ) {
         console.error('Missing self-hosted sync configuration')
-        setTimeout(() => {
-          DBManager.updateSyncStatus({
-            status: 'error',
-            message: 'Missing self-hosted sync configuration',
-            timestamp: new Date().toISOString()
-          })
-        }, 17000)
+        setTimeout(
+          () => {
+            DBManager.updateSyncStatus({
+              status: 'error',
+              message: 'Missing self-hosted sync configuration',
+              timestamp: new Date().toISOString()
+            })
+          },
+          isStart ? 17000 : 0
+        )
         return
       }
       await DBManager.syncAllWithRemote(syncConfig.selfHostedConfig.url, {
@@ -70,23 +81,29 @@ export async function startSync(): Promise<void> {
         }
       })
     }
-    setTimeout(() => {
-      DBManager.updateSyncStatus({
-        status: 'success',
-        message: '同步成功',
-        timestamp: new Date().toISOString()
-      })
-    }, 17000)
+    setTimeout(
+      () => {
+        DBManager.updateSyncStatus({
+          status: 'success',
+          message: '同步成功',
+          timestamp: new Date().toISOString()
+        })
+      },
+      isStart ? 17000 : 0
+    )
     console.log('Sync success')
   } catch (error) {
     console.error('Sync error:', error)
-    setTimeout(() => {
-      DBManager.updateSyncStatus({
-        status: 'error',
-        message: '同步失败',
-        timestamp: new Date().toISOString()
-      })
-    }, 17000)
+    setTimeout(
+      () => {
+        DBManager.updateSyncStatus({
+          status: 'error',
+          message: '同步失败',
+          timestamp: new Date().toISOString()
+        })
+      },
+      isStart ? 17000 : 0
+    )
   }
 }
 

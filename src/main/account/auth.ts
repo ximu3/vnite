@@ -3,13 +3,11 @@ import { SDK } from 'casdoor-nodejs-sdk'
 import CouchDBManager from './couchdb'
 import { ConfigDBManager } from '~/database'
 import { AuthResult, CasdoorUser, CouchDBCredentials, UserRole } from '@appTypes/sync'
-import * as fs from 'fs'
-import * as path from 'path'
+import { startSync } from '~/database'
 
 export class AuthManager {
   private static instance: AuthManager | null = null
   private casdoorSdk!: SDK
-  private couchdb!: CouchDBManager
   private redirectUrl: string = 'vnite://casdoor/callback'
   private serverUrl!: string
   private clientId!: string
@@ -53,19 +51,7 @@ export class AuthManager {
       instance.organizationName = import.meta.env.VITE_CASDOOR_ORGANIZATION_NAME || ''
 
       // 尝试加载证书
-      let certificate = import.meta.env.VITE_CASDOOR_CERTIFICATE || ''
-      if (!certificate) {
-        // 尝试从文件加载证书，如果环境变量中没有
-        try {
-          const certPath = path.join(process.cwd(), 'cert', 'casdoor-cert.pem')
-          if (fs.existsSync(certPath)) {
-            certificate = fs.readFileSync(certPath, 'utf8')
-          }
-        } catch (err) {
-          console.warn('无法从文件加载证书:', err)
-        }
-      }
-      instance.certificate = certificate
+      instance.certificate = import.meta.env.VITE_CASDOOR_CERTIFICATE.replace(/\\n/g, '\n') || ''
 
       // 验证必要的配置项
       if (
@@ -91,20 +77,6 @@ export class AuthManager {
 
       // 创建 SDK 实例
       instance.casdoorSdk = new SDK(authCfg)
-
-      // 初始化CouchDB管理器
-      const couchdbConfig = {
-        url: import.meta.env.VITE_COUCHDB_SERVER_URL || '',
-        adminUsername: import.meta.env.VITE_COUCHDB_ADMIN_USERNAME || '',
-        adminPassword: import.meta.env.VITE_COUCHDB_ADMIN_PASSWORD || ''
-      }
-
-      // 验证CouchDB配置
-      if (!couchdbConfig.url || !couchdbConfig.adminUsername || !couchdbConfig.adminPassword) {
-        throw new Error('缺少必要的CouchDB配置')
-      }
-
-      instance.couchdb = new CouchDBManager(couchdbConfig)
 
       instance.initialized = true
       console.log('AuthManager 初始化成功')
@@ -195,9 +167,7 @@ export class AuthManager {
         await AuthManager.setUserDefaultRole(userInfo.name)
 
         // 重新获取用户信息
-        const updatedUser = await instance.casdoorSdk.getUser(
-          `${instance.organizationName}/${userInfo.name}`
-        )
+        const updatedUser = await instance.casdoorSdk.getUser(userInfo.name)
         if (updatedUser && updatedUser.data && updatedUser.data.data) {
           Object.assign(userInfo, updatedUser.data.data)
         }
@@ -210,7 +180,7 @@ export class AuthManager {
 
       // 保存用户凭证
       await ConfigDBManager.setConfigLocalValue('userInfo', {
-        id: userInfo.id || '',
+        name: userInfo.name || '',
         accessToken,
         role: userRole
       })
@@ -225,6 +195,9 @@ export class AuthManager {
 
       // 通知渲染进程认证成功
       mainWindow.webContents.send('auth-success')
+
+      // 启动同步
+      await startSync()
     } catch (error) {
       console.error('处理授权码失败:', error)
       mainWindow.webContents.send('auth-error', (error as Error).message)
@@ -267,22 +240,18 @@ export class AuthManager {
     const instance = AuthManager.getInstance()
     try {
       // 1. 首先获取用户信息，检查现有角色
-      const userResponse = await instance.casdoorSdk.getUser(
-        `${instance.organizationName}/${username}`
-      )
+      const userResponse = await instance.casdoorSdk.getUser(username)
       const user = userResponse.data.data
 
       // 检查用户是否已有社区版角色
-      if (user.roles && user.roles.some((role) => role.name === UserRole.COMMUNITY)) {
+      if (user?.roles && user?.roles.some((role) => role.name === UserRole.COMMUNITY)) {
         console.log(`用户 ${username} 已拥有 ${UserRole.COMMUNITY} 角色`)
         return true
       }
 
       // 2. 获取社区版角色信息
       try {
-        const roleResponse = await instance.casdoorSdk.getRole(
-          `${instance.organizationName}/${UserRole.COMMUNITY}`
-        )
+        const roleResponse = await instance.casdoorSdk.getRole(UserRole.COMMUNITY)
 
         const role = roleResponse.data.data
 
@@ -304,6 +273,19 @@ export class AuthManager {
           throw new Error('更新角色失败')
         }
 
+        const roleResponse2 = await instance.casdoorSdk.getRole(UserRole.COMMUNITY)
+        const role2 = roleResponse2.data.data
+
+        user.roles = user.roles || []
+        user.roles.push(role2)
+
+        // 5. 更新用户
+        const userUpdateResponse = await instance.casdoorSdk.updateUser(user)
+
+        if (userUpdateResponse.data.status !== 'ok') {
+          throw new Error('更新用户失败')
+        }
+
         console.log(`已为用户 ${username} 添加默认角色: ${UserRole.COMMUNITY}`)
         return true
       } catch (roleError) {
@@ -320,20 +302,19 @@ export class AuthManager {
    * 设置CouchDB用户
    */
   private static async setupCouchDBUser(userInfo: CasdoorUser): Promise<CouchDBCredentials> {
-    const instance = AuthManager.getInstance()
     const username = userInfo.name
 
     // 检查用户的自定义属性中是否已有CouchDB密码
     const couchdbPassword = userInfo.properties?.couchdbPassword
 
     // 如果没有密码，生成一个新的随机密码
-    const password = couchdbPassword || instance.couchdb.generateRandomPassword()
+    const password = couchdbPassword || CouchDBManager.generateRandomPassword()
 
     // 创建CouchDB用户
-    await instance.couchdb.createUser(username, password)
+    await CouchDBManager.createUser(username, password)
 
     // 创建CouchDB用户数据库
-    await instance.couchdb.createDatabase(username)
+    await CouchDBManager.createDatabase(username)
 
     // 如果是新生成的密码，保存到Casdoor用户属性中
     if (!couchdbPassword) {
@@ -353,9 +334,7 @@ export class AuthManager {
     const instance = AuthManager.getInstance()
     try {
       // 先获取用户信息
-      const userResponse = await instance.casdoorSdk.getUser(
-        `${instance.organizationName}/${username}`
-      )
+      const userResponse = await instance.casdoorSdk.getUser(username)
       const user = userResponse.data.data
 
       // 更新用户的属性
@@ -365,14 +344,14 @@ export class AuthManager {
       // 更新用户
       const response = await instance.casdoorSdk.updateUser(user)
 
-      if (response.data.status !== 'ok') {
-        throw new Error('更新用户属性失败')
+      if (response.data.status === 'error') {
+        console.error('更新用户失败:', response.data.msg)
+        return false
       }
 
       return true
     } catch (error) {
       console.error('保存CouchDB密码到Casdoor失败:', error)
-      // 继续流程，因为CouchDB用户已创建成功
       return false
     }
   }

@@ -1,6 +1,5 @@
-import axios, { AxiosError, AxiosResponse } from 'axios'
 import * as crypto from 'crypto'
-import { CouchDBConfig } from '@appTypes/sync'
+import axios from 'axios'
 
 interface CouchDBResponse {
   ok: boolean
@@ -18,123 +17,279 @@ interface DatabaseInfo {
   ok?: boolean
 }
 
-class CouchDBManager {
-  private url: string
-  private adminUsername: string
-  private adminPassword: string
+export class CouchDBManager {
+  private url: string = ''
+  private adminUsername: string = ''
+  private adminPassword: string = ''
+  private authHeader: string = ''
 
-  constructor(config: CouchDBConfig) {
-    this.url = config.url
-    this.adminUsername = config.adminUsername
-    this.adminPassword = config.adminPassword
+  // 单例实例
+  private static instance: CouchDBManager | null = null
+
+  // 私有构造函数
+  private constructor() {
+    // 禁止外部实例化
   }
 
-  public async createUser(username: string, password: string): Promise<CouchDBResponse> {
-    const url = `${this.url}/_users/org.couchdb.user:${encodeURIComponent(username)}`
+  // 获取实例的静态方法
+  public static getInstance(): CouchDBManager {
+    if (!CouchDBManager.instance) {
+      CouchDBManager.instance = new CouchDBManager()
+    }
+    return CouchDBManager.instance
+  }
 
-    const userDoc = {
-      name: username,
-      password: password,
-      roles: ['user'],
-      type: 'user'
+  // 静态初始化方法
+  public static init(): void {
+    const instance = this.getInstance()
+
+    instance.url = import.meta.env.VITE_COUCHDB_SERVER_URL || ''
+    instance.adminUsername = import.meta.env.VITE_COUCHDB_ADMIN_USERNAME || ''
+    instance.adminPassword = import.meta.env.VITE_COUCHDB_ADMIN_PASSWORD || ''
+
+    if (!instance.url || !instance.adminUsername || !instance.adminPassword) {
+      throw new Error('CouchDB 配置信息不完整')
     }
 
-    try {
-      const response: AxiosResponse<CouchDBResponse> = await axios.put(url, userDoc, {
-        auth: {
-          username: this.adminUsername,
-          password: this.adminPassword
-        },
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
+    // 创建Basic Authentication头
+    instance.authHeader = `Basic ${Buffer.from(`${instance.adminUsername}:${instance.adminPassword}`).toString('base64')}`
+  }
 
-      return response.data
-    } catch (error) {
-      const axiosError = error as AxiosError
-      // 如果用户已存在 (409 Conflict)，这不是错误
-      if (axiosError.response && axiosError.response.status === 409) {
+  /**
+   * 确保系统数据库存在
+   */
+  public static async ensureSystemDatabases(): Promise<void> {
+    const instance = this.getInstance()
+    const systemDbs = ['_users']
+
+    for (const dbName of systemDbs) {
+      try {
+        // 检查数据库是否存在
+        const checkResponse = await axios.get(`${instance.url}/${dbName}`, {
+          headers: {
+            Authorization: instance.authHeader,
+            Accept: 'application/json'
+          },
+          validateStatus: null
+        })
+
+        if (checkResponse.status === 404) {
+          // 如果数据库不存在，则创建它
+          const createResponse = await axios.put(
+            `${instance.url}/${dbName}`,
+            {},
+            {
+              headers: {
+                Authorization: instance.authHeader,
+                Accept: 'application/json'
+              }
+            }
+          )
+
+          if (createResponse.status !== 201) {
+            throw new Error(`创建系统数据库 ${dbName} 失败: ${JSON.stringify(createResponse.data)}`)
+          }
+
+          console.log(`系统数据库 ${dbName} 创建成功`)
+        } else if (checkResponse.status !== 200) {
+          throw new Error(`检查系统数据库 ${dbName} 失败: ${JSON.stringify(checkResponse.data)}`)
+        } else {
+          console.log(`系统数据库 ${dbName} 已存在`)
+        }
+      } catch (error) {
+        console.error(`检查系统数据库 ${dbName} 失败:`, error)
+        throw error
+      }
+    }
+  }
+
+  /**
+   * 创建 CouchDB 用户
+   */
+  public static async createUser(username: string, password: string): Promise<CouchDBResponse> {
+    const instance = this.getInstance()
+    try {
+      // 确保系统数据库存在
+      await this.ensureSystemDatabases()
+
+      const userId = `org.couchdb.user:${username}`
+
+      const checkResponse = await axios.get(
+        `${instance.url}/_users/${encodeURIComponent(userId)}`,
+        {
+          headers: {
+            Authorization: instance.authHeader,
+            Accept: 'application/json'
+          },
+          validateStatus: null
+        }
+      )
+
+      if (checkResponse.status === 200) {
         console.log(`CouchDB用户 ${username} 已存在`)
-        return { ok: true, id: `org.couchdb.user:${username}`, exists: true }
+        return { ok: true, id: userId, exists: true }
       }
 
-      console.error('创建CouchDB用户失败:', axiosError.response?.data || axiosError.message)
-      throw error
-    }
-  }
+      // 创建用户文档
+      const userDoc = {
+        _id: userId,
+        name: username,
+        password: password,
+        roles: ['user'],
+        type: 'user'
+      }
 
-  public async createDatabase(username: string): Promise<DatabaseInfo> {
-    // 创建安全的数据库名称
-    const dbName = this.getUserDBName(username)
-    const url = `${this.url}/${dbName}`
-
-    try {
-      // 创建数据库
-      const createResponse: AxiosResponse<CouchDBResponse> = await axios.put(
-        url,
-        {},
+      // 插入用户文档到 _users 数据库
+      const response = await axios.put(
+        `${instance.url}/_users/${encodeURIComponent(userId)}`,
+        userDoc,
         {
-          auth: {
-            username: this.adminUsername,
-            password: this.adminPassword
+          headers: {
+            Authorization: instance.authHeader,
+            'Content-Type': 'application/json',
+            Accept: 'application/json'
           }
         }
       )
 
-      // 设置数据库安全选项
-      const securityUrl = `${url}/_security`
-      await axios.put(
-        securityUrl,
-        {
+      console.log(`CouchDB用户 ${username} 创建成功`)
+
+      return {
+        ok: true,
+        id: response.data.id,
+        rev: response.data.rev
+      }
+    } catch (error) {
+      console.error('创建CouchDB用户失败:', error)
+      throw error
+    }
+  }
+
+  /**
+   * 为用户创建三个数据库：config、game、game-collection
+   */
+  public static async createDatabase(username: string): Promise<{
+    config: DatabaseInfo
+    game: DatabaseInfo
+    gameCollection: DatabaseInfo
+  }> {
+    const instance = this.getInstance()
+    // 需要创建的三个数据库类型
+    const dbTypes = ['config', 'game', 'game-collection']
+    const results: any = {}
+
+    try {
+      // 为每种类型的数据库执行创建操作
+      for (const dbType of dbTypes) {
+        // 创建安全的数据库名称，加上数据库类型后缀
+        const dbName = this.getUserDBName(username) + `-${dbType}`
+        const dbUrl = `${instance.url}/${dbName}`
+        const resultKey = dbType === 'game-collection' ? 'gameCollection' : dbType
+
+        // 检查数据库是否存在
+        const checkResponse = await axios.get(dbUrl, {
+          headers: {
+            Authorization: instance.authHeader,
+            Accept: 'application/json'
+          },
+          validateStatus: null
+        })
+
+        if (checkResponse.status === 200) {
+          console.log(`数据库 ${dbName} 已存在`)
+          results[resultKey] = {
+            dbName,
+            url: dbUrl,
+            exists: true
+          }
+          continue // 继续处理下一个数据库
+        }
+
+        // 创建数据库
+        await axios.put(
+          dbUrl,
+          {},
+          {
+            headers: {
+              Authorization: instance.authHeader,
+              Accept: 'application/json'
+            }
+          }
+        )
+
+        // 设置数据库安全选项
+        const securityDoc = {
           admins: {
-            names: [this.adminUsername],
+            names: [instance.adminUsername],
             roles: ['_admin']
           },
           members: {
             names: [username],
             roles: []
           }
-        },
-        {
-          auth: {
-            username: this.adminUsername,
-            password: this.adminPassword
-          },
-          headers: {
-            'Content-Type': 'application/json'
-          }
         }
-      )
+
+        // 设置数据库访问权限
+        await axios.put(`${dbUrl}/_security`, securityDoc, {
+          headers: {
+            Authorization: instance.authHeader,
+            'Content-Type': 'application/json',
+            Accept: 'application/json'
+          }
+        })
+
+        console.log(`为用户 ${username} 创建数据库 ${dbName} 成功`)
+        results[resultKey] = {
+          dbName,
+          url: dbUrl,
+          ok: true
+        }
+      }
 
       return {
-        ok: createResponse.data.ok,
-        dbName,
-        url
+        config: results.config,
+        game: results.game,
+        gameCollection: results.gameCollection
       }
     } catch (error) {
-      const axiosError = error as AxiosError
-      // 如果数据库已存在 (412 Precondition Failed)，这不是错误
-      if (axiosError.response && axiosError.response.status === 412) {
-        console.log(`数据库 ${dbName} 已存在`)
-        return { dbName, url, exists: true }
-      }
-
-      console.error('创建用户数据库失败:', axiosError.response?.data || axiosError.message)
+      console.error('创建用户数据库失败:', error)
       throw error
     }
   }
 
-  public generateRandomPassword(length: number = 24): string {
+  /**
+   * 生成随机密码
+   */
+  public static generateRandomPassword(length: number = 24): string {
     return crypto
       .randomBytes(Math.ceil(length / 2))
       .toString('hex')
       .slice(0, length)
   }
 
-  public getUserDBName(username: string): string {
-    // 创建安全的数据库名，替换不允许的字符
+  /**
+   * 创建安全的数据库名称
+   */
+  public static getUserDBName(username: string): string {
     return `vnite-userdb-${username.toLowerCase().replace(/[^a-z0-9]/g, '-')}`
+  }
+
+  /**
+   * 获取用户的同步配置
+   */
+  public static getUserSyncConfig(
+    username: string,
+    password: string
+  ): {
+    remoteDbUrl: string
+    credentials: { username: string; password: string }
+  } {
+    const instance = this.getInstance()
+    const dbName = this.getUserDBName(username)
+    return {
+      remoteDbUrl: `${instance.url}/${dbName}`,
+      credentials: { username, password }
+    }
   }
 }
 

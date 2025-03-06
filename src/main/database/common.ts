@@ -223,7 +223,7 @@ export class DBManager {
     const localDb = this.getInstance(dbName)
     const { auth } = options
 
-    const remoteDbName = `${auth?.username}-${dbName}`
+    const remoteDbName = `vnite-userdb-${auth?.username}-${dbName}`
 
     // 构建远程数据库URL
     const remoteDbUrl = `${remoteUrl}/${remoteDbName}`

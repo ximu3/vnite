@@ -35,18 +35,18 @@ export function CloudSync(): JSX.Element {
   const [selfHostedPassword, setSelfHostedPassword] = useConfigLocalState(
     'sync.selfHostedConfig.auth.password'
   )
-  const [userId, setUserId] = useConfigLocalState('userInfo.id')
+  const [userName, setUserName] = useConfigLocalState('userInfo.name')
   const [_3, setUserAccessToken] = useConfigLocalState('userInfo.accessToken')
   const [userRole, setUserRole] = useConfigLocalState('userInfo.role')
 
-  const totalQuota = ROLE_QUOTAS[userRole]
+  const totalQuota = ROLE_QUOTAS[userRole].maxStorage
 
   const [usedQuota, setUsedQuota] = useState(0)
   const [storagePercentage, setStoragePercentage] = useState(0)
 
   // 获取存储使用情况
   useEffect(() => {
-    if (enabled && userId) {
+    if (enabled && userName) {
       const fetchStorageInfo = async (): Promise<void> => {
         try {
           // 这里应该替换为实际的API调用
@@ -61,7 +61,7 @@ export function CloudSync(): JSX.Element {
 
       fetchStorageInfo()
     }
-  }, [enabled, userId])
+  }, [enabled, userName])
 
   // 计算存储百分比
   useEffect(() => {
@@ -93,7 +93,7 @@ export function CloudSync(): JSX.Element {
         return
       }
 
-      if (syncMode === 'official' && !userId) {
+      if (syncMode === 'official' && !userName) {
         toast.error('请先登录官方账号')
         return
       }
@@ -140,9 +140,9 @@ export function CloudSync(): JSX.Element {
   const handleOfficialLogout = (): void => {
     setOfficialUsername('')
     setOfficialPassword('')
-    setUserId('')
+    setUserName('')
     setUserAccessToken('')
-    setUserRole('')
+    setUserRole('community')
     setUsedQuota(0)
     return
   }
@@ -154,6 +154,58 @@ export function CloudSync(): JSX.Element {
 
   return (
     <div className={cn('flex flex-col gap-2')}>
+      {enabled && (
+        <Card className={cn('group p-4 px-6')}>
+          {status ? (
+            <div className={cn('flex flex-row gap-1 text-xs')}>
+              <div className={cn('flex flex-row gap-2 items-center justify-between')}>
+                <div className={cn('flex flex-row gap-2 items-center')}>
+                  <div className={cn('flex flex-row')}>
+                    {status.status === 'syncing' ? (
+                      <div className={cn('flex flex-row gap-1 items-center')}>
+                        <span
+                          className={cn(
+                            'inline-block w-2 h-2 mr-3 rounded-lg',
+                            'bg-accent animate-pulse'
+                          )}
+                        ></span>
+                        <div>同步中</div>
+                      </div>
+                    ) : status.status === 'success' ? (
+                      <div className={cn('flex flex-row items-center')}>
+                        <span
+                          className={cn(
+                            'inline-block w-2 h-2 mr-3 rounded-lg text-center',
+                            'bg-primary'
+                          )}
+                        ></span>
+                        <div>同步成功</div>
+                      </div>
+                    ) : (
+                      <div className={cn('flex flex-row gap-1 items-center')}>
+                        <span
+                          className={cn('inline-block w-2 h-2 mr-3 rounded-lg', 'bg-destructive')}
+                        ></span>
+                        <div>同步失败</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div>|</div>
+              <div className={cn('flex flex-row gap-2 items-center')}>
+                <div className={cn('truncate')}>{status.message}</div>
+              </div>
+              <div>|</div>
+              <div className={cn('flex flex-row gap-2 items-center')}>
+                <div className={cn('')}>{formatDateToChineseWithSeconds(status.timestamp)}</div>
+              </div>
+            </div>
+          ) : (
+            <div>暂无同步信息</div>
+          )}
+        </Card>
+      )}
       <Card className={cn('group')}>
         <CardHeader>
           <CardTitle className={cn('relative')}>
@@ -195,7 +247,7 @@ export function CloudSync(): JSX.Element {
 
             {enabled && syncMode === 'official' && (
               <div className={cn('flex flex-col gap-4')}>
-                {!userId ? (
+                {!userName ? (
                   <div
                     className={cn('flex flex-col gap-3 items-center p-6 bg-muted/50 rounded-lg')}
                   >
@@ -220,12 +272,12 @@ export function CloudSync(): JSX.Element {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
                             <Avatar className="w-12 h-12 border-2 bg-gradient-to-br from-primary to-primary/70 text-primary-foreground border-background">
-                              <AvatarFallback>{getInitials(userId)}</AvatarFallback>
+                              <AvatarFallback>{getInitials(userName)}</AvatarFallback>
                             </Avatar>
                             <div>
                               <DropdownMenu>
                                 <DropdownMenuTrigger className="flex items-center gap-1 transition-colors outline-none hover:text-primary">
-                                  <span className="font-medium">{userId}</span>
+                                  <span className="font-medium">{userName}</span>
                                   <ChevronDown size={16} className="text-muted-foreground" />
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="start">
@@ -258,14 +310,14 @@ export function CloudSync(): JSX.Element {
                               className={cn(
                                 'inline-block w-2 h-2 mr-1 rounded-full',
                                 status?.status === 'error'
-                                  ? 'bg-amber-500'
-                                  : 'bg-green-500 animate-pulse'
+                                  ? 'bg-destructive'
+                                  : 'bg-primary animate-pulse'
                               )}
                             ></span>
                             <span
                               className={cn(
                                 'text-xs font-medium',
-                                status?.status === 'error' ? 'text-amber-500' : 'text-green-500'
+                                status?.status === 'error' ? 'text-destructive' : 'text-primary'
                               )}
                             >
                               {status?.status === 'error' ? '未连接' : '已连接'}
@@ -289,11 +341,7 @@ export function CloudSync(): JSX.Element {
                             <div
                               className={cn(
                                 'h-full rounded-full transition-all',
-                                storagePercentage > 90
-                                  ? 'bg-red-500'
-                                  : storagePercentage > 75
-                                    ? 'bg-amber-500'
-                                    : 'bg-green-500'
+                                storagePercentage > 90 ? 'bg-destructive' : 'bg-primary'
                               )}
                               style={{ width: `${storagePercentage}%` }}
                             ></div>

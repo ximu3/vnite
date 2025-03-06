@@ -16,17 +16,26 @@ export function CloudSyncInfo({ className }: { className?: string }): JSX.Elemen
                 <div className={cn('flex flex-row')}>
                   {status.status === 'syncing' ? (
                     <div className={cn('flex flex-row gap-1 items-center')}>
-                      <div className={cn('w-3 h-3 rounded-lg bg-accent')}></div>
+                      <span
+                        className={cn(
+                          'inline-block w-2 h-2 mr-1 rounded-lg',
+                          'bg-accent animate-pulse'
+                        )}
+                      ></span>
                       <div>同步中</div>
                     </div>
                   ) : status.status === 'success' ? (
-                    <div className={cn('flex flex-row gap-1 items-center')}>
-                      <div className={cn('w-3 h-3 rounded-lg bg-primary')}></div>
+                    <div className={cn('flex flex-row items-center')}>
+                      <span
+                        className={cn('inline-block w-2 h-2 mr-1 rounded-lg', 'bg-primary')}
+                      ></span>
                       <div>同步成功</div>
                     </div>
                   ) : (
                     <div className={cn('flex flex-row gap-1 items-center')}>
-                      <div className={cn('w-3 h-3 rounded-lg bg-destructive')}></div>
+                      <span
+                        className={cn('inline-block w-2 h-2 mr-1 rounded-lg', 'bg-destructive')}
+                      ></span>
                       <div>同步失败</div>
                     </div>
                   )}

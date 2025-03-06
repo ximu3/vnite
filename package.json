@@ -61,6 +61,7 @@
     "electron-window-state": "^5.0.3",
     "expr-eval": "^2.0.2",
     "file-type": "^20.1.0",
+    "get-folder-size": "^5.0.0",
     "html-react-parser": "^5.2.2",
     "html2canvas": "^1.4.1",
     "koffi": "^2.10.1",

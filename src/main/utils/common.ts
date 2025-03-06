@@ -8,18 +8,15 @@ import sharp from 'sharp'
 import pngToIco from 'png-to-ico'
 import { fileTypeFromBuffer } from 'file-type'
 import { get } from 'lodash'
+import getFolderSize from 'get-folder-size'
 
-/**
- * Calculate the total size of the database
- * @returns MB size of the database
- */
 export async function calculateDBSize(): Promise<number> {
   try {
     const dbPath = getDataPath()
-    const stats = await fse.stat(dbPath)
-    return stats.size / (1024 * 1024)
+    const size = await getFolderSize.loose(dbPath)
+    return size
   } catch (error) {
-    console.error('Error calculating DB size:', error)
+    console.error('计算数据库文件夹大小时出错:', error)
     return 0
   }
 }

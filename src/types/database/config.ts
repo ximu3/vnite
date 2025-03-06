@@ -47,7 +47,7 @@ export interface configDocs {
 
 export interface configLocalDocs {
   userInfo: {
-    id: string
+    name: string
     accessToken: string
     role: string
   }
@@ -123,7 +123,7 @@ export const DEFAULT_CONFIG_VALUES = {
 
 export const DEFAULT_CONFIG_LOCAL_VALUES = {
   userInfo: {
-    id: '',
+    name: '',
     accessToken: '',
     role: 'community'
   },

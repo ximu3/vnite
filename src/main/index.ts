@@ -21,7 +21,7 @@ import {
 // import { setupUpdater } from './updater' todo
 import { initScraper } from './scraper'
 import { startSync, GameDBManager, DBManager } from '~/database'
-import { AuthManager, handleAuthCallback } from './account'
+import { AuthManager, handleAuthCallback, CouchDBManager } from './account'
 
 let mainWindow: BrowserWindow
 let splashWindow: BrowserWindow | null
@@ -252,6 +252,8 @@ if (!gotTheLock) {
 
     AuthManager.init()
 
+    CouchDBManager.init()
+
     // Setup tray
     trayManager = await setupTray(mainWindow)
 
@@ -262,7 +264,7 @@ if (!gotTheLock) {
     await setupOpenAtLogin()
 
     // Sync all databases with remote
-    await startSync()
+    await startSync(true)
 
     // Setup auto updater
     // setupUpdater(mainWindow) todo

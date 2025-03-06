@@ -7,13 +7,13 @@ import { GameDBManager } from './game'
 export async function backupGameSave(gameId: string): Promise<void> {
   const saveId = generateUUID()
   const savePaths = await GameDBManager.getGameLocalValue(gameId, 'path.savePaths')
-  const maxSaveNumber = await GameDBManager.getGameLocalValue(gameId, 'path.maxSaveBackups')
+  const maxSaveNumber = await GameDBManager.getGameValue(gameId, 'save.maxBackups')
   const tempFilesPath = getAppTempPath(`save-files-${Date.now()}/`)
   const tempZipPath = getAppTempPath(`save-zip-${Date.now()}/`)
   await fse.ensureDir(tempFilesPath)
   await fse.ensureDir(tempZipPath)
 
-  const saveList = await GameDBManager.getGameValue(gameId, 'save')
+  const saveList = await GameDBManager.getGameValue(gameId, 'save.saveList')
 
   const saveIds = Object.keys(saveList).filter((key) => !saveList[key].locked)
 
@@ -46,7 +46,7 @@ export async function backupGameSave(gameId: string): Promise<void> {
   await GameDBManager.setGameSave(gameId, saveId, zipPath)
 
   saveList[saveId] = { _id: saveId, date: new Date().toISOString(), note: '', locked: false }
-  await GameDBManager.setGameValue(gameId, 'save', saveList)
+  await GameDBManager.setGameValue(gameId, 'save.saveList', saveList)
 
   await fse.remove(tempFilesPath)
   await fse.remove(tempZipPath)

@@ -45,6 +45,7 @@ export interface gameDoc {
         locked: boolean
       }
     }
+    maxBackups: number
   }
   memory: {
     memoryList: {
@@ -86,7 +87,6 @@ export interface gameLocalDoc {
   path: {
     gamePath: string
     savePaths: string[]
-    maxSaveBackups: number
   }
   launcher: {
     mode: 'file' | 'url' | 'script'
@@ -117,8 +117,7 @@ export const DEFAULT_GAME_LOCAL_VALUES = {
   _id: '',
   path: {
     gamePath: '',
-    savePaths: [],
-    maxSaveBackups: 7
+    savePaths: []
   },
   launcher: {
     mode: 'file',
@@ -178,7 +177,8 @@ export const DEFAULT_GAME_VALUES = {
     timers: []
   },
   save: {
-    saveList: {}
+    saveList: {},
+    maxBackups: 7
   },
   memory: {
     memoryList: {}

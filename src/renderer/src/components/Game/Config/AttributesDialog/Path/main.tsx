@@ -14,7 +14,7 @@ import {
 import { Separator } from '@ui/separator'
 import { toast } from 'sonner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
-import { useGameLocalState } from '~/hooks'
+import { useGameLocalState, useGameState } from '~/hooks'
 import { cn, ipcInvoke } from '~/utils'
 
 export function Path({ gameId }: { gameId: string }): JSX.Element {
@@ -23,7 +23,7 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
 
   const [savePath, setSavePath] = useGameLocalState(gameId, 'path.savePaths')
 
-  const [maxSaveBackups, setMaxSaveBackups] = useGameLocalState(gameId, 'path.maxSaveBackups')
+  const [maxSaveBackups, setMaxSaveBackups] = useGameState(gameId, 'save.maxBackups')
 
   async function selectGamePath(): Promise<void> {
     const filePath: string = await ipcInvoke('select-path-dialog', ['openFile'])

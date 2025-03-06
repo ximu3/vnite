@@ -48,8 +48,13 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
   }
 
   const toggleLock = (saveId: string): void => {
-    const newSaveList = { ...saveList }
-    saveList[saveId].locked = !saveList[saveId]?.locked
+    const newSaveList = {
+      ...saveList,
+      [saveId]: {
+        ...saveList[saveId],
+        locked: !saveList[saveId]?.locked
+      }
+    }
     setSaveList(newSaveList)
   }
 
