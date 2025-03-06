@@ -40,6 +40,7 @@ export function Scraper(): JSX.Element {
                   <SelectItem value="bangumi">Bangumi</SelectItem>
                   <SelectItem value="igdb">IGDB</SelectItem>
                   <SelectItem value="ymgal">YMgal</SelectItem>
+                  <SelectItem value="dlsite">DLsite</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>

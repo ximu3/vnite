@@ -50,6 +50,15 @@ import {
   getGameIconsFromSteamGridDB,
   getGameLogosFromSteamGridDB
 } from './steamGridDb'
+import {
+  searchGamesFromDLsite,
+  getGameMetadataFromDLsite,
+  getGameScreenshotsFromDLsite,
+  getGameCoverFromDLsite,
+  checkGameExistsOnDLsite,
+  getGameCoverByTitleFromDLsite,
+  getGameScreenshotsByTitleFromDLsite
+} from './dlsite'
 import { GameList, GameMetadata } from '@appTypes/utils'
 
 export async function searchGames(dataSource: string, gameName: string): Promise<GameList> {
@@ -64,6 +73,8 @@ export async function searchGames(dataSource: string, gameName: string): Promise
       return await searchGamesFromIGDB(gameName)
     case 'ymgal':
       return await searchGamesFromYMGal(gameName)
+    case 'dlsite':
+      return await searchGamesFromDLsite(gameName)
     default:
       throw new Error('Invalid data source')
   }
@@ -81,6 +92,8 @@ export async function checkGameExists(dataSource: string, gameId: string): Promi
       return await checkGameExistsOnIGDB(gameId)
     case 'ymgal':
       return await checkGameExistsOnYMGal(gameId)
+    case 'dlsite':
+      return await checkGameExistsOnDLsite(gameId)
     default:
       throw new Error('Invalid data source')
   }
@@ -98,6 +111,8 @@ export async function getGameMetadata(dataSource: string, gameId: string): Promi
       return await getGameMetadataFromIGDB(gameId)
     case 'ymgal':
       return await getGameMetadataFromYMGal(gameId)
+    case 'dlsite':
+      return await getGameMetadataFromDLsite(gameId)
     default:
       throw new Error('Invalid data source')
   }
@@ -115,6 +130,8 @@ export async function getGameScreenshots(dataSource: string, gameId: string): Pr
       return await getGameScreenshotsFromIGDB(gameId)
     case 'ymgal':
       return await getGameScreenshotsFromYMGal(gameId)
+    case 'dlsite':
+      return await getGameScreenshotsFromDLsite(gameId)
     default:
       throw new Error('Invalid data source')
   }
@@ -132,6 +149,8 @@ export async function getGameCover(dataSource: string, gameId: string): Promise<
       return await getGameCoverFromIGDB(gameId)
     case 'ymgal':
       return await getGameCoverFromYMGal(gameId)
+    case 'dlsite':
+      return await getGameCoverFromDLsite(gameId)
     default:
       throw new Error('Invalid data source')
   }
@@ -188,6 +207,8 @@ export async function getGameCoversByTitle(
       return await getGameCoverByTitleFromBangumi(gameName).then((cover) => [cover])
     case 'steamGridDb':
       return await getGameGridsFromSteamGridDB(gameName)
+    case 'dlsite':
+      return await getGameCoverByTitleFromDLsite(gameName).then((cover) => [cover])
     default:
       throw new Error('Invalid data source')
   }
@@ -206,6 +227,8 @@ export async function getGameScreenshotsByTitle(
       return await getGameScreenshotsByTitleFromIGDB(gameName)
     case 'steamGridDb':
       return await getGameHerosFromSteamGridDB(gameName)
+    case 'dlsite':
+      return await getGameScreenshotsByTitleFromDLsite(gameName)
     default:
       throw new Error('Invalid data source')
   }
