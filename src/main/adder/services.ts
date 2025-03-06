@@ -1,4 +1,9 @@
-import { addGameToDB, getBatchGameAdderData, addGameToDBWithoutMetadata } from './common'
+import {
+  addGameToDB,
+  getBatchGameAdderData,
+  addGameToDBWithoutMetadata,
+  updateGame
+} from './common'
 import log from 'electron-log/main.js'
 
 /**
@@ -12,27 +17,47 @@ import log from 'electron-log/main.js'
 export async function addGameToDatabase({
   dataSource,
   id,
-  preExistingDbId,
   screenshotUrl,
   playTime
 }: {
   dataSource: string
   id: string
-  preExistingDbId?: string
   screenshotUrl?: string
   playTime?: number
-  noWatcherAction?: boolean
 }): Promise<void> {
   try {
     await addGameToDB({
       dataSource,
       id,
-      preExistingDbId,
       screenshotUrl,
       playTime
     })
   } catch (error) {
     log.error('Error adding game to database:', error)
+    throw error
+  }
+}
+
+/**
+ * Update game metadata
+ * @param dataSource - The data source of the game
+ * @param id - The ID of the game
+ */
+export async function updateGameMetadata({
+  dbId,
+  dataSource,
+  dataSourceId,
+  screenshotUrl
+}: {
+  dbId: string
+  dataSource: string
+  dataSourceId: string
+  screenshotUrl?: string
+}): Promise<void> {
+  try {
+    await updateGame({ dbId, dataSource, dataSourceId, screenshotUrl })
+  } catch (error) {
+    log.error('Error updating game metadata:', error)
     throw error
   }
 }

@@ -117,7 +117,7 @@ export function Sidebar(): JSX.Element {
               )}
             </PopoverTrigger>
             <PopoverContent side="right">
-              <CloudSyncInfo isWithAction className={cn('text-sm')} />
+              <CloudSyncInfo className={cn('text-sm')} />
             </PopoverContent>
           </Popover>
         ) : (

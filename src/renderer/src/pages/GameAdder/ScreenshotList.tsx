@@ -85,7 +85,21 @@ export function ScreenshotList(): JSX.Element {
     setIsAdding(true)
     toast.promise(
       (async (): Promise<void> => {
-        await ipcInvoke('add-game-to-db', { dataSource, id, preExistingDbId: dbId, screenshotUrl })
+        if (dbId) {
+          await ipcInvoke('update-game-metadata', {
+            dbId,
+            dataSource,
+            dataSourceId: id,
+            screenshotUrl
+          })
+        } else {
+          await ipcInvoke('add-game-to-db', {
+            dataSource,
+            id,
+            preExistingDbId: dbId,
+            screenshotUrl
+          })
+        }
         setIsAdding(false)
         setDbId('')
         setId('')

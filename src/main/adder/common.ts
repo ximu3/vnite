@@ -24,21 +24,17 @@ import { DEFAULT_GAME_VALUES, DEFAULT_GAME_LOCAL_VALUES } from '@appTypes/databa
 export async function addGameToDB({
   dataSource,
   id,
-  preExistingDbId,
   screenshotUrl,
   playTime
 }: {
   dataSource: string
   id: string
-  preExistingDbId?: string
   screenshotUrl?: string
   playTime?: number
-  noWatcherAction?: boolean
-  noIpcAction?: boolean
 }): Promise<void> {
   const metadata = await getGameMetadata(dataSource, id)
 
-  const dbId = preExistingDbId || generateUUID()
+  const dbId = generateUUID()
 
   const gameDoc = DEFAULT_GAME_VALUES
 
@@ -48,10 +44,6 @@ export async function addGameToDB({
     ...metadata,
     originalName: metadata.originalName ?? '',
     [`${dataSource}Id`]: id
-  }
-
-  if (!preExistingDbId) {
-    gameDoc.record.addDate = new Date().toISOString()
   }
 
   if (playTime) {
@@ -94,6 +86,37 @@ export async function addGameToDB({
 
   if (logoUrl) {
     await GameDBManager.setGameImage(dbId, 'logo', logoUrl.toString())
+  }
+}
+
+export async function updateGame({
+  dbId,
+  dataSource,
+  dataSourceId,
+  screenshotUrl
+}: {
+  dbId: string
+  dataSource: string
+  dataSourceId: string
+  screenshotUrl?: string
+}): Promise<void> {
+  const metadata = await getGameMetadata(dataSource, dataSourceId)
+  const gameDoc = await GameDBManager.getGame(dbId)
+  gameDoc.metadata = {
+    ...gameDoc.metadata,
+    ...metadata,
+    originalName: metadata.originalName ?? '',
+    [`${dataSource}Id`]: dataSourceId
+  }
+  await GameDBManager.setGame(dbId, gameDoc)
+
+  if (screenshotUrl) {
+    await GameDBManager.setGameImage(dbId, 'background', screenshotUrl)
+  }
+
+  const coverUrl = await getGameCover(dataSource, dataSourceId)
+  if (coverUrl) {
+    await GameDBManager.setGameImage(dbId, 'cover', coverUrl)
   }
 }
 

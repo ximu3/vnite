@@ -2,7 +2,8 @@ import { ipcMain, BrowserWindow } from 'electron'
 import {
   addGameToDatabase,
   getBatchGameAdderDataFromDirectory,
-  addGameToDatabaseWithoutMetadata
+  addGameToDatabaseWithoutMetadata,
+  updateGameMetadata
 } from '~/adder'
 
 export function setupAdderIPC(mainWindow: BrowserWindow): void {
@@ -13,16 +14,34 @@ export function setupAdderIPC(mainWindow: BrowserWindow): void {
       {
         dataSource,
         id,
-        preExistingDbId,
         screenshotUrl
       }: {
         dataSource: string
         id: string
-        preExistingDbId?: string
         screenshotUrl?: string
       }
     ) => {
-      await addGameToDatabase({ dataSource, id, preExistingDbId, screenshotUrl })
+      await addGameToDatabase({ dataSource, id, screenshotUrl })
+    }
+  )
+
+  ipcMain.handle(
+    'update-game-metadata',
+    async (
+      _,
+      {
+        dbId,
+        dataSource,
+        dataSourceId,
+        screenshotUrl
+      }: {
+        dbId: string
+        dataSource: string
+        dataSourceId: string
+        screenshotUrl?: string
+      }
+    ) => {
+      await updateGameMetadata({ dbId, dataSource, dataSourceId, screenshotUrl })
     }
   )
 
