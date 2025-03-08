@@ -1,0 +1,33 @@
+{
+  "title": "vnite",
+  "navigation": {
+    "library": "游戏库",
+    "records": "记录"
+  },
+  "actions": {
+    "darkMode": "暗色模式",
+    "lightMode": "亮色模式",
+    "cloudSyncDisabled": "云同步未开启",
+    "addGame": "添加游戏",
+    "settings": "设置"
+  },
+  "gameAdder": {
+    "withScraper": "使用刮削器",
+    "addSingle": "单个添加",
+    "addBatch": "批量添加",
+    "withoutScraper": "不使用刮削器",
+    "importFromThirdParty": "从第三方导入",
+    "steam": "Steam"
+  },
+  "messages": {
+    "noGamesFound": "未找到游戏",
+    "getFailed": "获取游戏失败: ",
+    "unknownError": "未知错误",
+    "selectLibraryFolder": "请选择库文件夹...",
+    "getSuccess": "获取游戏成功",
+    "selectGamePath": "请选择游戏路径",
+    "adding": "正在添加游戏...",
+    "addSuccess": "添加游戏成功",
+    "addError": "添加游戏时出错"
+  }
+}

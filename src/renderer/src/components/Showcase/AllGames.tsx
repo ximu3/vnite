@@ -14,6 +14,7 @@ import { useConfigState } from '~/hooks'
 import { sortGames } from '~/stores/game'
 import { GamePoster } from './posters/GamePoster'
 import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
+import { useTranslation } from 'react-i18next'
 
 function PlaceHolder(): JSX.Element {
   return (
@@ -37,25 +38,38 @@ export function AllGamesComponent({
   const toggleOrder = (): void => {
     setOrder(order === 'asc' ? 'desc' : 'asc')
   }
+  const { t } = useTranslation('game')
   return (
     <div className={cn('w-full flex flex-col gap-1 pt-3')}>
       <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>
         <div className={cn('flex flex-row gap-5 items-center justify-center')}>
-          <div className={cn('text-accent-foreground flex-shrink-0')}>所有游戏</div>
+          <div className={cn('text-accent-foreground flex-shrink-0')}>
+            {t('showcase.sections.allGames')}
+          </div>
           <div className={cn('flex flex-row gap-1 items-center justify-center')}>
-            <div className={cn('text-sm')}>排序依据：</div>
+            <div className={cn('text-sm')}>{t('showcase.sorting.title')}</div>
             <Select value={by} onValueChange={setBy} defaultValue="name">
               <SelectTrigger className={cn('w-[120px] h-[26px] text-xs')}>
                 <SelectValue placeholder="Select a fruit" className={cn('text-xs')} />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>排序依据</SelectLabel>
-                  <SelectItem value="metadata.name">名称</SelectItem>
-                  <SelectItem value="metadata.releaseDate">发布日期</SelectItem>
-                  <SelectItem value="record.lastRunDate">最后运行日期</SelectItem>
-                  <SelectItem value="record.addDate">添加日期</SelectItem>
-                  <SelectItem value="record.playTime">游玩时间</SelectItem>
+                  <SelectLabel>{t('showcase.sorting.label')}</SelectLabel>
+                  <SelectItem value="metadata.name">
+                    {t('showcase.sorting.options.name')}
+                  </SelectItem>
+                  <SelectItem value="metadata.releaseDate">
+                    {t('showcase.sorting.options.releaseDate')}
+                  </SelectItem>
+                  <SelectItem value="record.lastRunDate">
+                    {t('showcase.sorting.options.lastRunDate')}
+                  </SelectItem>
+                  <SelectItem value="record.addDate">
+                    {t('showcase.sorting.options.addDate')}
+                  </SelectItem>
+                  <SelectItem value="record.playTime">
+                    {t('showcase.sorting.options.playTime')}
+                  </SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>

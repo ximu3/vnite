@@ -3,8 +3,10 @@ import { cn } from '~/utils'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@ui/accordion'
 import { ScrollArea } from '@ui/scroll-area'
 import { GameNav } from '../GameNav'
+import { useTranslation } from 'react-i18next'
 
 export function Search({ query }: { query: string }): JSX.Element {
+  const { t } = useTranslation('game')
   const games = searchGames(query)
   return (
     <ScrollArea className={cn('w-full h-full pr-3 -mr-3')}>
@@ -15,7 +17,7 @@ export function Search({ query }: { query: string }): JSX.Element {
       >
         <AccordionItem value="all">
           <AccordionTrigger className={cn('bg-accent/30 text-xs p-1 pl-2')}>
-            搜索结果
+            {t('list.search.results')}
           </AccordionTrigger>
           <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
             {games.map((game) => (

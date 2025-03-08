@@ -1,0 +1,53 @@
+{
+  "steamImporter": {
+    "dialog": {
+      "title": "Import Steam Games",
+      "description": "Please enter your Steam ID to import your game library. You can find your ID in your profile URL."
+    },
+    "input": {
+      "steamId": "Enter Steam ID",
+      "fetch": "Fetch",
+      "searching": "Searching games..."
+    },
+    "status": {
+      "initial": {
+        "title": "Start Importing",
+        "description": "Please enter your Steam ID to get your game list"
+      },
+      "ready": {
+        "title": "Ready to Fetch",
+        "description": "Please click the \"Fetch\" button to get your game list"
+      },
+      "loading": {
+        "title": "Loading",
+        "description": "Fetching game list..."
+      },
+      "empty": {
+        "title": "All Imported",
+        "description": "All games have been successfully imported"
+      }
+    },
+    "gameList": {
+      "selectAll": "Select All ({{selected}}/{{total}})",
+      "search": "Search games...",
+      "hours": "{{hours}} hours"
+    },
+    "import": {
+      "button": "Import Selected Games ({{count}})",
+      "preparing": "Preparing import...",
+      "progress": {
+        "title": "Importing",
+        "completed": "Import Complete",
+        "error": "Import Error",
+        "summary": "Success: {{success}} Failed: {{error}}"
+      }
+    },
+    "notifications": {
+      "fetchFailed": "Failed to fetch game list, please try again",
+      "selectAtLeastOne": "Please select at least one game",
+      "allImported": "All games have been imported",
+      "importFailed": "Import failed, please try again",
+      "waitForCompletion": "Please wait for import to complete"
+    }
+  }
+}

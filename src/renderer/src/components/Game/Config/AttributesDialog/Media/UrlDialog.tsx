@@ -3,6 +3,7 @@ import { Button } from '@ui/button'
 import { Dialog, DialogContent, DialogTrigger } from '@ui/dialog'
 import { Input } from '@ui/input'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export function UrlDialog({
   setMediaWithUrl,
@@ -11,11 +12,18 @@ export function UrlDialog({
   type
 }: {
   setMediaWithUrl: (type: string, URL: string) => void
-  isUrlDialogOpen: { icon: boolean; cover: boolean; background: boolean }
-  setIsUrlDialogOpen: (isOpen: { icon: boolean; cover: boolean; background: boolean }) => void
+  isUrlDialogOpen: { icon: boolean; cover: boolean; background: boolean; logo: boolean }
+  setIsUrlDialogOpen: (isOpen: {
+    icon: boolean
+    cover: boolean
+    background: boolean
+    logo: boolean
+  }) => void
   type: string
 }): JSX.Element {
+  const { t } = useTranslation('game')
   const [mediaUrl, setMediaUrl] = useState<string>('')
+
   return (
     <Dialog open={isUrlDialogOpen[type]}>
       <DialogTrigger>
@@ -48,7 +56,7 @@ export function UrlDialog({
               setMediaWithUrl(type, mediaUrl)
             }}
           >
-            确定
+            {t('detail.properties.media.url.confirm')}
           </Button>
         </div>
       </DialogContent>

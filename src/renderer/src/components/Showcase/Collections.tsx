@@ -5,6 +5,7 @@ import { useRef } from 'react'
 import { useGameCollectionStore } from '~/stores'
 import { cn } from '~/utils'
 import { CollectionPoster } from './posters/CollectionPoster'
+import { useTranslation } from 'react-i18next'
 
 export function Collections(): JSX.Element {
   const collections = useGameCollectionStore((state) => state.documents)
@@ -20,10 +21,13 @@ export function Collections(): JSX.Element {
       behavior: 'smooth'
     })
   }, 750)
+  const { t } = useTranslation('game')
   return (
     <div className={cn('w-full flex flex-col gap-1 pt-3')}>
       <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>
-        <div className={cn('text-accent-foreground flex-shrink-0')}>我的收藏</div>
+        <div className={cn('text-accent-foreground flex-shrink-0')}>
+          {t('showcase.sections.collections')}
+        </div>
 
         {/* Split Line Container */}
         <div className={cn('flex items-center justify-center flex-grow pr-5')}>

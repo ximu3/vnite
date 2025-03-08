@@ -15,8 +15,10 @@ import { GameList, useGameAdderStore } from './store'
 import { ipcInvoke } from '~/utils'
 import { useNavigate } from 'react-router-dom'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 
 export function Search({ className }: { className?: string }): JSX.Element {
+  const { t } = useTranslation('adder')
   const { dataSource, setDataSource, name, setName, id, setId, setGameList } = useGameAdderStore()
   const navigate = useNavigate()
 
@@ -41,14 +43,14 @@ export function Search({ className }: { className?: string }): JSX.Element {
 
   async function searchGames(): Promise<void> {
     if (!inputName) {
-      toast.warning('请输入游戏名称')
+      toast.warning(t('gameAdder.search.notifications.enterName'))
       return
     }
     toast.promise(
       (async (): Promise<GameList> => {
         const result = (await ipcInvoke('search-games', dataSource, inputName)) as GameList
         if (result.length === 0) {
-          throw new Error('未找到游戏')
+          throw new Error(t('gameAdder.search.notifications.notFound'))
         }
         setGameList(result)
         setName(inputName)
@@ -56,31 +58,31 @@ export function Search({ className }: { className?: string }): JSX.Element {
         return result
       })(),
       {
-        loading: '搜索游戏中...',
-        success: (data) => `找到 ${data.length} 个游戏`,
-        error: (err) => `搜索失败: ${err.message}`
+        loading: t('gameAdder.search.notifications.searching'),
+        success: (data) => t('gameAdder.search.notifications.found', { count: data.length }),
+        error: (err) => t('gameAdder.search.notifications.searchError', { message: err.message })
       }
     )
   }
 
   async function recognizeGame(): Promise<void> {
     if (!inputId) {
-      toast.warning('请输入游戏ID')
+      toast.warning(t('gameAdder.search.notifications.enterId'))
       return
     }
     toast.promise(
       (async (): Promise<void> => {
         const result = await ipcInvoke('check-game-exists', dataSource, inputId)
         if (!result) {
-          throw new Error('无效ID')
+          throw new Error(t('gameAdder.search.notifications.invalidId'))
         }
         setId(inputId)
         navigate('/screenshots')
       })(),
       {
-        loading: '识别游戏中...',
-        success: '识别游戏成功',
-        error: (err) => `识别游戏失败: ${err.message}`
+        loading: t('gameAdder.search.notifications.recognizing'),
+        success: t('gameAdder.search.notifications.recognized'),
+        error: (err) => t('gameAdder.search.notifications.recognizeError', { message: err.message })
       }
     )
   }
@@ -89,7 +91,7 @@ export function Search({ className }: { className?: string }): JSX.Element {
     <div className={cn('w-[36vw] h-auto', '3xl:w-[30vw]', className)}>
       <div className={cn('flex flex-col w-full h-full gap-3 p-3 justify-center')}>
         <div className={cn('flex flex-row gap-3 items-center justify-start')}>
-          <div>数据来源</div>
+          <div>{t('gameAdder.search.dataSource')}</div>
           <div className={cn('w-[130px]')}>
             <Select onValueChange={setDataSource} value={dataSource}>
               <SelectTrigger>
@@ -97,13 +99,15 @@ export function Search({ className }: { className?: string }): JSX.Element {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>数据来源</SelectLabel>
-                  <SelectItem value="steam">Steam</SelectItem>
-                  <SelectItem value="vndb">VNDB</SelectItem>
-                  <SelectItem value="bangumi">Bangumi</SelectItem>
-                  <SelectItem value="igdb">IGDB</SelectItem>
-                  <SelectItem value="ymgal">YMgal</SelectItem>
-                  <SelectItem value="dlsite">DLsite</SelectItem>
+                  <SelectLabel>{t('gameAdder.search.dataSources.label')}</SelectLabel>
+                  <SelectItem value="steam">{t('gameAdder.search.dataSources.steam')}</SelectItem>
+                  <SelectItem value="vndb">{t('gameAdder.search.dataSources.vndb')}</SelectItem>
+                  <SelectItem value="bangumi">
+                    {t('gameAdder.search.dataSources.bangumi')}
+                  </SelectItem>
+                  <SelectItem value="igdb">{t('gameAdder.search.dataSources.igdb')}</SelectItem>
+                  <SelectItem value="ymgal">{t('gameAdder.search.dataSources.ymgal')}</SelectItem>
+                  <SelectItem value="dlsite">{t('gameAdder.search.dataSources.dlsite')}</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -111,33 +115,33 @@ export function Search({ className }: { className?: string }): JSX.Element {
         </div>
 
         <div className={cn('flex flex-row gap-3 items-center justify-start')}>
-          <div className={cn('flex-shrink-0')}>游戏名称</div>
+          <div className={cn('flex-shrink-0')}>{t('gameAdder.search.gameName')}</div>
           <Input
             ref={gameNameInput}
             value={inputName}
             onChange={(e) => setInputName(e.target.value)}
-            placeholder="请输入游戏名称"
+            placeholder={t('gameAdder.search.gameNamePlaceholder')}
             onKeyDown={(e) => {
               if (e.key === 'Enter') searchGames()
               if (e.key === 'ArrowUp' || e.key === 'ArrowDown') gameIdInput.current?.focus()
             }}
           />
-          <Button onClick={searchGames}>搜索</Button>
+          <Button onClick={searchGames}>{t('gameAdder.search.searchButton')}</Button>
         </div>
 
         <div className={cn('flex flex-row gap-3 items-center justify-start')}>
-          <div className={cn('flex-shrink-0 mr-4')}>游戏ID</div>
+          <div className={cn('flex-shrink-0 mr-4')}>{t('gameAdder.search.gameId')}</div>
           <Input
             ref={gameIdInput}
             value={inputId}
             onChange={(e) => setInputId(e.target.value)}
-            placeholder="请输入游戏ID"
+            placeholder={t('gameAdder.search.gameIdPlaceholder')}
             onKeyDown={(e) => {
               if (e.key === 'Enter') recognizeGame()
               if (e.key === 'ArrowUp' || e.key === 'ArrowDown') gameNameInput.current?.focus()
             }}
           />
-          <Button onClick={recognizeGame}>识别</Button>
+          <Button onClick={recognizeGame}>{t('gameAdder.search.recognizeButton')}</Button>
         </div>
       </div>
     </div>

@@ -1,8 +1,5 @@
-'use client'
-
 import * as React from 'react'
 import { ChevronsUpDown } from 'lucide-react'
-
 import { cn, ipcInvoke } from '~/utils'
 import { Button } from '@ui/button'
 import {
@@ -16,17 +13,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
 import { toast } from 'sonner'
 import { useTheme } from '~/components/ThemeProvider'
-
-const presets = [
-  {
-    value: 'default',
-    label: '默认'
-  },
-  {
-    value: 'mutsumi',
-    label: 'Mutsumi'
-  }
-]
+import { useTranslation } from 'react-i18next'
 
 export function PresetSelecter({
   className,
@@ -35,9 +22,22 @@ export function PresetSelecter({
   className?: string
   setCssContent: (theme: string) => void
 }): JSX.Element {
+  const { t } = useTranslation('config')
   const [open, setOpen] = React.useState(false)
   const [value] = React.useState('')
   const { updateTheme } = useTheme()
+
+  // 预设配置从翻译中获取
+  const presets = [
+    {
+      value: 'default',
+      label: t('theme.presets.default')
+    },
+    {
+      value: 'mutsumi',
+      label: t('theme.presets.mutsumi')
+    }
+  ]
 
   async function setPreset(presetName: string): Promise<void> {
     toast.promise(
@@ -47,8 +47,8 @@ export function PresetSelecter({
         updateTheme(theme)
       },
       {
-        loading: '正在配置主题...',
-        success: '主题配置成功',
+        loading: t('theme.messages.configuring'),
+        success: t('theme.messages.configured'),
         error: (error) => `${error}`
       }
     )
@@ -61,17 +61,19 @@ export function PresetSelecter({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-[150px] justify-between"
+            className="w-[150px] justify-between items-center flex flex-row"
           >
-            {value ? presets.find((preset) => preset.value === value)?.label : '预设主题'}
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            {value
+              ? presets.find((preset) => preset.value === value)?.label
+              : t('theme.presetThemes')}
+            <ChevronsUpDown className="w-4 h-4 ml-2 opacity-50 shrink-0" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[150px] p-0">
           <Command>
-            <CommandInput placeholder="搜索主题" />
+            <CommandInput placeholder={t('theme.searchTheme')} />
             <CommandList>
-              <CommandEmpty>No preset found.</CommandEmpty>
+              <CommandEmpty>{t('theme.noPresetFound')}</CommandEmpty>
               <CommandGroup>
                 {presets.map((preset) => (
                   <CommandItem

@@ -22,7 +22,9 @@ export default defineConfig({
         '~': resolve('src/renderer/src'),
         '@ui': resolve('src/renderer/src/components/ui'),
         '@appTypes': resolve('src/types'),
-        '@appUtils': resolve('src/utils')
+        '@appUtils': resolve('src/utils'),
+        '@assets': resolve('src/renderer/assets'),
+        '@locales': resolve('src/renderer/locales')
       }
     },
     plugins: [react()]

@@ -1,11 +1,12 @@
 import { cn } from '~/utils'
 import { Dialog, DialogContent } from '@ui/dialog'
 import { toast } from 'sonner'
-
 import { useGameBatchAdderStore } from './store'
 import { GameList } from './GameList'
+import { useTranslation } from 'react-i18next'
 
 export function GameBatchAdder(): JSX.Element {
+  const { t } = useTranslation('adder')
   const {
     isOpen,
     isLoading,
@@ -14,7 +15,7 @@ export function GameBatchAdder(): JSX.Element {
 
   const handleClose = (): void => {
     if (isLoading) {
-      toast.warning('请等待游戏添加完成')
+      toast.warning(t('gameBatchAdder.dialog.waitForCompletion'))
       return
     }
 
@@ -22,6 +23,7 @@ export function GameBatchAdder(): JSX.Element {
     setGames([]) // 使用新的 actions
     setIsLoading(false)
   }
+
   return (
     <Dialog open={isOpen}>
       <DialogContent

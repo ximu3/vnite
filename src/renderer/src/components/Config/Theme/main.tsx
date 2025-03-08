@@ -5,22 +5,25 @@ import { useTheme } from '~/components/ThemeProvider'
 import { Button } from '@ui/button'
 import { Textarea } from '@ui/textarea'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 import { PresetSelecter } from './PresetSelecter'
 
 export function Theme(): JSX.Element {
+  const { t } = useTranslation('config')
   const { theme, updateTheme } = useTheme()
   const [cssContent, setCssContent] = useState(theme || '')
 
   const handleSave = async (): Promise<void> => {
     updateTheme(cssContent)
-    toast.success('主题已保存')
+    toast.success(t('theme.messages.themeSaved'))
   }
+
   return (
     <Card className={cn('group')}>
       <CardHeader>
         <CardTitle className={cn('relative')}>
           <div className={cn('flex flex-row justify-between items-center')}>
-            <div className={cn('flex items-center')}>主题</div>
+            <div className={cn('flex items-center')}>{t('theme.title')}</div>
             <div className={cn('flex items-center')}>
               <PresetSelecter setCssContent={setCssContent} />
             </div>
@@ -36,7 +39,7 @@ export function Theme(): JSX.Element {
           />
           <div className={cn('flex flex-row-reverse')}>
             <Button onClick={handleSave} className="mt-4">
-              保存主题
+              {t('theme.saveButton')}
             </Button>
           </div>
         </div>

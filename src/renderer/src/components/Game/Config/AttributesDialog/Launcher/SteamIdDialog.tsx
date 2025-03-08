@@ -4,6 +4,7 @@ import { Dialog, DialogContent } from '@ui/dialog'
 import { Input } from '@ui/input'
 import { create } from 'zustand'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 
 interface SteamIdState {
   isOpen: boolean
@@ -24,7 +25,9 @@ export const useSteamIdDialogStore = create<SteamIdState>((set) => ({
 }))
 
 export function SteamIdDialog(): JSX.Element {
+  const { t } = useTranslation('game')
   const { isOpen, setIsOpen, steamId, setSteamId, gameId, setGameId } = useSteamIdDialogStore()
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent showCloseButton={false}>
@@ -43,8 +46,8 @@ export function SteamIdDialog(): JSX.Element {
                   await ipcInvoke('launcher-preset', 'steam', gameId, steamId)
                 },
                 {
-                  loading: '正在配置预设...',
-                  success: '预设配置成功',
+                  loading: t('detail.properties.launcher.preset.notifications.configuring'),
+                  success: t('detail.properties.launcher.preset.notifications.success'),
                   error: (error) => `${error}`
                 }
               )
@@ -52,7 +55,7 @@ export function SteamIdDialog(): JSX.Element {
               setGameId('')
             }}
           >
-            确定
+            {t('detail.properties.launcher.preset.confirm')}
           </Button>
         </div>
       </DialogContent>

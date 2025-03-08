@@ -5,21 +5,23 @@ import { StartGame } from '../../Game/StartGame'
 import { StopGame } from '../../Game/StopGame'
 import { CollectionMenu } from './CollectionMenu'
 import { ManageMenu } from './ManageMenu'
+import { useTranslation } from 'react-i18next'
 
 export function GameNavCM({
   gameId,
   openAttributesDialog,
   openAddCollectionDialog,
   openNameEditorDialog,
-  openPlayingTimeEditorDialog
+  openPlayTimeEditorDialog
 }: {
   gameId: string
   openAttributesDialog: () => void
   openAddCollectionDialog: () => void
   openNameEditorDialog: () => void
-  openPlayingTimeEditorDialog: () => void
+  openPlayTimeEditorDialog: () => void
 }): JSX.Element {
   const { runningGames } = useRunningGames()
+  const { t } = useTranslation('game')
   return (
     <ContextMenuContent className={cn('w-40')}>
       <div className={cn('flex flex-row w-full')}>
@@ -35,11 +37,11 @@ export function GameNavCM({
       <ManageMenu
         gameId={gameId}
         openNameEditorDialog={openNameEditorDialog}
-        openPlayingTimeEditorDialog={openPlayingTimeEditorDialog}
+        openPlayingTimeEditorDialog={openPlayTimeEditorDialog}
       />
       <ContextMenuSeparator />
       <ContextMenuItem onSelect={openAttributesDialog}>
-        <div>属性</div>
+        <div>{t('detail.config.properties')}</div>
       </ContextMenuItem>
     </ContextMenuContent>
   )

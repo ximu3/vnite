@@ -1,0 +1,104 @@
+{
+  "gameAdder": {
+    "dialog": {
+      "title": "Add Game"
+    },
+    "gameList": {
+      "columns": {
+        "name": "Game Name",
+        "releaseDate": "Release Date",
+        "developers": "Developers"
+      },
+      "unknown": "Unknown",
+      "selected": "Selected game: {{name}}"
+    },
+    "screenshots": {
+      "noImages": "No images",
+      "confirm": "Confirm",
+      "notifications": {
+        "loading": "Getting images...",
+        "success": "Images retrieved successfully",
+        "error": "Failed to get images: {{message}}",
+        "noImages": "No game images found",
+        "adding": "Adding game...",
+        "addSuccess": "Game added successfully",
+        "addError": "Failed to add game: {{message}}"
+      }
+    },
+    "search": {
+      "dataSource": "Data Source",
+      "gameName": "Game Name",
+      "gameNamePlaceholder": "Please enter game name",
+      "gameId": "Game ID",
+      "gameIdPlaceholder": "Please enter game ID",
+      "searchButton": "Search",
+      "recognizeButton": "Recognize",
+      "notifications": {
+        "enterName": "Please enter game name",
+        "searching": "Searching games...",
+        "found": "Found {{count}} games",
+        "notFound": "No games found",
+        "searchError": "Search failed: {{message}}",
+        "enterId": "Please enter game ID",
+        "recognizing": "Recognizing game...",
+        "recognized": "Game recognized successfully",
+        "invalidId": "Invalid ID",
+        "recognizeError": "Failed to recognize game: {{message}}"
+      },
+      "dataSources": {
+        "label": "Data Sources",
+        "steam": "Steam",
+        "vndb": "VNDB",
+        "bangumi": "Bangumi",
+        "igdb": "IGDB",
+        "ymgal": "YMgal",
+        "dlsite": "DLsite"
+      }
+    }
+  },
+  "gameBatchAdder": {
+    "dialog": {
+      "title": "Batch Add Games",
+      "waitForCompletion": "Please wait for game addition to complete"
+    },
+    "status": {
+      "loading": "Adding",
+      "success": "Added successfully",
+      "error": "Addition failed",
+      "waiting": "Waiting to add"
+    },
+    "table": {
+      "columns": {
+        "dataSource": "Data Source",
+        "name": "Game Name",
+        "id": "Game ID",
+        "status": "Status",
+        "actions": "Actions"
+      }
+    },
+    "form": {
+      "dataSource": "Data Source",
+      "namePlaceholder": "Please enter game name",
+      "idPlaceholder": "Game ID (Optional)"
+    },
+    "actions": {
+      "retry": "Retry",
+      "add": "Add",
+      "delete": "Delete",
+      "addAll": "Add All",
+      "adding": "Adding..."
+    },
+    "notifications": {
+      "addingGame": "Adding game {{name}}...",
+      "gameAdded": "Game {{name}} added successfully",
+      "addingGames": "Adding games...",
+      "gamesAdded": "Games added successfully",
+      "gameAddFailed": "Failed to add game"
+    },
+    "errors": {
+      "gameNotFound": "Game not found: {{name}}",
+      "gameIsBeingAdded": "Game is already being added",
+      "gameAlreadyAdded": "Game already added"
+    }
+  }
+}

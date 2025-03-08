@@ -84,13 +84,13 @@ export function setupUpdateListener(): () => void {
  * @param navigate 路由导航函数
  * @returns 清理函数数组
  */
-export function setup(navigate: (path: string) => void): () => void {
+export async function setup(navigate: (path: string) => void): Promise<() => void> {
   // 设置各种监听器
   const cleanupFunctions = [
     setupGameUrlListener(navigate),
     setupCloudSyncListener(),
     setupGameExitListeners(),
-    setupDBSync(),
+    await setupDBSync(),
     setupUpdateListener()
   ]
 

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { ArrayInput } from '@ui/array-input'
 import { DateInput } from '@ui/date-input'
 import { Dialog, DialogContent, DialogTrigger } from '@ui/dialog'
@@ -7,6 +8,7 @@ import { useGameState } from '~/hooks'
 import { cn } from '~/utils'
 
 export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
+  const { t } = useTranslation('game')
   const [originalName, setOriginalName] = useGameState(gameId, 'metadata.originalName')
   const [name, setName] = useGameState(gameId, 'metadata.name')
   const [developers, setDevelopers] = useGameState(gameId, 'metadata.developers')
@@ -24,61 +26,97 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
       </DialogTrigger>
       <DialogContent>
         <div className={cn('grid grid-cols-[60px_1fr] gap-y-3 gap-x-4 px-3 py-5 items-center')}>
-          <div className={cn('whitespace-nowrap select-none justify-self-end')}>原名</div>
+          <div className={cn('whitespace-nowrap select-none justify-self-end')}>
+            {t('detail.overview.information.fields.originalName')}
+          </div>
           <Input
             value={originalName}
             onChange={(e) => setOriginalName(e.target.value)}
-            placeholder="暂无原名"
-            className={cn(' text-sm')}
+            placeholder={t('detail.overview.information.empty')}
+            className={cn('text-sm')}
           />
-          <div className={cn('whitespace-nowrap select-none justify-self-end')}>译名</div>
+          <div className={cn('whitespace-nowrap select-none justify-self-end')}>
+            {t('detail.overview.information.fields.localizedName')}
+          </div>
           <Input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="暂无译名"
-            className={cn(' text-sm')}
+            placeholder={t('detail.overview.information.empty')}
+            className={cn('text-sm')}
           />
-          <div className={cn('whitespace-nowrap select-none justify-self-end')}>开发商</div>
+          <div className={cn('whitespace-nowrap select-none justify-self-end')}>
+            {t('detail.overview.information.fields.developers')}
+          </div>
           <Tooltip>
             <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
-              <ArrayInput value={developers} onChange={setDevelopers} placeholder="暂无开发商" />
+              <ArrayInput
+                value={developers}
+                onChange={setDevelopers}
+                placeholder={t('detail.overview.information.empty')}
+              />
             </TooltipTrigger>
             <TooltipContent side="right">
-              <div className={cn('text-xs')}>开发商之间用英文逗号分隔</div>
+              <div className={cn('text-xs')}>
+                {t('detail.overview.information.hints.developers')}
+              </div>
             </TooltipContent>
           </Tooltip>
-          <div className={cn('whitespace-nowrap select-none justify-self-end')}>发行商</div>
+          <div className={cn('whitespace-nowrap select-none justify-self-end')}>
+            {t('detail.overview.information.fields.publishers')}
+          </div>
           <Tooltip>
             <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
-              <ArrayInput value={publishers} onChange={setPublishers} placeholder="暂无发行商" />
+              <ArrayInput
+                value={publishers}
+                onChange={setPublishers}
+                placeholder={t('detail.overview.information.empty')}
+              />
             </TooltipTrigger>
             <TooltipContent side="right">
-              <div className={cn('text-xs')}>发行商之间用英文逗号分隔</div>
+              <div className={cn('text-xs')}>
+                {t('detail.overview.information.hints.publishers')}
+              </div>
             </TooltipContent>
           </Tooltip>
-          <div className={cn('whitespace-nowrap select-none justify-self-end')}>发行日期</div>
+          <div className={cn('whitespace-nowrap select-none justify-self-end')}>
+            {t('detail.overview.information.fields.releaseDate')}
+          </div>
           <DateInput
             value={releaseDate}
             onChange={(e) => setReleaseDate(e.target.value)}
-            placeholder="暂无发行日期"
+            placeholder={t('detail.overview.information.empty')}
             className={cn('text-sm')}
           />
-          <div className={cn('whitespace-nowrap select-none justify-self-end')}>平台</div>
+          <div className={cn('whitespace-nowrap select-none justify-self-end')}>
+            {t('detail.overview.information.fields.platforms')}
+          </div>
           <Tooltip>
             <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
-              <ArrayInput value={platforms} onChange={setPlatforms} placeholder="暂无平台" />
+              <ArrayInput
+                value={platforms}
+                onChange={setPlatforms}
+                placeholder={t('detail.overview.information.empty')}
+              />
             </TooltipTrigger>
             <TooltipContent side="right">
-              <div className={cn('text-xs')}>平台之间用英文逗号分隔</div>
+              <div className={cn('text-xs')}>
+                {t('detail.overview.information.hints.platforms')}
+              </div>
             </TooltipContent>
           </Tooltip>
-          <div className={cn('whitespace-nowrap select-none justify-self-end')}>类型</div>
+          <div className={cn('whitespace-nowrap select-none justify-self-end')}>
+            {t('detail.overview.information.fields.genres')}
+          </div>
           <Tooltip>
             <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
-              <ArrayInput value={genres} onChange={setGenres} placeholder="暂无类型" />
+              <ArrayInput
+                value={genres}
+                onChange={setGenres}
+                placeholder={t('detail.overview.information.empty')}
+              />
             </TooltipTrigger>
             <TooltipContent side="right">
-              <div className={cn('text-xs')}>类型之间用英文逗号分隔</div>
+              <div className={cn('text-xs')}>{t('detail.overview.information.hints.genres')}</div>
             </TooltipContent>
           </Tooltip>
         </div>

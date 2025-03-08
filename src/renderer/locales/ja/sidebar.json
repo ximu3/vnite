@@ -1,0 +1,33 @@
+{
+  "title": "vnite",
+  "navigation": {
+    "library": "ゲームライブラリ",
+    "records": "記録"
+  },
+  "actions": {
+    "darkMode": "ダークモード",
+    "lightMode": "ライトモード",
+    "cloudSyncDisabled": "クラウド同期が無効",
+    "addGame": "ゲームを追加",
+    "settings": "設定"
+  },
+  "gameAdder": {
+    "withScraper": "スクレイパーを使用",
+    "addSingle": "単体追加",
+    "addBatch": "バッチ追加",
+    "withoutScraper": "スクレイパーを使用しない",
+    "importFromThirdParty": "サードパーティからインポート",
+    "steam": "Steam"
+  },
+  "messages": {
+    "noGamesFound": "ゲームが見つかりません",
+    "getFailed": "ゲームの取得に失敗しました: ",
+    "unknownError": "不明なエラー",
+    "selectLibraryFolder": "ライブラリフォルダを選択してください...",
+    "getSuccess": "ゲームの取得に成功しました",
+    "selectGamePath": "ゲームパスを選択してください",
+    "adding": "ゲームを追加中...",
+    "addSuccess": "ゲームの追加に成功しました",
+    "addError": "ゲームの追加中にエラーが発生しました"
+  }
+}

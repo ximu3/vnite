@@ -1,4 +1,4 @@
-import { cn, formatDateToChineseWithSeconds } from '~/utils'
+import { cn } from '~/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { Button } from '@ui/button'
 import { Input } from '@ui/input'
@@ -19,10 +19,12 @@ import {
 } from '@ui/dropdown-menu'
 import { User, LogOut, ChevronDown, HardDrive, Cloud, Key, InfoIcon } from 'lucide-react'
 import { Link } from '@ui/link'
+import { useTranslation } from 'react-i18next'
 import { useCloudSyncStore } from './store'
 import { ROLE_QUOTAS } from '@appTypes/sync'
 
 export function CloudSync(): JSX.Element {
+  const { t } = useTranslation('config')
   const { status } = useCloudSyncStore()
   const [enabled, setEnabled] = useConfigLocalState('sync.enabled')
   const [syncMode, setSyncMode] = useConfigLocalState('sync.mode')
@@ -55,13 +57,13 @@ export function CloudSync(): JSX.Element {
             setUsedQuota(dbSize)
           }
         } catch (error) {
-          console.error('获取存储信息失败', error)
+          console.error(t('cloudSync.errors.fetchStorageFailed'), error)
         }
       }
 
       fetchStorageInfo()
     }
-  }, [enabled, userName])
+  }, [enabled, userName, t])
 
   // 计算存储百分比
   useEffect(() => {
@@ -89,12 +91,12 @@ export function CloudSync(): JSX.Element {
         syncMode === 'selfHosted' &&
         (!selfHostedUrl || !selfHostedUsername || !selfHostedPassword)
       ) {
-        toast.error('请填写完整的云同步配置')
+        toast.error(t('cloudSync.errors.incompleteConfig'))
         return
       }
 
       if (syncMode === 'official' && !userName) {
-        toast.error('请先登录官方账号')
+        toast.error(t('cloudSync.errors.loginRequired'))
         return
       }
     }
@@ -104,9 +106,9 @@ export function CloudSync(): JSX.Element {
         await ipcInvoke('restart-sync')
       },
       {
-        loading: '正在更新云同步配置...',
-        success: '云同步配置更新成功',
-        error: '云同步配置更新失败'
+        loading: t('cloudSync.messages.updating'),
+        success: t('cloudSync.messages.updateSuccess'),
+        error: t('cloudSync.messages.updateError')
       }
     )
   }
@@ -117,9 +119,9 @@ export function CloudSync(): JSX.Element {
         await ipcInvoke('auth-signin')
       },
       {
-        loading: '正在登录...',
-        success: '登录成功',
-        error: '登录失败'
+        loading: t('cloudSync.messages.loggingIn'),
+        success: t('cloudSync.messages.loginSuccess'),
+        error: t('cloudSync.messages.loginError')
       }
     )
   }
@@ -130,9 +132,9 @@ export function CloudSync(): JSX.Element {
         await ipcInvoke('auth-signup')
       },
       {
-        loading: '正在注册...',
-        success: '注册成功',
-        error: '注册失败'
+        loading: t('cloudSync.messages.registering'),
+        success: t('cloudSync.messages.registerSuccess'),
+        error: t('cloudSync.messages.registerError')
       }
     )
   }
@@ -169,7 +171,7 @@ export function CloudSync(): JSX.Element {
                             'bg-accent animate-pulse'
                           )}
                         ></span>
-                        <div>同步中</div>
+                        <div>{t('cloudSync.status.syncing')}</div>
                       </div>
                     ) : status.status === 'success' ? (
                       <div className={cn('flex flex-row items-center')}>
@@ -179,14 +181,14 @@ export function CloudSync(): JSX.Element {
                             'bg-primary'
                           )}
                         ></span>
-                        <div>同步成功</div>
+                        <div>{t('cloudSync.status.success')}</div>
                       </div>
                     ) : (
                       <div className={cn('flex flex-row gap-1 items-center')}>
                         <span
                           className={cn('inline-block w-2 h-2 mr-3 rounded-lg', 'bg-destructive')}
                         ></span>
-                        <div>同步失败</div>
+                        <div>{t('cloudSync.status.error')}</div>
                       </div>
                     )}
                   </div>
@@ -198,11 +200,13 @@ export function CloudSync(): JSX.Element {
               </div>
               <div>|</div>
               <div className={cn('flex flex-row gap-2 items-center')}>
-                <div className={cn('')}>{formatDateToChineseWithSeconds(status.timestamp)}</div>
+                <div className={cn('')}>
+                  {t('{{date, niceDateSeconds}}', { date: status.timestamp })}
+                </div>
               </div>
             </div>
           ) : (
-            <div>暂无同步信息</div>
+            <div>{t('cloudSync.status.noInfo')}</div>
           )}
         </Card>
       )}
@@ -210,14 +214,14 @@ export function CloudSync(): JSX.Element {
         <CardHeader>
           <CardTitle className={cn('relative')}>
             <div className={cn('flex flex-row justify-between items-center')}>
-              <div className={cn('flex items-center')}>云同步设置</div>
+              <div className={cn('flex items-center')}>{t('cloudSync.title')}</div>
             </div>
           </CardTitle>
         </CardHeader>
         <CardContent className={cn('')}>
           <div className={cn('flex flex-col gap-5 justify-start')}>
             <div className={cn('flex flex-row gap-5 justify-between items-center')}>
-              <div>是否启用</div>
+              <div>{t('cloudSync.enable')}</div>
               <div>
                 <Switch checked={enabled} onCheckedChange={setEnabled} />
               </div>
@@ -225,7 +229,7 @@ export function CloudSync(): JSX.Element {
 
             {enabled && (
               <div className={cn('flex flex-row gap-5 justify-between items-center')}>
-                <div>同步模式</div>
+                <div>{t('cloudSync.syncMode')}</div>
                 <div>
                   <RadioGroup
                     className="flex flex-row gap-4"
@@ -234,11 +238,11 @@ export function CloudSync(): JSX.Element {
                   >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="official" id="official" />
-                      <Label htmlFor="official">官方</Label>
+                      <Label htmlFor="official">{t('cloudSync.modes.official')}</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="selfHosted" id="selfHosted" />
-                      <Label htmlFor="self-hosted">自托管</Label>
+                      <Label htmlFor="self-hosted">{t('cloudSync.modes.selfHosted')}</Label>
                     </div>
                   </RadioGroup>
                 </div>
@@ -252,16 +256,16 @@ export function CloudSync(): JSX.Element {
                     className={cn('flex flex-col gap-3 items-center p-6 bg-muted/50 rounded-lg')}
                   >
                     <Cloud size={40} className="mb-2 text-primary" />
-                    <h3 className="text-lg font-medium">连接云端存储</h3>
+                    <h3 className="text-lg font-medium">{t('cloudSync.official.connectTitle')}</h3>
                     <p className="mb-2 text-sm text-center text-muted-foreground">
-                      登录账号以启用云同步功能，获取跨设备同步和数据备份
+                      {t('cloudSync.official.connectDescription')}
                     </p>
                     <div className={cn('flex flex-row gap-3')}>
                       <Button onClick={handleOfficialSignin} className="mt-2">
-                        登录
+                        {t('cloudSync.official.login')}
                       </Button>
                       <Button variant={'outline'} onClick={handleOfficialSignup} className="mt-2">
-                        注册
+                        {t('cloudSync.official.register')}
                       </Button>
                     </div>
                   </div>
@@ -286,20 +290,20 @@ export function CloudSync(): JSX.Element {
                                     onClick={handleOfficialLogout}
                                   >
                                     <LogOut className="w-4 h-4 mr-2" />
-                                    <span>注销</span>
+                                    <span>{t('cloudSync.official.logout')}</span>
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>
                               <div className="flex items-center gap-3 mt-1">
                                 <span className="bg-primary/20 text-primary text-xs px-2 py-0.5 rounded-lg font-medium">
-                                  社区版
+                                  {t('cloudSync.official.communityEdition')}
                                 </span>
                                 <span className="text-xs text-muted-foreground">
-                                  最近同步:{' '}
+                                  {t('cloudSync.official.lastSync')}:{' '}
                                   <span className="font-medium">
                                     {(status?.timestamp &&
-                                      formatDateToChineseWithSeconds(status?.timestamp)) ||
-                                      '还未同步'}
+                                      t('{{date, niceDateSeconds}}', { date: status.timestamp })) ||
+                                      t('cloudSync.official.notSynced')}
                                   </span>
                                 </span>
                               </div>
@@ -320,7 +324,9 @@ export function CloudSync(): JSX.Element {
                                 status?.status === 'error' ? 'text-destructive' : 'text-primary'
                               )}
                             >
-                              {status?.status === 'error' ? '未连接' : '已连接'}
+                              {status?.status === 'error'
+                                ? t('cloudSync.official.disconnected')
+                                : t('cloudSync.official.connected')}
                             </span>
                           </div>
                         </div>
@@ -329,7 +335,7 @@ export function CloudSync(): JSX.Element {
                           <div className="flex items-center justify-between mb-2">
                             <span className="flex items-center text-sm text-muted-foreground">
                               <HardDrive className="w-4 h-4 mr-1" />
-                              存储空间
+                              {t('cloudSync.official.storage')}
                             </span>
                             <span className="text-sm">
                               {formatStorage(usedQuota)} / {formatStorage(totalQuota)}
@@ -350,7 +356,7 @@ export function CloudSync(): JSX.Element {
                           {/* 添加使用百分比显示 */}
                           <div className="flex justify-end mt-1">
                             <span className="text-xs text-muted-foreground">
-                              {storagePercentage.toFixed(1)}% 已使用
+                              {storagePercentage.toFixed(1)}% {t('cloudSync.official.used')}
                             </span>
                           </div>
                         </div>
@@ -370,9 +376,9 @@ export function CloudSync(): JSX.Element {
                           <HardDrive className="w-6 h-6 text-primary" />
                         </div>
                         <div>
-                          <h3 className="text-lg font-medium">自托管 CouchDB</h3>
+                          <h3 className="text-lg font-medium">{t('cloudSync.selfHosted.title')}</h3>
                           <p className="text-sm text-muted-foreground">
-                            配置您的自托管 CouchDB 服务器以启用跨设备同步
+                            {t('cloudSync.selfHosted.description')}
                           </p>
                         </div>
                       </div>
@@ -384,7 +390,7 @@ export function CloudSync(): JSX.Element {
                       <div className={cn('flex flex-row gap-5 justify-between items-center')}>
                         <div className="flex items-center gap-2">
                           <HardDrive className="w-4 h-4" />
-                          <span>CouchDB 地址</span>
+                          <span>{t('cloudSync.selfHosted.serverAddress')}</span>
                         </div>
                         <div>
                           <Input
@@ -399,7 +405,7 @@ export function CloudSync(): JSX.Element {
                       <div className={cn('flex flex-row gap-5 justify-between items-center')}>
                         <div className="flex items-center gap-2">
                           <User className="w-4 h-4" />
-                          <span>用户名</span>
+                          <span>{t('cloudSync.selfHosted.username')}</span>
                         </div>
                         <div>
                           <Input
@@ -414,7 +420,7 @@ export function CloudSync(): JSX.Element {
                       <div className={cn('flex flex-row gap-5 justify-between items-center')}>
                         <div className="flex items-center gap-2">
                           <Key className="w-4 h-4" />
-                          <span>密码</span>
+                          <span>{t('cloudSync.selfHosted.password')}</span>
                         </div>
                         <div>
                           <Input
@@ -431,9 +437,9 @@ export function CloudSync(): JSX.Element {
                         <p className="flex items-center gap-1">
                           <InfoIcon className="w-3.5 h-3.5" />
                           <span>
-                            CouchDB 是一个开源的文档数据库，可用于存储和同步数据 ，可以通过{' '}
-                            <Link name="Fly.io" url="https://fly.io" /> 或其他服务快速部署自托管
-                            CouchDB
+                            {t('cloudSync.selfHosted.info', {
+                              flyio: <Link name="Fly.io" url="https://fly.io" />
+                            })}
                           </span>
                         </p>
                       </div>
@@ -445,7 +451,7 @@ export function CloudSync(): JSX.Element {
 
             {enabled && (
               <div className={cn('flex flex-row-reverse gap-5 justify-between items-center')}>
-                <Button onClick={updateCloudSyncConfig}>保存</Button>
+                <Button onClick={updateCloudSyncConfig}>{t('ui:common.save')}</Button>
               </div>
             )}
           </div>

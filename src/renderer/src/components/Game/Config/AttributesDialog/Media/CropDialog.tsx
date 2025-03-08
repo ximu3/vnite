@@ -6,6 +6,7 @@ import { Button } from '@ui/button'
 import { toast } from 'sonner'
 import { cn } from '~/utils'
 import { ipcInvoke } from '~/utils'
+import { useTranslation } from 'react-i18next'
 
 interface CropDialogProps {
   isOpen: boolean
@@ -20,6 +21,7 @@ export function CropDialog({
   imagePath,
   onCropComplete
 }: CropDialogProps): JSX.Element | null {
+  const { t } = useTranslation('game')
   const [crop, setCrop] = useState<Crop>({
     unit: 'px',
     width: 0,
@@ -64,13 +66,13 @@ export function CropDialog({
     const actualWidth = Math.round(completedCrop.width * scaleX)
     const actualHeight = Math.round(completedCrop.height * scaleX)
 
-    return `${actualWidth} × ${actualHeight} px`
+    return t('detail.properties.media.crop.size', { width: actualWidth, height: actualHeight })
   }, [completedCrop, imageSize])
 
   const handleCrop = async (): Promise<void> => {
     try {
       if (!completedCrop || !imagePath || !imageRef.current) {
-        throw new Error('裁剪未完成')
+        throw new Error(t('detail.properties.media.notifications.cropIncomplete'))
       }
 
       const image = imageRef.current
@@ -103,7 +105,6 @@ export function CropDialog({
       onCropComplete(filePath)
     } catch (error) {
       console.error('裁剪失败:', error)
-      // 添加错误提示
     }
   }
 
@@ -112,7 +113,7 @@ export function CropDialog({
       <DialogContent className={cn('max-w-3xl min-w-0 w-auto')}>
         <DialogHeader>
           <DialogTitle>
-            调整图片大小
+            {t('detail.properties.media.crop.title')}
             {displaySize && (
               <span className={cn('ml-2 text-sm text-gray-500')}>({displaySize})</span>
             )}
@@ -138,7 +139,7 @@ export function CropDialog({
           </ReactCrop>
           <div className={cn('flex justify-end gap-2')}>
             <Button variant="outline" onClick={onClose}>
-              取消
+              {t('detail.properties.media.crop.cancel')}
             </Button>
             <Button
               onClick={() => {
@@ -147,14 +148,14 @@ export function CropDialog({
                     await handleCrop()
                   },
                   {
-                    loading: `正在裁剪...`,
-                    success: `裁剪成功`,
-                    error: `裁剪失败`
+                    loading: t('detail.properties.media.notifications.cropping'),
+                    success: t('detail.properties.media.notifications.cropSuccess'),
+                    error: t('detail.properties.media.notifications.cropError')
                   }
                 )
               }}
             >
-              确认
+              {t('detail.properties.media.crop.confirm')}
             </Button>
           </div>
         </div>

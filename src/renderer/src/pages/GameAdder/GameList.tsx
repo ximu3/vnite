@@ -5,9 +5,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { toast } from 'sonner'
 import { useGameAdderStore } from './store'
 import { Search } from './Search'
+import { useTranslation } from 'react-i18next'
 
 export function GameList(): JSX.Element {
+  const { t } = useTranslation('adder')
   const { setName, id, setId, gameList } = useGameAdderStore()
+
   return (
     <div className={cn('w-[726px] h-[84vh] p-3', '3xl:w-[876px]')}>
       <div className={cn('flex flex-col w-full h-full gap-3')}>
@@ -18,9 +21,15 @@ export function GameList(): JSX.Element {
                 <Table>
                   <TableHeader className={cn('bg-card')}>
                     <TableRow>
-                      <TableHead className={cn('w-1/2')}>游戏名称</TableHead>
-                      <TableHead className={cn('w-1/4')}>发行日期</TableHead>
-                      <TableHead className={cn('w-1/4')}>开发商</TableHead>
+                      <TableHead className={cn('w-1/2')}>
+                        {t('gameAdder.gameList.columns.name')}
+                      </TableHead>
+                      <TableHead className={cn('w-1/4')}>
+                        {t('gameAdder.gameList.columns.releaseDate')}
+                      </TableHead>
+                      <TableHead className={cn('w-1/4')}>
+                        {t('gameAdder.gameList.columns.developers')}
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -30,7 +39,7 @@ export function GameList(): JSX.Element {
                         onClick={() => {
                           setId(game.id)
                           setName(game.name)
-                          toast.success(`已选择游戏: ${game.name}`)
+                          toast.success(t('gameAdder.gameList.selected', { name: game.name }))
                         }}
                         className={cn(
                           'cursor-pointer',
@@ -46,13 +55,15 @@ export function GameList(): JSX.Element {
                         </TableCell>
                         <TableCell>
                           <div className={cn('w-[150px] truncate', '3xl:w-[200px]')}>
-                            {game.releaseDate === '' ? '未知' : game.releaseDate}
+                            {game.releaseDate === ''
+                              ? t('gameAdder.gameList.unknown')
+                              : game.releaseDate}
                           </div>
                         </TableCell>
                         <TableCell>
                           <div className={cn('w-[150px] truncate', '3xl:w-[200px]')}>
                             {game.developers.join(', ') === ''
-                              ? '未知'
+                              ? t('gameAdder.gameList.unknown')
                               : game.developers.join(', ')}
                           </div>
                         </TableCell>

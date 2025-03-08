@@ -14,8 +14,10 @@ import {
   SelectValue
 } from '@ui/select'
 import { ipcInvoke } from '~/utils'
+import { useTranslation } from 'react-i18next'
 
 export function ScriptLauncher({ gameId }: { gameId: string }): JSX.Element {
+  const { t } = useTranslation('game')
   const [command, setCommand] = useGameLocalState(gameId, 'launcher.scriptConfig.command')
   const [workingDirectory, setWorkingDirectory] = useGameLocalState(
     gameId,
@@ -49,7 +51,7 @@ export function ScriptLauncher({ gameId }: { gameId: string }): JSX.Element {
   return (
     <div className={cn('flex flex-col gap-5 w-full')}>
       <div className={cn('flex flex-row gap-5 items-start justify-start')}>
-        <div>脚本内容</div>
+        <div>{t('detail.properties.launcher.script.content')}</div>
         <div className={cn('w-3/4')}>
           <ArrayTextarea
             value={command}
@@ -59,7 +61,7 @@ export function ScriptLauncher({ gameId }: { gameId: string }): JSX.Element {
         </div>
       </div>
       <div className={cn('flex flex-row gap-5 items-center justify-start')}>
-        <div>工作目录</div>
+        <div>{t('detail.properties.launcher.script.workingDirectory')}</div>
         <div className={cn('w-3/4')}>
           <Input value={workingDirectory} onChange={(e) => setWorkingDirectory(e.target.value)} />
         </div>
@@ -74,7 +76,7 @@ export function ScriptLauncher({ gameId }: { gameId: string }): JSX.Element {
       </div>
       <Separator />
       <div className={cn('flex flex-row gap-5 items-center justify-start')}>
-        <div>追踪模式</div>
+        <div>{t('detail.properties.launcher.monitor.title')}</div>
         <div className={cn('w-[120px]')}>
           <Select value={monitorMode} onValueChange={setMonitorMode}>
             <SelectTrigger>
@@ -82,17 +84,27 @@ export function ScriptLauncher({ gameId }: { gameId: string }): JSX.Element {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectLabel>追踪模式</SelectLabel>
-                <SelectItem value="folder">目录</SelectItem>
-                <SelectItem value="file">文件</SelectItem>
-                <SelectItem value="process">进程</SelectItem>
+                <SelectLabel>{t('detail.properties.launcher.monitor.title')}</SelectLabel>
+                <SelectItem value="folder">
+                  {t('detail.properties.launcher.monitor.mode.folder')}
+                </SelectItem>
+                <SelectItem value="file">
+                  {t('detail.properties.launcher.monitor.mode.file')}
+                </SelectItem>
+                <SelectItem value="process">
+                  {t('detail.properties.launcher.monitor.mode.process')}
+                </SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
         </div>
       </div>
       <div className={cn('flex flex-row gap-5 items-center justify-start')}>
-        {['folder', 'file'].includes(monitorMode) ? <div>追踪路径</div> : <div>进程名称</div>}
+        {['folder', 'file'].includes(monitorMode) ? (
+          <div>{t('detail.properties.launcher.monitor.path')}</div>
+        ) : (
+          <div>{t('detail.properties.launcher.monitor.processName')}</div>
+        )}
         <div className={cn('w-3/4')}>
           <Input value={monitorPath} onChange={(e) => setMonitorPath(e.target.value)} />
         </div>

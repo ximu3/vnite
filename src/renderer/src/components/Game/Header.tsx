@@ -19,6 +19,7 @@ import { Config } from './Config'
 import { Record } from './Overview/Record'
 import { StartGame } from './StartGame'
 import { StopGame } from './StopGame'
+import { useTranslation } from 'react-i18next'
 
 export function Header({
   gameId,
@@ -29,6 +30,7 @@ export function Header({
   className?: string
   isSticky: boolean
 }): JSX.Element {
+  const { t } = useTranslation('game')
   const runningGames = useRunningGames((state) => state.runningGames)
   const [name] = useGameState(gameId, 'metadata.name')
   const [originalName] = useGameState(gameId, 'metadata.originalName')
@@ -43,26 +45,26 @@ export function Header({
     if (preScore === '') {
       setScore(-1)
       setIsScoreDialogOpen(false)
-      toast.success('评分已清除')
+      toast.success(t('detail.header.rating.cleared'))
       return
     }
 
     const scoreNum = parseFloat(preScore)
 
     if (isNaN(scoreNum)) {
-      toast.error('请输入有效数字')
+      toast.error(t('detail.header.rating.errors.invalidNumber'))
       resetPreScore()
       return
     }
 
     if (scoreNum < 0) {
-      toast.error('评分不能为负数')
+      toast.error(t('detail.header.rating.errors.negative'))
       resetPreScore()
       return
     }
 
     if (scoreNum > 10) {
-      toast.error('评分不能超过10分')
+      toast.error(t('detail.header.rating.errors.tooHigh'))
       resetPreScore()
       return
     }
@@ -70,13 +72,13 @@ export function Header({
     const formattedScore = scoreNum.toFixed(1)
 
     if (preScore !== formattedScore && !Number.isInteger(scoreNum)) {
-      toast.warning('已自动保留1位小数')
+      toast.warning(t('detail.header.rating.warning'))
     }
 
     setScore(Number(formattedScore))
     setPreScore(Number(formattedScore).toString())
     setIsScoreDialogOpen(false)
-    toast.success('评分已保存')
+    toast.success(t('detail.header.rating.success'))
   }
 
   return (
@@ -142,12 +144,12 @@ export function Header({
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>游玩状态</SelectLabel>
-                  <SelectItem value="unplayed">未开始</SelectItem>
-                  <SelectItem value="playing">游玩中</SelectItem>
-                  <SelectItem value="finished">已完成</SelectItem>
-                  <SelectItem value="multiple">多周目</SelectItem>
-                  <SelectItem value="shelved">搁置中</SelectItem>
+                  <SelectLabel>{t('detail.header.playStatus.label')}</SelectLabel>
+                  <SelectItem value="unplayed">{t('detail.header.playStatus.unplayed')}</SelectItem>
+                  <SelectItem value="playing">{t('detail.header.playStatus.playing')}</SelectItem>
+                  <SelectItem value="finished">{t('detail.header.playStatus.finished')}</SelectItem>
+                  <SelectItem value="multiple">{t('detail.header.playStatus.multiple')}</SelectItem>
+                  <SelectItem value="shelved">{t('detail.header.playStatus.shelved')}</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -168,7 +170,7 @@ export function Header({
               </DialogTrigger>
               <DialogContent showCloseButton={false} className="w-[500px]">
                 <div className={cn('flex flex-row gap-3 items-center justify-center')}>
-                  <div className={cn('whitespace-nowrap')}>我的评分</div>
+                  <div className={cn('whitespace-nowrap')}>{t('detail.header.rating.title')}</div>
                   <Input
                     value={preScore}
                     onChange={(e) => setPreScore(e.target.value)}
@@ -176,7 +178,7 @@ export function Header({
                       if (e.key === 'Enter') confirmScore()
                     }}
                   />
-                  <Button onClick={confirmScore}>确定</Button>
+                  <Button onClick={confirmScore}>{t('ui:common.confirm')}</Button>
                 </div>
               </DialogContent>
             </Dialog>

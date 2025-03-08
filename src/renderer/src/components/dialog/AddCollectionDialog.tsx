@@ -11,6 +11,7 @@ import { Input } from '@ui/input'
 import { cn } from '~/utils'
 import { useGameCollectionStore } from '~/stores'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export function AddCollectionDialog({
   gameIds,
@@ -19,6 +20,7 @@ export function AddCollectionDialog({
   gameIds: string[]
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }): JSX.Element {
+  const { t } = useTranslation('game')
   const [name, setName] = useState('')
   const { addCollection } = useGameCollectionStore()
 
@@ -31,8 +33,8 @@ export function AddCollectionDialog({
     <Dialog open={true} onOpenChange={(state) => setIsOpen(state)}>
       <DialogContent className={cn('')}>
         <DialogHeader>
-          <DialogTitle>新收藏</DialogTitle>
-          <DialogDescription>输入新收藏的名称</DialogDescription>
+          <DialogTitle>{t('detail.collection.dialog.title')}</DialogTitle>
+          <DialogDescription>{t('detail.collection.dialog.description')}</DialogDescription>
         </DialogHeader>
         <Input
           className={cn('grow')}
@@ -43,7 +45,7 @@ export function AddCollectionDialog({
           }}
         />
         <DialogFooter>
-          <Button onClick={addGameToNewCollection}>添加</Button>
+          <Button onClick={addGameToNewCollection}>{t('detail.collection.dialog.add')}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

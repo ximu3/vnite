@@ -7,6 +7,7 @@ import { cn } from '~/utils'
 import { useGameState } from '~/hooks'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 
 export function InformationDialog({
   gameIds,
@@ -19,6 +20,7 @@ export function InformationDialog({
   setIsOpen: (value: boolean) => void
   children: React.ReactNode
 }): JSX.Element {
+  const { t } = useTranslation('game')
   const [isIncremental, setIsIncremental] = useState(true)
   const [developers, setDevelopers] = useState<string[]>([])
   const [publishers, setPublishers] = useState<string[]>([])
@@ -72,71 +74,88 @@ export function InformationDialog({
       setGenres([])
       setPlatforms([])
 
-      toast.success('已批量修改游戏信息')
+      toast.success(t('batch.information.success'))
     } catch (error) {
       console.error('Failed to update games:', error)
       if (error instanceof Error) {
-        toast.error(`Failed to update games: ${error.message}`)
+        toast.error(t('batch.information.error', { message: error.message }))
       } else {
-        toast.error('Failed to update games: An unknown error occurred')
+        toast.error(t('batch.information.error', { message: 'An unknown error occurred' }))
       }
     }
   }
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger className={cn('w-full')}>{children}</DialogTrigger>
       <DialogContent className={cn('flex flex-col gap-5')}>
         <div className={cn('flex flex-col gap-3 p-4')}>
           <div className={cn('flex flex-row gap-3 items-center justify-start')}>
-            <div className={cn('w-20')}>增量模式</div>
+            <div className={cn('w-20')}>{t('batch.information.incrementalMode')}</div>
             <Switch checked={isIncremental} onCheckedChange={setIsIncremental} />
           </div>
           <div className={cn('flex flex-row gap-3 items-center justify-center')}>
-            <div className={cn('w-20')}>开发商</div>
+            <div className={cn('w-20')}>{t('batch.information.developers')}</div>
             <Tooltip>
               <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
-                <ArrayInput value={developers} onChange={setDevelopers} placeholder="暂无开发商" />
+                <ArrayInput
+                  value={developers}
+                  onChange={setDevelopers}
+                  placeholder={t('batch.information.placeholder.developers')}
+                />
               </TooltipTrigger>
               <TooltipContent side="right">
-                <div className={cn('text-xs')}>开发商之间用英文逗号分隔</div>
+                <div className={cn('text-xs')}>{t('batch.information.tooltip.developers')}</div>
               </TooltipContent>
             </Tooltip>
           </div>
           <div className={cn('flex flex-row gap-3 items-center justify-center')}>
-            <div className={cn('w-20')}>发行商</div>
+            <div className={cn('w-20')}>{t('batch.information.publishers')}</div>
             <Tooltip>
               <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
-                <ArrayInput value={publishers} onChange={setPublishers} placeholder="暂无发行商" />
+                <ArrayInput
+                  value={publishers}
+                  onChange={setPublishers}
+                  placeholder={t('batch.information.placeholder.publishers')}
+                />
               </TooltipTrigger>
               <TooltipContent side="right">
-                <div className={cn('text-xs')}>发行商之间用英文逗号分隔</div>
+                <div className={cn('text-xs')}>{t('batch.information.tooltip.publishers')}</div>
               </TooltipContent>
             </Tooltip>
           </div>
           <div className={cn('flex flex-row gap-3 items-center justify-center')}>
-            <div className={cn('w-20')}>平台</div>
+            <div className={cn('w-20')}>{t('batch.information.platforms')}</div>
             <Tooltip>
               <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
-                <ArrayInput value={platforms} onChange={setPlatforms} placeholder="暂无平台" />
+                <ArrayInput
+                  value={platforms}
+                  onChange={setPlatforms}
+                  placeholder={t('batch.information.placeholder.platforms')}
+                />
               </TooltipTrigger>
               <TooltipContent side="right">
-                <div className={cn('text-xs')}>平台之间用英文逗号分隔</div>
+                <div className={cn('text-xs')}>{t('batch.information.tooltip.platforms')}</div>
               </TooltipContent>
             </Tooltip>
           </div>
           <div className={cn('flex flex-row gap-3 items-center justify-center')}>
-            <div className={cn('w-20')}>类型</div>
+            <div className={cn('w-20')}>{t('batch.information.genres')}</div>
             <Tooltip>
               <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
-                <ArrayInput value={genres} onChange={setGenres} placeholder="暂无类型" />
+                <ArrayInput
+                  value={genres}
+                  onChange={setGenres}
+                  placeholder={t('batch.information.placeholder.genres')}
+                />
               </TooltipTrigger>
               <TooltipContent side="right">
-                <div className={cn('text-xs')}>类型之间用英文逗号分隔</div>
+                <div className={cn('text-xs')}>{t('batch.information.tooltip.genres')}</div>
               </TooltipContent>
             </Tooltip>
           </div>
           <div className={cn('flex flex-row-reverse -mb-3 mt-2')}>
-            <Button onClick={handleConfirm}>确认</Button>
+            <Button onClick={handleConfirm}>{t('batch.information.confirm')}</Button>
           </div>
         </div>
       </DialogContent>

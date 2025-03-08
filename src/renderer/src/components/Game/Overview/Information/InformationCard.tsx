@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Separator } from '@ui/separator'
 import React from 'react'
 import { useGameState } from '~/hooks'
@@ -12,6 +13,7 @@ export function InformationCard({
   gameId: string
   className?: string
 }): JSX.Element {
+  const { t } = useTranslation('game')
   const [originalName] = useGameState(gameId, 'metadata.originalName')
   const [name] = useGameState(gameId, 'metadata.name')
   const [developers] = useGameState(gameId, 'metadata.developers')
@@ -21,15 +23,16 @@ export function InformationCard({
   const [platforms] = useGameState(gameId, 'metadata.platforms')
 
   const handleCopySummary = (): void => {
-    const titles = {
-      originalName: '原名',
-      name: '译名',
-      developers: '开发商',
-      publishers: '发行商',
-      releaseDate: '发行日期',
-      platforms: '平台',
-      genres: '类型'
+    const fields = {
+      originalName: t('detail.overview.information.fields.originalName'),
+      name: t('detail.overview.information.fields.localizedName'),
+      developers: t('detail.overview.information.fields.developers'),
+      publishers: t('detail.overview.information.fields.publishers'),
+      releaseDate: t('detail.overview.information.fields.releaseDate'),
+      platforms: t('detail.overview.information.fields.platforms'),
+      genres: t('detail.overview.information.fields.genres')
     }
+
     copyWithToast(
       Object.entries({
         originalName,
@@ -40,7 +43,7 @@ export function InformationCard({
         genres,
         platforms
       })
-        .map(([key, value]) => `${titles[key]}: ${value}`)
+        .map(([key, value]) => `${fields[key]}: ${value}`)
         .join('\n')
     )
   }
@@ -49,7 +52,7 @@ export function InformationCard({
     <div className={cn(className, 'group')}>
       <div className={cn('flex flex-row justify-between items-center')}>
         <div className={cn('font-bold select-none cursor-pointer')} onClick={handleCopySummary}>
-          基本信息
+          {t('detail.overview.sections.basicInfo')}
         </div>
         <InformationDialog gameId={gameId} />
       </div>
@@ -62,25 +65,27 @@ export function InformationCard({
           className={cn('whitespace-nowrap select-none cursor-pointer')}
           onClick={() => copyWithToast(originalName)}
         >
-          原名
+          {t('detail.overview.information.fields.originalName')}
         </div>
-        <div>{originalName === '' ? '暂无' : originalName}</div>
+        <div>{originalName === '' ? t('detail.overview.information.empty') : originalName}</div>
 
         {/* name */}
         <div
           className={cn('whitespace-nowrap select-none cursor-pointer')}
           onClick={() => copyWithToast(name)}
         >
-          译名
+          {t('detail.overview.information.fields.localizedName')}
         </div>
-        <div>{name === originalName || name === '' ? '暂无' : name}</div>
+        <div>
+          {name === originalName || name === '' ? t('detail.overview.information.empty') : name}
+        </div>
 
         {/* developers */}
         <div
           className={cn('whitespace-nowrap select-none cursor-pointer')}
           onClick={() => copyWithToast(developers.join(','))}
         >
-          开发商
+          {t('detail.overview.information.fields.developers')}
         </div>
         <div
           className={cn(
@@ -89,10 +94,10 @@ export function InformationCard({
           )}
         >
           {developers.join(',') === ''
-            ? '暂无'
+            ? t('detail.overview.information.empty')
             : developers.map((developer) => (
                 <React.Fragment key={developer}>
-                  <FilterAdder filed="developers" value={developer} className={cn('')} />
+                  <FilterAdder filed="metadata.developers" value={developer} className={cn('')} />
                 </React.Fragment>
               ))}
         </div>
@@ -102,7 +107,7 @@ export function InformationCard({
           className={cn('whitespace-nowrap select-none cursor-pointer')}
           onClick={() => copyWithToast(publishers.join(','))}
         >
-          发行商
+          {t('detail.overview.information.fields.publishers')}
         </div>
         <div
           className={cn(
@@ -111,10 +116,10 @@ export function InformationCard({
           )}
         >
           {publishers.join(',') === ''
-            ? '暂无'
+            ? t('detail.overview.information.empty')
             : publishers.map((publisher) => (
                 <React.Fragment key={publisher}>
-                  <FilterAdder filed="publishers" value={publisher} className={cn('')} />
+                  <FilterAdder filed="metadata.publishers" value={publisher} className={cn('')} />
                 </React.Fragment>
               ))}
         </div>
@@ -124,14 +129,14 @@ export function InformationCard({
           className={cn('whitespace-nowrap select-none cursor-pointer')}
           onClick={() => copyWithToast(releaseDate)}
         >
-          发行日期
+          {t('detail.overview.information.fields.releaseDate')}
         </div>
         <div className={cn('flex flex-wrap gap-x-1 gap-y-1', releaseDate !== '' && 'mt-[2px]')}>
           {releaseDate === '' ? (
-            '暂无'
+            t('detail.overview.information.empty')
           ) : (
             <FilterAdder
-              filed="releaseDate"
+              filed="metadata.releaseDate"
               className={cn('hover:no-underline')}
               value={releaseDate}
             />
@@ -143,16 +148,16 @@ export function InformationCard({
           className={cn('whitespace-nowrap select-none cursor-pointer')}
           onClick={() => copyWithToast(platforms.join(','))}
         >
-          平台
+          {t('detail.overview.information.fields.platforms')}
         </div>
         <div
           className={cn('flex flex-wrap gap-x-1 gap-y-1', platforms.join(',') !== '' && 'mt-[2px]')}
         >
           {platforms.join(',') === ''
-            ? '暂无'
+            ? t('detail.overview.information.empty')
             : platforms.map((platform) => (
                 <React.Fragment key={platform}>
-                  <FilterAdder filed="platforms" value={platform} />
+                  <FilterAdder filed="metadata.platforms" value={platform} />
                 </React.Fragment>
               ))}
         </div>
@@ -162,16 +167,16 @@ export function InformationCard({
           className={cn('whitespace-nowrap select-none cursor-pointer')}
           onClick={() => copyWithToast(genres.join(','))}
         >
-          类型
+          {t('detail.overview.information.fields.genres')}
         </div>
         <div
           className={cn('flex flex-wrap gap-x-1 gap-y-1', genres.join(',') !== '' && 'mt-[2px]')}
         >
           {genres.join(',') === ''
-            ? '暂无'
+            ? t('detail.overview.information.empty')
             : genres.map((genre) => (
                 <React.Fragment key={genre}>
-                  <FilterAdder filed="genres" value={genre} />
+                  <FilterAdder filed="metadata.genres" value={genre} />
                 </React.Fragment>
               ))}
         </div>

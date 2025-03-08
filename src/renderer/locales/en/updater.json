@@ -1,0 +1,13 @@
+{
+  "dialog": {
+    "title": "New Version Found {{version}}",
+    "noReleaseNotes": "No release notes",
+    "latestVersion": "Already up to date",
+    "downloadProgress": "{{percent}}% - {{speed}} MB/s"
+  },
+  "actions": {
+    "skipUpdate": "Skip Update",
+    "update": "Update Now",
+    "install": "Install Now"
+  }
+}

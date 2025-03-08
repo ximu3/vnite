@@ -9,6 +9,7 @@ import {
 } from '@ui/context-menu'
 import { useGameCollectionStore } from '~/stores'
 import { cn } from '~/utils'
+import { useTranslation } from 'react-i18next'
 
 export function CollectionMenu({
   gameId,
@@ -25,10 +26,11 @@ export function CollectionMenu({
   const gameInCollectionsId = Object.entries(collections)
     .filter(([, value]) => value.games.includes(gameId))
     .map(([key]) => key)
+  const { t } = useTranslation('game')
   return (
     <ContextMenuGroup>
       <ContextMenuSub>
-        <ContextMenuSubTrigger>添加至</ContextMenuSubTrigger>
+        <ContextMenuSubTrigger>{t('detail.collection.addTo')}</ContextMenuSubTrigger>
         <ContextMenuPortal>
           <ContextMenuSubContent className="max-w-[300px]">
             <div className={cn('max-h-[224px] overflow-auto scrollbar-base-thin')}>
@@ -47,7 +49,7 @@ export function CollectionMenu({
             <ContextMenuItem onSelect={openAddCollectionDialog}>
               <div className={cn('flex flex-row gap-2 items-center w-full')}>
                 <span className={cn('icon-[mdi--add] w-4 h-4')}></span>
-                <div>新收藏</div>
+                <div>{t('detail.collection.newCollection')}</div>
               </div>
             </ContextMenuItem>
           </ContextMenuSubContent>
@@ -56,7 +58,7 @@ export function CollectionMenu({
 
       {gameInCollectionsId.length > 0 && (
         <ContextMenuSub>
-          <ContextMenuSubTrigger>移除出</ContextMenuSubTrigger>
+          <ContextMenuSubTrigger>{t('detail.collection.removeFrom')}</ContextMenuSubTrigger>
           <ContextMenuPortal>
             <ContextMenuSubContent className="max-w-[300px]">
               {Object.entries(collections)

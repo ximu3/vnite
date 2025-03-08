@@ -15,6 +15,7 @@ import { Card } from '@ui/card'
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import { ipcInvoke } from '~/utils'
+import { useTranslation } from 'react-i18next'
 
 interface SearchMediaDialogProps {
   isOpen: boolean
@@ -31,6 +32,7 @@ export function SearchMediaDialog({
   gameTitle,
   onSelect
 }: SearchMediaDialogProps): JSX.Element {
+  const { t } = useTranslation('game')
   const [searchTitle, setSearchTitle] = useState(gameTitle)
   const [dataSource, setDataSource] = useState('steamGridDb')
   const [imageList, setImageList] = useState<string[]>([])
@@ -40,9 +42,10 @@ export function SearchMediaDialog({
   useEffect(() => {
     if (isOpen) {
       toast.promise(handleSearch(), {
-        loading: '搜索中...',
-        success: '搜索成功',
-        error: (err) => `搜索失败: ${err.message}`
+        loading: t('detail.properties.media.notifications.searching'),
+        success: t('detail.properties.media.notifications.searchSuccess'),
+        error: (err) =>
+          t('detail.properties.media.notifications.searchError', { message: err.message })
       })
     }
   }, [isOpen])
@@ -69,14 +72,14 @@ export function SearchMediaDialog({
       }
 
       if (result.length === 0) {
-        toast.error('未找到相关图片')
+        toast.error(t('detail.properties.media.notifications.noResultsFound'))
         return
       }
 
       setImageList(result)
       setSelectedImage(result[0])
     } catch (error) {
-      toast.error(`搜索失败: ${error}`)
+      toast.error(t('detail.properties.media.notifications.searchError', { message: error }))
     } finally {
       setIsLoading(false)
     }
@@ -84,7 +87,7 @@ export function SearchMediaDialog({
 
   function handleConfirm(): void {
     if (!selectedImage) {
-      toast.error('请选择一张图片')
+      toast.error(t('detail.properties.media.notifications.selectImage'))
       return
     }
     onSelect(selectedImage)
@@ -124,7 +127,7 @@ export function SearchMediaDialog({
                     </div>
                   ))
                 ) : (
-                  <div>暂无图片</div>
+                  <div>{t('detail.properties.media.empty.images')}</div>
                 )}
               </div>
             </div>
@@ -134,11 +137,11 @@ export function SearchMediaDialog({
           <div className={cn('flex flex-row gap-3')}>
             <Select value={dataSource} onValueChange={setDataSource}>
               <SelectTrigger className={cn('w-72')}>
-                <SelectValue placeholder="选择数据源" />
+                <SelectValue placeholder={t('detail.properties.media.search.dataSource')} />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>数据源</SelectLabel>
+                  <SelectLabel>{t('detail.properties.media.search.dataSource')}</SelectLabel>
                   <SelectItem value="steamGridDb">SteamGridDB</SelectItem>
                   {['cover', 'background'].includes(type) && (
                     <SelectItem value="steam">Steam</SelectItem>
@@ -156,15 +159,16 @@ export function SearchMediaDialog({
             <Input
               value={searchTitle}
               onChange={(e) => setSearchTitle(e.target.value)}
-              placeholder="搜索标题"
+              placeholder={t('detail.properties.media.search.searchTitle')}
               className={cn('')}
             />
             <Button
               onClick={() => {
                 toast.promise(handleSearch(), {
-                  loading: '搜索中...',
-                  success: '搜索成功',
-                  error: (err) => `搜索失败: ${err.message}`
+                  loading: t('detail.properties.media.notifications.searching'),
+                  success: t('detail.properties.media.notifications.searchSuccess'),
+                  error: (err) =>
+                    t('detail.properties.media.notifications.searchError', { message: err.message })
                 })
               }}
               size={'icon'}
@@ -173,9 +177,9 @@ export function SearchMediaDialog({
             >
               <span className={cn('icon-[mdi--magnify] w-[20px] h-[20px]')}></span>
             </Button>
-            <Button onClick={handleConfirm}>确定</Button>
+            <Button onClick={handleConfirm}>{t('detail.properties.media.search.confirm')}</Button>
             <Button variant="outline" onClick={handleClose}>
-              取消
+              {t('detail.properties.media.search.cancel')}
             </Button>
           </div>
         </Card>

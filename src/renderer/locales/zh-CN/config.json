@@ -1,0 +1,173 @@
+{
+  "title": "Vnite 设置",
+  "general": {
+    "title": "通用",
+    "language": "语言",
+    "openAtLogin": "开机自启",
+    "theme": "主题样式",
+    "darkTheme": "暗色",
+    "lightTheme": "浅色",
+    "followSystem": "跟随系统",
+    "closeMainPanel": "关闭主面板",
+    "action": "操作",
+    "quitApp": "退出vnite",
+    "minimizeToTray": "最小化到托盘"
+  },
+  "appearances": {
+    "title": "外观",
+    "gameList": {
+      "title": "游戏列表",
+      "showRecentGames": "显示最近游戏栏目",
+      "highlightLocalGames": "高亮本地游戏",
+      "markLocalGames": "标记本地游戏"
+    },
+    "gameDetail": {
+      "title": "游戏详情页",
+      "showOriginalName": "在标题旁显示原名"
+    },
+    "sidebar": {
+      "title": "侧边栏",
+      "showThemeSwitcher": "显示主题切换按钮"
+    }
+  },
+  "advanced": {
+    "title": "高级",
+    "localeEmulator": {
+      "name": "Locale Emulator",
+      "placeholder": "请输入LEProc.exe的路径"
+    },
+    "visualBoyAdvance": {
+      "name": "VisualBoyAdvance",
+      "placeholder": "请输入visualboyadvance.exe的路径"
+    },
+    "magpie": {
+      "name": "Magpie",
+      "placeholder": "请输入Magpie.exe的路径",
+      "hotkeyLabel": "Magpie 缩放快捷键"
+    }
+  },
+  "theme": {
+    "title": "主题",
+    "saveButton": "保存主题",
+    "presetThemes": "预设主题",
+    "searchTheme": "搜索主题",
+    "noPresetFound": "没有找到预设",
+    "presets": {
+      "default": "默认",
+      "mutsumi": "Mutsumi"
+    },
+    "messages": {
+      "themeSaved": "主题已保存",
+      "configuring": "正在配置主题...",
+      "configured": "主题配置成功"
+    }
+  },
+  "cloudSync": {
+    "title": "云同步",
+    "enable": "是否启用",
+    "syncMode": "同步模式",
+    "modes": {
+      "official": "官方",
+      "selfHosted": "自托管"
+    },
+    "status": {
+      "syncing": "同步中",
+      "success": "同步成功",
+      "error": "同步失败",
+      "noInfo": "暂无同步信息"
+    },
+    "errors": {
+      "incompleteConfig": "请填写完整的云同步配置",
+      "loginRequired": "请先登录官方账号",
+      "fetchStorageFailed": "获取存储信息失败"
+    },
+    "messages": {
+      "updating": "正在更新云同步配置...",
+      "updateSuccess": "云同步配置更新成功",
+      "updateError": "云同步配置更新失败",
+      "loggingIn": "正在登录...",
+      "loginSuccess": "登录成功",
+      "loginError": "登录失败",
+      "registering": "正在注册...",
+      "registerSuccess": "注册成功",
+      "registerError": "注册失败"
+    },
+    "official": {
+      "connectTitle": "连接云端存储",
+      "connectDescription": "登录账号以启用云同步功能，获取跨设备同步和数据备份",
+      "login": "登录",
+      "register": "注册",
+      "logout": "注销",
+      "communityEdition": "社区版",
+      "lastSync": "最近同步",
+      "notSynced": "还未同步",
+      "connected": "已连接",
+      "disconnected": "未连接",
+      "storage": "存储空间",
+      "used": "已使用"
+    },
+    "selfHosted": {
+      "title": "自托管 CouchDB",
+      "description": "配置您的自托管 CouchDB 服务器以启用跨设备同步",
+      "serverAddress": "CouchDB 地址",
+      "username": "用户名",
+      "password": "密码",
+      "info": "CouchDB 是一个开源的文档数据库，可用于存储和同步数据，可以通过 {{flyio}} 或其他服务快速部署自托管 CouchDB"
+    },
+    "info": {
+      "status": "状态",
+      "message": "消息",
+      "time": "时间"
+    }
+  },
+  "scraper": {
+    "title": "刮削器",
+    "defaultDataSource": "默认数据源",
+    "dataSources": {
+      "steam": "Steam",
+      "vndb": "VNDB",
+      "bangumi": "Bangumi",
+      "igdb": "IGDB",
+      "ymgal": "YMgal",
+      "dlsite": "DLsite"
+    }
+  },
+  "database": {
+    "title": "数据库",
+    "portableMode": "便携模式",
+    "modes": {
+      "portable": "便携模式",
+      "normal": "普通模式"
+    },
+    "confirmSwitch": "确定要转换为 {{mode}} 吗？",
+    "switchDescription": "转换完成后将自动重启应用。",
+    "openFolder": "打开数据库文件夹",
+    "backup": "备份数据库",
+    "import": "导入数据库",
+    "importV1": "导入v1数据库",
+    "confirmImport": "确定要导入数据库吗？",
+    "importWarning": "导入数据库将覆盖当前数据库，此操作不可逆！操作结束后应用将自动重启。",
+    "confirmImportV1": "确定要导入v1数据库吗？",
+    "importV1Warning": "导入v1数据库将覆盖当前数据库，此操作不可逆！操作结束后应用将自动重启。",
+    "messages": {
+      "backingUp": "正在备份数据库...",
+      "backupSuccess": "数据库备份成功",
+      "backupError": "数据库备份失败",
+      "importing": "正在导入数据库...",
+      "importSuccess": "数据库导入成功",
+      "importError": "数据库导入失败",
+      "restartCountdown": "应用将在 3 秒后重启",
+      "switchingMode": "正在切换数据库模式...",
+      "switchSuccess": "数据库模式切换成功",
+      "switchError": "数据库模式切换失败"
+    }
+  },
+  "about": {
+    "title": "关于",
+    "author": "作者",
+    "version": "版本",
+    "repository": "Github仓库",
+    "feedback": "反馈",
+    "group": "群组"
+  }
+}

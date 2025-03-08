@@ -8,11 +8,11 @@ import { GameNavCM } from '~/components/contextMenu/GameNavCM'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { AttributesDialog } from '~/components/Game/Config/AttributesDialog'
 import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
-import { PlayingTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayingTimeEditorDialog'
+import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
 import { useDragContext } from '~/components/Showcase/CollectionGames'
 import { useGameState } from '~/hooks'
 import { useGameRegistry, useGameCollectionStore } from '~/stores/game'
-import { cn, formatDateToChinese, formatTimeToChinese } from '~/utils'
+import { cn } from '~/utils'
 import {
   attachClosestEdge,
   calPreviewOffset,
@@ -27,6 +27,7 @@ import {
   type Edge,
   type PreviewState
 } from '~/utils/dnd-utills'
+import { useTranslation } from 'react-i18next'
 
 function Preview({ title }: { title: string }): JSX.Element {
   return (
@@ -82,13 +83,15 @@ export function GamePoster({
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [isAttributesDialogOpen, setIsAttributesDialogOpen] = useState(false)
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = useState(false)
-  const [isPlayingTimeEditorDialogOpen, setIsPlayingTimeEditorDialogOpen] = useState(false)
+  const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = useState(false)
   const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const openTimeoutRef: MutableRefObject<NodeJS.Timeout | undefined> = useRef(undefined)
   const closeTimeoutRef: MutableRefObject<NodeJS.Timeout | undefined> = useRef(undefined)
   const openDelay = 200
   const closeDelay = 0
+
+  const { t } = useTranslation('game')
 
   const { isDraggingGlobal, setIsDraggingGlobal } = useDragContext()
 
@@ -244,7 +247,7 @@ export function GamePoster({
               openAttributesDialog={() => setIsAttributesDialogOpen(true)}
               openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
               openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
-              openPlayingTimeEditorDialog={() => setIsPlayingTimeEditorDialogOpen(true)}
+              openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
             />
           </ContextMenu>
 
@@ -257,8 +260,8 @@ export function GamePoster({
           {isNameEditorDialogOpen && (
             <NameEditorDialog gameId={gameId} setIsOpen={setIsNameEditorDialogOpen} />
           )}
-          {isPlayingTimeEditorDialogOpen && (
-            <PlayingTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayingTimeEditorDialogOpen} />
+          {isPlayTimeEditorDialogOpen && (
+            <PlayTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayTimeEditorDialogOpen} />
           )}
 
           <HoverCardContent
@@ -316,7 +319,9 @@ export function GamePoster({
                 <div className="flex flex-row items-center justify-start gap-2">
                   <span className={cn('icon-[mdi--access-time] w-4 h-4')}></span>
                   <div>
-                    {playTime ? `游戏时间 ${formatTimeToChinese(playTime)}` : '暂无游玩记录'}
+                    {playTime
+                      ? t('showcase.gameCard.playTime', { time: playTime })
+                      : t('showcase.gameCard.noPlayRecord')}
                   </div>
                 </div>
 
@@ -325,8 +330,8 @@ export function GamePoster({
                   <span className={cn('icon-[mdi--calendar-blank-outline] w-4 h-4')}></span>
                   <div>
                     {gameData?.lastRunDate
-                      ? `最后运行于 ${formatDateToChinese(gameData?.lastRunDate)}`
-                      : '从未运行过'}
+                      ? t('showcase.gameCard.lastRunAt', { date: new Date(gameData.lastRunDate) })
+                      : t('showcase.gameCard.neverRun')}
                   </div>
                 </div>
               </div>

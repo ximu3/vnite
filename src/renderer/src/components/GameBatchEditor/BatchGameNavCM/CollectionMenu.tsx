@@ -9,6 +9,7 @@ import {
 } from '@ui/context-menu'
 import { useGameCollectionStore } from '~/stores'
 import { cn } from '~/utils'
+import { useTranslation } from 'react-i18next'
 
 export function CollectionMenu({
   gameIds,
@@ -17,6 +18,7 @@ export function CollectionMenu({
   gameIds: string[]
   openAddCollectionDialog: () => void
 }): JSX.Element {
+  const { t } = useTranslation('game')
   const {
     documents: collections,
     addGamesToCollection,
@@ -52,10 +54,11 @@ export function CollectionMenu({
   const handleRemoveFromCollection = (collectionId: string): void => {
     removeGamesFromCollection(collectionId, gameIds)
   }
+
   return (
     <ContextMenuGroup>
       <ContextMenuSub>
-        <ContextMenuSubTrigger>批量添加至</ContextMenuSubTrigger>
+        <ContextMenuSubTrigger>{t('batch.contextMenu.addTo')}</ContextMenuSubTrigger>
         <ContextMenuPortal>
           <ContextMenuSubContent>
             {Object.entries(collections)
@@ -73,7 +76,7 @@ export function CollectionMenu({
             <ContextMenuItem onSelect={openAddCollectionDialog}>
               <div className={cn('flex flex-row gap-2 items-center w-full')}>
                 <span className={cn('icon-[mdi--add] w-4 h-4')}></span>
-                <div>新收藏</div>
+                <div>{t('batch.contextMenu.newCollection')}</div>
               </div>
             </ContextMenuItem>
           </ContextMenuSubContent>
@@ -82,7 +85,7 @@ export function CollectionMenu({
 
       {(collectionsStatus.inAll.length > 0 || collectionsStatus.inSome.length > 0) && (
         <ContextMenuSub>
-          <ContextMenuSubTrigger>批量移除出</ContextMenuSubTrigger>
+          <ContextMenuSubTrigger>{t('batch.contextMenu.removeFrom')}</ContextMenuSubTrigger>
           <ContextMenuPortal>
             <ContextMenuSubContent>
               {Object.entries(collections)

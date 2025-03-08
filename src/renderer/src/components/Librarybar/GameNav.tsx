@@ -5,7 +5,7 @@ import React from 'react'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { AttributesDialog } from '~/components/Game/Config/AttributesDialog'
 import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
-import { PlayingTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayingTimeEditorDialog'
+import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
 import { useGameState, useGameLocalState, useConfigState } from '~/hooks'
 import { cn } from '~/utils'
 import { GameNavCM } from '../contextMenu/GameNavCM'
@@ -30,7 +30,7 @@ export function GameNav({
   // 对话框状态
   const [isAttributesDialogOpen, setIsAttributesDialogOpen] = React.useState(false)
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
-  const [isPlayingTimeEditorDialogOpen, setIsPlayingTimeEditorDialogOpen] = React.useState(false)
+  const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = React.useState(false)
   const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = React.useState(false)
 
   // 只订阅当前游戏的选中状态和批量模式状态
@@ -151,7 +151,7 @@ export function GameNav({
             openAttributesDialog={() => setIsAttributesDialogOpen(true)}
             openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
             openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
-            openPlayingTimeEditorDialog={() => setIsPlayingTimeEditorDialogOpen(true)}
+            openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
           />
         )}
       </ContextMenu>
@@ -166,8 +166,8 @@ export function GameNav({
       {isNameEditorDialogOpen && (
         <NameEditorDialog gameId={gameId} setIsOpen={setIsNameEditorDialogOpen} />
       )}
-      {isPlayingTimeEditorDialogOpen && (
-        <PlayingTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayingTimeEditorDialogOpen} />
+      {isPlayTimeEditorDialogOpen && (
+        <PlayTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayTimeEditorDialogOpen} />
       )}
     </>
   )

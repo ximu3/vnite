@@ -5,8 +5,10 @@ import { useGameAdderStore } from './store'
 import { useEffect, useState } from 'react'
 import { ipcInvoke } from '~/utils'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 export function ScreenshotList(): JSX.Element {
+  const { t } = useTranslation('adder')
   const {
     screenshotUrl,
     setScreenshotUrl,
@@ -31,7 +33,7 @@ export function ScreenshotList(): JSX.Element {
       (async (): Promise<string[]> => {
         const result = (await ipcInvoke('get-game-screenshots', dataSource, id)) as string[]
         if (result.length === 0) {
-          toast.error('未找到游戏图片')
+          toast.error(t('gameAdder.screenshots.notifications.noImages'))
           setScreenshotUrl('')
           return []
         }
@@ -40,9 +42,9 @@ export function ScreenshotList(): JSX.Element {
         return result
       })(),
       {
-        loading: '获取图片中...',
-        success: '获取图片成功',
-        error: (err) => `获取图片失败: ${err.message}`
+        loading: t('gameAdder.screenshots.notifications.loading'),
+        success: t('gameAdder.screenshots.notifications.success'),
+        error: (err) => t('gameAdder.screenshots.notifications.error', { message: err.message })
       }
     )
   }, [])
@@ -74,6 +76,7 @@ export function ScreenshotList(): JSX.Element {
         })
       }
     }
+
     window.addEventListener('keydown', handleKeyDown)
     return (): void => {
       window.removeEventListener('keydown', handleKeyDown)
@@ -112,15 +115,16 @@ export function ScreenshotList(): JSX.Element {
         navigate('/')
       })(),
       {
-        loading: '添加游戏中...',
-        success: '添加游戏成功',
+        loading: t('gameAdder.screenshots.notifications.adding'),
+        success: t('gameAdder.screenshots.notifications.addSuccess'),
         error: (err) => {
           setIsAdding(false)
-          return `添加游戏失败: ${err.message}`
+          return t('gameAdder.screenshots.notifications.addError', { message: err.message })
         }
       }
     )
   }
+
   return (
     <div className={cn('w-[100vh] h-[80vh] p-3')}>
       <div className={cn('flex flex-col w-full h-full gap-3')}>
@@ -146,13 +150,13 @@ export function ScreenshotList(): JSX.Element {
                   </div>
                 ))
               ) : (
-                <div>暂无图片</div>
+                <div>{t('gameAdder.screenshots.noImages')}</div>
               )}
             </div>
           </div>
         </div>
         <div className={cn('flex flex-row-reverse')}>
-          <Button onClick={addGameToDB}>确定</Button>
+          <Button onClick={addGameToDB}>{t('gameAdder.screenshots.confirm')}</Button>
         </div>
       </div>
     </div>

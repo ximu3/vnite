@@ -29,7 +29,7 @@
 
 @font-face {
   font-family: 'Source Han Sans VF';
-  src: url('~/assets/fonts/SourceHanSans-VF.otf.ttc') format('truetype-variations');
+  src: url('@assets/fonts/SourceHanSans-VF.otf.ttc') format('truetype-variations');
   /* Supported word weight ranges */
   font-weight: 100 900;
   font-style: normal;

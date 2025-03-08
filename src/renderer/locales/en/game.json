@@ -1,0 +1,494 @@
+{
+  "librarybar": {
+    "home": "Home",
+    "collections": "Collections",
+    "search": {
+      "placeholder": "Search",
+      "tooltip": "Supports searching by game name, developer, release date and other metadata"
+    },
+    "groupBy": "Group by",
+    "groups": {
+      "none": "No Grouping",
+      "collection": "Collection",
+      "developers": "Developers",
+      "genres": "Genres",
+      "playStatus": "Play Status"
+    }
+  },
+  "list": {
+    "search": {
+      "results": "Search Results"
+    },
+    "recent": {
+      "title": "Recent Games",
+      "hide": "Hide"
+    },
+    "filter": {
+      "results": "Filter Results",
+      "noResults": "No games found matching your criteria"
+    },
+    "all": {
+      "title": "All Games",
+      "sortBy": "Sort by",
+      "sortOptions": {
+        "name": "Name",
+        "releaseDate": "Release Date",
+        "lastRunDate": "Last Played Date",
+        "addDate": "Date Added",
+        "playTime": "Play Time"
+      }
+    },
+    "playStatus": {
+      "unplayed": "Unplayed",
+      "playing": "Playing",
+      "finished": "Finished",
+      "multiple": "Multiple Runs",
+      "shelved": "Shelved",
+      "adjustOrder": "Adjust Order"
+    }
+  },
+  "filter": {
+    "title": "Advanced Filter",
+    "panel": {
+      "title": "Filters",
+      "clear": "Clear Filters",
+      "releaseDate": "Release Date",
+      "clearFilter": "Clear",
+      "developers": "Developers",
+      "publishers": "Publishers",
+      "genres": "Genres",
+      "platforms": "Platforms",
+      "tags": "Tags"
+    },
+    "combobox": {
+      "select": "Select {{placeholder}}",
+      "search": "Search {{placeholder}}",
+      "notFound": "{{placeholder}} not found"
+    }
+  },
+  "showcase": {
+    "welcome": "Welcome to Vnite, please add your first game.",
+    "sections": {
+      "recentGames": "Recent Games",
+      "collections": "My Collections",
+      "allGames": "All Games"
+    },
+    "sorting": {
+      "title": "Sort by:",
+      "label": "Sort by",
+      "options": {
+        "name": "Name",
+        "releaseDate": "Release Date",
+        "lastRunDate": "Last Played Date",
+        "addDate": "Date Added",
+        "playTime": "Play Time"
+      }
+    },
+    "gameCard": {
+      "playTime": "Play time {{time, gameTime}}",
+      "noPlayRecord": "No play record",
+      "lastRunAt": "Last played on {{date, niceDate}}",
+      "neverRun": "Never played",
+      "playRecord": "Play Record",
+      "totalPlayTime": "Total play time: {{time, gameTime}}",
+      "lastRunDate": "Last played date: {{date, niceDate}}",
+      "neverRunShort": "Never played"
+    },
+    "collection": {
+      "contextMenu": {
+        "rename": "Rename",
+        "delete": "Delete",
+        "confirm": "Confirm",
+        "cancel": "Cancel",
+        "deleteTitle": "Delete Collection",
+        "deleteConfirm": "Are you sure you want to delete collection {{name}}?"
+      }
+    }
+  },
+  "detail": {
+    "tabs": {
+      "overview": "Overview",
+      "record": "Records",
+      "save": "Saves",
+      "memory": "Memories"
+    },
+    "logoContextMenu": {
+      "resetPosition": "Reset Position",
+      "resetSize": "Reset Size",
+      "hideLogo": "Hide Logo"
+    },
+    "notifications": {
+      "logoHidden": "You can restore the logo display in Game Settings-Manage"
+    },
+    "header": {
+      "playStatus": {
+        "label": "Play Status",
+        "unplayed": "Unplayed",
+        "playing": "Playing",
+        "finished": "Finished",
+        "multiple": "Multiple Runs",
+        "shelved": "Shelved"
+      },
+      "rating": {
+        "title": "My Rating",
+        "confirm": "Confirm",
+        "errors": {
+          "invalidNumber": "Please enter a valid number",
+          "negative": "Rating cannot be negative",
+          "tooHigh": "Rating cannot exceed 10"
+        },
+        "success": "Rating saved",
+        "warning": "Automatically kept to 1 decimal place",
+        "cleared": "Rating cleared"
+      }
+    },
+    "actions": {
+      "start": "Start Game",
+      "stop": "Stop Game"
+    },
+    "save": {
+      "table": {
+        "date": "Date",
+        "note": "Note",
+        "actions": "Actions"
+      },
+      "empty": "No saves",
+      "actions": {
+        "switch": "Switch",
+        "delete": "Delete"
+      },
+      "notifications": {
+        "locked": "This save is locked",
+        "deleteLoading": "Deleting save...",
+        "deleteSuccess": "Save deleted successfully",
+        "deleteError": "Failed to delete save: {{message}}",
+        "switchLoading": "Switching save...",
+        "switchSuccess": "Save switched successfully",
+        "switchError": "Failed to switch save: {{message}}",
+        "noSavePath": "Save path not found"
+      }
+    },
+    "filter": {
+      "added": "Filter added, {{field}}: {{value}}"
+    },
+    "record": {
+      "card": {
+        "title": "Play Data",
+        "noData": "You haven't started playing this game yet.",
+        "playStats": "You played {{totalTime, gameTime}} over {{days}} days, averaging {{averageTime, gameTime}} per day,",
+        "immersion": "and were immersed for {{time, gameTime}} on {{date, niceDate}}.",
+        "history": "You added this game on {{addDate, niceDate}} and last played it on {{lastPlayDate, niceDate}}. Hope this journey leaves you with interesting memories."
+      }
+    },
+    "chart": {
+      "title": "Play Time Chart",
+      "selectRange": "Please select date range",
+      "dateError": "Start date cannot be later than end date",
+      "rangeLimit": "Please select dates between {{startDate, niceDate}} and {{endDate, niceDate}}",
+      "noData": "No data available"
+    },
+    "overview": {
+      "sections": {
+        "description": "Description",
+        "tags": "Tags",
+        "basicInfo": "Basic Information",
+        "relatedSites": "Related Sites"
+      },
+      "description": {
+        "empty": "No description",
+        "htmlHint": "HTML tags supported"
+      },
+      "tags": {
+        "empty": "No tags",
+        "separator": "Separate tags with commas"
+      },
+      "relatedSites": {
+        "empty": "No related sites",
+        "addLink": "Add Link",
+        "nameLabel": "Website Name",
+        "urlLabel": "Website URL"
+      },
+      "information": {
+        "fields": {
+          "originalName": "Original Name",
+          "localizedName": "Localized Name",
+          "developers": "Developers",
+          "publishers": "Publishers",
+          "releaseDate": "Release Date",
+          "platforms": "Platforms",
+          "genres": "Genres"
+        },
+        "empty": "None",
+        "hints": {
+          "developers": "Separate developers with commas",
+          "publishers": "Separate publishers with commas",
+          "platforms": "Separate platforms with commas",
+          "genres": "Separate genres with commas"
+        }
+      },
+      "record": {
+        "title": "Play Data",
+        "playTime": "Play Time",
+        "lastRunDate": "Last Played Date",
+        "playStatus": "Play Status",
+        "rating": "My Rating",
+        "neverRun": "Never played"
+      }
+    },
+    "memory": {
+      "actions": {
+        "add": "Add",
+        "addCover": "Add Cover",
+        "changeCover": "Change Cover",
+        "adjustCover": "Adjust Cover",
+        "addText": "Add Text",
+        "editText": "Edit Text",
+        "delete": "Delete"
+      },
+      "export": {
+        "exportAs": "Export As",
+        "image": "Image",
+        "markdown": "Markdown",
+        "toClipboard": "Export to Clipboard",
+        "saveAs": "Save As"
+      },
+      "notifications": {
+        "deleting": "Deleting...",
+        "deleteSuccess": "Deleted successfully",
+        "deleteError": "Delete failed: {{error}}",
+        "selectFileError": "Failed to select file: {{error}}",
+        "imageNotFound": "Current image not found",
+        "getImageError": "Failed to get current image: {{error}}",
+        "imageCopied": "Image successfully copied to clipboard",
+        "imageCopyError": "Failed to copy image to clipboard: {{error}}",
+        "markdownCopied": "Markdown copied to clipboard",
+        "markdownCopyError": "Failed to copy to clipboard: {{error}}"
+      },
+      "dialog": {
+        "markdownHint": "Markdown syntax supported"
+      }
+    },
+    "config": {
+      "properties": "Properties"
+    },
+    "manage": {
+      "title": "Manage",
+      "rename": "Rename",
+      "showLogo": "Show Logo",
+      "editPlayTime": "Edit Play Time",
+      "downloadMetadata": "Download Metadata",
+      "createShortcut": "Create Shortcut",
+      "browseLocalFiles": "Browse Local Files",
+      "browseDatabase": "Browse Database",
+      "delete": "Delete",
+      "notifications": {
+        "shortcutCreated": "Shortcut created",
+        "shortcutError": "Error creating shortcut",
+        "gamePathNotSet": "Game path not set"
+      }
+    },
+    "deleteAlert": {
+      "title": "Are you sure you want to delete {{gameName}}?",
+      "description": "All data for this game will be permanently deleted. This action cannot be undone.",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "notifications": {
+        "deleting": "Deleting game {{gameName}}...",
+        "deleted": "Game {{gameName}} has been deleted",
+        "error": "Failed to delete game {{gameName}}: {{message}}"
+      }
+    },
+    "playTimeEditor": {
+      "expressionSupport": "Arithmetic expressions supported",
+      "placeholder": "Enter seconds or expression",
+      "confirm": "Confirm"
+    },
+    "nameEditor": {
+      "confirm": "Confirm"
+    },
+    "collection": {
+      "addTo": "Add to",
+      "removeFrom": "Remove from",
+      "newCollection": "New Collection",
+      "dialog": {
+        "title": "New Collection",
+        "description": "Enter name for new collection",
+        "add": "Add"
+      }
+    },
+    "properties": {
+      "title": "Properties",
+      "tabs": {
+        "launcher": "Launch",
+        "path": "Path",
+        "media": "Media"
+      },
+      "path": {
+        "title": "Game & Save",
+        "gamePath": "Game Path",
+        "savePath": "Save Path",
+        "addFolder": "Add Folder",
+        "addFile": "Add File",
+        "maxBackups": "Maximum Save Backups",
+        "notifications": {
+          "configuring": "Configuring preset...",
+          "success": "Preset configured successfully"
+        }
+      },
+      "media": {
+        "types": {
+          "icon": "Icon",
+          "background": "Background",
+          "cover": "Cover",
+          "logo": "Logo"
+        },
+        "empty": {
+          "icon": "No icon",
+          "background": "No background",
+          "cover": "No cover",
+          "logo": "No logo",
+          "images": "No images"
+        },
+        "actions": {
+          "adjust": "Adjust",
+          "set": "Set",
+          "importFromFile": "Import from File",
+          "importFromUrl": "Import from URL",
+          "searchImage": "Search Image",
+          "cropImage": "Crop Image"
+        },
+        "search": {
+          "title": "Search Images",
+          "dataSource": "Data Source",
+          "searchTitle": "Search Title",
+          "confirm": "Confirm",
+          "cancel": "Cancel"
+        },
+        "url": {
+          "confirm": "Confirm"
+        },
+        "crop": {
+          "title": "Adjust Image Size",
+          "size": "{{width}} × {{height}} px",
+          "confirm": "Confirm",
+          "cancel": "Cancel"
+        },
+        "notifications": {
+          "fileSelectError": "Failed to select file: {{error}}",
+          "imageNotFound": "Current image not found",
+          "getImageError": "Failed to get current image: {{error}}",
+          "downloading": "Downloading image...",
+          "downloadSuccess": "Image downloaded successfully",
+          "downloadError": "Image download failed: {{message}}",
+          "processing": "{{action}} {{type}}...",
+          "success": "{{type}} {{action}} successful",
+          "error": "{{type}} {{action}} failed: {{message}}",
+          "searching": "Searching...",
+          "searchSuccess": "Search successful",
+          "searchError": "Search failed: {{message}}",
+          "noResultsFound": "No images found",
+          "selectImage": "Please select an image",
+          "cropping": "Cropping...",
+          "cropSuccess": "Crop successful",
+          "cropError": "Crop failed",
+          "cropIncomplete": "Crop incomplete"
+        }
+      },
+      "launcher": {
+        "title": "Launcher & Tracker",
+        "setGamePathFirst": "Please set game path first",
+        "mode": {
+          "title": "Launch Mode",
+          "file": "File",
+          "url": "URL",
+          "script": "Script"
+        },
+        "monitor": {
+          "title": "Tracking Mode",
+          "mode": {
+            "folder": "Folder",
+            "file": "File",
+            "process": "Process"
+          },
+          "path": "Tracking Path",
+          "processName": "Process Name"
+        },
+        "file": {
+          "path": "File Path",
+          "workingDirectory": "Working Directory"
+        },
+        "script": {
+          "content": "Script Content",
+          "workingDirectory": "Working Directory"
+        },
+        "url": {
+          "address": "URL Address",
+          "browser": "Browser",
+          "defaultBrowser": "System Default Browser"
+        },
+        "magpie": {
+          "scaling": "Magpie Scaling",
+          "pathNotSet": "Please set Magpie path first"
+        },
+        "preset": {
+          "title": "Preset Configuration",
+          "search": "Search Configuration",
+          "default": "Default Configuration",
+          "le": "LE Region Launch",
+          "steam": "Steam Launch",
+          "vba": "VBA Launch",
+          "steamIdRequired": "Please enter Steam ID",
+          "confirm": "Confirm",
+          "notifications": {
+            "configuring": "Configuring preset...",
+            "success": "Preset configured successfully"
+          }
+        }
+      }
+    }
+  },
+  "batch": {
+    "contextMenu": {
+      "addTo": "Batch Add To",
+      "removeFrom": "Batch Remove From",
+      "newCollection": "New Collection",
+      "editInfo": "Batch Edit Game Info",
+      "delete": "Batch Delete"
+    },
+    "information": {
+      "incrementalMode": "Incremental Mode",
+      "developers": "Developers",
+      "publishers": "Publishers",
+      "platforms": "Platforms",
+      "genres": "Genres",
+      "placeholder": {
+        "developers": "No developers",
+        "publishers": "No publishers",
+        "platforms": "No platforms",
+        "genres": "No genres"
+      },
+      "tooltip": {
+        "developers": "Separate developers with commas",
+        "publishers": "Separate publishers with commas",
+        "platforms": "Separate platforms with commas",
+        "genres": "Separate genres with commas"
+      },
+      "confirm": "Confirm",
+      "success": "Batch edited game information",
+      "error": "Failed to edit game information: {{message}}"
+    },
+    "delete": {
+      "title": "Are you sure you want to delete these {{count}} games?",
+      "description": "All data for selected games will be permanently deleted. This action cannot be undone.",
+      "gamesList": "Games to be deleted:",
+      "unnamedGame": "Unnamed Game",
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "notifications": {
+        "deleting": "Deleting {{count}} games...",
+        "success": "{{count}} games deleted",
+        "error": "Failed to delete {{count}} games: {{message}}"
+      }
+    }
+  }
+}

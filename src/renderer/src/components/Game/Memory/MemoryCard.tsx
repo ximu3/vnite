@@ -1,4 +1,4 @@
-import { cn, formatDateToChinese, ipcInvoke, formatDateToISO } from '~/utils'
+import { cn, ipcInvoke, formatDateToISO } from '~/utils'
 import { GameImage } from '@ui/game-image'
 import { Card } from '@ui/card'
 import {
@@ -23,6 +23,7 @@ import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { toast } from 'sonner'
 import html2canvas from 'html2canvas'
+import { useTranslation } from 'react-i18next'
 
 export function MemoryCard({
   gameId,
@@ -39,6 +40,7 @@ export function MemoryCard({
   date: string
   setNote: (note: string) => void
 }): JSX.Element {
+  const { t } = useTranslation('game')
   const [isNoteDialogOpen, setIsNoteDialogOpen] = useState(false)
   const [cropDialogState, setCropDialogState] = useState<{
     isOpen: boolean
@@ -72,7 +74,7 @@ export function MemoryCard({
         isResizing: false
       })
     } catch (error) {
-      toast.error(`选择文件失败: ${error}`)
+      toast.error(t('detail.memory.notifications.selectFileError', { error }))
     }
   }
 
@@ -81,7 +83,7 @@ export function MemoryCard({
       // Get current image path
       const currentPath: string = await ipcInvoke('get-memory-cover-path', gameId, memoryId)
       if (!currentPath) {
-        toast.error('未找到当前图片')
+        toast.error(t('detail.memory.notifications.imageNotFound'))
         return
       }
 
@@ -92,7 +94,7 @@ export function MemoryCard({
         isResizing: true
       })
     } catch (error) {
-      toast.error(`获取当前图片失败: ${error}`)
+      toast.error(t('detail.memory.notifications.getImageError', { error }))
     }
   }
 
@@ -164,10 +166,10 @@ export function MemoryCard({
           navigator.clipboard
             .write([clipboardItem])
             .then(() => {
-              toast.success('图片已成功复制到剪切板')
+              toast.success(t('detail.memory.notifications.imageCopied'))
             })
             .catch((error) => {
-              toast.error(`复制图片到剪切板失败: ${error}`)
+              toast.error(t('detail.memory.notifications.imageCopyError', { error }))
             })
         }, 'image/png')
       } finally {
@@ -185,15 +187,15 @@ export function MemoryCard({
 
     const coverPath: string = await ipcInvoke('get-memory-cover-path', gameId, memoryId)
 
-    const markdownContent = `# ${gameName} - ${formatDateToChinese(date)}\n\n![cover](${coverPath})\n\n${note}`
+    const markdownContent = `# ${gameName} - ${t('{{date, niceDate}}', { date })}\n\n![cover](${coverPath})\n\n${note}`
 
     if (type === 'clipboard') {
       // Copy to clipboard
       try {
         await navigator.clipboard.writeText(markdownContent)
-        toast.success('Markdown 已复制到剪贴板')
+        toast.success(t('detail.memory.notifications.markdownCopied'))
       } catch (error) {
-        toast.error(`复制到剪贴板失败: ${error}`)
+        toast.error(t('detail.memory.notifications.markdownCopyError', { error }))
       }
     } else {
       // Save as file
@@ -225,14 +227,16 @@ export function MemoryCard({
             {/* Add button area */}
             {(!isCoverExist || !note) && (
               <div className={cn('flex flex-row gap-5 p-5 border-b-[1px]')}>
-                {!isCoverExist && <Button onClick={handleCoverSelect}>添加封面</Button>}
+                {!isCoverExist && (
+                  <Button onClick={handleCoverSelect}>{t('detail.memory.actions.addCover')}</Button>
+                )}
                 {!note && (
                   <Button
                     onClick={() => {
                       setIsNoteDialogOpen(true)
                     }}
                   >
-                    添加文字
+                    {t('detail.memory.actions.addText')}
                   </Button>
                 )}
               </div>
@@ -259,7 +263,7 @@ export function MemoryCard({
               )}
             >
               <div className={cn('rounded-lg px-2 py-1 text-center bg-primary/90')}>
-                {formatDateToChinese(date)}
+                {t('{{date, niceDate}}', { date })}
               </div>
               <div className={cn('rounded-lg px-2 py-1 text-center bg-primary/90')}>{gameName}</div>
             </div>
@@ -268,43 +272,53 @@ export function MemoryCard({
       </ContextMenuTrigger>
       <ContextMenuContent>
         <ContextMenuItem onSelect={handleCoverSelect}>
-          {isCoverExist ? '更换封面' : '添加封面'}
+          {isCoverExist
+            ? t('detail.memory.actions.changeCover')
+            : t('detail.memory.actions.addCover')}
         </ContextMenuItem>
-        {isCoverExist && <ContextMenuItem onSelect={handleResize}>调整封面</ContextMenuItem>}
+        {isCoverExist && (
+          <ContextMenuItem onSelect={handleResize}>
+            {t('detail.memory.actions.adjustCover')}
+          </ContextMenuItem>
+        )}
 
         <ContextMenuItem
           onSelect={() => {
             setIsNoteDialogOpen(true)
           }}
         >
-          {note ? '修改文字' : '添加文字'}
+          {note ? t('detail.memory.actions.editText') : t('detail.memory.actions.addText')}
         </ContextMenuItem>
         <ContextMenuSeparator />
         <ContextMenuGroup>
           <ContextMenuSub>
-            <ContextMenuSubTrigger>转存为</ContextMenuSubTrigger>
+            <ContextMenuSubTrigger>{t('detail.memory.export.exportAs')}</ContextMenuSubTrigger>
             <ContextMenuPortal>
               <ContextMenuSubContent>
                 <ContextMenuSub>
-                  <ContextMenuSubTrigger>图片</ContextMenuSubTrigger>
+                  <ContextMenuSubTrigger>{t('detail.memory.export.image')}</ContextMenuSubTrigger>
                   <ContextMenuPortal>
                     <ContextMenuSubContent>
                       <ContextMenuItem onSelect={handleExportAsImageToClipboard}>
-                        导出至剪切板
+                        {t('detail.memory.export.toClipboard')}
                       </ContextMenuItem>
-                      <ContextMenuItem onSelect={handleExportAsImage}>另存为</ContextMenuItem>
+                      <ContextMenuItem onSelect={handleExportAsImage}>
+                        {t('detail.memory.export.saveAs')}
+                      </ContextMenuItem>
                     </ContextMenuSubContent>
                   </ContextMenuPortal>
                 </ContextMenuSub>
                 <ContextMenuSub>
-                  <ContextMenuSubTrigger>Markdown</ContextMenuSubTrigger>
+                  <ContextMenuSubTrigger>
+                    {t('detail.memory.export.markdown')}
+                  </ContextMenuSubTrigger>
                   <ContextMenuPortal>
                     <ContextMenuSubContent>
                       <ContextMenuItem onSelect={() => handleExportMarkdown('clipboard')}>
-                        导出至剪切板
+                        {t('detail.memory.export.toClipboard')}
                       </ContextMenuItem>
                       <ContextMenuItem onSelect={() => handleExportMarkdown('file')}>
-                        另存为
+                        {t('detail.memory.export.saveAs')}
                       </ContextMenuItem>
                     </ContextMenuSubContent>
                   </ContextMenuPortal>
@@ -314,7 +328,9 @@ export function MemoryCard({
           </ContextMenuSub>
         </ContextMenuGroup>
         <ContextMenuSeparator />
-        <ContextMenuItem onSelect={handleDelete}>删除</ContextMenuItem>
+        <ContextMenuItem onSelect={handleDelete}>
+          {t('detail.memory.actions.delete')}
+        </ContextMenuItem>
       </ContextMenuContent>
       <CropDialog
         isOpen={cropDialogState.isOpen}

@@ -5,6 +5,7 @@ import { getGamePlayTimeByDateRange, getGameStartAndEndDate } from '~/stores/gam
 import { useState, useEffect } from 'react'
 import { TimerChart } from './TimerChart'
 import { isEqual } from 'lodash'
+import { useTranslation } from 'react-i18next'
 
 export function ChartCard({
   gameId,
@@ -13,18 +14,22 @@ export function ChartCard({
   gameId: string
   className?: string
 }): JSX.Element {
+  const { t } = useTranslation('game')
   const timers = getGameStartAndEndDate(gameId)
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [playTimeByDateRange, setPlayTimeByDateRange] = useState<Record<string, number>>({})
+
   useEffect(() => {
     setStartDate(timers.start)
     setEndDate(timers.end)
   }, [timers.start, timers.end])
+
   const isDateInRange = (date: string): boolean => {
     if (!date || !timers.start || !timers.end) return false
     return date >= timers.start && date <= timers.end
   }
+
   useEffect(() => {
     // Get data only if both dates are valid and within the allowed range
     if (
@@ -38,9 +43,10 @@ export function ChartCard({
       setPlayTimeByDateRange(data)
     }
   }, [startDate, endDate, timers.start, timers.end, gameId])
+
   return (
     <div className={cn(className, 'flex flex-col')}>
-      <div className={cn('font-bold')}>时长图表</div>
+      <div className={cn('font-bold')}>{t('detail.chart.title')}</div>
       <Separator className={cn('my-3 bg-primary')} />
       {!isEqual(timers, { start: '', end: '' }) ? (
         <>
@@ -58,12 +64,12 @@ export function ChartCard({
             />
           </div>
           {!startDate || !endDate ? (
-            '请选择日期范围'
+            t('detail.chart.selectRange')
           ) : startDate > endDate ? (
-            <div>开始日期不能晚于结束日期</div>
+            <div>{t('detail.chart.dateError')}</div>
           ) : !isDateInRange(startDate) || !isDateInRange(endDate) ? (
             <div>
-              请选择在 {timers.start} 到 {timers.end} 之间的日期
+              {t('detail.chart.rangeLimit', { startDate: timers.start, endDate: timers.end })}
             </div>
           ) : (
             <div className={cn('max-h-full rounded-lg py-3', '3xl:max-h-full')}>
@@ -72,7 +78,7 @@ export function ChartCard({
           )}
         </>
       ) : (
-        <div>暂无数据</div>
+        <div>{t('detail.chart.noData')}</div>
       )}
     </div>
   )

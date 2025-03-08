@@ -7,11 +7,12 @@ import { GameNavCM } from '~/components/contextMenu/GameNavCM'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { AttributesDialog } from '~/components/Game/Config/AttributesDialog'
 import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
-import { PlayingTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayingTimeEditorDialog'
+import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
 import { GameImage } from '~/components/ui/game-image'
 import { useGameState } from '~/hooks'
 import { useGameRegistry } from '~/stores/game'
-import { cn, formatDateToChinese, formatTimeToChinese } from '~/utils'
+import { cn } from '~/utils'
+import { useTranslation } from 'react-i18next'
 
 export function BigGamePoster({
   gameId,
@@ -25,17 +26,18 @@ export function BigGamePoster({
   const navigate = useNavigate()
   const gameData = useGameRegistry((state) => state.gameMetaIndex[gameId])
   const [playTime] = useGameState(gameId, 'record.playTime')
-  const [lastRunDate] = useGameState(gameId, 'record.lastRunDate')
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [isAttributesDialogOpen, setIsAttributesDialogOpen] = React.useState(false)
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
-  const [isPlayingTimeEditorDialogOpen, setIsPlayingTimeEditorDialogOpen] = React.useState(false)
+  const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = React.useState(false)
   const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = React.useState(false)
   const [isOpen, setIsOpen] = React.useState(false)
   const openTimeoutRef: MutableRefObject<NodeJS.Timeout | undefined> = useRef(undefined)
   const closeTimeoutRef: MutableRefObject<NodeJS.Timeout | undefined> = useRef(undefined)
   const openDelay = 200
   const closeDelay = 0
+
+  const { t } = useTranslation('game')
 
   const handleMouseEnter = (): void => {
     clearTimeout(closeTimeoutRef.current ?? undefined)
@@ -101,19 +103,19 @@ export function BigGamePoster({
                 <div className="flex items-center justify-center shadow-sm shadow-black/50 w-14 h-14 bg-primary">
                   <span className="icon-[mdi--clock-star-four-points] w-8 h-8 text-primary-foreground/70"></span>
                 </div>
-                <div className="flex flex-col gap-1 p-4">
-                  <div className="text-xs font-semibold text-accent-foreground/80">游玩记录</div>
-                  <div className="flex flex-row text-xs">
-                    <div className="font-semibold">总游戏时长：</div>
-                    <div className="font-semibold">
-                      {playTime ? formatTimeToChinese(playTime) : '暂无游玩记录'}
-                    </div>
+                <div className="flex flex-col gap-1 p-4 text-xs font-semibold">
+                  <div className="text-accent-foreground/80">
+                    {t('showcase.gameCard.playRecord')}
                   </div>
-                  <div className="flex flex-row text-xs">
-                    <div className="font-semibold">最后运行日期：</div>
-                    <div className="font-semibold">
-                      {lastRunDate !== '' ? formatDateToChinese(lastRunDate) : '从未运行'}
-                    </div>
+                  <div>
+                    {playTime
+                      ? t('showcase.gameCard.totalPlayTime', { time: playTime })
+                      : t('showcase.gameCard.noPlayRecord')}
+                  </div>
+                  <div>
+                    {gameData?.lastRunDate
+                      ? t('showcase.gameCard.lastRunDate', { date: new Date(gameData.lastRunDate) })
+                      : t('showcase.gameCard.neverRunShort')}
                   </div>
                 </div>
               </div>
@@ -125,7 +127,7 @@ export function BigGamePoster({
           openAttributesDialog={() => setIsAttributesDialogOpen(true)}
           openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
           openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
-          openPlayingTimeEditorDialog={() => setIsPlayingTimeEditorDialogOpen(true)}
+          openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
         />
       </ContextMenu>
 
@@ -138,8 +140,8 @@ export function BigGamePoster({
       {isNameEditorDialogOpen && (
         <NameEditorDialog gameId={gameId} setIsOpen={setIsNameEditorDialogOpen} />
       )}
-      {isPlayingTimeEditorDialogOpen && (
-        <PlayingTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayingTimeEditorDialogOpen} />
+      {isPlayTimeEditorDialogOpen && (
+        <PlayTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayTimeEditorDialogOpen} />
       )}
 
       <HoverCardContent
@@ -188,7 +190,11 @@ export function BigGamePoster({
             {/* Playing time */}
             <div className="flex flex-row items-center justify-start gap-2">
               <span className={cn('icon-[mdi--access-time] w-4 h-4')}></span>
-              <div>{playTime ? `游戏时间 ${formatTimeToChinese(playTime)}` : '暂无游玩记录'}</div>
+              <div>
+                {playTime
+                  ? t('showcase.gameCard.playTime', { time: playTime })
+                  : t('showcase.gameCard.noPlayRecord')}
+              </div>
             </div>
 
             {/* Last running time */}
@@ -196,8 +202,8 @@ export function BigGamePoster({
               <span className={cn('icon-[mdi--calendar-blank-outline] w-4 h-4')}></span>
               <div>
                 {gameData?.lastRunDate
-                  ? `最后运行于 ${formatDateToChinese(gameData.lastRunDate)}`
-                  : '从未运行过'}
+                  ? t('showcase.gameCard.lastRunAt', { date: new Date(gameData.lastRunDate) })
+                  : t('showcase.gameCard.neverRun')}
               </div>
             </div>
           </div>

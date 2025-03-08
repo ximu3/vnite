@@ -14,6 +14,7 @@ import { useGameState } from '~/hooks'
 import { toast } from 'sonner'
 import { useGameCollectionStore } from '~/stores'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 export function DeleteGameAlert({
   gameId,
@@ -22,9 +23,11 @@ export function DeleteGameAlert({
   gameId: string
   children: React.ReactNode
 }): JSX.Element {
+  const { t } = useTranslation('game')
   const navigate = useNavigate()
   const [gameName] = useGameState(gameId, 'metadata.name')
   const { removeGameFromAllCollections } = useGameCollectionStore()
+
   async function deleteGame(): Promise<void> {
     toast.promise(
       async () => {
@@ -34,25 +37,27 @@ export function DeleteGameAlert({
         navigate('/library')
       },
       {
-        loading: `正在删除游戏 ${gameName}...`,
-        success: `游戏 ${gameName} 已删除`,
-        error: (err) => `删除游戏 ${gameName} 失败: ${err.message}`
+        loading: t('detail.deleteAlert.notifications.deleting', { gameName }),
+        success: t('detail.deleteAlert.notifications.deleted', { gameName }),
+        error: (err) =>
+          t('detail.deleteAlert.notifications.error', { gameName, message: err.message })
       }
     )
   }
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>确定要删除游戏 {gameName} 吗？</AlertDialogTitle>
-          <AlertDialogDescription>
-            删除后，游戏的所有数据将被永久删除。此操作不可逆。
-          </AlertDialogDescription>
+          <AlertDialogTitle>{t('detail.deleteAlert.title', { gameName })}</AlertDialogTitle>
+          <AlertDialogDescription>{t('detail.deleteAlert.description')}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>取消</AlertDialogCancel>
-          <AlertDialogAction onClick={deleteGame}>确定</AlertDialogAction>
+          <AlertDialogCancel>{t('detail.deleteAlert.cancel')}</AlertDialogCancel>
+          <AlertDialogAction onClick={deleteGame}>
+            {t('detail.deleteAlert.confirm')}
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -1,8 +1,9 @@
 import { cn } from '~/utils'
 import { useGameState } from '~/hooks'
 import { getGameMaxPlayTimeDay, getGamePlayDays } from '~/stores/game'
-import { formatTimeToChinese, formatDateToChinese } from '~/utils'
 import { Separator } from '@ui/separator'
+import { useTranslation } from 'react-i18next'
+import { Trans } from 'react-i18next'
 
 export function RecordCard({
   gameId,
@@ -11,6 +12,7 @@ export function RecordCard({
   gameId: string
   className?: string
 }): JSX.Element {
+  const { t } = useTranslation('game')
   const [addDate] = useGameState(gameId, 'record.addDate')
   const playDays = getGamePlayDays(gameId)
   const [playingTime] = useGameState(gameId, 'record.playTime')
@@ -18,55 +20,59 @@ export function RecordCard({
   const [timers] = useGameState(gameId, 'record.timers')
   const equalPlayingTime = playingTime / playDays
   const maxPlayTimeDay = getGameMaxPlayTimeDay(gameId)
+
   return (
     <div className={cn(className, 'w-auto')}>
-      <div className={cn('font-bold')}>游玩数据</div>
+      <div className={cn('font-bold')}>{t('detail.record.card.title')}</div>
       <Separator className={cn('my-3 bg-primary')} />
       {lastRunDate && timers.length !== 0 ? (
         <>
           <div className={cn('flex flex-row')}>
-            <div>
-              <span>你在</span>
-              <span className={cn('font-bold')}> {playDays} </span>
-              <span>天中游玩了</span>
-              <span className={cn('font-bold')}> {formatTimeToChinese(playingTime)}</span>
-              <span>，平均每天</span>
-              <span className={cn('font-bold')}> {formatTimeToChinese(equalPlayingTime)}</span>
-              <span>，</span>
-            </div>
-            <div>
-              <span>曾在</span>
-              <span className={cn('font-bold')}>
-                {' '}
-                {maxPlayTimeDay && formatDateToChinese(maxPlayTimeDay.date)}{' '}
-              </span>
-              <span>沉浸其中</span>
-              <span className={cn('font-bold')}>
-                {' '}
-                {maxPlayTimeDay && formatTimeToChinese(maxPlayTimeDay.playTime)}
-              </span>
-              <span>。</span>
-            </div>
+            <Trans
+              i18nKey="game:detail.record.card.playStats"
+              t={t}
+              values={{
+                days: playDays,
+                totalTime: playingTime,
+                averageTime: equalPlayingTime
+              }}
+              components={{
+                days: <span className={cn('font-bold')} />,
+                totalTime: <span className={cn('font-bold')} />,
+                averageTime: <span className={cn('font-bold')} />
+              }}
+            />
+
+            <Trans
+              i18nKey="game:detail.record.card.immersion"
+              t={t}
+              values={{
+                date: maxPlayTimeDay ? maxPlayTimeDay.date : null,
+                time: maxPlayTimeDay ? maxPlayTimeDay.playTime : null
+              }}
+              components={{
+                date: <span className={cn('font-bold')} />,
+                time: <span className={cn('font-bold')} />
+              }}
+            />
           </div>
           <div className={cn('flex flex-row')}>
-            <div>
-              <span>你在</span>
-              <span className={cn('font-bold')}> {formatDateToChinese(addDate)} </span>
-              <span>添加了该游戏，</span>
-            </div>
-            <div>
-              <span>在</span>
-              <span className={cn('font-bold')}>
-                {' '}
-                {lastRunDate && formatDateToChinese(lastRunDate)}{' '}
-              </span>
-              <span>最后一次游玩，</span>
-            </div>
-            <div>希望这段旅程能给你留下有趣的回忆。</div>
+            <Trans
+              i18nKey="game:detail.record.card.history"
+              t={t}
+              values={{
+                addDate: addDate,
+                lastPlayDate: lastRunDate
+              }}
+              components={{
+                addDate: <span className={cn('font-bold')} />,
+                lastPlayDate: <span className={cn('font-bold')} />
+              }}
+            />
           </div>
         </>
       ) : (
-        '你还没有开始游玩这个游戏。'
+        t('detail.record.card.noData')
       )}
     </div>
   )

@@ -21,6 +21,7 @@ import {
 import { useGameCollectionStore } from '~/stores'
 import { cn } from '~/utils'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export function CollectionCM({
   collectionId,
@@ -33,6 +34,7 @@ export function CollectionCM({
   const [newName, setNewName] = useState<string>('')
   const [isRenaming, setIsRenaming] = useState<boolean>(false)
   const [isDeleting, setIsDeleting] = useState<boolean>(false)
+  const { t } = useTranslation('game')
 
   useEffect(() => {
     if (collections[collectionId].name !== newName) {
@@ -50,9 +52,13 @@ export function CollectionCM({
       <ContextMenuTrigger>{children}</ContextMenuTrigger>
 
       <ContextMenuContent className={cn('w-40')}>
-        <ContextMenuItem onSelect={() => setIsRenaming(true)}>重命名</ContextMenuItem>
+        <ContextMenuItem onSelect={() => setIsRenaming(true)}>
+          {t('showcase.collection.contextMenu.rename')}
+        </ContextMenuItem>
         <ContextMenuSeparator />
-        <ContextMenuItem onSelect={() => setIsDeleting(true)}>删除</ContextMenuItem>
+        <ContextMenuItem onSelect={() => setIsDeleting(true)}>
+          {t('showcase.collection.contextMenu.delete')}
+        </ContextMenuItem>
       </ContextMenuContent>
 
       <Dialog open={isRenaming}>
@@ -67,14 +73,14 @@ export function CollectionCM({
               if (e.key === 'Enter') handleRename()
             }}
           />
-          <Button onClick={handleRename}>确定</Button>
+          <Button onClick={handleRename}>{t('showcase.collection.contextMenu.confirm')}</Button>
           <Button
             onClick={() => {
               setIsRenaming(false)
               setNewName(collections[collectionId].name)
             }}
           >
-            取消
+            {t('showcase.collection.contextMenu.cancel')}
           </Button>
         </DialogContent>
       </Dialog>
@@ -82,23 +88,27 @@ export function CollectionCM({
       <AlertDialog open={isDeleting}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>删除收藏</AlertDialogTitle>
+            <AlertDialogTitle>{t('showcase.collection.contextMenu.deleteTitle')}</AlertDialogTitle>
           </AlertDialogHeader>
-          <AlertDialogDescription>{`确定要删除收藏 ${collections[collectionId].name} 吗？`}</AlertDialogDescription>
+          <AlertDialogDescription>
+            {t('showcase.collection.contextMenu.deleteConfirm', {
+              name: collections[collectionId].name
+            })}
+          </AlertDialogDescription>
           <AlertDialogFooter>
             <AlertDialogCancel
               onClick={() => {
                 setIsDeleting(false)
               }}
             >
-              取消
+              {t('showcase.collection.contextMenu.cancel')}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 removeCollection(collectionId)
               }}
             >
-              确定
+              {t('showcase.collection.contextMenu.confirm')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

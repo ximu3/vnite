@@ -5,13 +5,16 @@ import { ipcInvoke } from '~/utils'
 import { useGameState } from '~/hooks'
 import { MemoryCard } from './MemoryCard'
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export function Memory({ gameId }: { gameId: string }): JSX.Element {
+  const { t } = useTranslation('game')
   const [memoryList, setMemoryList] = useGameState(gameId, 'memory.memoryList')
+  const [sortedMemoryIds, setSortedMemoryIds] = useState<string[]>([])
+
   async function addMemory(): Promise<void> {
     await ipcInvoke('add-memory', gameId)
   }
-  const [sortedMemoryIds, setSortedMemoryIds] = useState<string[]>([])
 
   useEffect(() => {
     // Recalculate sortedMemoryIds when memoryList is updated.
@@ -36,15 +39,9 @@ export function Memory({ gameId }: { gameId: string }): JSX.Element {
         await ipcInvoke('delete-memory', gameId, memoryId)
       },
       {
-        loading: '正在删除...',
-        success: '删除成功',
-        error: (err) => {
-          // Restore state on error
-          setSortedMemoryIds((prev) =>
-            [...prev, memoryId].sort((a, b) => memoryList[b].date.localeCompare(memoryList[a].date))
-          )
-          return `删除失败: ${err}`
-        }
+        loading: t('detail.memory.notifications.deleting'),
+        success: t('detail.memory.notifications.deleteSuccess'),
+        error: (err) => t('detail.memory.notifications.deleteError', { error: err })
       }
     )
   }
@@ -63,7 +60,6 @@ export function Memory({ gameId }: { gameId: string }): JSX.Element {
         </Button>
       </div>
       <div className={cn('flex flex-wrap gap-5 w-full')}>
-        {/* Sort by date in descending order */}
         {sortedMemoryIds.map((id) => (
           <MemoryCard
             key={`memory-${id}`}

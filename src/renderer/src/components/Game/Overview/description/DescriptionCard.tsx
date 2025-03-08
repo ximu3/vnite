@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Separator } from '@ui/separator'
 import parse from 'html-react-parser'
 import { useGameState } from '~/hooks'
@@ -11,6 +12,7 @@ export function DescriptionCard({
   gameId: string
   className?: string
 }): JSX.Element {
+  const { t } = useTranslation('game')
   const [description] = useGameState(gameId, 'metadata.description')
 
   return (
@@ -20,7 +22,7 @@ export function DescriptionCard({
           className={cn('font-bold select-none cursor-pointer')}
           onClick={() => copyWithToast(description)}
         >
-          简介
+          {t('detail.overview.sections.description')}
         </div>
         <DescriptionDialog gameId={gameId} />
       </div>
@@ -37,7 +39,9 @@ export function DescriptionCard({
           'leading-7'
         )}
       >
-        {description ? parse(description, HTMLParserOptions) : '暂无简介'}
+        {description
+          ? parse(description, HTMLParserOptions)
+          : t('detail.overview.description.empty')}
       </div>
     </div>
   )

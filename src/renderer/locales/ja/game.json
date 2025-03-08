@@ -1,0 +1,494 @@
+{
+  "librarybar": {
+    "home": "ホーム",
+    "collections": "コレクション",
+    "search": {
+      "placeholder": "検索",
+      "tooltip": "ゲーム名、開発者、リリース日などのメタデータで検索できます"
+    },
+    "groupBy": "グループ分け",
+    "groups": {
+      "none": "グループなし",
+      "collection": "コレクション",
+      "developers": "開発元",
+      "genres": "ジャンル",
+      "playStatus": "プレイ状況"
+    }
+  },
+  "list": {
+    "search": {
+      "results": "検索結果"
+    },
+    "recent": {
+      "title": "最近のゲーム",
+      "hide": "非表示"
+    },
+    "filter": {
+      "results": "フィルター結果",
+      "noResults": "条件に一致するゲームが見つかりません"
+    },
+    "all": {
+      "title": "すべてのゲーム",
+      "sortBy": "並び順",
+      "sortOptions": {
+        "name": "名前",
+        "releaseDate": "リリース日",
+        "lastRunDate": "最終プレイ日",
+        "addDate": "追加日",
+        "playTime": "プレイ時間"
+      }
+    },
+    "playStatus": {
+      "unplayed": "未プレイ",
+      "playing": "プレイ中",
+      "finished": "完了",
+      "multiple": "複数周回",
+      "shelved": "保留中",
+      "adjustOrder": "順序を調整"
+    }
+  },
+  "filter": {
+    "title": "詳細フィルター",
+    "panel": {
+      "title": "フィルター",
+      "clear": "フィルターをクリア",
+      "releaseDate": "リリース日",
+      "clearFilter": "クリア",
+      "developers": "開発元",
+      "publishers": "パブリッシャー",
+      "genres": "ジャンル",
+      "platforms": "プラットフォーム",
+      "tags": "タグ"
+    },
+    "combobox": {
+      "select": "{{placeholder}}を選択",
+      "search": "{{placeholder}}を検索",
+      "notFound": "{{placeholder}}が見つかりません"
+    }
+  },
+  "showcase": {
+    "welcome": "Vniteへようこそ、最初のゲームを追加してください。",
+    "sections": {
+      "recentGames": "最近のゲーム",
+      "collections": "マイコレクション",
+      "allGames": "すべてのゲーム"
+    },
+    "sorting": {
+      "title": "並び順：",
+      "label": "並び順",
+      "options": {
+        "name": "名前",
+        "releaseDate": "リリース日",
+        "lastRunDate": "最終プレイ日",
+        "addDate": "追加日",
+        "playTime": "プレイ時間"
+      }
+    },
+    "gameCard": {
+      "playTime": "プレイ時間 {{time, gameTime}}",
+      "noPlayRecord": "プレイ記録なし",
+      "lastRunAt": "最終プレイ日：{{date, niceDate}}",
+      "neverRun": "プレイしたことがありません",
+      "playRecord": "プレイ記録",
+      "totalPlayTime": "総プレイ時間：{{time, gameTime}}",
+      "lastRunDate": "最終プレイ日：{{date, niceDate}}",
+      "neverRunShort": "未プレイ"
+    },
+    "collection": {
+      "contextMenu": {
+        "rename": "名前変更",
+        "delete": "削除",
+        "confirm": "確認",
+        "cancel": "キャンセル",
+        "deleteTitle": "コレクション削除",
+        "deleteConfirm": "コレクション「{{name}}」を削除してもよろしいですか？"
+      }
+    }
+  },
+  "detail": {
+    "tabs": {
+      "overview": "概要",
+      "record": "記録",
+      "save": "セーブ",
+      "memory": "メモリー"
+    },
+    "logoContextMenu": {
+      "resetPosition": "位置をリセット",
+      "resetSize": "サイズをリセット",
+      "hideLogo": "ロゴを非表示"
+    },
+    "notifications": {
+      "logoHidden": "ゲーム設定の「管理」からロゴ表示を復元できます"
+    },
+    "header": {
+      "playStatus": {
+        "label": "プレイ状況",
+        "unplayed": "未プレイ",
+        "playing": "プレイ中",
+        "finished": "完了",
+        "multiple": "複数周回",
+        "shelved": "保留中"
+      },
+      "rating": {
+        "title": "評価",
+        "confirm": "確認",
+        "errors": {
+          "invalidNumber": "有効な数字を入力してください",
+          "negative": "評価はマイナスにできません",
+          "tooHigh": "評価は10を超えることができません"
+        },
+        "success": "評価が保存されました",
+        "warning": "小数点以下1桁に自動調整されました",
+        "cleared": "評価がクリアされました"
+      }
+    },
+    "actions": {
+      "start": "ゲーム開始",
+      "stop": "ゲーム停止"
+    },
+    "save": {
+      "table": {
+        "date": "日付",
+        "note": "メモ",
+        "actions": "アクション"
+      },
+      "empty": "セーブデータなし",
+      "actions": {
+        "switch": "切り替え",
+        "delete": "削除"
+      },
+      "notifications": {
+        "locked": "このセーブデータはロックされています",
+        "deleteLoading": "セーブデータを削除中...",
+        "deleteSuccess": "セーブデータを削除しました",
+        "deleteError": "セーブデータの削除に失敗しました: {{message}}",
+        "switchLoading": "セーブデータを切り替え中...",
+        "switchSuccess": "セーブデータを切り替えました",
+        "switchError": "セーブデータの切り替えに失敗しました: {{message}}",
+        "noSavePath": "セーブパスが見つかりません"
+      }
+    },
+    "filter": {
+      "added": "フィルターを追加しました、{{field}}: {{value}}"
+    },
+    "record": {
+      "card": {
+        "title": "プレイデータ",
+        "noData": "このゲームをまだプレイしていません。",
+        "playStats": "{{days}}日間で{{totalTime, gameTime}}プレイし、1日あたり平均{{averageTime, gameTime}}です。",
+        "immersion": "{{date, niceDate}}に{{time, gameTime}}没頭していました。",
+        "history": "{{addDate, niceDate}}にこのゲームを追加し、{{lastPlayDate, niceDate}}に最後にプレイしました。この旅があなたに面白い思い出を残すことを願っています。"
+      }
+    },
+    "chart": {
+      "title": "プレイ時間チャート",
+      "selectRange": "日付範囲を選択してください",
+      "dateError": "開始日は終了日より後にできません",
+      "rangeLimit": "{{startDate, niceDate}}から{{endDate, niceDate}}の間の日付を選択してください",
+      "noData": "データがありません"
+    },
+    "overview": {
+      "sections": {
+        "description": "説明",
+        "tags": "タグ",
+        "basicInfo": "基本情報",
+        "relatedSites": "関連サイト"
+      },
+      "description": {
+        "empty": "説明なし",
+        "htmlHint": "HTMLタグがサポートされています"
+      },
+      "tags": {
+        "empty": "タグなし",
+        "separator": "タグはカンマで区切ります"
+      },
+      "relatedSites": {
+        "empty": "関連サイトなし",
+        "addLink": "リンクを追加",
+        "nameLabel": "サイト名",
+        "urlLabel": "URL"
+      },
+      "information": {
+        "fields": {
+          "originalName": "オリジナル名",
+          "localizedName": "ローカライズ名",
+          "developers": "開発元",
+          "publishers": "パブリッシャー",
+          "releaseDate": "リリース日",
+          "platforms": "プラットフォーム",
+          "genres": "ジャンル"
+        },
+        "empty": "なし",
+        "hints": {
+          "developers": "開発元はカンマで区切ります",
+          "publishers": "パブリッシャーはカンマで区切ります",
+          "platforms": "プラットフォームはカンマで区切ります",
+          "genres": "ジャンルはカンマで区切ります"
+        }
+      },
+      "record": {
+        "title": "プレイデータ",
+        "playTime": "プレイ時間",
+        "lastRunDate": "最終プレイ日",
+        "playStatus": "プレイ状況",
+        "rating": "評価",
+        "neverRun": "プレイしたことがありません"
+      }
+    },
+    "memory": {
+      "actions": {
+        "add": "追加",
+        "addCover": "カバーを追加",
+        "changeCover": "カバーを変更",
+        "adjustCover": "カバーを調整",
+        "addText": "テキストを追加",
+        "editText": "テキストを編集",
+        "delete": "削除"
+      },
+      "export": {
+        "exportAs": "エクスポート形式",
+        "image": "画像",
+        "markdown": "Markdown",
+        "toClipboard": "クリップボードにエクスポート",
+        "saveAs": "名前を付けて保存"
+      },
+      "notifications": {
+        "deleting": "削除中...",
+        "deleteSuccess": "削除に成功しました",
+        "deleteError": "削除に失敗しました: {{error}}",
+        "selectFileError": "ファイルの選択に失敗しました: {{error}}",
+        "imageNotFound": "画像が見つかりません",
+        "getImageError": "画像の取得に失敗しました: {{error}}",
+        "imageCopied": "画像をクリップボードにコピーしました",
+        "imageCopyError": "画像のクリップボードへのコピーに失敗しました: {{error}}",
+        "markdownCopied": "Markdownをクリップボードにコピーしました",
+        "markdownCopyError": "クリップボードへのコピーに失敗しました: {{error}}"
+      },
+      "dialog": {
+        "markdownHint": "Markdown記法をサポートしています"
+      }
+    },
+    "config": {
+      "properties": "プロパティ"
+    },
+    "manage": {
+      "title": "管理",
+      "rename": "名前変更",
+      "showLogo": "ロゴを表示",
+      "editPlayTime": "プレイ時間を編集",
+      "downloadMetadata": "メタデータをダウンロード",
+      "createShortcut": "ショートカットを作成",
+      "browseLocalFiles": "ローカルファイルを閲覧",
+      "browseDatabase": "データベースを閲覧",
+      "delete": "削除",
+      "notifications": {
+        "shortcutCreated": "ショートカットを作成しました",
+        "shortcutError": "ショートカットの作成でエラーが発生しました",
+        "gamePathNotSet": "ゲームパスが設定されていません"
+      }
+    },
+    "deleteAlert": {
+      "title": "{{gameName}}を削除してもよろしいですか？",
+      "description": "このゲームのすべてのデータが完全に削除されます。この操作は元に戻せません。",
+      "cancel": "キャンセル",
+      "confirm": "確認",
+      "notifications": {
+        "deleting": "ゲーム{{gameName}}を削除中...",
+        "deleted": "ゲーム{{gameName}}を削除しました",
+        "error": "ゲーム{{gameName}}の削除に失敗しました: {{message}}"
+      }
+    },
+    "playTimeEditor": {
+      "expressionSupport": "計算式をサポートしています",
+      "placeholder": "秒数または式を入力",
+      "confirm": "確認"
+    },
+    "nameEditor": {
+      "confirm": "確認"
+    },
+    "collection": {
+      "addTo": "追加先",
+      "removeFrom": "削除元",
+      "newCollection": "新しいコレクション",
+      "dialog": {
+        "title": "新しいコレクション",
+        "description": "新しいコレクションの名前を入力してください",
+        "add": "追加"
+      }
+    },
+    "properties": {
+      "title": "プロパティ",
+      "tabs": {
+        "launcher": "起動",
+        "path": "パス",
+        "media": "メディア"
+      },
+      "path": {
+        "title": "ゲームとセーブ",
+        "gamePath": "ゲームパス",
+        "savePath": "セーブパス",
+        "addFolder": "フォルダを追加",
+        "addFile": "ファイルを追加",
+        "maxBackups": "セーブバックアップの最大数",
+        "notifications": {
+          "configuring": "プリセットを設定中...",
+          "success": "プリセットの設定が完了しました"
+        }
+      },
+      "media": {
+        "types": {
+          "icon": "アイコン",
+          "background": "背景",
+          "cover": "カバー",
+          "logo": "ロゴ"
+        },
+        "empty": {
+          "icon": "アイコンなし",
+          "background": "背景なし",
+          "cover": "カバーなし",
+          "logo": "ロゴなし",
+          "images": "画像なし"
+        },
+        "actions": {
+          "adjust": "調整",
+          "set": "設定",
+          "importFromFile": "ファイルからインポート",
+          "importFromUrl": "URLからインポート",
+          "searchImage": "画像を検索",
+          "cropImage": "画像を切り抜き"
+        },
+        "search": {
+          "title": "画像を検索",
+          "dataSource": "データソース",
+          "searchTitle": "検索タイトル",
+          "confirm": "確認",
+          "cancel": "キャンセル"
+        },
+        "url": {
+          "confirm": "確認"
+        },
+        "crop": {
+          "title": "画像サイズを調整",
+          "size": "{{width}} × {{height}} px",
+          "confirm": "確認",
+          "cancel": "キャンセル"
+        },
+        "notifications": {
+          "fileSelectError": "ファイルの選択に失敗しました: {{error}}",
+          "imageNotFound": "画像が見つかりません",
+          "getImageError": "画像の取得に失敗しました: {{error}}",
+          "downloading": "画像をダウンロード中...",
+          "downloadSuccess": "画像のダウンロードに成功しました",
+          "downloadError": "画像のダウンロードに失敗しました: {{message}}",
+          "processing": "{{type}}を{{action}}中...",
+          "success": "{{type}}の{{action}}に成功しました",
+          "error": "{{type}}の{{action}}に失敗しました: {{message}}",
+          "searching": "検索中...",
+          "searchSuccess": "検索に成功しました",
+          "searchError": "検索に失敗しました: {{message}}",
+          "noResultsFound": "画像が見つかりませんでした",
+          "selectImage": "画像を選択してください",
+          "cropping": "切り抜き中...",
+          "cropSuccess": "切り抜きに成功しました",
+          "cropError": "切り抜きに失敗しました",
+          "cropIncomplete": "切り抜きが完了していません"
+        }
+      },
+      "launcher": {
+        "title": "ランチャーとトラッカー",
+        "setGamePathFirst": "まずゲームパスを設定してください",
+        "mode": {
+          "title": "起動モード",
+          "file": "ファイル",
+          "url": "URL",
+          "script": "スクリプト"
+        },
+        "monitor": {
+          "title": "トラッキングモード",
+          "mode": {
+            "folder": "フォルダ",
+            "file": "ファイル",
+            "process": "プロセス"
+          },
+          "path": "トラッキングパス",
+          "processName": "プロセス名"
+        },
+        "file": {
+          "path": "ファイルパス",
+          "workingDirectory": "作業ディレクトリ"
+        },
+        "script": {
+          "content": "スクリプト内容",
+          "workingDirectory": "作業ディレクトリ"
+        },
+        "url": {
+          "address": "URLアドレス",
+          "browser": "ブラウザ",
+          "defaultBrowser": "システムのデフォルトブラウザ"
+        },
+        "magpie": {
+          "scaling": "Magpieスケーリング",
+          "pathNotSet": "まずMagpieパスを設定してください"
+        },
+        "preset": {
+          "title": "プリセット構成",
+          "search": "構成を検索",
+          "default": "デフォルト構成",
+          "le": "LE地域起動",
+          "steam": "Steam起動",
+          "vba": "VBA起動",
+          "steamIdRequired": "Steam IDを入力してください",
+          "confirm": "確認",
+          "notifications": {
+            "configuring": "プリセットを構成中...",
+            "success": "プリセットの構成に成功しました"
+          }
+        }
+      }
+    }
+  },
+  "batch": {
+    "contextMenu": {
+      "addTo": "一括追加",
+      "removeFrom": "一括削除",
+      "newCollection": "新しいコレクション",
+      "editInfo": "ゲーム情報を一括編集",
+      "delete": "一括削除"
+    },
+    "information": {
+      "incrementalMode": "増分モード",
+      "developers": "開発元",
+      "publishers": "パブリッシャー",
+      "platforms": "プラットフォーム",
+      "genres": "ジャンル",
+      "placeholder": {
+        "developers": "開発元なし",
+        "publishers": "パブリッシャーなし",
+        "platforms": "プラットフォームなし",
+        "genres": "ジャンルなし"
+      },
+      "tooltip": {
+        "developers": "開発元はカンマで区切ります",
+        "publishers": "パブリッシャーはカンマで区切ります",
+        "platforms": "プラットフォームはカンマで区切ります",
+        "genres": "ジャンルはカンマで区切ります"
+      },
+      "confirm": "確認",
+      "success": "ゲーム情報を一括編集しました",
+      "error": "ゲーム情報の編集に失敗しました: {{message}}"
+    },
+    "delete": {
+      "title": "これらの{{count}}個のゲームを削除してもよろしいですか？",
+      "description": "選択したゲームのすべてのデータが完全に削除されます。この操作は元に戻せません。",
+      "gamesList": "削除されるゲーム：",
+      "unnamedGame": "名前のないゲーム",
+      "confirm": "確認",
+      "cancel": "キャンセル",
+      "notifications": {
+        "deleting": "{{count}}個のゲームを削除中...",
+        "success": "{{count}}個のゲームを削除しました",
+        "error": "{{count}}個のゲームの削除に失敗しました: {{message}}"
+      }
+    }
+  }
+}

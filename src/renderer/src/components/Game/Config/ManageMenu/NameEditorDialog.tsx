@@ -3,6 +3,7 @@ import { Dialog, DialogContent } from '@ui/dialog'
 import { Input } from '@ui/input'
 import { useGameState } from '~/hooks'
 import { cn } from '~/utils'
+import { useTranslation } from 'react-i18next'
 
 export function NameEditorDialog({
   gameId,
@@ -11,7 +12,9 @@ export function NameEditorDialog({
   gameId: string
   setIsOpen: (value: boolean) => void
 }): JSX.Element {
+  const { t } = useTranslation('game')
   const [gameName, setGameName] = useGameState(gameId, 'metadata.name')
+
   return (
     <Dialog open={true} onOpenChange={setIsOpen}>
       <DialogContent showCloseButton={false} className={cn('w-[500px] flex flex-row gap-3')}>
@@ -25,7 +28,7 @@ export function NameEditorDialog({
             if (e.key === 'Enter') setIsOpen(false)
           }}
         />
-        <Button onClick={() => setIsOpen(false)}>确定</Button>
+        <Button onClick={() => setIsOpen(false)}>{t('ui:common.confirm')}</Button>
       </DialogContent>
     </Dialog>
   )

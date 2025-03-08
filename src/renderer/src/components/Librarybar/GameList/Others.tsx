@@ -8,6 +8,7 @@ import { getAllValuesInKey, filterGames } from '~/stores/game'
 import { GameNav } from '../GameNav'
 import { AllGame } from './AllGame'
 import { RecentGames } from './RecentGames'
+import { useTranslation } from 'react-i18next'
 
 export function Others({
   fieldName
@@ -23,18 +24,19 @@ export function Others({
       : fields_tmp
 
   const defaultValues = [...fields, 'all', 'recentGames']
+  const { t } = useTranslation('game')
   function convertFieldToTitle(field: string): string {
     switch (field) {
       case 'unplayed':
-        return '未开始'
+        return t('list.playStatus.unplayed')
       case 'playing':
-        return '游玩中'
+        return t('list.playStatus.playing')
       case 'finished':
-        return '已完成'
+        return t('list.playStatus.finished')
       case 'multiple':
-        return '多周目'
+        return t('list.playStatus.multiple')
       case 'shelved':
-        return '搁置中'
+        return t('list.playStatus.shelved')
     }
     return field
   }
@@ -84,7 +86,9 @@ export function Others({
                   </ContextMenuTrigger>
                   <ContextMenuContent className={cn('w-full p-3')}>
                     <div className={cn('flex flex-row gap-5 items-center justify-center')}>
-                      <div className={cn('text-sm whitespace-nowrap')}>调整顺序：</div>
+                      <div className={cn('text-sm whitespace-nowrap')}>
+                        {t('list.playStatus.adjustOrder')}：
+                      </div>
                       <Button
                         variant={'outline'}
                         size={'icon'}

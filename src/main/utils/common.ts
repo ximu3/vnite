@@ -10,6 +10,16 @@ import { fileTypeFromBuffer } from 'file-type'
 import { get } from 'lodash'
 import getFolderSize from 'get-folder-size'
 
+export async function getLanguage(): Promise<string> {
+  const language = await ConfigDBManager.getConfigValue('general.language')
+  if (language) {
+    return language
+  } else {
+    await ConfigDBManager.setConfigValue('general.language', app.getLocale())
+    return app.getLocale()
+  }
+}
+
 export async function calculateDBSize(): Promise<number> {
   try {
     const dbPath = getDataPath()

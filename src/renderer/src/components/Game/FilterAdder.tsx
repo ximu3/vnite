@@ -1,6 +1,7 @@
 import { cn } from '~/utils'
 import { useFilterStore } from '~/components/Librarybar/Filter/store'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 
 export function FilterAdder({
   filed,
@@ -12,6 +13,7 @@ export function FilterAdder({
   className?: string
 }): JSX.Element {
   const { filter, addFilter, updateFilter } = useFilterStore()
+  const { t } = useTranslation('game')
   return (
     <button
       className={cn(
@@ -19,14 +21,14 @@ export function FilterAdder({
         className
       )}
       onClick={() => {
-        if (filed === 'releaseDate') {
+        if (filed === 'metadata.releaseDate') {
           updateFilter(filed, [value, value])
         } else {
           if (!filter[filed]?.includes(value)) {
             addFilter(filed, value)
           }
         }
-        toast.info(`已添加筛选器，${filed}: ${value}`)
+        toast.info(t('detail.filter.added', { field: filed, value }))
       }}
     >
       {value}

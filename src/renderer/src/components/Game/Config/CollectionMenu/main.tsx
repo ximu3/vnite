@@ -9,6 +9,7 @@ import {
 } from '@ui/dropdown-menu'
 import { useGameCollectionStore } from '~/stores'
 import { cn } from '~/utils'
+import { useTranslation } from 'react-i18next'
 
 export function CollectionMenu({
   gameId,
@@ -17,18 +18,21 @@ export function CollectionMenu({
   gameId: string
   openAddCollectionDialog: () => void
 }): JSX.Element {
+  const { t } = useTranslation('game')
   const {
     documents: collections,
     addGameToCollection,
     removeGameFromCollection
   } = useGameCollectionStore()
+
   const gameInCollectionsId = Object.entries(collections)
     .filter(([, value]) => value.games.includes(gameId))
     .map(([key]) => key)
+
   return (
     <DropdownMenuGroup>
       <DropdownMenuSub>
-        <DropdownMenuSubTrigger>添加至</DropdownMenuSubTrigger>
+        <DropdownMenuSubTrigger>{t('detail.collection.addTo')}</DropdownMenuSubTrigger>
         <DropdownMenuPortal>
           <DropdownMenuSubContent className="max-w-[300px]">
             <div className={cn('max-h-[224px] overflow-auto scrollbar-base-thin')}>
@@ -49,7 +53,7 @@ export function CollectionMenu({
             <DropdownMenuItem onSelect={openAddCollectionDialog}>
               <div className={cn('flex flex-row gap-2 items-center w-full')}>
                 <span className={cn('icon-[mdi--add] w-4 h-4')}></span>
-                <div>新收藏</div>
+                <div>{t('detail.collection.newCollection')}</div>
               </div>
             </DropdownMenuItem>
           </DropdownMenuSubContent>
@@ -57,7 +61,7 @@ export function CollectionMenu({
       </DropdownMenuSub>
       {gameInCollectionsId.length > 0 && (
         <DropdownMenuSub>
-          <DropdownMenuSubTrigger>移除出</DropdownMenuSubTrigger>
+          <DropdownMenuSubTrigger>{t('detail.collection.removeFrom')}</DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent className="max-w-[300px]">
               {Object.entries(collections)

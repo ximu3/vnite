@@ -1,0 +1,104 @@
+{
+  "gameAdder": {
+    "dialog": {
+      "title": "ゲームを追加"
+    },
+    "gameList": {
+      "columns": {
+        "name": "ゲーム名",
+        "releaseDate": "リリース日",
+        "developers": "開発元"
+      },
+      "unknown": "不明",
+      "selected": "選択されたゲーム: {{name}}"
+    },
+    "screenshots": {
+      "noImages": "画像なし",
+      "confirm": "確認",
+      "notifications": {
+        "loading": "画像を取得中...",
+        "success": "画像の取得に成功しました",
+        "error": "画像の取得に失敗しました: {{message}}",
+        "noImages": "ゲーム画像が見つかりません",
+        "adding": "ゲームを追加中...",
+        "addSuccess": "ゲームの追加に成功しました",
+        "addError": "ゲームの追加に失敗しました: {{message}}"
+      }
+    },
+    "search": {
+      "dataSource": "データソース",
+      "gameName": "ゲーム名",
+      "gameNamePlaceholder": "ゲーム名を入力してください",
+      "gameId": "ゲームID",
+      "gameIdPlaceholder": "ゲームIDを入力してください",
+      "searchButton": "検索",
+      "recognizeButton": "認識",
+      "notifications": {
+        "enterName": "ゲーム名を入力してください",
+        "searching": "ゲームを検索中...",
+        "found": "{{count}}個のゲームが見つかりました",
+        "notFound": "ゲームが見つかりません",
+        "searchError": "検索に失敗しました: {{message}}",
+        "enterId": "ゲームIDを入力してください",
+        "recognizing": "ゲームを認識中...",
+        "recognized": "ゲームの認識に成功しました",
+        "invalidId": "無効なID",
+        "recognizeError": "ゲームの認識に失敗しました: {{message}}"
+      },
+      "dataSources": {
+        "label": "データソース",
+        "steam": "Steam",
+        "vndb": "VNDB",
+        "bangumi": "Bangumi",
+        "igdb": "IGDB",
+        "ymgal": "YMgal",
+        "dlsite": "DLsite"
+      }
+    }
+  },
+  "gameBatchAdder": {
+    "dialog": {
+      "title": "ゲームを一括追加",
+      "waitForCompletion": "ゲームの追加が完了するまでお待ちください"
+    },
+    "status": {
+      "loading": "追加中",
+      "success": "追加成功",
+      "error": "追加失敗",
+      "waiting": "追加待ち"
+    },
+    "table": {
+      "columns": {
+        "dataSource": "データソース",
+        "name": "ゲーム名",
+        "id": "ゲームID",
+        "status": "ステータス",
+        "actions": "アクション"
+      }
+    },
+    "form": {
+      "dataSource": "データソース",
+      "namePlaceholder": "ゲーム名を入力してください",
+      "idPlaceholder": "ゲームID（オプション）"
+    },
+    "actions": {
+      "retry": "再試行",
+      "add": "追加",
+      "delete": "削除",
+      "addAll": "すべて追加",
+      "adding": "追加中..."
+    },
+    "notifications": {
+      "addingGame": "ゲーム「{{name}}」を追加中...",
+      "gameAdded": "ゲーム「{{name}}」の追加に成功しました",
+      "addingGames": "ゲームを追加中...",
+      "gamesAdded": "ゲームの追加に成功しました",
+      "gameAddFailed": "ゲームの追加に失敗しました"
+    },
+    "errors": {
+      "gameNotFound": "ゲームが見つかりません: {{name}}",
+      "gameIsBeingAdded": "ゲームは既に追加中です",
+      "gameAlreadyAdded": "ゲームは既に追加されています"
+    }
+  }
+}

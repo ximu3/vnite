@@ -2,6 +2,7 @@ export interface configDocs {
   general: {
     openAtLogin: boolean
     quitToTray: boolean
+    language: string
   }
   game: {
     scraper: {
@@ -87,7 +88,8 @@ export interface configLocalDocs {
 export const DEFAULT_CONFIG_VALUES = {
   general: {
     openAtLogin: false,
-    quitToTray: true
+    quitToTray: true,
+    language: ''
   },
   game: {
     scraper: {

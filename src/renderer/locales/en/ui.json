@@ -1,0 +1,23 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "hotkeySetting": {
+    "title": "Set Hotkey",
+    "recording": "[Press hotkey...]",
+    "placeholder": "Type or record hotkey, e.g.: ctrl+a+b",
+    "startRecordButton": "Click to start recording",
+    "recordingButton": "Recording...",
+    "currentKeys": "Currently pressed keys",
+    "supportedKeys": "Supported keys include letters, numbers, arrow keys, Esc, Tab, Enter, Space, etc., and can be used in combination",
+    "errors": {
+      "invalidHotkey": "Please enter a valid hotkey",
+      "duplicateKeys": "Hotkey cannot contain duplicate keys"
+    },
+    "messages": {
+      "hotkeyUpdated": "Hotkey updated"
+    }
+  }
+}

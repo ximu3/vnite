@@ -10,7 +10,8 @@ import {
   getAppVersion,
   portableStore,
   switchDatabaseMode,
-  readFileBuffer
+  readFileBuffer,
+  getLanguage
 } from '~/utils'
 import { generateUUID } from '@appUtils'
 import { app } from 'electron'
@@ -99,6 +100,10 @@ export function setupUtilsIPC(mainWindow: BrowserWindow): void {
 
   ipcMain.handle('read-file-buffer', async (_, filePath: string) => {
     return await readFileBuffer(filePath)
+  })
+
+  ipcMain.handle('get-language', async () => {
+    return getLanguage()
   })
 
   mainWindow.on('maximize', () => {

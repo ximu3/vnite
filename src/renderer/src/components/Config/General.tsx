@@ -13,24 +13,41 @@ import { toast } from 'sonner'
 import { useConfigState } from '~/hooks'
 import { cn, ipcInvoke } from '~/utils'
 import { useTheme } from '../ThemeProvider'
+import { useTranslation } from 'react-i18next'
 
 export function General(): JSX.Element {
   const [openAtLogin, setOpenAtLogin] = useConfigState('general.openAtLogin')
   const [quitToTray, setQuitToTray] = useConfigState('general.quitToTray')
   const { themeSetting, setThemeSetting } = useTheme()
+  const { t } = useTranslation('config')
+  const { i18n } = useTranslation()
+  const [language, setLanguage] = useConfigState('general.language')
+
+  const languageOptions = [
+    { value: 'zh-CN', label: '简体中文' },
+    { value: 'en', label: 'English' },
+    { value: 'ja', label: '日本語' }
+  ]
+
+  // 处理语言变更
+  const handleLanguageChange = async (value: string): Promise<void> => {
+    await setLanguage(value)
+    await i18n.changeLanguage(value)
+  }
+
   return (
     <Card className={cn('group')}>
       <CardHeader>
         <CardTitle className={cn('relative')}>
           <div className={cn('flex flex-row justify-between items-center')}>
-            <div className={cn('flex items-center')}>通用</div>
+            <div className={cn('flex items-center')}>{t('general.title')}</div>
           </div>
         </CardTitle>
       </CardHeader>
       <CardContent className={cn('')}>
         <div className={cn('flex flex-col gap-5 justify-center')}>
           <div className={cn('flex flex-row justify-between items-center')}>
-            <div>开机自启</div>
+            <div>{t('general.openAtLogin')}</div>
             <Switch
               checked={openAtLogin}
               onCheckedChange={async (checked) => {
@@ -38,16 +55,35 @@ export function General(): JSX.Element {
                   await setOpenAtLogin(checked)
                   await ipcInvoke('update-open-at-login')
                   await ipcInvoke('update-tray-config')
-                  toast.success('设置已更新')
+                  toast.success(t('messages.settingsUpdated'))
                 } catch (error) {
-                  toast.error('设置更新失败')
+                  toast.error(t('messages.settingsUpdateError'))
                   console.error('更新设置失败:', error)
                 }
               }}
             />
           </div>
+          {/* 语言 */}
           <div className={cn('flex flex-row justify-between items-center')}>
-            <div>主题样式</div>
+            <div>{t('general.language')}</div>
+            <Select value={language} onValueChange={handleLanguageChange}>
+              <SelectTrigger className={cn('w-[200px]')}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>{t('general.language')}</SelectLabel>
+                  {languageOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className={cn('flex flex-row justify-between items-center')}>
+            <div>{t('general.theme')}</div>
             <Select
               value={themeSetting}
               onValueChange={(value: 'dark' | 'light' | 'follow-system') => setThemeSetting(value)}
@@ -57,21 +93,20 @@ export function General(): JSX.Element {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>主题样式</SelectLabel>
-                  <SelectItem value="dark">暗色</SelectItem>
-                  <SelectItem value="light">浅色</SelectItem>
-                  <SelectItem value="follow-system">跟随系统</SelectItem>
+                  <SelectLabel>{t('general.theme')}</SelectLabel>
+                  <SelectItem value="dark">{t('general.darkTheme')}</SelectItem>
+                  <SelectItem value="light">{t('general.lightTheme')}</SelectItem>
+                  <SelectItem value="follow-system">{t('general.followSystem')}</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
-            {/* <Switch checked={isDark} onCheckedChange={toggleTheme} /> */}
           </div>
           <div className={cn('flex flex-row justify-between items-center')}>
-            <div className={cn('grow')}>关闭主面板</div>
+            <div className={cn('grow')}>{t('general.closeMainPanel')}</div>
             <Select
-              value={quitToTray.toString()} // 转换为字符串
+              value={quitToTray.toString()}
               onValueChange={async (value) => {
-                await setQuitToTray(value === 'true') // 转换回布尔值
+                await setQuitToTray(value === 'true')
                 await ipcInvoke('update-tray-config')
               }}
             >
@@ -80,9 +115,9 @@ export function General(): JSX.Element {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>操作</SelectLabel>
-                  <SelectItem value="false">退出vnite</SelectItem>
-                  <SelectItem value="true">最小化到托盘</SelectItem>
+                  <SelectLabel>{t('general.action')}</SelectLabel>
+                  <SelectItem value="false">{t('general.quitApp')}</SelectItem>
+                  <SelectItem value="true">{t('general.minimizeToTray')}</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>

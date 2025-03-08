@@ -4,16 +4,18 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { isEqual } from 'lodash'
 import { toast } from 'sonner'
 import { useGameLocalState, useGameState } from '~/hooks'
-import { cn, formatDateToChineseWithSeconds, ipcInvoke } from '~/utils'
+import { cn, ipcInvoke } from '~/utils'
+import { useTranslation } from 'react-i18next'
 
 export function Save({ gameId }: { gameId: string }): JSX.Element {
+  const { t } = useTranslation('game')
   const [saveList, setSaveList] = useGameState(gameId, 'save.saveList')
 
   const [savePaths] = useGameLocalState(gameId, 'path.savePaths')
 
   async function restoreGameSave(saveId: string): Promise<void> {
     if (isEqual(savePaths, [''])) {
-      toast.error('未找到存档路径')
+      toast.error(t('detail.save.notifications.noSavePath'))
       return
     }
     toast.promise(
@@ -21,15 +23,16 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
         await ipcInvoke('restore-game-save', gameId, saveId)
       })(),
       {
-        loading: '切换存档中...',
-        success: '切换存档成功',
-        error: (err) => `切换存档失败: ${err.message}`
+        loading: t('detail.save.notifications.switchLoading'),
+        success: t('detail.save.notifications.switchSuccess'),
+        error: (err) => t('detail.save.notifications.switchError', { message: err.message })
       }
     )
   }
+
   async function deleteGameSave(saveId: string): Promise<void> {
     if (saveList[saveId]?.locked) {
-      toast('该存档已锁定', { duration: 1000 })
+      toast(t('detail.save.notifications.locked'), { duration: 1000 })
       return
     }
     toast.promise(
@@ -40,9 +43,9 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
         setSaveList(newSaveList)
       })(),
       {
-        loading: '删除存档中...',
-        success: '删除存档成功',
-        error: (err) => `删除存档失败: ${err.message}`
+        loading: t('detail.save.notifications.deleteLoading'),
+        success: t('detail.save.notifications.deleteSuccess'),
+        error: (err) => t('detail.save.notifications.deleteError', { message: err.message })
       }
     )
   }
@@ -65,21 +68,23 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
           <Table className="h-full">
             <TableHeader>
               <TableRow className={cn('')}>
-                <TableHead className={cn('w-1/5')}>日期</TableHead>
-                <TableHead className={cn('w-2/3', 'sm:w-1/3')}>备注</TableHead>
-                <TableHead className={cn('w-1/6')}>操作</TableHead>
+                <TableHead className={cn('w-1/5')}>{t('detail.save.table.date')}</TableHead>
+                <TableHead className={cn('w-2/3', 'sm:w-1/3')}>
+                  {t('detail.save.table.note')}
+                </TableHead>
+                <TableHead className={cn('w-1/6')}>{t('detail.save.table.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className={cn('h-full')}>
               {isEqual(saveList, {}) ? (
-                <div className={cn('mt-1')}>暂无存档</div>
+                <div className={cn('mt-1')}>{t('detail.save.empty')}</div>
               ) : (
                 Object.entries(saveList)
                   .sort(([, a], [, b]) => new Date(b.date).getTime() - new Date(a.date).getTime())
                   .map(([saveId, save]) => (
                     <TableRow key={saveId}>
                       <TableCell className={cn('w-1/5')}>
-                        <div>{formatDateToChineseWithSeconds(save.date)}</div>
+                        <div>{t('{{date, niceDateSeconds}}', { date: save.date })}</div>
                       </TableCell>
                       <TableCell className={cn('pr-10', '3xl:pr-24')}>
                         <Input
@@ -115,7 +120,7 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
                             className={cn('min-h-0 h-8')}
                             onClick={() => restoreGameSave(saveId)}
                           >
-                            切换
+                            {t('detail.save.actions.switch')}
                           </Button>
                           <Button
                             variant={'outline'}
@@ -124,7 +129,7 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
                             )}
                             onClick={() => deleteGameSave(saveId)}
                           >
-                            删除
+                            {t('detail.save.actions.delete')}
                           </Button>
                         </div>
                       </TableCell>

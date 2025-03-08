@@ -16,8 +16,10 @@ import { Memory } from './Memory'
 import { useState, useEffect, useRef } from 'react'
 import { throttle } from 'lodash'
 import { useGameState } from '~/hooks'
+import { useTranslation } from 'react-i18next'
 
 export function Game({ gameId }: { gameId: string }): JSX.Element {
+  const { t } = useTranslation('game')
   const [isImageError, setIsImageError] = useState(false)
   const [isSticky, setIsSticky] = useState(false)
   const headerRef = useRef<HTMLDivElement>(null)
@@ -191,15 +193,21 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
             </div>
           </ContextMenuTrigger>
           <ContextMenuContent>
-            <ContextMenuItem onClick={handleReset}>重置位置</ContextMenuItem>
-            <ContextMenuItem onClick={() => setLogoSize(initialSize)}>重置大小</ContextMenuItem>
+            <ContextMenuItem onClick={handleReset}>
+              {' '}
+              {t('detail.logoContextMenu.resetPosition')}
+            </ContextMenuItem>
+            <ContextMenuItem onClick={() => setLogoSize(initialSize)}>
+              {' '}
+              {t('detail.logoContextMenu.resetSize')}
+            </ContextMenuItem>
             <ContextMenuItem
               onClick={() => {
                 setLogoVisible(false)
-                toast.info('可在 游戏设置-管理 中恢复徽标显示')
+                toast.info(t('detail.notifications.logoHidden'))
               }}
             >
-              隐藏徽标
+              {t('detail.logoContextMenu.hideLogo')}
             </ContextMenuItem>
           </ContextMenuContent>
         </ContextMenu>
@@ -226,16 +234,16 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
             <Tabs defaultValue="overview" className={cn('w-full')}>
               <TabsList className={cn('w-[350px] shadow-md bg-accent/30')}>
                 <TabsTrigger className={cn('w-1/3')} value="overview">
-                  概览
+                  {t('detail.tabs.overview')}
                 </TabsTrigger>
                 <TabsTrigger className={cn('w-1/3')} value="record">
-                  记录
+                  {t('detail.tabs.record')}
                 </TabsTrigger>
                 <TabsTrigger className={cn('w-1/3')} value="save">
-                  存档
+                  {t('detail.tabs.save')}
                 </TabsTrigger>
                 <TabsTrigger className={cn('w-1/3')} value="memory">
-                  回忆
+                  {t('detail.tabs.memory')}
                 </TabsTrigger>
               </TabsList>
 

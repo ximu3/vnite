@@ -1,0 +1,23 @@
+{
+  "common": {
+    "save": "保存",
+    "cancel": "取消",
+    "confirm": "确定"
+  },
+  "hotkeySetting": {
+    "title": "设置快捷键",
+    "recording": "[按下快捷键...]",
+    "placeholder": "输入或记录快捷键，如: ctrl+a+b",
+    "startRecordButton": "点击开始记录",
+    "recordingButton": "正在记录...",
+    "currentKeys": "当前按下的键",
+    "supportedKeys": "支持的按键包括字母、数字、方向键、Esc、Tab、Enter、Space 等，可以组合使用多个按键",
+    "errors": {
+      "invalidHotkey": "请输入有效的快捷键",
+      "duplicateKeys": "快捷键不能包含重复的按键"
+    },
+    "messages": {
+      "hotkeyUpdated": "快捷键已更新"
+    }
+  }
+}

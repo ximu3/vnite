@@ -12,8 +12,10 @@ import { cn } from '~/utils'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Checkbox } from '@ui/checkbox'
+import { useTranslation } from 'react-i18next'
 
 export function SteamImporter(): JSX.Element {
+  const { t } = useTranslation('importer')
   const [searchQuery, setSearchQuery] = useState('')
   const [isImportLoading, setIsImportLoading] = useState(false)
   const [hasEverFetched, setHasEverFetched] = useState(false)
@@ -66,7 +68,7 @@ export function SteamImporter(): JSX.Element {
       setHasEverFetched(true) // Mark the list of games that have been fetched
     } catch (error) {
       console.error('获取游戏列表失败:', error)
-      toast.error('获取游戏列表失败，请重试')
+      toast.error(t('steamImporter.notifications.fetchFailed'))
     } finally {
       setIsLoadingGames(false)
     }
@@ -76,7 +78,7 @@ export function SteamImporter(): JSX.Element {
   const startImport = async (): Promise<void> => {
     const selectedGames = games.filter((game) => game.selected)
     if (selectedGames.length === 0) {
-      toast.error('请至少选择一个游戏')
+      toast.error(t('steamImporter.notifications.selectAtLeastOne'))
       return
     }
 
@@ -99,7 +101,7 @@ export function SteamImporter(): JSX.Element {
 
       // If there are no games left, it shows that all imports are complete
       if (remainingGames.length === 0) {
-        toast.success('所有游戏已导入完成')
+        toast.success(t('steamImporter.notifications.allImported'))
       }
     } catch (error) {
       console.error('导入失败:', error)
@@ -107,7 +109,7 @@ export function SteamImporter(): JSX.Element {
         current: 0,
         total: 0,
         status: 'error',
-        message: '导入失败，请重试'
+        message: t('steamImporter.notifications.importFailed')
       })
     }
   }
@@ -131,7 +133,7 @@ export function SteamImporter(): JSX.Element {
       setSearchQuery('')
       setHasEverFetched(false) // Reset acquisition state
     } else {
-      toast.warning('请等待导入完成')
+      toast.warning(t('steamImporter.notifications.waitForCompletion'))
     }
   }
 
@@ -158,10 +160,8 @@ export function SteamImporter(): JSX.Element {
         className={cn('transition-all duration-300 max-w-xl')}
       >
         <DialogHeader>
-          <DialogTitle>导入 Steam 游戏</DialogTitle>
-          <DialogDescription>
-            请输入你的 Steam ID 来导入游戏库，ID 可在个人资料的 URL 中获取。
-          </DialogDescription>
+          <DialogTitle>{t('steamImporter.dialog.title')}</DialogTitle>
+          <DialogDescription>{t('steamImporter.dialog.description')}</DialogDescription>
         </DialogHeader>
 
         {/* Steam ID Input */}
@@ -171,7 +171,7 @@ export function SteamImporter(): JSX.Element {
               id="steamId"
               value={steamId}
               onChange={(e) => setSteamId(e.target.value)}
-              placeholder="输入 Steam ID"
+              placeholder={t('steamImporter.input.steamId')}
               className="col-span-3"
               disabled={isLoadingGames || isImporting}
             />
@@ -185,7 +185,7 @@ export function SteamImporter(): JSX.Element {
               ) : (
                 <Search className="w-4 h-4" />
               )}
-              <span className="ml-2">获取</span>
+              <span className="ml-2">{t('steamImporter.input.fetch')}</span>
             </Button>
           </div>
         </div>
@@ -199,32 +199,40 @@ export function SteamImporter(): JSX.Element {
                   return (
                     <Alert>
                       <AlertCircle className="w-4 h-4" />
-                      <AlertTitle>开始导入</AlertTitle>
-                      <AlertDescription>请输入你的 Steam ID 获取游戏列表</AlertDescription>
+                      <AlertTitle>{t('steamImporter.status.initial.title')}</AlertTitle>
+                      <AlertDescription>
+                        {t('steamImporter.status.initial.description')}
+                      </AlertDescription>
                     </Alert>
                   )
                 case 'ready':
                   return (
                     <Alert>
                       <AlertCircle className="w-4 h-4" />
-                      <AlertTitle>准备获取</AlertTitle>
-                      <AlertDescription>{'请点击"获取"按钮来获取游戏列表'}</AlertDescription>
+                      <AlertTitle>{t('steamImporter.status.ready.title')}</AlertTitle>
+                      <AlertDescription>
+                        {t('steamImporter.status.ready.description')}
+                      </AlertDescription>
                     </Alert>
                   )
                 case 'loading':
                   return (
                     <Alert>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      <AlertTitle>加载中</AlertTitle>
-                      <AlertDescription>正在获取游戏列表...</AlertDescription>
+                      <AlertTitle>{t('steamImporter.status.loading.title')}</AlertTitle>
+                      <AlertDescription>
+                        {t('steamImporter.status.loading.description')}
+                      </AlertDescription>
                     </Alert>
                   )
                 case 'empty':
                   return (
                     <Alert>
                       <CheckCircle2 className="w-4 h-4" />
-                      <AlertTitle>已全部导入</AlertTitle>
-                      <AlertDescription>所有游戏都已成功导入</AlertDescription>
+                      <AlertTitle>{t('steamImporter.status.empty.title')}</AlertTitle>
+                      <AlertDescription>
+                        {t('steamImporter.status.empty.description')}
+                      </AlertDescription>
                     </Alert>
                   )
                 case 'hasGames':
@@ -240,11 +248,14 @@ export function SteamImporter(): JSX.Element {
                             onCheckedChange={(checked) => toggleAllGames(!!checked)}
                           />
                           <label htmlFor="selectAll" className="text-sm">
-                            全选 ({selectedCount}/{games.length})
+                            {t('steamImporter.gameList.selectAll', {
+                              selected: selectedCount,
+                              total: games.length
+                            })}
                           </label>
                         </div>
                         <Input
-                          placeholder="搜索游戏..."
+                          placeholder={t('steamImporter.gameList.search')}
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
                           className="max-w-xs"
@@ -268,7 +279,9 @@ export function SteamImporter(): JSX.Element {
                                 {game.name}
                               </label>
                               <span className="text-sm text-muted-foreground">
-                                {Math.round(game.totalPlayingTime / (1000 * 60 * 60))}小时
+                                {t('steamImporter.gameList.hours', {
+                                  hours: Math.round(game.totalPlayingTime / (1000 * 60 * 60))
+                                })}
                               </span>
                             </div>
                           ))}
@@ -283,10 +296,10 @@ export function SteamImporter(): JSX.Element {
                         {isImportLoading ? (
                           <>
                             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            <span>正在准备导入...</span>
+                            <span>{t('steamImporter.import.preparing')}</span>
                           </>
                         ) : (
-                          `导入选中的游戏 (${selectedCount})`
+                          t('steamImporter.import.button', { count: selectedCount })
                         )}
                       </Button>
                     </>
@@ -306,7 +319,7 @@ export function SteamImporter(): JSX.Element {
 
             <Alert variant="default">
               <AlertCircle className="w-4 h-4" />
-              <AlertTitle>正在导入</AlertTitle>
+              <AlertTitle>{t('steamImporter.import.progress.title')}</AlertTitle>
               <AlertDescription>{message}</AlertDescription>
             </Alert>
 
@@ -341,9 +354,18 @@ export function SteamImporter(): JSX.Element {
         {(status === 'completed' || status === 'error') && (
           <Alert variant={status === 'error' ? 'destructive' : 'default'}>
             <AlertCircle className="w-4 h-4" />
-            <AlertTitle>{status === 'completed' ? '导入完成' : '导入错误'}</AlertTitle>
+            <AlertTitle>
+              {status === 'completed'
+                ? t('steamImporter.import.progress.completed')
+                : t('steamImporter.import.progress.error')}
+            </AlertTitle>
             <AlertDescription>
-              {status === 'completed' ? `成功: ${successCount} 个 失败: ${errorCount} 个` : message}
+              {status === 'completed'
+                ? t('steamImporter.import.progress.summary', {
+                    success: successCount,
+                    error: errorCount
+                  })
+                : message}
             </AlertDescription>
           </Alert>
         )}

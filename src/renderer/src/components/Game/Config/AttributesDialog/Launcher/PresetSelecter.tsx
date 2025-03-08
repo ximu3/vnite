@@ -18,25 +18,7 @@ import { toast } from 'sonner'
 import { useGameState } from '~/hooks'
 
 import { useSteamIdDialogStore, SteamIdDialog } from './SteamIdDialog'
-
-const presets = [
-  {
-    value: 'default',
-    label: '默认配置'
-  },
-  {
-    value: 'le',
-    label: 'LE转区启动'
-  },
-  {
-    value: 'steam',
-    label: 'Steam启动'
-  },
-  {
-    value: 'vba',
-    label: 'VBA启动'
-  }
-]
+import { useTranslation } from 'react-i18next'
 
 export function PresetSelecter({
   gameId,
@@ -45,10 +27,30 @@ export function PresetSelecter({
   gameId: string
   className?: string
 }): JSX.Element {
+  const { t } = useTranslation('game')
   const [open, setOpen] = React.useState(false)
   const [steamId] = useGameState(gameId, 'metadata.steamId')
   const [value] = React.useState('')
   const { setIsOpen, setGameId } = useSteamIdDialogStore()
+
+  const presets = [
+    {
+      value: 'default',
+      label: t('detail.properties.launcher.preset.default')
+    },
+    {
+      value: 'le',
+      label: t('detail.properties.launcher.preset.le')
+    },
+    {
+      value: 'steam',
+      label: t('detail.properties.launcher.preset.steam')
+    },
+    {
+      value: 'vba',
+      label: t('detail.properties.launcher.preset.vba')
+    }
+  ]
 
   async function setPreset(presetName: string, gameId: string): Promise<void> {
     if (presetName === 'steam') {
@@ -58,8 +60,8 @@ export function PresetSelecter({
             await ipcInvoke('launcher-preset', 'steam', gameId, steamId)
           },
           {
-            loading: '正在配置预设...',
-            success: '预设配置成功',
+            loading: t('detail.properties.launcher.preset.notifications.configuring'),
+            success: t('detail.properties.launcher.preset.notifications.success'),
             error: (error) => `${error}`
           }
         )
@@ -67,7 +69,7 @@ export function PresetSelecter({
       }
       setIsOpen(true)
       setGameId(gameId)
-      toast.info('请输入Steam ID')
+      toast.info(t('detail.properties.launcher.preset.steamIdRequired'))
       return
     }
     toast.promise(
@@ -75,12 +77,13 @@ export function PresetSelecter({
         await ipcInvoke('launcher-preset', presetName, gameId)
       },
       {
-        loading: '正在配置预设...',
-        success: '预设配置成功',
+        loading: t('detail.properties.launcher.preset.notifications.configuring'),
+        success: t('detail.properties.launcher.preset.notifications.success'),
         error: (error) => `${error}`
       }
     )
   }
+
   return (
     <>
       <SteamIdDialog />
@@ -92,13 +95,15 @@ export function PresetSelecter({
             aria-expanded={open}
             className="w-[150px] justify-between"
           >
-            {value ? presets.find((preset) => preset.value === value)?.label : '预设配置'}
+            {value
+              ? presets.find((preset) => preset.value === value)?.label
+              : t('detail.properties.launcher.preset.title')}
             <ChevronsUpDown className="w-4 h-4 ml-2 opacity-50 shrink-0" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[150px] p-0">
           <Command>
-            <CommandInput placeholder="搜索配置" />
+            <CommandInput placeholder={t('detail.properties.launcher.preset.search')} />
             <CommandList>
               <CommandEmpty>No preset found.</CommandEmpty>
               <CommandGroup>

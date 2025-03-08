@@ -3,6 +3,7 @@ import { Button } from '@ui/button'
 import { Input } from '@ui/input'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@ui/dialog'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 
 interface HotkeySettingProps {
   defaultHotkey: string
@@ -36,6 +37,8 @@ export function HotkeySetting({
   onHotkeyChange,
   inputClassName = 'font-mono'
 }: HotkeySettingProps): JSX.Element {
+  const { t } = useTranslation()
+
   const [isOpen, setIsOpen] = useState(false)
   const [tempHotkey, setTempHotkey] = useState('')
   const [isRecording, setIsRecording] = useState(false)
@@ -51,13 +54,13 @@ export function HotkeySetting({
   const validateHotkey = (hotkey: string): boolean => {
     const keys = hotkey.split('+').map((k) => k.trim())
     if (keys.length === 0) {
-      toast.error('请输入有效的快捷键')
+      toast.error(t('ui:hotkeySetting.errors.invalidHotkey'))
       return false
     }
 
     // Check for key duplication
     if (new Set(keys).size !== keys.length) {
-      toast.error('快捷键不能包含重复的按键')
+      toast.error(t('ui:hotkeySetting.errors.duplicateKeys'))
       return false
     }
 
@@ -138,7 +141,7 @@ export function HotkeySetting({
   const handleSave = (): void => {
     if (tempHotkey && validateHotkey(tempHotkey)) {
       onHotkeyChange(tempHotkey)
-      toast.success('快捷键已更新')
+      toast.success(t('ui:hotkeySetting.messages.hotkeyUpdated'))
       setIsOpen(false)
     }
   }
@@ -163,15 +166,15 @@ export function HotkeySetting({
 
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>设置快捷键</DialogTitle>
+          <DialogTitle>{t('ui:hotkeySetting.title')}</DialogTitle>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
           <div className="space-y-4">
             <Input
-              value={isRecording ? '[按下快捷键...]' : tempHotkey}
+              value={isRecording ? t('ui:hotkeySetting.recording') : tempHotkey}
               onChange={handleInputChange}
-              placeholder="输入或记录快捷键，如: ctrl+a+b"
+              placeholder={t('ui:hotkeySetting.placeholder')}
               className={inputClassName}
             />
 
@@ -180,27 +183,29 @@ export function HotkeySetting({
               variant={isRecording ? 'secondary' : 'outline'}
               className="w-full"
             >
-              {isRecording ? '正在记录...' : '点击开始记录'}
+              {isRecording
+                ? t('ui:hotkeySetting.recordingButton')
+                : t('ui:hotkeySetting.startRecordButton')}
             </Button>
 
             {isRecording && pressedKeys.length > 0 && (
               <div className="text-sm text-muted-foreground">
-                当前按下的键: {formatHotkey(pressedKeys.join('+'))}
+                {t('ui:hotkeySetting.currentKeys')}: {formatHotkey(pressedKeys.join('+'))}
               </div>
             )}
 
             <div className="text-xs text-muted-foreground">
-              支持的按键包括字母、数字、方向键、Esc、Tab、Enter、Space 等，可以组合使用多个按键
+              {t('ui:hotkeySetting.supportedKeys')}
             </div>
           </div>
         </div>
 
         <div className="flex justify-end space-x-4">
           <Button variant="ghost" onClick={() => setIsOpen(false)}>
-            取消
+            {t('ui:common.cancel')}
           </Button>
           <Button onClick={handleSave} disabled={!tempHotkey}>
-            保存
+            {t('ui:common.save')}
           </Button>
         </div>
       </DialogContent>

@@ -3,17 +3,19 @@ import { useCallback } from 'react'
 import { useGameBatchAdderStore } from '../store'
 import type { Game } from '../store'
 import { ipcInvoke } from '~/utils'
+import { useTranslation } from 'react-i18next'
 
 export const useGameAdder = (): {
   addGame: (dataId: string) => Promise<void>
   addAllGames: () => Promise<void>
 } => {
+  const { t } = useTranslation('adder')
   const { games, actions } = useGameBatchAdderStore()
 
   const searchGame = async (game: Game): Promise<string> => {
     const result = (await ipcInvoke('search-games', game.dataSource, game.name)) as Game[]
     if (result.length === 0) {
-      throw new Error(`未找到游戏: ${game.name}`)
+      throw new Error(t('gameBatchAdder.errors.gameNotFound', { name: game.name }))
     }
     return result[0].id
   }
@@ -24,11 +26,11 @@ export const useGameAdder = (): {
       if (!game) return
 
       if (game.status === 'loading') {
-        throw new Error('游戏正在添加中')
+        throw new Error(t('gameBatchAdder.errors.gameIsBeingAdded'))
       }
 
       if (game.status === 'success') {
-        throw new Error('游戏已添加')
+        throw new Error(t('gameBatchAdder.errors.gameAlreadyAdded'))
       }
 
       try {
@@ -51,7 +53,7 @@ export const useGameAdder = (): {
         throw error
       }
     },
-    [games, actions]
+    [games, actions, t]
   )
 
   const addAllGames = useCallback(async () => {

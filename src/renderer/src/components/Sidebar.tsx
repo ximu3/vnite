@@ -23,6 +23,7 @@ import { useCloudSyncStore } from './Config/CloudSync/store'
 import { useSteamImporterStore } from '~/pages/Importer/SteamImporter/store'
 import { CloudSyncInfo } from './Config/CloudSync/Info'
 import { useTheme } from './ThemeProvider'
+import { useTranslation } from 'react-i18next'
 
 export function Sidebar(): JSX.Element {
   const setIsGameAdderOpen = useGameAdderStore((state) => state.setIsOpen)
@@ -32,6 +33,8 @@ export function Sidebar(): JSX.Element {
   const [cloudSyncEnabled] = useConfigLocalState('sync.enabled')
   const { toggleTheme, isDark } = useTheme()
   const [showThemeSwitchInSidebar] = useConfigState('appearances.sidebar.showThemeSwitcher')
+  const { t } = useTranslation('sidebar')
+
   return (
     <div className={cn('flex flex-col p-[10px] pt-3 pb-3 h-full bg-background justify-between')}>
       <div className={cn('flex flex-col gap-2')}>
@@ -40,7 +43,7 @@ export function Sidebar(): JSX.Element {
             'pb-2 font-mono text-xs font-bold flex justify-center items-center text-primary'
           )}
         >
-          vnite
+          {t('title')}
         </div>
         <Tooltip>
           <TooltipTrigger>
@@ -48,7 +51,7 @@ export function Sidebar(): JSX.Element {
               <span className={cn('icon-[mdi--bookshelf] w-5 h-5')}></span>
             </Nav>
           </TooltipTrigger>
-          <TooltipContent side="right">游戏库</TooltipContent>
+          <TooltipContent side="right">{t('navigation.library')}</TooltipContent>
         </Tooltip>
         <Tooltip>
           <TooltipTrigger>
@@ -56,7 +59,7 @@ export function Sidebar(): JSX.Element {
               <span className={cn('icon-[mdi--report-box-multiple] w-5 h-5')}></span>
             </Nav>
           </TooltipTrigger>
-          <TooltipContent side="right">记录</TooltipContent>
+          <TooltipContent side="right">{t('navigation.records')}</TooltipContent>
         </Tooltip>
       </div>
       <div className={cn('flex flex-col gap-2')}>
@@ -76,7 +79,9 @@ export function Sidebar(): JSX.Element {
                 )}
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="right">{isDark ? '暗色模式' : '亮色模式'}</TooltipContent>
+            <TooltipContent side="right">
+              {isDark ? t('actions.darkMode') : t('actions.lightMode')}
+            </TooltipContent>
           </Tooltip>
         )}
         {cloudSyncEnabled ? (
@@ -131,7 +136,7 @@ export function Sidebar(): JSX.Element {
                 <span className={cn('icon-[mdi--cloud-cancel-outline] w-5 h-5')}></span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="right">云同步未开启</TooltipContent>
+            <TooltipContent side="right">{t('actions.cloudSyncDisabled')}</TooltipContent>
           </Tooltip>
         )}
         <DropdownMenu>
@@ -147,11 +152,11 @@ export function Sidebar(): JSX.Element {
                 </Button>
               </TooltipTrigger>
             </DropdownMenuTrigger>
-            <TooltipContent side="right">添加游戏</TooltipContent>
+            <TooltipContent side="right">{t('actions.addGame')}</TooltipContent>
           </Tooltip>
           <DropdownMenuContent side="right" className="w-44">
             <DropdownMenuSub>
-              <DropdownMenuSubTrigger>使用刮削器</DropdownMenuSubTrigger>
+              <DropdownMenuSubTrigger>{t('gameAdder.withScraper')}</DropdownMenuSubTrigger>
               <DropdownMenuPortal>
                 <DropdownMenuSubContent>
                   <DropdownMenuItem
@@ -159,7 +164,7 @@ export function Sidebar(): JSX.Element {
                       setIsGameAdderOpen(true)
                     }}
                   >
-                    <div>单个添加</div>
+                    <div>{t('gameAdder.addSingle')}</div>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={async () => {
@@ -169,11 +174,11 @@ export function Sidebar(): JSX.Element {
                             const result = (await ipcInvoke('get-batch-game-adder-data')) as Game[]
 
                             if (!Array.isArray(result)) {
-                              throw new Error('返回数据格式错误')
+                              throw new Error(t('messages.unknownError'))
                             }
 
                             if (result.length === 0) {
-                              toast.error('未找到游戏')
+                              toast.error(t('messages.noGamesFound'))
                               return
                             }
 
@@ -181,23 +186,23 @@ export function Sidebar(): JSX.Element {
                             gameBatchAdderActions.setIsOpen(true)
                           } catch (error) {
                             if (error instanceof Error) {
-                              toast.error(`获取游戏失败: ${error.message}`)
+                              toast.error(`${t('messages.getFailed')}${error.message}`)
                               throw error
                             } else {
-                              toast.error(`获取游戏失败: ${error}`)
-                              throw new Error('未知错误')
+                              toast.error(`${t('messages.getFailed')}${error}`)
+                              throw new Error(t('messages.unknownError'))
                             }
                           }
                         })(),
                         {
-                          loading: '请选择库文件夹...',
-                          success: '获取游戏成功',
-                          error: (err: Error) => `获取游戏失败: ${err.message}`
+                          loading: t('messages.selectLibraryFolder'),
+                          success: t('messages.getSuccess'),
+                          error: (err: Error) => `${t('messages.getFailed')}${err.message}`
                         }
                       )
                     }}
                   >
-                    <div>批量添加</div>
+                    <div>{t('gameAdder.addBatch')}</div>
                   </DropdownMenuItem>
                 </DropdownMenuSubContent>
               </DropdownMenuPortal>
@@ -205,7 +210,7 @@ export function Sidebar(): JSX.Element {
             <DropdownMenuItem
               onClick={async () => {
                 try {
-                  toast.info('请选择游戏路径')
+                  toast.info(t('messages.selectGamePath'))
                   const gamePath = await ipcInvoke('select-path-dialog', ['openFile'])
                   if (!gamePath) {
                     return
@@ -215,20 +220,20 @@ export function Sidebar(): JSX.Element {
                       await ipcInvoke('add-game-to-db-without-metadata', gamePath)
                     })(),
                     {
-                      loading: '正在添加游戏...',
-                      success: '添加游戏成功',
-                      error: '添加游戏时出错'
+                      loading: t('messages.adding'),
+                      success: t('messages.addSuccess'),
+                      error: t('messages.addError')
                     }
                   )
                 } catch (_error) {
-                  toast.error('添加游戏时出错')
+                  toast.error(t('messages.addError'))
                 }
               }}
             >
-              <div>不使用刮削器</div>
+              <div>{t('gameAdder.withoutScraper')}</div>
             </DropdownMenuItem>
             <DropdownMenuSub>
-              <DropdownMenuSubTrigger>从第三方导入</DropdownMenuSubTrigger>
+              <DropdownMenuSubTrigger>{t('gameAdder.importFromThirdParty')}</DropdownMenuSubTrigger>
               <DropdownMenuPortal>
                 <DropdownMenuSubContent>
                   <DropdownMenuItem
@@ -236,7 +241,7 @@ export function Sidebar(): JSX.Element {
                       setIsSteamImporterOpen(true)
                     }}
                   >
-                    <div>Steam</div>
+                    <div>{t('gameAdder.steam')}</div>
                   </DropdownMenuItem>
                 </DropdownMenuSubContent>
               </DropdownMenuPortal>
@@ -255,7 +260,7 @@ export function Sidebar(): JSX.Element {
               </Button>
             </TooltipTrigger>
           </ConfigDialog>
-          <TooltipContent side="right">设置</TooltipContent>
+          <TooltipContent side="right">{t('actions.settings')}</TooltipContent>
         </Tooltip>
       </div>
     </div>

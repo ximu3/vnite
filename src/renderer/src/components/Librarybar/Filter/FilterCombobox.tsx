@@ -16,6 +16,7 @@ import * as React from 'react'
 import { getAllValuesInKey } from '~/stores/game'
 import { cn } from '~/utils'
 import { useFilterStore } from './store'
+import { useTranslation } from 'react-i18next'
 
 interface Option {
   value: string
@@ -58,6 +59,8 @@ export function FilterCombobox({
       addFilter(filed, value)
     }
   }
+
+  const { t } = useTranslation('game')
   return (
     <div className={cn('flex flex-row gap-2')}>
       <Popover open={open} onOpenChange={setOpen}>
@@ -79,7 +82,9 @@ export function FilterCombobox({
                   </span>
                 ))
               ) : (
-                <span className="text-muted-foreground">{`选择${placeholder}`}</span>
+                <span className="text-muted-foreground">
+                  {t('filter.combobox.select', { placeholder })}
+                </span>
               )}
             </div>
             <ChevronsUpDown className="w-4 h-4 ml-2 opacity-50 shrink-0" />
@@ -87,8 +92,11 @@ export function FilterCombobox({
         </PopoverTrigger>
         <PopoverContent side="bottom" align="end" className="w-[240px] p-0 max-w-none">
           <Command className={cn(' max-w-none')}>
-            <CommandInput placeholder={`搜索${placeholder}`} className={cn('non-draggable')} />
-            <CommandEmpty>{`未找到此${placeholder}`}</CommandEmpty>
+            <CommandInput
+              placeholder={t('filter.combobox.search', { placeholder })}
+              className={cn('non-draggable')}
+            />
+            <CommandEmpty>{t('filter.combobox.notFound', { placeholder })}</CommandEmpty>
             <CommandList className={cn('scrollbar-base')}>
               <CommandGroup>
                 {options.map((option) => (

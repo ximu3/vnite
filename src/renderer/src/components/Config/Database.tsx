@@ -17,8 +17,11 @@ import { Switch } from '@ui/switch'
 import { ipcInvoke, ipcSend } from '~/utils'
 import { toast } from 'sonner'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export function Database(): JSX.Element {
+  const { t } = useTranslation('config')
+
   const backup = async (): Promise<void> => {
     toast.promise(
       async () => {
@@ -27,12 +30,13 @@ export function Database(): JSX.Element {
         await ipcInvoke('backup-database', targetPath)
       },
       {
-        loading: '正在备份数据库...',
-        success: '数据库备份成功',
-        error: '数据库备份失败'
+        loading: t('database.messages.backingUp'),
+        success: t('database.messages.backupSuccess'),
+        error: t('database.messages.backupError')
       }
     )
   }
+
   const restore = async (): Promise<void> => {
     toast.promise(
       async () => {
@@ -41,12 +45,13 @@ export function Database(): JSX.Element {
         await ipcInvoke('restore-database', sourcePath)
       },
       {
-        loading: '正在导入数据库...',
-        success: '数据库导入成功',
-        error: '数据库导入失败'
+        loading: t('database.messages.importing'),
+        success: t('database.messages.importSuccess'),
+        error: t('database.messages.importError')
       }
     )
   }
+
   const importV1Data = async (): Promise<void> => {
     toast.promise(
       async () => {
@@ -55,48 +60,52 @@ export function Database(): JSX.Element {
         await ipcInvoke('import-v1-data', sourcePath)
       },
       {
-        loading: '正在导入数据库...',
-        success: '数据库导入成功',
-        error: '数据库导入失败'
+        loading: t('database.messages.importing'),
+        success: t('database.messages.importSuccess'),
+        error: t('database.messages.importError')
       }
     )
   }
+
   const [isPortable, setIsPortable] = useState<boolean>(false)
+
   useEffect(() => {
     ipcInvoke('is-portable-mode').then((isPortable) => {
       setIsPortable(isPortable as boolean)
     })
   }, [])
+
   const switchDatabaseMode = async (): Promise<void> => {
     toast.promise(
       async () => {
         await ipcInvoke('switch-database-mode')
         setIsPortable((prev) => !prev)
-        toast.info('应用将在 3 秒后重启')
+        toast.info(t('database.messages.restartCountdown'))
         setTimeout(() => {
           ipcSend('relaunch-app')
         }, 3000)
       },
       {
-        loading: '正在切换数据库模式...',
-        success: '数据库模式切换成功',
-        error: '数据库模式切换失败'
+        loading: t('database.messages.switchingMode'),
+        success: t('database.messages.switchSuccess'),
+        error: t('database.messages.switchError')
       }
     )
   }
+
   return (
     <Card className={cn('group')}>
       <CardHeader>
         <CardTitle className={cn('relative')}>
           <div className={cn('flex flex-row justify-between items-center')}>
-            <div className={cn('flex items-center')}>数据库</div>
+            <div className={cn('flex items-center')}>{t('database.title')}</div>
           </div>
         </CardTitle>
       </CardHeader>
       <CardContent className={cn('')}>
         <div className={cn('flex flex-col gap-5 w-full')}>
           <div className={cn('flex flex-row gap-5 items-center justify-between')}>
-            <div>便携模式</div>
+            <div>{t('database.portableMode')}</div>
             <AlertDialog>
               <AlertDialogTrigger>
                 <Switch checked={isPortable} />
@@ -104,13 +113,17 @@ export function Database(): JSX.Element {
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>
-                    确定要转换为 {isPortable ? '普通模式' : '便携模式'} 吗？
+                    {t('database.confirmSwitch', {
+                      mode: isPortable ? t('database.modes.normal') : t('database.modes.portable')
+                    })}
                   </AlertDialogTitle>
-                  <AlertDialogDescription>转换完成后将自动重启应用。</AlertDialogDescription>
+                  <AlertDialogDescription>{t('database.switchDescription')}</AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>取消</AlertDialogCancel>
-                  <AlertDialogAction onClick={switchDatabaseMode}>确定</AlertDialogAction>
+                  <AlertDialogCancel>{t('ui:common.cancel')}</AlertDialogCancel>
+                  <AlertDialogAction onClick={switchDatabaseMode}>
+                    {t('ui:common.confirm')}
+                  </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
@@ -123,25 +136,23 @@ export function Database(): JSX.Element {
                 await ipcInvoke('open-database-path-in-explorer')
               }}
             >
-              打开数据库文件夹
+              {t('database.openFolder')}
             </Button>
           </div>
           <div className={cn('flex flex-row gap-5 items-center')}>
-            <Button onClick={backup}>备份数据库</Button>
+            <Button onClick={backup}>{t('database.backup')}</Button>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button>导入数据库</Button>
+                <Button>{t('database.import')}</Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>确定要导入数据库吗？</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    导入数据库将覆盖当前数据库，此操作不可逆！操作结束后应用将自动重启。
-                  </AlertDialogDescription>
+                  <AlertDialogTitle>{t('database.confirmImport')}</AlertDialogTitle>
+                  <AlertDialogDescription>{t('database.importWarning')}</AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>取消</AlertDialogCancel>
-                  <AlertDialogAction onClick={restore}>确定</AlertDialogAction>
+                  <AlertDialogCancel>{t('ui:common.cancel')}</AlertDialogCancel>
+                  <AlertDialogAction onClick={restore}>{t('ui:common.confirm')}</AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
@@ -149,18 +160,18 @@ export function Database(): JSX.Element {
           <div className={cn('flex flex-row gap-5 items-center')}>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant={'outline'}>导入v1数据库</Button>
+                <Button variant={'outline'}>{t('database.importV1')}</Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>确定要导入v1数据库吗？</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    导入v1数据库将覆盖当前数据库，此操作不可逆！操作结束后应用将自动重启。
-                  </AlertDialogDescription>
+                  <AlertDialogTitle>{t('database.confirmImportV1')}</AlertDialogTitle>
+                  <AlertDialogDescription>{t('database.importV1Warning')}</AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>取消</AlertDialogCancel>
-                  <AlertDialogAction onClick={importV1Data}>确定</AlertDialogAction>
+                  <AlertDialogCancel>{t('ui:common.cancel')}</AlertDialogCancel>
+                  <AlertDialogAction onClick={importV1Data}>
+                    {t('ui:common.confirm')}
+                  </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>

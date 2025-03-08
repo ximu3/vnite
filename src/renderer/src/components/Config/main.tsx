@@ -9,40 +9,42 @@ import { About } from './About'
 import { Scraper } from './Scraper'
 import { Theme } from './Theme'
 import { Appearances } from './Appearances'
+import { useTranslation } from 'react-i18next'
 
 export function ConfigDialog({ children }: { children: React.ReactNode }): JSX.Element {
+  const { t } = useTranslation('config')
   return (
     <Dialog>
       <DialogTrigger className={cn('w-full')}>{children}</DialogTrigger>
       <DialogContent className={cn('w-[1000px] max-h-[770px] h-[90vh] max-w-none flex flex-col')}>
         <DialogHeader>
-          <DialogTitle>{`Vnite 设置`}</DialogTitle>
+          <DialogTitle>{t('title')}</DialogTitle>
         </DialogHeader>
         <Tabs defaultValue="general" className={cn('w-full')}>
-          <TabsList className={cn('w-[700px]')}>
+          <TabsList className={cn('w-[900px]')}>
             <TabsTrigger className={cn('w-full')} value="general">
-              通用
+              {t('general.title')}
             </TabsTrigger>
             <TabsTrigger className={cn('w-full')} value="appearances">
-              外观
+              {t('appearances.title')}
             </TabsTrigger>
             <TabsTrigger className={cn('w-full')} value="advanced">
-              高级
+              {t('advanced.title')}
             </TabsTrigger>
             <TabsTrigger className={cn('w-full')} value="theme">
-              主题
+              {t('theme.title')}
             </TabsTrigger>
             <TabsTrigger className={cn('w-full')} value="cloudSync">
-              云同步
+              {t('cloudSync.title')}
             </TabsTrigger>
             <TabsTrigger className={cn('w-full')} value="scraper">
-              刮削器
+              {t('scraper.title')}
             </TabsTrigger>
             <TabsTrigger className={cn('w-full')} value="database">
-              数据库
+              {t('database.title')}
             </TabsTrigger>
             <TabsTrigger className={cn('w-full')} value="about">
-              关于
+              {t('about.title')}
             </TabsTrigger>
           </TabsList>
           <TabsContent value="general">

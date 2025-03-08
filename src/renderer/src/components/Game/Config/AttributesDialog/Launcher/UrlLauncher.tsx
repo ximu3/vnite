@@ -13,8 +13,10 @@ import {
   SelectValue
 } from '@ui/select'
 import { ipcInvoke } from '~/utils'
+import { useTranslation } from 'react-i18next'
 
 export function UrlLauncher({ gameId }: { gameId: string }): JSX.Element {
+  const { t } = useTranslation('game')
   const [url, setUrl] = useGameLocalState(gameId, 'launcher.urlConfig.url')
   const [browserPath, setBrowserPath] = useGameLocalState(gameId, 'launcher.urlConfig.browserPath')
   const [monitorMode, setMonitorMode] = useGameLocalState(gameId, 'launcher.urlConfig.monitorMode')
@@ -28,6 +30,7 @@ export function UrlLauncher({ gameId }: { gameId: string }): JSX.Element {
     )
     setBrowserPath(workingDirectoryPath)
   }
+
   async function selectMonitorPath(): Promise<void> {
     if (monitorMode === 'file') {
       const monitorPath: string = await ipcInvoke('select-path-dialog', ['openFile'])
@@ -38,21 +41,22 @@ export function UrlLauncher({ gameId }: { gameId: string }): JSX.Element {
       setMonitorPath(monitorPath)
     }
   }
+
   return (
     <div className={cn('flex flex-col gap-5 w-full')}>
       <div className={cn('flex flex-row gap-5 items-center justify-start')}>
-        <div>链接地址</div>
+        <div>{t('detail.properties.launcher.url.address')}</div>
         <div className={cn('w-3/4')}>
           <Input value={url} onChange={(e) => setUrl(e.target.value)} />
         </div>
       </div>
       <div className={cn('flex flex-row gap-5 items-center justify-start')}>
-        <div>浏览器</div>
+        <div>{t('detail.properties.launcher.url.browser')}</div>
         <div className={cn('w-3/4 ml-4')}>
           <Input
             value={browserPath}
             onChange={(e) => setBrowserPath(e.target.value)}
-            placeholder="系统默认浏览器"
+            placeholder={t('detail.properties.launcher.url.defaultBrowser')}
           />
         </div>
         <Button
@@ -66,7 +70,7 @@ export function UrlLauncher({ gameId }: { gameId: string }): JSX.Element {
       </div>
       <Separator />
       <div className={cn('flex flex-row gap-5 items-center justify-start')}>
-        <div>追踪模式</div>
+        <div>{t('detail.properties.launcher.monitor.title')}</div>
         <div className={cn('w-[120px]')}>
           <Select value={monitorMode} onValueChange={setMonitorMode}>
             <SelectTrigger>
@@ -74,17 +78,27 @@ export function UrlLauncher({ gameId }: { gameId: string }): JSX.Element {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectLabel>追踪模式</SelectLabel>
-                <SelectItem value="folder">目录</SelectItem>
-                <SelectItem value="file">文件</SelectItem>
-                <SelectItem value="process">进程</SelectItem>
+                <SelectLabel>{t('detail.properties.launcher.monitor.title')}</SelectLabel>
+                <SelectItem value="folder">
+                  {t('detail.properties.launcher.monitor.mode.folder')}
+                </SelectItem>
+                <SelectItem value="file">
+                  {t('detail.properties.launcher.monitor.mode.file')}
+                </SelectItem>
+                <SelectItem value="process">
+                  {t('detail.properties.launcher.monitor.mode.process')}
+                </SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
         </div>
       </div>
       <div className={cn('flex flex-row gap-5 items-center justify-start')}>
-        {['folder', 'file'].includes(monitorMode) ? <div>追踪路径</div> : <div>进程名称</div>}
+        {['folder', 'file'].includes(monitorMode) ? (
+          <div>{t('detail.properties.launcher.monitor.path')}</div>
+        ) : (
+          <div>{t('detail.properties.launcher.monitor.processName')}</div>
+        )}
         <div className={cn('w-3/4')}>
           <Input value={monitorPath} onChange={(e) => setMonitorPath(e.target.value)} />
         </div>

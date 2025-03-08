@@ -1,0 +1,13 @@
+{
+  "dialog": {
+    "title": "新バージョン {{version}} が見つかりました",
+    "noReleaseNotes": "リリースノートなし",
+    "latestVersion": "最新バージョンです",
+    "downloadProgress": "{{percent}}% - {{speed}} MB/s"
+  },
+  "actions": {
+    "skipUpdate": "今はしない",
+    "update": "今すぐ更新",
+    "install": "今すぐインストール"
+  }
+}

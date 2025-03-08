@@ -9,12 +9,16 @@ import { cn, ipcInvoke } from '~/utils'
 import { CropDialog } from './CropDialog'
 import { SearchMediaDialog } from './SearchMediaDialog'
 import { UrlDialog } from './UrlDialog'
+import { useTranslation } from 'react-i18next'
 
 export function Media({ gameId }: { gameId: string }): JSX.Element {
+  const { t } = useTranslation('game')
+
   const [isUrlDialogOpen, setIsUrlDialogOpen] = useState({
     icon: false,
     cover: false,
-    background: false
+    background: false,
+    logo: false
   })
 
   const [cropDialogState, setCropDialogState] = useState<{
@@ -39,10 +43,12 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
     try {
       const filePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
       if (!filePath) return
+
       if (filePath.endsWith('.exe') && type == 'icon') {
         await ipcInvoke('set-game-media', gameId, type, filePath)
         return
       }
+
       setCropDialogState({
         isOpen: true,
         type,
@@ -50,7 +56,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
         isResizing: false
       })
     } catch (error) {
-      toast.error(`选择文件失败: ${error}`)
+      toast.error(t('detail.properties.media.notifications.fileSelectError', { error }))
     }
   }
 
@@ -60,7 +66,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
       // Get current image path
       const currentPath: string = await ipcInvoke('get-game-media-path', gameId, type)
       if (!currentPath) {
-        toast.error('未找到当前图片')
+        toast.error(t('detail.properties.media.notifications.imageNotFound'))
         return
       }
 
@@ -71,7 +77,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
         isResizing: true
       })
     } catch (error) {
-      toast.error(`获取当前图片失败: ${error}`)
+      toast.error(t('detail.properties.media.notifications.getImageError', { error }))
     }
   }
 
@@ -81,6 +87,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
       async () => {
         setIsUrlDialogOpen({ ...isUrlDialogOpen, [type]: false })
         if (!URL.trim()) return
+
         const tempFilePath = await ipcInvoke('download-temp-image', URL)
         setCropDialogState({
           isOpen: true,
@@ -90,9 +97,10 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
         })
       },
       {
-        loading: `正在获取图片...`,
-        success: `图片获取成功`,
-        error: (err) => `图片获取失败: ${err.message}`
+        loading: t('detail.properties.media.notifications.downloading'),
+        success: t('detail.properties.media.notifications.downloadSuccess'),
+        error: (err) =>
+          t('detail.properties.media.notifications.downloadError', { message: err.message })
       }
     )
   }
@@ -101,14 +109,29 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
   async function handleCropComplete(type: string, filePath: string): Promise<void> {
     setCropDialogState({ isOpen: false, type: '', imagePath: null, isResizing: false })
 
+    const action = cropDialogState.isResizing
+      ? t('detail.properties.media.actions.adjust')
+      : t('detail.properties.media.actions.set')
+
     toast.promise(
       async () => {
         await ipcInvoke('set-game-image', gameId, type, filePath)
       },
       {
-        loading: `正在${cropDialogState.isResizing ? '调整' : '设置'}${type}...`,
-        success: `${type}${cropDialogState.isResizing ? '调整' : '设置'}成功`,
-        error: (err) => `${type}${cropDialogState.isResizing ? '调整' : '设置'}失败: ${err.message}`
+        loading: t('detail.properties.media.notifications.processing', {
+          action,
+          type: t(`detail.properties.media.types.${type}`)
+        }),
+        success: t('detail.properties.media.notifications.success', {
+          action,
+          type: t(`detail.properties.media.types.${type}`)
+        }),
+        error: (err) =>
+          t('detail.properties.media.notifications.error', {
+            action,
+            type: t(`detail.properties.media.types.${type}`),
+            message: err.message
+          })
       }
     )
   }
@@ -127,7 +150,9 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
             <span className={cn('icon-[mdi--file-outline] w-4 h-4')}></span>
           </Button>
         </TooltipTrigger>
-        <TooltipContent side="bottom">从文件导入</TooltipContent>
+        <TooltipContent side="bottom">
+          {t('detail.properties.media.actions.importFromFile')}
+        </TooltipContent>
       </Tooltip>
       <Tooltip>
         <TooltipTrigger>
@@ -138,7 +163,9 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
             type={type}
           />
         </TooltipTrigger>
-        <TooltipContent side="bottom">从链接导入</TooltipContent>
+        <TooltipContent side="bottom">
+          {t('detail.properties.media.actions.importFromUrl')}
+        </TooltipContent>
       </Tooltip>
       <Tooltip>
         <TooltipTrigger>
@@ -154,7 +181,9 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
             <span className={cn('icon-[mdi--search] w-4 h-4')}></span>
           </Button>
         </TooltipTrigger>
-        <TooltipContent side="bottom">搜索图片</TooltipContent>
+        <TooltipContent side="bottom">
+          {t('detail.properties.media.actions.searchImage')}
+        </TooltipContent>
       </Tooltip>
       <Tooltip>
         <TooltipTrigger>
@@ -167,7 +196,9 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
             <span className={cn('icon-[mdi--resize] w-4 h-4')}></span>
           </Button>
         </TooltipTrigger>
-        <TooltipContent side="bottom">裁剪图片</TooltipContent>
+        <TooltipContent side="bottom">
+          {t('detail.properties.media.actions.cropImage')}
+        </TooltipContent>
       </Tooltip>
     </div>
   )
@@ -177,7 +208,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
       <div className={cn('flex flex-col gap-3 w-full')}>
         <Card>
           <CardHeader>
-            <CardTitle>图标</CardTitle>
+            <CardTitle>{t('detail.properties.media.types.icon')}</CardTitle>
           </CardHeader>
           <CardContent className={cn('-mt-2')}>
             <div className={cn('flex flex-col gap-2')}>
@@ -187,7 +218,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                   gameId={gameId}
                   type="icon"
                   className={cn('max-h-16 h-[calc(30vh-160px)] aspect-[1] object-cover')}
-                  fallback={<div>暂无图标</div>}
+                  fallback={<div>{t('detail.properties.media.empty.icon')}</div>}
                 />
               </div>
             </div>
@@ -196,7 +227,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
 
         <Card>
           <CardHeader>
-            <CardTitle>背景</CardTitle>
+            <CardTitle>{t('detail.properties.media.types.background')}</CardTitle>
           </CardHeader>
           <CardContent className={cn('-mt-2')}>
             <div className={cn('flex flex-col gap-2')}>
@@ -206,7 +237,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                   gameId={gameId}
                   type="background"
                   className={cn('max-h-[264px] h-[calc(60vh-200px)] aspect-[2] object-cover')}
-                  fallback={<div>暂无背景</div>}
+                  fallback={<div>{t('detail.properties.media.empty.background')}</div>}
                 />
               </div>
             </div>
@@ -217,7 +248,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
       <div className={cn('flex flex-col gap-3 w-full')}>
         <Card>
           <CardHeader>
-            <CardTitle>封面</CardTitle>
+            <CardTitle>{t('detail.properties.media.types.cover')}</CardTitle>
           </CardHeader>
           <CardContent className={cn('-mt-2')}>
             <div className={cn('flex flex-col gap-2')}>
@@ -227,7 +258,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                   gameId={gameId}
                   type="cover"
                   className={cn('max-h-[170px] h-[calc(90vh-230px)] aspect-[2/3] object-cover')}
-                  fallback={<div>暂无封面</div>}
+                  fallback={<div>{t('detail.properties.media.empty.cover')}</div>}
                 />
               </div>
             </div>
@@ -235,7 +266,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>徽标</CardTitle>
+            <CardTitle>{t('detail.properties.media.types.logo')}</CardTitle>
           </CardHeader>
           <CardContent className={cn('-mt-2')}>
             <div className={cn('flex flex-col gap-2')}>
@@ -245,7 +276,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                   gameId={gameId}
                   type="logo"
                   className={cn('max-h-[158px] h-[calc(90vh-230px)] aspect-[2/3] object-contain')}
-                  fallback={<div>暂无徽标</div>}
+                  fallback={<div>{t('detail.properties.media.empty.logo')}</div>}
                 />
               </div>
             </div>

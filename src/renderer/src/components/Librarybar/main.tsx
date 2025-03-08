@@ -19,8 +19,10 @@ import { useFilterStore } from './Filter/store'
 import { GameList } from './GameList'
 import { useLibrarybarStore } from './store'
 import { PositionButton } from './PositionButton'
+import { useTranslation } from 'react-i18next'
 
 export function Librarybar(): JSX.Element {
+  const { t } = useTranslation('game') // 使用 game 命名空间
   const [selectedGroup, setSelectedGroup] = useConfigState('game.gameList.selectedGroup')
   const query = useLibrarybarStore((state) => state.query)
   const setQuery = useLibrarybarStore((state) => state.setQuery)
@@ -41,7 +43,7 @@ export function Librarybar(): JSX.Element {
                 )}
               >
                 <span className={cn('icon-[mdi--home] w-5 h-5')}></span>
-                <span className={cn('whitespace-nowrap')}>主页</span>
+                <span className={cn('whitespace-nowrap')}>{t('librarybar.home')}</span>
               </div>
             </Nav>
           </div>
@@ -54,7 +56,7 @@ export function Librarybar(): JSX.Element {
                   </div>
                 </Nav>
               </TooltipTrigger>
-              <TooltipContent side="right">收藏</TooltipContent>
+              <TooltipContent side="right">{t('librarybar.collections')}</TooltipContent>
             </Tooltip>
           </div>
         </div>
@@ -67,12 +69,10 @@ export function Librarybar(): JSX.Element {
                 <Input
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="搜索"
+                  placeholder={t('librarybar.search.placeholder')}
                 />
               </TooltipTrigger>
-              <TooltipContent side="bottom">
-                支持通过游戏名、开发者、发行日期等元数据进行搜索
-              </TooltipContent>
+              <TooltipContent side="bottom">{t('librarybar.search.tooltip')}</TooltipContent>
             </Tooltip>
           </div>
           <div>
@@ -96,12 +96,16 @@ export function Librarybar(): JSX.Element {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectLabel>分组依据</SelectLabel>
-                <SelectItem value="none">无分组</SelectItem>
-                <SelectItem value="collection">收藏</SelectItem>
-                <SelectItem value="metadata.developers">开发商</SelectItem>
-                <SelectItem value="metadata.genres">类别</SelectItem>
-                <SelectItem value="record.playStatus">游玩状态</SelectItem>
+                <SelectLabel>{t('librarybar.groupBy')}</SelectLabel>
+                <SelectItem value="none">{t('librarybar.groups.none')}</SelectItem>
+                <SelectItem value="collection">{t('librarybar.groups.collection')}</SelectItem>
+                <SelectItem value="metadata.developers">
+                  {t('librarybar.groups.developers')}
+                </SelectItem>
+                <SelectItem value="metadata.genres">{t('librarybar.groups.genres')}</SelectItem>
+                <SelectItem value="record.playStatus">
+                  {t('librarybar.groups.playStatus')}
+                </SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>

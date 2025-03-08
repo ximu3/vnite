@@ -1,0 +1,173 @@
+{
+  "title": "Vnite Settings",
+  "general": {
+    "title": "General",
+    "language": "Language",
+    "openAtLogin": "Open at Login",
+    "theme": "Theme Style",
+    "darkTheme": "Dark",
+    "lightTheme": "Light",
+    "followSystem": "Follow System",
+    "closeMainPanel": "Close Main Panel",
+    "action": "Action",
+    "quitApp": "Quit vnite",
+    "minimizeToTray": "Minimize to Tray"
+  },
+  "appearances": {
+    "title": "Appearances",
+    "gameList": {
+      "title": "Game List",
+      "showRecentGames": "Show Recent Games Section",
+      "highlightLocalGames": "Highlight Local Games",
+      "markLocalGames": "Mark Local Games"
+    },
+    "gameDetail": {
+      "title": "Game Detail Page",
+      "showOriginalName": "Show Original Name Next to Title"
+    },
+    "sidebar": {
+      "title": "Sidebar",
+      "showThemeSwitcher": "Show Theme Switcher"
+    }
+  },
+  "advanced": {
+    "title": "Advanced",
+    "localeEmulator": {
+      "name": "Locale Emulator",
+      "placeholder": "Enter the path to LEProc.exe"
+    },
+    "visualBoyAdvance": {
+      "name": "VisualBoyAdvance",
+      "placeholder": "Enter the path to visualboyadvance.exe"
+    },
+    "magpie": {
+      "name": "Magpie",
+      "placeholder": "Enter the path to Magpie.exe",
+      "hotkeyLabel": "Magpie scaling hotkey"
+    }
+  },
+  "theme": {
+    "title": "Theme",
+    "saveButton": "Save Theme",
+    "presetThemes": "Preset Themes",
+    "searchTheme": "Search themes",
+    "noPresetFound": "No preset found",
+    "presets": {
+      "default": "Default",
+      "mutsumi": "Mutsumi"
+    },
+    "messages": {
+      "themeSaved": "Theme saved",
+      "configuring": "Configuring theme...",
+      "configured": "Theme configured successfully"
+    }
+  },
+  "cloudSync": {
+    "title": "CloudSync",
+    "enable": "Enable",
+    "syncMode": "Sync Mode",
+    "modes": {
+      "official": "Official",
+      "selfHosted": "Self-hosted"
+    },
+    "status": {
+      "syncing": "Syncing",
+      "success": "Sync successful",
+      "error": "Sync failed",
+      "noInfo": "No sync information"
+    },
+    "errors": {
+      "incompleteConfig": "Please fill in complete cloud sync configuration",
+      "loginRequired": "Please login to official account first",
+      "fetchStorageFailed": "Failed to fetch storage information"
+    },
+    "messages": {
+      "updating": "Updating cloud sync configuration...",
+      "updateSuccess": "Cloud sync configuration updated successfully",
+      "updateError": "Failed to update cloud sync configuration",
+      "loggingIn": "Logging in...",
+      "loginSuccess": "Login successful",
+      "loginError": "Login failed",
+      "registering": "Registering...",
+      "registerSuccess": "Registration successful",
+      "registerError": "Registration failed"
+    },
+    "official": {
+      "connectTitle": "Connect Cloud Storage",
+      "connectDescription": "Login to enable cloud sync, get cross-device synchronization and data backup",
+      "login": "Login",
+      "register": "Register",
+      "logout": "Logout",
+      "communityEdition": "Community Edition",
+      "lastSync": "Last sync",
+      "notSynced": "Not synced yet",
+      "connected": "Connected",
+      "disconnected": "Disconnected",
+      "storage": "Storage Space",
+      "used": "used"
+    },
+    "selfHosted": {
+      "title": "Self-hosted CouchDB",
+      "description": "Configure your self-hosted CouchDB server to enable cross-device synchronization",
+      "serverAddress": "CouchDB Address",
+      "username": "Username",
+      "password": "Password",
+      "info": "CouchDB is an open-source document database used for storing and syncing data, can be quickly deployed on {{flyio}} or other services"
+    },
+    "info": {
+      "status": "Status",
+      "message": "Message",
+      "time": "Time"
+    }
+  },
+  "scraper": {
+    "title": "Scraper",
+    "defaultDataSource": "Default Data Source",
+    "dataSources": {
+      "steam": "Steam",
+      "vndb": "VNDB",
+      "bangumi": "Bangumi",
+      "igdb": "IGDB",
+      "ymgal": "YMgal",
+      "dlsite": "DLsite"
+    }
+  },
+  "database": {
+    "title": "Database",
+    "portableMode": "Portable Mode",
+    "modes": {
+      "portable": "Portable Mode",
+      "normal": "Normal Mode"
+    },
+    "confirmSwitch": "Are you sure you want to switch to {{mode}}?",
+    "switchDescription": "The application will restart automatically after conversion.",
+    "openFolder": "Open Database Folder",
+    "backup": "Backup Database",
+    "import": "Import Database",
+    "importV1": "Import V1 Database",
+    "confirmImport": "Are you sure you want to import the database?",
+    "importWarning": "Importing a database will overwrite the current database. This operation is irreversible! The application will restart automatically after the operation.",
+    "confirmImportV1": "Are you sure you want to import the V1 database?",
+    "importV1Warning": "Importing a V1 database will overwrite the current database. This operation is irreversible! The application will restart automatically after the operation.",
+    "messages": {
+      "backingUp": "Backing up database...",
+      "backupSuccess": "Database backup successful",
+      "backupError": "Database backup failed",
+      "importing": "Importing database...",
+      "importSuccess": "Database import successful",
+      "importError": "Database import failed",
+      "restartCountdown": "The application will restart in 3 seconds",
+      "switchingMode": "Switching database mode...",
+      "switchSuccess": "Database mode switch successful",
+      "switchError": "Database mode switch failed"
+    }
+  },
+  "about": {
+    "title": "About",
+    "author": "Author",
+    "version": "Version",
+    "repository": "Github Repository",
+    "feedback": "Feedback",
+    "group": "Group"
+  }
+}

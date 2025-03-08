@@ -11,6 +11,7 @@ import { DeleteGameAlert } from '~/components/Game/Config/ManageMenu/DeleteGameA
 import { useGameLocalState, useGameState } from '~/hooks'
 import { useGameAdderStore } from '~/pages/GameAdder/store'
 import { ipcInvoke } from '~/utils'
+import { useTranslation } from 'react-i18next'
 
 export function ManageMenu({
   gameId,
@@ -26,13 +27,18 @@ export function ManageMenu({
   const setIsOpen = useGameAdderStore((state) => state.setIsOpen)
   const setName = useGameAdderStore((state) => state.setName)
   const setDbId = useGameAdderStore((state) => state.setDbId)
+  const { t } = useTranslation('game')
   return (
     <ContextMenuGroup>
       <ContextMenuSub>
-        <ContextMenuSubTrigger>管理</ContextMenuSubTrigger>
+        <ContextMenuSubTrigger>{t('detail.manage.title')}</ContextMenuSubTrigger>
         <ContextMenuSubContent>
-          <ContextMenuItem onSelect={openNameEditorDialog}>重命名</ContextMenuItem>
-          <ContextMenuItem onClick={openPlayingTimeEditorDialog}>修改游玩时间</ContextMenuItem>
+          <ContextMenuItem onSelect={openNameEditorDialog}>
+            {t('detail.manage.rename')}
+          </ContextMenuItem>
+          <ContextMenuItem onClick={openPlayingTimeEditorDialog}>
+            {t('detail.manage.editPlayTime')}
+          </ContextMenuItem>
           <ContextMenuItem
             onClick={() => {
               setDbId(gameId)
@@ -40,7 +46,7 @@ export function ManageMenu({
               setIsOpen(true)
             }}
           >
-            下载资料数据
+            {t('detail.manage.downloadMetadata')}
           </ContextMenuItem>
           {gamePath !== '' && (
             <ContextMenuItem
@@ -51,13 +57,13 @@ export function ManageMenu({
                     return
                   }
                   await ipcInvoke('create-game-shortcut', gameId, targetPath)
-                  toast.success('已创建快捷方式')
+                  toast.success(t('detail.manage.notifications.shortcutCreated'))
                 } catch (_error) {
-                  toast.error('创建快捷方式时出错')
+                  toast.error(t('detail.manage.notifications.shortcutError'))
                 }
               }}
             >
-              创建快捷方式
+              {t('detail.manage.createShortcut')}
             </ContextMenuItem>
           )}
           <ContextMenuSeparator />
@@ -66,22 +72,24 @@ export function ManageMenu({
               if (gamePath) {
                 ipcInvoke('open-path-in-explorer', gamePath)
               } else {
-                toast.warning('游戏路径未设置')
+                toast.warning(t('detail.manage.notifications.gamePathNotSet'))
               }
             }}
           >
-            浏览本地文件
+            {t('detail.manage.browseLocalFiles')}
           </ContextMenuItem>
           <ContextMenuItem
             onClick={() => {
               ipcInvoke('open-game-db-path-in-explorer', gameId)
             }}
           >
-            浏览数据库
+            {t('detail.manage.browseDatabase')}
           </ContextMenuItem>
           <ContextMenuSeparator />
           <DeleteGameAlert gameId={gameId}>
-            <ContextMenuItem onSelect={(e) => e.preventDefault()}>删除</ContextMenuItem>
+            <ContextMenuItem onSelect={(e) => e.preventDefault()}>
+              {t('detail.manage.delete')}
+            </ContextMenuItem>
           </DeleteGameAlert>
         </ContextMenuSubContent>
       </ContextMenuSub>

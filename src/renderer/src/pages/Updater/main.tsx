@@ -5,8 +5,10 @@ import { Button } from '@ui/button'
 import { Progress } from '@ui/progress'
 import { useUpdaterStore, UpdateInfo, UpdateProgress } from './store'
 import parse from 'html-react-parser'
+import { useTranslation } from 'react-i18next'
 
 export function UpdateDialog(): JSX.Element {
+  const { t } = useTranslation('updater')
   const {
     isOpen,
     setIsOpen,
@@ -61,7 +63,7 @@ export function UpdateDialog(): JSX.Element {
       {updateInfo ? (
         <DialogContent className={cn('w-[600px] max-w-none')}>
           <DialogHeader>
-            <DialogTitle>发现新版本 {updateInfo?.version}</DialogTitle>
+            <DialogTitle>{t('dialog.title', { version: updateInfo?.version })}</DialogTitle>
           </DialogHeader>
           <div className={cn('')}>
             <div
@@ -76,27 +78,32 @@ export function UpdateDialog(): JSX.Element {
                 'prose-a:no-underline hover:prose-a:underline' // underline effect
               )}
             >
-              {parse(updateInfo?.releaseNotes, HTMLParserOptions) || '无更新说明'}
+              {parse(updateInfo?.releaseNotes, HTMLParserOptions) || t('dialog.noReleaseNotes')}
             </div>
           </div>
           {downloading && progress && (
             <div>
               <Progress value={progress.percent} max={100} />
-              <p>{`${Math.round(progress.percent)}% - ${(progress.bytesPerSecond / 1024 / 1024).toFixed(2)} MB/s`}</p>
+              <p>
+                {t('dialog.downloadProgress', {
+                  percent: Math.round(progress.percent),
+                  speed: (progress.bytesPerSecond / 1024 / 1024).toFixed(2)
+                })}
+              </p>
             </div>
           )}
           <div className={cn('flex flex-row-reverse gap-3')}>
             {!downloading && (
               <Button variant={'outline'} onClick={() => setIsOpen(false)}>
-                暂不更新
+                {t('actions.skipUpdate')}
               </Button>
             )}
-            {!downloading && <Button onClick={handleUpdate}>立即更新</Button>}
-            {downloadComplete && <Button onClick={handleInstall}>立即安装</Button>}
+            {!downloading && <Button onClick={handleUpdate}>{t('actions.update')}</Button>}
+            {downloadComplete && <Button onClick={handleInstall}>{t('actions.install')}</Button>}
           </div>
         </DialogContent>
       ) : (
-        <DialogContent>已是最新版本</DialogContent>
+        <DialogContent>{t('dialog.latestVersion')}</DialogContent>
       )}
     </Dialog>
   )

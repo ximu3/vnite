@@ -5,20 +5,22 @@ import { Parser } from 'expr-eval'
 import { toNumber } from 'lodash'
 import { useState } from 'react'
 import { useGameState } from '~/hooks'
-import { cn, formatTimeToChinese } from '~/utils'
+import { cn } from '~/utils'
+import { useTranslation } from 'react-i18next'
 
-export function PlayingTimeEditorDialog({
+export function PlayTimeEditorDialog({
   gameId,
   setIsOpen
 }: {
   gameId: string
   setIsOpen: (value: boolean) => void
 }): JSX.Element {
+  const { t } = useTranslation('game')
   const [playTime, setPlayTime] = useGameState(gameId, 'record.playTime')
   // Initial value converted to seconds
-  const playingTime_sec = Math.floor(playTime / 1000).toString()
-  const [inputSeconds, setInputSeconds] = useState(playingTime_sec)
-  const [inputExpression, setInputExpression] = useState(playingTime_sec)
+  const playTime_sec = Math.floor(playTime / 1000).toString()
+  const [inputSeconds, setInputSeconds] = useState(playTime_sec)
+  const [inputExpression, setInputExpression] = useState(playTime_sec)
 
   // Processing Input Changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -47,8 +49,8 @@ export function PlayingTimeEditorDialog({
   // Processing Confirmation Button Click
   const handleConfirm = (): void => {
     if (inputSeconds === 'NaN') {
-      setInputExpression(playingTime_sec)
-      setInputSeconds(playingTime_sec)
+      setInputExpression(playTime_sec)
+      setInputSeconds(playTime_sec)
       return
     }
 
@@ -63,10 +65,12 @@ export function PlayingTimeEditorDialog({
   return (
     <Dialog open={true} onOpenChange={setIsOpen}>
       <DialogContent showCloseButton={false} className={cn('w-[500px] flex flex-col gap-3 py-5')}>
-        <div className={cn('text-xs')}>支持四则运算表达式</div>
+        <div className={cn('text-xs')}>{t('detail.playTimeEditor.expressionSupport')}</div>
         <div className={cn('flex flex-row gap-3 items-center')}>
           <div className={cn('')}>
-            {isNaN(Number(inputSeconds)) ? 'NaN' : formatTimeToChinese(Number(inputSeconds) * 1000)}
+            {isNaN(Number(inputSeconds))
+              ? 'NaN'
+              : t('{{date, gameTime}}', { date: Number(inputSeconds) * 1000 })}
           </div>
           <div className={cn('flex flex-row gap-3 items-center grow')}>
             <Input
@@ -77,9 +81,9 @@ export function PlayingTimeEditorDialog({
                 if (e.key === 'Enter') handleConfirm()
               }}
               type="text"
-              placeholder="请输入秒数或表达式"
+              placeholder={t('detail.playTimeEditor.placeholder')}
             />
-            <Button onClick={handleConfirm}>确定</Button>
+            <Button onClick={handleConfirm}>{t('detail.playTimeEditor.confirm')}</Button>
           </div>
         </div>
       </DialogContent>

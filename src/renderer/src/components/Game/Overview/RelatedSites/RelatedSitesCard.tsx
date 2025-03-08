@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Link } from '@ui/link'
 import { Separator } from '@ui/separator'
 import { isEqual } from 'lodash'
@@ -12,6 +13,7 @@ export function RelatedSitesCard({
   gameId: string
   className?: string
 }): JSX.Element {
+  const { t } = useTranslation('game')
   const [relatedSites] = useGameState(gameId, 'metadata.relatedSites')
 
   return (
@@ -23,14 +25,14 @@ export function RelatedSitesCard({
             copyWithToast(relatedSites.map((item) => `${item.label}: ${item.url}`).join('\n'))
           }
         >
-          相关网站
+          {t('detail.overview.sections.relatedSites')}
         </div>
         <RelatedSitesDialog gameId={gameId} />
       </div>
       <Separator className={cn('my-3 bg-primary')} />
       <div className={cn('flex flex-col text-sm justify-start items-start')}>
         {isEqual(relatedSites, []) || isEqual(relatedSites, [{ label: '', url: '' }])
-          ? '暂无相关网站'
+          ? t('detail.overview.relatedSites.empty')
           : relatedSites.map((site, index) => (
               <Link
                 key={`${gameId}-${site.label}-${site.url}-${index}`}

@@ -6,6 +6,7 @@ import { DeleteGameAlert } from './DeleteGameAlert'
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useGameBatchEditorStore } from '../store'
+import { useTranslation } from 'react-i18next'
 
 export function BatchGameNavCM({
   openAddCollectionDialog
@@ -13,16 +14,19 @@ export function BatchGameNavCM({
   openAttributesDialog: () => void
   openAddCollectionDialog: () => void
 }): JSX.Element {
+  const { t } = useTranslation('game')
   const [isInformationDialogOpen, setIsInformationDialogOpen] = useState(false)
   const { clearGameIds, selectedGamesMap } = useGameBatchEditorStore()
   const gameIds = Object.keys(selectedGamesMap)
   const location = useLocation()
+
   useEffect(() => {
     // clear batchEditor gameList when switching to a non-game-detail page and not in batchMode
     if (!location.pathname.includes(`/library/games/`) && gameIds.length < 2) {
       clearGameIds()
     }
   }, [location.pathname])
+
   return (
     <ContextMenuContent className={cn('w-40')}>
       <CollectionMenu gameIds={gameIds} openAddCollectionDialog={openAddCollectionDialog} />
@@ -38,13 +42,13 @@ export function BatchGameNavCM({
             setIsInformationDialogOpen(true)
           }}
         >
-          <div>批量修改游戏信息</div>
+          <div>{t('batch.contextMenu.editInfo')}</div>
         </ContextMenuItem>
       </InformationDialog>
       <ContextMenuSeparator />
       <DeleteGameAlert gameIds={gameIds}>
         <ContextMenuItem onSelect={(e) => e.preventDefault()}>
-          <div>批量删除</div>
+          <div>{t('batch.contextMenu.delete')}</div>
         </ContextMenuItem>
       </DeleteGameAlert>
     </ContextMenuContent>

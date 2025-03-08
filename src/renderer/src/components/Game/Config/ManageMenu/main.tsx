@@ -12,6 +12,7 @@ import { useGameState, useGameLocalState } from '~/hooks'
 import { useGameAdderStore } from '~/pages/GameAdder/store'
 import { ipcInvoke } from '~/utils'
 import { DeleteGameAlert } from './DeleteGameAlert'
+import { useTranslation } from 'react-i18next'
 
 export function ManageMenu({
   gameId,
@@ -22,29 +23,35 @@ export function ManageMenu({
   openNameEditorDialog: () => void
   openPlayingTimeEditorDialog: () => void
 }): JSX.Element {
+  const { t } = useTranslation('game')
   const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [logoVisible, setLogoVisible] = useGameState(gameId, 'apperance.logo.visible')
   const setIsOpen = useGameAdderStore((state) => state.setIsOpen)
   const setName = useGameAdderStore((state) => state.setName)
   const setDbId = useGameAdderStore((state) => state.setDbId)
+
   return (
     <DropdownMenuGroup>
       <DropdownMenuSub>
-        <DropdownMenuSubTrigger>管理</DropdownMenuSubTrigger>
+        <DropdownMenuSubTrigger>{t('detail.manage.title')}</DropdownMenuSubTrigger>
         <DropdownMenuPortal>
           <DropdownMenuSubContent>
-            <DropdownMenuItem onSelect={openNameEditorDialog}>重命名</DropdownMenuItem>
+            <DropdownMenuItem onSelect={openNameEditorDialog}>
+              {t('detail.manage.rename')}
+            </DropdownMenuItem>
             {!logoVisible && (
               <DropdownMenuItem
                 onClick={() => {
                   setLogoVisible(true)
                 }}
               >
-                显示徽标
+                {t('detail.manage.showLogo')}
               </DropdownMenuItem>
             )}
-            <DropdownMenuItem onClick={openPlayingTimeEditorDialog}>修改游玩时间</DropdownMenuItem>
+            <DropdownMenuItem onClick={openPlayingTimeEditorDialog}>
+              {t('detail.manage.editPlayTime')}
+            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
                 setDbId(gameId)
@@ -52,7 +59,7 @@ export function ManageMenu({
                 setIsOpen(true)
               }}
             >
-              下载资料数据
+              {t('detail.manage.downloadMetadata')}
             </DropdownMenuItem>
             {gamePath !== '' && (
               <DropdownMenuItem
@@ -63,13 +70,13 @@ export function ManageMenu({
                       return
                     }
                     await ipcInvoke('create-game-shortcut', gameId, targetPath)
-                    toast.success('已创建快捷方式')
+                    toast.success(t('detail.manage.notifications.shortcutCreated'))
                   } catch (_error) {
-                    toast.error('创建快捷方式时出错')
+                    toast.error(t('detail.manage.notifications.shortcutError'))
                   }
                 }}
               >
-                创建快捷方式
+                {t('detail.manage.createShortcut')}
               </DropdownMenuItem>
             )}
             <DropdownMenuSeparator />
@@ -78,22 +85,24 @@ export function ManageMenu({
                 if (gamePath) {
                   ipcInvoke('open-path-in-explorer', gamePath)
                 } else {
-                  toast.warning('游戏路径未设置')
+                  toast.warning(t('detail.manage.notifications.gamePathNotSet'))
                 }
               }}
             >
-              浏览本地文件
+              {t('detail.manage.browseLocalFiles')}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
                 ipcInvoke('open-game-db-path-in-explorer', gameId)
               }}
             >
-              浏览数据库
+              {t('detail.manage.browseDatabase')}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DeleteGameAlert gameId={gameId}>
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>删除</DropdownMenuItem>
+              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                {t('detail.manage.delete')}
+              </DropdownMenuItem>
             </DeleteGameAlert>
           </DropdownMenuSubContent>
         </DropdownMenuPortal>

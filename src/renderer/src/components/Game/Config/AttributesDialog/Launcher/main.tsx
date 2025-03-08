@@ -17,24 +17,29 @@ import { FileLauncher } from './FileLauncher'
 import { UrlLauncher } from './UrlLauncher'
 import { ScriptLauncher } from './ScriptLauncher'
 import { PresetSelecter } from './PresetSelecter'
+import { useTranslation } from 'react-i18next'
 
 export function Launcher({ gameId }: { gameId: string }): JSX.Element {
+  const { t } = useTranslation('game')
   const [mode, setMode] = useGameLocalState(gameId, 'launcher.mode')
   const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
   const [useMagpie, setUseMagpie] = useGameLocalState(gameId, 'launcher.useMagpie')
   const [magpiePath, setMagpiePath] = useConfigLocalState('game.linkage.magpie.path')
+
   async function selectMagpiePath(): Promise<void> {
     const magpiePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
     setMagpiePath(magpiePath)
   }
+
   async function switchUseMagpie(): Promise<void> {
     if (!useMagpie && !magpiePath) {
-      toast.error('请先设置Magpie路径')
+      toast.error(t('detail.properties.launcher.magpie.pathNotSet'))
       await selectMagpiePath()
       await new Promise((resolve) => setTimeout(resolve, 300))
     }
     setUseMagpie(!useMagpie)
   }
+
   return (
     <Card className={cn('group')}>
       {gamePath ? (
@@ -42,7 +47,9 @@ export function Launcher({ gameId }: { gameId: string }): JSX.Element {
           <CardHeader>
             <CardTitle className={cn('relative')}>
               <div className={cn('flex flex-row justify-between items-center')}>
-                <div className={cn('flex items-center')}>启动器与追踪器</div>
+                <div className={cn('flex items-center')}>
+                  {t('detail.properties.launcher.title')}
+                </div>
               </div>
               <PresetSelecter gameId={gameId} className={cn('top-0 right-0 absolute -mt-2')} />
             </CardTitle>
@@ -50,7 +57,7 @@ export function Launcher({ gameId }: { gameId: string }): JSX.Element {
           <CardContent className={cn('')}>
             <div className={cn('flex flex-col gap-5 w-full')}>
               <div className={cn('flex flex-row gap-5 items-center')}>
-                <div>启动模式</div>
+                <div>{t('detail.properties.launcher.mode.title')}</div>
                 <div className={cn('w-[120px]')}>
                   <Select value={mode} onValueChange={setMode}>
                     <SelectTrigger>
@@ -58,10 +65,16 @@ export function Launcher({ gameId }: { gameId: string }): JSX.Element {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        <SelectLabel>启动模式</SelectLabel>
-                        <SelectItem value="file">文件</SelectItem>
-                        <SelectItem value="url">链接</SelectItem>
-                        <SelectItem value="script">脚本</SelectItem>
+                        <SelectLabel>{t('detail.properties.launcher.mode.title')}</SelectLabel>
+                        <SelectItem value="file">
+                          {t('detail.properties.launcher.mode.file')}
+                        </SelectItem>
+                        <SelectItem value="url">
+                          {t('detail.properties.launcher.mode.url')}
+                        </SelectItem>
+                        <SelectItem value="script">
+                          {t('detail.properties.launcher.mode.script')}
+                        </SelectItem>
                       </SelectGroup>
                     </SelectContent>
                   </Select>
@@ -79,7 +92,9 @@ export function Launcher({ gameId }: { gameId: string }): JSX.Element {
                 </div>
                 <Separator className={cn('')} />
                 <div className={cn('flex flex-row gap-5 items-center')}>
-                  <div className={cn('text-center')}>Magpie缩放</div>
+                  <div className={cn('text-center')}>
+                    {t('detail.properties.launcher.magpie.scaling')}
+                  </div>
                   <Switch
                     className={cn('-mb-[2px]')}
                     checked={useMagpie}
@@ -92,7 +107,7 @@ export function Launcher({ gameId }: { gameId: string }): JSX.Element {
         </>
       ) : (
         <CardHeader className={cn('-m-3')}>
-          <div>请先设置游戏路径</div>
+          <div>{t('detail.properties.launcher.setGamePathFirst')}</div>
         </CardHeader>
       )}
     </Card>

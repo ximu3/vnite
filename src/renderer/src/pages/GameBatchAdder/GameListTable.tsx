@@ -2,6 +2,7 @@ import { useGameBatchAdderStore } from './store'
 import { GameListItem } from './GameListItem'
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@ui/table'
 import { cn } from '~/utils'
+import { useTranslation } from 'react-i18next'
 
 export const TABLE_COLUMN_WIDTHS = {
   dataSource: 'w-[150px] 3xl:w-[350px]',
@@ -12,17 +13,29 @@ export const TABLE_COLUMN_WIDTHS = {
 } as const
 
 export function GameListTable(): JSX.Element {
+  const { t } = useTranslation('adder')
   const { games } = useGameBatchAdderStore()
+
   return (
     <>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className={cn(TABLE_COLUMN_WIDTHS.dataSource)}>数据源</TableHead>
-            <TableHead className={cn(TABLE_COLUMN_WIDTHS.name)}>游戏名称</TableHead>
-            <TableHead className={cn(TABLE_COLUMN_WIDTHS.id)}>游戏ID</TableHead>
-            <TableHead className={cn(TABLE_COLUMN_WIDTHS.status)}>状态</TableHead>
-            <TableHead className={cn(TABLE_COLUMN_WIDTHS.actions)}>操作</TableHead>
+            <TableHead className={cn(TABLE_COLUMN_WIDTHS.dataSource)}>
+              {t('gameBatchAdder.table.columns.dataSource')}
+            </TableHead>
+            <TableHead className={cn(TABLE_COLUMN_WIDTHS.name)}>
+              {t('gameBatchAdder.table.columns.name')}
+            </TableHead>
+            <TableHead className={cn(TABLE_COLUMN_WIDTHS.id)}>
+              {t('gameBatchAdder.table.columns.id')}
+            </TableHead>
+            <TableHead className={cn(TABLE_COLUMN_WIDTHS.status)}>
+              {t('gameBatchAdder.table.columns.status')}
+            </TableHead>
+            <TableHead className={cn(TABLE_COLUMN_WIDTHS.actions)}>
+              {t('gameBatchAdder.table.columns.actions')}
+            </TableHead>
           </TableRow>
         </TableHeader>
       </Table>

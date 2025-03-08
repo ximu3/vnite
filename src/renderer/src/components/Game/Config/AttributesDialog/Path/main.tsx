@@ -16,13 +16,13 @@ import { toast } from 'sonner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import { useGameLocalState, useGameState } from '~/hooks'
 import { cn, ipcInvoke } from '~/utils'
+import { useTranslation } from 'react-i18next'
 
 export function Path({ gameId }: { gameId: string }): JSX.Element {
+  const { t } = useTranslation('game')
   const [monitorPath] = useGameLocalState(gameId, 'launcher.fileConfig.monitorPath')
   const [gamePath, setGamePath] = useGameLocalState(gameId, 'path.gamePath')
-
   const [savePath, setSavePath] = useGameLocalState(gameId, 'path.savePaths')
-
   const [maxSaveBackups, setMaxSaveBackups] = useGameState(gameId, 'save.maxBackups')
 
   async function selectGamePath(): Promise<void> {
@@ -46,13 +46,14 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
           await ipcInvoke('launcher-preset', 'default', gameId)
         },
         {
-          loading: '正在配置预设...',
-          success: '预设配置成功',
+          loading: t('detail.properties.path.notifications.configuring'),
+          success: t('detail.properties.path.notifications.success'),
           error: (error) => `${error}`
         }
       )
     }
   }
+
   async function selectSaveFolderPath(): Promise<void> {
     const folderPath: string[] = await ipcInvoke(
       'select-multiple-path-dialog',
@@ -66,6 +67,7 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
     const newSavePath = savePath.concat(folderPath)
     await setSavePath(newSavePath.filter(Boolean))
   }
+
   async function selectSaveFilePath(): Promise<void> {
     const filePath: string[] = await ipcInvoke(
       'select-multiple-path-dialog',
@@ -83,12 +85,12 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
   return (
     <Card className={cn('group')}>
       <CardHeader>
-        <CardTitle>游戏与存档</CardTitle>
+        <CardTitle>{t('detail.properties.path.title')}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className={cn('flex flex-col gap-5')}>
           <div className={cn('flex flex-row gap-5 items-center justify-start')}>
-            <div>游戏路径</div>
+            <div>{t('detail.properties.path.gamePath')}</div>
             <div className={cn('w-3/4')}>
               <Input value={gamePath} onChange={(e) => setGamePath(e.target.value)} />
             </div>
@@ -102,7 +104,7 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
             </Button>
           </div>
           <div className={cn('flex flex-row gap-5 items-start')}>
-            <div>存档路径</div>
+            <div>{t('detail.properties.path.savePath')}</div>
             <div className={cn('w-3/4')}>
               <ArrayTextarea
                 value={savePath}
@@ -122,7 +124,9 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
                     <span className={cn('icon-[mdi--folder-plus-outline] w-5 h-5')}></span>
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent side="right">添加文件夹</TooltipContent>
+                <TooltipContent side="right">
+                  {t('detail.properties.path.addFolder')}
+                </TooltipContent>
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger>
@@ -135,13 +139,13 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
                     <span className={cn('icon-[mdi--file-plus-outline] w-5 h-5')}></span>
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent side="right">添加文件</TooltipContent>
+                <TooltipContent side="right">{t('detail.properties.path.addFile')}</TooltipContent>
               </Tooltip>
             </div>
           </div>
           <Separator />
           <div className={cn('flex flex-row gap-5 items-center justify-start')}>
-            <div>最大存档备份数量</div>
+            <div>{t('detail.properties.path.maxBackups')}</div>
             <div className={cn('w-[120px]')}>
               <Select
                 value={maxSaveBackups.toString()}
@@ -152,7 +156,7 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>最大存档备份数量</SelectLabel>
+                    <SelectLabel>{t('detail.properties.path.maxBackups')}</SelectLabel>
                     <SelectItem value="1">1</SelectItem>
                     <SelectItem value="2">2</SelectItem>
                     <SelectItem value="3">3</SelectItem>

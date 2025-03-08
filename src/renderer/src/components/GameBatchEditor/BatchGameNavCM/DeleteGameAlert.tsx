@@ -13,6 +13,7 @@ import { ipcInvoke } from '~/utils'
 import { toast } from 'sonner'
 import { useGameCollectionStore, useGameRegistry } from '~/stores/game'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 export function DeleteGameAlert({
   gameIds,
@@ -21,6 +22,7 @@ export function DeleteGameAlert({
   gameIds: string[]
   children: React.ReactNode
 }): JSX.Element {
+  const { t } = useTranslation('game')
   const navigate = useNavigate()
   const { removeGamesFromAllCollections } = useGameCollectionStore()
   const gameMetaIndex = useGameRegistry((state) => state.gameMetaIndex)
@@ -45,9 +47,10 @@ export function DeleteGameAlert({
         navigate('/library')
       },
       {
-        loading: `正在删除${gamesCount} 个游戏...`,
-        success: `${gamesCount} 个游戏已删除`,
-        error: (err) => `删除${gamesCount} 个游戏失败: ${err.message}`
+        loading: t('batch.delete.notifications.deleting', { count: gamesCount }),
+        success: t('batch.delete.notifications.success', { count: gamesCount }),
+        error: (err) =>
+          t('batch.delete.notifications.error', { count: gamesCount, message: err.message })
       }
     )
   }
@@ -57,16 +60,16 @@ export function DeleteGameAlert({
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{`确定要删除这 ${gameIds.length} 个游戏吗？`}</AlertDialogTitle>
+          <AlertDialogTitle>{t('batch.delete.title', { count: gameIds.length })}</AlertDialogTitle>
           <AlertDialogDescription>
-            {'删除后，所选游戏的所有数据将被永久删除。此操作不可逆。'}
+            {t('batch.delete.description')}
             {gameIds.length > 1 && (
               <div className="mt-2">
-                <div className="mb-2 font-semibold">将要删除的游戏：</div>
+                <div className="mb-2 font-semibold">{t('batch.delete.gamesList')}</div>
                 <div className="overflow-y-auto text-sm max-h-32 scrollbar-base">
                   {gameIds.map((gameId) => (
                     <div key={`batch-delete-${gameId}`} className="mb-1">
-                      {gameMetaIndex[gameId]?.name || '未命名游戏'}
+                      {gameMetaIndex[gameId]?.name || t('batch.delete.unnamedGame')}
                     </div>
                   ))}
                 </div>
@@ -75,8 +78,8 @@ export function DeleteGameAlert({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>取消</AlertDialogCancel>
-          <AlertDialogAction onClick={deleteGames}>确定</AlertDialogAction>
+          <AlertDialogCancel>{t('batch.delete.cancel')}</AlertDialogCancel>
+          <AlertDialogAction onClick={deleteGames}>{t('batch.delete.confirm')}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

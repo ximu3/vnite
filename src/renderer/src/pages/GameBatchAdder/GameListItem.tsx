@@ -16,18 +16,21 @@ import { TableRow, TableCell } from '@ui/table'
 import { toast } from 'sonner'
 import { TABLE_COLUMN_WIDTHS } from './GameListTable'
 import { cn } from '~/utils'
+import { useTranslation } from 'react-i18next'
 
 export function GameListItem({ game }: { game: Game }): JSX.Element {
+  const { t } = useTranslation('adder')
   const { actions } = useGameBatchAdderStore()
   const { addGame } = useGameAdder()
 
   const handleAddGame = (): void => {
     toast.promise(() => addGame(game.dataId), {
-      loading: `正在添加游戏 ${game.name}...`,
-      success: `游戏 ${game.name} 添加成功`,
+      loading: t('gameBatchAdder.notifications.addingGame', { name: game.name }),
+      success: t('gameBatchAdder.notifications.gameAdded', { name: game.name }),
       error: (error) => error.message
     })
   }
+
   return (
     <TableRow className={cn('w-full')}>
       <TableCell className={cn(TABLE_COLUMN_WIDTHS.dataSource)}>
@@ -44,12 +47,12 @@ export function GameListItem({ game }: { game: Game }): JSX.Element {
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectLabel>数据来源</SelectLabel>
-              <SelectItem value="steam">Steam</SelectItem>
-              <SelectItem value="vndb">VNDB</SelectItem>
-              <SelectItem value="bangumi">Bangumi</SelectItem>
-              <SelectItem value="igdb">IGDB</SelectItem>
-              <SelectItem value="ymgal">YMgal</SelectItem>
+              <SelectLabel>{t('gameBatchAdder.form.dataSource')}</SelectLabel>
+              <SelectItem value="steam">{t('gameAdder.search.dataSources.steam')}</SelectItem>
+              <SelectItem value="vndb">{t('gameAdder.search.dataSources.vndb')}</SelectItem>
+              <SelectItem value="bangumi">{t('gameAdder.search.dataSources.bangumi')}</SelectItem>
+              <SelectItem value="igdb">{t('gameAdder.search.dataSources.igdb')}</SelectItem>
+              <SelectItem value="ymgal">{t('gameAdder.search.dataSources.ymgal')}</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -62,7 +65,7 @@ export function GameListItem({ game }: { game: Game }): JSX.Element {
               name: e.target.value
             })
           }
-          placeholder="请输入游戏名称"
+          placeholder={t('gameBatchAdder.form.namePlaceholder')}
         />
       </TableCell>
       <TableCell className={cn(TABLE_COLUMN_WIDTHS.id)}>
@@ -73,7 +76,7 @@ export function GameListItem({ game }: { game: Game }): JSX.Element {
               id: e.target.value
             })
           }
-          placeholder="游戏ID(可选)"
+          placeholder={t('gameBatchAdder.form.idPlaceholder')}
         />
       </TableCell>
       <TableCell className={cn(TABLE_COLUMN_WIDTHS.status)}>
@@ -85,10 +88,12 @@ export function GameListItem({ game }: { game: Game }): JSX.Element {
             disabled={game.status === 'loading' || game.status === 'success'}
             onClick={handleAddGame}
           >
-            {game.status === 'error' ? '重试' : '添加'}
+            {game.status === 'error'
+              ? t('gameBatchAdder.actions.retry')
+              : t('gameBatchAdder.actions.add')}
           </Button>
           <Button variant="outline" onClick={() => actions.removeGame(game.dataId)}>
-            删除
+            {t('gameBatchAdder.actions.delete')}
           </Button>
         </div>
       </TableCell>

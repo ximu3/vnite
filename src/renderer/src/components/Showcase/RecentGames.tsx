@@ -7,6 +7,7 @@ import { GamePoster } from './posters/GamePoster'
 import { BigGamePoster } from './posters/BigGamePoster'
 import { useRef } from 'react'
 import { throttle } from 'lodash'
+import { useTranslation } from 'react-i18next'
 
 export function RecentGames(): JSX.Element {
   const games = sortGames('record.lastRunDate', 'desc').slice(0, 15)
@@ -22,10 +23,13 @@ export function RecentGames(): JSX.Element {
       behavior: 'smooth'
     })
   }, 750)
+  const { t } = useTranslation('game')
   return (
     <div className={cn('w-full flex flex-col gap-1 pt-3')}>
       <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>
-        <div className={cn('text-accent-foreground flex-shrink-0')}>最近游戏</div>
+        <div className={cn('text-accent-foreground flex-shrink-0')}>
+          {t('showcase.sections.recentGames')}
+        </div>
 
         {/* Split Line Container */}
         <div className={cn('flex items-center justify-center flex-grow')}>

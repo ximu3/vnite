@@ -13,13 +13,16 @@ import { AttributesDialog } from './AttributesDialog'
 import { CollectionMenu } from './CollectionMenu'
 import { ManageMenu } from './ManageMenu'
 import { NameEditorDialog } from './ManageMenu/NameEditorDialog'
-import { PlayingTimeEditorDialog } from './ManageMenu/PlayingTimeEditorDialog'
+import { PlayTimeEditorDialog } from './ManageMenu/PlayTimeEditorDialog'
+import { useTranslation } from 'react-i18next'
 
 export function Config({ gameId }: { gameId: string }): JSX.Element {
+  const { t } = useTranslation('game')
   const [isAttributesDialogOpen, setIsAttributesDialogOpen] = React.useState(false)
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
-  const [isPlayingTimeEditorDialogOpen, setIsPlayingTimeEditorDialogOpen] = React.useState(false)
+  const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = React.useState(false)
   const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = React.useState(false)
+
   return (
     <>
       <DropdownMenu>
@@ -28,7 +31,7 @@ export function Config({ gameId }: { gameId: string }): JSX.Element {
             <span className={cn('icon-[mdi--settings-outline] w-4 h-4')}></span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-44 mr-5">
+        <DropdownMenuContent className="mr-5 w-44">
           <CollectionMenu
             gameId={gameId}
             openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
@@ -37,11 +40,11 @@ export function Config({ gameId }: { gameId: string }): JSX.Element {
           <ManageMenu
             gameId={gameId}
             openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
-            openPlayingTimeEditorDialog={() => setIsPlayingTimeEditorDialogOpen(true)}
+            openPlayingTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
           />
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={() => setIsAttributesDialogOpen(true)}>
-            <div>属性</div>
+            <div>{t('detail.config.properties')}</div>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -54,8 +57,8 @@ export function Config({ gameId }: { gameId: string }): JSX.Element {
       {isNameEditorDialogOpen && (
         <NameEditorDialog gameId={gameId} setIsOpen={setIsNameEditorDialogOpen} />
       )}
-      {isPlayingTimeEditorDialogOpen && (
-        <PlayingTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayingTimeEditorDialogOpen} />
+      {isPlayTimeEditorDialogOpen && (
+        <PlayTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayTimeEditorDialogOpen} />
       )}
     </>
   )

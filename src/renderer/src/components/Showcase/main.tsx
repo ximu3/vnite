@@ -6,8 +6,10 @@ import { Collections } from './Collections'
 import { AllGames } from './AllGames'
 import { useGameRegistry } from '~/stores/game'
 import { useGameAdderStore } from '~/pages/GameAdder/store'
+import { useTranslation } from 'react-i18next'
 
 export function Showcase(): JSX.Element {
+  const { t } = useTranslation('game')
   const gameIds = useGameRegistry((state) => state.gameIds)
   const setIsOpen = useGameAdderStore((state) => state.setIsOpen)
   console.warn('[DEBUG] Showcase')
@@ -24,9 +26,7 @@ export function Showcase(): JSX.Element {
           <div>
             <span className={cn('icon-[mdi--gamepad-variant] w-[60px] h-[60px]')}></span>
           </div>
-          <div className={cn('text-2xl font-bold -mt-2')}>
-            欢迎使用Vnite，请添加你的第一个游戏。
-          </div>
+          <div className={cn('text-2xl font-bold -mt-2')}>{t('showcase.welcome')}</div>
           <Button
             variant={'outline'}
             className={cn('mt-4')}

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Button } from '@ui/button'
 import { Dialog, DialogContent, DialogTrigger } from '@ui/dialog'
 import { Input } from '@ui/input'
@@ -5,7 +6,9 @@ import { useGameState } from '~/hooks'
 import { cn } from '~/utils'
 
 export function RelatedSitesDialog({ gameId }: { gameId: string }): JSX.Element {
+  const { t } = useTranslation('game')
   const [relatedSites, setRelatedSites] = useGameState(gameId, 'metadata.relatedSites')
+
   return (
     <Dialog>
       <DialogTrigger>
@@ -21,7 +24,7 @@ export function RelatedSitesDialog({ gameId }: { gameId: string }): JSX.Element 
           }}
           className={cn('w-[fit-content] ml-3')}
         >
-          添加链接
+          {t('detail.overview.relatedSites.addLink')}
         </Button>
         <div className={cn('flex flex-col gap-3 grow p-3 overflow-auto scrollbar-base')}>
           {relatedSites.map((site, i) => (
@@ -34,7 +37,7 @@ export function RelatedSitesDialog({ gameId }: { gameId: string }): JSX.Element 
                   newRelatedSites[i].label = e.target.value
                   setRelatedSites(newRelatedSites)
                 }}
-                placeholder="网站名称"
+                placeholder={t('detail.overview.relatedSites.nameLabel')}
               />
               <Input
                 value={site.url}
@@ -43,7 +46,7 @@ export function RelatedSitesDialog({ gameId }: { gameId: string }): JSX.Element 
                   newRelatedSites[i].url = e.target.value
                   setRelatedSites(newRelatedSites)
                 }}
-                placeholder="网站链接"
+                placeholder={t('detail.overview.relatedSites.urlLabel')}
               />
               <div className={cn('flex flex-row gap-2 grow')}>
                 <Button
