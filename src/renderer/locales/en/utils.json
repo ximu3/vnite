@@ -1,0 +1,20 @@
+{
+  "clipboard": {
+    "copied": "Copied to clipboard",
+    "copyError": "Failed to copy text to clipboard: {{error}}"
+  },
+  "game": {
+    "stopping": {
+      "loading": "Stopping game...",
+      "success": "Game stopped",
+      "error": "Failed to stop game: {{message}}"
+    },
+    "starting": {
+      "pathRequired": "Please set game path first",
+      "configuringLauncher": "Configuring launcher...",
+      "configSuccess": "Launcher configured successfully",
+      "configError": "Configuration error: {{message}}",
+      "runtimeError": "Runtime configuration error, please check!"
+    }
+  }
+}

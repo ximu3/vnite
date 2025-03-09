@@ -1,0 +1,20 @@
+{
+  "clipboard": {
+    "copied": "已复制到剪切板",
+    "copyError": "复制文本到剪切板失败: {{error}}"
+  },
+  "game": {
+    "stopping": {
+      "loading": "正在停止游戏...",
+      "success": "游戏已停止",
+      "error": "停止游戏失败: {{message}}"
+    },
+    "starting": {
+      "pathRequired": "请先设置游戏路径",
+      "configuringLauncher": "正在配置启动器...",
+      "configSuccess": "启动器配置成功",
+      "configError": "配置错误: {{message}}",
+      "runtimeError": "运行配置错误，请检查！"
+    }
+  }
+}

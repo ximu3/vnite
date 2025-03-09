@@ -1,0 +1,20 @@
+{
+  "clipboard": {
+    "copied": "クリップボードにコピーしました",
+    "copyError": "クリップボードへのテキストのコピーに失敗しました: {{error}}"
+  },
+  "game": {
+    "stopping": {
+      "loading": "ゲームを停止中...",
+      "success": "ゲームを停止しました",
+      "error": "ゲームの停止に失敗しました: {{message}}"
+    },
+    "starting": {
+      "pathRequired": "先にゲームパスを設定してください",
+      "configuringLauncher": "ランチャーを設定中...",
+      "configSuccess": "ランチャーの設定に成功しました",
+      "configError": "設定エラー: {{message}}",
+      "runtimeError": "実行設定エラー、ご確認ください！"
+    }
+  }
+}

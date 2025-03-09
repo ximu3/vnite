@@ -154,7 +154,7 @@ export function Sidebar(): JSX.Element {
             </DropdownMenuTrigger>
             <TooltipContent side="right">{t('actions.addGame')}</TooltipContent>
           </Tooltip>
-          <DropdownMenuContent side="right" className="w-44">
+          <DropdownMenuContent side="right" className="">
             <DropdownMenuSub>
               <DropdownMenuSubTrigger>{t('gameAdder.withScraper')}</DropdownMenuSubTrigger>
               <DropdownMenuPortal>

@@ -50,6 +50,8 @@ export async function addGameToDB({
     gameDoc.record.playTime = playTime
   }
 
+  gameDoc.record.addDate = new Date().toISOString()
+
   await GameDBManager.setGame(dbId, gameDoc)
 
   const gameLocalDoc = DEFAULT_GAME_LOCAL_VALUES

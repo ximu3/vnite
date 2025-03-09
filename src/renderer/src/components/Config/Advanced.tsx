@@ -39,59 +39,59 @@ export function Advanced(): JSX.Element {
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className={cn('')}>
-        <div className={cn('flex flex-col gap-5 justify-center')}>
-          <div className={cn('flex flex-row justify-between items-center')}>
-            <div>{t('advanced.localeEmulator.name')}</div>
-            <div className={cn('w-7/12 flex flex-row gap-3')}>
+      <CardContent>
+        <div className={cn('grid grid-cols-[170px_1fr] gap-x-5 gap-y-5 items-center text-sm')}>
+          {/* Locale Emulator路径 */}
+          <div className={cn('whitespace-nowrap select-none self-center')}>
+            {t('advanced.localeEmulator.name')}
+          </div>
+          <div className={cn('flex flex-row gap-3')}>
+            <Input
+              value={lePath}
+              onChange={(e) => setLePath(e.target.value)}
+              placeholder={t('advanced.localeEmulator.placeholder')}
+              className={cn('flex-1')}
+            />
+            <Button variant={'outline'} size={'icon'} onClick={selectLePath}>
+              <span className={cn('icon-[mdi--file-outline] w-5 h-5')}></span>
+            </Button>
+          </div>
+
+          {/* Visual Boy Advance路径 */}
+          <div className={cn('whitespace-nowrap select-none self-center')}>
+            {t('advanced.visualBoyAdvance.name')}
+          </div>
+          <div className={cn('flex flex-row gap-3')}>
+            <Input
+              value={vbaPath}
+              onChange={(e) => setVbaPath(e.target.value)}
+              placeholder={t('advanced.visualBoyAdvance.placeholder')}
+              className={cn('flex-1')}
+            />
+            <Button variant={'outline'} size={'icon'} onClick={selectVbaPath}>
+              <span className={cn('icon-[mdi--file-outline] w-5 h-5')}></span>
+            </Button>
+          </div>
+
+          {/* Magpie路径 */}
+          <div className={cn('whitespace-nowrap select-none self-start pt-2')}>
+            {t('advanced.magpie.name')}
+          </div>
+          <div className={cn('grid grid-rows-2 gap-5')}>
+            <div className={cn('flex flex-row gap-3')}>
               <Input
-                value={lePath}
-                onChange={(e) => setLePath(e.target.value)}
-                placeholder={t('advanced.localeEmulator.placeholder')}
+                value={magpiePath}
+                onChange={(e) => setMagpiePath(e.target.value)}
+                placeholder={t('advanced.magpie.placeholder')}
                 className={cn('flex-1')}
               />
-              <Button variant={'outline'} size={'icon'} className={cn('')} onClick={selectLePath}>
+              <Button variant={'outline'} size={'icon'} onClick={selectMagpiePath}>
                 <span className={cn('icon-[mdi--file-outline] w-5 h-5')}></span>
               </Button>
             </div>
-          </div>
-          <div className={cn('flex flex-row justify-between items-center')}>
-            <div>{t('advanced.visualBoyAdvance.name')}</div>
-            <div className={cn('w-7/12 flex flex-row gap-3')}>
-              <Input
-                value={vbaPath}
-                onChange={(e) => setVbaPath(e.target.value)}
-                placeholder={t('advanced.visualBoyAdvance.placeholder')}
-                className={cn('flex-1')}
-              />
-              <Button variant={'outline'} size={'icon'} className={cn('')} onClick={selectVbaPath}>
-                <span className={cn('icon-[mdi--file-outline] w-5 h-5')}></span>
-              </Button>
-            </div>
-          </div>
-          <div className={cn('flex flex-row justify-between items-start')}>
-            <div>{t('advanced.magpie.name')}</div>
-            <div className={cn('w-7/12 flex flex-col gap-5 items-end')}>
-              <div className={cn('flex flex-row gap-3 w-full')}>
-                <Input
-                  value={magpiePath}
-                  onChange={(e) => setMagpiePath(e.target.value)}
-                  placeholder={t('advanced.magpie.placeholder')}
-                  className={cn('flex-1')}
-                />
-                <Button
-                  variant={'outline'}
-                  size={'icon'}
-                  className={cn('')}
-                  onClick={selectMagpiePath}
-                >
-                  <span className={cn('icon-[mdi--file-outline] w-5 h-5')}></span>
-                </Button>
-              </div>
-              <div className={cn('flex flex-row justify-end items-center w-full gap-5')}>
-                <div className={cn('text-sm')}>{t('advanced.magpie.hotkeyLabel')}</div>
-                <HotkeySetting defaultHotkey={magpieHotkey} onHotkeyChange={setMagpieHotkey} />
-              </div>
+            <div className={cn('flex flex-row justify-end items-center gap-5')}>
+              <div className={cn('text-sm')}>{t('advanced.magpie.hotkeyLabel')}</div>
+              <HotkeySetting defaultHotkey={magpieHotkey} onHotkeyChange={setMagpieHotkey} />
             </div>
           </div>
         </div>

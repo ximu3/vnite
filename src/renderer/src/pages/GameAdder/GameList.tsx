@@ -12,7 +12,7 @@ export function GameList(): JSX.Element {
   const { setName, id, setId, gameList } = useGameAdderStore()
 
   return (
-    <div className={cn('w-[726px] h-[84vh] p-3', '3xl:w-[876px]')}>
+    <div className={cn('w-[726px] h-[86vh] p-3', '3xl:w-[876px]')}>
       <div className={cn('flex flex-col w-full h-full gap-3')}>
         <Card className={cn('grow pt-3')}>
           <CardContent className="h-full">

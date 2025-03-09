@@ -1,6 +1,8 @@
 import { app, Tray, Menu, nativeImage, BrowserWindow } from 'electron'
 import { GameDBManager, ConfigDBManager } from '~/database'
 import { shell } from 'electron'
+import { getLanguage } from './common'
+import { convertToPng } from '~/media'
 import icon from '../../../resources/icon.png?asset'
 
 export interface AppConfig {
@@ -79,12 +81,14 @@ export class TrayManager {
     const recentGames = await this.getRecentGames()
     const template: Array<Electron.MenuItemConstructorOptions> = []
 
+    const language = await getLanguage()
+
     if (recentGames.length > 0) {
       recentGames.forEach((game) => {
         template.push({
           label: this.truncateText(game.name, 10),
           icon: game.icon
-            ? nativeImage.createFromPath(game.icon).resize({ width: 16, height: 16 })
+            ? nativeImage.createFromBuffer(game.icon).resize({ width: 16, height: 16 })
             : undefined,
           click: () => {
             shell.openExternal(`vnite://rungameid/${game.id}`)
@@ -97,17 +101,28 @@ export class TrayManager {
 
     template.push(
       {
-        label: '显示主窗口',
+        // 中日英
+        label:
+          language === 'zh-CN'
+            ? '显示主窗口'
+            : language === 'ja'
+              ? 'メインウィンドウを表示'
+              : 'Show Main Window',
         click: (): void => {
           this.showMainWindow()
         }
       },
       { type: 'separator' },
       {
-        label: '设置',
+        label: language === 'zh-CN' ? '设置' : language === 'ja' ? '設定' : 'Settings',
         submenu: [
           {
-            label: '开机启动',
+            label:
+              language === 'zh-CN'
+                ? '开机自启'
+                : language === 'ja'
+                  ? '起動時に開く'
+                  : 'Open at Login',
             type: 'checkbox',
             checked: this.config?.openAtLogin,
             click: async (menuItem): Promise<void> => {
@@ -119,7 +134,12 @@ export class TrayManager {
             }
           },
           {
-            label: '关闭时最小化到托盘',
+            label:
+              language === 'zh-CN'
+                ? '退出到托盘'
+                : language === 'ja'
+                  ? 'トレイに終了'
+                  : 'Quit to Tray',
             type: 'checkbox',
             checked: this.config?.quitToTray,
             click: async (menuItem): Promise<void> => {
@@ -131,7 +151,7 @@ export class TrayManager {
       },
       { type: 'separator' },
       {
-        label: '退出',
+        label: language === 'zh-CN' ? '退出' : language === 'ja' ? '終了' : 'Quit',
         click: (): void => {
           this.isQuitting = true
           app.quit()
@@ -149,7 +169,7 @@ export class TrayManager {
   }
 
   private async getRecentGames(): Promise<
-    Array<{ id: string; name: string; icon: string | null }>
+    Array<{ id: string; name: string; icon: Buffer | null }>
   > {
     try {
       const gameDocs = await GameDBManager.getAllGames()
@@ -160,12 +180,15 @@ export class TrayManager {
       const recentGames = await Promise.all(
         recentGameIds.map(async (gameId) => {
           const game = gameDocs[gameId]
-          const iconPath = await GameDBManager.getGameImage(gameId, 'icon', 'file')
+          let icon = await GameDBManager.getGameImage(gameId, 'icon')
+          if (icon) {
+            icon = await convertToPng(icon)
+          }
 
           return {
             id: gameId,
             name: game?.metadata.name || gameId,
-            icon: iconPath
+            icon
           }
         })
       )

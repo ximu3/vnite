@@ -210,12 +210,12 @@ export function Header({
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>游玩状态</SelectLabel>
-                  <SelectItem value="unplayed">未开始</SelectItem>
-                  <SelectItem value="playing">游玩中</SelectItem>
-                  <SelectItem value="finished">已完成</SelectItem>
-                  <SelectItem value="multiple">多周目</SelectItem>
-                  <SelectItem value="shelved">搁置中</SelectItem>
+                  <SelectLabel>{t('detail.header.playStatus.label')}</SelectLabel>
+                  <SelectItem value="unplayed">{t('detail.header.playStatus.unplayed')}</SelectItem>
+                  <SelectItem value="playing">{t('detail.header.playStatus.playing')}</SelectItem>
+                  <SelectItem value="finished">{t('detail.header.playStatus.finished')}</SelectItem>
+                  <SelectItem value="multiple">{t('detail.header.playStatus.multiple')}</SelectItem>
+                  <SelectItem value="shelved">{t('detail.header.playStatus.shelved')}</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -236,7 +236,7 @@ export function Header({
               </DialogTrigger>
               <DialogContent showCloseButton={false} className="w-[500px]">
                 <div className={cn('flex flex-row gap-3 items-center justify-center')}>
-                  <div className={cn('whitespace-nowrap')}>我的评分</div>
+                  <div className={cn('whitespace-nowrap')}>{t('detail.header.rating.title')}</div>
                   <Input
                     value={preScore}
                     onChange={(e) => setPreScore(e.target.value)}
@@ -244,7 +244,7 @@ export function Header({
                       if (e.key === 'Enter') confirmScore()
                     }}
                   />
-                  <Button onClick={confirmScore}>确定</Button>
+                  <Button onClick={confirmScore}>{t('ui:common.confirm')}</Button>
                 </div>
               </DialogContent>
             </Dialog>

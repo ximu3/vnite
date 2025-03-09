@@ -89,34 +89,35 @@ export function Search({ className }: { className?: string }): JSX.Element {
 
   return (
     <div className={cn('w-[36vw] h-auto', '3xl:w-[30vw]', className)}>
-      <div className={cn('flex flex-col w-full h-full gap-3 p-3 justify-center')}>
-        <div className={cn('flex flex-row gap-3 items-center justify-start')}>
-          <div>{t('gameAdder.search.dataSource')}</div>
-          <div className={cn('w-[130px]')}>
-            <Select onValueChange={setDataSource} value={dataSource}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>{t('gameAdder.search.dataSources.label')}</SelectLabel>
-                  <SelectItem value="steam">{t('gameAdder.search.dataSources.steam')}</SelectItem>
-                  <SelectItem value="vndb">{t('gameAdder.search.dataSources.vndb')}</SelectItem>
-                  <SelectItem value="bangumi">
-                    {t('gameAdder.search.dataSources.bangumi')}
-                  </SelectItem>
-                  <SelectItem value="igdb">{t('gameAdder.search.dataSources.igdb')}</SelectItem>
-                  <SelectItem value="ymgal">{t('gameAdder.search.dataSources.ymgal')}</SelectItem>
-                  <SelectItem value="dlsite">{t('gameAdder.search.dataSources.dlsite')}</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
+      <div className={cn('grid grid-cols-[100px_1fr] gap-x-3 gap-y-2 text-sm items-center')}>
+        {/* 数据源选择 */}
+        <div className={cn('whitespace-nowrap select-none')}>
+          {t('gameAdder.search.dataSource')}
+        </div>
+        <div>
+          <Select onValueChange={setDataSource} value={dataSource}>
+            <SelectTrigger className={cn('w-[130px]')}>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>{t('gameAdder.search.dataSources.label')}</SelectLabel>
+                <SelectItem value="steam">{t('gameAdder.search.dataSources.steam')}</SelectItem>
+                <SelectItem value="vndb">{t('gameAdder.search.dataSources.vndb')}</SelectItem>
+                <SelectItem value="bangumi">{t('gameAdder.search.dataSources.bangumi')}</SelectItem>
+                <SelectItem value="igdb">{t('gameAdder.search.dataSources.igdb')}</SelectItem>
+                <SelectItem value="ymgal">{t('gameAdder.search.dataSources.ymgal')}</SelectItem>
+                <SelectItem value="dlsite">{t('gameAdder.search.dataSources.dlsite')}</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
 
-        <div className={cn('flex flex-row gap-3 items-center justify-start')}>
-          <div className={cn('flex-shrink-0')}>{t('gameAdder.search.gameName')}</div>
+        {/* 游戏名称输入 */}
+        <div className={cn('whitespace-nowrap select-none')}>{t('gameAdder.search.gameName')}</div>
+        <div className={cn('flex flex-row gap-3')}>
           <Input
+            className={cn('flex-1')}
             ref={gameNameInput}
             value={inputName}
             onChange={(e) => setInputName(e.target.value)}
@@ -129,9 +130,11 @@ export function Search({ className }: { className?: string }): JSX.Element {
           <Button onClick={searchGames}>{t('gameAdder.search.searchButton')}</Button>
         </div>
 
-        <div className={cn('flex flex-row gap-3 items-center justify-start')}>
-          <div className={cn('flex-shrink-0 mr-4')}>{t('gameAdder.search.gameId')}</div>
+        {/* 游戏ID输入 */}
+        <div className={cn('whitespace-nowrap select-none')}>{t('gameAdder.search.gameId')}</div>
+        <div className={cn('flex flex-row gap-3')}>
           <Input
+            className={cn('flex-1')}
             ref={gameIdInput}
             value={inputId}
             onChange={(e) => setInputId(e.target.value)}

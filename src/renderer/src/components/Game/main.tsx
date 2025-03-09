@@ -232,17 +232,17 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
             className={cn('p-7 pt-[6px] bg-background', 'duration-100', isSticky && '-mt-12 pt-12')}
           >
             <Tabs defaultValue="overview" className={cn('w-full')}>
-              <TabsList className={cn('w-[350px] shadow-md bg-accent/30')}>
-                <TabsTrigger className={cn('w-1/3')} value="overview">
+              <TabsList className={cn('w-[370px] shadow-md bg-accent/30')}>
+                <TabsTrigger className={cn('w-1/4')} value="overview">
                   {t('detail.tabs.overview')}
                 </TabsTrigger>
-                <TabsTrigger className={cn('w-1/3')} value="record">
+                <TabsTrigger className={cn('w-1/4')} value="record">
                   {t('detail.tabs.record')}
                 </TabsTrigger>
-                <TabsTrigger className={cn('w-1/3')} value="save">
+                <TabsTrigger className={cn('w-1/4')} value="save">
                   {t('detail.tabs.save')}
                 </TabsTrigger>
-                <TabsTrigger className={cn('w-1/3')} value="memory">
+                <TabsTrigger className={cn('w-1/4')} value="memory">
                   {t('detail.tabs.memory')}
                 </TabsTrigger>
               </TabsList>

@@ -73,6 +73,33 @@ export async function convertToWebP(
   }
 }
 
+export async function convertToPng(input: Buffer | string): Promise<Buffer> {
+  try {
+    sharp.cache(false)
+
+    // 处理输入是URL的情况
+    let imageBuffer: Buffer
+    if (typeof input === 'string' && input.startsWith('http')) {
+      const response = await fetch(input)
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.statusText}`)
+      }
+      imageBuffer = Buffer.from(await response.arrayBuffer())
+    } else if (typeof input === 'string') {
+      // 如果是本地文件路径
+      imageBuffer = await fse.readFile(input)
+    } else {
+      // 如果已经是Buffer
+      imageBuffer = input
+    }
+
+    return await sharp(imageBuffer).png().toBuffer()
+  } catch (error) {
+    console.error('Error converting image to PNG:', error)
+    throw error
+  }
+}
+
 function isIcoFormat(buffer: Buffer): boolean {
   // ICO文件头标识: 前2字节为0和1，第3和第4字节为1和0
   if (buffer.length >= 4) {

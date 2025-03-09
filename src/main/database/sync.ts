@@ -85,7 +85,7 @@ export async function startSync(isStart = false): Promise<void> {
       () => {
         DBManager.updateSyncStatus({
           status: 'success',
-          message: '同步成功',
+          message: 'Sync success',
           timestamp: new Date().toISOString()
         })
       },
@@ -98,7 +98,7 @@ export async function startSync(isStart = false): Promise<void> {
       () => {
         DBManager.updateSyncStatus({
           status: 'error',
-          message: '同步失败',
+          message: 'Sync error',
           timestamp: new Date().toISOString()
         })
       },

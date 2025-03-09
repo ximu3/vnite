@@ -30,28 +30,32 @@ export function Appearances(): JSX.Element {
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className={cn('')}>
-        <div className={cn('flex flex-col gap-8')}>
+      <CardContent>
+        <div className={cn('flex flex-col gap-8 text-sm')}>
           {/* 游戏列表设置 */}
           <div className={cn('space-y-4')}>
             <div className={cn('border-b pb-2')}>{t('appearances.gameList.title')}</div>
-            <div className={cn('flex flex-col gap-4 pl-2')}>
-              <div className={cn('flex flex-row justify-between items-center')}>
-                <div>{t('appearances.gameList.showRecentGames')}</div>
+            <div className={cn('pl-2')}>
+              <div className={cn('grid grid-cols-[1fr_auto] gap-4 items-center')}>
+                <div className={cn('whitespace-nowrap select-none')}>
+                  {t('appearances.gameList.showRecentGames')}
+                </div>
                 <Switch
                   checked={showRecentGamesInGameList}
                   onCheckedChange={(checked) => setShowRecentGamesInGameList(checked)}
                 />
-              </div>
-              <div className={cn('flex flex-row justify-between items-center')}>
-                <div>{t('appearances.gameList.highlightLocalGames')}</div>
+
+                <div className={cn('whitespace-nowrap select-none')}>
+                  {t('appearances.gameList.highlightLocalGames')}
+                </div>
                 <Switch
                   checked={highlightLocalGames}
                   onCheckedChange={(checked) => setHighlightLocalGames(checked)}
                 />
-              </div>
-              <div className={cn('flex flex-row justify-between items-center')}>
-                <div>{t('appearances.gameList.markLocalGames')}</div>
+
+                <div className={cn('whitespace-nowrap select-none')}>
+                  {t('appearances.gameList.markLocalGames')}
+                </div>
                 <Switch
                   checked={markLocalGames}
                   onCheckedChange={(checked) => setMarkLocalGames(checked)}
@@ -63,9 +67,11 @@ export function Appearances(): JSX.Element {
           {/* 游戏详情页设置 */}
           <div className={cn('space-y-4')}>
             <div className={cn('border-b pb-2')}>{t('appearances.gameDetail.title')}</div>
-            <div className={cn('flex flex-col gap-4 pl-2')}>
-              <div className={cn('flex flex-row justify-between items-center')}>
-                <div>{t('appearances.gameDetail.showOriginalName')}</div>
+            <div className={cn('pl-2')}>
+              <div className={cn('grid grid-cols-[1fr_auto] gap-4 items-center')}>
+                <div className={cn('whitespace-nowrap select-none')}>
+                  {t('appearances.gameDetail.showOriginalName')}
+                </div>
                 <Switch
                   checked={showOriginalNameInGameHeader}
                   onCheckedChange={(checked) => setShowOriginalNameInGameHeader(checked)}
@@ -77,9 +83,11 @@ export function Appearances(): JSX.Element {
           {/* 侧边栏设置 */}
           <div className={cn('space-y-4')}>
             <div className={cn('border-b pb-2')}>{t('appearances.sidebar.title')}</div>
-            <div className={cn('flex flex-col gap-4 pl-2')}>
-              <div className={cn('flex flex-row justify-between items-center')}>
-                <div>{t('appearances.sidebar.showThemeSwitcher')}</div>
+            <div className={cn('pl-2')}>
+              <div className={cn('grid grid-cols-[1fr_auto] gap-4 items-center')}>
+                <div className={cn('whitespace-nowrap select-none')}>
+                  {t('appearances.sidebar.showThemeSwitcher')}
+                </div>
                 <Switch
                   checked={showThemeSwitchInSidebar}
                   onCheckedChange={(checked) => setShowThemeSwitchInSidebar(checked)}

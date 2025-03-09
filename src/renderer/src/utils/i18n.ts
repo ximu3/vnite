@@ -11,6 +11,7 @@ import zhCNUI from '@locales/zh-CN/ui.json'
 import zhCNAdder from '@locales/zh-CN/adder.json'
 import zhCNImporter from '@locales/zh-CN/importer.json'
 import zhCNUpdater from '@locales/zh-CN/updater.json'
+import zhCNUtils from '@locales/zh-CN/utils.json'
 
 // 英文
 import enConfig from '@locales/en/config.json'
@@ -20,6 +21,7 @@ import enUI from '@locales/en/ui.json'
 import enAdder from '@locales/en/adder.json'
 import enImporter from '@locales/en/importer.json'
 import enUpdater from '@locales/en/updater.json'
+import enUtils from '@locales/en/utils.json'
 
 // 日语
 import jaConfig from '@locales/ja/config.json'
@@ -29,6 +31,7 @@ import jaUI from '@locales/ja/ui.json'
 import jaAdder from '@locales/ja/adder.json'
 import jaImporter from '@locales/ja/importer.json'
 import jaUpdater from '@locales/ja/updater.json'
+import jaUtils from '@locales/ja/utils.json'
 
 // 配置资源对象，按命名空间分组
 const resources = {
@@ -39,7 +42,8 @@ const resources = {
     ui: zhCNUI,
     adder: zhCNAdder,
     importer: zhCNImporter,
-    updater: zhCNUpdater
+    updater: zhCNUpdater,
+    utils: zhCNUtils
   },
   ja: {
     config: jaConfig,
@@ -48,7 +52,8 @@ const resources = {
     ui: jaUI,
     adder: jaAdder,
     importer: jaImporter,
-    updater: jaUpdater
+    updater: jaUpdater,
+    utils: jaUtils
   },
   en: {
     config: enConfig,
@@ -57,7 +62,8 @@ const resources = {
     ui: enUI,
     adder: enAdder,
     importer: enImporter,
-    updater: enUpdater
+    updater: enUpdater,
+    utils: enUtils
   }
 }
 
@@ -71,7 +77,7 @@ export async function i18nInit(): Promise<void> {
     fallbackLng: 'en',
     defaultNS: 'ui', // 默认命名空间
     fallbackNS: 'ui', // 如果在当前命名空间中找不到键，则回退到这个命名空间
-    ns: ['config', 'sidebar', 'ui', 'game', 'adder', 'importer', 'updater'], // 声明所有命名空间
+    ns: ['config', 'sidebar', 'ui', 'game', 'adder', 'importer', 'updater', 'utils'], // 声明所有命名空间
     interpolation: {
       escapeValue: false
     }

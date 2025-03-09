@@ -218,19 +218,21 @@ export function CloudSync(): JSX.Element {
             </div>
           </CardTitle>
         </CardHeader>
-        <CardContent className={cn('')}>
-          <div className={cn('flex flex-col gap-5 justify-start')}>
-            <div className={cn('flex flex-row gap-5 justify-between items-center')}>
-              <div>{t('cloudSync.enable')}</div>
-              <div>
-                <Switch checked={enabled} onCheckedChange={setEnabled} />
-              </div>
+        <CardContent>
+          <div className={cn('space-y-5 text-sm')}>
+            {/* 启用/禁用开关 - 网格布局 */}
+            <div className={cn('grid grid-cols-[1fr_auto] gap-5 items-center')}>
+              <div className={cn('whitespace-nowrap select-none')}>{t('cloudSync.enable')}</div>
+              <Switch checked={enabled} onCheckedChange={setEnabled} />
             </div>
 
             {enabled && (
-              <div className={cn('flex flex-row gap-5 justify-between items-center')}>
-                <div>{t('cloudSync.syncMode')}</div>
-                <div>
+              <>
+                {/* 同步模式选择 - 网格布局 */}
+                <div className={cn('grid grid-cols-[1fr_auto] gap-5 items-center')}>
+                  <div className={cn('whitespace-nowrap select-none')}>
+                    {t('cloudSync.syncMode')}
+                  </div>
                   <RadioGroup
                     className="flex flex-row gap-4"
                     value={syncMode}
@@ -246,9 +248,10 @@ export function CloudSync(): JSX.Element {
                     </div>
                   </RadioGroup>
                 </div>
-              </div>
+              </>
             )}
 
+            {/* 官方模式UI */}
             {enabled && syncMode === 'official' && (
               <div className={cn('flex flex-col gap-4')}>
                 {!userName ? (
@@ -366,6 +369,8 @@ export function CloudSync(): JSX.Element {
                 )}
               </div>
             )}
+
+            {/* 自托管模式UI - 转换为网格布局 */}
             {enabled && syncMode === 'selfHosted' && (
               <Card className="border shadow-sm border-muted">
                 <CardContent className="pt-6">
@@ -386,54 +391,50 @@ export function CloudSync(): JSX.Element {
 
                     <Separator />
 
-                    <div className="pt-2 space-y-4">
-                      <div className={cn('flex flex-row gap-5 justify-between items-center')}>
-                        <div className="flex items-center gap-2">
-                          <HardDrive className="w-4 h-4" />
-                          <span>{t('cloudSync.selfHosted.serverAddress')}</span>
-                        </div>
-                        <div>
-                          <Input
-                            className={cn('w-[400px]')}
-                            value={selfHostedUrl}
-                            onChange={(e) => setSelfHostedUrl(e.target.value)}
-                            placeholder="https://your-couchdb-server.com"
-                          />
-                        </div>
+                    {/* 自托管表单项 - 网格布局 */}
+                    <div className="grid grid-cols-[auto_1fr] gap-x-5 gap-y-4 items-center">
+                      <div className="flex items-center gap-2 select-none whitespace-nowrap">
+                        <HardDrive className="w-4 h-4" />
+                        <span>{t('cloudSync.selfHosted.serverAddress')}</span>
+                      </div>
+                      <div>
+                        <Input
+                          className={cn('w-full')}
+                          value={selfHostedUrl}
+                          onChange={(e) => setSelfHostedUrl(e.target.value)}
+                          placeholder="https://your-couchdb-server.com"
+                        />
                       </div>
 
-                      <div className={cn('flex flex-row gap-5 justify-between items-center')}>
-                        <div className="flex items-center gap-2">
-                          <User className="w-4 h-4" />
-                          <span>{t('cloudSync.selfHosted.username')}</span>
-                        </div>
-                        <div>
-                          <Input
-                            className={cn('w-[400px]')}
-                            value={selfHostedUsername}
-                            onChange={(e) => setSelfHostedUsername(e.target.value)}
-                            placeholder="admin"
-                          />
-                        </div>
+                      <div className="flex items-center gap-2 select-none whitespace-nowrap">
+                        <User className="w-4 h-4" />
+                        <span>{t('cloudSync.selfHosted.username')}</span>
+                      </div>
+                      <div>
+                        <Input
+                          className={cn('w-full')}
+                          value={selfHostedUsername}
+                          onChange={(e) => setSelfHostedUsername(e.target.value)}
+                          placeholder="admin"
+                        />
                       </div>
 
-                      <div className={cn('flex flex-row gap-5 justify-between items-center')}>
-                        <div className="flex items-center gap-2">
-                          <Key className="w-4 h-4" />
-                          <span>{t('cloudSync.selfHosted.password')}</span>
-                        </div>
-                        <div>
-                          <Input
-                            className={cn('w-[400px]')}
-                            type="password"
-                            value={selfHostedPassword}
-                            onChange={(e) => setSelfHostedPassword(e.target.value)}
-                            placeholder="••••••••"
-                          />
-                        </div>
+                      <div className="flex items-center gap-2 select-none whitespace-nowrap">
+                        <Key className="w-4 h-4" />
+                        <span>{t('cloudSync.selfHosted.password')}</span>
+                      </div>
+                      <div>
+                        <Input
+                          className={cn('w-full')}
+                          type="password"
+                          value={selfHostedPassword}
+                          onChange={(e) => setSelfHostedPassword(e.target.value)}
+                          placeholder="••••••••"
+                        />
                       </div>
 
-                      <div className="pt-2 text-xs text-muted-foreground">
+                      {/* 跨越两列的信息提示 */}
+                      <div className="col-span-2 pt-2 text-xs text-muted-foreground">
                         <p className="flex items-center gap-1">
                           <InfoIcon className="w-3.5 h-3.5" />
                           <span>
@@ -449,8 +450,9 @@ export function CloudSync(): JSX.Element {
               </Card>
             )}
 
+            {/* 保存按钮 */}
             {enabled && (
-              <div className={cn('flex flex-row-reverse gap-5 justify-between items-center')}>
+              <div className={cn('flex justify-end pt-2')}>
                 <Button onClick={updateCloudSyncConfig}>{t('ui:common.save')}</Button>
               </div>
             )}

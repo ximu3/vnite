@@ -59,7 +59,7 @@ export function InformationCard({
 
       <Separator className={cn('my-3 bg-primary')} />
 
-      <div className={cn('grid grid-cols-[60px_1fr] gap-x-3 gap-y-2 text-sm')}>
+      <div className={cn('grid grid-cols-[auto_1fr] gap-x-3 gap-y-2 text-sm')}>
         {/* original name */}
         <div
           className={cn('whitespace-nowrap select-none cursor-pointer')}

@@ -89,69 +89,71 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
       </CardHeader>
       <CardContent>
         <div className={cn('flex flex-col gap-5')}>
-          <div className={cn('flex flex-row gap-5 items-center justify-start')}>
-            <div>{t('detail.properties.path.gamePath')}</div>
-            <div className={cn('w-3/4')}>
-              <Input value={gamePath} onChange={(e) => setGamePath(e.target.value)} />
+          {/* 网格布局部分 - 路径设置 */}
+          <div className={cn('grid grid-cols-[120px_1fr] gap-x-3 gap-y-5 text-sm items-center')}>
+            {/* 游戏路径 */}
+            <div className={cn('whitespace-nowrap select-none self-center')}>
+              {t('detail.properties.path.gamePath')}
             </div>
-            <Button
-              variant={'outline'}
-              size={'icon'}
-              className={cn('-ml-3')}
-              onClick={selectGamePath}
-            >
-              <span className={cn('icon-[mdi--file-outline] w-5 h-5')}></span>
-            </Button>
-          </div>
-          <div className={cn('flex flex-row gap-5 items-start')}>
-            <div>{t('detail.properties.path.savePath')}</div>
-            <div className={cn('w-3/4')}>
+            <div className={cn('flex flex-row gap-3 items-center')}>
+              <Input
+                className={cn('flex-1')}
+                value={gamePath}
+                onChange={(e) => setGamePath(e.target.value)}
+              />
+              <Button variant={'outline'} size={'icon'} onClick={selectGamePath}>
+                <span className={cn('icon-[mdi--file-outline] w-5 h-5')}></span>
+              </Button>
+            </div>
+
+            {/* 保存路径 */}
+            <div className={cn('whitespace-nowrap select-none self-start pt-2')}>
+              {t('detail.properties.path.savePath')}
+            </div>
+            <div className={cn('flex flex-row gap-3 items-start')}>
               <ArrayTextarea
+                className={cn('flex-1 max-h-[400px] min-h-[100px]')}
                 value={savePath}
                 onChange={setSavePath}
-                className={cn('max-h-[400px] min-h-[100px]')}
               />
-            </div>
-            <div className={cn('flex flex-col gap-3')}>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Button
-                    variant={'outline'}
-                    size={'icon'}
-                    className={cn('-ml-3')}
-                    onClick={selectSaveFolderPath}
-                  >
-                    <span className={cn('icon-[mdi--folder-plus-outline] w-5 h-5')}></span>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="right">
-                  {t('detail.properties.path.addFolder')}
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Button
-                    variant={'outline'}
-                    size={'icon'}
-                    className={cn('-ml-3')}
-                    onClick={selectSaveFilePath}
-                  >
-                    <span className={cn('icon-[mdi--file-plus-outline] w-5 h-5')}></span>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="right">{t('detail.properties.path.addFile')}</TooltipContent>
-              </Tooltip>
+              <div className={cn('flex flex-col gap-3')}>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button variant={'outline'} size={'icon'} onClick={selectSaveFolderPath}>
+                      <span className={cn('icon-[mdi--folder-plus-outline] w-5 h-5')}></span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">
+                    {t('detail.properties.path.addFolder')}
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button variant={'outline'} size={'icon'} onClick={selectSaveFilePath}>
+                      <span className={cn('icon-[mdi--file-plus-outline] w-5 h-5')}></span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">
+                    {t('detail.properties.path.addFile')}
+                  </TooltipContent>
+                </Tooltip>
+              </div>
             </div>
           </div>
+
           <Separator />
-          <div className={cn('flex flex-row gap-5 items-center justify-start')}>
-            <div>{t('detail.properties.path.maxBackups')}</div>
-            <div className={cn('w-[120px]')}>
+
+          {/* 网格布局外的最大备份设置 */}
+          <div className={cn('flex flex-row gap-5 items-center justify-start text-sm')}>
+            <div className={cn('whitespace-nowrap select-none')}>
+              {t('detail.properties.path.maxBackups')}
+            </div>
+            <div>
               <Select
                 value={maxSaveBackups.toString()}
                 onValueChange={(v) => setMaxSaveBackups(Number(v))}
               >
-                <SelectTrigger>
+                <SelectTrigger className={cn('w-[120px]')}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

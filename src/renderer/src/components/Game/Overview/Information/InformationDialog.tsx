@@ -25,8 +25,10 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
         ></span>
       </DialogTrigger>
       <DialogContent>
-        <div className={cn('grid grid-cols-[60px_1fr] gap-y-3 gap-x-4 px-3 py-5 items-center')}>
-          <div className={cn('whitespace-nowrap select-none justify-self-end')}>
+        <div
+          className={cn('grid grid-cols-[auto_1fr] gap-y-3 gap-x-4 px-3 py-5 items-center text-sm')}
+        >
+          <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('detail.overview.information.fields.originalName')}
           </div>
           <Input
@@ -35,7 +37,7 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
             placeholder={t('detail.overview.information.empty')}
             className={cn('text-sm')}
           />
-          <div className={cn('whitespace-nowrap select-none justify-self-end')}>
+          <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('detail.overview.information.fields.localizedName')}
           </div>
           <Input
@@ -44,7 +46,7 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
             placeholder={t('detail.overview.information.empty')}
             className={cn('text-sm')}
           />
-          <div className={cn('whitespace-nowrap select-none justify-self-end')}>
+          <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('detail.overview.information.fields.developers')}
           </div>
           <Tooltip>
@@ -61,7 +63,7 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
               </div>
             </TooltipContent>
           </Tooltip>
-          <div className={cn('whitespace-nowrap select-none justify-self-end')}>
+          <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('detail.overview.information.fields.publishers')}
           </div>
           <Tooltip>
@@ -78,7 +80,7 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
               </div>
             </TooltipContent>
           </Tooltip>
-          <div className={cn('whitespace-nowrap select-none justify-self-end')}>
+          <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('detail.overview.information.fields.releaseDate')}
           </div>
           <DateInput
@@ -87,7 +89,7 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
             placeholder={t('detail.overview.information.empty')}
             className={cn('text-sm')}
           />
-          <div className={cn('whitespace-nowrap select-none justify-self-end')}>
+          <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('detail.overview.information.fields.platforms')}
           </div>
           <Tooltip>
@@ -104,7 +106,7 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
               </div>
             </TooltipContent>
           </Tooltip>
-          <div className={cn('whitespace-nowrap select-none justify-self-end')}>
+          <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('detail.overview.information.fields.genres')}
           </div>
           <Tooltip>

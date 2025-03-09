@@ -47,71 +47,78 @@ export function FileLauncher({ gameId }: { gameId: string }): JSX.Element {
   }
 
   return (
-    <div className={cn('flex flex-col gap-5 w-full')}>
-      <div className={cn('flex flex-row gap-5 items-center justify-start')}>
-        <div>{t('detail.properties.launcher.file.path')}</div>
-        <div className={cn('w-3/4')}>
-          <Input value={path} onChange={(e) => setPath(e.target.value)} />
-        </div>
-        <Button variant={'outline'} size={'icon'} className={cn('-ml-3')} onClick={selectFilePath}>
+    <div className={cn('grid grid-cols-[120px_1fr] gap-x-5 gap-y-5 text-sm items-center')}>
+      {/* 文件路径 */}
+      <div className={cn('whitespace-nowrap select-none')}>
+        {t('detail.properties.launcher.file.path')}
+      </div>
+      <div className={cn('flex flex-row gap-3 items-center')}>
+        <Input className={cn('flex-1')} value={path} onChange={(e) => setPath(e.target.value)} />
+        <Button variant={'outline'} size={'icon'} onClick={selectFilePath}>
           <span className={cn('icon-[mdi--file-outline] w-5 h-5')}></span>
         </Button>
       </div>
-      <div className={cn('flex flex-row gap-5 items-center justify-start')}>
-        <div>{t('detail.properties.launcher.file.workingDirectory')}</div>
-        <div className={cn('w-3/4')}>
-          <Input value={workingDirectory} onChange={(e) => setWorkingDirectory(e.target.value)} />
-        </div>
-        <Button
-          variant={'outline'}
-          size={'icon'}
-          className={cn('-ml-3')}
-          onClick={selectWorkingDirectory}
-        >
+
+      {/* 工作目录 */}
+      <div className={cn('whitespace-nowrap select-none')}>
+        {t('detail.properties.launcher.file.workingDirectory')}
+      </div>
+      <div className={cn('flex flex-row gap-3 items-center')}>
+        <Input
+          className={cn('flex-1')}
+          value={workingDirectory}
+          onChange={(e) => setWorkingDirectory(e.target.value)}
+        />
+        <Button variant={'outline'} size={'icon'} onClick={selectWorkingDirectory}>
           <span className={cn('icon-[mdi--folder-open-outline] w-5 h-5')}></span>
         </Button>
       </div>
-      <Separator />
-      <div className={cn('flex flex-row gap-5 items-center justify-start')}>
-        <div>{t('detail.properties.launcher.monitor.title')}</div>
-        <div className={cn('w-[120px]')}>
-          <Select value={monitorMode} onValueChange={setMonitorMode}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>{t('detail.properties.launcher.monitor.title')}</SelectLabel>
-                <SelectItem value="folder">
-                  {t('detail.properties.launcher.monitor.mode.folder')}
-                </SelectItem>
-                <SelectItem value="file">
-                  {t('detail.properties.launcher.monitor.mode.file')}
-                </SelectItem>
-                <SelectItem value="process">
-                  {t('detail.properties.launcher.monitor.mode.process')}
-                </SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
+
+      {/* 分隔符 - 占满整行 */}
+      <div className={cn('col-span-2')}>
+        <Separator />
       </div>
-      <div className={cn('flex flex-row gap-5 items-center justify-start')}>
-        {['folder', 'file'].includes(monitorMode) ? (
-          <div>{t('detail.properties.launcher.monitor.path')}</div>
-        ) : (
-          <div>{t('detail.properties.launcher.monitor.processName')}</div>
-        )}
-        <div className={cn('w-3/4')}>
-          <Input value={monitorPath} onChange={(e) => setMonitorPath(e.target.value)} />
-        </div>
+
+      {/* 监视器模式 */}
+      <div className={cn('whitespace-nowrap select-none')}>
+        {t('detail.properties.launcher.monitor.title')}
+      </div>
+      <div>
+        <Select value={monitorMode} onValueChange={setMonitorMode}>
+          <SelectTrigger className={cn('w-[120px]')}>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>{t('detail.properties.launcher.monitor.title')}</SelectLabel>
+              <SelectItem value="folder">
+                {t('detail.properties.launcher.monitor.mode.folder')}
+              </SelectItem>
+              <SelectItem value="file">
+                {t('detail.properties.launcher.monitor.mode.file')}
+              </SelectItem>
+              <SelectItem value="process">
+                {t('detail.properties.launcher.monitor.mode.process')}
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* 监视路径/进程名 */}
+      <div className={cn('whitespace-nowrap select-none')}>
+        {['folder', 'file'].includes(monitorMode)
+          ? t('detail.properties.launcher.monitor.path')
+          : t('detail.properties.launcher.monitor.processName')}
+      </div>
+      <div className={cn('flex flex-row gap-3 items-center')}>
+        <Input
+          className={cn('flex-1')}
+          value={monitorPath}
+          onChange={(e) => setMonitorPath(e.target.value)}
+        />
         {['folder', 'file'].includes(monitorMode) && (
-          <Button
-            variant={'outline'}
-            size={'icon'}
-            className={cn('-ml-3')}
-            onClick={selectMonitorPath}
-          >
+          <Button variant={'outline'} size={'icon'} onClick={selectMonitorPath}>
             <span
               className={cn(
                 monitorMode === 'folder'

@@ -31,44 +31,55 @@ export function About(): JSX.Element {
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className={cn('')}>
-        <div className={cn('flex flex-col gap-5 justify-center')}>
-          <div className={cn('flex flex-row justify-between items-center')}>
-            <div>{t('about.author')}</div>
+      <CardContent>
+        <div className={cn('grid grid-cols-[auto_1fr] gap-5 items-center text-sm')}>
+          {/* 作者信息 */}
+          <div className={cn('whitespace-nowrap select-none')}>{t('about.author')}</div>
+          <div className={cn('flex justify-end')}>
             <Link name="ximu" url="https://github.com/ximu3" />
           </div>
-          <div className={cn('flex flex-row justify-between items-center')}>
-            <div>{t('about.version')}</div>
-            <div className={cn('flex flex-row gap-2 text-sm items-center')}>
-              <div>{version}</div>
-              <Button
-                variant="outline"
-                size="icon"
-                className={cn('w-6 h-6')}
-                onClick={() => {
-                  ipcSend('check-update')
-                  setUpdateDialogIsOpen(true)
-                }}
-              >
-                <span className={cn('icon-[mdi--reload] w-4 h-4')}></span>
-              </Button>
-            </div>
+
+          {/* 版本信息 */}
+          <div className={cn('whitespace-nowrap select-none')}>{t('about.version')}</div>
+          <div className={cn('flex justify-end gap-2 text-sm items-center')}>
+            <div>{version}</div>
+            <Button
+              variant="outline"
+              size="icon"
+              className={cn('w-6 h-6')}
+              onClick={() => {
+                ipcSend('check-update')
+                setUpdateDialogIsOpen(true)
+              }}
+            >
+              <span className={cn('icon-[mdi--reload] w-4 h-4')}></span>
+            </Button>
           </div>
-          <div className={cn('flex flex-row justify-between items-center')}>
-            <div>{t('about.repository')}</div>
+
+          {/* 仓库链接 */}
+          <div className={cn('whitespace-nowrap select-none')}>{t('about.repository')}</div>
+          <div className={cn('flex justify-end')}>
             <Link
               noToolTip
               name="https://github.com/ximu3/vnite"
               url="https://github.com/ximu3/vnite"
             />
           </div>
-          <Separator />
-          <div className={cn('flex flex-row justify-between items-center')}>
-            <div>{t('about.feedback')}</div>
+
+          {/* 分隔线 - 跨越两列 */}
+          <div className={cn('col-span-2 py-0')}>
+            <Separator />
+          </div>
+
+          {/* 反馈链接 */}
+          <div className={cn('whitespace-nowrap select-none')}>{t('about.feedback')}</div>
+          <div className={cn('flex justify-end')}>
             <Link name="Github Issue" url="https://github.com/ximu3/vnite/issues" />
           </div>
-          <div className={cn('flex flex-row justify-between items-center')}>
-            <div>{t('about.group')}</div>
+
+          {/* 群组链接 */}
+          <div className={cn('whitespace-nowrap select-none')}>{t('about.group')}</div>
+          <div className={cn('flex justify-end')}>
             <Link name="Telegram" url="https://t.me/+d65-R_xRx1JlYWZh" />
           </div>
         </div>

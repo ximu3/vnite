@@ -3,6 +3,7 @@ import { SteamAppDetailsResponse, SteamStoreSearchResponse } from './types'
 import { formatDate } from '~/utils'
 import { getGameHerosFromSteamGridDB } from '../steamGridDb'
 import * as cheerio from 'cheerio'
+import { getSteamLanguageConfig, getTranslation } from './i18n'
 
 // Defining Base URL Constants
 const STEAM_URLS = {
@@ -88,12 +89,15 @@ async function fetchSteamAPI(primaryUrl: string, fallbackUrl: string): Promise<a
 
 export async function searchSteamGames(gameName: string): Promise<GameList> {
   try {
+    const langConfig = await getSteamLanguageConfig()
+
     const primaryUrl = `${STEAM_URLS.PRIMARY.STORE}/api/storesearch/?term=${encodeURIComponent(
       gameName
-    )}&l=schinese&cc=CN`
+    )}&l=${langConfig.apiLanguageCode}&cc=${langConfig.countryCode}`
+
     const fallbackUrl = `${STEAM_URLS.FALLBACK.STORE}/?term=${encodeURIComponent(
       gameName
-    )}&l=schinese&cc=CN`
+    )}&l=${langConfig.apiLanguageCode}&cc=${langConfig.countryCode}`
 
     const response = (await fetchSteamAPI(primaryUrl, fallbackUrl)) as SteamStoreSearchResponse
 
@@ -133,12 +137,14 @@ export async function searchSteamGames(gameName: string): Promise<GameList> {
 
 async function fetchStoreTags(appId: string): Promise<string[]> {
   try {
+    const langConfig = await getSteamLanguageConfig()
+
     const primaryUrl = `${STEAM_URLS.PRIMARY.STORE}/app/${appId}`
     const fallbackUrl = `${STEAM_URLS.FALLBACK.APP}/${appId}`
 
     const response = await fetchWithFallback(primaryUrl, fallbackUrl, {
       headers: {
-        'Accept-Language': 'zh-CN,zh;q=0.9'
+        'Accept-Language': langConfig.acceptLanguageHeader
       }
     })
 
@@ -162,43 +168,65 @@ async function fetchStoreTags(appId: string): Promise<string[]> {
 
 export async function getSteamMetadata(appId: string): Promise<GameMetadata> {
   try {
-    const primaryUrlCN = `${STEAM_URLS.PRIMARY.STORE}/api/appdetails?appids=${appId}&l=schinese`
-    const primaryUrlEN = `${STEAM_URLS.PRIMARY.STORE}/api/appdetails?appids=${appId}`
-    const fallbackUrlCN = `${STEAM_URLS.FALLBACK.APP_DETAILS}?appids=${appId}&l=schinese`
-    const fallbackUrlEN = `${STEAM_URLS.FALLBACK.APP_DETAILS}?appids=${appId}`
+    const langConfig = await getSteamLanguageConfig()
 
-    const [chineseData, englishData] = (await Promise.all([
-      fetchSteamAPI(primaryUrlCN, fallbackUrlCN),
-      fetchSteamAPI(primaryUrlEN, fallbackUrlEN)
-    ])) as [SteamAppDetailsResponse, SteamAppDetailsResponse]
+    // 获取当前语言的数据
+    const primaryUrlLocal = `${STEAM_URLS.PRIMARY.STORE}/api/appdetails?appids=${appId}&l=${langConfig.apiLanguageCode}`
+    const fallbackUrlLocal = `${STEAM_URLS.FALLBACK.APP_DETAILS}?appids=${appId}&l=${langConfig.apiLanguageCode}`
 
-    if (!chineseData[appId].success) {
+    // 获取英语数据作为原始名称（如果当前语言不是英语）
+    const needsOriginalName = langConfig.apiLanguageCode !== 'english'
+
+    let localData: SteamAppDetailsResponse
+    let englishData: SteamAppDetailsResponse | null = null
+
+    if (needsOriginalName) {
+      // 并行获取本地语言和英语数据
+      ;[localData, englishData] = await Promise.all([
+        fetchSteamAPI(primaryUrlLocal, fallbackUrlLocal),
+        fetchSteamAPI(
+          `${STEAM_URLS.PRIMARY.STORE}/api/appdetails?appids=${appId}&l=english`,
+          `${STEAM_URLS.FALLBACK.APP_DETAILS}?appids=${appId}&l=english`
+        )
+      ])
+    } else {
+      // 仅获取一种语言
+      localData = await fetchSteamAPI(primaryUrlLocal, fallbackUrlLocal)
+      englishData = localData // 如果当前语言就是英语，则复用
+    }
+
+    if (!localData[appId].success) {
       throw new Error(`No game found with ID: ${appId}`)
     }
 
-    const gameDataCN = chineseData[appId].data
-    const gameDataEN = englishData[appId].data
+    const gameData = localData[appId].data
+    const originalName =
+      englishData && englishData[appId].success ? englishData[appId].data.name : gameData.name
+
     const tags = await fetchStoreTags(appId)
 
     return {
-      name: gameDataCN.name,
-      originalName: gameDataEN.name,
-      releaseDate: formatDate(gameDataEN.release_date.date),
+      name: gameData.name,
+      originalName,
+      releaseDate: formatDate(gameData.release_date.date),
       description:
-        gameDataCN.detailed_description ||
-        gameDataCN.about_the_game ||
-        gameDataCN.short_description,
-      developers: gameDataCN.developers,
-      publishers: gameDataCN.publishers,
-      genres: gameDataCN.genres?.map((genre) => genre.description) || [],
+        gameData.detailed_description || gameData.about_the_game || gameData.short_description,
+      developers: gameData.developers,
+      publishers: gameData.publishers,
+      genres: gameData.genres?.map((genre) => genre.description) || [],
       relatedSites: [
-        ...(gameDataCN.website ? [{ label: '官方网站', url: gameDataCN.website }] : []),
-        ...(gameDataCN.metacritic?.url
-          ? [{ label: 'Metacritic', url: gameDataCN.metacritic.url }]
+        ...(gameData.website
+          ? [{ label: await getTranslation('officialWebsite'), url: gameData.website }]
           : []),
-        { label: 'Steam', url: `${STEAM_URLS.PRIMARY.STORE}/app/${appId}` }
+        ...(gameData.metacritic?.url
+          ? [{ label: 'Metacritic', url: gameData.metacritic.url }]
+          : []),
+        {
+          label: await getTranslation('steamStore'),
+          url: `${STEAM_URLS.PRIMARY.STORE}/app/${appId}`
+        }
       ],
-      tags: tags.length > 0 ? tags : gameDataCN.genres?.map((genre) => genre.description) || []
+      tags: tags.length > 0 ? tags : gameData.genres?.map((genre) => genre.description) || []
     }
   } catch (error) {
     console.error(`Error fetching metadata for game ${appId}:`, error)

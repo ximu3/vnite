@@ -1,19 +1,8 @@
 import axios from 'axios'
 import * as cheerio from 'cheerio'
 import { GameList, GameMetadata } from '@appTypes/utils'
-
-// 创建一个带有适当配置的axios实例
-// 创建一个带有必要认证 cookie 的 axios 实例
-const client = axios.create({
-  headers: {
-    'User-Agent':
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
-    Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-    'Accept-Language': 'zh-CN,zh;q=0.9,ja;q=0.8,en;q=0.7',
-    // 以下 Cookie 是关键 - 参考 dlsite-async 库的实现
-    Cookie: 'adultchecked=1; locale=ja_JP'
-  }
-})
+import { getLanguage } from '~/utils'
+import { getTerm, extractReleaseDateWithLibrary } from './i18n'
 
 /**
  * 在DLsite上搜索游戏
@@ -22,10 +11,21 @@ const client = axios.create({
  */
 export async function searchDlsiteGames(gameName: string): Promise<GameList> {
   // 使用正确的域名和简化的URL参数
-  const encodedQuery = encodeURIComponent(gameName)
+  const encodedQuery = encodeURIComponent(gameName.trim()).replace(/%20/g, '+')
   const url = `https://www.dlsite.com/soft/fsr/=/language/jp/keyword/${encodedQuery}/`
 
   // 添加更多请求头以模拟真实浏览器
+  const language = await getLanguage()
+  const client = axios.create({
+    headers: {
+      'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
+      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+      'Accept-Language': 'zh-CN,zh;q=0.9,ja;q=0.8,en;q=0.7',
+      // 以下 Cookie 是关键 - 参考 dlsite-async 库的实现
+      Cookie: `adultchecked=1; locale=${language}`
+    }
+  })
   const response = await client.get(url)
 
   const $ = cheerio.load(response.data)
@@ -76,11 +76,27 @@ export async function searchDlsiteGames(gameName: string): Promise<GameList> {
 export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata> {
   // 尝试访问作品页面
   const url = `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html`
+  const language = await getLanguage()
+  const client = axios.create({
+    headers: {
+      'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
+      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+      'Accept-Language': 'zh-CN,zh;q=0.9,ja;q=0.8,en;q=0.7',
+      // 以下 Cookie 是关键 - 参考 dlsite-async 库的实现
+      Cookie: `adultchecked=1; locale=${language}`
+    }
+  })
   const response = await client.get(url)
   const $ = cheerio.load(response.data)
 
   // 提取基础信息
   const name = $('#work_name').text().trim()
+
+  const workTypeTerm = getTerm('workType', language)
+  const releaseDateTerm = getTerm('releaseDate', language)
+  const seriesTerm = getTerm('series', language)
+
   // 提取完整描述
   let description = ''
 
@@ -136,11 +152,10 @@ export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata>
 
   // 提取发行日期
   let releaseDate = ''
-  const saleDateText = $('#work_outline tr:contains("販売日")').text()
-  const dateMatch = saleDateText.match(/(\d{4})年(\d{2})月(\d{2})日/)
-  if (dateMatch) {
-    const [_, year, month, day] = dateMatch
-    releaseDate = `${year}-${month}-${day}`
+  const saleDateRow = $(`#work_outline tr:contains("${releaseDateTerm}")`)
+
+  if (saleDateRow.length > 0) {
+    releaseDate = extractReleaseDateWithLibrary(saleDateRow.text(), language)
   }
 
   // 提取开发者（制作方）
@@ -160,8 +175,8 @@ export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata>
     tags.push(tag)
   })
 
-  // 处理作品类型
-  $('#work_outline tr:contains("作品形式")')
+  // 处理作品类型 - 使用国际化的术语
+  $(`#work_outline tr:contains("${workTypeTerm}")`)
     .find('a')
     .each((_, elem) => {
       const genre = $(elem).text().trim()
@@ -188,13 +203,13 @@ export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata>
   }
 
   // 添加系列链接（如果存在）
-  const seriesElement = $('#work_outline tr:contains("シリーズ")').find('a')
+  const seriesElement = $(`#work_outline tr:contains("${seriesTerm}")`).find('a')
   if (seriesElement.length > 0) {
     const seriesName = seriesElement.text().trim()
     const seriesUrl = seriesElement.attr('href')
     if (seriesUrl) {
       relatedSites.push({
-        label: `${seriesName} (系列)`,
+        label: `${seriesName} (${getTerm('series', language)})`,
         url: seriesUrl
       })
     }
@@ -223,6 +238,17 @@ export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata>
  */
 export async function getGameScreenshots(dlsiteId: string): Promise<string[]> {
   const url = `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html`
+  const language = await getLanguage()
+  const client = axios.create({
+    headers: {
+      'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
+      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+      'Accept-Language': 'zh-CN,zh;q=0.9,ja;q=0.8,en;q=0.7',
+      // 以下 Cookie 是关键 - 参考 dlsite-async 库的实现
+      Cookie: `adultchecked=1; locale=${language}`
+    }
+  })
   const response = await client.get(url)
   const $ = cheerio.load(response.data)
 
@@ -263,6 +289,17 @@ export async function getGameCover(dlsiteId: string): Promise<string> {
 
   // 如果没有找到样本图片，尝试从工作页面获取主图
   const url = `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html`
+  const language = await getLanguage()
+  const client = axios.create({
+    headers: {
+      'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
+      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+      'Accept-Language': 'zh-CN,zh;q=0.9,ja;q=0.8,en;q=0.7',
+      // 以下 Cookie 是关键 - 参考 dlsite-async 库的实现
+      Cookie: `adultchecked=1; locale=${language}`
+    }
+  })
   const response = await client.get(url)
   const $ = cheerio.load(response.data)
 
@@ -286,6 +323,17 @@ export async function getGameCover(dlsiteId: string): Promise<string> {
 export async function checkGameExists(dlsiteId: string): Promise<boolean> {
   try {
     const url = `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html`
+    const language = await getLanguage()
+    const client = axios.create({
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'zh-CN,zh;q=0.9,ja;q=0.8,en;q=0.7',
+        // 以下 Cookie 是关键 - 参考 dlsite-async 库的实现
+        Cookie: `adultchecked=1; locale=${language}`
+      }
+    })
     const response = await client.get(url)
 
     // 如果页面加载成功且不包含错误消息，则认为作品存在

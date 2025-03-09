@@ -102,10 +102,11 @@ export function Database(): JSX.Element {
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className={cn('')}>
-        <div className={cn('flex flex-col gap-5 w-full')}>
-          <div className={cn('flex flex-row gap-5 items-center justify-between')}>
-            <div>{t('database.portableMode')}</div>
+      <CardContent>
+        <div className={cn('space-y-5 w-full text-sm')}>
+          {/* 便携模式设置 - 网格布局 */}
+          <div className={cn('grid grid-cols-[1fr_auto] gap-5 items-center')}>
+            <div className={cn('whitespace-nowrap select-none')}>{t('database.portableMode')}</div>
             <AlertDialog>
               <AlertDialogTrigger>
                 <Switch checked={isPortable} />
@@ -128,53 +129,62 @@ export function Database(): JSX.Element {
               </AlertDialogContent>
             </AlertDialog>
           </div>
+
           <Separator />
-          <div className={cn('flex flex-row gap-5 items-center')}>
-            <Button
-              variant={'outline'}
-              onClick={async () => {
-                await ipcInvoke('open-database-path-in-explorer')
-              }}
-            >
-              {t('database.openFolder')}
-            </Button>
-          </div>
-          <div className={cn('flex flex-row gap-5 items-center')}>
-            <Button onClick={backup}>{t('database.backup')}</Button>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button>{t('database.import')}</Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>{t('database.confirmImport')}</AlertDialogTitle>
-                  <AlertDialogDescription>{t('database.importWarning')}</AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>{t('ui:common.cancel')}</AlertDialogCancel>
-                  <AlertDialogAction onClick={restore}>{t('ui:common.confirm')}</AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-          <div className={cn('flex flex-row gap-5 items-center')}>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant={'outline'}>{t('database.importV1')}</Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>{t('database.confirmImportV1')}</AlertDialogTitle>
-                  <AlertDialogDescription>{t('database.importV1Warning')}</AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>{t('ui:common.cancel')}</AlertDialogCancel>
-                  <AlertDialogAction onClick={importV1Data}>
-                    {t('ui:common.confirm')}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+
+          {/* 操作按钮 - 网格布局 */}
+          <div className={cn('grid grid-cols-1 gap-5')}>
+            <div className={cn('flex flex-row gap-5 items-center')}>
+              <Button
+                variant={'outline'}
+                onClick={async () => {
+                  await ipcInvoke('open-database-path-in-explorer')
+                }}
+              >
+                {t('database.openFolder')}
+              </Button>
+            </div>
+
+            <div className={cn('flex flex-row gap-5 items-center')}>
+              <Button onClick={backup}>{t('database.backup')}</Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button>{t('database.import')}</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>{t('database.confirmImport')}</AlertDialogTitle>
+                    <AlertDialogDescription>{t('database.importWarning')}</AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>{t('ui:common.cancel')}</AlertDialogCancel>
+                    <AlertDialogAction onClick={restore}>
+                      {t('ui:common.confirm')}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+
+            <div className={cn('flex flex-row gap-5 items-center')}>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant={'outline'}>{t('database.importV1')}</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>{t('database.confirmImportV1')}</AlertDialogTitle>
+                    <AlertDialogDescription>{t('database.importV1Warning')}</AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>{t('ui:common.cancel')}</AlertDialogCancel>
+                    <AlertDialogAction onClick={importV1Data}>
+                      {t('ui:common.confirm')}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           </div>
         </div>
       </CardContent>

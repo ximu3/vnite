@@ -54,53 +54,60 @@ export function Launcher({ gameId }: { gameId: string }): JSX.Element {
               <PresetSelecter gameId={gameId} className={cn('top-0 right-0 absolute -mt-2')} />
             </CardTitle>
           </CardHeader>
-          <CardContent className={cn('')}>
-            <div className={cn('flex flex-col gap-5 w-full')}>
-              <div className={cn('flex flex-row gap-5 items-center')}>
-                <div>{t('detail.properties.launcher.mode.title')}</div>
-                <div className={cn('w-[120px]')}>
-                  <Select value={mode} onValueChange={setMode}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>{t('detail.properties.launcher.mode.title')}</SelectLabel>
-                        <SelectItem value="file">
-                          {t('detail.properties.launcher.mode.file')}
-                        </SelectItem>
-                        <SelectItem value="url">
-                          {t('detail.properties.launcher.mode.url')}
-                        </SelectItem>
-                        <SelectItem value="script">
-                          {t('detail.properties.launcher.mode.script')}
-                        </SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
+          <CardContent>
+            <div className={cn('grid grid-cols-[120px_1fr] gap-x-5 gap-y-5 text-sm items-center')}>
+              {/* 启动模式选择 */}
+              <div className={cn('whitespace-nowrap select-none')}>
+                {t('detail.properties.launcher.mode.title')}
+              </div>
+              <div>
+                <Select value={mode} onValueChange={setMode}>
+                  <SelectTrigger className={cn('w-[120px]')}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>{t('detail.properties.launcher.mode.title')}</SelectLabel>
+                      <SelectItem value="file">
+                        {t('detail.properties.launcher.mode.file')}
+                      </SelectItem>
+                      <SelectItem value="url">
+                        {t('detail.properties.launcher.mode.url')}
+                      </SelectItem>
+                      <SelectItem value="script">
+                        {t('detail.properties.launcher.mode.script')}
+                      </SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* 启动器组件容器 - 占据两列 */}
+              <div className={cn('col-span-2')}>
+                <div className={cn('w-full')}>
+                  <div className={cn(mode === 'file' ? 'block' : 'hidden')}>
+                    <FileLauncher gameId={gameId} />
+                  </div>
+                  <div className={cn(mode === 'url' ? 'block' : 'hidden')}>
+                    <UrlLauncher gameId={gameId} />
+                  </div>
+                  <div className={cn(mode === 'script' ? 'block' : 'hidden')}>
+                    <ScriptLauncher gameId={gameId} />
+                  </div>
                 </div>
               </div>
-              <div className={cn('w-5/6 flex flex-col gap-5')}>
-                <div className={cn(mode === 'file' ? 'block' : 'hidden')}>
-                  <FileLauncher gameId={gameId} />
-                </div>
-                <div className={cn(mode === 'url' ? 'block' : 'hidden')}>
-                  <UrlLauncher gameId={gameId} />
-                </div>
-                <div className={cn(mode === 'script' ? 'block' : 'hidden')}>
-                  <ScriptLauncher gameId={gameId} />
-                </div>
-                <Separator className={cn('')} />
-                <div className={cn('flex flex-row gap-5 items-center')}>
-                  <div className={cn('text-center')}>
-                    {t('detail.properties.launcher.magpie.scaling')}
-                  </div>
-                  <Switch
-                    className={cn('-mb-[2px]')}
-                    checked={useMagpie}
-                    onClick={switchUseMagpie}
-                  />
-                </div>
+
+              {/* 分隔线 - 占据两列 */}
+              <div className={cn('col-span-2')}>
+                <Separator />
+              </div>
+
+              {/* Magpie缩放选项 */}
+              <div className={cn('whitespace-nowrap select-none')}>
+                {t('detail.properties.launcher.magpie.scaling')}
+              </div>
+              <div>
+                <Switch className={cn('-mb-[2px]')} checked={useMagpie} onClick={switchUseMagpie} />
               </div>
             </div>
           </CardContent>

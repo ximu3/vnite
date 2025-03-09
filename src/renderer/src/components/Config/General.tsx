@@ -44,10 +44,13 @@ export function General(): JSX.Element {
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className={cn('')}>
-        <div className={cn('flex flex-col gap-5 justify-center')}>
-          <div className={cn('flex flex-row justify-between items-center')}>
-            <div>{t('general.openAtLogin')}</div>
+      <CardContent>
+        <div className={cn('grid grid-cols-[120px_1fr] gap-x-3 gap-y-5 text-sm items-center')}>
+          {/* 开机自启动 */}
+          <div className={cn('whitespace-nowrap select-none self-center')}>
+            {t('general.openAtLogin')}
+          </div>
+          <div className={cn('flex justify-end')}>
             <Switch
               checked={openAtLogin}
               onCheckedChange={async (checked) => {
@@ -63,9 +66,12 @@ export function General(): JSX.Element {
               }}
             />
           </div>
+
           {/* 语言 */}
-          <div className={cn('flex flex-row justify-between items-center')}>
-            <div>{t('general.language')}</div>
+          <div className={cn('whitespace-nowrap select-none self-center')}>
+            {t('general.language')}
+          </div>
+          <div className={cn('flex justify-end')}>
             <Select value={language} onValueChange={handleLanguageChange}>
               <SelectTrigger className={cn('w-[200px]')}>
                 <SelectValue />
@@ -82,8 +88,12 @@ export function General(): JSX.Element {
               </SelectContent>
             </Select>
           </div>
-          <div className={cn('flex flex-row justify-between items-center')}>
-            <div>{t('general.theme')}</div>
+
+          {/* 主题 */}
+          <div className={cn('whitespace-nowrap select-none self-center')}>
+            {t('general.theme')}
+          </div>
+          <div className={cn('flex justify-end')}>
             <Select
               value={themeSetting}
               onValueChange={(value: 'dark' | 'light' | 'follow-system') => setThemeSetting(value)}
@@ -101,8 +111,12 @@ export function General(): JSX.Element {
               </SelectContent>
             </Select>
           </div>
-          <div className={cn('flex flex-row justify-between items-center')}>
-            <div className={cn('grow')}>{t('general.closeMainPanel')}</div>
+
+          {/* 关闭行为 */}
+          <div className={cn('whitespace-nowrap select-none self-center')}>
+            {t('general.closeMainPanel')}
+          </div>
+          <div className={cn('flex justify-end')}>
             <Select
               value={quitToTray.toString()}
               onValueChange={async (value) => {
