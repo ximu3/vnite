@@ -25,9 +25,8 @@ export function GamePoster({
     <div
       className={cn(
         'group relative overflow-hidden cursor-pointer rounded-lg',
-        'transition-border duration-300 ease-in-out',
-        'border-2 border-transparent',
-        'hover:border-primary hover:border-2',
+        'transition-all duration-300 ease-in-out',
+        'hover:ring-primary hover:ring-2',
         className
       )}
       onClick={() => navigate(`/library/games/${gameId}/all`)}
@@ -50,8 +49,8 @@ export function GamePoster({
             type="cover"
             alt={gameId}
             className={cn(
-              'w-full h-full cursor-pointer object-cover',
-              '3xl:w-full 3xl:h-full',
+              'w-[120px] h-[180px] cursor-pointer object-cover',
+              '3xl:w-[150px] 3xl:h-[225px]',
               className
             )}
             fallback={
