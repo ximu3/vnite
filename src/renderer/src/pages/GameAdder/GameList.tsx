@@ -76,7 +76,7 @@ export function GameList(): JSX.Element {
           </CardContent>
         </Card>
         <Card>
-          <Search className={cn('w-full p-3 text-sm', '3xl:w-full')} />
+          <Search className={cn('w-full p-5 text-sm', '3xl:w-full')} />
         </Card>
       </div>
     </div>

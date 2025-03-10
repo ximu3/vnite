@@ -175,9 +175,9 @@
       "card": {
         "title": "プレイデータ",
         "noData": "このゲームをまだプレイしていません。",
-        "playStats": "{{days}}日間で{{totalTime, gameTime}}プレイし、1日あたり平均{{averageTime, gameTime}}です。",
-        "immersion": "{{date, niceDate}}に{{time, gameTime}}没頭していました。",
-        "history": "{{addDate, niceDate}}にこのゲームを追加し、{{lastPlayDate, niceDate}}に最後にプレイしました。この旅があなたに面白い思い出を残すことを願っています。"
+        "playStats": "{{days}} 日間で {{totalTime, gameTime}} プレイし、1日あたり平均 {{averageTime, gameTime}} です。",
+        "immersion": "{{date, niceDate}} に {{time, gameTime}} 没頭していました。",
+        "history": "{{addDate, niceDate}} にこのゲームを追加し、{{lastPlayDate, niceDate}} に最後にプレイしました。この旅があなたに面白い思い出を残すことを願っています。"
       }
     },
     "chart": {

@@ -12,7 +12,7 @@ import { getTerm, extractReleaseDateWithLibrary } from './i18n'
 export async function searchDlsiteGames(gameName: string): Promise<GameList> {
   // 使用正确的域名和简化的URL参数
   const encodedQuery = encodeURIComponent(gameName.trim()).replace(/%20/g, '+')
-  const url = `https://www.dlsite.com/soft/fsr/=/language/jp/keyword/${encodedQuery}/`
+  const url = `https://www.dlsite.com/maniax/fsr/=/language/jp/keyword/${encodedQuery}/`
 
   // 添加更多请求头以模拟真实浏览器
   const language = await getLanguage()
