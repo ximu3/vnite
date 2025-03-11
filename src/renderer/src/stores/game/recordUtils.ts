@@ -219,9 +219,9 @@ export function getMonthlyPlayData(date = new Date()): {
     // 获取玩得最多的游戏
     const mostPlayedGames = Object.entries(gamePlayTime)
       .map(([gameId, playTime]) => ({ gameId, playTime }))
-      .filter((item) => item.playTime > 0)
+      // .filter((item) => item.playTime > 0)
       .sort((a, b) => b.playTime - a.playTime)
-      .slice(0, 5)
+      .slice(0, 3)
 
     // 将周游玩时间转化为数组
     const weeklyPlayTimeArray = Object.entries(weeklyPlayTime)
@@ -339,7 +339,7 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
     // 获取玩得最多的游戏
     const mostPlayedGames = Object.entries(gamePlayTime)
       .map(([gameId, playTime]) => ({ gameId, playTime }))
-      .filter((item) => item.playTime > 0)
+      // .filter((item) => item.playTime > 0)
       .sort((a, b) => b.playTime - a.playTime)
       .slice(0, 5)
 

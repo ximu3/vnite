@@ -3,8 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { Button } from '@ui/button'
 import { Calendar } from '@ui/calendar'
 import { ChevronLeft, ChevronRight, Clock, CalendarIcon, Trophy } from 'lucide-react'
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
+import { CartesianGrid, XAxis, YAxis, Area, AreaChart } from 'recharts'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
+import { Separator } from '@ui/separator'
 import type { ValueType } from 'recharts/types/component/DefaultTooltipContent'
 
 import { StatCard } from './StatCard'
@@ -50,12 +51,69 @@ export function MonthlyReport(): JSX.Element {
   const currentMonthName = monthNames[selectedDate.getMonth()]
 
   // 为图表准备数据
-  const weeklyChartData = monthData.weeklyPlayTime.map((item) => ({
-    week: `第${item.week}周`,
-    playTime: item.playTime / 3600000, // 转换为小时
-    weekDisplay: `第${item.week}周`, // 添加显示字段用于tooltip
-    weekNumber: item.week // 保存原始周数以备使用
-  }))
+  const weeklyChartData = monthData.weeklyPlayTime
+    .map((item) => ({
+      week: `第${item.week}周`,
+      playTime: item.playTime / 3600000, // 转换为小时
+      weekDisplay: `第${item.week}周`, // 添加显示字段用于tooltip
+      weekNumber: item.week // 保存原始周数以备使用
+    }))
+    .sort((a, b) => a.weekNumber - b.weekNumber) // 确保按周数排序
+
+  // 找出游戏时长最长的一周
+  const mostPlayedWeek =
+    weeklyChartData.length > 0
+      ? weeklyChartData.reduce(
+          (max, current) => (current.playTime > max.playTime ? current : max),
+          weeklyChartData[0]
+        )
+      : null
+
+  // 计算最长游戏周的日期范围
+  function getWeekDateRange(
+    year: number,
+    month: number,
+    weekNumber: number
+  ): { start: Date; end: Date } {
+    // 获取该月第一天
+    const firstDayOfMonth = new Date(year, month, 1)
+
+    // 计算月第一周的序号 (0-based)
+    const firstWeekNumber = Math.floor(
+      (firstDayOfMonth.getDate() - 1 + firstDayOfMonth.getDay()) / 7
+    )
+
+    // 计算目标周与第一周的差值
+    const weekDiff = weekNumber - firstWeekNumber
+
+    // 计算目标周的第一天
+    const startDay = new Date(year, month, 1 + weekDiff * 7 - firstDayOfMonth.getDay())
+
+    // 计算目标周的最后一天
+    const endDay = new Date(startDay)
+    endDay.setDate(startDay.getDate() + 6)
+
+    // 确保日期不超出当月范围
+    const lastDayOfMonth = new Date(year, month + 1, 0).getDate()
+    if (endDay.getMonth() !== month) {
+      endDay.setDate(lastDayOfMonth)
+    }
+
+    return { start: startDay, end: endDay }
+  }
+
+  // 获取最长游戏周的日期范围
+  let mostPlayedWeekDateRange: {
+    start: Date
+    end: Date
+  } | null = null
+  if (mostPlayedWeek) {
+    mostPlayedWeekDateRange = getWeekDateRange(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
+      mostPlayedWeek.weekNumber
+    )
+  }
 
   // Chart配置
   const chartConfig = {
@@ -67,8 +125,12 @@ export function MonthlyReport(): JSX.Element {
 
   // 自定义值格式化函数
   const valueFormatter = (value: ValueType): string => {
+    // value是每周游戏时间，单位为小时或分钟
     if (typeof value === 'number') {
-      return `${value.toFixed(1)} 小时`
+      if (value >= 1) {
+        return `${value.toFixed(1)} 小时`
+      }
+      return `${Math.round(value * 60)} 分钟`
     }
     return String(value)
   }
@@ -134,7 +196,7 @@ export function MonthlyReport(): JSX.Element {
           </CardHeader>
           <CardContent className="pt-0">
             <ChartContainer config={chartConfig} className="h-[320px] w-full">
-              <BarChart data={weeklyChartData}>
+              <AreaChart data={weeklyChartData}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
                 <XAxis dataKey="week" tickLine={false} axisLine={false} tickMargin={10} />
                 <YAxis tickLine={false} axisLine={false} tickMargin={10} />
@@ -148,8 +210,15 @@ export function MonthlyReport(): JSX.Element {
                     />
                   }
                 />
-                <Bar dataKey="playTime" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-              </BarChart>
+                <Area
+                  type="monotone"
+                  dataKey="playTime"
+                  stroke="hsl(var(--primary))"
+                  strokeWidth={2}
+                  fillOpacity={0.3}
+                  fill="hsl(var(--primary))"
+                />
+              </AreaChart>
             </ChartContainer>
           </CardContent>
         </Card>
@@ -181,25 +250,71 @@ export function MonthlyReport(): JSX.Element {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>本月热门游戏</CardTitle>
-        </CardHeader>
-        <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {monthData.mostPlayedGames.length > 0 ? (
-            monthData.mostPlayedGames.map((game, index) => (
-              <GameRankingItem
-                key={game.gameId}
-                gameId={game.gameId}
-                rank={index + 1}
-                extraInfo={formatPlayTimeWithUnit(game.playTime)}
-              />
-            ))
-          ) : (
-            <p className="col-span-2">本月没有游戏记录</p>
-          )}
-        </CardContent>
-      </Card>
+      {/* 本月数据亮点卡片 */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>本月数据亮点</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {/* 游戏时间最长的一周 */}
+              {mostPlayedWeek && mostPlayedWeekDateRange ? (
+                <div>
+                  <p className="text-sm text-muted-foreground">游戏时间最长的一周</p>
+                  <p className="text-lg font-bold">
+                    {mostPlayedWeek.week}（{mostPlayedWeekDateRange.start.getDate()}日-
+                    {mostPlayedWeekDateRange.end.getDate()}日）
+                  </p>
+                  <p className="text-sm">游戏时长：{valueFormatter(mostPlayedWeek.playTime)}</p>
+                </div>
+              ) : (
+                <p>本月没有游戏记录</p>
+              )}
+
+              <Separator />
+
+              {/* 游戏频率 */}
+              <div>
+                <p className="text-sm text-muted-foreground">游戏频率</p>
+                <p className="text-lg font-bold">
+                  {Object.values(monthData.dailyPlayTime).filter((time) => time > 0).length} /{' '}
+                  {Object.keys(monthData.dailyPlayTime).length} 天
+                </p>
+                <p className="text-sm">
+                  占本月{' '}
+                  {Math.round(
+                    (Object.values(monthData.dailyPlayTime).filter((time) => time > 0).length /
+                      Object.keys(monthData.dailyPlayTime).length) *
+                      100
+                  )}
+                  %
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>本月热门游戏</CardTitle>
+          </CardHeader>
+          <CardContent className="grid grid-cols-1 gap-2 -mt-1">
+            {monthData.mostPlayedGames.length > 0 ? (
+              monthData.mostPlayedGames.map((game, index) => (
+                <GameRankingItem
+                  key={game.gameId}
+                  gameId={game.gameId}
+                  rank={index + 1}
+                  extraInfo={formatPlayTimeWithUnit(game.playTime)}
+                />
+              ))
+            ) : (
+              <p className="col-span-2">本月没有游戏记录</p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

@@ -48,11 +48,7 @@ export function GamePoster({
             gameId={gameId}
             type="cover"
             alt={gameId}
-            className={cn(
-              'w-[120px] h-[180px] cursor-pointer object-cover',
-              '3xl:w-[150px] 3xl:h-[225px]',
-              className
-            )}
+            className={cn('w-full h-full cursor-pointer object-cover', className)}
             fallback={
               <div
                 className={cn(

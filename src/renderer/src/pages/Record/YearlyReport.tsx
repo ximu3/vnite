@@ -114,7 +114,7 @@ export function YearlyReport(): JSX.Element {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="pb-2 space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">年度游戏报告</h2>
         <div className="flex items-center space-x-2">
@@ -176,7 +176,6 @@ export function YearlyReport(): JSX.Element {
                   content={
                     <ChartTooltipContent
                       formatter={formatHours}
-                      labelKey="month"
                       hideIndicator={false}
                       color="hsl(var(--primary))"
                     />
@@ -202,7 +201,6 @@ export function YearlyReport(): JSX.Element {
                   content={
                     <ChartTooltipContent
                       formatter={formatDays}
-                      labelKey="month"
                       hideIndicator={false}
                       color="hsl(var(--primary))"
                     />
@@ -213,7 +211,7 @@ export function YearlyReport(): JSX.Element {
                   dataKey="playDays"
                   stroke="hsl(var(--primary))"
                   strokeWidth={2}
-                  dot={{ r: 4 }}
+                  dot={false}
                 />
               </LineChart>
             </ChartContainer>
@@ -221,61 +219,64 @@ export function YearlyReport(): JSX.Element {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>年度游戏时间分布</CardTitle>
-          <CardDescription>按游戏类型统计</CardDescription>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <ChartContainer config={pieChartConfig} className="h-[300px] w-full">
-            <PieChart>
-              <Pie
-                data={pieChartData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                outerRadius={100}
-                dataKey="playTime"
-                nameKey="type"
-                label={({ type, percentValue }) => `${type}: ${(percentValue * 100).toFixed(0)}%`}
-              >
-                {pieChartData.map((_entry, index) => (
-                  <Cell key={`cell-${index}`} fill={`hsl(var(--chart-${(index % 5) + 1}))`} />
-                ))}
-              </Pie>
-              <ChartTooltip
-                content={
-                  <ChartTooltipContent
-                    formatter={formatPieValue}
-                    nameKey="type"
-                    hideIndicator={false}
-                  />
-                }
-              />
-            </PieChart>
-          </ChartContainer>
-        </CardContent>
-      </Card>
+      {/* 将年度游戏时间分布和年度热门游戏放在同一行 */}
+      <div className="grid grid-cols-1 md:grid-cols-[auto,1fr] gap-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>年度游戏时间分布</CardTitle>
+            <CardDescription>按游戏类型统计</CardDescription>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <ChartContainer config={pieChartConfig} className="h-[300px] w-full">
+              <PieChart>
+                <Pie
+                  data={pieChartData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  outerRadius={100}
+                  dataKey="playTime"
+                  nameKey="type"
+                  label={({ type, percentValue }) => `${type}: ${(percentValue * 100).toFixed(0)}%`}
+                >
+                  {pieChartData.map((_entry, index) => (
+                    <Cell key={`cell-${index}`} fill={`hsl(var(--chart-${(index % 5) + 1}))`} />
+                  ))}
+                </Pie>
+                <ChartTooltip
+                  content={
+                    <ChartTooltipContent
+                      formatter={formatPieValue}
+                      nameKey="type"
+                      hideIndicator={false}
+                    />
+                  }
+                />
+              </PieChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>年度热门游戏</CardTitle>
-        </CardHeader>
-        <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {yearData.mostPlayedGames.length > 0 ? (
-            yearData.mostPlayedGames.map((game, index) => (
-              <GameRankingItem
-                key={game.gameId}
-                gameId={game.gameId}
-                rank={index + 1}
-                extraInfo={formatPlayTimeWithUnit(game.playTime)}
-              />
-            ))
-          ) : (
-            <p className="col-span-3">本年度没有游戏记录</p>
-          )}
-        </CardContent>
-      </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>年度热门游戏</CardTitle>
+          </CardHeader>
+          <CardContent className="grid grid-cols-1 gap-4">
+            {yearData.mostPlayedGames.length > 0 ? (
+              yearData.mostPlayedGames.map((game, index) => (
+                <GameRankingItem
+                  key={game.gameId}
+                  gameId={game.gameId}
+                  rank={index + 1}
+                  extraInfo={formatPlayTimeWithUnit(game.playTime)}
+                />
+              ))
+            ) : (
+              <p className="col-span-full">本年度没有游戏记录</p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

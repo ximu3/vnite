@@ -36,12 +36,14 @@ function extractMetaInfo(data: gameDoc): {
   genres?: string[]
   addDate?: string
   lastRunDate?: string
+  score?: number
 } {
   return {
     name: data.metadata?.name || '',
     genres: data.metadata?.genres,
     addDate: data.record?.addDate,
-    lastRunDate: data.record?.lastRunDate
+    lastRunDate: data.record?.lastRunDate,
+    score: data.record?.score
   }
 }
 
@@ -87,7 +89,8 @@ export function getGameStore(gameId: string): GameStore {
           'metadata.name',
           'metadata.genre',
           'record.addDate',
-          'record.lastRunDate'
+          'record.lastRunDate',
+          'record.score'
         ]
         if (metaFields.includes(path as string)) {
           useGameRegistry.getState().updateGameMeta(gameId, extractMetaInfo(currentData))

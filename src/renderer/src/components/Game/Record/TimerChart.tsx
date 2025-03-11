@@ -14,10 +14,12 @@ interface ChartData {
 
 export const TimerChart = ({
   data,
-  className
+  className,
+  filter0 = true
 }: {
   data: DailyPlayTime
   className?: string
+  filter0?: boolean
 }): JSX.Element => {
   const formatPlayTime = (value: ValueType): any => {
     if (typeof value === 'number') {
@@ -35,12 +37,21 @@ export const TimerChart = ({
   }
 
   // Converting data into the format Recharts needs
-  const chartData: ChartData[] = Object.entries(data)
-    .map(([date, playTime]) => ({
+  let chartData: ChartData[]
+
+  if (filter0) {
+    chartData = Object.entries(data)
+      .map(([date, playTime]) => ({
+        date,
+        playTime: Math.round(playTime / 1000 / 60) // 将毫秒转换为分钟
+      }))
+      .filter((item) => item.playTime > 0) // 过滤掉游戏时长为0的天数
+  } else {
+    chartData = Object.entries(data).map(([date, playTime]) => ({
       date,
       playTime: Math.round(playTime / 1000 / 60) // 将毫秒转换为分钟
     }))
-    .filter((item) => item.playTime > 0) // 过滤掉游戏时长为0的天数
+  }
 
   // Chart Configuration
   const chartConfig = {

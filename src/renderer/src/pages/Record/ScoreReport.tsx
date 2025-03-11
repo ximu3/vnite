@@ -25,7 +25,14 @@ function GameScoreCard({ gameId }: { gameId: string }): JSX.Element {
       <HoverCardTrigger asChild>
         <div className={cn('w-[120px] cursor-pointer object-cover', '3xl:w-[150px]')}>
           <div className="relative group">
-            <GamePoster gameId={gameId} className="object-cover rounded-lg shadow-md" />
+            <GamePoster
+              gameId={gameId}
+              className={cn(
+                'object-cover rounded-lg shadow-md',
+                'w-[120px] h-[180px] cursor-pointer object-cover',
+                '3xl:w-[150px] 3xl:h-[225px]'
+              )}
+            />
             <div className="absolute px-2 py-1 text-xs font-medium rounded-full bottom-2 right-2 bg-primary/90 text-primary-foreground backdrop-blur-sm">
               {score.toFixed(1)}
             </div>

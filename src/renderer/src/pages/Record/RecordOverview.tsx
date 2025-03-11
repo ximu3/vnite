@@ -1,11 +1,13 @@
+import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@ui/card'
 import { Button } from '@ui/button'
 import { ActivitySquare, Calendar as CalendarIcon, Clock, Trophy } from 'lucide-react'
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Area, AreaChart } from 'recharts'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
 import type { ValueType } from 'recharts/types/component/DefaultTooltipContent'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@ui/dialog'
+import { ScrollArea } from '@ui/scroll-area'
 
-import { TimerChart } from '~/components/Game/Record/TimerChart'
 import { formatTimeToChinese } from '~/utils'
 import {
   useGameRegistry,
@@ -22,12 +24,27 @@ import { GameRankingItem } from './GameRankingItem'
 import { getPlayTimeDistribution } from '~/stores/game/recordUtils'
 
 export function RecordOverview(): JSX.Element {
+  const [showMoreTimeGames, setShowMoreTimeGames] = useState(false)
+  const [showMoreScoreGames, setShowMoreScoreGames] = useState(false)
+
   const gameMetaIndex = useGameRegistry((state) => state.gameMetaIndex)
   const totalGames = Object.keys(gameMetaIndex).length
   const totalTime = getTotalplayTime()
   const totalDays = getTotalPlayedDays()
   const totalTimes = getTotalPlayedTimes()
   const playedDaysYearly = getPlayedDaysYearly()
+
+  // 获取所有游戏排序数据，不限制数量
+  const allTimeGames = sortGames('record.playTime', 'desc').filter(
+    (gameId) => getGameplayTime(gameId) > 0
+  )
+  const allScoreGames = sortGames('record.score', 'desc').filter(
+    (gameId) => gameMetaIndex[gameId].score !== -1
+  )
+
+  // 卡片展示仅显示前5名
+  const topTimeGames = allTimeGames.slice(0, 5)
+  const topScoreGames = allScoreGames.slice(0, 5)
 
   // 获取游戏时间分布数据并确保24小时数据都存在
   const rawTimeDistribution = getPlayTimeDistribution()
@@ -52,11 +69,25 @@ export function RecordOverview(): JSX.Element {
     value: 0
   })
 
-  // 按照游玩时间排序的游戏
-  const topGames = sortGames('record.playTime', 'desc').slice(0, 5)
+  // 近一年游戏时间转换为图表数据
+  const yearlyPlayData = Object.entries(playedDaysYearly)
+    .map(([date, playTime]) => ({
+      date,
+      playTime: Math.round(playTime / 1000 / 60), // 毫秒转为分钟
+      formattedDate: date.slice(5) // 只显示月-日部分
+    }))
+    .sort((a, b) => a.date.localeCompare(b.date)) // 按日期排序
 
-  // Chart配置
-  const chartConfig = {
+  // 近一年游戏时间的Chart配置
+  const yearlyChartConfig = {
+    playTime: {
+      label: '游戏时长',
+      color: 'hsl(var(--primary))'
+    }
+  }
+
+  // 分布图的Chart配置
+  const distributionChartConfig = {
     gamingHour: {
       label: '游戏时长',
       color: 'hsl(var(--primary))'
@@ -64,9 +95,26 @@ export function RecordOverview(): JSX.Element {
   }
 
   // 自定义值格式化函数
-  const valueFormatter = (value: ValueType): string => {
+  const hourFormatter = (value: ValueType): string => {
+    // value是每日游戏时间，单位为小时或分钟
     if (typeof value === 'number') {
-      return `${value.toFixed(2)} 小时`
+      if (value >= 1) {
+        return `${value.toFixed(1)} 小时`
+      }
+      return `${Math.round(value * 60)} 分钟`
+    }
+    return String(value)
+  }
+
+  // 分钟值格式化函数
+  const minuteFormatter = (value: ValueType): string => {
+    if (typeof value === 'number') {
+      if (value >= 60) {
+        const hours = Math.floor(value / 60)
+        const mins = value % 60
+        return mins > 0 ? `${hours}小时${mins}分钟` : `${hours}小时`
+      }
+      return `${value}分钟`
     }
     return String(value)
   }
@@ -96,14 +144,43 @@ export function RecordOverview(): JSX.Element {
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.5fr,1fr]">
         <Card className="col-span-1">
           <CardHeader>
             <CardTitle>近一年游戏时间</CardTitle>
             <CardDescription>{formatTimeToChinese(getTotalplayTimeYearly())}</CardDescription>
           </CardHeader>
-          <CardContent>
-            <TimerChart data={playedDaysYearly} className="w-full h-[250px] -ml-2 3xl:h-[320px]" />
+          <CardContent className="pt-0">
+            <ChartContainer config={yearlyChartConfig} className="h-[250px] 3xl:h-[320px] w-full">
+              <AreaChart data={yearlyPlayData}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <XAxis
+                  dataKey="formattedDate"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={10}
+                  tickCount={6}
+                />
+                <YAxis tickLine={false} axisLine={false} tickMargin={10} />
+                <ChartTooltip
+                  content={
+                    <ChartTooltipContent
+                      formatter={minuteFormatter}
+                      hideIndicator={false}
+                      color="hsl(var(--primary))"
+                    />
+                  }
+                />
+                <Area
+                  type="monotone"
+                  dataKey="playTime"
+                  stroke="hsl(var(--primary))"
+                  strokeWidth={2}
+                  fillOpacity={0.3}
+                  fill="hsl(var(--primary))"
+                />
+              </AreaChart>
+            </ChartContainer>
           </CardContent>
         </Card>
 
@@ -115,7 +192,10 @@ export function RecordOverview(): JSX.Element {
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-0">
-            <ChartContainer config={chartConfig} className="h-[250px] 3xl:h-[320px] w-full">
+            <ChartContainer
+              config={distributionChartConfig}
+              className="h-[250px] 3xl:h-[320px] w-full"
+            >
               <BarChart data={enhancedTimeDistribution}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
                 <XAxis
@@ -129,7 +209,7 @@ export function RecordOverview(): JSX.Element {
                 <ChartTooltip
                   content={
                     <ChartTooltipContent
-                      formatter={valueFormatter}
+                      formatter={hourFormatter}
                       hideIndicator={false}
                       nameKey="timeRange"
                       color="hsl(var(--primary))"
@@ -143,28 +223,97 @@ export function RecordOverview(): JSX.Element {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>游戏时间排行</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            {topGames.map((gameId, index) => (
-              <GameRankingItem
-                key={gameId}
-                gameId={gameId}
-                rank={index + 1}
-                extraInfo={formatTimeToChinese(getGameplayTime(gameId))}
-              />
-            ))}
-          </div>
-        </CardContent>
-        <CardFooter>
-          <Button variant="ghost" className="w-full">
-            查看更多
-          </Button>
-        </CardFooter>
-      </Card>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>游戏时间排行</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {topTimeGames.map((gameId, index) => (
+                <GameRankingItem
+                  key={gameId}
+                  gameId={gameId}
+                  rank={index + 1}
+                  extraInfo={formatTimeToChinese(getGameplayTime(gameId))}
+                />
+              ))}
+            </div>
+          </CardContent>
+          <CardFooter>
+            <Button variant="ghost" className="w-full" onClick={() => setShowMoreTimeGames(true)}>
+              查看更多
+            </Button>
+          </CardFooter>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>游戏评分排行</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {topScoreGames.map((gameId, index) => (
+                <GameRankingItem
+                  key={gameId}
+                  gameId={gameId}
+                  rank={index + 1}
+                  extraInfo={gameMetaIndex[gameId].score?.toString() || '暂无评分'}
+                />
+              ))}
+            </div>
+          </CardContent>
+          <CardFooter>
+            <Button variant="ghost" className="w-full" onClick={() => setShowMoreScoreGames(true)}>
+              查看更多
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+
+      {/* 游戏时间排行 - 对话框 */}
+      <Dialog open={showMoreTimeGames} onOpenChange={setShowMoreTimeGames}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>游戏时间排行</DialogTitle>
+            <DialogDescription>按照游玩时间排序的所有游戏</DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="h-[500px] pr-4">
+            <div className="space-y-2">
+              {allTimeGames.map((gameId, index) => (
+                <GameRankingItem
+                  key={gameId}
+                  gameId={gameId}
+                  rank={index + 1}
+                  extraInfo={formatTimeToChinese(getGameplayTime(gameId))}
+                />
+              ))}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
+      {/* 游戏评分排行 - 对话框 */}
+      <Dialog open={showMoreScoreGames} onOpenChange={setShowMoreScoreGames}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>游戏评分排行</DialogTitle>
+            <DialogDescription>按照评分排序的所有游戏</DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="h-[500px] pr-4">
+            <div className="space-y-2">
+              {allScoreGames.map((gameId, index) => (
+                <GameRankingItem
+                  key={gameId}
+                  gameId={gameId}
+                  rank={index + 1}
+                  extraInfo={gameMetaIndex[gameId].score?.toString() || '暂无评分'}
+                />
+              ))}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

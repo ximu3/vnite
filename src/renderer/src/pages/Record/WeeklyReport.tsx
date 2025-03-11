@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/c
 import { Button } from '@ui/button'
 import { Separator } from '@ui/separator'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
+import { CartesianGrid, XAxis, YAxis, Area, AreaChart } from 'recharts'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
 import type { ValueType } from 'recharts/types/component/DefaultTooltipContent'
 
@@ -58,8 +58,12 @@ export function WeeklyReport(): JSX.Element {
 
   // 自定义值格式化函数
   const valueFormatter = (value: ValueType): string => {
+    // value是每日游戏时间，单位为小时或分钟
     if (typeof value === 'number') {
-      return `${value.toFixed(1)} 小时`
+      if (value >= 1) {
+        return `${value.toFixed(1)} 小时`
+      }
+      return `${Math.round(value * 60)} 分钟`
     }
     return String(value)
   }
@@ -94,7 +98,7 @@ export function WeeklyReport(): JSX.Element {
           </CardHeader>
           <CardContent className="pt-0">
             <ChartContainer config={chartConfig} className="h-[250px] w-full">
-              <BarChart data={dailyChartData}>
+              <AreaChart data={dailyChartData}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
                 <XAxis dataKey="weekday" tickLine={false} axisLine={false} tickMargin={10} />
                 <YAxis tickLine={false} axisLine={false} tickMargin={10} />
@@ -113,8 +117,15 @@ export function WeeklyReport(): JSX.Element {
                     />
                   }
                 />
-                <Bar dataKey="playTime" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-              </BarChart>
+                <Area
+                  type="monotone"
+                  dataKey="playTime"
+                  stroke="hsl(var(--primary))"
+                  strokeWidth={2}
+                  fillOpacity={0.3}
+                  fill="hsl(var(--primary))"
+                />
+              </AreaChart>
             </ChartContainer>
           </CardContent>
         </Card>
@@ -143,9 +154,19 @@ export function WeeklyReport(): JSX.Element {
               <Separator />
 
               <div>
-                <p className="text-sm text-muted-foreground">本周游戏天数</p>
+                <p className="text-sm text-muted-foreground">游戏频率</p>
                 <p className="text-lg font-bold">
-                  {Object.values(weekData.dailyPlayTime).filter((time) => time > 0).length} 天
+                  {Object.values(weekData.dailyPlayTime).filter((time) => time > 0).length} /{' '}
+                  {Object.keys(weekData.dailyPlayTime).length} 天
+                </p>
+                <p className="text-sm">
+                  占本周{' '}
+                  {Math.round(
+                    (Object.values(weekData.dailyPlayTime).filter((time) => time > 0).length /
+                      Object.keys(weekData.dailyPlayTime).length) *
+                      100
+                  )}
+                  %
                 </p>
               </div>
             </div>
