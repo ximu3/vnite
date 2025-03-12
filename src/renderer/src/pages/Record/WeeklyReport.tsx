@@ -1,20 +1,25 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/card'
 import { Button } from '@ui/button'
 import { Separator } from '@ui/separator'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { CartesianGrid, XAxis, YAxis, Area, AreaChart } from 'recharts'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
-import type { ValueType } from 'recharts/types/component/DefaultTooltipContent'
 
 import { GameRankingItem } from './GameRankingItem'
 import {
-  getWeeklyPlayData,
-  formatChineseDate,
-  formatPlayTimeWithUnit
+  getWeeklyPlayData
+  // 移除不再使用的函数导入
+  // formatChineseDate,
+  // formatPlayTimeWithUnit
 } from '~/stores/game/recordUtils'
 
 export function WeeklyReport(): JSX.Element {
+  // 使用record命名空间
+  const { t } = useTranslation('record')
+
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const weekData = getWeeklyPlayData(selectedDate)
 
@@ -34,44 +39,53 @@ export function WeeklyReport(): JSX.Element {
   // 格式化周的日期范围
   const weekStart = new Date(weekData.dates[0])
   const weekEnd = new Date(weekData.dates[weekData.dates.length - 1])
-  const weekRange = `${formatChineseDate(weekStart)} - ${formatChineseDate(weekEnd)}`
+  const weekRange = t('weekly.dateRange', {
+    startDate: weekStart,
+    endDate: weekEnd
+  })
+
+  // 获取星期几的本地化名称
+  const getLocalizedWeekday = (dayIndex: number): string => {
+    const weekdayKeys = [
+      'weekly.weekdays.sunday',
+      'weekly.weekdays.monday',
+      'weekly.weekdays.tuesday',
+      'weekly.weekdays.wednesday',
+      'weekly.weekdays.thursday',
+      'weekly.weekdays.friday',
+      'weekly.weekdays.saturday'
+    ]
+    return t(weekdayKeys[dayIndex])
+  }
 
   // 转换每日游戏时间为图表数据
   const dailyChartData = weekData.dates.map((date) => {
     const dayDate = new Date(date)
-    const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
     return {
       date,
-      weekday: weekdays[dayDate.getDay()],
-      playTime: (weekData.dailyPlayTime[date] || 0) / 3600000, // 转换为小时
-      fullDate: formatChineseDate(date) // 添加完整日期用于tooltip
+      weekday: getLocalizedWeekday(dayDate.getDay()),
+      playTime: (weekData.dailyPlayTime[date] || 0) / 60000, // 转换为分钟
+      fullDate: date // 存储原始日期用于格式化
     }
   })
 
   // Chart配置
   const chartConfig = {
     playTime: {
-      label: '游戏时长',
+      label: t('overview.stats.totalPlayTime'),
       color: 'hsl(var(--primary))'
     }
   }
 
-  // 自定义值格式化函数
-  const valueFormatter = (value: ValueType): string => {
-    // value是每日游戏时间，单位为小时或分钟
-    if (typeof value === 'number') {
-      if (value >= 1) {
-        return `${value.toFixed(1)} 小时`
-      }
-      return `${Math.round(value * 60)} 分钟`
-    }
-    return String(value)
+  // 游戏时间格式化函数
+  const formatGameTime = (time: number): string => {
+    return t('utils:format.gameTime', { time })
   }
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">周游戏报告</h2>
+        <h2 className="text-2xl font-bold">{t('weekly.title')}</h2>
         <div className="flex items-center space-x-2">
           <Button variant="outline" size="icon" onClick={goToPreviousWeek}>
             <ChevronLeft className="w-4 h-4" />
@@ -91,9 +105,9 @@ export function WeeklyReport(): JSX.Element {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Card className="md:col-span-2">
           <CardHeader>
-            <CardTitle>每日游戏时间</CardTitle>
+            <CardTitle>{t('weekly.dailyPlayTime')}</CardTitle>
             <CardDescription>
-              本周共游戏 {formatPlayTimeWithUnit(weekData.totalTime)}
+              {t('weekly.totalWeeklyTime', { time: weekData.totalTime })}
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-0">
@@ -105,10 +119,11 @@ export function WeeklyReport(): JSX.Element {
                 <ChartTooltip
                   content={
                     <ChartTooltipContent
-                      formatter={valueFormatter}
+                      formatter={(value) => formatGameTime((value as number) * 60000)}
                       labelFormatter={(weekday, data) => {
                         if (data && data[0]?.payload) {
-                          return `${weekday} (${data[0].payload.fullDate})`
+                          const rawDate = new Date(data[0].payload.fullDate)
+                          return `${weekday} (${t('utils:format.niceDate', { date: rawDate })})`
                         }
                         return weekday
                       }}
@@ -132,41 +147,47 @@ export function WeeklyReport(): JSX.Element {
 
         <Card>
           <CardHeader>
-            <CardTitle>本周数据亮点</CardTitle>
+            <CardTitle>{t('weekly.highlights.title')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {weekData.mostPlayedDay ? (
                 <div>
-                  <p className="text-sm text-muted-foreground">游戏时间最长的一天</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t('weekly.highlights.longestDay')}
+                  </p>
                   <p className="text-lg font-bold">
-                    {weekData.mostPlayedDay.weekday}（
-                    {formatChineseDate(weekData.mostPlayedDay.date)}）
+                    {t('weekly.highlights.dateFormat', {
+                      weekday: getLocalizedWeekday(new Date(weekData.mostPlayedDay.date).getDay()),
+                      date: new Date(weekData.mostPlayedDay.date)
+                    })}
                   </p>
                   <p className="text-sm">
-                    游戏时长：{formatPlayTimeWithUnit(weekData.mostPlayedDay.playTime)}
+                    {t('weekly.highlights.playTime', { time: weekData.mostPlayedDay.playTime })}
                   </p>
                 </div>
               ) : (
-                <p>本周没有游戏记录</p>
+                <p>{t('weekly.highlights.noRecords')}</p>
               )}
 
               <Separator />
 
               <div>
-                <p className="text-sm text-muted-foreground">游戏频率</p>
+                <p className="text-sm text-muted-foreground">{t('weekly.highlights.frequency')}</p>
                 <p className="text-lg font-bold">
-                  {Object.values(weekData.dailyPlayTime).filter((time) => time > 0).length} /{' '}
-                  {Object.keys(weekData.dailyPlayTime).length} 天
+                  {t('weekly.highlights.daysPlayed', {
+                    played: Object.values(weekData.dailyPlayTime).filter((time) => time > 0).length,
+                    total: Object.keys(weekData.dailyPlayTime).length
+                  })}
                 </p>
                 <p className="text-sm">
-                  占本周{' '}
-                  {Math.round(
-                    (Object.values(weekData.dailyPlayTime).filter((time) => time > 0).length /
-                      Object.keys(weekData.dailyPlayTime).length) *
-                      100
-                  )}
-                  %
+                  {t('weekly.highlights.percentage', {
+                    percent: Math.round(
+                      (Object.values(weekData.dailyPlayTime).filter((time) => time > 0).length /
+                        Object.keys(weekData.dailyPlayTime).length) *
+                        100
+                    )
+                  })}
                 </p>
               </div>
             </div>
@@ -175,7 +196,7 @@ export function WeeklyReport(): JSX.Element {
 
         <Card>
           <CardHeader>
-            <CardTitle>本周热门游戏</CardTitle>
+            <CardTitle>{t('weekly.weeklyGames.title')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
@@ -185,11 +206,11 @@ export function WeeklyReport(): JSX.Element {
                     key={game.gameId}
                     gameId={game.gameId}
                     rank={index + 1}
-                    extraInfo={formatPlayTimeWithUnit(game.playTime)}
+                    extraInfo={formatGameTime(game.playTime)}
                   />
                 ))
               ) : (
-                <p>本周没有游戏记录</p>
+                <p>{t('weekly.weeklyGames.noRecords')}</p>
               )}
             </div>
           </CardContent>

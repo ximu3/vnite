@@ -1,0 +1,194 @@
+{
+  "overview": {
+    "stats": {
+      "totalGames": "Total Games",
+      "totalPlayTime": "Total Play Time",
+      "totalPlayDays": "Total Play Days",
+      "totalPlayTimes": "Total Play Times"
+    },
+    "chart": {
+      "yearlyPlayTime": "Gaming Time (Past Year)",
+      "timeDistribution": "Play Time Distribution",
+      "peakHour": "Peak Gaming Hours: {{hour}}:00 - {{nextHour}}:00"
+    },
+    "ranking": {
+      "playTimeRanking": "Play Time Ranking",
+      "scoreRanking": "Game Score Ranking",
+      "viewMore": "View More",
+      "allGamesByPlayTime": "All Games Sorted by Play Time",
+      "allGamesByScore": "All Games Sorted by Score"
+    },
+    "format": {
+      "hour": "hr",
+      "minute": "min",
+      "hourValue": "{{value}} hrs",
+      "minuteValue": "{{value}} mins"
+    },
+    "unit": {
+      "count": "",
+      "day": "days",
+      "times": "times"
+    },
+    "misc": {
+      "noScore": "No Rating"
+    }
+  },
+  "weekly": {
+    "title": "Weekly Gaming Report",
+    "dailyPlayTime": "Daily Play Time",
+    "totalWeeklyTime": "This Week: {{time, gameTime}}",
+    "highlights": {
+      "title": "Weekly Data",
+      "longestDay": "Longest Gaming Day",
+      "dateFormat": "{{weekday}} ({{date, niceDate}})",
+      "playTime": "Play Time: {{time, gameTime}}",
+      "noRecords": "No gaming records this week",
+      "frequency": "Gaming Frequency",
+      "daysPlayed": "{{played}} / {{total}} days",
+      "percentage": "{{percent}}% of the week"
+    },
+    "weeklyGames": {
+      "title": "This Week's Games",
+      "noRecords": "No gaming records this week"
+    },
+    "weekdays": {
+      "sunday": "Sun",
+      "monday": "Mon",
+      "tuesday": "Tue",
+      "wednesday": "Wed",
+      "thursday": "Thu",
+      "friday": "Fri",
+      "saturday": "Sat"
+    },
+    "dateRange": "{{startDate, niceDate}} - {{endDate, niceDate}}"
+  },
+  "monthly": {
+    "title": "Monthly Gaming Report",
+    "yearMonth": "{{month}} {{year}}",
+    "stats": {
+      "monthlyPlayTime": "Monthly Play Time",
+      "daysPlayed": "Days Played This Month",
+      "mostPlayedDay": "Most Active Day"
+    },
+    "unit": {
+      "days": "days",
+      "noRecord": "No records",
+      "playTime": "Play Time: {{time, gameTime}}"
+    },
+    "chart": {
+      "weeklyPlayTime": "Weekly Play Time",
+      "calendarTitle": "Monthly Gaming Calendar",
+      "weekFormat": "Week {{week}}",
+      "weekDateRange": "{{week}} ({{startDay}}-{{endDay}})"
+    },
+    "highlights": {
+      "title": "Monthly Data",
+      "longestWeek": "Week with Most Play Time",
+      "noRecords": "No gaming records this month",
+      "frequency": "Gaming Frequency",
+      "daysCount": "{{played}} / {{total}} days",
+      "percentage": "{{percent}}% of the month"
+    },
+    "monthlyGames": {
+      "title": "This Month's Games",
+      "noRecords": "No gaming records this month"
+    },
+    "months": {
+      "january": "January",
+      "february": "February",
+      "march": "March",
+      "april": "April",
+      "may": "May",
+      "june": "June",
+      "july": "July",
+      "august": "August",
+      "september": "September",
+      "october": "October",
+      "november": "November",
+      "december": "December"
+    }
+  },
+  "yearly": {
+    "title": "Annual Gaming Report",
+    "yearDisplay": "{{year}}",
+    "stats": {
+      "yearlyPlayTime": "Annual Play Time",
+      "monthsPlayed": "Months with Activity",
+      "monthsCount": "{{count}} months",
+      "mostPlayedMonth": "Most Active Month",
+      "noRecord": "No records",
+      "playTimeDesc": "Play Time: {{time, gameTime}}"
+    },
+    "chart": {
+      "monthlyPlayTime": "Monthly Play Time",
+      "monthlyPlayDays": "Days Played Each Month",
+      "timeDistribution": "Annual Gaming Distribution",
+      "byGameType": "By Game Type",
+      "typePercentage": "{{type}}: {{percent}}%"
+    },
+    "format": {
+      "hours": "{{value}} hrs",
+      "days": "{{value}} days"
+    },
+    "yearlyGames": {
+      "title": "This Year's Games",
+      "noRecords": "No gaming records this year"
+    },
+    "months": {
+      "january": "Jan",
+      "february": "Feb",
+      "march": "Mar",
+      "april": "Apr",
+      "may": "May",
+      "june": "Jun",
+      "july": "Jul",
+      "august": "Aug",
+      "september": "Sep",
+      "october": "Oct",
+      "november": "Nov",
+      "december": "Dec"
+    }
+  },
+  "score": {
+    "title": "Game Rating Report",
+    "description": "Below is your game library categorized by ratings. Scroll through each category and hover over games for more details.",
+    "categories": {
+      "excellent": {
+        "title": "Outstanding (9-10)",
+        "description": "These games offer exceptional experiences, highly recommended"
+      },
+      "great": {
+        "title": "Great (8-8.9)",
+        "description": "These games are excellent and worth playing"
+      },
+      "good": {
+        "title": "Good (7-7.9)",
+        "description": "These games have good quality"
+      },
+      "average": {
+        "title": "Average (6-6.9)",
+        "description": "These games are of average quality with notable flaws"
+      },
+      "notRecommended": {
+        "title": "Not Recommended (0-5.9)",
+        "description": "These games have serious issues and are not recommended"
+      },
+      "gamesCount": "{{count}} games"
+    },
+    "gameInfo": {
+      "unknown": "Unknown Game",
+      "addDate": "Added: {{date, niceDate}}",
+      "playTime": "Play Time: {{time, gameTime}}",
+      "lastRun": "Last Played: {{date, niceDate}}",
+      "ratingLabel": "Rating"
+    },
+    "playStatus": {
+      "unplayed": "Unplayed",
+      "playing": "Playing",
+      "finished": "Completed",
+      "multiple": "Multiple Runs",
+      "shelved": "Shelved",
+      "unknown": "Unknown Status"
+    }
+  }
+}

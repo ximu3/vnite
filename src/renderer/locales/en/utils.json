@@ -16,5 +16,9 @@
       "configError": "Configuration error: {{message}}",
       "runtimeError": "Runtime configuration error, please check!"
     }
+  },
+  "format": {
+    "gameTime": "{{time, gameTime}}",
+    "niceDate": "{{date, niceDate}}"
   }
 }

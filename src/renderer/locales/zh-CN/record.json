@@ -1,0 +1,194 @@
+{
+  "overview": {
+    "stats": {
+      "totalGames": "游戏总数",
+      "totalPlayTime": "总游戏时间",
+      "totalPlayDays": "总游戏天数",
+      "totalPlayTimes": "游戏次数"
+    },
+    "chart": {
+      "yearlyPlayTime": "近一年游戏时间",
+      "timeDistribution": "游戏时间分布",
+      "peakHour": "游戏高峰时段: {{hour}}:00 - {{nextHour}}:00"
+    },
+    "ranking": {
+      "playTimeRanking": "游戏时间排行",
+      "scoreRanking": "游戏评分排行",
+      "viewMore": "查看更多",
+      "allGamesByPlayTime": "按照游玩时间排序的所有游戏",
+      "allGamesByScore": "按照评分排序的所有游戏"
+    },
+    "format": {
+      "hour": "小时",
+      "minute": "分钟",
+      "hourValue": "{{value}} 小时",
+      "minuteValue": "{{value}} 分钟"
+    },
+    "unit": {
+      "count": "个",
+      "day": "天",
+      "times": "次"
+    },
+    "misc": {
+      "noScore": "暂无评分"
+    }
+  },
+  "weekly": {
+    "title": "周游戏报告",
+    "dailyPlayTime": "每日游戏时间",
+    "totalWeeklyTime": "本周共游戏 {{time, gameTime}}",
+    "highlights": {
+      "title": "本周数据",
+      "longestDay": "游戏时间最长的一天",
+      "dateFormat": "{{weekday}}（{{date, niceDate}}）",
+      "playTime": "游戏时长：{{time, gameTime}}",
+      "noRecords": "本周没有游戏记录",
+      "frequency": "游戏频率",
+      "daysPlayed": "{{played}} / {{total}} 天",
+      "percentage": "占本周 {{percent}}%"
+    },
+    "weeklyGames": {
+      "title": "本周游戏",
+      "noRecords": "本周没有游戏记录"
+    },
+    "weekdays": {
+      "sunday": "周日",
+      "monday": "周一",
+      "tuesday": "周二",
+      "wednesday": "周三",
+      "thursday": "周四",
+      "friday": "周五",
+      "saturday": "周六"
+    },
+    "dateRange": "{{startDate, niceDate}} - {{endDate, niceDate}}"
+  },
+  "monthly": {
+    "title": "月度游戏报告",
+    "yearMonth": "{{year}}年 {{month}}",
+    "stats": {
+      "monthlyPlayTime": "本月游戏时长",
+      "daysPlayed": "本月游戏天数",
+      "mostPlayedDay": "游戏最多的一天"
+    },
+    "unit": {
+      "days": "天",
+      "noRecord": "无记录",
+      "playTime": "游戏时长：{{time, gameTime}}"
+    },
+    "chart": {
+      "weeklyPlayTime": "每周游戏时长",
+      "calendarTitle": "月度游戏日历",
+      "weekFormat": "第{{week}}周",
+      "weekDateRange": "{{week}}（{{startDay}}日-{{endDay}}日）"
+    },
+    "highlights": {
+      "title": "本月数据",
+      "longestWeek": "游戏时间最长的一周",
+      "noRecords": "本月没有游戏记录",
+      "frequency": "游戏频率",
+      "daysCount": "{{played}} / {{total}} 天",
+      "percentage": "占本月 {{percent}}%"
+    },
+    "monthlyGames": {
+      "title": "本月游戏",
+      "noRecords": "本月没有游戏记录"
+    },
+    "months": {
+      "january": "一月",
+      "february": "二月",
+      "march": "三月",
+      "april": "四月",
+      "may": "五月",
+      "june": "六月",
+      "july": "七月",
+      "august": "八月",
+      "september": "九月",
+      "october": "十月",
+      "november": "十一月",
+      "december": "十二月"
+    }
+  },
+  "yearly": {
+    "title": "年度游戏报告",
+    "yearDisplay": "{{year}}年",
+    "stats": {
+      "yearlyPlayTime": "年度游戏时长",
+      "monthsPlayed": "游戏月份数",
+      "monthsCount": "{{count}}个月",
+      "mostPlayedMonth": "游戏最多的月份",
+      "noRecord": "无记录",
+      "playTimeDesc": "游戏时长：{{time, gameTime}}"
+    },
+    "chart": {
+      "monthlyPlayTime": "月度游戏时长",
+      "monthlyPlayDays": "月度游戏天数",
+      "timeDistribution": "年度游戏时间分布",
+      "byGameType": "按游戏类型统计",
+      "typePercentage": "{{type}}: {{percent}}%"
+    },
+    "format": {
+      "hours": "{{value}} 小时",
+      "days": "{{value}} 天"
+    },
+    "yearlyGames": {
+      "title": "年度游戏",
+      "noRecords": "本年度没有游戏记录"
+    },
+    "months": {
+      "january": "一月",
+      "february": "二月",
+      "march": "三月",
+      "april": "四月",
+      "may": "五月",
+      "june": "六月",
+      "july": "七月",
+      "august": "八月",
+      "september": "九月",
+      "october": "十月",
+      "november": "十一月",
+      "december": "十二月"
+    }
+  },
+  "score": {
+    "title": "游戏评分报告",
+    "description": "以下是您的游戏库按评分分类的结果。您可以滑动浏览每个类别中的游戏，并将鼠标悬停在游戏上查看详细信息。",
+    "categories": {
+      "excellent": {
+        "title": "极佳体验 (9-10分)",
+        "description": "这些游戏提供了卓越的体验，强烈推荐"
+      },
+      "great": {
+        "title": "优秀作品 (8-8.9分)",
+        "description": "这些游戏非常优秀，值得一玩"
+      },
+      "good": {
+        "title": "良好游戏 (7-7.9分)",
+        "description": "这些游戏有着不错的品质"
+      },
+      "average": {
+        "title": "一般游戏 (6-6.9分)",
+        "description": "这些游戏质量一般，有明显缺点"
+      },
+      "notRecommended": {
+        "title": "不推荐 (0-5.9分)",
+        "description": "这些游戏存在严重问题，不推荐体验"
+      },
+      "gamesCount": "{{count}} 款游戏"
+    },
+    "gameInfo": {
+      "unknown": "未知游戏",
+      "addDate": "添加日期: {{date, niceDate}}",
+      "playTime": "游戏时间: {{time, gameTime}}",
+      "lastRun": "最近运行: {{date, niceDate}}",
+      "ratingLabel": "评分"
+    },
+    "playStatus": {
+      "unplayed": "未玩",
+      "playing": "游玩中",
+      "finished": "已通关",
+      "multiple": "多周目",
+      "shelved": "已搁置",
+      "unknown": "未知状态"
+    }
+  }
+}

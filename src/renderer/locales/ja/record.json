@@ -1,0 +1,194 @@
+{
+  "overview": {
+    "stats": {
+      "totalGames": "ゲーム総数",
+      "totalPlayTime": "総プレイ時間",
+      "totalPlayDays": "総プレイ日数",
+      "totalPlayTimes": "プレイ回数"
+    },
+    "chart": {
+      "yearlyPlayTime": "過去一年のプレイ時間",
+      "timeDistribution": "プレイ時間分布",
+      "peakHour": "ピーク時間帯: {{hour}}:00 - {{nextHour}}:00"
+    },
+    "ranking": {
+      "playTimeRanking": "プレイ時間ランキング",
+      "scoreRanking": "ゲーム評価ランキング",
+      "viewMore": "もっと見る",
+      "allGamesByPlayTime": "プレイ時間順のゲーム一覧",
+      "allGamesByScore": "評価順のゲーム一覧"
+    },
+    "format": {
+      "hour": "時間",
+      "minute": "分",
+      "hourValue": "{{value}}時間",
+      "minuteValue": "{{value}}分"
+    },
+    "unit": {
+      "count": "個",
+      "day": "日",
+      "times": "回"
+    },
+    "misc": {
+      "noScore": "評価なし"
+    }
+  },
+  "weekly": {
+    "title": "週間ゲームレポート",
+    "dailyPlayTime": "日別プレイ時間",
+    "totalWeeklyTime": "今週の合計: {{time, gameTime}}",
+    "highlights": {
+      "title": "今週のデータ",
+      "longestDay": "最長プレイ日",
+      "dateFormat": "{{weekday}}（{{date, niceDate}}）",
+      "playTime": "プレイ時間：{{time, gameTime}}",
+      "noRecords": "今週のプレイ記録はありません",
+      "frequency": "プレイ頻度",
+      "daysPlayed": "{{played}} / {{total}} 日",
+      "percentage": "今週の {{percent}}%"
+    },
+    "weeklyGames": {
+      "title": "今週のゲーム",
+      "noRecords": "今週のプレイ記録はありません"
+    },
+    "weekdays": {
+      "sunday": "日",
+      "monday": "月",
+      "tuesday": "火",
+      "wednesday": "水",
+      "thursday": "木",
+      "friday": "金",
+      "saturday": "土"
+    },
+    "dateRange": "{{startDate, niceDate}} - {{endDate, niceDate}}"
+  },
+  "monthly": {
+    "title": "月間ゲームレポート",
+    "yearMonth": "{{year}}年 {{month}}",
+    "stats": {
+      "monthlyPlayTime": "月間プレイ時間",
+      "daysPlayed": "月間プレイ日数",
+      "mostPlayedDay": "最もプレイした日"
+    },
+    "unit": {
+      "days": "日",
+      "noRecord": "記録なし",
+      "playTime": "プレイ時間：{{time, gameTime}}"
+    },
+    "chart": {
+      "weeklyPlayTime": "週間プレイ時間",
+      "calendarTitle": "月間ゲームカレンダー",
+      "weekFormat": "第{{week}}週",
+      "weekDateRange": "{{week}}（{{startDay}}日-{{endDay}}日）"
+    },
+    "highlights": {
+      "title": "月間データ",
+      "longestWeek": "最長プレイ週",
+      "noRecords": "月間プレイ記録はありません",
+      "frequency": "プレイ頻度",
+      "daysCount": "{{played}} / {{total}} 日",
+      "percentage": "月間の {{percent}}%"
+    },
+    "monthlyGames": {
+      "title": "今月のゲーム",
+      "noRecords": "今月のプレイ記録はありません"
+    },
+    "months": {
+      "january": "1月",
+      "february": "2月",
+      "march": "3月",
+      "april": "4月",
+      "may": "5月",
+      "june": "6月",
+      "july": "7月",
+      "august": "8月",
+      "september": "9月",
+      "october": "10月",
+      "november": "11月",
+      "december": "12月"
+    }
+  },
+  "yearly": {
+    "title": "年間ゲームレポート",
+    "yearDisplay": "{{year}}年",
+    "stats": {
+      "yearlyPlayTime": "年間プレイ時間",
+      "monthsPlayed": "プレイ月数",
+      "monthsCount": "{{count}}ヶ月",
+      "mostPlayedMonth": "最もプレイした月",
+      "noRecord": "記録なし",
+      "playTimeDesc": "プレイ時間：{{time, gameTime}}"
+    },
+    "chart": {
+      "monthlyPlayTime": "月別プレイ時間",
+      "monthlyPlayDays": "月別プレイ日数",
+      "timeDistribution": "年間プレイ時間分布",
+      "byGameType": "ゲームタイプ別",
+      "typePercentage": "{{type}}: {{percent}}%"
+    },
+    "format": {
+      "hours": "{{value}}時間",
+      "days": "{{value}}日"
+    },
+    "yearlyGames": {
+      "title": "今年のゲーム",
+      "noRecords": "今年のプレイ記録はありません"
+    },
+    "months": {
+      "january": "1月",
+      "february": "2月",
+      "march": "3月",
+      "april": "4月",
+      "may": "5月",
+      "june": "6月",
+      "july": "7月",
+      "august": "8月",
+      "september": "9月",
+      "october": "10月",
+      "november": "11月",
+      "december": "12月"
+    }
+  },
+  "score": {
+    "title": "ゲーム評価レポート",
+    "description": "以下は評価別にカテゴリー分けされたゲームライブラリです。各カテゴリーをスクロールし、詳細を見るにはゲームにホバーしてください。",
+    "categories": {
+      "excellent": {
+        "title": "優秀 (9-10点)",
+        "description": "これらのゲームは卓越した体験を提供し、強くおすすめします"
+      },
+      "great": {
+        "title": "素晴らしい (8-8.9点)",
+        "description": "これらのゲームは非常に良く、プレイする価値があります"
+      },
+      "good": {
+        "title": "良い (7-7.9点)",
+        "description": "これらのゲームは良質な内容を持っています"
+      },
+      "average": {
+        "title": "普通 (6-6.9点)",
+        "description": "これらのゲームは平均的なクオリティで、目立った欠点があります"
+      },
+      "notRecommended": {
+        "title": "非推奨 (0-5.9点)",
+        "description": "これらのゲームには重大な問題があり、おすすめしません"
+      },
+      "gamesCount": "{{count}}本のゲーム"
+    },
+    "gameInfo": {
+      "unknown": "不明なゲーム",
+      "addDate": "追加日: {{date, niceDate}}",
+      "playTime": "プレイ時間: {{time, gameTime}}",
+      "lastRun": "最終プレイ: {{date, niceDate}}",
+      "ratingLabel": "評価"
+    },
+    "playStatus": {
+      "unplayed": "未プレイ",
+      "playing": "プレイ中",
+      "finished": "クリア済み",
+      "multiple": "複数周回",
+      "shelved": "中断",
+      "unknown": "不明状態"
+    }
+  }
+}

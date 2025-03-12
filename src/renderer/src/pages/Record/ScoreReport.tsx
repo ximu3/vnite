@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Card } from '@ui/card'
 import { ScrollArea, ScrollBar } from '@ui/scroll-area'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@ui/hover-card'
@@ -6,17 +7,17 @@ import { CalendarIcon, ClockIcon, GamepadIcon, Trophy } from 'lucide-react'
 
 import { cn } from '~/utils'
 import { GamePoster } from './GamePoster'
-import { getGamesByScoreRange, formatChineseDate } from '~/stores/game/recordUtils'
+import { getGamesByScoreRange } from '~/stores/game/recordUtils'
 import { useGameRegistry, getGameplayTime, getGameStore } from '~/stores/game'
 import { useGameState } from '~/hooks'
-import { formatTimeToChinese } from '~/utils'
 
 import { GameImage } from '@ui/game-image'
 
 // 游戏评分卡片组件
 function GameScoreCard({ gameId }: { gameId: string }): JSX.Element {
+  const { t } = useTranslation('record')
   const { gameMetaIndex } = useGameRegistry()
-  const gameInfo = gameMetaIndex[gameId] || { name: '未知游戏' }
+  const gameInfo = gameMetaIndex[gameId] || { name: t('score.gameInfo.unknown') }
   const [score] = useGameState(gameId, 'record.score')
   const playTime = getGameplayTime(gameId)
 
@@ -40,7 +41,7 @@ function GameScoreCard({ gameId }: { gameId: string }): JSX.Element {
           <div className="px-1 mt-2 text-sm font-medium text-center truncate">{gameInfo.name}</div>
         </div>
       </HoverCardTrigger>
-      <HoverCardContent className="relative w-80" side="right">
+      <HoverCardContent className="relative border-0 w-80" side="right">
         <div className="absolute inset-0">
           <GameImage
             gameId={gameId}
@@ -64,27 +65,27 @@ function GameScoreCard({ gameId }: { gameId: string }): JSX.Element {
               <div className="flex items-center pt-1">
                 <CalendarIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground" />
                 <span className="text-xs text-muted-foreground">
-                  添加日期: {formatChineseDate(gameInfo.addDate)}
+                  {t('score.gameInfo.addDate', { date: new Date(gameInfo.addDate) })}
                 </span>
               </div>
             )}
             <div className="flex items-center pt-1">
               <ClockIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground" />
               <span className="text-xs text-muted-foreground">
-                游戏时间: {formatTimeToChinese(playTime)}
+                {t('score.gameInfo.playTime', { time: playTime })}
               </span>
             </div>
             {gameInfo.lastRunDate && (
               <div className="flex items-center pt-1">
                 <CalendarIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground" />
                 <span className="text-xs text-muted-foreground">
-                  最近运行: {formatChineseDate(gameInfo.lastRunDate)}
+                  {t('score.gameInfo.lastRun', { date: new Date(gameInfo.lastRunDate) })}
                 </span>
               </div>
             )}
             <div className="pt-2">
               <Badge variant="secondary" className="mr-1">
-                {getGamePlayStatus(gameId)}
+                {getGamePlayStatus(gameId, t)}
               </Badge>
             </div>
           </div>
@@ -92,7 +93,9 @@ function GameScoreCard({ gameId }: { gameId: string }): JSX.Element {
             <div className="flex items-center justify-center text-lg font-bold rounded-full shadow-md w-14 h-14 bg-primary text-primary-foreground">
               {score.toFixed(1)}
             </div>
-            <span className="mt-1 text-xs text-muted-foreground">评分</span>
+            <span className="mt-1 text-xs text-muted-foreground">
+              {t('score.gameInfo.ratingLabel')}
+            </span>
           </div>
         </div>
       </HoverCardContent>
@@ -101,19 +104,19 @@ function GameScoreCard({ gameId }: { gameId: string }): JSX.Element {
 }
 
 // 获取游戏状态的中文描述
-function getGamePlayStatus(gameId: string): string {
+function getGamePlayStatus(gameId: string, t: any): string {
   const gameStore = getGameStore(gameId)
   const status = gameStore.getState().data?.record.playStatus as string
 
   const statusMap: Record<string, string> = {
-    unplayed: '未玩',
-    playing: '游玩中',
-    finished: '已通关',
-    multiple: '多周目',
-    shelved: '已搁置'
+    unplayed: t('score.playStatus.unplayed'),
+    playing: t('score.playStatus.playing'),
+    finished: t('score.playStatus.finished'),
+    multiple: t('score.playStatus.multiple'),
+    shelved: t('score.playStatus.shelved')
   }
 
-  return statusMap[status] || '未知状态'
+  return statusMap[status] || t('score.playStatus.unknown')
 }
 
 // 评分类别组件
@@ -130,6 +133,7 @@ function ScoreCategory({
   maxScore: number
   className: string
 }): JSX.Element | null {
+  const { t } = useTranslation('record')
   const games = getGamesByScoreRange(minScore, maxScore)
 
   if (games.length === 0) {
@@ -145,7 +149,7 @@ function ScoreCategory({
           </div>
           <p className="mb-3 text-sm text-muted-foreground">{description}</p>
           <Badge className="font-normal bg-accent text-accent-foreground">
-            {games.length} 款游戏
+            {t('score.categories.gamesCount', { count: games.length })}
           </Badge>
         </div>
         <div className="p-6 pt-0 lg:w-4/5 lg:pt-6">
@@ -165,52 +169,52 @@ function ScoreCategory({
 
 // 主评分报告组件
 export function ScoreReport(): JSX.Element {
+  const { t } = useTranslation('record')
+
   return (
     <div className="pb-3 space-y-6">
       <div className="flex items-center mb-2 space-x-2">
         <Trophy className="w-5 h-5" />
-        <h2 className="text-2xl font-bold">游戏评分报告</h2>
+        <h2 className="text-2xl font-bold">{t('score.title')}</h2>
       </div>
 
-      <p className="mb-6 text-muted-foreground">
-        以下是您的游戏库按评分分类的结果。您可以滑动浏览每个类别中的游戏，并将鼠标悬停在游戏上查看详细信息。
-      </p>
+      <p className="mb-6 text-muted-foreground">{t('score.description')}</p>
 
       <ScoreCategory
-        title="极佳体验 (9-10分)"
-        description="这些游戏提供了卓越的体验，强烈推荐"
+        title={t('score.categories.excellent.title')}
+        description={t('score.categories.excellent.description')}
         minScore={9}
         maxScore={10}
         className="border-primary"
       />
 
       <ScoreCategory
-        title="优秀作品 (8-8.9分)"
-        description="这些游戏非常优秀，值得一玩"
+        title={t('score.categories.great.title')}
+        description={t('score.categories.great.description')}
         minScore={8}
         maxScore={8.9}
         className="border-secondary"
       />
 
       <ScoreCategory
-        title="良好游戏 (7-7.9分)"
-        description="这些游戏有着不错的品质"
+        title={t('score.categories.good.title')}
+        description={t('score.categories.good.description')}
         minScore={7}
         maxScore={7.9}
         className="border-accent"
       />
 
       <ScoreCategory
-        title="一般游戏 (6-6.9分)"
-        description="这些游戏质量一般，有明显缺点"
+        title={t('score.categories.average.title')}
+        description={t('score.categories.average.description')}
         minScore={6}
         maxScore={6.9}
         className="border-muted"
       />
 
       <ScoreCategory
-        title="不推荐 (0-5.9分)"
-        description="这些游戏存在严重问题，不推荐体验"
+        title={t('score.categories.notRecommended.title')}
+        description={t('score.categories.notRecommended.description')}
         minScore={0}
         maxScore={5.9}
         className="border-destructive"

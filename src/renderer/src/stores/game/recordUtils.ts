@@ -219,7 +219,7 @@ export function getMonthlyPlayData(date = new Date()): {
     // 获取玩得最多的游戏
     const mostPlayedGames = Object.entries(gamePlayTime)
       .map(([gameId, playTime]) => ({ gameId, playTime }))
-      // .filter((item) => item.playTime > 0)
+      .filter((item) => item.playTime > 0)
       .sort((a, b) => b.playTime - a.playTime)
       .slice(0, 3)
 
@@ -339,7 +339,7 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
     // 获取玩得最多的游戏
     const mostPlayedGames = Object.entries(gamePlayTime)
       .map(([gameId, playTime]) => ({ gameId, playTime }))
-      // .filter((item) => item.playTime > 0)
+      .filter((item) => item.playTime > 0)
       .sort((a, b) => b.playTime - a.playTime)
       .slice(0, 5)
 
@@ -420,7 +420,6 @@ export function getPlayTimeDistribution(): { hour: number; value: number }[] {
       }
     }
 
-    // 转换为数组格式，单位转为小时
     return Object.entries(distribution).map(([hour, time]) => ({
       hour: parseInt(hour),
       value: time / 3600000 // 转换为小时
@@ -454,49 +453,6 @@ export function getGameScoreRanking(): { gameId: string; score: number }[] {
     return gamesWithScores.sort((a, b) => b.score - a.score)
   } catch (error) {
     console.error('Error in getGameScoreRanking:', error)
-    return []
-  }
-}
-
-/**
- * 获取游戏状态分布
- */
-export function getGameStatusDistribution(): { status: string; count: number }[] {
-  try {
-    const { gameIds } = useGameRegistry.getState()
-    const statusCounts: { [status: string]: number } = {
-      unplayed: 0,
-      playing: 0,
-      finished: 0,
-      multiple: 0,
-      shelved: 0
-    }
-
-    // 遍历每个游戏
-    for (const gameId of gameIds) {
-      const store = getGameStore(gameId)
-      const status = store.getState().getValue('record.playStatus')
-
-      if (status && statusCounts[status] !== undefined) {
-        statusCounts[status]++
-      }
-    }
-
-    // 转换为数组格式
-    const statusLabels: { [key: string]: string } = {
-      unplayed: '未玩',
-      playing: '游玩中',
-      finished: '已通关',
-      multiple: '多周目',
-      shelved: '已搁置'
-    }
-
-    return Object.entries(statusCounts).map(([status, count]) => ({
-      status: statusLabels[status] || status,
-      count
-    }))
-  } catch (error) {
-    console.error('Error in getGameStatusDistribution:', error)
     return []
   }
 }
@@ -548,30 +504,6 @@ export function getRecentlyPlayedGames(count = 5): string[] {
   } catch (error) {
     console.error('Error in getRecentlyPlayedGames:', error)
     return []
-  }
-}
-
-/**
- * 格式化中文日期
- */
-export function formatChineseDate(date: Date | string): string {
-  const d = typeof date === 'string' ? new Date(date) : date
-  return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`
-}
-
-/**
- * 格式化游戏时间并显示适当的单位
- */
-export function formatPlayTimeWithUnit(time: number): string {
-  const hours = Math.floor(time / 3600000)
-  const minutes = Math.floor((time % 3600000) / 60000)
-
-  if (hours > 0) {
-    return `${hours}小时${minutes > 0 ? ` ${minutes}分钟` : ''}`
-  } else if (minutes > 0) {
-    return `${minutes}分钟`
-  } else {
-    return `${Math.floor((time % 60000) / 1000)}秒`
   }
 }
 

@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/card'
 import { Button } from '@ui/button'
 import { ChevronLeft, ChevronRight, Clock, CalendarIcon, Trophy } from 'lucide-react'
@@ -19,9 +21,12 @@ import type { ValueType } from 'recharts/types/component/DefaultTooltipContent'
 
 import { StatCard } from './StatCard'
 import { GameRankingItem } from './GameRankingItem'
-import { getYearlyPlayData, formatPlayTimeWithUnit } from '~/stores/game/recordUtils'
+import { getYearlyPlayData } from '~/stores/game/recordUtils'
 
 export function YearlyReport(): JSX.Element {
+  // 使用record命名空间
+  const { t } = useTranslation('record')
+
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear())
   const yearData = getYearlyPlayData(selectedYear)
 
@@ -29,31 +34,34 @@ export function YearlyReport(): JSX.Element {
   const goToPreviousYear = (): void => setSelectedYear(selectedYear - 1)
   const goToNextYear = (): void => setSelectedYear(selectedYear + 1)
 
-  // 月份名称
-  const monthNames = [
-    '一月',
-    '二月',
-    '三月',
-    '四月',
-    '五月',
-    '六月',
-    '七月',
-    '八月',
-    '九月',
-    '十月',
-    '十一月',
-    '十二月'
-  ]
+  // 月份名称本地化
+  const getLocalizedMonth = (monthIndex: number): string => {
+    const monthKeys = [
+      'yearly.months.january',
+      'yearly.months.february',
+      'yearly.months.march',
+      'yearly.months.april',
+      'yearly.months.may',
+      'yearly.months.june',
+      'yearly.months.july',
+      'yearly.months.august',
+      'yearly.months.september',
+      'yearly.months.october',
+      'yearly.months.november',
+      'yearly.months.december'
+    ]
+    return t(monthKeys[monthIndex])
+  }
 
   // 为图表准备数据
   const monthlyChartData = yearData.monthlyPlayTime.map((item) => ({
-    month: monthNames[item.month],
+    month: getLocalizedMonth(item.month),
     playTime: item.playTime / 3600000, // 转换为小时
     originalMonth: item.month // 保存原始月份数据
   }))
 
   const monthlyDaysChartData = yearData.monthlyPlayDays.map((item) => ({
-    month: monthNames[item.month],
+    month: getLocalizedMonth(item.month),
     playDays: item.days,
     originalMonth: item.month
   }))
@@ -68,14 +76,14 @@ export function YearlyReport(): JSX.Element {
   // Chart配置
   const barChartConfig = {
     playTime: {
-      label: '游戏时长',
+      label: t('yearly.stats.yearlyPlayTime'),
       color: 'hsl(var(--primary))'
     }
   }
 
   const lineChartConfig = {
     playDays: {
-      label: '游戏天数',
+      label: t('yearly.chart.monthlyPlayDays'),
       color: 'hsl(var(--primary))'
     }
   }
@@ -91,37 +99,28 @@ export function YearlyReport(): JSX.Element {
     {} as Record<string, { label: string; color: string }>
   )
 
-  // 格式化函数
-  const formatHours = (value: ValueType): string => {
-    if (typeof value === 'number') {
-      return `${value.toFixed(1)} 小时`
-    }
-    return String(value)
-  }
-
   const formatDays = (value: ValueType): string => {
     if (typeof value === 'number') {
-      return `${value} 天`
+      return t('yearly.format.days', { value })
     }
     return String(value)
   }
 
-  const formatPieValue = (value: ValueType): string => {
-    if (typeof value === 'number') {
-      return formatPlayTimeWithUnit(value)
-    }
-    return String(value)
+  const formatGameTime = (time: number): string => {
+    return t('utils:format.gameTime', { time })
   }
 
   return (
     <div className="pb-2 space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">年度游戏报告</h2>
+        <h2 className="text-2xl font-bold">{t('yearly.title')}</h2>
         <div className="flex items-center space-x-2">
           <Button variant="outline" size="icon" onClick={goToPreviousYear}>
             <ChevronLeft className="w-4 h-4" />
           </Button>
-          <div className="text-sm font-medium">{selectedYear}年</div>
+          <div className="text-sm font-medium">
+            {t('yearly.yearDisplay', { year: selectedYear })}
+          </div>
           <Button
             variant="outline"
             size="icon"
@@ -135,25 +134,31 @@ export function YearlyReport(): JSX.Element {
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <StatCard
-          title="年度游戏时长"
-          value={formatPlayTimeWithUnit(yearData.totalTime)}
+          title={t('yearly.stats.yearlyPlayTime')}
+          value={formatGameTime(yearData.totalTime)}
           icon={<Clock className="w-4 h-4" />}
           className="col-span-1"
         />
 
         <StatCard
-          title="游戏月份数"
-          value={`${yearData.monthlyPlayTime.filter((m) => m.playTime > 0).length}个月`}
+          title={t('yearly.stats.monthsPlayed')}
+          value={t('yearly.stats.monthsCount', {
+            count: yearData.monthlyPlayTime.filter((m) => m.playTime > 0).length
+          })}
           icon={<CalendarIcon className="w-4 h-4" />}
           className="col-span-1"
         />
 
         <StatCard
-          title="游戏最多的月份"
-          value={yearData.mostPlayedMonth ? monthNames[yearData.mostPlayedMonth.month] : '无记录'}
+          title={t('yearly.stats.mostPlayedMonth')}
+          value={
+            yearData.mostPlayedMonth
+              ? getLocalizedMonth(yearData.mostPlayedMonth.month)
+              : t('yearly.stats.noRecord')
+          }
           description={
             yearData.mostPlayedMonth
-              ? `游戏时长：${formatPlayTimeWithUnit(yearData.mostPlayedMonth.playTime)}`
+              ? t('yearly.stats.playTimeDesc', { time: yearData.mostPlayedMonth.playTime })
               : ''
           }
           icon={<Trophy className="w-4 h-4" />}
@@ -164,7 +169,7 @@ export function YearlyReport(): JSX.Element {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>月度游戏时长</CardTitle>
+            <CardTitle>{t('yearly.chart.monthlyPlayTime')}</CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
             <ChartContainer config={barChartConfig} className="h-[300px] w-full">
@@ -175,7 +180,7 @@ export function YearlyReport(): JSX.Element {
                 <ChartTooltip
                   content={
                     <ChartTooltipContent
-                      formatter={formatHours}
+                      formatter={(value) => formatGameTime((value as number) * 3600000)}
                       hideIndicator={false}
                       color="hsl(var(--primary))"
                     />
@@ -189,7 +194,7 @@ export function YearlyReport(): JSX.Element {
 
         <Card>
           <CardHeader>
-            <CardTitle>月度游戏天数</CardTitle>
+            <CardTitle>{t('yearly.chart.monthlyPlayDays')}</CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
             <ChartContainer config={lineChartConfig} className="h-[300px] w-full">
@@ -223,8 +228,8 @@ export function YearlyReport(): JSX.Element {
       <div className="grid grid-cols-1 md:grid-cols-[auto,1fr] gap-4">
         <Card>
           <CardHeader>
-            <CardTitle>年度游戏时间分布</CardTitle>
-            <CardDescription>按游戏类型统计</CardDescription>
+            <CardTitle>{t('yearly.chart.timeDistribution')}</CardTitle>
+            <CardDescription>{t('yearly.chart.byGameType')}</CardDescription>
           </CardHeader>
           <CardContent className="pt-0">
             <ChartContainer config={pieChartConfig} className="h-[300px] w-full">
@@ -237,7 +242,12 @@ export function YearlyReport(): JSX.Element {
                   outerRadius={100}
                   dataKey="playTime"
                   nameKey="type"
-                  label={({ type, percentValue }) => `${type}: ${(percentValue * 100).toFixed(0)}%`}
+                  label={({ type, percentValue }) =>
+                    t('yearly.chart.typePercentage', {
+                      type,
+                      percent: (percentValue * 100).toFixed(0)
+                    })
+                  }
                 >
                   {pieChartData.map((_entry, index) => (
                     <Cell key={`cell-${index}`} fill={`hsl(var(--chart-${(index % 5) + 1}))`} />
@@ -246,7 +256,7 @@ export function YearlyReport(): JSX.Element {
                 <ChartTooltip
                   content={
                     <ChartTooltipContent
-                      formatter={formatPieValue}
+                      formatter={(value) => formatGameTime(Number(value))}
                       nameKey="type"
                       hideIndicator={false}
                     />
@@ -259,7 +269,7 @@ export function YearlyReport(): JSX.Element {
 
         <Card>
           <CardHeader>
-            <CardTitle>年度热门游戏</CardTitle>
+            <CardTitle>{t('yearly.yearlyGames.title')}</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 gap-4">
             {yearData.mostPlayedGames.length > 0 ? (
@@ -268,11 +278,11 @@ export function YearlyReport(): JSX.Element {
                   key={game.gameId}
                   gameId={game.gameId}
                   rank={index + 1}
-                  extraInfo={formatPlayTimeWithUnit(game.playTime)}
+                  extraInfo={formatGameTime(game.playTime)}
                 />
               ))
             ) : (
-              <p className="col-span-full">本年度没有游戏记录</p>
+              <p className="col-span-full">{t('yearly.yearlyGames.noRecords')}</p>
             )}
           </CardContent>
         </Card>

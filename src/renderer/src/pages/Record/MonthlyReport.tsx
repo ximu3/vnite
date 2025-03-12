@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { Button } from '@ui/button'
 import { Calendar } from '@ui/calendar'
@@ -6,17 +8,15 @@ import { ChevronLeft, ChevronRight, Clock, CalendarIcon, Trophy } from 'lucide-r
 import { CartesianGrid, XAxis, YAxis, Area, AreaChart } from 'recharts'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
 import { Separator } from '@ui/separator'
-import type { ValueType } from 'recharts/types/component/DefaultTooltipContent'
 
 import { StatCard } from './StatCard'
 import { GameRankingItem } from './GameRankingItem'
-import {
-  getMonthlyPlayData,
-  formatChineseDate,
-  formatPlayTimeWithUnit
-} from '~/stores/game/recordUtils'
+import { getMonthlyPlayData } from '~/stores/game/recordUtils'
 
 export function MonthlyReport(): JSX.Element {
+  // 使用record命名空间
+  const { t } = useTranslation('record')
+
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const monthData = getMonthlyPlayData(selectedDate)
 
@@ -34,28 +34,32 @@ export function MonthlyReport(): JSX.Element {
   }
 
   // 获取月份名称
-  const monthNames = [
-    '一月',
-    '二月',
-    '三月',
-    '四月',
-    '五月',
-    '六月',
-    '七月',
-    '八月',
-    '九月',
-    '十月',
-    '十一月',
-    '十二月'
-  ]
-  const currentMonthName = monthNames[selectedDate.getMonth()]
+  const getLocalizedMonth = (monthIndex: number): string => {
+    const monthKeys = [
+      'monthly.months.january',
+      'monthly.months.february',
+      'monthly.months.march',
+      'monthly.months.april',
+      'monthly.months.may',
+      'monthly.months.june',
+      'monthly.months.july',
+      'monthly.months.august',
+      'monthly.months.september',
+      'monthly.months.october',
+      'monthly.months.november',
+      'monthly.months.december'
+    ]
+    return t(monthKeys[monthIndex])
+  }
+
+  const currentMonthName = getLocalizedMonth(selectedDate.getMonth())
 
   // 为图表准备数据
   const weeklyChartData = monthData.weeklyPlayTime
     .map((item) => ({
-      week: `第${item.week}周`,
+      week: t('monthly.chart.weekFormat', { week: item.week }),
       playTime: item.playTime / 3600000, // 转换为小时
-      weekDisplay: `第${item.week}周`, // 添加显示字段用于tooltip
+      weekDisplay: t('monthly.chart.weekFormat', { week: item.week }), // 添加显示字段用于tooltip
       weekNumber: item.week // 保存原始周数以备使用
     }))
     .sort((a, b) => a.weekNumber - b.weekNumber) // 确保按周数排序
@@ -118,33 +122,26 @@ export function MonthlyReport(): JSX.Element {
   // Chart配置
   const chartConfig = {
     playTime: {
-      label: '游戏时长',
+      label: t('overview.stats.totalPlayTime'),
       color: 'hsl(var(--primary))'
     }
   }
 
-  // 自定义值格式化函数
-  const valueFormatter = (value: ValueType): string => {
-    // value是每周游戏时间，单位为小时或分钟
-    if (typeof value === 'number') {
-      if (value >= 1) {
-        return `${value.toFixed(1)} 小时`
-      }
-      return `${Math.round(value * 60)} 分钟`
-    }
-    return String(value)
+  // 游戏时间格式化函数
+  const formatGameTime = (time: number): string => {
+    return t('utils:format.gameTime', { time })
   }
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">月度游戏报告</h2>
+        <h2 className="text-2xl font-bold">{t('monthly.title')}</h2>
         <div className="flex items-center space-x-2">
           <Button variant="outline" size="icon" onClick={goToPreviousMonth}>
             <ChevronLeft className="w-4 h-4" />
           </Button>
           <div className="text-sm font-medium">
-            {selectedDate.getFullYear()}年 {currentMonthName}
+            {t('monthly.yearMonth', { year: selectedDate.getFullYear(), month: currentMonthName })}
           </div>
           <Button
             variant="outline"
@@ -161,27 +158,29 @@ export function MonthlyReport(): JSX.Element {
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <StatCard
-          title="本月游戏时长"
-          value={formatPlayTimeWithUnit(monthData.totalTime)}
+          title={t('monthly.stats.monthlyPlayTime')}
+          value={formatGameTime(monthData.totalTime)}
           icon={<Clock className="w-4 h-4" />}
           className="col-span-1"
         />
 
         <StatCard
-          title="本月游戏天数"
-          value={`${Object.values(monthData.dailyPlayTime).filter((time) => time > 0).length}天`}
+          title={t('monthly.stats.daysPlayed')}
+          value={`${Object.values(monthData.dailyPlayTime).filter((time) => time > 0).length}${t('monthly.unit.days')}`}
           icon={<CalendarIcon className="w-4 h-4" />}
           className="col-span-1"
         />
 
         <StatCard
-          title="游戏最多的一天"
+          title={t('monthly.stats.mostPlayedDay')}
           value={
-            monthData.mostPlayedDay ? formatChineseDate(monthData.mostPlayedDay.date) : '无记录'
+            monthData.mostPlayedDay
+              ? t('utils:format.niceDate', { date: new Date(monthData.mostPlayedDay.date) })
+              : t('monthly.unit.noRecord')
           }
           description={
             monthData.mostPlayedDay
-              ? `游戏时长：${formatPlayTimeWithUnit(monthData.mostPlayedDay.playTime)}`
+              ? t('monthly.unit.playTime', { time: monthData.mostPlayedDay.playTime })
               : ''
           }
           icon={<Trophy className="w-4 h-4" />}
@@ -192,7 +191,7 @@ export function MonthlyReport(): JSX.Element {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-[1fr,auto]">
         <Card>
           <CardHeader>
-            <CardTitle>每周游戏时长</CardTitle>
+            <CardTitle>{t('monthly.chart.weeklyPlayTime')}</CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
             <ChartContainer config={chartConfig} className="h-[320px] w-full">
@@ -203,7 +202,7 @@ export function MonthlyReport(): JSX.Element {
                 <ChartTooltip
                   content={
                     <ChartTooltipContent
-                      formatter={valueFormatter}
+                      formatter={(value) => formatGameTime((value as number) * 3600000)}
                       labelFormatter={(week) => `${week}`}
                       hideIndicator={false}
                       color="hsl(var(--primary))"
@@ -225,7 +224,7 @@ export function MonthlyReport(): JSX.Element {
 
         <Card>
           <CardHeader>
-            <CardTitle>月度游戏日历</CardTitle>
+            <CardTitle>{t('monthly.chart.calendarTitle')}</CardTitle>
           </CardHeader>
           <CardContent>
             <Calendar
@@ -254,41 +253,51 @@ export function MonthlyReport(): JSX.Element {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>本月数据亮点</CardTitle>
+            <CardTitle>{t('monthly.highlights.title')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {/* 游戏时间最长的一周 */}
               {mostPlayedWeek && mostPlayedWeekDateRange ? (
                 <div>
-                  <p className="text-sm text-muted-foreground">游戏时间最长的一周</p>
-                  <p className="text-lg font-bold">
-                    {mostPlayedWeek.week}（{mostPlayedWeekDateRange.start.getDate()}日-
-                    {mostPlayedWeekDateRange.end.getDate()}日）
+                  <p className="text-sm text-muted-foreground">
+                    {t('monthly.highlights.longestWeek')}
                   </p>
-                  <p className="text-sm">游戏时长：{valueFormatter(mostPlayedWeek.playTime)}</p>
+                  <p className="text-lg font-bold">
+                    {t('monthly.chart.weekDateRange', {
+                      week: t('monthly.chart.weekFormat', { week: mostPlayedWeek.weekNumber }),
+                      startDay: mostPlayedWeekDateRange.start.getDate(),
+                      endDay: mostPlayedWeekDateRange.end.getDate()
+                    })}
+                  </p>
+                  <p className="text-sm">
+                    {t('monthly.unit.playTime', { time: mostPlayedWeek.playTime * 3600000 })}
+                  </p>
                 </div>
               ) : (
-                <p>本月没有游戏记录</p>
+                <p>{t('monthly.highlights.noRecords')}</p>
               )}
 
               <Separator />
 
               {/* 游戏频率 */}
               <div>
-                <p className="text-sm text-muted-foreground">游戏频率</p>
+                <p className="text-sm text-muted-foreground">{t('monthly.highlights.frequency')}</p>
                 <p className="text-lg font-bold">
-                  {Object.values(monthData.dailyPlayTime).filter((time) => time > 0).length} /{' '}
-                  {Object.keys(monthData.dailyPlayTime).length} 天
+                  {t('monthly.highlights.daysCount', {
+                    played: Object.values(monthData.dailyPlayTime).filter((time) => time > 0)
+                      .length,
+                    total: Object.keys(monthData.dailyPlayTime).length
+                  })}
                 </p>
                 <p className="text-sm">
-                  占本月{' '}
-                  {Math.round(
-                    (Object.values(monthData.dailyPlayTime).filter((time) => time > 0).length /
-                      Object.keys(monthData.dailyPlayTime).length) *
-                      100
-                  )}
-                  %
+                  {t('monthly.highlights.percentage', {
+                    percent: Math.round(
+                      (Object.values(monthData.dailyPlayTime).filter((time) => time > 0).length /
+                        Object.keys(monthData.dailyPlayTime).length) *
+                        100
+                    )
+                  })}
                 </p>
               </div>
             </div>
@@ -297,7 +306,7 @@ export function MonthlyReport(): JSX.Element {
 
         <Card>
           <CardHeader>
-            <CardTitle>本月热门游戏</CardTitle>
+            <CardTitle>{t('monthly.monthlyGames.title')}</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 gap-2 -mt-1">
             {monthData.mostPlayedGames.length > 0 ? (
@@ -306,11 +315,11 @@ export function MonthlyReport(): JSX.Element {
                   key={game.gameId}
                   gameId={game.gameId}
                   rank={index + 1}
-                  extraInfo={formatPlayTimeWithUnit(game.playTime)}
+                  extraInfo={formatGameTime(game.playTime)}
                 />
               ))
             ) : (
-              <p className="col-span-2">本月没有游戏记录</p>
+              <p className="col-span-2">{t('monthly.monthlyGames.noRecords')}</p>
             )}
           </CardContent>
         </Card>

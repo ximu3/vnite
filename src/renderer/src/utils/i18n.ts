@@ -12,6 +12,7 @@ import zhCNAdder from '@locales/zh-CN/adder.json'
 import zhCNImporter from '@locales/zh-CN/importer.json'
 import zhCNUpdater from '@locales/zh-CN/updater.json'
 import zhCNUtils from '@locales/zh-CN/utils.json'
+import zhCNRecord from '@locales/zh-CN/record.json'
 
 // 英文
 import enConfig from '@locales/en/config.json'
@@ -22,6 +23,7 @@ import enAdder from '@locales/en/adder.json'
 import enImporter from '@locales/en/importer.json'
 import enUpdater from '@locales/en/updater.json'
 import enUtils from '@locales/en/utils.json'
+import enRecord from '@locales/en/record.json'
 
 // 日语
 import jaConfig from '@locales/ja/config.json'
@@ -32,6 +34,7 @@ import jaAdder from '@locales/ja/adder.json'
 import jaImporter from '@locales/ja/importer.json'
 import jaUpdater from '@locales/ja/updater.json'
 import jaUtils from '@locales/ja/utils.json'
+import jaRecord from '@locales/ja/record.json'
 
 // 配置资源对象，按命名空间分组
 const resources = {
@@ -43,7 +46,8 @@ const resources = {
     adder: zhCNAdder,
     importer: zhCNImporter,
     updater: zhCNUpdater,
-    utils: zhCNUtils
+    utils: zhCNUtils,
+    record: zhCNRecord
   },
   ja: {
     config: jaConfig,
@@ -53,7 +57,8 @@ const resources = {
     adder: jaAdder,
     importer: jaImporter,
     updater: jaUpdater,
-    utils: jaUtils
+    utils: jaUtils,
+    record: jaRecord
   },
   en: {
     config: enConfig,
@@ -63,7 +68,8 @@ const resources = {
     adder: enAdder,
     importer: enImporter,
     updater: enUpdater,
-    utils: enUtils
+    utils: enUtils,
+    record: enRecord
   }
 }
 
@@ -77,7 +83,7 @@ export async function i18nInit(): Promise<void> {
     fallbackLng: 'en',
     defaultNS: 'ui', // 默认命名空间
     fallbackNS: 'ui', // 如果在当前命名空间中找不到键，则回退到这个命名空间
-    ns: ['config', 'sidebar', 'ui', 'game', 'adder', 'importer', 'updater', 'utils'], // 声明所有命名空间
+    ns: ['config', 'sidebar', 'ui', 'game', 'adder', 'importer', 'updater', 'utils', 'record'], // 声明所有命名空间
     interpolation: {
       escapeValue: false
     }
@@ -86,7 +92,7 @@ export async function i18nInit(): Promise<void> {
   i18n.services.formatter?.add('gameTime', (value, lng, _options) => {
     // 计算总小时数（带小数部分）
     const totalHours = value / (1000 * 60 * 60)
-    const minutes = Math.floor((value % (1000 * 60 * 60)) / (1000 * 60))
+    const minutes = Math.ceil((value % (1000 * 60 * 60)) / (1000 * 60))
 
     if (totalHours >= 1) {
       // 当超过1小时时，显示为小数形式，保留1位小数

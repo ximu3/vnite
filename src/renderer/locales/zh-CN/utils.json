@@ -16,5 +16,9 @@
       "configError": "配置错误: {{message}}",
       "runtimeError": "运行配置错误，请检查！"
     }
+  },
+  "format": {
+    "gameTime": "{{time, gameTime}}",
+    "niceDate": "{{date, niceDate}}"
   }
 }

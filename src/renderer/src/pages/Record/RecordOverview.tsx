@@ -1,14 +1,15 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@ui/card'
 import { Button } from '@ui/button'
 import { ActivitySquare, Calendar as CalendarIcon, Clock, Trophy } from 'lucide-react'
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Area, AreaChart } from 'recharts'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
-import type { ValueType } from 'recharts/types/component/DefaultTooltipContent'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@ui/dialog'
 import { ScrollArea } from '@ui/scroll-area'
 
-import { formatTimeToChinese } from '~/utils'
+// 移除 import { formatTimeToChinese } from '~/utils'，不再使用
 import {
   useGameRegistry,
   getTotalplayTime,
@@ -24,6 +25,8 @@ import { GameRankingItem } from './GameRankingItem'
 import { getPlayTimeDistribution } from '~/stores/game/recordUtils'
 
 export function RecordOverview(): JSX.Element {
+  const { t } = useTranslation('record')
+
   const [showMoreTimeGames, setShowMoreTimeGames] = useState(false)
   const [showMoreScoreGames, setShowMoreScoreGames] = useState(false)
 
@@ -81,7 +84,7 @@ export function RecordOverview(): JSX.Element {
   // 近一年游戏时间的Chart配置
   const yearlyChartConfig = {
     playTime: {
-      label: '游戏时长',
+      label: t('overview.stats.totalPlayTime'),
       color: 'hsl(var(--primary))'
     }
   }
@@ -89,57 +92,37 @@ export function RecordOverview(): JSX.Element {
   // 分布图的Chart配置
   const distributionChartConfig = {
     gamingHour: {
-      label: '游戏时长',
+      label: t('overview.stats.totalPlayTime'),
       color: 'hsl(var(--primary))'
     }
   }
 
-  // 自定义值格式化函数
-  const hourFormatter = (value: ValueType): string => {
-    // value是每日游戏时间，单位为小时或分钟
-    if (typeof value === 'number') {
-      if (value >= 1) {
-        return `${value.toFixed(1)} 小时`
-      }
-      return `${Math.round(value * 60)} 分钟`
-    }
-    return String(value)
-  }
-
-  // 分钟值格式化函数
-  const minuteFormatter = (value: ValueType): string => {
-    if (typeof value === 'number') {
-      if (value >= 60) {
-        const hours = Math.floor(value / 60)
-        const mins = value % 60
-        return mins > 0 ? `${hours}小时${mins}分钟` : `${hours}小时`
-      }
-      return `${value}分钟`
-    }
-    return String(value)
+  // 使用gameTime格式化时间的辅助函数
+  const formatGameTime = (time: number): string => {
+    return t('utils:format.gameTime', { time })
   }
 
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          title="游戏总数"
-          value={`${totalGames}个`}
+          title={t('overview.stats.totalGames')}
+          value={`${totalGames} ${t('overview.unit.count')}`}
           icon={<ActivitySquare className="w-4 h-4" />}
         />
         <StatCard
-          title="总游戏时间"
-          value={formatTimeToChinese(totalTime)}
+          title={t('overview.stats.totalPlayTime')}
+          value={formatGameTime(totalTime)}
           icon={<Clock className="w-4 h-4" />}
         />
         <StatCard
-          title="总游戏天数"
-          value={`${totalDays}天`}
+          title={t('overview.stats.totalPlayDays')}
+          value={`${totalDays} ${t('overview.unit.day')}`}
           icon={<CalendarIcon className="w-4 h-4" />}
         />
         <StatCard
-          title="游戏次数"
-          value={`${totalTimes}次`}
+          title={t('overview.stats.totalPlayTimes')}
+          value={`${totalTimes} ${t('overview.unit.times')}`}
           icon={<Trophy className="w-4 h-4" />}
         />
       </div>
@@ -147,8 +130,8 @@ export function RecordOverview(): JSX.Element {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.5fr,1fr]">
         <Card className="col-span-1">
           <CardHeader>
-            <CardTitle>近一年游戏时间</CardTitle>
-            <CardDescription>{formatTimeToChinese(getTotalplayTimeYearly())}</CardDescription>
+            <CardTitle>{t('overview.chart.yearlyPlayTime')}</CardTitle>
+            <CardDescription>{formatGameTime(getTotalplayTimeYearly())}</CardDescription>
           </CardHeader>
           <CardContent className="pt-0">
             <ChartContainer config={yearlyChartConfig} className="h-[250px] 3xl:h-[320px] w-full">
@@ -165,7 +148,7 @@ export function RecordOverview(): JSX.Element {
                 <ChartTooltip
                   content={
                     <ChartTooltipContent
-                      formatter={minuteFormatter}
+                      formatter={(value) => formatGameTime((value as number) * 60000)}
                       hideIndicator={false}
                       color="hsl(var(--primary))"
                     />
@@ -186,9 +169,12 @@ export function RecordOverview(): JSX.Element {
 
         <Card className="col-span-1">
           <CardHeader>
-            <CardTitle>游戏时间分布</CardTitle>
+            <CardTitle>{t('overview.chart.timeDistribution')}</CardTitle>
             <CardDescription>
-              游戏高峰时段: {peakHour.hour}:00 - {(peakHour.hour + 1) % 24}:00
+              {t('overview.chart.peakHour', {
+                hour: peakHour.hour,
+                nextHour: (peakHour.hour + 1) % 24
+              })}
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-0">
@@ -209,7 +195,7 @@ export function RecordOverview(): JSX.Element {
                 <ChartTooltip
                   content={
                     <ChartTooltipContent
-                      formatter={hourFormatter}
+                      formatter={(value) => formatGameTime((value as number) * 3600000)}
                       hideIndicator={false}
                       nameKey="timeRange"
                       color="hsl(var(--primary))"
@@ -226,7 +212,7 @@ export function RecordOverview(): JSX.Element {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>游戏时间排行</CardTitle>
+            <CardTitle>{t('overview.ranking.playTimeRanking')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
@@ -235,21 +221,21 @@ export function RecordOverview(): JSX.Element {
                   key={gameId}
                   gameId={gameId}
                   rank={index + 1}
-                  extraInfo={formatTimeToChinese(getGameplayTime(gameId))}
+                  extraInfo={formatGameTime(getGameplayTime(gameId))}
                 />
               ))}
             </div>
           </CardContent>
           <CardFooter>
             <Button variant="ghost" className="w-full" onClick={() => setShowMoreTimeGames(true)}>
-              查看更多
+              {t('overview.ranking.viewMore')}
             </Button>
           </CardFooter>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>游戏评分排行</CardTitle>
+            <CardTitle>{t('overview.ranking.scoreRanking')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
@@ -258,14 +244,14 @@ export function RecordOverview(): JSX.Element {
                   key={gameId}
                   gameId={gameId}
                   rank={index + 1}
-                  extraInfo={gameMetaIndex[gameId].score?.toString() || '暂无评分'}
+                  extraInfo={gameMetaIndex[gameId].score?.toString() || t('overview.misc.noScore')}
                 />
               ))}
             </div>
           </CardContent>
           <CardFooter>
             <Button variant="ghost" className="w-full" onClick={() => setShowMoreScoreGames(true)}>
-              查看更多
+              {t('overview.ranking.viewMore')}
             </Button>
           </CardFooter>
         </Card>
@@ -275,8 +261,8 @@ export function RecordOverview(): JSX.Element {
       <Dialog open={showMoreTimeGames} onOpenChange={setShowMoreTimeGames}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>游戏时间排行</DialogTitle>
-            <DialogDescription>按照游玩时间排序的所有游戏</DialogDescription>
+            <DialogTitle>{t('overview.ranking.playTimeRanking')}</DialogTitle>
+            <DialogDescription>{t('overview.ranking.allGamesByPlayTime')}</DialogDescription>
           </DialogHeader>
           <ScrollArea className="h-[500px] pr-4">
             <div className="space-y-2">
@@ -285,7 +271,7 @@ export function RecordOverview(): JSX.Element {
                   key={gameId}
                   gameId={gameId}
                   rank={index + 1}
-                  extraInfo={formatTimeToChinese(getGameplayTime(gameId))}
+                  extraInfo={formatGameTime(getGameplayTime(gameId))}
                 />
               ))}
             </div>
@@ -297,8 +283,8 @@ export function RecordOverview(): JSX.Element {
       <Dialog open={showMoreScoreGames} onOpenChange={setShowMoreScoreGames}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>游戏评分排行</DialogTitle>
-            <DialogDescription>按照评分排序的所有游戏</DialogDescription>
+            <DialogTitle>{t('overview.ranking.scoreRanking')}</DialogTitle>
+            <DialogDescription>{t('overview.ranking.allGamesByScore')}</DialogDescription>
           </DialogHeader>
           <ScrollArea className="h-[500px] pr-4">
             <div className="space-y-2">
@@ -307,7 +293,7 @@ export function RecordOverview(): JSX.Element {
                   key={gameId}
                   gameId={gameId}
                   rank={index + 1}
-                  extraInfo={gameMetaIndex[gameId].score?.toString() || '暂无评分'}
+                  extraInfo={gameMetaIndex[gameId].score?.toString() || t('overview.misc.noScore')}
                 />
               ))}
             </div>
