@@ -230,7 +230,8 @@ export function MonthlyReport(): JSX.Element {
             <Calendar
               mode="single"
               selected={selectedDate}
-              onSelect={(date) => date && setSelectedDate(date)}
+              month={selectedDate} // 控制显示的月份
+              onMonthChange={(date) => setSelectedDate(date)}
               className="w-full border rounded-md"
               modifiers={{
                 played: (date) => {

@@ -127,7 +127,7 @@ export function getWeeklyPlayData(date = new Date()): {
       .map(([gameId, playTime]) => ({ gameId, playTime }))
       .filter((item) => item.playTime > 0)
       .sort((a, b) => b.playTime - a.playTime)
-      .slice(0, 5)
+      .slice(0, 3)
 
     return {
       dates,
