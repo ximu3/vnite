@@ -1,11 +1,11 @@
-import { importV1DataToV2 } from '~/importer/versionConverter'
+import { importV2DataToV3 } from '~/importer/versionConverter'
 import { getSteamGames, importSteamGames } from '~/importer/steam'
 import { FormattedGameInfo } from '~/importer/steam/types'
 import { ipcMain, BrowserWindow } from 'electron'
 
 export function setupImporterIPC(mainWindow: BrowserWindow): void {
-  ipcMain.handle('import-v1-data', async (_, dataPath: string) => {
-    return await importV1DataToV2(dataPath)
+  ipcMain.handle('import-v2-data', async (_, dataPath: string) => {
+    return await importV2DataToV3(dataPath)
   })
 
   ipcMain.handle('get-steam-games', async (_event, steamId: string) => {

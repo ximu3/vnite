@@ -1,101 +1,112 @@
-import * as fse from 'fs-extra'
+// DatabaseV2toV3Converter.ts
 import * as path from 'path'
+import * as fse from 'fs-extra'
 import * as unzipper from 'unzipper'
-import { generateUUID } from '@appUtils'
-import { launcherPreset } from '~/launcher'
+import { v4 as uuidv4 } from 'uuid'
+import { GameDBManager } from '~/database/game'
+import { ConfigDBManager } from '~/database/config'
+import { stopSync } from '~/database'
+import { gameDoc, gameLocalDoc, gameCollectionDoc } from '@appTypes/database'
+import { getAppTempPath } from '~/utils'
 import { app } from 'electron'
 
-// interface definition
-interface V1GameDetail {
-  name: string
-  chineseName: string
-  releaseDate: string
-  introduction: string
-  developer: string
-  websites: { title: string; url: string }[]
-  addDate: string
-  lastVisitDate: number
-  playStatus: number
-  gameDuration: number
-}
-
-interface V1Save {
-  id: number
-  date: string
-  note: string
-  path: string
-}
-
-interface V2Save {
-  id: string
-  date: string
-  note: string
-}
-
-interface V2Metadata {
+// v2数据库类型定义
+interface V2GameMetadata {
   id: string
   name: string
   originalName: string
   releaseDate: string
   description: string
   developers: string[]
-  relatedSites: { label: string; url: string }[]
+  platforms: string[]
+  publishers: string[]
+  genres: string[]
+  tags: string[]
+  relatedSites: {
+    label: string
+    url: string
+  }[]
+  steamId?: string
+  vndbId?: string
+  igdbId?: string
+  ymgalId?: string
 }
 
-interface V1Category {
-  id: number
-  name: string
-  games: string[]
+interface V2GameLauncher {
+  mode: 'file' | 'url' | 'script'
+  fileConfig: {
+    path: string
+    workingDirectory: string
+    timerMode: 'file' | 'folder'
+    timerPath: string
+  }
+  scriptConfig: {
+    command: string[]
+    workingDirectory: string
+    timerMode: 'file' | 'folder'
+    timerPath: string
+  }
+  urlConfig: {
+    url: string
+    timerMode: 'file' | 'folder'
+    timerPath: string
+    browserPath: string
+  }
+  useMagpie: boolean
 }
 
-interface V2Collection {
-  id: string
-  name: string
-  games: string[]
+interface V2GameMemory {
+  memoryList: {
+    [memoryId: string]: {
+      id: string
+      date: string
+      note: string
+    }
+  }
 }
 
-interface V2Record {
+interface V2GamePath {
+  gamePath: string
+  savePath: string[]
+}
+
+interface V2GameRecord {
   addDate: string
   lastRunDate: string
   score: number
   playingTime: number
-  timer: any[]
-  playStatus: string
+  playStatus: 'unplayed' | 'playing' | 'finished' | 'multiple' | 'shelved'
+  timer: {
+    start: string
+    end: string
+  }[]
 }
 
-interface V1Config {
-  cloudSync: {
-    enabled: boolean
-    mode: string
-    webdav: {
-      url: string
-      path: string
-      username: string
-      password: string
-      lastSyncTime: string
-    }
-    github: {
-      clientId: string
-      clientSecret: string
-      username: string
-      accessToken: string
-      repoUrl: string
-      lastSyncTime: string
-    }
+interface V2GameSave {
+  [saveId: string]: {
+    id: string
+    date: string
+    note: string
+    locked: boolean
   }
-  advance: {
-    lePath: string
-  }
-  general: {
-    theme: string
-    language: string
-    quitToTray: boolean
-  }
-  others: {
-    posterWall: {
-      sortOrder: string
-      sortBy: string
+}
+
+interface V2GameUtils {
+  logo: {
+    position: {
+      x: number
+      y: number
     }
+    size: number
+    visible: boolean
+  }
+}
+
+interface V2Collections {
+  [collectionId: string]: {
+    id: string
+    name: string
+    games: string[]
   }
 }
 
@@ -114,14 +125,24 @@ interface V2Config {
       remotePath: string
       username: string
       password: string
+      syncInterval: number
     }
   }
   others: {
     showcase: {
       sort: {
         by: string
-        order: string
+        order: 'asc' | 'desc'
       }
+    }
+    gameList: {
+      sort: {
+        by: string
+        order: 'asc' | 'desc'
+      }
+      selectedGroup: string
+      highlightLocalGames: boolean
+      markLocalGames: boolean
     }
   }
   advanced: {
@@ -129,268 +150,556 @@ interface V2Config {
       localeEmulator: {
         path: string
       }
+      visualBoyAdvance: {
+        path: string
+      }
+      magpie: {
+        path: string
+        hotkey: string
+      }
+    }
+  }
+  appearances: {
+    gameList: {
+      showRecentGamesInGameList: boolean
+    }
+    gameHeader: {
+      showOriginalNameInGameHeader: boolean
+    }
+    sidebar: {
+      showThemeSwitchInSidebar: boolean
     }
   }
 }
 
-async function convertConfig(tempDir: string, outputDir: string): Promise<void> {
-  const v1ConfigPath = path.join(tempDir, 'config', 'config.json')
+/**
+ * 主函数：从zip文件导入V2数据库并转换为V3
+ * @param zipFilePath zip文件路径
+ */
+export async function convertV2toV3Database(zipFilePath: string): Promise<void> {
+  console.log('开始从ZIP文件导入数据库...')
 
-  // Default v2 configuration
-  const defaultV2Config: V2Config = {
-    general: {
-      openAtLogin: false,
-      quitToTray: false
-    },
-    scraper: {
-      defaultDataSource: 'steam'
-    },
-    cloudSync: {
-      enabled: false,
-      config: {
-        webdavUrl: '',
-        remotePath: '',
-        username: '',
-        password: ''
-      }
-    },
-    others: {
-      showcase: {
-        sort: {
-          by: 'name',
-          order: 'desc'
-        }
-      }
-    },
-    advanced: {
-      linkage: {
-        localeEmulator: {
-          path: ''
-        }
-      }
-    }
-  }
-
-  // If the v1 configuration file exists, it reads and converts the
-  if (await fse.pathExists(v1ConfigPath)) {
-    const v1Config: V1Config = await fse.readJson(v1ConfigPath)
-
-    // Create v2 configurations, merge defaults and v1 values that need to be preserved
-    const v2Config: V2Config = {
-      ...defaultV2Config,
-      general: {
-        ...defaultV2Config.general,
-        quitToTray: v1Config.general.quitToTray
-      },
-      others: {
-        showcase: {
-          sort: {
-            by: v1Config.others.posterWall.sortBy,
-            order: v1Config.others.posterWall.sortOrder
-          }
-        }
-      },
-      advanced: {
-        linkage: {
-          localeEmulator: {
-            path: v1Config.advance.lePath
-          }
-        }
-      }
-    }
-
-    // Save v2 configuration file
-    await fse.writeJson(path.join(outputDir, 'config.json'), v2Config, { spaces: 2 })
-  } else {
-    // If the v1 configuration file does not exist, the default configuration is used
-    await fse.writeJson(path.join(outputDir, 'config.json'), defaultV2Config, { spaces: 2 })
-  }
-}
-
-export async function importV1Data(zipFilePath: string, outputDir: string): Promise<void> {
-  // Create a temporary decompression directory
-  const tempDir = path.join(outputDir, '_temp')
-  await fse.ensureDir(tempDir)
-
+  // 创建临时目录
+  const tempDir = getAppTempPath(`v2toV3-${uuidv4()}`)
+  stopSync() // 停止同步
   try {
-    // decompress a file
-    await fse
-      .createReadStream(zipFilePath)
-      .pipe(unzipper.Extract({ path: tempDir }))
-      .promise()
+    // 确保临时目录存在
+    await fse.ensureDir(tempDir)
 
-    await convertConfig(tempDir, outputDir)
+    // 解压文件
+    await extractZipFile(zipFilePath, tempDir)
 
-    // Read v1 data
-    const dataJsonPath = path.join(tempDir, 'data', 'data.json')
-    const pathsJsonPath = path.join(tempDir, 'path', 'paths.json')
-    const categoriesJsonPath = path.join(tempDir, 'data', 'categories.json')
+    // 转换数据
+    await convertGames(tempDir)
+    await convertCollections(tempDir)
+    await convertConfig(tempDir)
 
-    const dataJson = await fse.readJson(dataJsonPath)
-    const pathsJson = await fse.readJson(pathsJsonPath)
-    const categories: V1Category[] = await fse.readJson(categoriesJsonPath)
-
-    // Creating a Game ID Mapping Table
-    const gameIdMap: Record<string, string> = {}
-
-    // Convert game data
-    for (const oldGameId in dataJson) {
-      const newGameId = generateUUID()
-      gameIdMap[oldGameId] = newGameId
-
-      const gameDetail: V1GameDetail = dataJson[oldGameId].detail
-      const gameSaves: V1Save[] | undefined = dataJson[oldGameId].saves
-      const v2Metadata: V2Metadata = {
-        id: newGameId,
-        name: gameDetail.chineseName || gameDetail.name,
-        originalName: gameDetail.name,
-        releaseDate: gameDetail.releaseDate,
-        description: gameDetail.introduction,
-        developers: [gameDetail.developer],
-        relatedSites: gameDetail.websites.map((site) => ({
-          label: site.title,
-          url: site.url
-        }))
-      }
-
-      // Creating game catalogs and saving metadata
-      const gameDir = path.join(outputDir, 'games', newGameId)
-      await fse.ensureDir(gameDir)
-      await fse.writeJson(path.join(gameDir, 'metadata.json'), v2Metadata, { spaces: 2 })
-
-      // Copying Image Files
-      const imageFiles = ['background.webp', 'cover.webp', 'icon.png', 'icon.ico']
-      for (const file of imageFiles) {
-        const srcPath = path.join(tempDir, 'data', 'games', oldGameId, file)
-        const destPath = path.join(gameDir, file)
-        if (await fse.pathExists(srcPath)) {
-          await fse.copy(srcPath, destPath)
-        }
-      }
-
-      // Processing path information
-      const pathInfo = pathsJson[oldGameId]
-      if (pathInfo) {
-        const gamePath = pathInfo.gamePath || ''
-        const savePath = pathInfo.savePath || ''
-
-        const pathData = {
-          gamePath: gamePath,
-          savePath: {
-            mode: isFilePath(savePath) ? 'file' : 'folder',
-            folder: isFilePath(savePath) ? [] : [savePath],
-            file: isFilePath(savePath) ? [savePath] : []
-          }
-        }
-
-        await fse.writeJson(path.join(gameDir, 'path.json'), pathData, { spaces: 2 })
-
-        if (gamePath) {
-          await launcherPreset('default', newGameId)
-        }
-      }
-
-      // Creating Record Files
-      const v2Record: V2Record = {
-        addDate: new Date(gameDetail.addDate).toISOString(),
-        lastRunDate: gameDetail.lastVisitDate
-          ? new Date(gameDetail.lastVisitDate).toISOString()
-          : '',
-        score: -1,
-        playingTime: gameDetail?.gameDuration * 1000 || 0,
-        timer: [],
-        playStatus: convertPlayStatus(gameDetail.playStatus)
-      }
-      await fse.writeJson(path.join(gameDir, 'record.json'), v2Record, { spaces: 2 })
-
-      // Converting archived data
-      const v2Saves: Record<string, V2Save> = {}
-      if (Array.isArray(gameSaves)) {
-        for (const v1Save of gameSaves) {
-          const newSaveId = generateUUID()
-          v2Saves[newSaveId] = {
-            id: newSaveId,
-            date: new Date(v1Save.date).toISOString(),
-            note: v1Save.note
-          }
-
-          // Copying archive files
-          const oldSavePath = path.join(
-            tempDir,
-            'data',
-            'games',
-            oldGameId,
-            'saves',
-            v1Save.id.toString()
-          )
-          const newSavePath = path.join(gameDir, 'saves', newSaveId)
-
-          console.log(`Checking existence of: ${oldSavePath}`)
-          if (await fse.pathExists(oldSavePath)) {
-            console.log(`Copying save from ${oldSavePath} to ${newSavePath}`)
-            await fse.ensureDir(path.dirname(newSavePath))
-            await fse.copy(oldSavePath, newSavePath)
-          } else {
-            console.warn(`Save file does not exist: ${oldSavePath}`)
-          }
-        }
-      }
-
-      // Save v2 archive information
-      await fse.writeJson(path.join(gameDir, 'save.json'), v2Saves, { spaces: 2 })
-    }
-
-    // Converting Categories to Sets
-    const collections: Record<string, V2Collection> = {}
-    categories.forEach((category) => {
-      // Skip categories with id 0
-      if (category.id === 0) {
-        return
-      }
-      // Skip empty classification
-      if (category.games.length === 0) {
-        return
-      }
-      const collectionId = generateUUID()
-      collections[collectionId] = {
-        id: collectionId,
-        name: category.name,
-        games: category.games
-          .filter((oldGameId) => gameIdMap[oldGameId])
-          .map((oldGameId) => gameIdMap[oldGameId])
-      }
-    })
-
-    await fse.writeJson(path.join(outputDir, 'collections.json'), collections, { spaces: 2 })
-
-    return
+    console.log('数据库转换完成！')
+  } catch (error) {
+    console.error('转换过程中发生错误:', error)
+    throw error
   } finally {
-    // Clean up the temporary catalog
+    // 清理临时文件
     await new Promise((resolve) => setTimeout(resolve, 100))
+    await cleanupTempFiles(tempDir)
     fse.removeSync(tempDir)
     app.relaunch()
     app.exit()
   }
 }
 
-// Determine if the path is a file path
-function isFilePath(filePath: string): boolean {
-  // Simple judgment: if the path has a file extension, it is considered a file path
-  return path.extname(filePath) !== ''
+/**
+ * 解压zip文件到指定目录
+ */
+async function extractZipFile(zipFilePath: string, targetDir: string): Promise<void> {
+  console.log(`解压文件 ${zipFilePath} 到 ${targetDir}`)
+
+  return new Promise<void>((resolve, reject) => {
+    fse
+      .createReadStream(zipFilePath)
+      .pipe(unzipper.Extract({ path: targetDir }))
+      .on('error', (err) => {
+        reject(new Error(`解压文件失败: ${err}`))
+      })
+      .on('close', () => {
+        console.log('文件解压完成')
+        resolve()
+      })
+  })
 }
 
-// Convert the playStatus of v1 to the format of v2
-function convertPlayStatus(playStatus: number): string {
-  switch (playStatus) {
-    case 0:
-      return 'unplayed'
-    case 1:
-      return 'playing'
-    case 2:
-      return 'finished'
-    case 3:
-      return 'multiple'
+/**
+ * 转换游戏数据
+ */
+async function convertGames(basePath: string): Promise<void> {
+  console.log('开始转换游戏数据...')
+
+  const gamesPath = path.join(basePath, 'games')
+  const exists = await fse.pathExists(gamesPath)
+  if (!exists) {
+    console.error('游戏目录不存在')
+    return
+  }
+
+  // 读取games目录下的所有子目录
+  const items = await fse.readdir(gamesPath)
+  const gameIds: string[] = []
+
+  for (const item of items) {
+    const itemPath = path.join(gamesPath, item)
+    const stats = await fse.stat(itemPath)
+    if (stats.isDirectory() && item !== 'config.json') {
+      gameIds.push(item)
+    }
+  }
+
+  // 处理每个游戏
+  for (const gameId of gameIds) {
+    try {
+      await convertGame(gameId, path.join(gamesPath, gameId))
+    } catch (error) {
+      console.error(`转换游戏 ${gameId} 时出错:`, error)
+    }
+  }
+
+  console.log(`成功转换 ${gameIds.length} 个游戏`)
+}
+
+/**
+ * 转换单个游戏数据
+ */
+async function convertGame(gameId: string, gamePath: string): Promise<void> {
+  console.log(`正在转换游戏: ${gameId}`)
+
+  // 读取游戏相关JSON文件
+  try {
+    const metadata = await readJsonFile<V2GameMetadata>(path.join(gamePath, 'metadata.json'))
+    const launcher = await readJsonFile<V2GameLauncher>(path.join(gamePath, 'launcher.json'))
+    const memory = await readJsonFile<V2GameMemory>(path.join(gamePath, 'memory.json'))
+    const gamePaths = await readJsonFile<V2GamePath>(path.join(gamePath, 'path.json'))
+    const record = await readJsonFile<V2GameRecord>(path.join(gamePath, 'record.json'))
+    const save = await readJsonFile<V2GameSave>(path.join(gamePath, 'save.json'))
+    const utils = await readJsonFile<V2GameUtils>(path.join(gamePath, 'utils.json'))
+
+    // 创建v3的游戏文档
+    const gameDoc: Partial<gameDoc> = {
+      _id: gameId,
+      metadata: {
+        name: metadata.name || '',
+        originalName: metadata.originalName || '',
+        releaseDate: metadata.releaseDate || '',
+        description: metadata.description || '',
+        developers: metadata.developers || [],
+        platforms: metadata.platforms || [],
+        publishers: metadata.publishers || [],
+        genres: metadata.genres || [],
+        tags: metadata.tags || [],
+        relatedSites: metadata.relatedSites || [],
+        steamId: metadata.steamId || '',
+        vndbId: metadata.vndbId || '',
+        igdbId: metadata.igdbId || '',
+        ymgalId: metadata.ymgalId || ''
+      },
+      record: {
+        addDate: record.addDate || '',
+        lastRunDate: record.lastRunDate || '',
+        score: record.score || -1,
+        playTime: record.playingTime || 0, // 字段名称变化
+        playStatus: record.playStatus || 'unplayed', // 字段名称变化
+        timers: record.timer || [] // 字段名称变化
+      },
+      save: {
+        saveList: {},
+        maxBackups: 7 // 默认值
+      },
+      memory: {
+        memoryList: {}
+      },
+      apperance: {
+        logo: utils?.logo || {
+          position: {
+            x: 2,
+            y: 29
+          },
+          size: 100,
+          visible: true
+        }
+      }
+    }
+
+    // 处理存档数据
+    if (save) {
+      Object.keys(save).forEach((saveId) => {
+        if (!gameDoc.save) gameDoc.save = { saveList: {}, maxBackups: 7 }
+        gameDoc.save.saveList[saveId] = {
+          _id: save[saveId].id,
+          date: save[saveId].date,
+          note: save[saveId].note,
+          locked: save[saveId].locked
+        }
+      })
+    }
+
+    // 处理记忆数据
+    if (memory && memory.memoryList) {
+      Object.keys(memory.memoryList).forEach((memoryId) => {
+        if (!gameDoc.memory) gameDoc.memory = { memoryList: {} }
+        gameDoc.memory.memoryList[memoryId] = {
+          _id: memory.memoryList[memoryId].id,
+          date: memory.memoryList[memoryId].date,
+          note: memory.memoryList[memoryId].note
+        }
+      })
+    }
+
+    // 创建v3的游戏本地文档
+    const gameLocalDoc: Partial<gameLocalDoc> = {
+      _id: gameId,
+      path: {
+        gamePath: gamePaths.gamePath,
+        savePaths: gamePaths.savePath || []
+      },
+      launcher: {
+        mode: launcher.mode,
+        fileConfig: {
+          path: launcher.fileConfig.path,
+          workingDirectory: launcher.fileConfig.workingDirectory,
+          args: [],
+          monitorMode: launcher.fileConfig.timerMode, // 字段名称变化
+          monitorPath: launcher.fileConfig.timerPath // 字段名称变化
+        },
+        urlConfig: {
+          url: launcher.urlConfig.url,
+          browserPath: launcher.urlConfig.browserPath,
+          monitorMode: launcher.urlConfig.timerMode, // 字段名称变化
+          monitorPath: launcher.urlConfig.timerPath // 字段名称变化
+        },
+        scriptConfig: {
+          workingDirectory: launcher.scriptConfig.workingDirectory,
+          command: launcher.scriptConfig.command,
+          monitorMode: launcher.scriptConfig.timerMode, // 字段名称变化
+          monitorPath: launcher.scriptConfig.timerPath // 字段名称变化
+        },
+        useMagpie: launcher.useMagpie
+      }
+    }
+
+    // 保存游戏文档
+    await GameDBManager.setGame(gameId, gameDoc)
+    await GameDBManager.setGameLocal(gameId, gameLocalDoc)
+
+    // 处理游戏图像
+    await processGameImages(gameId, gamePath)
+
+    // 处理游戏存档附件
+    await processGameSaves(gameId, gamePath)
+
+    // 处理游戏记忆图像
+    await processGameMemories(gameId, gamePath)
+
+    console.log(`游戏 ${gameId} 转换完成`)
+  } catch (error) {
+    console.error(`处理游戏 ${gameId} 数据时出错:`, error)
+    throw error
+  }
+}
+
+/**
+ * 处理游戏图像文件
+ */
+async function processGameImages(gameId: string, gamePath: string): Promise<void> {
+  const imageTypes = ['background', 'cover', 'icon', 'logo']
+  const possibleExtensions = ['webp', 'jpg', 'jpeg', 'png', 'gif', 'ico']
+
+  for (const type of imageTypes) {
+    let imageFound = false
+
+    // 尝试不同的扩展名
+    for (const ext of possibleExtensions) {
+      const imagePath = path.join(gamePath, `${type}.${ext}`)
+
+      const exists = await fse.pathExists(imagePath)
+      if (exists) {
+        try {
+          const imageData = await fse.readFile(imagePath)
+          await GameDBManager.setGameImage(gameId, type as any, imageData)
+
+          imageFound = true
+          console.log(`已处理游戏 ${gameId} 的 ${type} 图像`)
+          break
+        } catch (error) {
+          console.error(`处理游戏 ${gameId} 的 ${type} 图像时出错:`, error)
+        }
+      }
+    }
+
+    if (!imageFound) {
+      console.log(`游戏 ${gameId} 没有 ${type} 图像`)
+    }
+  }
+}
+
+/**
+ * 处理游戏存档文件
+ */
+async function processGameSaves(gameId: string, gamePath: string): Promise<void> {
+  const savesDir = path.join(gamePath, 'saves')
+
+  const savesDirExists = await fse.pathExists(savesDir)
+  if (savesDirExists) {
+    const stats = await fse.stat(savesDir)
+    if (stats.isDirectory()) {
+      const saveFiles = await fse.readdir(savesDir)
+
+      for (const saveFile of saveFiles) {
+        if (saveFile.endsWith('.zip')) {
+          const saveId = saveFile.replace('.zip', '')
+          const saveFilePath = path.join(savesDir, saveFile)
+
+          try {
+            const saveData = await fse.readFile(saveFilePath)
+            await GameDBManager.setGameSave(gameId, saveId, saveData)
+
+            console.log(`已处理游戏 ${gameId} 的存档 ${saveId}`)
+          } catch (error) {
+            console.error(`处理游戏 ${gameId} 的存档 ${saveId} 时出错:`, error)
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * 处理游戏记忆图像
+ */
+async function processGameMemories(gameId: string, gamePath: string): Promise<void> {
+  const memoriesDir = path.join(gamePath, 'memories')
+
+  const memoriesDirExists = await fse.pathExists(memoriesDir)
+  if (memoriesDirExists) {
+    const stats = await fse.stat(memoriesDir)
+    if (stats.isDirectory()) {
+      const memoryFiles = await fse.readdir(memoriesDir)
+
+      for (const memoryFile of memoryFiles) {
+        const fileExtMatch = memoryFile.match(/(.+)\.(webp|jpg|jpeg|png|gif)$/)
+        if (fileExtMatch) {
+          const memoryId = fileExtMatch[1]
+          const memoryFilePath = path.join(memoriesDir, memoryFile)
+
+          try {
+            const memoryData = await fse.readFile(memoryFilePath)
+            await GameDBManager.setGameMemoryImage(gameId, memoryId, memoryData)
+
+            console.log(`已处理游戏 ${gameId} 的记忆图像 ${memoryId}`)
+          } catch (error) {
+            console.error(`处理游戏 ${gameId} 的记忆图像 ${memoryId} 时出错:`, error)
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * 转换收藏夹数据
+ */
+async function convertCollections(basePath: string): Promise<void> {
+  console.log('开始转换收藏夹数据...')
+
+  const collectionsPath = path.join(basePath, 'collections.json')
+
+  const exists = await fse.pathExists(collectionsPath)
+  if (!exists) {
+    console.log('没有找到收藏夹数据')
+    return
+  }
+
+  try {
+    const collections = await readJsonFile<V2Collections>(collectionsPath)
+
+    // 处理每个收藏夹
+    for (const collectionId in collections) {
+      const collection = collections[collectionId]
+
+      const collectionDoc: Partial<gameCollectionDoc> = {
+        _id: collection.id,
+        name: collection.name,
+        games: collection.games
+      }
+
+      await GameDBManager.setCollection(collection.id, collectionDoc)
+      console.log(`已转换收藏夹: ${collection.name}`)
+    }
+
+    console.log(`成功转换 ${Object.keys(collections).length} 个收藏夹`)
+  } catch (error) {
+    console.error('转换收藏夹数据时出错:', error)
+    throw error
+  }
+}
+
+/**
+ * 转换配置数据
+ */
+async function convertConfig(basePath: string): Promise<void> {
+  console.log('开始转换配置数据...')
+
+  const configPath = path.join(basePath, 'games', 'config.json')
+
+  const exists = await fse.pathExists(configPath)
+  if (!exists) {
+    console.log('没有找到配置数据')
+    return
+  }
+
+  try {
+    const v2Config = await readJsonFile<V2Config>(configPath)
+
+    // 转换一般配置
+    await ConfigDBManager.setConfigValue('general', {
+      openAtLogin: v2Config.general.openAtLogin,
+      quitToTray: v2Config.general.quitToTray,
+      language: '' // v2没有语言设置
+    })
+
+    // 转换游戏相关配置
+    await ConfigDBManager.setConfigValue('game', {
+      scraper: {
+        defaultDatasSource: mapDataSourceName(v2Config.scraper.defaultDataSource)
+      },
+      showcase: {
+        sort: {
+          by: mapSortField(v2Config.others.showcase.sort.by),
+          order: v2Config.others.showcase.sort.order
+        }
+      },
+      gameList: {
+        sort: {
+          by: mapSortField(v2Config.others.gameList.sort.by),
+          order: v2Config.others.gameList.sort.order
+        },
+        selectedGroup: v2Config.others.gameList.selectedGroup as
+          | 'collection'
+          | 'developers'
+          | 'genres',
+        highlightLocalGames: v2Config.others.gameList.highlightLocalGames,
+        markLocalGames: v2Config.others.gameList.markLocalGames,
+        showRecentGames: v2Config.appearances.gameList.showRecentGamesInGameList,
+        playingStatusOrder: ['unplayed', 'playing', 'finished', 'multiple', 'shelved'] // 默认顺序
+      },
+      gameHeader: {
+        showOriginalName: v2Config.appearances.gameHeader.showOriginalNameInGameHeader
+      }
+    })
+
+    // 转换外观配置
+    await ConfigDBManager.setConfigValue('appearances', {
+      sidebar: {
+        showThemeSwitcher: v2Config.appearances.sidebar.showThemeSwitchInSidebar
+      }
+    })
+
+    // 转换本地配置 - 游戏关联
+    await ConfigDBManager.setConfigLocalValue('game', {
+      linkage: {
+        localeEmulator: {
+          path: v2Config.advanced.linkage.localeEmulator.path
+        },
+        visualBoyAdvance: {
+          path: v2Config.advanced.linkage.visualBoyAdvance.path
+        },
+        magpie: {
+          path: v2Config.advanced.linkage.magpie.path,
+          hotkey: v2Config.advanced.linkage.magpie.hotkey
+        }
+      }
+    })
+
+    console.log('配置转换完成')
+  } catch (error) {
+    console.error('转换配置数据时出错:', error)
+    throw error
+  }
+}
+
+/**
+ * 映射数据源名称
+ */
+function mapDataSourceName(source: string): 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' {
+  switch (source) {
+    case 'steam':
+      return 'steam'
+    case 'vndb':
+      return 'vndb'
+    case 'bangumi':
+      return 'bangumi'
+    case 'ymgal':
+      return 'ymgal'
+    case 'igdb':
+      return 'igdb'
     default:
-      return 'unplayed'
+      return 'steam' // 默认返回steam
+  }
+}
+
+/**
+ * 映射排序字段
+ */
+function mapSortField(
+  field: string
+):
+  | 'metadata.name'
+  | 'metadata.releaseDate'
+  | 'record.lastRunDate'
+  | 'record.addDate'
+  | 'record.playTime' {
+  switch (field) {
+    case 'name':
+      return 'metadata.name'
+    case 'releaseDate':
+      return 'metadata.releaseDate'
+    case 'lastRunDate':
+      return 'record.lastRunDate'
+    case 'addDate':
+      return 'record.addDate'
+    case 'playingTime':
+    case 'playTime':
+      return 'record.playTime'
+    default:
+      return 'metadata.name' // 默认返回名称
+  }
+}
+
+/**
+ * 读取JSON文件
+ */
+async function readJsonFile<T>(filePath: string): Promise<T> {
+  const exists = await fse.pathExists(filePath)
+  if (!exists) {
+    return {} as T
+  }
+
+  try {
+    const content = await fse.readFile(filePath, 'utf8')
+    return JSON.parse(content) as T
+  } catch (error) {
+    throw new Error(`无法解析JSON文件 ${filePath}: ${error}`)
+  }
+}
+
+/**
+ * 清理临时文件
+ */
+async function cleanupTempFiles(tempDir: string): Promise<void> {
+  try {
+    const exists = await fse.pathExists(tempDir)
+    if (exists) {
+      console.log(`清理临时文件: ${tempDir}`)
+      await fse.remove(tempDir)
+    }
+  } catch (error) {
+    console.error(`清理临时文件出错: ${error}`)
   }
 }

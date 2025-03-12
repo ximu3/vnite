@@ -1,5 +1,4 @@
-import { importV1Data } from './common'
-import { getDataPath } from '~/utils'
+import { convertV2toV3Database } from './common'
 import log from 'electron-log/main.js'
 
 /**
@@ -8,10 +7,9 @@ import log from 'electron-log/main.js'
  * @returns A promise that resolves when the operation is complete.
  * @throws An error if the operation fails.
  */
-export async function importV1DataToV2(v1DataPath: string): Promise<void> {
+export async function importV2DataToV3(v2DataPath: string): Promise<void> {
   try {
-    const dataPath = await getDataPath('')
-    await importV1Data(v1DataPath, dataPath)
+    await convertV2toV3Database(v2DataPath)
   } catch (error) {
     log.error('Failed to import v1 data to v2', error)
     throw error

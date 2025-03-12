@@ -52,12 +52,12 @@ export function Database(): JSX.Element {
     )
   }
 
-  const importV1Data = async (): Promise<void> => {
+  const importV2Data = async (): Promise<void> => {
     toast.promise(
       async () => {
         const sourcePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
         if (!sourcePath) return
-        await ipcInvoke('import-v1-data', sourcePath)
+        await ipcInvoke('import-v2-data', sourcePath)
       },
       {
         loading: t('database.messages.importing'),
@@ -169,16 +169,16 @@ export function Database(): JSX.Element {
             <div className={cn('flex flex-row gap-5 items-center')}>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant={'outline'}>{t('database.importV1')}</Button>
+                  <Button variant={'outline'}>{t('database.importV2')}</Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>{t('database.confirmImportV1')}</AlertDialogTitle>
-                    <AlertDialogDescription>{t('database.importV1Warning')}</AlertDialogDescription>
+                    <AlertDialogTitle>{t('database.confirmImportV2')}</AlertDialogTitle>
+                    <AlertDialogDescription>{t('database.importV2Warning')}</AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>{t('ui:common.cancel')}</AlertDialogCancel>
-                    <AlertDialogAction onClick={importV1Data}>
+                    <AlertDialogAction onClick={importV2Data}>
                       {t('ui:common.confirm')}
                     </AlertDialogAction>
                   </AlertDialogFooter>
