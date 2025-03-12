@@ -16,7 +16,7 @@ export function Record({ className }: { className?: string }): JSX.Element {
         className
       )}
     >
-      <ScrollArea className={cn('w-full h-full p-6 pt-0')}>
+      <ScrollArea className={cn('w-full h-full px-6 pt-0')}>
         <div className={cn('flex flex-col gap-6')}>
           <div className={cn('text-2xl font-bold')}>我的游戏记录</div>
 
