@@ -16,7 +16,8 @@ import {
   calculateWindowSize,
   portableStore,
   getAppRootPath,
-  checkPortableMode
+  checkPortableMode,
+  setupSession
 } from './utils'
 // import { setupUpdater } from './updater' todo
 import { initScraper } from './scraper'
@@ -243,6 +244,8 @@ if (!gotTheLock) {
     }
 
     setupProtocols()
+
+    setupSession()
 
     createSplashWindow()
 

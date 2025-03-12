@@ -153,6 +153,7 @@ export function SearchMediaDialog({
                   {['cover', 'background'].includes(type) && (
                     <SelectItem value="igdb">IGDB</SelectItem>
                   )}
+                  <SelectItem value="google">Google</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>

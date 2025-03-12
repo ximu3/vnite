@@ -6,6 +6,34 @@ import { app } from 'electron'
 import fetch from 'node-fetch'
 import fse from 'fs-extra'
 import { fileTypeFromBuffer } from 'file-type'
+import gis from 'async-g-i-s'
+
+/**
+ * 搜索游戏相关图片
+ * @param gameName 游戏名称
+ * @param imageType 图片类型 (icon, logo, hero, cover)
+ * @returns 图片链接数组
+ */
+export async function searchGameImages(
+  gameName: string,
+  imageType: 'icon' | 'logo' | 'hero' | 'cover' | string,
+  limit: number = 30
+): Promise<string[]> {
+  try {
+    const imageUrls: string[] = []
+
+    // 使用Google图片搜索
+    const results = await gis(`"${gameName}" ${imageType === 'hero' ? 'wallpaper' : imageType}`)
+    for (const result of results.slice(0, limit)) {
+      imageUrls.push(result.url || '')
+    }
+
+    return imageUrls
+  } catch (error) {
+    console.error('搜索图片出错:', error)
+    return []
+  }
+}
 
 export async function convertToWebP(
   input: Buffer | string,
@@ -159,16 +187,43 @@ export async function saveGameIconByFile(gameId: string, filePath: string): Prom
 }
 
 export async function downloadTempImage(url: string): Promise<string> {
-  // Download file
-  const response = await fetch(url)
-  const arrayBuffer = await response.arrayBuffer()
-  const buffer = Buffer.from(arrayBuffer)
+  // 准备请求选项，模拟真实浏览器
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), 5000) // 3秒超时
 
-  // Verify the actual file type
-  const fileType = await fileTypeFromBuffer(buffer as Uint8Array)
-  const ext = fileType?.ext || 'webp'
-  const filePath = getAppTempPath(`${Date.now()}.${ext}`)
+  try {
+    // 下载文件，添加常见浏览器头信息
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        Accept: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
+        Referer: new URL(url).origin,
+        'Cache-Control': 'no-cache',
+        Pragma: 'no-cache'
+      },
+      signal: controller.signal
+    })
 
-  await fse.writeFile(filePath, buffer)
-  return filePath
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`)
+    }
+
+    const arrayBuffer = await response.arrayBuffer()
+    const buffer = Buffer.from(arrayBuffer)
+
+    // 验证实际文件类型
+    const fileType = await fileTypeFromBuffer(buffer as Uint8Array)
+    const ext = fileType?.ext || 'webp'
+    const filePath = getAppTempPath(`${Date.now()}.${ext}`)
+
+    await fse.writeFile(filePath, buffer)
+    return filePath
+  } catch (error) {
+    console.error('下载图片失败:', error)
+    throw error
+  } finally {
+    clearTimeout(timeoutId)
+  }
 }

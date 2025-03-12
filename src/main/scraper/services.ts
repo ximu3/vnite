@@ -59,6 +59,7 @@ import {
   getGameCoverByTitleFromDLsite,
   getGameScreenshotsByTitleFromDLsite
 } from './dlsite'
+import { searchGameImages } from '~/media'
 import { GameList, GameMetadata } from '@appTypes/utils'
 
 export async function searchGames(dataSource: string, gameName: string): Promise<GameList> {
@@ -209,6 +210,8 @@ export async function getGameCoversByTitle(
       return await getGameGridsFromSteamGridDB(gameName)
     case 'dlsite':
       return await getGameCoverByTitleFromDLsite(gameName).then((cover) => [cover])
+    case 'google':
+      return await searchGameImages(gameName, 'cover')
     default:
       throw new Error('Invalid data source')
   }
@@ -229,6 +232,8 @@ export async function getGameScreenshotsByTitle(
       return await getGameHerosFromSteamGridDB(gameName)
     case 'dlsite':
       return await getGameScreenshotsByTitleFromDLsite(gameName)
+    case 'google':
+      return await searchGameImages(gameName, 'hero')
     default:
       throw new Error('Invalid data source')
   }
@@ -241,6 +246,8 @@ export async function getGameIconsByTitle(
   switch (dataSource) {
     case 'steamGridDb':
       return await getGameIconsFromSteamGridDB(identifier)
+    case 'google':
+      return await searchGameImages(identifier as string, 'icon')
     default:
       throw new Error('Invalid data source')
   }
@@ -253,6 +260,8 @@ export async function getGameLogosByTitle(
   switch (dataSource) {
     case 'steamGridDb':
       return await getGameLogosFromSteamGridDB(identifier)
+    case 'google':
+      return await searchGameImages(identifier as string, 'logo')
     default:
       throw new Error('Invalid data source')
   }
