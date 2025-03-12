@@ -283,7 +283,8 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
       const timers = store.getState().getValue('record.timers') || []
       // 获取游戏类型，使用数组的第一个元素或默认值
       const gameGenres = store.getState().getValue('metadata.genres') || []
-      const gameType = gameGenres.length > 0 ? gameGenres[0] : '未分类'
+      const gameType =
+        gameGenres.length > 0 ? (gameGenres[0] === '' ? '未分类' : gameGenres[0]) : '未分类'
 
       let gamePlayTimeTotal = 0
 

@@ -73,7 +73,7 @@ export function ChartCard({
             </div>
           ) : (
             <div className={cn('max-h-full rounded-lg py-3', '3xl:max-h-full')}>
-              <TimerChart data={playTimeByDateRange} className={cn('w-full -ml-3')} />
+              <TimerChart data={playTimeByDateRange} className={cn('w-full max-h-[30vh] -ml-3')} />
             </div>
           )}
         </>

@@ -257,7 +257,7 @@ export function YearlyReport(): JSX.Element {
                   content={
                     <ChartTooltipContent
                       formatter={(value) => formatGameTime(Number(value))}
-                      nameKey="type"
+                      labelKey="type"
                       hideIndicator={false}
                     />
                   }
