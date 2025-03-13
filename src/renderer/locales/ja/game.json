@@ -195,12 +195,33 @@
         "relatedSites": "関連サイト"
       },
       "description": {
-        "empty": "説明なし",
-        "htmlHint": "HTMLタグがサポートされています"
+        "empty": "説明はありません",
+        "htmlHint": "HTMLタグがサポートされています",
+        "search": {
+          "loading": "ゲームの説明を検索中...",
+          "success": "検索成功",
+          "error": "検索失敗: {{message}}",
+          "notFound": "関連する説明が見つかりません",
+          "searchError": "検索エラー: {{error}}",
+          "selectRequired": "説明を選択してください"
+        }
       },
       "tags": {
-        "empty": "タグなし",
-        "separator": "タグはカンマで区切ります"
+        "empty": "タグはありません",
+        "separator": "タグはカンマで区切ってください",
+        "search": {
+          "loading": "ゲームのタグを検索中...",
+          "success": "検索成功",
+          "error": "検索失敗: {{message}}",
+          "notFound": "関連するタグが見つかりません",
+          "searchError": "検索エラー: {{error}}",
+          "selectRequired": "少なくとも1つのタグを選択してください"
+        }
+      },
+      "search": {
+        "placeholder": "ゲームタイトルを入力して検索",
+        "confirm": "確認",
+        "cancel": "キャンセル"
       },
       "relatedSites": {
         "empty": "関連サイトなし",

@@ -143,7 +143,15 @@ export async function getVNMetadataByName(vnName: string): Promise<GameMetadata>
     })
 
     if (!data.results.length) {
-      throw new Error(`No visual novel found with name: ${vnName}`)
+      return {
+        name: vnName,
+        originalName: vnName,
+        releaseDate: '',
+        description: '',
+        developers: [],
+        relatedSites: [],
+        tags: []
+      }
     }
 
     const vn = data.results[0]

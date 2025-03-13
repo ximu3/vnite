@@ -154,6 +154,17 @@ export async function getBangumiMetadata(gameId: string): Promise<GameMetadata> 
 export async function getBangumiMetadataByName(gameName: string): Promise<GameMetadata> {
   try {
     const game = (await searchBangumiGames(gameName))[0]
+    if (!game) {
+      return {
+        name: gameName,
+        originalName: gameName,
+        releaseDate: '',
+        description: '',
+        developers: [],
+        relatedSites: [],
+        tags: []
+      }
+    }
     return await getBangumiMetadata(game.id)
   } catch (error) {
     console.error(`Error fetching metadata for game ${gameName}:`, error)

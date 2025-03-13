@@ -149,6 +149,17 @@ export async function getYMGalMetadata(gameId: string): Promise<GameMetadata> {
 export async function getYMGalMetadataByName(gameName: string): Promise<GameMetadata> {
   try {
     const game = (await searchYMGalGames(gameName))[0]
+    if (!game) {
+      return {
+        name: gameName,
+        originalName: gameName,
+        developers: [],
+        tags: [],
+        relatedSites: [],
+        releaseDate: '',
+        description: ''
+      }
+    }
     return await getYMGalMetadata(game.id)
   } catch (error) {
     console.error(`Error fetching YMGal metadata for game ${gameName}:`, error)

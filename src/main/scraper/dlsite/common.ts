@@ -236,7 +236,15 @@ export async function getDlsiteMetadataByName(gameName: string): Promise<GameMet
   const gameList = await searchDlsiteGames(gameName)
 
   if (gameList.length === 0) {
-    throw new Error(`未找到名为 "${gameName}" 的游戏`)
+    return {
+      name: gameName,
+      originalName: gameName,
+      releaseDate: '',
+      description: '',
+      developers: [],
+      relatedSites: [],
+      tags: []
+    }
   }
 
   // 使用第一个匹配结果

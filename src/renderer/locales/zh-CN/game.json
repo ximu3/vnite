@@ -196,11 +196,32 @@
       },
       "description": {
         "empty": "暂无简介",
-        "htmlHint": "支持使用 HTML 标签"
+        "htmlHint": "支持使用 HTML 标签",
+        "search": {
+          "loading": "正在搜索游戏描述...",
+          "success": "搜索成功",
+          "error": "搜索失败: {{message}}",
+          "notFound": "没有找到相关描述",
+          "searchError": "搜索出错: {{error}}",
+          "selectRequired": "请选择一个描述"
+        }
       },
       "tags": {
         "empty": "暂无标签",
-        "separator": "标签之间使用逗号分隔"
+        "separator": "标签之间使用逗号分隔",
+        "search": {
+          "loading": "正在搜索游戏标签...",
+          "success": "搜索成功",
+          "error": "搜索失败: {{message}}",
+          "notFound": "没有找到相关标签",
+          "searchError": "搜索出错: {{error}}",
+          "selectRequired": "请至少选择一个标签"
+        }
+      },
+      "search": {
+        "placeholder": "输入游戏标题搜索",
+        "confirm": "确认",
+        "cancel": "取消"
       },
       "relatedSites": {
         "empty": "暂无相关网站",

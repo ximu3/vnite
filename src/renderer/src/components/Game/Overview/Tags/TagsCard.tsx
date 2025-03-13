@@ -1,10 +1,11 @@
 import { useTranslation } from 'react-i18next'
 import { Separator } from '@ui/separator'
-import React from 'react'
+import React, { useState } from 'react'
 import { useGameState } from '~/hooks'
 import { cn, copyWithToast } from '~/utils'
 import { FilterAdder } from '../../FilterAdder'
 import { TagsDialog } from './TagsDialog'
+import { SearchTagsDialog } from './SearchTagsDialog'
 
 export function TagsCard({
   gameId,
@@ -14,7 +15,13 @@ export function TagsCard({
   className?: string
 }): JSX.Element {
   const { t } = useTranslation('game')
-  const [tags] = useGameState(gameId, 'metadata.tags')
+  const [tags, setTags] = useGameState(gameId, 'metadata.tags')
+  const [originalName] = useGameState(gameId, 'metadata.originalName')
+  const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false)
+
+  const handleSelectTags = (newTags: string[]): void => {
+    setTags(newTags)
+  }
 
   return (
     <div className={cn(className, 'group')}>
@@ -22,7 +29,16 @@ export function TagsCard({
         <div className={cn('select-none cursor-pointer')} onClick={() => copyWithToast(`${tags}`)}>
           {t('detail.overview.sections.tags')}
         </div>
-        <TagsDialog gameId={gameId} />
+        <div className="flex items-center gap-3">
+          <span
+            className={cn(
+              'cursor-pointer icon-[mdi--magnify] invisible group-hover:visible w-5 h-5 mb-[4px]'
+            )}
+            onClick={() => setIsSearchDialogOpen(true)}
+          ></span>
+
+          <TagsDialog gameId={gameId} />
+        </div>
       </div>
       <Separator className={cn('my-3 bg-primary')} />
       <div className={cn('text-sm justify-start items-start')}>
@@ -36,6 +52,14 @@ export function TagsCard({
               ))}
         </div>
       </div>
+
+      <SearchTagsDialog
+        isOpen={isSearchDialogOpen}
+        onClose={() => setIsSearchDialogOpen(false)}
+        gameTitle={originalName}
+        onSelect={handleSelectTags}
+        initialTags={tags}
+      />
     </div>
   )
 }

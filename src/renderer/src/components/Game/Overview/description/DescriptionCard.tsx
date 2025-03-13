@@ -4,6 +4,8 @@ import parse from 'html-react-parser'
 import { useGameState } from '~/hooks'
 import { cn, copyWithToast, HTMLParserOptions } from '~/utils'
 import { DescriptionDialog } from './DescriptionDialog'
+import { SearchDescriptionDialog } from './SearchDescriptionDialog'
+import { useState } from 'react'
 
 export function DescriptionCard({
   gameId,
@@ -13,7 +15,13 @@ export function DescriptionCard({
   className?: string
 }): JSX.Element {
   const { t } = useTranslation('game')
-  const [description] = useGameState(gameId, 'metadata.description')
+  const [description, setDescription] = useGameState(gameId, 'metadata.description')
+  const [originalName] = useGameState(gameId, 'metadata.originalName')
+  const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false)
+
+  const handleSelectDescription = (newDescription: string): void => {
+    setDescription(newDescription)
+  }
 
   return (
     <div className={cn('bg-transparent border-0 shadow-none', className, 'group')}>
@@ -24,7 +32,15 @@ export function DescriptionCard({
         >
           {t('detail.overview.sections.description')}
         </div>
-        <DescriptionDialog gameId={gameId} />
+        <div className="flex items-center gap-3">
+          <span
+            onClick={() => setIsSearchDialogOpen(true)}
+            className={cn(
+              'invisible group-hover:visible cursor-pointer icon-[mdi--magnify] w-5 h-5 mb-[4px]'
+            )}
+          ></span>
+          <DescriptionDialog gameId={gameId} />
+        </div>
       </div>
       <Separator className={cn('my-3 bg-primary')} />
 
@@ -43,6 +59,13 @@ export function DescriptionCard({
           ? parse(description, HTMLParserOptions)
           : t('detail.overview.description.empty')}
       </div>
+
+      <SearchDescriptionDialog
+        isOpen={isSearchDialogOpen}
+        onClose={() => setIsSearchDialogOpen(false)}
+        gameTitle={originalName}
+        onSelect={handleSelectDescription}
+      />
     </div>
   )
 }

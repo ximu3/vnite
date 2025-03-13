@@ -29,3 +29,8 @@ export type GameDescriptionList = {
   dataSource: string
   description: string
 }[]
+
+export type GameTagsList = {
+  dataSource: string
+  tags: string[]
+}[]

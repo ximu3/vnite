@@ -14,7 +14,7 @@ export function Titlebar(): JSX.Element {
     }
   }, [])
   return (
-    <div className="draggable-area flex flex-row-reverse">
+    <div data-titlebar="true" className="flex flex-row-reverse draggable-area">
       <Button
         variant={'ghost'}
         className={cn(

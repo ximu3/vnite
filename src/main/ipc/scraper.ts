@@ -5,7 +5,9 @@ import {
   getGameBackgrounds,
   getGameCovers,
   getGameIcons,
-  getGameLogos
+  getGameLogos,
+  getGameDescriptionList,
+  getGameTagsList
 } from '~/scraper'
 import { ipcMain, BrowserWindow } from 'electron'
 import { ScraperIdentifier } from '@appTypes/database'
@@ -46,6 +48,14 @@ export function setupScraperIPC(mainWindow: BrowserWindow): void {
 
   ipcMain.handle('get-game-logos', async (_, dataSource: string, identifier: ScraperIdentifier) => {
     return await getGameLogos(dataSource, identifier)
+  })
+
+  ipcMain.handle('get-game-description-list', async (_, identifier: ScraperIdentifier) => {
+    return await getGameDescriptionList(identifier)
+  })
+
+  ipcMain.handle('get-game-tags-list', async (_, identifier: ScraperIdentifier) => {
+    return await getGameTagsList(identifier)
   })
 
   mainWindow.webContents.send('scraperIPCReady')

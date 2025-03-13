@@ -236,6 +236,17 @@ export async function getSteamMetadata(appId: string): Promise<GameMetadata> {
 export async function getSteamMetadataByName(gameName: string): Promise<GameMetadata> {
   try {
     const games = await searchSteamGames(gameName)
+    if (games.length === 0) {
+      return {
+        name: gameName,
+        originalName: gameName,
+        releaseDate: '',
+        description: '',
+        developers: [],
+        relatedSites: [],
+        tags: []
+      }
+    }
     return await getSteamMetadata(games[0].id)
   } catch (error) {
     console.error(`Error fetching metadata for game ${gameName}:`, error)

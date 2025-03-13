@@ -3,8 +3,6 @@ import {
   getGameBackgroundByName as getGameBackgroundByNameFromSteam,
   getGameCover as getGameCoverFromSteam,
   getGameCoverByName as getGameCoverByNameFromSteam,
-  getGameIcon as getGameIconFromSteam,
-  getGameIconByName as getGameIconByNameFromSteam,
   getGameLogo as getGameLogoFromSteam,
   getGameLogoByName as getGameLogoByNameFromSteam
 } from '../steam/common'
@@ -304,11 +302,7 @@ export async function getGameIcons(steamId: string): Promise<string[]> {
 
     // check url
     const urls = await Promise.all(data?.data?.map((icon: any) => checkImageUrl(icon.url)) || [])
-    // 在数组最前面插入游戏Icon
-    const iconUrl = await getGameIconFromSteam(steamId)
-    if (iconUrl) {
-      urls.unshift(iconUrl)
-    }
+
     return urls
   } catch (error) {
     console.error(`获取 SteamGridDB 图标时出错:`, error)
@@ -332,11 +326,7 @@ export async function getGameIconsByName(gameName: string): Promise<string[]> {
 
     // check url
     const urls = await Promise.all(data?.data?.map((icon: any) => checkImageUrl(icon.url)) || [])
-    // 在数组最前面插入游戏Icon
-    const iconUrl = await getGameIconByNameFromSteam(gameName)
-    if (iconUrl) {
-      urls.unshift(iconUrl)
-    }
+
     return urls
   } catch (error) {
     console.error(`获取 SteamGridDB 图标时出错:`, error)

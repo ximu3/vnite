@@ -49,7 +49,13 @@ import {
   checkGameExistsOnDLsite
 } from './dlsite'
 import { searchGameImages } from '~/media'
-import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
+import {
+  GameList,
+  GameMetadata,
+  ScraperIdentifier,
+  GameDescriptionList,
+  GameTagsList
+} from '@appTypes/utils'
 
 export async function searchGames(dataSource: string, gameName: string): Promise<GameList> {
   switch (dataSource) {
@@ -195,4 +201,50 @@ export async function getGameLogos(
 
 export async function initScraper(): Promise<void> {
   initIGDBService()
+}
+
+export async function getGameDescriptionList(
+  identifier: ScraperIdentifier
+): Promise<GameDescriptionList> {
+  const vndb = await getGameMetadataFromVNDB(identifier)
+  const steam = await getGameMetadataFromSteam(identifier)
+  const bangumi = await getGameMetadataFromBangumi(identifier)
+  const igdb = await getGameMetadataFromIGDB(identifier)
+  const ymgal = await getGameMetadataFromYMGal(identifier)
+  const dlsite = await getGameMetadataFromDLsite(identifier)
+
+  // 创建候选项数组
+  const candidates = [
+    steam.description && { dataSource: 'steam', description: steam.description },
+    vndb.description && { dataSource: 'vndb', description: vndb.description },
+    bangumi.description && { dataSource: 'bangumi', description: bangumi.description },
+    igdb.description && { dataSource: 'igdb', description: igdb.description },
+    dlsite.description && { dataSource: 'dlsite', description: dlsite.description },
+    ymgal.description && { dataSource: 'ymgal', description: ymgal.description }
+  ]
+
+  // 过滤掉所有falsy值（包括undefined、null、空字符串等）
+  return candidates.filter((item) => item && item.description) as GameDescriptionList
+}
+
+export async function getGameTagsList(identifier: ScraperIdentifier): Promise<GameTagsList> {
+  const vndb = await getGameMetadataFromVNDB(identifier)
+  const steam = await getGameMetadataFromSteam(identifier)
+  const bangumi = await getGameMetadataFromBangumi(identifier)
+  const igdb = await getGameMetadataFromIGDB(identifier)
+  const ymgal = await getGameMetadataFromYMGal(identifier)
+  const dlsite = await getGameMetadataFromDLsite(identifier)
+
+  // 创建候选项数组
+  const candidates = [
+    steam.tags.length > 0 && { dataSource: 'steam', tags: steam.tags },
+    vndb.tags.length > 0 && { dataSource: 'vndb', tags: vndb.tags },
+    bangumi.tags.length > 0 && { dataSource: 'bangumi', tags: bangumi.tags },
+    igdb.tags.length > 0 && { dataSource: 'igdb', tags: igdb.tags },
+    dlsite.tags.length > 0 && { dataSource: 'dlsite', tags: dlsite.tags },
+    ymgal.tags.length > 0 && { dataSource: 'ymgal', tags: ymgal.tags }
+  ]
+
+  // 过滤掉所有falsy值（包括undefined、null、空字符串等）
+  return candidates.filter((item) => item && item.tags) as GameTagsList
 }

@@ -195,12 +195,33 @@
         "relatedSites": "Related Sites"
       },
       "description": {
-        "empty": "No description",
-        "htmlHint": "HTML tags supported"
+        "empty": "No description available",
+        "htmlHint": "HTML tags are supported",
+        "search": {
+          "loading": "Searching for game descriptions...",
+          "success": "Search successful",
+          "error": "Search failed: {{message}}",
+          "notFound": "No related descriptions found",
+          "searchError": "Search error: {{error}}",
+          "selectRequired": "Please select a description"
+        }
       },
       "tags": {
-        "empty": "No tags",
-        "separator": "Separate tags with commas"
+        "empty": "No tags available",
+        "separator": "Separate tags with commas",
+        "search": {
+          "loading": "Searching for game tags...",
+          "success": "Search successful",
+          "error": "Search failed: {{message}}",
+          "notFound": "No related tags found",
+          "searchError": "Search error: {{error}}",
+          "selectRequired": "Please select at least one tag"
+        }
+      },
+      "search": {
+        "placeholder": "Enter game title to search",
+        "confirm": "Confirm",
+        "cancel": "Cancel"
       },
       "relatedSites": {
         "empty": "No related sites",

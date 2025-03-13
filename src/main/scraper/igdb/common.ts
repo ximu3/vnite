@@ -105,6 +105,17 @@ export async function getIGDBMetadata(gameId: string): Promise<GameMetadata> {
 export async function getIGDBMetadataByName(gameName: string): Promise<GameMetadata> {
   try {
     const games = await searchIGDBGames(gameName)
+    if (games.length === 0) {
+      return {
+        name: gameName,
+        originalName: gameName,
+        releaseDate: '',
+        description: '',
+        developers: [],
+        relatedSites: [],
+        tags: []
+      }
+    }
     return await getIGDBMetadata(games[0].id)
   } catch (error) {
     console.error(`Error fetching metadata for game ${gameName}:`, error)
