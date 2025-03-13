@@ -7,19 +7,19 @@ import { ipcInvoke } from '~/utils'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
-export function ScreenshotList(): JSX.Element {
+export function BackgroundList(): JSX.Element {
   const { t } = useTranslation('adder')
   const {
-    screenshotUrl,
-    setScreenshotUrl,
-    screenshotList,
-    setScreenshotList,
-    id,
+    backgroundUrl,
+    setBackgroundUrl,
+    backgroundList,
+    setBackgroundList,
+    dataSourceId,
     dataSource,
     setIsOpen,
     dbId,
     setDbId,
-    setId,
+    setDataSourceId,
     setName,
     setGameList,
     setIsLoading
@@ -31,27 +31,30 @@ export function ScreenshotList(): JSX.Element {
   useEffect(() => {
     toast.promise(
       (async (): Promise<string[]> => {
-        const result = (await ipcInvoke('get-game-screenshots', dataSource, id)) as string[]
+        const result = (await ipcInvoke('get-game-backgrounds', dataSource, {
+          type: 'id',
+          value: dataSourceId
+        })) as string[]
         if (result.length === 0) {
-          toast.error(t('gameAdder.screenshots.notifications.noImages'))
-          setScreenshotUrl('')
+          toast.error(t('gameAdder.backgrounds.notifications.noImages'))
+          setBackgroundUrl('')
           return []
         }
-        setScreenshotUrl(result[0])
-        setScreenshotList(result)
+        setBackgroundUrl(result[0])
+        setBackgroundList(result)
         return result
       })(),
       {
-        loading: t('gameAdder.screenshots.notifications.loading'),
-        success: t('gameAdder.screenshots.notifications.success'),
-        error: (err) => t('gameAdder.screenshots.notifications.error', { message: err.message })
+        loading: t('gameAdder.backgrounds.notifications.loading'),
+        success: t('gameAdder.backgrounds.notifications.success'),
+        error: (err) => t('gameAdder.backgrounds.notifications.error', { message: err.message })
       }
     )
   }, [])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent): void => {
-      const index = screenshotList.findIndex((image) => image === screenshotUrl)
+      const index = backgroundList.findIndex((image) => image === backgroundUrl)
       if (index === -1) return
 
       if (e.key === 'Enter') {
@@ -62,12 +65,12 @@ export function ScreenshotList(): JSX.Element {
       let targetIndex: number | null = null
       if (e.key === 'ArrowRight') targetIndex = index + 1
       else if (e.key === 'ArrowDown') targetIndex = index + 2
-      else if (e.key === 'ArrowLeft') targetIndex = index - 1 + screenshotList.length
-      else if (e.key === 'ArrowUp') targetIndex = index - 2 + screenshotList.length
+      else if (e.key === 'ArrowLeft') targetIndex = index - 1 + backgroundList.length
+      else if (e.key === 'ArrowUp') targetIndex = index - 2 + backgroundList.length
 
       if (targetIndex !== null) {
-        const targetGame = screenshotList[targetIndex % screenshotList.length]
-        setScreenshotUrl(targetGame)
+        const targetGame = backgroundList[targetIndex % backgroundList.length]
+        setBackgroundUrl(targetGame)
         const targetElement = document.querySelector(`[data-image="${targetGame}"]`)
         targetElement?.scrollIntoView({
           behavior: 'smooth',
@@ -81,7 +84,7 @@ export function ScreenshotList(): JSX.Element {
     return (): void => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [screenshotUrl, screenshotList])
+  }, [backgroundUrl, backgroundList])
 
   async function addGameToDB(): Promise<void> {
     if (isAdding) return
@@ -92,34 +95,34 @@ export function ScreenshotList(): JSX.Element {
           await ipcInvoke('update-game-metadata', {
             dbId,
             dataSource,
-            dataSourceId: id,
-            screenshotUrl
+            dataSourceId,
+            backgroundUrl
           })
         } else {
           await ipcInvoke('add-game-to-db', {
             dataSource,
-            id,
+            dataSourceId,
             preExistingDbId: dbId,
-            screenshotUrl
+            backgroundUrl
           })
         }
         setIsAdding(false)
         setDbId('')
-        setId('')
+        setDataSourceId('')
         setName('')
-        setScreenshotList([])
-        setScreenshotUrl('')
+        setBackgroundList([])
+        setBackgroundUrl('')
         setGameList([])
         setIsLoading(false)
         setIsOpen(false)
         navigate('/')
       })(),
       {
-        loading: t('gameAdder.screenshots.notifications.adding'),
-        success: t('gameAdder.screenshots.notifications.addSuccess'),
+        loading: t('gameAdder.backgrounds.notifications.adding'),
+        success: t('gameAdder.backgrounds.notifications.addSuccess'),
         error: (err) => {
           setIsAdding(false)
-          return t('gameAdder.screenshots.notifications.addError', { message: err.message })
+          return t('gameAdder.backgrounds.notifications.addError', { message: err.message })
         }
       }
     )
@@ -128,21 +131,21 @@ export function ScreenshotList(): JSX.Element {
   return (
     <div className={cn('w-[100vh] h-[83vh] p-3')}>
       <div className={cn('flex flex-col w-full h-full gap-3')}>
-        <div className={cn('font-bold')}>Hero图</div>
+        <div className={cn('font-bold')}>{t('gameAdder.backgrounds.title')}</div>
         <div className="w-full h-full">
           <div className={cn('scrollbar-base overflow-auto pr-3')}>
             <div className={cn('grid grid-cols-2 gap-3 h-[72vh]')}>
-              {screenshotList.length !== 0 ? (
-                screenshotList.map((image) => (
+              {backgroundList.length !== 0 ? (
+                backgroundList.map((image) => (
                   <div
                     key={image}
                     data-image={image}
                     onClick={() => {
-                      setScreenshotUrl(image)
+                      setBackgroundUrl(image)
                     }}
                     className={cn(
                       'cursor-pointer p-3 bg-muted text-muted-foreground rounded-lg',
-                      image === screenshotUrl
+                      image === backgroundUrl
                         ? 'bg-accent text-accent-foreground'
                         : 'hover:bg-accent hover:text-accent-foreground'
                     )}
@@ -151,13 +154,13 @@ export function ScreenshotList(): JSX.Element {
                   </div>
                 ))
               ) : (
-                <div>{t('gameAdder.screenshots.noImages')}</div>
+                <div>{t('gameAdder.backgrounds.noImages')}</div>
               )}
             </div>
           </div>
         </div>
         <div className={cn('flex flex-row-reverse')}>
-          <Button onClick={addGameToDB}>{t('gameAdder.screenshots.confirm')}</Button>
+          <Button onClick={addGameToDB}>{t('gameAdder.backgrounds.confirm')}</Button>
         </div>
       </div>
     </div>

@@ -1,10 +1,10 @@
 import { GameDBManager, ConfigDBManager } from '~/database'
 import {
   getGameMetadata,
-  getGameCover,
-  getGameIcon,
-  getGameScreenshots,
-  getGameLogo
+  getGameCovers,
+  getGameIcons,
+  getGameBackgrounds,
+  getGameLogos
 } from '~/scraper'
 import { selectPathDialog, getFirstLevelSubfolders } from '~/utils'
 import { generateUUID } from '@appUtils'
@@ -23,16 +23,16 @@ import { DEFAULT_GAME_VALUES, DEFAULT_GAME_LOCAL_VALUES } from '@appTypes/databa
  */
 export async function addGameToDB({
   dataSource,
-  id,
-  screenshotUrl,
+  dataSourceId,
+  backgroundUrl,
   playTime
 }: {
   dataSource: string
-  id: string
-  screenshotUrl?: string
+  dataSourceId: string
+  backgroundUrl?: string
   playTime?: number
 }): Promise<void> {
-  const metadata = await getGameMetadata(dataSource, id)
+  const metadata = await getGameMetadata(dataSource, { type: 'id', value: dataSourceId })
 
   const dbId = generateUUID()
 
@@ -43,7 +43,7 @@ export async function addGameToDB({
     ...gameDoc.metadata,
     ...metadata,
     originalName: metadata.originalName ?? '',
-    [`${dataSource}Id`]: id
+    [`${dataSource}Id`]: dataSourceId
   }
 
   if (playTime) {
@@ -58,27 +58,55 @@ export async function addGameToDB({
   gameLocalDoc._id = dbId
   GameDBManager.setGameLocal(dbId, gameLocalDoc)
 
-  const coverUrl = await getGameCover(dataSource, id)
+  const coverUrl = (
+    await getGameCovers(dataSource, {
+      type: 'id',
+      value: dataSourceId
+    })
+  )[0]
   let iconUrl = ''
   let logoUrl = ''
   if (dataSource == 'steam') {
-    iconUrl = await getGameIcon('steamGridDb', Number(id))
-    logoUrl = await getGameLogo('steamGridDb', Number(id))
+    iconUrl = (
+      await getGameIcons('steamGridDb', {
+        type: 'id',
+        value: dataSourceId
+      })
+    )[0]
+    logoUrl = (
+      await getGameLogos('steamGridDb', {
+        type: 'id',
+        value: dataSourceId
+      })
+    )[0]
   } else {
-    iconUrl = await getGameIcon('steamGridDb', metadata.originalName || metadata.name)
-    logoUrl = await getGameLogo('steamGridDb', metadata.originalName || metadata.name)
+    iconUrl = (
+      await getGameIcons('steamGridDb', {
+        type: 'name',
+        value: metadata.originalName || metadata.name
+      })
+    )[0]
+    logoUrl = (
+      await getGameLogos('steamGridDb', {
+        type: 'name',
+        value: metadata.originalName || metadata.name
+      })
+    )[0]
   }
 
   if (coverUrl) {
     await GameDBManager.setGameImage(dbId, 'cover', coverUrl)
   }
 
-  if (screenshotUrl) {
-    await GameDBManager.setGameImage(dbId, 'background', screenshotUrl)
+  if (backgroundUrl) {
+    await GameDBManager.setGameImage(dbId, 'background', backgroundUrl)
   } else {
-    const screenshots = await getGameScreenshots(dataSource, id)
-    if (screenshots.length > 0) {
-      await GameDBManager.setGameImage(dbId, 'background', screenshots[0])
+    const backgrounds = await getGameBackgrounds(dataSource, {
+      type: 'id',
+      value: dataSourceId
+    })
+    if (backgrounds.length > 0) {
+      await GameDBManager.setGameImage(dbId, 'background', backgrounds[0])
     }
   }
 
@@ -95,14 +123,14 @@ export async function updateGame({
   dbId,
   dataSource,
   dataSourceId,
-  screenshotUrl
+  backgroundUrl
 }: {
   dbId: string
   dataSource: string
   dataSourceId: string
-  screenshotUrl?: string
+  backgroundUrl?: string
 }): Promise<void> {
-  const metadata = await getGameMetadata(dataSource, dataSourceId)
+  const metadata = await getGameMetadata(dataSource, { type: 'id', value: dataSourceId })
   const gameDoc = await GameDBManager.getGame(dbId)
   gameDoc.metadata = {
     ...gameDoc.metadata,
@@ -112,11 +140,11 @@ export async function updateGame({
   }
   await GameDBManager.setGame(dbId, gameDoc)
 
-  if (screenshotUrl) {
-    await GameDBManager.setGameImage(dbId, 'background', screenshotUrl)
+  if (backgroundUrl) {
+    await GameDBManager.setGameImage(dbId, 'background', backgroundUrl)
   }
 
-  const coverUrl = await getGameCover(dataSource, dataSourceId)
+  const coverUrl = (await getGameCovers(dataSource, { type: 'id', value: dataSourceId }))[0]
   if (coverUrl) {
     await GameDBManager.setGameImage(dbId, 'cover', coverUrl)
   }

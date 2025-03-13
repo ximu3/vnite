@@ -1,14 +1,15 @@
 import {
   searchDlsiteGames,
   getDlsiteMetadata,
-  getGameScreenshots,
+  getGameBackgrounds,
   getGameCover,
   checkGameExists,
-  getGameCoverByTitle,
-  getGameScreenshotsByTitle
+  getGameCoverByName,
+  getGameBackgroundsByName,
+  getDlsiteMetadataByName
 } from './common'
 
-import { GameList, GameMetadata } from '@appTypes/utils'
+import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
 import log from 'electron-log/main.js'
 
 /**
@@ -33,9 +34,14 @@ export async function searchGamesFromDLsite(gameName: string): Promise<GameList>
  * @returns 作品的元数据
  * @throws 如果操作失败则抛出错误
  */
-export async function getGameMetadataFromDLsite(dlsiteId: string): Promise<GameMetadata> {
+export async function getGameMetadataFromDLsite(
+  identifier: ScraperIdentifier
+): Promise<GameMetadata> {
   try {
-    const metadata = await getDlsiteMetadata(dlsiteId)
+    const metadata =
+      identifier.type === 'id'
+        ? await getDlsiteMetadata(identifier.value)
+        : await getDlsiteMetadataByName(identifier.value)
     return metadata
   } catch (error) {
     log.error('获取作品元数据时出错:', error)
@@ -65,9 +71,14 @@ export async function checkGameExistsOnDLsite(dlsiteId: string): Promise<boolean
  * @returns 截图列表
  * @throws 如果操作失败则抛出错误
  */
-export async function getGameScreenshotsFromDLsite(dlsiteId: string): Promise<string[]> {
+export async function getGameBackgroundsFromDLsite(
+  identifier: ScraperIdentifier
+): Promise<string[]> {
   try {
-    const images = await getGameScreenshots(dlsiteId)
+    const images =
+      identifier.type === 'id'
+        ? await getGameBackgrounds(identifier.value)
+        : await getGameBackgroundsByName(identifier.value)
     return images
   } catch (error) {
     log.error('获取作品截图时出错:', error)
@@ -81,44 +92,15 @@ export async function getGameScreenshotsFromDLsite(dlsiteId: string): Promise<st
  * @returns 作品的封面图片
  * @throws 如果操作失败则抛出错误
  */
-export async function getGameCoverFromDLsite(dlsiteId: string): Promise<string> {
+export async function getGameCoverFromDLsite(identifier: ScraperIdentifier): Promise<string> {
   try {
-    const cover = await getGameCover(dlsiteId)
+    const cover =
+      identifier.type === 'id'
+        ? await getGameCover(identifier.value)
+        : await getGameCoverByName(identifier.value)
     return cover
   } catch (error) {
     log.error('获取作品封面时出错:', error)
-    throw error
-  }
-}
-
-/**
- * 通过标题从 DLsite 获取作品封面
- * @param gameName 作品名称
- * @returns 作品的封面图片
- * @throws 如果操作失败则抛出错误
- */
-export async function getGameCoverByTitleFromDLsite(gameName: string): Promise<string> {
-  try {
-    const cover = await getGameCoverByTitle(gameName)
-    return cover
-  } catch (error) {
-    log.error('通过标题获取作品封面时出错:', error)
-    throw error
-  }
-}
-
-/**
- * 通过标题从 DLsite 获取作品截图
- * @param gameName 作品名称
- * @returns 截图列表
- * @throws 如果操作失败则抛出错误
- */
-export async function getGameScreenshotsByTitleFromDLsite(gameName: string): Promise<string[]> {
-  try {
-    const images = await getGameScreenshotsByTitle(gameName)
-    return images
-  } catch (error) {
-    log.error('通过标题获取作品截图时出错:', error)
     throw error
   }
 }

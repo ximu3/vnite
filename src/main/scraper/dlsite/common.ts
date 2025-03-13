@@ -231,12 +231,25 @@ export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata>
   }
 }
 
+export async function getDlsiteMetadataByName(gameName: string): Promise<GameMetadata> {
+  // 首先搜索获取ID
+  const gameList = await searchDlsiteGames(gameName)
+
+  if (gameList.length === 0) {
+    throw new Error(`未找到名为 "${gameName}" 的游戏`)
+  }
+
+  // 使用第一个匹配结果
+  const firstMatch = gameList[0]
+  return getDlsiteMetadata(firstMatch.id)
+}
+
 /**
  * 从DLsite获取游戏截图
  * @param dlsiteId 作品ID（RJ号）
  * @returns 完整URL格式的截图数组
  */
-export async function getGameScreenshots(dlsiteId: string): Promise<string[]> {
+export async function getGameBackgrounds(dlsiteId: string): Promise<string[]> {
   const url = `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html`
   const language = await getLanguage()
   const client = axios.create({
@@ -274,13 +287,26 @@ export async function getGameScreenshots(dlsiteId: string): Promise<string[]> {
   return screenshots
 }
 
+export async function getGameBackgroundsByName(gameName: string): Promise<string[]> {
+  // 首先搜索获取ID
+  const gameList = await searchDlsiteGames(gameName)
+
+  if (gameList.length === 0) {
+    throw new Error(`未找到名为 "${gameName}" 的游戏`)
+  }
+
+  // 使用第一个匹配结果
+  const firstMatch = gameList[0]
+  return getGameBackgrounds(firstMatch.id)
+}
+
 /**
  * 获取游戏封面
  * @param dlsiteId 作品ID（RJ号）
  * @returns 完整URL格式的封面图片
  */
 export async function getGameCover(dlsiteId: string): Promise<string> {
-  const screenshots = await getGameScreenshots(dlsiteId)
+  const screenshots = await getGameBackgrounds(dlsiteId)
 
   // 通常第一张图片是封面
   if (screenshots.length > 0) {
@@ -316,6 +342,24 @@ export async function getGameCover(dlsiteId: string): Promise<string> {
 }
 
 /**
+ * 通过标题获取游戏封面
+ * @param gameName 游戏名称
+ * @returns 封面图片URL
+ */
+export async function getGameCoverByName(gameName: string): Promise<string> {
+  // 首先搜索获取ID
+  const gameList = await searchDlsiteGames(gameName)
+
+  if (gameList.length === 0) {
+    throw new Error(`未找到名为 "${gameName}" 的游戏`)
+  }
+
+  // 使用第一个匹配结果
+  const firstMatch = gameList[0]
+  return getGameCover(firstMatch.id)
+}
+
+/**
  * 检查游戏是否存在
  * @param dlsiteId 作品ID（RJ号）
  * @returns 布尔值表示游戏是否存在
@@ -346,40 +390,4 @@ export async function checkGameExists(dlsiteId: string): Promise<boolean> {
     // 请求失败，可能是404或其他错误
     return false
   }
-}
-
-/**
- * 通过标题获取游戏封面
- * @param gameName 游戏名称
- * @returns 封面图片URL
- */
-export async function getGameCoverByTitle(gameName: string): Promise<string> {
-  // 首先搜索获取ID
-  const gameList = await searchDlsiteGames(gameName)
-
-  if (gameList.length === 0) {
-    throw new Error(`未找到名为 "${gameName}" 的游戏`)
-  }
-
-  // 使用第一个匹配结果
-  const firstMatch = gameList[0]
-  return getGameCover(firstMatch.id)
-}
-
-/**
- * 通过标题获取游戏截图
- * @param gameName 游戏名称
- * @returns 截图URL数组
- */
-export async function getGameScreenshotsByTitle(gameName: string): Promise<string[]> {
-  // 首先搜索获取ID
-  const gameList = await searchDlsiteGames(gameName)
-
-  if (gameList.length === 0) {
-    throw new Error(`未找到名为 "${gameName}" 的游戏`)
-  }
-
-  // 使用第一个匹配结果
-  const firstMatch = gameList[0]
-  return getGameScreenshots(firstMatch.id)
 }

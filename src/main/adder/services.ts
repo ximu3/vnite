@@ -16,20 +16,20 @@ import log from 'electron-log/main.js'
  */
 export async function addGameToDatabase({
   dataSource,
-  id,
-  screenshotUrl,
+  dataSourceId,
+  backgroundUrl,
   playTime
 }: {
   dataSource: string
-  id: string
-  screenshotUrl?: string
+  dataSourceId: string
+  backgroundUrl?: string
   playTime?: number
 }): Promise<void> {
   try {
     await addGameToDB({
       dataSource,
-      id,
-      screenshotUrl,
+      dataSourceId,
+      backgroundUrl,
       playTime
     })
   } catch (error) {
@@ -47,15 +47,15 @@ export async function updateGameMetadata({
   dbId,
   dataSource,
   dataSourceId,
-  screenshotUrl
+  backgroundUrl
 }: {
   dbId: string
   dataSource: string
   dataSourceId: string
-  screenshotUrl?: string
+  backgroundUrl?: string
 }): Promise<void> {
   try {
-    await updateGame({ dbId, dataSource, dataSourceId, screenshotUrl })
+    await updateGame({ dbId, dataSource, dataSourceId, backgroundUrl })
   } catch (error) {
     log.error('Error updating game metadata:', error)
     throw error

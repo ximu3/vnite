@@ -1,12 +1,13 @@
 import {
   searchBangumiGames,
   getBangumiMetadata,
-  getGameScreenshots,
+  getBangumiMetadataByName,
   getGameCover,
   checkGameExists,
-  getGameCoverByTitle
+  getGameCoverByName
 } from './common'
-import { GameList, GameMetadata } from '@appTypes/utils'
+import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
+import { getGameBackgroundsFromVNDB } from '../vndb'
 import log from 'electron-log/main.js'
 
 /**
@@ -31,9 +32,14 @@ export async function searchGamesFromBangumi(gameName: string): Promise<GameList
  * @returns The metadata for the game
  * @throws An error if the operation fails
  */
-export async function getGameMetadataFromBangumi(bangumiId: string): Promise<GameMetadata> {
+export async function getGameMetadataFromBangumi(
+  identifier: ScraperIdentifier
+): Promise<GameMetadata> {
   try {
-    const metadata = await getBangumiMetadata(bangumiId)
+    const metadata =
+      identifier.type === 'id'
+        ? await getBangumiMetadata(identifier.value)
+        : await getBangumiMetadataByName(identifier.value)
     return metadata
   } catch (error) {
     log.error('Error fetching game metadata:', error)
@@ -63,9 +69,11 @@ export async function checkGameExistsOnBangumi(bangumiId: string): Promise<boole
  * @returns A list of screenshots
  * @throws An error if the operation fails
  */
-export async function getGameScreenshotsFromBangumi(bangumiId: string): Promise<string[]> {
+export async function getGameBackgroundsFromBangumi(
+  identifier: ScraperIdentifier
+): Promise<string[]> {
   try {
-    const images = await getGameScreenshots(bangumiId)
+    const images = await getGameBackgroundsFromVNDB(identifier)
     return images
   } catch (error) {
     log.error('Error fetching game images:', error)
@@ -79,25 +87,12 @@ export async function getGameScreenshotsFromBangumi(bangumiId: string): Promise<
  * @returns The cover image for the game
  * @throws An error if the operation fails
  */
-export async function getGameCoverFromBangumi(bangumiId: string): Promise<string> {
+export async function getGameCoverFromBangumi(identifier: ScraperIdentifier): Promise<string> {
   try {
-    const cover = await getGameCover(bangumiId)
-    return cover
-  } catch (error) {
-    log.error('Error fetching game cover:', error)
-    throw error
-  }
-}
-
-/**
- * Get game cover from Bangumi by title
- * @param gameName The name of the game
- * @returns The cover image for the game
- * @throws An error if the operation fails
- */
-export async function getGameCoverByTitleFromBangumi(gameName: string): Promise<string> {
-  try {
-    const cover = await getGameCoverByTitle(gameName)
+    const cover =
+      identifier.type === 'id'
+        ? await getGameCover(identifier.value)
+        : await getGameCoverByName(identifier.value)
     return cover
   } catch (error) {
     log.error('Error fetching game cover:', error)

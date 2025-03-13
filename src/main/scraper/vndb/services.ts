@@ -1,14 +1,16 @@
 import {
   searchVNDBGames,
   getVNMetadata,
+  getVNMetadataByName,
   checkVNExists,
-  getGameScreenshots,
+  getGameBackgrounds,
+  getGameBackgroundsByName,
   getGameCover,
-  getGameScreenshotsByTitle,
-  getGameCoverByTitle
+  getGameCoverByName
 } from './common'
 import { GameList, GameMetadata } from '@appTypes/utils'
 import log from 'electron-log/main.js'
+import { ScraperIdentifier } from '@appTypes/utils'
 
 /**
  * Search for games on VNDB
@@ -32,9 +34,14 @@ export async function searchGamesFromVNDB(gameName: string): Promise<GameList> {
  * @returns The metadata for the game
  * @throws An error if the operation fails
  */
-export async function getGameMetadataFromVNDB(vnId: string): Promise<GameMetadata> {
+export async function getGameMetadataFromVNDB(
+  identifier: ScraperIdentifier
+): Promise<GameMetadata> {
   try {
-    const metadata = await getVNMetadata(vnId)
+    const metadata =
+      identifier.type === 'id'
+        ? await getVNMetadata(identifier.value)
+        : await getVNMetadataByName(identifier.value)
     return metadata
   } catch (error) {
     log.error('Error fetching game metadata:', error)
@@ -64,9 +71,12 @@ export async function checkGameExistsOnVNDB(vnId: string): Promise<boolean> {
  * @returns A list of image urls
  * @throws An error if the operation fails
  */
-export async function getGameScreenshotsFromVNDB(vnId: string): Promise<string[]> {
+export async function getGameBackgroundsFromVNDB(identifier: ScraperIdentifier): Promise<string[]> {
   try {
-    const images = await getGameScreenshots(vnId)
+    const images =
+      identifier.type === 'id'
+        ? await getGameBackgrounds(identifier.value)
+        : await getGameBackgroundsByName(identifier.value)
     return images
   } catch (error) {
     log.error('Error fetching game images:', error)
@@ -80,44 +90,15 @@ export async function getGameScreenshotsFromVNDB(vnId: string): Promise<string[]
  * @returns The cover image url
  * @throws An error if the operation fails
  */
-export async function getGameCoverFromVNDB(vnId: string): Promise<string> {
+export async function getGameCoverFromVNDB(identifier: ScraperIdentifier): Promise<string> {
   try {
-    const cover = await getGameCover(vnId)
+    const cover =
+      identifier.type === 'id'
+        ? await getGameCover(identifier.value)
+        : await getGameCoverByName(identifier.value)
     return cover
   } catch (error) {
     log.error('Error fetching game cover:', error)
-    throw error
-  }
-}
-
-/**
- * Get game screenshots by title from VNDB
- * @param title The title of the game
- * @returns A list of image urls
- * @throws An error if the operation fails
- */
-export async function getGameScreenshotsByTitleFromVNDB(title: string): Promise<string[]> {
-  try {
-    const images = await getGameScreenshotsByTitle(title)
-    return images
-  } catch (error) {
-    log.error('Error fetching game images by title:', error)
-    throw error
-  }
-}
-
-/**
- * Get game cover by title from VNDB
- * @param title The title of the game
- * @returns The cover image url
- * @throws An error if the operation fails
- */
-export async function getGameCoverByTitleFromVNDB(title: string): Promise<string> {
-  try {
-    const cover = await getGameCoverByTitle(title)
-    return cover
-  } catch (error) {
-    log.error('Error fetching game cover by title:', error)
     throw error
   }
 }

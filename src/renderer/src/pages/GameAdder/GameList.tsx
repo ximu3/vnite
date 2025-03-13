@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next'
 
 export function GameList(): JSX.Element {
   const { t } = useTranslation('adder')
-  const { setName, id, setId, gameList } = useGameAdderStore()
+  const { setName, dataSourceId, setDataSourceId, gameList } = useGameAdderStore()
 
   return (
     <div className={cn('w-[726px] h-[86vh] p-3', '3xl:w-[876px]')}>
@@ -37,13 +37,13 @@ export function GameList(): JSX.Element {
                       <TableRow
                         key={game.name}
                         onClick={() => {
-                          setId(game.id)
+                          setDataSourceId(game.id)
                           setName(game.name)
                           toast.success(t('gameAdder.gameList.selected', { name: game.name }))
                         }}
                         className={cn(
                           'cursor-pointer',
-                          game.id === id
+                          game.id === dataSourceId
                             ? 'bg-accent text-accent-foreground hover:bg-accent hover:text-accent-foreground'
                             : ''
                         )}

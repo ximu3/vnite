@@ -1,15 +1,16 @@
 // services.ts
 import {
   getGameCover,
-  getGameScreenshots,
+  getGameBackgrounds,
   getIGDBMetadata,
   checkIGDBGameExists,
   searchIGDBGames,
   initIGDB,
-  getGameCoverByTitle,
-  getGameScreenshotsByTitle
+  getGameCoverByName,
+  getGameBackgroundsByName,
+  getIGDBMetadataByName
 } from './common'
-import { GameList, GameMetadata } from '@appTypes/utils'
+import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
 import log from 'electron-log/main.js'
 
 /**
@@ -34,9 +35,14 @@ export async function searchGamesFromIGDB(gameName: string): Promise<GameList> {
  * @returns The metadata for the game
  * @throws An error if the operation fails
  */
-export async function getGameMetadataFromIGDB(gameId: string): Promise<GameMetadata> {
+export async function getGameMetadataFromIGDB(
+  identifier: ScraperIdentifier
+): Promise<GameMetadata> {
   try {
-    const metadata = await getIGDBMetadata(gameId)
+    const metadata =
+      identifier.type === 'id'
+        ? await getIGDBMetadata(identifier.value)
+        : await getIGDBMetadataByName(identifier.value)
     return metadata
   } catch (error) {
     log.error('Error fetching game meta', error)
@@ -66,9 +72,12 @@ export async function checkGameExistsOnIGDB(gameId: string): Promise<boolean> {
  * @returns A list of screenshots
  * @throws An error if the operation fails
  */
-export async function getGameScreenshotsFromIGDB(gameId: string): Promise<string[]> {
+export async function getGameBackgroundsFromIGDB(identifier: ScraperIdentifier): Promise<string[]> {
   try {
-    const images = await getGameScreenshots(gameId)
+    const images =
+      identifier.type === 'id'
+        ? await getGameBackgrounds(identifier.value)
+        : await getGameBackgroundsByName(identifier.value)
     return images
   } catch (error) {
     log.error('Error fetching game images:', error)
@@ -82,9 +91,12 @@ export async function getGameScreenshotsFromIGDB(gameId: string): Promise<string
  * @returns The URL of the game cover
  * @throws An error if the operation fails
  */
-export async function getGameCoverFromIGDB(gameId: string): Promise<string> {
+export async function getGameCoverFromIGDB(identifier: ScraperIdentifier): Promise<string> {
   try {
-    const cover = await getGameCover(gameId)
+    const cover =
+      identifier.type === 'id'
+        ? await getGameCover(identifier.value)
+        : await getGameCoverByName(identifier.value)
     return cover
   } catch (error) {
     log.error('Error fetching game cover:', error)
@@ -101,38 +113,6 @@ export function initIGDBService(): void {
     initIGDB()
   } catch (error) {
     log.error('Error initializing IGDB service:', error)
-    throw error
-  }
-}
-
-/**
- * Get the game cover from IGDB by title
- * @param gameName The name of the game
- * @returns The URL of the game cover
- * @throws An error if the operation fails
- */
-export async function getGameCoverByTitleFromIGDB(gameName: string): Promise<string> {
-  try {
-    const cover = await getGameCoverByTitle(gameName)
-    return cover
-  } catch (error) {
-    log.error('Error fetching game cover:', error)
-    throw error
-  }
-}
-
-/**
- * Get game screenshots from IGDB by title
- * @param gameName The name of the game
- * @returns A list of screenshots
- * @throws An error if the operation fails
- */
-export async function getGameScreenshotsByTitleFromIGDB(gameName: string): Promise<string[]> {
-  try {
-    const images = await getGameScreenshotsByTitle(gameName)
-    return images
-  } catch (error) {
-    log.error('Error fetching game images:', error)
     throw error
   }
 }

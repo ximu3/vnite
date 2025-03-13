@@ -2,13 +2,13 @@ import {
   searchGames,
   getGameMetadata,
   checkGameExists,
-  getGameScreenshots,
-  getGameCoversByTitle,
-  getGameIconsByTitle,
-  getGameLogosByTitle,
-  getGameScreenshotsByTitle
+  getGameBackgrounds,
+  getGameCovers,
+  getGameIcons,
+  getGameLogos
 } from '~/scraper'
 import { ipcMain, BrowserWindow } from 'electron'
+import { ScraperIdentifier } from '@appTypes/database'
 
 export function setupScraperIPC(mainWindow: BrowserWindow): void {
   ipcMain.handle('search-games', async (_, dataSource: string, gameName: string) => {
@@ -19,32 +19,34 @@ export function setupScraperIPC(mainWindow: BrowserWindow): void {
     return await checkGameExists(dataSource, gameId)
   })
 
-  ipcMain.handle('get-game-metadata', async (_, dataSource: string, gameId: string) => {
-    return await getGameMetadata(dataSource, gameId)
-  })
-
-  ipcMain.handle('get-game-screenshots', async (_, dataSource: string, gameId: string) => {
-    return await getGameScreenshots(dataSource, gameId)
-  })
-
-  ipcMain.handle('get-game-covers-by-title', async (_, dataSource: string, gameTitle: string) => {
-    return await getGameCoversByTitle(dataSource, gameTitle)
-  })
-
-  ipcMain.handle('get-game-icons-by-title', async (_, dataSource: string, gameTitle: string) => {
-    return await getGameIconsByTitle(dataSource, gameTitle)
-  })
-
-  ipcMain.handle('get-game-logos-by-title', async (_, dataSource: string, gameTitle: string) => {
-    return await getGameLogosByTitle(dataSource, gameTitle)
-  })
-
   ipcMain.handle(
-    'get-game-screenshots-by-title',
-    async (_, dataSource: string, gameTitle: string) => {
-      return await getGameScreenshotsByTitle(dataSource, gameTitle)
+    'get-game-metadata',
+    async (_, dataSource: string, identifier: ScraperIdentifier) => {
+      return await getGameMetadata(dataSource, identifier)
     }
   )
+
+  ipcMain.handle(
+    'get-game-backgrounds',
+    async (_, dataSource: string, identifier: ScraperIdentifier) => {
+      return await getGameBackgrounds(dataSource, identifier)
+    }
+  )
+
+  ipcMain.handle(
+    'get-game-covers',
+    async (_, dataSource: string, identifier: ScraperIdentifier) => {
+      return await getGameCovers(dataSource, identifier)
+    }
+  )
+
+  ipcMain.handle('get-game-icons', async (_, dataSource: string, identifier: ScraperIdentifier) => {
+    return await getGameIcons(dataSource, identifier)
+  })
+
+  ipcMain.handle('get-game-logos', async (_, dataSource: string, identifier: ScraperIdentifier) => {
+    return await getGameLogos(dataSource, identifier)
+  })
 
   mainWindow.webContents.send('scraperIPCReady')
 }

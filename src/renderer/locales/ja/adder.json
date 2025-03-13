@@ -12,7 +12,8 @@
       "unknown": "不明",
       "selected": "選択されたゲーム: {{name}}"
     },
-    "screenshots": {
+    "backgrounds": {
+      "title": "背景画像",
       "noImages": "画像なし",
       "confirm": "確認",
       "notifications": {

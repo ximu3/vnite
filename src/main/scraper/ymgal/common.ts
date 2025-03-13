@@ -1,5 +1,4 @@
 import { GameList, GameMetadata } from '@appTypes/utils'
-import { getGameScreenshotsByTitleFromVNDB, getGameCoverByTitleFromVNDB } from '../vndb'
 import { GameListResponse, GameDetailResponse, OrganizationResponse, Organization } from './type'
 
 // Define the base URL for the Moon Screen API
@@ -147,6 +146,16 @@ export async function getYMGalMetadata(gameId: string): Promise<GameMetadata> {
   }
 }
 
+export async function getYMGalMetadataByName(gameName: string): Promise<GameMetadata> {
+  try {
+    const game = (await searchYMGalGames(gameName))[0]
+    return await getYMGalMetadata(game.id)
+  } catch (error) {
+    console.error(`Error fetching YMGal metadata for game ${gameName}:`, error)
+    throw error
+  }
+}
+
 // Check if the game exists
 export async function checkYMGalExists(gameId: string): Promise<boolean> {
   try {
@@ -157,31 +166,5 @@ export async function checkYMGalExists(gameId: string): Promise<boolean> {
   } catch (error) {
     console.error(`Error checking YMGal game existence for ID ${gameId}:`, error)
     return false
-  }
-}
-
-// Get Game Cover
-export async function getYMGalCover(gameId: string): Promise<string> {
-  try {
-    const data = await fetchYMGal<GameDetailResponse>('/open/archive', {
-      gid: gameId
-    })
-    return await getGameCoverByTitleFromVNDB(data.game.name)
-  } catch (error) {
-    console.error(`Error fetching YMGal cover for game ${gameId}:`, error)
-    return ''
-  }
-}
-
-// Get Game Screenshots
-export async function getYMGalScreenshots(gameId: string): Promise<string[]> {
-  try {
-    const data = await fetchYMGal<GameDetailResponse>('/open/archive', {
-      gid: gameId
-    })
-    return await getGameScreenshotsByTitleFromVNDB(data.game.name)
-  } catch (error) {
-    console.error(`Error fetching YMGal screenshots for game ${gameId}:`, error)
-    return []
   }
 }

@@ -1,12 +1,12 @@
 import {
   searchYMGalGames,
   getYMGalMetadata,
-  getYMGalCover,
-  getYMGalScreenshots,
+  getYMGalMetadataByName,
   checkYMGalExists
 } from './common'
 import log from 'electron-log/main.js'
-import { GameList, GameMetadata } from '@appTypes/utils'
+import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
+import { getGameCoverFromVNDB, getGameBackgroundsFromVNDB } from '../vndb'
 
 /**
  * Search for games on YMGal
@@ -30,9 +30,14 @@ export async function searchGamesFromYMGal(gameName: string): Promise<GameList> 
  * @returns The metadata for the game
  * @throws An error if the operation fails
  */
-export async function getGameMetadataFromYMGal(gameId: string): Promise<GameMetadata> {
+export async function getGameMetadataFromYMGal(
+  identifier: ScraperIdentifier
+): Promise<GameMetadata> {
   try {
-    const metadata = await getYMGalMetadata(gameId)
+    const metadata =
+      identifier.type === 'id'
+        ? await getYMGalMetadata(identifier.value)
+        : await getYMGalMetadataByName(identifier.value)
     return metadata
   } catch (error) {
     log.error('Error fetching game metadata:', error)
@@ -61,9 +66,11 @@ export async function checkGameExistsOnYMGal(gameId: string): Promise<boolean> {
  * @param gameId The id of the game on YMGal
  * @returns A list of screenshots
  */
-export async function getGameScreenshotsFromYMGal(gameId: string): Promise<string[]> {
+export async function getGameBackgroundsFromYMGal(
+  identifier: ScraperIdentifier
+): Promise<string[]> {
   try {
-    const screenshots = await getYMGalScreenshots(gameId)
+    const screenshots = await getGameBackgroundsFromVNDB(identifier)
     return screenshots
   } catch (error) {
     log.error('Error fetching game screenshots:', error)
@@ -76,9 +83,9 @@ export async function getGameScreenshotsFromYMGal(gameId: string): Promise<strin
  * @param gameId The id of the game on YMGal
  * @returns A cover image
  */
-export async function getGameCoverFromYMGal(gameId: string): Promise<string> {
+export async function getGameCoverFromYMGal(identifier: ScraperIdentifier): Promise<string> {
   try {
-    const cover = await getYMGalCover(gameId)
+    const cover = await getGameCoverFromVNDB(identifier)
     return cover
   } catch (error) {
     log.error('Error fetching game cover:', error)

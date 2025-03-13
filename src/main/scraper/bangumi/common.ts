@@ -1,6 +1,5 @@
 import { GameList, GameMetadata } from '@appTypes/utils'
 import { BangumiSearchResult, BangumiSubject } from './types'
-import { getGameScreenshotsByTitleFromVNDB } from '../vndb'
 
 async function fetchBangumi<T>(
   endpoint: string,
@@ -152,6 +151,16 @@ export async function getBangumiMetadata(gameId: string): Promise<GameMetadata> 
   }
 }
 
+export async function getBangumiMetadataByName(gameName: string): Promise<GameMetadata> {
+  try {
+    const game = (await searchBangumiGames(gameName))[0]
+    return await getBangumiMetadata(game.id)
+  } catch (error) {
+    console.error(`Error fetching metadata for game ${gameName}:`, error)
+    throw error
+  }
+}
+
 export async function checkGameExists(gameId: string): Promise<boolean> {
   try {
     await fetchBangumi<BangumiSubject>(`v0/subjects/${gameId}`)
@@ -159,16 +168,6 @@ export async function checkGameExists(gameId: string): Promise<boolean> {
   } catch (error) {
     console.error(`Error checking game existence for ID ${gameId}:`, error)
     return false
-  }
-}
-
-export async function getGameScreenshots(gameId: string): Promise<string[]> {
-  try {
-    const gameName = (await getBangumiMetadata(gameId)).originalName
-    return await getGameScreenshotsByTitleFromVNDB(gameName!)
-  } catch (error) {
-    console.error(`Error fetching images for game ${gameId}:`, error)
-    return []
   }
 }
 
@@ -182,7 +181,7 @@ export async function getGameCover(gameId: string): Promise<string> {
   }
 }
 
-export async function getGameCoverByTitle(gameName: string): Promise<string> {
+export async function getGameCoverByName(gameName: string): Promise<string> {
   try {
     const game = (await searchBangumiGames(gameName))[0]
     return await getGameCover(game.id)

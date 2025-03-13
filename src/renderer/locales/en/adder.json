@@ -12,7 +12,8 @@
       "unknown": "Unknown",
       "selected": "Selected game: {{name}}"
     },
-    "screenshots": {
+    "backgrounds": {
+      "title": "Background Image",
       "noImages": "No images",
       "confirm": "Confirm",
       "notifications": {

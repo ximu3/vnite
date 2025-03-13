@@ -12,7 +12,8 @@
       "unknown": "未知",
       "selected": "已选择游戏: {{name}}"
     },
-    "screenshots": {
+    "backgrounds": {
+      "title": "背景图片",
       "noImages": "暂无图片",
       "confirm": "确定",
       "notifications": {

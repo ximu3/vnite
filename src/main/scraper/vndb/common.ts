@@ -125,6 +125,51 @@ export async function getVNMetadata(vnId: string): Promise<GameMetadata> {
   }
 }
 
+export async function getVNMetadataByName(vnName: string): Promise<GameMetadata> {
+  const fields = [
+    'id',
+    'titles{main,title}',
+    'released',
+    'description',
+    'developers{name}',
+    'tags{rating,name}',
+    'extlinks{label,url}'
+  ] as const
+
+  try {
+    const data = await fetchVNDB({
+      filters: ['search', '=', vnName],
+      fields
+    })
+
+    if (!data.results.length) {
+      throw new Error(`No visual novel found with name: ${vnName}`)
+    }
+
+    const vn = data.results[0]
+
+    return {
+      name: vn.titles.find((t) => t.main)?.title || vn.titles[0].title,
+      originalName: vn.titles.find((t) => t.main)?.title || vn.titles[0].title,
+      releaseDate: vn.released || '',
+      description: formatDescription(vn.description),
+      developers: vn.developers?.map((d) => d.name) || [''],
+      relatedSites: [
+        ...(vn.extlinks?.map((link) => ({ label: link.label, url: link.url })) || []),
+        { label: 'VNDB', url: `https://vndb.org/v${vn.id}` }
+      ],
+      tags:
+        vn.tags
+          ?.sort((a, b) => b.rating - a.rating)
+          .slice(0, 10)
+          .map((tag) => tag.name) ?? []
+    }
+  } catch (error) {
+    console.error(`Error fetching metadata for VN ${vnName}:`, error)
+    throw error
+  }
+}
+
 export async function checkVNExists(vnId: string): Promise<boolean> {
   const formattedId = vnId.startsWith('v') ? vnId : `v${vnId}`
 
@@ -201,7 +246,7 @@ async function tryFetchImage(url: string): Promise<string> {
   }
 }
 
-export async function getGameScreenshots(vnId: string): Promise<string[]> {
+export async function getGameBackgrounds(vnId: string): Promise<string[]> {
   const formattedId = vnId.startsWith('v') ? vnId : `v${vnId}`
   const fields = ['screenshots{url}'] as const
 
@@ -221,18 +266,18 @@ export async function getGameScreenshots(vnId: string): Promise<string[]> {
   }
 }
 
-export async function getGameScreenshotsByTitle(title: string): Promise<string[]> {
+export async function getGameBackgroundsByName(name: string): Promise<string[]> {
   const fields = ['titles{title}', 'screenshots{url}'] as const
 
   try {
     const data = await fetchVNDB({
-      filters: ['search', '=', title],
+      filters: ['search', '=', name],
       fields
     })
 
     if (data.results.length > 0) {
       let vn = data.results.find((result) =>
-        result.titles.some((titleJson) => titleJson.title.toLowerCase() === title.toLowerCase())
+        result.titles.some((titleJson) => titleJson.title.toLowerCase() === name.toLowerCase())
       )
       vn = vn || data.results[0]
 
@@ -242,7 +287,7 @@ export async function getGameScreenshotsByTitle(title: string): Promise<string[]
     }
     return []
   } catch (error) {
-    console.error(`Error fetching images for VN ${title}:`, error)
+    console.error(`Error fetching images for VN ${name}:`, error)
     return []
   }
 }
@@ -265,19 +310,19 @@ export async function getGameCover(vnId: string): Promise<string> {
   }
 }
 
-export async function getGameCoverByTitle(title: string): Promise<string> {
+export async function getGameCoverByName(name: string): Promise<string> {
   const fields = ['image{url}'] as const
 
   try {
     const data = (await fetchVNDB({
-      filters: ['search', '=', title],
+      filters: ['search', '=', name],
       fields,
       results: 1
     })) as any
 
     return await tryFetchImage(data.results[0].image.url)
   } catch (error) {
-    console.error(`Error fetching cover for VN ${title}:`, error)
+    console.error(`Error fetching cover for VN ${name}:`, error)
     return ''
   }
 }

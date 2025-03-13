@@ -23,12 +23,12 @@ interface GameAdderState {
   setName: (name: string) => void
   gameList: GameList
   setGameList: (gameList: GameList) => void
-  id: string
-  setId: (id: string) => void
-  screenshotList: string[]
-  setScreenshotList: (screenshotList: string[]) => void
-  screenshotUrl: string
-  setScreenshotUrl: (screenshotUrl: string) => void
+  dataSourceId: string
+  setDataSourceId: (dataSourceId: string) => void
+  backgroundList: string[]
+  setBackgroundList: (backgroundList: string[]) => void
+  backgroundUrl: string
+  setBackgroundUrl: (backgroundUrl: string) => void
   handleClose: () => void
 }
 
@@ -45,22 +45,22 @@ export const useGameAdderStore = create<GameAdderState>((set, get) => ({
   setName: (name): void => set({ name }),
   gameList: [],
   setGameList: (gameList): void => set({ gameList }),
-  id: '',
-  setId: (id): void => set({ id }),
-  screenshotList: [],
-  setScreenshotList: (screenshotList): void => set({ screenshotList }),
-  screenshotUrl: '',
-  setScreenshotUrl: (screenshotUrl): void => set({ screenshotUrl }),
+  dataSourceId: '',
+  setDataSourceId: (dataSourceId): void => set({ dataSourceId }),
+  backgroundList: [],
+  setBackgroundList: (backgroundList): void => set({ backgroundList }),
+  backgroundUrl: '',
+  setBackgroundUrl: (backgroundUrl): void => set({ backgroundUrl }),
   handleClose: (): void => {
     const {
       isLoading,
       setIsOpen,
       setDataSource,
       setDbId,
-      setId,
+      setDataSourceId,
       setName,
-      setScreenshotList,
-      setScreenshotUrl,
+      setBackgroundList,
+      setBackgroundUrl,
       setGameList,
       setIsLoading
     } = get()
@@ -71,10 +71,10 @@ export const useGameAdderStore = create<GameAdderState>((set, get) => ({
     setIsOpen(false)
     setDataSource('steam')
     setDbId('')
-    setId('')
+    setDataSourceId('')
     setName('')
-    setScreenshotList([])
-    setScreenshotUrl('')
+    setBackgroundList([])
+    setBackgroundUrl('')
     setGameList([])
     setIsLoading(false)
   }

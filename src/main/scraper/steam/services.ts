@@ -1,14 +1,16 @@
 import {
   getGameCover,
-  getGameScreenshots,
+  getGameCoverByName,
   getSteamMetadata,
+  getSteamMetadataByName,
   checkSteamGameExists,
   searchSteamGames,
-  getGameIcon,
-  getGameCoverByTitle,
-  getGameScreenshotsByTitle
+  getGameLogo,
+  getGameLogoByName
 } from './common'
 import { GameList, GameMetadata } from '@appTypes/utils'
+import { getGameBackgroundsFromSteamGridDB } from '../steamGridDb'
+import { ScraperIdentifier } from '@appTypes/utils'
 import log from 'electron-log/main.js'
 
 /**
@@ -33,9 +35,14 @@ export async function searchGamesFromSteam(gameName: string): Promise<GameList> 
  * @returns The metadata for the game
  * @throws An error if the operation fails
  */
-export async function getGameMetadataFromSteam(appId: string): Promise<GameMetadata> {
+export async function getGameMetadataFromSteam(
+  identifier: ScraperIdentifier
+): Promise<GameMetadata> {
   try {
-    const metadata = await getSteamMetadata(appId)
+    const metadata =
+      identifier.type === 'id'
+        ? await getSteamMetadata(identifier.value)
+        : await getSteamMetadataByName(identifier.value)
     return metadata
   } catch (error) {
     log.error('Error fetching game metadata:', error)
@@ -65,9 +72,11 @@ export async function checkGameExistsOnSteam(appId: string): Promise<boolean> {
  * @returns A list of screenshots
  * @throws An error if the operation fails
  */
-export async function getGameScreenshotsFromSteam(appId: string): Promise<string[]> {
+export async function getGameBackgroundsFromSteam(
+  identifier: ScraperIdentifier
+): Promise<string[]> {
   try {
-    const images = await getGameScreenshots(appId)
+    const images = await getGameBackgroundsFromSteamGridDB(identifier)
     return images
   } catch (error) {
     log.error('Error fetching game images:', error)
@@ -81,9 +90,12 @@ export async function getGameScreenshotsFromSteam(appId: string): Promise<string
  * @returns The cover of the game
  * @throws An error if the operation fails
  */
-export async function getGameCoverFromSteam(appId: string): Promise<string> {
+export async function getGameCoverFromSteam(identifier: ScraperIdentifier): Promise<string> {
   try {
-    const cover = await getGameCover(appId)
+    const cover =
+      identifier.type === 'id'
+        ? await getGameCover(identifier.value)
+        : await getGameCoverByName(identifier.value)
     return cover
   } catch (error) {
     log.error('Error fetching game cover:', error)
@@ -92,49 +104,20 @@ export async function getGameCoverFromSteam(appId: string): Promise<string> {
 }
 
 /**
- * Get the icon of the game from Steam
+ * Get the logo of the game from Steam
  * @param appId The app id of the game on Steam
- * @returns The icon of the game
+ * @returns The logo of the game
  * @throws An error if the operation fails
  */
-export async function getGameIconFromSteam(appId: string): Promise<string> {
+export async function getGameLogoFromSteam(identifier: ScraperIdentifier): Promise<string> {
   try {
-    const icon = await getGameIcon(appId)
-    return icon
+    const logo =
+      identifier.type === 'id'
+        ? await getGameLogo(identifier.value)
+        : await getGameLogoByName(identifier.value)
+    return logo
   } catch (error) {
-    log.error('Error fetching game icon:', error)
-    throw error
-  }
-}
-
-/**
- * Get the cover of the game from Steam by title
- * @param gameName The name of the game
- * @returns The cover of the game
- * @throws An error if the operation fails
- */
-export async function getGameCoverByTitleFromSteam(gameName: string): Promise<string> {
-  try {
-    const cover = await getGameCoverByTitle(gameName)
-    return cover
-  } catch (error) {
-    log.error('Error fetching game cover:', error)
-    throw error
-  }
-}
-
-/**
- * Get game screenshots from Steam by title
- * @param gameName The name of the game
- * @returns A list of screenshots
- * @throws An error if the operation fails
- */
-export async function getGameScreenshotsByTitleFromSteam(gameName: string): Promise<string[]> {
-  try {
-    const images = await getGameScreenshotsByTitle(gameName)
-    return images
-  } catch (error) {
-    log.error('Error fetching game images:', error)
+    log.error('Error fetching game logo:', error)
     throw error
   }
 }

@@ -19,7 +19,8 @@ import { useTranslation } from 'react-i18next'
 
 export function Search({ className }: { className?: string }): JSX.Element {
   const { t } = useTranslation('adder')
-  const { dataSource, setDataSource, name, setName, id, setId, setGameList } = useGameAdderStore()
+  const { dataSource, setDataSource, name, setName, dataSourceId, setDataSourceId, setGameList } =
+    useGameAdderStore()
   const navigate = useNavigate()
 
   const [inputName, setInputName] = React.useState(name)
@@ -28,12 +29,12 @@ export function Search({ className }: { className?: string }): JSX.Element {
       setInputName(name)
     }
   }, [name])
-  const [inputId, setInputId] = React.useState(id)
+  const [inputId, setInputId] = React.useState(dataSourceId)
   React.useEffect(() => {
-    if (inputId !== id) {
-      setInputId(id)
+    if (inputId !== dataSourceId) {
+      setInputId(dataSourceId)
     }
-  }, [id])
+  }, [dataSourceId])
 
   const gameNameInput = React.useRef<HTMLInputElement>(null)
   const gameIdInput = React.useRef<HTMLInputElement>(null)
@@ -76,7 +77,7 @@ export function Search({ className }: { className?: string }): JSX.Element {
         if (!result) {
           throw new Error(t('gameAdder.search.notifications.invalidId'))
         }
-        setId(inputId)
+        setDataSourceId(inputId)
         navigate('/screenshots')
       })(),
       {
@@ -89,7 +90,7 @@ export function Search({ className }: { className?: string }): JSX.Element {
 
   return (
     <div className={cn('w-[36vw] h-auto', '3xl:w-[30vw]', className)}>
-      <div className={cn('grid grid-cols-[100px_1fr] gap-x-3 gap-y-2 text-sm items-center')}>
+      <div className={cn('grid grid-cols-[auto_1fr] gap-x-5 gap-y-2 text-sm items-center')}>
         {/* 数据源选择 */}
         <div className={cn('whitespace-nowrap select-none')}>
           {t('gameAdder.search.dataSource')}

@@ -1,4 +1,13 @@
-import { SteamGridDBAssets } from './type'
+import {
+  getGameBackground as getGameBackgroundFromSteam,
+  getGameBackgroundByName as getGameBackgroundByNameFromSteam,
+  getGameCover as getGameCoverFromSteam,
+  getGameCoverByName as getGameCoverByNameFromSteam,
+  getGameIcon as getGameIconFromSteam,
+  getGameIconByName as getGameIconByNameFromSteam,
+  getGameLogo as getGameLogoFromSteam,
+  getGameLogoByName as getGameLogoByNameFromSteam
+} from '../steam/common'
 
 const STEAMGRIDDB_API_KEY = import.meta.env.VITE_STEAMGRIDDB_API_KEY || ''
 const TIMEOUT = 5000
@@ -106,103 +115,15 @@ async function fetchSteamGridDb(
   }
 }
 
-export async function getSteamGridDBAssets(
-  identifier: string | number,
-  preferredStyle: string = 'official'
-): Promise<SteamGridDBAssets> {
-  const result: SteamGridDBAssets = {
-    hero: '',
-    logo: '',
-    icon: ''
-  }
-
+export async function getGameCovers(steamId: string): Promise<string[]> {
   try {
-    let gameId: number | undefined
-
-    if (typeof identifier === 'string') {
-      const searchData = (await fetchSteamGridDb(
-        `search/autocomplete/${encodeURIComponent(identifier)}`
-      )) as { data: { id: number }[] }
-      gameId = searchData?.data?.[0]?.id
-    } else {
-      const idData = (await fetchSteamGridDb(`games/steam/${identifier}`)) as {
-        data: { id: number }
-      }
-      gameId = idData?.data?.id
+    const idData = (await fetchSteamGridDb(`games/steam/${steamId}`)) as {
+      data: { id: number }
     }
+    const gameId = idData?.data?.id
 
     if (!gameId) {
-      console.warn(`找不到游戏: ${identifier}`)
-      return result
-    }
-
-    const getAsset = async (type: 'heroes' | 'logos' | 'icons'): Promise<string> => {
-      let data = {} as {
-        data: {
-          url: string
-          style: string
-        }[]
-      }
-
-      if (type === 'heroes') {
-        data = await fetchSteamGridDb(`${type}/game/${gameId}`)
-        return data?.data?.[0]?.url || ''
-      } else {
-        data = await fetchSteamGridDb(`${type}/game/${gameId}`, { styles: preferredStyle })
-        if (data?.data?.length > 0) {
-          return (
-            data.data.find((item: any) => item.style === preferredStyle)?.url || data.data[0].url
-          )
-        } else {
-          const anyStyleData = await fetchSteamGridDb(`${type}/game/${gameId}`)
-          return anyStyleData?.data?.[0]?.url || ''
-        }
-      }
-    }
-
-    // Get all resource URLs
-    const [heroUrl, logoUrl, iconUrl] = await Promise.all([
-      getAsset('heroes'),
-      getAsset('logos'),
-      getAsset('icons')
-    ])
-
-    // Check the accessibility of each URL and switch to the reverse generation if needed
-    const [hero, logo, icon] = await Promise.all([
-      checkImageUrl(heroUrl),
-      checkImageUrl(logoUrl),
-      checkImageUrl(iconUrl)
-    ])
-
-    return {
-      hero,
-      logo,
-      icon
-    }
-  } catch (error) {
-    console.error(`获取资源时发生错误:`, error)
-    return result
-  }
-}
-
-export async function getGameGrids(identifier: string | number): Promise<string[]> {
-  try {
-    let gameId: number | undefined
-
-    if (typeof identifier === 'string') {
-      const searchData = (await fetchSteamGridDb(
-        `search/autocomplete/${encodeURIComponent(identifier)}`
-      )) as { data: { id: number }[] }
-      gameId = searchData?.data?.[0]?.id
-    } else {
-      const idData = (await fetchSteamGridDb(`games/steam/${identifier}`)) as {
-        data: { id: number }
-      }
-      gameId = idData?.data?.id
-    }
-
-    if (!gameId) {
-      console.warn(`找不到游戏: ${identifier}`)
+      console.warn(`找不到游戏: ${steamId}`)
       return []
     }
 
@@ -210,6 +131,12 @@ export async function getGameGrids(identifier: string | number): Promise<string[
 
     // check url
     const urls = await Promise.all(data?.data?.map((grid: any) => checkImageUrl(grid.url)) || [])
+
+    // 在数组最前面插入游戏封面
+    const coverUrl = await getGameCoverFromSteam(steamId)
+    if (coverUrl) {
+      urls.unshift(coverUrl)
+    }
     return urls
   } catch (error) {
     console.error(`获取 SteamGridDB 封面时出错:`, error)
@@ -217,24 +144,43 @@ export async function getGameGrids(identifier: string | number): Promise<string[
   }
 }
 
-export async function getGameHeros(identifier: string | number): Promise<string[]> {
+export async function getGameCoversByName(gameName: string): Promise<string[]> {
   try {
-    let gameId: number | undefined
-
-    if (typeof identifier === 'string') {
-      const searchData = (await fetchSteamGridDb(
-        `search/autocomplete/${encodeURIComponent(identifier)}`
-      )) as { data: { id: number }[] }
-      gameId = searchData?.data?.[0]?.id
-    } else {
-      const idData = (await fetchSteamGridDb(`games/steam/${identifier}`)) as {
-        data: { id: number }
-      }
-      gameId = idData?.data?.id
-    }
+    const searchData = (await fetchSteamGridDb(
+      `search/autocomplete/${encodeURIComponent(gameName)}`
+    )) as { data: { id: number }[] }
+    const gameId = searchData?.data?.[0]?.id
 
     if (!gameId) {
-      console.warn(`找不到游戏: ${identifier}`)
+      console.warn(`找不到游戏: ${gameName}`)
+      return []
+    }
+
+    const data = await fetchSteamGridDb(`grids/game/${gameId}`)
+    // check url
+    const urls = await Promise.all(data?.data?.map((grid: any) => checkImageUrl(grid.url)) || [])
+
+    // 在数组最前面插入游戏封面
+    const coverUrl = await getGameCoverByNameFromSteam(gameName)
+    if (coverUrl) {
+      urls.unshift(coverUrl)
+    }
+    return urls
+  } catch (error) {
+    console.error(`获取 SteamGridDB 封面时出错:`, error)
+    return []
+  }
+}
+
+export async function getGameBackgrounds(steamId: string): Promise<string[]> {
+  try {
+    const idData = (await fetchSteamGridDb(`games/steam/${steamId}`)) as {
+      data: { id: number }
+    }
+    const gameId = idData?.data?.id
+
+    if (!gameId) {
+      console.warn(`找不到游戏: ${steamId}`)
       return []
     }
 
@@ -242,31 +188,57 @@ export async function getGameHeros(identifier: string | number): Promise<string[
 
     // check url
     const urls = await Promise.all(data?.data?.map((hero: any) => checkImageUrl(hero.url)) || [])
+
+    // 在数组最前面插入游戏Background图
+    const heroUrl = await getGameBackgroundFromSteam(steamId)
+    if (heroUrl) {
+      urls.unshift(heroUrl)
+    }
     return urls
   } catch (error) {
-    console.error(`获取 SteamGridDB Hero 时出错:`, error)
+    console.error(`获取 SteamGridDB Background 时出错:`, error)
     return []
   }
 }
 
-export async function getGameLogos(identifier: string | number): Promise<string[]> {
+export async function getGameBackgroundsByName(gameName: string): Promise<string[]> {
   try {
-    let gameId: number | undefined
-
-    if (typeof identifier === 'string') {
-      const searchData = (await fetchSteamGridDb(
-        `search/autocomplete/${encodeURIComponent(identifier)}`
-      )) as { data: { id: number }[] }
-      gameId = searchData?.data?.[0]?.id
-    } else {
-      const idData = (await fetchSteamGridDb(`games/steam/${identifier}`)) as {
-        data: { id: number }
-      }
-      gameId = idData?.data?.id
-    }
+    const searchData = (await fetchSteamGridDb(
+      `search/autocomplete/${encodeURIComponent(gameName)}`
+    )) as { data: { id: number }[] }
+    const gameId = searchData?.data?.[0]?.id
 
     if (!gameId) {
-      console.warn(`找不到游戏: ${identifier}`)
+      console.warn(`找不到游戏: ${gameName}`)
+      return []
+    }
+
+    const data = await fetchSteamGridDb(`heroes/game/${gameId}`)
+
+    // check url
+    const urls = await Promise.all(data?.data?.map((hero: any) => checkImageUrl(hero.url)) || [])
+
+    // 在数组最前面插入游戏Background图
+    const heroUrl = await getGameBackgroundByNameFromSteam(gameName)
+    if (heroUrl) {
+      urls.unshift(heroUrl)
+    }
+    return urls
+  } catch (error) {
+    console.error(`获取 SteamGridDB Background 时出错:`, error)
+    return []
+  }
+}
+
+export async function getGameLogos(steamId: string): Promise<string[]> {
+  try {
+    const idData = (await fetchSteamGridDb(`games/steam/${steamId}`)) as {
+      data: { id: number }
+    }
+    const gameId = idData?.data?.id
+
+    if (!gameId) {
+      console.warn(`找不到游戏: ${steamId}`)
       return []
     }
 
@@ -274,6 +246,12 @@ export async function getGameLogos(identifier: string | number): Promise<string[
 
     // check url
     const urls = await Promise.all(data?.data?.map((logo: any) => checkImageUrl(logo.url)) || [])
+
+    // 在数组最前面插入游戏Logo
+    const logoUrl = await getGameLogoFromSteam(steamId)
+    if (logoUrl) {
+      urls.unshift(logoUrl)
+    }
     return urls
   } catch (error) {
     console.error(`获取 SteamGridDB Logo 时出错:`, error)
@@ -281,24 +259,44 @@ export async function getGameLogos(identifier: string | number): Promise<string[
   }
 }
 
-export async function getGameIcons(identifier: string | number): Promise<string[]> {
+export async function getGameLogosByName(gameName: string): Promise<string[]> {
   try {
-    let gameId: number | undefined
-
-    if (typeof identifier === 'string') {
-      const searchData = (await fetchSteamGridDb(
-        `search/autocomplete/${encodeURIComponent(identifier)}`
-      )) as { data: { id: number }[] }
-      gameId = searchData?.data?.[0]?.id
-    } else {
-      const idData = (await fetchSteamGridDb(`games/steam/${identifier}`)) as {
-        data: { id: number }
-      }
-      gameId = idData?.data?.id
-    }
+    const searchData = (await fetchSteamGridDb(
+      `search/autocomplete/${encodeURIComponent(gameName)}`
+    )) as { data: { id: number }[] }
+    const gameId = searchData?.data?.[0]?.id
 
     if (!gameId) {
-      console.warn(`找不到游戏: ${identifier}`)
+      console.warn(`找不到游戏: ${gameName}`)
+      return []
+    }
+
+    const data = await fetchSteamGridDb(`logos/game/${gameId}`)
+
+    // check url
+    const urls = await Promise.all(data?.data?.map((logo: any) => checkImageUrl(logo.url)) || [])
+
+    // 在数组最前面插入游戏Logo
+    const logoUrl = await getGameLogoByNameFromSteam(gameName)
+    if (logoUrl) {
+      urls.unshift(logoUrl)
+    }
+    return urls
+  } catch (error) {
+    console.error(`获取 SteamGridDB Logo 时出错:`, error)
+    return []
+  }
+}
+
+export async function getGameIcons(steamId: string): Promise<string[]> {
+  try {
+    const idData = (await fetchSteamGridDb(`games/steam/${steamId}`)) as {
+      data: { id: number }
+    }
+    const gameId = idData?.data?.id
+
+    if (!gameId) {
+      console.warn(`找不到游戏: ${steamId}`)
       return []
     }
 
@@ -306,6 +304,39 @@ export async function getGameIcons(identifier: string | number): Promise<string[
 
     // check url
     const urls = await Promise.all(data?.data?.map((icon: any) => checkImageUrl(icon.url)) || [])
+    // 在数组最前面插入游戏Icon
+    const iconUrl = await getGameIconFromSteam(steamId)
+    if (iconUrl) {
+      urls.unshift(iconUrl)
+    }
+    return urls
+  } catch (error) {
+    console.error(`获取 SteamGridDB 图标时出错:`, error)
+    return []
+  }
+}
+
+export async function getGameIconsByName(gameName: string): Promise<string[]> {
+  try {
+    const searchData = (await fetchSteamGridDb(
+      `search/autocomplete/${encodeURIComponent(gameName)}`
+    )) as { data: { id: number }[] }
+    const gameId = searchData?.data?.[0]?.id
+
+    if (!gameId) {
+      console.warn(`找不到游戏: ${gameName}`)
+      return []
+    }
+
+    const data = await fetchSteamGridDb(`icons/game/${gameId}`)
+
+    // check url
+    const urls = await Promise.all(data?.data?.map((icon: any) => checkImageUrl(icon.url)) || [])
+    // 在数组最前面插入游戏Icon
+    const iconUrl = await getGameIconByNameFromSteam(gameName)
+    if (iconUrl) {
+      urls.unshift(iconUrl)
+    }
     return urls
   } catch (error) {
     console.error(`获取 SteamGridDB 图标时出错:`, error)

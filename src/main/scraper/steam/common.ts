@@ -1,7 +1,6 @@
 import { GameList, GameMetadata } from '@appTypes/utils'
 import { SteamAppDetailsResponse, SteamStoreSearchResponse } from './types'
 import { formatDate } from '~/utils'
-import { getGameHerosFromSteamGridDB } from '../steamGridDb'
 import * as cheerio from 'cheerio'
 import { getSteamLanguageConfig, getTranslation } from './i18n'
 
@@ -234,20 +233,47 @@ export async function getSteamMetadata(appId: string): Promise<GameMetadata> {
   }
 }
 
-export async function getGameScreenshots(appId: string): Promise<string[]> {
-  // try {
-  //   const primaryUrl = `${STEAM_URLS.PRIMARY.STORE}/api/appdetails?appids=${appId}`
-  //   const fallbackUrl = `${STEAM_URLS.FALLBACK.APP_DETAILS}?appids=${appId}`
-  //   const data = (await fetchSteamAPI(primaryUrl, fallbackUrl)) as SteamAppDetailsResponse
-  //   if (!data[appId].success) {
-  //     return []
-  //   }
-  //   return data[appId].data.screenshots.map((screenshot) => screenshot.path_full)
-  // } catch (error) {
-  //   console.error(`Error fetching screenshots for game ${appId}:`, error)
-  //   return []
-  // }
-  return await getGameHerosFromSteamGridDB(Number(appId))
+export async function getSteamMetadataByName(gameName: string): Promise<GameMetadata> {
+  try {
+    const games = await searchSteamGames(gameName)
+    return await getSteamMetadata(games[0].id)
+  } catch (error) {
+    console.error(`Error fetching metadata for game ${gameName}:`, error)
+    throw error
+  }
+}
+
+export async function getGameBackground(appId: string): Promise<string> {
+  const urls = {
+    primary: {
+      hd: `${STEAM_URLS.PRIMARY.CDN}/steam/apps/${appId}/library_hero_2x.jpg`,
+      standard: `${STEAM_URLS.PRIMARY.CDN}/steam/apps/${appId}/library_hero.jpg`
+    },
+    fallback: {
+      hd: `${STEAM_URLS.FALLBACK.CDN}/steam/apps/${appId}/library_hero_2x.jpg`,
+      standard: `${STEAM_URLS.FALLBACK.CDN}/steam/apps/${appId}/library_hero.jpg`
+    }
+  }
+
+  try {
+    const urlsToCheck = [
+      urls.primary.hd,
+      urls.primary.standard,
+      urls.fallback.hd,
+      urls.fallback.standard
+    ]
+
+    for (const url of urlsToCheck) {
+      if (await checkImageUrl(url)) {
+        return url
+      }
+    }
+
+    return ''
+  } catch (error) {
+    console.error('获取游戏Background图片失败:', error)
+    return ''
+  }
 }
 
 async function checkImageUrl(url: string, timeout = 5000): Promise<boolean> {
@@ -292,43 +318,35 @@ export async function getGameCover(appId: string): Promise<string> {
   }
 }
 
-type IconSize = 'small' | 'medium' | 'large'
-
-export async function getGameIcon(appId: string, size: IconSize = 'small'): Promise<string> {
+export async function getGameLogo(appId: string): Promise<string> {
   const urls = {
     primary: {
-      small: `${STEAM_URLS.PRIMARY.CLOUDFLARE}/steamcommunity/public/images/apps/${appId}/icon.jpg`,
-      medium: `${STEAM_URLS.PRIMARY.CDN}/steam/apps/${appId}/capsule_231x87.jpg`,
-      large: `${STEAM_URLS.PRIMARY.CDN}/steam/apps/${appId}/header.jpg`
+      hd: `${STEAM_URLS.PRIMARY.CDN}/steam/apps/${appId}/logo_2x.png`,
+      standard: `${STEAM_URLS.PRIMARY.CDN}/steam/apps/${appId}/logo.png`
     },
     fallback: {
-      small: `${STEAM_URLS.FALLBACK.COMMUNITY}/public/images/apps/${appId}/icon.jpg`,
-      medium: `${STEAM_URLS.FALLBACK.CDN}/steam/apps/${appId}/capsule_231x87.jpg`,
-      large: `${STEAM_URLS.FALLBACK.CDN}/steam/apps/${appId}/header.jpg`
+      hd: `${STEAM_URLS.FALLBACK.CDN}/steam/apps/${appId}/logo_2x.png`,
+      standard: `${STEAM_URLS.FALLBACK.CDN}/steam/apps/${appId}/logo.png`
     }
   }
 
   try {
-    if (await checkImageUrl(urls.primary[size])) {
-      return urls.primary[size]
-    }
+    const urlsToCheck = [
+      urls.primary.hd,
+      urls.primary.standard,
+      urls.fallback.hd,
+      urls.fallback.standard
+    ]
 
-    if (await checkImageUrl(urls.fallback[size])) {
-      return urls.fallback[size]
-    }
-
-    if (size !== 'small') {
-      if (await checkImageUrl(urls.primary.small)) {
-        return urls.primary.small
-      }
-      if (await checkImageUrl(urls.fallback.small)) {
-        return urls.fallback.small
+    for (const url of urlsToCheck) {
+      if (await checkImageUrl(url)) {
+        return url
       }
     }
 
     return ''
   } catch (error) {
-    console.error(`Error fetching icon for game ${appId}:`, error)
+    console.error(`Error fetching logo for game ${appId}:`, error)
     return ''
   }
 }
@@ -346,7 +364,7 @@ export async function checkSteamGameExists(appId: string): Promise<boolean> {
   }
 }
 
-export async function getGameCoverByTitle(gameName: string): Promise<string> {
+export async function getGameCoverByName(gameName: string): Promise<string> {
   try {
     const games = await searchSteamGames(gameName)
     return await getGameCover(games[0].id)
@@ -356,12 +374,32 @@ export async function getGameCoverByTitle(gameName: string): Promise<string> {
   }
 }
 
-export async function getGameScreenshotsByTitle(gameName: string): Promise<string[]> {
+export async function getGameBackgroundByName(gameName: string): Promise<string> {
   try {
     const games = await searchSteamGames(gameName)
-    return await getGameScreenshots(games[0].id)
+    return await getGameBackground(games[0].id)
   } catch (error) {
     console.error(`Error fetching screenshots for game ${gameName}:`, error)
-    return []
+    return ''
+  }
+}
+
+// export async function getGameIconByName(gameName: string): Promise<string> {
+//   try {
+//     const games = await searchSteamGames(gameName)
+//     return await getGameIcon(games[0].id)
+//   } catch (error) {
+//     console.error(`Error fetching icon for game ${gameName}:`, error)
+//     return ''
+//   }
+// }
+
+export async function getGameLogoByName(gameName: string): Promise<string> {
+  try {
+    const games = await searchSteamGames(gameName)
+    return await getGameLogo(games[0].id)
+  } catch (error) {
+    console.error(`Error fetching logo for game ${gameName}:`, error)
+    return ''
   }
 }

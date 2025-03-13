@@ -1,92 +1,72 @@
 import {
-  getSteamGridDBAssets,
-  getGameGrids,
-  getGameHeros,
+  getGameCovers,
+  getGameCoversByName,
+  getGameBackgrounds,
+  getGameBackgroundsByName,
   getGameIcons,
-  getGameLogos
+  getGameIconsByName,
+  getGameLogos,
+  getGameLogosByName
 } from './common'
 import log from 'electron-log/main.js'
+import { ScraperIdentifier } from '@appTypes/database'
 
-export async function getIconFromSteamGridDB(identifier: string | number): Promise<string> {
+export async function getGameIconsFromSteamGridDB(
+  identifier: ScraperIdentifier
+): Promise<string[]> {
   try {
-    const assets = await getSteamGridDBAssets(identifier)
-    if (assets) {
-      return assets.icon
-    }
+    const icons =
+      identifier.type === 'id'
+        ? await getGameIcons(identifier.value)
+        : await getGameIconsByName(identifier.value)
+    return icons
   } catch (error) {
     log.error(`获取 SteamGridDB 图标时出错: ${error}`)
   }
-  return ''
+  return []
 }
 
-export async function getHeroFromSteamGridDB(identifier: string | number): Promise<string> {
+export async function getGameBackgroundsFromSteamGridDB(
+  identifier: ScraperIdentifier
+): Promise<string[]> {
   try {
-    const assets = await getSteamGridDBAssets(identifier)
-    if (assets) {
-      return assets.hero
-    }
+    const heroes =
+      identifier.type === 'id'
+        ? await getGameBackgrounds(identifier.value)
+        : await getGameBackgroundsByName(identifier.value)
+    return heroes
   } catch (error) {
-    log.error(`获取 SteamGridDB Hero 时出错: ${error}`)
+    log.error(`获取 SteamGridDB Background 时出错: ${error}`)
   }
-  return ''
+  return []
 }
 
-export async function getLogoFromSteamGridDB(identifier: string | number): Promise<string> {
+export async function getGameLogosFromSteamGridDB(
+  identifier: ScraperIdentifier
+): Promise<string[]> {
   try {
-    const assets = await getSteamGridDBAssets(identifier)
-    if (assets) {
-      return assets.logo
-    }
+    const logos =
+      identifier.type === 'id'
+        ? await getGameLogos(identifier.value)
+        : await getGameLogosByName(identifier.value)
+    return logos
   } catch (error) {
     log.error(`获取 SteamGridDB Logo 时出错: ${error}`)
   }
-  return ''
+  return []
 }
 
-export async function getGameGridsFromSteamGridDB(identifier: string | number): Promise<string[]> {
+export async function getGameCoversFromSteamGridDB(
+  identifier: ScraperIdentifier
+): Promise<string[]> {
   try {
-    const assets = await getGameGrids(identifier)
-    if (assets) {
-      return assets
-    }
+    const covers =
+      identifier.type === 'id'
+        ? await getGameCovers(identifier.value)
+        : await getGameCoversByName(identifier.value)
+    return covers
   } catch (error) {
     log.error(`获取 SteamGridDB Grids 时出错: ${error}`)
-  }
-  return []
-}
-
-export async function getGameHerosFromSteamGridDB(identifier: string | number): Promise<string[]> {
-  try {
-    const assets = await getGameHeros(identifier)
-    if (assets) {
-      return assets
-    }
-  } catch (error) {
-    log.error(`获取 SteamGridDB Hero 时出错: ${error}`)
-  }
-  return []
-}
-
-export async function getGameIconsFromSteamGridDB(identifier: string | number): Promise<string[]> {
-  try {
-    const assets = await getGameIcons(identifier)
-    if (assets) {
-      return assets
-    }
-  } catch (error) {
-    log.error(`获取 SteamGridDB Icons 时出错: ${error}`)
-  }
-  return []
-}
-
-export async function getGameLogosFromSteamGridDB(identifier: string | number): Promise<string[]> {
-  try {
-    const assets = await getGameLogos(identifier)
-    if (assets) {
-      return assets
-    }
-  } catch (error) {
-    log.error(`获取 SteamGridDB Logos 时出错: ${error}`)
   }
   return []
 }

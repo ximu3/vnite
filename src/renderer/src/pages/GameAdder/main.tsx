@@ -4,7 +4,7 @@ import { MemoryRouter, Routes, Route, Navigate, useNavigate } from 'react-router
 import { useGameAdderStore, initializeStore } from './store'
 import { GameList } from './GameList'
 import { Search } from './Search'
-import { ScreenshotList } from './ScreenshotList'
+import { BackgroundList } from './BackgroundList'
 import { useEffect } from 'react'
 import { useConfigState } from '~/hooks'
 
@@ -34,7 +34,7 @@ function GameAdderContent(): JSX.Element {
           <Route index element={<Navigate to={'search'} />} />
           <Route path="/search" element={<Search />} />
           <Route path="/games" element={<GameList />} />
-          <Route path="/screenshots" element={<ScreenshotList />} />
+          <Route path="/screenshots" element={<BackgroundList />} />
         </Routes>
       </DialogContent>
     </Dialog>

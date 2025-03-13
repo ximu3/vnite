@@ -58,16 +58,28 @@ export function SearchMediaDialog({
       let result: string[] = []
       switch (type) {
         case 'cover':
-          result = await ipcInvoke('get-game-covers-by-title', dataSource, searchTitle)
+          result = await ipcInvoke('get-game-covers', dataSource, {
+            type: 'name',
+            value: searchTitle
+          })
           break
         case 'icon':
-          result = await ipcInvoke('get-game-icons-by-title', dataSource, searchTitle)
+          result = await ipcInvoke('get-game-icons', dataSource, {
+            type: 'name',
+            value: searchTitle
+          })
           break
         case 'logo':
-          result = await ipcInvoke('get-game-logos-by-title', dataSource, searchTitle)
+          result = await ipcInvoke('get-game-logos', dataSource, {
+            type: 'name',
+            value: searchTitle
+          })
           break
         case 'background':
-          result = await ipcInvoke('get-game-screenshots-by-title', dataSource, searchTitle)
+          result = await ipcInvoke('get-game-backgrounds', dataSource, {
+            type: 'name',
+            value: searchTitle
+          })
           break
       }
 

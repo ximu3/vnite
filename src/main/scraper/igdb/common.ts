@@ -102,7 +102,17 @@ export async function getIGDBMetadata(gameId: string): Promise<GameMetadata> {
   }
 }
 
-export async function getGameScreenshots(gameId: string): Promise<string[]> {
+export async function getIGDBMetadataByName(gameName: string): Promise<GameMetadata> {
+  try {
+    const games = await searchIGDBGames(gameName)
+    return await getIGDBMetadata(games[0].id)
+  } catch (error) {
+    console.error(`Error fetching metadata for game ${gameName}:`, error)
+    throw error
+  }
+}
+
+export async function getGameBackgrounds(gameId: string): Promise<string[]> {
   try {
     const query = `
       fields url,image_id;
@@ -162,7 +172,7 @@ export async function getGameCover(gameId: string): Promise<string> {
   }
 }
 
-export async function getGameCoverByTitle(gameName: string): Promise<string> {
+export async function getGameCoverByName(gameName: string): Promise<string> {
   try {
     const games = await searchIGDBGames(gameName)
     return await getGameCover(games[0].id)
@@ -172,10 +182,10 @@ export async function getGameCoverByTitle(gameName: string): Promise<string> {
   }
 }
 
-export async function getGameScreenshotsByTitle(gameName: string): Promise<string[]> {
+export async function getGameBackgroundsByName(gameName: string): Promise<string[]> {
   try {
     const games = await searchIGDBGames(gameName)
-    return await getGameScreenshots(games[0].id)
+    return await getGameBackgrounds(games[0].id)
   } catch (error) {
     console.error(`Error fetching screenshots for game ${gameName}:`, error)
     return []

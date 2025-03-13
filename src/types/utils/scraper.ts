@@ -19,3 +19,13 @@ export type GameMetadata = {
   }[]
   tags: string[]
 }
+
+export type ScraperIdentifier = {
+  type: 'id' | 'name'
+  value: string
+}
+
+export type GameDescriptionList = {
+  dataSource: string
+  description: string
+}[]
