@@ -202,7 +202,7 @@ export class GameDBManager {
     image: Buffer | string
   ): Promise<void> {
     image = await convertToWebP(image)
-    await DBManager.putAttachment(this.DB_NAME, gameId, `memories/${memoryId}.webp`, image)
+    await DBManager.putAttachment(this.DB_NAME, gameId, `images/memories/${memoryId}.webp`, image)
   }
 
   static async getGameMemoryImage<T extends 'buffer' | 'file' = 'buffer'>(
@@ -211,21 +211,30 @@ export class GameDBManager {
     format: T = 'buffer' as T
   ): Promise<T extends 'file' ? string | null : Buffer | null> {
     if (
-      (await DBManager.checkAttachment(this.DB_NAME, gameId, `memories/${memoryId}.webp`)) === false
+      (await DBManager.checkAttachment(
+        this.DB_NAME,
+        gameId,
+        `images/memories/${memoryId}.webp`
+      )) === false
     ) {
       return null
     }
     if (format === 'file') {
-      return (await DBManager.getAttachment(this.DB_NAME, gameId, `memories/${memoryId}.webp`, {
-        format: 'file',
-        filePath: '#temp',
-        ext: 'webp'
-      })) as T extends 'file' ? string : Buffer
+      return (await DBManager.getAttachment(
+        this.DB_NAME,
+        gameId,
+        `images/memories/${memoryId}.webp`,
+        {
+          format: 'file',
+          filePath: '#temp',
+          ext: 'webp'
+        }
+      )) as T extends 'file' ? string : Buffer
     } else {
       return (await DBManager.getAttachment(
         this.DB_NAME,
         gameId,
-        `memories/${memoryId}.webp`
+        `images/memories/${memoryId}.webp`
       )) as T extends 'file' ? string : Buffer
     }
   }

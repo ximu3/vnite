@@ -59,18 +59,57 @@ export function Memory({ gameId }: { gameId: string }): JSX.Element {
           <span className={cn('icon-[mdi--add] w-6 h-6')}></span>
         </Button>
       </div>
-      <div className={cn('flex flex-wrap gap-5 w-full')}>
-        {sortedMemoryIds.map((id) => (
-          <MemoryCard
-            key={`memory-${id}`}
-            gameId={gameId}
-            memoryId={id}
-            handleDelete={() => handleDelete(id)}
-            note={memoryList[id]?.note}
-            date={memoryList[id]?.date}
-            setNote={(note) => setNote(id, note)}
-          />
-        ))}
+      <div className="grid w-full grid-cols-3 gap-x-5 gap-y-5">
+        {/* 第一列 */}
+        <div className="flex flex-col gap-5">
+          {sortedMemoryIds
+            .filter((_, i) => i % 3 === 0)
+            .map((id) => (
+              <MemoryCard
+                key={`memory-${id}`}
+                gameId={gameId}
+                memoryId={id}
+                handleDelete={() => handleDelete(id)}
+                note={memoryList[id]?.note}
+                date={memoryList[id]?.date}
+                setNote={(note) => setNote(id, note)}
+              />
+            ))}
+        </div>
+
+        {/* 第二列 */}
+        <div className="flex flex-col gap-5">
+          {sortedMemoryIds
+            .filter((_, i) => i % 3 === 1)
+            .map((id) => (
+              <MemoryCard
+                key={`memory-${id}`}
+                gameId={gameId}
+                memoryId={id}
+                handleDelete={() => handleDelete(id)}
+                note={memoryList[id]?.note}
+                date={memoryList[id]?.date}
+                setNote={(note) => setNote(id, note)}
+              />
+            ))}
+        </div>
+
+        {/* 第三列 */}
+        <div className="flex flex-col gap-5">
+          {sortedMemoryIds
+            .filter((_, i) => i % 3 === 2)
+            .map((id) => (
+              <MemoryCard
+                key={`memory-${id}`}
+                gameId={gameId}
+                memoryId={id}
+                handleDelete={() => handleDelete(id)}
+                note={memoryList[id]?.note}
+                date={memoryList[id]?.date}
+                setNote={(note) => setNote(id, note)}
+              />
+            ))}
+        </div>
       </div>
     </div>
   )

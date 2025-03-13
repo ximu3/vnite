@@ -216,7 +216,7 @@ export function MemoryCard({
           <div className={cn('w-full flex flex-col')}>
             {/* Cover Image */}
             <GameImage
-              type={`memories/${memoryId}/cover`}
+              type={`memories/${memoryId}`}
               gameId={gameId}
               className={cn('w-full h-auto rounded-lg shadow-md')}
               fallback={<div />}
