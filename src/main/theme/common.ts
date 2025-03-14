@@ -14,9 +14,9 @@ export class ThemeManager {
     this.themePath = themePath
   }
 
-  static async getInstance(): Promise<ThemeManager> {
+  static getInstance(): ThemeManager {
     if (!ThemeManager.instance) {
-      const themePath = await getDataPath('theme.css')
+      const themePath = getDataPath('theme.css')
       ThemeManager.instance = new ThemeManager(themePath)
     }
     return ThemeManager.instance

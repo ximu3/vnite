@@ -31,7 +31,7 @@ export function Appearances(): JSX.Element {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className={cn('flex flex-col gap-8 text-sm')}>
+        <div className={cn('flex flex-col gap-8')}>
           {/* 游戏列表设置 */}
           <div className={cn('space-y-4')}>
             <div className={cn('border-b pb-2')}>{t('appearances.gameList.title')}</div>

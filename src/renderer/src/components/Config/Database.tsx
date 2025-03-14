@@ -103,7 +103,7 @@ export function Database(): JSX.Element {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className={cn('space-y-5 w-full text-sm')}>
+        <div className={cn('space-y-5 w-full')}>
           {/* 便携模式设置 - 网格布局 */}
           <div className={cn('grid grid-cols-[1fr_auto] gap-5 items-center')}>
             <div className={cn('whitespace-nowrap select-none')}>{t('database.portableMode')}</div>

@@ -43,7 +43,7 @@ export function UrlLauncher({ gameId }: { gameId: string }): JSX.Element {
   }
 
   return (
-    <div className={cn('grid grid-cols-[120px_1fr] gap-x-3 gap-y-5 text-sm items-center')}>
+    <div className={cn('grid grid-cols-[120px_1fr] gap-x-5 gap-y-5 items-center')}>
       {/* URL地址 */}
       <div className={cn('whitespace-nowrap select-none')}>
         {t('detail.properties.launcher.url.address')}

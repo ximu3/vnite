@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogTrigger } from '@ui/dialog'
 import { Input } from '@ui/input'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 
 export function UrlDialog({
   setMediaWithUrl,
@@ -25,7 +26,10 @@ export function UrlDialog({
   const [mediaUrl, setMediaUrl] = useState<string>('')
 
   return (
-    <Dialog open={isUrlDialogOpen[type]}>
+    <Dialog
+      open={isUrlDialogOpen[type]}
+      onOpenChange={(isOpen) => setIsUrlDialogOpen({ ...isUrlDialogOpen, [type]: isOpen })}
+    >
       <DialogTrigger>
         <Button
           variant={'outline'}
@@ -38,12 +42,7 @@ export function UrlDialog({
           <span className={cn('icon-[mdi--link-variant] w-4 h-4')}></span>
         </Button>
       </DialogTrigger>
-      <DialogContent
-        showCloseButton={false}
-        onInteractOutside={(e) => {
-          e.preventDefault()
-        }}
-      >
+      <DialogContent showCloseButton={false}>
         <div className={cn('flex flex-row gap-2')}>
           <Input
             value={mediaUrl}
@@ -53,6 +52,10 @@ export function UrlDialog({
           />
           <Button
             onClick={() => {
+              if (!mediaUrl) {
+                toast.error(t('detail.properties.media.url.empty'))
+                return
+              }
               setMediaWithUrl(type, mediaUrl)
             }}
           >

@@ -29,7 +29,7 @@ export function Scraper(): JSX.Element {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className={cn('grid grid-cols-[1fr_auto] gap-x-5 gap-y-5 items-center text-sm')}>
+        <div className={cn('grid grid-cols-[1fr_auto] gap-x-5 gap-y-5 items-center')}>
           <div className={cn('whitespace-nowrap select-none')}>
             {t('scraper.defaultDataSource')}
           </div>

@@ -55,7 +55,7 @@ export function Launcher({ gameId }: { gameId: string }): JSX.Element {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className={cn('grid grid-cols-[120px_1fr] gap-x-5 gap-y-5 text-sm items-center')}>
+            <div className={cn('grid grid-cols-[120px_1fr] gap-x-5 gap-y-5 items-center')}>
               {/* 启动模式选择 */}
               <div className={cn('whitespace-nowrap select-none')}>
                 {t('detail.properties.launcher.mode.title')}

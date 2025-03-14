@@ -40,7 +40,7 @@ export function Advanced(): JSX.Element {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className={cn('grid grid-cols-[170px_1fr] gap-x-5 gap-y-5 items-center text-sm')}>
+        <div className={cn('grid grid-cols-[170px_1fr] gap-x-5 gap-y-5 items-center')}>
           {/* Locale Emulator路径 */}
           <div className={cn('whitespace-nowrap select-none self-center')}>
             {t('advanced.localeEmulator.name')}

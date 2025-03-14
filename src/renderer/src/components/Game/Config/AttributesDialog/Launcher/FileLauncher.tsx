@@ -47,7 +47,7 @@ export function FileLauncher({ gameId }: { gameId: string }): JSX.Element {
   }
 
   return (
-    <div className={cn('grid grid-cols-[120px_1fr] gap-x-5 gap-y-5 text-sm items-center')}>
+    <div className={cn('grid grid-cols-[120px_1fr] gap-x-5 gap-y-5 items-center')}>
       {/* 文件路径 */}
       <div className={cn('whitespace-nowrap select-none')}>
         {t('detail.properties.launcher.file.path')}

@@ -204,8 +204,8 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
   )
 
   return (
-    <div className={cn('flex flex-row gap-3 w-full')}>
-      <div className={cn('flex flex-col gap-3 w-full')}>
+    <div className={cn('flex flex-row gap-3 w-full h-full')}>
+      <div className={cn('flex flex-col gap-3 w-full h-full')}>
         <Card>
           <CardHeader>
             <CardTitle>{t('detail.properties.media.types.icon')}</CardTitle>
@@ -245,7 +245,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
         </Card>
       </div>
 
-      <div className={cn('flex flex-col gap-3 w-full')}>
+      <div className={cn('flex flex-col gap-3 w-full h-full')}>
         <Card>
           <CardHeader>
             <CardTitle>{t('detail.properties.media.types.cover')}</CardTitle>
@@ -257,7 +257,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                 <GameImage
                   gameId={gameId}
                   type="cover"
-                  className={cn('max-h-[170px] h-[calc(90vh-230px)] aspect-[2/3] object-cover')}
+                  className={cn('max-h-[170px] h-[calc(50vh-230px)] aspect-[2/3] object-cover')}
                   fallback={<div>{t('detail.properties.media.empty.cover')}</div>}
                 />
               </div>
@@ -275,7 +275,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                 <GameImage
                   gameId={gameId}
                   type="logo"
-                  className={cn('max-h-[158px] h-[calc(90vh-230px)] aspect-[2/3] object-contain')}
+                  className={cn('max-h-[158px] h-[calc(40vh-130px)] aspect-[3/2] object-contain')}
                   fallback={<div>{t('detail.properties.media.empty.logo')}</div>}
                 />
               </div>

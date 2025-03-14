@@ -219,7 +219,7 @@ export function CloudSync(): JSX.Element {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className={cn('space-y-5 text-sm')}>
+          <div className={cn('space-y-5')}>
             {/* 启用/禁用开关 - 网格布局 */}
             <div className={cn('grid grid-cols-[1fr_auto] gap-5 items-center')}>
               <div className={cn('whitespace-nowrap select-none')}>{t('cloudSync.enable')}</div>

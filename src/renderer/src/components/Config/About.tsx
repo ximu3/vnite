@@ -32,7 +32,7 @@ export function About(): JSX.Element {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className={cn('grid grid-cols-[auto_1fr] gap-5 items-center text-sm')}>
+        <div className={cn('grid grid-cols-[auto_1fr] gap-5 items-center')}>
           {/* 作者信息 */}
           <div className={cn('whitespace-nowrap select-none')}>{t('about.author')}</div>
           <div className={cn('flex justify-end')}>

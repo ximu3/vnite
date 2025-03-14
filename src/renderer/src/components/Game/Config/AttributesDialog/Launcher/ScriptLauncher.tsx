@@ -49,7 +49,7 @@ export function ScriptLauncher({ gameId }: { gameId: string }): JSX.Element {
   }
 
   return (
-    <div className={cn('grid grid-cols-[120px_1fr] gap-x-3 gap-y-5 text-sm items-center')}>
+    <div className={cn('grid grid-cols-[120px_1fr] gap-x-5 gap-y-5 items-center')}>
       {/* 脚本内容 - 特殊处理对齐 */}
       <div className={cn('whitespace-nowrap select-none self-start pt-2')}>
         {t('detail.properties.launcher.script.content')}
