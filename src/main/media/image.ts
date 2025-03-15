@@ -187,10 +187,6 @@ export async function saveGameIconByFile(gameId: string, filePath: string): Prom
 }
 
 export async function downloadTempImage(url: string): Promise<string> {
-  // 准备请求选项，模拟真实浏览器
-  const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), 5000) // 3秒超时
-
   try {
     // 下载文件，添加常见浏览器头信息
     const response = await fetch(url, {
@@ -202,8 +198,7 @@ export async function downloadTempImage(url: string): Promise<string> {
         Referer: new URL(url).origin,
         'Cache-Control': 'no-cache',
         Pragma: 'no-cache'
-      },
-      signal: controller.signal
+      }
     })
 
     if (!response.ok) {
@@ -223,7 +218,5 @@ export async function downloadTempImage(url: string): Promise<string> {
   } catch (error) {
     console.error('下载图片失败:', error)
     throw error
-  } finally {
-    clearTimeout(timeoutId)
   }
 }

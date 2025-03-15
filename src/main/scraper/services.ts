@@ -206,12 +206,24 @@ export async function initScraper(): Promise<void> {
 export async function getGameDescriptionList(
   identifier: ScraperIdentifier
 ): Promise<GameDescriptionList> {
-  const vndb = await getGameMetadataFromVNDB(identifier)
-  const steam = await getGameMetadataFromSteam(identifier)
-  const bangumi = await getGameMetadataFromBangumi(identifier)
-  const igdb = await getGameMetadataFromIGDB(identifier)
-  const ymgal = await getGameMetadataFromYMGal(identifier)
-  const dlsite = await getGameMetadataFromDLsite(identifier)
+  const vndb = await getGameMetadataFromVNDB(identifier).catch(() => ({
+    description: ''
+  }))
+  const steam = await getGameMetadataFromSteam(identifier).catch(() => ({
+    description: ''
+  }))
+  const bangumi = await getGameMetadataFromBangumi(identifier).catch(() => ({
+    description: ''
+  }))
+  const igdb = await getGameMetadataFromIGDB(identifier).catch(() => ({
+    description: ''
+  }))
+  const ymgal = await getGameMetadataFromYMGal(identifier).catch(() => ({
+    description: ''
+  }))
+  const dlsite = await getGameMetadataFromDLsite(identifier).catch(() => ({
+    description: ''
+  }))
 
   // 创建候选项数组
   const candidates = [
@@ -228,12 +240,24 @@ export async function getGameDescriptionList(
 }
 
 export async function getGameTagsList(identifier: ScraperIdentifier): Promise<GameTagsList> {
-  const vndb = await getGameMetadataFromVNDB(identifier)
-  const steam = await getGameMetadataFromSteam(identifier)
-  const bangumi = await getGameMetadataFromBangumi(identifier)
-  const igdb = await getGameMetadataFromIGDB(identifier)
-  const ymgal = await getGameMetadataFromYMGal(identifier)
-  const dlsite = await getGameMetadataFromDLsite(identifier)
+  const vndb = await getGameMetadataFromVNDB(identifier).catch(() => ({
+    tags: []
+  }))
+  const steam = await getGameMetadataFromSteam(identifier).catch(() => ({
+    tags: []
+  }))
+  const bangumi = await getGameMetadataFromBangumi(identifier).catch(() => ({
+    tags: []
+  }))
+  const igdb = await getGameMetadataFromIGDB(identifier).catch(() => ({
+    tags: []
+  }))
+  const ymgal = await getGameMetadataFromYMGal(identifier).catch(() => ({
+    tags: []
+  }))
+  const dlsite = await getGameMetadataFromDLsite(identifier).catch(() => ({
+    tags: []
+  }))
 
   // 创建候选项数组
   const candidates = [

@@ -82,7 +82,7 @@ export async function importSelectedSteamGames(games: FormattedGameInfo[]): Prom
       try {
         await addGameToDatabase({
           dataSource: 'steam',
-          id: game.appId.toString(),
+          dataSourceId: game.appId.toString(),
           playTime: game.totalPlayingTime
         })
 
