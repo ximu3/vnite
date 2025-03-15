@@ -19,7 +19,7 @@ import {
   checkPortableMode,
   setupSession
 } from './utils'
-// import { setupUpdater } from './updater' todo
+import { setupUpdater } from './updater'
 import { initScraper } from './scraper'
 import { startSync, GameDBManager, DBManager } from '~/database'
 import { AuthManager, handleAuthCallback, CouchDBManager } from './account'
@@ -270,7 +270,7 @@ if (!gotTheLock) {
     await startSync(true)
 
     // Setup auto updater
-    // setupUpdater(mainWindow) todo
+    setupUpdater(mainWindow)
 
     // Initialize the scraper
     initScraper()

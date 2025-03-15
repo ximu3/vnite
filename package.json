@@ -1,10 +1,10 @@
 {
   "name": "vnite",
   "version": "3.0.0-dev",
-  "description": "An Electron application with React and TypeScript",
+  "description": "Game Management Software",
   "main": "./out/main/index.js",
-  "author": "example.com",
-  "homepage": "https://electron-vite.org",
+  "author": "ximu3",
+  "homepage": "https://github.com/ximu3/vnite",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint --cache .",
