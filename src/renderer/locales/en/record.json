@@ -181,14 +181,6 @@
       "playTime": "Play Time: {{time, gameTime}}",
       "lastRun": "Last Played: {{date, niceDate}}",
       "ratingLabel": "Rating"
-    },
-    "playStatus": {
-      "unplayed": "Unplayed",
-      "playing": "Playing",
-      "finished": "Completed",
-      "multiple": "Multiple Runs",
-      "shelved": "Shelved",
-      "unknown": "Unknown Status"
     }
   }
 }

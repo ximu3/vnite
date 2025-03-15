@@ -56,7 +56,7 @@
       "default": "デフォルト",
       "mutsumi": "Mutsumi"
     },
-    "messages": {
+    "notifications": {
       "themeSaved": "テーマが保存されました",
       "configuring": "テーマを設定中...",
       "configured": "テーマの設定に成功しました"
@@ -81,7 +81,7 @@
       "loginRequired": "まず公式アカウントにログインしてください",
       "fetchStorageFailed": "ストレージ情報の取得に失敗しました"
     },
-    "messages": {
+    "notifications": {
       "updating": "クラウド同期設定を更新中...",
       "updateSuccess": "クラウド同期設定が正常に更新されました",
       "updateError": "クラウド同期設定の更新に失敗しました",
@@ -149,7 +149,7 @@
     "importWarning": "データベースのインポートは現在のデータベースを上書きします。この操作は元に戻せません！操作後、アプリケーションは自動的に再起動します。",
     "confirmImportV2": "V2データベースをインポートしてもよろしいですか？",
     "importV2Warning": "V2データベースのインポートは現在のデータベースを上書きします。この操作は元に戻せません！操作後、アプリケーションは自動的に再起動します。",
-    "messages": {
+    "notifications": {
       "backingUp": "データベースをバックアップ中...",
       "backupSuccess": "データベースのバックアップに成功しました",
       "backupError": "データベースのバックアップに失敗しました",

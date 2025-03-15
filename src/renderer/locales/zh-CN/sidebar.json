@@ -19,7 +19,7 @@
     "importFromThirdParty": "从第三方导入",
     "steam": "Steam"
   },
-  "messages": {
+  "notifications": {
     "noGamesFound": "未找到游戏",
     "getFailed": "获取游戏失败: ",
     "unknownError": "未知错误",

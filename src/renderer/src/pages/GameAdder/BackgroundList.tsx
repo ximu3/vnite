@@ -160,7 +160,7 @@ export function BackgroundList(): JSX.Element {
           </div>
         </div>
         <div className={cn('flex flex-row-reverse')}>
-          <Button onClick={addGameToDB}>{t('gameAdder.backgrounds.confirm')}</Button>
+          <Button onClick={addGameToDB}>{t('ui:common.confirm')}</Button>
         </div>
       </div>
     </div>

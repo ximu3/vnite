@@ -15,7 +15,7 @@ export function Theme(): JSX.Element {
 
   const handleSave = async (): Promise<void> => {
     updateTheme(cssContent)
-    toast.success(t('theme.messages.themeSaved'))
+    toast.success(t('theme.notifications.themeSaved'))
   }
 
   return (

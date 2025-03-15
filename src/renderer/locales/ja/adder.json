@@ -15,7 +15,6 @@
     "backgrounds": {
       "title": "背景画像",
       "noImages": "画像なし",
-      "confirm": "確認",
       "notifications": {
         "loading": "画像を取得中...",
         "success": "画像の取得に成功しました",

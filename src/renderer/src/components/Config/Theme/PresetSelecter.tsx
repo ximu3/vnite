@@ -47,8 +47,8 @@ export function PresetSelecter({
         updateTheme(theme)
       },
       {
-        loading: t('theme.messages.configuring'),
-        success: t('theme.messages.configured'),
+        loading: t('theme.notifications.configuring'),
+        success: t('theme.notifications.configured'),
         error: (error) => `${error}`
       }
     )

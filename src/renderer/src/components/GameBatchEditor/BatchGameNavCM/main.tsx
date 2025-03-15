@@ -42,13 +42,13 @@ export function BatchGameNavCM({
             setIsInformationDialogOpen(true)
           }}
         >
-          <div>{t('batch.contextMenu.editInfo')}</div>
+          <div>{t('batchEditor.contextMenu.editInfo')}</div>
         </ContextMenuItem>
       </InformationDialog>
       <ContextMenuSeparator />
       <DeleteGameAlert gameIds={gameIds}>
         <ContextMenuItem onSelect={(e) => e.preventDefault()}>
-          <div>{t('batch.contextMenu.delete')}</div>
+          <div>{t('batchEditor.contextMenu.delete')}</div>
         </ContextMenuItem>
       </DeleteGameAlert>
     </ContextMenuContent>

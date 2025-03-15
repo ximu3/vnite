@@ -16,7 +16,7 @@
       "invalidHotkey": "Please enter a valid hotkey",
       "duplicateKeys": "Hotkey cannot contain duplicate keys"
     },
-    "messages": {
+    "notifications": {
       "hotkeyUpdated": "Hotkey updated"
     }
   }

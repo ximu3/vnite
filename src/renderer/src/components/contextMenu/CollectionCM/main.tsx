@@ -73,14 +73,14 @@ export function CollectionCM({
               if (e.key === 'Enter') handleRename()
             }}
           />
-          <Button onClick={handleRename}>{t('showcase.collection.contextMenu.confirm')}</Button>
+          <Button onClick={handleRename}>{t('ui:common.confirm')}</Button>
           <Button
             onClick={() => {
               setIsRenaming(false)
               setNewName(collections[collectionId].name)
             }}
           >
-            {t('showcase.collection.contextMenu.cancel')}
+            {t('ui:common.cancel')}
           </Button>
         </DialogContent>
       </Dialog>
@@ -101,14 +101,14 @@ export function CollectionCM({
                 setIsDeleting(false)
               }}
             >
-              {t('showcase.collection.contextMenu.cancel')}
+              {t('ui:common.cancel')}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 removeCollection(collectionId)
               }}
             >
-              {t('showcase.collection.contextMenu.confirm')}
+              {t('ui:common.confirm')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

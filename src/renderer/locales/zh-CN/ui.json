@@ -16,7 +16,7 @@
       "invalidHotkey": "请输入有效的快捷键",
       "duplicateKeys": "快捷键不能包含重复的按键"
     },
-    "messages": {
+    "notifications": {
       "hotkeyUpdated": "快捷键已更新"
     }
   }

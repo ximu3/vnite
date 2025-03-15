@@ -181,14 +181,6 @@
       "playTime": "プレイ時間: {{time, gameTime}}",
       "lastRun": "最終プレイ: {{date, niceDate}}",
       "ratingLabel": "評価"
-    },
-    "playStatus": {
-      "unplayed": "未プレイ",
-      "playing": "プレイ中",
-      "finished": "クリア済み",
-      "multiple": "複数周回",
-      "shelved": "中断",
-      "unknown": "不明状態"
     }
   }
 }

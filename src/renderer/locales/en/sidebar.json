@@ -19,7 +19,7 @@
     "importFromThirdParty": "Import from Third Party",
     "steam": "Steam"
   },
-  "messages": {
+  "notifications": {
     "noGamesFound": "No games found",
     "getFailed": "Failed to get games: ",
     "unknownError": "Unknown error",

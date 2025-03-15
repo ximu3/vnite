@@ -174,11 +174,11 @@ export function Sidebar(): JSX.Element {
                             const result = (await ipcInvoke('get-batch-game-adder-data')) as Game[]
 
                             if (!Array.isArray(result)) {
-                              throw new Error(t('messages.unknownError'))
+                              throw new Error(t('notifications.unknownError'))
                             }
 
                             if (result.length === 0) {
-                              toast.error(t('messages.noGamesFound'))
+                              toast.error(t('notifications.noGamesFound'))
                               return
                             }
 
@@ -186,18 +186,18 @@ export function Sidebar(): JSX.Element {
                             gameBatchAdderActions.setIsOpen(true)
                           } catch (error) {
                             if (error instanceof Error) {
-                              toast.error(`${t('messages.getFailed')}${error.message}`)
+                              toast.error(`${t('notifications.getFailed')}${error.message}`)
                               throw error
                             } else {
-                              toast.error(`${t('messages.getFailed')}${error}`)
-                              throw new Error(t('messages.unknownError'))
+                              toast.error(`${t('notifications.getFailed')}${error}`)
+                              throw new Error(t('notifications.unknownError'))
                             }
                           }
                         })(),
                         {
-                          loading: t('messages.selectLibraryFolder'),
-                          success: t('messages.getSuccess'),
-                          error: (err: Error) => `${t('messages.getFailed')}${err.message}`
+                          loading: t('notifications.selectLibraryFolder'),
+                          success: t('notifications.getSuccess'),
+                          error: (err: Error) => `${t('notifications.getFailed')}${err.message}`
                         }
                       )
                     }}
@@ -210,7 +210,7 @@ export function Sidebar(): JSX.Element {
             <DropdownMenuItem
               onClick={async () => {
                 try {
-                  toast.info(t('messages.selectGamePath'))
+                  toast.info(t('notifications.selectGamePath'))
                   const gamePath = await ipcInvoke('select-path-dialog', ['openFile'])
                   if (!gamePath) {
                     return
@@ -220,13 +220,13 @@ export function Sidebar(): JSX.Element {
                       await ipcInvoke('add-game-to-db-without-metadata', gamePath)
                     })(),
                     {
-                      loading: t('messages.adding'),
-                      success: t('messages.addSuccess'),
-                      error: t('messages.addError')
+                      loading: t('notifications.adding'),
+                      success: t('notifications.addSuccess'),
+                      error: t('notifications.addError')
                     }
                   )
                 } catch (_error) {
-                  toast.error(t('messages.addError'))
+                  toast.error(t('notifications.addError'))
                 }
               }}
             >

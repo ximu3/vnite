@@ -39,11 +39,6 @@
       }
     },
     "playStatus": {
-      "unplayed": "Unplayed",
-      "playing": "Playing",
-      "finished": "Finished",
-      "multiple": "Multiple Runs",
-      "shelved": "Shelved",
       "adjustOrder": "Adjust Order"
     }
   },
@@ -98,8 +93,6 @@
       "contextMenu": {
         "rename": "Rename",
         "delete": "Delete",
-        "confirm": "Confirm",
-        "cancel": "Cancel",
         "deleteTitle": "Delete Collection",
         "deleteConfirm": "Are you sure you want to delete collection {{name}}?"
       }
@@ -122,16 +115,10 @@
     },
     "header": {
       "playStatus": {
-        "label": "Play Status",
-        "unplayed": "Unplayed",
-        "playing": "Playing",
-        "finished": "Finished",
-        "multiple": "Multiple Runs",
-        "shelved": "Shelved"
+        "label": "Play Status"
       },
       "rating": {
         "title": "My Rating",
-        "confirm": "Confirm",
         "errors": {
           "invalidNumber": "Please enter a valid number",
           "negative": "Rating cannot be negative",
@@ -219,9 +206,7 @@
         }
       },
       "search": {
-        "placeholder": "Enter game title to search",
-        "confirm": "Confirm",
-        "cancel": "Cancel"
+        "placeholder": "Enter game title to search"
       },
       "relatedSites": {
         "empty": "No related sites",
@@ -311,8 +296,6 @@
     "deleteAlert": {
       "title": "Are you sure you want to delete {{gameName}}?",
       "description": "All data for this game will be permanently deleted. This action cannot be undone.",
-      "cancel": "Cancel",
-      "confirm": "Confirm",
       "notifications": {
         "deleting": "Deleting game {{gameName}}...",
         "deleted": "Game {{gameName}} has been deleted",
@@ -321,11 +304,7 @@
     },
     "playTimeEditor": {
       "expressionSupport": "Arithmetic expressions supported",
-      "placeholder": "Enter seconds or expression",
-      "confirm": "Confirm"
-    },
-    "nameEditor": {
-      "confirm": "Confirm"
+      "placeholder": "Enter seconds or expression"
     },
     "collection": {
       "addTo": "Add to",
@@ -381,18 +360,11 @@
         "search": {
           "title": "Search Images",
           "dataSource": "Data Source",
-          "searchTitle": "Search Title",
-          "confirm": "Confirm",
-          "cancel": "Cancel"
-        },
-        "url": {
-          "confirm": "Confirm"
+          "searchTitle": "Search Title"
         },
         "crop": {
           "title": "Adjust Image Size",
-          "size": "{{width}} × {{height}} px",
-          "confirm": "Confirm",
-          "cancel": "Cancel"
+          "size": "{{width}} × {{height}} px"
         },
         "notifications": {
           "fileSelectError": "Failed to select file: {{error}}",
@@ -459,7 +431,6 @@
           "steam": "Steam Launch",
           "vba": "VBA Launch",
           "steamIdRequired": "Please enter Steam ID",
-          "confirm": "Confirm",
           "notifications": {
             "configuring": "Configuring preset...",
             "success": "Preset configured successfully"
@@ -468,7 +439,7 @@
       }
     }
   },
-  "batch": {
+  "batchEditor": {
     "contextMenu": {
       "addTo": "Batch Add To",
       "removeFrom": "Batch Remove From",
@@ -494,7 +465,6 @@
         "platforms": "Separate platforms with commas",
         "genres": "Separate genres with commas"
       },
-      "confirm": "Confirm",
       "success": "Batch edited game information",
       "error": "Failed to edit game information: {{message}}"
     },
@@ -503,8 +473,6 @@
       "description": "All data for selected games will be permanently deleted. This action cannot be undone.",
       "gamesList": "Games to be deleted:",
       "unnamedGame": "Unnamed Game",
-      "confirm": "Confirm",
-      "cancel": "Cancel",
       "notifications": {
         "deleting": "Deleting {{count}} games...",
         "success": "{{count}} games deleted",

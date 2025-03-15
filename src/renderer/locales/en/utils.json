@@ -15,6 +15,14 @@
       "configSuccess": "Launcher configured successfully",
       "configError": "Configuration error: {{message}}",
       "runtimeError": "Runtime configuration error, please check!"
+    },
+    "playStatus": {
+      "unplayed": "Unplayed",
+      "playing": "Playing",
+      "finished": "Completed",
+      "multiple": "Multiple Runs",
+      "shelved": "Shelved",
+      "unknown": "Unknown Status"
     }
   },
   "format": {

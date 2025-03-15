@@ -145,11 +145,11 @@ export function Header({
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>{t('detail.header.playStatus.label')}</SelectLabel>
-                  <SelectItem value="unplayed">{t('detail.header.playStatus.unplayed')}</SelectItem>
-                  <SelectItem value="playing">{t('detail.header.playStatus.playing')}</SelectItem>
-                  <SelectItem value="finished">{t('detail.header.playStatus.finished')}</SelectItem>
-                  <SelectItem value="multiple">{t('detail.header.playStatus.multiple')}</SelectItem>
-                  <SelectItem value="shelved">{t('detail.header.playStatus.shelved')}</SelectItem>
+                  <SelectItem value="unplayed">{t('utils:game.playStatus.unplayed')}</SelectItem>
+                  <SelectItem value="playing">{t('utils:game.playStatus.playing')}</SelectItem>
+                  <SelectItem value="finished">{t('utils:game.playStatus.finished')}</SelectItem>
+                  <SelectItem value="multiple">{t('utils:game.playStatus.multiple')}</SelectItem>
+                  <SelectItem value="shelved">{t('utils:game.playStatus.shelved')}</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -211,11 +211,11 @@ export function Header({
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>{t('detail.header.playStatus.label')}</SelectLabel>
-                  <SelectItem value="unplayed">{t('detail.header.playStatus.unplayed')}</SelectItem>
-                  <SelectItem value="playing">{t('detail.header.playStatus.playing')}</SelectItem>
-                  <SelectItem value="finished">{t('detail.header.playStatus.finished')}</SelectItem>
-                  <SelectItem value="multiple">{t('detail.header.playStatus.multiple')}</SelectItem>
-                  <SelectItem value="shelved">{t('detail.header.playStatus.shelved')}</SelectItem>
+                  <SelectItem value="unplayed">{t('utils:game.playStatus.unplayed')}</SelectItem>
+                  <SelectItem value="playing">{t('utils:game.playStatus.playing')}</SelectItem>
+                  <SelectItem value="finished">{t('utils:game.playStatus.finished')}</SelectItem>
+                  <SelectItem value="multiple">{t('utils:game.playStatus.multiple')}</SelectItem>
+                  <SelectItem value="shelved">{t('utils:game.playStatus.shelved')}</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>

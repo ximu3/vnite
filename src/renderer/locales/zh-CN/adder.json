@@ -15,7 +15,6 @@
     "backgrounds": {
       "title": "背景图片",
       "noImages": "暂无图片",
-      "confirm": "确定",
       "notifications": {
         "loading": "获取图片中...",
         "success": "获取图片成功",

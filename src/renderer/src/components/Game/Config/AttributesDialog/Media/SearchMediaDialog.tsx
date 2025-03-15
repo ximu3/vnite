@@ -190,9 +190,9 @@ export function SearchMediaDialog({
             >
               <span className={cn('icon-[mdi--magnify] w-[20px] h-[20px]')}></span>
             </Button>
-            <Button onClick={handleConfirm}>{t('detail.properties.media.search.confirm')}</Button>
+            <Button onClick={handleConfirm}>{t('ui:common.confirm')}</Button>
             <Button variant="outline" onClick={handleClose}>
-              {t('detail.properties.media.search.cancel')}
+              {t('ui:common.cancel')}
             </Button>
           </div>
         </Card>

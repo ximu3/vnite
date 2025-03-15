@@ -39,11 +39,6 @@
       }
     },
     "playStatus": {
-      "unplayed": "未开始",
-      "playing": "游玩中",
-      "finished": "已完成",
-      "multiple": "多周目",
-      "shelved": "搁置中",
       "adjustOrder": "调整顺序"
     }
   },
@@ -98,8 +93,6 @@
       "contextMenu": {
         "rename": "重命名",
         "delete": "删除",
-        "confirm": "确定",
-        "cancel": "取消",
         "deleteTitle": "删除收藏",
         "deleteConfirm": "确定要删除收藏 {{name}} 吗？"
       }
@@ -122,16 +115,10 @@
     },
     "header": {
       "playStatus": {
-        "label": "游玩状态",
-        "unplayed": "未开始",
-        "playing": "游玩中",
-        "finished": "已完成",
-        "multiple": "多周目",
-        "shelved": "搁置中"
+        "label": "游玩状态"
       },
       "rating": {
         "title": "我的评分",
-        "confirm": "确定",
         "errors": {
           "invalidNumber": "请输入有效数字",
           "negative": "评分不能为负数",
@@ -219,9 +206,7 @@
         }
       },
       "search": {
-        "placeholder": "输入游戏标题搜索",
-        "confirm": "确认",
-        "cancel": "取消"
+        "placeholder": "输入游戏标题搜索"
       },
       "relatedSites": {
         "empty": "暂无相关网站",
@@ -311,8 +296,6 @@
     "deleteAlert": {
       "title": "确定要删除游戏 {{gameName}} 吗？",
       "description": "删除后，游戏的所有数据将被永久删除。此操作不可逆。",
-      "cancel": "取消",
-      "confirm": "确定",
       "notifications": {
         "deleting": "正在删除游戏 {{gameName}}...",
         "deleted": "游戏 {{gameName}} 已删除",
@@ -321,11 +304,7 @@
     },
     "playTimeEditor": {
       "expressionSupport": "支持四则运算表达式",
-      "placeholder": "请输入秒数或表达式",
-      "confirm": "确定"
-    },
-    "nameEditor": {
-      "confirm": "确定"
+      "placeholder": "请输入秒数或表达式"
     },
     "collection": {
       "addTo": "添加至",
@@ -381,20 +360,14 @@
         "search": {
           "title": "搜索图片",
           "dataSource": "数据源",
-          "searchTitle": "搜索标题",
-          "confirm": "确定",
-          "cancel": "取消"
+          "searchTitle": "搜索标题"
         },
         "url": {
-          "confirm": "确定",
-          "cancel": "取消",
           "empty": "请输入链接地址"
         },
         "crop": {
           "title": "调整图片大小",
-          "size": "{{width}} × {{height}} px",
-          "confirm": "确认",
-          "cancel": "取消"
+          "size": "{{width}} × {{height}} px"
         },
         "notifications": {
           "fileSelectError": "选择文件失败: {{error}}",
@@ -461,7 +434,6 @@
           "steam": "Steam启动",
           "vba": "VBA启动",
           "steamIdRequired": "请输入Steam ID",
-          "confirm": "确定",
           "notifications": {
             "configuring": "正在配置预设...",
             "success": "预设配置成功"
@@ -470,7 +442,7 @@
       }
     }
   },
-  "batch": {
+  "batchEditor": {
     "contextMenu": {
       "addTo": "批量添加至",
       "removeFrom": "批量移除出",
@@ -496,7 +468,6 @@
         "platforms": "平台之间用英文逗号分隔",
         "genres": "类型之间用英文逗号分隔"
       },
-      "confirm": "确认",
       "success": "已批量修改游戏信息",
       "error": "修改游戏信息失败: {{message}}"
     },
@@ -505,8 +476,6 @@
       "description": "删除后，所选游戏的所有数据将被永久删除。此操作不可逆。",
       "gamesList": "将要删除的游戏：",
       "unnamedGame": "未命名游戏",
-      "confirm": "确定",
-      "cancel": "取消",
       "notifications": {
         "deleting": "正在删除{{count}} 个游戏...",
         "success": "{{count}} 个游戏已删除",

@@ -39,11 +39,6 @@
       }
     },
     "playStatus": {
-      "unplayed": "未プレイ",
-      "playing": "プレイ中",
-      "finished": "完了",
-      "multiple": "複数周回",
-      "shelved": "保留中",
       "adjustOrder": "順序を調整"
     }
   },
@@ -98,8 +93,6 @@
       "contextMenu": {
         "rename": "名前変更",
         "delete": "削除",
-        "confirm": "確認",
-        "cancel": "キャンセル",
         "deleteTitle": "コレクション削除",
         "deleteConfirm": "コレクション「{{name}}」を削除してもよろしいですか？"
       }
@@ -122,16 +115,10 @@
     },
     "header": {
       "playStatus": {
-        "label": "プレイ状況",
-        "unplayed": "未プレイ",
-        "playing": "プレイ中",
-        "finished": "完了",
-        "multiple": "複数周回",
-        "shelved": "保留中"
+        "label": "プレイ状況"
       },
       "rating": {
         "title": "評価",
-        "confirm": "確認",
         "errors": {
           "invalidNumber": "有効な数字を入力してください",
           "negative": "評価はマイナスにできません",
@@ -219,9 +206,7 @@
         }
       },
       "search": {
-        "placeholder": "ゲームタイトルを入力して検索",
-        "confirm": "確認",
-        "cancel": "キャンセル"
+        "placeholder": "ゲームタイトルを入力して検索"
       },
       "relatedSites": {
         "empty": "関連サイトなし",
@@ -311,8 +296,6 @@
     "deleteAlert": {
       "title": "{{gameName}}を削除してもよろしいですか？",
       "description": "このゲームのすべてのデータが完全に削除されます。この操作は元に戻せません。",
-      "cancel": "キャンセル",
-      "confirm": "確認",
       "notifications": {
         "deleting": "ゲーム{{gameName}}を削除中...",
         "deleted": "ゲーム{{gameName}}を削除しました",
@@ -321,11 +304,7 @@
     },
     "playTimeEditor": {
       "expressionSupport": "計算式をサポートしています",
-      "placeholder": "秒数または式を入力",
-      "confirm": "確認"
-    },
-    "nameEditor": {
-      "confirm": "確認"
+      "placeholder": "秒数または式を入力"
     },
     "collection": {
       "addTo": "追加先",
@@ -381,18 +360,11 @@
         "search": {
           "title": "画像を検索",
           "dataSource": "データソース",
-          "searchTitle": "検索タイトル",
-          "confirm": "確認",
-          "cancel": "キャンセル"
-        },
-        "url": {
-          "confirm": "確認"
+          "searchTitle": "検索タイトル"
         },
         "crop": {
           "title": "画像サイズを調整",
-          "size": "{{width}} × {{height}} px",
-          "confirm": "確認",
-          "cancel": "キャンセル"
+          "size": "{{width}} × {{height}} px"
         },
         "notifications": {
           "fileSelectError": "ファイルの選択に失敗しました: {{error}}",
@@ -459,7 +431,6 @@
           "steam": "Steam起動",
           "vba": "VBA起動",
           "steamIdRequired": "Steam IDを入力してください",
-          "confirm": "確認",
           "notifications": {
             "configuring": "プリセットを構成中...",
             "success": "プリセットの構成に成功しました"
@@ -468,7 +439,7 @@
       }
     }
   },
-  "batch": {
+  "batchEditor": {
     "contextMenu": {
       "addTo": "一括追加",
       "removeFrom": "一括削除",
@@ -494,7 +465,6 @@
         "platforms": "プラットフォームはカンマで区切ります",
         "genres": "ジャンルはカンマで区切ります"
       },
-      "confirm": "確認",
       "success": "ゲーム情報を一括編集しました",
       "error": "ゲーム情報の編集に失敗しました: {{message}}"
     },
@@ -503,8 +473,6 @@
       "description": "選択したゲームのすべてのデータが完全に削除されます。この操作は元に戻せません。",
       "gamesList": "削除されるゲーム：",
       "unnamedGame": "名前のないゲーム",
-      "confirm": "確認",
-      "cancel": "キャンセル",
       "notifications": {
         "deleting": "{{count}}個のゲームを削除中...",
         "success": "{{count}}個のゲームを削除しました",

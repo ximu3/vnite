@@ -56,7 +56,7 @@
       "default": "Default",
       "mutsumi": "Mutsumi"
     },
-    "messages": {
+    "notifications": {
       "themeSaved": "Theme saved",
       "configuring": "Configuring theme...",
       "configured": "Theme configured successfully"
@@ -81,7 +81,7 @@
       "loginRequired": "Please login to official account first",
       "fetchStorageFailed": "Failed to fetch storage information"
     },
-    "messages": {
+    "notifications": {
       "updating": "Updating cloud sync configuration...",
       "updateSuccess": "Cloud sync configuration updated successfully",
       "updateError": "Failed to update cloud sync configuration",
@@ -149,7 +149,7 @@
     "importWarning": "Importing a database will overwrite the current database. This operation is irreversible! The application will restart automatically after the operation.",
     "confirmImportV2": "Are you sure you want to import the V2 database?",
     "importV2Warning": "Importing a V2 database will overwrite the current database. This operation is irreversible! The application will restart automatically after the operation.",
-    "messages": {
+    "notifications": {
       "backingUp": "Backing up database...",
       "backupSuccess": "Database backup successful",
       "backupError": "Database backup failed",

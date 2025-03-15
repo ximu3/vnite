@@ -109,11 +109,11 @@ function getGamePlayStatus(gameId: string, t: any): string {
   const status = gameStore.getState().data?.record.playStatus as string
 
   const statusMap: Record<string, string> = {
-    unplayed: t('score.playStatus.unplayed'),
-    playing: t('score.playStatus.playing'),
-    finished: t('score.playStatus.finished'),
-    multiple: t('score.playStatus.multiple'),
-    shelved: t('score.playStatus.shelved')
+    unplayed: t('utils:game.playStatus.unplayed'),
+    playing: t('utils:game.playStatus.playing'),
+    finished: t('utils:game.playStatus.finished'),
+    multiple: t('utils:game.playStatus.multiple'),
+    shelved: t('utils:game.playStatus.shelved')
   }
 
   return statusMap[status] || t('score.playStatus.unknown')

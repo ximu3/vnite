@@ -59,7 +59,7 @@ export function UrlDialog({
               setMediaWithUrl(type, mediaUrl)
             }}
           >
-            {t('detail.properties.media.url.confirm')}
+            {t('ui:common.confirm')}
           </Button>
         </div>
       </DialogContent>

@@ -28,15 +28,15 @@ export function Others({
   function convertFieldToTitle(field: string): string {
     switch (field) {
       case 'unplayed':
-        return t('list.playStatus.unplayed')
+        return t('utils:game.playStatus.unplayed')
       case 'playing':
-        return t('list.playStatus.playing')
+        return t('utils:game.playStatus.playing')
       case 'finished':
-        return t('list.playStatus.finished')
+        return t('utils:game.playStatus.finished')
       case 'multiple':
-        return t('list.playStatus.multiple')
+        return t('utils:game.playStatus.multiple')
       case 'shelved':
-        return t('list.playStatus.shelved')
+        return t('utils:game.playStatus.shelved')
     }
     return field
   }

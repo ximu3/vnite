@@ -15,6 +15,14 @@
       "configSuccess": "ランチャーの設定に成功しました",
       "configError": "設定エラー: {{message}}",
       "runtimeError": "実行設定エラー、ご確認ください！"
+    },
+    "playStatus": {
+      "unplayed": "未プレイ",
+      "playing": "プレイ中",
+      "finished": "完了",
+      "multiple": "複数周回",
+      "shelved": "保留中",
+      "unknown": "不明状態"
     }
   },
   "format": {

@@ -30,9 +30,9 @@ export function Database(): JSX.Element {
         await ipcInvoke('backup-database', targetPath)
       },
       {
-        loading: t('database.messages.backingUp'),
-        success: t('database.messages.backupSuccess'),
-        error: t('database.messages.backupError')
+        loading: t('database.notifications.backingUp'),
+        success: t('database.notifications.backupSuccess'),
+        error: t('database.notifications.backupError')
       }
     )
   }
@@ -45,9 +45,9 @@ export function Database(): JSX.Element {
         await ipcInvoke('restore-database', sourcePath)
       },
       {
-        loading: t('database.messages.importing'),
-        success: t('database.messages.importSuccess'),
-        error: t('database.messages.importError')
+        loading: t('database.notifications.importing'),
+        success: t('database.notifications.importSuccess'),
+        error: t('database.notifications.importError')
       }
     )
   }
@@ -60,9 +60,9 @@ export function Database(): JSX.Element {
         await ipcInvoke('import-v2-data', sourcePath)
       },
       {
-        loading: t('database.messages.importing'),
-        success: t('database.messages.importSuccess'),
-        error: t('database.messages.importError')
+        loading: t('database.notifications.importing'),
+        success: t('database.notifications.importSuccess'),
+        error: t('database.notifications.importError')
       }
     )
   }
@@ -80,15 +80,15 @@ export function Database(): JSX.Element {
       async () => {
         await ipcInvoke('switch-database-mode')
         setIsPortable((prev) => !prev)
-        toast.info(t('database.messages.restartCountdown'))
+        toast.info(t('database.notifications.restartCountdown'))
         setTimeout(() => {
           ipcSend('relaunch-app')
         }, 3000)
       },
       {
-        loading: t('database.messages.switchingMode'),
-        success: t('database.messages.switchSuccess'),
-        error: t('database.messages.switchError')
+        loading: t('database.notifications.switchingMode'),
+        success: t('database.notifications.switchSuccess'),
+        error: t('database.notifications.switchError')
       }
     )
   }

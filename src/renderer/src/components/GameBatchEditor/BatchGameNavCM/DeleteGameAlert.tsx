@@ -47,10 +47,10 @@ export function DeleteGameAlert({
         navigate('/library')
       },
       {
-        loading: t('batch.delete.notifications.deleting', { count: gamesCount }),
-        success: t('batch.delete.notifications.success', { count: gamesCount }),
+        loading: t('batchEditor.delete.notifications.deleting', { count: gamesCount }),
+        success: t('batchEditor.delete.notifications.success', { count: gamesCount }),
         error: (err) =>
-          t('batch.delete.notifications.error', { count: gamesCount, message: err.message })
+          t('batchEditor.delete.notifications.error', { count: gamesCount, message: err.message })
       }
     )
   }
@@ -60,16 +60,18 @@ export function DeleteGameAlert({
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{t('batch.delete.title', { count: gameIds.length })}</AlertDialogTitle>
+          <AlertDialogTitle>
+            {t('batchEditor.delete.title', { count: gameIds.length })}
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            {t('batch.delete.description')}
+            {t('batchEditor.delete.description')}
             {gameIds.length > 1 && (
               <div className="mt-2">
-                <div className="mb-2 font-semibold">{t('batch.delete.gamesList')}</div>
+                <div className="mb-2 font-semibold">{t('batchEditor.delete.gamesList')}</div>
                 <div className="overflow-y-auto text-sm max-h-32 scrollbar-base">
                   {gameIds.map((gameId) => (
-                    <div key={`batch-delete-${gameId}`} className="mb-1">
-                      {gameMetaIndex[gameId]?.name || t('batch.delete.unnamedGame')}
+                    <div key={`batchEditor-delete-${gameId}`} className="mb-1">
+                      {gameMetaIndex[gameId]?.name || t('batchEditor.delete.unnamedGame')}
                     </div>
                   ))}
                 </div>
@@ -78,8 +80,8 @@ export function DeleteGameAlert({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>{t('batch.delete.cancel')}</AlertDialogCancel>
-          <AlertDialogAction onClick={deleteGames}>{t('batch.delete.confirm')}</AlertDialogAction>
+          <AlertDialogCancel>{t('ui:common.cancel')}</AlertDialogCancel>
+          <AlertDialogAction onClick={deleteGames}>{t('ui:common.confirm')}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -58,9 +58,9 @@ export function General(): JSX.Element {
                   await setOpenAtLogin(checked)
                   await ipcInvoke('update-open-at-login')
                   await ipcInvoke('update-tray-config')
-                  toast.success(t('messages.settingsUpdated'))
+                  toast.success(t('notifications.settingsUpdated'))
                 } catch (error) {
-                  toast.error(t('messages.settingsUpdateError'))
+                  toast.error(t('notifications.settingsUpdateError'))
                   console.error('更新设置失败:', error)
                 }
               }}

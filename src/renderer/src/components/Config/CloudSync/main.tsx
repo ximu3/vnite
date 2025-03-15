@@ -106,9 +106,9 @@ export function CloudSync(): JSX.Element {
         await ipcInvoke('restart-sync')
       },
       {
-        loading: t('cloudSync.messages.updating'),
-        success: t('cloudSync.messages.updateSuccess'),
-        error: t('cloudSync.messages.updateError')
+        loading: t('cloudSync.notifications.updating'),
+        success: t('cloudSync.notifications.updateSuccess'),
+        error: t('cloudSync.notifications.updateError')
       }
     )
   }
@@ -119,9 +119,9 @@ export function CloudSync(): JSX.Element {
         await ipcInvoke('auth-signin')
       },
       {
-        loading: t('cloudSync.messages.loggingIn'),
-        success: t('cloudSync.messages.loginSuccess'),
-        error: t('cloudSync.messages.loginError')
+        loading: t('cloudSync.notifications.loggingIn'),
+        success: t('cloudSync.notifications.loginSuccess'),
+        error: t('cloudSync.notifications.loginError')
       }
     )
   }
@@ -132,9 +132,9 @@ export function CloudSync(): JSX.Element {
         await ipcInvoke('auth-signup')
       },
       {
-        loading: t('cloudSync.messages.registering'),
-        success: t('cloudSync.messages.registerSuccess'),
-        error: t('cloudSync.messages.registerError')
+        loading: t('cloudSync.notifications.registering'),
+        success: t('cloudSync.notifications.registerSuccess'),
+        error: t('cloudSync.notifications.registerError')
       }
     )
   }

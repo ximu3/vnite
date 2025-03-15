@@ -15,6 +15,14 @@
       "configSuccess": "启动器配置成功",
       "configError": "配置错误: {{message}}",
       "runtimeError": "运行配置错误，请检查！"
+    },
+    "playStatus": {
+      "unplayed": "未开始",
+      "playing": "游玩中",
+      "finished": "已完成",
+      "multiple": "多周目",
+      "shelved": "搁置中",
+      "unknown": "未知状态"
     }
   },
   "format": {

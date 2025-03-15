@@ -155,9 +155,9 @@ export function SearchDescriptionDialog({
             >
               <span className={cn('icon-[mdi--magnify] w-[20px] h-[20px]')}></span>
             </Button>
-            <Button onClick={handleConfirm}>{t('detail.overview.search.confirm')}</Button>
+            <Button onClick={handleConfirm}>{t('ui:common.confirm')}</Button>
             <Button variant="outline" onClick={handleClose}>
-              {t('detail.overview.search.cancel')}
+              {t('ui:common.cancel')}
             </Button>
           </div>
         </Card>

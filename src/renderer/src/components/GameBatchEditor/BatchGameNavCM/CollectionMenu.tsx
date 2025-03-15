@@ -58,7 +58,7 @@ export function CollectionMenu({
   return (
     <ContextMenuGroup>
       <ContextMenuSub>
-        <ContextMenuSubTrigger>{t('batch.contextMenu.addTo')}</ContextMenuSubTrigger>
+        <ContextMenuSubTrigger>{t('batchEditor.contextMenu.addTo')}</ContextMenuSubTrigger>
         <ContextMenuPortal>
           <ContextMenuSubContent>
             {Object.entries(collections)
@@ -76,7 +76,7 @@ export function CollectionMenu({
             <ContextMenuItem onSelect={openAddCollectionDialog}>
               <div className={cn('flex flex-row gap-2 items-center w-full')}>
                 <span className={cn('icon-[mdi--add] w-4 h-4')}></span>
-                <div>{t('batch.contextMenu.newCollection')}</div>
+                <div>{t('batchEditor.contextMenu.newCollection')}</div>
               </div>
             </ContextMenuItem>
           </ContextMenuSubContent>
@@ -85,7 +85,7 @@ export function CollectionMenu({
 
       {(collectionsStatus.inAll.length > 0 || collectionsStatus.inSome.length > 0) && (
         <ContextMenuSub>
-          <ContextMenuSubTrigger>{t('batch.contextMenu.removeFrom')}</ContextMenuSubTrigger>
+          <ContextMenuSubTrigger>{t('batchEditor.contextMenu.removeFrom')}</ContextMenuSubTrigger>
           <ContextMenuPortal>
             <ContextMenuSubContent>
               {Object.entries(collections)

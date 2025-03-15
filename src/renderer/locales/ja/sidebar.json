@@ -19,7 +19,7 @@
     "importFromThirdParty": "サードパーティからインポート",
     "steam": "Steam"
   },
-  "messages": {
+  "notifications": {
     "noGamesFound": "ゲームが見つかりません",
     "getFailed": "ゲームの取得に失敗しました: ",
     "unknownError": "不明なエラー",

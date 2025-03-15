@@ -141,7 +141,7 @@ export function HotkeySetting({
   const handleSave = (): void => {
     if (tempHotkey && validateHotkey(tempHotkey)) {
       onHotkeyChange(tempHotkey)
-      toast.success(t('ui:hotkeySetting.messages.hotkeyUpdated'))
+      toast.success(t('ui:hotkeySetting.notifications.hotkeyUpdated'))
       setIsOpen(false)
     }
   }

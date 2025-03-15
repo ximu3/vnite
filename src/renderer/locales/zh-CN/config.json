@@ -56,7 +56,7 @@
       "default": "默认",
       "mutsumi": "Mutsumi"
     },
-    "messages": {
+    "notifications": {
       "themeSaved": "主题已保存",
       "configuring": "正在配置主题...",
       "configured": "主题配置成功"
@@ -81,7 +81,7 @@
       "loginRequired": "请先登录官方账号",
       "fetchStorageFailed": "获取存储信息失败"
     },
-    "messages": {
+    "notifications": {
       "updating": "正在更新云同步配置...",
       "updateSuccess": "云同步配置更新成功",
       "updateError": "云同步配置更新失败",
@@ -149,7 +149,7 @@
     "importWarning": "导入数据库将覆盖当前数据库，此操作不可逆！操作结束后应用将自动重启。",
     "confirmImportV2": "确定要导入v2数据库吗？",
     "importV2Warning": "导入v2数据库将覆盖当前数据库，此操作不可逆！操作结束后应用将自动重启。",
-    "messages": {
+    "notifications": {
       "backingUp": "正在备份数据库...",
       "backupSuccess": "数据库备份成功",
       "backupError": "数据库备份失败",

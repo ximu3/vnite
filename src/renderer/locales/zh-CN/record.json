@@ -181,14 +181,6 @@
       "playTime": "游戏时间: {{time, gameTime}}",
       "lastRun": "最近运行: {{date, niceDate}}",
       "ratingLabel": "评分"
-    },
-    "playStatus": {
-      "unplayed": "未玩",
-      "playing": "游玩中",
-      "finished": "已通关",
-      "multiple": "多周目",
-      "shelved": "已搁置",
-      "unknown": "未知状态"
     }
   }
 }

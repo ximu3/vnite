@@ -16,7 +16,7 @@
       "invalidHotkey": "有効なホットキーを入力してください",
       "duplicateKeys": "ホットキーに重複したキーを含めることはできません"
     },
-    "messages": {
+    "notifications": {
       "hotkeyUpdated": "ホットキーが更新されました"
     }
   }

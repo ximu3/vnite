@@ -83,7 +83,7 @@ export function PlayTimeEditorDialog({
               type="text"
               placeholder={t('detail.playTimeEditor.placeholder')}
             />
-            <Button onClick={handleConfirm}>{t('detail.playTimeEditor.confirm')}</Button>
+            <Button onClick={handleConfirm}>{t('ui:common.confirm')}</Button>
           </div>
         </div>
       </DialogContent>

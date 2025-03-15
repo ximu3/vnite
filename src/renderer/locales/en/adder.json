@@ -15,7 +15,6 @@
     "backgrounds": {
       "title": "Background Image",
       "noImages": "No images",
-      "confirm": "Confirm",
       "notifications": {
         "loading": "Getting images...",
         "success": "Images retrieved successfully",

@@ -55,7 +55,7 @@ export function SteamIdDialog(): JSX.Element {
               setGameId('')
             }}
           >
-            {t('detail.properties.launcher.preset.confirm')}
+            {t('ui:common.confirm')}
           </Button>
         </div>
       </DialogContent>

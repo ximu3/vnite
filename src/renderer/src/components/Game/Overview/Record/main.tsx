@@ -35,7 +35,7 @@ export function Record({ gameId }: { gameId: string }): JSX.Element {
       <RecordCard
         className={cn('')}
         title={t('detail.overview.record.playStatus')}
-        content={t(`detail.header.playStatus.${playStatus}`)}
+        content={t(`utils:game.playStatus.${playStatus}`)}
         icon="icon-[mdi--bookmark-outline] w-[16px] h-[16px]"
       />
       <RecordCard
