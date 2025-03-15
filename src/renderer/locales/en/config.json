@@ -112,7 +112,7 @@
       "serverAddress": "CouchDB Address",
       "username": "Username",
       "password": "Password",
-      "info": "CouchDB is an open-source document database used for storing and syncing data, can be quickly deployed on {{flyio}} or other services"
+      "info": "CouchDB is an open-source document database used for storing and syncing data, can be quickly deployed on <flyio>Fly.io</flyio> or other services"
     },
     "info": {
       "status": "Status",

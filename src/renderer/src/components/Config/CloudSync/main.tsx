@@ -22,6 +22,7 @@ import { Link } from '@ui/link'
 import { useTranslation } from 'react-i18next'
 import { useCloudSyncStore } from './store'
 import { ROLE_QUOTAS } from '@appTypes/sync'
+import { Trans } from 'react-i18next'
 
 export function CloudSync(): JSX.Element {
   const { t } = useTranslation('config')
@@ -438,9 +439,12 @@ export function CloudSync(): JSX.Element {
                         <p className="flex items-center gap-1">
                           <InfoIcon className="w-3.5 h-3.5" />
                           <span>
-                            {t('cloudSync.selfHosted.info', {
-                              flyio: <Link name="Fly.io" url="https://fly.io" />
-                            })}
+                            <Trans
+                              i18nKey="config:cloudSync.selfHosted.info"
+                              components={{
+                                flyio: <Link name="Fly.io" url="https://fly.io" />
+                              }}
+                            />
                           </span>
                         </p>
                       </div>

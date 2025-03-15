@@ -112,7 +112,7 @@
       "serverAddress": "CouchDB 地址",
       "username": "用户名",
       "password": "密码",
-      "info": "CouchDB 是一个开源的文档数据库，可用于存储和同步数据，可以通过 {{flyio}} 或其他服务快速部署自托管 CouchDB"
+      "info": "CouchDB 是一个开源的文档数据库，可用于存储和同步数据，可以通过 <flyio>Fly.io</flyio> 或其他服务快速部署自托管 CouchDB"
     },
     "info": {
       "status": "状态",
