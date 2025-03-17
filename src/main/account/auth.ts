@@ -1,20 +1,36 @@
 import { BrowserWindow, shell } from 'electron'
-import { SDK } from 'casdoor-nodejs-sdk'
-import CouchDBManager from './couchdb'
+import axios from 'axios'
+import { jwtDecode } from 'jwt-decode'
+
 import { ConfigDBManager } from '~/database'
-import { AuthResult, CasdoorUser, CouchDBCredentials, UserRole } from '@appTypes/sync'
+import { AuthResult, UserRole } from '@appTypes/sync'
 import { startSync } from '~/database'
+
+// Authentik用户接口
+interface AuthentikUser {
+  sub: string
+  name: string
+  email: string
+  preferred_username: string
+  groups: string[]
+  couchdb?: {
+    username: string
+    password: string
+    url: string
+    databases: {
+      config: { dbName: string }
+      game: { dbName: string }
+      gameCollection: { dbName: string }
+    }
+  }
+}
 
 export class AuthManager {
   private static instance: AuthManager | null = null
-  private casdoorSdk!: SDK
-  private redirectUrl: string = 'vnite://casdoor/callback'
   private serverUrl!: string
   private clientId!: string
   private clientSecret!: string
-  private appName!: string
-  private organizationName!: string
-  private certificate!: string
+  private redirectUrl: string = 'vnite://auth/callback'
   private initialized: boolean = false
 
   // 私有构造函数，防止直接创建实例
@@ -44,39 +60,14 @@ export class AuthManager {
     // 从环境变量加载配置
     try {
       // 获取必要的配置
-      instance.serverUrl = import.meta.env.VITE_CASDOOR_SERVER_URL || ''
-      instance.clientId = import.meta.env.VITE_CASDOOR_CLIENT_ID || ''
-      instance.clientSecret = import.meta.env.VITE_CASDOOR_CLIENT_SECRET || ''
-      instance.appName = import.meta.env.VITE_CASDOOR_APP_NAME || ''
-      instance.organizationName = import.meta.env.VITE_CASDOOR_ORGANIZATION_NAME || ''
-
-      // 尝试加载证书
-      instance.certificate = import.meta.env.VITE_CASDOOR_CERTIFICATE.replace(/\\n/g, '\n') || ''
+      instance.serverUrl = import.meta.env.VITE_AUTHENTIK_SERVER_URL || ''
+      instance.clientId = import.meta.env.VITE_AUTHENTIK_CLIENT_ID || ''
+      instance.clientSecret = import.meta.env.VITE_AUTHENTIK_CLIENT_SECRET || ''
 
       // 验证必要的配置项
-      if (
-        !instance.serverUrl ||
-        !instance.clientId ||
-        !instance.clientSecret ||
-        !instance.appName ||
-        !instance.organizationName ||
-        !instance.certificate
-      ) {
-        throw new Error('缺少必要的Casdoor配置')
+      if (!instance.serverUrl || !instance.clientId || !instance.clientSecret) {
+        throw new Error('缺少必要的Authentik配置')
       }
-
-      // 初始化 casdoor-nodejs-sdk
-      const authCfg = {
-        endpoint: instance.serverUrl,
-        clientId: instance.clientId,
-        clientSecret: instance.clientSecret,
-        certificate: instance.certificate,
-        orgName: instance.organizationName,
-        appName: instance.appName
-      }
-
-      // 创建 SDK 实例
-      instance.casdoorSdk = new SDK(authCfg)
 
       instance.initialized = true
       console.log('AuthManager 初始化成功')
@@ -104,11 +95,13 @@ export class AuthManager {
     const instance = AuthManager.getInstance()
 
     try {
-      // 使用 SDK 获取注册 URL
-      const signupUrl = instance.casdoorSdk.getSignUpUrl(true, instance.redirectUrl)
+      // 构建Authentik注册URL
+      const signupUrl = new URL(`${instance.serverUrl}/if/flow/vnite-enrollment/`)
+      signupUrl.searchParams.append('client_id', instance.clientId)
+      signupUrl.searchParams.append('redirect_uri', instance.redirectUrl)
 
       // 打开默认浏览器进行注册
-      shell.openExternal(signupUrl)
+      shell.openExternal(signupUrl.toString())
 
       return { success: true }
     } catch (error) {
@@ -125,11 +118,15 @@ export class AuthManager {
     const instance = AuthManager.getInstance()
 
     try {
-      // 使用 SDK 获取登录 URL
-      const signinUrl = instance.casdoorSdk.getSignInUrl(instance.redirectUrl)
+      // 构建Authentik OAuth2登录URL
+      const signinUrl = new URL(`${instance.serverUrl}/application/o/authorize/`)
+      signinUrl.searchParams.append('client_id', instance.clientId)
+      signinUrl.searchParams.append('redirect_uri', instance.redirectUrl)
+      signinUrl.searchParams.append('response_type', 'code')
+      signinUrl.searchParams.append('scope', 'openid profile email groups couchdb')
 
       // 打开默认浏览器进行登录
-      shell.openExternal(signinUrl)
+      shell.openExternal(signinUrl.toString())
 
       return { success: true }
     } catch (error) {
@@ -154,27 +151,40 @@ export class AuthManager {
 
     try {
       // 交换授权码获取访问令牌
-      const tokenResponse = await instance.casdoorSdk.getAuthToken(code)
-      const accessToken = tokenResponse.access_token
-
-      // 解析 JWT 令牌获取用户信息
-      const userInfo = instance.casdoorSdk.parseJwtToken(accessToken) as unknown as CasdoorUser
-
-      const isNewUserOrNoRoles =
-        !userInfo.roles || !Array.isArray(userInfo.roles) || userInfo.roles.length === 0
-      if (isNewUserOrNoRoles) {
-        // 为新用户设置默认角色
-        await AuthManager.setUserDefaultRole(userInfo.name)
-
-        // 重新获取用户信息
-        const updatedUser = await instance.casdoorSdk.getUser(userInfo.name)
-        if (updatedUser && updatedUser.data && updatedUser.data.data) {
-          Object.assign(userInfo, updatedUser.data.data)
+      const tokenResponse = await axios.post(
+        `${instance.serverUrl}/application/o/token/`,
+        new URLSearchParams({
+          grant_type: 'authorization_code',
+          client_id: instance.clientId,
+          client_secret: instance.clientSecret,
+          code: code,
+          redirect_uri: instance.redirectUrl
+        }),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
         }
-      }
+      )
 
-      // 处理CouchDB用户创建或获取
-      const couchdbCredentials = await AuthManager.setupCouchDBUser(userInfo)
+      const accessToken = tokenResponse.data.access_token
+      const idToken = tokenResponse.data.id_token
+
+      // 解析ID令牌获取基本用户信息
+      const userInfo = jwtDecode(idToken) as AuthentikUser
+
+      // 获取CouchDB凭据
+      const couchdbCredentials = userInfo.couchdb
+        ? {
+            username: userInfo.couchdb.username,
+            password: userInfo.couchdb.password
+          }
+        : null
+
+      // 如果没有CouchDB凭据，则报错
+      if (!couchdbCredentials) {
+        throw new Error('无法获取CouchDB凭据，请确保Authentik已正确配置')
+      }
 
       const userRole = AuthManager.getUserRole(userInfo)
 
@@ -207,158 +217,27 @@ export class AuthManager {
   /**
    * 获取用户角色
    */
-  private static getUserRole(userInfo: CasdoorUser): UserRole {
-    // 首先从用户的roles数组中查找匹配的角色
-    if (userInfo.roles && Array.isArray(userInfo.roles) && userInfo.roles.length > 0) {
+  private static getUserRole(userInfo: AuthentikUser): UserRole {
+    // 首先从用户的groups数组中查找匹配的角色
+    if (userInfo.groups && Array.isArray(userInfo.groups) && userInfo.groups.length > 0) {
       // 获取用户的所有角色并按优先级排序（管理员 > 社区版）
-      const rolePriority = ['admin', 'community']
-
-      // 找出用户拥有的最高优先级角色
-      for (const priorityRole of rolePriority) {
-        if (userInfo.roles.includes(priorityRole)) {
-          return priorityRole as UserRole
-        }
+      if (userInfo.groups.includes('authentik-admins') || userInfo.groups.includes('admin')) {
+        return UserRole.ADMIN
+      } else if (userInfo.groups.includes('community')) {
+        return UserRole.COMMUNITY
       }
-    }
-
-    // 如果是管理员，赋予admin角色
-    if (userInfo.isAdmin || userInfo.isGlobalAdmin) {
-      return UserRole.ADMIN
     }
 
     // 默认为社区版用户
     return UserRole.COMMUNITY
   }
-
-  /**
-   * 设置用户默认角色
-   */
-  /**
-   * 设置用户默认角色
-   */
-  private static async setUserDefaultRole(username: string): Promise<boolean> {
-    const instance = AuthManager.getInstance()
-    try {
-      // 1. 首先获取用户信息，检查现有角色
-      const userResponse = await instance.casdoorSdk.getUser(username)
-      const user = userResponse.data.data
-
-      // 检查用户是否已有社区版角色
-      if (user?.roles && user?.roles.some((role) => role.name === UserRole.COMMUNITY)) {
-        console.log(`用户 ${username} 已拥有 ${UserRole.COMMUNITY} 角色`)
-        return true
-      }
-
-      // 2. 获取社区版角色信息
-      try {
-        const roleResponse = await instance.casdoorSdk.getRole(UserRole.COMMUNITY)
-
-        const role = roleResponse.data.data
-
-        // 检查角色是否存在
-        if (!role) {
-          throw new Error(`找不到角色: ${UserRole.COMMUNITY}`)
-        }
-
-        // 3. 将用户添加到角色中
-        role.users = role.users || []
-        if (!role.users.includes(username)) {
-          role.users.push(username)
-        }
-
-        // 4. 更新角色
-        const updateResponse = await instance.casdoorSdk.updateRole(role)
-
-        if (updateResponse.data.status !== 'ok') {
-          throw new Error('更新角色失败')
-        }
-
-        const roleResponse2 = await instance.casdoorSdk.getRole(UserRole.COMMUNITY)
-        const role2 = roleResponse2.data.data
-
-        user.roles = user.roles || []
-        user.roles.push(role2)
-
-        // 5. 更新用户
-        const userUpdateResponse = await instance.casdoorSdk.updateUser(user)
-
-        if (userUpdateResponse.data.status !== 'ok') {
-          throw new Error('更新用户失败')
-        }
-
-        console.log(`已为用户 ${username} 添加默认角色: ${UserRole.COMMUNITY}`)
-        return true
-      } catch (roleError) {
-        console.error('角色操作失败:', roleError)
-        return false
-      }
-    } catch (error) {
-      console.error('设置用户默认角色失败:', error)
-      return false
-    }
-  }
-
-  /**
-   * 设置CouchDB用户
-   */
-  private static async setupCouchDBUser(userInfo: CasdoorUser): Promise<CouchDBCredentials> {
-    const username = userInfo.name
-
-    // 检查用户的自定义属性中是否已有CouchDB密码
-    const couchdbPassword = userInfo.properties?.couchdbPassword
-
-    // 如果没有密码，生成一个新的随机密码
-    const password = couchdbPassword || CouchDBManager.generateRandomPassword()
-
-    // 创建CouchDB用户
-    await CouchDBManager.createUser(username, password)
-
-    // 创建CouchDB用户数据库
-    await CouchDBManager.createDatabase(username)
-
-    // 如果是新生成的密码，保存到Casdoor用户属性中
-    if (!couchdbPassword) {
-      await AuthManager.saveCouchDBPasswordToCasdoor(username, password)
-    }
-
-    return { username, password }
-  }
-
-  /**
-   * 保存密码到Casdoor
-   */
-  private static async saveCouchDBPasswordToCasdoor(
-    username: string,
-    password: string
-  ): Promise<boolean> {
-    const instance = AuthManager.getInstance()
-    try {
-      // 先获取用户信息
-      const userResponse = await instance.casdoorSdk.getUser(username)
-      const user = userResponse.data.data
-
-      // 更新用户的属性
-      user.properties = user.properties || {}
-      user.properties.couchdbPassword = password
-
-      // 更新用户
-      const response = await instance.casdoorSdk.updateUser(user)
-
-      if (response.data.status === 'error') {
-        console.error('更新用户失败:', response.data.msg)
-        return false
-      }
-
-      return true
-    } catch (error) {
-      console.error('保存CouchDB密码到Casdoor失败:', error)
-      return false
-    }
-  }
 }
 
+/**
+ * 处理授权回调URL
+ */
 export function handleAuthCallback(url: string): void {
-  if (!url.startsWith('vnite://casdoor/callback')) return
+  if (!url.startsWith('vnite://auth/callback')) return
 
   try {
     // 解析URL并获取授权码

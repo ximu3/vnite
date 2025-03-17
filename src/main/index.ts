@@ -22,7 +22,7 @@ import {
 import { setupUpdater } from './updater'
 import { initScraper } from './scraper'
 import { startSync, GameDBManager, DBManager } from '~/database'
-import { AuthManager, handleAuthCallback, CouchDBManager } from './account'
+import { AuthManager, handleAuthCallback } from './account'
 
 let mainWindow: BrowserWindow
 let splashWindow: BrowserWindow | null
@@ -206,7 +206,7 @@ if (!gotTheLock) {
       handleGameUrl(url)
     }
     // Check for auth callback URLs specifically
-    const authUrl = commandLine.find((arg) => arg.startsWith('vnite://casdoor/callback'))
+    const authUrl = commandLine.find((arg) => arg.startsWith('vnite://auth/callback'))
     if (authUrl) {
       // Processing auth callback URL
       handleAuthCallback(authUrl)
@@ -254,8 +254,6 @@ if (!gotTheLock) {
     DBManager.init()
 
     AuthManager.init()
-
-    CouchDBManager.init()
 
     // Setup tray
     trayManager = await setupTray(mainWindow)

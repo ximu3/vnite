@@ -1,7 +1,6 @@
 import { ConfigDBManager } from './config'
 import { DBManager } from './common'
 import { calculateDBSize } from '~/utils'
-import { CouchDBManager } from '~/account'
 import { ROLE_QUOTAS } from '@appTypes/sync'
 
 export async function startSync(isStart = false): Promise<void> {
@@ -48,7 +47,6 @@ export async function startSync(isStart = false): Promise<void> {
         )
         return
       }
-      await CouchDBManager.createDatabase(userInfo.name)
       await DBManager.syncAllWithRemote(import.meta.env.VITE_COUCHDB_SERVER_URL, {
         auth: {
           username: syncConfig.officialConfig.auth.username,
