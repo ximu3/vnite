@@ -31,7 +31,7 @@ export async function searchGamesFromIGDB(gameName: string): Promise<GameList> {
 
 /**
  * Get game metadata from IGDB
- * @param gameId The id of the game on IGDB
+ * @param identifier The identifier of the game
  * @returns The metadata for the game
  * @throws An error if the operation fails
  */
@@ -67,9 +67,9 @@ export async function checkGameExistsOnIGDB(gameId: string): Promise<boolean> {
 }
 
 /**
- * Get game screenshots from IGDB
- * @param gameId The id of the game on IGDB
- * @returns A list of screenshots
+ * Get game backgrounds from IGDB
+ * @param identifier The identifier of the game
+ * @returns A list of backgrounds
  * @throws An error if the operation fails
  */
 export async function getGameBackgroundsFromIGDB(identifier: ScraperIdentifier): Promise<string[]> {
@@ -87,7 +87,7 @@ export async function getGameBackgroundsFromIGDB(identifier: ScraperIdentifier):
 
 /**
  * Get the game cover from IGDB
- * @param gameId The id of the game on IGDB
+ * @param identifier The identifier of the game
  * @returns The URL of the game cover
  * @throws An error if the operation fails
  */

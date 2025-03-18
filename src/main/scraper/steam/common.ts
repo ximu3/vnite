@@ -169,18 +169,18 @@ export async function getSteamMetadata(appId: string): Promise<GameMetadata> {
   try {
     const langConfig = await getSteamLanguageConfig()
 
-    // 获取当前语言的数据
+    // Get data in the current language
     const primaryUrlLocal = `${STEAM_URLS.PRIMARY.STORE}/api/appdetails?appids=${appId}&l=${langConfig.apiLanguageCode}`
     const fallbackUrlLocal = `${STEAM_URLS.FALLBACK.APP_DETAILS}?appids=${appId}&l=${langConfig.apiLanguageCode}`
 
-    // 获取英语数据作为原始名称（如果当前语言不是英语）
+    // Get English data as the original name (if the current language is not English)
     const needsOriginalName = langConfig.apiLanguageCode !== 'english'
 
     let localData: SteamAppDetailsResponse
     let englishData: SteamAppDetailsResponse | null = null
 
     if (needsOriginalName) {
-      // 并行获取本地语言和英语数据
+      // Parallel acquisition of local language and English data
       ;[localData, englishData] = await Promise.all([
         fetchSteamAPI(primaryUrlLocal, fallbackUrlLocal),
         fetchSteamAPI(
@@ -189,9 +189,9 @@ export async function getSteamMetadata(appId: string): Promise<GameMetadata> {
         )
       ])
     } else {
-      // 仅获取一种语言
+      // Get only one language
       localData = await fetchSteamAPI(primaryUrlLocal, fallbackUrlLocal)
-      englishData = localData // 如果当前语言就是英语，则复用
+      englishData = localData // If the current language is English, reuse
     }
 
     if (!localData[appId].success) {
@@ -282,7 +282,7 @@ export async function getGameBackground(appId: string): Promise<string> {
 
     return ''
   } catch (error) {
-    console.error('获取游戏Background图片失败:', error)
+    console.error('Failed to get game Background image:', error)
     return ''
   }
 }

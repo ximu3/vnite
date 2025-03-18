@@ -3,7 +3,6 @@ import { toast } from 'sonner'
 import { ipcSend, ipcInvoke } from '~/utils'
 import { useRunningGames } from '~/pages/Library/store'
 import { getGameLocalStore, getGameStore } from '~/stores/game'
-// 创建一个获取翻译的工具函数，方便在非组件函数中使用
 import i18next from 'i18next'
 
 export function copyWithToast(content: string): void {
@@ -42,15 +41,15 @@ export function stopGame(gameId: string): void {
 }
 
 /**
- * 启动游戏的逻辑
+ * Logic for starting the game
  */
 export async function startGame(gameId: string, navigate?: (path: string) => void): Promise<void> {
-  // 导航到游戏详情页
+  // Navigate to the game details page
   if (navigate) {
     navigate(`/library/games/${gameId}/all`)
   }
 
-  // 获取最新的运行中游戏列表
+  // Get the latest list of running games
   const { runningGames, setRunningGames } = useRunningGames.getState()
 
   const gameLocalStore = getGameLocalStore(gameId)
@@ -94,7 +93,7 @@ export async function startGame(gameId: string, navigate?: (path: string) => voi
 
   const launcherMode = getGameLocalValue('launcher.mode')
 
-  // 根据不同模式验证配置
+  // Validating configurations against different modes
   if (launcherMode === 'file') {
     const launcherConfig = getGameLocalValue(`launcher.${launcherMode}Config`)
     if (

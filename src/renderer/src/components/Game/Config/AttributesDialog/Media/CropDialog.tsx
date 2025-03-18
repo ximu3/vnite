@@ -42,9 +42,9 @@ export function CropDialog({
 
     // Calculating scaling
     const scale = naturalWidth / width
-    console.log('图片缩放比例:', scale)
-    console.log('显示尺寸:', width, height)
-    console.log('原始尺寸:', naturalWidth, naturalHeight)
+    console.log('Image scaling:', scale)
+    console.log('Display size:', width, height)
+    console.log('Original size:', naturalWidth, naturalHeight)
 
     // Set the cropping area to the display size of the whole image
     const cropUpdate: Crop = {
@@ -104,7 +104,7 @@ export function CropDialog({
 
       onCropComplete(filePath)
     } catch (error) {
-      console.error('裁剪失败:', error)
+      console.error('Cropping Failure:', error)
     }
   }
 

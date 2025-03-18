@@ -48,7 +48,7 @@ async function getProcessList(): Promise<
       cmd: proc.CommandLine || ''
     }))
   } catch (error) {
-    console.error('获取进程列表失败:', error)
+    console.error('Failed to get process list:', error)
     throw error
   }
 }
@@ -74,7 +74,7 @@ async function startMagpie(): Promise<void> {
     if (magpiePath) {
       const isRunning = await checkIfProcessRunning('Magpie.exe')
       if (isRunning) {
-        console.log('Magpie 已经在运行')
+        console.log('Magpie is already running.')
         return
       }
       const magpie = spawn('start', ['""', `"${magpiePath}" -t`], {
@@ -85,7 +85,7 @@ async function startMagpie(): Promise<void> {
       magpie.unref()
     }
   } catch (error) {
-    console.error('启动 Magpie 失败:', error)
+    console.error('Failed to start Magpie:', error)
   }
 }
 
@@ -105,7 +105,7 @@ interface MonitoredProcess {
   isRunning: boolean
   pid?: number
   isScaled?: boolean
-  isProcessNameMode?: boolean // 新增：标记是否为进程名监控模式
+  isProcessNameMode?: boolean
 }
 
 interface GameStatus {
@@ -165,15 +165,21 @@ export class GameMonitor {
           if (!terminated) {
             retries++
             if (retries < maxRetries) {
-              console.log(`尝试终止进程 ${monitored.pid} 失败，${maxRetries - retries} 次重试机会`)
+              console.log(
+                `Failed attempt to terminate process ${monitored.pid}, ${maxRetries - retries} retries`
+              )
               await new Promise((resolve) => setTimeout(resolve, retryDelay))
             }
           }
         }
 
         if (!terminated) {
-          log.error(`无法终止进程 ${monitored.pid}，已达到最大重试次数`)
-          throw new Error(`无法终止进程 ${monitored.pid}，已达到最大重试次数`)
+          log.error(
+            `Unable to terminate process ${monitored.pid}, maximum number of retries reached`
+          )
+          throw new Error(
+            `Unable to terminate process ${monitored.pid}, maximum number of retries reached`
+          )
         }
       }
     }
@@ -184,31 +190,31 @@ export class GameMonitor {
       const isProcessNameMode = process.isProcessNameMode === true
 
       if (isProcessNameMode) {
-        // 进程名模式：直接使用进程名
+        // Process name mode: use the process name directly
         const processName = process.path
-        console.log(`尝试终止进程名: ${processName}`)
+        console.log(`Attempt to terminate process name: ${processName}`)
 
         try {
-          // 使用taskkill按名称终止进程
+          // Terminate processes by name using taskkill
           await execAsync(`taskkill /F /IM "${processName}"`, {
             shell: 'cmd.exe'
           })
-          console.log(`进程 ${processName} 已成功终止`)
+          console.log(`Process ${processName} has been successfully terminated.`)
           return true
         } catch (error) {
           const errorMessage = (error as any)?.message?.toLowerCase() || ''
 
-          // 如果进程不存在，视为终止成功
+          // If the process does not exist, the termination is considered successful
           if (
             errorMessage.includes('不存在') ||
             errorMessage.includes('找不到') ||
             errorMessage.includes('no process')
           ) {
-            console.log(`进程 ${processName} 已经不存在`)
+            console.log(`The process ${processName} no longer exists.`)
             return true
           }
 
-          console.error(`无法终止进程 ${processName}:`, error)
+          console.error(`Unable to terminate process ${processName}:`, error)
           return false
         }
       } else {
@@ -216,7 +222,7 @@ export class GameMonitor {
         const normalizedPath = this.normalizePath(process.path)
         const processName = path.basename(normalizedPath)
 
-        console.log(`尝试终止进程: ${normalizedPath}`)
+        console.log(`Attempts to terminate the process: ${normalizedPath}`)
 
         const methods = [
           // Method 2: Exact Match by Path using PowerShell
@@ -231,7 +237,7 @@ export class GameMonitor {
         for (const method of methods) {
           try {
             await method()
-            console.log(`进程 ${processName} 已成功终止`)
+            console.log(`Process ${processName} has been successfully terminated.`)
             return true
           } catch (error) {
             const errorMessage = (error as any)?.message?.toLowerCase() || ''
@@ -244,12 +250,12 @@ export class GameMonitor {
               errorMessage.includes('cannot find') ||
               errorMessage.includes('没有找到进程')
             ) {
-              console.log(`进程 ${processName} 已经不存在`)
+              console.log(`The process ${processName} no longer exists.`)
               return true
             }
 
             // Log the error but keep trying the next method
-            console.warn(`当前方法终止进程 ${processName} 失败:`, error)
+            console.warn(`Current method to terminate process ${processName} Failed:`, error)
             continue
           }
         }
@@ -261,15 +267,17 @@ export class GameMonitor {
         )
 
         if (!processStillExists) {
-          console.log(`进程 ${processName} 已不存在，视为终止成功`)
+          console.log(
+            `The process ${processName} no longer exists and is considered terminated successfully.`
+          )
           return true
         }
 
-        console.error(`无法终止进程 ${processName}，所有方法都失败`)
+        console.error(`Cannot terminate process ${processName}, all methods fail`)
         return false
       }
     } catch (error) {
-      console.error('终止进程失败:', error)
+      console.error('Failure to terminate the process:', error)
       return false
     }
   }
@@ -290,17 +298,16 @@ export class GameMonitor {
           }
         ]
       } else if (this.options.config.mode === 'process') {
-        // 新增对进程名监控的支持
         this.monitoredProcesses = [
           {
             path: this.options.config.path,
             isRunning: false,
-            isProcessNameMode: true // 标记为进程名监控模式
+            isProcessNameMode: true // Mark as process name monitoring mode
           }
         ]
       }
     } catch (error) {
-      log.error(`游戏 ${this.options.gameId} 监控初始化错误:`, error)
+      log.error(`game ${this.options.gameId} monitor initialization errors:`, error)
     }
   }
 
@@ -349,7 +356,7 @@ export class GameMonitor {
       await this.checkProcesses()
     }, this.options.checkInterval)
 
-    log.info(`开始监控游戏 ${this.options.gameId}`)
+    log.info(`Start monitoring the game ${this.options.gameId}`)
   }
 
   public stop(): void {
@@ -373,23 +380,22 @@ export class GameMonitor {
       const previousStates = this.monitoredProcesses.map((p) => p.isRunning)
 
       for (const monitored of this.monitoredProcesses) {
-        // 检查是否是进程名监控模式
+        // Check if it is process name monitoring mode
         const isProcessNameMode = monitored.isProcessNameMode === true
 
         const processInfo = processes.find((proc) => {
           if (isProcessNameMode) {
-            // 按进程名匹配
+            // Match by process name
             return proc.name.toLowerCase() === monitored.path.toLowerCase()
           } else {
-            // 原有的路径匹配逻辑
             if (!proc.executablePath) return false
 
-            // 路径规范化
+            // Path normalization
             const normalizedMonitoredPath = this.normalizePath(monitored.path)
             const normalizedExecPath = this.normalizePath(proc.executablePath)
             const normalizedCmdPath = this.normalizePath(proc.cmd)
 
-            // 路径匹配检查
+            // Path Matching Check
             return (
               normalizedExecPath === normalizedMonitoredPath ||
               normalizedCmdPath === normalizedMonitoredPath
@@ -399,7 +405,7 @@ export class GameMonitor {
 
         if (processInfo) {
           console.log(
-            `游戏 ${this.options.gameId} 进程 ${isProcessNameMode ? processInfo.name : processInfo.executablePath} 正在运行`
+            `Game ${this.options.gameId} process ${isProcessNameMode ? processInfo.name : processInfo.executablePath} running`
           )
         }
 
@@ -407,9 +413,9 @@ export class GameMonitor {
         monitored.isRunning = !!processInfo
         monitored.pid = processInfo?.pid || monitored.pid
 
-        // 如果进程刚刚启动（之前未运行，现在运行）
+        // If the process has just been started (not running before, running now)
         if (!wasRunning && monitored.isRunning) {
-          console.log(`游戏 ${this.options.gameId} 进程已启动`)
+          console.log(`Game ${this.options.gameId} process has been started`)
 
           // Check if Magpie scaling is enabled
           const useMagpie = await GameDBManager.getGameLocalValue(
@@ -446,7 +452,7 @@ export class GameMonitor {
         await this.handleGameExit()
       }
     } catch (error) {
-      log.error('进程检查错误:', error)
+      log.error('Process checking error:', error)
     }
   }
 
@@ -464,7 +470,7 @@ export class GameMonitor {
   }
 
   private async handleGameExit(): Promise<void> {
-    log.info(`游戏 ${this.options.gameId} 退出`)
+    log.info(`Game ${this.options.gameId} Exit`)
 
     // Record end time
     this.endTime = new Date().toISOString()

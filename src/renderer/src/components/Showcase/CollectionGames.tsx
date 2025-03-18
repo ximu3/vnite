@@ -23,13 +23,12 @@ export const useDragContext = (): DragContextType => {
   )
 }
 
-// 拆分为组件和包装后的导出组件
 export function CollectionGamesComponent({
   collectionId,
-  scrollPosition // 添加scrollPosition参数
+  scrollPosition
 }: {
   collectionId: string
-  scrollPosition: { x: number; y: number } // 接收滚动位置
+  scrollPosition: { x: number; y: number }
 }): JSX.Element {
   const collections = useGameCollectionStore((state) => state.documents)
   const games = collections[collectionId].games
@@ -105,7 +104,6 @@ export function CollectionGamesComponent({
                     'flex-shrink-0' // Preventing compression
                   )}
                 >
-                  {/* 添加LazyLoadComponent包装 */}
                   <LazyLoadComponent threshold={300} scrollPosition={scrollPosition}>
                     <GamePoster
                       gameId={gameId}
@@ -117,7 +115,7 @@ export function CollectionGamesComponent({
                         (index % columns === columns - 1 && 'right') ||
                         'center'
                       }
-                      scrollPosition={scrollPosition} // 传递给GamePoster
+                      scrollPosition={scrollPosition}
                     />
                   </LazyLoadComponent>
                 </div>
@@ -130,5 +128,4 @@ export function CollectionGamesComponent({
   )
 }
 
-// 使用trackWindowScroll高阶组件包装CollectionGamesComponent
 export const CollectionGames = trackWindowScroll(CollectionGamesComponent)

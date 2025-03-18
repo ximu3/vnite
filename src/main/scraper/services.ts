@@ -206,26 +206,29 @@ export async function initScraper(): Promise<void> {
 export async function getGameDescriptionList(
   identifier: ScraperIdentifier
 ): Promise<GameDescriptionList> {
-  const vndb = await getGameMetadataFromVNDB(identifier).catch(() => ({
-    description: ''
-  }))
-  const steam = await getGameMetadataFromSteam(identifier).catch(() => ({
-    description: ''
-  }))
-  const bangumi = await getGameMetadataFromBangumi(identifier).catch(() => ({
-    description: ''
-  }))
-  const igdb = await getGameMetadataFromIGDB(identifier).catch(() => ({
-    description: ''
-  }))
-  const ymgal = await getGameMetadataFromYMGal(identifier).catch(() => ({
-    description: ''
-  }))
-  const dlsite = await getGameMetadataFromDLsite(identifier).catch(() => ({
-    description: ''
-  }))
+  // Execute all requests in parallel
+  const [vndb, steam, bangumi, igdb, ymgal, dlsite] = await Promise.all([
+    getGameMetadataFromVNDB(identifier).catch(() => ({
+      description: ''
+    })),
+    getGameMetadataFromSteam(identifier).catch(() => ({
+      description: ''
+    })),
+    getGameMetadataFromBangumi(identifier).catch(() => ({
+      description: ''
+    })),
+    getGameMetadataFromIGDB(identifier).catch(() => ({
+      description: ''
+    })),
+    getGameMetadataFromYMGal(identifier).catch(() => ({
+      description: ''
+    })),
+    getGameMetadataFromDLsite(identifier).catch(() => ({
+      description: ''
+    }))
+  ])
 
-  // 创建候选项数组
+  // Creating a Candidate Array
   const candidates = [
     steam.description && { dataSource: 'steam', description: steam.description },
     vndb.description && { dataSource: 'vndb', description: vndb.description },
@@ -235,31 +238,34 @@ export async function getGameDescriptionList(
     ymgal.description && { dataSource: 'ymgal', description: ymgal.description }
   ]
 
-  // 过滤掉所有falsy值（包括undefined、null、空字符串等）
+  // Filter out all false values
   return candidates.filter((item) => item && item.description) as GameDescriptionList
 }
 
 export async function getGameTagsList(identifier: ScraperIdentifier): Promise<GameTagsList> {
-  const vndb = await getGameMetadataFromVNDB(identifier).catch(() => ({
-    tags: []
-  }))
-  const steam = await getGameMetadataFromSteam(identifier).catch(() => ({
-    tags: []
-  }))
-  const bangumi = await getGameMetadataFromBangumi(identifier).catch(() => ({
-    tags: []
-  }))
-  const igdb = await getGameMetadataFromIGDB(identifier).catch(() => ({
-    tags: []
-  }))
-  const ymgal = await getGameMetadataFromYMGal(identifier).catch(() => ({
-    tags: []
-  }))
-  const dlsite = await getGameMetadataFromDLsite(identifier).catch(() => ({
-    tags: []
-  }))
+  // Execute all requests in parallel
+  const [vndb, steam, bangumi, igdb, ymgal, dlsite] = await Promise.all([
+    getGameMetadataFromVNDB(identifier).catch(() => ({
+      tags: []
+    })),
+    getGameMetadataFromSteam(identifier).catch(() => ({
+      tags: []
+    })),
+    getGameMetadataFromBangumi(identifier).catch(() => ({
+      tags: []
+    })),
+    getGameMetadataFromIGDB(identifier).catch(() => ({
+      tags: []
+    })),
+    getGameMetadataFromYMGal(identifier).catch(() => ({
+      tags: []
+    })),
+    getGameMetadataFromDLsite(identifier).catch(() => ({
+      tags: []
+    }))
+  ])
 
-  // 创建候选项数组
+  // Creating a Candidate Array
   const candidates = [
     steam.tags.length > 0 && { dataSource: 'steam', tags: steam.tags },
     vndb.tags.length > 0 && { dataSource: 'vndb', tags: vndb.tags },
@@ -269,6 +275,6 @@ export async function getGameTagsList(identifier: ScraperIdentifier): Promise<Ga
     ymgal.tags.length > 0 && { dataSource: 'ymgal', tags: ymgal.tags }
   ]
 
-  // 过滤掉所有falsy值（包括undefined、null、空字符串等）
+  // Filter out all false values
   return candidates.filter((item) => item && item.tags) as GameTagsList
 }

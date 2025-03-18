@@ -7,7 +7,6 @@ import log from 'electron-log/main.js'
 import sharp from 'sharp'
 import pngToIco from 'png-to-ico'
 import { fileTypeFromBuffer } from 'file-type'
-import { get } from 'lodash'
 import getFolderSize from 'get-folder-size'
 
 export async function getLanguage(): Promise<string> {
@@ -26,60 +25,9 @@ export async function calculateDBSize(): Promise<number> {
     const size = await getFolderSize.loose(dbPath)
     return size
   } catch (error) {
-    console.error('计算数据库文件夹大小时出错:', error)
+    console.error('Error when calculating database folder size:', error)
     return 0
   }
-}
-
-export function getValueByPath(obj: any, path: string): any {
-  if (path === '#all') {
-    return obj
-  }
-
-  const pathArray = path
-    .replace(/$$(\d+)$$/g, '.$1')
-    .split('.')
-    .filter(Boolean)
-
-  return get(obj, pathArray)
-}
-
-export function setValueByPath(obj: any, path: string, value: any): void {
-  if (path === '#all') {
-    obj = value
-    return
-  }
-
-  const pathArray = path
-    .replace(/$$(\d+)$$/g, '.$1')
-    .split('.')
-    .filter(Boolean)
-
-  let current = obj
-
-  // 遍历路径，除了最后一个
-  for (let i = 0; i < pathArray.length - 1; i++) {
-    const key = pathArray[i]
-
-    // 如果当前节点不存在或为null，创建新对象
-    if (current === undefined || current === null) {
-      current = {}
-    }
-
-    // 如果key不存在，创建新对象
-    if (!(key in current)) {
-      current[key] = {}
-    }
-
-    current = current[key]
-  }
-
-  // 设置最后一个路径的值
-  const lastKey = pathArray[pathArray.length - 1]
-  if (current === undefined || current === null) {
-    current = {}
-  }
-  current[lastKey] = value
 }
 
 /**
@@ -227,7 +175,7 @@ export function formatDate(dateString: string): string {
 export async function getFirstLevelSubfolders(dirPath: string): Promise<string[]> {
   // Make sure the catalog exists
   if (!(await fse.pathExists(dirPath))) {
-    throw new Error('目录不存在')
+    throw new Error('Catalog does not exist')
   }
 
   // Read the contents of the catalog
@@ -414,7 +362,7 @@ async function convertToIcon(
     try {
       await Promise.all(tempPngPaths.map((tempPath) => fse.remove(tempPath)))
     } catch (cleanupError) {
-      console.warn('清理临时文件时出错:', cleanupError)
+      console.warn('Error clearing temporary files:', cleanupError)
       // Continued implementation as the main tasks have been completed
     }
 

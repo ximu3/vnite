@@ -23,32 +23,28 @@ export const GameImage: React.FC<GameImageProps> = ({
   className,
   onError,
   onUpdated,
-  fallback = <div>暂无图标</div>,
+  fallback = <div>No Pictures</div>,
   shadow = false,
   flips = false,
   effect = 'blur' as Effect,
-  scrollPosition, // 接收scrollPosition
+  scrollPosition,
   ...imgProps
 }) => {
   const { getAttachmentInfo, setAttachmentError } = useAttachmentStore()
 
   const attachmentInfo = getAttachmentInfo('game', gameId, `images/${type}.webp`)
 
-  // 直接使用附件协议URL
   const attachmentUrl = `attachment://game/${gameId}/images/${type}.webp?t=${
     attachmentInfo?.timestamp
   }`
 
-  // 如果已知图片有错误，直接返回fallback
+  // If the image is known to have an error, return fallback directly
   if (attachmentInfo?.error) {
     return <>{fallback}</>
   }
 
-  // 定义自定义占位符，保持与原组件行为一致
   const placeholder = (
-    <div className={cn('w-full h-full', className?.includes('rounded') && 'rounded-lg')}>
-      {/* 这里可以添加loading指示器 */}
-    </div>
+    <div className={cn('w-full h-full', className?.includes('rounded') && 'rounded-lg')}></div>
   )
 
   return (
@@ -72,7 +68,7 @@ export const GameImage: React.FC<GameImageProps> = ({
           setAttachmentError('game', gameId, `images/${type}.webp`, true)
           onError?.(e)
         }}
-        threshold={300} // 增加阈值，提前加载更多
+        threshold={300}
         wrapperProps={{
           style: {
             display: 'block',
@@ -83,7 +79,6 @@ export const GameImage: React.FC<GameImageProps> = ({
         {...imgProps}
       />
 
-      {/* 错误回退方案 - 在LazyLoadImage内部onError处理失败的情况下生效 */}
       <noscript>{fallback}</noscript>
     </div>
   )

@@ -67,7 +67,7 @@ export function SteamImporter(): JSX.Element {
       )
       setHasEverFetched(true) // Mark the list of games that have been fetched
     } catch (error) {
-      console.error('获取游戏列表失败:', error)
+      console.error('Failed to get game list:', error)
       toast.error(t('steamImporter.notifications.fetchFailed'))
     } finally {
       setIsLoadingGames(false)
@@ -104,7 +104,7 @@ export function SteamImporter(): JSX.Element {
         toast.success(t('steamImporter.notifications.allImported'))
       }
     } catch (error) {
-      console.error('导入失败:', error)
+      console.error('import failure:', error)
       updateProgress({
         current: 0,
         total: 0,
@@ -350,7 +350,7 @@ export function SteamImporter(): JSX.Element {
           </div>
         )}
 
-        {/* 导入完成或错误状态显示，只在状态为 completed 或 error 时显示 */}
+        {/* Import completed or error status display, only displays when the status is completed or error */}
         {(status === 'completed' || status === 'error') && (
           <Alert variant={status === 'error' ? 'destructive' : 'default'}>
             <AlertCircle className="w-4 h-4" />

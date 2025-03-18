@@ -21,14 +21,12 @@ type SteamAppDetailsData = {
     date: string
   }
   developers: string[]
-  publishers: string[] // 发行商
+  publishers: string[]
   genres: Array<{
-    // 游戏类型
     id: string
     description: string
   }>
   categories: Array<{
-    // 游戏分类
     id: number
     description: string
   }>

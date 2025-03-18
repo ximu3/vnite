@@ -1,21 +1,18 @@
-// src/store/attachmentStore.ts
 import { create } from 'zustand'
 
-// 定义附件状态接口
 interface AttachmentInfo {
   timestamp: number
-  error?: boolean // 标记是否有错误
-  errorMessage?: string // 可选的错误信息
+  error?: boolean
+  errorMessage?: string
 }
 
 interface AttachmentState {
-  // 三级嵌套结构：数据库名 -> 文档ID -> 附件ID -> 附件信息
+  // Three-level nested structure: database name -> document ID -> attachment ID -> attachment information
   attachments: Record<string, Record<string, Record<string, AttachmentInfo>>>
 
-  // 更新特定附件的时间戳
+  // Update timestamps for specific attachments
   updateTimestamp: (dbName: string, docId: string, attachmentId: string) => void
 
-  // 设置附件错误状态
   setAttachmentError: (
     dbName: string,
     docId: string,
@@ -24,18 +21,14 @@ interface AttachmentState {
     errorMessage?: string
   ) => void
 
-  // 获取特定附件的信息
   getAttachmentInfo: (dbName: string, docId: string, attachmentId: string) => AttachmentInfo
 
-  // 清除附件错误状态
   clearError: (dbName: string, docId: string, attachmentId: string) => void
 
-  // 批量更新时间戳
   batchUpdateTimestamps: (
     updates: Array<{ dbName: string; docId: string; attachmentId: string }>
   ) => void
 
-  // 清除特定文档的所有附件信息
   clearDocAttachments: (dbName: string, docId: string) => void
 }
 
@@ -46,14 +39,14 @@ export const useAttachmentStore = create<AttachmentState>((set, get) => ({
     set((state) => {
       const newAttachments = { ...state.attachments }
 
-      // 确保嵌套结构存在
+      // Ensure that nested structures exist
       newAttachments[dbName] = newAttachments[dbName] || {}
       newAttachments[dbName][docId] = newAttachments[dbName][docId] || {}
 
-      // 获取现有附件信息或创建新信息
+      // Get information about existing attachments or create new ones
       const currentInfo = newAttachments[dbName][docId][attachmentId] || { timestamp: 0 }
 
-      // 更新时间戳但保留错误状态
+      // Update timestamps but retain error status
       newAttachments[dbName][docId][attachmentId] = {
         ...currentInfo,
         timestamp: Date.now()
@@ -73,18 +66,18 @@ export const useAttachmentStore = create<AttachmentState>((set, get) => ({
     set((state) => {
       const newAttachments = { ...state.attachments }
 
-      // 确保嵌套结构存在
+      // Ensure that nested structures exist
       newAttachments[dbName] = newAttachments[dbName] || {}
       newAttachments[dbName][docId] = newAttachments[dbName][docId] || {}
 
-      // 获取现有附件信息或创建新信息
+      // Get information about existing attachments or create new ones
       const currentInfo = newAttachments[dbName][docId][attachmentId] || { timestamp: Date.now() }
 
-      // 更新错误状态
+      // Update Error Status
       newAttachments[dbName][docId][attachmentId] = {
         ...currentInfo,
         error,
-        errorMessage: error ? errorMessage || '加载失败' : undefined
+        errorMessage: error ? errorMessage || 'failed to load' : undefined
       }
 
       return { attachments: newAttachments }
@@ -94,41 +87,41 @@ export const useAttachmentStore = create<AttachmentState>((set, get) => ({
   getAttachmentInfo: (dbName: string, docId: string, attachmentId: string): AttachmentInfo => {
     const state = get()
 
-    // 检查附件信息是否存在
+    // Checking the existence of attachment information
     if (!state.attachments?.[dbName]?.[docId]?.[attachmentId]) {
-      // 创建默认附件信息
+      // Creating a default attachment message
       const defaultInfo: AttachmentInfo = {
         timestamp: Date.now(),
         error: false
       }
 
-      // 将默认信息保存到 store 中
+      // Save the default information to the store
       set((state) => {
-        // 创建新的状态对象，避免直接修改现有状态
+        // Create new state objects to avoid directly modifying existing state
         const newAttachments = { ...state.attachments }
 
-        // 确保嵌套结构存在
+        // Ensure that nested structures exist
         newAttachments[dbName] = newAttachments[dbName] || {}
         newAttachments[dbName][docId] = newAttachments[dbName][docId] || {}
 
-        // 设置默认附件信息
+        // Setting the default attachment information
         newAttachments[dbName][docId][attachmentId] = defaultInfo
 
         return { attachments: newAttachments }
       })
 
-      // 返回新创建的默认信息
+      // Returns the newly created default information
       return defaultInfo
     }
 
-    // 返回现有附件信息
+    // Return information on existing attachments
     return state.attachments[dbName][docId][attachmentId]
   },
 
   clearError: (dbName: string, docId: string, attachmentId: string): void => {
     set((state) => {
       const currentInfo = state.attachments?.[dbName]?.[docId]?.[attachmentId]
-      if (!currentInfo) return state // 没有找到附件信息
+      if (!currentInfo) return state // No attachment information found
 
       const newAttachments = { ...state.attachments }
 
@@ -149,14 +142,14 @@ export const useAttachmentStore = create<AttachmentState>((set, get) => ({
       const now = Date.now()
 
       updates.forEach(({ dbName, docId, attachmentId }) => {
-        // 确保嵌套结构存在
+        // Ensure that nested structures exist
         newAttachments[dbName] = newAttachments[dbName] || {}
         newAttachments[dbName][docId] = newAttachments[dbName][docId] || {}
 
-        // 获取现有附件信息或创建新信息
+        // Get information about existing attachments or create new ones
         const currentInfo = newAttachments[dbName][docId][attachmentId] || { timestamp: 0 }
 
-        // 更新时间戳但保留错误状态
+        // Update timestamps but retain error status
         newAttachments[dbName][docId][attachmentId] = {
           ...currentInfo,
           timestamp: now
@@ -169,16 +162,16 @@ export const useAttachmentStore = create<AttachmentState>((set, get) => ({
 
   clearDocAttachments: (dbName: string, docId: string): void => {
     set((state) => {
-      // 如果指定的路径不存在，则无需更改
+      // If the specified path does not exist, it does not need to be changed
       if (!state.attachments[dbName] || !state.attachments[dbName][docId]) {
         return state
       }
 
       const newAttachments = { ...state.attachments }
-      // 删除该文档的所有附件信息
+      // Delete all attachment information for the document
       delete newAttachments[dbName][docId]
 
-      // 如果数据库下没有其他文档，也删除数据库条目
+      // If there are no other documents under the database, delete the database entry as well
       if (Object.keys(newAttachments[dbName]).length === 0) {
         delete newAttachments[dbName]
       }

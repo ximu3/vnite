@@ -130,12 +130,12 @@ export const DEFAULT_CONFIG_LOCAL_VALUES = {
     role: 'community'
   },
   sync: {
-    enabled: true,
+    enabled: false,
     mode: 'official',
     officialConfig: {
       auth: {
-        username: 'ximu',
-        password: 'S%3WcHlrlA^PUl'
+        username: '',
+        password: ''
       }
     },
     selfHostedConfig: {

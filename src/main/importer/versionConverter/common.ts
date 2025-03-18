@@ -10,7 +10,7 @@ import { gameDoc, gameLocalDoc, gameCollectionDoc } from '@appTypes/database'
 import { getAppTempPath } from '~/utils'
 import { app } from 'electron'
 
-// v2数据库类型定义
+// v2 Database Type Definition
 interface V2GameMetadata {
   id: string
   name: string
@@ -173,23 +173,23 @@ interface V2Config {
 }
 
 /**
- * 主函数：从zip文件导入V2数据库并转换为V3
- * @param zipFilePath zip文件路径
+ * Import V2 database from zip file and convert to V3
+ * @param zipFilePath zip file path
  */
 export async function convertV2toV3Database(zipFilePath: string): Promise<void> {
-  console.log('开始从ZIP文件导入数据库...')
+  console.log('Start importing database from ZIP file...')
 
-  // 创建临时目录
+  // Creating a Temporary Directory
   const tempDir = getAppTempPath(`v2toV3-${uuidv4()}`)
-  stopSync() // 停止同步
+  stopSync() // desynchronization
   try {
-    // 确保临时目录存在
+    // Ensure that the temporary directory exists
     await fse.ensureDir(tempDir)
 
-    // 解压文件
+    // Unzip the file
     await extractZipFile(zipFilePath, tempDir)
 
-    // 转换数据
+    // Converted data
     await convertGames(tempDir)
     await convertCollections(tempDir)
     await convertConfig(tempDir)
@@ -199,7 +199,7 @@ export async function convertV2toV3Database(zipFilePath: string): Promise<void> 
     console.error('转换过程中发生错误:', error)
     throw error
   } finally {
-    // 清理临时文件
+    // Cleaning up temporary files
     await new Promise((resolve) => setTimeout(resolve, 100))
     await cleanupTempFiles(tempDir)
     fse.removeSync(tempDir)
@@ -209,39 +209,39 @@ export async function convertV2toV3Database(zipFilePath: string): Promise<void> 
 }
 
 /**
- * 解压zip文件到指定目录
+ * Extract the zip file to the specified directory
  */
 async function extractZipFile(zipFilePath: string, targetDir: string): Promise<void> {
-  console.log(`解压文件 ${zipFilePath} 到 ${targetDir}`)
+  console.log(`Unzip the file ${zipFilePath} to ${targetDir}`)
 
   return new Promise<void>((resolve, reject) => {
     fse
       .createReadStream(zipFilePath)
       .pipe(unzipper.Extract({ path: targetDir }))
       .on('error', (err) => {
-        reject(new Error(`解压文件失败: ${err}`))
+        reject(new Error(`Failed to unzip the file: ${err}`))
       })
       .on('close', () => {
-        console.log('文件解压完成')
+        console.log('File decompression complete')
         resolve()
       })
   })
 }
 
 /**
- * 转换游戏数据
+ * Convert game data
  */
 async function convertGames(basePath: string): Promise<void> {
-  console.log('开始转换游戏数据...')
+  console.log('Start converting game data...')
 
   const gamesPath = path.join(basePath, 'games')
   const exists = await fse.pathExists(gamesPath)
   if (!exists) {
-    console.error('游戏目录不存在')
+    console.error('Game directory does not exist')
     return
   }
 
-  // 读取games目录下的所有子目录
+  // Read all subdirectories in the games directory
   const items = await fse.readdir(gamesPath)
   const gameIds: string[] = []
 
@@ -253,25 +253,25 @@ async function convertGames(basePath: string): Promise<void> {
     }
   }
 
-  // 处理每个游戏
+  // Handling each game
   for (const gameId of gameIds) {
     try {
       await convertGame(gameId, path.join(gamesPath, gameId))
     } catch (error) {
-      console.error(`转换游戏 ${gameId} 时出错:`, error)
+      console.error(`Error while converting game ${gameId}:`, error)
     }
   }
 
-  console.log(`成功转换 ${gameIds.length} 个游戏`)
+  console.log(`Successful conversion of ${gameIds.length} games`)
 }
 
 /**
- * 转换单个游戏数据
+ * Convert individual game data
  */
 async function convertGame(gameId: string, gamePath: string): Promise<void> {
-  console.log(`正在转换游戏: ${gameId}`)
+  console.log(`Converting the game: ${gameId}`)
 
-  // 读取游戏相关JSON文件
+  // Read game-related JSON files
   try {
     const metadata = await readJsonFile<V2GameMetadata>(path.join(gamePath, 'metadata.json'))
     const launcher = await readJsonFile<V2GameLauncher>(path.join(gamePath, 'launcher.json'))
@@ -281,7 +281,7 @@ async function convertGame(gameId: string, gamePath: string): Promise<void> {
     const save = await readJsonFile<V2GameSave>(path.join(gamePath, 'save.json'))
     const utils = await readJsonFile<V2GameUtils>(path.join(gamePath, 'utils.json'))
 
-    // 创建v3的游戏文档
+    // Creating a game document for v3
     const gameDoc: Partial<gameDoc> = {
       _id: gameId,
       metadata: {
@@ -304,13 +304,13 @@ async function convertGame(gameId: string, gamePath: string): Promise<void> {
         addDate: record.addDate || '',
         lastRunDate: record.lastRunDate || '',
         score: record.score || -1,
-        playTime: record.playingTime || 0, // 字段名称变化
-        playStatus: record.playStatus || 'unplayed', // 字段名称变化
-        timers: record.timer || [] // 字段名称变化
+        playTime: record.playingTime || 0,
+        playStatus: record.playStatus || 'unplayed',
+        timers: record.timer || []
       },
       save: {
         saveList: {},
-        maxBackups: 7 // 默认值
+        maxBackups: 7
       },
       memory: {
         memoryList: {}
@@ -327,7 +327,7 @@ async function convertGame(gameId: string, gamePath: string): Promise<void> {
       }
     }
 
-    // 处理存档数据
+    // Processing of archived data
     if (save) {
       Object.keys(save).forEach((saveId) => {
         if (!gameDoc.save) gameDoc.save = { saveList: {}, maxBackups: 7 }
@@ -340,7 +340,7 @@ async function convertGame(gameId: string, gamePath: string): Promise<void> {
       })
     }
 
-    // 处理记忆数据
+    // Handling of memorized data
     if (memory && memory.memoryList) {
       Object.keys(memory.memoryList).forEach((memoryId) => {
         if (!gameDoc.memory) gameDoc.memory = { memoryList: {} }
@@ -352,7 +352,7 @@ async function convertGame(gameId: string, gamePath: string): Promise<void> {
       })
     }
 
-    // 创建v3的游戏本地文档
+    // Creating a game local file for v3
     const gameLocalDoc: Partial<gameLocalDoc> = {
       _id: gameId,
       path: {
@@ -365,47 +365,47 @@ async function convertGame(gameId: string, gamePath: string): Promise<void> {
           path: launcher.fileConfig.path,
           workingDirectory: launcher.fileConfig.workingDirectory,
           args: [],
-          monitorMode: launcher.fileConfig.timerMode, // 字段名称变化
-          monitorPath: launcher.fileConfig.timerPath // 字段名称变化
+          monitorMode: launcher.fileConfig.timerMode,
+          monitorPath: launcher.fileConfig.timerPath
         },
         urlConfig: {
           url: launcher.urlConfig.url,
           browserPath: launcher.urlConfig.browserPath,
-          monitorMode: launcher.urlConfig.timerMode, // 字段名称变化
-          monitorPath: launcher.urlConfig.timerPath // 字段名称变化
+          monitorMode: launcher.urlConfig.timerMode,
+          monitorPath: launcher.urlConfig.timerPath
         },
         scriptConfig: {
           workingDirectory: launcher.scriptConfig.workingDirectory,
           command: launcher.scriptConfig.command,
-          monitorMode: launcher.scriptConfig.timerMode, // 字段名称变化
-          monitorPath: launcher.scriptConfig.timerPath // 字段名称变化
+          monitorMode: launcher.scriptConfig.timerMode,
+          monitorPath: launcher.scriptConfig.timerPath
         },
         useMagpie: launcher.useMagpie
       }
     }
 
-    // 保存游戏文档
+    // Save Game Documentation
     await GameDBManager.setGame(gameId, gameDoc)
     await GameDBManager.setGameLocal(gameId, gameLocalDoc)
 
-    // 处理游戏图像
+    // Processing game images
     await processGameImages(gameId, gamePath)
 
-    // 处理游戏存档附件
+    // Handling game archive attachments
     await processGameSaves(gameId, gamePath)
 
-    // 处理游戏记忆图像
+    // Processing Game Memory Images
     await processGameMemories(gameId, gamePath)
 
-    console.log(`游戏 ${gameId} 转换完成`)
+    console.log(`Game ${gameId} Conversion complete`)
   } catch (error) {
-    console.error(`处理游戏 ${gameId} 数据时出错:`, error)
+    console.error(`Error processing game ${gameId} data:`, error)
     throw error
   }
 }
 
 /**
- * 处理游戏图像文件
+ * Processing game image files
  */
 async function processGameImages(gameId: string, gamePath: string): Promise<void> {
   const imageTypes = ['background', 'cover', 'icon', 'logo']
@@ -414,7 +414,7 @@ async function processGameImages(gameId: string, gamePath: string): Promise<void
   for (const type of imageTypes) {
     let imageFound = false
 
-    // 尝试不同的扩展名
+    // Try different extensions
     for (const ext of possibleExtensions) {
       const imagePath = path.join(gamePath, `${type}.${ext}`)
 
@@ -425,22 +425,22 @@ async function processGameImages(gameId: string, gamePath: string): Promise<void
           await GameDBManager.setGameImage(gameId, type as any, imageData)
 
           imageFound = true
-          console.log(`已处理游戏 ${gameId} 的 ${type} 图像`)
+          console.log(`Processed ${type} image for game ${gameId}`)
           break
         } catch (error) {
-          console.error(`处理游戏 ${gameId} 的 ${type} 图像时出错:`, error)
+          console.error(`Error processing ${type} image for game ${gameId}:`, error)
         }
       }
     }
 
     if (!imageFound) {
-      console.log(`游戏 ${gameId} 没有 ${type} 图像`)
+      console.log(`The game ${gameId} has no ${type} images`)
     }
   }
 }
 
 /**
- * 处理游戏存档文件
+ * Handling game archive files
  */
 async function processGameSaves(gameId: string, gamePath: string): Promise<void> {
   const savesDir = path.join(gamePath, 'saves')
@@ -460,9 +460,9 @@ async function processGameSaves(gameId: string, gamePath: string): Promise<void>
             const saveData = await fse.readFile(saveFilePath)
             await GameDBManager.setGameSave(gameId, saveId, saveData)
 
-            console.log(`已处理游戏 ${gameId} 的存档 ${saveId}`)
+            console.log(`Processed archive ${saveId} for game ${gameId}.`)
           } catch (error) {
-            console.error(`处理游戏 ${gameId} 的存档 ${saveId} 时出错:`, error)
+            console.error(`Error handling archive ${saveId} for game ${gameId}:`, error)
           }
         }
       }
@@ -471,7 +471,7 @@ async function processGameSaves(gameId: string, gamePath: string): Promise<void>
 }
 
 /**
- * 处理游戏记忆图像
+ * Processing Game Memory Images
  */
 async function processGameMemories(gameId: string, gamePath: string): Promise<void> {
   const memoriesDir = path.join(gamePath, 'memories')
@@ -492,9 +492,9 @@ async function processGameMemories(gameId: string, gamePath: string): Promise<vo
             const memoryData = await fse.readFile(memoryFilePath)
             await GameDBManager.setGameMemoryImage(gameId, memoryId, memoryData)
 
-            console.log(`已处理游戏 ${gameId} 的记忆图像 ${memoryId}`)
+            console.log(`Memory image of processed game ${gameId} ${memoryId}`)
           } catch (error) {
-            console.error(`处理游戏 ${gameId} 的记忆图像 ${memoryId} 时出错:`, error)
+            console.error(`Error processing memory image ${memoryId} of game ${gameId}:`, error)
           }
         }
       }
@@ -503,23 +503,23 @@ async function processGameMemories(gameId: string, gamePath: string): Promise<vo
 }
 
 /**
- * 转换收藏夹数据
+ * Convert Collections Data
  */
 async function convertCollections(basePath: string): Promise<void> {
-  console.log('开始转换收藏夹数据...')
+  console.log('Start converting collections data...')
 
   const collectionsPath = path.join(basePath, 'collections.json')
 
   const exists = await fse.pathExists(collectionsPath)
   if (!exists) {
-    console.log('没有找到收藏夹数据')
+    console.log('No collections data found')
     return
   }
 
   try {
     const collections = await readJsonFile<V2Collections>(collectionsPath)
 
-    // 处理每个收藏夹
+    // Handling each favorite
     for (const collectionId in collections) {
       const collection = collections[collectionId]
 
@@ -530,41 +530,41 @@ async function convertCollections(basePath: string): Promise<void> {
       }
 
       await GameDBManager.setCollection(collection.id, collectionDoc)
-      console.log(`已转换收藏夹: ${collection.name}`)
+      console.log(`Converted collection: ${collection.name}`)
     }
 
-    console.log(`成功转换 ${Object.keys(collections).length} 个收藏夹`)
+    console.log(`Successfully converted ${Object.keys(collections).length} collections`)
   } catch (error) {
-    console.error('转换收藏夹数据时出错:', error)
+    console.error('Error while converting collections data:', error)
     throw error
   }
 }
 
 /**
- * 转换配置数据
+ * Converting configuration data
  */
 async function convertConfig(basePath: string): Promise<void> {
-  console.log('开始转换配置数据...')
+  console.log('Start converting configuration data...')
 
   const configPath = path.join(basePath, 'games', 'config.json')
 
   const exists = await fse.pathExists(configPath)
   if (!exists) {
-    console.log('没有找到配置数据')
+    console.log('No configuration data found')
     return
   }
 
   try {
     const v2Config = await readJsonFile<V2Config>(configPath)
 
-    // 转换一般配置
+    // Convert the general configuration
     await ConfigDBManager.setConfigValue('general', {
       openAtLogin: v2Config.general.openAtLogin,
       quitToTray: v2Config.general.quitToTray,
-      language: '' // v2没有语言设置
+      language: ''
     })
 
-    // 转换游戏相关配置
+    // Converting game-related configurations
     await ConfigDBManager.setConfigValue('game', {
       scraper: {
         defaultDatasSource: mapDataSourceName(v2Config.scraper.defaultDataSource)
@@ -587,21 +587,21 @@ async function convertConfig(basePath: string): Promise<void> {
         highlightLocalGames: v2Config.others.gameList.highlightLocalGames,
         markLocalGames: v2Config.others.gameList.markLocalGames,
         showRecentGames: v2Config.appearances.gameList.showRecentGamesInGameList,
-        playingStatusOrder: ['unplayed', 'playing', 'finished', 'multiple', 'shelved'] // 默认顺序
+        playingStatusOrder: ['unplayed', 'playing', 'finished', 'multiple', 'shelved']
       },
       gameHeader: {
         showOriginalName: v2Config.appearances.gameHeader.showOriginalNameInGameHeader
       }
     })
 
-    // 转换外观配置
+    // Converting Appearance Configuration
     await ConfigDBManager.setConfigValue('appearances', {
       sidebar: {
         showThemeSwitcher: v2Config.appearances.sidebar.showThemeSwitchInSidebar
       }
     })
 
-    // 转换本地配置 - 游戏关联
+    // Converting Local Configurations - Game Associations
     await ConfigDBManager.setConfigLocalValue('game', {
       linkage: {
         localeEmulator: {
@@ -617,15 +617,15 @@ async function convertConfig(basePath: string): Promise<void> {
       }
     })
 
-    console.log('配置转换完成')
+    console.log('Configuration conversion complete')
   } catch (error) {
-    console.error('转换配置数据时出错:', error)
+    console.error('Error while converting configuration data:', error)
     throw error
   }
 }
 
 /**
- * 映射数据源名称
+ * Mapping Data Source Name
  */
 function mapDataSourceName(source: string): 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' {
   switch (source) {
@@ -640,12 +640,12 @@ function mapDataSourceName(source: string): 'steam' | 'vndb' | 'bangumi' | 'ymga
     case 'igdb':
       return 'igdb'
     default:
-      return 'steam' // 默认返回steam
+      return 'steam'
   }
 }
 
 /**
- * 映射排序字段
+ * Mapping Sorted Fields
  */
 function mapSortField(
   field: string
@@ -668,12 +668,12 @@ function mapSortField(
     case 'playTime':
       return 'record.playTime'
     default:
-      return 'metadata.name' // 默认返回名称
+      return 'metadata.name'
   }
 }
 
 /**
- * 读取JSON文件
+ * Reading JSON files
  */
 async function readJsonFile<T>(filePath: string): Promise<T> {
   const exists = await fse.pathExists(filePath)
@@ -685,21 +685,21 @@ async function readJsonFile<T>(filePath: string): Promise<T> {
     const content = await fse.readFile(filePath, 'utf8')
     return JSON.parse(content) as T
   } catch (error) {
-    throw new Error(`无法解析JSON文件 ${filePath}: ${error}`)
+    throw new Error(`Unable to parse JSON file ${filePath}: ${error}`)
   }
 }
 
 /**
- * 清理临时文件
+ * Cleaning up temporary files
  */
 async function cleanupTempFiles(tempDir: string): Promise<void> {
   try {
     const exists = await fse.pathExists(tempDir)
     if (exists) {
-      console.log(`清理临时文件: ${tempDir}`)
+      console.log(`Cleaning up temporary files: ${tempDir}`)
       await fse.remove(tempDir)
     }
   } catch (error) {
-    console.error(`清理临时文件出错: ${error}`)
+    console.error(`Error clearing temporary files: ${error}`)
   }
 }

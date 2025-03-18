@@ -44,7 +44,7 @@ export function UrlLauncher({ gameId }: { gameId: string }): JSX.Element {
 
   return (
     <div className={cn('grid grid-cols-[120px_1fr] gap-x-5 gap-y-5 items-center')}>
-      {/* URL地址 */}
+      {/* URL address */}
       <div className={cn('whitespace-nowrap select-none')}>
         {t('detail.properties.launcher.url.address')}
       </div>
@@ -52,7 +52,7 @@ export function UrlLauncher({ gameId }: { gameId: string }): JSX.Element {
         <Input className={cn('w-full')} value={url} onChange={(e) => setUrl(e.target.value)} />
       </div>
 
-      {/* 浏览器路径 */}
+      {/* Browser Path */}
       <div className={cn('whitespace-nowrap select-none')}>
         {t('detail.properties.launcher.url.browser')}
       </div>
@@ -68,12 +68,11 @@ export function UrlLauncher({ gameId }: { gameId: string }): JSX.Element {
         </Button>
       </div>
 
-      {/* 分隔符 - 占满整行 */}
       <div className={cn('col-span-2')}>
         <Separator />
       </div>
 
-      {/* 监视器模式 */}
+      {/* monitor mode */}
       <div className={cn('whitespace-nowrap select-none')}>
         {t('detail.properties.launcher.monitor.title')}
       </div>
@@ -99,7 +98,7 @@ export function UrlLauncher({ gameId }: { gameId: string }): JSX.Element {
         </Select>
       </div>
 
-      {/* 监视路径/进程名 */}
+      {/* Monitor path/process name */}
       <div className={cn('whitespace-nowrap select-none')}>
         {['folder', 'file'].includes(monitorMode)
           ? t('detail.properties.launcher.monitor.path')

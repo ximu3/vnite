@@ -50,7 +50,7 @@ export function simulateHotkey(hotkey: string): void {
     // Verify that all key names are valid
     const invalidKey = keys.find((key) => !(key in VK_CODES))
     if (invalidKey) {
-      throw new Error(`无效的键名: ${invalidKey}`)
+      throw new Error(`Invalid key name: ${invalidKey}`)
     }
 
     // Get virtual keycodes for all keys
@@ -66,12 +66,12 @@ export function simulateHotkey(hotkey: string): void {
       keybd_event(vkCode, 0, KEYEVENTF_KEYUP, 0)
     })
 
-    console.log('模拟按键:', {
+    console.log('simulate key:', {
       keys,
       originalHotkey: hotkey
     })
   } catch (error) {
-    console.error('模拟按键失败:', {
+    console.error('Failed to simulate keystrokes:', {
       error,
       hotkey,
       stack: error instanceof Error ? error.stack : undefined
@@ -83,12 +83,12 @@ export function simulateHotkey(hotkey: string): void {
 export function toggleKey(key: string, isDown: boolean): void {
   try {
     if (!(key.toLowerCase() in VK_CODES)) {
-      throw new Error(`无效的键名: ${key}`)
+      throw new Error(`Invalid key name: ${key}`)
     }
     const vkCode = VK_CODES[key.toLowerCase() as keyof typeof VK_CODES]
     keybd_event(vkCode, 0, isDown ? 0 : KEYEVENTF_KEYUP, 0)
   } catch (error) {
-    console.error('切换按键状态失败:', error)
+    console.error('Failed to toggle key state:', error)
     throw error
   }
 }

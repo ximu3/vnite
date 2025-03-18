@@ -9,22 +9,21 @@ export function useConfigState<Path extends Paths<configDocs, { bracketNotation:
 ): [Get<configDocs, Path>, (value: Get<configDocs, Path>) => Promise<void>] {
   const initialValue = useConfigStore.getState().getConfigValue(path)
 
-  // 使用本地状态存储当前值
+  // Use local state to store the current value
   const [localValue, setLocalValue] = useState<Get<configDocs, Path>>(initialValue)
 
-  // 使用 ref 存储最新的本地值
+  // Use ref to store the latest local values
   const localValueRef = useRef(localValue)
   localValueRef.current = localValue
 
-  // 订阅 store 的更改
+  // Changes to the subscription store
   useEffect(() => {
-    // 获取初始值，确保与 store 同步
+    // Get the initial value and make sure it's synchronized with the store
     const currentValue = useConfigStore.getState().getConfigValue(path)
     if (!isEqual(currentValue, localValue)) {
       setLocalValue(currentValue)
     }
 
-    // 订阅 store 的更改
     const unsubscribe = useConfigStore.subscribe((state) => {
       const newValue = state.getConfigValue(path)
       if (!isEqual(newValue, localValueRef.current)) {
@@ -33,17 +32,16 @@ export function useConfigState<Path extends Paths<configDocs, { bracketNotation:
     })
 
     return unsubscribe
-  }, [path]) // 只依赖 path，避免不必要的重新订阅
+  }, [path])
 
-  // 更新函数
   const setValue = useCallback(
     async (newValue: Get<configDocs, Path>) => {
       if (isEqual(newValue, localValue)) return
 
-      // 先更新本地状态以立即响应
+      // Update local state first for immediate response
       setLocalValue(newValue)
 
-      // 然后更新 store
+      // Then update the store
       return useConfigStore.getState().setConfigValue(path, newValue)
     },
     [path, localValue]

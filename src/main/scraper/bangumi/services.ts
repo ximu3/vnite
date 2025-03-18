@@ -28,7 +28,7 @@ export async function searchGamesFromBangumi(gameName: string): Promise<GameList
 
 /**
  * Get game metadata from Bangumi
- * @param bangumiId The id of the game on Bangumi
+ * @param identifier The identifier of the game
  * @returns The metadata for the game
  * @throws An error if the operation fails
  */
@@ -64,9 +64,9 @@ export async function checkGameExistsOnBangumi(bangumiId: string): Promise<boole
 }
 
 /**
- * Get game screenshots from Bangumi
- * @param bangumiId The id of the game on Bangumi
- * @returns A list of screenshots
+ * Get game backgrounds from Bangumi
+ * @param identifier The identifier of the game
+ * @returns A list of backgrounds
  * @throws An error if the operation fails
  */
 export async function getGameBackgroundsFromBangumi(
@@ -83,7 +83,7 @@ export async function getGameBackgroundsFromBangumi(
 
 /**
  * Get game cover from Bangumi
- * @param bangumiId The id of the game on Bangumi
+ * @param identifier The identifier of the game
  * @returns The cover image for the game
  * @throws An error if the operation fails
  */

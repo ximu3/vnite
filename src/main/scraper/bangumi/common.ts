@@ -14,7 +14,7 @@ async function fetchBangumi<T>(
     headers: {
       Accept: 'application/json',
       'User-Agent': 'ximu3/vnite/2.0.0-alpha.0 (https://github.com/ximu3/vnite)',
-      Authorization: 'Bearer l3AoRehijcoerQ4GFheGV6LPmJQhvi1T2ONWEDZd'
+      Authorization: `Bearer ${import.meta.env.VITE_BANGUMI_API_KEY}`
     }
   })
 

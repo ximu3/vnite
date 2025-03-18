@@ -28,16 +28,16 @@ export function setValueByPath(obj: any, path: string, value: any): void {
 
   let current = obj
 
-  // 遍历路径，除了最后一个
+  // Iterate through the path, except for the last
   for (let i = 0; i < pathArray.length - 1; i++) {
     const key = pathArray[i]
 
-    // 如果当前节点不存在或为null，创建新对象
+    // If the current node does not exist or is null, create a new object
     if (current === undefined || current === null) {
       current = {}
     }
 
-    // 如果key不存在，创建新对象
+    // If the key does not exist, create a new object
     if (!(key in current)) {
       current[key] = {}
     }
@@ -45,7 +45,7 @@ export function setValueByPath(obj: any, path: string, value: any): void {
     current = current[key]
   }
 
-  // 设置最后一个路径的值
+  // Set the value of the last path
   const lastKey = pathArray[pathArray.length - 1]
   if (current === undefined || current === null) {
     current = {}

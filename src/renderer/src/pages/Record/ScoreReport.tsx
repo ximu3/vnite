@@ -8,18 +8,17 @@ import { CalendarIcon, ClockIcon, GamepadIcon, Trophy } from 'lucide-react'
 import { cn } from '~/utils'
 import { GamePoster } from './GamePoster'
 import { getGamesByScoreRange } from '~/stores/game/recordUtils'
-import { useGameRegistry, getGameplayTime, getGameStore } from '~/stores/game'
+import { useGameRegistry, getGamePlayTime, getGameStore } from '~/stores/game'
 import { useGameState } from '~/hooks'
 
 import { GameImage } from '@ui/game-image'
 
-// 游戏评分卡片组件
 function GameScoreCard({ gameId }: { gameId: string }): JSX.Element {
   const { t } = useTranslation('record')
   const { gameMetaIndex } = useGameRegistry()
   const gameInfo = gameMetaIndex[gameId] || { name: t('score.gameInfo.unknown') }
   const [score] = useGameState(gameId, 'record.score')
-  const playTime = getGameplayTime(gameId)
+  const playTime = getGamePlayTime(gameId)
 
   return (
     <HoverCard>
@@ -103,7 +102,6 @@ function GameScoreCard({ gameId }: { gameId: string }): JSX.Element {
   )
 }
 
-// 获取游戏状态的中文描述
 function getGamePlayStatus(gameId: string, t: any): string {
   const gameStore = getGameStore(gameId)
   const status = gameStore.getState().data?.record.playStatus as string
@@ -119,7 +117,7 @@ function getGamePlayStatus(gameId: string, t: any): string {
   return statusMap[status] || t('score.playStatus.unknown')
 }
 
-// 评分类别组件
+// Scoring category components
 function ScoreCategory({
   title,
   description,
@@ -167,7 +165,7 @@ function ScoreCategory({
   )
 }
 
-// 主评分报告组件
+// Main Scoring Report Component
 export function ScoreReport(): JSX.Element {
   const { t } = useTranslation('record')
 

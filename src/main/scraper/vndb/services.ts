@@ -30,7 +30,7 @@ export async function searchGamesFromVNDB(gameName: string): Promise<GameList> {
 
 /**
  * Get game metadata from VNDB
- * @param vnId The id of the game on VNDB
+ * @param identifier The identifier of the game
  * @returns The metadata for the game
  * @throws An error if the operation fails
  */
@@ -66,8 +66,8 @@ export async function checkGameExistsOnVNDB(vnId: string): Promise<boolean> {
 }
 
 /**
- * Get game screenshots from VNDB
- * @param vnId The id of the game on VNDB
+ * Get game backgrounds from VNDB
+ * @param identifier The identifier of the game
  * @returns A list of image urls
  * @throws An error if the operation fails
  */
@@ -86,7 +86,7 @@ export async function getGameBackgroundsFromVNDB(identifier: ScraperIdentifier):
 
 /**
  * Get game cover from VNDB
- * @param vnId The id of the game on VNDB
+ * @param identifier The identifier of the game
  * @returns The cover image url
  * @throws An error if the operation fails
  */

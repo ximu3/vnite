@@ -21,7 +21,6 @@ function PlaceHolder(): JSX.Element {
   return <div className={cn('p-3 h-5 rounded-none bg-transparent')}></div>
 }
 
-// 将组件拆分为内部组件和导出组件
 export function AllGameComponent({
   scrollPosition
 }: {
@@ -105,5 +104,4 @@ export function AllGameComponent({
   )
 }
 
-// 使用trackWindowScroll高阶组件包装内部组件
 export const AllGame = trackWindowScroll(AllGameComponent)

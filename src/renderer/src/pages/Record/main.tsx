@@ -7,8 +7,10 @@ import { WeeklyReport } from './WeeklyReport'
 import { MonthlyReport } from './MonthlyReport'
 import { YearlyReport } from './YearlyReport'
 import { ScoreReport } from './ScoreReport'
+import { useTranslation } from 'react-i18next'
 
 export function Record({ className }: { className?: string }): JSX.Element {
+  const { t } = useTranslation('record')
   return (
     <div
       className={cn(
@@ -18,15 +20,15 @@ export function Record({ className }: { className?: string }): JSX.Element {
     >
       <ScrollArea className={cn('w-full h-full px-6 pt-0')}>
         <div className={cn('flex flex-col gap-6')}>
-          <div className={cn('text-2xl font-bold')}>我的游戏记录</div>
+          <div className={cn('text-2xl font-bold')}>{t('title')}</div>
 
           <Tabs defaultValue="overview" className="w-full">
             <TabsList className="grid grid-cols-5 mb-4">
-              <TabsTrigger value="overview">总览</TabsTrigger>
-              <TabsTrigger value="weekly">周报</TabsTrigger>
-              <TabsTrigger value="monthly">月报</TabsTrigger>
-              <TabsTrigger value="yearly">年报</TabsTrigger>
-              <TabsTrigger value="scores">评分报告</TabsTrigger>
+              <TabsTrigger value="overview">{t('tabs.overview')}</TabsTrigger>
+              <TabsTrigger value="weekly">{t('tabs.weekly')}</TabsTrigger>
+              <TabsTrigger value="monthly">{t('tabs.monthly')}</TabsTrigger>
+              <TabsTrigger value="yearly">{t('tabs.yearly')}</TabsTrigger>
+              <TabsTrigger value="scores">{t('tabs.score')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview">

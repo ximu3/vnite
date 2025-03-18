@@ -161,6 +161,7 @@
     "record": {
       "card": {
         "title": "プレイデータ",
+        "label": "プレイ時間",
         "noData": "このゲームをまだプレイしていません。",
         "playStats": "{{days}} 日間で {{totalTime, gameTime}} プレイし、1日あたり平均 {{averageTime, gameTime}} です。",
         "immersion": "{{date, niceDate}} に {{time, gameTime}} 没頭していました。",

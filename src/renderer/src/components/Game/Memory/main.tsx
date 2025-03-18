@@ -60,7 +60,6 @@ export function Memory({ gameId }: { gameId: string }): JSX.Element {
         </Button>
       </div>
       <div className="grid w-full grid-cols-3 gap-x-5 gap-y-5">
-        {/* 第一列 */}
         <div className="flex flex-col gap-5">
           {sortedMemoryIds
             .filter((_, i) => i % 3 === 0)
@@ -77,7 +76,6 @@ export function Memory({ gameId }: { gameId: string }): JSX.Element {
             ))}
         </div>
 
-        {/* 第二列 */}
         <div className="flex flex-col gap-5">
           {sortedMemoryIds
             .filter((_, i) => i % 3 === 1)
@@ -94,7 +92,6 @@ export function Memory({ gameId }: { gameId: string }): JSX.Element {
             ))}
         </div>
 
-        {/* 第三列 */}
         <div className="flex flex-col gap-5">
           {sortedMemoryIds
             .filter((_, i) => i % 3 === 2)

@@ -91,7 +91,7 @@ export function Search({ className }: { className?: string }): JSX.Element {
   return (
     <div className={cn('w-[36vw] h-auto', '3xl:w-[30vw]', className)}>
       <div className={cn('grid grid-cols-[auto_1fr] gap-x-5 gap-y-2 text-sm items-center')}>
-        {/* 数据源选择 */}
+        {/* Data source selection */}
         <div className={cn('whitespace-nowrap select-none')}>
           {t('gameAdder.search.dataSource')}
         </div>
@@ -114,7 +114,7 @@ export function Search({ className }: { className?: string }): JSX.Element {
           </Select>
         </div>
 
-        {/* 游戏名称输入 */}
+        {/* Game Name Input */}
         <div className={cn('whitespace-nowrap select-none')}>{t('gameAdder.search.gameName')}</div>
         <div className={cn('flex flex-row gap-3')}>
           <Input
@@ -131,7 +131,7 @@ export function Search({ className }: { className?: string }): JSX.Element {
           <Button onClick={searchGames}>{t('gameAdder.search.searchButton')}</Button>
         </div>
 
-        {/* 游戏ID输入 */}
+        {/* Game ID Input */}
         <div className={cn('whitespace-nowrap select-none')}>{t('gameAdder.search.gameId')}</div>
         <div className={cn('flex flex-row gap-3')}>
           <Input

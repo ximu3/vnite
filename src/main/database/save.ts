@@ -3,6 +3,7 @@ import path from 'path'
 import { zipFolder, unzipFile, getAppTempPath } from '~/utils'
 import { generateUUID } from '@appUtils'
 import { GameDBManager } from './game'
+import log from 'electron-log/main'
 
 export async function backupGameSave(gameId: string): Promise<void> {
   const saveId = generateUUID()
@@ -37,7 +38,7 @@ export async function backupGameSave(gameId: string): Promise<void> {
       try {
         await fse.copy(pathInGame, path.join(tempFilesPath, backupName))
       } catch (error) {
-        console.error(`Failed to backup ${pathInGame}:`, error)
+        log.error(`Failed to backup ${pathInGame}:`, error)
       }
     })
   )
@@ -66,16 +67,20 @@ export async function restoreGameSave(gameId: string, saveId: string): Promise<v
       try {
         await fse.copy(path.join(tempFilesPath, backupName), pathInGame)
       } catch (error) {
-        console.error(`Failed to restore ${pathInGame}:`, error)
-        // 可以选择抛出错误或进行其他错误处理
+        log.error(`Failed to restore ${pathInGame}:`, error)
       }
     })
   )
 }
 
 export async function deleteGameSave(gameId: string, saveId: string): Promise<void> {
-  const saveList = await GameDBManager.getGameValue(gameId, 'save')
-  delete saveList[saveId]
-  await GameDBManager.setGameValue(gameId, 'save', saveList)
-  await GameDBManager.removeGameSave(gameId, saveId)
+  try {
+    const saveList = await GameDBManager.getGameValue(gameId, 'save')
+    delete saveList[saveId]
+    await GameDBManager.setGameValue(gameId, 'save', saveList)
+    await GameDBManager.removeGameSave(gameId, saveId)
+  } catch (error) {
+    log.error('Error deleting save:', error)
+    throw error
+  }
 }

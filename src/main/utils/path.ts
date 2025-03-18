@@ -63,16 +63,16 @@ export async function setupTempDirectory(): Promise<string> {
     app.on('quit', async () => {
       try {
         await fse.remove(tempPath)
-        console.log('临时目录已清理')
+        console.log('Temporary directory cleared')
       } catch (error) {
-        console.error('清理临时目录失败:', error)
+        console.error('Failed to clean up temporary directory:', error)
       }
     })
 
-    console.log('临时目录已设置:', tempPath)
+    console.log('Temporary directory is set:', tempPath)
     return tempPath
   } catch (error) {
-    console.error('设置临时目录失败:', error)
+    console.error('Failed to set up temporary directory:', error)
     throw error
   }
 }

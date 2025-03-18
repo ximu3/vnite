@@ -29,7 +29,7 @@ export function General(): JSX.Element {
     { value: 'ja', label: '日本語' }
   ]
 
-  // 处理语言变更
+  // Handling of language changes
   const handleLanguageChange = async (value: string): Promise<void> => {
     await setLanguage(value)
     await i18n.changeLanguage(value)
@@ -46,7 +46,7 @@ export function General(): JSX.Element {
       </CardHeader>
       <CardContent>
         <div className={cn('grid grid-cols-[120px_1fr] gap-x-3 gap-y-5 items-center')}>
-          {/* 开机自启动 */}
+          {/* open at login */}
           <div className={cn('whitespace-nowrap select-none self-center')}>
             {t('general.openAtLogin')}
           </div>
@@ -67,7 +67,7 @@ export function General(): JSX.Element {
             />
           </div>
 
-          {/* 语言 */}
+          {/* language */}
           <div className={cn('whitespace-nowrap select-none self-center')}>
             {t('general.language')}
           </div>
@@ -89,7 +89,7 @@ export function General(): JSX.Element {
             </Select>
           </div>
 
-          {/* 主题 */}
+          {/* theme */}
           <div className={cn('whitespace-nowrap select-none self-center')}>
             {t('general.theme')}
           </div>
@@ -112,7 +112,7 @@ export function General(): JSX.Element {
             </Select>
           </div>
 
-          {/* 关闭行为 */}
+          {/* Closing behavior */}
           <div className={cn('whitespace-nowrap select-none self-center')}>
             {t('general.closeMainPanel')}
           </div>

@@ -26,7 +26,7 @@ export class ThemeManager {
     try {
       await fse.writeFile(this.themePath, cssContent, 'utf-8')
     } catch (error) {
-      log.error('保存主题失败:', error)
+      log.error('Failed to save topic:', error)
     }
   }
 
@@ -43,7 +43,7 @@ export class ThemeManager {
         return await themePreset('default')
       }
     } catch (error) {
-      log.error('读取主题失败:', error)
+      log.error('Failed to read topic:', error)
     }
     return null
   }

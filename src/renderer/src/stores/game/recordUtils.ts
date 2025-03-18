@@ -4,7 +4,6 @@ import type { gameDoc } from '@appTypes/database'
 interface WeeklyMostPlayedDay {
   date: string
   playTime: number
-  weekday: string
 }
 
 interface MonthlyMostPlayedDay {
@@ -18,11 +17,11 @@ interface MostPlayedMonth {
 }
 
 /**
- * 计算特定日期的游戏时间（毫秒）
+ * Calculate the game time (in milliseconds) for a specific date
  */
 export function calculateDailyPlayTime(date: Date, timers: gameDoc['record']['timers']): number {
   try {
-    // 确保我们只处理日期部分，不关心时间
+    // Make sure we only deal with the date part and don't care about the time
     const targetDate = new Date(date)
     targetDate.setHours(0, 0, 0, 0)
 
@@ -31,19 +30,19 @@ export function calculateDailyPlayTime(date: Date, timers: gameDoc['record']['ti
 
     let totalPlayTime = 0
 
-    // 遍历所有计时器记录
+    // Iterate over all timer records
     for (const timer of timers) {
       const start = new Date(timer.start)
       const end = new Date(timer.end)
 
-      // 如果计时器记录与目标日期没有重叠，则跳过
+      // If the timer record does not overlap with the target date, it is skipped
       if (end < targetDate || start >= nextDay) continue
 
-      // 计算重叠时间
+      // Calculate overlap time
       const overlapStart = start < targetDate ? targetDate : start
       const overlapEnd = end > nextDay ? nextDay : end
 
-      // 增加总播放时间
+      // Increase total play time
       totalPlayTime += overlapEnd.getTime() - overlapStart.getTime()
     }
 
@@ -55,7 +54,7 @@ export function calculateDailyPlayTime(date: Date, timers: gameDoc['record']['ti
 }
 
 /**
- * 获取指定周的游玩数据
+ * Get play data for a given week
  */
 export function getWeeklyPlayData(date = new Date()): {
   dates: string[]
@@ -65,7 +64,7 @@ export function getWeeklyPlayData(date = new Date()): {
   mostPlayedGames: { gameId: string; playTime: number }[]
 } {
   try {
-    // 计算一周的开始(周一)和结束(周日)
+    // Calculate the beginning (Monday) and end (Sunday) of the week
     const weekStart = new Date(date)
     weekStart.setDate(date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1))
     weekStart.setHours(0, 0, 0, 0)
@@ -74,7 +73,7 @@ export function getWeeklyPlayData(date = new Date()): {
     weekEnd.setDate(weekStart.getDate() + 6)
     weekEnd.setHours(23, 59, 59, 999)
 
-    // 生成这周的日期数组
+    // Generate an array of dates for the week
     const dates: string[] = []
     const current = new Date(weekStart)
     while (current <= weekEnd) {
@@ -82,7 +81,7 @@ export function getWeeklyPlayData(date = new Date()): {
       current.setDate(current.getDate() + 1)
     }
 
-    // 计算每天的游玩时间
+    // Calculate daily play time
     const dailyPlayTime: { [date: string]: number } = {}
     let totalTime = 0
     let mostPlayedDay: WeeklyMostPlayedDay | null = null
@@ -90,39 +89,37 @@ export function getWeeklyPlayData(date = new Date()): {
 
     const { gameIds } = useGameRegistry.getState()
 
-    // 遍历每一天
+    // Every day
     for (const dateStr of dates) {
       const dayDate = new Date(dateStr)
       let dayTotal = 0
 
-      // 遍历所有游戏
+      // Iterate through all the games
       for (const gameId of gameIds) {
         const store = getGameStore(gameId)
         const timers = store.getState().getValue('record.timers') || []
 
-        // 计算该游戏在这一天的游玩时间
+        // Calculate the playtime of the game on this day
         const playTime = calculateDailyPlayTime(dayDate, timers)
         dayTotal += playTime
 
-        // 累加每个游戏的总游玩时间
+        // Accumulate the total play time for each game
         gamePlayTime[gameId] = (gamePlayTime[gameId] || 0) + playTime
       }
 
       dailyPlayTime[dateStr] = dayTotal
       totalTime += dayTotal
 
-      // 更新玩游戏最多的那一天
+      // Update the day you play the most games
       if (mostPlayedDay === null || dayTotal > mostPlayedDay.playTime) {
-        const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
         mostPlayedDay = {
           date: dateStr,
-          playTime: dayTotal,
-          weekday: weekdays[dayDate.getDay()]
+          playTime: dayTotal
         }
       }
     }
 
-    // 获取玩得最多的游戏(按照时间排序)
+    // Get the most played games (in order of time)
     const mostPlayedGames = Object.entries(gamePlayTime)
       .map(([gameId, playTime]) => ({ gameId, playTime }))
       .filter((item) => item.playTime > 0)
@@ -149,7 +146,7 @@ export function getWeeklyPlayData(date = new Date()): {
 }
 
 /**
- * 获取指定月的游玩数据
+ * Get play data for a given month
  */
 export function getMonthlyPlayData(date = new Date()): {
   totalTime: number
@@ -159,11 +156,11 @@ export function getMonthlyPlayData(date = new Date()): {
   mostPlayedGames: { gameId: string; playTime: number }[]
 } {
   try {
-    // 计算月初和月末
+    // Calculation of beginning and end of month
     const monthStart = new Date(date.getFullYear(), date.getMonth(), 1)
     const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59, 999)
 
-    // 生成这个月的日期数组
+    // Generate an array of dates for this month
     const dates: string[] = []
     const current = new Date(monthStart)
     while (current <= monthEnd) {
@@ -171,7 +168,7 @@ export function getMonthlyPlayData(date = new Date()): {
       current.setDate(current.getDate() + 1)
     }
 
-    // 计算每天的游玩时间
+    // Calculate daily play time
     const dailyPlayTime: { [date: string]: number } = {}
     const weeklyPlayTime: { [week: number]: number } = {}
     let totalTime = 0
@@ -180,26 +177,26 @@ export function getMonthlyPlayData(date = new Date()): {
 
     const { gameIds } = useGameRegistry.getState()
 
-    // 遍历每一天
+    // Every day
     for (const dateStr of dates) {
       const dayDate = new Date(dateStr)
       let dayTotal = 0
 
-      // 计算当前日期是该月第几周
+      // Calculate what week of the month the current date is
       const weekOfMonth = Math.ceil(
         (dayDate.getDate() + new Date(dayDate.getFullYear(), dayDate.getMonth(), 1).getDay()) / 7
       )
 
-      // 遍历所有游戏
+      // Iterate through all the games
       for (const gameId of gameIds) {
         const store = getGameStore(gameId)
         const timers = store.getState().getValue('record.timers') || []
 
-        // 计算该游戏在这一天的游玩时间
+        // Calculate the playtime of the game on this day
         const playTime = calculateDailyPlayTime(dayDate, timers)
         dayTotal += playTime
 
-        // 累加每个游戏的总游玩时间
+        // Accumulate the total play time for each game
         gamePlayTime[gameId] = (gamePlayTime[gameId] || 0) + playTime
       }
 
@@ -207,7 +204,7 @@ export function getMonthlyPlayData(date = new Date()): {
       weeklyPlayTime[weekOfMonth] = (weeklyPlayTime[weekOfMonth] || 0) + dayTotal
       totalTime += dayTotal
 
-      // 更新玩游戏最多的那一天
+      // Update the day when you play the most games
       if (mostPlayedDay === null || dayTotal > mostPlayedDay.playTime) {
         mostPlayedDay = {
           date: dateStr,
@@ -216,14 +213,14 @@ export function getMonthlyPlayData(date = new Date()): {
       }
     }
 
-    // 获取玩得最多的游戏
+    // Get the most played games
     const mostPlayedGames = Object.entries(gamePlayTime)
       .map(([gameId, playTime]) => ({ gameId, playTime }))
       .filter((item) => item.playTime > 0)
       .sort((a, b) => b.playTime - a.playTime)
       .slice(0, 3)
 
-    // 将周游玩时间转化为数组
+    // Converting weekly playtime into an array
     const weeklyPlayTimeArray = Object.entries(weeklyPlayTime)
       .map(([week, playTime]) => ({ week: parseInt(week), playTime }))
       .sort((a, b) => a.week - b.week)
@@ -248,7 +245,7 @@ export function getMonthlyPlayData(date = new Date()): {
 }
 
 /**
- * 获取指定年的游玩数据
+ * Get play data for a given year
  */
 export function getYearlyPlayData(year = new Date().getFullYear()): {
   totalTime: number
@@ -259,7 +256,7 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
   gameTypeDistribution: { type: string; playTime: number }[]
 } {
   try {
-    // 计算年初和年末
+    // Calculation of beginning and end of year
     const yearStart = new Date(year, 0, 1)
     const yearEnd = new Date(year, 11, 31, 23, 59, 59, 999)
 
@@ -271,54 +268,54 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
 
     const { gameIds } = useGameRegistry.getState()
 
-    // 初始化月份数据
+    // Initialize month data
     for (let month = 0; month < 12; month++) {
       monthlyPlayTime[month] = 0
       monthlyPlayDays[month] = new Set()
     }
 
-    // 遍历每个游戏
+    // Iterate through each game
     for (const gameId of gameIds) {
       const store = getGameStore(gameId)
       const timers = store.getState().getValue('record.timers') || []
-      // 获取游戏类型，使用数组的第一个元素或默认值
+      // Get the game type, using either the first element of the array or the default value
       const gameGenres = store.getState().getValue('metadata.genres') || []
       const gameType =
         gameGenres.length > 0 ? (gameGenres[0] === '' ? '未分类' : gameGenres[0]) : '未分类'
 
       let gamePlayTimeTotal = 0
 
-      // 遍历每个游玩记录
+      // Traverse each play record
       for (const timer of timers) {
         const start = new Date(timer.start)
         const end = new Date(timer.end)
 
-        // 只处理今年的记录
+        // Processing of this year's records only
         if (start.getFullYear() !== year && end.getFullYear() !== year) continue
 
-        // 确保开始时间不早于年初
+        // Ensure that it starts no earlier than the beginning of the year
         const effectiveStart = start < yearStart ? yearStart : start
-        // 确保结束时间不晚于年末
+        // Ensure closure no later than the end of the year
         const effectiveEnd = end > yearEnd ? yearEnd : end
 
-        // 计算时间差，毫秒
+        // Calculation time difference, milliseconds
         const playTime = effectiveEnd.getTime() - effectiveStart.getTime()
 
         if (playTime <= 0) continue
 
         gamePlayTimeTotal += playTime
 
-        // 记录游玩天数
+        // Record the number of days of play
         const dayStr = effectiveStart.toISOString().split('T')[0]
         const month = effectiveStart.getMonth()
         monthlyPlayDays[month].add(dayStr)
         monthlyPlayTime[month] += playTime
       }
 
-      // 累加到游戏的总时间
+      // Total time accumulated to the game
       gamePlayTime[gameId] = gamePlayTimeTotal
 
-      // 累加到游戏类型的时间
+      // Time accumulated to game type
       if (gamePlayTimeTotal > 0) {
         gameTypeTime[gameType] = (gameTypeTime[gameType] || 0) + gamePlayTimeTotal
       }
@@ -326,7 +323,7 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
       totalTime += gamePlayTimeTotal
     }
 
-    // 找出玩游戏最多的月份
+    // Find out the month with the most games played
     let mostPlayedMonth: MostPlayedMonth | null = null
     for (let month = 0; month < 12; month++) {
       if (mostPlayedMonth === null || monthlyPlayTime[month] > mostPlayedMonth.playTime) {
@@ -337,14 +334,14 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
       }
     }
 
-    // 获取玩得最多的游戏
+    // Get the most played games
     const mostPlayedGames = Object.entries(gamePlayTime)
       .map(([gameId, playTime]) => ({ gameId, playTime }))
       .filter((item) => item.playTime > 0)
       .sort((a, b) => b.playTime - a.playTime)
       .slice(0, 5)
 
-    // 转换为数组格式
+    // Convert to array format
     const monthlyPlayTimeArray = Object.entries(monthlyPlayTime)
       .map(([month, playTime]) => ({ month: parseInt(month), playTime }))
       .sort((a, b) => a.month - b.month)
@@ -353,7 +350,7 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
       .map(([month, days]) => ({ month: parseInt(month), days: days.size }))
       .sort((a, b) => a.month - b.month)
 
-    // 游戏类型分布
+    // Game Type Distribution
     const gameTypeDistribution = Object.entries(gameTypeTime)
       .map(([type, playTime]) => ({ type, playTime }))
       .sort((a, b) => b.playTime - a.playTime)
@@ -380,24 +377,24 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
 }
 
 /**
- * 获取游玩时间分布（按小时）
+ * Get tour time distribution (by hour)
  */
 export function getPlayTimeDistribution(): { hour: number; value: number }[] {
   try {
     const { gameIds } = useGameRegistry.getState()
     const distribution: { [hour: number]: number } = {}
 
-    // 初始化每小时的数据
+    // Initialize hourly data
     for (let hour = 0; hour < 24; hour++) {
       distribution[hour] = 0
     }
 
-    // 遍历每个游戏
+    // Iterate through each game
     for (const gameId of gameIds) {
       const store = getGameStore(gameId)
       const timers = store.getState().getValue('record.timers') || []
 
-      // 遍历每个游玩记录
+      // Traverse each play record
       for (const timer of timers) {
         const start = new Date(timer.start)
         const end = new Date(timer.end)
@@ -406,7 +403,7 @@ export function getPlayTimeDistribution(): { hour: number; value: number }[] {
         while (current < end) {
           const hour = current.getHours()
 
-          // 计算当前小时的游玩时间（毫秒）
+          // Calculate the current hour's play time (in milliseconds)
           const hourEnd = new Date(current)
           hourEnd.setMinutes(59, 59, 999)
 
@@ -415,7 +412,7 @@ export function getPlayTimeDistribution(): { hour: number; value: number }[] {
 
           distribution[hour] += segmentTime
 
-          // 移到下一小时
+          // Move to next hour
           current = new Date(hourEnd.getTime() + 1)
         }
       }
@@ -423,7 +420,7 @@ export function getPlayTimeDistribution(): { hour: number; value: number }[] {
 
     return Object.entries(distribution).map(([hour, time]) => ({
       hour: parseInt(hour),
-      value: time / 3600000 // 转换为小时
+      value: time / 3600000 // Convert to hours
     }))
   } catch (error) {
     console.error('Error in getPlayTimeDistribution:', error)
@@ -432,25 +429,25 @@ export function getPlayTimeDistribution(): { hour: number; value: number }[] {
 }
 
 /**
- * 获取游戏评分排行
+ * Get game ratings ranking
  */
 export function getGameScoreRanking(): { gameId: string; score: number }[] {
   try {
     const { gameIds } = useGameRegistry.getState()
     const gamesWithScores: { gameId: string; score: number }[] = []
 
-    // 遍历每个游戏
+    // Iterate through each game
     for (const gameId of gameIds) {
       const store = getGameStore(gameId)
       const score = store.getState().getValue('record.score') || 0
 
       if (score > 0) {
-        // 只包含有评分的游戏
+        // Includes only rated games
         gamesWithScores.push({ gameId, score })
       }
     }
 
-    // 按评分排序
+    // Sort by rating
     return gamesWithScores.sort((a, b) => b.score - a.score)
   } catch (error) {
     console.error('Error in getGameScoreRanking:', error)
@@ -459,7 +456,7 @@ export function getGameScoreRanking(): { gameId: string; score: number }[] {
 }
 
 /**
- * 获取最近添加的游戏
+ * Get recently added games
  */
 export function getRecentlyAddedGames(count = 5): string[] {
   try {
@@ -473,7 +470,7 @@ export function getRecentlyAddedGames(count = 5): string[] {
 
     // 按添加日期排序
     return gamesWithAddDate
-      .filter((game) => game.addDate) // 过滤掉没有添加日期的游戏
+      .filter((game) => game.addDate) // Filtering out games with no date added
       .sort((a, b) => new Date(b.addDate).getTime() - new Date(a.addDate).getTime())
       .slice(0, count)
       .map((game) => game.gameId)
@@ -484,7 +481,7 @@ export function getRecentlyAddedGames(count = 5): string[] {
 }
 
 /**
- * 获取最近运行的游戏
+ * Get recently run games
  */
 export function getRecentlyPlayedGames(count = 5): string[] {
   try {
@@ -496,9 +493,9 @@ export function getRecentlyPlayedGames(count = 5): string[] {
       return { gameId, lastRunDate }
     })
 
-    // 按最后运行日期排序
+    // Sort by last run date
     return gamesWithLastRunDate
-      .filter((game) => game.lastRunDate) // 过滤掉没有运行日期的游戏
+      .filter((game) => game.lastRunDate) // Filter out games with no run date
       .sort((a, b) => new Date(b.lastRunDate).getTime() - new Date(a.lastRunDate).getTime())
       .slice(0, count)
       .map((game) => game.gameId)
@@ -509,7 +506,7 @@ export function getRecentlyPlayedGames(count = 5): string[] {
 }
 
 /**
- * 获取游戏记忆(memory)数量
+ * Get the number of game memories.
  */
 export function getGameMemoryCount(gameId: string): number {
   try {
@@ -523,7 +520,7 @@ export function getGameMemoryCount(gameId: string): number {
 }
 
 /**
- * 获取游戏存档(save)数量
+ * Getting the number of game saves
  */
 export function getGameSaveCount(gameId: string): number {
   try {
@@ -537,7 +534,7 @@ export function getGameSaveCount(gameId: string): number {
 }
 
 /**
- * 获取最近添加记忆的游戏
+ * Get recently added memory games
  */
 export function getRecentMemoryGames(
   count = 5
@@ -546,7 +543,7 @@ export function getRecentMemoryGames(
     const { gameIds } = useGameRegistry.getState()
     const allMemories: { gameId: string; memoryId: string; date: string }[] = []
 
-    // 遍历每个游戏
+    // Iterate through each game
     for (const gameId of gameIds) {
       const store = getGameStore(gameId)
       const memoryList = store.getState().getValue('memory.memoryList')
@@ -562,7 +559,7 @@ export function getRecentMemoryGames(
       }
     }
 
-    // 按日期排序
+    // Sort by date
     return allMemories
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
       .slice(0, count)
@@ -578,18 +575,18 @@ export function getGamesByScoreRange(minScore: number, maxScore: number): string
     const { gameIds } = useGameRegistry.getState()
     const gamesInRange: string[] = []
 
-    // 遍历每个游戏
+    // Iterate through each game
     for (const gameId of gameIds) {
       const store = getGameStore(gameId)
       const score = store.getState().getValue('record.score') || 0
 
-      // 筛选指定评分范围的游戏
+      // Filtering games with a specified rating range
       if (score >= minScore && score <= maxScore) {
         gamesInRange.push(gameId)
       }
     }
 
-    // 按评分降序排序
+    // Sort by rating in descending order
     return gamesInRange.sort((a, b) => {
       const scoreA = getGameStore(a).getState().getValue('record.score') || 0
       const scoreB = getGameStore(b).getState().getValue('record.score') || 0

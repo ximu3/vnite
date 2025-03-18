@@ -8,75 +8,106 @@ import {
 } from '@appTypes/database'
 import type { Get, Paths } from 'type-fest'
 import { getValueByPath } from '@appUtils'
+import log from 'electron-log/main'
 
 export class ConfigDBManager {
   private static readonly DB_NAME = 'config'
 
   static async getAllConfigs(): Promise<configDocs> {
-    return (await DBManager.getAllDocs(this.DB_NAME)) as configDocs
+    try {
+      return (await DBManager.getAllDocs(this.DB_NAME)) as configDocs
+    } catch (error) {
+      log.error('Error getting all configs:', error)
+      throw error
+    }
   }
 
   static async getAllConfigLocal(): Promise<configLocalDocs> {
-    return (await DBManager.getAllDocs(`${this.DB_NAME}-local`)) as configLocalDocs
+    try {
+      return (await DBManager.getAllDocs(`${this.DB_NAME}-local`)) as configLocalDocs
+    } catch (error) {
+      log.error('Error getting all local configs:', error)
+      throw error
+    }
   }
 
   static async getConfigValue<Path extends Paths<configDocs, { bracketNotation: true }>>(
     path: Path
   ): Promise<Get<configDocs, Path>> {
-    // 直接分割路径获取 docId 和剩余路径
-    const [docId, ...restPath] = path.split('.')
+    try {
+      // Split path to get docId and remaining path
+      const [docId, ...restPath] = path.split('.')
 
-    // 构造剩余路径字符串，保持方括号表示法
-    const remainingPath = restPath.length > 0 ? restPath.join('.') : '#all'
+      // Construct the remaining path string
+      const remainingPath = restPath.length > 0 ? restPath.join('.') : '#all'
 
-    return (await DBManager.getValue(
-      this.DB_NAME,
-      docId,
-      remainingPath,
-      getValueByPath(DEFAULT_CONFIG_VALUES, path)
-    )) as Get<configDocs, Path>
+      return (await DBManager.getValue(
+        this.DB_NAME,
+        docId,
+        remainingPath,
+        getValueByPath(DEFAULT_CONFIG_VALUES, path)
+      )) as Get<configDocs, Path>
+    } catch (error) {
+      log.error('Error getting config value:', error)
+      throw error
+    }
   }
 
   static async setConfigValue<Path extends Paths<configDocs, { bracketNotation: true }>>(
     path: Path,
     value: Get<configDocs, Path>
   ): Promise<void> {
-    // 直接分割路径获取 docId 和剩余路径
-    const [docId, ...restPath] = path.split('.')
+    try {
+      // Split path to get docId and remaining path
+      const [docId, ...restPath] = path.split('.')
 
-    // 构造剩余路径字符串，保持方括号表示法
-    const remainingPath = restPath.length > 0 ? restPath.join('.') : '#all'
+      // Constructs the remaining path string
+      const remainingPath = restPath.length > 0 ? restPath.join('.') : '#all'
 
-    await DBManager.setValue(this.DB_NAME, docId, remainingPath, value as any)
+      await DBManager.setValue(this.DB_NAME, docId, remainingPath, value as any)
+    } catch (error) {
+      log.error('Error setting config value:', error)
+      throw error
+    }
   }
 
   static async getConfigLocalValue<Path extends Paths<configLocalDocs, { bracketNotation: true }>>(
     path: Path
   ): Promise<Get<configLocalDocs, Path>> {
-    // 直接分割路径获取 docId 和剩余路径
-    const [docId, ...restPath] = path.split('.')
+    try {
+      // Split path to get docId and remaining path
+      const [docId, ...restPath] = path.split('.')
 
-    // 构造剩余路径字符串，保持方括号表示法
-    const remainingPath = restPath.length > 0 ? restPath.join('.') : '#all'
+      // Constructs the remaining path string
+      const remainingPath = restPath.length > 0 ? restPath.join('.') : '#all'
 
-    return (await DBManager.getValue(
-      `${this.DB_NAME}-local`,
-      docId,
-      remainingPath,
-      getValueByPath(DEFAULT_CONFIG_LOCAL_VALUES, path)
-    )) as Get<configLocalDocs, Path>
+      return (await DBManager.getValue(
+        `${this.DB_NAME}-local`,
+        docId,
+        remainingPath,
+        getValueByPath(DEFAULT_CONFIG_LOCAL_VALUES, path)
+      )) as Get<configLocalDocs, Path>
+    } catch (error) {
+      log.error('Error getting local config value:', error)
+      throw error
+    }
   }
 
   static async setConfigLocalValue<Path extends Paths<configLocalDocs, { bracketNotation: true }>>(
     path: Path,
     value: Get<configLocalDocs, Path>
   ): Promise<void> {
-    // 直接分割路径获取 docId 和剩余路径
-    const [docId, ...restPath] = path.split('.')
+    try {
+      // Split path to get docId and remaining path
+      const [docId, ...restPath] = path.split('.')
 
-    // 构造剩余路径字符串，保持方括号表示法
-    const remainingPath = restPath.length > 0 ? restPath.join('.') : '#all'
+      // Construct the remaining path string
+      const remainingPath = restPath.length > 0 ? restPath.join('.') : '#all'
 
-    await DBManager.setValue(`${this.DB_NAME}-local`, docId, remainingPath, value as any)
+      await DBManager.setValue(`${this.DB_NAME}-local`, docId, remainingPath, value as any)
+    } catch (error) {
+      log.error('Error setting local config value:', error)
+      throw error
+    }
   }
 }

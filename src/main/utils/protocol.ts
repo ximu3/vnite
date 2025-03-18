@@ -6,20 +6,20 @@ export function setupProtocols(): void {
   protocol.handle('attachment', async (request: Request) => {
     try {
       const url = new URL(request.url)
-      const dbName = url.host // 关键修改点
+      const dbName = url.host
 
-      // 处理路径部分
+      // Processing path sections
       const decodedPath = decodeURIComponent(url.pathname)
       const pathSegments = decodedPath.split('/').filter((segment) => segment !== '')
 
-      // 验证路径有效性
+      // Verify path validity
       if (pathSegments.length < 2) {
-        throw new Error(`路径段不足：${decodedPath}`)
+        throw new Error(`Insufficient route segments：${decodedPath}`)
       }
 
-      // 提取文档ID和附件路径
+      // Extract document IDs and attachment paths
       const [docId, ...attachmentParts] = pathSegments
-      const attachmentId = attachmentParts.join('/').split('?')[0] // 移除查询参数
+      const attachmentId = attachmentParts.join('/').split('?')[0] // Remove Query Parameters
 
       const isAttachmentExists = await DBManager.checkAttachment(dbName, docId, attachmentId)
       if (!isAttachmentExists) {

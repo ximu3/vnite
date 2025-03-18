@@ -21,19 +21,17 @@ export function GameNav({
   groupId: string
   scrollPosition?: { x: number; y: number }
 }): JSX.Element {
-  // 保留基本组件状态
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
   const [highlightLocalGames] = useConfigState('game.gameList.highlightLocalGames')
   const [markLocalGames] = useConfigState('game.gameList.markLocalGames')
 
-  // 对话框状态
+  // dialog box state
   const [isAttributesDialogOpen, setIsAttributesDialogOpen] = React.useState(false)
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
   const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = React.useState(false)
   const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = React.useState(false)
 
-  // 只订阅当前游戏的选中状态和批量模式状态
   const isSelected = useGameBatchEditorStore((state) => state.selectedGamesMap[gameId])
   const isBatchMode = useGameBatchEditorStore((state) => state.isBatchMode)
 
@@ -42,7 +40,6 @@ export function GameNav({
   const handleGameClick = (event: React.MouseEvent): void => {
     event.preventDefault()
 
-    // 在函数内部获取最新状态和方法，而不是在组件顶层订阅
     const store = useGameBatchEditorStore.getState()
     const { addGameId, removeGameId, clearGameIds, lastSelectedId, setLastSelectedId, gameIds } =
       store
@@ -113,7 +110,6 @@ export function GameNav({
               )}
               to={`./games/${gameId}/${groupId}`}
             >
-              {/* 内容保持不变... */}
               <div className={cn('flex flex-row gap-2 items-center w-full')}>
                 <div className={cn('flex items-center')}>
                   <GameImage
@@ -139,7 +135,6 @@ export function GameNav({
             </Nav>
           </div>
         </ContextMenuTrigger>
-        {/* 上下文菜单也可以使用 getState 优化 */}
         {isBatchMode ? (
           <BatchGameNavCM
             openAttributesDialog={() => setIsAttributesDialogOpen(true)}
@@ -156,7 +151,6 @@ export function GameNav({
         )}
       </ContextMenu>
 
-      {/* 对话框保持不变... */}
       {isAttributesDialogOpen && (
         <AttributesDialog gameId={gameId} setIsOpen={setIsAttributesDialogOpen} />
       )}

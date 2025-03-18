@@ -26,7 +26,6 @@ export interface GameCollectionState {
   initializeStore: (data: GameCollectionState['documents']) => void
   setDocument: (docId: string, data: gameCollectionDoc) => void
 
-  // CollectionsHook 的属性和方法
   addCollection: (name: string, gameId?: string[]) => Promise<string>
   removeCollection: (id: string) => void
   renameCollection: (id: string, name: string) => void
@@ -96,7 +95,6 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
       }
     }))
 
-    // 异步更新本地文档
     await syncTo('game-collection', collectionId, get().documents[collectionId])
   },
 
@@ -106,7 +104,6 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
       initialized: true
     }),
 
-  // CollectionsHook 的方法
   addCollection: async (name: string, gameIds?: string[]): Promise<string> => {
     try {
       const id = await ipcInvoke<string>('generate-uuid')
@@ -213,7 +210,7 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
         const insertOffset = edge === 'back' ? 1 : 0
         const newDocuments = { ...state.documents }
         const collection = newDocuments[collectionId]
-        if (!collection) return state // Or handle the error as you see fit
+        if (!collection) return state
         const games = [...collection.games]
 
         const [srcKey] = games.splice(games.indexOf(srcId), 1)

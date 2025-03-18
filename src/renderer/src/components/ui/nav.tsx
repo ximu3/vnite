@@ -39,7 +39,7 @@ export function Nav({
               ? 'bg-accent text-accent-foreground border-[1px] border-border'
               : 'hover:bg-accent hover:text-accent-foreground bg-background text-background-foreground border-[1px] border-border'
             break
-          default: // 'default'
+          default:
             variantStyles = isActive
               ? 'bg-primary text-primary-foreground shadow-md'
               : 'hover:bg-primary hover:text-primary-foreground'

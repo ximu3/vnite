@@ -89,9 +89,9 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
       </CardHeader>
       <CardContent>
         <div className={cn('flex flex-col gap-5')}>
-          {/* 网格布局部分 - 路径设置 */}
+          {/* Path Setting */}
           <div className={cn('grid grid-cols-[120px_1fr] gap-x-3 gap-y-5 items-center')}>
-            {/* 游戏路径 */}
+            {/* Game Path */}
             <div className={cn('whitespace-nowrap select-none self-center')}>
               {t('detail.properties.path.gamePath')}
             </div>
@@ -106,7 +106,7 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
               </Button>
             </div>
 
-            {/* 保存路径 */}
+            {/* Save Path */}
             <div className={cn('whitespace-nowrap select-none self-start pt-2')}>
               {t('detail.properties.path.savePath')}
             </div>
@@ -143,7 +143,7 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
 
           <Separator />
 
-          {/* 网格布局外的最大备份设置 */}
+          {/* Maximum Backup Settings */}
           <div className={cn('flex flex-row gap-5 items-center justify-start text-sm')}>
             <div className={cn('whitespace-nowrap select-none')}>
               {t('detail.properties.path.maxBackups')}

@@ -48,7 +48,7 @@ export function FileLauncher({ gameId }: { gameId: string }): JSX.Element {
 
   return (
     <div className={cn('grid grid-cols-[120px_1fr] gap-x-5 gap-y-5 items-center')}>
-      {/* 文件路径 */}
+      {/* file path */}
       <div className={cn('whitespace-nowrap select-none')}>
         {t('detail.properties.launcher.file.path')}
       </div>
@@ -59,7 +59,7 @@ export function FileLauncher({ gameId }: { gameId: string }): JSX.Element {
         </Button>
       </div>
 
-      {/* 工作目录 */}
+      {/* Work Directory */}
       <div className={cn('whitespace-nowrap select-none')}>
         {t('detail.properties.launcher.file.workingDirectory')}
       </div>

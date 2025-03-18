@@ -1,5 +1,3 @@
-// types.ts
-// IGDB API 的响应类型定义
 export interface IGDBCompany {
   id: number
   name: string
@@ -29,7 +27,7 @@ export interface IGDBWebsite {
   trusted: boolean
 }
 
-// 搜索响应的单个游戏项
+// Search for individual game items in response
 export interface IGDBGameBasic {
   id: number
   name: string
@@ -37,7 +35,7 @@ export interface IGDBGameBasic {
   involved_companies?: IGDBInvolvedCompany[]
 }
 
-// 完整的游戏详情
+// Full game details
 export interface IGDBGameDetailed extends IGDBGameBasic {
   summary?: string
   genres?: IGDBGenre[]
@@ -45,11 +43,11 @@ export interface IGDBGameDetailed extends IGDBGameBasic {
   websites?: IGDBWebsite[]
 }
 
-// API 响应类型
+// API Response Type
 export type IGDBSearchResponse = IGDBGameBasic[]
 export type IGDBGameResponse = IGDBGameDetailed[]
 
-// 截图响应
+// Screenshot Response
 export interface IGDBScreenshot {
   id: number
   game: number
@@ -59,7 +57,7 @@ export interface IGDBScreenshot {
   image_id: string
 }
 
-// 封面响应
+// Cover Response
 export interface IGDBCover {
   id: number
   game: number
@@ -72,7 +70,7 @@ export interface IGDBCover {
 export type IGDBScreenshotResponse = IGDBScreenshot[]
 export type IGDBCoverResponse = IGDBCover[]
 
-// 网站类别枚举
+// Enumeration of website categories
 export enum IGDBWebsiteCategory {
   OFFICIAL = 1,
   WIKIA = 2,

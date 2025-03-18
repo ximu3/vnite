@@ -9,17 +9,17 @@ interface GameMetaInfo {
 }
 
 interface GameRegistry {
-  // 只存储游戏ID和最小元数据，不存储完整数据
+  // Stores only the game ID and minimal metadata, not the full data
   gameIds: string[]
   gameMetaIndex: Record<string, GameMetaInfo>
 
-  // 注册表管理方法
+  // Registry Management Methods
   registerGame: (gameId: string, metaInfo: GameMetaInfo) => void
   unregisterGame: (gameId: string) => void
   setGameIds: (ids: string[]) => void
   updateGameMeta: (gameId: string, metaInfo: Partial<GameMetaInfo>) => void
 
-  // 初始化状态
+  // initialization state
   initialized: boolean
   setInitialized: (value: boolean) => void
 }

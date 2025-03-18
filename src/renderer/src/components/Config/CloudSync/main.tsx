@@ -47,12 +47,11 @@ export function CloudSync(): JSX.Element {
   const [usedQuota, setUsedQuota] = useState(0)
   const [storagePercentage, setStoragePercentage] = useState(0)
 
-  // 获取存储使用情况
+  // Getting Storage Usage
   useEffect(() => {
     if (enabled && userName) {
       const fetchStorageInfo = async (): Promise<void> => {
         try {
-          // 这里应该替换为实际的API调用
           const dbSize = (await ipcInvoke('calculate-db-size')) as number
           if (dbSize) {
             setUsedQuota(dbSize)
@@ -66,7 +65,7 @@ export function CloudSync(): JSX.Element {
     }
   }, [enabled, userName, t])
 
-  // 计算存储百分比
+  // Calculate storage percentage
   useEffect(() => {
     if (totalQuota > 0) {
       setStoragePercentage((usedQuota / totalQuota) * 100)
@@ -75,7 +74,7 @@ export function CloudSync(): JSX.Element {
     }
   }, [usedQuota, totalQuota])
 
-  // 格式化存储大小
+  // Formatted Storage Size
   const formatStorage = (bytes: number): string => {
     if (bytes === 0) return '0 B'
 
@@ -221,7 +220,7 @@ export function CloudSync(): JSX.Element {
         </CardHeader>
         <CardContent>
           <div className={cn('space-y-5')}>
-            {/* 启用/禁用开关 - 网格布局 */}
+            {/* Enable/Disable Switch */}
             <div className={cn('grid grid-cols-[1fr_auto] gap-5 items-center')}>
               <div className={cn('whitespace-nowrap select-none')}>{t('cloudSync.enable')}</div>
               <Switch checked={enabled} onCheckedChange={setEnabled} />
@@ -229,7 +228,7 @@ export function CloudSync(): JSX.Element {
 
             {enabled && (
               <>
-                {/* 同步模式选择 - 网格布局 */}
+                {/* Synchronization mode selection */}
                 <div className={cn('grid grid-cols-[1fr_auto] gap-5 items-center')}>
                   <div className={cn('whitespace-nowrap select-none')}>
                     {t('cloudSync.syncMode')}
@@ -252,7 +251,7 @@ export function CloudSync(): JSX.Element {
               </>
             )}
 
-            {/* 官方模式UI */}
+            {/* Official Mode UI */}
             {enabled && syncMode === 'official' && (
               <div className={cn('flex flex-col gap-4')}>
                 {!userName ? (
@@ -346,7 +345,6 @@ export function CloudSync(): JSX.Element {
                             </span>
                           </div>
 
-                          {/* 自定义进度条，替代Progress组件 */}
                           <div className="relative w-full h-2.5 bg-muted/60 rounded-full overflow-hidden">
                             <div
                               className={cn(
@@ -357,7 +355,6 @@ export function CloudSync(): JSX.Element {
                             ></div>
                           </div>
 
-                          {/* 添加使用百分比显示 */}
                           <div className="flex justify-end mt-1">
                             <span className="text-xs text-muted-foreground">
                               {storagePercentage.toFixed(1)}% {t('cloudSync.official.used')}
@@ -371,7 +368,7 @@ export function CloudSync(): JSX.Element {
               </div>
             )}
 
-            {/* 自托管模式UI - 转换为网格布局 */}
+            {/* Self-hosted mode UI */}
             {enabled && syncMode === 'selfHosted' && (
               <Card className="border shadow-sm border-muted">
                 <CardContent className="pt-6">
@@ -392,7 +389,7 @@ export function CloudSync(): JSX.Element {
 
                     <Separator />
 
-                    {/* 自托管表单项 - 网格布局 */}
+                    {/* Self-hosted form items */}
                     <div className="grid grid-cols-[auto_1fr] gap-x-5 gap-y-4 items-center">
                       <div className="flex items-center gap-2 select-none whitespace-nowrap">
                         <HardDrive className="w-4 h-4" />
@@ -434,7 +431,6 @@ export function CloudSync(): JSX.Element {
                         />
                       </div>
 
-                      {/* 跨越两列的信息提示 */}
                       <div className="col-span-2 pt-2 text-xs text-muted-foreground">
                         <p className="flex items-center gap-1">
                           <InfoIcon className="w-3.5 h-3.5" />
@@ -454,7 +450,7 @@ export function CloudSync(): JSX.Element {
               </Card>
             )}
 
-            {/* 保存按钮 */}
+            {/* Save button */}
             {enabled && (
               <div className={cn('flex justify-end pt-2')}>
                 <Button onClick={updateCloudSyncConfig}>{t('ui:common.save')}</Button>

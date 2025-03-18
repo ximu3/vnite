@@ -31,7 +31,7 @@ export async function searchGamesFromSteam(gameName: string): Promise<GameList> 
 
 /**
  * Get game metadata from Steam
- * @param appId The app id of the game on Steam
+ * @param identifier The identifier of the game
  * @returns The metadata for the game
  * @throws An error if the operation fails
  */
@@ -67,9 +67,9 @@ export async function checkGameExistsOnSteam(appId: string): Promise<boolean> {
 }
 
 /**
- * Get game screenshots from Steam
- * @param appId The app id of the game on Steam
- * @returns A list of screenshots
+ * Get game backgrounds from Steam
+ * @param identifier The identifier of the game
+ * @returns A list of backgrounds
  * @throws An error if the operation fails
  */
 export async function getGameBackgroundsFromSteam(
@@ -86,7 +86,7 @@ export async function getGameBackgroundsFromSteam(
 
 /**
  * Get the cover of the game from Steam
- * @param appId The app id of the game on Steam
+ * @param identifier The identifier of the game
  * @returns The cover of the game
  * @throws An error if the operation fails
  */
@@ -105,7 +105,7 @@ export async function getGameCoverFromSteam(identifier: ScraperIdentifier): Prom
 
 /**
  * Get the logo of the game from Steam
- * @param appId The app id of the game on Steam
+ * @param identifier The identifier of the game
  * @returns The logo of the game
  * @throws An error if the operation fails
  */

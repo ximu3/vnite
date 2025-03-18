@@ -9,21 +9,14 @@ import { CartesianGrid, XAxis, YAxis, Area, AreaChart } from 'recharts'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
 
 import { GameRankingItem } from './GameRankingItem'
-import {
-  getWeeklyPlayData
-  // 移除不再使用的函数导入
-  // formatChineseDate,
-  // formatPlayTimeWithUnit
-} from '~/stores/game/recordUtils'
+import { getWeeklyPlayData } from '~/stores/game/recordUtils'
 
 export function WeeklyReport(): JSX.Element {
-  // 使用record命名空间
   const { t } = useTranslation('record')
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const weekData = getWeeklyPlayData(selectedDate)
 
-  // 上一周/下一周
   const goToPreviousWeek = (): void => {
     const prevWeek = new Date(selectedDate)
     prevWeek.setDate(selectedDate.getDate() - 7)
@@ -36,7 +29,7 @@ export function WeeklyReport(): JSX.Element {
     setSelectedDate(nextWeek)
   }
 
-  // 格式化周的日期范围
+  // Formatting weekly date ranges
   const weekStart = new Date(weekData.dates[0])
   const weekEnd = new Date(weekData.dates[weekData.dates.length - 1])
   const weekRange = t('weekly.dateRange', {
@@ -44,7 +37,6 @@ export function WeeklyReport(): JSX.Element {
     endDate: weekEnd
   })
 
-  // 获取星期几的本地化名称
   const getLocalizedWeekday = (dayIndex: number): string => {
     const weekdayKeys = [
       'weekly.weekdays.sunday',
@@ -58,18 +50,17 @@ export function WeeklyReport(): JSX.Element {
     return t(weekdayKeys[dayIndex])
   }
 
-  // 转换每日游戏时间为图表数据
+  // Converting daily game time to graphical data
   const dailyChartData = weekData.dates.map((date) => {
     const dayDate = new Date(date)
     return {
       date,
       weekday: getLocalizedWeekday(dayDate.getDay()),
-      playTime: (weekData.dailyPlayTime[date] || 0) / 60000, // 转换为分钟
-      fullDate: date // 存储原始日期用于格式化
+      playTime: (weekData.dailyPlayTime[date] || 0) / 60000, // Convert to minutes
+      fullDate: date
     }
   })
 
-  // Chart配置
   const chartConfig = {
     playTime: {
       label: t('overview.stats.totalPlayTime'),
@@ -77,7 +68,6 @@ export function WeeklyReport(): JSX.Element {
     }
   }
 
-  // 游戏时间格式化函数
   const formatGameTime = (time: number): string => {
     return t('utils:format.gameTime', { time })
   }

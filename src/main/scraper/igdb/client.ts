@@ -1,6 +1,6 @@
 import { IGDBAuthConfig, IGDBAuthManager } from './auth'
 
-// IGDB API 客户端
+// IGDB API Client
 class IGDBClient {
   private authManager: IGDBAuthManager
   private baseUrl = 'https://api.igdb.com/v4'
@@ -20,12 +20,12 @@ class IGDBClient {
       })
 
       if (!response.ok) {
-        throw new Error(`IGDB API 错误: ${response.status} ${response.statusText}`)
+        throw new Error(`IGDB API Error: ${response.status} ${response.statusText}`)
       }
 
       return response.json()
     } catch (error) {
-      console.error(`IGDB API 请求失败 (${endpoint}):`, error)
+      console.error(`IGDB API request failed (${endpoint}):`, error)
       throw error
     }
   }
@@ -45,7 +45,7 @@ export function initIGDBClient(config: IGDBAuthConfig): IGDBClient {
 // Get Client Instance
 export function getIGDBClient(): IGDBClient {
   if (!igdbClient) {
-    throw new Error('IGDB 客户端未初始化')
+    throw new Error('IGDB client not initialized')
   }
   return igdbClient
 }

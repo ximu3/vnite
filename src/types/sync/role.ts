@@ -3,7 +3,6 @@ export enum UserRole {
   ADMIN = 'admin'
 }
 
-// 用户配额定义
 export interface UserQuota {
   maxStorage: number
 }
@@ -13,7 +12,6 @@ interface RoleQuotas {
   [UserRole.ADMIN]: UserQuota
 }
 
-// 角色对应的配额
 export const ROLE_QUOTAS: RoleQuotas = {
   community: {
     maxStorage: 300 * 1024 * 1024

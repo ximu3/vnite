@@ -5,7 +5,7 @@ import { useGameRegistry } from './gameRegistry'
 import type { Get, Paths } from 'type-fest'
 import { syncTo } from '../utils'
 
-// 单个游戏 store 的类型定义
+// Type definitions for individual game stores
 export interface SingleGameState {
   data: gameDoc | null
   initialized: boolean
@@ -24,13 +24,11 @@ export interface SingleGameState {
   getData: () => gameDoc | null
 }
 
-// 正确定义 store 类型
 type GameStore = UseBoundStore<StoreApi<SingleGameState>>
 
-// 游戏 store 缓存
 const gameStores: Record<string, GameStore> = {}
 
-// 提取基本元数据信息
+// Extract basic metadata information
 function extractMetaInfo(data: gameDoc): {
   name: string
   genres?: string[]
@@ -47,7 +45,7 @@ function extractMetaInfo(data: gameDoc): {
   }
 }
 
-// 游戏 store 创建函数
+// Game Store Create Functions
 export function getGameStore(gameId: string): GameStore {
   if (!gameStores[gameId]) {
     gameStores[gameId] = create<SingleGameState>((set, get) => ({
@@ -71,20 +69,20 @@ export function getGameStore(gameId: string): GameStore {
         path: Path,
         value: Get<gameDoc, Path>
       ): Promise<void> => {
-        // 创建当前数据的深拷贝
+        // Create a deep copy of the current data
         const currentData = get().data ? JSON.parse(JSON.stringify(get().data)) : {}
 
-        // 检查值是否真的变化了
+        // Check if the value has actually changed
         const currentValue = getValueByPath(currentData, path)
         if (JSON.stringify(currentValue) === JSON.stringify(value)) {
-          return // 无变化，跳过更新
+          return // No change, skip update
         }
 
-        // 更新本地数据
+        // Updating local data
         setValueByPath(currentData, path, value)
         set({ data: currentData })
 
-        // 更新元数据索引
+        // Updating the metadata index
         const metaFields = [
           'metadata.name',
           'metadata.genre',
@@ -96,7 +94,6 @@ export function getGameStore(gameId: string): GameStore {
           useGameRegistry.getState().updateGameMeta(gameId, extractMetaInfo(currentData))
         }
 
-        // 异步更新到数据库
         await syncTo('game', gameId, currentData)
       },
 
@@ -106,7 +103,7 @@ export function getGameStore(gameId: string): GameStore {
           initialized: true
         })
 
-        // 更新注册表
+        // Updating the registry
         useGameRegistry.getState().registerGame(gameId, extractMetaInfo(data))
       },
 
@@ -117,14 +114,14 @@ export function getGameStore(gameId: string): GameStore {
   return gameStores[gameId]
 }
 
-// 批量初始化游戏 store
+// Batch Initialization Game Store
 export function initializeGameStores(documents: Record<string, gameDoc>): void {
   const gameIds = Object.keys(documents)
 
-  // 更新注册表
+  // Updating the registry
   useGameRegistry.getState().setGameIds(gameIds)
 
-  // 初始化每个游戏的 store
+  // Initialize the store for each game
   Object.entries(documents).forEach(([gameId, gameData]) => {
     const store = getGameStore(gameId)
     store.getState().initialize(gameData)
@@ -133,28 +130,9 @@ export function initializeGameStores(documents: Record<string, gameDoc>): void {
   useGameRegistry.getState().setInitialized(true)
 }
 
-// 清理不活跃的 store
-export function cleanupInactiveStores(activeGameIds: string[]): void {
-  const activeSet = new Set(activeGameIds)
-  Object.keys(gameStores).forEach((id) => {
-    if (!activeSet.has(id)) {
-      delete gameStores[id]
-    }
-  })
-}
-
-// 获取缓存中的所有游戏
-export function getCachedGameIds(): string[] {
-  return Object.keys(gameStores)
-}
-
-/**
- * 删除指定游戏的 store
- * @param gameId 要删除的游戏ID
- */
 export function deleteGameStore(gameId: string): void {
   if (gameStores[gameId]) {
     delete gameStores[gameId]
-    console.log(`[Store] 游戏 store ${gameId} 已删除`)
+    console.log(`[Store] game store ${gameId} deleted`)
   }
 }

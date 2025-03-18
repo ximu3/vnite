@@ -63,7 +63,7 @@ export async function importSelectedSteamGames(games: FormattedGameInfo[]): Prom
         current: 0,
         total: 0,
         status: 'completed',
-        message: '没有选择要导入的游戏'
+        message: 'No selection of games to import'
       })
       return 0
     }
@@ -73,7 +73,7 @@ export async function importSelectedSteamGames(games: FormattedGameInfo[]): Prom
       current: 0,
       total: totalGames,
       status: 'started',
-      message: '开始添加游戏...'
+      message: 'Start adding games...'
     })
 
     // Add games to the database one by one
@@ -91,7 +91,7 @@ export async function importSelectedSteamGames(games: FormattedGameInfo[]): Prom
           current: i + 1,
           total: totalGames,
           status: 'processing',
-          message: `正在添加: ${game.name}`,
+          message: `Adding: ${game.name}`,
           game: {
             name: game.name,
             status: 'success'
@@ -103,11 +103,11 @@ export async function importSelectedSteamGames(games: FormattedGameInfo[]): Prom
           current: i + 1,
           total: totalGames,
           status: 'processing',
-          message: `添加失败: ${game.name}`,
+          message: `Add Failure: ${game.name}`,
           game: {
             name: game.name,
             status: 'error',
-            error: error instanceof Error ? error.message : '未知错误'
+            error: error instanceof Error ? error.message : 'unknown error'
           }
         })
       }
@@ -121,7 +121,7 @@ export async function importSelectedSteamGames(games: FormattedGameInfo[]): Prom
       current: totalGames,
       total: totalGames,
       status: 'completed',
-      message: '游戏添加完成'
+      message: 'Game additions completed'
     })
 
     return totalGames
@@ -131,8 +131,9 @@ export async function importSelectedSteamGames(games: FormattedGameInfo[]): Prom
       current: 0,
       total: 0,
       status: 'error',
-      message: error instanceof Error ? error.message : '导入游戏失败'
+      message: error instanceof Error ? error.message : 'Failed to import game'
     })
+    console.error('Failed to import Steam games:', error)
     throw error
   }
 }

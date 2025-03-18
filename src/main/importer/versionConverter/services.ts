@@ -2,8 +2,8 @@ import { convertV2toV3Database } from './common'
 import log from 'electron-log/main.js'
 
 /**
- * Import v1 data to v2
- * @param v1DataPath The path to the v1 data.
+ * Import v2 data to v3
+ * @param v2DataPath The path to the v2 data.
  * @returns A promise that resolves when the operation is complete.
  * @throws An error if the operation fails.
  */

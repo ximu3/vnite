@@ -104,7 +104,7 @@ export function Database(): JSX.Element {
       </CardHeader>
       <CardContent>
         <div className={cn('space-y-5 w-full')}>
-          {/* 便携模式设置 - 网格布局 */}
+          {/* Portable Mode Setting */}
           <div className={cn('grid grid-cols-[1fr_auto] gap-5 items-center')}>
             <div className={cn('whitespace-nowrap select-none')}>{t('database.portableMode')}</div>
             <AlertDialog>
@@ -132,7 +132,7 @@ export function Database(): JSX.Element {
 
           <Separator />
 
-          {/* 操作按钮 - 网格布局 */}
+          {/* push button */}
           <div className={cn('grid grid-cols-1 gap-5')}>
             <div className={cn('flex flex-row gap-5 items-center')}>
               <Button

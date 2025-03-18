@@ -82,7 +82,6 @@ export function Launcher({ gameId }: { gameId: string }): JSX.Element {
                 </Select>
               </div>
 
-              {/* 启动器组件容器 - 占据两列 */}
               <div className={cn('col-span-2')}>
                 <div className={cn('w-full')}>
                   <div className={cn(mode === 'file' ? 'block' : 'hidden')}>
@@ -97,12 +96,11 @@ export function Launcher({ gameId }: { gameId: string }): JSX.Element {
                 </div>
               </div>
 
-              {/* 分隔线 - 占据两列 */}
               <div className={cn('col-span-2')}>
                 <Separator />
               </div>
 
-              {/* Magpie缩放选项 */}
+              {/* Magpie zoom options */}
               <div className={cn('whitespace-nowrap select-none')}>
                 {t('detail.properties.launcher.magpie.scaling')}
               </div>

@@ -2,8 +2,8 @@ import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import { ipcInvoke } from './ipc'
 
-// 导入各个模块的翻译文件
-// 中文
+// Importing translation files for each module
+// zh-CN
 import zhCNConfig from '@locales/zh-CN/config.json'
 import zhCNSidebar from '@locales/zh-CN/sidebar.json'
 import zhCNGame from '@locales/zh-CN/game.json'
@@ -14,18 +14,7 @@ import zhCNUpdater from '@locales/zh-CN/updater.json'
 import zhCNUtils from '@locales/zh-CN/utils.json'
 import zhCNRecord from '@locales/zh-CN/record.json'
 
-// 英文
-import enConfig from '@locales/en/config.json'
-import enSidebar from '@locales/en/sidebar.json'
-import enGame from '@locales/en/game.json'
-import enUI from '@locales/en/ui.json'
-import enAdder from '@locales/en/adder.json'
-import enImporter from '@locales/en/importer.json'
-import enUpdater from '@locales/en/updater.json'
-import enUtils from '@locales/en/utils.json'
-import enRecord from '@locales/en/record.json'
-
-// 日语
+// ja
 import jaConfig from '@locales/ja/config.json'
 import jaSidebar from '@locales/ja/sidebar.json'
 import jaGame from '@locales/ja/game.json'
@@ -36,7 +25,17 @@ import jaUpdater from '@locales/ja/updater.json'
 import jaUtils from '@locales/ja/utils.json'
 import jaRecord from '@locales/ja/record.json'
 
-// 配置资源对象，按命名空间分组
+// en
+import enConfig from '@locales/en/config.json'
+import enSidebar from '@locales/en/sidebar.json'
+import enGame from '@locales/en/game.json'
+import enUI from '@locales/en/ui.json'
+import enAdder from '@locales/en/adder.json'
+import enImporter from '@locales/en/importer.json'
+import enUpdater from '@locales/en/updater.json'
+import enUtils from '@locales/en/utils.json'
+import enRecord from '@locales/en/record.json'
+
 const resources = {
   'zh-CN': {
     config: zhCNConfig,
@@ -81,24 +80,24 @@ export async function i18nInit(): Promise<void> {
     resources,
     lng: language,
     fallbackLng: 'en',
-    defaultNS: 'ui', // 默认命名空间
-    fallbackNS: 'ui', // 如果在当前命名空间中找不到键，则回退到这个命名空间
-    ns: ['config', 'sidebar', 'ui', 'game', 'adder', 'importer', 'updater', 'utils', 'record'], // 声明所有命名空间
+    defaultNS: 'ui',
+    fallbackNS: 'ui',
+    ns: ['config', 'sidebar', 'ui', 'game', 'adder', 'importer', 'updater', 'utils', 'record'],
     interpolation: {
       escapeValue: false
     }
   })
 
   i18n.services.formatter?.add('gameTime', (value, lng, _options) => {
-    // 计算总小时数（带小数部分）
+    // Calculation of total hours (with fractional part)
     const totalHours = value / (1000 * 60 * 60)
     const minutes = Math.ceil((value % (1000 * 60 * 60)) / (1000 * 60))
 
     if (totalHours >= 1) {
-      // 当超过1小时时，显示为小数形式，保留1位小数
+      // When more than 1 hour, the display is in decimal form with 1 decimal place retained
       const formattedHours = totalHours.toFixed(1)
 
-      // 根据不同语言返回不同格式
+      // Returns different formats depending on the language
       if (lng === 'zh-CN') {
         return `${formattedHours} 小时`
       } else if (lng === 'ja') {
@@ -107,7 +106,7 @@ export async function i18nInit(): Promise<void> {
         return `${formattedHours} h`
       }
     } else {
-      // 不到1小时时，仍然显示分钟
+      // Minutes are still displayed when less than 1 hour has elapsed
       if (lng === 'zh-CN') {
         return `${minutes} 分钟`
       } else if (lng === 'ja') {
@@ -119,23 +118,20 @@ export async function i18nInit(): Promise<void> {
   })
 
   i18n.services.formatter?.add('niceDate', (value, lng, _options) => {
-    // 确保value是Date对象
+    // Make sure value is a Date object
     const date = value instanceof Date ? value : new Date(value)
 
-    // 获取年、月、日
+    // Access to year, month and day
     const year = date.getFullYear()
-    const month = date.getMonth() + 1 // getMonth() 返回 0-11
+    const month = date.getMonth() + 1 // getMonth() return 0-11
     const day = date.getDate()
 
-    // 根据语言返回格式化的日期
+    // Returns formatted dates according to language
     if (lng === 'zh-CN') {
-      // 中文格式: 2004年12月29日
       return `${year}年${month}月${day}日`
     } else if (lng === 'ja') {
-      // 日文格式: 2004年12月29日 (与中文相似)
       return `${year}年${month}月${day}日`
     } else {
-      // 其他语言使用标准格式 (例如: December 29, 2004)
       return new Intl.DateTimeFormat(lng, {
         year: 'numeric',
         month: 'long',
@@ -145,26 +141,23 @@ export async function i18nInit(): Promise<void> {
   })
 
   i18n.services.formatter?.add('niceDateSeconds', (value, lng, _options) => {
-    // 确保value是Date对象
+    // Make sure value is a Date object
     const date = value instanceof Date ? value : new Date(value)
 
-    // 获取年、月、日、时、分、秒
+    // Get year, month, day, hour, minute, second
     const year = date.getFullYear()
-    const month = date.getMonth() + 1 // getMonth() 返回 0-11
+    const month = date.getMonth() + 1 // getMonth() return 0-11
     const day = date.getDate()
     const hours = date.getHours().toString().padStart(2, '0')
     const minutes = date.getMinutes().toString().padStart(2, '0')
     const seconds = date.getSeconds().toString().padStart(2, '0')
 
-    // 根据语言返回格式化的日期时间
+    // Returns formatted date and time according to language
     if (lng === 'zh-CN') {
-      // 中文格式: 2004年12月29日 15:30:45
       return `${year}年${month}月${day}日 ${hours}:${minutes}:${seconds}`
     } else if (lng === 'ja') {
-      // 日文格式: 2004年12月29日 15時30分45秒
       return `${year}年${month}月${day}日 ${hours}時${minutes}分${seconds}秒`
     } else {
-      // 其他语言使用标准格式，精确到秒
       return new Intl.DateTimeFormat(lng, {
         year: 'numeric',
         month: 'long',
@@ -172,7 +165,7 @@ export async function i18nInit(): Promise<void> {
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit',
-        hour12: lng?.startsWith('en') // 英语使用12小时制，其他大多使用24小时制
+        hour12: lng?.startsWith('en') // English uses a 12-hour day, most others use a 24-hour day.
       }).format(date)
     }
   })

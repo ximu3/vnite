@@ -21,7 +21,7 @@ export async function getGameIconsFromSteamGridDB(
         : await getGameIconsByName(identifier.value)
     return icons
   } catch (error) {
-    log.error(`获取 SteamGridDB 图标时出错: ${error}`)
+    log.error(`Error getting SteamGridDB icons: ${error}`)
   }
   return []
 }
@@ -36,7 +36,7 @@ export async function getGameBackgroundsFromSteamGridDB(
         : await getGameBackgroundsByName(identifier.value)
     return heroes
   } catch (error) {
-    log.error(`获取 SteamGridDB Background 时出错: ${error}`)
+    log.error(`Error Getting SteamGridDB Background: ${error}`)
   }
   return []
 }
@@ -51,7 +51,7 @@ export async function getGameLogosFromSteamGridDB(
         : await getGameLogosByName(identifier.value)
     return logos
   } catch (error) {
-    log.error(`获取 SteamGridDB Logo 时出错: ${error}`)
+    log.error(`Error Getting SteamGridDB Logo: ${error}`)
   }
   return []
 }
@@ -66,7 +66,7 @@ export async function getGameCoversFromSteamGridDB(
         : await getGameCoversByName(identifier.value)
     return covers
   } catch (error) {
-    log.error(`获取 SteamGridDB Grids 时出错: ${error}`)
+    log.error(`Error getting SteamGridDB Grids: ${error}`)
   }
   return []
 }

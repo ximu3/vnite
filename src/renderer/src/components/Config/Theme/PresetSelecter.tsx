@@ -27,7 +27,6 @@ export function PresetSelecter({
   const [value] = React.useState('')
   const { updateTheme } = useTheme()
 
-  // 预设配置从翻译中获取
   const presets = [
     {
       value: 'default',

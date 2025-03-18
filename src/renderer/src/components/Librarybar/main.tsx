@@ -22,7 +22,7 @@ import { PositionButton } from './PositionButton'
 import { useTranslation } from 'react-i18next'
 
 export function Librarybar(): JSX.Element {
-  const { t } = useTranslation('game') // 使用 game 命名空间
+  const { t } = useTranslation('game')
   const [selectedGroup, setSelectedGroup] = useConfigState('game.gameList.selectedGroup')
   const query = useLibrarybarStore((state) => state.query)
   const setQuery = useLibrarybarStore((state) => state.setQuery)

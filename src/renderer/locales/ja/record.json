@@ -1,5 +1,14 @@
 {
+  "title": "私のゲーム記録",
+  "tabs": {
+    "overview": "概要",
+    "weekly": "週間レポート",
+    "monthly": "月間レポート",
+    "yearly": "年間レポート",
+    "score": "評価レポート"
+  },
   "overview": {
+    "title": "概要",
     "stats": {
       "totalGames": "ゲーム総数",
       "totalPlayTime": "総プレイ時間",

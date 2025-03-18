@@ -1,17 +1,18 @@
 import { calculateDailyPlayTime } from '@appUtils'
 import { getGameStore } from './gameStoreFactory'
 import { useGameRegistry } from './gameRegistry'
+import { useConfigStore } from '../config'
 import type { MaxPlayTimeDay, gameDoc } from '@appTypes/database'
 import type { Paths } from 'type-fest'
 
-// 搜索函数
+// Search Functions
 export function searchGames(query: string): string[] {
   if (!query.trim()) return useGameRegistry.getState().gameIds
 
   const lowercaseQuery = query.toLowerCase()
   const { gameIds, gameMetaIndex } = useGameRegistry.getState()
 
-  // 先通过轻量索引过滤
+  // Filter by light indexing first
   const potentialMatches = gameIds.filter((id) => {
     const meta = gameMetaIndex[id]
     return (
@@ -21,14 +22,13 @@ export function searchGames(query: string): string[] {
     )
   })
 
-  // 如果需要更深入搜索
+  // If need to search deeper
   if (potentialMatches.length === 0) {
     return gameIds.filter((id) => {
       const store = getGameStore(id)
       const game = store.getState().data
       if (!game?.metadata) return false
 
-      // 进行更深入的搜索
       try {
         return Object.values(game.metadata).some(
           (value) => value && value.toString().toLowerCase().includes(lowercaseQuery)
@@ -42,12 +42,13 @@ export function searchGames(query: string): string[] {
   return potentialMatches
 }
 
-// 排序函数
+// sorting function
 export function sortGames<Path extends Paths<gameDoc, { bracketNotation: true }>>(
   by: Path,
   order: 'asc' | 'desc' = 'asc'
 ): string[] {
   const gameIds = useGameRegistry.getState().gameIds
+  const language = useConfigStore.getState().getConfigValue('general.language')
 
   return [...gameIds].sort((a, b) => {
     const storeA = getGameStore(a)
@@ -61,19 +62,18 @@ export function sortGames<Path extends Paths<gameDoc, { bracketNotation: true }>
     if (valueB == null) return order === 'asc' ? -1 : 1
     if (valueA === valueB) return 0
 
-    // 比较逻辑
     if (typeof valueA === 'string' && typeof valueB === 'string') {
       if (by === 'metadata.name') {
         return order === 'asc'
-          ? valueA.localeCompare(valueB, 'zh-CN')
-          : valueB.localeCompare(valueA, 'zh-CN')
+          ? valueA.localeCompare(valueB, language)
+          : valueB.localeCompare(valueA, language)
       } else {
         return order === 'asc' ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA)
       }
     } else if (typeof valueA === 'number' && typeof valueB === 'number') {
       return order === 'asc' ? valueA - valueB : valueB - valueA
     } else {
-      // 如果类型不明确，尝试转换为字符串进行比较
+      // If the type is not clear, try to convert to a string for comparison
       const strA = String(valueA)
       const strB = String(valueB)
       return order === 'asc' ? strA.localeCompare(strB) : strB.localeCompare(strA)
@@ -81,7 +81,7 @@ export function sortGames<Path extends Paths<gameDoc, { bracketNotation: true }>
   })
 }
 
-// 过滤函数
+// filter function
 export function filterGames(
   criteria: Partial<Record<Paths<gameDoc, { bracketNotation: true }>, string[]>>
 ): string[] {
@@ -109,7 +109,7 @@ export function filterGames(
               values.length === 2 &&
               metadataValue
             ) {
-              // 日期范围过滤逻辑
+              // Date range filtering logic
               const [start, end] = values
               const isValidDate = (dateStr: string): boolean => {
                 try {
@@ -149,7 +149,7 @@ export function filterGames(
                 break
               }
             } else {
-              // 其他类型过滤逻辑
+              // Other types of filtering logic
               let matches = false
 
               if (Array.isArray(metadataValue)) {
@@ -204,7 +204,7 @@ export function filterGames(
   }
 }
 
-// 获取某个键的所有唯一值
+// Get all unique values for a key
 export function getAllValuesInKey<Path extends Paths<gameDoc, { bracketNotation: true }>>(
   path: Path
 ): string[] {
@@ -254,8 +254,8 @@ export function getAllValuesInKey<Path extends Paths<gameDoc, { bracketNotation:
   }
 }
 
-// 获取游戏时间
-export function getGameplayTime(gameId: string): number {
+// Get Game Time
+export function getGamePlayTime(gameId: string): number {
   try {
     const store = getGameStore(gameId)
     const record = store.getState().getValue('record')
@@ -263,35 +263,12 @@ export function getGameplayTime(gameId: string): number {
 
     return record.playTime || 0
   } catch (error) {
-    console.error(`Error in getGameplayTime for ${gameId}:`, error)
+    console.error(`Error in getGamePlayTime for ${gameId}:`, error)
     return 0
   }
 }
 
-// 格式化游戏时间
-export function getGameplayTimeFormatted(gameId: string): string {
-  try {
-    const playTime = getGameplayTime(gameId)
-
-    const hours = Math.floor(playTime / 3600000)
-    const minutes = Math.floor((playTime % 3600000) / 60000)
-    const seconds = Math.floor((playTime % 60000) / 1000)
-
-    if (hours >= 1) {
-      const fractionalHours = (playTime / 3600000).toFixed(1)
-      return `${fractionalHours} h`
-    } else if (minutes >= 1) {
-      return `${minutes} min`
-    } else {
-      return `${seconds} s`
-    }
-  } catch (error) {
-    console.error(`Error in getGameplayTimeFormatted for ${gameId}:`, error)
-    return '0 s'
-  }
-}
-
-// 获取游戏时间按日期范围
+// Get game time by date range
 export function getGamePlayTimeByDateRange(
   gameId: string,
   startDate: string,
@@ -309,7 +286,7 @@ export function getGamePlayTimeByDateRange(
       const start = new Date(startDate)
       const end = new Date(endDate)
 
-      // 验证日期
+      // Date of validation
       if (isNaN(start.getTime()) || isNaN(end.getTime())) {
         console.error(`Invalid date range: ${startDate} to ${endDate}`)
         return {}
@@ -340,7 +317,7 @@ export function getGamePlayTimeByDateRange(
   }
 }
 
-// 获取游戏玩过的天数
+// Get the number of days the game has been played
 export function getGamePlayDays(gameId: string): number {
   try {
     const store = getGameStore(gameId)
@@ -353,11 +330,11 @@ export function getGamePlayDays(gameId: string): number {
     const playDays = new Set<string>()
 
     game.record.timers.forEach((timer) => {
-      // 转换为用户本地时区的时间
+      // Convert to time in the user's local time zone
       const start = new Date(timer.start)
       const end = new Date(timer.end)
 
-      // 获取本地时区的日期字符串
+      // Get a date string in the local time zone
       const startDay = start.toLocaleDateString()
       const endDay = end.toLocaleDateString()
 
@@ -365,7 +342,7 @@ export function getGamePlayDays(gameId: string): number {
         playDays.add(startDay)
       } else {
         const current = new Date(start)
-        // 设置为当天的开始时间（本地时区）
+        // Set to the start time of the day (local time zone)
         current.setHours(0, 0, 0, 0)
 
         while (current <= end) {
@@ -382,7 +359,7 @@ export function getGamePlayDays(gameId: string): number {
   }
 }
 
-// 获取游戏最大游玩时间的日期
+// Get the date of the game's maximum play time
 export function getGameMaxPlayTimeDay(gameId: string): MaxPlayTimeDay | null {
   try {
     const store = getGameStore(gameId)
@@ -424,7 +401,7 @@ export function getGameMaxPlayTimeDay(gameId: string): MaxPlayTimeDay | null {
   }
 }
 
-// 获取游戏记录
+// Getting Game Records
 export function getGameRecord(gameId: string): gameDoc['record'] {
   try {
     const store = getGameStore(gameId)
@@ -451,7 +428,7 @@ export function getGameRecord(gameId: string): gameDoc['record'] {
   }
 }
 
-// 获取游戏开始和结束日期
+// Get game start and end dates
 export function getGameStartAndEndDate(gameId: string): { start: string; end: string } {
   try {
     const store = getGameStore(gameId)
@@ -481,14 +458,14 @@ export function getGameStartAndEndDate(gameId: string): { start: string; end: st
   }
 }
 
-// 根据游玩时间排序游戏
+// Sort games by playtime
 export function getSortedGameIds(order: 'asc' | 'desc' = 'asc'): string[] {
   try {
     const { gameIds } = useGameRegistry.getState()
 
     return [...gameIds].sort((a, b) => {
-      const timeA = getGameplayTime(a)
-      const timeB = getGameplayTime(b)
+      const timeA = getGamePlayTime(a)
+      const timeB = getGamePlayTime(b)
 
       if (timeA < timeB) {
         return order === 'asc' ? -1 : 1
@@ -503,31 +480,7 @@ export function getSortedGameIds(order: 'asc' | 'desc' = 'asc'): string[] {
   }
 }
 
-// 获取最大序号的游戏ID
-export function getMaxOrdinalGameId(): string | null {
-  try {
-    const { gameIds } = useGameRegistry.getState()
-    let maxPlayedTimes = 0
-    let maxOrdinalGameId: string | null = null
-
-    for (const gameId of gameIds) {
-      const store = getGameStore(gameId)
-      const timers = store.getState().getValue('record.timers')
-
-      if (timers && timers.length > maxPlayedTimes) {
-        maxPlayedTimes = timers.length
-        maxOrdinalGameId = gameId
-      }
-    }
-
-    return maxOrdinalGameId
-  } catch (error) {
-    console.error(`Error in getMaxOrdinalGameId:`, error)
-    return null
-  }
-}
-
-// 获取年度游玩天数
+// Get annual play days
 export function getPlayedDaysYearly(): { [date: string]: number } {
   try {
     const { gameIds } = useGameRegistry.getState()
@@ -568,7 +521,7 @@ export function getPlayedDaysYearly(): { [date: string]: number } {
   }
 }
 
-// 获取年度总游戏时间
+// Get total annual playtime
 export function getTotalplayTimeYearly(): number {
   try {
     const { gameIds } = useGameRegistry.getState()
@@ -598,13 +551,13 @@ export function getTotalplayTimeYearly(): number {
   }
 }
 
-// 获取总游戏时间
+// Get Total Playtime
 export function getTotalplayTime(): number {
   try {
     const { gameIds } = useGameRegistry.getState()
 
     return gameIds.reduce((total, gameId) => {
-      return total + getGameplayTime(gameId)
+      return total + getGamePlayTime(gameId)
     }, 0)
   } catch (error) {
     console.error(`Error in getTotalplayTime:`, error)
@@ -612,7 +565,7 @@ export function getTotalplayTime(): number {
   }
 }
 
-// 获取总游玩次数
+// Get Total Play
 export function getTotalPlayedTimes(): number {
   try {
     const { gameIds } = useGameRegistry.getState()
@@ -628,7 +581,7 @@ export function getTotalPlayedTimes(): number {
   }
 }
 
-// 获取总游玩天数
+// Get Total Days of Play
 export function getTotalPlayedDays(): number {
   try {
     const { gameIds } = useGameRegistry.getState()
@@ -642,7 +595,7 @@ export function getTotalPlayedDays(): number {
   }
 }
 
-// 根据游玩次数排序游戏
+// Sort games by number of plays
 export function getSortedGameByPlayedTimes(order: 'asc' | 'desc' = 'asc'): string[] {
   try {
     const { gameIds } = useGameRegistry.getState()

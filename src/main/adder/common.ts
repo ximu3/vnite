@@ -190,7 +190,7 @@ export async function getBatchGameAdderData(): Promise<
       dataSource: defaultDataSource,
       name: gameName,
       id: '',
-      status: '未添加'
+      status: 'idle'
     }
   })
   return data

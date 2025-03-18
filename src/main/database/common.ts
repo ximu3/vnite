@@ -54,7 +54,7 @@ export class DBManager {
   }
 
   /**
-   * 获取数据库实例
+   * Getting a database instance
    */
   static getInstance(dbName: string): PouchDB.Database {
     if (!this.instances[dbName]) {
@@ -66,11 +66,6 @@ export class DBManager {
       const dbPath = config.path
       this.instances[dbName] = new PouchDB(dbPath, { auto_compaction: true })
       this.startChangeListener(dbName)
-      // app.on('before-quit', () => {
-      //   this.stopChangeListener(dbName)
-      //   this.stopSync(dbName)
-      //   this.instances[dbName].close()
-      // })
     }
     return this.instances[dbName]
   }
@@ -84,18 +79,17 @@ export class DBManager {
         return
       }
       await db.upsert(docId, (doc: any) => {
-        // 对于新建文档，doc 将是一个空对象，只包含 _id
+        // For new documents, doc will be an empty object containing only the _id.
         if (path === '#all') {
           if (value == '#delete') {
             return { _id: docId, _deleted: true }
           }
-          // 保留 _id 和 _rev (如果存在)
+          // Retain _id and _rev (if present)
           return {
             ...doc,
             ...value
           }
         } else {
-          // 使用 setValueByPath 更新指定路径的值
           setValueByPath(doc, path, value)
           return doc
         }
@@ -128,7 +122,6 @@ export class DBManager {
               ...defaultValue
             }
           } else {
-            // 直接使用新版 setValueByPath
             setValueByPath(doc, path, defaultValue)
           }
 
@@ -142,7 +135,6 @@ export class DBManager {
         return doc as T
       }
 
-      // 直接使用新版 getValueByPath
       const value = getValueByPath(doc, path)
 
       if (value === undefined) {
@@ -192,25 +184,25 @@ export class DBManager {
   }
 
   /**
-   * 同步所有配置的数据库
+   * Synchronize all configured databases
    */
   static async syncAllWithRemote(
     remoteUrl: string = 'http://localhost:5984',
     options: SyncOptions = {}
   ): Promise<void> {
-    // 停止所有现有同步
+    // Stop all existing synchronization
     for (const dbName in this.syncHandlers) {
       this.stopSync(dbName)
     }
 
-    // 同步每个数据库
+    // Synchronize each database
     for (const dbName in this.dbConfigs) {
       await this.syncWithRemote(dbName, remoteUrl, options)
     }
   }
 
   /**
-   * 同步单个数据库
+   * Synchronizing a single database
    */
   static async syncWithRemote(
     dbName: string,
@@ -225,7 +217,7 @@ export class DBManager {
 
     const remoteDbName = `vnite-userdb-${auth?.username}-${dbName}`
 
-    // 构建远程数据库URL
+    // Constructing a Remote Database URL
     const remoteDbUrl = `${remoteUrl}/${remoteDbName}`
 
     const remoteDb = new PouchDB(remoteDbUrl, {
@@ -233,13 +225,13 @@ export class DBManager {
       auth: auth
     })
 
-    // 停止现有同步
+    // Stop existing synchronization
     if (this.syncHandlers[dbName]) {
       this.syncHandlers[dbName].cancel()
     }
 
     try {
-      // 尝试创建远程数据库
+      // Trying to create a remote database
       if (auth) {
         try {
           await fetch(`${remoteUrl}/${remoteDbName}`, {
@@ -254,7 +246,7 @@ export class DBManager {
         }
       }
 
-      // 设置同步
+      // Setting up synchronization
       this.syncHandlers[dbName] = localDb
         .sync(remoteDb, {
           live: true,
@@ -301,7 +293,7 @@ export class DBManager {
           })
         })
     } catch (error) {
-      console.error(`[${dbName}] 同步设置失败:`, error)
+      console.error(`[${dbName}] Synchronization setup failed:`, error)
       throw error
     }
   }
@@ -312,7 +304,7 @@ export class DBManager {
   }
 
   /**
-   * 停止所有同步
+   * Stop all synchronization
    */
   static stopAllSync(): void {
     for (const dbName in this.syncHandlers) {
@@ -321,7 +313,7 @@ export class DBManager {
   }
 
   /**
-   * 停止特定数据库的同步
+   * Stopping the synchronization of specific databases
    */
   static stopSync(dbName: string): void {
     if (this.syncHandlers[dbName]) {
@@ -357,10 +349,10 @@ export class DBManager {
       })
 
       if (doc) {
-        // 文档存在，添加附件
+        // Document exists, add attachment
         await db.putAttachment(docId, attachmentId, doc._rev, attachment, type)
       } else {
-        // 文档不存在，创建新文档并添加附件
+        // Document does not exist, create a new document and add attachments
         await db.put({
           _id: docId,
           _attachments: {
@@ -490,7 +482,7 @@ export class DBManager {
 
           const { _id: docId, _rev, ...data } = change.doc
 
-          // 发送文档级别的变化
+          // Send document level changes
           mainWindow.webContents.send('db-changed', {
             dbName,
             docId,

@@ -1,5 +1,14 @@
 {
+  "title": "My Game Records",
+  "tabs": {
+    "overview": "Overview",
+    "weekly": "Weekly Report",
+    "monthly": "Monthly Report",
+    "yearly": "Annual Report",
+    "score": "Score Report"
+  },
   "overview": {
+    "title": "Overview",
     "stats": {
       "totalGames": "Total Games",
       "totalPlayTime": "Total Play Time",

@@ -52,7 +52,7 @@ async function checkImageUrl(url: string): Promise<string> {
       return url
     }
   } catch (error) {
-    console.warn(`原始图片URL访问失败: ${url}`, error)
+    console.warn(`Original Image URL Access Failed: ${url}`, error)
   }
 
   // If the original URL access fails, try using the reverse substitution
@@ -64,7 +64,7 @@ async function checkImageUrl(url: string): Promise<string> {
         return proxyUrl
       }
     } catch (error) {
-      console.warn(`反代图片URL访问失败: ${proxyUrl}`, error)
+      console.warn(`Failed to access the URL of the reverse proxy image: ${proxyUrl}`, error)
     }
   }
 
@@ -96,12 +96,12 @@ async function fetchSteamGridDb(
       )
 
       if (!response.ok) {
-        throw new Error(`API请求失败: ${response.status} ${response.statusText}`)
+        throw new Error(`API request failed: ${response.status} ${response.statusText}`)
       }
 
       return response.json()
     } catch (error) {
-      console.warn(`API端点 ${API_ENDPOINTS[currentApiIndex]} 请求失败:`, error)
+      console.warn(`API endpoint ${API_ENDPOINTS[currentApiIndex]} request failed:`, error)
       // Switch to the next API endpoint
       currentApiIndex = (currentApiIndex + 1) % API_ENDPOINTS.length
 
@@ -121,7 +121,7 @@ export async function getGameCovers(steamId: string): Promise<string[]> {
     const gameId = idData?.data?.id
 
     if (!gameId) {
-      console.warn(`找不到游戏: ${steamId}`)
+      console.warn(`Can't find the game: ${steamId}`)
       return []
     }
 
@@ -130,14 +130,14 @@ export async function getGameCovers(steamId: string): Promise<string[]> {
     // check url
     const urls = await Promise.all(data?.data?.map((grid: any) => checkImageUrl(grid.url)) || [])
 
-    // 在数组最前面插入游戏封面
+    // Insert the game cover at the top of the array
     const coverUrl = await getGameCoverFromSteam(steamId)
     if (coverUrl) {
       urls.unshift(coverUrl)
     }
     return urls
   } catch (error) {
-    console.error(`获取 SteamGridDB 封面时出错:`, error)
+    console.error(`Error getting SteamGridDB cover:`, error)
     return []
   }
 }
@@ -150,7 +150,7 @@ export async function getGameCoversByName(gameName: string): Promise<string[]> {
     const gameId = searchData?.data?.[0]?.id
 
     if (!gameId) {
-      console.warn(`找不到游戏: ${gameName}`)
+      console.warn(`Can't find the game: ${gameName}`)
       return []
     }
 
@@ -158,14 +158,14 @@ export async function getGameCoversByName(gameName: string): Promise<string[]> {
     // check url
     const urls = await Promise.all(data?.data?.map((grid: any) => checkImageUrl(grid.url)) || [])
 
-    // 在数组最前面插入游戏封面
+    // Insert the game cover at the top of the array
     const coverUrl = await getGameCoverByNameFromSteam(gameName)
     if (coverUrl) {
       urls.unshift(coverUrl)
     }
     return urls
   } catch (error) {
-    console.error(`获取 SteamGridDB 封面时出错:`, error)
+    console.error(`Error getting SteamGridDB cover:`, error)
     return []
   }
 }
@@ -178,7 +178,7 @@ export async function getGameBackgrounds(steamId: string): Promise<string[]> {
     const gameId = idData?.data?.id
 
     if (!gameId) {
-      console.warn(`找不到游戏: ${steamId}`)
+      console.warn(`Can't find the game: ${steamId}`)
       return []
     }
 
@@ -187,14 +187,14 @@ export async function getGameBackgrounds(steamId: string): Promise<string[]> {
     // check url
     const urls = await Promise.all(data?.data?.map((hero: any) => checkImageUrl(hero.url)) || [])
 
-    // 在数组最前面插入游戏Background图
+    // Insert the game's Background image at the top of the array
     const heroUrl = await getGameBackgroundFromSteam(steamId)
     if (heroUrl) {
       urls.unshift(heroUrl)
     }
     return urls
   } catch (error) {
-    console.error(`获取 SteamGridDB Background 时出错:`, error)
+    console.error(`Error Getting SteamGridDB Background:`, error)
     return []
   }
 }
@@ -207,7 +207,7 @@ export async function getGameBackgroundsByName(gameName: string): Promise<string
     const gameId = searchData?.data?.[0]?.id
 
     if (!gameId) {
-      console.warn(`找不到游戏: ${gameName}`)
+      console.warn(`Can't find the game: ${gameName}`)
       return []
     }
 
@@ -216,14 +216,14 @@ export async function getGameBackgroundsByName(gameName: string): Promise<string
     // check url
     const urls = await Promise.all(data?.data?.map((hero: any) => checkImageUrl(hero.url)) || [])
 
-    // 在数组最前面插入游戏Background图
+    // Insert the game's Background image at the top of the array.
     const heroUrl = await getGameBackgroundByNameFromSteam(gameName)
     if (heroUrl) {
       urls.unshift(heroUrl)
     }
     return urls
   } catch (error) {
-    console.error(`获取 SteamGridDB Background 时出错:`, error)
+    console.error(`Error Getting SteamGridDB Background:`, error)
     return []
   }
 }
@@ -236,7 +236,7 @@ export async function getGameLogos(steamId: string): Promise<string[]> {
     const gameId = idData?.data?.id
 
     if (!gameId) {
-      console.warn(`找不到游戏: ${steamId}`)
+      console.warn(`Can't find the game: ${steamId}`)
       return []
     }
 
@@ -245,14 +245,14 @@ export async function getGameLogos(steamId: string): Promise<string[]> {
     // check url
     const urls = await Promise.all(data?.data?.map((logo: any) => checkImageUrl(logo.url)) || [])
 
-    // 在数组最前面插入游戏Logo
+    // Insert the game logo at the top of the array
     const logoUrl = await getGameLogoFromSteam(steamId)
     if (logoUrl) {
       urls.unshift(logoUrl)
     }
     return urls
   } catch (error) {
-    console.error(`获取 SteamGridDB Logo 时出错:`, error)
+    console.error(`Error Getting SteamGridDB Logo:`, error)
     return []
   }
 }
@@ -265,7 +265,7 @@ export async function getGameLogosByName(gameName: string): Promise<string[]> {
     const gameId = searchData?.data?.[0]?.id
 
     if (!gameId) {
-      console.warn(`找不到游戏: ${gameName}`)
+      console.warn(`Can't find the game: ${gameName}`)
       return []
     }
 
@@ -274,14 +274,14 @@ export async function getGameLogosByName(gameName: string): Promise<string[]> {
     // check url
     const urls = await Promise.all(data?.data?.map((logo: any) => checkImageUrl(logo.url)) || [])
 
-    // 在数组最前面插入游戏Logo
+    // Insert the game logo at the top of the array
     const logoUrl = await getGameLogoByNameFromSteam(gameName)
     if (logoUrl) {
       urls.unshift(logoUrl)
     }
     return urls
   } catch (error) {
-    console.error(`获取 SteamGridDB Logo 时出错:`, error)
+    console.error(`Error Getting SteamGridDB Logo:`, error)
     return []
   }
 }
@@ -294,7 +294,7 @@ export async function getGameIcons(steamId: string): Promise<string[]> {
     const gameId = idData?.data?.id
 
     if (!gameId) {
-      console.warn(`找不到游戏: ${steamId}`)
+      console.warn(`Can't find the game: ${steamId}`)
       return []
     }
 
@@ -305,7 +305,7 @@ export async function getGameIcons(steamId: string): Promise<string[]> {
 
     return urls
   } catch (error) {
-    console.error(`获取 SteamGridDB 图标时出错:`, error)
+    console.error(`Error getting SteamGridDB icons:`, error)
     return []
   }
 }
@@ -318,7 +318,7 @@ export async function getGameIconsByName(gameName: string): Promise<string[]> {
     const gameId = searchData?.data?.[0]?.id
 
     if (!gameId) {
-      console.warn(`找不到游戏: ${gameName}`)
+      console.warn(`Can't find the game: ${gameName}`)
       return []
     }
 
@@ -329,7 +329,7 @@ export async function getGameIconsByName(gameName: string): Promise<string[]> {
 
     return urls
   } catch (error) {
-    console.error(`获取 SteamGridDB 图标时出错:`, error)
+    console.error(`Error getting SteamGridDB icons:`, error)
     return []
   }
 }

@@ -9,7 +9,6 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@ui/dialog'
 import { ScrollArea } from '@ui/scroll-area'
 
-// 移除 import { formatTimeToChinese } from '~/utils'，不再使用
 import {
   useGameRegistry,
   getTotalplayTime,
@@ -17,7 +16,7 @@ import {
   getTotalPlayedTimes,
   getTotalplayTimeYearly,
   sortGames,
-  getGameplayTime,
+  getGamePlayTime,
   getPlayedDaysYearly
 } from '~/stores/game'
 import { StatCard } from './StatCard'
@@ -37,51 +36,50 @@ export function RecordOverview(): JSX.Element {
   const totalTimes = getTotalPlayedTimes()
   const playedDaysYearly = getPlayedDaysYearly()
 
-  // 获取所有游戏排序数据，不限制数量
+  // Get all game sorting data, unlimited number of games
   const allTimeGames = sortGames('record.playTime', 'desc').filter(
-    (gameId) => getGameplayTime(gameId) > 0
+    (gameId) => getGamePlayTime(gameId) > 0
   )
   const allScoreGames = sortGames('record.score', 'desc').filter(
     (gameId) => gameMetaIndex[gameId].score !== -1
   )
 
-  // 卡片展示仅显示前5名
+  // Card display only shows the top 5
   const topTimeGames = allTimeGames.slice(0, 5)
   const topScoreGames = allScoreGames.slice(0, 5)
 
-  // 获取游戏时间分布数据并确保24小时数据都存在
+  // Get game time distribution data and make sure it exists 24/7
   const rawTimeDistribution = getPlayTimeDistribution()
 
-  // 确保所有小时数据都存在，即使是0值
+  // Ensure that all hourly data exists, even if it is a value of 0
   const timeDistribution = Array.from({ length: 24 }, (_, hour) => {
     const existing = rawTimeDistribution.find((item) => item.hour === hour)
     return existing || { hour, value: 0 }
   }).sort((a, b) => a.hour - b.hour)
 
-  // 为timeDistribution添加自定义label字段，用于tooltip显示
+  // Add custom label field to timeDistribution for tooltip display
   const enhancedTimeDistribution = timeDistribution.map((item) => ({
     hour: item.hour.toString() + ':00',
     value: item.value,
     timeRange: `${item.hour}:00 - ${(item.hour + 1) % 24}:00`,
-    gamingHour: item.value // 重命名value为gamingHour，方便tooltip使用
+    gamingHour: item.value
   }))
 
-  // 获取最热门的游戏时段
+  // Get the hottest game slots
   const peakHour = timeDistribution.reduce((max, item) => (item.value > max.value ? item : max), {
     hour: 0,
     value: 0
   })
 
-  // 近一年游戏时间转换为图表数据
+  // Nearly a year of game time converted to chart data
   const yearlyPlayData = Object.entries(playedDaysYearly)
     .map(([date, playTime]) => ({
       date,
-      playTime: Math.round(playTime / 1000 / 60), // 毫秒转为分钟
-      formattedDate: date.slice(5) // 只显示月-日部分
+      playTime: Math.round(playTime / 1000 / 60), // Milliseconds to minutes
+      formattedDate: date.slice(5) // Only the month-date portion is displayed
     }))
-    .sort((a, b) => a.date.localeCompare(b.date)) // 按日期排序
+    .sort((a, b) => a.date.localeCompare(b.date)) // Sort by date
 
-  // 近一年游戏时间的Chart配置
   const yearlyChartConfig = {
     playTime: {
       label: t('overview.stats.totalPlayTime'),
@@ -89,7 +87,6 @@ export function RecordOverview(): JSX.Element {
     }
   }
 
-  // 分布图的Chart配置
   const distributionChartConfig = {
     gamingHour: {
       label: t('overview.stats.totalPlayTime'),
@@ -97,7 +94,6 @@ export function RecordOverview(): JSX.Element {
     }
   }
 
-  // 使用gameTime格式化时间的辅助函数
   const formatGameTime = (time: number): string => {
     return t('utils:format.gameTime', { time })
   }
@@ -221,7 +217,7 @@ export function RecordOverview(): JSX.Element {
                   key={gameId}
                   gameId={gameId}
                   rank={index + 1}
-                  extraInfo={formatGameTime(getGameplayTime(gameId))}
+                  extraInfo={formatGameTime(getGamePlayTime(gameId))}
                 />
               ))}
             </div>
@@ -257,7 +253,7 @@ export function RecordOverview(): JSX.Element {
         </Card>
       </div>
 
-      {/* 游戏时间排行 - 对话框 */}
+      {/* Game Time Ranking - Dialog */}
       <Dialog open={showMoreTimeGames} onOpenChange={setShowMoreTimeGames}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
@@ -271,7 +267,7 @@ export function RecordOverview(): JSX.Element {
                   key={gameId}
                   gameId={gameId}
                   rank={index + 1}
-                  extraInfo={formatGameTime(getGameplayTime(gameId))}
+                  extraInfo={formatGameTime(getGamePlayTime(gameId))}
                 />
               ))}
             </div>
@@ -279,7 +275,7 @@ export function RecordOverview(): JSX.Element {
         </DialogContent>
       </Dialog>
 
-      {/* 游戏评分排行 - 对话框 */}
+      {/* Game Rating Ranking - Dialog */}
       <Dialog open={showMoreScoreGames} onOpenChange={setShowMoreScoreGames}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>

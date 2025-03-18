@@ -169,6 +169,7 @@
     },
     "chart": {
       "title": "时长图表",
+      "label": "游戏时长",
       "selectRange": "请选择日期范围",
       "dateError": "开始日期不能晚于结束日期",
       "rangeLimit": "请选择在 {{startDate, niceDate}} 到 {{endDate, niceDate}} 之间的日期",

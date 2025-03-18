@@ -14,13 +14,11 @@ import { GameRankingItem } from './GameRankingItem'
 import { getMonthlyPlayData } from '~/stores/game/recordUtils'
 
 export function MonthlyReport(): JSX.Element {
-  // 使用record命名空间
   const { t } = useTranslation('record')
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const monthData = getMonthlyPlayData(selectedDate)
 
-  // 上个月/下个月
   const goToPreviousMonth = (): void => {
     const prevMonth = new Date(selectedDate)
     prevMonth.setMonth(selectedDate.getMonth() - 1)
@@ -33,7 +31,7 @@ export function MonthlyReport(): JSX.Element {
     setSelectedDate(nextMonth)
   }
 
-  // 获取月份名称
+  // Get month name
   const getLocalizedMonth = (monthIndex: number): string => {
     const monthKeys = [
       'monthly.months.january',
@@ -54,17 +52,17 @@ export function MonthlyReport(): JSX.Element {
 
   const currentMonthName = getLocalizedMonth(selectedDate.getMonth())
 
-  // 为图表准备数据
+  // Preparing data for charts
   const weeklyChartData = monthData.weeklyPlayTime
     .map((item) => ({
       week: t('monthly.chart.weekFormat', { week: item.week }),
-      playTime: item.playTime / 3600000, // 转换为小时
-      weekDisplay: t('monthly.chart.weekFormat', { week: item.week }), // 添加显示字段用于tooltip
-      weekNumber: item.week // 保存原始周数以备使用
+      playTime: item.playTime / 3600000, // Convert to hours
+      weekDisplay: t('monthly.chart.weekFormat', { week: item.week }),
+      weekNumber: item.week
     }))
-    .sort((a, b) => a.weekNumber - b.weekNumber) // 确保按周数排序
+    .sort((a, b) => a.weekNumber - b.weekNumber) // Make sure to sort by weeks
 
-  // 找出游戏时长最长的一周
+  // Find the week with the longest game
   const mostPlayedWeek =
     weeklyChartData.length > 0
       ? weeklyChartData.reduce(
@@ -73,31 +71,31 @@ export function MonthlyReport(): JSX.Element {
         )
       : null
 
-  // 计算最长游戏周的日期范围
+  // Calculate the date range of the longest game week
   function getWeekDateRange(
     year: number,
     month: number,
     weekNumber: number
   ): { start: Date; end: Date } {
-    // 获取该月第一天
+    // Get the first day of the month
     const firstDayOfMonth = new Date(year, month, 1)
 
-    // 计算月第一周的序号 (0-based)
+    // Serial number of the first week of the calculation month (0-based)
     const firstWeekNumber = Math.floor(
       (firstDayOfMonth.getDate() - 1 + firstDayOfMonth.getDay()) / 7
     )
 
-    // 计算目标周与第一周的差值
+    // Calculate the difference between the target week and the first week
     const weekDiff = weekNumber - firstWeekNumber
 
-    // 计算目标周的第一天
+    // Calculate the first day of the target week
     const startDay = new Date(year, month, 1 + weekDiff * 7 - firstDayOfMonth.getDay())
 
-    // 计算目标周的最后一天
+    // Calculate the last day of the target week
     const endDay = new Date(startDay)
     endDay.setDate(startDay.getDate() + 6)
 
-    // 确保日期不超出当月范围
+    // Ensure that the date is within the current month
     const lastDayOfMonth = new Date(year, month + 1, 0).getDate()
     if (endDay.getMonth() !== month) {
       endDay.setDate(lastDayOfMonth)
@@ -106,7 +104,7 @@ export function MonthlyReport(): JSX.Element {
     return { start: startDay, end: endDay }
   }
 
-  // 获取最长游戏周的日期范围
+  // Get the date range of the longest game week
   let mostPlayedWeekDateRange: {
     start: Date
     end: Date
@@ -119,7 +117,6 @@ export function MonthlyReport(): JSX.Element {
     )
   }
 
-  // Chart配置
   const chartConfig = {
     playTime: {
       label: t('overview.stats.totalPlayTime'),
@@ -127,7 +124,6 @@ export function MonthlyReport(): JSX.Element {
     }
   }
 
-  // 游戏时间格式化函数
   const formatGameTime = (time: number): string => {
     return t('utils:format.gameTime', { time })
   }
@@ -230,7 +226,7 @@ export function MonthlyReport(): JSX.Element {
             <Calendar
               mode="single"
               selected={selectedDate}
-              month={selectedDate} // 控制显示的月份
+              month={selectedDate} // Controls the displayed month
               onMonthChange={(date) => setSelectedDate(date)}
               className="w-full border rounded-md"
               modifiers={{
@@ -250,7 +246,7 @@ export function MonthlyReport(): JSX.Element {
         </Card>
       </div>
 
-      {/* 本月数据亮点卡片 */}
+      {/* This month's data highlights card */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
@@ -258,7 +254,7 @@ export function MonthlyReport(): JSX.Element {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {/* 游戏时间最长的一周 */}
+              {/* Longest week of games */}
               {mostPlayedWeek && mostPlayedWeekDateRange ? (
                 <div>
                   <p className="text-sm text-muted-foreground">
@@ -281,7 +277,7 @@ export function MonthlyReport(): JSX.Element {
 
               <Separator />
 
-              {/* 游戏频率 */}
+              {/* Game frequency */}
               <div>
                 <p className="text-sm text-muted-foreground">{t('monthly.highlights.frequency')}</p>
                 <p className="text-lg font-bold">

@@ -32,7 +32,7 @@ export function Appearances(): JSX.Element {
       </CardHeader>
       <CardContent>
         <div className={cn('flex flex-col gap-8')}>
-          {/* 游戏列表设置 */}
+          {/* Game List Settings */}
           <div className={cn('space-y-4')}>
             <div className={cn('border-b pb-2')}>{t('appearances.gameList.title')}</div>
             <div className={cn('pl-2')}>
@@ -64,7 +64,7 @@ export function Appearances(): JSX.Element {
             </div>
           </div>
 
-          {/* 游戏详情页设置 */}
+          {/* Game detail page settings */}
           <div className={cn('space-y-4')}>
             <div className={cn('border-b pb-2')}>{t('appearances.gameDetail.title')}</div>
             <div className={cn('pl-2')}>
@@ -80,7 +80,7 @@ export function Appearances(): JSX.Element {
             </div>
           </div>
 
-          {/* 侧边栏设置 */}
+          {/* Sidebar Settings */}
           <div className={cn('space-y-4')}>
             <div className={cn('border-b pb-2')}>{t('appearances.sidebar.title')}</div>
             <div className={cn('pl-2')}>

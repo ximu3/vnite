@@ -5,8 +5,9 @@ import { jwtDecode } from 'jwt-decode'
 import { ConfigDBManager } from '~/database'
 import { AuthResult, UserRole } from '@appTypes/sync'
 import { startSync } from '~/database'
+import log from 'electron-log/main'
 
-// Authentik用户接口
+// Authentik User Interface
 interface AuthentikUser {
   sub: string
   name: string
@@ -33,13 +34,13 @@ export class AuthManager {
   private redirectUrl: string = 'vnite://auth/callback'
   private initialized: boolean = false
 
-  // 私有构造函数，防止直接创建实例
+  // Private constructor to prevent direct instance creation
   private constructor() {
-    // 构造函数为空
+    // Constructor is empty
   }
 
   /**
-   * 获取单例实例（内部使用）
+   * Getting a singleton instance (internal use)
    */
   private static getInstance(): AuthManager {
     if (!AuthManager.instance) {
@@ -49,7 +50,7 @@ export class AuthManager {
   }
 
   /**
-   * 初始化单例配置
+   * Initializing the Singleton Configuration
    */
   public static init(): void {
     const instance = AuthManager.getInstance()
@@ -57,100 +58,100 @@ export class AuthManager {
       return
     }
 
-    // 从环境变量加载配置
+    // Load configuration from environment variables
     try {
-      // 获取必要的配置
+      // Getting the necessary configuration
       instance.serverUrl = import.meta.env.VITE_AUTHENTIK_SERVER_URL || ''
       instance.clientId = import.meta.env.VITE_AUTHENTIK_CLIENT_ID || ''
       instance.clientSecret = import.meta.env.VITE_AUTHENTIK_CLIENT_SECRET || ''
 
-      // 验证必要的配置项
+      // Verify the necessary configuration items
       if (!instance.serverUrl || !instance.clientId || !instance.clientSecret) {
-        throw new Error('缺少必要的Authentik配置')
+        throw new Error('Missing required Authentik configurations')
       }
 
       instance.initialized = true
-      console.log('AuthManager 初始化成功')
+      log.info('AuthManager initialized successfully')
     } catch (error) {
-      console.error('AuthManager 初始化失败:', error)
+      log.error('AuthManager initialization failed:', error)
       throw error
     }
   }
 
   /**
-   * 检查实例是否已初始化
+   * Check if the instance is initialized
    */
   private static checkInitialized(): void {
     const instance = AuthManager.getInstance()
     if (!instance.initialized) {
-      throw new Error('AuthManager 未正确初始化，请先调用 AuthManager.init()')
+      throw new Error('AuthManager is not initialized correctly, call AuthManager.init() first')
     }
   }
 
   /**
-   * 启动注册流程
+   * Initiate the registration process
    */
   public static async startSignup(): Promise<AuthResult> {
     AuthManager.checkInitialized()
     const instance = AuthManager.getInstance()
 
     try {
-      // 构建Authentik注册URL
+      // Build Authentik Registration URL
       const signupUrl = new URL(`${instance.serverUrl}/if/flow/vnite-enrollment/`)
       signupUrl.searchParams.append('client_id', instance.clientId)
       signupUrl.searchParams.append('redirect_uri', instance.redirectUrl)
 
-      // 打开默认浏览器进行注册
+      // Open the default browser to register
       shell.openExternal(signupUrl.toString())
 
       return { success: true }
     } catch (error) {
-      console.error('启动注册流程失败:', error)
+      log.error('Failed to start the registration process:', error)
       return { success: false, error: (error as Error).message }
     }
   }
 
   /**
-   * 启动登录流程
+   * Starting the login process
    */
   public static async startSignin(): Promise<AuthResult> {
     AuthManager.checkInitialized()
     const instance = AuthManager.getInstance()
 
     try {
-      // 构建Authentik OAuth2登录URL
+      // Build Authentik Login URL
       const signinUrl = new URL(`${instance.serverUrl}/application/o/authorize/`)
       signinUrl.searchParams.append('client_id', instance.clientId)
       signinUrl.searchParams.append('redirect_uri', instance.redirectUrl)
       signinUrl.searchParams.append('response_type', 'code')
       signinUrl.searchParams.append('scope', 'openid profile email groups couchdb')
 
-      // 打开默认浏览器进行登录
+      // Open your default browser to log in
       shell.openExternal(signinUrl.toString())
 
       return { success: true }
     } catch (error) {
-      console.error('启动登录流程失败:', error)
+      log.error('Failure to start the login process:', error)
       return { success: false, error: (error as Error).message }
     }
   }
 
   /**
-   * 重置单例（主要用于测试和开发）
+   * Reset singletons (mainly for testing and development)
    */
   public static reset(): void {
     AuthManager.instance = null
   }
 
   /**
-   * 处理授权码 - 公开方法，由主进程调用
+   * Handling authorization codes - public method, called by the master process
    */
   public static async handleAuthCode(code: string, mainWindow: BrowserWindow): Promise<void> {
     AuthManager.checkInitialized()
     const instance = AuthManager.getInstance()
 
     try {
-      // 交换授权码获取访问令牌
+      // Exchanging authorization codes to obtain access tokens
       const tokenResponse = await axios.post(
         `${instance.serverUrl}/application/o/token/`,
         new URLSearchParams({
@@ -170,10 +171,10 @@ export class AuthManager {
       const accessToken = tokenResponse.data.access_token
       const idToken = tokenResponse.data.id_token
 
-      // 解析ID令牌获取基本用户信息
+      // Parsing ID tokens for basic user information
       const userInfo = jwtDecode(idToken) as AuthentikUser
 
-      // 获取CouchDB凭据
+      // Getting CouchDB Credentials
       const couchdbCredentials = userInfo.couchdb
         ? {
             username: userInfo.couchdb.username,
@@ -181,21 +182,23 @@ export class AuthManager {
           }
         : null
 
-      // 如果没有CouchDB凭据，则报错
+      // If there are no CouchDB credentials, an error is reported
       if (!couchdbCredentials) {
-        throw new Error('无法获取CouchDB凭据，请确保Authentik已正确配置')
+        throw new Error(
+          'Unable to get CouchDB credentials, make sure Authentik is properly configured'
+        )
       }
 
       const userRole = AuthManager.getUserRole(userInfo)
 
-      // 保存用户凭证
+      // Save user credentials
       await ConfigDBManager.setConfigLocalValue('userInfo', {
         name: userInfo.name || '',
         accessToken,
         role: userRole
       })
 
-      // 保存CouchDB凭证
+      // Save CouchDB Credentials
       await ConfigDBManager.setConfigLocalValue('sync.officialConfig', {
         auth: {
           username: couchdbCredentials.username,
@@ -203,24 +206,24 @@ export class AuthManager {
         }
       })
 
-      // 通知渲染进程认证成功
+      // Notify the rendering process of successful authentication
       mainWindow.webContents.send('auth-success')
 
-      // 启动同步
+      // Initiate synchronization
       await startSync()
     } catch (error) {
-      console.error('处理授权码失败:', error)
+      log.error('处理授权码失败:', error)
       mainWindow.webContents.send('auth-error', (error as Error).message)
     }
   }
 
   /**
-   * 获取用户角色
+   * Get user roles
    */
   private static getUserRole(userInfo: AuthentikUser): UserRole {
-    // 首先从用户的groups数组中查找匹配的角色
+    // First find the matching role from the user's groups array
     if (userInfo.groups && Array.isArray(userInfo.groups) && userInfo.groups.length > 0) {
-      // 获取用户的所有角色并按优先级排序（管理员 > 社区版）
+      // Get all roles for a user and sort them by priority (Admin > Community Edition)
       if (userInfo.groups.includes('authentik-admins') || userInfo.groups.includes('admin')) {
         return UserRole.ADMIN
       } else if (userInfo.groups.includes('community')) {
@@ -228,32 +231,32 @@ export class AuthManager {
       }
     }
 
-    // 默认为社区版用户
+    // Defaults to Community Edition users
     return UserRole.COMMUNITY
   }
 }
 
 /**
- * 处理授权回调URL
+ * Handling Authorization Callback URLs
  */
 export function handleAuthCallback(url: string): void {
   if (!url.startsWith('vnite://auth/callback')) return
 
   try {
-    // 解析URL并获取授权码
+    // Parsing the URL and getting the authorization code
     const urlObj = new URL(url)
     const code = urlObj.searchParams.get('code')
 
-    // 获取主窗口
+    // Get Main Window
     const mainWindow = BrowserWindow.getAllWindows()[0]
 
     if (code && mainWindow) {
-      // 将授权码传给 AuthManager 处理
+      // Pass the authorization code to AuthManager for processing
       AuthManager.handleAuthCode(code, mainWindow)
     } else {
-      console.error('授权回调中未找到授权码')
+      log.error('Authorization code not found in authorization callback')
     }
   } catch (error) {
-    console.error('处理授权回调URL失败:', error)
+    log.error('Failure to process authorization callback URL:', error)
   }
 }

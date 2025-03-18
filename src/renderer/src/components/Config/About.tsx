@@ -33,13 +33,13 @@ export function About(): JSX.Element {
       </CardHeader>
       <CardContent>
         <div className={cn('grid grid-cols-[auto_1fr] gap-5 items-center')}>
-          {/* 作者信息 */}
+          {/* Author Information */}
           <div className={cn('whitespace-nowrap select-none')}>{t('about.author')}</div>
           <div className={cn('flex justify-end')}>
             <Link name="ximu" url="https://github.com/ximu3" />
           </div>
 
-          {/* 版本信息 */}
+          {/* version information */}
           <div className={cn('whitespace-nowrap select-none')}>{t('about.version')}</div>
           <div className={cn('flex justify-end gap-2 text-sm items-center')}>
             <div>{version}</div>
@@ -56,7 +56,7 @@ export function About(): JSX.Element {
             </Button>
           </div>
 
-          {/* 仓库链接 */}
+          {/* Warehouse Links */}
           <div className={cn('whitespace-nowrap select-none')}>{t('about.repository')}</div>
           <div className={cn('flex justify-end')}>
             <Link
@@ -66,18 +66,17 @@ export function About(): JSX.Element {
             />
           </div>
 
-          {/* 分隔线 - 跨越两列 */}
           <div className={cn('col-span-2 py-0')}>
             <Separator />
           </div>
 
-          {/* 反馈链接 */}
+          {/* Feedback Links */}
           <div className={cn('whitespace-nowrap select-none')}>{t('about.feedback')}</div>
           <div className={cn('flex justify-end')}>
             <Link name="Github Issue" url="https://github.com/ximu3/vnite/issues" />
           </div>
 
-          {/* 群组链接 */}
+          {/* group link */}
           <div className={cn('whitespace-nowrap select-none')}>{t('about.group')}</div>
           <div className={cn('flex justify-end')}>
             <Link name="Telegram" url="https://t.me/+d65-R_xRx1JlYWZh" />

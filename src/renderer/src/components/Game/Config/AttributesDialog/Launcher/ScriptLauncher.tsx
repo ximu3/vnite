@@ -50,7 +50,7 @@ export function ScriptLauncher({ gameId }: { gameId: string }): JSX.Element {
 
   return (
     <div className={cn('grid grid-cols-[120px_1fr] gap-x-5 gap-y-5 items-center')}>
-      {/* 脚本内容 - 特殊处理对齐 */}
+      {/* Script content */}
       <div className={cn('whitespace-nowrap select-none self-start pt-2')}>
         {t('detail.properties.launcher.script.content')}
       </div>
@@ -62,7 +62,7 @@ export function ScriptLauncher({ gameId }: { gameId: string }): JSX.Element {
         />
       </div>
 
-      {/* 工作目录 */}
+      {/* Work Directory */}
       <div className={cn('whitespace-nowrap select-none')}>
         {t('detail.properties.launcher.script.workingDirectory')}
       </div>
@@ -77,12 +77,11 @@ export function ScriptLauncher({ gameId }: { gameId: string }): JSX.Element {
         </Button>
       </div>
 
-      {/* 分隔符 - 占满整行 */}
       <div className={cn('col-span-2')}>
         <Separator />
       </div>
 
-      {/* 监视器模式 */}
+      {/* monitor mode */}
       <div className={cn('whitespace-nowrap select-none')}>
         {t('detail.properties.launcher.monitor.title')}
       </div>
@@ -108,7 +107,7 @@ export function ScriptLauncher({ gameId }: { gameId: string }): JSX.Element {
         </Select>
       </div>
 
-      {/* 监视路径/进程名 */}
+      {/* Monitor path/process name */}
       <div className={cn('whitespace-nowrap select-none')}>
         {['folder', 'file'].includes(monitorMode)
           ? t('detail.properties.launcher.monitor.path')

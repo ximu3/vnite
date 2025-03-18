@@ -56,13 +56,11 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
     path: Path,
     value: Get<configDocs, Path>
   ): Promise<void> => {
-    // 先更新 store
     const pathArray = path.replace(/$$(\d+)$$/g, '.$1').split('.')
     const data = { ...get().documents }
     setValueByPath(data, path, value)
     set({ documents: data })
 
-    // 然后异步更新文档
     await syncTo('config', pathArray[0], get().documents[pathArray[0]])
   },
 

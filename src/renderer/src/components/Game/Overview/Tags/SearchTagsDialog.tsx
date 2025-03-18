@@ -47,7 +47,7 @@ export function SearchTagsDialog({
   }, [isOpen, t])
 
   useEffect(() => {
-    // 当对话框打开时，初始化选中的标签
+    // Initialize the selected tab when the dialog box is opened
     if (isOpen && initialTags) {
       setSelectedTags(initialTags)
     }
@@ -143,7 +143,7 @@ export function SearchTagsDialog({
           )}
         </Card>
 
-        {/* 搜索和操作按钮区域 */}
+        {/* Search and action button area */}
         <Card className={cn('p-3')}>
           <div className={cn('flex flex-row gap-3')}>
             <Input

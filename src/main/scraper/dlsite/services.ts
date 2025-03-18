@@ -13,26 +13,26 @@ import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
 import log from 'electron-log/main.js'
 
 /**
- * 在 DLsite 上搜索作品
- * @param gameName 要搜索的作品名称
- * @returns 作品列表
- * @throws 如果操作失败则抛出错误
+ * Search for works on DLsite
+ * @param gameName Title of the work to be searched
+ * @returns List of works
+ * @throws Throws an error if the operation fails
  */
 export async function searchGamesFromDLsite(gameName: string): Promise<GameList> {
   try {
     const games = await searchDlsiteGames(gameName)
     return games
   } catch (error) {
-    log.error('搜索作品时出错:', error)
+    log.error('Error while searching for works:', error)
     throw error
   }
 }
 
 /**
- * 从 DLsite 获取作品元数据
- * @param dlsiteId DLsite 上的作品 ID (RJ号)
- * @returns 作品的元数据
- * @throws 如果操作失败则抛出错误
+ * Get work metadata from DLsite
+ * @param identifier Work identifier
+ * @returns Work metadata
+ * @throws Throws an error if the operation fails
  */
 export async function getGameMetadataFromDLsite(
   identifier: ScraperIdentifier
@@ -44,32 +44,32 @@ export async function getGameMetadataFromDLsite(
         : await getDlsiteMetadataByName(identifier.value)
     return metadata
   } catch (error) {
-    log.error('获取作品元数据时出错:', error)
+    log.error('Error getting metadata for work:', error)
     throw error
   }
 }
 
 /**
- * 检查作品是否存在于 DLsite
- * @param dlsiteId DLsite 上的作品 ID (RJ号)
- * @returns 表示作品是否存在的布尔值
- * @throws 如果操作失败则抛出错误
+ * Check if a work exists on DLsite
+ * @param dlsiteId Work ID on DLsite
+ * @returns A boolean indicating whether the work exists
+ * @throws Throws an error if the operation fails
  */
 export async function checkGameExistsOnDLsite(dlsiteId: string): Promise<boolean> {
   try {
     const exists = await checkGameExists(dlsiteId)
     return exists
   } catch (error) {
-    log.error('检查作品是否存在时出错:', error)
+    log.error('Error while checking the existence of a work:', error)
     throw error
   }
 }
 
 /**
- * 从 DLsite 获取作品截图
- * @param dlsiteId DLsite 上的作品 ID (RJ号)
- * @returns 截图列表
- * @throws 如果操作失败则抛出错误
+ * Get work backgrounds from DLsite
+ * @param identifier Work identifier
+ * @returns Backgrounds of the work
+ * @throws Throws an error if the operation fails
  */
 export async function getGameBackgroundsFromDLsite(
   identifier: ScraperIdentifier
@@ -81,16 +81,16 @@ export async function getGameBackgroundsFromDLsite(
         : await getGameBackgroundsByName(identifier.value)
     return images
   } catch (error) {
-    log.error('获取作品截图时出错:', error)
+    log.error('Error getting backgrounds of your work:', error)
     throw error
   }
 }
 
 /**
- * 从 DLsite 获取作品封面
- * @param dlsiteId DLsite 上的作品 ID (RJ号)
- * @returns 作品的封面图片
- * @throws 如果操作失败则抛出错误
+ * Get the cover of the work from DLsite
+ * @param identifier Work identifier
+ * @returns Cover of the work
+ * @throws Throws an error if the operation fails
  */
 export async function getGameCoverFromDLsite(identifier: ScraperIdentifier): Promise<string> {
   try {
@@ -100,7 +100,7 @@ export async function getGameCoverFromDLsite(identifier: ScraperIdentifier): Pro
         : await getGameCoverByName(identifier.value)
     return cover
   } catch (error) {
-    log.error('获取作品封面时出错:', error)
+    log.error('Error getting work cover:', error)
     throw error
   }
 }

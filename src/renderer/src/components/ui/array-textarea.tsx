@@ -16,17 +16,17 @@ export function ArrayTextarea({
   placeholder,
   className
 }: ArrayTextareaProps): JSX.Element {
-  // 将数组转换为文本
+  // Converting arrays to text
   const arrayToText = useCallback((arr: string[]) => {
     return arr.join('\n')
   }, [])
 
-  // 将文本转换为数组，保留空行和空格
+  // Convert text to an array, preserving blank lines and spaces
   const textToArray = useCallback((text: string) => {
-    return text.split('\n') // 只按换行符分割，保留所有空格和空行
+    return text.split('\n')
   }, [])
 
-  // 处理文本改变
+  // Handling text changes
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>): void => {
     const newText = event.target.value
     const newArray = textToArray(newText)

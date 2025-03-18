@@ -20,7 +20,7 @@ export function GameBatchAdder(): JSX.Element {
     }
 
     setIsOpen(false)
-    setGames([]) // 使用新的 actions
+    setGames([])
     setIsLoading(false)
   }
 

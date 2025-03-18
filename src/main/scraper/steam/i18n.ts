@@ -1,23 +1,21 @@
 import { getLanguage } from '~/utils'
 
-// config/language.ts
 export interface SteamLanguageConfig {
-  // Steam API使用的语言代码
+  // Language code used by Steam API
   apiLanguageCode: string
-  // Steam URL查询参数使用的语言代码
+  // Language code used for Steam URL query parameters
   urlLanguageCode: string
-  // Accept-Language头值
+  // Accept-Language header value
   acceptLanguageHeader: string
-  // Steam区域代码
+  // Steam Region Code
   countryCode: string
-  // UI显示的翻译
+  // Translation of UI display
   translations: {
     officialWebsite: string
     steamStore: string
   }
 }
 
-// 支持的语言配置
 export const supportedLanguages: Record<string, SteamLanguageConfig> = {
   'zh-CN': {
     apiLanguageCode: 'schinese',
@@ -49,12 +47,9 @@ export const supportedLanguages: Record<string, SteamLanguageConfig> = {
       steamStore: 'Steam Store'
     }
   }
-  // 可以继续添加其他语言...
 }
 
-// 当前语言配置
-
-// 获取当前语言配置
+// Get current language configuration
 export async function getSteamLanguageConfig(): Promise<SteamLanguageConfig> {
   const language = await getLanguage()
   return supportedLanguages[language] || supportedLanguages['en-US']

@@ -9,10 +9,9 @@ import log from 'electron-log/main.js'
 /**
  * Add a game to the database
  * @param dataSource - The data source of the game
- * @param id - The ID of the game
- * @param dbId - The ID of the game in the database
- * @param screenshotUrl - The URL of the screenshot of the game
- * @param playingTime - The playing time of the game
+ * @param dataSourceId - The ID of the game
+ * @param backgroundUrl - The background URL of the game
+ * @param playTime - The play time of the game
  */
 export async function addGameToDatabase({
   dataSource,
@@ -40,8 +39,10 @@ export async function addGameToDatabase({
 
 /**
  * Update game metadata
+ * @param dbId - The ID of the game in the database
  * @param dataSource - The data source of the game
- * @param id - The ID of the game
+ * @param dataSourceId - The ID of the game
+ * @param backgroundUrl - The background URL of the game
  */
 export async function updateGameMetadata({
   dbId,

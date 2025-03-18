@@ -23,9 +23,9 @@ export async function switch2PortableMode(): Promise<void> {
     await fse.emptyDir(portablePath)
     await fse.copy(basePath, portablePath)
     await fse.remove(basePath)
-    log.info('已切换到便携模式')
+    log.info('Switched to portable mode')
   } catch (error) {
-    log.error('切换到便携模式失败', error)
+    log.error('Failed to switch to portable mode', error)
     throw error
   }
 }
@@ -38,9 +38,9 @@ export async function switch2NormalMode(): Promise<void> {
     await fse.emptyDir(basePath)
     await fse.copy(portablePath, basePath)
     await fse.remove(path.join(getAppRootPath(), 'portable'))
-    log.info('已切换到正常模式')
+    log.info('Switched to normal mode')
   } catch (error) {
-    log.error('切换到正常模式失败', error)
+    log.error('Failed to switch to normal mode', error)
     throw error
   }
 }
@@ -50,7 +50,7 @@ export async function checkPortableMode(): Promise<void> {
     const portablePath = path.join(getAppRootPath(), 'app')
     portableStore.isPortableMode = await fse.pathExists(portablePath)
   } catch (error) {
-    log.error('检查便携模式失败', error)
+    log.error('Failed to check portable mode', error)
     throw error
   }
 }
@@ -64,7 +64,7 @@ export async function switchDatabaseMode(): Promise<void> {
     }
     portableStore.isPortableMode = !portableStore.isPortableMode
   } catch (error) {
-    log.error('切换数据库模式失败', error)
+    log.error('Failed to switch database schema', error)
     throw error
   }
 }

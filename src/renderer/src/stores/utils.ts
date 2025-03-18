@@ -2,13 +2,11 @@ import { ipcInvoke } from '~/utils'
 import { DocChange } from '@appTypes/database'
 
 /**
- * 通用数据库同步函数 - 将数据同步到指定数据库
+ * Generic Database Synchronization Functions - Synchronize data to a specified database
  *
- * @param dbName 数据库名称
- * @param docId 文档ID
- * @param data 文档数据
- * @param immediate 已不再使用，保留参数保持API兼容
- * @param customDelay 已不再使用，保留参数保持API兼容
+ * @param dbName Database name
+ * @param docId Document ID
+ * @param data Documentation data
  * @returns Promise<void>
  */
 export async function syncTo<T extends Record<string, any>>(
@@ -16,7 +14,7 @@ export async function syncTo<T extends Record<string, any>>(
   docId: string,
   data: T | '#delete'
 ): Promise<void> {
-  // 创建变更对象
+  // Creating Change Objects
   const change: DocChange = {
     dbName,
     docId,
@@ -24,11 +22,10 @@ export async function syncTo<T extends Record<string, any>>(
     timestamp: Date.now()
   }
 
-  // 直接执行同步，不再使用防抖
   try {
     await ipcInvoke('db-changed', change)
   } catch (error) {
-    console.error(`[Sync] 同步失败 ${dbName}/${docId}:`, error)
-    throw error // 向上传递错误
+    console.error(`[Sync] sync failure ${dbName}/${docId}:`, error)
+    throw error
   }
 }

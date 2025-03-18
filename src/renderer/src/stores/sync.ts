@@ -20,62 +20,59 @@ import {
 import { isEqual } from 'lodash'
 
 /**
- * 映射数据库名称到对应的数据初始化函数
+ * Mapping database names to corresponding data initialization functions
  */
 const DB_INITIALIZERS = {
   game: async (data: gameDocs): Promise<void> => {
-    // 初始化游戏 stores
     initializeGameStores(data)
-    console.log(`[DB] game: 初始化了 ${Object.keys(data).length} 个游戏 store`)
+    console.log(`[DB] game: initialized ${Object.keys(data).length} game store`)
   },
   'game-local': async (data: gameLocalDocs): Promise<void> => {
-    // 初始化游戏本地 stores
     initializeGameLocalStores(data)
-    console.log(`[DB] game-local: 初始化了 ${Object.keys(data).length} 个游戏本地 store`)
+    console.log(`[DB] game-local: initialized ${Object.keys(data).length} game-local store`)
   },
   'game-collection': async (data: gameCollectionDocs): Promise<void> => {
-    // 初始化游戏集合 store
     useGameCollectionStore.getState().initializeStore(data)
-    console.log(`[DB] game-collection: 初始化了 ${Object.keys(data).length} 个游戏集合 store`)
+    console.log(
+      `[DB] game-collection: initializes ${Object.keys(data).length} collection of games store`
+    )
   },
   config: async (data: any): Promise<void> => {
-    // 保持原有的配置初始化
     useConfigStore.getState().initializeStore(data)
-    console.log('[DB] config store 已初始化')
+    console.log('[DB] config store initialized')
   },
   'config-local': async (data: any): Promise<void> => {
-    // 保持原有的本地配置初始化
     useConfigLocalStore.getState().initializeStore(data)
-    console.log('[DB] config-local store 已初始化')
+    console.log('[DB] config-local store initialized')
   }
 }
 
 /**
- * 处理各种数据库变更的函数映射
+ * Mapping of functions to handle various database changes
  */
 const DB_CHANGE_HANDLERS = {
   game: (docId: string, data: any, deleted: boolean): void => {
     if (deleted) {
-      // 如果文档被删除，从注册表中移除
+      // If the document is deleted, remove it from the registry
       useGameRegistry.getState().unregisterGame(docId)
-      // 删除游戏 store
+      // Delete game store
       deleteGameStore(docId)
-      console.log(`[DB] 游戏 ${docId} 已删除`)
+      console.log(`[DB] Game ${docId} Deleted`)
       return
     }
 
-    // 获取游戏 store 并更新数据
+    // Get game store and update data
     const gameStore = getGameStore(docId)
     const currentData = gameStore.getState().getData()
 
-    // 如果数据没有变化，跳过更新
+    // Skip update if no change in data
     if (isEqual(data, currentData)) return
 
-    // 如果游戏 store 已初始化，则更新数据
+    // If the game store is initialized, update the data
     if (gameStore.getState().initialized) {
       gameStore.getState().initialize(data)
     } else {
-      // 否则初始化游戏 store
+      // Otherwise initialize the game store
       gameStore.getState().initialize(data)
       useGameRegistry.getState().registerGame(docId, {
         name: data.metadata?.name || '',
@@ -85,135 +82,137 @@ const DB_CHANGE_HANDLERS = {
       })
     }
 
-    console.log(`[DB] 游戏 ${docId} 数据已更新`)
+    console.log(`[DB] Game ${docId} Data has been updated!`)
   },
 
   'game-local': (docId: string, data: any, deleted: boolean): void => {
     if (deleted) {
-      // 删除游戏本地 store
+      // Delete game local store
       deleteGameLocalStore(docId)
-      console.log(`[DB] 游戏本地数据 ${docId} 已删除`)
+      console.log(`[DB] Game Local Data ${docId} Deleted`)
       return
     }
 
-    // 获取游戏本地 store 并更新数据
+    // Get the game's local store and update the data
     const gameLocalStore = getGameLocalStore(docId)
     const currentData = gameLocalStore.getState().getData()
 
-    // 如果数据没有变化，跳过更新
+    // Skip update if no change in data
     if (isEqual(data, currentData)) return
 
-    // 如果游戏本地 store 已初始化，则更新数据
+    // If the local store for the game has been initialized, update the data
     if (gameLocalStore.getState().initialized) {
       gameLocalStore.getState().initialize(data)
     } else {
-      // 否则初始化游戏本地 store
+      // Otherwise initialize the game local store
       gameLocalStore.getState().initialize(data)
     }
 
-    console.log(`[DB] 游戏本地数据 ${docId} 已更新`)
+    console.log(`[DB] Game Local Data ${docId} Updated`)
   },
 
   'game-collection': (docId: string, data: any, deleted: boolean): void => {
     const gameCollectionStore = useGameCollectionStore.getState()
 
     if (deleted) {
-      // 处理游戏集合删除
+      // Handling game collection deletion
       gameCollectionStore.removeCollection(docId)
-      console.log(`[DB] 游戏集合 ${docId} 已删除`)
+      console.log(`[DB] Game Collection ${docId} Removed`)
       return
     }
 
-    // 更新游戏集合
+    // Updated Game Collection
     const currentCollection = gameCollectionStore.documents[docId]
     if (isEqual(data, currentCollection)) return
 
     gameCollectionStore.setDocument(docId, data)
-    console.log(`[DB] 游戏集合 ${docId} 已更新`)
+    console.log(`[DB] Game Collection ${docId} Updated`)
   },
 
   config: (docId: string, data: any, deleted: boolean): void => {
     const configStore = useConfigStore.getState()
 
     if (deleted) {
-      // 处理配置删除
+      // Handling configuration deletion
       const currentDocuments = { ...configStore.documents }
       delete currentDocuments[docId]
       configStore.setDocuments(currentDocuments)
-      console.log(`[DB] 配置 ${docId} 已删除`)
+      console.log(`[DB] Configuration ${docId} Removed`)
       return
     }
 
-    // 更新配置
+    // Updating the configuration
     const currentValue = configStore.documents[docId]
     if (isEqual(data, currentValue)) return
 
     configStore.setDocument(docId, data)
-    console.log(`[DB] 配置 ${docId} 已更新`)
+    console.log(`[DB] Configuration ${docId} Updated`)
   },
 
   'config-local': (docId: string, data: any, deleted: boolean): void => {
     const configLocalStore = useConfigLocalStore.getState()
 
     if (deleted) {
-      // 处理本地配置删除
+      // Handling Local Configuration Deletion
       const currentDocuments = { ...configLocalStore.documents }
       delete currentDocuments[docId]
       configLocalStore.setDocuments(currentDocuments)
-      console.log(`[DB] 本地配置 ${docId} 已删除`)
+      console.log(`[DB] Local Configuration ${docId} Removed`)
       return
     }
 
-    // 更新本地配置
+    // Update Local Configuration
     const currentValue = configLocalStore.documents[docId]
     if (isEqual(data, currentValue)) return
 
     configLocalStore.setDocument(docId, data)
-    console.log(`[DB] 本地配置 ${docId} 已更新`)
+    console.log(`[DB] Local Configuration ${docId} Updated`)
   }
 }
 
 /**
- * 建立数据库同步
+ * Establishment of database synchronization
  */
 export async function setupDBSync(): Promise<void> {
-  console.log('[DB] 设置数据库同步...')
+  console.log('[DB] Setting up database synchronization...')
 
-  // 初始化各个数据库
+  // Initialize each database
   const dbNames = Object.keys(DB_INITIALIZERS)
 
   for (const dbName of dbNames) {
     try {
-      // 获取所有文档
+      // Get all documents
       const data = await ipcInvoke('db-get-all-docs', dbName)
-      // 调用对应的初始化函数
+      // Call the corresponding initialization function
       await DB_INITIALIZERS[dbName](data)
     } catch (error) {
-      console.error(`[DB] ${dbName} 初始化失败:`, error)
+      console.error(`[DB] ${dbName} Initialization Failure:`, error)
     }
   }
 
-  // 监听数据库变化
+  // Listening to database changes
   ipcOnUnique('db-changed', (_, change: DocChange) => {
     const { dbName, docId, data } = change
     const isDeleted = data._deleted === true
 
-    // 检查我们是否有此数据库的处理程序
+    // Check if we have a handler for this database
     if (DB_CHANGE_HANDLERS[dbName]) {
       DB_CHANGE_HANDLERS[dbName](docId, data, isDeleted)
     } else {
-      console.warn(`[DB] 无法处理未知数据库的变更: ${dbName}`)
+      console.warn(`[DB] Unable to handle unknown database changes: ${dbName}`)
     }
   })
 
-  // 监听附件变化
+  // Listening to attachment changes
   ipcOnUnique('attachment-changed', (_event, change: AttachmentChange) => {
     useAttachmentStore.getState().updateTimestamp(change.dbName, change.docId, change.attachmentId)
     useAttachmentStore
       .getState()
       .setAttachmentError(change.dbName, change.docId, change.attachmentId, false)
-    console.log(`[DB] 附件已更改: ${change.dbName}/${change.docId}/${change.attachmentId}`)
+    console.log(
+      `[DB] attachment have been changed: ${change.dbName}/${change.docId}/${change.attachmentId}`
+    )
   })
 
-  console.log('[DB] 数据库同步已设置完成')
+  console.log('[DB] Database synchronization has been set up')
 }

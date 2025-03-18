@@ -1,23 +1,23 @@
 import { create } from 'zustand'
 
 interface GameBatchEditorStore {
-  // 核心状态
+  // core state
   selectedGamesMap: Record<string, boolean>
   isBatchMode: boolean
   lastSelectedId: string | null
 
-  // 操作方法
+  // Operating Methods
   selectGame: (gameId: string) => void
   unselectGame: (gameId: string) => void
   clearSelection: () => void
   setLastSelectedId: (id: string | null) => void
 
-  // 兼容旧接口
+  // Compatible with older interfaces
   addGameId: (gameId: string) => void
   removeGameId: (gameId: string) => void
   clearGameIds: () => void
 
-  // 计算属性
+  // Calculating properties
   get gameIds(): string[]
 }
 
@@ -26,15 +26,15 @@ export const useGameBatchEditorStore = create<GameBatchEditorStore>((set, get) =
   isBatchMode: false,
   lastSelectedId: null,
 
-  // 计算属性 - 兼容旧代码
+  // Calculated Properties - Compatible with old code
   get gameIds(): string[] {
     return Object.keys(get().selectedGamesMap)
   },
 
-  // 选中一个游戏
+  // Select a game
   selectGame: (gameId: string): void => {
     set((state) => {
-      // 如果已选中，无需更改
+      // If already checked, no need to change
       if (state.selectedGamesMap[gameId]) return state
 
       const newMap = { ...state.selectedGamesMap, [gameId]: true }
@@ -48,10 +48,10 @@ export const useGameBatchEditorStore = create<GameBatchEditorStore>((set, get) =
     console.warn(`[DEBUG] Select game: ${gameId}`)
   },
 
-  // 取消选中一个游戏
+  // Unselect a game
   unselectGame: (gameId: string): void => {
     set((state) => {
-      // 如果未选中，无需更改
+      // If unselected, no change is necessary
       if (!state.selectedGamesMap[gameId]) return state
 
       const newMap = { ...state.selectedGamesMap }
@@ -67,7 +67,7 @@ export const useGameBatchEditorStore = create<GameBatchEditorStore>((set, get) =
     console.warn(`[DEBUG] Unselect game: ${gameId}`)
   },
 
-  // 清空所有选择
+  // Clear all selections
   clearSelection: (): void => {
     set({
       selectedGamesMap: {},
@@ -75,12 +75,12 @@ export const useGameBatchEditorStore = create<GameBatchEditorStore>((set, get) =
     })
   },
 
-  // 设置最后选择的ID
+  // Setting the last selected ID
   setLastSelectedId: (id: string | null): void => {
     set({ lastSelectedId: id })
   },
 
-  // 兼容旧方法
+  // Compatible with old methods
   addGameId: (gameId: string): void => {
     get().selectGame(gameId)
   },

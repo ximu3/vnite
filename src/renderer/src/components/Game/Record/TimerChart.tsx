@@ -2,6 +2,7 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
 import { cn } from '~/utils'
 import type { ValueType } from '@ui/chart'
+import { useTranslation } from 'react-i18next'
 
 interface DailyPlayTime {
   [date: string]: number
@@ -21,6 +22,7 @@ export const TimerChart = ({
   className?: string
   filter0?: boolean
 }): JSX.Element => {
+  const { t } = useTranslation('game')
   const formatPlayTime = (value: ValueType): any => {
     if (typeof value === 'number') {
       if (value >= 60) {
@@ -43,20 +45,20 @@ export const TimerChart = ({
     chartData = Object.entries(data)
       .map(([date, playTime]) => ({
         date,
-        playTime: Math.round(playTime / 1000 / 60) // 将毫秒转换为分钟
+        playTime: Math.round(playTime / 1000 / 60) // Converting milliseconds to minutes
       }))
-      .filter((item) => item.playTime > 0) // 过滤掉游戏时长为0的天数
+      .filter((item) => item.playTime > 0) // Filter out days with 0 hours of gameplay
   } else {
     chartData = Object.entries(data).map(([date, playTime]) => ({
       date,
-      playTime: Math.round(playTime / 1000 / 60) // 将毫秒转换为分钟
+      playTime: Math.round(playTime / 1000 / 60) // Converting milliseconds to minutes
     }))
   }
 
   // Chart Configuration
   const chartConfig = {
     playTime: {
-      label: '游玩时长',
+      label: t('detail.record.chart.label'),
       color: 'var(--primary)'
     }
   }

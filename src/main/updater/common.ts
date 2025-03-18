@@ -12,18 +12,18 @@ export function setupAutoUpdater(mainWindow: BrowserWindow): void {
 
   // Add error handling
   autoUpdater.on('error', (error) => {
-    log.error('更新错误:', error)
+    log.error('update error:', error)
     mainWindow?.webContents.send('update-error', error.message)
   })
 
   // Add processing to check for the start of an update
   autoUpdater.on('checking-for-update', () => {
-    log.info('正在检查更新...')
+    log.info('Checking for updates...')
     mainWindow?.webContents.send('checking-for-update')
   })
 
   autoUpdater.on('update-available', (info) => {
-    log.info('发现新版本:', info.version)
+    log.info('Discover the new version:', info.version)
     const updateInfo = {
       version: info.version,
       releaseNotes: Array.isArray(info.releaseNotes)
@@ -34,7 +34,7 @@ export function setupAutoUpdater(mainWindow: BrowserWindow): void {
   })
 
   autoUpdater.on('update-not-available', (info) => {
-    log.info('当前已是最新版本:', info.version)
+    log.info('Currently in the latest version:', info.version)
     mainWindow?.webContents.send('update-not-available')
   })
 
@@ -43,7 +43,7 @@ export function setupAutoUpdater(mainWindow: BrowserWindow): void {
   })
 
   autoUpdater.on('update-downloaded', () => {
-    log.info('更新已下载完成')
+    log.info('The update has finished downloading')
     mainWindow?.webContents.send('update-downloaded')
   })
 
@@ -51,7 +51,7 @@ export function setupAutoUpdater(mainWindow: BrowserWindow): void {
     try {
       return await autoUpdater.downloadUpdate()
     } catch (error) {
-      log.error('下载更新失败:', error)
+      log.error('Failed to download update:', error)
       throw error
     }
   })
@@ -65,7 +65,7 @@ export function setupAutoUpdater(mainWindow: BrowserWindow): void {
     try {
       return await autoUpdater.checkForUpdates()
     } catch (error) {
-      log.error('检查更新失败:', error)
+      log.error('Failed to check for updates:', error)
       throw error
     }
   })
@@ -73,7 +73,7 @@ export function setupAutoUpdater(mainWindow: BrowserWindow): void {
   // Delay checking for updates to make sure the window is fully loaded
   setTimeout(() => {
     autoUpdater.checkForUpdates().catch((error) => {
-      log.error('自动检查更新失败:', error)
+      log.error('Failure to automatically check for updates:', error)
     })
   }, 3000)
 }
@@ -88,9 +88,9 @@ export function setupAutoUpdater(mainWindow: BrowserWindow): void {
 //     try {
 //       await upgradeAllGamesPathJson1to2()
 //       await setDBValue('version.json', ['pathJson'], DBVersion.pathJson)
-//       log.info(`path.json 版本升级成功：${pathJsonVersion} -> ${DBVersion.pathJson}`)
+//       log.info(`path.json Version Upgrade Successful：${pathJsonVersion} -> ${DBVersion.pathJson}`)
 //     } catch (error) {
-//       log.error(`path.json 版本升级失败：${pathJsonVersion} -> ${DBVersion.pathJson}`, error)
+//       log.error(`path.json Version Upgrade Failure：${pathJsonVersion} -> ${DBVersion.pathJson}`, error)
 //     }
 //   }
 // }

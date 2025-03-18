@@ -24,17 +24,15 @@ import { GameRankingItem } from './GameRankingItem'
 import { getYearlyPlayData } from '~/stores/game/recordUtils'
 
 export function YearlyReport(): JSX.Element {
-  // 使用record命名空间
   const { t } = useTranslation('record')
 
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear())
   const yearData = getYearlyPlayData(selectedYear)
 
-  // 上一年/下一年
   const goToPreviousYear = (): void => setSelectedYear(selectedYear - 1)
   const goToNextYear = (): void => setSelectedYear(selectedYear + 1)
 
-  // 月份名称本地化
+  // Month Name Localization
   const getLocalizedMonth = (monthIndex: number): string => {
     const monthKeys = [
       'yearly.months.january',
@@ -53,11 +51,11 @@ export function YearlyReport(): JSX.Element {
     return t(monthKeys[monthIndex])
   }
 
-  // 为图表准备数据
+  // Preparing data for charts
   const monthlyChartData = yearData.monthlyPlayTime.map((item) => ({
     month: getLocalizedMonth(item.month),
-    playTime: item.playTime / 3600000, // 转换为小时
-    originalMonth: item.month // 保存原始月份数据
+    playTime: item.playTime / 3600000, // Convert to hours
+    originalMonth: item.month
   }))
 
   const monthlyDaysChartData = yearData.monthlyPlayDays.map((item) => ({
@@ -69,11 +67,10 @@ export function YearlyReport(): JSX.Element {
   // 饼图的数据处理
   const pieChartData = yearData.gameTypeDistribution.map((item, index) => ({
     ...item,
-    percentValue: item.playTime / yearData.totalTime, // 添加百分比数据
-    color: `var(--chart-${(index % 5) + 1})` // 使用shadcn的chart颜色变量
+    percentValue: item.playTime / yearData.totalTime, // Adding percentage data
+    color: `var(--chart-${(index % 5) + 1})` // Using shadcn's chart color variable
   }))
 
-  // Chart配置
   const barChartConfig = {
     playTime: {
       label: t('yearly.stats.yearlyPlayTime'),
@@ -224,7 +221,6 @@ export function YearlyReport(): JSX.Element {
         </Card>
       </div>
 
-      {/* 将年度游戏时间分布和年度热门游戏放在同一行 */}
       <div className="grid grid-cols-1 md:grid-cols-[auto,1fr] gap-4">
         <Card>
           <CardHeader>

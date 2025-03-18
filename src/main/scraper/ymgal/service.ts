@@ -26,7 +26,7 @@ export async function searchGamesFromYMGal(gameName: string): Promise<GameList> 
 
 /**
  * Get game metadata from YMGal
- * @param gameId The id of the game on YMGal
+ * @param identifier The identifier of the game
  * @returns The metadata for the game
  * @throws An error if the operation fails
  */
@@ -62,25 +62,25 @@ export async function checkGameExistsOnYMGal(gameId: string): Promise<boolean> {
 }
 
 /**
- * Get game screenshots from YMGal
- * @param gameId The id of the game on YMGal
- * @returns A list of screenshots
+ * Get game backgrounds from YMGal
+ * @param identifier The identifier of the game
+ * @returns A list of backgrounds
  */
 export async function getGameBackgroundsFromYMGal(
   identifier: ScraperIdentifier
 ): Promise<string[]> {
   try {
-    const screenshots = await getGameBackgroundsFromVNDB(identifier)
-    return screenshots
+    const backgrounds = await getGameBackgroundsFromVNDB(identifier)
+    return backgrounds
   } catch (error) {
-    log.error('Error fetching game screenshots:', error)
+    log.error('Error fetching game backgrounds:', error)
     throw error
   }
 }
 
 /**
  * Get game cover from YMGal
- * @param gameId The id of the game on YMGal
+ * @param identifier The identifier of the game
  * @returns A cover image
  */
 export async function getGameCoverFromYMGal(identifier: ScraperIdentifier): Promise<string> {

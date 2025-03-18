@@ -2,6 +2,7 @@ import { ConfigDBManager } from './config'
 import { DBManager } from './common'
 import { calculateDBSize } from '~/utils'
 import { ROLE_QUOTAS } from '@appTypes/sync'
+import log from 'electron-log/main'
 
 export async function startSync(isStart = false): Promise<void> {
   try {
@@ -18,7 +19,7 @@ export async function startSync(isStart = false): Promise<void> {
         !userInfo.accessToken ||
         !userInfo.role
       ) {
-        console.error('Missing official sync username or password')
+        log.error('Missing official sync username or password')
         setTimeout(
           () => {
             DBManager.updateSyncStatus({
@@ -34,7 +35,7 @@ export async function startSync(isStart = false): Promise<void> {
       const roleQuotas = ROLE_QUOTAS[userInfo.role]
       const dbSize = await calculateDBSize()
       if (dbSize > roleQuotas.dbSize) {
-        console.error('Database size exceeds quota')
+        log.error('Database size exceeds quota')
         setTimeout(
           () => {
             DBManager.updateSyncStatus({
@@ -59,7 +60,7 @@ export async function startSync(isStart = false): Promise<void> {
         !syncConfig.selfHostedConfig.auth.username ||
         !syncConfig.selfHostedConfig.auth.password
       ) {
-        console.error('Missing self-hosted sync configuration')
+        log.error('Missing self-hosted sync configuration')
         setTimeout(
           () => {
             DBManager.updateSyncStatus({
@@ -89,9 +90,9 @@ export async function startSync(isStart = false): Promise<void> {
       },
       isStart ? 17000 : 0
     )
-    console.log('Sync success')
+    log.info('Sync success')
   } catch (error) {
-    console.error('Sync error:', error)
+    log.error('Sync error:', error)
     setTimeout(
       () => {
         DBManager.updateSyncStatus({

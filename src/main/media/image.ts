@@ -9,10 +9,10 @@ import { fileTypeFromBuffer } from 'file-type'
 import gis from 'async-g-i-s'
 
 /**
- * 搜索游戏相关图片
- * @param gameName 游戏名称
- * @param imageType 图片类型 (icon, logo, hero, cover)
- * @returns 图片链接数组
+ * Search game related images
+ * @param gameName name of game
+ * @param imageType Image Type (icon, logo, hero, cover)
+ * @returns Array of image links
  */
 export async function searchGameImages(
   gameName: string,
@@ -22,7 +22,7 @@ export async function searchGameImages(
   try {
     const imageUrls: string[] = []
 
-    // 使用Google图片搜索
+    // Using Google Image Search
     const results = await gis(`"${gameName}" ${imageType === 'hero' ? 'wallpaper' : imageType}`)
     for (const result of results.slice(0, limit)) {
       imageUrls.push(result.url || '')
@@ -30,7 +30,7 @@ export async function searchGameImages(
 
     return imageUrls
   } catch (error) {
-    console.error('搜索图片出错:', error)
+    console.error('Error searching for images:', error)
     return []
   }
 }
@@ -42,7 +42,7 @@ export async function convertToWebP(
   try {
     sharp.cache(false)
 
-    // 处理输入是URL的情况
+    // Handles cases where the input is a URL
     let imageBuffer: Buffer
     if (typeof input === 'string' && input.startsWith('http')) {
       const response = await fetch(input)
@@ -51,28 +51,28 @@ export async function convertToWebP(
       }
       imageBuffer = Buffer.from(await response.arrayBuffer())
     } else if (typeof input === 'string') {
-      // 如果是本地文件路径
+      // If it is a local file path
       imageBuffer = await fse.readFile(input)
     } else {
-      // 如果已经是Buffer
+      // If it is already Buffer
       imageBuffer = input
     }
 
     const isIco = isIcoFormat(imageBuffer)
 
     if (isIco) {
-      // 使用sharp-ico处理ICO文件
-      // 获取ICO中最大尺寸的图像作为转换源
+      // Handling ICO files with sharp-ico
+      // Get the largest size image in the ICO as a conversion source
       const sharpInstances = ico.sharpsFromIco(imageBuffer) as sharp.Sharp[]
 
       if (sharpInstances.length === 0) {
         throw new Error('No valid images found in ICO file')
       }
 
-      // 选择分辨率最高的图像（通常是ICO文件中的第一个）
+      // Select the image with the highest resolution (usually the first one in the ICO file)
       const largestIcon = sharpInstances[0]
 
-      // 转换为WebP
+      // Convert to WebP
       return await largestIcon
         .webp({
           quality: options.quality ?? 100
@@ -105,7 +105,7 @@ export async function convertToPng(input: Buffer | string): Promise<Buffer> {
   try {
     sharp.cache(false)
 
-    // 处理输入是URL的情况
+    // Handles cases where the input is a URL
     let imageBuffer: Buffer
     if (typeof input === 'string' && input.startsWith('http')) {
       const response = await fetch(input)
@@ -114,10 +114,10 @@ export async function convertToPng(input: Buffer | string): Promise<Buffer> {
       }
       imageBuffer = Buffer.from(await response.arrayBuffer())
     } else if (typeof input === 'string') {
-      // 如果是本地文件路径
+      // If it is a local file path
       imageBuffer = await fse.readFile(input)
     } else {
-      // 如果已经是Buffer
+      // If it is already Buffer
       imageBuffer = input
     }
 
@@ -129,7 +129,7 @@ export async function convertToPng(input: Buffer | string): Promise<Buffer> {
 }
 
 function isIcoFormat(buffer: Buffer): boolean {
-  // ICO文件头标识: 前2字节为0和1，第3和第4字节为1和0
+  // ICO file header identification: 0 and 1 in the first 2 bytes, 1 and 0 in the 3rd and 4th bytes
   if (buffer.length >= 4) {
     return buffer[0] === 0 && buffer[1] === 0 && buffer[2] === 1 && buffer[3] === 0
   }
@@ -179,16 +179,16 @@ export async function saveGameIconByFile(gameId: string, filePath: string): Prom
     // Save icon
     await GameDBManager.setGameImage(gameId, 'icon', icon.toPNG())
 
-    console.log('保存图标成功:', filePath)
+    console.log('Save Icon Successful:', filePath)
   } catch (error) {
-    console.error('保存图标失败:', error)
+    console.error('Failed to save icon:', error)
     throw error
   }
 }
 
 export async function downloadTempImage(url: string): Promise<string> {
   try {
-    // 下载文件，添加常见浏览器头信息
+    // Download file, add common browser headers
     const response = await fetch(url, {
       headers: {
         'User-Agent':
@@ -208,7 +208,7 @@ export async function downloadTempImage(url: string): Promise<string> {
     const arrayBuffer = await response.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
 
-    // 验证实际文件类型
+    // Verify the actual file type
     const fileType = await fileTypeFromBuffer(buffer as Uint8Array)
     const ext = fileType?.ext || 'webp'
     const filePath = getAppTempPath(`${Date.now()}.${ext}`)
@@ -216,7 +216,7 @@ export async function downloadTempImage(url: string): Promise<string> {
     await fse.writeFile(filePath, buffer)
     return filePath
   } catch (error) {
-    console.error('下载图片失败:', error)
+    console.error('Failed to download image:', error)
     throw error
   }
 }

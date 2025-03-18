@@ -30,12 +30,12 @@ export function ArrayInput({
   isTextarea,
   isHaveTooltip = true
 }: ArrayInputProps): JSX.Element {
-  // 使用 useMemo 初始化 inputValue，避免不必要的 join 操作
+  // Use useMemo to initialize inputValue to avoid unnecessary join operations.
   const initialInputValue = useMemo(() => value.join(', '), [])
   const [inputValue, setInputValue] = useState(initialInputValue)
   const [isComposing, setIsComposing] = useState(false)
 
-  // 使用防抖来延迟更新数组
+  // Delayed update of arrays using anti-aliasing
   const debouncedUpdateArray = useCallback(
     (() => {
       let timeoutId: NodeJS.Timeout
@@ -58,7 +58,7 @@ export function ArrayInput({
     [onChange]
   )
 
-  // 只在外部 value 发生有意义变化时更新 inputValue
+  // Update inputValue only when there is a meaningful change to the external value.
   useEffect(() => {
     const newInputValue = value.join(', ')
     if (newInputValue !== inputValue && !isComposing) {

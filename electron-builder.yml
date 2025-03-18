@@ -18,7 +18,6 @@ files:
 asarUnpack:
   - resources/**
 
-# 添加协议配置
 protocols:
   - name: Vnite Protocol
     schemes:

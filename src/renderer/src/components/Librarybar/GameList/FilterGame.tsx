@@ -25,7 +25,7 @@ export function FilterGame(): JSX.Element {
             {games.length !== 0 ? (
               games.map((game) => <GameNav key={game} gameId={game} groupId={'0'} />)
             ) : (
-              <div className={cn('text-center text-xs mt-2')}>没有找到符合条件的游戏</div>
+              <div className={cn('text-center text-xs mt-2')}>{t('list.filter.noResults')}</div>
             )}
           </AccordionContent>
         </AccordionItem>

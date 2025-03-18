@@ -54,7 +54,7 @@ export class IGDBAuthManager {
       )
 
       if (!response.ok) {
-        throw new Error(`认证失败: ${response.status} ${response.statusText}`)
+        throw new Error(`authentication failure: ${response.status} ${response.statusText}`)
       }
 
       const data = (await response.json()) as IGDBAuthResponse
@@ -63,7 +63,7 @@ export class IGDBAuthManager {
       // Calculate token expiration time
       this.tokenExpiration = new Date(Date.now() + data.expires_in * 1000)
     } catch (error) {
-      console.error('获取IGDB访问令牌失败:', error)
+      console.error('Failed to get IGDB access token:', error)
       throw error
     }
   }

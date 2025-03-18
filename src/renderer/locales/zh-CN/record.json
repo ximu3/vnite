@@ -1,5 +1,14 @@
 {
+  "title": "我的游戏记录",
+  "tabs": {
+    "overview": "总览",
+    "weekly": "周报",
+    "monthly": "月报",
+    "yearly": "年报",
+    "score": "评分报告"
+  },
   "overview": {
+    "title": "总览",
     "stats": {
       "totalGames": "游戏总数",
       "totalPlayTime": "总游戏时间",

@@ -1,6 +1,14 @@
 import type { Components } from 'react-markdown'
 
-export const TargetBlankLink: Components['a'] = ({ href, children, ...props }) => {
+export const TargetBlankLink: Components['a'] = ({
+  href,
+  children,
+  ...props
+}: {
+  href?: string
+  children?: React.ReactNode
+  props?: any
+}) => {
   const isExternal = href?.startsWith('http') || href?.startsWith('//')
 
   if (isExternal) {

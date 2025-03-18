@@ -161,6 +161,7 @@
     "record": {
       "card": {
         "title": "Play Data",
+        "label": "Playtime",
         "noData": "You haven't started playing this game yet.",
         "playStats": "You played {{totalTime, gameTime}} over {{days}} days, averaging {{averageTime, gameTime}} per day,",
         "immersion": "and were immersed for {{time, gameTime}} on {{date, niceDate}}.",

@@ -7,8 +7,8 @@ import { setupDBSync } from '~/stores/sync'
 import { useUpdaterStore } from '~/pages/Updater/store'
 
 /**
- * 设置游戏URL启动监听器
- * @param navigate 路由导航函数
+ * Setting the game URL startup listener
+ * @param navigate Route Navigation Functions
  */
 export function setupGameUrlListener(navigate: (path: string) => void): () => void {
   const handleStartGameFromUrl = (_event: any, gameId: string): void => {
@@ -19,7 +19,7 @@ export function setupGameUrlListener(navigate: (path: string) => void): () => vo
 }
 
 /**
- * 设置云同步状态监听器
+ * Setting up a Cloud Synchronization Status Listener
  */
 export function setupCloudSyncListener(): () => void {
   const { setStatus } = useCloudSyncStore.getState()
@@ -32,35 +32,31 @@ export function setupCloudSyncListener(): () => void {
 }
 
 export function setupGameExitListeners(): () => void {
-  // 使用 getState() 直接访问状态，避免依赖问题
   const { setRunningGames } = useRunningGames.getState()
 
-  // 游戏正在退出的监听器
+  // Game is exiting listener
   const exitingListener = ipcOnUnique('game-exiting', (_, gameId: string) => {
     toast.loading('正在退出游戏...', { id: `${gameId}-exiting` })
   })
 
-  // 游戏已退出的监听器
+  // Game is exited listener
   const exitedListener = ipcOnUnique('game-exited', (_, gameId: string) => {
-    // 获取最新状态，避免闭包陈旧值问题
     const { runningGames } = useRunningGames.getState()
     const newRunningGames = runningGames.filter((id) => id !== gameId)
 
-    // 更新运行中游戏列表
+    // Update the list of running games
     setRunningGames(newRunningGames)
 
-    // 显示通知
     toast.success('游戏已退出', {
       id: `${gameId}-exiting`
     })
 
-    // 4秒后关闭通知
+    // Turn off notifications after 4 seconds
     setTimeout(() => {
       toast.dismiss(`${gameId}-exiting`)
     }, 4000)
   })
 
-  // 返回清理函数，用于移除监听器
   return () => {
     exitingListener()
     exitedListener()
@@ -80,12 +76,11 @@ export function setupUpdateListener(): () => void {
 }
 
 /**
- * 设置所有应用程序监听器
- * @param navigate 路由导航函数
- * @returns 清理函数数组
+ * Setting up all application listeners
+ * @param navigate Route Navigation Functions
+ * @returns Cleaning up the function array
  */
 export async function setup(navigate: (path: string) => void): Promise<() => void> {
-  // 设置各种监听器
   const cleanupFunctions = [
     setupGameUrlListener(navigate),
     setupCloudSyncListener(),
@@ -94,7 +89,6 @@ export async function setup(navigate: (path: string) => void): Promise<() => voi
     setupUpdateListener()
   ]
 
-  // 返回一个函数用于清理所有监听器
   return () => {
     cleanupFunctions.forEach((cleanup) => {
       if (typeof cleanup === 'function') {
