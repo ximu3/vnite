@@ -49,8 +49,9 @@ export interface configDocs {
 export interface configLocalDocs {
   userInfo: {
     name: string
-    accessToken: string
+    email: string
     role: string
+    accessToken: string
   }
   sync: {
     enabled: boolean
@@ -126,8 +127,9 @@ export const DEFAULT_CONFIG_VALUES = {
 export const DEFAULT_CONFIG_LOCAL_VALUES = {
   userInfo: {
     name: '',
-    accessToken: '',
-    role: 'community'
+    email: '',
+    role: 'community',
+    accessToken: ''
   },
   sync: {
     enabled: false,

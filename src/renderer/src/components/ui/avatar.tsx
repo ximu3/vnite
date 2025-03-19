@@ -1,9 +1,15 @@
-'use client'
-
 import * as React from 'react'
 import * as AvatarPrimitive from '@radix-ui/react-avatar'
-
 import { cn } from '~/utils'
+import crypto from 'crypto-js/md5'
+
+const getGravatarUrl = (email: string, size: number = 80): string => {
+  // Convert to lowercase and remove spaces
+  const normalizedEmail = email.trim().toLowerCase()
+  const hash = crypto(normalizedEmail).toString()
+  // Return the Gravatar URL, use d=404 to have invalid avatars return a 404 error
+  return `https://www.gravatar.com/avatar/${hash}?s=${size}&d=404`
+}
 
 const Avatar = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
@@ -17,16 +23,32 @@ const Avatar = React.forwardRef<
 ))
 Avatar.displayName = AvatarPrimitive.Root.displayName
 
+// Extending the AvatarImage component's Props type
+interface AvatarImageProps extends React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image> {
+  email?: string
+  gravatarSize?: number
+}
+
 const AvatarImage = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Image>,
-  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
->(({ className, ...props }, ref) => (
-  <AvatarPrimitive.Image
-    ref={ref}
-    className={cn('aspect-square h-full w-full', className)}
-    {...props}
-  />
-))
+  AvatarImageProps
+>(({ className, email, gravatarSize = 80, ...props }, ref) => {
+  // Create statuses to track if an image fails to load
+  const [imageError, setImageError] = React.useState(false)
+
+  // If email is provided and the image does not load incorrectly, use the Gravatar URL
+  const imageSrc = email && !imageError ? getGravatarUrl(email, gravatarSize) : props.src
+
+  return !imageError ? (
+    <AvatarPrimitive.Image
+      ref={ref}
+      className={cn('aspect-square h-full w-full', className)}
+      src={imageSrc}
+      onError={() => setImageError(true)}
+      {...props}
+    />
+  ) : null
+})
 AvatarImage.displayName = AvatarPrimitive.Image.displayName
 
 const AvatarFallback = React.forwardRef<

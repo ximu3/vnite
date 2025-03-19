@@ -7,7 +7,7 @@ import log from 'electron-log/main.js'
 import sharp from 'sharp'
 import pngToIco from 'png-to-ico'
 import { fileTypeFromBuffer } from 'file-type'
-import getFolderSize from 'get-folder-size'
+import axios from 'axios'
 
 export async function getLanguage(): Promise<string> {
   const language = await ConfigDBManager.getConfigValue('general.language')
@@ -16,17 +16,6 @@ export async function getLanguage(): Promise<string> {
   } else {
     await ConfigDBManager.setConfigValue('general.language', app.getLocale())
     return app.getLocale()
-  }
-}
-
-export async function calculateDBSize(): Promise<number> {
-  try {
-    const dbPath = getDataPath()
-    const size = await getFolderSize.loose(dbPath)
-    return size
-  } catch (error) {
-    console.error('Error when calculating database folder size:', error)
-    return 0
   }
 }
 
@@ -406,6 +395,78 @@ export async function cropImage({
     return tempPath
   } catch (error) {
     console.error('Error cropping image:', error)
+    throw error
+  }
+}
+
+// Cache interface definition
+interface CacheItem {
+  size: number
+  timestamp: number
+}
+
+// In-memory cache object
+const sizeCache: Record<string, CacheItem> = {}
+
+// Cache TTL (15 minutes in milliseconds)
+const CACHE_TTL = 15 * 60 * 1000
+
+/**
+ * Get total size of CouchDB user databases with 15-minute cache
+ * @param username - User identifier for database queries
+ * @returns Promise resolving to total database size in bytes
+ */
+export async function getCouchDbSize(username: string): Promise<number> {
+  const cacheKey = `couchdb_size_${username}`
+
+  // Check if we have valid cache entry
+  const cacheData = sizeCache[cacheKey]
+  if (cacheData && Date.now() - cacheData.timestamp < CACHE_TTL) {
+    console.log(`Using cached size for ${username}: ${cacheData.size} bytes`)
+    return cacheData.size
+  }
+
+  // Cache doesn't exist or has expired, execute original logic
+  try {
+    const serverUrl = import.meta.env.VITE_COUCHDB_SERVER_URL
+    const adminUsername = import.meta.env.VITE_COUCHDB_USERNAME
+    const adminPassword = import.meta.env.VITE_COUCHDB_PASSWORD
+
+    if (!serverUrl) {
+      throw new Error('Missing CouchDB server URL')
+    }
+
+    const dbs = ['game', 'config', 'game-collection']
+    let dbSize = 0
+
+    // Query each database and sum up the sizes
+    for (const db of dbs) {
+      const dbName = `${username}-${db}`.replace('user', 'userdb')
+      const url = `${serverUrl}/${dbName}`
+
+      const response = await axios.get(url, {
+        auth: {
+          username: adminUsername,
+          password: adminPassword
+        }
+      })
+
+      if (response.data && response.data.sizes && response.data.sizes.file) {
+        dbSize += response.data.sizes.file
+      } else {
+        throw new Error(`Failed to get size for ${dbName}`)
+      }
+    }
+
+    // Create new cache item with current timestamp
+    sizeCache[cacheKey] = {
+      size: dbSize,
+      timestamp: Date.now()
+    }
+
+    return dbSize
+  } catch (error) {
+    console.error('Error getting CouchDB size:', error)
     throw error
   }
 }

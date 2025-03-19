@@ -9,7 +9,7 @@ import { useConfigLocalState } from '~/hooks'
 import { RadioGroup, RadioGroupItem } from '@ui/radio-group'
 import { Separator } from '@ui/separator'
 import { Label } from '@ui/label'
-import { Avatar, AvatarFallback } from '@ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@ui/avatar'
 import { useEffect, useState } from 'react'
 import {
   DropdownMenu,
@@ -17,7 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@ui/dropdown-menu'
-import { User, LogOut, ChevronDown, HardDrive, Cloud, Key, InfoIcon } from 'lucide-react'
+import { User, LogOut, HardDrive, Cloud, Key, InfoIcon } from 'lucide-react'
 import { Link } from '@ui/link'
 import { useTranslation } from 'react-i18next'
 import { useCloudSyncStore } from './store'
@@ -26,7 +26,7 @@ import { Trans } from 'react-i18next'
 
 export function CloudSync(): JSX.Element {
   const { t } = useTranslation('config')
-  const { status } = useCloudSyncStore()
+  const { status, usedQuota, setUsedQuota } = useCloudSyncStore()
   const [enabled, setEnabled] = useConfigLocalState('sync.enabled')
   const [syncMode, setSyncMode] = useConfigLocalState('sync.mode')
   const [_1, setOfficialUsername] = useConfigLocalState('sync.officialConfig.auth.username')
@@ -41,10 +41,10 @@ export function CloudSync(): JSX.Element {
   const [userName, setUserName] = useConfigLocalState('userInfo.name')
   const [_3, setUserAccessToken] = useConfigLocalState('userInfo.accessToken')
   const [userRole, setUserRole] = useConfigLocalState('userInfo.role')
+  const [userEmail, setUserEmail] = useConfigLocalState('userInfo.email')
 
   const totalQuota = ROLE_QUOTAS[userRole].maxStorage
 
-  const [usedQuota, setUsedQuota] = useState(0)
   const [storagePercentage, setStoragePercentage] = useState(0)
 
   // Getting Storage Usage
@@ -52,7 +52,7 @@ export function CloudSync(): JSX.Element {
     if (enabled && userName) {
       const fetchStorageInfo = async (): Promise<void> => {
         try {
-          const dbSize = (await ipcInvoke('calculate-db-size')) as number
+          const dbSize = (await ipcInvoke('get-couchdb-size')) as number
           if (dbSize) {
             setUsedQuota(dbSize)
           }
@@ -144,6 +144,7 @@ export function CloudSync(): JSX.Element {
     setOfficialPassword('')
     setUserName('')
     setUserAccessToken('')
+    setUserEmail('')
     setUserRole('community')
     setUsedQuota(0)
     return
@@ -152,6 +153,16 @@ export function CloudSync(): JSX.Element {
   const getInitials = (name: string): string => {
     if (!name) return 'U'
     return name.charAt(0).toUpperCase()
+  }
+
+  const getEdtionText = (): string => {
+    if (userRole === 'community') {
+      return t('cloudSync.official.communityEdition')
+    } else if (userRole === 'developer') {
+      return t('cloudSync.official.developerEdition')
+    } else {
+      return t('cloudSync.official.premiumEdition')
+    }
   }
 
   return (
@@ -206,7 +217,7 @@ export function CloudSync(): JSX.Element {
               </div>
             </div>
           ) : (
-            <div>{t('cloudSync.status.noInfo')}</div>
+            <div className={cn('text-xs')}>{t('cloudSync.status.noInfo')}</div>
           )}
         </Card>
       )}
@@ -278,20 +289,18 @@ export function CloudSync(): JSX.Element {
                       <div className="flex flex-col gap-4">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
-                            <Avatar className="w-12 h-12 border-2 bg-gradient-to-br from-primary to-primary/70 text-primary-foreground border-background">
+                            <Avatar className="border-2 w-14 h-14 bg-gradient-to-br from-primary to-primary/70 text-primary-foreground border-background">
+                              <AvatarImage email={userEmail} />
                               <AvatarFallback>{getInitials(userName)}</AvatarFallback>
                             </Avatar>
                             <div>
                               <DropdownMenu>
                                 <DropdownMenuTrigger className="flex items-center gap-1 transition-colors outline-none hover:text-primary">
                                   <span className="font-medium">{userName}</span>
-                                  <ChevronDown size={16} className="text-muted-foreground" />
+                                  <span className="icon-[mdi--keyboard-arrow-down] mt-1"></span>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="start">
-                                  <DropdownMenuItem
-                                    className="text-destructive"
-                                    onClick={handleOfficialLogout}
-                                  >
+                                  <DropdownMenuItem onClick={handleOfficialLogout}>
                                     <LogOut className="w-4 h-4 mr-2" />
                                     <span>{t('cloudSync.official.logout')}</span>
                                   </DropdownMenuItem>
@@ -299,7 +308,7 @@ export function CloudSync(): JSX.Element {
                               </DropdownMenu>
                               <div className="flex items-center gap-3 mt-1">
                                 <span className="bg-primary/20 text-primary text-xs px-2 py-0.5 rounded-lg font-medium">
-                                  {t('cloudSync.official.communityEdition')}
+                                  {getEdtionText()}
                                 </span>
                                 <span className="text-xs text-muted-foreground">
                                   {t('cloudSync.official.lastSync')}:{' '}

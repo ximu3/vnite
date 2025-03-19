@@ -11,7 +11,7 @@ export default defineConfig({
         '@appUtils': resolve('src/utils')
       }
     },
-    plugins: [externalizeDepsPlugin({ exclude: ['file-type', 'get-folder-size'] })]
+    plugins: [externalizeDepsPlugin({ exclude: ['file-type'] })]
   },
   preload: {
     plugins: [externalizeDepsPlugin()]

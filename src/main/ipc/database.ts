@@ -1,6 +1,6 @@
 import { ipcMain, BrowserWindow } from 'electron'
-import { DBManager, backupDatabase, restoreDatabase, startSync } from '~/database'
-import { calculateDBSize } from '~/utils'
+import { DBManager, backupDatabase, restoreDatabase, startSync, ConfigDBManager } from '~/database'
+import { getCouchDbSize } from '~/utils'
 import { DocChange } from '@appTypes/database'
 
 export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
@@ -31,8 +31,9 @@ export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
     await restoreDatabase(sourcePath)
   })
 
-  ipcMain.handle('calculate-db-size', async () => {
-    return await calculateDBSize()
+  ipcMain.handle('get-couchdb-size', async () => {
+    const username = await ConfigDBManager.getConfigLocalValue('sync.officialConfig.auth.username')
+    return await getCouchDbSize(username)
   })
 
   mainWindow.webContents.send('databaseIPCReady')

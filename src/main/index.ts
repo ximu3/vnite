@@ -255,6 +255,8 @@ if (!gotTheLock) {
 
     AuthManager.init()
 
+    await AuthManager.updateUserInfo()
+
     // Setup tray
     trayManager = await setupTray(mainWindow)
 

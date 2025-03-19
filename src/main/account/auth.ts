@@ -1,30 +1,10 @@
 import { BrowserWindow, shell } from 'electron'
 import axios from 'axios'
 import { jwtDecode } from 'jwt-decode'
-
 import { ConfigDBManager } from '~/database'
-import { AuthResult, UserRole } from '@appTypes/sync'
+import { AuthResult, UserRole, AuthentikUser } from '@appTypes/sync'
 import { startSync } from '~/database'
 import log from 'electron-log/main'
-
-// Authentik User Interface
-interface AuthentikUser {
-  sub: string
-  name: string
-  email: string
-  preferred_username: string
-  groups: string[]
-  couchdb?: {
-    username: string
-    password: string
-    url: string
-    databases: {
-      config: { dbName: string }
-      game: { dbName: string }
-      gameCollection: { dbName: string }
-    }
-  }
-}
 
 export class AuthManager {
   private static instance: AuthManager | null = null
@@ -143,6 +123,35 @@ export class AuthManager {
     AuthManager.instance = null
   }
 
+  public static async updateUserInfo(): Promise<void> {
+    try {
+      AuthManager.checkInitialized()
+      const instance = AuthManager.getInstance()
+      const accessToken = await ConfigDBManager.getConfigLocalValue('userInfo.accessToken')
+      if (!accessToken) {
+        return
+      }
+      const userInfo = (await axios.get(`${instance.serverUrl}/application/o/userinfo/`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      })) as { data: AuthentikUser }
+      if (!userInfo.data || !userInfo.data.name) {
+        throw new Error('Failed to get user information')
+      }
+      const userRole = AuthManager.getUserRole(userInfo.data)
+      await ConfigDBManager.setConfigLocalValue('userInfo', {
+        name: userInfo.data.name || '',
+        email: userInfo.data.email || '',
+        role: userRole,
+        accessToken
+      })
+    } catch (error) {
+      log.error('Failed to get user information:', error)
+      throw error
+    }
+  }
+
   /**
    * Handling authorization codes - public method, called by the master process
    */
@@ -194,8 +203,9 @@ export class AuthManager {
       // Save user credentials
       await ConfigDBManager.setConfigLocalValue('userInfo', {
         name: userInfo.name || '',
-        accessToken,
-        role: userRole
+        email: userInfo.email || '',
+        role: userRole,
+        accessToken
       })
 
       // Save CouchDB Credentials
@@ -212,7 +222,7 @@ export class AuthManager {
       // Initiate synchronization
       await startSync()
     } catch (error) {
-      log.error('处理授权码失败:', error)
+      log.error('Failure to process authorization code:', error)
       mainWindow.webContents.send('auth-error', (error as Error).message)
     }
   }
@@ -220,14 +230,18 @@ export class AuthManager {
   /**
    * Get user roles
    */
-  private static getUserRole(userInfo: AuthentikUser): UserRole {
+  public static getUserRole(userInfo: AuthentikUser): UserRole {
     // First find the matching role from the user's groups array
     if (userInfo.groups && Array.isArray(userInfo.groups) && userInfo.groups.length > 0) {
-      // Get all roles for a user and sort them by priority (Admin > Community Edition)
-      if (userInfo.groups.includes('authentik-admins') || userInfo.groups.includes('admin')) {
+      if (userInfo.groups.includes('authentik Admins')) {
         return UserRole.ADMIN
-      } else if (userInfo.groups.includes('community')) {
-        return UserRole.COMMUNITY
+      }
+      const roles = ['vnite-developer', 'vnite-premium', 'vnite-community']
+
+      for (const role of roles) {
+        if (userInfo.groups.includes(role)) {
+          return role.split('-')[1] as UserRole
+        }
       }
     }
 

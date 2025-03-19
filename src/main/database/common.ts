@@ -213,9 +213,11 @@ export class DBManager {
       return
     }
     const localDb = this.getInstance(dbName)
-    const { auth } = options
+    const { auth, isOfficial } = options
 
-    const remoteDbName = `vnite-userdb-${auth?.username}-${dbName}`
+    const remoteDbName = isOfficial
+      ? `${auth?.username}-${dbName}`.replace('user', 'userdb')
+      : `vnite-${dbName}`
 
     // Constructing a Remote Database URL
     const remoteDbUrl = `${remoteUrl}/${remoteDbName}`

@@ -26,6 +26,7 @@ export interface ExcludePath {
 
 export interface SyncOptions {
   auth?: CouchDBAuth
+  isOfficial?: boolean
 }
 
 export interface DatabaseSchemas {

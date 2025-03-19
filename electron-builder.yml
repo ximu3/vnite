@@ -1,5 +1,5 @@
-appId: vnite-3
-productName: vnite-3
+appId: vnite
+productName: vnite
 
 directories:
   buildResources: build

@@ -1,6 +1,6 @@
 import { ConfigDBManager } from './config'
 import { DBManager } from './common'
-import { calculateDBSize } from '~/utils'
+import { getCouchDbSize } from '~/utils'
 import { ROLE_QUOTAS } from '@appTypes/sync'
 import log from 'electron-log/main'
 
@@ -28,12 +28,12 @@ export async function startSync(isStart = false): Promise<void> {
               timestamp: new Date().toISOString()
             })
           },
-          isStart ? 17000 : 0
+          isStart ? 7000 : 0
         )
         return
       }
       const roleQuotas = ROLE_QUOTAS[userInfo.role]
-      const dbSize = await calculateDBSize()
+      const dbSize = await getCouchDbSize(syncConfig.officialConfig.auth.username)
       if (dbSize > roleQuotas.dbSize) {
         log.error('Database size exceeds quota')
         setTimeout(
@@ -44,7 +44,7 @@ export async function startSync(isStart = false): Promise<void> {
               timestamp: new Date().toISOString()
             })
           },
-          isStart ? 17000 : 0
+          isStart ? 7000 : 0
         )
         return
       }
@@ -52,7 +52,8 @@ export async function startSync(isStart = false): Promise<void> {
         auth: {
           username: syncConfig.officialConfig.auth.username,
           password: syncConfig.officialConfig.auth.password
-        }
+        },
+        isOfficial: true
       })
     } else {
       if (
@@ -69,7 +70,7 @@ export async function startSync(isStart = false): Promise<void> {
               timestamp: new Date().toISOString()
             })
           },
-          isStart ? 17000 : 0
+          isStart ? 7000 : 0
         )
         return
       }
@@ -88,7 +89,7 @@ export async function startSync(isStart = false): Promise<void> {
           timestamp: new Date().toISOString()
         })
       },
-      isStart ? 17000 : 0
+      isStart ? 7000 : 0
     )
     log.info('Sync success')
   } catch (error) {
@@ -101,7 +102,7 @@ export async function startSync(isStart = false): Promise<void> {
           timestamp: new Date().toISOString()
         })
       },
-      isStart ? 17000 : 0
+      isStart ? 7000 : 0
     )
   }
 }

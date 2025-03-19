@@ -1,6 +1,7 @@
 export enum UserRole {
-  COMMUNITY = 'community',
-  ADMIN = 'admin'
+  ADMIN = 'admin',
+  DEVELOPER = 'developer',
+  COMMUNITY = 'community'
 }
 
 export interface UserQuota {
@@ -8,15 +9,19 @@ export interface UserQuota {
 }
 
 interface RoleQuotas {
-  [UserRole.COMMUNITY]: UserQuota
   [UserRole.ADMIN]: UserQuota
+  [UserRole.DEVELOPER]: UserQuota
+  [UserRole.COMMUNITY]: UserQuota
 }
 
 export const ROLE_QUOTAS: RoleQuotas = {
-  community: {
-    maxStorage: 300 * 1024 * 1024
-  },
   admin: {
     maxStorage: 3 * 1024 * 1024 * 1024
+  },
+  developer: {
+    maxStorage: 1 * 1024 * 1024 * 1024
+  },
+  community: {
+    maxStorage: 300 * 1024 * 1024
   }
 }

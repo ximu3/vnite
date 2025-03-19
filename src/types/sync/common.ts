@@ -67,3 +67,23 @@ export interface AuthStatusResponse {
   user?: Omit<CasdoorUser, 'properties'>
   error?: string
 }
+
+export interface AuthentikUser {
+  sub: string
+  name: string
+  email: string
+  preferred_username: string
+  groups: string[]
+  role?: string
+  avatar?: string
+  couchdb?: {
+    username: string
+    password: string
+    url: string
+    databases: {
+      config: { dbName: string }
+      game: { dbName: string }
+      gameCollection: { dbName: string }
+    }
+  }
+}
