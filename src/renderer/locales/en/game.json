@@ -286,7 +286,6 @@
       "downloadMetadata": "Download Metadata",
       "createShortcut": "Create Shortcut",
       "browseLocalFiles": "Browse Local Files",
-      "browseDatabase": "Browse Database",
       "delete": "Delete",
       "notifications": {
         "shortcutCreated": "Shortcut created",

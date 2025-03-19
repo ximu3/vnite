@@ -286,7 +286,6 @@
       "downloadMetadata": "下载资料数据",
       "createShortcut": "创建快捷方式",
       "browseLocalFiles": "浏览本地文件",
-      "browseDatabase": "浏览数据库",
       "delete": "删除",
       "notifications": {
         "shortcutCreated": "已创建快捷方式",

@@ -78,13 +78,6 @@ export function ManageMenu({
           >
             {t('detail.manage.browseLocalFiles')}
           </ContextMenuItem>
-          <ContextMenuItem
-            onClick={() => {
-              ipcInvoke('open-game-db-path-in-explorer', gameId)
-            }}
-          >
-            {t('detail.manage.browseDatabase')}
-          </ContextMenuItem>
           <ContextMenuSeparator />
           <DeleteGameAlert gameId={gameId}>
             <ContextMenuItem onSelect={(e) => e.preventDefault()}>

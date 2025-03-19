@@ -286,7 +286,6 @@
       "downloadMetadata": "メタデータをダウンロード",
       "createShortcut": "ショートカットを作成",
       "browseLocalFiles": "ローカルファイルを閲覧",
-      "browseDatabase": "データベースを閲覧",
       "delete": "削除",
       "notifications": {
         "shortcutCreated": "ショートカットを作成しました",
