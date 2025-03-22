@@ -52,7 +52,7 @@ export function Filter({ children }: { children: React.ReactNode }): JSX.Element
                 className={cn('p-0 -mb-2 -mt-2')}
                 variant={'link'}
                 onClick={() => {
-                  deleteFilter('releaseDate', '#all')
+                  deleteFilter('metadata.releaseDate', '#all')
                 }}
               >
                 {t('filter.panel.clearFilter')}
@@ -60,21 +60,29 @@ export function Filter({ children }: { children: React.ReactNode }): JSX.Element
             </div>
             <div className={cn('flex flex-row gap-2 items-center justify-center')}>
               <DateInput
-                value={filter?.releaseDate ? filter?.releaseDate[0] : 0}
+                value={
+                  filter['metadata.releaseDate']?.length > 0 ? filter['metadata.releaseDate'][0] : 0
+                }
                 onChange={(e) => {
                   const newReleaseDateFilter = [
                     e.target.value,
-                    filter?.releaseDate ? filter?.releaseDate[1] : '9999-12-31'
+                    filter['metadata.releaseDate']?.length > 0
+                      ? filter['metadata.releaseDate'][1]
+                      : '9999-12-31'
                   ]
-                  updateFilter('releaseDate', newReleaseDateFilter)
+                  updateFilter('metadata.releaseDate', newReleaseDateFilter)
                 }}
               />
               -
               <DateInput
-                value={filter?.releaseDate ? filter?.releaseDate[1] : 0}
+                value={
+                  filter['metadata.releaseDate']?.length > 0 ? filter['metadata.releaseDate'][1] : 0
+                }
                 onChange={(e) => {
                   const newReleaseDateFilter = [
-                    filter?.releaseDate ? filter?.releaseDate[0] : '1970-01-01',
+                    filter['metadata.releaseDate']?.length > 0
+                      ? filter['metadata.releaseDate'][0]
+                      : '1970-01-01',
                     e.target.value
                   ]
                   updateFilter('releaseDate', newReleaseDateFilter)
