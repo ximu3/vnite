@@ -194,9 +194,9 @@ export async function convertV2toV3Database(zipFilePath: string): Promise<void> 
     await convertCollections(tempDir)
     await convertConfig(tempDir)
 
-    console.log('数据库转换完成！')
+    console.log('Database conversion complete')
   } catch (error) {
-    console.error('转换过程中发生错误:', error)
+    console.error('An error occurred during conversion:', error)
     throw error
   } finally {
     // Cleaning up temporary files
@@ -546,7 +546,7 @@ async function convertCollections(basePath: string): Promise<void> {
 async function convertConfig(basePath: string): Promise<void> {
   console.log('Start converting configuration data...')
 
-  const configPath = path.join(basePath, 'games', 'config.json')
+  const configPath = path.join(basePath, 'config.json')
 
   const exists = await fse.pathExists(configPath)
   if (!exists) {
