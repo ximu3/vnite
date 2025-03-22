@@ -248,6 +248,12 @@ export class DBManager {
         }
       }
 
+      // initial sync
+      await localDb.sync(remoteDb, {
+        live: false,
+        retry: true
+      })
+
       // Setting up synchronization
       this.syncHandlers[dbName] = localDb
         .sync(remoteDb, {
@@ -455,7 +461,6 @@ export class DBManager {
     }
   }
 
-  static async destroyDatabase(dbName: string): Promise<void> {
   static async closeDatabase(dbName: string): Promise<void> {
     if (this.instances[dbName]) {
       this.stopChangeListener(dbName)
