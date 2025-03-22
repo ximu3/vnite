@@ -103,7 +103,7 @@ export function SearchMediaDialog({
       return
     }
     onSelect(selectedImage)
-    onClose()
+    handleClose()
   }
 
   function handleClose(): void {
@@ -114,7 +114,7 @@ export function SearchMediaDialog({
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent
         showCloseButton={false}
         className={cn('w-[50vw] h-[80vh] max-w-none flex flex-col gap-3')}
