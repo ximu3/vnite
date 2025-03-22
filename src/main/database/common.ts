@@ -456,11 +456,18 @@ export class DBManager {
   }
 
   static async destroyDatabase(dbName: string): Promise<void> {
+  static async closeDatabase(dbName: string): Promise<void> {
     if (this.instances[dbName]) {
       this.stopChangeListener(dbName)
       this.stopSync(dbName)
-      await this.instances[dbName].destroy()
+      await this.instances[dbName].close()
       delete this.instances[dbName]
+    }
+  }
+
+  static async closeAllDatabases(): Promise<void> {
+    for (const dbName in this.instances) {
+      await this.closeDatabase(dbName)
     }
   }
 
