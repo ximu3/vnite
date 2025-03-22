@@ -136,6 +136,28 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
     )
   }
 
+  // Handling media deletions
+  async function handleDeleteMedia(type: string): Promise<void> {
+    toast.promise(
+      async () => {
+        await ipcInvoke('remove-game-media', gameId, type)
+      },
+      {
+        loading: t('detail.properties.media.notifications.deleting', {
+          type: t(`detail.properties.media.types.${type}`)
+        }),
+        success: t('detail.properties.media.notifications.deleteSuccess', {
+          type: t(`detail.properties.media.types.${type}`)
+        }),
+        error: (err) =>
+          t('detail.properties.media.notifications.deleteError', {
+            type: t(`detail.properties.media.types.${type}`),
+            message: err.message
+          })
+      }
+    )
+  }
+
   // Media Control Button Component
   const MediaControls = ({ type }: { type: string }): JSX.Element => (
     <div className={cn('flex flex-row gap-2')}>
@@ -198,6 +220,21 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
         </TooltipTrigger>
         <TooltipContent side="bottom">
           {t('detail.properties.media.actions.cropImage')}
+        </TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger>
+          <Button
+            onClick={() => handleDeleteMedia(type)}
+            variant={'outline'}
+            size={'icon'}
+            className={cn('w-7 h-7 hover:bg-destructive hover:text-destructive-foreground')}
+          >
+            <span className={cn('icon-[mdi--delete-outline] w-4 h-4')}></span>
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">
+          {t('detail.properties.media.actions.deleteImage')}
         </TooltipContent>
       </Tooltip>
     </div>

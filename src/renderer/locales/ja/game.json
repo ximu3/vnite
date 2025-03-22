@@ -355,7 +355,8 @@
           "importFromFile": "ファイルからインポート",
           "importFromUrl": "URLからインポート",
           "searchImage": "画像を検索",
-          "cropImage": "画像を切り抜き"
+          "cropImage": "画像を切り抜き",
+          "deleteImage": "画像を削除"
         },
         "search": {
           "title": "画像を検索",
@@ -384,7 +385,10 @@
           "cropping": "切り抜き中...",
           "cropSuccess": "切り抜きに成功しました",
           "cropError": "切り抜きに失敗しました",
-          "cropIncomplete": "切り抜きが完了していません"
+          "cropIncomplete": "切り抜きが完了していません",
+          "deleting": "画像を削除中...",
+          "deleteSuccess": "画像を削除しました",
+          "deleteError": "画像の削除に失敗しました: {{message}}"
         }
       },
       "launcher": {

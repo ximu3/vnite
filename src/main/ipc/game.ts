@@ -61,5 +61,12 @@ export function setupGameIPC(mainWindow: BrowserWindow): void {
     }
   )
 
+  ipcMain.handle(
+    'remove-game-media',
+    async (_, gameId: string, type: 'cover' | 'background' | 'icon' | 'logo') => {
+      return await GameDBManager.removeGameImage(gameId, type)
+    }
+  )
+
   mainWindow.webContents.send('gameIPCReady')
 }

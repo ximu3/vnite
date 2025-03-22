@@ -355,7 +355,8 @@
           "importFromFile": "Import from File",
           "importFromUrl": "Import from URL",
           "searchImage": "Search Image",
-          "cropImage": "Crop Image"
+          "cropImage": "Crop Image",
+          "deleteImage": "Delete Image"
         },
         "search": {
           "title": "Search Images",
@@ -384,7 +385,10 @@
           "cropping": "Cropping...",
           "cropSuccess": "Crop successful",
           "cropError": "Crop failed",
-          "cropIncomplete": "Crop incomplete"
+          "cropIncomplete": "Crop incomplete",
+          "deleting": "Deleting...",
+          "deleteSuccess": "Delete successful",
+          "deleteError": "Delete failed"
         }
       },
       "launcher": {

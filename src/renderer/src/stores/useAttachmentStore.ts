@@ -125,7 +125,7 @@ export const useAttachmentStore = create<AttachmentState>((set, get) => ({
 
       const newAttachments = { ...state.attachments }
 
-      // 移除错误状态但保留时间戳
+      // Remove the error status but keep the timestamp
       newAttachments[dbName][docId][attachmentId] = {
         timestamp: currentInfo.timestamp,
         error: false,

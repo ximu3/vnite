@@ -355,7 +355,8 @@
           "importFromFile": "从文件导入",
           "importFromUrl": "从链接导入",
           "searchImage": "搜索图片",
-          "cropImage": "裁剪图片"
+          "cropImage": "裁剪图片",
+          "deleteImage": "删除图片"
         },
         "search": {
           "title": "搜索图片",
@@ -387,7 +388,10 @@
           "cropping": "正在裁剪...",
           "cropSuccess": "裁剪成功",
           "cropError": "裁剪失败",
-          "cropIncomplete": "裁剪未完成"
+          "cropIncomplete": "裁剪未完成",
+          "deleting": "正在删除...",
+          "deleteSuccess": "删除成功",
+          "deleteError": "删除失败"
         }
       },
       "launcher": {

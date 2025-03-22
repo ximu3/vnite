@@ -455,6 +455,13 @@ export class DBManager {
     try {
       const doc = await db.get(docId)
       await db.removeAttachment(docId, attachmentId, doc._rev)
+      const mainWindow = BrowserWindow.getAllWindows()[0]
+      mainWindow.webContents.send('attachment-changed', {
+        dbName,
+        docId,
+        attachmentId,
+        timestamp: Date.now()
+      } as AttachmentChange)
     } catch (error) {
       console.error('Error removing attachment:', error)
       throw error
