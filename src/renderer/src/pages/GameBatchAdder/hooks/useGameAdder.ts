@@ -44,7 +44,7 @@ export const useGameAdder = (): {
 
         await ipcInvoke('add-game-to-db', {
           dataSource: game.dataSource,
-          id: gameId
+          dataSourceId: gameId
         })
 
         actions.updateGame(dataId, { status: 'success' })
