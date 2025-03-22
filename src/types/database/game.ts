@@ -113,7 +113,7 @@ export interface gameLocalDoc {
   }
 }
 
-export const DEFAULT_GAME_LOCAL_VALUES = {
+export const DEFAULT_GAME_LOCAL_VALUES: Readonly<gameLocalDoc> = {
   _id: '',
   path: {
     gamePath: '',
@@ -142,15 +142,15 @@ export const DEFAULT_GAME_LOCAL_VALUES = {
     },
     useMagpie: false
   }
-} satisfies gameLocalDoc
+} as const
 
-export const DEFAULT_GAME_COLLECTION_VALUES = {
+export const DEFAULT_GAME_COLLECTION_VALUES: Readonly<gameCollectionDoc> = {
   _id: '',
   name: '',
   games: []
-} satisfies gameCollectionDoc
+} as const
 
-export const DEFAULT_GAME_VALUES = {
+export const DEFAULT_GAME_VALUES: Readonly<gameDoc> = {
   _id: '',
   metadata: {
     name: '',
@@ -193,7 +193,7 @@ export const DEFAULT_GAME_VALUES = {
       visible: true
     }
   }
-} satisfies gameDoc
+} as const
 
 export interface SortConfig {
   by: Paths<gameDoc, { bracketNotation: true }>
