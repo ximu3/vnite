@@ -104,7 +104,7 @@ export class AuthManager {
       signinUrl.searchParams.append('client_id', instance.clientId)
       signinUrl.searchParams.append('redirect_uri', instance.redirectUrl)
       signinUrl.searchParams.append('response_type', 'code')
-      signinUrl.searchParams.append('scope', 'openid profile email groups couchdb')
+      signinUrl.searchParams.append('scope', 'openid profile email groups couchdb offline_access')
 
       // Open your default browser to log in
       shell.openExternal(signinUrl.toString())
@@ -113,6 +113,55 @@ export class AuthManager {
     } catch (error) {
       log.error('Failure to start the login process:', error)
       return { success: false, error: (error as Error).message }
+    }
+  }
+
+  public static async refreshAccessToken(): Promise<boolean> {
+    try {
+      AuthManager.checkInitialized()
+      const instance = AuthManager.getInstance()
+
+      // Get the stored refresh_token
+      const refreshToken = await ConfigDBManager.getConfigLocalValue('userInfo.refreshToken')
+      const clientId = instance.clientId
+      const clientSecret = instance.clientSecret
+
+      if (!refreshToken) {
+        log.error('No refresh token available')
+        return false
+      }
+
+      const params = new URLSearchParams()
+      params.append('refresh_token', refreshToken)
+      params.append('grant_type', 'refresh_token')
+      params.append('client_id', clientId)
+
+      const authHeader = clientSecret
+        ? `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`
+        : undefined
+
+      // Send a request to refresh the token
+      const response = await axios.post(`${instance.serverUrl}/application/o/token/`, params, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          ...(authHeader ? { Authorization: authHeader } : {})
+        }
+      })
+
+      const { access_token, refresh_token } = response.data
+
+      // Update stored tokens
+      const userInfo = (await ConfigDBManager.getConfigLocalValue('userInfo')) || {}
+      await ConfigDBManager.setConfigLocalValue('userInfo', {
+        ...userInfo,
+        accessToken: access_token,
+        refreshToken: refresh_token
+      })
+
+      return true
+    } catch (error) {
+      log.error('Failed to refresh access token:', error)
+      return false
     }
   }
 
@@ -127,25 +176,45 @@ export class AuthManager {
     try {
       AuthManager.checkInitialized()
       const instance = AuthManager.getInstance()
+
       const accessToken = await ConfigDBManager.getConfigLocalValue('userInfo.accessToken')
+
       if (!accessToken) {
         return
       }
-      const userInfo = (await axios.get(`${instance.serverUrl}/application/o/userinfo/`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
+
+      try {
+        const userInfo = await axios.get(`${instance.serverUrl}/application/o/userinfo/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          }
+        })
+
+        if (!userInfo.data || !userInfo.data.name) {
+          throw new Error('Failed to get user information')
         }
-      })) as { data: AuthentikUser }
-      if (!userInfo.data || !userInfo.data.name) {
-        throw new Error('Failed to get user information')
+
+        const userRole = AuthManager.getUserRole(userInfo.data)
+
+        const oldUserInfo = await ConfigDBManager.getConfigLocalValue('userInfo')
+        await ConfigDBManager.setConfigLocalValue('userInfo', {
+          ...oldUserInfo,
+          name: userInfo.data.name,
+          email: userInfo.data.email,
+          role: userRole
+        })
+      } catch (error) {
+        // Check for token expiration issues (usually returns a 401 status code)
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
+          // Try to refresh the token
+          const refreshed = await AuthManager.refreshAccessToken()
+          if (refreshed) {
+            // Refresh successful, retry with new token
+            return AuthManager.updateUserInfo()
+          }
+        }
+        throw error // Other errors or refresh failures continue to be thrown
       }
-      const userRole = AuthManager.getUserRole(userInfo.data)
-      await ConfigDBManager.setConfigLocalValue('userInfo', {
-        name: userInfo.data.name || '',
-        email: userInfo.data.email || '',
-        role: userRole,
-        accessToken
-      })
     } catch (error) {
       log.error('Failed to get user information:', error)
       throw error
@@ -179,6 +248,7 @@ export class AuthManager {
 
       const accessToken = tokenResponse.data.access_token
       const idToken = tokenResponse.data.id_token
+      const refreshToken = tokenResponse.data.refresh_token
 
       // Parsing ID tokens for basic user information
       const userInfo = jwtDecode(idToken) as AuthentikUser
@@ -205,7 +275,8 @@ export class AuthManager {
         name: userInfo.name || '',
         email: userInfo.email || '',
         role: userRole,
-        accessToken
+        accessToken,
+        refreshToken
       })
 
       // Save CouchDB Credentials
