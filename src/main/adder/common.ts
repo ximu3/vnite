@@ -36,7 +36,7 @@ export async function addGameToDB({
 
   const dbId = generateUUID()
 
-  const gameDoc = DEFAULT_GAME_VALUES
+  const gameDoc = { ...DEFAULT_GAME_VALUES }
 
   gameDoc._id = dbId
   gameDoc.metadata = {
@@ -54,7 +54,7 @@ export async function addGameToDB({
 
   await GameDBManager.setGame(dbId, gameDoc)
 
-  const gameLocalDoc = DEFAULT_GAME_LOCAL_VALUES
+  const gameLocalDoc = { ...DEFAULT_GAME_LOCAL_VALUES }
   gameLocalDoc._id = dbId
   GameDBManager.setGameLocal(dbId, gameLocalDoc)
 
@@ -157,15 +157,17 @@ export async function updateGame({
  */
 export async function addGameToDBWithoutMetadata(gamePath: string): Promise<void> {
   const dbId = generateUUID()
-  const gameDoc = DEFAULT_GAME_VALUES
+  const gameName = gamePath.split('\\').pop() ?? ''
+  const gameDoc = { ...DEFAULT_GAME_VALUES }
   gameDoc._id = dbId
   gameDoc.record.addDate = new Date().toISOString()
-  GameDBManager.setGame(dbId, gameDoc)
+  gameDoc.metadata.name = gameName
+  await GameDBManager.setGame(dbId, gameDoc)
 
-  const gameLocalDoc = DEFAULT_GAME_LOCAL_VALUES
+  const gameLocalDoc = { ...DEFAULT_GAME_LOCAL_VALUES }
   gameLocalDoc._id = dbId
   gameLocalDoc.path.gamePath = gamePath
-  GameDBManager.setGameLocal(dbId, gameLocalDoc)
+  await GameDBManager.setGameLocal(dbId, gameLocalDoc)
 
   await launcherPreset('default', dbId)
   await saveGameIconByFile(dbId, gamePath)
