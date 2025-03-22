@@ -7,7 +7,6 @@ import { ipcInvoke } from '~/utils'
 import { toast } from 'sonner'
 import { useConfigLocalState } from '~/hooks'
 import { RadioGroup, RadioGroupItem } from '@ui/radio-group'
-import { Separator } from '@ui/separator'
 import { Label } from '@ui/label'
 import { Avatar, AvatarFallback, AvatarImage } from '@ui/avatar'
 import { useEffect, useState } from 'react'
@@ -229,7 +228,7 @@ export function CloudSync(): JSX.Element {
             </div>
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className={cn('')}>
           <div className={cn('space-y-5')}>
             {/* Enable/Disable Switch */}
             <div className={cn('grid grid-cols-[1fr_auto] gap-5 items-center')}>
@@ -382,22 +381,6 @@ export function CloudSync(): JSX.Element {
               <Card className="border shadow-sm border-muted">
                 <CardContent className="pt-6">
                   <div className="flex flex-col gap-5">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start gap-3">
-                        <div className="p-2 rounded-md bg-primary/10">
-                          <HardDrive className="w-6 h-6 text-primary" />
-                        </div>
-                        <div>
-                          <h3 className="text-lg font-medium">{t('cloudSync.selfHosted.title')}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            {t('cloudSync.selfHosted.description')}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <Separator />
-
                     {/* Self-hosted form items */}
                     <div className="grid grid-cols-[auto_1fr] gap-x-5 gap-y-4 items-center">
                       <div className="flex items-center gap-2 select-none whitespace-nowrap">
