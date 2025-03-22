@@ -335,7 +335,12 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
         type={searchType}
         gameTitle={originalName}
         onSelect={async (imagePath) => {
+          toast.loading(t('detail.properties.media.notifications.downloading'), {
+            id: 'download-image-toast'
+          })
           const tempFilePath = await ipcInvoke('download-temp-image', imagePath)
+          toast.dismiss('download-image-toast')
+          toast.success(t('detail.properties.media.notifications.downloadSuccess'))
           setCropDialogState({
             isOpen: true,
             type: searchType,
