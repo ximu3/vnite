@@ -33,18 +33,28 @@ export function RelatedSitesDialog({ gameId }: { gameId: string }): JSX.Element 
                 value={site.label}
                 className={cn('w-1/4')}
                 onChange={(e) => {
-                  const newRelatedSites = [...relatedSites]
-                  newRelatedSites[i].label = e.target.value
-                  setRelatedSites(newRelatedSites)
+                  setRelatedSites(
+                    relatedSites.map((item, index) => {
+                      if (index === i) {
+                        return { ...item, label: e.target.value }
+                      }
+                      return item
+                    })
+                  )
                 }}
                 placeholder={t('detail.overview.relatedSites.nameLabel')}
               />
               <Input
                 value={site.url}
                 onChange={(e) => {
-                  const newRelatedSites = [...relatedSites]
-                  newRelatedSites[i].url = e.target.value
-                  setRelatedSites(newRelatedSites)
+                  setRelatedSites(
+                    relatedSites.map((item, index) => {
+                      if (index === i) {
+                        return { ...item, url: e.target.value }
+                      }
+                      return item
+                    })
+                  )
                 }}
                 placeholder={t('detail.overview.relatedSites.urlLabel')}
               />
