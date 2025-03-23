@@ -88,6 +88,8 @@
       "loggingIn": "正在登录...",
       "loginSuccess": "登录成功",
       "loginError": "登录失败",
+      "authSuccess": "授权成功",
+      "authError": "授权失败",
       "registering": "正在注册...",
       "registerSuccess": "注册成功",
       "registerError": "注册失败"

@@ -3,7 +3,6 @@ import axios from 'axios'
 import { jwtDecode } from 'jwt-decode'
 import { ConfigDBManager } from '~/database'
 import { AuthResult, UserRole, AuthentikUser } from '@appTypes/sync'
-import { startSync } from '~/database'
 import log from 'electron-log/main'
 
 export class AuthManager {
@@ -292,9 +291,6 @@ export class AuthManager {
 
       log.info(`User ${userInfo.name} successfully authenticated`)
       log.info('User role:', userRole)
-
-      // Initiate synchronization
-      await startSync()
     } catch (error) {
       log.error('Failure to process authorization code:', error)
       mainWindow.webContents.send('auth-error', (error as Error).message)

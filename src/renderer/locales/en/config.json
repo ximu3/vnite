@@ -88,6 +88,8 @@
       "loggingIn": "Logging in...",
       "loginSuccess": "Login successful",
       "loginError": "Login failed",
+      "authSuccess": "Authorization successful",
+      "authError": "Authorization failed",
       "registering": "Registering...",
       "registerSuccess": "Registration successful",
       "registerError": "Registration failed"

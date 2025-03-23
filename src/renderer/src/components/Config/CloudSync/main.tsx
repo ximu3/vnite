@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { Button } from '@ui/button'
 import { Input } from '@ui/input'
 import { Switch } from '@ui/switch'
-import { ipcInvoke } from '~/utils'
+import { ipcInvoke, ipcOnUnique } from '~/utils'
 import { toast } from 'sonner'
 import { useConfigLocalState } from '~/hooks'
 import { RadioGroup, RadioGroupItem } from '@ui/radio-group'
@@ -72,6 +72,16 @@ export function CloudSync(): JSX.Element {
       setStoragePercentage(0)
     }
   }, [usedQuota, totalQuota])
+
+  useEffect(() => {
+    ipcOnUnique('auth-success', async () => {
+      toast.success(t('cloudSync.notifications.authSuccess'))
+      await updateCloudSyncConfig()
+    })
+    ipcOnUnique('auth-error', (_event, message) => {
+      toast.error(t('cloudSync.notifications.authError'), message)
+    })
+  }, [])
 
   // Formatted Storage Size
   const formatStorage = (bytes: number): string => {

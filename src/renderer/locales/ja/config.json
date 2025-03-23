@@ -88,6 +88,8 @@
       "loggingIn": "ログイン中...",
       "loginSuccess": "ログイン成功",
       "loginError": "ログイン失敗",
+      "authSuccess": "認証成功",
+      "authError": "認証失敗",
       "registering": "登録中...",
       "registerSuccess": "登録成功",
       "registerError": "登録失敗"
