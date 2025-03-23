@@ -164,7 +164,7 @@
       "switchingMode": "データベースモードを切り替え中...",
       "switchSuccess": "データベースモードの切り替えに成功しました",
       "switchError": "データベースモードの切り替えに失敗しました",
-      "adminRightsRequired": "ポータブルモードに切り替えるには管理者権限が必要です"
+      "adminRightsRequired": "現在のインストールディレクトリからポータブルモードに切り替えるには管理者権限が必要です"
     }
   },
   "about": {

@@ -164,7 +164,7 @@
       "switchingMode": "正在切换数据库模式...",
       "switchSuccess": "数据库模式切换成功",
       "switchError": "数据库模式切换失败",
-      "adminRightsRequired": "切换到便携模式需要管理员权限"
+      "adminRightsRequired": "当前安装目录切换到便携模式需要管理员权限"
     }
   },
   "about": {

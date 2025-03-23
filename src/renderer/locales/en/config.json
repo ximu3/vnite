@@ -164,7 +164,7 @@
       "switchingMode": "Switching database mode...",
       "switchSuccess": "Database mode switch successful",
       "switchError": "Database mode switch failed",
-      "adminRightsRequired": "Switching to portable mode requires administrator privileges"
+      "adminRightsRequired": "Administrator rights are required to switch from the current installation directory to portable mode"
     }
   },
   "about": {
