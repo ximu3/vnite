@@ -9,6 +9,7 @@ import {
   gameLocalDoc,
   gameLocalDocs,
   DEFAULT_GAME_VALUES,
+  DEFAULT_GAME_LOCAL_VALUES,
   DEFAULT_GAME_COLLECTION_VALUES,
   SortConfig
 } from '@appTypes/database'
@@ -177,7 +178,7 @@ export class GameDBManager {
         `${this.DB_NAME}-local`,
         gameId,
         path,
-        getValueByPath(DEFAULT_GAME_VALUES, path)
+        getValueByPath(DEFAULT_GAME_LOCAL_VALUES, path)
       )) as Get<gameLocalDoc, Path>
     } catch (error) {
       log.error('Error getting local game value:', error)
