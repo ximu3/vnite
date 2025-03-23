@@ -1,6 +1,6 @@
 {
   "name": "vnite",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-alpha.2",
   "description": "Vnite",
   "main": "./out/main/index.js",
   "author": "ximu3",
