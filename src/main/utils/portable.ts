@@ -1,10 +1,11 @@
 import fse from 'fs-extra'
 import { getDataPath, getAppRootPath } from './path'
+import { DBManager } from '~/database'
 import path from 'path'
 import log from 'electron-log/main'
 import { app } from 'electron'
 
-let _isPortableMode: boolean = true
+let _isPortableMode: boolean = false
 
 export const portableStore = {
   get isPortableMode(): boolean {
@@ -19,6 +20,7 @@ export async function switch2PortableMode(): Promise<void> {
   try {
     const basePath = getDataPath('')
     const portablePath = path.join(getAppRootPath(), 'app/database')
+    await DBManager.closeAllDatabases()
     await fse.ensureDir(portablePath)
     await fse.emptyDir(portablePath)
     await fse.copy(basePath, portablePath)
@@ -34,10 +36,11 @@ export async function switch2NormalMode(): Promise<void> {
   try {
     const basePath = path.join(app.getPath('userData'), 'app/database')
     const portablePath = path.join(getAppRootPath(), 'app/database')
+    await DBManager.closeAllDatabases()
     await fse.ensureDir(basePath)
     await fse.emptyDir(basePath)
     await fse.copy(portablePath, basePath)
-    await fse.remove(path.join(getAppRootPath(), 'portable'))
+    await fse.remove(path.join(getAppRootPath(), 'app'))
     log.info('Switched to normal mode')
   } catch (error) {
     log.error('Failed to switch to normal mode', error)

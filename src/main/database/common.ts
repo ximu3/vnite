@@ -17,6 +17,7 @@ import {
 import { getValueByPath, setValueByPath } from '@appUtils'
 import { fileTypeFromBuffer } from 'file-type'
 import upsertPlugin from 'pouchdb-upsert'
+import log from 'electron-log/main'
 
 PouchDB.plugin(upsertPlugin)
 
@@ -24,30 +25,31 @@ export class DBManager {
   private static instances: { [key: string]: PouchDB.Database } = {}
   private static changeListeners: { [key: string]: PouchDB.Core.Changes<object> | null } = {}
   private static syncHandlers: { [key: string]: PouchDB.Replication.Sync<object> | null } = {}
-  private static dbConfigs: { [key: string]: DBConfig } = {
-    game: {
-      name: 'game',
-      path: getDataPath('game')
-    },
-    ['game-collection']: {
-      name: 'game-collection',
-      path: getDataPath('game-collection')
-    },
-    ['game-local']: {
-      name: 'game-local',
-      path: getDataPath('game-local')
-    },
-    config: {
-      name: 'config',
-      path: getDataPath('config')
-    },
-    ['config-local']: {
-      name: 'config-local',
-      path: getDataPath('config-local')
-    }
-  }
+  private static dbConfigs: { [key: string]: DBConfig } = {}
 
   static init(): void {
+    this.dbConfigs = {
+      game: {
+        name: 'game',
+        path: getDataPath('game')
+      },
+      ['game-collection']: {
+        name: 'game-collection',
+        path: getDataPath('game-collection')
+      },
+      ['game-local']: {
+        name: 'game-local',
+        path: getDataPath('game-local')
+      },
+      config: {
+        name: 'config',
+        path: getDataPath('config')
+      },
+      ['config-local']: {
+        name: 'config-local',
+        path: getDataPath('config-local')
+      }
+    }
     for (const dbName in this.dbConfigs) {
       this.getInstance(dbName)
     }
@@ -66,6 +68,7 @@ export class DBManager {
       const dbPath = config.path
       this.instances[dbName] = new PouchDB(dbPath, { auto_compaction: true })
       this.startChangeListener(dbName)
+      log.info(`Database ${dbName} initialized at ${dbPath}`)
     }
     return this.instances[dbName]
   }

@@ -152,6 +152,7 @@
     "importWarning": "Importing a database will overwrite the current database. This operation is irreversible! The application will restart automatically after the operation.",
     "confirmImportV2": "Are you sure you want to import the V2 database?",
     "importV2Warning": "Importing a V2 database will overwrite the current database. This operation is irreversible! The application will restart automatically after the operation.",
+    "portableAdminRequired": "Note: Portable mode may require administrator privileges.",
     "notifications": {
       "backingUp": "Backing up database...",
       "backupSuccess": "Database backup successful",
@@ -162,7 +163,8 @@
       "restartCountdown": "The application will restart in 3 seconds",
       "switchingMode": "Switching database mode...",
       "switchSuccess": "Database mode switch successful",
-      "switchError": "Database mode switch failed"
+      "switchError": "Database mode switch failed",
+      "adminRightsRequired": "Switching to portable mode requires administrator privileges"
     }
   },
   "about": {

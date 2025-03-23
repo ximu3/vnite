@@ -152,6 +152,7 @@
     "importWarning": "导入数据库将覆盖当前数据库，此操作不可逆！操作结束后应用将自动重启。",
     "confirmImportV2": "确定要导入v2数据库吗？",
     "importV2Warning": "导入v2数据库将覆盖当前数据库，此操作不可逆！操作结束后应用将自动重启。",
+    "portableAdminRequired": "注意：便携模式可能需要管理员权限。",
     "notifications": {
       "backingUp": "正在备份数据库...",
       "backupSuccess": "数据库备份成功",
@@ -162,7 +163,8 @@
       "restartCountdown": "应用将在 3 秒后重启",
       "switchingMode": "正在切换数据库模式...",
       "switchSuccess": "数据库模式切换成功",
-      "switchError": "数据库模式切换失败"
+      "switchError": "数据库模式切换失败",
+      "adminRightsRequired": "切换到便携模式需要管理员权限"
     }
   },
   "about": {

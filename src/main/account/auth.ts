@@ -290,6 +290,9 @@ export class AuthManager {
       // Notify the rendering process of successful authentication
       mainWindow.webContents.send('auth-success')
 
+      log.info(`User ${userInfo.name} successfully authenticated`)
+      log.info('User role:', userRole)
+
       // Initiate synchronization
       await startSync()
     } catch (error) {

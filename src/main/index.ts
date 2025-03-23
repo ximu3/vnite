@@ -5,7 +5,7 @@ import icon from '../../resources/icon.png?asset'
 import { setupIPC } from './ipc'
 import log from 'electron-log/main'
 import windowStateKeeper from 'electron-window-state'
-import { getLogsPath } from './utils'
+import { getDataPath } from './utils'
 import {
   setupProtocols,
   setupTempDirectory,
@@ -17,7 +17,11 @@ import {
   portableStore,
   getAppRootPath,
   checkPortableMode,
-  setupSession
+  setupSession,
+  checkAdminPermissions,
+  checkIfDirectoryNeedsAdminRights,
+  restartAppAsAdmin,
+  getLogsPath
 } from './utils'
 import { setupUpdater } from './updater'
 import { initScraper } from './scraper'
@@ -30,8 +34,6 @@ let splashWindow: BrowserWindow | null
 export let trayManager: TrayManager
 
 log.initialize()
-
-log.transports.file.resolvePathFn = (): string => getLogsPath()
 
 let launchGameId: string | null = null
 const args = process.argv
@@ -173,12 +175,63 @@ function createSplashWindow(): void {
   })
 }
 
-const gotTheLock = app.requestSingleInstanceLock()
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+app.whenReady().then(async () => {
+  // Set app user model id for windows
+  electronApp.setAppUserModelId('vnite')
 
-if (!gotTheLock) {
-  // If it's not the first instance, just exit
-  app.quit()
-} else {
+  // Default open or close DevTools by F12 in development
+  // and ignore CommandOrControl + R in production.
+  // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
+  app.on('browser-window-created', (_, window) => {
+    optimizer.watchWindowShortcuts(window)
+  })
+
+  // IPC test
+  ipcMain.on('ping', () => console.log('pong'))
+
+  // Set the userData directory to a different location in development
+  if (!app.isPackaged) {
+    app.setPath('userData', join(getAppRootPath(), 'dev'))
+  }
+
+  await checkPortableMode()
+
+  log.transports.file.resolvePathFn = (): string => getLogsPath()
+
+  // Check if the app is running in portable mode
+  if (portableStore.isPortableMode) {
+    if (await checkAdminPermissions()) {
+      log.info('Running in portable mode with admin permissions')
+    } else {
+      if (await checkIfDirectoryNeedsAdminRights(getDataPath())) {
+        log.info(
+          'Running in portable mode without admin permissions, but needs admin permissions, restarting as admin'
+        )
+        restartAppAsAdmin()
+        return
+      } else {
+        log.info('Running in portable mode without admin permissions')
+      }
+    }
+  } else {
+    if (await checkAdminPermissions()) {
+      log.info('Running in normal mode with admin permissions')
+    } else {
+      log.info('Running in normal mode without admin permissions')
+    }
+  }
+
+  const gotTheLock = app.requestSingleInstanceLock()
+
+  if (!gotTheLock) {
+    // If it's not the first instance, just exit
+    app.quit()
+    return
+  }
+
   // Handling the startup of the second instance
   app.on('second-instance', (_event, commandLine) => {
     // If the main window exists, activate it
@@ -212,86 +265,55 @@ if (!gotTheLock) {
       handleAuthCallback(authUrl)
     }
   })
-  // This method will be called when Electron has finished
-  // initialization and is ready to create browser windows.
-  // Some APIs can only be used after this event occurs.
-  app.whenReady().then(async () => {
-    // Set app user model id for windows
-    electronApp.setAppUserModelId('vnite')
 
-    // Default open or close DevTools by F12 in development
-    // and ignore CommandOrControl + R in production.
-    // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
-    app.on('browser-window-created', (_, window) => {
-      optimizer.watchWindowShortcuts(window)
-    })
+  setupProtocols()
 
-    // IPC test
-    ipcMain.on('ping', () => console.log('pong'))
+  setupSession()
 
-    await checkPortableMode()
+  createSplashWindow()
 
-    // Set the userData directory to a different location in development
-    if (!app.isPackaged) {
-      app.setPath('userData', join(getAppRootPath(), 'dev'))
-    }
+  createWindow()
 
-    // Check if the app is running in portable mode
-    if (portableStore.isPortableMode) {
-      log.info('Running in portable mode')
-    } else {
-      log.info('Running in normal mode')
-    }
+  DBManager.init()
 
-    setupProtocols()
+  AuthManager.init()
 
-    setupSession()
+  await AuthManager.updateUserInfo()
 
-    createSplashWindow()
+  // Setup tray
+  trayManager = await setupTray(mainWindow)
 
-    createWindow()
+  // Setup temporary directory
+  await setupTempDirectory()
 
-    DBManager.init()
+  // Setup open at login
+  await setupOpenAtLogin()
 
-    AuthManager.init()
+  // Sync all databases with remote
+  await startSync(true)
 
-    await AuthManager.updateUserInfo()
+  // Setup auto updater
+  setupUpdater(mainWindow)
 
-    // Setup tray
-    trayManager = await setupTray(mainWindow)
+  // Initialize the scraper
+  initScraper()
 
-    // Setup temporary directory
-    await setupTempDirectory()
-
-    // Setup open at login
-    await setupOpenAtLogin()
-
-    // Sync all databases with remote
-    await startSync(true)
-
-    // Setup auto updater
-    setupUpdater(mainWindow)
-
-    // Initialize the scraper
-    initScraper()
-
-    app.on('activate', function () {
-      // On macOS it's common to re-create a window in the app when the
-      // dock icon is clicked and there are no other windows open.
-      if (BrowserWindow.getAllWindows().length === 0) createWindow()
-    })
+  app.on('activate', function () {
+    // On macOS it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
+})
 
-  // Quit when all windows are closed, except on macOS. There, it's common
-  // for applications and their menu bar to stay active until the user quits
-  // explicitly with Cmd + Q.
-  app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-      // trayManager.destroy()
-      app.quit()
-    }
-  })
+// Quit when all windows are closed, except on macOS. There, it's common
+// for applications and their menu bar to stay active until the user quits
+// explicitly with Cmd + Q.
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    // trayManager.destroy()
+    app.quit()
+  }
+})
 
-  // In this file you can include the rest of your app"s specific main process
-  // code. You can also put them in separate files and require them here.
-}
+// In this file you can include the rest of your app"s specific main process
+// code. You can also put them in separate files and require them here.

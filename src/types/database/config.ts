@@ -90,7 +90,7 @@ export interface configLocalDocs {
 export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
   general: {
     openAtLogin: false,
-    quitToTray: true,
+    quitToTray: false,
     language: ''
   },
   game: {

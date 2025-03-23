@@ -21,6 +21,19 @@ import { useTranslation } from 'react-i18next'
 
 export function Database(): JSX.Element {
   const { t } = useTranslation('config')
+  const [isPortable, setIsPortable] = useState<boolean>(false)
+  const [isAdmin, setIsAdmin] = useState<boolean>(false)
+  const [switchDialogOpen, setSwitchDialogOpen] = useState<boolean>(false)
+
+  useEffect(() => {
+    ipcInvoke('is-portable-mode').then((isPortable) => {
+      setIsPortable(isPortable as boolean)
+    })
+
+    ipcInvoke('check-admin-permissions').then((hasAdminRights) => {
+      setIsAdmin(hasAdminRights as boolean)
+    })
+  }, [])
 
   const backup = async (): Promise<void> => {
     toast.promise(
@@ -67,13 +80,18 @@ export function Database(): JSX.Element {
     )
   }
 
-  const [isPortable, setIsPortable] = useState<boolean>(false)
-
-  useEffect(() => {
-    ipcInvoke('is-portable-mode').then((isPortable) => {
-      setIsPortable(isPortable as boolean)
-    })
-  }, [])
+  const handleSwitchClick = async (): Promise<void> => {
+    // If you want to switch to portable mode but do not have administrator permissions
+    if (!isPortable && !isAdmin) {
+      const isNeedAdminRights = await ipcInvoke('check-if-portable-directory-needs-admin-rights')
+      if (isNeedAdminRights) {
+        toast.error(t('database.notifications.adminRightsRequired'))
+        return
+      }
+    }
+    // Open the confirmation dialog
+    setSwitchDialogOpen(true)
+  }
 
   const switchDatabaseMode = async (): Promise<void> => {
     toast.promise(
@@ -107,10 +125,17 @@ export function Database(): JSX.Element {
           {/* Portable Mode Setting */}
           <div className={cn('grid grid-cols-[1fr_auto] gap-5 items-center')}>
             <div className={cn('whitespace-nowrap select-none')}>{t('database.portableMode')}</div>
-            <AlertDialog>
-              <AlertDialogTrigger>
-                <Switch checked={isPortable} />
-              </AlertDialogTrigger>
+            <Switch
+              checked={isPortable}
+              onClick={handleSwitchClick}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  handleSwitchClick()
+                }
+              }}
+            />
+            <AlertDialog open={switchDialogOpen} onOpenChange={setSwitchDialogOpen}>
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>
@@ -118,7 +143,15 @@ export function Database(): JSX.Element {
                       mode: isPortable ? t('database.modes.normal') : t('database.modes.portable')
                     })}
                   </AlertDialogTitle>
-                  <AlertDialogDescription>{t('database.switchDescription')}</AlertDialogDescription>
+                  <AlertDialogDescription>
+                    {!isPortable && (
+                      <>
+                        {t('database.portableAdminRequired')}
+                        <br />
+                      </>
+                    )}
+                    {t('database.switchDescription')}
+                  </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>{t('ui:common.cancel')}</AlertDialogCancel>

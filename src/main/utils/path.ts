@@ -29,7 +29,10 @@ export function getDataPath(file = ''): string {
  * @returns The path of the logs file
  */
 export function getLogsPath(): string {
-  return path.join(getAppRootPath(), '/logs/app.log')
+  const basePath = portableStore.isPortableMode
+    ? path.join(getAppRootPath(), 'logs')
+    : app.getPath('logs')
+  return path.join(basePath, 'app.log')
 }
 
 /**

@@ -11,7 +11,10 @@ import {
   portableStore,
   switchDatabaseMode,
   readFileBuffer,
-  getLanguage
+  getLanguage,
+  checkAdminPermissions,
+  checkIfDirectoryNeedsAdminRights,
+  getAppRootPath
 } from '~/utils'
 import { generateUUID } from '@appUtils'
 import { app } from 'electron'
@@ -104,6 +107,14 @@ export function setupUtilsIPC(mainWindow: BrowserWindow): void {
 
   ipcMain.handle('get-language', async () => {
     return getLanguage()
+  })
+
+  ipcMain.handle('check-admin-permissions', async () => {
+    return await checkAdminPermissions()
+  })
+
+  ipcMain.handle('check-if-portable-directory-needs-admin-rights', async () => {
+    return await checkIfDirectoryNeedsAdminRights(getAppRootPath())
   })
 
   mainWindow.on('maximize', () => {
