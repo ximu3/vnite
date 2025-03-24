@@ -7,20 +7,28 @@ import { AllGames } from './AllGames'
 import { useGameRegistry } from '~/stores/game'
 import { useGameAdderStore } from '~/pages/GameAdder/store'
 import { useTranslation } from 'react-i18next'
+import { ScrollToTopButton } from './ScrollToTopButton'
+import { useRef } from 'react'
 
 export function Showcase(): JSX.Element {
   const { t } = useTranslation('game')
   const gameIds = useGameRegistry((state) => state.gameIds)
   const setIsOpen = useGameAdderStore((state) => state.setIsOpen)
+  const scrollAreaRef = useRef<HTMLDivElement>(null)
+
   console.warn('[DEBUG] Showcase')
+
   return (
     <div className={cn('flex flex-col gap-3 h-[100vh] pt-[30px]')}>
       {gameIds.length !== 0 ? (
-        <ScrollArea className={cn('w-full')}>
-          <RecentGames />
-          <Collections />
-          <AllGames />
-        </ScrollArea>
+        <>
+          <ScrollArea ref={scrollAreaRef} className={cn('w-full')}>
+            <RecentGames />
+            <Collections />
+            <AllGames />
+          </ScrollArea>
+          <ScrollToTopButton scrollAreaRef={scrollAreaRef} />
+        </>
       ) : (
         <div className={cn('flex flex-col gap-1 items-center justify-center w-full h-full -mt-7')}>
           <div>
