@@ -9,6 +9,8 @@
       "~/*": ["src/main/*"],
       "@appTypes/*": ["src/types/*"],
       "@appUtils": ["src/utils"],
+      "@locales": ["src/main/locales"],
+      "@locales/*": ["src/main/locales/*"],
     }
   }
 }

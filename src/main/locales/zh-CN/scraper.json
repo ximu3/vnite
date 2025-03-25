@@ -1,0 +1,18 @@
+{
+  "dlsite": {
+    "workType": "作品类型",
+    "releaseDate": "贩卖日",
+    "series": "系列名",
+    "maker": "商标名"
+  },
+  "steam": {
+    "officialWebsite": "官方网站",
+    "steamStore": "Steam商店",
+    "config": {
+      "apiLanguageCode": "schinese",
+      "urlLanguageCode": "zh-cn",
+      "acceptLanguageHeader": "zh-CN,zh;q=0.9,en;q=0.8",
+      "countryCode": "CN"
+    }
+  }
+}

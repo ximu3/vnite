@@ -1,0 +1,18 @@
+{
+  "dlsite": {
+    "workType": "作品形式",
+    "releaseDate": "販売日",
+    "series": "シリーズ名",
+    "maker": "ブランド名"
+  },
+  "steam": {
+    "officialWebsite": "公式サイト",
+    "steamStore": "Steamストア",
+    "config": {
+      "apiLanguageCode": "japanese",
+      "urlLanguageCode": "ja-jp",
+      "acceptLanguageHeader": "ja-JP,ja;q=0.9,en;q=0.8",
+      "countryCode": "JP"
+    }
+  }
+}

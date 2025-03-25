@@ -21,7 +21,8 @@ import {
   checkAdminPermissions,
   checkIfDirectoryNeedsAdminRights,
   restartAppAsAdmin,
-  getLogsPath
+  getLogsPath,
+  initI18n
 } from './utils'
 import { setupUpdater } from './updater'
 import { initScraper } from './scraper'
@@ -279,6 +280,8 @@ app.whenReady().then(async () => {
   AuthManager.init()
 
   await AuthManager.updateUserInfo()
+
+  await initI18n()
 
   // Setup tray
   trayManager = await setupTray(mainWindow)

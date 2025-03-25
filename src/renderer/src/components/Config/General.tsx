@@ -33,6 +33,7 @@ export function General(): JSX.Element {
   const handleLanguageChange = async (value: string): Promise<void> => {
     await setLanguage(value)
     await i18n.changeLanguage(value)
+    await ipcInvoke('update-language', value)
   }
 
   return (
@@ -61,7 +62,7 @@ export function General(): JSX.Element {
                   toast.success(t('notifications.settingsUpdated'))
                 } catch (error) {
                   toast.error(t('notifications.settingsUpdateError'))
-                  console.error('更新设置失败:', error)
+                  console.error('Failed to update settings:', error)
                 }
               }}
             />

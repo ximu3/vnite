@@ -1,9 +1,9 @@
 import { app, Tray, Menu, nativeImage, BrowserWindow } from 'electron'
 import { GameDBManager, ConfigDBManager } from '~/database'
 import { shell } from 'electron'
-import { getLanguage } from './common'
 import { convertToPng } from '~/media'
 import icon from '../../../resources/icon.png?asset'
+import i18next from 'i18next'
 
 export interface AppConfig {
   openAtLogin: boolean
@@ -81,8 +81,6 @@ export class TrayManager {
     const recentGames = await this.getRecentGames()
     const template: Array<Electron.MenuItemConstructorOptions> = []
 
-    const language = await getLanguage()
-
     if (recentGames.length > 0) {
       recentGames.forEach((game) => {
         template.push({
@@ -101,28 +99,17 @@ export class TrayManager {
 
     template.push(
       {
-        // 中日英
-        label:
-          language === 'zh-CN'
-            ? '显示主窗口'
-            : language === 'ja'
-              ? 'メインウィンドウを表示'
-              : 'Show Main Window',
+        label: i18next.t('tray:showMainWindow'),
         click: (): void => {
           this.showMainWindow()
         }
       },
       { type: 'separator' },
       {
-        label: language === 'zh-CN' ? '设置' : language === 'ja' ? '設定' : 'Settings',
+        label: i18next.t('tray:settings'),
         submenu: [
           {
-            label:
-              language === 'zh-CN'
-                ? '开机自启'
-                : language === 'ja'
-                  ? '起動時に開く'
-                  : 'Open at Login',
+            label: i18next.t('tray:openAtLogin'),
             type: 'checkbox',
             checked: this.config?.openAtLogin,
             click: async (menuItem): Promise<void> => {
@@ -134,12 +121,7 @@ export class TrayManager {
             }
           },
           {
-            label:
-              language === 'zh-CN'
-                ? '退出到托盘'
-                : language === 'ja'
-                  ? 'トレイに終了'
-                  : 'Quit to Tray',
+            label: i18next.t('tray:quitToTray'),
             type: 'checkbox',
             checked: this.config?.quitToTray,
             click: async (menuItem): Promise<void> => {
@@ -151,7 +133,7 @@ export class TrayManager {
       },
       { type: 'separator' },
       {
-        label: language === 'zh-CN' ? '退出' : language === 'ja' ? '終了' : 'Quit',
+        label: i18next.t('tray:quit'),
         click: (): void => {
           this.isQuitting = true
           app.quit()

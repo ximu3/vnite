@@ -2,7 +2,8 @@ import axios from 'axios'
 import * as cheerio from 'cheerio'
 import { GameList, GameMetadata } from '@appTypes/utils'
 import { getLanguage } from '~/utils'
-import { getTerm, extractReleaseDateWithLibrary } from './i18n'
+import { extractReleaseDateWithLibrary } from './i18n'
+import i18next from 'i18next'
 
 export async function searchDlsiteGames(gameName: string): Promise<GameList> {
   const encodedQuery = encodeURIComponent(gameName.trim()).replace(/%20/g, '+')
@@ -73,9 +74,9 @@ export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata>
   // Extract basic information
   const name = $('#work_name').text().trim()
 
-  const workTypeTerm = getTerm('workType', language)
-  const releaseDateTerm = getTerm('releaseDate', language)
-  const seriesTerm = getTerm('series', language)
+  const workTypeTerm = i18next.t('scraper:dlsite.workType', { lng: language })
+  const releaseDateTerm = i18next.t('scraper:dlsite.releaseDate', { lng: language })
+  const seriesTerm = i18next.t('scraper:dlsite.series', { lng: language })
 
   // Extract full description
   let description = ''
@@ -175,7 +176,7 @@ export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata>
   const makerUrl = $('#work_maker .maker_name a').attr('href')
   if (makerUrl) {
     relatedSites.push({
-      label: `${developer} (制作方)`,
+      label: `${developer} (${i18next.t('scraper:dlsite.maker', { lng: language })})`,
       url: makerUrl
     })
   }
@@ -187,7 +188,7 @@ export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata>
     const seriesUrl = seriesElement.attr('href')
     if (seriesUrl) {
       relatedSites.push({
-        label: `${seriesName} (${getTerm('series', language)})`,
+        label: `${seriesName} (${i18next.t('scraper:dlsite.series', { lng: language })})`,
         url: seriesUrl
       })
     }

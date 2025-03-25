@@ -24,6 +24,9 @@ export interface gameDoc {
     vndbId: string
     igdbId: string
     ymgalId: string
+    extra: {
+      [key: string]: any
+    }
   }
   record: {
     addDate: string
@@ -166,7 +169,8 @@ export const DEFAULT_GAME_VALUES: Readonly<gameDoc> = {
     steamId: '',
     vndbId: '',
     igdbId: '',
-    ymgalId: ''
+    ymgalId: '',
+    extra: {}
   },
   record: {
     addDate: '',

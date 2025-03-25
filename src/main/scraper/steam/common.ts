@@ -2,7 +2,14 @@ import { GameList, GameMetadata } from '@appTypes/utils'
 import { SteamAppDetailsResponse, SteamStoreSearchResponse } from './types'
 import { formatDate } from '~/utils'
 import * as cheerio from 'cheerio'
-import { getSteamLanguageConfig, getTranslation } from './i18n'
+import i18next from 'i18next'
+
+export interface SteamLanguageConfig {
+  apiLanguageCode: string
+  urlLanguageCode: string
+  acceptLanguageHeader: string
+  countryCode: string
+}
 
 // Defining Base URL Constants
 const STEAM_URLS = {
@@ -88,7 +95,9 @@ async function fetchSteamAPI(primaryUrl: string, fallbackUrl: string): Promise<a
 
 export async function searchSteamGames(gameName: string): Promise<GameList> {
   try {
-    const langConfig = await getSteamLanguageConfig()
+    const langConfig = i18next.t('scraper:steam.config', {
+      returnObjects: true
+    }) as SteamLanguageConfig
 
     const primaryUrl = `${STEAM_URLS.PRIMARY.STORE}/api/storesearch/?term=${encodeURIComponent(
       gameName
@@ -136,7 +145,9 @@ export async function searchSteamGames(gameName: string): Promise<GameList> {
 
 async function fetchStoreTags(appId: string): Promise<string[]> {
   try {
-    const langConfig = await getSteamLanguageConfig()
+    const langConfig = i18next.t('scraper:steam.config', {
+      returnObjects: true
+    }) as SteamLanguageConfig
 
     const primaryUrl = `${STEAM_URLS.PRIMARY.STORE}/app/${appId}`
     const fallbackUrl = `${STEAM_URLS.FALLBACK.APP}/${appId}`
@@ -167,7 +178,9 @@ async function fetchStoreTags(appId: string): Promise<string[]> {
 
 export async function getSteamMetadata(appId: string): Promise<GameMetadata> {
   try {
-    const langConfig = await getSteamLanguageConfig()
+    const langConfig = i18next.t('scraper:steam.config', {
+      returnObjects: true
+    }) as SteamLanguageConfig
 
     // Get data in the current language
     const primaryUrlLocal = `${STEAM_URLS.PRIMARY.STORE}/api/appdetails?appids=${appId}&l=${langConfig.apiLanguageCode}`
@@ -215,13 +228,13 @@ export async function getSteamMetadata(appId: string): Promise<GameMetadata> {
       genres: gameData.genres?.map((genre) => genre.description) || [],
       relatedSites: [
         ...(gameData.website
-          ? [{ label: await getTranslation('officialWebsite'), url: gameData.website }]
+          ? [{ label: i18next.t('scraper:steam.officialWebsite'), url: gameData.website }]
           : []),
         ...(gameData.metacritic?.url
           ? [{ label: 'Metacritic', url: gameData.metacritic.url }]
           : []),
         {
-          label: await getTranslation('steamStore'),
+          label: i18next.t('scraper:steam.steamStore'),
           url: `${STEAM_URLS.PRIMARY.STORE}/app/${appId}`
         }
       ],

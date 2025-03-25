@@ -1,0 +1,7 @@
+{
+  "showMainWindow": "メインウィンドウを表示",
+  "settings": "設定",
+  "openAtLogin": "起動時に開く",
+  "quitToTray": "トレイに最小化",
+  "quit": "終了"
+}

@@ -8,7 +8,8 @@ export default defineConfig({
       alias: {
         '~': resolve('src/main'),
         '@appTypes': resolve('src/types'),
-        '@appUtils': resolve('src/utils')
+        '@appUtils': resolve('src/utils'),
+        '@locales': resolve('src/main/locales')
       }
     },
     plugins: [externalizeDepsPlugin({ exclude: ['file-type'] })]

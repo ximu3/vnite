@@ -14,7 +14,8 @@ import {
   getLanguage,
   checkAdminPermissions,
   checkIfDirectoryNeedsAdminRights,
-  getAppRootPath
+  getAppRootPath,
+  updateLanguage
 } from '~/utils'
 import { generateUUID } from '@appUtils'
 import { app } from 'electron'
@@ -115,6 +116,10 @@ export function setupUtilsIPC(mainWindow: BrowserWindow): void {
 
   ipcMain.handle('check-if-portable-directory-needs-admin-rights', async () => {
     return await checkIfDirectoryNeedsAdminRights(getAppRootPath())
+  })
+
+  ipcMain.handle('update-language', async (_, language: string) => {
+    updateLanguage(language)
   })
 
   mainWindow.on('maximize', () => {
