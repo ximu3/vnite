@@ -65,8 +65,8 @@ export function sortGames<Path extends Paths<gameDoc, { bracketNotation: true }>
     if (typeof valueA === 'string' && typeof valueB === 'string') {
       if (by === 'metadata.name') {
         return order === 'asc'
-          ? valueA.localeCompare(valueB, language)
-          : valueB.localeCompare(valueA, language)
+          ? valueA.localeCompare(valueB, language || undefined)
+          : valueB.localeCompare(valueA, language || undefined)
       } else {
         return order === 'asc' ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA)
       }
