@@ -139,7 +139,7 @@ export function CollectionPoster({
               'transition-all duration-300 ease-in-out',
               'ring-0 ring-transparent',
               'hover:ring-2 hover:ring-primary',
-              '3xl:w-[180px] 3xl:h-[180px]'
+              '3xl:w-[174px] 3xl:h-[174px]'
             )}
             onClick={() => navigate(`/library/collections/${collectionId}`)}
           >
