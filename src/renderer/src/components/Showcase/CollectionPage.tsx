@@ -65,8 +65,8 @@ export function CollectionPage(): JSX.Element {
           <div
             ref={gridContainerRef}
             className={cn(
-              'grid grid-cols-[repeat(auto-fill,160px)]',
-              '3xl:grid-cols-[repeat(auto-fill,190px)]',
+              'grid grid-cols-[repeat(auto-fill,150px)]',
+              '3xl:grid-cols-[repeat(auto-fill,180px)]',
               'justify-between gap-6 w-full',
               'pt-2 pb-6 pl-5 pr-5' // Add inner margins to show shadows
             )}

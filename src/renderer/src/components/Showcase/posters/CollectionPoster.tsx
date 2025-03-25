@@ -30,9 +30,9 @@ function Preview({
   return (
     <div
       className={cn(
-        'group relative overflow-hidden w-[160px] h-[160px] rounded-lg',
+        'group relative overflow-hidden w-[150px] h-[150px] rounded-lg',
         'transition-all duration-300 ease-in-out',
-        '3xl:w-[190px] 3xl:h-[190px]',
+        '3xl:w-[180px] 3xl:h-[180px]',
         'border-4 border-dashed border-primary bg-background'
       )}
     >
@@ -135,11 +135,11 @@ export function CollectionPoster({
         ) : (
           <div
             className={cn(
-              'overflow-hidden shadow-custom-initial cursor-pointer w-[160px] h-[160px] rounded-lg',
+              'overflow-hidden shadow-custom-initial cursor-pointer w-[150px] h-[150px] rounded-lg',
               'transition-all duration-300 ease-in-out',
               'ring-0 ring-transparent',
               'hover:ring-2 hover:ring-primary',
-              '3xl:w-[190px] 3xl:h-[190px]'
+              '3xl:w-[180px] 3xl:h-[180px]'
             )}
             onClick={() => navigate(`/library/collections/${collectionId}`)}
           >

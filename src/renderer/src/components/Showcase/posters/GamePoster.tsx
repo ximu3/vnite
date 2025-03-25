@@ -33,7 +33,7 @@ function Preview({ title }: { title: string }): JSX.Element {
   return (
     <div
       className={cn(
-        'relative w-[148px] h-[222px]',
+        'relative w-[150px] aspect-[2/3] rounded-lg',
         '3xl:w-[176px] 3xl:h-[264px]',
         'border-4 border-dashed border-primary bg-background'
       )}
@@ -215,15 +215,15 @@ export function GamePoster({
                     type="cover"
                     alt={gameId}
                     className={cn(
-                      'w-[148px] h-[222px] cursor-pointer object-cover',
-                      '3xl:w-[176px] 3xl:h-[264px]',
+                      'w-[148px] aspect-[2/3] cursor-pointer object-cover',
+                      '3xl:w-[176px]',
                       className
                     )}
                     fallback={
                       <div
                         className={cn(
-                          'w-[148px] h-[222px] cursor-pointer object-cover flex items-center justify-center',
-                          '3xl:w-[176px] 3xl:h-[264px]',
+                          'w-[148px] aspect-[2/3] cursor-pointer object-cover flex items-center justify-center',
+                          '3xl:w-[176px]',
                           className
                         )}
                         onClick={() =>
