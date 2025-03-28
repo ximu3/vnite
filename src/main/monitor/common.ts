@@ -124,6 +124,7 @@ export class GameMonitor {
   private ipcHandler?: () => void
   private startTime?: string
   private endTime?: string
+  private exiting: boolean = false
 
   constructor(options: GameMonitorOptions) {
     this.options = {
@@ -183,6 +184,7 @@ export class GameMonitor {
         }
       }
     }
+    this.handleGameExit()
   }
 
   private async terminateProcess(process: MonitoredProcess): Promise<boolean> {
@@ -470,6 +472,12 @@ export class GameMonitor {
   }
 
   private async handleGameExit(): Promise<void> {
+    if (this.exiting) {
+      return
+    }
+
+    this.exiting = true
+
     log.info(`Game ${this.options.gameId} Exit`)
 
     // Record end time
