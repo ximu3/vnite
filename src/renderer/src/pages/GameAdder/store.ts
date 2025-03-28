@@ -1,5 +1,7 @@
 import { create } from 'zustand'
 import { toast } from 'sonner'
+import { useConfigStore } from '~/stores'
+import i18next from 'i18next'
 
 export type DataSource = 'vndb' | 'igdb' | 'steam' | 'bangumi' | 'ymgal'
 
@@ -65,11 +67,11 @@ export const useGameAdderStore = create<GameAdderState>((set, get) => ({
       setIsLoading
     } = get()
     if (isLoading) {
-      toast.warning('请等待游戏添加完成')
+      toast.warning(i18next.t('adder:gameAdder.loading'))
       return
     }
     setIsOpen(false)
-    setDataSource('steam')
+    setDataSource(useConfigStore.getState().getConfigValue('game.scraper.defaultDatasSource'))
     setDbId('')
     setDataSourceId('')
     setName('')

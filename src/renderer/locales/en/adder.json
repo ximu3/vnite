@@ -3,6 +3,9 @@
     "dialog": {
       "title": "Add Game"
     },
+    "notifications": {
+      "loading": "Please wait for game addition to complete"
+    },
     "gameList": {
       "columns": {
         "name": "Game Name",
