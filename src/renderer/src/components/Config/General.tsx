@@ -9,7 +9,6 @@ import {
   SelectValue
 } from '@ui/select'
 import { Switch } from '@ui/switch'
-import { toast } from 'sonner'
 import { useConfigState } from '~/hooks'
 import { cn, ipcInvoke } from '~/utils'
 import { useTheme } from '../ThemeProvider'
@@ -59,9 +58,7 @@ export function General(): JSX.Element {
                   await setOpenAtLogin(checked)
                   await ipcInvoke('update-open-at-login')
                   await ipcInvoke('update-tray-config')
-                  toast.success(t('notifications.settingsUpdated'))
                 } catch (error) {
-                  toast.error(t('notifications.settingsUpdateError'))
                   console.error('Failed to update settings:', error)
                 }
               }}
