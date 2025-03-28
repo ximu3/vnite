@@ -40,44 +40,42 @@ function GameScoreCard({ gameId }: { gameId: string }): JSX.Element {
           <div className="px-1 mt-2 text-sm font-medium text-center truncate">{gameInfo.name}</div>
         </div>
       </HoverCardTrigger>
-      <HoverCardContent className="relative border-0 w-80" side="right">
-        <div className="absolute inset-0">
+      <HoverCardContent className="relative border-0 rounded-lg w-80" side="right">
+        <div className="absolute inset-0 rounded-lg">
           <GameImage
             gameId={gameId}
             type="background"
             alt={gameId}
-            className="object-cover w-full h-full"
+            className="object-cover w-full h-full rounded-lg"
             draggable="false"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-accent/40 to-accent/80 backdrop-blur-xl" />
+          <div className="absolute inset-0 rounded-lg bg-gradient-to-b from-primary/50 to-primary/90 backdrop-blur-xl" />
         </div>
         <div className="relative flex justify-between space-x-4">
           <div className="flex-1 space-y-1">
-            <h4 className="text-sm font-semibold">{gameInfo.name}</h4>
+            <h4 className="text-sm font-semibold text-primary-foreground">{gameInfo.name}</h4>
             {gameInfo.genre && (
               <div className="flex items-center pt-2">
-                <GamepadIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">{gameInfo.genre}</span>
+                <GamepadIcon className="mr-2 h-3.5 w-3.5" />
+                <span className="text-xs">{gameInfo.genre}</span>
               </div>
             )}
             {gameInfo.addDate && (
               <div className="flex items-center pt-1">
-                <CalendarIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">
+                <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                <span className="text-xs">
                   {t('score.gameInfo.addDate', { date: new Date(gameInfo.addDate) })}
                 </span>
               </div>
             )}
             <div className="flex items-center pt-1">
-              <ClockIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground" />
-              <span className="text-xs text-muted-foreground">
-                {t('score.gameInfo.playTime', { time: playTime })}
-              </span>
+              <ClockIcon className="mr-2 h-3.5 w-3.5" />
+              <span className="text-xs">{t('score.gameInfo.playTime', { time: playTime })}</span>
             </div>
             {gameInfo.lastRunDate && (
               <div className="flex items-center pt-1">
-                <CalendarIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">
+                <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                <span className="text-xs">
                   {t('score.gameInfo.lastRun', { date: new Date(gameInfo.lastRunDate) })}
                 </span>
               </div>
