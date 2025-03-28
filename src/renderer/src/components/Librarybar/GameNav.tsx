@@ -12,15 +12,7 @@ import { GameNavCM } from '../contextMenu/GameNavCM'
 import { BatchGameNavCM } from '../GameBatchEditor/BatchGameNavCM'
 import { useGameBatchEditorStore } from '../GameBatchEditor/store'
 
-export function GameNav({
-  gameId,
-  groupId,
-  scrollPosition
-}: {
-  gameId: string
-  groupId: string
-  scrollPosition?: { x: number; y: number }
-}): JSX.Element {
+export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }): JSX.Element {
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
   const [highlightLocalGames] = useConfigState('game.gameList.highlightLocalGames')
@@ -116,7 +108,6 @@ export function GameNav({
                     gameId={gameId}
                     type="icon"
                     alt="icon"
-                    scrollPosition={scrollPosition}
                     className={cn('w-[18px] h-[18px] rounded-md object-cover bg-accent shadow-sm')}
                     fallback={
                       <span className={cn('icon-[mdi--gamepad-variant] w-[18px] h-[18px]')}></span>

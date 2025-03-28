@@ -96,7 +96,7 @@ export function AllGameComponent({
             scrollPosition={scrollPosition}
             placeholder={<PlaceHolder />}
           >
-            <GameNav gameId={gameId} groupId="all" scrollPosition={scrollPosition} />
+            <GameNav gameId={gameId} groupId="all" />
           </LazyLoadComponent>
         ))}
       </AccordionContent>

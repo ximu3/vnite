@@ -298,7 +298,8 @@ async function convertGame(gameId: string, gamePath: string): Promise<void> {
         steamId: metadata.steamId || '',
         vndbId: metadata.vndbId || '',
         igdbId: metadata.igdbId || '',
-        ymgalId: metadata.ymgalId || ''
+        ymgalId: metadata.ymgalId || '',
+        extra: []
       },
       record: {
         addDate: record.addDate || '',

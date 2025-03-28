@@ -64,8 +64,7 @@ export function GamePoster({
   className,
   dragScenario,
   parentGap = 0,
-  position = 'center',
-  scrollPosition
+  position = 'center'
 }: {
   gameId: string
   groupId?: string
@@ -73,7 +72,6 @@ export function GamePoster({
   dragScenario?: string
   parentGap?: number
   position?: 'right' | 'left' | 'center'
-  scrollPosition?: { x: number; y: number }
 }): JSX.Element {
   const navigate = useNavigate()
   const gameData = useGameRegistry((state) => state.gameMetaIndex[gameId])
@@ -211,7 +209,6 @@ export function GamePoster({
                     }
                     draggable="false"
                     gameId={gameId}
-                    scrollPosition={scrollPosition}
                     type="cover"
                     alt={gameId}
                     className={cn(

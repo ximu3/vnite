@@ -12,7 +12,6 @@ export function GameList({
   selectedGroup: string
   query: string
 }): JSX.Element {
-  // 从 store 获取 filter
   const { filter } = useFilterStore()
 
   if (!isEqual(filter, {})) {

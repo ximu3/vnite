@@ -115,7 +115,6 @@ export function CollectionGamesComponent({
                         (index % columns === columns - 1 && 'right') ||
                         'center'
                       }
-                      scrollPosition={scrollPosition}
                     />
                   </LazyLoadComponent>
                 </div>

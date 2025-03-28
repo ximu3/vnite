@@ -110,7 +110,7 @@ export function AllGamesComponent({
               scrollPosition={scrollPosition}
               placeholder={<PlaceHolder />}
             >
-              <GamePoster gameId={gameId} scrollPosition={scrollPosition} />
+              <GamePoster gameId={gameId} />
             </LazyLoadComponent>
           </div>
         ))}
