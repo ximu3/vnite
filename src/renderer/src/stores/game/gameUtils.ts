@@ -248,6 +248,7 @@ export function getAllValuesInKey<Path extends Paths<gameDoc, { bracketNotation:
     }
 
     return Array.from(values)
+    return Array.from(values).filter((item) => item != '')
   } catch (error) {
     console.error('Fatal error in getAllValuesInKey:', error)
     return []
