@@ -180,6 +180,7 @@
         "description": "説明",
         "tags": "タグ",
         "basicInfo": "基本情報",
+        "extraInfo": "追加情報",
         "relatedSites": "関連サイト"
       },
       "description": {
@@ -231,6 +232,21 @@
           "publishers": "パブリッシャーはカンマで区切ります",
           "platforms": "プラットフォームはカンマで区切ります",
           "genres": "ジャンルはカンマで区切ります"
+        }
+      },
+      "extraInformation": {
+        "title": "追加情報",
+        "valueTip": "複数の値はコンマで区切ってください",
+        "enterKey": "キー名を入力",
+        "enterValue": "値を入力",
+        "addNew": "新しい情報を追加",
+        "empty": "追加情報はまだありません",
+        "fields": {
+          "designer": "企画",
+          "scenario": "シナリオ",
+          "illustration": "イラスト",
+          "music": "音楽",
+          "engine": "エンジン"
         }
       },
       "record": {

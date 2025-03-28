@@ -2,6 +2,7 @@ import { Description } from './description'
 import { Tags } from './Tags'
 import { Information } from './Information'
 import { RelatedSites } from './RelatedSites'
+import { ExtraInformation } from './extraInformation'
 import { cn } from '~/utils'
 
 export function Overview({ gameId }: { gameId: string }): JSX.Element {
@@ -13,6 +14,7 @@ export function Overview({ gameId }: { gameId: string }): JSX.Element {
       </div>
       <div className={cn('flex flex-col gap-5 w-1/4')}>
         <Information gameId={gameId} />
+        <ExtraInformation gameId={gameId} />
         <RelatedSites gameId={gameId} />
       </div>
     </div>

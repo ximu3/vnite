@@ -180,6 +180,7 @@
         "description": "Description",
         "tags": "Tags",
         "basicInfo": "Basic Information",
+        "extraInfo": "Additional Information",
         "relatedSites": "Related Sites"
       },
       "description": {
@@ -231,6 +232,21 @@
           "publishers": "Separate publishers with commas",
           "platforms": "Separate platforms with commas",
           "genres": "Separate genres with commas"
+        }
+      },
+      "extraInformation": {
+        "title": "Additional Information",
+        "valueTip": "Separate multiple values with commas",
+        "enterKey": "Enter key name",
+        "enterValue": "Enter value",
+        "addNew": "Add new information",
+        "empty": "No additional information yet",
+        "fields": {
+          "designer": "Designer",
+          "scenario": "Scenario Writer",
+          "illustration": "Illustrator",
+          "music": "Music",
+          "engine": "Engine"
         }
       },
       "record": {

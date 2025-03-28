@@ -13,7 +13,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
 import { Check, ChevronsUpDown } from 'lucide-react'
 import * as React from 'react'
-import { getAllValuesInKey } from '~/stores/game'
+import { getAllValuesInKey, getAllExtraValuesForKey } from '~/stores/game'
 import { cn } from '~/utils'
 import { useFilterStore } from './store'
 import { useTranslation } from 'react-i18next'
@@ -33,13 +33,25 @@ export function FilterCombobox({
   const [open, setOpen] = React.useState(false)
   const { filter, deleteFilter, addFilter } = useFilterStore()
   const selectedValues = filter[filed] || []
+
   const options: Option[] = React.useMemo(() => {
-    const allOptions = getAllValuesInKey(filed as any).map((value) => ({
+    let allValues: string[] = []
+
+    // Check if it's an extra information field
+    if (filed.startsWith('metadata.extra.')) {
+      const extraKey = filed.replace('metadata.extra.', '')
+      allValues = getAllExtraValuesForKey(extraKey)
+      console.warn(`allValues: ${allValues} extraKey: ${extraKey}`)
+    } else {
+      allValues = getAllValuesInKey(filed as any)
+    }
+
+    const allOptions = allValues.map((value) => ({
       value,
       label: value
     }))
 
-    // Sorting the options: selected ones come first
+    // Sort: selected items appear first
     return allOptions.sort((a, b) => {
       const aSelected = selectedValues.includes(a.value)
       const bSelected = selectedValues.includes(b.value)
@@ -48,14 +60,14 @@ export function FilterCombobox({
       if (!aSelected && bSelected) return 1
       return a.label.localeCompare(b.label, 'zh-CN')
     })
-  }, [getAllValuesInKey, filed, selectedValues])
+  }, [filed, selectedValues])
 
   const handleSelect = (value: string): void => {
     if (selectedValues.includes(value)) {
-      // Remove if checked
+      // If already selected, remove it
       deleteFilter(filed, value)
     } else {
-      // If unchecked, add
+      // If not selected, add it
       addFilter(filed, value)
     }
   }
@@ -78,7 +90,7 @@ export function FilterCombobox({
                     key={value}
                     className="px-2 py-1 text-sm rounded-md bg-primary text-primary-foreground"
                   >
-                    {options.find((opt) => opt.value === value)?.label}
+                    {options.find((opt) => opt.value === value)?.label || value}
                   </span>
                 ))
               ) : (

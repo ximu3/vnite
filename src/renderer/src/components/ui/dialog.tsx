@@ -45,7 +45,9 @@ const DialogContent = React.forwardRef<
       onInteractOutside={(e) => {
         if (e.target instanceof Element && e.target.closest('[data-titlebar]')) {
           e.preventDefault()
+          onClose?.()
         }
+        onClose?.()
       }}
       ref={ref}
       className={cn(

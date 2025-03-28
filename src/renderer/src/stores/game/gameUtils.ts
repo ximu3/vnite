@@ -81,7 +81,6 @@ export function sortGames<Path extends Paths<gameDoc, { bracketNotation: true }>
   })
 }
 
-// filter function
 export function filterGames(
   criteria: Partial<Record<Paths<gameDoc, { bracketNotation: true }>, string[]>>
 ): string[] {
@@ -101,6 +100,44 @@ export function filterGames(
           try {
             if (!Array.isArray(values) || values.length === 0) continue
 
+            // Handling paths in metadata.extra.xxx format
+            if (path.startsWith('metadata.extra.')) {
+              const extraKey = path.substring('metadata.extra.'.length)
+              const extraArray = store.getState().getValue('metadata.extra')
+
+              if (!extraArray || !Array.isArray(extraArray)) {
+                matchesAllCriteria = false
+                break
+              }
+
+              // Find the item in the array that matches the key
+              const matchingItem = extraArray.find((item) => item.key === extraKey)
+
+              // If no matching item is found, or the value doesn't match, the criteria isn't met
+              if (!matchingItem || !Array.isArray(matchingItem.value)) {
+                matchesAllCriteria = false
+                break
+              }
+
+              // Check if any value matches the criteria
+              const matches = matchingItem.value.some(
+                (item) =>
+                  item != null &&
+                  values.some((value) =>
+                    item.toString().toLowerCase().includes(value.toLowerCase())
+                  )
+              )
+
+              if (!matches) {
+                matchesAllCriteria = false
+                break
+              }
+
+              // Finished processing the extra field, continue to the next condition
+              continue
+            }
+
+            // Get value at the specified path
             const metadataValue = store.getState().getValue(path as any)
 
             if (
@@ -247,10 +284,105 @@ export function getAllValuesInKey<Path extends Paths<gameDoc, { bracketNotation:
       }
     }
 
-    return Array.from(values)
     return Array.from(values).filter((item) => item != '')
   } catch (error) {
     console.error('Fatal error in getAllValuesInKey:', error)
+    return []
+  }
+}
+
+/**
+ * Get all extra information key names from all games
+ * @returns {string[]} Array of all extra information key names
+ */
+export function getAllExtraKeys(): string[] {
+  try {
+    const { gameIds } = useGameRegistry.getState()
+    const keys = new Set<string>()
+
+    for (const gameId of gameIds) {
+      try {
+        const store = getGameStore(gameId)
+        let extraArray: Array<{ key: string; value: string[] }> | undefined
+
+        try {
+          // Get the extra information array
+          extraArray = store.getState().getValue('metadata.extra')
+        } catch (error) {
+          console.error(`Error getting extra info for game ${gameId}:`, error)
+          continue
+        }
+
+        if (extraArray && Array.isArray(extraArray)) {
+          try {
+            // Iterate through the array and extract the key from each object
+            extraArray.forEach((item) => {
+              if (item && item.key) {
+                keys.add(item.key)
+              }
+            })
+          } catch (error) {
+            console.error(`Error processing extra keys for ${gameId}:`, error)
+          }
+        }
+      } catch (error) {
+        console.error(`Error processing game ${gameId}:`, error)
+        continue
+      }
+    }
+
+    return Array.from(keys)
+  } catch (error) {
+    console.error('Fatal error in getAllExtraKeys:', error)
+    return []
+  }
+}
+
+/**
+ * Get all possible values for a specific extra information key
+ * @param {string} key Extra information key name
+ * @returns {string[]} Array of all distinct values under the specified key
+ */
+export function getAllExtraValuesForKey(key: string): string[] {
+  try {
+    const { gameIds } = useGameRegistry.getState()
+    const values = new Set<string>()
+
+    for (const gameId of gameIds) {
+      try {
+        const store = getGameStore(gameId)
+        let extraArray: Array<{ key: string; value: string[] }> | undefined
+
+        try {
+          // Get the extra information array
+          extraArray = store.getState().getValue('metadata.extra')
+
+          if (extraArray && Array.isArray(extraArray)) {
+            // Find the item matching the key
+            const matchingItem = extraArray.find((item) => item.key === key)
+
+            // If a matching item is found and a value array exists, add each value to the result set
+            if (matchingItem && Array.isArray(matchingItem.value)) {
+              matchingItem.value.forEach((item) => {
+                if (item != null) {
+                  values.add(item)
+                }
+              })
+            }
+          }
+        } catch (_error) {
+          // This game may not have this extra information key, silently ignore
+          continue
+        }
+      } catch (error) {
+        console.error(`Error processing game ${gameId}:`, error)
+        continue
+      }
+    }
+
+    return Array.from(values).filter((item) => item != '')
+  } catch (error) {
+    console.error(`Fatal error getting all extra values for key '${key}':`, error)
     return []
   }
 }

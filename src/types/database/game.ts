@@ -24,6 +24,10 @@ export interface gameDoc {
     vndbId: string
     igdbId: string
     ymgalId: string
+    extra: {
+      key: string
+      value: string[]
+    }[]
   }
   record: {
     addDate: string
@@ -166,7 +170,8 @@ export const DEFAULT_GAME_VALUES: Readonly<gameDoc> = {
     steamId: '',
     vndbId: '',
     igdbId: '',
-    ymgalId: ''
+    ymgalId: '',
+    extra: [] as { key: string; value: string[] }[]
   },
   record: {
     addDate: '',
@@ -209,3 +214,11 @@ export interface MaxPlayTimeDay {
   date: string
   playTime: number
 }
+
+export const METADATA_EXTRA_PREDEFINED_KEYS = [
+  'designer',
+  'scenario',
+  'illustration',
+  'music',
+  'engine'
+]

@@ -53,7 +53,8 @@
       "publishers": "发行商",
       "genres": "类别",
       "platforms": "平台",
-      "tags": "标签"
+      "tags": "标签",
+      "extraInfo": "附加信息"
     },
     "combobox": {
       "select": "选择{{placeholder}}",
@@ -180,6 +181,7 @@
         "description": "简介",
         "tags": "标签",
         "basicInfo": "基本信息",
+        "extraInfo": "附加信息",
         "relatedSites": "相关网站"
       },
       "description": {
@@ -231,6 +233,21 @@
           "publishers": "发行商之间用英文逗号分隔",
           "platforms": "平台之间用英文逗号分隔",
           "genres": "类型之间用英文逗号分隔"
+        }
+      },
+      "extraInformation": {
+        "title": "附加信息",
+        "valueTip": "用逗号分隔多个值",
+        "enterKey": "输入键名",
+        "enterValue": "输入值",
+        "addNew": "添加新信息",
+        "empty": "暂无附加信息",
+        "fields": {
+          "designer": "企划",
+          "scenario": "脚本",
+          "illustration": "原画",
+          "music": "音乐",
+          "engine": "引擎"
         }
       },
       "record": {
