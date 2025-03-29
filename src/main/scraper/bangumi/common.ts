@@ -182,6 +182,31 @@ export async function checkGameExists(gameId: string): Promise<boolean> {
   }
 }
 
+export async function getGameBackgrounds(gameId: string): Promise<string[]> {
+  try {
+    const data = await fetchBangumi<BangumiSubject>(`v0/subjects/${gameId}`)
+    return await getGameBackgroundsFromVNDB({
+      type: 'name',
+      value: data.name
+    })
+  } catch (error) {
+    console.error(`Error fetching backgrounds for game ${gameId}:`, error)
+    return []
+  }
+}
+
+export async function getGameBackgroundsByName(gameName: string): Promise<string[]> {
+  try {
+    return await getGameBackgroundsFromVNDB({
+      type: 'name',
+      value: gameName
+    })
+  } catch (error) {
+    console.error(`Error fetching backgrounds for game ${gameName}:`, error)
+    return []
+  }
+}
+
 export async function getGameCover(gameId: string): Promise<string> {
   try {
     const game = await fetchBangumi<BangumiSubject>(`v0/subjects/${gameId}`)

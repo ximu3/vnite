@@ -1,5 +1,6 @@
 import { GameList, GameMetadata } from '@appTypes/utils'
 import { GameListResponse, GameDetailResponse, OrganizationResponse, Organization } from './type'
+import { getGameBackgroundsFromVNDB, getGameCoverFromVNDB } from '../vndb'
 
 // Define the base URL for the Moon Screen API
 const BASE_URL = 'https://www.ymgal.games'
@@ -163,6 +164,65 @@ export async function getYMGalMetadataByName(gameName: string): Promise<GameMeta
     return await getYMGalMetadata(game.id)
   } catch (error) {
     console.error(`Error fetching YMGal metadata for game ${gameName}:`, error)
+    throw error
+  }
+}
+
+export async function getGameBackgrounds(gameId: string): Promise<string[]> {
+  try {
+    const data = await fetchYMGal<GameDetailResponse>('/open/archive', {
+      gid: gameId
+    })
+
+    const gameName = data.game.name
+
+    return await getGameBackgroundsFromVNDB({
+      type: 'name',
+      value: gameName
+    })
+  } catch (error) {
+    console.error(`Error fetching YMGal game backgrounds for ID ${gameId}:`, error)
+    throw error
+  }
+}
+
+export async function getGameBackgroundsByName(gameName: string): Promise<string[]> {
+  try {
+    return await getGameBackgroundsFromVNDB({
+      type: 'name',
+      value: gameName
+    })
+  } catch (error) {
+    console.error(`Error fetching YMGal game backgrounds for name ${gameName}:`, error)
+    throw error
+  }
+}
+
+// Get game cover
+export async function getGameCover(gameId: string): Promise<string> {
+  try {
+    const data = await fetchYMGal<GameDetailResponse>('/open/archive', {
+      gid: gameId
+    })
+    const gameName = data.game.name
+    return await getGameCoverFromVNDB({
+      type: 'name',
+      value: gameName
+    })
+  } catch (error) {
+    console.error(`Error fetching YMGal game cover for ID ${gameId}:`, error)
+    throw error
+  }
+}
+
+export async function getGameCoverByName(gameName: string): Promise<string> {
+  try {
+    return await getGameCoverFromVNDB({
+      type: 'name',
+      value: gameName
+    })
+  } catch (error) {
+    console.error(`Error fetching YMGal game cover for name ${gameName}:`, error)
     throw error
   }
 }

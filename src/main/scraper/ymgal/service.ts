@@ -2,11 +2,14 @@ import {
   searchYMGalGames,
   getYMGalMetadata,
   getYMGalMetadataByName,
+  getGameBackgrounds,
+  getGameBackgroundsByName,
+  getGameCover,
+  getGameCoverByName,
   checkYMGalExists
 } from './common'
 import log from 'electron-log/main.js'
 import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
-import { getGameCoverFromVNDB, getGameBackgroundsFromVNDB } from '../vndb'
 
 /**
  * Search for games on YMGal
@@ -70,8 +73,11 @@ export async function getGameBackgroundsFromYMGal(
   identifier: ScraperIdentifier
 ): Promise<string[]> {
   try {
-    const backgrounds = await getGameBackgroundsFromVNDB(identifier)
-    return backgrounds
+    const images =
+      identifier.type === 'id'
+        ? await getGameBackgrounds(identifier.value)
+        : await getGameBackgroundsByName(identifier.value)
+    return images
   } catch (error) {
     log.error('Error fetching game backgrounds:', error)
     throw error
@@ -85,7 +91,10 @@ export async function getGameBackgroundsFromYMGal(
  */
 export async function getGameCoverFromYMGal(identifier: ScraperIdentifier): Promise<string> {
   try {
-    const cover = await getGameCoverFromVNDB(identifier)
+    const cover =
+      identifier.type === 'id'
+        ? await getGameCover(identifier.value)
+        : await getGameCoverByName(identifier.value)
     return cover
   } catch (error) {
     log.error('Error fetching game cover:', error)

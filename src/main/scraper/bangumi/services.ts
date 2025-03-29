@@ -3,11 +3,12 @@ import {
   getBangumiMetadata,
   getBangumiMetadataByName,
   getGameCover,
+  getGameBackgrounds,
+  getGameBackgroundsByName,
   checkGameExists,
   getGameCoverByName
 } from './common'
 import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
-import { getGameBackgroundsFromVNDB } from '../vndb'
 import log from 'electron-log/main.js'
 
 /**
@@ -73,7 +74,10 @@ export async function getGameBackgroundsFromBangumi(
   identifier: ScraperIdentifier
 ): Promise<string[]> {
   try {
-    const images = await getGameBackgroundsFromVNDB(identifier)
+    const images =
+      identifier.type === 'id'
+        ? await getGameBackgrounds(identifier.value)
+        : await getGameBackgroundsByName(identifier.value)
     return images
   } catch (error) {
     log.error('Error fetching game images:', error)
