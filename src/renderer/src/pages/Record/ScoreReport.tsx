@@ -1,17 +1,17 @@
-import { useTranslation } from 'react-i18next'
-import { Card } from '@ui/card'
-import { ScrollArea, ScrollBar } from '@ui/scroll-area'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@ui/hover-card'
 import { Badge } from '@ui/badge'
+import { Card } from '@ui/card'
+import { GameImage } from '@ui/game-image'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@ui/hover-card'
 import { CalendarIcon, ClockIcon, GamepadIcon, Trophy } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import AutoSizer from 'react-virtualized-auto-sizer'
+import { FixedSizeList } from 'react-window'
 
+import { useGameState } from '~/hooks'
+import { getGamePlayTime, getGameStore, useGameRegistry } from '~/stores/game'
+import { getGamesByScoreRange } from '~/stores/game/recordUtils'
 import { cn } from '~/utils'
 import { GamePoster } from './GamePoster'
-import { getGamesByScoreRange } from '~/stores/game/recordUtils'
-import { useGameRegistry, getGamePlayTime, getGameStore } from '~/stores/game'
-import { useGameState } from '~/hooks'
-
-import { GameImage } from '@ui/game-image'
 
 function GameScoreCard({ gameId }: { gameId: string }): JSX.Element {
   const { t } = useTranslation('record')
@@ -148,15 +148,28 @@ function ScoreCategory({
             {t('score.categories.gamesCount', { count: games.length })}
           </Badge>
         </div>
-        <div className="p-6 pt-0 lg:w-4/5 lg:pt-6">
-          <ScrollArea className="w-full">
-            <div className="flex px-1 pt-1 pb-4 space-x-5">
-              {games.map((gameId) => (
-                <GameScoreCard key={gameId} gameId={gameId} />
-              ))}
-            </div>
-            <ScrollBar orientation="horizontal" />
-          </ScrollArea>
+        <div className="h-[280px] 3xl:h-[325px] p-6 pt-0 lg:w-4/5 lg:pt-6">
+          <AutoSizer>
+            {({ height, width }) => {
+              const itemSize = height <= 250 ? 150 : 180
+              return (
+                <FixedSizeList
+                  height={height}
+                  itemCount={games.length}
+                  itemSize={itemSize}
+                  className={cn('overflow-auto scrollbar-base')}
+                  width={width}
+                  layout="horizontal"
+                >
+                  {({ index, style }) => (
+                    <div style={style}>
+                      <GameScoreCard gameId={games[index]} />
+                    </div>
+                  )}
+                </FixedSizeList>
+              )
+            }}
+          </AutoSizer>
         </div>
       </div>
     </Card>
