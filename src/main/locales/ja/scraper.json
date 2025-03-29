@@ -14,5 +14,12 @@
       "acceptLanguageHeader": "ja-JP,ja;q=0.9,en;q=0.8",
       "countryCode": "JP"
     }
+  },
+  "extraMetadataFields": {
+    "director": "企画",
+    "scenario": "シナリオ",
+    "illustration": "イラスト",
+    "music": "音楽",
+    "engine": "エンジン"
   }
 }

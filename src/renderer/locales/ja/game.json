@@ -242,7 +242,7 @@
         "addNew": "新しい情報を追加",
         "empty": "追加情報はまだありません",
         "fields": {
-          "designer": "企画",
+          "director": "企画",
           "scenario": "シナリオ",
           "illustration": "イラスト",
           "music": "音楽",

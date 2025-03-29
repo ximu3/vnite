@@ -1,14 +1,35 @@
-import { VNDBField, VNDBResponse } from './types'
-import { GameList, GameMetadata } from '@appTypes/utils'
 import { formatDescription } from './parser'
+import {
+  VNDBRequestParams,
+  VNDBResponse,
+  VNBasicInfo,
+  VNDetailInfo,
+  VNWithScreenshots,
+  VNWithCover,
+  SimpleGameInfo,
+  VNTitle,
+  VNStaff
+} from './types'
+import { GameMetadata, METADATA_EXTRA_PREDEFINED_KEYS } from '@appTypes/database'
+import i18next from 'i18next'
 
-async function fetchVNDB<T extends readonly VNDBField[]>(params: {
-  filters: Array<unknown>
-  fields: T
-  results?: number
-}): Promise<VNDBResponse<T>> {
+const VNDB_ROLE_MAPPING: Record<string, string> = {
+  director: 'director',
+
+  scenario: 'scenario',
+
+  chardesign: 'illustration',
+  art: 'illustration',
+
+  music: 'music',
+  songs: 'music'
+}
+
+async function fetchVNDB<T>(params: VNDBRequestParams): Promise<VNDBResponse<T>> {
   const endpoints = ['https://api.vndb.org/kana/vn', 'https://api.ximu.dev/vndb/kana/vn']
   const TIMEOUT_MS = 5000
+
+  const fields = Array.isArray(params.fields) ? params.fields.join(',') : params.fields
 
   const requestConfig = {
     method: 'POST',
@@ -17,7 +38,7 @@ async function fetchVNDB<T extends readonly VNDBField[]>(params: {
     },
     body: JSON.stringify({
       ...params,
-      fields: params.fields.join(',')
+      fields
     })
   }
 
@@ -39,10 +60,10 @@ async function fetchVNDB<T extends readonly VNDBField[]>(params: {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
 
-      return response.json()
+      return (await response.json()) as VNDBResponse<T>
     } catch (error) {
-      lastError = error as Error
-      const errorMessage = error instanceof Error ? error.message : String(error)
+      lastError = error instanceof Error ? error : new Error(String(error))
+      const errorMessage = lastError.message
 
       if (errorMessage.includes('abort')) {
         console.warn(`Timeout exceeded (${TIMEOUT_MS}ms) for ${endpoint}`)
@@ -57,11 +78,42 @@ async function fetchVNDB<T extends readonly VNDBField[]>(params: {
   throw new Error(`All endpoints failed. Last error: ${lastError?.message}`)
 }
 
-export async function searchVNDBGames(gameName: string): Promise<GameList> {
-  const fields = ['titles{main,title}', 'released', 'developers{name}', 'id'] as const
+function processStaffData(staff: VNStaff[]): Array<{ key: string; value: string[] }> {
+  // Group staff by role
+  const staffByRole: Record<string, Set<string>> = {}
+  // Translation map, stores the translated role name for each mapped role
+  const translationMap: Record<string, string> = {}
+
+  // Process each staff member
+  staff.forEach((staffMember) => {
+    // Check if the role exists in the mapping table
+    const mappedRole = VNDB_ROLE_MAPPING[staffMember.role]
+    if (mappedRole && METADATA_EXTRA_PREDEFINED_KEYS.includes(mappedRole)) {
+      // Translate role name using i18next
+      const translatedRole = i18next.t(`scraper:extraMetadataFields.${mappedRole}`)
+      translationMap[mappedRole] = translatedRole
+
+      // Add to corresponding role group (using Set for automatic deduplication)
+      if (!staffByRole[mappedRole]) {
+        staffByRole[mappedRole] = new Set()
+      }
+      staffByRole[mappedRole].add(staffMember.name)
+    }
+  })
+
+  // Generate results according to the order in METADATA_EXTRA_PREDEFINED_KEYS
+  return METADATA_EXTRA_PREDEFINED_KEYS.filter((role) => staffByRole[role]) // Only keep roles that have data
+    .map((role) => ({
+      key: translationMap[role],
+      value: Array.from(staffByRole[role])
+    }))
+}
+
+export async function searchVNDBGames(gameName: string): Promise<SimpleGameInfo[]> {
+  const fields = ['titles{main,title}', 'released', 'developers{name}', 'id']
 
   try {
-    const data = await fetchVNDB({
+    const data = await fetchVNDB<VNBasicInfo>({
       filters: ['search', '=', gameName],
       fields,
       results: 30
@@ -88,11 +140,12 @@ export async function getVNMetadata(vnId: string): Promise<GameMetadata> {
     'description',
     'developers{name}',
     'tags{rating,name}',
-    'extlinks{label,url}'
-  ] as const
+    'extlinks{label,url}',
+    'staff{role,name}'
+  ]
 
   try {
-    const data = await fetchVNDB({
+    const data = await fetchVNDB<VNDetailInfo>({
       filters: ['id', '=', formattedId],
       fields
     })
@@ -102,6 +155,7 @@ export async function getVNMetadata(vnId: string): Promise<GameMetadata> {
     }
 
     const vn = data.results[0]
+    const staffData = processStaffData(vn.staff)
 
     return {
       name: vn.titles.find((t) => t.main)?.title || vn.titles[0].title,
@@ -111,13 +165,14 @@ export async function getVNMetadata(vnId: string): Promise<GameMetadata> {
       developers: vn.developers?.map((d) => d.name) || [''],
       relatedSites: [
         ...(vn.extlinks?.map((link) => ({ label: link.label, url: link.url })) || []),
-        { label: 'VNDB', url: `https://vndb.org/${vnId}` }
+        { label: 'VNDB', url: `https://vndb.org/${formattedId}` }
       ],
       tags:
         vn.tags
           ?.sort((a, b) => b.rating - a.rating)
           .slice(0, 10)
-          .map((tag) => tag.name) ?? []
+          .map((tag) => tag.name) ?? [],
+      extra: staffData
     }
   } catch (error) {
     console.error(`Error fetching metadata for VN ${vnId}:`, error)
@@ -133,11 +188,12 @@ export async function getVNMetadataByName(vnName: string): Promise<GameMetadata>
     'description',
     'developers{name}',
     'tags{rating,name}',
-    'extlinks{label,url}'
-  ] as const
+    'extlinks{label,url}',
+    'staff{role,name}'
+  ]
 
   try {
-    const data = await fetchVNDB({
+    const data = await fetchVNDB<VNDetailInfo>({
       filters: ['search', '=', vnName],
       fields
     })
@@ -150,11 +206,13 @@ export async function getVNMetadataByName(vnName: string): Promise<GameMetadata>
         description: '',
         developers: [],
         relatedSites: [],
-        tags: []
+        tags: [],
+        extra: []
       }
     }
 
     const vn = data.results[0]
+    const staffData = processStaffData(vn.staff)
 
     return {
       name: vn.titles.find((t) => t.main)?.title || vn.titles[0].title,
@@ -164,13 +222,14 @@ export async function getVNMetadataByName(vnName: string): Promise<GameMetadata>
       developers: vn.developers?.map((d) => d.name) || [''],
       relatedSites: [
         ...(vn.extlinks?.map((link) => ({ label: link.label, url: link.url })) || []),
-        { label: 'VNDB', url: `https://vndb.org/v${vn.id}` }
+        { label: 'VNDB', url: `https://vndb.org/${vn.id}` }
       ],
       tags:
         vn.tags
           ?.sort((a, b) => b.rating - a.rating)
           .slice(0, 10)
-          .map((tag) => tag.name) ?? []
+          .map((tag) => tag.name) ?? [],
+      extra: staffData
     }
   } catch (error) {
     console.error(`Error fetching metadata for VN ${vnName}:`, error)
@@ -180,11 +239,10 @@ export async function getVNMetadataByName(vnName: string): Promise<GameMetadata>
 
 export async function checkVNExists(vnId: string): Promise<boolean> {
   const formattedId = vnId.startsWith('v') ? vnId : `v${vnId}`
-
-  const fields = ['title'] as const
+  const fields = ['title']
 
   try {
-    const data = await fetchVNDB({
+    const data = await fetchVNDB<{ title: string }>({
       filters: ['id', '=', formattedId],
       fields,
       results: 1
@@ -197,12 +255,10 @@ export async function checkVNExists(vnId: string): Promise<boolean> {
   }
 }
 
-// helper function: replace image domain name
 function getAlternativeImageUrl(originalUrl: string): string {
   return originalUrl.replace('https://t.vndb.org/', 'https://api.ximu.dev/vndb/img/')
 }
 
-// helper function: try to get the image
 async function tryFetchImage(url: string): Promise<string> {
   const TIMEOUT_MS = 5000
 
@@ -256,16 +312,15 @@ async function tryFetchImage(url: string): Promise<string> {
 
 export async function getGameBackgrounds(vnId: string): Promise<string[]> {
   const formattedId = vnId.startsWith('v') ? vnId : `v${vnId}`
-  const fields = ['screenshots{url}'] as const
+  const fields = ['screenshots{url}']
 
   try {
-    const data = await fetchVNDB({
+    const data = await fetchVNDB<VNWithScreenshots>({
       filters: ['id', '=', formattedId],
       fields,
       results: 1
     })
 
-    // Process all screenshot URLs
     const urls = data.results[0].screenshots.map((screenshot) => screenshot.url)
     return await Promise.all(urls.map((url) => tryFetchImage(url)))
   } catch (error) {
@@ -275,10 +330,14 @@ export async function getGameBackgrounds(vnId: string): Promise<string[]> {
 }
 
 export async function getGameBackgroundsByName(name: string): Promise<string[]> {
-  const fields = ['titles{title}', 'screenshots{url}'] as const
+  const fields = ['titles{title}', 'screenshots{url}']
+
+  interface VNWithScreenshotsAndTitles extends VNWithScreenshots {
+    titles: VNTitle[]
+  }
 
   try {
-    const data = await fetchVNDB({
+    const data = await fetchVNDB<VNWithScreenshotsAndTitles>({
       filters: ['search', '=', name],
       fields
     })
@@ -289,7 +348,6 @@ export async function getGameBackgroundsByName(name: string): Promise<string[]> 
       )
       vn = vn || data.results[0]
 
-      // Process all screenshot URLs
       const urls = vn.screenshots.map((screenshot) => screenshot.url)
       return await Promise.all(urls.map((url) => tryFetchImage(url)))
     }
@@ -302,14 +360,14 @@ export async function getGameBackgroundsByName(name: string): Promise<string[]> 
 
 export async function getGameCover(vnId: string): Promise<string> {
   const formattedId = vnId.startsWith('v') ? vnId : `v${vnId}`
-  const fields = ['image{url}'] as const
+  const fields = ['image{url}']
 
   try {
-    const data = (await fetchVNDB({
+    const data = await fetchVNDB<VNWithCover>({
       filters: ['id', '=', formattedId],
       fields,
       results: 1
-    })) as any
+    })
 
     return await tryFetchImage(data.results[0].image.url)
   } catch (error) {
@@ -319,14 +377,14 @@ export async function getGameCover(vnId: string): Promise<string> {
 }
 
 export async function getGameCoverByName(name: string): Promise<string> {
-  const fields = ['image{url}'] as const
+  const fields = ['image{url}']
 
   try {
-    const data = (await fetchVNDB({
+    const data = await fetchVNDB<VNWithCover>({
       filters: ['search', '=', name],
       fields,
       results: 1
-    })) as any
+    })
 
     return await tryFetchImage(data.results[0].image.url)
   } catch (error) {

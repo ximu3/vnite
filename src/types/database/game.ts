@@ -216,7 +216,7 @@ export interface MaxPlayTimeDay {
 }
 
 export const METADATA_EXTRA_PREDEFINED_KEYS = [
-  'designer',
+  'director',
   'scenario',
   'illustration',
   'music',

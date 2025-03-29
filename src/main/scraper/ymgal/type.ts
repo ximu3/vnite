@@ -23,6 +23,13 @@ interface GameDetail {
   mainImg?: string
   website?: { title: string; link: string }[]
   tags?: string[]
+  staff?: {
+    sid: number
+    pid: number
+    jobName: string
+    desc: string
+    empName: string
+  }[]
 }
 
 // Game Details Response Type

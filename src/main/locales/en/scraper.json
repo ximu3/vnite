@@ -14,5 +14,12 @@
       "acceptLanguageHeader": "en-US,en;q=0.9",
       "countryCode": "US"
     }
+  },
+  "extraMetadataFields": {
+    "director": "Director",
+    "scenario": "Scenario Writer",
+    "illustration": "Illustrator",
+    "music": "Music",
+    "engine": "Engine"
   }
 }

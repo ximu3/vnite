@@ -243,7 +243,7 @@
         "addNew": "添加新信息",
         "empty": "暂无附加信息",
         "fields": {
-          "designer": "企划",
+          "director": "企划",
           "scenario": "脚本",
           "illustration": "原画",
           "music": "音乐",

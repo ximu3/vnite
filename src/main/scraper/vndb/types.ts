@@ -1,105 +1,92 @@
-// 基础字段定义
-export type VNDBBaseField =
-  | 'id'
-  | 'title'
-  | 'released'
-  | 'languages'
-  | 'platforms'
-  | 'aliases'
-  | 'length'
-  | 'description'
-  | 'rating'
-  | 'popularity'
-
-// Defining subfields of nestable fields
-export type VNDBNestedFields = {
-  titles: {
-    title: string
-    main: boolean
-    lang: string
-    latin: string | null
-    official: boolean
-  }
-  developers: {
-    id: string
-    name: string
-    original: string | null
-  }
-  tags: {
-    id: string
-    name: string
-    rating: number
-  }
-  screenshots: {
-    url: string
-    sexual: boolean
-    violence: boolean
-  }
-  image: {
-    url: string
-  }
-  extlinks: {
-    url: string
-    label: string
-  }
+export interface VNDBRequestParams {
+  filters: Array<unknown>
+  fields: string | string[]
+  results?: number
 }
 
-// Base Field Type
-type VNDBBaseFieldTypes = {
-  id: string
+export interface VNDBResponse<T> {
+  results: T[]
+  more: boolean
+  count?: number
+}
+
+export interface VNTitle {
   title: string
-  released: string | null
-  languages: string[]
-  platforms: string[]
-  aliases: string[]
-  length: number
-  description: string
-  rating: number
-  popularity: number
+  main: boolean
+  latin?: string
+  official: boolean
+  lang: string
 }
 
-// Extract the specified attributes
-type PickProperties<T, K extends string> = K extends keyof T ? Pick<T, K & keyof T> : never
+export interface VNDeveloper {
+  id: string
+  name: string
+}
 
-// Get field names (remove the curly bracket syntax)
-type GetFieldName<T extends string> = T extends `${infer Field}{${string}}` ? Field : T
+export interface VNTag {
+  id: string
+  name: string
+  rating: number
+  spoiler: number
+}
 
-// Parsing attributes in curly braces
-type ParseBraceProps<
-  Field extends keyof VNDBNestedFields,
-  Props extends string
-> = Props extends `${infer P},${infer Rest}`
-  ? PickProperties<VNDBNestedFields[Field], P & keyof VNDBNestedFields[Field]> &
-      ParseBraceProps<Field, Rest>
-  : PickProperties<VNDBNestedFields[Field], Props & keyof VNDBNestedFields[Field]>
+export interface VNExtLink {
+  id?: string
+  label: string
+  url: string
+}
 
-// parsed field
-type ParseField<T extends string> = T extends `${infer Field}{${infer Props}}`
-  ? Field extends keyof VNDBNestedFields
-    ? Array<ParseBraceProps<Field, Props>>
-    : never
-  : T extends keyof VNDBNestedFields
-    ? VNDBNestedFields[T][]
-    : T extends `${infer Field}.${infer Prop}`
-      ? Field extends keyof VNDBNestedFields
-        ? Prop extends keyof VNDBNestedFields[Field]
-          ? VNDBNestedFields[Field][Prop]
-          : never
-        : never
-      : T extends VNDBBaseField
-        ? VNDBBaseFieldTypes[T]
-        : never
+export interface VNStaff {
+  id?: string
+  aid: string
+  name: string
+  role: string
+  note?: string
+}
 
-// Combine all possible field types
-export type VNDBField =
-  | VNDBBaseField
-  | keyof VNDBNestedFields
-  | `${keyof VNDBNestedFields}.${string}`
-  | `${keyof VNDBNestedFields}{${string}}`
+export interface VNScreenshot {
+  id: string
+  url: string
+  release_id?: string
+  width: number
+  height: number
+  nsfw: boolean
+}
 
-// Define the response type
-export type VNDBResponse<T extends readonly VNDBField[]> = {
-  results: Array<{
-    [K in T[number] as GetFieldName<K>]: ParseField<K>
-  }>
+export interface VNImage {
+  id: string
+  url: string
+  width: number
+  height: number
+}
+
+export interface VNBasicInfo {
+  id: string
+  titles: VNTitle[]
+  released: string
+  developers: VNDeveloper[]
+}
+
+export interface VNDetailInfo extends VNBasicInfo {
+  description: string
+  tags: VNTag[]
+  extlinks: VNExtLink[]
+  staff: VNStaff[]
+}
+
+export interface VNWithScreenshots {
+  id: string
+  screenshots: VNScreenshot[]
+}
+
+export interface VNWithCover {
+  id: string
+  image: VNImage
+}
+
+export interface SimpleGameInfo {
+  id: string
+  name: string
+  releaseDate: string
+  developers: string[]
 }

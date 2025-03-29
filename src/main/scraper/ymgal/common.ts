@@ -1,8 +1,23 @@
 import { GameList, GameMetadata } from '@appTypes/utils'
 import { GameListResponse, GameDetailResponse, OrganizationResponse, Organization } from './type'
 import { getGameBackgroundsFromVNDB, getGameCoverFromVNDB } from '../vndb'
+import i18next from 'i18next'
+import { METADATA_EXTRA_PREDEFINED_KEYS } from '@appTypes/database'
 
-// Define the base URL for the Moon Screen API
+// YMGal job titles mapped to predefined roles
+const YMGAL_ROLE_MAPPING: Record<string, string> = {
+  脚本: 'scenario',
+
+  原画: 'illustration',
+  人物设计: 'illustration',
+
+  '导演/监督': 'director',
+
+  音乐: 'music',
+  歌曲: 'music'
+}
+
+// Define the base URL for the YMGal API
 const BASE_URL = 'https://www.ymgal.games'
 const API_VERSION = '1'
 
@@ -20,6 +35,55 @@ interface TokenResponse {
   token_type: string
   expires_in: number
   scope: string
+}
+
+// Process staff data function for YMGAL
+function processYMGalStaffData(
+  staffList: Array<{
+    sid: number
+    pid?: number
+    jobName: string
+    desc?: string
+    empName: string
+  }>
+): Array<{ key: string; value: string[] }> {
+  // Group staff by role
+  const staffByRole: Record<string, Set<string>> = {}
+  // Translation map, stores the translated role name for each mapped role
+  const translationMap: Record<string, string> = {}
+
+  // Process each staff member
+  staffList.forEach((staffMember) => {
+    // Extract job name and handle potential parentheses content
+    const jobName = staffMember.jobName.trim()
+
+    // Check if the role exists in the mapping table
+    const mappedRole = YMGAL_ROLE_MAPPING[jobName]
+    if (mappedRole && METADATA_EXTRA_PREDEFINED_KEYS.includes(mappedRole)) {
+      // Translate role name using i18next
+      const translatedRole = i18next.t(`scraper:extraMetadataFields.${mappedRole}`)
+      translationMap[mappedRole] = translatedRole
+
+      // Staff name with description if available
+      let staffName = staffMember.empName
+      if (staffMember.desc) {
+        staffName = `${staffName} (${staffMember.desc})`
+      }
+
+      // Add to corresponding role group (using Set for automatic deduplication)
+      if (!staffByRole[mappedRole]) {
+        staffByRole[mappedRole] = new Set()
+      }
+      staffByRole[mappedRole].add(staffName)
+    }
+  })
+
+  // Generate results according to the order in METADATA_EXTRA_PREDEFINED_KEYS
+  return METADATA_EXTRA_PREDEFINED_KEYS.filter((role) => staffByRole[role]) // Only keep roles that have data
+    .map((role) => ({
+      key: translationMap[role],
+      value: Array.from(staffByRole[role])
+    }))
 }
 
 // Get Access Token
@@ -126,6 +190,9 @@ export async function getYMGalMetadata(gameId: string): Promise<GameMetadata> {
       }
     }
 
+    // Process staff data
+    const staffData = game.staff ? processYMGalStaffData(game.staff) : []
+
     return {
       name: game.chineseName || game.name,
       originalName: game.name,
@@ -139,7 +206,8 @@ export async function getYMGalMetadata(gameId: string): Promise<GameMetadata> {
         })) || []),
         { label: '月幕Galgame', url: `https://www.ymgal.games/ga${gameId}` }
       ],
-      tags: game.tags || []
+      tags: game.tags || [],
+      extra: staffData
     }
   } catch (error) {
     console.error(`Error fetching YMGal metadata for game ${gameId}:`, error)
@@ -158,7 +226,8 @@ export async function getYMGalMetadataByName(gameName: string): Promise<GameMeta
         tags: [],
         relatedSites: [],
         releaseDate: '',
-        description: ''
+        description: '',
+        extra: []
       }
     }
     return await getYMGalMetadata(game.id)

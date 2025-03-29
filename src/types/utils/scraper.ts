@@ -18,6 +18,10 @@ export type GameMetadata = {
     url: string
   }[]
   tags: string[]
+  extra?: {
+    key: string
+    value: string[]
+  }[]
 }
 
 export type ScraperIdentifier = {
