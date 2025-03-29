@@ -32,12 +32,12 @@ export async function addGameToDB({
   backgroundUrl?: string
   playTime?: number
 }): Promise<void> {
+  // First get metadata (other operations depend on this result)
   const metadata = await getGameMetadata(dataSource, { type: 'id', value: dataSourceId })
-
   const dbId = generateUUID()
 
+  // Prepare game document
   const gameDoc = { ...DEFAULT_GAME_VALUES }
-
   gameDoc._id = dbId
   gameDoc.metadata = {
     ...gameDoc.metadata,
@@ -49,74 +49,55 @@ export async function addGameToDB({
   if (playTime) {
     gameDoc.record.playTime = playTime
   }
-
   gameDoc.record.addDate = new Date().toISOString()
-
-  await GameDBManager.setGame(dbId, gameDoc)
 
   const gameLocalDoc = { ...DEFAULT_GAME_LOCAL_VALUES }
   gameLocalDoc._id = dbId
-  GameDBManager.setGameLocal(dbId, gameLocalDoc)
 
-  const coverUrl = (
-    await getGameCovers(dataSource, {
-      type: 'id',
-      value: dataSourceId
-    })
-  )[0]
-  let iconUrl = ''
-  let logoUrl = ''
-  if (dataSource == 'steam') {
-    iconUrl = (
-      await getGameIcons('steamGridDb', {
-        type: 'id',
-        value: dataSourceId
-      })
-    )[0]
-    logoUrl = (
-      await getGameLogos('steamGridDb', {
-        type: 'id',
-        value: dataSourceId
-      })
-    )[0]
-  } else {
-    iconUrl = (
-      await getGameIcons('steamGridDb', {
-        type: 'name',
-        value: metadata.originalName || metadata.name
-      })
-    )[0]
-    logoUrl = (
-      await getGameLogos('steamGridDb', {
-        type: 'name',
-        value: metadata.originalName || metadata.name
-      })
-    )[0]
-  }
+  // Fetch all image resources in parallel
+  const [covers, backgrounds, icons, logos] = await Promise.all([
+    getGameCovers(dataSource, { type: 'id', value: dataSourceId }),
+    !backgroundUrl
+      ? getGameBackgrounds(dataSource, { type: 'id', value: dataSourceId })
+      : Promise.resolve([]),
+    dataSource == 'steam'
+      ? getGameIcons('steamGridDb', { type: 'id', value: dataSourceId })
+      : getGameIcons('steamGridDb', {
+          type: 'name',
+          value: metadata.originalName || metadata.name
+        }),
+    dataSource == 'steam'
+      ? getGameLogos('steamGridDb', { type: 'id', value: dataSourceId })
+      : getGameLogos('steamGridDb', { type: 'name', value: metadata.originalName || metadata.name })
+  ])
 
-  if (coverUrl) {
-    await GameDBManager.setGameImage(dbId, 'cover', coverUrl)
+  // Prepare all database write operations
+  const dbPromises: Promise<unknown>[] = [
+    GameDBManager.setGame(dbId, gameDoc),
+    GameDBManager.setGameLocal(dbId, gameLocalDoc)
+  ]
+
+  // Prepare all image save operations
+  if (covers.length > 0) {
+    dbPromises.push(GameDBManager.setGameImage(dbId, 'cover', covers[0]))
   }
 
   if (backgroundUrl) {
-    await GameDBManager.setGameImage(dbId, 'background', backgroundUrl)
-  } else {
-    const backgrounds = await getGameBackgrounds(dataSource, {
-      type: 'id',
-      value: dataSourceId
-    })
-    if (backgrounds.length > 0) {
-      await GameDBManager.setGameImage(dbId, 'background', backgrounds[0])
-    }
+    dbPromises.push(GameDBManager.setGameImage(dbId, 'background', backgroundUrl))
+  } else if (backgrounds.length > 0) {
+    dbPromises.push(GameDBManager.setGameImage(dbId, 'background', backgrounds[0]))
   }
 
-  if (iconUrl) {
-    await GameDBManager.setGameImage(dbId, 'icon', iconUrl.toString())
+  if (icons.length > 0) {
+    dbPromises.push(GameDBManager.setGameImage(dbId, 'icon', icons[0].toString()))
   }
 
-  if (logoUrl) {
-    await GameDBManager.setGameImage(dbId, 'logo', logoUrl.toString())
+  if (logos.length > 0) {
+    dbPromises.push(GameDBManager.setGameImage(dbId, 'logo', logos[0].toString()))
   }
+
+  // Execute all database operations in parallel
+  await Promise.all(dbPromises)
 }
 
 export async function updateGame({
@@ -130,24 +111,35 @@ export async function updateGame({
   dataSourceId: string
   backgroundUrl?: string
 }): Promise<void> {
-  const metadata = await getGameMetadata(dataSource, { type: 'id', value: dataSourceId })
-  const gameDoc = await GameDBManager.getGame(dbId)
+  // Fetch metadata and game document in parallel
+  const [metadata, gameDoc, coverUrls] = await Promise.all([
+    getGameMetadata(dataSource, { type: 'id', value: dataSourceId }),
+    GameDBManager.getGame(dbId),
+    getGameCovers(dataSource, { type: 'id', value: dataSourceId })
+  ])
+
+  // Update document
   gameDoc.metadata = {
     ...gameDoc.metadata,
     ...metadata,
     originalName: metadata.originalName ?? '',
     [`${dataSource}Id`]: dataSourceId
   }
-  await GameDBManager.setGame(dbId, gameDoc)
 
+  // Prepare all database write operations
+  const dbPromises: Promise<unknown>[] = [GameDBManager.setGame(dbId, gameDoc)]
+
+  // Add image save operations
   if (backgroundUrl) {
-    await GameDBManager.setGameImage(dbId, 'background', backgroundUrl)
+    dbPromises.push(GameDBManager.setGameImage(dbId, 'background', backgroundUrl))
   }
 
-  const coverUrl = (await getGameCovers(dataSource, { type: 'id', value: dataSourceId }))[0]
-  if (coverUrl) {
-    await GameDBManager.setGameImage(dbId, 'cover', coverUrl)
+  if (coverUrls.length > 0) {
+    dbPromises.push(GameDBManager.setGameImage(dbId, 'cover', coverUrls[0]))
   }
+
+  // Execute all database operations in parallel
+  await Promise.all(dbPromises)
 }
 
 /**
