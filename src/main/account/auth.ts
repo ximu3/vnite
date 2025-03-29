@@ -287,7 +287,9 @@ export class AuthManager {
       })
 
       // Notify the rendering process of successful authentication
-      mainWindow.webContents.send('auth-success')
+      setTimeout(() => {
+        mainWindow.webContents.send('auth-success')
+      }, 3000)
 
       log.info(`User ${userInfo.name} successfully authenticated`)
       log.info('User role:', userRole)

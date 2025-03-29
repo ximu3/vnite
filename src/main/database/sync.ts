@@ -2,6 +2,7 @@ import { ConfigDBManager } from './config'
 import { DBManager } from './common'
 import { getCouchDbSize } from '~/utils'
 import { ROLE_QUOTAS } from '@appTypes/sync'
+import { BrowserWindow } from 'electron'
 import log from 'electron-log/main'
 
 export async function startSync(isStart = false): Promise<void> {
@@ -11,6 +12,13 @@ export async function startSync(isStart = false): Promise<void> {
     if (!syncConfig.enabled) {
       return
     }
+    const mainWindow = BrowserWindow.getAllWindows()[0]
+    setTimeout(
+      () => {
+        mainWindow.webContents.send('full-syncing')
+      },
+      isStart ? 0 : 4000
+    )
     if (syncConfig.mode === 'official') {
       if (
         !syncConfig.officialConfig.auth.username ||
@@ -28,7 +36,7 @@ export async function startSync(isStart = false): Promise<void> {
               timestamp: new Date().toISOString()
             })
           },
-          isStart ? 7000 : 0
+          isStart ? 4000 : 0
         )
         return
       }
@@ -44,7 +52,7 @@ export async function startSync(isStart = false): Promise<void> {
               timestamp: new Date().toISOString()
             })
           },
-          isStart ? 7000 : 0
+          isStart ? 4000 : 0
         )
         return
       }
@@ -70,7 +78,7 @@ export async function startSync(isStart = false): Promise<void> {
               timestamp: new Date().toISOString()
             })
           },
-          isStart ? 7000 : 0
+          isStart ? 4000 : 0
         )
         return
       }
@@ -88,8 +96,9 @@ export async function startSync(isStart = false): Promise<void> {
           message: 'Sync success',
           timestamp: new Date().toISOString()
         })
+        mainWindow.webContents.send('full-synced')
       },
-      isStart ? 7000 : 0
+      isStart ? 5000 : 0
     )
     log.info('Sync success')
   } catch (error) {
@@ -101,8 +110,10 @@ export async function startSync(isStart = false): Promise<void> {
           message: 'Sync error',
           timestamp: new Date().toISOString()
         })
+        const mainWindow = BrowserWindow.getAllWindows()[0]
+        mainWindow.webContents.send('full-sync-error', error)
       },
-      isStart ? 7000 : 0
+      isStart ? 5000 : 0
     )
   }
 }

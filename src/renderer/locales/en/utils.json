@@ -28,5 +28,12 @@
   "format": {
     "gameTime": "{{time, gameTime}}",
     "niceDate": "{{date, niceDate}}"
+  },
+  "notifications": {
+    "gameExiting": "Exiting game...",
+    "gameExited": "Game has exited",
+    "fullSyncing": "Syncing data...",
+    "fullSynced": "Data sync completed",
+    "fullSyncError": "Data sync failed"
   }
 }

@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { useRunningGames } from '~/pages/Library/store'
 import { setupDBSync } from '~/stores/sync'
 import { useUpdaterStore } from '~/pages/Updater/store'
+import i18next from 'i18next'
 
 /**
  * Setting the game URL startup listener
@@ -36,7 +37,7 @@ export function setupGameExitListeners(): () => void {
 
   // Game is exiting listener
   const exitingListener = ipcOnUnique('game-exiting', (_, gameId: string) => {
-    toast.loading('正在退出游戏...', { id: `${gameId}-exiting` })
+    toast.loading(i18next.t('utils:notifications.gameExiting'), { id: `${gameId}-exiting` })
   })
 
   // Game is exited listener
@@ -47,7 +48,7 @@ export function setupGameExitListeners(): () => void {
     // Update the list of running games
     setRunningGames(newRunningGames)
 
-    toast.success('游戏已退出', {
+    toast.success(i18next.t('utils:notifications.gameExited'), {
       id: `${gameId}-exiting`
     })
 
@@ -60,6 +61,36 @@ export function setupGameExitListeners(): () => void {
   return () => {
     exitingListener()
     exitedListener()
+  }
+}
+
+export function setupFullSyncListener(): () => void {
+  const syningListener = ipcOnUnique('full-syncing', () => {
+    toast.loading(i18next.t('utils:notifications.fullSyncing'), { id: 'full-syncing' })
+  })
+  const syncedListener = ipcOnUnique('full-synced', () => {
+    toast.success(i18next.t('utils:notifications.fullSynced'), {
+      id: 'full-syncing'
+    })
+    // Turn off notifications after 4 seconds
+    setTimeout(() => {
+      toast.dismiss('full-syncing')
+    }, 4000)
+  })
+  const syncErrorListener = ipcOnUnique('full-sync-error', (_event, error: string) => {
+    toast.error(i18next.t('utils:notifications.fullSyncError'), {
+      id: 'full-syncing'
+    })
+    // Turn off notifications after 4 seconds
+    setTimeout(() => {
+      toast.dismiss('full-syncing')
+    }, 4000)
+    console.error('Full sync error:', error)
+  })
+  return () => {
+    syningListener()
+    syncedListener()
+    syncErrorListener()
   }
 }
 
@@ -86,7 +117,8 @@ export async function setup(navigate: (path: string) => void): Promise<() => voi
     setupCloudSyncListener(),
     setupGameExitListeners(),
     await setupDBSync(),
-    setupUpdateListener()
+    setupUpdateListener(),
+    setupFullSyncListener()
   ]
 
   return () => {
