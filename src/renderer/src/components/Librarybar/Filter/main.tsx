@@ -16,17 +16,44 @@ export function Filter({ children }: { children: React.ReactNode }): JSX.Element
     useFilterStore()
   const { t } = useTranslation('game')
 
-  // Get all keys for extra information
   const extraInfoKeys = (): string[] => {
     const allKeys = getAllExtraKeys()
 
-    // Sort (show predefined keys first)
-    return allKeys.sort((a: string, b: string) => {
-      const aIsPredefined = METADATA_EXTRA_PREDEFINED_KEYS.includes(a)
-      const bIsPredefined = METADATA_EXTRA_PREDEFINED_KEYS.includes(b)
+    // Create a reverse mapping from localized values to original keys
+    const localizedToOriginal: Record<string, string> = {}
 
-      if (aIsPredefined && !bIsPredefined) return -1
-      if (!aIsPredefined && bIsPredefined) return 1
+    // Map each predefined key to its localized version
+    METADATA_EXTRA_PREDEFINED_KEYS.forEach((key) => {
+      // Get localized version using i18next
+      const localizedKey = t(`detail.overview.extraInformation.fields.${key}`)
+      localizedToOriginal[localizedKey] = key
+    })
+
+    // Sort according to the order in METADATA_EXTRA_PREDEFINED_KEYS
+    return allKeys.sort((a: string, b: string) => {
+      // Get the original keys from localized values
+      const aOriginal = localizedToOriginal[a]
+      const bOriginal = localizedToOriginal[b]
+
+      // If both are predefined keys, sort by their position in the predefined array
+      if (aOriginal && bOriginal) {
+        return (
+          METADATA_EXTRA_PREDEFINED_KEYS.indexOf(aOriginal) -
+          METADATA_EXTRA_PREDEFINED_KEYS.indexOf(bOriginal)
+        )
+      }
+
+      // If only a is a predefined key, a comes first
+      if (aOriginal) {
+        return -1
+      }
+
+      // If only b is a predefined key, b comes first
+      if (bOriginal) {
+        return 1
+      }
+
+      // If neither is a predefined key, sort alphabetically
       return a.localeCompare(b)
     })
   }
