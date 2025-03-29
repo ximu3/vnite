@@ -42,7 +42,7 @@ export function TagsCard({
       </div>
       <Separator className={cn('my-3 bg-primary')} />
       <div className={cn('text-sm justify-start items-start')}>
-        <div className={cn('flex flex-wrap gap-x-1 gap-y-1')}>
+        <div className={cn('flex flex-wrap gap-x-1 gap-y-[6px]')}>
           {tags.join(', ') === ''
             ? t('detail.overview.tags.empty')
             : tags.map((tag) => (

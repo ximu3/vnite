@@ -55,7 +55,7 @@ export function ExtraInformationCard({
               </div>
               <div
                 className={cn(
-                  'flex flex-wrap gap-x-1 gap-y-1',
+                  'flex flex-wrap gap-x-1 gap-y-[6px]',
                   item.value.length > 0 && 'mt-[2px]'
                 )}
               >
