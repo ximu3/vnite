@@ -54,7 +54,7 @@
       "genres": "ジャンル",
       "platforms": "プラットフォーム",
       "tags": "タグ",
-      "extraInfo": "附加信息"
+      "extraInfo": "追加情報"
     },
     "combobox": {
       "select": "{{placeholder}}を選択",
@@ -170,7 +170,7 @@
     },
     "chart": {
       "title": "プレイ時間チャート",
-      "label": "游戏时长",
+      "label": "プレイ時間",
       "selectRange": "日付範囲を選択してください",
       "dateError": "開始日は終了日より後にできません",
       "rangeLimit": "{{startDate, niceDate}}から{{endDate, niceDate}}の間の日付を選択してください",
@@ -381,7 +381,7 @@
           "searchTitle": "検索タイトル"
         },
         "url": {
-          "empty": "请输入链接地址"
+          "empty": "リンクアドレスを入力してください"
         },
         "crop": {
           "title": "画像サイズを調整",
