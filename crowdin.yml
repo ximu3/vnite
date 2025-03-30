@@ -1,5 +1,5 @@
 files:
-  - source: src/main/locales/zh-CN/*.json
+  - source: /src/main/locales/zh-CN/*.json
     translation: /src/main/locales/%two_letters_code%/%original_file_name%
-  - source: src/renderer/locales/zh-CN/*.json
-    translation: src/renderer/locales/%two_letters_code%/%original_file_name%
+  - source: /src/renderer/locales/zh-CN/*.json
+    translation: /src/renderer/locales/%two_letters_code%/%original_file_name%
