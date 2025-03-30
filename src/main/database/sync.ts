@@ -17,7 +17,7 @@ export async function startSync(isStart = false): Promise<void> {
       () => {
         mainWindow.webContents.send('full-syncing')
       },
-      isStart ? 0 : 4000
+      isStart ? 0 : 3000
     )
     if (syncConfig.mode === 'official') {
       if (
@@ -36,7 +36,7 @@ export async function startSync(isStart = false): Promise<void> {
               timestamp: new Date().toISOString()
             })
           },
-          isStart ? 4000 : 0
+          isStart ? 3000 : 0
         )
         return
       }
@@ -52,7 +52,7 @@ export async function startSync(isStart = false): Promise<void> {
               timestamp: new Date().toISOString()
             })
           },
-          isStart ? 4000 : 0
+          isStart ? 3000 : 0
         )
         return
       }
@@ -78,7 +78,7 @@ export async function startSync(isStart = false): Promise<void> {
               timestamp: new Date().toISOString()
             })
           },
-          isStart ? 4000 : 0
+          isStart ? 3000 : 0
         )
         return
       }
@@ -98,7 +98,7 @@ export async function startSync(isStart = false): Promise<void> {
         })
         mainWindow.webContents.send('full-synced')
       },
-      isStart ? 5000 : 0
+      isStart ? 3500 : 0
     )
     log.info('Sync success')
   } catch (error) {
@@ -113,7 +113,7 @@ export async function startSync(isStart = false): Promise<void> {
         const mainWindow = BrowserWindow.getAllWindows()[0]
         mainWindow.webContents.send('full-sync-error', error)
       },
-      isStart ? 5000 : 0
+      isStart ? 3500 : 0
     )
   }
 }
