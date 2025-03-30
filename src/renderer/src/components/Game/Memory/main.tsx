@@ -47,9 +47,14 @@ export function Memory({ gameId }: { gameId: string }): JSX.Element {
   }
 
   async function setNote(memoryId: string, note: string): Promise<void> {
-    const newMemoryList = { ...memoryList }
-    newMemoryList[memoryId].note = note
-    await setMemoryList(newMemoryList)
+    const newMemoryList = {
+      ...memoryList,
+      [memoryId]: {
+        ...memoryList[memoryId],
+        note
+      }
+    }
+    setMemoryList(newMemoryList)
   }
 
   return (
