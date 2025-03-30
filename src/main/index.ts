@@ -1,33 +1,33 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
-import { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
-import { setupIPC } from './ipc'
+import { electronApp, is, optimizer } from '@electron-toolkit/utils'
+import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import log from 'electron-log/main'
 import windowStateKeeper from 'electron-window-state'
-import { getDataPath } from './utils'
+import { join } from 'path'
+import { DBManager, GameDBManager, startSync } from '~/database'
+import icon from '../../resources/icon.png?asset'
+import { AuthManager, handleAuthCallback } from './account'
+import { setupIPC } from './ipc'
+import { initScraper } from './scraper'
+import { setupUpdater } from './updater'
 import {
-  setupProtocols,
-  setupTempDirectory,
-  setupOpenAtLogin,
-  setupTray,
-  TrayManager,
-  parseGameIdFromUrl,
   calculateWindowSize,
-  portableStore,
-  getAppRootPath,
-  checkPortableMode,
-  setupSession,
   checkAdminPermissions,
   checkIfDirectoryNeedsAdminRights,
-  restartAppAsAdmin,
+  checkPortableMode,
+  getAppRootPath,
+  getDataPath,
   getLogsPath,
-  initI18n
+  initI18n,
+  parseGameIdFromUrl,
+  portableStore,
+  restartAppAsAdmin,
+  setupOpenAtLogin,
+  setupProtocols,
+  setupSession,
+  setupTempDirectory,
+  setupTray,
+  TrayManager
 } from './utils'
-import { setupUpdater } from './updater'
-import { initScraper } from './scraper'
-import { startSync, GameDBManager, DBManager } from '~/database'
-import { AuthManager, handleAuthCallback } from './account'
 
 let mainWindow: BrowserWindow
 let splashWindow: BrowserWindow | null
@@ -151,6 +151,7 @@ function createSplashWindow(): void {
     show: false,
     alwaysOnTop: true,
     icon: icon,
+    resizable: false,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
