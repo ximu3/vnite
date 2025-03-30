@@ -53,7 +53,8 @@
       "publishers": "パブリッシャー",
       "genres": "ジャンル",
       "platforms": "プラットフォーム",
-      "tags": "タグ"
+      "tags": "タグ",
+      "extraInfo": "附加信息"
     },
     "combobox": {
       "select": "{{placeholder}}を選択",
@@ -161,7 +162,6 @@
     "record": {
       "card": {
         "title": "プレイデータ",
-        "label": "プレイ時間",
         "noData": "このゲームをまだプレイしていません。",
         "playStats": "{{days}} 日間で {{totalTime, gameTime}} プレイし、1日あたり平均 {{averageTime, gameTime}} です。",
         "immersion": "{{date, niceDate}} に {{time, gameTime}} 没頭していました。",
@@ -170,6 +170,7 @@
     },
     "chart": {
       "title": "プレイ時間チャート",
+      "label": "游戏时长",
       "selectRange": "日付範囲を選択してください",
       "dateError": "開始日は終了日より後にできません",
       "rangeLimit": "{{startDate, niceDate}}から{{endDate, niceDate}}の間の日付を選択してください",
@@ -378,6 +379,9 @@
           "title": "画像を検索",
           "dataSource": "データソース",
           "searchTitle": "検索タイトル"
+        },
+        "url": {
+          "empty": "请输入链接地址"
         },
         "crop": {
           "title": "画像サイズを調整",
