@@ -7,9 +7,9 @@ import { CalendarIcon, ChevronLeft, ChevronRight, Clock, Trophy } from 'lucide-r
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
-import { cn } from '~/utils'
 
 import { getMonthlyPlayData } from '~/stores/game/recordUtils'
+import { cn } from '~/utils'
 import { GameRankingItem } from './GameRankingItem'
 import { StatCard } from './StatCard'
 
@@ -233,7 +233,8 @@ export function MonthlyReport(): JSX.Element {
                 day: cn(
                   buttonVariants({ variant: 'none' }),
                   'h-8 w-8 p-0 font-normal aria-selected:opacity-100'
-                )
+                ),
+                day_outside: 'invisible'
               }}
               modifiers={{
                 played: (date) => {
