@@ -54,7 +54,7 @@
       "genres": "Genres",
       "platforms": "Platforms",
       "tags": "Tags",
-      "extraInfo": "附加信息"
+      "extraInfo": "Additional Information"
     },
     "combobox": {
       "select": "Select {{placeholder}}",
@@ -170,7 +170,7 @@
     },
     "chart": {
       "title": "Play Time Chart",
-      "label": "游戏时长",
+      "label": "Play time",
       "selectRange": "Please select date range",
       "dateError": "Start date cannot be later than end date",
       "rangeLimit": "Please select dates between {{startDate, niceDate}} and {{endDate, niceDate}}",
@@ -381,7 +381,7 @@
           "searchTitle": "Search Title"
         },
         "url": {
-          "empty": "请输入链接地址"
+          "empty": "Please enter a link address"
         },
         "crop": {
           "title": "Adjust Image Size",
