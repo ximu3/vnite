@@ -53,7 +53,8 @@
       "publishers": "Publishers",
       "genres": "Genres",
       "platforms": "Platforms",
-      "tags": "Tags"
+      "tags": "Tags",
+      "extraInfo": "Additional Information"
     },
     "combobox": {
       "select": "Select {{placeholder}}",
@@ -161,7 +162,6 @@
     "record": {
       "card": {
         "title": "Play Data",
-        "label": "Playtime",
         "noData": "You haven't started playing this game yet.",
         "playStats": "You played {{totalTime, gameTime}} over {{days}} days, averaging {{averageTime, gameTime}} per day,",
         "immersion": "and were immersed for {{time, gameTime}} on {{date, niceDate}}.",
@@ -170,6 +170,7 @@
     },
     "chart": {
       "title": "Play Time Chart",
+      "label": "Play time",
       "selectRange": "Please select date range",
       "dateError": "Start date cannot be later than end date",
       "rangeLimit": "Please select dates between {{startDate, niceDate}} and {{endDate, niceDate}}",
@@ -378,6 +379,9 @@
           "title": "Search Images",
           "dataSource": "Data Source",
           "searchTitle": "Search Title"
+        },
+        "url": {
+          "empty": "Please enter a link address"
         },
         "crop": {
           "title": "Adjust Image Size",

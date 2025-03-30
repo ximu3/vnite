@@ -34,7 +34,7 @@
       "minuteValue": "{{value}} mins"
     },
     "unit": {
-      "count": "",
+      "count": "games",
       "day": "days",
       "times": "times"
     },
