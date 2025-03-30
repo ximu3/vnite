@@ -162,7 +162,7 @@ function ScoreCategory({
                   layout="horizontal"
                 >
                   {({ index, style }) => (
-                    <div style={style}>
+                    <div style={style} className={cn('pt-1', index == 0 && 'pl-1')}>
                       <GameScoreCard gameId={games[index]} />
                     </div>
                   )}
