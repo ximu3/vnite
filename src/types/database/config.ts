@@ -29,7 +29,12 @@ export interface configDocs {
           | 'record.playTime'
         order: 'asc' | 'desc'
       }
-      selectedGroup: 'collection' | 'developers' | 'genres'
+      selectedGroup:
+        | 'none'
+        | 'collection'
+        | 'metadata.genres'
+        | 'metadata.developers'
+        | 'record.playStatus'
       highlightLocalGames: boolean
       markLocalGames: boolean
       showRecentGames: boolean

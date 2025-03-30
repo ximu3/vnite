@@ -1,14 +1,14 @@
 // DatabaseV2toV3Converter.ts
-import * as path from 'path'
+import { gameCollectionDoc, gameDoc, gameLocalDoc } from '@appTypes/database'
+import { app } from 'electron'
 import * as fse from 'fs-extra'
+import * as path from 'path'
 import * as unzipper from 'unzipper'
 import { v4 as uuidv4 } from 'uuid'
-import { GameDBManager } from '~/database/game'
-import { ConfigDBManager } from '~/database/config'
 import { stopSync } from '~/database'
-import { gameDoc, gameLocalDoc, gameCollectionDoc } from '@appTypes/database'
+import { ConfigDBManager } from '~/database/config'
+import { GameDBManager } from '~/database/game'
 import { getAppTempPath } from '~/utils'
-import { app } from 'electron'
 
 // v2 Database Type Definition
 interface V2GameMetadata {
@@ -565,6 +565,17 @@ async function convertConfig(basePath: string): Promise<void> {
       language: ''
     })
 
+    const selectedGroupMap: Record<
+      string,
+      'none' | 'collection' | 'metadata.genres' | 'metadata.developers' | 'record.playStatus'
+    > = {
+      none: 'none',
+      collection: 'collection',
+      genres: 'metadata.genres',
+      developers: 'metadata.developers',
+      playStatus: 'record.playStatus'
+    }
+
     // Converting game-related configurations
     await ConfigDBManager.setConfigValue('game', {
       scraper: {
@@ -581,10 +592,7 @@ async function convertConfig(basePath: string): Promise<void> {
           by: mapSortField(v2Config.others.gameList.sort.by),
           order: v2Config.others.gameList.sort.order
         },
-        selectedGroup: v2Config.others.gameList.selectedGroup as
-          | 'collection'
-          | 'developers'
-          | 'genres',
+        selectedGroup: selectedGroupMap[v2Config.others.gameList.selectedGroup] || 'none',
         highlightLocalGames: v2Config.others.gameList.highlightLocalGames,
         markLocalGames: v2Config.others.gameList.markLocalGames,
         showRecentGames: v2Config.appearances.gameList.showRecentGamesInGameList,
