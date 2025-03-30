@@ -34,7 +34,7 @@
       "minuteValue": "{{value}} mins"
     },
     "unit": {
-      "count": "个",
+      "count": "games",
       "day": "days",
       "times": "times"
     },
