@@ -1,17 +1,17 @@
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
-import { Button } from '@ui/button'
+import { Button, buttonVariants } from '@ui/button'
 import { Calendar } from '@ui/calendar'
-import { ChevronLeft, ChevronRight, Clock, CalendarIcon, Trophy } from 'lucide-react'
-import { CartesianGrid, XAxis, YAxis, Area, AreaChart } from 'recharts'
+import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
 import { Separator } from '@ui/separator'
+import { CalendarIcon, ChevronLeft, ChevronRight, Clock, Trophy } from 'lucide-react'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 
-import { StatCard } from './StatCard'
-import { GameRankingItem } from './GameRankingItem'
 import { getMonthlyPlayData } from '~/stores/game/recordUtils'
+import { cn } from '~/utils'
+import { GameRankingItem } from './GameRankingItem'
+import { StatCard } from './StatCard'
 
 export function MonthlyReport(): JSX.Element {
   const { t } = useTranslation('record')
@@ -224,18 +224,33 @@ export function MonthlyReport(): JSX.Element {
           </CardHeader>
           <CardContent>
             <Calendar
-              mode="single"
+              mode="default"
               selected={selectedDate}
               month={selectedDate} // Controls the displayed month
               onMonthChange={(date) => setSelectedDate(date)}
-              className="w-full border rounded-md"
+              className="w-full border rounded-md select-none"
+              classNames={{
+                day: cn(
+                  buttonVariants({ variant: 'none' }),
+                  'h-8 w-8 p-0 font-normal aria-selected:opacity-100'
+                ),
+                day_outside: 'invisible'
+              }}
               modifiers={{
                 played: (date) => {
-                  const dateStr = date.toISOString().split('T')[0]
+                  const dateStr = date.toLocaleDateString('en-CA')
                   return !!monthData.dailyPlayTime[dateStr] && monthData.dailyPlayTime[dateStr] > 0
                 }
               }}
               modifiersStyles={{
+                today: {
+                  backgroundColor: 'hsl(var(--card))',
+                  color: 'inherit'
+                },
+                selected: {
+                  backgroundColor: 'hsl(var(--card))',
+                  color: 'inherit'
+                },
                 played: {
                   backgroundColor: 'hsl(var(--primary))',
                   color: 'hsl(var(--primary-foreground))'
