@@ -23,19 +23,8 @@ export const TimerChart = ({
   filter0?: boolean
 }): JSX.Element => {
   const { t } = useTranslation('game')
-  const formatPlayTime = (value: ValueType): any => {
-    if (typeof value === 'number') {
-      if (value >= 60) {
-        const hours = Math.floor(value / 60)
-        const remainingMinutes = value % 60
-        if (remainingMinutes === 0) {
-          return `${hours} 小时`
-        }
-        return `${hours}小时${remainingMinutes}分钟`
-      }
-      return `${value} 分钟`
-    }
-    return value
+  const formatGameTime = (time: number): string => {
+    return t('utils:format.gameTime', { time })
   }
 
   // Converting data into the format Recharts needs
@@ -84,7 +73,7 @@ export const TimerChart = ({
         <ChartTooltip
           content={
             <ChartTooltipContent
-              formatter={formatPlayTime}
+              formatter={(value: ValueType) => formatGameTime((value as number) * 60 * 1000)}
               hideIndicator={false}
               color="hsl(var(--primary))"
             />

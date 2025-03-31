@@ -1,5 +1,6 @@
 import { getGameStore, useGameRegistry } from '~/stores/game'
 import type { gameDoc } from '@appTypes/database'
+import i18next from 'i18next'
 
 interface WeeklyMostPlayedDay {
   date: string
@@ -77,7 +78,7 @@ export function getWeeklyPlayData(date = new Date()): {
     const dates: string[] = []
     const current = new Date(weekStart)
     while (current <= weekEnd) {
-      dates.push(current.toISOString().split('T')[0])
+      dates.push(i18next.format(current, 'niceISO'))
       current.setDate(current.getDate() + 1)
     }
 
@@ -164,7 +165,7 @@ export function getMonthlyPlayData(date = new Date()): {
     const dates: string[] = []
     const current = new Date(monthStart)
     while (current <= monthEnd) {
-      dates.push(current.toISOString().split('T')[0])
+      dates.push(i18next.format(current, 'niceISO'))
       current.setDate(current.getDate() + 1)
     }
 
@@ -256,7 +257,7 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
   gameTypeDistribution: { type: string; playTime: number }[]
 } {
   try {
-    // Calculation of beginning and end of year
+    // Calculate the beginning and end of the year
     const yearStart = new Date(year, 0, 1)
     const yearEnd = new Date(year, 11, 31, 23, 59, 59, 999)
 
@@ -268,62 +269,51 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
 
     const { gameIds } = useGameRegistry.getState()
 
-    // Initialize month data
+    // Initialize monthly data
     for (let month = 0; month < 12; month++) {
       monthlyPlayTime[month] = 0
       monthlyPlayDays[month] = new Set()
     }
 
-    // Iterate through each game
-    for (const gameId of gameIds) {
-      const store = getGameStore(gameId)
-      const timers = store.getState().getValue('record.timers') || []
-      // Get the game type, using either the first element of the array or the default value
-      const gameGenres = store.getState().getValue('metadata.genres') || []
-      const gameType =
-        gameGenres.length > 0 ? (gameGenres[0] === '' ? '未分类' : gameGenres[0]) : '未分类'
+    // Iterate through each day of the year
+    const currentDate = new Date(yearStart)
+    while (currentDate <= yearEnd) {
+      const month = currentDate.getMonth()
 
-      let gamePlayTimeTotal = 0
+      // Calculate total play time for this day
+      let dayTotal = 0
+      for (const gameId of gameIds) {
+        const store = getGameStore(gameId)
+        const timers = store.getState().getValue('record.timers') || []
+        const gameGenres = store.getState().getValue('metadata.genres') || []
+        const gameType =
+          gameGenres.length > 0 ? (gameGenres[0] === '' ? '未分类' : gameGenres[0]) : '未分类'
 
-      // Traverse each play record
-      for (const timer of timers) {
-        const start = new Date(timer.start)
-        const end = new Date(timer.end)
+        // Use calculateDailyPlayTime to get accurate play time for this day
+        const playTime = calculateDailyPlayTime(currentDate, timers)
+        dayTotal += playTime
 
-        // Processing of this year's records only
-        if (start.getFullYear() !== year && end.getFullYear() !== year) continue
-
-        // Ensure that it starts no earlier than the beginning of the year
-        const effectiveStart = start < yearStart ? yearStart : start
-        // Ensure closure no later than the end of the year
-        const effectiveEnd = end > yearEnd ? yearEnd : end
-
-        // Calculation time difference, milliseconds
-        const playTime = effectiveEnd.getTime() - effectiveStart.getTime()
-
-        if (playTime <= 0) continue
-
-        gamePlayTimeTotal += playTime
-
-        // Record the number of days of play
-        const dayStr = effectiveStart.toISOString().split('T')[0]
-        const month = effectiveStart.getMonth()
-        monthlyPlayDays[month].add(dayStr)
-        monthlyPlayTime[month] += playTime
+        if (playTime > 0) {
+          // Accumulate play time to game stats
+          gamePlayTime[gameId] = (gamePlayTime[gameId] || 0) + playTime
+          // Accumulate play time to game type
+          gameTypeTime[gameType] = (gameTypeTime[gameType] || 0) + playTime
+        }
       }
 
-      // Total time accumulated to the game
-      gamePlayTime[gameId] = gamePlayTimeTotal
-
-      // Time accumulated to game type
-      if (gamePlayTimeTotal > 0) {
-        gameTypeTime[gameType] = (gameTypeTime[gameType] || 0) + gamePlayTimeTotal
+      // If this day has any play time, add it to the monthly stats
+      if (dayTotal > 0) {
+        const dateStr = i18next.format(currentDate, 'niceISO')
+        monthlyPlayDays[month].add(dateStr)
+        monthlyPlayTime[month] += dayTotal
+        totalTime += dayTotal
       }
 
-      totalTime += gamePlayTimeTotal
+      // Move to the next day
+      currentDate.setDate(currentDate.getDate() + 1)
     }
 
-    // Find out the month with the most games played
+    // Find the month with most play time
     let mostPlayedMonth: MostPlayedMonth | null = null
     for (let month = 0; month < 12; month++) {
       if (mostPlayedMonth === null || monthlyPlayTime[month] > mostPlayedMonth.playTime) {

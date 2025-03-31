@@ -140,6 +140,18 @@ export async function i18nInit(): Promise<void> {
     }
   })
 
+  i18n.services.formatter?.add('niceISO', (value, _lng, _options) => {
+    // Make sure value is a Date object
+    const date = value instanceof Date ? value : new Date(value)
+
+    // Access to year, month and day
+    const year = date.getFullYear()
+    const month = date.getMonth() + 1 // getMonth() return 0-11
+    const day = date.getDate()
+
+    return `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`
+  })
+
   i18n.services.formatter?.add('niceDateSeconds', (value, lng, _options) => {
     // Make sure value is a Date object
     const date = value instanceof Date ? value : new Date(value)

@@ -238,7 +238,7 @@ export function MonthlyReport(): JSX.Element {
               }}
               modifiers={{
                 played: (date) => {
-                  const dateStr = date.toLocaleDateString('en-CA')
+                  const dateStr = t('utils:format.niceISO', { date })
                   return !!monthData.dailyPlayTime[dateStr] && monthData.dailyPlayTime[dateStr] > 0
                 }
               }}

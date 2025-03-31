@@ -4,6 +4,7 @@ import { useGameRegistry } from './gameRegistry'
 import { useConfigStore } from '../config'
 import type { MaxPlayTimeDay, gameDoc } from '@appTypes/database'
 import type { Paths } from 'type-fest'
+import i18next from 'i18next'
 
 // Search Functions
 export function searchGames(query: string): string[] {
@@ -430,7 +431,7 @@ export function getGamePlayTimeByDateRange(
 
       while (current <= end) {
         try {
-          const dateStr = current.toISOString().split('T')[0]
+          const dateStr = i18next.format(current, 'niceISO')
           result[dateStr] = calculateDailyPlayTime(current, game.record.timers)
           current.setDate(current.getDate() + 1)
         } catch (error) {
@@ -509,7 +510,7 @@ export function getGameMaxPlayTimeDay(gameId: string): MaxPlayTimeDay | null {
       const current = new Date(start)
 
       while (current <= end) {
-        allDates.add(current.toISOString().split('T')[0])
+        allDates.add(i18next.format(current, 'niceISO'))
         current.setDate(current.getDate() + 1)
       }
     })
