@@ -27,7 +27,8 @@
   },
   "format": {
     "gameTime": "{{time, gameTime}}",
-    "niceDate": "{{date, niceDate}}"
+    "niceDate": "{{date, niceDate}}",
+    "niceISO": "{{date, niceISO}}"
   },
   "notifications": {
     "gameExiting": "Exiting game...",
