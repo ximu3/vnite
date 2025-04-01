@@ -1,8 +1,8 @@
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
-import { cn } from '~/utils'
 import type { ValueType } from '@ui/chart'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
 import { useTranslation } from 'react-i18next'
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
+import { cn } from '~/utils'
 
 interface DailyPlayTime {
   [date: string]: number
@@ -34,13 +34,13 @@ export const TimerChart = ({
     chartData = Object.entries(data)
       .map(([date, playTime]) => ({
         date,
-        playTime: Math.round(playTime / 1000 / 60) // Converting milliseconds to minutes
+        playTime: playTime / 1000 / 60 // Converting milliseconds to minutes
       }))
       .filter((item) => item.playTime > 0) // Filter out days with 0 hours of gameplay
   } else {
     chartData = Object.entries(data).map(([date, playTime]) => ({
       date,
-      playTime: Math.round(playTime / 1000 / 60) // Converting milliseconds to minutes
+      playTime: playTime / 1000 / 60 // Converting milliseconds to minutes
     }))
   }
 
