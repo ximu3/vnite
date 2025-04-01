@@ -240,7 +240,9 @@ export function RecordOverview(): JSX.Element {
                   key={gameId}
                   gameId={gameId}
                   rank={index + 1}
-                  extraInfo={gameMetaIndex[gameId].score?.toString() || t('overview.misc.noScore')}
+                  extraInfo={
+                    gameMetaIndex[gameId].score?.toFixed(1).toString() || t('overview.misc.noScore')
+                  }
                 />
               ))}
             </div>
@@ -289,7 +291,9 @@ export function RecordOverview(): JSX.Element {
                   key={gameId}
                   gameId={gameId}
                   rank={index + 1}
-                  extraInfo={gameMetaIndex[gameId].score?.toString() || t('overview.misc.noScore')}
+                  extraInfo={
+                    gameMetaIndex[gameId].score?.toFixed(1).toString() || t('overview.misc.noScore')
+                  }
                 />
               ))}
             </div>
