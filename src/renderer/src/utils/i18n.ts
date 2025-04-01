@@ -4,37 +4,37 @@ import { ipcInvoke } from './ipc'
 
 // Importing translation files for each module
 // zh-CN
-import zhCNConfig from '@locales/zh-CN/config.json'
-import zhCNSidebar from '@locales/zh-CN/sidebar.json'
-import zhCNGame from '@locales/zh-CN/game.json'
-import zhCNUI from '@locales/zh-CN/ui.json'
 import zhCNAdder from '@locales/zh-CN/adder.json'
+import zhCNConfig from '@locales/zh-CN/config.json'
+import zhCNGame from '@locales/zh-CN/game.json'
 import zhCNImporter from '@locales/zh-CN/importer.json'
+import zhCNRecord from '@locales/zh-CN/record.json'
+import zhCNSidebar from '@locales/zh-CN/sidebar.json'
+import zhCNUI from '@locales/zh-CN/ui.json'
 import zhCNUpdater from '@locales/zh-CN/updater.json'
 import zhCNUtils from '@locales/zh-CN/utils.json'
-import zhCNRecord from '@locales/zh-CN/record.json'
 
 // ja
-import jaConfig from '@locales/ja/config.json'
-import jaSidebar from '@locales/ja/sidebar.json'
-import jaGame from '@locales/ja/game.json'
-import jaUI from '@locales/ja/ui.json'
 import jaAdder from '@locales/ja/adder.json'
+import jaConfig from '@locales/ja/config.json'
+import jaGame from '@locales/ja/game.json'
 import jaImporter from '@locales/ja/importer.json'
+import jaRecord from '@locales/ja/record.json'
+import jaSidebar from '@locales/ja/sidebar.json'
+import jaUI from '@locales/ja/ui.json'
 import jaUpdater from '@locales/ja/updater.json'
 import jaUtils from '@locales/ja/utils.json'
-import jaRecord from '@locales/ja/record.json'
 
 // en
-import enConfig from '@locales/en/config.json'
-import enSidebar from '@locales/en/sidebar.json'
-import enGame from '@locales/en/game.json'
-import enUI from '@locales/en/ui.json'
 import enAdder from '@locales/en/adder.json'
+import enConfig from '@locales/en/config.json'
+import enGame from '@locales/en/game.json'
 import enImporter from '@locales/en/importer.json'
+import enRecord from '@locales/en/record.json'
+import enSidebar from '@locales/en/sidebar.json'
+import enUI from '@locales/en/ui.json'
 import enUpdater from '@locales/en/updater.json'
 import enUtils from '@locales/en/utils.json'
-import enRecord from '@locales/en/record.json'
 
 const resources = {
   'zh-CN': {
@@ -91,7 +91,7 @@ export async function i18nInit(): Promise<void> {
   i18n.services.formatter?.add('gameTime', (value, lng, _options) => {
     // Calculation of total hours (with fractional part)
     const totalHours = value / (1000 * 60 * 60)
-    const minutes = Math.ceil((value % (1000 * 60 * 60)) / (1000 * 60))
+    const minutes = (value % (1000 * 60 * 60)) / (1000 * 60)
 
     if (totalHours >= 1) {
       // When more than 1 hour, the display is in decimal form with 1 decimal place retained
@@ -106,13 +106,15 @@ export async function i18nInit(): Promise<void> {
         return `${formattedHours} h`
       }
     } else {
+      const formattedMinutes = minutes < 0.5 && minutes > 1e-10 ? '< 1' : `${Math.round(minutes)}`
       // Minutes are still displayed when less than 1 hour has elapsed
+      // If it is less than 30s, display '< 1'
       if (lng === 'zh-CN') {
-        return `${minutes} 分钟`
+        return `${formattedMinutes} 分钟`
       } else if (lng === 'ja') {
-        return `${minutes} 分`
+        return `${formattedMinutes} 分`
       } else {
-        return `${minutes} m`
+        return `${formattedMinutes} m`
       }
     }
   })
