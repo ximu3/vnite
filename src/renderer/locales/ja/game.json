@@ -116,7 +116,8 @@
     },
     "header": {
       "playStatus": {
-        "label": "プレイ状況"
+        "label": "プレイ状況",
+        "tooltip": "プレイ状況を変更"
       },
       "rating": {
         "title": "評価",
@@ -127,7 +128,8 @@
         },
         "success": "評価が保存されました",
         "warning": "小数点以下1桁に自動調整されました",
-        "cleared": "評価がクリアされました"
+        "cleared": "評価がクリアされました",
+        "tooltip": "評価を変更"
       }
     },
     "actions": {

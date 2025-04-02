@@ -116,7 +116,8 @@
     },
     "header": {
       "playStatus": {
-        "label": "游玩状态"
+        "label": "游玩状态",
+        "tooltip": "修改游玩状态"
       },
       "rating": {
         "title": "我的评分",
@@ -127,7 +128,8 @@
         },
         "success": "评分已保存",
         "warning": "已自动保留1位小数",
-        "cleared": "评分已清除"
+        "cleared": "评分已清除",
+        "tooltip": "修改评分"
       }
     },
     "actions": {

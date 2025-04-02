@@ -1,7 +1,7 @@
-import { useTranslation } from 'react-i18next'
 import { Link } from '@ui/link'
 import { Separator } from '@ui/separator'
 import { isEqual } from 'lodash'
+import { useTranslation } from 'react-i18next'
 import { useGameState } from '~/hooks'
 import { cn, copyWithToast } from '~/utils'
 import { RelatedSitesDialog } from './RelatedSitesDialog'
@@ -38,6 +38,7 @@ export function RelatedSitesCard({
                 key={`${gameId}-${site.label}-${site.url}-${index}`}
                 name={site.label}
                 url={site.url}
+                tooltipSide="left"
               />
             ))}
       </div>
