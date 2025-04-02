@@ -244,6 +244,7 @@
         "enterValue": "Enter value",
         "addNew": "Add new information",
         "empty": "No additional information yet",
+        "emptyValue": "None",
         "fields": {
           "director": "Director",
           "scenario": "Scenario Writer",

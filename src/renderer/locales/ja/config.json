@@ -37,7 +37,7 @@
       "placeholder": "LEProc.exeのパスを入力してください"
     },
     "visualBoyAdvance": {
-      "name": "VisualBoyAdvance",
+      "name": "Visual Boy Advance",
       "placeholder": "visualboyadvance.exeのパスを入力してください"
     },
     "magpie": {
@@ -117,7 +117,7 @@
       "serverAddress": "CouchDBアドレス",
       "username": "ユーザー名",
       "password": "パスワード",
-      "info": "CouchDBはデータの保存と同期に使用されるオープンソースのドキュメントデータベースで、<flyio>Fly.io</flyio> やその他のサービスで簡単にデプロイできます"
+      "info": "<couchdb>CouchDB</couchdb> はデータの保存と同期に使用されるオープンソースのドキュメントデータベースで"
     },
     "info": {
       "status": "ステータス",

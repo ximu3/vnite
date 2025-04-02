@@ -37,7 +37,7 @@
       "placeholder": "请输入LEProc.exe的路径"
     },
     "visualBoyAdvance": {
-      "name": "VisualBoyAdvance",
+      "name": "Visual Boy Advance",
       "placeholder": "请输入visualboyadvance.exe的路径"
     },
     "magpie": {
@@ -117,7 +117,7 @@
       "serverAddress": "CouchDB 地址",
       "username": "用户名",
       "password": "密码",
-      "info": "CouchDB 是一个开源的文档数据库，可用于存储和同步数据，可以通过 <flyio>Fly.io</flyio> 或其他服务快速部署自托管 CouchDB"
+      "info": "<couchdb>CouchDB</couchdb> 是一个开源的文档数据库，可用于存储和同步数据"
     },
     "info": {
       "status": "状态",
@@ -149,11 +149,11 @@
     "openFolder": "打开数据库文件夹",
     "backup": "备份数据库",
     "import": "导入数据库",
-    "importV2": "导入v2数据库",
+    "importV2": "导入V2数据库",
     "confirmImport": "确定要导入数据库吗？",
     "importWarning": "导入数据库将覆盖当前数据库，此操作不可逆！操作结束后应用将自动重启。",
-    "confirmImportV2": "确定要导入v2数据库吗？",
-    "importV2Warning": "导入v2数据库将覆盖当前数据库，此操作不可逆！操作结束后应用将自动重启。",
+    "confirmImportV2": "确定要导入V2数据库吗？",
+    "importV2Warning": "导入V2数据库将覆盖当前数据库，此操作不可逆！操作结束后应用将自动重启。",
     "portableAdminRequired": "注意：便携模式可能需要管理员权限。",
     "notifications": {
       "backingUp": "正在备份数据库...",

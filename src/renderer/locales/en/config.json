@@ -37,7 +37,7 @@
       "placeholder": "Enter the path to LEProc.exe"
     },
     "visualBoyAdvance": {
-      "name": "VisualBoyAdvance",
+      "name": "Visual Boy Advance",
       "placeholder": "Enter the path to visualboyadvance.exe"
     },
     "magpie": {
@@ -117,7 +117,7 @@
       "serverAddress": "CouchDB Address",
       "username": "Username",
       "password": "Password",
-      "info": "CouchDB is an open-source document database used for storing and syncing data, can be quickly deployed on <flyio>Fly.io</flyio> or other services"
+      "info": "<couchdb>CouchDB</couchdb> is an open-source document database used for storing and syncing data"
     },
     "info": {
       "status": "Status",

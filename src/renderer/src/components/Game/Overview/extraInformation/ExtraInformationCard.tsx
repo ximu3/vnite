@@ -60,7 +60,7 @@ export function ExtraInformationCard({
                 )}
               >
                 {item.value.length === 0 ? (
-                  <span>{t('detail.overview.extraInformation.empty')}</span>
+                  <span>{t('detail.overview.extraInformation.emptyValue')}</span>
                 ) : (
                   item.value.map((val, i) => (
                     <div key={i} className={cn('flex items-center')}>

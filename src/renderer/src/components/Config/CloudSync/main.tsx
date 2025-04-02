@@ -440,7 +440,13 @@ export function CloudSync(): JSX.Element {
                             <Trans
                               i18nKey="config:cloudSync.selfHosted.info"
                               components={{
-                                flyio: <Link name="Fly.io" url="https://fly.io" />
+                                couchdb: (
+                                  <Link
+                                    name="CouchDB"
+                                    className="text-xs"
+                                    url="https://couchdb.apache.org"
+                                  />
+                                )
                               }}
                             />
                           </span>

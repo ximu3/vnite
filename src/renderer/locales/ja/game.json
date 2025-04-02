@@ -244,6 +244,7 @@
         "enterValue": "値を入力",
         "addNew": "新しい情報を追加",
         "empty": "追加情報はまだありません",
+        "emptyValue": "なし",
         "fields": {
           "director": "企画",
           "scenario": "シナリオ",
