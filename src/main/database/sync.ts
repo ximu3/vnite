@@ -35,8 +35,13 @@ export async function startSync(isStart = false): Promise<void> {
               message: 'Missing official sync username or password',
               timestamp: new Date().toISOString()
             })
+            const mainWindow = BrowserWindow.getAllWindows()[0]
+            mainWindow.webContents.send(
+              'full-sync-error',
+              'Missing official sync username or password'
+            )
           },
-          isStart ? 3000 : 0
+          isStart ? 3500 : 0
         )
         return
       }
@@ -51,8 +56,10 @@ export async function startSync(isStart = false): Promise<void> {
               message: 'Database size exceeds quota',
               timestamp: new Date().toISOString()
             })
+            const mainWindow = BrowserWindow.getAllWindows()[0]
+            mainWindow.webContents.send('full-sync-error', 'Database size exceeds quota')
           },
-          isStart ? 3000 : 0
+          isStart ? 3500 : 0
         )
         return
       }
@@ -77,8 +84,10 @@ export async function startSync(isStart = false): Promise<void> {
               message: 'Missing self-hosted sync configuration',
               timestamp: new Date().toISOString()
             })
+            const mainWindow = BrowserWindow.getAllWindows()[0]
+            mainWindow.webContents.send('full-sync-error', 'Missing self-hosted sync configuration')
           },
-          isStart ? 3000 : 0
+          isStart ? 3500 : 0
         )
         return
       }
