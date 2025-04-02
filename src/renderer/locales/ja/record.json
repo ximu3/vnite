@@ -123,7 +123,7 @@
     "stats": {
       "yearlyPlayTime": "年間プレイ時間",
       "monthsPlayed": "プレイ月数",
-      "monthsCount": "{{count}}ヶ月",
+      "monthsCount": "{{count}} ヶ月",
       "mostPlayedMonth": "最もプレイした月",
       "noRecord": "記録なし",
       "playTimeDesc": "プレイ時間：{{time, gameTime}}"

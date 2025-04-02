@@ -162,7 +162,7 @@ export function MonthlyReport(): JSX.Element {
 
         <StatCard
           title={t('monthly.stats.daysPlayed')}
-          value={`${Object.values(monthData.dailyPlayTime).filter((time) => time > 0).length}${t('monthly.unit.days')}`}
+          value={`${Object.values(monthData.dailyPlayTime).filter((time) => time > 0).length} ${t('monthly.unit.days')}`}
           icon={<CalendarIcon className="w-4 h-4" />}
           className="col-span-1"
         />
