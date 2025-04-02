@@ -1,5 +1,5 @@
 import { Button } from '@ui/button'
-import { useGameState, useConfigState } from '~/hooks'
+import { useConfigState, useGameState } from '~/hooks'
 import { cn, copyWithToast } from '~/utils'
 // import { Badge } from '@ui/badge'
 import { Dialog, DialogContent, DialogTrigger } from '@ui/dialog'
@@ -12,14 +12,15 @@ import {
   SelectLabel,
   SelectTrigger
 } from '@ui/select'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useRunningGames } from '~/pages/Library/store'
 import { Config } from './Config'
 import { Record } from './Overview/Record'
 import { StartGame } from './StartGame'
 import { StopGame } from './StopGame'
-import { useTranslation } from 'react-i18next'
 
 export function Header({
   gameId,
@@ -204,9 +205,16 @@ export function Header({
 
             <Select value={playStatus} onValueChange={setPlayStatus}>
               <SelectTrigger noIcon className={cn('p-0 h-auto w-auto border-0 shadow-none')}>
-                <Button variant="outline" size={'icon'} className={cn('')}>
-                  <span className={cn('icon-[mdi--bookmark-outline] w-4 h-4')}></span>
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button variant="outline" size={'icon'} className={cn('')}>
+                      <span className={cn('icon-[mdi--bookmark-outline] w-4 h-4')}></span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    {t('detail.header.playStatus.tooltip')}
+                  </TooltipContent>
+                </Tooltip>
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
@@ -222,17 +230,22 @@ export function Header({
 
             <Dialog open={isScoreDialogOpen} onOpenChange={setIsScoreDialogOpen}>
               <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size={'icon'}
-                  className="non-draggable"
-                  onClick={() => {
-                    resetPreScore()
-                    setIsScoreDialogOpen(true)
-                  }}
-                >
-                  <span className={cn('icon-[mdi--starburst-edit-outline] w-4 h-4')}></span>
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button
+                      variant="outline"
+                      size={'icon'}
+                      className="non-draggable"
+                      onClick={() => {
+                        resetPreScore()
+                        setIsScoreDialogOpen(true)
+                      }}
+                    >
+                      <span className={cn('icon-[mdi--starburst-edit-outline] w-4 h-4')}></span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">{t('detail.header.rating.tooltip')}</TooltipContent>
+                </Tooltip>
               </DialogTrigger>
               <DialogContent showCloseButton={false} className="w-[500px]">
                 <div className={cn('flex flex-row gap-3 items-center justify-center')}>

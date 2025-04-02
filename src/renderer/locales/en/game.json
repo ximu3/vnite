@@ -116,7 +116,8 @@
     },
     "header": {
       "playStatus": {
-        "label": "Play Status"
+        "label": "Play Status",
+        "tooltip": "Change play status"
       },
       "rating": {
         "title": "My Rating",
@@ -127,7 +128,8 @@
         },
         "success": "Rating saved",
         "warning": "Automatically kept to 1 decimal place",
-        "cleared": "Rating cleared"
+        "cleared": "Rating cleared",
+        "tooltip": "Modify rating"
       }
     },
     "actions": {
