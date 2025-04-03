@@ -136,7 +136,7 @@ export function Filter({ children }: { children: React.ReactNode }): JSX.Element
             </div>
           </div>
           <Separator className={cn('mt-1')} />
-          <div className={cn('h-full overflow-auto scrollbar-base pr-3 -mr-3')}>
+          <div className={cn('h-full overflow-auto scrollbar-base-thin pr-3 -mr-3')}>
             <div className={cn('flex flex-col gap-3 ')}>
               <div className={cn('flex flex-col gap-1 items-start justify-start')}>
                 <div className={cn('flex flex-row justify-between items-center w-full')}>
