@@ -1,5 +1,12 @@
 import { ipcMain, BrowserWindow } from 'electron'
-import { DBManager, backupDatabase, restoreDatabase, startSync, ConfigDBManager } from '~/database'
+import {
+  DBManager,
+  backupDatabase,
+  restoreDatabase,
+  startSync,
+  ConfigDBManager,
+  stopSync
+} from '~/database'
 import { getCouchDbSize } from '~/utils'
 import { DocChange } from '@appTypes/database'
 
@@ -14,6 +21,10 @@ export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
 
   ipcMain.handle('restart-sync', async (_) => {
     await startSync()
+  })
+
+  ipcMain.handle('stop-sync', async (_) => {
+    await stopSync()
   })
 
   ipcMain.handle(

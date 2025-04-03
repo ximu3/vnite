@@ -243,7 +243,15 @@ export function CloudSync(): JSX.Element {
             {/* Enable/Disable Switch */}
             <div className={cn('grid grid-cols-[1fr_auto] gap-5 items-center')}>
               <div className={cn('whitespace-nowrap select-none')}>{t('cloudSync.enable')}</div>
-              <Switch checked={enabled} onCheckedChange={setEnabled} />
+              <Switch
+                checked={enabled}
+                onCheckedChange={async (value) => {
+                  setEnabled(value)
+                  if (!value) {
+                    await ipcInvoke('stop-sync')
+                  }
+                }}
+              />
             </div>
 
             {enabled && (
