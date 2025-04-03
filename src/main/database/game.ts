@@ -199,6 +199,26 @@ export class GameDBManager {
     }
   }
 
+  static async checkGameExitsByPath(path: string): Promise<boolean> {
+    try {
+      const games = await this.getAllGamesLocal()
+
+      const gameArray = Object.values(games)
+      const results = await Promise.all(
+        gameArray.map(async (game) => {
+          const gamePath = await this.getGameLocalValue(game._id, 'path.gamePath')
+          const markPath = await this.getGameLocalValue(game._id, 'utils.markPath')
+          return gamePath.includes(path) || markPath === path
+        })
+      )
+
+      return results.some((result) => result)
+    } catch (error) {
+      log.error('Error checking game existence by path:', error)
+      throw error
+    }
+  }
+
   static async removeGame(gameId: string): Promise<void> {
     try {
       await DBManager.removeDoc(this.DB_NAME, gameId)

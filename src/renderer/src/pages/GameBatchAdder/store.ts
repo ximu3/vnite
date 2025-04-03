@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 
 export type DataSource = 'vndb' | 'igdb' | 'steam' | 'bangumi'
-export type GameStatus = 'idle' | 'loading' | 'success' | 'error'
+export type GameStatus = 'idle' | 'loading' | 'success' | 'error' | 'existed'
 
 export interface Game {
   dataId: string
@@ -9,6 +9,7 @@ export interface Game {
   dataSource: DataSource
   id: string
   status: GameStatus
+  dirPath: string
 }
 
 interface GameBatchAdderState {

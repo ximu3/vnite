@@ -15,6 +15,16 @@ export const TABLE_COLUMN_WIDTHS = {
 export function GameListTable(): JSX.Element {
   const { t } = useTranslation('adder')
   const { games } = useGameBatchAdderStore()
+  // Putting games in existed status at the end
+  const sortedGames = [...games].sort((a, b) => {
+    if (a.status === 'existed' && b.status !== 'existed') {
+      return 1
+    }
+    if (a.status !== 'existed' && b.status === 'existed') {
+      return -1
+    }
+    return 0
+  })
 
   return (
     <>
@@ -42,7 +52,7 @@ export function GameListTable(): JSX.Element {
       <Table>
         <TableBody>
           <div className={cn('overflow-auto scrollbar-base w-full', 'h-[calc(75vh-100px)]')}>
-            {games.map((game) => (
+            {sortedGames.map((game) => (
               <GameListItem key={game.dataId} game={game} />
             ))}
           </div>

@@ -68,7 +68,8 @@
       "loading": "正在添加",
       "success": "添加成功",
       "error": "添加失败",
-      "waiting": "等待添加"
+      "waiting": "等待添加",
+      "existed": "已存在"
     },
     "table": {
       "columns": {

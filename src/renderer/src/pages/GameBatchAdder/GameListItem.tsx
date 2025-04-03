@@ -85,7 +85,9 @@ export function GameListItem({ game }: { game: Game }): JSX.Element {
       <TableCell className={cn(TABLE_COLUMN_WIDTHS.actions)}>
         <div className="flex gap-2">
           <Button
-            disabled={game.status === 'loading' || game.status === 'success'}
+            disabled={
+              game.status === 'loading' || game.status === 'success' || game.status === 'existed'
+            }
             onClick={handleAddGame}
           >
             {game.status === 'error'

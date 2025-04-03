@@ -68,7 +68,8 @@
       "loading": "Adding",
       "success": "Added successfully",
       "error": "Addition failed",
-      "waiting": "Waiting to add"
+      "waiting": "Waiting to add",
+      "existed": "Already exists"
     },
     "table": {
       "columns": {

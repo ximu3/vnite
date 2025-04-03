@@ -17,19 +17,22 @@ export async function addGameToDatabase({
   dataSource,
   dataSourceId,
   backgroundUrl,
-  playTime
+  playTime,
+  dirPath
 }: {
   dataSource: string
   dataSourceId: string
   backgroundUrl?: string
   playTime?: number
+  dirPath?: string
 }): Promise<void> {
   try {
     await addGameToDB({
       dataSource,
       dataSourceId,
       backgroundUrl,
-      playTime
+      playTime,
+      dirPath
     })
   } catch (error) {
     log.error('Error adding game to database:', error)

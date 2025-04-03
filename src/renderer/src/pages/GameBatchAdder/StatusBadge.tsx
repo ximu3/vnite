@@ -12,6 +12,8 @@ export function StatusBadge({ status }: { status: GameStatus }): JSX.Element {
       return <Badge variant="default">{t('gameBatchAdder.status.success')}</Badge>
     case 'error':
       return <Badge variant="destructive">{t('gameBatchAdder.status.error')}</Badge>
+    case 'existed':
+      return <Badge variant="default">{t('gameBatchAdder.status.existed')}</Badge>
     default:
       return <Badge variant="outline">{t('gameBatchAdder.status.waiting')}</Badge>
   }

@@ -29,6 +29,10 @@ export const useGameAdder = (): {
         throw new Error(t('gameBatchAdder.errors.gameIsBeingAdded'))
       }
 
+      if (game.status === 'existed') {
+        throw new Error(t('gameBatchAdder.errors.gameAlreadyExists'))
+      }
+
       if (game.status === 'success') {
         throw new Error(t('gameBatchAdder.errors.gameAlreadyAdded'))
       }
@@ -44,7 +48,8 @@ export const useGameAdder = (): {
 
         await ipcInvoke('add-game-to-db', {
           dataSource: game.dataSource,
-          dataSourceId: gameId
+          dataSourceId: gameId,
+          dirPath: game.dirPath
         })
 
         actions.updateGame(dataId, { status: 'success' })

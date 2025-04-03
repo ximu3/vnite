@@ -25,12 +25,14 @@ export async function addGameToDB({
   dataSource,
   dataSourceId,
   backgroundUrl,
-  playTime
+  playTime,
+  dirPath
 }: {
   dataSource: string
   dataSourceId: string
   backgroundUrl?: string
   playTime?: number
+  dirPath?: string
 }): Promise<void> {
   // First get metadata (other operations depend on this result)
   const metadata = await getGameMetadata(dataSource, { type: 'id', value: dataSourceId })
@@ -53,6 +55,7 @@ export async function addGameToDB({
 
   const gameLocalDoc = { ...DEFAULT_GAME_LOCAL_VALUES }
   gameLocalDoc._id = dbId
+  gameLocalDoc.utils.markPath = dirPath ?? ''
 
   // Fetch all image resources in parallel
   const [covers, backgrounds, icons, logos] = await Promise.all([
@@ -170,22 +173,30 @@ export async function addGameToDBWithoutMetadata(gamePath: string): Promise<void
  * @returns The data for batch game adding
  */
 export async function getBatchGameAdderData(): Promise<
-  { name: string; id: string; status: string }[]
+  {
+    dataId: string
+    dataSource: string
+    name: string
+    id: string
+    status: string
+    dirPath: string
+  }[]
 > {
   const dirPath = await selectPathDialog(['openDirectory'])
   if (!dirPath) {
     return []
   }
   const defaultDataSource = await ConfigDBManager.getConfigValue('game.scraper.defaultDatasSource')
-  const gameNames = await getFirstLevelSubfolders(dirPath)
-  const data = gameNames.map((gameName) => {
+  const games = await getFirstLevelSubfolders(dirPath)
+  const data = games.map(async (game) => {
     return {
       dataId: generateUUID(),
       dataSource: defaultDataSource,
-      name: gameName,
+      name: game.name,
       id: '',
-      status: 'idle'
+      status: (await GameDBManager.checkGameExitsByPath(game.dirPath)) ? 'existed' : 'idle',
+      dirPath: game.dirPath
     }
   })
-  return data
+  return Promise.all(data)
 }

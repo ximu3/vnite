@@ -245,7 +245,12 @@ export function formatDate(dateString: string): string {
  * @param dirPath Directory Path
  * @returns Promise<string[]> Array of subfolder names
  */
-export async function getFirstLevelSubfolders(dirPath: string): Promise<string[]> {
+export async function getFirstLevelSubfolders(dirPath: string): Promise<
+  {
+    name: string
+    dirPath: string
+  }[]
+> {
   // Make sure the catalog exists
   if (!(await fse.pathExists(dirPath))) {
     throw new Error('Catalog does not exist')
@@ -261,13 +266,19 @@ export async function getFirstLevelSubfolders(dirPath: string): Promise<string[]
       const stats = await fse.stat(fullPath)
       return {
         name: item,
+        dirPath: fullPath,
         isDirectory: stats.isDirectory()
       }
     })
   )
 
   // Returns an array of folder names
-  return subfolders.filter((item) => item.isDirectory).map((item) => item.name)
+  return subfolders
+    .filter((item) => item.isDirectory)
+    .map((item) => ({
+      name: item.name,
+      dirPath: item.dirPath
+    }))
 }
 
 interface UrlShortcutOptions {

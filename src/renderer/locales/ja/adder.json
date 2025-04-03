@@ -68,7 +68,8 @@
       "loading": "追加中",
       "success": "追加成功",
       "error": "追加失敗",
-      "waiting": "追加待ち"
+      "waiting": "追加待ち",
+      "existed": "既存"
     },
     "table": {
       "columns": {
