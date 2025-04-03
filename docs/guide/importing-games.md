@@ -1,10 +1,10 @@
-# 从第三方平台导入
+# Import from Third-party Platforms
 
-Vnite 目前支持从 Steam 导入您的游戏库，后续将支持更多平台，敬请期待。
+Vnite currently supports importing your game library from Steam, with support for more platforms coming in the future.
 
 ## Steam
 
-从 Steam 导入您的游戏库将保留游戏时间，需要您的库为公开状态。
-Steam ID 可从个人资料的 URL 中获取，示例：https://steamcommunity.com/profiles/73561139761149479/ 其中 `73561139761149479` 为 Steam ID。
+Importing your game library from Steam will preserve your game time, but your library needs to be public.
+Steam ID can be obtained from the URL of your personal profile, example: https://steamcommunity.com/profiles/73561139761149479/ where `73561139761149479` is the Steam ID.
 
-![importSteamGame](https://img.timero.xyz/i/2024/12/09/6756db14a9242.png)
+![importSteamGame](https://img.timero.xyz/i/2025/04/02/67ecf1cfad412.webp)

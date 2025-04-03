@@ -1,19 +1,62 @@
-# 联动
+# Integration
 
-Vnite 可以与其它视觉小说相关软件联动，如转区软件Locale Emulator，以提高玩家的游玩体验。
+Vnite can integrate with other visual novel related software, such as the region conversion tool Locale Emulator, to enhance the player's gaming experience.
 
 ## Locale Emulator
 
-请确保您的电脑上已安装Locale Emulator，可以在下面的链接中下载并安装。
+> [!NOTE]
+> Locale Emulator is a system region and language simulation tool that allows users to simulate different language environments for specific programs without changing the overall system region settings
+
+Please ensure that Locale Emulator is installed on your computer. You can download and install it from the link below.
 
 - https://github.com/xupefei/Locale-Emulator/releases
 
-安装完成后需要在 Vnite 的 `设置-高级-联动-Locale Emulator` 中绑定 `LEProc` 路径。
+After installation, you need to bind the path of `LEProc.exe` in Vnite's `Settings-Advanced-Integration-Locale Emulator`.
 
-![linkage_1](https://img.timero.xyz/i/2024/12/09/6756d64d42901.png)
+![linkage](https://img.timero.xyz/i/2025/04/02/67ed2009304c4.webp)
 
-之后在需要LE转区启动的游戏 `设置-属性-运行-预设配置` 中选择 `LE转区启动` 即可生成预设。
+Then, for games that need to be launched with LE region conversion, select `LE Region Launch` in the game's `Settings-Properties-Run-Preset Configuration` to generate a preset.
 
-![linkage2](https://img.timero.xyz/i/2024/12/09/6756d765a955a.png)
+![linkage-le](https://img.timero.xyz/i/2025/04/02/67ed1cd13faeb.webp)
 
-之后在 Vnite 中启动该游戏时就会自动使用LE转区了。
+After that, when launching the game in Vnite, it will automatically use LE for region conversion.
+
+## Visual Boy Advance
+
+> [!NOTE]
+> Visual Boy Advance (VBA) is a popular game emulator primarily used for emulating games on the Game Boy and Game Boy Advance gaming systems
+
+Please ensure that Visual Boy Advance is installed on your computer. You can download and install it from the link below.
+
+- https://visualboyadvance.org
+
+After installation, you need to bind the path of `visualboyadvance-m.exe` in Vnite's `Settings-Advanced-Integration-Visual Boy Advance`.
+
+![linkage](https://img.timero.xyz/i/2025/04/02/67ed2009304c4.webp)
+
+Then, for games that need to be launched with VBA emulation, select `VBA Launch` in the game's `Settings-Properties-Run-Preset Configuration` to generate a preset.
+
+![linkage-vba](https://img.timero.xyz/i/2025/04/02/67ed1e8c3657c.webp)
+
+After that, when launching the game in Vnite, it will automatically use Visual Boy Advance for emulation.
+
+## Magpie
+
+> [!NOTE]
+> Magpie is a lightweight window scaling tool equipped with various efficient scaling algorithms and filters
+
+Please ensure that Magpie is installed on your computer. You can download and install it from the link below.
+
+- https://github.com/Blinue/Magpie/releases
+
+After installation, you need to bind the path of `Magpie.exe` and the scaling shortcut in Vnite's `Settings-Advanced-Integration-Magpie`.
+
+![linkage](https://img.timero.xyz/i/2025/04/02/67ed2009304c4.webp)
+
+![linkage-magpie1](https://img.timero.xyz/i/2025/04/02/67ed1fda7f0e3.webp)
+
+Then, for games that need Magpie scaling, turn on the `Magpie Scaling` switch in the game's `Settings-Properties-Run`.
+
+![linkage-magpie2](https://img.timero.xyz/i/2025/04/02/67ed1fe474d9c.webp)
+
+After that, when launching the game in Vnite, it will automatically use Magpie for scaling.

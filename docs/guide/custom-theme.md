@@ -1,11 +1,13 @@
-# 自定义主题
+# Custom Themes
 
-Vnite 的用户界面由 Shadcn UI 进行构建，充分支持其主题配置方法，您可以在 `设置-主题` 中通过 css 文件配置您的主题。
+Vnite's user interface is built with Shadcn UI, fully supporting its theme configuration methods. You can configure your theme through css files in `Settings-Theme`, and built-in presets will be updated periodically for your selection.
 
-![customTheme](https://img.timero.xyz/i/2024/12/10/6757fe023a11d.png)
+![customTheme1](https://img.timero.xyz/i/2025/04/02/67ed28ddd7e27.webp)
 
-## 主题预设
+![customTheme2](https://img.timero.xyz/i/2025/04/02/67ed28f963528.webp)
 
-您可在下面的网站中挑选您心仪的 Shadcn UI 主题预设，同样适用于 Vnite。
+## Theme Presets
+
+You can choose your favorite Shadcn UI theme preset from the website below, which is also applicable to Vnite.
 
 - https://ui.jln.dev

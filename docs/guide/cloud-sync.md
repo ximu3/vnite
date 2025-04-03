@@ -1,11 +1,13 @@
-# 云同步
+# Cloud Sync
 
-Vnite 可通过 WebDav 进行多端云同步，当然，你也可以将数据库上传到网盘来实现云同步。（数据库路径可通过 `设置-数据库-打开数据库文件夹` 来获取）
+Thanks to the powerful synchronization capabilities of PouchDB and CouchDB, Vnite's database natively supports real-time cloud synchronization across multiple devices, and comes with an official server and account system, providing each user with a 300MB synchronization quota.
 
-## 同步频率
+Of course, you can still choose to self-host CouchDB, which works out of the box. Please refer to the following documentation.
 
-Vnite 在应用启动时会进行一次云同步，之后每隔 `10分钟` 会进行一次云同步，请注意您的 WebDav 限额（如果有的话）。
+- https://docs.couchdb.org/en/stable/
 
-## 历史版本
+## Preview
 
-Vnite 会保留 `最近7天` 的历史版本，您可在需要时下载并恢复数据库。
+![sync1](https://img.timero.xyz/i/2025/04/02/67ed06b12210b.webp)
+
+![sycn2](https://img.timero.xyz/i/2025/04/02/67ed06ccf31ff.webp)

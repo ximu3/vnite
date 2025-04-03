@@ -1,5 +1,5 @@
-# 备份
+# Backup
 
-得益于 Vnite 数据与程序完全分离的设计，软件的所有数据均可导入导出，便于用户备份和自定义。
+All data in Vnite can be imported and exported, making it convenient for users to backup and customize.
 
-![backup](https://img.timero.xyz/i/2024/12/09/6756d30a687de.png)
+![backup](https://img.timero.xyz/i/2025/04/02/67ed1b051815f.webp)

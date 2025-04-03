@@ -1,31 +1,44 @@
-# 元数据
+# Metadata
 
-游戏的所有元数据均可被修改，并且大多提供了直观易用的修改方法。Vnite 还支持数据库实时同步，用户在本地修改数据库会实时反应到 Vnite 中。
+All metadata of games can be modified, with media, descriptions, and tags supporting web scraping.
 
-## 基本
+Vnite also supports custom metadata fields. You can attach custom key-value pairs to any game, and Vnite will automatically integrate the keys into the filter.
 
-游戏的基本元数据，如简介、基本信息、相关网站、标签等均可在游戏概览页中修改。
+## Basic
 
-![metadata1](https://img.timero.xyz/i/2024/12/09/6756b19905b12.png)
+The basic metadata of games, such as description, basic information, related websites, tags, etc., can be modified in the game overview page.
 
-![metadata2](https://img.timero.xyz/i/2024/12/09/6756d752ea669.png)
+![metadata1](https://img.timero.xyz/i/2025/04/02/67ecf9c4cf46c.webp)
 
-![metadata3](https://img.timero.xyz/i/2024/12/09/6756b1b6e07c0.png)
+![metadata2](https://img.timero.xyz/i/2025/04/02/67ecf9d227fea.webp)
 
-![metadata4](https://img.timero.xyz/i/2024/12/09/6756b1c45d824.png)
+![metadata3](https://img.timero.xyz/i/2025/04/02/67ecf9dd33a9f.webp)
 
-## 媒体
-
-游戏的图标、背景图、封面均可在 `游戏-设置-属性-媒体` 中修改。
+![metadata4](https://img.timero.xyz/i/2025/04/02/67ecf9e76de5b.webp)
 
 > [!TIP]
-> 修改游戏图标时选择可执行文件，Vnite 会自动获取该文件的图标并储存
+> Descriptions and tags support web scraping
 
-![media](https://img.timero.xyz/i/2024/12/09/6756b1d2e2db4.png)
+![metadata5](https://img.timero.xyz/i/2025/04/02/67ecfa00231af.webp)
 
-## 游戏时间与名称
+![metadata6](https://img.timero.xyz/i/2025/04/02/67ecfa132947c.webp)
 
-游戏时间与名称可在 `游戏-设置` 中修改。
+## Media
+
+The game's icon, background image, and cover can be modified in `Game-Settings-Properties-Media`, supporting web scraping, cropping, and other operations.
+
+> [!TIP]
+> When modifying the game icon, you can select an executable file, and Vnite will automatically retrieve and store the icon of that file
+
+![media1](https://img.timero.xyz/i/2025/04/02/67ecfbdebec58.webp)
+
+![media2](https://img.timero.xyz/i/2025/04/02/67ecfbfb89950.webp)
+
+![media3](https://img.timero.xyz/i/2025/04/02/67ecfc0c64ea4.webp)
+
+## Game Time and Name
+
+Game time and name can be modified in `Game-Settings`.
 
 > [!IMPORTANT]
-> 修改游戏时间会导致与按次记录计时器数据不同步
+> Modifying game time will cause it to be out of sync with the session-based timer data

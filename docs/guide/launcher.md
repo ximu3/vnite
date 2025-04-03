@@ -1,17 +1,21 @@
-# 启动器
+# Launcher
 
-Vnite 支持通过文件、链接、脚本三种方式启动游戏，且提供多种预设配置。
+Vnite supports launching games in three ways: files, links, and scripts, and provides various preset configurations.
 
-## 预设
+## Presets
 
-### 默认配置
+### Default Configuration
 
-直接从绑定的游戏路径生成启动器配置，适合可以直接通过可执行文件启动的游戏。
+Directly generates launcher configuration from the bound game path, suitable for games that can be launched directly through executable files.
 
-### LE转区启动
+### LE Region Launch
 
-需要在设置中绑定 LE 路径，可生成 LE 转区启动的脚本。
+Requires binding the LE path in settings, can generate scripts for launching with LE region conversion.
 
-### Steam启动
+### Steam Launch
 
-需要提供 Steam 游戏 ID，可唤醒 Steam 打开游戏。
+Requires providing the Steam game ID, can wake up Steam to open the game.
+
+### VBA Emulation Launch
+
+Requires binding the VBA path in settings, can generate scripts for launching with VBA emulation.

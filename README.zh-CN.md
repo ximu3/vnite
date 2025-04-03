@@ -12,35 +12,35 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md) | [日本語](README.ja.md)
 
-Vnite is a versatile game management software designed to provide a unified interface for recording, managing, and synchronizing your gaming journey.
+Vnite 是一个多功能的游戏管理软件，旨在提供一个统一的用户界面来 记录、管理、同步 您的游戏之旅。
 
-## ✨ Features
+## ✨ 功能
 
-- 📺 Modern user interface (with customizable themes)
+- 📺 现代化的用户界面（支持自定义主题）
 
-- ☁️ Real-time cloud synchronization for all game records, saves, and settings across multiple devices
+- ☁️ 所有游戏记录、存档、设置均支持多端实时云同步
 
-- 🔎 Support for multiple data sources (Steam, IGDB, Bangumi, VNDB, YMGal, DLsite)
+- 🔎 支持多种数据源（Steam、IGDB、Bangumi、VNDB、YMGal、DLsite）
 
-- 📃 Detailed reporting functionality, including annual, monthly, and weekly reports to review your gaming journey
+- 📃 提供细致的报告功能，支持年、月、周报告，便于回顾您的游戏之旅
 
-- 🕹️ Integration with other programs (such as one-click LE region switching, automatic Magpie scaling, emulator launching, etc.)
+- 🕹️ 支持与其他程序联动（如一键 LE 转区启动、自动Magpie缩放、模拟器启动等）
 
-- 🔌 One-click import from Steam library (preserving game time)
+- 🔌 支持从 Steam 一键导入游戏库（保留游戏时间）
 
-- 👾 Multiple launch methods (files, links, scripts), with high customizability and preset configurations
+- 👾 多样化的启动方式（文件、链接、脚本），支持高度自定义和预设配置
 
-- 🗂️ Dynamic categorization (by developer, tags, etc.)
+- 🗂️ 支持动态分类（按开发商、标签等）
 
-- 🎛️ Powerful filters with support for custom metadata fields
+- 🎛️ 强大的筛选器，支持自定义元数据字段
 
-- ⏳ Session-based timer, supporting recording for individual files or folders
+- ⏳ 按次记录的计时器，支持记录单个文件或文件夹
 
-- 🔗 Support for launching games via system links
+- 🔗 支持通过系统链接唤醒并启动游戏
 
-- 📤 Complete separation of data and program for easy backup and customization
+- 📤 数据与程序完全分离，便于备份和自定义
 
-## 📸 Screenshots
+## 📸 截图
 
 ![home](https://img.timero.xyz/i/2025/04/02/67ecefcab9ec7.webp)
 
@@ -60,18 +60,18 @@ Vnite is a versatile game management software designed to provide a unified inte
 
 ![scoreReport](https://img.timero.xyz/i/2025/04/02/67ecf045b3382.webp)
 
-## 💡 Planned Features
+## 💡 计划中
 
-- Self-built data source
+- 自建数据源
 
-## ☎️ Contact Me
+## ☎️ 联系我
 
 - [Twitter](https://x.com/ximu3_)
-- [Telegram Group](https://t.me/+d65-R_xRx1JlYWZh)
+- [Telegram 群组](https://t.me/+d65-R_xRx1JlYWZh)
 
-## Acknowledgements
+## 致谢
 
 - [VNDB API](https://api.vndb.org/kana)
 - [Steam API](https://partner.steamgames.com/doc/api)
 - [YMGal API](https://www.ymgal.games/developer)
-- ...
+- ……
