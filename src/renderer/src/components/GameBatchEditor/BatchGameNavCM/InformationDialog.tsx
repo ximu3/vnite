@@ -88,79 +88,82 @@ export function InformationDialog({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger className={cn('w-full')}>{children}</DialogTrigger>
-      <DialogContent className={cn('flex flex-col gap-5')}>
-        <div className={cn('flex flex-col gap-3 p-4')}>
-          <div className={cn('flex flex-row gap-3 items-center justify-start')}>
-            <div className={cn('w-20')}>{t('batchEditor.information.incrementalMode')}</div>
+      <DialogContent>
+        <div
+          className={cn('grid grid-cols-[auto_1fr] gap-y-3 gap-x-4 px-3 pt-5 items-center text-sm')}
+        >
+          <div className={cn('whitespace-nowrap select-none justify-self-start')}>
+            {t('batchEditor.information.incrementalMode')}
+          </div>
+          <div>
             <Switch checked={isIncremental} onCheckedChange={setIsIncremental} />
           </div>
-          <div className={cn('flex flex-row gap-3 items-center justify-center')}>
-            <div className={cn('w-20')}>{t('batchEditor.information.developers')}</div>
-            <Tooltip>
-              <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
-                <ArrayInput
-                  value={developers}
-                  onChange={setDevelopers}
-                  placeholder={t('batchEditor.information.placeholder.developers')}
-                />
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                <div className={cn('text-xs')}>
-                  {t('batchEditor.information.tooltip.developers')}
-                </div>
-              </TooltipContent>
-            </Tooltip>
+
+          <div className={cn('whitespace-nowrap select-none justify-self-start')}>
+            {t('batchEditor.information.developers')}
           </div>
-          <div className={cn('flex flex-row gap-3 items-center justify-center')}>
-            <div className={cn('w-20')}>{t('batchEditor.information.publishers')}</div>
-            <Tooltip>
-              <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
-                <ArrayInput
-                  value={publishers}
-                  onChange={setPublishers}
-                  placeholder={t('batchEditor.information.placeholder.publishers')}
-                />
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                <div className={cn('text-xs')}>
-                  {t('batchEditor.information.tooltip.publishers')}
-                </div>
-              </TooltipContent>
-            </Tooltip>
+          <Tooltip>
+            <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
+              <ArrayInput
+                value={developers}
+                onChange={setDevelopers}
+                placeholder={t('batchEditor.information.placeholder.developers')}
+              />
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <div className={cn('text-xs')}>{t('batchEditor.information.tooltip.developers')}</div>
+            </TooltipContent>
+          </Tooltip>
+
+          <div className={cn('whitespace-nowrap select-none justify-self-start')}>
+            {t('batchEditor.information.publishers')}
           </div>
-          <div className={cn('flex flex-row gap-3 items-center justify-center')}>
-            <div className={cn('w-20')}>{t('batchEditor.information.platforms')}</div>
-            <Tooltip>
-              <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
-                <ArrayInput
-                  value={platforms}
-                  onChange={setPlatforms}
-                  placeholder={t('batchEditor.information.placeholder.platforms')}
-                />
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                <div className={cn('text-xs')}>
-                  {t('batchEditor.information.tooltip.platforms')}
-                </div>
-              </TooltipContent>
-            </Tooltip>
+          <Tooltip>
+            <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
+              <ArrayInput
+                value={publishers}
+                onChange={setPublishers}
+                placeholder={t('batchEditor.information.placeholder.publishers')}
+              />
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <div className={cn('text-xs')}>{t('batchEditor.information.tooltip.publishers')}</div>
+            </TooltipContent>
+          </Tooltip>
+
+          <div className={cn('whitespace-nowrap select-none justify-self-start')}>
+            {t('batchEditor.information.platforms')}
           </div>
-          <div className={cn('flex flex-row gap-3 items-center justify-center')}>
-            <div className={cn('w-20')}>{t('batchEditor.information.genres')}</div>
-            <Tooltip>
-              <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
-                <ArrayInput
-                  value={genres}
-                  onChange={setGenres}
-                  placeholder={t('batchEditor.information.placeholder.genres')}
-                />
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                <div className={cn('text-xs')}>{t('batchEditor.information.tooltip.genres')}</div>
-              </TooltipContent>
-            </Tooltip>
+          <Tooltip>
+            <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
+              <ArrayInput
+                value={platforms}
+                onChange={setPlatforms}
+                placeholder={t('batchEditor.information.placeholder.platforms')}
+              />
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <div className={cn('text-xs')}>{t('batchEditor.information.tooltip.platforms')}</div>
+            </TooltipContent>
+          </Tooltip>
+
+          <div className={cn('whitespace-nowrap select-none justify-self-start')}>
+            {t('batchEditor.information.genres')}
           </div>
-          <div className={cn('flex flex-row-reverse -mb-3 mt-2')}>
+          <Tooltip>
+            <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
+              <ArrayInput
+                value={genres}
+                onChange={setGenres}
+                placeholder={t('batchEditor.information.placeholder.genres')}
+              />
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <div className={cn('text-xs')}>{t('batchEditor.information.tooltip.genres')}</div>
+            </TooltipContent>
+          </Tooltip>
+
+          <div className={cn('col-span-2 flex justify-end mt-2')}>
             <Button onClick={handleConfirm}>{t('ui:common.confirm')}</Button>
           </div>
         </div>
