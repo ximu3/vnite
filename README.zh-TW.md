@@ -10,7 +10,7 @@
 
 # Vnite
 
-[English](README.md) | [簡體中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [日本語](README.ja.md)
+[English](README.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [日本語](README.ja.md)
 
 Vnite 是一個多功能的遊戲管理軟體，旨在提供一個統一的使用者介面來 記錄、管理、同步 您的遊戲之旅。
 
