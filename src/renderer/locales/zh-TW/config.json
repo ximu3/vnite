@@ -1,0 +1,180 @@
+{
+  "title": "Vnite 設定",
+  "general": {
+    "title": "通用",
+    "language": "語言",
+    "openAtLogin": "開機自啟",
+    "theme": "主題樣式",
+    "darkTheme": "暗色",
+    "lightTheme": "淺色",
+    "followSystem": "跟隨系統",
+    "closeMainPanel": "關閉主面板",
+    "action": "操作",
+    "quitApp": "退出vnite",
+    "minimizeToTray": "最小化到系統匣"
+  },
+  "appearances": {
+    "title": "外觀",
+    "gameList": {
+      "title": "遊戲列表",
+      "showRecentGames": "顯示最近遊戲欄目",
+      "highlightLocalGames": "突顯本機遊戲",
+      "markLocalGames": "標記本機遊戲"
+    },
+    "gameDetail": {
+      "title": "遊戲詳情頁",
+      "showOriginalName": "在標題旁顯示原名"
+    },
+    "sidebar": {
+      "title": "側邊欄",
+      "showThemeSwitcher": "顯示主題切換按鈕"
+    }
+  },
+  "advanced": {
+    "title": "進階",
+    "localeEmulator": {
+      "name": "Locale Emulator",
+      "placeholder": "請輸入LEProc.exe的路徑"
+    },
+    "visualBoyAdvance": {
+      "name": "Visual Boy Advance",
+      "placeholder": "請輸入visualboyadvance.exe的路徑"
+    },
+    "magpie": {
+      "name": "Magpie",
+      "placeholder": "請輸入Magpie.exe的路徑",
+      "hotkeyLabel": "Magpie 縮放快捷鍵"
+    }
+  },
+  "theme": {
+    "title": "主題",
+    "saveButton": "儲存主題",
+    "presetThemes": "預設主題",
+    "searchTheme": "搜尋主題",
+    "noPresetFound": "沒有找到預設",
+    "presets": {
+      "default": "預設",
+      "mutsumi": "Mutsumi"
+    },
+    "notifications": {
+      "themeSaved": "主題已儲存",
+      "configuring": "正在配置主題...",
+      "configured": "主題配置成功"
+    }
+  },
+  "cloudSync": {
+    "title": "雲同步",
+    "enable": "是否啟用",
+    "syncMode": "同步模式",
+    "modes": {
+      "official": "官方",
+      "selfHosted": "自託管"
+    },
+    "status": {
+      "syncing": "同步中",
+      "success": "同步成功",
+      "error": "同步失敗",
+      "noInfo": "暫無同步資訊"
+    },
+    "errors": {
+      "incompleteConfig": "請填寫完整的雲同步配置",
+      "loginRequired": "請先登入官方帳號",
+      "fetchStorageFailed": "獲取儲存資訊失敗"
+    },
+    "notifications": {
+      "updating": "正在更新雲同步配置...",
+      "updateSuccess": "雲同步配置更新成功",
+      "updateError": "雲同步配置更新失敗",
+      "loggingIn": "正在登入...",
+      "loginSuccess": "登入成功",
+      "loginError": "登入失敗",
+      "authSuccess": "授權成功",
+      "authError": "授權失敗",
+      "registering": "正在註冊...",
+      "registerSuccess": "註冊成功",
+      "registerError": "註冊失敗"
+    },
+    "official": {
+      "connectTitle": "連接雲端儲存",
+      "connectDescription": "登入帳號以啟用雲同步功能，獲取跨裝置同步和資料備份",
+      "login": "登入",
+      "register": "註冊",
+      "logout": "註銷",
+      "adminEdition": "管理員版",
+      "developerEdition": "開發者版",
+      "premiumEdition": "進階版",
+      "communityEdition": "社群版",
+      "lastSync": "最近同步",
+      "notSynced": "還未同步",
+      "connected": "已連接",
+      "disconnected": "未連接",
+      "storage": "儲存空間",
+      "used": "已使用"
+    },
+    "selfHosted": {
+      "title": "自託管 CouchDB",
+      "description": "配置您的自託管 CouchDB 伺服器以啟用跨裝置同步",
+      "serverAddress": "CouchDB 地址",
+      "username": "使用者名稱",
+      "password": "密碼",
+      "info": "<couchdb>CouchDB</couchdb> 是一個開源的文件資料庫，可用於儲存和同步資料"
+    },
+    "info": {
+      "status": "狀態",
+      "message": "消息",
+      "time": "時間"
+    }
+  },
+  "scraper": {
+    "title": "刮削器",
+    "defaultDataSource": "預設資料源",
+    "dataSources": {
+      "steam": "Steam",
+      "vndb": "VNDB",
+      "bangumi": "Bangumi",
+      "igdb": "IGDB",
+      "ymgal": "YMgal",
+      "dlsite": "DLsite"
+    }
+  },
+  "database": {
+    "title": "資料庫",
+    "portableMode": "便攜模式",
+    "modes": {
+      "portable": "便攜模式",
+      "normal": "普通模式"
+    },
+    "confirmSwitch": "確定要轉換為 {{mode}} 嗎？",
+    "switchDescription": "轉換完成後將自動重啟應用。",
+    "openFolder": "打開資料庫資料夾",
+    "backup": "備份資料庫",
+    "import": "匯入資料庫",
+    "importV2": "匯入V2資料庫",
+    "confirmImport": "確定要匯入資料庫嗎？",
+    "importWarning": "匯入資料庫將覆蓋目前資料庫，此操作不可逆！操作結束後應用將自動重啟。",
+    "confirmImportV2": "確定要匯入V2資料庫嗎？",
+    "importV2Warning": "匯入V2資料庫將覆蓋目前資料庫，此操作不可逆！操作結束後應用將自動重啟。",
+    "portableAdminRequired": "注意：便攜模式可能需要管理員權限。",
+    "notifications": {
+      "backingUp": "正在備份資料庫...",
+      "backupSuccess": "資料庫備份成功",
+      "backupError": "資料庫備份失敗",
+      "importing": "正在匯入資料庫...",
+      "importSuccess": "資料庫匯入成功",
+      "importError": "資料庫匯入失敗",
+      "restartCountdown": "應用將在 3 秒後重啟",
+      "switchingMode": "正在切換資料庫模式...",
+      "switchSuccess": "資料庫模式切換成功",
+      "switchError": "資料庫模式切換失敗",
+      "adminRightsRequired": "目前安裝目錄切換到便攜模式需要管理員權限"
+    }
+  },
+  "about": {
+    "title": "關於",
+    "author": "作者",
+    "version": "版本",
+    "repository": "Github倉庫",
+    "feedback": "回饋",
+    "group": "群組"
+  }
+}

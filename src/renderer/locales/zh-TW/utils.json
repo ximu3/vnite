@@ -1,0 +1,40 @@
+{
+  "clipboard": {
+    "copied": "已複製到剪貼簿",
+    "copyError": "複製文字到剪貼簿失敗: {{error}}"
+  },
+  "game": {
+    "stopping": {
+      "loading": "正在停止遊戲...",
+      "success": "遊戲已停止",
+      "error": "停止遊戲失敗: {{message}}"
+    },
+    "starting": {
+      "pathRequired": "請先設定遊戲路徑",
+      "configuringLauncher": "正在配置啟動器...",
+      "configSuccess": "啟動器配置成功",
+      "configError": "配置錯誤: {{message}}",
+      "runtimeError": "執行配置錯誤，請檢查！"
+    },
+    "playStatus": {
+      "unplayed": "未開始",
+      "playing": "遊玩中",
+      "finished": "已完成",
+      "multiple": "多周目",
+      "shelved": "擱置中",
+      "unknown": "未知狀態"
+    }
+  },
+  "format": {
+    "gameTime": "{{time, gameTime}}",
+    "niceDate": "{{date, niceDate}}",
+    "niceISO": "{{date, niceISO}}"
+  },
+  "notifications": {
+    "gameExiting": "正在退出遊戲...",
+    "gameExited": "遊戲已退出",
+    "fullSyncing": "正在同步資料...",
+    "fullSynced": "資料同步完成",
+    "fullSyncError": "資料同步失敗"
+  }
+}
