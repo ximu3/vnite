@@ -1,7 +1,7 @@
 import fse from 'fs-extra'
 import archiver from 'archiver'
 import path from 'path'
-import unzipper from 'unzipper'
+import AdmZip from 'adm-zip'
 import log from 'electron-log/main.js'
 
 interface ZipOptions {
@@ -123,33 +123,26 @@ export async function unzipFile(
 ): Promise<string[]> {
   try {
     const { overwrite = true } = options
-
-    // Ensure that the target directory exists
     await fse.ensureDir(targetDir)
 
     const extractedFiles: string[] = []
+    const zip = new AdmZip(zipPath)
 
-    // decompress a file
-    await fse
-      .createReadStream(zipPath)
-      .pipe(unzipper.Parse())
-      .on('entry', async (entry) => {
-        const filePath = path.join(targetDir, entry.path)
+    const entries = zip.getEntries()
 
-        if (entry.type === 'Directory') {
-          await fse.ensureDir(filePath)
-          entry.autodrain()
-        } else {
-          if (overwrite || !(await fse.pathExists(filePath))) {
-            await fse.ensureDir(path.dirname(filePath))
-            entry.pipe(fse.createWriteStream(filePath))
-            extractedFiles.push(filePath)
-          } else {
-            entry.autodrain()
-          }
+    for (const entry of entries) {
+      const filePath = path.join(targetDir, entry.entryName)
+
+      if (entry.isDirectory) {
+        await fse.ensureDir(filePath)
+      } else {
+        if (overwrite || !(await fse.pathExists(filePath))) {
+          await fse.ensureDir(path.dirname(filePath))
+          zip.extractEntryTo(entry, targetDir, true, overwrite)
+          extractedFiles.push(filePath)
         }
-      })
-      .promise()
+      }
+    }
 
     return extractedFiles
   } catch (error) {

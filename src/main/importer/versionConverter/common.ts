@@ -3,12 +3,11 @@ import { gameCollectionDoc, gameDoc, gameLocalDoc } from '@appTypes/database'
 import { app } from 'electron'
 import * as fse from 'fs-extra'
 import * as path from 'path'
-import * as unzipper from 'unzipper'
 import { v4 as uuidv4 } from 'uuid'
 import { stopSync } from '~/database'
 import { ConfigDBManager } from '~/database/config'
 import { GameDBManager } from '~/database/game'
-import { getAppTempPath, zipFolder } from '~/utils'
+import { getAppTempPath, zipFolder, unzipFile } from '~/utils'
 
 // v2 Database Type Definition
 interface V2GameMetadata {
@@ -187,7 +186,7 @@ export async function convertV2toV3Database(zipFilePath: string): Promise<void> 
     await fse.ensureDir(tempDir)
 
     // Unzip the file
-    await extractZipFile(zipFilePath, tempDir)
+    await unzipFile(zipFilePath, tempDir)
 
     // Converted data
     await convertGames(tempDir)
@@ -206,26 +205,6 @@ export async function convertV2toV3Database(zipFilePath: string): Promise<void> 
     app.relaunch()
     app.exit()
   }
-}
-
-/**
- * Extract the zip file to the specified directory
- */
-async function extractZipFile(zipFilePath: string, targetDir: string): Promise<void> {
-  console.log(`Unzip the file ${zipFilePath} to ${targetDir}`)
-
-  return new Promise<void>((resolve, reject) => {
-    fse
-      .createReadStream(zipFilePath)
-      .pipe(unzipper.Extract({ path: targetDir }))
-      .on('error', (err) => {
-        reject(new Error(`Failed to unzip the file: ${err}`))
-      })
-      .on('close', () => {
-        console.log('File decompression complete')
-        resolve()
-      })
-  })
 }
 
 /**
