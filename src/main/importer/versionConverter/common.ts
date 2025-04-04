@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { stopSync } from '~/database'
 import { ConfigDBManager } from '~/database/config'
 import { GameDBManager } from '~/database/game'
-import { getAppTempPath } from '~/utils'
+import { getAppTempPath, zipFolder } from '~/utils'
 
 // v2 Database Type Definition
 interface V2GameMetadata {
@@ -441,7 +441,7 @@ async function processGameImages(gameId: string, gamePath: string): Promise<void
 }
 
 /**
- * Handling game archive files
+ * Handling game save files
  */
 async function processGameSaves(gameId: string, gamePath: string): Promise<void> {
   const savesDir = path.join(gamePath, 'saves')
@@ -450,21 +450,32 @@ async function processGameSaves(gameId: string, gamePath: string): Promise<void>
   if (savesDirExists) {
     const stats = await fse.stat(savesDir)
     if (stats.isDirectory()) {
-      const saveFiles = await fse.readdir(savesDir)
+      // Read all subdirectories under the saves directory (each subdirectory is a saveId)
+      const saveFolders = await fse.readdir(savesDir)
 
-      for (const saveFile of saveFiles) {
-        if (saveFile.endsWith('.zip')) {
-          const saveId = saveFile.replace('.zip', '')
-          const saveFilePath = path.join(savesDir, saveFile)
+      for (const saveId of saveFolders) {
+        const saveFolderPath = path.join(savesDir, saveId)
 
-          try {
-            const saveData = await fse.readFile(saveFilePath)
-            await GameDBManager.setGameSave(gameId, saveId, saveData)
+        // Check if it's a directory
+        const folderStats = await fse.stat(saveFolderPath)
+        if (!folderStats.isDirectory()) continue
 
-            console.log(`Processed archive ${saveId} for game ${gameId}.`)
-          } catch (error) {
-            console.error(`Error handling archive ${saveId} for game ${gameId}:`, error)
-          }
+        try {
+          // Create temporary directory for processing
+          const tempZipPath = getAppTempPath(`save-zip-${Date.now()}/`)
+          await fse.ensureDir(tempZipPath)
+
+          // Compress the entire save folder
+          const zipPath = await zipFolder(saveFolderPath, tempZipPath, saveId)
+
+          // Store to database
+          await GameDBManager.setGameSave(gameId, saveId, zipPath)
+          console.log(`Processed save directory ${saveId} for game ${gameId}.`)
+
+          // Clean up temporary directory
+          await fse.remove(tempZipPath)
+        } catch (error) {
+          console.error(`Error processing save directory ${saveId} for game ${gameId}:`, error)
         }
       }
     }
@@ -481,13 +492,22 @@ async function processGameMemories(gameId: string, gamePath: string): Promise<vo
   if (memoriesDirExists) {
     const stats = await fse.stat(memoriesDir)
     if (stats.isDirectory()) {
-      const memoryFiles = await fse.readdir(memoriesDir)
+      // Read all subdirectories under the memories directory (each subdirectory is a memoryId)
+      const memoryFolders = await fse.readdir(memoriesDir)
 
-      for (const memoryFile of memoryFiles) {
-        const fileExtMatch = memoryFile.match(/(.+)\.(webp|jpg|jpeg|png|gif)$/)
-        if (fileExtMatch) {
-          const memoryId = fileExtMatch[1]
-          const memoryFilePath = path.join(memoriesDir, memoryFile)
+      for (const memoryId of memoryFolders) {
+        const memoryFolderPath = path.join(memoriesDir, memoryId)
+
+        // Check if it is a folder
+        const folderStats = await fse.stat(memoryFolderPath)
+        if (!folderStats.isDirectory()) continue
+
+        // Find a cover file
+        const coverFiles = await fse.readdir(memoryFolderPath)
+        const coverFile = coverFiles.find((file) => /^cover\.(webp|jpg|jpeg|png|gif)$/i.test(file))
+
+        if (coverFile) {
+          const memoryFilePath = path.join(memoryFolderPath, coverFile)
 
           try {
             const memoryData = await fse.readFile(memoryFilePath)
