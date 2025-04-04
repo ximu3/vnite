@@ -7,17 +7,13 @@ body:
     id: feature_description
     attributes:
       label: Feature Description | 功能描述
-      description: |
-        Please describe the feature you want
-        简单描述一下你想要的功能
+      description: Please describe the feature you want <br> 简单描述一下你想要的功能
     validations:
       required: true
   - type: textarea
     id: implementation_idea
     attributes:
       label: Implementation Ideas | 实现思路
-      description: |
-        Do you have any ideas for implementing this feature? (optional)
-        你有什么实现这个功能的思路吗？（可选）
+      description: Do you have any ideas for implementing this feature? (optional) <br> 你有什么实现这个功能的思路吗？（可选）
     validations:
       required: false
