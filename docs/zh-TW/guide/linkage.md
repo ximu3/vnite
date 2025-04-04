@@ -1,17 +1,17 @@
-# 聯動
+# 同步
 
-Vnite 可以與其它視覺小說相關軟體聯動，如轉區軟體Locale Emulator，以提高玩家的遊玩體驗。
+Vnite 可以與其它視覺小說相關軟體同步，如轉區軟體Locale Emulator，以提高玩家的遊玩體驗。
 
 ## Locale Emulator
 
 > [!NOTE]
-> Locale Emulator 是一款系統區域和語言模擬工具，允許用戶在不更改系統整體區域設定的情況下，為特定程式模擬不同的語言環境
+> Locale Emulator 是一款系統區域和語言模擬工具，允許使用者在不更改系統整體區域設定的情況下，為特定程式模擬不同的語言環境
 
 請確保您的電腦上已安裝Locale Emulator，可以在下面的連結中下載並安裝。
 
 - https://github.com/xupefei/Locale-Emulator/releases
 
-安裝完成後需要在 Vnite 的 `設定-進階-聯動-Locale Emulator` 中綁定 `LEProc.exe` 路徑。
+安裝完成後需要在 Vnite 的 `設定-進階-同步-Locale Emulator` 中綁定 `LEProc.exe` 路徑。
 
 ![linkage](https://img.timero.xyz/i/2025/04/02/67ed2009304c4.webp)
 
@@ -30,7 +30,7 @@ Vnite 可以與其它視覺小說相關軟體聯動，如轉區軟體Locale Emul
 
 - https://visualboyadvance.org
 
-安裝完成後需要在 Vnite 的 `設定-進階-聯動-Visual Boy Advance` 中綁定 `visualboyadvance-m.exe` 路徑。
+安裝完成後需要在 Vnite 的 `設定-進階-同步-Visual Boy Advance` 中綁定 `visualboyadvance-m.exe` 路徑。
 
 ![linkage](https://img.timero.xyz/i/2025/04/02/67ed2009304c4.webp)
 
@@ -49,7 +49,7 @@ Vnite 可以與其它視覺小說相關軟體聯動，如轉區軟體Locale Emul
 
 - https://github.com/Blinue/Magpie/releases
 
-安裝完成後需要在 Vnite 的 `設定-進階-聯動-Magpie` 中綁定 `Magpie.exe` 路徑和縮放快速鍵。
+安裝完成後需要在 Vnite 的 `設定-進階-同步-Magpie` 中綁定 `Magpie.exe` 路徑和縮放快速鍵。
 
 ![linkage](https://img.timero.xyz/i/2025/04/02/67ed2009304c4.webp)
 
