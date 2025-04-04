@@ -21,7 +21,7 @@ body:
     id: bug_log
     attributes:
       label: Error Log | 问题日志
-      description: Please provide error logs (located at C:\Users\ximu\AppData\Roaming\vnite\logs\app.log, or in portable mode at logs/app.log in the application directory) <br> 请提供问题日志（位于 C:\Users\ximu\AppData\Roaming\vnite\logs\app.log，便携模式位于软件根目录 logs/app.log）
+      description: Please provide error logs (located at C:\Users\{username}\AppData\Roaming\vnite\logs\app.log, or in portable mode at logs\app.log in the application directory) <br> 请提供问题日志（位于 C:\Users\{username}\AppData\Roaming\vnite\logs\app.log，便携模式位于软件根目录 logs\app.log）
     validations:
       required: true
   - type: textarea
