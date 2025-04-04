@@ -7,6 +7,8 @@ body:
     id: suggestion_description
     attributes:
       label: Suggestion Content | 建议内容
-      description: Please describe your ideas or suggestions | 简单描述一下你想要的想法
+      description: |
+        Please describe your ideas or suggestions
+        简单描述一下你想要的想法
     validations:
       required: true

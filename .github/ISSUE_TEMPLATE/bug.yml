@@ -7,27 +7,35 @@ body:
     id: bug_version
     attributes:
       label: Software Version | 软件版本
-      description: Please enter the software version number | 请填写软件版本号
+      description: |
+        Please enter the software version number
+        请填写软件版本号
     validations:
       required: true
   - type: textarea
     id: bug_description
     attributes:
       label: Bug Description | 问题描述
-      description: Please describe the issue you encountered | 描述一下你遇到的问题
+      description: |
+        Please describe the issue you encountered
+        描述一下你遇到的问题
     validations:
       required: true
   - type: textarea
     id: bug_log
     attributes:
       label: Error Log | 问题日志
-      description: Please provide error logs (located at C:\Users\ximu\AppData\Roaming\vnite\logs\app.log, or in portable mode at logs/app.log in the application directory) | 请提供问题日志（位于C:\Users\ximu\AppData\Roaming\vnite\logs\app.log，便携模式位于软件根目录logs/app.log）
+      description: |
+        Please provide error logs (located at C:\Users\ximu\AppData\Roaming\vnite\logs\app.log, or in portable mode at logs/app.log in the application directory)
+        请提供问题日志（位于C:\Users\ximu\AppData\Roaming\vnite\logs\app.log，便携模式位于软件根目录logs/app.log）
     validations:
       required: true
   - type: textarea
     id: bug_screenshot
     attributes:
       label: Screenshots | 问题截图
-      description: Please provide screenshots of the issue (optional) | 请提供问题截图（可选）
+      description: |
+        Please provide screenshots of the issue (optional)
+        请提供问题截图（可选）
     validations:
       required: false
