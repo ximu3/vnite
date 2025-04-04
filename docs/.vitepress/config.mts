@@ -102,6 +102,53 @@ export default defineConfig({
         ]
       }
     },
+    'zh-TW': {
+      label: '正體中文',
+      lang: 'zh-TW',
+      description: '一款遊戲管理軟體',
+      link: '/zh-TW/',
+      themeConfig: {
+        nav: [
+          { text: '首頁', link: '/zh-TW/' },
+          { text: '軟體指南', link: '/zh-TW/guide/what-is-vnite' }
+        ],
+        sidebar: [
+          {
+            text: '簡介',
+            items: [
+              { text: '什麼是 Vnite?', link: '/zh-TW/guide/what-is-vnite' },
+              { text: '快速開始', link: '/zh-TW/guide/getting-started' }
+            ]
+          },
+          {
+            text: '基本',
+            items: [
+              { text: '添加遊戲', link: '/zh-TW/guide/adding-games' },
+              { text: '從第三方匯入', link: '/zh-TW/guide/importing-games' },
+              { text: '中繼資料', link: '/zh-TW/guide/metadata' },
+              { text: '雲同步', link: '/zh-TW/guide/cloud-sync' },
+              { text: '存檔', link: '/zh-TW/guide/save' },
+              { text: '回憶', link: '/zh-TW/guide/memory' },
+              { text: '備份', link: '/zh-TW/guide/backup' },
+              { text: '同步', link: '/zh-TW/guide/linkage' }
+            ]
+          },
+          {
+            text: '進階',
+            items: [
+              { text: '自訂主題', link: '/zh-TW/guide/custom-theme' },
+              { text: '連結喚醒', link: '/zh-TW/guide/link-wakeup' },
+              { text: '便攜模式', link: '/zh-TW/guide/portable' },
+              { text: '啟動器', link: '/zh-TW/guide/launcher' }
+            ]
+          },
+          {
+            text: '其它',
+            items: [{ text: '從 v2 遷移', link: '/zh-TW/guide/migration-from-v2' }]
+          }
+        ]
+      }
+    },
     ja: {
       label: '日本語',
       lang: 'ja',

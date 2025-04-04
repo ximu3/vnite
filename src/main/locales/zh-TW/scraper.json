@@ -1,0 +1,25 @@
+{
+  "dlsite": {
+    "workType": "作品類型",
+    "releaseDate": "販賣日",
+    "series": "系列名",
+    "maker": "商標名"
+  },
+  "steam": {
+    "officialWebsite": "官方網站",
+    "steamStore": "Steam商店",
+    "config": {
+      "apiLanguageCode": "tchinese",
+      "urlLanguageCode": "zh-tw",
+      "acceptLanguageHeader": "zh-TW,zh;q=0.9,en;q=0.8",
+      "countryCode": "TW"
+    }
+  },
+  "extraMetadataFields": {
+    "director": "企劃",
+    "scenario": "腳本",
+    "illustration": "原畫",
+    "music": "音樂",
+    "engine": "引擎"
+  }
+}

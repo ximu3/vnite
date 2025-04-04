@@ -1,0 +1,108 @@
+{
+  "gameAdder": {
+    "dialog": {
+      "title": "添加遊戲"
+    },
+    "notifications": {
+      "loading": "請等待遊戲添加完成"
+    },
+    "gameList": {
+      "columns": {
+        "name": "遊戲名稱",
+        "releaseDate": "發行日期",
+        "developers": "開發商"
+      },
+      "unknown": "未知",
+      "selected": "已選擇遊戲: {{name}}"
+    },
+    "backgrounds": {
+      "title": "背景圖片",
+      "noImages": "暫無圖片",
+      "notifications": {
+        "loading": "獲取圖片中...",
+        "success": "獲取圖片成功",
+        "error": "獲取圖片失敗: {{message}}",
+        "noImages": "未找到遊戲圖片",
+        "adding": "添加遊戲中...",
+        "addSuccess": "添加遊戲成功",
+        "addError": "添加遊戲失敗: {{message}}"
+      }
+    },
+    "search": {
+      "dataSource": "資料來源",
+      "gameName": "遊戲名稱",
+      "gameNamePlaceholder": "請輸入遊戲名稱",
+      "gameId": "遊戲ID",
+      "gameIdPlaceholder": "請輸入遊戲ID",
+      "searchButton": "搜尋",
+      "recognizeButton": "識別",
+      "notifications": {
+        "enterName": "請輸入遊戲名稱",
+        "searching": "搜尋遊戲中...",
+        "found": "找到 {{count}} 個遊戲",
+        "notFound": "未找到遊戲",
+        "searchError": "搜尋失敗: {{message}}",
+        "enterId": "請輸入遊戲ID",
+        "recognizing": "識別遊戲中...",
+        "recognized": "識別遊戲成功",
+        "invalidId": "無效ID",
+        "recognizeError": "識別遊戲失敗: {{message}}"
+      },
+      "dataSources": {
+        "label": "資料來源",
+        "steam": "Steam",
+        "vndb": "VNDB",
+        "bangumi": "Bangumi",
+        "igdb": "IGDB",
+        "ymgal": "YMgal",
+        "dlsite": "DLsite"
+      }
+    }
+  },
+  "gameBatchAdder": {
+    "dialog": {
+      "title": "批次添加遊戲",
+      "waitForCompletion": "請等待遊戲添加完成"
+    },
+    "status": {
+      "loading": "正在添加",
+      "success": "添加成功",
+      "error": "添加失敗",
+      "waiting": "等待添加",
+      "existed": "已存在"
+    },
+    "table": {
+      "columns": {
+        "dataSource": "資料源",
+        "name": "遊戲名稱",
+        "id": "遊戲ID",
+        "status": "狀態",
+        "actions": "操作"
+      }
+    },
+    "form": {
+      "dataSource": "資料來源",
+      "namePlaceholder": "請輸入遊戲名稱",
+      "idPlaceholder": "遊戲ID(可選)"
+    },
+    "actions": {
+      "retry": "重試",
+      "add": "添加",
+      "delete": "刪除",
+      "addAll": "全部添加",
+      "adding": "添加中..."
+    },
+    "notifications": {
+      "addingGame": "正在添加遊戲 {{name}}...",
+      "gameAdded": "遊戲 {{name}} 添加成功",
+      "addingGames": "正在添加遊戲...",
+      "gamesAdded": "添加遊戲成功",
+      "gameAddFailed": "添加遊戲失敗"
+    },
+    "errors": {
+      "gameNotFound": "未找到遊戲: {{name}}",
+      "gameIsBeingAdded": "遊戲正在添加中",
+      "gameAlreadyAdded": "遊戲已添加"
+    }
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "title": "我的遊戲記錄",
+  "tabs": {
+    "overview": "總覽",
+    "weekly": "周報",
+    "monthly": "月報",
+    "yearly": "年報",
+    "score": "評分報告"
+  },
+  "overview": {
+    "title": "總覽",
+    "stats": {
+      "totalGames": "遊戲總數",
+      "totalPlayTime": "總遊戲時間",
+      "totalPlayDays": "總遊戲天數",
+      "totalPlayTimes": "遊戲次數"
+    },
+    "chart": {
+      "yearlyPlayTime": "近一年遊戲時間",
+      "timeDistribution": "遊戲時間分布",
+      "peakHour": "遊戲高峰時段: {{hour}}:00 - {{nextHour}}:00"
+    },
+    "ranking": {
+      "playTimeRanking": "遊戲時間排行",
+      "scoreRanking": "遊戲評分排行",
+      "viewMore": "查看更多",
+      "allGamesByPlayTime": "按照遊玩時間排序的所有遊戲",
+      "allGamesByScore": "按照評分排序的所有遊戲"
+    },
+    "format": {
+      "hour": "小時",
+      "minute": "分鐘",
+      "hourValue": "{{value}} 小時",
+      "minuteValue": "{{value}} 分鐘"
+    },
+    "unit": {
+      "count": "個",
+      "day": "天",
+      "times": "次"
+    },
+    "misc": {
+      "noScore": "暫無評分"
+    }
+  },
+  "weekly": {
+    "title": "周遊戲報告",
+    "dailyPlayTime": "每日遊戲時間",
+    "totalWeeklyTime": "本週共遊戲 {{time, gameTime}}",
+    "highlights": {
+      "title": "本週資料",
+      "longestDay": "遊戲時間最長的一天",
+      "dateFormat": "{{weekday}}（{{date, niceDate}}）",
+      "playTime": "遊戲時長：{{time, gameTime}}",
+      "noRecords": "本週沒有遊戲記錄",
+      "frequency": "遊戲頻率",
+      "daysPlayed": "{{played}} / {{total}} 天",
+      "percentage": "占本週 {{percent}}%"
+    },
+    "weeklyGames": {
+      "title": "本週遊戲",
+      "noRecords": "本週沒有遊戲記錄"
+    },
+    "weekdays": {
+      "sunday": "週日",
+      "monday": "週一",
+      "tuesday": "週二",
+      "wednesday": "週三",
+      "thursday": "週四",
+      "friday": "週五",
+      "saturday": "週六"
+    },
+    "dateRange": "{{startDate, niceDate}} - {{endDate, niceDate}}"
+  },
+  "monthly": {
+    "title": "月度遊戲報告",
+    "yearMonth": "{{year}}年 {{month}}",
+    "stats": {
+      "monthlyPlayTime": "本月遊戲時長",
+      "daysPlayed": "本月遊戲天數",
+      "mostPlayedDay": "遊戲最多的一天"
+    },
+    "unit": {
+      "days": "天",
+      "noRecord": "無記錄",
+      "playTime": "遊戲時長：{{time, gameTime}}"
+    },
+    "chart": {
+      "weeklyPlayTime": "每週遊戲時長",
+      "calendarTitle": "月度遊戲日曆",
+      "weekFormat": "第{{week}}周",
+      "weekDateRange": "{{week}}（{{startDay}}日-{{endDay}}日）"
+    },
+    "highlights": {
+      "title": "本月資料",
+      "longestWeek": "遊戲時間最長的一週",
+      "noRecords": "本月沒有遊戲記錄",
+      "frequency": "遊戲頻率",
+      "daysCount": "{{played}} / {{total}} 天",
+      "percentage": "占本月 {{percent}}%"
+    },
+    "monthlyGames": {
+      "title": "本月遊戲",
+      "noRecords": "本月沒有遊戲記錄"
+    },
+    "months": {
+      "january": "一月",
+      "february": "二月",
+      "march": "三月",
+      "april": "四月",
+      "may": "五月",
+      "june": "六月",
+      "july": "七月",
+      "august": "八月",
+      "september": "九月",
+      "october": "十月",
+      "november": "十一月",
+      "december": "十二月"
+    }
+  },
+  "yearly": {
+    "title": "年度遊戲報告",
+    "yearDisplay": "{{year}}年",
+    "stats": {
+      "yearlyPlayTime": "年度遊戲時長",
+      "monthsPlayed": "遊戲月份數",
+      "monthsCount": "{{count}} 個月",
+      "mostPlayedMonth": "遊戲最多的月份",
+      "noRecord": "無記錄",
+      "playTimeDesc": "遊戲時長：{{time, gameTime}}"
+    },
+    "chart": {
+      "monthlyPlayTime": "月度遊戲時長",
+      "monthlyPlayDays": "月度遊戲天數",
+      "timeDistribution": "年度遊戲時間分布",
+      "byGameType": "按遊戲類型統計",
+      "typePercentage": "{{type}}: {{percent}}%"
+    },
+    "format": {
+      "hours": "{{value}} 小時",
+      "days": "{{value}} 天"
+    },
+    "yearlyGames": {
+      "title": "年度遊戲",
+      "noRecords": "本年度沒有遊戲記錄"
+    },
+    "months": {
+      "january": "1月",
+      "february": "2月",
+      "march": "3月",
+      "april": "4月",
+      "may": "5月",
+      "june": "6月",
+      "july": "7月",
+      "august": "8月",
+      "september": "9月",
+      "october": "10月",
+      "november": "11月",
+      "december": "12月"
+    }
+  },
+  "score": {
+    "title": "遊戲評分報告",
+    "description": "以下是您的遊戲庫按評分分類的結果。您可以滑動瀏覽每個類別中的遊戲，並將滑鼠懸停在遊戲上查看詳細資訊。",
+    "categories": {
+      "excellent": {
+        "title": "極佳體驗 (9-10分)",
+        "description": "這些遊戲提供了卓越的體驗，強烈推薦"
+      },
+      "great": {
+        "title": "優秀作品 (8-8.9分)",
+        "description": "這些遊戲非常優秀，值得一玩"
+      },
+      "good": {
+        "title": "良好遊戲 (7-7.9分)",
+        "description": "這些遊戲有著不錯的品質"
+      },
+      "average": {
+        "title": "一般遊戲 (6-6.9分)",
+        "description": "這些遊戲品質一般，有明顯缺點"
+      },
+      "notRecommended": {
+        "title": "不推薦 (0-5.9分)",
+        "description": "這些遊戲存在嚴重問題，不推薦體驗"
+      },
+      "gamesCount": "{{count}} 款遊戲"
+    },
+    "gameInfo": {
+      "unknown": "未知遊戲",
+      "addDate": "添加日期: {{date, niceDate}}",
+      "playTime": "遊戲時間: {{time, gameTime}}",
+      "lastRun": "最近執行: {{date, niceDate}}",
+      "ratingLabel": "評分"
+    }
+  }
+}

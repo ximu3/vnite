@@ -1,0 +1,53 @@
+{
+  "steamImporter": {
+    "dialog": {
+      "title": "匯入 Steam 遊戲",
+      "description": "請輸入你的 Steam ID 來匯入遊戲庫，ID 可在個人資料的 URL 中獲取。"
+    },
+    "input": {
+      "steamId": "輸入 Steam ID",
+      "fetch": "獲取",
+      "searching": "搜尋遊戲..."
+    },
+    "status": {
+      "initial": {
+        "title": "開始匯入",
+        "description": "請輸入你的 Steam ID 獲取遊戲列表"
+      },
+      "ready": {
+        "title": "準備獲取",
+        "description": "請點擊\"獲取\"按鈕來獲取遊戲列表"
+      },
+      "loading": {
+        "title": "載入中",
+        "description": "正在獲取遊戲列表..."
+      },
+      "empty": {
+        "title": "已全部匯入",
+        "description": "所有遊戲都已成功匯入"
+      }
+    },
+    "gameList": {
+      "selectAll": "全選 ({{selected}}/{{total}})",
+      "search": "搜尋遊戲...",
+      "hours": "{{hours}}小時"
+    },
+    "import": {
+      "button": "匯入選中的遊戲 ({{count}})",
+      "preparing": "正在準備匯入...",
+      "progress": {
+        "title": "正在匯入",
+        "completed": "匯入完成",
+        "error": "匯入錯誤",
+        "summary": "成功: {{success}} 個 失敗: {{error}} 個"
+      }
+    },
+    "notifications": {
+      "fetchFailed": "獲取遊戲列表失敗，請重試",
+      "selectAtLeastOne": "請至少選擇一個遊戲",
+      "allImported": "所有遊戲已匯入完成",
+      "importFailed": "匯入失敗，請重試",
+      "waitForCompletion": "請等待匯入完成"
+    }
+  }
+}
