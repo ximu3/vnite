@@ -61,7 +61,12 @@ export async function startGame(gameId: string, navigate?: (path: string) => voi
 
   if (getGameLocalValue('path.gamePath') === '') {
     toast.warning(i18next.t('utils:game.starting.pathRequired'))
-    const filePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
+    const filePath: string = await ipcInvoke(
+      'select-path-dialog',
+      ['openFile'],
+      undefined,
+      getGameLocalValue('utils.markPath')
+    )
     if (!filePath) {
       return
     }

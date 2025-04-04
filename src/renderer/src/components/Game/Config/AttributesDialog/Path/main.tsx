@@ -23,10 +23,16 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
   const [monitorPath] = useGameLocalState(gameId, 'launcher.fileConfig.monitorPath')
   const [gamePath, setGamePath] = useGameLocalState(gameId, 'path.gamePath')
   const [savePath, setSavePath] = useGameLocalState(gameId, 'path.savePaths')
+  const [markerPath] = useGameLocalState(gameId, 'utils.markPath')
   const [maxSaveBackups, setMaxSaveBackups] = useGameState(gameId, 'save.maxBackups')
 
   async function selectGamePath(): Promise<void> {
-    const filePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
+    const filePath: string = await ipcInvoke(
+      'select-path-dialog',
+      ['openFile'],
+      undefined,
+      gamePath || markerPath
+    )
     if (!filePath) {
       return
     }
@@ -59,7 +65,7 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
       'select-multiple-path-dialog',
       ['openDirectory'],
       undefined,
-      gamePath
+      gamePath || markerPath
     )
     if (!folderPath) {
       return
@@ -73,7 +79,7 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
       'select-multiple-path-dialog',
       ['openFile'],
       undefined,
-      gamePath
+      gamePath || markerPath
     )
     if (!filePath) {
       return
