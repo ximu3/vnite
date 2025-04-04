@@ -35,6 +35,7 @@
     "gameExited": "ゲームが終了しました",
     "fullSyncing": "データを同期しています...",
     "fullSynced": "データ同期が完了しました",
-    "fullSyncError": "データ同期に失敗しました"
+    "fullSyncError": "データ同期に失敗しました",
+    "updateUserInfoError": "公式クラウド同期アカウントのログインが期限切れです。再度ログインしてください"
   }
 }

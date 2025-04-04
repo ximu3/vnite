@@ -280,7 +280,13 @@ app.whenReady().then(async () => {
 
   AuthManager.init()
 
-  await AuthManager.updateUserInfo()
+  try {
+    await AuthManager.updateUserInfo()
+  } catch (_error) {
+    setTimeout(() => {
+      mainWindow.webContents.send('update-user-info-error')
+    }, 5000)
+  }
 
   await initI18n()
 

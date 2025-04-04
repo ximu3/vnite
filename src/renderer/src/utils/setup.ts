@@ -94,6 +94,15 @@ export function setupFullSyncListener(): () => void {
   }
 }
 
+export function setupUserInfoListener(): () => void {
+  const userInfoListener = ipcOnUnique('update-user-info-error', (_event) => {
+    toast.error(i18next.t('utils:notifications.updateUserInfoError'))
+  })
+  return () => {
+    userInfoListener()
+  }
+}
+
 export function setupUpdateListener(): () => void {
   const setIsUpdateDialogOpen = useUpdaterStore.getState().setIsOpen
   console.warn('[DEBUG] app.tsx')
@@ -118,7 +127,8 @@ export async function setup(navigate: (path: string) => void): Promise<() => voi
     setupGameExitListeners(),
     await setupDBSync(),
     setupUpdateListener(),
-    setupFullSyncListener()
+    setupFullSyncListener(),
+    setupUserInfoListener()
   ]
 
   return () => {
