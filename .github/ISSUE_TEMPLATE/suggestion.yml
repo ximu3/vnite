@@ -1,12 +1,12 @@
-name: 交流建议 | Suggestion Make
-title: "[Suggestion]: "
-description: 对软件提些建议 | Make suggestion for the application
-labels: "suggestion"
+name: Suggestion | 交流建议
+title: '[Suggestion]: '
+description: Make suggestions for the application | 对软件提些建议
+labels: 'suggestion'
 body:
   - type: textarea
     id: suggestion_description
     attributes:
-      label: 建议内容
-      description: 简单描述一下你想要的想法
+      label: Suggestion Content | 建议内容
+      description: Please describe your ideas or suggestions | 简单描述一下你想要的想法
     validations:
       required: true

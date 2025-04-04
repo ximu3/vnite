@@ -1,33 +1,33 @@
-name: 错误报告 | Bug Report
-title: "[Bug]: "
-description: 这里有只虫子 | Report a bug in the application
-labels: "bug"
+name: Bug Report | 错误报告
+title: '[Bug]: '
+description: Report a bug in the application | 这里有只虫子
+labels: 'bug'
 body:
   - type: input
     id: bug_version
     attributes:
-      label: 软件版本
-      description: 请填写软件版本号
+      label: Software Version | 软件版本
+      description: Please enter the software version number | 请填写软件版本号
     validations:
       required: true
   - type: textarea
     id: bug_description
     attributes:
-      label: 问题描述
-      description: 描述一下你遇到的问题
+      label: Bug Description | 问题描述
+      description: Please describe the issue you encountered | 描述一下你遇到的问题
     validations:
       required: true
   - type: textarea
     id: bug_log
     attributes:
-      label: 问题日志
-      description: 请提供问题日志（位于软件安装目录下的logs文件夹中）
+      label: Error Log | 问题日志
+      description: Please provide error logs (located at C:\Users\ximu\AppData\Roaming\vnite\logs\app.log, or in portable mode at logs/app.log in the application directory) | 请提供问题日志（位于C:\Users\ximu\AppData\Roaming\vnite\logs\app.log，便携模式位于软件根目录logs/app.log）
     validations:
       required: true
   - type: textarea
     id: bug_screenshot
     attributes:
-      label: 问题截图
-      description: 请提供问题截图（可选）
+      label: Screenshots | 问题截图
+      description: Please provide screenshots of the issue (optional) | 请提供问题截图（可选）
     validations:
       required: false
