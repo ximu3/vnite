@@ -24,6 +24,7 @@ export function General(): JSX.Element {
 
   const languageOptions = [
     { value: 'zh-CN', label: '简体中文' },
+    { value: 'zh-TW', label: '正體中文' },
     { value: 'en', label: 'English' },
     { value: 'ja', label: '日本語' }
   ]
