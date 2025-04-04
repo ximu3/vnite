@@ -1,92 +1,48 @@
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
+import resourcesToBackend from 'i18next-resources-to-backend'
 import { ipcInvoke } from './ipc'
-
-// Importing translation files for each module
-// zh-CN
-import zhCNAdder from '@locales/zh-CN/adder.json'
-import zhCNConfig from '@locales/zh-CN/config.json'
-import zhCNGame from '@locales/zh-CN/game.json'
-import zhCNImporter from '@locales/zh-CN/importer.json'
-import zhCNRecord from '@locales/zh-CN/record.json'
-import zhCNSidebar from '@locales/zh-CN/sidebar.json'
-import zhCNUI from '@locales/zh-CN/ui.json'
-import zhCNUpdater from '@locales/zh-CN/updater.json'
-import zhCNUtils from '@locales/zh-CN/utils.json'
-
-// ja
-import jaAdder from '@locales/ja/adder.json'
-import jaConfig from '@locales/ja/config.json'
-import jaGame from '@locales/ja/game.json'
-import jaImporter from '@locales/ja/importer.json'
-import jaRecord from '@locales/ja/record.json'
-import jaSidebar from '@locales/ja/sidebar.json'
-import jaUI from '@locales/ja/ui.json'
-import jaUpdater from '@locales/ja/updater.json'
-import jaUtils from '@locales/ja/utils.json'
-
-// en
-import enAdder from '@locales/en/adder.json'
-import enConfig from '@locales/en/config.json'
-import enGame from '@locales/en/game.json'
-import enImporter from '@locales/en/importer.json'
-import enRecord from '@locales/en/record.json'
-import enSidebar from '@locales/en/sidebar.json'
-import enUI from '@locales/en/ui.json'
-import enUpdater from '@locales/en/updater.json'
-import enUtils from '@locales/en/utils.json'
-
-const resources = {
-  'zh-CN': {
-    config: zhCNConfig,
-    sidebar: zhCNSidebar,
-    game: zhCNGame,
-    ui: zhCNUI,
-    adder: zhCNAdder,
-    importer: zhCNImporter,
-    updater: zhCNUpdater,
-    utils: zhCNUtils,
-    record: zhCNRecord
-  },
-  ja: {
-    config: jaConfig,
-    sidebar: jaSidebar,
-    game: jaGame,
-    ui: jaUI,
-    adder: jaAdder,
-    importer: jaImporter,
-    updater: jaUpdater,
-    utils: jaUtils,
-    record: jaRecord
-  },
-  en: {
-    config: enConfig,
-    sidebar: enSidebar,
-    game: enGame,
-    ui: enUI,
-    adder: enAdder,
-    importer: enImporter,
-    updater: enUpdater,
-    utils: enUtils,
-    record: enRecord
-  }
-}
 
 export async function i18nInit(): Promise<void> {
   const language = (await ipcInvoke('get-language')) as string
   console.warn('[i18n] Language:', language)
 
-  await i18n.use(initReactI18next).init({
-    resources,
-    lng: language,
-    fallbackLng: 'en',
-    defaultNS: 'ui',
-    fallbackNS: 'ui',
-    ns: ['config', 'sidebar', 'ui', 'game', 'adder', 'importer', 'updater', 'utils', 'record'],
-    interpolation: {
-      escapeValue: false
-    }
-  })
+  const namespaces = [
+    'config',
+    'sidebar',
+    'ui',
+    'game',
+    'adder',
+    'importer',
+    'updater',
+    'utils',
+    'record'
+  ]
+
+  const supportedLngs = ['zh-CN', 'zh-TW', 'ja', 'en']
+
+  await i18n
+    .use(initReactI18next)
+    .use(
+      resourcesToBackend(async (language: string, namespace: string) => {
+        return import(`@locales/${language}/${namespace}.json`).catch((error) => {
+          console.error(`Unable to load translation file: ${language}/${namespace}`, error)
+          return {}
+        })
+      })
+    )
+    .init({
+      lng: language,
+      fallbackLng: 'en',
+      defaultNS: 'ui',
+      fallbackNS: 'ui',
+      ns: namespaces,
+      interpolation: {
+        escapeValue: false
+      },
+      partialBundledLanguages: true,
+      supportedLngs
+    })
 
   i18n.services.formatter?.add('gameTime', (value, lng, _options) => {
     // Calculation of total hours (with fractional part)
@@ -100,6 +56,8 @@ export async function i18nInit(): Promise<void> {
       // Returns different formats depending on the language
       if (lng === 'zh-CN') {
         return `${formattedHours} 小时`
+      } else if (lng === 'zh-TW') {
+        return `${formattedHours} 小時`
       } else if (lng === 'ja') {
         return `${formattedHours} 時間`
       } else {
@@ -111,6 +69,8 @@ export async function i18nInit(): Promise<void> {
       // If it is less than 30s, display '< 1'
       if (lng === 'zh-CN') {
         return `${formattedMinutes} 分钟`
+      } else if (lng === 'zh-TW') {
+        return `${formattedMinutes} 分鐘`
       } else if (lng === 'ja') {
         return `${formattedMinutes} 分`
       } else {
@@ -130,6 +90,8 @@ export async function i18nInit(): Promise<void> {
 
     // Returns formatted dates according to language
     if (lng === 'zh-CN') {
+      return `${year}年${month}月${day}日`
+    } else if (lng === 'zh-TW') {
       return `${year}年${month}月${day}日`
     } else if (lng === 'ja') {
       return `${year}年${month}月${day}日`
@@ -168,6 +130,8 @@ export async function i18nInit(): Promise<void> {
 
     // Returns formatted date and time according to language
     if (lng === 'zh-CN') {
+      return `${year}年${month}月${day}日 ${hours}:${minutes}:${seconds}`
+    } else if (lng === 'zh-TW') {
       return `${year}年${month}月${day}日 ${hours}:${minutes}:${seconds}`
     } else if (lng === 'ja') {
       return `${year}年${month}月${day}日 ${hours}時${minutes}分${seconds}秒`

@@ -70,6 +70,7 @@
     "html2canvas": "^1.4.1",
     "i18next": "^24.2.2",
     "i18next-fs-backend": "^2.6.0",
+    "i18next-resources-to-backend": "^1.2.1",
     "koffi": "^2.10.1",
     "lucide-react": "^0.475.0",
     "medium-zoom": "^1.1.0",
