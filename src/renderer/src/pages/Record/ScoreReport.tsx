@@ -104,7 +104,7 @@ function GameScoreCard({ gameId }: { gameId: string }): JSX.Element {
 
 function getGamePlayStatus(gameId: string, t: any): string {
   const gameStore = getGameStore(gameId)
-  const status = gameStore.getState().data?.record.playStatus as string
+  const status = gameStore.getState().getValue('record.playStatus')
 
   const statusMap: Record<string, string> = {
     unplayed: t('utils:game.playStatus.unplayed'),

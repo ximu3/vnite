@@ -59,7 +59,6 @@ export function getGameStore(gameId: string): GameStore {
         if (!state.initialized || !state.data) {
           return getValueByPath(DEFAULT_GAME_VALUES, path)
         }
-        console.log('state.data', state.data.metadata.name)
 
         const value = getValueByPath(state.data, path)
         return value !== undefined ? value : getValueByPath(DEFAULT_GAME_VALUES, path)

@@ -169,7 +169,7 @@ export class TrayManager {
 
           return {
             id: gameId,
-            name: game?.metadata.name || gameId,
+            name: game?.metadata?.name || 'unknown',
             icon
           }
         })

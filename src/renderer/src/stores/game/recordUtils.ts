@@ -382,7 +382,7 @@ export function getPlayTimeDistribution(): { hour: number; value: number }[] {
     // Iterate through each game
     for (const gameId of gameIds) {
       const store = getGameStore(gameId)
-      const timers = store.getState().getValue('record.timers') || []
+      const timers = store.getState().getValue('record.timers')
 
       // Traverse each play record
       for (const timer of timers) {
@@ -429,7 +429,7 @@ export function getGameScoreRanking(): { gameId: string; score: number }[] {
     // Iterate through each game
     for (const gameId of gameIds) {
       const store = getGameStore(gameId)
-      const score = store.getState().getValue('record.score') || 0
+      const score = store.getState().getValue('record.score')
 
       if (score > 0) {
         // Includes only rated games
@@ -454,7 +454,7 @@ export function getRecentlyAddedGames(count = 5): string[] {
 
     const gamesWithAddDate = gameIds.map((gameId) => {
       const store = getGameStore(gameId)
-      const addDate = store.getState().getValue('record.addDate') || ''
+      const addDate = store.getState().getValue('record.addDate')
       return { gameId, addDate }
     })
 
@@ -479,7 +479,7 @@ export function getRecentlyPlayedGames(count = 5): string[] {
 
     const gamesWithLastRunDate = gameIds.map((gameId) => {
       const store = getGameStore(gameId)
-      const lastRunDate = store.getState().getValue('record.lastRunDate') || ''
+      const lastRunDate = store.getState().getValue('record.lastRunDate')
       return { gameId, lastRunDate }
     })
 
@@ -568,7 +568,7 @@ export function getGamesByScoreRange(minScore: number, maxScore: number): string
     // Iterate through each game
     for (const gameId of gameIds) {
       const store = getGameStore(gameId)
-      const score = store.getState().getValue('record.score') || 0
+      const score = store.getState().getValue('record.score')
 
       // Filtering games with a specified rating range
       if (score >= minScore && score <= maxScore) {
@@ -578,8 +578,8 @@ export function getGamesByScoreRange(minScore: number, maxScore: number): string
 
     // Sort by rating in descending order
     return gamesInRange.sort((a, b) => {
-      const scoreA = getGameStore(a).getState().getValue('record.score') || 0
-      const scoreB = getGameStore(b).getState().getValue('record.score') || 0
+      const scoreA = getGameStore(a).getState().getValue('record.score')
+      const scoreB = getGameStore(b).getState().getValue('record.score')
       return scoreB - scoreA
     })
   } catch (error) {

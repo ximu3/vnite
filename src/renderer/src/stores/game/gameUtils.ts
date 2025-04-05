@@ -410,9 +410,9 @@ export function getGamePlayTimeByDateRange(
 ): { [date: string]: number } {
   try {
     const store = getGameStore(gameId)
-    const game = store.getState().data
+    const timers = store.getState().getValue('record.timers')
 
-    if (!game?.record?.timers || game.record.timers.length === 0) {
+    if (!timers || timers.length === 0) {
       return {}
     }
 
@@ -432,7 +432,7 @@ export function getGamePlayTimeByDateRange(
       while (current <= end) {
         try {
           const dateStr = i18next.format(current, 'niceISO')
-          result[dateStr] = calculateDailyPlayTime(current, game.record.timers)
+          result[dateStr] = calculateDailyPlayTime(current, timers)
           current.setDate(current.getDate() + 1)
         } catch (error) {
           console.error(`Error processing date in getGamePlayTimeByDateRange:`, error)
@@ -455,15 +455,15 @@ export function getGamePlayTimeByDateRange(
 export function getGamePlayDays(gameId: string): number {
   try {
     const store = getGameStore(gameId)
-    const game = store.getState().data
+    const timers = store.getState().getValue('record.timers')
 
-    if (!game?.record?.timers || game.record.timers.length === 0) {
+    if (!timers || timers.length === 0) {
       return 0
     }
 
     const playDays = new Set<string>()
 
-    game.record.timers.forEach((timer) => {
+    timers.forEach((timer) => {
       // Convert to time in the user's local time zone
       const start = new Date(timer.start)
       const end = new Date(timer.end)
@@ -497,14 +497,14 @@ export function getGamePlayDays(gameId: string): number {
 export function getGameMaxPlayTimeDay(gameId: string): MaxPlayTimeDay | null {
   try {
     const store = getGameStore(gameId)
-    const game = store.getState().data
+    const timers = store.getState().getValue('record.timers')
 
-    if (!game?.record?.timers || game.record.timers.length === 0) {
+    if (!timers || timers.length === 0) {
       return null
     }
 
     const allDates = new Set<string>()
-    game.record.timers.forEach((timer) => {
+    timers.forEach((timer) => {
       const start = new Date(timer.start)
       const end = new Date(timer.end)
       const current = new Date(start)
@@ -520,7 +520,7 @@ export function getGameMaxPlayTimeDay(gameId: string): MaxPlayTimeDay | null {
 
     allDates.forEach((dateStr) => {
       const currentDate = new Date(dateStr)
-      const playTime = calculateDailyPlayTime(currentDate, game.record.timers)
+      const playTime = calculateDailyPlayTime(currentDate, timers)
 
       if (playTime > maxTime) {
         maxDate = dateStr
@@ -566,9 +566,9 @@ export function getGameRecord(gameId: string): gameDoc['record'] {
 export function getGameStartAndEndDate(gameId: string): { start: string; end: string } {
   try {
     const store = getGameStore(gameId)
-    const game = store.getState().data
+    const timers = store.getState().getValue('record.timers')
 
-    if (!game?.record?.timers || game.record.timers.length === 0) {
+    if (!timers || timers.length === 0) {
       return { start: '', end: '' }
     }
 
@@ -579,8 +579,8 @@ export function getGameStartAndEndDate(gameId: string): { start: string; end: st
       return `${year}-${month}-${day}`
     }
 
-    const start = new Date(game.record.timers[0].start)
-    const end = new Date(game.record.timers[game.record.timers.length - 1].end)
+    const start = new Date(timers[0].start)
+    const end = new Date(timers[timers.length - 1].end)
 
     return {
       start: formatDate(start),
@@ -632,10 +632,10 @@ export function getPlayedDaysYearly(): { [date: string]: number } {
 
       for (const gameId of gameIds) {
         const store = getGameStore(gameId)
-        const game = store.getState().data
+        const timers = store.getState().getValue('record.timers')
 
-        if (game?.record?.timers) {
-          playTime += calculateDailyPlayTime(current, game.record.timers)
+        if (timers) {
+          playTime += calculateDailyPlayTime(current, timers)
         }
       }
 
@@ -669,10 +669,10 @@ export function getTotalplayTimeYearly(): number {
     while (current.getTime() >= lastYearDate.getTime()) {
       for (const gameId of gameIds) {
         const store = getGameStore(gameId)
-        const game = store.getState().data
+        const timers = store.getState().getValue('record.timers')
 
-        if (game?.record?.timers) {
-          totalPlayTime += calculateDailyPlayTime(current, game.record.timers)
+        if (timers) {
+          totalPlayTime += calculateDailyPlayTime(current, timers)
         }
       }
       current.setDate(current.getDate() - 1)
