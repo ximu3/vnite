@@ -2,10 +2,10 @@ import { Button } from '@ui/button'
 import { Input } from '@ui/input'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@ui/table'
 import { isEqual } from 'lodash'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useGameLocalState, useGameState } from '~/hooks'
 import { cn, ipcInvoke } from '~/utils'
-import { useTranslation } from 'react-i18next'
 
 export function Save({ gameId }: { gameId: string }): JSX.Element {
   const { t } = useTranslation('game')
@@ -103,7 +103,7 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
                           <Button
                             variant={'outline'}
                             size={'icon'}
-                            className={cn(saveList[saveId]?.locked ? 'border-ring' : '')}
+                            className={cn('h-8 w-8', saveList[saveId]?.locked ? 'border-ring' : '')}
                             onClick={() => toggleLock(saveId)}
                           >
                             <span
