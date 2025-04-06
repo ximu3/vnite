@@ -12,14 +12,14 @@ import {
 } from '@ui/select'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import { isEqual } from 'lodash'
+import { useTranslation } from 'react-i18next'
 import { useConfigState } from '~/hooks'
 import { cn } from '~/utils'
 import { Filter } from './Filter'
 import { useFilterStore } from './Filter/store'
 import { GameList } from './GameList'
-import { useLibrarybarStore } from './store'
 import { PositionButton } from './PositionButton'
-import { useTranslation } from 'react-i18next'
+import { useLibrarybarStore } from './store'
 
 export function Librarybar(): JSX.Element {
   const { t } = useTranslation('game')
@@ -28,6 +28,7 @@ export function Librarybar(): JSX.Element {
   const setQuery = useLibrarybarStore((state) => state.setQuery)
   const filter = useFilterStore((state) => state.filter)
   const toggleFilterMenu = useFilterStore((state) => state.toggleFilterMenu)
+  const clearFilter = useFilterStore((state) => state.clearFilter)
 
   console.warn(`[DEBUG] Librarybar`)
 
@@ -75,6 +76,20 @@ export function Librarybar(): JSX.Element {
               <TooltipContent side="bottom">{t('librarybar.search.tooltip')}</TooltipContent>
             </Tooltip>
           </div>
+          {(!isEqual(filter, {}) || query) && (
+            <div>
+              <Button
+                onClick={() => {
+                  clearFilter()
+                  setQuery('')
+                }}
+                variant="default"
+                size={'icon'}
+              >
+                <span className={cn('icon-[mdi--filter-variant-remove] w-5 h-5')}></span>
+              </Button>
+            </div>
+          )}
           <div>
             <Filter>
               <Button onClick={toggleFilterMenu} variant="default" size={'icon'}>

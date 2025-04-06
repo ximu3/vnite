@@ -1,10 +1,10 @@
-import { useTranslation } from 'react-i18next'
 import { Separator } from '@ui/separator'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { useGameState } from '~/hooks'
 import { cn, copyWithToast } from '~/utils'
-import { ExtraInformationDialog } from './ExtraInformationDialog'
 import { FilterAdder } from '../../FilterAdder'
+import { ExtraInformationDialog } from './ExtraInformationDialog'
 
 export function ExtraInformationCard({
   gameId,
@@ -49,7 +49,7 @@ export function ExtraInformationCard({
             <React.Fragment key={index}>
               <div
                 className={cn('whitespace-nowrap select-none cursor-pointer')}
-                onClick={() => copyWithToast(item.key)}
+                onClick={() => copyWithToast(item.value.join(', '))}
               >
                 {item.key}
               </div>

@@ -1,6 +1,6 @@
-import { useTranslation } from 'react-i18next'
 import { Separator } from '@ui/separator'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { useGameState } from '~/hooks'
 import { cn, copyWithToast } from '~/utils'
 import { FilterAdder } from '../../FilterAdder'
@@ -43,7 +43,7 @@ export function InformationCard({
         genres,
         platforms
       })
-        .map(([key, value]) => `${fields[key]}: ${value}`)
+        .map(([key, value]) => `${fields[key]}: ${Array.isArray(value) ? value.join(', ') : value}`)
         .join('\n')
     )
   }
@@ -83,7 +83,7 @@ export function InformationCard({
         {/* developers */}
         <div
           className={cn('whitespace-nowrap select-none cursor-pointer')}
-          onClick={() => copyWithToast(developers.join(','))}
+          onClick={() => copyWithToast(developers.join(', '))}
         >
           {t('detail.overview.information.fields.developers')}
         </div>
@@ -105,7 +105,7 @@ export function InformationCard({
         {/* publishers */}
         <div
           className={cn('whitespace-nowrap select-none cursor-pointer')}
-          onClick={() => copyWithToast(publishers.join(','))}
+          onClick={() => copyWithToast(publishers.join(', '))}
         >
           {t('detail.overview.information.fields.publishers')}
         </div>
@@ -146,7 +146,7 @@ export function InformationCard({
         {/* platforms */}
         <div
           className={cn('whitespace-nowrap select-none cursor-pointer')}
-          onClick={() => copyWithToast(platforms.join(','))}
+          onClick={() => copyWithToast(platforms.join(', '))}
         >
           {t('detail.overview.information.fields.platforms')}
         </div>
@@ -165,7 +165,7 @@ export function InformationCard({
         {/* genres */}
         <div
           className={cn('whitespace-nowrap select-none cursor-pointer')}
-          onClick={() => copyWithToast(genres.join(','))}
+          onClick={() => copyWithToast(genres.join(', '))}
         >
           {t('detail.overview.information.fields.genres')}
         </div>
