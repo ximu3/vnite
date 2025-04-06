@@ -1,11 +1,11 @@
-import { useTranslation } from 'react-i18next'
 import { Separator } from '@ui/separator'
 import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useGameState } from '~/hooks'
 import { cn, copyWithToast } from '~/utils'
 import { FilterAdder } from '../../FilterAdder'
-import { TagsDialog } from './TagsDialog'
 import { SearchTagsDialog } from './SearchTagsDialog'
+import { TagsDialog } from './TagsDialog'
 
 export function TagsCard({
   gameId,
@@ -26,7 +26,10 @@ export function TagsCard({
   return (
     <div className={cn(className, 'group')}>
       <div className={cn('flex flex-row justify-between items-center')}>
-        <div className={cn('select-none cursor-pointer')} onClick={() => copyWithToast(`${tags}`)}>
+        <div
+          className={cn('select-none cursor-pointer')}
+          onClick={() => copyWithToast(`${tags.join(', ')}`)}
+        >
           {t('detail.overview.sections.tags')}
         </div>
         <div className="flex items-center gap-3">

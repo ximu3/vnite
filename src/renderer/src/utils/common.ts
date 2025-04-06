@@ -1,11 +1,13 @@
 import { Element, HTMLReactParserOptions } from 'html-react-parser'
+import i18next from 'i18next'
 import { toast } from 'sonner'
-import { ipcSend, ipcInvoke } from '~/utils'
 import { useRunningGames } from '~/pages/Library/store'
 import { getGameLocalStore, getGameStore } from '~/stores/game'
-import i18next from 'i18next'
+import { ipcInvoke, ipcSend } from '~/utils'
 
 export function copyWithToast(content: string): void {
+  if (!content) return
+
   navigator.clipboard
     .writeText(content)
     .then(() => {
