@@ -82,6 +82,7 @@
     "react-image-crop": "^11.0.7",
     "react-lazy-load-image-component": "^1.6.3",
     "react-markdown": "^10.0.0",
+    "react-medium-image-zoom": "^5.2.14",
     "react-resizable-panels": "^2.1.7",
     "react-router-dom": "^6.27.0",
     "react-virtualized-auto-sizer": "^1.0.25",

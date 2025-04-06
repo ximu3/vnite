@@ -24,6 +24,7 @@ import remarkGfm from 'remark-gfm'
 import { toast } from 'sonner'
 import html2canvas from 'html2canvas'
 import { useTranslation } from 'react-i18next'
+import Zoom from 'react-medium-image-zoom'
 
 export function MemoryCard({
   gameId,
@@ -215,14 +216,16 @@ export function MemoryCard({
         <Card ref={memoryRef} key={memoryId} className={cn('w-full h-auto shadow-md img-initial')}>
           <div className={cn('w-full flex flex-col')}>
             {/* Cover Image */}
-            <GameImage
-              type={`memories/${memoryId}`}
-              gameId={gameId}
-              className={cn('w-full h-auto rounded-lg shadow-md')}
-              fallback={<div />}
-              onError={() => setIsCoverExist(false)}
-              onUpdated={() => setIsCoverExist(true)}
-            />
+            <Zoom>
+              <GameImage
+                type={`memories/${memoryId}`}
+                gameId={gameId}
+                className={cn('w-full h-auto rounded-lg shadow-md')}
+                fallback={<div />}
+                onError={() => setIsCoverExist(false)}
+                onUpdated={() => setIsCoverExist(true)}
+              />
+            </Zoom>
 
             {/* Add button area */}
             {(!isCoverExist || !note) && (
