@@ -241,28 +241,53 @@ export function formatDate(dateString: string): string {
 }
 
 /**
- * Get the names of all first-level subfolders in the specified directory.
- * @param dirPath Directory Path
- * @returns Promise<string[]> Array of subfolder names
+ * Get subfolders at a specific depth level in the specified directory
+ * @param dirPath Directory path
+ * @param depth Target depth (1 means first level subfolders, 2 means second level subfolders, and so on)
+ * @returns Promise<{name: string, dirPath: string}[]> Array of subfolder information at the specified depth
  */
-export async function getFirstLevelSubfolders(dirPath: string): Promise<
+export async function getSubfoldersByDepth(
+  dirPath: string,
+  depth: number = 1
+): Promise<
   {
     name: string
     dirPath: string
   }[]
 > {
-  // Make sure the catalog exists
+  // Ensure the directory exists
   if (!(await fse.pathExists(dirPath))) {
-    throw new Error('Catalog does not exist')
+    throw new Error('Directory does not exist')
   }
 
-  // Read the contents of the catalog
-  const items = await fse.readdir(dirPath)
+  // Use helper function to recursively find folders at the specified depth
+  return await findFoldersAtDepth(dirPath, 1, depth)
+}
+
+/**
+ * Recursively find folders at the specified depth
+ * @param currentPath Current path
+ * @param currentDepth Current depth
+ * @param targetDepth Target depth
+ * @returns Promise<{name: string, dirPath: string}[]> Array of folder information
+ */
+async function findFoldersAtDepth(
+  currentPath: string,
+  currentDepth: number,
+  targetDepth: number
+): Promise<
+  {
+    name: string
+    dirPath: string
+  }[]
+> {
+  // Read directory contents
+  const items = await fse.readdir(currentPath)
 
   // Filter out folders
   const subfolders = await Promise.all(
     items.map(async (item) => {
-      const fullPath = path.join(dirPath, item)
+      const fullPath = path.join(currentPath, item)
       const stats = await fse.stat(fullPath)
       return {
         name: item,
@@ -272,13 +297,28 @@ export async function getFirstLevelSubfolders(dirPath: string): Promise<
     })
   )
 
-  // Returns an array of folder names
-  return subfolders
-    .filter((item) => item.isDirectory)
-    .map((item) => ({
+  const directories = subfolders.filter((item) => item.isDirectory)
+
+  // If current depth equals target depth, return these folders
+  if (currentDepth === targetDepth) {
+    return directories.map((item) => ({
       name: item.name,
       dirPath: item.dirPath
     }))
+  }
+
+  // If current depth is less than target depth, continue recursively searching the next level
+  if (currentDepth < targetDepth) {
+    const results = await Promise.all(
+      directories.map((dir) => findFoldersAtDepth(dir.dirPath, currentDepth + 1, targetDepth))
+    )
+
+    // Merge all results
+    return results.flat()
+  }
+
+  // If current depth is greater than target depth (should not happen), return empty array
+  return []
 }
 
 interface UrlShortcutOptions {

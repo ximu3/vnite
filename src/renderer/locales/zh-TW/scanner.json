@@ -1,0 +1,112 @@
+{
+  "title": "遊戲掃描器管理",
+  "status": {
+    "idle": "空閒",
+    "scanning": "掃描中",
+    "paused": "已暫停",
+    "completed": "已完成",
+    "error": "出錯",
+    "unknown": "未知"
+  },
+  "metrics": {
+    "scanners": "{{count}} 個掃描器",
+    "games": "{{count}} 個遊戲",
+    "scanInterval": "每 {{minutes}} 分鐘掃描",
+    "failures": "{{count}}個失敗"
+  },
+  "actions": {
+    "pause": "暫停",
+    "resume": "繼續",
+    "scanAll": "掃描全部",
+    "stop": "停止",
+    "globalSettings": "全局設定",
+    "addDirectory": "添加掃描目錄",
+    "cancel": "取消",
+    "save": "儲存",
+    "confirmDelete": "確認刪除",
+    "fix": "修復",
+    "back": "返回",
+    "close": "關閉",
+    "browse": "瀏覽"
+  },
+  "list": {
+    "title": "掃描目錄列表",
+    "empty": {
+      "title": "暫無掃描目錄",
+      "description": "添加掃描目錄來自動管理您的遊戲庫"
+    },
+    "item": {
+      "dataSource": "{{name}} 數據",
+      "depth": "{{level}} 深度",
+      "progress": "{{percentage}}% 完成",
+      "games": "{{count}} 個遊戲",
+      "statusLabels": {
+        "idle": "空閒",
+        "scanning": "掃描中",
+        "paused": "已暫停",
+        "completed": "已完成",
+        "error": "錯誤",
+        "unknown": "未知"
+      },
+      "deleteDialog": {
+        "title": "確認刪除",
+        "description": "確定要刪除掃描目錄\"{{path}}\"嗎？此操作無法撤銷。",
+        "cancel": "取消",
+        "confirm": "確認刪除"
+      }
+    }
+  },
+  "notifications": {
+    "fixAttempt": "嘗試獲取遊戲中",
+    "fixSuccess": "修復成功",
+    "fixError": "修復失敗",
+    "createError": "創建掃描器失敗",
+    "intervalTooShort": "掃描間隔時間不能小於5分鐘"
+  },
+  "errors": {
+    "fixFolder": "修復資料夾失敗:",
+    "createScanner": "創建掃描器失敗:"
+  },
+  "globalSettings": {
+    "title": "全局掃描器設定",
+    "scanInterval": "掃描間隔",
+    "scanIntervalTooltip": "所有掃描器的掃描間隔時間，單位為分鐘",
+    "ignoreList": "排除列表",
+    "ignoreListPlaceholder": "輸入排除的資料夾名，支援正則表達式",
+    "ignoreListTooltip": "支援正則表達式，逗號分割多個表達式"
+  },
+  "dataSources": {
+    "steam": "Steam",
+    "vndb": "VNDB",
+    "bangumi": "Bangumi",
+    "ymgal": "YMGAL",
+    "igdb": "IGDB",
+    "dlsite": "DLsite"
+  },
+  "failedFolders": {
+    "title": "處理失敗的資料夾",
+    "fixing": "修復: {{name}}",
+    "dataSource": "數據源:",
+    "dataSourceId": "數據源ID:",
+    "inputPlaceholder": "輸入遊戲ID",
+    "helpText": "請直接輸入數據源對應的遊戲ID，例如Steam遊戲的AppID",
+    "selectPlaceholder": "選擇數據源",
+    "table": {
+      "folderName": "資料夾名",
+      "location": "位置",
+      "error": "錯誤",
+      "actions": "操作"
+    }
+  },
+  "editScanner": {
+    "addTitle": "添加掃描目錄",
+    "editTitle": "編輯掃描目錄",
+    "path": "路徑",
+    "dataSource": "數據源",
+    "scanDepth": "掃描深度",
+    "pathPlaceholder": "選擇遊戲掃描目錄",
+    "dataSourcePlaceholder": "選擇數據源",
+    "depthPlaceholder": "選擇掃描深度",
+    "depthTooltip": "設置資料夾掃描的深度層級"
+  }
+}

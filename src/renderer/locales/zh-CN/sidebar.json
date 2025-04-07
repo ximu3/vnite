@@ -2,7 +2,8 @@
   "title": "vnite",
   "navigation": {
     "library": "游戏库",
-    "records": "记录"
+    "records": "记录",
+    "scanner": "扫描器"
   },
   "actions": {
     "darkMode": "暗色模式",

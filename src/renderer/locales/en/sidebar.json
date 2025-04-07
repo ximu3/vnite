@@ -2,7 +2,8 @@
   "title": "vnite",
   "navigation": {
     "library": "Game Library",
-    "records": "Records"
+    "records": "Records",
+    "scanner": "Scanner"
   },
   "actions": {
     "darkMode": "Dark Mode",

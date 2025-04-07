@@ -6,7 +6,7 @@ export interface configDocs {
   }
   game: {
     scraper: {
-      defaultDatasSource: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb'
+      defaultDatasSource: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite'
     }
     showcase: {
       sort: {
@@ -89,6 +89,17 @@ export interface configLocalDocs {
         hotkey: string
       }
     }
+    scanner: {
+      interval: number
+      ignoreList: string[]
+      list: {
+        [key: string]: {
+          path: string
+          dataSource: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite'
+          depth: number
+        }
+      }
+    }
   }
 }
 
@@ -166,6 +177,17 @@ export const DEFAULT_CONFIG_LOCAL_VALUES: Readonly<configLocalDocs> = {
       magpie: {
         path: '',
         hotkey: 'win+shift+a'
+      }
+    },
+    scanner: {
+      interval: 15 * 60 * 1000,
+      ignoreList: [],
+      list: {} as {
+        [key: string]: {
+          path: string
+          dataSource: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite'
+          depth: number
+        }
       }
     }
   }

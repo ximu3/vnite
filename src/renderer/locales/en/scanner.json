@@ -1,0 +1,112 @@
+{
+  "title": "Game Scanner Management",
+  "status": {
+    "idle": "Idle",
+    "scanning": "Scanning",
+    "paused": "Paused",
+    "completed": "Completed",
+    "error": "Error",
+    "unknown": "Unknown"
+  },
+  "metrics": {
+    "scanners": "{{count}} Scanners",
+    "games": "{{count}} Games",
+    "scanInterval": "Scan every {{minutes}} minutes",
+    "failures": "{{count}} Failures"
+  },
+  "actions": {
+    "pause": "Pause",
+    "resume": "Resume",
+    "scanAll": "Scan All",
+    "stop": "Stop",
+    "globalSettings": "Global Settings",
+    "addDirectory": "Add Scan Directory",
+    "cancel": "Cancel",
+    "save": "Save",
+    "confirmDelete": "Confirm Delete",
+    "fix": "Fix",
+    "back": "Back",
+    "close": "Close",
+    "browse": "Browse"
+  },
+  "list": {
+    "title": "Scan Directory List",
+    "empty": {
+      "title": "No Scan Directories",
+      "description": "Add scan directories to automatically manage your game library"
+    },
+    "item": {
+      "dataSource": "{{name}} Data",
+      "depth": "Depth {{level}}",
+      "progress": "{{percentage}}% Complete",
+      "games": "{{count}} Games",
+      "statusLabels": {
+        "idle": "Idle",
+        "scanning": "Scanning",
+        "paused": "Paused",
+        "completed": "Completed",
+        "error": "Error",
+        "unknown": "Unknown"
+      },
+      "deleteDialog": {
+        "title": "Confirm Delete",
+        "description": "Are you sure you want to delete the scan directory \"{{path}}\"? This action cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Confirm Delete"
+      }
+    }
+  },
+  "notifications": {
+    "fixAttempt": "Attempting to fetch game",
+    "fixSuccess": "Fix successful",
+    "fixError": "Fix failed",
+    "createError": "Failed to create scanner",
+    "intervalTooShort": "Scan interval cannot be less than 5 minutes"
+  },
+  "errors": {
+    "fixFolder": "Failed to fix folder:",
+    "createScanner": "Failed to create scanner:"
+  },
+  "globalSettings": {
+    "title": "Global Scanner Settings",
+    "scanInterval": "Scan Interval",
+    "scanIntervalTooltip": "Scan interval time for all scanners, in minutes",
+    "ignoreList": "Ignore List",
+    "ignoreListPlaceholder": "Enter folder names to exclude, supports regex",
+    "ignoreListTooltip": "Supports regular expressions, separate multiple patterns with commas"
+  },
+  "dataSources": {
+    "steam": "Steam",
+    "vndb": "VNDB",
+    "bangumi": "Bangumi",
+    "ymgal": "YMGAL",
+    "igdb": "IGDB",
+    "dlsite": "DLsite"
+  },
+  "failedFolders": {
+    "title": "Process Failed Folders",
+    "fixing": "Fixing: {{name}}",
+    "dataSource": "Data Source:",
+    "dataSourceId": "Data Source ID:",
+    "inputPlaceholder": "Enter Game ID",
+    "helpText": "Please enter the game ID for the corresponding data source, e.g., Steam game's AppID",
+    "selectPlaceholder": "Select Data Source",
+    "table": {
+      "folderName": "Folder Name",
+      "location": "Location",
+      "error": "Error",
+      "actions": "Actions"
+    }
+  },
+  "editScanner": {
+    "addTitle": "Add Scan Directory",
+    "editTitle": "Edit Scan Directory",
+    "path": "Path",
+    "dataSource": "Data Source",
+    "scanDepth": "Scan Depth",
+    "pathPlaceholder": "Select game scan directory",
+    "dataSourcePlaceholder": "Select data source",
+    "depthPlaceholder": "Select scan depth",
+    "depthTooltip": "Set the depth level for folder scanning"
+  }
+}

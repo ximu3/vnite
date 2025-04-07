@@ -6,7 +6,7 @@ import {
   getGameBackgrounds,
   getGameLogos
 } from '~/scraper'
-import { selectPathDialog, getFirstLevelSubfolders } from '~/utils'
+import { selectPathDialog, getSubfoldersByDepth } from '~/utils'
 import { generateUUID } from '@appUtils'
 import { launcherPreset } from '~/launcher'
 import { saveGameIconByFile } from '~/media'
@@ -187,7 +187,7 @@ export async function getBatchGameAdderData(): Promise<
     return []
   }
   const defaultDataSource = await ConfigDBManager.getConfigValue('game.scraper.defaultDatasSource')
-  const games = await getFirstLevelSubfolders(dirPath)
+  const games = await getSubfoldersByDepth(dirPath, 1)
   const data = games.map(async (game) => {
     return {
       dataId: generateUUID(),

@@ -28,6 +28,7 @@ import {
   setupTray,
   TrayManager
 } from './utils'
+import { GameScannerManager } from './adder/scanner'
 
 let mainWindow: BrowserWindow
 let splashWindow: BrowserWindow | null
@@ -307,6 +308,10 @@ app.whenReady().then(async () => {
 
   // Initialize the scraper
   initScraper()
+
+  // Initialize the game scanner
+  GameScannerManager.startScan()
+  GameScannerManager.startPeriodicScan()
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the

@@ -2,7 +2,8 @@
   "title": "vnite",
   "navigation": {
     "library": "ゲームライブラリ",
-    "records": "記録"
+    "records": "記録",
+    "scanner": "スキャナー"
   },
   "actions": {
     "darkMode": "ダークモード",

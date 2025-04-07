@@ -61,6 +61,14 @@ export function Sidebar(): JSX.Element {
           </TooltipTrigger>
           <TooltipContent side="right">{t('navigation.records')}</TooltipContent>
         </Tooltip>
+        <Tooltip>
+          <TooltipTrigger>
+            <Nav variant="sidebar" to="./scanner">
+              <span className={cn('icon-[mdi--folder-search] w-5 h-5')}></span>
+            </Nav>
+          </TooltipTrigger>
+          <TooltipContent side="right">{t('navigation.scanner')}</TooltipContent>
+        </Tooltip>
       </div>
       <div className={cn('flex flex-col gap-2')}>
         {showThemeSwitchInSidebar && (

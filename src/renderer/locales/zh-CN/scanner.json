@@ -23,7 +23,11 @@
     "addDirectory": "添加扫描目录",
     "cancel": "取消",
     "save": "保存",
-    "confirmDelete": "确认删除"
+    "confirmDelete": "确认删除",
+    "fix": "修复",
+    "back": "返回",
+    "close": "关闭",
+    "browse": "浏览"
   },
   "list": {
     "title": "扫描目录列表",
@@ -78,5 +82,31 @@
     "ymgal": "YMGAL",
     "igdb": "IGDB",
     "dlsite": "DLsite"
+  },
+  "failedFolders": {
+    "title": "处理失败的文件夹",
+    "fixing": "修复: {{name}}",
+    "dataSource": "数据源:",
+    "dataSourceId": "数据源ID:",
+    "inputPlaceholder": "输入游戏ID",
+    "helpText": "请直接输入数据源对应的游戏ID，例如Steam游戏的AppID",
+    "selectPlaceholder": "选择数据源",
+    "table": {
+      "folderName": "文件夹名",
+      "location": "位置",
+      "error": "错误",
+      "actions": "操作"
+    }
+  },
+  "editScanner": {
+    "addTitle": "添加扫描目录",
+    "editTitle": "编辑扫描目录",
+    "path": "路径",
+    "dataSource": "数据源",
+    "scanDepth": "扫描深度",
+    "pathPlaceholder": "选择游戏扫描目录",
+    "dataSourcePlaceholder": "选择数据源",
+    "depthPlaceholder": "选择扫描深度",
+    "depthTooltip": "设置文件夹扫描的深度层级"
   }
 }

@@ -1,0 +1,112 @@
+{
+  "title": "ゲームスキャナー管理",
+  "status": {
+    "idle": "待機中",
+    "scanning": "スキャン中",
+    "paused": "一時停止",
+    "completed": "完了",
+    "error": "エラー",
+    "unknown": "不明"
+  },
+  "metrics": {
+    "scanners": "スキャナー {{count}}個",
+    "games": "ゲーム {{count}}個",
+    "scanInterval": "{{minutes}}分ごとにスキャン",
+    "failures": "失敗 {{count}}個"
+  },
+  "actions": {
+    "pause": "一時停止",
+    "resume": "再開",
+    "scanAll": "すべてスキャン",
+    "stop": "停止",
+    "globalSettings": "全体設定",
+    "addDirectory": "スキャンディレクトリ追加",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "confirmDelete": "削除確認",
+    "fix": "修正",
+    "back": "戻る",
+    "close": "閉じる",
+    "browse": "参照"
+  },
+  "list": {
+    "title": "スキャンディレクトリリスト",
+    "empty": {
+      "title": "スキャンディレクトリがありません",
+      "description": "スキャンディレクトリを追加して、ゲームライブラリを自動管理しましょう"
+    },
+    "item": {
+      "dataSource": "{{name}} データ",
+      "depth": "深さ {{level}}",
+      "progress": "{{percentage}}% 完了",
+      "games": "ゲーム {{count}}個",
+      "statusLabels": {
+        "idle": "待機中",
+        "scanning": "スキャン中",
+        "paused": "一時停止",
+        "completed": "完了",
+        "error": "エラー",
+        "unknown": "不明"
+      },
+      "deleteDialog": {
+        "title": "削除確認",
+        "description": "スキャンディレクトリ \"{{path}}\" を削除してもよろしいですか？この操作は元に戻せません。",
+        "cancel": "キャンセル",
+        "confirm": "削除確認"
+      }
+    }
+  },
+  "notifications": {
+    "fixAttempt": "ゲーム情報取得中",
+    "fixSuccess": "修正成功",
+    "fixError": "修正失敗",
+    "createError": "スキャナー作成失敗",
+    "intervalTooShort": "スキャン間隔は5分以上でなければなりません"
+  },
+  "errors": {
+    "fixFolder": "フォルダの修正に失敗しました:",
+    "createScanner": "スキャナーの作成に失敗しました:"
+  },
+  "globalSettings": {
+    "title": "全体スキャナー設定",
+    "scanInterval": "スキャン間隔",
+    "scanIntervalTooltip": "すべてのスキャナーのスキャン間隔（分単位）",
+    "ignoreList": "除外リスト",
+    "ignoreListPlaceholder": "除外するフォルダ名を入力（正規表現対応）",
+    "ignoreListTooltip": "正規表現対応、カンマで区切って複数指定可能"
+  },
+  "dataSources": {
+    "steam": "Steam",
+    "vndb": "VNDB",
+    "bangumi": "Bangumi",
+    "ymgal": "YMGAL",
+    "igdb": "IGDB",
+    "dlsite": "DLsite"
+  },
+  "failedFolders": {
+    "title": "失敗フォルダの処理",
+    "fixing": "修正: {{name}}",
+    "dataSource": "データソース:",
+    "dataSourceId": "データソースID:",
+    "inputPlaceholder": "ゲームIDを入力",
+    "helpText": "データソースに対応するゲームIDを直接入力してください。例：SteamゲームのAppID",
+    "selectPlaceholder": "データソースを選択",
+    "table": {
+      "folderName": "フォルダ名",
+      "location": "場所",
+      "error": "エラー",
+      "actions": "アクション"
+    }
+  },
+  "editScanner": {
+    "addTitle": "スキャンディレクトリ追加",
+    "editTitle": "スキャンディレクトリ編集",
+    "path": "パス",
+    "dataSource": "データソース",
+    "scanDepth": "スキャン深度",
+    "pathPlaceholder": "ゲームスキャンディレクトリを選択",
+    "dataSourcePlaceholder": "データソースを選択",
+    "depthPlaceholder": "スキャン深度を選択",
+    "depthTooltip": "フォルダスキャンの深度レベルを設定"
+  }
+}
