@@ -361,7 +361,16 @@ export class DBManager {
 
       if (doc) {
         // Document exists, add attachment
-        await db.putAttachment(docId, attachmentId, doc._rev, attachment, type)
+        await db.upsert(docId, (doc: any) => {
+          doc._attachments = doc._attachments || {}
+
+          doc._attachments[attachmentId] = {
+            content_type: type,
+            data: attachment
+          }
+
+          return doc
+        })
       } else {
         // Document does not exist, create a new document and add attachments
         await db.put({
