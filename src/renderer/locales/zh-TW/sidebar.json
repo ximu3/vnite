@@ -11,11 +11,12 @@
     "addGame": "添加遊戲",
     "settings": "設定"
   },
-  "gameAdder": {
-    "withScraper": "使用刮削器",
-    "addSingle": "單個添加",
-    "addBatch": "批次添加",
-    "withoutScraper": "不使用刮削器",
+  "adder": {
+    "addGame": "新增遊戲",
+    "addSingle": "單個新增",
+    "addBatch": "批量新增",
+    "addCustom": "自定義新增",
+    "addScanner": "新增掃描器",
     "importFromThirdParty": "從第三方匯入",
     "steam": "Steam"
   },

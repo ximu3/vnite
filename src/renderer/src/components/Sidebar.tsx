@@ -24,8 +24,11 @@ import { useSteamImporterStore } from '~/pages/Importer/SteamImporter/store'
 import { CloudSyncInfo } from './Config/CloudSync/Info'
 import { useTheme } from './ThemeProvider'
 import { useTranslation } from 'react-i18next'
+import { useGameScannerStore } from '~/pages/GameScannerManager/store'
+import { useNavigate } from 'react-router-dom'
 
 export function Sidebar(): JSX.Element {
+  const navigate = useNavigate()
   const setIsGameAdderOpen = useGameAdderStore((state) => state.setIsOpen)
   const gameBatchAdderActions = useGameBatchAdderStore((state) => state.actions)
   const setIsSteamImporterOpen = useSteamImporterStore((state) => state.setIsOpen)
@@ -33,6 +36,7 @@ export function Sidebar(): JSX.Element {
   const [cloudSyncEnabled] = useConfigLocalState('sync.enabled')
   const { toggleTheme, isDark } = useTheme()
   const [showThemeSwitchInSidebar] = useConfigState('appearances.sidebar.showThemeSwitcher')
+  const setEditingScanner = useGameScannerStore((state) => state.setEditingScanner)
   const { t } = useTranslation('sidebar')
 
   return (
@@ -164,7 +168,7 @@ export function Sidebar(): JSX.Element {
           </Tooltip>
           <DropdownMenuContent side="right" className="">
             <DropdownMenuSub>
-              <DropdownMenuSubTrigger>{t('gameAdder.withScraper')}</DropdownMenuSubTrigger>
+              <DropdownMenuSubTrigger>{t('adder.addGame')}</DropdownMenuSubTrigger>
               <DropdownMenuPortal>
                 <DropdownMenuSubContent>
                   <DropdownMenuItem
@@ -172,7 +176,7 @@ export function Sidebar(): JSX.Element {
                       setIsGameAdderOpen(true)
                     }}
                   >
-                    <div>{t('gameAdder.addSingle')}</div>
+                    <div>{t('adder.addSingle')}</div>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={async () => {
@@ -210,38 +214,49 @@ export function Sidebar(): JSX.Element {
                       )
                     }}
                   >
-                    <div>{t('gameAdder.addBatch')}</div>
+                    <div>{t('adder.addBatch')}</div>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={async () => {
+                      try {
+                        toast.info(t('notifications.selectGamePath'))
+                        const gamePath = await ipcInvoke('select-path-dialog', ['openFile'])
+                        if (!gamePath) {
+                          return
+                        }
+                        toast.promise(
+                          (async (): Promise<void> => {
+                            await ipcInvoke('add-game-to-db-without-metadata', gamePath)
+                          })(),
+                          {
+                            loading: t('notifications.adding'),
+                            success: t('notifications.addSuccess'),
+                            error: t('notifications.addError')
+                          }
+                        )
+                      } catch (_error) {
+                        toast.error(t('notifications.addError'))
+                      }
+                    }}
+                  >
+                    <div>{t('adder.addCustom')}</div>
                   </DropdownMenuItem>
                 </DropdownMenuSubContent>
               </DropdownMenuPortal>
             </DropdownMenuSub>
             <DropdownMenuItem
-              onClick={async () => {
-                try {
-                  toast.info(t('notifications.selectGamePath'))
-                  const gamePath = await ipcInvoke('select-path-dialog', ['openFile'])
-                  if (!gamePath) {
-                    return
-                  }
-                  toast.promise(
-                    (async (): Promise<void> => {
-                      await ipcInvoke('add-game-to-db-without-metadata', gamePath)
-                    })(),
-                    {
-                      loading: t('notifications.adding'),
-                      success: t('notifications.addSuccess'),
-                      error: t('notifications.addError')
-                    }
-                  )
-                } catch (_error) {
-                  toast.error(t('notifications.addError'))
-                }
+              onClick={() => {
+                navigate('/scanner')
+                setEditingScanner({
+                  id: null,
+                  isNew: true
+                })
               }}
             >
-              <div>{t('gameAdder.withoutScraper')}</div>
+              <div>{t('adder.addScanner')}</div>
             </DropdownMenuItem>
             <DropdownMenuSub>
-              <DropdownMenuSubTrigger>{t('gameAdder.importFromThirdParty')}</DropdownMenuSubTrigger>
+              <DropdownMenuSubTrigger>{t('adder.importFromThirdParty')}</DropdownMenuSubTrigger>
               <DropdownMenuPortal>
                 <DropdownMenuSubContent>
                   <DropdownMenuItem
@@ -249,7 +264,7 @@ export function Sidebar(): JSX.Element {
                       setIsSteamImporterOpen(true)
                     }}
                   >
-                    <div>{t('gameAdder.steam')}</div>
+                    <div>{t('adder.steam')}</div>
                   </DropdownMenuItem>
                 </DropdownMenuSubContent>
               </DropdownMenuPortal>

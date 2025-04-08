@@ -12,11 +12,12 @@
     "addGame": "Add Game",
     "settings": "Settings"
   },
-  "gameAdder": {
-    "withScraper": "With Scraper",
+  "adder": {
+    "addGame": "Add Game",
     "addSingle": "Add Single",
     "addBatch": "Add Batch",
-    "withoutScraper": "Without Scraper",
+    "addCustom": "Add Custom",
+    "addScanner": "Add Scanner",
     "importFromThirdParty": "Import from Third Party",
     "steam": "Steam"
   },

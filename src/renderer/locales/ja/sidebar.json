@@ -12,11 +12,12 @@
     "addGame": "ゲームを追加",
     "settings": "設定"
   },
-  "gameAdder": {
-    "withScraper": "スクレイパーを使用",
-    "addSingle": "単体追加",
+  "adder": {
+    "addGame": "ゲームを追加",
+    "addSingle": "単一追加",
     "addBatch": "バッチ追加",
-    "withoutScraper": "スクレイパーを使用しない",
+    "addCustom": "カスタム追加",
+    "addScanner": "スキャナーを追加",
     "importFromThirdParty": "サードパーティからインポート",
     "steam": "Steam"
   },

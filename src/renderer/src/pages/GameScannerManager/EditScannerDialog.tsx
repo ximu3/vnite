@@ -73,15 +73,15 @@ export const EditScannerDialog: React.FC<EditScannerDialogProps> = ({
           <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('editScanner.path')}
           </div>
-          <div className={cn('flex gap-2')}>
+          <div className={cn('flex flex-row gap-2')}>
             <Input
               onChange={(e) => updateFormState({ path: e.target.value })}
               value={formState.path}
-              className={cn('flex-grow text-sm')}
+              className={cn('text-sm flex-1')}
               placeholder={t('editScanner.pathPlaceholder')}
             />
-            <Button type="button" onClick={selectPath}>
-              {t('actions.browse')}
+            <Button className="flex-0" size={'icon'} variant={'outline'} onClick={selectPath}>
+              <span className={cn('icon-[mdi--folder-open-outline] w-5 h-5')}></span>
             </Button>
           </div>
 
