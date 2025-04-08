@@ -6,6 +6,7 @@ import { getSubfoldersByDepth } from '~/utils'
 import { addGameToDatabase } from './services'
 import { searchGames } from '~/scraper'
 import { OverallScanProgress } from '@appTypes/utils'
+import log from 'electron-log/main'
 
 // Scanner configuration type
 interface ScannerConfig {
@@ -298,7 +299,7 @@ export class GameScanner extends EventEmitter {
     const scannerId = scanner.id
     const scannerPath = scanner.path
     this.scanProgress.currentScannerId = scannerId
-    console.log(`Start scanning directory: ${scannerPath}`)
+    log.info(`Start scanning directory: ${scannerPath}`)
 
     // Get scanner progress object
     const scannerProgress = this.scanProgress.scannerProgresses[scannerId]
@@ -331,7 +332,7 @@ export class GameScanner extends EventEmitter {
         // Check status at the beginning of each loop
         if (this.scanProgress.status !== 'scanning') {
           // If not scanning, return directly without further processing
-          console.log(`Scanning stopped`)
+          log.info(`Scanning stopped`)
           return
         }
 
@@ -352,7 +353,7 @@ export class GameScanner extends EventEmitter {
         this.notifyProgressUpdate('scan-progress')
       }
     } catch (error) {
-      console.error(`Error scanning directory ${scannerPath}:`, error)
+      log.error(`Error scanning directory ${scannerPath}:`, error)
       scannerProgress.status = 'error'
       scannerProgress.errorMessage = error instanceof Error ? error.message : String(error)
       throw error
@@ -518,7 +519,7 @@ export class GameScanner extends EventEmitter {
    */
   public stopScan(): void {
     if (this.scanProgress.status === 'scanning') {
-      console.log('Stopping scan')
+      log.info('Stopping scan')
 
       // Completely reset scan progress
       this.scanProgress = {
@@ -578,7 +579,7 @@ export class GameScanner extends EventEmitter {
       this.scanProgress.scannedGames++
       this.notifyProgressUpdate('scan-folder-fixed')
     } catch (error) {
-      console.error('Fix folder failed:', error)
+      log.error('Fix folder failed:', error)
       throw error
     }
   }
@@ -600,7 +601,7 @@ export class GameScanner extends EventEmitter {
       // Remove from failed list
       scannerProgress.failedFolders.splice(index, 1)
     } catch (error) {
-      console.error('Ignore failed folder failed:', error)
+      log.error('Ignore failed folder failed:', error)
       throw error
     }
   }
@@ -648,7 +649,7 @@ export class GameScanner extends EventEmitter {
         // Give render process time to process
         await new Promise((resolve) => setTimeout(resolve, 50))
       } catch (error) {
-        console.error('Error processing message queue:', error)
+        log.error('Error processing message queue:', error)
         this.messageQueue.shift() // Remove problematic message
       }
     }
@@ -687,7 +688,7 @@ export class GameScanner extends EventEmitter {
 
       // Ensure interval is at least 5 minutes to prevent frequent scanning
       const safeInterval = Math.max(interval, 60000 * 5)
-      console.log(`Setting global periodic scan at ${safeInterval}ms`)
+      log.info(`Setting global periodic scan at ${safeInterval}ms`)
 
       // Record last scan time
       this.lastScanTime = Date.now()
@@ -699,16 +700,16 @@ export class GameScanner extends EventEmitter {
           console.log(`Periodic scan triggered, but scan in progress, skipping this scan`)
           return
         }
-        console.log(`Periodic global scan triggered`)
+        log.info(`Periodic global scan triggered`)
         try {
           await this.startScan()
         } catch (error) {
-          console.error(`Global periodic scan failed:`, error)
+          log.error(`Global periodic scan failed:`, error)
         }
       }, safeInterval)
-      console.log(`Global periodic scan started`)
+      log.info(`Global periodic scan started`)
     } catch (error) {
-      console.error('Start periodic scan failed:', error)
+      log.error('Start periodic scan failed:', error)
       throw error
     }
   }
@@ -720,7 +721,7 @@ export class GameScanner extends EventEmitter {
     if (this.globalScanTimer) {
       clearInterval(this.globalScanTimer)
       this.globalScanTimer = null
-      console.log(`Global periodic scan stopped`)
+      log.info(`Global periodic scan stopped`)
       return true
     }
     return false
