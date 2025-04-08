@@ -461,8 +461,8 @@ export class GameScanner extends EventEmitter {
           scannerProgress.currentFolder = '' // Clear the currently processing folder
           this.notifyProgressUpdate('scan-progress')
 
-          // Operation interval delay (3 seconds)
-          await new Promise((resolve) => setTimeout(resolve, 3000))
+          // Operation interval delay (300ms)
+          await new Promise((resolve) => setTimeout(resolve, 300))
         }
       }
     } finally {
