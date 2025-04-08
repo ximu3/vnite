@@ -30,9 +30,6 @@ interface GameScannerStore {
   scanProgress: OverallScanProgress
   isShowingFailedDialog: boolean
   selectedFailedFolder: FailedFolder | null
-  searchResults: any[]
-  searchTerm: string
-  isSearching: boolean
   formState: ScannerForm
   globalSettings: GlobalScannerSettings
   intervalMinutes: string
@@ -83,12 +80,9 @@ export const useGameScannerStore = create<GameScannerStore>((set, get) => ({
     scannedGames: 0,
     scannerProgresses: {}
   },
-  isShowingScanDialog: false,
   isShowingFailedDialog: false,
   selectedFailedFolder: null,
-  searchResults: [],
-  searchTerm: '',
-  isSearching: false,
+
   formState: {
     path: '',
     dataSource: 'steam',
@@ -178,9 +172,7 @@ export const useGameScannerStore = create<GameScannerStore>((set, get) => ({
   // Failed Folder Handling
   selectFailedFolder: (folder): void => {
     set({
-      selectedFailedFolder: folder,
-      searchTerm: folder?.name || '',
-      searchResults: []
+      selectedFailedFolder: folder
     })
   },
 
@@ -194,9 +186,7 @@ export const useGameScannerStore = create<GameScannerStore>((set, get) => ({
 
       // Reset state
       set({
-        selectedFailedFolder: null,
-        searchResults: [],
-        searchTerm: ''
+        selectedFailedFolder: null
       })
     } catch (error) {
       console.error(`${t('errors.fixFolder')}`, error)
