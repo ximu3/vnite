@@ -25,6 +25,7 @@
     "save": "保存",
     "confirmDelete": "削除確認",
     "fix": "修正",
+    "ignore": "無視",
     "back": "戻る",
     "close": "閉じる",
     "browse": "参照"
@@ -73,7 +74,7 @@
     "scanIntervalTooltip": "すべてのスキャナーのスキャン間隔（分単位）",
     "ignoreList": "除外リスト",
     "ignoreListPlaceholder": "除外するフォルダ名を入力（正規表現対応）",
-    "ignoreListTooltip": "正規表現対応、カンマで区切って複数指定可能"
+    "ignoreListTooltip": "正規表現対応、各行に1つのフォルダ名を指定してください"
   },
   "dataSources": {
     "steam": "Steam",

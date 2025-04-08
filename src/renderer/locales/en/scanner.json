@@ -25,6 +25,7 @@
     "save": "Save",
     "confirmDelete": "Confirm Delete",
     "fix": "Fix",
+    "ignore": "Ignore",
     "back": "Back",
     "close": "Close",
     "browse": "Browse"
@@ -73,7 +74,7 @@
     "scanIntervalTooltip": "Scan interval time for all scanners, in minutes",
     "ignoreList": "Ignore List",
     "ignoreListPlaceholder": "Enter folder names to exclude, supports regex",
-    "ignoreListTooltip": "Supports regular expressions, separate multiple patterns with commas"
+    "ignoreListTooltip": "Supports regular expressions, each line is a separate expression"
   },
   "dataSources": {
     "steam": "Steam",

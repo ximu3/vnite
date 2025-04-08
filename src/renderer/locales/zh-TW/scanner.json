@@ -25,6 +25,7 @@
     "save": "儲存",
     "confirmDelete": "確認刪除",
     "fix": "修復",
+    "ignore": "忽略",
     "back": "返回",
     "close": "關閉",
     "browse": "瀏覽"
@@ -73,7 +74,7 @@
     "scanIntervalTooltip": "所有掃描器的掃描間隔時間，單位為分鐘",
     "ignoreList": "排除列表",
     "ignoreListPlaceholder": "輸入排除的資料夾名，支援正則表達式",
-    "ignoreListTooltip": "支援正則表達式，逗號分割多個表達式"
+    "ignoreListTooltip": "支援正則表達式，每行一個"
   },
   "dataSources": {
     "steam": "Steam",

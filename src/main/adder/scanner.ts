@@ -1,5 +1,4 @@
 import { BrowserWindow, ipcMain } from 'electron'
-import * as path from 'path'
 import * as fse from 'fs-extra'
 import { EventEmitter } from 'events'
 import { ConfigDBManager, GameDBManager } from '~/database'
@@ -35,7 +34,6 @@ export class GameScanner extends EventEmitter {
     scannerProgresses: {}
   }
   private currentScannerConfig: (ScannerConfig & { id: string }) | null = null
-
   private globalScanTimer: NodeJS.Timeout | null = null
   private lastScanTime: number = 0
   private autoStartPeriodicScan: boolean = true
@@ -45,6 +43,16 @@ export class GameScanner extends EventEmitter {
   private isProcessingQueue: boolean = false
   private lastNotifyTime: number = 0
   private notifyThrottleTime: number = 200
+
+  // Queue related properties
+  private gameAddQueue: Array<{
+    dataSource: string
+    folder: { name: string; dirPath: string }
+    scannerId: string // Add scannerId to track which scanner the folder belongs to
+  }> = []
+  private isProcessingGameQueue: boolean = false
+  private queuedPaths: Set<string> = new Set()
+  private shouldAbortQueue: boolean = false
 
   constructor() {
     super()
@@ -64,18 +72,6 @@ export class GameScanner extends EventEmitter {
     // Start scanning a specific game directory
     ipcMain.handle('game-scanner:scan-scanner', async (_, scannerId: string) => {
       await this.scanSpecificScanner(scannerId)
-      return this.scanProgress
-    })
-
-    // Pause scanning
-    ipcMain.handle('game-scanner:pause-scan', () => {
-      this.pauseScan()
-      return this.scanProgress
-    })
-
-    // Resume scanning
-    ipcMain.handle('game-scanner:resume-scan', async () => {
-      await this.resumeScan()
       return this.scanProgress
     })
 
@@ -120,6 +116,15 @@ export class GameScanner extends EventEmitter {
     ipcMain.handle('game-scanner:request-progress', () => {
       return { ...this.scanProgress }
     })
+
+    // Add method to ignore failed folder
+    ipcMain.handle(
+      'game-scanner:ignore-failed-folder',
+      (_, scannerId: string, folderPath: string) => {
+        this.ignoreFailedFolder(scannerId, folderPath)
+        return this.scanProgress
+      }
+    )
   }
 
   /**
@@ -138,18 +143,19 @@ export class GameScanner extends EventEmitter {
    */
   public async startScan(): Promise<void> {
     if (this.scanProgress.status === 'scanning') {
+      console.log('Scan already in progress')
       return // Already scanning
     }
     try {
       // Get global scanner configuration
       const scannerConfig = await this.getGlobalScannerConfig()
-
       if (!scannerConfig.list || Object.keys(scannerConfig.list).length === 0) {
         console.log('No scan directories configured, cannot start scanning')
         return
       }
 
       const scannerIds = Object.keys(scannerConfig.list)
+
       // Initialize total progress
       this.scanProgress = {
         status: 'scanning',
@@ -208,8 +214,8 @@ export class GameScanner extends EventEmitter {
       this.scanProgress.errorMessage = error instanceof Error ? error.message : String(error)
       this.notifyProgressUpdate('scan-error')
     } finally {
-      // Reset current scanner config if not paused
-      if (this.scanProgress.status !== 'paused') {
+      // Reset current scanner config when done
+      if (this.scanProgress.status !== 'scanning') {
         this.currentScannerConfig = null
       }
     }
@@ -220,16 +226,15 @@ export class GameScanner extends EventEmitter {
    */
   public async scanSpecificScanner(scannerId: string): Promise<void> {
     if (this.scanProgress.status === 'scanning') {
+      console.log('Scan already in progress')
       return // Already scanning
     }
     try {
       // Get global scanner configuration
       const scannerConfig = await this.getGlobalScannerConfig()
-
       if (!scannerConfig.list) {
         throw new Error('Scanner configuration does not exist')
       }
-
       const scanner = scannerConfig.list[scannerId]
       if (!scanner) {
         throw new Error('Specified scanner not found')
@@ -245,7 +250,6 @@ export class GameScanner extends EventEmitter {
         scannedGames: 0,
         scannerProgresses: {}
       }
-
       this.scanProgress.scannerProgresses[scannerId] = {
         status: 'idle',
         processedFolders: 0,
@@ -255,7 +259,6 @@ export class GameScanner extends EventEmitter {
         failedFolders: [],
         scannedGames: 0
       }
-
       this.currentScannerConfig = {
         ...scanner,
         id: scannerId
@@ -278,8 +281,8 @@ export class GameScanner extends EventEmitter {
       this.scanProgress.errorMessage = error instanceof Error ? error.message : String(error)
       this.notifyProgressUpdate('scan-error')
     } finally {
-      // Reset current scanner config if not paused
-      if (this.scanProgress.status !== 'paused') {
+      // Reset current scanner config when done
+      if (this.scanProgress.status !== 'scanning') {
         this.currentScannerConfig = null
       }
     }
@@ -320,7 +323,7 @@ export class GameScanner extends EventEmitter {
       // Update progress info
       scannerProgress.foldersToProcess = foldersToScan.map((f) => f.dirPath)
       scannerProgress.totalFolders = foldersToScan.length
-      scannerProgress.processedFolders = 0
+      scannerProgress.processedFolders = 0 // Initialize to 0
       this.notifyProgressUpdate('scan-progress')
 
       // Process each folder
@@ -328,7 +331,7 @@ export class GameScanner extends EventEmitter {
         // Check status at the beginning of each loop
         if (this.scanProgress.status !== 'scanning') {
           // If not scanning, return directly without further processing
-          console.log(`Scanning ${this.scanProgress.status === 'paused' ? 'paused' : 'stopped'}`)
+          console.log(`Scanning stopped`)
           return
         }
 
@@ -336,47 +339,14 @@ export class GameScanner extends EventEmitter {
         scannerProgress.currentFolder = folder.dirPath
         this.notifyProgressUpdate('scan-progress')
 
-        try {
-          // Check if game already exists
-          const gameExists = await GameDBManager.checkGameExitsByPath(folder.dirPath)
-
-          if (!gameExists) {
-            // Check status again before long operation
-            if (this.scanProgress.status !== 'scanning') {
-              return
-            }
-
-            // Use folder name as game name to search for ID
-            await this.addGameByFolderName(scanner.dataSource, folder)
-
-            // Check status again after wait
-            if (this.scanProgress.status !== 'scanning') {
-              return
-            }
-
-            await new Promise((resolve) => setTimeout(resolve, 3000)) // Wait 3 seconds
-          }
-
-          scannerProgress.scannedGames++
-          this.scanProgress.scannedGames++
-          this.notifyProgressUpdate('scan-progress')
-        } catch (error) {
-          // Record failed folder
-          scannerProgress.failedFolders.push({
-            path: folder.dirPath,
-            name: folder.name,
-            error: error instanceof Error ? error.message : String(error),
-            dataSource: scanner.dataSource // Save data source
-          })
-          this.notifyProgressUpdate('scan-folder-error')
-        }
-
-        // Update progress
-        scannerProgress.processedFolders++
-        this.notifyProgressUpdate('scan-progress')
+        // Add folder to processing queue
+        this.addGameToQueue(scanner.dataSource, folder, scannerId)
       }
 
-      // Only set to completed if all folders are processed normally
+      // Wait for queue processing to complete
+      await this.waitForQueueToComplete()
+
+      // Only set to completed if all folders processed successfully
       if (this.scanProgress.status === 'scanning') {
         scannerProgress.status = 'completed'
         this.notifyProgressUpdate('scan-progress')
@@ -390,26 +360,137 @@ export class GameScanner extends EventEmitter {
   }
 
   /**
-   * Add game by folder name
+   * Add game to processing queue
    */
-  private async addGameByFolderName(
+  private addGameToQueue(
     dataSource: string,
-    folder: { name: string; dirPath: string }
-  ): Promise<void> {
-    // Use folder name as game name for search
-    const gameResults = await searchGames(dataSource, folder.name)
-    if (gameResults && gameResults.length > 0) {
-      // Use first result as match
-      const match = gameResults[0]
-      await addGameToDatabase({
-        dataSource,
-        dataSourceId: match.id,
-        dirPath: folder.dirPath
-      })
-    } else {
-      // If no match found, add game without metadata
-      throw new Error(`No games found matching "${folder.name}"`)
+    folder: { name: string; dirPath: string },
+    scannerId: string
+  ): void {
+    // Check if this path is already in the queue to avoid duplication
+    if (this.queuedPaths.has(folder.dirPath)) {
+      console.log(`Path already in queue: ${folder.dirPath}`)
+      return
     }
+
+    // Add to queue and mark the path as queued
+    this.gameAddQueue.push({ dataSource, folder, scannerId })
+    this.queuedPaths.add(folder.dirPath)
+
+    // Start processing if the queue is not being processed
+    if (!this.isProcessingGameQueue) {
+      this.processGameQueue()
+    }
+  }
+
+  /**
+   * Clear game addition queue
+   */
+  public clearGameQueue(): void {
+    this.gameAddQueue = []
+    this.queuedPaths.clear()
+  }
+
+  /**
+   * Process game addition queue
+   */
+  private async processGameQueue(): Promise<void> {
+    if (this.isProcessingGameQueue) return
+
+    this.isProcessingGameQueue = true
+    this.shouldAbortQueue = false
+
+    try {
+      while (this.gameAddQueue.length > 0 && !this.shouldAbortQueue) {
+        // Exit queue processing if scanning has been stopped
+        if (this.scanProgress.status !== 'scanning') {
+          return
+        }
+
+        const item = this.gameAddQueue[0]
+        const { dataSource, folder, scannerId } = item
+        const scannerProgress = this.scanProgress.scannerProgresses[scannerId]
+
+        try {
+          // Check if the game already exists
+          const gameExists = await GameDBManager.checkGameExitsByPath(folder.dirPath)
+
+          if (!gameExists) {
+            // Check status again to prevent state changes before long operations
+            if (this.scanProgress.status !== 'scanning') {
+              return
+            }
+
+            // Use folder name as game name for search
+            const gameResults = await searchGames(dataSource, folder.name)
+
+            if (gameResults && gameResults.length > 0) {
+              // Use the first result as a match
+              const match = gameResults[0]
+              await addGameToDatabase({
+                dataSource,
+                dataSourceId: match.id,
+                dirPath: folder.dirPath
+              })
+            } else {
+              // If no match is found
+              throw new Error(`No games found matching "${folder.name}"`)
+            }
+          }
+
+          // Update the scanner's game count
+          scannerProgress.scannedGames++
+          this.scanProgress.scannedGames++
+        } catch (error) {
+          // Record failed folder
+          scannerProgress.failedFolders.push({
+            path: folder.dirPath,
+            name: folder.name,
+            error: error instanceof Error ? error.message : String(error),
+            dataSource
+          })
+          this.notifyProgressUpdate('scan-folder-error')
+        } finally {
+          // Remove from queue and set
+          this.gameAddQueue.shift()
+          this.queuedPaths.delete(folder.dirPath)
+
+          // Now update processing progress - counts as one complete process regardless of success or failure
+          scannerProgress.processedFolders++
+          scannerProgress.currentFolder = '' // Clear the currently processing folder
+          this.notifyProgressUpdate('scan-progress')
+
+          // Operation interval delay (3 seconds)
+          await new Promise((resolve) => setTimeout(resolve, 3000))
+        }
+      }
+    } finally {
+      this.isProcessingGameQueue = false
+      this.shouldAbortQueue = false
+    }
+  }
+
+  /**
+   * Wait for queue processing to complete
+   */
+  private async waitForQueueToComplete(): Promise<void> {
+    // Return directly if the queue is empty and not being processed
+    if (this.gameAddQueue.length === 0 && !this.isProcessingGameQueue) {
+      return
+    }
+
+    // Otherwise wait for queue processing to complete
+    return new Promise<void>((resolve) => {
+      const checkQueue = (): void => {
+        if (this.gameAddQueue.length === 0 && !this.isProcessingGameQueue) {
+          resolve()
+        } else {
+          setTimeout(checkQueue, 500) // Check every 500 milliseconds
+        }
+      }
+
+      checkQueue()
+    })
   }
 
   /**
@@ -422,8 +503,10 @@ export class GameScanner extends EventEmitter {
     if (!ignoreList || ignoreList.length === 0) {
       return folders
     }
+
     // Convert ignore list to regex patterns
     const regexList = ignoreList.map((pattern) => new RegExp(pattern))
+
     // Filter out folders matching ignore patterns
     return folders.filter((folder) => {
       return !regexList.some((regex) => regex.test(folder.name))
@@ -431,217 +514,28 @@ export class GameScanner extends EventEmitter {
   }
 
   /**
-   * Pause scanning
-   */
-  public pauseScan(): void {
-    if (this.scanProgress.status === 'scanning') {
-      console.log('Pausing scan')
-      this.scanProgress.status = 'paused'
-
-      // Pause current scanner progress
-      const currentScannerId = this.scanProgress.currentScannerId
-      if (currentScannerId && this.scanProgress.scannerProgresses[currentScannerId]) {
-        this.scanProgress.scannerProgresses[currentScannerId].status = 'paused'
-      }
-
-      this.notifyProgressUpdate('scan-paused')
-    }
-  }
-
-  /**
-   * Resume scanning
-   */
-  public async resumeScan(): Promise<void> {
-    if (this.scanProgress.status === 'paused') {
-      console.log('Resuming scan')
-      this.scanProgress.status = 'scanning'
-
-      // Resume current scanner progress
-      const currentScannerId = this.scanProgress.currentScannerId
-      if (currentScannerId && this.scanProgress.scannerProgresses[currentScannerId]) {
-        this.scanProgress.scannerProgresses[currentScannerId].status = 'scanning'
-      }
-
-      this.notifyProgressUpdate('scan-resumed')
-
-      try {
-        // Process remaining folders for current scanner
-        if (this.currentScannerConfig) {
-          await this.processPendingFolders()
-        }
-
-        // Use loop to process remaining scanners
-        while (
-          this.scanProgress.status === 'scanning' &&
-          this.scanProgress.processedScanners < this.scanProgress.totalScanners
-        ) {
-          // Find next unprocessed scanner
-          const nextScannerId =
-            this.scanProgress.scannersToProcess[this.scanProgress.processedScanners]
-          if (!nextScannerId) break
-
-          try {
-            // Get global scanner configuration
-            const scannerConfig = await this.getGlobalScannerConfig()
-            if (!scannerConfig.list || !scannerConfig.list[nextScannerId]) {
-              throw new Error(`Scanner configuration not found: ${nextScannerId}`)
-            }
-
-            const config = scannerConfig.list[nextScannerId]
-            this.currentScannerConfig = {
-              ...config,
-              id: nextScannerId
-            }
-            this.scanProgress.currentScannerId = nextScannerId
-            await this.scanDirectory(this.currentScannerConfig, scannerConfig.ignoreList)
-            this.scanProgress.processedScanners++
-          } catch (error) {
-            console.error(`Failed to process scanner:`, error)
-            this.scanProgress.status = 'error'
-            this.scanProgress.errorMessage = error instanceof Error ? error.message : String(error)
-            this.notifyProgressUpdate('scan-error')
-            break
-          }
-        }
-
-        // Check if all scanners are completed
-        if (
-          this.scanProgress.status === 'scanning' &&
-          this.scanProgress.processedScanners >= this.scanProgress.totalScanners
-        ) {
-          this.scanProgress.status = 'completed'
-          this.notifyProgressUpdate('scan-completed')
-
-          // Update last scan time
-          this.lastScanTime = Date.now()
-        }
-      } catch (error) {
-        console.error(`Resume scanning failed:`, error)
-        this.scanProgress.status = 'error'
-        this.scanProgress.errorMessage = error instanceof Error ? error.message : String(error)
-        this.notifyProgressUpdate('scan-error')
-      }
-    }
-  }
-
-  /**
    * Stop scanning
    */
   public stopScan(): void {
-    if (this.scanProgress.status === 'scanning' || this.scanProgress.status === 'paused') {
+    if (this.scanProgress.status === 'scanning') {
       console.log('Stopping scan')
-      this.scanProgress.status = 'idle'
 
-      // Stop progress for all scanners
-      for (const scannerId in this.scanProgress.scannerProgresses) {
-        this.scanProgress.scannerProgresses[scannerId].status = 'idle'
+      // Completely reset scan progress
+      this.scanProgress = {
+        status: 'idle',
+        currentScannerId: '',
+        processedScanners: 0,
+        totalScanners: 0,
+        scannersToProcess: [],
+        scannedGames: 0,
+        scannerProgresses: {}
       }
+
+      this.clearGameQueue()
 
       // Reset current scanner config
       this.currentScannerConfig = null
-
       this.notifyProgressUpdate('scan-stopped')
-    }
-  }
-
-  /**
-   * Process remaining folders
-   */
-  private async processPendingFolders(): Promise<void> {
-    if (!this.currentScannerConfig) {
-      throw new Error('Current scanner configuration does not exist')
-    }
-
-    const scannerId = this.currentScannerConfig.id
-    const scannerProgress = this.scanProgress.scannerProgresses[scannerId]
-    if (!scannerProgress) {
-      throw new Error('Current scanner progress does not exist')
-    }
-
-    // Get unprocessed folders
-    const pendingFolders = scannerProgress.foldersToProcess.slice(scannerProgress.processedFolders)
-
-    try {
-      for (let i = 0; i < pendingFolders.length; i++) {
-        // Check status at the beginning of each loop
-        if (this.scanProgress.status !== 'scanning') {
-          console.log(
-            `Resume scanning ${this.scanProgress.status === 'paused' ? 'paused' : 'stopped'}`
-          )
-          return
-        }
-
-        const folderPath = pendingFolders[i]
-        const folderName = path.basename(folderPath)
-
-        scannerProgress.currentFolder = folderPath
-        this.notifyProgressUpdate('scan-progress')
-
-        try {
-          // Check if game already exists
-          const gameExists = await GameDBManager.checkGameExitsByPath(folderPath)
-
-          if (!gameExists) {
-            // Check status again
-            if (this.scanProgress.status !== 'scanning') {
-              return
-            }
-
-            // Add game
-            await this.addGameByFolderName(this.currentScannerConfig.dataSource, {
-              name: folderName,
-              dirPath: folderPath
-            })
-
-            // Check status again during wait
-            if (this.scanProgress.status !== 'scanning') {
-              return
-            }
-
-            await new Promise((resolve) => setTimeout(resolve, 3000)) // Wait 3 seconds
-          }
-
-          scannerProgress.scannedGames++
-          this.scanProgress.scannedGames++
-        } catch (error) {
-          // Record failed folder
-          scannerProgress.failedFolders.push({
-            path: folderPath,
-            name: folderName,
-            error: error instanceof Error ? error.message : String(error),
-            dataSource: this.currentScannerConfig.dataSource
-          })
-          this.notifyProgressUpdate('scan-folder-error')
-        }
-
-        // Update progress
-        scannerProgress.processedFolders++
-        this.notifyProgressUpdate('scan-progress')
-      }
-
-      // Only update status when normally completed all folders and status is scanning
-      if (this.scanProgress.status === 'scanning') {
-        // Check if completed
-        if (scannerProgress.processedFolders >= scannerProgress.totalFolders) {
-          scannerProgress.status = 'completed'
-
-          // Check if all scanners are completed
-          const allCompleted = Object.values(this.scanProgress.scannerProgresses).every(
-            (progress) => progress.status === 'completed' || progress.status === 'error'
-          )
-
-          if (allCompleted) {
-            this.scanProgress.status = 'completed'
-            this.notifyProgressUpdate('scan-completed')
-          }
-        }
-      }
-    } catch (error) {
-      scannerProgress.status = 'error'
-      scannerProgress.errorMessage = error instanceof Error ? error.message : String(error)
-      this.scanProgress.status = 'error'
-      this.scanProgress.errorMessage = error instanceof Error ? error.message : String(error)
-      this.notifyProgressUpdate('scan-error')
     }
   }
 
@@ -666,7 +560,6 @@ export class GameScanner extends EventEmitter {
           break
         }
       }
-
       if (foundScannerId === null || foundIndex === -1) {
         throw new Error('Failed folder not found')
       }
@@ -690,25 +583,38 @@ export class GameScanner extends EventEmitter {
     }
   }
 
+  private ignoreFailedFolder(scannerId: string, folderPath: string): void {
+    try {
+      // Find the scanner progress
+      const scannerProgress = this.scanProgress.scannerProgresses[scannerId]
+      if (!scannerProgress) {
+        throw new Error('Scanner not found')
+      }
+
+      // Find the failed folder
+      const index = scannerProgress.failedFolders.findIndex((f) => f.path === folderPath)
+      if (index === -1) {
+        throw new Error('Failed folder not found')
+      }
+
+      // Remove from failed list
+      scannerProgress.failedFolders.splice(index, 1)
+    } catch (error) {
+      console.error('Ignore failed folder failed:', error)
+      throw error
+    }
+  }
+
   /**
    * Notify render process of progress update
    */
   private notifyProgressUpdate(event: string): void {
     // Check if throttling needed (except for specific important events)
     const now = Date.now()
-    const importantEvents = [
-      'scan-start',
-      'scan-completed',
-      'scan-error',
-      'scan-paused',
-      'scan-resumed',
-      'scan-stopped'
-    ]
-
+    const importantEvents = ['scan-start', 'scan-completed', 'scan-error', 'scan-stopped']
     if (!importantEvents.includes(event) && now - this.lastNotifyTime < this.notifyThrottleTime) {
       return // Skip non-important events within throttle time
     }
-
     this.lastNotifyTime = now
 
     // Use safe queue method to send messages
@@ -726,24 +632,19 @@ export class GameScanner extends EventEmitter {
   // Process message queue asynchronously
   private async processMessageQueue(): Promise<void> {
     if (this.isProcessingQueue) return
-
     this.isProcessingQueue = true
-
     while (this.messageQueue.length > 0) {
       try {
         const message = this.messageQueue[0]
         const windows = BrowserWindow.getAllWindows()
-
         if (windows.length > 0) {
           const mainWindow = windows[0]
           if (mainWindow && !mainWindow.isDestroyed() && mainWindow.webContents) {
             mainWindow.webContents.send(`game-scanner:${message.event}`, message.data)
           }
         }
-
         // Remove processed message
         this.messageQueue.shift()
-
         // Give render process time to process
         await new Promise((resolve) => setTimeout(resolve, 50))
       } catch (error) {
@@ -751,7 +652,6 @@ export class GameScanner extends EventEmitter {
         this.messageQueue.shift() // Remove problematic message
       }
     }
-
     this.isProcessingQueue = false
   }
 
@@ -768,7 +668,6 @@ export class GameScanner extends EventEmitter {
   public async startPeriodicScan(): Promise<void> {
     // Stop existing timer scan
     this.stopPeriodicScan()
-
     try {
       // Get global scanner configuration
       const scannerConfig = await this.getGlobalScannerConfig()
@@ -796,11 +695,10 @@ export class GameScanner extends EventEmitter {
       // Set global timer
       this.globalScanTimer = setInterval(async () => {
         // Skip this scan if already scanning
-        if (this.scanProgress.status === 'scanning' || this.scanProgress.status === 'paused') {
+        if (this.scanProgress.status === 'scanning') {
           console.log(`Periodic scan triggered, but scan in progress, skipping this scan`)
           return
         }
-
         console.log(`Periodic global scan triggered`)
         try {
           await this.startScan()
@@ -808,7 +706,6 @@ export class GameScanner extends EventEmitter {
           console.error(`Global periodic scan failed:`, error)
         }
       }, safeInterval)
-
       console.log(`Global periodic scan started`)
     } catch (error) {
       console.error('Start periodic scan failed:', error)
@@ -846,7 +743,6 @@ export class GameScanner extends EventEmitter {
     } catch (error) {
       console.error('Failed to get scan interval:', error)
     }
-
     return {
       active: this.globalScanTimer !== null,
       lastScanTime: this.lastScanTime,

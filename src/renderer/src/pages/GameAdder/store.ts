@@ -3,7 +3,7 @@ import { toast } from 'sonner'
 import { useConfigStore } from '~/stores'
 import i18next from 'i18next'
 
-export type DataSource = 'vndb' | 'igdb' | 'steam' | 'bangumi' | 'ymgal'
+export type DataSource = 'vndb' | 'igdb' | 'steam' | 'bangumi' | 'ymgal' | 'dlsite'
 
 export type GameList = {
   id: string

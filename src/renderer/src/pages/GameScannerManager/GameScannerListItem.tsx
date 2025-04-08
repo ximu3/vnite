@@ -69,7 +69,7 @@ export const GameScannerListItem: React.FC<GameScannerListItemProps> = ({
   const scannerProgress = scanProgress?.scannerProgresses[scannerId] || null
 
   // Check if current directory is being scanned
-  const isScanning = scannerProgress?.status === 'scanning' || scannerProgress?.status === 'paused'
+  const isScanning = scannerProgress?.status === 'scanning'
 
   // Calculate progress percentage for this scanner
   const calculateProgress = (): number => {
@@ -85,9 +85,9 @@ export const GameScannerListItem: React.FC<GameScannerListItemProps> = ({
     if (!scannerProgress) return { variant: 'outline', label: t('list.item.statusLabels.idle') }
 
     const variants: Record<string, 'default' | 'outline' | 'secondary' | 'destructive'> = {
-      scanning: 'default',
+      scanning: 'secondary',
       paused: 'outline',
-      completed: 'secondary',
+      completed: 'default',
       error: 'destructive',
       idle: 'outline'
     }
@@ -110,7 +110,7 @@ export const GameScannerListItem: React.FC<GameScannerListItemProps> = ({
         <div
           className={cn(
             'absolute left-0 top-0 h-full bg-primary/10 transition-all duration-300',
-            scannerProgress?.status === 'paused' ? 'bg-muted/20' : 'bg-primary/10'
+            'bg-primary/10'
           )}
           style={{ width: `${calculateProgress()}%` }}
         />
@@ -150,11 +150,16 @@ export const GameScannerListItem: React.FC<GameScannerListItemProps> = ({
             variant="ghost"
             size="icon"
             onClick={handleScan}
-            disabled={scanProgress.status === 'scanning' || scanProgress.status === 'paused'}
+            disabled={scanProgress.status === 'scanning'}
           >
             <PlayCircle className="w-4 h-4" />
           </Button>
-          <Button variant="ghost" size="icon" onClick={onEditClick}>
+          <Button
+            variant="ghost"
+            size="icon"
+            disabled={scanProgress.status === 'scanning'}
+            onClick={onEditClick}
+          >
             <Pencil className="w-4 h-4" />
           </Button>
           <Button
@@ -162,7 +167,7 @@ export const GameScannerListItem: React.FC<GameScannerListItemProps> = ({
             size="icon"
             onClick={() => setShowDeleteDialog(true)}
             className="hover:text-destructive"
-            disabled={isScanning}
+            disabled={scanProgress.status === 'scanning'}
           >
             <Trash2 className="w-4 h-4" />
           </Button>

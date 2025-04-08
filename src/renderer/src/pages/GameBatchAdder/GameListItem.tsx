@@ -53,6 +53,7 @@ export function GameListItem({ game }: { game: Game }): JSX.Element {
               <SelectItem value="bangumi">{t('gameAdder.search.dataSources.bangumi')}</SelectItem>
               <SelectItem value="igdb">{t('gameAdder.search.dataSources.igdb')}</SelectItem>
               <SelectItem value="ymgal">{t('gameAdder.search.dataSources.ymgal')}</SelectItem>
+              <SelectItem value="dlsite">{t('gameAdder.search.dataSources.dlsite')}</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>

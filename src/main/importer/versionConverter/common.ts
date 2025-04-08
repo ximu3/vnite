@@ -610,18 +610,16 @@ async function convertConfig(basePath: string): Promise<void> {
     })
 
     // Converting Local Configurations - Game Associations
-    await ConfigDBManager.setConfigLocalValue('game', {
-      linkage: {
-        localeEmulator: {
-          path: v2Config.advanced.linkage.localeEmulator.path
-        },
-        visualBoyAdvance: {
-          path: v2Config.advanced.linkage.visualBoyAdvance.path
-        },
-        magpie: {
-          path: v2Config.advanced.linkage.magpie.path,
-          hotkey: v2Config.advanced.linkage.magpie.hotkey
-        }
+    await ConfigDBManager.setConfigLocalValue('game.linkage', {
+      localeEmulator: {
+        path: v2Config.advanced.linkage.localeEmulator.path
+      },
+      visualBoyAdvance: {
+        path: v2Config.advanced.linkage.visualBoyAdvance.path
+      },
+      magpie: {
+        path: v2Config.advanced.linkage.magpie.path,
+        hotkey: v2Config.advanced.linkage.magpie.hotkey
       }
     })
 

@@ -8,10 +8,10 @@ declare module 'eslint-plugin-react-hooks' {
   export default plugin
 }
 
-export type ScanStatus = 'idle' | 'scanning' | 'paused' | 'completed' | 'error'
+export type ScanStatus = 'idle' | 'scanning' | 'completed' | 'error'
 
 interface ScannerProgress {
-  status: 'idle' | 'scanning' | 'paused' | 'completed' | 'error'
+  status: ScanStatus
   processedFolders: number
   totalFolders: number
   currentFolder: string
@@ -27,7 +27,7 @@ interface ScannerProgress {
 }
 
 interface OverallScanProgress {
-  status: 'idle' | 'scanning' | 'paused' | 'completed' | 'error'
+  status: ScanStatus
   currentScannerId: string
   processedScanners: number
   totalScanners: number

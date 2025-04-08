@@ -4,8 +4,6 @@ import { Button } from '@ui/button'
 import {
   Folder,
   RefreshCw,
-  PlayCircle,
-  PauseCircle,
   StopCircle,
   FolderPlus,
   AlertTriangle,
@@ -39,8 +37,6 @@ export const GameScannerManager: React.FC = () => {
     setEditingScanner,
     showFailedDialog,
     scanAll,
-    pauseScan,
-    resumeScan,
     stopScan
   } = useGameScannerStore()
 
@@ -77,8 +73,6 @@ export const GameScannerManager: React.FC = () => {
     switch (scanProgress.status) {
       case 'scanning':
         return 'secondary'
-      case 'paused':
-        return 'outline'
       case 'completed':
         return 'default'
       case 'error':
@@ -94,8 +88,6 @@ export const GameScannerManager: React.FC = () => {
         return t('status.idle')
       case 'scanning':
         return t('status.scanning')
-      case 'paused':
-        return t('status.paused')
       case 'completed':
         return t('status.completed')
       case 'error':
@@ -181,6 +173,7 @@ export const GameScannerManager: React.FC = () => {
                       size="sm"
                       className="flex items-center h-6 gap-1 px-2 text-amber-500"
                       onClick={() => showFailedDialog(true)}
+                      disabled={scanProgress.status === 'scanning'}
                     >
                       <AlertTriangle className="w-3.5 h-3.5" />
                       <span>{t('metrics.failures', { count: getFailedFolderCount() })}</span>
@@ -192,14 +185,14 @@ export const GameScannerManager: React.FC = () => {
               {/* Right: Action buttons group */}
               <div className="flex gap-2">
                 {scanProgress.status === 'scanning' ? (
-                  <Button size="sm" variant="outline" onClick={pauseScan}>
-                    <PauseCircle className="w-4 h-4 mr-2" />
-                    {t('actions.pause')}
-                  </Button>
-                ) : scanProgress.status === 'paused' ? (
-                  <Button size="sm" variant="outline" onClick={resumeScan}>
-                    <PlayCircle className="w-4 h-4 mr-2" />
-                    {t('actions.resume')}
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="hover:text-destructive-foreground hover:bg-destructive"
+                    onClick={stopScan}
+                  >
+                    <StopCircle className="w-4 h-4 mr-2" />
+                    {t('actions.stop')}
                   </Button>
                 ) : (
                   <Button
@@ -213,18 +206,12 @@ export const GameScannerManager: React.FC = () => {
                   </Button>
                 )}
 
-                {(scanProgress.status === 'scanning' || scanProgress.status === 'paused') && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="hover:text-destructive-foreground hover:bg-destructive"
-                    onClick={stopScan}
-                  >
-                    <StopCircle className="w-4 h-4 mr-2" />
-                    {t('actions.stop')}
-                  </Button>
-                )}
-                <Button variant="outline" size="sm" onClick={handleEditGlobalSettings}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleEditGlobalSettings}
+                  disabled={scanProgress.status === 'scanning'}
+                >
                   <Settings className="w-4 h-4 mr-2" />
                   {t('actions.globalSettings')}
                 </Button>
@@ -237,7 +224,11 @@ export const GameScannerManager: React.FC = () => {
             {/* Scanners list title bar */}
             <div className="flex items-center justify-between p-4 border-b bg-muted/30">
               <div className="text-sm font-medium">{t('list.title')}</div>
-              <Button size="sm" onClick={handleAddScanner}>
+              <Button
+                size="sm"
+                onClick={handleAddScanner}
+                disabled={scanProgress.status === 'scanning'}
+              >
                 <FolderPlus className="w-4 h-4 mr-2" />
                 {t('actions.addDirectory')}
               </Button>

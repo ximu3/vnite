@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Input } from '@ui/input'
 import { Button } from '@ui/button'
 import { useConfigLocalState } from '~/hooks'
-import { ArrayInput } from '@ui/array-input'
+import { ArrayTextarea } from '@ui/array-textarea'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import { cn } from '~/utils'
 import { useGameScannerStore } from './store'
@@ -79,18 +79,19 @@ export const GlobalSettingsDialog: React.FC<GlobalSettingsDialogProps> = ({ isOp
             </TooltipContent>
           </Tooltip>
 
-          <div className={cn('whitespace-nowrap select-none justify-self-start')}>
+          <div className={cn('whitespace-nowrap select-none self-start mt-1')}>
             {t('globalSettings.ignoreList')}
           </div>
           <Tooltip>
             <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
-              <ArrayInput
+              <ArrayTextarea
+                className="max-h-[250px] min-h-[100px]"
                 placeholder={t('globalSettings.ignoreListPlaceholder')}
                 value={globalSettings.ignoreList}
                 onChange={(value: string[]) => updateGlobalSettings({ ignoreList: value })}
               />
             </TooltipTrigger>
-            <TooltipContent side="right">
+            <TooltipContent side="right" align="start">
               <div className={cn('text-xs')}>{t('globalSettings.ignoreListTooltip')}</div>
             </TooltipContent>
           </Tooltip>

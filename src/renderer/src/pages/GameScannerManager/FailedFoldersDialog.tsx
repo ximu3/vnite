@@ -17,7 +17,7 @@ interface FailedFoldersDialogProps {
 export const FailedFoldersDialog: React.FC<FailedFoldersDialogProps> = ({ isOpen, onClose }) => {
   const { t } = useTranslation('scanner')
 
-  const { scanProgress, fixFailedFolder } = useGameScannerStore()
+  const { scanProgress, fixFailedFolder, ignoreFailedFolder } = useGameScannerStore()
 
   const [selectedFolder, setSelectedFolder] = useState<{
     path: string
@@ -43,15 +43,15 @@ export const FailedFoldersDialog: React.FC<FailedFoldersDialogProps> = ({ isOpen
     path: string
     name: string
     error: string
-    dataSource?: string
-    scannerId?: string
+    dataSource: string
+    scannerId: string
   }[] => {
     const allFailedFolders: Array<{
       path: string
       name: string
       error: string
-      dataSource?: string
-      scannerId?: string
+      dataSource: string
+      scannerId: string
     }> = []
 
     Object.entries(scanProgress?.scannerProgresses).forEach(([scannerId, progress]) => {
@@ -181,13 +181,21 @@ export const FailedFoldersDialog: React.FC<FailedFoldersDialogProps> = ({ isOpen
                       <TableCell className="text-xs truncate max-w-[200px]">
                         {folder.error}
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="flex flex-row">
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={() => handleSelectFolder(folder)}
                         >
                           {t('actions.fix')}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="ml-2"
+                          onClick={() => ignoreFailedFolder(folder.scannerId, folder.path)}
+                        >
+                          {t('actions.ignore')}
                         </Button>
                       </TableCell>
                     </TableRow>

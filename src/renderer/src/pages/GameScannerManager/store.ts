@@ -47,8 +47,6 @@ interface GameScannerStore {
   // Scanning Operations
   scanAll: () => Promise<void>
   scanScanner: (scannerId: string) => Promise<void>
-  pauseScan: () => Promise<void>
-  resumeScan: () => Promise<void>
   stopScan: () => Promise<void>
 
   // Failed Folder Handling
@@ -68,6 +66,7 @@ interface GameScannerStore {
   createNewScanner: (config: ScannerForm) => Promise<string>
 
   fixFailedFolder: (folderPath: string, gameId: string, dataSource: string) => Promise<void>
+  ignoreFailedFolder: (scannerId: string, folderPath: string) => Promise<void>
 }
 
 const t = (key: string): string => i18next.t(key, { ns: 'scanner' })
@@ -169,16 +168,6 @@ export const useGameScannerStore = create<GameScannerStore>((set, get) => ({
 
   scanScanner: async (scannerId): Promise<void> => {
     await ipcInvoke('game-scanner:scan-scanner', scannerId)
-  },
-
-  pauseScan: async (): Promise<void> => {
-    const progress = (await ipcInvoke('game-scanner:pause-scan')) as OverallScanProgress
-    set({ scanProgress: progress })
-  },
-
-  resumeScan: async (): Promise<void> => {
-    const progress = (await ipcInvoke('game-scanner:resume-scan')) as OverallScanProgress
-    set({ scanProgress: progress })
   },
 
   stopScan: async (): Promise<void> => {
@@ -315,6 +304,28 @@ export const useGameScannerStore = create<GameScannerStore>((set, get) => ({
         id: 'fix-folder'
       })
       throw error
+    }
+  },
+
+  ignoreFailedFolder: async (scannerId: string, folderPath: string): Promise<void> => {
+    try {
+      set((state) => ({
+        scanProgress: {
+          ...state.scanProgress,
+          scannerProgresses: {
+            ...state.scanProgress.scannerProgresses,
+            [scannerId]: {
+              ...state.scanProgress.scannerProgresses[scannerId],
+              failedFolders: state.scanProgress.scannerProgresses[scannerId].failedFolders.filter(
+                (folder) => folder.path !== folderPath
+              )
+            }
+          }
+        }
+      }))
+      await ipcInvoke('game-scanner:ignore-failed-folder', scannerId, folderPath)
+    } catch (error) {
+      console.error(`${t('errors.ignoreFolder')}`, error)
     }
   }
 }))

@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-export type DataSource = 'vndb' | 'igdb' | 'steam' | 'bangumi'
+export type DataSource = 'vndb' | 'igdb' | 'steam' | 'bangumi' | 'ymgal' | 'dlsite'
 export type GameStatus = 'idle' | 'loading' | 'success' | 'error' | 'existed'
 
 export interface Game {

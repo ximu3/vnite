@@ -63,14 +63,6 @@
     "fixFolder": "修复文件夹失败:",
     "createScanner": "创建扫描器失败:"
   },
-  "globalSettings": {
-    "title": "全局扫描器设置",
-    "scanInterval": "扫描间隔",
-    "scanIntervalTooltip": "所有扫描器的扫描间隔时间，单位为分钟",
-    "ignoreList": "排除列表",
-    "ignoreListPlaceholder": "输入排除的文件夹名，支持正则表达式",
-    "ignoreListTooltip": "支持正则表达式，逗号分割多个表达式"
-  },
   "dataSources": {
     "steam": "Steam",
     "vndb": "VNDB",
