@@ -156,15 +156,18 @@ export const useGameScannerStore = create<GameScannerStore>((set, get) => ({
 
   // Scanning Operations
   scanAll: async (): Promise<void> => {
+    set({ scanProgress: { ...get().scanProgress, status: 'scanning' } })
     const progress = (await ipcInvoke('game-scanner:scan-all')) as OverallScanProgress
     set({ scanProgress: progress })
   },
 
   scanScanner: async (scannerId): Promise<void> => {
+    set({ scanProgress: { ...get().scanProgress, status: 'scanning' } })
     await ipcInvoke('game-scanner:scan-scanner', scannerId)
   },
 
   stopScan: async (): Promise<void> => {
+    set({ scanProgress: { ...get().scanProgress, status: 'idle' } })
     const progress = (await ipcInvoke('game-scanner:stop-scan')) as OverallScanProgress
     set({ scanProgress: progress })
   },
