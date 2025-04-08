@@ -150,14 +150,14 @@ export const GameScannerListItem: React.FC<GameScannerListItemProps> = ({
             variant="ghost"
             size="icon"
             onClick={handleScan}
-            disabled={scanProgress.status === 'scanning'}
+            disabled={scanProgress.status === 'scanning' || isScanning}
           >
             <PlayCircle className="w-4 h-4" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
-            disabled={scanProgress.status === 'scanning'}
+            disabled={scanProgress.status === 'scanning' || isScanning}
             onClick={onEditClick}
           >
             <Pencil className="w-4 h-4" />
@@ -167,7 +167,7 @@ export const GameScannerListItem: React.FC<GameScannerListItemProps> = ({
             size="icon"
             onClick={() => setShowDeleteDialog(true)}
             className="hover:text-destructive"
-            disabled={scanProgress.status === 'scanning'}
+            disabled={scanProgress.status === 'scanning' || isScanning}
           >
             <Trash2 className="w-4 h-4" />
           </Button>

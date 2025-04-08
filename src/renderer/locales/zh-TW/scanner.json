@@ -62,7 +62,9 @@
     "fixSuccess": "修復成功",
     "fixError": "修復失敗",
     "createError": "創建掃描器失敗",
-    "intervalTooShort": "掃描間隔時間不能小於5分鐘"
+    "intervalTooShort": "掃描間隔時間不能小於5分鐘",
+    "scanStopping": "正在停止掃描...",
+    "scanStopped": "掃描已停止"
   },
   "errors": {
     "fixFolder": "修復資料夾失敗:",

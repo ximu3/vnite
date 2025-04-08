@@ -37,7 +37,8 @@ export const GameScannerManager: React.FC = () => {
     setEditingScanner,
     showFailedDialog,
     scanAll,
-    stopScan
+    stopScan,
+    isStopping
   } = useGameScannerStore()
 
   // Initialize listeners and get initial state
@@ -145,7 +146,7 @@ export const GameScannerManager: React.FC = () => {
                 </div>
 
                 {/* Scanning metrics */}
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3 pr-4 border-r">
                   <Badge variant="outline" className="flex items-center gap-1">
                     <Folder className="w-3.5 h-3.5" />
                     <span>{t('metrics.scanners', { count: scannerCount })}</span>
@@ -166,20 +167,19 @@ export const GameScannerManager: React.FC = () => {
                       </span>
                     </Badge>
                   )}
-
-                  {getFailedFolderCount() > 0 && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex items-center h-6 gap-1 px-2 text-amber-500"
-                      onClick={() => showFailedDialog(true)}
-                      disabled={scanProgress.status === 'scanning'}
-                    >
-                      <AlertTriangle className="w-3.5 h-3.5" />
-                      <span>{t('metrics.failures', { count: getFailedFolderCount() })}</span>
-                    </Button>
-                  )}
                 </div>
+                {getFailedFolderCount() > 0 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center h-[22px] gap-1 px-2 text-primary bg-transparent"
+                    onClick={() => showFailedDialog(true)}
+                    disabled={scanProgress.status === 'scanning' || isStopping}
+                  >
+                    <AlertTriangle className="w-3.5 h-3.5" />
+                    <span>{t('metrics.failures', { count: getFailedFolderCount() })}</span>
+                  </Button>
+                )}
               </div>
 
               {/* Right: Action buttons group */}
@@ -190,6 +190,7 @@ export const GameScannerManager: React.FC = () => {
                     variant="outline"
                     className="hover:text-destructive-foreground hover:bg-destructive"
                     onClick={stopScan}
+                    disabled={isStopping}
                   >
                     <StopCircle className="w-4 h-4 mr-2" />
                     {t('actions.stop')}
@@ -210,7 +211,7 @@ export const GameScannerManager: React.FC = () => {
                   variant="outline"
                   size="sm"
                   onClick={handleEditGlobalSettings}
-                  disabled={scanProgress.status === 'scanning'}
+                  disabled={scanProgress.status === 'scanning' || isStopping}
                 >
                   <Settings className="w-4 h-4 mr-2" />
                   {t('actions.globalSettings')}
@@ -227,7 +228,7 @@ export const GameScannerManager: React.FC = () => {
               <Button
                 size="sm"
                 onClick={handleAddScanner}
-                disabled={scanProgress.status === 'scanning'}
+                disabled={scanProgress.status === 'scanning' || isStopping}
               >
                 <FolderPlus className="w-4 h-4 mr-2" />
                 {t('actions.addDirectory')}

@@ -39,22 +39,6 @@ export class GameScanner extends EventEmitter {
   private lastScanTime: number = 0
   private autoStartPeriodicScan: boolean = true
 
-  // Message queue and throttling related properties
-  private messageQueue: { event: string; data: any }[] = []
-  private isProcessingQueue: boolean = false
-  private lastNotifyTime: number = 0
-  private notifyThrottleTime: number = 200
-
-  // Queue related properties
-  private gameAddQueue: Array<{
-    dataSource: string
-    folder: { name: string; dirPath: string }
-    scannerId: string // Add scannerId to track which scanner the folder belongs to
-  }> = []
-  private isProcessingGameQueue: boolean = false
-  private queuedPaths: Set<string> = new Set()
-  private shouldAbortQueue: boolean = false
-
   constructor() {
     super()
     this.setupIPC()
@@ -327,12 +311,14 @@ export class GameScanner extends EventEmitter {
       scannerProgress.processedFolders = 0 // Initialize to 0
       this.notifyProgressUpdate('scan-progress')
 
-      // Process each folder
+      // Process each folder directly (no more queue)
       for (let i = 0; i < foldersToScan.length; i++) {
         // Check status at the beginning of each loop
         if (this.scanProgress.status !== 'scanning') {
           // If not scanning, return directly without further processing
           log.info(`Scanning stopped`)
+          // Notify that scan was stopped
+          this.notifyProgressUpdate('scan-stopped')
           return
         }
 
@@ -340,12 +326,14 @@ export class GameScanner extends EventEmitter {
         scannerProgress.currentFolder = folder.dirPath
         this.notifyProgressUpdate('scan-progress')
 
-        // Add folder to processing queue
-        this.addGameToQueue(scanner.dataSource, folder, scannerId)
-      }
+        // Process the folder
+        await this.processFolder(scanner.dataSource, folder, scannerId)
 
-      // Wait for queue processing to complete
-      await this.waitForQueueToComplete()
+        // Update progress after each folder is processed
+        scannerProgress.processedFolders++
+        scannerProgress.currentFolder = '' // Clear current folder
+        this.notifyProgressUpdate('scan-progress')
+      }
 
       // Only set to completed if all folders processed successfully
       if (this.scanProgress.status === 'scanning') {
@@ -361,137 +349,54 @@ export class GameScanner extends EventEmitter {
   }
 
   /**
-   * Add game to processing queue
+   * Process a single folder
    */
-  private addGameToQueue(
+  private async processFolder(
     dataSource: string,
     folder: { name: string; dirPath: string },
     scannerId: string
-  ): void {
-    // Check if this path is already in the queue to avoid duplication
-    if (this.queuedPaths.has(folder.dirPath)) {
-      console.log(`Path already in queue: ${folder.dirPath}`)
-      return
+  ): Promise<void> {
+    if (this.scanProgress.status !== 'scanning') {
+      return // Exit if scanning has been stopped
     }
 
-    // Add to queue and mark the path as queued
-    this.gameAddQueue.push({ dataSource, folder, scannerId })
-    this.queuedPaths.add(folder.dirPath)
-
-    // Start processing if the queue is not being processed
-    if (!this.isProcessingGameQueue) {
-      this.processGameQueue()
-    }
-  }
-
-  /**
-   * Clear game addition queue
-   */
-  public clearGameQueue(): void {
-    this.gameAddQueue = []
-    this.queuedPaths.clear()
-  }
-
-  /**
-   * Process game addition queue
-   */
-  private async processGameQueue(): Promise<void> {
-    if (this.isProcessingGameQueue) return
-
-    this.isProcessingGameQueue = true
-    this.shouldAbortQueue = false
+    const scannerProgress = this.scanProgress.scannerProgresses[scannerId]
 
     try {
-      while (this.gameAddQueue.length > 0 && !this.shouldAbortQueue) {
-        // Exit queue processing if scanning has been stopped
-        if (this.scanProgress.status !== 'scanning') {
-          return
-        }
+      // Check if the game already exists
+      const gameExists = await GameDBManager.checkGameExitsByPath(folder.dirPath)
 
-        const item = this.gameAddQueue[0]
-        const { dataSource, folder, scannerId } = item
-        const scannerProgress = this.scanProgress.scannerProgresses[scannerId]
+      if (!gameExists) {
+        // Use folder name as game name for search
+        const gameResults = await searchGames(dataSource, folder.name)
 
-        try {
-          // Check if the game already exists
-          const gameExists = await GameDBManager.checkGameExitsByPath(folder.dirPath)
-
-          if (!gameExists) {
-            // Check status again to prevent state changes before long operations
-            if (this.scanProgress.status !== 'scanning') {
-              return
-            }
-
-            // Use folder name as game name for search
-            const gameResults = await searchGames(dataSource, folder.name)
-
-            if (gameResults && gameResults.length > 0) {
-              // Use the first result as a match
-              const match = gameResults[0]
-              await addGameToDatabase({
-                dataSource,
-                dataSourceId: match.id,
-                dirPath: folder.dirPath
-              })
-            } else {
-              // If no match is found
-              throw new Error(`No games found matching "${folder.name}"`)
-            }
-          }
-
-          // Update the scanner's game count
-          scannerProgress.scannedGames++
-          this.scanProgress.scannedGames++
-        } catch (error) {
-          // Record failed folder
-          scannerProgress.failedFolders.push({
-            path: folder.dirPath,
-            name: folder.name,
-            error: error instanceof Error ? error.message : String(error),
-            dataSource
+        if (gameResults && gameResults.length > 0) {
+          // Use the first result as a match
+          const match = gameResults[0]
+          await addGameToDatabase({
+            dataSource,
+            dataSourceId: match.id,
+            dirPath: folder.dirPath
           })
-          this.notifyProgressUpdate('scan-folder-error')
-        } finally {
-          // Remove from queue and set
-          this.gameAddQueue.shift()
-          this.queuedPaths.delete(folder.dirPath)
-
-          // Now update processing progress - counts as one complete process regardless of success or failure
-          scannerProgress.processedFolders++
-          scannerProgress.currentFolder = '' // Clear the currently processing folder
-          this.notifyProgressUpdate('scan-progress')
-
-          // Operation interval delay (300ms)
-          await new Promise((resolve) => setTimeout(resolve, 300))
-        }
-      }
-    } finally {
-      this.isProcessingGameQueue = false
-      this.shouldAbortQueue = false
-    }
-  }
-
-  /**
-   * Wait for queue processing to complete
-   */
-  private async waitForQueueToComplete(): Promise<void> {
-    // Return directly if the queue is empty and not being processed
-    if (this.gameAddQueue.length === 0 && !this.isProcessingGameQueue) {
-      return
-    }
-
-    // Otherwise wait for queue processing to complete
-    return new Promise<void>((resolve) => {
-      const checkQueue = (): void => {
-        if (this.gameAddQueue.length === 0 && !this.isProcessingGameQueue) {
-          resolve()
         } else {
-          setTimeout(checkQueue, 500) // Check every 500 milliseconds
+          // If no match is found
+          throw new Error(`No games found matching "${folder.name}"`)
         }
       }
 
-      checkQueue()
-    })
+      // Update the scanner's game count
+      scannerProgress.scannedGames++
+      this.scanProgress.scannedGames++
+    } catch (error) {
+      // Record failed folder
+      scannerProgress.failedFolders.push({
+        path: folder.dirPath,
+        name: folder.name,
+        error: error instanceof Error ? error.message : String(error),
+        dataSource
+      })
+      this.notifyProgressUpdate('scan-folder-error')
+    }
   }
 
   /**
@@ -521,7 +426,10 @@ export class GameScanner extends EventEmitter {
     if (this.scanProgress.status === 'scanning') {
       log.info('Stopping scan')
 
-      // Completely reset scan progress
+      // Set status to idle immediately so all processing loops will exit
+      this.scanProgress.status = 'idle'
+
+      // Reset all scan progress
       this.scanProgress = {
         status: 'idle',
         currentScannerId: '',
@@ -532,11 +440,8 @@ export class GameScanner extends EventEmitter {
         scannerProgresses: {}
       }
 
-      this.clearGameQueue()
-
       // Reset current scanner config
       this.currentScannerConfig = null
-      this.notifyProgressUpdate('scan-stopped')
     }
   }
 
@@ -584,6 +489,9 @@ export class GameScanner extends EventEmitter {
     }
   }
 
+  /**
+   * Ignore failed folder
+   */
   private ignoreFailedFolder(scannerId: string, folderPath: string): void {
     try {
       // Find the scanner progress
@@ -600,6 +508,7 @@ export class GameScanner extends EventEmitter {
 
       // Remove from failed list
       scannerProgress.failedFolders.splice(index, 1)
+      this.notifyProgressUpdate('scan-progress')
     } catch (error) {
       log.error('Ignore failed folder failed:', error)
       throw error
@@ -608,52 +517,16 @@ export class GameScanner extends EventEmitter {
 
   /**
    * Notify render process of progress update
+   * Simplified version with no queue
    */
   private notifyProgressUpdate(event: string): void {
-    // Check if throttling needed (except for specific important events)
-    const now = Date.now()
-    const importantEvents = ['scan-start', 'scan-completed', 'scan-error', 'scan-stopped']
-    if (!importantEvents.includes(event) && now - this.lastNotifyTime < this.notifyThrottleTime) {
-      return // Skip non-important events within throttle time
-    }
-    this.lastNotifyTime = now
-
-    // Use safe queue method to send messages
-    this.queueMessage(event, { ...this.scanProgress })
-  }
-
-  // Add message to queue
-  private queueMessage(event: string, data: any): void {
-    this.messageQueue.push({ event, data })
-    if (!this.isProcessingQueue) {
-      this.processMessageQueue()
-    }
-  }
-
-  // Process message queue asynchronously
-  private async processMessageQueue(): Promise<void> {
-    if (this.isProcessingQueue) return
-    this.isProcessingQueue = true
-    while (this.messageQueue.length > 0) {
-      try {
-        const message = this.messageQueue[0]
-        const windows = BrowserWindow.getAllWindows()
-        if (windows.length > 0) {
-          const mainWindow = windows[0]
-          if (mainWindow && !mainWindow.isDestroyed() && mainWindow.webContents) {
-            mainWindow.webContents.send(`game-scanner:${message.event}`, message.data)
-          }
-        }
-        // Remove processed message
-        this.messageQueue.shift()
-        // Give render process time to process
-        await new Promise((resolve) => setTimeout(resolve, 50))
-      } catch (error) {
-        log.error('Error processing message queue:', error)
-        this.messageQueue.shift() // Remove problematic message
+    const windows = BrowserWindow.getAllWindows()
+    if (windows.length > 0) {
+      const mainWindow = windows[0]
+      if (mainWindow && !mainWindow.isDestroyed() && mainWindow.webContents) {
+        mainWindow.webContents.send(`game-scanner:${event}`, { ...this.scanProgress })
       }
     }
-    this.isProcessingQueue = false
   }
 
   /**

@@ -62,7 +62,9 @@
     "fixSuccess": "Fix successful",
     "fixError": "Fix failed",
     "createError": "Failed to create scanner",
-    "intervalTooShort": "Scan interval cannot be less than 5 minutes"
+    "intervalTooShort": "Scan interval cannot be less than 5 minutes",
+    "scanStopping": "Stopping scan...",
+    "scanStopped": "Scan stopped"
   },
   "errors": {
     "fixFolder": "Failed to fix folder:",

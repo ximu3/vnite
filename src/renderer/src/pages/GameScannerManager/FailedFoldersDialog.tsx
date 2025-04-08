@@ -161,7 +161,7 @@ export const FailedFoldersDialog: React.FC<FailedFoldersDialogProps> = ({ isOpen
               </div>
             </div>
           ) : (
-            <ScrollArea className={cn('h-[calc(84vh-230px)] bg-background')}>
+            <ScrollArea className={cn('h-[calc(84vh-230px)] bg-background pr-2')}>
               <Table className="bg-background">
                 <TableHeader className="bg-background">
                   <TableRow>

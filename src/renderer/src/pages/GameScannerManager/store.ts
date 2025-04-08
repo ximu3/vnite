@@ -33,6 +33,7 @@ interface GameScannerStore {
   formState: ScannerForm
   globalSettings: GlobalScannerSettings
   intervalMinutes: string
+  isStopping: boolean
 
   // Initialization
   initialize: () => Promise<void>
@@ -93,6 +94,7 @@ export const useGameScannerStore = create<GameScannerStore>((set, get) => ({
     ignoreList: []
   },
   intervalMinutes: '0',
+  isStopping: false,
 
   // Initialization - Set Event Listeners
   initialize: async (): Promise<void> => {
@@ -138,6 +140,10 @@ export const useGameScannerStore = create<GameScannerStore>((set, get) => ({
     })
 
     ipcOnUnique('game-scanner:scan-stopped', (_, progress) => {
+      toast.success(t('notifications.scanStopped'), {
+        id: 'scan-stopping'
+      })
+      set({ isStopping: false })
       set({ scanProgress: progress })
     })
 
@@ -167,9 +173,11 @@ export const useGameScannerStore = create<GameScannerStore>((set, get) => ({
   },
 
   stopScan: async (): Promise<void> => {
-    set({ scanProgress: { ...get().scanProgress, status: 'idle' } })
-    const progress = (await ipcInvoke('game-scanner:stop-scan')) as OverallScanProgress
-    set({ scanProgress: progress })
+    set({ isStopping: true })
+    toast.loading(t('notifications.scanStopping'), {
+      id: 'scan-stopping'
+    })
+    await ipcInvoke('game-scanner:stop-scan')
   },
 
   // Failed Folder Handling
