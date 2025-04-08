@@ -1,74 +1,41 @@
 {
-  "title": "游戏扫描器管理",
-  "status": {
-    "idle": "空闲",
-    "scanning": "扫描中",
-    "paused": "已暂停",
-    "completed": "已完成",
-    "error": "出错",
-    "unknown": "未知"
+  "clipboard": {
+    "copied": "已复制到剪切板",
+    "copyError": "复制文本到剪切板失败: {{error}}"
   },
-  "metrics": {
-    "scanners": "{{count}} 个扫描器",
-    "games": "{{count}} 个游戏",
-    "scanInterval": "每 {{minutes}} 分钟扫描",
-    "failures": "{{count}}个失败"
-  },
-  "actions": {
-    "pause": "暂停",
-    "resume": "继续",
-    "scanAll": "扫描全部",
-    "stop": "停止",
-    "globalSettings": "全局设置",
-    "addDirectory": "添加扫描目录",
-    "cancel": "取消",
-    "save": "保存",
-    "confirmDelete": "确认删除"
-  },
-  "list": {
-    "title": "扫描目录列表",
-    "empty": {
-      "title": "暂无扫描目录",
-      "description": "添加扫描目录来自动管理您的游戏库"
+  "game": {
+    "stopping": {
+      "loading": "正在停止游戏...",
+      "success": "游戏已停止",
+      "error": "停止游戏失败: {{message}}"
     },
-    "item": {
-      "dataSource": "{{name}} 数据",
-      "depth": "{{level}} 深度",
-      "progress": "{{percentage}}% 完成",
-      "games": "{{count}} 个游戏",
-      "statusLabels": {
-        "idle": "空闲",
-        "scanning": "扫描中",
-        "paused": "已暂停",
-        "completed": "已完成",
-        "error": "错误",
-        "unknown": "未知"
-      },
-      "deleteDialog": {
-        "title": "确认删除",
-        "description": "确定要删除扫描目录\"{{path}}\"吗？此操作无法撤销。",
-        "cancel": "取消",
-        "confirm": "确认删除"
-      }
+    "starting": {
+      "pathRequired": "请先设置游戏路径",
+      "configuringLauncher": "正在配置启动器...",
+      "configSuccess": "启动器配置成功",
+      "configError": "配置错误: {{message}}",
+      "runtimeError": "运行配置错误，请检查！"
+    },
+    "playStatus": {
+      "unplayed": "未开始",
+      "playing": "游玩中",
+      "finished": "已完成",
+      "multiple": "多周目",
+      "shelved": "搁置中",
+      "unknown": "未知状态"
     }
   },
+  "format": {
+    "gameTime": "{{time, gameTime}}",
+    "niceDate": "{{date, niceDate}}",
+    "niceISO": "{{date, niceISO}}"
+  },
   "notifications": {
-    "fixAttempt": "尝试获取游戏中",
-    "fixSuccess": "修复成功",
-    "fixError": "修复失败",
-    "createError": "创建扫描器失败",
-    "intervalTooShort": "扫描间隔时间不能小于5分钟"
-  },
-  "errors": {
-    "fixFolder": "修复文件夹失败:",
-    "createScanner": "创建扫描器失败:"
-  },
-  "dataSources": {
-    "steam": "Steam",
-    "vndb": "VNDB",
-    "bangumi": "Bangumi",
-    "ymgal": "YMGAL",
-    "igdb": "IGDB",
-    "dlsite": "DLsite"
+    "gameExiting": "正在退出游戏...",
+    "gameExited": "游戏已退出",
+    "fullSyncing": "正在同步数据...",
+    "fullSynced": "数据同步完成",
+    "fullSyncError": "数据同步失败",
+    "updateUserInfoError": "官方云同步账号登录过期，请重新登录"
   }
 }
