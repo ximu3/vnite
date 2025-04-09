@@ -1,13 +1,16 @@
-import { searchGames } from '~/stores/game'
-import { cn } from '~/utils'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@ui/accordion'
 import { ScrollArea } from '@ui/scroll-area'
-import { GameNav } from '../GameNav'
 import { useTranslation } from 'react-i18next'
+import { useConfigState } from '~/hooks'
+import { searchGames, sortGames } from '~/stores/game'
+import { cn } from '~/utils'
+import { GameNav } from '../GameNav'
 
 export function Search({ query }: { query: string }): JSX.Element {
+  const [by, _setBy] = useConfigState('game.gameList.sort.by')
+  const [order, _setOrder] = useConfigState('game.gameList.sort.order')
   const { t } = useTranslation('game')
-  const games = searchGames(query)
+  const games = sortGames(by, order, searchGames(query))
   return (
     <ScrollArea className={cn('w-full h-full pr-3 -mr-3')}>
       <Accordion

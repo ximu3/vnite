@@ -1,10 +1,10 @@
-import { calculateDailyPlayTime } from '@appUtils'
-import { getGameStore } from './gameStoreFactory'
-import { useGameRegistry } from './gameRegistry'
-import { useConfigStore } from '../config'
 import type { MaxPlayTimeDay, gameDoc } from '@appTypes/database'
-import type { Paths } from 'type-fest'
+import { calculateDailyPlayTime } from '@appUtils'
 import i18next from 'i18next'
+import type { Paths } from 'type-fest'
+import { useConfigStore } from '../config'
+import { useGameRegistry } from './gameRegistry'
+import { getGameStore } from './gameStoreFactory'
 
 // Search Functions
 export function searchGames(query: string): string[] {
@@ -46,9 +46,10 @@ export function searchGames(query: string): string[] {
 // sorting function
 export function sortGames<Path extends Paths<gameDoc, { bracketNotation: true }>>(
   by: Path,
-  order: 'asc' | 'desc' = 'asc'
+  order: 'asc' | 'desc' = 'asc',
+  gameIds?: string[]
 ): string[] {
-  const gameIds = useGameRegistry.getState().gameIds
+  if (!gameIds) gameIds = useGameRegistry.getState().gameIds
   const language = useConfigStore.getState().getConfigValue('general.language')
 
   return [...gameIds].sort((a, b) => {
