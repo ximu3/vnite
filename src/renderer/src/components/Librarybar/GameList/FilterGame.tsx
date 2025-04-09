@@ -1,14 +1,17 @@
-import { cn } from '~/utils'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@ui/accordion'
 import { ScrollArea } from '@ui/scroll-area'
-import { GameNav } from '../GameNav'
-import { useFilterStore } from '../Filter/store'
-import { filterGames } from '~/stores/game'
 import { useTranslation } from 'react-i18next'
+import { useConfigState } from '~/hooks'
+import { filterGames, sortGames } from '~/stores/game'
+import { cn } from '~/utils'
+import { useFilterStore } from '../Filter/store'
+import { GameNav } from '../GameNav'
 
 export function FilterGame(): JSX.Element {
+  const [by, _setBy] = useConfigState('game.gameList.sort.by')
+  const [order, _setOrder] = useConfigState('game.gameList.sort.order')
   const { filter } = useFilterStore()
-  const games = filterGames(filter)
+  const games = sortGames(by, order, filterGames(filter))
   const { t } = useTranslation('game')
   return (
     <ScrollArea className={cn('w-full h-full pr-3 -mr-3')}>

@@ -1,14 +1,14 @@
-import { cn } from '~/utils'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@ui/accordion'
-import { ScrollArea } from '@ui/scroll-area'
-import { ContextMenuContent, ContextMenuTrigger, ContextMenu } from '@ui/context-menu'
 import { Button } from '@ui/button'
+import { ContextMenu, ContextMenuContent, ContextMenuTrigger } from '@ui/context-menu'
+import { ScrollArea } from '@ui/scroll-area'
+import { useTranslation } from 'react-i18next'
 import { useConfigState } from '~/hooks'
-import { getAllValuesInKey, filterGames } from '~/stores/game'
+import { filterGames, getAllValuesInKey, sortGames } from '~/stores/game'
+import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
 import { AllGame } from './AllGame'
 import { RecentGames } from './RecentGames'
-import { useTranslation } from 'react-i18next'
 
 export function Others({
   fieldName
@@ -16,6 +16,8 @@ export function Others({
   fieldName: 'metadata.developers' | 'metadata.genres' | 'record.playStatus'
 }): JSX.Element {
   const [playStatusOrder, setPlayStatusOrder] = useConfigState('game.gameList.playingStatusOrder')
+  const [by, _setBy] = useConfigState('game.gameList.sort.by')
+  const [order, _setOrder] = useConfigState('game.gameList.sort.order')
 
   const fields_tmp = getAllValuesInKey(fieldName)
   const fields =
@@ -121,7 +123,7 @@ export function Others({
                 </AccordionTrigger>
               )}
               <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
-                {filterGames({ [fieldName]: [field] }).map((game) => (
+                {sortGames(by, order, filterGames({ [fieldName]: [field] })).map((game) => (
                   <GameNav key={game} gameId={game} groupId={`${fieldName}:${field}`} />
                 ))}
               </AccordionContent>
