@@ -102,6 +102,17 @@ export function Librarybar(): JSX.Element {
                 ></span>
               </Button>
             </Filter>
+            {!isEqual(filter, {}) && (
+              <Button
+                className={cn(
+                  'absolute -top-1 -right-1 w-[14px] h-[14px] p-0 items-center justify-center'
+                )}
+                onClick={clearFilter}
+                variant={'outline'}
+              >
+                <span className={cn('icon-[mdi--close] w-3 h-3')}></span>
+              </Button>
+            )}
           </div>
         </div>
         <div className={cn('pr-3')}>
