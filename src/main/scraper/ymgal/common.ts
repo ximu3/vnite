@@ -37,7 +37,7 @@ interface TokenResponse {
   scope: string
 }
 
-// Process staff data function for YMGAL
+// Process staff data function for YMGal
 function processYMGalStaffData(
   staffList: Array<{
     sid: number
