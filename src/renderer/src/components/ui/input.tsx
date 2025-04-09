@@ -59,7 +59,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             tabIndex={-1}
             variant={'outline'}
           >
-            <span className="icon-[mdi--close] w-3 h-3"></span>
+            <span className="icon-[mdi--close] w-[10px] h-[10px]"></span>
           </Button>
         )}
       </div>

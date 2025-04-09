@@ -98,7 +98,7 @@ export function Librarybar(): JSX.Element {
                 onClick={clearFilter}
                 variant={'outline'}
               >
-                <span className={cn('icon-[mdi--close] w-3 h-3')}></span>
+                <span className={cn('icon-[mdi--close] w-[10px] h-[10px]')}></span>
               </Button>
             )}
           </div>
