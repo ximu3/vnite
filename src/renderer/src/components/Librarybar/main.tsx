@@ -71,26 +71,14 @@ export function Librarybar(): JSX.Element {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder={t('librarybar.search.placeholder')}
+                  showClear={true}
+                  onClear={() => setQuery('')}
                 />
               </TooltipTrigger>
               <TooltipContent side="bottom">{t('librarybar.search.tooltip')}</TooltipContent>
             </Tooltip>
           </div>
-          {(!isEqual(filter, {}) || query) && (
-            <div>
-              <Button
-                onClick={() => {
-                  clearFilter()
-                  setQuery('')
-                }}
-                variant="default"
-                size={'icon'}
-              >
-                <span className={cn('icon-[mdi--filter-variant-remove] w-5 h-5')}></span>
-              </Button>
-            </div>
-          )}
-          <div>
+          <div className="relative">
             <Filter>
               <Button onClick={toggleFilterMenu} variant="default" size={'icon'}>
                 <span
