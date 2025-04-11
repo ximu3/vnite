@@ -12,11 +12,12 @@ import {
   SelectValue
 } from '@ui/select'
 import { Separator } from '@ui/separator'
-import { toast } from 'sonner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 import { useGameLocalState, useGameState } from '~/hooks'
 import { cn, ipcInvoke } from '~/utils'
-import { useTranslation } from 'react-i18next'
 
 export function Path({ gameId }: { gameId: string }): JSX.Element {
   const { t } = useTranslation('game')
@@ -25,6 +26,29 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
   const [savePath, setSavePath] = useGameLocalState(gameId, 'path.savePaths')
   const [markerPath] = useGameLocalState(gameId, 'utils.markPath')
   const [maxSaveBackups, setMaxSaveBackups] = useGameState(gameId, 'save.maxBackups')
+  const [savePathSize, setSavePathSize] = useState(0)
+
+  useEffect(() => {
+    if ((savePath.length === 1 && savePath[0] === '') || savePath.length === 0 || !savePath) {
+      setSavePathSize(-1)
+      return
+    }
+    ipcInvoke<number>('get-path-size', savePath)
+      .then((size: number) => setSavePathSize(size))
+      .catch(() => setSavePathSize(NaN))
+  }, [savePath])
+
+  function formatSize(bytes: number): string {
+    if (savePathSize === -1) return ''
+    if (Number.isNaN(bytes)) return 'N/A'
+    if (bytes < 1024) return `${bytes} B`
+    const kb = bytes / 1024
+    if (kb < 1024) return `${kb.toFixed(2)} KiB`
+    const mb = kb / 1024
+    if (mb < 1024) return `${mb.toFixed(2)} MiB`
+    const gb = mb / 1024
+    return `${gb.toFixed(2)} GiB`
+  }
 
   async function selectGamePath(): Promise<void> {
     const filePath: string = await ipcInvoke(
@@ -114,8 +138,14 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
 
             {/* Save Path */}
             <div className={cn('whitespace-nowrap select-none self-start pt-2')}>
-              {t('detail.properties.path.savePath')}
+              <div>{t('detail.properties.path.savePath')}</div>
+              <div
+                className={cn('text-xs pt-2', {
+                  'text-destructive': Number.isNaN(savePathSize) || savePathSize > 1024 * 1024 * 256
+                })}
+              >{`${formatSize(savePathSize)}`}</div>
             </div>
+
             <div className={cn('flex flex-row gap-3 items-start')}>
               <ArrayTextarea
                 className={cn('flex-1 max-h-[400px] min-h-[100px]')}
