@@ -1,16 +1,16 @@
-import fse from 'fs-extra'
-import { shell, app } from 'electron'
-import path from 'path'
-import { getDataPath, getAppTempPath } from './path'
-import { ConfigDBManager, GameDBManager } from '~/database'
-import log from 'electron-log/main.js'
-import sharp from 'sharp'
-import pngToIco from 'png-to-ico'
-import { fileTypeFromBuffer } from 'file-type'
 import axios from 'axios'
 import { exec } from 'child_process'
-import { promisify } from 'util'
+import { app, shell } from 'electron'
+import log from 'electron-log/main.js'
+import { fileTypeFromBuffer } from 'file-type'
+import fse from 'fs-extra'
 import koffi from 'koffi'
+import path from 'path'
+import pngToIco from 'png-to-ico'
+import sharp from 'sharp'
+import { promisify } from 'util'
+import { ConfigDBManager, GameDBManager } from '~/database'
+import { getAppTempPath, getDataPath } from './path'
 
 const execAsync = promisify(exec)
 
@@ -604,4 +604,52 @@ export async function getCouchDbSize(username: string): Promise<number> {
     console.error('Error getting CouchDB size:', error)
     throw error
   }
+}
+
+async function getFolderSize(folderPath: string): Promise<number> {
+  let totalSize = 0
+  try {
+    const entries = await fse.readdir(folderPath, { withFileTypes: true })
+    for (const entry of entries) {
+      const fullPath = path.join(folderPath, entry.name)
+      if (entry.isDirectory()) {
+        totalSize += await getFolderSize(fullPath)
+      } else if (entry.isFile()) {
+        const stat = await fse.stat(fullPath)
+        totalSize += stat.size
+      }
+    }
+  } catch {
+    return NaN
+  }
+  return totalSize
+}
+
+/**
+ * Get the total size of multiple paths (files or directories)
+ * @param paths Array of file or directory paths
+ * @returns Promise resolving to total size in bytes (NaN if the path doesn't exist)
+ */
+export async function getTotalPathSize(paths: string[]): Promise<number> {
+  const sizes = await Promise.all(
+    paths.map(async (p) => {
+      try {
+        const stat = await fse.stat(p)
+        if (stat.isDirectory()) {
+          return await getFolderSize(p)
+        } else if (stat.isFile()) {
+          return stat.size
+        } else {
+          return 0
+        }
+      } catch (err) {
+        console.error('Error getting size for path:', p, err)
+        return NaN
+      }
+    })
+  )
+  if (sizes.some((s) => Number.isNaN(s))) {
+    return NaN
+  }
+  return sizes.reduce((acc, cur) => acc + cur, 0)
 }

@@ -1,24 +1,24 @@
-import { ipcMain, BrowserWindow, OpenDialogOptions } from 'electron'
-import { trayManager } from '../index'
+import { generateUUID } from '@appUtils'
+import { app, BrowserWindow, ipcMain, OpenDialogOptions } from 'electron'
 import {
-  selectPathDialog,
-  selectMultiplePathDialog,
-  openPathInExplorer,
-  createGameShortcut,
-  openDatabasePathInExplorer,
-  updateOpenAtLogin,
-  getAppVersion,
-  portableStore,
-  switchDatabaseMode,
-  readFileBuffer,
-  getLanguage,
   checkAdminPermissions,
   checkIfDirectoryNeedsAdminRights,
+  createGameShortcut,
   getAppRootPath,
-  updateLanguage
+  getAppVersion,
+  getLanguage,
+  getTotalPathSize,
+  openDatabasePathInExplorer,
+  openPathInExplorer,
+  portableStore,
+  readFileBuffer,
+  selectMultiplePathDialog,
+  selectPathDialog,
+  switchDatabaseMode,
+  updateLanguage,
+  updateOpenAtLogin
 } from '~/utils'
-import { generateUUID } from '@appUtils'
-import { app } from 'electron'
+import { trayManager } from '../index'
 
 export function setupUtilsIPC(mainWindow: BrowserWindow): void {
   ipcMain.on('minimize', () => {
@@ -69,6 +69,10 @@ export function setupUtilsIPC(mainWindow: BrowserWindow): void {
       return await selectMultiplePathDialog(properties, extensions, defaultPath)
     }
   )
+
+  ipcMain.handle('get-path-size', async (_, paths: string[]): Promise<number> => {
+    return await getTotalPathSize(paths)
+  })
 
   ipcMain.handle('open-path-in-explorer', async (_, filePath: string) => {
     await openPathInExplorer(filePath)
