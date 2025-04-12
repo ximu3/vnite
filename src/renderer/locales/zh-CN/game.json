@@ -251,6 +251,14 @@
           "illustration": "原画",
           "music": "音乐",
           "engine": "引擎"
+        },
+        "search": {
+          "loading": "正在搜索游戏附加信息...",
+          "success": "搜索成功",
+          "error": "搜索失败: {{message}}",
+          "notFound": "没有找到相关信息",
+          "searchError": "搜索出错: {{error}}",
+          "selectRequired": "请至少选择一项附加信息"
         }
       },
       "record": {

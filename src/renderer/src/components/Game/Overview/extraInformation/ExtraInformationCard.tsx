@@ -1,10 +1,11 @@
 import { Separator } from '@ui/separator'
-import React from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useGameState } from '~/hooks'
 import { cn, copyWithToast } from '~/utils'
 import { FilterAdder } from '../../FilterAdder'
 import { ExtraInformationDialog } from './ExtraInformationDialog'
+import { SearchExtraInformationDialog } from './SearchExtraInformationDialog'
 
 export function ExtraInformationCard({
   gameId,
@@ -14,7 +15,9 @@ export function ExtraInformationCard({
   className?: string
 }): JSX.Element {
   const { t } = useTranslation('game')
-  const [extra] = useGameState(gameId, 'metadata.extra')
+  const [extra, setExtra] = useGameState(gameId, 'metadata.extra')
+  const [originalName] = useGameState(gameId, 'metadata.originalName')
+  const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false)
 
   const handleCopyExtra = (): void => {
     if (!extra || extra.length === 0) return
@@ -30,13 +33,41 @@ export function ExtraInformationCard({
     )
   }
 
+  const handleSelectExtraInfo = (newExtraInfo: { key: string; value: string }[]): void => {
+    const groupedExtra = newExtraInfo.reduce<Array<{ key: string; value: string[] }>>(
+      (acc, item) => {
+        const existingItem = acc.find((x) => x.key === item.key)
+        if (existingItem) {
+          if (!existingItem.value.includes(item.value)) {
+            existingItem.value.push(item.value)
+          }
+        } else {
+          acc.push({ key: item.key, value: [item.value] })
+        }
+        return acc
+      },
+      []
+    )
+
+    setExtra(groupedExtra)
+  }
+
   return (
     <div className={cn(className, 'group')}>
       <div className={cn('flex flex-row justify-between items-center')}>
-        <div className={cn('font-bold select-none cursor-pointer')} onClick={handleCopyExtra}>
+        <div className={cn('select-none cursor-pointer')} onClick={handleCopyExtra}>
           {t('detail.overview.sections.extraInfo')}
         </div>
-        <ExtraInformationDialog gameId={gameId} />
+        <div className="flex items-center gap-3">
+          <span
+            className={cn(
+              'cursor-pointer icon-[mdi--magnify] invisible group-hover:visible w-5 h-5 mb-[4px]'
+            )}
+            onClick={() => setIsSearchDialogOpen(true)}
+          ></span>
+
+          <ExtraInformationDialog gameId={gameId} />
+        </div>
       </div>
 
       <Separator className={cn('my-3 bg-primary')} />
@@ -73,6 +104,18 @@ export function ExtraInformationCard({
           ))
         )}
       </div>
+
+      <SearchExtraInformationDialog
+        isOpen={isSearchDialogOpen}
+        onClose={() => setIsSearchDialogOpen(false)}
+        gameTitle={originalName}
+        onSelect={handleSelectExtraInfo}
+        initialExtraInfo={
+          extra
+            ? extra.flatMap((item) => item.value.map((val) => ({ key: item.key, value: val })))
+            : []
+        }
+      />
     </div>
   )
 }

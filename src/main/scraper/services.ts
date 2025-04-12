@@ -54,7 +54,8 @@ import {
   GameMetadata,
   ScraperIdentifier,
   GameDescriptionList,
-  GameTagsList
+  GameTagsList,
+  GameExtraInfoList
 } from '@appTypes/utils'
 
 export async function searchGames(dataSource: string, gameName: string): Promise<GameList> {
@@ -277,4 +278,31 @@ export async function getGameTagsList(identifier: ScraperIdentifier): Promise<Ga
 
   // Filter out all false values
   return candidates.filter((item) => item && item.tags) as GameTagsList
+}
+
+export async function getGameExtraInfoList(
+  identifier: ScraperIdentifier
+): Promise<GameExtraInfoList> {
+  // Execute all requests in parallel
+  const [vndb, bangumi, ymgal] = await Promise.all([
+    getGameMetadataFromVNDB(identifier).catch(() => ({
+      extra: []
+    })),
+    getGameMetadataFromBangumi(identifier).catch(() => ({
+      extra: []
+    })),
+    getGameMetadataFromYMGal(identifier).catch(() => ({
+      extra: []
+    }))
+  ])
+
+  // Creating a Candidate Array
+  const candidates = [
+    vndb.extra && vndb.extra.length > 0 && { dataSource: 'vndb', extra: vndb.extra },
+    bangumi.extra && bangumi.extra.length > 0 && { dataSource: 'bangumi', extra: bangumi.extra },
+    ymgal.extra && ymgal.extra.length > 0 && { dataSource: 'ymgal', extra: ymgal.extra }
+  ]
+
+  // Filter out all false values
+  return candidates.filter((item) => item && item.extra) as GameExtraInfoList
 }

@@ -251,6 +251,14 @@
           "illustration": "Illustrator",
           "music": "Music",
           "engine": "Engine"
+        },
+        "search": {
+          "loading": "Searching for game additional information...",
+          "success": "Search successful",
+          "error": "Search failed: {{message}}",
+          "notFound": "No relevant information found",
+          "searchError": "Search error: {{error}}",
+          "selectRequired": "Please select at least one additional information item"
         }
       },
       "record": {

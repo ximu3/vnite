@@ -251,6 +251,14 @@
           "illustration": "イラスト",
           "music": "音楽",
           "engine": "エンジン"
+        },
+        "search": {
+          "loading": "ゲームの追加情報を検索中...",
+          "success": "検索成功",
+          "error": "検索失敗: {{message}}",
+          "notFound": "関連情報が見つかりません",
+          "searchError": "検索エラー: {{error}}",
+          "selectRequired": "追加情報を少なくとも1つ選択してください"
         }
       },
       "record": {

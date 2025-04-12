@@ -251,6 +251,14 @@
           "illustration": "原畫",
           "music": "音樂",
           "engine": "引擎"
+        },
+        "search": {
+          "loading": "正在搜尋遊戲附加資訊...",
+          "success": "搜尋成功",
+          "error": "搜尋失敗: {{message}}",
+          "notFound": "沒有找到相關資訊",
+          "searchError": "搜尋出錯: {{error}}",
+          "selectRequired": "請至少選擇一項附加資訊"
         }
       },
       "record": {

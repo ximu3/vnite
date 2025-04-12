@@ -38,3 +38,11 @@ export type GameTagsList = {
   dataSource: string
   tags: string[]
 }[]
+
+export type GameExtraInfoList = {
+  dataSource: string
+  extra: {
+    key: string
+    value: string[]
+  }[]
+}[]
