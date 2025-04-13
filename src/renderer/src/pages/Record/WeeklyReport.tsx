@@ -1,15 +1,25 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/card'
 import { Button } from '@ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/card'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
 import { Separator } from '@ui/separator'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { CartesianGrid, XAxis, YAxis, Area, AreaChart } from 'recharts'
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 
-import { GameRankingItem } from './GameRankingItem'
 import { getWeeklyPlayData } from '~/stores/game/recordUtils'
+import { GameRankingItem } from './GameRankingItem'
+
+/**
+ * for a date string in the format YYYY-MM-DD
+ * if use `new Date(str)` it will be parsed as UTC time
+ * this function is used to parse the date string to local time
+ */
+function parseLocalDate(str: string): Date {
+  const [y, m, d] = str.split('-').map(Number)
+  return new Date(y, m - 1, d)
+}
 
 export function WeeklyReport(): JSX.Element {
   const { t } = useTranslation('record')
@@ -30,8 +40,10 @@ export function WeeklyReport(): JSX.Element {
   }
 
   // Formatting weekly date ranges
-  const weekStart = new Date(weekData.dates[0])
-  const weekEnd = new Date(weekData.dates[weekData.dates.length - 1])
+  const weekStart = parseLocalDate(weekData.dates[0])
+  const weekEnd = parseLocalDate(weekData.dates[weekData.dates.length - 1])
+  const nextWeekStart = new Date(weekEnd)
+  nextWeekStart.setDate(weekEnd.getDate() + 1)
   const weekRange = t('weekly.dateRange', {
     startDate: weekStart,
     endDate: weekEnd
@@ -52,7 +64,7 @@ export function WeeklyReport(): JSX.Element {
 
   // Converting daily game time to graphical data
   const dailyChartData = weekData.dates.map((date) => {
-    const dayDate = new Date(date)
+    const dayDate = parseLocalDate(date)
     return {
       date,
       weekday: getLocalizedWeekday(dayDate.getDay()),
@@ -85,7 +97,7 @@ export function WeeklyReport(): JSX.Element {
             variant="outline"
             size="icon"
             onClick={goToNextWeek}
-            disabled={new Date(weekEnd) > new Date()}
+            disabled={new Date(nextWeekStart) > new Date()}
           >
             <ChevronRight className="w-4 h-4" />
           </Button>
@@ -112,7 +124,7 @@ export function WeeklyReport(): JSX.Element {
                       formatter={(value) => formatGameTime((value as number) * 60000)}
                       labelFormatter={(weekday, data) => {
                         if (data && data[0]?.payload) {
-                          const rawDate = new Date(data[0].payload.fullDate)
+                          const rawDate = parseLocalDate(data[0].payload.fullDate)
                           return `${weekday} (${t('utils:format.niceDate', { date: rawDate })})`
                         }
                         return weekday
@@ -148,8 +160,10 @@ export function WeeklyReport(): JSX.Element {
                   </p>
                   <p className="text-lg font-bold">
                     {t('weekly.highlights.dateFormat', {
-                      weekday: getLocalizedWeekday(new Date(weekData.mostPlayedDay.date).getDay()),
-                      date: new Date(weekData.mostPlayedDay.date)
+                      weekday: getLocalizedWeekday(
+                        parseLocalDate(weekData.mostPlayedDay.date).getDay()
+                      ),
+                      date: parseLocalDate(weekData.mostPlayedDay.date)
                     })}
                   </p>
                   <p className="text-sm">

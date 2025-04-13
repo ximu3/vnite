@@ -1,6 +1,6 @@
-import { getGameStore, useGameRegistry } from '~/stores/game'
 import type { gameDoc } from '@appTypes/database'
 import i18next from 'i18next'
+import { getGameStore, useGameRegistry } from '~/stores/game'
 
 interface WeeklyMostPlayedDay {
   date: string
@@ -184,9 +184,10 @@ export function getMonthlyPlayData(date = new Date()): {
       let dayTotal = 0
 
       // Calculate what week of the month the current date is
-      const weekOfMonth = Math.ceil(
-        (dayDate.getDate() + new Date(dayDate.getFullYear(), dayDate.getMonth(), 1).getDay()) / 7
-      )
+      const firstWeek = 1 // set the first day of the week to Monday (0-Sun, 1-Mon, ...)
+      const weekOfFirstDay =
+        (new Date(dayDate.getFullYear(), dayDate.getMonth(), 1).getDay() - firstWeek + 7) % 7
+      const weekOfMonth = Math.ceil((dayDate.getDate() + weekOfFirstDay) / 7)
 
       // Iterate through all the games
       for (const gameId of gameIds) {
