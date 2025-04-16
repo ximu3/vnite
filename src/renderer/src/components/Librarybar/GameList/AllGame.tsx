@@ -6,8 +6,14 @@ import { sortGames } from '~/stores/game'
 import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
 
-function PlaceHolder(): JSX.Element {
-  return <div className={cn('p-3 h-5 rounded-none bg-transparent')}></div>
+function PlaceHolder({ gameId }: { gameId: string }): JSX.Element {
+  return (
+    <div
+      className={cn('p-3 h-5 rounded-none bg-transparent')}
+      data-game-id={gameId}
+      data-group-id={'all'}
+    ></div>
+  )
 }
 
 export function AllGameComponent({
@@ -34,7 +40,7 @@ export function AllGameComponent({
             key={gameId}
             threshold={300}
             scrollPosition={scrollPosition}
-            placeholder={<PlaceHolder />}
+            placeholder={<PlaceHolder gameId={gameId} />}
           >
             <GameNav gameId={gameId} groupId="all" />
           </LazyLoadComponent>
