@@ -109,13 +109,13 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
       if (!headerRef.current) return
 
       const scrollTop = scrollContainer.scrollTop
-      const vh45 = window.innerHeight * 0.45
+      const vh40 = window.innerHeight * 0.4
       const buffer = 100 // Add a buffer to prevent repeated switching at critical points
 
       // Adding a hysteresis effect
-      if (!isSticky && scrollTop > vh45 + buffer) {
+      if (!isSticky && scrollTop > vh40) {
         setIsSticky(true)
-      } else if (isSticky && scrollTop < vh45 + buffer - 100) {
+      } else if (isSticky && scrollTop < vh40 + buffer - 100) {
         setIsSticky(false)
       }
 
@@ -224,7 +224,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
         {/* content container */}
         <div className={cn('relative z-20 flex flex-col w-full')}>
           {/* Header with sticky positioning */}
-          <div ref={headerRef} className={cn('sticky top-[-1px] z-30 w-full')}>
+          <div ref={headerRef} className={cn('sticky top-0 z-30 w-full')}>
             <Header gameId={gameId} className={cn('w-full')} isSticky={isSticky} />
           </div>
 
