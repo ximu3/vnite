@@ -26,7 +26,7 @@ export function Nav({
         switch (variant) {
           case 'gameList':
             variantStyles = isActive
-              ? 'bg-accent rounded-none shadow-md'
+              ? 'bg-accent text-accent-foreground rounded-none shadow-md'
               : 'hover:bg-accent rounded-none'
             break
           case 'sidebar':

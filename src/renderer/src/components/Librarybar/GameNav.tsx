@@ -11,12 +11,14 @@ import { cn } from '~/utils'
 import { GameNavCM } from '../contextMenu/GameNavCM'
 import { BatchGameNavCM } from '../GameBatchEditor/BatchGameNavCM'
 import { useGameBatchEditorStore } from '../GameBatchEditor/store'
+import { useTheme } from '../ThemeProvider'
 
 export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }): JSX.Element {
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
   const [highlightLocalGames] = useConfigState('game.gameList.highlightLocalGames')
   const [markLocalGames] = useConfigState('game.gameList.markLocalGames')
+  const isDarkMode = useTheme().isDark
 
   // dialog box state
   const [isAttributesDialogOpen, setIsAttributesDialogOpen] = React.useState(false)
@@ -97,7 +99,9 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
               variant="gameList"
               className={cn(
                 'text-xs p-3 h-5 rounded-none',
+                highlightLocalGames && 'text-foreground',
                 highlightLocalGames && gamePath && 'text-accent-foreground',
+                highlightLocalGames && !gamePath && !isDarkMode && 'text-foreground/90',
                 isSelected && isBatchMode && 'bg-accent'
               )}
               to={`./games/${gameId}/${groupId}`}

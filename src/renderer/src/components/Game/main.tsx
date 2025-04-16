@@ -29,7 +29,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
   const offset = useRef({ x: 0, y: 0 })
   const logoRef = useRef<HTMLDivElement>(null)
 
-  const initialPosition = { x: 2, y: 29 }
+  const initialPosition = { x: 2, y: 26 }
   const initialSize = 100
 
   const [logoPosition, setLogoPosition] = useGameState(gameId, 'apperance.logo.position')
@@ -219,7 +219,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
         )}
       >
         {/* Spacer to push content down */}
-        <div className={cn('h-[45vh]')} />
+        <div className={cn('h-[40vh]')} />
 
         {/* content container */}
         <div className={cn('relative z-20 flex flex-col w-full')}>
