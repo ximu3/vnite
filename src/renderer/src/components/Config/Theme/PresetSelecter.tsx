@@ -35,6 +35,10 @@ export function PresetSelecter({
     {
       value: 'mutsumi',
       label: t('theme.presets.mutsumi')
+    },
+    {
+      value: 'moonlight',
+      label: t('theme.presets.moonlight')
     }
   ]
 

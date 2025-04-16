@@ -54,7 +54,8 @@
     "noPresetFound": "沒有找到預設",
     "presets": {
       "default": "預設",
-      "mutsumi": "Mutsumi"
+      "mutsumi": "Mutsumi",
+      "moonlight": "Moonlight"
     },
     "notifications": {
       "themeSaved": "主題已儲存",

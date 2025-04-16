@@ -54,7 +54,8 @@
     "noPresetFound": "No preset found",
     "presets": {
       "default": "Default",
-      "mutsumi": "Mutsumi"
+      "mutsumi": "Mutsumi",
+      "moonlight": "Moonlight"
     },
     "notifications": {
       "themeSaved": "Theme saved",

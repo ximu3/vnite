@@ -1,4 +1,4 @@
-import { defaultPreset, mutsumiPreset } from './preset'
+import { defaultPreset, mutsumiPreset, moonlightPreset } from './preset'
 import log from 'electron-log/main.js'
 
 export async function themePreset(presetName: string): Promise<string> {
@@ -7,6 +7,8 @@ export async function themePreset(presetName: string): Promise<string> {
       return await defaultPreset()
     } else if (presetName === 'mutsumi') {
       return await mutsumiPreset()
+    } else if (presetName === 'moonlight') {
+      return await moonlightPreset()
     } else {
       throw new Error(`Unknown theme preset ${presetName}`)
     }
