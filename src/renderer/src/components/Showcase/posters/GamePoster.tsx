@@ -28,6 +28,8 @@ import {
   type PreviewState
 } from '~/utils/dnd-utills'
 import { useTranslation } from 'react-i18next'
+import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
+import { generateUUID } from '@appUtils'
 
 function Preview({ title }: { title: string }): JSX.Element {
   return (
@@ -76,6 +78,7 @@ export function GamePoster({
   const navigate = useNavigate()
   const gameData = useGameRegistry((state) => state.gameMetaIndex[gameId])
   const reorderGamesInCollection = useGameCollectionStore((state) => state.reorderGamesInCollection)
+  const setLazyloadMark = usePositionButtonStore((state) => state.setLazyloadMark)
   const collectionId = groupId?.split(':')[1]
   const [playTime] = useGameState(gameId, 'record.playTime')
   const [gameName] = useGameState(gameId, 'metadata.name')
@@ -205,6 +208,9 @@ export function GamePoster({
                       scrollToElement({
                         selector: `[data-game-id="${gameId}"][data-group-id="${groupId || 'all'}"]`
                       })
+                      setTimeout(() => {
+                        setLazyloadMark(generateUUID())
+                      }, 100)
                     }}
                     draggable="false"
                     gameId={gameId}

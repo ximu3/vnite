@@ -2,6 +2,7 @@ import { Button } from '@ui/button'
 import React, { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { cn, scrollToElement } from '~/utils'
+import { create } from 'zustand'
 
 interface PositionButtonProps {
   className?: string
@@ -11,6 +12,16 @@ interface PositionButtonProps {
   threshold?: number
   position?: string
 }
+
+interface usePositionButtonStore {
+  lazyloadMark: string
+  setLazyloadMark: (mark: string) => void
+}
+
+export const usePositionButtonStore = create<usePositionButtonStore>((set) => ({
+  lazyloadMark: 'lazyload',
+  setLazyloadMark: (mark: string): void => set(() => ({ lazyloadMark: mark }))
+}))
 
 export const PositionButton = React.memo(function PositionButton({
   className,
@@ -22,6 +33,7 @@ export const PositionButton = React.memo(function PositionButton({
 }: PositionButtonProps): JSX.Element | null {
   // Getting Routing Information
   const { pathname } = useLocation()
+  const lazyloadMark = usePositionButtonStore((state) => state.lazyloadMark)
   const [isTargetVisible, setIsTargetVisible] = useState(true)
   const visibilityTimeout = useRef<NodeJS.Timeout>()
 
@@ -91,7 +103,7 @@ export const PositionButton = React.memo(function PositionButton({
         clearTimeout(visibilityTimeout.current)
       }
     }
-  }, [pathname, threshold, isGameDetailPage])
+  }, [pathname, threshold, isGameDetailPage, lazyloadMark])
 
   if (!isGameDetailPage) {
     return null
