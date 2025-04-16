@@ -1,7 +1,7 @@
 import { Button } from '@ui/button'
 import React, { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { cn } from '~/utils'
+import { cn, scrollToElement } from '~/utils'
 
 interface PositionButtonProps {
   className?: string
@@ -45,13 +45,11 @@ export const PositionButton = React.memo(function PositionButton({
     const selector = getTargetSelector()
     if (!selector) return
 
-    const element = document.querySelector(selector)
-    if (element) {
-      element.scrollIntoView({
-        behavior: scrollBehavior,
-        block: 'center'
-      })
-    }
+    scrollToElement({
+      selector,
+      behavior: scrollBehavior,
+      block: 'center'
+    })
   }
 
   // Set element visibility listener - always on top of the component

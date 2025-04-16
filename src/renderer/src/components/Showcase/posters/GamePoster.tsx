@@ -12,7 +12,7 @@ import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTi
 import { useDragContext } from '~/components/Showcase/CollectionGames'
 import { useGameState } from '~/hooks'
 import { useGameRegistry, useGameCollectionStore } from '~/stores/game'
-import { cn } from '~/utils'
+import { cn, scrollToElement } from '~/utils'
 import {
   attachClosestEdge,
   calPreviewOffset,
@@ -200,13 +200,12 @@ export function GamePoster({
               <ContextMenuTrigger>
                 <HoverCardAnimation className={cn('')}>
                   <GameImage
-                    onClick={() =>
-                      navigate(
-                        groupId
-                          ? `/library/games/${gameId}/${groupId}`
-                          : `/library/games/${gameId}/all`
-                      )
-                    }
+                    onClick={() => {
+                      navigate(`/library/games/${gameId}/${groupId || 'all'}`)
+                      scrollToElement({
+                        selector: `[data-game-id="${gameId}"][data-group-id="${groupId || 'all'}"]`
+                      })
+                    }}
                     draggable="false"
                     gameId={gameId}
                     type="cover"

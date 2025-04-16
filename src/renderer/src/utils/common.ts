@@ -29,6 +29,30 @@ export const HTMLParserOptions: HTMLReactParserOptions = {
   }
 }
 
+/**
+ * Scroll to a specific element on the page
+ * @param options Scrolling options
+ */
+export function scrollToElement(options: {
+  selector?: string
+  behavior?: ScrollBehavior
+  block?: ScrollLogicalPosition
+}): void {
+  const { selector, behavior = 'instant', block = 'center' } = options
+
+  // If there's no valid selector, return
+  if (!selector) return
+
+  // Find and scroll to the element
+  const element = document.querySelector(selector)
+  if (element) {
+    element.scrollIntoView({
+      behavior,
+      block
+    })
+  }
+}
+
 export function stopGame(gameId: string): void {
   toast.promise(
     (async (): Promise<void> => {

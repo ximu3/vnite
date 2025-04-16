@@ -11,7 +11,7 @@ import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTi
 import { GameImage } from '~/components/ui/game-image'
 import { useGameState } from '~/hooks'
 import { useGameRegistry } from '~/stores/game'
-import { cn } from '~/utils'
+import { cn, scrollToElement } from '~/utils'
 import { useTranslation } from 'react-i18next'
 
 export function BigGamePoster({
@@ -69,11 +69,12 @@ export function BigGamePoster({
             >
               <HoverBigCardAnimation className={cn('rounded-none w-full h-full')}>
                 <GameImage
-                  onClick={() =>
-                    groupId
-                      ? navigate(`/library/games/${gameId}/${groupId}`)
-                      : navigate(`/library/games/${gameId}/all`)
-                  }
+                  onClick={() => {
+                    navigate(`/library/games/${gameId}/${groupId || 'all'}`)
+                    scrollToElement({
+                      selector: `[data-game-id="${gameId}"][data-group-id="${groupId || 'all'}"]`
+                    })
+                  }}
                   gameId={gameId}
                   type="background"
                   className={cn(
