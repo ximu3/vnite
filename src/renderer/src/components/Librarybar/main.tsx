@@ -1,5 +1,5 @@
 import { Button } from '@ui/button'
-import { Input } from '@ui/input'
+import { ClearableInput } from '@ui/input'
 import { Nav } from '@ui/nav'
 import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
 import {
@@ -83,11 +83,10 @@ export function Librarybar(): JSX.Element {
           <div className={cn('grow')}>
             <Tooltip>
               <TooltipTrigger className={cn('w-full')}>
-                <Input
+                <ClearableInput
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder={t('librarybar.search.placeholder')}
-                  showClear={true}
                   onClear={() => setQuery('')}
                 />
               </TooltipTrigger>
