@@ -63,7 +63,7 @@
     "fixError": "修复失败",
     "createError": "创建扫描器失败",
     "intervalTooShort": "扫描间隔时间不能小于5分钟",
-    "scanStopping": "正在停止扫描...",
+    "scanStopping": "正在停止扫描…",
     "scanStopped": "扫描已停止"
   },
   "errors": {

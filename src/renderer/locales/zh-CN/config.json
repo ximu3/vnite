@@ -59,7 +59,7 @@
     },
     "notifications": {
       "themeSaved": "主题已保存",
-      "configuring": "正在配置主题...",
+      "configuring": "正在配置主题…",
       "configured": "主题配置成功"
     }
   },
@@ -83,15 +83,15 @@
       "fetchStorageFailed": "获取存储信息失败"
     },
     "notifications": {
-      "updating": "正在更新云同步配置...",
+      "updating": "正在更新云同步配置…",
       "updateSuccess": "云同步配置更新成功",
       "updateError": "云同步配置更新失败",
-      "loggingIn": "正在登录...",
+      "loggingIn": "正在登录…",
       "loginSuccess": "登录成功",
       "loginError": "登录失败",
       "authSuccess": "授权成功",
       "authError": "授权失败",
-      "registering": "正在注册...",
+      "registering": "正在注册…",
       "registerSuccess": "注册成功",
       "registerError": "注册失败"
     },
@@ -157,14 +157,14 @@
     "importV2Warning": "导入V2数据库将覆盖当前数据库，此操作不可逆！操作结束后应用将自动重启。",
     "portableAdminRequired": "注意：便携模式可能需要管理员权限。",
     "notifications": {
-      "backingUp": "正在备份数据库...",
+      "backingUp": "正在备份数据库…",
       "backupSuccess": "数据库备份成功",
       "backupError": "数据库备份失败",
-      "importing": "正在导入数据库...",
+      "importing": "正在导入数据库…",
       "importSuccess": "数据库导入成功",
       "importError": "数据库导入失败",
       "restartCountdown": "应用将在 3 秒后重启",
-      "switchingMode": "正在切换数据库模式...",
+      "switchingMode": "正在切换数据库模式…",
       "switchSuccess": "数据库模式切换成功",
       "switchError": "数据库模式切换失败",
       "adminRightsRequired": "当前安装目录切换到便携模式需要管理员权限"

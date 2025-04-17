@@ -149,10 +149,10 @@
       },
       "notifications": {
         "locked": "该存档已锁定",
-        "deleteLoading": "删除存档中...",
+        "deleteLoading": "删除存档中…",
         "deleteSuccess": "删除存档成功",
         "deleteError": "删除存档失败: {{message}}",
-        "switchLoading": "切换存档中...",
+        "switchLoading": "切换存档中…",
         "switchSuccess": "切换存档成功",
         "switchError": "切换存档失败: {{message}}",
         "noSavePath": "未找到存档路径"
@@ -190,7 +190,7 @@
         "empty": "暂无简介",
         "htmlHint": "支持使用 HTML 标签",
         "search": {
-          "loading": "正在搜索游戏描述...",
+          "loading": "正在搜索游戏描述…",
           "success": "搜索成功",
           "error": "搜索失败: {{message}}",
           "notFound": "没有找到相关描述",
@@ -202,7 +202,7 @@
         "empty": "暂无标签",
         "separator": "标签之间使用逗号分隔",
         "search": {
-          "loading": "正在搜索游戏标签...",
+          "loading": "正在搜索游戏标签…",
           "success": "搜索成功",
           "error": "搜索失败: {{message}}",
           "notFound": "没有找到相关标签",
@@ -253,7 +253,7 @@
           "engine": "引擎"
         },
         "search": {
-          "loading": "正在搜索游戏附加信息...",
+          "loading": "正在搜索游戏附加信息…",
           "success": "搜索成功",
           "error": "搜索失败: {{message}}",
           "notFound": "没有找到相关信息",
@@ -288,7 +288,7 @@
         "saveAs": "另存为"
       },
       "notifications": {
-        "deleting": "正在删除...",
+        "deleting": "正在删除…",
         "deleteSuccess": "删除成功",
         "deleteError": "删除失败: {{error}}",
         "selectFileError": "选择文件失败: {{error}}",
@@ -325,7 +325,7 @@
       "title": "确定要删除游戏 {{gameName}} 吗？",
       "description": "删除后，游戏的所有数据将被永久删除。此操作不可逆。",
       "notifications": {
-        "deleting": "正在删除游戏 {{gameName}}...",
+        "deleting": "正在删除游戏 {{gameName}}…",
         "deleted": "游戏 {{gameName}} 已删除",
         "error": "删除游戏 {{gameName}} 失败: {{message}}"
       }
@@ -359,7 +359,7 @@
         "addFile": "添加文件",
         "maxBackups": "最大存档备份数量",
         "notifications": {
-          "configuring": "正在配置预设...",
+          "configuring": "正在配置预设…",
           "success": "预设配置成功"
         }
       },
@@ -402,22 +402,22 @@
           "fileSelectError": "选择文件失败: {{error}}",
           "imageNotFound": "未找到当前图片",
           "getImageError": "获取当前图片失败: {{error}}",
-          "downloading": "正在获取图片...",
+          "downloading": "正在获取图片…",
           "downloadSuccess": "图片获取成功",
           "downloadError": "图片获取失败: {{message}}",
-          "processing": "正在{{action}}{{type}}...",
+          "processing": "正在{{action}}{{type}}…",
           "success": "{{type}}{{action}}成功",
           "error": "{{type}}{{action}}失败: {{message}}",
-          "searching": "搜索中...",
+          "searching": "搜索中…",
           "searchSuccess": "搜索成功",
           "searchError": "搜索失败: {{message}}",
           "noResultsFound": "未找到相关图片",
           "selectImage": "请选择一张图片",
-          "cropping": "正在裁剪...",
+          "cropping": "正在裁剪…",
           "cropSuccess": "裁剪成功",
           "cropError": "裁剪失败",
           "cropIncomplete": "裁剪未完成",
-          "deleting": "正在删除...",
+          "deleting": "正在删除…",
           "deleteSuccess": "删除成功",
           "deleteError": "删除失败"
         }
@@ -467,7 +467,7 @@
           "vba": "VBA启动",
           "steamIdRequired": "请输入Steam ID",
           "notifications": {
-            "configuring": "正在配置预设...",
+            "configuring": "正在配置预设…",
             "success": "预设配置成功"
           }
         }
@@ -509,7 +509,7 @@
       "gamesList": "将要删除的游戏：",
       "unnamedGame": "未命名游戏",
       "notifications": {
-        "deleting": "正在删除{{count}} 个游戏...",
+        "deleting": "正在删除{{count}} 个游戏…",
         "success": "{{count}} 个游戏已删除",
         "error": "删除{{count}} 个游戏失败: {{message}}"
       }

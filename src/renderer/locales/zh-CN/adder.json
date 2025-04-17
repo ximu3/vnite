@@ -4,12 +4,11 @@
       "title": "添加游戏"
     },
     "notifications": {
-      "loading": "请等待游戏添加完成testWeblate",
-      "testWeblate": "测试翻译"
+      "loading": "请等待游戏添加完成"
     },
     "gameList": {
       "columns": {
-        "name": "游戏名称",
+        "name": "游戏名",
         "releaseDate": "发行日期",
         "developers": "开发商"
       },
@@ -20,11 +19,11 @@
       "title": "背景图片",
       "noImages": "暂无图片",
       "notifications": {
-        "loading": "获取图片中...",
+        "loading": "获取图片中…",
         "success": "获取图片成功",
         "error": "获取图片失败: {{message}}",
         "noImages": "未找到游戏图片",
-        "adding": "添加游戏中...",
+        "adding": "添加游戏中…",
         "addSuccess": "添加游戏成功",
         "addError": "添加游戏失败: {{message}}"
       }
@@ -39,12 +38,12 @@
       "recognizeButton": "识别",
       "notifications": {
         "enterName": "请输入游戏名称",
-        "searching": "搜索游戏中...",
+        "searching": "搜索游戏中…",
         "found": "找到 {{count}} 个游戏",
         "notFound": "未找到游戏",
         "searchError": "搜索失败: {{message}}",
         "enterId": "请输入游戏ID",
-        "recognizing": "识别游戏中...",
+        "recognizing": "识别游戏中…",
         "recognized": "识别游戏成功",
         "invalidId": "无效ID",
         "recognizeError": "识别游戏失败: {{message}}"
@@ -91,12 +90,12 @@
       "add": "添加",
       "delete": "删除",
       "addAll": "全部添加",
-      "adding": "添加中..."
+      "adding": "添加中…"
     },
     "notifications": {
-      "addingGame": "正在添加游戏 {{name}}...",
+      "addingGame": "正在添加游戏 {{name}}…",
       "gameAdded": "游戏 {{name}} 添加成功",
-      "addingGames": "正在添加游戏...",
+      "addingGames": "正在添加游戏…",
       "gamesAdded": "添加游戏成功",
       "gameAddFailed": "添加游戏失败"
     },
