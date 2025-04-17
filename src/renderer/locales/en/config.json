@@ -59,7 +59,7 @@
     },
     "notifications": {
       "themeSaved": "Theme saved",
-      "configuring": "Configuring theme...",
+      "configuring": "Configuring theme…",
       "configured": "Theme configured successfully"
     }
   },
@@ -83,15 +83,15 @@
       "fetchStorageFailed": "Failed to fetch storage information"
     },
     "notifications": {
-      "updating": "Updating cloud sync configuration...",
+      "updating": "Updating cloud sync configuration…",
       "updateSuccess": "Cloud sync configuration updated successfully",
       "updateError": "Failed to update cloud sync configuration",
-      "loggingIn": "Logging in...",
+      "loggingIn": "Logging in…",
       "loginSuccess": "Login successful",
       "loginError": "Login failed",
       "authSuccess": "Authorization successful",
       "authError": "Authorization failed",
-      "registering": "Registering...",
+      "registering": "Registering…",
       "registerSuccess": "Registration successful",
       "registerError": "Registration failed"
     },
@@ -157,14 +157,14 @@
     "importV2Warning": "Importing a V2 database will overwrite the current database. This operation is irreversible! The application will restart automatically after the operation.",
     "portableAdminRequired": "Note: Portable mode may require administrator privileges.",
     "notifications": {
-      "backingUp": "Backing up database...",
+      "backingUp": "Backing up database…",
       "backupSuccess": "Database backup successful",
       "backupError": "Database backup failed",
-      "importing": "Importing database...",
+      "importing": "Importing database…",
       "importSuccess": "Database import successful",
       "importError": "Database import failed",
       "restartCountdown": "The application will restart in 3 seconds",
-      "switchingMode": "Switching database mode...",
+      "switchingMode": "Switching database mode…",
       "switchSuccess": "Database mode switch successful",
       "switchError": "Database mode switch failed",
       "adminRightsRequired": "Administrator rights are required to switch from the current installation directory to portable mode"
