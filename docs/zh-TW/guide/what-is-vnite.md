@@ -1,40 +1,45 @@
-# Vnite 是什麼？
+# What is Vnite?
 
-Vnite 是一個多功能的遊戲管理軟體，旨在提供一個統一的使用者介面來 記錄、管理、同步 您的遊戲旅程。
+Vnite is a versatile game management software designed to provide a unified user
+interface for recording, managing, and synchronizing your gaming journey.
 
 <div class="tip custom-block" style="padding-top: 8px">
 
-只是想嘗試一下？跳到[快速開始](./getting-started)。
+Just want to try it out? Jump to [Getting Started](./getting-started).
 
 </div>
 
-## 功能
+## Features
 
-- 現代化的使用者介面（支援自訂主題）
+- Modern user interface (supports custom themes)
 
-- 所有遊戲記錄、存檔、設定均支援多端即時雲同步
+- Real-time cloud synchronization for all game records, saves, and settings
+  across multiple devices
 
-- 支援多種資料來源（Steam、IGDB、Bangumi、VNDB、YMGal、DLsite）
+- Support for multiple data sources (Steam, IGDB, Bangumi, VNDB, YMGal, DLsite)
 
-- 提供詳細的報告功能，支援年、月、週報告，便於回顧您的遊戲旅程
+- Detailed reporting functionality with yearly, monthly, and weekly reports to
+  review your gaming journey
 
-- 支援與其他程式同步（如一鍵 LE 轉區啟動、自動Magpie縮放、模擬器啟動等）
+- Integration with other programs (such as one-click LE region switching,
+  automatic Magpie scaling, emulator launching, etc.)
 
-- 支援從 Steam 一鍵匯入遊戲庫（保留遊戲時間）
+- One-click import of your Steam library (preserving game time)
 
-- 多樣化的啟動方式（檔案、連結、指令碼），支援高度自訂和預設配置
+- Diverse launching methods (files, links, scripts) with high customization and
+  preset configurations
 
-- 支援動態分類（按開發商、標籤等）
+- Dynamic categorization (by developer, tags, etc.)
 
-- 強大的篩選器，支援自訂中繼資料欄位
+- Powerful filters with support for custom metadata fields
 
-- 按次記錄的計時器，支援記錄單個檔案或資料夾
+- Session-based timer that can track individual files or folders
 
-- 支援透過系統連結喚醒並啟動遊戲
+- Support for launching games via system links
 
-- 資料與程式完全分離，便於備份和自訂
+- Complete separation of data and program for easy backup and customization
 
-## 預覽
+## Preview
 
 ![home](https://img.timero.xyz/i/2025/04/02/67ecefcab9ec7.webp)
 

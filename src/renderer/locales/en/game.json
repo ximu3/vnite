@@ -149,10 +149,10 @@
       },
       "notifications": {
         "locked": "This save is locked",
-        "deleteLoading": "Deleting save...",
+        "deleteLoading": "Deleting save…",
         "deleteSuccess": "Save deleted successfully",
         "deleteError": "Failed to delete save: {{message}}",
-        "switchLoading": "Switching save...",
+        "switchLoading": "Switching save…",
         "switchSuccess": "Save switched successfully",
         "switchError": "Failed to switch save: {{message}}",
         "noSavePath": "Save path not found"
@@ -190,7 +190,7 @@
         "empty": "No description available",
         "htmlHint": "HTML tags are supported",
         "search": {
-          "loading": "Searching for game descriptions...",
+          "loading": "Searching for game descriptions…",
           "success": "Search successful",
           "error": "Search failed: {{message}}",
           "notFound": "No related descriptions found",
@@ -202,7 +202,7 @@
         "empty": "No tags available",
         "separator": "Separate tags with commas",
         "search": {
-          "loading": "Searching for game tags...",
+          "loading": "Searching for game tags…",
           "success": "Search successful",
           "error": "Search failed: {{message}}",
           "notFound": "No related tags found",
@@ -253,7 +253,7 @@
           "engine": "Engine"
         },
         "search": {
-          "loading": "Searching for game additional information...",
+          "loading": "Searching for game additional information…",
           "success": "Search successful",
           "error": "Search failed: {{message}}",
           "notFound": "No relevant information found",
@@ -288,7 +288,7 @@
         "saveAs": "Save As"
       },
       "notifications": {
-        "deleting": "Deleting...",
+        "deleting": "Deleting…",
         "deleteSuccess": "Deleted successfully",
         "deleteError": "Delete failed: {{error}}",
         "selectFileError": "Failed to select file: {{error}}",
@@ -325,7 +325,7 @@
       "title": "Are you sure you want to delete {{gameName}}?",
       "description": "All data for this game will be permanently deleted. This action cannot be undone.",
       "notifications": {
-        "deleting": "Deleting game {{gameName}}...",
+        "deleting": "Deleting game {{gameName}}…",
         "deleted": "Game {{gameName}} has been deleted",
         "error": "Failed to delete game {{gameName}}: {{message}}"
       }
@@ -359,7 +359,7 @@
         "addFile": "Add File",
         "maxBackups": "Maximum Save Backups",
         "notifications": {
-          "configuring": "Configuring preset...",
+          "configuring": "Configuring preset…",
           "success": "Preset configured successfully"
         }
       },
@@ -402,22 +402,22 @@
           "fileSelectError": "Failed to select file: {{error}}",
           "imageNotFound": "Current image not found",
           "getImageError": "Failed to get current image: {{error}}",
-          "downloading": "Downloading image...",
+          "downloading": "Downloading image…",
           "downloadSuccess": "Image downloaded successfully",
           "downloadError": "Image download failed: {{message}}",
-          "processing": "{{action}} {{type}}...",
+          "processing": "{{action}} {{type}}…",
           "success": "{{type}} {{action}} successful",
           "error": "{{type}} {{action}} failed: {{message}}",
-          "searching": "Searching...",
+          "searching": "Searching…",
           "searchSuccess": "Search successful",
           "searchError": "Search failed: {{message}}",
           "noResultsFound": "No images found",
           "selectImage": "Please select an image",
-          "cropping": "Cropping...",
+          "cropping": "Cropping…",
           "cropSuccess": "Crop successful",
           "cropError": "Crop failed",
           "cropIncomplete": "Crop incomplete",
-          "deleting": "Deleting...",
+          "deleting": "Deleting…",
           "deleteSuccess": "Delete successful",
           "deleteError": "Delete failed"
         }
@@ -467,7 +467,7 @@
           "vba": "VBA Launch",
           "steamIdRequired": "Please enter Steam ID",
           "notifications": {
-            "configuring": "Configuring preset...",
+            "configuring": "Configuring preset…",
             "success": "Preset configured successfully"
           }
         }
@@ -509,7 +509,7 @@
       "gamesList": "Games to be deleted:",
       "unnamedGame": "Unnamed Game",
       "notifications": {
-        "deleting": "Deleting {{count}} games...",
+        "deleting": "Deleting {{count}} games…",
         "success": "{{count}} games deleted",
         "error": "Failed to delete {{count}} games: {{message}}"
       }

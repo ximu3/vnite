@@ -6,10 +6,10 @@
   },
   "hotkeySetting": {
     "title": "設定快捷鍵",
-    "recording": "[按下快捷鍵...]",
+    "recording": "[按下快捷鍵…]",
     "placeholder": "輸入或記錄快捷鍵，如: ctrl+a+b",
     "startRecordButton": "點擊開始記錄",
-    "recordingButton": "正在記錄...",
+    "recordingButton": "正在記錄…",
     "currentKeys": "目前按下的鍵",
     "supportedKeys": "支援的按鍵包括字母、數字、方向鍵、Esc、Tab、Enter、Space 等，可以組合使用多個按鍵",
     "errors": {
@@ -26,13 +26,13 @@
   },
   "game": {
     "stopping": {
-      "loading": "正在停止遊戲...",
+      "loading": "正在停止遊戲…",
       "success": "遊戲已停止",
       "error": "停止遊戲失敗: {{message}}"
     },
     "starting": {
       "pathRequired": "請先設定遊戲路徑",
-      "configuringLauncher": "正在配置啟動器...",
+      "configuringLauncher": "正在配置啟動器…",
       "configSuccess": "啟動器配置成功",
       "configError": "配置錯誤: {{message}}",
       "runtimeError": "執行配置錯誤，請檢查！"
@@ -52,9 +52,9 @@
     "niceISO": "{{date, niceISO}}"
   },
   "notifications": {
-    "gameExiting": "正在退出遊戲...",
+    "gameExiting": "正在退出遊戲…",
     "gameExited": "遊戲已退出",
-    "fullSyncing": "正在同步資料...",
+    "fullSyncing": "正在同步資料…",
     "fullSynced": "資料同步完成",
     "fullSyncError": "資料同步失敗",
     "updateUserInfoError": "官方雲同步帳號登入過期，請重新登入"

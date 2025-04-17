@@ -7,7 +7,7 @@
     "input": {
       "steamId": "输入 Steam ID",
       "fetch": "获取",
-      "searching": "搜索游戏..."
+      "searching": "搜索游戏…"
     },
     "status": {
       "initial": {
@@ -20,7 +20,7 @@
       },
       "loading": {
         "title": "加载中",
-        "description": "正在获取游戏列表..."
+        "description": "正在获取游戏列表…"
       },
       "empty": {
         "title": "已全部导入",
@@ -29,12 +29,12 @@
     },
     "gameList": {
       "selectAll": "全选 ({{selected}}/{{total}})",
-      "search": "搜索游戏...",
+      "search": "搜索游戏…",
       "hours": "{{hours}}小时"
     },
     "import": {
       "button": "导入选中的游戏 ({{count}})",
-      "preparing": "正在准备导入...",
+      "preparing": "正在准备导入…",
       "progress": {
         "title": "正在导入",
         "completed": "导入完成",

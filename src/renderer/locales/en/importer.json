@@ -7,7 +7,7 @@
     "input": {
       "steamId": "Enter Steam ID",
       "fetch": "Fetch",
-      "searching": "Searching games..."
+      "searching": "Searching games…"
     },
     "status": {
       "initial": {
@@ -20,7 +20,7 @@
       },
       "loading": {
         "title": "Loading",
-        "description": "Fetching game list..."
+        "description": "Fetching game list…"
       },
       "empty": {
         "title": "All Imported",
@@ -29,12 +29,12 @@
     },
     "gameList": {
       "selectAll": "Select All ({{selected}}/{{total}})",
-      "search": "Search games...",
+      "search": "Search games…",
       "hours": "{{hours}} hours"
     },
     "import": {
       "button": "Import Selected Games ({{count}})",
-      "preparing": "Preparing import...",
+      "preparing": "Preparing import…",
       "progress": {
         "title": "Importing",
         "completed": "Import Complete",

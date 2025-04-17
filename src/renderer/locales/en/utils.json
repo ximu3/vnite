@@ -6,10 +6,10 @@
   },
   "hotkeySetting": {
     "title": "Set Hotkey",
-    "recording": "[Press hotkey...]",
+    "recording": "[Press hotkey…]",
     "placeholder": "Type or record hotkey, e.g.: ctrl+a+b",
     "startRecordButton": "Click to start recording",
-    "recordingButton": "Recording...",
+    "recordingButton": "Recording…",
     "currentKeys": "Currently pressed keys",
     "supportedKeys": "Supported keys include letters, numbers, arrow keys, Esc, Tab, Enter, Space, etc., and can be used in combination",
     "errors": {
@@ -26,13 +26,13 @@
   },
   "game": {
     "stopping": {
-      "loading": "Stopping game...",
+      "loading": "Stopping game…",
       "success": "Game stopped",
       "error": "Failed to stop game: {{message}}"
     },
     "starting": {
       "pathRequired": "Please set game path first",
-      "configuringLauncher": "Configuring launcher...",
+      "configuringLauncher": "Configuring launcher…",
       "configSuccess": "Launcher configured successfully",
       "configError": "Configuration error: {{message}}",
       "runtimeError": "Runtime configuration error, please check!"
@@ -52,9 +52,9 @@
     "niceISO": "{{date, niceISO}}"
   },
   "notifications": {
-    "gameExiting": "Exiting game...",
+    "gameExiting": "Exiting game…",
     "gameExited": "Game has exited",
-    "fullSyncing": "Syncing data...",
+    "fullSyncing": "Syncing data…",
     "fullSynced": "Data sync completed",
     "fullSyncError": "Data sync failed",
     "updateUserInfoError": "Official cloud sync account login expired, please log in again"

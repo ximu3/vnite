@@ -59,7 +59,7 @@
     },
     "notifications": {
       "themeSaved": "主題已儲存",
-      "configuring": "正在配置主題...",
+      "configuring": "正在配置主題…",
       "configured": "主題配置成功"
     }
   },
@@ -83,15 +83,15 @@
       "fetchStorageFailed": "獲取儲存資訊失敗"
     },
     "notifications": {
-      "updating": "正在更新雲同步配置...",
+      "updating": "正在更新雲同步配置…",
       "updateSuccess": "雲同步配置更新成功",
       "updateError": "雲同步配置更新失敗",
-      "loggingIn": "正在登入...",
+      "loggingIn": "正在登入…",
       "loginSuccess": "登入成功",
       "loginError": "登入失敗",
       "authSuccess": "授權成功",
       "authError": "授權失敗",
-      "registering": "正在註冊...",
+      "registering": "正在註冊…",
       "registerSuccess": "註冊成功",
       "registerError": "註冊失敗"
     },
@@ -157,14 +157,14 @@
     "importV2Warning": "匯入V2資料庫將覆蓋目前資料庫，此操作不可逆！操作結束後應用將自動重啟。",
     "portableAdminRequired": "注意：便攜模式可能需要管理員權限。",
     "notifications": {
-      "backingUp": "正在備份資料庫...",
+      "backingUp": "正在備份資料庫…",
       "backupSuccess": "資料庫備份成功",
       "backupError": "資料庫備份失敗",
-      "importing": "正在匯入資料庫...",
+      "importing": "正在匯入資料庫…",
       "importSuccess": "資料庫匯入成功",
       "importError": "資料庫匯入失敗",
       "restartCountdown": "應用將在 3 秒後重啟",
-      "switchingMode": "正在切換資料庫模式...",
+      "switchingMode": "正在切換資料庫模式…",
       "switchSuccess": "資料庫模式切換成功",
       "switchError": "資料庫模式切換失敗",
       "adminRightsRequired": "目前安裝目錄切換到便攜模式需要管理員權限"

@@ -7,7 +7,7 @@
     "input": {
       "steamId": "Steam IDを入力",
       "fetch": "取得",
-      "searching": "ゲームを検索中..."
+      "searching": "ゲームを検索中…"
     },
     "status": {
       "initial": {
@@ -20,7 +20,7 @@
       },
       "loading": {
         "title": "読み込み中",
-        "description": "ゲームリストを取得中..."
+        "description": "ゲームリストを取得中…"
       },
       "empty": {
         "title": "すべてインポート済み",
@@ -29,12 +29,12 @@
     },
     "gameList": {
       "selectAll": "すべて選択 ({{selected}}/{{total}})",
-      "search": "ゲームを検索...",
+      "search": "ゲームを検索…",
       "hours": "{{hours}}時間"
     },
     "import": {
       "button": "選択したゲームをインポート ({{count}})",
-      "preparing": "インポートを準備中...",
+      "preparing": "インポートを準備中…",
       "progress": {
         "title": "インポート中",
         "completed": "インポート完了",
