@@ -4,8 +4,7 @@
       "title": "Add Game"
     },
     "notifications": {
-      "loading": "Please wait for game addition to complete testWeblate",
-      "testWeblate": "Test translation"
+      "loading": "Please wait for game addition to complete"
     },
     "gameList": {
       "columns": {
@@ -20,11 +19,11 @@
       "title": "Background Image",
       "noImages": "No images",
       "notifications": {
-        "loading": "Getting images...",
+        "loading": "Getting images…",
         "success": "Images retrieved successfully",
         "error": "Failed to get images: {{message}}",
         "noImages": "No game images found",
-        "adding": "Adding game...",
+        "adding": "Adding game…",
         "addSuccess": "Game added successfully",
         "addError": "Failed to add game: {{message}}"
       }
@@ -39,12 +38,12 @@
       "recognizeButton": "Recognize",
       "notifications": {
         "enterName": "Please enter game name",
-        "searching": "Searching games...",
+        "searching": "Searching games…",
         "found": "Found {{count}} games",
         "notFound": "No games found",
         "searchError": "Search failed: {{message}}",
         "enterId": "Please enter game ID",
-        "recognizing": "Recognizing game...",
+        "recognizing": "Recognizing game…",
         "recognized": "Game recognized successfully",
         "invalidId": "Invalid ID",
         "recognizeError": "Failed to recognize game: {{message}}"
@@ -91,12 +90,12 @@
       "add": "Add",
       "delete": "Delete",
       "addAll": "Add All",
-      "adding": "Adding..."
+      "adding": "Adding…"
     },
     "notifications": {
-      "addingGame": "Adding game {{name}}...",
+      "addingGame": "Adding game {{name}}…",
       "gameAdded": "Game {{name}} added successfully",
-      "addingGames": "Adding games...",
+      "addingGames": "Adding games…",
       "gamesAdded": "Games added successfully",
       "gameAddFailed": "Failed to add game"
     },
