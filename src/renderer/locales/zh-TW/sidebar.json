@@ -1,34 +1,34 @@
 {
-  "title": "vnite",
-  "navigation": {
-    "library": "遊戲庫",
-    "records": "記錄"
-  },
-  "actions": {
-    "darkMode": "暗色模式",
-    "lightMode": "亮色模式",
-    "cloudSyncDisabled": "雲同步未開啟",
-    "addGame": "添加遊戲",
-    "settings": "設定"
-  },
-  "adder": {
-    "addGame": "新增遊戲",
-    "addSingle": "單個新增",
-    "addBatch": "批量新增",
-    "addCustom": "自定義新增",
-    "addScanner": "新增掃描器",
-    "importFromThirdParty": "從第三方匯入",
-    "steam": "Steam"
-  },
-  "notifications": {
-    "noGamesFound": "未找到遊戲",
-    "getFailed": "獲取遊戲失敗: ",
-    "unknownError": "未知錯誤",
-    "selectLibraryFolder": "請選擇庫資料夾...",
-    "getSuccess": "獲取遊戲成功",
-    "selectGamePath": "請選擇遊戲路徑",
-    "adding": "正在添加遊戲...",
-    "addSuccess": "添加遊戲成功",
-    "addError": "添加遊戲時出錯"
-  }
+    "title": "vnite",
+    "navigation": {
+        "library": "遊戲庫",
+        "records": "記錄"
+    },
+    "actions": {
+        "darkMode": "暗色模式",
+        "lightMode": "亮色模式",
+        "cloudSyncDisabled": "雲同步未開啟",
+        "addGame": "添加遊戲",
+        "settings": "設定"
+    },
+    "adder": {
+        "addGame": "新增遊戲",
+        "addSingle": "單個新增",
+        "addBatch": "批量新增",
+        "addCustom": "自定義新增",
+        "addScanner": "新增掃描器",
+        "importFromThirdParty": "從第三方匯入",
+        "steam": "Steam"
+    },
+    "notifications": {
+        "noGamesFound": "未找到遊戲",
+        "getFailed": "獲取遊戲失敗: ",
+        "unknownError": "未知錯誤",
+        "selectLibraryFolder": "請選擇庫資料夾...",
+        "getSuccess": "獲取遊戲成功",
+        "selectGamePath": "請選擇遊戲路徑",
+        "adding": "正在添加遊戲...",
+        "addSuccess": "添加遊戲成功",
+        "addError": "添加遊戲時出錯"
+    }
 }
