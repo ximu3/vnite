@@ -4,7 +4,8 @@
       "title": "Add Game"
     },
     "notifications": {
-      "loading": "Please wait for game addition to complete"
+      "loading": "Please wait for game addition to complete testWeblate",
+      "testWeblate": "Test translation"
     },
     "gameList": {
       "columns": {

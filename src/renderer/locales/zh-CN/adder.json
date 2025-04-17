@@ -4,7 +4,8 @@
       "title": "添加游戏"
     },
     "notifications": {
-      "loading": "请等待游戏添加完成"
+      "loading": "请等待游戏添加完成testWeblate",
+      "testWeblate": "测试翻译"
     },
     "gameList": {
       "columns": {
