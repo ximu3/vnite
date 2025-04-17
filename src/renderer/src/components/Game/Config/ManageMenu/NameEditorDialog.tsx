@@ -28,7 +28,7 @@ export function NameEditorDialog({
             if (e.key === 'Enter') setIsOpen(false)
           }}
         />
-        <Button onClick={() => setIsOpen(false)}>{t('ui:common.confirm')}</Button>
+        <Button onClick={() => setIsOpen(false)}>{t('utils:common.confirm')}</Button>
       </DialogContent>
     </Dialog>
   )

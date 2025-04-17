@@ -179,7 +179,7 @@ export function Header({
                       if (e.key === 'Enter') confirmScore()
                     }}
                   />
-                  <Button onClick={confirmScore}>{t('ui:common.confirm')}</Button>
+                  <Button onClick={confirmScore}>{t('utils:common.confirm')}</Button>
                 </div>
               </DialogContent>
             </Dialog>
@@ -257,7 +257,7 @@ export function Header({
                       if (e.key === 'Enter') confirmScore()
                     }}
                   />
-                  <Button onClick={confirmScore}>{t('ui:common.confirm')}</Button>
+                  <Button onClick={confirmScore}>{t('utils:common.confirm')}</Button>
                 </div>
               </DialogContent>
             </Dialog>

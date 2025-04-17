@@ -469,7 +469,7 @@ export function CloudSync(): JSX.Element {
             {/* Save button */}
             {enabled && (
               <div className={cn('flex justify-end pt-2')}>
-                <Button onClick={updateCloudSyncConfig}>{t('ui:common.save')}</Button>
+                <Button onClick={updateCloudSyncConfig}>{t('utils:common.save')}</Button>
               </div>
             )}
           </div>

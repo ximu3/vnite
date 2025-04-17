@@ -54,8 +54,8 @@ export function DeleteGameAlert({
           <AlertDialogDescription>{t('detail.deleteAlert.description')}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>{t('ui:common.cancel')}</AlertDialogCancel>
-          <AlertDialogAction onClick={deleteGame}>{t('ui:common.confirm')}</AlertDialogAction>
+          <AlertDialogCancel>{t('utils:common.cancel')}</AlertDialogCancel>
+          <AlertDialogAction onClick={deleteGame}>{t('utils:common.confirm')}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

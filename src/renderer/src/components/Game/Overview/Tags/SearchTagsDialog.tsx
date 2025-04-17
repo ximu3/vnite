@@ -166,9 +166,9 @@ export function SearchTagsDialog({
             >
               <span className={cn('icon-[mdi--magnify] w-[20px] h-[20px]')}></span>
             </Button>
-            <Button onClick={handleConfirm}>{t('ui:common.confirm')}</Button>
+            <Button onClick={handleConfirm}>{t('utils:common.confirm')}</Button>
             <Button variant="outline" onClick={handleClose}>
-              {t('ui:common.cancel')}
+              {t('utils:common.cancel')}
             </Button>
           </div>
         </Card>

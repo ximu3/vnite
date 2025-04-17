@@ -164,7 +164,7 @@ export function InformationDialog({
           </Tooltip>
 
           <div className={cn('col-span-2 flex justify-end mt-2')}>
-            <Button onClick={handleConfirm}>{t('ui:common.confirm')}</Button>
+            <Button onClick={handleConfirm}>{t('utils:common.confirm')}</Button>
           </div>
         </div>
       </DialogContent>

@@ -54,13 +54,13 @@ export function HotkeySetting({
   const validateHotkey = (hotkey: string): boolean => {
     const keys = hotkey.split('+').map((k) => k.trim())
     if (keys.length === 0) {
-      toast.error(t('ui:hotkeySetting.errors.invalidHotkey'))
+      toast.error(t('utils:hotkeySetting.errors.invalidHotkey'))
       return false
     }
 
     // Check for key duplication
     if (new Set(keys).size !== keys.length) {
-      toast.error(t('ui:hotkeySetting.errors.duplicateKeys'))
+      toast.error(t('utils:hotkeySetting.errors.duplicateKeys'))
       return false
     }
 
@@ -141,7 +141,7 @@ export function HotkeySetting({
   const handleSave = (): void => {
     if (tempHotkey && validateHotkey(tempHotkey)) {
       onHotkeyChange(tempHotkey)
-      toast.success(t('ui:hotkeySetting.notifications.hotkeyUpdated'))
+      toast.success(t('utils:hotkeySetting.notifications.hotkeyUpdated'))
       setIsOpen(false)
     }
   }
@@ -166,15 +166,15 @@ export function HotkeySetting({
 
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{t('ui:hotkeySetting.title')}</DialogTitle>
+          <DialogTitle>{t('utils:hotkeySetting.title')}</DialogTitle>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
           <div className="space-y-4">
             <Input
-              value={isRecording ? t('ui:hotkeySetting.recording') : tempHotkey}
+              value={isRecording ? t('utils:hotkeySetting.recording') : tempHotkey}
               onChange={handleInputChange}
-              placeholder={t('ui:hotkeySetting.placeholder')}
+              placeholder={t('utils:hotkeySetting.placeholder')}
               className={inputClassName}
             />
 
@@ -184,28 +184,28 @@ export function HotkeySetting({
               className="w-full"
             >
               {isRecording
-                ? t('ui:hotkeySetting.recordingButton')
-                : t('ui:hotkeySetting.startRecordButton')}
+                ? t('utils:hotkeySetting.recordingButton')
+                : t('utils:hotkeySetting.startRecordButton')}
             </Button>
 
             {isRecording && pressedKeys.length > 0 && (
               <div className="text-sm text-muted-foreground">
-                {t('ui:hotkeySetting.currentKeys')}: {formatHotkey(pressedKeys.join('+'))}
+                {t('utils:hotkeySetting.currentKeys')}: {formatHotkey(pressedKeys.join('+'))}
               </div>
             )}
 
             <div className="text-xs text-muted-foreground">
-              {t('ui:hotkeySetting.supportedKeys')}
+              {t('utils:hotkeySetting.supportedKeys')}
             </div>
           </div>
         </div>
 
         <div className="flex justify-end space-x-4">
           <Button variant="ghost" onClick={() => setIsOpen(false)}>
-            {t('ui:common.cancel')}
+            {t('utils:common.cancel')}
           </Button>
           <Button onClick={handleSave} disabled={!tempHotkey}>
-            {t('ui:common.save')}
+            {t('utils:common.save')}
           </Button>
         </div>
       </DialogContent>

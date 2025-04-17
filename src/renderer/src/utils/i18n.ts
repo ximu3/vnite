@@ -10,7 +10,6 @@ export async function i18nInit(): Promise<void> {
   const namespaces = [
     'config',
     'sidebar',
-    'ui',
     'game',
     'adder',
     'importer',
@@ -35,8 +34,8 @@ export async function i18nInit(): Promise<void> {
     .init({
       lng: language,
       fallbackLng: 'en',
-      defaultNS: 'ui',
-      fallbackNS: 'ui',
+      defaultNS: 'sidebar',
+      fallbackNS: 'sidebar',
       ns: namespaces,
       interpolation: {
         escapeValue: false

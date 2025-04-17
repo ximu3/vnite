@@ -154,9 +154,9 @@ export function Database(): JSX.Element {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>{t('ui:common.cancel')}</AlertDialogCancel>
+                  <AlertDialogCancel>{t('utils:common.cancel')}</AlertDialogCancel>
                   <AlertDialogAction onClick={switchDatabaseMode}>
-                    {t('ui:common.confirm')}
+                    {t('utils:common.confirm')}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -190,9 +190,9 @@ export function Database(): JSX.Element {
                     <AlertDialogDescription>{t('database.importWarning')}</AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>{t('ui:common.cancel')}</AlertDialogCancel>
+                    <AlertDialogCancel>{t('utils:common.cancel')}</AlertDialogCancel>
                     <AlertDialogAction onClick={restore}>
-                      {t('ui:common.confirm')}
+                      {t('utils:common.confirm')}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
@@ -210,9 +210,9 @@ export function Database(): JSX.Element {
                     <AlertDialogDescription>{t('database.importV2Warning')}</AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>{t('ui:common.cancel')}</AlertDialogCancel>
+                    <AlertDialogCancel>{t('utils:common.cancel')}</AlertDialogCancel>
                     <AlertDialogAction onClick={importV2Data}>
-                      {t('ui:common.confirm')}
+                      {t('utils:common.confirm')}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>

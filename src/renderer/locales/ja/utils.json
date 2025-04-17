@@ -1,4 +1,25 @@
 {
+  "common": {
+    "save": "保存",
+    "cancel": "キャンセル",
+    "confirm": "確認"
+  },
+  "hotkeySetting": {
+    "title": "ホットキーの設定",
+    "recording": "[ホットキーを押してください...]",
+    "placeholder": "ホットキーを入力または記録、例: ctrl+a+b",
+    "startRecordButton": "クリックして記録開始",
+    "recordingButton": "記録中...",
+    "currentKeys": "現在押されているキー",
+    "supportedKeys": "サポートされているキーには、文字、数字、矢印キー、Esc、Tab、Enter、Spaceなどが含まれ、複数のキーを組み合わせて使用できます",
+    "errors": {
+      "invalidHotkey": "有効なホットキーを入力してください",
+      "duplicateKeys": "ホットキーに重複したキーを含めることはできません"
+    },
+    "notifications": {
+      "hotkeyUpdated": "ホットキーが更新されました"
+    }
+  },
   "clipboard": {
     "copied": "クリップボードにコピーしました",
     "copyError": "クリップボードへのテキストのコピーに失敗しました: {{error}}"

@@ -139,7 +139,7 @@ export function CropDialog({
           </ReactCrop>
           <div className={cn('flex justify-end gap-2')}>
             <Button variant="outline" onClick={onClose}>
-              {t('ui:common.cancel')}
+              {t('utils:common.cancel')}
             </Button>
             <Button
               onClick={() => {
@@ -155,7 +155,7 @@ export function CropDialog({
                 )
               }}
             >
-              {t('ui:common.confirm')}
+              {t('utils:common.confirm')}
             </Button>
           </div>
         </div>
