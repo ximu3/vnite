@@ -1,45 +1,40 @@
-# What is Vnite?
+# Vniteとは？
 
-Vnite is a versatile game management software designed to provide a unified user
-interface for recording, managing, and synchronizing your gaming journey.
+Vniteはゲームの記録、管理、同期のための統一されたユーザーインターフェースを提供する多機能ゲーム管理ソフトウェアです。
 
 <div class="tip custom-block" style="padding-top: 8px">
 
-Just want to try it out? Jump to [Getting Started](./getting-started).
+試してみたいですか？[はじめに](./getting-started)へジャンプしてください。
 
 </div>
 
-## Features
+## 機能
 
-- Modern user interface (supports custom themes)
+- モダンなユーザーインターフェース（カスタムテーマをサポート）
 
-- Real-time cloud synchronization for all game records, saves, and settings
-  across multiple devices
+- すべてのゲーム記録、セーブデータ、設定の複数デバイス間でのリアルタイムクラウド同期
 
-- Support for multiple data sources (Steam, IGDB, Bangumi, VNDB, YMGal, DLsite)
+- 複数のデータソースをサポート（Steam、IGDB、Bangumi、VNDB、YMGal、DLsite）
 
-- Detailed reporting functionality with yearly, monthly, and weekly reports to
-  review your gaming journey
+- 年間、月間、週間レポートによる詳細なレポート機能でゲームの旅を振り返る
 
-- Integration with other programs (such as one-click LE region switching,
-  automatic Magpie scaling, emulator launching, etc.)
+- 他のプログラムとの連携（ワンクリックLEリージョン切り替え、自動Magpieスケーリング、エミュレーター起動など）
 
-- One-click import of your Steam library (preserving game time)
+- Steamライブラリのワンクリックインポート（ゲーム時間を保持）
 
-- Diverse launching methods (files, links, scripts) with high customization and
-  preset configurations
+- 多様な起動方法（ファイル、リンク、スクリプト）と高度なカスタマイズとプリセット構成
 
-- Dynamic categorization (by developer, tags, etc.)
+- 動的カテゴリ分け（開発者、タグなどによる）
 
-- Powerful filters with support for custom metadata fields
+- カスタムメタデータフィールドをサポートする強力なフィルター
 
-- Session-based timer that can track individual files or folders
+- セッションベースのタイマーで個別のファイルやフォルダを追跡可能
 
-- Support for launching games via system links
+- システムリンクを介したゲーム起動のサポート
 
-- Complete separation of data and program for easy backup and customization
+- データとプログラムの完全分離による簡単なバックアップとカスタマイズ
 
-## Preview
+## プレビュー
 
 ![home](https://img.timero.xyz/i/2025/04/02/67ecefcab9ec7.webp)
 
