@@ -19,11 +19,11 @@
       "title": "背景圖片",
       "noImages": "暫無圖片",
       "notifications": {
-        "loading": "獲取圖片中...",
+        "loading": "獲取圖片中…",
         "success": "獲取圖片成功",
         "error": "獲取圖片失敗: {{message}}",
         "noImages": "未找到遊戲圖片",
-        "adding": "添加遊戲中...",
+        "adding": "添加遊戲中…",
         "addSuccess": "添加遊戲成功",
         "addError": "添加遊戲失敗: {{message}}"
       }
@@ -38,12 +38,12 @@
       "recognizeButton": "識別",
       "notifications": {
         "enterName": "請輸入遊戲名稱",
-        "searching": "搜尋遊戲中...",
+        "searching": "搜尋遊戲中…",
         "found": "找到 {{count}} 個遊戲",
         "notFound": "未找到遊戲",
         "searchError": "搜尋失敗: {{message}}",
         "enterId": "請輸入遊戲ID",
-        "recognizing": "識別遊戲中...",
+        "recognizing": "識別遊戲中…",
         "recognized": "識別遊戲成功",
         "invalidId": "無效ID",
         "recognizeError": "識別遊戲失敗: {{message}}"
@@ -90,12 +90,12 @@
       "add": "添加",
       "delete": "刪除",
       "addAll": "全部添加",
-      "adding": "添加中..."
+      "adding": "添加中…"
     },
     "notifications": {
-      "addingGame": "正在添加遊戲 {{name}}...",
+      "addingGame": "正在添加遊戲 {{name}}…",
       "gameAdded": "遊戲 {{name}} 添加成功",
-      "addingGames": "正在添加遊戲...",
+      "addingGames": "正在添加遊戲…",
       "gamesAdded": "添加遊戲成功",
       "gameAddFailed": "添加遊戲失敗"
     },
