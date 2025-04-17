@@ -7,7 +7,7 @@
     "input": {
       "steamId": "輸入 Steam ID",
       "fetch": "獲取",
-      "searching": "搜尋遊戲..."
+      "searching": "搜尋遊戲…"
     },
     "status": {
       "initial": {
@@ -20,7 +20,7 @@
       },
       "loading": {
         "title": "載入中",
-        "description": "正在獲取遊戲列表..."
+        "description": "正在獲取遊戲列表…"
       },
       "empty": {
         "title": "已全部匯入",
@@ -29,12 +29,12 @@
     },
     "gameList": {
       "selectAll": "全選 ({{selected}}/{{total}})",
-      "search": "搜尋遊戲...",
+      "search": "搜尋遊戲…",
       "hours": "{{hours}}小時"
     },
     "import": {
       "button": "匯入選中的遊戲 ({{count}})",
-      "preparing": "正在準備匯入...",
+      "preparing": "正在準備匯入…",
       "progress": {
         "title": "正在匯入",
         "completed": "匯入完成",
