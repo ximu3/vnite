@@ -1,35 +1,35 @@
 {
-    "title": "vnite",
-    "navigation": {
-        "library": "游戏库",
-        "records": "记录",
-        "scanner": "扫描器"
-    },
-    "actions": {
-        "darkMode": "暗色模式",
-        "lightMode": "亮色模式",
-        "cloudSyncDisabled": "云同步未开启",
-        "addGame": "添加游戏",
-        "settings": "设置"
-    },
-    "adder": {
-        "addGame": "添加游戏",
-        "addSingle": "单个添加",
-        "addBatch": "批量添加",
-        "addCustom": "自定义添加",
-        "addScanner": "添加扫描器",
-        "importFromThirdParty": "从第三方导入",
-        "steam": "Steam"
-    },
-    "notifications": {
-        "noGamesFound": "未找到游戏",
-        "getFailed": "获取游戏失败: ",
-        "unknownError": "未知错误",
-        "selectLibraryFolder": "请选择库文件夹…",
-        "getSuccess": "获取游戏成功",
-        "selectGamePath": "请选择游戏路径",
-        "adding": "正在添加游戏…",
-        "addSuccess": "添加游戏成功",
-        "addError": "添加游戏时出错"
-    }
+  "title": "vnite",
+  "navigation": {
+    "library": "游戏库",
+    "records": "记录",
+    "scanner": "扫描器"
+  },
+  "actions": {
+    "darkMode": "暗色模式",
+    "lightMode": "亮色模式",
+    "cloudSyncDisabled": "云同步未开启",
+    "addGame": "添加游戏",
+    "settings": "设置"
+  },
+  "adder": {
+    "addGame": "添加游戏",
+    "addSingle": "单个添加",
+    "addBatch": "批量添加",
+    "addCustom": "自定义添加",
+    "addScanner": "添加扫描器",
+    "importFromThirdParty": "从第三方导入",
+    "steam": "Steam"
+  },
+  "notifications": {
+    "noGamesFound": "未找到游戏",
+    "getFailed": "获取游戏失败: ",
+    "unknownError": "未知错误",
+    "selectLibraryFolder": "请选择库文件夹…",
+    "getSuccess": "获取游戏成功",
+    "selectGamePath": "请选择游戏路径",
+    "adding": "正在添加游戏…",
+    "addSuccess": "添加游戏成功",
+    "addError": "添加游戏时出错"
+  }
 }
