@@ -149,10 +149,10 @@
       },
       "notifications": {
         "locked": "このセーブデータはロックされています",
-        "deleteLoading": "セーブデータを削除中...",
+        "deleteLoading": "セーブデータを削除中…",
         "deleteSuccess": "セーブデータを削除しました",
         "deleteError": "セーブデータの削除に失敗しました: {{message}}",
-        "switchLoading": "セーブデータを切り替え中...",
+        "switchLoading": "セーブデータを切り替え中…",
         "switchSuccess": "セーブデータを切り替えました",
         "switchError": "セーブデータの切り替えに失敗しました: {{message}}",
         "noSavePath": "セーブパスが見つかりません"
@@ -190,7 +190,7 @@
         "empty": "説明はありません",
         "htmlHint": "HTMLタグがサポートされています",
         "search": {
-          "loading": "ゲームの説明を検索中...",
+          "loading": "ゲームの説明を検索中…",
           "success": "検索成功",
           "error": "検索失敗: {{message}}",
           "notFound": "関連する説明が見つかりません",
@@ -202,7 +202,7 @@
         "empty": "タグはありません",
         "separator": "タグはカンマで区切ってください",
         "search": {
-          "loading": "ゲームのタグを検索中...",
+          "loading": "ゲームのタグを検索中…",
           "success": "検索成功",
           "error": "検索失敗: {{message}}",
           "notFound": "関連するタグが見つかりません",
@@ -253,7 +253,7 @@
           "engine": "エンジン"
         },
         "search": {
-          "loading": "ゲームの追加情報を検索中...",
+          "loading": "ゲームの追加情報を検索中…",
           "success": "検索成功",
           "error": "検索失敗: {{message}}",
           "notFound": "関連情報が見つかりません",
@@ -288,7 +288,7 @@
         "saveAs": "名前を付けて保存"
       },
       "notifications": {
-        "deleting": "削除中...",
+        "deleting": "削除中…",
         "deleteSuccess": "削除に成功しました",
         "deleteError": "削除に失敗しました: {{error}}",
         "selectFileError": "ファイルの選択に失敗しました: {{error}}",
@@ -325,7 +325,7 @@
       "title": "{{gameName}}を削除してもよろしいですか？",
       "description": "このゲームのすべてのデータが完全に削除されます。この操作は元に戻せません。",
       "notifications": {
-        "deleting": "ゲーム{{gameName}}を削除中...",
+        "deleting": "ゲーム{{gameName}}を削除中…",
         "deleted": "ゲーム{{gameName}}を削除しました",
         "error": "ゲーム{{gameName}}の削除に失敗しました: {{message}}"
       }
@@ -359,7 +359,7 @@
         "addFile": "ファイルを追加",
         "maxBackups": "セーブバックアップの最大数",
         "notifications": {
-          "configuring": "プリセットを設定中...",
+          "configuring": "プリセットを設定中…",
           "success": "プリセットの設定が完了しました"
         }
       },
@@ -402,24 +402,24 @@
           "fileSelectError": "ファイルの選択に失敗しました: {{error}}",
           "imageNotFound": "画像が見つかりません",
           "getImageError": "画像の取得に失敗しました: {{error}}",
-          "downloading": "画像をダウンロード中...",
+          "downloading": "画像をダウンロード中…",
           "downloadSuccess": "画像のダウンロードに成功しました",
           "downloadError": "画像のダウンロードに失敗しました: {{message}}",
-          "processing": "{{type}}を{{action}}中...",
+          "processing": "{{type}}を{{action}}中…",
           "success": "{{type}}の{{action}}に成功しました",
           "error": "{{type}}の{{action}}に失敗しました: {{message}}",
-          "searching": "検索中...",
+          "searching": "検索中…",
           "searchSuccess": "検索に成功しました",
           "searchError": "検索に失敗しました: {{message}}",
           "noResultsFound": "画像が見つかりませんでした",
           "selectImage": "画像を選択してください",
-          "cropping": "切り抜き中...",
+          "cropping": "切り抜き中…",
           "cropSuccess": "切り抜きに成功しました",
           "cropError": "切り抜きに失敗しました",
           "cropIncomplete": "切り抜きが完了していません",
-          "deleting": "画像を削除中...",
+          "deleting": "画像を削除中…",
           "deleteSuccess": "画像を削除しました",
-          "deleteError": "画像の削除に失敗しました: {{message}}"
+          "deleteError": "削除失敗"
         }
       },
       "launcher": {
@@ -467,7 +467,7 @@
           "vba": "VBA起動",
           "steamIdRequired": "Steam IDを入力してください",
           "notifications": {
-            "configuring": "プリセットを構成中...",
+            "configuring": "プリセットを構成中…",
             "success": "プリセットの構成に成功しました"
           }
         }
@@ -509,7 +509,7 @@
       "gamesList": "削除されるゲーム：",
       "unnamedGame": "名前のないゲーム",
       "notifications": {
-        "deleting": "{{count}}個のゲームを削除中...",
+        "deleting": "{{count}}個のゲームを削除中…",
         "success": "{{count}}個のゲームを削除しました",
         "error": "{{count}}個のゲームの削除に失敗しました: {{message}}"
       }
