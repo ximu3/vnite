@@ -19,11 +19,11 @@
       "title": "背景画像",
       "noImages": "画像なし",
       "notifications": {
-        "loading": "画像を取得中...",
+        "loading": "画像を取得中…",
         "success": "画像の取得に成功しました",
         "error": "画像の取得に失敗しました: {{message}}",
         "noImages": "ゲーム画像が見つかりません",
-        "adding": "ゲームを追加中...",
+        "adding": "ゲームを追加中…",
         "addSuccess": "ゲームの追加に成功しました",
         "addError": "ゲームの追加に失敗しました: {{message}}"
       }
@@ -38,12 +38,12 @@
       "recognizeButton": "認識",
       "notifications": {
         "enterName": "ゲーム名を入力してください",
-        "searching": "ゲームを検索中...",
+        "searching": "ゲームを検索中…",
         "found": "{{count}}個のゲームが見つかりました",
         "notFound": "ゲームが見つかりません",
         "searchError": "検索に失敗しました: {{message}}",
         "enterId": "ゲームIDを入力してください",
-        "recognizing": "ゲームを認識中...",
+        "recognizing": "ゲームを認識中…",
         "recognized": "ゲームの認識に成功しました",
         "invalidId": "無効なID",
         "recognizeError": "ゲームの認識に失敗しました: {{message}}"
@@ -90,12 +90,12 @@
       "add": "追加",
       "delete": "削除",
       "addAll": "すべて追加",
-      "adding": "追加中..."
+      "adding": "追加中…"
     },
     "notifications": {
-      "addingGame": "ゲーム「{{name}}」を追加中...",
+      "addingGame": "ゲーム「{{name}}」を追加中…",
       "gameAdded": "ゲーム「{{name}}」の追加に成功しました",
-      "addingGames": "ゲームを追加中...",
+      "addingGames": "ゲームを追加中…",
       "gamesAdded": "ゲームの追加に成功しました",
       "gameAddFailed": "ゲームの追加に失敗しました"
     },

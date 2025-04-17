@@ -59,7 +59,7 @@
     },
     "notifications": {
       "themeSaved": "テーマが保存されました",
-      "configuring": "テーマを設定中...",
+      "configuring": "テーマを設定中…",
       "configured": "テーマの設定に成功しました"
     }
   },
@@ -83,15 +83,15 @@
       "fetchStorageFailed": "ストレージ情報の取得に失敗しました"
     },
     "notifications": {
-      "updating": "クラウド同期設定を更新中...",
+      "updating": "クラウド同期設定を更新中…",
       "updateSuccess": "クラウド同期設定が正常に更新されました",
       "updateError": "クラウド同期設定の更新に失敗しました",
-      "loggingIn": "ログイン中...",
+      "loggingIn": "ログイン中…",
       "loginSuccess": "ログイン成功",
       "loginError": "ログイン失敗",
       "authSuccess": "認証成功",
       "authError": "認証失敗",
-      "registering": "登録中...",
+      "registering": "登録中…",
       "registerSuccess": "登録成功",
       "registerError": "登録失敗"
     },
@@ -157,14 +157,14 @@
     "importV2Warning": "V2データベースのインポートは現在のデータベースを上書きします。この操作は元に戻せません！操作後、アプリケーションは自動的に再起動します。",
     "portableAdminRequired": "注意：ポータブルモードには管理者権限が必要な場合があります。",
     "notifications": {
-      "backingUp": "データベースをバックアップ中...",
+      "backingUp": "データベースをバックアップ中…",
       "backupSuccess": "データベースのバックアップに成功しました",
       "backupError": "データベースのバックアップに失敗しました",
-      "importing": "データベースをインポート中...",
+      "importing": "データベースをインポート中…",
       "importSuccess": "データベースのインポートに成功しました",
       "importError": "データベースのインポートに失敗しました",
       "restartCountdown": "アプリケーションは3秒後に再起動します",
-      "switchingMode": "データベースモードを切り替え中...",
+      "switchingMode": "データベースモードを切り替え中…",
       "switchSuccess": "データベースモードの切り替えに成功しました",
       "switchError": "データベースモードの切り替えに失敗しました",
       "adminRightsRequired": "現在のインストールディレクトリからポータブルモードに切り替えるには管理者権限が必要です"

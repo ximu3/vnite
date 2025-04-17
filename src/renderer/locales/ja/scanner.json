@@ -63,7 +63,7 @@
     "fixError": "修正失敗",
     "createError": "スキャナー作成失敗",
     "intervalTooShort": "スキャン間隔は5分以上でなければなりません",
-    "scanStopping": "スキャン停止中...",
+    "scanStopping": "スキャン停止中…",
     "scanStopped": "スキャン停止完了"
   },
   "errors": {
