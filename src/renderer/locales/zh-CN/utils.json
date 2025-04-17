@@ -6,10 +6,10 @@
   },
   "hotkeySetting": {
     "title": "设置快捷键",
-    "recording": "[按下快捷键...]",
+    "recording": "[按下快捷键…]",
     "placeholder": "输入或记录快捷键，如: ctrl+a+b",
     "startRecordButton": "点击开始记录",
-    "recordingButton": "正在记录...",
+    "recordingButton": "正在记录…",
     "currentKeys": "当前按下的键",
     "supportedKeys": "支持的按键包括字母、数字、方向键、Esc、Tab、Enter、Space 等，可以组合使用多个按键",
     "errors": {
@@ -26,13 +26,13 @@
   },
   "game": {
     "stopping": {
-      "loading": "正在停止游戏...",
+      "loading": "正在停止游戏…",
       "success": "游戏已停止",
       "error": "停止游戏失败: {{message}}"
     },
     "starting": {
       "pathRequired": "请先设置游戏路径",
-      "configuringLauncher": "正在配置启动器...",
+      "configuringLauncher": "正在配置启动器…",
       "configSuccess": "启动器配置成功",
       "configError": "配置错误: {{message}}",
       "runtimeError": "运行配置错误，请检查！"
@@ -52,9 +52,9 @@
     "niceISO": "{{date, niceISO}}"
   },
   "notifications": {
-    "gameExiting": "正在退出游戏...",
+    "gameExiting": "正在退出游戏…",
     "gameExited": "游戏已退出",
-    "fullSyncing": "正在同步数据...",
+    "fullSyncing": "正在同步数据…",
     "fullSynced": "数据同步完成",
     "fullSyncError": "数据同步失败",
     "updateUserInfoError": "官方云同步账号登录过期，请重新登录"
