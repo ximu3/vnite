@@ -25,10 +25,10 @@
     "noGamesFound": "No games found",
     "getFailed": "Failed to get games: ",
     "unknownError": "Unknown error",
-    "selectLibraryFolder": "Please select library folder...",
+    "selectLibraryFolder": "Please select library folder…",
     "getSuccess": "Successfully got games",
     "selectGamePath": "Please select game path",
-    "adding": "Adding game...",
+    "adding": "Adding game…",
     "addSuccess": "Successfully added game",
     "addError": "Error adding game"
   }

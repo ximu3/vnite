@@ -25,10 +25,10 @@
     "noGamesFound": "ゲームが見つかりません",
     "getFailed": "ゲームの取得に失敗しました: ",
     "unknownError": "不明なエラー",
-    "selectLibraryFolder": "ライブラリフォルダを選択してください...",
+    "selectLibraryFolder": "ライブラリフォルダを選択してください…",
     "getSuccess": "ゲームの取得に成功しました",
     "selectGamePath": "ゲームパスを選択してください",
-    "adding": "ゲームを追加中...",
+    "adding": "ゲームを追加中…",
     "addSuccess": "ゲームの追加に成功しました",
     "addError": "ゲームの追加中にエラーが発生しました"
   }
