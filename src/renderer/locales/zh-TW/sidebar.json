@@ -2,7 +2,8 @@
     "title": "vnite",
     "navigation": {
         "library": "遊戲庫",
-        "records": "記錄"
+        "records": "記錄",
+        "scanner": "掃描器"
     },
     "actions": {
         "darkMode": "暗色模式",
@@ -24,10 +25,10 @@
         "noGamesFound": "未找到遊戲",
         "getFailed": "獲取遊戲失敗: ",
         "unknownError": "未知錯誤",
-        "selectLibraryFolder": "請選擇庫資料夾...",
+        "selectLibraryFolder": "請選擇庫資料夾…",
         "getSuccess": "獲取遊戲成功",
         "selectGamePath": "請選擇遊戲路徑",
-        "adding": "正在添加遊戲...",
+        "adding": "正在添加遊戲…",
         "addSuccess": "添加遊戲成功",
         "addError": "添加遊戲時出錯"
     }
