@@ -64,12 +64,20 @@ Vnite 是一個多功能的遊戲管理軟體，旨在提供一個統一的使�
 
 - 自建資料源
 
+## 🌏 國際化
+
+Vnite 的國際化工作託管在 [Weblate](https://hosted.weblate.org/projects/vnite/) 上，歡迎參與。
+
+<a href="https://hosted.weblate.org/engage/vnite/">
+<img src="https://hosted.weblate.org/widget/vnite/multi-auto.svg" alt="translation-status" />
+</a>
+
 ## ☎️ 聯絡我
 
 - [Twitter](https://x.com/ximu3_)
 - [Telegram 群組](https://t.me/+d65-R_xRx1JlYWZh)
 
-## 致謝
+## ⭐ 致謝
 
 - [VNDB API](https://api.vndb.org/kana)
 - [Steam API](https://partner.steamgames.com/doc/api)

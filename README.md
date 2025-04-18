@@ -64,12 +64,20 @@ Vnite is a versatile game management software designed to provide a unified inte
 
 - Self-built data source
 
+## 🌏 Internationalization
+
+The internationalization work of Vnite is hosted on [Weblate](https://hosted.weblate.org/projects/vnite/), and your participation is welcome.
+
+<a href="https://hosted.weblate.org/engage/vnite/">
+<img src="https://hosted.weblate.org/widget/vnite/multi-auto.svg" alt="translation-status" />
+</a>
+
 ## ☎️ Contact Me
 
 - [Twitter](https://x.com/ximu3_)
 - [Telegram Group](https://t.me/+d65-R_xRx1JlYWZh)
 
-## Acknowledgements
+## ⭐ Acknowledgements
 
 - [VNDB API](https://api.vndb.org/kana)
 - [Steam API](https://partner.steamgames.com/doc/api)

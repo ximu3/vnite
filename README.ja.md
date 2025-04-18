@@ -64,12 +64,20 @@ Vniteは、ゲームの記録、管理、同期のための統一されたイン
 
 - 自作データソース
 
+## 🌏 国際化
+
+Vniteの国際化作業は[Weblate](https://hosted.weblate.org/projects/vnite/)でホストされています。ぜひご参加ください。
+
+<a href="https://hosted.weblate.org/engage/vnite/">
+<img src="https://hosted.weblate.org/widget/vnite/multi-auto.svg" alt="translation-status" />
+</a>
+
 ## ☎️ お問い合わせ
 
 - [Twitter](https://x.com/ximu3_)
 - [Telegram グループ](https://t.me/+d65-R_xRx1JlYWZh)
 
-## 謝辞
+## ⭐ 謝辞
 
 - [VNDB API](https://api.vndb.org/kana)
 - [Steam API](https://partner.steamgames.com/doc/api)
