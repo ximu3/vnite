@@ -1,6 +1,6 @@
 # Scanner
 
-Vnite's scanner helps users automatically import games, supporting global deduplication, regex exclusion, and unified error handling [1](https://github.com/ximu3/vnite).
+Vnite's scanner helps users automatically import games, supporting global deduplication, regex exclusion, and unified error handling.
 
 ![scanner1](https://img.timero.xyz/i/2025/04/18/68023670e9770.webp)
 
@@ -60,7 +60,7 @@ You can adjust the `Scan Interval` and `Exclusion List` in the global scanner se
 
 ## Error Handling
 
-The scanner supports secondary identification for folders with errors. Users need to provide the data source and corresponding game ID, or they can choose to ignore or add to the exclusion list [2](https://github.com/ximu3/vnite/blob/main/README.md).
+The scanner supports secondary identification for folders with errors. Users need to provide the data source and corresponding game ID, or they can choose to ignore or add to the exclusion list.
 
 ![scanner4](https://img.timero.xyz/i/2025/04/18/680236c38566b.webp)
 
