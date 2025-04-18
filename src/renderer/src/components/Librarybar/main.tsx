@@ -1,7 +1,6 @@
 import { Button } from '@ui/button'
 import { ClearableInput } from '@ui/input'
 import { Nav } from '@ui/nav'
-import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
 import {
   Select,
   SelectContent,
@@ -21,6 +20,7 @@ import { Filter } from './Filter'
 import { useFilterStore } from './Filter/store'
 import { GameList } from './GameList'
 import { PositionButton } from './PositionButton'
+import { SortMenu } from './SortMenu'
 import { useLibrarybarStore } from './store'
 
 export function Librarybar(): JSX.Element {
@@ -33,13 +33,8 @@ export function Librarybar(): JSX.Element {
   const clearFilter = useFilterStore((state) => state.clearFilter)
 
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false)
-  const [by, setBy] = useConfigState('game.gameList.sort.by')
-  const [order, setOrder] = useConfigState('game.gameList.sort.order')
   const toggleSortMenu = (): void => {
     setIsSortMenuOpen(!isSortMenuOpen)
-  }
-  const toggleOrder = (): void => {
-    setOrder(order === 'asc' ? 'desc' : 'asc')
   }
 
   console.warn(`[DEBUG] Librarybar`)
@@ -141,62 +136,11 @@ export function Librarybar(): JSX.Element {
             </Select>
           </div>
           <div>
-            <Popover open={isSortMenuOpen}>
-              <Tooltip>
-                <PopoverTrigger>
-                  <TooltipTrigger asChild>
-                    <Button onClick={toggleSortMenu} variant="outline" size={'icon'}>
-                      <span className={cn('icon-[mdi--sort] w-5 h-5')}></span>
-                    </Button>
-                  </TooltipTrigger>
-                </PopoverTrigger>
-                <TooltipContent side="right">{t('list.all.sortBy')}</TooltipContent>
-              </Tooltip>
-              <PopoverContent side="right">
-                <div className={cn('flex flex-row gap-5 items-center justify-center')}>
-                  <div className={cn('flex flex-row gap-1 items-center justify-center')}>
-                    <div className={cn('text-sm whitespace-nowrap')}>{t('list.all.sortBy')}：</div>
-                    <Select value={by} onValueChange={setBy} defaultValue="name">
-                      <SelectTrigger className={cn('w-[120px] h-[26px] text-xs')}>
-                        <SelectValue placeholder="Select a fruit" className={cn('text-xs')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>{t('list.all.sortBy')}：</SelectLabel>
-                          <SelectItem value="metadata.name">
-                            {t('list.all.sortOptions.name')}
-                          </SelectItem>
-                          <SelectItem value="metadata.releaseDate">
-                            {t('list.all.sortOptions.releaseDate')}
-                          </SelectItem>
-                          <SelectItem value="record.lastRunDate">
-                            {t('list.all.sortOptions.lastRunDate')}
-                          </SelectItem>
-                          <SelectItem value="record.addDate">
-                            {t('list.all.sortOptions.addDate')}
-                          </SelectItem>
-                          <SelectItem value="record.playTime">
-                            {t('list.all.sortOptions.playTime')}
-                          </SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <Button
-                    variant={'outline'}
-                    size={'icon'}
-                    className={cn('h-[26px] w-[26px] -ml-3')}
-                    onClick={toggleOrder}
-                  >
-                    {order === 'asc' ? (
-                      <span className={cn('icon-[mdi--arrow-up] w-4 h-4')}></span>
-                    ) : (
-                      <span className={cn('icon-[mdi--arrow-down] w-4 h-4')}></span>
-                    )}
-                  </Button>
-                </div>
-              </PopoverContent>
-            </Popover>
+            <SortMenu isSortMenuOpen={isSortMenuOpen}>
+              <Button onClick={toggleSortMenu} variant="outline" size={'icon'}>
+                <span className={cn('icon-[mdi--sort] w-5 h-5')}></span>
+              </Button>
+            </SortMenu>
           </div>
         </div>
         <GameList query={query} selectedGroup={selectedGroup} />
