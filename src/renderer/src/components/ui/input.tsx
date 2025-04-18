@@ -4,13 +4,37 @@ import { Button } from './button'
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   variant?: 'default' | 'ghost'
-  showClear?: boolean
+}
+
+export interface ClearableInputProps extends InputProps {
+  inputClassName?: string
   onClear?: () => void
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, type, variant = 'default', value, onChange, ...props }, ref) => {
+    return (
+      <input
+        spellCheck="false"
+        type={type}
+        className={cn(
+          'flex h-9 w-full non-draggable rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
+          variant === 'ghost' &&
+            'border-0 bg-transparent hover:bg-accent transition-none focus:hover:bg-transparent truncate shadow-none',
+          className
+        )}
+        value={value}
+        onChange={onChange}
+        ref={ref}
+        {...props}
+      />
+    )
+  }
+)
+
+const ClearableInput = React.forwardRef<HTMLInputElement, ClearableInputProps>(
   (
-    { className, type, variant = 'default', showClear = false, onClear, value, onChange, ...props },
+    { className, inputClassName, type, variant = 'default', onClear, value, onChange, ...props },
     ref
   ) => {
     // Handle clearing input content
@@ -32,24 +56,18 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     }
 
     // Check if clear button should be shown
-    const hasValue = value !== undefined && value !== null && value !== ''
-    const showClearButton = showClear && hasValue
+    const hasValue = Boolean(value)
+    const showClearButton = hasValue
 
     return (
-      <div className="relative w-full">
-        <input
-          spellCheck="false"
+      <div className={cn('relative w-full', className)}>
+        <Input
           type={type}
-          className={cn(
-            'flex h-9 w-full non-draggable rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
-            variant === 'ghost' &&
-              'border-0 bg-transparent hover:bg-accent transition-none focus:hover:bg-transparent truncate shadow-none',
-            showClearButton ? 'pr-8' : '',
-            className
-          )}
+          className={cn(showClearButton ? 'pr-8' : '', inputClassName)}
           value={value}
           onChange={onChange}
           ref={ref}
+          variant={variant}
           {...props}
         />
         {showClearButton && (
@@ -68,5 +86,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 )
 
 Input.displayName = 'Input'
+ClearableInput.displayName = 'ClearableInput'
 
-export { Input }
+export { ClearableInput, Input }
