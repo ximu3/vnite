@@ -30,6 +30,7 @@ export default defineConfig({
             text: 'Basics',
             items: [
               { text: 'Adding Games', link: '/guide/adding-games' },
+              { text: 'Scanner', link: '/guide/scanner' },
               { text: 'Importing from Third Party', link: '/guide/importing-games' },
               { text: 'Metadata', link: '/guide/metadata' },
               { text: 'Cloud Sync', link: '/guide/cloud-sync' },
@@ -77,6 +78,7 @@ export default defineConfig({
             text: '基本',
             items: [
               { text: '添加游戏', link: '/zh-CN/guide/adding-games' },
+              { text: '扫描器', link: '/zh-CN/guide/scanner' },
               { text: '从第三方导入', link: '/zh-CN/guide/importing-games' },
               { text: '元数据', link: '/zh-CN/guide/metadata' },
               { text: '云同步', link: '/zh-CN/guide/cloud-sync' },
@@ -124,6 +126,7 @@ export default defineConfig({
             text: '基本',
             items: [
               { text: '添加遊戲', link: '/zh-TW/guide/adding-games' },
+              { text: '掃描器', link: '/zh-TW/guide/scanner' },
               { text: '從第三方匯入', link: '/zh-TW/guide/importing-games' },
               { text: '中繼資料', link: '/zh-TW/guide/metadata' },
               { text: '雲同步', link: '/zh-TW/guide/cloud-sync' },
@@ -171,6 +174,7 @@ export default defineConfig({
             text: '基本',
             items: [
               { text: 'ゲームを追加', link: '/ja/guide/adding-games' },
+              { text: 'スキャナー', link: '/ja/guide/scanner' },
               { text: 'サードパーティからインポート', link: '/ja/guide/importing-games' },
               { text: 'メタデータ', link: '/ja/guide/metadata' },
               { text: 'クラウド同期', link: '/ja/guide/cloud-sync' },
