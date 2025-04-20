@@ -104,7 +104,7 @@ export const GameScannerManager: React.FC = () => {
   const globalInterval = scannerConfig?.interval || 0
 
   return (
-    <div className="flex flex-col w-screen h-screen pt-[34px] border-l-[1px]">
+    <div className="flex flex-col w-full h-full bg-background/60 pt-[34px]">
       <ScrollArea className="px-6">
         {/* Header title */}
         <div className="flex items-center justify-between mb-4 ">
@@ -113,7 +113,7 @@ export const GameScannerManager: React.FC = () => {
 
         <div className="grid grid-cols-1 gap-4">
           {/* Status card */}
-          <div className="p-4 border rounded-lg bg-background/50">
+          <div className="p-4 border rounded-lg bg-card/35">
             <div className="flex flex-wrap items-center justify-between gap-4">
               {/* Left: Status and progress information */}
               <div className="flex flex-wrap items-center gap-4">
@@ -221,9 +221,9 @@ export const GameScannerManager: React.FC = () => {
           </div>
 
           {/* Scanners list and action card */}
-          <div className="flex flex-col flex-grow overflow-hidden border rounded-lg">
+          <div className="flex flex-col flex-grow overflow-hidden border rounded-lg bg-card/35">
             {/* Scanners list title bar */}
-            <div className="flex items-center justify-between p-4 border-b bg-muted/30">
+            <div className="flex items-center justify-between p-4 border-b bg-muted/35">
               <div className="text-sm font-medium">{t('list.title')}</div>
               <Button
                 size="sm"

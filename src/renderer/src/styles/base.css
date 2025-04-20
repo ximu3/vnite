@@ -6,7 +6,7 @@
   top: 0;
   left: 0;
   background-color: transparent;
-  z-index: 1000; /* Make sure it's at the top */
+  z-index: 1; /* Make sure it's at the top */
   pointer-events: none; /* Ensure that click events on other elements are not affected */
 }
 

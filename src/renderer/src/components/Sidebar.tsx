@@ -40,15 +40,12 @@ export function Sidebar(): JSX.Element {
   const { t } = useTranslation('sidebar')
 
   return (
-    <div className={cn('flex flex-col p-[10px] pt-3 pb-3 h-full bg-background justify-between')}>
+    <div
+      className={cn(
+        'flex flex-col p-[10px] h-full bg-background/70 border-r border-border justify-between'
+      )}
+    >
       <div className={cn('flex flex-col gap-2')}>
-        <div
-          className={cn(
-            'pb-2 font-mono text-xs font-bold flex justify-center items-center text-primary'
-          )}
-        >
-          {t('title')}
-        </div>
         <Tooltip>
           <TooltipTrigger>
             <Nav variant="sidebar" to="./library">

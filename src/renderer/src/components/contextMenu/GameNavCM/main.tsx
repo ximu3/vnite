@@ -1,8 +1,7 @@
 import { ContextMenuContent, ContextMenuItem, ContextMenuSeparator } from '@ui/context-menu'
 import { useRunningGames } from '~/pages/Library/store'
-import { cn } from '~/utils'
-import { StartGame } from '../../Game/StartGame'
-import { StopGame } from '../../Game/StopGame'
+import { cn, startGame, stopGame } from '~/utils'
+
 import { CollectionMenu } from './CollectionMenu'
 import { ManageMenu } from './ManageMenu'
 import { useTranslation } from 'react-i18next'
@@ -24,13 +23,17 @@ export function GameNavCM({
   const { t } = useTranslation('game')
   return (
     <ContextMenuContent className={cn('w-40')}>
-      <div className={cn('flex flex-row w-full')}>
-        {runningGames.includes(gameId) ? (
-          <StopGame className={cn('w-full max-w-none flex')} gameId={gameId} />
-        ) : (
-          <StartGame className={cn('w-full max-w-none flex')} gameId={gameId} />
-        )}
-      </div>
+      <ContextMenuItem
+        onSelect={() => {
+          if (runningGames.includes(gameId)) {
+            stopGame(gameId)
+          } else {
+            startGame(gameId)
+          }
+        }}
+      >
+        {runningGames.includes(gameId) ? t('detail.actions.stop') : t('detail.actions.start')}
+      </ContextMenuItem>
       <ContextMenuSeparator />
       <CollectionMenu gameId={gameId} openAddCollectionDialog={openAddCollectionDialog} />
       <ContextMenuSeparator />

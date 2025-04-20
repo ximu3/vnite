@@ -6,20 +6,24 @@ import { Record } from './Record'
 import { Icon } from './arts/Icon'
 import { Logo } from './arts/Logo'
 import { GameScannerManager } from './GameScannerManager'
+import { Light } from './Light'
 
 export function Main(): JSX.Element {
   console.warn('[DEBUG] Main')
   return (
-    <div className={cn('flex flex-row w-screen h-screen')}>
-      <Sidebar />
-      <Routes>
-        <Route index element={<Navigate to="/library" />} />
-        <Route path="/library/*" element={<Library />} />
-        <Route path="/record/*" element={<Record />} />
-        <Route path="/scanner/*" element={<GameScannerManager />} />
-        <Route path="/icon" element={<Icon />} />
-        <Route path="/logo" element={<Logo />} />
-      </Routes>
+    <div>
+      <Light />
+      <div className={cn('flex flex-row w-screen h-screen pt-[30px] relative')}>
+        <Sidebar />
+        <Routes>
+          <Route index element={<Navigate to="/library" />} />
+          <Route path="/library/*" element={<Library />} />
+          <Route path="/record/*" element={<Record />} />
+          <Route path="/scanner/*" element={<GameScannerManager />} />
+          <Route path="/icon" element={<Icon />} />
+          <Route path="/logo" element={<Logo />} />
+        </Routes>
+      </div>
     </div>
   )
 }

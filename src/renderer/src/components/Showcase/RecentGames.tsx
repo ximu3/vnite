@@ -1,6 +1,5 @@
 import { cn } from '~/utils'
 import { Button } from '@ui/button'
-import { Separator } from '@ui/separator'
 import { useConfigState } from '~/hooks'
 import { sortGames } from '~/stores/game'
 import { GamePoster } from './posters/GamePoster'
@@ -33,7 +32,7 @@ export function RecentGames(): JSX.Element {
 
         {/* Split Line Container */}
         <div className={cn('flex items-center justify-center flex-grow')}>
-          <Separator className={cn('flex-grow')} />
+          <div className="w-full h-px border-t border-dashed border-border" />
         </div>
         <div className={cn('flex flex-row gap-2 items-center justify-center pr-5')}>
           <Button
@@ -74,7 +73,7 @@ export function RecentGames(): JSX.Element {
               )}
             >
               {showRecentGamesInGameList ? (
-                <BigGamePoster gameId={game} groupId="recentGames" />
+                <BigGamePoster className="" gameId={game} groupId="recentGames" />
               ) : (
                 <BigGamePoster gameId={game} />
               )}

@@ -58,16 +58,16 @@ export function BigGamePoster({
         <HoverCardTrigger
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          className={cn('rounded-none')}
+          className={cn('')}
         >
-          <ContextMenuTrigger className={cn('rounded-none')}>
+          <ContextMenuTrigger className={cn('')}>
             <div
               className={cn(
-                'relative overflow-hidden shadow-custom-initial cursor-pointer h-[222px] aspect-[3/2] rounded-none',
-                '3xl:h-[264px]'
+                'relative overflow-hidden shadow-custom-initial cursor-pointer h-[222px] aspect-[3/2] rounded-lg'
+                // '3xl:h-[264px]'
               )}
             >
-              <HoverBigCardAnimation className={cn('rounded-none w-full h-full')}>
+              <HoverBigCardAnimation className={cn('rounded-lg w-full h-full')}>
                 <GameImage
                   onClick={() => {
                     navigate(`/library/games/${gameId}/${groupId || 'all'}`)
@@ -78,7 +78,7 @@ export function BigGamePoster({
                   gameId={gameId}
                   type="background"
                   className={cn(
-                    'w-full h-full cursor-pointer object-cover',
+                    'w-full h-full cursor-pointer object-cover rounded-lg',
                     '3xl:w-full 3xl:h-full',
                     className
                   )}
@@ -100,7 +100,7 @@ export function BigGamePoster({
                   }
                 />
               </HoverBigCardAnimation>
-              <div className="rounded-none absolute bg-muted/60 flex items-center pl-5 flex-row justify-start bottom-0 w-full transform-gpu will-change-opacity h-1/3 backdrop-blur-2xl border-t-0.5 border-white/30">
+              <div className="absolute bg-muted/60 flex items-center pl-5 flex-row justify-start bottom-0 w-full transform-gpu will-change-opacity h-1/3 backdrop-blur-2xl border-t-0.5 border-white/30">
                 <div className="flex items-center justify-center shadow-sm shadow-black/50 w-14 h-14 bg-primary">
                   <span className="icon-[mdi--clock-star-four-points] w-8 h-8 text-primary-foreground/70"></span>
                 </div>
@@ -148,8 +148,8 @@ export function BigGamePoster({
       <HoverCardContent
         side="right"
         className={cn(
-          'p-0 w-[250px] h-[230px] border-0 rounded-none overflow-hidden shadow-xl relative mx-2',
-          '3xl:w-[300px] 3xl:h-[272px] cursor-pointer'
+          'p-0 w-[250px] h-[230px] border-0 rounded-lg overflow-hidden shadow-xl relative mx-2',
+          'cursor-pointer'
         )}
       >
         {/* background layer */}
@@ -166,7 +166,7 @@ export function BigGamePoster({
           </div>
 
           {/* Game Preview Image */}
-          <div className={cn('relative w-full h-[128px]', '3xl:h-[164px]')}>
+          <div className={cn('relative w-full h-[128px]')}>
             <GameImage
               gameId={gameId}
               type="background"

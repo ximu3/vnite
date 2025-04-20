@@ -41,7 +41,7 @@ function GameScoreCard({ gameId }: { gameId: string }): JSX.Element {
         </div>
       </HoverCardTrigger>
       <HoverCardPortal>
-        <HoverCardContent className="relative border-0 rounded-lg w-80" side="right">
+        <HoverCardContent className="relative rounded-lg w-80" side="right">
           <div className="absolute inset-0 rounded-lg">
             <GameImage
               gameId={gameId}
@@ -50,11 +50,11 @@ function GameScoreCard({ gameId }: { gameId: string }): JSX.Element {
               className="object-cover w-full h-full rounded-lg"
               draggable="false"
             />
-            <div className="absolute inset-0 rounded-lg bg-gradient-to-b from-primary/50 to-primary/90 backdrop-blur-xl" />
+            <div className="absolute inset-0 rounded-lg bg-popover/[0.7] backdrop-blur-xl" />
           </div>
           <div className="relative flex justify-between space-x-4">
             <div className="flex-1 space-y-1">
-              <h4 className="text-sm font-semibold text-primary-foreground">{gameInfo.name}</h4>
+              <h4 className="text-sm font-semibold text-accent-foreground">{gameInfo.name}</h4>
               {gameInfo.genre && (
                 <div className="flex items-center pt-2">
                   <GamepadIcon className="mr-2 h-3.5 w-3.5" />
