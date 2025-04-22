@@ -1,26 +1,31 @@
 import { ContextMenuContent, ContextMenuItem, ContextMenuSeparator } from '@ui/context-menu'
 import { useRunningGames } from '~/pages/Library/store'
-import { cn, startGame, stopGame } from '~/utils'
+import { cn, startGame, stopGame, scrollToElement } from '~/utils'
+import { generateUUID } from '@appUtils'
 
 import { CollectionMenu } from './CollectionMenu'
 import { ManageMenu } from './ManageMenu'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
+import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
 
 export function GameNavCM({
   gameId,
-  openAttributesDialog,
+  groupId,
   openAddCollectionDialog,
   openNameEditorDialog,
   openPlayTimeEditorDialog
 }: {
   gameId: string
-  openAttributesDialog: () => void
+  groupId: string
   openAddCollectionDialog: () => void
   openNameEditorDialog: () => void
   openPlayTimeEditorDialog: () => void
 }): JSX.Element {
+  const setLazyloadMark = usePositionButtonStore((state) => state.setLazyloadMark)
   const { runningGames } = useRunningGames()
   const { t } = useTranslation('game')
+  const navigate = useNavigate()
   return (
     <ContextMenuContent className={cn('w-40')}>
       <ContextMenuItem
@@ -34,16 +39,26 @@ export function GameNavCM({
       >
         {runningGames.includes(gameId) ? t('detail.actions.stop') : t('detail.actions.start')}
       </ContextMenuItem>
-      <ContextMenuSeparator />
+      {/* <ContextMenuSeparator /> */}
       <CollectionMenu gameId={gameId} openAddCollectionDialog={openAddCollectionDialog} />
-      <ContextMenuSeparator />
+      {/* <ContextMenuSeparator /> */}
       <ManageMenu
         gameId={gameId}
         openNameEditorDialog={openNameEditorDialog}
         openPlayingTimeEditorDialog={openPlayTimeEditorDialog}
       />
       <ContextMenuSeparator />
-      <ContextMenuItem onSelect={openAttributesDialog}>
+      <ContextMenuItem
+        onSelect={() => {
+          navigate(`/library/games/${gameId}/${groupId}/properties`)
+          scrollToElement({
+            selector: `[data-game-id="${gameId}"][data-group-id="${groupId || 'all'}"]`
+          })
+          setTimeout(() => {
+            setLazyloadMark(generateUUID())
+          }, 100)
+        }}
+      >
         <div>{t('detail.config.properties')}</div>
       </ContextMenuItem>
     </ContextMenuContent>

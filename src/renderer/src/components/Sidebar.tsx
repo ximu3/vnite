@@ -18,10 +18,9 @@ import { useGameAdderStore } from '~/pages/GameAdder/store'
 import { useGameBatchAdderStore, Game } from '~/pages/GameBatchAdder/store'
 import { ipcInvoke } from '~/utils'
 import { useConfigLocalState, useConfigState } from '~/hooks'
-import { ConfigDialog } from './Config'
-import { useCloudSyncStore } from './Config/CloudSync/store'
+import { useCloudSyncStore } from '../pages/Config/CloudSync/store'
 import { useSteamImporterStore } from '~/pages/Importer/SteamImporter/store'
-import { CloudSyncInfo } from './Config/CloudSync/Info'
+import { CloudSyncInfo } from '../pages/Config/CloudSync/Info'
 import { useTheme } from './ThemeProvider'
 import { useTranslation } from 'react-i18next'
 import { useGameScannerStore } from '~/pages/GameScannerManager/store'
@@ -269,17 +268,11 @@ export function Sidebar(): JSX.Element {
           </DropdownMenuContent>
         </DropdownMenu>
         <Tooltip>
-          <ConfigDialog>
-            <TooltipTrigger>
-              <Button
-                variant="ghost"
-                size={'icon'}
-                className={cn('min-h-0 min-w-0 p-2 non-draggable')}
-              >
-                <span className={cn('icon-[mdi--settings-outline] w-5 h-5')}></span>
-              </Button>
-            </TooltipTrigger>
-          </ConfigDialog>
+          <TooltipTrigger>
+            <Nav variant="sidebar" to="./config">
+              <span className={cn('icon-[mdi--settings-outline] w-5 h-5')}></span>
+            </Nav>
+          </TooltipTrigger>
           <TooltipContent side="right">{t('actions.settings')}</TooltipContent>
         </Tooltip>
       </div>

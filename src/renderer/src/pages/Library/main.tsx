@@ -7,6 +7,7 @@ import { Game } from '~/components/Game'
 import { Showcase } from '~/components/Showcase'
 import { CollectionGames } from '~/components/Showcase/CollectionGames'
 import { CollectionPage } from '~/components/Showcase/CollectionPage'
+import { GameProperties } from '~/components/Game/Config/Properties'
 
 export function Library({ className }: { className?: string }): JSX.Element {
   const gameIds = useGameRegistry((state) => state.gameIds)
@@ -16,7 +17,7 @@ export function Library({ className }: { className?: string }): JSX.Element {
     <ResizablePanelGroup
       autoSaveId="LibraryPanelGroup"
       direction="horizontal"
-      className={cn('w-full h-full', className)}
+      className={cn('w-full h-full shadow-inner', className)}
     >
       <ResizablePanel defaultSize={18} maxSize={26} minSize={13} collapsible={true}>
         <Librarybar />
@@ -31,11 +32,18 @@ export function Library({ className }: { className?: string }): JSX.Element {
             gameIds.map(
               (gameId) =>
                 gameId && (
-                  <Route
-                    key={gameId}
-                    path={`games/${gameId}/*`}
-                    element={<Game gameId={gameId} />}
-                  />
+                  <>
+                    <Route
+                      key={gameId}
+                      path={`games/${gameId}/:groupId`}
+                      element={<Game gameId={gameId} />}
+                    />
+                    <Route
+                      key={`${gameId}-attributes`}
+                      path={`games/${gameId}/:groupId/properties`}
+                      element={<GameProperties gameId={gameId} />}
+                    />
+                  </>
                 )
             )}
           {gameIds.length > 0 &&

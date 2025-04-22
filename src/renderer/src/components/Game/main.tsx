@@ -99,12 +99,12 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
   }, [dragging])
 
   return (
-    <div className={cn('w-full h-full relative overflow-hidden')}>
+    <div className={cn('w-full h-full relative overflow-hidden shadow-inner')}>
       {/* Background layer - absolute positioning */}
       <div
         className={cn(
-          'absolute inset-0 w-full h-full max-h-[84vh] overflow-hidden pr-2',
-          'will-change-transform'
+          'absolute inset-0 w-full h-full overflow-hidden pr-2',
+          'will-change-transform max-h-[calc(80vh-30px)]'
         )}
         style={{
           transform: `translateY(-${scrollY * 0.4}px)`
@@ -114,7 +114,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
           gameId={gameId}
           key={`${gameId}-background-1`}
           type="background"
-          className={cn('w-full h-auto max-h-[84vh] object-cover')}
+          className={cn('w-full h-auto object-cover')}
           onError={() => setIsImageError(true)}
           onUpdated={() => setIsImageError(false)}
           fallback={<div className={cn('w-full h-full bg-background/15')} />}
@@ -124,7 +124,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
           key={`${gameId}-background-2`}
           type="background"
           flips
-          className={cn('w-full h-auto max-h-[84vh] object-cover')}
+          className={cn('w-full h-auto object-cover')}
           onError={() => setIsImageError(true)}
           onUpdated={() => setIsImageError(false)}
           fallback={<div className={cn('w-full h-full bg-background/15')} />}
@@ -188,7 +188,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
           <div
             className={cn(
               'absolute top-0 bottom-0 left-0 w-[50px] bg-gradient-to-r from-background/[0.7] to-transparent',
-              'backdrop-blur-3xl'
+              'backdrop-blur-xl'
             )}
             style={{
               maskImage: 'linear-gradient(to right, black, transparent)',
@@ -200,7 +200,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
           <div
             className={cn(
               'absolute top-0 bottom-0 right-0 w-[50px] bg-gradient-to-l from-background/[0.7] to-transparent',
-              'backdrop-blur-lg'
+              'backdrop-blur-xl'
             )}
             style={{
               maskImage: 'linear-gradient(to left, black, transparent)',
@@ -212,7 +212,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
         {/* Content container */}
         <div
           className={cn(
-            'relative z-20 flex flex-col w-full bg-background/[0.9] min-h-[calc(60vh-30px)] backdrop-blur-3xl'
+            'relative z-20 flex flex-col w-full bg-background/[0.9] min-h-[calc(60vh-30px)] backdrop-blur-2xl'
           )}
         >
           {/* Header area */}

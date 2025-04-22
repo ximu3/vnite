@@ -284,7 +284,7 @@ export function CloudSync(): JSX.Element {
               <div className={cn('flex flex-col gap-4')}>
                 {!userName ? (
                   <div
-                    className={cn('flex flex-col gap-3 items-center p-6 bg-muted/50 rounded-lg')}
+                    className={cn('flex flex-col gap-3 items-center p-6 bg-muted/30 rounded-lg')}
                   >
                     <Cloud size={40} className="mb-2 text-primary" />
                     <h3 className="text-lg font-medium">{t('cloudSync.official.connectTitle')}</h3>

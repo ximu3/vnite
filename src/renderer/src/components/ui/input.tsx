@@ -60,7 +60,7 @@ const ClearableInput = React.forwardRef<HTMLInputElement, ClearableInputProps>(
     const showClearButton = hasValue
 
     return (
-      <div className={cn('relative w-full', className)}>
+      <div className={cn('relative w-full shadow-sm', className)}>
         <Input
           type={type}
           className={cn(showClearButton ? 'pr-8' : '', inputClassName)}

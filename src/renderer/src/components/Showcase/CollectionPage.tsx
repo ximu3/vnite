@@ -1,5 +1,4 @@
 import { ScrollArea } from '@ui/scroll-area'
-import { Separator } from '@ui/separator'
 import { useEffect, useRef, useState } from 'react'
 import { useGameCollectionStore } from '~/stores'
 import { cn } from '~/utils'
@@ -46,7 +45,7 @@ export function CollectionPage(): JSX.Element {
   const { t } = useTranslation('game')
 
   return (
-    <div className={cn('flex flex-col gap-3 h-[100vh] pt-[30px]')}>
+    <div className={cn('flex flex-col gap-3 h-[100vh] pt-[14px] bg-background/50')}>
       <ScrollArea className={cn('w-full')}>
         <div className={cn('w-full flex flex-col gap-1 pt-3')}>
           <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>
@@ -56,8 +55,8 @@ export function CollectionPage(): JSX.Element {
             </div>
 
             {/* Split Line Container */}
-            <div className={cn('flex items-center justify-center flex-grow pr-5')}>
-              <Separator className={cn('flex-grow')} />
+            <div className={cn('flex items-center justify-center flex-grow')}>
+              <div className="w-full h-px border-t border-dashed border-border" />
             </div>
           </div>
 

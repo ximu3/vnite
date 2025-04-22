@@ -3,7 +3,6 @@ import { GameImage } from '@ui/game-image'
 import { Nav } from '@ui/nav'
 import React from 'react'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
-import { AttributesDialog } from '~/components/Game/Config/AttributesDialog'
 import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
 import { useGameState, useGameLocalState, useConfigState } from '~/hooks'
@@ -21,7 +20,6 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
   const isDarkMode = useTheme().isDark
 
   // dialog box state
-  const [isAttributesDialogOpen, setIsAttributesDialogOpen] = React.useState(false)
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
   const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = React.useState(false)
   const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = React.useState(false)
@@ -131,14 +129,11 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
           </div>
         </ContextMenuTrigger>
         {isBatchMode ? (
-          <BatchGameNavCM
-            openAttributesDialog={() => setIsAttributesDialogOpen(true)}
-            openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
-          />
+          <BatchGameNavCM openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)} />
         ) : (
           <GameNavCM
             gameId={gameId}
-            openAttributesDialog={() => setIsAttributesDialogOpen(true)}
+            groupId={groupId}
             openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
             openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
             openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
@@ -146,9 +141,6 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
         )}
       </ContextMenu>
 
-      {isAttributesDialogOpen && (
-        <AttributesDialog gameId={gameId} setIsOpen={setIsAttributesDialogOpen} />
-      )}
       {isAddCollectionDialogOpen && (
         <AddCollectionDialog gameIds={[gameId]} setIsOpen={setIsAddCollectionDialogOpen} />
       )}

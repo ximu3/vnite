@@ -1,5 +1,5 @@
 import { ipcOnUnique } from '~/utils'
-import { useCloudSyncStore, SyncStatus } from '~/components/Config/CloudSync/store'
+import { useCloudSyncStore, SyncStatus } from '~/pages/Config/CloudSync/store'
 import { startGame } from '~/utils'
 import { toast } from 'sonner'
 import { useRunningGames } from '~/pages/Library/store'

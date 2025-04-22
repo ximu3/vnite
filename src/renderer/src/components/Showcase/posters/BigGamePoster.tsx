@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom'
 import { HoverBigCardAnimation } from '~/components/animations/HoverBigCard'
 import { GameNavCM } from '~/components/contextMenu/GameNavCM'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
-import { AttributesDialog } from '~/components/Game/Config/AttributesDialog'
 import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
 import { GameImage } from '~/components/ui/game-image'
@@ -27,7 +26,6 @@ export function BigGamePoster({
   const gameData = useGameRegistry((state) => state.gameMetaIndex[gameId])
   const [playTime] = useGameState(gameId, 'record.playTime')
   const [gameName] = useGameState(gameId, 'metadata.name')
-  const [isAttributesDialogOpen, setIsAttributesDialogOpen] = React.useState(false)
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
   const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = React.useState(false)
   const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = React.useState(false)
@@ -125,16 +123,13 @@ export function BigGamePoster({
         </HoverCardTrigger>
         <GameNavCM
           gameId={gameId}
-          openAttributesDialog={() => setIsAttributesDialogOpen(true)}
+          groupId={groupId || 'all'}
           openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
           openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
           openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
         />
       </ContextMenu>
 
-      {isAttributesDialogOpen && (
-        <AttributesDialog gameId={gameId} setIsOpen={setIsAttributesDialogOpen} />
-      )}
       {isAddCollectionDialogOpen && (
         <AddCollectionDialog gameIds={[gameId]} setIsOpen={setIsAddCollectionDialogOpen} />
       )}

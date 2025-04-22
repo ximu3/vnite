@@ -252,7 +252,7 @@ export function MonthlyReport(): JSX.Element {
                   color: 'inherit'
                 },
                 played: {
-                  backgroundColor: 'hsl(var(--primary))',
+                  backgroundColor: 'hsl(var(--primary)/0.8)',
                   color: 'hsl(var(--primary-foreground))'
                 }
               }}

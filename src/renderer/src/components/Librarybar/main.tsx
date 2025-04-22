@@ -112,7 +112,7 @@ export function Librarybar(): JSX.Element {
         <div className={cn('flex flex-row gap-2 pr-3 items-center')}>
           <div className={cn('flex-1 min-w-0')}>
             <Select value={selectedGroup} onValueChange={setSelectedGroup}>
-              <SelectTrigger className="pr-3">
+              <SelectTrigger className="pr-3 shadow-sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

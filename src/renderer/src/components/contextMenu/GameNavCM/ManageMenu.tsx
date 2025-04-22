@@ -68,7 +68,7 @@ export function ManageMenu({
                 {t('detail.manage.createShortcut')}
               </ContextMenuItem>
             )}
-            <ContextMenuSeparator />
+            {/* <ContextMenuSeparator /> */}
             <ContextMenuItem
               onClick={() => {
                 if (gamePath) {

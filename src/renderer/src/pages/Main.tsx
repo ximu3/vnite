@@ -7,6 +7,7 @@ import { Icon } from './arts/Icon'
 import { Logo } from './arts/Logo'
 import { GameScannerManager } from './GameScannerManager'
 import { Light } from './Light'
+import { Config } from '~/pages/Config'
 
 export function Main(): JSX.Element {
   console.warn('[DEBUG] Main')
@@ -20,6 +21,7 @@ export function Main(): JSX.Element {
           <Route path="/library/*" element={<Library />} />
           <Route path="/record/*" element={<Record />} />
           <Route path="/scanner/*" element={<GameScannerManager />} />
+          <Route path="/config/*" element={<Config />} />
           <Route path="/icon" element={<Icon />} />
           <Route path="/logo" element={<Logo />} />
         </Routes>

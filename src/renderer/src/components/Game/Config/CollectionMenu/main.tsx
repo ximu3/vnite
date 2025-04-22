@@ -34,7 +34,7 @@ export function CollectionMenu({
       <DropdownMenuSub>
         <DropdownMenuSubTrigger>{t('detail.collection.addTo')}</DropdownMenuSubTrigger>
         <DropdownMenuPortal>
-          <DropdownMenuSubContent className="max-w-[300px]">
+          <DropdownMenuSubContent className="max-w-[300px] bg-popover/[0.7]">
             <div className={cn('max-h-[224px] overflow-auto scrollbar-base-thin')}>
               {Object.entries(collections)
                 .filter(([key]) => !gameInCollectionsId.includes(key))

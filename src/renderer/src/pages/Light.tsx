@@ -37,12 +37,12 @@ export function Light(): JSX.Element {
 
   return (
     <div className="absolute top-0 left-0 object-cover w-full h-full pointer-events-none">
-      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-background/[0.9] via-100% via-background to-background backdrop-blur-3xl"></div>
+      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-background/[0.85] via-60% via-background to-background backdrop-blur-3xl"></div>
       <img
         src={attachmentUrl}
         loading="lazy"
         decoding="async"
-        className="transition-all duration-300"
+        className="object-cover w-full h-full transition-all duration-300"
       />
     </div>
   )
