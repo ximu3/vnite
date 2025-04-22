@@ -15,6 +15,19 @@
   },
   "appearances": {
     "title": "Appearances",
+    "background": {
+      "title": "Background",
+      "customBackground": "Custom Background",
+      "image": "Image",
+      "selectImage": "Select Image",
+      "currentBackground": "Current Background Image",
+      "noBackground": "No Background Image Set"
+    },
+    "glass": {
+      "title": "Frosted Glass",
+      "blur": "Blur",
+      "opacity": "Opacity"
+    },
     "gameList": {
       "title": "Game List",
       "showRecentGames": "Show Recent Games Section",

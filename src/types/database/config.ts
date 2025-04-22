@@ -48,6 +48,13 @@ export interface configDocs {
     sidebar: {
       showThemeSwitcher: boolean
     }
+    background: {
+      customBackground: boolean
+    }
+    glass: {
+      blur: number
+      opacity: number
+    }
   }
 }
 
@@ -137,6 +144,13 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
   appearances: {
     sidebar: {
       showThemeSwitcher: true
+    },
+    background: {
+      customBackground: false
+    },
+    glass: {
+      blur: 64,
+      opacity: 0.85
     }
   }
 } as const

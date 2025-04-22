@@ -35,9 +35,18 @@ export function Light(): JSX.Element {
     }
   }, [pathname, getGameCollectionValue, collections])
 
+  useEffect(() => {
+    document.documentElement.style.setProperty('--glass-opacity', glassOpacity.toString())
+    document.documentElement.style.setProperty('--glass-blur', `${glassBlur}px`)
+  }, [glassOpacity, glassBlur])
+
   return (
     <div className="absolute top-0 left-0 object-cover w-full h-full pointer-events-none">
-      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-background/[0.85] via-60% via-background to-background backdrop-blur-3xl"></div>
+      <div
+        className={cn(
+          'absolute top-0 left-0 w-full h-full bg-gradient-to-b from-background/[var(--glass-opacity)] via-60% via-background to-background backdrop-blur-[var(--glass-blur)]'
+        )}
+      ></div>
       <img
         src={attachmentUrl}
         loading="lazy"

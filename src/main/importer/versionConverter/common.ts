@@ -603,10 +603,8 @@ async function convertConfig(basePath: string): Promise<void> {
     })
 
     // Converting Appearance Configuration
-    await ConfigDBManager.setConfigValue('appearances', {
-      sidebar: {
-        showThemeSwitcher: v2Config.appearances.sidebar.showThemeSwitchInSidebar
-      }
+    await ConfigDBManager.setConfigValue('appearances.sidebar', {
+      showThemeSwitcher: v2Config.appearances.sidebar.showThemeSwitchInSidebar
     })
 
     // Converting Local Configurations - Game Associations

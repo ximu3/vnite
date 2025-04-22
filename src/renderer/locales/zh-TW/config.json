@@ -15,6 +15,19 @@
   },
   "appearances": {
     "title": "外觀",
+    "background": {
+      "title": "背景",
+      "customBackground": "自定義背景",
+      "image": "圖片",
+      "selectImage": "選擇圖片",
+      "currentBackground": "當前背景圖片",
+      "noBackground": "未設置背景圖片"
+    },
+    "glass": {
+      "title": "磨砂玻璃",
+      "blur": "模糊度",
+      "opacity": "透明度"
+    },
     "gameList": {
       "title": "遊戲列表",
       "showRecentGames": "顯示最近遊戲欄目",
