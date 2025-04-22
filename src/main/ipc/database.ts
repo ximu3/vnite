@@ -24,7 +24,7 @@ export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
   })
 
   ipcMain.handle('stop-sync', async (_) => {
-    await stopSync()
+    stopSync()
   })
 
   ipcMain.handle(
@@ -45,6 +45,10 @@ export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
   ipcMain.handle('get-couchdb-size', async () => {
     const username = await ConfigDBManager.getConfigLocalValue('sync.officialConfig.auth.username')
     return await getCouchDbSize(username)
+  })
+
+  ipcMain.handle('set-config-background', async (_, path: string) => {
+    return await ConfigDBManager.setConfigBackgroundImage(path)
   })
 
   mainWindow.webContents.send('databaseIPCReady')
