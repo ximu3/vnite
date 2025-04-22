@@ -106,7 +106,7 @@ export const GameScannerManager: React.FC = () => {
   return (
     <div className="flex flex-col w-full h-full shadow-inner bg-background/60">
       <ScrollArea className="px-6">
-        <div className="pt-[34px]">
+        <div className="py-[34px]">
           {/* Header title */}
           <div className="flex items-center justify-between mb-4 ">
             <h2 className="text-2xl font-bold">{t('title')}</h2>

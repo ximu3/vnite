@@ -36,7 +36,7 @@ export function ManageMenu({
       <DropdownMenuSub>
         <DropdownMenuSubTrigger>{t('detail.manage.title')}</DropdownMenuSubTrigger>
         <DropdownMenuPortal>
-          <DropdownMenuSubContent className="bg-popover/[0.7]">
+          <DropdownMenuSubContent className="">
             <DropdownMenuItem onSelect={openNameEditorDialog}>
               {t('detail.manage.rename')}
             </DropdownMenuItem>

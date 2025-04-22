@@ -40,7 +40,7 @@ export function Config({ gameId }: { gameId: string }): JSX.Element {
             <span className={cn('icon-[mdi--settings-outline] w-4 h-4')}></span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="mr-5 w-44 bg-popover/[0.7]">
+        <DropdownMenuContent className="mr-5 w-44">
           <CollectionMenu
             gameId={gameId}
             openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
