@@ -27,7 +27,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
   const logoRef = useRef<HTMLDivElement>(null)
 
   // Game settings-related state
-  const initialPosition = { x: 2, y: 26 }
+  const initialPosition = { x: 2, y: 22 }
   const initialSize = 100
   const [logoPosition, setLogoPosition] = useGameState(gameId, 'apperance.logo.position')
   const [logoSize, setLogoSize] = useGameState(gameId, 'apperance.logo.size')
