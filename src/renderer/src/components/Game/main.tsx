@@ -179,7 +179,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
       {/* Scrollable content area */}
       <div
         className={cn(
-          'relative h-full w-full overflow-auto scrollbar-base scrollbar-track-background'
+          'relative h-full w-full overflow-auto scrollbar-base scrollbar-track-background rounded-none'
         )}
       >
         {/* Top space */}
