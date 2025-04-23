@@ -43,6 +43,13 @@ export function searchGames(query: string): string[] {
   return potentialMatches
 }
 
+export function randomGame(): string | null {
+  const { gameIds } = useGameRegistry.getState()
+  if (gameIds.length === 0) return null
+  const randomIndex = Math.floor(Math.random() * gameIds.length)
+  return gameIds[randomIndex]
+}
+
 // sorting function
 export function sortGames<Path extends Paths<gameDoc, { bracketNotation: true }>>(
   by: Path,

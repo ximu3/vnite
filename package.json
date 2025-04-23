@@ -79,6 +79,7 @@
     "pouchdb": "^9.0.0",
     "pouchdb-upsert": "^2.2.0",
     "react-day-picker": "^8.10.1",
+    "react-hotkeys-hook": "^5.0.1",
     "react-i18next": "^15.4.1",
     "react-image-crop": "^11.0.7",
     "react-lazy-load-image-component": "^1.6.3",

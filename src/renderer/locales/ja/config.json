@@ -76,6 +76,24 @@
       "configured": "テーマの設定に成功しました"
     }
   },
+  "hotkeys": {
+    "title": "ショートカットキー",
+    "pageNavigation": {
+      "title": "ページ切り替え",
+      "library": "ゲームライブラリ",
+      "record": "記録",
+      "scanner": "スキャナー",
+      "config": "設定"
+    },
+    "quickActions": {
+      "title": "クイックアクション",
+      "addGame": "ゲームを追加"
+    },
+    "others": {
+      "title": "その他",
+      "randomGame": "ランダムゲーム"
+    }
+  },
   "cloudSync": {
     "title": "クラウド同期",
     "enable": "有効化",

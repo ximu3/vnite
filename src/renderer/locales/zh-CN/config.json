@@ -76,6 +76,24 @@
       "configured": "主题配置成功"
     }
   },
+  "hotkeys": {
+    "title": "快捷键",
+    "pageNavigation": {
+      "title": "页面切换",
+      "library": "游戏库",
+      "record": "记录",
+      "scanner": "扫描器",
+      "config": "设置"
+    },
+    "quickActions": {
+      "title": "快捷操作",
+      "addGame": "添加游戏"
+    },
+    "others": {
+      "title": "其它",
+      "randomGame": "随机游戏"
+    }
+  },
   "cloudSync": {
     "title": "云同步",
     "enable": "是否启用",

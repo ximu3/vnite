@@ -56,6 +56,14 @@ export interface configDocs {
       opacity: number
     }
   }
+  hotkeys: {
+    library: string
+    record: string
+    scanner: string
+    config: string
+    addGame: string
+    randomGame: string
+  }
 }
 
 export interface configLocalDocs {
@@ -152,6 +160,14 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       blur: 64,
       opacity: 0.85
     }
+  },
+  hotkeys: {
+    library: 'ctrl+l',
+    record: 'ctrl+r',
+    scanner: 'ctrl+s',
+    config: 'ctrl+c',
+    addGame: 'ctrl+a',
+    randomGame: 'ctrl+shift+r'
   }
 } as const
 

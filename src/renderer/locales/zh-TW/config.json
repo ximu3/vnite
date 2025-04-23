@@ -76,6 +76,24 @@
       "configured": "主題配置成功"
     }
   },
+  "hotkeys": {
+    "title": "快捷鍵",
+    "pageNavigation": {
+      "title": "頁面切換",
+      "library": "遊戲庫",
+      "record": "記錄",
+      "scanner": "掃描器",
+      "config": "設置"
+    },
+    "quickActions": {
+      "title": "快捷操作",
+      "addGame": "添加遊戲"
+    },
+    "others": {
+      "title": "其它",
+      "randomGame": "隨機遊戲"
+    }
+  },
   "cloudSync": {
     "title": "雲同步",
     "enable": "是否啟用",

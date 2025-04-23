@@ -4,11 +4,13 @@ import { Input } from '@ui/input'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@ui/dialog'
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
+import { cn } from '~/utils'
 
 interface HotkeySettingProps {
   defaultHotkey: string
   onHotkeyChange: (newHotkey: string) => void
   inputClassName?: string
+  className?: string
 }
 
 // Special Key Mapping Table
@@ -35,7 +37,8 @@ const SPECIAL_KEYS_MAP: Record<string, string> = {
 export function HotkeySetting({
   defaultHotkey,
   onHotkeyChange,
-  inputClassName = 'font-mono'
+  inputClassName = 'font-mono',
+  className
 }: HotkeySettingProps): JSX.Element {
   const { t } = useTranslation()
 
@@ -156,7 +159,7 @@ export function HotkeySetting({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <div className="flex items-center space-x-4">
+      <div className={cn('flex items-center space-x-4', className)}>
         <DialogTrigger asChild>
           <Button variant="outline" size="sm">
             {formatHotkey(defaultHotkey)}
