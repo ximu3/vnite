@@ -207,6 +207,7 @@
     "version": "Version",
     "repository": "Github Repository",
     "feedback": "Feedback",
-    "group": "Group"
+    "group": "Group",
+    "prerelease": "Receive preview version updates"
   }
 }

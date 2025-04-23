@@ -6,9 +6,9 @@ import log from 'electron-log/main.js'
  * Set up the auto updater
  * @param mainWindow The main window
  */
-export function setupUpdater(mainWindow: BrowserWindow): void {
+export async function setupUpdater(mainWindow: BrowserWindow): Promise<void> {
   try {
-    setupAutoUpdater(mainWindow)
+    await setupAutoUpdater(mainWindow)
   } catch (error) {
     log.error('Failed to setup updater:', error)
   }

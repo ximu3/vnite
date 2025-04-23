@@ -207,6 +207,7 @@
     "version": "版本",
     "repository": "Github倉庫",
     "feedback": "回饋",
-    "group": "群組"
+    "group": "群組",
+    "prerelease": "接收預覽版更新"
   }
 }

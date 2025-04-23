@@ -207,6 +207,7 @@
     "version": "バージョン",
     "repository": "Githubリポジトリ",
     "feedback": "フィードバック",
-    "group": "グループ"
+    "group": "グループ",
+    "prerelease": "プレビューバージョンの更新を受け取る"
   }
 }

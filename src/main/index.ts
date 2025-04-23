@@ -304,7 +304,7 @@ app.whenReady().then(async () => {
   await startSync(true)
 
   // Setup auto updater
-  setupUpdater(mainWindow)
+  await setupUpdater(mainWindow)
 
   // Initialize the scraper
   initScraper()

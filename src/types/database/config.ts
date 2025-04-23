@@ -64,6 +64,9 @@ export interface configDocs {
     addGame: string
     randomGame: string
   }
+  updater: {
+    allowPrerelease: boolean
+  }
 }
 
 export interface configLocalDocs {
@@ -168,6 +171,9 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     config: 'ctrl+c',
     addGame: 'ctrl+a',
     randomGame: 'ctrl+shift+r'
+  },
+  updater: {
+    allowPrerelease: false
   }
 } as const
 
