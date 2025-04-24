@@ -194,18 +194,21 @@ export function Sidebar(): JSX.Element {
                             gameBatchAdderActions.setIsOpen(true)
                           } catch (error) {
                             if (error instanceof Error) {
-                              toast.error(`${t('notifications.getFailed')}${error.message}`)
+                              toast.error(
+                                `${t('notifications.getBatchGamesFailed')}${error.message}`
+                              )
                               throw error
                             } else {
-                              toast.error(`${t('notifications.getFailed')}${error}`)
+                              toast.error(`${t('notifications.getBatchGamesFailed')}${error}`)
                               throw new Error(t('notifications.unknownError'))
                             }
                           }
                         })(),
                         {
                           loading: t('notifications.selectLibraryFolder'),
-                          success: t('notifications.getSuccess'),
-                          error: (err: Error) => `${t('notifications.getFailed')}${err.message}`
+                          success: t('notifications.getBatchGamesSuccess'),
+                          error: (err: Error) =>
+                            `${t('notifications.getBatchGamesFailed')}${err.message}`
                         }
                       )
                     }}

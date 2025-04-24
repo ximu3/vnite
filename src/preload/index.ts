@@ -1,8 +1,23 @@
 import { contextBridge } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import { webUtils } from 'electron'
+import fse from 'fs-extra'
+import path from 'path'
 
 // Custom APIs for renderer
-const api = {}
+const api = {
+  webUtils: {
+    ...webUtils,
+    isDirectory: (file: string): boolean => {
+      try {
+        return fse.lstatSync(file).isDirectory()
+      } catch (_error) {
+        return false
+      }
+    }
+  },
+  path: path
+}
 
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise

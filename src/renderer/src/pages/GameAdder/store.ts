@@ -31,6 +31,8 @@ interface GameAdderState {
   setBackgroundList: (backgroundList: string[]) => void
   backgroundUrl: string
   setBackgroundUrl: (backgroundUrl: string) => void
+  dirPath: string
+  setDirPath: (dirPath: string) => void
   handleClose: () => void
 }
 
@@ -53,6 +55,8 @@ export const useGameAdderStore = create<GameAdderState>((set, get) => ({
   setBackgroundList: (backgroundList): void => set({ backgroundList }),
   backgroundUrl: '',
   setBackgroundUrl: (backgroundUrl): void => set({ backgroundUrl }),
+  dirPath: '',
+  setDirPath: (dirPath): void => set({ dirPath }),
   handleClose: (): void => {
     const {
       isLoading,
@@ -64,7 +68,8 @@ export const useGameAdderStore = create<GameAdderState>((set, get) => ({
       setBackgroundList,
       setBackgroundUrl,
       setGameList,
-      setIsLoading
+      setIsLoading,
+      setDirPath
     } = get()
     if (isLoading) {
       toast.warning(i18next.t('adder:gameAdder.loading'))
@@ -73,6 +78,7 @@ export const useGameAdderStore = create<GameAdderState>((set, get) => ({
     setIsOpen(false)
     setDataSource(useConfigStore.getState().getConfigValue('game.scraper.defaultDatasSource'))
     setDbId('')
+    setDirPath('')
     setDataSourceId('')
     setName('')
     setBackgroundList([])

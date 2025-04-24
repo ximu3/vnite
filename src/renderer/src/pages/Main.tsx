@@ -1,6 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { Sidebar } from '~/components/Sidebar'
-import { cn } from '~/utils'
 import { Library } from './Library'
 import { Record } from './Record'
 import { Icon } from './arts/Icon'
@@ -8,13 +7,14 @@ import { Logo } from './arts/Logo'
 import { GameScannerManager } from './GameScannerManager'
 import { Light } from './Light'
 import { Config } from '~/pages/Config'
+import { DragContainer } from './DragContainer'
 
 export function Main(): JSX.Element {
   console.warn('[DEBUG] Main')
   return (
     <div>
       <Light />
-      <div className={cn('flex flex-row w-screen h-screen pt-[30px] relative')}>
+      <DragContainer>
         <Sidebar />
         <Routes>
           <Route index element={<Navigate to="/library" />} />
@@ -25,7 +25,7 @@ export function Main(): JSX.Element {
           <Route path="/icon" element={<Icon />} />
           <Route path="/logo" element={<Logo />} />
         </Routes>
-      </div>
+      </DragContainer>
     </div>
   )
 }

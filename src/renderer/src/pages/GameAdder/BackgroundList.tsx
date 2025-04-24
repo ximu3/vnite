@@ -16,13 +16,9 @@ export function BackgroundList(): JSX.Element {
     setBackgroundList,
     dataSourceId,
     dataSource,
-    setIsOpen,
     dbId,
-    setDbId,
-    setDataSourceId,
-    setName,
-    setGameList,
-    setIsLoading
+    dirPath,
+    handleClose
   } = useGameAdderStore()
 
   const navigate = useNavigate()
@@ -102,19 +98,12 @@ export function BackgroundList(): JSX.Element {
           await ipcInvoke('add-game-to-db', {
             dataSource,
             dataSourceId,
-            preExistingDbId: dbId,
-            backgroundUrl
+            backgroundUrl,
+            dirPath
           })
         }
         setIsAdding(false)
-        setDbId('')
-        setDataSourceId('')
-        setName('')
-        setBackgroundList([])
-        setBackgroundUrl('')
-        setGameList([])
-        setIsLoading(false)
-        setIsOpen(false)
+        handleClose()
         navigate('/')
       })(),
       {

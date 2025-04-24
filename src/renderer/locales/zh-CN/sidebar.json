@@ -23,10 +23,11 @@
   },
   "notifications": {
     "noGamesFound": "未找到游戏",
-    "getFailed": "获取游戏失败: ",
+    "gettingBatchGames": "正在批量获取游戏…",
+    "getBatchGamesFailed": "批量获取游戏失败: ",
+    "getBatchGamesSuccess": "批量获取游戏成功",
     "unknownError": "未知错误",
     "selectLibraryFolder": "请选择库文件夹…",
-    "getSuccess": "获取游戏成功",
     "selectGamePath": "请选择游戏路径",
     "adding": "正在添加游戏…",
     "addSuccess": "添加游戏成功",
