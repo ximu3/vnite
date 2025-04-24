@@ -55,7 +55,7 @@ export function ExtraInformationCard({
   return (
     <div className={cn(className, 'group')}>
       <div className={cn('flex flex-row justify-between items-center')}>
-        <div className={cn('select-none cursor-pointer')} onClick={handleCopyExtra}>
+        <div className={cn('font-bold select-none cursor-pointer')} onClick={handleCopyExtra}>
           {t('detail.overview.sections.extraInfo')}
         </div>
         <div className="flex items-center gap-3">

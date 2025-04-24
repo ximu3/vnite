@@ -27,7 +27,7 @@ export function TagsCard({
     <div className={cn(className, 'group')}>
       <div className={cn('flex flex-row justify-between items-center')}>
         <div
-          className={cn('select-none cursor-pointer')}
+          className={cn('font-bold select-none cursor-pointer')}
           onClick={() => copyWithToast(`${tags.join(', ')}`)}
         >
           {t('detail.overview.sections.tags')}
