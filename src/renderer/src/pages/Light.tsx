@@ -42,12 +42,12 @@ export function Light(): JSX.Element {
       if (!currentCollectionId) {
         if (isCustomBackgroundAvailable()) {
           setAttachmentUrl(getCustomBackgroundUrl())
-          return
         } else {
           const recentGameId = getRecentGameId()
           setGameId(recentGameId)
           setAttachmentUrl(getGameBackgroundUrl(recentGameId))
         }
+        return
       }
       const currentGameId = getGameCollectionValue(currentCollectionId, 'games')[0]
       setGameId(currentGameId)
