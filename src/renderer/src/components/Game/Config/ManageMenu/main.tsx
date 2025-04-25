@@ -25,6 +25,7 @@ export function ManageMenu({
 }): JSX.Element {
   const { t } = useTranslation('game')
   const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
+  const [markPath] = useGameLocalState(gameId, 'utils.markPath')
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [logoVisible, setLogoVisible] = useGameState(gameId, 'apperance.logo.visible')
   const setIsOpen = useGameAdderStore((state) => state.setIsOpen)
@@ -82,10 +83,10 @@ export function ManageMenu({
             {/* <DropdownMenuSeparator /> */}
             <DropdownMenuItem
               onClick={() => {
-                if (gamePath) {
-                  ipcInvoke('open-path-in-explorer', gamePath)
-                } else {
+                if (!gamePath && !markPath) {
                   toast.warning(t('detail.manage.notifications.gamePathNotSet'))
+                } else {
+                  ipcInvoke('open-path-in-explorer', gamePath || markPath)
                 }
               }}
             >
