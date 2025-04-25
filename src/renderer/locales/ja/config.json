@@ -15,6 +15,19 @@
   },
   "appearances": {
     "title": "外観",
+    "background": {
+      "title": "背景",
+      "customBackground": "カスタム背景",
+      "image": "画像",
+      "selectImage": "画像を選択",
+      "currentBackground": "現在の背景画像",
+      "noBackground": "背景画像が設定されていません"
+    },
+    "glass": {
+      "title": "フロストガラス",
+      "blur": "ぼかし",
+      "opacity": "透明度"
+    },
     "gameList": {
       "title": "ゲームリスト",
       "showRecentGames": "最近のゲームセクションを表示",
@@ -61,6 +74,24 @@
       "themeSaved": "テーマが保存されました",
       "configuring": "テーマを設定中…",
       "configured": "テーマの設定に成功しました"
+    }
+  },
+  "hotkeys": {
+    "title": "ショートカットキー",
+    "pageNavigation": {
+      "title": "ページ切り替え",
+      "library": "ゲームライブラリ",
+      "record": "記録",
+      "scanner": "スキャナー",
+      "config": "設定"
+    },
+    "quickActions": {
+      "title": "クイックアクション",
+      "addGame": "ゲームを追加"
+    },
+    "others": {
+      "title": "その他",
+      "randomGame": "ランダムゲーム"
     }
   },
   "cloudSync": {
@@ -176,6 +207,7 @@
     "version": "バージョン",
     "repository": "Githubリポジトリ",
     "feedback": "フィードバック",
-    "group": "グループ"
+    "group": "グループ",
+    "prerelease": "プレビューバージョンの更新を受け取る"
   }
 }

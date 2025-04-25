@@ -1,5 +1,4 @@
 import { Button } from '@ui/button'
-import { Separator } from '@ui/separator'
 import { throttle } from 'lodash'
 import { useRef } from 'react'
 import { useGameCollectionStore } from '~/stores'
@@ -30,8 +29,8 @@ export function Collections(): JSX.Element {
         </div>
 
         {/* Split Line Container */}
-        <div className={cn('flex items-center justify-center flex-grow pr-5')}>
-          <Separator className={cn('flex-grow')} />
+        <div className={cn('flex items-center justify-center flex-grow')}>
+          <div className="w-full h-px pr-3 border-t border-dashed border-border" />
         </div>
 
         <div className={cn('flex flex-row gap-2 items-center justify-center pr-5')}>

@@ -15,6 +15,19 @@
   },
   "appearances": {
     "title": "Appearances",
+    "background": {
+      "title": "Background",
+      "customBackground": "Custom Background",
+      "image": "Image",
+      "selectImage": "Select Image",
+      "currentBackground": "Current Background Image",
+      "noBackground": "No Background Image Set"
+    },
+    "glass": {
+      "title": "Frosted Glass",
+      "blur": "Blur",
+      "opacity": "Opacity"
+    },
     "gameList": {
       "title": "Game List",
       "showRecentGames": "Show Recent Games Section",
@@ -61,6 +74,24 @@
       "themeSaved": "Theme saved",
       "configuring": "Configuring theme…",
       "configured": "Theme configured successfully"
+    }
+  },
+  "hotkeys": {
+    "title": "Hotkeys",
+    "pageNavigation": {
+      "title": "Page Navigation",
+      "library": "Game Library",
+      "record": "Records",
+      "scanner": "Scanner",
+      "config": "Settings"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "addGame": "Add Game"
+    },
+    "others": {
+      "title": "Others",
+      "randomGame": "Random Game"
     }
   },
   "cloudSync": {
@@ -176,6 +207,7 @@
     "version": "Version",
     "repository": "Github Repository",
     "feedback": "Feedback",
-    "group": "Group"
+    "group": "Group",
+    "prerelease": "Receive preview version updates"
   }
 }

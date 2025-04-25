@@ -57,6 +57,7 @@
     "fullSyncing": "Syncing data…",
     "fullSynced": "Data sync completed",
     "fullSyncError": "Data sync failed",
-    "updateUserInfoError": "Official cloud sync account login expired, please log in again"
+    "updateUserInfoError": "Official cloud sync account login expired, please log in again",
+    "checkingForUpdate": "Checking for updates..."
   }
 }

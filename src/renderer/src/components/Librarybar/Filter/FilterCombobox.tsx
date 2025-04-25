@@ -88,7 +88,7 @@ export function FilterCombobox({
                 selectedValues.map((value) => (
                   <span
                     key={value}
-                    className="px-2 py-1 text-sm rounded-md bg-primary text-primary-foreground"
+                    className="px-2 py-1 text-sm rounded-md bg-primary/[0.8] text-primary-foreground"
                   >
                     {options.find((opt) => opt.value === value)?.label || value}
                   </span>
@@ -102,8 +102,12 @@ export function FilterCombobox({
             <ChevronsUpDown className="w-4 h-4 ml-2 opacity-50 shrink-0" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent side="bottom" align="end" className="w-[240px] p-0 max-w-none">
-          <Command className={cn(' max-w-none')}>
+        <PopoverContent
+          side="bottom"
+          align="end"
+          className="w-[240px] p-0 max-w-none bg-transparent"
+        >
+          <Command className={cn('max-w-none bg-popover/[0.75]')}>
             <CommandInput
               placeholder={t('filter.combobox.search', { placeholder })}
               className={cn('non-draggable')}

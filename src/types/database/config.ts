@@ -48,6 +48,24 @@ export interface configDocs {
     sidebar: {
       showThemeSwitcher: boolean
     }
+    background: {
+      customBackground: boolean
+    }
+    glass: {
+      blur: number
+      opacity: number
+    }
+  }
+  hotkeys: {
+    library: string
+    record: string
+    scanner: string
+    config: string
+    addGame: string
+    randomGame: string
+  }
+  updater: {
+    allowPrerelease: boolean
   }
 }
 
@@ -137,7 +155,25 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
   appearances: {
     sidebar: {
       showThemeSwitcher: true
+    },
+    background: {
+      customBackground: false
+    },
+    glass: {
+      blur: 64,
+      opacity: 0.85
     }
+  },
+  hotkeys: {
+    library: 'ctrl+l',
+    record: 'ctrl+r',
+    scanner: 'ctrl+s',
+    config: 'ctrl+c',
+    addGame: 'ctrl+a',
+    randomGame: 'ctrl+shift+r'
+  },
+  updater: {
+    allowPrerelease: false
   }
 } as const
 

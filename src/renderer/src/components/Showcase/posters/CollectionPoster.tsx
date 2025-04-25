@@ -32,7 +32,7 @@ function Preview({
       className={cn(
         'group relative overflow-hidden w-[150px] h-[150px] rounded-lg',
         'transition-all duration-300 ease-in-out',
-        '3xl:w-[180px] 3xl:h-[180px]',
+        // '3xl:w-[180px] 3xl:h-[180px]',
         'border-4 border-dashed border-primary bg-background'
       )}
     >
@@ -138,16 +138,14 @@ export function CollectionPoster({
               'overflow-hidden shadow-custom-initial cursor-pointer w-[150px] h-[150px] rounded-lg',
               'transition-all duration-300 ease-in-out',
               'ring-0 ring-transparent',
-              'hover:ring-2 hover:ring-primary',
-              '3xl:w-[174px] 3xl:h-[174px]'
+              'hover:ring-2 hover:ring-primary'
+              // '3xl:w-[174px] 3xl:h-[174px]'
             )}
             onClick={() => navigate(`/library/collections/${collectionId}`)}
           >
             {/* background mask layer */}
             <div
-              className={cn(
-                'absolute inset-0 bg-muted/40 backdrop-blur-sm z-10 rounded-lg pointer-events-none'
-              )}
+              className={cn('absolute inset-0 bg-muted/55 z-10 rounded-lg pointer-events-none')}
             />
 
             {/* HoverBigCardAnimation layer */}
@@ -181,7 +179,8 @@ export function CollectionPoster({
               className={cn(
                 'absolute inset-0 z-20 mt-4 rounded-lg',
                 'flex items-center justify-center',
-                'pointer-events-none w-full h-full'
+                'pointer-events-none w-full h-full',
+                ''
               )}
             >
               <div className="flex flex-col items-center justify-center w-full h-full gap-1">
@@ -195,7 +194,7 @@ export function CollectionPoster({
                   {collectionName}
                 </div>
 
-                <div className={cn('text-accent-foreground/70')}>{`( ${length} )`}</div>
+                <div className={cn('text-accent-foreground font-semibold')}>{`( ${length} )`}</div>
               </div>
             </div>
           </div>

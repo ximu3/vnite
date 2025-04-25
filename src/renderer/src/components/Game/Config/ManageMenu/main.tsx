@@ -36,7 +36,7 @@ export function ManageMenu({
       <DropdownMenuSub>
         <DropdownMenuSubTrigger>{t('detail.manage.title')}</DropdownMenuSubTrigger>
         <DropdownMenuPortal>
-          <DropdownMenuSubContent>
+          <DropdownMenuSubContent className="">
             <DropdownMenuItem onSelect={openNameEditorDialog}>
               {t('detail.manage.rename')}
             </DropdownMenuItem>
@@ -79,7 +79,7 @@ export function ManageMenu({
                 {t('detail.manage.createShortcut')}
               </DropdownMenuItem>
             )}
-            <DropdownMenuSeparator />
+            {/* <DropdownMenuSeparator /> */}
             <DropdownMenuItem
               onClick={() => {
                 if (gamePath) {

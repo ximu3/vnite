@@ -4,7 +4,8 @@ import {
   ContextMenuSeparator,
   ContextMenuSub,
   ContextMenuSubContent,
-  ContextMenuSubTrigger
+  ContextMenuSubTrigger,
+  ContextMenuPortal
 } from '@ui/context-menu'
 import { toast } from 'sonner'
 import { DeleteGameAlert } from '~/components/Game/Config/ManageMenu/DeleteGameAlert'
@@ -32,59 +33,61 @@ export function ManageMenu({
     <ContextMenuGroup>
       <ContextMenuSub>
         <ContextMenuSubTrigger>{t('detail.manage.title')}</ContextMenuSubTrigger>
-        <ContextMenuSubContent>
-          <ContextMenuItem onSelect={openNameEditorDialog}>
-            {t('detail.manage.rename')}
-          </ContextMenuItem>
-          <ContextMenuItem onClick={openPlayingTimeEditorDialog}>
-            {t('detail.manage.editPlayTime')}
-          </ContextMenuItem>
-          <ContextMenuItem
-            onClick={() => {
-              setDbId(gameId)
-              setName(gameName)
-              setIsOpen(true)
-            }}
-          >
-            {t('detail.manage.downloadMetadata')}
-          </ContextMenuItem>
-          {gamePath !== '' && (
+        <ContextMenuPortal>
+          <ContextMenuSubContent>
+            <ContextMenuItem onSelect={openNameEditorDialog}>
+              {t('detail.manage.rename')}
+            </ContextMenuItem>
+            <ContextMenuItem onClick={openPlayingTimeEditorDialog}>
+              {t('detail.manage.editPlayTime')}
+            </ContextMenuItem>
             <ContextMenuItem
-              onClick={async () => {
-                try {
-                  const targetPath = await ipcInvoke('select-path-dialog', ['openDirectory'])
-                  if (!targetPath) {
-                    return
+              onClick={() => {
+                setDbId(gameId)
+                setName(gameName)
+                setIsOpen(true)
+              }}
+            >
+              {t('detail.manage.downloadMetadata')}
+            </ContextMenuItem>
+            {gamePath !== '' && (
+              <ContextMenuItem
+                onClick={async () => {
+                  try {
+                    const targetPath = await ipcInvoke('select-path-dialog', ['openDirectory'])
+                    if (!targetPath) {
+                      return
+                    }
+                    await ipcInvoke('create-game-shortcut', gameId, targetPath)
+                    toast.success(t('detail.manage.notifications.shortcutCreated'))
+                  } catch (_error) {
+                    toast.error(t('detail.manage.notifications.shortcutError'))
                   }
-                  await ipcInvoke('create-game-shortcut', gameId, targetPath)
-                  toast.success(t('detail.manage.notifications.shortcutCreated'))
-                } catch (_error) {
-                  toast.error(t('detail.manage.notifications.shortcutError'))
+                }}
+              >
+                {t('detail.manage.createShortcut')}
+              </ContextMenuItem>
+            )}
+            {/* <ContextMenuSeparator /> */}
+            <ContextMenuItem
+              onClick={() => {
+                if (gamePath) {
+                  ipcInvoke('open-path-in-explorer', gamePath)
+                } else {
+                  toast.warning(t('detail.manage.notifications.gamePathNotSet'))
                 }
               }}
             >
-              {t('detail.manage.createShortcut')}
+              {t('detail.manage.browseLocalFiles')}
             </ContextMenuItem>
-          )}
-          <ContextMenuSeparator />
-          <ContextMenuItem
-            onClick={() => {
-              if (gamePath) {
-                ipcInvoke('open-path-in-explorer', gamePath)
-              } else {
-                toast.warning(t('detail.manage.notifications.gamePathNotSet'))
-              }
-            }}
-          >
-            {t('detail.manage.browseLocalFiles')}
-          </ContextMenuItem>
-          <ContextMenuSeparator />
-          <DeleteGameAlert gameId={gameId}>
-            <ContextMenuItem onSelect={(e) => e.preventDefault()}>
-              {t('detail.manage.delete')}
-            </ContextMenuItem>
-          </DeleteGameAlert>
-        </ContextMenuSubContent>
+            <ContextMenuSeparator />
+            <DeleteGameAlert gameId={gameId}>
+              <ContextMenuItem onSelect={(e) => e.preventDefault()}>
+                {t('detail.manage.delete')}
+              </ContextMenuItem>
+            </DeleteGameAlert>
+          </ContextMenuSubContent>
+        </ContextMenuPortal>
       </ContextMenuSub>
     </ContextMenuGroup>
   )

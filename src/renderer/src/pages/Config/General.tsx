@@ -11,7 +11,7 @@ import {
 import { Switch } from '@ui/switch'
 import { useConfigState } from '~/hooks'
 import { cn, ipcInvoke } from '~/utils'
-import { useTheme } from '../ThemeProvider'
+import { useTheme } from '../../components/ThemeProvider'
 import { useTranslation } from 'react-i18next'
 
 export function General(): JSX.Element {

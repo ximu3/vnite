@@ -15,6 +15,19 @@
   },
   "appearances": {
     "title": "外观",
+    "background": {
+      "title": "背景",
+      "customBackground": "自定义背景",
+      "image": "图片",
+      "selectImage": "选择图片",
+      "currentBackground": "当前背景图片",
+      "noBackground": "未设置背景图片"
+    },
+    "glass": {
+      "title": "毛玻璃",
+      "blur": "模糊度",
+      "opacity": "透明度"
+    },
     "gameList": {
       "title": "游戏列表",
       "showRecentGames": "显示最近游戏栏目",
@@ -61,6 +74,24 @@
       "themeSaved": "主题已保存",
       "configuring": "正在配置主题…",
       "configured": "主题配置成功"
+    }
+  },
+  "hotkeys": {
+    "title": "快捷键",
+    "pageNavigation": {
+      "title": "页面切换",
+      "library": "游戏库",
+      "record": "记录",
+      "scanner": "扫描器",
+      "config": "设置"
+    },
+    "quickActions": {
+      "title": "快捷操作",
+      "addGame": "添加游戏"
+    },
+    "others": {
+      "title": "其它",
+      "randomGame": "随机游戏"
     }
   },
   "cloudSync": {
@@ -176,6 +207,7 @@
     "version": "版本",
     "repository": "Github仓库",
     "feedback": "反馈",
-    "group": "群组"
+    "group": "群组",
+    "prerelease": "接收预览版更新"
   }
 }

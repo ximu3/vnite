@@ -9,6 +9,7 @@ import {
 import type { Get, Paths } from 'type-fest'
 import { getValueByPath } from '@appUtils'
 import log from 'electron-log/main'
+import { convertToWebP } from '~/media'
 
 export class ConfigDBManager {
   private static readonly DB_NAME = 'config'
@@ -107,6 +108,49 @@ export class ConfigDBManager {
       await DBManager.setValue(`${this.DB_NAME}-local`, docId, remainingPath, value as any)
     } catch (error) {
       log.error('Error setting local config value:', error)
+      throw error
+    }
+  }
+
+  static async setConfigBackgroundImage(image: Buffer | string): Promise<void> {
+    try {
+      const webpImage = await convertToWebP(image)
+      await DBManager.putAttachment(
+        this.DB_NAME,
+        'media',
+        'background.webp',
+        webpImage,
+        'image/webp'
+      )
+    } catch (error) {
+      log.error('Error setting background image:', error)
+      throw error
+    }
+  }
+
+  static async getConfigBackgroundImage<T extends 'buffer' | 'file' = 'buffer'>(
+    format: T = 'buffer' as T
+  ): Promise<T extends 'file' ? string | null : Buffer | null> {
+    try {
+      if ((await DBManager.checkAttachment(this.DB_NAME, 'media', 'background.webp')) === false) {
+        return null
+      }
+
+      if (format === 'file') {
+        return (await DBManager.getAttachment(this.DB_NAME, 'media', 'background.webp', {
+          format: 'file',
+          filePath: '#temp',
+          ext: 'webp'
+        })) as T extends 'file' ? string : Buffer
+      } else {
+        return (await DBManager.getAttachment(
+          this.DB_NAME,
+          'media',
+          'background.webp'
+        )) as T extends 'file' ? string : Buffer
+      }
+    } catch (error) {
+      log.error('Error getting background image:', error)
       throw error
     }
   }

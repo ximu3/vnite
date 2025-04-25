@@ -18,10 +18,9 @@ import { useGameAdderStore } from '~/pages/GameAdder/store'
 import { useGameBatchAdderStore, Game } from '~/pages/GameBatchAdder/store'
 import { ipcInvoke } from '~/utils'
 import { useConfigLocalState, useConfigState } from '~/hooks'
-import { ConfigDialog } from './Config'
-import { useCloudSyncStore } from './Config/CloudSync/store'
+import { useCloudSyncStore } from '../pages/Config/CloudSync/store'
 import { useSteamImporterStore } from '~/pages/Importer/SteamImporter/store'
-import { CloudSyncInfo } from './Config/CloudSync/Info'
+import { CloudSyncInfo } from '../pages/Config/CloudSync/Info'
 import { useTheme } from './ThemeProvider'
 import { useTranslation } from 'react-i18next'
 import { useGameScannerStore } from '~/pages/GameScannerManager/store'
@@ -40,15 +39,12 @@ export function Sidebar(): JSX.Element {
   const { t } = useTranslation('sidebar')
 
   return (
-    <div className={cn('flex flex-col p-[10px] pt-3 pb-3 h-full bg-background justify-between')}>
+    <div
+      className={cn(
+        'flex flex-col p-[10px] h-full bg-background/70 border-r border-border justify-between'
+      )}
+    >
       <div className={cn('flex flex-col gap-2')}>
-        <div
-          className={cn(
-            'pb-2 font-mono text-xs font-bold flex justify-center items-center text-primary'
-          )}
-        >
-          {t('title')}
-        </div>
         <Tooltip>
           <TooltipTrigger>
             <Nav variant="sidebar" to="./library">
@@ -198,18 +194,21 @@ export function Sidebar(): JSX.Element {
                             gameBatchAdderActions.setIsOpen(true)
                           } catch (error) {
                             if (error instanceof Error) {
-                              toast.error(`${t('notifications.getFailed')}${error.message}`)
+                              toast.error(
+                                `${t('notifications.getBatchGamesFailed')}${error.message}`
+                              )
                               throw error
                             } else {
-                              toast.error(`${t('notifications.getFailed')}${error}`)
+                              toast.error(`${t('notifications.getBatchGamesFailed')}${error}`)
                               throw new Error(t('notifications.unknownError'))
                             }
                           }
                         })(),
                         {
                           loading: t('notifications.selectLibraryFolder'),
-                          success: t('notifications.getSuccess'),
-                          error: (err: Error) => `${t('notifications.getFailed')}${err.message}`
+                          success: t('notifications.getBatchGamesSuccess'),
+                          error: (err: Error) =>
+                            `${t('notifications.getBatchGamesFailed')}${err.message}`
                         }
                       )
                     }}
@@ -272,17 +271,11 @@ export function Sidebar(): JSX.Element {
           </DropdownMenuContent>
         </DropdownMenu>
         <Tooltip>
-          <ConfigDialog>
-            <TooltipTrigger>
-              <Button
-                variant="ghost"
-                size={'icon'}
-                className={cn('min-h-0 min-w-0 p-2 non-draggable')}
-              >
-                <span className={cn('icon-[mdi--settings-outline] w-5 h-5')}></span>
-              </Button>
-            </TooltipTrigger>
-          </ConfigDialog>
+          <TooltipTrigger>
+            <Nav variant="sidebar" to="./config">
+              <span className={cn('icon-[mdi--settings-outline] w-5 h-5')}></span>
+            </Nav>
+          </TooltipTrigger>
           <TooltipContent side="right">{t('actions.settings')}</TooltipContent>
         </Tooltip>
       </div>

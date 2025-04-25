@@ -68,5 +68,9 @@ export function setupGameIPC(mainWindow: BrowserWindow): void {
     }
   )
 
+  ipcMain.handle('check-game-exits-by-path', async (_, gamePath: string) => {
+    return await GameDBManager.checkGameExitsByPath(gamePath)
+  })
+
   mainWindow.webContents.send('gameIPCReady')
 }

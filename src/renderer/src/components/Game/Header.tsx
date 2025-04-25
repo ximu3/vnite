@@ -1,7 +1,6 @@
 import { Button } from '@ui/button'
 import { useConfigState, useGameState } from '~/hooks'
 import { cn, copyWithToast } from '~/utils'
-// import { Badge } from '@ui/badge'
 import { Dialog, DialogContent, DialogTrigger } from '@ui/dialog'
 import { Input } from '@ui/input'
 import {
@@ -22,15 +21,7 @@ import { Record } from './Overview/Record'
 import { StartGame } from './StartGame'
 import { StopGame } from './StopGame'
 
-export function Header({
-  gameId,
-  className,
-  isSticky
-}: {
-  gameId: string
-  className?: string
-  isSticky: boolean
-}): JSX.Element {
+export function Header({ gameId, className }: { gameId: string; className?: string }): JSX.Element {
   const { t } = useTranslation('game')
   const runningGames = useRunningGames((state) => state.runningGames)
   const [name] = useGameState(gameId, 'metadata.name')
@@ -42,6 +33,7 @@ export function Header({
   const resetPreScore = (): void => setPreScore(score === -1 ? '' : score.toString())
   const [isScoreDialogOpen, setIsScoreDialogOpen] = useState(false)
 
+  // Score submission handler function
   function confirmScore(): void {
     if (preScore === '') {
       setScore(-1)
@@ -83,25 +75,15 @@ export function Header({
   }
 
   return (
-    <div
-      className={cn(
-        'flex-col flex gap-5 px-7 py-5 pb-11 relative',
-        isSticky
-          ? 'bg-gradient-to-t from-background/80 to-background py-5 backdrop-blur-sm'
-          : 'bg-gradient-to-b from-background/60 to-background backdrop-blur-lg duration-100',
-        className,
-        'transition-all duration-100'
-      )}
-    >
+    <div className={cn('flex-col flex gap-5 px-7 py-5 pb-11 relative', className)}>
+      {/* Border effect */}
       <div
         className={cn(
-          'absolute inset-0',
-          isSticky
-            ? 'border-0 border-b-[1px] border-accent-foreground/10'
-            : 'border-t-[1px] translate-y-[1px] border-accent-foreground/10',
-          'transition-none'
+          'absolute inset-0 border-t-[1px] translate-y-[1px] border-accent-foreground/10'
         )}
       ></div>
+
+      {/* Game name section */}
       <div
         className={cn(
           'flex flex-row gap-3 grow overflow-hidden items-center justify-between',
@@ -124,148 +106,89 @@ export function Header({
             </span>
           )}
         </div>
-        {isSticky && (
-          <div
-            className={cn(
-              'flex flex-row gap-3 items-center duration-300 z-20 select-none',
-              '3xl:gap-5'
-            )}
-          >
-            {runningGames.includes(gameId) ? (
-              <StopGame gameId={gameId} className={cn('')} />
-            ) : (
-              <StartGame gameId={gameId} className={cn('')} />
-            )}
-
-            <Select value={playStatus} onValueChange={setPlayStatus}>
-              <SelectTrigger noIcon className={cn('p-0 h-auto w-auto border-0 shadow-none')}>
-                <Button variant="outline" size={'icon'} className="non-draggable">
-                  <span className={cn('icon-[mdi--bookmark-outline] w-4 h-4')}></span>
-                </Button>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>{t('detail.header.playStatus.label')}</SelectLabel>
-                  <SelectItem value="unplayed">{t('utils:game.playStatus.unplayed')}</SelectItem>
-                  <SelectItem value="playing">{t('utils:game.playStatus.playing')}</SelectItem>
-                  <SelectItem value="finished">{t('utils:game.playStatus.finished')}</SelectItem>
-                  <SelectItem value="multiple">{t('utils:game.playStatus.multiple')}</SelectItem>
-                  <SelectItem value="shelved">{t('utils:game.playStatus.shelved')}</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-
-            <Dialog open={isScoreDialogOpen} onOpenChange={setIsScoreDialogOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size={'icon'}
-                  className="non-draggable"
-                  onClick={() => {
-                    resetPreScore()
-                    setIsScoreDialogOpen(true)
-                  }}
-                >
-                  <span className={cn('icon-[mdi--starburst-edit-outline] w-4 h-4')}></span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent showCloseButton={false} className="w-[500px]">
-                <div className={cn('flex flex-row gap-3 items-center justify-center')}>
-                  <div className={cn('whitespace-nowrap')}>{t('detail.header.rating.title')}</div>
-                  <Input
-                    value={preScore}
-                    onChange={(e) => setPreScore(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') confirmScore()
-                    }}
-                  />
-                  <Button onClick={confirmScore}>{t('utils:common.confirm')}</Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-
-            <Config gameId={gameId} />
-          </div>
-        )}
       </div>
-      {!isSticky && (
-        <div
-          className={cn(
-            'flex flex-row justify-between items-center duration-300 select-none',
-            '3xl:gap-5'
+
+      {/* Game records and action buttons */}
+      <div
+        className={cn(
+          'flex flex-row justify-between items-center duration-300 select-none',
+          '3xl:gap-5'
+        )}
+      >
+        <Record gameId={gameId} />
+        <div className={cn('flex flex-row gap-3 items-center z-20', '3xl:gap-5')}>
+          {/* Start/Stop game button */}
+          {runningGames.includes(gameId) ? (
+            <StopGame gameId={gameId} className={cn('')} />
+          ) : (
+            <StartGame gameId={gameId} className={cn('')} />
           )}
-        >
-          <Record gameId={gameId} />
-          <div className={cn('flex flex-row gap-3 items-center z-20', '3xl:gap-5')}>
-            {runningGames.includes(gameId) ? (
-              <StopGame gameId={gameId} className={cn('')} />
-            ) : (
-              <StartGame gameId={gameId} className={cn('')} />
-            )}
 
-            <Select value={playStatus} onValueChange={setPlayStatus}>
-              <SelectTrigger noIcon className={cn('p-0 h-auto w-auto border-0 shadow-none')}>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Button variant="outline" size={'icon'} className={cn('')}>
-                      <span className={cn('icon-[mdi--bookmark-outline] w-4 h-4')}></span>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom">
-                    {t('detail.header.playStatus.tooltip')}
-                  </TooltipContent>
-                </Tooltip>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>{t('detail.header.playStatus.label')}</SelectLabel>
-                  <SelectItem value="unplayed">{t('utils:game.playStatus.unplayed')}</SelectItem>
-                  <SelectItem value="playing">{t('utils:game.playStatus.playing')}</SelectItem>
-                  <SelectItem value="finished">{t('utils:game.playStatus.finished')}</SelectItem>
-                  <SelectItem value="multiple">{t('utils:game.playStatus.multiple')}</SelectItem>
-                  <SelectItem value="shelved">{t('utils:game.playStatus.shelved')}</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+          {/* Game status selection */}
+          <Select value={playStatus} onValueChange={setPlayStatus}>
+            <SelectTrigger noIcon className={cn('p-0 h-auto w-auto border-0 shadow-none')}>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button variant="outline" size={'icon'} className={cn('')}>
+                    <span className={cn('icon-[mdi--bookmark-outline] w-4 h-4')}></span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  {t('detail.header.playStatus.tooltip')}
+                </TooltipContent>
+              </Tooltip>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>{t('detail.header.playStatus.label')}</SelectLabel>
+                <SelectItem value="unplayed">{t('utils:game.playStatus.unplayed')}</SelectItem>
+                <SelectItem value="playing">{t('utils:game.playStatus.playing')}</SelectItem>
+                <SelectItem value="finished">{t('utils:game.playStatus.finished')}</SelectItem>
+                <SelectItem value="multiple">{t('utils:game.playStatus.multiple')}</SelectItem>
+                <SelectItem value="shelved">{t('utils:game.playStatus.shelved')}</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
 
-            <Dialog open={isScoreDialogOpen} onOpenChange={setIsScoreDialogOpen}>
-              <DialogTrigger asChild>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Button
-                      variant="outline"
-                      size={'icon'}
-                      className="non-draggable"
-                      onClick={() => {
-                        resetPreScore()
-                        setIsScoreDialogOpen(true)
-                      }}
-                    >
-                      <span className={cn('icon-[mdi--starburst-edit-outline] w-4 h-4')}></span>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom">{t('detail.header.rating.tooltip')}</TooltipContent>
-                </Tooltip>
-              </DialogTrigger>
-              <DialogContent showCloseButton={false} className="w-[500px]">
-                <div className={cn('flex flex-row gap-3 items-center justify-center')}>
-                  <div className={cn('whitespace-nowrap')}>{t('detail.header.rating.title')}</div>
-                  <Input
-                    value={preScore}
-                    onChange={(e) => setPreScore(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') confirmScore()
+          {/* Rating dialog */}
+          <Dialog open={isScoreDialogOpen} onOpenChange={setIsScoreDialogOpen}>
+            <DialogTrigger asChild>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    variant="outline"
+                    size={'icon'}
+                    className="non-draggable"
+                    onClick={() => {
+                      resetPreScore()
+                      setIsScoreDialogOpen(true)
                     }}
-                  />
-                  <Button onClick={confirmScore}>{t('utils:common.confirm')}</Button>
-                </div>
-              </DialogContent>
-            </Dialog>
+                  >
+                    <span className={cn('icon-[mdi--starburst-edit-outline] w-4 h-4')}></span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">{t('detail.header.rating.tooltip')}</TooltipContent>
+              </Tooltip>
+            </DialogTrigger>
+            <DialogContent showCloseButton={false} className="w-[500px]">
+              <div className={cn('flex flex-row gap-3 items-center justify-center')}>
+                <div className={cn('whitespace-nowrap')}>{t('detail.header.rating.title')}</div>
+                <Input
+                  value={preScore}
+                  onChange={(e) => setPreScore(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') confirmScore()
+                  }}
+                />
+                <Button onClick={confirmScore}>{t('utils:common.confirm')}</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
 
-            <Config gameId={gameId} />
-          </div>
+          {/* Configuration button */}
+          <Config gameId={gameId} />
         </div>
-      )}
+      </div>
     </div>
   )
 }

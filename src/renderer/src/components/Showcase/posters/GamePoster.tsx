@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom'
 import { HoverCardAnimation } from '~/components/animations/HoverCard'
 import { GameNavCM } from '~/components/contextMenu/GameNavCM'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
-import { AttributesDialog } from '~/components/Game/Config/AttributesDialog'
 import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
 import { useDragContext } from '~/components/Showcase/CollectionGames'
@@ -82,7 +81,6 @@ export function GamePoster({
   const collectionId = groupId?.split(':')[1]
   const [playTime] = useGameState(gameId, 'record.playTime')
   const [gameName] = useGameState(gameId, 'metadata.name')
-  const [isAttributesDialogOpen, setIsAttributesDialogOpen] = useState(false)
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = useState(false)
   const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = useState(false)
   const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = useState(false)
@@ -201,7 +199,7 @@ export function GamePoster({
               className={cn('rounded-none')}
             >
               <ContextMenuTrigger>
-                <HoverCardAnimation className={cn('')}>
+                <HoverCardAnimation className={cn('rounded-lg')}>
                   <GameImage
                     onClick={() => {
                       navigate(`/library/games/${gameId}/${groupId || 'all'}`)
@@ -217,15 +215,15 @@ export function GamePoster({
                     type="cover"
                     alt={gameId}
                     className={cn(
-                      'w-[148px] aspect-[2/3] cursor-pointer object-cover',
-                      '3xl:w-[176px]',
+                      'w-[148px] aspect-[2/3] cursor-pointer object-cover rounded-lg',
+                      // '3xl:w-[176px]',
                       className
                     )}
                     fallback={
                       <div
                         className={cn(
                           'w-[148px] aspect-[2/3] cursor-pointer object-cover flex items-center justify-center',
-                          '3xl:w-[176px]',
+                          // '3xl:w-[176px]',
                           className
                         )}
                         onClick={() =>
@@ -246,16 +244,13 @@ export function GamePoster({
 
             <GameNavCM
               gameId={gameId}
-              openAttributesDialog={() => setIsAttributesDialogOpen(true)}
+              groupId={groupId || 'all'}
               openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
               openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
               openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
             />
           </ContextMenu>
 
-          {isAttributesDialogOpen && (
-            <AttributesDialog gameId={gameId} setIsOpen={setIsAttributesDialogOpen} />
-          )}
           {isAddCollectionDialogOpen && (
             <AddCollectionDialog gameIds={[gameId]} setIsOpen={setIsAddCollectionDialogOpen} />
           )}
@@ -269,8 +264,8 @@ export function GamePoster({
           <HoverCardContent
             side="right"
             className={cn(
-              'p-0 w-[250px] h-[230px] border-0 rounded-none overflow-hidden shadow-xl relative mx-2',
-              '3xl:w-[300px] 3xl:h-[272px] cursor-pointer'
+              'p-0 w-[250px] h-[230px] border-0 rounded-lg overflow-hidden shadow-xl relative mx-2',
+              'cursor-pointer'
             )}
           >
             {/* background layer */}
@@ -279,7 +274,7 @@ export function GamePoster({
                 gameId={gameId}
                 type="background"
                 alt={gameId}
-                className="object-cover w-full h-full"
+                className="object-cover w-full h-full rounded-lg"
                 draggable="false"
               />
               <div className="absolute inset-0 bg-gradient-to-b from-accent/40 to-accent/80 backdrop-blur-xl" />
@@ -293,11 +288,11 @@ export function GamePoster({
               </div>
 
               {/* Game Preview Image */}
-              <div className={cn('relative w-full h-[128px]', '3xl:h-[164px]')}>
+              <div className={cn('relative w-full h-[128px]')}>
                 <GameImage
                   gameId={gameId}
                   type="background"
-                  className={cn('object-cover w-full h-full')}
+                  className={cn('object-cover w-full h-full rounded-lg')}
                   style={{
                     maskImage: 'linear-gradient(to top, transparent 0%, black 30%)'
                   }}

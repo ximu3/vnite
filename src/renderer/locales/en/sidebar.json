@@ -23,10 +23,11 @@
   },
   "notifications": {
     "noGamesFound": "No games found",
-    "getFailed": "Failed to get games: ",
+    "gettingBatchGames": "Getting games in batch...",
+    "getBatchGamesFailed": "Failed to get games in batch: ",
+    "getBatchGamesSuccess": "Successfully got games in batch",
     "unknownError": "Unknown error",
     "selectLibraryFolder": "Please select library folder…",
-    "getSuccess": "Successfully got games",
     "selectGamePath": "Please select game path",
     "adding": "Adding game…",
     "addSuccess": "Successfully added game",

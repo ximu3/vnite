@@ -1,5 +1,4 @@
 import { cn } from '~/utils'
-import { Separator } from '@ui/separator'
 import { Button } from '@ui/button'
 import {
   Select,
@@ -18,12 +17,7 @@ import { useTranslation } from 'react-i18next'
 
 function PlaceHolder(): JSX.Element {
   return (
-    <div
-      className={cn(
-        'w-[148px] h-[222px] cursor-pointer object-cover',
-        '3xl:w-[176px] 3xl:h-[264px] bg-transparent'
-      )}
-    ></div>
+    <div className={cn('w-[148px] h-[222px] cursor-pointer object-cover', 'bg-transparent')}></div>
   )
 }
 
@@ -41,7 +35,7 @@ export function AllGamesComponent({
   const { t } = useTranslation('game')
   return (
     <div className={cn('w-full flex flex-col gap-1 pt-3')}>
-      <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>
+      <div className={cn('flex flex-row items-center gap-5 justify-center px-5')}>
         <div className={cn('flex flex-row gap-5 items-center justify-center')}>
           <div className={cn('text-accent-foreground flex-shrink-0')}>
             {t('showcase.sections.allGames')}
@@ -89,8 +83,8 @@ export function AllGamesComponent({
         </div>
 
         {/* Split Line Container */}
-        <div className={cn('flex items-center justify-center flex-grow pr-5')}>
-          <Separator className={cn('flex-grow')} />
+        <div className={cn('flex items-center justify-center flex-grow')}>
+          <div className="w-full h-px border-t border-dashed border-border" />
         </div>
       </div>
 
@@ -98,7 +92,7 @@ export function AllGamesComponent({
       <div
         className={cn(
           'grid grid-cols-[repeat(auto-fill,148px)]',
-          '3xl:grid-cols-[repeat(auto-fill,176px)]',
+          // '3xl:grid-cols-[repeat(auto-fill,176px)]',
           'justify-between gap-6 w-full',
           'pt-2 pl-5 pr-5 pb-6' // Add inner margins to show shadows
         )}

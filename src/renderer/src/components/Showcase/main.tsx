@@ -19,13 +19,15 @@ export function Showcase(): JSX.Element {
   console.warn('[DEBUG] Showcase')
 
   return (
-    <div className={cn('flex flex-col gap-3 h-[100vh] pt-[30px]')}>
+    <div className={cn('flex flex-col gap-3 h-full bg-background/50 shadow-inner')}>
       {gameIds.length !== 0 ? (
         <>
-          <ScrollArea ref={scrollAreaRef} className={cn('w-full')}>
-            <RecentGames />
-            <Collections />
-            <AllGames />
+          <ScrollArea ref={scrollAreaRef} className={cn('w-full h-full')}>
+            <div className={cn('pt-[14px]')}>
+              <RecentGames />
+              <Collections />
+              <AllGames />
+            </div>
           </ScrollArea>
           <ScrollToTopButton scrollAreaRef={scrollAreaRef} />
         </>

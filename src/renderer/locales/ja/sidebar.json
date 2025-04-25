@@ -23,10 +23,11 @@
   },
   "notifications": {
     "noGamesFound": "ゲームが見つかりません",
-    "getFailed": "ゲームの取得に失敗しました: ",
+    "gettingBatchGames": "ゲームを一括取得中…",
+    "getBatchGamesFailed": "ゲームの一括取得に失敗しました: ",
+    "getBatchGamesSuccess": "ゲームの一括取得に成功しました",
     "unknownError": "不明なエラー",
     "selectLibraryFolder": "ライブラリフォルダを選択してください…",
-    "getSuccess": "ゲームの取得に成功しました",
     "selectGamePath": "ゲームパスを選択してください",
     "adding": "ゲームを追加中…",
     "addSuccess": "ゲームの追加に成功しました",

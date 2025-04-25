@@ -36,8 +36,8 @@ export function Nav({
             break
           case 'librarybar':
             variantStyles = isActive
-              ? 'bg-accent text-accent-foreground border-[1px] border-border'
-              : 'hover:bg-accent hover:text-accent-foreground bg-background text-background-foreground border-[1px] border-border'
+              ? 'bg-accent/[0.7] text-accent-foreground border-[1px] border-border shadow-sm'
+              : 'hover:bg-accent/[0.7] hover:text-accent-foreground bg-background/[0.3] text-background-foreground border-[1px] border-border shadow-sm'
             break
           default:
             variantStyles = isActive

@@ -11,7 +11,6 @@ import { useTranslation } from 'react-i18next'
 export function BatchGameNavCM({
   openAddCollectionDialog
 }: {
-  openAttributesDialog: () => void
   openAddCollectionDialog: () => void
 }): JSX.Element {
   const { t } = useTranslation('game')

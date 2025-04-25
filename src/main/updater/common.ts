@@ -1,12 +1,18 @@
 import { BrowserWindow, ipcMain } from 'electron'
 import { autoUpdater } from 'electron-updater'
+import { ConfigDBManager } from '~/database'
 import log from 'electron-log/main.js'
 
-export function setupAutoUpdater(mainWindow: BrowserWindow): void {
+export async function setupAutoUpdater(mainWindow: BrowserWindow): Promise<void> {
   // Development Environment Configuration
   if (process.env.NODE_ENV === 'development') {
     autoUpdater.forceDevUpdateConfig = true
   }
+
+  const allowPrerelease = await ConfigDBManager.getConfigValue('updater.allowPrerelease')
+  log.info('Allow pre-release:', allowPrerelease)
+
+  autoUpdater.allowPrerelease = allowPrerelease
 
   autoUpdater.autoDownload = false
 
@@ -70,12 +76,35 @@ export function setupAutoUpdater(mainWindow: BrowserWindow): void {
     }
   })
 
+  // Add handler for updating auto-updater configuration
+  ipcMain.handle('update-updater-config', async () => {
+    try {
+      await updateUpdater()
+      return { success: true }
+    } catch (error) {
+      log.error('Failed to update auto-updater configuration:', error)
+      throw error
+    }
+  })
+
   // Delay checking for updates to make sure the window is fully loaded
   setTimeout(() => {
     autoUpdater.checkForUpdates().catch((error) => {
       log.error('Failure to automatically check for updates:', error)
     })
   }, 3000)
+}
+
+/**
+ * Update auto-updater configuration
+ * Re-read settings from the configuration database and apply them to autoUpdater
+ */
+export async function updateUpdater(): Promise<void> {
+  const allowPrerelease = await ConfigDBManager.getConfigValue('updater.allowPrerelease')
+
+  autoUpdater.allowPrerelease = allowPrerelease
+
+  log.info('Updated auto-updater settings:', { allowPrerelease })
 }
 
 // const DBVersion = {
