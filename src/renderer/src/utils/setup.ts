@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { useRunningGames } from '~/pages/Library/store'
 import { setupDBSync } from '~/stores/sync'
 import { useUpdaterStore } from '~/pages/Updater/store'
+import { useLibrarybarStore } from '~/components/Librarybar/store'
 import i18next from 'i18next'
 
 /**
@@ -34,6 +35,7 @@ export function setupCloudSyncListener(): () => void {
 
 export function setupGameExitListeners(): () => void {
   const { setRunningGames } = useRunningGames.getState()
+  const { refreshGameList } = useLibrarybarStore.getState()
 
   // Game is exiting listener
   const exitingListener = ipcOnUnique('game-exiting', (_, gameId: string) => {
@@ -47,6 +49,9 @@ export function setupGameExitListeners(): () => void {
 
     // Update the list of running games
     setRunningGames(newRunningGames)
+
+    // Refresh the game list
+    refreshGameList()
 
     toast.success(i18next.t('utils:notifications.gameExited'), {
       id: `${gameId}-exiting`
