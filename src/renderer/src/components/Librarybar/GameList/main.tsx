@@ -1,9 +1,10 @@
+import { isEqual } from 'lodash'
+import { useFilterStore } from '../Filter/store'
 import { Collection } from './Collection'
+import { PlayStatusGames } from './PlayStatusGames'
+import { FilterGame } from './FilterGame'
 import { Others } from './Others'
 import { Search } from './Search'
-import { useFilterStore } from '../Filter/store'
-import { FilterGame } from './FilterGame'
-import { isEqual } from 'lodash'
 
 export function GameList({
   selectedGroup,
@@ -22,6 +23,9 @@ export function GameList({
   }
   if (selectedGroup === 'collection') {
     return <Collection />
+  }
+  if (selectedGroup === 'record.playStatus') {
+    return <PlayStatusGames />
   }
 
   return <Others fieldName={selectedGroup as any} />

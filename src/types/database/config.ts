@@ -39,6 +39,9 @@ export interface configDocs {
       markLocalGames: boolean
       showRecentGames: boolean
       playingStatusOrder: string[]
+      playStatusAccordionOpen: string[]
+      allGamesAccordionOpen: boolean
+      recentGamesAccordionOpen: boolean
     }
     gameHeader: {
       showOriginalName: boolean
@@ -146,7 +149,10 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       highlightLocalGames: true,
       markLocalGames: false,
       showRecentGames: true,
-      playingStatusOrder: ['unplayed', 'playing', 'finished', 'multiple', 'shelved']
+      playingStatusOrder: ['unplayed', 'playing', 'finished', 'multiple', 'shelved'],
+      playStatusAccordionOpen: ['unplayed', 'playing', 'finished', 'multiple', 'shelved'],
+      allGamesAccordionOpen: true,
+      recentGamesAccordionOpen: true
     },
     gameHeader: {
       showOriginalName: false
