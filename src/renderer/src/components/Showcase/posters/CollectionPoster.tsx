@@ -22,10 +22,12 @@ import {
 
 function Preview({
   collectionName,
-  collectionLength
+  collectionLength,
+  transparentBackground = false
 }: {
   collectionName: string
   collectionLength: number
+  transparentBackground?: boolean
 }): JSX.Element {
   return (
     <div
@@ -33,7 +35,8 @@ function Preview({
         'group relative overflow-hidden w-[150px] h-[150px] rounded-lg',
         'transition-all duration-300 ease-in-out',
         // '3xl:w-[180px] 3xl:h-[180px]',
-        'border-4 border-dashed border-primary bg-background'
+        'border-4 border-dashed border-primary',
+        !transparentBackground && ' bg-background'
       )}
     >
       <div
@@ -60,8 +63,8 @@ export function CollectionPoster({
 }: {
   collectionId: string
   className?: string
-  parentGap?: number
-  position?: 'right' | 'left' | 'center'
+  parentGap?: number // Gap(px) between posters
+  position?: 'right' | 'left' | 'center' // poster position in the container
 }): JSX.Element {
   const navigate = useNavigate()
   const collections = useGameCollectionStore((state) => state.documents)
@@ -131,7 +134,11 @@ export function CollectionPoster({
     <CollectionCM collectionId={collectionId}>
       <div className={cn('group relative rounded-lg')} ref={ref_}>
         {dragging ? (
-          <Preview collectionLength={length} collectionName={collectionName} />
+          <Preview
+            collectionLength={length}
+            collectionName={collectionName}
+            transparentBackground={true}
+          />
         ) : (
           <div
             className={cn(
