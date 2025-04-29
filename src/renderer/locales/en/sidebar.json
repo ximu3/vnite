@@ -23,7 +23,7 @@
   },
   "notifications": {
     "noGamesFound": "No games found",
-    "gettingBatchGames": "Getting games in batch...",
+    "gettingBatchGames": "Getting games in batch…",
     "getBatchGamesFailed": "Failed to get games in batch: ",
     "getBatchGamesSuccess": "Successfully got games in batch",
     "unknownError": "Unknown error",
