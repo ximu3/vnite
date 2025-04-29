@@ -213,7 +213,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
         {/* Content container */}
         <div
           className={cn(
-            'relative z-20 flex flex-col w-full bg-background/[0.9] min-h-[calc(60vh-30px)] backdrop-blur-[calc(var(--glass-blur)-24px)]'
+            'relative z-20 flex flex-col w-full bg-background/[0.9] min-h-[calc(60vh-30px)] backdrop-blur-[var(--glass-blur)]'
           )}
         >
           {/* Header area */}
