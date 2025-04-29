@@ -104,10 +104,11 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
       <div
         className={cn(
           'absolute inset-0 w-full h-full overflow-hidden pr-2',
-          'will-change-transform max-h-[calc(80vh-30px)]'
+          'will-change-transform'
         )}
         style={{
-          transform: `translateY(-${scrollY * 0.4}px)`
+          transform: `translateY(-${scrollY * 0.4}px)`,
+          maskImage: 'linear-gradient(to bottom, black 50%, transparent 85%)'
         }}
       >
         <GameImage
@@ -212,7 +213,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
         {/* Content container */}
         <div
           className={cn(
-            'relative z-20 flex flex-col w-full bg-background/[0.9] min-h-[calc(60vh-30px)] backdrop-blur-2xl'
+            'relative z-20 flex flex-col w-full bg-background/[0.9] min-h-[calc(60vh-30px)] backdrop-blur-[calc(var(--glass-blur)-24px)]'
           )}
         >
           {/* Header area */}
