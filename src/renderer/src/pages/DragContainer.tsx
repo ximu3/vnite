@@ -1,12 +1,11 @@
-import { cn } from '~/utils'
-import { useState, useEffect } from 'react'
+import { generateUUID } from '@appUtils'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { useConfigState } from '~/hooks'
+import { cn, ipcInvoke } from '~/utils'
 import { useGameAdderStore } from './GameAdder/store'
 import { useGameBatchAdderStore } from './GameBatchAdder/store'
-import { ipcInvoke } from '~/utils'
-import { generateUUID } from '@appUtils'
-import { useConfigState } from '~/hooks'
-import { toast } from 'sonner'
-import { useTranslation } from 'react-i18next'
 
 export function DragContainer({ children }: { children: React.ReactNode }): JSX.Element {
   const { t } = useTranslation('sidebar')
@@ -14,25 +13,42 @@ export function DragContainer({ children }: { children: React.ReactNode }): JSX.
   const { setIsOpen: setGameAdderIsOpen, setName, setDirPath } = useGameAdderStore()
   const { actions: gameBatchAdderActions } = useGameBatchAdderStore()
   const [defaultDataSource] = useConfigState('game.scraper.defaultDatasSource')
+
+  const isFileDrag = (event: DragEvent): boolean => {
+    if (!event.dataTransfer) return false
+
+    const types = Array.from(event.dataTransfer.types)
+    // `types.includes('Files')` doesn't work when dragging img element
+    if (types.length === 1 && types[0] === 'Files') {
+      return true
+    }
+
+    return false
+  }
+
   useEffect(() => {
     const handleDragEnter = (event: DragEvent): void => {
       event.preventDefault()
       event.stopPropagation()
+      if (!isFileDrag(event)) return
       setIsDragging(true)
     }
     const handleDragOver = (event: DragEvent): void => {
       event.preventDefault()
       event.stopPropagation()
+      if (!isFileDrag(event)) return
       setIsDragging(true)
     }
     const handleDragLeave = (event: DragEvent): void => {
       event.preventDefault()
       event.stopPropagation()
+      if (!isFileDrag(event)) return
       setIsDragging(false)
     }
     const handleDrop = async (event: DragEvent): Promise<void> => {
       event.preventDefault()
       event.stopPropagation()
+      if (!isFileDrag(event)) return
       setIsDragging(false)
 
       const paths = event.dataTransfer?.files

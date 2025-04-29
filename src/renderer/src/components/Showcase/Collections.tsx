@@ -1,10 +1,10 @@
 import { Button } from '@ui/button'
 import { throttle } from 'lodash'
 import { useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useGameCollectionStore } from '~/stores'
 import { cn } from '~/utils'
 import { CollectionPoster } from './posters/CollectionPoster'
-import { useTranslation } from 'react-i18next'
 
 export function Collections(): JSX.Element {
   const collections = useGameCollectionStore((state) => state.documents)
@@ -72,6 +72,7 @@ export function Collections(): JSX.Element {
           >
             <CollectionPoster
               collectionId={collectionId}
+              parentGap={32} // Gap(px) between posters
               position={
                 (index === 0 && 'left') ||
                 (index === Object.keys(collections).length - 1 && 'right') ||

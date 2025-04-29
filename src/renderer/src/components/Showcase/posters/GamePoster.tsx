@@ -1,16 +1,19 @@
+import { generateUUID } from '@appUtils'
 import { ContextMenu, ContextMenuTrigger } from '@ui/context-menu'
 import { GameImage } from '@ui/game-image'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@ui/hover-card'
 import { MutableRefObject, useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { HoverCardAnimation } from '~/components/animations/HoverCard'
 import { GameNavCM } from '~/components/contextMenu/GameNavCM'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
+import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
 import { useDragContext } from '~/components/Showcase/CollectionGames'
 import { useGameState } from '~/hooks'
-import { useGameRegistry, useGameCollectionStore } from '~/stores/game'
+import { useGameCollectionStore, useGameRegistry } from '~/stores/game'
 import { cn, scrollToElement } from '~/utils'
 import {
   attachClosestEdge,
@@ -26,17 +29,21 @@ import {
   type Edge,
   type PreviewState
 } from '~/utils/dnd-utills'
-import { useTranslation } from 'react-i18next'
-import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
-import { generateUUID } from '@appUtils'
 
-function Preview({ title }: { title: string }): JSX.Element {
+function Preview({
+  title,
+  transparentBackground = false
+}: {
+  title: string
+  transparentBackground?: boolean
+}): JSX.Element {
   return (
     <div
       className={cn(
         'relative w-[150px] aspect-[2/3] rounded-lg',
         '3xl:w-[176px] 3xl:h-[264px]',
-        'border-4 border-dashed border-primary bg-background'
+        'border-4 border-dashed border-primary',
+        !transparentBackground && ' bg-background'
       )}
     >
       <div
@@ -189,7 +196,7 @@ export function GamePoster({
   return (
     <div ref={ref_} className="relative overflow-visible">
       {dragging ? (
-        <Preview title={gameData?.name ?? ''} />
+        <Preview title={gameData?.name ?? ''} transparentBackground={true} />
       ) : (
         <HoverCard open={isOpen && !isDraggingGlobal}>
           <ContextMenu>
