@@ -3,6 +3,9 @@ import { cn } from '~/utils'
 import { useNavigate } from 'react-router-dom'
 import { useGameState } from '~/hooks'
 import { GameImage } from '~/components/ui/game-image'
+import { generateUUID } from '@appUtils'
+import { scrollToElement } from '~/utils'
+import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
 
 export function GamePoster({
   gameId,
@@ -21,6 +24,7 @@ export function GamePoster({
 }): JSX.Element {
   const navigate = useNavigate()
   const [gameName] = useGameState(gameId, 'metadata.name')
+  const setLazyloadMark = usePositionButtonStore((state) => state.setLazyloadMark)
   return (
     <div
       className={cn(
@@ -29,7 +33,17 @@ export function GamePoster({
         'hover:ring-primary hover:ring-2',
         className
       )}
-      onClick={() => navigate(`/library/games/${gameId}/all`)}
+      onClick={() => {
+        navigate(`/library/games/${gameId}/all`)
+        setTimeout(() => {
+          scrollToElement({
+            selector: `[data-game-id="${gameId}"][data-group-id="all"]`
+          })
+          setTimeout(() => {
+            setLazyloadMark(generateUUID())
+          }, 100)
+        }, 50)
+      }}
     >
       {/* Add a background mask layer */}
       {isShowGameName && (
