@@ -11,6 +11,7 @@ import {
   VNStaff
 } from './types'
 import { GameMetadata, METADATA_EXTRA_PREDEFINED_KEYS } from '@appTypes/database'
+import { net } from 'electron'
 import i18next from 'i18next'
 
 const VNDB_ROLE_MAPPING: Record<string, string> = {
@@ -49,7 +50,7 @@ async function fetchVNDB<T>(params: VNDBRequestParams): Promise<VNDBResponse<T>>
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS)
 
-      const response = await fetch(endpoint, {
+      const response = await net.fetch(endpoint, {
         ...requestConfig,
         signal: controller.signal
       })
@@ -267,7 +268,7 @@ async function tryFetchImage(url: string): Promise<string> {
     const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS)
 
     try {
-      const response = await fetch(fetchUrl, {
+      const response = await net.fetch(fetchUrl, {
         method: 'HEAD',
         signal: controller.signal
       })

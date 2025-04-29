@@ -1,6 +1,7 @@
 import { FormattedGameInfo, GetOwnedGamesResponse } from './types'
 import { addGameToDatabase } from '~/adder'
 import { BrowserWindow } from 'electron'
+import { net } from 'electron'
 
 /**
  * Getting information about a user's Steam library
@@ -21,7 +22,7 @@ export async function getUserSteamGames(steamId: string): Promise<FormattedGameI
   for (const baseUrl of endpoints) {
     try {
       const url = `${baseUrl}/IPlayerService/GetOwnedGames/v0001/?${searchParams}`
-      const response = await fetch(url)
+      const response = await net.fetch(url)
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
@@ -45,7 +46,7 @@ export async function getUserSteamGames(steamId: string): Promise<FormattedGameI
     }
   }
 
-  console.error('获取 Steam 游戏库失败:', lastError)
+  console.error('Failed to get Steam game library:', lastError)
   throw lastError || new Error('All endpoints failed')
 }
 

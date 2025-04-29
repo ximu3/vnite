@@ -1,3 +1,4 @@
+import { net } from 'electron'
 import {
   getGameBackground as getGameBackgroundFromSteam,
   getGameBackgroundByName as getGameBackgroundByNameFromSteam,
@@ -29,7 +30,7 @@ const fetchWithTimeout = async (
   const timeoutId = setTimeout(() => controller.abort(), timeout)
 
   try {
-    const response = await fetch(url, {
+    const response = await net.fetch(url, {
       ...options,
       signal: controller.signal
     })

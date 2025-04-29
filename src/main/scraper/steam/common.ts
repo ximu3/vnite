@@ -3,6 +3,7 @@ import { SteamAppDetailsResponse, SteamStoreSearchResponse } from './types'
 import { formatDate } from '~/utils'
 import * as cheerio from 'cheerio'
 import i18next from 'i18next'
+import { net } from 'electron'
 
 export interface SteamLanguageConfig {
   apiLanguageCode: string
@@ -39,7 +40,7 @@ async function fetchWithTimeout(
   const timeoutId = setTimeout(() => controller.abort(), timeout)
 
   try {
-    const response = await fetch(url, {
+    const response = await net.fetch(url, {
       ...options,
       signal: controller.signal
     })

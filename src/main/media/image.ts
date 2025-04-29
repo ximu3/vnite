@@ -3,7 +3,7 @@ import ico from 'sharp-ico'
 import { getAppTempPath } from '~/utils'
 import { GameDBManager } from '~/database'
 import { app } from 'electron'
-import fetch from 'node-fetch'
+import { net } from 'electron'
 import fse from 'fs-extra'
 import { fileTypeFromBuffer } from 'file-type'
 import gis from 'async-g-i-s'
@@ -45,7 +45,7 @@ export async function convertToWebP(
     // Handles cases where the input is a URL
     let imageBuffer: Buffer
     if (typeof input === 'string' && input.startsWith('http')) {
-      const response = await fetch(input)
+      const response = await net.fetch(input)
       if (!response.ok) {
         throw new Error(`Failed to fetch image: ${response.statusText}`)
       }
@@ -108,7 +108,7 @@ export async function convertToPng(input: Buffer | string): Promise<Buffer> {
     // Handles cases where the input is a URL
     let imageBuffer: Buffer
     if (typeof input === 'string' && input.startsWith('http')) {
-      const response = await fetch(input)
+      const response = await net.fetch(input)
       if (!response.ok) {
         throw new Error(`Failed to fetch image: ${response.statusText}`)
       }
@@ -189,7 +189,7 @@ export async function saveGameIconByFile(gameId: string, filePath: string): Prom
 export async function downloadTempImage(url: string): Promise<string> {
   try {
     // Download file, add common browser headers
-    const response = await fetch(url, {
+    const response = await net.fetch(url, {
       headers: {
         'User-Agent':
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',

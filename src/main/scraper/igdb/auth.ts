@@ -1,3 +1,5 @@
+import { net } from 'electron'
+
 // auth.ts
 export interface IGDBAuthResponse {
   access_token: string
@@ -41,7 +43,7 @@ export class IGDBAuthManager {
   // Refresh Access Token
   private async refreshToken(): Promise<void> {
     try {
-      const response = await fetch(
+      const response = await net.fetch(
         'https://id.twitch.tv/oauth2/token?' +
           new URLSearchParams({
             client_id: this.clientId,

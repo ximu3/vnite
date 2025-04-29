@@ -17,6 +17,7 @@ import {
 import { getValueByPath, setValueByPath } from '@appUtils'
 import { fileTypeFromBuffer } from 'file-type'
 import upsertPlugin from 'pouchdb-upsert'
+import { net } from 'electron'
 import log from 'electron-log/main'
 
 PouchDB.plugin(upsertPlugin)
@@ -239,7 +240,7 @@ export class DBManager {
       // Trying to create a remote database
       if (auth) {
         try {
-          await fetch(`${remoteUrl}/${remoteDbName}`, {
+          await net.fetch(`${remoteUrl}/${remoteDbName}`, {
             method: 'PUT',
             headers: {
               Authorization: 'Basic ' + btoa(`${auth.username}:${auth.password}`)

@@ -2,6 +2,7 @@ import { GameList, GameMetadata } from '@appTypes/utils'
 import { BangumiSearchResult, BangumiSubject } from './types'
 import { getGameBackgroundsFromVNDB } from '../vndb'
 import i18next from 'i18next'
+import { net } from 'electron'
 import { METADATA_EXTRA_PREDEFINED_KEYS } from '@appTypes/database'
 
 // Mapping table from Bangumi fields to predefined roles
@@ -97,7 +98,7 @@ async function fetchBangumi<T>(
     url.searchParams.append(key, String(value))
   })
 
-  const response = await fetch(url.toString(), {
+  const response = await net.fetch(url.toString(), {
     headers: {
       Accept: 'application/json',
       'User-Agent': 'ximu3/vnite/3.0.0-alpha.0 (https://github.com/ximu3/vnite)',

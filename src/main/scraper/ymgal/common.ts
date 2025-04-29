@@ -3,6 +3,7 @@ import { GameListResponse, GameDetailResponse, OrganizationResponse, Organizatio
 import { getGameBackgroundsFromVNDB, getGameCoverFromVNDB } from '../vndb'
 import i18next from 'i18next'
 import { METADATA_EXTRA_PREDEFINED_KEYS } from '@appTypes/database'
+import { net } from 'electron'
 
 // YMGal job titles mapped to predefined roles
 const YMGAL_ROLE_MAPPING: Record<string, string> = {
@@ -97,7 +98,7 @@ async function getAccessToken(): Promise<string> {
   })
 
   try {
-    const response = await fetch(`${tokenEndpoint}?${params}`)
+    const response = await net.fetch(`${tokenEndpoint}?${params}`)
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
@@ -119,7 +120,7 @@ async function fetchYMGal<T>(endpoint: string, params?: Record<string, string>):
     })
   }
 
-  const response = await fetch(url.toString(), {
+  const response = await net.fetch(url.toString(), {
     headers: {
       Accept: 'application/json;charset=utf-8',
       Authorization: `Bearer ${token}`,

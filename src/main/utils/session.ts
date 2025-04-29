@@ -1,6 +1,7 @@
 import { session } from 'electron'
 
 export function setupSession(): void {
+  session.defaultSession.setProxy({ mode: 'system' })
   session.defaultSession.webRequest.onBeforeSendHeaders(
     { urls: ['*://*.hdslb.com/*', '*://*.bilibili.com/*'] },
     (details, callback) => {

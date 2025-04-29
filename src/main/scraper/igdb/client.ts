@@ -1,4 +1,5 @@
 import { IGDBAuthConfig, IGDBAuthManager } from './auth'
+import { net } from 'electron'
 
 // IGDB API Client
 class IGDBClient {
@@ -13,7 +14,7 @@ class IGDBClient {
   async request<T>(endpoint: string, query: string): Promise<T> {
     try {
       const headers = await this.authManager.getHeaders()
-      const response = await fetch(`${this.baseUrl}/${endpoint}`, {
+      const response = await net.fetch(`${this.baseUrl}/${endpoint}`, {
         method: 'POST',
         headers,
         body: query
