@@ -68,7 +68,7 @@ export function BigGamePoster({
               <HoverBigCardAnimation className={cn('rounded-lg w-full h-full')}>
                 <GameImage
                   onClick={() => {
-                    navigate(`/library/games/${gameId}/${groupId || 'all'}`)
+                    navigate(`/library/games/${gameId}/${encodeURIComponent(groupId || 'all')}`)
                     scrollToElement({
                       selector: `[data-game-id="${gameId}"][data-group-id="${groupId || 'all'}"]`
                     })
@@ -88,9 +88,7 @@ export function BigGamePoster({
                         className
                       )}
                       onClick={() =>
-                        groupId
-                          ? navigate(`/library/games/${gameId}/${groupId}`)
-                          : navigate(`/library/games/${gameId}/all`)
+                        navigate(`/library/games/${gameId}/${encodeURIComponent(groupId || 'all')}`)
                       }
                     >
                       {gameName}

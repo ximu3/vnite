@@ -202,7 +202,7 @@ export function GamePoster({
                 <HoverCardAnimation className={cn('rounded-lg')}>
                   <GameImage
                     onClick={() => {
-                      navigate(`/library/games/${gameId}/${groupId || 'all'}`)
+                      navigate(`/library/games/${gameId}/${encodeURIComponent(groupId || 'all')}`)
                       scrollToElement({
                         selector: `[data-game-id="${gameId}"][data-group-id="${groupId || 'all'}"]`
                       })
@@ -228,9 +228,7 @@ export function GamePoster({
                         )}
                         onClick={() =>
                           navigate(
-                            groupId
-                              ? `/library/games/${gameId}/${groupId}`
-                              : `/library/games/${gameId}/all`
+                            `/library/games/${gameId}/${encodeURIComponent(groupId || 'all')}`
                           )
                         }
                       >

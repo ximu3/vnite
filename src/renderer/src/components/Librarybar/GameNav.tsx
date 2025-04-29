@@ -102,7 +102,7 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
                 highlightLocalGames && !gamePath && !isDarkMode && 'text-foreground/90',
                 isSelected && isBatchMode && 'bg-accent'
               )}
-              to={`./games/${gameId}/${groupId}`}
+              to={`./games/${gameId}/${encodeURIComponent(groupId)}`}
             >
               <div className={cn('flex flex-row gap-2 items-center w-full')}>
                 <div className={cn('flex items-center')}>
