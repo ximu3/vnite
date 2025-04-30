@@ -30,7 +30,7 @@ export function RelatedSitesCard({
         <RelatedSitesDialog gameId={gameId} />
       </div>
       <Separator className={cn('my-3 bg-primary')} />
-      <div className={cn('flex flex-col text-sm justify-start items-start')}>
+      <div className={cn('flex flex-col text-sm justify-start gap-[6px] items-start')}>
         {isEqual(relatedSites, []) || isEqual(relatedSites, [{ label: '', url: '' }])
           ? t('detail.overview.relatedSites.empty')
           : relatedSites.map((site, index) => (

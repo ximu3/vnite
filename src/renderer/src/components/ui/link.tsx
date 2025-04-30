@@ -23,7 +23,7 @@ export function Link({
             <Button
               onClick={() => window.open(url, '_blank', 'noopener,noreferrer')}
               variant="link"
-              className={cn('p-0 h-7', className)}
+              className={cn('p-0 h-0', className)}
             >
               {name}
             </Button>
