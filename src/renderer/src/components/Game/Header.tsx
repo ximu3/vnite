@@ -1,6 +1,4 @@
 import { Button } from '@ui/button'
-import { useConfigState, useGameState } from '~/hooks'
-import { cn, copyWithToast } from '~/utils'
 import { Dialog, DialogContent, DialogTrigger } from '@ui/dialog'
 import { Input } from '@ui/input'
 import {
@@ -15,7 +13,10 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { useLibrarybarStore } from '~/components/Librarybar/store'
+import { useConfigState, useGameState } from '~/hooks'
 import { useRunningGames } from '~/pages/Library/store'
+import { cn, copyWithToast } from '~/utils'
 import { Config } from './Config'
 import { Record } from './Overview/Record'
 import { StartGame } from './StartGame'
@@ -32,6 +33,15 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
   const [preScore, setPreScore] = useState(score === -1 ? '' : score.toString())
   const resetPreScore = (): void => setPreScore(score === -1 ? '' : score.toString())
   const [isScoreDialogOpen, setIsScoreDialogOpen] = useState(false)
+  const [selectedGroup, _setSelectedGroup] = useConfigState('game.gameList.selectedGroup')
+  const { refreshGameList } = useLibrarybarStore.getState()
+
+  const changePlayStatus = (value: typeof playStatus): void => {
+    setPlayStatus(value)
+    if (selectedGroup === 'record.playStatus') {
+      refreshGameList()
+    }
+  }
 
   // Score submission handler function
   function confirmScore(): void {
@@ -125,7 +135,7 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
           )}
 
           {/* Game status selection */}
-          <Select value={playStatus} onValueChange={setPlayStatus}>
+          <Select value={playStatus} onValueChange={changePlayStatus}>
             <SelectTrigger noIcon className={cn('p-0 h-auto w-auto border-0 shadow-none')}>
               <Tooltip>
                 <TooltipTrigger>
