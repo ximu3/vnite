@@ -53,7 +53,6 @@
     "adm-zip": "^0.5.16",
     "archiver": "^7.0.1",
     "archiver-utils": "^5.0.2",
-    "async-g-i-s": "^1.5.5",
     "axios": "^1.8.1",
     "cheerio": "^1.0.0",
     "class-variance-authority": "^0.7.1",
