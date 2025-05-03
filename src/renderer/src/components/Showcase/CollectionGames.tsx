@@ -1,9 +1,9 @@
 import { ScrollArea } from '@ui/scroll-area'
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
+import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
 import { useGameCollectionStore } from '~/stores'
 import { cn } from '~/utils'
 import { GamePoster } from './posters/GamePoster'
-import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
 
 export type DragContextType = {
   isDraggingGlobal: boolean
@@ -121,6 +121,9 @@ export function CollectionGamesComponent({
             </div>
           </div>
         </ScrollArea>
+        {/* This spacer prevents the last row of posters from being cut off 
+        and enables downward auto-scrolling when dragging near the bottom. */}
+        <div className="h-10" />
       </div>
     </DragContext.Provider>
   )

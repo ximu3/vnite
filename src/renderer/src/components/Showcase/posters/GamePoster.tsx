@@ -40,8 +40,7 @@ function Preview({
   return (
     <div
       className={cn(
-        'relative w-[150px] aspect-[2/3] rounded-lg',
-        '3xl:w-[176px] 3xl:h-[264px]',
+        'relative w-[148px] aspect-[2/3] rounded-lg',
         'border-4 border-dashed border-primary',
         !transparentBackground && ' bg-background'
       )}
