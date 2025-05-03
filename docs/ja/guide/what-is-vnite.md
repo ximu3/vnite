@@ -10,46 +10,50 @@ Vniteはゲームの記録、管理、同期のための統一されたユーザ
 
 ## 機能
 
-- モダンなユーザーインターフェース（カスタムテーマをサポート）
+- モダンなユーザーインターフェース（カスタマイズ可能なテーマ対応）
 
 - すべてのゲーム記録、セーブデータ、設定の複数デバイス間でのリアルタイムクラウド同期
 
-- 複数のデータソースをサポート（Steam、IGDB、Bangumi、VNDB、YMGal、DLsite）
+- 複数のデータソースに対応（Steam、IGDB、Bangumi、VNDB、YMGal、DLsite）
 
-- 年間、月間、週間レポートによる詳細なレポート機能でゲームの旅を振り返る
+- ゲームの自動登録をサポート、各スキャナーでフォルダ構造とデータソースをカスタマイズ可能
 
-- 他のプログラムとの連携（ワンクリックLEリージョン切り替え、自動Magpieスケーリング、エミュレーター起動など）
+- 柔軟なメタデータコンバーター、正規表現による修正、置換、結合、任意のメタデータの除外をサポート
 
-- Steamライブラリのワンクリックインポート（ゲーム時間を保持）
+- 詳細なレポート機能（年間、月間、週間レポート）でゲーム体験を振り返り
 
-- 多様な起動方法（ファイル、リンク、スクリプト）と高度なカスタマイズとプリセット構成
+- 他のプログラムとの連携（ワンクリックでのLEリージョン切り替え、自動Magpieスケーリング、エミュレータ起動など）
 
-- 動的カテゴリ分け（開発者、タグなどによる）
+- Steamライブラリからワンクリックでインポート（プレイ時間を保持）
 
-- カスタムメタデータフィールドをサポートする強力なフィルター
+- 複数の起動方法（ファイル、リンク、スクリプト）、高度にカスタマイズ可能でプリセット設定も可能
 
-- セッションベースのタイマーで個別のファイルやフォルダを追跡可能
+- 動的カテゴリ分け（開発者、タグなど）
+
+- カスタムメタデータフィールドに対応したパワフルなフィルタ
+
+- セッションベースのタイマー、個別のファイルまたはフォルダの記録に対応
 
 - システムリンクを介したゲーム起動のサポート
 
-- データとプログラムの完全分離による簡単なバックアップとカスタマイズ
+- データとプログラムの完全分離で、バックアップとカスタマイズが簡単
 
 ## プレビュー
 
-![home](https://img.timero.xyz/i/2025/04/02/67ecefcab9ec7.webp)
+![gameDetail](https://img.timero.xyz/i/2025/05/03/681616318b8c8.webp)
 
-![gameDetail](https://img.timero.xyz/i/2025/04/02/67ecefde5b5d8.webp)
+![home](https://img.timero.xyz/i/2025/05/03/681616478400e.webp)
 
-![gameRecord](https://img.timero.xyz/i/2025/04/02/67eceff02f2d1.webp)
+![gameRecord](https://img.timero.xyz/i/2025/05/03/68161658d16d8.webp)
 
-![gameSave](https://img.timero.xyz/i/2025/04/02/67ecf00a19afc.webp)
+![gameSave](https://img.timero.xyz/i/2025/05/03/6816166910858.webp)
 
-![recordOverview](https://img.timero.xyz/i/2025/04/02/67ecf018111f7.webp)
+![recordOverview](https://img.timero.xyz/i/2025/05/03/681616772b8be.webp)
 
-![recordWeekly](https://img.timero.xyz/i/2025/04/02/67ecf024f2aee.webp)
+![recordWeekly](https://img.timero.xyz/i/2025/05/03/681616892fb55.webp)
 
-![recordMonthly](https://img.timero.xyz/i/2025/04/02/67ecf02fde090.webp)
+![recordMonthly](https://img.timero.xyz/i/2025/05/03/68161695dfb29.webp)
 
-![recordYearly](https://img.timero.xyz/i/2025/04/02/67ecf03a9e42b.webp)
+![recordYearly](https://img.timero.xyz/i/2025/05/03/681616a4adae3.webp)
 
-![scoreReport](https://img.timero.xyz/i/2025/04/02/67ecf045b3382.webp)
+![scoreReport](https://img.timero.xyz/i/2025/05/03/681616b563d89.webp)

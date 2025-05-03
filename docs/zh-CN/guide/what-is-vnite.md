@@ -16,6 +16,10 @@ Vnite 是一个多功能的游戏管理软件，旨在提供一个统一的用�
 
 - 支持多种数据源（Steam、IGDB、Bangumi、VNDB、YMGal、DLsite）
 
+- 灵活的元数据转换器，支持正则修改、替换、合并、排除任意元数据
+
+- 支持游戏自动入库，每个扫描器都可自定义文件夹结构与数据源
+
 - 提供细致的报告功能，支持年、月、周报告，便于回顾您的游戏之旅
 
 - 支持与其他程序联动（如一键 LE 转区启动、自动Magpie缩放、模拟器启动等）
@@ -36,20 +40,20 @@ Vnite 是一个多功能的游戏管理软件，旨在提供一个统一的用�
 
 ## 预览
 
-![home](https://img.timero.xyz/i/2025/04/02/67ecefcab9ec7.webp)
+![gameDetail](https://img.timero.xyz/i/2025/05/03/681616318b8c8.webp)
 
-![gameDetail](https://img.timero.xyz/i/2025/04/02/67ecefde5b5d8.webp)
+![home](https://img.timero.xyz/i/2025/05/03/681616478400e.webp)
 
-![gameRecord](https://img.timero.xyz/i/2025/04/02/67eceff02f2d1.webp)
+![gameRecord](https://img.timero.xyz/i/2025/05/03/68161658d16d8.webp)
 
-![gameSave](https://img.timero.xyz/i/2025/04/02/67ecf00a19afc.webp)
+![gameSave](https://img.timero.xyz/i/2025/05/03/6816166910858.webp)
 
-![recordOverview](https://img.timero.xyz/i/2025/04/02/67ecf018111f7.webp)
+![recordOverview](https://img.timero.xyz/i/2025/05/03/681616772b8be.webp)
 
-![recordWeekly](https://img.timero.xyz/i/2025/04/02/67ecf024f2aee.webp)
+![recordWeekly](https://img.timero.xyz/i/2025/05/03/681616892fb55.webp)
 
-![recordMonthly](https://img.timero.xyz/i/2025/04/02/67ecf02fde090.webp)
+![recordMonthly](https://img.timero.xyz/i/2025/05/03/68161695dfb29.webp)
 
-![recordYearly](https://img.timero.xyz/i/2025/04/02/67ecf03a9e42b.webp)
+![recordYearly](https://img.timero.xyz/i/2025/05/03/681616a4adae3.webp)
 
-![scoreReport](https://img.timero.xyz/i/2025/04/02/67ecf045b3382.webp)
+![scoreReport](https://img.timero.xyz/i/2025/05/03/681616b563d89.webp)
