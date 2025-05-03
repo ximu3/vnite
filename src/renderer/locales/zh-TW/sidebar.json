@@ -3,7 +3,8 @@
   "navigation": {
     "library": "遊戲庫",
     "records": "記錄",
-    "scanner": "掃描器"
+    "scanner": "掃描器",
+    "transformer": "轉換器"
   },
   "actions": {
     "darkMode": "暗色模式",

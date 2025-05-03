@@ -3,7 +3,8 @@
   "navigation": {
     "library": "游戏库",
     "records": "记录",
-    "scanner": "扫描器"
+    "scanner": "扫描器",
+    "transformer": "转换器"
   },
   "actions": {
     "darkMode": "暗色模式",

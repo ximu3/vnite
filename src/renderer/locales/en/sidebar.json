@@ -3,7 +3,8 @@
   "navigation": {
     "library": "Game Library",
     "records": "Records",
-    "scanner": "Scanner"
+    "scanner": "Scanner",
+    "transformer": "Transformer"
   },
   "actions": {
     "darkMode": "Dark Mode",

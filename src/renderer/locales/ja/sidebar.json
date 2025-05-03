@@ -3,7 +3,8 @@
   "navigation": {
     "library": "ゲームライブラリ",
     "records": "記録",
-    "scanner": "スキャナー"
+    "scanner": "スキャナー",
+    "transformer": "変換器"
   },
   "actions": {
     "darkMode": "ダークモード",
