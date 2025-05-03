@@ -27,6 +27,12 @@ features:
   - title: スクレイパー
     icon: 🔎
     details: 複数のデータソース（Steam、IGDB、Bangumi、VNDB、YMGal、DLsite）をサポート
+  - title: メタデータコンバータ
+    icon: 🔄
+    details: 柔軟なメタデータコンバータで、正規表現による修正、置換、マージ、任意のメタデータの除外をサポート
+  - title: 自動インポート
+    icon: 🧲
+    details: ゲームの自動インポートをサポートし、各スキャナーはフォルダ構造とデータソースをカスタマイズ可能
   - title: ワンクリックインポート
     icon: 🔌
     details: Steamライブラリからのワンクリックインポート（プレイ時間を保持）をサポート

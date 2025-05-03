@@ -27,6 +27,12 @@ features:
   - title: 刮削器
     icon: 🔎
     details: 支持多种数据源（Steam、IGDB、Bangumi、VNDB、YMGal、DLsite）
+  - title: 元数据转换器
+    icon: 🔄
+    details: 灵活的元数据转换器，支持正则修改、替换、合并、排除任意元数据
+  - title: 自动入库
+    icon: 🧲
+    details: 支持游戏自动入库，每个扫描器都可自定义文件夹结构与数据源
   - title: 一键导入
     icon: 🔌
     details: 支持从 Steam 一键导入游戏库（保留游戏时间）
