@@ -186,7 +186,9 @@ export async function getBatchGameAdderData(): Promise<
   if (!dirPath) {
     return []
   }
-  const defaultDataSource = await ConfigDBManager.getConfigValue('game.scraper.defaultDatasSource')
+  const defaultDataSource = await ConfigDBManager.getConfigValue(
+    'game.scraper.common.defaultDataSource'
+  )
   const games = await getSubfoldersByDepth(dirPath, 1)
   const data = games.map(async (game) => {
     return {

@@ -115,7 +115,12 @@ interface V2Config {
     quitToTray: boolean
   }
   scraper: {
-    defaultDataSource: string
+    common: {
+      defaultDataSource: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite'
+    }
+    vndb: {
+      tagSpoilerLevel: 0 | 1 | 2
+    }
   }
   cloudSync: {
     enabled: boolean
@@ -578,7 +583,12 @@ async function convertConfig(basePath: string): Promise<void> {
     // Converting game-related configurations
     await ConfigDBManager.setConfigValue('game', {
       scraper: {
-        defaultDatasSource: mapDataSourceName(v2Config.scraper.defaultDataSource)
+        common: {
+          defaultDataSource: mapDataSourceName(v2Config.scraper.common.defaultDataSource)
+        },
+        vndb: {
+          tagSpoilerLevel: v2Config.scraper.vndb.tagSpoilerLevel
+        }
       },
       showcase: {
         sort: {
@@ -595,7 +605,10 @@ async function convertConfig(basePath: string): Promise<void> {
         highlightLocalGames: v2Config.others.gameList.highlightLocalGames,
         markLocalGames: v2Config.others.gameList.markLocalGames,
         showRecentGames: v2Config.appearances.gameList.showRecentGamesInGameList,
-        playingStatusOrder: ['unplayed', 'playing', 'finished', 'multiple', 'shelved']
+        playingStatusOrder: ['unplayed', 'playing', 'finished', 'multiple', 'shelved'],
+        playStatusAccordionOpen: ['unplayed', 'playing', 'finished', 'multiple', 'shelved'],
+        allGamesAccordionOpen: true,
+        recentGamesAccordionOpen: true
       },
       gameHeader: {
         showOriginalName: v2Config.appearances.gameHeader.showOriginalNameInGameHeader
@@ -631,7 +644,9 @@ async function convertConfig(basePath: string): Promise<void> {
 /**
  * Mapping Data Source Name
  */
-function mapDataSourceName(source: string): 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' {
+function mapDataSourceName(
+  source: string
+): 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite' {
   switch (source) {
     case 'steam':
       return 'steam'
@@ -643,6 +658,8 @@ function mapDataSourceName(source: string): 'steam' | 'vndb' | 'bangumi' | 'ymga
       return 'ymgal'
     case 'igdb':
       return 'igdb'
+    case 'dlsite':
+      return 'dlsite'
     default:
       return 'steam'
   }

@@ -159,7 +159,19 @@
   },
   "scraper": {
     "title": "刮削器",
-    "defaultDataSource": "預設資料源",
+    "common": {
+      "title": "通用",
+      "defaultDataSource": "預設資料來源"
+    },
+    "vndb": {
+      "title": "VNDB 設置",
+      "tagSpoilerLevel": "標籤劇透級別",
+      "tagSpoilerLevels": {
+        "none": "無劇透 (0)",
+        "minor": "輕微劇透 (1)",
+        "all": "所有劇透 (2)"
+      }
+    },
     "dataSources": {
       "steam": "Steam",
       "vndb": "VNDB",

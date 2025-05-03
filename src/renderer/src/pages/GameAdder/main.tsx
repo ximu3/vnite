@@ -10,7 +10,7 @@ import { useConfigState } from '~/hooks'
 
 function GameAdderContent(): JSX.Element {
   const { isOpen, handleClose } = useGameAdderStore()
-  const [defaultDataSource] = useConfigState('game.scraper.defaultDatasSource')
+  const [defaultDataSource] = useConfigState('game.scraper.common.defaultDataSource')
   const navigate = useNavigate()
   useEffect(() => {
     const initStore = async (): Promise<void> => {

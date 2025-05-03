@@ -12,6 +12,7 @@ import {
 } from './types'
 import { GameMetadata, METADATA_EXTRA_PREDEFINED_KEYS } from '@appTypes/database'
 import { net } from 'electron'
+import { ConfigDBManager } from '~/database'
 import i18next from 'i18next'
 
 const VNDB_ROLE_MAPPING: Record<string, string> = {
@@ -140,7 +141,7 @@ export async function getVNMetadata(vnId: string): Promise<GameMetadata> {
     'released',
     'description',
     'developers{name}',
-    'tags{rating,name}',
+    'tags{rating,name,spoiler}',
     'extlinks{label,url}',
     'staff{role,name}'
   ]
@@ -158,6 +159,18 @@ export async function getVNMetadata(vnId: string): Promise<GameMetadata> {
     const vn = data.results[0]
     const staffData = processStaffData(vn.staff)
 
+    const spoilerTagsLevel = await ConfigDBManager.getConfigValue(
+      'game.scraper.vndb.tagSpoilerLevel'
+    )
+
+    if (spoilerTagsLevel === 0) {
+      vn.tags = vn.tags?.filter((tag) => tag.spoiler === 0)
+    } else if (spoilerTagsLevel === 1) {
+      vn.tags = vn.tags?.filter((tag) => tag.spoiler <= 1)
+    } else {
+      vn.tags = vn.tags?.filter((tag) => tag.spoiler <= 2)
+    }
+
     return {
       name: vn.titles.find((t) => t.main)?.title || vn.titles[0].title,
       originalName: vn.titles.find((t) => t.main)?.title || vn.titles[0].title,
@@ -168,11 +181,7 @@ export async function getVNMetadata(vnId: string): Promise<GameMetadata> {
         ...(vn.extlinks?.map((link) => ({ label: link.label, url: link.url })) || []),
         { label: 'VNDB', url: `https://vndb.org/${formattedId}` }
       ],
-      tags:
-        vn.tags
-          ?.sort((a, b) => b.rating - a.rating)
-          .slice(0, 30)
-          .map((tag) => tag.name) ?? [],
+      tags: vn.tags?.sort((a, b) => b.rating - a.rating).map((tag) => tag.name) ?? [],
       extra: staffData
     }
   } catch (error) {
@@ -188,7 +197,7 @@ export async function getVNMetadataByName(vnName: string): Promise<GameMetadata>
     'released',
     'description',
     'developers{name}',
-    'tags{rating,name}',
+    'tags{rating,name,spoiler}',
     'extlinks{label,url}',
     'staff{role,name}'
   ]
@@ -215,6 +224,18 @@ export async function getVNMetadataByName(vnName: string): Promise<GameMetadata>
     const vn = data.results[0]
     const staffData = processStaffData(vn.staff)
 
+    const spoilerTagsLevel = await ConfigDBManager.getConfigValue(
+      'game.scraper.vndb.tagSpoilerLevel'
+    )
+
+    if (spoilerTagsLevel === 0) {
+      vn.tags = vn.tags?.filter((tag) => tag.spoiler === 0)
+    } else if (spoilerTagsLevel === 1) {
+      vn.tags = vn.tags?.filter((tag) => tag.spoiler <= 1)
+    } else {
+      vn.tags = vn.tags?.filter((tag) => tag.spoiler <= 2)
+    }
+
     return {
       name: vn.titles.find((t) => t.main)?.title || vn.titles[0].title,
       originalName: vn.titles.find((t) => t.main)?.title || vn.titles[0].title,
@@ -225,11 +246,7 @@ export async function getVNMetadataByName(vnName: string): Promise<GameMetadata>
         ...(vn.extlinks?.map((link) => ({ label: link.label, url: link.url })) || []),
         { label: 'VNDB', url: `https://vndb.org/${vn.id}` }
       ],
-      tags:
-        vn.tags
-          ?.sort((a, b) => b.rating - a.rating)
-          .slice(0, 30)
-          .map((tag) => tag.name) ?? [],
+      tags: vn.tags?.sort((a, b) => b.rating - a.rating).map((tag) => tag.name) ?? [],
       extra: staffData
     }
   } catch (error) {

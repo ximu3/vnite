@@ -159,7 +159,19 @@
   },
   "scraper": {
     "title": "スクレイパー",
-    "defaultDataSource": "デフォルトデータソース",
+    "common": {
+      "title": "一般",
+      "defaultDataSource": "デフォルトデータソース"
+    },
+    "vndb": {
+      "title": "VNDB 設定",
+      "tagSpoilerLevel": "タグのネタバレレベル",
+      "tagSpoilerLevels": {
+        "none": "ネタバレなし (0)",
+        "minor": "軽度のネタバレ (1)",
+        "all": "すべてのネタバレ (2)"
+      }
+    },
     "dataSources": {
       "steam": "Steam",
       "vndb": "VNDB",

@@ -12,7 +12,7 @@ export function DragContainer({ children }: { children: React.ReactNode }): JSX.
   const [isDragging, setIsDragging] = useState(false)
   const { setIsOpen: setGameAdderIsOpen, setName, setDirPath } = useGameAdderStore()
   const { actions: gameBatchAdderActions } = useGameBatchAdderStore()
-  const [defaultDataSource] = useConfigState('game.scraper.defaultDatasSource')
+  const [defaultDataSource] = useConfigState('game.scraper.common.defaultDataSource')
 
   const isFileDrag = (event: DragEvent): boolean => {
     if (!event.dataTransfer) return false

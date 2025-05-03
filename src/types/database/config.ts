@@ -6,7 +6,12 @@ export interface configDocs {
   }
   game: {
     scraper: {
-      defaultDatasSource: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite'
+      common: {
+        defaultDataSource: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite'
+      }
+      vndb: {
+        tagSpoilerLevel: 0 | 1 | 2
+      }
     }
     showcase: {
       sort: {
@@ -196,7 +201,12 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
   },
   game: {
     scraper: {
-      defaultDatasSource: 'steam'
+      common: {
+        defaultDataSource: 'steam'
+      },
+      vndb: {
+        tagSpoilerLevel: 0
+      }
     },
     showcase: {
       sort: {

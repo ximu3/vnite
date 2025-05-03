@@ -159,7 +159,19 @@
   },
   "scraper": {
     "title": "刮削器",
-    "defaultDataSource": "默认数据源",
+    "common": {
+      "title": "通用",
+      "defaultDataSource": "默认数据源"
+    },
+    "vndb": {
+      "title": "VNDB 设置",
+      "tagSpoilerLevel": "标签剧透级别",
+      "tagSpoilerLevels": {
+        "none": "无剧透 (0)",
+        "minor": "轻微剧透 (1)",
+        "all": "所有剧透 (2)"
+      }
+    },
     "dataSources": {
       "steam": "Steam",
       "vndb": "VNDB",

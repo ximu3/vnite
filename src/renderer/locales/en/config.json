@@ -159,7 +159,19 @@
   },
   "scraper": {
     "title": "Scraper",
-    "defaultDataSource": "Default Data Source",
+    "common": {
+      "title": "Common",
+      "defaultDataSource": "Default Data Source"
+    },
+    "vndb": {
+      "title": "VNDB Settings",
+      "tagSpoilerLevel": "Tag Spoiler Level",
+      "tagSpoilerLevels": {
+        "none": "No Spoilers (0)",
+        "minor": "Minor Spoilers (1)",
+        "all": "All Spoilers (2)"
+      }
+    },
     "dataSources": {
       "steam": "Steam",
       "vndb": "VNDB",

@@ -76,7 +76,7 @@ export const useGameAdderStore = create<GameAdderState>((set, get) => ({
       return
     }
     setIsOpen(false)
-    setDataSource(useConfigStore.getState().getConfigValue('game.scraper.defaultDatasSource'))
+    setDataSource(useConfigStore.getState().getConfigValue('game.scraper.common.defaultDataSource'))
     setDbId('')
     setDirPath('')
     setDataSourceId('')
