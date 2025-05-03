@@ -27,9 +27,9 @@ features:
   - title: Scraper
     icon: 🔎
     details: Supports multiple data sources (Steam, IGDB, Bangumi, VNDB, YMGal, DLsite)
-  - title: Metadata Converter
+  - title: Metadata Transformer
     icon: 🔄
-    details: Flexible metadata converter supporting regex modifications, replacement, merging, and exclusion of any metadata
+    details: Flexible metadata transformer supporting regex modifications, replacement, merging, and exclusion of any metadata
   - title: Automatic Import
     icon: 🧲
     details: Supports automatic game importing, each scanner can customize folder structures and data sources
