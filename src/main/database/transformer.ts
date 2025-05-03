@@ -331,6 +331,13 @@ export class Transformer {
       // Transform metadata
       const transformedMetadata = await this.transformMetadata(metadata)
 
+      // Compare original and transformed metadata
+      if (JSON.stringify(metadata) === JSON.stringify(transformedMetadata)) {
+        // No changes detected, skip database update
+        console.log(`No metadata changes for game ${gameId}, skipping update`)
+        return true
+      }
+
       // Save transformed metadata directly to database
       await this.applyMetadataToGame(gameId, transformedMetadata)
 
