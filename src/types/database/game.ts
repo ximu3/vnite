@@ -12,8 +12,8 @@ export interface gameDoc {
     releaseDate: string
     description: string
     developers: string[]
-    platforms: string[]
     publishers: string[]
+    platforms: string[]
     genres: string[]
     tags: string[]
     relatedSites: {
@@ -168,8 +168,8 @@ export const DEFAULT_GAME_VALUES: Readonly<gameDoc> = {
     releaseDate: '',
     description: '',
     developers: [] as string[],
-    platforms: [] as string[],
     publishers: [] as string[],
+    platforms: [] as string[],
     genres: [] as string[],
     tags: [] as string[],
     relatedSites: [] as { label: string; url: string }[],

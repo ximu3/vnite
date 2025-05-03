@@ -15,6 +15,12 @@ export function getValueByPath(obj: any, path: string): any {
   return get(obj, pathArray)
 }
 
+export function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message
+  if (typeof error === 'string') return error
+  return 'An unknown error occurred'
+}
+
 export function setValueByPath(obj: any, path: string, value: any): void {
   if (path === '#all') {
     obj = value

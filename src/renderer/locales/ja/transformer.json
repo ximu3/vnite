@@ -1,0 +1,82 @@
+{
+  "title": "メタデータ変換器管理",
+  "status": {
+    "transformers": "変換器",
+    "rules": "ルール",
+    "apply": "適用"
+  },
+  "list": {
+    "title": "変換器リスト",
+    "add": "変換器を追加",
+    "import": "変換器をインポート",
+    "newTransformerName": "新規変換器",
+    "empty": {
+      "title": "変換器がありません",
+      "description": "ゲームのメタデータを自動処理するための変換器を作成します"
+    }
+  },
+  "ruleDialog": {
+    "title": "ルール設定",
+    "loading": "読み込み中...",
+    "categories": {
+      "name": "名称",
+      "originalName": "原名",
+      "description": "概要",
+      "developers": "開発元",
+      "publishers": "発行元",
+      "genres": "ジャンル",
+      "platforms": "プラットフォーム",
+      "tags": "タグ",
+      "director": "ディレクター",
+      "scenario": "シナリオ",
+      "illustration": "イラスト",
+      "music": "音楽",
+      "engine": "エンジン"
+    },
+    "match": "マッチングルール",
+    "replace": "置換",
+    "addRule": "ルールを追加",
+    "addDialogTitle": "マッチングルールを追加",
+    "addDialogPlaceholder": "マッチング内容を入力してください",
+    "cancel": "キャンセル",
+    "save": "保存"
+  },
+  "notifications": {
+    "applyLoading": "すべての変換器を変換中...",
+    "applySuccess": "すべての変換器が正常に変換されました",
+    "applyError": "すべての変換器の変換中にエラーが発生しました",
+    "presetAdded": "プリセットが追加されました",
+    "importSuccess": "変換器のインポートに成功しました",
+    "importError": "変換器のインポートに失敗しました",
+    "exportSuccess": "変換器のエクスポートに成功しました",
+    "exportError": "変換器のエクスポートに失敗しました"
+  },
+  "editDialog": {
+    "title": "変換器を編集",
+    "name": "名称",
+    "note": "メモ",
+    "notePlaceholder": "任意",
+    "cancel": "キャンセル",
+    "save": "保存"
+  },
+  "deleteDialog": {
+    "title": "削除の確認",
+    "confirmMessage": "変換器「{{name}}」を削除してもよろしいですか？この操作は元に戻せません。",
+    "cancel": "キャンセル",
+    "confirm": "削除"
+  },
+  "presetSelector": {
+    "button": "プリセット変換器",
+    "searchPlaceholder": "プリセットを検索...",
+    "noResults": "プリセットが見つかりません"
+  },
+  "transformerItem": {
+    "rulesCount": "{{count}}個のルール"
+  },
+  "presets": {
+    "vndbChineseTags": {
+      "name": "VNDB 中国語タグ",
+      "note": "VNDB の英語タグを中国語に変換する"
+    }
+  }
+}

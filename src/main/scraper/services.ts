@@ -57,6 +57,7 @@ import {
   GameTagsList,
   GameExtraInfoList
 } from '@appTypes/utils'
+import { Transformer } from '~/database'
 
 export async function searchGames(dataSource: string, gameName: string): Promise<GameList> {
   switch (dataSource) {
@@ -100,22 +101,30 @@ export async function getGameMetadata(
   dataSource: string,
   identifier: ScraperIdentifier
 ): Promise<GameMetadata> {
+  let gameMetadata: GameMetadata
   switch (dataSource) {
     case 'vndb':
-      return await getGameMetadataFromVNDB(identifier)
+      gameMetadata = await getGameMetadataFromVNDB(identifier)
+      break
     case 'steam':
-      return await getGameMetadataFromSteam(identifier)
+      gameMetadata = await getGameMetadataFromSteam(identifier)
+      break
     case 'bangumi':
-      return await getGameMetadataFromBangumi(identifier)
+      gameMetadata = await getGameMetadataFromBangumi(identifier)
+      break
     case 'igdb':
-      return await getGameMetadataFromIGDB(identifier)
+      gameMetadata = await getGameMetadataFromIGDB(identifier)
+      break
     case 'ymgal':
-      return await getGameMetadataFromYMGal(identifier)
+      gameMetadata = await getGameMetadataFromYMGal(identifier)
+      break
     case 'dlsite':
-      return await getGameMetadataFromDLsite(identifier)
+      gameMetadata = await getGameMetadataFromDLsite(identifier)
+      break
     default:
       throw new Error('Invalid data source')
   }
+  return Transformer.transformMetadata(gameMetadata)
 }
 
 export async function getGameBackgrounds(
@@ -240,7 +249,10 @@ export async function getGameDescriptionList(
   ]
 
   // Filter out all false values
-  return candidates.filter((item) => item && item.description) as GameDescriptionList
+  const descriptionList = candidates.filter(
+    (item) => item && item.description
+  ) as GameDescriptionList
+  return await Transformer.transformDescriptionList(descriptionList)
 }
 
 export async function getGameTagsList(identifier: ScraperIdentifier): Promise<GameTagsList> {
@@ -277,7 +289,8 @@ export async function getGameTagsList(identifier: ScraperIdentifier): Promise<Ga
   ]
 
   // Filter out all false values
-  return candidates.filter((item) => item && item.tags) as GameTagsList
+  const tagsList = candidates.filter((item) => item && item.tags) as GameTagsList
+  return await Transformer.transformTagsList(tagsList)
 }
 
 export async function getGameExtraInfoList(
@@ -304,5 +317,6 @@ export async function getGameExtraInfoList(
   ]
 
   // Filter out all false values
-  return candidates.filter((item) => item && item.extra) as GameExtraInfoList
+  const extraInfoList = candidates.filter((item) => item && item.extra) as GameExtraInfoList
+  return await Transformer.transformExtraInfoList(extraInfoList)
 }

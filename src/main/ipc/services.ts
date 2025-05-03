@@ -9,6 +9,7 @@ import { setupImporterIPC } from './importer'
 import { setupThemeIPC } from './theme'
 import { setupUpdaterIPC } from './updater'
 import { setupAccountIPC } from './account'
+import { setupTransformerIPC } from './transformer'
 import { BrowserWindow } from 'electron'
 import log from 'electron-log/main'
 
@@ -25,6 +26,7 @@ export function setupIPC(mainWindow: BrowserWindow): void {
     setupThemeIPC(mainWindow)
     setupUpdaterIPC(mainWindow)
     setupAccountIPC(mainWindow)
+    setupTransformerIPC(mainWindow) // Add the new IPC handler setup
   } catch (error) {
     log.error('Error setting up IPC:', error)
     throw error

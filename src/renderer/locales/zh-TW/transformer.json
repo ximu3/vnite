@@ -1,0 +1,82 @@
+{
+  "title": "元數據轉換器管理",
+  "status": {
+    "transformers": "轉換器",
+    "rules": "規則",
+    "apply": "應用"
+  },
+  "list": {
+    "title": "轉換器列表",
+    "add": "添加轉換器",
+    "import": "導入轉換器",
+    "newTransformerName": "新轉換器",
+    "empty": {
+      "title": "暫無轉換器",
+      "description": "創建轉換器來自動處理遊戲元數據"
+    }
+  },
+  "ruleDialog": {
+    "title": "規則設置",
+    "loading": "載入中...",
+    "categories": {
+      "name": "譯名",
+      "originalName": "原名",
+      "description": "簡介",
+      "developers": "開發商",
+      "publishers": "發行商",
+      "genres": "類型",
+      "platforms": "平台",
+      "tags": "標籤",
+      "director": "企劃",
+      "scenario": "腳本",
+      "illustration": "原畫",
+      "music": "音樂",
+      "engine": "引擎"
+    },
+    "match": "匹配規則",
+    "replace": "替換為",
+    "addRule": "添加規則",
+    "addDialogTitle": "添加匹配規則",
+    "addDialogPlaceholder": "請輸入匹配內容",
+    "cancel": "取消",
+    "save": "保存"
+  },
+  "notifications": {
+    "applyLoading": "正在轉換所有轉換器...",
+    "applySuccess": "所有轉換器已成功轉換",
+    "applyError": "轉換所有轉換器時出錯",
+    "presetAdded": "預設已添加",
+    "importSuccess": "轉換器導入成功",
+    "importError": "轉換器導入失敗",
+    "exportSuccess": "轉換器導出成功",
+    "exportError": "轉換器導出失敗"
+  },
+  "editDialog": {
+    "title": "編輯轉換器",
+    "name": "名稱",
+    "note": "備註",
+    "notePlaceholder": "可選",
+    "cancel": "取消",
+    "save": "保存"
+  },
+  "deleteDialog": {
+    "title": "確認刪除",
+    "confirmMessage": "你確定要刪除轉換器 \"{{name}}\" 嗎？此操作無法撤銷。",
+    "cancel": "取消",
+    "confirm": "刪除"
+  },
+  "presetSelector": {
+    "button": "預設轉換器",
+    "searchPlaceholder": "搜索預設...",
+    "noResults": "未找到預設"
+  },
+  "transformerItem": {
+    "rulesCount": "{{count}} 條規則"
+  },
+  "presets": {
+    "vndbChineseTags": {
+      "name": "VNDB 中文標籤",
+      "note": "將 VNDB 的英文標籤轉換為中文"
+    }
+  }
+}

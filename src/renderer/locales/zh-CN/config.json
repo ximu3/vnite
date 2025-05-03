@@ -209,5 +209,14 @@
     "feedback": "反馈",
     "group": "群组",
     "prerelease": "接收预览版更新"
+  },
+  "metadata": {
+    "title": "元数据",
+    "transformer": {
+      "title": "转换器",
+      "enable": "启用转换器",
+      "manage": "管理转换规则",
+      "manageButton": "管理"
+    }
   }
 }

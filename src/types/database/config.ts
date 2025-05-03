@@ -70,6 +70,70 @@ export interface configDocs {
   updater: {
     allowPrerelease: boolean
   }
+  metadata: {
+    transformer: {
+      enabled: boolean
+      list: {
+        id: string
+        name: string
+        note: string
+        processors: {
+          name: {
+            match: string[]
+            replace: string
+          }[]
+          originalName: {
+            match: string[]
+            replace: string
+          }[]
+          description: {
+            match: string[]
+            replace: string
+          }[]
+          developers: {
+            match: string[]
+            replace: string
+          }[]
+          publishers: {
+            match: string[]
+            replace: string
+          }[]
+          platforms: {
+            match: string[]
+            replace: string
+          }[]
+          genres: {
+            match: string[]
+            replace: string
+          }[]
+          tags: {
+            match: string[]
+            replace: string
+          }[]
+          director: {
+            match: string[]
+            replace: string
+          }[]
+          scenario: {
+            match: string[]
+            replace: string
+          }[]
+          illustration: {
+            match: string[]
+            replace: string
+          }[]
+          music: {
+            match: string[]
+            replace: string
+          }[]
+          engine: {
+            match: string[]
+            replace: string
+          }[]
+        }
+      }[]
+    }
+  }
 }
 
 export interface configLocalDocs {
@@ -180,6 +244,33 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
   },
   updater: {
     allowPrerelease: false
+  },
+  metadata: {
+    transformer: {
+      enabled: false,
+      list: [
+        {
+          id: 'default',
+          name: 'Default',
+          note: 'Default transformer',
+          processors: {
+            name: [],
+            originalName: [],
+            description: [],
+            developers: [],
+            publishers: [],
+            platforms: [],
+            genres: [],
+            tags: [],
+            director: [],
+            scenario: [],
+            illustration: [],
+            music: [],
+            engine: []
+          }
+        }
+      ]
+    }
   }
 } as const
 

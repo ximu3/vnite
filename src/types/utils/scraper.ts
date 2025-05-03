@@ -13,6 +13,7 @@ export type GameMetadata = {
   developers: string[]
   publishers?: string[]
   genres?: string[]
+  platforms?: string[]
   relatedSites: {
     label: string
     url: string

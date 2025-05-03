@@ -16,7 +16,8 @@ export async function i18nInit(): Promise<void> {
     'updater',
     'utils',
     'record',
-    'scanner'
+    'scanner',
+    'transformer'
   ]
 
   const supportedLngs = ['zh-CN', 'zh-TW', 'ja', 'en']

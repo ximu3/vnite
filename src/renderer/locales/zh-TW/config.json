@@ -206,8 +206,17 @@
     "author": "作者",
     "version": "版本",
     "repository": "Github倉庫",
-    "feedback": "回饋",
+    "feedback": "反饋",
     "group": "群組",
     "prerelease": "接收預覽版更新"
+  },
+  "metadata": {
+    "title": "元數據",
+    "transformer": {
+      "title": "轉換器",
+      "enable": "啟用轉換器",
+      "manage": "管理轉換規則",
+      "manageButton": "管理"
+    }
   }
 }

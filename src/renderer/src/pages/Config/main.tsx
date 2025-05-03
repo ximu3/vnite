@@ -10,6 +10,7 @@ import { Scraper } from './Scraper'
 import { Theme } from './Theme'
 import { Appearances } from './Appearances'
 import { Hotkeys } from './Hotkeys'
+import { Metadata } from './Metadata'
 import { useTranslation } from 'react-i18next'
 
 export function Config({ className }: { className?: string }): JSX.Element {
@@ -22,10 +23,11 @@ export function Config({ className }: { className?: string }): JSX.Element {
           <div className={cn('text-2xl font-bold')}>{t('title')}</div>
 
           <Tabs defaultValue="general" className="w-full">
-            <TabsList className="grid grid-cols-9 mb-4">
+            <TabsList className="grid grid-cols-10 mb-4">
               <TabsTrigger value="general">{t('general.title')}</TabsTrigger>
               <TabsTrigger value="appearances">{t('appearances.title')}</TabsTrigger>
               <TabsTrigger value="advanced">{t('advanced.title')}</TabsTrigger>
+              <TabsTrigger value="metadata">{t('metadata.title')}</TabsTrigger>
               <TabsTrigger value="theme">{t('theme.title')}</TabsTrigger>
               <TabsTrigger value="hotkeys">{t('hotkeys.title')}</TabsTrigger>
               <TabsTrigger value="cloudSync">{t('cloudSync.title')}</TabsTrigger>
@@ -44,6 +46,10 @@ export function Config({ className }: { className?: string }): JSX.Element {
 
             <TabsContent value="advanced">
               <Advanced />
+            </TabsContent>
+
+            <TabsContent value="metadata">
+              <Metadata />
             </TabsContent>
 
             <TabsContent value="theme">

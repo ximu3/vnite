@@ -4,6 +4,14 @@
     "cancel": "取消",
     "confirm": "确定"
   },
+  "arrayEditor": {
+    "clickPlusToAdd": "点击 + 添加元素",
+    "addElement": "添加元素",
+    "editElement": "编辑元素",
+    "enterElement": "输入元素",
+    "add": "添加",
+    "update": "更新"
+  },
   "hotkeySetting": {
     "title": "设置快捷键",
     "recording": "[按下快捷键…]",

@@ -1,0 +1,82 @@
+{
+  "title": "Metadata Transformer Manager",
+  "status": {
+    "transformers": "Transformers",
+    "rules": "Rules",
+    "apply": "Apply"
+  },
+  "list": {
+    "title": "Transformer List",
+    "add": "Add Transformer",
+    "import": "Import Transformer",
+    "newTransformerName": "New Transformer",
+    "empty": {
+      "title": "No Transformers",
+      "description": "Create transformers to automatically process game metadata"
+    }
+  },
+  "ruleDialog": {
+    "title": "Rule Settings",
+    "loading": "Loading...",
+    "categories": {
+      "name": "Name",
+      "originalName": "Original Name",
+      "description": "Description",
+      "developers": "Developers",
+      "publishers": "Publishers",
+      "genres": "Genres",
+      "platforms": "Platforms",
+      "tags": "Tags",
+      "director": "Director",
+      "scenario": "Scenario",
+      "illustration": "Illustration",
+      "music": "Music",
+      "engine": "Engine"
+    },
+    "match": "Matching Rule",
+    "replace": "Replace With",
+    "addRule": "Add Rule",
+    "addDialogTitle": "Add Matching Rule",
+    "addDialogPlaceholder": "Please enter matching content",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "notifications": {
+    "applyLoading": "Converting all transformers...",
+    "applySuccess": "All transformers have been successfully converted",
+    "applyError": "Error occurred while converting all transformers",
+    "presetAdded": "Preset has been added",
+    "importSuccess": "Transformer import successful",
+    "importError": "Transformer import failed",
+    "exportSuccess": "Transformer export successful",
+    "exportError": "Transformer export failed"
+  },
+  "editDialog": {
+    "title": "Edit Transformer",
+    "name": "Name",
+    "note": "Note",
+    "notePlaceholder": "Optional",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "deleteDialog": {
+    "title": "Confirm Deletion",
+    "confirmMessage": "Are you sure you want to delete transformer \"{{name}}\"? This action cannot be undone.",
+    "cancel": "Cancel",
+    "confirm": "Delete"
+  },
+  "presetSelector": {
+    "button": "Preset Transformers",
+    "searchPlaceholder": "Search presets...",
+    "noResults": "No presets found"
+  },
+  "transformerItem": {
+    "rulesCount": "{{count}} rules"
+  },
+  "presets": {
+    "vndbChineseTags": {
+      "name": "VNDB Chinese Tags",
+      "note": "Convert VNDB English tags to Chinese"
+    }
+  }
+}

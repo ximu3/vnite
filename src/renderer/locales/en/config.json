@@ -209,5 +209,14 @@
     "feedback": "Feedback",
     "group": "Group",
     "prerelease": "Receive preview version updates"
+  },
+  "metadata": {
+    "title": "Metadata",
+    "transformer": {
+      "title": "Transformer",
+      "enable": "Enable Transformer",
+      "manage": "Manage Transformer Rules",
+      "manageButton": "Manage"
+    }
   }
 }

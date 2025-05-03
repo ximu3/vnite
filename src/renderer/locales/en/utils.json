@@ -4,6 +4,14 @@
     "cancel": "Cancel",
     "confirm": "Confirm"
   },
+  "arrayEditor": {
+    "clickPlusToAdd": "Click + to add elements",
+    "addElement": "Add Element",
+    "editElement": "Edit Element",
+    "enterElement": "Enter element",
+    "add": "Add",
+    "update": "Update"
+  },
   "hotkeySetting": {
     "title": "Set Hotkey",
     "recording": "[Press hotkey…]",

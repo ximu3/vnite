@@ -171,7 +171,7 @@ export async function getVNMetadata(vnId: string): Promise<GameMetadata> {
       tags:
         vn.tags
           ?.sort((a, b) => b.rating - a.rating)
-          .slice(0, 10)
+          .slice(0, 30)
           .map((tag) => tag.name) ?? [],
       extra: staffData
     }
@@ -228,7 +228,7 @@ export async function getVNMetadataByName(vnName: string): Promise<GameMetadata>
       tags:
         vn.tags
           ?.sort((a, b) => b.rating - a.rating)
-          .slice(0, 10)
+          .slice(0, 30)
           .map((tag) => tag.name) ?? [],
       extra: staffData
     }
