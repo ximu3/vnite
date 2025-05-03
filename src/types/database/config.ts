@@ -240,8 +240,8 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       customBackground: false
     },
     glass: {
-      blur: 64,
-      opacity: 0.85
+      blur: 54,
+      opacity: 0.75
     }
   },
   hotkeys: {
@@ -257,7 +257,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
   },
   metadata: {
     transformer: {
-      enabled: false,
+      enabled: true,
       list: [
         {
           id: 'default',
