@@ -15,6 +15,9 @@
       "countryCode": "JP"
     }
   },
+  "vndb": {
+    "languageCode": "ja"
+  },
   "extraMetadataFields": {
     "director": "企画",
     "scenario": "シナリオ",

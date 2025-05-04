@@ -15,6 +15,9 @@
       "countryCode": "US"
     }
   },
+  "vndb": {
+    "languageCode": "en"
+  },
   "extraMetadataFields": {
     "director": "Director",
     "scenario": "Scenario Writer",

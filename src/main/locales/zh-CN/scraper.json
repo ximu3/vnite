@@ -15,6 +15,9 @@
       "countryCode": "CN"
     }
   },
+  "vndb": {
+    "languageCode": "zh-Hans"
+  },
   "extraMetadataFields": {
     "director": "企划",
     "scenario": "脚本",

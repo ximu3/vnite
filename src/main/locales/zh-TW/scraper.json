@@ -15,6 +15,9 @@
       "countryCode": "TW"
     }
   },
+  "vndb": {
+    "languageCode": "zh-Hant"
+  },
   "extraMetadataFields": {
     "director": "企劃",
     "scenario": "腳本",

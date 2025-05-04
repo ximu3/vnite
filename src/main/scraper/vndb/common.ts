@@ -137,7 +137,7 @@ export async function getVNMetadata(vnId: string): Promise<GameMetadata> {
   const formattedId = vnId.startsWith('v') ? vnId : `v${vnId}`
 
   const fields = [
-    'titles{main,title}',
+    'titles{main,title,lang}',
     'released',
     'description',
     'developers{name}',
@@ -171,8 +171,10 @@ export async function getVNMetadata(vnId: string): Promise<GameMetadata> {
       vn.tags = vn.tags?.filter((tag) => tag.spoiler <= 2)
     }
 
+    const languageCode = i18next.t('scraper:vndb.languageCode')
+
     return {
-      name: vn.titles.find((t) => t.main)?.title || vn.titles[0].title,
+      name: vn.titles.find((t) => t.lang === languageCode)?.title || vn.titles[0].title,
       originalName: vn.titles.find((t) => t.main)?.title || vn.titles[0].title,
       releaseDate: vn.released || '',
       description: formatDescription(vn.description),
