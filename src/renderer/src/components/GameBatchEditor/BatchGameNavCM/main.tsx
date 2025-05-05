@@ -27,7 +27,7 @@ export function BatchGameNavCM({
   }, [location.pathname])
 
   return (
-    <ContextMenuContent className={cn('w-40')}>
+    <ContextMenuContent className={cn('w-[180px]')}>
       <CollectionMenu gameIds={gameIds} openAddCollectionDialog={openAddCollectionDialog} />
       <ContextMenuSeparator />
       <InformationDialog
