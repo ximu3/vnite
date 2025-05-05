@@ -83,7 +83,9 @@
       "library": "Game Library",
       "record": "Records",
       "scanner": "Scanner",
-      "config": "Settings"
+      "config": "Settings",
+      "goBack": "Previous Page",
+      "goForward": "Next Page"
     },
     "quickActions": {
       "title": "Quick Actions",

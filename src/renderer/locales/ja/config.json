@@ -83,7 +83,9 @@
       "library": "ゲームライブラリ",
       "record": "記録",
       "scanner": "スキャナー",
-      "config": "設定"
+      "config": "設定",
+      "goBack": "前のページ",
+      "goForward": "次のページ"
     },
     "quickActions": {
       "title": "クイックアクション",

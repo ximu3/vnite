@@ -13,6 +13,8 @@ export function Hotkeys(): JSX.Element {
   const [recordHotkey, setRecordHotkey] = useConfigState('hotkeys.record')
   const [scannerHotkey, setScannerHotkey] = useConfigState('hotkeys.scanner')
   const [configHotkey, setConfigHotkey] = useConfigState('hotkeys.config')
+  const [goBackHotKey, setGoBackHotKey] = useConfigState('hotkeys.goBack')
+  const [goForwardHotKey, setGoForwardHotKey] = useConfigState('hotkeys.goForward')
 
   // Quick action hotkeys
   const [addGameHotkey, setAddGameHotkey] = useConfigState('hotkeys.addGame')
@@ -73,6 +75,26 @@ export function Hotkeys(): JSX.Element {
                   <HotkeySetting
                     defaultHotkey={configHotkey}
                     onHotkeyChange={(newHotkey) => setConfigHotkey(newHotkey)}
+                  />
+                </div>
+
+                <div className={cn('whitespace-nowrap select-none')}>
+                  {t('hotkeys.pageNavigation.goBack')}
+                </div>
+                <div className={cn('justify-self-end')}>
+                  <HotkeySetting
+                    defaultHotkey={goBackHotKey}
+                    onHotkeyChange={(newHotkey) => setGoBackHotKey(newHotkey)}
+                  />
+                </div>
+
+                <div className={cn('whitespace-nowrap select-none')}>
+                  {t('hotkeys.pageNavigation.goForward')}
+                </div>
+                <div className={cn('justify-self-end')}>
+                  <HotkeySetting
+                    defaultHotkey={goForwardHotKey}
+                    onHotkeyChange={(newHotkey) => setGoForwardHotKey(newHotkey)}
                   />
                 </div>
               </div>

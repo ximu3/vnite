@@ -1,26 +1,44 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
+import { Button } from '@ui/button'
 import { ScrollArea } from '@ui/scroll-area'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
+import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import { cn } from '~/utils'
-import { Database } from './Database'
-import { CloudSync } from './CloudSync'
-import { General } from './General'
-import { Advanced } from './Advanced'
 import { About } from './About'
-import { Scraper } from './Scraper'
-import { Theme } from './Theme'
+import { Advanced } from './Advanced'
 import { Appearances } from './Appearances'
+import { CloudSync } from './CloudSync'
+import { Database } from './Database'
+import { General } from './General'
 import { Hotkeys } from './Hotkeys'
 import { Metadata } from './Metadata'
-import { useTranslation } from 'react-i18next'
+import { Scraper } from './Scraper'
+import { Theme } from './Theme'
 
 export function Config({ className }: { className?: string }): JSX.Element {
   const { t } = useTranslation('config')
+  const navigate = useNavigate()
+
+  const handleGoBack = (): void => {
+    navigate(-1)
+  }
 
   return (
     <div className={cn('w-full h-full bg-background/60 shadow-inner', className)}>
       <ScrollArea className={cn('w-full h-full px-6 pt-0')}>
         <div className={cn('flex flex-col gap-6 py-[34px]')}>
-          <div className={cn('text-2xl font-bold')}>{t('title')}</div>
+          <div className={cn('flex flex-row items-end gap-5')}>
+            <div className={cn('text-2xl font-bold')}>{t('title')}</div>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handleGoBack}
+              className="w-[26px] h-[26px]"
+              aria-label={t('common.back')}
+            >
+              <span className={cn('icon-[mdi--keyboard-return] w-4 h-4')}></span>
+            </Button>
+          </div>
 
           <Tabs defaultValue="general" className="w-full">
             <TabsList className="grid grid-cols-10 mb-4">

@@ -69,6 +69,8 @@ export interface configDocs {
     record: string
     scanner: string
     config: string
+    goBack: string
+    goForward: string
     addGame: string
     randomGame: string
   }
@@ -249,6 +251,8 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     record: 'ctrl+r',
     scanner: 'ctrl+s',
     config: 'ctrl+c',
+    goBack: 'alt+left',
+    goForward: 'alt+right',
     addGame: 'ctrl+a',
     randomGame: 'ctrl+shift+r'
   },

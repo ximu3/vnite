@@ -83,7 +83,9 @@
       "library": "遊戲庫",
       "record": "記錄",
       "scanner": "掃描器",
-      "config": "設置"
+      "config": "設置",
+      "goBack": "上一個頁面",
+      "goForward": "下一個頁面"
     },
     "quickActions": {
       "title": "快捷操作",

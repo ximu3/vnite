@@ -83,7 +83,9 @@
       "library": "游戏库",
       "record": "记录",
       "scanner": "扫描器",
-      "config": "设置"
+      "config": "设置",
+      "goBack": "前一个页面",
+      "goForward": "后一个页面"
     },
     "quickActions": {
       "title": "快捷操作",
