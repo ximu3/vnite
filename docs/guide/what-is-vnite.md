@@ -40,20 +40,20 @@ Just want to try it out? Jump to [Getting Started](./getting-started).
 
 ## Preview
 
-![gameDetail](https://img.timero.xyz/i/2025/05/03/681616318b8c8.webp)
+![gameDetail](https://img.timero.xyz/i/2025/05/05/68187c3701c64.webp)
 
-![home](https://img.timero.xyz/i/2025/05/03/681616478400e.webp)
+![home](https://img.timero.xyz/i/2025/05/05/68187c440f098.webp)
 
-![gameRecord](https://img.timero.xyz/i/2025/05/03/68161658d16d8.webp)
+![gameRecord](https://img.timero.xyz/i/2025/05/05/68187c50ceb6e.webp)
 
-![gameSave](https://img.timero.xyz/i/2025/05/03/6816166910858.webp)
+![gameSave](https://img.timero.xyz/i/2025/05/05/68187c5f8d297.webp)
 
-![recordOverview](https://img.timero.xyz/i/2025/05/03/681616772b8be.webp)
+![recordOverview](https://img.timero.xyz/i/2025/05/05/68187c7179b6c.webp)
 
-![recordWeekly](https://img.timero.xyz/i/2025/05/03/681616892fb55.webp)
+![recordWeekly](https://img.timero.xyz/i/2025/05/05/68187c7e66fdd.webp)
 
-![recordMonthly](https://img.timero.xyz/i/2025/05/03/68161695dfb29.webp)
+![recordMonthly](https://img.timero.xyz/i/2025/05/05/68187c88eb75b.webp)
 
-![recordYearly](https://img.timero.xyz/i/2025/05/03/681616a4adae3.webp)
+![recordYearly](https://img.timero.xyz/i/2025/05/05/68187c95324c9.webp)
 
-![scoreReport](https://img.timero.xyz/i/2025/05/03/681616b563d89.webp)
+![scoreReport](https://img.timero.xyz/i/2025/05/05/68187c9f86b48.webp)
