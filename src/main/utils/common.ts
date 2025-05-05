@@ -285,17 +285,28 @@ async function findFoldersAtDepth(
   const items = await fse.readdir(currentPath)
 
   // Filter out folders
-  const subfolders = await Promise.all(
-    items.map(async (item) => {
-      const fullPath = path.join(currentPath, item)
-      const stats = await fse.stat(fullPath)
-      return {
-        name: item,
-        dirPath: fullPath,
-        isDirectory: stats.isDirectory()
-      }
-    })
-  )
+  const subfolders = (
+    await Promise.all(
+      items.map(async (item) => {
+        const fullPath = path.join(currentPath, item)
+        try {
+          const stats = await fse.stat(fullPath)
+          return {
+            name: item,
+            dirPath: fullPath,
+            isDirectory: stats.isDirectory()
+          }
+        } catch (error) {
+          log.error('Error reading directory:', error)
+          return undefined
+        }
+      })
+    )
+  ).filter(Boolean) as Array<{
+    name: string
+    dirPath: string
+    isDirectory: boolean
+  }>
 
   const directories = subfolders.filter((item) => item.isDirectory)
 
