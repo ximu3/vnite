@@ -31,6 +31,7 @@ const gameStores: Record<string, GameStore> = {}
 // Extract basic metadata information
 function extractMetaInfo(data: gameDoc): {
   name: string
+  originalName?: string
   genres?: string[]
   addDate?: string
   lastRunDate?: string
@@ -38,6 +39,7 @@ function extractMetaInfo(data: gameDoc): {
 } {
   return {
     name: data.metadata?.name || '',
+    originalName: data.metadata?.originalName || '',
     genres: data.metadata?.genres,
     addDate: data.record?.addDate,
     lastRunDate: data.record?.lastRunDate,
@@ -84,6 +86,7 @@ export function getGameStore(gameId: string): GameStore {
         // Updating the metadata index
         const metaFields = [
           'metadata.name',
+          'metadata.originalName',
           'metadata.genre',
           'record.addDate',
           'record.lastRunDate',
