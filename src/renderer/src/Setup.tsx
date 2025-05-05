@@ -1,10 +1,10 @@
-import { useNavigate } from 'react-router-dom'
-import { setup } from '~/utils'
 import { useEffect } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
+import { useNavigate } from 'react-router-dom'
+import { setup } from '~/utils'
+import { useConfigState } from './hooks'
 import { useGameAdderStore } from './pages/GameAdder/store'
 import { randomGame } from './stores/game'
-import { useConfigState } from './hooks'
 
 export function Setup(): JSX.Element {
   const navigate = useNavigate()
@@ -16,6 +16,8 @@ export function Setup(): JSX.Element {
   const [recordHotkey] = useConfigState('hotkeys.record')
   const [scannerHotkey] = useConfigState('hotkeys.scanner')
   const [configHotkey] = useConfigState('hotkeys.config')
+  const [goBackHotKey] = useConfigState('hotkeys.goBack')
+  const [goForwardHotKey] = useConfigState('hotkeys.goForward')
   const [addGameHotkey] = useConfigState('hotkeys.addGame')
   const [randomGameHotkey] = useConfigState('hotkeys.randomGame')
 
@@ -75,6 +77,24 @@ export function Setup(): JSX.Element {
       } else {
         navigate('/library')
       }
+    },
+    {
+      preventDefault: true
+    }
+  )
+  useHotkeys(
+    goBackHotKey,
+    () => {
+      navigate(-1)
+    },
+    {
+      preventDefault: true
+    }
+  )
+  useHotkeys(
+    goForwardHotKey,
+    () => {
+      navigate(1)
     },
     {
       preventDefault: true
