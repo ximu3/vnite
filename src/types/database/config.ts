@@ -242,8 +242,8 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       customBackground: false
     },
     glass: {
-      blur: 54,
-      opacity: 0.75
+      blur: 50,
+      opacity: 0.7
     }
   },
   hotkeys: {
