@@ -17,7 +17,7 @@
   },
   "ruleDialog": {
     "title": "ルール設定",
-    "loading": "読み込み中...",
+    "loading": "読み込み中…",
     "categories": {
       "name": "名称",
       "originalName": "原名",
@@ -42,7 +42,7 @@
     "save": "保存"
   },
   "notifications": {
-    "applyLoading": "すべての変換器を変換中...",
+    "applyLoading": "すべてのトランスフォーマーを適用しています…",
     "applySuccess": "すべての変換器が正常に変換されました",
     "applyError": "すべての変換器の変換中にエラーが発生しました",
     "presetAdded": "プリセットが追加されました",
@@ -67,7 +67,7 @@
   },
   "presetSelector": {
     "button": "プリセット変換器",
-    "searchPlaceholder": "プリセットを検索...",
+    "searchPlaceholder": "プリセットを検索…",
     "noResults": "プリセットが見つかりません"
   },
   "transformerItem": {
