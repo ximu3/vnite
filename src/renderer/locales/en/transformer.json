@@ -17,7 +17,7 @@
   },
   "ruleDialog": {
     "title": "Rule Settings",
-    "loading": "Loading...",
+    "loading": "Loading…",
     "categories": {
       "name": "Name",
       "originalName": "Original Name",
@@ -42,7 +42,7 @@
     "save": "Save"
   },
   "notifications": {
-    "applyLoading": "Converting all transformers...",
+    "applyLoading": "Applying all transformers…",
     "applySuccess": "All transformers have been successfully converted",
     "applyError": "Error occurred while converting all transformers",
     "presetAdded": "Preset has been added",
@@ -67,7 +67,7 @@
   },
   "presetSelector": {
     "button": "Preset Transformers",
-    "searchPlaceholder": "Search presets...",
+    "searchPlaceholder": "Search presets…",
     "noResults": "No presets found"
   },
   "transformerItem": {
