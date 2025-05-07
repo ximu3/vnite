@@ -11,7 +11,7 @@ export async function importV2DataToV3(v2DataPath: string): Promise<void> {
   try {
     await convertV2toV3Database(v2DataPath)
   } catch (error) {
-    log.error('Failed to import v1 data to v2', error)
+    log.error('Failed to import v2 data to v3', error)
     throw error
   }
 }

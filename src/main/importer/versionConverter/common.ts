@@ -115,12 +115,7 @@ interface V2Config {
     quitToTray: boolean
   }
   scraper: {
-    common: {
-      defaultDataSource: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite'
-    }
-    vndb: {
-      tagSpoilerLevel: 0 | 1 | 2
-    }
+    defaultDataSource: string
   }
   cloudSync: {
     enabled: boolean
@@ -584,10 +579,10 @@ async function convertConfig(basePath: string): Promise<void> {
     await ConfigDBManager.setConfigValue('game', {
       scraper: {
         common: {
-          defaultDataSource: mapDataSourceName(v2Config.scraper.common.defaultDataSource)
+          defaultDataSource: mapDataSourceName(v2Config.scraper.defaultDataSource)
         },
         vndb: {
-          tagSpoilerLevel: v2Config.scraper.vndb.tagSpoilerLevel
+          tagSpoilerLevel: 0
         }
       },
       showcase: {
