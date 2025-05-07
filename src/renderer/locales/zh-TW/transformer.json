@@ -17,7 +17,7 @@
   },
   "ruleDialog": {
     "title": "規則設置",
-    "loading": "載入中...",
+    "loading": "載入中…",
     "categories": {
       "name": "譯名",
       "originalName": "原名",
@@ -42,7 +42,7 @@
     "save": "保存"
   },
   "notifications": {
-    "applyLoading": "正在轉換所有轉換器...",
+    "applyLoading": "正在應用所有轉換器…",
     "applySuccess": "所有轉換器已成功轉換",
     "applyError": "轉換所有轉換器時出錯",
     "presetAdded": "預設已添加",
@@ -67,7 +67,7 @@
   },
   "presetSelector": {
     "button": "預設轉換器",
-    "searchPlaceholder": "搜索預設...",
+    "searchPlaceholder": "搜索預設…",
     "noResults": "未找到預設"
   },
   "transformerItem": {
