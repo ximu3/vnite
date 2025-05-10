@@ -39,7 +39,7 @@ export async function addGameToDB({
   const dbId = generateUUID()
 
   // Prepare game document
-  const gameDoc = { ...DEFAULT_GAME_VALUES }
+  const gameDoc = JSON.parse(JSON.stringify(DEFAULT_GAME_VALUES))
   gameDoc._id = dbId
   gameDoc.metadata = {
     ...gameDoc.metadata,
@@ -53,7 +53,7 @@ export async function addGameToDB({
   }
   gameDoc.record.addDate = new Date().toISOString()
 
-  const gameLocalDoc = { ...DEFAULT_GAME_LOCAL_VALUES }
+  const gameLocalDoc = JSON.parse(JSON.stringify(DEFAULT_GAME_LOCAL_VALUES))
   gameLocalDoc._id = dbId
   gameLocalDoc.utils.markPath = dirPath ?? ''
 
@@ -153,13 +153,13 @@ export async function updateGame({
 export async function addGameToDBWithoutMetadata(gamePath: string): Promise<void> {
   const dbId = generateUUID()
   const gameName = gamePath.split('\\').pop() ?? ''
-  const gameDoc = { ...DEFAULT_GAME_VALUES }
+  const gameDoc = JSON.parse(JSON.stringify(DEFAULT_GAME_VALUES))
   gameDoc._id = dbId
   gameDoc.record.addDate = new Date().toISOString()
   gameDoc.metadata.name = gameName
   await GameDBManager.setGame(dbId, gameDoc)
 
-  const gameLocalDoc = { ...DEFAULT_GAME_LOCAL_VALUES }
+  const gameLocalDoc = JSON.parse(JSON.stringify(DEFAULT_GAME_LOCAL_VALUES))
   gameLocalDoc._id = dbId
   gameLocalDoc.path.gamePath = gamePath
   await GameDBManager.setGameLocal(dbId, gameLocalDoc)
