@@ -553,14 +553,14 @@ export class GameScanner extends EventEmitter {
       // Get global scan interval
       const interval = scannerConfig.interval
 
-      // Check if valid scan interval is set
+      // Check if valid scan interval is set (interval <= 0 means auto scan is disabled)
       if (!interval || interval <= 0) {
-        console.log('No valid scan interval set, cannot start periodic scan')
+        log.info('Periodic scan is disabled (interval is <= 0)')
         return
       }
 
       // Ensure interval is at least 5 minutes to prevent frequent scanning
-      const safeInterval = Math.max(interval, 60000 * 5)
+      const safeInterval = Math.min(Math.max(interval, 60000 * 5), 2147483647)
       log.info(`Setting global periodic scan at ${safeInterval}ms`)
 
       // Record last scan time
