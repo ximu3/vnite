@@ -32,7 +32,8 @@
       "title": "游戏列表",
       "showRecentGames": "显示最近游戏栏目",
       "highlightLocalGames": "高亮本地游戏",
-      "markLocalGames": "标记本地游戏"
+      "markLocalGames": "标记本地游戏",
+      "showCollapseButton": "显示折叠按钮"
     },
     "gameDetail": {
       "title": "游戏详情页",

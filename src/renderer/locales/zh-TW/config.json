@@ -32,7 +32,8 @@
       "title": "遊戲列表",
       "showRecentGames": "顯示最近遊戲欄目",
       "highlightLocalGames": "突顯本機遊戲",
-      "markLocalGames": "標記本機遊戲"
+      "markLocalGames": "標記本機遊戲",
+      "showCollapseButton": "顯示折疊按鈕"
     },
     "gameDetail": {
       "title": "遊戲詳情頁",

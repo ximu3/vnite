@@ -32,7 +32,8 @@
       "title": "ゲームリスト",
       "showRecentGames": "最近のゲームセクションを表示",
       "highlightLocalGames": "ローカルゲームをハイライト",
-      "markLocalGames": "ローカルゲームにマーク"
+      "markLocalGames": "ローカルゲームにマーク",
+      "showCollapseButton": "折りたたみボタンを表示"
     },
     "gameDetail": {
       "title": "ゲーム詳細ページ",

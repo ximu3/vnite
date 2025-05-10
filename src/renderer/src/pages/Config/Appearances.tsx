@@ -17,6 +17,9 @@ export function Appearances(): JSX.Element {
   const [showRecentGamesInGameList, setShowRecentGamesInGameList] = useConfigState(
     'game.gameList.showRecentGames'
   )
+  const [showCollapseButton, setShowCollapseButton] = useConfigState(
+    'game.gameList.showCollapseButton'
+  )
   const [showOriginalNameInGameHeader, setShowOriginalNameInGameHeader] = useConfigState(
     'game.gameHeader.showOriginalName'
   )
@@ -211,6 +214,14 @@ export function Appearances(): JSX.Element {
                 <Switch
                   checked={markLocalGames}
                   onCheckedChange={(checked) => setMarkLocalGames(checked)}
+                />
+
+                <div className={cn('whitespace-nowrap select-none')}>
+                  {t('appearances.gameList.showCollapseButton')}
+                </div>
+                <Switch
+                  checked={showCollapseButton}
+                  onCheckedChange={(checked) => setShowCollapseButton(checked)}
                 />
               </div>
             </div>

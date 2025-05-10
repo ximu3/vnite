@@ -32,7 +32,8 @@
       "title": "Game List",
       "showRecentGames": "Show Recent Games Section",
       "highlightLocalGames": "Highlight Local Games",
-      "markLocalGames": "Mark Local Games"
+      "markLocalGames": "Mark Local Games",
+      "showCollapseButton": "Show Collapse Button"
     },
     "gameDetail": {
       "title": "Game Detail Page",
