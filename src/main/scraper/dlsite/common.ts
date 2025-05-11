@@ -234,105 +234,125 @@ export async function getDlsiteMetadataByName(gameName: string): Promise<GameMet
 }
 
 export async function getGameBackgrounds(dlsiteId: string): Promise<string[]> {
-  const url = `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html`
-  const language = await getLanguage()
+  try {
+    const url = `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html`
+    const language = await getLanguage()
 
-  const response = await net.fetch(url, {
-    headers: {
-      'User-Agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
-      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-      'Accept-Language': 'zh-CN,zh;q=0.9,ja;q=0.8,en;q=0.7',
-      Cookie: `adultchecked=1; locale=${language}`
-    }
-  })
-
-  const data = await response.text()
-  const $ = cheerio.load(data)
-
-  const screenshots: string[] = []
-
-  // Extract all sample images
-  $('.product-slider-data div[data-src]').each((_, elem) => {
-    let imgUrl = $(elem).attr('data-src')
-
-    if (imgUrl) {
-      // Fix protocol relative URLs
-      if (imgUrl.startsWith('//')) {
-        imgUrl = `https:${imgUrl}`
+    const response = await net.fetch(url, {
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'zh-CN,zh;q=0.9,ja;q=0.8,en;q=0.7',
+        Cookie: `adultchecked=1; locale=${language}`
       }
+    })
 
-      // Avoid duplicate URLs
-      if (!screenshots.includes(imgUrl)) {
-        screenshots.push(imgUrl)
+    const data = await response.text()
+    const $ = cheerio.load(data)
+
+    const screenshots: string[] = []
+
+    // Extract all sample images
+    $('.product-slider-data div[data-src]').each((_, elem) => {
+      let imgUrl = $(elem).attr('data-src')
+
+      if (imgUrl) {
+        // Fix protocol relative URLs
+        if (imgUrl.startsWith('//')) {
+          imgUrl = `https:${imgUrl}`
+        }
+
+        // Avoid duplicate URLs
+        if (!screenshots.includes(imgUrl)) {
+          screenshots.push(imgUrl)
+        }
       }
-    }
-  })
+    })
 
-  return screenshots
+    return screenshots
+  } catch (error) {
+    console.error(`Error fetching game backgrounds for work ${dlsiteId}:`, error)
+    return []
+  }
 }
 
 export async function getGameBackgroundsByName(gameName: string): Promise<string[]> {
-  // First search to get ID
-  const gameList = await searchDlsiteGames(gameName)
+  try {
+    // First search to get ID
+    const gameList = await searchDlsiteGames(gameName)
 
-  if (gameList.length === 0) {
-    throw new Error(`No games named "${gameName}" were found.`)
+    if (gameList.length === 0) {
+      throw new Error(`No games named "${gameName}" were found.`)
+    }
+
+    // Use the first match
+    const firstMatch = gameList[0]
+    return getGameBackgrounds(firstMatch.id)
+  } catch (error) {
+    console.error(`Error fetching game backgrounds for game ${gameName}:`, error)
+    return []
   }
-
-  // Use the first match
-  const firstMatch = gameList[0]
-  return getGameBackgrounds(firstMatch.id)
 }
 
 export async function getGameCover(dlsiteId: string): Promise<string> {
-  const screenshots = await getGameBackgrounds(dlsiteId)
+  try {
+    const screenshots = await getGameBackgrounds(dlsiteId)
 
-  // Usually the first image is the cover
-  if (screenshots.length > 0) {
-    return screenshots[0]
-  }
-
-  // If no sample image is found, try to get main image from work page
-  const url = `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html`
-  const language = await getLanguage()
-
-  const response = await net.fetch(url, {
-    headers: {
-      'User-Agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
-      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-      'Accept-Language': 'zh-CN,zh;q=0.9,ja;q=0.8,en;q=0.7',
-      Cookie: `adultchecked=1; locale=${language}`
+    // Usually the first image is the cover
+    if (screenshots.length > 0) {
+      return screenshots[0]
     }
-  })
 
-  const data = await response.text()
-  const $ = cheerio.load(data)
+    // If no sample image is found, try to get main image from work page
+    const url = `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html`
+    const language = await getLanguage()
 
-  let mainImg = $('#work_left .product-slider img').attr('src')
-  if (mainImg) {
-    // Fix protocol relative URLs
-    if (mainImg.startsWith('//')) {
-      mainImg = `https:${mainImg}`
+    const response = await net.fetch(url, {
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'zh-CN,zh;q=0.9,ja;q=0.8,en;q=0.7',
+        Cookie: `adultchecked=1; locale=${language}`
+      }
+    })
+
+    const data = await response.text()
+    const $ = cheerio.load(data)
+
+    let mainImg = $('#work_left .product-slider img').attr('src')
+    if (mainImg) {
+      // Fix protocol relative URLs
+      if (mainImg.startsWith('//')) {
+        mainImg = `https:${mainImg}`
+      }
+      return mainImg
     }
-    return mainImg
-  }
 
-  throw new Error(`Cannot find the cover image for work ${dlsiteId}.`)
+    throw new Error(`Cannot find the cover image for work ${dlsiteId}.`)
+  } catch (error) {
+    console.error(`Error fetching cover image for work ${dlsiteId}:`, error)
+    return ''
+  }
 }
 
 export async function getGameCoverByName(gameName: string): Promise<string> {
-  // First search to get ID
-  const gameList = await searchDlsiteGames(gameName)
+  try {
+    // First search to get ID
+    const gameList = await searchDlsiteGames(gameName)
 
-  if (gameList.length === 0) {
-    throw new Error(`No games named "${gameName}" were found.`)
+    if (gameList.length === 0) {
+      throw new Error(`No games named "${gameName}" were found.`)
+    }
+
+    // Use the first match
+    const firstMatch = gameList[0]
+    return getGameCover(firstMatch.id)
+  } catch (error) {
+    console.error(`Error fetching cover image for work ${gameName}:`, error)
+    return ''
   }
-
-  // Use the first match
-  const firstMatch = gameList[0]
-  return getGameCover(firstMatch.id)
 }
 
 export async function checkGameExists(dlsiteId: string): Promise<boolean> {
