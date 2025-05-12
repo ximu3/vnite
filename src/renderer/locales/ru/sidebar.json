@@ -1,0 +1,37 @@
+{
+  "title": "Vnite",
+  "navigation": {
+    "library": "Библиотека игр",
+    "records": "Записи",
+    "scanner": "Сканер",
+    "transformer": "Трансформер"
+  },
+  "actions": {
+    "darkMode": "Тёмная тема",
+    "lightMode": "Светлая тема",
+    "cloudSyncDisabled": "Облачная синхронизация отключена",
+    "addGame": "Добавить игру",
+    "settings": "Настройки"
+  },
+  "adder": {
+    "addGame": "Добавить игру",
+    "addSingle": "Добавить одну",
+    "addBatch": "Пакетное добавление",
+    "addCustom": "Добавить вручную",
+    "addScanner": "Добавить сканер",
+    "importFromThirdParty": "Импорт из сторонних источников",
+    "steam": "Steam"
+  },
+  "notifications": {
+    "noGamesFound": "Игры не найдены",
+    "gettingBatchGames": "Получение игр…",
+    "getBatchGamesFailed": "Не удалось получить игры: ",
+    "getBatchGamesSuccess": "Игры успешно получены",
+    "unknownError": "Неизвестная ошибка",
+    "selectLibraryFolder": "Пожалуйста, выберите папку библиотеки…",
+    "selectGamePath": "Пожалуйста, выберите путь к игре",
+    "adding": "Добавление игры…",
+    "addSuccess": "Игра успешно добавлена",
+    "addError": "Ошибка при добавлении игры"
+  }
+}

@@ -26,7 +26,8 @@ export function General(): JSX.Element {
     { value: 'zh-CN', label: '简体中文' },
     { value: 'zh-TW', label: '正體中文' },
     { value: 'en', label: 'English' },
-    { value: 'ja', label: '日本語' }
+    { value: 'ja', label: '日本語' },
+    { value: 'ru', label: 'Русский' } // ← add [teosiq]
   ]
 
   // Handling of language changes

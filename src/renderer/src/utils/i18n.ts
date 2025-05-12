@@ -20,7 +20,8 @@ export async function i18nInit(): Promise<void> {
     'transformer'
   ]
 
-  const supportedLngs = ['zh-CN', 'zh-TW', 'ja', 'en']
+  // Added ‘ru’ to the list of supported languages [teosiq]
+  const supportedLngs = ['zh-CN', 'zh-TW', 'ja', 'en', 'ru']
 
   await i18n
     .use(initReactI18next)
@@ -61,6 +62,8 @@ export async function i18nInit(): Promise<void> {
         return `${formattedHours} 小時`
       } else if (lng === 'ja') {
         return `${formattedHours} 時間`
+      } else if (lng === 'ru') {
+        return `${formattedHours} ч`
       } else {
         return `${formattedHours} h`
       }
@@ -74,6 +77,8 @@ export async function i18nInit(): Promise<void> {
         return `${formattedMinutes} 分鐘`
       } else if (lng === 'ja') {
         return `${formattedMinutes} 分`
+      } else if (lng === 'ru') {
+        return `${formattedMinutes} мин`
       } else {
         return `${formattedMinutes} m`
       }
@@ -96,6 +101,9 @@ export async function i18nInit(): Promise<void> {
       return `${year}年${month}月${day}日`
     } else if (lng === 'ja') {
       return `${year}年${month}月${day}日`
+    } else if (lng === 'ru') {
+      // In Russia usually: dd.mm.yyyy [teosiq]
+      return `${day.toString().padStart(2, '0')}.${month.toString().padStart(2, '0')}.${year}`
     } else {
       return new Intl.DateTimeFormat(lng, {
         year: 'numeric',
@@ -136,6 +144,9 @@ export async function i18nInit(): Promise<void> {
       return `${year}年${month}月${day}日 ${hours}:${minutes}:${seconds}`
     } else if (lng === 'ja') {
       return `${year}年${month}月${day}日 ${hours}時${minutes}分${seconds}秒`
+    } else if (lng === 'ru') {
+      // In Russia: dd.mm.yyyy hh:mm:ss [teosiq]
+      return `${day.toString().padStart(2, '0')}.${month.toString().padStart(2, '0')}.${year} ${hours}:${minutes}:${seconds}`
     } else {
       return new Intl.DateTimeFormat(lng, {
         year: 'numeric',

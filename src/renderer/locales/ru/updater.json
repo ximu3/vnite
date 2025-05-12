@@ -1,0 +1,13 @@
+{
+  "dialog": {
+    "title": "Найдена новая версия {{version}}",
+    "noReleaseNotes": "Нет заметок к выпуску",
+    "latestVersion": "Уже установлена последняя версия",
+    "downloadProgress": "{{percent}}% — {{speed}} МБ/с"
+  },
+  "actions": {
+    "skipUpdate": "Пропустить обновление",
+    "update": "Обновить сейчас",
+    "install": "Установить сейчас"
+  }
+}
