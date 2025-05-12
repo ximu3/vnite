@@ -25,6 +25,20 @@ export function setupUtilsIPC(mainWindow: BrowserWindow): void {
     mainWindow.minimize()
   })
 
+  ipcMain.on('quit-to-tray', () => {
+    mainWindow.hide()
+  })
+
+  ipcMain.on('restore-and-focus', () => {
+    if (mainWindow.isMinimized()) {
+      mainWindow.restore()
+    }
+    if (!mainWindow.isVisible()) {
+      mainWindow.show()
+    }
+    mainWindow.focus()
+  })
+
   ipcMain.on('maximize', () => {
     if (mainWindow.isMaximized()) {
       mainWindow.unmaximize()

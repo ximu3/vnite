@@ -1,6 +1,7 @@
 import { defaultPreset, lePreset, steamPreset, vbaPreset } from './preset'
 import { GameDBManager } from '../database'
-import { fileLuancher, urlLauncher, scriptLauncher } from './common'
+import { BrowserWindow } from 'electron'
+import { fileLauncher, urlLauncher, scriptLauncher } from './common'
 import log from 'electron-log/main.js'
 
 /**
@@ -42,8 +43,12 @@ export async function launcherPreset(
 export async function launcher(gameId: string): Promise<void> {
   try {
     const mode = await GameDBManager.getGameLocalValue(gameId, 'launcher.mode')
+    const mainWindow = BrowserWindow.getAllWindows()[0]
+    if (mainWindow) {
+      mainWindow.hide()
+    }
     if (mode === 'file') {
-      await fileLuancher(gameId)
+      await fileLauncher(gameId)
     } else if (mode === 'url') {
       await urlLauncher(gameId)
     } else if (mode === 'script') {

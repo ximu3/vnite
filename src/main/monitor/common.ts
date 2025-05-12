@@ -485,6 +485,9 @@ export class GameMonitor {
 
     const mainWindow = BrowserWindow.getAllWindows()[0]
 
+    mainWindow.show()
+    mainWindow.focus()
+
     mainWindow.webContents.send('game-exiting', this.options.gameId)
 
     const timers = await GameDBManager.getGameValue(this.options.gameId, 'record.timers')

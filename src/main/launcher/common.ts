@@ -2,7 +2,7 @@ import { spawn } from 'child_process'
 import { GameDBManager } from '~/database'
 import { startMonitor } from '~/monitor'
 
-export async function fileLuancher(gameId: string): Promise<void> {
+export async function fileLauncher(gameId: string): Promise<void> {
   try {
     const fileConfig = await GameDBManager.getGameLocalValue(gameId, 'launcher.fileConfig')
 
