@@ -1,0 +1,115 @@
+{
+  "title": "Управление сканером игр",
+  "status": {
+    "idle": "Ожидание",
+    "scanning": "Сканирование",
+    "paused": "Пауза",
+    "completed": "Завершено",
+    "error": "Ошибка",
+    "unknown": "Неизвестно"
+  },
+  "metrics": {
+    "scanners": "{{count}} сканер(ов)",
+    "games": "{{count}} игр",
+    "scanInterval": "Сканировать каждые {{minutes}} минут",
+    "failures": "{{count}} ошибок"
+  },
+  "actions": {
+    "pause": "Поставить на паузу",
+    "resume": "Возобновить",
+    "scanAll": "Сканировать всё",
+    "stop": "Остановить",
+    "globalSettings": "Глобальные настройки",
+    "addDirectory": "Добавить папку для сканирования",
+    "cancel": "Отмена",
+    "save": "Сохранить",
+    "confirmDelete": "Подтвердить удаление",
+    "fix": "Исправить",
+    "ignore": "Игнорировать",
+    "back": "Назад",
+    "close": "Закрыть",
+    "browse": "Обзор"
+  },
+  "list": {
+    "title": "Список папок для сканирования",
+    "empty": {
+      "title": "Папок для сканирования нет",
+      "description": "Добавьте папки для автоматического управления библиотекой игр"
+    },
+    "item": {
+      "dataSource": "Данные из {{name}}",
+      "depth": "Глубина {{level}}",
+      "progress": "{{percentage}}% завершено",
+      "games": "{{count}} игр",
+      "statusLabels": {
+        "idle": "Ожидание",
+        "scanning": "Сканирование",
+        "paused": "Пауза",
+        "completed": "Завершено",
+        "error": "Ошибка",
+        "unknown": "Неизвестно"
+      },
+      "deleteDialog": {
+        "title": "Подтвердите удаление",
+        "description": "Вы уверены, что хотите удалить папку «{{path}}»? Это действие нельзя отменить.",
+        "cancel": "Отмена",
+        "confirm": "Удалить"
+      }
+    }
+  },
+  "notifications": {
+    "fixAttempt": "Пробую получить данные игры",
+    "fixSuccess": "Исправлено успешно",
+    "fixError": "Не удалось исправить",
+    "createError": "Не удалось создать сканер",
+    "intervalTooShort": "Интервал сканирования не может быть меньше 5 минут",
+    "scanStopping": "Остановка сканирования…",
+    "scanStopped": "Сканирование остановлено"
+  },
+  "errors": {
+    "fixFolder": "Не удалось исправить папку:",
+    "createScanner": "Не удалось создать сканер:"
+  },
+  "globalSettings": {
+    "title": "Глобальные настройки сканера",
+    "scanInterval": "Интервал сканирования",
+    "scanIntervalTooltip": "Время между проверками для всех сканеров (в минутах)",
+    "ignoreList": "Список исключений",
+    "ignoreListPlaceholder": "Введите имена папок для исключения, поддерживается regex",
+    "ignoreListTooltip": "Поддерживаются регулярные выражения, каждая строка — отдельный шаблон"
+  },
+  "dataSources": {
+    "steam": "Steam",
+    "vndb": "VNDB",
+    "bangumi": "Bangumi",
+    "ymgal": "YMGal",
+    "igdb": "IGDB",
+    "dlsite": "DLsite"
+  },
+  "failedFolders": {
+    "title": "Обработка неудачных папок",
+    "fixing": "Исправление: {{name}}",
+    "dataSource": "Источник данных:",
+    "dataSourceId": "ID источника данных:",
+    "inputPlaceholder": "Введите ID игры",
+    "helpText": "Введите ID игры для соответствующего источника, например AppID игры в Steam",
+    "selectPlaceholder": "Выберите источник данных",
+    "table": {
+      "folderName": "Имя папки",
+      "location": "Расположение",
+      "error": "Ошибка",
+      "actions": "Действия"
+    }
+  },
+  "editScanner": {
+    "addTitle": "Добавить папку для сканирования",
+    "editTitle": "Редактировать папку для сканирования",
+    "path": "Путь",
+    "dataSource": "Источник данных",
+    "scanDepth": "Глубина сканирования",
+    "pathPlaceholder": "Выберите папку для сканирования",
+    "dataSourcePlaceholder": "Выберите источник данных",
+    "depthPlaceholder": "Выберите глубину сканирования",
+    "depthTooltip": "Установите уровень вложенности папок для сканирования"
+  }
+}

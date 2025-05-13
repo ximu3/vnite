@@ -1,0 +1,71 @@
+{
+  "common": {
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "confirm": "Подтвердить"
+  },
+  "arrayEditor": {
+    "clickPlusToAdd": "Нажмите +, чтобы добавить элемент",
+    "addElement": "Добавить элемент",
+    "editElement": "Редактировать элемент",
+    "enterElement": "Введите элемент",
+    "add": "Добавить",
+    "update": "Обновить"
+  },
+  "hotkeySetting": {
+    "title": "Установить клавишу",
+    "recording": "[Нажмите комбинацию…]",
+    "placeholder": "Введите или запишите сочетание, напр.: ctrl+a+b",
+    "startRecordButton": "Нажмите для начала записи",
+    "recordingButton": "Запись…",
+    "currentKeys": "Нажатые в данный момент клавиши",
+    "supportedKeys": "Поддерживаются буквы, цифры, стрелки, Esc, Tab, Enter, Space и др.; возможны комбинации",
+    "errors": {
+      "invalidHotkey": "Введите корректную клавишу",
+      "duplicateKeys": "Комбинация не должна содержать повторяющиеся клавиши"
+    },
+    "notifications": {
+      "hotkeyUpdated": "Клавиша обновлена"
+    }
+  },
+  "clipboard": {
+    "copied": "Скопировано в буфер обмена",
+    "copyError": "Не удалось скопировать текст: {{error}}"
+  },
+  "game": {
+    "stopping": {
+      "loading": "Останавливаем игру…",
+      "success": "Игра остановлена",
+      "error": "Не удалось остановить игру: {{message}}"
+    },
+    "starting": {
+      "pathRequired": "Сначала укажите путь к игре",
+      "configuringLauncher": "Настройка лаунчера…",
+      "configSuccess": "Лаунчер настроен",
+      "configError": "Ошибка настройки: {{message}}",
+      "runtimeError": "Ошибка во время запуска, проверьте конфигурацию!"
+    },
+    "playStatus": {
+      "unplayed": "Не запускалась",
+      "playing": "В процессе",
+      "finished": "Завершена",
+      "multiple": "Несколько запусков",
+      "shelved": "Отложена",
+      "unknown": "Статус неизвестен"
+    }
+  },
+  "format": {
+    "gameTime": "{{time, gameTime}}",
+    "niceDate": "{{date, niceDate}}",
+    "niceISO": "{{date, niceISO}}"
+  },
+  "notifications": {
+    "gameExiting": "Выход из игры…",
+    "gameExited": "Игра завершена",
+    "fullSyncing": "Синхронизируем данные…",
+    "fullSynced": "Синхронизация завершена",
+    "fullSyncError": "Ошибка синхронизации данных",
+    "updateUserInfoError": "Сессия облачной синхронизации истекла, войдите снова",
+    "checkingForUpdate": "Проверка обновлений…"
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "title": "Мои игровые отчёты",
+  "tabs": {
+    "overview": "Обзор",
+    "weekly": "Еженедельный отчёт",
+    "monthly": "Ежемесячный отчёт",
+    "yearly": "Годовой отчёт",
+    "score": "Отчёт по оценкам"
+  },
+  "overview": {
+    "title": "Обзор",
+    "stats": {
+      "totalGames": "Всего игр",
+      "totalPlayTime": "Общее время игры",
+      "totalPlayDays": "Дней игры",
+      "totalPlayTimes": "Запусков"
+    },
+    "chart": {
+      "yearlyPlayTime": "Время игры (за последний год)",
+      "timeDistribution": "Распределение времени игры",
+      "peakHour": "Пик игровых часов: {{hour}}:00 – {{nextHour}}:00"
+    },
+    "ranking": {
+      "playTimeRanking": "Рейтинг по времени игры",
+      "scoreRanking": "Рейтинг по оценкам",
+      "viewMore": "Посмотреть все",
+      "allGamesByPlayTime": "Все игры по времени игры",
+      "allGamesByScore": "Все игры по оценкам"
+    },
+    "format": {
+      "hour": "ч",
+      "minute": "мин",
+      "hourValue": "{{value}} ч",
+      "minuteValue": "{{value}} мин"
+    },
+    "unit": {
+      "count": "игр",
+      "day": "дн",
+      "times": "раз"
+    },
+    "misc": {
+      "noScore": "Без оценки"
+    }
+  },
+  "weekly": {
+    "title": "Еженедельный отчёт",
+    "dailyPlayTime": "Ежедневное время игры",
+    "totalWeeklyTime": "За неделю: {{time, gameTime}}",
+    "highlights": {
+      "title": "Данные за неделю",
+      "longestDay": "Самый продолжительный день",
+      "dateFormat": "{{weekday}} ({{date, niceDate}})",
+      "playTime": "Время игры: {{time, gameTime}}",
+      "noRecords": "Записи за эту неделю отсутствуют",
+      "frequency": "Частота игры",
+      "daysPlayed": "{{played}} / {{total}} дней",
+      "percentage": "{{percent}}% недели"
+    },
+    "weeklyGames": {
+      "title": "Игры за неделю",
+      "noRecords": "Записи за эту неделю отсутствуют"
+    },
+    "weekdays": {
+      "sunday": "Вс",
+      "monday": "Пн",
+      "tuesday": "Вт",
+      "wednesday": "Ср",
+      "thursday": "Чт",
+      "friday": "Пт",
+      "saturday": "Сб"
+    },
+    "dateRange": "{{startDate, niceDate}} – {{endDate, niceDate}}"
+  },
+  "monthly": {
+    "title": "Ежемесячный отчёт",
+    "yearMonth": "{{month}} {{year}}",
+    "stats": {
+      "monthlyPlayTime": "Время игры за месяц",
+      "daysPlayed": "Дней игры в месяце",
+      "mostPlayedDay": "Самый активный день"
+    },
+    "unit": {
+      "days": "дн",
+      "noRecord": "Нет записей",
+      "playTime": "Время игры: {{time, gameTime}}"
+    },
+    "chart": {
+      "weeklyPlayTime": "Еженедельное время игры",
+      "calendarTitle": "Календарь за месяц",
+      "weekFormat": "Неделя {{week}}",
+      "weekDateRange": "Нед. {{week}} ({{startDay}}–{{endDay}})"
+    },
+    "highlights": {
+      "title": "Данные за месяц",
+      "longestWeek": "Неделя с наибольшим временем игры",
+      "noRecords": "Записи за этот месяц отсутствуют",
+      "frequency": "Частота игры",
+      "daysCount": "{{played}} / {{total}} дней",
+      "percentage": "{{percent}}% месяца"
+    },
+    "monthlyGames": {
+      "title": "Игры за месяц",
+      "noRecords": "Записи за этот месяц отсутствуют"
+    },
+    "months": {
+      "january": "Январь",
+      "february": "Февраль",
+      "march": "Март",
+      "april": "Апрель",
+      "may": "Май",
+      "june": "Июнь",
+      "july": "Июль",
+      "august": "Август",
+      "september": "Сентябрь",
+      "october": "Октябрь",
+      "november": "Ноябрь",
+      "december": "Декабрь"
+    }
+  },
+  "yearly": {
+    "title": "Годовой отчёт",
+    "yearDisplay": "{{year}}",
+    "stats": {
+      "yearlyPlayTime": "Время игры за год",
+      "monthsPlayed": "Активные месяцы",
+      "monthsCount": "{{count}} мес.",
+      "mostPlayedMonth": "Самый активный месяц",
+      "noRecord": "Нет записей",
+      "playTimeDesc": "Время игры: {{time, gameTime}}"
+    },
+    "chart": {
+      "monthlyPlayTime": "Ежемесячное время игры",
+      "monthlyPlayDays": "Дней игры в месяце",
+      "timeDistribution": "Годовое распределение игры",
+      "byGameType": "По типам игр",
+      "typePercentage": "{{type}}: {{percent}}%"
+    },
+    "format": {
+      "hours": "{{value}} ч",
+      "days": "{{value}} дн"
+    },
+    "yearlyGames": {
+      "title": "Игры года",
+      "noRecords": "Записи за этот год отсутствуют"
+    },
+    "months": {
+      "january": "Янв",
+      "february": "Фев",
+      "march": "Мар",
+      "april": "Апр",
+      "may": "Май",
+      "june": "Июн",
+      "july": "Июл",
+      "august": "Авг",
+      "september": "Сен",
+      "october": "Окт",
+      "november": "Ноя",
+      "december": "Дек"
+    }
+  },
+  "score": {
+    "title": "Отчёт по оценкам",
+    "description": "Ниже — ваша библиотека, сгруппированная по оценкам. Пролистайте категории и наведите курсор на игры для деталей.",
+    "categories": {
+      "excellent": {
+        "title": "Великолепно (9–10)",
+        "description": "Исключительный опыт, настоятельно рекомендованы"
+      },
+      "great": {
+        "title": "Отлично (8–8.9)",
+        "description": "Отличные игры, достойны внимания"
+      },
+      "good": {
+        "title": "Хорошо (7–7.9)",
+        "description": "Игры хорошего качества"
+      },
+      "average": {
+        "title": "Средне (6–6.9)",
+        "description": "Средний уровень, с заметными недостатками"
+      },
+      "notRecommended": {
+        "title": "Не рекомендовано (0–5.9)",
+        "description": "Имеют серьёзные проблемы, не рекомендуются"
+      },
+      "gamesCount": "{{count}} игр"
+    },
+    "gameInfo": {
+      "unknown": "Неизвестная игра",
+      "addDate": "Добавлено: {{date, niceDate}}",
+      "playTime": "Время игры: {{time, gameTime}}",
+      "lastRun": "Последний запуск: {{date, niceDate}}",
+      "ratingLabel": "Оценка"
+    }
+  }
+}

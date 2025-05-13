@@ -1,0 +1,237 @@
+{
+  "title": "Настройки Vnite",
+  "general": {
+    "title": "Общие",
+    "language": "Язык",
+    "openAtLogin": "Открывать при запуске",
+    "theme": "Стиль темы",
+    "darkTheme": "Тёмная",
+    "lightTheme": "Светлая",
+    "followSystem": "Как в системе",
+    "closeMainPanel": "Закрывать главное окно",
+    "action": "Действие",
+    "quitApp": "Выйти из Vnite",
+    "minimizeToTray": "Свернуть в трей"
+  },
+  "appearances": {
+    "title": "Внешний вид",
+    "background": {
+      "title": "Фон",
+      "customBackground": "Пользовательский фон",
+      "image": "Изображение",
+      "selectImage": "Выбрать изображение",
+      "currentBackground": "Текущее фоновое изображение",
+      "noBackground": "Фоновое изображение не задано"
+    },
+    "glass": {
+      "title": "Эффект стекла",
+      "blur": "Размытие",
+      "opacity": "Непрозрачность"
+    },
+    "gameList": {
+      "title": "Список игр",
+      "showRecentGames": "Показывать раздел «Недавние»",
+      "highlightLocalGames": "Подсвечивать локальные игры",
+      "markLocalGames": "Помечать локальные игры",
+      "showCollapseButton": "Показывать кнопку сворачивания"
+    },
+    "gameDetail": {
+      "title": "Страница игры",
+      "showOriginalName": "Показывать оригинальное название рядом с заголовком"
+    },
+    "sidebar": {
+      "title": "Боковая панель",
+      "showThemeSwitcher": "Показывать переключатель темы"
+    }
+  },
+  "advanced": {
+    "title": "Дополнительно",
+    "localeEmulator": {
+      "name": "Locale Emulator",
+      "placeholder": "Укажите путь к LEProc.exe"
+    },
+    "visualBoyAdvance": {
+      "name": "Visual Boy Advance",
+      "placeholder": "Укажите путь к visualboyadvance.exe"
+    },
+    "magpie": {
+      "name": "Magpie",
+      "placeholder": "Укажите путь к Magpie.exe",
+      "hotkeyLabel": "Клавиша масштабирования Magpie"
+    }
+  },
+  "theme": {
+    "title": "Тема",
+    "saveButton": "Сохранить тему",
+    "presetThemes": "Готовые темы",
+    "searchTheme": "Поиск тем",
+    "noPresetFound": "Предустановок не найдено",
+    "presets": {
+      "default": "По умолчанию",
+      "mutsumi": "Mutsumi",
+      "moonlight": "Moonlight"
+    },
+    "notifications": {
+      "themeSaved": "Тема сохранена",
+      "configuring": "Применение темы…",
+      "configured": "Тема успешно применена"
+    }
+  },
+  "hotkeys": {
+    "title": "Клавиши",
+    "pageNavigation": {
+      "title": "Навигация по страницам",
+      "library": "Библиотека игр",
+      "record": "Записи",
+      "scanner": "Сканер",
+      "config": "Настройки",
+      "goBack": "Назад",
+      "goForward": "Вперёд"
+    },
+    "quickActions": {
+      "title": "Быстрые действия",
+      "addGame": "Добавить игру"
+    },
+    "others": {
+      "title": "Прочее",
+      "randomGame": "Случайная игра"
+    }
+  },
+  "cloudSync": {
+    "title": "Синхронизация",
+    "enable": "Включить",
+    "syncMode": "Режим синхронизации",
+    "modes": {
+      "official": "Официальный",
+      "selfHosted": "Самостоятельный"
+    },
+    "status": {
+      "syncing": "Синхронизация",
+      "success": "Синхронизация выполнена",
+      "error": "Ошибка синхронизации",
+      "noInfo": "Нет информации"
+    },
+    "errors": {
+      "incompleteConfig": "Заполните настройки синхронизации",
+      "loginRequired": "Сначала войдите в аккаунт",
+      "fetchStorageFailed": "Не удалось получить информацию о хранилище"
+    },
+    "notifications": {
+      "updating": "Обновление настроек синхронизации…",
+      "updateSuccess": "Настройки успешно обновлены",
+      "updateError": "Не удалось обновить настройки",
+      "loggingIn": "Вход в систему…",
+      "loginSuccess": "Вход выполнен",
+      "loginError": "Ошибка входа",
+      "authSuccess": "Авторизация успешна",
+      "authError": "Ошибка авторизации",
+      "registering": "Регистрация…",
+      "registerSuccess": "Регистрация выполнена",
+      "registerError": "Ошибка регистрации"
+    },
+    "official": {
+      "connectTitle": "Подключить облако",
+      "connectDescription": "Войдите, чтобы включить синхронизацию и резервное копирование",
+      "login": "Войти",
+      "register": "Регистрация",
+      "logout": "Выйти",
+      "adminEdition": "Администраторская версия",
+      "developerEdition": "Версия для разработчиков",
+      "premiumEdition": "Премиум-версия",
+      "communityEdition": "Сообщественная версия",
+      "lastSync": "Последняя синхронизация",
+      "notSynced": "Ещё не синхронизировано",
+      "connected": "Подключено",
+      "disconnected": "Отключено",
+      "storage": "Место в хранилище",
+      "used": "использовано"
+    },
+    "selfHosted": {
+      "title": "Самостоятельный CouchDB",
+      "description": "Настройте свой сервер CouchDB для синхронизации",
+      "serverAddress": "Адрес CouchDB",
+      "username": "Имя пользователя",
+      "password": "Пароль",
+      "info": "<couchdb>CouchDB</couchdb> — открытая СУБД для хранения и синхронизации данных"
+    },
+    "info": {
+      "status": "Статус",
+      "message": "Сообщение",
+      "time": "Время"
+    }
+  },
+  "scraper": {
+    "title": "Поиск данных",
+    "common": {
+      "title": "Общие",
+      "defaultDataSource": "Источник данных по умолчанию"
+    },
+    "vndb": {
+      "title": "Настройки VNDB",
+      "tagSpoilerLevel": "Уровень спойлеров тегов",
+      "tagSpoilerLevels": {
+        "none": "Без спойлеров (0)",
+        "minor": "Незначительные спойлеры (1)",
+        "all": "Все спойлеры (2)"
+      }
+    },
+    "dataSources": {
+      "steam": "Steam",
+      "vndb": "VNDB",
+      "bangumi": "Bangumi",
+      "igdb": "IGDB",
+      "ymgal": "YMGal",
+      "dlsite": "DLsite"
+    }
+  },
+  "database": {
+    "title": "База данных",
+    "portableMode": "Портативный режим",
+    "modes": {
+      "portable": "Портативный режим",
+      "normal": "Обычный режим"
+    },
+    "confirmSwitch": "Вы уверены, что хотите переключиться на {{mode}}?",
+    "switchDescription": "Приложение автоматически перезапустится после конверсии.",
+    "openFolder": "Открыть папку базы",
+    "backup": "Резервное копирование",
+    "import": "Импорт базы данных",
+    "importV2": "Импорт V2 базы",
+    "confirmImport": "Вы уверены, что хотите импортировать базу?",
+    "importWarning": "Импорт перезапишет текущую базу. Операция необратима! Приложение перезапустится автоматически.",
+    "confirmImportV2": "Вы уверены, что хотите импортировать V2 базу?",
+    "importV2Warning": "Импорт V2 перезапишет текущую базу. Операция необратима! Приложение перезапустится автоматически.",
+    "portableAdminRequired": "Примечание: для портативного режима могут потребоваться права администратора.",
+    "notifications": {
+      "backingUp": "Резервное копирование…",
+      "backupSuccess": "Резервная копия успешно создана",
+      "backupError": "Ошибка резервного копирования",
+      "importing": "Импорт…",
+      "importSuccess": "Импорт завершён",
+      "importError": "Ошибка импорта",
+      "restartCountdown": "Приложение перезапустится через 3 секунды",
+      "switchingMode": "Переключение режима…",
+      "switchSuccess": "Режим успешно переключён",
+      "switchError": "Ошибка переключения режима",
+      "adminRightsRequired": "Требуются права администратора для перехода в портативный режим"
+    }
+  },
+  "about": {
+    "title": "О приложении",
+    "author": "Автор",
+    "version": "Версия",
+    "repository": "Репозиторий на GitHub",
+    "feedback": "Обратная связь",
+    "group": "Группа",
+    "prerelease": "Получать ранние обновления"
+  },
+  "metadata": {
+    "title": "Метаданные",
+    "transformer": {
+      "title": "Преобразователь",
+      "enable": "Включить преобразователь",
+      "manage": "Настроить правила",
+      "manageButton": "Настроить"
+    }
+  }
+}

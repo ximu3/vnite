@@ -1,0 +1,518 @@
+{
+  "librarybar": {
+    "home": "Главная",
+    "collections": "Коллекции",
+    "search": {
+      "placeholder": "Поиск",
+      "tooltip": "Поиск по названию игры, разработчику, дате выпуска и другим метаданным"
+    },
+    "groupBy": "Группировать по",
+    "groups": {
+      "none": "Без группировки",
+      "collection": "Коллекция",
+      "developers": "Разработчики",
+      "genres": "Жанры",
+      "playStatus": "Статус прохождения"
+    }
+  },
+  "list": {
+    "search": {
+      "results": "Результаты поиска"
+    },
+    "recent": {
+      "title": "Недавние игры",
+      "hide": "Скрыть"
+    },
+    "filter": {
+      "results": "Результаты фильтрации",
+      "noResults": "Игры, соответствующие критериям, не найдены"
+    },
+    "all": {
+      "title": "Все игры",
+      "sortBy": "Сортировать по",
+      "sortOptions": {
+        "name": "Названию",
+        "releaseDate": "Дате выпуска",
+        "lastRunDate": "Последней дате запуска",
+        "addDate": "Дате добавления",
+        "playTime": "Времени игры"
+      }
+    },
+    "playStatus": {
+      "adjustOrder": "Изменить порядок"
+    }
+  },
+  "filter": {
+    "title": "Расширенный фильтр",
+    "panel": {
+      "title": "Фильтры",
+      "clear": "Сбросить фильтры",
+      "releaseDate": "Дата выпуска",
+      "clearFilter": "Сбросить",
+      "developers": "Разработчики",
+      "publishers": "Издатели",
+      "genres": "Жанры",
+      "platforms": "Платформы",
+      "tags": "Теги",
+      "extraInfo": "Дополнительная информация"
+    },
+    "combobox": {
+      "select": "Выберите {{placeholder}}",
+      "search": "Поиск {{placeholder}}",
+      "notFound": "{{placeholder}} не найден(о)"
+    }
+  },
+  "showcase": {
+    "welcome": "Добро пожаловать в Vnite, добавьте вашу первую игру.",
+    "sections": {
+      "recentGames": "Недавние игры",
+      "collections": "Мои коллекции",
+      "allGames": "Все игры"
+    },
+    "sorting": {
+      "title": "Сортировать по:",
+      "label": "Сортировка",
+      "options": {
+        "name": "Названию",
+        "releaseDate": "Дате выпуска",
+        "lastRunDate": "Последней дате запуска",
+        "addDate": "Дате добавления",
+        "playTime": "Времени игры"
+      }
+    },
+    "gameCard": {
+      "playTime": "Время игры: {{time, gameTime}}",
+      "noPlayRecord": "Нет записей о игре",
+      "lastRunAt": "Последний запуск: {{date, niceDate}}",
+      "neverRun": "Не запускалась",
+      "playRecord": "История игры",
+      "totalPlayTime": "Общее время игры: {{time, gameTime}}",
+      "lastRunDate": "Последняя дата запуска: {{date, niceDate}}",
+      "neverRunShort": "Не запускалась"
+    },
+    "collection": {
+      "contextMenu": {
+        "rename": "Переименовать",
+        "delete": "Удалить",
+        "deleteTitle": "Удалить коллекцию",
+        "deleteConfirm": "Вы уверены, что хотите удалить коллекцию «{{name}}»?"
+      }
+    }
+  },
+  "detail": {
+    "tabs": {
+      "overview": "Обзор",
+      "record": "Записи",
+      "save": "Сейвы",
+      "memory": "Моменты"
+    },
+    "logoContextMenu": {
+      "resetPosition": "Сбросить позицию",
+      "resetSize": "Сбросить размер",
+      "hideLogo": "Скрыть логотип"
+    },
+    "notifications": {
+      "logoHidden": "Логотип можно вернуть в настройках игры — Управление"
+    },
+    "header": {
+      "playStatus": {
+        "label": "Статус прохождения",
+        "tooltip": "Изменить статус прохождения"
+      },
+      "rating": {
+        "title": "Моя оценка",
+        "errors": {
+          "invalidNumber": "Введите корректное число",
+          "negative": "Оценка не может быть отрицательной",
+          "tooHigh": "Оценка не может превышать 10"
+        },
+        "success": "Оценка сохранена",
+        "warning": "Автоматически округляется до 1 десятичного знака",
+        "cleared": "Оценка сброшена",
+        "tooltip": "Изменить оценку"
+      }
+    },
+    "actions": {
+      "start": "Запустить игру",
+      "stop": "Остановить игру"
+    },
+    "save": {
+      "table": {
+        "date": "Дата",
+        "note": "Заметка",
+        "actions": "Действия"
+      },
+      "empty": "Сейвы отсутствуют",
+      "actions": {
+        "switch": "Переключить",
+        "delete": "Удалить"
+      },
+      "notifications": {
+        "locked": "Этот сейв заблокирован",
+        "deleteLoading": "Удаление сейва…",
+        "deleteSuccess": "Сейв успешно удалён",
+        "deleteError": "Не удалось удалить сейв: {{message}}",
+        "switchLoading": "Переключение сейва…",
+        "switchSuccess": "Сейв успешно переключён",
+        "switchError": "Не удалось переключить сейв: {{message}}",
+        "noSavePath": "Путь к сейвам не найден"
+      }
+    },
+    "filter": {
+      "added": "Фильтр применён, {{field}}: {{value}}"
+    },
+    "record": {
+      "card": {
+        "title": "Статистика игры",
+        "noData": "Вы ещё не запускали эту игру.",
+        "playStats": "Вы играли {{totalTime, gameTime}} за {{days}} дней, в среднем по {{averageTime, gameTime}} в день,",
+        "immersion": "и были погружены на {{time, gameTime}} в {{date, niceDate}}.",
+        "history": "Эту игру вы добавили {{addDate, niceDate}}, последний запуск был {{lastPlayDate, niceDate}}. Надеемся, это путешествие оставило вам интересные впечатления."
+      }
+    },
+    "chart": {
+      "title": "График времени игры",
+      "label": "Время игры",
+      "selectRange": "Выберите диапазон дат",
+      "dateError": "Дата начала не может быть позже даты окончания",
+      "rangeLimit": "Выберите даты между {{startDate, niceDate}} и {{endDate, niceDate}}",
+      "noData": "Данные отсутствуют"
+    },
+    "overview": {
+      "sections": {
+        "description": "Описание",
+        "tags": "Теги",
+        "basicInfo": "Основная информация",
+        "extraInfo": "Дополнительная информация",
+        "relatedSites": "Связанные сайты"
+      },
+      "description": {
+        "empty": "Описание отсутствует",
+        "htmlHint": "Поддерживаются HTML-теги",
+        "search": {
+          "loading": "Поиск описаний…",
+          "success": "Поиск завершён",
+          "error": "Ошибка поиска: {{message}}",
+          "notFound": "Описание не найдено",
+          "searchError": "Ошибка поиска: {{error}}",
+          "selectRequired": "Выберите описание"
+        }
+      },
+      "tags": {
+        "empty": "Теги отсутствуют",
+        "separator": "Разделяйте теги запятыми",
+        "search": {
+          "loading": "Поиск тегов…",
+          "success": "Поиск завершён",
+          "error": "Ошибка поиска: {{message}}",
+          "notFound": "Теги не найдены",
+          "searchError": "Ошибка поиска: {{error}}",
+          "selectRequired": "Выберите хотя бы один тег"
+        }
+      },
+      "search": {
+        "placeholder": "Введите название игры для поиска"
+      },
+      "relatedSites": {
+        "empty": "Связанные сайты отсутствуют",
+        "addLink": "Добавить ссылку",
+        "nameLabel": "Название сайта",
+        "urlLabel": "URL сайта"
+      },
+      "information": {
+        "fields": {
+          "originalName": "Оригинальное название",
+          "localizedName": "Локализованное название",
+          "developers": "Разработчики",
+          "publishers": "Издатели",
+          "releaseDate": "Дата выпуска",
+          "platforms": "Платформы",
+          "genres": "Жанры"
+        },
+        "empty": "Нет данных",
+        "hints": {
+          "developers": "Разделяйте разработчиков запятыми",
+          "publishers": "Разделяйте издателей запятыми",
+          "platforms": "Разделяйте платформы запятыми",
+          "genres": "Разделяйте жанры запятыми"
+        }
+      },
+      "extraInformation": {
+        "title": "Дополнительная информация",
+        "valueTip": "Разделяйте значения запятыми",
+        "enterKey": "Введите название поля",
+        "enterValue": "Введите значение",
+        "addNew": "Добавить новую информацию",
+        "empty": "Дополнительная информация отсутствует",
+        "emptyValue": "Нет значения",
+        "fields": {
+          "director": "Режиссёр",
+          "scenario": "Сценарист",
+          "illustration": "Иллюстратор",
+          "music": "Музыка",
+          "engine": "Движок"
+        },
+        "search": {
+          "loading": "Поиск доп. информации…",
+          "success": "Поиск завершён",
+          "error": "Ошибка поиска: {{message}}",
+          "notFound": "Информация не найдена",
+          "searchError": "Ошибка поиска: {{error}}",
+          "selectRequired": "Выберите хотя бы один элемент"
+        }
+      },
+      "record": {
+        "title": "Статистика",
+        "playTime": "Время игры",
+        "lastRunDate": "Дата последнего запуска",
+        "playStatus": "Статус прохождения",
+        "rating": "Моя оценка",
+        "neverRun": "Не запускалась"
+      }
+    },
+    "memory": {
+      "actions": {
+        "add": "Добавить",
+        "addCover": "Добавить обложку",
+        "changeCover": "Изменить обложку",
+        "adjustCover": "Настроить обложку",
+        "addText": "Добавить текст",
+        "editText": "Редактировать текст",
+        "delete": "Удалить"
+      },
+      "export": {
+        "exportAs": "Экспортировать как",
+        "image": "Изображение",
+        "markdown": "Markdown",
+        "toClipboard": "В буфер обмена",
+        "saveAs": "Сохранить как"
+      },
+      "notifications": {
+        "deleting": "Удаление…",
+        "deleteSuccess": "Успешно удалено",
+        "deleteError": "Ошибка удаления: {{error}}",
+        "selectFileError": "Не удалось выбрать файл: {{error}}",
+        "imageNotFound": "Изображение не найдено",
+        "getImageError": "Ошибка получения изображения: {{error}}",
+        "imageCopied": "Изображение скопировано в буфер",
+        "imageCopyError": "Не удалось скопировать изображение: {{error}}",
+        "markdownCopied": "Markdown скопирован в буфер",
+        "markdownCopyError": "Не удалось скопировать в буфер: {{error}}"
+      },
+      "dialog": {
+        "markdownHint": "Поддерживается синтаксис Markdown"
+      }
+    },
+    "config": {
+      "properties": "Свойства"
+    },
+    "manage": {
+      "title": "Управление",
+      "rename": "Переименовать",
+      "showLogo": "Показать логотип",
+      "editPlayTime": "Редактировать время игры",
+      "downloadMetadata": "Загрузить метаданные",
+      "createShortcut": "Создать ярлык",
+      "browseLocalFiles": "Обзор локальных файлов",
+      "delete": "Удалить",
+      "notifications": {
+        "shortcutCreated": "Ярлык создан",
+        "shortcutError": "Ошибка создания ярлыка",
+        "gamePathNotSet": "Путь к игре не задан"
+      }
+    },
+    "deleteAlert": {
+      "title": "Вы уверены, что хотите удалить «{{gameName}}»?",
+      "description": "Все данные об этой игре будут безвозвратно удалены.",
+      "notifications": {
+        "deleting": "Удаление игры «{{gameName}}»…",
+        "deleted": "Игра «{{gameName}}» удалена",
+        "error": "Ошибка удаления «{{gameName}}»: {{message}}"
+      }
+    },
+    "playTimeEditor": {
+      "expressionSupport": "Поддерживаются арифметические выражения",
+      "placeholder": "Введите секунды или выражение"
+    },
+    "collection": {
+      "addTo": "Добавить в",
+      "removeFrom": "Удалить из",
+      "newCollection": "Новая коллекция",
+      "dialog": {
+        "title": "Новая коллекция",
+        "description": "Введите название коллекции",
+        "add": "Добавить"
+      }
+    },
+    "properties": {
+      "title": "Свойства",
+      "tabs": {
+        "launcher": "Запуск",
+        "path": "Путь",
+        "media": "Медиа"
+      },
+      "path": {
+        "title": "Путь игры и сохранений",
+        "gamePath": "Путь к игре",
+        "savePath": "Путь к сохранениям",
+        "addFolder": "Добавить папку",
+        "addFile": "Добавить файл",
+        "maxBackups": "Максимум сохранённых резервных копий",
+        "notifications": {
+          "configuring": "Применение настройки…",
+          "success": "Настройка применена"
+        }
+      },
+      "media": {
+        "types": {
+          "icon": "Иконка",
+          "background": "Фон",
+          "cover": "Обложка",
+          "logo": "Логотип"
+        },
+        "empty": {
+          "icon": "Иконка отсутствует",
+          "background": "Фон отсутствует",
+          "cover": "Обложка отсутствует",
+          "logo": "Логотип отсутствует",
+          "images": "Изображения отсутствуют"
+        },
+        "actions": {
+          "adjust": "Настроить",
+          "set": "Установить",
+          "importFromFile": "Импортировать из файла",
+          "importFromUrl": "Импортировать по ссылке",
+          "searchImage": "Поиск изображения",
+          "cropImage": "Обрезать изображение",
+          "deleteImage": "Удалить изображение"
+        },
+        "search": {
+          "title": "Поиск изображений",
+          "dataSource": "Источник данных",
+          "searchTitle": "Название для поиска"
+        },
+        "url": {
+          "empty": "Укажите ссылку"
+        },
+        "crop": {
+          "title": "Настройка размера изображения",
+          "size": "{{width}} × {{height}} px"
+        },
+        "notifications": {
+          "fileSelectError": "Ошибка выбора файла: {{error}}",
+          "imageNotFound": "Изображение не найдено",
+          "getImageError": "Не удалось получить изображение: {{error}}",
+          "downloading": "Загрузка изображения…",
+          "downloadSuccess": "Изображение загружено",
+          "downloadError": "Не удалось загрузить изображение: {{message}}",
+          "processing": "{{action}} {{type}}…",
+          "success": "{{type}} {{action}} выполнено",
+          "error": "{{type}} {{action}} не выполнено: {{message}}",
+          "searching": "Поиск…",
+          "searchSuccess": "Поиск завершён",
+          "searchError": "Ошибка поиска: {{message}}",
+          "noResultsFound": "Изображения не найдены",
+          "selectImage": "Выберите изображение",
+          "cropping": "Обрезка…",
+          "cropSuccess": "Обрезка успешна",
+          "cropError": "Ошибка обрезки",
+          "cropIncomplete": "Обрезка не завершена",
+          "deleting": "Удаление…",
+          "deleteSuccess": "Удалено",
+          "deleteError": "Ошибка удаления"
+        }
+      },
+      "launcher": {
+        "title": "Запуск и отслеживание",
+        "setGamePathFirst": "Сначала укажите путь к игре",
+        "mode": {
+          "title": "Режим запуска",
+          "file": "Файл",
+          "url": "URL",
+          "script": "Скрипт"
+        },
+        "monitor": {
+          "title": "Режим отслеживания",
+          "mode": {
+            "folder": "Папка",
+            "file": "Файл",
+            "process": "Процесс"
+          },
+          "path": "Путь для отслеживания",
+          "processName": "Имя процесса"
+        },
+        "file": {
+          "path": "Путь к файлу",
+          "workingDirectory": "Рабочая директория"
+        },
+        "script": {
+          "content": "Содержимое скрипта",
+          "workingDirectory": "Рабочая директория"
+        },
+        "url": {
+          "address": "Адрес URL",
+          "browser": "Браузер",
+          "defaultBrowser": "Системный браузер"
+        },
+        "magpie": {
+          "scaling": "Масштабирование Magpie",
+          "pathNotSet": "Сначала укажите путь к Magpie"
+        },
+        "preset": {
+          "title": "Конфигурация пресета",
+          "search": "Поиск конфигурации",
+          "default": "Конфигурация по умолчанию",
+          "le": "Запуск через LE Region",
+          "steam": "Запуск через Steam",
+          "vba": "Запуск через VBA",
+          "steamIdRequired": "Укажите Steam ID",
+          "notifications": {
+            "configuring": "Применение пресета…",
+            "success": "Пресет успешно применён"
+          }
+        }
+      }
+    }
+  },
+  "batchEditor": {
+    "contextMenu": {
+      "addTo": "Пакетное добавление в",
+      "removeFrom": "Пакетное удаление из",
+      "newCollection": "Новая коллекция",
+      "editInfo": "Пакетное редактирование",
+      "delete": "Пакетное удаление"
+    },
+    "information": {
+      "incrementalMode": "Режим добавления",
+      "developers": "Разработчики",
+      "publishers": "Издатели",
+      "platforms": "Платформы",
+      "genres": "Жанры",
+      "placeholder": {
+        "developers": "Нет разработчиков",
+        "publishers": "Нет издателей",
+        "platforms": "Нет платформ",
+        "genres": "Нет жанров"
+      },
+      "tooltip": {
+        "developers": "Разделяйте разработчиков запятыми",
+        "publishers": "Разделяйте издателей запятыми",
+        "platforms": "Разделяйте платформы запятыми",
+        "genres": "Разделяйте жанры запятыми"
+      },
+      "success": "Информация успешно обновлена",
+      "error": "Не удалось обновить информацию: {{message}}"
+    },
+    "delete": {
+      "title": "Удалить {{count}} игр?",
+      "description": "Все данные выбранных игр будут безвозвратно удалены.",
+      "gamesList": "Игры для удаления:",
+      "unnamedGame": "Без названия",
+      "notifications": {
+        "deleting": "Удаление {{count}} игр…",
+        "success": "{{count}} игры удалены",
+        "error": "Не удалось удалить {{count}} игр: {{message}}"
+      }
+    }
+  }
+}

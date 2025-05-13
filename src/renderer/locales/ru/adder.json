@@ -1,0 +1,108 @@
+{
+  "gameAdder": {
+    "dialog": {
+      "title": "Добавить игру"
+    },
+    "notifications": {
+      "loading": "Пожалуйста, подождите, идет добавление игры"
+    },
+    "gameList": {
+      "columns": {
+        "name": "Название игры",
+        "releaseDate": "Дата выпуска",
+        "developers": "Разработчики"
+      },
+      "unknown": "Неизвестно",
+      "selected": "Выбрана игра: {{name}}"
+    },
+    "backgrounds": {
+      "title": "Фоновое изображение",
+      "noImages": "Изображения отсутствуют",
+      "notifications": {
+        "loading": "Получение изображений…",
+        "success": "Изображения успешно получены",
+        "error": "Не удалось получить изображения: {{message}}",
+        "noImages": "Изображения для этой игры не найдены",
+        "adding": "Добавление игры…",
+        "addSuccess": "Игра успешно добавлена",
+        "addError": "Не удалось добавить игру: {{message}}"
+      }
+    },
+    "search": {
+      "dataSource": "Источник данных",
+      "gameName": "Название игры",
+      "gameNamePlaceholder": "Введите название игры",
+      "gameId": "ID игры",
+      "gameIdPlaceholder": "Введите ID игры",
+      "searchButton": "Поиск",
+      "recognizeButton": "Распознать",
+      "notifications": {
+        "enterName": "Пожалуйста, введите название игры",
+        "searching": "Поиск игр…",
+        "found": "Найдено игр: {{count}}",
+        "notFound": "Игры не найдены",
+        "searchError": "Ошибка поиска: {{message}}",
+        "enterId": "Пожалуйста, введите ID игры",
+        "recognizing": "Распознавание игры…",
+        "recognized": "Игра успешно распознана",
+        "invalidId": "Неверный ID",
+        "recognizeError": "Не удалось распознать игру: {{message}}"
+      },
+      "dataSources": {
+        "label": "Источники данных",
+        "steam": "Steam",
+        "vndb": "VNDB",
+        "bangumi": "Bangumi",
+        "igdb": "IGDB",
+        "ymgal": "YMGal",
+        "dlsite": "DLsite"
+      }
+    }
+  },
+  "gameBatchAdder": {
+    "dialog": {
+      "title": "Пакетное добавление игр",
+      "waitForCompletion": "Пожалуйста, подождите, идет добавление игр"
+    },
+    "status": {
+      "loading": "Добавление",
+      "success": "Успешно добавлено",
+      "error": "Ошибка при добавлении",
+      "waiting": "Ожидание добавления",
+      "existed": "Уже существует"
+    },
+    "table": {
+      "columns": {
+        "dataSource": "Источник данных",
+        "name": "Название игры",
+        "id": "ID игры",
+        "status": "Статус",
+        "actions": "Действия"
+      }
+    },
+    "form": {
+      "dataSource": "Источник данных",
+      "namePlaceholder": "Введите название игры",
+      "idPlaceholder": "ID игры (необязательно)"
+    },
+    "actions": {
+      "retry": "Повторить",
+      "add": "Добавить",
+      "delete": "Удалить",
+      "addAll": "Добавить все",
+      "adding": "Добавление…"
+    },
+    "notifications": {
+      "addingGame": "Добавление игры {{name}}…",
+      "gameAdded": "Игра {{name}} успешно добавлена",
+      "addingGames": "Добавление игр…",
+      "gamesAdded": "Игры успешно добавлены",
+      "gameAddFailed": "Не удалось добавить игру"
+    },
+    "errors": {
+      "gameNotFound": "Игра не найдена: {{name}}",
+      "gameIsBeingAdded": "Игра уже добавляется",
+      "gameAlreadyAdded": "Игра уже добавлена"
+    }
+  }
+}

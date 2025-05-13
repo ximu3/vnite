@@ -1,0 +1,53 @@
+{
+  "steamImporter": {
+    "dialog": {
+      "title": "Импорт игр из Steam",
+      "description": "Введите ваш Steam ID для импорта библиотеки игр. Вы можете найти его в URL вашего профиля."
+    },
+    "input": {
+      "steamId": "Введите Steam ID",
+      "fetch": "Загрузить",
+      "searching": "Поиск игр…"
+    },
+    "status": {
+      "initial": {
+        "title": "Начать импорт",
+        "description": "Введите ваш Steam ID, чтобы получить список игр"
+      },
+      "ready": {
+        "title": "Готово к загрузке",
+        "description": "Нажмите кнопку «Загрузить», чтобы получить список игр"
+      },
+      "loading": {
+        "title": "Загрузка",
+        "description": "Получение списка игр…"
+      },
+      "empty": {
+        "title": "Все импортировано",
+        "description": "Все игры успешно импортированы"
+      }
+    },
+    "gameList": {
+      "selectAll": "Выбрать все ({{selected}}/{{total}})",
+      "search": "Поиск игр…",
+      "hours": "{{hours}} часов"
+    },
+    "import": {
+      "button": "Импортировать выбранные игры ({{count}})",
+      "preparing": "Подготовка к импорту…",
+      "progress": {
+        "title": "Импортируется",
+        "completed": "Импорт завершён",
+        "error": "Ошибка импорта",
+        "summary": "Успешно: {{success}} Ошибок: {{error}}"
+      }
+    },
+    "notifications": {
+      "fetchFailed": "Не удалось получить список игр, попробуйте снова",
+      "selectAtLeastOne": "Выберите хотя бы одну игру",
+      "allImported": "Все игры были импортированы",
+      "importFailed": "Ошибка импорта, попробуйте снова",
+      "waitForCompletion": "Пожалуйста, дождитесь завершения импорта"
+    }
+  }
+}
