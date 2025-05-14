@@ -71,7 +71,12 @@
     "noResults": "No presets found"
   },
   "transformerItem": {
-    "rulesCount": "{{count}} rules"
+    "rulesCount": "{{count}} rules",
+    "tooltips":{
+      "edit": "Edit",
+      "export": "Export",
+      "delete": "Delete"
+    }
   },
   "presets": {
     "vndbChineseTags": {

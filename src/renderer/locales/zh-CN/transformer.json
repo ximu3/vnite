@@ -71,7 +71,12 @@
     "noResults": "未找到预设"
   },
   "transformerItem": {
-    "rulesCount": "{{count}} 条规则"
+    "rulesCount": "{{count}} 条规则",
+    "tooltips":{
+      "edit": "编辑",
+      "export": "导出",
+      "delete": "删除"
+    }
   },
   "presets": {
     "vndbChineseTags": {
