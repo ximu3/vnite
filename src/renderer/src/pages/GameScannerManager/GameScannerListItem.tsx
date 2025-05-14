@@ -1,8 +1,3 @@
-import React, { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { Button } from '@ui/button'
-import { Badge } from '@ui/badge'
-import { Folder, Pencil, Trash2, PlayCircle } from 'lucide-react'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,9 +8,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@ui/alert-dialog'
+import { Badge } from '@ui/badge'
+import { Button } from '@ui/button'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
+import { Folder, Pencil, PlayCircle, Trash2 } from 'lucide-react'
+import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useConfigLocalState } from '~/hooks'
-import { useGameScannerStore } from './store'
 import { cn } from '~/utils'
+import { useGameScannerStore } from './store'
 
 interface GameScannerListItemProps {
   scanner: {
@@ -146,31 +147,48 @@ export const GameScannerListItem: React.FC<GameScannerListItemProps> = ({
         <Badge variant={variant}>{label}</Badge>
 
         <div className="flex gap-1 ml-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleScan}
-            disabled={scanProgress.status === 'scanning' || isScanning}
-          >
-            <PlayCircle className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            disabled={scanProgress.status === 'scanning' || isScanning}
-            onClick={onEditClick}
-          >
-            <Pencil className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setShowDeleteDialog(true)}
-            className="hover:text-destructive"
-            disabled={scanProgress.status === 'scanning' || isScanning}
-          >
-            <Trash2 className="w-4 h-4" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleScan}
+                disabled={scanProgress.status === 'scanning' || isScanning}
+              >
+                <PlayCircle className="w-4 h-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">{t('list.item.tooltips.scan')}</TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                variant="ghost"
+                size="icon"
+                disabled={scanProgress.status === 'scanning' || isScanning}
+                onClick={onEditClick}
+              >
+                <Pencil className="w-4 h-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">{t('list.item.tooltips.edit')}</TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowDeleteDialog(true)}
+                className="hover:text-destructive"
+                disabled={scanProgress.status === 'scanning' || isScanning}
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">{t('list.item.tooltips.delete')}</TooltipContent>
+          </Tooltip>
         </div>
       </div>
 
