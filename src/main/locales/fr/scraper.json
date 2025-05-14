@@ -1,0 +1,28 @@
+{
+  "dlsite": {
+    "workType": "",
+    "releaseDate": "",
+    "series": "",
+    "maker": ""
+  },
+  "steam": {
+    "officialWebsite": "",
+    "steamStore": "",
+    "config": {
+      "apiLanguageCode": "",
+      "urlLanguageCode": "",
+      "acceptLanguageHeader": "",
+      "countryCode": ""
+    }
+  },
+  "vndb": {
+    "languageCode": ""
+  },
+  "extraMetadataFields": {
+    "director": "",
+    "scenario": "",
+    "illustration": "",
+    "music": "",
+    "engine": ""
+  }
+}

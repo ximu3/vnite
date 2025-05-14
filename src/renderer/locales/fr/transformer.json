@@ -1,0 +1,82 @@
+{
+  "list": {
+    "empty": {
+      "description": "Créer des transformateurs pour traiter automatiquement les métadonnées du jeu",
+      "title": "Aucun transformateur"
+    },
+    "title": "Liste des transformateurs",
+    "add": "Ajouter un transformateur",
+    "import": "Importer un transformateur",
+    "newTransformerName": "Nouveau transformateur"
+  },
+  "ruleDialog": {
+    "title": "Paramètres de règle",
+    "loading": "Chargement…",
+    "categories": {
+      "name": "Nom",
+      "originalName": "Nom d'origine",
+      "developers": "Développeurs",
+      "platforms": "Plateformes",
+      "genres": "Genres",
+      "publishers": "Éditeurs",
+      "description": "Description",
+      "tags": "Étiquettes",
+      "music": "Musique",
+      "engine": "Moteur",
+      "scenario": "Scénario",
+      "director": "Réalisateur",
+      "illustration": "Illustration"
+    },
+    "replace": "Remplacer par",
+    "match": "Règle correspondante",
+    "addRule": "Ajouter la règle",
+    "addDialogTitle": "Ajouter la règle correspondante",
+    "addDialogPlaceholder": "Veuillez saisir le contenu correspondant",
+    "cancel": "Annuler",
+    "save": "Enregistrer"
+  },
+  "title": "Gestionnaire du transformateur de métadonnées",
+  "status": {
+    "rules": "Règles",
+    "transformers": "Transformateurs",
+    "apply": "Appliquer"
+  },
+  "notifications": {
+    "applyLoading": "Appliquer tous les transformateurs…",
+    "applySuccess": "Tous les transformateurs ont été convertis avec succès",
+    "applyError": "Erreur survenue lors de la conversion de tous les transformateurs",
+    "presetAdded": "Le préréglage a été ajouté",
+    "importSuccess": "Importation du transformateur réussi",
+    "importError": "L'importation de transformateurs a échoué",
+    "exportSuccess": "Exportation du transformateur réussie",
+    "exportError": "L'exportation du transformateur a échoué"
+  },
+  "editDialog": {
+    "title": "Modifier le transformateur",
+    "name": "Nom",
+    "note": "Note",
+    "notePlaceholder": "Facultatif",
+    "cancel": "Annuler",
+    "save": "Enregistrer"
+  },
+  "deleteDialog": {
+    "title": "Confirmer la suppression",
+    "confirmMessage": "Êtes-vous sûr·e de vouloir supprimer le transformateur « {{name}} » ? Cette action ne peut pas être annulée.",
+    "cancel": "Annuler",
+    "confirm": "Supprimer"
+  },
+  "presetSelector": {
+    "button": "Transformateurs prédéfinis",
+    "searchPlaceholder": "Rechercher des préréglages…",
+    "noResults": "Pas de préréglages trouvés"
+  },
+  "presets": {
+    "vndbChineseTags": {
+      "name": "Étiquettes VNDB chinoises",
+      "note": "Convertir des VNDB tags anglais to Chinese"
+    }
+  },
+  "transformerItem": {
+    "rulesCount": "{{count}} règles"
+  }
+}
