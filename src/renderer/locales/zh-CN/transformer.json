@@ -18,6 +18,7 @@
   "ruleDialog": {
     "title": "规则设置",
     "loading": "加载中…",
+    "noRules": "暂无规则",
     "categories": {
       "name": "译名",
       "originalName": "原名",

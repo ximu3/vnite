@@ -176,23 +176,29 @@ export function RuleDialog({
 
         {currentRuleCategory === category && (
           <div className="flex-grow">
-            <AutoSizer>
-              {({ height, width }) => {
-                return (
-                  <FixedSizeList
-                    className="scrollbar-base-thin"
-                    height={height}
-                    width={width}
-                    itemCount={rules.length}
-                    itemSize={50}
-                    layout="vertical"
-                    style={{ willChange: 'auto' }} // fix: the content becomes blurred when custom scrollbar appears
-                  >
-                    {Row}
-                  </FixedSizeList>
-                )
-              }}
-            </AutoSizer>
+            {rules.length !== 0 ? (
+              <AutoSizer>
+                {({ height, width }) => {
+                  return (
+                    <FixedSizeList
+                      className="scrollbar-base-thin"
+                      height={height}
+                      width={width}
+                      itemCount={rules.length}
+                      itemSize={50}
+                      layout="vertical"
+                      style={{ willChange: 'auto' }} // fix: the content becomes blurred when custom scrollbar appears
+                    >
+                      {Row}
+                    </FixedSizeList>
+                  )
+                }}
+              </AutoSizer>
+            ) : (
+              <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
+                {t('ruleDialog.noRules')}
+              </div>
+            )}
           </div>
         )}
       </div>
