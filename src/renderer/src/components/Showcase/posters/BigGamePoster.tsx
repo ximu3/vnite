@@ -57,7 +57,7 @@ export function BigGamePoster({
                   gameId={gameId}
                   type="background"
                   className={cn(
-                    'h-[222px] aspect-[3/2] cursor-pointer object-contain rounded-lg bg-accent/40',
+                    'h-[222px] aspect-[3/2] cursor-pointer object-contain rounded-lg bg-accent/30',
                     className
                   )}
                   fallback={
