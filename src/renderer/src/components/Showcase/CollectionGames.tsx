@@ -47,7 +47,7 @@ export function CollectionGamesComponent({
 
         const itemWidth = (gridItems[0] as HTMLDivElement).offsetWidth
         const containerStyle = window.getComputedStyle(gridContainer)
-        const minGap = parseFloat(containerStyle.getPropertyValue('gap'))
+        const minGap = parseFloat(containerStyle.getPropertyValue('column-gap'))
         const pL = parseFloat(containerStyle.paddingLeft)
         const pR = parseFloat(containerStyle.paddingRight)
 
@@ -123,7 +123,7 @@ export function CollectionGamesComponent({
         </ScrollArea>
         {/* This spacer prevents the last row of posters from being cut off
         and enables downward auto-scrolling when dragging near the bottom. */}
-        <div className="h-10" />
+        <div className="h-5" />
       </div>
     </DragContext.Provider>
   )
