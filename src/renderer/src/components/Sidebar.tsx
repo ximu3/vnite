@@ -41,10 +41,20 @@ export function Sidebar(): JSX.Element {
   return (
     <div
       className={cn(
-        'flex flex-col p-[10px] h-full bg-background/70 border-r border-border justify-between'
+        'flex flex-col p-[10px] h-full bg-background/60 border-r border-border justify-between'
       )}
     >
       <div className={cn('flex flex-col gap-2')}>
+        <div
+          className={cn(
+            'font-mono text-2xl font-bold flex justify-center items-center text-primary non-draggable cursor-pointer'
+          )}
+          onClick={() => {
+            navigate(-1)
+          }}
+        >
+          V
+        </div>
         <Tooltip>
           <TooltipTrigger>
             <Nav variant="sidebar" to="./library">

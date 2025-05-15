@@ -97,7 +97,7 @@ export function ArrayInput({
       onCompositionStart={handleCompositionStart}
       onCompositionEnd={handleCompositionEnd}
       placeholder={placeholder}
-      className={cn('', className)}
+      className={cn('bg-background/[0.5]', className)}
     />
   )
 

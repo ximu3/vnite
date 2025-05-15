@@ -2,6 +2,7 @@ import { defaultPreset, lePreset, steamPreset, vbaPreset } from './preset'
 import { GameDBManager } from '../database'
 import { BrowserWindow } from 'electron'
 import { fileLauncher, urlLauncher, scriptLauncher } from './common'
+import { delay } from '~/utils'
 import log from 'electron-log/main.js'
 
 /**
@@ -45,6 +46,7 @@ export async function launcher(gameId: string): Promise<void> {
     const mode = await GameDBManager.getGameLocalValue(gameId, 'launcher.mode')
     const mainWindow = BrowserWindow.getAllWindows()[0]
     if (mainWindow) {
+      await delay(1000)
       mainWindow.hide()
     }
     if (mode === 'file') {

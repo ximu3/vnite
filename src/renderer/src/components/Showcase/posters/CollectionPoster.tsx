@@ -1,7 +1,7 @@
 import { GameImage } from '@ui/game-image'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { HoverSquareCardAnimation } from '~/components/animations/HoverSquareCard'
+import { HoverCardAnimation } from '~/components/animations/HoverCard'
 import { CollectionCM } from '~/components/contextMenu/CollectionCM'
 import { useGameCollectionStore } from '~/stores'
 import { cn } from '~/utils'
@@ -34,7 +34,6 @@ function Preview({
       className={cn(
         'group relative overflow-hidden w-[150px] h-[150px] rounded-lg',
         'transition-all duration-300 ease-in-out',
-        // '3xl:w-[180px] 3xl:h-[180px]',
         'border-4 border-dashed border-primary',
         !transparentBackground && ' bg-background'
       )}
@@ -140,69 +139,53 @@ export function CollectionPoster({
             transparentBackground={true}
           />
         ) : (
-          <div
-            className={cn(
-              'overflow-hidden shadow-custom-initial cursor-pointer w-[150px] h-[150px] rounded-lg',
-              'transition-all duration-300 ease-in-out',
-              'ring-0 ring-transparent',
-              'hover:ring-2 hover:ring-primary'
-              // '3xl:w-[174px] 3xl:h-[174px]'
-            )}
-            onClick={() => navigate(`/library/collections/${collectionId}`)}
-          >
-            {/* background mask layer */}
+          <div className="flex flex-col items-center justify-center gap-[8px] cursor-pointer group">
             <div
-              className={cn('absolute inset-0 bg-muted/55 z-10 rounded-lg pointer-events-none')}
-            />
-
-            {/* HoverBigCardAnimation layer */}
-            <div className="relative z-0 w-full h-full">
-              <HoverSquareCardAnimation className={cn('rounded-lg w-full h-full')}>
+              className={cn(
+                'rounded-lg shadow-md',
+                'transition-all duration-300 ease-in-out',
+                'ring-0 ring-border',
+                'group-hover:ring-2 group-hover:ring-primary',
+                'relative overflow-hidden group'
+              )}
+              onClick={() => navigate(`/library/collections/${collectionId}`)}
+            >
+              <div className="absolute inset-0 z-10 transition-all duration-300 rounded-lg pointer-events-none bg-background/20 group-hover:bg-transparent" />
+              <HoverCardAnimation>
                 <GameImage
                   gameId={gameId}
                   type="cover"
                   alt={gameId}
-                  className={cn(
-                    'w-full h-full cursor-pointer object-cover',
-                    '3xl:w-full 3xl:h-full',
-                    className
-                  )}
+                  className={cn('w-[155px] h-[155px] cursor-pointer object-cover', className)}
                   draggable="false"
                   fallback={
                     <div
                       className={cn(
                         'w-full h-full cursor-pointer object-cover flex items-center justify-center',
-                        '3xl:w-full 3xl:h-full',
                         className
                       )}
                     ></div>
                   }
                 />
-              </HoverSquareCardAnimation>
-            </div>
+              </HoverCardAnimation>
 
-            {/* text content layer */}
-            <div
-              className={cn(
-                'absolute inset-0 z-20 mt-4 rounded-lg',
-                'flex items-center justify-center',
-                'pointer-events-none w-full h-full',
-                ''
-              )}
-            >
-              <div className="flex flex-col items-center justify-center w-full h-full gap-1">
-                <div
-                  className={cn(
-                    'text-accent-foreground text-lg font-semibold',
-                    'w-[90%] break-words whitespace-normal text-center',
-                    'max-h-[50%] overflow-hidden'
-                  )}
-                >
-                  {collectionName}
+              <div
+                className={cn(
+                  'absolute inset-x-0 bottom-0 h-full bg-accent/50',
+                  'transition-opacity duration-300 ease-in-out',
+                  'flex flex-col p-[10px] text-accent-foreground',
+                  'transform',
+                  'opacity-0 group-hover:opacity-100',
+                  'overflow-hidden'
+                )}
+              >
+                <div className="absolute inset-0 flex items-center justify-center flex-grow">
+                  <div className="text-xl font-semibold">{length}</div>
                 </div>
-
-                <div className={cn('text-accent-foreground font-semibold')}>{`( ${length} )`}</div>
               </div>
+            </div>
+            <div className="text-[13px] text-foreground truncate cursor-pointer hover:underline w-[148px] text-center decoration-foreground">
+              {collectionName}
             </div>
           </div>
         )}

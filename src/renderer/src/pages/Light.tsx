@@ -110,7 +110,7 @@ export function Light(): JSX.Element {
     <div className="absolute top-0 left-0 object-cover w-full h-full pointer-events-none -z-10">
       <div
         className={cn(
-          'absolute top-0 left-0 w-full h-full bg-gradient-to-b from-background/[var(--glass-opacity)] via-60% via-background to-background backdrop-blur-[var(--glass-blur)] z-10'
+          'absolute top-0 left-0 w-full h-full bg-gradient-to-b from-background/[var(--glass-opacity)] via-[63%] via-background/95 to-background/95 backdrop-blur-[var(--glass-blur)] z-10'
         )}
       ></div>
 

@@ -105,7 +105,7 @@ export const GameScannerListItem: React.FC<GameScannerListItemProps> = ({
   const { variant, label } = getStatusDetails()
 
   return (
-    <div className="relative flex items-center justify-between p-4 overflow-hidden transition-colors hover:bg-muted/20">
+    <div className="relative flex items-center justify-between p-4 overflow-hidden transition-colors">
       {/* Semi-transparent progress bar - only shown when scanning */}
       {isScanning && (
         <div

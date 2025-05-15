@@ -85,53 +85,40 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
   }
 
   return (
-    <div className={cn('flex-col flex gap-5 px-7 py-5 pb-11 relative', className)}>
-      {/* Border effect */}
-      <div
-        className={cn(
-          'absolute inset-0 border-t-[1px] translate-y-[1px] border-accent-foreground/10'
-        )}
-      ></div>
-
+    <div className={cn('flex-col flex gap-5 px-7 py-5 relative', className)}>
       {/* Game name section */}
-      <div
-        className={cn(
-          'flex flex-row gap-3 grow overflow-hidden items-center justify-between',
-          showOriginalNameInGameHeader && originalName && originalName !== name && 'items-end'
-        )}
-      >
-        <div className={cn('select-none truncate z-10')}>
-          <span
-            className={cn('font-bold text-2xl text-accent-foreground cursor-pointer')}
-            onClick={() => copyWithToast(name)}
-          >
-            {name}
-          </span>
-          {showOriginalNameInGameHeader && originalName && originalName !== name && (
-            <span
-              className={cn('font-bold text-accent-foreground ml-3 cursor-pointer')}
-              onClick={() => copyWithToast(originalName)}
-            >
-              {originalName}
-            </span>
-          )}
+      <div className={cn('flex flex-col gap-3 grow overflow-hidden items-start justify-center')}>
+        <div
+          className={cn('font-bold text-2xl text-accent-foreground cursor-pointer')}
+          onClick={() => copyWithToast(name)}
+        >
+          {name}
         </div>
+        {showOriginalNameInGameHeader && originalName && originalName !== name && (
+          <div
+            className={cn('font-bold text-accent-foreground cursor-pointer')}
+            onClick={() => copyWithToast(originalName)}
+          >
+            {originalName}
+          </div>
+        )}
       </div>
 
-      {/* Game records and action buttons */}
       <div
         className={cn(
-          'flex flex-row justify-between items-center duration-300 select-none',
+          'flex flex-row justify-between items-end duration-300 select-none mb-3',
           '3xl:gap-5'
         )}
       >
+        {/* Game records and action buttons */}
         <Record gameId={gameId} />
-        <div className={cn('flex flex-row gap-3 items-center z-20', '3xl:gap-5')}>
+
+        <div className={cn('flex flex-row gap-3 items-end z-20', '3xl:gap-5')}>
           {/* Start/Stop game button */}
           {runningGames.includes(gameId) ? (
-            <StopGame gameId={gameId} className={cn('')} />
+            <StopGame gameId={gameId} className={cn('w-[170px] h-[40px]')} />
           ) : (
-            <StartGame gameId={gameId} className={cn('')} />
+            <StartGame gameId={gameId} className={cn('w-[170px] h-[40px]')} />
           )}
 
           {/* Game status selection */}
@@ -139,7 +126,7 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
             <SelectTrigger noIcon className={cn('p-0 h-auto w-auto border-0 shadow-none')}>
               <Tooltip>
                 <TooltipTrigger>
-                  <Button variant="outline" size={'icon'} className={cn('')}>
+                  <Button variant="outline" size={'icon'} className={cn('h-[40px] w-[40px]')}>
                     <span className={cn('icon-[mdi--bookmark-outline] w-4 h-4')}></span>
                   </Button>
                 </TooltipTrigger>
@@ -168,7 +155,7 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
                   <Button
                     variant="outline"
                     size={'icon'}
-                    className="non-draggable"
+                    className="non-draggable w-[40px] h-[40px]"
                     onClick={() => {
                       resetPreScore()
                       setIsScoreDialogOpen(true)

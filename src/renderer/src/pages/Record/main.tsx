@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next'
 export function Record({ className }: { className?: string }): JSX.Element {
   const { t } = useTranslation('record')
   return (
-    <div className={cn('w-full h-full bg-background/60 shadow-inner', className)}>
+    <div className={cn('w-full h-full bg-background/60 pt-[20px]', className)}>
       <ScrollArea className={cn('w-full h-full px-6 pt-0')}>
         <div className={cn('flex flex-col gap-6 pt-[34px]')}>
           <div className={cn('text-2xl font-bold')}>{t('title')}</div>

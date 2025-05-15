@@ -23,7 +23,7 @@ export function RecentGames(): JSX.Element {
         <AccordionItem value="recentGames">
           <ContextMenu>
             <ContextMenuTrigger>
-              <AccordionTrigger className={cn('bg-accent/30 text-xs p-1 pl-2')}>
+              <AccordionTrigger className={cn('text-xs p-1 pl-2 bg-accent/35')}>
                 <div className={cn('flex flex-row items-center justify-start gap-1')}>
                   <div className={cn('text-xs')}>{t('list.recent.title')}</div>
                 </div>

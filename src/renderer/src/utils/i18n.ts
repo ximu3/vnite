@@ -20,8 +20,7 @@ export async function i18nInit(): Promise<void> {
     'transformer'
   ]
 
-  // Added ‘ru’ to the list of supported languages [teosiq]
-  const supportedLngs = ['zh-CN', 'zh-TW', 'ja', 'en', 'ru']
+  const supportedLngs = ['zh-CN', 'zh-TW', 'ja', 'en', 'ru', 'fr']
 
   await i18n
     .use(initReactI18next)

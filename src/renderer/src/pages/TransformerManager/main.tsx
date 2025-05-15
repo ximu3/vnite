@@ -3,6 +3,7 @@ import { ScrollArea } from '@ui/scroll-area'
 import { Button } from '@ui/button'
 import { Plus, RefreshCw, ListFilter } from 'lucide-react'
 import { Badge } from '@ui/badge'
+import { Card } from '@ui/card'
 import { TransformerRule } from './types'
 import { TransformerItem } from './TransformerItem'
 import { RuleDialog } from './RuleDialog'
@@ -167,7 +168,7 @@ export function TransformerManager(): JSX.Element {
   }
 
   return (
-    <div className="flex flex-col w-full h-full shadow-inner bg-background/60">
+    <div className="flex flex-col w-full h-full bg-background/60 pt-[20px]">
       <ScrollArea className="px-6">
         <div className="py-[34px]">
           {/* Title */}
@@ -177,7 +178,7 @@ export function TransformerManager(): JSX.Element {
 
           <div className="grid grid-cols-1 gap-4">
             {/* Status card */}
-            <div className="p-4 border rounded-lg bg-card/45">
+            <Card className="p-4 border rounded-lg">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 {/* Left side: Status and quantity information */}
                 <div className="flex flex-wrap items-center gap-4">
@@ -213,10 +214,10 @@ export function TransformerManager(): JSX.Element {
                   </Button>
                 </div>
               </div>
-            </div>
+            </Card>
 
             {/* Transformer list and operation card */}
-            <div className="flex flex-col flex-grow overflow-hidden border rounded-lg bg-card/45">
+            <Card className="flex flex-col flex-grow overflow-hidden border rounded-lg">
               {/* Transformer list header bar */}
               <div className="flex items-center justify-between p-4 border-b bg-muted/45">
                 <div className="text-sm font-medium">{t('list.title')}</div>
@@ -269,7 +270,7 @@ export function TransformerManager(): JSX.Element {
                   </div>
                 )}
               </div>
-            </div>
+            </Card>
           </div>
 
           {/* Dialog components */}

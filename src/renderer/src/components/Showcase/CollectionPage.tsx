@@ -45,7 +45,7 @@ export function CollectionPage(): JSX.Element {
   const { t } = useTranslation('game')
 
   return (
-    <div className={cn('flex flex-col gap-3 h-[100vh] pt-[14px] bg-background/50')}>
+    <div className={cn('flex flex-col gap-3 h-[100vh] pt-[50px] bg-background/50')}>
       <ScrollArea className={cn('w-full')}>
         <div className={cn('w-full flex flex-col gap-1 pt-3')}>
           <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>

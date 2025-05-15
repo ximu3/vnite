@@ -197,8 +197,8 @@ export const DEFAULT_GAME_VALUES: Readonly<gameDoc> = {
   apperance: {
     logo: {
       position: {
-        x: 2,
-        y: 22
+        x: 1.5,
+        y: 24
       },
       size: 100,
       visible: true

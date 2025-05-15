@@ -106,13 +106,11 @@
       "save": "存檔",
       "memory": "回憶"
     },
-    "logoContextMenu": {
+    "logoManagePanel": {
       "resetPosition": "重設位置",
       "resetSize": "重設大小",
-      "hideLogo": "隱藏徽標"
-    },
-    "notifications": {
-      "logoHidden": "可在 遊戲設定-管理 中復原徽標顯示"
+      "hideLogo": "隱藏徽標",
+      "showLogo": "顯示徽標"
     },
     "header": {
       "playStatus": {
@@ -309,7 +307,7 @@
     "manage": {
       "title": "管理",
       "rename": "重新命名",
-      "showLogo": "顯示徽標",
+      "editLogo": "編輯徽標",
       "editPlayTime": "修改遊玩時間",
       "downloadMetadata": "下載資料資料",
       "createShortcut": "建立捷徑",

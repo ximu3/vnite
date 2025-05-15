@@ -4,6 +4,32 @@ import { toast } from 'sonner'
 import { useRunningGames } from '~/pages/Library/store'
 import { getGameLocalStore, getGameStore } from '~/stores/game'
 import { ipcInvoke, ipcSend } from '~/utils'
+import { generateUUID } from '@appUtils'
+import { useNavigate } from 'react-router-dom'
+import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
+
+export function navigateToGame(
+  navigate: ReturnType<typeof useNavigate>,
+  gameId: string,
+  groupId = 'all'
+): void {
+  const setLazyloadMark = usePositionButtonStore.getState().setLazyloadMark
+  navigate(`/library/games/${gameId}/${encodeURIComponent(groupId)}`)
+  scrollToElement({
+    selector: `[data-game-id="${gameId}"][data-group-id="${groupId}"]`
+  })
+  setTimeout(() => {
+    setLazyloadMark(generateUUID())
+  }, 100)
+}
+
+export async function checkAttachment(
+  dbName: string,
+  docId: string,
+  attachmentId: string
+): Promise<boolean> {
+  return await ipcInvoke('db-check-attachment', dbName, docId, attachmentId)
+}
 
 export function copyWithToast(content: string): void {
   if (!content) return

@@ -1,8 +1,8 @@
 import { ContextMenu, ContextMenuTrigger } from '@ui/context-menu'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@ui/hover-card'
-import React, { MutableRefObject, useRef } from 'react'
+import { Button } from '@ui/button'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { HoverBigCardAnimation } from '~/components/animations/HoverBigCard'
+import { HoverCardAnimation } from '~/components/animations/HoverCard'
 import { GameNavCM } from '~/components/contextMenu/GameNavCM'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
@@ -10,7 +10,8 @@ import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTi
 import { GameImage } from '~/components/ui/game-image'
 import { useGameState } from '~/hooks'
 import { useGameRegistry } from '~/stores/game'
-import { cn, scrollToElement } from '~/utils'
+import { cn, navigateToGame, startGame, stopGame } from '~/utils'
+import { useRunningGames } from '~/pages/Library/store'
 import { useTranslation } from 'react-i18next'
 
 export function BigGamePoster({
@@ -24,109 +25,131 @@ export function BigGamePoster({
 }): JSX.Element {
   const navigate = useNavigate()
   const gameData = useGameRegistry((state) => state.gameMetaIndex[gameId])
+  const runningGames = useRunningGames((state) => state.runningGames)
   const [playTime] = useGameState(gameId, 'record.playTime')
   const [gameName] = useGameState(gameId, 'metadata.name')
-  const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
-  const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = React.useState(false)
-  const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = React.useState(false)
-  const [isOpen, setIsOpen] = React.useState(false)
-  const openTimeoutRef: MutableRefObject<NodeJS.Timeout | undefined> = useRef(undefined)
-  const closeTimeoutRef: MutableRefObject<NodeJS.Timeout | undefined> = useRef(undefined)
-  const openDelay = 200
-  const closeDelay = 0
-
+  const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = useState(false)
+  const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = useState(false)
+  const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = useState(false)
   const { t } = useTranslation('game')
 
-  const handleMouseEnter = (): void => {
-    clearTimeout(closeTimeoutRef.current ?? undefined)
-    openTimeoutRef.current = setTimeout(() => {
-      setIsOpen(true)
-    }, openDelay)
-  }
-
-  const handleMouseLeave = (): void => {
-    clearTimeout(openTimeoutRef.current ?? undefined)
-    closeTimeoutRef.current = setTimeout(() => {
-      setIsOpen(false)
-    }, closeDelay)
-  }
   return (
-    <HoverCard open={isOpen}>
-      <ContextMenu>
-        <HoverCardTrigger
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          className={cn('')}
-        >
-          <ContextMenuTrigger className={cn('')}>
+    <ContextMenu>
+      <div className="relative">
+        <ContextMenuTrigger className={cn('')}>
+          <div
+            className="flex flex-col items-center justify-center gap-[8px] cursor-pointer group"
+            onClick={() => navigateToGame(navigate, gameId, groupId)}
+          >
             <div
               className={cn(
-                'relative overflow-hidden shadow-custom-initial cursor-pointer h-[222px] aspect-[3/2] rounded-lg'
-                // '3xl:h-[264px]'
+                'rounded-lg shadow-md',
+                'transition-all duration-300 ease-in-out',
+                'ring-0 ring-border',
+                'group-hover:ring-2 group-hover:ring-primary',
+                'relative overflow-hidden group'
               )}
             >
-              <HoverBigCardAnimation className={cn('rounded-lg w-full h-full')}>
+              <div className="absolute inset-0 z-10 transition-all duration-300 rounded-lg pointer-events-none bg-background/15 group-hover:bg-transparent" />
+              <HoverCardAnimation>
                 <GameImage
-                  onClick={() => {
-                    navigate(`/library/games/${gameId}/${encodeURIComponent(groupId || 'all')}`)
-                    scrollToElement({
-                      selector: `[data-game-id="${gameId}"][data-group-id="${groupId || 'all'}"]`
-                    })
-                  }}
+                  onClick={() => navigateToGame(navigate, gameId, groupId)}
                   gameId={gameId}
                   type="background"
                   className={cn(
-                    'w-full h-full cursor-pointer object-cover rounded-lg',
-                    '3xl:w-full 3xl:h-full',
+                    'h-[222px] aspect-[3/2] cursor-pointer object-contain rounded-lg bg-accent/40',
                     className
                   )}
                   fallback={
                     <div
                       className={cn(
-                        'w-full h-full cursor-pointer object-cover flex items-center justify-center pb-10 font-bold',
-                        '3xl:w-full 3xl:h-full',
+                        'w-full h-full cursor-pointer object-cover flex items-center justify-center pb-10 font-bold bg-accent',
                         className
                       )}
-                      onClick={() =>
-                        navigate(`/library/games/${gameId}/${encodeURIComponent(groupId || 'all')}`)
-                      }
                     >
                       {gameName}
                     </div>
                   }
                 />
-              </HoverBigCardAnimation>
-              <div className="absolute bg-muted/60 flex items-center pl-5 flex-row justify-start bottom-0 w-full transform-gpu will-change-opacity h-1/3 backdrop-blur-2xl border-t-0.5 border-white/30">
-                <div className="flex items-center justify-center shadow-sm shadow-black/50 w-14 h-14 bg-primary">
-                  <span className="icon-[mdi--clock-star-four-points] w-8 h-8 text-primary-foreground/70"></span>
+              </HoverCardAnimation>
+              {/* Hover overlay */}
+              <div
+                className={cn(
+                  'absolute inset-x-0 bottom-0 h-full bg-accent/50',
+                  'transition-opacity duration-300 ease-in-out',
+                  'flex flex-col p-[10px] text-accent-foreground',
+                  'opacity-0 group-hover:opacity-100',
+                  'overflow-hidden'
+                )}
+              >
+                {/* Play button */}
+                <div className="absolute inset-0 flex items-center justify-center flex-grow">
+                  {runningGames.includes(gameId) ? (
+                    <Button
+                      variant="secondary"
+                      className="rounded-full w-[50px] h-[50px] p-0"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        stopGame(gameId)
+                      }}
+                    >
+                      <span className="icon-[mdi--stop] text-secondary-foreground w-7 h-7"></span>
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="default"
+                      className="rounded-full w-[50px] h-[50px] p-0"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        navigateToGame(navigate, gameId, groupId || 'all')
+                        startGame(gameId)
+                      }}
+                    >
+                      <span className="icon-[mdi--play] text-primary-foreground w-7 h-7"></span>
+                    </Button>
+                  )}
                 </div>
-                <div className="flex flex-col gap-1 p-4 text-xs font-semibold">
-                  <div className="text-accent-foreground/80">
-                    {t('showcase.gameCard.playRecord')}
+
+                {/* Game info */}
+                <div className="flex flex-col gap-2 mt-auto text-xs font-semibold">
+                  {/* Play time */}
+                  <div className="flex flex-row items-center justify-start gap-2">
+                    <span className="icon-[mdi--access-time] w-4 h-4"></span>
+                    <div>
+                      {playTime
+                        ? t('showcase.gameCard.playTime', { time: playTime })
+                        : t('showcase.gameCard.noPlayRecord')}
+                    </div>
                   </div>
-                  <div>
-                    {playTime
-                      ? t('showcase.gameCard.totalPlayTime', { time: playTime })
-                      : t('showcase.gameCard.noPlayRecord')}
-                  </div>
-                  <div>
-                    {gameData?.lastRunDate
-                      ? t('showcase.gameCard.lastRunDate', { date: new Date(gameData.lastRunDate) })
-                      : t('showcase.gameCard.neverRunShort')}
+
+                  {/* Last run time */}
+                  <div className="flex flex-row items-center justify-start gap-2">
+                    <span className="icon-[mdi--calendar-blank-outline] w-4 h-4"></span>
+                    <div>
+                      {gameData?.lastRunDate
+                        ? t('showcase.gameCard.lastRunAt', {
+                            date: new Date(gameData.lastRunDate)
+                          })
+                        : t('showcase.gameCard.neverRun')}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </ContextMenuTrigger>
-        </HoverCardTrigger>
-        <GameNavCM
-          gameId={gameId}
-          groupId={groupId || 'all'}
-          openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
-          openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
-          openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
-        />
-      </ContextMenu>
+
+            <div className="text-[13px] cursor-pointer text-foreground hover:underline decoration-foreground truncate w-[333px] text-center">
+              {gameData?.name}
+            </div>
+          </div>
+        </ContextMenuTrigger>
+      </div>
+      <GameNavCM
+        gameId={gameId}
+        groupId={groupId || 'all'}
+        openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
+        openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
+        openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
+      />
 
       {isAddCollectionDialogOpen && (
         <AddCollectionDialog gameIds={[gameId]} setIsOpen={setIsAddCollectionDialogOpen} />
@@ -137,72 +160,6 @@ export function BigGamePoster({
       {isPlayTimeEditorDialogOpen && (
         <PlayTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayTimeEditorDialogOpen} />
       )}
-
-      <HoverCardContent
-        side="right"
-        className={cn(
-          'p-0 w-[250px] h-[230px] border-0 rounded-lg overflow-hidden shadow-xl relative mx-2',
-          'cursor-pointer'
-        )}
-      >
-        {/* background layer */}
-        <div className="absolute inset-0">
-          <GameImage gameId={gameId} type="background" className="object-cover w-full h-full" />
-          <div className="absolute inset-0 bg-gradient-to-b from-accent/40 to-accent/80 backdrop-blur-xl" />
-        </div>
-
-        {/* content area */}
-        <div className="relative flex flex-col w-full h-full gap-2">
-          {/* Game Title */}
-          <div className={cn('font-bold text-accent-foreground truncate text-sm px-3 pt-2')}>
-            {gameData?.name}
-          </div>
-
-          {/* Game Preview Image */}
-          <div className={cn('relative w-full h-[128px]')}>
-            <GameImage
-              gameId={gameId}
-              type="background"
-              className={cn('object-cover w-full h-full absolute')}
-              style={{
-                maskImage: 'linear-gradient(to top, transparent 0%, black 30%)'
-              }}
-              alt={`${gameData?.name} preview`}
-              fallback={
-                <div className={cn('w-full h-full absolute')}>
-                  <div className={cn('flex items-center justify-center w-full h-full font-bold')}>
-                    {gameData?.name}
-                  </div>
-                </div>
-              }
-            />
-          </div>
-
-          {/* Game Information */}
-
-          <div className={cn('flex flex-col gap-2 text-xs justify-center grow px-3 pb-2')}>
-            {/* Playing time */}
-            <div className="flex flex-row items-center justify-start gap-2">
-              <span className={cn('icon-[mdi--access-time] w-4 h-4')}></span>
-              <div>
-                {playTime
-                  ? t('showcase.gameCard.playTime', { time: playTime })
-                  : t('showcase.gameCard.noPlayRecord')}
-              </div>
-            </div>
-
-            {/* Last running time */}
-            <div className="flex flex-row items-center justify-start gap-2">
-              <span className={cn('icon-[mdi--calendar-blank-outline] w-4 h-4')}></span>
-              <div>
-                {gameData?.lastRunDate
-                  ? t('showcase.gameCard.lastRunAt', { date: new Date(gameData.lastRunDate) })
-                  : t('showcase.gameCard.neverRun')}
-              </div>
-            </div>
-          </div>
-        </div>
-      </HoverCardContent>
-    </HoverCard>
+    </ContextMenu>
   )
 }

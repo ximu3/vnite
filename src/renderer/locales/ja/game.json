@@ -106,13 +106,11 @@
       "save": "セーブ",
       "memory": "メモリー"
     },
-    "logoContextMenu": {
+    "logoManagePanel": {
       "resetPosition": "位置をリセット",
       "resetSize": "サイズをリセット",
-      "hideLogo": "ロゴを非表示"
-    },
-    "notifications": {
-      "logoHidden": "ゲーム設定の「管理」からロゴ表示を復元できます"
+      "hideLogo": "ロゴを非表示",
+      "showLogo": "ロゴを表示"
     },
     "header": {
       "playStatus": {
@@ -309,7 +307,7 @@
     "manage": {
       "title": "管理",
       "rename": "名前変更",
-      "showLogo": "ロゴを表示",
+      "editLogo": "ロゴを編集",
       "editPlayTime": "プレイ時間を編集",
       "downloadMetadata": "メタデータをダウンロード",
       "createShortcut": "ショートカットを作成",

@@ -11,7 +11,7 @@ export function Record({ gameId }: { gameId: string }): JSX.Element {
   const [playingTime] = useGameState(gameId, 'record.playTime')
 
   return (
-    <div className={cn('flex flex-row items-center')}>
+    <div className={cn('flex flex-row items-center gap-3')}>
       <RecordCard
         className={cn('')}
         title={t('detail.overview.record.playTime')}

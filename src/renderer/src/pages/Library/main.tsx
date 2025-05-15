@@ -39,14 +39,15 @@ export function Library({ className }: { className?: string }): JSX.Element {
     <ResizablePanelGroup
       autoSaveId="LibraryPanelGroup"
       direction="horizontal"
-      className={cn('w-full h-full shadow-inner', className)}
+      className={cn('w-full h-full', className)}
     >
       <ResizablePanel
         ref={panelRef}
-        defaultSize={18}
-        maxSize={26}
-        minSize={13}
+        defaultSize={15}
+        maxSize={20}
+        minSize={10}
         collapsible={true}
+        className="max-w-[330px]"
         onCollapse={() => setIsCollapsed(true)}
         onExpand={() => setIsCollapsed(false)}
       >

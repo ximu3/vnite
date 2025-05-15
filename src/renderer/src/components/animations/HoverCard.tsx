@@ -1,13 +1,15 @@
-import { animated, useSpring, to } from '@react-spring/web'
-import { ReactNode, HTMLAttributes } from 'react'
+import { animated, useSpring } from '@react-spring/web'
+import { ReactNode, HTMLAttributes, useEffect, useRef } from 'react'
 import { cn } from '~/utils'
 
 interface HoverCardProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode
-  liftAmount?: number
-  shadowConfig?: {
-    initial: string
-    hover: string
+  className?: string
+  imageConfig?: {
+    scale: {
+      initial: number
+      hover: number
+    }
   }
   animationConfig?: {
     tension?: number
@@ -18,11 +20,11 @@ interface HoverCardProps extends HTMLAttributes<HTMLDivElement> {
 export function HoverCardAnimation({
   children,
   className,
-  onClick,
-  liftAmount = 6,
-  shadowConfig = {
-    initial: '0 2px 5px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.3)',
-    hover: '0 3px 6px rgba(0, 0, 0, 0.35), 0 8px 16px rgba(0, 0, 0, 0.6)'
+  imageConfig = {
+    scale: {
+      initial: 1,
+      hover: 1.02
+    }
   },
   animationConfig = {
     tension: 750,
@@ -30,6 +32,10 @@ export function HoverCardAnimation({
   },
   ...rest
 }: HoverCardProps): JSX.Element {
+  // Reference to the element
+  const cardRef = useRef<HTMLDivElement>(null)
+
+  // Animation configuration
   const springConfig = {
     tension: animationConfig.tension,
     friction: animationConfig.friction,
@@ -38,115 +44,72 @@ export function HoverCardAnimation({
     clamp: true
   }
 
+  // Image scaling animation state
   const [springs, api] = useSpring(() => ({
-    y: 0,
-    boxShadow: shadowConfig.initial,
-    shineX: 45,
-    shineY: -45,
-    shineScale: 1,
-    shineOpacity: 0.3,
+    imageScale: imageConfig.scale.initial,
     config: springConfig,
     immediate: true
   }))
 
-  const handleMouseEnter = (): void => {
-    api.start({
-      y: -liftAmount,
-      boxShadow: shadowConfig.hover,
-      shineX: 30,
-      shineY: -30,
-      shineScale: 1.2,
-      shineOpacity: 1
-    })
-  }
+  // Use useEffect to listen for hover events on the parent element
+  useEffect(() => {
+    // Get the parent element containing the 'group' class
+    const findGroupParent = (element: HTMLElement | null): HTMLElement | null => {
+      if (!element) return null
+      if (element.classList.contains('group')) return element
+      return findGroupParent(element.parentElement)
+    }
 
-  const handleMouseLeave = (): void => {
-    api.start({
-      y: 0,
-      boxShadow: shadowConfig.initial,
-      shineX: 45,
-      shineY: -45,
-      shineScale: 1,
-      shineOpacity: 0.3
-    })
-  }
+    const card = cardRef.current
+    if (!card) return
 
-  const shineTransform = to(
-    [springs.shineX, springs.shineY, springs.shineScale],
-    (x, y, s) => `translate3d(${x}%, ${y}%, 0) rotate(-45deg) scale(${s})`
-  )
+    const groupParent = findGroupParent(card)
+    if (!groupParent) return
+
+    // Listen for hover events on the parent element
+    const handleGroupEnter = (): void => {
+      api.start({
+        imageScale: imageConfig.scale.hover
+      })
+    }
+
+    const handleGroupLeave = (): void => {
+      api.start({
+        imageScale: imageConfig.scale.initial
+      })
+    }
+
+    groupParent.addEventListener('mouseenter', handleGroupEnter)
+    groupParent.addEventListener('mouseleave', handleGroupLeave)
+
+    return (): void => {
+      groupParent.removeEventListener('mouseenter', handleGroupEnter)
+      groupParent.removeEventListener('mouseleave', handleGroupLeave)
+    }
+  }, [api, imageConfig.scale])
 
   return (
     <animated.div
+      ref={cardRef}
       className={cn(
-        'relative overflow-hidden',
-        'transform-gpu', // Accelerating with the GPU
+        'relative overflow-hidden rounded-lg',
+        'transform-gpu',
         'will-change-transform',
         className
       )}
-      onClick={onClick}
-      style={{
-        transform: springs.y.to((y) => `translate3d(0, ${y}px, 0) translateZ(0)`),
-        boxShadow: springs.boxShadow,
-        backfaceVisibility: 'hidden',
-        WebkitFontSmoothing: 'antialiased'
-      }}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
       {...rest}
     >
-      {/* Glossy Effects - Blur Layer */}
+      {/* Image layer */}
       <animated.div
         style={{
-          position: 'absolute',
-          top: '-40%',
-          right: '-40%',
-          width: '150%',
-          height: '150%',
-          background: `linear-gradient(
-            225deg,
-            rgba(255, 255, 255, 0.4) 0%,
-            rgba(255, 255, 255, 0.2) 30%,
-            rgba(255, 255, 255, 0.1) 40%,
-            rgba(255, 255, 255, 0) 60%
-          )`,
-          filter: 'blur(5px)',
-          pointerEvents: 'none',
-          zIndex: 1,
-          transform: shineTransform,
-          opacity: springs.shineOpacity,
-          willChange: 'transform, opacity',
-          backfaceVisibility: 'hidden'
+          transform: springs.imageScale.to((s) => `scale(${s})`),
+          willChange: 'transform',
+          width: '100%',
+          height: '100%'
         }}
-      />
-
-      {/* Glossy Effects - Main Layer */}
-      <animated.div
-        style={{
-          position: 'absolute',
-          top: '-40%',
-          right: '-40%',
-          width: '150%',
-          height: '150%',
-          background: `linear-gradient(
-            225deg,
-            transparent 0%,
-            rgba(255, 255, 255, 0.15) 69.9%,
-            rgba(255, 255, 255, 0.15) 90%,
-            rgba(255, 255, 255, 0.05) 100%,
-            transparent 100%
-          )`,
-          filter: 'blur(3px)',
-          pointerEvents: 'none',
-          zIndex: 2,
-          transform: shineTransform,
-          opacity: springs.shineOpacity,
-          willChange: 'transform, opacity',
-          backfaceVisibility: 'hidden'
-        }}
-      />
-
-      <div className="relative z-0">{children}</div>
+      >
+        {children}
+      </animated.div>
     </animated.div>
   )
 }

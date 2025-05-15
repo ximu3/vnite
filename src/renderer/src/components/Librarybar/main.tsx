@@ -40,7 +40,9 @@ export function Librarybar(): JSX.Element {
   console.warn(`[DEBUG] Librarybar`)
 
   return (
-    <div className={cn('flex flex-col gap-6 bg-card/60 w-full h-full pt-2 relative group')}>
+    <div
+      className={cn('flex flex-col gap-6 bg-background/60 w-full h-full pt-[14px] relative group')}
+    >
       <div className={cn('flex flex-col gap-3 p-3 pb-0')}>
         <div className={cn('flex flex-row gap-2')}>
           <div className={cn('grow')}>

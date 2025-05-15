@@ -106,13 +106,11 @@
       "save": "Saves",
       "memory": "Memories"
     },
-    "logoContextMenu": {
+    "logoManagePanel": {
       "resetPosition": "Reset Position",
       "resetSize": "Reset Size",
-      "hideLogo": "Hide Logo"
-    },
-    "notifications": {
-      "logoHidden": "You can restore the logo display in Game Settings-Manage"
+      "hideLogo": "Hide Logo",
+      "showLogo": "Show Logo"
     },
     "header": {
       "playStatus": {
@@ -309,7 +307,7 @@
     "manage": {
       "title": "Manage",
       "rename": "Rename",
-      "showLogo": "Show Logo",
+      "editLogo": "Edit Logo",
       "editPlayTime": "Edit Play Time",
       "downloadMetadata": "Download Metadata",
       "createShortcut": "Create Shortcut",

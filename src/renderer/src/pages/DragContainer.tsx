@@ -119,7 +119,7 @@ export function DragContainer({ children }: { children: React.ReactNode }): JSX.
   }, [])
 
   return (
-    <div className={cn('flex flex-row w-screen h-screen pt-[30px] relative')}>
+    <div className={cn('flex flex-row w-screen h-screen relative')}>
       <div
         className={cn(
           'absolute top-0 left-0 w-full h-full bg-black/80 transition-opacity duration-300 z-[999] pointer-events-none',

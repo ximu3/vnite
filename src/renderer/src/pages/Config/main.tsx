@@ -24,7 +24,7 @@ export function Config({ className }: { className?: string }): JSX.Element {
   }
 
   return (
-    <div className={cn('w-full h-full bg-background/60 shadow-inner', className)}>
+    <div className={cn('w-full h-full bg-background/60 pt-[20px]', className)}>
       <ScrollArea className={cn('w-full h-full px-6 pt-0')}>
         <div className={cn('flex flex-col gap-6 py-[34px]')}>
           <div className={cn('flex flex-row items-end gap-5')}>

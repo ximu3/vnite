@@ -81,9 +81,9 @@
       }
     },
     "gameCard": {
-      "playTime": "游戏时间 {{time, gameTime}}",
+      "playTime": "{{time, gameTime}}",
       "noPlayRecord": "暂无游玩记录",
-      "lastRunAt": "最后运行于 {{date, niceDate}}",
+      "lastRunAt": "{{date, niceDate}}",
       "neverRun": "从未运行过",
       "playRecord": "游玩记录",
       "totalPlayTime": "总游戏时长：{{time, gameTime}}",
@@ -106,13 +106,11 @@
       "save": "存档",
       "memory": "回忆"
     },
-    "logoContextMenu": {
+    "logoManagePanel": {
       "resetPosition": "重置位置",
       "resetSize": "重置大小",
-      "hideLogo": "隐藏徽标"
-    },
-    "notifications": {
-      "logoHidden": "可在 游戏设置-管理 中恢复徽标显示"
+      "hideLogo": "隐藏徽标",
+      "showLogo": "显示徽标"
     },
     "header": {
       "playStatus": {
@@ -309,7 +307,7 @@
     "manage": {
       "title": "管理",
       "rename": "重命名",
-      "showLogo": "显示徽标",
+      "editLogo": "编辑徽标",
       "editPlayTime": "修改游玩时间",
       "downloadMetadata": "下载资料数据",
       "createShortcut": "创建快捷方式",

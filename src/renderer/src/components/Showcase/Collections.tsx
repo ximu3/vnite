@@ -22,7 +22,7 @@ export function Collections(): JSX.Element {
   }, 750)
   const { t } = useTranslation('game')
   return (
-    <div className={cn('w-full flex flex-col gap-1 pt-3')}>
+    <div className={cn('w-full flex flex-col gap-1')}>
       <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>
         <div className={cn('text-accent-foreground flex-shrink-0')}>
           {t('showcase.sections.collections')}
@@ -59,7 +59,7 @@ export function Collections(): JSX.Element {
         className={cn(
           'flex flex-row gap-8 grow',
           'w-full overflow-x-auto scrollbar-none scroll-smooth',
-          'pt-2 pb-6 pl-5 pr-5' // Add inner margins to show shadows
+          'pt-3 pb-6 pl-5 pr-5' // Add inner margins to show shadows
         )}
       >
         {/* The wrapper ensures that each Poster maintains a fixed width */}

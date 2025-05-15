@@ -212,7 +212,7 @@ export function MemoryCard({
 
   return (
     <ContextMenu>
-      <ContextMenuTrigger className={cn('w-full')}>
+      <ContextMenuTrigger asChild className={cn('w-full')}>
         <Card ref={memoryRef} key={memoryId} className={cn('w-full h-auto shadow-md img-initial')}>
           <div className={cn('w-full flex flex-col')}>
             {/* Cover Image */}

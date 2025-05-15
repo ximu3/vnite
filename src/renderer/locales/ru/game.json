@@ -106,13 +106,10 @@
       "save": "Сейвы",
       "memory": "Моменты"
     },
-    "logoContextMenu": {
+    "logoManagePanel": {
       "resetPosition": "Сбросить позицию",
       "resetSize": "Сбросить размер",
       "hideLogo": "Скрыть логотип"
-    },
-    "notifications": {
-      "logoHidden": "Логотип можно вернуть в настройках игры — Управление"
     },
     "header": {
       "playStatus": {
@@ -309,7 +306,7 @@
     "manage": {
       "title": "Управление",
       "rename": "Переименовать",
-      "showLogo": "Показать логотип",
+      "editLogo": "Показать логотип",
       "editPlayTime": "Редактировать время игры",
       "downloadMetadata": "Загрузить метаданные",
       "createShortcut": "Создать ярлык",

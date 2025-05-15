@@ -26,22 +26,22 @@ export function Nav({
         switch (variant) {
           case 'gameList':
             variantStyles = isActive
-              ? 'bg-accent text-accent-foreground rounded-none shadow-md'
+              ? 'bg-accent text-accent-foreground rounded-none'
               : 'hover:bg-accent rounded-none'
             break
           case 'sidebar':
             variantStyles = isActive
-              ? 'bg-accent text-accent-foreground shadow-md'
-              : 'hover:bg-accent hover:text-accent-foreground '
+              ? 'bg-accent text-accent-foreground'
+              : 'hover:bg-accent hover:text-accent-foreground'
             break
           case 'librarybar':
             variantStyles = isActive
-              ? 'bg-accent/[0.7] text-accent-foreground border-[1px] border-border shadow-sm'
-              : 'hover:bg-accent/[0.7] hover:text-accent-foreground bg-background/[0.3] text-background-foreground border-[1px] border-border shadow-sm'
+              ? 'bg-accent/[0.7] text-accent-foreground border-[1px] border-input shadow-sm'
+              : 'hover:bg-accent/[0.7] hover:text-accent-foreground shadow-sm bg-background/[0.35] text-background-foreground border-[1px] border-input shadow-sm'
             break
           default:
             variantStyles = isActive
-              ? 'bg-primary text-primary-foreground shadow-md'
+              ? 'bg-primary text-primary-foreground'
               : 'hover:bg-primary hover:text-primary-foreground'
         }
 

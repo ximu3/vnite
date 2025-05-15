@@ -106,13 +106,10 @@
       "save": "",
       "memory": ""
     },
-    "logoContextMenu": {
+    "logoManagePanel": {
       "resetPosition": "",
       "resetSize": "",
       "hideLogo": ""
-    },
-    "notifications": {
-      "logoHidden": ""
     },
     "header": {
       "playStatus": {
@@ -309,7 +306,7 @@
     "manage": {
       "title": "",
       "rename": "",
-      "showLogo": "",
+      "editLogo": "",
       "editPlayTime": "",
       "downloadMetadata": "",
       "createShortcut": "",

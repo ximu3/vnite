@@ -1,4 +1,4 @@
-import { HoverSquareCardAnimation } from '~/components/animations/HoverSquareCard'
+import { HoverCardAnimation } from '~/components/animations/HoverCard'
 import { cn } from '~/utils'
 import { useNavigate } from 'react-router-dom'
 import { useGameState } from '~/hooks'
@@ -54,10 +54,8 @@ export function GamePoster({
         />
       )}
 
-      {/* HoverBigCardAnimation layer */}
-
       <div className="relative z-0">
-        <HoverSquareCardAnimation className={cn('rounded-none shadow-none')}>
+        <HoverCardAnimation className={cn('rounded-none shadow-none')}>
           <GameImage
             gameId={gameId}
             type="cover"
@@ -73,7 +71,7 @@ export function GamePoster({
               ></div>
             }
           />
-        </HoverSquareCardAnimation>
+        </HoverCardAnimation>
       </div>
 
       {/* text content layer */}

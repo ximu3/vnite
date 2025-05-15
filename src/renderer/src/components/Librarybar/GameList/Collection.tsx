@@ -23,7 +23,7 @@ export function Collection(): JSX.Element {
           {Object.entries(collections).map(([key, value]) => (
             <AccordionItem key={key} value={key}>
               <CollectionCM collectionId={key}>
-                <AccordionTrigger className={cn('bg-accent/30 text-xs p-1 pl-2 rounded-none')}>
+                <AccordionTrigger className={cn('text-xs p-1 pl-2 rounded-none bg-accent/35')}>
                   <div className={cn('flex flex-row items-center justify-start gap-1')}>
                     <div className={cn('text-xs')}>{value.name}</div>
                     <div className={cn('text-2xs text-foreground/50')}>({value.games.length})</div>

@@ -36,7 +36,7 @@ export function Config({ gameId }: { gameId: string }): JSX.Element {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size={'icon'} className="non-draggable">
+          <Button variant="outline" size={'icon'} className="non-draggable w-[40px] h-[40px]">
             <span className={cn('icon-[mdi--settings-outline] w-4 h-4')}></span>
           </Button>
         </DropdownMenuTrigger>

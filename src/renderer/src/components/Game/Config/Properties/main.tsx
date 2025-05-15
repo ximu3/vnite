@@ -25,7 +25,7 @@ export function GameProperties({
   }
 
   return (
-    <div className={cn('w-full h-full bg-background/60 pt-[34px] shadow-inner', className)}>
+    <div className={cn('w-full h-full bg-background/60 pt-[50px]', className)}>
       <ScrollArea className={cn('w-full h-full px-6 pt-0')}>
         <div className={cn('flex flex-col gap-6')}>
           <div className={cn('flex flex-row items-end gap-5')}>
