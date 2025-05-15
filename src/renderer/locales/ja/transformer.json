@@ -39,7 +39,8 @@
     "addDialogTitle": "マッチングルールを追加",
     "addDialogPlaceholder": "マッチング内容を入力してください",
     "cancel": "キャンセル",
-    "save": "保存"
+    "save": "保存",
+    "noRules": "ルールがまだ設定されていません"
   },
   "notifications": {
     "applyLoading": "すべてのトランスフォーマーを適用しています…",
@@ -71,7 +72,12 @@
     "noResults": "プリセットが見つかりません"
   },
   "transformerItem": {
-    "rulesCount": "{{count}}個のルール"
+    "rulesCount": "{{count}}個のルール",
+    "tooltips": {
+      "delete": "削除",
+      "export": "エクスポート",
+      "edit": "編集"
+    }
   },
   "presets": {
     "vndbChineseTags": {
