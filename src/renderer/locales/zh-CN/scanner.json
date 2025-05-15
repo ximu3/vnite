@@ -54,6 +54,11 @@
         "description": "确定要删除扫描目录\"{{path}}\"吗？此操作无法撤销。",
         "cancel": "取消",
         "confirm": "确认删除"
+      },
+      "tooltips": {
+        "scan": "启动扫描",
+        "edit": "编辑",
+        "delete": "删除"
       }
     }
   },

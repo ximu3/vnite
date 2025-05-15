@@ -1,13 +1,14 @@
+import { Button } from '@ui/button'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@ui/dialog'
+import { Input } from '@ui/input'
+import { ScrollArea } from '@ui/scroll-area'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/select'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@ui/table'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@ui/dialog'
-import { Input } from '@ui/input'
-import { Button } from '@ui/button'
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@ui/table'
-import { useGameScannerStore } from './store'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/select'
-import { ScrollArea } from '@ui/scroll-area'
 import { cn } from '~/utils'
+import { useGameScannerStore } from './store'
 
 interface FailedFoldersDialogProps {
   isOpen: boolean
@@ -123,7 +124,7 @@ export const FailedFoldersDialog: React.FC<FailedFoldersDialogProps> = ({ isOpen
                 <p className="font-medium">
                   {t('failedFolders.fixing', { name: selectedFolder.name })}
                 </p>
-                <p className="text-sm">{selectedFolder.error}</p>
+                <p className="text-sm text-destructive">{selectedFolder.error}</p>
               </div>
 
               <div className="grid grid-cols-[auto_1fr] gap-y-4 gap-x-4 items-center">
@@ -175,11 +176,21 @@ export const FailedFoldersDialog: React.FC<FailedFoldersDialogProps> = ({ isOpen
                   {failedFolders.map((folder, index) => (
                     <TableRow key={index}>
                       <TableCell className="font-medium">{folder.name}</TableCell>
-                      <TableCell className="text-xs truncate max-w-[200px]">
-                        {folder.path.split('/').pop()}
+                      <TableCell className="max-w-[200px]">
+                        <Tooltip>
+                          <TooltipTrigger className="text-xs truncate max-w-[200px]">
+                            {folder.path.split('/').pop()}
+                          </TooltipTrigger>
+                          <TooltipContent>{folder.path.split('/').pop()}</TooltipContent>
+                        </Tooltip>
                       </TableCell>
-                      <TableCell className="text-xs truncate max-w-[200px]">
-                        {folder.error}
+                      <TableCell className="max-w-[200px]">
+                        <Tooltip>
+                          <TooltipTrigger className="text-xs truncate max-w-[200px]">
+                            {folder.error}
+                          </TooltipTrigger>
+                          <TooltipContent>{folder.error}</TooltipContent>
+                        </Tooltip>
                       </TableCell>
                       <TableCell className="flex flex-row">
                         <Button

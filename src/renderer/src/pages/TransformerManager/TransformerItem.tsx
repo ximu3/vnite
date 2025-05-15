@@ -1,11 +1,11 @@
-import { Badge } from '@ui/badge'
-import { TransformerRule } from './types'
-import { Button } from '@ui/button'
-import { cn } from '~/utils'
-import { useTranslation } from 'react-i18next'
-import { ipcInvoke } from '~/utils'
-import { toast } from 'sonner'
 import { getErrorMessage } from '@appUtils'
+import { Badge } from '@ui/badge'
+import { Button } from '@ui/button'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { cn, ipcInvoke } from '~/utils'
+import { TransformerRule } from './types'
 
 interface TransformerItemProps {
   transformer: TransformerRule
@@ -66,7 +66,7 @@ export function TransformerItem({
           </div>
         </div>
 
-        <div className="flex items-center space-x-2" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
           <Button
             className={cn(index === 0 && 'opacity-50 cursor-not-allowed')}
             variant={'ghost'}
@@ -87,17 +87,37 @@ export function TransformerItem({
             <span className="w-4 h-4 icon-[mdi--chevron-down]"></span>
           </Button>
 
-          <Button variant="ghost" onClick={() => onEditClick(transformer)} size={'icon'}>
-            <span className="w-4 h-4 icon-[mdi--pencil]"></span>
-          </Button>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button variant="ghost" onClick={() => onEditClick(transformer)} size={'icon'}>
+                <span className="w-4 h-4 icon-[mdi--pencil]"></span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">{t('transformerItem.tooltips.edit')}</TooltipContent>
+          </Tooltip>
 
-          <Button variant="ghost" onClick={handleExport} size={'icon'}>
-            <span className="w-4 h-4 icon-[mdi--export]"></span>
-          </Button>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button variant="ghost" onClick={handleExport} size={'icon'}>
+                <span className="w-4 h-4 icon-[mdi--export]"></span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">{t('transformerItem.tooltips.export')}</TooltipContent>
+          </Tooltip>
 
-          <Button variant={'ghost'} size={'icon'} onClick={() => onDeleteClick(transformer)}>
-            <span className="w-4 h-4 icon-[mdi--delete-outline]"></span>
-          </Button>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                variant={'ghost'}
+                size={'icon'}
+                className="hover:text-destructive"
+                onClick={() => onDeleteClick(transformer)}
+              >
+                <span className="w-4 h-4 icon-[mdi--delete-outline]"></span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">{t('transformerItem.tooltips.delete')}</TooltipContent>
+          </Tooltip>
         </div>
       </div>
     </div>

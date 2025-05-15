@@ -54,6 +54,11 @@
         "description": "Are you sure you want to delete the scan directory \"{{path}}\"? This action cannot be undone.",
         "cancel": "Cancel",
         "confirm": "Confirm Delete"
+      },
+      "tooltips": {
+        "scan": "Scan",
+        "edit": "Edit",
+        "delete": "Delete"
       }
     }
   },
