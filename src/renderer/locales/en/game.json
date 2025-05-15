@@ -81,9 +81,7 @@
       }
     },
     "gameCard": {
-      "playTime": "Play time {{time, gameTime}}",
       "noPlayRecord": "No play record",
-      "lastRunAt": "Last played on {{date, niceDate}}",
       "neverRun": "Never played",
       "playRecord": "Play Record",
       "totalPlayTime": "Total play time: {{time, gameTime}}",

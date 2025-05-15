@@ -242,7 +242,7 @@ export function GamePoster({
                         <span className="icon-[mdi--access-time] w-4 h-4"></span>
                         <div>
                           {playTime
-                            ? t('showcase.gameCard.playTime', { time: playTime })
+                            ? t('utils:format.gameTime', { time: playTime })
                             : t('showcase.gameCard.noPlayRecord')}
                         </div>
                       </div>
@@ -252,7 +252,7 @@ export function GamePoster({
                         <span className="icon-[mdi--calendar-blank-outline] w-4 h-4"></span>
                         <div>
                           {gameData?.lastRunDate
-                            ? t('showcase.gameCard.lastRunAt', {
+                            ? t('utils:format.niceDate', {
                                 date: new Date(gameData.lastRunDate)
                               })
                             : t('showcase.gameCard.neverRun')}

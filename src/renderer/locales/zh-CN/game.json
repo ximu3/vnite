@@ -81,9 +81,7 @@
       }
     },
     "gameCard": {
-      "playTime": "{{time, gameTime}}",
       "noPlayRecord": "暂无游玩记录",
-      "lastRunAt": "{{date, niceDate}}",
       "neverRun": "从未运行过",
       "playRecord": "游玩记录",
       "totalPlayTime": "总游戏时长：{{time, gameTime}}",

@@ -81,9 +81,7 @@
       }
     },
     "gameCard": {
-      "playTime": "",
       "noPlayRecord": "",
-      "lastRunAt": "",
       "neverRun": "",
       "playRecord": "",
       "totalPlayTime": "",

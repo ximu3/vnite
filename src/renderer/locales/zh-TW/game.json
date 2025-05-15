@@ -81,9 +81,7 @@
       }
     },
     "gameCard": {
-      "playTime": "遊戲時間 {{time, gameTime}}",
       "noPlayRecord": "暫無遊玩記錄",
-      "lastRunAt": "最後執行於 {{date, niceDate}}",
       "neverRun": "從未執行過",
       "playRecord": "遊玩記錄",
       "totalPlayTime": "總遊戲時長：{{time, gameTime}}",

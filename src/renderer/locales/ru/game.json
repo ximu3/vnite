@@ -81,9 +81,7 @@
       }
     },
     "gameCard": {
-      "playTime": "Время игры: {{time, gameTime}}",
       "noPlayRecord": "Нет записей о игре",
-      "lastRunAt": "Последний запуск: {{date, niceDate}}",
       "neverRun": "Не запускалась",
       "playRecord": "История игры",
       "totalPlayTime": "Общее время игры: {{time, gameTime}}",

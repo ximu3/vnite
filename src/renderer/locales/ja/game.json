@@ -81,9 +81,7 @@
       }
     },
     "gameCard": {
-      "playTime": "プレイ時間 {{time, gameTime}}",
       "noPlayRecord": "プレイ記録なし",
-      "lastRunAt": "最終プレイ日：{{date, niceDate}}",
       "neverRun": "プレイしたことがありません",
       "playRecord": "プレイ記録",
       "totalPlayTime": "総プレイ時間：{{time, gameTime}}",
