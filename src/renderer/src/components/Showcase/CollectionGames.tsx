@@ -78,7 +78,9 @@ export function CollectionGamesComponent({
         <ScrollArea className={cn('w-full')}>
           <div className={cn('w-full flex flex-col gap-1 pt-3')}>
             <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>
-              <div className={cn('text-accent-foreground flex-shrink-0')}>{collectionName}</div>
+              <div className={cn('text-accent-foreground select-none flex-shrink-0')}>
+                {collectionName}
+              </div>
 
               {/* Split Line Container */}
               <div className={cn('flex items-center justify-center flex-grow')}>

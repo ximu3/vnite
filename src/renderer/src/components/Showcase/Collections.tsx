@@ -24,7 +24,7 @@ export function Collections(): JSX.Element {
   return (
     <div className={cn('w-full flex flex-col gap-1')}>
       <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>
-        <div className={cn('text-accent-foreground flex-shrink-0')}>
+        <div className={cn('text-accent-foreground select-none flex-shrink-0')}>
           {t('showcase.sections.collections')}
         </div>
 

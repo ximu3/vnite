@@ -1,18 +1,18 @@
+import { Button } from '@ui/button'
 import { ContextMenu, ContextMenuTrigger } from '@ui/context-menu'
 import { GameImage } from '@ui/game-image'
-import { Button } from '@ui/button'
 import { useEffect, useRef, useState } from 'react'
-import { HoverCardAnimation } from '~/components/animations/HoverCard'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
+import { HoverCardAnimation } from '~/components/animations/HoverCard'
 import { GameNavCM } from '~/components/contextMenu/GameNavCM'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
 import { useDragContext } from '~/components/Showcase/CollectionGames'
 import { useGameState } from '~/hooks'
-import { useGameCollectionStore, useGameRegistry } from '~/stores/game'
 import { useRunningGames } from '~/pages/Library/store'
+import { useGameCollectionStore, useGameRegistry } from '~/stores/game'
 import { cn, navigateToGame, startGame, stopGame } from '~/utils'
 import {
   attachClosestEdge,
@@ -180,7 +180,7 @@ export function GamePoster({
                       type="cover"
                       alt={gameId}
                       className={cn(
-                        'w-[148px] aspect-[2/3] cursor-pointer object-cover rounded-lg',
+                        'w-[148px] aspect-[2/3] cursor-pointer select-none object-cover rounded-lg',
                         className
                       )}
                       fallback={
@@ -191,7 +191,7 @@ export function GamePoster({
                           )}
                           onClick={() => navigateToGame(navigate, gameId, groupId || 'all')}
                         >
-                          <div className="p-1 font-bold truncate">{gameName}</div>
+                          <div className="p-1 font-bold truncate select-none">{gameName}</div>
                         </div>
                       }
                     />
@@ -236,7 +236,7 @@ export function GamePoster({
                     </div>
 
                     {/* Game info */}
-                    <div className="flex flex-col gap-2 mt-auto text-xs font-semibold">
+                    <div className="flex flex-col gap-2 mt-auto text-xs font-semibold select-none">
                       {/* Play time */}
                       <div className="flex flex-row items-center justify-start gap-2">
                         <span className="icon-[mdi--access-time] w-4 h-4"></span>
@@ -262,7 +262,7 @@ export function GamePoster({
                   </div>
                 </div>
 
-                <div className="text-[13px] text-foreground truncate cursor-pointer hover:underline w-[148px] text-center decoration-foreground">
+                <div className="text-[13px] text-foreground truncate cursor-pointer select-none hover:underline w-[148px] text-center decoration-foreground">
                   {gameData?.name}
                 </div>
               </div>
