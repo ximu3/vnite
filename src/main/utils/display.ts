@@ -7,14 +7,23 @@ interface WindowDimensions {
   minHeight: number
 }
 
-export function calculateWindowSize(initialRatio: number, minRatio: number): WindowDimensions {
+export function calculateWindowSize(
+  initialRatio: number,
+  minRatio: number,
+  aspectRatio: number = 16 / 9 // Default aspect ratio is 16:9
+): WindowDimensions {
   const primaryDisplay = screen.getPrimaryDisplay()
   const { width: screenWidth, height: screenHeight } = primaryDisplay.workAreaSize
 
-  const calculatedWidth = Math.round(screenWidth * initialRatio)
+  // Calculate the initial window height based on screen height
   const calculatedHeight = Math.round(screenHeight * initialRatio)
-  const minWidth = Math.round(screenWidth * minRatio)
+  // Calculate width based on height and aspect ratio
+  const calculatedWidth = Math.round(calculatedHeight * aspectRatio)
+
+  // Calculate minimum window height based on screen height
   const minHeight = Math.round(screenHeight * minRatio)
+  // Calculate minimum width based on minimum height and aspect ratio
+  const minWidth = Math.round(minHeight * aspectRatio)
 
   return {
     width: clamp(calculatedWidth, 300, screenWidth),

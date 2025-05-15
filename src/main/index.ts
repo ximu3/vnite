@@ -74,7 +74,7 @@ async function handleGameUrl(url: string): Promise<void> {
 }
 
 function createWindow(): void {
-  const windowSize = calculateWindowSize(0.8, 0.6)
+  const windowSize = calculateWindowSize(0.85, 0.6, 1.62)
 
   const mainWindowState = windowStateKeeper({
     defaultWidth: windowSize.width,
