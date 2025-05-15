@@ -1,12 +1,14 @@
-import React, { useState } from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@ui/dialog'
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@ui/accordion'
-import { Button } from '@ui/button'
-import { Input } from '@ui/input'
 import { ArrayEditor } from '@ui/array-editor'
-import { TransformerRule, RuleSet } from './types'
-import { Plus } from 'lucide-react'
+import { Button } from '@ui/button'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@ui/dialog'
+import { Input } from '@ui/input'
+import { ChevronDown, Plus } from 'lucide-react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import AutoSizer from 'react-virtualized-auto-sizer'
+import { FixedSizeList } from 'react-window'
+import { cn } from '~/utils'
+import { RuleSet, TransformerRule } from './types'
 
 interface RuleDialogProps {
   isOpen: boolean
@@ -23,6 +25,9 @@ export function RuleDialog({
 }: RuleDialogProps): JSX.Element {
   const { t } = useTranslation('transformer')
   const [localTransformer, setLocalTransformer] = useState<TransformerRule | null>(transformer)
+  const [currentRuleCategory, setCurrentRuleCategory] = useState<
+    keyof TransformerRule['processors'] | 'all'
+  >('all')
 
   // Update local state every time the dialog opens
   React.useEffect(() => {
@@ -107,48 +112,96 @@ export function RuleDialog({
     onOpenChange(false)
   }
 
-  // Render rule category content
-  const renderRuleCategory = (
+  const toggleCurrentRule = (to: keyof TransformerRule['processors']): void => {
+    if (currentRuleCategory === 'all') {
+      setCurrentRuleCategory(to)
+    } else {
+      setCurrentRuleCategory('all')
+    }
+  }
+
+  const ruleCategoryItem = (
     category: keyof TransformerRule['processors'],
     title: string
   ): JSX.Element => {
     const rules = localTransformer.processors[category] || []
 
-    return (
-      <AccordionItem value={category}>
-        <AccordionTrigger className="font-medium">{title}</AccordionTrigger>
-        <AccordionContent>
-          {rules.map((rule, index) => (
-            <div key={index} className="flex items-center gap-4 pt-1 mb-2">
-              <div className="w-[70%]">
-                <ArrayEditor
-                  value={rule.match}
-                  onChange={(value) => updateRuleSet(category, index, 'match', value)}
-                  placeholder={t('ruleDialog.match')}
-                  isHaveTooltip={true}
-                  dialogTitle={t('ruleDialog.addDialogTitle')}
-                  dialogPlaceholder={t('ruleDialog.addDialogPlaceholder')}
-                />
-              </div>
-              <div className="w-[calc(30%-68px)]">
-                <Input
-                  value={rule.replace}
-                  onChange={(e) => updateRuleSet(category, index, 'replace', e.target.value)}
-                  placeholder={t('ruleDialog.replace')}
-                />
-              </div>
-              <Button variant="outline" size="icon" onClick={() => deleteRule(category, index)}>
-                <span className="w-5 h-5 icon-[mdi--delete-outline]"></span>
-              </Button>
-            </div>
-          ))}
-
-          <Button variant="outline" size="sm" className="mt-2" onClick={() => addRule(category)}>
-            <Plus className="w-4 h-4 mr-2" />
-            {t('ruleDialog.addRule')}
+    const Row = ({ index, style }: { index: number; style: React.CSSProperties }): JSX.Element => {
+      const rule = rules[index]
+      return (
+        <div style={style} className={cn('flex items-center gap-4 pt-1 px-2')}>
+          <div className="flex-[7]">
+            <ArrayEditor
+              value={rule.match}
+              onChange={(value) => updateRuleSet(category, index, 'match', value)}
+              placeholder={t('ruleDialog.match')}
+              isHaveTooltip={true}
+              dialogTitle={t('ruleDialog.addDialogTitle')}
+              dialogPlaceholder={t('ruleDialog.addDialogPlaceholder')}
+            />
+          </div>
+          <div className="flex-[3]">
+            <Input
+              value={rule.replace}
+              onChange={(e) => updateRuleSet(category, index, 'replace', e.target.value)}
+              placeholder={t('ruleDialog.replace')}
+            />
+          </div>
+          <Button
+            variant="outline"
+            size="icon"
+            className="hover:text-destructive flex-shrink-0"
+            onClick={() => deleteRule(category, index)}
+          >
+            <span className="w-5 h-5 icon-[mdi--delete-outline]"></span>
           </Button>
-        </AccordionContent>
-      </AccordionItem>
+        </div>
+      )
+    }
+
+    return (
+      <div className={cn('flex flex-col w-full', currentRuleCategory === category && 'h-full')}>
+        <div
+          className="flex items-center px-4 py-3 cursor-pointer hover:bg-accent rounded-md transition"
+          onClick={() => toggleCurrentRule(category)}
+        >
+          <span className="text-sm font-medium text-foreground">{title}</span>
+          <div className="flex-grow" />
+          <ChevronDown
+            className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${
+              currentRuleCategory === category ? 'rotate-180' : ''
+            }`}
+          />
+        </div>
+
+        {currentRuleCategory === category && (
+          <div className="flex-grow">
+            {rules.length !== 0 ? (
+              <AutoSizer>
+                {({ height, width }) => {
+                  return (
+                    <FixedSizeList
+                      className="scrollbar-base-thin"
+                      height={height}
+                      width={width}
+                      itemCount={rules.length}
+                      itemSize={50}
+                      layout="vertical"
+                      style={{ willChange: 'auto' }} // fix: the content becomes blurred when custom scrollbar appears
+                    >
+                      {Row}
+                    </FixedSizeList>
+                  )
+                }}
+              </AutoSizer>
+            ) : (
+              <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
+                {t('ruleDialog.noRules')}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     )
   }
 
@@ -161,24 +214,42 @@ export function RuleDialog({
           </DialogTitle>
         </DialogHeader>
         <div className="h-[calc(70vh-170px)] pr-2 overflow-y-auto scrollbar-base-thin">
-          <Accordion type="multiple" className="w-full">
-            {renderRuleCategory('name', t('ruleDialog.categories.name'))}
-            {renderRuleCategory('originalName', t('ruleDialog.categories.originalName'))}
-            {renderRuleCategory('description', t('ruleDialog.categories.description'))}
-            {renderRuleCategory('developers', t('ruleDialog.categories.developers'))}
-            {renderRuleCategory('publishers', t('ruleDialog.categories.publishers'))}
-            {renderRuleCategory('genres', t('ruleDialog.categories.genres'))}
-            {renderRuleCategory('platforms', t('ruleDialog.categories.platforms'))}
-            {renderRuleCategory('tags', t('ruleDialog.categories.tags'))}
-            {renderRuleCategory('director', t('ruleDialog.categories.director'))}
-            {renderRuleCategory('scenario', t('ruleDialog.categories.scenario'))}
-            {renderRuleCategory('illustration', t('ruleDialog.categories.illustration'))}
-            {renderRuleCategory('music', t('ruleDialog.categories.music'))}
-            {renderRuleCategory('engine', t('ruleDialog.categories.engine'))}
-          </Accordion>
+          <div className="w-full h-full">
+            {currentRuleCategory === 'all' ? (
+              <>
+                {ruleCategoryItem('name', t('ruleDialog.categories.name'))}
+                {ruleCategoryItem('originalName', t('ruleDialog.categories.originalName'))}
+                {ruleCategoryItem('description', t('ruleDialog.categories.description'))}
+                {ruleCategoryItem('developers', t('ruleDialog.categories.developers'))}
+                {ruleCategoryItem('publishers', t('ruleDialog.categories.publishers'))}
+                {ruleCategoryItem('genres', t('ruleDialog.categories.genres'))}
+                {ruleCategoryItem('platforms', t('ruleDialog.categories.platforms'))}
+                {ruleCategoryItem('tags', t('ruleDialog.categories.tags'))}
+                {ruleCategoryItem('director', t('ruleDialog.categories.director'))}
+                {ruleCategoryItem('scenario', t('ruleDialog.categories.scenario'))}
+                {ruleCategoryItem('illustration', t('ruleDialog.categories.illustration'))}
+                {ruleCategoryItem('music', t('ruleDialog.categories.music'))}
+                {ruleCategoryItem('engine', t('ruleDialog.categories.engine'))}
+              </>
+            ) : (
+              <>
+                {ruleCategoryItem(
+                  currentRuleCategory,
+                  t('ruleDialog.categories.' + currentRuleCategory)
+                )}
+              </>
+            )}
+          </div>
         </div>
 
         <DialogFooter>
+          {currentRuleCategory !== 'all' && (
+            <Button variant="outline" onClick={() => addRule(currentRuleCategory)}>
+              <Plus className="w-4 h-4 mr-2" />
+              {t('ruleDialog.addRule')}
+            </Button>
+          )}
+
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             {t('ruleDialog.cancel')}
           </Button>

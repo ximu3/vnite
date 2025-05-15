@@ -18,6 +18,7 @@
   "ruleDialog": {
     "title": "Rule Settings",
     "loading": "Loading…",
+    "noRules": "No rules yet",
     "categories": {
       "name": "Name",
       "originalName": "Original Name",
