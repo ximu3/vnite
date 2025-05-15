@@ -39,7 +39,8 @@
     "addDialogTitle": "添加匹配規則",
     "addDialogPlaceholder": "請輸入匹配內容",
     "cancel": "取消",
-    "save": "保存"
+    "save": "保存",
+    "noRules": "暫無規則"
   },
   "notifications": {
     "applyLoading": "正在應用所有轉換器…",
@@ -71,7 +72,12 @@
     "noResults": "未找到預設"
   },
   "transformerItem": {
-    "rulesCount": "{{count}} 條規則"
+    "rulesCount": "{{count}} 條規則",
+    "tooltips": {
+      "delete": "刪除",
+      "edit": "編輯",
+      "export": "匯出"
+    }
   },
   "presets": {
     "vndbChineseTags": {
