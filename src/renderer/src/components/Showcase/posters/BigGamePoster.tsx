@@ -1,6 +1,7 @@
-import { ContextMenu, ContextMenuTrigger } from '@ui/context-menu'
 import { Button } from '@ui/button'
+import { ContextMenu, ContextMenuTrigger } from '@ui/context-menu'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { HoverCardAnimation } from '~/components/animations/HoverCard'
 import { GameNavCM } from '~/components/contextMenu/GameNavCM'
@@ -9,10 +10,9 @@ import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditor
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
 import { GameImage } from '~/components/ui/game-image'
 import { useGameState } from '~/hooks'
+import { useRunningGames } from '~/pages/Library/store'
 import { useGameRegistry } from '~/stores/game'
 import { cn, navigateToGame, startGame, stopGame } from '~/utils'
-import { useRunningGames } from '~/pages/Library/store'
-import { useTranslation } from 'react-i18next'
 
 export function BigGamePoster({
   gameId,
@@ -57,7 +57,7 @@ export function BigGamePoster({
                   gameId={gameId}
                   type="background"
                   className={cn(
-                    'h-[222px] aspect-[3/2] cursor-pointer object-contain rounded-lg bg-accent/30',
+                    'h-[222px] aspect-[3/2] cursor-pointer select-none object-contain rounded-lg bg-accent/30',
                     className
                   )}
                   fallback={
@@ -111,7 +111,7 @@ export function BigGamePoster({
                 </div>
 
                 {/* Game info */}
-                <div className="flex flex-col gap-2 mt-auto text-xs font-semibold">
+                <div className="flex flex-col gap-2 mt-auto text-xs font-semibold select-none">
                   {/* Play time */}
                   <div className="flex flex-row items-center justify-start gap-2">
                     <span className="icon-[mdi--access-time] w-4 h-4"></span>
@@ -137,7 +137,7 @@ export function BigGamePoster({
               </div>
             </div>
 
-            <div className="text-[13px] cursor-pointer text-foreground hover:underline decoration-foreground truncate w-[333px] text-center">
+            <div className="text-[13px] cursor-pointer select-none text-foreground hover:underline decoration-foreground truncate w-[333px] text-center">
               {gameData?.name}
             </div>
           </div>

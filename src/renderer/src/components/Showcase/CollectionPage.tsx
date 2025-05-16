@@ -1,9 +1,9 @@
 import { ScrollArea } from '@ui/scroll-area'
 import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useGameCollectionStore } from '~/stores'
 import { cn } from '~/utils'
 import { CollectionPoster } from './posters/CollectionPoster'
-import { useTranslation } from 'react-i18next'
 
 export function CollectionPage(): JSX.Element {
   const collections = useGameCollectionStore((state) => state.documents)
@@ -19,7 +19,7 @@ export function CollectionPage(): JSX.Element {
         const gridItems = gridContainer.children
         const itemWidth = (gridItems[0] as HTMLDivElement).offsetWidth
         const containerStyle = window.getComputedStyle(gridContainer)
-        const minGap = parseFloat(containerStyle.getPropertyValue('gap'))
+        const minGap = parseFloat(containerStyle.getPropertyValue('column-gap'))
         const pL = parseFloat(containerStyle.paddingLeft)
         const pR = parseFloat(containerStyle.paddingRight)
 
@@ -49,7 +49,7 @@ export function CollectionPage(): JSX.Element {
       <ScrollArea className={cn('w-full')}>
         <div className={cn('w-full flex flex-col gap-1 pt-3')}>
           <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>
-            <div className={cn('text-accent-foreground flex-shrink-0')}>
+            <div className={cn('text-accent-foreground select-none flex-shrink-0')}>
               {' '}
               {t('showcase.sections.collections')}
             </div>

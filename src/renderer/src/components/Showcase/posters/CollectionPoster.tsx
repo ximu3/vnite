@@ -32,7 +32,7 @@ function Preview({
   return (
     <div
       className={cn(
-        'group relative overflow-hidden w-[150px] h-[150px] rounded-lg',
+        'group relative overflow-hidden w-[155px] h-[155px] rounded-lg',
         'transition-all duration-300 ease-in-out',
         'border-4 border-dashed border-primary',
         !transparentBackground && ' bg-background'

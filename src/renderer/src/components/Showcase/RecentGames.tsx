@@ -1,12 +1,12 @@
-import { cn } from '~/utils'
 import { Button } from '@ui/button'
+import { throttle } from 'lodash'
+import { useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useConfigState } from '~/hooks'
 import { sortGames } from '~/stores/game'
-import { GamePoster } from './posters/GamePoster'
+import { cn } from '~/utils'
 import { BigGamePoster } from './posters/BigGamePoster'
-import { useRef } from 'react'
-import { throttle } from 'lodash'
-import { useTranslation } from 'react-i18next'
+import { GamePoster } from './posters/GamePoster'
 
 export function RecentGames(): JSX.Element {
   const games = sortGames('record.lastRunDate', 'desc').slice(0, 15)
@@ -26,7 +26,7 @@ export function RecentGames(): JSX.Element {
   return (
     <div className={cn('w-full flex flex-col gap-1')}>
       <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>
-        <div className={cn('text-accent-foreground flex-shrink-0')}>
+        <div className={cn('text-accent-foreground select-none flex-shrink-0')}>
           {t('showcase.sections.recentGames')}
         </div>
 

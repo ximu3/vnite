@@ -89,14 +89,14 @@ export function Header({ gameId, className }: { gameId: string; className?: stri
       {/* Game name section */}
       <div className={cn('flex flex-col gap-3 grow overflow-hidden items-start justify-center')}>
         <div
-          className={cn('font-bold text-2xl text-accent-foreground cursor-pointer')}
+          className={cn('font-bold text-2xl text-accent-foreground cursor-pointer select-none')}
           onClick={() => copyWithToast(name)}
         >
           {name}
         </div>
         {showOriginalNameInGameHeader && originalName && originalName !== name && (
           <div
-            className={cn('font-bold text-accent-foreground cursor-pointer')}
+            className={cn('font-bold text-accent-foreground cursor-pointer select-none')}
             onClick={() => copyWithToast(originalName)}
           >
             {originalName}
