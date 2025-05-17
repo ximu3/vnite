@@ -60,6 +60,9 @@ export interface configDocs {
     background: {
       customBackground: boolean
     }
+    showcase: {
+      showPlayButtonOnPoster: boolean
+    }
     glass: {
       blur: number
       opacity: number
@@ -242,6 +245,9 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     },
     background: {
       customBackground: false
+    },
+    showcase: {
+      showPlayButtonOnPoster: true
     },
     glass: {
       blur: 15,

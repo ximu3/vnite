@@ -23,6 +23,10 @@
       "currentBackground": "現在の背景画像",
       "noBackground": "背景画像が設定されていません"
     },
+    "showcase": {
+      "title": "ポスターボード",
+      "showPlayButtonOnPoster": "ポスターにプレイボタンを表示"
+    },
     "glass": {
       "title": "フロストガラス",
       "blur": "ぼかし",

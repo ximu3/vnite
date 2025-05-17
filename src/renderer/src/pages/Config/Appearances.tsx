@@ -34,6 +34,9 @@ export function Appearances(): JSX.Element {
   const [customBackground, setCustomBackground] = useConfigState(
     'appearances.background.customBackground'
   )
+  const [showPlayButtonOnPoster, setShowPlayButtonOnPoster] = useConfigState(
+    'appearances.showcase.showPlayButtonOnPoster'
+  )
   const [glassBlur, setGlassBlur] = useConfigState('appearances.glass.blur')
   const [glassOpacity, setGlassOpacity] = useConfigState('appearances.glass.opacity')
 
@@ -184,6 +187,21 @@ export function Appearances(): JSX.Element {
                     {localOpacityValue.toFixed(0)}%
                   </span>
                 </div>
+              </div>
+            </div>
+          </div>
+          {/* Showcase Settings */}
+          <div className={cn('space-y-4')}>
+            <div className={cn('border-b pb-2')}>{t('appearances.showcase.title')}</div>
+            <div className={cn('pl-2')}>
+              <div className={cn('grid grid-cols-[1fr_auto] gap-4 items-center')}>
+                <div className={cn('whitespace-nowrap select-none')}>
+                  {t('appearances.showcase.showPlayButtonOnPoster')}
+                </div>
+                <Switch
+                  checked={showPlayButtonOnPoster}
+                  onCheckedChange={(checked) => setShowPlayButtonOnPoster(checked)}
+                />
               </div>
             </div>
           </div>

@@ -23,6 +23,10 @@
       "currentBackground": "当前背景图片",
       "noBackground": "未设置背景图片"
     },
+    "showcase": {
+      "title": "海报墙",
+      "showPlayButtonOnPoster": "在海报上显示游玩按钮"
+    },
     "glass": {
       "title": "毛玻璃",
       "blur": "模糊度",

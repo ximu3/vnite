@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { HoverCardAnimation } from '~/components/animations/HoverCard'
+import { useConfigState } from '~/hooks'
 import { GameNavCM } from '~/components/contextMenu/GameNavCM'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
@@ -84,6 +85,7 @@ export function GamePoster({
   const [closestEdge, setClosestEdge] = useState<Edge | null>(null)
   const [dragging, setDragging] = useState<boolean>(false)
   const [previewState, setPreviewState] = useState<PreviewState>({ type: 'idle' })
+  const [showPlayButtonOnPoster] = useConfigState('appearances.showcase.showPlayButtonOnPoster')
 
   useEffect(() => {
     if (!dragScenario || !collectionId) return
@@ -209,30 +211,31 @@ export function GamePoster({
                   >
                     {/* Play button */}
                     <div className="absolute inset-0 flex items-center justify-center flex-grow">
-                      {runningGames.includes(gameId) ? (
-                        <Button
-                          variant="secondary"
-                          className="rounded-full w-[46px] h-[46px] p-0 shadow-sm bg-secondary hover:bg-secondary/90"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            stopGame(gameId)
-                          }}
-                        >
-                          <span className="icon-[mdi--stop] text-secondary-foreground w-7 h-7"></span>
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="default"
-                          className="rounded-full w-[46px] h-[46px] p-0 bg-primary hover:bg-primary/90"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            navigateToGame(navigate, gameId, groupId || 'all')
-                            startGame(gameId)
-                          }}
-                        >
-                          <span className="icon-[mdi--play] text-primary-foreground w-7 h-7"></span>
-                        </Button>
-                      )}
+                      {showPlayButtonOnPoster &&
+                        (runningGames.includes(gameId) ? (
+                          <Button
+                            variant="secondary"
+                            className="rounded-full w-[46px] h-[46px] p-0 shadow-sm bg-secondary hover:bg-secondary/90"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              stopGame(gameId)
+                            }}
+                          >
+                            <span className="icon-[mdi--stop] text-secondary-foreground w-7 h-7"></span>
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="default"
+                            className="rounded-full w-[46px] h-[46px] p-0 bg-primary hover:bg-primary/90"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              navigateToGame(navigate, gameId, groupId || 'all')
+                              startGame(gameId)
+                            }}
+                          >
+                            <span className="icon-[mdi--play] text-primary-foreground w-7 h-7"></span>
+                          </Button>
+                        ))}
                     </div>
 
                     {/* Game info */}

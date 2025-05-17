@@ -23,6 +23,10 @@
       "currentBackground": "當前背景圖片",
       "noBackground": "未設置背景圖片"
     },
+    "showcase": {
+      "title": "海報牆",
+      "showPlayButtonOnPoster": "在海報上顯示遊玩按鈕"
+    },
     "glass": {
       "title": "磨砂玻璃",
       "blur": "模糊度",
