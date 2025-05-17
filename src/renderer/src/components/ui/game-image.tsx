@@ -46,12 +46,12 @@ export const GameImage: React.FC<GameImageProps> = ({
         className={cn(
           'transition-opacity duration-300',
           shadow && 'shadow-md shadow-black/50',
-          isLoaded ? 'opacity-100' : 'opacity-0',
+          // isLoaded ? 'opacity-100' : 'opacity-0',
           flips && '-scale-y-100',
           className
         )}
-        loading="lazy"
-        decoding="async"
+        // loading="lazy"
+        // decoding="async"
         onLoad={() => {
           setIsLoaded(true)
           onUpdated?.()

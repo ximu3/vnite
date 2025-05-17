@@ -123,17 +123,22 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
           gameId={gameId}
           key={`${gameId}-background-1`}
           type="background"
-          className={cn('w-full h-auto object-cover')}
+          className={cn('w-full h-auto object-cover z-[1]')}
           onError={() => setIsImageError(true)}
           onUpdated={() => setIsImageError(false)}
           fallback={<div className={cn('w-full h-full bg-background/15')} />}
+          style={{
+            maskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)'
+          }}
         />
         <GameImage
           gameId={gameId}
           key={`${gameId}-background-2`}
           type="background"
-          flips
-          className={cn('w-full h-auto object-cover')}
+          className={cn('w-full h-full absolute top-0 object-cover z-0')}
+          style={{
+            opacity: 0.3
+          }}
           onError={() => setIsImageError(true)}
           onUpdated={() => setIsImageError(false)}
           fallback={<div className={cn('w-full h-full bg-background/15')} />}

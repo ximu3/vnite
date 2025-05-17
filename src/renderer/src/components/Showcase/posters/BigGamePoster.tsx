@@ -87,7 +87,7 @@ export function BigGamePoster({
                   {runningGames.includes(gameId) ? (
                     <Button
                       variant="secondary"
-                      className="rounded-full w-[50px] h-[50px] p-0"
+                      className="rounded-full w-[46px] h-[46px] p-0 bg-secondary hover:bg-secondary/90"
                       onClick={(e) => {
                         e.stopPropagation()
                         stopGame(gameId)
@@ -98,7 +98,7 @@ export function BigGamePoster({
                   ) : (
                     <Button
                       variant="default"
-                      className="rounded-full w-[50px] h-[50px] p-0"
+                      className="rounded-full w-[46px] h-[46px] p-0 bg-primary hover:bg-primary/90"
                       onClick={(e) => {
                         e.stopPropagation()
                         navigateToGame(navigate, gameId, groupId || 'all')
