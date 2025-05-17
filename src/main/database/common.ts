@@ -184,7 +184,22 @@ export class DBManager {
 
   static async setAllDocs(dbName: string, docs: any[]): Promise<void> {
     const db = this.getInstance(dbName)
-    await db.bulkDocs(docs)
+
+    // Use Promise.all to process all upsert operations in parallel
+    await Promise.all(
+      docs.map((doc) => {
+        if (!doc._id) {
+          // If there's no _id, directly create a new document using post
+          return db.post(doc)
+        }
+
+        // Use upsert to handle documents with existing _id
+        return db.upsert(doc._id, (existingDoc) => {
+          // Preserve other fields that might exist in the current document
+          return { ...existingDoc, ...doc }
+        })
+      })
+    )
   }
 
   /**

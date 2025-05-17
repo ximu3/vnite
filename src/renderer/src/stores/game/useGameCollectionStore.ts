@@ -44,12 +44,61 @@ export interface GameCollectionState {
   removeGamesFromAllCollections: (gameIds: string[]) => void
 }
 
+// Helper function: Determine if rebalancing is needed
+function _shouldRebalance(collections: gameCollectionDoc[]): boolean {
+  // Sort
+  const sorted = [...collections].sort((a, b) => a.sort - b.sort)
+
+  // Check if the gap between adjacent elements' sort values is too small
+  for (let i = 1; i < sorted.length; i++) {
+    if (sorted[i].sort - sorted[i - 1].sort < 1) {
+      return true
+    }
+  }
+  return false
+}
+
+// Helper function: Rebalance sort values for all collections
+function _rebalanceCollections(collections: gameCollectionDocs): void {
+  const sortedCollections = Object.values(collections).sort((a, b) => a.sort - b.sort)
+
+  // Reassign sort values starting from 100 with intervals of 100
+  sortedCollections.forEach((collection, index) => {
+    collections[collection._id].sort = (index + 1) * 100
+  })
+}
+
+// Initialize sort values function
+const initializeSortValues = (collections: gameCollectionDocs): gameCollectionDocs => {
+  const updatedCollections = { ...collections }
+
+  // Check if any collection is missing the sort field
+  const needsInitialization = Object.values(collections).some((col) => col.sort === undefined)
+
+  if (needsInitialization) {
+    // Sort by object keys (maintain original order)
+    const collectionIds = Object.keys(collections)
+
+    // Assign sort values for each collection, starting from 100, incrementing by 100
+    collectionIds.forEach((id, index) => {
+      updatedCollections[id] = {
+        ...updatedCollections[id],
+        sort: (index + 1) * 100
+      }
+    })
+  }
+
+  return updatedCollections
+}
+
 export const useGameCollectionStore = create<GameCollectionState>((set, get) => ({
   documents: {} as gameCollectionDocs,
   initialized: false,
 
   setDocuments: (data: gameCollectionDocs): void => {
-    set({ documents: data })
+    // Ensure all collections have sort values
+    const initializedData = initializeSortValues(data)
+    set({ documents: initializedData })
   },
 
   setDocument: (docId: string, data: gameCollectionDoc): void => {
@@ -79,7 +128,6 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
     return value !== undefined ? value : getValueByPath(DEFAULT_GAME_COLLECTION_VALUES, path)
   },
 
-  // 设置游戏本地特定路径的值
   setGameCollectionValue: async <Path extends Paths<gameCollectionDoc, { bracketNotation: true }>>(
     collectionId: string,
     path: Path,
@@ -98,19 +146,29 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
     await syncTo('game-collection', collectionId, get().documents[collectionId])
   },
 
-  initializeStore: (data): void =>
+  initializeStore: (data): void => {
+    // Initialize sort values
+    const initializedData = initializeSortValues(data)
     set({
-      documents: data,
+      documents: initializedData,
       initialized: true
-    }),
+    })
+  },
 
   addCollection: async (name: string, gameIds?: string[]): Promise<string> => {
     try {
       const id = await ipcInvoke<string>('generate-uuid')
 
+      // Calculate new sort value
+      const collections = Object.values(get().documents)
+      const highestSort =
+        collections.length > 0 ? Math.max(...collections.map((col) => col.sort || 0)) : 0
+      const newSort = highestSort + 100 // Use 100 as interval for easier insertion later
+
       const newCollection: gameCollectionDoc = {
         _id: id,
         name,
+        sort: newSort,
         games: gameIds ? [...gameIds] : []
       }
 
@@ -130,6 +188,7 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
       return ''
     }
   },
+
   removeCollection: async (id: string): Promise<void> => {
     try {
       set((state) => {
@@ -147,6 +206,7 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
       }
     }
   },
+
   renameCollection: async (id: string, name: string): Promise<void> => {
     try {
       set((state) => {
@@ -167,6 +227,7 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
       }
     }
   },
+
   reorderCollections: async (
     srcId: string,
     destId: string,
@@ -176,17 +237,55 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
       if (srcId === destId) return
 
       set((state) => {
-        const insertOffset = edge === 'back' ? 1 : 0
-        const prevDocuments = { ...state.documents }
-        const newDocuments: gameCollectionDocs = {}
-        const keys = Object.keys(prevDocuments)
-        const [srcKey] = keys.splice(keys.indexOf(srcId), 1)
-        keys.splice(keys.indexOf(destId) + insertOffset, 0, srcKey)
-        keys.forEach((id) => {
-          newDocuments[id] = prevDocuments[id]
-        })
-        return { documents: newDocuments }
+        const collections = { ...state.documents }
+        const srcCollection = collections[srcId]
+        const destCollection = collections[destId]
+
+        if (!srcCollection || !destCollection) return state
+
+        // Get all collections sorted by sort value
+        const sortedCollections = Object.values(collections).sort((a, b) => a.sort - b.sort)
+
+        // Find target position
+        let newSort
+        if (edge === 'front') {
+          // Calculate sort value for front insertion
+          if (sortedCollections[0]._id === destId) {
+            // If target is the first one, set smaller sort value
+            newSort = destCollection.sort - 100
+          } else {
+            // Find the element before target
+            const destIndex = sortedCollections.findIndex((c) => c._id === destId)
+            const prevCollection = sortedCollections[destIndex - 1]
+            newSort = (prevCollection.sort + destCollection.sort) / 2
+          }
+        } else {
+          // Back insertion
+          if (sortedCollections[sortedCollections.length - 1]._id === destId) {
+            // If target is the last one, set larger sort value
+            newSort = destCollection.sort + 100
+          } else {
+            // Find the element after target
+            const destIndex = sortedCollections.findIndex((c) => c._id === destId)
+            const nextCollection = sortedCollections[destIndex + 1]
+            newSort = (destCollection.sort + nextCollection.sort) / 2
+          }
+        }
+
+        // Update source collection's sort value
+        collections[srcId] = {
+          ...srcCollection,
+          sort: newSort
+        }
+
+        // If sort values become too close or too large, trigger rebalancing
+        if (Math.abs(newSort) > 10000 || _shouldRebalance(Object.values(collections))) {
+          _rebalanceCollections(collections)
+        }
+
+        return { documents: collections }
       })
+
       await syncTo('game-collection', '#all', get().documents)
     } catch (error) {
       console.error('Failed to reorder collections:', error)
@@ -197,6 +296,7 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
       }
     }
   },
+
   reorderGamesInCollection: async (
     collectionId: string,
     srcId: string,
@@ -207,12 +307,12 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
       if (srcId === destId) return
 
       set((state) => {
-        const insertOffset = edge === 'back' ? 1 : 0
         const newDocuments = { ...state.documents }
         const collection = newDocuments[collectionId]
         if (!collection) return state
         const games = [...collection.games]
 
+        const insertOffset = edge === 'back' ? 1 : 0
         const [srcKey] = games.splice(games.indexOf(srcId), 1)
         games.splice(games.indexOf(destId) + insertOffset, 0, srcKey)
 
@@ -230,6 +330,7 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
       }
     }
   },
+
   addGameToCollection: async (collectionId: string, gameId: string): Promise<void> => {
     try {
       set((state) => {
@@ -255,6 +356,7 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
       }
     }
   },
+
   addGamesToCollection: async (collectionId: string, gameIds: string[]): Promise<void> => {
     try {
       set((state) => {
@@ -265,12 +367,12 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
           throw new Error('Collection not found')
         }
 
-        // Use Set to Avoid Adding the Same Game ID Over and Over Again
+        // Use Set to avoid duplicate game IDs
         const updatedGames = new Set([...collection.games, ...gameIds])
 
         const newCollection = {
           ...collection,
-          games: Array.from(updatedGames) // Converting a Set back to an Array
+          games: Array.from(updatedGames) // Convert Set back to array
         }
 
         newDocuments[collectionId] = newCollection
@@ -286,6 +388,7 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
       }
     }
   },
+
   removeGameFromCollection: async (collectionId: string, gameId: string): Promise<void> => {
     try {
       set((state) => {
@@ -314,6 +417,7 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
       }
     }
   },
+
   removeGamesFromCollection: async (collectionId: string, gameIds: string[]): Promise<void> => {
     try {
       set((state) => {
@@ -342,6 +446,7 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
       }
     }
   },
+
   removeGameFromAllCollections: async (gameId: string): Promise<void> => {
     set((state) => {
       const newDocuments: gameCollectionDocs = { ...state.documents }
@@ -357,6 +462,7 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
     })
     await syncTo('game-collection', '#all', get().documents)
   },
+
   removeGamesFromAllCollections: async (gameIds: string[]): Promise<void> => {
     set((state) => {
       const newDocuments: gameCollectionDocs = { ...state.documents }

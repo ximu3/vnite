@@ -79,6 +79,7 @@ export interface gameCollectionDocs {
 export interface gameCollectionDoc {
   _id: string
   name: string
+  sort: number
   games: string[]
 }
 
@@ -157,6 +158,7 @@ export const DEFAULT_GAME_LOCAL_VALUES: Readonly<gameLocalDoc> = {
 export const DEFAULT_GAME_COLLECTION_VALUES: Readonly<gameCollectionDoc> = {
   _id: '',
   name: '',
+  sort: 0,
   games: []
 } as const
 
