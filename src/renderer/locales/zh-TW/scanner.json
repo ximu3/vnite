@@ -54,6 +54,11 @@
         "description": "確定要刪除掃描目錄\"{{path}}\"嗎？此操作無法撤銷。",
         "cancel": "取消",
         "confirm": "確認刪除"
+      },
+      "tooltips": {
+        "scan": "啟動掃描",
+        "edit": "編輯",
+        "delete": "刪除"
       }
     }
   },
