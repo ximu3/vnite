@@ -11,7 +11,8 @@
     "closeMainPanel": "メインパネルを閉じる",
     "action": "アクション",
     "quitApp": "vniteを終了",
-    "minimizeToTray": "トレイに最小化"
+    "minimizeToTray": "トレイに最小化",
+    "hideWindowAfterGameStart": "ゲーム起動後にトレイに最小化する"
   },
   "appearances": {
     "title": "外観",

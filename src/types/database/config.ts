@@ -3,6 +3,7 @@ export interface configDocs {
     openAtLogin: boolean
     quitToTray: boolean
     language: string
+    hideWindowAfterGameStart: boolean
   }
   game: {
     scraper: {
@@ -203,7 +204,8 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
   general: {
     openAtLogin: false,
     quitToTray: false,
-    language: ''
+    language: '',
+    hideWindowAfterGameStart: true
   },
   game: {
     scraper: {

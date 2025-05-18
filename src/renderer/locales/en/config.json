@@ -11,7 +11,8 @@
     "closeMainPanel": "Close Main Panel",
     "action": "Action",
     "quitApp": "Quit vnite",
-    "minimizeToTray": "Minimize to Tray"
+    "minimizeToTray": "Minimize to Tray",
+    "hideWindowAfterGameStart": "Minimize to tray after game launch"
   },
   "appearances": {
     "title": "Appearances",
