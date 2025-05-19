@@ -9,10 +9,10 @@ import {
   SelectValue
 } from '@ui/select'
 import { Switch } from '@ui/switch'
+import { useTranslation } from 'react-i18next'
 import { useConfigState } from '~/hooks'
 import { cn, ipcInvoke } from '~/utils'
 import { useTheme } from '../../components/ThemeProvider'
-import { useTranslation } from 'react-i18next'
 
 export function General(): JSX.Element {
   const [openAtLogin, setOpenAtLogin] = useConfigState('general.openAtLogin')
@@ -21,6 +21,9 @@ export function General(): JSX.Element {
   const { t } = useTranslation('config')
   const { i18n } = useTranslation()
   const [language, setLanguage] = useConfigState('general.language')
+  const [hideWindowAfterGameStart, setHideWindowAfterGameStart] = useConfigState(
+    'general.hideWindowAfterGameStart'
+  )
 
   const languageOptions = [
     { value: 'zh-CN', label: '简体中文' },
@@ -135,6 +138,17 @@ export function General(): JSX.Element {
                 </SelectGroup>
               </SelectContent>
             </Select>
+          </div>
+
+          {/* Run game behavior */}
+          <div className={cn('whitespace-nowrap select-none self-center')}>
+            {t('general.hideWindowAfterGameStart')}
+          </div>
+          <div className={cn('flex justify-end')}>
+            <Switch
+              checked={hideWindowAfterGameStart}
+              onCheckedChange={(checked) => setHideWindowAfterGameStart(checked)}
+            />
           </div>
         </div>
       </CardContent>

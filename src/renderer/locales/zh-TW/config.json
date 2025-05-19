@@ -11,7 +11,8 @@
     "closeMainPanel": "關閉主面板",
     "action": "操作",
     "quitApp": "退出vnite",
-    "minimizeToTray": "最小化到系統匣"
+    "minimizeToTray": "最小化到系統匣",
+    "hideWindowAfterGameStart": "啟動遊戲後最小化到系統匣"
   },
   "appearances": {
     "title": "外觀",
