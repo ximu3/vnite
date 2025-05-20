@@ -1,0 +1,53 @@
+{
+  "steamImporter": {
+    "dialog": {
+      "title": "",
+      "description": ""
+    },
+    "input": {
+      "steamId": "",
+      "fetch": "",
+      "searching": ""
+    },
+    "status": {
+      "initial": {
+        "title": "",
+        "description": ""
+      },
+      "ready": {
+        "title": "",
+        "description": ""
+      },
+      "loading": {
+        "title": "",
+        "description": ""
+      },
+      "empty": {
+        "title": "",
+        "description": ""
+      }
+    },
+    "gameList": {
+      "selectAll": "",
+      "search": "",
+      "hours": ""
+    },
+    "import": {
+      "button": "",
+      "preparing": "",
+      "progress": {
+        "title": "",
+        "completed": "",
+        "error": "",
+        "summary": ""
+      }
+    },
+    "notifications": {
+      "fetchFailed": "",
+      "selectAtLeastOne": "",
+      "allImported": "",
+      "importFailed": "",
+      "waitForCompletion": ""
+    }
+  }
+}

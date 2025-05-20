@@ -1,0 +1,108 @@
+{
+  "gameAdder": {
+    "dialog": {
+      "title": "게임 추가"
+    },
+    "notifications": {
+      "loading": "게임을 추가하는 중입니다, 잠시만 기다려주세요"
+    },
+    "gameList": {
+      "columns": {
+        "name": "게임 이름",
+        "releaseDate": "발매일",
+        "developers": "개발자"
+      },
+      "unknown": "알 수 없음",
+      "selected": "선택한 게임: {{name}}"
+    },
+    "backgrounds": {
+      "title": "배경 이미지",
+      "noImages": "이미지 없음",
+      "notifications": {
+        "loading": "이미지를 얻어오는 중…",
+        "success": "이미지를 성공적으로 불러왔습니다",
+        "error": "이미지를 얻는데 실패했습니다: {{message}}",
+        "noImages": "",
+        "adding": "",
+        "addSuccess": "",
+        "addError": ""
+      }
+    },
+    "search": {
+      "dataSource": "",
+      "gameName": "",
+      "gameNamePlaceholder": "",
+      "gameId": "",
+      "gameIdPlaceholder": "",
+      "searchButton": "",
+      "recognizeButton": "",
+      "notifications": {
+        "enterName": "",
+        "searching": "",
+        "found": "",
+        "notFound": "",
+        "searchError": "",
+        "enterId": "",
+        "recognizing": "",
+        "recognized": "",
+        "invalidId": "",
+        "recognizeError": ""
+      },
+      "dataSources": {
+        "label": "",
+        "steam": "",
+        "vndb": "",
+        "bangumi": "",
+        "igdb": "",
+        "ymgal": "",
+        "dlsite": ""
+      }
+    }
+  },
+  "gameBatchAdder": {
+    "dialog": {
+      "title": "",
+      "waitForCompletion": ""
+    },
+    "status": {
+      "loading": "",
+      "success": "",
+      "error": "",
+      "waiting": "",
+      "existed": ""
+    },
+    "table": {
+      "columns": {
+        "dataSource": "",
+        "name": "",
+        "id": "",
+        "status": "",
+        "actions": ""
+      }
+    },
+    "form": {
+      "dataSource": "",
+      "namePlaceholder": "",
+      "idPlaceholder": ""
+    },
+    "actions": {
+      "retry": "",
+      "add": "",
+      "delete": "",
+      "addAll": "",
+      "adding": ""
+    },
+    "notifications": {
+      "addingGame": "",
+      "gameAdded": "",
+      "addingGames": "",
+      "gamesAdded": "",
+      "gameAddFailed": ""
+    },
+    "errors": {
+      "gameNotFound": "",
+      "gameIsBeingAdded": "",
+      "gameAlreadyAdded": ""
+    }
+  }
+}
