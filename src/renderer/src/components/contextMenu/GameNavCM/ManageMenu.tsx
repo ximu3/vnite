@@ -1,18 +1,18 @@
 import {
   ContextMenuGroup,
   ContextMenuItem,
+  ContextMenuPortal,
   ContextMenuSeparator,
   ContextMenuSub,
   ContextMenuSubContent,
-  ContextMenuSubTrigger,
-  ContextMenuPortal
+  ContextMenuSubTrigger
 } from '@ui/context-menu'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { DeleteGameAlert } from '~/components/Game/Config/ManageMenu/DeleteGameAlert'
 import { useGameLocalState, useGameState } from '~/hooks'
 import { useGameAdderStore } from '~/pages/GameAdder/store'
 import { ipcInvoke } from '~/utils'
-import { useTranslation } from 'react-i18next'
 
 export function ManageMenu({
   gameId,
@@ -25,6 +25,7 @@ export function ManageMenu({
 }): JSX.Element {
   const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
   const [gameName] = useGameState(gameId, 'metadata.name')
+  const [nsfw, setNsfw] = useGameState(gameId, 'apperance.nsfw')
   const setIsOpen = useGameAdderStore((state) => state.setIsOpen)
   const setName = useGameAdderStore((state) => state.setName)
   const setDbId = useGameAdderStore((state) => state.setDbId)
@@ -40,6 +41,9 @@ export function ManageMenu({
             </ContextMenuItem>
             <ContextMenuItem onClick={openPlayingTimeEditorDialog}>
               {t('detail.manage.editPlayTime')}
+            </ContextMenuItem>
+            <ContextMenuItem onClick={() => setNsfw(!nsfw)}>
+              {nsfw ? t('detail.manage.unmarkNSFW') : t('detail.manage.markNSFW')}
             </ContextMenuItem>
             <ContextMenuItem
               onClick={() => {

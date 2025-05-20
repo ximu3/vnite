@@ -307,6 +307,8 @@
       "rename": "Rename",
       "editLogo": "Edit Logo",
       "editPlayTime": "Edit Play Time",
+      "markNSFW": "Mark as NSFW",
+      "unmarkNSFW": "Unmark NSFW",
       "downloadMetadata": "Download Metadata",
       "createShortcut": "Create Shortcut",
       "browseLocalFiles": "Browse Local Files",

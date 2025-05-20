@@ -7,13 +7,13 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger
 } from '@ui/dropdown-menu'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { useGameState, useGameLocalState } from '~/hooks'
+import { useGameLocalState, useGameState } from '~/hooks'
 import { useGameAdderStore } from '~/pages/GameAdder/store'
 import { ipcInvoke } from '~/utils'
-import { DeleteGameAlert } from './DeleteGameAlert'
 import { useGameDetailStore } from '../../store'
-import { useTranslation } from 'react-i18next'
+import { DeleteGameAlert } from './DeleteGameAlert'
 
 export function ManageMenu({
   gameId,
@@ -28,6 +28,7 @@ export function ManageMenu({
   const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
   const [markPath] = useGameLocalState(gameId, 'utils.markPath')
   const [gameName] = useGameState(gameId, 'metadata.name')
+  const [nsfw, setNsfw] = useGameState(gameId, 'apperance.nsfw')
   const setIsEditingLogo = useGameDetailStore((state) => state.setIsEditingLogo)
   const setIsOpen = useGameAdderStore((state) => state.setIsOpen)
   const setName = useGameAdderStore((state) => state.setName)
@@ -52,6 +53,10 @@ export function ManageMenu({
 
             <DropdownMenuItem onClick={openPlayingTimeEditorDialog}>
               {t('detail.manage.editPlayTime')}
+            </DropdownMenuItem>
+
+            <DropdownMenuItem onClick={() => setNsfw(!nsfw)}>
+              {nsfw ? t('detail.manage.unmarkNSFW') : t('detail.manage.markNSFW')}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {

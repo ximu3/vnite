@@ -69,6 +69,7 @@ export interface gameDoc {
       size: number
       visible: boolean
     }
+    nsfw: boolean
   }
 }
 
@@ -204,7 +205,8 @@ export const DEFAULT_GAME_VALUES: Readonly<gameDoc> = {
       },
       size: 100,
       visible: true
-    }
+    },
+    nsfw: false
   }
 } as const
 

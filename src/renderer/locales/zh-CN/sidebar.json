@@ -7,6 +7,8 @@
     "transformer": "转换器"
   },
   "actions": {
+    "enableNSFWBlur":"屏蔽 NSFW 内容",
+    "disableNSFWBlur":"显示 NSFW 内容",
     "darkMode": "暗色模式",
     "lightMode": "亮色模式",
     "cloudSyncDisabled": "云同步未开启",

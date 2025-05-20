@@ -9,11 +9,10 @@ import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
 import { GameImage } from '~/components/ui/game-image'
-import { useGameState } from '~/hooks'
+import { useConfigState, useGameState } from '~/hooks'
 import { useRunningGames } from '~/pages/Library/store'
 import { useGameRegistry } from '~/stores/game'
 import { cn, navigateToGame, startGame, stopGame } from '~/utils'
-import { useConfigState } from '~/hooks'
 
 export function BigGamePoster({
   gameId,
@@ -29,6 +28,8 @@ export function BigGamePoster({
   const runningGames = useRunningGames((state) => state.runningGames)
   const [playTime] = useGameState(gameId, 'record.playTime')
   const [gameName] = useGameState(gameId, 'metadata.name')
+  const [nsfw] = useGameState(gameId, 'apperance.nsfw')
+  const [enableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = useState(false)
   const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = useState(false)
   const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = useState(false)
@@ -58,6 +59,7 @@ export function BigGamePoster({
                   onClick={() => navigateToGame(navigate, gameId, groupId)}
                   gameId={gameId}
                   type="background"
+                  blur={nsfw && enableNSFWBlur}
                   className={cn(
                     'h-[222px] aspect-[3/2] cursor-pointer select-none object-contain rounded-lg bg-accent/30',
                     className

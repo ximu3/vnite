@@ -5,13 +5,12 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { HoverCardAnimation } from '~/components/animations/HoverCard'
-import { useConfigState } from '~/hooks'
 import { GameNavCM } from '~/components/contextMenu/GameNavCM'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
 import { useDragContext } from '~/components/Showcase/CollectionGames'
-import { useGameState } from '~/hooks'
+import { useConfigState, useGameState } from '~/hooks'
 import { useRunningGames } from '~/pages/Library/store'
 import { useGameCollectionStore, useGameRegistry } from '~/stores/game'
 import { cn, navigateToGame, startGame, stopGame } from '~/utils'
@@ -76,6 +75,8 @@ export function GamePoster({
   const collectionId = groupId?.split(':')[1]
   const [playTime] = useGameState(gameId, 'record.playTime')
   const [gameName] = useGameState(gameId, 'metadata.name')
+  const [nsfw] = useGameState(gameId, 'apperance.nsfw')
+  const [enableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = useState(false)
   const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = useState(false)
   const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = useState(false)
@@ -180,6 +181,7 @@ export function GamePoster({
                       draggable="false"
                       gameId={gameId}
                       type="cover"
+                      blur={nsfw && enableNSFWBlur}
                       alt={gameId}
                       className={cn(
                         'w-[148px] aspect-[2/3] cursor-pointer select-none object-cover rounded-lg',

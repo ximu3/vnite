@@ -1,15 +1,15 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
-import { Switch } from '@ui/switch'
-import { Slider } from '@ui/slider'
 import { Button } from '@ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@ui/hover-card'
-import { useConfigState } from '~/hooks'
+import { Slider } from '@ui/slider'
+import { Switch } from '@ui/switch'
+import { debounce } from 'lodash'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useConfigState } from '~/hooks'
+import { useAttachmentStore } from '~/stores'
 import { cn } from '~/utils'
 import { ipcInvoke } from '~/utils/ipc'
-import { useAttachmentStore } from '~/stores'
-import { debounce } from 'lodash'
-import { useCallback, useState, useEffect } from 'react'
 
 export function Appearances(): JSX.Element {
   const { t } = useTranslation('config')
@@ -25,6 +25,9 @@ export function Appearances(): JSX.Element {
   )
   const [showThemeSwitchInSidebar, setShowThemeSwitchInSidebar] = useConfigState(
     'appearances.sidebar.showThemeSwitcher'
+  )
+  const [showNSFWBlurSwitchInSidebar, setShowNSFWBlurSwitchInSidebar] = useConfigState(
+    'appearances.sidebar.showNSFWBlurSwitcher'
   )
   const [highlightLocalGames, setHighlightLocalGames] = useConfigState(
     'game.gameList.highlightLocalGames'
@@ -272,6 +275,14 @@ export function Appearances(): JSX.Element {
                 <Switch
                   checked={showThemeSwitchInSidebar}
                   onCheckedChange={(checked) => setShowThemeSwitchInSidebar(checked)}
+                />
+
+                <div className={cn('whitespace-nowrap select-none')}>
+                  {t('appearances.sidebar.showNSFWBlurSwitcher')}
+                </div>
+                <Switch
+                  checked={showNSFWBlurSwitchInSidebar}
+                  onCheckedChange={(checked) => setShowNSFWBlurSwitchInSidebar(checked)}
                 />
               </div>
             </div>

@@ -7,6 +7,8 @@
     "transformer": "Transformer"
   },
   "actions": {
+    "enableNSFWBlur":"Hide NSFW Content",
+    "disableNSFWBlur":"Show NSFW Content",
     "darkMode": "Dark Mode",
     "lightMode": "Light Mode",
     "cloudSyncDisabled": "Cloud Sync Disabled",

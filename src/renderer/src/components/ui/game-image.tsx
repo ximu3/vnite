@@ -1,4 +1,4 @@
-import React, { useState, ImgHTMLAttributes } from 'react'
+import React, { ImgHTMLAttributes, useState } from 'react'
 import { useAttachmentStore } from '~/stores'
 import { cn } from '~/utils'
 
@@ -9,6 +9,7 @@ interface GameImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src'
   fallback?: React.ReactNode
   shadow?: boolean
   flips?: boolean
+  blur?: boolean
 }
 
 export const GameImage: React.FC<GameImageProps> = ({
@@ -20,6 +21,7 @@ export const GameImage: React.FC<GameImageProps> = ({
   fallback = <div>No Pictures</div>,
   shadow = false,
   flips = false,
+  blur = false,
   ...imgProps
 }) => {
   const [isLoaded, setIsLoaded] = useState(false)
@@ -48,6 +50,7 @@ export const GameImage: React.FC<GameImageProps> = ({
           shadow && 'shadow-md shadow-black/50',
           // isLoaded ? 'opacity-100' : 'opacity-0',
           flips && '-scale-y-100',
+          blur && 'filter blur-xl',
           className
         )}
         // loading="lazy"
