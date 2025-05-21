@@ -1,0 +1,514 @@
+{
+  "librarybar": {
+    "home": "",
+    "collections": "",
+    "search": {
+      "placeholder": "",
+      "tooltip": ""
+    },
+    "groupBy": "",
+    "groups": {
+      "none": "",
+      "collection": "",
+      "developers": "",
+      "genres": "",
+      "playStatus": ""
+    }
+  },
+  "list": {
+    "search": {
+      "results": ""
+    },
+    "recent": {
+      "title": "",
+      "hide": ""
+    },
+    "filter": {
+      "results": "",
+      "noResults": ""
+    },
+    "all": {
+      "title": "",
+      "sortBy": "",
+      "sortOptions": {
+        "name": "",
+        "releaseDate": "",
+        "lastRunDate": "",
+        "addDate": "",
+        "playTime": ""
+      }
+    },
+    "playStatus": {
+      "adjustOrder": ""
+    }
+  },
+  "filter": {
+    "title": "",
+    "panel": {
+      "title": "",
+      "clear": "",
+      "releaseDate": "",
+      "clearFilter": "",
+      "developers": "",
+      "publishers": "",
+      "genres": "",
+      "platforms": "",
+      "tags": "",
+      "extraInfo": ""
+    },
+    "combobox": {
+      "select": "",
+      "search": "",
+      "notFound": ""
+    }
+  },
+  "showcase": {
+    "welcome": "",
+    "sections": {
+      "recentGames": "",
+      "collections": "",
+      "allGames": ""
+    },
+    "sorting": {
+      "title": "",
+      "label": "",
+      "options": {
+        "name": "",
+        "releaseDate": "",
+        "lastRunDate": "",
+        "addDate": "",
+        "playTime": ""
+      }
+    },
+    "gameCard": {
+      "noPlayRecord": "",
+      "neverRun": "",
+      "playRecord": "",
+      "totalPlayTime": "",
+      "lastRunDate": "",
+      "neverRunShort": ""
+    },
+    "collection": {
+      "contextMenu": {
+        "rename": "",
+        "delete": "",
+        "deleteTitle": "",
+        "deleteConfirm": ""
+      }
+    }
+  },
+  "detail": {
+    "tabs": {
+      "overview": "",
+      "record": "",
+      "save": "",
+      "memory": ""
+    },
+    "logoManagePanel": {
+      "resetPosition": "",
+      "resetSize": "",
+      "hideLogo": "",
+      "showLogo": ""
+    },
+    "header": {
+      "playStatus": {
+        "label": "",
+        "tooltip": ""
+      },
+      "rating": {
+        "title": "",
+        "errors": {
+          "invalidNumber": "",
+          "negative": "",
+          "tooHigh": ""
+        },
+        "success": "",
+        "warning": "",
+        "cleared": "",
+        "tooltip": ""
+      }
+    },
+    "actions": {
+      "start": "",
+      "stop": ""
+    },
+    "save": {
+      "table": {
+        "date": "",
+        "note": "",
+        "actions": ""
+      },
+      "empty": "",
+      "actions": {
+        "switch": "",
+        "delete": ""
+      },
+      "notifications": {
+        "locked": "",
+        "deleteLoading": "",
+        "deleteSuccess": "",
+        "deleteError": "",
+        "switchLoading": "",
+        "switchSuccess": "",
+        "switchError": "",
+        "noSavePath": ""
+      }
+    },
+    "filter": {
+      "added": ""
+    },
+    "record": {
+      "card": {
+        "title": "",
+        "noData": "",
+        "playStats": "",
+        "immersion": "",
+        "history": ""
+      }
+    },
+    "chart": {
+      "title": "",
+      "label": "",
+      "selectRange": "",
+      "dateError": "",
+      "rangeLimit": "",
+      "noData": ""
+    },
+    "overview": {
+      "sections": {
+        "description": "",
+        "tags": "",
+        "basicInfo": "",
+        "extraInfo": "",
+        "relatedSites": ""
+      },
+      "description": {
+        "empty": "",
+        "htmlHint": "",
+        "search": {
+          "loading": "",
+          "success": "",
+          "error": "",
+          "notFound": "",
+          "searchError": "",
+          "selectRequired": ""
+        }
+      },
+      "tags": {
+        "empty": "",
+        "separator": "",
+        "search": {
+          "loading": "",
+          "success": "",
+          "error": "",
+          "notFound": "",
+          "searchError": "",
+          "selectRequired": ""
+        }
+      },
+      "search": {
+        "placeholder": ""
+      },
+      "relatedSites": {
+        "empty": "",
+        "addLink": "",
+        "nameLabel": "",
+        "urlLabel": ""
+      },
+      "information": {
+        "fields": {
+          "originalName": "",
+          "localizedName": "",
+          "developers": "",
+          "publishers": "",
+          "releaseDate": "",
+          "platforms": "",
+          "genres": ""
+        },
+        "empty": "",
+        "hints": {
+          "developers": "",
+          "publishers": "",
+          "platforms": "",
+          "genres": ""
+        }
+      },
+      "extraInformation": {
+        "title": "",
+        "valueTip": "",
+        "enterKey": "",
+        "enterValue": "",
+        "addNew": "",
+        "empty": "",
+        "emptyValue": "",
+        "fields": {
+          "director": "",
+          "scenario": "",
+          "illustration": "",
+          "music": "",
+          "engine": ""
+        },
+        "search": {
+          "loading": "",
+          "success": "",
+          "error": "",
+          "notFound": "",
+          "searchError": "",
+          "selectRequired": ""
+        }
+      },
+      "record": {
+        "title": "",
+        "playTime": "",
+        "lastRunDate": "",
+        "playStatus": "",
+        "rating": "",
+        "neverRun": ""
+      }
+    },
+    "memory": {
+      "actions": {
+        "add": "",
+        "addCover": "",
+        "changeCover": "",
+        "adjustCover": "",
+        "addText": "",
+        "editText": "",
+        "delete": ""
+      },
+      "export": {
+        "exportAs": "",
+        "image": "",
+        "markdown": "",
+        "toClipboard": "",
+        "saveAs": ""
+      },
+      "notifications": {
+        "deleting": "",
+        "deleteSuccess": "",
+        "deleteError": "",
+        "selectFileError": "",
+        "imageNotFound": "",
+        "getImageError": "",
+        "imageCopied": "",
+        "imageCopyError": "",
+        "markdownCopied": "",
+        "markdownCopyError": ""
+      },
+      "dialog": {
+        "markdownHint": ""
+      }
+    },
+    "config": {
+      "properties": ""
+    },
+    "manage": {
+      "title": "",
+      "rename": "",
+      "editLogo": "",
+      "editPlayTime": "",
+      "downloadMetadata": "",
+      "createShortcut": "",
+      "browseLocalFiles": "",
+      "delete": "",
+      "notifications": {
+        "shortcutCreated": "",
+        "shortcutError": "",
+        "gamePathNotSet": ""
+      }
+    },
+    "deleteAlert": {
+      "title": "",
+      "description": "",
+      "notifications": {
+        "deleting": "",
+        "deleted": "",
+        "error": ""
+      }
+    },
+    "playTimeEditor": {
+      "expressionSupport": "",
+      "placeholder": ""
+    },
+    "collection": {
+      "addTo": "",
+      "removeFrom": "",
+      "newCollection": "",
+      "dialog": {
+        "title": "",
+        "description": "",
+        "add": ""
+      }
+    },
+    "properties": {
+      "title": "",
+      "tabs": {
+        "launcher": "",
+        "path": "",
+        "media": ""
+      },
+      "path": {
+        "title": "",
+        "gamePath": "",
+        "savePath": "",
+        "addFolder": "",
+        "addFile": "",
+        "maxBackups": "",
+        "notifications": {
+          "configuring": "",
+          "success": ""
+        }
+      },
+      "media": {
+        "types": {
+          "icon": "",
+          "background": "",
+          "cover": "",
+          "logo": ""
+        },
+        "empty": {
+          "icon": "",
+          "background": "",
+          "cover": "",
+          "logo": "",
+          "images": ""
+        },
+        "actions": {
+          "adjust": "",
+          "set": "",
+          "importFromFile": "",
+          "importFromUrl": "",
+          "searchImage": "",
+          "cropImage": "",
+          "deleteImage": ""
+        },
+        "search": {
+          "title": "",
+          "dataSource": "",
+          "searchTitle": ""
+        },
+        "url": {
+          "empty": ""
+        },
+        "crop": {
+          "title": "",
+          "size": ""
+        },
+        "notifications": {
+          "fileSelectError": "",
+          "imageNotFound": "",
+          "getImageError": "",
+          "downloading": "",
+          "downloadSuccess": "",
+          "downloadError": "",
+          "processing": "",
+          "success": "",
+          "error": "",
+          "searching": "",
+          "searchSuccess": "",
+          "searchError": "",
+          "noResultsFound": "",
+          "selectImage": "",
+          "cropping": "",
+          "cropSuccess": "",
+          "cropError": "",
+          "cropIncomplete": "",
+          "deleting": "",
+          "deleteSuccess": "",
+          "deleteError": ""
+        }
+      },
+      "launcher": {
+        "title": "",
+        "setGamePathFirst": "",
+        "mode": {
+          "title": "",
+          "file": "",
+          "url": "",
+          "script": ""
+        },
+        "monitor": {
+          "title": "",
+          "mode": {
+            "folder": "",
+            "file": "",
+            "process": ""
+          },
+          "path": "",
+          "processName": ""
+        },
+        "file": {
+          "path": "",
+          "workingDirectory": ""
+        },
+        "script": {
+          "content": "",
+          "workingDirectory": ""
+        },
+        "url": {
+          "address": "",
+          "browser": "",
+          "defaultBrowser": ""
+        },
+        "magpie": {
+          "scaling": "",
+          "pathNotSet": ""
+        },
+        "preset": {
+          "title": "",
+          "search": "",
+          "default": "",
+          "le": "",
+          "steam": "",
+          "vba": "",
+          "steamIdRequired": "",
+          "notifications": {
+            "configuring": "",
+            "success": ""
+          }
+        }
+      }
+    }
+  },
+  "batchEditor": {
+    "contextMenu": {
+      "addTo": "",
+      "removeFrom": "",
+      "newCollection": "",
+      "editInfo": "",
+      "delete": ""
+    },
+    "information": {
+      "incrementalMode": "",
+      "developers": "",
+      "publishers": "",
+      "platforms": "",
+      "genres": "",
+      "placeholder": {
+        "developers": "",
+        "publishers": "",
+        "platforms": "",
+        "genres": ""
+      },
+      "tooltip": {
+        "developers": "",
+        "publishers": "",
+        "platforms": "",
+        "genres": ""
+      },
+      "success": "",
+      "error": ""
+    },
+    "delete": {
+      "title": "",
+      "description": "",
+      "gamesList": "",
+      "unnamedGame": "",
+      "notifications": {
+        "deleting": "",
+        "success": "",
+        "error": ""
+      }
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "dialog": {
+    "title": "",
+    "noReleaseNotes": "",
+    "latestVersion": "",
+    "downloadProgress": ""
+  },
+  "actions": {
+    "skipUpdate": "",
+    "update": "",
+    "install": ""
+  }
+}

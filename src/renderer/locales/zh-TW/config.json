@@ -139,7 +139,7 @@
       "connectDescription": "登入帳號以啟用雲同步功能，獲取跨裝置同步和資料備份",
       "login": "登入",
       "register": "註冊",
-      "logout": "註銷",
+      "logout": "登出",
       "adminEdition": "管理員版",
       "developerEdition": "開發者版",
       "premiumEdition": "進階版",

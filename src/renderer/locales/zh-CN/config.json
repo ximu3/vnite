@@ -139,7 +139,7 @@
       "connectDescription": "登录账号以启用云同步功能，获取跨设备同步和数据备份",
       "login": "登录",
       "register": "注册",
-      "logout": "注销",
+      "logout": "登出",
       "adminEdition": "管理员版",
       "developerEdition": "开发者版",
       "premiumEdition": "高级版",
