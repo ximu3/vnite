@@ -1,120 +1,120 @@
 {
-  "title": "",
+  "title": "게임 스캐너 관리자",
   "status": {
-    "idle": "",
-    "scanning": "",
-    "paused": "",
-    "completed": "",
-    "error": "",
-    "unknown": ""
+    "idle": "대기 중",
+    "scanning": "스캔 중",
+    "paused": "일시 정지됨",
+    "completed": "완료됨",
+    "error": "오류",
+    "unknown": "알 수 없음"
   },
   "metrics": {
-    "scanners": "",
-    "games": "",
-    "scanInterval": "",
-    "failures": ""
+    "scanners": "{{count}}개 스캐너",
+    "games": "{{count}}개 게임",
+    "scanInterval": "{{minutes}}초 마다 스캔",
+    "failures": "{{count}}개 실패"
   },
   "actions": {
-    "pause": "",
-    "resume": "",
-    "scanAll": "",
-    "stop": "",
-    "globalSettings": "",
-    "addDirectory": "",
-    "cancel": "",
-    "save": "",
-    "confirmDelete": "",
-    "fix": "",
-    "ignore": "",
-    "back": "",
-    "close": "",
-    "browse": ""
+    "pause": "일시 정지",
+    "resume": "스캐너 재개",
+    "scanAll": "모두 스캔",
+    "stop": "정지",
+    "globalSettings": "전역 설정",
+    "addDirectory": "스캔 디렉토리 추가",
+    "cancel": "취소",
+    "save": "저장",
+    "confirmDelete": "제거 확인",
+    "fix": "문제 해결",
+    "ignore": "무시",
+    "back": "돌아가기",
+    "close": "닫기",
+    "browse": "탐색"
   },
   "list": {
-    "title": "",
+    "title": "스캔 디렉토리 목록",
     "empty": {
-      "title": "",
-      "description": ""
+      "title": "스캔 디렉토리 없음",
+      "description": "스캔 디렉토리를 추가하여 게임 라이브러리를 자동으로 관리하세요"
     },
     "item": {
-      "dataSource": "",
-      "depth": "",
-      "progress": "",
-      "games": "",
+      "dataSource": "{{name}} 데이터",
+      "depth": "깊이 {{level}}",
+      "progress": "{{percentage}}% 완료",
+      "games": "게임 {{count}}개",
       "statusLabels": {
-        "idle": "",
-        "scanning": "",
-        "paused": "",
-        "completed": "",
-        "error": "",
-        "unknown": ""
+        "idle": "대기 중",
+        "scanning": "스캔 중",
+        "paused": "일시 정지됨",
+        "completed": "완료됨",
+        "error": "오류",
+        "unknown": "알 수 없음"
       },
       "deleteDialog": {
-        "title": "",
-        "description": "",
-        "cancel": "",
-        "confirm": ""
+        "title": "제거 확인",
+        "description": "스캔 디렉토리 \"{{path}}\"을(를) 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+        "cancel": "취소",
+        "confirm": "제거 확인"
       },
       "tooltips": {
-        "scan": "",
-        "edit": "",
-        "delete": ""
+        "scan": "스캔",
+        "edit": "수정",
+        "delete": "제거"
       }
     }
   },
   "notifications": {
-    "fixAttempt": "",
-    "fixSuccess": "",
-    "fixError": "",
-    "createError": "",
-    "intervalTooShort": "",
-    "scanStopping": "",
-    "scanStopped": ""
+    "fixAttempt": "게임 가져오기를 시도 중",
+    "fixSuccess": "문제 해결 완료",
+    "fixError": "문제 해결 실패",
+    "createError": "스캐너 생성에 실패했습니다",
+    "intervalTooShort": "스캔 주기는 5분 미만으로 설정할 수 없습니다",
+    "scanStopping": "스캔 중지 중…",
+    "scanStopped": "스캔 중단됨"
   },
   "errors": {
-    "fixFolder": "",
-    "createScanner": ""
+    "fixFolder": "폴더의 문제 해결에 실패했습니다.",
+    "createScanner": "스캐너 생성에 실패했습니다:"
   },
   "globalSettings": {
-    "title": "",
-    "scanInterval": "",
-    "scanIntervalTooltip": "",
-    "ignoreList": "",
-    "ignoreListPlaceholder": "",
-    "ignoreListTooltip": ""
+    "title": "전역 스캐너 설정",
+    "scanInterval": "스캔 주기",
+    "scanIntervalTooltip": "모든 스캐너의 스캔 주기 (분 단위)",
+    "ignoreList": "무시 목록",
+    "ignoreListPlaceholder": "제외할 폴더 이름 입력 (정규식 지원)",
+    "ignoreListTooltip": "정규 표현식을 지원하며, 각 줄은 별도의 표현식입니다"
   },
   "dataSources": {
-    "steam": "",
-    "vndb": "",
-    "bangumi": "",
-    "ymgal": "",
-    "igdb": "",
-    "dlsite": ""
+    "steam": "Steam",
+    "vndb": "VNDB",
+    "bangumi": "Bangumi",
+    "ymgal": "YMGal",
+    "igdb": "IGDB",
+    "dlsite": "DLsite"
   },
   "failedFolders": {
-    "title": "",
-    "fixing": "",
-    "dataSource": "",
-    "dataSourceId": "",
-    "inputPlaceholder": "",
-    "helpText": "",
-    "selectPlaceholder": "",
+    "title": "실패한 폴더 처리",
+    "fixing": "문제 해결: {{name}}",
+    "dataSource": "자료 출처:",
+    "dataSourceId": "자료 출처 ID:",
+    "inputPlaceholder": "게임 ID 입력",
+    "helpText": "해당 자료 출처의 게임 ID(예: Steam 게임의 AppID)를 입력하세요",
+    "selectPlaceholder": "자료 출처 선택",
     "table": {
-      "folderName": "",
-      "location": "",
-      "error": "",
-      "actions": ""
+      "folderName": "폴더명",
+      "location": "위치",
+      "error": "오류",
+      "actions": "동작"
     }
   },
   "editScanner": {
-    "addTitle": "",
-    "editTitle": "",
-    "path": "",
-    "dataSource": "",
-    "scanDepth": "",
-    "pathPlaceholder": "",
-    "dataSourcePlaceholder": "",
-    "depthPlaceholder": "",
-    "depthTooltip": ""
+    "addTitle": "스캔 디렉토리 추가",
+    "editTitle": "스캔 디렉토리 수정",
+    "path": "경로",
+    "dataSource": "자료 출처",
+    "scanDepth": "스캔 깊이",
+    "pathPlaceholder": "게임 스캔 디렉토리 선택",
+    "dataSourcePlaceholder": "자료 출처 선택",
+    "depthPlaceholder": "스캔 깊이 선택",
+    "depthTooltip": "폴더를 스캔하는 깊이 단계를 설정"
   }
 }

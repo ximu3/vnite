@@ -1,53 +1,53 @@
 {
   "steamImporter": {
     "dialog": {
-      "title": "",
-      "description": ""
+      "title": "Steam 게임 가져오기",
+      "description": "게임 라이브러리를 가져오려면 Steam ID를 입력하세요. ID는 프로필 URL에서 찾을 수 있습니다."
     },
     "input": {
-      "steamId": "",
-      "fetch": "",
-      "searching": ""
+      "steamId": "Steam ID 입력",
+      "fetch": "가져오기",
+      "searching": "게임 검색 중…"
     },
     "status": {
       "initial": {
-        "title": "",
-        "description": ""
+        "title": "가져오기 시작",
+        "description": "게임 목록을 보려면 Steam ID를 입력하세요"
       },
       "ready": {
-        "title": "",
-        "description": ""
+        "title": "가져오기 준비 완료",
+        "description": "게임 목록을 가져오려면 [가져오기] 버튼을 클릭하세요"
       },
       "loading": {
-        "title": "",
-        "description": ""
+        "title": "로딩 중",
+        "description": "게임 목록 가져오는 중…"
       },
       "empty": {
-        "title": "",
-        "description": ""
+        "title": "가져오기 성공",
+        "description": "모든 게임을 성공적으로 가져왔습니다"
       }
     },
     "gameList": {
-      "selectAll": "",
-      "search": "",
-      "hours": ""
+      "selectAll": "모두 선택 ({{selected}}/{{total}})",
+      "search": "게임 검색 중…",
+      "hours": "{{hours}} 시간"
     },
     "import": {
-      "button": "",
-      "preparing": "",
+      "button": "선택한 게임({{count}} 개) 가져오기",
+      "preparing": "가져오기를 준비 중…",
       "progress": {
-        "title": "",
-        "completed": "",
-        "error": "",
-        "summary": ""
+        "title": "가져오는 중",
+        "completed": "가져오기 완료",
+        "error": "가져오는 중 오류 발생",
+        "summary": "성공: {{success}} 실패: {{error}}"
       }
     },
     "notifications": {
-      "fetchFailed": "",
-      "selectAtLeastOne": "",
-      "allImported": "",
-      "importFailed": "",
-      "waitForCompletion": ""
+      "fetchFailed": "게임 목록을 가져오는 데 실패했습니다, 다시 시도해주세요",
+      "selectAtLeastOne": "최소 하나의 게임은 선택해야 합니다",
+      "allImported": "모든 게임이 가져와졌습니다",
+      "importFailed": "가져오기 실패, 다시 시도해주세요",
+      "waitForCompletion": "가져오기 작업이 끝날 때 까지 기다려주세요"
     }
   }
 }

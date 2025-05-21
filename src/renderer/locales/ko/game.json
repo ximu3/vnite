@@ -1,470 +1,472 @@
 {
   "librarybar": {
-    "home": "",
-    "collections": "",
+    "home": "홈",
+    "collections": "컬렉션",
     "search": {
-      "placeholder": "",
-      "tooltip": ""
+      "placeholder": "검색",
+      "tooltip": "게임 이름, 개발사, 출시일 및 기타 메타데이터로 검색 지원"
     },
-    "groupBy": "",
+    "groupBy": "그룹 기준",
     "groups": {
-      "none": "",
-      "collection": "",
-      "developers": "",
-      "genres": "",
-      "playStatus": ""
+      "none": "그룹화 하지 않음",
+      "collection": "컬렉션",
+      "developers": "개발사",
+      "genres": "장르",
+      "playStatus": "플레이 상태"
     }
   },
   "list": {
     "search": {
-      "results": ""
+      "results": "검색 결과"
     },
     "recent": {
-      "title": "",
-      "hide": ""
+      "title": "최근 게임",
+      "hide": "숨기기"
     },
     "filter": {
-      "results": "",
-      "noResults": ""
+      "results": "필터 결과",
+      "noResults": "조건에 맞는 게임이 없습니다"
     },
     "all": {
-      "title": "",
-      "sortBy": "",
+      "title": "모든 게임",
+      "sortBy": "정렬 기준",
       "sortOptions": {
-        "name": "",
-        "releaseDate": "",
-        "lastRunDate": "",
-        "addDate": "",
-        "playTime": ""
+        "name": "이름",
+        "releaseDate": "발매일자",
+        "lastRunDate": "마지막 플레이 일자",
+        "addDate": "추가된 날짜",
+        "playTime": "플레이 시간"
       }
     },
     "playStatus": {
-      "adjustOrder": ""
+      "adjustOrder": "순서 조정"
     }
   },
   "filter": {
-    "title": "",
+    "title": "고급 필터",
     "panel": {
-      "title": "",
-      "clear": "",
-      "releaseDate": "",
-      "clearFilter": "",
-      "developers": "",
-      "publishers": "",
-      "genres": "",
-      "platforms": "",
-      "tags": "",
-      "extraInfo": ""
+      "title": "필터",
+      "clear": "필터 초기화",
+      "releaseDate": "발매일자",
+      "clearFilter": "초기화",
+      "developers": "개발사",
+      "publishers": "유통사",
+      "genres": "장르",
+      "platforms": "플랫폼",
+      "tags": "태그",
+      "extraInfo": "추가 정보"
     },
     "combobox": {
-      "select": "",
-      "search": "",
-      "notFound": ""
+      "select": "{{placeholder}} 선택",
+      "search": "{{placeholder}} 검색",
+      "notFound": "{{placeholder}}을(를) 찾을 수 없음"
     }
   },
   "showcase": {
-    "welcome": "",
+    "welcome": "Vnite에 어서오세요, 당신의 첫 게임을 등록해주세요.",
     "sections": {
-      "recentGames": "",
-      "collections": "",
-      "allGames": ""
+      "recentGames": "최근 게임",
+      "collections": "내 컬렉션",
+      "allGames": "모든 게임"
     },
     "sorting": {
-      "title": "",
-      "label": "",
+      "title": "정렬 기준:",
+      "label": "정렬 기준",
       "options": {
-        "name": "",
-        "releaseDate": "",
-        "lastRunDate": "",
-        "addDate": "",
-        "playTime": ""
+        "name": "이름",
+        "releaseDate": "발매 일자",
+        "lastRunDate": "마지막 플레이 일자",
+        "addDate": "추가된 날짜",
+        "playTime": "플레이 시간"
       }
     },
     "gameCard": {
-      "noPlayRecord": "",
-      "neverRun": "",
-      "playRecord": "",
-      "totalPlayTime": "",
-      "lastRunDate": "",
-      "neverRunShort": ""
+      "noPlayRecord": "플레이 기록 없음",
+      "neverRun": "플레이하지 않음",
+      "playRecord": "플레이 기록",
+      "totalPlayTime": "총 플레이 시간: {{time, gameTime}}",
+      "lastRunDate": "마지막 플레이 일자: {{date, niceDate}}",
+      "neverRunShort": "플레이하지 않음"
     },
     "collection": {
       "contextMenu": {
-        "rename": "",
-        "delete": "",
-        "deleteTitle": "",
-        "deleteConfirm": ""
+        "rename": "이름 변경",
+        "delete": "제거",
+        "deleteTitle": "컬렉션 제거",
+        "deleteConfirm": "{{name}} 컬렉션을 제거하시겠습니까?"
       }
     }
   },
   "detail": {
     "tabs": {
-      "overview": "",
-      "record": "",
-      "save": "",
-      "memory": ""
+      "overview": "개요",
+      "record": "기록",
+      "save": "세이브",
+      "memory": "회상"
     },
     "logoManagePanel": {
-      "resetPosition": "",
-      "resetSize": "",
-      "hideLogo": "",
-      "showLogo": ""
+      "resetPosition": "위치 초기화",
+      "resetSize": "크기 초기화",
+      "hideLogo": "로고 숨기기",
+      "showLogo": "로고 표시"
     },
     "header": {
       "playStatus": {
-        "label": "",
-        "tooltip": ""
+        "label": "플레이 상태",
+        "tooltip": "플레이 상태 변경"
       },
       "rating": {
-        "title": "",
+        "title": "내 평가",
         "errors": {
-          "invalidNumber": "",
-          "negative": "",
-          "tooHigh": ""
+          "invalidNumber": "유효한 숫자를 입력해주세요",
+          "negative": "평가 점수는 음수가 될 수 없습니다",
+          "tooHigh": "평가 점수는 10점을 넘길 수 없습니다"
         },
-        "success": "",
-        "warning": "",
-        "cleared": "",
-        "tooltip": ""
+        "success": "평가 저장됨",
+        "warning": "소수점 이하 1자리로 자동 유지",
+        "cleared": "평가 삭제됨",
+        "tooltip": "평가 수정"
       }
     },
     "actions": {
-      "start": "",
-      "stop": ""
+      "start": "게임 시작",
+      "stop": "게임 종료"
     },
     "save": {
       "table": {
-        "date": "",
-        "note": "",
-        "actions": ""
+        "date": "일자",
+        "note": "메모",
+        "actions": "동작"
       },
-      "empty": "",
+      "empty": "세이브 없음",
       "actions": {
-        "switch": "",
-        "delete": ""
+        "switch": "교체",
+        "delete": "삭제"
       },
       "notifications": {
-        "locked": "",
-        "deleteLoading": "",
-        "deleteSuccess": "",
-        "deleteError": "",
-        "switchLoading": "",
-        "switchSuccess": "",
-        "switchError": "",
-        "noSavePath": ""
+        "locked": "이 세이브는 잠겨있습니다",
+        "deleteLoading": "세이브 삭제 중…",
+        "deleteSuccess": "세이브 정보가 성공적으로 삭제되었습니다",
+        "deleteError": "세이브 정보 삭제에 실패했습니다: {{message}}",
+        "switchLoading": "세이브 교체 중…",
+        "switchSuccess": "세이브 교체 성공",
+        "switchError": "세이브 교체 실패: {{message}}",
+        "noSavePath": "세이브 경로를 찾을 수 없음"
       }
     },
     "filter": {
-      "added": ""
+      "added": "필터 추가됨, {{field}}: {{value}}"
     },
     "record": {
       "card": {
-        "title": "",
-        "noData": "",
-        "playStats": "",
-        "immersion": "",
-        "history": ""
+        "title": "플레이 정보",
+        "noData": "아직 이 게임을 시작하지 않았습니다.",
+        "playStats": "{{days}}일 동안 {{totalTime, gameTime}}을 플레이했으며, 하루 평균 {{averageTime, gameTime}}을 플레이했습니다,",
+        "immersion": "그리고 {{date, niceDate}}에는 {{time, gameTime}} 동안 몰입했네요.",
+        "history": "{{addDate, niceDate}} 에 이 게임을 추가했고 마지막으로 플레이한 날짜는 {{lastPlayDate, niceDate}}입니다. 이 여정이 재미있는 추억으로 남길 바랍니다."
       }
     },
     "chart": {
-      "title": "",
-      "label": "",
-      "selectRange": "",
-      "dateError": "",
-      "rangeLimit": "",
-      "noData": ""
+      "title": "플레이 시간 차트",
+      "label": "플레이 시간",
+      "selectRange": "일자 범위를 선택해주세요",
+      "dateError": "시작 날짜는 종료 날짜보다 늦을 수 없습니다",
+      "rangeLimit": "{{startDate, niceDate}}와 {{endDate, niceDate}} 사이에서 날짜를 선택하세요",
+      "noData": "데이터가 없습니다"
     },
     "overview": {
       "sections": {
-        "description": "",
-        "tags": "",
-        "basicInfo": "",
-        "extraInfo": "",
-        "relatedSites": ""
+        "description": "설명",
+        "tags": "태그",
+        "basicInfo": "기본 정보",
+        "extraInfo": "추가 정보",
+        "relatedSites": "발매 사이트"
       },
       "description": {
-        "empty": "",
-        "htmlHint": "",
+        "empty": "설명이 없습니다",
+        "htmlHint": "HTML 태그가 지원됩니다",
         "search": {
-          "loading": "",
-          "success": "",
-          "error": "",
-          "notFound": "",
-          "searchError": "",
-          "selectRequired": ""
+          "loading": "게임 설명 검색 중…",
+          "success": "검색 성공",
+          "error": "검색 실패: {{message}}",
+          "notFound": "연관된 설명을 찾을 수 없습니다",
+          "searchError": "검색 오류: {{error}}",
+          "selectRequired": "설명을 선택해주세요"
         }
       },
       "tags": {
-        "empty": "",
-        "separator": "",
+        "empty": "태그가 없습니다",
+        "separator": "쉼표로 태그 구분",
         "search": {
-          "loading": "",
-          "success": "",
-          "error": "",
-          "notFound": "",
-          "searchError": "",
-          "selectRequired": ""
+          "loading": "게임 태그 검색 중…",
+          "success": "검색 성공",
+          "error": "검색 실패: {{message}}",
+          "notFound": "연관된 태그를 찾을 수 없습니다",
+          "searchError": "검색 오류: {{error}}",
+          "selectRequired": "최소한 하나의 태그를 선택해주세요"
         }
       },
       "search": {
-        "placeholder": ""
+        "placeholder": "검색할 게임 타이틀을 입력해주세요"
       },
       "relatedSites": {
-        "empty": "",
-        "addLink": "",
-        "nameLabel": "",
-        "urlLabel": ""
+        "empty": "연관된 사이트 없음",
+        "addLink": "링크 추가",
+        "nameLabel": "웹사이트 이름",
+        "urlLabel": "웹사이트 URL"
       },
       "information": {
         "fields": {
-          "originalName": "",
-          "localizedName": "",
-          "developers": "",
-          "publishers": "",
-          "releaseDate": "",
-          "platforms": "",
-          "genres": ""
+          "originalName": "원어 이름",
+          "localizedName": "번역된 이름",
+          "developers": "개발사",
+          "publishers": "유통사",
+          "releaseDate": "발매 일자",
+          "platforms": "플랫폼",
+          "genres": "장르"
         },
-        "empty": "",
+        "empty": "없음",
         "hints": {
-          "developers": "",
-          "publishers": "",
-          "platforms": "",
-          "genres": ""
+          "developers": "쉼표로 개발사 구분",
+          "publishers": "쉼표로 유통사 구분",
+          "platforms": "쉼표로 플랫폼 분",
+          "genres": "쉼표로 장르 구분"
         }
       },
       "extraInformation": {
-        "title": "",
-        "valueTip": "",
-        "enterKey": "",
-        "enterValue": "",
-        "addNew": "",
-        "empty": "",
-        "emptyValue": "",
+        "title": "추가 정보",
+        "valueTip": "쉼표로 여러 값 구분",
+        "enterKey": "키 이름 입력",
+        "enterValue": "값 입력",
+        "addNew": "새 정보 추가",
+        "empty": "아직 추가 정보가 없습다",
+        "emptyValue": "없음",
         "fields": {
-          "director": "",
-          "scenario": "",
-          "illustration": "",
-          "music": "",
-          "engine": ""
+          "director": "기획",
+          "scenario": "시나리오",
+          "illustration": "원화",
+          "music": "음악",
+          "engine": "엔진"
         },
         "search": {
-          "loading": "",
-          "success": "",
-          "error": "",
-          "notFound": "",
-          "searchError": "",
-          "selectRequired": ""
+          "loading": "게임 추가 정보 검색 중…",
+          "success": "검색 성공",
+          "error": "검색 실패: {{message}}",
+          "notFound": "관련 정보를 찾을 수 없습니다",
+          "searchError": "검색 오류: {{error}}",
+          "selectRequired": "추가 정보 항목을 하나 이상 선택해 주세요"
         }
       },
       "record": {
-        "title": "",
-        "playTime": "",
-        "lastRunDate": "",
-        "playStatus": "",
-        "rating": "",
-        "neverRun": ""
+        "title": "플레이 정보",
+        "playTime": "플레이 시간",
+        "lastRunDate": "마지막 플레이 일자",
+        "playStatus": "플레이 상태",
+        "rating": "내 평가",
+        "neverRun": "플레이하지 않음"
       }
     },
     "memory": {
       "actions": {
-        "add": "",
-        "addCover": "",
-        "changeCover": "",
-        "adjustCover": "",
-        "addText": "",
-        "editText": "",
-        "delete": ""
+        "add": "추가",
+        "addCover": "커버 추가",
+        "changeCover": "커버 변경",
+        "adjustCover": "커버 조정",
+        "addText": "텍스트 가",
+        "editText": "텍스트 수정",
+        "delete": "제거"
       },
       "export": {
-        "exportAs": "",
-        "image": "",
-        "markdown": "",
-        "toClipboard": "",
-        "saveAs": ""
+        "exportAs": "다른 형식으로 내보내기",
+        "image": "이미지",
+        "markdown": "마크다운",
+        "toClipboard": "클립보드로 내보내기",
+        "saveAs": "다른 이름으로 저장"
       },
       "notifications": {
-        "deleting": "",
-        "deleteSuccess": "",
-        "deleteError": "",
-        "selectFileError": "",
-        "imageNotFound": "",
-        "getImageError": "",
-        "imageCopied": "",
-        "imageCopyError": "",
-        "markdownCopied": "",
-        "markdownCopyError": ""
+        "deleting": "제거 중…",
+        "deleteSuccess": "성공적으로 제거했습니다",
+        "deleteError": "제거에 실패했습니다: {{error}}",
+        "selectFileError": "파일 선택에 실패했습니다: {{error}}",
+        "imageNotFound": "현재 이미지를 찾을 수 없습니다",
+        "getImageError": "현재 이미지를 얻어오는 데 실패했습니다: {{error}}",
+        "imageCopied": "이미지를 성공적으로 클립보드에 복사했습니다",
+        "imageCopyError": "이미지를 클립보드에 복사하는 데 실패했습니다: {{error}}",
+        "markdownCopied": "마크다운이 클립보드에 복사되었습니다",
+        "markdownCopyError": "클립보드에 복사하는 데 실패했습니다: {{error}}"
       },
       "dialog": {
-        "markdownHint": ""
+        "markdownHint": "마크다운 문법 지원됨"
       }
     },
     "config": {
-      "properties": ""
+      "properties": "속성"
     },
     "manage": {
-      "title": "",
-      "rename": "",
-      "editLogo": "",
-      "editPlayTime": "",
-      "downloadMetadata": "",
-      "createShortcut": "",
-      "browseLocalFiles": "",
-      "delete": "",
+      "title": "관리",
+      "rename": "이름 바꾸기",
+      "editLogo": "로고 변경",
+      "editPlayTime": "플레이 시간 변경",
+      "downloadMetadata": "메타데이터 다운로드",
+      "createShortcut": "바로가기 생성",
+      "browseLocalFiles": "로컬 파일 찾기",
+      "delete": "제거",
       "notifications": {
-        "shortcutCreated": "",
-        "shortcutError": "",
-        "gamePathNotSet": ""
-      }
+        "shortcutCreated": "바로가기 생성됨",
+        "shortcutError": "바로가기 생성에 실패했습니다",
+        "gamePathNotSet": "게임 경로가 설정되지 않음"
+      },
+      "markNSFW": "NSFW로 표시",
+      "unmarkNSFW": "NSFW 표시 삭제"
     },
     "deleteAlert": {
-      "title": "",
-      "description": "",
+      "title": "{{gameName}} 을(를) 제거하시겠습니까?",
+      "description": "이 게임의 모든 데이터가 영구적으로 제거됩니다. 이 작업은 되돌릴 수 없습니다.",
       "notifications": {
-        "deleting": "",
-        "deleted": "",
-        "error": ""
+        "deleting": "{{gameName}}을(를) 제거하는 중…",
+        "deleted": "{{gameName}}이(가) 제거되었습니다",
+        "error": "{{gameName}}을(를) 제거하는 데 실패했습니다: {{message}}"
       }
     },
     "playTimeEditor": {
-      "expressionSupport": "",
-      "placeholder": ""
+      "expressionSupport": "산술 표현식 지원",
+      "placeholder": "초 또는 수식 입력"
     },
     "collection": {
-      "addTo": "",
-      "removeFrom": "",
-      "newCollection": "",
+      "addTo": "컬렉션에 추가",
+      "removeFrom": "컬렉션에서 제거",
+      "newCollection": "새 컬렉션",
       "dialog": {
-        "title": "",
-        "description": "",
-        "add": ""
+        "title": "새 컬렉션",
+        "description": "새 컬렉션의 이름을 입력하세요",
+        "add": "추가"
       }
     },
     "properties": {
-      "title": "",
+      "title": "속성",
       "tabs": {
-        "launcher": "",
-        "path": "",
-        "media": ""
+        "launcher": "실행",
+        "path": "경로",
+        "media": "미디어"
       },
       "path": {
-        "title": "",
-        "gamePath": "",
-        "savePath": "",
-        "addFolder": "",
-        "addFile": "",
-        "maxBackups": "",
+        "title": "게임 & 세이브",
+        "gamePath": "게임 경로",
+        "savePath": "세이브 경로",
+        "addFolder": "폴더 추가",
+        "addFile": "파일 추가",
+        "maxBackups": "최대 세이브 파일 백업 수",
         "notifications": {
-          "configuring": "",
-          "success": ""
+          "configuring": "프리셋을 설정하는 중…",
+          "success": "프리셋 설정에 성공했습니다"
         }
       },
       "media": {
         "types": {
-          "icon": "",
-          "background": "",
-          "cover": "",
-          "logo": ""
+          "icon": "아이콘",
+          "background": "배경",
+          "cover": "커버",
+          "logo": "로고"
         },
         "empty": {
-          "icon": "",
-          "background": "",
-          "cover": "",
-          "logo": "",
-          "images": ""
+          "icon": "아이콘 없음",
+          "background": "배경 없음",
+          "cover": "커버 없음",
+          "logo": "로고 없음",
+          "images": "이미지 음"
         },
         "actions": {
-          "adjust": "",
-          "set": "",
-          "importFromFile": "",
-          "importFromUrl": "",
-          "searchImage": "",
-          "cropImage": "",
-          "deleteImage": ""
+          "adjust": "조정",
+          "set": "설정",
+          "importFromFile": "파일에서 불러오기",
+          "importFromUrl": "URL에서 불러오기",
+          "searchImage": "이미지 검색",
+          "cropImage": "이미지 자르기",
+          "deleteImage": "이미지 삭제"
         },
         "search": {
-          "title": "",
-          "dataSource": "",
-          "searchTitle": ""
+          "title": "이미지 색",
+          "dataSource": "자료 출처",
+          "searchTitle": "타이틀 검색"
         },
         "url": {
-          "empty": ""
+          "empty": "링크 주소를 입력하세요"
         },
         "crop": {
-          "title": "",
-          "size": ""
+          "title": "이미지 크기 조정",
+          "size": "{{width}} × {{height}} px"
         },
         "notifications": {
-          "fileSelectError": "",
-          "imageNotFound": "",
-          "getImageError": "",
-          "downloading": "",
-          "downloadSuccess": "",
-          "downloadError": "",
-          "processing": "",
-          "success": "",
-          "error": "",
-          "searching": "",
-          "searchSuccess": "",
-          "searchError": "",
-          "noResultsFound": "",
-          "selectImage": "",
-          "cropping": "",
-          "cropSuccess": "",
-          "cropError": "",
-          "cropIncomplete": "",
-          "deleting": "",
-          "deleteSuccess": "",
-          "deleteError": ""
+          "fileSelectError": "파일 선택에 실패했습니다: {{error}}",
+          "imageNotFound": "현재 이미지를 찾을 수 없습니다",
+          "getImageError": "현재 이미지를 얻어오는 데 실패했습니다: {{error}}",
+          "downloading": "이미지 다운로드 중…",
+          "downloadSuccess": "이미지 다운로드에 성공했습니다",
+          "downloadError": "이미지 다운로드에 실패했습니다: {{message}}",
+          "processing": "{{type}}를 {{action}}하는 중…",
+          "success": "{{type}}를 {{action}}하는 데 성공했습니다",
+          "error": "{{type}}를 {{action}}하는 데 실패했습니다: {{message}}",
+          "searching": "검색 중…",
+          "searchSuccess": "검색 성공",
+          "searchError": "검색 실패: {{message}}",
+          "noResultsFound": "이미지를 찾을 수 없습니다",
+          "selectImage": "이미지를 선택해주세요",
+          "cropping": "자르는 중…",
+          "cropSuccess": "이미지 자르기 성공",
+          "cropError": "이미지 자르기 실패",
+          "cropIncomplete": "이미지 자르기가 완료되지 않았습니다",
+          "deleting": "제거 중…",
+          "deleteSuccess": "제거 성공",
+          "deleteError": "제거 패"
         }
       },
       "launcher": {
-        "title": "",
-        "setGamePathFirst": "",
+        "title": "실행 & 트래커",
+        "setGamePathFirst": "먼저 게임 경로를 설정해주세요",
         "mode": {
-          "title": "",
-          "file": "",
-          "url": "",
-          "script": ""
+          "title": "실행 모드",
+          "file": "파일",
+          "url": "URL",
+          "script": "스크립트"
         },
         "monitor": {
-          "title": "",
+          "title": "트래킹 모드",
           "mode": {
-            "folder": "",
-            "file": "",
-            "process": ""
+            "folder": "폴더",
+            "file": "파일",
+            "process": "프로세스"
           },
-          "path": "",
-          "processName": ""
+          "path": "트래킹 경로",
+          "processName": "프로세스 이름"
         },
         "file": {
-          "path": "",
-          "workingDirectory": ""
+          "path": "파일 경로",
+          "workingDirectory": "작업 디렉토리"
         },
         "script": {
-          "content": "",
-          "workingDirectory": ""
+          "content": "스크립트 내용",
+          "workingDirectory": "작업 디렉토리"
         },
         "url": {
-          "address": "",
-          "browser": "",
-          "defaultBrowser": ""
+          "address": "URL 주소",
+          "browser": "브라우저",
+          "defaultBrowser": "시스템 기본 브라우저"
         },
         "magpie": {
-          "scaling": "",
-          "pathNotSet": ""
+          "scaling": "Magpie 스케일링",
+          "pathNotSet": "먼저 Magpie 경로를 선택해주세요"
         },
         "preset": {
-          "title": "",
-          "search": "",
-          "default": "",
-          "le": "",
-          "steam": "",
-          "vba": "",
-          "steamIdRequired": "",
+          "title": "프리셋 설정",
+          "search": "검색 설정",
+          "default": "기본 설정",
+          "le": "LE 지역 실행",
+          "steam": "Steam 실행",
+          "vba": "VBA 실행",
+          "steamIdRequired": "스팀 ID를 입력해주세요",
           "notifications": {
-            "configuring": "",
-            "success": ""
+            "configuring": "프리셋 설정 중…",
+            "success": "프리셋 설정에 성공했습니다"
           }
         }
       }
@@ -472,42 +474,42 @@
   },
   "batchEditor": {
     "contextMenu": {
-      "addTo": "",
-      "removeFrom": "",
-      "newCollection": "",
-      "editInfo": "",
-      "delete": ""
+      "addTo": "컬렉션에 일괄 추가",
+      "removeFrom": "컬렉션에서 일괄 제거",
+      "newCollection": "새 컬렉션",
+      "editInfo": "게임 정보 일괄 수정",
+      "delete": "일괄 삭제"
     },
     "information": {
-      "incrementalMode": "",
-      "developers": "",
-      "publishers": "",
-      "platforms": "",
-      "genres": "",
+      "incrementalMode": "증분 모드",
+      "developers": "개발사",
+      "publishers": "유통사",
+      "platforms": "플랫폼",
+      "genres": "장르",
       "placeholder": {
-        "developers": "",
-        "publishers": "",
-        "platforms": "",
-        "genres": ""
+        "developers": "개발사 없음",
+        "publishers": "유통사 음",
+        "platforms": "플랫폼 없음",
+        "genres": "장르 음"
       },
       "tooltip": {
-        "developers": "",
-        "publishers": "",
-        "platforms": "",
-        "genres": ""
+        "developers": "쉼표로 개발사 구분",
+        "publishers": "쉼표로 유통사 구분",
+        "platforms": "쉼표로 플랫폼 분",
+        "genres": "쉼표로 장르분"
       },
-      "success": "",
-      "error": ""
+      "success": "게임 정보를 일괄 수정했습니다",
+      "error": "게임 정보 수정에 실패했습니다: {{message}}"
     },
     "delete": {
-      "title": "",
-      "description": "",
-      "gamesList": "",
-      "unnamedGame": "",
+      "title": "선택한 {{count}}개의 게임을 삭제하시겠습니까?",
+      "description": "선택된 게임의 모든 데이터가 영구적으로 제거됩니다. 이 작업은 되돌릴 수 없습니다.",
+      "gamesList": "제거될 게임:",
+      "unnamedGame": "이름 없는 게임",
       "notifications": {
-        "deleting": "",
-        "success": "",
-        "error": ""
+        "deleting": "{{count}}개 게임 제거 중…",
+        "success": "{{count}}개의 게임이 제거되었습니다",
+        "error": "{{count}}개의 게임을 제거하는 데 실패했습니다: {{message}}"
       }
     }
   }

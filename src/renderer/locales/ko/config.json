@@ -1,242 +1,243 @@
 {
-  "title": "",
+  "title": "Vnite 설정",
   "general": {
-    "title": "",
-    "language": "",
-    "openAtLogin": "",
-    "theme": "",
-    "darkTheme": "",
-    "lightTheme": "",
-    "followSystem": "",
-    "closeMainPanel": "",
-    "action": "",
-    "quitApp": "",
-    "minimizeToTray": "",
-    "hideWindowAfterGameStart": ""
+    "title": "일반",
+    "language": "언어",
+    "openAtLogin": "시스템 시작 시 열기",
+    "theme": "테마 스타일",
+    "darkTheme": "다크",
+    "lightTheme": "라이트",
+    "followSystem": "시스템 설정을 따름",
+    "closeMainPanel": "메인 패널 닫기",
+    "action": "동작",
+    "quitApp": "Vnite 종료",
+    "minimizeToTray": "트레이로 최소화",
+    "hideWindowAfterGameStart": "게임 실행 후 트레이로 최소화"
   },
   "appearances": {
-    "title": "",
+    "title": "표시",
     "background": {
-      "title": "",
-      "customBackground": "",
-      "image": "",
-      "selectImage": "",
-      "currentBackground": "",
-      "noBackground": ""
+      "title": "배경",
+      "customBackground": "커스텀 배경",
+      "image": "이미지",
+      "selectImage": "이미지 선택",
+      "currentBackground": "현재 배경 이미지",
+      "noBackground": "설정된 배경 이미지가 없습니다"
     },
     "showcase": {
-      "title": "",
-      "showPlayButtonOnPoster": ""
+      "title": "전시 모드",
+      "showPlayButtonOnPoster": "포스터에 플레이 버튼 표시"
     },
     "glass": {
-      "title": "",
-      "blur": "",
-      "opacity": ""
+      "title": "반투명 유리 효과",
+      "blur": "블러",
+      "opacity": "투명도"
     },
     "gameList": {
-      "title": "",
-      "showRecentGames": "",
-      "highlightLocalGames": "",
-      "markLocalGames": "",
-      "showCollapseButton": ""
+      "title": "게임 목록",
+      "showRecentGames": "최근 게임 섹션 표시",
+      "highlightLocalGames": "로컬 게임 강조",
+      "markLocalGames": "로컬 게임 표시",
+      "showCollapseButton": "접기 버튼 표시"
     },
     "gameDetail": {
-      "title": "",
-      "showOriginalName": ""
+      "title": "게임 상세 페이지",
+      "showOriginalName": "게임 타이틀 옆에 원어 타이틀 표시"
     },
     "sidebar": {
-      "title": "",
-      "showThemeSwitcher": ""
+      "title": "사이드바",
+      "showThemeSwitcher": "테마 변경 메뉴 표시",
+      "showNSFWBlurSwitcher": "NSFW 콘텐츠 숨김/표시 메뉴 보이기"
     }
   },
   "advanced": {
-    "title": "",
+    "title": "고급",
     "localeEmulator": {
-      "name": "",
-      "placeholder": ""
+      "name": "로케일 에뮬레이터",
+      "placeholder": "LEProc.exe의 경로를 입력하세요"
     },
     "visualBoyAdvance": {
-      "name": "",
-      "placeholder": ""
+      "name": "Visual Boy Advance",
+      "placeholder": "visualboyadvance.exe의 경로를 입력하세요"
     },
     "magpie": {
-      "name": "",
-      "placeholder": "",
-      "hotkeyLabel": ""
+      "name": "Magpie",
+      "placeholder": "Magpie.exe의 경로를 입력하세요",
+      "hotkeyLabel": "Magpie 스케일링 단축키"
     }
   },
   "theme": {
-    "title": "",
-    "saveButton": "",
-    "presetThemes": "",
-    "searchTheme": "",
-    "noPresetFound": "",
+    "title": "테마",
+    "saveButton": "테마 저장",
+    "presetThemes": "테마 프리셋",
+    "searchTheme": "테마 검색",
+    "noPresetFound": "프리셋을 찾을 수 없습니다",
     "presets": {
-      "default": "",
-      "mutsumi": "",
-      "moonlight": ""
+      "default": "기본",
+      "mutsumi": "Mutsumi",
+      "moonlight": "Moonlight"
     },
     "notifications": {
-      "themeSaved": "",
-      "configuring": "",
-      "configured": ""
+      "themeSaved": "테마 저장됨",
+      "configuring": "테마 설정 중…",
+      "configured": "테마 설정에 성공했습니다"
     }
   },
   "hotkeys": {
-    "title": "",
+    "title": "단축키",
     "pageNavigation": {
-      "title": "",
-      "library": "",
-      "record": "",
-      "scanner": "",
-      "config": "",
-      "goBack": "",
-      "goForward": ""
+      "title": "페이지 전환",
+      "library": "게임 라이브러리",
+      "record": "기록",
+      "scanner": "스캐너",
+      "config": "설정",
+      "goBack": "이전 페이지",
+      "goForward": "다음 페이지"
     },
     "quickActions": {
-      "title": "",
-      "addGame": ""
+      "title": "빠른 동작",
+      "addGame": "게임 추가"
     },
     "others": {
-      "title": "",
-      "randomGame": ""
+      "title": "기타",
+      "randomGame": "랜덤 게임"
     }
   },
   "cloudSync": {
-    "title": "",
-    "enable": "",
-    "syncMode": "",
+    "title": "클라우드 동기화",
+    "enable": "활성화",
+    "syncMode": "동기화 모드",
     "modes": {
-      "official": "",
-      "selfHosted": ""
+      "official": "공식",
+      "selfHosted": "자체 호스트"
     },
     "status": {
-      "syncing": "",
-      "success": "",
-      "error": "",
-      "noInfo": ""
+      "syncing": "동기화 중",
+      "success": "동기화 성공",
+      "error": "동기화 실패",
+      "noInfo": "동기화 정보가 없습니다"
     },
     "errors": {
-      "incompleteConfig": "",
-      "loginRequired": "",
-      "fetchStorageFailed": ""
+      "incompleteConfig": "클라우드 동기화 설정을 입력해주세요",
+      "loginRequired": "먼저 공식 계정으로 로그인해주세요",
+      "fetchStorageFailed": "스토리지 정보를 불러오는 데 실패했습니다"
     },
     "notifications": {
-      "updating": "",
-      "updateSuccess": "",
-      "updateError": "",
-      "loggingIn": "",
-      "loginSuccess": "",
-      "loginError": "",
-      "authSuccess": "",
-      "authError": "",
-      "registering": "",
-      "registerSuccess": "",
-      "registerError": ""
+      "updating": "클라우드 동기화 설정 변경 중…",
+      "updateSuccess": "클라우드 동기화 설정 변경에 성공했습니다",
+      "updateError": "클라우드 동기화 설정 변경에 실패했습니다",
+      "loggingIn": "로그인 중…",
+      "loginSuccess": "로그인 성공",
+      "loginError": "로그인 실패",
+      "authSuccess": "인증 성공",
+      "authError": "인증 실패",
+      "registering": "회원 가입 중…",
+      "registerSuccess": "등록 성공",
+      "registerError": "회원 가 실패"
     },
     "official": {
-      "connectTitle": "",
-      "connectDescription": "",
-      "login": "",
-      "register": "",
-      "logout": "",
-      "adminEdition": "",
-      "developerEdition": "",
-      "premiumEdition": "",
-      "communityEdition": "",
-      "lastSync": "",
-      "notSynced": "",
-      "connected": "",
-      "disconnected": "",
-      "storage": "",
-      "used": ""
+      "connectTitle": "클라우드 저장소 연결",
+      "connectDescription": "로그인하여 클라우드 동기화를 활성화하고, 장치 간 동기화 및 데이터를 백업하세요",
+      "login": "로그인",
+      "register": "회원 가입",
+      "logout": "로그아웃",
+      "adminEdition": "관리자 에디션",
+      "developerEdition": "개발자 에디션",
+      "premiumEdition": "프리미엄 에디션",
+      "communityEdition": "커뮤니티 에디션",
+      "lastSync": "마지막 동기화",
+      "notSynced": "동기화 데이터 없음",
+      "connected": "연결됨",
+      "disconnected": "연결 끊김",
+      "storage": "저장 공간",
+      "used": "사용됨"
     },
     "selfHosted": {
-      "title": "",
-      "description": "",
-      "serverAddress": "",
-      "username": "",
-      "password": "",
-      "info": ""
+      "title": "CouchDB 자체 호스트",
+      "description": "자체 호스팅 CouchDB 서버를 구성하여 기기 간 동기화를 활성화하세요",
+      "serverAddress": "CouchDB 주소",
+      "username": "사용자명",
+      "password": "비밀번호",
+      "info": "<couchdb>CouchDB</couchdb>는 자료를 저장하고 동기화하기 위한 오픈소스 문서 데이터베이스입니다"
     },
     "info": {
-      "status": "",
-      "message": "",
-      "time": ""
+      "status": "상태",
+      "message": "메시지",
+      "time": "시간"
     }
   },
   "scraper": {
-    "title": "",
+    "title": "스크래퍼",
     "common": {
-      "title": "",
-      "defaultDataSource": ""
+      "title": "일반",
+      "defaultDataSource": "기본 자료 출처"
     },
     "vndb": {
-      "title": "",
-      "tagSpoilerLevel": "",
+      "title": "VNDB 설정",
+      "tagSpoilerLevel": "스포일러 수준 태그",
       "tagSpoilerLevels": {
-        "none": "",
-        "minor": "",
-        "all": ""
+        "none": "스포일러 없음 (0)",
+        "minor": "약한 스포일러 (1)",
+        "all": "모든 스포일러 (2)"
       }
     },
     "dataSources": {
-      "steam": "",
-      "vndb": "",
-      "bangumi": "",
-      "igdb": "",
-      "ymgal": "",
-      "dlsite": ""
+      "steam": "Steam",
+      "vndb": "VNDB",
+      "bangumi": "Bangumi",
+      "igdb": "IGDB",
+      "ymgal": "YMGal",
+      "dlsite": "DLsite"
     }
   },
   "database": {
-    "title": "",
-    "portableMode": "",
+    "title": "데이터베이스",
+    "portableMode": "휴대용 모드",
     "modes": {
-      "portable": "",
-      "normal": ""
+      "portable": "휴대용 모드",
+      "normal": "일반 모드"
     },
-    "confirmSwitch": "",
-    "switchDescription": "",
-    "openFolder": "",
-    "backup": "",
-    "import": "",
-    "importV2": "",
-    "confirmImport": "",
-    "importWarning": "",
-    "confirmImportV2": "",
-    "importV2Warning": "",
-    "portableAdminRequired": "",
+    "confirmSwitch": "정말 {{mode}}로 변환하시겠습니까?",
+    "switchDescription": "변환 후 애플리케이션이 자동으로 다시 시작됩니다.",
+    "openFolder": "데이터베이스 폴더 열기",
+    "backup": "데이터베이스 백업",
+    "import": "데이터베이스 가져오기",
+    "importV2": "V2 데이터베이스 가져오기",
+    "confirmImport": "정말 이 데이터베이스를 가져오시겠습니까?",
+    "importWarning": "데이터베이스를 가져오면 현재 데이터베이스를 덮어쓰게 됩니다. 이 작업은 되돌릴 수 없습니다! 작업 후 애플리케이션이 자동으로 다시 시작됩니다.",
+    "confirmImportV2": "정말 이 V2 데이터베이스를 가져오시겠습니까?",
+    "importV2Warning": "V2 데이터베이스를 가져오면 현재 데이터베이스를 덮어쓰게 됩니다. 이 작업은 되돌릴 수 없습니다! 작업 후 애플리케이션이 자동으로 다시 시작됩니다.",
+    "portableAdminRequired": "참고: 휴대용 모드에서는 관리자 권한이 필요할 수 있습니다.",
     "notifications": {
-      "backingUp": "",
-      "backupSuccess": "",
-      "backupError": "",
-      "importing": "",
-      "importSuccess": "",
-      "importError": "",
-      "restartCountdown": "",
-      "switchingMode": "",
-      "switchSuccess": "",
-      "switchError": "",
-      "adminRightsRequired": ""
+      "backingUp": "데이터베이스 백업 중…",
+      "backupSuccess": "데이터베이스 백업 성공",
+      "backupError": "데이터베이스 백업 실패",
+      "importing": "데이터베이스 가져오는 중…",
+      "importSuccess": "데이터베이스 가져오기 성공",
+      "importError": "데이터베이스 가져오기 실패",
+      "restartCountdown": "3초 후 애플리케이션이 다시 시작됩니다",
+      "switchingMode": "데이터베이스 모드 변환 중…",
+      "switchSuccess": "데이터베이스 모드 변환 성공",
+      "switchError": "데이터베이스 모드 변환 실패",
+      "adminRightsRequired": "현재 설치 디렉터리에서 휴대용 모드로 전환하려면 관리자 권한이 필요합니다"
     }
   },
   "about": {
-    "title": "",
-    "author": "",
-    "version": "",
-    "repository": "",
-    "feedback": "",
-    "group": "",
-    "prerelease": ""
+    "title": "이 앱에 대해",
+    "author": "제작",
+    "version": "버전",
+    "repository": "Github 저장소",
+    "feedback": "피드백",
+    "group": "그룹",
+    "prerelease": "프리뷰 버전 업데이트 받기"
   },
   "metadata": {
-    "title": "",
+    "title": "메타데이터",
     "transformer": {
-      "title": "",
-      "enable": "",
-      "manage": "",
-      "manageButton": ""
+      "title": "변환기",
+      "enable": "변환기 활성화",
+      "manage": "변환기 규칙 관리",
+      "manageButton": "관리"
     }
   }
 }
