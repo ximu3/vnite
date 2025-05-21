@@ -11,7 +11,9 @@
     "lightMode": "亮色模式",
     "cloudSyncDisabled": "雲同步未開啟",
     "addGame": "添加遊戲",
-    "settings": "設定"
+    "settings": "設定",
+    "enableNSFWBlur": "隱藏 NSFW 內容",
+    "disableNSFWBlur": "顯示 NSFW 內容"
   },
   "adder": {
     "addGame": "新增遊戲",

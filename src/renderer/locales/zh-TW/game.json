@@ -315,7 +315,9 @@
         "shortcutCreated": "已建立捷徑",
         "shortcutError": "建立捷徑時出錯",
         "gamePathNotSet": "遊戲路徑未設定"
-      }
+      },
+      "unmarkNSFW": "取消標記為 NSFW",
+      "markNSFW": "標記為 NSFW"
     },
     "deleteAlert": {
       "title": "確定要刪除遊戲 {{gameName}} 嗎？",
