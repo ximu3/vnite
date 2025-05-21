@@ -57,6 +57,7 @@ export interface configDocs {
   appearances: {
     sidebar: {
       showThemeSwitcher: boolean
+      showNSFWBlurSwitcher: boolean
     }
     background: {
       customBackground: boolean
@@ -68,6 +69,7 @@ export interface configDocs {
       blur: number
       opacity: number
     }
+    enableNSFWBlur: boolean
   }
   hotkeys: {
     library: string
@@ -243,7 +245,8 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
   },
   appearances: {
     sidebar: {
-      showThemeSwitcher: true
+      showThemeSwitcher: true,
+      showNSFWBlurSwitcher: true
     },
     background: {
       customBackground: false
@@ -254,7 +257,8 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     glass: {
       blur: 15,
       opacity: 0.85
-    }
+    },
+    enableNSFWBlur: true
   },
   hotkeys: {
     library: 'ctrl+l',

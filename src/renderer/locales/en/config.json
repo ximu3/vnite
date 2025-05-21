@@ -46,7 +46,8 @@
     },
     "sidebar": {
       "title": "Sidebar",
-      "showThemeSwitcher": "Show Theme Switcher"
+      "showThemeSwitcher": "Show Theme Switcher",
+      "showNSFWBlurSwitcher": "Show NSFW Content Block Switcher"
     }
   },
   "advanced": {

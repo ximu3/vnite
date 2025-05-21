@@ -1,15 +1,15 @@
-import { cn } from '~/utils'
-import { useGameState } from '~/hooks'
-import { useState, useEffect, useRef } from 'react'
-import { useTranslation } from 'react-i18next'
-import { GameImage } from '@ui/game-image'
 import { Button } from '@ui/button'
+import { GameImage } from '@ui/game-image'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
+import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useConfigState, useGameState } from '~/hooks'
+import { cn } from '~/utils'
+import { Header } from './Header'
+import { Memory } from './Memory'
 import { Overview } from './Overview'
 import { Record } from './Record'
 import { Save } from './Save'
-import { Memory } from './Memory'
-import { Header } from './Header'
 import { useGameDetailStore } from './store'
 
 export function Game({ gameId }: { gameId: string }): JSX.Element {
@@ -27,6 +27,8 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
   // Game settings-related state
   const initialPosition = { x: 1.5, y: 24 }
   const initialSize = 100
+  const [nsfw] = useGameState(gameId, 'apperance.nsfw')
+  const [enableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
   const [logoPosition, setLogoPosition] = useGameState(gameId, 'apperance.logo.position')
   const [logoSize, setLogoSize] = useGameState(gameId, 'apperance.logo.size')
   const [logoVisible, setLogoVisible] = useGameState(gameId, 'apperance.logo.visible')
@@ -123,6 +125,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
           gameId={gameId}
           key={`${gameId}-background-1`}
           type="background"
+          blur={nsfw && enableNSFWBlur}
           className={cn('w-full h-auto object-cover z-[1]')}
           onError={() => setIsImageError(true)}
           onUpdated={() => setIsImageError(false)}

@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { HoverCardAnimation } from '~/components/animations/HoverCard'
 import { CollectionCM } from '~/components/contextMenu/CollectionCM'
+import { useConfigState, useGameState } from '~/hooks'
 import { useGameCollectionStore } from '~/stores'
 import { cn } from '~/utils'
 import {
@@ -70,6 +71,8 @@ export function CollectionPoster({
   const reorderCollections = useGameCollectionStore((state) => state.reorderCollections)
   const collectionName = collections[collectionId].name
   const gameId = collections[collectionId].games[0]
+  const [nsfw] = useGameState(gameId, 'apperance.nsfw')
+  const [enableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
   const length = collections[collectionId].games.length
 
   const ref_ = useRef<HTMLDivElement>(null)
@@ -155,6 +158,7 @@ export function CollectionPoster({
                 <GameImage
                   gameId={gameId}
                   type="cover"
+                  blur={nsfw && enableNSFWBlur}
                   alt={gameId}
                   className={cn('w-[155px] h-[155px] cursor-pointer object-cover', className)}
                   draggable="false"
