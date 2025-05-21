@@ -75,9 +75,9 @@ export async function restoreGameSave(gameId: string, saveId: string): Promise<v
 
 export async function deleteGameSave(gameId: string, saveId: string): Promise<void> {
   try {
-    const saveList = await GameDBManager.getGameValue(gameId, 'save')
+    const saveList = await GameDBManager.getGameValue(gameId, 'save.saveList')
     delete saveList[saveId]
-    await GameDBManager.setGameValue(gameId, 'save', saveList)
+    await GameDBManager.setGameValue(gameId, 'save.saveList', saveList)
     await GameDBManager.removeGameSave(gameId, saveId)
   } catch (error) {
     log.error('Error deleting save:', error)
