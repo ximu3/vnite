@@ -140,7 +140,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
           type="background"
           className={cn('w-full h-full absolute top-0 object-cover z-0')}
           style={{
-            opacity: 0.3
+            opacity: 0.9
           }}
           onError={() => setIsImageError(true)}
           onUpdated={() => setIsImageError(false)}
@@ -241,7 +241,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
           }}
         >
           {/* Header area */}
-          <div ref={headerRef} className="mt-[40vh]">
+          <div ref={headerRef} className="mt-[39vh]">
             <Header gameId={gameId} />
           </div>
 
