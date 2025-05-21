@@ -315,7 +315,9 @@
         "shortcutCreated": "ショートカットを作成しました",
         "shortcutError": "ショートカットの作成でエラーが発生しました",
         "gamePathNotSet": "ゲームパスが設定されていません"
-      }
+      },
+      "unmarkNSFW": "NSFW のマークを解除する",
+      "markNSFW": "NSFW としてマークする"
     },
     "deleteAlert": {
       "title": "{{gameName}}を削除してもよろしいですか？",

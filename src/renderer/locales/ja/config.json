@@ -46,7 +46,8 @@
     },
     "sidebar": {
       "title": "サイドバー",
-      "showThemeSwitcher": "テーマ切り替えボタンを表示"
+      "showThemeSwitcher": "テーマ切り替えボタンを表示",
+      "showNSFWBlurSwitcher": "NSFW コンテンツのスイッチャーを表示"
     }
   },
   "advanced": {
