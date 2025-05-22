@@ -1,7 +1,7 @@
 {
-  "showMainWindow": "",
-  "settings": "",
-  "openAtLogin": "",
-  "quitToTray": "",
-  "quit": ""
+  "showMainWindow": "메인 윈도우 보이기",
+  "settings": "설정",
+  "openAtLogin": "시스템 시작 시 열기",
+  "quitToTray": "트레이로 최소화",
+  "quit": "종료"
 }

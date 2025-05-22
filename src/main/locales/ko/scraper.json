@@ -1,28 +1,28 @@
 {
   "dlsite": {
-    "workType": "",
-    "releaseDate": "",
-    "series": "",
-    "maker": ""
+    "workType": "제품 형식",
+    "releaseDate": "발매 일자",
+    "series": "시리즈 이름",
+    "maker": "브랜드"
   },
   "steam": {
-    "officialWebsite": "",
-    "steamStore": "",
+    "officialWebsite": "공식 웹사이트",
+    "steamStore": "Steam 상점",
     "config": {
-      "apiLanguageCode": "",
-      "urlLanguageCode": "",
-      "acceptLanguageHeader": "",
-      "countryCode": ""
+      "apiLanguageCode": "korean",
+      "urlLanguageCode": "ko-kr",
+      "acceptLanguageHeader": "ko-KR,ko;q=0.9,en;q=0.8",
+      "countryCode": "KR"
     }
   },
   "vndb": {
-    "languageCode": ""
+    "languageCode": "ko"
   },
   "extraMetadataFields": {
-    "director": "",
-    "scenario": "",
-    "illustration": "",
-    "music": "",
-    "engine": ""
+    "director": "기획",
+    "scenario": "시나리오",
+    "illustration": "원화",
+    "music": "음악",
+    "engine": "엔진"
   }
 }

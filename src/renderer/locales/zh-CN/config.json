@@ -47,7 +47,7 @@
     "sidebar": {
       "title": "侧边栏",
       "showThemeSwitcher": "显示主题切换按钮",
-      "showNSFWBlurSwitcher": "显示屏蔽 NSFW 内容开关"
+      "showNSFWBlurSwitcher": "显示 NSFW 内容开关"
     }
   },
   "advanced": {

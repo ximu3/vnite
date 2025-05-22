@@ -1,13 +1,13 @@
 {
   "dialog": {
-    "title": "",
-    "noReleaseNotes": "",
-    "latestVersion": "",
-    "downloadProgress": ""
+    "title": "새로운 버전({{version}})이 있습니다",
+    "noReleaseNotes": "릴리즈 노트 없음",
+    "latestVersion": "이미 최신 버전입니다",
+    "downloadProgress": "{{percent}}% - {{speed}} MB/s"
   },
   "actions": {
-    "skipUpdate": "",
-    "update": "",
-    "install": ""
+    "skipUpdate": "업데이트 보류",
+    "update": "지금 업데이트",
+    "install": "지금 설치"
   }
 }

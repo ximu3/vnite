@@ -1,71 +1,71 @@
 {
   "common": {
-    "save": "",
-    "cancel": "",
-    "confirm": ""
+    "save": "저장",
+    "cancel": "취소",
+    "confirm": "확인"
   },
   "arrayEditor": {
-    "clickPlusToAdd": "",
-    "addElement": "",
-    "editElement": "",
-    "enterElement": "",
-    "add": "",
-    "update": ""
+    "clickPlusToAdd": "+ 를 클릭하여 요소 추가",
+    "addElement": "요소 추가",
+    "editElement": "요소 편집",
+    "enterElement": "요소 입력",
+    "add": "추가",
+    "update": "편집"
   },
   "hotkeySetting": {
-    "title": "",
-    "recording": "",
-    "placeholder": "",
-    "startRecordButton": "",
-    "recordingButton": "",
-    "currentKeys": "",
-    "supportedKeys": "",
+    "title": "단축키 설정",
+    "recording": "[단축키를 입력하세요...]",
+    "placeholder": "단축키를 입력하거나 기록하세요, 예시: ctrl+a+b",
+    "startRecordButton": "클릭하여 기록 시작",
+    "recordingButton": "기록 중…",
+    "currentKeys": "현재 입력된 키",
+    "supportedKeys": "지원되는 키는 문자, 숫자, 화살표 키, Esc, 탭, 엔터, 스페이스 등이며, 조합하여 사용할 수 있습니다",
     "errors": {
-      "invalidHotkey": "",
-      "duplicateKeys": ""
+      "invalidHotkey": "유효한 키를 입력해주세요",
+      "duplicateKeys": "중복된 키는 단축키에 포함할 수 없습니다"
     },
     "notifications": {
-      "hotkeyUpdated": ""
+      "hotkeyUpdated": "단축키 수정됨"
     }
   },
   "clipboard": {
-    "copied": "",
-    "copyError": ""
+    "copied": "클립보드에 복사됨",
+    "copyError": "클립보드에 복사하는 데 실패했습니다: {{error}}"
   },
   "game": {
     "stopping": {
-      "loading": "",
-      "success": "",
-      "error": ""
+      "loading": "게임 종료 중…",
+      "success": "게임 종료됨",
+      "error": "게임 종료에 실패했습니다: {{message}}"
     },
     "starting": {
-      "pathRequired": "",
-      "configuringLauncher": "",
-      "configSuccess": "",
-      "configError": "",
-      "runtimeError": ""
+      "pathRequired": "먼저 게임의 경로를 설정해주세요",
+      "configuringLauncher": "런처 설정 중…",
+      "configSuccess": "런처 설정에 성공했습니다",
+      "configError": "설정 실패: {{message}}",
+      "runtimeError": "런타임 설정 오류 발생, 확인해주세요!"
     },
     "playStatus": {
-      "unplayed": "",
-      "playing": "",
-      "finished": "",
-      "multiple": "",
-      "shelved": "",
-      "unknown": ""
+      "unplayed": "플레이 안 함",
+      "playing": "플레이 중",
+      "finished": "클리어",
+      "multiple": "다회차 플레이",
+      "shelved": "보류",
+      "unknown": "알 수 없음"
     }
   },
   "format": {
-    "gameTime": "",
-    "niceDate": "",
-    "niceISO": ""
+    "gameTime": "{{time, gameTime}}",
+    "niceDate": "{{date, niceDate}}",
+    "niceISO": "{{date, niceISO}}"
   },
   "notifications": {
-    "gameExiting": "",
-    "gameExited": "",
-    "fullSyncing": "",
-    "fullSynced": "",
-    "fullSyncError": "",
-    "updateUserInfoError": "",
-    "checkingForUpdate": ""
+    "gameExiting": "게임 종료 중…",
+    "gameExited": "게임이 종료되었습니다",
+    "fullSyncing": "자료 동기화 중…",
+    "fullSynced": "자료가 동기화되었습니다",
+    "fullSyncError": "자료 동기화 실패",
+    "updateUserInfoError": "공식 클라우드 동기화 계정 로그인이 만료되었습니다, 다시 로그인해주세요",
+    "checkingForUpdate": "업데이트 확인 중…"
   }
 }

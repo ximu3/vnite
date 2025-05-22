@@ -46,7 +46,8 @@
     },
     "sidebar": {
       "title": "側邊欄",
-      "showThemeSwitcher": "顯示主題切換按鈕"
+      "showThemeSwitcher": "顯示主題切換按鈕",
+      "showNSFWBlurSwitcher": "顯示 NSFW 內容開關"
     }
   },
   "advanced": {

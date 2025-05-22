@@ -8,7 +8,7 @@
     },
     "gameList": {
       "columns": {
-        "name": "게임 이름",
+        "name": "게임명",
         "releaseDate": "발매일",
         "developers": "개발자"
       },
@@ -21,88 +21,88 @@
       "notifications": {
         "loading": "이미지를 얻어오는 중…",
         "success": "이미지를 성공적으로 불러왔습니다",
-        "error": "이미지를 얻는데 실패했습니다: {{message}}",
-        "noImages": "",
-        "adding": "",
-        "addSuccess": "",
-        "addError": ""
+        "error": "이미지를 얻어오는 데 실패했습니다: {{message}}",
+        "noImages": "게임 이미지를 찾을 수 없습니다",
+        "adding": "게임 추가하는 중…",
+        "addSuccess": "게임이 성공적으로 추가되었습니다",
+        "addError": "게임을 추가하는 데 실패했습니다: {{message}}"
       }
     },
     "search": {
-      "dataSource": "",
-      "gameName": "",
-      "gameNamePlaceholder": "",
-      "gameId": "",
-      "gameIdPlaceholder": "",
-      "searchButton": "",
-      "recognizeButton": "",
+      "dataSource": "자료 출처",
+      "gameName": "게임명",
+      "gameNamePlaceholder": "게임의 이름을 입력해주세요",
+      "gameId": "게임 ID",
+      "gameIdPlaceholder": "게임 ID를 입력해주세요",
+      "searchButton": "검색",
+      "recognizeButton": "식별",
       "notifications": {
-        "enterName": "",
-        "searching": "",
-        "found": "",
-        "notFound": "",
-        "searchError": "",
-        "enterId": "",
-        "recognizing": "",
-        "recognized": "",
-        "invalidId": "",
-        "recognizeError": ""
+        "enterName": "게임의 이름을 입력해주세요",
+        "searching": "게임 찾는 중…",
+        "found": "{{count}}개의 게임을 찾았습니다",
+        "notFound": "검색된 게임이 없습니다",
+        "searchError": "검색 실패: {{message}}",
+        "enterId": "게임 ID를 입력해주세요",
+        "recognizing": "게임 식별 중…",
+        "recognized": "게임 식별에 성공했습니다",
+        "invalidId": "유효하지 않은 ID",
+        "recognizeError": "게임 식별에 실패했습니다: {{message}}"
       },
       "dataSources": {
-        "label": "",
-        "steam": "",
-        "vndb": "",
-        "bangumi": "",
-        "igdb": "",
-        "ymgal": "",
-        "dlsite": ""
+        "label": "자료 출처",
+        "steam": "Steam",
+        "vndb": "VNDB",
+        "bangumi": "Bangumi",
+        "igdb": "IGDB",
+        "ymgal": "YMGal",
+        "dlsite": "DLsite"
       }
     }
   },
   "gameBatchAdder": {
     "dialog": {
-      "title": "",
-      "waitForCompletion": ""
+      "title": "게임 일괄 추가",
+      "waitForCompletion": "게임을 추가하는 중입니다, 잠시만 기다려주세요"
     },
     "status": {
-      "loading": "",
-      "success": "",
-      "error": "",
-      "waiting": "",
-      "existed": ""
+      "loading": "추가 중",
+      "success": "추가 성공",
+      "error": "추가 실패",
+      "waiting": "추가 대기 중",
+      "existed": "이미 존재함"
     },
     "table": {
       "columns": {
-        "dataSource": "",
-        "name": "",
-        "id": "",
-        "status": "",
-        "actions": ""
+        "dataSource": "자료 출처",
+        "name": "게임명",
+        "id": "게임 ID",
+        "status": "상태",
+        "actions": "동작"
       }
     },
     "form": {
-      "dataSource": "",
-      "namePlaceholder": "",
-      "idPlaceholder": ""
+      "dataSource": "자료 출처",
+      "namePlaceholder": "게임의 이름을 입력해주세요",
+      "idPlaceholder": "게임 ID (선택사항)"
     },
     "actions": {
-      "retry": "",
-      "add": "",
-      "delete": "",
-      "addAll": "",
-      "adding": ""
+      "retry": "재시도",
+      "add": "추가",
+      "delete": "제거",
+      "addAll": "모두 추가",
+      "adding": "추가 중…"
     },
     "notifications": {
-      "addingGame": "",
-      "gameAdded": "",
-      "addingGames": "",
-      "gamesAdded": "",
-      "gameAddFailed": ""
+      "addingGame": "{{name}}을 추가하는 중…",
+      "gameAdded": "{{name}}를 성공적으로 게임 항목에 추가했습니다",
+      "addingGames": "게임을 추가하는 중…",
+      "gamesAdded": "게임 추가에 성공했습니다",
+      "gameAddFailed": "게임을 추가하는 데 실패했습니다"
     },
     "errors": {
-      "gameNotFound": "",
-      "gameIsBeingAdded": "",
-      "gameAlreadyAdded": ""
+      "gameNotFound": "게임을 찾을 수 없습니다: {{name}}",
+      "gameIsBeingAdded": "해당 게임을 이미 추가하고 있습니다",
+      "gameAlreadyAdded": "해당 게임은 이미 등록되어 있습니다"
     }
   }
 }
