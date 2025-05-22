@@ -1,195 +1,195 @@
 {
-  "title": "",
+  "title": "내 게임 기록",
   "tabs": {
-    "overview": "",
-    "weekly": "",
-    "monthly": "",
-    "yearly": "",
-    "score": ""
+    "overview": "개요",
+    "weekly": "주간 보고",
+    "monthly": "월간 보고",
+    "yearly": "연간 보고",
+    "score": "평가 점수 보고"
   },
   "overview": {
-    "title": "",
+    "title": "개요",
     "stats": {
-      "totalGames": "",
-      "totalPlayTime": "",
-      "totalPlayDays": "",
-      "totalPlayTimes": ""
+      "totalGames": "총 게임 수",
+      "totalPlayTime": "총 플레이 시간",
+      "totalPlayDays": "총 플레이 일수",
+      "totalPlayTimes": "총 플레이 횟수"
     },
     "chart": {
-      "yearlyPlayTime": "",
-      "timeDistribution": "",
-      "peakHour": ""
+      "yearlyPlayTime": "플레이 시간 (지난 1년간)",
+      "timeDistribution": "플레이 시간 분배",
+      "peakHour": "피크 시간대: {{hour}}:00 - {{nextHour}}:00"
     },
     "ranking": {
-      "playTimeRanking": "",
-      "scoreRanking": "",
-      "viewMore": "",
-      "allGamesByPlayTime": "",
-      "allGamesByScore": ""
+      "playTimeRanking": "플레이 시간 랭킹",
+      "scoreRanking": "게임 평가 랭킹",
+      "viewMore": "더 보기",
+      "allGamesByPlayTime": "플레이 시간 순 게임 목록",
+      "allGamesByScore": "평가 순 게임 목록"
     },
     "format": {
-      "hour": "",
-      "minute": "",
-      "hourValue": "",
-      "minuteValue": ""
+      "hour": "시간",
+      "minute": "분",
+      "hourValue": "{{value}} 시간",
+      "minuteValue": "{{value}} 분"
     },
     "unit": {
-      "count": "",
-      "day": "",
-      "times": ""
+      "count": "개",
+      "day": "일",
+      "times": "회"
     },
     "misc": {
-      "noScore": ""
+      "noScore": "평가 없음"
     }
   },
   "weekly": {
-    "title": "",
-    "dailyPlayTime": "",
-    "totalWeeklyTime": "",
+    "title": "주간 게임 보고",
+    "dailyPlayTime": "일간 플레이 시간",
+    "totalWeeklyTime": "이번 주: {{time, gameTime}}",
     "highlights": {
-      "title": "",
-      "longestDay": "",
-      "dateFormat": "",
-      "playTime": "",
-      "noRecords": "",
-      "frequency": "",
-      "daysPlayed": "",
-      "percentage": ""
+      "title": "주간 데이터",
+      "longestDay": "가장 많이 플레이 한 날",
+      "dateFormat": "{{weekday}} ({{date, niceDate}})",
+      "playTime": "플레이 시간: {{time, gameTime}}",
+      "noRecords": "이번 주 플레이 기록이 없습니다",
+      "frequency": "플레이 빈도",
+      "daysPlayed": "{{played}} / {{total}} 일",
+      "percentage": "이번 주의 {{percent}}%"
     },
     "weeklyGames": {
-      "title": "",
-      "noRecords": ""
+      "title": "이번 주의 게임",
+      "noRecords": "이번 주 플레이 기록이 없습니다"
     },
     "weekdays": {
-      "sunday": "",
-      "monday": "",
-      "tuesday": "",
-      "wednesday": "",
-      "thursday": "",
-      "friday": "",
-      "saturday": ""
+      "sunday": "일",
+      "monday": "월",
+      "tuesday": "화",
+      "wednesday": "수",
+      "thursday": "목",
+      "friday": "금",
+      "saturday": "토"
     },
-    "dateRange": ""
+    "dateRange": "{{startDate, niceDate}} - {{endDate, niceDate}}"
   },
   "monthly": {
-    "title": "",
-    "yearMonth": "",
+    "title": "월간 게임 보고",
+    "yearMonth": "{{year}}년 {{month}}",
     "stats": {
-      "monthlyPlayTime": "",
-      "daysPlayed": "",
-      "mostPlayedDay": ""
+      "monthlyPlayTime": "월간 플레이 시간",
+      "daysPlayed": "이번 달에 플레이 한 일수",
+      "mostPlayedDay": "가장 많이 플레이 한 날"
     },
     "unit": {
-      "days": "",
-      "noRecord": "",
-      "playTime": ""
+      "days": "일",
+      "noRecord": "기록 없음",
+      "playTime": "플레이 시간: {{time, gameTime}}"
     },
     "chart": {
-      "weeklyPlayTime": "",
-      "calendarTitle": "",
-      "weekFormat": "",
-      "weekDateRange": ""
+      "weeklyPlayTime": "주간 플레이 시간",
+      "calendarTitle": "월간 게임 달력",
+      "weekFormat": "{{week}}번째 주",
+      "weekDateRange": "{{week}} ({{startDay}}일~{{endDay}}일)"
     },
     "highlights": {
-      "title": "",
-      "longestWeek": "",
-      "noRecords": "",
-      "frequency": "",
-      "daysCount": "",
-      "percentage": ""
+      "title": "월간 데이터",
+      "longestWeek": "최장 플레이 주간",
+      "noRecords": "월간 플레이 기록이 없습니다",
+      "frequency": "플레이 빈도",
+      "daysCount": "{{played}} / {{total}} 일",
+      "percentage": "월간 기록의 {{percent}}%"
     },
     "monthlyGames": {
-      "title": "",
-      "noRecords": ""
+      "title": "이달의 게임",
+      "noRecords": "이달의 플레이 기록이 없습니다"
     },
     "months": {
-      "january": "",
-      "february": "",
-      "march": "",
-      "april": "",
-      "may": "",
-      "june": "",
-      "july": "",
-      "august": "",
-      "september": "",
-      "october": "",
-      "november": "",
-      "december": ""
+      "january": "1월",
+      "february": "2월",
+      "march": "3월",
+      "april": "4월",
+      "may": "5월",
+      "june": "6월",
+      "july": "7월",
+      "august": "8월",
+      "september": "9월",
+      "october": "10월",
+      "november": "11월",
+      "december": "12월"
     }
   },
   "yearly": {
-    "title": "",
-    "yearDisplay": "",
+    "title": "연간 게임 보고",
+    "yearDisplay": "{{year}}년",
     "stats": {
-      "yearlyPlayTime": "",
-      "monthsPlayed": "",
-      "monthsCount": "",
-      "mostPlayedMonth": "",
-      "noRecord": "",
-      "playTimeDesc": ""
+      "yearlyPlayTime": "연간 플레이 시간",
+      "monthsPlayed": "플레이 개월 수",
+      "monthsCount": "{{count}} 개월",
+      "mostPlayedMonth": "가장 많이 플레이 한 달",
+      "noRecord": "기록 없음",
+      "playTimeDesc": "플레이 시간: {{time, gameTime}}"
     },
     "chart": {
-      "monthlyPlayTime": "",
-      "monthlyPlayDays": "",
-      "timeDistribution": "",
-      "byGameType": "",
-      "typePercentage": ""
+      "monthlyPlayTime": "월간 플레이 시간",
+      "monthlyPlayDays": "월별 플레이 일수",
+      "timeDistribution": "연간 플레이 시간 분포",
+      "byGameType": "게임 타입별",
+      "typePercentage": "{{type}}: {{percent}}%"
     },
     "format": {
-      "hours": "",
-      "days": ""
+      "hours": "{{value}} 시간",
+      "days": "{{value}} 일"
     },
     "yearlyGames": {
-      "title": "",
-      "noRecords": ""
+      "title": "올해의 게임",
+      "noRecords": "올해 플레이 기록이 없습니다"
     },
     "months": {
-      "january": "",
-      "february": "",
-      "march": "",
-      "april": "",
-      "may": "",
-      "june": "",
-      "july": "",
-      "august": "",
-      "september": "",
-      "october": "",
-      "november": "",
-      "december": ""
+      "january": "1월",
+      "february": "2월",
+      "march": "3월",
+      "april": "4월",
+      "may": "5월",
+      "june": "6월",
+      "july": "7월",
+      "august": "8월",
+      "september": "9월",
+      "october": "10월",
+      "november": "11월",
+      "december": "12월"
     }
   },
   "score": {
-    "title": "",
-    "description": "",
+    "title": "게임 평가 보고",
+    "description": "아래는 등급 별로 분류된 게임 라이브러리입니다. 각 카테고리를 스크롤하고 게임에 마우스를 가져가면 자세한 내용을 확인할 수 있습니다.",
     "categories": {
       "excellent": {
-        "title": "",
-        "description": ""
+        "title": "우수 (9 ~ 10점)",
+        "description": "이 게임들은 뛰어난 경험을 제공하며, 강력히 추천합니다"
       },
       "great": {
-        "title": "",
-        "description": ""
+        "title": "훌륭함 (8 ~ 8.9점)",
+        "description": "이 게임은 매우 훌륭하고 플레이 할 가치가 있습니다"
       },
       "good": {
-        "title": "",
-        "description": ""
+        "title": "좋음 (7 ~ 7.9점)",
+        "description": "이 게임들은 양질의 콘텐츠를 가지고 있습니다"
       },
       "average": {
-        "title": "",
-        "description": ""
+        "title": "보통 (6 ~ 6.9점)",
+        "description": "이 게임들은 평균적인 품질과 눈에 띄는 단점이 있습니다"
       },
       "notRecommended": {
-        "title": "",
-        "description": ""
+        "title": "비추천 (0 ~ 5.9점)",
+        "description": "이 게임들은 심각한 문제가 있으므로 권장하지 않습니다"
       },
-      "gamesCount": ""
+      "gamesCount": "{{count}}개의 게임"
     },
     "gameInfo": {
-      "unknown": "",
-      "addDate": "",
-      "playTime": "",
-      "lastRun": "",
-      "ratingLabel": ""
+      "unknown": "알 수 없는 게임",
+      "addDate": "추가 일자: {{date, niceDate}}",
+      "playTime": "플레이 시간: {{time, gameTime}}",
+      "lastRun": "마지막 플레이: {{date, niceDate}}",
+      "ratingLabel": "평가 점수"
     }
   }
 }

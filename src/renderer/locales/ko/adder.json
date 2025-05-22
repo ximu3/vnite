@@ -10,7 +10,7 @@
       "columns": {
         "name": "게임명",
         "releaseDate": "발매일",
-        "developers": "개발자"
+        "developers": "개발사"
       },
       "unknown": "알 수 없음",
       "selected": "선택한 게임: {{name}}"
