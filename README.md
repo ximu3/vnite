@@ -10,7 +10,7 @@
 
 # Vnite
 
-[English](README.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [日本語](README.ja.md) | [Русский](README.ru.md) 
+[English](README.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [日本語](README.ja.md) | [Русский](README.ru.md) | [한국어](README.ko.md)
 
 Vnite is a versatile game management software designed to provide a unified interface for recording, managing, and synchronizing your gaming journey.
 
