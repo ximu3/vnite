@@ -31,7 +31,7 @@
       "name": "이름"
     },
     "match": "매칭 규칙",
-    "replace": "치환",
+    "replace": "치환할 텍스트",
     "addRule": "규칙 추가",
     "addDialogPlaceholder": "매칭 내용을 입력해주세요",
     "title": "규칙 설정",
