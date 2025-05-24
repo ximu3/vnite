@@ -303,7 +303,8 @@ async function convertGame(gameId: string, gamePath: string): Promise<void> {
           },
           size: 100,
           visible: true
-        }
+        },
+        nsfw: false
       }
     }
 
@@ -561,7 +562,8 @@ async function convertConfig(basePath: string): Promise<void> {
     await ConfigDBManager.setConfigValue('general', {
       openAtLogin: v2Config.general.openAtLogin,
       quitToTray: v2Config.general.quitToTray,
-      language: ''
+      language: '',
+      hideWindowAfterGameStart: true
     })
 
     const selectedGroupMap: Record<
@@ -613,7 +615,8 @@ async function convertConfig(basePath: string): Promise<void> {
 
     // Converting Appearance Configuration
     await ConfigDBManager.setConfigValue('appearances.sidebar', {
-      showThemeSwitcher: v2Config.appearances.sidebar.showThemeSwitchInSidebar
+      showThemeSwitcher: v2Config.appearances.sidebar.showThemeSwitchInSidebar,
+      showNSFWBlurSwitcher: true
     })
 
     // Converting Local Configurations - Game Associations
