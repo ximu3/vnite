@@ -30,7 +30,8 @@ export function General(): JSX.Element {
     { value: 'zh-TW', label: '正體中文' },
     { value: 'en', label: 'English' },
     { value: 'ja', label: '日本語' },
-    { value: 'ru', label: 'Русский' } // ← add [teosiq]
+    { value: 'ru', label: 'Русский' },
+    { value: 'ko', label: '한국어' }
   ]
 
   // Handling of language changes

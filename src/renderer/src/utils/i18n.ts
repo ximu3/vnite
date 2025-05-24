@@ -20,7 +20,7 @@ export async function i18nInit(): Promise<void> {
     'transformer'
   ]
 
-  const supportedLngs = ['zh-CN', 'zh-TW', 'ja', 'en', 'ru', 'fr']
+  const supportedLngs = ['zh-CN', 'zh-TW', 'ja', 'en', 'ru', 'fr', 'ko']
 
   await i18n
     .use(initReactI18next)

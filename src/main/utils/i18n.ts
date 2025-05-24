@@ -8,7 +8,7 @@ export async function initI18n(): Promise<void> {
 
   const namespaces = ['tray', 'scraper']
 
-  const supportedLngs = ['zh-CN', 'zh-TW', 'ja', 'en', 'ru', 'fr']
+  const supportedLngs = ['zh-CN', 'zh-TW', 'ja', 'en', 'ru', 'fr', 'ko']
 
   await i18next
     .use(Backend)
