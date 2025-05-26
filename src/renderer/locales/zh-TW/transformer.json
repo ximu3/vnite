@@ -83,6 +83,10 @@
     "vndbChineseTags": {
       "name": "VNDB 中文標籤",
       "note": "將 VNDB 的英文標籤轉換為中文"
+    },
+    "kanaToLatinDevelopers": {
+      "name": "開發商名稱假名轉寫",
+      "note": "將僅由日文假名組成的開發商名稱轉換為拉丁字母"
     }
   }
 }
