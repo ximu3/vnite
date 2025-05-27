@@ -1,13 +1,13 @@
-import { GameDBManager } from './game'
-import { ConfigDBManager } from './config'
-import { GameMetadata, GameTagsList, GameDescriptionList, GameExtraInfoList } from '@appTypes/utils'
-import i18next from 'i18next'
+import { configDocs } from '@appTypes/database'
+import { GameDescriptionList, GameExtraInfoList, GameMetadata, GameTagsList } from '@appTypes/utils'
+import { generateUUID } from '@appUtils'
 import log from 'electron-log/main'
 import fse from 'fs-extra'
-import { configDocs } from '@appTypes/database'
-import { z } from 'zod'
+import i18next from 'i18next'
 import path from 'path'
-import { generateUUID } from '@appUtils'
+import { z } from 'zod'
+import { ConfigDBManager } from './config'
+import { GameDBManager } from './game'
 
 /**
  * Metadata transformer module, processes game metadata transformations
@@ -283,7 +283,7 @@ export class Transformer {
     }
     // Process string array type fields
     else if (Array.isArray(metadata[field])) {
-      metadata[field] = metadata[field]
+      const processedArray = metadata[field]
         .map((item: string) => {
           if (typeof item !== 'string') return item
 
@@ -298,6 +298,9 @@ export class Transformer {
         })
         // Filter out empty values
         .filter((item: any) => item !== null && item !== undefined)
+
+      // Deduplicate
+      metadata[field] = [...new Set(processedArray)]
     }
   }
 
