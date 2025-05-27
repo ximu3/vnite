@@ -61,7 +61,7 @@ export function BigGamePoster({
                   type="background"
                   blur={nsfw && enableNSFWBlur}
                   className={cn(
-                    'h-[222px] aspect-[3/2] cursor-pointer select-none object-contain rounded-lg bg-accent/30',
+                    'h-[222px] aspect-[3/2] cursor-pointer select-none object-cover rounded-lg bg-accent/30',
                     className
                   )}
                   fallback={
