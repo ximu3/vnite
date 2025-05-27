@@ -83,6 +83,10 @@
     "vndbChineseTags": {
       "name": "VNDB 中国語タグ",
       "note": "VNDB の英語タグを中国語に変換する"
+    },
+    "kanaToLatinDevelopers": {
+      "name": "開発者名のカナ転写",
+      "note": "カナのみで構成された開発者名をラテン文字に変換します"
     }
   }
 }

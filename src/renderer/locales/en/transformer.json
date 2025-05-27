@@ -73,7 +73,7 @@
   },
   "transformerItem": {
     "rulesCount": "{{count}} rules",
-    "tooltips":{
+    "tooltips": {
       "edit": "Edit",
       "export": "Export",
       "delete": "Delete"
@@ -83,6 +83,10 @@
     "vndbChineseTags": {
       "name": "VNDB Chinese Tags",
       "note": "Convert VNDB English tags to Chinese"
+    },
+    "kanaToLatinDevelopers": {
+      "name": "Kana-to-Latin Developer Names",
+      "note": "Convert developer names composed solely of Japanese kana into Latin alphabet"
     }
   }
 }

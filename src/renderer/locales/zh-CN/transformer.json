@@ -73,7 +73,7 @@
   },
   "transformerItem": {
     "rulesCount": "{{count}} 条规则",
-    "tooltips":{
+    "tooltips": {
       "edit": "编辑",
       "export": "导出",
       "delete": "删除"
@@ -83,6 +83,10 @@
     "vndbChineseTags": {
       "name": "VNDB 中文标签",
       "note": "将 VNDB 的英文标签转换为中文"
+    },
+    "kanaToLatinDevelopers": {
+      "name": "开发商名称假名转写",
+      "note": "将仅由日文假名构成的开发商名称转换为拉丁字母"
     }
   }
 }
