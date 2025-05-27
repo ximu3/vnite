@@ -165,7 +165,7 @@ export function CollectionPoster({
                   fallback={
                     <div
                       className={cn(
-                        'w-full h-full cursor-pointer object-cover flex items-center justify-center',
+                        'w-[155px] h-[155px] cursor-pointer object-cover flex items-center justify-center bg-muted/50',
                         className
                       )}
                     ></div>

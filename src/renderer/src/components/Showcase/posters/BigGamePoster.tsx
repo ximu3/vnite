@@ -67,7 +67,7 @@ export function BigGamePoster({
                   fallback={
                     <div
                       className={cn(
-                        'w-full h-full cursor-pointer object-cover flex items-center justify-center pb-10 font-bold bg-accent',
+                        'w-[333px] aspect-[3/2] cursor-pointer object-cover flex items-center justify-center font-bold bg-muted/50',
                         className
                       )}
                     >
