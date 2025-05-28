@@ -2,6 +2,7 @@ import type { MaxPlayTimeDay, gameDoc } from '@appTypes/database'
 import { calculateDailyPlayTime } from '@appUtils'
 import i18next from 'i18next'
 import type { Paths } from 'type-fest'
+import { parseLocalDate } from '~/stores/game/recordUtils'
 import { useConfigStore } from '../config'
 import { useGameRegistry } from './gameRegistry'
 import { getGameStore } from './gameStoreFactory'
@@ -425,8 +426,10 @@ export function getGamePlayTimeByDateRange(
     }
 
     try {
-      const start = new Date(startDate)
-      const end = new Date(endDate)
+      // const start = new Date(startDate)
+      const start = parseLocalDate(startDate)
+      // const end = new Date(endDate)
+      const end = parseLocalDate(endDate)
 
       // Date of validation
       if (isNaN(start.getTime()) || isNaN(end.getTime())) {
