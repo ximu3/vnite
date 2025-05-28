@@ -18,6 +18,16 @@ interface MostPlayedMonth {
 }
 
 /**
+ * for a date string in the format YYYY-MM-DD
+ * if use `new Date(str)` it will be parsed as UTC time
+ * this function is used to parse the date string to local time
+ */
+export function parseLocalDate(str: string): Date {
+  const [y, m, d] = str.split('-').map(Number)
+  return new Date(y, m - 1, d)
+}
+
+/**
  * Calculate the game time (in milliseconds) for a specific date
  */
 export function calculateDailyPlayTime(date: Date, timers: gameDoc['record']['timers']): number {
@@ -92,7 +102,8 @@ export function getWeeklyPlayData(date = new Date()): {
 
     // Every day
     for (const dateStr of dates) {
-      const dayDate = new Date(dateStr)
+      // const dayDate = new Date(dateStr)
+      const dayDate = parseLocalDate(dateStr)
       let dayTotal = 0
 
       // Iterate through all the games
@@ -180,7 +191,8 @@ export function getMonthlyPlayData(date = new Date()): {
 
     // Every day
     for (const dateStr of dates) {
-      const dayDate = new Date(dateStr)
+      // const dayDate = new Date(dateStr)
+      const dayDate = parseLocalDate(dateStr)
       let dayTotal = 0
 
       // Calculate what week of the month the current date is

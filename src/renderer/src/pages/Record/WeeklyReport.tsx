@@ -8,18 +8,8 @@ import { Separator } from '@ui/separator'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 
-import { getWeeklyPlayData } from '~/stores/game/recordUtils'
+import { getWeeklyPlayData, parseLocalDate } from '~/stores/game/recordUtils'
 import { GameRankingItem } from './GameRankingItem'
-
-/**
- * for a date string in the format YYYY-MM-DD
- * if use `new Date(str)` it will be parsed as UTC time
- * this function is used to parse the date string to local time
- */
-function parseLocalDate(str: string): Date {
-  const [y, m, d] = str.split('-').map(Number)
-  return new Date(y, m - 1, d)
-}
 
 export function WeeklyReport(): JSX.Element {
   const { t } = useTranslation('record')
