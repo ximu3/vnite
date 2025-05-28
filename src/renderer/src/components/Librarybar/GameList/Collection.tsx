@@ -1,15 +1,22 @@
-import { cn } from '~/utils'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@ui/accordion'
-import { useGameCollectionStore } from '~/stores'
 import { ScrollArea } from '@ui/scroll-area'
+import { useMemo } from 'react'
+import { CollectionCM } from '~/components/contextMenu/CollectionCM'
+import { useGameCollectionStore } from '~/stores'
+import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
 import { AllGame } from './AllGame'
 import { RecentGames } from './RecentGames'
-import { CollectionCM } from '~/components/contextMenu/CollectionCM'
 
 export function Collection(): JSX.Element {
   const collections = useGameCollectionStore((state) => state.documents)
   const defaultValues = [...Object.keys(collections), 'all', 'recentGames']
+
+  // Sort collections by the sort field
+  const sortedCollections = useMemo(() => {
+    return Object.entries(collections).sort(([, a], [, b]) => a.sort - b.sort)
+  }, [collections])
+
   return (
     <ScrollArea className={cn('w-full h-full pr-3 -mr-3')}>
       {defaultValues.length > 2 ? (
@@ -20,7 +27,7 @@ export function Collection(): JSX.Element {
           className={cn('w-full text-xs flex flex-col gap-2')}
         >
           <RecentGames />
-          {Object.entries(collections).map(([key, value]) => (
+          {sortedCollections.map(([key, value]) => (
             <AccordionItem key={key} value={key}>
               <CollectionCM collectionId={key}>
                 <AccordionTrigger className={cn('text-xs p-1 pl-2 rounded-none bg-accent/35')}>
