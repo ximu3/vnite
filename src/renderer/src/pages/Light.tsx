@@ -1,10 +1,10 @@
-import { useLocation } from 'react-router-dom'
-import { sortGames, useGameCollectionStore } from '~/stores/game'
 import { useEffect, useState } from 'react'
-import { useAttachmentStore } from '~/stores'
-import { useConfigState } from '~/hooks'
-import { cn } from '~/utils'
+import { useLocation } from 'react-router-dom'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
+import { useConfigState } from '~/hooks'
+import { useAttachmentStore } from '~/stores'
+import { sortGames, useGameCollectionStore } from '~/stores/game'
+import { cn } from '~/utils'
 
 export function Light(): JSX.Element {
   const { pathname } = useLocation()
@@ -59,10 +59,10 @@ export function Light(): JSX.Element {
       })
       .catch(() => {
         // Handle image loading failure
-        if (customBackground) {
-          setAttachmentError('config', 'media', 'background.webp', true)
-        } else if (newGameId) {
+        if (newGameId) {
           setAttachmentError('game', newGameId, 'images/background.webp', true)
+        } else if (customBackground) {
+          setAttachmentError('config', 'media', 'background.webp', true)
         }
       })
   }
