@@ -1,0 +1,120 @@
+{
+  "title": "",
+  "status": {
+    "idle": "",
+    "scanning": "",
+    "paused": "",
+    "completed": "",
+    "error": "",
+    "unknown": ""
+  },
+  "metrics": {
+    "scanners": "",
+    "games": "",
+    "scanInterval": "",
+    "failures": ""
+  },
+  "actions": {
+    "pause": "",
+    "resume": "",
+    "scanAll": "",
+    "stop": "",
+    "globalSettings": "",
+    "addDirectory": "",
+    "cancel": "",
+    "save": "",
+    "confirmDelete": "",
+    "fix": "",
+    "ignore": "",
+    "back": "",
+    "close": "",
+    "browse": ""
+  },
+  "list": {
+    "title": "",
+    "empty": {
+      "title": "",
+      "description": ""
+    },
+    "item": {
+      "dataSource": "",
+      "depth": "",
+      "progress": "",
+      "games": "",
+      "statusLabels": {
+        "idle": "",
+        "scanning": "",
+        "paused": "",
+        "completed": "",
+        "error": "",
+        "unknown": ""
+      },
+      "deleteDialog": {
+        "title": "",
+        "description": "",
+        "cancel": "",
+        "confirm": ""
+      },
+      "tooltips": {
+        "scan": "",
+        "edit": "",
+        "delete": ""
+      }
+    }
+  },
+  "notifications": {
+    "fixAttempt": "",
+    "fixSuccess": "",
+    "fixError": "",
+    "createError": "",
+    "intervalTooShort": "",
+    "scanStopping": "",
+    "scanStopped": ""
+  },
+  "errors": {
+    "fixFolder": "",
+    "createScanner": ""
+  },
+  "globalSettings": {
+    "title": "",
+    "scanInterval": "",
+    "scanIntervalTooltip": "",
+    "ignoreList": "",
+    "ignoreListPlaceholder": "",
+    "ignoreListTooltip": ""
+  },
+  "dataSources": {
+    "steam": "",
+    "vndb": "",
+    "bangumi": "",
+    "ymgal": "",
+    "igdb": "",
+    "dlsite": ""
+  },
+  "failedFolders": {
+    "title": "",
+    "fixing": "",
+    "dataSource": "",
+    "dataSourceId": "",
+    "inputPlaceholder": "",
+    "helpText": "",
+    "selectPlaceholder": "",
+    "table": {
+      "folderName": "",
+      "location": "",
+      "error": "",
+      "actions": ""
+    }
+  },
+  "editScanner": {
+    "addTitle": "",
+    "editTitle": "",
+    "path": "",
+    "dataSource": "",
+    "scanDepth": "",
+    "pathPlaceholder": "",
+    "dataSourcePlaceholder": "",
+    "depthPlaceholder": "",
+    "depthTooltip": ""
+  }
+}
