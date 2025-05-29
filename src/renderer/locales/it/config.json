@@ -1,0 +1,243 @@
+{
+  "title": "",
+  "general": {
+    "title": "",
+    "language": "",
+    "openAtLogin": "",
+    "theme": "",
+    "darkTheme": "",
+    "lightTheme": "",
+    "followSystem": "",
+    "closeMainPanel": "",
+    "action": "",
+    "quitApp": "",
+    "minimizeToTray": "",
+    "hideWindowAfterGameStart": ""
+  },
+  "appearances": {
+    "title": "",
+    "background": {
+      "title": "",
+      "customBackground": "",
+      "image": "",
+      "selectImage": "",
+      "currentBackground": "",
+      "noBackground": ""
+    },
+    "showcase": {
+      "title": "",
+      "showPlayButtonOnPoster": ""
+    },
+    "glass": {
+      "title": "",
+      "blur": "",
+      "opacity": ""
+    },
+    "gameList": {
+      "title": "",
+      "showRecentGames": "",
+      "highlightLocalGames": "",
+      "markLocalGames": "",
+      "showCollapseButton": ""
+    },
+    "gameDetail": {
+      "title": "",
+      "showOriginalName": ""
+    },
+    "sidebar": {
+      "title": "",
+      "showThemeSwitcher": "",
+      "showNSFWBlurSwitcher": ""
+    }
+  },
+  "advanced": {
+    "title": "",
+    "localeEmulator": {
+      "name": "",
+      "placeholder": ""
+    },
+    "visualBoyAdvance": {
+      "name": "",
+      "placeholder": ""
+    },
+    "magpie": {
+      "name": "",
+      "placeholder": "",
+      "hotkeyLabel": ""
+    }
+  },
+  "theme": {
+    "title": "",
+    "saveButton": "",
+    "presetThemes": "",
+    "searchTheme": "",
+    "noPresetFound": "",
+    "presets": {
+      "default": "",
+      "mutsumi": "",
+      "moonlight": ""
+    },
+    "notifications": {
+      "themeSaved": "",
+      "configuring": "",
+      "configured": ""
+    }
+  },
+  "hotkeys": {
+    "title": "",
+    "pageNavigation": {
+      "title": "",
+      "library": "",
+      "record": "",
+      "scanner": "",
+      "config": "",
+      "goBack": "",
+      "goForward": ""
+    },
+    "quickActions": {
+      "title": "",
+      "addGame": ""
+    },
+    "others": {
+      "title": "",
+      "randomGame": ""
+    }
+  },
+  "cloudSync": {
+    "title": "",
+    "enable": "",
+    "syncMode": "",
+    "modes": {
+      "official": "",
+      "selfHosted": ""
+    },
+    "status": {
+      "syncing": "",
+      "success": "",
+      "error": "",
+      "noInfo": ""
+    },
+    "errors": {
+      "incompleteConfig": "",
+      "loginRequired": "",
+      "fetchStorageFailed": ""
+    },
+    "notifications": {
+      "updating": "",
+      "updateSuccess": "",
+      "updateError": "",
+      "loggingIn": "",
+      "loginSuccess": "",
+      "loginError": "",
+      "authSuccess": "",
+      "authError": "",
+      "registering": "",
+      "registerSuccess": "",
+      "registerError": ""
+    },
+    "official": {
+      "connectTitle": "",
+      "connectDescription": "",
+      "login": "",
+      "register": "",
+      "logout": "",
+      "adminEdition": "",
+      "developerEdition": "",
+      "premiumEdition": "",
+      "communityEdition": "",
+      "lastSync": "",
+      "notSynced": "",
+      "connected": "",
+      "disconnected": "",
+      "storage": "",
+      "used": ""
+    },
+    "selfHosted": {
+      "title": "",
+      "description": "",
+      "serverAddress": "",
+      "username": "",
+      "password": "",
+      "info": ""
+    },
+    "info": {
+      "status": "",
+      "message": "",
+      "time": ""
+    }
+  },
+  "scraper": {
+    "title": "",
+    "common": {
+      "title": "",
+      "defaultDataSource": ""
+    },
+    "vndb": {
+      "title": "",
+      "tagSpoilerLevel": "",
+      "tagSpoilerLevels": {
+        "none": "",
+        "minor": "",
+        "all": ""
+      }
+    },
+    "dataSources": {
+      "steam": "",
+      "vndb": "",
+      "bangumi": "",
+      "igdb": "",
+      "ymgal": "",
+      "dlsite": ""
+    }
+  },
+  "database": {
+    "title": "",
+    "portableMode": "",
+    "modes": {
+      "portable": "",
+      "normal": ""
+    },
+    "confirmSwitch": "",
+    "switchDescription": "",
+    "openFolder": "",
+    "backup": "",
+    "import": "",
+    "importV2": "",
+    "confirmImport": "",
+    "importWarning": "",
+    "confirmImportV2": "",
+    "importV2Warning": "",
+    "portableAdminRequired": "",
+    "notifications": {
+      "backingUp": "",
+      "backupSuccess": "",
+      "backupError": "",
+      "importing": "",
+      "importSuccess": "",
+      "importError": "",
+      "restartCountdown": "",
+      "switchingMode": "",
+      "switchSuccess": "",
+      "switchError": "",
+      "adminRightsRequired": ""
+    }
+  },
+  "about": {
+    "title": "",
+    "author": "",
+    "version": "",
+    "repository": "",
+    "feedback": "",
+    "group": "",
+    "prerelease": ""
+  },
+  "metadata": {
+    "title": "",
+    "transformer": {
+      "title": "",
+      "enable": "",
+      "manage": "",
+      "manageButton": ""
+    }
+  }
+}
