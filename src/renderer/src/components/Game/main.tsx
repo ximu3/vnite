@@ -11,6 +11,7 @@ import { Overview } from './Overview'
 import { Record } from './Record'
 import { Save } from './Save'
 import { useGameDetailStore } from './store'
+import { ScrollArea } from '../ui/scroll-area'
 
 export function Game({ gameId }: { gameId: string }): JSX.Element {
   const { t } = useTranslation('game')
@@ -112,10 +113,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
     <div className={cn('w-full h-full relative overflow-hidden')}>
       {/* Background layer - absolute positioning */}
       <div
-        className={cn(
-          'absolute inset-0 w-full h-full overflow-hidden pr-2',
-          'will-change-transform'
-        )}
+        className={cn('absolute inset-0 w-full h-full overflow-hidden', 'will-change-transform')}
         style={{
           transform: `translateY(-${scrollY * 0.4}px)`,
           maskImage: 'linear-gradient(to bottom, black 50%, transparent 85%)'
@@ -227,11 +225,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
       )}
 
       {/* Scrollable content area */}
-      <div
-        className={cn(
-          'relative h-full w-full overflow-auto scrollbar-base scrollbar-track-background rounded-none'
-        )}
-      >
+      <ScrollArea className={cn('relative h-full w-full overflow-auto rounded-none')}>
         {/* Content container */}
         <div
           className={cn('relative z-20 flex flex-col w-full min-h-[100vh]')}
@@ -278,7 +272,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
             </Tabs>
           </div>
         </div>
-      </div>
+      </ScrollArea>
     </div>
   )
 }
