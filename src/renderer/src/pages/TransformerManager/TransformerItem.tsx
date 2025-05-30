@@ -2,6 +2,7 @@ import { getErrorMessage } from '@appUtils'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
+import { PlayCircle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { cn, ipcInvoke } from '~/utils'
@@ -11,6 +12,8 @@ interface TransformerItemProps {
   transformer: TransformerRule
   index: number
   totalCount: number
+  isTransforming: boolean
+  handleTransform: (transformer: TransformerRule) => void
   onRuleClick: (transformer: TransformerRule) => void
   onMoveUp: (index: number) => void
   onMoveDown: (index: number) => void
@@ -22,6 +25,8 @@ export function TransformerItem({
   transformer,
   index,
   totalCount,
+  isTransforming,
+  handleTransform,
   onRuleClick,
   onMoveUp,
   onMoveDown,
@@ -66,7 +71,7 @@ export function TransformerItem({
           </div>
         </div>
 
-        <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
           <Button
             className={cn(index === 0 && 'opacity-50 cursor-not-allowed')}
             variant={'ghost'}
@@ -74,7 +79,7 @@ export function TransformerItem({
             onClick={() => onMoveUp(index)}
             disabled={index === 0}
           >
-            <span className="w-4 h-4 icon-[mdi--chevron-up]"></span>
+            <span className="w-5 h-5 icon-[mdi--chevron-up]"></span>
           </Button>
 
           <Button
@@ -84,8 +89,22 @@ export function TransformerItem({
             onClick={() => onMoveDown(index)}
             disabled={index === totalCount - 1}
           >
-            <span className="w-4 h-4 icon-[mdi--chevron-down]"></span>
+            <span className="w-5 h-5 icon-[mdi--chevron-down]"></span>
           </Button>
+
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                variant="ghost"
+                onClick={() => handleTransform(transformer)}
+                size={'icon'}
+                disabled={isTransforming}
+              >
+                <PlayCircle className="w-4 h-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">{t('transformerItem.tooltips.apply')}</TooltipContent>
+          </Tooltip>
 
           <Tooltip>
             <TooltipTrigger>

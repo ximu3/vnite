@@ -165,7 +165,8 @@ export function RuleDialog({
           className="flex items-center px-4 py-3 cursor-pointer hover:bg-accent rounded-md transition"
           onClick={() => toggleCurrentRule(category)}
         >
-          <span className="text-sm font-medium text-foreground">{title}</span>
+          <span className="text-sm font-medium text-foreground">{`${title}`}</span>
+          <span className="text-sm text-foreground/80 ml-1">{`(${rules.length})`}</span>
           <div className="flex-grow" />
           <ChevronDown
             className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${
