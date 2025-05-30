@@ -241,7 +241,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
           }}
         >
           {/* Header area */}
-          <div ref={headerRef} className="mt-[39vh]">
+          <div ref={headerRef} className="mt-[40vh]">
             <Header gameId={gameId} />
           </div>
 
