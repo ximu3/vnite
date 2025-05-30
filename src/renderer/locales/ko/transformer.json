@@ -73,6 +73,7 @@
   "transformerItem": {
     "rulesCount": "{{count}}개 규칙",
     "tooltips": {
+      "apply": "적용",
       "export": "내보내기",
       "delete": "제거",
       "edit": "수정"

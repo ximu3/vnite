@@ -1,11 +1,14 @@
-import { ipcMain, BrowserWindow } from 'electron'
-import { Transformer } from '~/database'
 import { GameMetadata } from '@appTypes/utils'
+import { BrowserWindow, ipcMain } from 'electron'
+import { Transformer } from '~/database'
 
 export function setupTransformerIPC(mainWindow: BrowserWindow): void {
-  ipcMain.handle('transform-metadata', async (_event, metadata: GameMetadata) => {
-    return await Transformer.transformMetadata(metadata)
-  })
+  ipcMain.handle(
+    'transform-metadata',
+    async (_event, metadata: GameMetadata, transformerIds: string[]) => {
+      return await Transformer.transformMetadata(metadata, transformerIds)
+    }
+  )
 
   ipcMain.handle('export-transformer', async (_event, transformer, targetPath) => {
     await Transformer.exportTransformerToFile(transformer, targetPath)
@@ -16,12 +19,15 @@ export function setupTransformerIPC(mainWindow: BrowserWindow): void {
     return transformer
   })
 
-  ipcMain.handle('transform-game-by-id', async (_event, gameId: string) => {
-    return await Transformer.transformGameById(gameId)
-  })
+  ipcMain.handle(
+    'transform-game-by-id',
+    async (_event, gameId: string, transformerIds: string[]) => {
+      return await Transformer.transformGameById(gameId, transformerIds)
+    }
+  )
 
-  ipcMain.handle('transform-all-games', async () => {
-    return await Transformer.transformAllGames()
+  ipcMain.handle('transform-all-games', async (_event, transformerIds: string[]) => {
+    return await Transformer.transformAllGames(transformerIds)
   })
 
   ipcMain.handle('apply-metadata', async (_event, gameId: string, metadata: GameMetadata) => {
