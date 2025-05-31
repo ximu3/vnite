@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { ChevronsUpDown } from 'lucide-react'
-import { cn, ipcInvoke } from '~/utils'
+import { cn } from '~/utils'
 import { Button } from '@ui/button'
 import {
   Command,
@@ -45,7 +45,7 @@ export function PresetSelecter({
   async function setPreset(presetName: string): Promise<void> {
     toast.promise(
       async () => {
-        const theme = (await ipcInvoke('theme-preset', presetName)) as string
+        const theme = await window.api.theme.themePreset(presetName)
         setCssContent(theme)
         updateTheme(theme)
       },

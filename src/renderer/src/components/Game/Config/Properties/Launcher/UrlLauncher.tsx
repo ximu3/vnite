@@ -12,7 +12,6 @@ import {
   SelectTrigger,
   SelectValue
 } from '@ui/select'
-import { ipcInvoke } from '~/utils'
 import { useTranslation } from 'react-i18next'
 
 export function UrlLauncher({ gameId }: { gameId: string }): JSX.Element {
@@ -23,8 +22,7 @@ export function UrlLauncher({ gameId }: { gameId: string }): JSX.Element {
   const [monitorPath, setMonitorPath] = useGameLocalState(gameId, 'launcher.urlConfig.monitorPath')
 
   async function selectBorwserPath(): Promise<void> {
-    const workingDirectoryPath: string = await ipcInvoke(
-      'select-path-dialog',
+    const workingDirectoryPath: string = await window.api.utils.selectPathDialog(
       ['openFile'],
       ['exe']
     )
@@ -33,11 +31,11 @@ export function UrlLauncher({ gameId }: { gameId: string }): JSX.Element {
 
   async function selectMonitorPath(): Promise<void> {
     if (monitorMode === 'file') {
-      const monitorPath: string = await ipcInvoke('select-path-dialog', ['openFile'])
+      const monitorPath: string = await window.api.utils.selectPathDialog(['openFile'])
       setMonitorPath(monitorPath)
     }
     if (monitorMode === 'folder') {
-      const monitorPath: string = await ipcInvoke('select-path-dialog', ['openDirectory'])
+      const monitorPath: string = await window.api.utils.selectPathDialog(['openDirectory'])
       setMonitorPath(monitorPath)
     }
   }

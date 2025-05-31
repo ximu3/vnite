@@ -3,7 +3,7 @@ import i18next from 'i18next'
 import { toast } from 'sonner'
 import { useRunningGames } from '~/pages/Library/store'
 import { getGameLocalStore, getGameStore } from '~/stores/game'
-import { ipcInvoke, ipcSend } from '~/utils'
+import { ipcSend } from '~/utils'
 import { generateUUID } from '@appUtils'
 import { useNavigate } from 'react-router-dom'
 import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
@@ -28,7 +28,7 @@ export async function checkAttachment(
   docId: string,
   attachmentId: string
 ): Promise<boolean> {
-  return await ipcInvoke('db-check-attachment', dbName, docId, attachmentId)
+  return await window.api.database.checkAttachment(dbName, docId, attachmentId)
 }
 
 export function copyWithToast(content: string): void {
@@ -82,7 +82,7 @@ export function scrollToElement(options: {
 export function stopGame(gameId: string): void {
   toast.promise(
     (async (): Promise<void> => {
-      await ipcInvoke(`stop-game-${gameId}`)
+      await window.api.launcher.stopGame(gameId)
     })(),
     {
       loading: i18next.t('utils:game.stopping.loading'),
@@ -113,8 +113,7 @@ export async function startGame(gameId: string, navigate?: (path: string) => voi
 
   if (getGameLocalValue('path.gamePath') === '') {
     toast.warning(i18next.t('utils:game.starting.pathRequired'))
-    const filePath: string = await ipcInvoke(
-      'select-path-dialog',
+    const filePath: string = await window.api.utils.selectPathDialog(
       ['openFile'],
       undefined,
       getGameLocalValue('utils.markPath')
@@ -125,19 +124,18 @@ export async function startGame(gameId: string, navigate?: (path: string) => voi
 
     await setGameLocalValue('path.gamePath', filePath)
 
-    const isIconAccessible = await ipcInvoke(
-      'db-check-attachment',
+    const isIconAccessible = await window.api.database.checkAttachment(
       'game',
       gameId,
       'images/icon.webp'
     )
     if (!isIconAccessible) {
-      await ipcInvoke('save-game-icon-by-file', gameId, filePath)
+      await window.api.media.saveGameIconByFile(gameId, filePath)
     }
 
     toast.promise(
       async () => {
-        await ipcInvoke('launcher-preset', 'default', gameId)
+        await window.api.launcher.launcherPreset('default', gameId)
       },
       {
         loading: i18next.t('utils:game.starting.configuringLauncher'),

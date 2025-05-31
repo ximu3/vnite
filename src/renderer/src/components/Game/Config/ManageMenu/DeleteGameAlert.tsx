@@ -9,7 +9,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from '@ui/alert-dialog'
-import { ipcInvoke } from '~/utils'
 import { useGameState } from '~/hooks'
 import { toast } from 'sonner'
 import { useGameCollectionStore } from '~/stores'
@@ -32,7 +31,7 @@ export function DeleteGameAlert({
     toast.promise(
       async () => {
         removeGameFromAllCollections(gameId)
-        await ipcInvoke('delete-game', gameId)
+        await window.api.game.deleteGame(gameId)
         console.log(`Game ${gameId} deleted`)
         navigate('/library')
       },

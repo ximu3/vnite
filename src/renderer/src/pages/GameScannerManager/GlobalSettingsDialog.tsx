@@ -9,7 +9,6 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import { cn } from '~/utils'
 import { useGameScannerStore } from './store'
 import { toast } from 'sonner'
-import { ipcInvoke } from '~/utils'
 
 interface GlobalSettingsDialogProps {
   isOpen: boolean
@@ -46,7 +45,7 @@ export const GlobalSettingsDialog: React.FC<GlobalSettingsDialogProps> = ({ isOp
       ignoreList: globalSettings.ignoreList
     }
     await setScannerConfig(updatedConfig)
-    await ipcInvoke('game-scanner:start-periodic-scan')
+    await window.api.gameScanner.startPeriodicScan()
     onClose()
   }
 

@@ -6,7 +6,6 @@ import { Card } from '@ui/card'
 import { Badge } from '@ui/badge'
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
-import { ipcInvoke } from '~/utils'
 import { GameTagsList } from '@appTypes/utils'
 import { useTranslation } from 'react-i18next'
 
@@ -58,10 +57,10 @@ export function SearchTagsDialog({
     setIsLoading(true)
 
     try {
-      const result = (await ipcInvoke('get-game-tags-list', {
+      const result = await window.api.scraper.getGameTagsList({
         type: 'name',
         value: searchTitle
-      })) as GameTagsList
+      })
 
       if (!result || result.length === 0) {
         toast.error(t('detail.overview.tags.search.notFound'))

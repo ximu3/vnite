@@ -9,7 +9,7 @@ import { useGameCollectionStore } from './game'
 import { useConfigStore } from './config/useConfigStore'
 import { useConfigLocalStore } from './config/useConfigLocalStore'
 import { useAttachmentStore } from './useAttachmentStore'
-import { ipcOnUnique, ipcInvoke } from '~/utils/ipc'
+import { ipcOnUnique } from '~/utils/ipc'
 import {
   DocChange,
   AttachmentChange,
@@ -182,7 +182,7 @@ export async function setupDBSync(): Promise<void> {
   for (const dbName of dbNames) {
     try {
       // Get all documents
-      const data = await ipcInvoke('db-get-all-docs', dbName)
+      const data = await window.api.database.getAllDocs(dbName)
       // Call the corresponding initialization function
       await DB_INITIALIZERS[dbName](data)
     } catch (error) {

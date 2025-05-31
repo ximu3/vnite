@@ -8,7 +8,6 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useConfigState } from '~/hooks'
-import { ipcInvoke } from '~/utils'
 import { DeleteDialog } from './DeleteDialog'
 import { EditDialog } from './EditDialog'
 import { TransformerPresetSelector } from './PresetSelector'
@@ -128,9 +127,9 @@ export function TransformerManager(): JSX.Element {
 
   const handleImportTransformer = async (): Promise<void> => {
     try {
-      const filePath = await ipcInvoke('select-path-dialog', ['openFile'])
+      const filePath = await window.api.utils.selectPathDialog(['openFile'])
       if (!filePath) return
-      await ipcInvoke('import-transformer', filePath)
+      await window.api.transformer.importTransformer(filePath)
       toast.success(t('notifications.importSuccess'))
     } catch (error) {
       console.error('Error importing transformer:', error)
@@ -144,10 +143,7 @@ export function TransformerManager(): JSX.Element {
       id: 'transform-all'
     })
     try {
-      await ipcInvoke(
-        'transform-all-games',
-        transformers.map((t) => t.id)
-      )
+      await window.api.transformer.transformAllGames(transformers.map((t) => t.id))
       toast.success(t('notifications.applySuccess'), { id: 'transform-all' })
     } catch (error) {
       console.error('Error transforming all:', error)
@@ -163,7 +159,7 @@ export function TransformerManager(): JSX.Element {
       id: 'transform-one'
     })
     try {
-      await ipcInvoke('transform-all-games', [transformer.id])
+      await window.api.transformer.transformAllGames([transformer.id])
       toast.success(t('notifications.applySuccess'), { id: 'transform-one' })
     } catch (error) {
       console.error('Error transforming one:', error)

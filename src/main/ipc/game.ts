@@ -49,15 +49,8 @@ export function setupGameIPC(mainWindow: BrowserWindow): void {
 
   ipcMain.handle(
     'get-game-media-path',
-    async (_, gameId: string, type: 'cover' | 'background' | 'icon') => {
+    async (_, gameId: string, type: 'cover' | 'background' | 'icon' | 'logo') => {
       return await GameDBManager.getGameImage(gameId, type, 'file')
-    }
-  )
-
-  ipcMain.handle(
-    'set-game-media',
-    async (_, gameId: string, type: 'cover' | 'background' | 'icon' | 'logo', source: string) => {
-      return await GameDBManager.setGameImage(gameId, type, source)
     }
   )
 

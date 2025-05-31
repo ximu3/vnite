@@ -5,7 +5,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useGameState } from '~/hooks'
-import { cn, ipcInvoke } from '~/utils'
+import { cn } from '~/utils'
 import { CropDialog } from './CropDialog'
 import { SearchMediaDialog } from './SearchMediaDialog'
 import { UrlDialog } from './UrlDialog'
@@ -23,29 +23,29 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
 
   const [cropDialogState, setCropDialogState] = useState<{
     isOpen: boolean
-    type: string
+    type: 'cover' | 'background' | 'icon' | 'logo'
     imagePath: string | null
     isResizing: boolean
   }>({
     isOpen: false,
-    type: '',
+    type: 'cover',
     imagePath: null,
     isResizing: false
   })
 
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false)
-  const [searchType, setSearchType] = useState('')
+  const [searchType, setSearchType] = useState<'cover' | 'background' | 'icon' | 'logo'>('cover')
 
   const [originalName] = useGameState(gameId, 'metadata.originalName')
 
   // Processing file selection
-  async function handleFileSelect(type: string): Promise<void> {
+  async function handleFileSelect(type: 'cover' | 'background' | 'icon' | 'logo'): Promise<void> {
     try {
-      const filePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
+      const filePath: string = await window.api.utils.selectPathDialog(['openFile'])
       if (!filePath) return
 
       if (filePath.endsWith('.exe') && type == 'icon') {
-        await ipcInvoke('set-game-media', gameId, type, filePath)
+        await window.api.game.setGameImage(gameId, type, filePath)
         return
       }
 
@@ -61,10 +61,10 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
   }
 
   // Handling of resizing
-  async function handleResize(type: string): Promise<void> {
+  async function handleResize(type: 'cover' | 'background' | 'icon' | 'logo'): Promise<void> {
     try {
       // Get current image path
-      const currentPath: string = await ipcInvoke('get-game-media-path', gameId, type)
+      const currentPath = await window.api.game.getGameMediaPath(gameId, type)
       if (!currentPath) {
         toast.error(t('detail.properties.media.notifications.imageNotFound'))
         return
@@ -82,13 +82,13 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
   }
 
   // Processing URL Input
-  function setMediaWithUrl(type: string, URL: string): void {
+  function setMediaWithUrl(type: 'cover' | 'background' | 'icon' | 'logo', URL: string): void {
     toast.promise(
       async () => {
         setIsUrlDialogOpen({ ...isUrlDialogOpen, [type]: false })
         if (!URL.trim()) return
 
-        const tempFilePath = await ipcInvoke('download-temp-image', URL)
+        const tempFilePath = await window.api.media.downloadTempImage(URL.trim())
         setCropDialogState({
           isOpen: true,
           type,
@@ -106,8 +106,11 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
   }
 
   // Processing cuts are complete
-  async function handleCropComplete(type: string, filePath: string): Promise<void> {
-    setCropDialogState({ isOpen: false, type: '', imagePath: null, isResizing: false })
+  async function handleCropComplete(
+    type: 'cover' | 'background' | 'icon' | 'logo',
+    filePath: string
+  ): Promise<void> {
+    setCropDialogState({ isOpen: false, type: 'cover', imagePath: null, isResizing: false })
 
     const action = cropDialogState.isResizing
       ? t('detail.properties.media.actions.adjust')
@@ -115,7 +118,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
 
     toast.promise(
       async () => {
-        await ipcInvoke('set-game-image', gameId, type, filePath)
+        await window.api.game.setGameImage(gameId, type, filePath)
       },
       {
         loading: t('detail.properties.media.notifications.processing', {
@@ -137,10 +140,10 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
   }
 
   // Handling media deletions
-  async function handleDeleteMedia(type: string): Promise<void> {
+  async function handleDeleteMedia(type: 'cover' | 'background' | 'icon' | 'logo'): Promise<void> {
     toast.promise(
       async () => {
-        await ipcInvoke('remove-game-media', gameId, type)
+        await window.api.game.removeGameMedia(gameId, type)
       },
       {
         loading: t('detail.properties.media.notifications.deleting', {
@@ -159,7 +162,11 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
   }
 
   // Media Control Button Component
-  const MediaControls = ({ type }: { type: string }): JSX.Element => (
+  const MediaControls = ({
+    type
+  }: {
+    type: 'cover' | 'background' | 'icon' | 'logo'
+  }): JSX.Element => (
     <div className={cn('flex flex-row gap-2')}>
       <Tooltip>
         <TooltipTrigger>
@@ -324,7 +331,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
       <CropDialog
         isOpen={cropDialogState.isOpen}
         onClose={() =>
-          setCropDialogState({ isOpen: false, type: '', imagePath: null, isResizing: false })
+          setCropDialogState({ isOpen: false, type: 'cover', imagePath: null, isResizing: false })
         }
         imagePath={cropDialogState.imagePath}
         onCropComplete={(filePath) => handleCropComplete(cropDialogState.type, filePath)}
@@ -338,7 +345,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
           toast.loading(t('detail.properties.media.notifications.downloading'), {
             id: 'download-image-toast'
           })
-          const tempFilePath = await ipcInvoke('download-temp-image', imagePath)
+          const tempFilePath = await window.api.media.downloadTempImage(imagePath)
           toast.dismiss('download-image-toast')
           toast.success(t('detail.properties.media.notifications.downloadSuccess'))
           setCropDialogState({

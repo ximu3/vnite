@@ -124,7 +124,7 @@ export async function getGameMetadata(
     default:
       throw new Error('Invalid data source')
   }
-  return Transformer.transformMetadata(gameMetadata)
+  return Transformer.transformMetadata(gameMetadata, '#all')
 }
 
 export async function getGameBackgrounds(

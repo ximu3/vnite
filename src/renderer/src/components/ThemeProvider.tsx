@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { ipcInvoke } from '~/utils'
 
 const ThemeContext = createContext<{
   theme: string | null
@@ -57,7 +56,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }): JSX.
   }, [themeSetting])
 
   useEffect(() => {
-    ipcInvoke('load-theme').then((savedTheme) => {
+    window.api.theme.loadTheme().then((savedTheme) => {
       if (savedTheme) {
         setTheme(savedTheme as string)
         applyTheme(savedTheme as string)
@@ -71,7 +70,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }): JSX.
   }, [isDark])
 
   const updateTheme = async (css: string): Promise<void> => {
-    await ipcInvoke('save-theme', css)
+    await window.api.theme.saveTheme(css)
     setTheme(css)
     applyTheme(css)
   }

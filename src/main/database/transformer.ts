@@ -21,7 +21,7 @@ export class Transformer {
    */
   static async transformMetadata(
     metadata: GameMetadata,
-    transformerIds: string[]
+    transformerIds: string[] | '#all'
   ): Promise<GameMetadata> {
     try {
       // Get transformer enabled status and configuration list
@@ -35,7 +35,13 @@ export class Transformer {
       if (!transformerList || transformerList.length === 0) {
         return metadata
       }
-      const activeTransformers = transformerList.filter((t) => transformerIds.includes(t.id))
+      let activeTransformers = [] as configDocs['metadata']['transformer']['list']
+      if (transformerIds === '#all') {
+        // If transformerIds is '#all', use all transformers
+        activeTransformers = transformerList
+      } else {
+        activeTransformers = transformerList.filter((t) => transformerIds.includes(t.id))
+      }
 
       // Create deep copy to avoid modifying the original object
       const transformedMetadata: GameMetadata = JSON.parse(JSON.stringify(metadata))

@@ -12,7 +12,6 @@ import { toast } from 'sonner'
 import { DeleteGameAlert } from '~/components/Game/Config/ManageMenu/DeleteGameAlert'
 import { useGameLocalState, useGameState } from '~/hooks'
 import { useGameAdderStore } from '~/pages/GameAdder/store'
-import { ipcInvoke } from '~/utils'
 
 export function ManageMenu({
   gameId,
@@ -58,11 +57,11 @@ export function ManageMenu({
               <ContextMenuItem
                 onClick={async () => {
                   try {
-                    const targetPath = await ipcInvoke('select-path-dialog', ['openDirectory'])
+                    const targetPath = await window.api.utils.selectPathDialog(['openDirectory'])
                     if (!targetPath) {
                       return
                     }
-                    await ipcInvoke('create-game-shortcut', gameId, targetPath)
+                    await window.api.utils.createGameShortcut(gameId, targetPath)
                     toast.success(t('detail.manage.notifications.shortcutCreated'))
                   } catch (_error) {
                     toast.error(t('detail.manage.notifications.shortcutError'))
@@ -76,7 +75,7 @@ export function ManageMenu({
             <ContextMenuItem
               onClick={() => {
                 if (gamePath) {
-                  ipcInvoke('open-path-in-explorer', gamePath)
+                  window.api.utils.openPathInExplorer(gamePath)
                 } else {
                   toast.warning(t('detail.manage.notifications.gamePathNotSet'))
                 }

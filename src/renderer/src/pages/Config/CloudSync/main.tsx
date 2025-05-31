@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { Button } from '@ui/button'
 import { Input } from '@ui/input'
 import { Switch } from '@ui/switch'
-import { ipcInvoke, ipcOnUnique } from '~/utils'
+import { ipcOnUnique } from '~/utils'
 import { toast } from 'sonner'
 import { useConfigLocalState } from '~/hooks'
 import { RadioGroup, RadioGroupItem } from '@ui/radio-group'
@@ -51,7 +51,7 @@ export function CloudSync(): JSX.Element {
     if (enabled && userName) {
       const fetchStorageInfo = async (): Promise<void> => {
         try {
-          const dbSize = (await ipcInvoke('get-couchdb-size')) as number
+          const dbSize = await window.api.database.getCouchDbSize()
           if (dbSize) {
             setUsedQuota(dbSize)
           }
@@ -112,7 +112,7 @@ export function CloudSync(): JSX.Element {
 
     toast.promise(
       async () => {
-        await ipcInvoke('restart-sync')
+        await window.api.database.restartSync()
       },
       {
         loading: t('cloudSync.notifications.updating'),
@@ -125,7 +125,7 @@ export function CloudSync(): JSX.Element {
   const handleOfficialSignin = async (): Promise<void> => {
     toast.promise(
       async () => {
-        await ipcInvoke('auth-signin')
+        await window.api.account.authSignin()
       },
       {
         loading: t('cloudSync.notifications.loggingIn'),
@@ -138,7 +138,7 @@ export function CloudSync(): JSX.Element {
   const handleOfficialSignup = async (): Promise<void> => {
     toast.promise(
       async () => {
-        await ipcInvoke('auth-signup')
+        await window.api.account.authSignup()
       },
       {
         loading: t('cloudSync.notifications.registering'),
@@ -248,7 +248,7 @@ export function CloudSync(): JSX.Element {
                 onCheckedChange={async (value) => {
                   setEnabled(value)
                   if (!value) {
-                    await ipcInvoke('stop-sync')
+                    await window.api.database.stopSync()
                   }
                 }}
               />

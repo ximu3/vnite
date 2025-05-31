@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useConfigState } from '~/hooks'
-import { cn, ipcInvoke } from '~/utils'
+import { cn } from '~/utils'
 import { useGameAdderStore } from './GameAdder/store'
 import { useGameBatchAdderStore } from './GameBatchAdder/store'
 
@@ -88,7 +88,7 @@ export function DragContainer({ children }: { children: React.ReactNode }): JSX.
           name: info.name,
           dataSource: defaultDataSource,
           id: '',
-          status: (await ipcInvoke('check-game-exits-by-path', info.dirPath))
+          status: (await window.api.game.checkGameExitsByPath(info.dirPath))
             ? 'existed'
             : ('idle' as 'existed' | 'idle'),
           dirPath: info.dirPath

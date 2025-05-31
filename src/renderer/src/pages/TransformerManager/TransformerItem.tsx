@@ -5,7 +5,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import { PlayCircle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { cn, ipcInvoke } from '~/utils'
+import { cn } from '~/utils'
 import { TransformerRule } from './types'
 
 interface TransformerItemProps {
@@ -43,9 +43,9 @@ export function TransformerItem({
 
   const handleExport = async (): Promise<void> => {
     try {
-      const targetPath = await ipcInvoke('select-path-dialog', ['openDirectory'])
+      const targetPath = await window.api.utils.selectPathDialog(['openDirectory'])
       if (!targetPath) return
-      await ipcInvoke('export-transformer', transformer, targetPath)
+      await window.api.transformer.exportTransformer(transformer, targetPath)
       toast.success(t('notifications.exportSuccess'))
     } catch (error) {
       console.error('Error exporting transformer:', error)

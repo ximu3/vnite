@@ -5,7 +5,6 @@ import { Button } from '@ui/button'
 import { HotkeySetting } from '@ui/hotkey-setting'
 import { useConfigLocalState } from '~/hooks'
 import { useTranslation } from 'react-i18next'
-import { ipcInvoke } from '~/utils'
 
 export function Advanced(): JSX.Element {
   const { t } = useTranslation('config')
@@ -16,17 +15,17 @@ export function Advanced(): JSX.Element {
   const [magpieHotkey, setMagpieHotkey] = useConfigLocalState('game.linkage.magpie.hotkey')
 
   async function selectLePath(): Promise<void> {
-    const lePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
+    const lePath: string = await window.api.utils.selectPathDialog(['openFile'])
     setLePath(lePath)
   }
 
   async function selectVbaPath(): Promise<void> {
-    const vbaPath: string = await ipcInvoke('select-path-dialog', ['openFile'])
+    const vbaPath: string = await window.api.utils.selectPathDialog(['openFile'])
     setVbaPath(vbaPath)
   }
 
   async function selectMagpiePath(): Promise<void> {
-    const magpiePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
+    const magpiePath: string = await window.api.utils.selectPathDialog(['openFile'])
     setMagpiePath(magpiePath)
   }
 

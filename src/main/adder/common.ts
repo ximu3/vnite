@@ -10,7 +10,7 @@ import { selectPathDialog, getSubfoldersByDepth } from '~/utils'
 import { generateUUID } from '@appUtils'
 import { launcherPreset } from '~/launcher'
 import { saveGameIconByFile } from '~/media'
-import { DEFAULT_GAME_VALUES, DEFAULT_GAME_LOCAL_VALUES } from '@appTypes/database'
+import { DEFAULT_GAME_VALUES, DEFAULT_GAME_LOCAL_VALUES, BatchGameInfo } from '@appTypes/database'
 
 /**
  * Add a game to the database
@@ -172,16 +172,7 @@ export async function addGameToDBWithoutMetadata(gamePath: string): Promise<void
  * Get the data for batch game adding
  * @returns The data for batch game adding
  */
-export async function getBatchGameAdderData(): Promise<
-  {
-    dataId: string
-    dataSource: string
-    name: string
-    id: string
-    status: string
-    dirPath: string
-  }[]
-> {
+export async function getBatchGameAdderData(): Promise<BatchGameInfo[]> {
   const dirPath = await selectPathDialog(['openDirectory'])
   if (!dirPath) {
     return []

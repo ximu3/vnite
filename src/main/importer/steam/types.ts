@@ -14,6 +14,7 @@ export interface FormattedGameInfo {
   appId: number
   name: string
   totalPlayingTime: number
+  selected?: boolean
 }
 
 // Type Definitions for Progress Messages

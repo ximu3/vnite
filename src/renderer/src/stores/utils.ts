@@ -1,4 +1,3 @@
-import { ipcInvoke } from '~/utils'
 import { DocChange } from '@appTypes/database'
 
 /**
@@ -23,7 +22,7 @@ export async function syncTo<T extends Record<string, any>>(
   }
 
   try {
-    await ipcInvoke('db-changed', change)
+    await window.api.database.setValue(change)
   } catch (error) {
     console.error(`[Sync] sync failure ${dbName}/${docId}:`, error)
     throw error

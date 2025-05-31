@@ -15,7 +15,7 @@ import { Folder, FolderOpen, Pencil, PlayCircle, Trash2 } from 'lucide-react'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useConfigLocalState } from '~/hooks'
-import { cn, ipcInvoke } from '~/utils'
+import { cn } from '~/utils'
 import { useGameScannerStore } from './store'
 
 interface GameScannerListItemProps {
@@ -123,7 +123,7 @@ export const GameScannerListItem: React.FC<GameScannerListItemProps> = ({
             'flex items-center justify-center w-10 h-10 rounded-md bg-primary/10 ',
             'group cursor-pointer hover:bg-primary/20'
           )}
-          onClick={() => ipcInvoke('open-path-in-explorer', scanner.path)}
+          onClick={() => window.api.utils.openPathInExplorer(scanner.path)}
         >
           <Folder className="w-5 h-5 text-primary block group-hover:hidden" />
           <FolderOpen className="w-5 h-5 text-primary hidden group-hover:block" />
