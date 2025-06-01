@@ -7,9 +7,10 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger
 } from '@ui/dropdown-menu'
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useGameCollectionStore } from '~/stores'
 import { cn } from '~/utils'
-import { useTranslation } from 'react-i18next'
 
 export function CollectionMenu({
   gameId,
@@ -28,6 +29,10 @@ export function CollectionMenu({
   const gameInCollectionsId = Object.entries(collections)
     .filter(([, value]) => value.games.includes(gameId))
     .map(([key]) => key)
+  // Sort collections by the sort field
+  const sortedCollections = useMemo(() => {
+    return Object.entries(collections).sort(([, a], [, b]) => a.sort - b.sort)
+  }, [collections])
 
   return (
     <DropdownMenuGroup>
@@ -36,7 +41,7 @@ export function CollectionMenu({
         <DropdownMenuPortal>
           <DropdownMenuSubContent className="max-w-[300px]">
             <div className={cn('max-h-[224px] overflow-auto scrollbar-base-thin')}>
-              {Object.entries(collections)
+              {sortedCollections
                 .filter(([key]) => !gameInCollectionsId.includes(key))
                 .map(([key, value]) => (
                   <DropdownMenuItem
@@ -48,8 +53,9 @@ export function CollectionMenu({
                   </DropdownMenuItem>
                 ))}
             </div>
-            {Object.entries(collections).filter(([key]) => !gameInCollectionsId.includes(key))
-              .length > 0 && <DropdownMenuSeparator />}
+            {sortedCollections.filter(([key]) => !gameInCollectionsId.includes(key)).length > 0 && (
+              <DropdownMenuSeparator />
+            )}
             <DropdownMenuItem onSelect={openAddCollectionDialog}>
               <div className={cn('flex flex-row gap-2 items-center w-full')}>
                 <span className={cn('icon-[mdi--add] w-4 h-4')}></span>
@@ -64,7 +70,7 @@ export function CollectionMenu({
           <DropdownMenuSubTrigger>{t('detail.collection.removeFrom')}</DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent className="max-w-[300px]">
-              {Object.entries(collections)
+              {sortedCollections
                 .filter(([key]) => gameInCollectionsId.includes(key))
                 .map(([key, value]) => (
                   <DropdownMenuItem
