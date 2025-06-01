@@ -39,7 +39,7 @@ export const GameImage: React.FC<GameImageProps> = ({
   }
 
   return (
-    <div className={cn('relative', className)}>
+    <div className={cn('relative overflow-hidden', className)}>
       {!isLoaded && (
         <div className={cn('absolute inset-0', className?.includes('rounded') && 'rounded-lg')} />
       )}
