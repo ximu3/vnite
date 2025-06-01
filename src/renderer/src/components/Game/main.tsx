@@ -138,6 +138,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
           gameId={gameId}
           key={`${gameId}-background-2`}
           type="background"
+          blur={nsfw && enableNSFWBlur}
           className={cn('w-full h-full absolute top-0 object-cover z-0')}
           style={{
             opacity: 0.9
