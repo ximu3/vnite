@@ -54,3 +54,12 @@ export type PathsOf<T> = T extends object
       [K in keyof T]: [K] | [K, ...PathsOf<T[K]>]
     }[keyof T]
   : never
+
+export interface BatchGameInfo {
+  dataId: string
+  dataSource: string
+  name: string
+  id: string
+  status: string
+  dirPath: string
+}

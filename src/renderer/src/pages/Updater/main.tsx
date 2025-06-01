@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { ipcInvoke, ipcOnUnique, cn, HTMLParserOptions } from '~/utils'
+import { ipcOnUnique, cn, HTMLParserOptions } from '~/utils'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@ui/dialog'
 import { Button } from '@ui/button'
 import { Progress } from '@ui/progress'
@@ -51,11 +51,11 @@ export function UpdateDialog(): JSX.Element {
 
   const handleUpdate = async (): Promise<void> => {
     setDownloading(true)
-    await ipcInvoke('start-update')
+    await window.api.updater.startUpdate()
   }
 
   const handleInstall = async (): Promise<void> => {
-    await ipcInvoke('install-update')
+    await window.api.updater.installUpdate()
   }
 
   return (

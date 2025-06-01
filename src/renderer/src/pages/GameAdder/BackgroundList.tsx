@@ -3,7 +3,6 @@ import { Button } from '@ui/button'
 import { toast } from 'sonner'
 import { useGameAdderStore } from './store'
 import { useEffect, useState } from 'react'
-import { ipcInvoke } from '~/utils'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
@@ -27,10 +26,10 @@ export function BackgroundList(): JSX.Element {
   useEffect(() => {
     toast.promise(
       (async (): Promise<string[]> => {
-        const result = (await ipcInvoke('get-game-backgrounds', dataSource, {
+        const result = await window.api.scraper.getGameBackgrounds(dataSource, {
           type: 'id',
           value: dataSourceId
-        })) as string[]
+        })
         if (result.length === 0) {
           toast.error(t('gameAdder.backgrounds.notifications.noImages'))
           setBackgroundUrl('')
@@ -88,14 +87,14 @@ export function BackgroundList(): JSX.Element {
     toast.promise(
       (async (): Promise<void> => {
         if (dbId) {
-          await ipcInvoke('update-game-metadata', {
+          await window.api.adder.updateGameMetadata({
             dbId,
             dataSource,
             dataSourceId,
             backgroundUrl
           })
         } else {
-          await ipcInvoke('add-game-to-db', {
+          await window.api.adder.addGameToDb({
             dataSource,
             dataSourceId,
             backgroundUrl,

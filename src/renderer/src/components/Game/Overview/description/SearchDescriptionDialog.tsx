@@ -6,8 +6,6 @@ import { Card } from '@ui/card'
 import { Badge } from '@ui/badge'
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
-import { ipcInvoke } from '~/utils'
-import { GameDescriptionList } from '@appTypes/database'
 import parse from 'html-react-parser'
 import { HTMLParserOptions } from '~/utils'
 import { useTranslation } from 'react-i18next'
@@ -53,10 +51,10 @@ export function SearchDescriptionDialog({
     setIsLoading(true)
 
     try {
-      const result = (await ipcInvoke('get-game-description-list', {
+      const result = await window.api.scraper.getGameDescriptionList({
         type: 'name',
         value: searchTitle
-      })) as GameDescriptionList
+      })
 
       if (result.length === 0) {
         toast.error(t('detail.overview.description.search.notFound'))

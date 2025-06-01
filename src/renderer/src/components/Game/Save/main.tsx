@@ -5,7 +5,7 @@ import { isEqual } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useGameLocalState, useGameState } from '~/hooks'
-import { cn, ipcInvoke } from '~/utils'
+import { cn } from '~/utils'
 
 export function Save({ gameId }: { gameId: string }): JSX.Element {
   const { t } = useTranslation('game')
@@ -20,7 +20,7 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
     }
     toast.promise(
       (async (): Promise<void> => {
-        await ipcInvoke('restore-game-save', gameId, saveId)
+        await window.api.game.restoreGameSave(gameId, saveId)
       })(),
       {
         loading: t('detail.save.notifications.switchLoading'),
@@ -37,7 +37,7 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
     }
     toast.promise(
       (async (): Promise<void> => {
-        await ipcInvoke('delete-game-save', gameId, saveId)
+        await window.api.game.deleteGameSave(gameId, saveId)
         const newSaveList = { ...saveList }
         delete newSaveList[saveId]
         setSaveList(newSaveList)

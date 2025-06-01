@@ -17,7 +17,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useGameLocalState, useGameState } from '~/hooks'
-import { cn, ipcInvoke } from '~/utils'
+import { cn } from '~/utils'
 
 export function Path({ gameId }: { gameId: string }): JSX.Element {
   const { t } = useTranslation('game')
@@ -33,7 +33,8 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
       setSavePathSize(-1)
       return
     }
-    ipcInvoke<number>('get-path-size', savePath)
+    window.api.utils
+      .getPathSize(savePath)
       .then((size: number) => setSavePathSize(size))
       .catch(() => setSavePathSize(NaN))
   }, [savePath])
@@ -51,8 +52,7 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
   }
 
   async function selectGamePath(): Promise<void> {
-    const filePath: string = await ipcInvoke(
-      'select-path-dialog',
+    const filePath: string = await window.api.utils.selectPathDialog(
       ['openFile'],
       undefined,
       gamePath || markerPath
@@ -61,19 +61,18 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
       return
     }
     await setGamePath(filePath)
-    const isIconAccessible = await ipcInvoke(
-      'db-check-attachment',
+    const isIconAccessible = await window.api.database.checkAttachment(
       'game',
       gameId,
       'images/icon.webp'
     )
     if (!isIconAccessible) {
-      await ipcInvoke('save-game-icon-by-file', gameId, filePath)
+      await window.api.media.saveGameIconByFile(gameId, filePath)
     }
     if (!monitorPath) {
       toast.promise(
         async () => {
-          await ipcInvoke('launcher-preset', 'default', gameId)
+          await window.api.launcher.launcherPreset('default', gameId)
         },
         {
           loading: t('detail.properties.path.notifications.configuring'),
@@ -85,8 +84,7 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
   }
 
   async function selectSaveFolderPath(): Promise<void> {
-    const folderPath: string[] = await ipcInvoke(
-      'select-multiple-path-dialog',
+    const folderPath: string[] = await window.api.utils.selectMultiplePathDialog(
       ['openDirectory'],
       undefined,
       gamePath || markerPath
@@ -99,8 +97,7 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
   }
 
   async function selectSaveFilePath(): Promise<void> {
-    const filePath: string[] = await ipcInvoke(
-      'select-multiple-path-dialog',
+    const filePath: string[] = await window.api.utils.selectMultiplePathDialog(
       ['openFile'],
       undefined,
       gamePath || markerPath

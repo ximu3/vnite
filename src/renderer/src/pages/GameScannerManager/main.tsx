@@ -1,27 +1,27 @@
-import React, { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
+import { Card } from '@ui/card'
+import { Progress } from '@ui/progress'
+import { ScrollArea } from '@ui/scroll-area'
 import {
-  Folder,
-  RefreshCw,
-  StopCircle,
-  FolderPlus,
   AlertTriangle,
+  Folder,
+  FolderPlus,
   ListFilter,
   Loader2,
-  Settings
+  RefreshCw,
+  Settings,
+  StopCircle
 } from 'lucide-react'
-import { Progress } from '@ui/progress'
-import { Badge } from '@ui/badge'
-import { ScrollArea } from '@ui/scroll-area'
-import { Card } from '@ui/card'
+import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useConfigLocalState } from '~/hooks'
-import { GameScannerListItem } from './GameScannerListItem'
-import { EditScannerDialog } from './EditScannerDialog'
-import { GlobalSettingsDialog } from './GlobalSettingsDialog'
-import { FailedFoldersDialog } from './FailedFoldersDialog'
-import { useGameScannerStore } from './store'
 import { cn } from '~/utils'
+import { EditScannerDialog } from './EditScannerDialog'
+import { FailedFoldersDialog } from './FailedFoldersDialog'
+import { GameScannerListItem } from './GameScannerListItem'
+import { GlobalSettingsDialog } from './GlobalSettingsDialog'
+import { useGameScannerStore } from './store'
 
 export const GameScannerManager: React.FC = () => {
   const { t } = useTranslation('scanner')
@@ -223,7 +223,7 @@ export const GameScannerManager: React.FC = () => {
             </Card>
 
             {/* Scanners list and action card */}
-            <Card className="flex flex-col flex-grow overflow-hidden border rounded-lg">
+            <Card className="flex flex-col flex-grow border rounded-lg">
               {/* Scanners list title bar */}
               <div className="flex items-center justify-between p-4 border-b bg-muted/45">
                 <div className="text-sm font-medium">{t('list.title')}</div>

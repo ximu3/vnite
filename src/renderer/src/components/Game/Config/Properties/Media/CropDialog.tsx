@@ -5,7 +5,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@ui/dialog'
 import { Button } from '@ui/button'
 import { toast } from 'sonner'
 import { cn } from '~/utils'
-import { ipcInvoke } from '~/utils'
 import { useTranslation } from 'react-i18next'
 
 interface CropDialogProps {
@@ -92,13 +91,13 @@ export function CropDialog({
         return
       }
 
-      const filePath = (await ipcInvoke('crop-image', {
+      const filePath = await window.api.media.cropImage({
         sourcePath: imagePath,
         x: actualX,
         y: actualY,
         width: actualWidth,
         height: actualHeight
-      })) as string
+      })
 
       await new Promise((resolve) => setTimeout(resolve, 1000))
 

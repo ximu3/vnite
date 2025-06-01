@@ -1,6 +1,5 @@
 import { create } from 'zustand'
-import { ipcInvoke } from '~/utils'
-import { getValueByPath, setValueByPath } from '@appUtils'
+import { getValueByPath, setValueByPath, generateUUID } from '@appUtils'
 import {
   gameCollectionDoc,
   gameCollectionDocs,
@@ -157,7 +156,7 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
 
   addCollection: async (name: string, gameIds?: string[]): Promise<string> => {
     try {
-      const id = await ipcInvoke<string>('generate-uuid')
+      const id = generateUUID()
 
       // Calculate new sort value
       const collections = Object.values(get().documents)

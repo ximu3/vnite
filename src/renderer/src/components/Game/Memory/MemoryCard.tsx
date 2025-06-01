@@ -1,4 +1,4 @@
-import { cn, ipcInvoke, formatDateToISO } from '~/utils'
+import { cn, formatDateToISO } from '~/utils'
 import { GameImage } from '@ui/game-image'
 import { Card } from '@ui/card'
 import {
@@ -59,13 +59,13 @@ export function MemoryCard({
   const memoryRef = useRef<HTMLDivElement>(null)
 
   function handleCropComplete(filePath: string): void {
-    ipcInvoke('update-memory-cover', gameId, memoryId, filePath)
+    window.api.game.updateMemoryCover(gameId, memoryId, filePath)
     setCropDialogState({ isOpen: false, type: '', imagePath: null, isResizing: false })
   }
 
   async function handleCoverSelect(): Promise<void> {
     try {
-      const filePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
+      const filePath: string = await window.api.utils.selectPathDialog(['openFile'])
       if (!filePath) return
 
       setCropDialogState({
@@ -82,7 +82,7 @@ export function MemoryCard({
   async function handleResize(): Promise<void> {
     try {
       // Get current image path
-      const currentPath: string = await ipcInvoke('get-memory-cover-path', gameId, memoryId)
+      const currentPath: string = await window.api.game.getMemoryCoverPath(gameId, memoryId)
       if (!currentPath) {
         toast.error(t('detail.memory.notifications.imageNotFound'))
         return
@@ -186,7 +186,7 @@ export function MemoryCard({
   const handleExportMarkdown = async (type: 'clipboard' | 'file'): Promise<void> => {
     if (!note) return
 
-    const coverPath: string = await ipcInvoke('get-memory-cover-path', gameId, memoryId)
+    const coverPath: string = await window.api.game.getMemoryCoverPath(gameId, memoryId)
 
     const markdownContent = `# ${gameName} - ${t('{{date, niceDate}}', { date })}\n\n![cover](${coverPath})\n\n${note}`
 

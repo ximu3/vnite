@@ -1,7 +1,6 @@
 import { cn } from '~/utils'
 import { Button } from '@ui/button'
 import { toast } from 'sonner'
-import { ipcInvoke } from '~/utils'
 import { useGameState } from '~/hooks'
 import { MemoryCard } from './MemoryCard'
 import { useState, useEffect } from 'react'
@@ -13,7 +12,7 @@ export function Memory({ gameId }: { gameId: string }): JSX.Element {
   const [sortedMemoryIds, setSortedMemoryIds] = useState<string[]>([])
 
   async function addMemory(): Promise<void> {
-    await ipcInvoke('add-memory', gameId)
+    await window.api.game.addMemory(gameId)
   }
 
   useEffect(() => {
@@ -36,7 +35,7 @@ export function Memory({ gameId }: { gameId: string }): JSX.Element {
         await setMemoryList(newMemoryList)
 
         // Finally, perform a back-end delete operation
-        await ipcInvoke('delete-memory', gameId, memoryId)
+        await window.api.game.deleteMemory(gameId, memoryId)
       },
       {
         loading: t('detail.memory.notifications.deleting'),

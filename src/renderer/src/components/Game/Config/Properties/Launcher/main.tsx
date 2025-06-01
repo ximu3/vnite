@@ -1,4 +1,4 @@
-import { cn, ipcInvoke } from '~/utils'
+import { cn } from '~/utils'
 import { useGameLocalState, useConfigLocalState } from '~/hooks'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import {
@@ -27,7 +27,7 @@ export function Launcher({ gameId }: { gameId: string }): JSX.Element {
   const [magpiePath, setMagpiePath] = useConfigLocalState('game.linkage.magpie.path')
 
   async function selectMagpiePath(): Promise<void> {
-    const magpiePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
+    const magpiePath: string = await window.api.utils.selectPathDialog(['openFile'])
     setMagpiePath(magpiePath)
   }
 

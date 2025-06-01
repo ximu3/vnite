@@ -9,7 +9,6 @@ import { useTranslation } from 'react-i18next'
 import { useConfigState } from '~/hooks'
 import { useAttachmentStore } from '~/stores'
 import { cn } from '~/utils'
-import { ipcInvoke } from '~/utils/ipc'
 
 export function Appearances(): JSX.Element {
   const { t } = useTranslation('config')
@@ -44,9 +43,9 @@ export function Appearances(): JSX.Element {
   const [glassOpacity, setGlassOpacity] = useConfigState('appearances.glass.opacity')
 
   async function selectBackgroundImage(): Promise<void> {
-    const filePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
+    const filePath: string = await window.api.utils.selectPathDialog(['openFile'])
     if (!filePath) return
-    await ipcInvoke('set-config-background', filePath)
+    await window.api.theme.setConfigBackground(filePath)
   }
 
   const { getAttachmentInfo, setAttachmentError } = useAttachmentStore()

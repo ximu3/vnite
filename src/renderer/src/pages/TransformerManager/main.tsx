@@ -1,20 +1,19 @@
-import { useState } from 'react'
-import { ScrollArea } from '@ui/scroll-area'
-import { Button } from '@ui/button'
-import { Plus, RefreshCw, ListFilter } from 'lucide-react'
-import { Badge } from '@ui/badge'
-import { Card } from '@ui/card'
-import { TransformerRule } from './types'
-import { TransformerItem } from './TransformerItem'
-import { RuleDialog } from './RuleDialog'
-import { EditDialog } from './EditDialog'
-import { DeleteDialog } from './DeleteDialog'
-import { TransformerPresetSelector } from './PresetSelector'
-import { useConfigState } from '~/hooks'
-import { ipcInvoke } from '~/utils'
-import { toast } from 'sonner'
 import { generateUUID, getErrorMessage } from '@appUtils'
+import { Badge } from '@ui/badge'
+import { Button } from '@ui/button'
+import { Card } from '@ui/card'
+import { ScrollArea } from '@ui/scroll-area'
+import { ListFilter, Plus, RefreshCw } from 'lucide-react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { useConfigState } from '~/hooks'
+import { DeleteDialog } from './DeleteDialog'
+import { EditDialog } from './EditDialog'
+import { TransformerPresetSelector } from './PresetSelector'
+import { RuleDialog } from './RuleDialog'
+import { TransformerItem } from './TransformerItem'
+import { TransformerRule } from './types'
 
 export function TransformerManager(): JSX.Element {
   const { t } = useTranslation('transformer')
@@ -128,9 +127,9 @@ export function TransformerManager(): JSX.Element {
 
   const handleImportTransformer = async (): Promise<void> => {
     try {
-      const filePath = await ipcInvoke('select-path-dialog', ['openFile'])
+      const filePath = await window.api.utils.selectPathDialog(['openFile'])
       if (!filePath) return
-      await ipcInvoke('import-transformer', filePath)
+      await window.api.transformer.importTransformer(filePath)
       toast.success(t('notifications.importSuccess'))
     } catch (error) {
       console.error('Error importing transformer:', error)
@@ -144,11 +143,27 @@ export function TransformerManager(): JSX.Element {
       id: 'transform-all'
     })
     try {
-      await ipcInvoke('transform-all-games', transformers)
+      await window.api.transformer.transformAllGames(transformers.map((t) => t.id))
       toast.success(t('notifications.applySuccess'), { id: 'transform-all' })
     } catch (error) {
       console.error('Error transforming all:', error)
       toast.error(t('notifications.applyError'), { id: 'transform-all' })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleTransformOne = async (transformer: TransformerRule): Promise<void> => {
+    setIsLoading(true)
+    toast.loading(t('notifications.applyLoading'), {
+      id: 'transform-one'
+    })
+    try {
+      await window.api.transformer.transformAllGames([transformer.id])
+      toast.success(t('notifications.applySuccess'), { id: 'transform-one' })
+    } catch (error) {
+      console.error('Error transforming one:', error)
+      toast.error(t('notifications.applyError'), { id: 'transform-one' })
     } finally {
       setIsLoading(false)
     }
@@ -217,7 +232,7 @@ export function TransformerManager(): JSX.Element {
             </Card>
 
             {/* Transformer list and operation card */}
-            <Card className="flex flex-col flex-grow overflow-hidden border rounded-lg">
+            <Card className="flex flex-col flex-grow border rounded-lg">
               {/* Transformer list header bar */}
               <div className="flex items-center justify-between p-4 border-b bg-muted/45">
                 <div className="text-sm font-medium">{t('list.title')}</div>
@@ -248,6 +263,8 @@ export function TransformerManager(): JSX.Element {
                         transformer={transformer}
                         index={index}
                         totalCount={transformers.length}
+                        isTransforming={isLoading}
+                        handleTransform={handleTransformOne}
                         onRuleClick={handleRuleClick}
                         onEditClick={handleEditClick}
                         onDeleteClick={handleDeleteClick}

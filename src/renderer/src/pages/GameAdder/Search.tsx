@@ -12,7 +12,6 @@ import {
 import { Input } from '@ui/input'
 import { toast } from 'sonner'
 import { GameList, useGameAdderStore } from './store'
-import { ipcInvoke } from '~/utils'
 import { useNavigate } from 'react-router-dom'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
@@ -49,7 +48,7 @@ export function Search({ className }: { className?: string }): JSX.Element {
     }
     toast.promise(
       (async (): Promise<GameList> => {
-        const result = (await ipcInvoke('search-games', dataSource, inputName)) as GameList
+        const result = await window.api.scraper.searchGames(dataSource, inputName)
         if (result.length === 0) {
           throw new Error(t('gameAdder.search.notifications.notFound'))
         }
@@ -73,7 +72,7 @@ export function Search({ className }: { className?: string }): JSX.Element {
     }
     toast.promise(
       (async (): Promise<void> => {
-        const result = await ipcInvoke('check-game-exists', dataSource, inputId)
+        const result = await window.api.scraper.checkGameExists(dataSource, inputId)
         if (!result) {
           throw new Error(t('gameAdder.search.notifications.invalidId'))
         }

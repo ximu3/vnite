@@ -17,10 +17,10 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useConfigLocalState, useConfigState } from '~/hooks'
 import { useGameAdderStore } from '~/pages/GameAdder/store'
-import { Game, useGameBatchAdderStore } from '~/pages/GameBatchAdder/store'
+import { useGameBatchAdderStore } from '~/pages/GameBatchAdder/store'
 import { useGameScannerStore } from '~/pages/GameScannerManager/store'
 import { useSteamImporterStore } from '~/pages/Importer/SteamImporter/store'
-import { cn, ipcInvoke } from '~/utils'
+import { cn } from '~/utils'
 import { CloudSyncInfo } from '../pages/Config/CloudSync/Info'
 import { useCloudSyncStore } from '../pages/Config/CloudSync/store'
 import { useTheme } from './ThemeProvider'
@@ -219,7 +219,7 @@ export function Sidebar(): JSX.Element {
                       toast.promise(
                         (async (): Promise<void> => {
                           try {
-                            const result = (await ipcInvoke('get-batch-game-adder-data')) as Game[]
+                            const result = await window.api.adder.getBatchGameAdderData()
 
                             if (!Array.isArray(result)) {
                               throw new Error(t('notifications.unknownError'))
@@ -259,13 +259,13 @@ export function Sidebar(): JSX.Element {
                     onClick={async () => {
                       try {
                         toast.info(t('notifications.selectGamePath'))
-                        const gamePath = await ipcInvoke('select-path-dialog', ['openFile'])
+                        const gamePath = await window.api.utils.selectPathDialog(['openFile'])
                         if (!gamePath) {
                           return
                         }
                         toast.promise(
                           (async (): Promise<void> => {
-                            await ipcInvoke('add-game-to-db-without-metadata', gamePath)
+                            await window.api.adder.addGameToDbWithoutMetadata(gamePath)
                           })(),
                           {
                             loading: t('notifications.adding'),

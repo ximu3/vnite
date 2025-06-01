@@ -74,6 +74,7 @@
   "transformerItem": {
     "rulesCount": "{{count}}個のルール",
     "tooltips": {
+      "apply": "適用",
       "delete": "削除",
       "export": "エクスポート",
       "edit": "編集"

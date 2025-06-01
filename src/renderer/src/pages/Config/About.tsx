@@ -5,7 +5,6 @@ import { Link } from '@ui/link'
 import { Button } from '@ui/button'
 import { Switch } from '~/components/ui/switch'
 import { useConfigState } from '~/hooks'
-import { ipcInvoke } from '~/utils'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useUpdaterStore } from '~/pages/Updater/store'
@@ -19,7 +18,7 @@ export function About(): JSX.Element {
 
   useEffect(() => {
     async function getVersion(): Promise<void> {
-      const version = (await ipcInvoke('get-app-version')) as string
+      const version = await window.api.utils.getAppVersion()
       setVersion(version)
     }
 
@@ -56,7 +55,7 @@ export function About(): JSX.Element {
                   id: 'checking-for-update'
                 })
                 setUpdateInfo(null)
-                await ipcInvoke('check-update')
+                await window.api.updater.checkUpdate()
                 toast.dismiss('checking-for-update')
                 setUpdateDialogIsOpen(true)
               }}
@@ -103,13 +102,13 @@ export function About(): JSX.Element {
               checked={allowPrerelease}
               onCheckedChange={async (checked) => {
                 await setAllowPrerelease(checked)
-                await ipcInvoke('update-updater-config')
+                await window.api.updater.updateUpdaterConfig()
                 if (checked) {
                   toast.loading(t('utils:notifications.checkingForUpdate'), {
                     id: 'checking-for-update'
                   })
                   setUpdateInfo(null)
-                  await ipcInvoke('check-update')
+                  await window.api.updater.checkUpdate()
                   toast.dismiss('checking-for-update')
                   setUpdateDialogIsOpen(true)
                 }

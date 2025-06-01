@@ -14,7 +14,6 @@ import {
 import { Card } from '@ui/card'
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
-import { ipcInvoke } from '~/utils'
 import { useTranslation } from 'react-i18next'
 
 interface SearchMediaDialogProps {
@@ -58,25 +57,25 @@ export function SearchMediaDialog({
       let result: string[] = []
       switch (type) {
         case 'cover':
-          result = await ipcInvoke('get-game-covers', dataSource, {
+          result = await window.api.scraper.getGameCovers(dataSource, {
             type: 'name',
             value: searchTitle
           })
           break
         case 'icon':
-          result = await ipcInvoke('get-game-icons', dataSource, {
+          result = await window.api.scraper.getGameIcons(dataSource, {
             type: 'name',
             value: searchTitle
           })
           break
         case 'logo':
-          result = await ipcInvoke('get-game-logos', dataSource, {
+          result = await window.api.scraper.getGameLogos(dataSource, {
             type: 'name',
             value: searchTitle
           })
           break
         case 'background':
-          result = await ipcInvoke('get-game-backgrounds', dataSource, {
+          result = await window.api.scraper.getGameBackgrounds(dataSource, {
             type: 'name',
             value: searchTitle
           })

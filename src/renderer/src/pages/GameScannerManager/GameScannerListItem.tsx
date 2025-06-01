@@ -11,7 +11,7 @@ import {
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
-import { Folder, Pencil, PlayCircle, Trash2 } from 'lucide-react'
+import { Folder, FolderOpen, Pencil, PlayCircle, Trash2 } from 'lucide-react'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useConfigLocalState } from '~/hooks'
@@ -118,8 +118,15 @@ export const GameScannerListItem: React.FC<GameScannerListItemProps> = ({
       )}
 
       <div className="z-10 flex items-center flex-grow gap-4 overflow-hidden">
-        <div className="flex items-center justify-center w-10 h-10 rounded-md bg-primary/10">
-          <Folder className="w-5 h-5 text-primary" />
+        <div
+          className={cn(
+            'flex items-center justify-center w-10 h-10 rounded-md bg-primary/10 ',
+            'group cursor-pointer hover:bg-primary/20'
+          )}
+          onClick={() => window.api.utils.openPathInExplorer(scanner.path)}
+        >
+          <Folder className="w-5 h-5 text-primary block group-hover:hidden" />
+          <FolderOpen className="w-5 h-5 text-primary hidden group-hover:block" />
         </div>
 
         <div className="flex-grow min-w-0">

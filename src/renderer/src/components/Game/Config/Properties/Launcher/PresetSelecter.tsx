@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { ChevronsUpDown } from 'lucide-react'
 
-import { cn, ipcInvoke } from '~/utils'
+import { cn } from '~/utils'
 import { Button } from '@ui/button'
 import {
   Command,
@@ -57,7 +57,7 @@ export function PresetSelecter({
       if (steamId) {
         toast.promise(
           async () => {
-            await ipcInvoke('launcher-preset', 'steam', gameId, steamId)
+            await window.api.launcher.launcherPreset(presetName, gameId, steamId)
           },
           {
             loading: t('detail.properties.launcher.preset.notifications.configuring'),
@@ -74,7 +74,7 @@ export function PresetSelecter({
     }
     toast.promise(
       async () => {
-        await ipcInvoke('launcher-preset', presetName, gameId)
+        await window.api.launcher.launcherPreset(presetName, gameId)
       },
       {
         loading: t('detail.properties.launcher.preset.notifications.configuring'),

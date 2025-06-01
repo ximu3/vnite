@@ -6,7 +6,6 @@ import { Card } from '@ui/card'
 import { Badge } from '@ui/badge'
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
-import { ipcInvoke } from '~/utils'
 import { GameExtraInfoList } from '@appTypes/utils'
 import { useTranslation } from 'react-i18next'
 
@@ -59,10 +58,10 @@ export function SearchExtraInformationDialog({
     setIsLoading(true)
 
     try {
-      const result = (await ipcInvoke('get-game-extra-info-list', {
+      const result = await window.api.scraper.getGameExtraInfoList({
         type: 'name',
         value: searchTitle
-      })) as GameExtraInfoList
+      })
 
       if (!result || result.length === 0) {
         toast.error(t('detail.overview.extraInformation.search.notFound'))

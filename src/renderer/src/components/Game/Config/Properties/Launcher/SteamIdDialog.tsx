@@ -1,4 +1,4 @@
-import { cn, ipcInvoke } from '~/utils'
+import { cn } from '~/utils'
 import { Button } from '@ui/button'
 import { Dialog, DialogContent } from '@ui/dialog'
 import { Input } from '@ui/input'
@@ -43,7 +43,7 @@ export function SteamIdDialog(): JSX.Element {
               setIsOpen(false)
               toast.promise(
                 async () => {
-                  await ipcInvoke('launcher-preset', 'steam', gameId, steamId)
+                  await window.api.launcher.launcherPreset('steam', gameId, steamId)
                 },
                 {
                   loading: t('detail.properties.launcher.preset.notifications.configuring'),

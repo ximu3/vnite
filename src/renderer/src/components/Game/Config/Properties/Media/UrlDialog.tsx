@@ -12,7 +12,7 @@ export function UrlDialog({
   setIsUrlDialogOpen,
   type
 }: {
-  setMediaWithUrl: (type: string, URL: string) => void
+  setMediaWithUrl: (type: 'cover' | 'background' | 'icon' | 'logo', URL: string) => void
   isUrlDialogOpen: { icon: boolean; cover: boolean; background: boolean; logo: boolean }
   setIsUrlDialogOpen: (isOpen: {
     icon: boolean
@@ -20,7 +20,7 @@ export function UrlDialog({
     background: boolean
     logo: boolean
   }) => void
-  type: string
+  type: 'cover' | 'background' | 'icon' | 'logo'
 }): JSX.Element {
   const { t } = useTranslation('game')
   const [mediaUrl, setMediaUrl] = useState<string>('')

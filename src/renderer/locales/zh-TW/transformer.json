@@ -74,6 +74,7 @@
   "transformerItem": {
     "rulesCount": "{{count}} 條規則",
     "tooltips": {
+      "apply": "應用",
       "delete": "刪除",
       "edit": "編輯",
       "export": "匯出"

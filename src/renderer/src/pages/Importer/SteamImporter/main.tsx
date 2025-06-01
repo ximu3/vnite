@@ -6,8 +6,8 @@ import { Progress } from '@ui/progress'
 import { ScrollArea } from '@ui/scroll-area'
 import { Alert, AlertDescription, AlertTitle } from '@ui/alert'
 import { CheckCircle2, XCircle, AlertCircle, Loader2, Search } from 'lucide-react'
-import { useSteamImporterStore, GameInfo } from './store'
-import { ipcInvoke, ipcOnUnique } from '~/utils'
+import { useSteamImporterStore } from './store'
+import { ipcOnUnique } from '~/utils'
 import { cn } from '~/utils'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -58,7 +58,7 @@ export function SteamImporter(): JSX.Element {
 
     try {
       setIsLoadingGames(true)
-      const gamesData = (await ipcInvoke('get-steam-games', steamId)) as GameInfo[]
+      const gamesData = await window.api.importer.getSteamGames(steamId)
       setGames(
         gamesData.map((game) => ({
           ...game,
@@ -85,8 +85,7 @@ export function SteamImporter(): JSX.Element {
     try {
       setIsImportLoading(true)
       reset()
-      await ipcInvoke(
-        'import-selected-steam-games',
+      await window.api.importer.importSelectedSteamGames(
         selectedGames.map((game) => ({
           appId: game.appId,
           name: game.name,

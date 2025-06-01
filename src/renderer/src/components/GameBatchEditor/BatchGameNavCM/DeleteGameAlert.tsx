@@ -9,7 +9,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from '@ui/alert-dialog'
-import { ipcInvoke } from '~/utils'
 import { toast } from 'sonner'
 import { useGameCollectionStore, useGameRegistry } from '~/stores/game'
 import { useNavigate } from 'react-router-dom'
@@ -39,7 +38,7 @@ export function DeleteGameAlert({
 
         // Deleting games from the database
         for (const gameId of gameIds) {
-          await ipcInvoke('delete-game', gameId)
+          await window.api.game.deleteGame(gameId)
           await new Promise((resolve) => setTimeout(resolve, 50))
         }
 

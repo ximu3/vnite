@@ -14,7 +14,7 @@ import {
   AlertDialogTrigger
 } from '@ui/alert-dialog'
 import { Switch } from '@ui/switch'
-import { ipcInvoke, ipcSend } from '~/utils'
+import { ipcSend } from '~/utils'
 import { toast } from 'sonner'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -26,11 +26,11 @@ export function Database(): JSX.Element {
   const [switchDialogOpen, setSwitchDialogOpen] = useState<boolean>(false)
 
   useEffect(() => {
-    ipcInvoke('is-portable-mode').then((isPortable) => {
+    window.api.utils.isPortableMode().then((isPortable) => {
       setIsPortable(isPortable as boolean)
     })
 
-    ipcInvoke('check-admin-permissions').then((hasAdminRights) => {
+    window.api.utils.checkAdminPermissions().then((hasAdminRights) => {
       setIsAdmin(hasAdminRights as boolean)
     })
   }, [])
@@ -38,9 +38,9 @@ export function Database(): JSX.Element {
   const backup = async (): Promise<void> => {
     toast.promise(
       async () => {
-        const targetPath: string = await ipcInvoke('select-path-dialog', ['openDirectory'])
+        const targetPath: string = await window.api.utils.selectPathDialog(['openDirectory'])
         if (!targetPath) return
-        await ipcInvoke('backup-database', targetPath)
+        await window.api.database.backupDatabase(targetPath)
       },
       {
         loading: t('database.notifications.backingUp'),
@@ -53,9 +53,9 @@ export function Database(): JSX.Element {
   const restore = async (): Promise<void> => {
     toast.promise(
       async () => {
-        const sourcePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
+        const sourcePath: string = await window.api.utils.selectPathDialog(['openFile'])
         if (!sourcePath) return
-        await ipcInvoke('restore-database', sourcePath)
+        await window.api.database.restoreDatabase(sourcePath)
       },
       {
         loading: t('database.notifications.importing'),
@@ -68,9 +68,9 @@ export function Database(): JSX.Element {
   const importV2Data = async (): Promise<void> => {
     toast.promise(
       async () => {
-        const sourcePath: string = await ipcInvoke('select-path-dialog', ['openFile'])
+        const sourcePath: string = await window.api.utils.selectPathDialog(['openFile'])
         if (!sourcePath) return
-        await ipcInvoke('import-v2-data', sourcePath)
+        await window.api.importer.importV2Data(sourcePath)
       },
       {
         loading: t('database.notifications.importing'),
@@ -83,7 +83,7 @@ export function Database(): JSX.Element {
   const handleSwitchClick = async (): Promise<void> => {
     // If you want to switch to portable mode but do not have administrator permissions
     if (!isPortable && !isAdmin) {
-      const isNeedAdminRights = await ipcInvoke('check-if-portable-directory-needs-admin-rights')
+      const isNeedAdminRights = await window.api.utils.checkIfPortableDirectoryNeedsAdminRights()
       if (isNeedAdminRights) {
         toast.error(t('database.notifications.adminRightsRequired'))
         return
@@ -96,7 +96,7 @@ export function Database(): JSX.Element {
   const switchDatabaseMode = async (): Promise<void> => {
     toast.promise(
       async () => {
-        await ipcInvoke('switch-database-mode')
+        await window.api.utils.switchDatabaseMode()
         setIsPortable((prev) => !prev)
         toast.info(t('database.notifications.restartCountdown'))
         setTimeout(() => {
@@ -171,7 +171,7 @@ export function Database(): JSX.Element {
               <Button
                 variant={'outline'}
                 onClick={async () => {
-                  await ipcInvoke('open-database-path-in-explorer')
+                  await window.api.utils.openDatabasePathInExplorer()
                 }}
               >
                 {t('database.openFolder')}
