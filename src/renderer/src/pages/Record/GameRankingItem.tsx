@@ -1,10 +1,9 @@
-import { cn } from '~/utils'
-import { useGameState } from '~/hooks'
-import { useNavigate } from 'react-router-dom'
-import { GameImage } from '@ui/game-image'
 import { generateUUID } from '@appUtils'
-import { scrollToElement } from '~/utils'
+import { GameImage } from '@ui/game-image'
+import { useNavigate } from 'react-router-dom'
 import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
+import { useConfigState, useGameState } from '~/hooks'
+import { cn, scrollToElement } from '~/utils'
 
 interface GameRankingItemProps {
   gameId: string
@@ -20,6 +19,8 @@ export function GameRankingItem({
   className
 }: GameRankingItemProps): JSX.Element {
   const [gameName] = useGameState(gameId, 'metadata.name')
+  const [nsfw] = useGameState(gameId, 'apperance.nsfw')
+  const [enableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
   const navigate = useNavigate()
   const setLazyloadMark = usePositionButtonStore((state) => state.setLazyloadMark)
 
@@ -47,6 +48,7 @@ export function GameRankingItem({
       <GameImage
         gameId={gameId}
         type={'cover'}
+        blur={nsfw && enableNSFWBlur}
         className="object-cover w-10 h-10 rounded-md"
         fallback={<div className="w-10 h-10 rounded-md bg-primary" />}
       />

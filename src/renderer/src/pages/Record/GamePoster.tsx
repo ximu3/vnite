@@ -1,16 +1,16 @@
-import { HoverCardAnimation } from '~/components/animations/HoverCard'
-import { cn } from '~/utils'
-import { useNavigate } from 'react-router-dom'
-import { useGameState } from '~/hooks'
-import { GameImage } from '~/components/ui/game-image'
 import { generateUUID } from '@appUtils'
-import { scrollToElement } from '~/utils'
+import { useNavigate } from 'react-router-dom'
+import { HoverCardAnimation } from '~/components/animations/HoverCard'
 import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
+import { GameImage } from '~/components/ui/game-image'
+import { useGameState } from '~/hooks'
+import { cn, scrollToElement } from '~/utils'
 
 export function GamePoster({
   gameId,
   className,
   isShowGameName = false,
+  blur = false,
   additionalInfo,
   infoStyle,
   fontStyles
@@ -18,6 +18,7 @@ export function GamePoster({
   gameId: string
   className?: string
   isShowGameName?: boolean
+  blur?: boolean
   additionalInfo?: string
   infoStyle?: string
   fontStyles?: { name: string; additionalInfo: string }
@@ -60,6 +61,7 @@ export function GamePoster({
             gameId={gameId}
             type="cover"
             alt={gameId}
+            blur={blur}
             className={cn('w-full h-full cursor-pointer object-cover', className)}
             fallback={
               <div
