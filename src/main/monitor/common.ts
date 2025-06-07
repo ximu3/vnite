@@ -8,6 +8,7 @@ import { backupGameSave } from '~/database'
 import { exec } from 'child_process'
 import { isEqual } from 'lodash'
 import { spawn } from 'child_process'
+import { psManager } from '~/utils/powershell'
 
 const execAsync = (command: string, options?: any): Promise<{ stdout: string; stderr: string }> => {
   return new Promise<{ stdout: string; stderr: string }>((resolve, reject) => {
@@ -31,14 +32,9 @@ async function getProcessList(): Promise<
   }>
 > {
   try {
-    // Getting process information with PowerShell
-    const { stdout } = await execAsync(
-      `chcp 65001 | Out-Null; powershell -Command "Get-CimInstance Win32_Process | Select-Object Name,ProcessId,ExecutablePath,CommandLine | ConvertTo-Json"`,
-      {
-        shell: 'powershell.exe',
-        maxBuffer: 1024 * 1024 * 5 // 5MB buffer for large output
-      }
-    )
+    const command =
+      'Get-CimInstance Win32_Process | Select-Object Name,ProcessId,ExecutablePath,CommandLine | ConvertTo-Json'
+    const stdout = await psManager.executeCommand(command)
 
     const processes = JSON.parse(stdout)
     return processes.map((proc: any) => ({
@@ -128,7 +124,7 @@ export class GameMonitor {
 
   constructor(options: GameMonitorOptions) {
     this.options = {
-      checkInterval: 3000,
+      checkInterval: 5000,
       executableExtensions: ['.exe', '.bat', '.cmd'],
       magpieHotkey: 'win+alt+a',
       ...options
@@ -230,9 +226,7 @@ export class GameMonitor {
           // Method 2: Exact Match by Path using PowerShell
           async (): Promise<void> => {
             const psCommand = `Get-Process | Where-Object {$_.Path -eq '${normalizedPath}'} | Stop-Process -Force`
-            await execAsync(`powershell -Command "${psCommand}"`, {
-              shell: 'cmd.exe'
-            })
+            await psManager.executeCommand(psCommand)
           }
         ]
 

@@ -29,6 +29,7 @@ import {
   TrayManager
 } from './utils'
 import { GameScannerManager } from './adder/scanner'
+import { cleanupPowerShell } from './utils/powershell'
 
 let mainWindow: BrowserWindow
 let splashWindow: BrowserWindow | null
@@ -328,6 +329,33 @@ app.on('window-all-closed', () => {
     // trayManager.destroy()
     app.quit()
   }
+})
+
+// 添加应用程序退出前的清理逻辑
+app.on('before-quit', () => {
+  // 清理PowerShell实例
+  cleanupPowerShell()
+
+  // 清理托盘
+  if (trayManager) {
+    trayManager.destroy()
+  }
+})
+
+// 添加进程退出时的清理
+process.on('exit', () => {
+  cleanupPowerShell()
+})
+
+// 处理意外退出
+process.on('SIGINT', () => {
+  cleanupPowerShell()
+  app.quit()
+})
+
+process.on('SIGTERM', () => {
+  cleanupPowerShell()
+  app.quit()
 })
 
 // In this file you can include the rest of your app"s specific main process
