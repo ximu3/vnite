@@ -1,7 +1,8 @@
 import { ipcRenderer } from 'electron'
+import { UpdateCheckResult } from 'electron-updater'
 
 export const updaterAPI = {
-  async checkUpdate(): Promise<any> {
+  async checkUpdate(): Promise<UpdateCheckResult | null> {
     return await ipcRenderer.invoke('check-update')
   },
 

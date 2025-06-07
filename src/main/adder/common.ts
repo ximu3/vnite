@@ -187,7 +187,9 @@ export async function getBatchGameAdderData(): Promise<BatchGameInfo[]> {
       dataSource: defaultDataSource,
       name: game.name,
       id: '',
-      status: (await GameDBManager.checkGameExitsByPath(game.dirPath)) ? 'existed' : 'idle',
+      status: ((await GameDBManager.checkGameExitsByPath(game.dirPath)) ? 'existed' : 'idle') as
+        | 'existed'
+        | 'idle',
       dirPath: game.dirPath
     }
   })

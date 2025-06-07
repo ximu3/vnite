@@ -10,15 +10,15 @@ export const transformerAPI = {
     return await ipcRenderer.invoke('export-transformer', transformer, targetPath)
   },
 
-  async importTransformer(sourcePath: string): Promise<any> {
+  async importTransformer(sourcePath: string): Promise<void> {
     return await ipcRenderer.invoke('import-transformer', sourcePath)
   },
 
-  async transformGameById(gameId: string, transformerIds: string[]): Promise<any> {
+  async transformGameById(gameId: string, transformerIds: string[]): Promise<boolean> {
     return await ipcRenderer.invoke('transform-game-by-id', gameId, transformerIds)
   },
 
-  async transformAllGames(transformerIds: string[]): Promise<any> {
+  async transformAllGames(transformerIds: string[]): Promise<number> {
     return await ipcRenderer.invoke('transform-all-games', transformerIds)
   },
 

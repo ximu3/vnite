@@ -27,7 +27,7 @@ export const databaseAPI = {
     return await ipcRenderer.invoke('get-couchdb-size')
   },
 
-  async setConfigBackground(path: string): Promise<any> {
+  async setConfigBackground(path: string): Promise<void> {
     return await ipcRenderer.invoke('set-config-background', path)
   },
 

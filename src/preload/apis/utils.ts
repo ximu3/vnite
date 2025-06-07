@@ -59,7 +59,7 @@ export const utilsAPI = {
     return await ipcRenderer.invoke('is-portable-mode')
   },
 
-  async switchDatabaseMode(): Promise<any> {
+  async switchDatabaseMode(): Promise<void> {
     return await ipcRenderer.invoke('switch-database-mode')
   },
 

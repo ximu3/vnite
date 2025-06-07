@@ -6,6 +6,6 @@ export interface MediaAPI {
     width: number
     height: number
   }): Promise<string>
-  saveGameIconByFile(gameId: string, filePath: string): Promise<any>
+  saveGameIconByFile(gameId: string, filePath: string): Promise<void>
   downloadTempImage(url: string): Promise<string>
 }

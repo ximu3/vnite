@@ -1,5 +1,6 @@
 import { useGameAdder } from './hooks/useGameAdder'
-import { useGameBatchAdderStore, DataSource, Game } from './store'
+import { useGameBatchAdderStore, DataSource } from './store'
+import { BatchGameInfo } from '@appTypes/database'
 import { StatusBadge } from './StatusBadge'
 import { Button } from '@ui/button'
 import { Input } from '@ui/input'
@@ -18,7 +19,7 @@ import { TABLE_COLUMN_WIDTHS } from './GameListTable'
 import { cn } from '~/utils'
 import { useTranslation } from 'react-i18next'
 
-export function GameListItem({ game }: { game: Game }): JSX.Element {
+export function GameListItem({ game }: { game: BatchGameInfo }): JSX.Element {
   const { t } = useTranslation('adder')
   const { actions } = useGameBatchAdderStore()
   const { addGame } = useGameAdder()

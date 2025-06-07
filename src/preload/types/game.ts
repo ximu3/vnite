@@ -3,7 +3,7 @@ export interface GameAPI {
     gameId: string,
     type: 'background' | 'cover' | 'logo' | 'icon',
     image: string
-  ): Promise<any>
+  ): Promise<void>
   deleteGameSave(gameId: string, saveId: string): Promise<void>
   restoreGameSave(gameId: string, saveId: string): Promise<void>
   deleteGame(gameId: string): Promise<void>
@@ -12,6 +12,6 @@ export interface GameAPI {
   updateMemoryCover(gameId: string, memoryId: string, imgPath: string): Promise<void>
   getMemoryCoverPath(gameId: string, memoryId: string): Promise<string>
   getGameMediaPath(gameId: string, type: 'cover' | 'background' | 'icon' | 'logo'): Promise<string>
-  removeGameMedia(gameId: string, type: 'cover' | 'background' | 'icon' | 'logo'): Promise<any>
+  removeGameMedia(gameId: string, type: 'cover' | 'background' | 'icon' | 'logo'): Promise<void>
   checkGameExitsByPath(gamePath: string): Promise<boolean>
 }

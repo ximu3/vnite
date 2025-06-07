@@ -9,7 +9,7 @@ export const themeAPI = {
     return await ipcRenderer.invoke('load-theme')
   },
 
-  async themePreset(preset: string): Promise<any> {
+  async themePreset(preset: string): Promise<string> {
     return await ipcRenderer.invoke('theme-preset', preset)
   },
 

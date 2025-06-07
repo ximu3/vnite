@@ -60,6 +60,6 @@ export interface BatchGameInfo {
   dataSource: string
   name: string
   id: string
-  status: string
+  status: 'idle' | 'loading' | 'success' | 'error' | 'existed'
   dirPath: string
 }

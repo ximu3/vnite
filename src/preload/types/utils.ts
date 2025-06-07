@@ -20,7 +20,7 @@ export interface UtilsAPI {
   updateTrayConfig(): Promise<void>
   getAppVersion(): Promise<string>
   isPortableMode(): Promise<boolean>
-  switchDatabaseMode(): Promise<any>
+  switchDatabaseMode(): Promise<void>
   readFileBuffer(filePath: string): Promise<Buffer>
   getLanguage(): Promise<string>
   checkAdminPermissions(): Promise<boolean>

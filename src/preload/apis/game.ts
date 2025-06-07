@@ -5,7 +5,7 @@ export const gameAPI = {
     gameId: string,
     type: 'background' | 'cover' | 'logo' | 'icon',
     image: string
-  ): Promise<any> {
+  ): Promise<void> {
     return await ipcRenderer.invoke('set-game-image', gameId, type, image)
   },
 
@@ -47,7 +47,7 @@ export const gameAPI = {
   async removeGameMedia(
     gameId: string,
     type: 'cover' | 'background' | 'icon' | 'logo'
-  ): Promise<any> {
+  ): Promise<void> {
     return await ipcRenderer.invoke('remove-game-media', gameId, type)
   },
 

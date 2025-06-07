@@ -7,7 +7,7 @@ export interface DatabaseAPI {
   backupDatabase(targetPath: string): Promise<void>
   restoreDatabase(sourcePath: string): Promise<void>
   getCouchDbSize(): Promise<number>
-  setConfigBackground(path: string): Promise<any>
+  setConfigBackground(path: string): Promise<void>
   restartSync(): Promise<void>
   stopSync(): Promise<void>
 }
