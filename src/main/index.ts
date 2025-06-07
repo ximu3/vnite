@@ -331,23 +331,23 @@ app.on('window-all-closed', () => {
   }
 })
 
-// 添加应用程序退出前的清理逻辑
+// Add cleanup logic before application exit
 app.on('before-quit', () => {
-  // 清理PowerShell实例
+  // Clean up PowerShell instance
   cleanupPowerShell()
 
-  // 清理托盘
+  // Clean up tray
   if (trayManager) {
     trayManager.destroy()
   }
 })
 
-// 添加进程退出时的清理
+// Add cleanup on process exit
 process.on('exit', () => {
   cleanupPowerShell()
 })
 
-// 处理意外退出
+// Handle unexpected exits
 process.on('SIGINT', () => {
   cleanupPowerShell()
   app.quit()
