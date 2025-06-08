@@ -155,15 +155,19 @@ export function TransformerManager(): JSX.Element {
 
   const handleTransformOne = async (transformer: TransformerRule): Promise<void> => {
     setIsLoading(true)
-    toast.loading(t('notifications.applyLoading'), {
+    toast.loading(t('notifications.applyOneLoading', { name: transformer.name }), {
       id: 'transform-one'
     })
     try {
       await window.api.transformer.transformAllGames([transformer.id])
-      toast.success(t('notifications.applySuccess'), { id: 'transform-one' })
+      toast.success(t('notifications.applyOneSuccess', { name: transformer.name }), {
+        id: 'transform-one'
+      })
     } catch (error) {
-      console.error('Error transforming one:', error)
-      toast.error(t('notifications.applyError'), { id: 'transform-one' })
+      console.error(`Error transforming ${transformer.name}:`, error)
+      toast.error(t('notifications.applyOneError', { name: transformer.name }), {
+        id: 'transform-one'
+      })
     } finally {
       setIsLoading(false)
     }
