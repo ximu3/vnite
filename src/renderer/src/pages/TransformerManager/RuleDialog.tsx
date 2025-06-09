@@ -128,6 +128,11 @@ export function RuleDialog({
 
     const Row = ({ index, style }: { index: number; style: React.CSSProperties }): JSX.Element => {
       const rule = rules[index]
+      const [inputValue, setInputValue] = React.useState(rule.replace)
+
+      React.useEffect(() => {
+        setInputValue(rule.replace)
+      }, [rule.replace])
       return (
         <div style={style} className={cn('flex items-center gap-4 pt-1 px-2')}>
           <div className="flex-[7]">
@@ -142,8 +147,9 @@ export function RuleDialog({
           </div>
           <div className="flex-[3]">
             <Input
-              value={rule.replace}
-              onChange={(e) => updateRuleSet(category, index, 'replace', e.target.value)}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onBlur={() => updateRuleSet(category, index, 'replace', inputValue)}
               placeholder={t('ruleDialog.replace')}
             />
           </div>
