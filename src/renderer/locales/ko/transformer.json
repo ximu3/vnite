@@ -49,7 +49,10 @@
     "importError": "변환기 불러오기 실패",
     "exportSuccess": "변환기 내보내기 성공",
     "applyLoading": "모든 변환기 적용 중…",
-    "exportError": "변환기 내보내기 실패"
+    "exportError": "변환기 내보내기 실패",
+    "applyOneLoading": "\"{{name}}\" 변환기를 적용하는 중…",
+    "applyOneSuccess": "\"{{name}}\" 변환기가 성공적으로 전환되었습니다",
+    "applyOneError": "\"{{name}}\" 변환기를 전환하는 중 오류가 발생했습니다"
   },
   "editDialog": {
     "name": "이름",
@@ -83,6 +86,10 @@
     "vndbChineseTags": {
       "name": "VNDB 중국어 태그",
       "note": "VNDB 영어 태그를 중국어로 변환"
+    },
+    "kanaToLatinDevelopers": {
+      "note": "일본어 가나 문자로 표시된 개발사 이름을 라틴 알파벳으로 변환합니다",
+      "name": "개발사 라틴어 표기"
     }
   },
   "title": "메타데이터 변환기 관리자"
