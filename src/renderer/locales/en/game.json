@@ -21,7 +21,8 @@
     },
     "recent": {
       "title": "Recent Games",
-      "hide": "Hide"
+      "hide": "Hide",
+      "empty": "No recent games"
     },
     "filter": {
       "results": "Filter Results",
