@@ -21,7 +21,8 @@
     },
     "recent": {
       "title": "最近游戏",
-      "hide": "隐藏"
+      "hide": "隐藏",
+      "empty": "暂无最近游戏"
     },
     "filter": {
       "results": "筛选结果",

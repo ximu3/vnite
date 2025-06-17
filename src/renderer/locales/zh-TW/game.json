@@ -21,7 +21,8 @@
     },
     "recent": {
       "title": "最近遊戲",
-      "hide": "隱藏"
+      "hide": "隱藏",
+      "empty": "暫無最近遊戲"
     },
     "filter": {
       "results": "篩選結果",

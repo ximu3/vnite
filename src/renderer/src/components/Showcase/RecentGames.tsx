@@ -3,13 +3,18 @@ import { throttle } from 'lodash'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useConfigState } from '~/hooks'
-import { sortGames } from '~/stores/game'
+import { getGameStore, sortGames } from '~/stores/game'
 import { cn } from '~/utils'
 import { BigGamePoster } from './posters/BigGamePoster'
 import { GamePoster } from './posters/GamePoster'
 
 export function RecentGames(): JSX.Element {
-  const games = sortGames('record.lastRunDate', 'desc').slice(0, 15)
+  const games = sortGames('record.lastRunDate', 'desc')
+    .slice(0, 15)
+    .filter((id) => {
+      const date = getGameStore(id).getState().getValue('record.lastRunDate')
+      return date && date !== ''
+    })
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [showRecentGamesInGameList] = useConfigState('game.gameList.showRecentGames')
 
@@ -64,6 +69,9 @@ export function RecentGames(): JSX.Element {
         )}
       >
         {/* The wrapper ensures that each Poster maintains a fixed width */}
+        {games.length === 0 && (
+          <div className="text-muted-foreground text-sm">{t('list.recent.empty')}</div>
+        )}
         {games.map((game, index) =>
           index === 0 ? (
             <div

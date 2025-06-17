@@ -1,21 +1,26 @@
-import { cn } from '~/utils'
 import { AccordionContent, AccordionItem, AccordionTrigger } from '@ui/accordion'
 import {
-  ContextMenuContent,
-  ContextMenuTrigger,
   ContextMenu,
-  ContextMenuItem
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger
 } from '@ui/context-menu'
-import { useConfigState } from '~/hooks'
-import { sortGames } from '~/stores/game'
-import { GameNav } from '../GameNav'
 import { useTranslation } from 'react-i18next'
+import { useConfigState } from '~/hooks'
+import { getGameStore, sortGames } from '~/stores/game'
+import { cn } from '~/utils'
+import { GameNav } from '../GameNav'
 
 export function RecentGames(): JSX.Element {
   const [showRecentGamesInGameList, setShowRecentGamesInGameList] = useConfigState(
     'game.gameList.showRecentGames'
   )
-  const games = sortGames('record.lastRunDate', 'desc').slice(0, 5)
+  const games = sortGames('record.lastRunDate', 'desc')
+    .slice(0, 5)
+    .filter((id) => {
+      const date = getGameStore(id).getState().getValue('record.lastRunDate')
+      return date && date !== ''
+    })
   const { t } = useTranslation('game')
   return (
     <>
@@ -36,6 +41,11 @@ export function RecentGames(): JSX.Element {
             </ContextMenuContent>
           </ContextMenu>
           <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
+            {games.length === 0 && (
+              <div className="flex items-center justify-center text-muted-foreground text-xs mt-3">
+                {t('list.recent.empty')}
+              </div>
+            )}
             {games.map((gameId) => (
               <GameNav key={gameId} gameId={gameId} groupId="recentGames" />
             ))}
