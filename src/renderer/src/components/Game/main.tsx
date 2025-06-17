@@ -17,6 +17,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
   const { t } = useTranslation('game')
   const [_isImageError, setIsImageError] = useState(false)
   const headerRef = useRef<HTMLDivElement>(null)
+  const scrollAreaRef = useRef<HTMLDivElement>(null)
   const [scrollY, setScrollY] = useState(0)
   const [dragging, setDragging] = useState(false)
   const offset = useRef({ x: 0, y: 0 })
@@ -85,16 +86,23 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
 
   // Scroll handling
   useEffect(() => {
-    const handleScroll = (e: any): void => {
-      const scrollContainer = e.target
-      setScrollY(scrollContainer.scrollTop)
+    if (!scrollAreaRef.current) return
+
+    const viewportElement = scrollAreaRef.current.querySelector('[class*="h-full w-full"]')
+
+    if (!viewportElement) {
+      console.error('ScrollArea viewport element not found')
+      return
     }
 
-    const scrollContainer = document.querySelector('.scrollbar-base')
-    scrollContainer?.addEventListener('scroll', handleScroll)
+    const handleScroll = (): void => {
+      setScrollY((viewportElement as HTMLElement).scrollTop)
+    }
+
+    viewportElement.addEventListener('scroll', handleScroll)
 
     return (): void => {
-      scrollContainer?.removeEventListener('scroll', handleScroll)
+      viewportElement.removeEventListener('scroll', handleScroll)
     }
   }, [])
 
@@ -226,7 +234,10 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
       )}
 
       {/* Scrollable content area */}
-      <ScrollArea className={cn('relative h-full w-full overflow-auto rounded-none')}>
+      <ScrollArea
+        ref={scrollAreaRef}
+        className={cn('relative h-full w-full overflow-auto rounded-none')}
+      >
         {/* Content container */}
         <div
           className={cn('relative z-20 flex flex-col w-full min-h-[100vh]')}
