@@ -105,8 +105,8 @@ export const GameScannerManager: React.FC = () => {
   const globalInterval = scannerConfig?.interval || 0
 
   return (
-    <div className="flex flex-col w-full h-full bg-background/60 pt-[20px]">
-      <ScrollArea className="px-6">
+    <div className="flex flex-col w-full h-full bg-background/60">
+      <ScrollArea className="px-6 pt-[20px]">
         <div className="py-[34px]">
           {/* Header title */}
           <div className="flex items-center justify-between mb-4 ">

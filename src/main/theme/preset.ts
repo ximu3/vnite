@@ -31,7 +31,7 @@ export async function defaultPreset(): Promise<string> {
     --chart-3: 230 8% 70%;
     --chart-4: 223 30% 78%;
     --chart-5: 223 45% 57%;
-    --radius: 0.3rem;
+    --radius: 0.625rem;
   }
 
   .dark {
@@ -54,7 +54,7 @@ export async function defaultPreset(): Promise<string> {
     --destructive: 2 80% 58%;
     --destructive-foreground: 0 0% 100%;
     --ring: 223 45% 44%;
-    --radius: 0.3rem;
+    --radius: 0.625rem;
   }
 }
 
@@ -95,7 +95,7 @@ export async function mutsumiPreset(): Promise<string> {
     --chart-3: 0 0% 85%;
     --chart-4: 174 30% 28%;
     --chart-5: 174 45% 65%;
-    --radius: 0.3rem;
+    --radius: 0.625rem;
   }
 
   .dark {
@@ -123,7 +123,7 @@ export async function mutsumiPreset(): Promise<string> {
     --chart-3: 229 20% 35%;
     --chart-4: 174 30% 28%;
     --chart-5: 174 45% 65%;
-    --radius: 0.3rem;
+    --radius: 0.625rem;
   }
 }
 
@@ -164,7 +164,7 @@ export async function moonlightPreset(): Promise<string> {
       --chart-3: 0 0% 81%;
       --chart-4: 214 30% 78%;
       --chart-5: 214 60% 55%;
-      --radius: 0.3rem;
+      --radius: 0.625rem;
     }
 
     .dark {
@@ -192,7 +192,7 @@ export async function moonlightPreset(): Promise<string> {
       --chart-3: 234 23% 32%;
       --chart-4: 217 30% 28%;
       --chart-5: 217 103% 74%;
-      --radius: 0.3rem;
+      --radius: 0.625rem;
     }
   }
 

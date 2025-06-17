@@ -96,7 +96,7 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
             <Nav
               variant="gameList"
               className={cn(
-                'text-xs p-3 h-5 rounded-none',
+                'text-xs p-3 h-5',
                 highlightLocalGames && 'text-foreground',
                 highlightLocalGames && gamePath && 'text-accent-foreground',
                 highlightLocalGames && !gamePath && !isDarkMode && 'text-foreground/90',

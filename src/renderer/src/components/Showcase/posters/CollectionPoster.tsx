@@ -188,7 +188,7 @@ export function CollectionPoster({
                 </div>
               </div>
             </div>
-            <div className="text-[13px] text-foreground truncate cursor-pointer hover:underline w-[148px] text-center decoration-foreground">
+            <div className="text-xs text-foreground truncate cursor-pointer hover:underline w-[148px] text-center decoration-foreground">
               {collectionName}
             </div>
           </div>

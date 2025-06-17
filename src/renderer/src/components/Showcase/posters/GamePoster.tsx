@@ -267,7 +267,7 @@ export function GamePoster({
                   </div>
                 </div>
 
-                <div className="text-[13px] text-foreground truncate cursor-pointer select-none hover:underline w-[148px] text-center decoration-foreground">
+                <div className="text-xs text-foreground truncate cursor-pointer select-none hover:underline w-[148px] text-center decoration-foreground">
                   {gameData?.name}
                 </div>
               </div>

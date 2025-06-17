@@ -142,7 +142,7 @@ export function BigGamePoster({
               </div>
             </div>
 
-            <div className="text-[13px] cursor-pointer select-none text-foreground hover:underline decoration-foreground truncate w-[333px] text-center">
+            <div className="text-xs cursor-pointer select-none text-foreground hover:underline decoration-foreground truncate w-[333px] text-center">
               {gameData?.name}
             </div>
           </div>
