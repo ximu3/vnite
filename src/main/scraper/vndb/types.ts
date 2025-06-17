@@ -21,6 +21,7 @@ export interface VNTitle {
 export interface VNDeveloper {
   id: string
   name: string
+  original?: string
 }
 
 export interface VNTag {
@@ -40,6 +41,7 @@ export interface VNStaff {
   id?: string
   aid: string
   name: string
+  original?: string
   role: string
   note?: string
 }

@@ -99,7 +99,7 @@ function processStaffData(staff: VNStaff[]): Array<{ key: string; value: string[
       if (!staffByRole[mappedRole]) {
         staffByRole[mappedRole] = new Set()
       }
-      staffByRole[mappedRole].add(staffMember.name)
+      staffByRole[mappedRole].add(staffMember.original || staffMember.name)
     }
   })
 
@@ -140,10 +140,10 @@ export async function getVNMetadata(vnId: string): Promise<GameMetadata> {
     'titles{main,title,lang}',
     'released',
     'description',
-    'developers{name}',
+    'developers{name,original}',
     'tags{rating,name,spoiler}',
     'extlinks{label,url}',
-    'staff{role,name}'
+    'staff{role,name,original}'
   ]
 
   try {
@@ -178,7 +178,7 @@ export async function getVNMetadata(vnId: string): Promise<GameMetadata> {
       originalName: vn.titles.find((t) => t.main)?.title || vn.titles[0].title,
       releaseDate: vn.released || '',
       description: formatDescription(vn.description),
-      developers: vn.developers?.map((d) => d.name) || [''],
+      developers: vn.developers?.map((d) => d.original || d.name) || [''],
       relatedSites: [
         ...(vn.extlinks?.map((link) => ({ label: link.label, url: link.url })) || []),
         { label: 'VNDB', url: `https://vndb.org/${formattedId}` }
@@ -198,10 +198,10 @@ export async function getVNMetadataByName(vnName: string): Promise<GameMetadata>
     'titles{main,title}',
     'released',
     'description',
-    'developers{name}',
+    'developers{name,original}',
     'tags{rating,name,spoiler}',
     'extlinks{label,url}',
-    'staff{role,name}'
+    'staff{role,name,original}'
   ]
 
   try {
@@ -243,7 +243,7 @@ export async function getVNMetadataByName(vnName: string): Promise<GameMetadata>
       originalName: vn.titles.find((t) => t.main)?.title || vn.titles[0].title,
       releaseDate: vn.released || '',
       description: formatDescription(vn.description),
-      developers: vn.developers?.map((d) => d.name) || [''],
+      developers: vn.developers?.map((d) => d.original || d.name) || [''],
       relatedSites: [
         ...(vn.extlinks?.map((link) => ({ label: link.label, url: link.url })) || []),
         { label: 'VNDB', url: `https://vndb.org/${vn.id}` }
