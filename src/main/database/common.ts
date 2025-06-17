@@ -378,11 +378,13 @@ export class DBManager {
       if (doc) {
         // Document exists, add attachment
         await db.upsert(docId, (doc: any) => {
+          const prevrevpos = '_rev' in doc ? parseInt(doc._rev, 10) : 0
           doc._attachments = doc._attachments || {}
 
           doc._attachments[attachmentId] = {
             content_type: type,
-            data: attachment
+            data: attachment,
+            revpos: prevrevpos + 1
           }
 
           return doc
@@ -394,7 +396,8 @@ export class DBManager {
           _attachments: {
             [attachmentId]: {
               content_type: type,
-              data: attachment
+              data: attachment,
+              revpos: 1
             }
           }
         })
