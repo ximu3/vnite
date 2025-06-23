@@ -147,6 +147,10 @@ export interface configDocs {
         }
       }[]
     }
+    imageTransformer: {
+      enabled: boolean
+      quality: number
+    }
   }
 }
 
@@ -298,6 +302,10 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
           }
         }
       ]
+    },
+    imageTransformer: {
+      enabled: false,
+      quality: 100
     }
   }
 } as const
