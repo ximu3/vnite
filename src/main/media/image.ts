@@ -35,6 +35,32 @@ export async function searchGameImages(
   }
 }
 
+export async function getImage(input: Buffer | string): Promise<Buffer>
+{
+  try
+  {
+    // Handles cases where the input is a URL
+    if (typeof input === 'string' && input.startsWith('http')) {
+      const response = await net.fetch(input)
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.statusText}`)
+      }
+      return Buffer.from(await response.arrayBuffer())
+    } else if (typeof input === 'string') {
+      // If it is a local file path
+      return await fse.readFile(input)
+    } else {
+      // If it is already Buffer
+      return input
+    }
+  }
+  catch (error)
+  {
+    console.error('Error getting the image:', error)
+    throw error
+  }
+}
+
 export async function convertToWebP(
   input: Buffer | string,
   options: { quality?: number; animated?: boolean } = {}
@@ -42,21 +68,7 @@ export async function convertToWebP(
   try {
     sharp.cache(false)
 
-    // Handles cases where the input is a URL
-    let imageBuffer: Buffer
-    if (typeof input === 'string' && input.startsWith('http')) {
-      const response = await net.fetch(input)
-      if (!response.ok) {
-        throw new Error(`Failed to fetch image: ${response.statusText}`)
-      }
-      imageBuffer = Buffer.from(await response.arrayBuffer())
-    } else if (typeof input === 'string') {
-      // If it is a local file path
-      imageBuffer = await fse.readFile(input)
-    } else {
-      // If it is already Buffer
-      imageBuffer = input
-    }
+    const imageBuffer = await getImage(input)
 
     const isIco = isIcoFormat(imageBuffer)
 
@@ -105,21 +117,7 @@ export async function convertToPng(input: Buffer | string): Promise<Buffer> {
   try {
     sharp.cache(false)
 
-    // Handles cases where the input is a URL
-    let imageBuffer: Buffer
-    if (typeof input === 'string' && input.startsWith('http')) {
-      const response = await net.fetch(input)
-      if (!response.ok) {
-        throw new Error(`Failed to fetch image: ${response.statusText}`)
-      }
-      imageBuffer = Buffer.from(await response.arrayBuffer())
-    } else if (typeof input === 'string') {
-      // If it is a local file path
-      imageBuffer = await fse.readFile(input)
-    } else {
-      // If it is already Buffer
-      imageBuffer = input
-    }
+    const imageBuffer = await getImage(input)
 
     return await sharp(imageBuffer).png().toBuffer()
   } catch (error) {
