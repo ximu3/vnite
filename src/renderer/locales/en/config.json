@@ -18,18 +18,33 @@
     "title": "Appearances",
     "background": {
       "title": "Background",
-      "customBackground": "Custom Background",
-      "image": "Image",
-      "selectImage": "Select Image",
-      "currentBackground": "Current Background Image",
-      "noBackground": "No Background Image Set"
+      "typeBackground": "Type of background",
+      "selectImage": "Select image",
+      "type":
+      {
+        "label": "Type of background",
+        "default": "Default",
+        "single": "Single",
+        "slideshow": "Slideshow"
+      },
+      "uploadImage":
+      {
+        "label": "Upload",
+        "extensions": {
+          "jpeg": "JPEG",
+          "png": "PNG",
+          "gif": "GIF"
+        }
+      },
+      "currentBackground": "Current background image",
+      "noBackground": "No background image set"
     },
     "showcase": {
       "title": "Showcase",
-      "showPlayButtonOnPoster": "Show Play Button on Poster"
+      "showPlayButtonOnPoster": "Show Play button on poster"
     },
     "glass": {
-      "title": "Frosted Glass",
+      "title": "Frosted glass",
       "blur": "Blur",
       "opacity": "Opacity"
     },

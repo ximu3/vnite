@@ -4,17 +4,17 @@ import { OpenDialogOptions } from 'electron'
 /**
  * Show a dialog to select a path
  * @param properties The properties of the dialog
- * @param extensions The extensions to filter by
+ * @param filters The filters to use for file selection
  * @returns A promise that resolves with the selected path.
  */
 export async function selectPathDialog(
   properties: NonNullable<OpenDialogOptions['properties']>,
-  extensions?: string[],
+  filters?: { name: string, extensions: string[] }[],
   defaultPath?: string
 ): Promise<string | undefined> {
   const result = await dialog.showOpenDialog({
     properties: properties,
-    filters: extensions ? [{ name: 'All Files', extensions: extensions }] : undefined,
+    filters,
     defaultPath: defaultPath
   })
   return result.filePaths[0]

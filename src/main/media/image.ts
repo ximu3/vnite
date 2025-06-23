@@ -56,7 +56,7 @@ export async function getImage(input: Buffer | string): Promise<Buffer>
   }
   catch (error)
   {
-    console.error('Error getting the image:', error)
+    console.error('Error getting image:', error)
     throw error
   }
 }

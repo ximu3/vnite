@@ -4,7 +4,7 @@ export interface UtilsAPI {
   generateUUID(): Promise<string>
   selectPathDialog(
     properties: NonNullable<OpenDialogOptions['properties']>,
-    extensions?: string[],
+    filters?: { name: string, extensions: string[] }[],
     defaultPath?: string
   ): Promise<string>
   selectMultiplePathDialog(

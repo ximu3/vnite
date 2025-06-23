@@ -13,7 +13,7 @@ export function Light(): JSX.Element {
   const { getAttachmentInfo, setAttachmentError } = useAttachmentStore()
   const getGameCollectionValue = useGameCollectionStore((state) => state.getGameCollectionValue)
   const collections = useGameCollectionStore((state) => state.documents)
-  const [customBackground] = useConfigState('appearances.background.customBackground')
+  const [customBackgroundMode] = useConfigState('appearances.background.customBackgroundMode')
   const [glassBlur] = useConfigState('appearances.glass.blur')
   const [glassOpacity] = useConfigState('appearances.glass.opacity')
 
@@ -31,7 +31,7 @@ export function Light(): JSX.Element {
 
   // Check if custom background is available
   const isCustomBackgroundAvailable = (): boolean => {
-    return customBackground && !getAttachmentInfo('config', 'media', 'background.webp')?.error
+    return !getAttachmentInfo('config', 'media', 'background.webp')?.error
   }
 
   // Get recent game ID
@@ -61,7 +61,7 @@ export function Light(): JSX.Element {
         // Handle image loading failure
         if (newGameId) {
           setAttachmentError('game', newGameId, 'images/background.webp', true)
-        } else if (customBackground) {
+        } else if (customBackgroundMode !== 'default') {
           setAttachmentError('config', 'media', 'background.webp', true)
         }
       })
@@ -76,7 +76,7 @@ export function Light(): JSX.Element {
       const currentCollectionId = pathname.split('/collections/')[1]?.split('/')[0]
 
       if (!currentCollectionId) {
-        if (isCustomBackgroundAvailable()) {
+        if (isCustomBackgroundAvailable() && customBackgroundMode !== 'default') {
           updateBackgroundImage(getCustomBackgroundUrl())
         } else {
           const recentGameId = getRecentGameId()
@@ -90,7 +90,7 @@ export function Light(): JSX.Element {
         updateBackgroundImage(getGameBackgroundUrl(currentGameId), currentGameId)
       }
     } else {
-      if (isCustomBackgroundAvailable()) {
+      if (isCustomBackgroundAvailable() && customBackgroundMode !== 'default') {
         updateBackgroundImage(getCustomBackgroundUrl())
         return
       }
@@ -98,7 +98,7 @@ export function Light(): JSX.Element {
       const recentGameId = getRecentGameId()
       updateBackgroundImage(getGameBackgroundUrl(recentGameId), recentGameId)
     }
-  }, [pathname, getGameCollectionValue, collections, customBackground])
+  }, [pathname, getGameCollectionValue, collections, customBackgroundMode])
 
   // Update CSS variables
   useEffect(() => {
@@ -123,7 +123,7 @@ export function Light(): JSX.Element {
             alt=""
             className="absolute top-0 left-0 object-cover w-full h-full"
             onError={() => {
-              if (customBackground) {
+              if (customBackgroundMode) {
                 setAttachmentError('config', 'media', 'background.webp', true)
               } else {
                 setAttachmentError('game', gameId, 'images/background.webp', true)

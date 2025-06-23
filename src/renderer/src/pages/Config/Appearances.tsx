@@ -9,6 +9,15 @@ import { useTranslation } from 'react-i18next'
 import { useConfigState } from '~/hooks'
 import { useAttachmentStore } from '~/stores'
 import { cn } from '~/utils'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue
+} from '@ui/select'
 
 export function Appearances(): JSX.Element {
   const { t } = useTranslation('config')
@@ -33,20 +42,33 @@ export function Appearances(): JSX.Element {
   )
   const [markLocalGames, setMarkLocalGames] = useConfigState('game.gameList.markLocalGames')
 
-  const [customBackground, setCustomBackground] = useConfigState(
-    'appearances.background.customBackground'
+  const [customBackgroundMode, setCustomBackgroundMode] = useConfigState(
+    'appearances.background.customBackgroundMode'
   )
+  
   const [showPlayButtonOnPoster, setShowPlayButtonOnPoster] = useConfigState(
     'appearances.showcase.showPlayButtonOnPoster'
   )
   const [glassBlur, setGlassBlur] = useConfigState('appearances.glass.blur')
   const [glassOpacity, setGlassOpacity] = useConfigState('appearances.glass.opacity')
+  
 
   async function selectBackgroundImage(): Promise<void> {
-    const filePath: string = await window.api.utils.selectPathDialog(['openFile'])
-    if (!filePath) return
-    await window.api.theme.setConfigBackground(filePath)
+  const filters = [
+    { name: 'JPEG Image', extensions: ['jpg', 'jpeg'] },
+    { name: 'PNG Image', extensions: ['png'] },
+    { name: 'WebP Image', extensions: ['webp'] },
+    { name: 'GIF image', extensions: ['gif'] },
+    { name: 'SVG image', extensions: ['svg'] },
+    { name: 'TIFF image', extensions: ['tiff'] },
+    { name: 'AVIF Image', extensions: ['avif'] },
+    { name: 'All Images', extensions: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg', 'tiff', 'avif'] }
+  ]
+  const filePath: string = await window.api.utils.selectPathDialog(['openFile'], filters)
+  if (!filePath) return
+  await window.api.theme.setConfigBackground(filePath)
   }
+
 
   const { getAttachmentInfo, setAttachmentError } = useAttachmentStore()
 
@@ -95,24 +117,33 @@ export function Appearances(): JSX.Element {
             <div className={cn('pl-2')}>
               <div className={cn('grid grid-cols-[1fr_auto] gap-4 items-center')}>
                 <div className={cn('whitespace-nowrap select-none')}>
-                  {t('appearances.background.customBackground')}
+                  {t('appearances.background.typeBackground')}
                 </div>
-                <Switch
-                  checked={customBackground}
-                  onCheckedChange={(checked) => setCustomBackground(checked)}
-                />
+                <Select value={customBackgroundMode} onValueChange={setCustomBackgroundMode}>
+                  <SelectTrigger className={cn('w-[200px]')}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>{t('appearances.background.type.label')}</SelectLabel>
+                      <SelectItem value="default">{t('appearances.background.type.default')}</SelectItem>
+                      <SelectItem value="single">{t('appearances.background.type.single')}</SelectItem>
+                      <SelectItem value="slideshow">{t('appearances.background.type.slideshow')}</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <div className={cn('pl-2')}>
               <div className={cn('grid grid-cols-[1fr_auto] gap-4 items-center')}>
                 <div className={cn('whitespace-nowrap select-none')}>
-                  {t('appearances.background.image')}
+                  {t('appearances.background.selectImage')}
                 </div>
 
                 <HoverCard>
                   <HoverCardTrigger asChild>
                     <Button variant="outline" className={cn('')} onClick={selectBackgroundImage}>
-                      {t('appearances.background.selectImage')}
+                      {t('appearances.background.uploadImage.label')}
                     </Button>
                   </HoverCardTrigger>
                   <HoverCardContent className="w-80" side="left">
