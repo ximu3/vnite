@@ -45,30 +45,31 @@ export function Appearances(): JSX.Element {
   const [customBackgroundMode, setCustomBackgroundMode] = useConfigState(
     'appearances.background.customBackgroundMode'
   )
-  
   const [showPlayButtonOnPoster, setShowPlayButtonOnPoster] = useConfigState(
     'appearances.showcase.showPlayButtonOnPoster'
   )
   const [glassBlur, setGlassBlur] = useConfigState('appearances.glass.blur')
   const [glassOpacity, setGlassOpacity] = useConfigState('appearances.glass.opacity')
-  
 
   async function selectBackgroundImage(): Promise<void> {
-  const filters = [
-    { name: 'JPEG Image', extensions: ['jpg', 'jpeg'] },
-    { name: 'PNG Image', extensions: ['png'] },
-    { name: 'WebP Image', extensions: ['webp'] },
-    { name: 'GIF image', extensions: ['gif'] },
-    { name: 'SVG image', extensions: ['svg'] },
-    { name: 'TIFF image', extensions: ['tiff'] },
-    { name: 'AVIF Image', extensions: ['avif'] },
-    { name: 'All Images', extensions: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg', 'tiff', 'avif'] }
-  ]
-  const filePath: string = await window.api.utils.selectPathDialog(['openFile'], filters)
-  if (!filePath) return
-  await window.api.theme.setConfigBackground(filePath)
+    const filters = [
+      { name: 'JPEG Image', extensions: ['jpg', 'jpeg'] },
+      { name: 'PNG Image', extensions: ['png'] },
+      { name: 'WebP Image', extensions: ['webp'] },
+      { name: 'GIF image', extensions: ['gif'] },
+      { name: 'SVG image', extensions: ['svg'] },
+      { name: 'TIFF image', extensions: ['tiff'] },
+      { name: 'AVIF Image', extensions: ['avif'] },
+      { name: 'ICO Image', extensions: ['ico'] },
+      {
+        name: 'All Images',
+        extensions: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg', 'tiff', 'avif', 'ico']
+      }
+    ]
+    const filePath: string = await window.api.utils.selectPathDialog(['openFile'], filters)
+    if (!filePath) return
+    await window.api.theme.setConfigBackground(filePath)
   }
-
 
   const { getAttachmentInfo, setAttachmentError } = useAttachmentStore()
 
@@ -126,9 +127,15 @@ export function Appearances(): JSX.Element {
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>{t('appearances.background.type.label')}</SelectLabel>
-                      <SelectItem value="default">{t('appearances.background.type.default')}</SelectItem>
-                      <SelectItem value="single">{t('appearances.background.type.single')}</SelectItem>
-                      <SelectItem value="slideshow">{t('appearances.background.type.slideshow')}</SelectItem>
+                      <SelectItem value="default">
+                        {t('appearances.background.type.default')}
+                      </SelectItem>
+                      <SelectItem value="single">
+                        {t('appearances.background.type.single')}
+                      </SelectItem>
+                      <SelectItem value="slideshow">
+                        {t('appearances.background.type.slideshow')}
+                      </SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -142,7 +149,12 @@ export function Appearances(): JSX.Element {
 
                 <HoverCard>
                   <HoverCardTrigger asChild>
-                    <Button variant="outline" className={cn('')} onClick={selectBackgroundImage}>
+                    <Button
+                      variant="outline"
+                      className={cn('')}
+                      onClick={selectBackgroundImage}
+                      disabled={customBackgroundMode === 'default'}
+                    >
                       {t('appearances.background.uploadImage.label')}
                     </Button>
                   </HoverCardTrigger>

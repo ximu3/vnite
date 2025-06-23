@@ -1,6 +1,6 @@
 // src/database/GameDBManager.ts
 import { DBManager } from './common'
-import { convertToWebP } from '~/media'
+import { convertImage } from '~/media'
 import {
   gameDoc,
   gameDocs,
@@ -294,7 +294,7 @@ export class GameDBManager {
     image: Buffer | string
   ): Promise<void> {
     try {
-      image = await convertToWebP(image)
+      image = await convertImage(image, 'webp')
       await DBManager.putAttachment(this.DB_NAME, gameId, `images/${type}.webp`, image)
     } catch (error) {
       log.error('Error setting game image:', error)
@@ -338,7 +338,7 @@ export class GameDBManager {
     image: Buffer | string
   ): Promise<void> {
     try {
-      image = await convertToWebP(image)
+      image = await convertImage(image, 'webp')
       await DBManager.putAttachment(this.DB_NAME, gameId, `images/memories/${memoryId}.webp`, image)
     } catch (error) {
       log.error('Error setting game memory image:', error)

@@ -253,6 +253,11 @@
       "enable": "Enable Transformer",
       "manage": "Manage Transformer Rules",
       "manageButton": "Manage"
+    },
+    "imageTransformer": {
+      "title": "Image conversion",
+      "enable": "Enable image conversion",
+      "quality": "Select percentage of quality"
     }
   }
 }

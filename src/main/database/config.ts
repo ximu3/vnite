@@ -9,7 +9,7 @@ import {
 import type { Get, Paths } from 'type-fest'
 import { getValueByPath } from '@appUtils'
 import log from 'electron-log/main'
-import { convertToWebP } from '~/media'
+import { convertImage } from '~/media'
 
 export class ConfigDBManager {
   private static readonly DB_NAME = 'config'
@@ -114,7 +114,7 @@ export class ConfigDBManager {
 
   static async setConfigBackgroundImage(image: Buffer | string): Promise<void> {
     try {
-      const webpImage = await convertToWebP(image)
+      const webpImage = await convertImage(image, 'webp')
       await DBManager.putAttachment(
         this.DB_NAME,
         'media',

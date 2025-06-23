@@ -2,9 +2,8 @@ import sharp from 'sharp'
 import ico from 'sharp-ico'
 import { getAppTempPath } from '~/utils'
 import { GameDBManager } from '~/database'
-import { app } from 'electron'
-import { net } from 'electron'
-import fse from 'fs-extra'
+import { app, net } from 'electron'
+import * as fse from 'fs-extra'
 import { fileTypeFromBuffer } from 'file-type'
 import { gis } from '~/utils'
 
@@ -61,69 +60,31 @@ export async function getImage(input: Buffer | string): Promise<Buffer>
   }
 }
 
-export async function convertToWebP(
+export async function convertImage(
   input: Buffer | string,
+  extension: 'jpg' | 'jpeg' | 'png' | 'webp' | 'gif' | 'avif' | 'svg' | 'tiff' | 'ico',
   options: { quality?: number; animated?: boolean } = {}
 ): Promise<Buffer> {
-  try {
-    sharp.cache(false)
 
-    const imageBuffer = await getImage(input)
+  sharp.cache(false)
+  const imageBuffer = await getImage(input)
 
-    const isIco = isIcoFormat(imageBuffer)
-
-    if (isIco) {
-      // Handling ICO files with sharp-ico
-      // Get the largest size image in the ICO as a conversion source
-      const sharpInstances = ico.sharpsFromIco(imageBuffer) as sharp.Sharp[]
-
-      if (sharpInstances.length === 0) {
-        throw new Error('No valid images found in ICO file')
-      }
-
-      // Select the image with the highest resolution (usually the first one in the ICO file)
-      const largestIcon = sharpInstances[0]
-
-      // Convert to WebP
-      return await largestIcon
-        .webp({
-          quality: options.quality ?? 100
-        })
-        .toBuffer()
-    }
-
-    const metadata = await sharp(imageBuffer).metadata()
-
-    let isAnimated = false
-    if (metadata?.pages && metadata.pages > 1) {
-      isAnimated = true
-    }
-
-    return await sharp(imageBuffer, {
-      animated: isAnimated && (options.animated ?? true),
-      limitInputPixels: false
-    })
-      .webp({
-        quality: options.quality ?? 100
-      })
-      .toBuffer()
-  } catch (error) {
-    console.error('Error converting image to WebP:', error)
-    throw error
+  //Handle .ico files specially (sharp does not support .ico files)
+  if (isIcoFormat(imageBuffer)) {
+    const sharpInstances = ico.sharpsFromIco(imageBuffer) as sharp.Sharp[]
+    if (!sharpInstances.length) throw new Error('Invalid .ico file selected')
+    const largestIcon = sharpInstances[0]
+    return await largestIcon.toFormat(extension, options).toBuffer()
   }
-}
+  const metadata = await sharp(imageBuffer).metadata()
+  const isAnimated = Boolean(metadata?.pages && metadata.pages > 1)
 
-export async function convertToPng(input: Buffer | string): Promise<Buffer> {
-  try {
-    sharp.cache(false)
-
-    const imageBuffer = await getImage(input)
-
-    return await sharp(imageBuffer).png().toBuffer()
-  } catch (error) {
-    console.error('Error converting image to PNG:', error)
-    throw error
+  const sharpOptions: sharp.SharpOptions = {
+    animated: isAnimated && (options.animated ?? true),
+    limitInputPixels: false
   }
+
+  return await sharp(imageBuffer, sharpOptions).toFormat(extension, options).toBuffer()
 }
 
 function isIcoFormat(buffer: Buffer): boolean {
