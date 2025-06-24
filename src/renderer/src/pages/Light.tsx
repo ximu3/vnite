@@ -16,6 +16,8 @@ export function Light(): JSX.Element {
   const [customBackgroundMode] = useConfigState('appearances.background.customBackgroundMode')
   const [glassBlur] = useConfigState('appearances.glass.blur')
   const [glassOpacity] = useConfigState('appearances.glass.opacity')
+  const [backgroundImageNames, setBackgroundImageNames] = useState<string[]>([]);
+  const [currentBackgroundIndex, setCurrentBackgroundIndex] = useState(0);
 
   // Get game background URL
   const getGameBackgroundUrl = (id: string): string => {
@@ -24,9 +26,11 @@ export function Light(): JSX.Element {
   }
 
   // Get custom background URL
-  const getCustomBackgroundUrl = (): string => {
-    const info = getAttachmentInfo('config', 'media', 'background-1.webp')
-    return `attachment://config/media/background-1.webp?t=${info?.timestamp}`
+  function getCustomBackgroundUrl(): string | undefined {
+    const name = backgroundImageNames[currentBackgroundIndex];
+    if (!name) return undefined;
+    const info = getAttachmentInfo('config', 'media', name);
+    return `attachment://config/media/${name}?t=${info?.timestamp ?? ''}`;
   }
 
   // Check if custom background is available
@@ -76,9 +80,11 @@ export function Light(): JSX.Element {
       const currentCollectionId = pathname.split('/collections/')[1]?.split('/')[0]
 
       if (!currentCollectionId) {
-        if (isCustomBackgroundAvailable() && customBackgroundMode !== 'default') {
-          updateBackgroundImage(getCustomBackgroundUrl())
-        } else {
+        const url = getCustomBackgroundUrl();
+        if (isCustomBackgroundAvailable() && customBackgroundMode !== 'default' && url) {
+          updateBackgroundImage(url);
+        }
+        else {
           const recentGameId = getRecentGameId()
           updateBackgroundImage(getGameBackgroundUrl(recentGameId), recentGameId)
         }
@@ -90,15 +96,43 @@ export function Light(): JSX.Element {
         updateBackgroundImage(getGameBackgroundUrl(currentGameId), currentGameId)
       }
     } else {
-      if (isCustomBackgroundAvailable() && customBackgroundMode !== 'default') {
-        updateBackgroundImage(getCustomBackgroundUrl())
+      if (customBackgroundMode !== 'default' && backgroundImageNames.length > 0) {
+        const url = getCustomBackgroundUrl()
+        if (url) updateBackgroundImage(url)
         return
       }
-
+      
       const recentGameId = getRecentGameId()
       updateBackgroundImage(getGameBackgroundUrl(recentGameId), recentGameId)
     }
-  }, [pathname, getGameCollectionValue, collections, customBackgroundMode])
+  }, [pathname, getGameCollectionValue, collections, customBackgroundMode, backgroundImageNames, currentBackgroundIndex])
+
+  useEffect(() => {
+    if (customBackgroundMode !== 'default') {
+      window.api.theme.getConfigBackground('buffer', true)
+        .then((names: string[]) => {
+          setBackgroundImageNames(Array.isArray(names) ? names : []);
+          setCurrentBackgroundIndex(0);
+        })
+        .catch(() => {
+          setBackgroundImageNames([]);
+          setCurrentBackgroundIndex(0);
+        });
+    } else {
+      setBackgroundImageNames([]);
+      setCurrentBackgroundIndex(0);
+    }
+  }, [customBackgroundMode]);
+
+  useEffect(() => {
+    if (customBackgroundMode !== 'slideshow' || backgroundImageNames.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrentBackgroundIndex(i => (i + 1) % backgroundImageNames.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [customBackgroundMode, backgroundImageNames.length]);
 
   // Update CSS variables
   useEffect(() => {
