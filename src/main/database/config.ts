@@ -114,18 +114,17 @@ export class ConfigDBManager {
 
   static async setConfigBackgroundImages(images: (Buffer | string)[]): Promise<void> {
     try {
-      // 1. List all current attachments
+
+      //Remove any attachment that matches background pattern name
       const attachments = await DBManager.listAttachmentNames(this.DB_NAME, 'media');
 
-      // 2. Remove any attachment that matches background pattern
       for (const name of attachments) {
         if (name === 'background.webp' || /^background-\d+\.webp$/.test(name)) {
           await DBManager.removeAttachment(this.DB_NAME, 'media', name).catch(() => {});
         }
       }
 
-      // 3. Save new images as background-1.webp, background-2.webp, ...
-
+      //Save new images as background-1.webp, background-2.webp, ...
       for (let i = 0; i < images.length; i++) {
         const image = images[i];
         const webpImage = await convertImage(image, 'webp');
