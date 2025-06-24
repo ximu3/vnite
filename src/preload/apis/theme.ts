@@ -13,7 +13,7 @@ export const themeAPI = {
     return await ipcRenderer.invoke('theme-preset', preset)
   },
 
-  async setConfigBackground(filePath: string): Promise<void> {
-    return await ipcRenderer.invoke('set-config-background', filePath)
+  async setConfigBackground(filePaths: string[]): Promise<void> {
+    return await ipcRenderer.invoke('set-config-background', filePaths)
   }
 }

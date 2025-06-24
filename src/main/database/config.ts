@@ -112,18 +112,34 @@ export class ConfigDBManager {
     }
   }
 
-  static async setConfigBackgroundImage(image: Buffer | string): Promise<void> {
+  static async setConfigBackgroundImages(images: (Buffer | string)[]): Promise<void> {
     try {
-      const webpImage = await convertImage(image, 'webp')
-      await DBManager.putAttachment(
-        this.DB_NAME,
-        'media',
-        'background.webp',
-        webpImage,
-        'image/webp'
-      )
+      // 1. List all current attachments
+      const attachments = await DBManager.listAttachmentNames(this.DB_NAME, 'media');
+
+      // 2. Remove any attachment that matches background pattern
+      for (const name of attachments) {
+        if (name === 'background.webp' || /^background-\d+\.webp$/.test(name)) {
+          await DBManager.removeAttachment(this.DB_NAME, 'media', name).catch(() => {});
+        }
+      }
+
+      // 3. Save new images as background-1.webp, background-2.webp, ...
+
+      for (let i = 0; i < images.length; i++) {
+        const image = images[i];
+        const webpImage = await convertImage(image, 'webp');
+        const attachmentName = `background-${i + 1}.webp`;
+        await DBManager.putAttachment(
+          this.DB_NAME,
+          'media',
+          attachmentName,
+          webpImage,
+          'image/webp'
+        );
+      }
     } catch (error) {
-      log.error('Error setting background image:', error)
+      log.error('Error setting background image(s):', error)
       throw error
     }
   }
@@ -132,12 +148,12 @@ export class ConfigDBManager {
     format: T = 'buffer' as T
   ): Promise<T extends 'file' ? string | null : Buffer | null> {
     try {
-      if ((await DBManager.checkAttachment(this.DB_NAME, 'media', 'background.webp')) === false) {
+      if ((await DBManager.checkAttachment(this.DB_NAME, 'media', 'background-1.webp')) === false) {
         return null
       }
 
       if (format === 'file') {
-        return (await DBManager.getAttachment(this.DB_NAME, 'media', 'background.webp', {
+        return (await DBManager.getAttachment(this.DB_NAME, 'media', 'background-1.webp', {
           format: 'file',
           filePath: '#temp',
           ext: 'webp'
@@ -146,7 +162,7 @@ export class ConfigDBManager {
         return (await DBManager.getAttachment(
           this.DB_NAME,
           'media',
-          'background.webp'
+          'background-1.webp'
         )) as T extends 'file' ? string : Buffer
       }
     } catch (error) {

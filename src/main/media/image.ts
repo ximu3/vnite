@@ -62,7 +62,7 @@ export async function getImage(input: Buffer | string): Promise<Buffer>
 
 export async function convertImage(
   input: Buffer | string,
-  extension: 'jpg' | 'jpeg' | 'png' | 'webp' | 'gif' | 'avif' | 'svg' | 'tiff' | 'ico',
+  extension: 'jpg' | 'jpeg' | 'png' | 'webp' | 'gif' | 'avif' | 'svg' | 'tiff',
   options: { quality?: number; animated?: boolean } = {}
 ): Promise<Buffer> {
 

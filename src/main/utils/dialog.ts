@@ -23,12 +23,12 @@ export async function selectPathDialog(
 /**
  * Show a dialog to select multiple paths
  * @param properties The properties of the dialog
- * @param extensions The extensions to filter by
+ * @param filters The filters to use for file selection
  * @returns A promise that resolves with the selected paths.
  */
 export async function selectMultiplePathDialog(
   properties: NonNullable<OpenDialogOptions['properties']>,
-  extensions?: string[],
+  filters?: { name: string, extensions: string[] }[],
   defaultPath?: string
 ): Promise<string[] | undefined> {
   if (!properties.includes('multiSelections')) {
@@ -36,7 +36,7 @@ export async function selectMultiplePathDialog(
   }
   const result = await dialog.showOpenDialog({
     properties: properties,
-    filters: extensions ? [{ name: 'All Files', extensions: extensions }] : undefined,
+    filters,
     defaultPath: defaultPath
   })
   return result.filePaths

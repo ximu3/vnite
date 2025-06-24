@@ -66,15 +66,24 @@ export function Appearances(): JSX.Element {
         extensions: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg', 'tiff', 'avif', 'ico']
       }
     ]
-    const filePath: string = await window.api.utils.selectPathDialog(['openFile'], filters)
-    if (!filePath) return
-    await window.api.theme.setConfigBackground(filePath)
+    if (customBackgroundMode === 'single') {
+      const filePath: string = await window.api.utils.selectPathDialog(['openFile'], filters)
+      if (!filePath) return
+      await window.api.theme.setConfigBackground([filePath])
+    } else if (customBackgroundMode === 'slideshow') {
+      const filePaths: string[] = await window.api.utils.selectMultiplePathDialog(
+        ['openFile'],
+        filters
+      )
+      if (!filePaths || filePaths.length === 0) return
+      await window.api.theme.setConfigBackground(filePaths)
+    }
   }
 
   const { getAttachmentInfo, setAttachmentError } = useAttachmentStore()
 
-  const backgroundInfo = getAttachmentInfo('config', 'media', 'background.webp')
-  const backgroundUrl = `attachment://config/media/background.webp?t=${backgroundInfo?.timestamp}`
+  const backgroundInfo = getAttachmentInfo('config', 'media', 'background-1.webp')
+  const backgroundUrl = `attachment://config/media/background-1.webp?t=${backgroundInfo?.timestamp}`
 
   const [localBlurValue, setLocalBlurValue] = useState(glassBlur)
   const [localOpacityValue, setLocalOpacityValue] = useState(glassOpacity * 100)

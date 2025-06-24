@@ -77,10 +77,10 @@ export function setupUtilsIPC(mainWindow: BrowserWindow): void {
     async (
       _,
       properties: NonNullable<OpenDialogOptions['properties']>,
-      extensions?: string[],
+      filters?: { name: string, extensions: string[] }[],
       defaultPath?: string
     ) => {
-      return await selectMultiplePathDialog(properties, extensions, defaultPath)
+      return await selectMultiplePathDialog(properties, filters, defaultPath)
     }
   )
 

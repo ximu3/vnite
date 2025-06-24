@@ -460,6 +460,22 @@ export class DBManager {
     }
   }
 
+  static async listAttachmentNames(dbName: string, docId: string): Promise<string[]> {
+    const db = this.getInstance(dbName)
+    try {
+      const doc = await db.get(docId)
+      if (doc && doc._attachments) {
+        return Object.keys(doc._attachments)
+      }
+      return []
+    } catch (error) {
+      if (error === 'not_found') {
+        return []
+      }
+      throw error
+    }
+  }
+
   static async checkAttachment(
     dbName: string,
     docId: string,

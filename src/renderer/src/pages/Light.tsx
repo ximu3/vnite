@@ -25,13 +25,13 @@ export function Light(): JSX.Element {
 
   // Get custom background URL
   const getCustomBackgroundUrl = (): string => {
-    const info = getAttachmentInfo('config', 'media', 'background.webp')
-    return `attachment://config/media/background.webp?t=${info?.timestamp}`
+    const info = getAttachmentInfo('config', 'media', 'background-1.webp')
+    return `attachment://config/media/background-1.webp?t=${info?.timestamp}`
   }
 
   // Check if custom background is available
   const isCustomBackgroundAvailable = (): boolean => {
-    return !getAttachmentInfo('config', 'media', 'background.webp')?.error
+    return !getAttachmentInfo('config', 'media', 'background-1.webp')?.error
   }
 
   // Get recent game ID

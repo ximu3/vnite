@@ -110,10 +110,12 @@ export function Metadata(): JSX.Element {
                     disabled={!imageTransformerEnabled}
                   />
                   {/* Label for the slider */}
-                  <span className={cn(
+                  <span
+                    className={cn(
                       'text-sm text-muted-foreground w-12 text-right',
                       !imageTransformerEnabled && 'text-gray-400'
-                    )}>
+                    )}
+                  >
                     {localImageTransformerValue}%
                   </span>
                 </div>

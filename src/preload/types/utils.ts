@@ -9,7 +9,7 @@ export interface UtilsAPI {
   ): Promise<string>
   selectMultiplePathDialog(
     properties: NonNullable<OpenDialogOptions['properties']>,
-    extensions?: string[],
+    filters?: { name: string, extensions: string[] }[],
     defaultPath?: string
   ): Promise<string[]>
   getPathSize(paths: string[]): Promise<number>
