@@ -15,5 +15,9 @@ export const themeAPI = {
 
   async setConfigBackground(filePaths: string[]): Promise<void> {
     return await ipcRenderer.invoke('set-config-background', filePaths)
+  },
+
+  async getConfigBackground<T = any>(format = 'buffer', namesOnly = false): Promise<T> {
+    return await ipcRenderer.invoke('get-config-background', format, namesOnly);
   }
 }

@@ -127,14 +127,13 @@ export class ConfigDBManager {
       //Save new images as background-1.webp, background-2.webp, ...
       for (let i = 0; i < images.length; i++) {
         const image = images[i];
-        const webpImage = await convertImage(image, 'webp');
+        const convertedImage = await convertImage(image, 'webp');
         const attachmentName = `background-${i + 1}.webp`;
         await DBManager.putAttachment(
           this.DB_NAME,
           'media',
           attachmentName,
-          webpImage,
-          'image/webp'
+          convertedImage
         );
       }
     } catch (error) {
@@ -144,29 +143,49 @@ export class ConfigDBManager {
   }
 
   static async getConfigBackgroundImage<T extends 'buffer' | 'file' = 'buffer'>(
-    format: T = 'buffer' as T
-  ): Promise<T extends 'file' ? string | null : Buffer | null> {
+  format: T = 'buffer' as T,
+  namesOnly: boolean = false
+  ): Promise<
+    | string[] // if namesOnly is true
+    | Array<{ name: string, data: T extends 'file' ? string : Buffer }> // if namesOnly is false
+  > {
     try {
-      if ((await DBManager.checkAttachment(this.DB_NAME, 'media', 'background-1.webp')) === false) {
-        return null
-      }
+      // 1. List all attachments in 'media'
+      const attachments = await DBManager.listAttachmentNames(this.DB_NAME, 'media');
 
-      if (format === 'file') {
-        return (await DBManager.getAttachment(this.DB_NAME, 'media', 'background-1.webp', {
-          format: 'file',
-          filePath: '#temp',
-          ext: 'webp'
-        })) as T extends 'file' ? string : Buffer
-      } else {
-        return (await DBManager.getAttachment(
-          this.DB_NAME,
-          'media',
-          'background-1.webp'
-        )) as T extends 'file' ? string : Buffer
-      }
+      // 2. Filter for background-<number>.<ext>
+      const images = attachments
+        .filter(name => /^background-\d+\.[a-z0-9]+$/i.test(name))
+        .sort((a, b) => {
+          const numA = parseInt(a.match(/^background-(\d+)\./)?.[1] || '0', 10);
+          const numB = parseInt(b.match(/^background-(\d+)\./)?.[1] || '0', 10);
+          return numA - numB;
+        });
+
+      // 3. Return just names if requested
+      if (namesOnly) return images as any;
+
+      // 4. Otherwise, return array of { name, data }
+      return await Promise.all(
+        images.map(async name => {
+          if (format === 'file') {
+            const ext = name.split('.').pop();
+            const filePath = '#temp'; // or generate a unique temp path if needed
+            const file = await DBManager.getAttachment(this.DB_NAME, 'media', name, {
+              format: 'file',
+              filePath,
+              ext
+            });
+            return { name, data: file as T extends 'file' ? string : Buffer };
+          } else {
+            const buffer = await DBManager.getAttachment(this.DB_NAME, 'media', name);
+            return { name, data: buffer as T extends 'file' ? string : Buffer };
+          }
+        })
+      ) as any;
     } catch (error) {
-      log.error('Error getting background image:', error)
-      throw error
+      log.error('Error getting background image(s):', error);
+      throw error;
     }
   }
 }

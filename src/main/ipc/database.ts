@@ -51,5 +51,9 @@ export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
     return await ConfigDBManager.setConfigBackgroundImages(paths)
   })
 
+  ipcMain.handle('get-config-background', async (_event, format = 'buffer', namesOnly = false) => {
+    return await ConfigDBManager.getConfigBackgroundImage(format, namesOnly);
+  });
+
   mainWindow.webContents.send('databaseIPCReady')
 }

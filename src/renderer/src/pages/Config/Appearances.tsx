@@ -51,6 +51,11 @@ export function Appearances(): JSX.Element {
   const [glassBlur, setGlassBlur] = useConfigState('appearances.glass.blur')
   const [glassOpacity, setGlassOpacity] = useConfigState('appearances.glass.opacity')
 
+  const { getAttachmentInfo, setAttachmentError } = useAttachmentStore()
+  const [backgroundImageNames, setBackgroundImageNames] = useState<string[]>([]);
+  const [currentBgIndex, setCurrentBgIndex] = useState(0);
+  const [reloadBg, setReloadBg] = useState(0);
+
   async function selectBackgroundImage(): Promise<void> {
     const filters = [
       { name: 'JPEG Image', extensions: ['jpg', 'jpeg'] },
@@ -70,6 +75,7 @@ export function Appearances(): JSX.Element {
       const filePath: string = await window.api.utils.selectPathDialog(['openFile'], filters)
       if (!filePath) return
       await window.api.theme.setConfigBackground([filePath])
+      setReloadBg(x => x + 1)
     } else if (customBackgroundMode === 'slideshow') {
       const filePaths: string[] = await window.api.utils.selectMultiplePathDialog(
         ['openFile'],
@@ -77,10 +83,20 @@ export function Appearances(): JSX.Element {
       )
       if (!filePaths || filePaths.length === 0) return
       await window.api.theme.setConfigBackground(filePaths)
+      setReloadBg(x => x + 1)
     }
   }
 
-  const { getAttachmentInfo, setAttachmentError } = useAttachmentStore()
+  function getBackgroundImageUrls(
+    imageNames: string[],
+    getAttachmentInfo: (a: string, b: string, c: string) => any
+  ) {
+    return imageNames.map(name => {
+      const info = getAttachmentInfo('config', 'media', name);
+      const url = `attachment://config/media/${name}?t=${info?.timestamp ?? ''}`;
+      return { name, url, error: info?.error };
+    });
+  }
 
   const backgroundInfo = getAttachmentInfo('config', 'media', 'background-1.webp')
   const backgroundUrl = `attachment://config/media/background-1.webp?t=${backgroundInfo?.timestamp}`
@@ -109,6 +125,22 @@ export function Appearances(): JSX.Element {
   useEffect(() => {
     setLocalOpacityValue(glassOpacity * 100)
   }, [glassOpacity])
+
+  useEffect(() => {
+    window.api.theme.getConfigBackground('buffer', true)
+      .then((names: string[]) => {
+        setBackgroundImageNames(Array.isArray(names) ? names : []);
+        setCurrentBgIndex(0);
+      })
+      .catch(() => {
+        setBackgroundImageNames([]);
+        setCurrentBgIndex(0);
+      });
+  }, [customBackgroundMode, reloadBg]);
+
+  const bgImages = getBackgroundImageUrls(backgroundImageNames, getAttachmentInfo);
+  const hasImages = bgImages.length > 0;
+  const currentBg = hasImages ? bgImages[currentBgIndex] : undefined;
 
   return (
     <Card className={cn('group')}>
@@ -172,16 +204,37 @@ export function Appearances(): JSX.Element {
                       <h4 className="text-sm font-semibold">
                         {t('appearances.background.currentBackground')}
                       </h4>
-                      {!backgroundInfo.error ? (
-                        <div className="overflow-hidden border rounded-md">
-                          <img
-                            src={backgroundUrl}
-                            alt={t('appearances.background.currentBackground')}
-                            className="object-cover w-full h-auto"
-                            onError={() => {
-                              setAttachmentError('config', 'media', 'background.webp', true)
-                            }}
-                          />
+                      {hasImages && !currentBg?.error ? (
+                        <div className="flex flex-col items-center">
+                          <div className="overflow-hidden border rounded-md">
+                            {currentBg ? (
+                            <img
+                              src={currentBg.url}
+                              alt={t('appearances.background.currentBackground')}
+                              className="object-cover w-full h-auto"
+                              onError={() => setAttachmentError('config', 'media', currentBg.name, true)}
+                            />
+                          ) : null}
+                          </div>
+                          {bgImages.length > 1 && (
+                            <div className="flex justify-between w-full mt-2">
+                              <button
+                                type="button"
+                                onClick={() => setCurrentBgIndex(i => (i === 0 ? bgImages.length - 1 : i - 1))}
+                                className="px-2 py-1 text-sm"
+                              >
+                                &lt;
+                              </button>
+                              <span>{currentBgIndex + 1} / {bgImages.length}</span>
+                              <button
+                                type="button"
+                                onClick={() => setCurrentBgIndex(i => (i === bgImages.length - 1 ? 0 : i + 1))}
+                                className="px-2 py-1 text-sm"
+                              >
+                                &gt;
+                              </button>
+                            </div>
+                          )}
                         </div>
                       ) : (
                         <div className="text-sm text-muted-foreground">
