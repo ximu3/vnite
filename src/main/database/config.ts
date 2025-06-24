@@ -150,10 +150,10 @@ export class ConfigDBManager {
     | Array<{ name: string, data: T extends 'file' ? string : Buffer }> // if namesOnly is false
   > {
     try {
-      // 1. List all attachments in 'media'
+
+      //Filter for background-<number>.<ext>
       const attachments = await DBManager.listAttachmentNames(this.DB_NAME, 'media');
 
-      // 2. Filter for background-<number>.<ext>
       const images = attachments
         .filter(name => /^background-\d+\.[a-z0-9]+$/i.test(name))
         .sort((a, b) => {
@@ -162,10 +162,10 @@ export class ConfigDBManager {
           return numA - numB;
         });
 
-      // 3. Return just names if requested
+      //Return just names if requested
       if (namesOnly) return images as any;
 
-      // 4. Otherwise, return array of { name, data }
+      //Otherwise, return array of { name, data }
       return await Promise.all(
         images.map(async name => {
           if (format === 'file') {

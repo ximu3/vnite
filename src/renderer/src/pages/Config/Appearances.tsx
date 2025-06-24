@@ -53,8 +53,8 @@ export function Appearances(): JSX.Element {
 
   const { getAttachmentInfo, setAttachmentError } = useAttachmentStore()
   const [backgroundImageNames, setBackgroundImageNames] = useState<string[]>([]);
-  const [currentBgIndex, setCurrentBgIndex] = useState(0);
-  const [reloadBg, setReloadBg] = useState(0);
+  const [currentBackgroundIndex, setCurrentBackgroundIndex] = useState(0);
+  const [reloadBackground, setReloadBackground] = useState(0);
 
   async function selectBackgroundImage(): Promise<void> {
     const filters = [
@@ -75,7 +75,7 @@ export function Appearances(): JSX.Element {
       const filePath: string = await window.api.utils.selectPathDialog(['openFile'], filters)
       if (!filePath) return
       await window.api.theme.setConfigBackground([filePath])
-      setReloadBg(x => x + 1)
+      setReloadBackground(x => x + 1)
     } else if (customBackgroundMode === 'slideshow') {
       const filePaths: string[] = await window.api.utils.selectMultiplePathDialog(
         ['openFile'],
@@ -83,7 +83,7 @@ export function Appearances(): JSX.Element {
       )
       if (!filePaths || filePaths.length === 0) return
       await window.api.theme.setConfigBackground(filePaths)
-      setReloadBg(x => x + 1)
+      setReloadBackground(x => x + 1)
     }
   }
 
@@ -97,9 +97,6 @@ export function Appearances(): JSX.Element {
       return { name, url, error: info?.error };
     });
   }
-
-  const backgroundInfo = getAttachmentInfo('config', 'media', 'background-1.webp')
-  const backgroundUrl = `attachment://config/media/background-1.webp?t=${backgroundInfo?.timestamp}`
 
   const [localBlurValue, setLocalBlurValue] = useState(glassBlur)
   const [localOpacityValue, setLocalOpacityValue] = useState(glassOpacity * 100)
@@ -130,17 +127,17 @@ export function Appearances(): JSX.Element {
     window.api.theme.getConfigBackground('buffer', true)
       .then((names: string[]) => {
         setBackgroundImageNames(Array.isArray(names) ? names : []);
-        setCurrentBgIndex(0);
+        setCurrentBackgroundIndex(0);
       })
       .catch(() => {
         setBackgroundImageNames([]);
-        setCurrentBgIndex(0);
+        setCurrentBackgroundIndex(0);
       });
-  }, [customBackgroundMode, reloadBg]);
+  }, [customBackgroundMode, reloadBackground]);
 
-  const bgImages = getBackgroundImageUrls(backgroundImageNames, getAttachmentInfo);
-  const hasImages = bgImages.length > 0;
-  const currentBg = hasImages ? bgImages[currentBgIndex] : undefined;
+  const backgroundImages = getBackgroundImageUrls(backgroundImageNames, getAttachmentInfo);
+  const hasImages = backgroundImages.length > 0;
+  const currentBackground = hasImages ? backgroundImages[currentBackgroundIndex] : undefined;
 
   return (
     <Card className={cn('group')}>
@@ -187,7 +184,7 @@ export function Appearances(): JSX.Element {
                 <div className={cn('whitespace-nowrap select-none')}>
                   {t('appearances.background.selectImage')}
                 </div>
-
+                {/* Background image uploader */}
                 <HoverCard>
                   <HoverCardTrigger asChild>
                     <Button
@@ -199,36 +196,37 @@ export function Appearances(): JSX.Element {
                       {t('appearances.background.uploadImage.label')}
                     </Button>
                   </HoverCardTrigger>
+                  {/* Background image previewer */}
                   <HoverCardContent className="w-80" side="left">
                     <div className="space-y-2">
                       <h4 className="text-sm font-semibold">
                         {t('appearances.background.currentBackground')}
                       </h4>
-                      {hasImages && !currentBg?.error ? (
+                      {hasImages && !currentBackground?.error ? (
                         <div className="flex flex-col items-center">
                           <div className="overflow-hidden border rounded-md">
-                            {currentBg ? (
+                            {currentBackground ? (
                             <img
-                              src={currentBg.url}
+                              src={currentBackground.url}
                               alt={t('appearances.background.currentBackground')}
                               className="object-cover w-full h-auto"
-                              onError={() => setAttachmentError('config', 'media', currentBg.name, true)}
+                              onError={() => setAttachmentError('config', 'media', currentBackground.name, true)}
                             />
                           ) : null}
                           </div>
-                          {bgImages.length > 1 && (
+                          {backgroundImages.length > 1 && customBackgroundMode === 'slideshow' && (
                             <div className="flex justify-between w-full mt-2">
                               <button
                                 type="button"
-                                onClick={() => setCurrentBgIndex(i => (i === 0 ? bgImages.length - 1 : i - 1))}
+                                onClick={() => setCurrentBackgroundIndex(i => (i === 0 ? backgroundImages.length - 1 : i - 1))}
                                 className="px-2 py-1 text-sm"
                               >
                                 &lt;
                               </button>
-                              <span>{currentBgIndex + 1} / {bgImages.length}</span>
+                              <span>{currentBackgroundIndex + 1} / {backgroundImages.length}</span>
                               <button
                                 type="button"
-                                onClick={() => setCurrentBgIndex(i => (i === bgImages.length - 1 ? 0 : i + 1))}
+                                onClick={() => setCurrentBackgroundIndex(i => (i === backgroundImages.length - 1 ? 0 : i + 1))}
                                 className="px-2 py-1 text-sm"
                               >
                                 &gt;
