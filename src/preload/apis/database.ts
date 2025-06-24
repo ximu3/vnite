@@ -26,11 +26,7 @@ export const databaseAPI = {
   async getCouchDbSize(): Promise<number> {
     return await ipcRenderer.invoke('get-couchdb-size')
   },
-
-  async setConfigBackground(paths: string[]): Promise<void> {
-    return await ipcRenderer.invoke('set-config-background', paths)
-  },
-
+  
   // Sync operations
   async restartSync(): Promise<void> {
     return await ipcRenderer.invoke('restart-sync')
