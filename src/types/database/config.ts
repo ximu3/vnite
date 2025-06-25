@@ -61,6 +61,7 @@ export interface configDocs {
     }
     background: {
       customBackgroundMode: string
+      timerBackground: number
     }
     showcase: {
       showPlayButtonOnPoster: boolean
@@ -253,7 +254,8 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       showNSFWBlurSwitcher: true
     },
     background: {
-      customBackgroundMode: 'default'
+      customBackgroundMode: 'default',
+      timerBackground: 5
     },
     showcase: {
       showPlayButtonOnPoster: true

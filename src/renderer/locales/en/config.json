@@ -19,7 +19,10 @@
     "background": {
       "title": "Background",
       "typeBackground": "Type of background",
+      "seconds": "seconds",
       "selectImage": "Select image",
+      "timer": "Time between each image",
+      "timerOnlySlideshow": "Only for slideshow mode",
       "type":
       {
         "label": "Type of background",

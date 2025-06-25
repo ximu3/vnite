@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@ui/hover-card'
 import { Slider } from '@ui/slider'
 import { Switch } from '@ui/switch'
+import { Textarea } from '@ui/textarea'
 import { debounce } from 'lodash'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -55,8 +56,11 @@ export function Appearances(): JSX.Element {
   const [backgroundImageNames, setBackgroundImageNames] = useState<string[]>([]);
   const [currentBackgroundIndex, setCurrentBackgroundIndex] = useState(0);
   const [reloadBackground, setReloadBackground] = useState(0);
+  const [timerBackground, setBackgroundImageTimer] = useConfigState(
+    'appearances.background.timerBackground'
+  )
 
-  async function selectBackgroundImage(): Promise<void> {
+  async function setBackgroundImage(): Promise<void> {
     const filters = [
       { name: 'JPEG Image', extensions: ['jpg', 'jpeg'] },
       { name: 'PNG Image', extensions: ['png'] },
@@ -100,6 +104,8 @@ export function Appearances(): JSX.Element {
 
   const [localBlurValue, setLocalBlurValue] = useState(glassBlur)
   const [localOpacityValue, setLocalOpacityValue] = useState(glassOpacity * 100)
+  const [localTimerBackground, setLocalTimerBackground] = useState(timerBackground)
+
 
   const debouncedSetBlur = useCallback(
     debounce((value: number) => {
@@ -122,6 +128,10 @@ export function Appearances(): JSX.Element {
   useEffect(() => {
     setLocalOpacityValue(glassOpacity * 100)
   }, [glassOpacity])
+
+  useEffect(() => {
+    setLocalTimerBackground(timerBackground)
+  }, [timerBackground])
 
   useEffect(() => {
     window.api.theme.getConfigBackground('buffer', true)
@@ -152,7 +162,7 @@ export function Appearances(): JSX.Element {
         <div className={cn('flex flex-col gap-8')}>
           {/* Background Settings */}
           <div className={cn('space-y-4')}>
-            <div className={cn('border-b pb-2')}>{t('appearances.background.title')}</div>
+            <div className={cn('border-b pb-2 select-none')}>{t('appearances.background.title')}</div>
             <div className={cn('pl-2')}>
               <div className={cn('grid grid-cols-[1fr_auto] gap-4 items-center')}>
                 <div className={cn('whitespace-nowrap select-none')}>
@@ -190,7 +200,7 @@ export function Appearances(): JSX.Element {
                     <Button
                       variant="outline"
                       className={cn('')}
-                      onClick={selectBackgroundImage}
+                      onClick={setBackgroundImage}
                       disabled={customBackgroundMode === 'default'}
                     >
                       {t('appearances.background.uploadImage.label')}
@@ -244,11 +254,52 @@ export function Appearances(): JSX.Element {
                 </HoverCard>
               </div>
             </div>
+            {/* Background timer settings */}
+            <div className={cn('pl-2')}>
+              <div className={cn('grid grid-cols-[1fr_auto] gap-1 items-center')}>
+                <div className={cn('whitespace-nowrap select-none')}>
+                  {t('appearances.background.timer')}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Textarea
+                    value={localTimerBackground}
+                    onChange={e => {
+                      const value = Number(e.target.value)
+                      setLocalTimerBackground(value)
+                    }}
+                    disabled={customBackgroundMode !== 'slideshow'}
+                    onBlur={() => setBackgroundImageTimer(localTimerBackground)}
+                    className={cn('font-mono resize-none text-center')}
+                    style={{
+                      width: '7rem',
+                      height: '2.38rem',
+                      minHeight: '2.38rem',
+                      maxHeight: '2.38rem'
+                    }}
+                  />
+                  <span
+                    className={cn(
+                      'text-sm select-none transition-opacity',
+                      customBackgroundMode !== 'slideshow'
+                        ? 'text-muted-foreground opacity-60 cursor-not-allowed'
+                        : 'text-muted-foreground'
+                    )}
+                  >
+                    {t('appearances.background.seconds')}
+                  </span>
+                </div>
+                {customBackgroundMode !== 'slideshow' && (
+                <div className="text-xs text-muted-foreground select-none mt-1">
+                  {t('appearances.background.timerOnlySlideshow')}
+                </div>
+              )}
+              </div>
+            </div>
           </div>
 
           {/* Glass Effect Settings */}
           <div className={cn('space-y-4')}>
-            <div className={cn('border-b pb-2')}>{t('appearances.glass.title')}</div>
+            <div className={cn('border-b pb-2 select-none')}>{t('appearances.glass.title')}</div>
             <div className={cn('pl-2')}>
               <div className={cn('grid grid-cols-[1fr_auto] gap-4 items-center')}>
                 <div className={cn('whitespace-nowrap select-none')}>
@@ -297,7 +348,7 @@ export function Appearances(): JSX.Element {
           </div>
           {/* Showcase Settings */}
           <div className={cn('space-y-4')}>
-            <div className={cn('border-b pb-2')}>{t('appearances.showcase.title')}</div>
+            <div className={cn('border-b pb-2 select-none')}>{t('appearances.showcase.title')}</div>
             <div className={cn('pl-2')}>
               <div className={cn('grid grid-cols-[1fr_auto] gap-4 items-center')}>
                 <div className={cn('whitespace-nowrap select-none')}>
@@ -312,7 +363,7 @@ export function Appearances(): JSX.Element {
           </div>
           {/* Game List Settings */}
           <div className={cn('space-y-4')}>
-            <div className={cn('border-b pb-2')}>{t('appearances.gameList.title')}</div>
+            <div className={cn('border-b pb-2 select-none')}>{t('appearances.gameList.title')}</div>
             <div className={cn('pl-2')}>
               <div className={cn('grid grid-cols-[1fr_auto] gap-4 items-center')}>
                 <div className={cn('whitespace-nowrap select-none')}>
@@ -352,7 +403,7 @@ export function Appearances(): JSX.Element {
 
           {/* Game detail page settings */}
           <div className={cn('space-y-4')}>
-            <div className={cn('border-b pb-2')}>{t('appearances.gameDetail.title')}</div>
+            <div className={cn('border-b pb-2 select-none')}>{t('appearances.gameDetail.title')}</div>
             <div className={cn('pl-2')}>
               <div className={cn('grid grid-cols-[1fr_auto] gap-4 items-center')}>
                 <div className={cn('whitespace-nowrap select-none')}>
@@ -368,7 +419,7 @@ export function Appearances(): JSX.Element {
 
           {/* Sidebar Settings */}
           <div className={cn('space-y-4')}>
-            <div className={cn('border-b pb-2')}>{t('appearances.sidebar.title')}</div>
+            <div className={cn('border-b pb-2 select-none')}>{t('appearances.sidebar.title')}</div>
             <div className={cn('pl-2')}>
               <div className={cn('grid grid-cols-[1fr_auto] gap-4 items-center')}>
                 <div className={cn('whitespace-nowrap select-none')}>

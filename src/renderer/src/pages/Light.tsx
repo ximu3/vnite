@@ -18,6 +18,7 @@ export function Light(): JSX.Element {
   const [glassOpacity] = useConfigState('appearances.glass.opacity')
   const [backgroundImageNames, setBackgroundImageNames] = useState<string[]>([]);
   const [currentBackgroundIndex, setCurrentBackgroundIndex] = useState(0);
+  const [timerImageBackground] = useConfigState('appearances.background.timerBackground')
 
   // Get game background URL
   const getGameBackgroundUrl = (id: string): string => {
@@ -71,7 +72,7 @@ export function Light(): JSX.Element {
       })
   }
 
-  // Update background when path changes
+  //Update background when path changes
   useEffect(() => {
     if (pathname.includes('/library/games/')) {
       const currentGameId = pathname.split('/games/')[1]?.split('/')[0]
@@ -101,12 +102,13 @@ export function Light(): JSX.Element {
         if (url) updateBackgroundImage(url)
         return
       }
-      
+
       const recentGameId = getRecentGameId()
       updateBackgroundImage(getGameBackgroundUrl(recentGameId), recentGameId)
     }
   }, [pathname, getGameCollectionValue, collections, customBackgroundMode, backgroundImageNames, currentBackgroundIndex])
 
+  //Reset the array of custom background images if the selected mode has changed
   useEffect(() => {
     if (customBackgroundMode !== 'default') {
       window.api.theme.getConfigBackground('buffer', true)
@@ -124,15 +126,16 @@ export function Light(): JSX.Element {
     }
   }, [customBackgroundMode]);
 
+  //Change background periodically if enough time has passed
   useEffect(() => {
     if (customBackgroundMode !== 'slideshow' || backgroundImageNames.length <= 1) return;
 
     const interval = setInterval(() => {
       setCurrentBackgroundIndex(i => (i + 1) % backgroundImageNames.length);
-    }, 5000);
+    }, timerImageBackground * 1000);
 
     return () => clearInterval(interval);
-  }, [customBackgroundMode, backgroundImageNames.length]);
+  }, [customBackgroundMode, backgroundImageNames.length, timerImageBackground]);
 
   // Update CSS variables
   useEffect(() => {
@@ -157,8 +160,8 @@ export function Light(): JSX.Element {
             alt=""
             className="absolute top-0 left-0 object-cover w-full h-full"
             onError={() => {
-              if (customBackgroundMode) {
-                setAttachmentError('config', 'media', 'background.webp', true)
+              if (customBackgroundMode !== 'default') {
+                setAttachmentError('config', 'media', backgroundImageNames[currentBackgroundIndex], true)
               } else {
                 setAttachmentError('game', gameId, 'images/background.webp', true)
               }
