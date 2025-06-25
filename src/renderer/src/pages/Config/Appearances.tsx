@@ -59,6 +59,13 @@ export function Appearances(): JSX.Element {
   const [timerBackground, setBackgroundImageTimer] = useConfigState(
     'appearances.background.timerBackground'
   )
+  const [compressionBackgroundImageStatus, setBackgroundImageCompressionStatus] = useConfigState(
+    'appearances.background.compression.enabled'
+  )
+
+  const [compressionBackgroundImageFactor, setBackgroundImageCompressionFactor] = useConfigState(
+    'appearances.background.compression.factor'
+  )
 
   async function setBackgroundImage(): Promise<void> {
     const filters = [
@@ -105,6 +112,7 @@ export function Appearances(): JSX.Element {
   const [localBlurValue, setLocalBlurValue] = useState(glassBlur)
   const [localOpacityValue, setLocalOpacityValue] = useState(glassOpacity * 100)
   const [localTimerBackground, setLocalTimerBackground] = useState(timerBackground)
+  const [localBackgroundImageCompressionFactor, setLocalBackgroundImageCompressionFactor] = useState(compressionBackgroundImageFactor)
 
 
   const debouncedSetBlur = useCallback(
@@ -121,6 +129,13 @@ export function Appearances(): JSX.Element {
     [setGlassOpacity]
   )
 
+  const debouncedSetBackgroundImageCompressionFactor = useCallback(
+      debounce((value: number) => {
+        setBackgroundImageCompressionFactor(value)
+      }, 300),
+      [setBackgroundImageCompressionFactor]
+    )
+
   useEffect(() => {
     setLocalBlurValue(glassBlur)
   }, [glassBlur])
@@ -132,6 +147,10 @@ export function Appearances(): JSX.Element {
   useEffect(() => {
     setLocalTimerBackground(timerBackground)
   }, [timerBackground])
+
+  useEffect(() => {
+    setLocalBackgroundImageCompressionFactor(compressionBackgroundImageFactor)
+  }, [compressionBackgroundImageFactor])
 
   useEffect(() => {
     window.api.theme.getConfigBackground('buffer', true)
@@ -163,6 +182,7 @@ export function Appearances(): JSX.Element {
           {/* Background Settings */}
           <div className={cn('space-y-4')}>
             <div className={cn('border-b pb-2 select-none')}>{t('appearances.background.title')}</div>
+            {/* Background image mode selector */}
             <div className={cn('pl-2')}>
               <div className={cn('grid grid-cols-[1fr_auto] gap-4 items-center')}>
                 <div className={cn('whitespace-nowrap select-none')}>
@@ -174,10 +194,11 @@ export function Appearances(): JSX.Element {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectLabel>{t('appearances.background.type.label')}</SelectLabel>
+                      <SelectLabel className='select-none'>{t('appearances.background.source.library')}</SelectLabel>
                       <SelectItem value="default">
                         {t('appearances.background.type.default')}
                       </SelectItem>
+                      <SelectLabel className='select-none'>{t('appearances.background.source.custom')}</SelectLabel>
                       <SelectItem value="single">
                         {t('appearances.background.type.single')}
                       </SelectItem>
@@ -189,112 +210,147 @@ export function Appearances(): JSX.Element {
                 </Select>
               </div>
             </div>
-            <div className={cn('pl-2')}>
-              <div className={cn('grid grid-cols-[1fr_auto] gap-4 items-center')}>
-                <div className={cn('whitespace-nowrap select-none')}>
-                  {t('appearances.background.selectImage')}
-                </div>
-                {/* Background image uploader */}
-                <HoverCard>
-                  <HoverCardTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn('')}
-                      onClick={setBackgroundImage}
-                      disabled={customBackgroundMode === 'default'}
-                    >
-                      {t('appearances.background.uploadImage.label')}
-                    </Button>
-                  </HoverCardTrigger>
-                  {/* Background image previewer */}
-                  <HoverCardContent className="w-80" side="left">
-                    <div className="space-y-2">
-                      <h4 className="text-sm font-semibold">
-                        {t('appearances.background.currentBackground')}
-                      </h4>
-                      {hasImages && !currentBackground?.error ? (
-                        <div className="flex flex-col items-center">
-                          <div className="overflow-hidden border rounded-md">
-                            {currentBackground ? (
-                            <img
-                              src={currentBackground.url}
-                              alt={t('appearances.background.currentBackground')}
-                              className="object-cover w-full h-auto"
-                              onError={() => setAttachmentError('config', 'media', currentBackground.name, true)}
-                            />
-                          ) : null}
-                          </div>
-                          {backgroundImages.length > 1 && customBackgroundMode === 'slideshow' && (
-                            <div className="flex justify-between w-full mt-2">
-                              <button
-                                type="button"
-                                onClick={() => setCurrentBackgroundIndex(i => (i === 0 ? backgroundImages.length - 1 : i - 1))}
-                                className="px-2 py-1 text-sm"
-                              >
-                                &lt;
-                              </button>
-                              <span>{currentBackgroundIndex + 1} / {backgroundImages.length}</span>
-                              <button
-                                type="button"
-                                onClick={() => setCurrentBackgroundIndex(i => (i === backgroundImages.length - 1 ? 0 : i + 1))}
-                                className="px-2 py-1 text-sm"
-                              >
-                                &gt;
-                              </button>
+            {customBackgroundMode !== 'default' && (
+              <>
+              {/* Background image uploader */}
+              <div className={cn('pl-2')}>
+                <div className={cn('grid grid-cols-[1fr_auto] gap-4 items-center')}>
+                  <div className={cn('whitespace-nowrap select-none')}>
+                    {t('appearances.background.selectImage')}
+                  </div>
+                  <HoverCard>
+                    <HoverCardTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn('')}
+                        onClick={setBackgroundImage}
+                        disabled={customBackgroundMode === 'default'}
+                      >
+                        {t('appearances.background.uploadImage.label')}
+                      </Button>
+                    </HoverCardTrigger>
+                    {/* Background image previewer */}
+                    <HoverCardContent className="w-80" side="left">
+                      <div className="space-y-2">
+                        <h4 className="text-sm font-semibold">
+                          {t('appearances.background.currentBackground')}
+                        </h4>
+                        {hasImages && !currentBackground?.error ? (
+                          <div className="flex flex-col items-center">
+                            <div className="overflow-hidden border rounded-md">
+                              {currentBackground ? (
+                              <img
+                                src={currentBackground.url}
+                                alt={t('appearances.background.currentBackground')}
+                                className="object-cover w-full h-auto"
+                                onError={() => setAttachmentError('config', 'media', currentBackground.name, true)}
+                              />
+                            ) : null}
                             </div>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="text-sm text-muted-foreground">
-                          {t('appearances.background.noBackground')}
-                        </div>
+                            {backgroundImages.length > 1 && customBackgroundMode === 'slideshow' && (
+                              <div className="flex justify-between w-full mt-2">
+                                <button
+                                  type="button"
+                                  onClick={() => setCurrentBackgroundIndex(i => (i === 0 ? backgroundImages.length - 1 : i - 1))}
+                                  className="px-2 py-1 text-sm"
+                                >
+                                  &lt;
+                                </button>
+                                <span>{currentBackgroundIndex + 1} / {backgroundImages.length}</span>
+                                <button
+                                  type="button"
+                                  onClick={() => setCurrentBackgroundIndex(i => (i === backgroundImages.length - 1 ? 0 : i + 1))}
+                                  className="px-2 py-1 text-sm"
+                                >
+                                  &gt;
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="text-sm text-muted-foreground">
+                            {t('appearances.background.noBackground')}
+                          </div>
+                        )}
+                      </div>
+                    </HoverCardContent>
+                  </HoverCard>
+                </div>
+              </div>
+              {/* Background timer settings */}
+              <div className={cn('pl-2')}>
+                <div className={cn('grid grid-cols-[1fr_auto] gap-1 items-center')}>
+                  <div className={cn('whitespace-nowrap select-none')}>
+                    {t('appearances.background.timer')}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Textarea
+                      value={localTimerBackground}
+                      onChange={e => {
+                        const value = Number(e.target.value)
+                        setLocalTimerBackground(value)
+                      }}
+                      disabled={customBackgroundMode !== 'slideshow'}
+                      onBlur={() => setBackgroundImageTimer(localTimerBackground)}
+                      className={cn('font-mono resize-none text-center')}
+                      style={{
+                        width: '7rem',
+                        height: '2.38rem',
+                        minHeight: '2.38rem',
+                        maxHeight: '2.38rem'
+                      }}
+                    />
+                    <span
+                      className={cn(
+                        'text-sm select-none transition-opacity',
+                        customBackgroundMode !== 'slideshow'
+                          ? 'text-muted-foreground opacity-60 cursor-not-allowed'
+                          : 'text-muted-foreground'
                       )}
-                    </div>
-                  </HoverCardContent>
-                </HoverCard>
+                    >
+                      {t('appearances.background.seconds')}
+                    </span>
+                  </div>
+                </div>
               </div>
-            </div>
-            {/* Background timer settings */}
-            <div className={cn('pl-2')}>
-              <div className={cn('grid grid-cols-[1fr_auto] gap-1 items-center')}>
-                <div className={cn('whitespace-nowrap select-none')}>
-                  {t('appearances.background.timer')}
+              {/* Background image compression settings */}
+              <div className={cn('pl-2')}>
+                <div className={cn('grid grid-cols-[1fr_auto] gap-4 items-center')}>
+                  {/* Background image compression toggle */}
+                  <div className={cn('whitespace-nowrap select-none')}>
+                    {t('appearances.background.compression.label')}
+                  </div>
+                  <div className={cn('justify-self-end')}>
+                    <Switch
+                      checked={compressionBackgroundImageStatus}
+                      onCheckedChange={(checked) => setBackgroundImageCompressionStatus(checked)}
+                    />
+                  </div>
+                  {/* Background image compression factor selector */}
+                  <div className={cn('whitespace-nowrap select-none')}>
+                    {t('appearances.background.compression.factor')}
+                  </div>
+                  <div className={cn('flex items-center gap-2 w-[250px]')}>
+                    <Slider
+                        value={[localBackgroundImageCompressionFactor]}
+                        min={0}
+                        max={100}
+                        step={1}
+                        onValueChange={(value: number[]) => {
+                          const newValue = value[0]
+                          setLocalBackgroundImageCompressionFactor(newValue)
+                          debouncedSetBackgroundImageCompressionFactor(newValue)
+                        }}
+                        className={cn('flex-1')}
+                      />
+                      <span className={cn('text-sm text-muted-foreground w-12 text-right select-none')}>
+                        {localBackgroundImageCompressionFactor}%
+                      </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Textarea
-                    value={localTimerBackground}
-                    onChange={e => {
-                      const value = Number(e.target.value)
-                      setLocalTimerBackground(value)
-                    }}
-                    disabled={customBackgroundMode !== 'slideshow'}
-                    onBlur={() => setBackgroundImageTimer(localTimerBackground)}
-                    className={cn('font-mono resize-none text-center')}
-                    style={{
-                      width: '7rem',
-                      height: '2.38rem',
-                      minHeight: '2.38rem',
-                      maxHeight: '2.38rem'
-                    }}
-                  />
-                  <span
-                    className={cn(
-                      'text-sm select-none transition-opacity',
-                      customBackgroundMode !== 'slideshow'
-                        ? 'text-muted-foreground opacity-60 cursor-not-allowed'
-                        : 'text-muted-foreground'
-                    )}
-                  >
-                    {t('appearances.background.seconds')}
-                  </span>
-                </div>
-                {customBackgroundMode !== 'slideshow' && (
-                <div className="text-xs text-muted-foreground select-none mt-1">
-                  {t('appearances.background.timerOnlySlideshow')}
-                </div>
+              </div>
+              </>
               )}
-              </div>
-            </div>
           </div>
 
           {/* Glass Effect Settings */}
@@ -318,7 +374,7 @@ export function Appearances(): JSX.Element {
                     }}
                     className={cn('flex-1')}
                   />
-                  <span className={cn('text-sm text-muted-foreground w-12 text-right')}>
+                  <span className={cn('text-sm text-muted-foreground w-12 text-right select-none')}>
                     {localBlurValue}px
                   </span>
                 </div>
@@ -339,7 +395,7 @@ export function Appearances(): JSX.Element {
                     }}
                     className={cn('flex-1')}
                   />
-                  <span className={cn('text-sm text-muted-foreground w-12 text-right')}>
+                  <span className={cn('text-sm text-muted-foreground w-12 text-right select-none')}>
                     {localOpacityValue.toFixed(0)}%
                   </span>
                 </div>
@@ -361,7 +417,7 @@ export function Appearances(): JSX.Element {
               </div>
             </div>
           </div>
-          {/* Game List Settings */}
+          {/* Game list Settings */}
           <div className={cn('space-y-4')}>
             <div className={cn('border-b pb-2 select-none')}>{t('appearances.gameList.title')}</div>
             <div className={cn('pl-2')}>

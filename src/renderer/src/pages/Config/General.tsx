@@ -82,7 +82,6 @@ export function General(): JSX.Element {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>{t('general.language')}</SelectLabel>
                   {languageOptions.map((option) => (
                     <SelectItem key={option.value} value={option.value}>
                       {option.label}
@@ -107,7 +106,6 @@ export function General(): JSX.Element {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>{t('general.theme')}</SelectLabel>
                   <SelectItem value="dark">{t('general.darkTheme')}</SelectItem>
                   <SelectItem value="light">{t('general.lightTheme')}</SelectItem>
                   <SelectItem value="follow-system">{t('general.followSystem')}</SelectItem>

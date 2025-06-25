@@ -3,15 +3,15 @@
   "general": {
     "title": "General",
     "language": "Language",
-    "openAtLogin": "Open at Login",
+    "openAtLogin": "Open at login",
     "theme": "Theme Style",
     "darkTheme": "Dark",
     "lightTheme": "Light",
     "followSystem": "Follow System",
-    "closeMainPanel": "Close Main Panel",
+    "closeMainPanel": "Close main window",
     "action": "Action",
-    "quitApp": "Quit vnite",
-    "minimizeToTray": "Minimize to Tray",
+    "quitApp": "Exit vnite",
+    "minimizeToTray": "Minimize to tray",
     "hideWindowAfterGameStart": "Minimize to tray after game launch"
   },
   "appearances": {
@@ -20,12 +20,14 @@
       "title": "Background",
       "typeBackground": "Type of background",
       "seconds": "seconds",
-      "selectImage": "Select image",
+      "selectImage": "Select image(s)",
       "timer": "Time between each image",
-      "timerOnlySlideshow": "Only for slideshow mode",
+      "source": {
+        "custom": "Custom",
+        "library": "Library"
+      },
       "type":
       {
-        "label": "Type of background",
         "default": "Default",
         "single": "Single",
         "slideshow": "Slideshow"
@@ -40,7 +42,11 @@
         }
       },
       "currentBackground": "Current background image",
-      "noBackground": "No background image set"
+      "noBackground": "No background image set",
+      "compression": {
+        "label": "Enable compression",
+        "factor": "Level of compression"
+      }
     },
     "showcase": {
       "title": "Showcase",
