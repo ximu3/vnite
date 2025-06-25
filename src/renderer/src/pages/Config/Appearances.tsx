@@ -85,7 +85,7 @@ export function Appearances(): JSX.Element {
     if (customBackgroundMode === 'single') {
       const filePath: string = await window.api.utils.selectPathDialog(['openFile'], filters)
       if (!filePath) return
-      await window.api.theme.setConfigBackground([filePath])
+      await window.api.theme.setConfigBackground([filePath], compressionBackgroundImageStatus, compressionBackgroundImageFactor)
       setReloadBackground(x => x + 1)
     } else if (customBackgroundMode === 'slideshow') {
       const filePaths: string[] = await window.api.utils.selectMultiplePathDialog(
@@ -93,7 +93,7 @@ export function Appearances(): JSX.Element {
         filters
       )
       if (!filePaths || filePaths.length === 0) return
-      await window.api.theme.setConfigBackground(filePaths)
+      await window.api.theme.setConfigBackground(filePaths, compressionBackgroundImageStatus, compressionBackgroundImageFactor)
       setReloadBackground(x => x + 1)
     }
   }
@@ -330,10 +330,11 @@ export function Appearances(): JSX.Element {
                   <div className={cn('whitespace-nowrap select-none')}>
                     {t('appearances.background.compression.factor')}
                   </div>
-                  <div className={cn('flex items-center gap-2 w-[250px]')}>
+                  <div className={cn('flex items-center gap-2 w-[250px]', 
+                    !compressionBackgroundImageStatus && 'opacity-50 pointer-events-none select-none')}>
                     <Slider
                         value={[localBackgroundImageCompressionFactor]}
-                        min={0}
+                        min={1}
                         max={100}
                         step={1}
                         onValueChange={(value: number[]) => {

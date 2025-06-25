@@ -47,8 +47,8 @@ export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
     return await getCouchDbSize(username)
   })
 
-  ipcMain.handle('set-config-background', async (_, paths: string[]) => {
-    return await ConfigDBManager.setConfigBackgroundImages(paths)
+  ipcMain.handle('set-config-background', async (_, paths: string[], shouldCompress: boolean, compressFactor?: number) => {
+    return await ConfigDBManager.setConfigBackgroundImages(paths, shouldCompress, compressFactor)
   })
 
   ipcMain.handle('get-config-background', async (_event, format = 'buffer', namesOnly = false) => {

@@ -36,7 +36,7 @@ export function Light(): JSX.Element {
 
   // Check if custom background is available
   const isCustomBackgroundAvailable = (): boolean => {
-    return !getAttachmentInfo('config', 'media', 'background-1.webp')?.error
+    return !getAttachmentInfo('config', 'media', backgroundImageNames[currentBackgroundIndex])?.error
   }
 
   // Get recent game ID
@@ -67,7 +67,7 @@ export function Light(): JSX.Element {
         if (newGameId) {
           setAttachmentError('game', newGameId, 'images/background.webp', true)
         } else if (customBackgroundMode !== 'default') {
-          setAttachmentError('config', 'media', 'background.webp', true)
+          setAttachmentError('config', 'media', backgroundImageNames[currentBackgroundIndex], true)
         }
       })
   }

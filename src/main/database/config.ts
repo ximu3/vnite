@@ -10,6 +10,8 @@ import type { Get, Paths } from 'type-fest'
 import { getValueByPath } from '@appUtils'
 import log from 'electron-log/main'
 import { convertImage } from '~/media'
+import path from 'path'
+import fs from 'fs/promises'
 
 export class ConfigDBManager {
   private static readonly DB_NAME = 'config'
@@ -112,29 +114,55 @@ export class ConfigDBManager {
     }
   }
 
-  static async setConfigBackgroundImages(images: (Buffer | string)[]): Promise<void> {
+  static async setConfigBackgroundImages(images: (Buffer | string)[], shouldCompress: boolean,
+  compressFactor?: number): Promise<void> {
     try {
 
       //Remove any attachment that matches background pattern name
       const attachments = await DBManager.listAttachmentNames(this.DB_NAME, 'media');
 
       for (const name of attachments) {
-        if (name === 'background.webp' || /^background-\d+\.webp$/.test(name)) {
+        if (/^background-\d+\.[^.]+$/.test(name)) {
           await DBManager.removeAttachment(this.DB_NAME, 'media', name).catch(() => {});
         }
       }
 
-      //Save new images as background-1.webp, background-2.webp, ...
+      //Save new images as background-1.{ext}, background-2.{ext}...
       for (let i = 0; i < images.length; i++) {
         const image = images[i];
-        const convertedImage = await convertImage(image, 'webp');
-        const attachmentName = `background-${i + 1}.webp`;
-        await DBManager.putAttachment(
+
+        //The images will be compressed
+        if (shouldCompress === true && compressFactor !== null)
+        {
+          const convertedImage = await convertImage(image, 'webp', {quality: compressFactor});
+          const attachmentName = `background-${i + 1}.webp`;
+          await DBManager.putAttachment(
           this.DB_NAME,
           'media',
           attachmentName,
           convertedImage
         );
+        }
+        //The images will not be compressed
+        else{
+          let imageBuffer: Buffer;
+          let imageExtension: string;
+          if (typeof image === 'string') {
+            imageBuffer = await fs.readFile(image);
+            imageExtension = path.extname(image).replace('.', '').toLowerCase();
+          }
+          else {
+            imageBuffer = image
+            imageExtension = 'webp' //If the image is a buffer already, we cannot infer the extension, so as a safeguard we use webp
+          }
+          const attachmentName = `background-${i + 1}.${imageExtension}`;
+          await DBManager.putAttachment(
+          this.DB_NAME,
+          'media',
+          attachmentName,
+          imageBuffer
+        );
+        }
       }
     } catch (error) {
       log.error('Error setting background image(s):', error)

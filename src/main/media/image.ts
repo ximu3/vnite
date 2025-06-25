@@ -6,6 +6,7 @@ import { app, net } from 'electron'
 import * as fse from 'fs-extra'
 import { fileTypeFromBuffer } from 'file-type'
 import { gis } from '~/utils'
+import { format } from 'path'
 
 /**
  * Search game related images
@@ -69,12 +70,21 @@ export async function convertImage(
   sharp.cache(false)
   const imageBuffer = await getImage(input)
 
+  // Create a mutable copy of options to adjust quality
+  const formatOptions = { ...options };
+  if (formatOptions.quality != null) {
+    const inverted = 100 - formatOptions.quality
+
+    //The possible range of values are between 1 and 100 that sharp and sharp-ico can accept
+    formatOptions.quality = Math.max(1, Math.min(inverted, 99))
+  }
+
   //Handle .ico files specially (sharp does not support .ico files)
   if (isIcoFormat(imageBuffer)) {
     const sharpInstances = ico.sharpsFromIco(imageBuffer) as sharp.Sharp[]
     if (!sharpInstances.length) throw new Error('Invalid .ico file selected')
     const largestIcon = sharpInstances[0]
-    return await largestIcon.toFormat(extension, options).toBuffer()
+    return await largestIcon.toFormat(extension, formatOptions).toBuffer()
   }
   const metadata = await sharp(imageBuffer).metadata()
   const isAnimated = Boolean(metadata?.pages && metadata.pages > 1)
@@ -84,7 +94,7 @@ export async function convertImage(
     limitInputPixels: false
   }
 
-  return await sharp(imageBuffer, sharpOptions).toFormat(extension, options).toBuffer()
+  return await sharp(imageBuffer, sharpOptions).toFormat(extension, formatOptions).toBuffer()
 }
 
 function isIcoFormat(buffer: Buffer): boolean {
