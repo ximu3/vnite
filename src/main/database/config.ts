@@ -178,7 +178,6 @@ export class ConfigDBManager {
     | Array<{ name: string, data: T extends 'file' ? string : Buffer }> // if namesOnly is false
   > {
     try {
-
       //Filter for background-<number>.<ext>
       const attachments = await DBManager.listAttachmentNames(this.DB_NAME, 'media');
 

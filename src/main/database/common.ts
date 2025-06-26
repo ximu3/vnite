@@ -468,8 +468,8 @@ export class DBManager {
         return Object.keys(doc._attachments)
       }
       return []
-    } catch (error) {
-      if (error === 'not_found') {
+    } catch (error: any) {
+      if (error.name === 'not_found') {
         return []
       }
       throw error
