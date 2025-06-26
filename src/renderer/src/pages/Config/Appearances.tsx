@@ -5,6 +5,7 @@ import { Slider } from '@ui/slider'
 import { Switch } from '@ui/switch'
 import { Textarea } from '@ui/textarea'
 import { debounce } from 'lodash'
+import { toast } from 'sonner'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useConfigState } from '~/hooks'
@@ -72,34 +73,59 @@ export function Appearances(): JSX.Element {
 
   async function setBackgroundImage(): Promise<void> {
     const filters = [
-      { name: 'JPEG Image', extensions: ['jpg', 'jpeg'] },
-      { name: 'PNG Image', extensions: ['png'] },
-      { name: 'WebP Image', extensions: ['webp'] },
-      { name: 'GIF image', extensions: ['gif'] },
-      { name: 'SVG image', extensions: ['svg'] },
-      { name: 'TIFF image', extensions: ['tiff'] },
-      { name: 'AVIF Image', extensions: ['avif'] },
-      { name: 'ICO Image', extensions: ['ico'] },
+      { name: 'JPEG', extensions: ['jpg', 'jpeg'] },
+      { name: 'PNG', extensions: ['png'] },
+      { name: 'WebP', extensions: ['webp'] },
+      { name: 'GIF', extensions: ['gif'] },
+      { name: 'SVG', extensions: ['svg'] },
+      { name: 'TIFF', extensions: ['tiff'] },
+      { name: 'AVIF', extensions: ['avif'] },
+      { name: 'ICO', extensions: ['ico'] },
       {
-        name: 'All Images',
+        name: `${t('appearances.background.uploadImage.allValidFormats')}`,
         extensions: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg', 'tiff', 'avif', 'ico']
       }
     ]
+
     if (customBackgroundMode === 'single') {
       const filePath: string = await window.api.utils.selectPathDialog(['openFile'], filters)
       if (!filePath) return
-      await window.api.theme.setConfigBackground([filePath], compressionBackgroundImageStatus, compressionBackgroundImageFactor)
-      triggerBackgroundRefresh()
-      setReloadBackgroundPreview(x => x + 1)
+
+      const toastBackgroundImageUpload = toast.loading(`${t('appearances.background.uploadImage.notifications.uploading')}
+       ${t('appearances.background.uploadImage.notifications.image')}...`)
+      try {
+        await window.api.theme.setConfigBackground(
+          [filePath],
+          compressionBackgroundImageStatus,
+          compressionBackgroundImageFactor
+        )
+        toast.success(`${t('appearances.background.uploadImage.notifications.successSingle')}`, { id: toastBackgroundImageUpload })
+        setReloadBackgroundPreview(x => x + 1)
+        triggerBackgroundRefresh()
+      } catch (e) {
+        toast.error(`${t('appearances.background.uploadImage.notifications.failureSingle')}`, { id: toastBackgroundImageUpload })
+      }
     } else if (customBackgroundMode === 'slideshow') {
       const filePaths: string[] = await window.api.utils.selectMultiplePathDialog(
         ['openFile'],
         filters
       )
       if (!filePaths || filePaths.length === 0) return
-      await window.api.theme.setConfigBackground(filePaths, compressionBackgroundImageStatus, compressionBackgroundImageFactor)
-      triggerBackgroundRefresh()
-      setReloadBackgroundPreview(x => x + 1)
+
+      const toastBackgroundImageUpload = toast.loading(`${t('appearances.background.uploadImage.notifications.uploading')} ${filePaths.length}
+       ${t('appearances.background.uploadImage.notifications.images')}...`)
+      try {
+        await window.api.theme.setConfigBackground(
+          filePaths,
+          compressionBackgroundImageStatus,
+          compressionBackgroundImageFactor
+        )
+        toast.success(`${t('appearances.background.uploadImage.notifications.successMultiple')}`, { id: toastBackgroundImageUpload })
+        setReloadBackgroundPreview(x => x + 1)
+        triggerBackgroundRefresh()
+      } catch (e) {
+        toast.error(`${t('appearances.background.uploadImage.notifications.failureMultiple')}`, { id: toastBackgroundImageUpload })
+      }
     }
   }
 

@@ -35,10 +35,15 @@
       "uploadImage":
       {
         "label": "Upload",
-        "extensions": {
-          "jpeg": "JPEG",
-          "png": "PNG",
-          "gif": "GIF"
+        "allValidFormats": "All valid formats",
+        "notifications": {
+          "uploading": "Uploading",
+          "image": "image",
+          "images": "images",
+          "successSingle": "Background image uploaded successfully.",
+          "successMultiple": "Background images uploaded successfully.",
+          "failureSingle": "Failed to upload image.",
+          "failureMultiple": "Failed to upload images."
         }
       },
       "currentBackground": "Current background image",
