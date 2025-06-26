@@ -1,5 +1,4 @@
-import { dialog } from 'electron'
-import { OpenDialogOptions } from 'electron'
+import { dialog, OpenDialogOptions } from 'electron'
 
 /**
  * Show a dialog to select a path
