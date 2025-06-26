@@ -92,7 +92,7 @@ export function Appearances(): JSX.Element {
       if (!filePath) return
 
       const toastBackgroundImageUpload = toast.loading(`${t('appearances.background.uploadImage.notifications.uploading')}
-       ${t('appearances.background.uploadImage.notifications.image')}...`)
+       ${t('appearances.background.uploadImage.notifications.image')}...`, {className: 'select-none'})
       try {
         await window.api.theme.setConfigBackground(
           [filePath],
@@ -113,7 +113,7 @@ export function Appearances(): JSX.Element {
       if (!filePaths || filePaths.length === 0) return
 
       const toastBackgroundImageUpload = toast.loading(`${t('appearances.background.uploadImage.notifications.uploading')} ${filePaths.length}
-       ${t('appearances.background.uploadImage.notifications.images')}...`)
+       ${t('appearances.background.uploadImage.notifications.images')}...`, {className: 'select-none'})
       try {
         await window.api.theme.setConfigBackground(
           filePaths,

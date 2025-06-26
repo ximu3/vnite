@@ -1,4 +1,4 @@
-import { dialog, OpenDialogOptions } from 'electron'
+import { BrowserWindow, dialog, OpenDialogOptions } from 'electron'
 
 /**
  * Show a dialog to select a path
@@ -9,13 +9,13 @@ import { dialog, OpenDialogOptions } from 'electron'
 export async function selectPathDialog(
   properties: NonNullable<OpenDialogOptions['properties']>,
   filters?: { name: string, extensions: string[] }[],
-  defaultPath?: string
+  defaultPath?: string,
+  parentWindow?: BrowserWindow
 ): Promise<string | undefined> {
-  const result = await dialog.showOpenDialog({
-    properties: properties,
-    filters,
-    defaultPath: defaultPath
-  })
+  const options = { properties, filters, defaultPath }
+  const result = parentWindow
+    ? await dialog.showOpenDialog(parentWindow, options)
+    : await dialog.showOpenDialog(options)
   return result.filePaths[0]
 }
 
@@ -28,15 +28,15 @@ export async function selectPathDialog(
 export async function selectMultiplePathDialog(
   properties: NonNullable<OpenDialogOptions['properties']>,
   filters?: { name: string, extensions: string[] }[],
-  defaultPath?: string
+  defaultPath?: string,
+  parentWindow?: BrowserWindow
 ): Promise<string[] | undefined> {
   if (!properties.includes('multiSelections')) {
     properties.push('multiSelections')
   }
-  const result = await dialog.showOpenDialog({
-    properties: properties,
-    filters,
-    defaultPath: defaultPath
-  })
+  const options = { properties, filters, defaultPath }
+  const result = parentWindow
+    ? await dialog.showOpenDialog(parentWindow, options)
+    : await dialog.showOpenDialog(options)
   return result.filePaths
 }
