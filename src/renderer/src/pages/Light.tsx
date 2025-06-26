@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { useConfigState } from '~/hooks'
 import { useAttachmentStore } from '~/stores'
+import { useBackgroundRefreshStore } from '~/stores/config'
 import { sortGames, useGameCollectionStore } from '~/stores/game'
 import { cn } from '~/utils'
 
@@ -19,12 +20,13 @@ export function Light(): JSX.Element {
   const [backgroundImageNames, setBackgroundImageNames] = useState<string[]>([]);
   const [currentBackgroundIndex, setCurrentBackgroundIndex] = useState(0);
   const [timerImageBackground] = useConfigState('appearances.background.timerBackground')
+  const tokenBackgroundImageRefresh = useBackgroundRefreshStore(state => state.refreshToken)
 
   // Get game background URL
-  const getGameBackgroundUrl = (id: string): string => {
-    const info = getAttachmentInfo('game', id, 'images/background.webp')
-    return `attachment://game/${id}/images/background.webp?t=${info?.timestamp}`
-  }
+  function getGameBackgroundUrl(id: string): string {
+  const info = getAttachmentInfo('game', id, 'images/background.webp');
+  return `attachment://game/${id}/images/background.webp?t=${info?.timestamp}`;
+}
 
   // Get custom background URL
   function getCustomBackgroundUrl(): string | undefined {
@@ -35,7 +37,7 @@ export function Light(): JSX.Element {
   }
 
   // Check if custom background is available
-  const isCustomBackgroundAvailable = (): boolean => {
+  function isCustomBackgroundAvailable(): boolean {
     return !getAttachmentInfo('config', 'media', backgroundImageNames[currentBackgroundIndex])?.error
   }
 
@@ -53,33 +55,35 @@ export function Light(): JSX.Element {
   }
 
   // Set new background image URL and preload
-  const updateBackgroundImage = (newUrl: string, newGameId: string = ''): void => {
-    if (newUrl === currentImageUrl) return
+  function updateBackgroundImage(newUrl: string, newGameId: string = ''): void {
+    if (newUrl === currentImageUrl) return;
 
     // Remove isLoading related code
     preloadImage(newUrl)
       .then(() => {
-        setCurrentImageUrl(newUrl)
-        if (newGameId) setGameId(newGameId)
+        setCurrentImageUrl(newUrl);
+        if (newGameId) setGameId(newGameId);
       })
       .catch(() => {
         // Handle image loading failure
         if (newGameId) {
-          setAttachmentError('game', newGameId, 'images/background.webp', true)
+          setAttachmentError('game', newGameId, 'images/background.webp', true);
         } else if (customBackgroundMode !== 'default') {
-          setAttachmentError('config', 'media', backgroundImageNames[currentBackgroundIndex], true)
+          setAttachmentError('config', 'media', backgroundImageNames[currentBackgroundIndex], true);
         }
-      })
+      });
   }
 
-  //Update background when path changes
+  //Update specific constants depending on the current page
   useEffect(() => {
+    //Change current game
     if (pathname.includes('/library/games/')) {
       const currentGameId = pathname.split('/games/')[1]?.split('/')[0]
       updateBackgroundImage(getGameBackgroundUrl(currentGameId), currentGameId)
-    } else if (pathname.includes('/library/collections')) {
+    }
+    //Change current collection
+    else if (pathname.includes('/library/collections')) {
       const currentCollectionId = pathname.split('/collections/')[1]?.split('/')[0]
-
       if (!currentCollectionId) {
         const url = getCustomBackgroundUrl();
         if (isCustomBackgroundAvailable() && customBackgroundMode !== 'default' && url) {
@@ -96,15 +100,24 @@ export function Light(): JSX.Element {
       if (currentGameId) {
         updateBackgroundImage(getGameBackgroundUrl(currentGameId), currentGameId)
       }
-    } else {
-      if (customBackgroundMode !== 'default' && backgroundImageNames.length > 0) {
+    }
+    //Another page
+    else {
+      if (customBackgroundMode === 'default')
+      {
+          //Loads the recent game as an image
+          const recentGameId = getRecentGameId()
+          if (recentGameId !== undefined) 
+            updateBackgroundImage(getGameBackgroundUrl(recentGameId), recentGameId)
+
+          //If there is no game in the database, it will simply remove the background image
+          else setCurrentImageUrl('')
+      }
+      else if (customBackgroundMode !== 'default' && backgroundImageNames.length > 0) {
         const url = getCustomBackgroundUrl()
         if (url) updateBackgroundImage(url)
         return
       }
-
-      const recentGameId = getRecentGameId()
-      updateBackgroundImage(getGameBackgroundUrl(recentGameId), recentGameId)
     }
   }, [pathname, getGameCollectionValue, collections, customBackgroundMode, backgroundImageNames, currentBackgroundIndex])
 
@@ -124,7 +137,7 @@ export function Light(): JSX.Element {
       setBackgroundImageNames([]);
       setCurrentBackgroundIndex(0);
     }
-  }, [customBackgroundMode]);
+  }, [customBackgroundMode, tokenBackgroundImageRefresh]);
 
   //Change background periodically if enough time has passed
   useEffect(() => {

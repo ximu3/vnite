@@ -9,6 +9,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useConfigState } from '~/hooks'
 import { useAttachmentStore } from '~/stores'
+import { useBackgroundRefreshStore } from '~/stores/config'
 import { cn } from '~/utils'
 import {
   Select,
@@ -55,7 +56,7 @@ export function Appearances(): JSX.Element {
   const { getAttachmentInfo, setAttachmentError } = useAttachmentStore()
   const [backgroundImageNames, setBackgroundImageNames] = useState<string[]>([]);
   const [currentBackgroundIndex, setCurrentBackgroundIndex] = useState(0);
-  const [reloadBackground, setReloadBackground] = useState(0);
+  const [reloadBackgroundPreview, setReloadBackgroundPreview] = useState(0);
   const [timerBackground, setBackgroundImageTimer] = useConfigState(
     'appearances.background.timerBackground'
   )
@@ -66,6 +67,8 @@ export function Appearances(): JSX.Element {
   const [compressionBackgroundImageFactor, setBackgroundImageCompressionFactor] = useConfigState(
     'appearances.background.compression.factor'
   )
+
+  const triggerBackgroundRefresh = useBackgroundRefreshStore(state => state.triggerRefresh)
 
   async function setBackgroundImage(): Promise<void> {
     const filters = [
@@ -86,7 +89,8 @@ export function Appearances(): JSX.Element {
       const filePath: string = await window.api.utils.selectPathDialog(['openFile'], filters)
       if (!filePath) return
       await window.api.theme.setConfigBackground([filePath], compressionBackgroundImageStatus, compressionBackgroundImageFactor)
-      setReloadBackground(x => x + 1)
+      triggerBackgroundRefresh()
+      setReloadBackgroundPreview(x => x + 1)
     } else if (customBackgroundMode === 'slideshow') {
       const filePaths: string[] = await window.api.utils.selectMultiplePathDialog(
         ['openFile'],
@@ -94,7 +98,8 @@ export function Appearances(): JSX.Element {
       )
       if (!filePaths || filePaths.length === 0) return
       await window.api.theme.setConfigBackground(filePaths, compressionBackgroundImageStatus, compressionBackgroundImageFactor)
-      setReloadBackground(x => x + 1)
+      triggerBackgroundRefresh()
+      setReloadBackgroundPreview(x => x + 1)
     }
   }
 
@@ -152,6 +157,7 @@ export function Appearances(): JSX.Element {
     setLocalBackgroundImageCompressionFactor(compressionBackgroundImageFactor)
   }, [compressionBackgroundImageFactor])
 
+  //Update the background previewer when new images get added
   useEffect(() => {
     window.api.theme.getConfigBackground('buffer', true)
       .then((names: string[]) => {
@@ -162,7 +168,7 @@ export function Appearances(): JSX.Element {
         setBackgroundImageNames([]);
         setCurrentBackgroundIndex(0);
       });
-  }, [customBackgroundMode, reloadBackground]);
+  }, [reloadBackgroundPreview]);
 
   const backgroundImages = getBackgroundImageUrls(backgroundImageNames, getAttachmentInfo);
   const hasImages = backgroundImages.length > 0;
