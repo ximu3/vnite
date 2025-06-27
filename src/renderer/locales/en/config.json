@@ -97,9 +97,10 @@
   },
   "theme": {
     "title": "Theme",
-    "saveButton": "Save Theme",
-    "presetThemes": "Preset Themes",
-    "searchTheme": "Search themes",
+    "themeEditor": "Theme editor",
+    "saveButton": "Save theme",
+    "presetThemes": "Preset themes",
+    "searchTheme": "Search",
     "noPresetFound": "No preset found",
     "presets": {
       "default": "Default",
@@ -133,7 +134,7 @@
     }
   },
   "cloudSync": {
-    "title": "CloudSync",
+    "title": "Cloud sync",
     "enable": "Enable",
     "syncMode": "Sync Mode",
     "modes": {
@@ -165,26 +166,26 @@
       "registerError": "Registration failed"
     },
     "official": {
-      "connectTitle": "Connect Cloud Storage",
+      "connectTitle": "Connect cloud storage",
       "connectDescription": "Login to enable cloud sync, get cross-device synchronization and data backup",
       "login": "Login",
       "register": "Register",
       "logout": "Logout",
-      "adminEdition": "Admin Edition",
-      "developerEdition": "Developer Edition",
-      "premiumEdition": "Premium Edition",
-      "communityEdition": "Community Edition",
+      "adminEdition": "Admin edition",
+      "developerEdition": "Developer edition",
+      "premiumEdition": "Premium edition",
+      "communityEdition": "Community edition",
       "lastSync": "Last sync",
       "notSynced": "Not synced yet",
       "connected": "Connected",
       "disconnected": "Disconnected",
-      "storage": "Storage Space",
+      "storage": "Storage space",
       "used": "used"
     },
     "selfHosted": {
       "title": "Self-hosted CouchDB",
       "description": "Configure your self-hosted CouchDB server to enable cross-device synchronization",
-      "serverAddress": "CouchDB Address",
+      "serverAddress": "CouchDB address",
       "username": "Username",
       "password": "Password",
       "info": "<couchdb>CouchDB</couchdb> is an open-source document database used for storing and syncing data"
@@ -199,15 +200,15 @@
     "title": "Scraper",
     "common": {
       "title": "Common",
-      "defaultDataSource": "Default Data Source"
+      "defaultDataSource": "Default data source"
     },
     "vndb": {
-      "title": "VNDB Settings",
-      "tagSpoilerLevel": "Tag Spoiler Level",
+      "title": "VNDB settings",
+      "tagSpoilerLevel": "Tag spoiler level",
       "tagSpoilerLevels": {
-        "none": "No Spoilers (0)",
-        "minor": "Minor Spoilers (1)",
-        "all": "All Spoilers (2)"
+        "none": "No spoilers (0)",
+        "minor": "Minor spoilers (1)",
+        "all": "All spoilers (2)"
       }
     },
     "dataSources": {
@@ -221,17 +222,17 @@
   },
   "database": {
     "title": "Database",
-    "portableMode": "Portable Mode",
+    "portableMode": "Portable mode",
     "modes": {
-      "portable": "Portable Mode",
-      "normal": "Normal Mode"
+      "portable": "Portable mode",
+      "normal": "Normal mode"
     },
     "confirmSwitch": "Are you sure you want to switch to {{mode}}?",
     "switchDescription": "The application will restart automatically after conversion.",
-    "openFolder": "Open Database Folder",
-    "backup": "Backup Database",
-    "import": "Import Database",
-    "importV2": "Import V2 Database",
+    "openFolder": "Open database folder",
+    "backup": "Backup database",
+    "import": "Import database",
+    "importV2": "Import V2 database",
     "confirmImport": "Are you sure you want to import the database?",
     "importWarning": "Importing a database will overwrite the current database. This operation is irreversible! The application will restart automatically after the operation.",
     "confirmImportV2": "Are you sure you want to import the V2 database?",
@@ -255,7 +256,7 @@
     "title": "About",
     "author": "Author",
     "version": "Version",
-    "repository": "Github Repository",
+    "repository": "Github repository",
     "feedback": "Feedback",
     "group": "Group",
     "prerelease": "Receive preview version updates"
@@ -264,8 +265,8 @@
     "title": "Metadata",
     "transformer": {
       "title": "Transformer",
-      "enable": "Enable Transformer",
-      "manage": "Manage Transformer Rules",
+      "enable": "Enable transformer",
+      "manage": "Manage transformer Rules",
       "manageButton": "Manage"
     },
     "imageTransformer": {

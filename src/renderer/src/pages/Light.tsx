@@ -24,9 +24,9 @@ export function Light(): JSX.Element {
 
   // Get game background URL
   function getGameBackgroundUrl(id: string): string {
-  const info = getAttachmentInfo('game', id, 'images/background.webp');
-  return `attachment://game/${id}/images/background.webp?t=${info?.timestamp}`;
-}
+    const info = getAttachmentInfo('game', id, 'images/background.webp');
+    return `attachment://game/${id}/images/background.webp?t=${info?.timestamp}`;
+  }
 
   // Get custom background URL
   function getCustomBackgroundUrl(): string | undefined {

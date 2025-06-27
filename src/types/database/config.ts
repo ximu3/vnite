@@ -215,7 +215,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
   general: {
     openAtLogin: false,
     quitToTray: false,
-    language: '',
+    language: 'English',
     hideWindowAfterGameStart: true
   },
   game: {

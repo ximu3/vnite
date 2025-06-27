@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
+import { Card, CardContent } from '@ui/card'
 import {
   Select,
   SelectContent,
@@ -43,13 +43,6 @@ export function General(): JSX.Element {
 
   return (
     <Card className={cn('group')}>
-      <CardHeader>
-        <CardTitle className={cn('relative')}>
-          <div className={cn('flex flex-row justify-between items-center')}>
-            <div className={cn('flex items-center')}>{t('general.title')}</div>
-          </div>
-        </CardTitle>
-      </CardHeader>
       <CardContent>
         <div className={cn('grid grid-cols-[120px_1fr] gap-x-3 gap-y-5 items-center')}>
           {/* open at login */}

@@ -1,5 +1,5 @@
 import { Button } from '@ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
+import { Card, CardContent } from '@ui/card'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@ui/hover-card'
 import { Slider } from '@ui/slider'
 import { Switch } from '@ui/switch'
@@ -202,16 +202,9 @@ export function Appearances(): JSX.Element {
 
   return (
     <Card className={cn('group')}>
-      <CardHeader>
-        <CardTitle className={cn('relative')}>
-          <div className={cn('flex flex-row justify-between items-center')}>
-            <div className={cn('flex items-center')}>{t('appearances.title')}</div>
-          </div>
-        </CardTitle>
-      </CardHeader>
       <CardContent>
         <div className={cn('flex flex-col gap-8')}>
-          {/* Background Settings */}
+          {/* Background settings */}
           <div className={cn('space-y-4')}>
             <div className={cn('border-b pb-2 select-none')}>{t('appearances.background.title')}</div>
             {/* Background image mode selector */}

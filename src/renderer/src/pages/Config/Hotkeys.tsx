@@ -1,8 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { useConfigState } from '~/hooks'
 import { cn } from '~/utils'
-
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
+import { Card, CardContent } from '@ui/card'
 import { HotkeySetting } from '@ui/hotkey-setting'
 
 export function Hotkeys(): JSX.Element {
@@ -24,18 +23,11 @@ export function Hotkeys(): JSX.Element {
 
   return (
     <Card className={cn('group')}>
-      <CardHeader>
-        <CardTitle className={cn('relative')}>
-          <div className={cn('flex flex-row justify-between items-center')}>
-            <div className={cn('flex items-center')}>{t('hotkeys.title')}</div>
-          </div>
-        </CardTitle>
-      </CardHeader>
       <CardContent>
         <div className={cn('flex flex-col gap-8')}>
           {/* Page navigation hotkeys */}
           <div className={cn('space-y-4')}>
-            <div className={cn('border-b pb-2')}>{t('hotkeys.pageNavigation.title')}</div>
+            <div className={cn('border-b pb-2 select-none')}>{t('hotkeys.pageNavigation.title')}</div>
             <div className={cn('pl-2')}>
               <div className={cn('grid grid-cols-[1fr_auto] gap-4 items-center')}>
                 <div className={cn('whitespace-nowrap select-none')}>
@@ -43,6 +35,7 @@ export function Hotkeys(): JSX.Element {
                 </div>
                 <div className={cn('justify-self-end')}>
                   <HotkeySetting
+                    className="select-none"
                     defaultHotkey={libraryHotkey}
                     onHotkeyChange={(newHotkey) => setLibraryHotkey(newHotkey)}
                   />
@@ -53,6 +46,7 @@ export function Hotkeys(): JSX.Element {
                 </div>
                 <div className={cn('justify-self-end')}>
                   <HotkeySetting
+                    className="select-none"
                     defaultHotkey={recordHotkey}
                     onHotkeyChange={(newHotkey) => setRecordHotkey(newHotkey)}
                   />
@@ -63,6 +57,7 @@ export function Hotkeys(): JSX.Element {
                 </div>
                 <div className={cn('justify-self-end')}>
                   <HotkeySetting
+                    className="select-none"
                     defaultHotkey={scannerHotkey}
                     onHotkeyChange={(newHotkey) => setScannerHotkey(newHotkey)}
                   />
@@ -73,6 +68,7 @@ export function Hotkeys(): JSX.Element {
                 </div>
                 <div className={cn('justify-self-end')}>
                   <HotkeySetting
+                    className="select-none"
                     defaultHotkey={configHotkey}
                     onHotkeyChange={(newHotkey) => setConfigHotkey(newHotkey)}
                   />
@@ -83,6 +79,7 @@ export function Hotkeys(): JSX.Element {
                 </div>
                 <div className={cn('justify-self-end')}>
                   <HotkeySetting
+                    className="select-none"
                     defaultHotkey={goBackHotKey}
                     onHotkeyChange={(newHotkey) => setGoBackHotKey(newHotkey)}
                   />
@@ -93,6 +90,7 @@ export function Hotkeys(): JSX.Element {
                 </div>
                 <div className={cn('justify-self-end')}>
                   <HotkeySetting
+                    className="select-none"
                     defaultHotkey={goForwardHotKey}
                     onHotkeyChange={(newHotkey) => setGoForwardHotKey(newHotkey)}
                   />
@@ -103,7 +101,7 @@ export function Hotkeys(): JSX.Element {
 
           {/* Quick action hotkeys */}
           <div className={cn('space-y-4')}>
-            <div className={cn('border-b pb-2')}>{t('hotkeys.quickActions.title')}</div>
+            <div className={cn('border-b pb-2 select-none')}>{t('hotkeys.quickActions.title')}</div>
             <div className={cn('pl-2')}>
               <div className={cn('grid grid-cols-[1fr_auto] gap-4 items-center')}>
                 <div className={cn('whitespace-nowrap select-none')}>
@@ -111,6 +109,7 @@ export function Hotkeys(): JSX.Element {
                 </div>
                 <div className={cn('justify-self-end')}>
                   <HotkeySetting
+                    className="select-none"
                     defaultHotkey={addGameHotkey}
                     onHotkeyChange={(newHotkey) => setAddGameHotkey(newHotkey)}
                   />
@@ -129,6 +128,7 @@ export function Hotkeys(): JSX.Element {
                 </div>
                 <div className={cn('justify-self-end')}>
                   <HotkeySetting
+                    className="select-none"
                     defaultHotkey={randomGameHotkey}
                     onHotkeyChange={(newHotkey) => setRandomGameHotkey(newHotkey)}
                   />

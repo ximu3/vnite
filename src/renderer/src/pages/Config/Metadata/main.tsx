@@ -1,6 +1,5 @@
 import { cn } from '~/utils'
-
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
+import { Card, CardContent } from '@ui/card'
 import { Switch } from '@ui/switch'
 import { useConfigState } from '~/hooks'
 import { useNavigate } from 'react-router-dom'
@@ -37,17 +36,11 @@ export function Metadata(): JSX.Element {
 
   return (
     <Card className={cn('group')}>
-      <CardHeader>
-        <CardTitle className={cn('relative')}>
-          <div className={cn('flex flex-row justify-between items-center')}>
-            <div className={cn('flex items-center')}>{t('metadata.title')}</div>
-          </div>
-        </CardTitle>
-      </CardHeader>
       <CardContent>
         <div className={cn('flex flex-col gap-8')}>
+          {/* Transformer section */}
           <div className={cn('space-y-4')}>
-            <div className={cn('border-b pb-2')}>{t('metadata.transformer.title')}</div>
+            <div className={cn('border-b pb-2 select-none')}>{t('metadata.transformer.title')}</div>
             <div className={cn('pl-2')}>
               <div className={cn('grid grid-cols-[1fr_auto] gap-4 items-center')}>
                 <div className={cn('whitespace-nowrap select-none')}>
@@ -75,8 +68,11 @@ export function Metadata(): JSX.Element {
                 </div>
               </div>
             </div>
-            {/* Image Transformer Section */}
-            <div className={cn('border-b pb-2')}>{t('metadata.imageTransformer.title')}</div>
+          </div>
+          {/* Image transformer section */}
+          <div className={cn('space-y-4')}>
+            <div className={cn('border-b pb-2 select-none')}>{t('metadata.imageTransformer.title')}</div>
+            {/* Button to toggle on/off the image compression */}
             <div className={cn('pl-2')}>
               <div className={cn('grid grid-cols-[1fr_auto] gap-4 items-center')}>
                 <div className={cn('whitespace-nowrap select-none')}>
@@ -88,7 +84,11 @@ export function Metadata(): JSX.Element {
                     onCheckedChange={(checked) => setImageTransformerEnabled(checked)}
                   />
                 </div>
-                {/* Slider for image quality, only enabled if switch is ON */}
+              </div>
+            </div>
+            {/* Slider for image quality compression, only enabled if switch is ON */}
+            <div className={cn('pl-2')}>
+              <div className={cn('grid grid-cols-[1fr_auto] gap-4 items-center')}>
                 <div className={cn('whitespace-nowrap select-none')}>
                     {t('metadata.imageTransformer.quality')}
                 </div>
@@ -112,7 +112,7 @@ export function Metadata(): JSX.Element {
                   {/* Label for the slider */}
                   <span
                     className={cn(
-                      'text-sm text-muted-foreground w-12 text-right',
+                      'text-sm text-muted-foreground w-12 text-right select-none',
                       !imageTransformerEnabled && 'text-gray-400'
                     )}
                   >
