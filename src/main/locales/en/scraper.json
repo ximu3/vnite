@@ -6,8 +6,8 @@
     "maker": "Brand"
   },
   "steam": {
-    "officialWebsite": "Official website",
-    "steamStore": "Steam store",
+    "officialWebsite": "Official Website",
+    "steamStore": "Steam Store",
     "config": {
       "apiLanguageCode": "english",
       "urlLanguageCode": "en-us",
@@ -20,7 +20,7 @@
   },
   "extraMetadataFields": {
     "director": "Director",
-    "scenario": "Scenario writer",
+    "scenario": "Scenario Writer",
     "illustration": "Illustrator",
     "music": "Music",
     "engine": "Engine"

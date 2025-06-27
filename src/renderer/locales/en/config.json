@@ -4,10 +4,10 @@
     "title": "General",
     "language": "Language",
     "openAtLogin": "Open at login",
-    "theme": "Theme Style",
+    "theme": "Theme style",
     "darkTheme": "Dark",
     "lightTheme": "Light",
-    "followSystem": "Follow System",
+    "followSystem": "Follow system",
     "closeMainPanel": "Close main window",
     "action": "Action",
     "quitApp": "Exit vnite",
@@ -266,7 +266,7 @@
     "transformer": {
       "title": "Transformer",
       "enable": "Enable transformer",
-      "manage": "Manage transformer Rules",
+      "manage": "Manage transformer rules",
       "manageButton": "Manage"
     },
     "imageTransformer": {

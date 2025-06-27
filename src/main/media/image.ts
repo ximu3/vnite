@@ -6,7 +6,6 @@ import { app, net } from 'electron'
 import * as fse from 'fs-extra'
 import { fileTypeFromBuffer } from 'file-type'
 import { gis } from '~/utils'
-import { format } from 'path'
 
 /**
  * Search game related images

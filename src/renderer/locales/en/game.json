@@ -351,12 +351,11 @@
         "media": "Media"
       },
       "path": {
-        "title": "Game & Save",
-        "gamePath": "Game Path",
-        "savePath": "Save Path",
-        "addFolder": "Add Folder",
-        "addFile": "Add File",
-        "maxBackups": "Maximum Save Backups",
+        "gamePath": "Game path",
+        "savePath": "Save path",
+        "addFolder": "Add folder",
+        "addFile": "Add file",
+        "maxBackups": "Maximum save backups",
         "notifications": {
           "configuring": "Configuring preset…",
           "success": "Preset configured successfully"
@@ -379,22 +378,22 @@
         "actions": {
           "adjust": "Adjust",
           "set": "Set",
-          "importFromFile": "Import from File",
+          "importFromFile": "Import from file",
           "importFromUrl": "Import from URL",
-          "searchImage": "Search Image",
-          "cropImage": "Crop Image",
-          "deleteImage": "Delete Image"
+          "searchImage": "Search image",
+          "cropImage": "Crop image",
+          "deleteImage": "Delete image"
         },
         "search": {
-          "title": "Search Images",
-          "dataSource": "Data Source",
-          "searchTitle": "Search Title"
+          "title": "Search images",
+          "dataSource": "Data source",
+          "searchTitle": "Search title"
         },
         "url": {
           "empty": "Please enter a link address"
         },
         "crop": {
-          "title": "Adjust Image Size",
+          "title": "Adjust image size",
           "size": "{{width}} × {{height}} px"
         },
         "notifications": {

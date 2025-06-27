@@ -247,7 +247,7 @@ export function Appearances(): JSX.Element {
                     <HoverCardTrigger asChild>
                       <Button
                         variant="outline"
-                        className={cn('')}
+                        className={cn('select-none')}
                         onClick={setBackgroundImage}
                         disabled={customBackgroundMode === 'default'}
                       >
@@ -257,11 +257,11 @@ export function Appearances(): JSX.Element {
                     {/* Background image previewer */}
                     <HoverCardContent className="w-80" side="left">
                       <div className="space-y-2">
-                        <h4 className="text-sm font-semibold">
+                        <h4 className="text-sm font-semibold select-none">
                           {t('appearances.background.currentBackground')}
                         </h4>
                         {hasImages && !currentBackground?.error ? (
-                          <div className="flex flex-col items-center">
+                          <div className="flex flex-col items-center select-none">
                             <div className="overflow-hidden border rounded-md">
                               {currentBackground ? (
                               <img

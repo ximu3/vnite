@@ -1,6 +1,6 @@
 import { ArrayTextarea } from '@ui/array-textarea'
 import { Button } from '@ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
+import { Card, CardContent } from '@ui/card'
 import { Input } from '@ui/input'
 import {
   Select,
@@ -111,9 +111,6 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
 
   return (
     <Card className={cn('group')}>
-      <CardHeader>
-        <CardTitle>{t('detail.properties.path.title')}</CardTitle>
-      </CardHeader>
       <CardContent>
         <div className={cn('flex flex-col gap-5')}>
           {/* Path Setting */}

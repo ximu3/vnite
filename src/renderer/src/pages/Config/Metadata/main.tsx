@@ -56,7 +56,7 @@ export function Metadata(): JSX.Element {
                 <div className={cn('whitespace-nowrap select-none')}>
                   {t('metadata.transformer.manage')}
                 </div>
-                <div className={cn('justify-self-end')}>
+                <div className={cn('justify-self-end select-none')}>
                   <Button
                     variant={'outline'}
                     onClick={() => {
