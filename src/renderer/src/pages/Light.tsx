@@ -6,6 +6,7 @@ import { useAttachmentStore } from '~/stores'
 import { useBackgroundRefreshStore } from '~/stores/config'
 import { sortGames, useGameCollectionStore } from '~/stores/game'
 import { cn } from '~/utils'
+import clsx from 'clsx'
 
 export function Light(): JSX.Element {
   const { pathname } = useLocation()
@@ -171,7 +172,10 @@ export function Light(): JSX.Element {
             loading="lazy"
             decoding="async"
             alt=""
-            className="absolute top-0 left-0 object-cover w-full h-full"
+            className={clsx(
+              'absolute top-0 left-0 object-cover',
+              currentImageUrl && 'w-full h-full'
+            )}
             onError={() => {
               if (customBackgroundMode !== 'default') {
                 setAttachmentError('config', 'media', backgroundImageNames[currentBackgroundIndex], true)
