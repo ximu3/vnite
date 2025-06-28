@@ -16,6 +16,8 @@ import {
 import { getValueByPath } from '@appUtils'
 import type { Get, Paths } from 'type-fest'
 import log from 'electron-log/main'
+import path from 'path'
+import fs from 'fs/promises'
 
 export class GameDBManager {
   private static readonly DB_NAME = 'game'
@@ -291,11 +293,48 @@ export class GameDBManager {
   static async setGameImage(
     gameId: string,
     type: 'background' | 'cover' | 'icon' | 'logo',
-    image: Buffer | string
+    image: Buffer | string,
+    shouldCompress: boolean,
+    compressFactor?: number
   ): Promise<void> {
     try {
-      image = await convertImage(image, 'webp')
-      await DBManager.putAttachment(this.DB_NAME, gameId, `images/${type}.webp`, image)
+
+      // Remove existing images for this type
+      const attachments = await DBManager.listAttachmentNames(this.DB_NAME, gameId);
+      for (const name of attachments) {
+        if (new RegExp(`^images/${type}\\.[^.]+$`).test(name)) {
+          await DBManager.removeAttachment(this.DB_NAME, gameId, name).catch(() => {});
+        }
+      }
+
+      // Handle image conversion and compression
+      let imageBuffer: Buffer
+      let imageExtension = 'webp'
+
+      if (shouldCompress && compressFactor !== undefined) {
+        // Compressed version
+        imageBuffer = await convertImage(image, 'webp', { quality: compressFactor })
+      } else {
+        // Uncompressed version
+        if (typeof image === 'string') {
+          imageBuffer = await fs.readFile(image)
+          imageExtension = path.extname(image).replace('.', '').toLowerCase()
+        } else if (type === 'icon'){ //This case is for when we extract the game's icon
+          imageExtension = 'png'
+          imageBuffer = image
+        }
+        else {
+          imageBuffer = image
+        }
+      }
+
+      // Save new image
+      await DBManager.putAttachment(
+        this.DB_NAME,
+        gameId,
+        `images/${type}.${imageExtension}`,
+        imageBuffer
+      );
     } catch (error) {
       log.error('Error setting game image:', error)
       throw error

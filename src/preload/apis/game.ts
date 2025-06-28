@@ -4,9 +4,11 @@ export const gameAPI = {
   async setGameImage(
     gameId: string,
     type: 'background' | 'cover' | 'logo' | 'icon',
-    image: string
+    image: string,
+    shouldCompress: boolean,
+    compressFactor?: number
   ): Promise<void> {
-    return await ipcRenderer.invoke('set-game-image', gameId, type, image)
+    return await ipcRenderer.invoke('set-game-image', gameId, type, image, shouldCompress, compressFactor)
   },
 
   async deleteGameSave(gameId: string, saveId: string): Promise<void> {

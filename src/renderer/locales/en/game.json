@@ -416,50 +416,53 @@
           "cropError": "Crop failed",
           "cropIncomplete": "Crop incomplete",
           "deleting": "Deleting…",
-          "deleteSuccess": "Delete successful",
-          "deleteError": "Delete failed"
+          "deleteSuccess": "Deletion successful",
+          "deleteError": "Deletion failed"
+        },
+        "upload": {
+          "allValidFormats": "All valid formats"
         }
       },
       "launcher": {
-        "title": "Launcher & Tracker",
+        "title": "Launcher & tracker",
         "setGamePathFirst": "Please set game path first",
         "mode": {
-          "title": "Launch Mode",
+          "title": "Launch mode",
           "file": "File",
           "url": "URL",
           "script": "Script"
         },
         "monitor": {
-          "title": "Tracking Mode",
+          "title": "Tracking mode",
           "mode": {
             "folder": "Folder",
             "file": "File",
             "process": "Process"
           },
-          "path": "Tracking Path",
-          "processName": "Process Name"
+          "path": "Tracking path",
+          "processName": "Process name"
         },
         "file": {
-          "path": "File Path",
-          "workingDirectory": "Working Directory"
+          "path": "File path",
+          "workingDirectory": "Working directory"
         },
         "script": {
-          "content": "Script Content",
-          "workingDirectory": "Working Directory"
+          "content": "Script content",
+          "workingDirectory": "Working directory"
         },
         "url": {
-          "address": "URL Address",
+          "address": "URL address",
           "browser": "Browser",
-          "defaultBrowser": "System Default Browser"
+          "defaultBrowser": "System default browser"
         },
         "magpie": {
-          "scaling": "Magpie Scaling",
+          "scaling": "Magpie scaling",
           "pathNotSet": "Please set Magpie path first"
         },
         "preset": {
-          "title": "Preset Configuration",
-          "search": "Search Configuration",
-          "default": "Default Configuration",
+          "title": "Preset configuration",
+          "search": "Search",
+          "default": "Default configuration",
           "le": "LE Region Launch",
           "steam": "Steam Launch",
           "vba": "VBA Launch",

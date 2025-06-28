@@ -15,6 +15,10 @@ export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
     return await DBManager.setValue(change.dbName, change.docId, '#all', change.data)
   })
 
+  ipcMain.handle('list-attachment-names', async (_event, dbName, docId) => {
+    return await DBManager.listAttachmentNames(dbName, docId)
+  })
+
   ipcMain.handle('db-get-all-docs', async (_event, dbName: string) => {
     return await DBManager.getAllDocs(dbName)
   })

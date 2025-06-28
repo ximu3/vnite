@@ -26,7 +26,7 @@ export function setupIPC(mainWindow: BrowserWindow): void {
     setupThemeIPC(mainWindow)
     setupUpdaterIPC(mainWindow)
     setupAccountIPC(mainWindow)
-    setupTransformerIPC(mainWindow) // Add the new IPC handler setup
+    setupTransformerIPC(mainWindow)
   } catch (error) {
     log.error('Error setting up IPC:', error)
     throw error

@@ -11,6 +11,10 @@ export const databaseAPI = {
     return await ipcRenderer.invoke('db-get-all-docs', dbName)
   },
 
+  async getAllAttachmentNames(dbName: string, docId: string): Promise<any> {
+    return await ipcRenderer.invoke('list-attachment-names', dbName, docId)
+  },
+
   async checkAttachment(dbName: string, docId: string, attachmentId: string): Promise<boolean> {
     return await ipcRenderer.invoke('db-check-attachment', dbName, docId, attachmentId)
   },

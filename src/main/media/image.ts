@@ -143,11 +143,11 @@ export async function saveGameIconByFile(gameId: string, filePath: string): Prom
   try {
     // Get file icon
     const icon = await app.getFileIcon(filePath)
-
+    
     // Save icon
-    await GameDBManager.setGameImage(gameId, 'icon', icon.toPNG())
+    await GameDBManager.setGameImage(gameId, 'icon', icon.toPNG(), false)
 
-    console.log('Save Icon Successful:', filePath)
+    console.log('Save icon successful:', filePath)
   } catch (error) {
     console.error('Failed to save icon:', error)
     throw error

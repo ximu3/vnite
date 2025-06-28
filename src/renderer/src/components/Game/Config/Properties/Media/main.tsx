@@ -4,7 +4,7 @@ import { GameImage } from '@ui/game-image'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { useGameState } from '~/hooks'
+import { useGameState, useConfigState } from '~/hooks'
 import { cn } from '~/utils'
 import { CropDialog } from './CropDialog'
 import { SearchMediaDialog } from './SearchMediaDialog'
@@ -35,28 +35,59 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
 
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false)
   const [searchType, setSearchType] = useState<'cover' | 'background' | 'icon' | 'logo'>('cover')
-
   const [originalName] = useGameState(gameId, 'metadata.originalName')
+
+  //Global variables used to know when to compress the metadata images
+  const [imageTransformerStatus] = useConfigState('metadata.imageTransformer.enabled')
+  const [imageTransformerQuality] = useConfigState('metadata.imageTransformer.quality')
 
   // Processing file selection
   async function handleFileSelect(type: 'cover' | 'background' | 'icon' | 'logo'): Promise<void> {
     try {
-      const filePath: string = await window.api.utils.selectPathDialog(['openFile'])
-      if (!filePath) return
+      // Define the base image filters
+      const imageFilters = [
+        { name: 'JPEG', extensions: ['jpg', 'jpeg'] },
+        { name: 'PNG', extensions: ['png'] },
+        { name: 'WebP', extensions: ['webp'] },
+        { name: 'GIF', extensions: ['gif'] },
+        { name: 'SVG', extensions: ['svg'] },
+        { name: 'TIFF', extensions: ['tiff'] },
+        { name: 'AVIF', extensions: ['avif'] },
+        { name: 'ICO', extensions: ['ico'] }
+      ]
 
-      if (filePath.endsWith('.exe') && type == 'icon') {
-        await window.api.game.setGameImage(gameId, type, filePath)
+      // Add EXE filter for icons
+      const filters = type === 'icon'
+        ? [
+            ...imageFilters,
+            { name: 'EXE', extensions: ['exe'] },
+            {
+              name: t('detail.properties.media.upload.allValidFormats'),
+              extensions: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg', 'tiff', 'avif', 'ico', 'exe']
+            }
+          ]
+        : [
+            ...imageFilters,
+            {
+              name: t('detail.properties.media.upload.allValidFormats'),
+              extensions: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg', 'tiff', 'avif', 'ico']
+            }
+          ]
+
+      const filePath: string = await window.api.utils.selectPathDialog(['openFile'], filters)
+      if (!filePath) return
+      
+      if (filePath.endsWith('.exe') && type === 'icon'){
+        await window.api.media.saveGameIconByFile(gameId, filePath)
+        return
+      }
+      else{
+        await window.api.game.setGameImage(gameId, type, filePath, imageTransformerStatus, imageTransformerQuality)
         return
       }
 
-      setCropDialogState({
-        isOpen: true,
-        type,
-        imagePath: filePath,
-        isResizing: false
-      })
     } catch (error) {
-      toast.error(t('detail.properties.media.notifications.fileSelectError', { error }))
+      toast.error(t('detail.properties.media.notifications.fileSelectError', { error }));
     }
   }
 
@@ -89,12 +120,8 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
         if (!URL.trim()) return
 
         const tempFilePath = await window.api.media.downloadTempImage(URL.trim())
-        setCropDialogState({
-          isOpen: true,
-          type,
-          imagePath: tempFilePath as string,
-          isResizing: false
-        })
+        await window.api.game.setGameImage(gameId, type, tempFilePath, imageTransformerStatus, imageTransformerQuality)
+        return
       },
       {
         loading: t('detail.properties.media.notifications.downloading'),
@@ -118,7 +145,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
 
     toast.promise(
       async () => {
-        await window.api.game.setGameImage(gameId, type, filePath)
+        await window.api.game.setGameImage(gameId, type, filePath, imageTransformerStatus, imageTransformerQuality)
       },
       {
         loading: t('detail.properties.media.notifications.processing', {
@@ -162,11 +189,8 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
   }
 
   // Media Control Button Component
-  const MediaControls = ({
-    type
-  }: {
-    type: 'cover' | 'background' | 'icon' | 'logo'
-  }): JSX.Element => (
+  const MediaControls = ({type}: {type: 'cover' | 'background' | 'icon' | 'logo'}):
+   JSX.Element => (
     <div className={cn('flex flex-row gap-2')}>
       <Tooltip>
         <TooltipTrigger>

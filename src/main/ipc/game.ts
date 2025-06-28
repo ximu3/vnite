@@ -11,8 +11,8 @@ import { ipcMain, BrowserWindow } from 'electron'
 export function setupGameIPC(mainWindow: BrowserWindow): void {
   ipcMain.handle(
     'set-game-image',
-    async (_, gameId: string, type: 'background' | 'cover' | 'logo' | 'icon', image: string) => {
-      return await GameDBManager.setGameImage(gameId, type, image)
+    async (_, gameId: string, type: 'background' | 'cover' | 'logo' | 'icon', image: string, shouldCompress: boolean, compressFactor?: number) => {
+      return await GameDBManager.setGameImage(gameId, type, image, shouldCompress, compressFactor)
     }
   )
 
