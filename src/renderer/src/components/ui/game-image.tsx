@@ -5,6 +5,7 @@ import { cn } from '~/utils'
 interface GameImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src'> {
   gameId: string
   type: 'background' | 'cover' | 'icon' | 'logo' | string
+  refreshKey?: number
   onUpdated?: () => void
   fallback?: React.ReactNode
   shadow?: boolean
@@ -20,6 +21,7 @@ async function getFirstImageName(dbName: string, docId: string, type: string): P
 export const GameImage: React.FC<GameImageProps> = ({
   gameId,
   type,
+  refreshKey,
   className,
   onError,
   onUpdated,
@@ -38,9 +40,10 @@ export const GameImage: React.FC<GameImageProps> = ({
     let cancelled = false
     getFirstImageName('game', gameId, type).then(name => {
       if (!cancelled) setImageName(name)
+      else <>{fallback}</>
     })
     return () => { cancelled = true }
-  }, [gameId, type])
+  }, [gameId, type, refreshKey])
 
   // If no image found, show fallback
   if (!imageName) {
@@ -53,6 +56,7 @@ export const GameImage: React.FC<GameImageProps> = ({
   }
 
   const attachmentUrl = `attachment://game/${gameId}/${imageName}?t=${attachmentInfo?.timestamp}`
+  
   return (
     <div className={cn('relative overflow-hidden', className)}>
       {!isLoaded && (
@@ -68,8 +72,8 @@ export const GameImage: React.FC<GameImageProps> = ({
           blur && 'filter blur-xl',
           className
         )}
-        // loading="lazy"
-        // decoding="async"
+        loading="lazy"
+        decoding="async"
         onLoad={() => {
           setIsLoaded(true)
           onUpdated?.()

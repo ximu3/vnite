@@ -41,6 +41,9 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
   const [imageTransformerStatus] = useConfigState('metadata.imageTransformer.enabled')
   const [imageTransformerQuality] = useConfigState('metadata.imageTransformer.quality')
 
+  //Global variable to let the GameImage component to update the image source
+  const [refreshKey, setRefreshKey] = useState(0)
+
   // Processing file selection
   async function handleFileSelect(type: 'cover' | 'background' | 'icon' | 'logo'): Promise<void> {
     try {
@@ -79,10 +82,12 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
       
       if (filePath.endsWith('.exe') && type === 'icon'){
         await window.api.media.saveGameIconByFile(gameId, filePath)
+        setRefreshKey(k => k + 1)
         return
       }
       else{
         await window.api.game.setGameImage(gameId, type, filePath, imageTransformerStatus, imageTransformerQuality)
+        setRefreshKey(k => k + 1)
         return
       }
 
@@ -121,6 +126,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
 
         const tempFilePath = await window.api.media.downloadTempImage(URL.trim())
         await window.api.game.setGameImage(gameId, type, tempFilePath, imageTransformerStatus, imageTransformerQuality)
+        setRefreshKey(k => k + 1)
         return
       },
       {
@@ -146,6 +152,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
     toast.promise(
       async () => {
         await window.api.game.setGameImage(gameId, type, filePath, imageTransformerStatus, imageTransformerQuality)
+        setRefreshKey(k => k + 1)
       },
       {
         loading: t('detail.properties.media.notifications.processing', {
@@ -171,6 +178,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
     toast.promise(
       async () => {
         await window.api.game.removeGameMedia(gameId, type)
+        setRefreshKey(k => k + 1)
       },
       {
         loading: t('detail.properties.media.notifications.deleting', {
@@ -285,6 +293,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                 <GameImage
                   gameId={gameId}
                   type="icon"
+                  refreshKey={refreshKey}
                   className={cn('max-h-16 h-[calc(30vh-160px)] aspect-[1] object-cover')}
                   fallback={<div>{t('detail.properties.media.empty.icon')}</div>}
                 />
@@ -304,6 +313,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                 <GameImage
                   gameId={gameId}
                   type="background"
+                  refreshKey={refreshKey}
                   className={cn('max-h-[264px] h-[calc(60vh-200px)] aspect-[2] object-cover')}
                   fallback={<div>{t('detail.properties.media.empty.background')}</div>}
                 />
@@ -325,6 +335,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                 <GameImage
                   gameId={gameId}
                   type="cover"
+                  refreshKey={refreshKey}
                   className={cn('max-h-[170px] h-[calc(50vh-230px)] aspect-[2/3] object-cover')}
                   fallback={<div>{t('detail.properties.media.empty.cover')}</div>}
                 />
@@ -343,6 +354,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                 <GameImage
                   gameId={gameId}
                   type="logo"
+                  refreshKey={refreshKey}
                   className={cn('max-h-[158px] h-[calc(40vh-130px)] aspect-[3/2] object-contain')}
                   fallback={<div>{t('detail.properties.media.empty.logo')}</div>}
                 />

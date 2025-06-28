@@ -298,7 +298,6 @@ export class GameDBManager {
     compressFactor?: number
   ): Promise<void> {
     try {
-
       // Remove existing images for this type
       const attachments = await DBManager.listAttachmentNames(this.DB_NAME, gameId);
       for (const name of attachments) {
@@ -491,7 +490,14 @@ export class GameDBManager {
     type: 'background' | 'cover' | 'icon' | 'logo'
   ): Promise<void> {
     try {
-      await DBManager.removeAttachment(this.DB_NAME, gameId, `images/${type}.webp`)
+      // Remove existing images for this type
+      const attachments = await DBManager.listAttachmentNames(this.DB_NAME, gameId);
+      for (const name of attachments) {
+        if (new RegExp(`^images/${type}\\.[^.]+$`).test(name)) {
+          
+          await DBManager.removeAttachment(this.DB_NAME, gameId, name).catch(() => {})
+        }
+      }
     } catch (error) {
       log.error('Error removing game image:', error)
       throw error
