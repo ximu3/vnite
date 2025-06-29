@@ -272,7 +272,7 @@
     "imageTransformer": {
       "title": "Image conversion",
       "enable": "Enable image conversion",
-      "quality": "Select percentage of quality"
+      "factor": "Select percentage of compression"
     }
   }
 }

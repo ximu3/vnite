@@ -3,6 +3,7 @@ import i18next from 'i18next'
 import { toast } from 'sonner'
 import { useRunningGames } from '~/pages/Library/store'
 import { getGameLocalStore, getGameStore } from '~/stores/game'
+import { useConfigState } from '~/hooks'
 import { ipcSend } from '~/utils'
 import { generateUUID } from '@appUtils'
 import { useNavigate } from 'react-router-dom'
@@ -110,6 +111,9 @@ export async function startGame(gameId: string, navigate?: (path: string) => voi
   const getGameLocalValue = gameLocalStore.getState().getValue
   const setGameValue = gameStore.getState().setValue
   const getGameValue = gameStore.getState().getValue
+   //Global variables used to know when to compress the metadata images
+  const [imageTransformerStatus] = useConfigState('metadata.imageTransformer.enabled')
+  const [imageTransformerQuality] = useConfigState('metadata.imageTransformer.quality')
 
   if (getGameLocalValue('path.gamePath') === '') {
     toast.warning(i18next.t('utils:game.starting.pathRequired'))
@@ -132,7 +136,7 @@ export async function startGame(gameId: string, navigate?: (path: string) => voi
     const isIconAccessible = await isTypeAttachmentAccessible('game', gameId, 'icon')
 
     if (!isIconAccessible) {
-      await window.api.media.saveGameIconByFile(gameId, filePath, false)
+      await window.api.media.saveGameIconByFile(gameId, filePath, imageTransformerStatus, imageTransformerQuality)
     }
 
     toast.promise(

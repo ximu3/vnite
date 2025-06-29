@@ -82,21 +82,21 @@ export async function addGameToDB({
 
   // Prepare all image save operations
   if (covers.length > 0 && covers[0]) {
-    dbPromises.push(GameDBManager.setGameImage(dbId, 'cover', covers[0]))
+    dbPromises.push(GameDBManager.setGameImage(dbId, 'cover', covers[0], false))
   }
 
   if (backgroundUrl) {
-    dbPromises.push(GameDBManager.setGameImage(dbId, 'background', backgroundUrl))
+    dbPromises.push(GameDBManager.setGameImage(dbId, 'background', backgroundUrl, false))
   } else if (backgrounds.length > 0 && backgrounds[0]) {
-    dbPromises.push(GameDBManager.setGameImage(dbId, 'background', backgrounds[0]))
+    dbPromises.push(GameDBManager.setGameImage(dbId, 'background', backgrounds[0], false))
   }
 
   if (icons.length > 0 && icons[0]) {
-    dbPromises.push(GameDBManager.setGameImage(dbId, 'icon', icons[0].toString()))
+    dbPromises.push(GameDBManager.setGameImage(dbId, 'icon', icons[0].toString(), false))
   }
 
   if (logos.length > 0 && logos[0]) {
-    dbPromises.push(GameDBManager.setGameImage(dbId, 'logo', logos[0].toString()))
+    dbPromises.push(GameDBManager.setGameImage(dbId, 'logo', logos[0].toString(), false))
   }
 
   // Execute all database operations in parallel
@@ -134,11 +134,11 @@ export async function updateGame({
 
   // Add image save operations
   if (backgroundUrl) {
-    dbPromises.push(GameDBManager.setGameImage(dbId, 'background', backgroundUrl))
+    dbPromises.push(GameDBManager.setGameImage(dbId, 'background', backgroundUrl, false))
   }
 
   if (coverUrls.length > 0 && coverUrls[0]) {
-    dbPromises.push(GameDBManager.setGameImage(dbId, 'cover', coverUrls[0]))
+    dbPromises.push(GameDBManager.setGameImage(dbId, 'cover', coverUrls[0], false))
   }
 
   // Execute all database operations in parallel
@@ -163,9 +163,10 @@ export async function addGameToDBWithoutMetadata(gamePath: string): Promise<void
   gameLocalDoc._id = dbId
   gameLocalDoc.path.gamePath = gamePath
   await GameDBManager.setGameLocal(dbId, gameLocalDoc)
+  console.log(gameLocalDoc)
 
   await launcherPreset('default', dbId)
-  await saveGameIconByFile(dbId, gamePath)
+  await saveGameIconByFile(dbId, gamePath, false)
 }
 
 /**

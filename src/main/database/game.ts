@@ -1,6 +1,6 @@
 // src/database/GameDBManager.ts
 import { DBManager } from './common'
-import { convertImage } from '~/media'
+import { convertImage, getImage } from '~/media'
 import {
   gameDoc,
   gameDocs,
@@ -17,7 +17,6 @@ import { getValueByPath } from '@appUtils'
 import type { Get, Paths } from 'type-fest'
 import log from 'electron-log/main'
 import path from 'path'
-import fs from 'fs/promises'
 
 export class GameDBManager {
   private static readonly DB_NAME = 'game'
@@ -310,20 +309,17 @@ export class GameDBManager {
       let imageBuffer: Buffer
       let imageExtension = 'webp'
 
+      imageBuffer = await getImage(image)
+
       if (shouldCompress && compressFactor !== undefined) {
         // Compressed version
         imageBuffer = await convertImage(image, 'webp', { quality: compressFactor })
       } else {
         // Uncompressed version
         if (typeof image === 'string') {
-          imageBuffer = await fs.readFile(image)
           imageExtension = path.extname(image).replace('.', '').toLowerCase()
         } else if (type === 'icon'){ //This case is for when we extract the game's icon
           imageExtension = 'png'
-          imageBuffer = image
-        }
-        else {
-          imageBuffer = image
         }
       }
 

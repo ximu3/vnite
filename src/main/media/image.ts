@@ -40,7 +40,7 @@ export async function getImage(input: Buffer | string): Promise<Buffer>
   try
   {
     // Handles cases where the input is a URL
-    if (typeof input === 'string' && input.startsWith('http')) {
+    if (typeof input === 'string' && (input.startsWith('http://') || input.startsWith('https://'))) {
       const response = await net.fetch(input)
       if (!response.ok) {
         throw new Error(`Failed to fetch image: ${response.statusText}`)

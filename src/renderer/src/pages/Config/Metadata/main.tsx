@@ -15,16 +15,16 @@ export function Metadata(): JSX.Element {
   const { t } = useTranslation('config')
   const [transformerEnabled, setTransformerEnabled] = useConfigState('metadata.transformer.enabled')
   const [imageTransformerEnabled, setImageTransformerEnabled] = useConfigState('metadata.imageTransformer.enabled')
-  const [imageTransformerValue, setImageTransformerQuality] = useConfigState('metadata.imageTransformer.quality')
+  const [imageTransformerValue, setImageTransformerFactor] = useConfigState('metadata.imageTransformer.factor')
 
   //Local values
   const [localImageTransformerValue, setLocalImageTransformerValue] = useState(imageTransformerValue ?? 80)
 
-  const debouncedSetImageTransformerQuality = useCallback(
+  const debouncedSetImageTransformerFactor = useCallback(
     debounce((value: number) => {
-      setImageTransformerQuality(value)
+      setImageTransformerFactor(value)
     }, 300),
-    [setImageTransformerQuality]
+    [setImageTransformerFactor]
   )
 
   //Keep local state in sync with config
@@ -90,7 +90,7 @@ export function Metadata(): JSX.Element {
             <div className={cn('pl-2')}>
               <div className={cn('grid grid-cols-[1fr_auto] gap-4 items-center')}>
                 <div className={cn('whitespace-nowrap select-none')}>
-                    {t('metadata.imageTransformer.quality')}
+                    {t('metadata.imageTransformer.factor')}
                 </div>
                 <div className={cn(
                     'flex items-center gap-2 w-[250px]', !imageTransformerEnabled && 'opacity-50 pointer-events-none select-none'
@@ -98,13 +98,13 @@ export function Metadata(): JSX.Element {
                   {/* Actual slider */}
                   <Slider
                     value={[localImageTransformerValue]}
-                    min={0}
+                    min={1}
                     max={100}
                     step={1}
                     onValueChange={(value: number[]) => {
                       const newValue = value[0]
                       setLocalImageTransformerValue(newValue)
-                      debouncedSetImageTransformerQuality(newValue)
+                      debouncedSetImageTransformerFactor(newValue)
                     }}
                     className={cn('flex-1')}
                     disabled={!imageTransformerEnabled}
