@@ -61,13 +61,16 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
       return
     }
     await setGamePath(filePath)
-    const isIconAccessible = await window.api.database.checkAttachment(
-      'game',
-      gameId,
-      'images/icon.webp'
-    )
+    
+    async function isTypeAttachmentAccessible(dbName: string, gameId: string, type: string): Promise<boolean> {
+      const attachments = await window.api.database.getAllAttachmentNames(dbName, gameId)
+      return attachments.some(name => new RegExp(`^images/${type}\\.[^.]+$`, 'i').test(name))
+    }
+
+    const isIconAccessible = await isTypeAttachmentAccessible('game', gameId, 'icon')
+
     if (!isIconAccessible) {
-      await window.api.media.saveGameIconByFile(gameId, filePath)
+      await window.api.media.saveGameIconByFile(gameId, filePath, false)
     }
     if (!monitorPath) {
       toast.promise(

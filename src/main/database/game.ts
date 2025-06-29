@@ -346,27 +346,27 @@ export class GameDBManager {
     format: T = 'buffer' as T
   ): Promise<T extends 'file' ? string | null : Buffer | null> {
     try {
-      if (
-        (await DBManager.checkAttachment(this.DB_NAME, gameId, `images/${type}.webp`)) === false
-      ) {
-        return null
+      const attachments = await DBManager.listAttachmentNames(this.DB_NAME, gameId);
+
+      const match = attachments.find(name =>
+        new RegExp(`^images/${type}\\.[^.]+$`, 'i').test(name)
+      );
+      if (!match) {
+        return null;
       }
+
       if (format === 'file') {
-        return (await DBManager.getAttachment(this.DB_NAME, gameId, `images/${type}.webp`, {
+        return (await DBManager.getAttachment(this.DB_NAME, gameId, match, {
           format: 'file',
           filePath: '#temp',
-          ext: 'webp'
-        })) as T extends 'file' ? string | null : Buffer | null
+          ext: match.split('.').pop() || 'bin'
+        })) as T extends 'file' ? string | null : Buffer | null;
       } else {
-        return (await DBManager.getAttachment(
-          this.DB_NAME,
-          gameId,
-          `images/${type}.webp`
-        )) as T extends 'file' ? string | null : Buffer | null
+        return (await DBManager.getAttachment(this.DB_NAME, gameId, match)) as T extends 'file' ? string | null : Buffer | null;
       }
     } catch (error) {
-      log.error('Error getting game image:', error)
-      throw error
+      log.error('Error getting game image:', error);
+      throw error;
     }
   }
 

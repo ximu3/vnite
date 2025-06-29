@@ -81,7 +81,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
       if (!filePath) return
       
       if (filePath.endsWith('.exe') && type === 'icon'){
-        await window.api.media.saveGameIconByFile(gameId, filePath)
+        await window.api.media.saveGameIconByFile(gameId, filePath, imageTransformerStatus, imageTransformerQuality)
         setRefreshKey(k => k + 1)
         return
       }
@@ -151,7 +151,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
 
     toast.promise(
       async () => {
-        await window.api.game.setGameImage(gameId, type, filePath, imageTransformerStatus, imageTransformerQuality)
+        await window.api.game.setGameImage(gameId, type, filePath, false) //To avoid problems where an user might have the compressor set to on
         setRefreshKey(k => k + 1)
       },
       {
@@ -295,7 +295,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                   type="icon"
                   refreshKey={refreshKey}
                   className={cn('max-h-16 h-[calc(30vh-160px)] aspect-[1] object-cover')}
-                  fallback={<div>{t('detail.properties.media.empty.icon')}</div>}
+                  fallback={<div className='select-none'>{t('detail.properties.media.empty.icon')}</div>}
                 />
               </div>
             </div>
@@ -315,7 +315,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                   type="background"
                   refreshKey={refreshKey}
                   className={cn('max-h-[264px] h-[calc(60vh-200px)] aspect-[2] object-cover')}
-                  fallback={<div>{t('detail.properties.media.empty.background')}</div>}
+                  fallback={<div className='select-none'>{t('detail.properties.media.empty.background')}</div>}
                 />
               </div>
             </div>
@@ -337,7 +337,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                   type="cover"
                   refreshKey={refreshKey}
                   className={cn('max-h-[170px] h-[calc(50vh-230px)] aspect-[2/3] object-cover')}
-                  fallback={<div>{t('detail.properties.media.empty.cover')}</div>}
+                  fallback={<div className='select-none'>{t('detail.properties.media.empty.cover')}</div>}
                 />
               </div>
             </div>
@@ -356,7 +356,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                   type="logo"
                   refreshKey={refreshKey}
                   className={cn('max-h-[158px] h-[calc(40vh-130px)] aspect-[3/2] object-contain')}
-                  fallback={<div>{t('detail.properties.media.empty.logo')}</div>}
+                  fallback={<div className='select-none'>{t('detail.properties.media.empty.logo')}</div>}
                 />
               </div>
             </div>

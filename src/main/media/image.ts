@@ -6,6 +6,7 @@ import { app, net } from 'electron'
 import * as fse from 'fs-extra'
 import { fileTypeFromBuffer } from 'file-type'
 import { gis } from '~/utils'
+import path from 'path'
 
 /**
  * Search game related images
@@ -62,7 +63,7 @@ export async function getImage(input: Buffer | string): Promise<Buffer>
 
 export async function convertImage(
   input: Buffer | string,
-  extension: 'jpg' | 'jpeg' | 'png' | 'webp' | 'gif' | 'avif' | 'svg' | 'tiff',
+  extension, //'jpg' | 'jpeg' | 'png' | 'webp' | 'gif' | 'avif' | 'svg' | 'tiff'
   options: { quality?: number; animated?: boolean } = {}
 ): Promise<Buffer> {
 
@@ -118,19 +119,12 @@ export async function cropImage({
   height: number
 }): Promise<string> {
   try {
-    const tempPath = getAppTempPath(`cropped_${Date.now()}.webp`)
+    const ext = path.extname(sourcePath).slice(1)
+    const tempPath = getAppTempPath(`cropped_${Date.now()}.${ext}`)
     sharp.cache(false)
-    const metadata = await sharp(sourcePath).metadata()
-    let isAnimated = false
-    if (metadata?.pages && metadata.pages > 1) {
-      isAnimated = true
-    }
-    await sharp(sourcePath, { animated: isAnimated, limitInputPixels: false })
+    const sharpBuffer = await convertImage(sourcePath, ext) //We do obtain the buffer to avoid having to deal with .ICO resizing issues
+    await sharp(sharpBuffer)
       .extract({ left: x, top: y, width, height })
-      .webp({
-        effort: 6,
-        lossless: true
-      })
       .toFile(tempPath)
     return tempPath
   } catch (error) {
@@ -139,14 +133,15 @@ export async function cropImage({
   }
 }
 
-export async function saveGameIconByFile(gameId: string, filePath: string): Promise<void> {
+export async function saveGameIconByFile(gameId: string, filePath: string, shouldCompress: boolean, compressFactor?: number): Promise<void> {
   try {
     // Get file icon
     const icon = await app.getFileIcon(filePath)
-    
-    // Save icon
-    await GameDBManager.setGameImage(gameId, 'icon', icon.toPNG(), false)
 
+    if (shouldCompress === true && compressFactor !== null)
+      await GameDBManager.setGameImage(gameId, 'icon', icon.toPNG(), true, compressFactor)
+    else
+      await GameDBManager.setGameImage(gameId, 'icon', icon.toPNG(), false)
     console.log('Save icon successful:', filePath)
   } catch (error) {
     console.error('Failed to save icon:', error)
