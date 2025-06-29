@@ -51,16 +51,15 @@
       "compression": {
         "label": "Enable compression",
         "factor": "Level of compression"
+      },
+      "settings":{
+        "blur": "Blur",
+        "opacity": "Opacity"
       }
     },
     "showcase": {
       "title": "Showcase",
       "showPlayButtonOnPoster": "Show Play button on poster"
-    },
-    "glass": {
-      "title": "Frosted glass",
-      "blur": "Blur",
-      "opacity": "Opacity"
     },
     "gameList": {
       "title": "Game List",

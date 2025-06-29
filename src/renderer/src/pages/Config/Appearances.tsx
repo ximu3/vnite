@@ -377,15 +377,11 @@ export function Appearances(): JSX.Element {
               </div>
               </>
               )}
-          </div>
-
-          {/* Glass Effect Settings */}
-          <div className={cn('space-y-4')}>
-            <div className={cn('border-b pb-2 select-none')}>{t('appearances.glass.title')}</div>
+            {/* Blur and opaticity settings */}
             <div className={cn('pl-2')}>
               <div className={cn('grid grid-cols-[1fr_auto] gap-4 items-center')}>
                 <div className={cn('whitespace-nowrap select-none')}>
-                  {t('appearances.glass.blur')}
+                  {t('appearances.background.settings.blur')}
                 </div>
                 <div className={cn('flex items-center gap-2 w-[250px]')}>
                   <Slider
@@ -406,7 +402,7 @@ export function Appearances(): JSX.Element {
                 </div>
 
                 <div className={cn('whitespace-nowrap select-none')}>
-                  {t('appearances.glass.opacity')}
+                  {t('appearances.background.settings.opacity')}
                 </div>
                 <div className={cn('flex items-center self-end gap-2 w-[250px]')}>
                   <Slider
@@ -428,6 +424,7 @@ export function Appearances(): JSX.Element {
               </div>
             </div>
           </div>
+
           {/* Showcase Settings */}
           <div className={cn('space-y-4')}>
             <div className={cn('border-b pb-2 select-none')}>{t('appearances.showcase.title')}</div>
