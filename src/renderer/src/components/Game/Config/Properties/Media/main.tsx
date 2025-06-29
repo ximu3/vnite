@@ -39,7 +39,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
 
   //Global variables used to know when to compress the metadata images
   const [imageTransformerStatus] = useConfigState('metadata.imageTransformer.enabled')
-  const [imageTransformerQuality] = useConfigState('metadata.imageTransformer.quality')
+  const [imageTransformerFactor] = useConfigState('metadata.imageTransformer.factor')
 
   //Global variable to let the GameImage component to update the image source
   const [refreshKey, setRefreshKey] = useState(0)
@@ -81,12 +81,12 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
       if (!filePath) return
       
       if (filePath.endsWith('.exe') && type === 'icon'){
-        await window.api.media.saveGameIconByFile(gameId, filePath, imageTransformerStatus, imageTransformerQuality)
+        await window.api.media.saveGameIconByFile(gameId, filePath, imageTransformerStatus, imageTransformerFactor)
         setRefreshKey(k => k + 1)
         return
       }
       else{
-        await window.api.game.setGameImage(gameId, type, filePath, imageTransformerStatus, imageTransformerQuality)
+        await window.api.game.setGameImage(gameId, type, filePath, imageTransformerStatus, imageTransformerFactor)
         setRefreshKey(k => k + 1)
         return
       }
@@ -125,7 +125,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
         if (!URL.trim()) return
 
         const tempFilePath = await window.api.media.downloadTempImage(URL.trim())
-        await window.api.game.setGameImage(gameId, type, tempFilePath, imageTransformerStatus, imageTransformerQuality)
+        await window.api.game.setGameImage(gameId, type, tempFilePath, imageTransformerStatus, imageTransformerFactor)
         setRefreshKey(k => k + 1)
         return
       },
