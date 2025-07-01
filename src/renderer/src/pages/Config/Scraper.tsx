@@ -1,11 +1,10 @@
 import { cn } from '~/utils'
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
+import { Card, CardContent } from '@ui/card'
 import {
   Select,
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue
 } from '@ui/select'
@@ -25,30 +24,22 @@ export function Scraper(): JSX.Element {
 
   return (
     <Card className={cn('group')}>
-      <CardHeader>
-        <CardTitle className={cn('relative')}>
-          <div className={cn('flex flex-row justify-between items-center')}>
-            <div className={cn('flex items-center')}>{t('scraper.title')}</div>
-          </div>
-        </CardTitle>
-      </CardHeader>
       <CardContent>
         <div className={cn('flex flex-col gap-8')}>
-          {/* General Settings */}
+          {/* General settings */}
           <div className={cn('space-y-4')}>
-            <div className={cn('border-b pb-2')}>{t('scraper.common.title')}</div>
+            <div className={cn('border-b pb-2 select-none')}>{t('scraper.common.title')}</div>
             <div className={cn('pl-2')}>
               <div className={cn('grid grid-cols-[1fr_auto] gap-4 items-center')}>
                 <div className={cn('whitespace-nowrap select-none')}>
                   {t('scraper.common.defaultDataSource')}
                 </div>
                 <Select value={defaultDataSource} onValueChange={setDefaultDataSource}>
-                  <SelectTrigger className={cn('w-[200px]')}>
+                  <SelectTrigger className={cn('w-[200px] select-none')}>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectLabel>{t('scraper.common.defaultDataSource')}</SelectLabel>
                       <SelectItem value="steam">{t('scraper.dataSources.steam')}</SelectItem>
                       <SelectItem value="vndb">{t('scraper.dataSources.vndb')}</SelectItem>
                       <SelectItem value="bangumi">{t('scraper.dataSources.bangumi')}</SelectItem>
@@ -64,7 +55,7 @@ export function Scraper(): JSX.Element {
 
           {/* VNDB Settings */}
           <div className={cn('space-y-4')}>
-            <div className={cn('border-b pb-2')}>{t('scraper.vndb.title')}</div>
+            <div className={cn('border-b pb-2 select-none')}>{t('scraper.vndb.title')}</div>
             <div className={cn('pl-2')}>
               <div className={cn('grid grid-cols-[1fr_auto] gap-4 items-center')}>
                 <div className={cn('whitespace-nowrap select-none')}>
@@ -76,12 +67,11 @@ export function Scraper(): JSX.Element {
                     setVndbTagSpoilerLevel(parseInt(value) as 0 | 1 | 2)
                   }}
                 >
-                  <SelectTrigger className={cn('w-[200px]')}>
+                  <SelectTrigger className={cn('w-[200px] select-none')}>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectLabel>{t('scraper.vndb.tagSpoilerLevel')}</SelectLabel>
                       <SelectItem value="0">{t('scraper.vndb.tagSpoilerLevels.none')}</SelectItem>
                       <SelectItem value="1">{t('scraper.vndb.tagSpoilerLevels.minor')}</SelectItem>
                       <SelectItem value="2">{t('scraper.vndb.tagSpoilerLevels.all')}</SelectItem>

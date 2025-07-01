@@ -61,7 +61,7 @@ export function UpdateDialog(): JSX.Element {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       {updateInfo ? (
-        <DialogContent className={cn('w-[600px] max-w-none')}>
+        <DialogContent className={cn('w-[600px] max-w-none select-none')}>
           <DialogHeader>
             <DialogTitle>{t('dialog.title', { version: updateInfo?.version })}</DialogTitle>
           </DialogHeader>
@@ -103,7 +103,7 @@ export function UpdateDialog(): JSX.Element {
           </div>
         </DialogContent>
       ) : (
-        <DialogContent>{t('dialog.latestVersion')}</DialogContent>
+        <DialogContent className="select-none">{t('dialog.latestVersion')}</DialogContent>
       )}
     </Dialog>
   )

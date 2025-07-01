@@ -1,6 +1,6 @@
 import { ArrayTextarea } from '@ui/array-textarea'
 import { Button } from '@ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
+import { Card, CardContent } from '@ui/card'
 import { Input } from '@ui/input'
 import {
   Select,
@@ -61,13 +61,16 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
       return
     }
     await setGamePath(filePath)
-    const isIconAccessible = await window.api.database.checkAttachment(
-      'game',
-      gameId,
-      'images/icon.webp'
-    )
+    
+    async function isTypeAttachmentAccessible(dbName: string, gameId: string, type: string): Promise<boolean> {
+      const attachments = await window.api.database.getAllAttachmentNames(dbName, gameId)
+      return attachments.some(name => new RegExp(`^images/${type}\\.[^.]+$`, 'i').test(name))
+    }
+
+    const isIconAccessible = await isTypeAttachmentAccessible('game', gameId, 'icon')
+
     if (!isIconAccessible) {
-      await window.api.media.saveGameIconByFile(gameId, filePath)
+      await window.api.media.saveGameIconByFile(gameId, filePath, false)
     }
     if (!monitorPath) {
       toast.promise(
@@ -111,9 +114,6 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
 
   return (
     <Card className={cn('group')}>
-      <CardHeader>
-        <CardTitle>{t('detail.properties.path.title')}</CardTitle>
-      </CardHeader>
       <CardContent>
         <div className={cn('flex flex-col gap-5')}>
           {/* Path Setting */}

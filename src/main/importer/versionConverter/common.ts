@@ -403,7 +403,7 @@ async function processGameImages(gameId: string, gamePath: string): Promise<void
       if (exists) {
         try {
           const imageData = await fse.readFile(imagePath)
-          await GameDBManager.setGameImage(gameId, type as any, imageData)
+          await GameDBManager.setGameImage(gameId, type as any, imageData, false)
 
           imageFound = true
           console.log(`Processed ${type} image for game ${gameId}`)

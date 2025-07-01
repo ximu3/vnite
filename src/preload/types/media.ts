@@ -6,6 +6,6 @@ export interface MediaAPI {
     width: number
     height: number
   }): Promise<string>
-  saveGameIconByFile(gameId: string, filePath: string): Promise<void>
+  saveGameIconByFile(gameId: string, filePath: string, shouldCompress: boolean, compressFactor?: number): Promise<void>
   downloadTempImage(url: string): Promise<string>
 }

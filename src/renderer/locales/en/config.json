@@ -3,35 +3,63 @@
   "general": {
     "title": "General",
     "language": "Language",
-    "openAtLogin": "Open at Login",
-    "theme": "Theme Style",
+    "openAtLogin": "Open at login",
+    "theme": "Theme style",
     "darkTheme": "Dark",
     "lightTheme": "Light",
-    "followSystem": "Follow System",
-    "closeMainPanel": "Close Main Panel",
+    "followSystem": "Follow system",
+    "closeMainPanel": "Close main window",
     "action": "Action",
-    "quitApp": "Quit vnite",
-    "minimizeToTray": "Minimize to Tray",
+    "quitApp": "Exit vnite",
+    "minimizeToTray": "Minimize to tray",
     "hideWindowAfterGameStart": "Minimize to tray after game launch"
   },
   "appearances": {
     "title": "Appearances",
     "background": {
       "title": "Background",
-      "customBackground": "Custom Background",
-      "image": "Image",
-      "selectImage": "Select Image",
-      "currentBackground": "Current Background Image",
-      "noBackground": "No Background Image Set"
+      "typeBackground": "Type of background",
+      "seconds": "seconds",
+      "selectImage": "Select image(s)",
+      "timer": "Time between each image",
+      "source": {
+        "custom": "Custom",
+        "library": "Library"
+      },
+      "type":
+      {
+        "default": "Default",
+        "single": "Single",
+        "slideshow": "Slideshow"
+      },
+      "uploadImage":
+      {
+        "label": "Upload",
+        "allValidFormats": "All valid formats",
+        "notifications": {
+          "uploading": "Uploading",
+          "image": "image",
+          "images": "images",
+          "successSingle": "Background image uploaded successfully.",
+          "successMultiple": "Background images uploaded successfully.",
+          "failureSingle": "Failed to upload image.",
+          "failureMultiple": "Failed to upload images."
+        }
+      },
+      "currentBackground": "Current background image",
+      "noBackground": "No background image set",
+      "compression": {
+        "label": "Enable compression",
+        "factor": "Level of compression"
+      },
+      "settings":{
+        "blur": "Blur",
+        "opacity": "Opacity"
+      }
     },
     "showcase": {
       "title": "Showcase",
-      "showPlayButtonOnPoster": "Show Play Button on Poster"
-    },
-    "glass": {
-      "title": "Frosted Glass",
-      "blur": "Blur",
-      "opacity": "Opacity"
+      "showPlayButtonOnPoster": "Show Play button on poster"
     },
     "gameList": {
       "title": "Game List",
@@ -68,9 +96,10 @@
   },
   "theme": {
     "title": "Theme",
-    "saveButton": "Save Theme",
-    "presetThemes": "Preset Themes",
-    "searchTheme": "Search themes",
+    "themeEditor": "Theme editor",
+    "saveButton": "Save theme",
+    "presetThemes": "Preset themes",
+    "searchTheme": "Search",
     "noPresetFound": "No preset found",
     "presets": {
       "default": "Default",
@@ -104,7 +133,7 @@
     }
   },
   "cloudSync": {
-    "title": "CloudSync",
+    "title": "Cloud sync",
     "enable": "Enable",
     "syncMode": "Sync Mode",
     "modes": {
@@ -136,26 +165,26 @@
       "registerError": "Registration failed"
     },
     "official": {
-      "connectTitle": "Connect Cloud Storage",
+      "connectTitle": "Connect cloud storage",
       "connectDescription": "Login to enable cloud sync, get cross-device synchronization and data backup",
       "login": "Login",
       "register": "Register",
       "logout": "Logout",
-      "adminEdition": "Admin Edition",
-      "developerEdition": "Developer Edition",
-      "premiumEdition": "Premium Edition",
-      "communityEdition": "Community Edition",
+      "adminEdition": "Admin edition",
+      "developerEdition": "Developer edition",
+      "premiumEdition": "Premium edition",
+      "communityEdition": "Community edition",
       "lastSync": "Last sync",
       "notSynced": "Not synced yet",
       "connected": "Connected",
       "disconnected": "Disconnected",
-      "storage": "Storage Space",
+      "storage": "Storage space",
       "used": "used"
     },
     "selfHosted": {
       "title": "Self-hosted CouchDB",
       "description": "Configure your self-hosted CouchDB server to enable cross-device synchronization",
-      "serverAddress": "CouchDB Address",
+      "serverAddress": "CouchDB address",
       "username": "Username",
       "password": "Password",
       "info": "<couchdb>CouchDB</couchdb> is an open-source document database used for storing and syncing data"
@@ -170,15 +199,15 @@
     "title": "Scraper",
     "common": {
       "title": "Common",
-      "defaultDataSource": "Default Data Source"
+      "defaultDataSource": "Default data source"
     },
     "vndb": {
-      "title": "VNDB Settings",
-      "tagSpoilerLevel": "Tag Spoiler Level",
+      "title": "VNDB settings",
+      "tagSpoilerLevel": "Tag spoiler level",
       "tagSpoilerLevels": {
-        "none": "No Spoilers (0)",
-        "minor": "Minor Spoilers (1)",
-        "all": "All Spoilers (2)"
+        "none": "No spoilers (0)",
+        "minor": "Minor spoilers (1)",
+        "all": "All spoilers (2)"
       }
     },
     "dataSources": {
@@ -192,17 +221,17 @@
   },
   "database": {
     "title": "Database",
-    "portableMode": "Portable Mode",
+    "portableMode": "Portable mode",
     "modes": {
-      "portable": "Portable Mode",
-      "normal": "Normal Mode"
+      "portable": "Portable mode",
+      "normal": "Normal mode"
     },
     "confirmSwitch": "Are you sure you want to switch to {{mode}}?",
     "switchDescription": "The application will restart automatically after conversion.",
-    "openFolder": "Open Database Folder",
-    "backup": "Backup Database",
-    "import": "Import Database",
-    "importV2": "Import V2 Database",
+    "openFolder": "Open database folder",
+    "backup": "Backup database",
+    "import": "Import database",
+    "importV2": "Import V2 database",
     "confirmImport": "Are you sure you want to import the database?",
     "importWarning": "Importing a database will overwrite the current database. This operation is irreversible! The application will restart automatically after the operation.",
     "confirmImportV2": "Are you sure you want to import the V2 database?",
@@ -226,7 +255,7 @@
     "title": "About",
     "author": "Author",
     "version": "Version",
-    "repository": "Github Repository",
+    "repository": "Github repository",
     "feedback": "Feedback",
     "group": "Group",
     "prerelease": "Receive preview version updates"
@@ -235,9 +264,14 @@
     "title": "Metadata",
     "transformer": {
       "title": "Transformer",
-      "enable": "Enable Transformer",
-      "manage": "Manage Transformer Rules",
+      "enable": "Enable transformer",
+      "manage": "Manage transformer rules",
       "manageButton": "Manage"
+    },
+    "imageTransformer": {
+      "title": "Image conversion",
+      "enable": "Enable image conversion",
+      "factor": "Select percentage of compression"
     }
   }
 }

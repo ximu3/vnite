@@ -1,9 +1,8 @@
-import { cn } from '~/utils'
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
+import { cn, ipcOnUnique } from '~/utils'
+import { Card, CardContent } from '@ui/card'
 import { Button } from '@ui/button'
 import { Input } from '@ui/input'
 import { Switch } from '@ui/switch'
-import { ipcOnUnique } from '~/utils'
 import { toast } from 'sonner'
 import { useConfigLocalState } from '~/hooks'
 import { RadioGroup, RadioGroupItem } from '@ui/radio-group'
@@ -18,10 +17,9 @@ import {
 } from '@ui/dropdown-menu'
 import { User, LogOut, HardDrive, Cloud, Key, InfoIcon } from 'lucide-react'
 import { Link } from '@ui/link'
-import { useTranslation } from 'react-i18next'
+import { useTranslation, Trans } from 'react-i18next'
 import { useCloudSyncStore } from './store'
 import { ROLE_QUOTAS } from '@appTypes/sync'
-import { Trans } from 'react-i18next'
 
 export function CloudSync(): JSX.Element {
   const { t } = useTranslation('config')
@@ -46,7 +44,7 @@ export function CloudSync(): JSX.Element {
 
   const [storagePercentage, setStoragePercentage] = useState(0)
 
-  // Getting Storage Usage
+  //Getting storage usage
   useEffect(() => {
     if (enabled && userName) {
       const fetchStorageInfo = async (): Promise<void> => {
@@ -64,7 +62,7 @@ export function CloudSync(): JSX.Element {
     }
   }, [enabled, userName, t])
 
-  // Calculate storage percentage
+  //Calculate storage percentage
   useEffect(() => {
     if (totalQuota > 0) {
       setStoragePercentage((usedQuota / totalQuota) * 100)
@@ -83,7 +81,7 @@ export function CloudSync(): JSX.Element {
     })
   }, [])
 
-  // Formatted Storage Size
+  //Formatted storage size
   const formatStorage = (bytes: number): string => {
     if (bytes === 0) return '0 B'
 
@@ -188,7 +186,7 @@ export function CloudSync(): JSX.Element {
                         <span
                           className={cn(
                             'inline-block w-2 h-2 mr-3 rounded-lg',
-                            'bg-accent animate-pulse'
+                            'bg-accent animate-pulse select-none'
                           )}
                         ></span>
                         <div>{t('cloudSync.status.syncing')}</div>
@@ -197,7 +195,7 @@ export function CloudSync(): JSX.Element {
                       <div className={cn('flex flex-row items-center')}>
                         <span
                           className={cn(
-                            'inline-block w-2 h-2 mr-3 rounded-lg text-center',
+                            'inline-block w-2 h-2 mr-3 rounded-lg text-center select-none',
                             'bg-primary'
                           )}
                         ></span>
@@ -206,7 +204,7 @@ export function CloudSync(): JSX.Element {
                     ) : (
                       <div className={cn('flex flex-row gap-1 items-center')}>
                         <span
-                          className={cn('inline-block w-2 h-2 mr-3 rounded-lg', 'bg-destructive')}
+                          className={cn('inline-block w-2 h-2 mr-3 rounded-lg select-none', 'bg-destructive')}
                         ></span>
                         <div>{t('cloudSync.status.error')}</div>
                       </div>
@@ -216,28 +214,21 @@ export function CloudSync(): JSX.Element {
               </div>
               <div>|</div>
               <div className={cn('flex flex-row gap-2 items-center')}>
-                <div className={cn('truncate')}>{status.message}</div>
+                <div className={cn('truncate select-none')}>{status.message}</div>
               </div>
               <div>|</div>
               <div className={cn('flex flex-row gap-2 items-center')}>
-                <div className={cn('')}>
+                <div className={cn('select-none')}>
                   {t('{{date, niceDateSeconds}}', { date: status.timestamp })}
                 </div>
               </div>
             </div>
           ) : (
-            <div className={cn('text-xs')}>{t('cloudSync.status.noInfo')}</div>
+            <div className={cn('text-xs select-none')}>{t('cloudSync.status.noInfo')}</div>
           )}
         </Card>
       )}
       <Card className={cn('group')}>
-        <CardHeader>
-          <CardTitle className={cn('relative')}>
-            <div className={cn('flex flex-row justify-between items-center')}>
-              <div className={cn('flex items-center')}>{t('cloudSync.title')}</div>
-            </div>
-          </CardTitle>
-        </CardHeader>
         <CardContent className={cn('')}>
           <div className={cn('space-y-5')}>
             {/* Enable/Disable Switch */}
@@ -262,7 +253,7 @@ export function CloudSync(): JSX.Element {
                     {t('cloudSync.syncMode')}
                   </div>
                   <RadioGroup
-                    className="flex flex-row gap-4"
+                    className="flex flex-row gap-4 select-none"
                     value={syncMode}
                     onValueChange={setSyncMode}
                   >
@@ -284,7 +275,7 @@ export function CloudSync(): JSX.Element {
               <div className={cn('flex flex-col gap-4')}>
                 {!userName ? (
                   <div
-                    className={cn('flex flex-col gap-3 items-center p-6 bg-muted/30 rounded-lg')}
+                    className={cn('flex flex-col gap-3 items-center p-6 bg-muted/30 rounded-lg select-none')}
                   >
                     <Cloud size={40} className="mb-2 text-primary" />
                     <h3 className="text-lg font-medium">{t('cloudSync.official.connectTitle')}</h3>
@@ -441,7 +432,7 @@ export function CloudSync(): JSX.Element {
                         />
                       </div>
 
-                      <div className="col-span-2 pt-2 text-xs text-muted-foreground">
+                      <div className="col-span-2 pt-2 text-xs text-muted-foreground select-none">
                         <p className="flex items-center gap-1">
                           <InfoIcon className="w-3.5 h-3.5" />
                           <span>

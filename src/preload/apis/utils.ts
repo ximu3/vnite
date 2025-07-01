@@ -8,21 +8,21 @@ export const utilsAPI = {
 
   async selectPathDialog(
     properties: NonNullable<OpenDialogOptions['properties']>,
-    extensions?: string[],
+    filters?: { name: string, extensions: string[] }[],
     defaultPath?: string
   ): Promise<string> {
-    return await ipcRenderer.invoke('select-path-dialog', properties, extensions, defaultPath)
+    return await ipcRenderer.invoke('select-path-dialog', properties, filters, defaultPath)
   },
 
   async selectMultiplePathDialog(
     properties: NonNullable<OpenDialogOptions['properties']>,
-    extensions?: string[],
+    filters?: { name: string, extensions: string[] }[],
     defaultPath?: string
   ): Promise<string[]> {
     return await ipcRenderer.invoke(
       'select-multiple-path-dialog',
       properties,
-      extensions,
+      filters,
       defaultPath
     )
   },
