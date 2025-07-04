@@ -75,7 +75,8 @@
     "noResults": "No presets found"
   },
   "transformerItem": {
-    "rulesCount": "{{count}} rules",
+    "rulesCount": "{{count}} rule",
+    "rulesCount_other": "{{count}} rules",
     "tooltips": {
       "apply": "Apply",
       "edit": "Edit",

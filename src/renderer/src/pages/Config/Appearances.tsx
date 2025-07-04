@@ -73,6 +73,10 @@ export function Appearances(): JSX.Element {
 
   async function setBackgroundImage(): Promise<void> {
     const filters = [
+      {
+        name: `${t('appearances.background.uploadImage.allValidFormats')}`,
+        extensions: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg', 'tiff', 'avif', 'ico']
+      },
       { name: 'JPEG', extensions: ['jpg', 'jpeg'] },
       { name: 'PNG', extensions: ['png'] },
       { name: 'WebP', extensions: ['webp'] },
@@ -80,11 +84,7 @@ export function Appearances(): JSX.Element {
       { name: 'SVG', extensions: ['svg'] },
       { name: 'TIFF', extensions: ['tiff'] },
       { name: 'AVIF', extensions: ['avif'] },
-      { name: 'ICO', extensions: ['ico'] },
-      {
-        name: `${t('appearances.background.uploadImage.allValidFormats')}`,
-        extensions: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg', 'tiff', 'avif', 'ico']
-      }
+      { name: 'ICO', extensions: ['ico'] }
     ]
 
     if (customBackgroundMode === 'single') {
@@ -92,8 +92,7 @@ export function Appearances(): JSX.Element {
       if (!filePath) return
 
       const toastBackgroundImageUpload = toast.loading(
-        `${t('appearances.background.uploadImage.notifications.uploading')}
-       ${t('appearances.background.uploadImage.notifications.image')}...`,
+        `${t('appearances.background.uploadImage.notifications.uploading', { count: 1 })}`,
         { className: 'select-none' }
       )
       try {
@@ -102,13 +101,13 @@ export function Appearances(): JSX.Element {
           compressionBackgroundImageStatus,
           compressionBackgroundImageFactor
         )
-        toast.success(`${t('appearances.background.uploadImage.notifications.successSingle')}`, {
+        toast.success(`${t('appearances.background.uploadImage.notifications.success')}`, {
           id: toastBackgroundImageUpload
         })
         setReloadBackgroundPreview((x) => x + 1)
         triggerBackgroundRefresh()
       } catch (_e) {
-        toast.error(`${t('appearances.background.uploadImage.notifications.failureSingle')}`, {
+        toast.error(`${t('appearances.background.uploadImage.notifications.failure')}`, {
           id: toastBackgroundImageUpload
         })
       }
@@ -120,8 +119,7 @@ export function Appearances(): JSX.Element {
       if (!filePaths || filePaths.length === 0) return
 
       const toastBackgroundImageUpload = toast.loading(
-        `${t('appearances.background.uploadImage.notifications.uploading')} ${filePaths.length}
-       ${t('appearances.background.uploadImage.notifications.images')}...`,
+        `${t('appearances.background.uploadImage.notifications.uploading', { count: filePaths.length })}`,
         { className: 'select-none' }
       )
       try {
@@ -130,15 +128,21 @@ export function Appearances(): JSX.Element {
           compressionBackgroundImageStatus,
           compressionBackgroundImageFactor
         )
-        toast.success(`${t('appearances.background.uploadImage.notifications.successMultiple')}`, {
-          id: toastBackgroundImageUpload
-        })
+        toast.success(
+          `${t('appearances.background.uploadImage.notifications.success', { count: filePaths.length })}`,
+          {
+            id: toastBackgroundImageUpload
+          }
+        )
         setReloadBackgroundPreview((x) => x + 1)
         triggerBackgroundRefresh()
       } catch (_e) {
-        toast.error(`${t('appearances.background.uploadImage.notifications.failureMultiple')}`, {
-          id: toastBackgroundImageUpload
-        })
+        toast.error(
+          `${t('appearances.background.uploadImage.notifications.failure', { count: filePaths.length })}`,
+          {
+            id: toastBackgroundImageUpload
+          }
+        )
       }
     }
   }

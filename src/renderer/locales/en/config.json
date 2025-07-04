@@ -26,24 +26,21 @@
         "custom": "Custom",
         "library": "Library"
       },
-      "type":
-      {
+      "type": {
         "default": "Default",
         "single": "Single",
         "slideshow": "Slideshow"
       },
-      "uploadImage":
-      {
+      "uploadImage": {
         "label": "Upload",
         "allValidFormats": "All valid formats",
         "notifications": {
-          "uploading": "Uploading",
-          "image": "image",
-          "images": "images",
-          "successSingle": "Background image uploaded successfully.",
-          "successMultiple": "Background images uploaded successfully.",
-          "failureSingle": "Failed to upload image.",
-          "failureMultiple": "Failed to upload images."
+          "uploading": "Uploading image",
+          "uploading_other": "Uploading {{count}} images",
+          "success": "Background image uploaded successfully.",
+          "success_other": "Background images uploaded successfully.",
+          "failure": "Failed to upload image.",
+          "failure_other": "Failed to upload images."
         }
       },
       "currentBackground": "Current background image",
@@ -52,7 +49,7 @@
         "label": "Enable compression",
         "factor": "Level of compression"
       },
-      "settings":{
+      "settings": {
         "blur": "Blur",
         "opacity": "Opacity"
       }
