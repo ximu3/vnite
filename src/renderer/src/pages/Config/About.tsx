@@ -1,5 +1,5 @@
 import { cn } from '~/utils'
-import { Card, CardContent } from '@ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { Separator } from '@ui/separator'
 import { Link } from '@ui/link'
 import { Button } from '@ui/button'
@@ -27,15 +27,22 @@ export function About(): JSX.Element {
 
   return (
     <Card className={cn('group')}>
+      <CardHeader>
+        <CardTitle className={cn('relative')}>
+          <div className={cn('flex flex-row justify-between items-center')}>
+            <div className={cn('flex items-center')}>{t('about.title')}</div>
+          </div>
+        </CardTitle>
+      </CardHeader>
       <CardContent>
-        <div className={cn('grid grid-cols-[auto_1fr] gap-5 items-center select-none')}>
-          {/* Author information */}
+        <div className={cn('grid grid-cols-[auto_1fr] gap-5 items-center')}>
+          {/* Author Information */}
           <div className={cn('whitespace-nowrap select-none')}>{t('about.author')}</div>
           <div className={cn('flex justify-end')}>
             <Link name="ximu" url="https://github.com/ximu3" />
           </div>
 
-          {/* Version information */}
+          {/* version information */}
           <div className={cn('whitespace-nowrap select-none')}>{t('about.version')}</div>
           <div className={cn('flex justify-end gap-2 text-sm items-center')}>
             <div>{version}</div>
@@ -57,7 +64,7 @@ export function About(): JSX.Element {
             </Button>
           </div>
 
-          {/* Repository link */}
+          {/* Warehouse Links */}
           <div className={cn('whitespace-nowrap select-none')}>{t('about.repository')}</div>
           <div className={cn('flex justify-end')}>
             <Link
@@ -71,13 +78,13 @@ export function About(): JSX.Element {
             <Separator />
           </div>
 
-          {/* Feedback link */}
+          {/* Feedback Links */}
           <div className={cn('whitespace-nowrap select-none')}>{t('about.feedback')}</div>
           <div className={cn('flex justify-end')}>
             <Link name="Github Issue" url="https://github.com/ximu3/vnite/issues" />
           </div>
 
-          {/* Social media links */}
+          {/* group link */}
           <div className={cn('whitespace-nowrap select-none')}>{t('about.group')}</div>
           <div className={cn('flex justify-end')}>
             <Link name="Telegram" url="https://t.me/+d65-R_xRx1JlYWZh" />

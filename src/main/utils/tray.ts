@@ -1,7 +1,7 @@
 import { app, Tray, Menu, nativeImage, BrowserWindow } from 'electron'
 import { GameDBManager, ConfigDBManager } from '~/database'
 import { shell } from 'electron'
-import { convertImage } from '~/media'
+import { convertToPng } from '~/media'
 import icon from '../../../resources/icon.png?asset'
 import i18next from 'i18next'
 
@@ -164,7 +164,7 @@ export class TrayManager {
           const game = gameDocs[gameId]
           let icon = await GameDBManager.getGameImage(gameId, 'icon')
           if (icon) {
-            icon = await convertImage(icon, 'png')
+            icon = await convertToPng(icon)
           }
 
           return {

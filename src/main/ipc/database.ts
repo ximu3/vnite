@@ -15,10 +15,6 @@ export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
     return await DBManager.setValue(change.dbName, change.docId, '#all', change.data)
   })
 
-  ipcMain.handle('list-attachment-names', async (_event, dbName, docId) => {
-    return await DBManager.listAttachmentNames(dbName, docId)
-  })
-
   ipcMain.handle('db-get-all-docs', async (_event, dbName: string) => {
     return await DBManager.getAllDocs(dbName)
   })
@@ -51,13 +47,9 @@ export function setupDatabaseIPC(mainWindow: BrowserWindow): void {
     return await getCouchDbSize(username)
   })
 
-  ipcMain.handle('set-config-background', async (_, paths: string[], shouldCompress: boolean, compressFactor?: number) => {
-    return await ConfigDBManager.setConfigBackgroundImages(paths, shouldCompress, compressFactor)
+  ipcMain.handle('set-config-background', async (_, path: string) => {
+    return await ConfigDBManager.setConfigBackgroundImage(path)
   })
-
-  ipcMain.handle('get-config-background', async (_event, format = 'buffer', namesOnly = false) => {
-    return await ConfigDBManager.getConfigBackgroundImage(format, namesOnly);
-  });
 
   mainWindow.webContents.send('databaseIPCReady')
 }

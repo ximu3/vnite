@@ -4,12 +4,12 @@ export interface UtilsAPI {
   generateUUID(): Promise<string>
   selectPathDialog(
     properties: NonNullable<OpenDialogOptions['properties']>,
-    filters?: { name: string, extensions: string[] }[],
+    extensions?: string[],
     defaultPath?: string
   ): Promise<string>
   selectMultiplePathDialog(
     properties: NonNullable<OpenDialogOptions['properties']>,
-    filters?: { name: string, extensions: string[] }[],
+    extensions?: string[],
     defaultPath?: string
   ): Promise<string[]>
   getPathSize(paths: string[]): Promise<number>

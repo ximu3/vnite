@@ -60,12 +60,7 @@ export interface configDocs {
       showNSFWBlurSwitcher: boolean
     }
     background: {
-      compression: {
-        enabled: boolean,
-        factor: number
-      },
-      customBackgroundMode: string
-      timerBackground: number
+      customBackground: boolean
     }
     showcase: {
       showPlayButtonOnPoster: boolean
@@ -152,10 +147,6 @@ export interface configDocs {
         }
       }[]
     }
-    imageTransformer: {
-      enabled: boolean
-      factor: number
-    }
   }
 }
 
@@ -215,7 +206,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
   general: {
     openAtLogin: false,
     quitToTray: false,
-    language: 'English',
+    language: '',
     hideWindowAfterGameStart: true
   },
   game: {
@@ -258,12 +249,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       showNSFWBlurSwitcher: true
     },
     background: {
-      compression: {
-        enabled: true,
-        factor: 100
-      },
-      customBackgroundMode: 'default',
-      timerBackground: 5,
+      customBackground: false
     },
     showcase: {
       showPlayButtonOnPoster: true
@@ -312,10 +298,6 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
           }
         }
       ]
-    },
-    imageTransformer: {
-      enabled: false,
-      factor: 100
     }
   }
 } as const

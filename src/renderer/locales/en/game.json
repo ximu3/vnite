@@ -351,11 +351,12 @@
         "media": "Media"
       },
       "path": {
-        "gamePath": "Game path",
-        "savePath": "Save path",
-        "addFolder": "Add folder",
-        "addFile": "Add file",
-        "maxBackups": "Maximum save backups",
+        "title": "Game & Save",
+        "gamePath": "Game Path",
+        "savePath": "Save Path",
+        "addFolder": "Add Folder",
+        "addFile": "Add File",
+        "maxBackups": "Maximum Save Backups",
         "notifications": {
           "configuring": "Configuring preset…",
           "success": "Preset configured successfully"
@@ -378,22 +379,22 @@
         "actions": {
           "adjust": "Adjust",
           "set": "Set",
-          "importFromFile": "Import from file",
+          "importFromFile": "Import from File",
           "importFromUrl": "Import from URL",
-          "searchImage": "Search image",
-          "cropImage": "Crop image",
-          "deleteImage": "Delete image"
+          "searchImage": "Search Image",
+          "cropImage": "Crop Image",
+          "deleteImage": "Delete Image"
         },
         "search": {
-          "title": "Search images",
-          "dataSource": "Data source",
-          "searchTitle": "Search title"
+          "title": "Search Images",
+          "dataSource": "Data Source",
+          "searchTitle": "Search Title"
         },
         "url": {
           "empty": "Please enter a link address"
         },
         "crop": {
-          "title": "Adjust image size",
+          "title": "Adjust Image Size",
           "size": "{{width}} × {{height}} px"
         },
         "notifications": {
@@ -416,53 +417,50 @@
           "cropError": "Crop failed",
           "cropIncomplete": "Crop incomplete",
           "deleting": "Deleting…",
-          "deleteSuccess": "Deletion successful",
-          "deleteError": "Deletion failed"
-        },
-        "upload": {
-          "allValidFormats": "All valid formats"
+          "deleteSuccess": "Delete successful",
+          "deleteError": "Delete failed"
         }
       },
       "launcher": {
-        "title": "Launcher & tracker",
+        "title": "Launcher & Tracker",
         "setGamePathFirst": "Please set game path first",
         "mode": {
-          "title": "Launch mode",
+          "title": "Launch Mode",
           "file": "File",
           "url": "URL",
           "script": "Script"
         },
         "monitor": {
-          "title": "Tracking mode",
+          "title": "Tracking Mode",
           "mode": {
             "folder": "Folder",
             "file": "File",
             "process": "Process"
           },
-          "path": "Tracking path",
-          "processName": "Process name"
+          "path": "Tracking Path",
+          "processName": "Process Name"
         },
         "file": {
-          "path": "File path",
-          "workingDirectory": "Working directory"
+          "path": "File Path",
+          "workingDirectory": "Working Directory"
         },
         "script": {
-          "content": "Script content",
-          "workingDirectory": "Working directory"
+          "content": "Script Content",
+          "workingDirectory": "Working Directory"
         },
         "url": {
-          "address": "URL address",
+          "address": "URL Address",
           "browser": "Browser",
-          "defaultBrowser": "System default browser"
+          "defaultBrowser": "System Default Browser"
         },
         "magpie": {
-          "scaling": "Magpie scaling",
+          "scaling": "Magpie Scaling",
           "pathNotSet": "Please set Magpie path first"
         },
         "preset": {
-          "title": "Preset configuration",
-          "search": "Search",
-          "default": "Default configuration",
+          "title": "Preset Configuration",
+          "search": "Search Configuration",
+          "default": "Default Configuration",
           "le": "LE Region Launch",
           "steam": "Steam Launch",
           "vba": "VBA Launch",

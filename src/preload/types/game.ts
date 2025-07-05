@@ -2,9 +2,7 @@ export interface GameAPI {
   setGameImage(
     gameId: string,
     type: 'background' | 'cover' | 'logo' | 'icon',
-    image: string,
-    shouldCompress: boolean,
-    compressFactor?: number
+    image: string
   ): Promise<void>
   deleteGameSave(gameId: string, saveId: string): Promise<void>
   restoreGameSave(gameId: string, saveId: string): Promise<void>

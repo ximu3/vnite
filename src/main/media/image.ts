@@ -2,11 +2,11 @@ import sharp from 'sharp'
 import ico from 'sharp-ico'
 import { getAppTempPath } from '~/utils'
 import { GameDBManager } from '~/database'
-import { app, net } from 'electron'
-import * as fse from 'fs-extra'
+import { app } from 'electron'
+import { net } from 'electron'
+import fse from 'fs-extra'
 import { fileTypeFromBuffer } from 'file-type'
 import { gis } from '~/utils'
-import path from 'path'
 
 /**
  * Search game related images
@@ -35,66 +35,97 @@ export async function searchGameImages(
   }
 }
 
-export async function getImage(input: Buffer | string): Promise<Buffer>
-{
-  try
-  {
+export async function convertToWebP(
+  input: Buffer | string,
+  options: { quality?: number; animated?: boolean } = {}
+): Promise<Buffer> {
+  try {
+    sharp.cache(false)
+
     // Handles cases where the input is a URL
-    if (typeof input === 'string' && (input.startsWith('http://') || input.startsWith('https://'))) {
+    let imageBuffer: Buffer
+    if (typeof input === 'string' && input.startsWith('http')) {
       const response = await net.fetch(input)
       if (!response.ok) {
         throw new Error(`Failed to fetch image: ${response.statusText}`)
       }
-      return Buffer.from(await response.arrayBuffer())
+      imageBuffer = Buffer.from(await response.arrayBuffer())
     } else if (typeof input === 'string') {
       // If it is a local file path
-      return await fse.readFile(input)
+      imageBuffer = await fse.readFile(input)
     } else {
       // If it is already Buffer
-      return input
+      imageBuffer = input
     }
-  }
-  catch (error)
-  {
-    console.error('Error getting image:', error)
+
+    const isIco = isIcoFormat(imageBuffer)
+
+    if (isIco) {
+      // Handling ICO files with sharp-ico
+      // Get the largest size image in the ICO as a conversion source
+      const sharpInstances = ico.sharpsFromIco(imageBuffer) as sharp.Sharp[]
+
+      if (sharpInstances.length === 0) {
+        throw new Error('No valid images found in ICO file')
+      }
+
+      // Select the image with the highest resolution (usually the first one in the ICO file)
+      const largestIcon = sharpInstances[0]
+
+      // Convert to WebP
+      return await largestIcon
+        .webp({
+          quality: options.quality ?? 100
+        })
+        .toBuffer()
+    }
+
+    const metadata = await sharp(imageBuffer).metadata()
+
+    let isAnimated = false
+    if (metadata?.pages && metadata.pages > 1) {
+      isAnimated = true
+    }
+
+    return await sharp(imageBuffer, {
+      animated: isAnimated && (options.animated ?? true),
+      limitInputPixels: false
+    })
+      .webp({
+        quality: options.quality ?? 100
+      })
+      .toBuffer()
+  } catch (error) {
+    console.error('Error converting image to WebP:', error)
     throw error
   }
 }
 
-export async function convertImage(
-  input: Buffer | string,
-  extension, //'jpg' | 'jpeg' | 'png' | 'webp' | 'gif' | 'avif' | 'svg' | 'tiff'
-  options: { quality?: number; animated?: boolean } = {}
-): Promise<Buffer> {
+export async function convertToPng(input: Buffer | string): Promise<Buffer> {
+  try {
+    sharp.cache(false)
 
-  sharp.cache(false)
-  const imageBuffer = await getImage(input)
+    // Handles cases where the input is a URL
+    let imageBuffer: Buffer
+    if (typeof input === 'string' && input.startsWith('http')) {
+      const response = await net.fetch(input)
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.statusText}`)
+      }
+      imageBuffer = Buffer.from(await response.arrayBuffer())
+    } else if (typeof input === 'string') {
+      // If it is a local file path
+      imageBuffer = await fse.readFile(input)
+    } else {
+      // If it is already Buffer
+      imageBuffer = input
+    }
 
-  // Create a mutable copy of options to adjust quality
-  const formatOptions = { ...options };
-  if (formatOptions.quality != null) {
-    const inverted = 100 - formatOptions.quality
-
-    //The possible range of values are between 1 and 100 that sharp and sharp-ico can accept
-    formatOptions.quality = Math.max(1, Math.min(inverted, 99))
+    return await sharp(imageBuffer).png().toBuffer()
+  } catch (error) {
+    console.error('Error converting image to PNG:', error)
+    throw error
   }
-
-  //Handle .ico files specially (sharp does not support .ico files)
-  if (isIcoFormat(imageBuffer)) {
-    const sharpInstances = ico.sharpsFromIco(imageBuffer) as sharp.Sharp[]
-    if (!sharpInstances.length) throw new Error('Invalid .ico file selected')
-    const largestIcon = sharpInstances[0]
-    return await largestIcon.toFormat(extension, formatOptions).toBuffer()
-  }
-  const metadata = await sharp(imageBuffer).metadata()
-  const isAnimated = Boolean(metadata?.pages && metadata.pages > 1)
-
-  const sharpOptions: sharp.SharpOptions = {
-    animated: isAnimated && (options.animated ?? true),
-    limitInputPixels: false
-  }
-
-  return await sharp(imageBuffer, sharpOptions).toFormat(extension, formatOptions).toBuffer()
 }
 
 function isIcoFormat(buffer: Buffer): boolean {
@@ -119,12 +150,19 @@ export async function cropImage({
   height: number
 }): Promise<string> {
   try {
-    const ext = path.extname(sourcePath).slice(1)
-    const tempPath = getAppTempPath(`cropped_${Date.now()}.${ext}`)
+    const tempPath = getAppTempPath(`cropped_${Date.now()}.webp`)
     sharp.cache(false)
-    const sharpBuffer = await convertImage(sourcePath, ext) //We do obtain the buffer to avoid having to deal with .ICO resizing issues
-    await sharp(sharpBuffer)
+    const metadata = await sharp(sourcePath).metadata()
+    let isAnimated = false
+    if (metadata?.pages && metadata.pages > 1) {
+      isAnimated = true
+    }
+    await sharp(sourcePath, { animated: isAnimated, limitInputPixels: false })
       .extract({ left: x, top: y, width, height })
+      .webp({
+        effort: 6,
+        lossless: true
+      })
       .toFile(tempPath)
     return tempPath
   } catch (error) {
@@ -133,16 +171,15 @@ export async function cropImage({
   }
 }
 
-export async function saveGameIconByFile(gameId: string, filePath: string, shouldCompress: boolean, compressFactor?: number): Promise<void> {
+export async function saveGameIconByFile(gameId: string, filePath: string): Promise<void> {
   try {
     // Get file icon
     const icon = await app.getFileIcon(filePath)
 
-    if (shouldCompress === true && compressFactor !== null)
-      await GameDBManager.setGameImage(gameId, 'icon', icon.toPNG(), true, compressFactor)
-    else
-      await GameDBManager.setGameImage(gameId, 'icon', icon.toPNG(), false)
-    console.log('Save icon successful:', filePath)
+    // Save icon
+    await GameDBManager.setGameImage(gameId, 'icon', icon.toPNG())
+
+    console.log('Save Icon Successful:', filePath)
   } catch (error) {
     console.error('Failed to save icon:', error)
     throw error

@@ -1,5 +1,5 @@
-import { cn, ipcSend } from '~/utils'
-import { Card, CardContent } from '@ui/card'
+import { cn } from '~/utils'
+import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { Separator } from '@ui/separator'
 import { Button } from '@ui/button'
 import {
@@ -14,6 +14,7 @@ import {
   AlertDialogTrigger
 } from '@ui/alert-dialog'
 import { Switch } from '@ui/switch'
+import { ipcSend } from '~/utils'
 import { toast } from 'sonner'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -112,9 +113,16 @@ export function Database(): JSX.Element {
 
   return (
     <Card className={cn('group')}>
+      <CardHeader>
+        <CardTitle className={cn('relative')}>
+          <div className={cn('flex flex-row justify-between items-center')}>
+            <div className={cn('flex items-center')}>{t('database.title')}</div>
+          </div>
+        </CardTitle>
+      </CardHeader>
       <CardContent>
         <div className={cn('space-y-5 w-full')}>
-          {/* Portable mode toggle */}
+          {/* Portable Mode Setting */}
           <div className={cn('grid grid-cols-[1fr_auto] gap-5 items-center')}>
             <div className={cn('whitespace-nowrap select-none')}>{t('database.portableMode')}</div>
             <Switch
@@ -155,10 +163,10 @@ export function Database(): JSX.Element {
             </AlertDialog>
           </div>
 
-          <Separator/>
+          <Separator />
 
-          {/* Various buttons */}
-          <div className={cn('grid grid-cols-1 gap-5 select-none')}>
+          {/* push button */}
+          <div className={cn('grid grid-cols-1 gap-5')}>
             <div className={cn('flex flex-row gap-5 items-center')}>
               <Button
                 variant={'outline'}

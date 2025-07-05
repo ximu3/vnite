@@ -24,8 +24,8 @@ export function setupMediaIPC(mainWindow: BrowserWindow): void {
     }
   )
 
-  ipcMain.handle('save-game-icon-by-file', async (_, gameId: string, filePath: string, shouldCompress: boolean, compressFactor?: number) => {
-    return await saveGameIconByFile(gameId, filePath, shouldCompress, compressFactor)
+  ipcMain.handle('save-game-icon-by-file', async (_, gameId: string, filePath: string) => {
+    return await saveGameIconByFile(gameId, filePath)
   })
 
   ipcMain.handle('download-temp-image', async (_, url: string) => {

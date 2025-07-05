@@ -63,26 +63,24 @@ export function setupUtilsIPC(mainWindow: BrowserWindow): void {
   ipcMain.handle(
     'select-path-dialog',
     async (
-      event,
+      _,
       properties: NonNullable<OpenDialogOptions['properties']>,
-      filters?: { name: string, extensions: string[] }[],
+      extensions?: string[],
       defaultPath?: string
     ) => {
-      const win = BrowserWindow.fromWebContents(event.sender) || undefined
-      return await selectPathDialog(properties, filters, defaultPath, win)
+      return await selectPathDialog(properties, extensions, defaultPath)
     }
   )
 
   ipcMain.handle(
     'select-multiple-path-dialog',
     async (
-      event,
+      _,
       properties: NonNullable<OpenDialogOptions['properties']>,
-      filters?: { name: string, extensions: string[] }[],
+      extensions?: string[],
       defaultPath?: string
     ) => {
-      const win = BrowserWindow.fromWebContents(event.sender) || undefined
-      return await selectMultiplePathDialog(properties, filters, defaultPath, win)
+      return await selectMultiplePathDialog(properties, extensions, defaultPath)
     }
   )
 

@@ -36,7 +36,7 @@ export function Showcase(): JSX.Element {
           <div>
             <span className={cn('icon-[mdi--gamepad-variant] w-[60px] h-[60px]')}></span>
           </div>
-          <div className={cn('text-2xl font-bold -mt-2 select-none')}>{t('showcase.welcome')}</div>
+          <div className={cn('text-2xl font-bold -mt-2')}>{t('showcase.welcome')}</div>
           <Button
             variant={'outline'}
             className={cn('mt-4')}

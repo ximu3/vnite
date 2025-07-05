@@ -4,7 +4,7 @@ import { GameImage } from '@ui/game-image'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { useGameState, useConfigState } from '~/hooks'
+import { useGameState } from '~/hooks'
 import { cn } from '~/utils'
 import { CropDialog } from './CropDialog'
 import { SearchMediaDialog } from './SearchMediaDialog'
@@ -35,64 +35,28 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
 
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false)
   const [searchType, setSearchType] = useState<'cover' | 'background' | 'icon' | 'logo'>('cover')
+
   const [originalName] = useGameState(gameId, 'metadata.originalName')
-
-  //Global variables used to know when to compress the metadata images
-  const [imageTransformerStatus] = useConfigState('metadata.imageTransformer.enabled')
-  const [imageTransformerFactor] = useConfigState('metadata.imageTransformer.factor')
-
-  //Global variable to let the GameImage component to update the image source
-  const [refreshKey, setRefreshKey] = useState(0)
 
   // Processing file selection
   async function handleFileSelect(type: 'cover' | 'background' | 'icon' | 'logo'): Promise<void> {
     try {
-      // Define the base image filters
-      const imageFilters = [
-        { name: 'JPEG', extensions: ['jpg', 'jpeg'] },
-        { name: 'PNG', extensions: ['png'] },
-        { name: 'WebP', extensions: ['webp'] },
-        { name: 'GIF', extensions: ['gif'] },
-        { name: 'SVG', extensions: ['svg'] },
-        { name: 'TIFF', extensions: ['tiff'] },
-        { name: 'AVIF', extensions: ['avif'] },
-        { name: 'ICO', extensions: ['ico'] }
-      ]
-
-      // Add EXE filter for icons
-      const filters = type === 'icon'
-        ? [
-            ...imageFilters,
-            { name: 'EXE', extensions: ['exe'] },
-            {
-              name: t('detail.properties.media.upload.allValidFormats'),
-              extensions: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg', 'tiff', 'avif', 'ico', 'exe']
-            }
-          ]
-        : [
-            ...imageFilters,
-            {
-              name: t('detail.properties.media.upload.allValidFormats'),
-              extensions: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg', 'tiff', 'avif', 'ico']
-            }
-          ]
-
-      const filePath: string = await window.api.utils.selectPathDialog(['openFile'], filters)
+      const filePath: string = await window.api.utils.selectPathDialog(['openFile'])
       if (!filePath) return
-      
-      if (filePath.endsWith('.exe') && type === 'icon'){
-        await window.api.media.saveGameIconByFile(gameId, filePath, imageTransformerStatus, imageTransformerFactor)
-        setRefreshKey(k => k + 1)
-        return
-      }
-      else{
-        await window.api.game.setGameImage(gameId, type, filePath, imageTransformerStatus, imageTransformerFactor)
-        setRefreshKey(k => k + 1)
+
+      if (filePath.endsWith('.exe') && type == 'icon') {
+        await window.api.game.setGameImage(gameId, type, filePath)
         return
       }
 
+      setCropDialogState({
+        isOpen: true,
+        type,
+        imagePath: filePath,
+        isResizing: false
+      })
     } catch (error) {
-      toast.error(t('detail.properties.media.notifications.fileSelectError', { error }));
+      toast.error(t('detail.properties.media.notifications.fileSelectError', { error }))
     }
   }
 
@@ -125,9 +89,12 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
         if (!URL.trim()) return
 
         const tempFilePath = await window.api.media.downloadTempImage(URL.trim())
-        await window.api.game.setGameImage(gameId, type, tempFilePath, imageTransformerStatus, imageTransformerFactor)
-        setRefreshKey(k => k + 1)
-        return
+        setCropDialogState({
+          isOpen: true,
+          type,
+          imagePath: tempFilePath as string,
+          isResizing: false
+        })
       },
       {
         loading: t('detail.properties.media.notifications.downloading'),
@@ -151,8 +118,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
 
     toast.promise(
       async () => {
-        await window.api.game.setGameImage(gameId, type, filePath, false) //To avoid problems where an user might have the compressor set to on
-        setRefreshKey(k => k + 1)
+        await window.api.game.setGameImage(gameId, type, filePath)
       },
       {
         loading: t('detail.properties.media.notifications.processing', {
@@ -178,7 +144,6 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
     toast.promise(
       async () => {
         await window.api.game.removeGameMedia(gameId, type)
-        setRefreshKey(k => k + 1)
       },
       {
         loading: t('detail.properties.media.notifications.deleting', {
@@ -197,8 +162,11 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
   }
 
   // Media Control Button Component
-  const MediaControls = ({type}: {type: 'cover' | 'background' | 'icon' | 'logo'}):
-   JSX.Element => (
+  const MediaControls = ({
+    type
+  }: {
+    type: 'cover' | 'background' | 'icon' | 'logo'
+  }): JSX.Element => (
     <div className={cn('flex flex-row gap-2')}>
       <Tooltip>
         <TooltipTrigger>
@@ -293,9 +261,8 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                 <GameImage
                   gameId={gameId}
                   type="icon"
-                  refreshKey={refreshKey}
                   className={cn('max-h-16 h-[calc(30vh-160px)] aspect-[1] object-cover')}
-                  fallback={<div className='select-none'>{t('detail.properties.media.empty.icon')}</div>}
+                  fallback={<div>{t('detail.properties.media.empty.icon')}</div>}
                 />
               </div>
             </div>
@@ -313,9 +280,8 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                 <GameImage
                   gameId={gameId}
                   type="background"
-                  refreshKey={refreshKey}
                   className={cn('max-h-[264px] h-[calc(60vh-200px)] aspect-[2] object-cover')}
-                  fallback={<div className='select-none'>{t('detail.properties.media.empty.background')}</div>}
+                  fallback={<div>{t('detail.properties.media.empty.background')}</div>}
                 />
               </div>
             </div>
@@ -335,9 +301,8 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                 <GameImage
                   gameId={gameId}
                   type="cover"
-                  refreshKey={refreshKey}
                   className={cn('max-h-[170px] h-[calc(50vh-230px)] aspect-[2/3] object-cover')}
-                  fallback={<div className='select-none'>{t('detail.properties.media.empty.cover')}</div>}
+                  fallback={<div>{t('detail.properties.media.empty.cover')}</div>}
                 />
               </div>
             </div>
@@ -354,9 +319,8 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
                 <GameImage
                   gameId={gameId}
                   type="logo"
-                  refreshKey={refreshKey}
                   className={cn('max-h-[158px] h-[calc(40vh-130px)] aspect-[3/2] object-contain')}
-                  fallback={<div className='select-none'>{t('detail.properties.media.empty.logo')}</div>}
+                  fallback={<div>{t('detail.properties.media.empty.logo')}</div>}
                 />
               </div>
             </div>

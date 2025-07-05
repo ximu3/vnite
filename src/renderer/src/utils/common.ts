@@ -3,7 +3,6 @@ import i18next from 'i18next'
 import { toast } from 'sonner'
 import { useRunningGames } from '~/pages/Library/store'
 import { getGameLocalStore, getGameStore } from '~/stores/game'
-import { useConfigState } from '~/hooks'
 import { ipcSend } from '~/utils'
 import { generateUUID } from '@appUtils'
 import { useNavigate } from 'react-router-dom'
@@ -111,9 +110,6 @@ export async function startGame(gameId: string, navigate?: (path: string) => voi
   const getGameLocalValue = gameLocalStore.getState().getValue
   const setGameValue = gameStore.getState().setValue
   const getGameValue = gameStore.getState().getValue
-   //Global variables used to know when to compress the metadata images
-  const [imageTransformerStatus] = useConfigState('metadata.imageTransformer.enabled')
-  const [imageTransformerQuality] = useConfigState('metadata.imageTransformer.quality')
 
   if (getGameLocalValue('path.gamePath') === '') {
     toast.warning(i18next.t('utils:game.starting.pathRequired'))
@@ -128,15 +124,13 @@ export async function startGame(gameId: string, navigate?: (path: string) => voi
 
     await setGameLocalValue('path.gamePath', filePath)
 
-    async function isTypeAttachmentAccessible(dbName: string, gameId: string, type: string): Promise<boolean> {
-      const attachments = await window.api.database.getAllAttachmentNames(dbName, gameId)
-      return attachments.some(name => new RegExp(`^images/${type}\\.[^.]+$`, 'i').test(name))
-    }
-
-    const isIconAccessible = await isTypeAttachmentAccessible('game', gameId, 'icon')
-
+    const isIconAccessible = await window.api.database.checkAttachment(
+      'game',
+      gameId,
+      'images/icon.webp'
+    )
     if (!isIconAccessible) {
-      await window.api.media.saveGameIconByFile(gameId, filePath, imageTransformerStatus, imageTransformerQuality)
+      await window.api.media.saveGameIconByFile(gameId, filePath)
     }
 
     toast.promise(

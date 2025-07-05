@@ -1,5 +1,5 @@
 import { cn } from '~/utils'
-import { Card, CardContent } from '@ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { Input } from '@ui/input'
 import { Button } from '@ui/button'
 import { HotkeySetting } from '@ui/hotkey-setting'
@@ -31,6 +31,13 @@ export function Advanced(): JSX.Element {
 
   return (
     <Card className={cn('group')}>
+      <CardHeader>
+        <CardTitle className={cn('relative')}>
+          <div className={cn('flex flex-row justify-between items-center')}>
+            <div className={cn('flex items-center')}>{t('advanced.title')}</div>
+          </div>
+        </CardTitle>
+      </CardHeader>
       <CardContent>
         <div className={cn('grid grid-cols-[170px_1fr] gap-x-5 gap-y-5 items-center')}>
           {/* Locale Emulator Path */}
@@ -82,8 +89,8 @@ export function Advanced(): JSX.Element {
               </Button>
             </div>
             <div className={cn('flex flex-row justify-end items-center gap-5')}>
-              <div className={cn('text-sm select-none')}>{t('advanced.magpie.hotkeyLabel')}</div>
-              <HotkeySetting defaultHotkey={magpieHotkey} className="select-none" onHotkeyChange={setMagpieHotkey}/>
+              <div className={cn('text-sm')}>{t('advanced.magpie.hotkeyLabel')}</div>
+              <HotkeySetting defaultHotkey={magpieHotkey} onHotkeyChange={setMagpieHotkey} />
             </div>
           </div>
         </div>

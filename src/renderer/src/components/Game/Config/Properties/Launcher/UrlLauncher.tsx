@@ -21,7 +21,7 @@ export function UrlLauncher({ gameId }: { gameId: string }): JSX.Element {
   const [monitorMode, setMonitorMode] = useGameLocalState(gameId, 'launcher.urlConfig.monitorMode')
   const [monitorPath, setMonitorPath] = useGameLocalState(gameId, 'launcher.urlConfig.monitorPath')
 
-  async function selectBrowserPath(): Promise<void> {
+  async function selectBorwserPath(): Promise<void> {
     const workingDirectoryPath: string = await window.api.utils.selectPathDialog(
       ['openFile'],
       ['exe']
@@ -61,7 +61,7 @@ export function UrlLauncher({ gameId }: { gameId: string }): JSX.Element {
           onChange={(e) => setBrowserPath(e.target.value)}
           placeholder={t('detail.properties.launcher.url.defaultBrowser')}
         />
-        <Button variant={'outline'} size={'icon'} onClick={selectBrowserPath}>
+        <Button variant={'outline'} size={'icon'} onClick={selectBorwserPath}>
           <span className={cn('icon-[mdi--folder-open-outline] w-5 h-5')}></span>
         </Button>
       </div>

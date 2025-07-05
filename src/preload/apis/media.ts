@@ -11,8 +11,8 @@ export const mediaAPI = {
     return await ipcRenderer.invoke('crop-image', params)
   },
 
-  async saveGameIconByFile(gameId: string, filePath: string, shouldCompress: boolean, compressFactor?: number): Promise<void> {
-    return await ipcRenderer.invoke('save-game-icon-by-file', gameId, filePath, shouldCompress, compressFactor)
+  async saveGameIconByFile(gameId: string, filePath: string): Promise<void> {
+    return await ipcRenderer.invoke('save-game-icon-by-file', gameId, filePath)
   },
 
   async downloadTempImage(url: string): Promise<string> {

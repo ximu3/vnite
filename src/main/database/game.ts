@@ -1,6 +1,6 @@
 // src/database/GameDBManager.ts
 import { DBManager } from './common'
-import { convertImage, getImage } from '~/media'
+import { convertToWebP } from '~/media'
 import {
   gameDoc,
   gameDocs,
@@ -16,7 +16,6 @@ import {
 import { getValueByPath } from '@appUtils'
 import type { Get, Paths } from 'type-fest'
 import log from 'electron-log/main'
-import path from 'path'
 
 export class GameDBManager {
   private static readonly DB_NAME = 'game'
@@ -292,44 +291,11 @@ export class GameDBManager {
   static async setGameImage(
     gameId: string,
     type: 'background' | 'cover' | 'icon' | 'logo',
-    image: Buffer | string,
-    shouldCompress: boolean,
-    compressFactor?: number
+    image: Buffer | string
   ): Promise<void> {
     try {
-      // Remove existing images for this type
-      const attachments = await DBManager.listAttachmentNames(this.DB_NAME, gameId);
-      for (const name of attachments) {
-        if (new RegExp(`^images/${type}\\.[^.]+$`).test(name)) {
-          await DBManager.removeAttachment(this.DB_NAME, gameId, name).catch(() => {});
-        }
-      }
-
-      // Handle image conversion and compression
-      let imageBuffer: Buffer
-      let imageExtension = 'webp'
-
-      imageBuffer = await getImage(image)
-
-      if (shouldCompress && compressFactor !== undefined) {
-        // Compressed version
-        imageBuffer = await convertImage(image, 'webp', { quality: compressFactor })
-      } else {
-        // Uncompressed version
-        if (typeof image === 'string') {
-          imageExtension = path.extname(image).replace('.', '').toLowerCase()
-        } else if (type === 'icon'){ //This case is for when we extract the game's icon
-          imageExtension = 'png'
-        }
-      }
-
-      // Save new image
-      await DBManager.putAttachment(
-        this.DB_NAME,
-        gameId,
-        `images/${type}.${imageExtension}`,
-        imageBuffer
-      );
+      image = await convertToWebP(image)
+      await DBManager.putAttachment(this.DB_NAME, gameId, `images/${type}.webp`, image)
     } catch (error) {
       log.error('Error setting game image:', error)
       throw error
@@ -342,27 +308,27 @@ export class GameDBManager {
     format: T = 'buffer' as T
   ): Promise<T extends 'file' ? string | null : Buffer | null> {
     try {
-      const attachments = await DBManager.listAttachmentNames(this.DB_NAME, gameId);
-
-      const match = attachments.find(name =>
-        new RegExp(`^images/${type}\\.[^.]+$`, 'i').test(name)
-      );
-      if (!match) {
-        return null;
+      if (
+        (await DBManager.checkAttachment(this.DB_NAME, gameId, `images/${type}.webp`)) === false
+      ) {
+        return null
       }
-
       if (format === 'file') {
-        return (await DBManager.getAttachment(this.DB_NAME, gameId, match, {
+        return (await DBManager.getAttachment(this.DB_NAME, gameId, `images/${type}.webp`, {
           format: 'file',
           filePath: '#temp',
-          ext: match.split('.').pop() || 'bin'
-        })) as T extends 'file' ? string | null : Buffer | null;
+          ext: 'webp'
+        })) as T extends 'file' ? string | null : Buffer | null
       } else {
-        return (await DBManager.getAttachment(this.DB_NAME, gameId, match)) as T extends 'file' ? string | null : Buffer | null;
+        return (await DBManager.getAttachment(
+          this.DB_NAME,
+          gameId,
+          `images/${type}.webp`
+        )) as T extends 'file' ? string | null : Buffer | null
       }
     } catch (error) {
-      log.error('Error getting game image:', error);
-      throw error;
+      log.error('Error getting game image:', error)
+      throw error
     }
   }
 
@@ -372,7 +338,7 @@ export class GameDBManager {
     image: Buffer | string
   ): Promise<void> {
     try {
-      image = await convertImage(image, 'webp')
+      image = await convertToWebP(image)
       await DBManager.putAttachment(this.DB_NAME, gameId, `images/memories/${memoryId}.webp`, image)
     } catch (error) {
       log.error('Error setting game memory image:', error)
@@ -486,14 +452,7 @@ export class GameDBManager {
     type: 'background' | 'cover' | 'icon' | 'logo'
   ): Promise<void> {
     try {
-      // Remove existing images for this type
-      const attachments = await DBManager.listAttachmentNames(this.DB_NAME, gameId);
-      for (const name of attachments) {
-        if (new RegExp(`^images/${type}\\.[^.]+$`).test(name)) {
-          
-          await DBManager.removeAttachment(this.DB_NAME, gameId, name).catch(() => {})
-        }
-      }
+      await DBManager.removeAttachment(this.DB_NAME, gameId, `images/${type}.webp`)
     } catch (error) {
       log.error('Error removing game image:', error)
       throw error
