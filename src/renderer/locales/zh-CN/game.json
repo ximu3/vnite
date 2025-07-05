@@ -419,6 +419,9 @@
           "deleting": "正在删除…",
           "deleteSuccess": "删除成功",
           "deleteError": "删除失败"
+        },
+        "upload": {
+          "allValidFormats": "所有有效格式"
         }
       },
       "launcher": {
