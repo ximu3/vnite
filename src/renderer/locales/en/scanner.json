@@ -9,10 +9,13 @@
     "unknown": "Unknown"
   },
   "metrics": {
-    "scanners": "{{count}} Scanners",
-    "games": "{{count}} Games",
+    "scanners": "{{count}} Scanner",
+    "scanners_other": "{{count}} Scanners",
+    "games": "{{count}} Game",
+    "games_other": "{{count}} Games",
     "scanInterval": "Scan every {{minutes}} minutes",
-    "failures": "{{count}} Failures"
+    "failures": "{{count}} Failures",
+    "failures_other": "{{count}} Failures"
   },
   "actions": {
     "pause": "Pause",
@@ -40,7 +43,8 @@
       "dataSource": "{{name}} Data",
       "depth": "Depth {{level}}",
       "progress": "{{percentage}}% Complete",
-      "games": "{{count}} Games",
+      "games": "{{count}} Game",
+      "games_other": "{{count}} Games",
       "statusLabels": {
         "idle": "Idle",
         "scanning": "Scanning",
