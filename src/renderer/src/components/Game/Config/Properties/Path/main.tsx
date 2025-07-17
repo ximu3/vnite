@@ -1,7 +1,7 @@
 import { ArrayTextarea } from '@ui/array-textarea'
-import { Button } from '@ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
-import { Input } from '@ui/input'
+import { Button } from '~/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import { Input } from '~/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -10,34 +10,35 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue
-} from '@ui/select'
-import { Separator } from '@ui/separator'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
+} from '~/components/ui/select'
+import { Separator } from '~/components/ui/separator'
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useGameLocalState, useGameState } from '~/hooks'
 import { cn } from '~/utils'
+import { ipcManager } from '~/app/ipc'
 
-export function Path({ gameId }: { gameId: string }): JSX.Element {
+export function Path({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [monitorPath] = useGameLocalState(gameId, 'launcher.fileConfig.monitorPath')
-  const [gamePath, setGamePath] = useGameLocalState(gameId, 'path.gamePath')
-  const [savePath, setSavePath] = useGameLocalState(gameId, 'path.savePaths')
+  const [gamePath, setGamePath, saveGamePath] = useGameLocalState(gameId, 'path.gamePath', true)
+  const [savePaths, setSavePaths, saveSavePaths] = useGameLocalState(gameId, 'path.savePaths', true)
   const [markerPath] = useGameLocalState(gameId, 'utils.markPath')
   const [maxSaveBackups, setMaxSaveBackups] = useGameState(gameId, 'save.maxBackups')
   const [savePathSize, setSavePathSize] = useState(0)
 
   useEffect(() => {
-    if ((savePath.length === 1 && savePath[0] === '') || savePath.length === 0 || !savePath) {
+    if ((savePaths.length === 1 && savePaths[0] === '') || savePaths.length === 0 || !savePaths) {
       setSavePathSize(-1)
       return
     }
-    window.api.utils
-      .getPathSize(savePath)
+    ipcManager
+      .invoke('system:get-path-size', savePaths)
       .then((size: number) => setSavePathSize(size))
       .catch(() => setSavePathSize(NaN))
-  }, [savePath])
+  }, [savePaths])
 
   function formatSize(bytes: number): string {
     if (savePathSize === -1) return ''
@@ -52,7 +53,8 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
   }
 
   async function selectGamePath(): Promise<void> {
-    const filePath: string = await window.api.utils.selectPathDialog(
+    const filePath = await ipcManager.invoke(
+      'system:select-path-dialog',
       ['openFile'],
       undefined,
       gamePath || markerPath
@@ -60,19 +62,21 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
     if (!filePath) {
       return
     }
-    await setGamePath(filePath)
-    const isIconAccessible = await window.api.database.checkAttachment(
+    setGamePath(filePath)
+    await saveGamePath()
+    const isIconAccessible = await ipcManager.invoke(
+      'db:check-attachment',
       'game',
       gameId,
       'images/icon.webp'
     )
     if (!isIconAccessible) {
-      await window.api.media.saveGameIconByFile(gameId, filePath)
+      await ipcManager.invoke('utils:save-game-icon-by-file', gameId, filePath)
     }
     if (!monitorPath) {
       toast.promise(
         async () => {
-          await window.api.launcher.launcherPreset('default', gameId)
+          await ipcManager.invoke('launcher:select-preset', 'default', gameId)
         },
         {
           loading: t('detail.properties.path.notifications.configuring'),
@@ -84,7 +88,8 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
   }
 
   async function selectSaveFolderPath(): Promise<void> {
-    const folderPath: string[] = await window.api.utils.selectMultiplePathDialog(
+    const folderPath = await ipcManager.invoke(
+      'system:select-multiple-path-dialog',
       ['openDirectory'],
       undefined,
       gamePath || markerPath
@@ -92,12 +97,14 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
     if (!folderPath) {
       return
     }
-    const newSavePath = savePath.concat(folderPath)
-    await setSavePath(newSavePath.filter(Boolean))
+    const newSavePath = savePaths.concat(folderPath)
+    setSavePaths(newSavePath.filter(Boolean))
+    saveSavePaths()
   }
 
   async function selectSaveFilePath(): Promise<void> {
-    const filePath: string[] = await window.api.utils.selectMultiplePathDialog(
+    const filePath = await ipcManager.invoke(
+      'system:select-multiple-path-dialog',
       ['openFile'],
       undefined,
       gamePath || markerPath
@@ -105,8 +112,9 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
     if (!filePath) {
       return
     }
-    const newSavePath = savePath.concat(filePath)
-    await setSavePath(newSavePath.filter(Boolean))
+    const newSavePath = savePaths.concat(filePath)
+    setSavePaths(newSavePath.filter(Boolean))
+    saveSavePaths()
   }
 
   return (
@@ -127,6 +135,7 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
                 className={cn('flex-1')}
                 value={gamePath}
                 onChange={(e) => setGamePath(e.target.value)}
+                onBlur={saveGamePath}
               />
               <Button variant={'outline'} size={'icon'} onClick={selectGamePath}>
                 <span className={cn('icon-[mdi--file-outline] w-5 h-5')}></span>
@@ -146,8 +155,9 @@ export function Path({ gameId }: { gameId: string }): JSX.Element {
             <div className={cn('flex flex-row gap-3 items-start')}>
               <ArrayTextarea
                 className={cn('flex-1 max-h-[400px] min-h-[100px]')}
-                value={savePath}
-                onChange={setSavePath}
+                value={savePaths}
+                onChange={setSavePaths}
+                onBlur={saveSavePaths}
               />
               <div className={cn('flex flex-col gap-3')}>
                 <Tooltip>

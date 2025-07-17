@@ -1,6 +1,6 @@
-import { Button } from '@ui/button'
-import { Dialog, DialogContent } from '@ui/dialog'
-import { Input } from '@ui/input'
+import { Button } from '~/components/ui/button'
+import { Dialog, DialogContent } from '~/components/ui/dialog'
+import { Input } from '~/components/ui/input'
 import { useGameState } from '~/hooks'
 import { cn } from '~/utils'
 import { useTranslation } from 'react-i18next'
@@ -11,9 +11,9 @@ export function NameEditorDialog({
 }: {
   gameId: string
   setIsOpen: (value: boolean) => void
-}): JSX.Element {
+}): React.JSX.Element {
   const { t } = useTranslation('game')
-  const [gameName, setGameName] = useGameState(gameId, 'metadata.name')
+  const [gameName, setGameName, saveGameName] = useGameState(gameId, 'metadata.name', true)
 
   return (
     <Dialog open={true} onOpenChange={setIsOpen}>
@@ -24,8 +24,12 @@ export function NameEditorDialog({
           onChange={(e) => {
             setGameName(e.target.value)
           }}
+          onBlur={saveGameName}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') setIsOpen(false)
+            if (e.key === 'Enter') {
+              setIsOpen(false)
+              saveGameName()
+            }
           }}
         />
         <Button onClick={() => setIsOpen(false)}>{t('utils:common.confirm')}</Button>

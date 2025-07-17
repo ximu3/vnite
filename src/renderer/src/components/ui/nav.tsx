@@ -1,56 +1,49 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom'
+import * as React from 'react'
+import { Link, LinkProps } from '@tanstack/react-router'
+import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '~/utils'
 
-interface NavProps {
-  to: string
-  children: React.ReactNode
-  variant?: 'default' | 'gameList' | 'sidebar' | 'librarybar'
+const navVariants = cva(
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*="size-"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive',
+  {
+    variants: {
+      variant: {
+        default: 'hover:bg-accent/50 hover:text-accent-foreground',
+        sidebar: 'hover:bg-accent/50 hover:text-accent-foreground min-h-0 min-w-0 p-2',
+        gameList: 'hover:bg-accent/50 hover:text-accent-foreground relative',
+        librarybar: 'hover:bg-accent/50 hover:text-accent-foreground shadow-sm'
+      },
+      size: {
+        default: 'h-9 px-4 py-2',
+        sm: 'h-8 rounded-md px-3',
+        lg: 'h-10 rounded-md px-6',
+        icon: 'size-9'
+      }
+    },
+    defaultVariants: {
+      variant: 'default',
+      size: 'default'
+    }
+  }
+)
+
+export interface NavProps extends LinkProps, VariantProps<typeof navVariants> {
   className?: string
+  children?: React.ReactNode
 }
 
-export function Nav({
-  to,
-  children,
-  className,
-  variant = 'default',
-  ...props
-}: NavProps): JSX.Element {
+function Nav({ className, variant, size, children, ...props }: NavProps): React.JSX.Element {
   return (
-    <NavLink to={to}>
-      {({ isActive }) => {
-        const baseStyles =
-          'p-2 rounded-md text-sm font-medium w-full h-full flex flex-row gap-1 justify-start items-center non-draggable'
-        let variantStyles = ''
-
-        switch (variant) {
-          case 'gameList':
-            variantStyles = isActive
-              ? 'bg-accent text-accent-foreground rounded-none'
-              : 'hover:bg-accent rounded-none'
-            break
-          case 'sidebar':
-            variantStyles = isActive
-              ? 'bg-accent text-accent-foreground'
-              : 'hover:bg-accent hover:text-accent-foreground'
-            break
-          case 'librarybar':
-            variantStyles = isActive
-              ? 'bg-accent/[0.7] text-accent-foreground border-[1px] border-input shadow-sm'
-              : 'hover:bg-accent/[0.7] hover:text-accent-foreground shadow-sm bg-background/[0.3] text-background-foreground border-[1px] border-input shadow-sm'
-            break
-          default:
-            variantStyles = isActive
-              ? 'bg-primary text-primary-foreground'
-              : 'hover:bg-primary hover:text-primary-foreground'
-        }
-
-        return (
-          <div className={cn(baseStyles, variantStyles, className)} {...props}>
-            {children}
-          </div>
-        )
+    <Link
+      className={cn(navVariants({ variant, size, className }))}
+      activeProps={{
+        className: '!bg-accent/50 !text-accent-foreground !shadow-sm'
       }}
-    </NavLink>
+      {...props}
+    >
+      {children}
+    </Link>
   )
 }
+
+export { Nav }

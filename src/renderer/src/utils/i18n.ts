@@ -1,9 +1,10 @@
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import resourcesToBackend from 'i18next-resources-to-backend'
+import { ipcManager } from '~/app/ipc'
 
 export async function i18nInit(): Promise<void> {
-  const language = await window.api.utils.getLanguage()
+  const language = await ipcManager.invoke('system:get-language')
   console.warn('[i18n] Language:', language)
 
   const namespaces = [

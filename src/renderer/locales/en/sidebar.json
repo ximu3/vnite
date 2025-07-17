@@ -4,11 +4,12 @@
     "library": "Game Library",
     "records": "Records",
     "scanner": "Scanner",
-    "transformer": "Transformer"
+    "transformer": "Transformer",
+    "plugin": "Plugins"
   },
   "actions": {
-    "enableNSFWBlur":"Hide NSFW Content",
-    "disableNSFWBlur":"Show NSFW Content",
+    "enableNSFWBlur": "Hide NSFW Content",
+    "disableNSFWBlur": "Show NSFW Content",
     "darkMode": "Dark Mode",
     "lightMode": "Light Mode",
     "cloudSyncDisabled": "Cloud Sync Disabled",

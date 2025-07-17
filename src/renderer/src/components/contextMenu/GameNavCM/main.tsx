@@ -1,4 +1,8 @@
-import { ContextMenuContent, ContextMenuItem, ContextMenuSeparator } from '@ui/context-menu'
+import {
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator
+} from '~/components/ui/context-menu'
 import { useRunningGames } from '~/pages/Library/store'
 import { cn, startGame, stopGame, scrollToElement } from '~/utils'
 import { generateUUID } from '@appUtils'
@@ -6,7 +10,6 @@ import { generateUUID } from '@appUtils'
 import { CollectionMenu } from './CollectionMenu'
 import { ManageMenu } from './ManageMenu'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
 import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
 
 export function GameNavCM({
@@ -14,18 +17,19 @@ export function GameNavCM({
   groupId,
   openAddCollectionDialog,
   openNameEditorDialog,
-  openPlayTimeEditorDialog
+  openPlayTimeEditorDialog,
+  openPropertiesDialog
 }: {
   gameId: string
   groupId: string
   openAddCollectionDialog: () => void
   openNameEditorDialog: () => void
   openPlayTimeEditorDialog: () => void
-}): JSX.Element {
+  openPropertiesDialog: () => void
+}): React.JSX.Element {
   const setLazyloadMark = usePositionButtonStore((state) => state.setLazyloadMark)
   const { runningGames } = useRunningGames()
   const { t } = useTranslation('game')
-  const navigate = useNavigate()
   return (
     <ContextMenuContent className={cn('w-40')}>
       <ContextMenuItem
@@ -50,7 +54,7 @@ export function GameNavCM({
       <ContextMenuSeparator />
       <ContextMenuItem
         onSelect={() => {
-          navigate(`/library/games/${gameId}/${groupId}/properties`)
+          openPropertiesDialog()
           scrollToElement({
             selector: `[data-game-id="${gameId}"][data-group-id="${groupId || 'all'}"]`
           })

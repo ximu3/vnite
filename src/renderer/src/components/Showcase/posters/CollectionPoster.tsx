@@ -1,6 +1,6 @@
-import { GameImage } from '@ui/game-image'
+import { GameImage } from '~/components/ui/game-image'
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from '@tanstack/react-router'
 import { HoverCardAnimation } from '~/components/animations/HoverCard'
 import { CollectionCM } from '~/components/contextMenu/CollectionCM'
 import { useConfigState, useGameState } from '~/hooks'
@@ -29,7 +29,7 @@ function Preview({
   collectionName: string
   collectionLength: number
   transparentBackground?: boolean
-}): JSX.Element {
+}): React.JSX.Element {
   return (
     <div
       className={cn(
@@ -65,8 +65,8 @@ export function CollectionPoster({
   className?: string
   parentGap?: number // Gap(px) between posters
   position?: 'right' | 'left' | 'center' // poster position in the container
-}): JSX.Element {
-  const navigate = useNavigate()
+}): React.JSX.Element {
+  const router = useRouter()
   const collections = useGameCollectionStore((state) => state.documents)
   const reorderCollections = useGameCollectionStore((state) => state.reorderCollections)
   const collectionName = collections[collectionId].name
@@ -151,9 +151,9 @@ export function CollectionPoster({
                 'group-hover:ring-2 group-hover:ring-primary',
                 'relative overflow-hidden group'
               )}
-              onClick={() => navigate(`/library/collections/${collectionId}`)}
+              onClick={() => router.navigate({ to: `/library/collections/${collectionId}` })}
             >
-              <div className="absolute inset-0 z-10 transition-all duration-300 rounded-lg pointer-events-none bg-background/20 group-hover:bg-transparent" />
+              {/* <div className="absolute inset-0 z-10 transition-all duration-300 rounded-lg pointer-events-none bg-background/20 group-hover:bg-transparent" /> */}
               <HoverCardAnimation>
                 <GameImage
                   gameId={gameId}

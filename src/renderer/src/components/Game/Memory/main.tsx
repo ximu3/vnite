@@ -1,18 +1,23 @@
 import { cn } from '~/utils'
-import { Button } from '@ui/button'
+import { Button } from '~/components/ui/button'
 import { toast } from 'sonner'
 import { useGameState } from '~/hooks'
 import { MemoryCard } from './MemoryCard'
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ipcManager } from '~/app/ipc'
 
-export function Memory({ gameId }: { gameId: string }): JSX.Element {
+export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
-  const [memoryList, setMemoryList] = useGameState(gameId, 'memory.memoryList')
+  const [memoryList, setMemoryList, saveMemoryList] = useGameState(
+    gameId,
+    'memory.memoryList',
+    true
+  )
   const [sortedMemoryIds, setSortedMemoryIds] = useState<string[]>([])
 
   async function addMemory(): Promise<void> {
-    await window.api.game.addMemory(gameId)
+    await ipcManager.invoke('game:add-memory', gameId)
   }
 
   useEffect(() => {
@@ -32,10 +37,11 @@ export function Memory({ gameId }: { gameId: string }): JSX.Element {
         // and then update the memoryList
         const newMemoryList = { ...memoryList }
         delete newMemoryList[memoryId]
-        await setMemoryList(newMemoryList)
+        setMemoryList(newMemoryList)
+        await saveMemoryList()
 
         // Finally, perform a back-end delete operation
-        await window.api.game.deleteMemory(gameId, memoryId)
+        await ipcManager.invoke('game:delete-memory', gameId, memoryId)
       },
       {
         loading: t('detail.memory.notifications.deleting'),
@@ -76,6 +82,7 @@ export function Memory({ gameId }: { gameId: string }): JSX.Element {
                 note={memoryList[id]?.note}
                 date={memoryList[id]?.date}
                 setNote={(note) => setNote(id, note)}
+                saveNote={saveMemoryList}
               />
             ))}
         </div>
@@ -92,6 +99,7 @@ export function Memory({ gameId }: { gameId: string }): JSX.Element {
                 note={memoryList[id]?.note}
                 date={memoryList[id]?.date}
                 setNote={(note) => setNote(id, note)}
+                saveNote={saveMemoryList}
               />
             ))}
         </div>
@@ -108,6 +116,7 @@ export function Memory({ gameId }: { gameId: string }): JSX.Element {
                 note={memoryList[id]?.note}
                 date={memoryList[id]?.date}
                 setNote={(note) => setNote(id, note)}
+                saveNote={saveMemoryList}
               />
             ))}
         </div>

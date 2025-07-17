@@ -1,5 +1,5 @@
 import { generateUUID } from '@appUtils'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from '@tanstack/react-router'
 import { HoverCardAnimation } from '~/components/animations/HoverCard'
 import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
 import { GameImage } from '~/components/ui/game-image'
@@ -22,8 +22,8 @@ export function GamePoster({
   additionalInfo?: string
   infoStyle?: string
   fontStyles?: { name: string; additionalInfo: string }
-}): JSX.Element {
-  const navigate = useNavigate()
+}): React.JSX.Element {
+  const router = useRouter()
   const [gameName] = useGameState(gameId, 'metadata.name')
   const setLazyloadMark = usePositionButtonStore((state) => state.setLazyloadMark)
   return (
@@ -35,7 +35,7 @@ export function GamePoster({
         className
       )}
       onClick={() => {
-        navigate(`/library/games/${gameId}/all`)
+        router.navigate({ to: `/library/games/${gameId}/all` })
         setTimeout(() => {
           scrollToElement({
             selector: `[data-game-id="${gameId}"][data-group-id="all"]`

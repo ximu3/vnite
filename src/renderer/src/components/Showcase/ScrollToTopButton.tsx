@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Button } from '@ui/button'
+import { Button } from '~/components/ui/button'
 import { cn } from '~/utils'
 
 interface ScrollToTopButtonProps {
-  scrollAreaRef: React.RefObject<HTMLDivElement>
+  scrollAreaRef: React.RefObject<HTMLDivElement | null>
   className?: string
   scrollBehavior?: ScrollBehavior
   threshold?: number
@@ -14,9 +14,9 @@ export const ScrollToTopButton = React.memo(function ScrollToTopButton({
   className,
   scrollBehavior = 'instant',
   threshold = 300
-}: ScrollToTopButtonProps): JSX.Element {
+}: ScrollToTopButtonProps): React.JSX.Element {
   const [isVisible, setIsVisible] = useState(false)
-  const visibilityTimeout = useRef<NodeJS.Timeout>()
+  const visibilityTimeout = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     if (!scrollAreaRef.current) return

@@ -32,7 +32,7 @@ const offsetToAlignTerminalWithLine = (strokeSize - terminalSize) / 2
 /**
  * This is a tailwind port of `@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box`
  */
-export function DropIndicator({ edge, gap }: { edge: Edge; gap: string }): JSX.Element {
+export function DropIndicator({ edge, gap }: { edge: Edge; gap: string }): React.JSX.Element {
   const lineOffset = `calc(-0.5 * (${gap} + ${strokeSize}px))`
 
   const orientation = edgeToOrientationMap[edge]
@@ -49,10 +49,10 @@ export function DropIndicator({ edge, gap }: { edge: Edge; gap: string }): JSX.E
           '--offset-terminal': `${offsetToAlignTerminalWithLine}px`
         } as CSSProperties
       }
-      className={`absolute z-10 bg-accent-foreground pointer-events-none 
-        before:content-[''] before:w-[--terminal-size] before:h-[--terminal-size] 
-        box-border before:absolute before:border-[length:--line-thickness] 
-        before:border-solid before:border-accent-foreground before:rounded-full 
+      className={`absolute z-10 bg-accent-foreground pointer-events-none
+        before:content-[''] before:w-[--terminal-size] before:h-[--terminal-size]
+        box-border before:absolute before:border-[length:--line-thickness]
+        before:border-solid before:border-accent-foreground before:rounded-full
         ${orientationStyles[orientation]} ${[edgeStyles[edge]]} overflow-visible`}
     ></div>
   )

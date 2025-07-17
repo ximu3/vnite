@@ -1,6 +1,6 @@
-import { Button } from '@ui/button'
-import { Dialog, DialogContent } from '@ui/dialog'
-import { Input } from '@ui/input'
+import { Button } from '~/components/ui/button'
+import { Dialog, DialogContent } from '~/components/ui/dialog'
+import { Input } from '~/components/ui/input'
 import { Parser } from 'expr-eval'
 import { toNumber } from 'lodash'
 import { useState } from 'react'
@@ -14,7 +14,7 @@ export function PlayTimeEditorDialog({
 }: {
   gameId: string
   setIsOpen: (value: boolean) => void
-}): JSX.Element {
+}): React.JSX.Element {
   const { t } = useTranslation('game')
   const [playTime, setPlayTime] = useGameState(gameId, 'record.playTime')
   // Initial value converted to seconds
@@ -64,7 +64,7 @@ export function PlayTimeEditorDialog({
 
   return (
     <Dialog open={true} onOpenChange={setIsOpen}>
-      <DialogContent showCloseButton={false} className={cn('w-[500px] flex flex-col gap-3 py-5')}>
+      <DialogContent showCloseButton={false} className={cn('w-[500px] flex flex-col gap-3')}>
         <div className={cn('text-xs')}>{t('detail.playTimeEditor.expressionSupport')}</div>
         <div className={cn('flex flex-row gap-3 items-center')}>
           <div className={cn('')}>

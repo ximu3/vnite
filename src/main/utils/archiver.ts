@@ -2,7 +2,7 @@ import fse from 'fs-extra'
 import archiver from 'archiver'
 import path from 'path'
 import AdmZip from 'adm-zip'
-import log from 'electron-log/main.js'
+import log from 'electron-log/main'
 
 interface ZipOptions {
   // Compression level 1-9, default 9 (best compression)

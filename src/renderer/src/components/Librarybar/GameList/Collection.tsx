@@ -1,5 +1,10 @@
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@ui/accordion'
-import { ScrollArea } from '@ui/scroll-area'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from '~/components/ui/accordion'
+import { ScrollArea } from '~/components/ui/scroll-area'
 import { useMemo } from 'react'
 import { CollectionCM } from '~/components/contextMenu/CollectionCM'
 import { useGameCollectionStore } from '~/stores'
@@ -8,7 +13,7 @@ import { GameNav } from '../GameNav'
 import { AllGame } from './AllGame'
 import { RecentGames } from './RecentGames'
 
-export function Collection(): JSX.Element {
+export function Collection(): React.JSX.Element {
   const collections = useGameCollectionStore((state) => state.documents)
   const defaultValues = [...Object.keys(collections), 'all', 'recentGames']
 
@@ -18,26 +23,26 @@ export function Collection(): JSX.Element {
   }, [collections])
 
   return (
-    <ScrollArea className={cn('w-full h-full pr-3 -mr-3')}>
+    <ScrollArea className={cn('w-full h-full pr-3 -mr-3 pt-1')}>
       {defaultValues.length > 2 ? (
         <Accordion
           key={'collection-yes'}
           type="multiple"
           defaultValue={defaultValues}
-          className={cn('w-full text-xs flex flex-col gap-2')}
+          className={cn('min-w-0 text-xs flex flex-col gap-2')}
         >
           <RecentGames />
           {sortedCollections.map(([key, value]) => (
             <AccordionItem key={key} value={key}>
               <CollectionCM collectionId={key}>
-                <AccordionTrigger className={cn('text-xs p-1 pl-2 bg-accent/35')}>
+                <AccordionTrigger className={cn('text-xs p-1 pl-2')}>
                   <div className={cn('flex flex-row items-center justify-start gap-1')}>
                     <div className={cn('text-xs')}>{value.name}</div>
                     <div className={cn('text-2xs text-foreground/50')}>({value.games.length})</div>
                   </div>
                 </AccordionTrigger>
               </CollectionCM>
-              <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
+              <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1 w-full')}>
                 {value.games.map((game) => (
                   <GameNav key={game} gameId={game} groupId={`collection:${key}`} />
                 ))}

@@ -2,7 +2,7 @@ import { cn } from '~/utils'
 import { useTranslation } from 'react-i18next'
 import { useCloudSyncStore } from './store'
 
-export function CloudSyncInfo({ className }: { className?: string }): JSX.Element {
+export function CloudSyncInfo({ className }: { className?: string }): React.JSX.Element {
   const { t } = useTranslation('config')
   const { status } = useCloudSyncStore()
 

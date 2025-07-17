@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { ChevronsUpDown } from 'lucide-react'
 import { cn } from '~/utils'
-import { Button } from '@ui/button'
+import { Button } from '~/components/ui/button'
 import {
   Command,
   CommandEmpty,
@@ -9,11 +9,12 @@ import {
   CommandInput,
   CommandItem,
   CommandList
-} from '@ui/command'
-import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
+} from '~/components/ui/command'
+import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
 import { toast } from 'sonner'
 import { useTheme } from '~/components/ThemeProvider'
 import { useTranslation } from 'react-i18next'
+import { ipcManager } from '~/app/ipc'
 
 export function PresetSelecter({
   className,
@@ -21,7 +22,7 @@ export function PresetSelecter({
 }: {
   className?: string
   setCssContent: (theme: string) => void
-}): JSX.Element {
+}): React.JSX.Element {
   const { t } = useTranslation('config')
   const [open, setOpen] = React.useState(false)
   const [value] = React.useState('')
@@ -45,7 +46,7 @@ export function PresetSelecter({
   async function setPreset(presetName: string): Promise<void> {
     toast.promise(
       async () => {
-        const theme = await window.api.theme.themePreset(presetName)
+        const theme = await ipcManager.invoke('theme:select-preset', presetName)
         setCssContent(theme)
         updateTheme(theme)
       },

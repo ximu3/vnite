@@ -1,11 +1,11 @@
-import { Button } from '@ui/button'
+import { Button } from '~/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger
-} from '@ui/dropdown-menu'
+} from '~/components/ui/dropdown-menu'
 import React from 'react'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { cn } from '~/utils'
@@ -13,30 +13,22 @@ import { CollectionMenu } from './CollectionMenu'
 import { ManageMenu } from './ManageMenu'
 import { NameEditorDialog } from './ManageMenu/NameEditorDialog'
 import { PlayTimeEditorDialog } from './ManageMenu/PlayTimeEditorDialog'
+import { GamePropertiesDialog } from './Properties'
 import { useTranslation } from 'react-i18next'
-import { useNavigate, useLocation } from 'react-router-dom'
 
-export function Config({ gameId }: { gameId: string }): JSX.Element {
+export function Config({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
-  const navigate = useNavigate()
-  const location = useLocation()
 
-  const goToProperties = (): void => {
-    // Make sure there is no slash at the end of the path, then add /properties
-    const basePath = location.pathname.endsWith('/')
-      ? location.pathname.slice(0, -1)
-      : location.pathname
-    navigate(`${basePath}/properties`)
-  }
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
   const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = React.useState(false)
   const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = React.useState(false)
+  const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = React.useState(false)
 
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size={'icon'} className="non-draggable w-[40px] h-[40px]">
+          <Button variant="thirdary" size={'icon'} className="non-draggable w-[40px] h-[40px]">
             <span className={cn('icon-[mdi--settings-outline] w-4 h-4')}></span>
           </Button>
         </DropdownMenuTrigger>
@@ -52,7 +44,7 @@ export function Config({ gameId }: { gameId: string }): JSX.Element {
             openPlayingTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
           />
           <DropdownMenuSeparator />
-          <DropdownMenuItem onSelect={goToProperties}>
+          <DropdownMenuItem onSelect={() => setIsPropertiesDialogOpen(true)}>
             <div>{t('detail.config.properties')}</div>
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -65,6 +57,13 @@ export function Config({ gameId }: { gameId: string }): JSX.Element {
       )}
       {isPlayTimeEditorDialogOpen && (
         <PlayTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayTimeEditorDialogOpen} />
+      )}
+      {isPropertiesDialogOpen && (
+        <GamePropertiesDialog
+          gameId={gameId}
+          isOpen={isPropertiesDialogOpen}
+          setIsOpen={setIsPropertiesDialogOpen}
+        />
       )}
     </>
   )

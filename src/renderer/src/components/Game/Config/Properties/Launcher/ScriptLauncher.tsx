@@ -1,9 +1,9 @@
 import { cn } from '~/utils'
 import { useGameLocalState } from '~/hooks'
-import { Input } from '@ui/input'
-import { Button } from '@ui/button'
+import { Input } from '~/components/ui/input'
+import { Button } from '~/components/ui/button'
 import { ArrayTextarea } from '~/components/ui/array-textarea'
-import { Separator } from '@ui/separator'
+import { Separator } from '~/components/ui/separator'
 import {
   Select,
   SelectContent,
@@ -12,38 +12,59 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue
-} from '@ui/select'
+} from '~/components/ui/select'
 import { useTranslation } from 'react-i18next'
+import { ipcManager } from '~/app/ipc'
 
-export function ScriptLauncher({ gameId }: { gameId: string }): JSX.Element {
+export function ScriptLauncher({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
-  const [command, setCommand] = useGameLocalState(gameId, 'launcher.scriptConfig.command')
-  const [workingDirectory, setWorkingDirectory] = useGameLocalState(
+  const [command, setCommand, saveCommand] = useGameLocalState(
     gameId,
-    'launcher.scriptConfig.workingDirectory'
+    'launcher.scriptConfig.command',
+    true
+  )
+  const [workingDirectory, setWorkingDirectory, saveWorkingDirectory] = useGameLocalState(
+    gameId,
+    'launcher.scriptConfig.workingDirectory',
+    true
   )
   const [monitorMode, setMonitorMode] = useGameLocalState(
     gameId,
     'launcher.scriptConfig.monitorMode'
   )
-  const [monitorPath, setMonitorPath] = useGameLocalState(
+  const [monitorPath, setMonitorPath, saveMonitorPath] = useGameLocalState(
     gameId,
-    'launcher.scriptConfig.monitorPath'
+    'launcher.scriptConfig.monitorPath',
+    true
   )
 
   async function selectWorkingDirectory(): Promise<void> {
-    const workingDirectoryPath: string = await window.api.utils.selectPathDialog(['openDirectory'])
+    const workingDirectoryPath = await ipcManager.invoke('system:select-path-dialog', [
+      'openDirectory'
+    ])
+    if (!workingDirectoryPath) {
+      return
+    }
     setWorkingDirectory(workingDirectoryPath)
+    saveWorkingDirectory()
   }
 
   async function selectMonitorPath(): Promise<void> {
     if (monitorMode === 'file') {
-      const monitorPath: string = await window.api.utils.selectPathDialog(['openFile'])
+      const monitorPath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
+      if (!monitorPath) {
+        return
+      }
       setMonitorPath(monitorPath)
+      saveMonitorPath()
     }
     if (monitorMode === 'folder') {
-      const monitorPath: string = await window.api.utils.selectPathDialog(['openDirectory'])
+      const monitorPath = await ipcManager.invoke('system:select-path-dialog', ['openDirectory'])
+      if (!monitorPath) {
+        return
+      }
       setMonitorPath(monitorPath)
+      saveMonitorPath()
     }
   }
 
@@ -57,6 +78,7 @@ export function ScriptLauncher({ gameId }: { gameId: string }): JSX.Element {
         <ArrayTextarea
           value={command}
           onChange={setCommand}
+          onBlur={saveCommand}
           className={cn('max-h-[250px] min-h-[100px] w-full')}
         />
       </div>
@@ -70,6 +92,7 @@ export function ScriptLauncher({ gameId }: { gameId: string }): JSX.Element {
           className={cn('flex-1')}
           value={workingDirectory}
           onChange={(e) => setWorkingDirectory(e.target.value)}
+          onBlur={saveWorkingDirectory}
         />
         <Button variant={'outline'} size={'icon'} onClick={selectWorkingDirectory}>
           <span className={cn('icon-[mdi--folder-open-outline] w-5 h-5')}></span>
@@ -117,6 +140,7 @@ export function ScriptLauncher({ gameId }: { gameId: string }): JSX.Element {
           className={cn('flex-1')}
           value={monitorPath}
           onChange={(e) => setMonitorPath(e.target.value)}
+          onBlur={saveMonitorPath}
         />
         {['folder', 'file'].includes(monitorMode) && (
           <Button variant={'outline'} size={'icon'} onClick={selectMonitorPath}>

@@ -1,17 +1,17 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { Button } from '@ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/card'
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
-import { Separator } from '@ui/separator'
+import { Button } from '~/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '~/components/ui/chart'
+import { Separator } from '~/components/ui/separator'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 
 import { getWeeklyPlayData, parseLocalDate } from '~/stores/game/recordUtils'
 import { GameRankingItem } from './GameRankingItem'
 
-export function WeeklyReport(): JSX.Element {
+export function WeeklyReport(): React.JSX.Element {
   const { t } = useTranslation('record')
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
@@ -66,7 +66,7 @@ export function WeeklyReport(): JSX.Element {
   const chartConfig = {
     playTime: {
       label: t('overview.stats.totalPlayTime'),
-      color: 'hsl(var(--primary))'
+      color: 'var(--primary)'
     }
   }
 
@@ -109,8 +109,9 @@ export function WeeklyReport(): JSX.Element {
                 <XAxis dataKey="weekday" tickLine={false} axisLine={false} tickMargin={10} />
                 <YAxis tickLine={false} axisLine={false} tickMargin={10} />
                 <ChartTooltip
-                  content={
+                  content={(props) => (
                     <ChartTooltipContent
+                      {...props}
                       formatter={(value) => formatGameTime((value as number) * 60000)}
                       labelFormatter={(weekday, data) => {
                         if (data && data[0]?.payload) {
@@ -120,17 +121,17 @@ export function WeeklyReport(): JSX.Element {
                         return weekday
                       }}
                       hideIndicator={false}
-                      color="hsl(var(--primary))"
+                      color="var(--primary)"
                     />
-                  }
+                  )}
                 />
                 <Area
                   type="monotone"
                   dataKey="playTime"
-                  stroke="hsl(var(--primary))"
+                  stroke="var(--primary)"
                   strokeWidth={2}
                   fillOpacity={0.3}
-                  fill="hsl(var(--primary))"
+                  fill="var(--primary)"
                 />
               </AreaChart>
             </ChartContainer>

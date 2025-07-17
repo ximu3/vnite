@@ -1,7 +1,7 @@
-import { Button } from '@ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
-import { GameImage } from '@ui/game-image'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
+import { Button } from '~/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import { GameImage } from '~/components/ui/game-image'
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useGameState } from '~/hooks'
@@ -10,8 +10,9 @@ import { CropDialog } from './CropDialog'
 import { SearchMediaDialog } from './SearchMediaDialog'
 import { UrlDialog } from './UrlDialog'
 import { useTranslation } from 'react-i18next'
+import { ipcManager } from '~/app/ipc'
 
-export function Media({ gameId }: { gameId: string }): JSX.Element {
+export function Media({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
 
   const [isUrlDialogOpen, setIsUrlDialogOpen] = useState({
@@ -41,11 +42,11 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
   // Processing file selection
   async function handleFileSelect(type: 'cover' | 'background' | 'icon' | 'logo'): Promise<void> {
     try {
-      const filePath: string = await window.api.utils.selectPathDialog(['openFile'])
+      const filePath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
       if (!filePath) return
 
       if (filePath.endsWith('.exe') && type == 'icon') {
-        await window.api.game.setGameImage(gameId, type, filePath)
+        await ipcManager.invoke('game:set-image', gameId, type, filePath)
         return
       }
 
@@ -64,7 +65,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
   async function handleResize(type: 'cover' | 'background' | 'icon' | 'logo'): Promise<void> {
     try {
       // Get current image path
-      const currentPath = await window.api.game.getGameMediaPath(gameId, type)
+      const currentPath = await ipcManager.invoke('game:get-media-path', gameId, type)
       if (!currentPath) {
         toast.error(t('detail.properties.media.notifications.imageNotFound'))
         return
@@ -88,7 +89,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
         setIsUrlDialogOpen({ ...isUrlDialogOpen, [type]: false })
         if (!URL.trim()) return
 
-        const tempFilePath = await window.api.media.downloadTempImage(URL.trim())
+        const tempFilePath = await ipcManager.invoke('utils:download-temp-image', URL.trim())
         setCropDialogState({
           isOpen: true,
           type,
@@ -118,7 +119,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
 
     toast.promise(
       async () => {
-        await window.api.game.setGameImage(gameId, type, filePath)
+        await ipcManager.invoke('game:set-image', gameId, type, filePath)
       },
       {
         loading: t('detail.properties.media.notifications.processing', {
@@ -143,7 +144,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
   async function handleDeleteMedia(type: 'cover' | 'background' | 'icon' | 'logo'): Promise<void> {
     toast.promise(
       async () => {
-        await window.api.game.removeGameMedia(gameId, type)
+        await ipcManager.invoke('game:remove-media', gameId, type)
       },
       {
         loading: t('detail.properties.media.notifications.deleting', {
@@ -166,7 +167,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
     type
   }: {
     type: 'cover' | 'background' | 'icon' | 'logo'
-  }): JSX.Element => (
+  }): React.JSX.Element => (
     <div className={cn('flex flex-row gap-2')}>
       <Tooltip>
         <TooltipTrigger>
@@ -345,7 +346,7 @@ export function Media({ gameId }: { gameId: string }): JSX.Element {
           toast.loading(t('detail.properties.media.notifications.downloading'), {
             id: 'download-image-toast'
           })
-          const tempFilePath = await window.api.media.downloadTempImage(imagePath)
+          const tempFilePath = await ipcManager.invoke('utils:download-temp-image', imagePath)
           toast.dismiss('download-image-toast')
           toast.success(t('detail.properties.media.notifications.downloadSuccess'))
           setCropDialogState({

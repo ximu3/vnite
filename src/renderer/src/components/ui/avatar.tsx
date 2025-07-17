@@ -1,7 +1,10 @@
+'use client'
+
 import * as React from 'react'
 import * as AvatarPrimitive from '@radix-ui/react-avatar'
-import { cn } from '~/utils'
 import crypto from 'crypto-js/md5'
+
+import { cn } from '~/utils'
 
 const getGravatarUrl = (email: string, size: number = 80): string => {
   // Convert to lowercase and remove spaces
@@ -11,59 +14,57 @@ const getGravatarUrl = (email: string, size: number = 80): string => {
   return `https://www.gravatar.com/avatar/${hash}?s=${size}&d=404`
 }
 
-const Avatar = React.forwardRef<
-  React.ElementRef<typeof AvatarPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>
->(({ className, ...props }, ref) => (
-  <AvatarPrimitive.Root
-    ref={ref}
-    className={cn('relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full', className)}
-    {...props}
-  />
-))
-Avatar.displayName = AvatarPrimitive.Root.displayName
+function Avatar({
+  className,
+  ...props
+}: React.ComponentProps<typeof AvatarPrimitive.Root>): React.JSX.Element {
+  return (
+    <AvatarPrimitive.Root
+      data-slot="avatar"
+      className={cn('relative flex size-8 shrink-0 overflow-hidden rounded-full', className)}
+      {...props}
+    />
+  )
+}
 
-// Extending the AvatarImage component's Props type
-interface AvatarImageProps extends React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image> {
+interface AvatarImageProps extends React.ComponentProps<typeof AvatarPrimitive.Image> {
   email?: string
   gravatarSize?: number
 }
 
-const AvatarImage = React.forwardRef<
-  React.ElementRef<typeof AvatarPrimitive.Image>,
-  AvatarImageProps
->(({ className, email, gravatarSize = 80, ...props }, ref) => {
+function AvatarImage({
+  className,
+  email,
+  gravatarSize,
+  ...props
+}: AvatarImageProps): React.JSX.Element {
   // Create statuses to track if an image fails to load
   const [imageError, setImageError] = React.useState(false)
 
   // If email is provided and the image does not load incorrectly, use the Gravatar URL
   const imageSrc = email && !imageError ? getGravatarUrl(email, gravatarSize) : props.src
-
-  return !imageError ? (
+  return (
     <AvatarPrimitive.Image
-      ref={ref}
-      className={cn('aspect-square h-full w-full', className)}
+      data-slot="avatar-image"
       src={imageSrc}
       onError={() => setImageError(true)}
+      className={cn('aspect-square size-full', className)}
       {...props}
     />
-  ) : null
-})
-AvatarImage.displayName = AvatarPrimitive.Image.displayName
+  )
+}
 
-const AvatarFallback = React.forwardRef<
-  React.ElementRef<typeof AvatarPrimitive.Fallback>,
-  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>
->(({ className, ...props }, ref) => (
-  <AvatarPrimitive.Fallback
-    ref={ref}
-    className={cn(
-      'flex h-full w-full items-center justify-center rounded-full bg-muted',
-      className
-    )}
-    {...props}
-  />
-))
-AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName
+function AvatarFallback({
+  className,
+  ...props
+}: React.ComponentProps<typeof AvatarPrimitive.Fallback>): React.JSX.Element {
+  return (
+    <AvatarPrimitive.Fallback
+      data-slot="avatar-fallback"
+      className={cn('bg-muted flex size-full items-center justify-center rounded-full', className)}
+      {...props}
+    />
+  )
+}
 
 export { Avatar, AvatarImage, AvatarFallback }

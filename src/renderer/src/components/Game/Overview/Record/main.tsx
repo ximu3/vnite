@@ -3,7 +3,7 @@ import { cn } from '~/utils'
 import { RecordCard } from './RecordCard'
 import { useGameState } from '~/hooks'
 
-export function Record({ gameId }: { gameId: string }): JSX.Element {
+export function Record({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [lastRunDate] = useGameState(gameId, 'record.lastRunDate')
   const [playStatus] = useGameState(gameId, 'record.playStatus')
@@ -11,7 +11,7 @@ export function Record({ gameId }: { gameId: string }): JSX.Element {
   const [playingTime] = useGameState(gameId, 'record.playTime')
 
   return (
-    <div className={cn('flex flex-row items-center gap-3')}>
+    <div className={cn('flex flex-row items-center gap-12 ml-1')}>
       <RecordCard
         className={cn('')}
         title={t('detail.overview.record.playTime')}

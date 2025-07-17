@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/card'
-import { Button } from '@ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
+import { Button } from '~/components/ui/button'
 import { ChevronLeft, ChevronRight, Clock, CalendarIcon, Trophy } from 'lucide-react'
 import {
   Bar,
@@ -16,14 +16,14 @@ import {
   Pie,
   Cell
 } from 'recharts'
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '~/components/ui/chart'
 import type { ValueType } from 'recharts/types/component/DefaultTooltipContent'
 
 import { StatCard } from './StatCard'
 import { GameRankingItem } from './GameRankingItem'
 import { getYearlyPlayData } from '~/stores/game/recordUtils'
 
-export function YearlyReport(): JSX.Element {
+export function YearlyReport(): React.JSX.Element {
   const { t } = useTranslation('record')
 
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear())
@@ -74,14 +74,14 @@ export function YearlyReport(): JSX.Element {
   const barChartConfig = {
     playTime: {
       label: t('yearly.stats.yearlyPlayTime'),
-      color: 'hsl(var(--primary))'
+      color: 'var(--primary)'
     }
   }
 
   const lineChartConfig = {
     playDays: {
       label: t('yearly.chart.monthlyPlayDays'),
-      color: 'hsl(var(--primary))'
+      color: 'var(--primary)'
     }
   }
 
@@ -175,15 +175,16 @@ export function YearlyReport(): JSX.Element {
                 <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={10} />
                 <YAxis tickLine={false} axisLine={false} tickMargin={10} />
                 <ChartTooltip
-                  content={
+                  content={(props) => (
                     <ChartTooltipContent
+                      {...props}
                       formatter={(value) => formatGameTime((value as number) * 3600000)}
                       hideIndicator={false}
-                      color="hsl(var(--primary))"
+                      color="var(--primary)"
                     />
-                  }
+                  )}
                 />
-                <Bar dataKey="playTime" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="playTime" fill="var(--primary)" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ChartContainer>
           </CardContent>
@@ -200,18 +201,19 @@ export function YearlyReport(): JSX.Element {
                 <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={10} />
                 <YAxis tickLine={false} axisLine={false} tickMargin={10} />
                 <ChartTooltip
-                  content={
+                  content={(props) => (
                     <ChartTooltipContent
+                      {...props}
                       formatter={formatDays}
                       hideIndicator={false}
-                      color="hsl(var(--primary))"
+                      color="var(--primary)"
                     />
-                  }
+                  )}
                 />
                 <Line
                   type="monotone"
                   dataKey="playDays"
-                  stroke="hsl(var(--primary))"
+                  stroke="var(--primary)"
                   strokeWidth={2}
                   dot={false}
                 />
@@ -250,13 +252,14 @@ export function YearlyReport(): JSX.Element {
                   ))}
                 </Pie>
                 <ChartTooltip
-                  content={
+                  content={(props) => (
                     <ChartTooltipContent
+                      {...props}
                       formatter={(value) => formatGameTime(Number(value))}
                       labelKey="type"
                       hideIndicator={false}
                     />
-                  }
+                  )}
                 />
               </PieChart>
             </ChartContainer>

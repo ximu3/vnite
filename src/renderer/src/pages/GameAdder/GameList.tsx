@@ -1,13 +1,20 @@
 import { cn } from '~/utils'
-import { Card, CardContent } from '@ui/card'
-import { ScrollArea } from '@ui/scroll-area'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@ui/table'
+import { Card, CardContent } from '~/components/ui/card'
+import { ScrollArea } from '~/components/ui/scroll-area'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '~/components/ui/table'
 import { toast } from 'sonner'
 import { useGameAdderStore } from './store'
 import { Search } from './Search'
 import { useTranslation } from 'react-i18next'
 
-export function GameList(): JSX.Element {
+export function GameList(): React.JSX.Element {
   const { t } = useTranslation('adder')
   const { setName, dataSourceId, setDataSourceId, gameList } = useGameAdderStore()
 
@@ -19,7 +26,7 @@ export function GameList(): JSX.Element {
             <div className="w-full">
               <ScrollArea className={cn('h-[calc(84vh-230px)]')}>
                 <Table>
-                  <TableHeader className={cn('bg-card')}>
+                  <TableHeader className={cn('')}>
                     <TableRow>
                       <TableHead className={cn('w-1/2')}>
                         {t('gameAdder.gameList.columns.name')}
@@ -75,7 +82,7 @@ export function GameList(): JSX.Element {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="p-0">
           <Search className={cn('w-full p-5 text-sm', '3xl:w-full')} />
         </Card>
       </div>

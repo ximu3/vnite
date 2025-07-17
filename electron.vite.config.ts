@@ -1,18 +1,20 @@
 import { resolve } from 'path'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import react from '@vitejs/plugin-react'
+// @ts-ignore moduleResolution problem with tailwindcss
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   main: {
     resolve: {
       alias: {
         '~': resolve('src/main'),
+        '@locales': resolve('src/main/locales'),
         '@appTypes': resolve('src/types'),
-        '@appUtils': resolve('src/utils'),
-        '@locales': resolve('src/main/locales')
+        '@appUtils': resolve('src/utils')
       }
     },
-    plugins: [externalizeDepsPlugin({ exclude: ['file-type'] })]
+    plugins: [externalizeDepsPlugin()]
   },
   preload: {
     plugins: [externalizeDepsPlugin()]
@@ -22,20 +24,11 @@ export default defineConfig({
       alias: {
         '~': resolve('src/renderer/src'),
         '@ui': resolve('src/renderer/src/components/ui'),
+        '@locales': resolve('src/renderer/locales'),
         '@appTypes': resolve('src/types'),
-        '@appUtils': resolve('src/utils'),
-        '@assets': resolve('src/renderer/assets'),
-        '@locales': resolve('src/renderer/locales')
+        '@appUtils': resolve('src/utils')
       }
     },
-    plugins: [react()],
-    build: {
-      rollupOptions: {
-        input: {
-          index: resolve(__dirname, 'src/renderer/index.html'),
-          splash: resolve(__dirname, 'src/renderer/splash.html')
-        }
-      }
-    }
+    plugins: [react(), tailwindcss()]
   }
 })

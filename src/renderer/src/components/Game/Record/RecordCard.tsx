@@ -1,7 +1,7 @@
 import { cn } from '~/utils'
 import { useGameState } from '~/hooks'
 import { getGameMaxPlayTimeDay, getGamePlayDays } from '~/stores/game'
-import { Separator } from '@ui/separator'
+import { Separator } from '~/components/ui/separator'
 import { useTranslation } from 'react-i18next'
 import { Trans } from 'react-i18next'
 
@@ -11,7 +11,7 @@ export function RecordCard({
 }: {
   gameId: string
   className?: string
-}): JSX.Element {
+}): React.JSX.Element {
   const { t } = useTranslation('game')
   const [addDate] = useGameState(gameId, 'record.addDate')
   const playDays = getGamePlayDays(gameId)

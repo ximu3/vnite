@@ -1,11 +1,11 @@
 import { useGameBatchAdderStore } from './store'
 import { GameListTable } from './GameListTable'
 import { useGameAdder } from './hooks/useGameAdder'
-import { Button } from '@ui/button'
+import { Button } from '~/components/ui/button'
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
 
-export function GameList(): JSX.Element {
+export function GameList(): React.JSX.Element {
   const { t } = useTranslation('adder')
   const { isLoading } = useGameBatchAdderStore()
   const { addAllGames } = useGameAdder()

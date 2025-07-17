@@ -1,8 +1,8 @@
-import { Badge } from '@ui/badge'
+import { Badge } from '~/components/ui/badge'
 import { GameStatus } from './store'
 import { useTranslation } from 'react-i18next'
 
-export function StatusBadge({ status }: { status: GameStatus }): JSX.Element {
+export function StatusBadge({ status }: { status: GameStatus }): React.JSX.Element {
   const { t } = useTranslation('adder')
 
   switch (status) {

@@ -1,14 +1,21 @@
 import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@ui/dialog'
-import { Input } from '@ui/input'
-import { Button } from '@ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter
+} from '~/components/ui/dialog'
+import { Input } from '~/components/ui/input'
+import { Button } from '~/components/ui/button'
 import { useConfigLocalState } from '~/hooks'
 import { ArrayTextarea } from '@ui/array-textarea'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 import { cn } from '~/utils'
 import { useGameScannerStore } from './store'
 import { toast } from 'sonner'
+import { ipcManager } from '~/app/ipc'
 
 interface GlobalSettingsDialogProps {
   isOpen: boolean
@@ -45,13 +52,13 @@ export const GlobalSettingsDialog: React.FC<GlobalSettingsDialogProps> = ({ isOp
       ignoreList: globalSettings.ignoreList
     }
     await setScannerConfig(updatedConfig)
-    await window.api.gameScanner.startPeriodicScan()
+    await ipcManager.invoke('scanner:start-periodic-scan')
     onClose()
   }
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="w-[500px]">
         <DialogHeader>
           <DialogTitle>{t('globalSettings.title')}</DialogTitle>
         </DialogHeader>

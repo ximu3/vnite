@@ -5,9 +5,9 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle
-} from '@ui/dialog'
-import { Button } from '@ui/button'
-import { Input } from '@ui/input'
+} from '~/components/ui/dialog'
+import { Button } from '~/components/ui/button'
+import { Input } from '~/components/ui/input'
 import { cn } from '~/utils'
 import { useGameCollectionStore } from '~/stores'
 import { useState } from 'react'
@@ -19,7 +19,7 @@ export function AddCollectionDialog({
 }: {
   gameIds: string[]
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
-}): JSX.Element {
+}): React.JSX.Element {
   const { t } = useTranslation('game')
   const [name, setName] = useState('')
   const { addCollection } = useGameCollectionStore()
@@ -31,7 +31,7 @@ export function AddCollectionDialog({
 
   return (
     <Dialog open={true} onOpenChange={(state) => setIsOpen(state)}>
-      <DialogContent className={cn('')}>
+      <DialogContent className={cn('w-[500px]')}>
         <DialogHeader>
           <DialogTitle>{t('detail.collection.dialog.title')}</DialogTitle>
           <DialogDescription>{t('detail.collection.dialog.description')}</DialogDescription>

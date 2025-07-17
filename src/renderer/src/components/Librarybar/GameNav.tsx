@@ -1,10 +1,11 @@
-import { ContextMenu, ContextMenuTrigger } from '@ui/context-menu'
-import { GameImage } from '@ui/game-image'
+import { ContextMenu, ContextMenuTrigger } from '~/components/ui/context-menu'
+import { GameImage } from '~/components/ui/game-image'
 import { Nav } from '@ui/nav'
 import React from 'react'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
+import { GamePropertiesDialog } from '~/components/Game/Config/Properties'
 import { useGameState, useGameLocalState, useConfigState } from '~/hooks'
 import { cn } from '~/utils'
 import { GameNavCM } from '../contextMenu/GameNavCM'
@@ -12,7 +13,13 @@ import { BatchGameNavCM } from '../GameBatchEditor/BatchGameNavCM'
 import { useGameBatchEditorStore } from '../GameBatchEditor/store'
 import { useTheme } from '../ThemeProvider'
 
-export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }): JSX.Element {
+export function GameNav({
+  gameId,
+  groupId
+}: {
+  gameId: string
+  groupId: string
+}): React.JSX.Element {
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
   const [highlightLocalGames] = useConfigState('game.gameList.highlightLocalGames')
@@ -23,6 +30,7 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
   const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = React.useState(false)
   const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = React.useState(false)
+  const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = React.useState(false)
 
   const isSelected = useGameBatchEditorStore((state) => state.selectedGamesMap[gameId])
   const isBatchMode = useGameBatchEditorStore((state) => state.isBatchMode)
@@ -30,62 +38,74 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
   console.warn('[DEBUG] GameNav')
 
   const handleGameClick = (event: React.MouseEvent): void => {
-    event.preventDefault()
-
     const store = useGameBatchEditorStore.getState()
     const { addGameId, removeGameId, clearGameIds, lastSelectedId, setLastSelectedId, gameIds } =
       store
 
-    if (event.shiftKey && lastSelectedId) {
-      // Get all games in the currently visible AccordionContent
-      const accordionContent = (event.currentTarget as HTMLElement).closest('.accordion-content')
+    // 如果是批量选择模式下的特殊操作，阻止默认导航
+    if (event.shiftKey || event.ctrlKey || event.metaKey) {
+      event.preventDefault()
 
-      if (accordionContent) {
-        const visibleGameElements = Array.from(
-          accordionContent.querySelectorAll('[data-game-id]')
-        ) as HTMLElement[]
+      if (event.shiftKey && lastSelectedId) {
+        // Get all games in the currently visible AccordionContent
+        const accordionContent = (event.currentTarget as HTMLElement).closest('.accordion-content')
 
-        const currentGameIds = visibleGameElements
-          .map((el) => el.dataset.gameId)
-          .filter(Boolean) as string[]
+        if (accordionContent) {
+          const visibleGameElements = Array.from(
+            accordionContent.querySelectorAll('[data-game-id]')
+          ) as HTMLElement[]
 
-        const currentIndex = currentGameIds.indexOf(gameId)
-        const lastSelectedIndex = currentGameIds.indexOf(lastSelectedId)
+          const currentGameIds = visibleGameElements
+            .map((el) => el.dataset.gameId)
+            .filter(Boolean) as string[]
 
-        if (currentIndex !== -1 && lastSelectedIndex !== -1) {
-          const start = Math.min(currentIndex, lastSelectedIndex)
-          const end = Math.max(currentIndex, lastSelectedIndex)
+          const currentIndex = currentGameIds.indexOf(gameId)
+          const lastSelectedIndex = currentGameIds.indexOf(lastSelectedId)
 
-          const selectedRange = currentGameIds.slice(start, end + 1)
+          if (currentIndex !== -1 && lastSelectedIndex !== -1) {
+            const start = Math.min(currentIndex, lastSelectedIndex)
+            const end = Math.max(currentIndex, lastSelectedIndex)
 
-          if (event.ctrlKey || event.metaKey) {
-            // Shift + Ctrl/Cmd: Add to existing selection
-            selectedRange.forEach((id) => {
-              if (!gameIds.includes(id)) {
-                addGameId(id)
-              }
-            })
-          } else {
-            // Shift: Replacement of existing options
-            clearGameIds()
-            selectedRange.forEach((id) => addGameId(id))
+            const selectedRange = currentGameIds.slice(start, end + 1)
+
+            if (event.ctrlKey || event.metaKey) {
+              // Shift + Ctrl/Cmd: Add to existing selection
+              selectedRange.forEach((id) => {
+                if (!gameIds.includes(id)) {
+                  addGameId(id)
+                }
+              })
+            } else {
+              // Shift: Replacement of existing options
+              clearGameIds()
+              selectedRange.forEach((id) => addGameId(id))
+            }
           }
         }
+      } else if (event.ctrlKey || event.metaKey) {
+        // Ctrl/Cmd Click
+        if (isSelected) {
+          removeGameId(gameId)
+        } else {
+          addGameId(gameId)
+        }
+      } else if (isBatchMode) {
+        // 批量模式下的普通点击
+        if (isSelected) {
+          removeGameId(gameId)
+        } else {
+          addGameId(gameId)
+        }
       }
-    } else if (event.ctrlKey || event.metaKey) {
-      // Ctrl/Cmd Click
-      if (isSelected) {
-        removeGameId(gameId)
-      } else {
-        addGameId(gameId)
-      }
+
+      setLastSelectedId(gameId)
     } else {
-      // normal click
+      // 正常点击 - 允许导航发生
       clearGameIds()
       addGameId(gameId)
+      setLastSelectedId(gameId)
+      // 不调用 preventDefault()，让 Link 组件处理导航
     }
-
-    setLastSelectedId(gameId)
   }
 
   return (
@@ -96,13 +116,15 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
             <Nav
               variant="gameList"
               className={cn(
-                'text-xs p-3 h-5',
+                'text-xs p-3 h-5 rounded-none transition-none w-full',
                 highlightLocalGames && 'text-foreground',
                 highlightLocalGames && gamePath && 'text-accent-foreground',
                 highlightLocalGames && !gamePath && !isDarkMode && 'text-foreground/90',
-                isSelected && isBatchMode && 'bg-accent'
+                isSelected && isBatchMode && 'bg-accent/60'
               )}
-              to={`./games/${gameId}/${encodeURIComponent(groupId)}`}
+              to="/library/games/$gameId/$groupId"
+              params={{ gameId, groupId: encodeURIComponent(groupId) }}
+              resetScroll={false}
             >
               <div className={cn('flex flex-row gap-2 items-center w-full')}>
                 <div className={cn('flex items-center')}>
@@ -116,7 +138,7 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
                     }
                   />
                 </div>
-                <div className={cn('truncate flex-grow')}>{gameName}</div>
+                <div className={cn('truncate w-[188px]')}>{gameName}</div>
                 {markLocalGames && gamePath && (
                   <span
                     className={cn(
@@ -137,6 +159,7 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
             openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
             openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
             openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
+            openPropertiesDialog={() => setIsPropertiesDialogOpen(true)}
           />
         )}
       </ContextMenu>
@@ -149,6 +172,13 @@ export function GameNav({ gameId, groupId }: { gameId: string; groupId: string }
       )}
       {isPlayTimeEditorDialogOpen && (
         <PlayTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayTimeEditorDialogOpen} />
+      )}
+      {isPropertiesDialogOpen && (
+        <GamePropertiesDialog
+          gameId={gameId}
+          isOpen={isPropertiesDialogOpen}
+          setIsOpen={setIsPropertiesDialogOpen}
+        />
       )}
     </>
   )

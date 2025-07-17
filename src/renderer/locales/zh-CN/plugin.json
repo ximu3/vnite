@@ -1,0 +1,64 @@
+{
+  "title": "插件管理器",
+  "description": "使用插件管理和扩展您的应用程序",
+  "actions": {
+    "checkUpdates": "检查更新",
+    "installPlugin": "安装插件",
+    "installFromRegistry": "从仓库安装",
+    "installFromFile": "从文件安装",
+    "installFirstPlugin": "安装您的第一个插件",
+    "install": "安装",
+    "installed": "已安装",
+    "enable": "启用",
+    "disable": "禁用",
+    "uninstall": "卸载",
+    "configure": "配置",
+    "cancel": "取消",
+    "save": "保存",
+    "saving": "正在保存..."
+  },
+  "stats": {
+    "total": "总计",
+    "enabled": "已启用",
+    "disabled": "已禁用",
+    "errors": "错误"
+  },
+  "tabs": {
+    "installed": "已安装",
+    "browse": "浏览"
+  },
+  "emptyState": {
+    "title": "未安装插件",
+    "description": "开始安装您的第一个插件来扩展应用程序的功能。"
+  },
+  "search": {
+    "placeholder": "搜索插件...",
+    "noResults": "未找到插件",
+    "tryDifferentKeyword": "尝试使用不同的关键词搜索"
+  },
+  "messages": {
+    "loading": "正在加载...",
+    "loadPluginsFailed": "加载插件失败",
+    "searchPluginsFailed": "搜索插件失败",
+    "installSuccess": "插件安装成功",
+    "installFailed": "插件安装失败：{{error}}",
+    "installFromFileFailed": "从文件安装插件失败",
+    "uninstallSuccess": "插件卸载成功",
+    "uninstallFailed": "插件卸载失败：{{error}}",
+    "activateSuccess": "插件激活成功",
+    "activateFailed": "插件激活失败：{{error}}",
+    "deactivateSuccess": "插件停用成功",
+    "deactivateFailed": "插件停用失败：{{error}}",
+    "updatesAvailable": "{{count}} 个插件更新可用",
+    "noUpdatesAvailable": "所有插件都是最新的",
+    "checkUpdatesFailed": "检查更新失败",
+    "configurationSaved": "配置保存成功",
+    "saveConfigurationFailed": "保存配置失败",
+    "loadConfigurationFailed": "加载配置失败"
+  },
+  "configDialog": {
+    "title": "配置 {{pluginName}}",
+    "description": "根据您的偏好自定义插件设置。",
+    "noConfiguration": "此插件没有可配置的选项。"
+  }
+}

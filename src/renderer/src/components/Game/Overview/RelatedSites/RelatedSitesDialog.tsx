@@ -1,13 +1,17 @@
 import { useTranslation } from 'react-i18next'
-import { Button } from '@ui/button'
-import { Dialog, DialogContent, DialogTrigger } from '@ui/dialog'
-import { Input } from '@ui/input'
+import { Button } from '~/components/ui/button'
+import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog'
+import { Input } from '~/components/ui/input'
 import { useGameState } from '~/hooks'
 import { cn } from '~/utils'
 
-export function RelatedSitesDialog({ gameId }: { gameId: string }): JSX.Element {
+export function RelatedSitesDialog({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
-  const [relatedSites, setRelatedSites] = useGameState(gameId, 'metadata.relatedSites')
+  const [relatedSites, setRelatedSites, saveRelatedSites] = useGameState(
+    gameId,
+    'metadata.relatedSites',
+    true
+  )
 
   return (
     <Dialog>
@@ -16,7 +20,7 @@ export function RelatedSitesDialog({ gameId }: { gameId: string }): JSX.Element 
           className={cn('invisible group-hover:visible w-5 h-5 icon-[mdi--square-edit-outline]')}
         ></span>
       </DialogTrigger>
-      <DialogContent className={cn('w-1/2 h-1/2 max-w-none flex flex-col gap-3')}>
+      <DialogContent className={cn('max-w-none flex flex-col gap-3 w-[700px]')}>
         <Button
           variant="outline"
           onClick={() => {
@@ -42,6 +46,7 @@ export function RelatedSitesDialog({ gameId }: { gameId: string }): JSX.Element 
                     })
                   )
                 }}
+                onBlur={saveRelatedSites}
                 placeholder={t('detail.overview.relatedSites.nameLabel')}
               />
               <Input
@@ -57,6 +62,7 @@ export function RelatedSitesDialog({ gameId }: { gameId: string }): JSX.Element 
                   )
                 }}
                 placeholder={t('detail.overview.relatedSites.urlLabel')}
+                onBlur={saveRelatedSites}
               />
               <div className={cn('flex flex-row gap-2 grow')}>
                 <Button

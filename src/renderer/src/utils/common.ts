@@ -3,18 +3,18 @@ import i18next from 'i18next'
 import { toast } from 'sonner'
 import { useRunningGames } from '~/pages/Library/store'
 import { getGameLocalStore, getGameStore } from '~/stores/game'
-import { ipcSend } from '~/utils'
+import { ipcManager } from '~/app/ipc'
 import { generateUUID } from '@appUtils'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from '@tanstack/react-router'
 import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
 
 export function navigateToGame(
-  navigate: ReturnType<typeof useNavigate>,
+  router: ReturnType<typeof useRouter>,
   gameId: string,
   groupId = 'all'
 ): void {
   const setLazyloadMark = usePositionButtonStore.getState().setLazyloadMark
-  navigate(`/library/games/${gameId}/${encodeURIComponent(groupId)}`)
+  router.navigate({ to: `/library/games/${gameId}/${encodeURIComponent(groupId)}` })
   scrollToElement({
     selector: `[data-game-id="${gameId}"][data-group-id="${groupId}"]`
   })
@@ -28,7 +28,7 @@ export async function checkAttachment(
   docId: string,
   attachmentId: string
 ): Promise<boolean> {
-  return await window.api.database.checkAttachment(dbName, docId, attachmentId)
+  return await ipcManager.invoke('db:check-attachment', dbName, docId, attachmentId)
 }
 
 export function copyWithToast(content: string): void {
@@ -82,7 +82,7 @@ export function scrollToElement(options: {
 export function stopGame(gameId: string): void {
   toast.promise(
     (async (): Promise<void> => {
-      await window.api.launcher.stopGame(gameId)
+      await ipcManager.invoke('monitor:stop-game', gameId)
     })(),
     {
       loading: i18next.t('utils:game.stopping.loading'),
@@ -113,7 +113,8 @@ export async function startGame(gameId: string, navigate?: (path: string) => voi
 
   if (getGameLocalValue('path.gamePath') === '') {
     toast.warning(i18next.t('utils:game.starting.pathRequired'))
-    const filePath: string = await window.api.utils.selectPathDialog(
+    const filePath = await ipcManager.invoke(
+      'system:select-path-dialog',
       ['openFile'],
       undefined,
       getGameLocalValue('utils.markPath')
@@ -124,18 +125,19 @@ export async function startGame(gameId: string, navigate?: (path: string) => voi
 
     await setGameLocalValue('path.gamePath', filePath)
 
-    const isIconAccessible = await window.api.database.checkAttachment(
+    const isIconAccessible = await ipcManager.invoke(
+      'db:check-attachment',
       'game',
       gameId,
       'images/icon.webp'
     )
     if (!isIconAccessible) {
-      await window.api.media.saveGameIconByFile(gameId, filePath)
+      await ipcManager.invoke('utils:save-game-icon-by-file', gameId, filePath)
     }
 
     toast.promise(
       async () => {
-        await window.api.launcher.launcherPreset('default', gameId)
+        await ipcManager.invoke('launcher:select-preset', 'default', gameId)
       },
       {
         loading: i18next.t('utils:game.starting.configuringLauncher'),
@@ -157,7 +159,7 @@ export async function startGame(gameId: string, navigate?: (path: string) => voi
       launcherConfig.monitorMode &&
       launcherConfig.monitorPath
     ) {
-      ipcSend('start-game', gameId)
+      ipcManager.send('launcher:start-game', gameId)
       setRunningGames([...runningGames, gameId])
       if (getGameValue('record.playStatus') === 'unplayed') {
         setGameValue('record.playStatus', 'playing')
@@ -173,7 +175,7 @@ export async function startGame(gameId: string, navigate?: (path: string) => voi
       launcherConfig.monitorMode &&
       launcherConfig.monitorPath
     ) {
-      ipcSend('start-game', gameId)
+      ipcManager.send('launcher:start-game', gameId)
       setRunningGames([...runningGames, gameId])
       if (getGameValue('record.playStatus') === 'unplayed') {
         setGameValue('record.playStatus', 'playing')
@@ -184,7 +186,7 @@ export async function startGame(gameId: string, navigate?: (path: string) => voi
   } else if (launcherMode === 'url') {
     const launcherConfig = getGameLocalValue(`launcher.${launcherMode}Config`)
     if (launcherConfig.url && launcherConfig.monitorMode && launcherConfig.monitorPath) {
-      ipcSend('start-game', gameId)
+      ipcManager.send('launcher:start-game', gameId)
       setRunningGames([...runningGames, gameId])
       if (getGameValue('record.playStatus') === 'unplayed') {
         setGameValue('record.playStatus', 'playing')

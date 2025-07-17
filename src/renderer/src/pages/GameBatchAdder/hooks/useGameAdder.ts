@@ -1,8 +1,9 @@
 // hooks/useGameAdder.ts
 import { useCallback } from 'react'
 import { useGameBatchAdderStore } from '../store'
-import { BatchGameInfo } from '@appTypes/database'
+import { BatchGameInfo } from '@appTypes/models'
 import { useTranslation } from 'react-i18next'
+import { ipcManager } from '~/app/ipc'
 
 export const useGameAdder = (): {
   addGame: (dataId: string) => Promise<void>
@@ -12,7 +13,7 @@ export const useGameAdder = (): {
   const { games, actions } = useGameBatchAdderStore()
 
   const searchGame = async (game: BatchGameInfo): Promise<string> => {
-    const result = await window.api.scraper.searchGames(game.dataSource, game.name)
+    const result = await ipcManager.invoke('scraper:search-games', game.dataSource, game.name)
     if (result.length === 0) {
       throw new Error(t('gameBatchAdder.errors.gameNotFound', { name: game.name }))
     }
@@ -45,7 +46,7 @@ export const useGameAdder = (): {
           actions.updateGame(dataId, { id: gameId })
         }
 
-        await window.api.adder.addGameToDb({
+        await ipcManager.invoke('adder:add-game-to-db', {
           dataSource: game.dataSource,
           dataSourceId: gameId,
           dirPath: game.dirPath

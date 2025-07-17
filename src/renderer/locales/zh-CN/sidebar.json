@@ -4,7 +4,8 @@
     "library": "游戏库",
     "records": "记录",
     "scanner": "扫描器",
-    "transformer": "转换器"
+    "transformer": "转换器",
+    "plugin": "插件"
   },
   "actions": {
     "enableNSFWBlur": "隐藏 NSFW 内容",

@@ -9,10 +9,30 @@ import path from 'path'
 import pngToIco from 'png-to-ico'
 import sharp from 'sharp'
 import { promisify } from 'util'
-import { ConfigDBManager, GameDBManager } from '~/database'
-import { getAppTempPath, getDataPath } from './path'
+import { getAppTempPath, getDataPath } from '../features/system/services/path'
 
 const execAsync = promisify(exec)
+
+/**
+ * 获取目录大小（字节）
+ */
+export async function getDirSize(dirPath: string): Promise<number> {
+  let size = 0
+  const files = await fse.readdir(dirPath)
+
+  for (const file of files) {
+    const filePath = path.join(dirPath, file)
+    const stats = await fse.stat(filePath)
+
+    if (stats.isDirectory()) {
+      size += await getDirSize(filePath)
+    } else {
+      size += stats.size
+    }
+  }
+
+  return size
+}
 
 export function restartAppAsAdmin(): void {
   try {
@@ -93,16 +113,6 @@ export async function checkAdminPermissions(): Promise<boolean> {
   }
 }
 
-export async function getLanguage(): Promise<string> {
-  const language = await ConfigDBManager.getConfigValue('general.language')
-  if (language) {
-    return language
-  } else {
-    await ConfigDBManager.setConfigValue('general.language', app.getLocale())
-    return app.getLocale()
-  }
-}
-
 /**
  * Parse the game ID from a URL
  * @param url The URL
@@ -153,38 +163,6 @@ export async function convertFileToBuffer(filePath: string): Promise<Buffer> {
  */
 export function getAppVersion(): string {
   return app.getVersion()
-}
-
-/**
- * Get the path to the application log file
- * @returns The path to the application log file
- */
-export async function setupOpenAtLogin(): Promise<void> {
-  try {
-    const isEnabled = await ConfigDBManager.getConfigValue('general.openAtLogin')
-    app.setLoginItemSettings({
-      openAtLogin: isEnabled,
-      args: ['--hidden']
-    })
-  } catch (error) {
-    log.error('Error toggling open at login:', error)
-  }
-}
-
-/**
- * Open a path in the file explorer
- * @param filePath The path to open
- */
-export async function updateOpenAtLogin(): Promise<void> {
-  try {
-    const isEnabled = await ConfigDBManager.getConfigValue('general.openAtLogin')
-    app.setLoginItemSettings({
-      openAtLogin: isEnabled,
-      args: ['--hidden']
-    })
-  } catch (error) {
-    log.error('Error setting open at login:', error)
-  }
 }
 
 /**
@@ -342,46 +320,10 @@ interface UrlShortcutOptions {
 }
 
 /**
- * Create a shortcut for a game
- * @param gameId The ID of the game
- * @param targetPath The path to save the shortcut
- */
-export async function createGameShortcut(gameId: string, targetPath: string): Promise<void> {
-  try {
-    // Get game information
-    const gameName = await GameDBManager.getGameValue(gameId, 'metadata.name')
-
-    const originalIconPath = await GameDBManager.getGameImage(gameId, 'icon', 'file')
-
-    // ico icon path
-    const iconPath = getAppTempPath(`icon_${gameId}_${Date.now()}.ico`)
-
-    // Convert icons to ico format
-    if (originalIconPath) {
-      await convertToIcon(originalIconPath, iconPath, {
-        sizes: [32],
-        quality: 100
-      })
-    }
-    // Creating URL shortcuts
-    await createUrlShortcut({
-      url: `vnite://rungameid/${gameId}`,
-      iconPath: iconPath,
-      targetPath: targetPath,
-      name: gameName,
-      description: `Launch ${gameName} in Vnite`,
-      categories: ['Game']
-    })
-  } catch (error) {
-    log.error('Error creating game shortcut:', error)
-  }
-}
-
-/**
  * Creating URL shortcut files
  * @param options UrlShortcutOptions Configuration options
  */
-async function createUrlShortcut(options: UrlShortcutOptions): Promise<string> {
+export async function createUrlShortcut(options: UrlShortcutOptions): Promise<string> {
   const { url, iconPath, targetPath, name = 'url_shortcut', description = '' } = options
 
   try {
@@ -458,7 +400,7 @@ interface IconConversionOptions {
  * @param outputPath Output Image Path
  * @param options Conversion options
  */
-async function convertToIcon(
+export async function convertToIcon(
   inputPath: string,
   outputPath: string,
   options: IconConversionOptions = {}
@@ -517,34 +459,6 @@ export async function readFileBuffer(filePath: string): Promise<Buffer> {
   }
 }
 
-export async function cropImage({
-  sourcePath,
-  x,
-  y,
-  width,
-  height
-}: {
-  sourcePath: string
-  x: number
-  y: number
-  width: number
-  height: number
-}): Promise<string> {
-  try {
-    const ext = path.extname(sourcePath).slice(1)
-    const tempPath = getAppTempPath(`cropped_${Date.now()}.${ext}`)
-    sharp.cache(false)
-    await sharp(sourcePath, { animated: true, limitInputPixels: false })
-      .extract({ left: x, top: y, width, height })
-      .toFile(tempPath)
-
-    return tempPath
-  } catch (error) {
-    console.error('Error cropping image:', error)
-    throw error
-  }
-}
-
 // Cache interface definition
 interface CacheItem {
   size: number
@@ -562,7 +476,7 @@ const CACHE_TTL = 15 * 60 * 1000
  * @param username - User identifier for database queries
  * @returns Promise resolving to total database size in bytes
  */
-export async function getCouchDbSize(username: string): Promise<number> {
+export async function getCouchDBSize(username: string): Promise<number> {
   const cacheKey = `couchdb_size_${username}`
 
   // Check if we have valid cache entry

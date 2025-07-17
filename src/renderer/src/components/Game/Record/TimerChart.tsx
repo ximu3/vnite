@@ -1,5 +1,5 @@
-import type { ValueType } from '@ui/chart'
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
+import type { ValueType } from 'recharts/types/component/DefaultTooltipContent'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '~/components/ui/chart'
 import { useTranslation } from 'react-i18next'
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { cn } from '~/utils'
@@ -21,7 +21,7 @@ export const TimerChart = ({
   data: DailyPlayTime
   className?: string
   filter0?: boolean
-}): JSX.Element => {
+}): React.JSX.Element => {
   const { t } = useTranslation('game')
   const formatGameTime = (time: number): string => {
     return t('utils:format.gameTime', { time })
@@ -71,19 +71,20 @@ export const TimerChart = ({
 
         {/* Adding Interactive Tips */}
         <ChartTooltip
-          content={
+          content={(props) => (
             <ChartTooltipContent
+              {...props}
               formatter={(value: ValueType) => formatGameTime((value as number) * 60 * 1000)}
               hideIndicator={false}
-              color="hsl(var(--primary))"
+              color="var(--primary)"
             />
-          }
+          )}
         />
 
         {/* histogram */}
         <Bar
           dataKey="playTime"
-          fill="hsl(var(--primary))"
+          fill="var(--primary)"
           radius={[4, 4, 0, 0]} // terete
         />
       </BarChart>

@@ -1,13 +1,13 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
-import { ScrollArea } from '@ui/scroll-area'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
+import { ScrollArea } from '~/components/ui/scroll-area'
 import { cn } from '~/utils'
 import { Launcher } from './Launcher'
 import { Path } from './Path'
 import { Media } from './Media'
 import { useGameState } from '~/hooks'
 import { useTranslation } from 'react-i18next'
-import { Button } from '@ui/button'
-import { useNavigate } from 'react-router-dom'
+import { Button } from '~/components/ui/button'
+import { useRouter } from '@tanstack/react-router'
 
 export function GameProperties({
   gameId,
@@ -15,13 +15,13 @@ export function GameProperties({
 }: {
   gameId: string
   className?: string
-}): JSX.Element {
+}): React.JSX.Element {
   const { t } = useTranslation('game')
   const [gameName] = useGameState(gameId, 'metadata.name')
-  const navigate = useNavigate()
+  const router = useRouter()
 
   const handleGoBack = (): void => {
-    navigate(-1)
+    router.history.back()
   }
 
   return (

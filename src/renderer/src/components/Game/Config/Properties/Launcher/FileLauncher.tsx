@@ -1,8 +1,8 @@
 import { cn } from '~/utils'
 import { useGameLocalState } from '~/hooks'
-import { Input } from '@ui/input'
-import { Button } from '@ui/button'
-import { Separator } from '@ui/separator'
+import { Input } from '~/components/ui/input'
+import { Button } from '~/components/ui/button'
+import { Separator } from '~/components/ui/separator'
 import {
   Select,
   SelectContent,
@@ -11,37 +11,61 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue
-} from '@ui/select'
+} from '~/components/ui/select'
 import { useTranslation } from 'react-i18next'
+import { ipcManager } from '~/app/ipc'
 
-export function FileLauncher({ gameId }: { gameId: string }): JSX.Element {
+export function FileLauncher({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
-  const [path, setPath] = useGameLocalState(gameId, 'launcher.fileConfig.path')
-  const [workingDirectory, setWorkingDirectory] = useGameLocalState(
+  const [path, setPath, savePath] = useGameLocalState(gameId, 'launcher.fileConfig.path', true)
+  const [workingDirectory, setWorkingDirectory, saveWorkingDirectory] = useGameLocalState(
     gameId,
-    'launcher.fileConfig.workingDirectory'
+    'launcher.fileConfig.workingDirectory',
+    true
   )
   const [monitorMode, setMonitorMode] = useGameLocalState(gameId, 'launcher.fileConfig.monitorMode')
-  const [monitorPath, setMonitorPath] = useGameLocalState(gameId, 'launcher.fileConfig.monitorPath')
+  const [monitorPath, setMonitorPath, saveMonitorPath] = useGameLocalState(
+    gameId,
+    'launcher.fileConfig.monitorPath',
+    true
+  )
 
   async function selectFilePath(): Promise<void> {
-    const filePath: string = await window.api.utils.selectPathDialog(['openFile'])
+    const filePath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
+    if (!filePath) {
+      return
+    }
     setPath(filePath)
+    savePath()
   }
 
   async function selectWorkingDirectory(): Promise<void> {
-    const workingDirectoryPath: string = await window.api.utils.selectPathDialog(['openDirectory'])
+    const workingDirectoryPath = await ipcManager.invoke('system:select-path-dialog', [
+      'openDirectory'
+    ])
+    if (!workingDirectoryPath) {
+      return
+    }
     setWorkingDirectory(workingDirectoryPath)
+    saveWorkingDirectory()
   }
 
   async function selectMonitorPath(): Promise<void> {
     if (monitorMode === 'file') {
-      const monitorPath: string = await window.api.utils.selectPathDialog(['openFile'])
+      const monitorPath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
+      if (!monitorPath) {
+        return
+      }
       setMonitorPath(monitorPath)
+      saveMonitorPath()
     }
     if (monitorMode === 'folder') {
-      const monitorPath: string = await window.api.utils.selectPathDialog(['openDirectory'])
+      const monitorPath = await ipcManager.invoke('system:select-path-dialog', ['openDirectory'])
+      if (!monitorPath) {
+        return
+      }
       setMonitorPath(monitorPath)
+      saveMonitorPath()
     }
   }
 
@@ -52,7 +76,12 @@ export function FileLauncher({ gameId }: { gameId: string }): JSX.Element {
         {t('detail.properties.launcher.file.path')}
       </div>
       <div className={cn('flex flex-row gap-3 items-center')}>
-        <Input className={cn('flex-1')} value={path} onChange={(e) => setPath(e.target.value)} />
+        <Input
+          className={cn('flex-1')}
+          value={path}
+          onChange={(e) => setPath(e.target.value)}
+          onBlur={savePath}
+        />
         <Button variant={'outline'} size={'icon'} onClick={selectFilePath}>
           <span className={cn('icon-[mdi--file-outline] w-5 h-5')}></span>
         </Button>
@@ -67,13 +96,14 @@ export function FileLauncher({ gameId }: { gameId: string }): JSX.Element {
           className={cn('flex-1')}
           value={workingDirectory}
           onChange={(e) => setWorkingDirectory(e.target.value)}
+          onBlur={saveWorkingDirectory}
         />
         <Button variant={'outline'} size={'icon'} onClick={selectWorkingDirectory}>
           <span className={cn('icon-[mdi--folder-open-outline] w-5 h-5')}></span>
         </Button>
       </div>
 
-      {/* 分隔符 - 占满整行 */}
+      {/* 分隔线 - 占满整行 */}
       <div className={cn('col-span-2')}>
         <Separator />
       </div>
@@ -115,6 +145,7 @@ export function FileLauncher({ gameId }: { gameId: string }): JSX.Element {
           className={cn('flex-1')}
           value={monitorPath}
           onChange={(e) => setMonitorPath(e.target.value)}
+          onBlur={saveMonitorPath}
         />
         {['folder', 'file'].includes(monitorMode) && (
           <Button variant={'outline'} size={'icon'} onClick={selectMonitorPath}>

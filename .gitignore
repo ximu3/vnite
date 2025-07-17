@@ -4,9 +4,7 @@ out
 .DS_Store
 .eslintcache
 *.log*
-data
 .env
 .env.local
 .env.*.local
-app
 dev

@@ -1,5 +1,10 @@
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@ui/accordion'
-import { ScrollArea } from '@ui/scroll-area'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from '~/components/ui/accordion'
+import { ScrollArea } from '~/components/ui/scroll-area'
 import { useTranslation } from 'react-i18next'
 import { useConfigState } from '~/hooks'
 import { filterGames, sortGames } from '~/stores/game'
@@ -7,7 +12,7 @@ import { cn } from '~/utils'
 import { useFilterStore } from '../Filter/store'
 import { GameNav } from '../GameNav'
 
-export function FilterGame(): JSX.Element {
+export function FilterGame(): React.JSX.Element {
   const [by, _setBy] = useConfigState('game.gameList.sort.by')
   const [order, _setOrder] = useConfigState('game.gameList.sort.order')
   const { filter } = useFilterStore()
@@ -21,7 +26,7 @@ export function FilterGame(): JSX.Element {
         className={cn('w-full text-xs flex flex-col gap-2')}
       >
         <AccordionItem value="filter">
-          <AccordionTrigger className={cn('bg-accent/30 text-xs p-1 pl-2')}>
+          <AccordionTrigger className={cn('text-xs p-1 pl-2')}>
             {t('list.filter.results')}
           </AccordionTrigger>
           <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>

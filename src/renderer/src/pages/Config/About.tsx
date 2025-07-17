@@ -1,24 +1,24 @@
 import { cn } from '~/utils'
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
-import { Separator } from '@ui/separator'
-import { Link } from '@ui/link'
-import { Button } from '@ui/button'
-import { Switch } from '~/components/ui/switch'
-import { useConfigState } from '~/hooks'
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import { Separator } from '~/components/ui/separator'
+import { Link } from '~/components/ui/link'
+import { Button } from '~/components/ui/button'
+import { ConfigItem } from '~/components/form/ConfigItem'
+import { ConfigItemPure } from '~/components/form/ConfigItemPure'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useUpdaterStore } from '~/pages/Updater/store'
 import { toast } from 'sonner'
+import { ipcManager } from '~/app/ipc'
 
-export function About(): JSX.Element {
+export function About(): React.JSX.Element {
   const { t } = useTranslation('config')
   const [version, setVersion] = useState('')
   const { setIsOpen: setUpdateDialogIsOpen, setUpdateInfo } = useUpdaterStore()
-  const [allowPrerelease, setAllowPrerelease] = useConfigState('updater.allowPrerelease')
 
   useEffect(() => {
     async function getVersion(): Promise<void> {
-      const version = await window.api.utils.getAppVersion()
+      const version = await ipcManager.invoke('app:get-app-version')
       setVersion(version)
     }
 
@@ -35,86 +35,77 @@ export function About(): JSX.Element {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className={cn('grid grid-cols-[auto_1fr] gap-5 items-center')}>
+        <div className={cn('space-y-4')}>
           {/* Author Information */}
-          <div className={cn('whitespace-nowrap select-none')}>{t('about.author')}</div>
-          <div className={cn('flex justify-end')}>
+          <ConfigItemPure title={t('about.author')}>
             <Link name="ximu" url="https://github.com/ximu3" />
-          </div>
+          </ConfigItemPure>
 
-          {/* version information */}
-          <div className={cn('whitespace-nowrap select-none')}>{t('about.version')}</div>
-          <div className={cn('flex justify-end gap-2 text-sm items-center')}>
-            <div>{version}</div>
-            <Button
-              variant="outline"
-              size="icon"
-              className={cn('w-6 h-6')}
-              onClick={async () => {
-                toast.loading(t('utils:notifications.checkingForUpdate'), {
-                  id: 'checking-for-update'
-                })
-                setUpdateInfo(null)
-                await window.api.updater.checkUpdate()
-                toast.dismiss('checking-for-update')
-                setUpdateDialogIsOpen(true)
-              }}
-            >
-              <span className={cn('icon-[mdi--reload] w-4 h-4')}></span>
-            </Button>
-          </div>
+          {/* Version Information */}
+          <ConfigItemPure title={t('about.version')}>
+            <div className={cn('flex gap-2 text-sm items-center')}>
+              <div>{version}</div>
+              <Button
+                variant="outline"
+                size="icon"
+                className={cn('w-6 h-6')}
+                onClick={async () => {
+                  toast.loading(t('utils:notifications.checkingForUpdate'), {
+                    id: 'checking-for-update'
+                  })
+                  setUpdateInfo(null)
+                  await ipcManager.invoke('updater:check-update')
+                  toast.dismiss('checking-for-update')
+                  setUpdateDialogIsOpen(true)
+                }}
+              >
+                <span className={cn('icon-[mdi--reload] w-4 h-4')}></span>
+              </Button>
+            </div>
+          </ConfigItemPure>
 
-          {/* Warehouse Links */}
-          <div className={cn('whitespace-nowrap select-none')}>{t('about.repository')}</div>
-          <div className={cn('flex justify-end')}>
+          {/* Repository Links */}
+          <ConfigItemPure title={t('about.repository')}>
             <Link
               noToolTip
               name="https://github.com/ximu3/vnite"
               url="https://github.com/ximu3/vnite"
             />
-          </div>
+          </ConfigItemPure>
 
-          <div className={cn('col-span-2 py-0')}>
-            <Separator />
-          </div>
+          <Separator />
 
           {/* Feedback Links */}
-          <div className={cn('whitespace-nowrap select-none')}>{t('about.feedback')}</div>
-          <div className={cn('flex justify-end')}>
+          <ConfigItemPure title={t('about.feedback')}>
             <Link name="Github Issue" url="https://github.com/ximu3/vnite/issues" />
-          </div>
+          </ConfigItemPure>
 
-          {/* group link */}
-          <div className={cn('whitespace-nowrap select-none')}>{t('about.group')}</div>
-          <div className={cn('flex justify-end')}>
+          {/* Group Link */}
+          <ConfigItemPure title={t('about.group')}>
             <Link name="Telegram" url="https://t.me/+d65-R_xRx1JlYWZh" />
-          </div>
+          </ConfigItemPure>
 
-          <div className={cn('col-span-2 py-0')}>
-            <Separator />
-          </div>
+          <Separator />
 
-          {/* Prerelease */}
-          <div className={cn('whitespace-nowrap select-none')}>{t('about.prerelease')}</div>
-          <div className={cn('flex justify-end')}>
-            <Switch
-              id="prerelease"
-              checked={allowPrerelease}
-              onCheckedChange={async (checked) => {
-                await setAllowPrerelease(checked)
-                await window.api.updater.updateUpdaterConfig()
-                if (checked) {
-                  toast.loading(t('utils:notifications.checkingForUpdate'), {
-                    id: 'checking-for-update'
-                  })
-                  setUpdateInfo(null)
-                  await window.api.updater.checkUpdate()
-                  toast.dismiss('checking-for-update')
-                  setUpdateDialogIsOpen(true)
-                }
-              }}
-            />
-          </div>
+          {/* Prerelease Setting */}
+          <ConfigItem
+            hookType="config"
+            path="updater.allowPrerelease"
+            title={t('about.prerelease')}
+            controlType="switch"
+            onChange={async (checked) => {
+              await ipcManager.invoke('updater:update-config')
+              if (checked) {
+                toast.loading(t('utils:notifications.checkingForUpdate'), {
+                  id: 'checking-for-update'
+                })
+                setUpdateInfo(null)
+                await ipcManager.invoke('updater:check-update')
+                toast.dismiss('checking-for-update')
+                setUpdateDialogIsOpen(true)
+              }
+            }}
+          />
         </div>
       </CardContent>
     </Card>

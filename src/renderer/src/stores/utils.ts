@@ -1,4 +1,5 @@
-import { DocChange } from '@appTypes/database'
+import { DocChange } from '@appTypes/models'
+import { ipcManager } from '~/app/ipc'
 
 /**
  * Generic Database Synchronization Functions - Synchronize data to a specified database
@@ -22,7 +23,7 @@ export async function syncTo<T extends Record<string, any>>(
   }
 
   try {
-    await window.api.database.setValue(change)
+    await ipcManager.invoke('db:doc-changed', change)
   } catch (error) {
     console.error(`[Sync] sync failure ${dbName}/${docId}:`, error)
     throw error

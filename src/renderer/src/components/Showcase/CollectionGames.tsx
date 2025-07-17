@@ -1,4 +1,4 @@
-import { ScrollArea } from '@ui/scroll-area'
+import { ScrollArea } from '~/components/ui/scroll-area'
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
 import { useGameCollectionStore } from '~/stores'
@@ -12,6 +12,7 @@ export type DragContextType = {
 
 const DragContext = createContext<DragContextType | null>(null)
 
+// eslint-disable-next-line
 export const useDragContext = (): DragContextType => {
   const context = useContext(DragContext)
   return (
@@ -28,7 +29,7 @@ export function CollectionGamesComponent({
 }: {
   collectionId: string
   scrollPosition: { x: number; y: number }
-}): JSX.Element {
+}): React.JSX.Element {
   const collections = useGameCollectionStore((state) => state.documents)
   const games = collections[collectionId].games
   const collectionName = collections[collectionId].name

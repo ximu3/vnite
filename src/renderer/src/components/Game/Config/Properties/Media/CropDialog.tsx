@@ -1,11 +1,12 @@
 import { useState, useRef, useCallback, useMemo } from 'react'
 import ReactCrop, { Crop } from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@ui/dialog'
-import { Button } from '@ui/button'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/ui/dialog'
+import { Button } from '~/components/ui/button'
 import { toast } from 'sonner'
 import { cn } from '~/utils'
 import { useTranslation } from 'react-i18next'
+import { ipcManager } from '~/app/ipc'
 
 interface CropDialogProps {
   isOpen: boolean
@@ -19,7 +20,7 @@ export function CropDialog({
   onClose,
   imagePath,
   onCropComplete
-}: CropDialogProps): JSX.Element | null {
+}: CropDialogProps): React.JSX.Element | null {
   const { t } = useTranslation('game')
   const [crop, setCrop] = useState<Crop>({
     unit: 'px',
@@ -91,7 +92,7 @@ export function CropDialog({
         return
       }
 
-      const filePath = await window.api.media.cropImage({
+      const filePath = await ipcManager.invoke('utils:crop-image', {
         sourcePath: imagePath,
         x: actualX,
         y: actualY,

@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import html2canvas from 'html2canvas'
 import { cn } from '~/utils'
 
-export function Logo(): JSX.Element {
+export function Logo(): React.JSX.Element {
   const logoRef = useRef<HTMLDivElement>(null)
 
   const handleExportAsImage = async (): Promise<void> => {

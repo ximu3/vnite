@@ -1,13 +1,14 @@
 import { cn } from '~/utils'
-import { Dialog, DialogContent } from '@ui/dialog'
-import { Button } from '@ui/button'
-import { Input } from '@ui/input'
-import { Card } from '@ui/card'
-import { Badge } from '@ui/badge'
+import { Dialog, DialogContent } from '~/components/ui/dialog'
+import { Button } from '~/components/ui/button'
+import { Input } from '~/components/ui/input'
+import { Card } from '~/components/ui/card'
+import { Badge } from '~/components/ui/badge'
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import { GameTagsList } from '@appTypes/utils'
 import { useTranslation } from 'react-i18next'
+import { ipcManager } from '~/app/ipc'
 
 interface SearchTagsDialogProps {
   isOpen: boolean
@@ -23,7 +24,7 @@ export function SearchTagsDialog({
   gameTitle,
   onSelect,
   initialTags = []
-}: SearchTagsDialogProps): JSX.Element {
+}: SearchTagsDialogProps): React.JSX.Element {
   const { t } = useTranslation('game')
   const [searchTitle, setSearchTitle] = useState(gameTitle)
   const [tagsList, setTagsList] = useState<GameTagsList>([])
@@ -57,7 +58,7 @@ export function SearchTagsDialog({
     setIsLoading(true)
 
     try {
-      const result = await window.api.scraper.getGameTagsList({
+      const result = await ipcManager.invoke('scraper:get-game-tags-list', {
         type: 'name',
         value: searchTitle
       })

@@ -1,5 +1,5 @@
 import { cn } from '~/utils'
-import { Button } from '@ui/button'
+import { Button } from '~/components/ui/button'
 import { stopGame } from '~/utils'
 import { useTranslation } from 'react-i18next'
 
@@ -9,7 +9,7 @@ export function StopGame({
 }: {
   gameId: string
   className?: string
-}): JSX.Element {
+}): React.JSX.Element {
   const { t } = useTranslation('game')
   return (
     <Button className={cn('', className)} variant={'secondary'} onClick={() => stopGame(gameId)}>

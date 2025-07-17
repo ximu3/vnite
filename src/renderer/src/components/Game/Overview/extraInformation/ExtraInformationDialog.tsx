@@ -1,19 +1,19 @@
 import { useTranslation } from 'react-i18next'
-import { Button } from '@ui/button'
-import { Dialog, DialogContent, DialogTrigger } from '@ui/dialog'
-import { Input } from '@ui/input'
+import { Button } from '~/components/ui/button'
+import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog'
+import { Input } from '~/components/ui/input'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
-} from '@ui/dropdown-menu'
+} from '~/components/ui/dropdown-menu'
 import { ArrayInput } from '~/components/ui/array-input'
 import { useGameState } from '~/hooks'
 import { cn } from '~/utils'
-import { METADATA_EXTRA_PREDEFINED_KEYS } from '@appTypes/database'
+import { METADATA_EXTRA_PREDEFINED_KEYS } from '@appTypes/models'
 
-export function ExtraInformationDialog({ gameId }: { gameId: string }): JSX.Element {
+export function ExtraInformationDialog({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [extra, setExtra] = useGameState(gameId, 'metadata.extra')
 
@@ -65,7 +65,7 @@ export function ExtraInformationDialog({ gameId }: { gameId: string }): JSX.Elem
         ></span>
       </DialogTrigger>
       <DialogContent
-        className={cn('w-1/2 h-1/2 max-w-none flex flex-col gap-3')}
+        className={cn('w-[700px] max-w-none flex flex-col gap-3')}
         onClose={
           // Remove items with empty keys
           () => {

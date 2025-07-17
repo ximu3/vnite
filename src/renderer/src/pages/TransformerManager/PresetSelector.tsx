@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Plus } from 'lucide-react'
 import { cn } from '~/utils'
-import { Button } from '@ui/button'
+import { Button } from '~/components/ui/button'
 import {
   Command,
   CommandEmpty,
@@ -9,8 +9,8 @@ import {
   CommandInput,
   CommandItem,
   CommandList
-} from '@ui/command'
-import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
+} from '~/components/ui/command'
+import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
 import { getTransformerPresets } from './presets'
@@ -25,7 +25,7 @@ interface PresetSelectorProps {
 export function TransformerPresetSelector({
   className,
   onSelectPreset
-}: PresetSelectorProps): JSX.Element {
+}: PresetSelectorProps): React.JSX.Element {
   const { t } = useTranslation('transformer')
   const [open, setOpen] = React.useState(false)
 

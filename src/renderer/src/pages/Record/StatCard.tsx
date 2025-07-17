@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { cn } from '~/utils'
 
 interface StatCardProps {
@@ -15,10 +15,10 @@ export function StatCard({
   icon,
   description,
   className
-}: StatCardProps): JSX.Element {
+}: StatCardProps): React.JSX.Element {
   return (
     <Card className={cn(className)}>
-      <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
         <div className="w-4 h-4 text-muted-foreground">{icon}</div>
       </CardHeader>

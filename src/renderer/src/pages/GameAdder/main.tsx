@@ -1,23 +1,36 @@
 import { cn } from '~/utils'
-import { Dialog, DialogContent } from '@ui/dialog'
-import { MemoryRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
+import { Dialog, DialogContent } from '~/components/ui/dialog'
 import { useGameAdderStore, initializeStore } from './store'
-import { GameList } from './GameList'
-import { Search } from './Search'
-import { BackgroundList } from './BackgroundList'
 import { useEffect } from 'react'
 import { useConfigState } from '~/hooks'
+import { Search } from './Search'
+import { GameList } from './GameList'
+import { BackgroundList } from './BackgroundList'
 
-function GameAdderContent(): JSX.Element {
-  const { isOpen, handleClose } = useGameAdderStore()
+function GameAdderContent(): React.JSX.Element {
+  const { isOpen, currentPage, handleClose } = useGameAdderStore()
   const [defaultDataSource] = useConfigState('game.scraper.common.defaultDataSource')
-  const navigate = useNavigate()
+
   useEffect(() => {
     const initStore = async (): Promise<void> => {
       initializeStore(defaultDataSource)
     }
     initStore()
   }, [defaultDataSource])
+
+  const renderCurrentPage = (): React.JSX.Element => {
+    switch (currentPage) {
+      case 'search':
+        return <Search />
+      case 'games':
+        return <GameList />
+      case 'screenshots':
+        return <BackgroundList />
+      default:
+        return <Search />
+    }
+  }
+
   return (
     <Dialog open={isOpen}>
       <DialogContent
@@ -27,24 +40,14 @@ function GameAdderContent(): JSX.Element {
         }}
         onClose={() => {
           handleClose()
-          navigate('/')
         }}
       >
-        <Routes>
-          <Route index element={<Navigate to={'search'} />} />
-          <Route path="/search" element={<Search />} />
-          <Route path="/games" element={<GameList />} />
-          <Route path="/screenshots" element={<BackgroundList />} />
-        </Routes>
+        {renderCurrentPage()}
       </DialogContent>
     </Dialog>
   )
 }
 
-export function GameAdder(): JSX.Element {
-  return (
-    <MemoryRouter>
-      <GameAdderContent />
-    </MemoryRouter>
-  )
+export function GameAdder(): React.JSX.Element {
+  return <GameAdderContent />
 }

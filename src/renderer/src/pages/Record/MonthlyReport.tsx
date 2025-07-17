@@ -1,8 +1,8 @@
-import { Button, buttonVariants } from '@ui/button'
-import { Calendar } from '@ui/calendar'
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
-import { Separator } from '@ui/separator'
+import { Button, buttonVariants } from '~/components/ui/button'
+import { Calendar } from '~/components/ui/calendar'
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '~/components/ui/chart'
+import { Separator } from '~/components/ui/separator'
 import { CalendarIcon, ChevronLeft, ChevronRight, Clock, Trophy } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -13,7 +13,7 @@ import { cn } from '~/utils'
 import { GameRankingItem } from './GameRankingItem'
 import { StatCard } from './StatCard'
 
-export function MonthlyReport(): JSX.Element {
+export function MonthlyReport(): React.JSX.Element {
   const { t } = useTranslation('record')
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
@@ -120,7 +120,7 @@ export function MonthlyReport(): JSX.Element {
   const chartConfig = {
     playTime: {
       label: t('overview.stats.totalPlayTime'),
-      color: 'hsl(var(--primary))'
+      color: 'var(--primary)'
     }
   }
 
@@ -196,22 +196,23 @@ export function MonthlyReport(): JSX.Element {
                 <XAxis dataKey="week" tickLine={false} axisLine={false} tickMargin={10} />
                 <YAxis tickLine={false} axisLine={false} tickMargin={10} />
                 <ChartTooltip
-                  content={
+                  content={(props) => (
                     <ChartTooltipContent
+                      {...props}
                       formatter={(value) => formatGameTime((value as number) * 3600000)}
                       labelFormatter={(week) => `${week}`}
                       hideIndicator={false}
-                      color="hsl(var(--primary))"
+                      color="var(--primary)"
                     />
-                  }
+                  )}
                 />
                 <Area
                   type="monotone"
                   dataKey="playTime"
-                  stroke="hsl(var(--primary))"
+                  stroke="var(--primary)"
                   strokeWidth={2}
                   fillOpacity={0.3}
-                  fill="hsl(var(--primary))"
+                  fill="var(--primary)"
                 />
               </AreaChart>
             </ChartContainer>
@@ -224,14 +225,14 @@ export function MonthlyReport(): JSX.Element {
           </CardHeader>
           <CardContent>
             <Calendar
-              mode="default"
+              mode="single"
               selected={selectedDate}
               month={selectedDate} // Controls the displayed month
               onMonthChange={(date) => setSelectedDate(date)}
               className="w-full border rounded-md select-none"
               classNames={{
                 day: cn(
-                  buttonVariants({ variant: 'none' }),
+                  buttonVariants({ variant: 'ghost' }),
                   'h-8 w-8 p-0 font-normal aria-selected:opacity-100'
                 ),
                 day_outside: 'invisible'

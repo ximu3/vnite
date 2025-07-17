@@ -6,7 +6,7 @@ import {
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger
-} from '@ui/dropdown-menu'
+} from '~/components/ui/dropdown-menu'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useGameCollectionStore } from '~/stores'
@@ -18,7 +18,7 @@ export function CollectionMenu({
 }: {
   gameId: string
   openAddCollectionDialog: () => void
-}): JSX.Element {
+}): React.JSX.Element {
   const { t } = useTranslation('game')
   const {
     documents: collections,

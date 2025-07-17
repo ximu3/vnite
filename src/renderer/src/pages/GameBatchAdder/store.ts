@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { BatchGameInfo } from '@appTypes/database'
+import { BatchGameInfo } from '@appTypes/models'
 
 export type DataSource = 'vndb' | 'igdb' | 'steam' | 'bangumi' | 'ymgal' | 'dlsite'
 export type GameStatus = 'idle' | 'loading' | 'success' | 'error' | 'existed'

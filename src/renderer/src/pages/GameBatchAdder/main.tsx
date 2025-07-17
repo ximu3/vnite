@@ -1,11 +1,11 @@
 import { cn } from '~/utils'
-import { Dialog, DialogContent } from '@ui/dialog'
+import { Dialog, DialogContent } from '~/components/ui/dialog'
 import { toast } from 'sonner'
 import { useGameBatchAdderStore } from './store'
 import { GameList } from './GameList'
 import { useTranslation } from 'react-i18next'
 
-export function GameBatchAdder(): JSX.Element {
+export function GameBatchAdder(): React.JSX.Element {
   const { t } = useTranslation('adder')
   const {
     isOpen,

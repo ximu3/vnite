@@ -1,15 +1,15 @@
 import { useEffect } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from '@tanstack/react-router'
 import { setup } from '~/utils'
 import { useConfigState } from './hooks'
 import { useGameAdderStore } from './pages/GameAdder/store'
 import { randomGame } from './stores/game'
 
-export function Setup(): JSX.Element {
-  const navigate = useNavigate()
+export function Setup(): React.JSX.Element {
+  const router = useRouter()
   useEffect(() => {
-    setup(navigate)
+    setup(router)
   }, [])
 
   const [libraryHotkey] = useConfigState('hotkeys.library')
@@ -35,7 +35,7 @@ export function Setup(): JSX.Element {
   useHotkeys(
     libraryHotkey,
     () => {
-      navigate('/library')
+      router.navigate({ to: '/library' })
     },
     {
       preventDefault: true
@@ -44,7 +44,7 @@ export function Setup(): JSX.Element {
   useHotkeys(
     recordHotkey,
     () => {
-      navigate('/record')
+      router.navigate({ to: '/record' })
     },
     {
       preventDefault: true
@@ -53,7 +53,7 @@ export function Setup(): JSX.Element {
   useHotkeys(
     scannerHotkey,
     () => {
-      navigate('/scanner')
+      router.navigate({ to: '/scanner' })
     },
     {
       preventDefault: true
@@ -62,7 +62,7 @@ export function Setup(): JSX.Element {
   useHotkeys(
     configHotkey,
     () => {
-      navigate('/config')
+      router.navigate({ to: '/config' })
     },
     {
       preventDefault: true
@@ -73,9 +73,9 @@ export function Setup(): JSX.Element {
     () => {
       const randomGameId = randomGame()
       if (randomGameId) {
-        navigate(`/library/games/${randomGameId}/all`)
+        router.navigate({ to: `/library/games/${randomGameId}/all` })
       } else {
-        navigate('/library')
+        router.navigate({ to: '/library' })
       }
     },
     {
@@ -85,7 +85,7 @@ export function Setup(): JSX.Element {
   useHotkeys(
     goBackHotKey,
     () => {
-      navigate(-1)
+      router.history.back()
     },
     {
       preventDefault: true
@@ -94,7 +94,7 @@ export function Setup(): JSX.Element {
   useHotkeys(
     goForwardHotKey,
     () => {
-      navigate(1)
+      router.history.forward()
     },
     {
       preventDefault: true

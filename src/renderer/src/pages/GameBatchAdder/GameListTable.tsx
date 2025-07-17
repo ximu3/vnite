@@ -1,9 +1,10 @@
 import { useGameBatchAdderStore } from './store'
 import { GameListItem } from './GameListItem'
-import { Table, TableBody, TableHead, TableHeader, TableRow } from '@ui/table'
+import { Table, TableBody, TableHead, TableHeader, TableRow } from '~/components/ui/table'
 import { cn } from '~/utils'
 import { useTranslation } from 'react-i18next'
 
+// eslint-disable-next-line
 export const TABLE_COLUMN_WIDTHS = {
   dataSource: 'w-[150px] 3xl:w-[350px]',
   name: 'w-[300px] 3xl:w-[350px]',
@@ -12,7 +13,7 @@ export const TABLE_COLUMN_WIDTHS = {
   actions: 'w-[150px] 3xl:w-[200px]'
 } as const
 
-export function GameListTable(): JSX.Element {
+export function GameListTable(): React.JSX.Element {
   const { t } = useTranslation('adder')
   const { games } = useGameBatchAdderStore()
   // Putting games in existed status at the end

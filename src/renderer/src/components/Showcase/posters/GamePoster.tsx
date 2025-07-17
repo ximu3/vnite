@@ -1,14 +1,15 @@
-import { Button } from '@ui/button'
-import { ContextMenu, ContextMenuTrigger } from '@ui/context-menu'
-import { GameImage } from '@ui/game-image'
+import { Button } from '~/components/ui/button'
+import { ContextMenu, ContextMenuTrigger } from '~/components/ui/context-menu'
+import { GameImage } from '~/components/ui/game-image'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from '@tanstack/react-router'
 import { HoverCardAnimation } from '~/components/animations/HoverCard'
 import { GameNavCM } from '~/components/contextMenu/GameNavCM'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
+import { GamePropertiesDialog } from '~/components/Game/Config/Properties'
 import { useDragContext } from '~/components/Showcase/CollectionGames'
 import { useConfigState, useGameState } from '~/hooks'
 import { useRunningGames } from '~/pages/Library/store'
@@ -35,7 +36,7 @@ function Preview({
 }: {
   title: string
   transparentBackground?: boolean
-}): JSX.Element {
+}): React.JSX.Element {
   return (
     <div
       className={cn(
@@ -67,8 +68,8 @@ export function GamePoster({
   dragScenario?: string
   parentGap?: number
   position?: 'right' | 'left' | 'center'
-}): JSX.Element {
-  const navigate = useNavigate()
+}): React.JSX.Element {
+  const router = useRouter()
   const gameData = useGameRegistry((state) => state.gameMetaIndex[gameId])
   const runningGames = useRunningGames((state) => state.runningGames)
   const reorderGamesInCollection = useGameCollectionStore((state) => state.reorderGamesInCollection)
@@ -80,6 +81,7 @@ export function GamePoster({
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = useState(false)
   const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = useState(false)
   const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = useState(false)
+  const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = useState(false)
   const { t } = useTranslation('game')
   const { setIsDraggingGlobal } = useDragContext()
   const ref_ = useRef<HTMLDivElement>(null)
@@ -164,7 +166,7 @@ export function GamePoster({
             <ContextMenuTrigger>
               <div
                 className="flex flex-col items-center justify-center gap-[8px] cursor-pointer group"
-                onClick={() => navigateToGame(navigate, gameId, groupId || 'all')}
+                onClick={() => navigateToGame(router, gameId, groupId || 'all')}
               >
                 <div
                   className={cn(
@@ -175,7 +177,7 @@ export function GamePoster({
                     'relative overflow-hidden group'
                   )}
                 >
-                  <div className="absolute inset-0 z-10 transition-all duration-300 rounded-lg pointer-events-none bg-background/15 group-hover:bg-transparent" />
+                  {/* <div className="absolute inset-0 z-10 transition-all duration-300 rounded-lg pointer-events-none bg-background/15 group-hover:bg-transparent" /> */}
                   <HoverCardAnimation>
                     <GameImage
                       draggable="false"
@@ -193,7 +195,7 @@ export function GamePoster({
                             'w-[148px] aspect-[2/3] cursor-pointer object-cover flex items-center justify-center bg-muted/50',
                             className
                           )}
-                          onClick={() => navigateToGame(navigate, gameId, groupId || 'all')}
+                          onClick={() => navigateToGame(router, gameId, groupId || 'all')}
                         >
                           <div className="p-1 font-bold truncate select-none">{gameName}</div>
                         </div>
@@ -231,7 +233,7 @@ export function GamePoster({
                             className="rounded-full w-[46px] h-[46px] p-0 bg-primary hover:bg-primary/90"
                             onClick={(e) => {
                               e.stopPropagation()
-                              navigateToGame(navigate, gameId, groupId || 'all')
+                              navigateToGame(router, gameId, groupId || 'all')
                               startGame(gameId)
                             }}
                           >
@@ -279,6 +281,7 @@ export function GamePoster({
             openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
             openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
             openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
+            openPropertiesDialog={() => setIsPropertiesDialogOpen(true)}
           />
         </ContextMenu>
       )}
@@ -291,6 +294,13 @@ export function GamePoster({
       )}
       {isPlayTimeEditorDialogOpen && (
         <PlayTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayTimeEditorDialogOpen} />
+      )}
+      {isPropertiesDialogOpen && (
+        <GamePropertiesDialog
+          gameId={gameId}
+          isOpen={isPropertiesDialogOpen}
+          setIsOpen={setIsPropertiesDialogOpen}
+        />
       )}
 
       {closestEdge && (

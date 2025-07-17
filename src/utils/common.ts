@@ -1,6 +1,6 @@
 import { get } from 'lodash'
 import { v4 } from 'uuid'
-import { Timer } from '@appTypes/database'
+import type { Timer } from '@appTypes/models'
 
 export function getValueByPath(obj: any, path: string): any {
   if (path === '#all') {
@@ -13,6 +13,10 @@ export function getValueByPath(obj: any, path: string): any {
     .filter(Boolean)
 
   return get(obj, pathArray)
+}
+
+export function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 export function getErrorMessage(error: unknown): string {

@@ -1,10 +1,11 @@
 {
   "title": "",
   "navigation": {
-    "library": "",
-    "records": "",
-    "scanner": "",
-    "transformer": ""
+    "library": "Bibliothèque de jeux",
+    "records": "Enregistrements",
+    "scanner": "Scanner",
+    "transformer": "Transformateur",
+    "plugin": "Plugins"
   },
   "actions": {
     "darkMode": "",

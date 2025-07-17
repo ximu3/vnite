@@ -1,5 +1,5 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
-import { ScrollArea } from '@ui/scroll-area'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
+import { ScrollArea } from '~/components/ui/scroll-area'
 import { cn } from '~/utils'
 
 import { RecordOverview } from './RecordOverview'
@@ -9,11 +9,11 @@ import { YearlyReport } from './YearlyReport'
 import { ScoreReport } from './ScoreReport'
 import { useTranslation } from 'react-i18next'
 
-export function Record({ className }: { className?: string }): JSX.Element {
+export function Record({ className }: { className?: string }): React.JSX.Element {
   const { t } = useTranslation('record')
   return (
-    <div className={cn('w-full h-full bg-background/60', className)}>
-      <ScrollArea className={cn('w-full h-full px-6 pt-[20px]')}>
+    <div className={cn('w-full h-full bg-transparent', className)}>
+      <ScrollArea className={cn('w-full h-full px-6')}>
         <div className={cn('flex flex-col gap-6 pt-[34px]')}>
           <div className={cn('text-2xl font-bold')}>{t('title')}</div>
 

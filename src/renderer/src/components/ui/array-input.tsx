@@ -14,6 +14,7 @@ import { cn } from '~/utils'
 interface ArrayInputProps {
   value: string[]
   onChange: (value: string[]) => void
+  onBlur?: (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void
   placeholder?: string
   tooltipText?: string
   className?: string
@@ -28,8 +29,9 @@ export function ArrayInput({
   tooltipText,
   className,
   isTextarea,
-  isHaveTooltip = true
-}: ArrayInputProps): JSX.Element {
+  isHaveTooltip = true,
+  onBlur = () => {}
+}: ArrayInputProps): React.JSX.Element {
   // Use useMemo to initialize inputValue to avoid unnecessary join operations.
   const initialInputValue = useMemo(() => value.join(', '), [])
   const [inputValue, setInputValue] = useState(initialInputValue)
@@ -94,6 +96,7 @@ export function ArrayInput({
     <InputComponent
       value={inputValue}
       onChange={handleChange}
+      onBlur={onBlur}
       onCompositionStart={handleCompositionStart}
       onCompositionEnd={handleCompositionEnd}
       placeholder={placeholder}

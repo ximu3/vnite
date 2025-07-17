@@ -1,4 +1,3 @@
-import { Separator } from '@ui/separator'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useGameState } from '~/hooks'
@@ -13,7 +12,7 @@ export function TagsCard({
 }: {
   gameId: string
   className?: string
-}): JSX.Element {
+}): React.JSX.Element {
   const { t } = useTranslation('game')
   const [tags, setTags] = useGameState(gameId, 'metadata.tags')
   const [originalName] = useGameState(gameId, 'metadata.originalName')
@@ -43,7 +42,9 @@ export function TagsCard({
           <TagsDialog gameId={gameId} />
         </div>
       </div>
-      <Separator className={cn('my-3 bg-primary')} />
+      <div className={cn('flex items-center justify-center flex-grow')}>
+        <div className="w-full h-px my-3 border-t border-dashed border-primary" />
+      </div>
       <div className={cn('text-sm justify-start items-start')}>
         <div className={cn('flex flex-wrap gap-x-1 gap-y-[6px]')}>
           {tags.join(', ') === ''

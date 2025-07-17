@@ -1,6 +1,6 @@
 import { generateUUID } from '@appUtils'
-import { GameImage } from '@ui/game-image'
-import { useNavigate } from 'react-router-dom'
+import { GameImage } from '~/components/ui/game-image'
+import { useRouter } from '@tanstack/react-router'
 import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
 import { useConfigState, useGameState } from '~/hooks'
 import { cn, scrollToElement } from '~/utils'
@@ -17,11 +17,11 @@ export function GameRankingItem({
   rank,
   extraInfo,
   className
-}: GameRankingItemProps): JSX.Element {
+}: GameRankingItemProps): React.JSX.Element {
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
   const [enableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
-  const navigate = useNavigate()
+  const router = useRouter()
   const setLazyloadMark = usePositionButtonStore((state) => state.setLazyloadMark)
 
   return (
@@ -31,7 +31,7 @@ export function GameRankingItem({
         className
       )}
       onClick={() => {
-        navigate(`/library/games/${gameId}/all`)
+        router.navigate({ to: `/library/games/${gameId}/all` })
         setTimeout(() => {
           scrollToElement({
             selector: `[data-game-id="${gameId}"][data-group-id="all"]`

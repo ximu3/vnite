@@ -1,5 +1,5 @@
-import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
-import { Button } from '@ui/button'
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
+import { Button } from '~/components/ui/button'
 import { cn } from '~/utils'
 
 export function Link({
@@ -14,7 +14,7 @@ export function Link({
   className?: string
   noToolTip?: boolean
   tooltipSide?: 'top' | 'bottom' | 'left' | 'right'
-}): JSX.Element {
+}): React.JSX.Element {
   return (
     <>
       {!noToolTip ? (

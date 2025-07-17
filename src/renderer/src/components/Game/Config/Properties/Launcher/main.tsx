@@ -1,6 +1,6 @@
 import { cn } from '~/utils'
 import { useGameLocalState, useConfigLocalState } from '~/hooks'
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import {
   Select,
   SelectContent,
@@ -9,17 +9,18 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue
-} from '@ui/select'
-import { Switch } from '@ui/switch'
-import { Separator } from '@ui/separator'
+} from '~/components/ui/select'
+import { Switch } from '~/components/ui/switch'
+import { Separator } from '~/components/ui/separator'
 import { toast } from 'sonner'
 import { FileLauncher } from './FileLauncher'
 import { UrlLauncher } from './UrlLauncher'
 import { ScriptLauncher } from './ScriptLauncher'
 import { PresetSelecter } from './PresetSelecter'
 import { useTranslation } from 'react-i18next'
+import { ipcManager } from '~/app/ipc'
 
-export function Launcher({ gameId }: { gameId: string }): JSX.Element {
+export function Launcher({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [mode, setMode] = useGameLocalState(gameId, 'launcher.mode')
   const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
@@ -27,7 +28,10 @@ export function Launcher({ gameId }: { gameId: string }): JSX.Element {
   const [magpiePath, setMagpiePath] = useConfigLocalState('game.linkage.magpie.path')
 
   async function selectMagpiePath(): Promise<void> {
-    const magpiePath: string = await window.api.utils.selectPathDialog(['openFile'])
+    const magpiePath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
+    if (!magpiePath) {
+      return
+    }
     setMagpiePath(magpiePath)
   }
 

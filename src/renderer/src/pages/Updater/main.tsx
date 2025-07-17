@@ -1,13 +1,14 @@
 import { useEffect } from 'react'
-import { ipcOnUnique, cn, HTMLParserOptions } from '~/utils'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@ui/dialog'
-import { Button } from '@ui/button'
+import { cn, HTMLParserOptions } from '~/utils'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/ui/dialog'
+import { Button } from '~/components/ui/button'
 import { Progress } from '@ui/progress'
 import { useUpdaterStore, UpdateInfo, UpdateProgress } from './store'
 import parse from 'html-react-parser'
 import { useTranslation } from 'react-i18next'
+import { ipcManager } from '~/app/ipc'
 
-export function UpdateDialog(): JSX.Element {
+export function UpdateDialog(): React.JSX.Element {
   const { t } = useTranslation('updater')
   const {
     isOpen,
@@ -23,22 +24,22 @@ export function UpdateDialog(): JSX.Element {
   } = useUpdaterStore()
 
   useEffect(() => {
-    const removeUpdateAvailableListener = ipcOnUnique(
-      'update-available',
+    const removeUpdateAvailableListener = ipcManager.onUnique(
+      'updater:update-available',
       (_event, updateInfo: UpdateInfo) => {
         setUpdateInfo(updateInfo)
         setIsOpen(true)
       }
     )
 
-    const removeUpdateProgressListener = ipcOnUnique(
-      'update-progress',
+    const removeUpdateProgressListener = ipcManager.onUnique(
+      'updater:download-progress',
       (_event, progress: UpdateProgress) => {
         setProgress(progress)
       }
     )
 
-    const removeUpdateDownloadedListener = ipcOnUnique('update-downloaded', () => {
+    const removeUpdateDownloadedListener = ipcManager.onUnique('updater:update-downloaded', () => {
       setDownloadComplete(true)
     })
 
@@ -51,11 +52,11 @@ export function UpdateDialog(): JSX.Element {
 
   const handleUpdate = async (): Promise<void> => {
     setDownloading(true)
-    await window.api.updater.startUpdate()
+    await ipcManager.invoke('updater:start-update')
   }
 
   const handleInstall = async (): Promise<void> => {
-    await window.api.updater.installUpdate()
+    await ipcManager.invoke('updater:install-update')
   }
 
   return (

@@ -1,8 +1,8 @@
-import { Badge } from '@ui/badge'
-import { Button } from '@ui/button'
-import { Card } from '@ui/card'
+import { Badge } from '~/components/ui/badge'
+import { Button } from '~/components/ui/button'
+import { Card } from '~/components/ui/card'
 import { Progress } from '@ui/progress'
-import { ScrollArea } from '@ui/scroll-area'
+import { ScrollArea } from '~/components/ui/scroll-area'
 import {
   AlertTriangle,
   Folder,
@@ -105,8 +105,8 @@ export const GameScannerManager: React.FC = () => {
   const globalInterval = scannerConfig?.interval || 0
 
   return (
-    <div className="flex flex-col w-full h-full bg-background/60">
-      <ScrollArea className="px-6 pt-[20px]">
+    <div className="flex flex-col w-full h-full bg-transparent">
+      <ScrollArea className="px-6">
         <div className="py-[34px]">
           {/* Header title */}
           <div className="flex items-center justify-between mb-4 ">
@@ -115,7 +115,7 @@ export const GameScannerManager: React.FC = () => {
 
           <div className="grid grid-cols-1 gap-4">
             {/* Status card */}
-            <Card className="p-4 border rounded-lg">
+            <Card className="p-4 rounded-lg">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 {/* Left: Status and progress information */}
                 <div className="flex flex-wrap items-center gap-4">
@@ -223,9 +223,9 @@ export const GameScannerManager: React.FC = () => {
             </Card>
 
             {/* Scanners list and action card */}
-            <Card className="flex flex-col flex-grow border rounded-lg">
+            <Card className="flex flex-col flex-grow rounded-lg p-0 gap-0">
               {/* Scanners list title bar */}
-              <div className="flex items-center justify-between p-4 border-b bg-muted/45">
+              <div className="flex items-center justify-between p-4 border-b bg-muted/30">
                 <div className="text-sm font-medium">{t('list.title')}</div>
                 <Button
                   size="sm"

@@ -28,7 +28,7 @@ export function ArrayEditor({
   isHaveTooltip = true,
   dialogTitle,
   dialogPlaceholder
-}: ArrayEditorProps): JSX.Element {
+}: ArrayEditorProps): React.JSX.Element {
   const { t } = useTranslation('utils')
   // State for adding elements
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
@@ -125,7 +125,7 @@ export function ArrayEditor({
 
       {/* Add element dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="w-[500px]">
           <DialogHeader>
             <DialogTitle>{dialogTitle || defaultDialogTitle}</DialogTitle>
           </DialogHeader>

@@ -1,5 +1,10 @@
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@ui/accordion'
-import { ScrollArea } from '@ui/scroll-area'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from '~/components/ui/accordion'
+import { ScrollArea } from '~/components/ui/scroll-area'
 import { useConfigState } from '~/hooks'
 import { filterGames, getAllValuesInKey, sortGames } from '~/stores/game'
 import { cn } from '~/utils'
@@ -11,7 +16,7 @@ export function Others({
   fieldName
 }: {
   fieldName: 'metadata.developers' | 'metadata.genres'
-}): JSX.Element {
+}): React.JSX.Element {
   const [by, _setBy] = useConfigState('game.gameList.sort.by')
   const [order, _setOrder] = useConfigState('game.gameList.sort.order')
 
@@ -30,7 +35,7 @@ export function Others({
           <RecentGames />
           {fields.map((field) => (
             <AccordionItem key={field} value={field}>
-              <AccordionTrigger defaultChecked className={cn('text-xs p-1 pl-2 bg-accent/35')}>
+              <AccordionTrigger defaultChecked className={cn('text-xs p-1 pl-2')}>
                 <div className={cn('flex flex-row items-center justify-start gap-1')}>
                   <div className={cn('text-xs')}>{field}</div>
                   <div className={cn('text-2xs text-foreground/50')}>

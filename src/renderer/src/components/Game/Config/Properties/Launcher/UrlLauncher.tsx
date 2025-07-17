@@ -1,8 +1,8 @@
 import { cn } from '~/utils'
 import { useGameLocalState } from '~/hooks'
-import { Input } from '@ui/input'
-import { Button } from '@ui/button'
-import { Separator } from '@ui/separator'
+import { Input } from '~/components/ui/input'
+import { Button } from '~/components/ui/button'
+import { Separator } from '~/components/ui/separator'
 import {
   Select,
   SelectContent,
@@ -11,32 +11,54 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue
-} from '@ui/select'
+} from '~/components/ui/select'
 import { useTranslation } from 'react-i18next'
+import { ipcManager } from '~/app/ipc'
 
-export function UrlLauncher({ gameId }: { gameId: string }): JSX.Element {
+export function UrlLauncher({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
-  const [url, setUrl] = useGameLocalState(gameId, 'launcher.urlConfig.url')
-  const [browserPath, setBrowserPath] = useGameLocalState(gameId, 'launcher.urlConfig.browserPath')
+  const [url, setUrl, saveUrl] = useGameLocalState(gameId, 'launcher.urlConfig.url', true)
+  const [browserPath, setBrowserPath, saveBrowserPath] = useGameLocalState(
+    gameId,
+    'launcher.urlConfig.browserPath',
+    true
+  )
   const [monitorMode, setMonitorMode] = useGameLocalState(gameId, 'launcher.urlConfig.monitorMode')
-  const [monitorPath, setMonitorPath] = useGameLocalState(gameId, 'launcher.urlConfig.monitorPath')
+  const [monitorPath, setMonitorPath, saveMonitorPath] = useGameLocalState(
+    gameId,
+    'launcher.urlConfig.monitorPath',
+    true
+  )
 
   async function selectBorwserPath(): Promise<void> {
-    const workingDirectoryPath: string = await window.api.utils.selectPathDialog(
+    const workingDirectoryPath = await ipcManager.invoke(
+      'system:select-path-dialog',
       ['openFile'],
       ['exe']
     )
+    if (!workingDirectoryPath) {
+      return
+    }
     setBrowserPath(workingDirectoryPath)
+    saveBrowserPath()
   }
 
   async function selectMonitorPath(): Promise<void> {
     if (monitorMode === 'file') {
-      const monitorPath: string = await window.api.utils.selectPathDialog(['openFile'])
+      const monitorPath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
+      if (!monitorPath) {
+        return
+      }
       setMonitorPath(monitorPath)
+      saveMonitorPath()
     }
     if (monitorMode === 'folder') {
-      const monitorPath: string = await window.api.utils.selectPathDialog(['openDirectory'])
+      const monitorPath = await ipcManager.invoke('system:select-path-dialog', ['openDirectory'])
+      if (!monitorPath) {
+        return
+      }
       setMonitorPath(monitorPath)
+      saveMonitorPath()
     }
   }
 
@@ -47,7 +69,12 @@ export function UrlLauncher({ gameId }: { gameId: string }): JSX.Element {
         {t('detail.properties.launcher.url.address')}
       </div>
       <div>
-        <Input className={cn('w-full')} value={url} onChange={(e) => setUrl(e.target.value)} />
+        <Input
+          className={cn('w-full')}
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          onBlur={saveUrl}
+        />
       </div>
 
       {/* Browser Path */}
@@ -60,6 +87,7 @@ export function UrlLauncher({ gameId }: { gameId: string }): JSX.Element {
           value={browserPath}
           onChange={(e) => setBrowserPath(e.target.value)}
           placeholder={t('detail.properties.launcher.url.defaultBrowser')}
+          onBlur={saveBrowserPath}
         />
         <Button variant={'outline'} size={'icon'} onClick={selectBorwserPath}>
           <span className={cn('icon-[mdi--folder-open-outline] w-5 h-5')}></span>
@@ -107,6 +135,7 @@ export function UrlLauncher({ gameId }: { gameId: string }): JSX.Element {
           className={cn('flex-1')}
           value={monitorPath}
           onChange={(e) => setMonitorPath(e.target.value)}
+          onBlur={saveMonitorPath}
         />
         {['folder', 'file'].includes(monitorMode) && (
           <Button variant={'outline'} size={'icon'} onClick={selectMonitorPath}>

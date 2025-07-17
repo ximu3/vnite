@@ -1,12 +1,13 @@
 import { getErrorMessage } from '@appUtils'
-import { Badge } from '@ui/badge'
-import { Button } from '@ui/button'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
+import { Badge } from '~/components/ui/badge'
+import { Button } from '~/components/ui/button'
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 import { PlayCircle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { cn } from '~/utils'
 import { TransformerRule } from './types'
+import { ipcManager } from '~/app/ipc'
 
 interface TransformerItemProps {
   transformer: TransformerRule
@@ -32,7 +33,7 @@ export function TransformerItem({
   onMoveDown,
   onEditClick,
   onDeleteClick
-}: TransformerItemProps): JSX.Element {
+}: TransformerItemProps): React.JSX.Element {
   const { t } = useTranslation('transformer')
 
   // Calculate total rule count
@@ -43,9 +44,9 @@ export function TransformerItem({
 
   const handleExport = async (): Promise<void> => {
     try {
-      const targetPath = await window.api.utils.selectPathDialog(['openDirectory'])
+      const targetPath = await ipcManager.invoke('system:select-path-dialog', ['openDirectory'])
       if (!targetPath) return
-      await window.api.transformer.exportTransformer(transformer, targetPath)
+      await ipcManager.invoke('transformer:export-transformer', transformer, targetPath)
       toast.success(t('notifications.exportSuccess'))
     } catch (error) {
       console.error('Error exporting transformer:', error)
@@ -55,7 +56,7 @@ export function TransformerItem({
 
   return (
     <div
-      className="p-4 cursor-pointer bg-card/45 hover:bg-muted/20"
+      className="p-4 cursor-pointer bg-transparent hover:bg-muted/30"
       onClick={() => onRuleClick(transformer)}
     >
       <div className="flex items-center justify-between">

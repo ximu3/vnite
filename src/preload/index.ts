@@ -1,41 +1,8 @@
 import { contextBridge } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { webUtils } from 'electron'
-import fse from 'fs-extra'
+import * as fse from 'fs-extra'
 import path from 'path'
-import {
-  databaseAPI,
-  gameAPI,
-  utilsAPI,
-  launcherAPI,
-  scraperAPI,
-  adderAPI,
-  mediaAPI,
-  importerAPI,
-  themeAPI,
-  updaterAPI,
-  accountAPI,
-  transformerAPI,
-  gameScannerAPI,
-  eventsAPI
-} from './apis'
-
-const vniteAPI = {
-  database: databaseAPI,
-  game: gameAPI,
-  utils: utilsAPI,
-  launcher: launcherAPI,
-  scraper: scraperAPI,
-  adder: adderAPI,
-  media: mediaAPI,
-  importer: importerAPI,
-  theme: themeAPI,
-  updater: updaterAPI,
-  account: accountAPI,
-  transformer: transformerAPI,
-  gameScanner: gameScannerAPI,
-  events: eventsAPI
-}
+import { webUtils } from 'electron'
 
 // Custom APIs for renderer
 const api = {
@@ -49,8 +16,7 @@ const api = {
       }
     }
   },
-  path: path,
-  ...vniteAPI
+  path: path
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

@@ -1,7 +1,13 @@
 import { ArrayEditor } from '@ui/array-editor'
-import { Button } from '@ui/button'
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@ui/dialog'
-import { Input } from '@ui/input'
+import { Button } from '~/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '~/components/ui/dialog'
+import { Input } from '~/components/ui/input'
 import { ChevronDown, Plus } from 'lucide-react'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -22,7 +28,7 @@ export function RuleDialog({
   onOpenChange,
   transformer,
   onSave
-}: RuleDialogProps): JSX.Element {
+}: RuleDialogProps): React.JSX.Element {
   const { t } = useTranslation('transformer')
   const [localTransformer, setLocalTransformer] = useState<TransformerRule | null>(transformer)
   const [currentRuleCategory, setCurrentRuleCategory] = useState<
@@ -40,7 +46,7 @@ export function RuleDialog({
   if (!localTransformer) {
     return (
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
-        <DialogContent>{t('ruleDialog.loading')}</DialogContent>
+        <DialogContent className="w-[1000px]">{t('ruleDialog.loading')}</DialogContent>
       </Dialog>
     )
   }
@@ -123,10 +129,16 @@ export function RuleDialog({
   const ruleCategoryItem = (
     category: keyof TransformerRule['processors'],
     title: string
-  ): JSX.Element => {
+  ): React.JSX.Element => {
     const rules = localTransformer.processors[category] || []
 
-    const Row = ({ index, style }: { index: number; style: React.CSSProperties }): JSX.Element => {
+    const Row = ({
+      index,
+      style
+    }: {
+      index: number
+      style: React.CSSProperties
+    }): React.JSX.Element => {
       const rule = rules[index]
       const [inputValue, setInputValue] = React.useState(rule.replace)
 
@@ -214,7 +226,7 @@ export function RuleDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="w-3/4 max-w-none h-[70vh]">
+      <DialogContent className="w-[1000px] max-w-none h-[70vh]">
         <DialogHeader>
           <DialogTitle>
             {localTransformer.name} - {t('ruleDialog.title')}

@@ -2,11 +2,11 @@
   -webkit-app-region: drag;
   height: 50px; /* Set the height of the draggable area */
   width: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  background-color: transparent;
-  z-index: 1000; /* Make sure it's at the top */
+  /* position: fixed; */
+  /* top: 0;
+  left: 0; */
+  /* background-color: transparent; */
+  /* z-index: 1000; Make sure it's at the top */
   pointer-events: none; /* Ensure that click events on other elements are not affected */
 }
 
@@ -27,29 +27,7 @@
     black 90%,
     transparent 100%
   );
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    black 10%,
-    black 90%,
-    transparent 100%
-  );
-}
-
-.scrollbar-base {
-  @apply rounded-sm scrollbar-track-transparent scrollbar-thumb-muted scrollbar-thumb-rounded-lg scrollbar scrollbar-w-2 scrollbar-h-1;
-}
-
-.scrollbar-base-thin {
-  @apply rounded-sm scrollbar-track-transparent scrollbar-thumb-muted scrollbar-thumb-rounded-lg scrollbar scrollbar-w-1 scrollbar-h-1;
-}
-
-@font-face {
-  font-family: 'Source Han Sans VF';
-  src: url('@assets/fonts/SourceHanSans-VF.otf.ttc') format('truetype-variations');
-  /* Supported word weight ranges */
-  font-weight: 100 900;
-  font-style: normal;
+  mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
 }
 
 @keyframes fadeIn {
@@ -88,25 +66,21 @@
   }
 }
 
+/* 添加到您的全局CSS文件 */
 .background-fade-enter {
   opacity: 0;
 }
 
 .background-fade-enter-active {
   opacity: 1;
-  transition: opacity 250ms ease-in-out;
+  transition: opacity 300ms ease-in;
 }
 
 .background-fade-exit {
   opacity: 1;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
 }
 
 .background-fade-exit-active {
   opacity: 0;
-  transition: opacity 250ms ease-in-out;
+  transition: opacity 300ms ease-out;
 }

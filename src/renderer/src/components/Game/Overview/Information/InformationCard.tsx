@@ -1,4 +1,3 @@
-import { Separator } from '@ui/separator'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useGameState } from '~/hooks'
@@ -12,7 +11,7 @@ export function InformationCard({
 }: {
   gameId: string
   className?: string
-}): JSX.Element {
+}): React.JSX.Element {
   const { t } = useTranslation('game')
   const [originalName] = useGameState(gameId, 'metadata.originalName')
   const [name] = useGameState(gameId, 'metadata.name')
@@ -57,7 +56,9 @@ export function InformationCard({
         <InformationDialog gameId={gameId} />
       </div>
 
-      <Separator className={cn('my-3 bg-primary')} />
+      <div className={cn('flex items-center justify-center flex-grow')}>
+        <div className="w-full h-px my-3 border-t border-dashed border-primary" />
+      </div>
 
       <div className={cn('grid grid-cols-[auto_1fr] gap-x-3 gap-y-2 text-sm')}>
         {/* original name */}

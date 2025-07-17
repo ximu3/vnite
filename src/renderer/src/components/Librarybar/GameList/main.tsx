@@ -12,7 +12,7 @@ export function GameList({
 }: {
   selectedGroup: string
   query: string
-}): JSX.Element {
+}): React.JSX.Element {
   const { filter } = useFilterStore()
 
   if (!isEqual(filter, {})) {

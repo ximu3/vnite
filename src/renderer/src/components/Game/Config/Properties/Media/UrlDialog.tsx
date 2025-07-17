@@ -1,7 +1,7 @@
 import { cn } from '~/utils'
-import { Button } from '@ui/button'
-import { Dialog, DialogContent, DialogTrigger } from '@ui/dialog'
-import { Input } from '@ui/input'
+import { Button } from '~/components/ui/button'
+import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog'
+import { Input } from '~/components/ui/input'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -21,7 +21,7 @@ export function UrlDialog({
     logo: boolean
   }) => void
   type: 'cover' | 'background' | 'icon' | 'logo'
-}): JSX.Element {
+}): React.JSX.Element {
   const { t } = useTranslation('game')
   const [mediaUrl, setMediaUrl] = useState<string>('')
 
@@ -42,7 +42,7 @@ export function UrlDialog({
           <span className={cn('icon-[mdi--link-variant] w-4 h-4')}></span>
         </Button>
       </DialogTrigger>
-      <DialogContent showCloseButton={false}>
+      <DialogContent showCloseButton={false} className="w-[500px]">
         <div className={cn('flex flex-row gap-2')}>
           <Input
             value={mediaUrl}

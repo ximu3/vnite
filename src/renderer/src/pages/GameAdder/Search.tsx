@@ -1,5 +1,5 @@
 import { cn } from '~/utils'
-import { Button } from '@ui/button'
+import { Button } from '~/components/ui/button'
 import {
   Select,
   SelectContent,
@@ -8,19 +8,49 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue
-} from '@ui/select'
-import { Input } from '@ui/input'
+} from '~/components/ui/select'
+import { Input } from '~/components/ui/input'
 import { toast } from 'sonner'
 import { GameList, useGameAdderStore } from './store'
-import { useNavigate } from 'react-router-dom'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ipcManager } from '~/app/ipc'
+import { ScraperCapabilities } from '@appTypes/utils'
 
-export function Search({ className }: { className?: string }): JSX.Element {
+export function Search({ className }: { className?: string }): React.JSX.Element {
   const { t } = useTranslation('adder')
-  const { dataSource, setDataSource, name, setName, dataSourceId, setDataSourceId, setGameList } =
-    useGameAdderStore()
-  const navigate = useNavigate()
+  const {
+    dataSource,
+    setDataSource,
+    name,
+    setName,
+    dataSourceId,
+    setDataSourceId,
+    setGameList,
+    setCurrentPage
+  } = useGameAdderStore()
+
+  const [availableDataSources, setAvailableDataSources] = React.useState<
+    { id: string; name: string; capabilities: ScraperCapabilities[] }[]
+  >([])
+
+  useEffect(() => {
+    const fetchAvailableDataSources = async (): Promise<void> => {
+      const availableDataSources = await ipcManager.invoke(
+        'scraper:get-provider-infos-with-capabilities',
+        ['searchGames', 'checkGameExists', 'getGameMetadata', 'getGameBackgrounds', 'getGameCovers']
+      )
+      setAvailableDataSources(availableDataSources)
+      if (availableDataSources.length > 0) {
+        if (!availableDataSources.some((ds) => ds.id === dataSource)) {
+          setDataSource(availableDataSources[0].id)
+        }
+      } else {
+        toast.error(t('gameAdder.search.notifications.noDataSources'))
+      }
+    }
+    fetchAvailableDataSources()
+  }, [])
 
   const [inputName, setInputName] = React.useState(name)
   React.useEffect(() => {
@@ -48,13 +78,13 @@ export function Search({ className }: { className?: string }): JSX.Element {
     }
     toast.promise(
       (async (): Promise<GameList> => {
-        const result = await window.api.scraper.searchGames(dataSource, inputName)
+        const result = await ipcManager.invoke('scraper:search-games', dataSource, inputName)
         if (result.length === 0) {
           throw new Error(t('gameAdder.search.notifications.notFound'))
         }
         setGameList(result)
         setName(inputName)
-        navigate('/games')
+        setCurrentPage('games')
         return result
       })(),
       {
@@ -72,12 +102,15 @@ export function Search({ className }: { className?: string }): JSX.Element {
     }
     toast.promise(
       (async (): Promise<void> => {
-        const result = await window.api.scraper.checkGameExists(dataSource, inputId)
+        const result = await ipcManager.invoke('scraper:check-game-exists', dataSource, {
+          type: 'id',
+          value: inputId
+        })
         if (!result) {
           throw new Error(t('gameAdder.search.notifications.invalidId'))
         }
         setDataSourceId(inputId)
-        navigate('/screenshots')
+        setCurrentPage('screenshots')
       })(),
       {
         loading: t('gameAdder.search.notifications.recognizing'),
@@ -102,12 +135,11 @@ export function Search({ className }: { className?: string }): JSX.Element {
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>{t('gameAdder.search.dataSources.label')}</SelectLabel>
-                <SelectItem value="steam">{t('gameAdder.search.dataSources.steam')}</SelectItem>
-                <SelectItem value="vndb">{t('gameAdder.search.dataSources.vndb')}</SelectItem>
-                <SelectItem value="bangumi">{t('gameAdder.search.dataSources.bangumi')}</SelectItem>
-                <SelectItem value="igdb">{t('gameAdder.search.dataSources.igdb')}</SelectItem>
-                <SelectItem value="ymgal">{t('gameAdder.search.dataSources.ymgal')}</SelectItem>
-                <SelectItem value="dlsite">{t('gameAdder.search.dataSources.dlsite')}</SelectItem>
+                {availableDataSources.map((provider) => (
+                  <SelectItem key={provider.id} value={provider.id}>
+                    {provider.name}
+                  </SelectItem>
+                ))}
               </SelectGroup>
             </SelectContent>
           </Select>

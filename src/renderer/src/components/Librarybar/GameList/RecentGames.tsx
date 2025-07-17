@@ -1,17 +1,17 @@
-import { AccordionContent, AccordionItem, AccordionTrigger } from '@ui/accordion'
+import { AccordionContent, AccordionItem, AccordionTrigger } from '~/components/ui/accordion'
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger
-} from '@ui/context-menu'
+} from '~/components/ui/context-menu'
 import { useTranslation } from 'react-i18next'
 import { useConfigState } from '~/hooks'
 import { getGameStore, sortGames } from '~/stores/game'
 import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
 
-export function RecentGames(): JSX.Element {
+export function RecentGames(): React.JSX.Element {
   const [showRecentGamesInGameList, setShowRecentGamesInGameList] = useConfigState(
     'game.gameList.showRecentGames'
   )
@@ -28,7 +28,7 @@ export function RecentGames(): JSX.Element {
         <AccordionItem value="recentGames">
           <ContextMenu>
             <ContextMenuTrigger>
-              <AccordionTrigger className={cn('text-xs p-1 pl-2 bg-accent/35')}>
+              <AccordionTrigger className={cn('text-xs p-1 pl-2')}>
                 <div className={cn('flex flex-row items-center justify-start gap-1')}>
                   <div className={cn('text-xs')}>{t('list.recent.title')}</div>
                 </div>
@@ -42,7 +42,7 @@ export function RecentGames(): JSX.Element {
           </ContextMenu>
           <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
             {games.length === 0 && (
-              <div className="flex items-center justify-center text-muted-foreground text-xs mt-3">
+              <div className="flex items-center justify-center mt-3 text-xs text-muted-foreground">
                 {t('list.recent.empty')}
               </div>
             )}

@@ -1,5 +1,5 @@
 import { DateInput } from '@ui/date-input'
-import { Separator } from '@ui/separator'
+import { Separator } from '~/components/ui/separator'
 import { cn } from '~/utils'
 import { getGamePlayTimeByDateRange, getGameStartAndEndDate } from '~/stores/game'
 import { useState, useEffect } from 'react'
@@ -13,7 +13,7 @@ export function ChartCard({
 }: {
   gameId: string
   className?: string
-}): JSX.Element {
+}): React.JSX.Element {
   const { t } = useTranslation('game')
   const timers = getGameStartAndEndDate(gameId)
   const [startDate, setStartDate] = useState('')

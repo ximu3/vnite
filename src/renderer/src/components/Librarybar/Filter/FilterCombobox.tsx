@@ -1,7 +1,7 @@
 'use client'
 
 import { Cross2Icon } from '@radix-ui/react-icons'
-import { Button } from '@ui/button'
+import { Button } from '~/components/ui/button'
 import {
   Command,
   CommandEmpty,
@@ -9,8 +9,8 @@ import {
   CommandInput,
   CommandItem,
   CommandList
-} from '@ui/command'
-import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
+} from '~/components/ui/command'
+import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
 import { Check, ChevronsUpDown } from 'lucide-react'
 import * as React from 'react'
 import { getAllValuesInKey, getAllExtraValuesForKey } from '~/stores/game'
@@ -29,7 +29,7 @@ export function FilterCombobox({
 }: {
   filed: string
   placeholder: string
-}): JSX.Element {
+}): React.JSX.Element {
   const [open, setOpen] = React.useState(false)
   const { filter, deleteFilter, addFilter } = useFilterStore()
   const selectedValues = filter[filed] || []

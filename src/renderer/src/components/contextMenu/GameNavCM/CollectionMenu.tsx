@@ -6,7 +6,7 @@ import {
   ContextMenuSub,
   ContextMenuSubContent,
   ContextMenuSubTrigger
-} from '@ui/context-menu'
+} from '~/components/ui/context-menu'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useGameCollectionStore } from '~/stores'
@@ -18,7 +18,7 @@ export function CollectionMenu({
 }: {
   gameId: string
   openAddCollectionDialog: () => void
-}): JSX.Element {
+}): React.JSX.Element {
   const {
     documents: collections,
     addGameToCollection,

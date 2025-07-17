@@ -1,9 +1,9 @@
 import { useGameAdder } from './hooks/useGameAdder'
 import { useGameBatchAdderStore, DataSource } from './store'
-import { BatchGameInfo } from '@appTypes/database'
+import { BatchGameInfo } from '@appTypes/models'
 import { StatusBadge } from './StatusBadge'
-import { Button } from '@ui/button'
-import { Input } from '@ui/input'
+import { Button } from '~/components/ui/button'
+import { Input } from '~/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -12,17 +12,23 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue
-} from '@ui/select'
-import { TableRow, TableCell } from '@ui/table'
+} from '~/components/ui/select'
+import { TableRow, TableCell } from '~/components/ui/table'
 import { toast } from 'sonner'
 import { TABLE_COLUMN_WIDTHS } from './GameListTable'
 import { cn } from '~/utils'
+import { useEffect, useState } from 'react'
+import { ScraperCapabilities } from '@appTypes/utils'
 import { useTranslation } from 'react-i18next'
+import { ipcManager } from '~/app/ipc'
 
-export function GameListItem({ game }: { game: BatchGameInfo }): JSX.Element {
+export function GameListItem({ game }: { game: BatchGameInfo }): React.JSX.Element {
   const { t } = useTranslation('adder')
   const { actions } = useGameBatchAdderStore()
   const { addGame } = useGameAdder()
+  const [availableDataSources, setAvailableDataSources] = useState<
+    { id: string; name: string; capabilities: ScraperCapabilities[] }[]
+  >([])
 
   const handleAddGame = (): void => {
     toast.promise(() => addGame(game.dataId), {
@@ -31,6 +37,27 @@ export function GameListItem({ game }: { game: BatchGameInfo }): JSX.Element {
       error: (error) => error.message
     })
   }
+
+  useEffect(() => {
+    const fetchAvailableDataSources = async (): Promise<void> => {
+      const sources = await ipcManager.invoke('scraper:get-provider-infos-with-capabilities', [
+        'searchGames',
+        'checkGameExists',
+        'getGameMetadata',
+        'getGameBackgrounds',
+        'getGameCovers'
+      ])
+      setAvailableDataSources(sources)
+      if (sources.length > 0) {
+        if (!sources.some((ds) => ds.id === game.dataSource)) {
+          actions.updateGame(game.dataId, { dataSource: sources[0].id })
+        }
+      } else {
+        toast.error(t('gameBatchAdder.notifications.noDataSources'))
+      }
+    }
+    fetchAvailableDataSources()
+  }, [actions, game.dataId, game.dataSource, t])
 
   return (
     <TableRow className={cn('w-full')}>
@@ -49,12 +76,11 @@ export function GameListItem({ game }: { game: BatchGameInfo }): JSX.Element {
           <SelectContent>
             <SelectGroup>
               <SelectLabel>{t('gameBatchAdder.form.dataSource')}</SelectLabel>
-              <SelectItem value="steam">{t('gameAdder.search.dataSources.steam')}</SelectItem>
-              <SelectItem value="vndb">{t('gameAdder.search.dataSources.vndb')}</SelectItem>
-              <SelectItem value="bangumi">{t('gameAdder.search.dataSources.bangumi')}</SelectItem>
-              <SelectItem value="igdb">{t('gameAdder.search.dataSources.igdb')}</SelectItem>
-              <SelectItem value="ymgal">{t('gameAdder.search.dataSources.ymgal')}</SelectItem>
-              <SelectItem value="dlsite">{t('gameAdder.search.dataSources.dlsite')}</SelectItem>
+              {availableDataSources.map((source) => (
+                <SelectItem key={source.id} value={source.id}>
+                  {source.name}
+                </SelectItem>
+              ))}
             </SelectGroup>
           </SelectContent>
         </Select>

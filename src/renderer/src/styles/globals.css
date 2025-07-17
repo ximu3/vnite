@@ -1,0 +1,209 @@
+@import './base.css';
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@plugin 'tailwind-scrollbar' {
+  nocompatible: true;
+  preferredstrategy: 'pseudoelements';
+}
+@plugin "@tailwindcss/typography";
+@plugin "@iconify/tailwind4";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: hsl(230 8% 85%);
+  --foreground: hsl(229 26% 28%);
+  --muted: hsl(230 12% 81%);
+  --muted-foreground: hsl(230 12% 21%);
+  --popover: hsl(230 8% 82%);
+  --popover-foreground: hsl(229 26% 18%);
+  --card: hsl(230 8% 83%);
+  --card-foreground: hsl(229 26% 23%);
+  --border: hsl(0 0% 80%);
+  --input: hsl(0 0% 77%);
+  --primary: hsl(223 42% 57%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(223 30% 75%);
+  --secondary-foreground: hsl(223 30% 15%);
+  --accent: hsl(230 8% 70%);
+  --accent-foreground: hsl(230 8% 10%);
+  --destructive: hsl(2 82% 30%);
+  --destructive-foreground: hsl(2 82% 90%);
+  --ring: hsl(223 42% 57%);
+  --chart-1: hsl(223 42% 57%);
+  --chart-2: hsl(223 30% 75%);
+  --chart-3: hsl(230 8% 70%);
+  --chart-4: hsl(223 30% 78%);
+  --chart-5: hsl(223 45% 57%);
+  --radius: 0.625rem;
+}
+
+.dark {
+  --background: hsl(230 24% 19%);
+  --foreground: hsl(229 35% 75%);
+  --muted: hsl(230 12% 23%);
+  --muted-foreground: hsl(230 12% 73%);
+  --popover: hsl(230 24% 16%);
+  --popover-foreground: hsl(229 35% 85%);
+  --card: hsl(230 24% 17%);
+  --card-foreground: hsl(229 35% 80%);
+  --border: hsl(230 14% 24%);
+  --input: hsl(230 14% 27%);
+  --primary: hsl(223 45% 44%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(223 30% 75%);
+  --secondary-foreground: hsl(223 30% 15%);
+  --accent: hsl(230 24% 34%);
+  --accent-foreground: hsl(230 24% 94%);
+  --destructive: hsl(2 80% 58%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --ring: hsl(223 45% 44%);
+  --chart-1: hsl(223 42% 57%);
+  --chart-2: hsl(223 30% 75%);
+  --chart-3: hsl(230 8% 70%);
+  --chart-4: hsl(223 30% 78%);
+  --chart-5: hsl(223 45% 57%);
+  --radius: 0.625rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer base {
+  :root {
+    --chart-1: hsl(223 42% 57%);
+    --chart-2: hsl(223 30% 75%);
+    --chart-3: hsl(230 8% 70%);
+    --chart-4: hsl(223 30% 78%);
+    --chart-5: hsl(223 45% 57%);
+  }
+
+  .dark {
+    --chart-1: hsl(223 42% 57%);
+    --chart-2: hsl(223 30% 75%);
+    --chart-3: hsl(230 8% 70%);
+    --chart-4: hsl(223 30% 78%);
+    --chart-5: hsl(223 45% 57%);
+  }
+}
+
+.scrollbar-base {
+  @apply rounded-sm scrollbar-track-transparent scrollbar-thumb-muted scrollbar-thumb-rounded-lg scrollbar scrollbar-w-2 scrollbar-h-1;
+}
+
+.scrollbar-base-thin {
+  @apply rounded-sm scrollbar-track-transparent scrollbar-thumb-muted scrollbar-thumb-rounded-lg scrollbar scrollbar-w-1 scrollbar-h-1;
+}
+
+@layer utilities {
+  /* 自定义阴影 */
+  .shadow-custom-initial {
+    box-shadow:
+      0 2px 5px rgba(0, 0, 0, 0.15),
+      0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .shadow-l-inner {
+    box-shadow: inset 2px 0 4px 0 rgb(0 0 0 / 0.05);
+  }
+
+  /* 自定义过渡属性 */
+  .transition-border {
+    transition-property: border-color, border-width;
+  }
+}
+
+@layer keyframes {
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+
+  @keyframes slideInfinite {
+    0% {
+      left: -40%;
+    }
+    50% {
+      left: 90%;
+    }
+    50.01% {
+      left: 90%;
+    }
+    100% {
+      left: -40%;
+    }
+  }
+}
+
+@layer utilities {
+  .animate-accordion-down {
+    animation: accordion-down 0.2s ease-out;
+  }
+
+  .animate-accordion-up {
+    animation: accordion-up 0.2s ease-out;
+  }
+
+  .animate-slide-infinite {
+    animation: slideInfinite 2.5s ease-in-out infinite;
+  }
+}

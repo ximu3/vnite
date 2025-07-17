@@ -1,5 +1,10 @@
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@ui/accordion'
-import { ScrollArea } from '@ui/scroll-area'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from '~/components/ui/accordion'
+import { ScrollArea } from '~/components/ui/scroll-area'
 import { useTranslation } from 'react-i18next'
 import { useConfigState } from '~/hooks'
 import { filterGames, getAllValuesInKey, sortGames } from '~/stores/game'
@@ -8,7 +13,7 @@ import { GameNav } from '../GameNav'
 import { AllGame } from './AllGame'
 import { RecentGames } from './RecentGames'
 
-export function PlayStatusGames(): JSX.Element {
+export function PlayStatusGames(): React.JSX.Element {
   const [playStatusOrder, _setPlayStatusOrder] = useConfigState('game.gameList.playingStatusOrder')
   const [playStatusAccordionOpen, setPlayStatusAccordionOpen] = useConfigState(
     'game.gameList.playStatusAccordionOpen'
@@ -68,7 +73,7 @@ export function PlayStatusGames(): JSX.Element {
           <RecentGames />
           {fields.map((field) => (
             <AccordionItem key={field} value={field}>
-              <AccordionTrigger className={cn('text-xs p-1 pl-2 bg-accent/35')}>
+              <AccordionTrigger className={cn('text-xs p-1 pl-2')}>
                 <div className={cn('flex flex-row items-center justify-start gap-1')}>
                   <div className={cn('text-xs')}>{convertFieldToTitle(field)}</div>
                   <div className={cn('text-2xs text-foreground/50')}>

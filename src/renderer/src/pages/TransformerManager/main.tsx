@@ -1,8 +1,8 @@
 import { generateUUID, getErrorMessage } from '@appUtils'
-import { Badge } from '@ui/badge'
-import { Button } from '@ui/button'
-import { Card } from '@ui/card'
-import { ScrollArea } from '@ui/scroll-area'
+import { Badge } from '~/components/ui/badge'
+import { Button } from '~/components/ui/button'
+import { Card } from '~/components/ui/card'
+import { ScrollArea } from '~/components/ui/scroll-area'
 import { ListFilter, Plus, RefreshCw } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -14,8 +14,9 @@ import { TransformerPresetSelector } from './PresetSelector'
 import { RuleDialog } from './RuleDialog'
 import { TransformerItem } from './TransformerItem'
 import { TransformerRule } from './types'
+import { ipcManager } from '~/app/ipc'
 
-export function TransformerManager(): JSX.Element {
+export function TransformerManager(): React.JSX.Element {
   const { t } = useTranslation('transformer')
   const [transformers, setTransformers] = useConfigState('metadata.transformer.list')
   const [isLoading, setIsLoading] = useState(false)
@@ -127,9 +128,9 @@ export function TransformerManager(): JSX.Element {
 
   const handleImportTransformer = async (): Promise<void> => {
     try {
-      const filePath = await window.api.utils.selectPathDialog(['openFile'])
+      const filePath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
       if (!filePath) return
-      await window.api.transformer.importTransformer(filePath)
+      await ipcManager.invoke('transformer:import-transformer', filePath)
       toast.success(t('notifications.importSuccess'))
     } catch (error) {
       console.error('Error importing transformer:', error)
@@ -143,7 +144,10 @@ export function TransformerManager(): JSX.Element {
       id: 'transform-all'
     })
     try {
-      await window.api.transformer.transformAllGames(transformers.map((t) => t.id))
+      await ipcManager.invoke(
+        'transformer:transform-all-games',
+        transformers.map((t) => t.id)
+      )
       toast.success(t('notifications.applySuccess'), { id: 'transform-all' })
     } catch (error) {
       console.error('Error transforming all:', error)
@@ -159,7 +163,7 @@ export function TransformerManager(): JSX.Element {
       id: 'transform-one'
     })
     try {
-      await window.api.transformer.transformAllGames([transformer.id])
+      await ipcManager.invoke('transformer:transform-all-games', [transformer.id])
       toast.success(t('notifications.applyOneSuccess', { name: transformer.name }), {
         id: 'transform-one'
       })
@@ -187,7 +191,7 @@ export function TransformerManager(): JSX.Element {
   }
 
   return (
-    <div className="flex flex-col w-full h-full bg-background/60 pt-[20px]">
+    <div className="flex flex-col w-full h-full bg-transparent">
       <ScrollArea className="px-6">
         <div className="py-[34px]">
           {/* Title */}
@@ -197,7 +201,7 @@ export function TransformerManager(): JSX.Element {
 
           <div className="grid grid-cols-1 gap-4">
             {/* Status card */}
-            <Card className="p-4 border rounded-lg">
+            <Card className="p-4 rounded-lg">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 {/* Left side: Status and quantity information */}
                 <div className="flex flex-wrap items-center gap-4">
@@ -236,9 +240,9 @@ export function TransformerManager(): JSX.Element {
             </Card>
 
             {/* Transformer list and operation card */}
-            <Card className="flex flex-col flex-grow border rounded-lg">
+            <Card className="flex flex-col flex-grow rounded-lg p-0 gap-0">
               {/* Transformer list header bar */}
-              <div className="flex items-center justify-between p-4 border-b bg-muted/45">
+              <div className="flex items-center justify-between p-4 border-b bg-muted/30">
                 <div className="text-sm font-medium">{t('list.title')}</div>
                 <div className="flex items-center gap-2">
                   <Button size="sm" onClick={handleAddTransformer} disabled={isLoading}>

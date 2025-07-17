@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { getValueByPath, setValueByPath } from '@appUtils'
-import { configLocalDocs, DEFAULT_CONFIG_LOCAL_VALUES } from '@appTypes/database'
+import { configLocalDocs, DEFAULT_CONFIG_LOCAL_VALUES } from '@appTypes/models'
 import type { Get, Paths } from 'type-fest'
 import { syncTo } from '../utils'
 
@@ -44,7 +44,7 @@ export const useConfigLocalStore = create<ConfigLocalState>((set, get) => ({
       return getValueByPath(DEFAULT_CONFIG_LOCAL_VALUES, path)
     }
     const value = getValueByPath(state.documents, path)
-    console.log('getConfigValue', path, value)
+    // console.log('getConfigValue', path, value)
     return value !== undefined ? value : getValueByPath(DEFAULT_CONFIG_LOCAL_VALUES, path)
   },
 

@@ -1,7 +1,13 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Button } from '@ui/button'
-import { Input } from '@ui/input'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@ui/dialog'
+import { Button } from '~/components/ui/button'
+import { Input } from '~/components/ui/input'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '~/components/ui/dialog'
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
 import { cn } from '~/utils'
@@ -39,7 +45,7 @@ export function HotkeySetting({
   onHotkeyChange,
   inputClassName = 'font-mono',
   className
-}: HotkeySettingProps): JSX.Element {
+}: HotkeySettingProps): React.JSX.Element {
   const { t } = useTranslation()
 
   const [isOpen, setIsOpen] = useState(false)

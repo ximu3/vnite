@@ -8,14 +8,16 @@ interface ArrayTextareaProps {
   onChange?: (value: string[]) => void
   placeholder?: string
   className?: string
+  onBlur?: (event: React.FocusEvent<HTMLTextAreaElement>) => void
 }
 
 export function ArrayTextarea({
   value = [],
   onChange,
   placeholder,
-  className
-}: ArrayTextareaProps): JSX.Element {
+  className,
+  onBlur
+}: ArrayTextareaProps): React.JSX.Element {
   // Converting arrays to text
   const arrayToText = useCallback((arr: string[]) => {
     return arr.join('\n')
@@ -40,6 +42,7 @@ export function ArrayTextarea({
       onChange={handleChange}
       placeholder={placeholder}
       className={className}
+      onBlur={onBlur}
     />
   )
 }

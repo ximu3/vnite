@@ -1,10 +1,14 @@
-import { ContextMenuContent, ContextMenuItem, ContextMenuSeparator } from '@ui/context-menu'
+import {
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator
+} from '~/components/ui/context-menu'
 import { cn } from '~/utils'
 import { CollectionMenu } from './CollectionMenu'
 import { InformationDialog } from './InformationDialog'
 import { DeleteGameAlert } from './DeleteGameAlert'
 import { useState, useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation } from '@tanstack/react-router'
 import { useGameBatchEditorStore } from '../store'
 import { useTranslation } from 'react-i18next'
 
@@ -12,7 +16,7 @@ export function BatchGameNavCM({
   openAddCollectionDialog
 }: {
   openAddCollectionDialog: () => void
-}): JSX.Element {
+}): React.JSX.Element {
   const { t } = useTranslation('game')
   const [isInformationDialogOpen, setIsInformationDialogOpen] = useState(false)
   const { clearGameIds, selectedGamesMap } = useGameBatchEditorStore()

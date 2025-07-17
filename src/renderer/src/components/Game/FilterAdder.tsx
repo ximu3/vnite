@@ -11,13 +11,13 @@ export function FilterAdder({
   filed: string
   value: string
   className?: string
-}): JSX.Element {
+}): React.JSX.Element {
   const { filter, addFilter, updateFilter } = useFilterStore()
   const { t } = useTranslation('game')
   return (
     <button
       className={cn(
-        'py-[1px] px-[4px] bg-accent/70 rounded-lg text-xs text-accent-foreground/70 hover:text-accent-foreground hover:bg-accent',
+        'py-[1px] px-[4px] bg-accent/50 cursor-pointer rounded-lg text-xs text-accent-foreground hover:text-accent-foreground hover:bg-accent',
         className
       )}
       onClick={() => {

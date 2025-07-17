@@ -1,4 +1,4 @@
-import { Button } from '@ui/button'
+import { Button } from '~/components/ui/button'
 import { throttle } from 'lodash'
 import { useRef, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -6,7 +6,7 @@ import { useGameCollectionStore } from '~/stores'
 import { cn } from '~/utils'
 import { CollectionPoster } from './posters/CollectionPoster'
 
-export function Collections(): JSX.Element {
+export function Collections(): React.JSX.Element {
   const collections = useGameCollectionStore((state) => state.documents)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const scroll = throttle((direction: 'left' | 'right'): void => {

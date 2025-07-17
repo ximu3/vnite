@@ -3,7 +3,7 @@ import { toast } from 'sonner'
 import { useConfigStore } from '~/stores'
 import i18next from 'i18next'
 
-export type DataSource = 'vndb' | 'igdb' | 'steam' | 'bangumi' | 'ymgal' | 'dlsite'
+export type DataSource = 'vndb' | 'igdb' | 'steam' | 'bangumi' | 'ymgal' | 'dlsite' | string
 
 export type GameList = {
   id: string
@@ -12,9 +12,13 @@ export type GameList = {
   developers: string[]
 }[]
 
+export type GameAdderPage = 'search' | 'games' | 'screenshots'
+
 interface GameAdderState {
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void
+  currentPage: GameAdderPage
+  setCurrentPage: (page: GameAdderPage) => void
   isLoading: boolean
   setIsLoading: (isLoading: boolean) => void
   dbId: string
@@ -39,6 +43,8 @@ interface GameAdderState {
 export const useGameAdderStore = create<GameAdderState>((set, get) => ({
   isOpen: false,
   setIsOpen: (isOpen): void => set({ isOpen }),
+  currentPage: 'search',
+  setCurrentPage: (page): void => set({ currentPage: page }),
   isLoading: false,
   setIsLoading: (isLoading): void => set({ isLoading }),
   dbId: '',
@@ -61,6 +67,7 @@ export const useGameAdderStore = create<GameAdderState>((set, get) => ({
     const {
       isLoading,
       setIsOpen,
+      setCurrentPage,
       setDataSource,
       setDbId,
       setDataSourceId,
@@ -76,6 +83,7 @@ export const useGameAdderStore = create<GameAdderState>((set, get) => ({
       return
     }
     setIsOpen(false)
+    setCurrentPage('search')
     setDataSource(useConfigStore.getState().getConfigValue('game.scraper.common.defaultDataSource'))
     setDbId('')
     setDirPath('')

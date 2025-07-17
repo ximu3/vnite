@@ -1,7 +1,7 @@
 import { cn } from '~/utils'
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
-import { Separator } from '@ui/separator'
-import { Button } from '@ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import { Separator } from '~/components/ui/separator'
+import { Button } from '~/components/ui/button'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,25 +12,26 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger
-} from '@ui/alert-dialog'
-import { Switch } from '@ui/switch'
-import { ipcSend } from '~/utils'
+} from '~/components/ui/alert-dialog'
+import { Switch } from '~/components/ui/switch'
+import { ConfigItemPure } from '~/components/form/ConfigItemPure'
 import { toast } from 'sonner'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ipcManager } from '~/app/ipc'
 
-export function Database(): JSX.Element {
+export function Database(): React.JSX.Element {
   const { t } = useTranslation('config')
   const [isPortable, setIsPortable] = useState<boolean>(false)
   const [isAdmin, setIsAdmin] = useState<boolean>(false)
   const [switchDialogOpen, setSwitchDialogOpen] = useState<boolean>(false)
 
   useEffect(() => {
-    window.api.utils.isPortableMode().then((isPortable) => {
+    ipcManager.invoke('app:is-portable-mode').then((isPortable) => {
       setIsPortable(isPortable as boolean)
     })
 
-    window.api.utils.checkAdminPermissions().then((hasAdminRights) => {
+    ipcManager.invoke('system:check-admin-permissions').then((hasAdminRights) => {
       setIsAdmin(hasAdminRights as boolean)
     })
   }, [])
@@ -38,9 +39,9 @@ export function Database(): JSX.Element {
   const backup = async (): Promise<void> => {
     toast.promise(
       async () => {
-        const targetPath: string = await window.api.utils.selectPathDialog(['openDirectory'])
+        const targetPath = await ipcManager.invoke('system:select-path-dialog', ['openDirectory'])
         if (!targetPath) return
-        await window.api.database.backupDatabase(targetPath)
+        await ipcManager.invoke('db:backup', targetPath)
       },
       {
         loading: t('database.notifications.backingUp'),
@@ -53,9 +54,9 @@ export function Database(): JSX.Element {
   const restore = async (): Promise<void> => {
     toast.promise(
       async () => {
-        const sourcePath: string = await window.api.utils.selectPathDialog(['openFile'])
+        const sourcePath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
         if (!sourcePath) return
-        await window.api.database.restoreDatabase(sourcePath)
+        await ipcManager.invoke('db:restore', sourcePath)
       },
       {
         loading: t('database.notifications.importing'),
@@ -68,9 +69,9 @@ export function Database(): JSX.Element {
   const importV2Data = async (): Promise<void> => {
     toast.promise(
       async () => {
-        const sourcePath: string = await window.api.utils.selectPathDialog(['openFile'])
+        const sourcePath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
         if (!sourcePath) return
-        await window.api.importer.importV2Data(sourcePath)
+        await ipcManager.invoke('importer:import-v2-data', sourcePath)
       },
       {
         loading: t('database.notifications.importing'),
@@ -83,7 +84,9 @@ export function Database(): JSX.Element {
   const handleSwitchClick = async (): Promise<void> => {
     // If you want to switch to portable mode but do not have administrator permissions
     if (!isPortable && !isAdmin) {
-      const isNeedAdminRights = await window.api.utils.checkIfPortableDirectoryNeedsAdminRights()
+      const isNeedAdminRights = await ipcManager.invoke(
+        'system:check-if-portable-directory-needs-admin-rights'
+      )
       if (isNeedAdminRights) {
         toast.error(t('database.notifications.adminRightsRequired'))
         return
@@ -96,11 +99,11 @@ export function Database(): JSX.Element {
   const switchDatabaseMode = async (): Promise<void> => {
     toast.promise(
       async () => {
-        await window.api.utils.switchDatabaseMode()
+        await ipcManager.invoke('app:switch-database-mode')
         setIsPortable((prev) => !prev)
         toast.info(t('database.notifications.restartCountdown'))
         setTimeout(() => {
-          ipcSend('relaunch-app')
+          ipcManager.send('app:relaunch-app')
         }, 3000)
       },
       {
@@ -123,8 +126,10 @@ export function Database(): JSX.Element {
       <CardContent>
         <div className={cn('space-y-5 w-full')}>
           {/* Portable Mode Setting */}
-          <div className={cn('grid grid-cols-[1fr_auto] gap-5 items-center')}>
-            <div className={cn('whitespace-nowrap select-none')}>{t('database.portableMode')}</div>
+          <ConfigItemPure
+            title={t('database.portableMode')}
+            description={t('database.portableModeDescription')}
+          >
             <Switch
               checked={isPortable}
               onClick={handleSwitchClick}
@@ -161,45 +166,56 @@ export function Database(): JSX.Element {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-          </div>
+          </ConfigItemPure>
 
           <Separator />
 
-          {/* push button */}
-          <div className={cn('grid grid-cols-1 gap-5')}>
-            <div className={cn('flex flex-row gap-5 items-center')}>
+          {/* Database Operations */}
+          <div className={cn('space-y-4')}>
+            <ConfigItemPure
+              title={t('database.openFolder')}
+              description={t('database.openFolderDescription')}
+            >
               <Button
                 variant={'outline'}
                 onClick={async () => {
-                  await window.api.utils.openDatabasePathInExplorer()
+                  await ipcManager.invoke('utils:open-database-path-in-explorer')
                 }}
               >
                 {t('database.openFolder')}
               </Button>
-            </div>
+            </ConfigItemPure>
 
-            <div className={cn('flex flex-row gap-5 items-center')}>
-              <Button onClick={backup}>{t('database.backup')}</Button>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button>{t('database.import')}</Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>{t('database.confirmImport')}</AlertDialogTitle>
-                    <AlertDialogDescription>{t('database.importWarning')}</AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>{t('utils:common.cancel')}</AlertDialogCancel>
-                    <AlertDialogAction onClick={restore}>
-                      {t('utils:common.confirm')}
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
+            <ConfigItemPure
+              title={t('database.backup')}
+              description={t('database.backupDescription')}
+            >
+              <div className={cn('flex flex-row gap-5 items-center')}>
+                <Button onClick={backup}>{t('database.backup')}</Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button>{t('database.import')}</Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>{t('database.confirmImport')}</AlertDialogTitle>
+                      <AlertDialogDescription>{t('database.importWarning')}</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>{t('utils:common.cancel')}</AlertDialogCancel>
+                      <AlertDialogAction onClick={restore}>
+                        {t('utils:common.confirm')}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </ConfigItemPure>
 
-            <div className={cn('flex flex-row gap-5 items-center')}>
+            <ConfigItemPure
+              title={t('database.importV2')}
+              description={t('database.importV2Description')}
+            >
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant={'outline'}>{t('database.importV2')}</Button>
@@ -217,7 +233,7 @@ export function Database(): JSX.Element {
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-            </div>
+            </ConfigItemPure>
           </div>
         </div>
       </CardContent>

@@ -4,7 +4,7 @@ import {
   gameCollectionDoc,
   gameCollectionDocs,
   DEFAULT_GAME_COLLECTION_VALUES
-} from '@appTypes/database'
+} from '@appTypes/models'
 import type { Get, Paths } from 'type-fest'
 import { toast } from 'sonner'
 import { syncTo } from '../utils'

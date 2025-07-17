@@ -9,14 +9,15 @@ import { useGameCollectionStore } from './game'
 import { useConfigStore } from './config/useConfigStore'
 import { useConfigLocalStore } from './config/useConfigLocalStore'
 import { useAttachmentStore } from './useAttachmentStore'
-import { ipcOnUnique } from '~/utils/ipc'
+import { usePluginStore } from './plugin'
+import { ipcManager } from '~/app/ipc'
 import {
   DocChange,
   AttachmentChange,
   gameDocs,
   gameLocalDocs,
   gameCollectionDocs
-} from '@appTypes/database'
+} from '@appTypes/models'
 import { isEqual } from 'lodash'
 
 /**
@@ -44,6 +45,10 @@ const DB_INITIALIZERS = {
   'config-local': async (data: any): Promise<void> => {
     useConfigLocalStore.getState().initializeStore(data)
     console.log('[DB] config-local store initialized')
+  },
+  plugin: async (data: any): Promise<void> => {
+    usePluginStore.getState().initializeStore(data)
+    console.log('[DB] plugin store initialized')
   }
 }
 
@@ -167,6 +172,20 @@ const DB_CHANGE_HANDLERS = {
 
     configLocalStore.setDocument(docId, data)
     console.log(`[DB] Local Configuration ${docId} Updated`)
+  },
+  plugin: (docId: string, data: any, deleted: boolean): void => {
+    const pluginStore = usePluginStore.getState()
+    if (deleted) {
+      // Handling plugin deletion
+      pluginStore.deletePluginData(docId)
+      console.log(`[DB] Plugin ${docId} Deleted`)
+      return
+    }
+    // Updating plugin data
+    const currentData = pluginStore.pluginData[docId] || {}
+    if (isEqual(data, currentData)) return
+    pluginStore.setPluginData(docId, data)
+    console.log(`[DB] Plugin ${docId} Updated`)
   }
 }
 
@@ -182,7 +201,7 @@ export async function setupDBSync(): Promise<void> {
   for (const dbName of dbNames) {
     try {
       // Get all documents
-      const data = await window.api.database.getAllDocs(dbName)
+      const data = await ipcManager.invoke('db:get-all-docs', dbName)
       // Call the corresponding initialization function
       await DB_INITIALIZERS[dbName](data)
     } catch (error) {
@@ -191,7 +210,7 @@ export async function setupDBSync(): Promise<void> {
   }
 
   // Listening to database changes
-  ipcOnUnique('db-changed', (_, change: DocChange) => {
+  ipcManager.on('db:doc-changed', (_, change: DocChange) => {
     const { dbName, docId, data } = change
     const isDeleted = data._deleted === true
 
@@ -204,7 +223,7 @@ export async function setupDBSync(): Promise<void> {
   })
 
   // Listening to attachment changes
-  ipcOnUnique('attachment-changed', (_event, change: AttachmentChange) => {
+  ipcManager.on('db:attachment-changed', (_event, change: AttachmentChange) => {
     useAttachmentStore.getState().updateTimestamp(change.dbName, change.docId, change.attachmentId)
     useAttachmentStore
       .getState()

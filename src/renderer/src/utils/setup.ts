@@ -1,4 +1,4 @@
-import { ipcOnUnique } from '~/utils'
+import { ipcManager } from '~/app/ipc'
 import { useCloudSyncStore, SyncStatus } from '~/pages/Config/CloudSync/store'
 import { startGame } from '~/utils'
 import { toast } from 'sonner'
@@ -10,14 +10,15 @@ import i18next from 'i18next'
 
 /**
  * Setting the game URL startup listener
- * @param navigate Route Navigation Functions
+ * @param router Router instance from @tanstack/react-router
  */
-export function setupGameUrlListener(navigate: (path: string) => void): () => void {
+export function setupGameUrlListener(router: any): () => void {
   const handleStartGameFromUrl = (_event: any, gameId: string): void => {
-    startGame(gameId, navigate)
+    const navigateFunction = (path: string): void => router.navigate({ to: path })
+    startGame(gameId, navigateFunction)
   }
 
-  return ipcOnUnique('start-game-from-url', handleStartGameFromUrl)
+  return ipcManager.on('game:start-from-url', handleStartGameFromUrl)
 }
 
 /**
@@ -30,7 +31,7 @@ export function setupCloudSyncListener(): () => void {
     setStatus(status)
   }
 
-  return ipcOnUnique('cloud-sync-status', handleSyncStatus)
+  return ipcManager.on('db:sync-status', handleSyncStatus)
 }
 
 export function setupGameExitListeners(): () => void {
@@ -38,12 +39,12 @@ export function setupGameExitListeners(): () => void {
   const { refreshGameList } = useLibrarybarStore.getState()
 
   // Game is exiting listener
-  const exitingListener = ipcOnUnique('game-exiting', (_, gameId: string) => {
+  const exitingListener = ipcManager.on('game:exiting', (_, gameId: string) => {
     toast.loading(i18next.t('utils:notifications.gameExiting'), { id: `${gameId}-exiting` })
   })
 
   // Game is exited listener
-  const exitedListener = ipcOnUnique('game-exited', (_, gameId: string) => {
+  const exitedListener = ipcManager.on('game:exited', (_, gameId: string) => {
     const { runningGames } = useRunningGames.getState()
     const newRunningGames = runningGames.filter((id) => id !== gameId)
 
@@ -70,10 +71,10 @@ export function setupGameExitListeners(): () => void {
 }
 
 export function setupFullSyncListener(): () => void {
-  const syningListener = ipcOnUnique('full-syncing', () => {
+  const syningListener = ipcManager.on('db:full-syncing', () => {
     toast.loading(i18next.t('utils:notifications.fullSyncing'), { id: 'full-syncing' })
   })
-  const syncedListener = ipcOnUnique('full-synced', () => {
+  const syncedListener = ipcManager.on('db:full-synced', () => {
     toast.success(i18next.t('utils:notifications.fullSynced'), {
       id: 'full-syncing'
     })
@@ -82,7 +83,7 @@ export function setupFullSyncListener(): () => void {
       toast.dismiss('full-syncing')
     }, 4000)
   })
-  const syncErrorListener = ipcOnUnique('full-sync-error', (_event, error: string) => {
+  const syncErrorListener = ipcManager.on('db:full-sync-error', (_event, error: string) => {
     toast.error(i18next.t('utils:notifications.fullSyncError'), {
       id: 'full-syncing'
     })
@@ -100,7 +101,7 @@ export function setupFullSyncListener(): () => void {
 }
 
 export function setupUserInfoListener(): () => void {
-  const userInfoListener = ipcOnUnique('update-user-info-error', (_event) => {
+  const userInfoListener = ipcManager.on('account:update-user-info-error', (_event) => {
     toast.error(i18next.t('utils:notifications.updateUserInfoError'))
   })
   return () => {
@@ -112,9 +113,12 @@ export function setupUpdateListener(): () => void {
   const setIsUpdateDialogOpen = useUpdaterStore.getState().setIsOpen
   console.warn('[DEBUG] app.tsx')
 
-  const removeUpdateAvailableListener = ipcOnUnique('update-available', (_event, _updateInfo) => {
-    setIsUpdateDialogOpen(true)
-  })
+  const removeUpdateAvailableListener = ipcManager.on(
+    'updater:update-available',
+    (_event, _updateInfo) => {
+      setIsUpdateDialogOpen(true)
+    }
+  )
   return (): void => {
     removeUpdateAvailableListener()
   }
@@ -125,9 +129,9 @@ export function setupUpdateListener(): () => void {
  * @param navigate Route Navigation Functions
  * @returns Cleaning up the function array
  */
-export async function setup(navigate: (path: string) => void): Promise<() => void> {
+export async function setup(router: any): Promise<() => void> {
   const cleanupFunctions = [
-    setupGameUrlListener(navigate),
+    setupGameUrlListener(router),
     setupCloudSyncListener(),
     setupGameExitListeners(),
     await setupDBSync(),

@@ -1,4 +1,4 @@
-import type { MaxPlayTimeDay, gameDoc } from '@appTypes/database'
+import type { MaxPlayTimeDay, gameDoc } from '@appTypes/models'
 import { calculateDailyPlayTime } from '@appUtils'
 import i18next from 'i18next'
 import type { Paths } from 'type-fest'
@@ -462,17 +462,17 @@ export function getGamePlayTimeByDateRange(
   }
 }
 
-// Get the number of days the game has been played
-export function getGamePlayDays(gameId: string): number {
+// Get the dates the game has been played (stored in Set)
+export function getGamePlayedDates(gameId: string): Set<string> {
+  const playDays = new Set<string>()
+
   try {
     const store = getGameStore(gameId)
     const timers = store.getState().getValue('record.timers')
 
     if (!timers || timers.length === 0) {
-      return 0
+      return playDays
     }
-
-    const playDays = new Set<string>()
 
     timers.forEach((timer) => {
       // Convert to time in the user's local time zone
@@ -496,12 +496,16 @@ export function getGamePlayDays(gameId: string): number {
         }
       }
     })
-
-    return playDays.size
   } catch (error) {
-    console.error(`Error in getGamePlayDays for ${gameId}:`, error)
-    return 0
+    console.error(`Error in getGamePlayedDates for ${gameId}:`, error)
   }
+
+  return playDays
+}
+
+// Get the number of days the game has been played
+export function getGamePlayDays(gameId: string): number {
+  return getGamePlayedDates(gameId).size
 }
 
 // Get the date of the game's maximum play time
@@ -730,10 +734,15 @@ export function getTotalPlayedTimes(): number {
 export function getTotalPlayedDays(): number {
   try {
     const { gameIds } = useGameRegistry.getState()
+    const allDates = new Set<string>()
 
-    return gameIds.reduce((total, gameId) => {
-      return total + getGamePlayDays(gameId)
-    }, 0)
+    for (const gameId of gameIds) {
+      for (const date of getGamePlayedDates(gameId)) {
+        allDates.add(date)
+      }
+    }
+
+    return allDates.size
   } catch (error) {
     console.error(`Error in getTotalPlayedDays:`, error)
     return 0

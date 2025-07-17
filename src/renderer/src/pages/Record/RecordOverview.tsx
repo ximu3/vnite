@@ -1,13 +1,26 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@ui/card'
-import { Button } from '@ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '~/components/ui/card'
+import { Button } from '~/components/ui/button'
 import { ActivitySquare, Calendar as CalendarIcon, Clock, Trophy } from 'lucide-react'
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Area, AreaChart } from 'recharts'
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@ui/dialog'
-import { ScrollArea } from '@ui/scroll-area'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '~/components/ui/chart'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription
+} from '~/components/ui/dialog'
+import { ScrollArea } from '~/components/ui/scroll-area'
 
 import {
   useGameRegistry,
@@ -23,7 +36,7 @@ import { StatCard } from './StatCard'
 import { GameRankingItem } from './GameRankingItem'
 import { getPlayTimeDistribution } from '~/stores/game/recordUtils'
 
-export function RecordOverview(): JSX.Element {
+export function RecordOverview(): React.JSX.Element {
   const { t } = useTranslation('record')
 
   const [showMoreTimeGames, setShowMoreTimeGames] = useState(false)
@@ -83,14 +96,14 @@ export function RecordOverview(): JSX.Element {
   const yearlyChartConfig = {
     playTime: {
       label: t('overview.stats.totalPlayTime'),
-      color: 'hsl(var(--primary))'
+      color: 'var(--primary)'
     }
   }
 
   const distributionChartConfig = {
     gamingHour: {
       label: t('overview.stats.totalPlayTime'),
-      color: 'hsl(var(--primary))'
+      color: 'var(--primary)'
     }
   }
 
@@ -123,7 +136,7 @@ export function RecordOverview(): JSX.Element {
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.5fr,1fr]">
+      <div className="grid gap-4" style={{ gridTemplateColumns: '1.5fr 1fr' }}>
         <Card className="col-span-1">
           <CardHeader>
             <CardTitle>{t('overview.chart.yearlyPlayTime')}</CardTitle>
@@ -142,21 +155,22 @@ export function RecordOverview(): JSX.Element {
                 />
                 <YAxis tickLine={false} axisLine={false} tickMargin={10} />
                 <ChartTooltip
-                  content={
+                  content={(props) => (
                     <ChartTooltipContent
+                      {...props}
                       formatter={(value) => formatGameTime((value as number) * 60000)}
                       hideIndicator={false}
-                      color="hsl(var(--primary))"
+                      color="var(--primary)"
                     />
-                  }
+                  )}
                 />
                 <Area
                   type="monotone"
                   dataKey="playTime"
-                  stroke="hsl(var(--primary))"
+                  stroke="var(--primary)"
                   strokeWidth={2}
                   fillOpacity={0.3}
-                  fill="hsl(var(--primary))"
+                  fill="var(--primary)"
                 />
               </AreaChart>
             </ChartContainer>
@@ -189,16 +203,17 @@ export function RecordOverview(): JSX.Element {
                 />
                 <YAxis tickLine={false} axisLine={false} tickMargin={10} />
                 <ChartTooltip
-                  content={
+                  content={(props) => (
                     <ChartTooltipContent
+                      {...props}
                       formatter={(value) => formatGameTime((value as number) * 3600000)}
                       hideIndicator={false}
                       nameKey="timeRange"
-                      color="hsl(var(--primary))"
+                      color="var(--primary)"
                     />
-                  }
+                  )}
                 />
-                <Bar dataKey="gamingHour" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="gamingHour" fill="var(--primary)" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ChartContainer>
           </CardContent>
@@ -257,7 +272,7 @@ export function RecordOverview(): JSX.Element {
 
       {/* Game Time Ranking - Dialog */}
       <Dialog open={showMoreTimeGames} onOpenChange={setShowMoreTimeGames}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="w-[500px]">
           <DialogHeader>
             <DialogTitle>{t('overview.ranking.playTimeRanking')}</DialogTitle>
             <DialogDescription>{t('overview.ranking.allGamesByPlayTime')}</DialogDescription>
@@ -279,7 +294,7 @@ export function RecordOverview(): JSX.Element {
 
       {/* Game Rating Ranking - Dialog */}
       <Dialog open={showMoreScoreGames} onOpenChange={setShowMoreScoreGames}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="w-[500px]">
           <DialogHeader>
             <DialogTitle>{t('overview.ranking.scoreRanking')}</DialogTitle>
             <DialogDescription>{t('overview.ranking.allGamesByScore')}</DialogDescription>

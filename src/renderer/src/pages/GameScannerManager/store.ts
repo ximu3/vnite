@@ -1,10 +1,10 @@
 import { create } from 'zustand'
-import { ipcOnUnique } from '~/utils'
 import { toast } from 'sonner'
 import { OverallScanProgress } from '@appTypes/utils'
 import { generateUUID } from '@appUtils'
 import { useConfigLocalStore } from '~/stores'
 import i18next from 'i18next'
+import { ipcManager } from '~/app/ipc'
 
 interface FailedFolder {
   path: string
@@ -15,7 +15,7 @@ interface FailedFolder {
 
 interface ScannerForm {
   path: string
-  dataSource: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite'
+  dataSource: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite' | string
   depth: number
 }
 
@@ -99,7 +99,7 @@ export const useGameScannerStore = create<GameScannerStore>((set, get) => ({
   // Initialization - Set Event Listeners
   initialize: async (): Promise<void> => {
     // Get initial scan status
-    const progress = await window.api.gameScanner.getProgress()
+    const progress = await ipcManager.invoke('scanner:get-progress')
     if (progress) {
       set({
         scanProgress: progress.status !== undefined ? progress : get().scanProgress
@@ -119,27 +119,27 @@ export const useGameScannerStore = create<GameScannerStore>((set, get) => ({
     }
 
     // Set up all IPC listeners
-    ipcOnUnique('game-scanner:scan-progress', (_, progress) => {
+    ipcManager.onUnique('scanner:scan-progress', (_, progress) => {
       set({ scanProgress: progress })
     })
 
-    ipcOnUnique('game-scanner:scan-completed', (_, progress) => {
+    ipcManager.onUnique('scanner:scan-completed', (_, progress) => {
       set({ scanProgress: progress })
     })
 
-    ipcOnUnique('game-scanner:scan-error', (_, progress) => {
+    ipcManager.onUnique('scanner:scan-error', (_, progress) => {
       set({ scanProgress: progress })
     })
 
-    ipcOnUnique('game-scanner:scan-paused', (_, progress) => {
+    ipcManager.onUnique('scanner:scan-paused', (_, progress) => {
       set({ scanProgress: progress })
     })
 
-    ipcOnUnique('game-scanner:scan-resumed', (_, progress) => {
+    ipcManager.onUnique('scanner:scan-resumed', (_, progress) => {
       set({ scanProgress: progress })
     })
 
-    ipcOnUnique('game-scanner:scan-stopped', (_, progress) => {
+    ipcManager.onUnique('scanner:scan-stopped', (_, progress) => {
       toast.success(t('notifications.scanStopped'), {
         id: 'scan-stopping'
       })
@@ -147,11 +147,11 @@ export const useGameScannerStore = create<GameScannerStore>((set, get) => ({
       set({ scanProgress: progress })
     })
 
-    ipcOnUnique('game-scanner:scan-folder-error', (_, progress) => {
+    ipcManager.onUnique('scanner:scan-folder-error', (_, progress) => {
       set({ scanProgress: progress })
     })
 
-    ipcOnUnique('game-scanner:scan-folder-fixed', (_, progress) => {
+    ipcManager.onUnique('scanner:scan-folder-fixed', (_, progress) => {
       set({ scanProgress: progress })
     })
   },
@@ -163,13 +163,13 @@ export const useGameScannerStore = create<GameScannerStore>((set, get) => ({
   // Scanning Operations
   scanAll: async (): Promise<void> => {
     set({ scanProgress: { ...get().scanProgress, status: 'scanning' } })
-    const progress = await window.api.gameScanner.scanAll()
+    const progress = await ipcManager.invoke('scanner:scan-all')
     set({ scanProgress: progress })
   },
 
   scanScanner: async (scannerId): Promise<void> => {
     set({ scanProgress: { ...get().scanProgress, status: 'scanning' } })
-    await window.api.gameScanner.scanScanner(scannerId)
+    await ipcManager.invoke('scanner:scan-scanner', scannerId)
   },
 
   stopScan: async (): Promise<void> => {
@@ -177,7 +177,7 @@ export const useGameScannerStore = create<GameScannerStore>((set, get) => ({
     toast.loading(t('notifications.scanStopping'), {
       id: 'scan-stopping'
     })
-    await window.api.gameScanner.stopScan()
+    await ipcManager.invoke('scanner:stop-scan')
   },
 
   // Failed Folder Handling
@@ -193,7 +193,7 @@ export const useGameScannerStore = create<GameScannerStore>((set, get) => ({
 
     try {
       const dataSource = selectedFailedFolder.dataSource || 'steam'
-      await window.api.gameScanner.fixFolder(selectedFailedFolder.path, gameId, dataSource)
+      await ipcManager.invoke('scanner:fix-folder', selectedFailedFolder.path, gameId, dataSource)
 
       // Reset state
       set({
@@ -249,7 +249,7 @@ export const useGameScannerStore = create<GameScannerStore>((set, get) => ({
   },
 
   selectPath: async (): Promise<void> => {
-    const path = await window.api.utils.selectPathDialog(['openDirectory'])
+    const path = await ipcManager.invoke('system:select-path-dialog', ['openDirectory'])
     if (path) {
       set((state) => ({
         formState: { ...state.formState, path: path as string }
@@ -294,7 +294,7 @@ export const useGameScannerStore = create<GameScannerStore>((set, get) => ({
       toast.loading(t('notifications.fixAttempt'), {
         id: 'fix-folder'
       })
-      await window.api.gameScanner.fixFolder(folderPath, gameId, dataSource)
+      await ipcManager.invoke('scanner:fix-folder', folderPath, gameId, dataSource)
 
       toast.success(t('notifications.fixSuccess'), {
         id: 'fix-folder'
@@ -324,7 +324,7 @@ export const useGameScannerStore = create<GameScannerStore>((set, get) => ({
           }
         }
       }))
-      await window.api.gameScanner.ignoreFailedFolder(scannerId, folderPath)
+      await ipcManager.invoke('scanner:ignore-failed-folder', scannerId, folderPath)
     } catch (error) {
       console.error(`${t('errors.ignoreFolder')}`, error)
     }

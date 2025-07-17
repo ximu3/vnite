@@ -1,15 +1,23 @@
-import { Button } from '@ui/button'
-import { Input } from '@ui/input'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@ui/table'
+import { Button } from '~/components/ui/button'
+import { Input } from '~/components/ui/input'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '~/components/ui/table'
 import { isEqual } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useGameLocalState, useGameState } from '~/hooks'
 import { cn } from '~/utils'
+import { ipcManager } from '~/app/ipc'
 
-export function Save({ gameId }: { gameId: string }): JSX.Element {
+export function Save({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
-  const [saveList, setSaveList] = useGameState(gameId, 'save.saveList')
+  const [saveList, setSaveList, saveSaveList] = useGameState(gameId, 'save.saveList', true)
 
   const [savePaths] = useGameLocalState(gameId, 'path.savePaths')
 
@@ -20,7 +28,7 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
     }
     toast.promise(
       (async (): Promise<void> => {
-        await window.api.game.restoreGameSave(gameId, saveId)
+        await ipcManager.invoke('game:restore-save', gameId, saveId)
       })(),
       {
         loading: t('detail.save.notifications.switchLoading'),
@@ -37,7 +45,7 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
     }
     toast.promise(
       (async (): Promise<void> => {
-        await window.api.game.deleteGameSave(gameId, saveId)
+        await ipcManager.invoke('game:delete-save', gameId, saveId)
         const newSaveList = { ...saveList }
         delete newSaveList[saveId]
         setSaveList(newSaveList)
@@ -95,6 +103,7 @@ export function Save({ gameId }: { gameId: string }): JSX.Element {
                               [saveId]: { ...save, note: e.target.value }
                             })
                           }
+                          onBlur={saveSaveList}
                           className={cn('h-8')}
                         />
                       </TableCell>

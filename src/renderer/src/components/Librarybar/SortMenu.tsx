@@ -1,5 +1,5 @@
-import { Button } from '@ui/button'
-import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
+import { Button } from '~/components/ui/button'
+import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
 import {
   Select,
   SelectContent,
@@ -8,9 +8,9 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue
-} from '@ui/select'
-import { Separator } from '@ui/separator'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
+} from '~/components/ui/select'
+import { Separator } from '~/components/ui/separator'
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useConfigState } from '~/hooks'
@@ -22,7 +22,7 @@ export function SortMenu({
 }: {
   isSortMenuOpen: boolean
   children: React.ReactNode
-}): JSX.Element {
+}): React.JSX.Element {
   const { t } = useTranslation('game')
   const [selectedGroup, _setSelectedGroup] = useConfigState('game.gameList.selectedGroup')
   const [by, setBy] = useConfigState('game.gameList.sort.by')
@@ -52,14 +52,14 @@ export function SortMenu({
         <PopoverTrigger>
           <TooltipTrigger asChild>{children}</TooltipTrigger>
         </PopoverTrigger>
-        <TooltipContent side="right">{t('list.all.sortBy')}</TooltipContent>
+        <TooltipContent side="bottom">{t('list.all.sortBy')}</TooltipContent>
       </Tooltip>
-      <PopoverContent side="right">
+      <PopoverContent side="bottom">
         <div className={cn('flex flex-col gap-5')}>
           <div className={cn('flex flex-row gap-1 items-center justify-center')}>
             <div className={cn('text-sm whitespace-nowrap')}>{t('list.all.sortBy')}：</div>
             <Select value={by} onValueChange={setBy} defaultValue="name">
-              <SelectTrigger className={cn('w-[120px] h-[26px] text-xs')}>
+              <SelectTrigger className={cn('w-[130px] h-[26px] text-xs min-h-0')}>
                 <SelectValue placeholder="Select a fruit" className={cn('text-xs')} />
               </SelectTrigger>
               <SelectContent>
@@ -82,7 +82,7 @@ export function SortMenu({
               </SelectContent>
             </Select>
             <Button
-              variant={'outline'}
+              variant={'thirdary'}
               size={'icon'}
               className={cn('h-[26px] w-[26px] ml-1')}
               onClick={toggleOrder}

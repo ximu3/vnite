@@ -4,10 +4,9 @@
     "src/renderer/src/env.d.ts",
     "src/renderer/src/**/*",
     "src/renderer/src/**/*.tsx",
-    "src/renderer/**/*",
     "src/preload/*.d.ts",
-    "src/types/**/*",
-    "src/utils/**/*"
+    "src/utils/**/*",
+    "src/types/**/*"
   ],
   "compilerOptions": {
     "composite": true,
@@ -15,10 +14,7 @@
     "baseUrl": ".",
     "paths": {
       "~/*": ["src/renderer/src/*"],
-      "@ui": ["src/renderer/src/components/ui"],
       "@ui/*": ["src/renderer/src/components/ui/*"],
-      "@assets": ["src/renderer/assets"],
-      "@assets/*": ["src/renderer/assets/*"],
       "@locales": ["src/renderer/locales"],
       "@locales/*": ["src/renderer/locales/*"],
       "@appTypes": ["src/types"],

@@ -1,21 +1,37 @@
 import { useTranslation } from 'react-i18next'
 import { ArrayInput } from '@ui/array-input'
 import { DateInput } from '@ui/date-input'
-import { Dialog, DialogContent, DialogTrigger } from '@ui/dialog'
-import { Input } from '@ui/input'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
+import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog'
+import { Input } from '~/components/ui/input'
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 import { useGameState } from '~/hooks'
 import { cn } from '~/utils'
 
-export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
+export function InformationDialog({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
-  const [originalName, setOriginalName] = useGameState(gameId, 'metadata.originalName')
-  const [name, setName] = useGameState(gameId, 'metadata.name')
-  const [developers, setDevelopers] = useGameState(gameId, 'metadata.developers')
-  const [publishers, setPublishers] = useGameState(gameId, 'metadata.publishers')
-  const [releaseDate, setReleaseDate] = useGameState(gameId, 'metadata.releaseDate')
-  const [genres, setGenres] = useGameState(gameId, 'metadata.genres')
-  const [platforms, setPlatforms] = useGameState(gameId, 'metadata.platforms')
+  const [originalName, setOriginalName, saveOriginalName] = useGameState(
+    gameId,
+    'metadata.originalName',
+    true
+  )
+  const [name, setName, saveName] = useGameState(gameId, 'metadata.name', true)
+  const [developers, setDevelopers, saveDevelopers] = useGameState(
+    gameId,
+    'metadata.developers',
+    true
+  )
+  const [publishers, setPublishers, savePublishers] = useGameState(
+    gameId,
+    'metadata.publishers',
+    true
+  )
+  const [releaseDate, setReleaseDate, saveReleaseDate] = useGameState(
+    gameId,
+    'metadata.releaseDate',
+    true
+  )
+  const [genres, setGenres, saveGenres] = useGameState(gameId, 'metadata.genres', true)
+  const [platforms, setPlatforms, savePlatforms] = useGameState(gameId, 'metadata.platforms', true)
 
   return (
     <Dialog>
@@ -24,7 +40,7 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
           className={cn('invisible group-hover:visible w-5 h-5 icon-[mdi--square-edit-outline]')}
         ></span>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="w-[500px]">
         <div
           className={cn('grid grid-cols-[auto_1fr] gap-y-3 gap-x-4 px-3 py-5 items-center text-sm')}
         >
@@ -34,6 +50,7 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
           <Input
             value={originalName}
             onChange={(e) => setOriginalName(e.target.value)}
+            onBlur={saveOriginalName}
             placeholder={t('detail.overview.information.empty')}
             className={cn('text-sm')}
           />
@@ -43,6 +60,7 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
           <Input
             value={name}
             onChange={(e) => setName(e.target.value)}
+            onBlur={saveName}
             placeholder={t('detail.overview.information.empty')}
             className={cn('text-sm')}
           />
@@ -54,6 +72,7 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
               <ArrayInput
                 value={developers}
                 onChange={setDevelopers}
+                onBlur={saveDevelopers}
                 placeholder={t('detail.overview.information.empty')}
               />
             </TooltipTrigger>
@@ -71,6 +90,7 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
               <ArrayInput
                 value={publishers}
                 onChange={setPublishers}
+                onBlur={savePublishers}
                 placeholder={t('detail.overview.information.empty')}
               />
             </TooltipTrigger>
@@ -86,6 +106,7 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
           <DateInput
             value={releaseDate}
             onChange={(e) => setReleaseDate(e.target.value)}
+            onBlur={saveReleaseDate}
             placeholder={t('detail.overview.information.empty')}
             className={cn('text-sm')}
           />
@@ -97,6 +118,7 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
               <ArrayInput
                 value={platforms}
                 onChange={setPlatforms}
+                onBlur={savePlatforms}
                 placeholder={t('detail.overview.information.empty')}
               />
             </TooltipTrigger>
@@ -114,6 +136,7 @@ export function InformationDialog({ gameId }: { gameId: string }): JSX.Element {
               <ArrayInput
                 value={genres}
                 onChange={setGenres}
+                onBlur={saveGenres}
                 placeholder={t('detail.overview.information.empty')}
               />
             </TooltipTrigger>

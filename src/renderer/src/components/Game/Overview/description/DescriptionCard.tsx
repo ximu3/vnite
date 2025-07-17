@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next'
-import { Separator } from '@ui/separator'
 import parse from 'html-react-parser'
 import { useGameState } from '~/hooks'
 import { cn, copyWithToast, HTMLParserOptions } from '~/utils'
@@ -13,7 +12,7 @@ export function DescriptionCard({
 }: {
   gameId: string
   className?: string
-}): JSX.Element {
+}): React.JSX.Element {
   const { t } = useTranslation('game')
   const [description, setDescription] = useGameState(gameId, 'metadata.description')
   const [originalName] = useGameState(gameId, 'metadata.originalName')
@@ -42,7 +41,9 @@ export function DescriptionCard({
           <DescriptionDialog gameId={gameId} />
         </div>
       </div>
-      <Separator className={cn('my-3 bg-primary')} />
+      <div className={cn('flex items-center justify-center flex-grow')}>
+        <div className="w-full h-px my-3 border-t border-dashed border-primary" />
+      </div>
 
       <div
         className={cn(

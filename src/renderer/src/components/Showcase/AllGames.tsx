@@ -1,4 +1,4 @@
-import { Button } from '@ui/button'
+import { Button } from '~/components/ui/button'
 import {
   Select,
   SelectContent,
@@ -7,7 +7,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue
-} from '@ui/select'
+} from '~/components/ui/select'
 import { useTranslation } from 'react-i18next'
 import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
 import { useConfigState } from '~/hooks'
@@ -15,7 +15,7 @@ import { sortGames } from '~/stores/game'
 import { cn } from '~/utils'
 import { GamePoster } from './posters/GamePoster'
 
-function PlaceHolder(): JSX.Element {
+function PlaceHolder(): React.JSX.Element {
   return (
     <div className={cn('w-[148px] h-[222px] cursor-pointer object-cover', 'bg-transparent')}></div>
   )
@@ -25,7 +25,7 @@ export function AllGamesComponent({
   scrollPosition
 }: {
   scrollPosition: { x: number; y: number }
-}): JSX.Element {
+}): React.JSX.Element {
   const [by, setBy] = useConfigState('game.showcase.sort.by')
   const [order, setOrder] = useConfigState('game.showcase.sort.order')
   const games = sortGames(by, order)
@@ -43,7 +43,7 @@ export function AllGamesComponent({
           <div className={cn('flex flex-row gap-1 items-center justify-center select-none')}>
             <div className={cn('text-sm')}>{t('showcase.sorting.title')}</div>
             <Select value={by} onValueChange={setBy} defaultValue="name">
-              <SelectTrigger className={cn('w-[120px] h-[26px] text-xs')}>
+              <SelectTrigger className={cn('w-[130px] h-[26px] text-xs border-0')}>
                 <SelectValue placeholder="Select a fruit" className={cn('text-xs')} />
               </SelectTrigger>
               <SelectContent>
@@ -69,7 +69,7 @@ export function AllGamesComponent({
             </Select>
           </div>
           <Button
-            variant={'outline'}
+            variant={'thirdary'}
             size={'icon'}
             className={cn('h-[26px] w-[26px] -ml-3')}
             onClick={toggleOrder}

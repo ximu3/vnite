@@ -8,12 +8,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger
-} from '@ui/alert-dialog'
+} from '~/components/ui/alert-dialog'
 import { useGameState } from '~/hooks'
 import { toast } from 'sonner'
 import { useGameCollectionStore } from '~/stores'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
+import { ipcManager } from '~/app/ipc'
 
 export function DeleteGameAlert({
   gameId,
@@ -21,7 +22,7 @@ export function DeleteGameAlert({
 }: {
   gameId: string
   children: React.ReactNode
-}): JSX.Element {
+}): React.JSX.Element {
   const { t } = useTranslation('game')
   const navigate = useNavigate()
   const [gameName] = useGameState(gameId, 'metadata.name')
@@ -31,9 +32,9 @@ export function DeleteGameAlert({
     toast.promise(
       async () => {
         removeGameFromAllCollections(gameId)
-        await window.api.game.deleteGame(gameId)
+        await ipcManager.invoke('game:delete', gameId)
         console.log(`Game ${gameId} deleted`)
-        navigate('/library')
+        navigate({ to: '/library' })
       },
       {
         loading: t('detail.deleteAlert.notifications.deleting', { gameName }),

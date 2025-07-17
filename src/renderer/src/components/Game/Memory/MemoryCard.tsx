@@ -1,6 +1,6 @@
 import { cn, formatDateToISO } from '~/utils'
-import { GameImage } from '@ui/game-image'
-import { Card } from '@ui/card'
+import { GameImage } from '~/components/ui/game-image'
+import { Card } from '~/components/ui/card'
 import {
   ContextMenu,
   ContextMenuContent,
@@ -12,8 +12,8 @@ import {
   ContextMenuSubContent,
   ContextMenuSubTrigger,
   ContextMenuGroup
-} from '@ui/context-menu'
-import { Button } from '@ui/button'
+} from '~/components/ui/context-menu'
+import { Button } from '~/components/ui/button'
 import { useGameState } from '~/hooks'
 import { NoteDialog } from './NoteDialog'
 import { useState, useRef } from 'react'
@@ -25,6 +25,7 @@ import { toast } from 'sonner'
 import html2canvas from 'html2canvas'
 import { useTranslation } from 'react-i18next'
 import Zoom from 'react-medium-image-zoom'
+import { ipcManager } from '~/app/ipc'
 
 export function MemoryCard({
   gameId,
@@ -32,7 +33,8 @@ export function MemoryCard({
   handleDelete,
   note,
   date,
-  setNote
+  setNote,
+  saveNote
 }: {
   gameId: string
   memoryId: string
@@ -40,7 +42,8 @@ export function MemoryCard({
   note: string
   date: string
   setNote: (note: string) => void
-}): JSX.Element {
+  saveNote: () => Promise<void>
+}): React.JSX.Element {
   const { t } = useTranslation('game')
   const [isNoteDialogOpen, setIsNoteDialogOpen] = useState(false)
   const [cropDialogState, setCropDialogState] = useState<{
@@ -59,13 +62,13 @@ export function MemoryCard({
   const memoryRef = useRef<HTMLDivElement>(null)
 
   function handleCropComplete(filePath: string): void {
-    window.api.game.updateMemoryCover(gameId, memoryId, filePath)
+    ipcManager.invoke('game:update-memory-cover', gameId, memoryId, filePath)
     setCropDialogState({ isOpen: false, type: '', imagePath: null, isResizing: false })
   }
 
   async function handleCoverSelect(): Promise<void> {
     try {
-      const filePath: string = await window.api.utils.selectPathDialog(['openFile'])
+      const filePath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
       if (!filePath) return
 
       setCropDialogState({
@@ -82,7 +85,7 @@ export function MemoryCard({
   async function handleResize(): Promise<void> {
     try {
       // Get current image path
-      const currentPath: string = await window.api.game.getMemoryCoverPath(gameId, memoryId)
+      const currentPath = await ipcManager.invoke('game:get-memory-cover-path', gameId, memoryId)
       if (!currentPath) {
         toast.error(t('detail.memory.notifications.imageNotFound'))
         return
@@ -186,7 +189,7 @@ export function MemoryCard({
   const handleExportMarkdown = async (type: 'clipboard' | 'file'): Promise<void> => {
     if (!note) return
 
-    const coverPath: string = await window.api.game.getMemoryCoverPath(gameId, memoryId)
+    const coverPath = await ipcManager.invoke('game:get-memory-cover-path', gameId, memoryId)
 
     const markdownContent = `# ${gameName} - ${t('{{date, niceDate}}', { date })}\n\n![cover](${coverPath})\n\n${note}`
 
@@ -348,6 +351,7 @@ export function MemoryCard({
         setIsOpen={setIsNoteDialogOpen}
         note={note}
         setNote={setNote}
+        saveNote={saveNote}
       ></NoteDialog>
     </ContextMenu>
   )

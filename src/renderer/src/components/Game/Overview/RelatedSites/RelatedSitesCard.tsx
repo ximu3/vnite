@@ -1,5 +1,4 @@
-import { Link } from '@ui/link'
-import { Separator } from '@ui/separator'
+import { Link } from '~/components/ui/link'
 import { isEqual } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { useGameState } from '~/hooks'
@@ -12,7 +11,7 @@ export function RelatedSitesCard({
 }: {
   gameId: string
   className?: string
-}): JSX.Element {
+}): React.JSX.Element {
   const { t } = useTranslation('game')
   const [relatedSites] = useGameState(gameId, 'metadata.relatedSites')
 
@@ -29,7 +28,9 @@ export function RelatedSitesCard({
         </div>
         <RelatedSitesDialog gameId={gameId} />
       </div>
-      <Separator className={cn('my-3 bg-primary')} />
+      <div className={cn('flex items-center justify-center flex-grow')}>
+        <div className="w-full h-px my-3 border-t border-dashed border-primary" />
+      </div>
       <div className={cn('flex flex-col text-sm justify-start gap-[6px] items-start')}>
         {isEqual(relatedSites, []) || isEqual(relatedSites, [{ label: '', url: '' }])
           ? t('detail.overview.relatedSites.empty')

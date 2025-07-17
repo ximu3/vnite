@@ -1,4 +1,4 @@
-import { Button } from '@ui/button'
+import { Button } from '~/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,57 +8,54 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger
-} from '@ui/dropdown-menu'
-import { Nav } from '@ui/nav'
-import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
+} from '~/components/ui/dropdown-menu'
+import { Nav } from '~/components/ui/nav'
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from '@tanstack/react-router'
 import { toast } from 'sonner'
-import { useConfigLocalState, useConfigState } from '~/hooks'
 import { useGameAdderStore } from '~/pages/GameAdder/store'
 import { useGameBatchAdderStore } from '~/pages/GameBatchAdder/store'
 import { useGameScannerStore } from '~/pages/GameScannerManager/store'
 import { useSteamImporterStore } from '~/pages/Importer/SteamImporter/store'
+import { ipcManager } from '~/app/ipc'
 import { cn } from '~/utils'
-import { CloudSyncInfo } from '../pages/Config/CloudSync/Info'
-import { useCloudSyncStore } from '../pages/Config/CloudSync/store'
-import { useTheme } from './ThemeProvider'
 
-export function Sidebar(): JSX.Element {
-  const navigate = useNavigate()
+export function Sidebar(): React.JSX.Element {
+  const router = useRouter()
   const setIsGameAdderOpen = useGameAdderStore((state) => state.setIsOpen)
   const gameBatchAdderActions = useGameBatchAdderStore((state) => state.actions)
   const setIsSteamImporterOpen = useSteamImporterStore((state) => state.setIsOpen)
-  const syncStatus = useCloudSyncStore((state) => state.status)
-  const [cloudSyncEnabled] = useConfigLocalState('sync.enabled')
-  const { toggleTheme, isDark } = useTheme()
-  const [showThemeSwitchInSidebar] = useConfigState('appearances.sidebar.showThemeSwitcher')
-  const [showNSFWBlurSwitchInSidebar] = useConfigState('appearances.sidebar.showNSFWBlurSwitcher')
-  const [enableNSFWBlur, setEnableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
   const setEditingScanner = useGameScannerStore((state) => state.setEditingScanner)
   const { t } = useTranslation('sidebar')
 
   return (
     <div
       className={cn(
-        'flex flex-col p-[10px] h-full bg-background/60 border-r border-border justify-between'
+        'flex flex-col p-[6px] py-[8px] bg-transparent border-r border-border justify-between h-full w-[56px]'
       )}
     >
-      <div className={cn('flex flex-col gap-2')}>
+      <div className={cn('flex flex-col gap-2 items-center justify-center')}>
         <div
           className={cn(
-            'font-mono text-2xl font-bold flex justify-center items-center text-primary non-draggable cursor-pointer'
+            'font-mono text-shadow-lg text-2xl font-bold flex justify-center items-center text-primary non-draggable cursor-pointer'
           )}
           onClick={() => {
-            navigate(-1)
+            router.history.back()
           }}
         >
           V
         </div>
         <Tooltip>
           <TooltipTrigger>
-            <Nav variant="sidebar" to="./library">
+            <Nav
+              variant="sidebar"
+              to="/library"
+              activeOptions={{
+                exact: false
+              }}
+              className="size-9 p-0"
+            >
               <span className={cn('icon-[mdi--bookshelf] w-5 h-5')}></span>
             </Nav>
           </TooltipTrigger>
@@ -66,7 +63,7 @@ export function Sidebar(): JSX.Element {
         </Tooltip>
         <Tooltip>
           <TooltipTrigger>
-            <Nav variant="sidebar" to="./record">
+            <Nav variant="sidebar" to="/record" className="size-9 p-0">
               <span className={cn('icon-[mdi--report-box-multiple] w-5 h-5')}></span>
             </Nav>
           </TooltipTrigger>
@@ -74,7 +71,7 @@ export function Sidebar(): JSX.Element {
         </Tooltip>
         <Tooltip>
           <TooltipTrigger>
-            <Nav variant="sidebar" to="./scanner">
+            <Nav variant="sidebar" to="/scanner" className="size-9 p-0">
               <span className={cn('icon-[mdi--folder-search] w-5 h-5')}></span>
             </Nav>
           </TooltipTrigger>
@@ -82,111 +79,22 @@ export function Sidebar(): JSX.Element {
         </Tooltip>
         <Tooltip>
           <TooltipTrigger>
-            <Nav variant="sidebar" to="./transformer">
+            <Nav variant="sidebar" to="/transformer" className="size-9 p-0">
               <span className={cn('icon-[mdi--file-replace] w-5 h-5')}></span>
             </Nav>
           </TooltipTrigger>
           <TooltipContent side="right">{t('navigation.transformer')}</TooltipContent>
         </Tooltip>
+        <Tooltip>
+          <TooltipTrigger>
+            <Nav variant="sidebar" to="/plugin" className="size-9 p-0">
+              <span className={cn('icon-[mdi--puzzle] w-5 h-5')}></span>
+            </Nav>
+          </TooltipTrigger>
+          <TooltipContent side="right">{t('navigation.plugin')}</TooltipContent>
+        </Tooltip>
       </div>
-      <div className={cn('flex flex-col gap-2')}>
-        {showNSFWBlurSwitchInSidebar && (
-          <Tooltip>
-            <TooltipTrigger>
-              <Button
-                variant="ghost"
-                size={'icon'}
-                className={cn('min-h-0 min-w-0 p-2 non-draggable')}
-                onClick={() => setEnableNSFWBlur(!enableNSFWBlur)}
-              >
-                {enableNSFWBlur ? (
-                  <span className={cn('icon-[mdi--eye-off-outline] w-6 h-6')}></span>
-                ) : (
-                  <span className={cn('icon-[mdi--eye-outline] w-6 h-6')}></span>
-                )}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              {enableNSFWBlur ? t('actions.disableNSFWBlur') : t('actions.enableNSFWBlur')}
-            </TooltipContent>
-          </Tooltip>
-        )}
-        {showThemeSwitchInSidebar && (
-          <Tooltip>
-            <TooltipTrigger>
-              <Button
-                variant="ghost"
-                size={'icon'}
-                className={cn('min-h-0 min-w-0 p-2 non-draggable')}
-                onClick={toggleTheme}
-              >
-                {isDark ? (
-                  <span className={cn('icon-[mdi--weather-night] w-5 h-5')}></span>
-                ) : (
-                  <span className={cn('icon-[mdi--weather-sunny] w-6 h-6 -m-1')}></span>
-                )}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              {isDark ? t('actions.darkMode') : t('actions.lightMode')}
-            </TooltipContent>
-          </Tooltip>
-        )}
-        {cloudSyncEnabled ? (
-          <Popover>
-            <PopoverTrigger>
-              {syncStatus?.status === 'syncing' ? (
-                <Button
-                  variant="ghost"
-                  size={'icon'}
-                  className={cn('min-h-0 min-w-0 p-2 non-draggable')}
-                >
-                  <span className={cn('icon-[mdi--cloud-sync-outline] w-5 h-5')}></span>
-                </Button>
-              ) : syncStatus?.status === 'success' ? (
-                <Button
-                  variant="ghost"
-                  size={'icon'}
-                  className={cn('min-h-0 min-w-0 p-2 non-draggable')}
-                >
-                  <span className={cn('icon-[mdi--cloud-check-outline] w-5 h-5')}></span>
-                </Button>
-              ) : syncStatus?.status === 'error' ? (
-                <Button
-                  variant="ghost"
-                  size={'icon'}
-                  className={cn('min-h-0 min-w-0 p-2 non-draggable')}
-                >
-                  <span className={cn('icon-[mdi--cloud-remove-outline] w-5 h-5')}></span>
-                </Button>
-              ) : (
-                <Button
-                  variant="ghost"
-                  size={'icon'}
-                  className={cn('min-h-0 min-w-0 p-2 non-draggable')}
-                >
-                  <span className={cn('icon-[mdi--cloud-outline] w-5 h-5')}></span>
-                </Button>
-              )}
-            </PopoverTrigger>
-            <PopoverContent side="right">
-              <CloudSyncInfo className={cn('text-sm')} />
-            </PopoverContent>
-          </Popover>
-        ) : (
-          <Tooltip>
-            <TooltipTrigger>
-              <Button
-                variant="ghost"
-                size={'icon'}
-                className={cn('min-h-0 min-w-0 p-2 non-draggable')}
-              >
-                <span className={cn('icon-[mdi--cloud-cancel-outline] w-5 h-5')}></span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right">{t('actions.cloudSyncDisabled')}</TooltipContent>
-          </Tooltip>
-        )}
+      <div className={cn('flex flex-col gap-2 items-center justify-center')}>
         <DropdownMenu>
           <Tooltip>
             <DropdownMenuTrigger>
@@ -219,7 +127,9 @@ export function Sidebar(): JSX.Element {
                       toast.promise(
                         (async (): Promise<void> => {
                           try {
-                            const result = await window.api.adder.getBatchGameAdderData()
+                            const result = await ipcManager.invoke(
+                              'adder:get-batch-game-adder-data'
+                            )
 
                             if (!Array.isArray(result)) {
                               throw new Error(t('notifications.unknownError'))
@@ -259,13 +169,18 @@ export function Sidebar(): JSX.Element {
                     onClick={async () => {
                       try {
                         toast.info(t('notifications.selectGamePath'))
-                        const gamePath = await window.api.utils.selectPathDialog(['openFile'])
+                        const gamePath = await ipcManager.invoke('system:select-path-dialog', [
+                          'openFile'
+                        ])
                         if (!gamePath) {
                           return
                         }
                         toast.promise(
                           (async (): Promise<void> => {
-                            await window.api.adder.addGameToDbWithoutMetadata(gamePath)
+                            await ipcManager.invoke(
+                              'adder:add-game-to-db-without-metadata',
+                              gamePath
+                            )
                           })(),
                           {
                             loading: t('notifications.adding'),
@@ -285,7 +200,7 @@ export function Sidebar(): JSX.Element {
             </DropdownMenuSub>
             <DropdownMenuItem
               onClick={() => {
-                navigate('/scanner')
+                router.navigate({ to: '/scanner' })
                 setEditingScanner({
                   id: null,
                   isNew: true
@@ -312,7 +227,7 @@ export function Sidebar(): JSX.Element {
         </DropdownMenu>
         <Tooltip>
           <TooltipTrigger>
-            <Nav variant="sidebar" to="./config">
+            <Nav variant="sidebar" to="/config" className="size-9 p-0">
               <span className={cn('icon-[mdi--settings-outline] w-5 h-5')}></span>
             </Nav>
           </TooltipTrigger>

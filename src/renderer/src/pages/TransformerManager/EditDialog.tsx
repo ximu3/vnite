@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@ui/dialog'
-import { Button } from '@ui/button'
-import { Input } from '@ui/input'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter
+} from '~/components/ui/dialog'
+import { Button } from '~/components/ui/button'
+import { Input } from '~/components/ui/input'
 import { TransformerRule } from './types'
 import { cn } from '~/utils'
 import { useTranslation } from 'react-i18next'
@@ -18,7 +24,7 @@ export function EditDialog({
   onOpenChange,
   transformer,
   onSave
-}: EditDialogProps): JSX.Element {
+}: EditDialogProps): React.JSX.Element {
   const { t } = useTranslation('transformer')
   const [name, setName] = useState('')
   const [note, setNote] = useState('')
@@ -42,7 +48,7 @@ export function EditDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="w-[500px]">
         <DialogHeader>
           <DialogTitle>{t('editDialog.title')}</DialogTitle>
         </DialogHeader>

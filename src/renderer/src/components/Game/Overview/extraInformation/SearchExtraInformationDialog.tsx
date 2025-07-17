@@ -1,13 +1,14 @@
 import { cn } from '~/utils'
-import { Dialog, DialogContent } from '@ui/dialog'
-import { Button } from '@ui/button'
-import { Input } from '@ui/input'
-import { Card } from '@ui/card'
-import { Badge } from '@ui/badge'
+import { Dialog, DialogContent } from '~/components/ui/dialog'
+import { Button } from '~/components/ui/button'
+import { Input } from '~/components/ui/input'
+import { Card } from '~/components/ui/card'
+import { Badge } from '~/components/ui/badge'
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import { GameExtraInfoList } from '@appTypes/utils'
 import { useTranslation } from 'react-i18next'
+import { ipcManager } from '~/app/ipc'
 
 interface SearchExtraInformationDialogProps {
   isOpen: boolean
@@ -23,7 +24,7 @@ export function SearchExtraInformationDialog({
   gameTitle,
   onSelect,
   initialExtraInfo = []
-}: SearchExtraInformationDialogProps): JSX.Element {
+}: SearchExtraInformationDialogProps): React.JSX.Element {
   const { t } = useTranslation('game')
   const [searchTitle, setSearchTitle] = useState(gameTitle)
   const [extraInfoList, setExtraInfoList] = useState<GameExtraInfoList>([])
@@ -58,7 +59,7 @@ export function SearchExtraInformationDialog({
     setIsLoading(true)
 
     try {
-      const result = await window.api.scraper.getGameExtraInfoList({
+      const result = await ipcManager.invoke('scraper:get-game-extra-info-list', {
         type: 'name',
         value: searchTitle
       })
@@ -155,7 +156,7 @@ export function SearchExtraInformationDialog({
           )}
         </Card>
 
-        {/* 搜索和操作按钮区域 */}
+        {/* 搜索和操作按钮区�?*/}
         <Card className={cn('p-3')}>
           <div className={cn('flex flex-row gap-3')}>
             <Input

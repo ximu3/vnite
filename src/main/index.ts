@@ -1,38 +1,40 @@
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
-import { app, BrowserWindow, ipcMain, shell } from 'electron'
+import { app, BrowserWindow, ipcMain, shell, protocol } from 'electron'
 import log from 'electron-log/main'
 import windowStateKeeper from 'electron-window-state'
 import { join } from 'path'
-import { DBManager, GameDBManager, startSync } from '~/database'
+import { baseDBManager, GameDBManager } from '~/core/database'
+import { startSync } from '~/features/database'
 import icon from '../../resources/icon.png?asset'
-import { AuthManager, handleAuthCallback } from './account'
-import { setupIPC } from './ipc'
-import { initScraper } from './scraper'
-import { setupUpdater } from './updater'
+import { AuthManager, handleAuthCallback } from './features/account'
+import { ipcManager, setupIPC } from './core/ipc'
+import { setupAutoUpdater } from './features/updater'
 import {
   calculateWindowSize,
   checkAdminPermissions,
   checkIfDirectoryNeedsAdminRights,
-  checkPortableMode,
   getAppRootPath,
   getDataPath,
   getLogsPath,
-  initI18n,
   parseGameIdFromUrl,
-  portableStore,
   restartAppAsAdmin,
-  setupOpenAtLogin,
-  setupProtocols,
-  setupSession,
-  setupTempDirectory,
-  setupTray,
-  TrayManager
+  setupTempDirectory
 } from './utils'
-import { GameScannerManager } from './adder/scanner'
-import { cleanupPowerShell } from './utils/powershell'
+import {
+  TrayManager,
+  setupTray,
+  setupProtocols,
+  setupOpenAtLogin,
+  portableStore,
+  initI18n,
+  checkPortableMode
+} from './features/system'
+import { GameScannerManager } from './features/adder'
+import { setupScraper } from './features/scraper'
+import { cleanupPowerShell } from './utils'
+import { pluginService } from './plugins'
 
-let mainWindow: BrowserWindow
-let splashWindow: BrowserWindow | null
+export let mainWindow: BrowserWindow
 
 export let trayManager: TrayManager
 
@@ -100,33 +102,26 @@ function createWindow(): void {
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false,
-      webSecurity: false
+      webSecurity: true
     }
   })
 
   mainWindowState.manage(mainWindow)
 
-  setupIPC(mainWindow)
+  setupIPC()
 
-  mainWindow.once('ready-to-show', () => {
-    // Setting a fixed delay
-    setTimeout(async () => {
-      if (splashWindow) {
-        splashWindow.destroy()
-        splashWindow = null
-      }
-      const isHidden = process.argv.includes('--hidden')
-      if (!isHidden) {
-        mainWindow.show()
-      }
-      if (launchGameId) {
-        const gamePath = await GameDBManager.getGameLocalValue(launchGameId, 'path.gamePath')
-        const mode = await GameDBManager.getGameLocalValue(launchGameId, 'launcher.mode')
-        const config = await GameDBManager.getGameLocalValue(launchGameId, `launcher.${mode}Config`)
-        mainWindow.webContents.send('start-game-from-url', launchGameId, gamePath, mode, config)
-        launchGameId = null
-      }
-    }, 3000)
+  mainWindow.once('ready-to-show', async () => {
+    const isHidden = process.argv.includes('--hidden')
+    if (!isHidden) {
+      mainWindow.show()
+    }
+    if (launchGameId) {
+      const gamePath = await GameDBManager.getGameLocalValue(launchGameId, 'path.gamePath')
+      const mode = await GameDBManager.getGameLocalValue(launchGameId, 'launcher.mode')
+      const config = await GameDBManager.getGameLocalValue(launchGameId, `launcher.${mode}Config`)
+      mainWindow.webContents.send('start-game-from-url', launchGameId, gamePath, mode, config)
+      launchGameId = null
+    }
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -143,41 +138,17 @@ function createWindow(): void {
   }
 }
 
-function createSplashWindow(): void {
-  const windowSize = calculateWindowSize(0.25, 0)
-  splashWindow = new BrowserWindow({
-    width: windowSize.width,
-    height: windowSize.height,
-    frame: false,
-    transparent: true,
-    show: false,
-    alwaysOnTop: true,
-    icon: icon,
-    resizable: false,
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'attachment',
+    privileges: {
+      standard: true,
+      supportFetchAPI: true,
+      corsEnabled: true,
+      bypassCSP: true
     }
-  })
-
-  splashWindow.on('closed', () => {
-    splashWindow = null
-  })
-
-  // Loading the Launch Screen Page
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    splashWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/splash.html`)
-  } else {
-    splashWindow.loadFile(join(__dirname, '../renderer/splash.html'))
   }
-
-  splashWindow.once('ready-to-show', () => {
-    const isHidden = process.argv.includes('--hidden')
-    if (splashWindow && !isHidden) {
-      splashWindow.show()
-    }
-  })
-}
+])
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -200,6 +171,8 @@ app.whenReady().then(async () => {
   if (!app.isPackaged) {
     app.setPath('userData', join(getAppRootPath(), 'dev'))
   }
+
+  baseDBManager.initAllDatabases()
 
   await checkPortableMode()
 
@@ -272,25 +245,20 @@ app.whenReady().then(async () => {
 
   setupProtocols()
 
-  setupSession()
-
-  createSplashWindow()
-
   createWindow()
-
-  DBManager.init()
 
   AuthManager.init()
 
   try {
     await AuthManager.updateUserInfo()
   } catch (_error) {
-    setTimeout(() => {
-      mainWindow.webContents.send('update-user-info-error')
-    }, 5000)
+    ipcManager.send('account:update-user-info-error')
   }
 
   await initI18n()
+
+  // Setup scraper providers
+  setupScraper()
 
   // Setup tray
   trayManager = await setupTray(mainWindow)
@@ -302,17 +270,16 @@ app.whenReady().then(async () => {
   await setupOpenAtLogin()
 
   // Sync all databases with remote
-  await startSync(true)
+  await startSync()
 
   // Setup auto updater
-  await setupUpdater(mainWindow)
-
-  // Initialize the scraper
-  initScraper()
+  await setupAutoUpdater()
 
   // Initialize the game scanner
   GameScannerManager.startScan()
   GameScannerManager.startPeriodicScan()
+
+  await pluginService.initialize()
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the

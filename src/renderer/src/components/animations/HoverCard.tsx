@@ -31,7 +31,7 @@ export function HoverCardAnimation({
     friction: 95
   },
   ...rest
-}: HoverCardProps): JSX.Element {
+}: HoverCardProps): React.JSX.Element {
   // Reference to the element
   const cardRef = useRef<HTMLDivElement>(null)
 

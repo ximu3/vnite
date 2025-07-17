@@ -1,13 +1,14 @@
-import { Button } from '@ui/button'
-import { ContextMenu, ContextMenuTrigger } from '@ui/context-menu'
+import { Button } from '~/components/ui/button'
+import { ContextMenu, ContextMenuTrigger } from '~/components/ui/context-menu'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from '@tanstack/react-router'
 import { HoverCardAnimation } from '~/components/animations/HoverCard'
 import { GameNavCM } from '~/components/contextMenu/GameNavCM'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
+import { GamePropertiesDialog } from '~/components/Game/Config/Properties'
 import { GameImage } from '~/components/ui/game-image'
 import { useConfigState, useGameState } from '~/hooks'
 import { useRunningGames } from '~/pages/Library/store'
@@ -22,8 +23,8 @@ export function BigGamePoster({
   gameId: string
   groupId?: string
   className?: string
-}): JSX.Element {
-  const navigate = useNavigate()
+}): React.JSX.Element {
+  const router = useRouter()
   const gameData = useGameRegistry((state) => state.gameMetaIndex[gameId])
   const runningGames = useRunningGames((state) => state.runningGames)
   const [playTime] = useGameState(gameId, 'record.playTime')
@@ -33,6 +34,7 @@ export function BigGamePoster({
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = useState(false)
   const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = useState(false)
   const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = useState(false)
+  const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = useState(false)
   const [showPlayButtonOnPoster] = useConfigState('appearances.showcase.showPlayButtonOnPoster')
   const { t } = useTranslation('game')
 
@@ -42,7 +44,7 @@ export function BigGamePoster({
         <ContextMenuTrigger className={cn('')}>
           <div
             className="flex flex-col items-center justify-center gap-[8px] cursor-pointer group"
-            onClick={() => navigateToGame(navigate, gameId, groupId)}
+            onClick={() => navigateToGame(router, gameId, groupId)}
           >
             <div
               className={cn(
@@ -53,10 +55,10 @@ export function BigGamePoster({
                 'relative overflow-hidden group'
               )}
             >
-              <div className="absolute inset-0 z-10 transition-all duration-300 rounded-lg pointer-events-none bg-background/15 group-hover:bg-transparent" />
+              {/* <div className="absolute inset-0 z-10 transition-all duration-300 rounded-lg pointer-events-none bg-background/15 group-hover:bg-transparent" /> */}
               <HoverCardAnimation>
                 <GameImage
-                  onClick={() => navigateToGame(navigate, gameId, groupId)}
+                  onClick={() => navigateToGame(router, gameId, groupId)}
                   gameId={gameId}
                   type="background"
                   blur={nsfw && enableNSFWBlur}
@@ -106,7 +108,7 @@ export function BigGamePoster({
                         className="rounded-full w-[46px] h-[46px] p-0 bg-primary hover:bg-primary/90"
                         onClick={(e) => {
                           e.stopPropagation()
-                          navigateToGame(navigate, gameId, groupId || 'all')
+                          navigateToGame(router, gameId, groupId || 'all')
                           startGame(gameId)
                         }}
                       >
@@ -154,6 +156,7 @@ export function BigGamePoster({
         openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
         openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
         openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
+        openPropertiesDialog={() => setIsPropertiesDialogOpen(true)}
       />
 
       {isAddCollectionDialogOpen && (
@@ -164,6 +167,13 @@ export function BigGamePoster({
       )}
       {isPlayTimeEditorDialogOpen && (
         <PlayTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayTimeEditorDialogOpen} />
+      )}
+      {isPropertiesDialogOpen && (
+        <GamePropertiesDialog
+          gameId={gameId}
+          isOpen={isPropertiesDialogOpen}
+          setIsOpen={setIsPropertiesDialogOpen}
+        />
       )}
     </ContextMenu>
   )

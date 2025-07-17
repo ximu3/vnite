@@ -7,7 +7,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle
-} from '@ui/alert-dialog'
+} from '~/components/ui/alert-dialog'
 import { TransformerRule } from './types'
 import { useTranslation } from 'react-i18next'
 
@@ -23,7 +23,7 @@ export function DeleteDialog({
   onOpenChange,
   transformer,
   onConfirm
-}: DeleteDialogProps): JSX.Element {
+}: DeleteDialogProps): React.JSX.Element {
   const { t } = useTranslation('transformer')
 
   return (

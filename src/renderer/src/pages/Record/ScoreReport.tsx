@@ -1,7 +1,12 @@
-import { Badge } from '@ui/badge'
-import { Card } from '@ui/card'
-import { GameImage } from '@ui/game-image'
-import { HoverCard, HoverCardContent, HoverCardPortal, HoverCardTrigger } from '@ui/hover-card'
+import { Badge } from '~/components/ui/badge'
+import { Card } from '~/components/ui/card'
+import { GameImage } from '~/components/ui/game-image'
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardPortal,
+  HoverCardTrigger
+} from '~/components/ui/hover-card'
 import { CalendarIcon, ClockIcon, GamepadIcon, Trophy } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import AutoSizer from 'react-virtualized-auto-sizer'
@@ -13,7 +18,7 @@ import { getGamesByScoreRange } from '~/stores/game/recordUtils'
 import { cn } from '~/utils'
 import { GamePoster } from './GamePoster'
 
-function GameScoreCard({ gameId }: { gameId: string }): JSX.Element {
+function GameScoreCard({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('record')
   const { gameMetaIndex } = useGameRegistry()
   const gameInfo = gameMetaIndex[gameId] || { name: t('score.gameInfo.unknown') }
@@ -134,7 +139,7 @@ function ScoreCategory({
   minScore: number
   maxScore: number
   className: string
-}): JSX.Element | null {
+}): React.JSX.Element | null {
   const { t } = useTranslation('record')
   const games = getGamesByScoreRange(minScore, maxScore)
 
@@ -143,7 +148,9 @@ function ScoreCategory({
   }
 
   return (
-    <Card className={cn(`w-full mb-6 overflow-hidden border-0 shadow-md border-l-4`, className)}>
+    <Card
+      className={cn(`w-full mb-6 overflow-hidden border-0 shadow-md border-l-4 p-0`, className)}
+    >
       <div className="flex flex-col lg:flex-row">
         <div className="p-6 lg:w-1/5 bg-muted/30">
           <div className="flex items-center mb-2">
@@ -183,7 +190,7 @@ function ScoreCategory({
 }
 
 // Main Scoring Report Component
-export function ScoreReport(): JSX.Element {
+export function ScoreReport(): React.JSX.Element {
   const { t } = useTranslation('record')
 
   return (

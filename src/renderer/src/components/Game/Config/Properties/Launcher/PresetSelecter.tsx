@@ -4,7 +4,7 @@ import * as React from 'react'
 import { ChevronsUpDown } from 'lucide-react'
 
 import { cn } from '~/utils'
-import { Button } from '@ui/button'
+import { Button } from '~/components/ui/button'
 import {
   Command,
   CommandEmpty,
@@ -12,13 +12,14 @@ import {
   CommandInput,
   CommandItem,
   CommandList
-} from '@ui/command'
-import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
+} from '~/components/ui/command'
+import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
 import { toast } from 'sonner'
 import { useGameState } from '~/hooks'
 
 import { useSteamIdDialogStore, SteamIdDialog } from './SteamIdDialog'
 import { useTranslation } from 'react-i18next'
+import { ipcManager } from '~/app/ipc'
 
 export function PresetSelecter({
   gameId,
@@ -26,7 +27,7 @@ export function PresetSelecter({
 }: {
   gameId: string
   className?: string
-}): JSX.Element {
+}): React.JSX.Element {
   const { t } = useTranslation('game')
   const [open, setOpen] = React.useState(false)
   const [steamId] = useGameState(gameId, 'metadata.steamId')
@@ -57,7 +58,7 @@ export function PresetSelecter({
       if (steamId) {
         toast.promise(
           async () => {
-            await window.api.launcher.launcherPreset(presetName, gameId, steamId)
+            await ipcManager.invoke('launcher:select-preset', presetName, gameId, steamId)
           },
           {
             loading: t('detail.properties.launcher.preset.notifications.configuring'),
@@ -74,7 +75,7 @@ export function PresetSelecter({
     }
     toast.promise(
       async () => {
-        await window.api.launcher.launcherPreset(presetName, gameId)
+        await ipcManager.invoke('launcher:select-preset', presetName, gameId)
       },
       {
         loading: t('detail.properties.launcher.preset.notifications.configuring'),

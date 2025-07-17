@@ -1,4 +1,4 @@
-import type { gameDoc } from '@appTypes/database'
+import type { gameDoc } from '@appTypes/models'
 import i18next from 'i18next'
 import { getGameStore, useGameRegistry } from '~/stores/game'
 

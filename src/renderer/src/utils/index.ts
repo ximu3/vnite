@@ -1,5 +1,4 @@
 export * from './className'
 export * from './common'
-export * from './ipc'
 export * from './formatter'
 export * from './setup'

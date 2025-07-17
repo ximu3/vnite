@@ -1,13 +1,28 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@ui/dialog'
-import { Input } from '@ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/select'
-import { Button } from '@ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter
+} from '~/components/ui/dialog'
+import { Input } from '~/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '~/components/ui/select'
+import { Button } from '~/components/ui/button'
 import { useConfigLocalState } from '~/hooks'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 import { cn } from '~/utils'
 import { useGameScannerStore } from './store'
+import { ScraperCapabilities } from '@appTypes/utils'
+import { ipcManager } from '~/app/ipc'
+import { toast } from 'sonner'
 
 interface EditScannerDialogProps {
   isOpen: boolean
@@ -26,6 +41,31 @@ export const EditScannerDialog: React.FC<EditScannerDialogProps> = ({
   const [scannerConfig, setScannerConfig] = useConfigLocalState('game.scanner')
   const { formState, initFormState, updateFormState, selectPath, createNewScanner } =
     useGameScannerStore()
+
+  const [availableDataSources, setAvailableDataSources] = useState<
+    { id: string; name: string; capabilities: ScraperCapabilities[] }[]
+  >([])
+
+  useEffect(() => {
+    const fetchAvailableDataSources = async (): Promise<void> => {
+      const sources = await ipcManager.invoke('scraper:get-provider-infos-with-capabilities', [
+        'searchGames',
+        'checkGameExists',
+        'getGameMetadata',
+        'getGameBackgrounds',
+        'getGameCovers'
+      ])
+      setAvailableDataSources(sources)
+      if (sources.length > 0) {
+        if (!sources.some((ds) => ds.id === formState.dataSource)) {
+          updateFormState({ dataSource: sources[0].id })
+        }
+      } else {
+        toast.error(t('gameBatchAdder.notifications.noDataSources'))
+      }
+    }
+    fetchAvailableDataSources()
+  }, [])
 
   // Initialize form data
   useEffect(() => {
@@ -60,7 +100,7 @@ export const EditScannerDialog: React.FC<EditScannerDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="w-[500px]">
         <DialogHeader>
           <DialogTitle>
             {isNew ? t('editScanner.addTitle') : t('editScanner.editTitle')}
@@ -80,7 +120,7 @@ export const EditScannerDialog: React.FC<EditScannerDialogProps> = ({
               className={cn('text-sm flex-1')}
               placeholder={t('editScanner.pathPlaceholder')}
             />
-            <Button className="flex-0" size={'icon'} variant={'outline'} onClick={selectPath}>
+            <Button className="" size={'icon'} variant={'outline'} onClick={selectPath}>
               <span className={cn('icon-[mdi--folder-open-outline] w-5 h-5')}></span>
             </Button>
           </div>
@@ -90,20 +130,19 @@ export const EditScannerDialog: React.FC<EditScannerDialogProps> = ({
           </div>
           <Select
             value={formState.dataSource}
-            onValueChange={(value: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite') =>
-              updateFormState({ dataSource: value })
-            }
+            onValueChange={(
+              value: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite' | string
+            ) => updateFormState({ dataSource: value })}
           >
             <SelectTrigger className={cn('w-full text-sm')}>
               <SelectValue placeholder={t('editScanner.dataSourcePlaceholder')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="steam">{t('dataSources.steam')}</SelectItem>
-              <SelectItem value="vndb">{t('dataSources.vndb')}</SelectItem>
-              <SelectItem value="bangumi">{t('dataSources.bangumi')}</SelectItem>
-              <SelectItem value="ymgal">{t('dataSources.ymgal')}</SelectItem>
-              <SelectItem value="igdb">{t('dataSources.igdb')}</SelectItem>
-              <SelectItem value="dlsite">{t('dataSources.dlsite')}</SelectItem>
+              {availableDataSources.map((source) => (
+                <SelectItem key={source.id} value={source.id}>
+                  {source.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
 

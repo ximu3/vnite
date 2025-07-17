@@ -1,9 +1,9 @@
-import { Button } from '@ui/button'
-import { GameImage } from '@ui/game-image'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
+import { Button } from '~/components/ui/button'
+import { GameImage } from '~/components/ui/game-image'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useConfigState, useGameState } from '~/hooks'
+import { useGameState } from '~/hooks'
 import { cn } from '~/utils'
 import { Header } from './Header'
 import { Memory } from './Memory'
@@ -13,9 +13,8 @@ import { Save } from './Save'
 import { useGameDetailStore } from './store'
 import { ScrollArea } from '../ui/scroll-area'
 
-export function Game({ gameId }: { gameId: string }): JSX.Element {
+export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
-  const [_isImageError, setIsImageError] = useState(false)
   const headerRef = useRef<HTMLDivElement>(null)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const [scrollY, setScrollY] = useState(0)
@@ -29,8 +28,6 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
   // Game settings-related state
   const initialPosition = { x: 1.5, y: 24 }
   const initialSize = 100
-  const [nsfw] = useGameState(gameId, 'apperance.nsfw')
-  const [enableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
   const [logoPosition, setLogoPosition] = useGameState(gameId, 'apperance.logo.position')
   const [logoSize, setLogoSize] = useGameState(gameId, 'apperance.logo.size')
   const [logoVisible, setLogoVisible] = useGameState(gameId, 'apperance.logo.visible')
@@ -88,7 +85,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
   useEffect(() => {
     if (!scrollAreaRef.current) return
 
-    const viewportElement = scrollAreaRef.current.querySelector('[class*="h-full w-full"]')
+    const viewportElement = scrollAreaRef.current.querySelector('[class*="size-full"]')
 
     if (!viewportElement) {
       console.error('ScrollArea viewport element not found')
@@ -96,10 +93,20 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
     }
 
     const handleScroll = (): void => {
-      setScrollY((viewportElement as HTMLElement).scrollTop)
+      const scrollTop = (viewportElement as HTMLElement).scrollTop
+      setScrollY(scrollTop)
+
+      // 触发自定义事件，通知Light组件进行视差滚动
+      window.dispatchEvent(
+        new CustomEvent('game-scroll', {
+          detail: { scrollY: scrollTop }
+        })
+      )
     }
 
     viewportElement.addEventListener('scroll', handleScroll)
+    // 添加类名以便Light组件能找到滚动元素
+    viewportElement.classList.add('scrollable-content')
 
     return (): void => {
       viewportElement.removeEventListener('scroll', handleScroll)
@@ -119,43 +126,9 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
 
   return (
     <div className={cn('w-full h-full relative overflow-hidden')}>
-      {/* Background layer - absolute positioning */}
-      <div
-        className={cn('absolute inset-0 w-full h-full overflow-hidden', 'will-change-transform')}
-        style={{
-          transform: `translateY(-${scrollY * 0.4}px)`,
-          maskImage: 'linear-gradient(to bottom, black 50%, transparent 85%)'
-        }}
-      >
-        <GameImage
-          gameId={gameId}
-          key={`${gameId}-background-1`}
-          type="background"
-          blur={nsfw && enableNSFWBlur}
-          className={cn('w-full h-auto object-cover z-[1]')}
-          onError={() => setIsImageError(true)}
-          onUpdated={() => setIsImageError(false)}
-          fallback={<div className={cn('w-full h-full bg-background/15')} />}
-          style={{
-            maskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)'
-          }}
-        />
-        <GameImage
-          gameId={gameId}
-          key={`${gameId}-background-2`}
-          type="background"
-          blur={nsfw && enableNSFWBlur}
-          className={cn('w-full h-full absolute top-0 object-cover z-0')}
-          style={{
-            opacity: 0.9
-          }}
-          onError={() => setIsImageError(true)}
-          onUpdated={() => setIsImageError(false)}
-          fallback={<div className={cn('w-full h-full bg-background/15')} />}
-        />
-      </div>
+      {/* 背景层已移至Light组件 */}
 
-      {/* Logo editing control panel - displayed when in edit mode */}
+      {/* Logo编辑控制面板 - 仅在编辑模式下显示 */}
       {isEditingLogo && (
         <div
           className={cn(
@@ -207,7 +180,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
         </div>
       )}
 
-      {/* Logo layer */}
+      {/* Logo层 */}
       {logoVisible && (
         <div
           ref={logoRef}
@@ -219,7 +192,7 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
             top: `${localLogoPosition.y}vh`,
             cursor: dragging ? 'grabbing' : 'grab',
             transformOrigin: 'center center',
-            zIndex: isEditingLogo ? 30 : 10 // elevated z-index in edit mode
+            zIndex: isEditingLogo ? 30 : 10 // 编辑模式下提高z-index
           }}
           className={cn('absolute', 'will-change-transform')}
         >
@@ -233,55 +206,54 @@ export function Game({ gameId }: { gameId: string }): JSX.Element {
         </div>
       )}
 
-      {/* Scrollable content area */}
+      {/* 可滚动内容区域 */}
       <ScrollArea
         ref={scrollAreaRef}
         className={cn('relative h-full w-full overflow-auto rounded-none')}
       >
-        {/* Content container */}
+        {/* 内容容器 */}
         <div
           className={cn('relative z-20 flex flex-col w-full min-h-[100vh]')}
-          style={{
-            background:
-              'linear-gradient(to bottom, transparent 0%, hsl(var(--background) / 0.95) 63vh, hsl(var(--background) / 0.95) 100%)'
-          }}
+          // 背景渐变已移除，由Light组件处理
         >
-          {/* Header area */}
-          <div ref={headerRef} className="mt-[40vh]">
-            <Header gameId={gameId} />
-          </div>
+          <div className="mt-[36vh]">
+            {/* 头部区域 */}
+            <div ref={headerRef} className="pt-1">
+              <Header gameId={gameId} />
+            </div>
 
-          {/* Content area */}
-          <div className={cn('p-7 pt-0 h-full')}>
-            <Tabs defaultValue="overview" className={cn('w-full')}>
-              <TabsList className={cn('w-[500px] justify-start')}>
-                <TabsTrigger className={cn('w-1/4')} value="overview">
-                  {t('detail.tabs.overview')}
-                </TabsTrigger>
-                <TabsTrigger className={cn('w-1/4')} value="record">
-                  {t('detail.tabs.record')}
-                </TabsTrigger>
-                <TabsTrigger className={cn('w-1/4')} value="save">
-                  {t('detail.tabs.save')}
-                </TabsTrigger>
-                <TabsTrigger className={cn('w-1/4')} value="memory">
-                  {t('detail.tabs.memory')}
-                </TabsTrigger>
-              </TabsList>
+            {/* 内容区域 */}
+            <div className={cn('p-7 pt-4 h-full')}>
+              <Tabs defaultValue="overview" className={cn('w-full')}>
+                <TabsList className={cn('w-full justify-start bg-transparent')} variant="underline">
+                  <TabsTrigger className={cn('w-1/4')} value="overview" variant="underline">
+                    {t('detail.tabs.overview')}
+                  </TabsTrigger>
+                  <TabsTrigger className={cn('w-1/4')} value="record" variant="underline">
+                    {t('detail.tabs.record')}
+                  </TabsTrigger>
+                  <TabsTrigger className={cn('w-1/4')} value="save" variant="underline">
+                    {t('detail.tabs.save')}
+                  </TabsTrigger>
+                  <TabsTrigger className={cn('w-1/4')} value="memory" variant="underline">
+                    {t('detail.tabs.memory')}
+                  </TabsTrigger>
+                </TabsList>
 
-              <TabsContent value="overview">
-                <Overview gameId={gameId} />
-              </TabsContent>
-              <TabsContent value="record">
-                <Record gameId={gameId} />
-              </TabsContent>
-              <TabsContent value="save">
-                <Save gameId={gameId} />
-              </TabsContent>
-              <TabsContent value="memory">
-                <Memory gameId={gameId} />
-              </TabsContent>
-            </Tabs>
+                <TabsContent value="overview">
+                  <Overview gameId={gameId} />
+                </TabsContent>
+                <TabsContent value="record">
+                  <Record gameId={gameId} />
+                </TabsContent>
+                <TabsContent value="save">
+                  <Save gameId={gameId} />
+                </TabsContent>
+                <TabsContent value="memory">
+                  <Memory gameId={gameId} />
+                </TabsContent>
+              </Tabs>
+            </div>
           </div>
         </div>
       </ScrollArea>

@@ -1,6 +1,6 @@
 import { cn } from '~/utils'
-import { ScrollArea } from '@ui/scroll-area'
-import { Button } from '@ui/button'
+import { ScrollArea } from '~/components/ui/scroll-area'
+import { Button } from '~/components/ui/button'
 import { RecentGames } from './RecentGames'
 import { Collections } from './Collections'
 import { AllGames } from './AllGames'
@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next'
 import { ScrollToTopButton } from './ScrollToTopButton'
 import { useRef } from 'react'
 
-export function Showcase(): JSX.Element {
+export function Showcase(): React.JSX.Element {
   const { t } = useTranslation('game')
   const gameIds = useGameRegistry((state) => state.gameIds)
   const setIsOpen = useGameAdderStore((state) => state.setIsOpen)
@@ -19,11 +19,11 @@ export function Showcase(): JSX.Element {
   console.warn('[DEBUG] Showcase')
 
   return (
-    <div className={cn('flex flex-col gap-3 h-full bg-background/60')}>
+    <div className={cn('flex flex-col gap-3 h-full w-full bg-transparent')}>
       {gameIds.length !== 0 ? (
         <>
           <ScrollArea ref={scrollAreaRef} className={cn('w-full h-full')}>
-            <div className={cn('pt-[50px] flex flex-col gap-3')}>
+            <div className={cn('pt-[18px] flex flex-col gap-3')}>
               <RecentGames />
               <Collections />
               <AllGames />

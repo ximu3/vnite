@@ -1,4 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import { ConfigItem } from '~/components/form/ConfigItem'
+import { ConfigItemPure } from '~/components/form/ConfigItemPure'
 import {
   Select,
   SelectContent,
@@ -7,23 +9,17 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue
-} from '@ui/select'
-import { Switch } from '@ui/switch'
+} from '~/components/ui/select'
 import { useTranslation } from 'react-i18next'
-import { useConfigState } from '~/hooks'
 import { cn } from '~/utils'
 import { useTheme } from '../../components/ThemeProvider'
+import { ipcManager } from '~/app/ipc'
+import { eventBus } from '~/app/events'
 
-export function General(): JSX.Element {
-  const [openAtLogin, setOpenAtLogin] = useConfigState('general.openAtLogin')
-  const [quitToTray, setQuitToTray] = useConfigState('general.quitToTray')
+export function General(): React.JSX.Element {
   const { themeSetting, setThemeSetting } = useTheme()
   const { t } = useTranslation('config')
   const { i18n } = useTranslation()
-  const [language, setLanguage] = useConfigState('general.language')
-  const [hideWindowAfterGameStart, setHideWindowAfterGameStart] = useConfigState(
-    'general.hideWindowAfterGameStart'
-  )
 
   const languageOptions = [
     { value: 'zh-CN', label: '简体中文' },
@@ -33,13 +29,6 @@ export function General(): JSX.Element {
     { value: 'ru', label: 'Русский' },
     { value: 'ko', label: '한국어' }
   ]
-
-  // Handling of language changes
-  const handleLanguageChange = async (value: string): Promise<void> => {
-    await setLanguage(value)
-    await i18n.changeLanguage(value)
-    await window.api.utils.updateLanguage(value)
-  }
 
   return (
     <Card className={cn('group')}>
@@ -51,58 +40,47 @@ export function General(): JSX.Element {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className={cn('grid grid-cols-[120px_1fr] gap-x-3 gap-y-5 items-center')}>
-          {/* open at login */}
-          <div className={cn('whitespace-nowrap select-none self-center')}>
-            {t('general.openAtLogin')}
-          </div>
-          <div className={cn('flex justify-end')}>
-            <Switch
-              checked={openAtLogin}
-              onCheckedChange={async (checked) => {
-                try {
-                  await setOpenAtLogin(checked)
-                  await window.api.utils.updateOpenAtLogin()
-                  await window.api.utils.updateTrayConfig()
-                } catch (error) {
-                  console.error('Failed to update settings:', error)
-                }
-              }}
-            />
-          </div>
+        <div className={cn('space-y-4')}>
+          {/* Open at login - 使用 ConfigItem 并通过 onChange 处理额外逻辑 */}
+          <ConfigItem
+            hookType="config"
+            path="general.openAtLogin"
+            title={t('general.openAtLogin')}
+            description="系统启动时自动运行应用程序"
+            controlType="switch"
+            onChange={async (_checked: boolean) => {
+              try {
+                await ipcManager.invoke('utils:update-open-at-login')
+                eventBus.emit('tray:config-updated', undefined, {
+                  source: 'openAtLogin'
+                })
+              } catch (error) {
+                console.error('Failed to update settings:', error)
+              }
+            }}
+          />
 
-          {/* language */}
-          <div className={cn('whitespace-nowrap select-none self-center')}>
-            {t('general.language')}
-          </div>
-          <div className={cn('flex justify-end')}>
-            <Select value={language} onValueChange={handleLanguageChange}>
-              <SelectTrigger className={cn('w-[200px]')}>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>{t('general.language')}</SelectLabel>
-                  {languageOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
+          {/* Language - 使用 ConfigItem 并通过 onChange 处理语言切换 */}
+          <ConfigItem
+            hookType="config"
+            path="general.language"
+            title={t('general.language')}
+            description="选择应用程序界面显示语言"
+            controlType="select"
+            options={languageOptions}
+            onChange={async (value: string) => {
+              await i18n.changeLanguage(value)
+              await ipcManager.invoke('app:update-language', value)
+            }}
+          />
 
-          {/* theme */}
-          <div className={cn('whitespace-nowrap select-none self-center')}>
-            {t('general.theme')}
-          </div>
-          <div className={cn('flex justify-end')}>
+          {/* Theme - 使用 ConfigItemPure，因为它不在 config 存储中 */}
+          <ConfigItemPure title={t('general.theme')} description="选择应用程序主题外观">
             <Select
               value={themeSetting}
               onValueChange={(value: 'dark' | 'light' | 'follow-system') => setThemeSetting(value)}
             >
-              <SelectTrigger className={cn('w-[200px]')}>
+              <SelectTrigger className={cn('')}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -114,43 +92,35 @@ export function General(): JSX.Element {
                 </SelectGroup>
               </SelectContent>
             </Select>
-          </div>
+          </ConfigItemPure>
 
-          {/* Closing behavior */}
-          <div className={cn('whitespace-nowrap select-none self-center')}>
-            {t('general.closeMainPanel')}
-          </div>
-          <div className={cn('flex justify-end')}>
-            <Select
-              value={quitToTray.toString()}
-              onValueChange={async (value) => {
-                await setQuitToTray(value === 'true')
-                await window.api.utils.updateTrayConfig()
-              }}
-            >
-              <SelectTrigger className={cn('w-[200px]')}>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>{t('general.action')}</SelectLabel>
-                  <SelectItem value="false">{t('general.quitApp')}</SelectItem>
-                  <SelectItem value="true">{t('general.minimizeToTray')}</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
+          {/* Close behavior - 使用 select 让用户更好理解选项 */}
+          <ConfigItem
+            hookType="config"
+            path="general.quitToTray"
+            title={t('general.closeMainPanel')}
+            description="选择关闭主窗口时的行为方式"
+            controlType="select"
+            options={[
+              { value: 'false', label: t('general.quitApp') },
+              { value: 'true', label: t('general.minimizeToTray') }
+            ]}
+            onChange={async (value: string) => {
+              eventBus.emit('tray:config-updated', undefined, {
+                source: 'quitToTray'
+              })
+              console.log('Close behavior changed:', value === 'true' ? 'minimize' : 'quit')
+            }}
+          />
 
-          {/* Run game behavior */}
-          <div className={cn('whitespace-nowrap select-none self-center')}>
-            {t('general.hideWindowAfterGameStart')}
-          </div>
-          <div className={cn('flex justify-end')}>
-            <Switch
-              checked={hideWindowAfterGameStart}
-              onCheckedChange={(checked) => setHideWindowAfterGameStart(checked)}
-            />
-          </div>
+          {/* Hide window after game start - 简单配置，使用 ConfigItem */}
+          <ConfigItem
+            hookType="config"
+            path="general.hideWindowAfterGameStart"
+            title={t('general.hideWindowAfterGameStart')}
+            description="启动游戏后自动隐藏主窗口"
+            controlType="switch"
+          />
         </div>
       </CardContent>
     </Card>

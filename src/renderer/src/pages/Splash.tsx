@@ -1,7 +1,7 @@
 import { cn } from '~/utils'
 import { InfiniteProgress } from '@ui/infinite-progress'
 
-export function Splash(): JSX.Element {
+export function Splash(): React.JSX.Element {
   return (
     <div
       className={cn(

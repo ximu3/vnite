@@ -1,4 +1,4 @@
-import { Button } from '@ui/button'
+import { Button } from '~/components/ui/button'
 import { throttle } from 'lodash'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -8,7 +8,7 @@ import { cn } from '~/utils'
 import { BigGamePoster } from './posters/BigGamePoster'
 import { GamePoster } from './posters/GamePoster'
 
-export function RecentGames(): JSX.Element {
+export function RecentGames(): React.JSX.Element {
   const games = sortGames('record.lastRunDate', 'desc')
     .slice(0, 15)
     .filter((id) => {
@@ -29,7 +29,7 @@ export function RecentGames(): JSX.Element {
   }, 750)
   const { t } = useTranslation('game')
   return (
-    <div className={cn('w-full flex flex-col gap-1')}>
+    <div className={cn('w-[calc(100vw-327px)] flex flex-col gap-1')}>
       <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>
         <div className={cn('text-accent-foreground select-none flex-shrink-0')}>
           {t('showcase.sections.recentGames')}

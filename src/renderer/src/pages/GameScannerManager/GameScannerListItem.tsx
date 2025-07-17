@@ -7,16 +7,17 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle
-} from '@ui/alert-dialog'
-import { Badge } from '@ui/badge'
-import { Button } from '@ui/button'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
+} from '~/components/ui/alert-dialog'
+import { Badge } from '~/components/ui/badge'
+import { Button } from '~/components/ui/button'
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 import { Folder, FolderOpen, Pencil, PlayCircle, Trash2 } from 'lucide-react'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useConfigLocalState } from '~/hooks'
 import { cn } from '~/utils'
 import { useGameScannerStore } from './store'
+import { ipcManager } from '~/app/ipc'
 
 interface GameScannerListItemProps {
   scanner: {
@@ -123,7 +124,7 @@ export const GameScannerListItem: React.FC<GameScannerListItemProps> = ({
             'flex items-center justify-center w-10 h-10 rounded-md bg-primary/10 ',
             'group cursor-pointer hover:bg-primary/20'
           )}
-          onClick={() => window.api.utils.openPathInExplorer(scanner.path)}
+          onClick={() => ipcManager.invoke('system:open-path-in-explorer', scanner.path)}
         >
           <Folder className="w-5 h-5 text-primary block group-hover:hidden" />
           <FolderOpen className="w-5 h-5 text-primary hidden group-hover:block" />

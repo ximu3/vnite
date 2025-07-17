@@ -1,12 +1,12 @@
 import { cn } from '~/utils'
-import { Button } from '@ui/button'
+import { Button } from '~/components/ui/button'
 import { toast } from 'sonner'
 import { useGameAdderStore } from './store'
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { ipcManager } from '~/app/ipc'
 
-export function BackgroundList(): JSX.Element {
+export function BackgroundList(): React.JSX.Element {
   const { t } = useTranslation('adder')
   const {
     backgroundUrl,
@@ -20,13 +20,12 @@ export function BackgroundList(): JSX.Element {
     handleClose
   } = useGameAdderStore()
 
-  const navigate = useNavigate()
   const [isAdding, setIsAdding] = useState(false)
 
   useEffect(() => {
     toast.promise(
       (async (): Promise<string[]> => {
-        const result = await window.api.scraper.getGameBackgrounds(dataSource, {
+        const result = await ipcManager.invoke('scraper:get-game-backgrounds', dataSource, {
           type: 'id',
           value: dataSourceId
         })
@@ -87,14 +86,14 @@ export function BackgroundList(): JSX.Element {
     toast.promise(
       (async (): Promise<void> => {
         if (dbId) {
-          await window.api.adder.updateGameMetadata({
+          await ipcManager.invoke('adder:update-game-metadata', {
             dbId,
             dataSource,
             dataSourceId,
             backgroundUrl
           })
         } else {
-          await window.api.adder.addGameToDb({
+          await ipcManager.invoke('adder:add-game-to-db', {
             dataSource,
             dataSourceId,
             backgroundUrl,
@@ -103,7 +102,6 @@ export function BackgroundList(): JSX.Element {
         }
         setIsAdding(false)
         handleClose()
-        navigate('/')
       })(),
       {
         loading: t('gameAdder.backgrounds.notifications.adding'),

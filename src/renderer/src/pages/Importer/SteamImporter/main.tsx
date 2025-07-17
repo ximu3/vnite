@@ -1,20 +1,26 @@
 import { useEffect, useMemo } from 'react'
-import { Button } from '@ui/button'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@ui/dialog'
-import { Input } from '@ui/input'
+import { Button } from '~/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle
+} from '~/components/ui/dialog'
+import { Input } from '~/components/ui/input'
 import { Progress } from '@ui/progress'
-import { ScrollArea } from '@ui/scroll-area'
-import { Alert, AlertDescription, AlertTitle } from '@ui/alert'
+import { ScrollArea } from '~/components/ui/scroll-area'
+import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert'
 import { CheckCircle2, XCircle, AlertCircle, Loader2, Search } from 'lucide-react'
 import { useSteamImporterStore } from './store'
-import { ipcOnUnique } from '~/utils'
+import { ipcManager } from '~/app/ipc'
 import { cn } from '~/utils'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { Checkbox } from '@ui/checkbox'
+import { Checkbox } from '~/components/ui/checkbox'
 import { useTranslation } from 'react-i18next'
 
-export function SteamImporter(): JSX.Element {
+export function SteamImporter(): React.JSX.Element {
   const { t } = useTranslation('importer')
   const [searchQuery, setSearchQuery] = useState('')
   const [isImportLoading, setIsImportLoading] = useState(false)
@@ -45,7 +51,10 @@ export function SteamImporter(): JSX.Element {
       updateProgress(data)
     }
 
-    const removeProgressListener = ipcOnUnique('import-steam-games-progress', handleProgress)
+    const removeProgressListener = ipcManager.onUnique(
+      'importer:import-steam-games-progress',
+      handleProgress
+    )
 
     return (): void => {
       removeProgressListener()
@@ -58,7 +67,7 @@ export function SteamImporter(): JSX.Element {
 
     try {
       setIsLoadingGames(true)
-      const gamesData = await window.api.importer.getSteamGames(steamId)
+      const gamesData = await ipcManager.invoke('importer:get-steam-games', steamId)
       setGames(
         gamesData.map((game) => ({
           ...game,
@@ -85,7 +94,8 @@ export function SteamImporter(): JSX.Element {
     try {
       setIsImportLoading(true)
       reset()
-      await window.api.importer.importSelectedSteamGames(
+      await ipcManager.invoke(
+        'importer:import-selected-steam-games',
         selectedGames.map((game) => ({
           appId: game.appId,
           name: game.name,
@@ -156,7 +166,7 @@ export function SteamImporter(): JSX.Element {
         onInteractOutside={(e) => {
           e.preventDefault()
         }}
-        className={cn('transition-all duration-300 max-w-xl')}
+        className={cn('transition-all duration-300 w-[500px]')}
       >
         <DialogHeader>
           <DialogTitle>{t('steamImporter.dialog.title')}</DialogTitle>
@@ -192,7 +202,7 @@ export function SteamImporter(): JSX.Element {
         {/* Game List */}
         {!isImporting && (
           <div className="space-y-4">
-            {((): JSX.Element => {
+            {((): React.JSX.Element => {
               switch (currentStatus) {
                 case 'initial':
                   return (

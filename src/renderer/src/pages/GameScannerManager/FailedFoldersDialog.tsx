@@ -1,14 +1,36 @@
-import { Button } from '@ui/button'
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@ui/dialog'
-import { Input } from '@ui/input'
-import { ScrollArea } from '@ui/scroll-area'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/select'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@ui/table'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
-import React, { useState } from 'react'
+import { Button } from '~/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '~/components/ui/dialog'
+import { Input } from '~/components/ui/input'
+import { ScrollArea } from '~/components/ui/scroll-area'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '~/components/ui/select'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '~/components/ui/table'
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
+import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { cn } from '~/utils'
 import { useGameScannerStore } from './store'
+import { ScraperCapabilities } from '@appTypes/utils'
+import { ipcManager } from '~/app/ipc'
+import { toast } from 'sonner'
 
 interface FailedFoldersDialogProps {
   isOpen: boolean
@@ -29,15 +51,30 @@ export const FailedFoldersDialog: React.FC<FailedFoldersDialogProps> = ({ isOpen
   const [dataSourceId, setDataSourceId] = useState('')
   const [dataSource, setDataSource] = useState<string>('steam')
 
-  // Data source options
-  const dataSourceOptions = [
-    { value: 'steam', label: t('dataSources.steam') },
-    { value: 'vndb', label: t('dataSources.vndb') },
-    { value: 'bangumi', label: t('dataSources.bangumi') },
-    { value: 'ymgal', label: t('dataSources.ymgal') },
-    { value: 'igdb', label: t('dataSources.igdb') },
-    { value: 'dlsite', label: t('dataSources.dlsite') }
-  ]
+  const [availableDataSources, setAvailableDataSources] = useState<
+    { id: string; name: string; capabilities: ScraperCapabilities[] }[]
+  >([])
+
+  useEffect(() => {
+    const fetchAvailableDataSources = async (): Promise<void> => {
+      const sources = await ipcManager.invoke('scraper:get-provider-infos-with-capabilities', [
+        'searchGames',
+        'checkGameExists',
+        'getGameMetadata',
+        'getGameBackgrounds',
+        'getGameCovers'
+      ])
+      setAvailableDataSources(sources)
+      if (sources.length > 0) {
+        if (!sources.some((ds) => ds.id === dataSource)) {
+          setDataSource(sources[0].id)
+        }
+      } else {
+        toast.error(t('gameBatchAdder.notifications.noDataSources'))
+      }
+    }
+    fetchAvailableDataSources()
+  }, [])
 
   // Collect failed folders from all scanners
   const getAllFailedFolders = (): {
@@ -134,9 +171,9 @@ export const FailedFoldersDialog: React.FC<FailedFoldersDialogProps> = ({ isOpen
                     <SelectValue placeholder={t('failedFolders.selectPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    {dataSourceOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
+                    {availableDataSources.map((source) => (
+                      <SelectItem key={source.id} value={source.id}>
+                        {source.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -162,9 +199,9 @@ export const FailedFoldersDialog: React.FC<FailedFoldersDialogProps> = ({ isOpen
               </div>
             </div>
           ) : (
-            <ScrollArea className={cn('h-[calc(84vh-230px)] bg-background pr-2')}>
-              <Table className="bg-background">
-                <TableHeader className="bg-background">
+            <ScrollArea className={cn('h-[calc(84vh-230px)] pr-2')}>
+              <Table className="">
+                <TableHeader className="">
                   <TableRow>
                     <TableHead>{t('failedFolders.table.folderName')}</TableHead>
                     <TableHead>{t('failedFolders.table.location')}</TableHead>

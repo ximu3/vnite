@@ -4,10 +4,10 @@ import {
   ContextMenuTrigger,
   ContextMenu,
   ContextMenuSeparator
-} from '@ui/context-menu'
-import { Dialog, DialogContent } from '@ui/dialog'
-import { Input } from '@ui/input'
-import { Button } from '@ui/button'
+} from '~/components/ui/context-menu'
+import { Dialog, DialogContent } from '~/components/ui/dialog'
+import { Input } from '~/components/ui/input'
+import { Button } from '~/components/ui/button'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,7 +17,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle
-} from '@ui/alert-dialog'
+} from '~/components/ui/alert-dialog'
 import { useGameCollectionStore } from '~/stores'
 import { cn } from '~/utils'
 import { useEffect, useState } from 'react'
@@ -29,7 +29,7 @@ export function CollectionCM({
 }: {
   collectionId: string
   children: React.ReactNode
-}): JSX.Element {
+}): React.JSX.Element {
   const { renameCollection, removeCollection, documents: collections } = useGameCollectionStore()
   const [newName, setNewName] = useState<string>('')
   const [isRenaming, setIsRenaming] = useState<boolean>(false)

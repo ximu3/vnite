@@ -1,8 +1,8 @@
-import { Dialog, DialogContent, DialogTrigger } from '@ui/dialog'
-import { TooltipContent, TooltipTrigger, Tooltip } from '@ui/tooltip'
+import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog'
+import { TooltipContent, TooltipTrigger, Tooltip } from '~/components/ui/tooltip'
 import { ArrayInput } from '@ui/array-input'
-import { Switch } from '@ui/switch'
-import { Button } from '@ui/button'
+import { Switch } from '~/components/ui/switch'
+import { Button } from '~/components/ui/button'
 import { cn } from '~/utils'
 import { useGameState } from '~/hooks'
 import { useState } from 'react'
@@ -19,7 +19,7 @@ export function InformationDialog({
   isOpen: boolean
   setIsOpen: (value: boolean) => void
   children: React.ReactNode
-}): JSX.Element {
+}): React.JSX.Element {
   const { t } = useTranslation('game')
   const [isIncremental, setIsIncremental] = useState(true)
   const [developers, setDevelopers] = useState<string[]>([])

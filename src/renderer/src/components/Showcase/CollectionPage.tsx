@@ -1,11 +1,11 @@
-import { ScrollArea } from '@ui/scroll-area'
+import { ScrollArea } from '~/components/ui/scroll-area'
 import { useEffect, useRef, useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useGameCollectionStore } from '~/stores'
 import { cn } from '~/utils'
 import { CollectionPoster } from './posters/CollectionPoster'
 
-export function CollectionPage(): JSX.Element {
+export function CollectionPage(): React.JSX.Element {
   const collections = useGameCollectionStore((state) => state.documents)
   const [gap, setGap] = useState<number>(0)
   const [columns, setColumns] = useState<number>(0)
@@ -49,7 +49,7 @@ export function CollectionPage(): JSX.Element {
   const { t } = useTranslation('game')
 
   return (
-    <div className={cn('flex flex-col gap-3 h-[100vh] pt-[50px] bg-background/50')}>
+    <div className={cn('flex flex-col gap-3 h-[100vh] pt-[18px] bg-transparent')}>
       <ScrollArea className={cn('w-full')}>
         <div className={cn('w-full flex flex-col gap-1 pt-3')}>
           <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>

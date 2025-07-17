@@ -1,14 +1,14 @@
 import { cn } from '~/utils'
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { useState } from 'react'
 import { useTheme } from '~/components/ThemeProvider'
-import { Button } from '@ui/button'
-import { Textarea } from '@ui/textarea'
+import { Button } from '~/components/ui/button'
+import { Textarea } from '~/components/ui/textarea'
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
 import { PresetSelecter } from './PresetSelecter'
 
-export function Theme(): JSX.Element {
+export function Theme(): React.JSX.Element {
   const { t } = useTranslation('config')
   const { theme, updateTheme } = useTheme()
   const [cssContent, setCssContent] = useState(theme || '')

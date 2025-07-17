@@ -6,8 +6,9 @@ import { useConfigState } from '~/hooks'
 import { cn } from '~/utils'
 import { useGameAdderStore } from './GameAdder/store'
 import { useGameBatchAdderStore } from './GameBatchAdder/store'
+import { ipcManager } from '~/app/ipc'
 
-export function DragContainer({ children }: { children: React.ReactNode }): JSX.Element {
+export function DragContainer({ children }: { children: React.ReactNode }): React.JSX.Element {
   const { t } = useTranslation('sidebar')
   const [isDragging, setIsDragging] = useState(false)
   const { setIsOpen: setGameAdderIsOpen, setName, setDirPath } = useGameAdderStore()
@@ -88,7 +89,7 @@ export function DragContainer({ children }: { children: React.ReactNode }): JSX.
           name: info.name,
           dataSource: defaultDataSource,
           id: '',
-          status: (await window.api.game.checkGameExitsByPath(info.dirPath))
+          status: (await ipcManager.invoke('game:check-exits-by-path', info.dirPath))
             ? 'existed'
             : ('idle' as 'existed' | 'idle'),
           dirPath: info.dirPath
@@ -119,7 +120,7 @@ export function DragContainer({ children }: { children: React.ReactNode }): JSX.
   }, [])
 
   return (
-    <div className={cn('flex flex-row w-screen h-screen relative')}>
+    <div className={cn('flex flex-row w-full h-full relative')}>
       <div
         className={cn(
           'absolute top-0 left-0 w-full h-full bg-black/80 transition-opacity duration-300 z-[999] pointer-events-none',

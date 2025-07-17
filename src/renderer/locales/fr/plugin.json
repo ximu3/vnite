@@ -1,0 +1,52 @@
+{
+  "title": "Plugin Manager",
+  "description": "Manage and extend your application with plugins",
+  "actions": {
+    "checkUpdates": "Check Updates",
+    "installPlugin": "Install Plugin",
+    "installFromRegistry": "Install from Registry",
+    "installFromFile": "Install from File",
+    "installFirstPlugin": "Install Your First Plugin",
+    "install": "Install",
+    "installed": "Installed",
+    "enable": "Enable",
+    "disable": "Disable",
+    "uninstall": "Uninstall"
+  },
+  "stats": {
+    "total": "Total",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "errors": "Errors"
+  },
+  "tabs": {
+    "installed": "Installed",
+    "browse": "Browse"
+  },
+  "emptyState": {
+    "title": "No Plugins Installed",
+    "description": "Start by installing your first plugin to extend the functionality of your application."
+  },
+  "search": {
+    "placeholder": "Search plugins...",
+    "noResults": "No plugins found",
+    "tryDifferentKeyword": "Try searching with different keywords"
+  },
+  "messages": {
+    "loading": "Loading...",
+    "loadPluginsFailed": "Failed to load plugins",
+    "searchPluginsFailed": "Failed to search plugins",
+    "installSuccess": "Plugin installed successfully",
+    "installFailed": "Failed to install plugin: {{error}}",
+    "installFromFileFailed": "Failed to install plugin from file",
+    "uninstallSuccess": "Plugin uninstalled successfully",
+    "uninstallFailed": "Failed to uninstall plugin: {{error}}",
+    "activateSuccess": "Plugin activated successfully",
+    "activateFailed": "Failed to activate plugin: {{error}}",
+    "deactivateSuccess": "Plugin deactivated successfully",
+    "deactivateFailed": "Failed to deactivate plugin: {{error}}",
+    "updatesAvailable": "{{count}} plugin updates available",
+    "noUpdatesAvailable": "All plugins are up to date",
+    "checkUpdatesFailed": "Failed to check for updates"
+  }
+}

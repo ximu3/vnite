@@ -1,6 +1,6 @@
 import { create, StoreApi, UseBoundStore } from 'zustand'
 import { getValueByPath, setValueByPath } from '@appUtils'
-import { gameLocalDoc, DEFAULT_GAME_LOCAL_VALUES } from '@appTypes/database'
+import { gameLocalDoc, DEFAULT_GAME_LOCAL_VALUES } from '@appTypes/models'
 import type { Get, Paths } from 'type-fest'
 import { syncTo } from '../utils'
 

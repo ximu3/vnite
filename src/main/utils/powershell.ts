@@ -1,9 +1,8 @@
 import { spawn, ChildProcess } from 'child_process'
 import log from 'electron-log/main.js'
 
-// PowerShell instance manager
+// PowerShell实例管理器
 class PowerShellManager {
-  private static instance: PowerShellManager
   private psProcess: ChildProcess | null = null
   private isInitialized = false
   private commandQueue: Array<{
@@ -14,10 +13,10 @@ class PowerShellManager {
   private isProcessing = false
   private lastUsedTime: number = 0
   private cleanupTimer: NodeJS.Timeout | null = null
-  private readonly CLEANUP_TIMEOUT = 15000 // Automatically clean up after 15 seconds of inactivity
+  private readonly CLEANUP_TIMEOUT = 15000 // 自动清理的不活跃时间：15秒
 
-  private constructor() {
-    // Private constructor, singleton pattern
+  constructor() {
+    // 构造函数
     this.updateLastUsedTime()
   }
 
@@ -33,17 +32,10 @@ class PowerShellManager {
 
     this.cleanupTimer = setTimeout(() => {
       if (Date.now() - this.lastUsedTime >= this.CLEANUP_TIMEOUT) {
-        log.info('PowerShell instance unused for 15 seconds, cleaning up')
+        log.info('PowerShell 实例闲置15秒，正在清理')
         this.cleanup()
       }
     }, this.CLEANUP_TIMEOUT)
-  }
-
-  public static getInstance(): PowerShellManager {
-    if (!PowerShellManager.instance) {
-      PowerShellManager.instance = new PowerShellManager()
-    }
-    return PowerShellManager.instance
   }
 
   private async initializePowerShell(): Promise<void> {
@@ -52,17 +44,17 @@ class PowerShellManager {
     }
 
     try {
-      // Start a persistent PowerShell instance
+      // 启动持久化的 PowerShell 实例
       this.psProcess = spawn('powershell.exe', ['-NoProfile', '-Command', '-'], {
         stdio: ['pipe', 'pipe', 'pipe'],
         shell: false
       })
 
       if (!this.psProcess.stdin || !this.psProcess.stdout) {
-        throw new Error('Failed to create PowerShell process streams')
+        throw new Error('创建 PowerShell 进程流失败')
       }
 
-      // Set encoding
+      // 设置编码
       this.psProcess.stdin.write('$null = chcp 65001\n')
       this.psProcess.stdin.write(
         '$OutputEncoding = [Console]::OutputEncoding = [Text.UTF8Encoding]::UTF8\n'
@@ -71,16 +63,16 @@ class PowerShellManager {
       this.isInitialized = true
 
       this.psProcess.on('error', (error) => {
-        log.error('PowerShell process error:', error)
+        log.error('PowerShell 进程错误:', error)
         this.cleanup()
       })
 
       this.psProcess.on('exit', () => {
-        log.info('PowerShell process exited')
+        log.info('PowerShell 进程已退出')
         this.cleanup()
       })
     } catch (error) {
-      log.error('Failed to initialize PowerShell:', error)
+      log.error('初始化 PowerShell 失败:', error)
       this.cleanup()
       throw error
     }
@@ -120,7 +112,7 @@ class PowerShellManager {
   private executeCommandInternal(command: string): Promise<string> {
     return new Promise((resolve, reject) => {
       if (!this.psProcess || !this.psProcess.stdin || !this.psProcess.stdout) {
-        reject(new Error('PowerShell process not available'))
+        reject(new Error('PowerShell 进程不可用'))
         return
       }
 
@@ -136,7 +128,7 @@ class PowerShellManager {
           this.psProcess!.stdout!.removeListener('data', onData)
           this.psProcess!.stderr!.removeListener('data', onError)
 
-          // Remove delimiter
+          // 移除分隔符
           const result = output.replace(delimiter, '').trim()
           resolve(result)
         }
@@ -149,28 +141,28 @@ class PowerShellManager {
       this.psProcess.stdout.on('data', onData)
       this.psProcess.stderr?.on('data', onError)
 
-      // Execute command and add delimiter
+      // 执行命令并添加分隔符
       const fullCommand = `${command}; Write-Host "${delimiter}"\n`
       this.psProcess.stdin?.write(fullCommand)
 
-      // Set timeout
+      // 设置超时
       setTimeout(() => {
         this.psProcess!.stdout!.removeListener('data', onData)
         this.psProcess!.stderr!.removeListener('data', onError)
 
         if (errorOutput) {
-          reject(new Error(`PowerShell error: ${errorOutput}`))
+          reject(new Error(`PowerShell 错误: ${errorOutput}`))
         } else {
-          reject(new Error('PowerShell command timeout'))
+          reject(new Error('PowerShell 命令超时'))
         }
-      }, 10000) // 10 second timeout
+      }, 10000) // 10秒超时
     })
   }
 
   private cleanup(): void {
     this.isInitialized = false
 
-    // Clear timer
+    // 清除定时器
     if (this.cleanupTimer) {
       clearTimeout(this.cleanupTimer)
       this.cleanupTimer = null
@@ -183,10 +175,10 @@ class PowerShellManager {
       this.psProcess = null
     }
 
-    // Clear queue and reject all pending commands
+    // 清空队列并拒绝所有待处理命令
     while (this.commandQueue.length > 0) {
       const { reject } = this.commandQueue.shift()!
-      reject(new Error('PowerShell process terminated'))
+      reject(new Error('PowerShell 进程已终止'))
     }
   }
 
@@ -195,10 +187,10 @@ class PowerShellManager {
   }
 }
 
-// Get PowerShell manager instance
-export const psManager = PowerShellManager.getInstance()
+// 创建并导出 PowerShell 管理器的单例实例
+export const psManager = new PowerShellManager()
 
-// Export PowerShell cleanup function, to be called on application exit
+// 导出 PowerShell 清理函数，在应用退出时调用
 export function cleanupPowerShell(): void {
   psManager.destroy()
 }

@@ -6,7 +6,7 @@ import {
   ContextMenuSub,
   ContextMenuSubContent,
   ContextMenuSubTrigger
-} from '@ui/context-menu'
+} from '~/components/ui/context-menu'
 import { useGameCollectionStore } from '~/stores'
 import { cn } from '~/utils'
 import { useTranslation } from 'react-i18next'
@@ -17,7 +17,7 @@ export function CollectionMenu({
 }: {
   gameIds: string[]
   openAddCollectionDialog: () => void
-}): JSX.Element {
+}): React.JSX.Element {
   const { t } = useTranslation('game')
   const {
     documents: collections,

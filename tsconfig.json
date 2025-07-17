@@ -1,9 +1,4 @@
 {
   "files": [],
-  "references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.web.json" }],
-  "compilerOptions": {
-    "noImplicitAny": true,
-    "strictFunctionTypes": true,
-    "noImplicitReturns": true
-  },
+  "references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.web.json" }]
 }

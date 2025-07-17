@@ -47,3 +47,12 @@ export type GameExtraInfoList = {
     value: string[]
   }[]
 }[]
+
+export type ScraperCapabilities =
+  | 'searchGames'
+  | 'checkGameExists'
+  | 'getGameMetadata'
+  | 'getGameBackgrounds'
+  | 'getGameCovers'
+  | 'getGameLogos'
+  | 'getGameIcons'

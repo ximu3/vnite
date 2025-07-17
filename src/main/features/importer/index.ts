@@ -1,0 +1,1 @@
+export { setupImporterIPC } from './ipc'

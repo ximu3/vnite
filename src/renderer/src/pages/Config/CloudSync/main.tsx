@@ -1,41 +1,46 @@
 import { cn } from '~/utils'
-import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
-import { Button } from '@ui/button'
-import { Input } from '@ui/input'
-import { Switch } from '@ui/switch'
-import { ipcOnUnique } from '~/utils'
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import { Button } from '~/components/ui/button'
+import { Input } from '~/components/ui/input'
 import { toast } from 'sonner'
+import { ipcManager } from '~/app/ipc'
 import { useConfigLocalState } from '~/hooks'
-import { RadioGroup, RadioGroupItem } from '@ui/radio-group'
-import { Label } from '@ui/label'
-import { Avatar, AvatarFallback, AvatarImage } from '@ui/avatar'
+import { RadioGroup, RadioGroupItem } from '~/components/ui/radio-group'
+import { Label } from '~/components/ui/label'
+import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
 import { useEffect, useState } from 'react'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
-} from '@ui/dropdown-menu'
+} from '~/components/ui/dropdown-menu'
 import { User, LogOut, HardDrive, Cloud, Key, InfoIcon } from 'lucide-react'
-import { Link } from '@ui/link'
+import { Link } from '~/components/ui/link'
 import { useTranslation } from 'react-i18next'
 import { useCloudSyncStore } from './store'
 import { ROLE_QUOTAS } from '@appTypes/sync'
+import { ConfigItem } from '~/components/form'
 import { Trans } from 'react-i18next'
 
-export function CloudSync(): JSX.Element {
+export function CloudSync(): React.JSX.Element {
   const { t } = useTranslation('config')
   const { status, usedQuota, setUsedQuota } = useCloudSyncStore()
   const [enabled, setEnabled] = useConfigLocalState('sync.enabled')
   const [syncMode, setSyncMode] = useConfigLocalState('sync.mode')
   const [_1, setOfficialUsername] = useConfigLocalState('sync.officialConfig.auth.username')
   const [_2, setOfficialPassword] = useConfigLocalState('sync.officialConfig.auth.password')
-  const [selfHostedUrl, setSelfHostedUrl] = useConfigLocalState('sync.selfHostedConfig.url')
-  const [selfHostedUsername, setSelfHostedUsername] = useConfigLocalState(
-    'sync.selfHostedConfig.auth.username'
+  const [selfHostedUrl, setSelfHostedUrl, saveSelfHostedUrl] = useConfigLocalState(
+    'sync.selfHostedConfig.url',
+    true
   )
-  const [selfHostedPassword, setSelfHostedPassword] = useConfigLocalState(
-    'sync.selfHostedConfig.auth.password'
+  const [selfHostedUsername, setSelfHostedUsername, saveSelfHostedUsername] = useConfigLocalState(
+    'sync.selfHostedConfig.auth.username',
+    true
+  )
+  const [selfHostedPassword, setSelfHostedPassword, saveSelfHostedPassword] = useConfigLocalState(
+    'sync.selfHostedConfig.auth.password',
+    true
   )
   const [userName, setUserName] = useConfigLocalState('userInfo.name')
   const [_3, setUserAccessToken] = useConfigLocalState('userInfo.accessToken')
@@ -51,7 +56,7 @@ export function CloudSync(): JSX.Element {
     if (enabled && userName) {
       const fetchStorageInfo = async (): Promise<void> => {
         try {
-          const dbSize = await window.api.database.getCouchDbSize()
+          const dbSize = await ipcManager.invoke('db:get-couchdb-size')
           if (dbSize) {
             setUsedQuota(dbSize)
           }
@@ -74,12 +79,12 @@ export function CloudSync(): JSX.Element {
   }, [usedQuota, totalQuota])
 
   useEffect(() => {
-    ipcOnUnique('auth-success', async () => {
+    ipcManager.on('account:auth-success', async () => {
       toast.success(t('cloudSync.notifications.authSuccess'))
       await updateCloudSyncConfig()
     })
-    ipcOnUnique('auth-error', (_event, message) => {
-      toast.error(t('cloudSync.notifications.authError'), message)
+    ipcManager.on('account:auth-failed', (_event, message) => {
+      toast.error(`${t('cloudSync.notifications.authError')}, ${message}`)
     })
   }, [])
 
@@ -112,7 +117,7 @@ export function CloudSync(): JSX.Element {
 
     toast.promise(
       async () => {
-        await window.api.database.restartSync()
+        await ipcManager.invoke('db:restart-sync')
       },
       {
         loading: t('cloudSync.notifications.updating'),
@@ -125,7 +130,7 @@ export function CloudSync(): JSX.Element {
   const handleOfficialSignin = async (): Promise<void> => {
     toast.promise(
       async () => {
-        await window.api.account.authSignin()
+        await ipcManager.invoke('account:auth-signin')
       },
       {
         loading: t('cloudSync.notifications.loggingIn'),
@@ -138,7 +143,7 @@ export function CloudSync(): JSX.Element {
   const handleOfficialSignup = async (): Promise<void> => {
     toast.promise(
       async () => {
-        await window.api.account.authSignup()
+        await ipcManager.invoke('account:auth-signup')
       },
       {
         loading: t('cloudSync.notifications.registering'),
@@ -241,18 +246,19 @@ export function CloudSync(): JSX.Element {
         <CardContent className={cn('')}>
           <div className={cn('space-y-5')}>
             {/* Enable/Disable Switch */}
-            <div className={cn('grid grid-cols-[1fr_auto] gap-5 items-center')}>
-              <div className={cn('whitespace-nowrap select-none')}>{t('cloudSync.enable')}</div>
-              <Switch
-                checked={enabled}
-                onCheckedChange={async (value) => {
-                  setEnabled(value)
-                  if (!value) {
-                    await window.api.database.stopSync()
-                  }
-                }}
-              />
-            </div>
+            <ConfigItem
+              hookType="configLocal"
+              path="sync.enabled"
+              title={t('cloudSync.enable')}
+              description="启用云同步功能"
+              controlType="switch"
+              onChange={async (value) => {
+                setEnabled(value)
+                if (!value) {
+                  await ipcManager.invoke('db:stop-sync')
+                }
+              }}
+            ></ConfigItem>
 
             {enabled && (
               <>
@@ -301,7 +307,7 @@ export function CloudSync(): JSX.Element {
                     </div>
                   </div>
                 ) : (
-                  <Card className="border shadow-sm border-muted">
+                  <Card className="shadow-sm">
                     <CardContent className="pt-6">
                       <div className="flex flex-col gap-4">
                         <div className="flex items-center justify-between">
@@ -396,7 +402,7 @@ export function CloudSync(): JSX.Element {
 
             {/* Self-hosted mode UI */}
             {enabled && syncMode === 'selfHosted' && (
-              <Card className="border shadow-sm border-muted">
+              <Card className="shadow-sm">
                 <CardContent className="pt-6">
                   <div className="flex flex-col gap-5">
                     {/* Self-hosted form items */}
@@ -410,6 +416,7 @@ export function CloudSync(): JSX.Element {
                           className={cn('w-full')}
                           value={selfHostedUrl}
                           onChange={(e) => setSelfHostedUrl(e.target.value)}
+                          onBlur={saveSelfHostedUrl}
                           placeholder="https://your-couchdb-server.com"
                         />
                       </div>
@@ -423,6 +430,7 @@ export function CloudSync(): JSX.Element {
                           className={cn('w-full')}
                           value={selfHostedUsername}
                           onChange={(e) => setSelfHostedUsername(e.target.value)}
+                          onBlur={saveSelfHostedUsername}
                           placeholder="admin"
                         />
                       </div>
@@ -437,6 +445,7 @@ export function CloudSync(): JSX.Element {
                           type="password"
                           value={selfHostedPassword}
                           onChange={(e) => setSelfHostedPassword(e.target.value)}
+                          onBlur={saveSelfHostedPassword}
                           placeholder="••••••••"
                         />
                       </div>

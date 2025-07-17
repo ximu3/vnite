@@ -1,14 +1,15 @@
 import { cn } from '~/utils'
-import { Dialog, DialogContent } from '@ui/dialog'
-import { Button } from '@ui/button'
-import { Input } from '@ui/input'
-import { Card } from '@ui/card'
-import { Badge } from '@ui/badge'
+import { Dialog, DialogContent } from '~/components/ui/dialog'
+import { Button } from '~/components/ui/button'
+import { Input } from '~/components/ui/input'
+import { Card } from '~/components/ui/card'
+import { Badge } from '~/components/ui/badge'
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import parse from 'html-react-parser'
 import { HTMLParserOptions } from '~/utils'
 import { useTranslation } from 'react-i18next'
+import { ipcManager } from '~/app/ipc'
 
 interface SearchDescriptionDialogProps {
   isOpen: boolean
@@ -22,7 +23,7 @@ export function SearchDescriptionDialog({
   onClose,
   gameTitle,
   onSelect
-}: SearchDescriptionDialogProps): JSX.Element {
+}: SearchDescriptionDialogProps): React.JSX.Element {
   const { t } = useTranslation('game')
   const [searchTitle, setSearchTitle] = useState(gameTitle)
   const [descriptionList, setDescriptionList] = useState<
@@ -51,7 +52,7 @@ export function SearchDescriptionDialog({
     setIsLoading(true)
 
     try {
-      const result = await window.api.scraper.getGameDescriptionList({
+      const result = await ipcManager.invoke('scraper:get-game-description-list', {
         type: 'name',
         value: searchTitle
       })

@@ -1,7 +1,7 @@
 import { cn } from '~/utils'
-import { Dialog, DialogContent } from '@ui/dialog'
-import { Button } from '@ui/button'
-import { Input } from '@ui/input'
+import { Dialog, DialogContent } from '~/components/ui/dialog'
+import { Button } from '~/components/ui/button'
+import { Input } from '~/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -10,11 +10,13 @@ import {
   SelectValue,
   SelectLabel,
   SelectGroup
-} from '@ui/select'
-import { Card } from '@ui/card'
+} from '~/components/ui/select'
+import { Card } from '~/components/ui/card'
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
+import { ipcManager } from '~/app/ipc'
+import { ScraperCapabilities } from '@appTypes/utils'
 
 interface SearchMediaDialogProps {
   isOpen: boolean
@@ -30,13 +32,28 @@ export function SearchMediaDialog({
   type,
   gameTitle,
   onSelect
-}: SearchMediaDialogProps): JSX.Element {
+}: SearchMediaDialogProps): React.JSX.Element {
   const { t } = useTranslation('game')
   const [searchTitle, setSearchTitle] = useState(gameTitle)
-  const [dataSource, setDataSource] = useState('steamGridDb')
+  const [dataSource, setDataSource] = useState('steamgriddb')
+  const [availableDataSources, setAvailableDataSources] = useState<
+    { id: string; name: string; capabilities: ScraperCapabilities[] }[]
+  >([])
   const [imageList, setImageList] = useState<string[]>([])
   const [selectedImage, setSelectedImage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    const fetchAvailableDataSources = async (): Promise<void> => {
+      const sources = await ipcManager.invoke(
+        'scraper:get-provider-infos-with-capabilities',
+        ['getGameCovers', 'getGameIcons', 'getGameLogos', 'getGameBackgrounds'],
+        false
+      )
+      setAvailableDataSources(sources)
+    }
+    fetchAvailableDataSources()
+  }, [])
 
   useEffect(() => {
     if (isOpen) {
@@ -57,25 +74,25 @@ export function SearchMediaDialog({
       let result: string[] = []
       switch (type) {
         case 'cover':
-          result = await window.api.scraper.getGameCovers(dataSource, {
+          result = await ipcManager.invoke('scraper:get-game-covers', dataSource, {
             type: 'name',
             value: searchTitle
           })
           break
         case 'icon':
-          result = await window.api.scraper.getGameIcons(dataSource, {
+          result = await ipcManager.invoke('scraper:get-game-icons', dataSource, {
             type: 'name',
             value: searchTitle
           })
           break
         case 'logo':
-          result = await window.api.scraper.getGameLogos(dataSource, {
+          result = await ipcManager.invoke('scraper:get-game-logos', dataSource, {
             type: 'name',
             value: searchTitle
           })
           break
         case 'background':
-          result = await window.api.scraper.getGameBackgrounds(dataSource, {
+          result = await ipcManager.invoke('scraper:get-game-backgrounds', dataSource, {
             type: 'name',
             value: searchTitle
           })
@@ -108,7 +125,7 @@ export function SearchMediaDialog({
   function handleClose(): void {
     setSelectedImage('')
     setImageList([])
-    setDataSource('steamGridDb')
+    setDataSource('steamgriddb')
     onClose()
   }
 
@@ -153,18 +170,26 @@ export function SearchMediaDialog({
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>{t('detail.properties.media.search.dataSource')}</SelectLabel>
-                  <SelectItem value="steamGridDb">SteamGridDB</SelectItem>
-                  {['cover', 'background'].includes(type) && (
-                    <SelectItem value="steam">Steam</SelectItem>
-                  )}
-                  {['cover', 'background'].includes(type) && (
-                    <SelectItem value="vndb">VNDB</SelectItem>
-                  )}
-                  {['cover'].includes(type) && <SelectItem value="bangumi">Bangumi</SelectItem>}
-                  {['cover', 'background'].includes(type) && (
-                    <SelectItem value="igdb">IGDB</SelectItem>
-                  )}
-                  <SelectItem value="google">Google</SelectItem>
+                  {availableDataSources
+                    .filter((source) => {
+                      switch (type) {
+                        case 'cover':
+                          return source.capabilities.includes('getGameCovers')
+                        case 'icon':
+                          return source.capabilities.includes('getGameIcons')
+                        case 'logo':
+                          return source.capabilities.includes('getGameLogos')
+                        case 'background':
+                          return source.capabilities.includes('getGameBackgrounds')
+                        default:
+                          return false
+                      }
+                    })
+                    .map((source) => (
+                      <SelectItem key={source.id} value={source.id}>
+                        {source.name}
+                      </SelectItem>
+                    ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
