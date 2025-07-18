@@ -18,7 +18,7 @@ export function InformationDialog({
   gameIds: string[]
   isOpen: boolean
   setIsOpen: (value: boolean) => void
-  children: React.ReactNode
+  children?: React.ReactNode
 }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [isIncremental, setIsIncremental] = useState(true)
@@ -87,8 +87,8 @@ export function InformationDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger className={cn('w-full')}>{children}</DialogTrigger>
-      <DialogContent>
+      {children && <DialogTrigger className={cn('w-full')}>{children}</DialogTrigger>}
+      <DialogContent className="w-[500px]">
         <div
           className={cn('grid grid-cols-[auto_1fr] gap-y-3 gap-x-4 px-3 pt-5 items-center text-sm')}
         >

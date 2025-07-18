@@ -17,10 +17,14 @@ import { ipcManager } from '~/app/ipc'
 
 export function DeleteGameAlert({
   gameIds,
+  isOpen,
+  setIsOpen,
   children
 }: {
   gameIds: string[]
-  children: React.ReactNode
+  isOpen?: boolean
+  setIsOpen?: (value: boolean) => void
+  children?: React.ReactNode
 }): React.JSX.Element {
   const { t } = useTranslation('game')
   const navigate = useNavigate()
@@ -56,7 +60,7 @@ export function DeleteGameAlert({
   }
 
   return (
-    <AlertDialog>
+    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

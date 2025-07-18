@@ -12,6 +12,7 @@ import { GameNavCM } from '../contextMenu/GameNavCM'
 import { BatchGameNavCM } from '../GameBatchEditor/BatchGameNavCM'
 import { useGameBatchEditorStore } from '../GameBatchEditor/store'
 import { useTheme } from '../ThemeProvider'
+import { useLocation } from '@tanstack/react-router'
 
 export function GameNav({
   gameId,
@@ -25,6 +26,7 @@ export function GameNav({
   const [highlightLocalGames] = useConfigState('game.gameList.highlightLocalGames')
   const [markLocalGames] = useConfigState('game.gameList.markLocalGames')
   const isDarkMode = useTheme().isDark
+  const location = useLocation()
 
   // dialog box state
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
@@ -41,6 +43,12 @@ export function GameNav({
     const store = useGameBatchEditorStore.getState()
     const { addGameId, removeGameId, clearGameIds, lastSelectedId, setLastSelectedId, gameIds } =
       store
+
+    if (location.pathname.includes(`/library/games/`)) {
+      // 如果在游戏详情页面，把当前游戏ID添加到选择列表
+      const routerGameId = location.pathname.split('/')[3]
+      addGameId(routerGameId)
+    }
 
     // 如果是批量选择模式下的特殊操作，阻止默认导航
     if (event.shiftKey || event.ctrlKey || event.metaKey) {
@@ -89,21 +97,12 @@ export function GameNav({
         } else {
           addGameId(gameId)
         }
-      } else if (isBatchMode) {
-        // 批量模式下的普通点击
-        if (isSelected) {
-          removeGameId(gameId)
-        } else {
-          addGameId(gameId)
-        }
       }
 
       setLastSelectedId(gameId)
     } else {
       // 正常点击 - 允许导航发生
       clearGameIds()
-      addGameId(gameId)
-      setLastSelectedId(gameId)
       // 不调用 preventDefault()，让 Link 组件处理导航
     }
   }
@@ -120,7 +119,7 @@ export function GameNav({
                 highlightLocalGames && 'text-foreground',
                 highlightLocalGames && gamePath && 'text-accent-foreground',
                 highlightLocalGames && !gamePath && !isDarkMode && 'text-foreground/90',
-                isSelected && isBatchMode && 'bg-accent/60'
+                isSelected && 'bg-accent/60'
               )}
               to="/library/games/$gameId/$groupId"
               params={{ gameId, groupId: encodeURIComponent(groupId) }}

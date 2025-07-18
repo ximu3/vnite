@@ -502,6 +502,17 @@
       "success": "已批量修改游戏信息",
       "error": "修改游戏信息失败: {{message}}"
     },
+    "floatingButtons": {
+      "addToCollection": "添加到集合",
+      "editInfo": "编辑信息",
+      "delete": "删除",
+      "cancel": "取消",
+      "selected": "已选择 {{count}} 项"
+    },
+    "selection": {
+      "selectAll": "全选",
+      "unselectAll": "取消全选"
+    },
     "delete": {
       "title": "确定要删除这 {{count}} 个游戏吗？",
       "description": "删除后，所选游戏的所有数据将被永久删除。此操作不可逆。",

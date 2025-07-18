@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { useRouter } from '@tanstack/react-router'
 import { HoverCardAnimation } from '~/components/animations/HoverCard'
 import { GameNavCM } from '~/components/contextMenu/GameNavCM'
+import { BatchGameNavCM } from '~/components/GameBatchEditor/BatchGameNavCM'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
@@ -14,6 +15,7 @@ import { useDragContext } from '~/components/Showcase/CollectionGames'
 import { useConfigState, useGameState } from '~/hooks'
 import { useRunningGames } from '~/pages/Library/store'
 import { useGameCollectionStore, useGameRegistry } from '~/stores/game'
+import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
 import { cn, navigateToGame, startGame, stopGame } from '~/utils'
 import {
   attachClosestEdge,
@@ -60,7 +62,8 @@ export function GamePoster({
   className,
   dragScenario,
   parentGap = 0,
-  position = 'center'
+  position = 'center',
+  inViewGames = [] // 当前视图中所有游戏的ID数组，用于Shift多选
 }: {
   gameId: string
   groupId?: string
@@ -68,6 +71,7 @@ export function GamePoster({
   dragScenario?: string
   parentGap?: number
   position?: 'right' | 'left' | 'center'
+  inViewGames?: string[]
 }): React.JSX.Element {
   const router = useRouter()
   const gameData = useGameRegistry((state) => state.gameMetaIndex[gameId])
@@ -89,6 +93,63 @@ export function GamePoster({
   const [dragging, setDragging] = useState<boolean>(false)
   const [previewState, setPreviewState] = useState<PreviewState>({ type: 'idle' })
   const [showPlayButtonOnPoster] = useConfigState('appearances.showcase.showPlayButtonOnPoster')
+
+  // 批量选择相关状态和方法
+  const {
+    selectedGamesMap,
+    selectGame,
+    unselectGame,
+    lastSelectedId,
+    setLastSelectedId,
+    isBatchMode
+  } = useGameBatchEditorStore()
+
+  const isSelected = !!selectedGamesMap[gameId]
+
+  // 处理选择游戏
+  const handleSelect = (e: React.MouseEvent): void => {
+    e.stopPropagation()
+
+    if (e.shiftKey && lastSelectedId && inViewGames.length > 0) {
+      // Shift+点击实现连续选择
+      const lastIndex = inViewGames.indexOf(lastSelectedId)
+      const currentIndex = inViewGames.indexOf(gameId)
+
+      if (lastIndex !== -1 && currentIndex !== -1) {
+        const startIndex = Math.min(lastIndex, currentIndex)
+        const endIndex = Math.max(lastIndex, currentIndex)
+
+        for (let i = startIndex; i <= endIndex; i++) {
+          selectGame(inViewGames[i])
+        }
+      } else {
+        // 如果找不到索引，只选择当前游戏
+        selectGame(gameId)
+      }
+    } else {
+      // 常规单击选择
+      if (isSelected) {
+        unselectGame(gameId)
+      } else {
+        selectGame(gameId)
+        setLastSelectedId(gameId)
+      }
+    }
+  }
+
+  // Ctrl+点击游戏封面时实现多选，而不是导航
+  const handleGameClick = (e: React.MouseEvent): void => {
+    if (e.ctrlKey || e.metaKey) {
+      handleSelect(e)
+    } else if (!isSelected) {
+      navigateToGame(router, gameId, groupId || 'all')
+    } else {
+      // 如果已选中且不按Ctrl键，仍然选择该游戏（取消其他选择）
+      e.stopPropagation()
+      selectGame(gameId)
+      setLastSelectedId(gameId)
+    }
+  }
 
   useEffect(() => {
     if (!dragScenario || !collectionId) return
@@ -166,18 +227,18 @@ export function GamePoster({
             <ContextMenuTrigger>
               <div
                 className="flex flex-col items-center justify-center gap-[8px] cursor-pointer group"
-                onClick={() => navigateToGame(router, gameId, groupId || 'all')}
+                onClick={handleGameClick}
               >
                 <div
                   className={cn(
                     'rounded-lg shadow-md',
                     'transition-all duration-300 ease-in-out',
-                    'ring-0 ring-border',
-                    'group-hover:ring-2 group-hover:ring-primary',
+                    isSelected
+                      ? 'ring-2 ring-primary'
+                      : 'ring-0 ring-border group-hover:ring-2 group-hover:ring-primary',
                     'relative overflow-hidden group'
                   )}
                 >
-                  {/* <div className="absolute inset-0 z-10 transition-all duration-300 rounded-lg pointer-events-none bg-background/15 group-hover:bg-transparent" /> */}
                   <HoverCardAnimation>
                     <GameImage
                       draggable="false"
@@ -203,23 +264,39 @@ export function GamePoster({
                     />
                   </HoverCardAnimation>
 
-                  {/* Hover overlay */}
+                  {/* Hover overlay - 修改为当选中或悬停时显示 */}
                   <div
                     className={cn(
                       'absolute inset-x-0 bottom-0 h-full bg-accent/50',
                       'transition-opacity duration-300 ease-in-out',
                       'flex flex-col p-[10px] text-accent-foreground',
-                      'opacity-0 group-hover:opacity-100',
+                      isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
                       'overflow-hidden'
                     )}
                   >
+                    {/* 添加多选圆点到overlay内部左上角 */}
+                    <div
+                      className={cn(
+                        'absolute left-2 top-2 shadow-md z-20 rounded-full w-5 h-5 flex items-center justify-center cursor-pointer',
+                        'transition-all duration-200',
+                        isSelected
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-background/50 hover:bg-background/70'
+                      )}
+                      onClick={handleSelect}
+                    >
+                      {isSelected && <span className="icon-[mdi--check] w-4 h-4" />}
+                    </div>
+
                     {/* Play button */}
                     <div className="absolute inset-0 flex items-center justify-center flex-grow">
                       {showPlayButtonOnPoster &&
                         (runningGames.includes(gameId) ? (
                           <Button
                             variant="secondary"
-                            className="rounded-full w-[46px] h-[46px] p-0 shadow-sm bg-secondary hover:bg-secondary/90"
+                            className={cn(
+                              'rounded-full w-[46px] h-[46px] p-0 shadow-sm bg-secondary hover:bg-secondary/90'
+                            )}
                             onClick={(e) => {
                               e.stopPropagation()
                               stopGame(gameId)
@@ -230,7 +307,9 @@ export function GamePoster({
                         ) : (
                           <Button
                             variant="default"
-                            className="rounded-full w-[46px] h-[46px] p-0 bg-primary hover:bg-primary/90"
+                            className={cn(
+                              'rounded-full w-[46px] h-[46px] p-0 bg-primary hover:bg-primary/90'
+                            )}
                             onClick={(e) => {
                               e.stopPropagation()
                               navigateToGame(router, gameId, groupId || 'all')
@@ -275,14 +354,20 @@ export function GamePoster({
               </div>
             </ContextMenuTrigger>
           </div>
-          <GameNavCM
-            gameId={gameId}
-            groupId={groupId || 'all'}
-            openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
-            openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
-            openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
-            openPropertiesDialog={() => setIsPropertiesDialogOpen(true)}
-          />
+
+          {/* 根据是否处于批量模式切换上下文菜单 */}
+          {isBatchMode ? (
+            <BatchGameNavCM openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)} />
+          ) : (
+            <GameNavCM
+              gameId={gameId}
+              groupId={groupId || 'all'}
+              openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
+              openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
+              openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
+              openPropertiesDialog={() => setIsPropertiesDialogOpen(true)}
+            />
+          )}
         </ContextMenu>
       )}
 
