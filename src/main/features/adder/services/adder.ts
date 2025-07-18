@@ -6,6 +6,7 @@ import { launcherPreset } from '~/features/launcher'
 import { saveGameIconByFile } from '~/features/game'
 import { DEFAULT_GAME_VALUES, DEFAULT_GAME_LOCAL_VALUES, BatchGameInfo } from '@appTypes/models'
 import { eventBus } from '~/core/events'
+import { GameDescriptionList, GameExtraInfoList, GameMetadata, GameTagsList } from '@appTypes/utils'
 
 /**
  * Add a game to the database
@@ -29,14 +30,94 @@ export async function addGameToDB({
   playTime?: number
   dirPath?: string
 }): Promise<void> {
-  // First get metadata (other operations depend on this result)
-  const metadata = await scraperManager.getGameMetadata(dataSource, {
+  const dbId = generateUUID()
+
+  // 首先获取基础元数据
+  const baseMetadata = await scraperManager.getGameMetadata(dataSource, {
     type: 'id',
     value: dataSourceId
   })
-  const dbId = generateUUID()
 
-  // Prepare game document
+  // 创建一个深拷贝的元数据对象，用于后续增强
+  const metadata = JSON.parse(JSON.stringify(baseMetadata)) as GameMetadata
+
+  // 准备获取缺失数据的任务
+  const enhancementTasks: Promise<any>[] = []
+
+  // 检查并获取缺失的描述信息
+  if (!metadata.description || metadata.description.trim() === '') {
+    enhancementTasks.push(
+      scraperManager
+        .getGameDescriptionList?.({
+          type: 'name',
+          value: metadata.originalName || metadata.name
+        })
+        .catch((err) => {
+          console.warn(`获取游戏描述失败: ${err.message}`)
+          return []
+        })
+    )
+  } else {
+    enhancementTasks.push(Promise.resolve(null))
+  }
+
+  // 检查并获取缺失的标签信息
+  if (!metadata.tags || metadata.tags.length === 0) {
+    enhancementTasks.push(
+      scraperManager
+        .getGameTagsList?.({
+          type: 'name',
+          value: metadata.originalName || metadata.name
+        })
+        .catch((err) => {
+          console.warn(`获取游戏标签失败: ${err.message}`)
+          return []
+        })
+    )
+  } else {
+    enhancementTasks.push(Promise.resolve(null))
+  }
+
+  // 检查并获取缺失的额外信息
+  if (!metadata.extra || Object.keys(metadata.extra).length === 0) {
+    enhancementTasks.push(
+      scraperManager
+        .getGameExtraInfoList?.({
+          type: 'name',
+          value: metadata.originalName || metadata.name
+        })
+        .catch((err) => {
+          console.warn(`获取游戏额外信息失败: ${err.message}`)
+          return {}
+        })
+    )
+  } else {
+    enhancementTasks.push(Promise.resolve(null))
+  }
+
+  // 执行所有增强元数据的任务
+  const [descriptions, tags, extra] = (await Promise.all(enhancementTasks)) as [
+    GameDescriptionList,
+    GameTagsList,
+    GameExtraInfoList
+  ]
+
+  // 合并增强的元数据
+  if (descriptions && descriptions.length > 0) {
+    // 选择最合适的描述（可以根据需要选择最长或最短的）
+
+    metadata.description = descriptions[0].description
+  }
+
+  if (tags && tags.length > 0) {
+    metadata.tags = tags[0].tags
+  }
+
+  if (extra && Object.keys(extra).length > 0) {
+    metadata.extra = extra[0].extra
+  }
+
+  // 准备游戏文档
   const gameDoc = JSON.parse(JSON.stringify(DEFAULT_GAME_VALUES))
   gameDoc._id = dbId
   gameDoc.metadata = {
@@ -55,7 +136,7 @@ export async function addGameToDB({
   gameLocalDoc._id = dbId
   gameLocalDoc.utils.markPath = dirPath ?? ''
 
-  // Fetch all image resources in parallel
+  // 并行获取所有图片资源
   const [covers, backgrounds, icons, logos] = await Promise.all([
     scraperManager.getGameCovers(dataSource, { type: 'id', value: dataSourceId }),
     !backgroundUrl
@@ -75,13 +156,13 @@ export async function addGameToDB({
         })
   ])
 
-  // Prepare all database write operations
+  // 准备所有数据库写入操作
   const dbPromises: Promise<unknown>[] = [
     GameDBManager.setGame(dbId, gameDoc),
     GameDBManager.setGameLocal(dbId, gameLocalDoc)
   ]
 
-  // Prepare all image save operations
+  // 准备所有图片保存操作
   if (covers.length > 0 && covers[0]) {
     dbPromises.push(GameDBManager.setGameImage(dbId, 'cover', covers[0]))
   }
@@ -100,10 +181,10 @@ export async function addGameToDB({
     dbPromises.push(GameDBManager.setGameImage(dbId, 'logo', logos[0].toString()))
   }
 
-  // Execute all database operations in parallel
+  // 执行所有数据库操作（并行）
   await Promise.all(dbPromises)
 
-  // Emit event to notify other parts of the application
+  // 发出事件通知应用程序的其他部分
   eventBus.emit(
     'game:added',
     {
