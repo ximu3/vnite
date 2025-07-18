@@ -16,6 +16,12 @@
   },
   "appearances": {
     "title": "外观",
+    "font": {
+      "title": "字体",
+      "manageFont": "管理字体",
+      "manageFontDescription": "更换应用程序字体",
+      "manage": "管理"
+    },
     "background": {
       "title": "背景",
       "customBackground": "自定义背景",
