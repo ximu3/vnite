@@ -5,7 +5,10 @@ import {
   GameMetadataUpdateMode,
   GameMetadataUpdateOptions,
   BatchUpdateResults,
-  BatchUpdateResult
+  BatchUpdateResult,
+  GameDescriptionList,
+  GameTagsList,
+  GameExtraInfoList
 } from '@appTypes/utils'
 import { GameDBManager } from '~/core/database'
 import { scraperManager } from '~/features/scraper'
@@ -291,7 +294,7 @@ export async function updateGameMetadata({
   const {
     overwriteExisting = true,
     updateImages = true,
-    mergeStrategy = 'merge',
+    mergeStrategy = 'replace',
     sourcesPriority = []
   } = options
 
@@ -344,7 +347,7 @@ export async function updateGameMetadata({
   }
 
   // 并行执行基本元数据获取任务
-  const [baseMetadata] = await Promise.all(fetchTasks)
+  const [baseMetadata] = (await Promise.all(fetchTasks)) as [GameMetadata]
 
   // 处理图片获取结果
   const imageResults = await Promise.all(
@@ -395,7 +398,7 @@ export async function updateGameMetadata({
 
     basicFields.forEach((key) => {
       const typedKey = key as keyof GameMetadata
-      updatedMetadata[typedKey] = baseMetadata[typedKey]
+      updatedMetadata[typedKey] = baseMetadata[typedKey] as any
     })
   } else {
     // 更新指定的基本字段
@@ -515,7 +518,11 @@ export async function updateGameMetadata({
     if (gameName) {
       // 使用游戏名称作为标识符
       const nameIdentifier = { type: 'name', value: gameName } as ScraperIdentifier
-      const specialFetchPromises: Record<string, Promise<any>> = {}
+      const specialFetchPromises: {
+        description?: Promise<GameDescriptionList>
+        tags?: Promise<GameTagsList>
+        extra?: Promise<GameExtraInfoList>
+      } = {}
 
       // 准备额外的获取任务
       if (needFetchSpecialFields.includes('description')) {
@@ -532,7 +539,11 @@ export async function updateGameMetadata({
 
       // 执行额外的获取任务
       const specialResults = await Promise.all(Object.values(specialFetchPromises))
-      const specialResultsMap: Record<string, any> = {}
+      const specialResultsMap: {
+        description?: GameDescriptionList
+        tags?: GameTagsList
+        extra?: GameExtraInfoList
+      } = {}
 
       // 映射结果
       let resultIndex = 0
