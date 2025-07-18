@@ -18,7 +18,7 @@ import {
   EventHistoryEntry,
   EventHistoryQuery
 } from '@appTypes/event'
-import { OverallScanProgress } from '@appTypes/utils'
+import { OverallScanProgress, BatchUpdateGameMetadataProgress } from '@appTypes/utils'
 
 /**
  * IPC Events Type Definitions
@@ -161,10 +161,19 @@ type MainIpcEvents =
         dbId: string
         dataSource: string
         dataSourceId: string
+        fields?: (GameMetadataField | GameMetadataUpdateMode)[]
         backgroundUrl?: string
+        options?: GameMetadataUpdateOptions
       }) => void
       'adder:get-batch-game-adder-data': () => BatchGameInfo[]
       'adder:add-game-to-db-without-metadata': (gamePath: string) => void
+      'adder:batch-update-game-metadata': (data: {
+        gameIds: string[]
+        dataSource: string
+        fields?: (GameMetadataField | GameMetadataUpdateMode)[]
+        options?: GameMetadataUpdateOptions
+        concurrency?: number
+      }) => void
 
       'importer:import-v2-data': (dataPath: string) => void
       'importer:get-steam-games': (steamId: string) => SteamFormattedGameInfo[]
@@ -365,6 +374,8 @@ type RendererIpcEvents = {
   'scanner:scan-error': [progress: OverallScanProgress]
   'scanner:scan-paused': [progress: OverallScanProgress]
   'scanner:scan-resumed': [progress: OverallScanProgress]
+
+  'adder:batch-update-game-metadata-progress': [progress: BatchUpdateGameMetadataProgress]
 }
 
 // Export types for use in both main and renderer

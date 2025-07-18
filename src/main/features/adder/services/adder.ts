@@ -116,48 +116,6 @@ export async function addGameToDB({
   )
 }
 
-export async function updateGameMetadata({
-  dbId,
-  dataSource,
-  dataSourceId,
-  backgroundUrl
-}: {
-  dbId: string
-  dataSource: string
-  dataSourceId: string
-  backgroundUrl?: string
-}): Promise<void> {
-  // Fetch metadata and game document in parallel
-  const [metadata, gameDoc, coverUrls] = await Promise.all([
-    scraperManager.getGameMetadata(dataSource, { type: 'id', value: dataSourceId }),
-    GameDBManager.getGame(dbId),
-    scraperManager.getGameCovers(dataSource, { type: 'id', value: dataSourceId })
-  ])
-
-  // Update document
-  gameDoc.metadata = {
-    ...gameDoc.metadata,
-    ...metadata,
-    originalName: metadata.originalName ?? '',
-    [`${dataSource}Id`]: dataSourceId
-  }
-
-  // Prepare all database write operations
-  const dbPromises: Promise<unknown>[] = [GameDBManager.setGame(dbId, gameDoc)]
-
-  // Add image save operations
-  if (backgroundUrl) {
-    dbPromises.push(GameDBManager.setGameImage(dbId, 'background', backgroundUrl))
-  }
-
-  if (coverUrls.length > 0 && coverUrls[0]) {
-    dbPromises.push(GameDBManager.setGameImage(dbId, 'cover', coverUrls[0]))
-  }
-
-  // Execute all database operations in parallel
-  await Promise.all(dbPromises)
-}
-
 /**
  * Add a game to the database without metadata
  * @param gamePath - The path of the game

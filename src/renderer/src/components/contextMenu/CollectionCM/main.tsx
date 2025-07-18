@@ -22,6 +22,7 @@ import { useGameCollectionStore } from '~/stores'
 import { cn } from '~/utils'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useGameMetadataUpdaterStore } from '~/pages/GameMetadataUpdater'
 
 export function CollectionCM({
   collectionId,
@@ -31,6 +32,10 @@ export function CollectionCM({
   children: React.ReactNode
 }): React.JSX.Element {
   const { renameCollection, removeCollection, documents: collections } = useGameCollectionStore()
+  const {
+    setGameIds: setGameMetadataUpdaterGameIds,
+    setIsOpen: setIsGameMetadataUpdaterDialogOpen
+  } = useGameMetadataUpdaterStore()
   const [newName, setNewName] = useState<string>('')
   const [isRenaming, setIsRenaming] = useState<boolean>(false)
   const [isDeleting, setIsDeleting] = useState<boolean>(false)
@@ -54,6 +59,14 @@ export function CollectionCM({
       <ContextMenuContent className={cn('w-40')}>
         <ContextMenuItem onSelect={() => setIsRenaming(true)}>
           {t('showcase.collection.contextMenu.rename')}
+        </ContextMenuItem>
+        <ContextMenuItem
+          onSelect={() => {
+            setIsGameMetadataUpdaterDialogOpen(true)
+            setGameMetadataUpdaterGameIds(collections[collectionId].games)
+          }}
+        >
+          {t('showcase.collection.contextMenu.updateMetadata')}
         </ContextMenuItem>
         <ContextMenuSeparator />
         <ContextMenuItem onSelect={() => setIsDeleting(true)}>

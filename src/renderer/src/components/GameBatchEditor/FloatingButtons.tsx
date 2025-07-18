@@ -6,6 +6,7 @@ import { useGameBatchEditorStore } from './store'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { InformationDialog } from './BatchGameNavCM/InformationDialog'
 import { DeleteGameAlert } from './BatchGameNavCM/DeleteGameAlert'
+import { useGameMetadataUpdaterStore } from '~/pages/GameMetadataUpdater'
 
 export function FloatingButtons(): React.JSX.Element {
   const { t } = useTranslation('game')
@@ -14,12 +15,16 @@ export function FloatingButtons(): React.JSX.Element {
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = useState(false)
   const [isInformationDialogOpen, setIsInformationDialogOpen] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const {
+    setGameIds: setGameMetadataUpdaterGameIds,
+    setIsOpen: setIsGameMetadataUpdaterDialogOpen
+  } = useGameMetadataUpdaterStore()
 
   return (
     <>
       <div
         className={cn(
-          'absolute bottom-4 left-1/4 z-50 flex flex-row gap-2 p-2 rounded-lg',
+          'absolute bottom-4 left-[10px] z-50 flex flex-row gap-2 p-2 rounded-lg',
           'bg-background/(--glass-opacity) backdrop-blur-(--glass-blur) shadow-md'
         )}
       >
@@ -41,6 +46,19 @@ export function FloatingButtons(): React.JSX.Element {
         >
           <span className="icon-[mdi--pencil-outline] w-4 h-4" />
           {t('batchEditor.floatingButtons.editInfo')}
+        </Button>
+
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => {
+            setIsGameMetadataUpdaterDialogOpen(true)
+            setGameMetadataUpdaterGameIds(selectedGameIds)
+          }}
+          className="flex items-center gap-1"
+        >
+          <span className="icon-[mdi--database-edit-outline] w-4 h-4" />
+          {t('batchEditor.floatingButtons.updateMetadata')}
         </Button>
 
         <Button

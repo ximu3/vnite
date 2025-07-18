@@ -11,6 +11,7 @@ import { useState, useEffect } from 'react'
 import { useLocation } from '@tanstack/react-router'
 import { useGameBatchEditorStore } from '../store'
 import { useTranslation } from 'react-i18next'
+import { useGameMetadataUpdaterStore } from '~/pages/GameMetadataUpdater'
 
 export function BatchGameNavCM({
   openAddCollectionDialog
@@ -20,6 +21,10 @@ export function BatchGameNavCM({
   const { t } = useTranslation('game')
   const [isInformationDialogOpen, setIsInformationDialogOpen] = useState(false)
   const { clearGameIds, selectedGamesMap } = useGameBatchEditorStore()
+  const {
+    setGameIds: setGameMetadataUpdaterGameIds,
+    setIsOpen: setIsGameMetadataUpdaterDialogOpen
+  } = useGameMetadataUpdaterStore()
   const gameIds = Object.keys(selectedGamesMap)
   const location = useLocation()
 
@@ -48,6 +53,14 @@ export function BatchGameNavCM({
           <div>{t('batchEditor.contextMenu.editInfo')}</div>
         </ContextMenuItem>
       </InformationDialog>
+      <ContextMenuItem
+        onClick={() => {
+          setIsGameMetadataUpdaterDialogOpen(true)
+          setGameMetadataUpdaterGameIds(gameIds)
+        }}
+      >
+        <div>{t('batchEditor.contextMenu.updateMetadata')}</div>
+      </ContextMenuItem>
       <ContextMenuSeparator />
       <DeleteGameAlert gameIds={gameIds}>
         <ContextMenuItem onSelect={(e) => e.preventDefault()}>

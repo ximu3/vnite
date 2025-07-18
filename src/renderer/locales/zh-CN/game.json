@@ -92,6 +92,7 @@
     "collection": {
       "contextMenu": {
         "rename": "重命名",
+        "updateMetadata": "更新元数据",
         "delete": "删除",
         "deleteTitle": "删除收藏",
         "deleteConfirm": "确定要删除收藏 {{name}} 吗？"
@@ -475,11 +476,12 @@
   },
   "batchEditor": {
     "contextMenu": {
-      "addTo": "批量添加至",
-      "removeFrom": "批量移除出",
+      "addTo": "添加至",
+      "removeFrom": "移除出",
       "newCollection": "新收藏",
-      "editInfo": "批量修改游戏信息",
-      "delete": "批量删除"
+      "editInfo": "编辑信息",
+      "updateMetadata": "更新元数据",
+      "delete": "删除"
     },
     "information": {
       "incrementalMode": "增量模式",
@@ -505,6 +507,7 @@
     "floatingButtons": {
       "addToCollection": "添加到集合",
       "editInfo": "编辑信息",
+      "updateMetadata": "更新元数据",
       "delete": "删除",
       "cancel": "取消",
       "selected": "已选择 {{count}} 项"
@@ -523,6 +526,27 @@
         "success": "{{count}} 个游戏已删除",
         "error": "删除{{count}} 个游戏失败: {{message}}"
       }
+    }
+  },
+  "updater": {
+    "fields": {
+      "#all": "所有字段",
+      "#missing": "缺失字段",
+      "name": "名称",
+      "originalName": "原始名称",
+      "releaseDate": "发行日期",
+      "description": "描述",
+      "developers": "开发商",
+      "publishers": "发行商",
+      "genres": "类型",
+      "platforms": "平台",
+      "tags": "标签",
+      "relatedSites": "相关网站",
+      "extra": "额外信息",
+      "cover": "封面",
+      "background": "背景",
+      "logo": "徽标",
+      "icon": "图标"
     }
   }
 }

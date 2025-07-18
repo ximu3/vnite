@@ -4,6 +4,7 @@ import { toast } from 'sonner'
 import { useGameAdderStore } from './store'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useGameMetadataUpdaterStore } from '../GameMetadataUpdater/store'
 import { ipcManager } from '~/app/ipc'
 
 export function BackgroundList(): React.JSX.Element {
@@ -19,6 +20,14 @@ export function BackgroundList(): React.JSX.Element {
     dirPath,
     handleClose
   } = useGameAdderStore()
+
+  const {
+    setIsOpen: setIsGameMetadataUpdaterDialogOpen,
+    setBackgroundUrl: setGameMetadataUpdaterBackgroundUrl,
+    setDataSource: setGameMetadataUpdaterDataSource,
+    setDataSourceId: setGameMetadataUpdaterDataSourceId,
+    setGameIds: setGameMetadataUpdaterGameIds
+  } = useGameMetadataUpdaterStore()
 
   const [isAdding, setIsAdding] = useState(false)
 
@@ -86,12 +95,14 @@ export function BackgroundList(): React.JSX.Element {
     toast.promise(
       (async (): Promise<void> => {
         if (dbId) {
-          await ipcManager.invoke('adder:update-game-metadata', {
-            dbId,
-            dataSource,
-            dataSourceId,
-            backgroundUrl
-          })
+          setGameMetadataUpdaterBackgroundUrl(backgroundUrl)
+          setGameMetadataUpdaterDataSource(dataSource)
+          setGameMetadataUpdaterGameIds([dbId])
+          setIsGameMetadataUpdaterDialogOpen(true)
+          setIsAdding(false)
+          setGameMetadataUpdaterDataSourceId(dataSourceId)
+          handleClose()
+          return
         } else {
           await ipcManager.invoke('adder:add-game-to-db', {
             dataSource,

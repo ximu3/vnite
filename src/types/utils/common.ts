@@ -1,16 +1,6 @@
-declare module 'eslint-plugin-react-hooks' {
-  import type { ESLint } from 'eslint'
-
-  const plugin: Omit<ESLint.Plugin, 'configs'> & {
-    configs: Record<string, ESLint.ConfigData>
-  }
-
-  export default plugin
-}
-
 export type ScanStatus = 'idle' | 'scanning' | 'completed' | 'error'
 
-interface ScannerProgress {
+export interface ScannerProgress {
   status: ScanStatus
   processedFolders: number
   totalFolders: number
@@ -26,7 +16,7 @@ interface ScannerProgress {
   errorMessage?: string
 }
 
-interface OverallScanProgress {
+export interface OverallScanProgress {
   status: ScanStatus
   currentScannerId: string
   processedScanners: number

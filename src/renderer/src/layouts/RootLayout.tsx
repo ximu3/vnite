@@ -6,6 +6,7 @@ import { Sidebar } from '../components/Sidebar'
 import { GameAdder } from '../pages/GameAdder'
 import { GameBatchAdder } from '../pages/GameBatchAdder'
 import { UpdateDialog } from '../pages/Updater'
+import { GameMetadataUpdaterDialog } from '../pages/GameMetadataUpdater'
 import { Importer } from '../pages/Importer'
 import { Setup } from '../Setup'
 import { Light } from '../pages/Light'
@@ -35,6 +36,7 @@ export function RootLayout(): React.JSX.Element {
       <Toaster />
       <UpdateDialog />
       <Importer />
+      <GameMetadataUpdaterDialog />
     </ThemeProvider>
   )
 }
