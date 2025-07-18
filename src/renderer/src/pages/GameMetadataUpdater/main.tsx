@@ -25,6 +25,7 @@ import { useGameMetadataUpdaterStore } from './store'
 import { useConfigState } from '~/hooks'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { cn } from '~/utils'
+import { delay } from '@appUtils'
 
 export function GameMetadataUpdaterDialog(): React.JSX.Element {
   const {
@@ -224,13 +225,14 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
       }
 
       await ipcManager.invoke('adder:batch-update-game-metadata', params)
-
+      await delay(1000) // 等待一段时间以确保进度更新
       toast.success(`批量更新完成! 成功: ${progress.successful}, 失败: ${progress.failed}`, {
         id: 'batch-update'
       })
 
       // 不自动关闭对话框，让用户查看详细结果
     } catch (error) {
+      await delay(1000) // 等待一段时间以确保进度更新
       toast.error(`批量更新出错: ${error instanceof Error ? error.message : '未知错误'}`, {
         id: 'batch-update'
       })
@@ -372,29 +374,30 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
               <Progress value={(progress.completed / progress.total) * 100} className="h-2" />
 
               <div className="flex justify-between text-sm mt-2">
-                <span className="text-green-500">成功: {progress.successful}</span>
-                <span className="text-red-500">失败: {progress.failed}</span>
+                <span className="text-primary">成功: {progress.successful}</span>
+                <span className="text-destructive">失败: {progress.failed}</span>
               </div>
             </div>
 
             <ScrollArea className="h-[400px]">
               <div className="space-y-2 py-2 pr-4">
                 {progress.results.map((result, index) => (
-                  <Card
-                    key={index}
-                    className={result.status === 'error' ? 'border-red-400' : 'border-green-400'}
-                  >
+                  <Card key={index} className="pb-5">
                     <CardHeader className="">
-                      <CardTitle className="text-base flex justify-between">
+                      <CardTitle className="text-base flex justify-between items-center">
                         <span className="truncate max-w-[300px]">
                           {result.gameName || result.gameId}
                         </span>
-                        <span>{result.status === 'error' ? '❌' : '✅'}</span>
+                        {result.status === 'error' ? (
+                          <span className="icon-[mdi--error-outline] text-destructive w-5 h-5"></span>
+                        ) : (
+                          <span className="icon-[mdi--success-circle-outline] text-primary w-5 h-5"></span>
+                        )}
                       </CardTitle>
                     </CardHeader>
                     {result.status === 'error' && (
                       <CardContent className="">
-                        <CardDescription className="text-red-400">
+                        <CardDescription className="text-destructive">
                           错误: {result.error}
                         </CardDescription>
                       </CardContent>
