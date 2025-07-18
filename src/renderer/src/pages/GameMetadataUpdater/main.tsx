@@ -43,7 +43,7 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
   const [options, setOptions] = useState<GameMetadataUpdateOptions>({
     overwriteExisting: true,
     updateImages: true,
-    mergeStrategy: 'merge'
+    mergeStrategy: 'replace'
   })
   const [concurrency, setConcurrency] = useState<number>(5)
   const [isUpdating, setIsUpdating] = useState<boolean>(false)
