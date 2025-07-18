@@ -32,8 +32,11 @@ export function BackgroundList(): React.JSX.Element {
   const [isAdding, setIsAdding] = useState(false)
 
   useEffect(() => {
-    toast.promise(
-      (async (): Promise<string[]> => {
+    const fetchBackgrounds = async (): Promise<void> => {
+      try {
+        toast.loading(t('gameAdder.backgrounds.notifications.loading'), {
+          id: 'loading-backgrounds'
+        })
         const result = await ipcManager.invoke('scraper:get-game-backgrounds', dataSource, {
           type: 'id',
           value: dataSourceId
@@ -41,18 +44,20 @@ export function BackgroundList(): React.JSX.Element {
         if (result.length === 0) {
           toast.error(t('gameAdder.backgrounds.notifications.noImages'))
           setBackgroundUrl('')
-          return []
+          return
         }
         setBackgroundUrl(result[0])
         setBackgroundList(result)
-        return result
-      })(),
-      {
-        loading: t('gameAdder.backgrounds.notifications.loading'),
-        success: t('gameAdder.backgrounds.notifications.success'),
-        error: (err) => t('gameAdder.backgrounds.notifications.error', { message: err.message })
+        toast.success(t('gameAdder.backgrounds.notifications.success'), {
+          id: 'loading-backgrounds'
+        })
+      } catch (error) {
+        toast.error(t('gameAdder.backgrounds.notifications.error', { message: String(error) }), {
+          id: 'loading-backgrounds'
+        })
       }
-    )
+    }
+    fetchBackgrounds()
   }, [])
 
   useEffect(() => {
@@ -92,37 +97,40 @@ export function BackgroundList(): React.JSX.Element {
   async function addGameToDB(): Promise<void> {
     if (isAdding) return
     setIsAdding(true)
-    toast.promise(
-      (async (): Promise<void> => {
-        if (dbId) {
-          setGameMetadataUpdaterBackgroundUrl(backgroundUrl)
-          setGameMetadataUpdaterDataSource(dataSource)
-          setGameMetadataUpdaterGameIds([dbId])
-          setIsGameMetadataUpdaterDialogOpen(true)
-          setIsAdding(false)
-          setGameMetadataUpdaterDataSourceId(dataSourceId)
-          handleClose()
-          return
-        } else {
-          await ipcManager.invoke('adder:add-game-to-db', {
-            dataSource,
-            dataSourceId,
-            backgroundUrl,
-            dirPath
-          })
-        }
+    try {
+      if (dbId) {
+        setGameMetadataUpdaterBackgroundUrl(backgroundUrl)
+        setGameMetadataUpdaterDataSource(dataSource)
+        setGameMetadataUpdaterGameIds([dbId])
+        setIsGameMetadataUpdaterDialogOpen(true)
+        setIsAdding(false)
+        setGameMetadataUpdaterDataSourceId(dataSourceId)
         setIsAdding(false)
         handleClose()
-      })(),
-      {
-        loading: t('gameAdder.backgrounds.notifications.adding'),
-        success: t('gameAdder.backgrounds.notifications.addSuccess'),
-        error: (err) => {
-          setIsAdding(false)
-          return t('gameAdder.backgrounds.notifications.addError', { message: err.message })
-        }
+        return
+      } else {
+        toast.loading(t('gameAdder.backgrounds.notifications.adding'), {
+          id: 'adding-game'
+        })
+        await ipcManager.invoke('adder:add-game-to-db', {
+          dataSource,
+          dataSourceId,
+          backgroundUrl,
+          dirPath
+        })
+        setIsAdding(false)
+        handleClose()
+        toast.success(t('gameAdder.backgrounds.notifications.added'), {
+          id: 'adding-game'
+        })
+        return
       }
-    )
+    } catch (error) {
+      setIsAdding(false)
+      toast.error(t('gameAdder.backgrounds.notifications.addError', { message: String(error) }), {
+        id: 'adding-game'
+      })
+    }
   }
 
   return (
