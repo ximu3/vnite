@@ -65,6 +65,7 @@ type MainIpcEvents =
       'system:get-language': () => string
       'system:check-admin-permissions': () => boolean
       'system:check-if-portable-directory-needs-admin-rights': () => boolean
+      'system:get-fonts': () => string[]
 
       'app:update-language': (language: string) => void
       'app:get-app-version': () => string

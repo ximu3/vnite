@@ -70,6 +70,7 @@ export interface configDocs {
       opacity: number
     }
     enableNSFWBlur: boolean
+    font: string
   }
   hotkeys: {
     library: string
@@ -258,7 +259,8 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       blur: 15,
       opacity: 0.85
     },
-    enableNSFWBlur: true
+    enableNSFWBlur: true,
+    font: 'system-ui'
   },
   hotkeys: {
     library: 'ctrl+l',

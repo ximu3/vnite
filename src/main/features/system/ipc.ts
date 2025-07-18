@@ -22,7 +22,8 @@ import {
   updateOpenAtLogin,
   getLanguage,
   updateLanguage,
-  saveGameIconByFile
+  saveGameIconByFile,
+  getSystemFonts
 } from './services'
 import { mainWindow } from '~/index'
 
@@ -89,6 +90,10 @@ export function setupSystemIPC(): void {
       return await selectMultiplePathDialog(properties, extensions, defaultPath)
     }
   )
+
+  ipcManager.handle('system:get-fonts', async () => {
+    return await getSystemFonts()
+  })
 
   ipcManager.handle('system:get-path-size', async (_, paths: string[]): Promise<number> => {
     return await getTotalPathSize(paths)

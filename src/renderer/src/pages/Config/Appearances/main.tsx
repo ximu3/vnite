@@ -7,9 +7,13 @@ import { useTranslation } from 'react-i18next'
 import { useAttachmentStore } from '~/stores'
 import { cn } from '~/utils'
 import { ipcManager } from '~/app/ipc'
+import { useState } from 'react'
+import { FontSettingsDialog } from './FontSettingsDialog'
 
 export function Appearances(): React.JSX.Element {
   const { t } = useTranslation('config')
+
+  const [fontDialogOpen, setFontDialogOpen] = useState(false)
 
   async function selectBackgroundImage(): Promise<void> {
     const filePath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
@@ -114,6 +118,25 @@ export function Appearances(): React.JSX.Element {
                 debounceMs={300}
               />
             </div>
+          </div>
+          {/* Font Settings */}
+          <div className={cn('space-y-4')}>
+            <div className={cn('border-b pb-2')}>{t('appearances.font.title')}</div>
+            <div className={cn('')}>
+              <ConfigItemPure
+                title={t('appearances.font.manageFont')}
+                description={t('appearances.font.manageFontDescription')}
+              >
+                <Button
+                  variant="outline"
+                  onClick={() => setFontDialogOpen(true)}
+                  className="w-full justify-between font-normal"
+                >
+                  {t('appearances.font.manage')}
+                </Button>
+              </ConfigItemPure>
+            </div>
+            <FontSettingsDialog isOpen={fontDialogOpen} onOpenChange={setFontDialogOpen} />
           </div>
           {/* Showcase Settings */}
           <div className={cn('space-y-4')}>

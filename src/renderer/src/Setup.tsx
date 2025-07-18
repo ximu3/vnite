@@ -1,17 +1,19 @@
 import { useEffect } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { useRouter } from '@tanstack/react-router'
-import { setup } from '~/utils'
-import { useConfigState } from './hooks'
+import { setup, changeFont } from '~/utils'
 import { useGameAdderStore } from './pages/GameAdder/store'
 import { randomGame } from './stores/game'
+import { useConfigState } from './hooks'
 
 export function Setup(): React.JSX.Element {
   const router = useRouter()
+  const [font] = useConfigState('appearances.font')
   useEffect(() => {
     setup(router)
   }, [])
 
+  changeFont(font)
   const [libraryHotkey] = useConfigState('hotkeys.library')
   const [recordHotkey] = useConfigState('hotkeys.record')
   const [scannerHotkey] = useConfigState('hotkeys.scanner')

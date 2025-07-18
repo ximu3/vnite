@@ -63,6 +63,7 @@
     "electron-window-state": "^5.0.3",
     "expr-eval": "^2.0.2",
     "file-type": "^21.0.0",
+    "font-list": "^1.5.1",
     "html-react-parser": "^5.2.5",
     "html2canvas": "^1.4.1",
     "i18next": "^25.3.1",

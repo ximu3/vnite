@@ -8,6 +8,15 @@ import { generateUUID } from '@appUtils'
 import { useRouter } from '@tanstack/react-router'
 import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
 
+export function changeFont(fontFamily: string | null, defaultFallback: string = 'system-ui'): void {
+  if (!fontFamily) {
+    document.documentElement.style.setProperty('--font-current', `"${defaultFallback}"`)
+    return
+  }
+  // 设置字体样式
+  document.documentElement.style.setProperty('--font-current', `"${fontFamily}"`)
+}
+
 export function navigateToGame(
   router: ReturnType<typeof useRouter>,
   gameId: string,
