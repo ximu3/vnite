@@ -277,15 +277,15 @@ export function GamePoster({
                     {/* 添加多选圆点到overlay内部左上角 */}
                     <div
                       className={cn(
-                        'absolute left-2 top-2 shadow-md z-20 rounded-full w-5 h-5 flex items-center justify-center cursor-pointer',
-                        'transition-all duration-200',
+                        'absolute left-2 top-2 shadow-md z-20 rounded-full w-4 h-4 flex items-center justify-center cursor-pointer',
+                        'transition-colors duration-200',
                         isSelected
                           ? 'bg-primary text-primary-foreground'
-                          : 'bg-background/50 hover:bg-background/70'
+                          : 'bg-muted/70 hover:bg-muted/90'
                       )}
                       onClick={handleSelect}
                     >
-                      {isSelected && <span className="icon-[mdi--check] w-4 h-4" />}
+                      {isSelected && <span className="icon-[mdi--check] w-3 h-3" />}
                     </div>
 
                     {/* Play button */}

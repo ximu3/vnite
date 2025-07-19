@@ -8,7 +8,9 @@ interface GameBatchEditorStore {
 
   // Operating Methods
   selectGame: (gameId: string) => void
+  selectGames: (gameIds: string[]) => void
   unselectGame: (gameId: string) => void
+  unselectGames: (gameIds: string[]) => void
   clearSelection: () => void
   setLastSelectedId: (id: string | null) => void
 
@@ -47,6 +49,23 @@ export const useGameBatchEditorStore = create<GameBatchEditorStore>((set, get) =
     })
     console.warn(`[DEBUG] Select game: ${gameId}`)
   },
+  // Select multiple games
+  selectGames: (gameIds: string[]): void => {
+    set((state) => {
+      const newMap: Record<string, boolean> = { ...state.selectedGamesMap }
+      gameIds.forEach((gameId) => {
+        if (!newMap[gameId]) {
+          newMap[gameId] = true
+        }
+      })
+      const selectedCount = Object.keys(newMap).length
+      return {
+        selectedGamesMap: newMap,
+        isBatchMode: selectedCount > 1
+      }
+    })
+    console.warn(`[DEBUG] Select games: ${gameIds.join(', ')}`)
+  },
 
   // Unselect a game
   unselectGame: (gameId: string): void => {
@@ -65,6 +84,24 @@ export const useGameBatchEditorStore = create<GameBatchEditorStore>((set, get) =
       }
     })
     console.warn(`[DEBUG] Unselect game: ${gameId}`)
+  },
+
+  // Unselect multiple games
+  unselectGames: (gameIds: string[]): void => {
+    set((state) => {
+      const newMap: Record<string, boolean> = { ...state.selectedGamesMap }
+      gameIds.forEach((gameId) => {
+        if (newMap[gameId]) {
+          delete newMap[gameId]
+        }
+      })
+      const selectedCount = Object.keys(newMap).length
+      return {
+        selectedGamesMap: newMap,
+        isBatchMode: selectedCount > 1
+      }
+    })
+    console.warn(`[DEBUG] Unselect games: ${gameIds.join(', ')}`)
   },
 
   // Clear all selections
