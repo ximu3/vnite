@@ -73,7 +73,13 @@ export function ConfigItem<
 
   const handleSelectChange = useCallback(
     async (value: string) => {
-      await setValueAndSave(value as any)
+      if (value === 'true') {
+        await setValueAndSave(true as any)
+      } else if (value === 'false') {
+        await setValueAndSave(false as any)
+      } else {
+        await setValueAndSave(value as any)
+      }
       if (onChange) {
         await onChange(value)
       }
