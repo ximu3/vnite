@@ -35,7 +35,7 @@ export function ManageMenu({
   const [playStatus, setPlayStatus] = useGameState(gameId, 'record.playStatus')
   const [score, setScore] = useGameState(gameId, 'record.score')
   const [preScore, setPreScore] = useState(score === -1 ? '' : score.toString())
-  const [selectedGroup, _setSelectedGroup] = useConfigState('game.gameList.selectedGroup')
+  const [selectedGroup] = useConfigState('game.gameList.selectedGroup')
   const [isScoreDialogOpen, setIsScoreDialogOpen] = useState(false)
   const { refreshGameList } = useLibrarybarStore.getState()
   const setIsOpen = useGameAdderStore((state) => state.setIsOpen)

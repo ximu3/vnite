@@ -17,14 +17,14 @@ import { ipcManager } from '~/app/ipc'
 
 export function FileLauncher({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
-  const [path, setPath, savePath] = useGameLocalState(gameId, 'launcher.fileConfig.path', true)
   const [workingDirectory, setWorkingDirectory, saveWorkingDirectory] = useGameLocalState(
     gameId,
     'launcher.fileConfig.workingDirectory',
+    'launcher.fileConfig.path',
     true
   )
   const [monitorMode, setMonitorMode] = useGameLocalState(gameId, 'launcher.fileConfig.monitorMode')
-  const [monitorPath, setMonitorPath, saveMonitorPath] = useGameLocalState(
+  const [monitorPath, setMonitorPath, saveMonitorPath, setMonitorPathAndSave] = useGameLocalState(
     gameId,
     'launcher.fileConfig.monitorPath',
     true
@@ -35,10 +35,6 @@ export function FileLauncher({ gameId }: { gameId: string }): React.JSX.Element 
     if (!filePath) {
       return
     }
-    setPath(filePath)
-    savePath()
-  }
-
   async function selectWorkingDirectory(): Promise<void> {
     const workingDirectoryPath = await ipcManager.invoke('system:select-path-dialog', [
       'openDirectory'
@@ -48,6 +44,7 @@ export function FileLauncher({ gameId }: { gameId: string }): React.JSX.Element 
     }
     setWorkingDirectory(workingDirectoryPath)
     saveWorkingDirectory()
+    await setPathAndSave(filePath)
   }
 
   async function selectMonitorPath(): Promise<void> {
@@ -56,16 +53,14 @@ export function FileLauncher({ gameId }: { gameId: string }): React.JSX.Element 
       if (!monitorPath) {
         return
       }
-      setMonitorPath(monitorPath)
-      saveMonitorPath()
+      await setMonitorPathAndSave(monitorPath)
     }
     if (monitorMode === 'folder') {
       const monitorPath = await ipcManager.invoke('system:select-path-dialog', ['openDirectory'])
       if (!monitorPath) {
         return
       }
-      setMonitorPath(monitorPath)
-      saveMonitorPath()
+      await setMonitorPathAndSave(monitorPath)
     }
   }
 

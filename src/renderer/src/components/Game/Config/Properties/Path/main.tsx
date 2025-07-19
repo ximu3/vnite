@@ -23,8 +23,16 @@ import { ipcManager } from '~/app/ipc'
 export function Path({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [monitorPath] = useGameLocalState(gameId, 'launcher.fileConfig.monitorPath')
-  const [gamePath, setGamePath, saveGamePath] = useGameLocalState(gameId, 'path.gamePath', true)
-  const [savePaths, setSavePaths, saveSavePaths] = useGameLocalState(gameId, 'path.savePaths', true)
+  const [gamePath, setGamePath, saveGamePath, setGamePathAndSave] = useGameLocalState(
+    gameId,
+    'path.gamePath',
+    true
+  )
+  const [savePaths, setSavePaths, saveSavePaths, setSavePathsAndSave] = useGameLocalState(
+    gameId,
+    'path.savePaths',
+    true
+  )
   const [markerPath] = useGameLocalState(gameId, 'utils.markPath')
   const [maxSaveBackups, setMaxSaveBackups] = useGameState(gameId, 'save.maxBackups')
   const [savePathSize, setSavePathSize] = useState(0)
@@ -62,8 +70,7 @@ export function Path({ gameId }: { gameId: string }): React.JSX.Element {
     if (!filePath) {
       return
     }
-    setGamePath(filePath)
-    await saveGamePath()
+    await setGamePathAndSave(filePath)
     const isIconAccessible = await ipcManager.invoke(
       'db:check-attachment',
       'game',
@@ -98,8 +105,7 @@ export function Path({ gameId }: { gameId: string }): React.JSX.Element {
       return
     }
     const newSavePath = savePaths.concat(folderPath)
-    setSavePaths(newSavePath.filter(Boolean))
-    saveSavePaths()
+    await setSavePathsAndSave(newSavePath.filter(Boolean))
   }
 
   async function selectSaveFilePath(): Promise<void> {
@@ -113,8 +119,7 @@ export function Path({ gameId }: { gameId: string }): React.JSX.Element {
       return
     }
     const newSavePath = savePaths.concat(filePath)
-    setSavePaths(newSavePath.filter(Boolean))
-    saveSavePaths()
+    await setSavePathsAndSave(newSavePath.filter(Boolean))
   }
 
   return (

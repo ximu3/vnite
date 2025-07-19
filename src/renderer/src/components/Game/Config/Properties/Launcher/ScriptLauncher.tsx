@@ -23,16 +23,13 @@ export function ScriptLauncher({ gameId }: { gameId: string }): React.JSX.Elemen
     'launcher.scriptConfig.command',
     true
   )
-  const [workingDirectory, setWorkingDirectory, saveWorkingDirectory] = useGameLocalState(
-    gameId,
-    'launcher.scriptConfig.workingDirectory',
-    true
-  )
+  const [workingDirectory, setWorkingDirectory, saveWorkingDirectory, setWorkingDirectoryAndSave] =
+    useGameLocalState(gameId, 'launcher.scriptConfig.workingDirectory', true)
   const [monitorMode, setMonitorMode] = useGameLocalState(
     gameId,
     'launcher.scriptConfig.monitorMode'
   )
-  const [monitorPath, setMonitorPath, saveMonitorPath] = useGameLocalState(
+  const [monitorPath, setMonitorPath, saveMonitorPath, setMonitorPathAndSave] = useGameLocalState(
     gameId,
     'launcher.scriptConfig.monitorPath',
     true
@@ -45,8 +42,7 @@ export function ScriptLauncher({ gameId }: { gameId: string }): React.JSX.Elemen
     if (!workingDirectoryPath) {
       return
     }
-    setWorkingDirectory(workingDirectoryPath)
-    saveWorkingDirectory()
+    await setWorkingDirectoryAndSave(workingDirectoryPath)
   }
 
   async function selectMonitorPath(): Promise<void> {
@@ -55,16 +51,14 @@ export function ScriptLauncher({ gameId }: { gameId: string }): React.JSX.Elemen
       if (!monitorPath) {
         return
       }
-      setMonitorPath(monitorPath)
-      saveMonitorPath()
+      await setMonitorPathAndSave(monitorPath)
     }
     if (monitorMode === 'folder') {
       const monitorPath = await ipcManager.invoke('system:select-path-dialog', ['openDirectory'])
       if (!monitorPath) {
         return
       }
-      setMonitorPath(monitorPath)
-      saveMonitorPath()
+      await setMonitorPathAndSave(monitorPath)
     }
   }
 

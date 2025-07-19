@@ -24,8 +24,8 @@ export function PlayStatusGames(): React.JSX.Element {
   const [recentGamesAccordionOpen, setRecentGamesAccordionOpen] = useConfigState(
     'game.gameList.recentGamesAccordionOpen'
   )
-  const [by, _setBy] = useConfigState('game.gameList.sort.by')
-  const [order, _setOrder] = useConfigState('game.gameList.sort.order')
+  const [by] = useConfigState('game.gameList.sort.by')
+  const [order] = useConfigState('game.gameList.sort.order')
 
   const fields_tmp = getAllValuesInKey('record.playStatus')
   const fields = playStatusOrder.filter((item) => fields_tmp.includes(item))

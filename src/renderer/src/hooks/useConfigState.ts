@@ -11,7 +11,12 @@ export function useConfigState<
   path: Path,
   saveMode: SaveMode = false as SaveMode
 ): SaveMode extends true
-  ? [Get<configDocs, Path>, (value: Get<configDocs, Path>) => void, () => Promise<void>]
+  ? [
+      Get<configDocs, Path>,
+      (value: Get<configDocs, Path>) => void,
+      () => Promise<void>,
+      (value: Get<configDocs, Path>) => Promise<void>
+    ]
   : [Get<configDocs, Path>, (value: Get<configDocs, Path>) => Promise<void>] {
   const initialValue = useConfigStore.getState().getConfigValue(path)
 
@@ -67,17 +72,38 @@ export function useConfigState<
   )
 
   const save = useCallback(async () => {
-    if (!saveMode || isEqual(localValue, originalValue)) return
+    if (!saveMode) return
+
+    // 使用 ref 中的最新值，而不是闭包捕获的 localValue
+    const currentValue = localValueRef.current
+
+    if (isEqual(currentValue, originalValue)) return
 
     // Apply the local changes to the store
-    await useConfigStore.getState().setConfigValue(path, localValue)
+    await useConfigStore.getState().setConfigValue(path, currentValue)
 
     // Update the original value to match the saved value
-    setOriginalValue(localValue)
-  }, [saveMode, path, localValue, originalValue])
+    setOriginalValue(currentValue)
+  }, [saveMode, path, originalValue])
+
+  const setValueAndSave = useCallback(
+    async (newValue: Get<configDocs, Path>) => {
+      if (isEqual(newValue, localValue) || !saveMode) return
+
+      // 更新本地状态
+      setLocalValue(newValue)
+
+      // 直接保存到 store
+      await useConfigStore.getState().setConfigValue(path, newValue)
+
+      // 更新原始值
+      setOriginalValue(newValue)
+    },
+    [localValue, path, saveMode]
+  )
 
   if (saveMode) {
-    return [localValue, setValue, save] as any
+    return [localValue, setValue, save, setValueAndSave] as any
   } else {
     return [localValue, setValue] as any
   }

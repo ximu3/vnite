@@ -13,6 +13,7 @@ import { Slider } from '@ui/slider'
 import { Button } from '@ui/button'
 import { HotkeySetting } from '@ui/hotkey-setting'
 import { cn } from '~/utils'
+import { ipcManager } from '~/app/ipc'
 
 export function ConfigItem<
   T extends HookType,
@@ -24,6 +25,7 @@ export function ConfigItem<
     gameId,
     collectionId,
     pluginId,
+    defaultValue,
     title,
     description,
     controlType,
@@ -32,12 +34,13 @@ export function ConfigItem<
     controlClassName = '',
     onChange
   } = props
-  const [value, setValue, save] = useStateHook(
+  const [value, setValue, save, setValueAndSave] = useStateHook(
     hookType,
     path,
     gameId as T extends 'game' | 'gameLocal' ? string : undefined,
     collectionId as T extends 'gameCollection' ? string : undefined,
     pluginId as T extends 'plugin' ? string : undefined,
+    defaultValue as T extends 'plugin' ? any : undefined,
     true
   )
 
@@ -60,24 +63,22 @@ export function ConfigItem<
 
   const handleSwitchChange = useCallback(
     async (checked: boolean) => {
-      setValue(checked as any)
-      await save()
+      await setValueAndSave(checked as any)
       if (onChange) {
         await onChange(checked)
       }
     },
-    [setValue, save, onChange]
+    [setValueAndSave, onChange]
   )
 
   const handleSelectChange = useCallback(
     async (value: string) => {
-      setValue(value as any)
-      await save()
+      await setValueAndSave(value as any)
       if (onChange) {
         await onChange(value)
       }
     },
-    [setValue, save, onChange]
+    [setValueAndSave, onChange]
   )
 
   const handleDateInputChange = useCallback(
@@ -90,13 +91,12 @@ export function ConfigItem<
 
   const handleArrayChange = useCallback(
     async (newArray: string[]) => {
-      setValue(newArray as any)
-      await save()
+      await setValueAndSave(newArray as any)
       if (onChange) {
         await onChange(newArray)
       }
     },
-    [setValue, save, onChange]
+    [setValueAndSave, onChange]
   )
 
   const handleSliderChange = useCallback(
@@ -126,12 +126,9 @@ export function ConfigItem<
       _filters?: Array<{ name: string; extensions: string[] }>
     ) => {
       try {
-        // Import ipcManager dynamically to avoid issues
-        const { ipcManager } = await import('~/app/ipc')
         const selectedPath = await ipcManager.invoke('system:select-path-dialog', [dialogType])
         if (selectedPath) {
-          setValue(selectedPath as any)
-          await save()
+          await setValueAndSave(selectedPath as any)
           if (onChange) {
             await onChange(selectedPath)
           }
@@ -140,18 +137,17 @@ export function ConfigItem<
         console.error('Failed to select file:', error)
       }
     },
-    [setValue, save, onChange]
+    [setValueAndSave, onChange]
   )
 
   const handleHotkeyChange = useCallback(
     async (newHotkey: string) => {
-      setValue(newHotkey as any)
-      await save()
+      await setValueAndSave(newHotkey as any)
       if (onChange) {
         await onChange(newHotkey)
       }
     },
-    [setValue, save, onChange]
+    [setValueAndSave, onChange]
   )
 
   const handleBlur = useCallback(

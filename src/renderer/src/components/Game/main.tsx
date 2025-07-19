@@ -28,8 +28,12 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   // Game settings-related state
   const initialPosition = { x: 1.5, y: 24 }
   const initialSize = 100
-  const [logoPosition, setLogoPosition] = useGameState(gameId, 'apperance.logo.position')
-  const [logoSize, setLogoSize] = useGameState(gameId, 'apperance.logo.size')
+  const [logoPosition, setLogoPosition, saveLogoPosition] = useGameState(
+    gameId,
+    'apperance.logo.position',
+    true
+  )
+  const [logoSize, setLogoSize, saveLogoSize] = useGameState(gameId, 'apperance.logo.size', true)
   const [logoVisible, setLogoVisible] = useGameState(gameId, 'apperance.logo.visible')
 
   const [localLogoPosition, setLocalLogoPosition] = useState(initialPosition)
@@ -49,14 +53,14 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
 
   const handleMouseUp = async (): Promise<void> => {
     if (dragging) {
-      await setLogoPosition(localLogoPosition)
+      setLogoPosition(localLogoPosition)
     }
     setDragging(false)
   }
 
   const handleReset = async (): Promise<void> => {
     setLocalLogoPosition(initialPosition)
-    await setLogoPosition(initialPosition)
+    setLogoPosition(initialPosition)
   }
 
   // Logo-related handler functions
@@ -173,7 +177,11 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
           <Button
             variant={'default'}
             className={cn('bg-primary hover:bg-primary/95')}
-            onClick={() => setIsEditingLogo(false)}
+            onClick={() => {
+              setIsEditingLogo(false)
+              saveLogoPosition()
+              saveLogoSize()
+            }}
           >
             {t('utils:common.confirm')}
           </Button>

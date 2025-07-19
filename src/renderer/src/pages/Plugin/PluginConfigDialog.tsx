@@ -86,6 +86,7 @@ export function PluginConfigDialog({
       path: config.id as any,
       pluginId,
       title: config.title,
+      defaultValue: config.default,
       description: config.description,
       controlClassName: config.controlClassName
     }

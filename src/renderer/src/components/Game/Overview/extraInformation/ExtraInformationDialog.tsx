@@ -15,15 +15,15 @@ import { METADATA_EXTRA_PREDEFINED_KEYS } from '@appTypes/models'
 
 export function ExtraInformationDialog({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
-  const [extra, setExtra] = useGameState(gameId, 'metadata.extra')
+  const [extra, setExtra, saveExtra, setExtraAndSave] = useGameState(gameId, 'metadata.extra', true)
 
   const addNewItem = (): void => {
     const newItem = { key: '', value: [] }
-    setExtra([...extra, newItem])
+    setExtraAndSave([...extra, newItem])
   }
 
   const setPredefinedKey = (index: number, key: string): void => {
-    setExtra(
+    setExtraAndSave(
       extra.map((item, i) => {
         if (i === index) {
           return { ...item, key }
@@ -39,7 +39,7 @@ export function ExtraInformationDialog({ gameId }: { gameId: string }): React.JS
     const temp = newItems[index]
     newItems[index] = newItems[index - 1]
     newItems[index - 1] = temp
-    setExtra(newItems)
+    setExtraAndSave(newItems)
   }
 
   const moveItemDown = (index: number): void => {
@@ -48,13 +48,13 @@ export function ExtraInformationDialog({ gameId }: { gameId: string }): React.JS
     const temp = newItems[index]
     newItems[index] = newItems[index + 1]
     newItems[index + 1] = temp
-    setExtra(newItems)
+    setExtraAndSave(newItems)
   }
 
   const removeItem = (index: number): void => {
     const newItems = [...extra]
     newItems.splice(index, 1)
-    setExtra(newItems)
+    setExtraAndSave(newItems)
   }
 
   return (
@@ -118,6 +118,7 @@ export function ExtraInformationDialog({ gameId }: { gameId: string }): React.JS
                       })
                     )
                   }}
+                  onBlur={saveExtra}
                   placeholder={t('detail.overview.extraInformation.enterKey')}
                   className={cn('flex-grow')}
                 />
@@ -137,6 +138,7 @@ export function ExtraInformationDialog({ gameId }: { gameId: string }): React.JS
                     })
                   )
                 }}
+                onBlur={saveExtra}
                 placeholder={t('detail.overview.extraInformation.enterValue')}
                 tooltipText={t('detail.overview.extraInformation.valueTip')}
               />

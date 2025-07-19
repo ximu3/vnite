@@ -20,9 +20,15 @@ export function useStateHook<
   gameId: T extends 'game' | 'gameLocal' ? string : undefined,
   collectionId: T extends 'gameCollection' ? string : undefined,
   pluginId: T extends 'plugin' ? string : undefined,
+  defaultValue?: T extends 'plugin' ? any : undefined,
   saveMode: SaveMode = true as SaveMode
 ): SaveMode extends true
-  ? [Get<DocType<T>, Path>, (value: Get<DocType<T>, Path>) => void, () => Promise<void>]
+  ? [
+      Get<DocType<T>, Path>,
+      (value: Get<DocType<T>, Path>) => void,
+      () => Promise<void>,
+      (value: Get<DocType<T>, Path>) => Promise<void>
+    ]
   : [Get<DocType<T>, Path>, (value: Get<DocType<T>, Path>) => Promise<void>] {
   switch (hookType) {
     case 'config':
@@ -46,7 +52,7 @@ export function useStateHook<
     case 'plugin':
       if (!pluginId) throw new Error('pluginId is required for plugin hook')
       // eslint-disable-next-line react-hooks/rules-of-hooks
-      return usePluginState(pluginId, path as any, saveMode) as any
+      return usePluginState(pluginId, path as any, defaultValue, saveMode) as any
     default:
       throw new Error(`Unsupported hook type: ${hookType}`)
   }

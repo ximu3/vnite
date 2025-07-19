@@ -12,8 +12,8 @@ import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
 
 export function Search({ query }: { query: string }): React.JSX.Element {
-  const [by, _setBy] = useConfigState('game.gameList.sort.by')
-  const [order, _setOrder] = useConfigState('game.gameList.sort.order')
+  const [by] = useConfigState('game.gameList.sort.by')
+  const [order] = useConfigState('game.gameList.sort.order')
   const { t } = useTranslation('game')
   const games = sortGames(by, order, searchGames(query))
   return (

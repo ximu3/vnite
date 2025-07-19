@@ -3,7 +3,7 @@ import { usePluginStore } from '~/stores'
 import { isEqual } from 'lodash'
 
 /**
- * 插件状态Hook - 简单版本，参照useGameState设计
+ * 插件状态Hook
  *
  * @param pluginId 插件ID
  * @param key 数据键
@@ -16,7 +16,7 @@ export function usePluginState<T = any, SaveMode extends boolean = false>(
   defaultValue?: T,
   saveMode: SaveMode = false as SaveMode
 ): SaveMode extends true
-  ? [T, (value: T) => void, () => Promise<void>]
+  ? [T, (value: T) => void, () => Promise<void>, (value: T) => Promise<void>]
   : [T, (value: T) => Promise<void>] {
   const pluginStore = usePluginStore()
   const initialValue = pluginStore.getPluginValue(pluginId, key, defaultValue)
@@ -73,17 +73,38 @@ export function usePluginState<T = any, SaveMode extends boolean = false>(
   )
 
   const save = useCallback(async () => {
-    if (!saveMode || isEqual(localValue, originalValue)) return
+    if (!saveMode) return
+
+    // 使用 ref 中的最新值，而不是闭包捕获的 localValue
+    const currentValue = localValueRef.current
+
+    if (isEqual(currentValue, originalValue)) return
 
     // 将本地更改应用到store
-    await usePluginStore.getState().setPluginValue(pluginId, key, localValue)
+    await usePluginStore.getState().setPluginValue(pluginId, key, currentValue)
 
     // 更新原始值以匹配保存的值
-    setOriginalValue(localValue)
-  }, [saveMode, pluginId, key, localValue, originalValue])
+    setOriginalValue(currentValue)
+  }, [saveMode, pluginId, key, originalValue])
+
+  const setValueAndSave = useCallback(
+    async (newValue: T) => {
+      if (isEqual(newValue, localValue) || !saveMode) return
+
+      // 更新本地状态
+      setLocalValue(newValue)
+
+      // 直接保存到 store
+      await usePluginStore.getState().setPluginValue(pluginId, key, newValue)
+
+      // 更新原始值
+      setOriginalValue(newValue)
+    },
+    [localValue, pluginId, key, saveMode]
+  )
 
   if (saveMode) {
-    return [localValue, setValue, save] as any
+    return [localValue, setValue, save, setValueAndSave] as any
   } else {
     return [localValue, setValue] as any
   }

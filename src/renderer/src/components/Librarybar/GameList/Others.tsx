@@ -17,8 +17,8 @@ export function Others({
 }: {
   fieldName: 'metadata.developers' | 'metadata.genres'
 }): React.JSX.Element {
-  const [by, _setBy] = useConfigState('game.gameList.sort.by')
-  const [order, _setOrder] = useConfigState('game.gameList.sort.order')
+  const [by] = useConfigState('game.gameList.sort.by')
+  const [order] = useConfigState('game.gameList.sort.order')
 
   const fields = getAllValuesInKey(fieldName)
   const defaultValues = [...fields, 'all', 'recentGames']

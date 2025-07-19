@@ -6,7 +6,6 @@ import type {
   gameCollectionDoc
 } from '@appTypes/models'
 import type { Paths } from 'type-fest'
-import type { InputHTMLAttributes, TextareaHTMLAttributes } from 'react'
 
 // Hook类型定义
 export type HookType = 'config' | 'configLocal' | 'game' | 'gameLocal' | 'gameCollection' | 'plugin'
@@ -36,26 +35,11 @@ export interface BaseFormFieldProps<
   gameId?: T extends 'game' | 'gameLocal' ? string : never
   collectionId?: T extends 'gameCollection' ? string : never
   pluginId?: T extends 'plugin' ? string : never
+  defaultValue?: T extends 'plugin' ? any : never
   label?: string
   disabled?: boolean
   className?: string
 }
-
-// Input组件props
-export interface FormInputProps<
-  T extends HookType,
-  Path extends Paths<DocType<T>, { bracketNotation: true }>
-> extends BaseFormFieldProps<T, Path>,
-    Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'> {
-  type?: 'text' | 'number' | 'email' | 'password' | 'url'
-}
-
-// Textarea组件props
-export interface FormTextareaProps<
-  T extends HookType,
-  Path extends Paths<DocType<T>, { bracketNotation: true }>
-> extends BaseFormFieldProps<T, Path>,
-    Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'value' | 'onChange'> {}
 
 // ConfigItem控件类型
 export type ControlType =

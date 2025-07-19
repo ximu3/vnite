@@ -6,7 +6,7 @@ import { ArrayInput } from '~/components/ui/array-input'
 
 export function TagsDialog({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
-  const [tags, setTags] = useGameState(gameId, 'metadata.tags')
+  const [tags, setTags, saveTags] = useGameState(gameId, 'metadata.tags', true)
 
   return (
     <Dialog>
@@ -21,6 +21,7 @@ export function TagsDialog({ gameId }: { gameId: string }): React.JSX.Element {
           className={cn('grow resize-none')}
           value={tags}
           onChange={setTags}
+          onBlur={saveTags}
           placeholder={t('detail.overview.tags.empty')}
           isTextarea
           isHaveTooltip={false}

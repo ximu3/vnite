@@ -18,13 +18,13 @@ import { ipcManager } from '~/app/ipc'
 export function UrlLauncher({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [url, setUrl, saveUrl] = useGameLocalState(gameId, 'launcher.urlConfig.url', true)
-  const [browserPath, setBrowserPath, saveBrowserPath] = useGameLocalState(
+  const [browserPath, setBrowserPath, saveBrowserPath, setBrowserPathAndSave] = useGameLocalState(
     gameId,
     'launcher.urlConfig.browserPath',
     true
   )
   const [monitorMode, setMonitorMode] = useGameLocalState(gameId, 'launcher.urlConfig.monitorMode')
-  const [monitorPath, setMonitorPath, saveMonitorPath] = useGameLocalState(
+  const [monitorPath, setMonitorPath, saveMonitorPath, setMonitorPathAndSave] = useGameLocalState(
     gameId,
     'launcher.urlConfig.monitorPath',
     true
@@ -39,8 +39,7 @@ export function UrlLauncher({ gameId }: { gameId: string }): React.JSX.Element {
     if (!workingDirectoryPath) {
       return
     }
-    setBrowserPath(workingDirectoryPath)
-    saveBrowserPath()
+    await setBrowserPathAndSave(workingDirectoryPath)
   }
 
   async function selectMonitorPath(): Promise<void> {
@@ -49,16 +48,14 @@ export function UrlLauncher({ gameId }: { gameId: string }): React.JSX.Element {
       if (!monitorPath) {
         return
       }
-      setMonitorPath(monitorPath)
-      saveMonitorPath()
+      await setMonitorPathAndSave(monitorPath)
     }
     if (monitorMode === 'folder') {
       const monitorPath = await ipcManager.invoke('system:select-path-dialog', ['openDirectory'])
       if (!monitorPath) {
         return
       }
-      setMonitorPath(monitorPath)
-      saveMonitorPath()
+      await setMonitorPathAndSave(monitorPath)
     }
   }
 

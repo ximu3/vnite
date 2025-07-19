@@ -13,8 +13,8 @@ import { useFilterStore } from '../Filter/store'
 import { GameNav } from '../GameNav'
 
 export function FilterGame(): React.JSX.Element {
-  const [by, _setBy] = useConfigState('game.gameList.sort.by')
-  const [order, _setOrder] = useConfigState('game.gameList.sort.order')
+  const [by] = useConfigState('game.gameList.sort.by')
+  const [order] = useConfigState('game.gameList.sort.order')
   const { filter } = useFilterStore()
   const games = sortGames(by, order, filterGames(filter))
   const { t } = useTranslation('game')

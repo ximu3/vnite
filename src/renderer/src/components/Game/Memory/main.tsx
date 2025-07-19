@@ -9,7 +9,7 @@ import { ipcManager } from '~/app/ipc'
 
 export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
-  const [memoryList, setMemoryList, saveMemoryList] = useGameState(
+  const [memoryList, setMemoryList, saveMemoryList, setMemoryListAndSave] = useGameState(
     gameId,
     'memory.memoryList',
     true
@@ -37,8 +37,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
         // and then update the memoryList
         const newMemoryList = { ...memoryList }
         delete newMemoryList[memoryId]
-        setMemoryList(newMemoryList)
-        await saveMemoryList()
+        await setMemoryListAndSave(newMemoryList)
 
         // Finally, perform a back-end delete operation
         await ipcManager.invoke('game:delete-memory', gameId, memoryId)

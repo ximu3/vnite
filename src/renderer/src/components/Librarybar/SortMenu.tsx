@@ -24,7 +24,7 @@ export function SortMenu({
   children: React.ReactNode
 }): React.JSX.Element {
   const { t } = useTranslation('game')
-  const [selectedGroup, _setSelectedGroup] = useConfigState('game.gameList.selectedGroup')
+  const [selectedGroup] = useConfigState('game.gameList.selectedGroup')
   const [by, setBy] = useConfigState('game.gameList.sort.by')
   const [order, setOrder] = useConfigState('game.gameList.sort.order')
 

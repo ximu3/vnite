@@ -21,8 +21,8 @@ export function AllGameComponent({
 }: {
   scrollPosition: { x: number; y: number }
 }): React.JSX.Element {
-  const [by, _setBy] = useConfigState('game.gameList.sort.by')
-  const [order, _setOrder] = useConfigState('game.gameList.sort.order')
+  const [by] = useConfigState('game.gameList.sort.by')
+  const [order] = useConfigState('game.gameList.sort.order')
   const games = sortGames(by, order)
   const { t } = useTranslation('game')
 
