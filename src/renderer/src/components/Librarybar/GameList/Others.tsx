@@ -24,7 +24,7 @@ export function Others({
   const defaultValues = [...fields, 'all', 'recentGames']
 
   return (
-    <ScrollArea className={cn('w-full h-full pr-3 -mr-3')}>
+    <ScrollArea className={cn('w-full h-full pr-3 -mr-3 pb-1 pt-1')}>
       {defaultValues.length > 2 ? (
         <Accordion
           key={`${fieldName}_yes`}

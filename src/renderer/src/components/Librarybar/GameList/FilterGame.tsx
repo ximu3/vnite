@@ -19,7 +19,7 @@ export function FilterGame(): React.JSX.Element {
   const games = sortGames(by, order, filterGames(filter))
   const { t } = useTranslation('game')
   return (
-    <ScrollArea className={cn('w-full h-full pr-3 -mr-3')}>
+    <ScrollArea className={cn('w-full h-full pr-3 -mr-3 pb-1')}>
       <Accordion
         type="multiple"
         defaultValue={['filter']}

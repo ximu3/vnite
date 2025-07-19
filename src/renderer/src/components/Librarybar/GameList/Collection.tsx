@@ -23,7 +23,7 @@ export function Collection(): React.JSX.Element {
   }, [collections])
 
   return (
-    <ScrollArea className={cn('w-full h-full pr-3 -mr-3 pt-1')}>
+    <ScrollArea className={cn('w-full h-full pr-3 -mr-3 pt-1 pb-1')}>
       {defaultValues.length > 2 ? (
         <Accordion
           key={'collection-yes'}

@@ -47,7 +47,7 @@ export function TransformerPresetSelector({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger className={cn(className)} asChild>
-        <Button variant="outline" size={'sm'} className="bg-background/70">
+        <Button variant="outline" size={'sm'} className="">
           <Plus className="w-4 h-4 mr-2" />
           {t('presetSelector.button')}
         </Button>

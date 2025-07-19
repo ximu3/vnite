@@ -17,7 +17,7 @@ export function Search({ query }: { query: string }): React.JSX.Element {
   const { t } = useTranslation('game')
   const games = sortGames(by, order, searchGames(query))
   return (
-    <ScrollArea className={cn('w-full h-full pr-3 -mr-3')}>
+    <ScrollArea className={cn('w-full h-full pr-3 -mr-3 pt-1 pb-1')}>
       <Accordion
         type="multiple"
         defaultValue={['all']}

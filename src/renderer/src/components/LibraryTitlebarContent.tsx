@@ -1,14 +1,7 @@
 import { Button } from '~/components/ui/button'
 import { ClearableInput } from '~/components/ui/input'
 import { Nav } from '~/components/ui/nav'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger
-} from '~/components/ui/dropdown-menu'
+import { Select, SelectTrigger, SelectContent, SelectItem } from '~/components/ui/select'
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 import { isEqual } from 'lodash'
 import { useState } from 'react'
@@ -130,40 +123,28 @@ export function LibraryTitlebarContent(): React.JSX.Element {
       </div>
 
       {/* 分组按钮 */}
-      <Tooltip>
-        <TooltipTrigger>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="thirdary" size="icon" className="h-[32px] w-[32px]">
-                <span className="icon-[mdi--format-list-group] w-4 h-4"></span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuGroup>
-                <DropdownMenuLabel>{t('librarybar.groupBy')}</DropdownMenuLabel>
-                <DropdownMenuItem onClick={() => setSelectedGroup('none')}>
-                  {t('librarybar.groups.none')}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSelectedGroup('collection')}>
-                  {t('librarybar.groups.collection')}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSelectedGroup('metadata.developers')}>
-                  {t('librarybar.groups.developers')}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSelectedGroup('metadata.genres')}>
-                  {t('librarybar.groups.genres')}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSelectedGroup('record.playStatus')}>
-                  {t('librarybar.groups.playStatus')}
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </TooltipTrigger>
-        <TooltipContent side="bottom">
-          {t('librarybar.groupBy')}: {getGroupDisplayText(selectedGroup)}
-        </TooltipContent>
-      </Tooltip>
+      <Select value={selectedGroup} onValueChange={setSelectedGroup}>
+        <Tooltip>
+          <TooltipTrigger>
+            <SelectTrigger
+              noIcon
+              className="h-[32px] w-[32px] flex items-center justify-center bg-input/30 hover:bg-input/50 border-0 p-0"
+            >
+              <span className="icon-[mdi--format-list-group] w-4 h-4"></span>
+            </SelectTrigger>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            {t('librarybar.groupBy')}: {getGroupDisplayText(selectedGroup)}
+          </TooltipContent>
+        </Tooltip>
+        <SelectContent>
+          <SelectItem value="none">{t('librarybar.groups.none')}</SelectItem>
+          <SelectItem value="collection">{t('librarybar.groups.collection')}</SelectItem>
+          <SelectItem value="metadata.developers">{t('librarybar.groups.developers')}</SelectItem>
+          <SelectItem value="metadata.genres">{t('librarybar.groups.genres')}</SelectItem>
+          <SelectItem value="record.playStatus">{t('librarybar.groups.playStatus')}</SelectItem>
+        </SelectContent>
+      </Select>
 
       {/* 排序按钮 */}
       <SortMenu isSortMenuOpen={isSortMenuOpen}>

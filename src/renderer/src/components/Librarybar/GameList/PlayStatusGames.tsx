@@ -61,7 +61,7 @@ export function PlayStatusGames(): React.JSX.Element {
   }
 
   return (
-    <ScrollArea className={cn('w-full h-full pr-3 -mr-3')}>
+    <ScrollArea className={cn('w-full h-full pr-3 -mr-3 pt-1 pb-1')}>
       {fields.length > 0 ? (
         <Accordion
           key={`record.playStatus_yes`}
