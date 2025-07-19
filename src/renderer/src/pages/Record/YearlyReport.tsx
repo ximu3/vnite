@@ -89,7 +89,7 @@ export function YearlyReport(): React.JSX.Element {
     (config, item, index) => {
       config[item.type] = {
         label: item.type,
-        color: `hsl(var(--chart-${(index % 5) + 1}))`
+        color: `var(--chart-${(index % 5) + 1})`
       }
       return config
     },
@@ -223,7 +223,7 @@ export function YearlyReport(): React.JSX.Element {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-[auto,1fr] gap-4">
+      <div className="grid gap-4" style={{ gridTemplateColumns: 'auto 1fr' }}>
         <Card>
           <CardHeader>
             <CardTitle>{t('yearly.chart.timeDistribution')}</CardTitle>
@@ -248,7 +248,7 @@ export function YearlyReport(): React.JSX.Element {
                   }
                 >
                   {pieChartData.map((_entry, index) => (
-                    <Cell key={`cell-${index}`} fill={`hsl(var(--chart-${(index % 5) + 1}))`} />
+                    <Cell key={`cell-${index}`} fill={`var(--chart-${(index % 5) + 1})`} />
                   ))}
                 </Pie>
                 <ChartTooltip

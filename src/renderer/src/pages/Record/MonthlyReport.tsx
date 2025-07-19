@@ -184,7 +184,7 @@ export function MonthlyReport(): React.JSX.Element {
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-[1fr,auto]">
+      <div className="grid gap-4" style={{ gridTemplateColumns: '1fr auto' }}>
         <Card>
           <CardHeader>
             <CardTitle>{t('monthly.chart.weeklyPlayTime')}</CardTitle>
@@ -229,7 +229,7 @@ export function MonthlyReport(): React.JSX.Element {
               selected={selectedDate}
               month={selectedDate} // Controls the displayed month
               onMonthChange={(date) => setSelectedDate(date)}
-              className="w-full border rounded-md select-none"
+              className="w-full p-0 rounded-md select-none"
               classNames={{
                 day: cn(
                   buttonVariants({ variant: 'ghost' }),
@@ -245,16 +245,16 @@ export function MonthlyReport(): React.JSX.Element {
               }}
               modifiersStyles={{
                 today: {
-                  backgroundColor: 'hsl(var(--card))',
+                  backgroundColor: 'var(--card)',
                   color: 'inherit'
                 },
                 selected: {
-                  backgroundColor: 'hsl(var(--card))',
+                  backgroundColor: 'var(--card)',
                   color: 'inherit'
                 },
                 played: {
-                  backgroundColor: 'hsl(var(--primary)/0.8)',
-                  color: 'hsl(var(--primary-foreground))'
+                  backgroundColor: 'color-mix(in srgb, var(--primary) 80%, transparent)',
+                  color: 'var(--primary-foreground)'
                 }
               }}
             />
