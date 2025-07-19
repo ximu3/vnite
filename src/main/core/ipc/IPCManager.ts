@@ -4,6 +4,7 @@ import {
   ExtractArgs,
   ExtractHandler
 } from '@electron-toolkit/typed-ipc/main'
+import { ipcMain } from 'electron'
 import { BrowserWindow } from 'electron'
 
 /**
@@ -59,6 +60,10 @@ export class IPCManager {
   ): void {
     const mainWindow = BrowserWindow.getAllWindows()[0]
     this.emitter.send(mainWindow.webContents, channel, ...args)
+  }
+
+  removeHandler<E extends keyof IpcMainEvents>(channel: Extract<E, string>): void {
+    ipcMain.removeHandler(channel)
   }
 }
 
