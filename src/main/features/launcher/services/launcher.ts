@@ -1,26 +1,18 @@
 import { spawn } from 'child_process'
 import { GameDBManager } from '~/core/database'
 import { startMonitor } from '~/features/monitor'
+import { shell } from 'electron'
 
 export async function fileLauncher(gameId: string): Promise<void> {
   try {
     const fileConfig = await GameDBManager.getGameLocalValue(gameId, 'launcher.fileConfig')
 
-    const launcher = spawn('start', ['""', `"${fileConfig.path}"`], {
-      shell: true,
-      detached: true,
-      cwd: fileConfig.workingDirectory,
-      stdio: 'ignore'
-    })
+    const errorMessage = await shell.openPath(fileConfig.path)
 
-    // error handling
-    launcher.on('error', (err) => {
-      console.error(`Failed to launch file for game ${gameId}:`, err)
-      throw err
-    })
-
-    // Letting sub-processes run independently
-    launcher.unref()
+    if (errorMessage) {
+      console.error(`Failed to launch file for game ${gameId}:`, errorMessage)
+      throw new Error(errorMessage)
+    }
 
     // Startup Monitor
     await startMonitor(gameId)

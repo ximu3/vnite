@@ -17,9 +17,8 @@ import { ipcManager } from '~/app/ipc'
 
 export function FileLauncher({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
-  const [workingDirectory, setWorkingDirectory, saveWorkingDirectory] = useGameLocalState(
+  const [path, setPath, savePath, setPathAndSave] = useGameLocalState(
     gameId,
-    'launcher.fileConfig.workingDirectory',
     'launcher.fileConfig.path',
     true
   )
@@ -35,15 +34,6 @@ export function FileLauncher({ gameId }: { gameId: string }): React.JSX.Element 
     if (!filePath) {
       return
     }
-  async function selectWorkingDirectory(): Promise<void> {
-    const workingDirectoryPath = await ipcManager.invoke('system:select-path-dialog', [
-      'openDirectory'
-    ])
-    if (!workingDirectoryPath) {
-      return
-    }
-    setWorkingDirectory(workingDirectoryPath)
-    saveWorkingDirectory()
     await setPathAndSave(filePath)
   }
 
@@ -79,22 +69,6 @@ export function FileLauncher({ gameId }: { gameId: string }): React.JSX.Element 
         />
         <Button variant={'outline'} size={'icon'} onClick={selectFilePath}>
           <span className={cn('icon-[mdi--file-outline] w-5 h-5')}></span>
-        </Button>
-      </div>
-
-      {/* Work Directory */}
-      <div className={cn('whitespace-nowrap select-none')}>
-        {t('detail.properties.launcher.file.workingDirectory')}
-      </div>
-      <div className={cn('flex flex-row gap-3 items-center')}>
-        <Input
-          className={cn('flex-1')}
-          value={workingDirectory}
-          onChange={(e) => setWorkingDirectory(e.target.value)}
-          onBlur={saveWorkingDirectory}
-        />
-        <Button variant={'outline'} size={'icon'} onClick={selectWorkingDirectory}>
-          <span className={cn('icon-[mdi--folder-open-outline] w-5 h-5')}></span>
         </Button>
       </div>
 
