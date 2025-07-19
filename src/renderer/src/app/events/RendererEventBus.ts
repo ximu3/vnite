@@ -99,11 +99,6 @@ class SimpleEventEmitter {
 export class RendererEventBus {
   private emitter = new SimpleEventEmitter()
   private isInitialized = false
-  private pendingSubscriptions: Array<{
-    eventType: EventType
-    handler: EventHandler<any>
-    resolve: (unsubscribe: EventUnsubscribe) => void
-  }> = []
 
   constructor() {
     this.emitter.setMaxListeners(100)
@@ -120,13 +115,6 @@ export class RendererEventBus {
     try {
       // 这里可以添加一些初始化检查
       this.isInitialized = true
-
-      // 处理所有待处理的订阅
-      this.pendingSubscriptions.forEach(({ eventType, handler, resolve }) => {
-        const unsubscribe = this.setupLocalHandler(eventType, handler)
-        resolve(unsubscribe)
-      })
-      this.pendingSubscriptions = []
 
       console.log('[RendererEventBus] Initialization completed')
     } catch (error) {
@@ -165,17 +153,6 @@ export class RendererEventBus {
    * 监听事件（本地监听 + 主进程事件转发）
    */
   on<T extends EventType>(eventType: T, handler: EventHandler<T>): EventUnsubscribe {
-    if (!this.isInitialized) {
-      // 如果还未初始化，将订阅请求加入队列
-      return new Promise<EventUnsubscribe>((resolve) => {
-        this.pendingSubscriptions.push({
-          eventType,
-          handler,
-          resolve
-        })
-      }) as any // 这里类型转换是为了兼容同步接口
-    }
-
     return this.setupLocalHandler(eventType, handler)
   }
 
