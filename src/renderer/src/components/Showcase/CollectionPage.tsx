@@ -50,9 +50,9 @@ export function CollectionPage(): React.JSX.Element {
   const { t } = useTranslation('game')
 
   return (
-    <div className={cn('flex flex-col gap-3 h-[100vh] pt-[18px] bg-transparent')}>
+    <div className={cn('flex flex-col gap-3 h-[100vh] bg-transparent')}>
       <ScrollArea className={cn('w-full')}>
-        <div className={cn('w-full flex flex-col gap-1 pt-3')}>
+        <div className={cn('w-full flex flex-col gap-1 pt-[18px]')}>
           <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>
             <div className={cn('text-accent-foreground select-none flex-shrink-0')}>
               {' '}

@@ -32,8 +32,8 @@ export function CollectionGamesComponent({
   scrollPosition: { x: number; y: number }
 }): React.JSX.Element {
   const collections = useGameCollectionStore((state) => state.documents)
-  const games = collections[collectionId].games
-  const collectionName = collections[collectionId].name
+  const games = collections[collectionId]?.games
+  const collectionName = collections[collectionId]?.name
 
   const [gap, setGap] = useState<number>(0)
   const [columns, setColumns] = useState<number>(0)
@@ -76,9 +76,9 @@ export function CollectionGamesComponent({
 
   return (
     <DragContext.Provider value={{ isDraggingGlobal, setIsDraggingGlobal }}>
-      <div className={cn('flex flex-col gap-3 h-[100vh] pt-[50px] bg-background/50')}>
+      <div className={cn('flex flex-col gap-3 h-[100vh] bg-transparent')}>
         <ScrollArea className={cn('w-full')}>
-          <div className={cn('w-full flex flex-col gap-1 pt-3')}>
+          <div className={cn('w-full flex flex-col gap-1 pt-[18px]')}>
             <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>
               <div className={cn('text-accent-foreground select-none flex-shrink-0')}>
                 {collectionName}
@@ -97,7 +97,7 @@ export function CollectionGamesComponent({
                 'pt-2 pb-6 pl-5 pr-5' // Add inner margins to show shadows
               )}
             >
-              {games.map((gameId, index) => (
+              {games?.map((gameId, index) => (
                 <div
                   key={gameId}
                   className={cn(
