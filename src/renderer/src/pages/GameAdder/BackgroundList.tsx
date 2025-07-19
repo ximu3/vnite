@@ -120,7 +120,7 @@ export function BackgroundList(): React.JSX.Element {
         })
         setIsAdding(false)
         handleClose()
-        toast.success(t('gameAdder.backgrounds.notifications.added'), {
+        toast.success(t('gameAdder.backgrounds.notifications.addSuccess'), {
           id: 'adding-game'
         })
         return
