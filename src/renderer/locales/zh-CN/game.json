@@ -510,6 +510,7 @@
       "updateMetadata": "更新元数据",
       "delete": "删除",
       "cancel": "取消",
+      "selectAll": "全选",
       "selected": "已选择 {{count}} 项"
     },
     "selection": {

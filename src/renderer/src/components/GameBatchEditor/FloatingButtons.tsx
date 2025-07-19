@@ -8,10 +8,11 @@ import { InformationDialog } from './BatchGameNavCM/InformationDialog'
 import { DeleteGameAlert } from './BatchGameNavCM/DeleteGameAlert'
 import { useGameMetadataUpdaterStore } from '~/pages/GameMetadataUpdater'
 import { useEffect } from 'react'
+import { useGameRegistry } from '~/stores/game'
 
 export function FloatingButtons(): React.JSX.Element {
   const { t } = useTranslation('game')
-  const { selectedGamesMap, clearSelection, isBatchMode } = useGameBatchEditorStore()
+  const { selectedGamesMap, clearSelection, isBatchMode, selectGames } = useGameBatchEditorStore()
   const selectedGameIds = Object.keys(selectedGamesMap)
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = useState(false)
   const [isInformationDialogOpen, setIsInformationDialogOpen] = useState(false)
@@ -20,6 +21,11 @@ export function FloatingButtons(): React.JSX.Element {
     setGameIds: setGameMetadataUpdaterGameIds,
     setIsOpen: setIsGameMetadataUpdaterDialogOpen
   } = useGameMetadataUpdaterStore()
+  const gameIds = useGameRegistry((state) => state.gameIds)
+
+  function selectAllGames(): void {
+    selectGames(gameIds)
+  }
 
   // 键盘快捷键处理
   useEffect(() => {
@@ -28,8 +34,6 @@ export function FloatingButtons(): React.JSX.Element {
       if (e.key === 'Escape' && isBatchMode) {
         clearSelection()
       }
-
-      // Ctrl+A 全选（可以在AllGames组件中实现）
     }
 
     window.addEventListener('keydown', handleKeyDown)
@@ -39,7 +43,7 @@ export function FloatingButtons(): React.JSX.Element {
   return (
     <>
       <div className={cn('absolute bottom-4 w-full z-50 flex flex-row justify-center')}>
-        <div className="rounded-lg p-2 bg-background/(--glass-opacity) backdrop-blur-(--glass-blur) shadow-md flex flex-row">
+        <div className="rounded-lg p-2 bg-background/(--glass-opacity) justify-center items-center backdrop-blur-(--glass-blur) shadow-md flex flex-row">
           <Button
             size="sm"
             variant="ghost"
@@ -83,16 +87,26 @@ export function FloatingButtons(): React.JSX.Element {
             {t('batchEditor.floatingButtons.delete')}
           </Button>
 
-          <div className="h-5 w-px bg-border mx-1" />
+          <div className="h-5 w-px bg-border mx-2" />
 
           <Button
             size="sm"
-            variant="outline"
+            variant="ghost"
             onClick={clearSelection}
-            className="flex items-center gap-1"
+            className="flex items-center gap-1 justify-center"
           >
             <span className="icon-[mdi--close] w-4 h-4" />
             {t('batchEditor.floatingButtons.cancel')}
+          </Button>
+
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={selectAllGames}
+            className="flex items-center gap-1 justify-center"
+          >
+            <span className="icon-[mdi--select-all] w-4 h-4" />
+            {t('batchEditor.floatingButtons.selectAll')}
           </Button>
 
           <div className={cn('flex items-center px-2 text-sm text-muted-foreground')}>
