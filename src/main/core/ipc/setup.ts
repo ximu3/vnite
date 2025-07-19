@@ -10,6 +10,7 @@ import { setupThemeIPC } from '~/features/theme'
 import { setupTransformerIPC } from '~/features/transformer'
 import { setupUpdaterIPC } from '~/features/updater'
 import { setupPluginIPC } from '~/plugins'
+import { setupEventBusIPC } from '../events'
 
 export function setupIPC(): void {
   setupAccountIPC()
@@ -24,4 +25,5 @@ export function setupIPC(): void {
   setupTransformerIPC()
   setupUpdaterIPC()
   setupPluginIPC()
+  setupEventBusIPC()
 }
