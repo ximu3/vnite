@@ -146,7 +146,7 @@ export class GameMonitor {
       }
       await this.terminateProcesses()
     }
-    ipcManager.handle(`monitor:stop-game`, this.ipcHandler)
+    ipcMain.handleOnce(`stop-game-${this.options.gameId}`, this.ipcHandler)
   }
 
   private cleanupIpcListener(): void {
