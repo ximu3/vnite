@@ -1,4 +1,4 @@
-import { backupDatabase, restoreDatabase, startSync, stopSync } from './services'
+import { backupDatabase, restoreDatabase, startSync, stopSync, fullSync } from './services'
 import { baseDBManager, ConfigDBManager } from '~/core/database'
 import { getCouchDBSize } from '~/utils'
 import { ipcManager } from '~/core/ipc'
@@ -15,6 +15,10 @@ export function setupDatabaseIPC(): void {
 
   ipcManager.handle('db:restart-sync', async (_) => {
     await startSync()
+  })
+
+  ipcManager.handle('db:full-sync', async (_) => {
+    await fullSync()
   })
 
   ipcManager.handle('db:stop-sync', async (_) => {

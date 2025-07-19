@@ -113,6 +113,7 @@ type MainIpcEvents =
       'db:check-attachment': (dbName: string, docId: string, attachmentId: string) => boolean
       'db:get-all-docs': (dbName: string) => Record<string, any>
       'db:restart-sync': () => void
+      'db:full-sync': () => void
       'db:stop-sync': () => void
       'db:doc-changed': (change: {
         dbName: string

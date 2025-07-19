@@ -20,7 +20,7 @@ import { Link } from '~/components/ui/link'
 import { useTranslation } from 'react-i18next'
 import { useCloudSyncStore } from './store'
 import { ROLE_QUOTAS } from '@appTypes/sync'
-import { ConfigItem } from '~/components/form'
+import { ConfigItem, ConfigItemPure } from '~/components/form'
 import { Trans } from 'react-i18next'
 
 export function CloudSync(): React.JSX.Element {
@@ -125,6 +125,14 @@ export function CloudSync(): React.JSX.Element {
         error: t('cloudSync.notifications.updateError')
       }
     )
+  }
+
+  const handleFullSync = async (): Promise<void> => {
+    try {
+      await ipcManager.invoke('db:full-sync')
+    } catch (error) {
+      console.error('Full sync error:', error)
+    }
   }
 
   const handleOfficialSignin = async (): Promise<void> => {
@@ -260,6 +268,13 @@ export function CloudSync(): React.JSX.Element {
               }}
             ></ConfigItem>
 
+            <ConfigItemPure
+              title={t('cloudSync.syncFull')}
+              description={t('cloudSync.syncFullDescription')}
+            >
+              <Button onClick={handleFullSync}>{t('cloudSync.syncFullButton')}</Button>
+            </ConfigItemPure>
+
             {enabled && (
               <>
                 {/* Synchronization mode selection */}
@@ -308,7 +323,7 @@ export function CloudSync(): React.JSX.Element {
                   </div>
                 ) : (
                   <Card className="shadow-sm">
-                    <CardContent className="pt-6">
+                    <CardContent className="">
                       <div className="flex flex-col gap-4">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
@@ -403,7 +418,7 @@ export function CloudSync(): React.JSX.Element {
             {/* Self-hosted mode UI */}
             {enabled && syncMode === 'selfHosted' && (
               <Card className="shadow-sm">
-                <CardContent className="pt-6">
+                <CardContent className="">
                   <div className="flex flex-col gap-5">
                     {/* Self-hosted form items */}
                     <div className="grid grid-cols-[auto_1fr] gap-x-5 gap-y-4 items-center">

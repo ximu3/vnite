@@ -12,6 +12,7 @@ import { fileTypeFromBuffer } from 'file-type'
 import upsertPlugin from 'pouchdb-upsert'
 import { net } from 'electron'
 import log from 'electron-log/main'
+import { fetch as fetchWithProxy } from 'node-fetch-native/proxy'
 
 PouchDB.plugin(upsertPlugin)
 
@@ -199,6 +200,80 @@ export class BaseDBManager {
   }
 
   /**
+   * 同步所有数据库的完整数据
+   */
+  async syncAllWithRemoteFull(
+    remoteUrl: string = 'http://localhost:5984',
+    options: SyncOptions = {}
+  ): Promise<void> {
+    // 停止所有现有的同步
+    for (const dbName in this.syncHandlers) {
+      this.stopSync(dbName)
+    }
+    for (const dbName in this.dbInstances) {
+      await this.syncWithRemoteFull(dbName, remoteUrl, options)
+    }
+    await this.syncAllWithRemote(remoteUrl, options)
+  }
+
+  async syncWithRemoteFull(
+    dbName: string,
+    remoteUrl: string = 'http://localhost:5984',
+    options: SyncOptions = {}
+  ): Promise<void> {
+    if (dbName.includes('local')) {
+      return
+    }
+
+    const localDb = this.getDatabase(dbName)
+    const { auth, isOfficial } = options
+
+    const remoteDbName = isOfficial
+      ? `${auth?.username}-${dbName}`.replace('user', 'userdb')
+      : `vnite-${dbName}`
+
+    const remoteDbUrl = `${remoteUrl}/${remoteDbName}`
+
+    if (isOfficial) {
+      await net.fetch(`${remoteUrl}/${remoteDbName}`, {
+        method: 'PUT',
+        headers: {
+          Authorization:
+            'Basic ' +
+            btoa(
+              `${import.meta.env.VITE_COUCHDB_USERNAME}:${import.meta.env.VITE_COUCHDB_PASSWORD}`
+            )
+        }
+      })
+    } else {
+      await net.fetch(`${remoteUrl}/${remoteDbName}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: 'Basic ' + btoa(`${auth?.username}:${auth?.password}`)
+        }
+      })
+    }
+
+    const remoteDb = new PouchDB(remoteDbUrl, {
+      skip_setup: false,
+      auth: auth,
+      fetch: fetchWithProxy
+    })
+
+    try {
+      // 初始同步
+      await localDb.sync(remoteDb, {
+        live: false,
+        retry: true
+      })
+      console.log(`[${dbName}] Full synchronization completed successfully`)
+    } catch (error) {
+      console.error(`[${dbName}] Full synchronization setup failed:`, error)
+      throw error
+    }
+  }
+
+  /**
    * 同步单个数据库
    */
   async syncWithRemote(
@@ -219,9 +294,30 @@ export class BaseDBManager {
 
     const remoteDbUrl = `${remoteUrl}/${remoteDbName}`
 
+    if (isOfficial) {
+      await net.fetch(`${remoteUrl}/${remoteDbName}`, {
+        method: 'PUT',
+        headers: {
+          Authorization:
+            'Basic ' +
+            btoa(
+              `${import.meta.env.VITE_COUCHDB_USERNAME}:${import.meta.env.VITE_COUCHDB_PASSWORD}`
+            )
+        }
+      })
+    } else {
+      await net.fetch(`${remoteUrl}/${remoteDbName}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: 'Basic ' + btoa(`${auth?.username}:${auth?.password}`)
+        }
+      })
+    }
+
     const remoteDb = new PouchDB(remoteDbUrl, {
       skip_setup: false,
-      auth: auth
+      auth: auth,
+      fetch: fetchWithProxy
     })
 
     // 停止现有的同步
@@ -230,27 +326,6 @@ export class BaseDBManager {
     }
 
     try {
-      // 尝试创建远程数据库
-      if (auth) {
-        try {
-          await net.fetch(`${remoteUrl}/${remoteDbName}`, {
-            method: 'PUT',
-            headers: {
-              Authorization: 'Basic ' + btoa(`${auth.username}:${auth.password}`)
-            }
-          })
-        } catch (err) {
-          console.log('Database might already exist or creation failed:', err)
-          throw err
-        }
-      }
-
-      // 初始同步
-      await localDb.sync(remoteDb, {
-        live: false,
-        retry: true
-      })
-
       // 设置同步
       this.syncHandlers[dbName] = localDb
         .sync(remoteDb, {

@@ -113,6 +113,9 @@
     "title": "云同步",
     "enable": "是否启用",
     "syncMode": "同步模式",
+    "syncFull": "全量同步",
+    "syncFullDescription": "一次性同步所有数据，适用于新设备与数据迁移",
+    "syncFullButton": "全量同步",
     "modes": {
       "official": "官方",
       "selfHosted": "自托管"
