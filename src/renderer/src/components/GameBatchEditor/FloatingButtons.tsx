@@ -7,10 +7,11 @@ import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { InformationDialog } from './BatchGameNavCM/InformationDialog'
 import { DeleteGameAlert } from './BatchGameNavCM/DeleteGameAlert'
 import { useGameMetadataUpdaterStore } from '~/pages/GameMetadataUpdater'
+import { useEffect } from 'react'
 
 export function FloatingButtons(): React.JSX.Element {
   const { t } = useTranslation('game')
-  const { selectedGamesMap, clearSelection } = useGameBatchEditorStore()
+  const { selectedGamesMap, clearSelection, isBatchMode } = useGameBatchEditorStore()
   const selectedGameIds = Object.keys(selectedGamesMap)
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = useState(false)
   const [isInformationDialogOpen, setIsInformationDialogOpen] = useState(false)
@@ -19,6 +20,21 @@ export function FloatingButtons(): React.JSX.Element {
     setGameIds: setGameMetadataUpdaterGameIds,
     setIsOpen: setIsGameMetadataUpdaterDialogOpen
   } = useGameMetadataUpdaterStore()
+
+  // 键盘快捷键处理
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent): void => {
+      // Escape键退出批量模式
+      if (e.key === 'Escape' && isBatchMode) {
+        clearSelection()
+      }
+
+      // Ctrl+A 全选（可以在AllGames组件中实现）
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isBatchMode, clearSelection])
 
   return (
     <>
