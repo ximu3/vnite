@@ -5,6 +5,7 @@ import { cn, copyWithToast } from '~/utils'
 import { FilterAdder } from '../../FilterAdder'
 import { SearchTagsDialog } from './SearchTagsDialog'
 import { TagsDialog } from './TagsDialog'
+import { SeparatorDashed } from '@ui/separator-dashed'
 
 export function TagsCard({
   gameId,
@@ -42,9 +43,7 @@ export function TagsCard({
           <TagsDialog gameId={gameId} />
         </div>
       </div>
-      <div className={cn('flex items-center justify-center flex-grow')}>
-        <div className="w-full h-px my-3 border-t border-dashed border-primary" />
-      </div>
+      <SeparatorDashed />
       <div className={cn('text-sm justify-start items-start')}>
         <div className={cn('flex flex-wrap gap-x-1 gap-y-[6px]')}>
           {tags.join(', ') === ''

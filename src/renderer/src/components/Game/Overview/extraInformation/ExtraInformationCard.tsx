@@ -5,6 +5,7 @@ import { cn, copyWithToast } from '~/utils'
 import { FilterAdder } from '../../FilterAdder'
 import { ExtraInformationDialog } from './ExtraInformationDialog'
 import { SearchExtraInformationDialog } from './SearchExtraInformationDialog'
+import { SeparatorDashed } from '@ui/separator-dashed'
 
 export function ExtraInformationCard({
   gameId,
@@ -69,9 +70,7 @@ export function ExtraInformationCard({
         </div>
       </div>
 
-      <div className={cn('flex items-center justify-center flex-grow')}>
-        <div className="w-full h-px my-3 border-t border-dashed border-primary" />
-      </div>
+      <SeparatorDashed />
 
       <div className={cn('grid grid-cols-[auto_1fr] gap-x-3 gap-y-2 text-sm')}>
         {!extra || extra.length === 0 ? (

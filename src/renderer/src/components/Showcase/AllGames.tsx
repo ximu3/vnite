@@ -14,6 +14,7 @@ import { useConfigState } from '~/hooks'
 import { sortGames } from '~/stores/game'
 import { cn } from '~/utils'
 import { GamePoster } from './posters/GamePoster'
+import { SeparatorDashed } from '@ui/separator-dashed'
 
 function PlaceHolder(): React.JSX.Element {
   return (
@@ -82,10 +83,7 @@ export function AllGamesComponent({
           </Button>
         </div>
 
-        {/* Split Line Container */}
-        <div className={cn('flex items-center justify-center flex-grow')}>
-          <div className="w-full h-px border-t border-dashed border-border" />
-        </div>
+        <SeparatorDashed className="border-border" />
       </div>
 
       {/* Game List Container */}

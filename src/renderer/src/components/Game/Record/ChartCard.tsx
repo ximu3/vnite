@@ -1,11 +1,11 @@
 import { DateInput } from '@ui/date-input'
-import { Separator } from '~/components/ui/separator'
 import { cn } from '~/utils'
 import { getGamePlayTimeByDateRange, getGameStartAndEndDate } from '~/stores/game'
 import { useState, useEffect } from 'react'
 import { TimerChart } from './TimerChart'
 import { isEqual } from 'lodash'
 import { useTranslation } from 'react-i18next'
+import { SeparatorDashed } from '~/components/ui/separator-dashed'
 
 export function ChartCard({
   gameId,
@@ -47,7 +47,7 @@ export function ChartCard({
   return (
     <div className={cn(className, 'flex flex-col')}>
       <div className={cn('font-bold')}>{t('detail.chart.title')}</div>
-      <Separator className={cn('my-3 bg-primary')} />
+      <SeparatorDashed />
       {!isEqual(timers, { start: '', end: '' }) ? (
         <>
           <div className={cn('flex flex-row gap-2 items-center')}>

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useGameCollectionStore } from '~/stores'
 import { cn } from '~/utils'
 import { CollectionPoster } from './posters/CollectionPoster'
+import { SeparatorDashed } from '@ui/separator-dashed'
 
 export function CollectionPage(): React.JSX.Element {
   const collections = useGameCollectionStore((state) => state.documents)
@@ -58,9 +59,7 @@ export function CollectionPage(): React.JSX.Element {
               {t('showcase.sections.collections')}
             </div>
             {/* Split Line Container */}
-            <div className={cn('flex items-center justify-center flex-grow')}>
-              <div className="w-full h-px border-t border-dashed border-border" />
-            </div>
+            <SeparatorDashed className="border-border" />
           </div>
           {/* Game List Container */}
           <div

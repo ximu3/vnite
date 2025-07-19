@@ -5,6 +5,7 @@ import { cn, copyWithToast, HTMLParserOptions } from '~/utils'
 import { DescriptionDialog } from './DescriptionDialog'
 import { SearchDescriptionDialog } from './SearchDescriptionDialog'
 import { useState } from 'react'
+import { SeparatorDashed } from '@ui/separator-dashed'
 
 export function DescriptionCard({
   gameId,
@@ -41,9 +42,7 @@ export function DescriptionCard({
           <DescriptionDialog gameId={gameId} />
         </div>
       </div>
-      <div className={cn('flex items-center justify-center flex-grow')}>
-        <div className="w-full h-px my-3 border-t border-dashed border-primary" />
-      </div>
+      <SeparatorDashed />
 
       <div
         className={cn(

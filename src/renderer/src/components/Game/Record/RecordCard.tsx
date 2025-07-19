@@ -1,9 +1,9 @@
 import { cn } from '~/utils'
 import { useGameState } from '~/hooks'
 import { getGameMaxPlayTimeDay, getGamePlayDays } from '~/stores/game'
-import { Separator } from '~/components/ui/separator'
 import { useTranslation } from 'react-i18next'
 import { Trans } from 'react-i18next'
+import { SeparatorDashed } from '~/components/ui/separator-dashed'
 
 export function RecordCard({
   gameId,
@@ -24,7 +24,7 @@ export function RecordCard({
   return (
     <div className={cn(className, 'w-auto')}>
       <div className={cn('font-bold')}>{t('detail.record.card.title')}</div>
-      <Separator className={cn('my-3 bg-primary')} />
+      <SeparatorDashed />
       {lastRunDate && timers.length !== 0 ? (
         <>
           <div className={cn('flex flex-row')}>

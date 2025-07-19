@@ -4,6 +4,7 @@ import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-comp
 import { useGameCollectionStore } from '~/stores'
 import { cn } from '~/utils'
 import { GamePoster } from './posters/GamePoster'
+import { SeparatorDashed } from '@ui/separator-dashed'
 
 export type DragContextType = {
   isDraggingGlobal: boolean
@@ -83,10 +84,7 @@ export function CollectionGamesComponent({
                 {collectionName}
               </div>
 
-              {/* Split Line Container */}
-              <div className={cn('flex items-center justify-center flex-grow')}>
-                <div className="w-full h-px border-t border-dashed border-border" />
-              </div>
+              <SeparatorDashed className="border-border" />
             </div>
 
             {/* Game List Container */}

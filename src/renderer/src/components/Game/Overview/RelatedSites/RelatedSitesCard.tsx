@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useGameState } from '~/hooks'
 import { cn, copyWithToast } from '~/utils'
 import { RelatedSitesDialog } from './RelatedSitesDialog'
+import { SeparatorDashed } from '@ui/separator-dashed'
 
 export function RelatedSitesCard({
   gameId,
@@ -28,9 +29,7 @@ export function RelatedSitesCard({
         </div>
         <RelatedSitesDialog gameId={gameId} />
       </div>
-      <div className={cn('flex items-center justify-center flex-grow')}>
-        <div className="w-full h-px my-3 border-t border-dashed border-primary" />
-      </div>
+      <SeparatorDashed />
       <div className={cn('flex flex-col text-sm justify-start gap-[6px] items-start')}>
         {isEqual(relatedSites, []) || isEqual(relatedSites, [{ label: '', url: '' }])
           ? t('detail.overview.relatedSites.empty')

@@ -7,6 +7,7 @@ import { getGameStore, sortGames } from '~/stores/game'
 import { cn } from '~/utils'
 import { BigGamePoster } from './posters/BigGamePoster'
 import { GamePoster } from './posters/GamePoster'
+import { SeparatorDashed } from '@ui/separator-dashed'
 
 export function RecentGames(): React.JSX.Element {
   const games = sortGames('record.lastRunDate', 'desc')
@@ -35,10 +36,7 @@ export function RecentGames(): React.JSX.Element {
           {t('showcase.sections.recentGames')}
         </div>
 
-        {/* Split Line Container */}
-        <div className={cn('flex items-center justify-center flex-grow')}>
-          <div className="w-full h-px border-t border-dashed border-border" />
-        </div>
+        <SeparatorDashed className="border-border" />
         <div className={cn('flex flex-row gap-2 items-center justify-center pr-5')}>
           <Button
             className={cn('hover:bg-transparent p-0 -mt-2 -mb-2')}
