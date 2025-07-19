@@ -226,7 +226,7 @@ export class GameDBManager {
 
   static async removeGame(gameId: string): Promise<void> {
     try {
-      const gameName = (await this.getGame(gameId)).metadata.name
+      const gameName = (await this.getGame(gameId))?.metadata?.name || 'Unknown Game'
       await baseDBManager.removeDoc(this.DB_NAME, gameId)
       await baseDBManager.removeDoc(`${this.DB_NAME}-local`, gameId)
       // Emit event after removing the game
