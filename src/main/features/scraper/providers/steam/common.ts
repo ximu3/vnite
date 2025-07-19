@@ -112,7 +112,7 @@ export async function searchSteamGames(gameName: string): Promise<GameList> {
           console.error(`Error fetching metadata for game ${game.id}:`, error)
           return {
             releaseDate: '',
-            developers: []
+            developers: [] as string[]
           }
         })
       )
@@ -218,10 +218,13 @@ export async function getSteamMetadata(appId: string): Promise<GameMetadata> {
     return {
       name: gameData.name,
       originalName,
-      releaseDate: formatDate(gameData.release_date.date),
+      releaseDate: formatDate(gameData?.release_date?.date || ''),
       description:
-        gameData.detailed_description || gameData.about_the_game || gameData.short_description,
-      developers: gameData.developers,
+        gameData.detailed_description ||
+        gameData.about_the_game ||
+        gameData.short_description ||
+        '',
+      developers: gameData.developers || [],
       publishers: gameData.publishers,
       genres: gameData.genres?.map((genre) => genre.description) || [],
       relatedSites: [

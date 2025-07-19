@@ -14,27 +14,27 @@ export interface SteamStoreSearchResponse {
 
 type SteamAppDetailsData = {
   name: string
-  detailed_description: string
-  short_description: string
-  about_the_game: string
-  release_date: {
+  detailed_description?: string
+  short_description?: string
+  about_the_game?: string
+  release_date?: {
     date: string
   }
-  developers: string[]
-  publishers: string[]
-  genres: Array<{
+  developers?: string[]
+  publishers?: string[]
+  genres?: Array<{
     id: string
     description: string
   }>
-  categories: Array<{
+  categories?: Array<{
     id: number
     description: string
   }>
-  screenshots: Array<{
+  screenshots?: Array<{
     path_full: string
   }>
-  header_image: string
-  website: string
+  header_image?: string
+  website?: string
   metacritic?: {
     score: number
     url: string
