@@ -1,0 +1,30 @@
+diff --git a/node_modules/pouchdb/lib/index.js b/node_modules/pouchdb/lib/index.js
+index 71ef6ab..80a07f0 100644
+--- a/node_modules/pouchdb/lib/index.js
++++ b/node_modules/pouchdb/lib/index.js
+@@ -4843,7 +4843,24 @@ function readAsBlobOrBuffer(storedObject, type) {
+ 
+ // in Node, we store the buffer directly
+ function prepareAttachmentForStorage(attData, cb) {
+-  cb(attData);
++  // Check if it's a Blob type
++  if (attData && typeof attData === 'object' &&
++      (attData instanceof Blob ||
++       (attData.constructor && attData.constructor.name === 'Blob'))) {
++
++    // Convert Blob to Buffer
++    attData.arrayBuffer().then(function(arrayBuffer) {
++      var buffer = Buffer.from(arrayBuffer);
++      cb(buffer);
++    }).catch(function(err) {
++      console.error('PouchDB: Failed to convert Blob to Buffer:', err);
++      // Try using original data as fallback
++      cb(attData);
++    });
++  } else {
++    // Pass through non-Blob types directly
++    cb(attData);
++  }
+ }
+ 
+ function createEmptyBlobOrBuffer(type) {
