@@ -1,4 +1,3 @@
-// Light.tsx 修改版
 import { useEffect, useState, useRef } from 'react'
 import { useLocation } from '@tanstack/react-router'
 import { useConfigState, useGameState } from '~/hooks'
@@ -153,7 +152,15 @@ export function Light(): React.JSX.Element {
       const recentGameId = getRecentGameId()
       updateBackgroundImage(getGameBackgroundUrl(recentGameId), recentGameId)
     }
-  }, [pathname, getGameCollectionValue, collections, customBackground, isDark, refreshId])
+  }, [
+    pathname,
+    getGameCollectionValue,
+    collections,
+    customBackground,
+    isDark,
+    refreshId,
+    getAttachmentInfo
+  ])
 
   // 更新CSS变量
   useEffect(() => {
