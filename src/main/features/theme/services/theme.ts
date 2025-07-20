@@ -16,7 +16,7 @@ export class ThemeManager {
 
   static getInstance(): ThemeManager {
     if (!ThemeManager.instance) {
-      const themePath = getDataPath('theme.css')
+      const themePath = getDataPath('theme.v4.css')
       ThemeManager.instance = new ThemeManager(themePath)
     }
     return ThemeManager.instance
