@@ -12,7 +12,7 @@ import {
 } from '~/components/ui/select'
 import { useTranslation } from 'react-i18next'
 import { cn } from '~/utils'
-import { useTheme } from '../../components/ThemeProvider'
+import { useTheme } from '~/components/ThemeProvider'
 import { ipcManager } from '~/app/ipc'
 import { eventBus } from '~/app/events'
 

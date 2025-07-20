@@ -66,8 +66,14 @@ export interface configDocs {
       showPlayButtonOnPoster: boolean
     }
     glass: {
-      blur: number
-      opacity: number
+      dark: {
+        blur: number
+        opacity: number
+      }
+      light: {
+        blur: number
+        opacity: number
+      }
     }
     enableNSFWBlur: boolean
     font: string
@@ -256,8 +262,14 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       showPlayButtonOnPoster: true
     },
     glass: {
-      blur: 15,
-      opacity: 0.85
+      dark: {
+        blur: 100,
+        opacity: 0.5
+      },
+      light: {
+        blur: 130,
+        opacity: 0.75
+      }
     },
     enableNSFWBlur: true,
     font: 'system-ui'

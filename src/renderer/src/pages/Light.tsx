@@ -6,6 +6,17 @@ import { useAttachmentStore } from '~/stores'
 import { sortGames, useGameCollectionStore } from '~/stores/game'
 import { CrossfadeImage } from '@ui/cross-fade-image'
 import { cn } from '~/utils'
+import { useTheme } from '~/components/ThemeProvider'
+import { create } from 'zustand'
+
+// eslint-disable-next-line
+export const useLightStore = create<{
+  refreshId: number
+  refresh: () => void
+}>((set) => ({
+  refreshId: 0,
+  refresh: () => set((state) => ({ refreshId: state.refreshId + 1 }))
+}))
 
 export function Light(): React.JSX.Element {
   const { pathname } = useLocation()
@@ -16,11 +27,28 @@ export function Light(): React.JSX.Element {
   const getGameCollectionValue = useGameCollectionStore((state) => state.getGameCollectionValue)
   const collections = useGameCollectionStore((state) => state.documents)
   const [customBackground] = useConfigState('appearances.background.customBackground')
-  const [glassBlur] = useConfigState('appearances.glass.blur')
-  const [glassOpacity] = useConfigState('appearances.glass.opacity')
+  const [darkGlassBlur] = useConfigState('appearances.glass.dark.blur')
+  const [darkGlassOpacity] = useConfigState('appearances.glass.dark.opacity')
+  const [lightGlassBlur] = useConfigState('appearances.glass.light.blur')
+  const [lightGlassOpacity] = useConfigState('appearances.glass.light.opacity')
+  const [glassBlur, setGlassBlur] = useState(darkGlassBlur)
+  const [glassOpacity, setGlassOpacity] = useState(darkGlassOpacity)
   const [enableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
   const detailBackgroundRef = useRef<HTMLDivElement>(null)
+  const { isDark } = useTheme()
+  const refreshId = useLightStore((state) => state.refreshId)
+
+  useEffect(() => {
+    // 根据主题设置玻璃效果的模糊和透明度
+    if (isDark) {
+      setGlassBlur(darkGlassBlur)
+      setGlassOpacity(darkGlassOpacity)
+    } else {
+      setGlassBlur(lightGlassBlur)
+      setGlassOpacity(lightGlassOpacity)
+    }
+  }, [isDark, darkGlassBlur, darkGlassOpacity, lightGlassBlur, lightGlassOpacity])
 
   // 获取游戏背景URL
   const getGameBackgroundUrl = (id: string): string => {
@@ -30,13 +58,20 @@ export function Light(): React.JSX.Element {
 
   // 获取自定义背景URL
   const getCustomBackgroundUrl = (): string => {
-    const info = getAttachmentInfo('config', 'media', 'background.webp')
-    return `attachment://config/media/background.webp?t=${info?.timestamp}`
+    const info = getAttachmentInfo(
+      'config',
+      'media',
+      `background-${isDark ? 'dark' : 'light'}.webp`
+    )
+    return `attachment://config/media/background-${isDark ? 'dark' : 'light'}.webp?t=${info?.timestamp}`
   }
 
   // 检查自定义背景是否可用
   const isCustomBackgroundAvailable = (): boolean => {
-    return customBackground && !getAttachmentInfo('config', 'media', 'background.webp')?.error
+    return (
+      customBackground &&
+      !getAttachmentInfo('config', 'media', `background-${isDark ? 'dark' : 'light'}.webp`)?.error
+    )
   }
 
   // 获取最近游戏ID
@@ -118,7 +153,7 @@ export function Light(): React.JSX.Element {
       const recentGameId = getRecentGameId()
       updateBackgroundImage(getGameBackgroundUrl(recentGameId), recentGameId)
     }
-  }, [pathname, getGameCollectionValue, collections, customBackground])
+  }, [pathname, getGameCollectionValue, collections, customBackground, isDark, refreshId])
 
   // 更新CSS变量
   useEffect(() => {

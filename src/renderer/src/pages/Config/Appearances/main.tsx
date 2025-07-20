@@ -9,22 +9,31 @@ import { cn } from '~/utils'
 import { ipcManager } from '~/app/ipc'
 import { useState } from 'react'
 import { FontSettingsDialog } from './FontSettingsDialog'
+import { useTheme } from '~/components/ThemeProvider'
+import { useLightStore } from '~/pages/Light'
 
 export function Appearances(): React.JSX.Element {
   const { t } = useTranslation('config')
+  const { isDark } = useTheme()
+  const refresh = useLightStore((state) => state.refresh)
 
   const [fontDialogOpen, setFontDialogOpen] = useState(false)
 
   async function selectBackgroundImage(): Promise<void> {
     const filePath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
     if (!filePath) return
-    await ipcManager.invoke('db:set-config-background', filePath)
+    await ipcManager.invoke('db:set-config-background', filePath, isDark ? 'dark' : 'light')
+    refresh()
   }
 
   const { getAttachmentInfo, setAttachmentError } = useAttachmentStore()
 
-  const backgroundInfo = getAttachmentInfo('config', 'media', 'background.webp')
-  const backgroundUrl = `attachment://config/media/background.webp?t=${backgroundInfo?.timestamp}`
+  const backgroundInfo = getAttachmentInfo(
+    'config',
+    'media',
+    `background-${isDark ? 'dark' : 'light'}.webp`
+  )
+  const backgroundUrl = `attachment://config/media/background-${isDark ? 'dark' : 'light'}.webp?t=${backgroundInfo?.timestamp}`
 
   return (
     <Card className={cn('group')}>
@@ -60,7 +69,7 @@ export function Appearances(): React.JSX.Element {
                       {t('appearances.background.selectImage')}
                     </Button>
                   </HoverCardTrigger>
-                  <HoverCardContent className="w-80" side="left">
+                  <HoverCardContent className="w-80" side="left" sideOffset={8}>
                     <div className="space-y-2">
                       <h4 className="text-sm font-semibold">
                         {t('appearances.background.currentBackground')}
@@ -94,7 +103,7 @@ export function Appearances(): React.JSX.Element {
             <div className={cn(' space-y-4')}>
               <ConfigItem
                 hookType="config"
-                path="appearances.glass.blur"
+                path={isDark ? 'appearances.glass.dark.blur' : 'appearances.glass.light.blur'}
                 title={t('appearances.glass.blur')}
                 description={t('appearances.glass.blurDescription')}
                 controlType="slider"
@@ -107,7 +116,7 @@ export function Appearances(): React.JSX.Element {
 
               <ConfigItem
                 hookType="config"
-                path="appearances.glass.opacity"
+                path={isDark ? 'appearances.glass.dark.opacity' : 'appearances.glass.light.opacity'}
                 title={t('appearances.glass.opacity')}
                 description={t('appearances.glass.opacityDescription')}
                 controlType="slider"

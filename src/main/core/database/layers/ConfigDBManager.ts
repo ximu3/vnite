@@ -111,13 +111,16 @@ export class ConfigDBManager {
     }
   }
 
-  static async setConfigBackgroundImage(image: Buffer | string): Promise<void> {
+  static async setConfigBackgroundImage(
+    image: Buffer | string,
+    theme: 'dark' | 'light'
+  ): Promise<void> {
     try {
       const webpImage = await convertToWebP(image)
       await baseDBManager.putAttachment(
         this.DB_NAME,
         'media',
-        'background.webp',
+        `background-${theme}.webp`,
         webpImage,
         'image/webp'
       )
