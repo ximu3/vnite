@@ -2,9 +2,26 @@ import { cn } from '~/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { ConfigItem } from '~/components/form/ConfigItem'
 import { useTranslation } from 'react-i18next'
+import { useState, useEffect } from 'react'
+import { ipcManager } from '~/app/ipc'
+import { ScraperCapabilities } from '@appTypes/utils'
 
 export function Scraper(): React.JSX.Element {
   const { t } = useTranslation('config')
+  const [availableDataSources, setAvailableDataSources] = useState<
+    { id: string; name: string; capabilities: ScraperCapabilities[] }[]
+  >([])
+
+  useEffect(() => {
+    const fetchAvailableDataSources = async (): Promise<void> => {
+      const availableDataSources = await ipcManager.invoke(
+        'scraper:get-provider-infos-with-capabilities',
+        ['searchGames', 'checkGameExists', 'getGameMetadata', 'getGameBackgrounds', 'getGameCovers']
+      )
+      setAvailableDataSources(availableDataSources)
+    }
+    fetchAvailableDataSources()
+  }, [])
 
   return (
     <Card className={cn('group')}>
@@ -26,15 +43,11 @@ export function Scraper(): React.JSX.Element {
                 path="game.scraper.common.defaultDataSource"
                 title={t('scraper.common.defaultDataSource')}
                 controlType="select"
-                description="选择默认的数据源"
-                options={[
-                  { value: 'steam', label: t('scraper.dataSources.steam') },
-                  { value: 'vndb', label: t('scraper.dataSources.vndb') },
-                  { value: 'bangumi', label: t('scraper.dataSources.bangumi') },
-                  { value: 'igdb', label: t('scraper.dataSources.igdb') },
-                  { value: 'ymgal', label: t('scraper.dataSources.ymgal') },
-                  { value: 'dlsite', label: t('scraper.dataSources.dlsite') }
-                ]}
+                description={t('scraper.common.defaultDataSourceDescription')}
+                options={availableDataSources.map((ds) => ({
+                  value: ds.id,
+                  label: ds.name
+                }))}
                 controlClassName="w-[200px]"
               />
             </div>
