@@ -42,7 +42,7 @@ export async function defaultPreset(): Promise<string> {
   --popover-foreground: hsl(230 24% 94%);
   --card: hsl(230 24% 17%);
   --card-foreground: hsl(230 24% 94%);
-  --border: hsl(230 14% 24%);
+  --border: hsla(230 14% 24% / 0.8);
   --input: hsl(230 14% 27%);
   --primary: hsl(223 45% 44%);
   --primary-foreground: hsl(0 0% 100%);
