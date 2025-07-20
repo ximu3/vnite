@@ -275,13 +275,13 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     font: 'system-ui'
   },
   hotkeys: {
-    library: 'ctrl+l',
-    record: 'ctrl+r',
-    scanner: 'ctrl+s',
-    config: 'ctrl+c',
+    library: 'alt+shift+l',
+    record: 'alt+shift+r',
+    scanner: 'alt+shift+s',
+    config: 'alt+shift+c',
     goBack: 'alt+left',
     goForward: 'alt+right',
-    addGame: 'ctrl+a',
+    addGame: 'alt+shift+a',
     randomGame: 'ctrl+shift+r'
   },
   updater: {
