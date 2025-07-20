@@ -21,7 +21,7 @@ export function BigGamePoster({
   gameId,
   groupId,
   className,
-  inViewGames = [] // 添加inViewGames参数，用于Shift多选
+  inViewGames = [] // 添加inViewGames参数，用于Shift多选 - TODO
 }: {
   gameId: string
   groupId?: string
@@ -141,7 +141,7 @@ export function BigGamePoster({
                 />
               </HoverCardAnimation>
 
-              {/* Hover overlay - 修改为当选中或悬停时显示 */}
+              {/* Hover overlay */}
               <div
                 className={cn(
                   'absolute inset-x-0 bottom-0 h-full bg-accent/50',
@@ -151,7 +151,7 @@ export function BigGamePoster({
                   'overflow-hidden'
                 )}
               >
-                {/* 添加多选圆点到overlay内部左上角 */}
+                {/* 多选圆点 */}
                 <div
                   className={cn(
                     'absolute left-2 top-2 shadow-md z-20 rounded-full w-4 h-4 flex items-center justify-center cursor-pointer',

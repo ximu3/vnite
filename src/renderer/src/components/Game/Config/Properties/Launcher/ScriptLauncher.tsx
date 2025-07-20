@@ -97,7 +97,7 @@ export function ScriptLauncher({ gameId }: { gameId: string }): React.JSX.Elemen
         <Separator />
       </div>
 
-      {/* monitor mode */}
+      {/* Monitor mode */}
       <div className={cn('whitespace-nowrap select-none')}>
         {t('detail.properties.launcher.monitor.title')}
       </div>

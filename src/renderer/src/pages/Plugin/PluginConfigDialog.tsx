@@ -62,7 +62,6 @@ export function PluginConfigDialog({
   const handleSave = async (): Promise<void> => {
     setSaving(true)
     try {
-      // ConfigItem组件已经自动保存了，这里只需要显示成功消息
       toast.success(t('messages.configurationSaved'))
       onSave?.()
       onClose()

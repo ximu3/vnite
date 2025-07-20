@@ -242,7 +242,7 @@ export function CollectionPoster({
                   'overflow-hidden'
                 )}
               >
-                {/* 添加多选圆点到overlay内部左上角 */}
+                {/* 多选圆点 */}
                 <div
                   className={cn(
                     'absolute left-2 top-2 shadow-md z-20 rounded-full w-4 h-4 flex items-center justify-center cursor-pointer',

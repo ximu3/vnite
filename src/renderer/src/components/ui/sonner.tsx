@@ -7,18 +7,12 @@ const Toaster = ({ ...props }: ToasterProps): React.JSX.Element => {
   return (
     <Sonner
       theme={theme as ToasterProps['theme']}
-      // closeButton
-      toastOptions={{
-        classNames: {
-          toast: 'backdrop-filter !backdrop-blur-md'
-        }
-      }}
-      className="toaster group backdrop-filter backdrop-blur-[32px]"
+      className="toaster group"
       style={
         {
           '--normal-bg': 'color-mix(in hsl, var(--popover) 95%, transparent)',
           '--normal-text': 'var(--popover-foreground)',
-          '--normal-border': 'var(--border)'
+          '--normal-border': 'color-mix(in hsl, var(--border) 0%, transparent)'
         } as React.CSSProperties
       }
       {...props}

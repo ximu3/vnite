@@ -2,11 +2,6 @@
   -webkit-app-region: drag;
   height: 50px; /* Set the height of the draggable area */
   width: 100%;
-  /* position: fixed; */
-  /* top: 0;
-  left: 0; */
-  /* background-color: transparent; */
-  /* z-index: 1000; Make sure it's at the top */
   pointer-events: none; /* Ensure that click events on other elements are not affected */
 }
 

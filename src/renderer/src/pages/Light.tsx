@@ -227,7 +227,7 @@ export function Light(): React.JSX.Element {
         )}
       ></div>
 
-      {/* 原有的背景图层 */}
+      {/* 背景图层 */}
       <CrossfadeImage
         src={imageUrl}
         className="w-full h-full"

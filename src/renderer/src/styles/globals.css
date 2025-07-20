@@ -38,7 +38,7 @@
   --chart-5: hsl(223 45% 57%);
   --radius: 0.625rem;
 
-  --font-current: system-ui; /* 当前选择的字体 */
+  --font-current: system-ui;
   --font-sans:
     var(--font-current), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
     Arial, sans-serif;
@@ -124,31 +124,13 @@
   }
   body {
     @apply bg-background text-foreground;
-    /* 新增：默认使用系统字体 */
+    /* 默认使用系统字体 */
     font-family: var(--font-sans);
   }
 
-  /* 新增：自定义字体类 */
+  /* 自定义字体类 */
   .font-custom {
     font-family: var(--font-current), var(--font-sans);
-  }
-}
-
-@layer base {
-  :root {
-    --chart-1: hsl(223 42% 57%);
-    --chart-2: hsl(223 30% 75%);
-    --chart-3: hsl(230 8% 70%);
-    --chart-4: hsl(223 30% 78%);
-    --chart-5: hsl(223 45% 57%);
-  }
-
-  .dark {
-    --chart-1: hsl(223 42% 57%);
-    --chart-2: hsl(223 30% 75%);
-    --chart-3: hsl(230 8% 70%);
-    --chart-4: hsl(223 30% 78%);
-    --chart-5: hsl(223 45% 57%);
   }
 }
 
@@ -175,12 +157,6 @@
   /* 自定义过渡属性 */
   .transition-border {
     transition-property: border-color, border-width;
-  }
-
-  /* 新增：字体平滑度工具类 */
-  .font-smoothing {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
   }
 }
 

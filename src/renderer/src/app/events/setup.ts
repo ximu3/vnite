@@ -2,7 +2,7 @@ import { eventBus } from './RendererEventBus'
 
 /**
  * 初始化渲染进程的 EventBus
- * 应在应用启动时调用
+ * 在应用启动时调用
  */
 export async function initializeRendererEventBus(): Promise<void> {
   try {
@@ -16,7 +16,7 @@ export async function initializeRendererEventBus(): Promise<void> {
 
 /**
  * 清理渲染进程的 EventBus
- * 应在应用关闭时调用
+ * 在应用关闭时调用
  */
 export function cleanupRendererEventBus(): void {
   try {

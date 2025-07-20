@@ -696,7 +696,6 @@ export class PluginManager {
 
     this.plugins.clear()
     this.loadedModules.clear()
-    // EventEmitter 相关的监听器清理已移除，因为不再继承 EventEmitter
   }
 }
 

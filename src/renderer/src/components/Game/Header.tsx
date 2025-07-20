@@ -72,6 +72,7 @@ export function Header({
             type="cover"
             blur={enableNSFWBlur && nsfw}
             className={cn('w-auto h-[170px] object-cover rounded-lg shadow-md')}
+            fallback={<div className="h-[170px]" />}
           />
           {/* <div className="absolute inset-0 rounded-lg bg-background/15" /> */}
         </div>

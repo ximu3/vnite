@@ -156,7 +156,7 @@ export function SearchExtraInformationDialog({
           )}
         </Card>
 
-        {/* 搜索和操作按钮区�?*/}
+        {/* 搜索和操作按钮区域*/}
         <Card className={cn('p-3')}>
           <div className={cn('flex flex-row gap-3')}>
             <Input

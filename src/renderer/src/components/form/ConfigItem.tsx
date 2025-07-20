@@ -124,8 +124,6 @@ export function ConfigItem<
     [save, onChange]
   )
 
-  // Remove the debounced slider change handler since we're using onValueCommit now
-
   const handleFileSelect = useCallback(
     async (
       dialogType: 'openFile' | 'openDirectory' = 'openFile',
@@ -306,7 +304,7 @@ export function ConfigItem<
         const dialogType = fileInputProps.dialogType || 'openFile'
         const filters = fileInputProps.dialogFilters
         const buttonIcon = fileInputProps.buttonIcon || 'icon-[mdi--file-outline]'
-        const buttonTooltip = fileInputProps.buttonTooltip || '选择文件'
+        const buttonTooltip = fileInputProps.buttonTooltip
 
         return (
           <div className={cn('flex flex-row gap-3', controlClassName)}>

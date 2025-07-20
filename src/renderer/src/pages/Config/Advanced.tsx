@@ -26,7 +26,6 @@ export function Advanced(): React.JSX.Element {
             controlType="fileinput"
             placeholder={t('advanced.localeEmulator.placeholder')}
             dialogType="openFile"
-            buttonTooltip="选择 Locale Emulator 程序"
           />
 
           {/* Visual Boy Advance Path */}
@@ -38,7 +37,6 @@ export function Advanced(): React.JSX.Element {
             controlType="fileinput"
             placeholder={t('advanced.visualBoyAdvance.placeholder')}
             dialogType="openFile"
-            buttonTooltip="选择 VBA 模拟器程序"
           />
 
           {/* Magpie Path */}
@@ -50,7 +48,6 @@ export function Advanced(): React.JSX.Element {
             controlType="fileinput"
             placeholder={t('advanced.magpie.placeholder')}
             dialogType="openFile"
-            buttonTooltip="选择 Magpie 程序"
           />
 
           {/* Magpie Hotkey */}
@@ -60,7 +57,6 @@ export function Advanced(): React.JSX.Element {
             title={t('advanced.magpie.hotkeyLabel')}
             description={t('advanced.magpie.hotkeyDescription')}
             controlType="hotkey"
-            inputClassName="font-mono"
           />
         </div>
       </CardContent>

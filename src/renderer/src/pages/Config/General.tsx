@@ -41,7 +41,7 @@ export function General(): React.JSX.Element {
       </CardHeader>
       <CardContent>
         <div className={cn('space-y-4')}>
-          {/* Open at login - 使用 ConfigItem 并通过 onChange 处理额外逻辑 */}
+          {/* Open at login */}
           <ConfigItem
             hookType="config"
             path="general.openAtLogin"
@@ -60,7 +60,7 @@ export function General(): React.JSX.Element {
             }}
           />
 
-          {/* Language - 使用 ConfigItem 并通过 onChange 处理语言切换 */}
+          {/* Language */}
           <ConfigItem
             hookType="config"
             path="general.language"
@@ -74,7 +74,7 @@ export function General(): React.JSX.Element {
             }}
           />
 
-          {/* Theme - 使用 ConfigItemPure，因为它不在 config 存储中 */}
+          {/* Theme */}
           <ConfigItemPure title={t('general.theme')} description={t('general.themeDescription')}>
             <Select
               value={themeSetting}
@@ -94,7 +94,7 @@ export function General(): React.JSX.Element {
             </Select>
           </ConfigItemPure>
 
-          {/* Close behavior - 使用 select 让用户更好理解选项 */}
+          {/* Close behavior */}
           <ConfigItem
             hookType="config"
             path="general.quitToTray"
@@ -113,7 +113,7 @@ export function General(): React.JSX.Element {
             }}
           />
 
-          {/* Hide window after game start - 简单配置，使用 ConfigItem */}
+          {/* Hide window after game start */}
           <ConfigItem
             hookType="config"
             path="general.hideWindowAfterGameStart"

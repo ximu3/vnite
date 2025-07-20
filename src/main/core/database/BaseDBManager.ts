@@ -4,8 +4,7 @@ import {
   convertBufferToFile,
   convertFileToBuffer,
   convertBufferToTempFile,
-  getDataPath,
-  ipc
+  getDataPath
 } from '~/utils'
 import { getValueByPath, setValueByPath } from '@appUtils'
 import { fileTypeFromBuffer } from 'file-type'
@@ -13,6 +12,7 @@ import upsertPlugin from 'pouchdb-upsert'
 import { net } from 'electron'
 import log from 'electron-log/main'
 import { fetch as fetchWithProxy } from 'node-fetch-native/proxy'
+import { ipcManager } from '~/core/ipc'
 
 PouchDB.plugin(upsertPlugin)
 
@@ -334,7 +334,7 @@ export class BaseDBManager {
         })
         .on('change', (info) => {
           console.log(`[${dbName}] sync change:`, info)
-          ipc.send('db:sync-status', {
+          ipcManager.send('db:sync-status', {
             status: 'syncing',
             message: 'Syncing...',
             timestamp: new Date().toISOString()
@@ -342,7 +342,7 @@ export class BaseDBManager {
         })
         .on('paused', () => {
           console.log(`[${dbName}] sync paused`)
-          ipc.send('db:sync-status', {
+          ipcManager.send('db:sync-status', {
             status: 'success',
             message: 'Sync paused',
             timestamp: new Date().toISOString()
@@ -350,7 +350,7 @@ export class BaseDBManager {
         })
         .on('active', () => {
           console.log(`[${dbName}] sync resumed`)
-          ipc.send('db:sync-status', {
+          ipcManager.send('db:sync-status', {
             status: 'syncing',
             message: 'Syncing...',
             timestamp: new Date().toISOString()
@@ -358,7 +358,7 @@ export class BaseDBManager {
         })
         .on('denied', (err) => {
           console.error(`[${dbName}] sync denied:`, err)
-          ipc.send('db:sync-status', {
+          ipcManager.send('db:sync-status', {
             status: 'error',
             message: 'Sync denied',
             timestamp: new Date().toISOString()
@@ -366,7 +366,7 @@ export class BaseDBManager {
         })
         .on('error', (err) => {
           console.error(`[${dbName}] sync error:`, err)
-          ipc.send('db:sync-status', {
+          ipcManager.send('db:sync-status', {
             status: 'error',
             message: 'Sync error',
             timestamp: new Date().toISOString()
@@ -450,7 +450,7 @@ export class BaseDBManager {
           }
         })
       }
-      ipc.send('db:attachment-changed', {
+      ipcManager.send('db:attachment-changed', {
         dbName,
         docId,
         attachmentId: attachmentId,
@@ -541,7 +541,7 @@ export class BaseDBManager {
     try {
       const doc = await db.get(docId)
       await db.removeAttachment(docId, attachmentId, doc._rev)
-      ipc.send('db:attachment-changed', {
+      ipcManager.send('db:attachment-changed', {
         dbName,
         docId,
         attachmentId,
@@ -588,7 +588,7 @@ export class BaseDBManager {
 
           const { _id: docId, _rev, ...data } = change.doc
 
-          ipc.send('db:doc-changed', {
+          ipcManager.send('db:doc-changed', {
             dbName,
             docId,
             data: { _id: docId, ...data },

@@ -1,7 +1,3 @@
-/**
- * 插件相关类型定义
- */
-
 export interface PluginManifest {
   /** 插件ID，必须唯一 */
   id: string

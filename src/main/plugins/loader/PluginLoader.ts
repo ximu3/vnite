@@ -133,7 +133,7 @@ export class PluginLoader {
    */
   private static isVersionCompatible(installed: string, required: string): boolean {
     // 简单的版本兼容性检查
-    // 实际项目中应该使用更完善的semver库
+    // todo: 使用更完善的semver库
 
     if (required.startsWith('^')) {
       // 兼容主版本

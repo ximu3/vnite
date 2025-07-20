@@ -1,10 +1,6 @@
 import { create } from 'zustand'
 import { syncTo } from '../utils'
 
-/**
- * Plugin Store - 简单的插件数据存储
- * 参照PluginDBManager的设计，使用pluginId和key来存储数据
- */
 export interface PluginState {
   initialized: boolean
 
@@ -64,7 +60,6 @@ export const usePluginStore = create<PluginState>((set, get) => ({
       await syncTo('plugin', pluginId, get().pluginData[pluginId])
     } catch (error) {
       console.error(`Failed to sync plugin value ${pluginId}.${key}:`, error)
-      // 可以考虑回滚本地状态或显示错误提示
     }
   },
 

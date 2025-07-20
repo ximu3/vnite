@@ -1,35 +1,7 @@
-export interface CasdoorConfig {
-  serverUrl: string
-  clientId: string
-  clientSecret: string
-  appName: string
-  organizationName: string
-  redirectPath?: string
-  signinPath?: string
-}
-
 export interface CouchDBConfig {
   url: string
   adminUsername: string
   adminPassword: string
-}
-
-export interface AuthManagerConfig extends Omit<CasdoorConfig, 'redirectPath'> {
-  couchdbConfig: CouchDBConfig
-  callbackPort?: number
-}
-
-export interface CasdoorUser {
-  id?: string
-  sub?: string
-  name: string
-  displayName?: string
-  avatar?: string
-  email?: string
-  phone?: string
-  tag?: string
-  properties?: Record<string, string>
-  [key: string]: any
 }
 
 export interface CouchDBCredentials {
@@ -60,12 +32,6 @@ export interface StoredCredentials {
 export interface AuthCallbackData {
   code: string
   state?: string
-}
-
-export interface AuthStatusResponse {
-  authenticated: boolean
-  user?: Omit<CasdoorUser, 'properties'>
-  error?: string
 }
 
 export interface AuthentikUser {
