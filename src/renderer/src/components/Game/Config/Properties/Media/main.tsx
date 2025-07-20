@@ -11,9 +11,11 @@ import { SearchMediaDialog } from './SearchMediaDialog'
 import { UrlDialog } from './UrlDialog'
 import { useTranslation } from 'react-i18next'
 import { ipcManager } from '~/app/ipc'
+import { useLightStore } from '~/pages/Light'
 
 export function Media({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
+  const refreshLight = useLightStore((state) => state.refresh)
 
   const [isUrlDialogOpen, setIsUrlDialogOpen] = useState({
     icon: false,
@@ -120,6 +122,7 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     toast.promise(
       async () => {
         await ipcManager.invoke('game:set-image', gameId, type, filePath)
+        refreshLight()
       },
       {
         loading: t('detail.properties.media.notifications.processing', {
@@ -145,6 +148,7 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     toast.promise(
       async () => {
         await ipcManager.invoke('game:remove-media', gameId, type)
+        refreshLight()
       },
       {
         loading: t('detail.properties.media.notifications.deleting', {
