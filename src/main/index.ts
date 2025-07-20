@@ -248,6 +248,9 @@ app.whenReady().then(async () => {
 
   setupProtocols()
 
+  // Setup scraper providers
+  setupScraper()
+
   createWindow()
 
   AuthManager.init()
@@ -259,9 +262,6 @@ app.whenReady().then(async () => {
   }
 
   await initI18n()
-
-  // Setup scraper providers
-  setupScraper()
 
   // Setup tray
   trayManager = await setupTray(mainWindow)
