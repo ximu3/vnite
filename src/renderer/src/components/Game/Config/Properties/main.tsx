@@ -1,3 +1,4 @@
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { cn } from '~/utils'
@@ -6,64 +7,48 @@ import { Path } from './Path'
 import { Media } from './Media'
 import { useGameState } from '~/hooks'
 import { useTranslation } from 'react-i18next'
-import { Button } from '~/components/ui/button'
-import { useRouter } from '@tanstack/react-router'
 
-export function GameProperties({
+export function GamePropertiesDialog({
   gameId,
-  className
+  isOpen,
+  setIsOpen
 }: {
   gameId: string
-  className?: string
+  isOpen: boolean
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [gameName] = useGameState(gameId, 'metadata.name')
-  const router = useRouter()
-
-  const handleGoBack = (): void => {
-    router.history.back()
-  }
 
   return (
-    <div className={cn('w-full h-full bg-background/60 pt-[50px]', className)}>
-      <ScrollArea className={cn('w-full h-full px-6 pt-0')}>
-        <div className={cn('flex flex-col gap-6')}>
-          <div className={cn('flex flex-row items-end gap-5')}>
-            <div className={cn('text-2xl font-bold')}>
-              {`${gameName} - ${t('detail.properties.title')}`}
-            </div>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={handleGoBack}
-              className="w-[26px] h-[26px]"
-              aria-label={t('common.back')}
-            >
-              <span className="icon-[mdi--close] w-4 h-4"></span>
-            </Button>
-          </div>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogContent className={cn('w-[1000px] h-[85vh] flex flex-col')}>
+        <DialogHeader>
+          <DialogTitle>{`${gameName} - ${t('detail.properties.title')}`}</DialogTitle>
+        </DialogHeader>
 
-          <Tabs defaultValue="launcher" className="w-full">
-            <TabsList className="grid grid-cols-3 mb-4 w-[350px]">
-              <TabsTrigger value="launcher">{t('detail.properties.tabs.launcher')}</TabsTrigger>
-              <TabsTrigger value="path">{t('detail.properties.tabs.path')}</TabsTrigger>
-              <TabsTrigger value="media">{t('detail.properties.tabs.media')}</TabsTrigger>
-            </TabsList>
+        <Tabs defaultValue="launcher" className="flex-1 flex flex-col h-full">
+          <TabsList className="">
+            <TabsTrigger value="launcher">{t('detail.properties.tabs.launcher')}</TabsTrigger>
+            <TabsTrigger value="path">{t('detail.properties.tabs.path')}</TabsTrigger>
+            <TabsTrigger value="media">{t('detail.properties.tabs.media')}</TabsTrigger>
+          </TabsList>
 
-            <TabsContent value="launcher">
+          <ScrollArea className="h-[calc(100%-60px)] pr-5">
+            <TabsContent value="launcher" className="">
               <Launcher gameId={gameId} />
             </TabsContent>
 
-            <TabsContent value="path">
+            <TabsContent value="path" className="">
               <Path gameId={gameId} />
             </TabsContent>
 
-            <TabsContent value="media">
+            <TabsContent value="media" className="">
               <Media gameId={gameId} />
             </TabsContent>
-          </Tabs>
-        </div>
-      </ScrollArea>
-    </div>
+          </ScrollArea>
+        </Tabs>
+      </DialogContent>
+    </Dialog>
   )
 }
