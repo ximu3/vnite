@@ -98,12 +98,12 @@ async function fetchBangumi<T>(
     url.searchParams.append(key, String(value))
   })
 
-  const apiKey = process.env.VITE_BANGUMI_API_KEY || ''
+  const apiKey = import.meta.env.VITE_BANGUMI_API_KEY || ''
 
   const response = await net.fetch(url.toString(), {
     headers: {
       Accept: 'application/json',
-      'User-Agent': 'ximu3/vnite/3.0.0-alpha.0 (https://github.com/ximu3/vnite)',
+      'User-Agent': 'ximu3/vnite/4.0.0-alpha.0 (https://github.com/ximu3/vnite)',
       ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {})
     }
   })

@@ -4,25 +4,15 @@ import { formatDate } from '~/utils'
 import i18next from 'i18next'
 import { net } from 'electron'
 
-// Defining Base URL Constants
+// 定义基础 URL 常量
 const STEAM_URLS = {
-  PRIMARY: {
-    STORE: 'https://store.steampowered.com',
-    CDN: 'https://steamcdn-a.akamaihd.net',
-    COMMUNITY: 'https://steamcommunity.com',
-    CLOUDFLARE: 'https://cdn.cloudflare.steamstatic.com'
-  },
-  FALLBACK: {
-    BASE: 'https://api.ximu.dev',
-    STORE: 'https://api.ximu.dev/steam/storesearch',
-    APP_DETAILS: 'https://api.ximu.dev/steam/appdetails',
-    CDN: 'https://api.ximu.dev/steam/cdn',
-    COMMUNITY: 'https://api.ximu.dev/steam/community',
-    APP: 'https://api.ximu.dev/steam/app'
-  }
+  STORE: 'https://store.steampowered.com',
+  CDN: 'https://steamcdn-a.akamaihd.net',
+  COMMUNITY: 'https://steamcommunity.com',
+  CLOUDFLARE: 'https://cdn.cloudflare.steamstatic.com'
 }
 
-// Generic fetch function with retry logic
+// 通用的 fetch 函数
 async function fetchWithTimeout(
   url: string,
   options: RequestInit = {},
@@ -44,45 +34,8 @@ async function fetchWithTimeout(
   }
 }
 
-async function fetchWithFallback(
-  primaryUrl: string,
-  fallbackUrl: string,
-  options: RequestInit = {},
-  timeout = 5000
-): Promise<Response> {
-  try {
-    const primaryResponse = await fetchWithTimeout(primaryUrl, options, timeout)
-    if (primaryResponse.ok) {
-      return primaryResponse
-    }
-    throw new Error(`Primary request failed with status: ${primaryResponse.status}`)
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error)
-    if (errorMessage.includes('abort')) {
-      console.warn(`Primary request timeout (${timeout}ms) for URL: ${primaryUrl}`)
-    } else {
-      console.warn(`Primary request failed, trying fallback: ${error}`)
-    }
-
-    try {
-      const fallbackResponse = await fetchWithTimeout(fallbackUrl, options, timeout)
-      if (!fallbackResponse.ok) {
-        throw new Error(`Fallback request failed with status: ${fallbackResponse.status}`)
-      }
-      return fallbackResponse
-    } catch (fallbackError) {
-      const fallbackErrorMessage =
-        fallbackError instanceof Error ? fallbackError.message : String(fallbackError)
-      if (fallbackErrorMessage.includes('abort')) {
-        throw new Error(`Both primary and fallback requests timed out after ${timeout}ms`)
-      }
-      throw fallbackError
-    }
-  }
-}
-
-async function fetchSteamAPI(primaryUrl: string, fallbackUrl: string): Promise<any> {
-  const response = await fetchWithFallback(primaryUrl, fallbackUrl)
+async function fetchSteamAPI(url: string): Promise<any> {
+  const response = await fetchWithTimeout(url)
   return response.json()
 }
 
@@ -92,15 +45,11 @@ export async function searchSteamGames(gameName: string): Promise<GameList> {
       returnObjects: true
     }) as SteamLanguageConfig
 
-    const primaryUrl = `${STEAM_URLS.PRIMARY.STORE}/api/storesearch/?term=${encodeURIComponent(
+    const url = `${STEAM_URLS.STORE}/api/storesearch/?term=${encodeURIComponent(
       gameName
     )}&l=${langConfig.apiLanguageCode}&cc=${langConfig.countryCode}`
 
-    const fallbackUrl = `${STEAM_URLS.FALLBACK.STORE}/?term=${encodeURIComponent(
-      gameName
-    )}&l=${langConfig.apiLanguageCode}&cc=${langConfig.countryCode}`
-
-    const response = (await fetchSteamAPI(primaryUrl, fallbackUrl)) as SteamStoreSearchResponse
+    const response = (await fetchSteamAPI(url)) as SteamStoreSearchResponse
 
     if (!response.items || response.items.length === 0) {
       throw new Error('No games found')
@@ -142,10 +91,9 @@ async function fetchStoreTags(appId: string): Promise<string[]> {
       returnObjects: true
     }) as SteamLanguageConfig
 
-    const primaryUrl = `${STEAM_URLS.PRIMARY.STORE}/app/${appId}`
-    const fallbackUrl = `${STEAM_URLS.FALLBACK.APP}/${appId}`
+    const url = `${STEAM_URLS.STORE}/app/${appId}`
 
-    const response = await fetchWithFallback(primaryUrl, fallbackUrl, {
+    const response = await fetchWithTimeout(url, {
       headers: {
         'Accept-Language': langConfig.acceptLanguageHeader
       }
@@ -153,7 +101,7 @@ async function fetchStoreTags(appId: string): Promise<string[]> {
 
     const html = await response.text()
 
-    // Simple regex-based tag extraction (fallback approach without cheerio)
+    // 简单的基于正则表达式的标签提取方法
     const tagMatches = html.match(/class="app_tag"[^>]*>([^<]+)<\/a>/g) || []
     const tags: string[] = []
 
@@ -180,29 +128,25 @@ export async function getSteamMetadata(appId: string): Promise<GameMetadata> {
       returnObjects: true
     }) as SteamLanguageConfig
 
-    // Get data in the current language
-    const primaryUrlLocal = `${STEAM_URLS.PRIMARY.STORE}/api/appdetails?appids=${appId}&l=${langConfig.apiLanguageCode}`
-    const fallbackUrlLocal = `${STEAM_URLS.FALLBACK.APP_DETAILS}?appids=${appId}&l=${langConfig.apiLanguageCode}`
+    // 获取当前语言的数据
+    const urlLocal = `${STEAM_URLS.STORE}/api/appdetails?appids=${appId}&l=${langConfig.apiLanguageCode}`
 
-    // Get English data as the original name (if the current language is not English)
+    // 判断是否需要获取英文原名（如果当前语言不是英文）
     const needsOriginalName = langConfig.apiLanguageCode !== 'english'
 
     let localData: SteamAppDetailsResponse
     let englishData: SteamAppDetailsResponse | null = null
 
     if (needsOriginalName) {
-      // Parallel acquisition of local language and English data
+      // 并行获取本地语言和英文数据
       ;[localData, englishData] = await Promise.all([
-        fetchSteamAPI(primaryUrlLocal, fallbackUrlLocal),
-        fetchSteamAPI(
-          `${STEAM_URLS.PRIMARY.STORE}/api/appdetails?appids=${appId}&l=english`,
-          `${STEAM_URLS.FALLBACK.APP_DETAILS}?appids=${appId}&l=english`
-        )
+        fetchSteamAPI(urlLocal),
+        fetchSteamAPI(`${STEAM_URLS.STORE}/api/appdetails?appids=${appId}&l=english`)
       ])
     } else {
-      // Get only one language
-      localData = await fetchSteamAPI(primaryUrlLocal, fallbackUrlLocal)
-      englishData = localData // If the current language is English, reuse
+      // 只获取一种语言
+      localData = await fetchSteamAPI(urlLocal)
+      englishData = localData // 如果当前语言是英文，重用
     }
 
     if (!localData[appId].success) {
@@ -236,7 +180,7 @@ export async function getSteamMetadata(appId: string): Promise<GameMetadata> {
           : []),
         {
           label: i18next.t('scraper:steam.steamStore'),
-          url: `${STEAM_URLS.PRIMARY.STORE}/app/${appId}`
+          url: `${STEAM_URLS.STORE}/app/${appId}`
         }
       ],
       tags: tags.length > 0 ? tags : gameData.genres?.map((genre) => genre.description) || []
@@ -269,119 +213,24 @@ export async function getSteamMetadataByName(gameName: string): Promise<GameMeta
 }
 
 export async function getGameBackground(appId: string): Promise<string> {
-  const urls = {
-    primary: {
-      hd: `${STEAM_URLS.PRIMARY.CDN}/steam/apps/${appId}/library_hero_2x.jpg`,
-      standard: `${STEAM_URLS.PRIMARY.CDN}/steam/apps/${appId}/library_hero.jpg`
-    },
-    fallback: {
-      hd: `${STEAM_URLS.FALLBACK.CDN}/steam/apps/${appId}/library_hero_2x.jpg`,
-      standard: `${STEAM_URLS.FALLBACK.CDN}/steam/apps/${appId}/library_hero.jpg`
-    }
-  }
-
-  try {
-    const urlsToCheck = [
-      urls.primary.hd,
-      urls.primary.standard,
-      urls.fallback.hd,
-      urls.fallback.standard
-    ]
-
-    for (const url of urlsToCheck) {
-      if (await checkImageUrl(url)) {
-        return url
-      }
-    }
-
-    return ''
-  } catch (error) {
-    console.error('Failed to get game Background image:', error)
-    return ''
-  }
-}
-
-async function checkImageUrl(url: string, timeout = 5000): Promise<boolean> {
-  try {
-    const response = await fetchWithTimeout(url, { method: 'HEAD' }, timeout)
-    return response.ok
-  } catch (_error) {
-    return false
-  }
+  // 直接返回高清图片 URL，而不检查其可用性
+  return `${STEAM_URLS.CDN}/steam/apps/${appId}/library_hero_2x.jpg`
 }
 
 export async function getGameCover(appId: string): Promise<string> {
-  const urls = {
-    primary: {
-      hd: `${STEAM_URLS.PRIMARY.CDN}/steam/apps/${appId}/library_600x900_2x.jpg`,
-      standard: `${STEAM_URLS.PRIMARY.CDN}/steam/apps/${appId}/library_600x900.jpg`
-    },
-    fallback: {
-      hd: `${STEAM_URLS.FALLBACK.CDN}/steam/apps/${appId}/library_600x900_2x.jpg`,
-      standard: `${STEAM_URLS.FALLBACK.CDN}/steam/apps/${appId}/library_600x900.jpg`
-    }
-  }
-
-  try {
-    const urlsToCheck = [
-      urls.primary.hd,
-      urls.primary.standard,
-      urls.fallback.hd,
-      urls.fallback.standard
-    ]
-
-    for (const url of urlsToCheck) {
-      if (await checkImageUrl(url)) {
-        return url
-      }
-    }
-
-    return ''
-  } catch (error) {
-    console.error(`Error fetching cover for game ${appId}:`, error)
-    return ''
-  }
+  // 直接返回高清图片 URL，而不检查其可用性
+  return `${STEAM_URLS.CDN}/steam/apps/${appId}/library_600x900_2x.jpg`
 }
 
 export async function getGameLogo(appId: string): Promise<string> {
-  const urls = {
-    primary: {
-      hd: `${STEAM_URLS.PRIMARY.CDN}/steam/apps/${appId}/logo_2x.png`,
-      standard: `${STEAM_URLS.PRIMARY.CDN}/steam/apps/${appId}/logo.png`
-    },
-    fallback: {
-      hd: `${STEAM_URLS.FALLBACK.CDN}/steam/apps/${appId}/logo_2x.png`,
-      standard: `${STEAM_URLS.FALLBACK.CDN}/steam/apps/${appId}/logo.png`
-    }
-  }
-
-  try {
-    const urlsToCheck = [
-      urls.primary.hd,
-      urls.primary.standard,
-      urls.fallback.hd,
-      urls.fallback.standard
-    ]
-
-    for (const url of urlsToCheck) {
-      if (await checkImageUrl(url)) {
-        return url
-      }
-    }
-
-    return ''
-  } catch (error) {
-    console.error(`Error fetching logo for game ${appId}:`, error)
-    return ''
-  }
+  // 直接返回高清图片 URL，而不检查其可用性
+  return `${STEAM_URLS.CDN}/steam/apps/${appId}/logo_2x.png`
 }
 
 export async function checkSteamGameExists(appId: string): Promise<boolean> {
   try {
-    const primaryUrl = `${STEAM_URLS.PRIMARY.STORE}/api/appdetails?appids=${appId}`
-    const fallbackUrl = `${STEAM_URLS.FALLBACK.APP_DETAILS}?appids=${appId}`
-
-    const data = (await fetchSteamAPI(primaryUrl, fallbackUrl)) as SteamAppDetailsResponse
+    const url = `${STEAM_URLS.STORE}/api/appdetails?appids=${appId}`
+    const data = (await fetchSteamAPI(url)) as SteamAppDetailsResponse
     return data[appId]?.success || false
   } catch (error) {
     console.error(`Error checking game existence for ID ${appId}:`, error)
@@ -392,7 +241,8 @@ export async function checkSteamGameExists(appId: string): Promise<boolean> {
 export async function getGameCoverByName(gameName: string): Promise<string> {
   try {
     const games = await searchSteamGames(gameName)
-    return await getGameCover(games[0].id)
+    if (games.length === 0) return ''
+    return getGameCover(games[0].id)
   } catch (error) {
     console.error(`Error fetching cover for game ${gameName}:`, error)
     return ''
@@ -402,7 +252,8 @@ export async function getGameCoverByName(gameName: string): Promise<string> {
 export async function getGameBackgroundByName(gameName: string): Promise<string> {
   try {
     const games = await searchSteamGames(gameName)
-    return await getGameBackground(games[0].id)
+    if (games.length === 0) return ''
+    return getGameBackground(games[0].id)
   } catch (error) {
     console.error(`Error fetching screenshots for game ${gameName}:`, error)
     return ''
@@ -412,7 +263,8 @@ export async function getGameBackgroundByName(gameName: string): Promise<string>
 export async function getGameLogoByName(gameName: string): Promise<string> {
   try {
     const games = await searchSteamGames(gameName)
-    return await getGameLogo(games[0].id)
+    if (games.length === 0) return ''
+    return getGameLogo(games[0].id)
   } catch (error) {
     console.error(`Error fetching logo for game ${gameName}:`, error)
     return ''

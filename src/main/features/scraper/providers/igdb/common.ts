@@ -13,8 +13,8 @@ import { IGDBClient } from './auth'
 // Create a client instance (no global state)
 function createIGDBClient(): IGDBClient {
   const config: IGDBAuthConfig = {
-    clientId: process.env.VITE_IGDB_API_ID || '',
-    clientSecret: process.env.VITE_IGDB_API_KEY || ''
+    clientId: import.meta.env.VITE_IGDB_API_ID || '',
+    clientSecret: import.meta.env.VITE_IGDB_API_KEY || ''
   }
 
   if (!config.clientId || !config.clientSecret) {

@@ -8,17 +8,11 @@ import {
   getGameLogoByName as getGameLogoByNameFromSteam
 } from '../steam/common'
 
-const STEAMGRIDDB_API_KEY = process.env.STEAMGRIDDB_API_KEY || ''
+const STEAMGRIDDB_API_KEY = import.meta.env.VITE_STEAMGRIDDB_API_KEY || ''
 const TIMEOUT = 5000
 
-// Define multiple API endpoints
-const API_ENDPOINTS = ['https://www.steamgriddb.com/api/v2', 'https://api.ximu.dev/steamgriddb/api']
-
-// Define the original CDN and reverse generation address
-const ORIGINAL_CDN = 'https://cdn2.steamgriddb.com'
-const PROXY_CDN = 'https://api.ximu.dev/steamgriddb/img'
-
-let currentApiIndex = 0
+// 定义 API 端点
+const API_ENDPOINT = 'https://www.steamgriddb.com/api/v2'
 
 // Timeout-controlled fetch function
 const fetchWithTimeout = async (
@@ -42,75 +36,32 @@ const fetchWithTimeout = async (
   }
 }
 
-// Check if the image URL is accessible
-async function checkImageUrl(url: string): Promise<string> {
-  if (!url) return ''
-
-  try {
-    // Try the original URL first
-    const response = await fetchWithTimeout(url, {}, TIMEOUT)
-    if (response.ok) {
-      return url
-    }
-  } catch (error) {
-    console.warn(`Original Image URL Access Failed: ${url}`, error)
-  }
-
-  // If the original URL access fails, try using the reverse substitution
-  if (url.startsWith(ORIGINAL_CDN)) {
-    const proxyUrl = url.replace(ORIGINAL_CDN, PROXY_CDN)
-    try {
-      const proxyResponse = await fetchWithTimeout(proxyUrl, {}, TIMEOUT)
-      if (proxyResponse.ok) {
-        return proxyUrl
-      }
-    } catch (error) {
-      console.warn(`Failed to access the URL of the reverse proxy image: ${proxyUrl}`, error)
-    }
-  }
-
-  // If all fail, return the original URL
-  return url
-}
-
 async function fetchSteamGridDb(
   endpoint: string,
   queryParams?: Record<string, string>
 ): Promise<any> {
   const params = new URLSearchParams(queryParams)
-  const initialApiIndex = currentApiIndex
+  const url = `${API_ENDPOINT}/${endpoint}${queryParams ? `?${params.toString()}` : ''}`
 
-  // Try all API endpoints
-  for (let attempt = 0; attempt < API_ENDPOINTS.length; attempt++) {
-    try {
-      const baseUrl = API_ENDPOINTS[currentApiIndex]
-      const url = `${baseUrl}/${endpoint}${queryParams ? `?${params.toString()}` : ''}`
+  try {
+    const response = await fetchWithTimeout(
+      url,
+      {
+        headers: {
+          Authorization: `Bearer ${STEAMGRIDDB_API_KEY}`
+        }
+      },
+      TIMEOUT
+    )
 
-      const response = await fetchWithTimeout(
-        url,
-        {
-          headers: {
-            Authorization: `Bearer ${STEAMGRIDDB_API_KEY}`
-          }
-        },
-        TIMEOUT
-      )
-
-      if (!response.ok) {
-        throw new Error(`API request failed: ${response.status} ${response.statusText}`)
-      }
-
-      return response.json()
-    } catch (error) {
-      console.warn(`API endpoint ${API_ENDPOINTS[currentApiIndex]} request failed:`, error)
-      // Switch to the next API endpoint
-      currentApiIndex = (currentApiIndex + 1) % API_ENDPOINTS.length
-
-      // If all endpoints have been tried, throw an error
-      if (currentApiIndex === initialApiIndex) {
-        throw error
-      }
+    if (!response.ok) {
+      throw new Error(`API request failed: ${response.status} ${response.statusText}`)
     }
+
+    return response.json()
+  } catch (error) {
+    console.error(`API request failed:`, error)
+    throw error
   }
 }
 
@@ -128,10 +79,10 @@ export async function getGameCovers(steamId: string): Promise<string[]> {
 
     const data = await fetchSteamGridDb(`grids/game/${gameId}`)
 
-    // check url
-    const urls = await Promise.all(data?.data?.map((grid: any) => checkImageUrl(grid.url)) || [])
+    // 直接提取 URL，无需检查
+    const urls = data?.data?.map((grid: any) => grid.url) || []
 
-    // Insert the game cover at the top of the array
+    // 将游戏封面插入数组顶部
     const coverUrl = await getGameCoverFromSteam(steamId)
     if (coverUrl) {
       urls.unshift(coverUrl)
@@ -156,10 +107,11 @@ export async function getGameCoversByName(gameName: string): Promise<string[]> {
     }
 
     const data = await fetchSteamGridDb(`grids/game/${gameId}`)
-    // check url
-    const urls = await Promise.all(data?.data?.map((grid: any) => checkImageUrl(grid.url)) || [])
 
-    // Insert the game cover at the top of the array
+    // 直接提取 URL，无需检查
+    const urls = data?.data?.map((grid: any) => grid.url) || []
+
+    // 将游戏封面插入数组顶部
     const coverUrl = await getGameCoverByNameFromSteam(gameName)
     if (coverUrl) {
       urls.unshift(coverUrl)
@@ -185,10 +137,10 @@ export async function getGameBackgrounds(steamId: string): Promise<string[]> {
 
     const data = await fetchSteamGridDb(`heroes/game/${gameId}`)
 
-    // check url
-    const urls = await Promise.all(data?.data?.map((hero: any) => checkImageUrl(hero.url)) || [])
+    // 直接提取 URL，无需检查
+    const urls = data?.data?.map((hero: any) => hero.url) || []
 
-    // Insert the game's Background image at the top of the array
+    // 将游戏背景图插入数组顶部
     const heroUrl = await getGameBackgroundFromSteam(steamId)
     if (heroUrl) {
       urls.unshift(heroUrl)
@@ -214,10 +166,10 @@ export async function getGameBackgroundsByName(gameName: string): Promise<string
 
     const data = await fetchSteamGridDb(`heroes/game/${gameId}`)
 
-    // check url
-    const urls = await Promise.all(data?.data?.map((hero: any) => checkImageUrl(hero.url)) || [])
+    // 直接提取 URL，无需检查
+    const urls = data?.data?.map((hero: any) => hero.url) || []
 
-    // Insert the game's Background image at the top of the array.
+    // 将游戏背景图插入数组顶部
     const heroUrl = await getGameBackgroundByNameFromSteam(gameName)
     if (heroUrl) {
       urls.unshift(heroUrl)
@@ -243,10 +195,10 @@ export async function getGameLogos(steamId: string): Promise<string[]> {
 
     const data = await fetchSteamGridDb(`logos/game/${gameId}`)
 
-    // check url
-    const urls = await Promise.all(data?.data?.map((logo: any) => checkImageUrl(logo.url)) || [])
+    // 直接提取 URL，无需检查
+    const urls = data?.data?.map((logo: any) => logo.url) || []
 
-    // Insert the game logo at the top of the array
+    // 将游戏 logo 插入数组顶部
     const logoUrl = await getGameLogoFromSteam(steamId)
     if (logoUrl) {
       urls.unshift(logoUrl)
@@ -272,10 +224,10 @@ export async function getGameLogosByName(gameName: string): Promise<string[]> {
 
     const data = await fetchSteamGridDb(`logos/game/${gameId}`)
 
-    // check url
-    const urls = await Promise.all(data?.data?.map((logo: any) => checkImageUrl(logo.url)) || [])
+    // 直接提取 URL，无需检查
+    const urls = data?.data?.map((logo: any) => logo.url) || []
 
-    // Insert the game logo at the top of the array
+    // 将游戏 logo 插入数组顶部
     const logoUrl = await getGameLogoByNameFromSteam(gameName)
     if (logoUrl) {
       urls.unshift(logoUrl)
@@ -301,8 +253,8 @@ export async function getGameIcons(steamId: string): Promise<string[]> {
 
     const data = await fetchSteamGridDb(`icons/game/${gameId}`)
 
-    // check url
-    const urls = await Promise.all(data?.data?.map((icon: any) => checkImageUrl(icon.url)) || [])
+    // 直接提取 URL，无需检查
+    const urls = data?.data?.map((icon: any) => icon.url) || []
 
     return urls
   } catch (error) {
@@ -325,8 +277,8 @@ export async function getGameIconsByName(gameName: string): Promise<string[]> {
 
     const data = await fetchSteamGridDb(`icons/game/${gameId}`)
 
-    // check url
-    const urls = await Promise.all(data?.data?.map((icon: any) => checkImageUrl(icon.url)) || [])
+    // 直接提取 URL，无需检查
+    const urls = data?.data?.map((icon: any) => icon.url) || []
 
     return urls
   } catch (error) {

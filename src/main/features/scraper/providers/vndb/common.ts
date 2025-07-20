@@ -18,18 +18,15 @@ import i18next from 'i18next'
 
 const VNDB_ROLE_MAPPING: Record<string, string> = {
   director: 'director',
-
   scenario: 'scenario',
-
   chardesign: 'illustration',
   art: 'illustration',
-
   music: 'music',
   songs: 'music'
 }
 
 async function fetchVNDB<T>(params: VNDBRequestParams): Promise<VNDBResponse<T>> {
-  const endpoints = ['https://api.vndb.org/kana/vn', 'https://api.ximu.dev/vndb/kana/vn']
+  const endpoint = 'https://api.vndb.org/kana/vn'
   const TIMEOUT_MS = 5000
 
   const fields = Array.isArray(params.fields) ? params.fields.join(',') : params.fields
@@ -45,40 +42,31 @@ async function fetchVNDB<T>(params: VNDBRequestParams): Promise<VNDBResponse<T>>
     })
   }
 
-  let lastError: Error | null = null
+  try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS)
 
-  for (const endpoint of endpoints) {
-    try {
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS)
+    const response = await net.fetch(endpoint, {
+      ...requestConfig,
+      signal: controller.signal
+    })
 
-      const response = await net.fetch(endpoint, {
-        ...requestConfig,
-        signal: controller.signal
-      })
+    clearTimeout(timeoutId)
 
-      clearTimeout(timeoutId)
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
+    return (await response.json()) as VNDBResponse<T>
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
 
-      return (await response.json()) as VNDBResponse<T>
-    } catch (error) {
-      lastError = error instanceof Error ? error : new Error(String(error))
-      const errorMessage = lastError.message
-
-      if (errorMessage.includes('abort')) {
-        console.warn(`Timeout exceeded (${TIMEOUT_MS}ms) for ${endpoint}`)
-      } else {
-        console.warn(`Failed to fetch from ${endpoint}:`, error)
-      }
-
-      continue
+    if (errorMessage.includes('abort')) {
+      throw new Error(`Timeout exceeded (${TIMEOUT_MS}ms) for ${endpoint}`)
+    } else {
+      throw new Error(`Failed to fetch from ${endpoint}: ${errorMessage}`)
     }
   }
-
-  throw new Error(`All endpoints failed. Last error: ${lastError?.message}`)
 }
 
 function processStaffData(staff: VNStaff[]): Array<{ key: string; value: string[] }> {
@@ -276,61 +264,6 @@ export async function checkVNExists(vnId: string): Promise<boolean> {
   }
 }
 
-function getAlternativeImageUrl(originalUrl: string): string {
-  return originalUrl.replace('https://t.vndb.org/', 'https://api.ximu.dev/vndb/img/')
-}
-
-async function tryFetchImage(url: string): Promise<string> {
-  const TIMEOUT_MS = 5000
-
-  async function fetchWithTimeout(fetchUrl: string): Promise<Response> {
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS)
-
-    try {
-      const response = await net.fetch(fetchUrl, {
-        method: 'HEAD',
-        signal: controller.signal
-      })
-      clearTimeout(timeoutId)
-      return response
-    } catch (error) {
-      clearTimeout(timeoutId)
-      throw error
-    }
-  }
-
-  try {
-    const response = await fetchWithTimeout(url)
-    if (response.ok) {
-      return url
-    }
-    throw new Error(`Failed to fetch image: ${response.status}`)
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error)
-
-    if (errorMessage.includes('abort')) {
-      console.warn(`Image fetch timeout (${TIMEOUT_MS}ms) for URL: ${url}`)
-    } else {
-      console.warn(`Failed to fetch image from primary URL: ${url}`, error)
-    }
-
-    const alternativeUrl = getAlternativeImageUrl(url)
-    console.warn(`Retrying with alternative URL: ${alternativeUrl}`)
-
-    try {
-      const alternativeResponse = await fetchWithTimeout(alternativeUrl)
-      if (alternativeResponse.ok) {
-        return alternativeUrl
-      }
-    } catch (altError) {
-      console.warn(`Alternative URL also failed: ${alternativeUrl}`, altError)
-    }
-
-    return alternativeUrl
-  }
-}
-
 export async function getGameBackgrounds(vnId: string): Promise<string[]> {
   const formattedId = vnId.startsWith('v') ? vnId : `v${vnId}`
   const fields = ['screenshots{url}']
@@ -342,8 +275,7 @@ export async function getGameBackgrounds(vnId: string): Promise<string[]> {
       results: 1
     })
 
-    const urls = data.results[0].screenshots.map((screenshot) => screenshot.url)
-    return await Promise.all(urls.map((url) => tryFetchImage(url)))
+    return data.results[0].screenshots.map((screenshot) => screenshot.url)
   } catch (error) {
     console.error(`Error fetching images for VN ${vnId}:`, error)
     return []
@@ -369,8 +301,7 @@ export async function getGameBackgroundsByName(name: string): Promise<string[]> 
       )
       vn = vn || data.results[0]
 
-      const urls = vn.screenshots.map((screenshot) => screenshot.url)
-      return await Promise.all(urls.map((url) => tryFetchImage(url)))
+      return vn.screenshots.map((screenshot) => screenshot.url)
     }
     return []
   } catch (error) {
@@ -390,7 +321,7 @@ export async function getGameCover(vnId: string): Promise<string> {
       results: 1
     })
 
-    return await tryFetchImage(data.results[0].image.url)
+    return data.results[0].image.url
   } catch (error) {
     console.error(`Error fetching cover for VN ${vnId}:`, error)
     return ''
@@ -407,7 +338,7 @@ export async function getGameCoverByName(name: string): Promise<string> {
       results: 1
     })
 
-    return await tryFetchImage(data.results[0].image.url)
+    return data.results[0].image.url
   } catch (error) {
     console.error(`Error fetching cover for VN ${name}:`, error)
     return ''
