@@ -81,7 +81,7 @@ export function ArrayEditor({
 
   const editorContent = (
     <div className={cn('w-full flex flex-row shadow-sm rounded-md', className)}>
-      <div className="flex px-3 py-1 overflow-x-auto text-sm bg-input/20 grow scrollbar-base-thin border-input h-9">
+      <div className="flex px-3 py-1 overflow-x-auto text-sm bg-input/20 grow scrollbar-base-thin h-9">
         {value.length === 0 ? (
           <div className="self-center text-sm text-muted-foreground">
             {placeholder || defaultPlaceholder}
@@ -117,7 +117,7 @@ export function ArrayEditor({
         type="button"
         variant="outline"
         onClick={() => setIsAddDialogOpen(true)}
-        className="p-1 rounded-l-none border-input h-9 shadow-none"
+        className="p-1 rounded-none h-9 shadow-none"
         aria-label={t('arrayEditor.addElement')}
       >
         <Plus className="w-4 h-4" />

@@ -18,9 +18,11 @@ import { cn } from '~/utils'
 
 export function SortMenu({
   isSortMenuOpen,
+  setIsSortMenuOpen,
   children
 }: {
   isSortMenuOpen: boolean
+  setIsSortMenuOpen: (open: boolean) => void
   children: React.ReactNode
 }): React.JSX.Element {
   const { t } = useTranslation('game')
@@ -47,7 +49,7 @@ export function SortMenu({
     setPlayStatusOrder([...newOrder])
   }
   return (
-    <Popover open={isSortMenuOpen}>
+    <Popover open={isSortMenuOpen} onOpenChange={setIsSortMenuOpen}>
       <Tooltip>
         <PopoverTrigger>
           <TooltipTrigger asChild>{children}</TooltipTrigger>

@@ -268,7 +268,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       },
       light: {
         blur: 130,
-        opacity: 0.75
+        opacity: 0.8
       }
     },
     enableNSFWBlur: true,

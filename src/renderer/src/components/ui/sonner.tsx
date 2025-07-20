@@ -13,7 +13,7 @@ const Toaster = ({ ...props }: ToasterProps): React.JSX.Element => {
           toast: 'backdrop-filter !backdrop-blur-md'
         }
       }}
-      className="toaster group backdrop-filter backdrop-blur-[var(--glass-blur)]"
+      className="toaster group backdrop-filter backdrop-blur-[32px]"
       style={
         {
           '--normal-bg': 'color-mix(in hsl, var(--popover) 95%, transparent)',

@@ -22,9 +22,9 @@ export function GameList(): React.JSX.Element {
     <div className={cn('w-[726px] h-[86vh] p-3', '3xl:w-[876px]')}>
       <div className={cn('flex flex-col w-full h-full gap-3')}>
         <Card className={cn('grow pt-3')}>
-          <CardContent className="h-full">
+          <CardContent className="h-full w-full">
             <div className="w-full">
-              <ScrollArea className={cn('h-[calc(84vh-230px)]')}>
+              <ScrollArea className={cn('h-[calc(84vh-230px)] pr-3')}>
                 <Table>
                   <TableHeader className={cn('')}>
                     <TableRow>

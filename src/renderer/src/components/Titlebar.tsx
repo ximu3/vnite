@@ -78,7 +78,7 @@ export function Titlebar(): React.JSX.Element {
         <Button
           variant={'ghost'}
           className={cn(
-            'non-draggable rounded-none h-[30px]',
+            'non-draggable rounded-none h-[30px] z-[999]',
             'hover:bg-transparent hover:text-destructive dark:hover:bg-transparent'
           )}
           onClick={() => ipcManager.send('window:close')}
@@ -88,7 +88,7 @@ export function Titlebar(): React.JSX.Element {
         <Button
           variant={'ghost'}
           className={cn(
-            'non-draggable hover:bg-transparent hover:text-primary rounded-none h-[30px] dark:hover:bg-transparent'
+            'non-draggable hover:bg-transparent hover:text-primary rounded-none h-[30px]  z-[999] dark:hover:bg-transparent'
           )}
           onClick={() => ipcManager.send('window:maximize')}
         >
@@ -101,7 +101,7 @@ export function Titlebar(): React.JSX.Element {
         <Button
           variant={'ghost'}
           className={cn(
-            'non-draggable rounded-none hover:bg-transparent hover:text-primary h-[30px] dark:hover:bg-transparent'
+            'non-draggable rounded-none hover:bg-transparent hover:text-primary h-[30px]  z-[999] dark:hover:bg-transparent'
           )}
           onClick={() => ipcManager.send('window:minimize')}
         >

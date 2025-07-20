@@ -75,7 +75,7 @@ export function Appearances(): React.JSX.Element {
                         {t('appearances.background.currentBackground')}
                       </h4>
                       {!backgroundInfo.error ? (
-                        <div className="overflow-hidden border rounded-md">
+                        <div className="overflow-hidden rounded-md">
                           <img
                             src={backgroundUrl}
                             alt={t('appearances.background.currentBackground')}

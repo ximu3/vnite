@@ -83,7 +83,7 @@ export function FilterCombobox({
             aria-expanded={open}
             className="justify-between non-draggable"
           >
-            <div className="flex flex-row gap-1 -ml-2 mx-1 my-1 p-0 truncate w-[196px]">
+            <div className="flex flex-row gap-1 -ml-2 mx-1 my-1 p-0 pl-1 truncate w-[196px]">
               {selectedValues.length > 0 ? (
                 selectedValues.map((value) => (
                   <span

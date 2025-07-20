@@ -59,7 +59,7 @@ export function Filter({ children }: { children: React.ReactNode }): React.JSX.E
   }
 
   return (
-    <Popover open={isFilterMenuOpen}>
+    <Popover open={isFilterMenuOpen} onOpenChange={setIsFilterMenuOpen}>
       <Tooltip>
         <PopoverTrigger>
           <TooltipTrigger asChild>{children}</TooltipTrigger>

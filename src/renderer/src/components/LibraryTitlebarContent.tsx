@@ -147,7 +147,7 @@ export function LibraryTitlebarContent(): React.JSX.Element {
       </Select>
 
       {/* 排序按钮 */}
-      <SortMenu isSortMenuOpen={isSortMenuOpen}>
+      <SortMenu isSortMenuOpen={isSortMenuOpen} setIsSortMenuOpen={setIsSortMenuOpen}>
         <Button
           onClick={toggleSortMenu}
           variant="thirdary"
