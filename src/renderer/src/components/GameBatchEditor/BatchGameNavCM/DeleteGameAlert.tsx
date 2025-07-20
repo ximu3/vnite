@@ -13,6 +13,7 @@ import { toast } from 'sonner'
 import { useGameCollectionStore, useGameRegistry } from '~/stores/game'
 import { useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
+import { useGameBatchEditorStore } from '../store'
 import { ipcManager } from '~/app/ipc'
 
 export function DeleteGameAlert({
@@ -30,24 +31,29 @@ export function DeleteGameAlert({
   const navigate = useNavigate()
   const { removeGamesFromAllCollections } = useGameCollectionStore()
   const gameMetaIndex = useGameRegistry((state) => state.gameMetaIndex)
+  const clearSelection = useGameBatchEditorStore((state) => state.clearSelection)
 
   async function deleteGames(): Promise<void> {
     const gamesCount = gameIds.length
+    const gameIdsToDelete = gameIds
 
     toast.promise(
       async () => {
-        console.log(`Deleting games: ${gameIds.join(', ')}...`)
+        // Clear the selection in the batch editor
+        clearSelection()
+
+        console.log(`Deleting games: ${gameIdsToDelete.join(', ')}...`)
 
         // Remove games from favorites
-        removeGamesFromAllCollections(gameIds)
+        removeGamesFromAllCollections(gameIdsToDelete)
 
         // Deleting games from the database
-        for (const gameId of gameIds) {
+        for (const gameId of gameIdsToDelete) {
           await ipcManager.invoke('game:delete', gameId)
           await new Promise((resolve) => setTimeout(resolve, 50))
         }
 
-        console.log(`Games deleted: ${gameIds.join(', ')}`)
+        console.log(`Games deleted: ${gameIdsToDelete.join(', ')}`)
         navigate({ to: '/library' })
       },
       {
