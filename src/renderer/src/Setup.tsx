@@ -5,10 +5,12 @@ import { setup, changeFont } from '~/utils'
 import { useGameAdderStore } from './pages/GameAdder/store'
 import { randomGame } from './stores/game'
 import { useConfigState } from './hooks'
+import { useGameRegistry } from './stores/game'
 
 export function Setup(): React.JSX.Element {
   const router = useRouter()
   const [font] = useConfigState('appearances.font')
+  const gameIds = useGameRegistry((state) => state.gameIds)
   useEffect(() => {
     setup(router)
   }, [])
@@ -24,6 +26,25 @@ export function Setup(): React.JSX.Element {
   const [randomGameHotkey] = useConfigState('hotkeys.randomGame')
 
   const setIsGameAdderOpen = useGameAdderStore((state) => state.setIsOpen)
+
+  function randomGameDetail(): void {
+    const randomGameId = randomGame()
+    if (randomGameId) {
+      if (router.state.location.pathname.startsWith('/library/games/')) {
+        if (gameIds.length === 1) {
+          return
+        }
+        const currentGameId = router.state.location.pathname.split('/')[3]
+        if (currentGameId === randomGameId) {
+          randomGameDetail()
+          return
+        }
+      }
+      router.navigate({ to: `/library/games/${randomGameId}/all` })
+    } else {
+      router.navigate({ to: '/library' })
+    }
+  }
 
   useHotkeys(
     addGameHotkey,
@@ -73,12 +94,7 @@ export function Setup(): React.JSX.Element {
   useHotkeys(
     randomGameHotkey,
     () => {
-      const randomGameId = randomGame()
-      if (randomGameId) {
-        router.navigate({ to: `/library/games/${randomGameId}/all` })
-      } else {
-        router.navigate({ to: '/library' })
-      }
+      randomGameDetail()
     },
     {
       preventDefault: true
