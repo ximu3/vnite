@@ -3,67 +3,102 @@
   "general": {
     "title": "通用",
     "language": "語言",
+    "languageDescription": "選擇應用程式的顯示語言",
     "openAtLogin": "開機自啟",
+    "openAtLoginDescription": "在系統啟動時自動打開應用程式",
     "theme": "主題樣式",
+    "themeDescription": "選擇應用程式的主題樣式",
     "darkTheme": "暗色",
     "lightTheme": "淺色",
     "followSystem": "跟隨系統",
     "closeMainPanel": "關閉主面板",
+    "closeMainPanelDescription": "選擇關閉主窗口時的行為方式",
     "action": "操作",
     "quitApp": "退出vnite",
     "minimizeToTray": "最小化到系統匣",
-    "hideWindowAfterGameStart": "啟動遊戲後最小化到系統匣"
+    "hideWindowAfterGameStart": "啟動遊戲後最小化到系統匣",
+    "hideWindowAfterGameStartDescription": "啟動遊戲後自動隱藏主窗口"
   },
   "appearances": {
     "title": "外觀",
+    "font": {
+      "title": "字體",
+      "manageFont": "管理字體",
+      "manageFontDescription": "更換應用程式字體",
+      "manage": "管理",
+      "dialog": {
+        "title": "字體設置",
+        "description": "選擇應用顯示字體，更改將立即生效",
+        "currentFont": "當前字體",
+        "systemDefaultFonts": "系統默認字體",
+        "searchFont": "搜索字體...",
+        "preview": "預覽",
+        "resetToDefault": "重置為默認字體",
+        "finish": "完成"
+      }
+    },
     "background": {
       "title": "背景",
       "customBackground": "自定義背景",
+      "customBackgroundDescription": "啟用自定義背景圖片",
       "image": "圖片",
+      "imageDescription": "選擇自定義背景圖片",
       "selectImage": "選擇圖片",
       "currentBackground": "當前背景圖片",
       "noBackground": "未設置背景圖片"
     },
     "showcase": {
       "title": "海報牆",
-      "showPlayButtonOnPoster": "在海報上顯示遊玩按鈕"
+      "showPlayButtonOnPoster": "在海報上顯示遊玩按鈕",
+      "showPlayButtonOnPosterDescription": "在海報上顯示遊玩按鈕"
     },
     "glass": {
       "title": "磨砂玻璃",
       "blur": "模糊度",
-      "opacity": "透明度"
+      "blurDescription": "磨砂玻璃效果的模糊度",
+      "opacity": "透明度",
+      "opacityDescription": "磨砂玻璃效果的透明度"
     },
     "gameList": {
       "title": "遊戲列表",
       "showRecentGames": "顯示最近遊戲欄目",
+      "showRecentGamesDescription": "在遊戲列表中顯示最近遊玩的遊戲",
       "highlightLocalGames": "突顯本機遊戲",
+      "highlightLocalGamesDescription": "在遊戲列表中突顯顯示本機遊戲",
       "markLocalGames": "標記本機遊戲",
-      "showCollapseButton": "顯示折疊按鈕"
+      "markLocalGamesDescription": "在遊戲列表中標記本機已安裝的遊戲"
     },
     "gameDetail": {
       "title": "遊戲詳情頁",
-      "showOriginalName": "在標題旁顯示原名"
+      "showOriginalName": "在標題旁顯示原名",
+      "showOriginalNameDescription": "在遊戲詳情頁遊戲標題旁顯示原名"
     },
     "sidebar": {
       "title": "側邊欄",
       "showThemeSwitcher": "顯示主題切換按鈕",
-      "showNSFWBlurSwitcher": "顯示 NSFW 內容開關"
+      "showThemeSwitcherDescription": "在側邊欄顯示主題切換按鈕",
+      "showNSFWBlurSwitcher": "顯示 NSFW 內容開關",
+      "showNSFWBlurSwitcherDescription": "在側邊欄顯示 NSFW 模糊切換器"
     }
   },
   "advanced": {
     "title": "進階",
     "localeEmulator": {
       "name": "Locale Emulator",
+      "description": "Locale Emulator 是一個用於模擬應用程式區域設置的工具",
       "placeholder": "請輸入LEProc.exe的路徑"
     },
     "visualBoyAdvance": {
       "name": "Visual Boy Advance",
+      "description": "Visual Boy Advance 是一個流行的 Game Boy Advance 模擬器",
       "placeholder": "請輸入visualboyadvance.exe的路徑"
     },
     "magpie": {
       "name": "Magpie",
+      "description": "Magpie 是一個用於超分辨率縮放的工具",
       "placeholder": "請輸入Magpie.exe的路徑",
-      "hotkeyLabel": "Magpie 縮放快捷鍵"
+      "hotkeyLabel": "Magpie 縮放快捷鍵",
+      "hotkeyDescription": "設置 Magpie 縮放的快捷鍵"
     }
   },
   "theme": {
@@ -106,7 +141,11 @@
   "cloudSync": {
     "title": "雲同步",
     "enable": "是否啟用",
+    "enableDescription": "啟用雲同步功能以實現跨裝置數據實時同步",
     "syncMode": "同步模式",
+    "syncFull": "全量同步",
+    "syncFullDescription": "一次性同步所有數據，適用於新裝置與數據遷移",
+    "syncFullButton": "全量同步",
     "modes": {
       "official": "官方",
       "selfHosted": "自託管"
@@ -170,11 +209,13 @@
     "title": "刮削器",
     "common": {
       "title": "通用",
-      "defaultDataSource": "預設資料來源"
+      "defaultDataSource": "預設資料來源",
+      "defaultDataSourceDescription": "選擇預設資料來源"
     },
     "vndb": {
       "title": "VNDB 設置",
       "tagSpoilerLevel": "標籤劇透級別",
+      "tagSpoilerLevelDescription": "選擇 VNDB 標籤的劇透級別",
       "tagSpoilerLevels": {
         "none": "無劇透 (0)",
         "minor": "輕微劇透 (1)",
@@ -193,6 +234,7 @@
   "database": {
     "title": "資料庫",
     "portableMode": "便攜模式",
+    "portableModeDescription": "將應用數據存儲在應用目錄下，便於攜帶和備份",
     "modes": {
       "portable": "便攜模式",
       "normal": "普通模式"
@@ -200,9 +242,13 @@
     "confirmSwitch": "確定要轉換為 {{mode}} 嗎？",
     "switchDescription": "轉換完成後將自動重啟應用。",
     "openFolder": "打開資料庫資料夾",
+    "openFolderDescription": "打開資料庫資料夾以查看或備份資料",
     "backup": "備份資料庫",
+    "backupDescription": "備份當前資料庫到指定位置",
     "import": "匯入資料庫",
+    "importDescription": "從指定位置匯入資料庫，覆蓋當前資料",
     "importV2": "匯入V2資料庫",
+    "importV2Description": "從指定位置匯入V2資料庫，覆蓋當前資料",
     "confirmImport": "確定要匯入資料庫嗎？",
     "importWarning": "匯入資料庫將覆蓋目前資料庫，此操作不可逆！操作結束後應用將自動重啟。",
     "confirmImportV2": "確定要匯入V2資料庫嗎？",
@@ -236,7 +282,9 @@
     "transformer": {
       "title": "轉換器",
       "enable": "啟用轉換器",
+      "enableDescription": "啟用轉換器以自動轉換遊戲元數據",
       "manage": "管理轉換規則",
+      "manageDescription": "管理和配置元數據轉換器",
       "manageButton": "管理"
     }
   }

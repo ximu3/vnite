@@ -3,67 +3,102 @@
   "general": {
     "title": "General",
     "language": "Language",
+    "languageDescription": "Choose the display language for the application",
     "openAtLogin": "Open at Login",
+    "openAtLoginDescription": "Automatically open application when system starts",
     "theme": "Theme Style",
+    "themeDescription": "Choose the theme style for the application",
     "darkTheme": "Dark",
     "lightTheme": "Light",
     "followSystem": "Follow System",
     "closeMainPanel": "Close Main Panel",
+    "closeMainPanelDescription": "Choose the behavior when closing the main window",
     "action": "Action",
     "quitApp": "Quit vnite",
     "minimizeToTray": "Minimize to Tray",
-    "hideWindowAfterGameStart": "Minimize to tray after game launch"
+    "hideWindowAfterGameStart": "Minimize to tray after game launch",
+    "hideWindowAfterGameStartDescription": "Automatically hide main window after launching a game"
   },
   "appearances": {
     "title": "Appearances",
+    "font": {
+      "title": "Font",
+      "manageFont": "Manage Font",
+      "manageFontDescription": "Change application font",
+      "manage": "Manage",
+      "dialog": {
+        "title": "Font Settings",
+        "description": "Select font for the application, changes will take effect immediately",
+        "currentFont": "Current Font",
+        "systemDefaultFonts": "System Default Fonts",
+        "searchFont": "Search fonts...",
+        "preview": "Preview",
+        "resetToDefault": "Reset to Default Font",
+        "finish": "Finish"
+      }
+    },
     "background": {
       "title": "Background",
       "customBackground": "Custom Background",
+      "customBackgroundDescription": "Enable custom background image",
       "image": "Image",
+      "imageDescription": "Choose custom background image",
       "selectImage": "Select Image",
       "currentBackground": "Current Background Image",
       "noBackground": "No Background Image Set"
     },
     "showcase": {
       "title": "Showcase",
-      "showPlayButtonOnPoster": "Show Play Button on Poster"
+      "showPlayButtonOnPoster": "Show Play Button on Poster",
+      "showPlayButtonOnPosterDescription": "Show play button on the poster"
     },
     "glass": {
       "title": "Frosted Glass",
       "blur": "Blur",
-      "opacity": "Opacity"
+      "blurDescription": "Blur level for frosted glass effect",
+      "opacity": "Opacity",
+      "opacityDescription": "Opacity level for frosted glass effect"
     },
     "gameList": {
       "title": "Game List",
       "showRecentGames": "Show Recent Games Section",
+      "showRecentGamesDescription": "Show recently played games in game list",
       "highlightLocalGames": "Highlight Local Games",
+      "highlightLocalGamesDescription": "Highlight local games in game list",
       "markLocalGames": "Mark Local Games",
-      "showCollapseButton": "Show Collapse Button"
+      "markLocalGamesDescription": "Mark installed local games in game list"
     },
     "gameDetail": {
       "title": "Game Detail Page",
-      "showOriginalName": "Show Original Name Next to Title"
+      "showOriginalName": "Show Original Name Next to Title",
+      "showOriginalNameDescription": "Show original name next to game title in detail page"
     },
     "sidebar": {
       "title": "Sidebar",
       "showThemeSwitcher": "Show Theme Switcher",
-      "showNSFWBlurSwitcher": "Show NSFW Content Switcher"
+      "showThemeSwitcherDescription": "Show theme switcher button in sidebar",
+      "showNSFWBlurSwitcher": "Show NSFW Content Switcher",
+      "showNSFWBlurSwitcherDescription": "Show NSFW blur toggle in sidebar"
     }
   },
   "advanced": {
     "title": "Advanced",
     "localeEmulator": {
       "name": "Locale Emulator",
+      "description": "Locale Emulator is a tool for simulating application locales",
       "placeholder": "Enter the path to LEProc.exe"
     },
     "visualBoyAdvance": {
       "name": "Visual Boy Advance",
+      "description": "Visual Boy Advance is a popular Game Boy Advance emulator",
       "placeholder": "Enter the path to visualboyadvance.exe"
     },
     "magpie": {
       "name": "Magpie",
+      "description": "Magpie is a tool for super-resolution scaling",
       "placeholder": "Enter the path to Magpie.exe",
-      "hotkeyLabel": "Magpie scaling hotkey"
+      "hotkeyLabel": "Magpie scaling hotkey",
+      "hotkeyDescription": "Set hotkey for Magpie scaling"
     }
   },
   "theme": {
@@ -104,9 +139,13 @@
     }
   },
   "cloudSync": {
-    "title": "CloudSync",
+    "title": "Cloud Sync",
     "enable": "Enable",
+    "enableDescription": "Enable cloud sync for real-time data synchronization across devices",
     "syncMode": "Sync Mode",
+    "syncFull": "Full Sync",
+    "syncFullDescription": "Sync all data at once, suitable for new devices and data migration",
+    "syncFullButton": "Full Sync",
     "modes": {
       "official": "Official",
       "selfHosted": "Self-hosted"
@@ -170,11 +209,13 @@
     "title": "Scraper",
     "common": {
       "title": "Common",
-      "defaultDataSource": "Default Data Source"
+      "defaultDataSource": "Default Data Source",
+      "defaultDataSourceDescription": "Choose default data source"
     },
     "vndb": {
       "title": "VNDB Settings",
       "tagSpoilerLevel": "Tag Spoiler Level",
+      "tagSpoilerLevelDescription": "Choose spoiler level for VNDB tags",
       "tagSpoilerLevels": {
         "none": "No Spoilers (0)",
         "minor": "Minor Spoilers (1)",
@@ -193,6 +234,7 @@
   "database": {
     "title": "Database",
     "portableMode": "Portable Mode",
+    "portableModeDescription": "Store application data in the application directory for portability and backup",
     "modes": {
       "portable": "Portable Mode",
       "normal": "Normal Mode"
@@ -200,9 +242,13 @@
     "confirmSwitch": "Are you sure you want to switch to {{mode}}?",
     "switchDescription": "The application will restart automatically after conversion.",
     "openFolder": "Open Database Folder",
+    "openFolderDescription": "Open database folder to view or backup data",
     "backup": "Backup Database",
+    "backupDescription": "Backup current database to specified location",
     "import": "Import Database",
+    "importDescription": "Import database from specified location, overwriting current data",
     "importV2": "Import V2 Database",
+    "importV2Description": "Import V2 database from specified location, overwriting current data",
     "confirmImport": "Are you sure you want to import the database?",
     "importWarning": "Importing a database will overwrite the current database. This operation is irreversible! The application will restart automatically after the operation.",
     "confirmImportV2": "Are you sure you want to import the V2 database?",
@@ -236,7 +282,9 @@
     "transformer": {
       "title": "Transformer",
       "enable": "Enable Transformer",
+      "enableDescription": "Enable transformer to automatically transform game metadata",
       "manage": "Manage Transformer Rules",
+      "manageDescription": "Manage and configure metadata transformer",
       "manageButton": "Manage"
     }
   }

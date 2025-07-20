@@ -478,6 +478,7 @@
       "removeFrom": "一括削除",
       "newCollection": "新しいコレクション",
       "editInfo": "ゲーム情報を一括編集",
+      "updateMetadata": "メタデータを更新",
       "delete": "一括削除"
     },
     "information": {
@@ -501,6 +502,19 @@
       "success": "ゲーム情報を一括編集しました",
       "error": "ゲーム情報の編集に失敗しました: {{message}}"
     },
+    "floatingButtons": {
+      "addToCollection": "コレクションに追加",
+      "editInfo": "情報を編集",
+      "updateMetadata": "メタデータを更新",
+      "delete": "削除",
+      "cancel": "キャンセル",
+      "selectAll": "すべて選択",
+      "selected": "{{count}}項目選択済み"
+    },
+    "selection": {
+      "selectAll": "すべて選択",
+      "unselectAll": "選択解除"
+    },
     "delete": {
       "title": "これらの{{count}}個のゲームを削除してもよろしいですか？",
       "description": "選択したゲームのすべてのデータが完全に削除されます。この操作は元に戻せません。",
@@ -511,6 +525,63 @@
         "success": "{{count}}個のゲームを削除しました",
         "error": "{{count}}個のゲームの削除に失敗しました: {{message}}"
       }
+    }
+  },
+  "updater": {
+    "fields": {
+      "#all": "すべてのフィールド",
+      "#missing": "欠落フィールド",
+      "name": "名前",
+      "originalName": "原名",
+      "releaseDate": "発売日",
+      "description": "説明",
+      "developers": "開発元",
+      "publishers": "パブリッシャー",
+      "genres": "ジャンル",
+      "platforms": "プラットフォーム",
+      "tags": "タグ",
+      "relatedSites": "関連サイト",
+      "extra": "追加情報",
+      "cover": "カバー",
+      "background": "背景",
+      "logo": "ロゴ",
+      "icon": "アイコン"
+    },
+    "dialog": {
+      "title": "ゲームメタデータの更新",
+      "batchTitle": "一括メタデータ更新 ({{count}}個のゲーム)",
+      "description": "選択したデータソースからゲームメタデータを取得してライブラリに適用します",
+      "dataSource": "データソース",
+      "selectDataSource": "データソースを選択",
+      "updateFields": "更新するフィールド",
+      "mergeStrategy": "マージ戦略",
+      "replace": "置換",
+      "merge": "マージ",
+      "append": "追加",
+      "concurrency": "同時実行数: {{count}}",
+      "concurrencyDescription": "同時実行数が高いほど処理が速くなりますが、リクエストが失敗する可能性があります",
+      "progress": "進捗状況: {{completed}}%",
+      "progressCount": "{{current}}/{{total}}",
+      "successful": "成功: {{count}}",
+      "failed": "失敗: {{count}}",
+      "processing": "処理中...",
+      "error": "エラー: {{message}}",
+      "back": "設定に戻る",
+      "close": "閉じる",
+      "cancel": "キャンセル",
+      "update": "メタデータを更新",
+      "startBatch": "一括更新を開始",
+      "updating": "更新中...",
+      "batchUpdating": "一括更新中..."
+    },
+    "notifications": {
+      "updating": "ゲームメタデータを更新中...",
+      "batchUpdating": "{{count}}個のゲームのメタデータを一括更新中...",
+      "processing": "{{name}}を処理中... {{progress}}",
+      "success": "ゲームメタデータが正常に更新されました！",
+      "batchComplete": "一括更新完了！成功: {{success}}、失敗: {{failed}}",
+      "error": "更新に失敗しました: {{message}}",
+      "noDataSources": "互換性のあるデータソースが見つかりません"
     }
   }
 }

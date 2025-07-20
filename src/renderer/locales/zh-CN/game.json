@@ -548,6 +548,43 @@
       "background": "背景",
       "logo": "徽标",
       "icon": "图标"
-    }
+    },
+    "dialog": {
+      "title": "更新游戏元数据",
+      "batchTitle": "批量更新元数据 ({{count}} 个游戏)",
+      "description": "从选定的数据源获取游戏元数据并应用到游戏库中",
+      "dataSource": "数据源",
+      "selectDataSource": "选择数据源",
+      "updateFields": "要更新的字段",
+      "mergeStrategy": "合并策略",
+      "replace": "替换",
+      "merge": "合并",
+      "append": "追加",
+      "concurrency": "并发数: {{count}}",
+      "concurrencyDescription": "并发数越高，处理速度越快，但可能会导致请求失败",
+      "progress": "总进度: {{completed}}%",
+      "progressCount": "{{current}}/{{total}}",
+      "successful": "成功: {{count}}",
+      "failed": "失败: {{count}}",
+      "processing": "处理中...",
+      "error": "错误: {{message}}",
+      "back": "返回设置",
+      "close": "关闭",
+      "cancel": "取消",
+      "update": "更新元数据",
+      "startBatch": "开始批量更新",
+      "updating": "更新中...",
+      "batchUpdating": "批量更新中..."
+    },
+    "notifications": {
+      "updating": "正在更新游戏元数据...",
+      "batchUpdating": "正在批量更新 {{count}} 个游戏的元数据...",
+      "processing": "正在处理 {{name}}... {{progress}}",
+      "success": "游戏元数据更新成功！",
+      "batchComplete": "批量更新完成！成功: {{success}}, 失败: {{failed}}",
+      "error": "更新失败: {{message}}",
+      "noDataSources": "没有找到兼容的数据源"
+    },
+    "unknown": "未知错误"
   }
 }

@@ -18,6 +18,7 @@ import { Label } from '@ui/label'
 import { ScrollArea } from '@ui/scroll-area'
 import { ipcManager } from '~/app/ipc'
 import { changeFont } from '~/utils'
+import { useTranslation } from 'react-i18next'
 
 interface FontSettingsDialogProps {
   isOpen: boolean
@@ -37,6 +38,8 @@ export function FontSettingsDialog({
   const [previewText, setPreviewText] = useState(
     '这是字体预览文本 The quick brown fox jumps over the lazy dog 1234567890'
   )
+
+  const { t } = useTranslation('config')
 
   // 加载系统字体
   const loadSystemFonts = async (): Promise<void> => {
@@ -80,13 +83,13 @@ export function FontSettingsDialog({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="w-[700px]">
         <DialogHeader>
-          <DialogTitle>字体设置</DialogTitle>
-          <DialogDescription>选择应用显示字体，更改将立即生效</DialogDescription>
+          <DialogTitle>{t('appearances.font.dialog.title')}</DialogTitle>
+          <DialogDescription>{t('appearances.font.dialog.description')}</DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
-            <Label htmlFor="font">当前字体</Label>
+            <Label htmlFor="font">{t('appearances.font.dialog.currentFont')}</Label>
             <div className="flex items-center gap-2">
               <Popover open={commandOpen} onOpenChange={setCommandOpen} modal={true}>
                 <PopoverTrigger asChild>
@@ -97,14 +100,14 @@ export function FontSettingsDialog({
                     className="justify-between font-normal w-[200px]"
                     style={{ fontFamily: font || 'var(--font-sans)' }}
                   >
-                    {font || '系统默认字体'}
+                    {font || t('appearances.font.dialog.systemDefaultFonts')}
                     <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-[300px] p-0" side="bottom" align="start">
                   <Command>
                     <CommandInput
-                      placeholder="搜索字体..."
+                      placeholder={t('appearances.font.dialog.searchFont')}
                       value={searchTerm}
                       onValueChange={setSearchTerm}
                     />
@@ -134,13 +137,7 @@ export function FontSettingsDialog({
                 </PopoverContent>
               </Popover>
 
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={loadSystemFonts}
-                disabled={loading}
-                title="刷新字体列表"
-              >
+              <Button variant="outline" size="icon" onClick={loadSystemFonts} disabled={loading}>
                 {loading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
@@ -151,7 +148,7 @@ export function FontSettingsDialog({
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="preview">预览</Label>
+            <Label htmlFor="preview">{t('appearances.font.dialog.preview')}</Label>
             <Textarea
               id="preview"
               value={previewText}
@@ -164,9 +161,9 @@ export function FontSettingsDialog({
 
         <DialogFooter className="gap-2">
           <Button variant="outline" onClick={handleResetFont}>
-            重置为默认字体
+            {t('appearances.font.dialog.resetToDefault')}
           </Button>
-          <Button onClick={() => onOpenChange(false)}>完成</Button>
+          <Button onClick={() => onOpenChange(false)}>{t('appearances.font.dialog.finish')}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

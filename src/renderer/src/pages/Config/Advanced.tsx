@@ -22,7 +22,7 @@ export function Advanced(): React.JSX.Element {
             hookType="configLocal"
             path="game.linkage.localeEmulator.path"
             title={t('advanced.localeEmulator.name')}
-            description="Locale Emulator 程序路径"
+            description={t('advanced.localeEmulator.description')}
             controlType="fileinput"
             placeholder={t('advanced.localeEmulator.placeholder')}
             dialogType="openFile"
@@ -34,7 +34,7 @@ export function Advanced(): React.JSX.Element {
             hookType="configLocal"
             path="game.linkage.visualBoyAdvance.path"
             title={t('advanced.visualBoyAdvance.name')}
-            description="Visual Boy Advance 模拟器路径"
+            description={t('advanced.visualBoyAdvance.description')}
             controlType="fileinput"
             placeholder={t('advanced.visualBoyAdvance.placeholder')}
             dialogType="openFile"
@@ -46,7 +46,7 @@ export function Advanced(): React.JSX.Element {
             hookType="configLocal"
             path="game.linkage.magpie.path"
             title={t('advanced.magpie.name')}
-            description="Magpie 缩放工具路径"
+            description={t('advanced.magpie.description')}
             controlType="fileinput"
             placeholder={t('advanced.magpie.placeholder')}
             dialogType="openFile"
@@ -58,7 +58,7 @@ export function Advanced(): React.JSX.Element {
             hookType="configLocal"
             path="game.linkage.magpie.hotkey"
             title={t('advanced.magpie.hotkeyLabel')}
-            description="设置 Magpie 的快捷键"
+            description={t('advanced.magpie.hotkeyDescription')}
             controlType="hotkey"
             inputClassName="font-mono"
           />

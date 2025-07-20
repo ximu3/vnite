@@ -3,67 +3,102 @@
   "general": {
     "title": "一般",
     "language": "言語",
+    "languageDescription": "アプリケーションの表示言語を選択",
     "openAtLogin": "ログイン時に開く",
+    "openAtLoginDescription": "システム起動時に自動的にアプリケーションを開く",
     "theme": "テーマスタイル",
+    "themeDescription": "アプリケーションのテーマスタイルを選択",
     "darkTheme": "ダーク",
     "lightTheme": "ライト",
     "followSystem": "システムに従う",
     "closeMainPanel": "メインパネルを閉じる",
+    "closeMainPanelDescription": "メインウィンドウを閉じる時の動作を選択",
     "action": "アクション",
     "quitApp": "vniteを終了",
     "minimizeToTray": "トレイに最小化",
-    "hideWindowAfterGameStart": "ゲーム起動後にトレイに最小化する"
+    "hideWindowAfterGameStart": "ゲーム起動後にトレイに最小化する",
+    "hideWindowAfterGameStartDescription": "ゲーム起動後に自動的にメインウィンドウを隠す"
   },
   "appearances": {
     "title": "外観",
+    "font": {
+      "title": "フォント",
+      "manageFont": "フォント管理",
+      "manageFontDescription": "アプリケーションのフォントを変更",
+      "manage": "管理",
+      "dialog": {
+        "title": "フォント設定",
+        "description": "アプリケーションのフォントを選択、変更は即時反映されます",
+        "currentFont": "現在のフォント",
+        "systemDefaultFonts": "システムデフォルトフォント",
+        "searchFont": "フォントを検索...",
+        "preview": "プレビュー",
+        "resetToDefault": "デフォルトフォントにリセット",
+        "finish": "完了"
+      }
+    },
     "background": {
       "title": "背景",
       "customBackground": "カスタム背景",
+      "customBackgroundDescription": "カスタム背景画像を有効にする",
       "image": "画像",
+      "imageDescription": "カスタム背景画像を選択",
       "selectImage": "画像を選択",
       "currentBackground": "現在の背景画像",
       "noBackground": "背景画像が設定されていません"
     },
     "showcase": {
       "title": "ポスターボード",
-      "showPlayButtonOnPoster": "ポスターにプレイボタンを表示"
+      "showPlayButtonOnPoster": "ポスターにプレイボタンを表示",
+      "showPlayButtonOnPosterDescription": "ポスター上にプレイボタンを表示する"
     },
     "glass": {
       "title": "フロストガラス",
       "blur": "ぼかし",
-      "opacity": "透明度"
+      "blurDescription": "フロストガラス効果のぼかし度",
+      "opacity": "透明度",
+      "opacityDescription": "フロストガラス効果の透明度"
     },
     "gameList": {
       "title": "ゲームリスト",
       "showRecentGames": "最近のゲームセクションを表示",
+      "showRecentGamesDescription": "ゲームリストに最近プレイしたゲームを表示",
       "highlightLocalGames": "ローカルゲームをハイライト",
+      "highlightLocalGamesDescription": "ゲームリストでローカルゲームをハイライト表示",
       "markLocalGames": "ローカルゲームにマーク",
-      "showCollapseButton": "折りたたみボタンを表示"
+      "markLocalGamesDescription": "ゲームリストでローカルにインストールされているゲームにマークを付ける"
     },
     "gameDetail": {
       "title": "ゲーム詳細ページ",
-      "showOriginalName": "タイトルの隣に原名を表示"
+      "showOriginalName": "タイトルの隣に原名を表示",
+      "showOriginalNameDescription": "ゲーム詳細ページのタイトルの隣に原名を表示"
     },
     "sidebar": {
       "title": "サイドバー",
       "showThemeSwitcher": "テーマ切り替えボタンを表示",
-      "showNSFWBlurSwitcher": "NSFW コンテンツのスイッチャーを表示"
+      "showThemeSwitcherDescription": "サイドバーにテーマ切り替えボタンを表示",
+      "showNSFWBlurSwitcher": "NSFW コンテンツのスイッチャーを表示",
+      "showNSFWBlurSwitcherDescription": "サイドバーにNSFWぼかし切り替えを表示"
     }
   },
   "advanced": {
     "title": "高度",
     "localeEmulator": {
       "name": "Locale Emulator",
+      "description": "Locale Emulatorはアプリケーションのロケールをシミュレートするためのツール",
       "placeholder": "LEProc.exeのパスを入力してください"
     },
     "visualBoyAdvance": {
       "name": "Visual Boy Advance",
+      "description": "Visual Boy AdvanceはGame Boy Advanceの人気エミュレータ",
       "placeholder": "visualboyadvance.exeのパスを入力してください"
     },
     "magpie": {
       "name": "Magpie",
+      "description": "Magpieは超解像度スケーリングのためのツール",
       "placeholder": "Magpie.exeのパスを入力してください",
-      "hotkeyLabel": "Magpieスケーリングホットキー"
+      "hotkeyLabel": "Magpieスケーリングホットキー",
+      "hotkeyDescription": "Magpieスケーリングのホットキーを設定"
     }
   },
   "theme": {
@@ -106,7 +141,11 @@
   "cloudSync": {
     "title": "クラウド同期",
     "enable": "有効化",
+    "enableDescription": "クラウド同期を有効にしてデバイス間でリアルタイムデータ同期を実現",
     "syncMode": "同期モード",
+    "syncFull": "全量同期",
+    "syncFullDescription": "すべてのデータを一度に同期、新しいデバイスとデータ移行に適しています",
+    "syncFullButton": "全量同期",
     "modes": {
       "official": "公式",
       "selfHosted": "セルフホスト"
@@ -158,7 +197,7 @@
       "serverAddress": "CouchDBアドレス",
       "username": "ユーザー名",
       "password": "パスワード",
-      "info": "<couchdb>CouchDB</couchdb> はデータの保存と同期に使用されるオープンソースのドキュメントデータベースで"
+      "info": "<couchdb>CouchDB</couchdb> はデータの保存と同期に使用されるオープンソースのドキュメントデータベースです"
     },
     "info": {
       "status": "ステータス",
@@ -170,11 +209,13 @@
     "title": "スクレイパー",
     "common": {
       "title": "一般",
-      "defaultDataSource": "デフォルトデータソース"
+      "defaultDataSource": "デフォルトデータソース",
+      "defaultDataSourceDescription": "デフォルトデータソースを選択"
     },
     "vndb": {
       "title": "VNDB 設定",
       "tagSpoilerLevel": "タグのネタバレレベル",
+      "tagSpoilerLevelDescription": "VNDBタグのネタバレレベルを選択",
       "tagSpoilerLevels": {
         "none": "ネタバレなし (0)",
         "minor": "軽度のネタバレ (1)",
@@ -193,6 +234,7 @@
   "database": {
     "title": "データベース",
     "portableMode": "ポータブルモード",
+    "portableModeDescription": "アプリケーションデータをアプリディレクトリに保存し、持ち運びとバックアップを容易にする",
     "modes": {
       "portable": "ポータブルモード",
       "normal": "通常モード"
@@ -200,9 +242,13 @@
     "confirmSwitch": "{{mode}}に変換してもよろしいですか？",
     "switchDescription": "変換後、アプリケーションは自動的に再起動します。",
     "openFolder": "データベースフォルダを開く",
+    "openFolderDescription": "データベースフォルダを開いて、データの閲覧またはバックアップ",
     "backup": "データベースをバックアップ",
+    "backupDescription": "現在のデータベースを指定の場所にバックアップ",
     "import": "データベースをインポート",
+    "importDescription": "指定の場所からデータベースをインポートし、現在のデータを上書き",
     "importV2": "V2データベースをインポート",
+    "importV2Description": "指定の場所からV2データベースをインポートし、現在のデータを上書き",
     "confirmImport": "データベースをインポートしてもよろしいですか？",
     "importWarning": "データベースのインポートは現在のデータベースを上書きします。この操作は元に戻せません！操作後、アプリケーションは自動的に再起動します。",
     "confirmImportV2": "V2データベースをインポートしてもよろしいですか？",
@@ -236,7 +282,9 @@
     "transformer": {
       "title": "トランスフォーマー",
       "enable": "トランスフォーマーを有効化",
+      "enableDescription": "トランスフォーマーを有効にしてゲームメタデータを自動的に変換",
       "manage": "変換ルールを管理",
+      "manageDescription": "メタデータ変換器を管理・設定する",
       "manageButton": "管理"
     }
   }

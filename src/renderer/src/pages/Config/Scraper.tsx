@@ -49,7 +49,7 @@ export function Scraper(): React.JSX.Element {
                 path="game.scraper.vndb.tagSpoilerLevel"
                 title={t('scraper.vndb.tagSpoilerLevel')}
                 controlType="select"
-                description="选择 VNDB 标签的剧透级别"
+                description={t('scraper.vndb.tagSpoilerLevelDescription')}
                 options={[
                   { value: 0, label: t('scraper.vndb.tagSpoilerLevels.none') },
                   { value: 1, label: t('scraper.vndb.tagSpoilerLevels.minor') },

@@ -3,16 +3,21 @@
   "general": {
     "title": "通用",
     "language": "语言",
+    "languageDescription": "选择应用程序的显示语言",
     "openAtLogin": "开机自启",
+    "openAtLoginDescription": "在系统启动时自动打开应用程序",
     "theme": "主题样式",
+    "themeDescription": "选择应用程序的主题样式",
     "darkTheme": "暗色",
     "lightTheme": "浅色",
     "followSystem": "跟随系统",
     "closeMainPanel": "关闭主面板",
+    "closeMainPanelDescription": "选择关闭主窗口时的行为方式",
     "action": "操作",
     "quitApp": "退出vnite",
     "minimizeToTray": "最小化到托盘",
-    "hideWindowAfterGameStart": "启动游戏后最小化到托盘"
+    "hideWindowAfterGameStart": "启动游戏后最小化到托盘",
+    "hideWindowAfterGameStartDescription": "启动游戏后自动隐藏主窗口"
   },
   "appearances": {
     "title": "外观",
@@ -20,56 +25,80 @@
       "title": "字体",
       "manageFont": "管理字体",
       "manageFontDescription": "更换应用程序字体",
-      "manage": "管理"
+      "manage": "管理",
+      "dialog": {
+        "title": "字体设置",
+        "description": "选择应用显示字体，更改将立即生效",
+        "currentFont": "当前字体",
+        "systemDefaultFonts": "系统默认字体",
+        "searchFont": "搜索字体...",
+        "preview": "预览",
+        "resetToDefault": "重置为默认字体",
+        "finish": "完成"
+      }
     },
     "background": {
       "title": "背景",
       "customBackground": "自定义背景",
+      "customBackgroundDescription": "启用自定义背景图片",
       "image": "图片",
+      "imageDescription": "选择自定义背景图片",
       "selectImage": "选择图片",
       "currentBackground": "当前背景图片",
       "noBackground": "未设置背景图片"
     },
     "showcase": {
       "title": "海报墙",
-      "showPlayButtonOnPoster": "在海报上显示游玩按钮"
+      "showPlayButtonOnPoster": "在海报上显示游玩按钮",
+      "showPlayButtonOnPosterDescription": "在海报上显示游玩按钮"
     },
     "glass": {
       "title": "毛玻璃",
       "blur": "模糊度",
-      "opacity": "透明度"
+      "blurDescription": "毛玻璃效果的模糊度",
+      "opacity": "透明度",
+      "opacityDescription": "毛玻璃效果的透明度"
     },
     "gameList": {
       "title": "游戏列表",
       "showRecentGames": "显示最近游戏栏目",
+      "showRecentGamesDescription": "在游戏列表中显示最近游玩的游戏",
       "highlightLocalGames": "高亮本地游戏",
+      "highlightLocalGamesDescription": "在游戏列表中高亮显示本地游戏",
       "markLocalGames": "标记本地游戏",
-      "showCollapseButton": "显示折叠按钮"
+      "markLocalGamesDescription": "在游戏列表中标记本地已安装的游戏"
     },
     "gameDetail": {
       "title": "游戏详情页",
-      "showOriginalName": "在标题旁显示原名"
+      "showOriginalName": "在标题旁显示原名",
+      "showOriginalNameDescription": "在游戏详情页游戏标题旁显示原名"
     },
     "sidebar": {
       "title": "侧边栏",
       "showThemeSwitcher": "显示主题切换按钮",
-      "showNSFWBlurSwitcher": "显示 NSFW 内容开关"
+      "showThemeSwitcherDescription": "在侧边栏显示主题切换按钮",
+      "showNSFWBlurSwitcher": "显示 NSFW 内容开关",
+      "showNSFWBlurSwitcherDescription": "在侧边栏显示 NSFW 模糊切换器"
     }
   },
   "advanced": {
     "title": "高级",
     "localeEmulator": {
       "name": "Locale Emulator",
+      "description": "Locale Emulator 是一个用于模拟应用程序区域设置的工具",
       "placeholder": "请输入LEProc.exe的路径"
     },
     "visualBoyAdvance": {
       "name": "Visual Boy Advance",
+      "description": "Visual Boy Advance 是一个流行的 Game Boy Advance 模拟器",
       "placeholder": "请输入visualboyadvance.exe的路径"
     },
     "magpie": {
       "name": "Magpie",
+      "description": "Magpie 是一个用于超分辨率缩放的工具",
       "placeholder": "请输入Magpie.exe的路径",
-      "hotkeyLabel": "Magpie 缩放快捷键"
+      "hotkeyLabel": "Magpie 缩放快捷键",
+      "hotkeyDescription": "设置 Magpie 缩放的快捷键"
     }
   },
   "theme": {
@@ -112,6 +141,7 @@
   "cloudSync": {
     "title": "云同步",
     "enable": "是否启用",
+    "enableDescription": "启用云同步功能以实现跨设备数据实时同步",
     "syncMode": "同步模式",
     "syncFull": "全量同步",
     "syncFullDescription": "一次性同步所有数据，适用于新设备与数据迁移",
@@ -179,11 +209,13 @@
     "title": "刮削器",
     "common": {
       "title": "通用",
-      "defaultDataSource": "默认数据源"
+      "defaultDataSource": "默认数据源",
+      "defaultDataSourceDescription": "选择默认数据源"
     },
     "vndb": {
       "title": "VNDB 设置",
       "tagSpoilerLevel": "标签剧透级别",
+      "tagSpoilerLevelDescription": "选择 VNDB 标签的剧透级别",
       "tagSpoilerLevels": {
         "none": "无剧透 (0)",
         "minor": "轻微剧透 (1)",
@@ -202,6 +234,7 @@
   "database": {
     "title": "数据库",
     "portableMode": "便携模式",
+    "portableModeDescription": "将应用数据存储在应用目录下，便于携带和备份",
     "modes": {
       "portable": "便携模式",
       "normal": "普通模式"
@@ -209,9 +242,13 @@
     "confirmSwitch": "确定要转换为 {{mode}} 吗？",
     "switchDescription": "转换完成后将自动重启应用。",
     "openFolder": "打开数据库文件夹",
+    "openFolderDescription": "打开数据库文件夹以查看或备份数据",
     "backup": "备份数据库",
+    "backupDescription": "备份当前数据库到指定位置",
     "import": "导入数据库",
+    "importDescription": "从指定位置导入数据库，覆盖当前数据",
     "importV2": "导入V2数据库",
+    "importV2Description": "从指定位置导入V2数据库，覆盖当前数据",
     "confirmImport": "确定要导入数据库吗？",
     "importWarning": "导入数据库将覆盖当前数据库，此操作不可逆！操作结束后应用将自动重启。",
     "confirmImportV2": "确定要导入V2数据库吗？",
@@ -245,7 +282,9 @@
     "transformer": {
       "title": "转换器",
       "enable": "启用转换器",
+      "enableDescription": "启用转换器以自动转换游戏元数据",
       "manage": "管理转换规则",
+      "manageDescription": "管理和配置元数据转换器",
       "manageButton": "管理"
     }
   }

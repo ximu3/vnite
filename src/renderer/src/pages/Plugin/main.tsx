@@ -211,7 +211,7 @@ export function Plugin(): React.JSX.Element {
         {/* 页面标题和操作按钮 */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">{t('title')}</h1>
+            <h1 className="text-2xl font-bold">{t('title') + ' - Beta'}</h1>
             <p className="text-muted-foreground mt-1">{t('description')}</p>
           </div>
           <div className="flex items-center space-x-3">
@@ -252,7 +252,7 @@ export function Plugin(): React.JSX.Element {
                 <CardTitle className="text-sm font-medium">{t('stats.enabled')}</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-green-600">{stats.enabled}</div>
+                <div className="text-2xl font-bold text-primary">{stats.enabled}</div>
               </CardContent>
             </Card>
             <Card>
@@ -260,7 +260,7 @@ export function Plugin(): React.JSX.Element {
                 <CardTitle className="text-sm font-medium">{t('stats.disabled')}</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-orange-600">{stats.disabled}</div>
+                <div className="text-2xl font-bold text-muted-foreground">{stats.disabled}</div>
               </CardContent>
             </Card>
             <Card>
@@ -268,7 +268,7 @@ export function Plugin(): React.JSX.Element {
                 <CardTitle className="text-sm font-medium">{t('stats.errors')}</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-red-600">{stats.error}</div>
+                <div className="text-2xl font-bold text-destructive">{stats.error}</div>
               </CardContent>
             </Card>
           </div>

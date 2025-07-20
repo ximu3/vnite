@@ -258,7 +258,7 @@ export function CloudSync(): React.JSX.Element {
               hookType="configLocal"
               path="sync.enabled"
               title={t('cloudSync.enable')}
-              description="启用云同步功能"
+              description={t('cloudSync.enableDescription')}
               controlType="switch"
               onChange={async (value) => {
                 setEnabled(value)

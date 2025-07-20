@@ -72,7 +72,7 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
           setDataSource(availableDataSources[0].id)
         }
       } else {
-        toast.error(t('gameAdder.search.notifications.noDataSources'))
+        toast.error(t('updater.notifications.noDataSources'))
       }
     }
     fetchAvailableDataSources()
@@ -142,9 +142,15 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
   const updateToastProgress = (data: BatchUpdateGameMetadataProgress): void => {
     const progressText = `${data.current}/${data.total} (${Math.round((data.current / data.total) * 100)}%)`
 
-    toast.loading(`正在处理 ${data.gameName || data.gameId}... ${progressText}`, {
-      id: 'batch-update'
-    })
+    toast.loading(
+      t('updater.notifications.processing', {
+        name: data.gameName || data.gameId,
+        progress: progressText
+      }),
+      {
+        id: 'batch-update'
+      }
+    )
   }
 
   // 切换字段选择
@@ -173,7 +179,7 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
     if (!gameIds[0]) return
 
     setIsUpdating(true)
-    toast.loading(`正在更新游戏元数据...`, { id: 'single-update' })
+    toast.loading(t('updater.notifications.updating'), { id: 'single-update' })
 
     try {
       const params = {
@@ -187,12 +193,17 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
 
       await ipcManager.invoke('adder:update-game-metadata', params)
 
-      toast.success('游戏元数据更新成功！', { id: 'single-update' })
+      toast.success(t('updater.notifications.success'), { id: 'single-update' })
       handleClose()
     } catch (error) {
-      toast.error(`更新失败: ${error instanceof Error ? error.message : '未知错误'}`, {
-        id: 'single-update'
-      })
+      toast.error(
+        t('updater.notifications.error', {
+          message: error instanceof Error ? error.message : t('unknown')
+        }),
+        {
+          id: 'single-update'
+        }
+      )
     } finally {
       setIsUpdating(false)
     }
@@ -213,7 +224,9 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
       results: []
     })
 
-    toast.loading(`正在批量更新 ${gameIds.length} 个游戏的元数据...`, { id: 'batch-update' })
+    toast.loading(t('updater.notifications.batchUpdating', { count: gameIds.length }), {
+      id: 'batch-update'
+    })
 
     try {
       const params = {
@@ -226,16 +239,27 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
 
       await ipcManager.invoke('adder:batch-update-game-metadata', params)
       await delay(1000) // 等待一段时间以确保进度更新
-      toast.success(`批量更新完成! 成功: ${progress.successful}, 失败: ${progress.failed}`, {
-        id: 'batch-update'
-      })
+      toast.success(
+        t('updater.notifications.batchComplete', {
+          success: progress.successful,
+          failed: progress.failed
+        }),
+        {
+          id: 'batch-update'
+        }
+      )
 
       // 不自动关闭对话框，让用户查看详细结果
     } catch (error) {
       await delay(1000) // 等待一段时间以确保进度更新
-      toast.error(`批量更新出错: ${error instanceof Error ? error.message : '未知错误'}`, {
-        id: 'batch-update'
-      })
+      toast.error(
+        t('updater.notifications.error', {
+          message: error instanceof Error ? error.message : t('unknown')
+        }),
+        {
+          id: 'batch-update'
+        }
+      )
     } finally {
       setIsUpdating(false)
     }
@@ -260,9 +284,11 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
       <DialogContent className="w-[700px]" onClose={handleClose}>
         <DialogHeader>
           <DialogTitle>
-            {isBatchMode ? `批量更新游戏元数据 (${gameIds.length} 个游戏)` : '更新游戏元数据'}
+            {isBatchMode
+              ? t('updater.dialog.batchTitle', { count: gameIds.length })
+              : t('updater.dialog.title')}
           </DialogTitle>
-          <DialogDescription>从选定的数据源获取游戏元数据并应用到游戏库中</DialogDescription>
+          <DialogDescription>{t('updater.dialog.description')}</DialogDescription>
         </DialogHeader>
 
         {/* 根据状态显示设置页面或进度页面 */}
@@ -272,11 +298,11 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
             {isBatchMode && (
               <div className="grid gap-2">
                 <Label htmlFor="dataSource" className="">
-                  数据源
+                  {t('updater.dialog.dataSource')}
                 </Label>
                 <Select value={dataSource} onValueChange={setDataSource}>
                   <SelectTrigger id="dataSource">
-                    <SelectValue placeholder="选择数据源" />
+                    <SelectValue placeholder={t('updater.dialog.selectDataSource')} />
                   </SelectTrigger>
                   <SelectContent>
                     {availableDataSources.map((source) => (
@@ -291,7 +317,7 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
 
             {/* 要更新的字段 */}
             <div className="grid gap-2">
-              <Label>要更新的字段</Label>
+              <Label>{t('updater.dialog.updateFields')}</Label>
               <div className="grid grid-cols-2 gap-2">
                 {AllGameMetadataUpdateFields.map((field) => (
                   <div key={field} className="flex items-center gap-2">
@@ -316,7 +342,7 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
 
             {/* 更新选项 */}
             <div className="grid gap-2">
-              <Label>合并策略</Label>
+              <Label>{t('updater.dialog.mergeStrategy')}</Label>
               <div className="grid gap-4">
                 <Select
                   value={options.mergeStrategy}
@@ -331,9 +357,9 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="replace">替换</SelectItem>
-                    <SelectItem value="merge">合并</SelectItem>
-                    <SelectItem value="append">追加</SelectItem>
+                    <SelectItem value="replace">{t('updater.dialog.replace')}</SelectItem>
+                    <SelectItem value="merge">{t('updater.dialog.merge')}</SelectItem>
+                    <SelectItem value="append">{t('updater.dialog.append')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -343,7 +369,9 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
             {isBatchMode && (
               <div className="grid gap-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="concurrency">并发数: {concurrency}</Label>
+                  <Label htmlFor="concurrency">
+                    {t('updater.dialog.concurrency', { count: concurrency })}
+                  </Label>
                 </div>
                 <Slider
                   id="concurrency"
@@ -354,7 +382,7 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
                   onValueChange={([val]) => setConcurrency(val)}
                 />
                 <span className="text-xs text-muted-foreground">
-                  并发数越高，处理速度越快，但可能会导致请求失败
+                  {t('updater.dialog.concurrencyDescription')}
                 </span>
               </div>
             )}
@@ -366,16 +394,27 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
           <div className="py-4 space-y-4 h-full overflow-hidden flex flex-col">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span>总进度: {Math.round((progress.completed / progress.total) * 100)}%</span>
                 <span>
-                  {progress.completed}/{progress.total}
+                  {t('updater.dialog.progress', {
+                    completed: Math.round((progress.completed / progress.total) * 100)
+                  })}
+                </span>
+                <span>
+                  {t('updater.dialog.progressCount', {
+                    current: progress.completed,
+                    total: progress.total
+                  })}
                 </span>
               </div>
               <Progress value={(progress.completed / progress.total) * 100} className="h-2" />
 
               <div className="flex justify-between text-sm mt-2">
-                <span className="text-primary">成功: {progress.successful}</span>
-                <span className="text-destructive">失败: {progress.failed}</span>
+                <span className="text-primary">
+                  {t('updater.dialog.successful', { count: progress.successful })}
+                </span>
+                <span className="text-destructive">
+                  {t('updater.dialog.failed', { count: progress.failed })}
+                </span>
               </div>
             </div>
 
@@ -398,7 +437,7 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
                     {result.status === 'error' && (
                       <CardContent className="">
                         <CardDescription className="text-destructive">
-                          错误: {result.error}
+                          {t('updater.dialog.error', { message: result.error })}
                         </CardDescription>
                       </CardContent>
                     )}
@@ -409,7 +448,7 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
               {isUpdating && progress.completed < progress.total && (
                 <div className="flex justify-center items-center p-4">
                   <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                  <span className="ml-2">处理中...</span>
+                  <span className="ml-2">{t('updater.dialog.processing')}</span>
                 </div>
               )}
             </ScrollArea>
@@ -420,27 +459,27 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
           {isBatchMode && showProgress ? (
             <>
               <Button variant="outline" onClick={handleBackToSettings} disabled={isUpdating}>
-                返回设置
+                {t('updater.dialog.back')}
               </Button>
               <Button variant="outline" onClick={handleClose} disabled={isUpdating}>
-                关闭
+                {t('updater.dialog.close')}
               </Button>
             </>
           ) : (
             <>
               <Button variant="outline" onClick={handleClose} disabled={isUpdating}>
-                取消
+                {t('updater.dialog.cancel')}
               </Button>
               <Button onClick={handleUpdate} disabled={isUpdating || selectedFields.length === 0}>
                 {isUpdating ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {isBatchMode ? '批量更新中...' : '更新中...'}
+                    {isBatchMode ? t('updater.dialog.batchUpdating') : t('updater.dialog.updating')}
                   </>
                 ) : isBatchMode ? (
-                  '开始批量更新'
+                  t('updater.dialog.startBatch')
                 ) : (
-                  '更新元数据'
+                  t('updater.dialog.update')
                 )}
               </Button>
             </>

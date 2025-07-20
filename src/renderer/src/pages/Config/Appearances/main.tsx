@@ -45,14 +45,14 @@ export function Appearances(): React.JSX.Element {
                 hookType="config"
                 path="appearances.background.customBackground"
                 title={t('appearances.background.customBackground')}
-                description="启用自定义背景图片"
+                description={t('appearances.background.customBackgroundDescription')}
                 controlType="switch"
               />
             </div>
             <div className={cn('')}>
               <ConfigItemPure
                 title={t('appearances.background.image')}
-                description="选择自定义背景图片"
+                description={t('appearances.background.imageDescription')}
               >
                 <HoverCard>
                   <HoverCardTrigger asChild>
@@ -96,7 +96,7 @@ export function Appearances(): React.JSX.Element {
                 hookType="config"
                 path="appearances.glass.blur"
                 title={t('appearances.glass.blur')}
-                description="玻璃效果模糊程度"
+                description={t('appearances.glass.blurDescription')}
                 controlType="slider"
                 min={0}
                 max={130}
@@ -109,7 +109,7 @@ export function Appearances(): React.JSX.Element {
                 hookType="config"
                 path="appearances.glass.opacity"
                 title={t('appearances.glass.opacity')}
-                description="玻璃效果透明度"
+                description={t('appearances.glass.opacityDescription')}
                 controlType="slider"
                 min={0}
                 max={1}
@@ -146,7 +146,7 @@ export function Appearances(): React.JSX.Element {
                 hookType="config"
                 path="appearances.showcase.showPlayButtonOnPoster"
                 title={t('appearances.showcase.showPlayButtonOnPoster')}
-                description="在海报上显示播放按钮"
+                description={t('appearances.showcase.showPlayButtonOnPosterDescription')}
                 controlType="switch"
               />
             </div>
@@ -159,7 +159,7 @@ export function Appearances(): React.JSX.Element {
                 hookType="config"
                 path="game.gameList.showRecentGames"
                 title={t('appearances.gameList.showRecentGames')}
-                description="在游戏列表中显示最近游戏"
+                description={t('appearances.gameList.showRecentGamesDescription')}
                 controlType="switch"
               />
 
@@ -167,7 +167,7 @@ export function Appearances(): React.JSX.Element {
                 hookType="config"
                 path="game.gameList.highlightLocalGames"
                 title={t('appearances.gameList.highlightLocalGames')}
-                description="高亮显示本地已安装的游戏"
+                description={t('appearances.gameList.highlightLocalGamesDescription')}
                 controlType="switch"
               />
 
@@ -175,15 +175,7 @@ export function Appearances(): React.JSX.Element {
                 hookType="config"
                 path="game.gameList.markLocalGames"
                 title={t('appearances.gameList.markLocalGames')}
-                description="标记本地已安装的游戏"
-                controlType="switch"
-              />
-
-              <ConfigItem
-                hookType="config"
-                path="game.gameList.showCollapseButton"
-                title={t('appearances.gameList.showCollapseButton')}
-                description="显示折叠按钮"
+                description={t('appearances.gameList.markLocalGamesDescription')}
                 controlType="switch"
               />
             </div>
@@ -197,7 +189,7 @@ export function Appearances(): React.JSX.Element {
                 hookType="config"
                 path="game.gameHeader.showOriginalName"
                 title={t('appearances.gameDetail.showOriginalName')}
-                description="在游戏详情页显示原始名称"
+                description={t('appearances.gameDetail.showOriginalNameDescription')}
                 controlType="switch"
               />
             </div>
@@ -211,7 +203,7 @@ export function Appearances(): React.JSX.Element {
                 hookType="config"
                 path="appearances.sidebar.showThemeSwitcher"
                 title={t('appearances.sidebar.showThemeSwitcher')}
-                description="在侧边栏显示主题切换器"
+                description={t('appearances.sidebar.showThemeSwitcherDescription')}
                 controlType="switch"
               />
 
@@ -219,7 +211,7 @@ export function Appearances(): React.JSX.Element {
                 hookType="config"
                 path="appearances.sidebar.showNSFWBlurSwitcher"
                 title={t('appearances.sidebar.showNSFWBlurSwitcher')}
-                description="在侧边栏显示NSFW模糊切换器"
+                description={t('appearances.sidebar.showNSFWBlurSwitcherDescription')}
                 controlType="switch"
               />
             </div>

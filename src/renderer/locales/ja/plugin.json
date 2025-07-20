@@ -1,52 +1,64 @@
 {
-  "title": "Plugin Manager",
-  "description": "Manage and extend your application with plugins",
+  "title": "プラグインマネージャー",
+  "description": "プラグインを使用してアプリケーションを管理および拡張する",
   "actions": {
-    "checkUpdates": "Check Updates",
-    "installPlugin": "Install Plugin",
-    "installFromRegistry": "Install from Registry",
-    "installFromFile": "Install from File",
-    "installFirstPlugin": "Install Your First Plugin",
-    "install": "Install",
-    "installed": "Installed",
-    "enable": "Enable",
-    "disable": "Disable",
-    "uninstall": "Uninstall"
+    "checkUpdates": "更新を確認",
+    "installPlugin": "プラグインをインストール",
+    "installFromRegistry": "レジストリからインストール",
+    "installFromFile": "ファイルからインストール",
+    "installFirstPlugin": "最初のプラグインをインストール",
+    "install": "インストール",
+    "installed": "インストール済み",
+    "enable": "有効化",
+    "disable": "無効化",
+    "uninstall": "アンインストール",
+    "configure": "設定",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "saving": "保存中..."
   },
   "stats": {
-    "total": "Total",
-    "enabled": "Enabled",
-    "disabled": "Disabled",
-    "errors": "Errors"
+    "total": "合計",
+    "enabled": "有効",
+    "disabled": "無効",
+    "errors": "エラー"
   },
   "tabs": {
-    "installed": "Installed",
-    "browse": "Browse"
+    "installed": "インストール済み",
+    "browse": "ブラウズ"
   },
   "emptyState": {
-    "title": "No Plugins Installed",
-    "description": "Start by installing your first plugin to extend the functionality of your application."
+    "title": "プラグインがインストールされていません",
+    "description": "アプリケーションの機能を拡張するために、最初のプラグインをインストールしましょう。"
   },
   "search": {
-    "placeholder": "Search plugins...",
-    "noResults": "No plugins found",
-    "tryDifferentKeyword": "Try searching with different keywords"
+    "placeholder": "プラグインを検索...",
+    "noResults": "プラグインが見つかりません",
+    "tryDifferentKeyword": "別のキーワードで検索してみてください"
   },
   "messages": {
-    "loading": "Loading...",
-    "loadPluginsFailed": "Failed to load plugins",
-    "searchPluginsFailed": "Failed to search plugins",
-    "installSuccess": "Plugin installed successfully",
-    "installFailed": "Failed to install plugin: {{error}}",
-    "installFromFileFailed": "Failed to install plugin from file",
-    "uninstallSuccess": "Plugin uninstalled successfully",
-    "uninstallFailed": "Failed to uninstall plugin: {{error}}",
-    "activateSuccess": "Plugin activated successfully",
-    "activateFailed": "Failed to activate plugin: {{error}}",
-    "deactivateSuccess": "Plugin deactivated successfully",
-    "deactivateFailed": "Failed to deactivate plugin: {{error}}",
-    "updatesAvailable": "{{count}} plugin updates available",
-    "noUpdatesAvailable": "All plugins are up to date",
-    "checkUpdatesFailed": "Failed to check for updates"
+    "loading": "読み込み中...",
+    "loadPluginsFailed": "プラグインの読み込みに失敗しました",
+    "searchPluginsFailed": "プラグインの検索に失敗しました",
+    "installSuccess": "プラグインのインストールに成功しました",
+    "installFailed": "プラグインのインストールに失敗しました：{{error}}",
+    "installFromFileFailed": "ファイルからのプラグインのインストールに失敗しました",
+    "uninstallSuccess": "プラグインのアンインストールに成功しました",
+    "uninstallFailed": "プラグインのアンインストールに失敗しました：{{error}}",
+    "activateSuccess": "プラグインの有効化に成功しました",
+    "activateFailed": "プラグインの有効化に失敗しました：{{error}}",
+    "deactivateSuccess": "プラグインの無効化に成功しました",
+    "deactivateFailed": "プラグインの無効化に失敗しました：{{error}}",
+    "updatesAvailable": "{{count}} 個のプラグイン更新が利用可能です",
+    "noUpdatesAvailable": "すべてのプラグインは最新です",
+    "checkUpdatesFailed": "更新の確認に失敗しました",
+    "configurationSaved": "設定の保存に成功しました",
+    "saveConfigurationFailed": "設定の保存に失敗しました",
+    "loadConfigurationFailed": "設定の読み込みに失敗しました"
+  },
+  "configDialog": {
+    "title": "{{pluginName}} の設定",
+    "description": "お好みに合わせてプラグインの設定をカスタマイズします。",
+    "noConfiguration": "このプラグインには設定可能なオプションがありません。"
   }
 }

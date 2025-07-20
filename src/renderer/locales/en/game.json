@@ -479,6 +479,7 @@
       "removeFrom": "Batch Remove From",
       "newCollection": "New Collection",
       "editInfo": "Batch Edit Game Info",
+      "updateMetadata": "Update Metadata",
       "delete": "Batch Delete"
     },
     "information": {
@@ -502,6 +503,19 @@
       "success": "Batch edited game information",
       "error": "Failed to edit game information: {{message}}"
     },
+    "floatingButtons": {
+      "addToCollection": "Add to Collection",
+      "editInfo": "Edit Info",
+      "updateMetadata": "Update Metadata",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "selectAll": "Select All",
+      "selected": "{{count}} items selected"
+    },
+    "selection": {
+      "selectAll": "Select All",
+      "unselectAll": "Unselect All"
+    },
     "delete": {
       "title": "Are you sure you want to delete these {{count}} games?",
       "description": "All data for selected games will be permanently deleted. This action cannot be undone.",
@@ -512,6 +526,63 @@
         "success": "{{count}} games deleted",
         "error": "Failed to delete {{count}} games: {{message}}"
       }
+    }
+  },
+  "updater": {
+    "fields": {
+      "#all": "All Fields",
+      "#missing": "Missing Fields",
+      "name": "Name",
+      "originalName": "Original Name",
+      "releaseDate": "Release Date",
+      "description": "Description",
+      "developers": "Developers",
+      "publishers": "Publishers",
+      "genres": "Genres",
+      "platforms": "Platforms",
+      "tags": "Tags",
+      "relatedSites": "Related Sites",
+      "extra": "Extra Information",
+      "cover": "Cover",
+      "background": "Background",
+      "logo": "Logo",
+      "icon": "Icon"
+    },
+    "dialog": {
+      "title": "Update Game Metadata",
+      "batchTitle": "Batch Update Metadata ({{count}} games)",
+      "description": "Fetch game metadata from selected data source and apply to your library",
+      "dataSource": "Data Source",
+      "selectDataSource": "Select data source",
+      "updateFields": "Fields to Update",
+      "mergeStrategy": "Merge Strategy",
+      "replace": "Replace",
+      "merge": "Merge",
+      "append": "Append",
+      "concurrency": "Concurrency: {{count}}",
+      "concurrencyDescription": "Higher concurrency means faster processing but may lead to failed requests",
+      "progress": "Progress: {{completed}}%",
+      "progressCount": "{{current}}/{{total}}",
+      "successful": "Successful: {{count}}",
+      "failed": "Failed: {{count}}",
+      "processing": "Processing...",
+      "error": "Error: {{message}}",
+      "back": "Back to Settings",
+      "close": "Close",
+      "cancel": "Cancel",
+      "update": "Update Metadata",
+      "startBatch": "Start Batch Update",
+      "updating": "Updating...",
+      "batchUpdating": "Batch Updating..."
+    },
+    "notifications": {
+      "updating": "Updating game metadata...",
+      "batchUpdating": "Batch updating metadata for {{count}} games...",
+      "processing": "Processing {{name}}... {{progress}}",
+      "success": "Game metadata updated successfully!",
+      "batchComplete": "Batch update complete! Success: {{success}}, Failed: {{failed}}",
+      "error": "Update failed: {{message}}",
+      "noDataSources": "No compatible data sources found"
     }
   }
 }

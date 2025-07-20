@@ -30,14 +30,14 @@ export function Metadata(): React.JSX.Element {
                 hookType="config"
                 path="metadata.transformer.enabled"
                 title={t('metadata.transformer.enable')}
-                description="启用元数据转换器功能"
+                description={t('metadata.transformer.enableDescription')}
                 controlType="switch"
               />
 
               {/* Transformer Management Button */}
               <ConfigItemPure
                 title={t('metadata.transformer.manage')}
-                description="管理和配置元数据转换器"
+                description={t('metadata.transformer.manageDescription')}
               >
                 <Button
                   variant="outline"

@@ -479,6 +479,7 @@
       "removeFrom": "批次移除出",
       "newCollection": "新收藏",
       "editInfo": "批次修改遊戲資訊",
+      "updateMetadata": "更新元數據",
       "delete": "批次刪除"
     },
     "information": {
@@ -502,6 +503,19 @@
       "success": "已批次修改遊戲資訊",
       "error": "修改遊戲資訊失敗: {{message}}"
     },
+    "floatingButtons": {
+      "addToCollection": "添加到集合",
+      "editInfo": "編輯資訊",
+      "updateMetadata": "更新元數據",
+      "delete": "刪除",
+      "cancel": "取消",
+      "selectAll": "全選",
+      "selected": "已選擇 {{count}} 項"
+    },
+    "selection": {
+      "selectAll": "全選",
+      "unselectAll": "取消全選"
+    },
     "delete": {
       "title": "確定要刪除這 {{count}} 個遊戲嗎？",
       "description": "刪除後，所選遊戲的所有資料將被永久刪除。此操作不可逆。",
@@ -512,6 +526,63 @@
         "success": "{{count}} 個遊戲已刪除",
         "error": "刪除{{count}} 個遊戲失敗: {{message}}"
       }
+    }
+  },
+  "updater": {
+    "fields": {
+      "#all": "所有欄位",
+      "#missing": "缺失欄位",
+      "name": "名稱",
+      "originalName": "原始名稱",
+      "releaseDate": "發行日期",
+      "description": "描述",
+      "developers": "開發商",
+      "publishers": "發行商",
+      "genres": "類型",
+      "platforms": "平台",
+      "tags": "標籤",
+      "relatedSites": "相關網站",
+      "extra": "額外資訊",
+      "cover": "封面",
+      "background": "背景",
+      "logo": "徽標",
+      "icon": "圖示"
+    },
+    "dialog": {
+      "title": "更新遊戲元數據",
+      "batchTitle": "批次更新元數據 ({{count}} 個遊戲)",
+      "description": "從選定的資料來源獲取遊戲元數據並應用到遊戲庫中",
+      "dataSource": "資料來源",
+      "selectDataSource": "選擇資料來源",
+      "updateFields": "要更新的欄位",
+      "mergeStrategy": "合併策略",
+      "replace": "替換",
+      "merge": "合併",
+      "append": "追加",
+      "concurrency": "並發數: {{count}}",
+      "concurrencyDescription": "並發數越高，處理速度越快，但可能會導致請求失敗",
+      "progress": "總進度: {{completed}}%",
+      "progressCount": "{{current}}/{{total}}",
+      "successful": "成功: {{count}}",
+      "failed": "失敗: {{count}}",
+      "processing": "處理中...",
+      "error": "錯誤: {{message}}",
+      "back": "返回設置",
+      "close": "關閉",
+      "cancel": "取消",
+      "update": "更新元數據",
+      "startBatch": "開始批次更新",
+      "updating": "更新中...",
+      "batchUpdating": "批次更新中..."
+    },
+    "notifications": {
+      "updating": "正在更新遊戲元數據...",
+      "batchUpdating": "正在批次更新 {{count}} 個遊戲的元數據...",
+      "processing": "正在處理 {{name}}... {{progress}}",
+      "success": "遊戲元數據更新成功！",
+      "batchComplete": "批次更新完成！成功: {{success}}, 失敗: {{failed}}",
+      "error": "更新失敗: {{message}}",
+      "noDataSources": "找不到兼容的資料來源"
     }
   }
 }

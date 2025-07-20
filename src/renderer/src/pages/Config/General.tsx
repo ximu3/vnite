@@ -46,7 +46,7 @@ export function General(): React.JSX.Element {
             hookType="config"
             path="general.openAtLogin"
             title={t('general.openAtLogin')}
-            description="系统启动时自动运行应用程序"
+            description={t('general.openAtLoginDescription')}
             controlType="switch"
             onChange={async (_checked: boolean) => {
               try {
@@ -65,7 +65,7 @@ export function General(): React.JSX.Element {
             hookType="config"
             path="general.language"
             title={t('general.language')}
-            description="选择应用程序界面显示语言"
+            description={t('general.languageDescription')}
             controlType="select"
             options={languageOptions}
             onChange={async (value: string) => {
@@ -75,7 +75,7 @@ export function General(): React.JSX.Element {
           />
 
           {/* Theme - 使用 ConfigItemPure，因为它不在 config 存储中 */}
-          <ConfigItemPure title={t('general.theme')} description="选择应用程序主题外观">
+          <ConfigItemPure title={t('general.theme')} description={t('general.themeDescription')}>
             <Select
               value={themeSetting}
               onValueChange={(value: 'dark' | 'light' | 'follow-system') => setThemeSetting(value)}
@@ -99,7 +99,7 @@ export function General(): React.JSX.Element {
             hookType="config"
             path="general.quitToTray"
             title={t('general.closeMainPanel')}
-            description="选择关闭主窗口时的行为方式"
+            description={t('general.closeMainPanelDescription')}
             controlType="select"
             options={[
               { value: 'false', label: t('general.quitApp') },
@@ -118,7 +118,7 @@ export function General(): React.JSX.Element {
             hookType="config"
             path="general.hideWindowAfterGameStart"
             title={t('general.hideWindowAfterGameStart')}
-            description="启动游戏后自动隐藏主窗口"
+            description={t('general.hideWindowAfterGameStartDescription')}
             controlType="switch"
           />
         </div>
