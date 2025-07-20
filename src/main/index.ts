@@ -10,7 +10,6 @@ import { AuthManager, handleAuthCallback } from './features/account'
 import { ipcManager, setupIPC } from './core/ipc'
 import { setupAutoUpdater } from './features/updater'
 import {
-  calculateWindowSize,
   checkAdminPermissions,
   checkIfDirectoryNeedsAdminRights,
   getAppRootPath,
@@ -80,11 +79,9 @@ async function handleGameUrl(url: string): Promise<void> {
 }
 
 function createWindow(): void {
-  const windowSize = calculateWindowSize(0.85, 0.6, 1.62)
-
   const mainWindowState = windowStateKeeper({
-    defaultWidth: windowSize.width,
-    defaultHeight: windowSize.height,
+    defaultWidth: 1400,
+    defaultHeight: 900,
     maximize: false,
     fullScreen: false
   })
@@ -95,8 +92,8 @@ function createWindow(): void {
     y: mainWindowState.y,
     width: mainWindowState.width,
     height: mainWindowState.height,
-    minWidth: windowSize.minWidth,
-    minHeight: windowSize.minHeight,
+    minWidth: 920,
+    minHeight: 420,
     show: false,
     frame: false,
     icon: icon,
