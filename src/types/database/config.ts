@@ -61,9 +61,9 @@ export interface configDocs {
     }
     background: {
       compression: {
-        enabled: boolean,
+        enabled: boolean
         factor: number
-      },
+      }
       customBackgroundMode: string
       timerBackground: number
     }
@@ -263,7 +263,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
         factor: 100
       },
       customBackgroundMode: 'default',
-      timerBackground: 5,
+      timerBackground: 5
     },
     showcase: {
       showPlayButtonOnPoster: true

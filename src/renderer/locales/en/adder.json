@@ -39,7 +39,8 @@
       "notifications": {
         "enterName": "Please enter game name",
         "searching": "Searching games…",
-        "found": "Found {{count}} games",
+        "found": "Found {{count}} game",
+        "found_other": "Found {{count}} games",
         "notFound": "No games found",
         "searchError": "Search failed: {{message}}",
         "enterId": "Please enter game ID",
