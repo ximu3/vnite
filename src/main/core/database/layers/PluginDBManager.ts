@@ -21,4 +21,13 @@ export class PluginDBManager {
       throw new Error(`Failed to set plugin value: ${error}`)
     }
   }
+
+  static async removePlugin(pluginId: string): Promise<void> {
+    try {
+      await baseDBManager.removeDoc(this.DB_NAME, pluginId)
+    } catch (error) {
+      log.error(`Failed to remove plugin ${pluginId}:`, error)
+      throw new Error(`Failed to remove plugin: ${error}`)
+    }
+  }
 }

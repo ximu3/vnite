@@ -503,12 +503,12 @@ export class PluginManager {
       // 删除插件文件
       await fs.rm(pluginInfo.installPath, { recursive: true, force: true })
 
-      // 清理插件数据 - 暂时跳过，需要实现相关方法
-      // TODO: 实现插件数据清理功能
-
       // 从内存中移除
       this.plugins.delete(pluginId)
       this.loadedModules.delete(pluginId)
+
+      // 清理插件数据
+      await PluginDBManager.removePlugin(pluginId)
 
       log.info(`插件 ${pluginId} 卸载成功`)
       eventBus.emit(
