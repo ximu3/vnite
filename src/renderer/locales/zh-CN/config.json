@@ -22,7 +22,40 @@
       "image": "图片",
       "selectImage": "选择图片",
       "currentBackground": "当前背景图片",
-      "noBackground": "未设置背景图片"
+      "noBackground": "未设置背景图片",
+      "typeBackground": "背景类型",
+      "uploadImage": {
+        "allValidFormats": "所有有效格式",
+        "label": "添加图片",
+        "notifications": {
+          "uploading": "添加中",
+          "successSingle": "背景图片添加成功",
+          "successMultiple": "背景图片添加成功",
+          "failureSingle": "添加图片失败",
+          "failureMultiple": "添加图片失败",
+          "image": "图片",
+          "images": "图片"
+        }
+      },
+      "settings": {
+        "blur": "模糊度",
+        "opacity": "透明度"
+      },
+      "seconds": "秒",
+      "type": {
+        "slideshow": "图片轮播",
+        "single": "单个图片",
+        "default": "默认"
+      },
+      "timer": "图片轮播间隔",
+      "source": {
+        "custom": "自定义",
+        "library": "游戏库"
+      },
+      "compression": {
+        "label": "启用压缩",
+        "factor": "压缩等级"
+      }
     },
     "showcase": {
       "title": "海报墙",
@@ -81,7 +114,8 @@
       "themeSaved": "主题已保存",
       "configuring": "正在配置主题…",
       "configured": "主题配置成功"
-    }
+    },
+    "themeEditor": "主题编辑器"
   },
   "hotkeys": {
     "title": "快捷键",
@@ -238,6 +272,11 @@
       "enable": "启用转换器",
       "manage": "管理转换规则",
       "manageButton": "管理"
+    },
+    "imageTransformer": {
+      "title": "图像转换",
+      "enable": "启用图片转换",
+      "factor": "选择压缩比"
     }
   }
 }
