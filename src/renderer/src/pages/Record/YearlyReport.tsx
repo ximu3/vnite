@@ -163,7 +163,7 @@ export function YearlyReport(): React.JSX.Element {
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>{t('yearly.chart.monthlyPlayTime')}</CardTitle>
@@ -223,7 +223,7 @@ export function YearlyReport(): React.JSX.Element {
         </Card>
       </div>
 
-      <div className="grid gap-4" style={{ gridTemplateColumns: 'auto 1fr' }}>
+      <div className="grid gap-4 xl:grid-cols-[auto_1fr]">
         <Card>
           <CardHeader>
             <CardTitle>{t('yearly.chart.timeDistribution')}</CardTitle>

@@ -224,7 +224,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
           className={cn('relative z-20 flex flex-col w-full min-h-[100vh]')}
           // 背景渐变已移除，由Light组件处理
         >
-          <div className="mt-[36vh]">
+          <div className="mt-[39vh]">
             {/* 头部区域 */}
             <div ref={headerRef} className="pt-1">
               <Header gameId={gameId} />

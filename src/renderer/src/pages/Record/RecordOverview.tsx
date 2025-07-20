@@ -136,7 +136,7 @@ export function RecordOverview(): React.JSX.Element {
         />
       </div>
 
-      <div className="grid gap-4" style={{ gridTemplateColumns: '1.5fr 1fr' }}>
+      <div className="grid gap-4 w-full xl:grid-cols-[1.5fr_1fr]">
         <Card className="col-span-1">
           <CardHeader>
             <CardTitle>{t('overview.chart.yearlyPlayTime')}</CardTitle>

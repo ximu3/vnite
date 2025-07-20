@@ -18,7 +18,7 @@ export function Record({ className }: { className?: string }): React.JSX.Element
           <div className={cn('text-2xl font-bold')}>{t('title')}</div>
 
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid grid-cols-5 mb-4">
+            <TabsList className="mb-4">
               <TabsTrigger value="overview">{t('tabs.overview')}</TabsTrigger>
               <TabsTrigger value="weekly">{t('tabs.weekly')}</TabsTrigger>
               <TabsTrigger value="monthly">{t('tabs.monthly')}</TabsTrigger>

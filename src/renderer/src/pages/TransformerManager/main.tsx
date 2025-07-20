@@ -192,7 +192,7 @@ export function TransformerManager(): React.JSX.Element {
 
   return (
     <div className="flex flex-col w-full h-full bg-transparent">
-      <ScrollArea className="px-6">
+      <ScrollArea className="px-6 w-full h-full">
         <div className="py-[34px]">
           {/* Title */}
           <div className="flex items-center justify-between mb-4 ">

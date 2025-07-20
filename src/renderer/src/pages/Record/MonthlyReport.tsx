@@ -184,7 +184,7 @@ export function MonthlyReport(): React.JSX.Element {
         />
       </div>
 
-      <div className="grid gap-4" style={{ gridTemplateColumns: '1fr auto' }}>
+      <div className="grid gap-4 xl:grid-cols-[1fr_auto]">
         <Card>
           <CardHeader>
             <CardTitle>{t('monthly.chart.weeklyPlayTime')}</CardTitle>
@@ -229,7 +229,7 @@ export function MonthlyReport(): React.JSX.Element {
               selected={selectedDate}
               month={selectedDate} // Controls the displayed month
               onMonthChange={(date) => setSelectedDate(date)}
-              className="w-full p-0 rounded-md select-none"
+              className="p-0 rounded-md select-none"
               classNames={{
                 day: cn(
                   buttonVariants({ variant: 'ghost' }),

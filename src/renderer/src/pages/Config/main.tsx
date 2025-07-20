@@ -41,7 +41,7 @@ export function Config({ className }: { className?: string }): React.JSX.Element
           </div>
 
           <Tabs defaultValue="general" className="w-full">
-            <TabsList className="grid grid-cols-10 mb-4">
+            <TabsList className="mb-4">
               <TabsTrigger value="general">{t('general.title')}</TabsTrigger>
               <TabsTrigger value="appearances">{t('appearances.title')}</TabsTrigger>
               <TabsTrigger value="advanced">{t('advanced.title')}</TabsTrigger>
