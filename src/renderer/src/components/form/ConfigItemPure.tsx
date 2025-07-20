@@ -26,7 +26,7 @@ export function ConfigItemPure({
   return (
     <Card className={cn('w-full pb-5 bg-card/20 shadow-sm', { 'opacity-50': disabled }, className)}>
       <CardContent className="flex items-center justify-between">
-        <div className="flex-col flex items-start justify-center">
+        <div className="flex-col flex items-start justify-center gap-1">
           <div className="text-sm font-medium leading-none">{title}</div>
           {description && <div className="text-sm text-muted-foreground">{description}</div>}
         </div>

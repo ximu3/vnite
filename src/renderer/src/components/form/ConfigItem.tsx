@@ -352,7 +352,7 @@ export function ConfigItem<
   return (
     <Card className={cn('w-full pb-5 shadow-sm bg-card/20', className)}>
       <CardContent className="flex items-center justify-between">
-        <div className="flex-col flex items-start justify-center">
+        <div className="flex-col flex items-start justify-center gap-1">
           <div className="text-sm font-medium leading-none">{title}</div>
           {description && <div className="text-sm text-muted-foreground">{description}</div>}
         </div>
