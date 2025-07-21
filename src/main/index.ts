@@ -172,8 +172,6 @@ app.whenReady().then(async () => {
     app.setPath('userData', join(getAppRootPath(), 'dev'))
   }
 
-  baseDBManager.initAllDatabases()
-
   await checkPortableMode()
 
   log.transports.file.resolvePathFn = (): string => getLogsPath()
@@ -249,6 +247,8 @@ app.whenReady().then(async () => {
   setupScraper()
 
   createWindow()
+
+  baseDBManager.initAllDatabases()
 
   AuthManager.init()
 
