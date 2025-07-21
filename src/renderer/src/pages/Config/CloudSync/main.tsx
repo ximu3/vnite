@@ -268,12 +268,14 @@ export function CloudSync(): React.JSX.Element {
               }}
             ></ConfigItem>
 
-            <ConfigItemPure
-              title={t('cloudSync.syncFull')}
-              description={t('cloudSync.syncFullDescription')}
-            >
-              <Button onClick={handleFullSync}>{t('cloudSync.syncFullButton')}</Button>
-            </ConfigItemPure>
+            {enabled && (
+              <ConfigItemPure
+                title={t('cloudSync.syncFull')}
+                description={t('cloudSync.syncFullDescription')}
+              >
+                <Button onClick={handleFullSync}>{t('cloudSync.syncFullButton')}</Button>
+              </ConfigItemPure>
+            )}
 
             {enabled && (
               <>
