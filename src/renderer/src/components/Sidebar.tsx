@@ -32,7 +32,7 @@ export function Sidebar(): React.JSX.Element {
   return (
     <div
       className={cn(
-        'flex flex-col p-[6px] py-[8px] bg-transparent border-r border-border justify-between h-full w-[56px]'
+        'flex flex-col p-[6px] py-[8px] bg-transparent border-r border-border justify-between h-full w-[56px] shrink-0'
       )}
     >
       <div className={cn('flex flex-col gap-2 items-center justify-center')}>

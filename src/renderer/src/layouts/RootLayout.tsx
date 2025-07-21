@@ -15,15 +15,16 @@ import { DragContainer } from '~/pages/DragContainer'
 
 export function RootLayout(): React.JSX.Element {
   console.warn('[DEBUG] RootLayout')
+
   return (
     <ThemeProvider>
-      <div className="w-screen h-screen">
+      <div className="w-screen h-screen overflow-hidden">
         <DragContainer>
           <Setup />
           <Light />
-          <div className="flex flex-row w-full h-full">
+          <div className="flex flex-row w-full h-full overflow-hidden">
             <Sidebar />
-            <div className="flex flex-col w-full h-full">
+            <div className="flex flex-col w-full h-full overflow-hidden">
               <Titlebar />
               <div className="flex-1 overflow-hidden w-full">
                 <Outlet />

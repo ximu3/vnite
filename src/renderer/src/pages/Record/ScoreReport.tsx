@@ -194,7 +194,7 @@ export function ScoreReport(): React.JSX.Element {
   const { t } = useTranslation('record')
 
   return (
-    <div className="pb-6 space-y-6">
+    <div className="space-y-6">
       <div className="flex items-center mb-2 space-x-2">
         <Trophy className="w-5 h-5" />
         <h2 className="text-2xl font-bold">{t('score.title')}</h2>

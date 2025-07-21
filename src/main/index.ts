@@ -89,7 +89,7 @@ function createWindow(): void {
     y: mainWindowState.y,
     width: mainWindowState.width,
     height: mainWindowState.height,
-    minWidth: 920,
+    minWidth: 740,
     minHeight: 420,
     show: false,
     frame: false,

@@ -14,7 +14,7 @@ export function Record({ className }: { className?: string }): React.JSX.Element
   return (
     <div className={cn('w-full h-full bg-transparent', className)}>
       <ScrollArea className={cn('w-full h-full px-6')}>
-        <div className={cn('flex flex-col gap-6 pt-[34px]')}>
+        <div className={cn('flex flex-col gap-6 pt-[34px] pb-6')}>
           <div className={cn('text-2xl font-bold')}>{t('title')}</div>
 
           <Tabs defaultValue="overview" className="w-full">

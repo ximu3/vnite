@@ -179,9 +179,9 @@ export function Light(): React.JSX.Element {
           ref={detailBackgroundRef}
           className={cn('absolute overflow-hidden', 'will-change-transform')}
           style={{
-            left: '324px',
+            left: '327px',
             top: '50px',
-            width: 'calc(100% - 324px)',
+            width: 'calc(100% - 327px)',
             height: 'calc(100% - 50px)',
             zIndex: 15,
             clipPath: 'inset(0 0 0 0)' // 确保内容不会溢出这个容器

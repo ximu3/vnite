@@ -50,68 +50,40 @@ export function Titlebar(): React.JSX.Element {
       data-titlebar="true"
       className="flex flex-row draggable-area text-accent-foreground h-[50px] bg-transparent border-b w-full"
     >
-      {/* 左侧：通用按钮 */}
-      <div className="flex flex-row items-center gap-2 px-3 pr-2 non-draggable">
-        <Button
-          variant={'thirdary'}
-          size={'icon'}
-          className={cn('non-draggable h-[32px] w-[32px]', '')}
-          onClick={() => router.history.back()}
-        >
-          <span className="icon-[mdi--arrow-left] w-4 h-4"></span>
-        </Button>
-        <Button
-          variant={'thirdary'}
-          size={'icon'}
-          className={cn('non-draggable h-[32px] w-[32px]', '')}
-          onClick={() => router.history.forward()}
-        >
-          <span className="icon-[mdi--arrow-right] w-4 h-4"></span>
-        </Button>
-      </div>
-      {/* 左侧：Library路由的功能按钮 */}
-      <div className="flex flex-row items-center gap-2 px-3 non-draggable">
-        {isLibraryRoute && <LibraryTitlebarContent />}
-      </div>
+      {/* 将内容分为两部分：1. 可伸缩/可隐藏的主内容区 2. 固定的窗口控制按钮区 */}
 
-      {/* 右侧：功能按钮和窗口控制按钮 */}
-      <div className="flex flex-row-reverse ml-auto">
-        {/* 窗口控制按钮 */}
-        <Button
-          variant={'ghost'}
-          className={cn(
-            'non-draggable rounded-none h-[30px] z-[999]',
-            'hover:bg-transparent hover:text-destructive dark:hover:bg-transparent'
-          )}
-          onClick={() => ipcManager.send('window:close')}
-        >
-          <span className="icon-[mdi--close] w-4 h-4"></span>
-        </Button>
-        <Button
-          variant={'ghost'}
-          className={cn(
-            'non-draggable hover:bg-transparent hover:text-primary rounded-none h-[30px]  z-[999] dark:hover:bg-transparent'
-          )}
-          onClick={() => ipcManager.send('window:maximize')}
-        >
-          {ismaximize ? (
-            <span className="icon-[mdi--window-restore] w-4 h-4"></span>
-          ) : (
-            <span className="icon-[mdi--window-maximize] w-4 h-4"></span>
-          )}
-        </Button>
-        <Button
-          variant={'ghost'}
-          className={cn(
-            'non-draggable rounded-none hover:bg-transparent hover:text-primary h-[30px]  z-[999] dark:hover:bg-transparent'
-          )}
-          onClick={() => ipcManager.send('window:minimize')}
-        >
-          <span className="icon-[mdi--minus] w-4 h-4"></span>
-        </Button>
+      {/* 1. 主内容区域 - 在宽度不足时会隐藏溢出内容 */}
+      <div className="flex flex-row items-center w-full overflow-hidden">
+        {/* 左侧：通用按钮 */}
+        <div className="flex flex-row items-center gap-2 px-3 pr-2 non-draggable shrink-0">
+          <Button
+            variant={'thirdary'}
+            size={'icon'}
+            className={cn('non-draggable h-[32px] w-[32px]')}
+            onClick={() => router.history.back()}
+          >
+            <span className="icon-[mdi--arrow-left] w-4 h-4"></span>
+          </Button>
+          <Button
+            variant={'thirdary'}
+            size={'icon'}
+            className={cn('non-draggable h-[32px] w-[32px]')}
+            onClick={() => router.history.forward()}
+          >
+            <span className="icon-[mdi--arrow-right] w-4 h-4"></span>
+          </Button>
+        </div>
 
-        {/* 功能按钮区域 */}
-        <div className="flex flex-row items-center gap-2 px-3">
+        {/* 左侧：Library路由的功能按钮 */}
+        <div className="flex flex-row items-center gap-2 px-3 shrink-0">
+          {isLibraryRoute && <LibraryTitlebarContent />}
+        </div>
+
+        {/* 中间可伸缩空间 */}
+        <div className="flex-grow"></div>
+
+        {/* 右侧：功能按钮区域 */}
+        <div className="flex flex-row items-center gap-2 px-3 overflow-hidden shrink-0">
           {/* 日志查看按钮 */}
           <Tooltip>
             <TooltipTrigger>
@@ -126,6 +98,7 @@ export function Titlebar(): React.JSX.Element {
             </TooltipTrigger>
             <TooltipContent side="bottom">{t('actions.viewLogs')}</TooltipContent>
           </Tooltip>
+
           {/* NSFW模糊切换按钮 */}
           {showNSFWBlurSwitchInSidebar && (
             <Tooltip>
@@ -229,6 +202,42 @@ export function Titlebar(): React.JSX.Element {
             </Tooltip>
           )}
         </div>
+      </div>
+
+      {/* 2. 窗口控制按钮区域 - 固定显示，永不隐藏 */}
+      <div className="flex flex-row ml-auto shrink-0">
+        <Button
+          variant={'ghost'}
+          className={cn(
+            'non-draggable rounded-none h-[30px] z-[999]',
+            'hover:bg-transparent hover:text-primary dark:hover:bg-transparent'
+          )}
+          onClick={() => ipcManager.send('window:minimize')}
+        >
+          <span className="icon-[mdi--minus] w-4 h-4"></span>
+        </Button>
+        <Button
+          variant={'ghost'}
+          className={cn(
+            'non-draggable hover:bg-transparent hover:text-primary rounded-none h-[30px] z-[999] dark:hover:bg-transparent'
+          )}
+          onClick={() => ipcManager.send('window:maximize')}
+        >
+          {ismaximize ? (
+            <span className="icon-[mdi--window-restore] w-4 h-4"></span>
+          ) : (
+            <span className="icon-[mdi--window-maximize] w-4 h-4"></span>
+          )}
+        </Button>
+        <Button
+          variant={'ghost'}
+          className={cn(
+            'non-draggable rounded-none hover:bg-transparent hover:text-destructive h-[30px] z-[999] dark:hover:bg-transparent'
+          )}
+          onClick={() => ipcManager.send('window:close')}
+        >
+          <span className="icon-[mdi--close] w-4 h-4"></span>
+        </Button>
       </div>
     </div>
   )

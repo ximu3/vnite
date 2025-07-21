@@ -209,7 +209,7 @@ export function Plugin(): React.JSX.Element {
   return (
     <div className={cn('w-full h-full bg-transparent')}>
       <ScrollArea className={cn('w-full h-full px-6')}>
-        <div className="w-full h-full pt-[34px] overflow-auto">
+        <div className="w-full h-full pt-[34px] pb-6 overflow-auto">
           <div className="max-w-7xl space-y-6">
             {/* 页面标题和操作按钮 */}
             <div className="flex items-center justify-between">

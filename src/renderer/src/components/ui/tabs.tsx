@@ -35,10 +35,11 @@ function TabsList({ className, variant = 'default', ...props }: TabsListProps): 
       data-slot="tabs-list"
       data-variant={variant}
       className={cn(
+        'flex flex-wrap', // 添加 flex-wrap 以支持换行
         variant === 'default'
-          ? 'bg-muted/40 text-muted-foreground inline-flex h-9 w-fit items-center justify-center rounded-lg p-[3px]'
+          ? 'bg-muted/40 text-muted-foreground inline-flex h-auto w-fit items-center justify-center rounded-lg p-[3px]'
           : variant === 'underline'
-            ? 'w-full justify-start rounded-none bg-transparent p-0 inline-flex items-center'
+            ? 'w-fit justify-start rounded-none bg-transparent p-0 inline-flex items-center'
             : '',
         className
       )}

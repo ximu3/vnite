@@ -108,7 +108,7 @@ export function YearlyReport(): React.JSX.Element {
   }
 
   return (
-    <div className="pb-6 space-y-4">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">{t('yearly.title')}</h2>
         <div className="flex items-center space-x-2">
