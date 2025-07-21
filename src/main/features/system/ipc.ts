@@ -22,8 +22,11 @@ import {
   getLanguage,
   updateLanguage,
   saveGameIconByFile,
-  getSystemFonts
+  getSystemFonts,
   getAppRootPath,
+  getAppLogContentsInCurrentLifetime,
+  copyAppLogInCurrentLifetimeToClipboardAsFile,
+  openLogPathInExplorer
 } from './services'
 import { mainWindow } from '~/index'
 
@@ -65,6 +68,18 @@ export function setupSystemIPC(): void {
 
   ipcManager.handle('utils:generate-uuid', () => {
     return generateUUID()
+  })
+
+  ipcManager.handle('utils:get-app-log-contents-in-current-lifetime', async () => {
+    return await getAppLogContentsInCurrentLifetime()
+  })
+
+  ipcManager.handle('utils:copy-app-log-in-current-lifetime-to-clipboard-as-file', async () => {
+    await copyAppLogInCurrentLifetimeToClipboardAsFile()
+  })
+
+  ipcManager.handle('utils:open-log-path-in-explorer', async () => {
+    await openLogPathInExplorer()
   })
 
   ipcManager.handle(

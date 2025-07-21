@@ -11,12 +11,14 @@ import { CloudSyncInfo } from '../pages/Config/CloudSync/Info'
 import { useTheme } from './ThemeProvider'
 import { LibraryTitlebarContent } from './LibraryTitlebarContent'
 import { ipcManager } from '~/app/ipc'
+import { useLogStore } from '~/pages/Log'
 
 export function Titlebar(): React.JSX.Element {
   const [ismaximize, setIsmaximize] = useState(false)
   const router = useRouter()
   const { location } = useRouterState()
   const { t } = useTranslation('sidebar')
+  const { setIsOpen: setLogDialogIsOpen } = useLogStore()
 
   // 云同步相关
   const syncStatus = useCloudSyncStore((state) => state.status)
@@ -110,6 +112,20 @@ export function Titlebar(): React.JSX.Element {
 
         {/* 功能按钮区域 */}
         <div className="flex flex-row items-center gap-2 px-3">
+          {/* 日志查看按钮 */}
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                variant="thirdary"
+                size={'icon'}
+                className={cn('min-h-0 min-w-0 p-1 non-draggable h-[32px] w-[32px]')}
+                onClick={() => setLogDialogIsOpen(true)}
+              >
+                <span className={cn('icon-[mdi--file-document] w-4 h-4')}></span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">{t('actions.viewLogs')}</TooltipContent>
+          </Tooltip>
           {/* NSFW模糊切换按钮 */}
           {showNSFWBlurSwitchInSidebar && (
             <Tooltip>

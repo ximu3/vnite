@@ -10,8 +10,44 @@ import pngToIco from 'png-to-ico'
 import sharp from 'sharp'
 import { promisify } from 'util'
 import { getAppTempPath, getDataPath } from '~/features/system'
+import { psManager } from './Powershell'
 
 const execAsync = promisify(exec)
+
+/**
+ * 将文件复制到剪贴板
+ * @param filePath 要复制的文件路径
+ * @returns Promise<boolean> 是否成功复制
+ */
+export async function copyFileToClipboard(filePath: string): Promise<boolean> {
+  try {
+    // 确保文件存在
+    if (!(await fse.pathExists(filePath))) {
+      throw new Error(`文件不存在: ${filePath}`)
+    }
+
+    // 确保使用绝对路径
+    const absolutePath = path.resolve(filePath)
+
+    // PowerShell命令：将文件添加到剪贴板
+    const psCommand = `
+      Add-Type -AssemblyName System.Windows.Forms
+      $filePath = "${absolutePath.replace(/\\/g, '\\\\')}"
+      $fileCollection = New-Object System.Collections.Specialized.StringCollection
+      $fileCollection.Add($filePath) | Out-Null
+      [System.Windows.Forms.Clipboard]::SetFileDropList($fileCollection)
+      "Success"
+    `
+
+    // 执行PowerShell命令
+    const result = await psManager.executeCommand(psCommand)
+
+    return result.includes('Success')
+  } catch (error) {
+    log.error('复制文件到剪贴板失败:', error)
+    return false
+  }
+}
 
 /**
  * 获取目录大小（字节）

@@ -178,8 +178,9 @@ export class AuthManager {
       const instance = AuthManager.getInstance()
 
       const accessToken = await ConfigDBManager.getConfigLocalValue('userInfo.accessToken')
+      const enabled = await ConfigDBManager.getConfigLocalValue('sync.enabled')
 
-      if (!accessToken) {
+      if (!accessToken || !enabled) {
         return
       }
 

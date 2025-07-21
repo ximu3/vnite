@@ -169,30 +169,33 @@ app.whenReady().then(async () => {
     app.setPath('userData', join(getAppRootPath(), 'dev'))
   }
 
-  await checkPortableMode()
-
   log.transports.file.resolvePathFn = (): string => getLogsPath()
+
+  log.info('[App] App is starting...')
+  log.info(`[App] System: ${process.platform} ${process.arch}`)
+
+  await checkPortableMode()
 
   // Check if the app is running in portable mode
   if (portableStore.isPortableMode) {
     if (await checkAdminPermissions()) {
-      log.info('Running in portable mode with admin permissions')
+      log.info('[App] Running in portable mode with admin permissions')
     } else {
       if (await checkIfDirectoryNeedsAdminRights(getDataPath())) {
         log.info(
-          'Running in portable mode without admin permissions, but needs admin permissions, restarting as admin'
+          '[App] Running in portable mode without admin permissions, but needs admin permissions, restarting as admin'
         )
         restartAppAsAdmin()
         return
       } else {
-        log.info('Running in portable mode without admin permissions')
+        log.info('[App] Running in portable mode without admin permissions')
       }
     }
   } else {
     if (await checkAdminPermissions()) {
-      log.info('Running in normal mode with admin permissions')
+      log.info('[App] Running in normal mode with admin permissions')
     } else {
-      log.info('Running in normal mode without admin permissions')
+      log.info('[App] Running in normal mode without admin permissions')
     }
   }
 
