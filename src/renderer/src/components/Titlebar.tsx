@@ -50,7 +50,7 @@ export function Titlebar(): React.JSX.Element {
       data-titlebar="true"
       className="flex flex-row draggable-area text-accent-foreground h-[50px] bg-transparent border-b w-full"
     >
-      {/* 将内容分为两部分：1. 可伸缩/可隐藏的主内容区 2. 固定的窗口控制按钮区 */}
+      {/* 内容分为两部分：1. 可伸缩/可隐藏的主内容区 2. 固定的窗口控制按钮区 */}
 
       {/* 1. 主内容区域 - 在宽度不足时会隐藏溢出内容 */}
       <div className="flex flex-row items-center w-full overflow-hidden">
