@@ -1,0 +1,14 @@
+{
+  "title": "アプリケーションログ",
+  "description": "現在のアプリケーションライフサイクル内のログ情報",
+  "refresh": "更新",
+  "scrollToBottom": "下部にスクロール",
+  "openLogFolder": "ログフォルダを開く",
+  "copy": "app.logとしてコピー",
+  "copied": "コピーしました",
+  "fetchError": "ログの取得に失敗しました。後でもう一度お試しください",
+  "notifications": {
+    "fetchError": "ログの取得に失敗しました: {{error}}",
+    "copyError": "クリップボードへのコピーに失敗しました: {{error}}"
+  }
+}

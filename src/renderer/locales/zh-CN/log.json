@@ -1,0 +1,14 @@
+{
+  "title": "应用日志",
+  "description": "当前应用生命周期内的日志信息",
+  "refresh": "刷新",
+  "scrollToBottom": "滚动到底部",
+  "openLogFolder": "打开日志文件夹",
+  "copy": "复制为app.log",
+  "copied": "已复制",
+  "fetchError": "获取日志失败，请稍后重试",
+  "notifications": {
+    "fetchError": "获取日志失败: {{error}}",
+    "copyError": "复制到剪贴板失败: {{error}}"
+  }
+}

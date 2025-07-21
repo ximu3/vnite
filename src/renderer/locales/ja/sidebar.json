@@ -7,6 +7,7 @@
     "transformer": "変換器"
   },
   "actions": {
+    "viewLogs": "ログを表示",
     "darkMode": "ダークモード",
     "lightMode": "ライトモード",
     "cloudSyncDisabled": "クラウド同期が無効",

@@ -8,6 +8,7 @@
     "plugin": "Plugins"
   },
   "actions": {
+    "viewLogs": "View Logs",
     "enableNSFWBlur": "Hide NSFW Content",
     "disableNSFWBlur": "Show NSFW Content",
     "darkMode": "Dark Mode",

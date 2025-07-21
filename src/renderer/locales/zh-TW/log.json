@@ -1,0 +1,14 @@
+{
+  "title": "應用日誌",
+  "description": "當前應用生命週期內的日誌信息",
+  "refresh": "刷新",
+  "scrollToBottom": "滾動到底部",
+  "openLogFolder": "打開日誌文件夾",
+  "copy": "複製為app.log",
+  "copied": "已複製",
+  "fetchError": "獲取日誌失敗，請稍後重試",
+  "notifications": {
+    "fetchError": "獲取日誌失敗: {{error}}",
+    "copyError": "複製到剪貼簿失敗: {{error}}"
+  }
+}

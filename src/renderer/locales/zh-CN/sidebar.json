@@ -8,6 +8,7 @@
     "plugin": "插件"
   },
   "actions": {
+    "viewLogs": "查看日志",
     "enableNSFWBlur": "隐藏 NSFW 内容",
     "disableNSFWBlur": "显示 NSFW 内容",
     "darkMode": "暗色模式",

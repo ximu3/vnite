@@ -11,9 +11,11 @@ import {
 import { RefreshCcw, Copy, Check } from 'lucide-react'
 import { ipcManager } from '~/app/ipc'
 import { useLogStore } from './store'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 
-// 接收isOpen和setIsOpen作为props
 export function LogDialog(): React.JSX.Element {
+  const { t } = useTranslation('log')
   const { isOpen, setIsOpen } = useLogStore()
   const [logs, setLogs] = useState<string>('')
   const [loading, setLoading] = useState(false)
@@ -26,8 +28,8 @@ export function LogDialog(): React.JSX.Element {
       const logContent = await ipcManager.invoke('utils:get-app-log-contents-in-current-lifetime')
       setLogs(logContent)
     } catch (error) {
-      console.error('获取日志失败:', error)
-      setLogs('获取日志失败，请稍后重试')
+      toast.error(t('notifications.fetchError', { error: String(error) }))
+      setLogs(t('fetchError'))
     } finally {
       setLoading(false)
     }
@@ -52,21 +54,21 @@ export function LogDialog(): React.JSX.Element {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch (error) {
-      console.error('复制到剪贴板失败:', error)
+      toast.error(t('notifications.copyError', { error: String(error) }))
     }
   }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="w-[70vw] h-[80vh]">
+      <DialogContent className="w-[60vw] h-[70vh]">
         <DialogHeader>
-          <DialogTitle>应用日志</DialogTitle>
-          <DialogDescription>当前应用生命周期内的日志信息</DialogDescription>
+          <DialogTitle>{t('title')}</DialogTitle>
+          <DialogDescription>{t('description')}</DialogDescription>
         </DialogHeader>
 
         <div
           ref={logContainerRef}
-          className="h-full overflow-auto scrollbar-base-thin p-2 bg-card/40 rounded-lg shadow-md"
+          className="h-full overflow-auto scrollbar-base-thin p-3 bg-card/40 rounded-lg shadow-md"
         >
           <pre className="whitespace-pre-wrap break-words font-mono text-sm">{logs}</pre>
         </div>
@@ -80,7 +82,7 @@ export function LogDialog(): React.JSX.Element {
             disabled={loading}
           >
             <RefreshCcw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-            刷新
+            {t('refresh')}
           </Button>
           <div className="flex flex-row items-center gap-3">
             <Button
@@ -89,7 +91,7 @@ export function LogDialog(): React.JSX.Element {
               className="flex items-center gap-2"
               onClick={scrollToBottom}
             >
-              <span>滚动到底部</span>
+              <span>{t('scrollToBottom')}</span>
             </Button>
             <Button
               variant="thirdary"
@@ -99,7 +101,7 @@ export function LogDialog(): React.JSX.Element {
                 ipcManager.invoke('utils:open-log-path-in-explorer')
               }}
             >
-              <span>打开日志文件夹</span>
+              <span>{t('openLogFolder')}</span>
             </Button>
             <Button
               variant="secondary"
@@ -110,12 +112,12 @@ export function LogDialog(): React.JSX.Element {
               {copied ? (
                 <>
                   <Check className="h-4 w-4" />
-                  已复制
+                  {t('copied')}
                 </>
               ) : (
                 <>
                   <Copy className="h-4 w-4" />
-                  复制为app.log
+                  {t('copy')}
                 </>
               )}
             </Button>
@@ -125,5 +127,3 @@ export function LogDialog(): React.JSX.Element {
     </Dialog>
   )
 }
-
-export default LogDialog

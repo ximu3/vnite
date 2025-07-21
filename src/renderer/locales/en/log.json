@@ -1,0 +1,14 @@
+{
+  "title": "Application Logs",
+  "description": "Log information in the current application lifetime",
+  "refresh": "Refresh",
+  "scrollToBottom": "Scroll to Bottom",
+  "openLogFolder": "Open Log Folder",
+  "copy": "Copy as app.log",
+  "copied": "Copied",
+  "fetchError": "Failed to fetch logs, please try again later",
+  "notifications": {
+    "fetchError": "Failed to fetch logs: {{error}}",
+    "copyError": "Failed to copy to clipboard: {{error}}"
+  }
+}
