@@ -68,7 +68,7 @@ export function LogDialog(): React.JSX.Element {
 
         <div
           ref={logContainerRef}
-          className="h-full overflow-auto scrollbar-base-thin p-3 bg-card/40 rounded-lg shadow-md"
+          className="h-full overflow-auto scrollbar-base-thin p-3 bg-accent/20 rounded-lg shadow-inner"
         >
           <pre className="whitespace-pre-wrap break-words font-mono text-sm">{logs}</pre>
         </div>

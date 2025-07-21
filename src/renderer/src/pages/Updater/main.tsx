@@ -62,25 +62,23 @@ export function UpdateDialog(): React.JSX.Element {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       {updateInfo ? (
-        <DialogContent className={cn('w-[600px] max-w-none')}>
+        <DialogContent className={cn('w-[650px]')}>
           <DialogHeader>
             <DialogTitle>{t('dialog.title', { version: updateInfo?.version })}</DialogTitle>
           </DialogHeader>
-          <div className={cn('')}>
-            <div
-              className={cn(
-                'max-h-[300px] p-2 border-[1px] border-border pb-3 overflow-auto scrollbar-base text-sm bg-card text-card-foreground rounded-lg',
-                'prose max-w-none',
-                'prose-headings:font-bold prose-headings:text-lg prose-headings:m-0 prose-headings:text-card-foreground',
-                'prose-p:my-0',
-                'prose-ul:list-disc prose-ul:ml-0',
-                'prose-li:mb-0',
-                'prose-a:text-primary', // Link Color
-                'prose-a:no-underline hover:prose-a:underline' // underline effect
-              )}
-            >
-              {parse(updateInfo?.releaseNotes, HTMLParserOptions) || t('dialog.noReleaseNotes')}
-            </div>
+          <div
+            className={cn(
+              'h-[350px] p-2 pb-3 shadow-inner overflow-auto scrollbar-base-thin text-sm bg-accent/20 text-card-foreground rounded-xl',
+              'prose max-w-none',
+              'prose-headings:font-bold prose-headings:text-lg prose-headings:m-0 prose-headings:text-card-foreground',
+              'prose-p:my-0',
+              'prose-ul:list-disc prose-ul:ml-0',
+              'prose-li:mb-0',
+              'prose-a:text-primary', // Link Color
+              'prose-a:no-underline hover:prose-a:underline' // underline effect
+            )}
+          >
+            {parse(updateInfo?.releaseNotes, HTMLParserOptions) || t('dialog.noReleaseNotes')}
           </div>
           {downloading && progress && (
             <div>
