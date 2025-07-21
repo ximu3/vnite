@@ -21,7 +21,9 @@ export const ScrollToTopButton = React.memo(function ScrollToTopButton({
   useEffect(() => {
     if (!scrollAreaRef.current) return
 
-    const viewportElement = scrollAreaRef.current.querySelector('[class*="h-full w-full"]')
+    const viewportElement = scrollAreaRef.current.querySelector(
+      '[data-slot="scroll-area-viewport"]'
+    )
 
     if (!viewportElement) {
       console.error('viewport element not found')
@@ -53,7 +55,9 @@ export const ScrollToTopButton = React.memo(function ScrollToTopButton({
   const scrollToTop = (): void => {
     if (!scrollAreaRef.current) return
 
-    const viewportElement = scrollAreaRef.current.querySelector('[class*="h-full w-full"]')
+    const viewportElement = scrollAreaRef.current.querySelector(
+      '[data-slot="scroll-area-viewport"]'
+    )
 
     if (viewportElement) {
       ;(viewportElement as HTMLElement).scrollTo({
