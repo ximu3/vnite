@@ -79,3 +79,10 @@
   opacity: 0;
   transition: opacity 300ms ease-out;
 }
+
+@font-face {
+  font-family: 'LXGW WenKai Mono';
+  src: url('@assets/fonts/LXGWWenKaiMono-Medium.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}

@@ -272,7 +272,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       }
     },
     enableNSFWBlur: true,
-    font: 'system-ui'
+    font: 'LXGW WenKai Mono'
   },
   hotkeys: {
     library: 'alt+shift+l',

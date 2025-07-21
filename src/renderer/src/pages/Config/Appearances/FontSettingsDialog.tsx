@@ -68,8 +68,14 @@ export function FontSettingsDialog({
     setCommandOpen(false)
   }
 
+  // 重置为软件默认字体
+  const handleResetToSoftwareFont = (): void => {
+    changeFont('LXGW WenKai Mono')
+    setFont('LXGW WenKai Mono')
+  }
+
   // 重置为系统默认字体
-  const handleResetFont = (): void => {
+  const handleResetToSystemFont = (): void => {
     changeFont('system-ui')
     setFont('system-ui')
   }
@@ -160,7 +166,10 @@ export function FontSettingsDialog({
         </div>
 
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={handleResetFont}>
+          <Button variant="outline" onClick={handleResetToSystemFont}>
+            {t('appearances.font.dialog.resetToSystem')}
+          </Button>
+          <Button variant="outline" onClick={handleResetToSoftwareFont}>
             {t('appearances.font.dialog.resetToDefault')}
           </Button>
           <Button onClick={() => onOpenChange(false)}>{t('appearances.font.dialog.finish')}</Button>

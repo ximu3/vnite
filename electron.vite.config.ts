@@ -25,6 +25,7 @@ export default defineConfig({
         '~': resolve('src/renderer/src'),
         '@ui': resolve('src/renderer/src/components/ui'),
         '@locales': resolve('src/renderer/locales'),
+        '@assets': resolve('src/renderer/assets'),
         '@appTypes': resolve('src/types'),
         '@appUtils': resolve('src/utils')
       }

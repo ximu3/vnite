@@ -17,6 +17,8 @@
       "@ui/*": ["src/renderer/src/components/ui/*"],
       "@locales": ["src/renderer/locales"],
       "@locales/*": ["src/renderer/locales/*"],
+       "@assets": ["src/renderer/assets"],
+      "@assets/*": ["src/renderer/assets/*"],
       "@appTypes": ["src/types"],
       "@appTypes/*": ["src/types/*"],
       "@appUtils": ["src/utils"],

@@ -34,6 +34,7 @@
         "searchFont": "フォントを検索...",
         "preview": "プレビュー",
         "resetToDefault": "デフォルトフォントにリセット",
+        "resetToSystem": "システムフォントに同期",
         "finish": "完了"
       }
     },

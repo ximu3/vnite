@@ -38,7 +38,7 @@
   --chart-5: hsl(223 45% 57%);
   --radius: 0.625rem;
 
-  --font-current: system-ui;
+  --font-current: 'LXGW WenKai Mono';
   --font-sans:
     var(--font-current), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
     Arial, sans-serif;

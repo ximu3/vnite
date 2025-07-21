@@ -34,6 +34,7 @@
         "searchFont": "Search fonts...",
         "preview": "Preview",
         "resetToDefault": "Reset to Default Font",
+        "resetToSystem": "Sync to System Font",
         "finish": "Finish"
       }
     },

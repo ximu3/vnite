@@ -34,6 +34,7 @@
         "searchFont": "搜索字體...",
         "preview": "預覽",
         "resetToDefault": "重置為默認字體",
+        "resetToSystem": "同步系統字體",
         "finish": "完成"
       }
     },
