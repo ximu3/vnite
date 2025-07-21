@@ -116,7 +116,8 @@ export class ScraperManager {
     if (!provider.getGameMetadata) {
       throw new Error(`Provider '${providerId}' does not support getting game metadata`)
     }
-    return provider.getGameMetadata(identifier)
+    const metadata = await provider.getGameMetadata(identifier)
+    return Transformer.transformMetadata(metadata, '#all')
   }
 
   /**
@@ -198,6 +199,34 @@ export class ScraperManager {
   }
 
   /**
+   * Get capabilities of a specific provider
+   * @param provider The scraper provider
+   * @returns Array of capabilities implemented by the provider
+   */
+  private getProviderCapabilities(provider: ScraperProvider): ScraperCapabilities[] {
+    return Object.keys(provider)
+      .filter((key) => key !== 'id' && key !== 'name')
+      .filter((key) => typeof provider[key] === 'function')
+      .map((key) => key as ScraperCapabilities)
+  }
+
+  public getProviderInfo(providerId: string): {
+    id: string
+    name: string
+    capabilities: ScraperCapabilities[]
+  } {
+    const provider = this.getProvider(providerId)
+    if (!provider) {
+      throw new Error(`Provider '${providerId}' not found`)
+    }
+    return {
+      id: provider.id,
+      name: provider.name,
+      capabilities: this.getProviderCapabilities(provider)
+    }
+  }
+
+  /**
    * Get provider Infos that implement specified capabilities
    * @param capabilities Array of capability names that providers must implement
    * @param requireAll If true, providers must implement all capabilities; if false, providers need only implement at least one capability
@@ -209,21 +238,19 @@ export class ScraperManager {
   ): { id: string; name: string; capabilities: ScraperCapabilities[] }[] {
     return this.getAllProviders()
       .filter((provider) => {
+        const providerCapabilities = this.getProviderCapabilities(provider)
+
         if (requireAll) {
-          return capabilities.every((capability) => {
-            return typeof provider[capability] === 'function'
-          })
+          return capabilities.every((capability) => providerCapabilities.includes(capability))
         } else {
-          return capabilities.some((capability) => {
-            return typeof provider[capability] === 'function'
-          })
+          return capabilities.some((capability) => providerCapabilities.includes(capability))
         }
       })
       .map((provider) => ({
         id: provider.id,
         name: provider.name,
-        capabilities: capabilities.filter(
-          (capability) => typeof provider[capability] === 'function'
+        capabilities: capabilities.filter((capability) =>
+          this.getProviderCapabilities(provider).includes(capability)
         )
       }))
   }
@@ -232,19 +259,9 @@ export class ScraperManager {
     capabilities: ScraperCapabilities[],
     requireAll: boolean = true
   ): string[] {
-    return this.getAllProviders()
-      .filter((provider) => {
-        if (requireAll) {
-          return capabilities.every((capability) => {
-            return typeof provider[capability] === 'function'
-          })
-        } else {
-          return capabilities.some((capability) => {
-            return typeof provider[capability] === 'function'
-          })
-        }
-      })
-      .map((provider) => provider.id)
+    return this.getProviderInfosWithCapabilities(capabilities, requireAll).map(
+      (providerInfo) => providerInfo.id
+    )
   }
 
   /**

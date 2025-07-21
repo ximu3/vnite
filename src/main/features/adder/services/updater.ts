@@ -8,7 +8,8 @@ import {
   BatchUpdateResult,
   GameDescriptionList,
   GameTagsList,
-  GameExtraInfoList
+  GameExtraInfoList,
+  ScraperCapabilities
 } from '@appTypes/utils'
 import { GameDBManager } from '~/core/database'
 import { scraperManager } from '~/features/scraper'
@@ -304,13 +305,18 @@ export async function updateGameMetadata({
   // 需要通过额外API获取的字段
   const specialFetchFields: GameMetadataField[] = ['description', 'tags', 'extra']
 
-  // 准备数据获取任务
-  const fetchTasks: Promise<any>[] = []
-  const imageFetchTasks: Array<{ type: GameMetadataField; promise: Promise<string[]> }> = []
+  // 获取数据源能力信息
+  const providerInfo = scraperManager.getProviderInfo(dataSource)
+  const providerCapabilities = providerInfo?.capabilities || []
 
   // 第一步：获取基本元数据
-  // 始终获取基本元数据
-  fetchTasks.push(scraperManager.getGameMetadata(dataSource, { type: 'id', value: dataSourceId }))
+  const baseMetadata = await scraperManager.getGameMetadata(dataSource, {
+    type: 'id',
+    value: dataSourceId
+  })
+
+  // 准备图像获取任务
+  const imageFetchTasks: Array<{ type: GameMetadataField; promise: Promise<string[]> }> = []
 
   // 根据需要获取不同类型的图像
   if (updateImages) {
@@ -324,10 +330,13 @@ export async function updateGameMetadata({
             promise: Promise.resolve([backgroundUrl])
           })
         } else {
-          // 使用对应的API获取图像URL
+          // 检查当前数据源是否支持此图像类型的能力
           const methodName =
-            `getGame${imageField.charAt(0).toUpperCase() + imageField.slice(1)}s` as keyof typeof scraperManager
-          if (typeof scraperManager[methodName] === 'function') {
+            `getGame${imageField.charAt(0).toUpperCase() + imageField.slice(1)}s` as ScraperCapabilities
+
+          // 判断数据源是否支持获取此类图像
+          if (providerCapabilities.includes(methodName)) {
+            // 当前数据源支持此图像类型，直接使用当前数据源
             imageFetchTasks.push({
               type: imageField,
               promise: (
@@ -340,14 +349,29 @@ export async function updateGameMetadata({
                 value: dataSourceId
               })
             })
+          } else if (imageField === 'logo' || imageField === 'icon') {
+            // 特殊处理 logo 和 icon，使用 steamgriddb 作为备选
+            const alternativeSource = 'steamgriddb'
+            const alternativeMethod = imageField === 'logo' ? 'getGameLogos' : 'getGameIcons'
+
+            // 已经获取到基本元数据，直接使用
+            imageFetchTasks.push({
+              type: imageField,
+              promise: scraperManager[alternativeMethod](
+                alternativeSource,
+                dataSource === 'steam'
+                  ? { type: 'id', value: dataSourceId }
+                  : {
+                      type: 'name',
+                      value: baseMetadata.originalName || baseMetadata.name
+                    }
+              )
+            })
           }
         }
       }
     })
   }
-
-  // 并行执行基本元数据获取任务
-  const [baseMetadata] = (await Promise.all(fetchTasks)) as [GameMetadata]
 
   // 处理图片获取结果
   const imageResults = await Promise.all(
@@ -564,11 +588,11 @@ export async function updateGameMetadata({
               selectedDescription = match.description
               break
             }
+          }
 
-            // 如果没找到优先来源的描述，使用第一个
-            if (!selectedDescription && descriptions[0]) {
-              selectedDescription = descriptions[0].description
-            }
+          // 如果没找到优先来源的描述，使用第一个
+          if (!selectedDescription && descriptions[0]) {
+            selectedDescription = descriptions[0].description
           }
 
           if (selectedDescription) {

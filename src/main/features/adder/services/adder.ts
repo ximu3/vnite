@@ -32,6 +32,10 @@ export async function addGameToDB({
 }): Promise<void> {
   const dbId = generateUUID()
 
+  // 获取数据源能力信息
+  const providerInfo = scraperManager.getProviderInfo(dataSource)
+  const providerCapabilities = providerInfo?.capabilities || []
+
   // 首先获取基础元数据
   const baseMetadata = await scraperManager.getGameMetadata(dataSource, {
     type: 'id',
@@ -104,8 +108,6 @@ export async function addGameToDB({
 
   // 合并增强的元数据
   if (descriptions && descriptions.length > 0) {
-    // 选择最合适的描述（可以根据需要选择最长或最短的）
-
     metadata.description = descriptions[0].description
   }
 
@@ -136,25 +138,67 @@ export async function addGameToDB({
   gameLocalDoc._id = dbId
   gameLocalDoc.utils.markPath = dirPath ?? ''
 
-  // 并行获取所有图片资源
-  const [covers, backgrounds, icons, logos] = await Promise.all([
-    scraperManager.getGameCovers(dataSource, { type: 'id', value: dataSourceId }),
-    !backgroundUrl
+  // 准备图像获取任务
+  // 使用显式类型注解来允许动态添加属性
+  const imagePromises: {
+    covers: Promise<string[]>
+    backgrounds: Promise<string[]>
+    icons?: Promise<string[]>
+    logos?: Promise<string[]>
+  } = {
+    covers: scraperManager.getGameCovers(dataSource, { type: 'id', value: dataSourceId }),
+    backgrounds: !backgroundUrl
       ? scraperManager.getGameBackgrounds(dataSource, { type: 'id', value: dataSourceId })
-      : Promise.resolve([]),
-    dataSource == 'steam'
-      ? scraperManager.getGameIcons('steamgriddb', { type: 'id', value: dataSourceId })
-      : scraperManager.getGameIcons('steamgriddb', {
-          type: 'name',
-          value: metadata.originalName || metadata.name
-        }),
-    dataSource == 'steam'
-      ? scraperManager.getGameLogos('steamgriddb', { type: 'id', value: dataSourceId })
-      : scraperManager.getGameLogos('steamgriddb', {
-          type: 'name',
-          value: metadata.originalName || metadata.name
-        })
+      : Promise.resolve([])
+  }
+
+  // 检查数据源是否支持获取图标和徽标的能力
+  const hasIconCapability = providerCapabilities.includes('getGameIcons')
+  const hasLogoCapability = providerCapabilities.includes('getGameLogos')
+
+  // 根据数据源能力选择获取图标的方式
+  if (hasIconCapability) {
+    // 当前数据源支持获取图标
+    imagePromises.icons = scraperManager.getGameIcons(dataSource, {
+      type: 'id',
+      value: dataSourceId
+    })
+  } else {
+    // 使用备选数据源 steamgriddb 获取图标
+    imagePromises.icons = scraperManager.getGameIcons(
+      'steamgriddb',
+      dataSource === 'steam'
+        ? { type: 'id', value: dataSourceId }
+        : { type: 'name', value: metadata.originalName || metadata.name }
+    )
+  }
+
+  // 根据数据源能力选择获取徽标的方式
+  if (hasLogoCapability) {
+    // 当前数据源支持获取徽标
+    imagePromises.logos = scraperManager.getGameLogos(dataSource, {
+      type: 'id',
+      value: dataSourceId
+    })
+  } else {
+    // 使用备选数据源 steamgriddb 获取徽标
+    imagePromises.logos = scraperManager.getGameLogos(
+      'steamgriddb',
+      dataSource === 'steam'
+        ? { type: 'id', value: dataSourceId }
+        : { type: 'name', value: metadata.originalName || metadata.name }
+    )
+  }
+
+  // 并行获取所有图片资源
+  const imageResults = await Promise.all([
+    imagePromises.covers,
+    imagePromises.backgrounds,
+    imagePromises.icons,
+    imagePromises.logos
   ])
+
+  const [covers, backgrounds, icons, logos] = imageResults
 
   // 准备所有数据库写入操作
   const dbPromises: Promise<unknown>[] = [
