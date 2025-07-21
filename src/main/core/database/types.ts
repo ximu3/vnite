@@ -4,8 +4,8 @@ export interface CouchDBAuth {
 }
 
 export interface SyncOptions {
-  auth?: CouchDBAuth
-  isOfficial?: boolean
+  auth: CouchDBAuth
+  isOfficial: boolean
 }
 
 export type AttachmentReturnType<T> = T extends { format: 'file' } ? string : Buffer

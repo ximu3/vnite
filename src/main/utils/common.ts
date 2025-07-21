@@ -11,8 +11,79 @@ import sharp from 'sharp'
 import { promisify } from 'util'
 import { getAppTempPath, getDataPath } from '~/features/system'
 import { psManager } from './Powershell'
+import { net } from 'electron'
 
 const execAsync = promisify(exec)
+
+/**
+ * 创建远程官方数据库并设置访问权限
+ * @param remoteUrl 远程CouchDB服务器URL
+ * @param remoteDbName 要创建的数据库名称
+ * @param username 需要授予访问权限的用户名
+ * @param adminUsername 管理员用户名
+ * @param adminPassword 管理员密码
+ */
+export async function createOfficialRemoteDBWithPermissions(
+  remoteUrl: string,
+  remoteDbName: string,
+  username: string,
+  adminUsername: string,
+  adminPassword: string
+): Promise<void> {
+  try {
+    // 第一步：创建数据库（如果不存在）
+    const createResponse = await net.fetch(`${remoteUrl}/${remoteDbName}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Basic ' + btoa(`${adminUsername}:${adminPassword}`),
+        'Content-Type': 'application/json'
+      }
+    })
+
+    const createData = await createResponse.json().catch(() => ({}))
+
+    // 如果数据库已存在，直接返回
+    if (!createResponse.ok && createData.error === 'file_exists') {
+      return
+    }
+
+    // 其他错误情况仍然抛出
+    if (!createResponse.ok) {
+      throw new Error(`创建数据库失败: ${createData.reason || '未知错误'}`)
+    }
+
+    // 第二步：设置数据库安全文档
+    const securityDoc = {
+      admins: {
+        names: [adminUsername],
+        roles: ['_admin']
+      },
+      members: {
+        names: [username],
+        roles: []
+      }
+    }
+
+    const securityResponse = await net.fetch(`${remoteUrl}/${remoteDbName}/_security`, {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Basic ' + btoa(`${adminUsername}:${adminPassword}`),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(securityDoc)
+    })
+
+    if (!securityResponse.ok) {
+      const securityData = await securityResponse.json().catch(() => ({}))
+      throw new Error(`设置数据库权限失败: ${securityData.reason || '未知错误'}`)
+    }
+
+    log.info(`已成功创建官方数据库 ${remoteDbName} 并设置权限，用户 ${username} 已被授予访问权限`)
+  } catch (error) {
+    log.error(`创建远程官方数据库或设置权限时出错:`, error)
+    throw error
+  }
+}
 
 /**
  * 将文件复制到剪贴板

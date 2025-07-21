@@ -9,6 +9,7 @@ import { net } from 'electron'
 import log from 'electron-log/main'
 import { fetch as fetchWithProxy } from 'node-fetch-native/proxy'
 import { ipcManager } from '~/core/ipc'
+import { createOfficialRemoteDBWithPermissions } from '~/utils'
 
 PouchDB.plugin(upsertPlugin)
 
@@ -182,7 +183,7 @@ export class BaseDBManager {
    */
   async syncAllWithRemote(
     remoteUrl: string = 'http://localhost:5984',
-    options: SyncOptions = {}
+    options: SyncOptions
   ): Promise<void> {
     // 停止所有现有的同步
     for (const dbName in this.syncHandlers) {
@@ -200,7 +201,7 @@ export class BaseDBManager {
    */
   async syncAllWithRemoteFull(
     remoteUrl: string = 'http://localhost:5984',
-    options: SyncOptions = {}
+    options: SyncOptions
   ): Promise<void> {
     // 停止所有现有的同步
     for (const dbName in this.syncHandlers) {
@@ -215,7 +216,7 @@ export class BaseDBManager {
   async syncWithRemoteFull(
     dbName: string,
     remoteUrl: string = 'http://localhost:5984',
-    options: SyncOptions = {}
+    options: SyncOptions
   ): Promise<void> {
     if (dbName.includes('local')) {
       return
@@ -231,16 +232,13 @@ export class BaseDBManager {
     const remoteDbUrl = `${remoteUrl}/${remoteDbName}`
 
     if (isOfficial) {
-      await net.fetch(`${remoteUrl}/${remoteDbName}`, {
-        method: 'PUT',
-        headers: {
-          Authorization:
-            'Basic ' +
-            btoa(
-              `${import.meta.env.VITE_COUCHDB_USERNAME}:${import.meta.env.VITE_COUCHDB_PASSWORD}`
-            )
-        }
-      })
+      await createOfficialRemoteDBWithPermissions(
+        remoteUrl,
+        remoteDbName,
+        auth.username,
+        import.meta.env.VITE_COUCHDB_USERNAME,
+        import.meta.env.VITE_COUCHDB_PASSWORD
+      )
     } else {
       await net.fetch(`${remoteUrl}/${remoteDbName}`, {
         method: 'PUT',
@@ -275,7 +273,7 @@ export class BaseDBManager {
   async syncWithRemote(
     dbName: string,
     remoteUrl: string = 'http://localhost:5984',
-    options: SyncOptions = {}
+    options: SyncOptions
   ): Promise<void> {
     if (dbName.includes('local')) {
       return
@@ -285,22 +283,19 @@ export class BaseDBManager {
     const { auth, isOfficial } = options
 
     const remoteDbName = isOfficial
-      ? `${auth?.username}-${dbName}`.replace('user', 'userdb')
+      ? `${auth.username}-${dbName}`.replace('user', 'userdb')
       : `vnite-${dbName}`
 
     const remoteDbUrl = `${remoteUrl}/${remoteDbName}`
 
     if (isOfficial) {
-      await net.fetch(`${remoteUrl}/${remoteDbName}`, {
-        method: 'PUT',
-        headers: {
-          Authorization:
-            'Basic ' +
-            btoa(
-              `${import.meta.env.VITE_COUCHDB_USERNAME}:${import.meta.env.VITE_COUCHDB_PASSWORD}`
-            )
-        }
-      })
+      await createOfficialRemoteDBWithPermissions(
+        remoteUrl,
+        remoteDbName,
+        auth.username,
+        import.meta.env.VITE_COUCHDB_USERNAME,
+        import.meta.env.VITE_COUCHDB_PASSWORD
+      )
     } else {
       await net.fetch(`${remoteUrl}/${remoteDbName}`, {
         method: 'PUT',

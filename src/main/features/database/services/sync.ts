@@ -71,7 +71,8 @@ export async function startSync(): Promise<void> {
         auth: {
           username: syncConfig.selfHostedConfig.auth.username,
           password: syncConfig.selfHostedConfig.auth.password
-        }
+        },
+        isOfficial: false
       })
     }
 
@@ -164,7 +165,8 @@ export async function fullSync(): Promise<void> {
         auth: {
           username: syncConfig.selfHostedConfig.auth.username,
           password: syncConfig.selfHostedConfig.auth.password
-        }
+        },
+        isOfficial: false
       })
     }
 
