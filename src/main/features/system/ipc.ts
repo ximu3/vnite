@@ -4,7 +4,6 @@ import { ipcManager } from '~/core/ipc'
 import {
   checkAdminPermissions,
   checkIfDirectoryNeedsAdminRights,
-  getAppRootPath,
   getAppVersion,
   getTotalPathSize,
   openDatabasePathInExplorer,
@@ -24,6 +23,7 @@ import {
   updateLanguage,
   saveGameIconByFile,
   getSystemFonts
+  getAppRootPath,
 } from './services'
 import { mainWindow } from '~/index'
 

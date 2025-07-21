@@ -7,7 +7,8 @@ import { v4 as uuidv4 } from 'uuid'
 import { stopSync } from '~/features/database'
 import { ConfigDBManager } from '~/core/database'
 import { GameDBManager } from '~/core/database'
-import { getAppTempPath, zipFolder, unzipFile } from '~/utils'
+import { zipFolder, unzipFile } from '~/utils'
+import { getAppTempPath } from '~/features/system'
 
 // v2 Database Type Definition
 interface V2GameMetadata {

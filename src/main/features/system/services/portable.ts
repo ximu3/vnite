@@ -1,5 +1,5 @@
 import fse from 'fs-extra'
-import { getDataPath, getAppRootPath } from '~/utils'
+import { getDataPath, getAppRootPath } from './path'
 import { baseDBManager } from '~/core/database'
 import path from 'path'
 import log from 'electron-log/main'

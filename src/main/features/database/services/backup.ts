@@ -1,4 +1,5 @@
-import { getDataPath, zipFolder, unzipFile } from '~/utils'
+import { zipFolder, unzipFile } from '~/utils'
+import { getDataPath } from '~/features/system'
 import { app } from 'electron'
 import { baseDBManager } from '~/core/database'
 import fse from 'fs-extra'

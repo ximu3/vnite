@@ -1,11 +1,7 @@
 import PouchDB from 'pouchdb'
 import { SyncOptions, AttachmentReturnType } from './types'
-import {
-  convertBufferToFile,
-  convertFileToBuffer,
-  convertBufferToTempFile,
-  getDataPath
-} from '~/utils'
+import { convertBufferToFile, convertFileToBuffer, convertBufferToTempFile } from '~/utils'
+import { getDataPath } from '~/features/system'
 import { getValueByPath, setValueByPath } from '@appUtils'
 import { fileTypeFromBuffer } from 'file-type'
 import upsertPlugin from 'pouchdb-upsert'

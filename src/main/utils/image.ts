@@ -1,6 +1,6 @@
 import sharp from 'sharp'
 import ico from 'sharp-ico'
-import { getAppTempPath } from '~/utils'
+import { getAppTempPath } from '~/features/system'
 import { net } from 'electron'
 import fse from 'fs-extra'
 import { fileTypeFromBuffer } from 'file-type'

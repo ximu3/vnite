@@ -1,5 +1,4 @@
 export * from './common'
-export * from '../features/system/services/path'
 export * from './image'
 export * from './gis'
 export * from './archiver'

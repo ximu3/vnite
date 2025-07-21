@@ -1,6 +1,7 @@
 import fse from 'fs-extra'
 import path from 'path'
-import { zipFolder, unzipFile, getAppTempPath } from '~/utils'
+import { zipFolder, unzipFile } from '~/utils'
+import { getAppTempPath } from '~/features/system'
 import { generateUUID } from '@appUtils'
 import { GameDBManager } from '~/core/database'
 import log from 'electron-log/main'

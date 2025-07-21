@@ -9,7 +9,7 @@ import path from 'path'
 import pngToIco from 'png-to-ico'
 import sharp from 'sharp'
 import { promisify } from 'util'
-import { getAppTempPath, getDataPath } from '../features/system/services/path'
+import { getAppTempPath, getDataPath } from '~/features/system'
 
 const execAsync = promisify(exec)
 

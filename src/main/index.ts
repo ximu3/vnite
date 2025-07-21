@@ -12,13 +12,10 @@ import { setupAutoUpdater } from './features/updater'
 import {
   checkAdminPermissions,
   checkIfDirectoryNeedsAdminRights,
-  getAppRootPath,
-  getDataPath,
-  getLogsPath,
   parseGameIdFromUrl,
-  restartAppAsAdmin,
-  setupTempDirectory
+  restartAppAsAdmin
 } from './utils'
+import { getAppRootPath, getDataPath, getLogsPath, setupTempDirectory } from '~/features/system'
 import {
   TrayManager,
   setupTray,
