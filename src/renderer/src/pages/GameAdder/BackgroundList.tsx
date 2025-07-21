@@ -42,7 +42,9 @@ export function BackgroundList(): React.JSX.Element {
           value: dataSourceId
         })
         if (result.length === 0) {
-          toast.error(t('gameAdder.backgrounds.notifications.noImages'))
+          toast.error(t('gameAdder.backgrounds.notifications.noImages'), {
+            id: 'loading-backgrounds'
+          })
           setBackgroundUrl('')
           return
         }
