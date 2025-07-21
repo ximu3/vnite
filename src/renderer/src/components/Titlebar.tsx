@@ -55,11 +55,11 @@ export function Titlebar(): React.JSX.Element {
       {/* 1. 主内容区域 - 在宽度不足时会隐藏溢出内容 */}
       <div className="flex flex-row items-center w-full overflow-hidden">
         {/* 左侧：通用按钮 */}
-        <div className="flex flex-row items-center gap-2 px-3 pr-2 non-draggable shrink-0">
+        <div className="flex flex-row items-center gap-2 px-3 pr-2 shrink-0">
           <Button
             variant={'thirdary'}
             size={'icon'}
-            className={cn('non-draggable h-[32px] w-[32px]')}
+            className={cn('h-[32px] w-[32px]')}
             onClick={() => router.history.back()}
           >
             <span className="icon-[mdi--arrow-left] w-4 h-4"></span>
@@ -67,7 +67,7 @@ export function Titlebar(): React.JSX.Element {
           <Button
             variant={'thirdary'}
             size={'icon'}
-            className={cn('non-draggable h-[32px] w-[32px]')}
+            className={cn('h-[32px] w-[32px]')}
             onClick={() => router.history.forward()}
           >
             <span className="icon-[mdi--arrow-right] w-4 h-4"></span>
@@ -90,7 +90,7 @@ export function Titlebar(): React.JSX.Element {
               <Button
                 variant="thirdary"
                 size={'icon'}
-                className={cn('min-h-0 min-w-0 p-1 non-draggable h-[32px] w-[32px]')}
+                className={cn('p-1 h-[32px] w-[32px]')}
                 onClick={() => setLogDialogIsOpen(true)}
               >
                 <span className={cn('icon-[mdi--file-document] w-4 h-4')}></span>
@@ -106,7 +106,7 @@ export function Titlebar(): React.JSX.Element {
                 <Button
                   variant="thirdary"
                   size={'icon'}
-                  className={cn('min-h-0 min-w-0 p-1 non-draggable h-[32px] w-[32px]')}
+                  className={cn('p-1 h-[32px] w-[32px]')}
                   onClick={() => setEnableNSFWBlur(!enableNSFWBlur)}
                 >
                   {enableNSFWBlur ? (
@@ -129,7 +129,7 @@ export function Titlebar(): React.JSX.Element {
                 <Button
                   variant="thirdary"
                   size={'icon'}
-                  className={cn('min-h-0 min-w-0 p-1 non-draggable h-[32px] w-[32px]')}
+                  className={cn('p-1 h-[32px] w-[32px]')}
                   onClick={toggleTheme}
                 >
                   {isDark ? (
@@ -150,35 +150,19 @@ export function Titlebar(): React.JSX.Element {
             <Popover>
               <PopoverTrigger>
                 {syncStatus?.status === 'syncing' ? (
-                  <Button
-                    variant="thirdary"
-                    size={'icon'}
-                    className={cn('min-h-0 min-w-0 p-1 non-draggable h-[32px] w-[32px]')}
-                  >
+                  <Button variant="thirdary" size={'icon'} className={cn('p-1 h-[32px] w-[32px]')}>
                     <span className={cn('icon-[mdi--cloud-sync-outline] w-4 h-4')}></span>
                   </Button>
                 ) : syncStatus?.status === 'success' ? (
-                  <Button
-                    variant="thirdary"
-                    size={'icon'}
-                    className={cn('min-h-0 min-w-0 p-1 non-draggable h-[32px] w-[32px]')}
-                  >
+                  <Button variant="thirdary" size={'icon'} className={cn('p-1 h-[32px] w-[32px]')}>
                     <span className={cn('icon-[mdi--cloud-check-outline] w-4 h-4')}></span>
                   </Button>
                 ) : syncStatus?.status === 'error' ? (
-                  <Button
-                    variant="thirdary"
-                    size={'icon'}
-                    className={cn('min-h-0 min-w-0 p-1 non-draggable h-[32px] w-[32px]')}
-                  >
+                  <Button variant="thirdary" size={'icon'} className={cn('p-1 h-[32px] w-[32px]')}>
                     <span className={cn('icon-[mdi--cloud-remove-outline] w-4 h-4')}></span>
                   </Button>
                 ) : (
-                  <Button
-                    variant="thirdary"
-                    size={'icon'}
-                    className={cn('min-h-0 min-w-0 p-1 non-draggable h-[32px] w-[32px]')}
-                  >
+                  <Button variant="thirdary" size={'icon'} className={cn('p-1 h-[32px] w-[32px]')}>
                     <span className={cn('icon-[mdi--cloud-outline] w-4 h-4')}></span>
                   </Button>
                 )}
@@ -190,11 +174,7 @@ export function Titlebar(): React.JSX.Element {
           ) : (
             <Tooltip>
               <TooltipTrigger>
-                <Button
-                  variant="thirdary"
-                  size={'icon'}
-                  className={cn('min-h-0 min-w-0 p-1 non-draggable h-[32px] w-[32px]')}
-                >
+                <Button variant="thirdary" size={'icon'} className={cn('p-1 h-[32px] w-[32px]')}>
                   <span className={cn('icon-[mdi--cloud-cancel-outline] w-4 h-4')}></span>
                 </Button>
               </TooltipTrigger>
@@ -209,7 +189,7 @@ export function Titlebar(): React.JSX.Element {
         <Button
           variant={'ghost'}
           className={cn(
-            'non-draggable rounded-none h-[30px] z-[999]',
+            'rounded-none h-[30px] z-[999]',
             'hover:bg-transparent hover:text-primary dark:hover:bg-transparent'
           )}
           onClick={() => ipcManager.send('window:minimize')}
@@ -219,7 +199,7 @@ export function Titlebar(): React.JSX.Element {
         <Button
           variant={'ghost'}
           className={cn(
-            'non-draggable hover:bg-transparent hover:text-primary rounded-none h-[30px] z-[999] dark:hover:bg-transparent'
+            'hover:bg-transparent hover:text-primary rounded-none h-[30px] z-[999] dark:hover:bg-transparent'
           )}
           onClick={() => ipcManager.send('window:maximize')}
         >
@@ -232,7 +212,7 @@ export function Titlebar(): React.JSX.Element {
         <Button
           variant={'ghost'}
           className={cn(
-            'non-draggable rounded-none hover:bg-transparent hover:text-destructive h-[30px] z-[999] dark:hover:bg-transparent'
+            'rounded-none hover:bg-transparent hover:text-destructive h-[30px] z-[999] dark:hover:bg-transparent'
           )}
           onClick={() => ipcManager.send('window:close')}
         >
