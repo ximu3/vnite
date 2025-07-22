@@ -396,10 +396,10 @@ export class Transformer {
   }
 
   /**
-   * Process extra fields and apply transformation rules
-   * @param extraFields Extra fields to process
-   * @param processors Processing rules configuration
-   * @returns Processed extra fields
+   * 处理额外字段并应用转换规则
+   * @param extraFields 要处理的额外字段
+   * @param processors 处理规则配置
+   * @returns 处理后的额外字段
    */
   private static async processExtraFields(
     extraFields: { key: string; value: string[] }[],
@@ -410,20 +410,23 @@ export class Transformer {
         return []
       }
 
-      // Get all possible localized field mappings
+      // 需要国际化的字段列表
+      const keysToLocalize = ['scenario', 'illustration', 'voice', 'music', 'director']
+
+      // 获取所有可能的本地化字段映射
       const localizedKeyMap = this.getLocalizedExtraFieldsMap()
       const result: { key: string; value: string[] }[] = []
 
-      // Process each extra field
+      // 处理每个额外字段
       for (const field of extraFields) {
-        // Find the corresponding original key (non-localized key name)
+        // 查找对应的原始键（非本地化键名）
         const originalKey = this.findOriginalKey(field.key, localizedKeyMap)
 
-        // If the corresponding original key is found and has matching processing rules
+        // 如果找到对应的原始键并且有匹配的处理规则
         if (originalKey && processors[originalKey]) {
           const rules = processors[originalKey]
 
-          // Apply processing rules to the value array
+          // 应用处理规则到值数组
           const newValues = field.value.map((value) => {
             let newValue = value
             for (const rule of rules) {
@@ -434,23 +437,36 @@ export class Transformer {
             return newValue
           })
 
+          // 检查是否需要国际化处理的字段
+          let keyToUse = field.key
+          if (keysToLocalize.includes(originalKey)) {
+            keyToUse = i18next.t(`scraper:extraMetadataFields.${originalKey}`)
+          }
+
           result.push({
-            key: field.key, // Keep original localized key name
+            key: keyToUse, // 使用国际化后的键名或原始本地化键名
             value: newValues
           })
         } else {
-          // No matching processing rules found, keep as is
-          result.push(field)
+          // 没有找到匹配的处理规则，保持原样
+          // 检查是否需要国际化处理的字段
+          if (keysToLocalize.includes(field.key)) {
+            result.push({
+              key: i18next.t(`scraper:extraMetadataFields.${field.key}`),
+              value: field.value
+            })
+          } else {
+            result.push(field)
+          }
         }
       }
 
       return result
     } catch (error) {
-      log.error('Error processing extra fields:', error)
+      log.error('处理额外字段时出错:', error)
       return extraFields || []
     }
   }
-
   /**
    * Find the original key name for a field (like director, scenario, etc.)
    * @param localizedKey Localized key name
