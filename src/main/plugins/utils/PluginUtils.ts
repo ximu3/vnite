@@ -155,8 +155,8 @@ export class PluginUtils {
    * 验证插件ID格式
    */
   public static validatePluginId(id: string): { valid: boolean; error?: string } {
-    // 插件ID规则：只能包含字母、数字、连字符和下划线，不能以数字开头
-    const idRegex = /^[a-zA-Z][a-zA-Z0-9_-]*$/
+    // 插件ID规则：只能包含字母、数字、连字符和下划线
+    const idRegex = /^[a-zA-Z0-9][a-zA-Z0-9_-]*$/
 
     if (!idRegex.test(id)) {
       return {

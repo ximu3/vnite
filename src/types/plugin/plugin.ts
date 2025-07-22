@@ -23,8 +23,6 @@ export interface PluginManifest {
   keywords?: string[]
   /** 插件分类 */
   category?: PluginCategory
-  /** 激活事件 */
-  activationEvents?: string[]
   /** 依赖的其他插件 */
   dependencies?: Record<string, string>
   /** 开发依赖 */
