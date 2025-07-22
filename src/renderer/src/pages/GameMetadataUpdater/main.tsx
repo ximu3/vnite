@@ -18,7 +18,12 @@ import { Slider } from '@ui/slider'
 import { Progress } from '@ui/progress'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/card'
 import { ipcManager } from '~/app/ipc'
-import { BatchUpdateGameMetadataProgress, GameMetadataUpdateOptions } from '@appTypes/utils'
+import {
+  BatchUpdateGameMetadataProgress,
+  GameMetadataUpdateOptions,
+  GameMetadataField,
+  GameMetadataUpdateMode
+} from '@appTypes/utils'
 import { ScraperCapabilities, AllGameMetadataUpdateFields } from '@appTypes/utils'
 import { useTranslation } from 'react-i18next'
 import { useGameMetadataUpdaterStore } from './store'
@@ -40,7 +45,9 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
     setShowProgress
   } = useGameMetadataUpdaterStore()
 
-  const [selectedFields, setSelectedFields] = useState<string[]>(['#all'])
+  const [selectedFields, setSelectedFields] = useState<
+    (GameMetadataField | GameMetadataUpdateMode)[]
+  >(['#all'])
   const [options, setOptions] = useState<GameMetadataUpdateOptions>({
     overwriteExisting: true,
     updateImages: true,
@@ -154,7 +161,7 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
   }
 
   // 切换字段选择
-  const toggleField = (field: string): void => {
+  const toggleField = (field: GameMetadataField | GameMetadataUpdateMode): void => {
     if (field === '#all' || field === '#missing') {
       setSelectedFields([field])
       return
