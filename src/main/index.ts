@@ -29,7 +29,7 @@ import { GameScannerManager } from './features/adder'
 import { setupScraper } from './features/scraper'
 import { cleanupPowerShell } from './utils'
 import { pluginService } from './plugins'
-import { fetch as fetchWithProxy } from 'node-fetch-native/proxy'
+import { net } from 'electron'
 
 export let mainWindow: BrowserWindow
 
@@ -37,7 +37,7 @@ export let trayManager: TrayManager
 
 log.initialize()
 
-global.fetch = fetchWithProxy
+global.fetch = net.fetch as typeof global.fetch
 
 let launchGameId: string | null = null
 const args = process.argv

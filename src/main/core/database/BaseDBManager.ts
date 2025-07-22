@@ -7,7 +7,6 @@ import { fileTypeFromBuffer } from 'file-type'
 import upsertPlugin from 'pouchdb-upsert'
 import { net } from 'electron'
 import log from 'electron-log/main'
-import { fetch as fetchWithProxy } from 'node-fetch-native/proxy'
 import { ipcManager } from '~/core/ipc'
 import { createOfficialRemoteDBWithPermissions } from '~/utils'
 
@@ -251,7 +250,7 @@ export class BaseDBManager {
     const remoteDb = new PouchDB(remoteDbUrl, {
       skip_setup: false,
       auth: auth,
-      fetch: fetchWithProxy
+      fetch: net.fetch
     })
 
     try {
@@ -308,7 +307,7 @@ export class BaseDBManager {
     const remoteDb = new PouchDB(remoteDbUrl, {
       skip_setup: false,
       auth: auth,
-      fetch: fetchWithProxy
+      fetch: net.fetch
     })
 
     // 停止现有的同步
