@@ -9,7 +9,12 @@ import {
 import { configDocs, BatchGameInfo } from './models'
 import { PluginConfiguration } from './plugin'
 import { SteamFormattedGameInfo } from './utils'
-import { ScraperCapabilities } from './utils'
+import {
+  ScraperCapabilities,
+  GameMetadataField,
+  GameMetadataUpdateMode,
+  GameMetadataUpdateOptions
+} from './utils'
 import { UpdateCheckResult, ProgressInfo } from 'electron-updater'
 import {
   EventType,
@@ -76,11 +81,11 @@ type MainIpcEvents =
       'utils:create-game-shortcut': (gameId: string, targetPath: string) => void
       'utils:update-open-at-login': () => void
       'utils:generate-uuid': () => string
-      'utils:crop-image': ({
-        sourcePath: string,
-        x: number,
-        y: number,
-        width: number,
+      'utils:crop-image': (params: {
+        sourcePath: string
+        x: number
+        y: number
+        width: number
         height: number
       }) => string
       'utils:save-game-icon-by-file': (gameId: string, filePath: string) => void
@@ -102,11 +107,6 @@ type MainIpcEvents =
       'transformer:transform-all-games': (transformerIds: string[] | '#all') => number
       'transformer:apply-metadata-to-game': (gameId: string, metadata: GameMetadata) => void
       'transformer:get-localized-field-label': (key: string, lang?: string) => string
-
-      // Theme management events
-      'theme:save': (cssContent: string) => void
-      'theme:load': () => string | null
-      'theme:apply-preset': (preset: string) => string
 
       // Database backup & restore events
       'db:backup': (targetPath: string) => void
@@ -204,7 +204,7 @@ type MainIpcEvents =
       'scraper:get-game-extra-info-list': (identifier: ScraperIdentifier) => GameExtraInfoList
       'scraper:get-provider-infos-with-capabilities': (
         capabilities: ScraperCapabilities[],
-        requireAll = true
+        requireAll?: boolean
       ) => {
         id: string
         name: string
@@ -213,7 +213,7 @@ type MainIpcEvents =
 
       // Theme events
       'theme:save': (cssContent: string) => void
-      'theme:load': () => string
+      'theme:load': () => string | null
       'theme:select-preset': (preset: string) => string
 
       // Updater events

@@ -11,14 +11,14 @@ export type GameMetadata = {
   releaseDate: string
   description: string
   developers: string[]
-  publishers?: string[]
-  genres?: string[]
-  platforms?: string[]
   relatedSites: {
     label: string
     url: string
   }[]
   tags: string[]
+  publishers?: string[]
+  genres?: string[]
+  platforms?: string[]
   extra?: {
     key: string
     value: string[]
