@@ -253,7 +253,7 @@ app.whenReady().then(async () => {
   AuthManager.init()
 
   try {
-    await AuthManager.updateUserInfo()
+    AuthManager.updateUserInfo()
   } catch (_error) {
     ipcManager.send('account:update-user-info-error')
   }
@@ -267,19 +267,19 @@ app.whenReady().then(async () => {
   await setupTempDirectory()
 
   // Setup open at login
-  await setupOpenAtLogin()
+  setupOpenAtLogin()
 
   // Sync all databases with remote
-  await startSync()
+  startSync()
 
   // Setup auto updater
-  await setupAutoUpdater()
+  setupAutoUpdater()
 
   // Initialize the game scanner
   GameScannerManager.startScan()
   GameScannerManager.startPeriodicScan()
 
-  await pluginService.initialize()
+  pluginService.initialize()
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
