@@ -7,7 +7,12 @@
 import { app } from 'electron'
 import { pluginManager, PluginRegistryManager, PluginUtils } from './index'
 import { eventBus } from '~/core/events'
-import { PluginConfiguration, PluginStatsData, PluginSearchResult } from '@appTypes/plugin'
+import {
+  PluginConfiguration,
+  PluginStatsData,
+  PluginSearchResult,
+  PluginSearchOptions
+} from '@appTypes/plugin'
 import log from 'electron-log'
 
 // 创建注册表管理器实例
@@ -248,47 +253,81 @@ export class PluginService {
   }
 
   /**
-   * 搜索插件
+   * 搜索远程插件并标记已安装状态
    */
-  public async searchPlugins(keyword: string): Promise<PluginSearchResult[]> {
+  public async searchPlugins(options?: PluginSearchOptions): Promise<PluginSearchResult> {
     try {
-      log.info(`搜索插件: ${keyword}`)
+      log.info(
+        `搜索远程插件: ${options?.keyword}${options?.category ? `, 分类: ${options.category}` : ''}`
+      )
 
-      // 从注册表搜索
-      const remoteResults = await registryManager.searchPlugins(keyword, {
-        limit: 20
+      // 构建搜索参数
+      const searchOptions = {
+        keyword: options?.keyword || '',
+        category: options?.category || 'all',
+        page: options?.page || 1,
+        perPage: options?.perPage || 20,
+        sort: options?.sort || 'stars',
+        order: options?.order || 'desc'
+      }
+
+      // 从远程注册表搜索
+      const remoteResultsData = await registryManager.searchPlugins(searchOptions)
+
+      // 获取本地已安装插件的信息，用于标记已安装状态
+      const installedPlugins = pluginManager.getAllPlugins()
+
+      // 创建已安装插件的标识映射 (使用 ID 和作者的组合作为键)
+      const installedPluginMap = new Map(
+        installedPlugins.map((plugin) => [
+          `${plugin.manifest.id}:${plugin.manifest.author || ''}`,
+          plugin
+        ])
+      )
+
+      // 为远程插件添加已安装标记
+      const plugins = remoteResultsData.plugins.map((plugin) => {
+        // 同时检查 ID 和作者
+        const isInstalled = installedPluginMap.has(
+          `${plugin.manifest.id}:${plugin.manifest.author || plugin.owner || ''}`
+        )
+
+        return {
+          ...plugin,
+          installed: isInstalled
+        }
       })
 
-      // 搜索本地已安装的插件
-      const localResults = pluginManager.searchPlugins({ keyword })
+      // 将已安装的插件排在前面（保持分页的基础上）
+      plugins.sort((a, b) => {
+        if (a.installed !== b.installed) {
+          return a.installed ? -1 : 1
+        }
 
-      // 合并结果
-      const allResults = [
-        ...localResults.map((plugin) => ({
-          id: plugin.manifest.id,
-          name: plugin.manifest.name,
-          version: plugin.manifest.version,
-          description: plugin.manifest.description,
-          author: plugin.manifest.author,
-          source: 'local' as const,
-          installed: true
-        })),
-        ...remoteResults.map((plugin) => ({
-          id: plugin.manifest.id,
-          name: plugin.manifest.name,
-          version: plugin.manifest.version,
-          description: plugin.manifest.description,
-          author: plugin.manifest.author,
-          source: 'registry' as const,
-          installed: false
-        }))
-      ]
+        // 保持原有排序
+        return 0
+      })
 
-      log.info(`搜索完成，找到 ${allResults.length} 个结果`)
-      return allResults
+      log.info(
+        `搜索完成，找到 ${plugins.length} 个远程插件，总计 ${remoteResultsData.totalCount} 个结果`
+      )
+
+      // 返回符合 PluginSearchResult 接口的结果
+      return {
+        plugins,
+        totalCount: remoteResultsData.totalCount,
+        currentPage: remoteResultsData.currentPage,
+        totalPages: remoteResultsData.totalPages
+      }
     } catch (error) {
-      log.error('搜索插件失败:', error)
-      return []
+      log.error('搜索远程插件失败:', error)
+      // 返回空结果
+      return {
+        plugins: [],
+        totalCount: 0,
+        currentPage: options?.page || 1,
+        totalPages: 0
+      }
     }
   }
 

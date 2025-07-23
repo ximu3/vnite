@@ -7,6 +7,7 @@
 import { ipcManager } from '~/core/ipc'
 import { pluginService } from './services'
 import log from 'electron-log'
+import { PluginSearchOptions } from '@appTypes/plugin'
 
 /**
  * 设置插件系统相关的IPC处理器
@@ -44,7 +45,7 @@ export function setupPluginIPC(): void {
   })
 
   // 搜索插件
-  ipcManager.handle('plugin:search-plugins', async (_, keyword: string) => {
+  ipcManager.handle('plugin:search-plugins', async (_, keyword: PluginSearchOptions) => {
     try {
       return await pluginService.searchPlugins(keyword)
     } catch (error) {

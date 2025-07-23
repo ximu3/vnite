@@ -7,7 +7,13 @@ import {
   ScraperIdentifier
 } from './utils'
 import { configDocs, BatchGameInfo } from './models'
-import { PluginConfiguration, PluginInfo, PluginSearchResult, PluginStatsData } from './plugin'
+import {
+  PluginConfiguration,
+  PluginInfo,
+  PluginSearchOptions,
+  PluginSearchResult,
+  PluginStatsData
+} from './plugin'
 import { SteamFormattedGameInfo } from './utils'
 import {
   ScraperCapabilities,
@@ -277,7 +283,7 @@ type MainIpcEvents =
       'plugin:initialize': () => { success: boolean; error?: string }
       'plugin:get-all-plugins': () => Omit<PluginInfo, 'instance'>[]
       'plugin:get-plugin': (pluginId: string) => Omit<PluginInfo, 'instance'> | undefined
-      'plugin:search-plugins': (keyword: string) => PluginSearchResult[]
+      'plugin:search-plugins': (options: PluginSearchOptions) => PluginSearchResult
       'plugin:install-plugin': (
         source: string,
         options?: { autoEnable?: boolean }

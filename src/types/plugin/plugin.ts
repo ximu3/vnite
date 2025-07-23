@@ -137,16 +137,7 @@ export type PluginConfiguration =
   | FilePluginConfiguration
   | HotkeyPluginConfiguration
 
-export enum PluginCategory {
-  GAME = 'game',
-  THEME = 'theme',
-  SCRAPER = 'scraper',
-  UTILITY = 'utility',
-  LANGUAGE = 'language',
-  IMPORTER = 'importer',
-  LAUNCHER = 'launcher',
-  OTHER = 'other'
-}
+export type PluginCategory = 'scraper' | 'common'
 
 export enum PluginStatus {
   INSTALLED = 'installed',
@@ -168,13 +159,10 @@ export interface PluginInfo {
 }
 
 export interface PluginSearchResult {
-  id: string
-  name: string
-  version: string
-  description?: string
-  author?: string
-  source: 'local' | 'registry'
-  installed: boolean
+  plugins: PluginPackage[]
+  totalCount: number
+  currentPage: number
+  totalPages: number
 }
 
 export interface PluginStatsData {
@@ -194,14 +182,13 @@ export interface PluginInstallOptions {
 }
 
 export interface PluginSearchOptions {
-  /** 搜索关键词 */
   keyword?: string
-  /** 插件分类 */
-  category?: PluginCategory
-  /** 是否只显示已安装的 */
-  installedOnly?: boolean
-  /** 是否只显示已启用的 */
-  enabledOnly?: boolean
+  category?: PluginCategory | 'all'
+  page?: number
+  perPage?: number
+  status?: PluginStatus
+  sort?: 'stars' | 'updated' | 'name' | 'status' | 'category' | 'author' | 'date'
+  order?: 'desc' | 'asc'
 }
 
 export interface PluginRegistry {
@@ -218,5 +205,12 @@ export interface PluginPackage {
   downloadUrl: string
   size: number
   checksum: string
-  publishTime: Date
+  publishTime: string
+  installed?: boolean
+  stars?: number
+  updatedAt?: string
+  owner?: string
+  repoUrl?: string
+  readme?: string
+  homepageUrl?: string
 }

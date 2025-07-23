@@ -18,8 +18,7 @@ import type {
   PluginInfo,
   PluginInstallOptions,
   PluginSearchOptions,
-  PluginRegistry,
-  PluginPackage
+  PluginRegistry
 } from '@appTypes/plugin'
 import { IPlugin } from '../api/types'
 import { PluginStatus, PluginStatsData } from '@appTypes/plugin'
@@ -237,7 +236,7 @@ export class PluginManager {
   /**
    * 停用插件
    */
-  public async deactivatePlugin(pluginId: string): Promise<void> {
+  public async deactivatePlugin(pluginId: string, onQuit = false): Promise<void> {
     try {
       const pluginInfo = this.plugins.get(pluginId)
       if (!pluginInfo) {
@@ -262,7 +261,8 @@ export class PluginManager {
 
       // 更新状态
       this.updatePluginStatus(pluginId, PluginStatus.DISABLED)
-      await PluginDBManager.setPluginValue('system', `plugins.${pluginId}.enabled`, false)
+      !onQuit &&
+        (await PluginDBManager.setPluginValue('system', `plugins.${pluginId}.enabled`, false))
 
       log.info(`插件 ${pluginId} 停用成功`)
       eventBus.emit('plugin:disabled', { pluginId }, { source: 'PluginManager' })
@@ -517,6 +517,9 @@ export class PluginManager {
       // 清理插件数据
       await PluginDBManager.removePlugin(pluginId)
 
+      ipcManager.send('plugin:update-all-plugins', this.getSerializablePlugins())
+      ipcManager.send('plugin:update-plugin-stats', this.getPluginStats())
+
       log.info(`插件 ${pluginId} 卸载成功`)
       eventBus.emit(
         'plugin:uninstalled',
@@ -532,6 +535,10 @@ export class PluginManager {
   /**
    * 搜索插件
    */
+  /**
+   * 搜索本地已安装插件
+   * @param options 搜索选项
+   */
   public searchPlugins(options: PluginSearchOptions = {}): PluginInfo[] {
     let results = Array.from(this.plugins.values())
 
@@ -542,22 +549,50 @@ export class PluginManager {
         (plugin) =>
           plugin.manifest.name.toLowerCase().includes(keyword) ||
           plugin.manifest.description.toLowerCase().includes(keyword) ||
+          (plugin.manifest.author || '').toLowerCase().includes(keyword) ||
           plugin.manifest.keywords?.some((k) => k.toLowerCase().includes(keyword))
       )
     }
 
     // 按分类过滤
-    if (options.category) {
+    if (options.category && options.category !== 'all') {
       results = results.filter((plugin) => plugin.manifest.category === options.category)
     }
 
     // 按状态过滤
-    if (options.installedOnly) {
-      results = results.filter((plugin) => plugin.status !== PluginStatus.UNINSTALLED)
+    if (options.status) {
+      results = results.filter((plugin) => plugin.status === options.status)
     }
 
-    if (options.enabledOnly) {
-      results = results.filter((plugin) => plugin.status === PluginStatus.ENABLED)
+    // 排序
+    if (options.sort) {
+      const { sort, order = 'asc' } = options
+
+      results.sort((a, b) => {
+        let comparison = 0
+        switch (sort) {
+          case 'name':
+            comparison = a.manifest.name.localeCompare(b.manifest.name)
+            break
+          case 'status':
+            comparison = a.status.localeCompare(b.status)
+            break
+          case 'category':
+            comparison = (a.manifest.category || '').localeCompare(b.manifest.category || '')
+            break
+          case 'author':
+            comparison = (a.manifest.author || '').localeCompare(b.manifest.author || '')
+            break
+          case 'date':
+            comparison = new Date(a.installTime).getTime() - new Date(b.installTime).getTime()
+            break
+          default:
+            comparison = a.manifest.name.localeCompare(b.manifest.name)
+        }
+
+        // 应用排序顺序
+        return order === 'asc' ? comparison : -comparison
+      })
     }
 
     return results
@@ -664,29 +699,6 @@ export class PluginManager {
   }
 
   /**
-   * 从注册表搜索插件
-   */
-  public async searchFromRegistry(keyword: string): Promise<PluginPackage[]> {
-    const results: PluginPackage[] = []
-
-    for (const registry of this.registries) {
-      if (!registry.enabled) continue
-
-      try {
-        const response = await axios.get(`${registry.url}/search`, {
-          params: { q: keyword }
-        })
-
-        results.push(...response.data)
-      } catch (error) {
-        log.warn(`从注册表 ${registry.name} 搜索失败:`, error)
-      }
-    }
-
-    return results
-  }
-
-  /**
    * 清理资源
    */
   public async dispose(): Promise<void> {
@@ -697,7 +709,7 @@ export class PluginManager {
 
     for (const plugin of enabledPlugins) {
       try {
-        await this.deactivatePlugin(plugin.manifest.id)
+        await this.deactivatePlugin(plugin.manifest.id, true)
       } catch (error) {
         log.error(`停用插件 ${plugin.manifest.id} 失败:`, error)
       }
