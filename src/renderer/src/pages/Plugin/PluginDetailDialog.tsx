@@ -64,7 +64,7 @@ export function PluginDetailDialog({
 
         <div className="grid grid-cols-1 md:grid-cols-5 gap-6 h-full">
           {/* 左侧：README */}
-          <div className="md:col-span-3 h-[70vh]">
+          <div className="md:col-span-3 h-[70vh] border-r pr-5">
             <ScrollArea className="rounded-md h-full">
               {plugin.readme ? <MarkdownRenderer content={plugin.readme} /> : t('details.noReadme')}
             </ScrollArea>
