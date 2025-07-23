@@ -213,6 +213,7 @@ export interface PluginPackage {
   publishTime: string
   installed?: boolean
   stars?: number
+  createdAt?: string
   updatedAt?: string
   owner?: string
   repoUrl?: string

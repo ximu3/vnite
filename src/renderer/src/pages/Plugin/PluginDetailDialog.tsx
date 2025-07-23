@@ -113,7 +113,7 @@ export function PluginDetailDialog({
                     {t('details.created')}
                   </label>
                   <div className="mt-1">
-                    {plugin.publishTime ? formatDate(plugin.publishTime) : t('search.unknownDate')}
+                    {plugin.createdAt ? formatDate(plugin.createdAt) : t('search.unknownDate')}
                   </div>
                 </div>
 

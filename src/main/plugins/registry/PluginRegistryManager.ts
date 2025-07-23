@@ -293,6 +293,7 @@ export class PluginRegistryManager {
           checksum: '',
           publishTime: repo.pushed_at || repo.created_at,
           stars: repo.stargazers_count,
+          createdAt: repo.created_at,
           updatedAt: repo.updated_at,
           owner: repo.owner.login,
           repoUrl: repo.html_url,
