@@ -8,3 +8,4 @@ out
 .env.local
 .env.*.local
 dev
+app
