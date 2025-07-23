@@ -32,6 +32,14 @@
     "readmeNotFound": "未找到 README 文件",
     "readmeLoadFailed": "加載 README 失敗"
   },
+  "dialogs": {
+    "uninstall": {
+      "title": "卸載插件",
+      "description": "您確定要卸載此插件嗎？",
+      "confirm": "卸載",
+      "cancel": "取消"
+    }
+  },
   "stats": {
     "total": "總計",
     "enabled": "已啟用",

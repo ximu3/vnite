@@ -32,6 +32,14 @@
     "readmeNotFound": "READMEファイルが見つかりません",
     "readmeLoadFailed": "READMEの読み込みに失敗しました"
   },
+  "dialogs": {
+    "uninstall": {
+      "title": "プラグインのアンインストール",
+      "description": "このプラグインをアンインストールしてもよろしいですか？",
+      "confirm": "アンインストール",
+      "cancel": "キャンセル"
+    }
+  },
   "stats": {
     "total": "合計",
     "enabled": "有効",

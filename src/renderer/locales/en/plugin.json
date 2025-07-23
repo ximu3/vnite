@@ -32,6 +32,14 @@
     "readmeNotFound": "README file not found",
     "readmeLoadFailed": "Failed to load README"
   },
+  "dialogs": {
+    "uninstall": {
+      "title": "Uninstall Plugin",
+      "description": "Are you sure you want to uninstall this plugin?",
+      "confirm": "Uninstall",
+      "cancel": "Cancel"
+    }
+  },
   "stats": {
     "total": "Total",
     "enabled": "Enabled",
