@@ -1,10 +1,10 @@
-import { ScrollArea } from '~/components/ui/scroll-area'
+import { SeparatorDashed } from '@ui/separator-dashed'
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
+import { ScrollArea } from '~/components/ui/scroll-area'
 import { useGameCollectionStore } from '~/stores'
 import { cn } from '~/utils'
 import { GamePoster } from './posters/GamePoster'
-import { SeparatorDashed } from '@ui/separator-dashed'
 
 export type DragContextType = {
   isDraggingGlobal: boolean
@@ -76,8 +76,8 @@ export function CollectionGamesComponent({
 
   return (
     <DragContext.Provider value={{ isDraggingGlobal, setIsDraggingGlobal }}>
-      <div className={cn('flex flex-col gap-3 h-[100vh] bg-transparent')}>
-        <ScrollArea className={cn('w-full')}>
+      <div className={cn('flex flex-col gap-3 h-full bg-transparent')}>
+        <ScrollArea className={cn('w-full h-full pb-2')}>
           <div className={cn('w-full flex flex-col gap-1 pt-[18px]')}>
             <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>
               <div className={cn('text-accent-foreground select-none flex-shrink-0')}>
@@ -122,9 +122,6 @@ export function CollectionGamesComponent({
             </div>
           </div>
         </ScrollArea>
-        {/* This spacer prevents the last row of posters from being cut off
-        and enables downward auto-scrolling when dragging near the bottom. */}
-        <div className="h-5" />
       </div>
     </DragContext.Provider>
   )

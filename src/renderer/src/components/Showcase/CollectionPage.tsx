@@ -1,10 +1,10 @@
-import { ScrollArea } from '~/components/ui/scroll-area'
-import { useEffect, useRef, useState, useMemo } from 'react'
+import { SeparatorDashed } from '@ui/separator-dashed'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ScrollArea } from '~/components/ui/scroll-area'
 import { useGameCollectionStore } from '~/stores'
 import { cn } from '~/utils'
 import { CollectionPoster } from './posters/CollectionPoster'
-import { SeparatorDashed } from '@ui/separator-dashed'
 
 export function CollectionPage(): React.JSX.Element {
   const collections = useGameCollectionStore((state) => state.documents)
@@ -50,8 +50,8 @@ export function CollectionPage(): React.JSX.Element {
   const { t } = useTranslation('game')
 
   return (
-    <div className={cn('flex flex-col gap-3 h-[100vh] bg-transparent')}>
-      <ScrollArea className={cn('w-full')}>
+    <div className={cn('flex flex-col gap-3 h-full bg-transparent')}>
+      <ScrollArea className={cn('w-full h-full pb-2')}>
         <div className={cn('w-full flex flex-col gap-1 pt-[18px]')}>
           <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>
             <div className={cn('text-accent-foreground select-none flex-shrink-0')}>
