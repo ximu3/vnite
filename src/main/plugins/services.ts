@@ -7,7 +7,7 @@
 import { app } from 'electron'
 import { pluginManager, PluginRegistryManager, PluginUtils } from './index'
 import { eventBus } from '~/core/events'
-import { PluginConfiguration } from '@appTypes/plugin'
+import { PluginConfiguration, PluginStatsData, PluginSearchResult } from '@appTypes/plugin'
 import log from 'electron-log'
 
 // 创建注册表管理器实例
@@ -250,17 +250,7 @@ export class PluginService {
   /**
    * 搜索插件
    */
-  public async searchPlugins(keyword: string): Promise<
-    Array<{
-      id: string
-      name: string
-      version: string
-      description?: string
-      author?: string
-      source: 'local' | 'registry'
-      installed: boolean
-    }>
-  > {
+  public async searchPlugins(keyword: string): Promise<PluginSearchResult[]> {
     try {
       log.info(`搜索插件: ${keyword}`)
 
@@ -335,12 +325,7 @@ export class PluginService {
   /**
    * 获取插件统计信息
    */
-  public getPluginStats(): {
-    total: number
-    enabled: number
-    disabled: number
-    error: number
-  } {
+  public getPluginStats(): PluginStatsData {
     const plugins = pluginManager.getAllPlugins()
 
     return {

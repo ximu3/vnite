@@ -21,11 +21,6 @@ export class PluginRegistryManager {
   private initializeDefaultRegistries(): void {
     const defaultRegistries: PluginRegistry[] = [
       {
-        name: 'Vnite Official Registry',
-        url: 'https://plugins.vnite.app/registry',
-        enabled: false
-      },
-      {
         name: 'GitHub Registry',
         url: 'https://api.github.com/search/repositories',
         enabled: false

@@ -22,7 +22,8 @@ import type {
   PluginPackage
 } from '@appTypes/plugin'
 import { IPlugin } from '../api/types'
-import { PluginStatus } from '@appTypes/plugin'
+import { PluginStatus, PluginStatsData } from '@appTypes/plugin'
+import { ipcManager } from '~/core/ipc'
 
 export class PluginManager {
   private static instance: PluginManager
@@ -120,21 +121,33 @@ export class PluginManager {
         return
       }
 
-      // 获取插件状态
-      const status = await this.getPluginStatus(pluginId)
-
       const pluginInfo: PluginInfo = {
         manifest,
-        status,
+        status: PluginStatus.DISABLED,
         installPath: pluginDir,
         installTime: new Date(),
         lastUpdateTime: new Date()
       }
 
       this.plugins.set(pluginId, pluginInfo)
+
+      ipcManager.send('plugin:update-all-plugins', this.getSerializablePlugins())
+      ipcManager.send('plugin:update-plugin-stats', this.getPluginStats())
+
       log.info(`已加载插件信息: ${pluginId}`)
     } catch (error) {
       log.error(`加载插件 ${pluginId} 信息失败:`, error)
+    }
+  }
+
+  public getPluginStats(): PluginStatsData {
+    const plugins = this.getAllPlugins()
+
+    return {
+      total: plugins.length,
+      enabled: plugins.filter((p) => p.status === 'enabled').length,
+      disabled: plugins.filter((p) => p.status === 'disabled').length,
+      error: plugins.filter((p) => p.status === 'error').length
     }
   }
 
@@ -152,31 +165,25 @@ export class PluginManager {
   }
 
   /**
-   * 获取插件状态
+   * 加载已启用的插件
    */
-  private async getPluginStatus(pluginId: string): Promise<PluginStatus> {
-    try {
-      const enabled = await PluginDBManager.getPluginValue(
+  private async loadEnabledPlugins(): Promise<void> {
+    // 获取所有已注册的插件ID
+    const pluginIds = Array.from(this.plugins.keys())
+
+    // 遍历所有插件，检查数据库中的启用状态
+    for (const pluginId of pluginIds) {
+      // 从数据库中获取插件的启用状态，默认为false
+      const isEnabled = await PluginDBManager.getPluginValue(
         'system',
         `plugins.${pluginId}.enabled`,
         false
       )
-      return enabled ? PluginStatus.ENABLED : PluginStatus.DISABLED
-    } catch {
-      return PluginStatus.DISABLED
-    }
-  }
 
-  /**
-   * 加载已启用的插件
-   */
-  private async loadEnabledPlugins(): Promise<void> {
-    const enabledPlugins = Array.from(this.plugins.values()).filter(
-      (plugin) => plugin.status === PluginStatus.ENABLED
-    )
-
-    for (const plugin of enabledPlugins) {
-      await this.activatePlugin(plugin.manifest.id)
+      // 如果插件在数据库中标记为启用，则激活它
+      if (isEnabled) {
+        await this.activatePlugin(pluginId)
+      }
     }
   }
 
@@ -624,6 +631,8 @@ export class PluginManager {
       } else {
         delete pluginInfo.error
       }
+      ipcManager.send('plugin:update-all-plugins', this.getSerializablePlugins())
+      ipcManager.send('plugin:update-plugin-stats', this.getPluginStats())
     }
   }
 

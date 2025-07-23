@@ -167,6 +167,23 @@ export interface PluginInfo {
   instance?: any
 }
 
+export interface PluginSearchResult {
+  id: string
+  name: string
+  version: string
+  description?: string
+  author?: string
+  source: 'local' | 'registry'
+  installed: boolean
+}
+
+export interface PluginStatsData {
+  total: number
+  enabled: number
+  disabled: number
+  error: number
+}
+
 export interface PluginInstallOptions {
   /** 是否自动启用 */
   autoEnable?: boolean

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
@@ -16,33 +16,26 @@ import { toast } from 'sonner'
 import { ipcManager } from '~/app/ipc'
 import { cn } from '~/utils'
 import { PluginConfigDialog } from './PluginConfigDialog'
-import type { PluginInfo } from '@appTypes/plugin/plugin'
-
-interface PluginSearchResult {
-  id: string
-  name: string
-  version: string
-  description?: string
-  author?: string
-  source: 'local' | 'registry'
-  installed: boolean
-}
-
-interface PluginStatsData {
-  total: number
-  enabled: number
-  disabled: number
-  error: number
-}
+import { usePluginInfoStore } from './store'
+import { PluginSearchResult } from '@appTypes/plugin'
 
 export function Plugin(): React.JSX.Element {
   const { t } = useTranslation('plugin')
-  const [plugins, setPlugins] = useState<PluginInfo[]>([])
+
+  // 使用Zustand store中的状态和方法
+  const plugins = usePluginInfoStore((state) => state.plugins)
+  const stats = usePluginInfoStore((state) => state.stats)
+  const loading = usePluginInfoStore((state) => state.loading)
+  const installPlugin = usePluginInfoStore((state) => state.installPlugin)
+  const installPluginFromFile = usePluginInfoStore((state) => state.installPluginFromFile)
+  const uninstallPlugin = usePluginInfoStore((state) => state.uninstallPlugin)
+  const togglePlugin = usePluginInfoStore((state) => state.togglePlugin)
+  const checkUpdates = usePluginInfoStore((state) => state.checkUpdates)
+
+  // 保留本地状态
   const [searchResults, setSearchResults] = useState<PluginSearchResult[]>([])
-  const [loading, setLoading] = useState(false)
   const [searchLoading, setSearchLoading] = useState(false)
   const [searchKeyword, setSearchKeyword] = useState('')
-  const [stats, setStats] = useState<PluginStatsData | null>(null)
   const [configDialog, setConfigDialog] = useState<{
     open: boolean
     pluginId: string
@@ -52,30 +45,6 @@ export function Plugin(): React.JSX.Element {
     pluginId: '',
     pluginName: ''
   })
-
-  // 获取已安装的插件列表
-  const loadPlugins = async (): Promise<void> => {
-    setLoading(true)
-    try {
-      const result = await ipcManager.invoke('plugin:get-all-plugins')
-      setPlugins(result || [])
-    } catch (error) {
-      console.error('获取插件列表失败:', error)
-      toast.error(t('messages.loadPluginsFailed'))
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  // 获取插件统计信息
-  const loadStats = async (): Promise<void> => {
-    try {
-      const result = await ipcManager.invoke('plugin:get-stats')
-      setStats(result)
-    } catch (error) {
-      console.error('获取插件统计信息失败:', error)
-    }
-  }
 
   // 搜索插件
   const searchPlugins = async (keyword: string): Promise<void> => {
@@ -96,93 +65,6 @@ export function Plugin(): React.JSX.Element {
     }
   }
 
-  // 安装插件
-  const installPlugin = async (
-    source: string,
-    options?: { autoEnable?: boolean }
-  ): Promise<{ success: boolean; error?: string }> => {
-    const result = await ipcManager.invoke('plugin:install-plugin', source, options)
-    if (result.success) {
-      toast.success(t('messages.installSuccess'))
-      await loadPlugins()
-      await loadStats()
-    } else {
-      toast.error(t('messages.installFailed', { error: result.error }))
-    }
-    return result
-  }
-
-  // 从文件安装插件
-  const installPluginFromFile = async (): Promise<void> => {
-    try {
-      const filePath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
-
-      if (!filePath) return
-
-      const result = await ipcManager.invoke('plugin:install-plugin-from-file', filePath, {
-        autoEnable: true
-      })
-      if (result.success) {
-        toast.success(t('messages.installSuccess'))
-        await loadPlugins()
-        await loadStats()
-      } else {
-        toast.error(t('messages.installFailed', { error: result.error }))
-      }
-    } catch (error) {
-      console.error('从文件安装插件失败:', error)
-      toast.error(t('messages.installFromFileFailed'))
-    }
-  }
-
-  // 卸载插件
-  const uninstallPlugin = async (pluginId: string): Promise<void> => {
-    const result = await ipcManager.invoke('plugin:uninstall-plugin', pluginId)
-    if (result.success) {
-      toast.success(t('messages.uninstallSuccess'))
-      await loadPlugins()
-      await loadStats()
-    } else {
-      toast.error(t('messages.uninstallFailed', { error: result.error }))
-    }
-  }
-
-  // 激活/停用插件
-  const togglePlugin = async (pluginId: string, activate: boolean): Promise<void> => {
-    const action = activate ? 'plugin:activate-plugin' : 'plugin:deactivate-plugin'
-    const result = await ipcManager.invoke(action, pluginId)
-
-    if (result.success) {
-      const message = activate ? t('messages.activateSuccess') : t('messages.deactivateSuccess')
-      toast.success(message)
-      await loadPlugins()
-      await loadStats()
-    } else {
-      const message = activate
-        ? t('messages.activateFailed', { error: result.error })
-        : t('messages.deactivateFailed', { error: result.error })
-      toast.error(message)
-    }
-  }
-
-  // 检查更新
-  const checkUpdates = async (): Promise<void> => {
-    try {
-      setLoading(true)
-      const updates = await ipcManager.invoke('plugin:check-updates')
-      if (updates.length > 0) {
-        toast.success(t('messages.updatesAvailable', { count: updates.length }))
-      } else {
-        toast.info(t('messages.noUpdatesAvailable'))
-      }
-    } catch (error) {
-      console.error('检查更新失败:', error)
-      toast.error(t('messages.checkUpdatesFailed'))
-    } finally {
-      setLoading(false)
-    }
-  }
-
   // 打开插件配置对话框
   const openConfigDialog = (pluginId: string, pluginName: string): void => {
     setConfigDialog({
@@ -200,11 +82,6 @@ export function Plugin(): React.JSX.Element {
       pluginName: ''
     })
   }
-
-  useEffect(() => {
-    loadPlugins()
-    loadStats()
-  }, [])
 
   return (
     <div className={cn('w-full h-full bg-transparent')}>
@@ -440,10 +317,6 @@ export function Plugin(): React.JSX.Element {
             pluginName={configDialog.pluginName}
             open={configDialog.open}
             onClose={closeConfigDialog}
-            onSave={() => {
-              // 配置保存后可以重新加载插件列表或做其他操作
-              loadPlugins()
-            }}
           />
         </div>
       </ScrollArea>

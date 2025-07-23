@@ -7,7 +7,7 @@ import {
   ScraperIdentifier
 } from './utils'
 import { configDocs, BatchGameInfo } from './models'
-import { PluginConfiguration } from './plugin'
+import { PluginConfiguration, PluginInfo, PluginSearchResult, PluginStatsData } from './plugin'
 import { SteamFormattedGameInfo } from './utils'
 import {
   ScraperCapabilities,
@@ -275,17 +275,9 @@ type MainIpcEvents =
 
       // Plugin events
       'plugin:initialize': () => { success: boolean; error?: string }
-      'plugin:get-all-plugins': () => any[]
-      'plugin:get-plugin': (pluginId: string) => any
-      'plugin:search-plugins': (keyword: string) => Array<{
-        id: string
-        name: string
-        version: string
-        description?: string
-        author?: string
-        source: 'local' | 'registry'
-        installed: boolean
-      }>
+      'plugin:get-all-plugins': () => Omit<PluginInfo, 'instance'>[]
+      'plugin:get-plugin': (pluginId: string) => Omit<PluginInfo, 'instance'> | undefined
+      'plugin:search-plugins': (keyword: string) => PluginSearchResult[]
       'plugin:install-plugin': (
         source: string,
         options?: { autoEnable?: boolean }
@@ -303,12 +295,7 @@ type MainIpcEvents =
         latestVersion: string
         updateAvailable: boolean
       }>
-      'plugin:get-stats': () => {
-        total: number
-        enabled: number
-        disabled: number
-        error: number
-      }
+      'plugin:get-stats': () => PluginStatsData
       'plugin:get-plugin-configuration': (pluginId: string) => PluginConfiguration[]
       'plugin:shutdown': () => { success: boolean; error?: string }
     }
@@ -381,6 +368,9 @@ type RendererIpcEvents = {
   'scanner:scan-resumed': [progress: OverallScanProgress]
 
   'adder:batch-update-game-metadata-progress': [progress: BatchUpdateGameMetadataProgress]
+
+  'plugin:update-all-plugins': [plugins: Omit<PluginInfo, 'instance'>[]]
+  'plugin:update-plugin-stats': [stats: PluginStatsData]
 }
 
 // Export types for use in both main and renderer

@@ -59,6 +59,10 @@ export class IPCManager {
     ...args: IpcRendererEvents[E]
   ): void {
     const mainWindow = BrowserWindow.getAllWindows()[0]
+    if (!mainWindow) {
+      console.warn('No main window found to send IPC message')
+      return
+    }
     this.emitter.send(mainWindow.webContents, channel, ...args)
   }
 

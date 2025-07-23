@@ -6,6 +6,8 @@ import { useGameAdderStore } from './pages/GameAdder/store'
 import { randomGame } from './stores/game'
 import { useConfigState } from './hooks'
 import { useGameRegistry } from './stores/game'
+import { usePluginInfoStore } from './pages/Plugin/store'
+import { ipcManager } from './app/ipc'
 
 export function Setup(): React.JSX.Element {
   const router = useRouter()
@@ -13,6 +15,17 @@ export function Setup(): React.JSX.Element {
   const gameIds = useGameRegistry((state) => state.gameIds)
   useEffect(() => {
     setup(router)
+  }, [])
+
+  useEffect(() => {
+    usePluginInfoStore.getState().loadPlugins()
+    usePluginInfoStore.getState().loadStats()
+    ipcManager.on('plugin:update-all-plugins', (_event, plugins) => {
+      usePluginInfoStore.getState().setPlugins(plugins)
+    })
+    ipcManager.on('plugin:update-plugin-stats', (_event, stats) => {
+      usePluginInfoStore.getState().setStats(stats)
+    })
   }, [])
 
   changeFont(font)
