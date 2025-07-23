@@ -11,7 +11,6 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select'
-import { toast } from 'sonner'
 import { cn } from '~/utils'
 import { PluginConfigDialog } from './PluginConfigDialog'
 import { usePluginInfoStore } from './store'
@@ -146,14 +145,8 @@ export function PluginInstalled(): React.JSX.Element {
 
   // 处理卸载
   const handleUninstall = async (): Promise<void> => {
-    try {
-      await uninstallPlugin(uninstallDialog.pluginId)
-      toast.success(t('messages.uninstallSuccess', { name: uninstallDialog.pluginName }))
-    } catch (_error) {
-      toast.error(t('messages.uninstallFailed', { name: uninstallDialog.pluginName }))
-    } finally {
-      setUninstallDialog({ open: false, pluginId: '', pluginName: '' })
-    }
+    await uninstallPlugin(uninstallDialog.pluginId)
+    setUninstallDialog({ open: false, pluginId: '', pluginName: '' })
   }
 
   return (
