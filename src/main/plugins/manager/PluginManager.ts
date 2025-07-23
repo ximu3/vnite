@@ -8,7 +8,7 @@ import { join, dirname } from 'path'
 import { app } from 'electron'
 import { promises as fs } from 'fs'
 import AdmZip from 'adm-zip'
-import axios from 'axios'
+import { net } from 'electron'
 import { VnitePluginAPI } from '../api'
 import { PluginDBManager } from '~/core/database'
 import { eventBus } from '~/core/events'
@@ -344,17 +344,54 @@ export class PluginManager {
     onProgress?: (progress: number, message: string) => void
   ): Promise<Buffer> {
     try {
-      const response = await axios.get(url, {
-        responseType: 'arraybuffer',
-        onDownloadProgress: (progressEvent) => {
-          if (onProgress && progressEvent.total) {
-            const progress = (progressEvent.loaded / progressEvent.total) * 100
-            onProgress(progress, `下载中... ${Math.round(progress)}%`)
-          }
-        }
-      })
+      // 使用Electron的net.fetch发起请求
+      const response = await net.fetch(url)
 
-      return Buffer.from(response.data)
+      if (!response.ok) {
+        throw new Error(`请求失败：${response.status} ${response.statusText}`)
+      }
+
+      // 获取响应体
+      const reader = response.body?.getReader()
+      if (!reader) {
+        throw new Error('无法读取响应流')
+      }
+
+      // 获取内容长度（如果有）
+      const contentLength = Number(response.headers.get('Content-Length') || '0')
+
+      // 准备接收数据的数组
+      const chunks: Uint8Array[] = []
+      let receivedLength = 0
+
+      // 读取数据流
+      while (true) {
+        const { done, value } = await reader.read()
+
+        if (done) {
+          break
+        }
+
+        chunks.push(value)
+        receivedLength += value.length
+
+        // 报告下载进度
+        if (onProgress && contentLength > 0) {
+          const progress = (receivedLength / contentLength) * 100
+          onProgress(progress, `下载中... ${Math.round(progress)}%`)
+        }
+      }
+
+      // 合并所有接收到的数据块
+      const allChunks = new Uint8Array(receivedLength)
+      let position = 0
+      for (const chunk of chunks) {
+        allChunks.set(chunk, position)
+        position += chunk.length
+      }
+
+      // 转换为Buffer并返回
+      return Buffer.from(allChunks)
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error)
       throw new Error(`下载插件失败: ${errorMessage}`)

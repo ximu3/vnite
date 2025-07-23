@@ -1,5 +1,4 @@
-import { shell } from 'electron'
-import axios from 'axios'
+import { shell, net } from 'electron'
 import { jwtDecode } from 'jwt-decode'
 import { ConfigDBManager } from '~/core/database'
 import { AuthResult, UserRole, AuthentikUser } from '@appTypes/sync'
@@ -118,6 +117,16 @@ export class AuthManager {
 
   public static async refreshAccessToken(): Promise<boolean> {
     try {
+      const enabled = await ConfigDBManager.getConfigLocalValue('sync.enabled')
+      const mode = await ConfigDBManager.getConfigLocalValue('sync.mode')
+      if (mode !== 'official') {
+        log.warn('Sync mode is not set to official, skipping access token refresh')
+        return false
+      }
+      if (!enabled) {
+        log.warn('Sync is not enabled, skipping access token refresh')
+        return false
+      }
       AuthManager.checkInitialized()
       const instance = AuthManager.getInstance()
 
@@ -141,14 +150,21 @@ export class AuthManager {
         : undefined
 
       // Send a request to refresh the token
-      const response = await axios.post(`${instance.serverUrl}/application/o/token/`, params, {
+      const response = await net.fetch(`${instance.serverUrl}/application/o/token/`, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           ...(authHeader ? { Authorization: authHeader } : {})
-        }
+        },
+        body: params.toString()
       })
 
-      const { access_token, refresh_token } = response.data
+      if (!response.ok) {
+        throw new Error(`Failed to refresh token: ${response.status} ${response.statusText}`)
+      }
+
+      const data = await response.json()
+      const { access_token, refresh_token } = data
 
       // Update stored tokens
       const userInfo = (await ConfigDBManager.getConfigLocalValue('userInfo')) || {}
@@ -184,29 +200,14 @@ export class AuthManager {
         return
       }
 
-      try {
-        const userInfo = await axios.get(`${instance.serverUrl}/application/o/userinfo/`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`
-          }
-        })
-
-        if (!userInfo.data || !userInfo.data.name) {
-          throw new Error('Failed to get user information')
+      const response = await net.fetch(`${instance.serverUrl}/application/o/userinfo/`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
         }
+      })
 
-        const userRole = AuthManager.getUserRole(userInfo.data)
-
-        const oldUserInfo = await ConfigDBManager.getConfigLocalValue('userInfo')
-        await ConfigDBManager.setConfigLocalValue('userInfo', {
-          ...oldUserInfo,
-          name: userInfo.data.name,
-          email: userInfo.data.email,
-          role: userRole
-        })
-      } catch (error) {
-        // Check for token expiration issues (usually returns a 401 status code)
-        if (axios.isAxiosError(error) && error.response?.status === 401) {
+      if (!response.ok) {
+        if (response.status === 401) {
           // Try to refresh the token
           const refreshed = await AuthManager.refreshAccessToken()
           if (refreshed) {
@@ -214,8 +215,24 @@ export class AuthManager {
             return AuthManager.updateUserInfo()
           }
         }
-        throw error // Other errors or refresh failures continue to be thrown
+        throw new Error(`Failed to get user information: ${response.status} ${response.statusText}`)
       }
+
+      const userInfoData = await response.json()
+
+      if (!userInfoData || !userInfoData.name) {
+        throw new Error('Failed to get user information')
+      }
+
+      const userRole = AuthManager.getUserRole(userInfoData)
+
+      const oldUserInfo = await ConfigDBManager.getConfigLocalValue('userInfo')
+      await ConfigDBManager.setConfigLocalValue('userInfo', {
+        ...oldUserInfo,
+        name: userInfoData.name,
+        email: userInfoData.email,
+        role: userRole
+      })
     } catch (error) {
       log.error('Failed to get user information:', error)
       throw error
@@ -230,26 +247,34 @@ export class AuthManager {
     const instance = AuthManager.getInstance()
 
     try {
-      // Exchanging authorization codes to obtain access tokens
-      const tokenResponse = await axios.post(
-        `${instance.serverUrl}/application/o/token/`,
-        new URLSearchParams({
-          grant_type: 'authorization_code',
-          client_id: instance.clientId,
-          client_secret: instance.clientSecret,
-          code: code,
-          redirect_uri: instance.redirectUrl
-        }),
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          }
-        }
-      )
+      // Prepare form data
+      const params = new URLSearchParams({
+        grant_type: 'authorization_code',
+        client_id: instance.clientId,
+        client_secret: instance.clientSecret,
+        code: code,
+        redirect_uri: instance.redirectUrl
+      }).toString()
 
-      const accessToken = tokenResponse.data.access_token
-      const idToken = tokenResponse.data.id_token
-      const refreshToken = tokenResponse.data.refresh_token
+      // Exchanging authorization codes to obtain access tokens
+      const tokenResponse = await net.fetch(`${instance.serverUrl}/application/o/token/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: params
+      })
+
+      if (!tokenResponse.ok) {
+        throw new Error(
+          `Failed to exchange token: ${tokenResponse.status} ${tokenResponse.statusText}`
+        )
+      }
+
+      const tokenData = await tokenResponse.json()
+      const accessToken = tokenData.access_token
+      const idToken = tokenData.id_token
+      const refreshToken = tokenData.refresh_token
 
       // Parsing ID tokens for basic user information
       const userInfo = jwtDecode(idToken) as AuthentikUser
@@ -289,7 +314,6 @@ export class AuthManager {
       })
 
       // Notify the rendering process of successful authentication
-
       ipcManager.send('account:auth-success')
 
       log.info(`User ${userInfo.name} successfully authenticated`)

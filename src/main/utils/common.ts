@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { exec } from 'child_process'
 import { app, shell } from 'electron'
 import log from 'electron-log/main.js'
@@ -583,6 +582,7 @@ const CACHE_TTL = 15 * 60 * 1000
  * @param username - User identifier for database queries
  * @returns Promise resolving to total database size in bytes
  */
+
 export async function getCouchDBSize(username: string): Promise<number> {
   const cacheKey = `couchdb_size_${username}`
 
@@ -611,15 +611,25 @@ export async function getCouchDBSize(username: string): Promise<number> {
       const dbName = `${username}-${db}`.replace('user', 'userdb')
       const url = `${serverUrl}/${dbName}`
 
-      const response = await axios.get(url, {
-        auth: {
-          username: adminUsername,
-          password: adminPassword
+      // 创建基本认证头
+      const authHeader = `Basic ${Buffer.from(`${adminUsername}:${adminPassword}`).toString('base64')}`
+
+      const response = await net.fetch(url, {
+        headers: {
+          Authorization: authHeader
         }
       })
 
-      if (response.data && response.data.sizes && response.data.sizes.file) {
-        dbSize += response.data.sizes.file
+      if (!response.ok) {
+        throw new Error(
+          `Failed to get size for ${dbName}: ${response.status} ${response.statusText}`
+        )
+      }
+
+      const data = await response.json()
+
+      if (data && data.sizes && data.sizes.file) {
+        dbSize += data.sizes.file
       } else {
         throw new Error(`Failed to get size for ${dbName}`)
       }
