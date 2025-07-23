@@ -17,11 +17,31 @@
     "save": "保存",
     "saving": "正在保存..."
   },
+  "details": {
+    "readme": "README",
+    "noReadme": "此插件沒有 README 文件",
+    "author": "作者",
+    "description": "描述",
+    "category": "分類",
+    "version": "版本",
+    "created": "創建時間",
+    "updated": "更新時間",
+    "stars": "星標數",
+    "viewOnGithub": "在 GitHub 上查看",
+    "visitHomepage": "訪問主頁",
+    "readmeNotFound": "未找到 README 文件",
+    "readmeLoadFailed": "加載 README 失敗"
+  },
   "stats": {
     "total": "總計",
     "enabled": "已啟用",
     "disabled": "已禁用",
     "errors": "錯誤"
+  },
+  "status": {
+    "enabled": "已啟用",
+    "disabled": "已禁用",
+    "error": "錯誤"
   },
   "tabs": {
     "installed": "已安裝",
@@ -33,8 +53,14 @@
   },
   "search": {
     "placeholder": "搜索插件...",
-    "noResults": "未找到插件",
-    "tryDifferentKeyword": "嘗試使用不同的關鍵詞搜索"
+    "noPluginsFound": "未找到插件",
+    "tryDifferentKeyword": "嘗試使用不同的關鍵詞搜索",
+    "localPluginsPlaceholder": "搜索已安裝插件...",
+    "localResults": "找到 {count} 個插件",
+    "noLocalResults": "未找到匹配的插件",
+    "noLocalMatchesTitle": "沒有匹配的插件",
+    "noLocalMatchesDescription": "請嘗試其他搜索條件或清除篩選器",
+    "unknownDate": "未知日期"
   },
   "messages": {
     "loading": "正在加載...",
@@ -60,5 +86,29 @@
     "title": "配置 {{pluginName}}",
     "description": "根據您的偏好自定義插件設置。",
     "noConfiguration": "此插件沒有可配置的選項。"
+  },
+  "filters": {
+    "category": "分類",
+    "allCategories": "所有分類",
+    "common": "通用",
+    "scraper": "刮削器",
+    "sortBy": "排序方式",
+    "name": "名稱",
+    "status": "狀態",
+    "author": "作者",
+    "date": "安裝日期",
+    "stars": "星標數",
+    "updated": "更新時間",
+    "ascending": "升序排列",
+    "descending": "降序排列"
+  },
+  "pagination": {
+    "previous": "上一頁",
+    "next": "下一頁",
+    "page": "第 {page} 頁"
+  },
+  "categories": {
+    "common": "通用",
+    "scraper": "刮削器"
   }
 }

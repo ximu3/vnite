@@ -17,11 +17,31 @@
     "save": "Save",
     "saving": "Saving..."
   },
+  "details": {
+    "readme": "README",
+    "noReadme": "This plugin has no README file",
+    "author": "Author",
+    "description": "Description",
+    "category": "Category",
+    "version": "Version",
+    "created": "Created",
+    "updated": "Updated",
+    "stars": "Stars",
+    "viewOnGithub": "View on GitHub",
+    "visitHomepage": "Visit Homepage",
+    "readmeNotFound": "README file not found",
+    "readmeLoadFailed": "Failed to load README"
+  },
   "stats": {
     "total": "Total",
     "enabled": "Enabled",
     "disabled": "Disabled",
     "errors": "Errors"
+  },
+  "status": {
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "error": "Error"
   },
   "tabs": {
     "installed": "Installed",
@@ -29,12 +49,18 @@
   },
   "emptyState": {
     "title": "No Plugins Installed",
-    "description": "Start by installing your first plugin to extend the functionality of your application."
+    "description": "Start installing your first plugin to extend the application's functionality."
   },
   "search": {
     "placeholder": "Search plugins...",
-    "noResults": "No plugins found",
-    "tryDifferentKeyword": "Try searching with different keywords"
+    "noPluginsFound": "No plugins found",
+    "tryDifferentKeyword": "Try a different search keyword",
+    "localPluginsPlaceholder": "Search installed plugins...",
+    "localResults": "Found {count} plugins",
+    "noLocalResults": "No matching plugins found",
+    "noLocalMatchesTitle": "No matching plugins",
+    "noLocalMatchesDescription": "Try different search terms or clear filters",
+    "unknownDate": "Unknown date"
   },
   "messages": {
     "loading": "Loading...",
@@ -58,7 +84,31 @@
   },
   "configDialog": {
     "title": "Configure {{pluginName}}",
-    "description": "Customize the plugin settings according to your preferences.",
+    "description": "Customize plugin settings according to your preferences.",
     "noConfiguration": "This plugin has no configurable options."
+  },
+  "filters": {
+    "category": "Category",
+    "allCategories": "All Categories",
+    "common": "Common",
+    "scraper": "Scraper",
+    "sortBy": "Sort By",
+    "name": "Name",
+    "status": "Status",
+    "author": "Author",
+    "date": "Install Date",
+    "stars": "Stars",
+    "updated": "Updated",
+    "ascending": "Ascending",
+    "descending": "Descending"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {page}"
+  },
+  "categories": {
+    "common": "Common",
+    "scraper": "Scraper"
   }
 }

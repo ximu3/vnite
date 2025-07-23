@@ -1,10 +1,10 @@
 {
   "title": "プラグインマネージャー",
-  "description": "プラグインを使用してアプリケーションを管理および拡張する",
+  "description": "プラグインを使ってアプリケーションを管理・拡張する",
   "actions": {
     "checkUpdates": "更新を確認",
     "installPlugin": "プラグインをインストール",
-    "installFromRegistry": "レジストリからインストール",
+    "installFromRegistry": "レポジトリからインストール",
     "installFromFile": "ファイルからインストール",
     "installFirstPlugin": "最初のプラグインをインストール",
     "install": "インストール",
@@ -17,24 +17,50 @@
     "save": "保存",
     "saving": "保存中..."
   },
+  "details": {
+    "readme": "README",
+    "noReadme": "このプラグインにはREADMEファイルがありません",
+    "author": "作者",
+    "description": "説明",
+    "category": "カテゴリ",
+    "version": "バージョン",
+    "created": "作成日",
+    "updated": "更新日",
+    "stars": "スター数",
+    "viewOnGithub": "GitHubで見る",
+    "visitHomepage": "ホームページを訪問",
+    "readmeNotFound": "READMEファイルが見つかりません",
+    "readmeLoadFailed": "READMEの読み込みに失敗しました"
+  },
   "stats": {
     "total": "合計",
     "enabled": "有効",
     "disabled": "無効",
     "errors": "エラー"
   },
+  "status": {
+    "enabled": "有効",
+    "disabled": "無効",
+    "error": "エラー"
+  },
   "tabs": {
     "installed": "インストール済み",
-    "browse": "ブラウズ"
+    "browse": "閲覧"
   },
   "emptyState": {
     "title": "プラグインがインストールされていません",
-    "description": "アプリケーションの機能を拡張するために、最初のプラグインをインストールしましょう。"
+    "description": "アプリケーションの機能を拡張するために最初のプラグインをインストールしましょう。"
   },
   "search": {
     "placeholder": "プラグインを検索...",
-    "noResults": "プラグインが見つかりません",
-    "tryDifferentKeyword": "別のキーワードで検索してみてください"
+    "noPluginsFound": "プラグインが見つかりません",
+    "tryDifferentKeyword": "別のキーワードで検索してみてください",
+    "localPluginsPlaceholder": "インストール済みプラグインを検索...",
+    "localResults": "{count}個のプラグインが見つかりました",
+    "noLocalResults": "一致するプラグインが見つかりません",
+    "noLocalMatchesTitle": "一致するプラグインがありません",
+    "noLocalMatchesDescription": "他の検索条件を試すかフィルターをクリアしてください",
+    "unknownDate": "不明な日付"
   },
   "messages": {
     "loading": "読み込み中...",
@@ -42,23 +68,47 @@
     "searchPluginsFailed": "プラグインの検索に失敗しました",
     "installSuccess": "プラグインのインストールに成功しました",
     "installFailed": "プラグインのインストールに失敗しました：{{error}}",
-    "installFromFileFailed": "ファイルからのプラグインのインストールに失敗しました",
+    "installFromFileFailed": "ファイルからのプラグインインストールに失敗しました",
     "uninstallSuccess": "プラグインのアンインストールに成功しました",
     "uninstallFailed": "プラグインのアンインストールに失敗しました：{{error}}",
     "activateSuccess": "プラグインの有効化に成功しました",
     "activateFailed": "プラグインの有効化に失敗しました：{{error}}",
     "deactivateSuccess": "プラグインの無効化に成功しました",
     "deactivateFailed": "プラグインの無効化に失敗しました：{{error}}",
-    "updatesAvailable": "{{count}} 個のプラグイン更新が利用可能です",
-    "noUpdatesAvailable": "すべてのプラグインは最新です",
+    "updatesAvailable": "{{count}}個のプラグイン更新が利用可能です",
+    "noUpdatesAvailable": "すべてのプラグインが最新です",
     "checkUpdatesFailed": "更新の確認に失敗しました",
-    "configurationSaved": "設定の保存に成功しました",
+    "configurationSaved": "設定が正常に保存されました",
     "saveConfigurationFailed": "設定の保存に失敗しました",
     "loadConfigurationFailed": "設定の読み込みに失敗しました"
   },
   "configDialog": {
-    "title": "{{pluginName}} の設定",
+    "title": "{{pluginName}}の設定",
     "description": "お好みに合わせてプラグインの設定をカスタマイズします。",
     "noConfiguration": "このプラグインには設定可能なオプションがありません。"
+  },
+  "filters": {
+    "category": "カテゴリ",
+    "allCategories": "すべてのカテゴリ",
+    "common": "一般",
+    "scraper": "スクレーパー",
+    "sortBy": "並び替え",
+    "name": "名前",
+    "status": "ステータス",
+    "author": "作者",
+    "date": "インストール日",
+    "stars": "スター数",
+    "updated": "更新日",
+    "ascending": "昇順",
+    "descending": "降順"
+  },
+  "pagination": {
+    "previous": "前へ",
+    "next": "次へ",
+    "page": "ページ {page}"
+  },
+  "categories": {
+    "common": "一般",
+    "scraper": "スクレーパー"
   }
 }
