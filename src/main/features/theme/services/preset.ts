@@ -8,9 +8,9 @@ export async function defaultPreset(): Promise<string> {
 :root {
   --background: hsl(0 0% 96%);
   --foreground: hsl(230 8% 10%);
-  --muted: hsl(0 12% 90%);
-  --muted-foreground: hsl(0 12% 30%);
-  --popover: hsl(230 8% 82%);
+  --muted: hsl(230 12% 81%);
+  --muted-foreground: hsl(230 12% 21%);
+  --popover: hsl(0 0% 93%);
   --popover-foreground: hsl(230 8% 10%);
   --card: hsl(0 0% 94%);
   --card-foreground: hsl(230 8% 10%);

@@ -74,7 +74,7 @@ function DialogContent({
         {...props}
       >
         {/* 添加毛玻璃效果的背景层 */}
-        <div className="absolute inset-0 bg-background/60 backdrop-filter backdrop-blur-[var(--glass-blur)] rounded-lg -z-10"></div>
+        <div className="absolute inset-0 bg-background dark:bg-background/60 backdrop-filter backdrop-blur-[var(--glass-blur)] rounded-lg -z-10"></div>
 
         {/* 确保内容清晰 */}
         <div className={cn('relative z-10 grid gap-4 w-auto', className)}>{children}</div>
