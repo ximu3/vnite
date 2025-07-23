@@ -7,13 +7,15 @@
 
 import { net } from 'electron'
 import log from 'electron-log'
+import semver from 'semver'
 import type {
   PluginRegistry,
   PluginPackage,
   PluginManifest,
   PluginSearchOptions,
   PluginSearchResult,
-  PluginCategory
+  PluginCategory,
+  PluginInfo
 } from '@appTypes/plugin'
 
 // GitHub API 参数常量
@@ -308,11 +310,17 @@ export class PluginRegistryManager {
   /**
    * 获取插件详情
    */
-  public async getPluginDetails(pluginId: string): Promise<PluginPackage | null> {
+  public async getPluginDetails(repoInfo: {
+    owner: string
+    name: string
+  }): Promise<PluginPackage | null> {
     try {
-      const repo = await this.fetchJson(`${GITHUB_API_URL}/repos/${pluginId}`, {
-        headers: this.getGitHubHeaders()
-      })
+      const repo = await this.fetchJson(
+        `${GITHUB_API_URL}/repos/${repoInfo.owner}/${repoInfo.name}`,
+        {
+          headers: this.getGitHubHeaders()
+        }
+      )
 
       // 获取最新release信息
       const releaseRes = await this.fetchJson(`${repo.url}/releases/latest`, {
@@ -376,7 +384,7 @@ export class PluginRegistryManager {
         repoUrl: repo.html_url
       }
     } catch (error) {
-      log.error(`获取插件 ${pluginId} 详情失败:`, error)
+      log.error(`获取插件 ${repoInfo.owner}/${repoInfo.name} 详情失败:`, error)
       return null
     }
   }
@@ -402,7 +410,7 @@ export class PluginRegistryManager {
   /**
    * 检查插件更新
    */
-  public async checkUpdates(installedPlugins: Map<string, any>): Promise<
+  public async checkUpdates(installedPlugins: Map<string, PluginInfo>): Promise<
     Array<{
       pluginId: string
       currentVersion: string
@@ -421,11 +429,25 @@ export class PluginRegistryManager {
 
     for (const [pluginId, pluginInfo] of installedPlugins) {
       try {
-        const details = await this.getPluginDetails(pluginId)
+        if (
+          !pluginInfo.manifest.repo ||
+          !pluginInfo.manifest.repo.owner ||
+          !pluginInfo.manifest.repo.name
+        ) {
+          log.warn(`插件 ${pluginId} 没有配置GitHub仓库信息，无法检查更新`)
+          continue
+        }
+        const details = await this.getPluginDetails(pluginInfo.manifest.repo)
         if (details) {
           const currentVersion = pluginInfo.manifest.version
           const latestVersion = details.manifest.version
-          const isNewer = this.isNewerVersion(latestVersion, currentVersion)
+          const cleanNew = semver.valid(semver.coerce(latestVersion))
+          const cleanCurrent = semver.valid(semver.coerce(currentVersion))
+          if (!cleanNew || !cleanCurrent) {
+            log.warn(`插件 ${pluginId} 版本号不合法，无法检查更新`)
+            continue
+          }
+          const isNewer = semver.gt(cleanNew, cleanCurrent)
 
           updateInfo.push({
             pluginId,
@@ -441,28 +463,6 @@ export class PluginRegistryManager {
     }
 
     return updateInfo
-  }
-
-  /**
-   * 比较版本号
-   */
-  private isNewerVersion(newVersion: string, currentVersion: string): boolean {
-    const parseVersion = (version: string): number[] => {
-      return version.split('.').map((v) => parseInt(v, 10))
-    }
-
-    const newParts = parseVersion(newVersion)
-    const currentParts = parseVersion(currentVersion)
-
-    for (let i = 0; i < Math.max(newParts.length, currentParts.length); i++) {
-      const newPart = newParts[i] || 0
-      const currentPart = currentParts[i] || 0
-
-      if (newPart > currentPart) return true
-      if (newPart < currentPart) return false
-    }
-
-    return false
   }
 
   /**

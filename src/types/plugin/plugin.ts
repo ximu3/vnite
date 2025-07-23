@@ -29,6 +29,11 @@ export interface PluginManifest {
   devDependencies?: Record<string, string>
   /** 插件配置项 */
   configuration?: PluginConfiguration[]
+  /** Github仓库信息 */
+  repo?: {
+    owner: string
+    name: string
+  }
 }
 
 // 基础插件配置项接口

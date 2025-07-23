@@ -11,7 +11,8 @@ import {
   PluginConfiguration,
   PluginStatsData,
   PluginSearchResult,
-  PluginSearchOptions
+  PluginSearchOptions,
+  PluginInfo
 } from '@appTypes/plugin'
 import log from 'electron-log'
 
@@ -129,7 +130,7 @@ export class PluginService {
     }>
   > {
     try {
-      const installedPlugins = new Map()
+      const installedPlugins = new Map() as Map<string, PluginInfo>
 
       // 转换插件格式
       for (const plugin of pluginManager.getAllPlugins()) {
