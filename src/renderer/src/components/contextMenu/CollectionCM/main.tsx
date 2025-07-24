@@ -75,7 +75,14 @@ export function CollectionCM({
       </ContextMenuContent>
 
       <Dialog open={isRenaming}>
-        <DialogContent showCloseButton={false} className={cn('w-[500px] flex flex-row gap-3')}>
+        <DialogContent
+          showCloseButton={false}
+          className={cn('w-[500px] flex flex-row gap-3')}
+          onClose={() => {
+            setIsRenaming(false)
+            setNewName(collections[collectionId].name)
+          }}
+        >
           <Input
             className={cn('w-full')}
             value={newName}
@@ -87,14 +94,6 @@ export function CollectionCM({
             }}
           />
           <Button onClick={handleRename}>{t('utils:common.confirm')}</Button>
-          <Button
-            onClick={() => {
-              setIsRenaming(false)
-              setNewName(collections[collectionId].name)
-            }}
-          >
-            {t('utils:common.cancel')}
-          </Button>
         </DialogContent>
       </Dialog>
 
