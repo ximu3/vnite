@@ -27,7 +27,7 @@ const VNDB_ROLE_MAPPING: Record<string, string> = {
 
 async function fetchVNDB<T>(params: VNDBRequestParams): Promise<VNDBResponse<T>> {
   const endpoint = 'https://api.vndb.org/kana/vn'
-  const TIMEOUT_MS = 5000
+  const TIMEOUT_MS = 10000
 
   const fields = Array.isArray(params.fields) ? params.fields.join(',') : params.fields
 

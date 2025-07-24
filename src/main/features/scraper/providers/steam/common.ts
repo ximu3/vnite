@@ -16,7 +16,7 @@ const STEAM_URLS = {
 async function fetchWithTimeout(
   url: string,
   options: RequestInit = {},
-  timeout = 5000
+  timeout = 10000
 ): Promise<Response> {
   const controller = new AbortController()
   const timeoutId = setTimeout(() => controller.abort(), timeout)

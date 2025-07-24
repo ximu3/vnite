@@ -9,7 +9,7 @@ import {
 } from '../steam/common'
 
 const STEAMGRIDDB_API_KEY = import.meta.env.VITE_STEAMGRIDDB_API_KEY || ''
-const TIMEOUT = 5000
+const TIMEOUT = 10000
 
 // 定义 API 端点
 const API_ENDPOINT = 'https://www.steamgriddb.com/api/v2'
