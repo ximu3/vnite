@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { ActivitySquare, Calendar as CalendarIcon, Clock, Trophy } from 'lucide-react'
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
+import { Button } from '~/components/ui/button'
 import {
   Card,
   CardContent,
@@ -9,32 +12,29 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card'
-import { Button } from '~/components/ui/button'
-import { ActivitySquare, Calendar as CalendarIcon, Clock, Trophy } from 'lucide-react'
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Area, AreaChart } from 'recharts'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '~/components/ui/chart'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
-  DialogTitle,
-  DialogDescription
+  DialogTitle
 } from '~/components/ui/dialog'
 import { ScrollArea } from '~/components/ui/scroll-area'
 
 import {
-  useGameRegistry,
-  getTotalplayTime,
+  getGamePlayTime,
+  getPlayedDaysYearly,
   getTotalPlayedDays,
   getTotalPlayedTimes,
+  getTotalplayTime,
   getTotalplayTimeYearly,
   sortGames,
-  getGamePlayTime,
-  getPlayedDaysYearly
+  useGameRegistry
 } from '~/stores/game'
-import { StatCard } from './StatCard'
-import { GameRankingItem } from './GameRankingItem'
 import { getPlayTimeDistribution } from '~/stores/game/recordUtils'
+import { GameRankingItem } from './GameRankingItem'
+import { StatCard } from './StatCard'
 
 export function RecordOverview(): React.JSX.Element {
   const { t } = useTranslation('record')
@@ -272,13 +272,13 @@ export function RecordOverview(): React.JSX.Element {
 
       {/* Game Time Ranking - Dialog */}
       <Dialog open={showMoreTimeGames} onOpenChange={setShowMoreTimeGames}>
-        <DialogContent className="w-[500px]">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>{t('overview.ranking.playTimeRanking')}</DialogTitle>
             <DialogDescription>{t('overview.ranking.allGamesByPlayTime')}</DialogDescription>
           </DialogHeader>
           <ScrollArea className="h-[500px] pr-4">
-            <div className="space-y-2">
+            <div className="w-[500px] space-y-2">
               {allTimeGames.map((gameId, index) => (
                 <GameRankingItem
                   key={gameId}
@@ -294,13 +294,13 @@ export function RecordOverview(): React.JSX.Element {
 
       {/* Game Rating Ranking - Dialog */}
       <Dialog open={showMoreScoreGames} onOpenChange={setShowMoreScoreGames}>
-        <DialogContent className="w-[500px]">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>{t('overview.ranking.scoreRanking')}</DialogTitle>
             <DialogDescription>{t('overview.ranking.allGamesByScore')}</DialogDescription>
           </DialogHeader>
           <ScrollArea className="h-[500px] pr-4">
-            <div className="space-y-2">
+            <div className="w-[500px] space-y-2">
               {allScoreGames.map((gameId, index) => (
                 <GameRankingItem
                   key={gameId}
