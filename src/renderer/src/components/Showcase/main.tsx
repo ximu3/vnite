@@ -8,13 +8,40 @@ import { useGameRegistry } from '~/stores/game'
 import { useGameAdderStore } from '~/pages/GameAdder/store'
 import { useTranslation } from 'react-i18next'
 import { ScrollToTopButton } from './ScrollToTopButton'
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
+import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
 
 export function Showcase(): React.JSX.Element {
   const { t } = useTranslation('game')
   const gameIds = useGameRegistry((state) => state.gameIds)
   const setIsOpen = useGameAdderStore((state) => state.setIsOpen)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
+  const selectGames = useGameBatchEditorStore((state) => state.selectGames)
+
+  // 键盘快捷键处理
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent): void => {
+      // 检查当前是否有对话框元素处于活动状态
+      const isDialogActive =
+        document.querySelector('dialog[open]') !== null ||
+        document.querySelector('.modal.active') !== null ||
+        document.querySelector('[role="dialog"]') !== null
+
+      // 当对话框打开时，不执行快捷键功能
+      if (isDialogActive) {
+        return
+      }
+
+      // Ctrl + A 选择所有游戏
+      if (e.ctrlKey && e.key === 'a') {
+        e.preventDefault()
+        selectGames(gameIds)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [selectGames, gameIds])
 
   return (
     <div className={cn('flex flex-col gap-3 h-full w-full bg-transparent')}>
