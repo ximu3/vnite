@@ -220,3 +220,10 @@ export interface PluginPackage {
   readme?: string
   homepageUrl?: string
 }
+
+export interface PluginUpdateInfo {
+  pluginId: string
+  currentVersion: string
+  latestVersion: string
+  downloadUrl: string
+}

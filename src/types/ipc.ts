@@ -10,9 +10,11 @@ import { configDocs, BatchGameInfo } from './models'
 import {
   PluginConfiguration,
   PluginInfo,
+  PluginInstallOptions,
   PluginSearchOptions,
   PluginSearchResult,
-  PluginStatsData
+  PluginStatsData,
+  PluginUpdateInfo
 } from './plugin'
 import { SteamFormattedGameInfo } from './utils'
 import {
@@ -286,21 +288,16 @@ type MainIpcEvents =
       'plugin:search-plugins': (options: PluginSearchOptions) => PluginSearchResult
       'plugin:install-plugin': (
         source: string,
-        options?: { autoEnable?: boolean }
+        options?: PluginInstallOptions
       ) => { success: boolean; error?: string }
       'plugin:install-plugin-from-file': (
         filePath: string,
-        options?: { autoEnable?: boolean }
+        options?: PluginInstallOptions
       ) => { success: boolean; error?: string }
       'plugin:uninstall-plugin': (pluginId: string) => { success: boolean; error?: string }
       'plugin:activate-plugin': (pluginId: string) => { success: boolean; error?: string }
       'plugin:deactivate-plugin': (pluginId: string) => { success: boolean; error?: string }
-      'plugin:check-updates': () => Array<{
-        pluginId: string
-        currentVersion: string
-        latestVersion: string
-        updateAvailable: boolean
-      }>
+      'plugin:check-updates': () => PluginUpdateInfo[]
       'plugin:get-stats': () => PluginStatsData
       'plugin:get-plugin-configuration': (pluginId: string) => PluginConfiguration[]
       'plugin:shutdown': () => { success: boolean; error?: string }

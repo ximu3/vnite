@@ -20,6 +20,7 @@ export function Setup(): React.JSX.Element {
   useEffect(() => {
     usePluginInfoStore.getState().loadPlugins()
     usePluginInfoStore.getState().loadStats()
+    usePluginInfoStore.getState().checkUpdates(true)
     ipcManager.on('plugin:update-all-plugins', (_event, plugins) => {
       usePluginInfoStore.getState().setPlugins(plugins)
     })

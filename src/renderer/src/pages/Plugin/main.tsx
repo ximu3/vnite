@@ -22,6 +22,7 @@ export function Plugin(): React.JSX.Element {
   const installPluginFromFile = usePluginInfoStore((state) => state.installPluginFromFile)
   const stats = usePluginInfoStore((state) => state.stats)
   const loading = usePluginInfoStore((state) => state.loading)
+  const checkUpdates = usePluginInfoStore((state) => state.checkUpdates)
 
   return (
     <div className={cn('w-full h-full bg-transparent')}>
@@ -35,7 +36,7 @@ export function Plugin(): React.JSX.Element {
                 <p className="text-muted-foreground mt-1">{t('description')}</p>
               </div>
               <div className="flex items-center space-x-3">
-                <Button variant="outline" onClick={() => {}} disabled={loading}>
+                <Button variant="outline" onClick={checkUpdates} disabled={loading}>
                   <span className={cn('icon-[mdi--update] w-4 h-4 mr-2')}></span>
                   {t('actions.checkUpdates')}
                 </Button>

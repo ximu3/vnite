@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
-import { Badge } from '~/components/ui/badge'
 import {
   Select,
   SelectContent,
@@ -23,17 +21,13 @@ import {
 import { toast } from 'sonner'
 import { ipcManager } from '~/app/ipc'
 import { cn } from '~/utils'
-import { usePluginInfoStore } from './store'
-import { PluginDetailDialog } from './PluginDetailDialog'
 import { PluginPackage, PluginCategory } from '@appTypes/plugin'
+import { PluginBrowseCard } from './PluginBrowseCard'
 
 const ITEMS_PER_PAGE = 12
 
 export function PluginBrowse(): React.JSX.Element {
   const { t } = useTranslation('plugin')
-
-  // Zustand store
-  const installPlugin = usePluginInfoStore((state) => state.installPlugin)
 
   // 本地状态
   const [plugins, setPlugins] = useState<PluginPackage[]>([])
@@ -44,13 +38,6 @@ export function PluginBrowse(): React.JSX.Element {
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc')
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
-  const [detailDialogOpen, setDetailDialogOpen] = useState(false)
-  const [selectedPlugin, setSelectedPlugin] = useState<PluginPackage | null>(null)
-
-  const openDetailDialog = (plugin: PluginPackage): void => {
-    setSelectedPlugin(plugin)
-    setDetailDialogOpen(true)
-  }
 
   // 加载插件列表
   const fetchPlugins = async (): Promise<void> => {
@@ -86,23 +73,6 @@ export function PluginBrowse(): React.JSX.Element {
   const handleSearch = (): void => {
     setCurrentPage(1) // 重置到第一页
     fetchPlugins()
-  }
-
-  // 处理安装
-  const handleInstallPlugin = async (plugin: PluginPackage): Promise<void> => {
-    try {
-      await installPlugin(plugin.downloadUrl, {
-        autoEnable: true
-      })
-      toast.success(t('messages.installSuccess', { name: plugin.manifest.name }))
-    } catch (_error) {
-      toast.error(t('messages.installFailed', { name: plugin.manifest.name }))
-    }
-  }
-
-  // 格式化日期
-  const formatDate = (date: Date): string => {
-    return new Date(date).toLocaleDateString()
   }
 
   // 生成分页项
@@ -260,62 +230,15 @@ export function PluginBrowse(): React.JSX.Element {
       ) : plugins.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {plugins.map((plugin) => (
-            <Card
+            <PluginBrowseCard
               key={plugin.manifest.id}
-              className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
-              onClick={() => openDetailDialog(plugin)}
-            >
-              <CardHeader className="-mb-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex justify-between">
-                    <div>
-                      <CardTitle className="text-lg line-clamp-1 break-words whitespace-normal">
-                        {plugin.manifest.name}
-                      </CardTitle>
-                      <CardDescription className="line-clamp-1">
-                        <span className="flex items-center gap-1">
-                          <span className={cn('icon-[mdi--account] w-3 h-3')}></span>
-                          {plugin.manifest.author || plugin.owner}
-                        </span>
-                      </CardDescription>
-                    </div>
-                  </div>
-                  <Badge variant="outline" className="">
-                    {t(`categories.${plugin.manifest.category}`)}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-3 line-clamp-2 h-[3em] break-words whitespace-normal">
-                  {plugin.manifest.description}
-                </p>
-
-                <div className="flex justify-between items-center">
-                  <div className="flex flex-wrap gap-1">
-                    <Badge variant="secondary">{plugin.manifest.version}</Badge>
-                    <Badge variant="outline" className="flex items-center gap-1">
-                      <span className={cn('icon-[mdi--star] w-3 h-3')}></span>
-                      {plugin.stars}
-                    </Badge>
-                    <Badge variant="outline" className="flex items-center gap-1">
-                      <span className={cn('icon-[mdi--calendar] w-3 h-3')}></span>
-                      {plugin.updatedAt
-                        ? formatDate(new Date(plugin.updatedAt))
-                        : t('search.unknownDate')}
-                    </Badge>
-                  </div>
-                  {!plugin.installed ? (
-                    <Button size="sm" onClick={() => handleInstallPlugin(plugin)}>
-                      {t('actions.install')}
-                    </Button>
-                  ) : (
-                    <Button size="sm" variant="secondary" disabled>
-                      {t('actions.installed')}
-                    </Button>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+              plugin={plugin}
+              setPlugin={(plugin) => {
+                setPlugins((prev) =>
+                  prev.map((p) => (p.manifest.id === plugin.manifest.id ? plugin : p))
+                )
+              }}
+            />
           ))}
         </div>
       ) : (
@@ -366,11 +289,6 @@ export function PluginBrowse(): React.JSX.Element {
           </PaginationContent>
         </Pagination>
       )}
-      <PluginDetailDialog
-        isOpen={detailDialogOpen}
-        setIsOpen={setDetailDialogOpen}
-        plugin={selectedPlugin}
-      />
     </div>
   )
 }

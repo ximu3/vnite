@@ -12,7 +12,9 @@ import {
   PluginStatsData,
   PluginSearchResult,
   PluginSearchOptions,
-  PluginInfo
+  PluginInfo,
+  PluginUpdateInfo,
+  PluginInstallOptions
 } from '@appTypes/plugin'
 import log from 'electron-log'
 
@@ -53,9 +55,6 @@ export class PluginService {
 
       // 监听插件事件
       this.setupEventListeners()
-
-      // 检查插件更新
-      await this.checkPluginUpdates()
 
       this.initialized = true
       log.info('插件系统初始化完成')
@@ -121,14 +120,7 @@ export class PluginService {
   /**
    * 检查插件更新
    */
-  public async checkPluginUpdates(): Promise<
-    Array<{
-      pluginId: string
-      currentVersion: string
-      latestVersion: string
-      updateAvailable: boolean
-    }>
-  > {
+  public async checkPluginUpdates(): Promise<PluginUpdateInfo[]> {
     try {
       const installedPlugins = new Map() as Map<string, PluginInfo>
 
@@ -143,9 +135,7 @@ export class PluginService {
         log.info(`发现 ${updates.length} 个插件有更新可用`)
 
         for (const update of updates) {
-          if (update.updateAvailable) {
-            log.info(`插件 ${update.pluginId}: ${update.currentVersion} -> ${update.latestVersion}`)
-          }
+          log.info(`插件 ${update.pluginId}: ${update.currentVersion} -> ${update.latestVersion}`)
         }
       }
 
@@ -159,21 +149,11 @@ export class PluginService {
   /**
    * 安装插件
    */
-  public async installPlugin(
-    source: string,
-    options?: { autoEnable?: boolean; onProgress?: (progress: number, message: string) => void }
-  ): Promise<void> {
+  public async installPlugin(source: string, options?: PluginInstallOptions): Promise<void> {
     try {
       log.info(`正在安装插件: ${source}`)
 
-      await pluginManager.installPlugin(source, {
-        autoEnable: options?.autoEnable ?? false,
-        onProgress:
-          options?.onProgress ||
-          ((progress, message) => {
-            log.info(`安装进度: ${progress.toFixed(1)}% - ${message}`)
-          })
-      })
+      await pluginManager.installPlugin(source, options)
 
       log.info('插件安装成功')
     } catch (error) {

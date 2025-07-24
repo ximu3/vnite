@@ -1,28 +1,37 @@
 import { create } from 'zustand'
 import { ipcManager } from '~/app/ipc'
 import { toast } from 'sonner'
-import type { PluginInfo, PluginStatsData } from '@appTypes/plugin'
+import type {
+  PluginInfo,
+  PluginStatsData,
+  PluginUpdateInfo,
+  PluginInstallOptions
+} from '@appTypes/plugin'
+import i18next from 'i18next'
 
 interface PluginInfoStore {
   // 状态
   plugins: PluginInfo[]
   stats: PluginStatsData | null
   loading: boolean
+  updates: PluginUpdateInfo[] | null
 
   loadPlugins: () => Promise<void>
   loadStats: () => Promise<void>
 
   setPlugins: (plugins: PluginInfo[]) => void
   setStats: (stats: PluginStatsData | null) => void
+  setUpdates: (updates: PluginUpdateInfo[] | null) => void
 
   installPlugin: (
     source: string,
-    options?: { autoEnable?: boolean }
+    options?: PluginInstallOptions,
+    pluginName?: string
   ) => Promise<{ success: boolean; error?: string }>
   installPluginFromFile: () => Promise<void>
-  uninstallPlugin: (pluginId: string) => Promise<void>
+  uninstallPlugin: (pluginId: string, pluginName: string) => Promise<void>
   togglePlugin: (pluginId: string, activate: boolean) => Promise<void>
-  checkUpdates: () => Promise<void>
+  checkUpdates: (noToast?: boolean) => Promise<void>
 }
 
 export const usePluginInfoStore = create<PluginInfoStore>((set) => ({
@@ -30,9 +39,11 @@ export const usePluginInfoStore = create<PluginInfoStore>((set) => ({
   plugins: [],
   stats: null,
   loading: false,
+  updates: null,
 
   setPlugins: (plugins) => set({ plugins }),
   setStats: (stats) => set({ stats }),
+  setUpdates: (updates) => set({ updates }),
 
   // 操作方法
   loadPlugins: async () => {
@@ -42,7 +53,7 @@ export const usePluginInfoStore = create<PluginInfoStore>((set) => ({
       set({ plugins: result || [] })
     } catch (error) {
       console.error('获取插件列表失败:', error)
-      toast.error('加载插件失败')
+      toast.error(i18next.t('plugin:messages.loadPluginsFailed'))
     } finally {
       set({ loading: false })
     }
@@ -60,9 +71,9 @@ export const usePluginInfoStore = create<PluginInfoStore>((set) => ({
   installPlugin: async (source, options) => {
     const result = await ipcManager.invoke('plugin:install-plugin', source, options)
     if (result.success) {
-      toast.success('插件安装成功')
+      toast.success(i18next.t('plugin:messages.installSuccess'))
     } else {
-      toast.error(`插件安装失败: ${result.error}`)
+      toast.error(i18next.t('plugin:messages.installFailed', { error: result.error }))
     }
     return result
   },
@@ -78,22 +89,22 @@ export const usePluginInfoStore = create<PluginInfoStore>((set) => ({
       })
 
       if (result.success) {
-        toast.success('插件安装成功')
+        toast.success(i18next.t('plugin:messages.installSuccess'))
       } else {
-        toast.error(`插件安装失败: ${result.error}`)
+        toast.error(i18next.t('plugin:messages.installFromFileFailed'))
       }
     } catch (error) {
       console.error('从文件安装插件失败:', error)
-      toast.error('从文件安装插件失败')
+      toast.error(i18next.t('plugin:messages.installFromFileFailed'))
     }
   },
 
   uninstallPlugin: async (pluginId) => {
     const result = await ipcManager.invoke('plugin:uninstall-plugin', pluginId)
     if (result.success) {
-      toast.success('插件卸载成功')
+      toast.success(i18next.t('plugin:messages.uninstallSuccess'))
     } else {
-      toast.error(`插件卸载失败: ${result.error}`)
+      toast.error(i18next.t('plugin:messages.uninstallFailed'))
     }
   },
 
@@ -102,28 +113,37 @@ export const usePluginInfoStore = create<PluginInfoStore>((set) => ({
     const result = await ipcManager.invoke(action, pluginId)
 
     if (result.success) {
-      const message = activate ? '插件已激活' : '插件已停用'
-      toast.success(message)
+      if (activate) {
+        toast.success(i18next.t('plugin:messages.pluginActivated'))
+      } else {
+        toast.success(i18next.t('plugin:messages.pluginDeactivated'))
+      }
     } else {
-      const message = activate ? `激活插件失败: ${result.error}` : `停用插件失败: ${result.error}`
-      toast.error(message)
+      if (activate) {
+        toast.error(i18next.t('plugin:messages.pluginActivateFailed', { error: result.error }))
+      } else {
+        toast.error(i18next.t('plugin:messages.pluginDeactivateFailed', { error: result.error }))
+      }
     }
   },
 
-  checkUpdates: async () => {
+  checkUpdates: async (noToast?: boolean) => {
     set({ loading: true })
+    let updates: PluginUpdateInfo[] | null = null
     try {
-      const updates = await ipcManager.invoke('plugin:check-updates')
+      updates = await ipcManager.invoke('plugin:check-updates')
       if (updates.length > 0) {
-        toast.success(`有 ${updates.length} 个更新可用`)
+        !noToast &&
+          toast.success(i18next.t('plugin:messages.updatesAvailable', { count: updates.length }))
       } else {
-        toast.info('没有可用更新')
+        !noToast && toast.info(i18next.t('plugin:messages.noUpdatesAvailable'))
       }
     } catch (error) {
       console.error('检查更新失败:', error)
-      toast.error('检查更新失败')
+      !noToast && toast.error(i18next.t('plugin:messages.checkUpdatesFailed'))
     } finally {
       set({ loading: false })
+      set({ updates: updates || null })
     }
   }
 }))

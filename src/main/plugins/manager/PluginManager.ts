@@ -319,7 +319,7 @@ export class PluginManager {
       if (typeof source === 'string') {
         // 从URL下载
         if (source.startsWith('http')) {
-          pluginBuffer = await this.downloadPlugin(source, options.onProgress)
+          pluginBuffer = await this.downloadPlugin(source)
         } else {
           // 从本地文件读取
           pluginBuffer = await fs.readFile(source)
@@ -339,10 +339,7 @@ export class PluginManager {
   /**
    * 下载插件
    */
-  private async downloadPlugin(
-    url: string,
-    onProgress?: (progress: number, message: string) => void
-  ): Promise<Buffer> {
+  private async downloadPlugin(url: string): Promise<Buffer> {
     try {
       // 使用Electron的net.fetch发起请求
       const response = await net.fetch(url)
@@ -356,9 +353,6 @@ export class PluginManager {
       if (!reader) {
         throw new Error('无法读取响应流')
       }
-
-      // 获取内容长度（如果有）
-      const contentLength = Number(response.headers.get('Content-Length') || '0')
 
       // 准备接收数据的数组
       const chunks: Uint8Array[] = []
@@ -374,12 +368,6 @@ export class PluginManager {
 
         chunks.push(value)
         receivedLength += value.length
-
-        // 报告下载进度
-        if (onProgress && contentLength > 0) {
-          const progress = (receivedLength / contentLength) * 100
-          onProgress(progress, `下载中... ${Math.round(progress)}%`)
-        }
       }
 
       // 合并所有接收到的数据块

@@ -7,7 +7,7 @@
 import { ipcManager } from '~/core/ipc'
 import { pluginService } from './services'
 import log from 'electron-log'
-import { PluginSearchOptions } from '@appTypes/plugin'
+import { PluginInstallOptions, PluginSearchOptions } from '@appTypes/plugin'
 
 /**
  * 设置插件系统相关的IPC处理器
@@ -57,7 +57,7 @@ export function setupPluginIPC(): void {
   // 安装插件
   ipcManager.handle(
     'plugin:install-plugin',
-    async (_, source: string, options?: { autoEnable?: boolean }) => {
+    async (_, source: string, options?: PluginInstallOptions) => {
       try {
         await pluginService.installPlugin(source, options)
         return { success: true }

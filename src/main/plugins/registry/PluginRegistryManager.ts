@@ -15,7 +15,8 @@ import type {
   PluginSearchOptions,
   PluginSearchResult,
   PluginCategory,
-  PluginInfo
+  PluginInfo,
+  PluginUpdateInfo
 } from '@appTypes/plugin'
 
 // GitHub API 参数常量
@@ -27,6 +28,8 @@ const PLUGIN_CATEGORIES = {
   COMMON: 'common',
   SCRAPER: 'scraper'
 }
+// 定义分类优先级数组
+const CATEGORY_PRIORITIES = ['scraper', 'common'] as PluginCategory[]
 
 export class PluginRegistryManager {
   private registries: Map<string, PluginRegistry> = new Map()
@@ -177,9 +180,6 @@ export class PluginRegistryManager {
    * 解析GitHub搜索结果
    */
   private async parseGitHubSearchResults(items: any[]): Promise<PluginPackage[]> {
-    // 定义分类优先级数组
-    const CATEGORY_PRIORITIES = ['scraper', 'common'] as PluginCategory[]
-
     const plugins: PluginPackage[] = []
 
     for (const repo of items) {
@@ -342,7 +342,7 @@ export class PluginRegistryManager {
       }
 
       // 尝试获取插件清单
-      const contentRes = await this.fetchJson(`${repo.url}/contents/plugin.json`, {
+      const contentRes = await this.fetchJson(`${repo.url}/contents/package.json`, {
         headers: this.getGitHubHeaders()
       }).catch(() => null)
 
@@ -357,23 +357,52 @@ export class PluginRegistryManager {
         vniteVersion: '1.0.0'
       }
 
+      // 如果能获取到package.json，优先使用其id和name，并补全其他字段
       if (contentRes) {
         try {
           const content = Buffer.from(contentRes.content, 'base64').toString('utf8')
-          const pluginJson = JSON.parse(content)
-          manifest = { ...manifest, ...pluginJson }
+          const packageJson = JSON.parse(content)
+
+          manifest = {
+            // 基础字段，默认使用从仓库获取的信息
+            id: packageJson.id || repo.name,
+            name: packageJson.name || repo.name,
+            version,
+            description: repo.description || packageJson.description || '无描述',
+            author: repo.owner.login,
+            homepage: repo.html_url,
+            main: packageJson.main || 'index.js',
+            vniteVersion: packageJson.vniteVersion || '4.0.0'
+          }
         } catch (e) {
-          log.warn(`解析 ${repo.name} 的plugin.json失败:`, e)
+          log.warn(`解析 ${repo.name} 的package.json失败:`, e)
         }
       }
 
-      const categories = repo.topics || []
+      // 分析仓库标签
+      const topics = repo.topics || []
+
+      // 根据优先级确定分类
+      let category = 'common' as PluginCategory
+
+      // 查找第一个匹配的分类
+      for (const priorityCategory of CATEGORY_PRIORITIES) {
+        if (topics.includes(priorityCategory)) {
+          category = priorityCategory
+          break // 找到第一个匹配的分类后停止
+        }
+      }
+
+      // 如果package.json中已经明确定义了分类，优先使用
+      if (manifest.category && CATEGORY_PRIORITIES.includes(manifest.category)) {
+        category = manifest.category
+      }
 
       return {
         manifest: {
           ...manifest,
           keywords: repo.topics || [],
-          category: categories.includes('scraper') ? 'scraper' : 'common'
+          category
         },
         downloadUrl,
         size: repo.size * 1024,
@@ -411,22 +440,10 @@ export class PluginRegistryManager {
   /**
    * 检查插件更新
    */
-  public async checkUpdates(installedPlugins: Map<string, PluginInfo>): Promise<
-    Array<{
-      pluginId: string
-      currentVersion: string
-      latestVersion: string
-      updateAvailable: boolean
-      downloadUrl?: string
-    }>
-  > {
-    const updateInfo: Array<{
-      pluginId: string
-      currentVersion: string
-      latestVersion: string
-      updateAvailable: boolean
-      downloadUrl?: string
-    }> = []
+  public async checkUpdates(
+    installedPlugins: Map<string, PluginInfo>
+  ): Promise<PluginUpdateInfo[]> {
+    const updateInfo: PluginUpdateInfo[] = []
 
     for (const [pluginId, pluginInfo] of installedPlugins) {
       try {
@@ -450,13 +467,13 @@ export class PluginRegistryManager {
           }
           const isNewer = semver.gt(cleanNew, cleanCurrent)
 
-          updateInfo.push({
-            pluginId,
-            currentVersion,
-            latestVersion,
-            updateAvailable: isNewer,
-            downloadUrl: isNewer ? details.downloadUrl : undefined
-          })
+          isNewer &&
+            updateInfo.push({
+              pluginId,
+              currentVersion,
+              latestVersion,
+              downloadUrl: details.downloadUrl
+            })
         }
       } catch (error) {
         log.warn(`检查插件 ${pluginId} 更新失败:`, error)

@@ -17,13 +17,19 @@ import { MarkdownRenderer } from '~/components/ui/markdown-renderer'
 interface PluginDetailDialogProps {
   isOpen: boolean
   setIsOpen: (open: boolean) => void
+  isInstalling: boolean
+  setIsInstalling: (installing: boolean) => void
   plugin: PluginPackage | null
+  setPlugin: (plugin: PluginPackage) => void
 }
 
 export function PluginDetailDialog({
   isOpen,
   setIsOpen,
-  plugin
+  isInstalling,
+  setIsInstalling,
+  plugin,
+  setPlugin
 }: PluginDetailDialogProps): React.JSX.Element {
   const { t } = useTranslation('plugin')
   const installPlugin = usePluginInfoStore((state) => state.installPlugin)
@@ -33,12 +39,20 @@ export function PluginDetailDialog({
     if (!plugin) return
 
     try {
-      await installPlugin(plugin.downloadUrl, {
-        autoEnable: true
-      })
+      setIsInstalling(true)
+      await installPlugin(
+        plugin.downloadUrl,
+        {
+          autoEnable: true
+        },
+        plugin.manifest.name
+      )
+      setPlugin({ ...plugin, installed: true }) // 更新插件状态
       setIsOpen(false)
     } catch (error) {
       console.error('安装失败:', error)
+    } finally {
+      setIsInstalling(false)
     }
   }
 
@@ -131,7 +145,7 @@ export function PluginDetailDialog({
                     {t('details.stars')}
                   </label>
                   <div className="flex items-center gap-1 mt-1">
-                    <span className={cn('icon-[mdi--star] w-4 h-4 text-yellow-500')}></span>
+                    <span className={cn('icon-[mdi--star] w-4 h-4 text-primary')}></span>
                     <span>{plugin.stars}</span>
                   </div>
                 </div>
@@ -161,9 +175,18 @@ export function PluginDetailDialog({
               )}
 
               {!plugin.installed ? (
-                <Button className="w-full" onClick={handleInstall}>
-                  <span className={cn('icon-[mdi--download] w-4 h-4 mr-2')}></span>
-                  {t('actions.install')}
+                <Button className="w-full" onClick={handleInstall} disabled={isInstalling}>
+                  {isInstalling ? (
+                    <>
+                      <span className="mr-2 w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
+                      {t('actions.installing')}
+                    </>
+                  ) : (
+                    <>
+                      <span className={cn('icon-[mdi--download] w-4 h-4 mr-2')}></span>
+                      {t('actions.install')}
+                    </>
+                  )}
                 </Button>
               ) : (
                 <Button className="w-full" disabled>
