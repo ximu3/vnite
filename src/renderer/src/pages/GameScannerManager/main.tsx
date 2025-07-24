@@ -172,9 +172,9 @@ export const GameScannerManager: React.FC = () => {
                   </div>
                   {getFailedFolderCount() > 0 && (
                     <Button
-                      variant="outline"
+                      variant="destructive"
                       size="sm"
-                      className="flex items-center h-[22px] gap-1 px-2 text-primary bg-transparent"
+                      className="flex items-center h-[22px] gap-1 px-2 text-destructive-foreground"
                       onClick={() => showFailedDialog(true)}
                       disabled={scanProgress.status === 'scanning' || isStopping}
                     >

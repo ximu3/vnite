@@ -68,7 +68,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
           <span className={cn('icon-[mdi--add] w-6 h-6')}></span>
         </Button>
       </div>
-      <div className="grid w-full grid-cols-3 gap-x-5 gap-y-5">
+      <div className="grid w-full xl:grid-cols-3 lg:grid-cols-2 gap-x-5 gap-y-5">
         <div className="flex flex-col gap-5">
           {sortedMemoryIds
             .filter((_, i) => i % 3 === 0)

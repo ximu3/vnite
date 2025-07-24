@@ -22,7 +22,7 @@ export function GamePropertiesDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className={cn('w-[1000px] h-[85vh] flex flex-col')}>
+      <DialogContent className={cn('w-[70vw] h-[70vh] lg:h-[80vh] flex flex-col')}>
         <DialogHeader>
           <DialogTitle>{`${gameName} - ${t('detail.properties.title')}`}</DialogTitle>
         </DialogHeader>
@@ -34,16 +34,16 @@ export function GamePropertiesDialog({
             <TabsTrigger value="media">{t('detail.properties.tabs.media')}</TabsTrigger>
           </TabsList>
 
-          <ScrollArea className="h-[calc(100%-60px)] pr-5">
-            <TabsContent value="launcher" className="">
+          <ScrollArea className="h-[calc(95%-60px)]">
+            <TabsContent value="launcher" className="pr-5 pb-3">
               <Launcher gameId={gameId} />
             </TabsContent>
 
-            <TabsContent value="path" className="">
+            <TabsContent value="path" className="pr-5 pb-3">
               <Path gameId={gameId} />
             </TabsContent>
 
-            <TabsContent value="media" className="">
+            <TabsContent value="media" className="pr-5 pb-3">
               <Media gameId={gameId} />
             </TabsContent>
           </ScrollArea>

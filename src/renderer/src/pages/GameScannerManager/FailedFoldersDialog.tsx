@@ -7,7 +7,6 @@ import {
   DialogTitle
 } from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
-import { ScrollArea } from '~/components/ui/scroll-area'
 import {
   Select,
   SelectContent,
@@ -26,7 +25,6 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { cn } from '~/utils'
 import { useGameScannerStore } from './store'
 import { ScraperCapabilities } from '@appTypes/utils'
 import { ipcManager } from '~/app/ipc'
@@ -149,12 +147,12 @@ export const FailedFoldersDialog: React.FC<FailedFoldersDialogProps> = ({ isOpen
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="w-[60vw] max-w-none">
+      <DialogContent className="w-[60vw] relative">
         <DialogHeader>
           <DialogTitle>{t('failedFolders.title')}</DialogTitle>
         </DialogHeader>
 
-        <div className="py-4 space-y-4">
+        <div className="pb-1 space-y-4 max-h-[60vh] overflow-auto scrollbar-base">
           {selectedFolder ? (
             <div className="p-4 space-y-4 border rounded-lg">
               <div>
@@ -199,58 +197,56 @@ export const FailedFoldersDialog: React.FC<FailedFoldersDialogProps> = ({ isOpen
               </div>
             </div>
           ) : (
-            <ScrollArea className={cn('h-[calc(84vh-230px)] pr-2')}>
-              <Table className="">
-                <TableHeader className="">
-                  <TableRow>
-                    <TableHead>{t('failedFolders.table.folderName')}</TableHead>
-                    <TableHead>{t('failedFolders.table.location')}</TableHead>
-                    <TableHead>{t('failedFolders.table.error')}</TableHead>
-                    <TableHead className="w-[100px]">{t('failedFolders.table.actions')}</TableHead>
+            <Table className="">
+              <TableHeader className="">
+                <TableRow>
+                  <TableHead>{t('failedFolders.table.folderName')}</TableHead>
+                  <TableHead>{t('failedFolders.table.location')}</TableHead>
+                  <TableHead>{t('failedFolders.table.error')}</TableHead>
+                  <TableHead className="w-[100px]">{t('failedFolders.table.actions')}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody className="">
+                {failedFolders.map((folder, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="font-medium max-w-[10vw] overflow-hidden">
+                      {folder.name}
+                    </TableCell>
+                    <TableCell className="max-w-[10vw] overflow-hidden">
+                      <Tooltip>
+                        <TooltipTrigger className="text-xs">
+                          {folder.path.split('/').pop()}
+                        </TooltipTrigger>
+                        <TooltipContent>{folder.path.split('/').pop()}</TooltipContent>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell className="max-w-[10vw] overflow-hidden">
+                      <Tooltip>
+                        <TooltipTrigger className="text-xs">{folder.error}</TooltipTrigger>
+                        <TooltipContent>{folder.error}</TooltipContent>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell className="flex flex-row">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleSelectFolder(folder)}
+                      >
+                        {t('actions.fix')}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="ml-2"
+                        onClick={() => ignoreFailedFolder(folder.scannerId, folder.path)}
+                      >
+                        {t('actions.ignore')}
+                      </Button>
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody className="">
-                  {failedFolders.map((folder, index) => (
-                    <TableRow key={index}>
-                      <TableCell className="font-medium">{folder.name}</TableCell>
-                      <TableCell className="max-w-[200px]">
-                        <Tooltip>
-                          <TooltipTrigger className="text-xs truncate max-w-[200px]">
-                            {folder.path.split('/').pop()}
-                          </TooltipTrigger>
-                          <TooltipContent>{folder.path.split('/').pop()}</TooltipContent>
-                        </Tooltip>
-                      </TableCell>
-                      <TableCell className="max-w-[200px]">
-                        <Tooltip>
-                          <TooltipTrigger className="text-xs truncate max-w-[200px]">
-                            {folder.error}
-                          </TooltipTrigger>
-                          <TooltipContent>{folder.error}</TooltipContent>
-                        </Tooltip>
-                      </TableCell>
-                      <TableCell className="flex flex-row">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleSelectFolder(folder)}
-                        >
-                          {t('actions.fix')}
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="ml-2"
-                          onClick={() => ignoreFailedFolder(folder.scannerId, folder.path)}
-                        >
-                          {t('actions.ignore')}
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </ScrollArea>
+                ))}
+              </TableBody>
+            </Table>
           )}
         </div>
 

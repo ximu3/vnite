@@ -15,7 +15,7 @@ export function TagsDialog({ gameId }: { gameId: string }): React.JSX.Element {
           className={cn('invisible group-hover:visible w-5 h-5 icon-[mdi--square-edit-outline]')}
         ></span>
       </DialogTrigger>
-      <DialogContent className={cn('w-[700px] h-[500px] max-w-none flex flex-col gap-5')}>
+      <DialogContent className={cn('w-[500px] h-[300px] max-w-none flex flex-col gap-5')}>
         <div className={cn('text-xs -mb-2')}>{t('detail.overview.tags.separator')}</div>
         <ArrayInput
           className={cn('grow resize-none')}

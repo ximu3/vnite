@@ -277,7 +277,7 @@ export function RecordOverview(): React.JSX.Element {
             <DialogTitle>{t('overview.ranking.playTimeRanking')}</DialogTitle>
             <DialogDescription>{t('overview.ranking.allGamesByPlayTime')}</DialogDescription>
           </DialogHeader>
-          <ScrollArea className="h-[500px] pr-4">
+          <ScrollArea className="h-[60vh] pr-4">
             <div className="space-y-2">
               {allTimeGames.map((gameId, index) => (
                 <GameRankingItem
@@ -299,7 +299,7 @@ export function RecordOverview(): React.JSX.Element {
             <DialogTitle>{t('overview.ranking.scoreRanking')}</DialogTitle>
             <DialogDescription>{t('overview.ranking.allGamesByScore')}</DialogDescription>
           </DialogHeader>
-          <ScrollArea className="h-[500px] pr-4">
+          <ScrollArea className="h-[60vh] pr-4">
             <div className="space-y-2">
               {allScoreGames.map((gameId, index) => (
                 <GameRankingItem

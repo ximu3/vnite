@@ -20,7 +20,7 @@ export function RelatedSitesDialog({ gameId }: { gameId: string }): React.JSX.El
           className={cn('invisible group-hover:visible w-5 h-5 icon-[mdi--square-edit-outline]')}
         ></span>
       </DialogTrigger>
-      <DialogContent className={cn('max-w-none flex flex-col gap-3 w-[700px]')}>
+      <DialogContent className={cn('max-w-none flex flex-col gap-3 w-[60vw]')}>
         <Button
           variant="outline"
           onClick={() => {
@@ -30,7 +30,11 @@ export function RelatedSitesDialog({ gameId }: { gameId: string }): React.JSX.El
         >
           {t('detail.overview.relatedSites.addLink')}
         </Button>
-        <div className={cn('flex flex-col gap-3 grow p-3 overflow-auto scrollbar-base')}>
+        <div
+          className={cn(
+            'flex flex-col gap-3 grow p-3 overflow-auto scrollbar-base h-[60vh] lg:h-[70vh]'
+          )}
+        >
           {relatedSites.map((site, i) => (
             <div key={i} className={cn('flex flex-row gap-3')}>
               <Input

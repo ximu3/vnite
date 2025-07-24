@@ -19,8 +19,8 @@ export function GameList(): React.JSX.Element {
   }
 
   return (
-    <div className="w-[870px] h-[75vh]">
-      <div className="py-[10px]">
+    <div className="w-[70vw] h-[70vh]">
+      <div className="py-[10px] w-full">
         <GameListTable />
         <div className="flex flex-row-reverse pt-[20px]">
           <Button disabled={isLoading} onClick={handleAddAll}>

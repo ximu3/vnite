@@ -19,12 +19,12 @@ export function GameList(): React.JSX.Element {
   const { setName, dataSourceId, setDataSourceId, gameList } = useGameAdderStore()
 
   return (
-    <div className={cn('w-[726px] h-[86vh] p-3', '3xl:w-[876px]')}>
+    <div className={cn('w-[50vw] h-[80vh] p-3')}>
       <div className={cn('flex flex-col w-full h-full gap-3')}>
         <Card className={cn('grow pt-3')}>
           <CardContent className="h-full w-full">
             <div className="w-full">
-              <ScrollArea className={cn('h-[calc(84vh-230px)] pr-3')}>
+              <ScrollArea className={cn('h-[calc(80vh-230px)] pr-3')}>
                 <Table>
                   <TableHeader className={cn('')}>
                     <TableRow>
@@ -83,7 +83,9 @@ export function GameList(): React.JSX.Element {
           </CardContent>
         </Card>
         <Card className="p-0">
-          <Search className={cn('w-full p-5 text-sm', '3xl:w-full')} />
+          <CardContent className="w-full h-full p-0">
+            <Search className={cn('w-full p-6 py-5 text-sm')} />
+          </CardContent>
         </Card>
       </div>
     </div>

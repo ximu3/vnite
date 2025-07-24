@@ -60,7 +60,7 @@ export function GameListItem({ game }: { game: BatchGameInfo }): React.JSX.Eleme
   }, [actions, game.dataId, game.dataSource, t])
 
   return (
-    <TableRow className={cn('w-full')}>
+    <TableRow className={cn('w-full relative')}>
       <TableCell className={cn(TABLE_COLUMN_WIDTHS.dataSource)}>
         <Select
           value={game.dataSource}

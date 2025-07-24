@@ -41,7 +41,7 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
 
   const [originalName] = useGameState(gameId, 'metadata.originalName')
 
-  // Processing file selection
+  // 处理文件选择
   async function handleFileSelect(type: 'cover' | 'background' | 'icon' | 'logo'): Promise<void> {
     try {
       const filePath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
@@ -63,10 +63,10 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     }
   }
 
-  // Handling of resizing
+  // 处理调整大小
   async function handleResize(type: 'cover' | 'background' | 'icon' | 'logo'): Promise<void> {
     try {
-      // Get current image path
+      // 获取当前图像路径
       const currentPath = await ipcManager.invoke('game:get-media-path', gameId, type)
       if (!currentPath) {
         toast.error(t('detail.properties.media.notifications.imageNotFound'))
@@ -84,7 +84,7 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     }
   }
 
-  // Processing URL Input
+  // 处理URL输入
   function setMediaWithUrl(type: 'cover' | 'background' | 'icon' | 'logo', URL: string): void {
     toast.promise(
       async () => {
@@ -108,7 +108,7 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     )
   }
 
-  // Processing cuts are complete
+  // 裁剪完成
   async function handleCropComplete(
     type: 'cover' | 'background' | 'icon' | 'logo',
     filePath: string
@@ -143,7 +143,7 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     )
   }
 
-  // Handling media deletions
+  // 处理媒体删除
   async function handleDeleteMedia(type: 'cover' | 'background' | 'icon' | 'logo'): Promise<void> {
     toast.promise(
       async () => {
@@ -166,7 +166,7 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     )
   }
 
-  // Media Control Button Component
+  // 媒体控制按钮组件
   const MediaControls = ({
     type
   }: {
@@ -252,86 +252,42 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     </div>
   )
 
+  // 媒体卡片组件
+  const MediaCard = ({
+    type,
+    aspectRatio
+  }: {
+    type: 'cover' | 'background' | 'icon' | 'logo'
+    aspectRatio: string
+  }): React.JSX.Element => (
+    <Card className="h-full flex flex-col">
+      <CardHeader>
+        <CardTitle>{t(`detail.properties.media.types.${type}`)}</CardTitle>
+      </CardHeader>
+      <CardContent className={cn('-mt-2 flex-1 flex flex-col')}>
+        <div className={cn('flex flex-col gap-2 h-full')}>
+          <MediaControls type={type} />
+          <div className={cn('flex-1 flex items-center justify-center')}>
+            <GameImage
+              gameId={gameId}
+              type={type}
+              className={cn(
+                `aspect-[${aspectRatio}] object-${type === 'logo' ? 'contain' : 'cover'} h-auto max-h-full`
+              )}
+              fallback={<div>{t(`detail.properties.media.empty.${type}`)}</div>}
+            />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+
   return (
-    <div className={cn('flex flex-row gap-3 w-full h-full')}>
-      <div className={cn('flex flex-col gap-3 w-full h-full')}>
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('detail.properties.media.types.icon')}</CardTitle>
-          </CardHeader>
-          <CardContent className={cn('-mt-2')}>
-            <div className={cn('flex flex-col gap-2')}>
-              <MediaControls type="icon" />
-              <div className={cn('self-center')}>
-                <GameImage
-                  gameId={gameId}
-                  type="icon"
-                  className={cn('max-h-16 h-[calc(30vh-160px)] aspect-[1] object-cover')}
-                  fallback={<div>{t('detail.properties.media.empty.icon')}</div>}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('detail.properties.media.types.background')}</CardTitle>
-          </CardHeader>
-          <CardContent className={cn('-mt-2')}>
-            <div className={cn('flex flex-col gap-2')}>
-              <MediaControls type="background" />
-              <div className={cn('self-center')}>
-                <GameImage
-                  gameId={gameId}
-                  type="background"
-                  className={cn('max-h-[264px] h-[calc(60vh-200px)] aspect-[2] object-cover')}
-                  fallback={<div>{t('detail.properties.media.empty.background')}</div>}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className={cn('flex flex-col gap-3 w-full h-full')}>
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('detail.properties.media.types.cover')}</CardTitle>
-          </CardHeader>
-          <CardContent className={cn('-mt-2')}>
-            <div className={cn('flex flex-col gap-2')}>
-              <MediaControls type="cover" />
-              <div className={cn('self-center')}>
-                <GameImage
-                  gameId={gameId}
-                  type="cover"
-                  className={cn('max-h-[170px] h-[calc(50vh-230px)] aspect-[2/3] object-cover')}
-                  fallback={<div>{t('detail.properties.media.empty.cover')}</div>}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('detail.properties.media.types.logo')}</CardTitle>
-          </CardHeader>
-          <CardContent className={cn('-mt-2')}>
-            <div className={cn('flex flex-col gap-2')}>
-              <MediaControls type="logo" />
-              <div className={cn('self-center')}>
-                <GameImage
-                  gameId={gameId}
-                  type="logo"
-                  className={cn('max-h-[158px] h-[calc(40vh-130px)] aspect-[3/2] object-contain')}
-                  fallback={<div>{t('detail.properties.media.empty.logo')}</div>}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+    <div className={cn('grid grid-cols-[1fr_1.5fr] gap-3 w-full h-full')}>
+      <MediaCard type="cover" aspectRatio="2/3" />
+      <MediaCard type="background" aspectRatio="2" />
+      <MediaCard type="icon" aspectRatio="1" />
+      <MediaCard type="logo" aspectRatio="3/2" />
 
       <CropDialog
         isOpen={cropDialogState.isOpen}
