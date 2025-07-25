@@ -1,17 +1,14 @@
 import { net } from 'electron'
+import * as cheerio from 'cheerio'
 import { GameList, GameMetadata } from '@appTypes/utils'
 import { getLanguage } from '~/features/system/services/i18n'
 import { extractReleaseDateWithLibrary } from './i18n'
 import i18next from 'i18next'
 
-// Note: Cheerio is not available in the Electron main process
-// Using regex-based HTML parsing instead
-
 export async function searchDlsiteGames(gameName: string): Promise<GameList> {
   const encodedQuery = encodeURIComponent(gameName.trim()).replace(/%20/g, '+')
-  const url = `https://www.dlsite.com/maniax/fsr/=/language/jp/keyword/${encodedQuery}/`
-
   const language = await getLanguage()
+  const url = `https://www.dlsite.com/maniax/fsr/=/language/jp/keyword/${encodedQuery}/?locale=${language}`
 
   const response = await net.fetch(url, {
     headers: {
@@ -24,28 +21,29 @@ export async function searchDlsiteGames(gameName: string): Promise<GameList> {
   })
 
   const data = await response.text()
+  const $ = cheerio.load(data)
   const results: GameList = []
 
-  // Parse search results using regex
-  const searchResultRegex =
-    /<div[^>]*class="[^"]*search_result_img_box_inner[^"]*"[^>]*>(.*?)<\/div>/gs
-  const searchResults = data.match(searchResultRegex) || []
+  $('.search_result_img_box_inner').each((_, element) => {
+    // 从列表项的 data-list_item_product_id 属性获取ID
+    let id = $(element).attr('data-list_item_product_id') || ''
 
-  for (const resultHtml of searchResults) {
-    // Extract product ID
-    const idMatch = resultHtml.match(/id="([^"]*_link_[^"]*)"/)
-    const id = idMatch?.[1]?.replace('_link_', '') || ''
+    // 如果没有获取到ID，则尝试从链接URL中提取
+    if (!id) {
+      const href = $(element).find('a.work_thumb_inner').attr('href') || ''
+      const productIdMatch = href.match(/product_id\/([^.]+)\.html/)
+      id = productIdMatch ? productIdMatch[1] : ''
+    }
 
-    // Extract game name
-    const nameMatch = resultHtml.match(/<a[^>]*class="[^"]*work_name[^"]*"[^>]*>(.*?)<\/a>/s)
-    const name = nameMatch?.[1]?.replace(/<[^>]*>/g, '').trim() || ''
+    // 获取游戏名称
+    const nameElement = $(element).find('.work_name a')
+    const name = nameElement.attr('title') || nameElement.text().trim()
 
-    // Extract developer (producer)
-    const developerMatch = resultHtml.match(/<a[^>]*class="[^"]*maker_name[^"]*"[^>]*>(.*?)<\/a>/s)
-    const developer = developerMatch?.[1]?.replace(/<[^>]*>/g, '').trim() || ''
+    // 获取开发者
+    const developer = $(element).find('.maker_name a').text().trim()
     const developers = developer ? [developer] : []
 
-    if (name) {
+    if (name && id) {
       results.push({
         id,
         name,
@@ -53,7 +51,7 @@ export async function searchDlsiteGames(gameName: string): Promise<GameList> {
         developers
       })
     }
-  }
+  })
 
   console.log(`Search for "${gameName}" found ${results.length} results`)
   return results
@@ -61,8 +59,8 @@ export async function searchDlsiteGames(gameName: string): Promise<GameList> {
 
 export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata> {
   // Try to access the work page
-  const url = `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html`
   const language = await getLanguage()
+  const url = `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html?locale=${language}`
 
   const response = await net.fetch(url, {
     headers: {
@@ -75,41 +73,85 @@ export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata>
   })
 
   const data = await response.text()
+  const $ = cheerio.load(data)
 
-  // Extract basic information using regex
-  const nameMatch = data.match(/<[^>]*id="work_name"[^>]*>(.*?)<\/[^>]*>/s)
-  const name = nameMatch?.[1]?.replace(/<[^>]*>/g, '').trim() || ''
+  // Extract basic information using Cheerio
+  const name = $('#work_name').text().trim()
+  const originalName = name
 
   const workTypeTerm = i18next.t('scraper:dlsite.workType', { lng: language })
   const releaseDateTerm = i18next.t('scraper:dlsite.releaseDate', { lng: language })
   const seriesTerm = i18next.t('scraper:dlsite.series', { lng: language })
 
-  // Extract description
-  let description = ''
-  const descMatch = data.match(/<div[^>]*itemprop="description"[^>]*>(.*?)<\/div>/s)
-  if (descMatch) {
-    // Clean up HTML tags and format
-    description = descMatch[1]
-      .replace(/<script[^>]*>.*?<\/script>/gs, '')
-      .replace(/<style[^>]*>.*?<\/style>/gs, '')
-      .replace(/<[^>]*>/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim()
-  }
+  // 提取描述，保留HTML，但修改链接以添加target="_blank"
+  const descriptionElement = $('[itemprop="description"]')
+
+  // 查找描述元素中的所有链接，并添加target="_blank"属性
+  descriptionElement.find('a').attr('target', '_blank')
+
+  // 移除所有颜色样式
+  descriptionElement.find('*').each((_, element) => {
+    const el = $(element)
+    // 移除 style 属性中的颜色设置
+    const style = el.attr('style')
+    if (style) {
+      const newStyle = style
+        .replace(/color\s*:\s*[^;]+;?/gi, '') // 移除 color: xxx;
+        .replace(/background-color\s*:\s*[^;]+;?/gi, '') // 移除 background-color: xxx;
+        .trim()
+
+      if (newStyle) {
+        el.attr('style', newStyle)
+      } else {
+        el.removeAttr('style')
+      }
+    }
+
+    // 移除字体颜色属性
+    el.removeAttr('color')
+  })
+
+  // 获取修改后的HTML
+  let description = descriptionElement.html() || ''
+
+  // 清理脚本和样式标签
+  description = description
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+    .trim()
+
+  // 清除字体标签中的颜色属性
+  description = description
+    .replace(/<font\s+color="[^"]*"([^>]*)>/gi, '<font$1>') // 移除 <font color="xxx">
+    .replace(/<font\s+color='[^']*'([^>]*)>/gi, '<font$1>') // 移除 <font color='xxx'>
+    .replace(/<span\s+style="color:\s*[^;"]*;?([^"]*)">/gi, '<span style="$1">') // 移除 style="color: xxx;" 但保留其他样式
+    .replace(/<span\s+style="background-color:\s*[^;"]*;?([^"]*)">/gi, '<span style="$1">') // 移除 style="background-color: xxx;"
+    .replace(/<span\s+style="([^"]*);?\s*color:\s*[^;"]*;?([^"]*)">/gi, '<span style="$1;$2">') // 在样式中间的情况
+
+  // 清理空的 style 属性
+  description = description.replace(/\sstyle="\s*"/gi, '').replace(/\sstyle='\s*'/gi, '')
+
+  // 清理空的 font 标签，转换为 span
+  description = description
+    .replace(/<font\s*>([^<]*)<\/font>/gi, '$1')
+    .replace(/<font\s*([^>]*)>([^<]*)<\/font>/gi, '<span $1>$2</span>')
+
+  // 清除标签之间的空白和连续空白
+  description = description.replace(/>\s+</g, '><') // 清除标签之间的空白
+  description = description.replace(/(\s)\s+/g, '$1') // 将连续空白替换为单个空白
 
   // Extract release date
   let releaseDate = ''
-  const releaseDateRegex = new RegExp(`${releaseDateTerm}[^<]*?([^<]+)`, 'i')
-  const releaseDateMatch = data.match(releaseDateRegex)
-  if (releaseDateMatch) {
-    releaseDate = extractReleaseDateWithLibrary(releaseDateMatch[1], language)
-  }
+  $('th').each((_, element) => {
+    const thText = $(element).text().trim()
+    if (thText.includes(releaseDateTerm)) {
+      const releaseDateText = $(element).next('td').text().trim()
+      releaseDate = extractReleaseDateWithLibrary(releaseDateText, language)
+    }
+  })
 
   // Extract developer (producer)
-  const developerMatch = data.match(
-    /<[^>]*class="[^"]*maker_name[^"]*"[^>]*>.*?<a[^>]*>(.*?)<\/a>/s
-  )
-  const developer = developerMatch?.[1]?.replace(/<[^>]*>/g, '').trim() || ''
+  const developer = $('.maker_name a').text().trim()
   const developers = developer ? [developer] : []
   const publishers = developers.length > 0 ? [...developers] : undefined
 
@@ -118,60 +160,64 @@ export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata>
   const genres: string[] = []
 
   // Extract main genre tags
-  const genreMatches =
-    data.match(/<[^>]*class="[^"]*main_genre[^"]*"[^>]*>.*?<a[^>]*>(.*?)<\/a>/gs) || []
-  for (const match of genreMatches) {
-    const tagMatch = match.match(/<a[^>]*>(.*?)<\/a>/s)
-    if (tagMatch) {
-      const tag = tagMatch[1].replace(/<[^>]*>/g, '').trim()
-      if (tag && !tags.includes(tag)) {
-        tags.push(tag)
-      }
+  $('.main_genre a').each((_, element) => {
+    const tag = $(element).text().trim()
+    if (tag && !tags.includes(tag)) {
+      tags.push(tag)
     }
-  }
+  })
 
   // Extract work type
-  const workTypeRegex = new RegExp(`${workTypeTerm}[^<]*?<a[^>]*>(.*?)</a>`, 'gs')
-  let workTypeMatch
-  while ((workTypeMatch = workTypeRegex.exec(data)) !== null) {
-    const genre = workTypeMatch[1].replace(/<[^>]*>/g, '').trim()
-    if (genre && !genres.includes(genre)) {
-      genres.push(genre)
-      if (!tags.includes(genre)) {
-        tags.push(genre)
-      }
+  $('th').each((_, element) => {
+    const thText = $(element).text().trim()
+    if (thText.includes(workTypeTerm)) {
+      $(element)
+        .next('td')
+        .find('a')
+        .each((_, genreElement) => {
+          const genre = $(genreElement).text().trim()
+          if (genre && !genres.includes(genre)) {
+            genres.push(genre)
+            if (!tags.includes(genre)) {
+              tags.push(genre)
+            }
+          }
+        })
     }
-  }
+  })
 
   // Extract related sites
   const relatedSites: { label: string; url: string }[] = []
 
+  relatedSites.push({
+    label: 'DLsite',
+    url
+  })
+
   // Add producer site
-  const makerUrlMatch = data.match(
-    /<[^>]*class="[^"]*maker_name[^"]*"[^>]*>.*?<a[^>]*href="([^"]*)"/
-  )
-  if (makerUrlMatch?.[1] && developer) {
+  const makerUrl = $('.maker_name a').attr('href')
+  if (makerUrl && developer) {
     relatedSites.push({
       label: `${developer} (${i18next.t('scraper:dlsite.maker', { lng: language })})`,
-      url: makerUrlMatch[1]
+      url: makerUrl
     })
   }
 
   // Add series link (if exists)
-  const seriesRegex = new RegExp(`${seriesTerm}[^<]*?<a[^>]*href="([^"]*)"[^>]*>(.*?)</a>`, 'i')
-  const seriesMatch = data.match(seriesRegex)
-  if (seriesMatch) {
-    const seriesUrl = seriesMatch[1]
-    const seriesName = seriesMatch[2].replace(/<[^>]*>/g, '').trim()
-    if (seriesUrl && seriesName) {
-      relatedSites.push({
-        label: `${seriesName} (${i18next.t('scraper:dlsite.series', { lng: language })})`,
-        url: seriesUrl
-      })
+  $('th').each((_, element) => {
+    const thText = $(element).text().trim()
+    if (thText.includes(seriesTerm)) {
+      const seriesElement = $(element).next('td').find('a').first()
+      const seriesUrl = seriesElement.attr('href')
+      const seriesName = seriesElement.text().trim()
+      if (seriesUrl && seriesName) {
+        relatedSites.push({
+          label: `${seriesName} (${i18next.t('scraper:dlsite.series', { lng: language })})`,
+          url: seriesUrl
+        })
+      }
     }
-  }
-
-  const originalName = name
+  })
 
   return {
     name,
@@ -227,26 +273,24 @@ export async function getGameBackgrounds(dlsiteId: string): Promise<string[]> {
     })
 
     const data = await response.text()
+    const $ = cheerio.load(data)
     const screenshots: string[] = []
 
-    // Extract all sample images using regex
-    const imageRegex = /<div[^>]*data-src="([^"]*)"[^>]*>/g
-    let match
-    while ((match = imageRegex.exec(data)) !== null) {
-      let imgUrl = match[1]
+    $('[data-src]').each((_, element) => {
+      let imgUrl = $(element).attr('data-src') || ''
 
-      if (imgUrl) {
-        // Fix protocol relative URLs
-        if (imgUrl.startsWith('//')) {
-          imgUrl = `https:${imgUrl}`
-        }
-
-        // Avoid duplicate URLs
-        if (!screenshots.includes(imgUrl)) {
-          screenshots.push(imgUrl)
-        }
+      if (imgUrl && imgUrl.startsWith('//')) {
+        imgUrl = `https:${imgUrl}`
       }
-    }
+
+      if (
+        imgUrl &&
+        !screenshots.includes(imgUrl) &&
+        (imgUrl.includes('_img_main') || imgUrl.includes('_img_smp'))
+      ) {
+        screenshots.push(imgUrl)
+      }
+    })
 
     return screenshots
   } catch (error) {
@@ -275,14 +319,6 @@ export async function getGameBackgroundsByName(gameName: string): Promise<string
 
 export async function getGameCover(dlsiteId: string): Promise<string> {
   try {
-    const screenshots = await getGameBackgrounds(dlsiteId)
-
-    // Usually the first image is the cover
-    if (screenshots.length > 0) {
-      return screenshots[0]
-    }
-
-    // If no sample image is found, try to get main image from work page
     const url = `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html`
     const language = await getLanguage()
 
@@ -297,16 +333,34 @@ export async function getGameCover(dlsiteId: string): Promise<string> {
     })
 
     const data = await response.text()
+    const $ = cheerio.load(data)
 
-    // Extract main image using regex
-    const mainImgMatch = data.match(/<img[^>]*class="[^"]*product-slider[^"]*"[^>]*src="([^"]*)"/)
-    if (mainImgMatch) {
-      let mainImg = mainImgMatch[1]
-      // Fix protocol relative URLs
+    // 首先尝试找到包含 img_main 的图片
+    let mainImg = ''
+
+    // 查找所有图片元素
+    $('img[srcset], source[srcset]').each((_, element) => {
+      const srcset = $(element).attr('srcset') || ''
+      if (srcset.includes('img_main') && !mainImg) {
+        mainImg = srcset
+      }
+    })
+
+    // 如果找到了包含 img_main 的图片
+    if (mainImg) {
+      // 修复协议相对URL
       if (mainImg.startsWith('//')) {
-        mainImg = `https:${mainImg}`
+        return `https:${mainImg}`
       }
       return mainImg
+    }
+
+    // 如果没有找到包含 img_main 的图片，则获取背景图片列表
+    const screenshots = await getGameBackgrounds(dlsiteId)
+
+    // 使用第一个背景图片作为封面
+    if (screenshots.length > 0) {
+      return screenshots[0]
     }
 
     return ''
