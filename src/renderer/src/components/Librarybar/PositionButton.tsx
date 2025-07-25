@@ -48,7 +48,7 @@ export const PositionButton = React.memo(function PositionButton({
 
     // Builds the game element selector based on the current path by default
     const currentGameId = pathname.split('/games/')[1]?.split('/')[0]
-    const currentGroupId = pathname.split('/games/')[1]?.split('/')[1]
+    const currentGroupId = decodeURIComponent(pathname.split('/games/')[1]?.split('/')[1] || '')
 
     if (!currentGameId || !currentGroupId) return ''
     return `[data-game-id="${currentGameId}"][data-group-id="${currentGroupId}"]`
