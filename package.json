@@ -52,6 +52,7 @@
     "@tailwindcss/vite": "^4.1.11",
     "@tanstack/react-router": "^1.125.6",
     "adm-zip": "^0.5.16",
+    "cheerio": "^1.1.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",

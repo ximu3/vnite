@@ -166,218 +166,219 @@ export function SteamImporter(): React.JSX.Element {
         onInteractOutside={(e) => {
           e.preventDefault()
         }}
-        className={cn('transition-all duration-300 w-[500px]')}
+        className={cn('transition-all duration-300 w-[450px] lg:w-[500px]')}
       >
         <DialogHeader>
           <DialogTitle>{t('steamImporter.dialog.title')}</DialogTitle>
           <DialogDescription>{t('steamImporter.dialog.description')}</DialogDescription>
         </DialogHeader>
-
-        {/* Steam ID Input */}
-        <div className="grid gap-4 py-4">
-          <div className="grid items-center grid-cols-4 gap-4">
-            <Input
-              id="steamId"
-              value={steamId}
-              onChange={(e) => setSteamId(e.target.value)}
-              placeholder={t('steamImporter.input.steamId')}
-              className="col-span-3"
-              disabled={isLoadingGames || isImporting}
-            />
-            <Button
-              onClick={fetchGames}
-              disabled={!steamId || isLoadingGames || isImporting}
-              className="relative"
-            >
-              {isLoadingGames ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Search className="w-4 h-4" />
-              )}
-              <span className="ml-2">{t('steamImporter.input.fetch')}</span>
-            </Button>
-          </div>
-        </div>
-
-        {/* Game List */}
-        {!isImporting && (
-          <div className="space-y-4">
-            {((): React.JSX.Element => {
-              switch (currentStatus) {
-                case 'initial':
-                  return (
-                    <Alert>
-                      <AlertCircle className="w-4 h-4" />
-                      <AlertTitle>{t('steamImporter.status.initial.title')}</AlertTitle>
-                      <AlertDescription>
-                        {t('steamImporter.status.initial.description')}
-                      </AlertDescription>
-                    </Alert>
-                  )
-                case 'ready':
-                  return (
-                    <Alert>
-                      <AlertCircle className="w-4 h-4" />
-                      <AlertTitle>{t('steamImporter.status.ready.title')}</AlertTitle>
-                      <AlertDescription>
-                        {t('steamImporter.status.ready.description')}
-                      </AlertDescription>
-                    </Alert>
-                  )
-                case 'loading':
-                  return (
-                    <Alert>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <AlertTitle>{t('steamImporter.status.loading.title')}</AlertTitle>
-                      <AlertDescription>
-                        {t('steamImporter.status.loading.description')}
-                      </AlertDescription>
-                    </Alert>
-                  )
-                case 'empty':
-                  return (
-                    <Alert>
-                      <CheckCircle2 className="w-4 h-4" />
-                      <AlertTitle>{t('steamImporter.status.empty.title')}</AlertTitle>
-                      <AlertDescription>
-                        {t('steamImporter.status.empty.description')}
-                      </AlertDescription>
-                    </Alert>
-                  )
-                case 'hasGames':
-                  return (
-                    // Game List Contents
-                    <>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id="selectAll"
-                            className={cn('rounded-lg')}
-                            checked={selectedCount === games.length}
-                            onCheckedChange={(checked) => toggleAllGames(!!checked)}
-                          />
-                          <label htmlFor="selectAll" className="text-sm">
-                            {t('steamImporter.gameList.selectAll', {
-                              selected: selectedCount,
-                              total: games.length
-                            })}
-                          </label>
-                        </div>
-                        <Input
-                          placeholder={t('steamImporter.gameList.search')}
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          className="max-w-xs"
-                        />
-                      </div>
-
-                      <ScrollArea className="h-[300px] rounded-md border p-4">
-                        <div className="space-y-2">
-                          {filteredGames.map((game) => (
-                            <div
-                              key={game.appId}
-                              className="flex items-center p-2 space-x-2 rounded-lg hover:bg-accent"
-                            >
-                              <Checkbox
-                                id={`game-${game.appId}`}
-                                checked={game.selected}
-                                className={cn('rounded-lg')}
-                                onCheckedChange={() => toggleGameSelection(game.appId)}
-                              />
-                              <label htmlFor={`game-${game.appId}`} className="flex-1 text-sm">
-                                {game.name}
-                              </label>
-                              <span className="text-sm text-muted-foreground">
-                                {t('steamImporter.gameList.hours', {
-                                  hours: Math.round(game.totalPlayingTime / (1000 * 60 * 60))
-                                })}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </ScrollArea>
-
-                      <Button
-                        onClick={startImport}
-                        disabled={selectedCount === 0 || isImportLoading}
-                        className="relative w-full"
-                      >
-                        {isImportLoading ? (
-                          <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            <span>{t('steamImporter.import.preparing')}</span>
-                          </>
-                        ) : (
-                          t('steamImporter.import.button', { count: selectedCount })
-                        )}
-                      </Button>
-                    </>
-                  )
-              }
-            })()}
-          </div>
-        )}
-
-        {/* Import progress */}
-        {isImporting && (
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Progress value={progress} className="w-full" />
-              <p className="text-sm text-center text-muted-foreground">{progress}%</p>
+        <div className="max-h-[65vh] lg:max-h-[70vh] xl:max-h-[80vh] overflow-y-auto scrollbar-base pb-1 pr-1">
+          {/* Steam ID Input */}
+          <div className="grid gap-4 py-4">
+            <div className="grid items-center grid-cols-4 gap-4">
+              <Input
+                id="steamId"
+                value={steamId}
+                onChange={(e) => setSteamId(e.target.value)}
+                placeholder={t('steamImporter.input.steamId')}
+                className="col-span-3"
+                disabled={isLoadingGames || isImporting}
+              />
+              <Button
+                onClick={fetchGames}
+                disabled={!steamId || isLoadingGames || isImporting}
+                className="relative"
+              >
+                {isLoadingGames ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Search className="w-4 h-4" />
+                )}
+                <span className="ml-2">{t('steamImporter.input.fetch')}</span>
+              </Button>
             </div>
-
-            <Alert variant="default">
-              <AlertCircle className="w-4 h-4" />
-              <AlertTitle>{t('steamImporter.import.progress.title')}</AlertTitle>
-              <AlertDescription>{message}</AlertDescription>
-            </Alert>
-
-            <ScrollArea className="h-[300px] rounded-md border p-4">
-              <div className="space-y-2">
-                {gameLogs.map((game, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-col gap-1 justify-between max-w-[500px] p-2 truncate border rounded animate-fadeIn"
-                  >
-                    <div className="flex items-center gap-2">
-                      {game.status === 'success' ? (
-                        <CheckCircle2 className="w-4 h-4 text-primary animate-scaleIn" />
-                      ) : (
-                        <XCircle className="w-4 h-4 text-destructive animate-scaleIn" />
-                      )}
-                      <span className="truncate">{game.name}</span>
-                    </div>
-                    {game.error && (
-                      <span className="text-sm truncate text-destructive animate-fadeIn">
-                        {game.error}
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
           </div>
-        )}
 
-        {/* Import completed or error status display, only displays when the status is completed or error */}
-        {(status === 'completed' || status === 'error') && (
-          <Alert variant={status === 'error' ? 'destructive' : 'default'}>
-            <AlertCircle className="w-4 h-4" />
-            <AlertTitle>
-              {status === 'completed'
-                ? t('steamImporter.import.progress.completed')
-                : t('steamImporter.import.progress.error')}
-            </AlertTitle>
-            <AlertDescription>
-              {status === 'completed'
-                ? t('steamImporter.import.progress.summary', {
-                    success: successCount,
-                    error: errorCount
-                  })
-                : message}
-            </AlertDescription>
-          </Alert>
-        )}
+          {/* Game List */}
+          {!isImporting && (
+            <div className="space-y-4">
+              {((): React.JSX.Element => {
+                switch (currentStatus) {
+                  case 'initial':
+                    return (
+                      <Alert>
+                        <AlertCircle className="w-4 h-4" />
+                        <AlertTitle>{t('steamImporter.status.initial.title')}</AlertTitle>
+                        <AlertDescription>
+                          {t('steamImporter.status.initial.description')}
+                        </AlertDescription>
+                      </Alert>
+                    )
+                  case 'ready':
+                    return (
+                      <Alert>
+                        <AlertCircle className="w-4 h-4" />
+                        <AlertTitle>{t('steamImporter.status.ready.title')}</AlertTitle>
+                        <AlertDescription>
+                          {t('steamImporter.status.ready.description')}
+                        </AlertDescription>
+                      </Alert>
+                    )
+                  case 'loading':
+                    return (
+                      <Alert>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <AlertTitle>{t('steamImporter.status.loading.title')}</AlertTitle>
+                        <AlertDescription>
+                          {t('steamImporter.status.loading.description')}
+                        </AlertDescription>
+                      </Alert>
+                    )
+                  case 'empty':
+                    return (
+                      <Alert>
+                        <CheckCircle2 className="w-4 h-4" />
+                        <AlertTitle>{t('steamImporter.status.empty.title')}</AlertTitle>
+                        <AlertDescription>
+                          {t('steamImporter.status.empty.description')}
+                        </AlertDescription>
+                      </Alert>
+                    )
+                  case 'hasGames':
+                    return (
+                      // Game List Contents
+                      <>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <Checkbox
+                              id="selectAll"
+                              className={cn('rounded-lg')}
+                              checked={selectedCount === games.length}
+                              onCheckedChange={(checked) => toggleAllGames(!!checked)}
+                            />
+                            <label htmlFor="selectAll" className="text-sm">
+                              {t('steamImporter.gameList.selectAll', {
+                                selected: selectedCount,
+                                total: games.length
+                              })}
+                            </label>
+                          </div>
+                          <Input
+                            placeholder={t('steamImporter.gameList.search')}
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="max-w-xs"
+                          />
+                        </div>
+
+                        <ScrollArea className="h-[100px] lg:h-[200px] xl:h-[300px] rounded-md border p-4">
+                          <div className="space-y-2">
+                            {filteredGames.map((game) => (
+                              <div
+                                key={game.appId}
+                                className="flex items-center p-2 space-x-2 rounded-lg hover:bg-accent"
+                              >
+                                <Checkbox
+                                  id={`game-${game.appId}`}
+                                  checked={game.selected}
+                                  className={cn('rounded-lg')}
+                                  onCheckedChange={() => toggleGameSelection(game.appId)}
+                                />
+                                <label htmlFor={`game-${game.appId}`} className="flex-1 text-sm">
+                                  {game.name}
+                                </label>
+                                <span className="text-sm text-muted-foreground">
+                                  {t('steamImporter.gameList.hours', {
+                                    hours: Math.round(game.totalPlayingTime / (1000 * 60 * 60))
+                                  })}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </ScrollArea>
+
+                        <Button
+                          onClick={startImport}
+                          disabled={selectedCount === 0 || isImportLoading}
+                          className="relative w-full"
+                        >
+                          {isImportLoading ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              <span>{t('steamImporter.import.preparing')}</span>
+                            </>
+                          ) : (
+                            t('steamImporter.import.button', { count: selectedCount })
+                          )}
+                        </Button>
+                      </>
+                    )
+                }
+              })()}
+            </div>
+          )}
+
+          {/* Import progress */}
+          {isImporting && (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Progress value={progress} className="w-full" />
+                <p className="text-sm text-center text-muted-foreground">{progress}%</p>
+              </div>
+
+              <Alert variant="default">
+                <AlertCircle className="w-4 h-4" />
+                <AlertTitle>{t('steamImporter.import.progress.title')}</AlertTitle>
+                <AlertDescription>{message}</AlertDescription>
+              </Alert>
+
+              <ScrollArea className="h-[100px] lg:h-[200px] xl:h-[300px] rounded-md border p-4">
+                <div className="space-y-2">
+                  {gameLogs.map((game, index) => (
+                    <div
+                      key={index}
+                      className="flex flex-col gap-1 justify-between max-w-[500px] p-2 truncate border rounded animate-fadeIn"
+                    >
+                      <div className="flex items-center gap-2">
+                        {game.status === 'success' ? (
+                          <CheckCircle2 className="w-4 h-4 text-primary animate-scaleIn" />
+                        ) : (
+                          <XCircle className="w-4 h-4 text-destructive animate-scaleIn" />
+                        )}
+                        <span className="truncate">{game.name}</span>
+                      </div>
+                      {game.error && (
+                        <span className="text-sm truncate text-destructive animate-fadeIn">
+                          {game.error}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+          )}
+
+          {/* Import completed or error status display, only displays when the status is completed or error */}
+          {(status === 'completed' || status === 'error') && (
+            <Alert className="mt-4" variant={status === 'error' ? 'destructive' : 'default'}>
+              <AlertCircle className="w-4 h-4" />
+              <AlertTitle>
+                {status === 'completed'
+                  ? t('steamImporter.import.progress.completed')
+                  : t('steamImporter.import.progress.error')}
+              </AlertTitle>
+              <AlertDescription>
+                {status === 'completed'
+                  ? t('steamImporter.import.progress.summary', {
+                      success: successCount,
+                      error: errorCount
+                    })
+                  : message}
+              </AlertDescription>
+            </Alert>
+          )}
+        </div>
       </DialogContent>
     </Dialog>
   )

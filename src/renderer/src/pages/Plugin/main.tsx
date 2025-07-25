@@ -36,7 +36,13 @@ export function Plugin(): React.JSX.Element {
                 <p className="text-muted-foreground mt-1">{t('description')}</p>
               </div>
               <div className="flex items-center space-x-3">
-                <Button variant="outline" onClick={checkUpdates} disabled={loading}>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    checkUpdates()
+                  }}
+                  disabled={loading}
+                >
                   <span className={cn('icon-[mdi--update] w-4 h-4 mr-2')}></span>
                   {t('actions.checkUpdates')}
                 </Button>

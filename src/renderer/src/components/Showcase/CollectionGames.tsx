@@ -5,6 +5,7 @@ import { ScrollArea } from '~/components/ui/scroll-area'
 import { useGameCollectionStore } from '~/stores'
 import { cn } from '~/utils'
 import { GamePoster } from './posters/GamePoster'
+import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
 
 export type DragContextType = {
   isDraggingGlobal: boolean
@@ -38,6 +39,33 @@ export function CollectionGamesComponent({
   const [gap, setGap] = useState<number>(0)
   const [columns, setColumns] = useState<number>(0)
   const gridContainerRef = useRef<HTMLDivElement | null>(null)
+
+  const selectGames = useGameBatchEditorStore((state) => state.selectGames)
+
+  // 键盘快捷键处理
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent): void => {
+      // 检查当前是否有对话框元素处于活动状态
+      const isDialogActive =
+        document.querySelector('dialog[open]') !== null ||
+        document.querySelector('.modal.active') !== null ||
+        document.querySelector('[role="dialog"]') !== null
+
+      // 当对话框打开时，不执行快捷键功能
+      if (isDialogActive) {
+        return
+      }
+
+      // Ctrl + A 选择所有游戏
+      if (e.ctrlKey && e.key === 'a') {
+        e.preventDefault()
+        selectGames(games)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [selectGames, collections])
 
   useEffect(() => {
     const calculateGap = (): void => {

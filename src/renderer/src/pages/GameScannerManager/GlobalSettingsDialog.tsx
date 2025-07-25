@@ -80,7 +80,7 @@ export const GlobalSettingsDialog: React.FC<GlobalSettingsDialogProps> = ({ isOp
                 pattern="[0-9]*\.?[0-9]*"
               />
             </TooltipTrigger>
-            <TooltipContent side="right">
+            <TooltipContent side="bottom" align="start">
               <div className={cn('text-xs')}>{t('globalSettings.scanIntervalTooltip')}</div>
             </TooltipContent>
           </Tooltip>
@@ -91,13 +91,13 @@ export const GlobalSettingsDialog: React.FC<GlobalSettingsDialogProps> = ({ isOp
           <Tooltip>
             <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
               <ArrayTextarea
-                className="max-h-[250px] min-h-[100px]"
+                className="h-[100px] resize-none"
                 placeholder={t('globalSettings.ignoreListPlaceholder')}
                 value={globalSettings.ignoreList}
                 onChange={(value: string[]) => updateGlobalSettings({ ignoreList: value })}
               />
             </TooltipTrigger>
-            <TooltipContent side="right" align="start">
+            <TooltipContent side="bottom" align="start">
               <div className={cn('text-xs')}>{t('globalSettings.ignoreListTooltip')}</div>
             </TooltipContent>
           </Tooltip>

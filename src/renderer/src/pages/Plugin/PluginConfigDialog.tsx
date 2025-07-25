@@ -172,7 +172,7 @@ export function PluginConfigDialog({
 
   return (
     <Dialog open={open && !!pluginId} onOpenChange={onClose}>
-      <DialogContent className="h-[700px] w-[1000px] flex flex-col">
+      <DialogContent className="h-[70vh] w-[50vw] flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <span className={cn('icon-[mdi--cog] w-5 h-5')}></span>

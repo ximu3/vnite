@@ -288,7 +288,7 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
 
   return (
     <Dialog open={open}>
-      <DialogContent className="w-[700px]" onClose={handleClose}>
+      <DialogContent className="w-[60vw]" onClose={handleClose}>
         <DialogHeader>
           <DialogTitle>
             {isBatchMode
@@ -297,170 +297,171 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
           </DialogTitle>
           <DialogDescription>{t('updater.dialog.description')}</DialogDescription>
         </DialogHeader>
-
-        {/* 根据状态显示设置页面或进度页面 */}
-        {(!isBatchMode || (isBatchMode && !showProgress)) && (
-          <div className="space-y-6 py-4 w-full h-full">
-            {/* 数据源选择 */}
-            {isBatchMode && (
-              <div className="grid gap-2">
-                <Label htmlFor="dataSource" className="">
-                  {t('updater.dialog.dataSource')}
-                </Label>
-                <Select value={dataSource} onValueChange={setDataSource}>
-                  <SelectTrigger id="dataSource">
-                    <SelectValue placeholder={t('updater.dialog.selectDataSource')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {availableDataSources.map((source) => (
-                      <SelectItem key={source.id} value={source.id}>
-                        {source.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-
-            {/* 要更新的字段 */}
-            <div className="grid gap-2">
-              <Label>{t('updater.dialog.updateFields')}</Label>
-              <div className="grid grid-cols-2 gap-2">
-                {AllGameMetadataUpdateFields.map((field) => (
-                  <div key={field} className="flex items-center gap-2">
-                    <Checkbox
-                      id={`field-${field}`}
-                      checked={selectedFields.includes(field)}
-                      onCheckedChange={() => toggleField(field)}
-                    />
-                    <Label
-                      htmlFor={`field-${field}`}
-                      className={cn(
-                        'cursor-pointer',
-                        (field === '#all' || field === '#missing') && 'font-bold'
-                      )}
-                    >
-                      {t(`updater.fields.${field}`)}
-                    </Label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* 更新选项 */}
-            <div className="grid gap-2">
-              <Label>{t('updater.dialog.mergeStrategy')}</Label>
-              <div className="grid gap-4">
-                <Select
-                  value={options.mergeStrategy}
-                  onValueChange={(val) =>
-                    setOptions({
-                      ...options,
-                      mergeStrategy: val as 'replace' | 'merge' | 'append'
-                    })
-                  }
-                >
-                  <SelectTrigger id="mergeStrategy">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="replace">{t('updater.dialog.replace')}</SelectItem>
-                    <SelectItem value="merge">{t('updater.dialog.merge')}</SelectItem>
-                    <SelectItem value="append">{t('updater.dialog.append')}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {/* 批量模式下的并发设置 */}
-            {isBatchMode && (
-              <div className="grid gap-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="concurrency">
-                    {t('updater.dialog.concurrency', { count: concurrency })}
+        <div className="max-h-[45vh] lg:max-h-[65vh] overflow-y-auto scrollbar-base pb-1 pr-1">
+          {/* 根据状态显示设置页面或进度页面 */}
+          {(!isBatchMode || (isBatchMode && !showProgress)) && (
+            <div className="space-y-6 py-1 w-full h-full">
+              {/* 数据源选择 */}
+              {isBatchMode && (
+                <div className="grid gap-2">
+                  <Label htmlFor="dataSource" className="">
+                    {t('updater.dialog.dataSource')}
                   </Label>
-                </div>
-                <Slider
-                  id="concurrency"
-                  min={1}
-                  max={20}
-                  step={1}
-                  value={[concurrency]}
-                  onValueChange={([val]) => setConcurrency(val)}
-                />
-                <span className="text-xs text-muted-foreground">
-                  {t('updater.dialog.concurrencyDescription')}
-                </span>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* 批量模式的进度页面 */}
-        {isBatchMode && showProgress && (
-          <div className="py-4 space-y-4 h-full overflow-hidden flex flex-col">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span>
-                  {t('updater.dialog.progress', {
-                    completed: Math.round((progress.completed / progress.total) * 100)
-                  })}
-                </span>
-                <span>
-                  {t('updater.dialog.progressCount', {
-                    current: progress.completed,
-                    total: progress.total
-                  })}
-                </span>
-              </div>
-              <Progress value={(progress.completed / progress.total) * 100} className="h-2" />
-
-              <div className="flex justify-between text-sm mt-2">
-                <span className="text-primary">
-                  {t('updater.dialog.successful', { count: progress.successful })}
-                </span>
-                <span className="text-destructive">
-                  {t('updater.dialog.failed', { count: progress.failed })}
-                </span>
-              </div>
-            </div>
-
-            <ScrollArea className="h-[400px]">
-              <div className="space-y-2 py-2 pr-4">
-                {progress.results.map((result, index) => (
-                  <Card key={index} className="pb-5">
-                    <CardHeader className="">
-                      <CardTitle className="text-base flex justify-between items-center">
-                        <span className="truncate max-w-[300px]">
-                          {result.gameName || result.gameId}
-                        </span>
-                        {result.status === 'error' ? (
-                          <span className="icon-[mdi--error-outline] text-destructive w-5 h-5"></span>
-                        ) : (
-                          <span className="icon-[mdi--success-circle-outline] text-primary w-5 h-5"></span>
-                        )}
-                      </CardTitle>
-                    </CardHeader>
-                    {result.status === 'error' && (
-                      <CardContent className="">
-                        <CardDescription className="text-destructive">
-                          {t('updater.dialog.error', { message: result.error })}
-                        </CardDescription>
-                      </CardContent>
-                    )}
-                  </Card>
-                ))}
-              </div>
-
-              {isUpdating && progress.completed < progress.total && (
-                <div className="flex justify-center items-center p-4">
-                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                  <span className="ml-2">{t('updater.dialog.processing')}</span>
+                  <Select value={dataSource} onValueChange={setDataSource}>
+                    <SelectTrigger id="dataSource">
+                      <SelectValue placeholder={t('updater.dialog.selectDataSource')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableDataSources.map((source) => (
+                        <SelectItem key={source.id} value={source.id}>
+                          {source.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               )}
-            </ScrollArea>
-          </div>
-        )}
+
+              {/* 要更新的字段 */}
+              <div className="grid gap-2">
+                <Label>{t('updater.dialog.updateFields')}</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {AllGameMetadataUpdateFields.map((field) => (
+                    <div key={field} className="flex items-center gap-2">
+                      <Checkbox
+                        id={`field-${field}`}
+                        checked={selectedFields.includes(field)}
+                        onCheckedChange={() => toggleField(field)}
+                      />
+                      <Label
+                        htmlFor={`field-${field}`}
+                        className={cn(
+                          'cursor-pointer',
+                          (field === '#all' || field === '#missing') && 'font-bold'
+                        )}
+                      >
+                        {t(`updater.fields.${field}`)}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 更新选项 */}
+              <div className="grid gap-2">
+                <Label>{t('updater.dialog.mergeStrategy')}</Label>
+                <div className="grid gap-4">
+                  <Select
+                    value={options.mergeStrategy}
+                    onValueChange={(val) =>
+                      setOptions({
+                        ...options,
+                        mergeStrategy: val as 'replace' | 'merge' | 'append'
+                      })
+                    }
+                  >
+                    <SelectTrigger id="mergeStrategy">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="replace">{t('updater.dialog.replace')}</SelectItem>
+                      <SelectItem value="merge">{t('updater.dialog.merge')}</SelectItem>
+                      <SelectItem value="append">{t('updater.dialog.append')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* 批量模式下的并发设置 */}
+              {isBatchMode && (
+                <div className="grid gap-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="concurrency">
+                      {t('updater.dialog.concurrency', { count: concurrency })}
+                    </Label>
+                  </div>
+                  <Slider
+                    id="concurrency"
+                    min={1}
+                    max={20}
+                    step={1}
+                    value={[concurrency]}
+                    onValueChange={([val]) => setConcurrency(val)}
+                  />
+                  <span className="text-xs text-muted-foreground">
+                    {t('updater.dialog.concurrencyDescription')}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 批量模式的进度页面 */}
+          {isBatchMode && showProgress && (
+            <div className="py-1 space-y-4 h-full flex flex-col">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span>
+                    {t('updater.dialog.progress', {
+                      completed: Math.round((progress.completed / progress.total) * 100)
+                    })}
+                  </span>
+                  <span>
+                    {t('updater.dialog.progressCount', {
+                      current: progress.completed,
+                      total: progress.total
+                    })}
+                  </span>
+                </div>
+                <Progress value={(progress.completed / progress.total) * 100} className="h-2" />
+
+                <div className="flex justify-between text-sm mt-2">
+                  <span className="text-primary">
+                    {t('updater.dialog.successful', { count: progress.successful })}
+                  </span>
+                  <span className="text-destructive">
+                    {t('updater.dialog.failed', { count: progress.failed })}
+                  </span>
+                </div>
+              </div>
+
+              <ScrollArea className="h-[400px]">
+                <div className="space-y-2 py-2 pr-4">
+                  {progress.results.map((result, index) => (
+                    <Card key={index} className="pb-5">
+                      <CardHeader className="">
+                        <CardTitle className="text-base flex justify-between items-center">
+                          <span className="truncate max-w-[300px]">
+                            {result.gameName || result.gameId}
+                          </span>
+                          {result.status === 'error' ? (
+                            <span className="icon-[mdi--error-outline] text-destructive w-5 h-5"></span>
+                          ) : (
+                            <span className="icon-[mdi--success-circle-outline] text-primary w-5 h-5"></span>
+                          )}
+                        </CardTitle>
+                      </CardHeader>
+                      {result.status === 'error' && (
+                        <CardContent className="">
+                          <CardDescription className="text-destructive">
+                            {t('updater.dialog.error', { message: result.error })}
+                          </CardDescription>
+                        </CardContent>
+                      )}
+                    </Card>
+                  ))}
+                </div>
+
+                {isUpdating && progress.completed < progress.total && (
+                  <div className="flex justify-center items-center p-4">
+                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                    <span className="ml-2">{t('updater.dialog.processing')}</span>
+                  </div>
+                )}
+              </ScrollArea>
+            </div>
+          )}
+        </div>
 
         <DialogFooter>
           {isBatchMode && showProgress ? (

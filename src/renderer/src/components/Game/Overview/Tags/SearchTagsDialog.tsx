@@ -105,7 +105,7 @@ export function SearchTagsDialog({
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent
         showCloseButton={false}
-        className={cn('w-[50vw] h-[85vh] max-w-none flex flex-col gap-3')}
+        className={cn('w-[50vw] h-[80vh] max-w-none flex flex-col gap-3')}
       >
         <Card className={cn('p-3 w-full h-full scrollbar-base overflow-auto')}>
           {tagsList.length > 0 ? (

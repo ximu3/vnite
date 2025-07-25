@@ -16,10 +16,12 @@ export function DescriptionDialog({ gameId }: { gameId: string }): React.JSX.Ele
     <Dialog>
       <DialogTrigger>
         <span
-          className={cn('invisible group-hover:visible w-5 h-5 icon-[mdi--square-edit-outline]')}
+          className={cn(
+            'invisible group-hover:visible w-5 h-5 icon-[mdi--square-edit-outline] cursor-pointer'
+          )}
         ></span>
       </DialogTrigger>
-      <DialogContent className={cn('w-[700px] h-[500px] max-w-none flex flex-col gap-5')}>
+      <DialogContent className={cn('w-[70vw] h-[70vh] lg:h-[80vh] max-w-none flex flex-col gap-5')}>
         <div className={cn('text-xs -mb-2')}>{t('detail.overview.description.htmlHint')}</div>
         <Textarea
           spellCheck={false}

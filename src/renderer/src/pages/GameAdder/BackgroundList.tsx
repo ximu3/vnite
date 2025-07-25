@@ -136,12 +136,12 @@ export function BackgroundList(): React.JSX.Element {
   }
 
   return (
-    <div className={cn('w-[100vh] h-[83vh] p-3')}>
+    <div className={cn('w-[50vw] h-[80vh] p-3')}>
       <div className={cn('flex flex-col w-full h-full gap-3')}>
         <div className={cn('font-bold')}>{t('gameAdder.backgrounds.title')}</div>
         <div className="w-full h-full">
           <div className={cn('scrollbar-base overflow-auto pr-3')}>
-            <div className={cn('grid grid-cols-2 gap-3 h-[72vh]')}>
+            <div className={cn('grid grid-cols-2 gap-3 h-[calc(80vh-100px)]')}>
               {backgroundList.length !== 0 ? (
                 backgroundList.map((image) => (
                   <div

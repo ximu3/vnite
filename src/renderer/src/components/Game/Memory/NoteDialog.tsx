@@ -19,11 +19,8 @@ export function NoteDialog({
   const { t } = useTranslation('game')
 
   return (
-    <Dialog open={isOpen}>
-      <DialogContent
-        className={cn('w-[700px] h-[500px] max-w-none flex flex-col gap-5')}
-        onClose={() => setIsOpen(false)}
-      >
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogContent className={cn('w-[50vw] h-[80vh] max-w-none flex flex-col gap-5')}>
         <div className={cn('text-xs -mb-2')}>{t('detail.memory.dialog.markdownHint')}</div>
         <Textarea
           spellCheck={false}

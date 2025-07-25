@@ -6,11 +6,11 @@ import { useTranslation } from 'react-i18next'
 
 // eslint-disable-next-line
 export const TABLE_COLUMN_WIDTHS = {
-  dataSource: 'w-[150px] 3xl:w-[350px]',
-  name: 'w-[300px] 3xl:w-[350px]',
-  id: 'w-[150px] 3xl:w-[200px]',
-  status: 'w-[120px] 3xl:w-[200px]',
-  actions: 'w-[150px] 3xl:w-[200px]'
+  dataSource: 'w-1/6',
+  name: 'w-1/3',
+  id: 'w-1/6',
+  status: 'w-1/6',
+  actions: 'w-1/6'
 } as const
 
 export function GameListTable(): React.JSX.Element {
@@ -50,9 +50,11 @@ export function GameListTable(): React.JSX.Element {
           </TableRow>
         </TableHeader>
       </Table>
-      <Table>
-        <TableBody>
-          <div className={cn('overflow-auto scrollbar-base w-full', 'h-[calc(75vh-100px)]')}>
+      <Table className="w-full">
+        <TableBody className="w-full">
+          <div
+            className={cn('overflow-auto scrollbar-base w-full relative', 'h-[calc(70vh-120px)]')}
+          >
             {sortedGames.map((game) => (
               <GameListItem key={game.dataId} game={game} />
             ))}

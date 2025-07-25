@@ -40,9 +40,11 @@ export function InformationDialog({ gameId }: { gameId: string }): React.JSX.Ele
           className={cn('invisible group-hover:visible w-5 h-5 icon-[mdi--square-edit-outline]')}
         ></span>
       </DialogTrigger>
-      <DialogContent className="w-[500px]">
+      <DialogContent className="w-[500px] p-3">
         <div
-          className={cn('grid grid-cols-[auto_1fr] gap-y-3 gap-x-4 px-3 py-5 items-center text-sm')}
+          className={cn(
+            'grid grid-cols-[auto_1fr] gap-y-3 gap-x-4 py-1 pr-2 items-center text-sm overflow-auto scrollbar-base-thin max-h-[70vh]'
+          )}
         >
           <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('detail.overview.information.fields.originalName')}

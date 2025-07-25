@@ -87,7 +87,7 @@ export function FontSettingsDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[700px]">
+      <DialogContent className="w-[500px]">
         <DialogHeader>
           <DialogTitle>{t('appearances.font.dialog.title')}</DialogTitle>
           <DialogDescription>{t('appearances.font.dialog.description')}</DialogDescription>
@@ -123,7 +123,7 @@ export function FontSettingsDialog({
                           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                         </div>
                       ) : (
-                        <ScrollArea className="h-[200px] overflow-auto">
+                        <ScrollArea className="h-[100px] lg:h-[200px] overflow-auto">
                           <CommandGroup>
                             {filteredFonts.map((fontName) => (
                               <CommandItem
@@ -153,13 +153,13 @@ export function FontSettingsDialog({
             </div>
           </div>
 
-          <div className="grid gap-2">
+          <div className="hidden lg:grid lg:gap-2">
             <Label htmlFor="preview">{t('appearances.font.dialog.preview')}</Label>
             <Textarea
               id="preview"
               value={previewText}
               onChange={(e) => setPreviewText(e.target.value)}
-              className="font-current h-[200px] resize-none"
+              className="font-current h-[100px] resize-none"
               style={{ fontFamily: font || 'var(--font-sans)' }}
             />
           </div>

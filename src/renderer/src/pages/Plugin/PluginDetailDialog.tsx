@@ -8,7 +8,6 @@ import {
   DialogClose
 } from '~/components/ui/dialog'
 import { Button } from '~/components/ui/button'
-import { ScrollArea } from '~/components/ui/scroll-area'
 import { cn } from '~/utils'
 import { PluginPackage } from '@appTypes/plugin'
 import { usePluginInfoStore } from './store'
@@ -68,7 +67,7 @@ export function PluginDetailDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="">
+      <DialogContent className="w-[70vw]">
         <DialogHeader className="pb-2">
           <div className="flex items-center justify-between">
             <DialogTitle className="text-xl">{plugin.manifest.name}</DialogTitle>
@@ -76,12 +75,10 @@ export function PluginDetailDialog({
           </div>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 h-full">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 h-[60vh] lg:h-[70vh] pr-2 pb-1 scrollbar-base overflow-auto">
           {/* 左侧：README */}
-          <div className="md:col-span-3 h-[70vh] border-r pr-5">
-            <ScrollArea className="rounded-md h-full">
-              {plugin.readme ? <MarkdownRenderer content={plugin.readme} /> : t('details.noReadme')}
-            </ScrollArea>
+          <div className="md:col-span-3 border-r pr-5">
+            {plugin.readme ? <MarkdownRenderer content={plugin.readme} /> : t('details.noReadme')}
           </div>
 
           {/* 右侧：详细信息 */}

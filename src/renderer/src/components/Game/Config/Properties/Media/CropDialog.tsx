@@ -110,12 +110,12 @@ export function CropDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={cn('max-w-3xl min-w-0 w-auto')}>
+      <DialogContent className={cn('w-auto')} showCloseButton={false}>
         <DialogHeader>
           <DialogTitle>
             {t('detail.properties.media.crop.title')}
             {displaySize && (
-              <span className={cn('ml-2 text-sm text-gray-500')}>({displaySize})</span>
+              <span className={cn('ml-2 text-sm text-muted-foreground')}>({displaySize})</span>
             )}
           </DialogTitle>
         </DialogHeader>

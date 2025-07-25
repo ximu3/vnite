@@ -62,13 +62,13 @@ export function UpdateDialog(): React.JSX.Element {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       {updateInfo ? (
-        <DialogContent className={cn('w-[650px]')}>
+        <DialogContent className={cn('w-[500px]')}>
           <DialogHeader>
             <DialogTitle>{t('dialog.title', { version: updateInfo?.version })}</DialogTitle>
           </DialogHeader>
           <div
             className={cn(
-              'h-[350px] p-2 pb-3 shadow-inner overflow-auto scrollbar-base-thin text-sm bg-accent/20 text-card-foreground rounded-xl',
+              'max-h-[55vh] p-2 pb-3 shadow-inner overflow-auto scrollbar-base-thin text-sm bg-accent/20 text-card-foreground rounded-xl',
               'prose max-w-none',
               'prose-headings:font-bold prose-headings:text-lg prose-headings:m-0 prose-headings:text-card-foreground',
               'prose-p:my-0',

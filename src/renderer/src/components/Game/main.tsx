@@ -129,7 +129,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   }, [dragging, localLogoPosition])
 
   return (
-    <div className={cn('w-full h-full relative overflow-hidden')}>
+    <div className={cn('w-full h-full relative overflow-hidden shrink-0')}>
       {/* 背景层已移至Light组件 */}
 
       {/* Logo编辑控制面板 - 仅在编辑模式下显示 */}

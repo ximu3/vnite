@@ -46,7 +46,7 @@ export function RuleDialog({
   if (!localTransformer) {
     return (
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
-        <DialogContent className="w-[1000px]">{t('ruleDialog.loading')}</DialogContent>
+        <DialogContent className="w-[60vw]">{t('ruleDialog.loading')}</DialogContent>
       </Dialog>
     )
   }
@@ -226,13 +226,13 @@ export function RuleDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[1000px] max-w-none h-[70vh]">
+      <DialogContent className="w-[60vw] max-w-none">
         <DialogHeader>
           <DialogTitle>
             {localTransformer.name} - {t('ruleDialog.title')}
           </DialogTitle>
         </DialogHeader>
-        <div className="h-[calc(70vh-170px)] pr-2 overflow-y-auto scrollbar-base-thin">
+        <div className="h-[60vh] pr-2 overflow-y-auto scrollbar-base-thin">
           <div className="w-full h-full">
             {currentRuleCategory === 'all' ? (
               <>

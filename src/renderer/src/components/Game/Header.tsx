@@ -65,7 +65,7 @@ export function Header({
             </div>
           </div>
         </div>
-        <div className="relative mr-3 pb-1">
+        <div className="relative lg:mr-3 pb-1 shrink-0">
           <GameImage
             gameId={gameId}
             key={`${gameId}-poster`}

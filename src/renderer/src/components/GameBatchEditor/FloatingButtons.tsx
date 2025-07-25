@@ -9,6 +9,8 @@ import { DeleteGameAlert } from './BatchGameNavCM/DeleteGameAlert'
 import { useGameMetadataUpdaterStore } from '~/pages/GameMetadataUpdater'
 import { useEffect } from 'react'
 import { useGameRegistry } from '~/stores/game'
+import { useLocation } from '@tanstack/react-router'
+import { useGameCollectionStore } from '~/stores/game'
 
 export function FloatingButtons(): React.JSX.Element {
   const { t } = useTranslation('game')
@@ -21,10 +23,26 @@ export function FloatingButtons(): React.JSX.Element {
     setGameIds: setGameMetadataUpdaterGameIds,
     setIsOpen: setIsGameMetadataUpdaterDialogOpen
   } = useGameMetadataUpdaterStore()
-  const gameIds = useGameRegistry((state) => state.gameIds)
+  const allGameIds = useGameRegistry((state) => state.gameIds)
+  const collections = useGameCollectionStore((state) => state.documents)
+  const location = useLocation()
 
   function selectAllGames(): void {
-    selectGames(gameIds)
+    let currentAllGameIds: string[] = []
+    if (location.pathname.includes('/library/collections')) {
+      const collectionId = location.pathname.split('/').pop()
+      if (collectionId && collections[collectionId]) {
+        // 如果在集合详情页面，获取当前集合的所有游戏ID
+        currentAllGameIds = collections[collectionId].games
+      } else {
+        // 如果在集合主页面，获取所有集合的所有游戏ID
+        currentAllGameIds = Object.values(collections).flatMap((collection) => collection.games)
+      }
+    } else {
+      // 如果不是在集合页面，获取所有游戏ID
+      currentAllGameIds = allGameIds
+    }
+    selectGames(currentAllGameIds)
   }
 
   // 键盘快捷键处理

@@ -121,7 +121,7 @@ export function Search({ className }: { className?: string }): React.JSX.Element
   }
 
   return (
-    <div className={cn('w-[36vw] h-auto', '3xl:w-[30vw]', className)}>
+    <div className={cn('w-[500px] h-auto', className)}>
       <div className={cn('grid grid-cols-[auto_1fr] gap-x-5 gap-y-2 text-sm items-center')}>
         {/* Data source selection */}
         <div className={cn('whitespace-nowrap select-none')}>

@@ -24,7 +24,6 @@ export function NameEditorDialog({
           onChange={(e) => {
             setGameName(e.target.value)
           }}
-          onBlur={saveGameName}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               setIsOpen(false)

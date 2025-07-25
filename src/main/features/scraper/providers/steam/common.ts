@@ -16,7 +16,7 @@ const STEAM_URLS = {
 async function fetchWithTimeout(
   url: string,
   options: RequestInit = {},
-  timeout = 5000
+  timeout = 10000
 ): Promise<Response> {
   const controller = new AbortController()
   const timeoutId = setTimeout(() => controller.abort(), timeout)
@@ -212,19 +212,71 @@ export async function getSteamMetadataByName(gameName: string): Promise<GameMeta
   }
 }
 
+/**
+ * 检查图片 URL 是否存在
+ * @param url 需要检查的图片 URL
+ * @returns 如果图片存在则返回 true，否则返回 false
+ */
+export async function checkImageExists(url: string): Promise<boolean> {
+  try {
+    const response = await net.fetch(url, {
+      method: 'HEAD' // 只获取头信息，不下载实际图片内容
+    })
+
+    // 检查状态码是否为 200
+    return response.status === 200
+  } catch (error) {
+    console.error(`检查图片失败: ${url}`, error)
+    return false
+  }
+}
+
+/**
+ * 获取游戏背景图片 URL
+ * @param appId Steam 应用 ID
+ * @returns 可用的背景图片 URL
+ */
 export async function getGameBackground(appId: string): Promise<string> {
-  // 直接返回高清图片 URL，而不检查其可用性
-  return `${STEAM_URLS.CDN}/steam/apps/${appId}/library_hero_2x.jpg`
+  const hdUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/library_hero_2x.jpg`
+  const standardUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/library_hero.jpg`
+
+  // 检查高清图片是否存在
+  const hdExists = await checkImageExists(hdUrl)
+
+  // 如果高清图片存在，返回高清图片 URL，否则返回标准图片 URL
+  return hdExists ? hdUrl : standardUrl
 }
 
+/**
+ * 获取游戏封面图片 URL
+ * @param appId Steam 应用 ID
+ * @returns 可用的封面图片 URL
+ */
 export async function getGameCover(appId: string): Promise<string> {
-  // 直接返回高清图片 URL，而不检查其可用性
-  return `${STEAM_URLS.CDN}/steam/apps/${appId}/library_600x900_2x.jpg`
+  const hdUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/library_600x900_2x.jpg`
+  const standardUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/library_600x900.jpg`
+
+  // 检查高清图片是否存在
+  const hdExists = await checkImageExists(hdUrl)
+
+  // 如果高清图片存在，返回高清图片 URL，否则返回标准图片 URL
+  return hdExists ? hdUrl : standardUrl
 }
 
+/**
+ * 获取游戏 Logo URL
+ * @param appId Steam 应用 ID
+ * @returns 可用的 Logo 图片 URL
+ */
 export async function getGameLogo(appId: string): Promise<string> {
-  // 直接返回高清图片 URL，而不检查其可用性
-  return `${STEAM_URLS.CDN}/steam/apps/${appId}/logo_2x.png`
+  const hdUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/logo_2x.png`
+  const standardUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/logo.png`
+
+  // 检查高清图片是否存在
+  const hdExists = await checkImageExists(hdUrl)
+
+  // 如果高清图片存在，返回高清图片 URL，否则返回标准图片 URL
+  return hdExists ? hdUrl : standardUrl
 }
 
 export async function checkSteamGameExists(appId: string): Promise<boolean> {

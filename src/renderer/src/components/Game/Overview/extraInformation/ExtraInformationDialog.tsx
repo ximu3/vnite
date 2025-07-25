@@ -61,11 +61,13 @@ export function ExtraInformationDialog({ gameId }: { gameId: string }): React.JS
     <Dialog>
       <DialogTrigger>
         <span
-          className={cn('invisible group-hover:visible w-5 h-5 icon-[mdi--square-edit-outline]')}
+          className={cn(
+            'invisible group-hover:visible w-5 h-5 icon-[mdi--square-edit-outline] cursor-pointer'
+          )}
         ></span>
       </DialogTrigger>
       <DialogContent
-        className={cn('w-[700px] max-w-none flex flex-col gap-3')}
+        className={cn('w-[70vw] max-w-none flex flex-col gap-3')}
         onClose={
           // Remove items with empty keys
           () => {
@@ -79,7 +81,11 @@ export function ExtraInformationDialog({ gameId }: { gameId: string }): React.JS
           </Button>
         </div>
 
-        <div className={cn('flex flex-col gap-3 grow p-3 overflow-auto scrollbar-base')}>
+        <div
+          className={cn(
+            'flex flex-col gap-3 grow px-3 py-1 overflow-auto scrollbar-base h-[60vh] lg:h-[70vh]'
+          )}
+        >
           {extra.map((item, i) => (
             <div key={i} className={cn('flex flex-row gap-2')}>
               {/* Key input and predefined key selection */}
