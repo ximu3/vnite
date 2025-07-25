@@ -249,8 +249,6 @@ type MainIpcEvents =
         averageEventsPerMinute: number
       }
 
-      'monitor:stop-game': (gameId: string) => void
-
       'scanner:scan-all': () => OverallScanProgress
       'scanner:scan-scanner': (scannerId: string) => OverallScanProgress
       'scanner:stop-scan': () => OverallScanProgress

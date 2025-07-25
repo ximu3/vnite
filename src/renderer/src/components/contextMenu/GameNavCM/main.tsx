@@ -30,6 +30,7 @@ export function GameNavCM({
   const setLazyloadMark = usePositionButtonStore((state) => state.setLazyloadMark)
   const { runningGames } = useRunningGames()
   const { t } = useTranslation('game')
+
   return (
     <ContextMenuContent className={cn('w-40')}>
       <ContextMenuItem

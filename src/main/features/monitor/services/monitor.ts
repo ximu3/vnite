@@ -6,25 +6,11 @@ import { updateRecentGamesInTray } from '~/features/system'
 import { GameDBManager, ConfigDBManager } from '~/core/database'
 import log from 'electron-log/main.js'
 import { backupGameSave } from '~/features/game'
-import { exec } from 'child_process'
 import { isEqual } from 'lodash'
 import { spawn } from 'child_process'
 import { psManager } from '~/utils'
 import { ipcManager } from '~/core/ipc'
 import { eventBus } from '~/core/events'
-
-const execAsync = (command: string, options?: any): Promise<{ stdout: string; stderr: string }> => {
-  return new Promise<{ stdout: string; stderr: string }>((resolve, reject) => {
-    exec(command, { ...options }, (error, stdout, stderr) => {
-      if (error) {
-        reject(error)
-      } else {
-        // Convert output from GBK to UTF-8
-        resolve({ stdout: stdout.toString(), stderr: stderr.toString() })
-      }
-    })
-  })
-}
 
 async function getProcessList(): Promise<
   Array<{
@@ -124,6 +110,7 @@ export class GameMonitor {
   private startTime?: string
   private endTime?: string
   private exiting: boolean = false
+  private stopping: boolean = false
 
   constructor(options: GameMonitorOptions) {
     this.options = {
@@ -141,12 +128,13 @@ export class GameMonitor {
       _event: Electron.IpcMainInvokeEvent,
       gameId: string
     ): Promise<void> => {
-      if (this.exiting || gameId !== this.options.gameId) {
+      if (this.exiting || gameId !== this.options.gameId || this.stopping) {
         return
       }
+      this.stopping = true
       await this.terminateProcesses()
     }
-    ipcMain.handleOnce(`stop-game-${this.options.gameId}`, this.ipcHandler)
+    ipcMain.handle(`stop-game-${this.options.gameId}`, this.ipcHandler)
   }
 
   private cleanupIpcListener(): void {
@@ -157,36 +145,9 @@ export class GameMonitor {
   }
 
   private async terminateProcesses(): Promise<void> {
-    const maxRetries = 3
-    const retryDelay = 100
-
     for (const monitored of this.monitoredProcesses) {
       if (monitored.isRunning) {
-        let retries = 0
-        let terminated = false
-
-        while (retries < maxRetries && !terminated) {
-          terminated = await this.terminateProcess(monitored)
-
-          if (!terminated) {
-            retries++
-            if (retries < maxRetries) {
-              console.log(
-                `Failed attempt to terminate process ${monitored.pid}, ${maxRetries - retries} retries`
-              )
-              await new Promise((resolve) => setTimeout(resolve, retryDelay))
-            }
-          }
-        }
-
-        if (!terminated) {
-          log.error(
-            `Unable to terminate process ${monitored.pid}, maximum number of retries reached`
-          )
-          throw new Error(
-            `Unable to terminate process ${monitored.pid}, maximum number of retries reached`
-          )
-        }
+        await this.terminateProcess(monitored)
       }
     }
     this.handleGameExit()
@@ -197,92 +158,67 @@ export class GameMonitor {
       const isProcessNameMode = process.isProcessNameMode === true
 
       if (isProcessNameMode) {
-        // Process name mode: use the process name directly
+        // 进程名称模式：直接使用进程名称
         const processName = process.path
-        console.log(`Attempt to terminate process name: ${processName}`)
+        console.log(`尝试终止进程名称: ${processName}`)
 
         try {
-          // Terminate processes by name using taskkill
-          await execAsync(`taskkill /F /IM "${processName}"`, {
-            shell: 'cmd.exe'
-          })
-          console.log(`Process ${processName} has been successfully terminated.`)
+          // 使用 PowerShell 通过名称终止进程
+          const psCommand = `Get-Process -Name "${processName.replace('.exe', '')}" | Stop-Process -Force`
+          await psManager.executeCommand(psCommand)
+          console.log(`进程 ${processName} 已成功终止。`)
           return true
         } catch (error) {
           const errorMessage = (error as any)?.message?.toLowerCase() || ''
 
-          // If the process does not exist, the termination is considered successful
+          // 如果进程不存在，则认为终止成功
           if (
             errorMessage.includes('不存在') ||
             errorMessage.includes('找不到') ||
-            errorMessage.includes('no process')
+            errorMessage.includes('no process') ||
+            errorMessage.includes('cannot find a process')
           ) {
-            console.log(`The process ${processName} no longer exists.`)
+            console.log(`进程 ${processName} 不再存在。`)
             return true
           }
 
-          console.error(`Unable to terminate process ${processName}:`, error)
+          console.error(`无法终止进程 ${processName}:`, error)
           return false
         }
       } else {
-        // Normalization path
+        // 路径标准化
         const normalizedPath = this.normalizePath(process.path)
         const processName = path.basename(normalizedPath)
 
-        console.log(`Attempts to terminate the process: ${normalizedPath}`)
+        console.log(`尝试终止进程: ${normalizedPath}`)
 
-        const methods = [
-          // Method 2: Exact Match by Path using PowerShell
-          async (): Promise<void> => {
-            const psCommand = `Get-Process | Where-Object {$_.Path -eq '${normalizedPath}'} | Stop-Process -Force`
-            await psManager.executeCommand(psCommand)
-          }
-        ]
-
-        for (const method of methods) {
-          try {
-            await method()
-            console.log(`Process ${processName} has been successfully terminated.`)
-            return true
-          } catch (error) {
-            const errorMessage = (error as any)?.message?.toLowerCase() || ''
-
-            // If the process no longer exists, termination is considered successful
-            if (
-              errorMessage.includes('不存在') ||
-              errorMessage.includes('找不到') ||
-              errorMessage.includes('no process') ||
-              errorMessage.includes('cannot find') ||
-              errorMessage.includes('没有找到进程')
-            ) {
-              console.log(`The process ${processName} no longer exists.`)
-              return true
-            }
-
-            // Log the error but keep trying the next method
-            console.warn(`Current method to terminate process ${processName} Failed:`, error)
-            continue
-          }
-        }
-
-        // Finally verify that the process is still running
-        const processes = await getProcessList()
-        const processStillExists = processes.some(
-          (p) => this.normalizePath(p.executablePath) === normalizedPath
-        )
-
-        if (!processStillExists) {
-          console.log(
-            `The process ${processName} no longer exists and is considered terminated successfully.`
-          )
+        try {
+          // 使用 PowerShell 通过精确路径匹配终止进程
+          const psCommand = `Get-Process | Where-Object {$_.Path -eq '${normalizedPath}'} | Stop-Process -Force`
+          await psManager.executeCommand(psCommand)
+          console.log(`进程 ${processName} 已成功终止。`)
           return true
-        }
+        } catch (error) {
+          const errorMessage = (error as any)?.message?.toLowerCase() || ''
 
-        console.error(`Cannot terminate process ${processName}, all methods fail`)
-        return false
+          // 如果进程不存在，则认为终止成功
+          if (
+            errorMessage.includes('不存在') ||
+            errorMessage.includes('找不到') ||
+            errorMessage.includes('no process') ||
+            errorMessage.includes('cannot find') ||
+            errorMessage.includes('没有找到进程')
+          ) {
+            console.log(`进程 ${processName} 不再存在。`)
+            return true
+          }
+
+          console.error(`无法终止进程 ${processName}:`, error)
+          return false
+        }
       }
     } catch (error) {
-      console.error('Failure to terminate the process:', error)
+      console.error('终止进程失败:', error)
       return false
     }
   }
@@ -380,6 +316,9 @@ export class GameMonitor {
   }
 
   private async checkProcesses(): Promise<void> {
+    if (this.stopping || this.exiting) {
+      return
+    }
     try {
       const processes = await getProcessList()
       const previousStates = this.monitoredProcesses.map((p) => p.isRunning)
@@ -491,7 +430,7 @@ export class GameMonitor {
     mainWindow.show()
     mainWindow.focus()
 
-    mainWindow.webContents.send('game-exiting', this.options.gameId)
+    ipcManager.send('game:exiting', this.options.gameId)
 
     const timers = await GameDBManager.getGameValue(this.options.gameId, 'record.timers')
 

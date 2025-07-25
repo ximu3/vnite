@@ -1,5 +1,5 @@
 import { spawn, ChildProcess } from 'child_process'
-import log from 'electron-log/main.js'
+import log from 'electron-log/main'
 
 // PowerShell实例管理器
 class PowerShellManager {
@@ -13,7 +13,7 @@ class PowerShellManager {
   private isProcessing = false
   private lastUsedTime: number = 0
   private cleanupTimer: NodeJS.Timeout | null = null
-  private readonly CLEANUP_TIMEOUT = 15000 // 自动清理的不活跃时间：15秒
+  private readonly CLEANUP_TIMEOUT = 30000 // 自动清理的不活跃时间：30秒
 
   constructor() {
     // 构造函数
@@ -32,7 +32,7 @@ class PowerShellManager {
 
     this.cleanupTimer = setTimeout(() => {
       if (Date.now() - this.lastUsedTime >= this.CLEANUP_TIMEOUT) {
-        log.info('PowerShell 实例闲置15秒，正在清理')
+        log.info('PowerShell 实例闲置30秒，正在清理')
         this.cleanup()
       }
     }, this.CLEANUP_TIMEOUT)
@@ -118,6 +118,7 @@ class PowerShellManager {
 
       const delimiter = `---COMMAND-END-${Date.now()}---`
       let output = ''
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       let errorOutput = ''
 
       const onData = (data: Buffer): void => {
@@ -145,17 +146,7 @@ class PowerShellManager {
       const fullCommand = `${command}; Write-Host "${delimiter}"\n`
       this.psProcess.stdin?.write(fullCommand)
 
-      // 设置超时
-      setTimeout(() => {
-        this.psProcess!.stdout!.removeListener('data', onData)
-        this.psProcess!.stderr!.removeListener('data', onError)
-
-        if (errorOutput) {
-          reject(new Error(`PowerShell 错误: ${errorOutput}`))
-        } else {
-          reject(new Error('PowerShell 命令超时'))
-        }
-      }, 10000) // 10秒超时
+      // 注意：已移除超时处理逻辑
     })
   }
 
