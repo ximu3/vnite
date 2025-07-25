@@ -19,22 +19,22 @@ export function GameList(): React.JSX.Element {
   const { setName, dataSourceId, setDataSourceId, gameList } = useGameAdderStore()
 
   return (
-    <div className={cn('w-[50vw] h-[80vh] lg:h-[85vh] p-3')}>
+    <div className={cn('w-[60vw] h-[80vh] lg:h-[85vh] p-3')}>
       <div className={cn('flex flex-col w-full h-full gap-3')}>
         <Card className={cn('grow pt-3')}>
           <CardContent className="h-full w-full">
             <div className="w-full">
-              <ScrollArea className={cn('h-[calc(80vh-230px)] pr-3')}>
+              <ScrollArea className={cn('h-[calc(80vh-230px)] lg:h-[calc(85vh-230px)] pr-3')}>
                 <Table>
                   <TableHeader className={cn('')}>
                     <TableRow>
-                      <TableHead className={cn('w-[13vw] overflow-hidden')}>
+                      <TableHead className={cn('w-[20vw] overflow-hidden')}>
                         {t('gameAdder.gameList.columns.name')}
                       </TableHead>
-                      <TableHead className={cn('w-[10vw] overflow-hidden')}>
+                      <TableHead className={cn('w-[13vw] overflow-hidden')}>
                         {t('gameAdder.gameList.columns.releaseDate')}
                       </TableHead>
-                      <TableHead className={cn('w-[10vw] overflow-hidden')}>
+                      <TableHead className={cn('w-[17vw] overflow-hidden')}>
                         {t('gameAdder.gameList.columns.developers')}
                       </TableHead>
                     </TableRow>
@@ -56,17 +56,17 @@ export function GameList(): React.JSX.Element {
                         )}
                       >
                         <TableCell>
-                          <div className={cn('w-[13vw] overflow-hidden')}>{game.name}</div>
+                          <div className={cn('w-[20vw] overflow-hidden')}>{game.name}</div>
                         </TableCell>
                         <TableCell>
-                          <div className={cn('w-[10vw] overflow-hidden')}>
+                          <div className={cn('w-[13vw] overflow-hidden')}>
                             {game.releaseDate === ''
                               ? t('gameAdder.gameList.unknown')
                               : game.releaseDate}
                           </div>
                         </TableCell>
                         <TableCell>
-                          <div className={cn('w-[10vw] overflow-hidden')}>
+                          <div className={cn('w-[17vw] overflow-hidden')}>
                             {game.developers.join(', ') === ''
                               ? t('gameAdder.gameList.unknown')
                               : game.developers.join(', ')}
