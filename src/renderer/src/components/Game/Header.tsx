@@ -1,11 +1,15 @@
-import { GameImage } from '../ui/game-image'
+import React from 'react'
 import { useConfigState, useGameState } from '~/hooks'
 import { useRunningGames } from '~/pages/Library/store'
 import { cn, copyWithToast } from '~/utils'
+import { GameImage } from '../ui/game-image'
 import { Config } from './Config'
+import { PlayTimeEditorDialog } from './Config/ManageMenu/PlayTimeEditorDialog'
+import { RatingEditorDialog } from './Config/ManageMenu/RatingEditorDialog'
 import { Record } from './Overview/Record'
 import { StartGame } from './StartGame'
 import { StopGame } from './StopGame'
+import { useGameDetailStore } from './store'
 
 export function Header({
   gameId,
@@ -21,65 +25,85 @@ export function Header({
   const [enableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
 
+  const isPlayTimeEditorDialogOpen = useGameDetailStore((state) => state.isPlayTimeEditorDialogOpen)
+  const setIsPlayTimeEditorDialogOpen = useGameDetailStore(
+    (state) => state.setIsPlayTimeEditorDialogOpen
+  )
+  const isRatingEditorDialogOpen = useGameDetailStore((state) => state.isRatingEditorDialogOpen)
+  const setIsRatingEditorDialogOpen = useGameDetailStore(
+    (state) => state.setIsRatingEditorDialogOpen
+  )
+
   return (
-    <div className={cn('flex-col flex gap-5 px-7 py-5 pl-6 pt-6 relative', className)}>
-      {/* Game name section */}
-      <div className="flex flex-row justify-between items-end">
-        <div
-          className={cn('flex flex-col gap-3 grow overflow-hidden items-start justify-start pl-1')}
-        >
+    <>
+      <div className={cn('flex-col flex gap-5 px-7 py-5 pl-6 pt-6 relative', className)}>
+        {/* Game name section */}
+        <div className="flex flex-row justify-between items-end">
           <div
             className={cn(
-              'font-bold text-2xl text-accent-foreground cursor-pointer select-none text-shadow-lg'
+              'flex flex-col gap-3 grow overflow-hidden items-start justify-start pl-1'
             )}
-            onClick={() => copyWithToast(name)}
           >
-            {name}
-          </div>
-          {showOriginalNameInGameHeader && originalName && (
             <div
-              className={cn('font-bold text-accent-foreground cursor-pointer select-none')}
-              onClick={() => copyWithToast(originalName)}
-            >
-              {originalName}
-            </div>
-          )}
-          <div
-            className={cn(
-              'flex flex-row justify-between items-end duration-300 select-none mt-2 pb-1',
-              '3xl:gap-5'
-            )}
-          >
-            {/* Game records and action buttons */}
-
-            <div className={cn('flex flex-row gap-3 items-end z-20', '3xl:gap-5')}>
-              {/* Start/Stop game button */}
-              {runningGames.includes(gameId) ? (
-                <StopGame gameId={gameId} className={cn('w-[170px] h-[40px]')} />
-              ) : (
-                <StartGame gameId={gameId} className={cn('w-[170px] h-[40px]')} />
+              className={cn(
+                'font-bold text-2xl text-accent-foreground cursor-pointer select-none text-shadow-lg'
               )}
+              onClick={() => copyWithToast(name)}
+            >
+              {name}
+            </div>
+            {showOriginalNameInGameHeader && originalName && (
+              <div
+                className={cn('font-bold text-accent-foreground cursor-pointer select-none')}
+                onClick={() => copyWithToast(originalName)}
+              >
+                {originalName}
+              </div>
+            )}
+            <div
+              className={cn(
+                'flex flex-row justify-between items-end duration-300 select-none mt-2 pb-1',
+                '3xl:gap-5'
+              )}
+            >
+              {/* Game records and action buttons */}
 
-              {/* Configuration button */}
-              <Config gameId={gameId} />
+              <div className={cn('flex flex-row gap-3 items-end z-20', '3xl:gap-5')}>
+                {/* Start/Stop game button */}
+                {runningGames.includes(gameId) ? (
+                  <StopGame gameId={gameId} className={cn('w-[170px] h-[40px]')} />
+                ) : (
+                  <StartGame gameId={gameId} className={cn('w-[170px] h-[40px]')} />
+                )}
+
+                {/* Configuration button */}
+                <Config gameId={gameId} />
+              </div>
             </div>
           </div>
+          <div className="relative lg:mr-3 pb-1 shrink-0">
+            <GameImage
+              gameId={gameId}
+              key={`${gameId}-poster`}
+              type="cover"
+              blur={enableNSFWBlur && nsfw}
+              className={cn('w-auto h-[170px] object-cover rounded-lg shadow-md')}
+              fallback={<div className="h-[170px]" />}
+            />
+            {/* <div className="absolute inset-0 rounded-lg bg-background/15" /> */}
+          </div>
         </div>
-        <div className="relative lg:mr-3 pb-1 shrink-0">
-          <GameImage
-            gameId={gameId}
-            key={`${gameId}-poster`}
-            type="cover"
-            blur={enableNSFWBlur && nsfw}
-            className={cn('w-auto h-[170px] object-cover rounded-lg shadow-md')}
-            fallback={<div className="h-[170px]" />}
-          />
-          {/* <div className="absolute inset-0 rounded-lg bg-background/15" /> */}
+        <div className="pt-6">
+          <Record gameId={gameId} />
         </div>
       </div>
-      <div className="pt-6">
-        <Record gameId={gameId} />
-      </div>
-    </div>
+
+      {isPlayTimeEditorDialogOpen && (
+        <PlayTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayTimeEditorDialogOpen} />
+      )}
+      {isRatingEditorDialogOpen && (
+        <RatingEditorDialog gameId={gameId} setIsOpen={setIsRatingEditorDialogOpen} />
+      )}
+    </>
   )
 }
