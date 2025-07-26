@@ -1,12 +1,12 @@
-import { useState, useRef, useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import ReactCrop, { Crop } from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/ui/dialog'
-import { Button } from '~/components/ui/button'
 import { toast } from 'sonner'
-import { cn } from '~/utils'
-import { useTranslation } from 'react-i18next'
 import { ipcManager } from '~/app/ipc'
+import { Button } from '~/components/ui/button'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/ui/dialog'
+import { cn } from '~/utils'
 
 interface CropDialogProps {
   isOpen: boolean
@@ -83,8 +83,8 @@ export function CropDialog({
       // Calculate actual cut size
       const actualWidth = Math.round(completedCrop.width * scaleX)
       const actualHeight = Math.round(completedCrop.height * scaleY)
-      const actualX = Math.round(completedCrop.x * scaleX)
-      const actualY = Math.round(completedCrop.y * scaleY)
+      const actualX = Math.max(0, Math.round(completedCrop.x * scaleX))
+      const actualY = Math.max(0, Math.round(completedCrop.y * scaleY))
 
       // If it is the original size then it returns directly
       if (actualWidth === imageSize.width && actualHeight === imageSize.height) {
@@ -105,6 +105,7 @@ export function CropDialog({
       onCropComplete(filePath)
     } catch (error) {
       console.error('Cropping Failure:', error)
+      throw error
     }
   }
 

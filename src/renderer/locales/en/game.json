@@ -379,11 +379,12 @@
         "actions": {
           "adjust": "Adjust",
           "set": "Set",
-          "importFromFile": "Import from File",
+          "importFromFile": "Import from file",
+          "importFromClipboard": "Import from clipboard",
           "importFromUrl": "Import from URL",
-          "searchImage": "Search Image",
-          "cropImage": "Crop Image",
-          "deleteImage": "Delete Image"
+          "searchImage": "Search image",
+          "cropImage": "Crop image",
+          "deleteImage": "Delete image"
         },
         "search": {
           "title": "Search Images",
@@ -399,6 +400,8 @@
         },
         "notifications": {
           "fileSelectError": "Failed to select file: {{error}}",
+          "noImageInClipboard": "There is no image in the clipboard",
+          "clipboardImportError": "Failed to import from clipboard: {{error}}",
           "imageNotFound": "Current image not found",
           "getImageError": "Failed to get current image: {{error}}",
           "downloading": "Downloading image…",
