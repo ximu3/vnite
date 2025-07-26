@@ -89,6 +89,26 @@ export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata>
   // 查找描述元素中的所有链接，并添加target="_blank"属性
   descriptionElement.find('a').attr('target', '_blank')
 
+  // 修正描述中的图片和链接URL，确保以 // 开头的URL转换为https://
+  descriptionElement.find('img, a').each((_, element) => {
+    const el = $(element)
+    // 处理图片src属性
+    if (el.is('img')) {
+      const src = el.attr('src')
+      if (src && src.startsWith('//')) {
+        el.attr('src', `https:${src}`)
+      }
+    }
+
+    // 处理链接href属性
+    if (el.is('a')) {
+      const href = el.attr('href')
+      if (href && href.startsWith('//')) {
+        el.attr('href', `https:${href}`)
+      }
+    }
+  })
+
   // 移除所有颜色样式
   descriptionElement.find('*').each((_, element) => {
     const el = $(element)
@@ -139,6 +159,9 @@ export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata>
   // 清除标签之间的空白和连续空白
   description = description.replace(/>\s+</g, '><') // 清除标签之间的空白
   description = description.replace(/(\s)\s+/g, '$1') // 将连续空白替换为单个空白
+
+  // 处理描述中剩余的以 // 开头的URL（针对可能的内联样式或其他属性）
+  description = description.replace(/(src|href)="\/\//g, '$1="https://')
 
   // Extract release date
   let releaseDate = ''
@@ -199,7 +222,7 @@ export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata>
   if (makerUrl && developer) {
     relatedSites.push({
       label: `${developer} (${i18next.t('scraper:dlsite.maker', { lng: language })})`,
-      url: makerUrl
+      url: makerUrl.startsWith('//') ? `https:${makerUrl}` : makerUrl
     })
   }
 
@@ -213,7 +236,7 @@ export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata>
       if (seriesUrl && seriesName) {
         relatedSites.push({
           label: `${seriesName} (${i18next.t('scraper:dlsite.series', { lng: language })})`,
-          url: seriesUrl
+          url: seriesUrl?.startsWith('//') ? `https:${seriesUrl}` : seriesUrl
         })
       }
     }
