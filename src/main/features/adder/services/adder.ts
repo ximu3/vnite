@@ -146,9 +146,19 @@ export async function addGameToDB({
     icons?: Promise<string[]>
     logos?: Promise<string[]>
   } = {
-    covers: scraperManager.getGameCovers(dataSource, { type: 'id', value: dataSourceId }),
+    covers: scraperManager
+      .getGameCovers(dataSource, { type: 'id', value: dataSourceId })
+      .catch((err) => {
+        console.warn(`获取游戏封面失败: ${err.message}`)
+        return []
+      }),
     backgrounds: !backgroundUrl
-      ? scraperManager.getGameBackgrounds(dataSource, { type: 'id', value: dataSourceId })
+      ? scraperManager
+          .getGameBackgrounds(dataSource, { type: 'id', value: dataSourceId })
+          .catch((err) => {
+            console.warn(`获取游戏背景失败: ${err.message}`)
+            return []
+          })
       : Promise.resolve([])
   }
 
@@ -159,35 +169,55 @@ export async function addGameToDB({
   // 根据数据源能力选择获取图标的方式
   if (hasIconCapability) {
     // 当前数据源支持获取图标
-    imagePromises.icons = scraperManager.getGameIcons(dataSource, {
-      type: 'id',
-      value: dataSourceId
-    })
+    imagePromises.icons = scraperManager
+      .getGameIcons(dataSource, {
+        type: 'id',
+        value: dataSourceId
+      })
+      .catch((err) => {
+        console.warn(`获取游戏图标失败: ${err.message}`)
+        return []
+      })
   } else {
     // 使用备选数据源 steamgriddb 获取图标
-    imagePromises.icons = scraperManager.getGameIcons(
-      'steamgriddb',
-      dataSource === 'steam'
-        ? { type: 'id', value: dataSourceId }
-        : { type: 'name', value: metadata.originalName || metadata.name }
-    )
+    imagePromises.icons = scraperManager
+      .getGameIcons(
+        'steamgriddb',
+        dataSource === 'steam'
+          ? { type: 'id', value: dataSourceId }
+          : { type: 'name', value: metadata.originalName || metadata.name }
+      )
+      .catch((err) => {
+        console.warn(`获取游戏图标失败: ${err.message}`)
+        return []
+      })
   }
 
   // 根据数据源能力选择获取徽标的方式
   if (hasLogoCapability) {
     // 当前数据源支持获取徽标
-    imagePromises.logos = scraperManager.getGameLogos(dataSource, {
-      type: 'id',
-      value: dataSourceId
-    })
+    imagePromises.logos = scraperManager
+      .getGameLogos(dataSource, {
+        type: 'id',
+        value: dataSourceId
+      })
+      .catch((err) => {
+        console.warn(`获取游戏徽标失败: ${err.message}`)
+        return []
+      })
   } else {
     // 使用备选数据源 steamgriddb 获取徽标
-    imagePromises.logos = scraperManager.getGameLogos(
-      'steamgriddb',
-      dataSource === 'steam'
-        ? { type: 'id', value: dataSourceId }
-        : { type: 'name', value: metadata.originalName || metadata.name }
-    )
+    imagePromises.logos = scraperManager
+      .getGameLogos(
+        'steamgriddb',
+        dataSource === 'steam'
+          ? { type: 'id', value: dataSourceId }
+          : { type: 'name', value: metadata.originalName || metadata.name }
+      )
+      .catch((err) => {
+        console.warn(`获取游戏徽标失败: ${err.message}`)
+        return []
+      })
   }
 
   // 并行获取所有图片资源
