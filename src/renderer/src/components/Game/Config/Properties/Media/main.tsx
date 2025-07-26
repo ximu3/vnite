@@ -1,17 +1,17 @@
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { ipcManager } from '~/app/ipc'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { GameImage } from '~/components/ui/game-image'
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
-import { useState } from 'react'
-import { toast } from 'sonner'
 import { useGameState } from '~/hooks'
+import { useLightStore } from '~/pages/Light'
 import { cn } from '~/utils'
 import { CropDialog } from './CropDialog'
 import { SearchMediaDialog } from './SearchMediaDialog'
 import { UrlDialog } from './UrlDialog'
-import { useTranslation } from 'react-i18next'
-import { ipcManager } from '~/app/ipc'
-import { useLightStore } from '~/pages/Light'
 
 export function Media({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
@@ -60,6 +60,27 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
       })
     } catch (error) {
       toast.error(t('detail.properties.media.notifications.fileSelectError', { error }))
+    }
+  }
+
+  async function handleClipboardImport(
+    type: 'cover' | 'background' | 'icon' | 'logo'
+  ): Promise<void> {
+    try {
+      const filePath = await ipcManager.invoke('utils:save-clipboard-image')
+      if (!filePath) {
+        toast.warning(t('detail.properties.media.notifications.noImageInClipboard'))
+        return
+      }
+
+      setCropDialogState({
+        isOpen: true,
+        type,
+        imagePath: filePath,
+        isResizing: false
+      })
+    } catch (error) {
+      toast.error(t('detail.properties.media.notifications.clipboardImportError', { error }))
     }
   }
 
@@ -186,6 +207,21 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
         </TooltipTrigger>
         <TooltipContent side="bottom">
           {t('detail.properties.media.actions.importFromFile')}
+        </TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger>
+          <Button
+            onClick={() => handleClipboardImport(type)}
+            variant="outline"
+            size="icon"
+            className={cn('w-7 h-7')}
+          >
+            <span className={cn('icon-[mdi--clipboard-outline] w-4 h-4')}></span>
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">
+          {t('detail.properties.media.actions.importFromClipboard')}
         </TooltipContent>
       </Tooltip>
       <Tooltip>

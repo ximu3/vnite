@@ -1,9 +1,9 @@
+import { clipboard, net } from 'electron'
+import { fileTypeFromBuffer } from 'file-type'
+import fse from 'fs-extra'
 import sharp from 'sharp'
 import ico from 'sharp-ico'
 import { getAppTempPath } from '~/features/system'
-import { net } from 'electron'
-import fse from 'fs-extra'
-import { fileTypeFromBuffer } from 'file-type'
 import { gis } from '~/utils'
 
 /**
@@ -200,6 +200,23 @@ export async function downloadTempImage(url: string): Promise<string> {
     return filePath
   } catch (error) {
     console.error('Failed to download image:', error)
+    throw error
+  }
+}
+
+export async function saveClipboardImage(): Promise<string> {
+  try {
+    const image = clipboard.readImage()
+    if (image.isEmpty()) {
+      return ''
+    }
+
+    const buffer = image.toPNG()
+    const filePath = getAppTempPath(`${Date.now()}.png`)
+    await fse.writeFile(filePath, buffer)
+    return filePath
+  } catch (error) {
+    console.error('Failed to save image in clipboard:', error)
     throw error
   }
 }

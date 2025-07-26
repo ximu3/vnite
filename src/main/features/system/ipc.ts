@@ -1,34 +1,35 @@
 import { generateUUID } from '@appUtils'
 import { app, OpenDialogOptions } from 'electron'
 import { ipcManager } from '~/core/ipc'
+import { mainWindow } from '~/index'
 import {
   checkAdminPermissions,
   checkIfDirectoryNeedsAdminRights,
+  cropImage,
+  downloadTempImage,
   getAppVersion,
   getTotalPathSize,
   openDatabasePathInExplorer,
   openPathInExplorer,
   readFileBuffer,
+  saveClipboardImage,
   selectMultiplePathDialog,
-  selectPathDialog,
-  downloadTempImage,
-  cropImage
+  selectPathDialog
 } from '~/utils'
 import {
-  createGameShortcut,
-  portableStore,
-  switchDatabaseMode,
-  updateOpenAtLogin,
-  getLanguage,
-  updateLanguage,
-  saveGameIconByFile,
-  getSystemFonts,
-  getAppRootPath,
-  getAppLogContentsInCurrentLifetime,
   copyAppLogInCurrentLifetimeToClipboardAsFile,
-  openLogPathInExplorer
+  createGameShortcut,
+  getAppLogContentsInCurrentLifetime,
+  getAppRootPath,
+  getLanguage,
+  getSystemFonts,
+  openLogPathInExplorer,
+  portableStore,
+  saveGameIconByFile,
+  switchDatabaseMode,
+  updateLanguage,
+  updateOpenAtLogin
 } from './services'
-import { mainWindow } from '~/index'
 
 export function setupSystemIPC(): void {
   ipcManager.on('window:minimize', () => {
@@ -190,6 +191,10 @@ export function setupSystemIPC(): void {
 
   ipcManager.handle('utils:download-temp-image', async (_, url: string) => {
     return await downloadTempImage(url)
+  })
+
+  ipcManager.handle('utils:save-clipboard-image', async () => {
+    return await saveClipboardImage()
   })
 
   mainWindow.on('maximize', () => {
