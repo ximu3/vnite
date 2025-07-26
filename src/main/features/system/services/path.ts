@@ -43,6 +43,16 @@ export function getLogsPath(): string {
   }
 }
 
+export function getPluginPath(): string {
+  try {
+    const basePath = portableStore.isPortableMode
+      ? path.join(getAppRootPath(), 'app/plugins')
+      : path.join(app.getPath('userData'), 'app/plugins')
+    return basePath
+  } catch (error) {
+    log.error('[System] Failed to get plugin path:', error)
+    throw error
+  }
 }
 
 export function getAppTempPath(file?: string): string {

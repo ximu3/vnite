@@ -15,17 +15,16 @@ import type {
 import { IPlugin } from '../api/types'
 import { PluginStatus, PluginStatsData } from '@appTypes/plugin'
 import { ipcManager } from '~/core/ipc'
+import { getPluginPath } from '~/features/system'
 
 export class PluginManager {
   private static instance: PluginManager
   private plugins: Map<string, PluginInfo> = new Map()
-  private pluginsDir: string
-  private registries: PluginRegistry[] = []
+  private pluginsDir: string = '' // Initialized in initialize() calling form main process initialization
   private loadedModules: Map<string, any> = new Map()
 
   private constructor() {
-    this.pluginsDir = join(app.getPath('userData'), 'plugins')
-    this.initializeRegistries()
+    // Private constructor to enforce singleton pattern
   }
 
   public static getInstance(): PluginManager {
@@ -37,7 +36,8 @@ export class PluginManager {
 
   public async initialize(): Promise<void> {
     try {
-      // 确保插件目录存在
+      this.pluginsDir = getPluginPath()
+      // Ensure plugins directory exists
       await fs.mkdir(this.pluginsDir, { recursive: true })
 
       // Load all installed plugins
