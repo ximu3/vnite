@@ -1,15 +1,36 @@
+import { Check } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { cn } from '~/utils'
-import { RecordCard } from './RecordCard'
+import { useLibrarybarStore } from '~/components/Librarybar/store'
+import { Popover, PopoverContent } from '~/components/ui/popover'
 import { useGameState } from '~/hooks'
+import { cn } from '~/utils'
+import { useGameDetailStore } from '../../store'
+import { RecordCard } from './RecordCard'
 
 export function Record({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [lastRunDate] = useGameState(gameId, 'record.lastRunDate')
-  const [playStatus] = useGameState(gameId, 'record.playStatus')
   const [score] = useGameState(gameId, 'record.score')
   const [playingTime] = useGameState(gameId, 'record.playTime')
-
+  const [playStatus, setPlayStatus] = useGameState(gameId, 'record.playStatus')
+  const { refreshGameList } = useLibrarybarStore.getState()
+  const setIsPlayTimeEditorDialogOpen = useGameDetailStore(
+    (state) => state.setIsPlayTimeEditorDialogOpen
+  )
+  const setIsRatingEditorDialogOpen = useGameDetailStore(
+    (state) => state.setIsRatingEditorDialogOpen
+  )
+  const playStatusOptions: (typeof playStatus)[] = [
+    'unplayed',
+    'playing',
+    'finished',
+    'multiple',
+    'shelved'
+  ]
+  const changePlayStatus = (status: typeof playStatus): void => {
+    setPlayStatus(status)
+    refreshGameList()
+  }
   return (
     <div className={cn('flex flex-row items-center gap-12 ml-1')}>
       <RecordCard
@@ -21,6 +42,7 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
             : t('detail.overview.information.empty')
         }
         icon="icon-[mdi--timer-outline] w-[16px] h-[16px]"
+        onClick={() => setIsPlayTimeEditorDialogOpen(true)}
       />
       <RecordCard
         className={cn('')}
@@ -32,17 +54,38 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
         }
         icon="icon-[mdi--calendar-blank-multiple] w-[16px] h-[16px]"
       />
-      <RecordCard
-        className={cn('')}
-        title={t('detail.overview.record.playStatus')}
-        content={t(`utils:game.playStatus.${playStatus}`)}
-        icon="icon-[mdi--bookmark-outline] w-[16px] h-[16px]"
-      />
+      <Popover>
+        <RecordCard
+          asPopoverTrigger
+          className={cn('')}
+          title={t('detail.overview.record.playStatus')}
+          content={t(`utils:game.playStatus.${playStatus}`)}
+          icon="icon-[mdi--bookmark-outline] w-[16px] h-[16px]"
+        />
+        <PopoverContent className="max-w-[150px] p-1">
+          <div className="flex flex-col">
+            {playStatusOptions.map((opt) => (
+              <div
+                key={opt}
+                onClick={() => changePlayStatus(opt)}
+                className={cn(
+                  'flex flex-row items-center justify-between px-2 py-2 text-sm cursor-pointer',
+                  'hover:bg-background'
+                )}
+              >
+                {t('utils:game.playStatus.' + opt)}
+                {playStatus === opt && <Check className="w-4 h-4" />}
+              </div>
+            ))}
+          </div>
+        </PopoverContent>
+      </Popover>
       <RecordCard
         className={cn('')}
         title={t('detail.overview.record.rating')}
         content={score === -1 ? t('detail.overview.information.empty') : score.toFixed(1)}
         icon="icon-[mdi--starburst-outline] w-[16px] h-[16px]"
+        onClick={() => setIsRatingEditorDialogOpen(true)}
       />
     </div>
   )

@@ -1,3 +1,6 @@
+import React from 'react'
+import { useTranslation } from 'react-i18next'
+import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { Button } from '~/components/ui/button'
 import {
   DropdownMenu,
@@ -6,21 +9,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
-import React from 'react'
-import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { cn } from '~/utils'
 import { CollectionMenu } from './CollectionMenu'
 import { ManageMenu } from './ManageMenu'
 import { NameEditorDialog } from './ManageMenu/NameEditorDialog'
-import { PlayTimeEditorDialog } from './ManageMenu/PlayTimeEditorDialog'
 import { GamePropertiesDialog } from './Properties'
-import { useTranslation } from 'react-i18next'
 
 export function Config({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
 
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
-  const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = React.useState(false)
   const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = React.useState(false)
   const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = React.useState(false)
 
@@ -41,7 +39,6 @@ export function Config({ gameId }: { gameId: string }): React.JSX.Element {
           <ManageMenu
             gameId={gameId}
             openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
-            openPlayingTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
           />
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={() => setIsPropertiesDialogOpen(true)}>
@@ -54,9 +51,6 @@ export function Config({ gameId }: { gameId: string }): React.JSX.Element {
       )}
       {isNameEditorDialogOpen && (
         <NameEditorDialog gameId={gameId} setIsOpen={setIsNameEditorDialogOpen} />
-      )}
-      {isPlayTimeEditorDialogOpen && (
-        <PlayTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayTimeEditorDialogOpen} />
       )}
       {isPropertiesDialogOpen && (
         <GamePropertiesDialog
