@@ -13,14 +13,10 @@ export class AuthManager {
   private redirectUrl: string = 'vnite://auth/callback'
   private initialized: boolean = false
 
-  // Private constructor to prevent direct instance creation
   private constructor() {
-    // Constructor is empty
+    // Private constructor to enforce singleton pattern
   }
 
-  /**
-   * Getting a singleton instance (internal use)
-   */
   private static getInstance(): AuthManager {
     if (!AuthManager.instance) {
       AuthManager.instance = new AuthManager()
@@ -28,9 +24,6 @@ export class AuthManager {
     return AuthManager.instance
   }
 
-  /**
-   * Initializing the Singleton Configuration
-   */
   public static init(): void {
     const instance = AuthManager.getInstance()
     if (instance.initialized) {
@@ -50,16 +43,13 @@ export class AuthManager {
       }
 
       instance.initialized = true
-      log.info('AuthManager initialized successfully')
+      log.info('[Account] AuthManager initialized successfully')
     } catch (error) {
-      log.error('AuthManager initialization failed:', error)
+      log.error('[Account] AuthManager initialization failed:', error)
       throw error
     }
   }
 
-  /**
-   * Check if the instance is initialized
-   */
   private static checkInitialized(): void {
     const instance = AuthManager.getInstance()
     if (!instance.initialized) {
@@ -67,9 +57,6 @@ export class AuthManager {
     }
   }
 
-  /**
-   * Initiate the registration process
-   */
   public static async startSignup(): Promise<AuthResult> {
     AuthManager.checkInitialized()
     const instance = AuthManager.getInstance()
@@ -85,14 +72,11 @@ export class AuthManager {
 
       return { success: true }
     } catch (error) {
-      log.error('Failed to start the registration process:', error)
+      log.error('[Account] Failed to start the registration process:', error)
       return { success: false, error: (error as Error).message }
     }
   }
 
-  /**
-   * Starting the login process
-   */
   public static async startSignin(): Promise<AuthResult> {
     AuthManager.checkInitialized()
     const instance = AuthManager.getInstance()
@@ -110,7 +94,7 @@ export class AuthManager {
 
       return { success: true }
     } catch (error) {
-      log.error('Failure to start the login process:', error)
+      log.error('[Account] Failure to start the login process:', error)
       return { success: false, error: (error as Error).message }
     }
   }
@@ -136,7 +120,7 @@ export class AuthManager {
       const clientSecret = instance.clientSecret
 
       if (!refreshToken) {
-        log.error('No refresh token available')
+        log.error('[Account] No refresh token available')
         return false
       }
 
@@ -176,14 +160,11 @@ export class AuthManager {
 
       return true
     } catch (error) {
-      log.error('Failed to refresh access token:', error)
+      log.error('[Account] Failed to refresh access token:', error)
       return false
     }
   }
 
-  /**
-   * Reset singletons (mainly for testing and development)
-   */
   public static reset(): void {
     AuthManager.instance = null
   }
@@ -234,14 +215,11 @@ export class AuthManager {
         role: userRole
       })
     } catch (error) {
-      log.error('Failed to get user information:', error)
+      log.error('[Account] Failed to get user information:', error)
       throw error
     }
   }
 
-  /**
-   * Handling authorization codes - public method, called by the master process
-   */
   public static async handleAuthCode(code: string): Promise<void> {
     AuthManager.checkInitialized()
     const instance = AuthManager.getInstance()
@@ -316,17 +294,14 @@ export class AuthManager {
       // Notify the rendering process of successful authentication
       ipcManager.send('account:auth-success')
 
-      log.info(`User ${userInfo.name} successfully authenticated`)
-      log.info('User role:', userRole)
+      log.info(`[Account] User ${userInfo.name} successfully authenticated`)
+      log.info('[Account] User role:', userRole)
     } catch (error) {
-      log.error('Failure to process authorization code:', error)
+      log.error('[Account] Failure to process authorization code:', error)
       ipcManager.send('account:auth-failed', (error as Error).message)
     }
   }
 
-  /**
-   * Get user roles
-   */
   public static getUserRole(userInfo: AuthentikUser): UserRole {
     // First find the matching role from the user's groups array
     if (userInfo.groups && Array.isArray(userInfo.groups) && userInfo.groups.length > 0) {

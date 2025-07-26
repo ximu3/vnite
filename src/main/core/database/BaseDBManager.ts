@@ -13,17 +13,15 @@ import { createOfficialRemoteDBWithPermissions } from '~/utils'
 PouchDB.plugin(upsertPlugin)
 
 export class BaseDBManager {
-  // 内部追踪表
   private dbInstances: { [key: string]: PouchDB.Database } = {}
   private changeListeners: { [key: string]: PouchDB.Core.Changes<object> | null } = {}
   private syncHandlers: { [key: string]: PouchDB.Replication.Sync<object> | null } = {}
 
   constructor() {
-    // pass
+    // Wait for the call from main process initialization
   }
 
   public initAllDatabases(): void {
-    // 直接在构造函数中初始化所有数据库
     this.initDatabase('game')
     this.initDatabase('game-collection')
     this.initDatabase('game-local')
@@ -32,25 +30,19 @@ export class BaseDBManager {
     this.initDatabase('plugin')
   }
 
-  /**
-   * 初始化单个数据库并返回实例
-   */
   private initDatabase(dbName: string): PouchDB.Database {
     const dbPath = getDataPath(dbName)
     const db = new PouchDB(dbPath, { auto_compaction: true })
 
-    // 将实例存储在内部表中以便管理
+    // Store the database instance
     this.dbInstances[dbName] = db
 
     this.startChangeListener(dbName)
 
-    log.info(`Database ${dbName} initialized at ${dbPath}`)
+    log.info(`[BaseDB] Database ${dbName} initialized at ${dbPath}`)
     return db
   }
 
-  /**
-   * 获取特定数据库实例的内部方法
-   */
   private getDatabase(dbName: string): PouchDB.Database {
     const db = this.dbInstances[dbName]
     if (!db) {
@@ -64,13 +56,16 @@ export class BaseDBManager {
 
     try {
       if (docId === '#all' && path === '#all') {
+        // If docId and path are both '#all', we set all documents in the database
         await this.setAllDocs(dbName, Object.values(value))
         return
       }
 
       await db.upsert(docId, (doc: any) => {
         if (path === '#all') {
+          // If path is '#all', we replace the entire document
           if (value === '#delete') {
+            // If value is '#delete', we delete the document
             return { _id: docId, _deleted: true }
           }
           return {
@@ -100,6 +95,7 @@ export class BaseDBManager {
           doc = { _id: docId }
 
           if (path === '#all') {
+            // If path is '#all', we initialize the document with default values
             doc = {
               _id: docId,
               ...defaultValue
@@ -115,6 +111,7 @@ export class BaseDBManager {
       }
 
       if (path === '#all') {
+        // If path is '#all', we return the entire document
         return doc as T
       }
 
@@ -150,6 +147,7 @@ export class BaseDBManager {
     const db = this.getDatabase(dbName)
     const result = await db.allDocs({ include_docs: true })
 
+    // Convert result.rows to a record with doc._id as key
     return result.rows.reduce(
       (acc, row) => {
         if (row.doc) {
@@ -177,38 +175,33 @@ export class BaseDBManager {
     )
   }
 
-  /**
-   * 同步所有数据库
-   */
   async syncAllWithRemote(
     remoteUrl: string = 'http://localhost:5984',
     options: SyncOptions
   ): Promise<void> {
-    // 停止所有现有的同步
+    // Stop all existing syncs
     for (const dbName in this.syncHandlers) {
       this.stopSync(dbName)
     }
-
-    // 同步每个数据库
+    // Sync each database
     for (const dbName in this.dbInstances) {
       await this.syncWithRemote(dbName, remoteUrl, options)
     }
   }
 
-  /**
-   * 同步所有数据库的完整数据
-   */
   async syncAllWithRemoteFull(
     remoteUrl: string = 'http://localhost:5984',
     options: SyncOptions
   ): Promise<void> {
-    // 停止所有现有的同步
+    // Stop all existing syncs
     for (const dbName in this.syncHandlers) {
       this.stopSync(dbName)
     }
+    // Sync each database with full sync
     for (const dbName in this.dbInstances) {
       await this.syncWithRemoteFull(dbName, remoteUrl, options)
     }
+    // Finally, auto create live sync for all databases
     await this.syncAllWithRemote(remoteUrl, options)
   }
 
@@ -217,6 +210,7 @@ export class BaseDBManager {
     remoteUrl: string = 'http://localhost:5984',
     options: SyncOptions
   ): Promise<void> {
+    // Skip local databases
     if (dbName.includes('local')) {
       return
     }
@@ -230,6 +224,7 @@ export class BaseDBManager {
 
     const remoteDbUrl = `${remoteUrl}/${remoteDbName}`
 
+    // Check if the remote database exists, if not, create it
     if (isOfficial) {
       await createOfficialRemoteDBWithPermissions(
         remoteUrl,
@@ -250,30 +245,28 @@ export class BaseDBManager {
     const remoteDb = new PouchDB(remoteDbUrl, {
       skip_setup: false,
       auth: auth,
-      fetch: net.fetch
+      fetch: net.fetch // Use the net module for fetching, to support system proxy
     })
 
     try {
-      // 初始同步
+      // Full sync without live options
       await localDb.sync(remoteDb, {
         live: false,
         retry: true
       })
-      console.log(`[${dbName}] Full synchronization completed successfully`)
+      log.info(`[Sync] ${dbName} Full synchronization completed successfully`)
     } catch (error) {
-      console.error(`[${dbName}] Full synchronization setup failed:`, error)
+      log.error(`[Sync] ${dbName} Full synchronization setup failed:`, error)
       throw error
     }
   }
 
-  /**
-   * 同步单个数据库
-   */
   async syncWithRemote(
     dbName: string,
     remoteUrl: string = 'http://localhost:5984',
     options: SyncOptions
   ): Promise<void> {
+    // Skip local databases
     if (dbName.includes('local')) {
       return
     }
@@ -287,6 +280,7 @@ export class BaseDBManager {
 
     const remoteDbUrl = `${remoteUrl}/${remoteDbName}`
 
+    // Check if the remote database exists, if not, create it
     if (isOfficial) {
       await createOfficialRemoteDBWithPermissions(
         remoteUrl,
@@ -307,16 +301,16 @@ export class BaseDBManager {
     const remoteDb = new PouchDB(remoteDbUrl, {
       skip_setup: false,
       auth: auth,
-      fetch: net.fetch
+      fetch: net.fetch // Use the net module for fetching, to support system proxy
     })
 
-    // 停止现有的同步
+    // Stop existing syncs
     if (this.syncHandlers[dbName]) {
       this.syncHandlers[dbName].cancel()
     }
 
     try {
-      // 设置同步
+      // Start live sync
       this.syncHandlers[dbName] = localDb
         .sync(remoteDb, {
           live: true,
@@ -363,23 +357,17 @@ export class BaseDBManager {
           })
         })
     } catch (error) {
-      console.error(`[${dbName}] Synchronization setup failed:`, error)
+      log.error(`[Sync] ${dbName} Live synchronization setup failed:`, error)
       throw error
     }
   }
 
-  /**
-   * 停止所有同步
-   */
   stopAllSync(): void {
     for (const dbName in this.syncHandlers) {
       this.stopSync(dbName)
     }
   }
 
-  /**
-   * 停止特定数据库的同步
-   */
   stopSync(dbName: string): void {
     if (this.syncHandlers[dbName]) {
       this.syncHandlers[dbName].cancel()
@@ -396,10 +384,12 @@ export class BaseDBManager {
   ): Promise<void> {
     const db = this.getDatabase(dbName)
 
+    // Convert attachment to buffer if it's a file path
     if (typeof attachment === 'string') {
       attachment = await convertFileToBuffer(attachment)
     }
 
+    // If type is not provided, try to detect it from the buffer
     if (!type) {
       type =
         (await fileTypeFromBuffer(attachment as Uint8Array))?.mime || 'application/octet-stream'
@@ -414,7 +404,7 @@ export class BaseDBManager {
       })
 
       if (doc) {
-        // 文档存在，添加附件
+        // Document exists, update it with the new attachment
         await db.upsert(docId, (doc: any) => {
           const prevrevpos = '_rev' in doc ? parseInt(doc._rev, 10) : 0
           doc._attachments = doc._attachments || {}
@@ -428,7 +418,7 @@ export class BaseDBManager {
           return doc
         })
       } else {
-        // 文档不存在，创建新文档并添加附件
+        // Document does not exist, create a new document and add the attachment
         await db.put({
           _id: docId,
           _attachments: {
@@ -440,6 +430,7 @@ export class BaseDBManager {
           }
         })
       }
+      // Notify the change to the renderer to sync the attachment content
       ipcManager.send('db:attachment-changed', {
         dbName,
         docId,
@@ -476,8 +467,10 @@ export class BaseDBManager {
         throw new Error('Attachment not found')
       }
 
+      // If the format is 'file', convert the buffer to a file or temp file
       if (options.format === 'file') {
         if (options.filePath === '#temp' || !options.filePath) {
+          // Store the image in a temporary file and return the file path
           return (await convertBufferToTempFile(
             attachment as Buffer,
             options.ext
@@ -531,6 +524,7 @@ export class BaseDBManager {
     try {
       const doc = await db.get(docId)
       await db.removeAttachment(docId, attachmentId, doc._rev)
+      // Notify the change to the renderer to sync the attachment removal
       ipcManager.send('db:attachment-changed', {
         dbName,
         docId,
@@ -577,7 +571,7 @@ export class BaseDBManager {
           if (!change.doc) return
 
           const { _id: docId, _rev, ...data } = change.doc
-
+          // Notify the renderer about the change to sync the document
           ipcManager.send('db:doc-changed', {
             dbName,
             docId,
@@ -600,5 +594,4 @@ export class BaseDBManager {
   }
 }
 
-// 创建并导出单例实例
 export const baseDBManager = new BaseDBManager()

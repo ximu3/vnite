@@ -14,14 +14,6 @@ import { net } from 'electron'
 
 const execAsync = promisify(exec)
 
-/**
- * 创建远程官方数据库并设置访问权限
- * @param remoteUrl 远程CouchDB服务器URL
- * @param remoteDbName 要创建的数据库名称
- * @param username 需要授予访问权限的用户名
- * @param adminUsername 管理员用户名
- * @param adminPassword 管理员密码
- */
 export async function createOfficialRemoteDBWithPermissions(
   remoteUrl: string,
   remoteDbName: string,
@@ -30,7 +22,7 @@ export async function createOfficialRemoteDBWithPermissions(
   adminPassword: string
 ): Promise<void> {
   try {
-    // 第一步：创建数据库（如果不存在）
+    // First step: Create the remote database
     const createResponse = await net.fetch(`${remoteUrl}/${remoteDbName}`, {
       method: 'PUT',
       headers: {
@@ -41,17 +33,17 @@ export async function createOfficialRemoteDBWithPermissions(
 
     const createData = await createResponse.json().catch(() => ({}))
 
-    // 如果数据库已存在，直接返回
+    // If the database already exists, return directly
     if (!createResponse.ok && createData.error === 'file_exists') {
       return
     }
 
-    // 其他错误情况仍然抛出
+    // Other error cases still throw
     if (!createResponse.ok) {
-      throw new Error(`创建数据库失败: ${createData.reason || '未知错误'}`)
+      throw new Error(`Failed to create database: ${createData.reason || 'Unknown error'}`)
     }
 
-    // 第二步：设置数据库安全文档
+    // Second step: Set up the database security document
     const securityDoc = {
       admins: {
         names: [adminUsername],
@@ -74,32 +66,31 @@ export async function createOfficialRemoteDBWithPermissions(
 
     if (!securityResponse.ok) {
       const securityData = await securityResponse.json().catch(() => ({}))
-      throw new Error(`设置数据库权限失败: ${securityData.reason || '未知错误'}`)
+      throw new Error(
+        `Failed to set database permissions: ${securityData.reason || 'Unknown error'}`
+      )
     }
 
-    log.info(`已成功创建官方数据库 ${remoteDbName} 并设置权限，用户 ${username} 已被授予访问权限`)
+    log.info(
+      `[Utils] Successfully created official database ${remoteDbName} and set permissions, user ${username} has been granted access`
+    )
   } catch (error) {
-    log.error(`创建远程官方数据库或设置权限时出错:`, error)
+    log.error(`[Utils] Error creating remote official database or setting permissions:`, error)
     throw error
   }
 }
 
-/**
- * 将文件复制到剪贴板
- * @param filePath 要复制的文件路径
- * @returns Promise<boolean> 是否成功复制
- */
 export async function copyFileToClipboard(filePath: string): Promise<boolean> {
   try {
-    // 确保文件存在
+    // Ensure the file exists
     if (!(await fse.pathExists(filePath))) {
-      throw new Error(`文件不存在: ${filePath}`)
+      throw new Error(`File does not exist: ${filePath}`)
     }
 
-    // 确保使用绝对路径
+    // Ensure absolute path is used
     const absolutePath = path.resolve(filePath)
 
-    // PowerShell命令：将文件添加到剪贴板
+    // PowerShell command: Add the file to clipboard
     const psCommand = `
       Add-Type -AssemblyName System.Windows.Forms
       $filePath = "${absolutePath.replace(/\\/g, '\\\\')}"
@@ -109,19 +100,16 @@ export async function copyFileToClipboard(filePath: string): Promise<boolean> {
       "Success"
     `
 
-    // 执行PowerShell命令
+    // Execute PowerShell command
     const result = await psManager.executeCommand(psCommand)
 
     return result.includes('Success')
   } catch (error) {
-    log.error('复制文件到剪贴板失败:', error)
+    log.error(`[Utils] Error copying file to clipboard:`, error)
     return false
   }
 }
 
-/**
- * 获取目录大小（字节）
- */
 export async function getDirSize(dirPath: string): Promise<number> {
   let size = 0
   const files = await fse.readdir(dirPath)
@@ -175,11 +163,6 @@ export function restartAppAsAdmin(): void {
   }
 }
 
-/**
- * Check if a directory requires admin privileges to write to
- * @param directoryPath Directory path to check
- * @returns Whether admin privileges are required
- */
 export async function checkIfDirectoryNeedsAdminRights(directoryPath: string): Promise<boolean> {
   const testFilePath = path.join(directoryPath, '.permission_test_' + Date.now())
 
@@ -202,10 +185,6 @@ export async function checkIfDirectoryNeedsAdminRights(directoryPath: string): P
   }
 }
 
-/**
- * Check if the current process has administrator permissions
- * @returns Whether the process has administrator permissions
- */
 export async function checkAdminPermissions(): Promise<boolean> {
   if (process.platform !== 'win32') {
     return false // Non-Windows platforms return false
@@ -219,11 +198,6 @@ export async function checkAdminPermissions(): Promise<boolean> {
   }
 }
 
-/**
- * Parse the game ID from a URL
- * @param url The URL
- * @returns The game ID or null if not found
- */
 export function parseGameIdFromUrl(url: string): string | null {
   const match = url.match(/vnite:\/\/rungameid\/([^/\s]+)/)
   return match ? match[1] : null
@@ -263,18 +237,10 @@ export async function convertFileToBuffer(filePath: string): Promise<Buffer> {
   }
 }
 
-/**
- * Get the version of the application
- * @returns The version of the application
- */
 export function getAppVersion(): string {
   return app.getVersion()
 }
 
-/**
- * Open a path in the file explorer
- * @param filePath The path to open
- */
 export async function openPathInExplorer(filePath: string): Promise<void> {
   try {
     // Check if the path exists
@@ -286,14 +252,19 @@ export async function openPathInExplorer(filePath: string): Promise<void> {
     // Open the path using Electron's shell module
     shell.openPath(dirPath)
   } catch (error) {
-    console.error('Error opening path:', error)
+    log.error('[Utils] Error opening path:', error)
   }
 }
 
 export async function openDatabasePathInExplorer(): Promise<void> {
-  const databasePath = getDataPath()
-  if (databasePath) {
-    await openPathInExplorer(databasePath)
+  try {
+    const databasePath = getDataPath()
+    if (databasePath) {
+      await openPathInExplorer(databasePath)
+    }
+  } catch (error) {
+    log.error('[Utils] Error opening database path in explorer:', error)
+    throw error
   }
 }
 
@@ -301,11 +272,6 @@ export function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-/**
- * Format a date string as YYYY-MM-DD
- * @param dateString The date string
- * @returns The formatted date string
- */
 export function formatDate(dateString: string): string {
   if (!dateString) return ''
 
@@ -324,12 +290,6 @@ export function formatDate(dateString: string): string {
   }
 }
 
-/**
- * Get subfolders at a specific depth level in the specified directory
- * @param dirPath Directory path
- * @param depth Target depth (1 means first level subfolders, 2 means second level subfolders, and so on)
- * @returns Promise<{name: string, dirPath: string}[]> Array of subfolder information at the specified depth
- */
 export async function getSubfoldersByDepth(
   dirPath: string,
   depth: number = 1
@@ -348,13 +308,6 @@ export async function getSubfoldersByDepth(
   return await findFoldersAtDepth(dirPath, 1, depth)
 }
 
-/**
- * Recursively find folders at the specified depth
- * @param currentPath Current path
- * @param currentDepth Current depth
- * @param targetDepth Target depth
- * @returns Promise<{name: string, dirPath: string}[]> Array of folder information
- */
 async function findFoldersAtDepth(
   currentPath: string,
   currentDepth: number,
@@ -425,10 +378,6 @@ interface UrlShortcutOptions {
   categories?: string[]
 }
 
-/**
- * Creating URL shortcut files
- * @param options UrlShortcutOptions Configuration options
- */
 export async function createUrlShortcut(options: UrlShortcutOptions): Promise<string> {
   const { url, iconPath, targetPath, name = 'url_shortcut', description = '' } = options
 
@@ -489,7 +438,7 @@ export async function createUrlShortcut(options: UrlShortcutOptions): Promise<st
 
     return finalPath
   } catch (error) {
-    console.error('Error creating URL shortcut:', error)
+    log.error('[Utils] Error creating URL shortcut:', error)
     throw error
   }
 }
@@ -500,12 +449,6 @@ interface IconConversionOptions {
   background?: sharp.Color
 }
 
-/**
- * Converting images to ICO format
- * @param inputPath Input image path
- * @param outputPath Output Image Path
- * @param options Conversion options
- */
 export async function convertToIcon(
   inputPath: string,
   outputPath: string,
@@ -577,12 +520,6 @@ const sizeCache: Record<string, CacheItem> = {}
 // Cache TTL (15 minutes in milliseconds)
 const CACHE_TTL = 15 * 60 * 1000
 
-/**
- * Get total size of CouchDB user databases with 15-minute cache
- * @param username - User identifier for database queries
- * @returns Promise resolving to total database size in bytes
- */
-
 export async function getCouchDBSize(username: string): Promise<number> {
   const cacheKey = `couchdb_size_${username}`
 
@@ -611,7 +548,6 @@ export async function getCouchDBSize(username: string): Promise<number> {
       const dbName = `${username}-${db}`.replace('user', 'userdb')
       const url = `${serverUrl}/${dbName}`
 
-      // 创建基本认证头
       const authHeader = `Basic ${Buffer.from(`${adminUsername}:${adminPassword}`).toString('base64')}`
 
       const response = await net.fetch(url, {
@@ -667,11 +603,6 @@ async function getFolderSize(folderPath: string): Promise<number> {
   return totalSize
 }
 
-/**
- * Get the total size of multiple paths (files or directories)
- * @param paths Array of file or directory paths
- * @returns Promise resolving to total size in bytes (NaN if the path doesn't exist)
- */
 export async function getTotalPathSize(paths: string[]): Promise<number> {
   const sizes = await Promise.all(
     paths.map(async (p) => {

@@ -8,7 +8,7 @@ export class PluginDBManager {
     try {
       return await baseDBManager.getValue(this.DB_NAME, pluginId, key, defaultValue)
     } catch (error) {
-      log.error(`Failed to get plugin value for ${pluginId} with key ${key}:`, error)
+      log.error(`[PluginDB] Failed to get plugin value for ${pluginId} with key ${key}:`, error)
       throw new Error(`Failed to get plugin value: ${error}`)
     }
   }
@@ -17,7 +17,7 @@ export class PluginDBManager {
     try {
       await baseDBManager.setValue(this.DB_NAME, pluginId, key, value)
     } catch (error) {
-      log.error(`Failed to set plugin value for ${pluginId} with key ${key}:`, error)
+      log.error(`[PluginDB] Failed to set plugin value for ${pluginId} with key ${key}:`, error)
       throw new Error(`Failed to set plugin value: ${error}`)
     }
   }
@@ -26,7 +26,7 @@ export class PluginDBManager {
     try {
       await baseDBManager.removeDoc(this.DB_NAME, pluginId)
     } catch (error) {
-      log.error(`Failed to remove plugin ${pluginId}:`, error)
+      log.error(`[PluginDB] Failed to remove plugin ${pluginId}:`, error)
       throw new Error(`Failed to remove plugin: ${error}`)
     }
   }

@@ -1,18 +1,8 @@
-/**
- * Core API 全局命名空间
- *
- * 这个文件创建了一个统一的API对象，暴露了所有核心模块的功能。
- *
- * 注意：这个实现需要与 plugin-sdk 中的类型定义保持一致
- */
-
-// 导入所有核心模块
 import { ConfigDBManager, GameDBManager, PluginDBManager } from '~/core/database'
 import { eventBus } from '~/core/events'
 import { ipcManager } from '~/core/ipc'
 import { scraperManager } from '~/features/scraper/services/ScraperManager'
 
-// 创建API实例
 export class VnitePluginAPI {
   public readonly pluginId: string
   public readonly ConfigDB = ConfigDBManager

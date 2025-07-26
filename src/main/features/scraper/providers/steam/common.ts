@@ -4,7 +4,7 @@ import { formatDate } from '~/utils'
 import i18next from 'i18next'
 import { net } from 'electron'
 
-// 定义基础 URL 常量
+// Define base URL constants
 const STEAM_URLS = {
   STORE: 'https://store.steampowered.com',
   CDN: 'https://steamcdn-a.akamaihd.net',
@@ -12,7 +12,6 @@ const STEAM_URLS = {
   CLOUDFLARE: 'https://cdn.cloudflare.steamstatic.com'
 }
 
-// 通用的 fetch 函数
 async function fetchWithTimeout(
   url: string,
   options: RequestInit = {},
@@ -101,7 +100,7 @@ async function fetchStoreTags(appId: string): Promise<string[]> {
 
     const html = await response.text()
 
-    // 简单的基于正则表达式的标签提取方法
+    // Simple regex-based tag extraction method
     const tagMatches = html.match(/class="app_tag"[^>]*>([^<]+)<\/a>/g) || []
     const tags: string[] = []
 
@@ -128,25 +127,25 @@ export async function getSteamMetadata(appId: string): Promise<GameMetadata> {
       returnObjects: true
     }) as SteamLanguageConfig
 
-    // 获取当前语言的数据
+    // Get data in the current language
     const urlLocal = `${STEAM_URLS.STORE}/api/appdetails?appids=${appId}&l=${langConfig.apiLanguageCode}`
 
-    // 判断是否需要获取英文原名（如果当前语言不是英文）
+    // Determine if we need to get the original English name (if current language is not English)
     const needsOriginalName = langConfig.apiLanguageCode !== 'english'
 
     let localData: SteamAppDetailsResponse
     let englishData: SteamAppDetailsResponse | null = null
 
     if (needsOriginalName) {
-      // 并行获取本地语言和英文数据
+      // Fetch local language and English data in parallel
       ;[localData, englishData] = await Promise.all([
         fetchSteamAPI(urlLocal),
         fetchSteamAPI(`${STEAM_URLS.STORE}/api/appdetails?appids=${appId}&l=english`)
       ])
     } else {
-      // 只获取一种语言
+      // Only fetch one language
       localData = await fetchSteamAPI(urlLocal)
-      englishData = localData // 如果当前语言是英文，重用
+      englishData = localData // Reuse if current language is English
     }
 
     if (!localData[appId].success) {
@@ -212,70 +211,50 @@ export async function getSteamMetadataByName(gameName: string): Promise<GameMeta
   }
 }
 
-/**
- * 检查图片 URL 是否存在
- * @param url 需要检查的图片 URL
- * @returns 如果图片存在则返回 true，否则返回 false
- */
 export async function checkImageExists(url: string): Promise<boolean> {
   try {
     const response = await net.fetch(url, {
-      method: 'HEAD' // 只获取头信息，不下载实际图片内容
+      method: 'HEAD' // Only get header information, don't download the actual image content
     })
 
-    // 检查状态码是否为 200
+    // Check if status code is 200
     return response.status === 200
   } catch (error) {
-    console.error(`检查图片失败: ${url}`, error)
+    console.error(`Failed to check image: ${url}`, error)
     return false
   }
 }
 
-/**
- * 获取游戏背景图片 URL
- * @param appId Steam 应用 ID
- * @returns 可用的背景图片 URL
- */
 export async function getGameBackground(appId: string): Promise<string> {
   const hdUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/library_hero_2x.jpg`
   const standardUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/library_hero.jpg`
 
-  // 检查高清图片是否存在
+  // Check if HD image exists
   const hdExists = await checkImageExists(hdUrl)
 
-  // 如果高清图片存在，返回高清图片 URL，否则返回标准图片 URL
+  // If HD image exists, return HD image URL, otherwise return standard image URL
   return hdExists ? hdUrl : standardUrl
 }
 
-/**
- * 获取游戏封面图片 URL
- * @param appId Steam 应用 ID
- * @returns 可用的封面图片 URL
- */
 export async function getGameCover(appId: string): Promise<string> {
   const hdUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/library_600x900_2x.jpg`
   const standardUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/library_600x900.jpg`
 
-  // 检查高清图片是否存在
+  // Check if HD image exists
   const hdExists = await checkImageExists(hdUrl)
 
-  // 如果高清图片存在，返回高清图片 URL，否则返回标准图片 URL
+  // If HD image exists, return HD image URL, otherwise return standard image URL
   return hdExists ? hdUrl : standardUrl
 }
 
-/**
- * 获取游戏 Logo URL
- * @param appId Steam 应用 ID
- * @returns 可用的 Logo 图片 URL
- */
 export async function getGameLogo(appId: string): Promise<string> {
   const hdUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/logo_2x.png`
   const standardUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/logo.png`
 
-  // 检查高清图片是否存在
+  // Check if HD image exists
   const hdExists = await checkImageExists(hdUrl)
 
-  // 如果高清图片存在，返回高清图片 URL，否则返回标准图片 URL
+  // If HD image exists, return HD image URL, otherwise return standard image URL
   return hdExists ? hdUrl : standardUrl
 }
 

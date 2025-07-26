@@ -3,9 +3,6 @@ import log from 'electron-log/main'
 
 export { AuthManager }
 
-/**
- * Handling Authorization Callback URLs
- */
 export function handleAuthCallback(url: string): void {
   if (!url.startsWith('vnite://auth/callback')) return
 

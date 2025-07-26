@@ -6,13 +6,6 @@ import { fileLauncher, scriptLauncher, urlLauncher } from './launcher'
 import { defaultPreset, lePreset, steamPreset, vbaPreset } from './preset'
 import { eventBus } from '~/core/events'
 
-/**
- * Set the preset for the launcher
- * @param presetName - The name of the preset
- * @param gameId - The id of the game
- * @param steamId - The steam id of the game
- * @returns A promise that resolves when the operation is complete.
- */
 export async function launcherPreset(
   presetName: string,
   gameId: string,
@@ -32,16 +25,11 @@ export async function launcherPreset(
       await vbaPreset(gameId)
     }
   } catch (error) {
-    log.error(`Failed to set preset for ${gameId}`, error)
+    log.error(`[Launcher] Failed to set preset for ${gameId}`, error)
     throw error
   }
 }
 
-/**
- * Launch the game
- * @param gameId - The id of the game
- * @returns A promise that resolves when the operation is complete.
- */
 export async function launcher(gameId: string): Promise<void> {
   try {
     const mode = await GameDBManager.getGameLocalValue(gameId, 'launcher.mode')
@@ -50,7 +38,7 @@ export async function launcher(gameId: string): Promise<void> {
       'general.hideWindowAfterGameStart'
     )
     if (hideWindowAfterGameStart && mainWindow) {
-      await delay(1000)
+      await delay(1000) // Delay to improve user experience
       mainWindow.hide()
     }
     if (mode === 'file') {
@@ -70,8 +58,8 @@ export async function launcher(gameId: string): Promise<void> {
       },
       { source: 'launcher' }
     )
-    log.info(`Launched game ${gameId}`)
+    log.info(`[Launcher] Launched game ${gameId}`)
   } catch (error) {
-    log.error(`Failed to launch game ${gameId}`, error)
+    log.error(`[Launcher] Failed to launch game ${gameId}`, error)
   }
 }

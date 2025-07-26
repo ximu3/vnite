@@ -21,7 +21,7 @@ export async function startSync(): Promise<void> {
         !userInfo.accessToken ||
         !userInfo.role
       ) {
-        log.error('Missing official sync username or password')
+        log.error('[Sync] Missing official sync username or password')
 
         ipcManager.send('db:sync-status', {
           status: 'error',
@@ -31,10 +31,11 @@ export async function startSync(): Promise<void> {
 
         return
       }
+      // Check if the database size exceeds the quota for the user's role
       const roleQuotas = ROLE_QUOTAS[userInfo.role]
       const dbSize = await getCouchDBSize(syncConfig.officialConfig.auth.username)
       if (dbSize > roleQuotas.dbSize) {
-        log.error('Database size exceeds quota')
+        log.error('[Sync] Database size exceeds quota')
 
         ipcManager.send('db:sync-status', {
           status: 'error',
@@ -57,7 +58,7 @@ export async function startSync(): Promise<void> {
         !syncConfig.selfHostedConfig.auth.username ||
         !syncConfig.selfHostedConfig.auth.password
       ) {
-        log.error('Missing self-hosted sync configuration')
+        log.error('[Sync] Missing self-hosted sync configuration')
 
         ipcManager.send('db:sync-status', {
           status: 'error',
@@ -82,9 +83,9 @@ export async function startSync(): Promise<void> {
       timestamp: new Date().toISOString()
     })
 
-    log.info('Sync success')
+    log.info('[Sync] Sync success')
   } catch (error) {
-    log.error('Sync error:', error)
+    log.error('[Sync] Sync error:', error)
 
     ipcManager.send('db:sync-status', {
       status: 'error',
@@ -112,7 +113,7 @@ export async function fullSync(): Promise<void> {
         !userInfo.accessToken ||
         !userInfo.role
       ) {
-        log.error('Missing official sync username or password')
+        log.error('[Sync] Missing official sync username or password')
 
         ipcManager.send('db:sync-status', {
           status: 'error',
@@ -123,10 +124,11 @@ export async function fullSync(): Promise<void> {
 
         return
       }
+      // Check if the database size exceeds the quota for the user's role
       const roleQuotas = ROLE_QUOTAS[userInfo.role]
       const dbSize = await getCouchDBSize(syncConfig.officialConfig.auth.username)
       if (dbSize > roleQuotas.dbSize) {
-        log.error('Database size exceeds quota')
+        log.error('[Sync] Database size exceeds quota')
 
         ipcManager.send('db:sync-status', {
           status: 'error',
@@ -150,7 +152,7 @@ export async function fullSync(): Promise<void> {
         !syncConfig.selfHostedConfig.auth.username ||
         !syncConfig.selfHostedConfig.auth.password
       ) {
-        log.error('Missing self-hosted sync configuration')
+        log.error('[Sync] Missing self-hosted sync configuration')
 
         ipcManager.send('db:sync-status', {
           status: 'error',
@@ -177,9 +179,9 @@ export async function fullSync(): Promise<void> {
     })
     ipcManager.send('db:full-synced')
 
-    log.info('Sync success')
+    log.info('[Sync] Sync success')
   } catch (error) {
-    log.error('Sync error:', error)
+    log.error('[Sync] Sync error:', error)
 
     ipcManager.send('db:sync-status', {
       status: 'error',

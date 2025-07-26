@@ -6,10 +6,6 @@ import fse from 'fs-extra'
 import { app } from 'electron'
 import { copyFileToClipboard } from '~/utils'
 
-/**
- * Get the path to the application log file
- * @returns The path to the application log file
- */
 export async function setupOpenAtLogin(): Promise<void> {
   try {
     const isEnabled = await ConfigDBManager.getConfigValue('general.openAtLogin')
@@ -18,7 +14,7 @@ export async function setupOpenAtLogin(): Promise<void> {
       args: ['--hidden']
     })
   } catch (error) {
-    log.error('Error toggling open at login:', error)
+    log.error('[Utils] Error toggling open at login:', error)
   }
 }
 
@@ -27,46 +23,46 @@ export async function getAppLogContentsInCurrentLifetime(): Promise<string> {
     const logPath = getLogsPath()
     const logContents = await fse.readFile(logPath, 'utf-8')
 
-    // 将日志内容分割成行
+    // Split log contents into lines
     const lines = logContents.split('\n')
 
-    // 从后向前查找包含"[App] App is starting..."的行
+    // Search for the line containing "[App] App is starting..." from the end
     for (let i = lines.length - 1; i >= 0; i--) {
       if (lines[i].includes('[App] App is starting...')) {
-        // 找到匹配行后，返回从该行开始到末尾的所有内容
+        // Return all content from the matching line to the end
         return lines.slice(i).join('\n')
       }
     }
 
-    // 如果没找到匹配行，返回全部日志内容
+    // If no matching line is found, return all log contents
     return logContents
   } catch (error) {
-    log.error('Error getting app log path:', error)
+    log.error('[Utils] Error getting app log path:', error)
     throw error
   }
 }
 
 export async function copyAppLogInCurrentLifetimeToClipboardAsFile(): Promise<boolean> {
   try {
-    // 获取日志内容
+    // Get log contents
     const logContents = await getAppLogContentsInCurrentLifetime()
 
-    // 将日志写入临时文件
+    // Write log to temp file
     const tempFilePath = getAppTempPath('app.log')
     await fse.writeFile(tempFilePath, logContents)
 
-    // 复制文件到剪贴板
+    // Copy file to clipboard
     const success = await copyFileToClipboard(tempFilePath)
 
     if (success) {
-      log.info('应用日志已复制到剪贴板作为文件')
+      log.info('[Utils] App log copied to clipboard as file:', tempFilePath)
     } else {
-      log.warn('无法将应用日志复制到剪贴板作为文件')
+      log.warn('[Utils] Failed to copy app log to clipboard as file:', tempFilePath)
     }
 
     return success
   } catch (error) {
-    log.error('复制应用日志到剪贴板失败:', error)
+    log.error('[Utils] Failed to copy app log to clipboard:', error)
     return false
   }
 }
@@ -75,17 +71,13 @@ export async function openLogPathInExplorer(): Promise<void> {
   try {
     const logPath = getLogsPath()
     await openPathInExplorer(logPath)
-    log.info('日志文件夹已打开:', logPath)
+    log.info('[Utils] Log folder opened:', logPath)
   } catch (error) {
-    log.error('打开日志文件夹失败:', error)
+    log.error('[Utils] Failed to open log folder:', error)
     throw error
   }
 }
 
-/**
- * Open a path in the file explorer
- * @param filePath The path to open
- */
 export async function updateOpenAtLogin(): Promise<void> {
   try {
     const isEnabled = await ConfigDBManager.getConfigValue('general.openAtLogin')
@@ -94,7 +86,7 @@ export async function updateOpenAtLogin(): Promise<void> {
       args: ['--hidden']
     })
   } catch (error) {
-    log.error('Error setting open at login:', error)
+    log.error('[Utils] Error setting open at login:', error)
   }
 }
 
@@ -113,11 +105,6 @@ export async function saveGameIconByFile(gameId: string, filePath: string): Prom
   }
 }
 
-/**
- * Create a shortcut for a game
- * @param gameId The ID of the game
- * @param targetPath The path to save the shortcut
- */
 export async function createGameShortcut(gameId: string, targetPath: string): Promise<void> {
   try {
     // Get game information
@@ -145,6 +132,6 @@ export async function createGameShortcut(gameId: string, targetPath: string): Pr
       categories: ['Game']
     })
   } catch (error) {
-    log.error('Error creating game shortcut:', error)
+    log.error('[Utils] Error creating game shortcut:', error)
   }
 }

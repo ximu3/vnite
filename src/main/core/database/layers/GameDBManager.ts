@@ -24,7 +24,7 @@ export class GameDBManager {
     try {
       return (await baseDBManager.getAllDocs(this.DB_NAME)) as gameDocs
     } catch (error) {
-      log.error('Error getting all games:', error)
+      log.error('[GameDB] Error getting all games:', error)
       throw error
     }
   }
@@ -33,7 +33,7 @@ export class GameDBManager {
     try {
       return (await baseDBManager.getAllDocs(`${this.DB_NAME}-collection`)) as gameCollectionDocs
     } catch (error) {
-      log.error('Error getting all collections:', error)
+      log.error('[GameDB] Error getting all collections:', error)
       throw error
     }
   }
@@ -42,7 +42,7 @@ export class GameDBManager {
     try {
       return (await baseDBManager.getAllDocs(`${this.DB_NAME}-local`)) as gameLocalDocs
     } catch (error) {
-      log.error('Error getting all local games:', error)
+      log.error('[GameDB] Error getting all local games:', error)
       throw error
     }
   }
@@ -51,7 +51,7 @@ export class GameDBManager {
     try {
       return await baseDBManager.getValue(this.DB_NAME, gameId, '#all', {} as gameDoc)
     } catch (error) {
-      log.error('Error getting game:', error)
+      log.error('[GameDB] Error getting game:', error)
       throw error
     }
   }
@@ -60,7 +60,7 @@ export class GameDBManager {
     try {
       await baseDBManager.setValue(this.DB_NAME, gameId, '#all', data)
     } catch (error) {
-      log.error('Error setting game:', error)
+      log.error('[GameDB] Error setting game:', error)
       throw error
     }
   }
@@ -74,7 +74,7 @@ export class GameDBManager {
         {} as gameLocalDoc
       )
     } catch (error) {
-      log.error('Error getting local game:', error)
+      log.error('[GameDB] Error getting local game:', error)
       throw error
     }
   }
@@ -83,7 +83,7 @@ export class GameDBManager {
     try {
       await baseDBManager.setValue(`${this.DB_NAME}-local`, gameId, '#all', data)
     } catch (error) {
-      log.error('Error setting local game:', error)
+      log.error('[GameDB] Error setting local game:', error)
       throw error
     }
   }
@@ -97,7 +97,7 @@ export class GameDBManager {
         {} as gameCollectionDoc
       )
     } catch (error) {
-      log.error('Error getting collection:', error)
+      log.error('[GameDB] Error getting collection:', error)
       throw error
     }
   }
@@ -109,7 +109,7 @@ export class GameDBManager {
     try {
       await baseDBManager.setValue(`${this.DB_NAME}-collection`, collectionId, '#all', data)
     } catch (error) {
-      log.error('Error setting collection:', error)
+      log.error('[GameDB] Error setting collection:', error)
       throw error
     }
   }
@@ -126,7 +126,7 @@ export class GameDBManager {
         getValueByPath(DEFAULT_GAME_VALUES, path)
       )) as Get<gameDoc, Path>
     } catch (error) {
-      log.error('Error getting game value:', error)
+      log.error('[GameDB] Error getting game value:', error)
       throw error
     }
   }
@@ -139,7 +139,7 @@ export class GameDBManager {
     try {
       await baseDBManager.setValue(this.DB_NAME, gameId, path, value)
     } catch (error) {
-      log.error('Error setting game value:', error)
+      log.error('[GameDB] Error setting game value:', error)
       throw error
     }
   }
@@ -156,7 +156,7 @@ export class GameDBManager {
         getValueByPath(DEFAULT_GAME_COLLECTION_VALUES, path)
       )) as Get<gameCollectionDoc, Path>
     } catch (error) {
-      log.error('Error getting collection value:', error)
+      log.error('[GameDB] Error getting collection value:', error)
       throw error
     }
   }
@@ -169,7 +169,7 @@ export class GameDBManager {
     try {
       await baseDBManager.setValue(`${this.DB_NAME}-collection`, collectionId, path, value)
     } catch (error) {
-      log.error('Error setting collection value:', error)
+      log.error('[GameDB] Error setting collection value:', error)
       throw error
     }
   }
@@ -186,7 +186,7 @@ export class GameDBManager {
         getValueByPath(DEFAULT_GAME_LOCAL_VALUES, path)
       )) as Get<gameLocalDoc, Path>
     } catch (error) {
-      log.error('Error getting local game value:', error)
+      log.error('[GameDB] Error getting local game value:', error)
       throw error
     }
   }
@@ -199,7 +199,7 @@ export class GameDBManager {
     try {
       await baseDBManager.setValue(`${this.DB_NAME}-local`, gameId, path, value)
     } catch (error) {
-      log.error('Error setting local game value:', error)
+      log.error('[GameDB] Error setting local game value:', error)
       throw error
     }
   }
@@ -219,7 +219,7 @@ export class GameDBManager {
 
       return results.some((result) => result)
     } catch (error) {
-      log.error('Error checking game existence by path:', error)
+      log.error('[GameDB] Error checking game existence by path:', error)
       throw error
     }
   }
@@ -239,7 +239,7 @@ export class GameDBManager {
         { source: 'GameDBManager' }
       )
     } catch (error) {
-      log.error('Error removing game:', error)
+      log.error('[GameDB] Error removing game:', error)
       throw error
     }
   }
@@ -248,7 +248,7 @@ export class GameDBManager {
     try {
       await baseDBManager.removeDoc(`${this.DB_NAME}-collection`, collectionId)
     } catch (error) {
-      log.error('Error removing collection:', error)
+      log.error('[GameDB] Error removing collection:', error)
       throw error
     }
   }
@@ -260,7 +260,7 @@ export class GameDBManager {
         games: collection.games.filter((id) => id !== gameId)
       })
     } catch (error) {
-      log.error('Error removing game from collection:', error)
+      log.error('[GameDB] Error removing game from collection:', error)
       throw error
     }
   }
@@ -272,7 +272,7 @@ export class GameDBManager {
         games: [...collection.games, gameId]
       })
     } catch (error) {
-      log.error('Error adding game to collection:', error)
+      log.error('[GameDB] Error adding game to collection:', error)
       throw error
     }
   }
@@ -289,7 +289,7 @@ export class GameDBManager {
         }
       }
     } catch (error) {
-      log.error('Error removing game from all collections:', error)
+      log.error('[GameDB] Error removing game from all collections:', error)
       throw error
     }
   }
@@ -298,7 +298,7 @@ export class GameDBManager {
     try {
       await baseDBManager.removeDoc(`${this.DB_NAME}-local`, gameId)
     } catch (error) {
-      log.error('Error removing local game:', error)
+      log.error('[GameDB] Error removing local game:', error)
       throw error
     }
   }
@@ -312,7 +312,7 @@ export class GameDBManager {
       image = await convertToWebP(image)
       await baseDBManager.putAttachment(this.DB_NAME, gameId, `images/${type}.webp`, image)
     } catch (error) {
-      log.error('Error setting game image:', error)
+      log.error('[GameDB] Error setting game image:', error)
       throw error
     }
   }
@@ -329,6 +329,7 @@ export class GameDBManager {
         return null
       }
       if (format === 'file') {
+        // Store the image in a temporary file and return the file path
         return (await baseDBManager.getAttachment(this.DB_NAME, gameId, `images/${type}.webp`, {
           format: 'file',
           filePath: '#temp',
@@ -342,7 +343,7 @@ export class GameDBManager {
         )) as T extends 'file' ? string | null : Buffer | null
       }
     } catch (error) {
-      log.error('Error getting game image:', error)
+      log.error('[GameDB] Error getting game image:', error)
       throw error
     }
   }
@@ -361,7 +362,7 @@ export class GameDBManager {
         image
       )
     } catch (error) {
-      log.error('Error setting game memory image:', error)
+      log.error('[GameDB] Error setting game memory image:', error)
       throw error
     }
   }
@@ -400,7 +401,7 @@ export class GameDBManager {
         )) as T extends 'file' ? string : Buffer
       }
     } catch (error) {
-      log.error('Error getting game memory image:', error)
+      log.error('[GameDB] Error getting game memory image:', error)
       throw error
     }
   }
@@ -419,7 +420,7 @@ export class GameDBManager {
         'application/zip'
       )
     } catch (error) {
-      log.error('Error setting game save:', error)
+      log.error('[GameDB] Error setting game save:', error)
       throw error
     }
   }
@@ -444,7 +445,7 @@ export class GameDBManager {
         )) as T extends 'file' ? string : Buffer
       }
     } catch (error) {
-      log.error('Error getting game save:', error)
+      log.error('[GameDB] Error getting game save:', error)
       throw error
     }
   }
@@ -453,7 +454,7 @@ export class GameDBManager {
     try {
       await baseDBManager.removeAttachment(this.DB_NAME, gameId, `saves/${saveId}.zip`)
     } catch (error) {
-      log.error('Error removing game save:', error)
+      log.error('[GameDB] Error removing game save:', error)
       throw error
     }
   }
@@ -462,7 +463,7 @@ export class GameDBManager {
     try {
       await baseDBManager.removeAttachment(this.DB_NAME, gameId, `memories/${memoryId}.webp`)
     } catch (error) {
-      log.error('Error removing game memory image:', error)
+      log.error('[GameDB] Error removing game memory image:', error)
       throw error
     }
   }
@@ -474,7 +475,7 @@ export class GameDBManager {
     try {
       await baseDBManager.removeAttachment(this.DB_NAME, gameId, `images/${type}.webp`)
     } catch (error) {
-      log.error('Error removing game image:', error)
+      log.error('[GameDB] Error removing game image:', error)
       throw error
     }
   }
@@ -523,7 +524,7 @@ export class GameDBManager {
 
       return sortedGames.map((game) => game._id)
     } catch (error) {
-      log.error('Error sorting games:', error)
+      log.error('[GameDB] Error sorting games:', error)
       throw error
     }
   }

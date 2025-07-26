@@ -231,17 +231,17 @@ type MainIpcEvents =
       'updater:update-config': () => void
 
       // EventBus IPC handlers
-      'eventbus:emit': <T extends EventType>(
+      'events:emit': <T extends EventType>(
         eventType: T,
         data: EventData<T>,
         options: { source: string; correlationId?: string }
       ) => boolean
-      'eventbus:query-history': (options?: EventHistoryQuery) => EventHistoryEntry[]
-      'eventbus:get-total-events': () => number
-      'eventbus:get-events-by-type': () => Record<string, number>
-      'eventbus:get-recent-events': (limit?: number) => EventHistoryEntry[]
-      'eventbus:clear-history': () => void
-      'eventbus:get-history-stats': () => {
+      'events:query-history': (options?: EventHistoryQuery) => EventHistoryEntry[]
+      'events:get-total-events': () => number
+      'events:get-events-by-type': () => Record<string, number>
+      'events:get-recent-events': (limit?: number) => EventHistoryEntry[]
+      'events:clear-history': () => void
+      'events:get-history-stats': () => {
         totalEvents: number
         uniqueEventTypes: number
         oldestEvent?: EventHistoryEntry
@@ -280,7 +280,6 @@ type MainIpcEvents =
       'scanner:ignore-failed-folder': (scannerId: string, folderPath: string) => OverallScanProgress
 
       // Plugin events
-      'plugin:initialize': () => { success: boolean; error?: string }
       'plugin:get-all-plugins': () => Omit<PluginInfo, 'instance'>[]
       'plugin:get-plugin': (pluginId: string) => Omit<PluginInfo, 'instance'> | undefined
       'plugin:search-plugins': (options: PluginSearchOptions) => PluginSearchResult
@@ -298,7 +297,6 @@ type MainIpcEvents =
       'plugin:check-updates': () => PluginUpdateInfo[]
       'plugin:get-stats': () => PluginStatsData
       'plugin:get-plugin-configuration': (pluginId: string) => PluginConfiguration[]
-      'plugin:shutdown': () => { success: boolean; error?: string }
     }
 
 // Renderer process IPC events - handled by renderer process
@@ -338,7 +336,7 @@ type RendererIpcEvents = {
   'updater:update-downloaded': []
 
   // EventBus events forwarded from main process
-  'eventbus:event-emitted': [eventType: EventType, data: EnhancedEventData<EventType>]
+  'events:event-emitted': [eventType: EventType, data: EnhancedEventData<EventType>]
 
   'game:exiting': [gameId: string]
   'game:exited': [gameId: string]

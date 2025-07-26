@@ -9,16 +9,7 @@ import { z } from 'zod'
 import { ConfigDBManager } from '~/core/database'
 import { GameDBManager } from '~/core/database'
 
-/**
- * Metadata transformer module, processes game metadata transformations
- * Supports metadata transformation according to configured rules, and supports localization of additional fields
- */
 export class Transformer {
-  /**
-   * Transform metadata for a single game
-   * @param metadata Game metadata object to transform
-   * @returns Transformed game metadata
-   */
   static async transformMetadata(
     metadata: GameMetadata,
     transformerIds: string[] | '#all'
@@ -85,7 +76,7 @@ export class Transformer {
 
       return transformedMetadata
     } catch (error) {
-      log.error('Error transforming metadata:', error)
+      log.error('[Transformer] Error transforming metadata:', error)
       throw error
     }
   }
@@ -137,7 +128,7 @@ export class Transformer {
 
       return transformedTags
     } catch (error) {
-      log.error('Error transforming tags:', error)
+      log.error('[Transformer] Error transforming tags:', error)
       throw error
     }
   }
@@ -187,7 +178,7 @@ export class Transformer {
         (descItem) => descItem.description !== null && descItem.description !== ''
       )
     } catch (error) {
-      log.error('Error transforming descriptions:', error)
+      log.error('[Transformer] Error transforming descriptions:', error)
       throw error
     }
   }
@@ -260,17 +251,11 @@ export class Transformer {
         (item) => item.extra && Array.isArray(item.extra) && item.extra.length > 0
       )
     } catch (error) {
-      log.error('Error transforming extra info:', error)
+      log.error('[Transformer] Error transforming extra info:', error)
       throw error
     }
   }
 
-  /**
-   * Apply processor rules to metadata fields
-   * @param metadata Metadata object
-   * @param field Field name to process
-   * @param rules Array of processing rules
-   */
   private static applyProcessorRules(
     metadata: any,
     field: string,
@@ -314,11 +299,6 @@ export class Transformer {
     }
   }
 
-  /**
-   * Transform metadata for a specific game ID
-   * @param gameId The game ID for which to transform metadata
-   * @returns Returns true if successful, false if failed
-   */
   static async transformGameById(
     gameId: string,
     transformerIds: string[] | '#all'
@@ -359,15 +339,11 @@ export class Transformer {
 
       return true
     } catch (error) {
-      log.error(`Error transforming game ${gameId} metadata:`, error)
+      log.error(`[Transformer] Error transforming game ${gameId} metadata:`, error)
       return false
     }
   }
 
-  /**
-   * Transform metadata for all games and save directly to the database
-   * @returns Number of successfully transformed games
-   */
   static async transformAllGames(transformerIds: string[] | '#all'): Promise<number> {
     try {
       const allGames = await GameDBManager.getAllGames()
@@ -382,7 +358,7 @@ export class Transformer {
               successCount++
             }
           } catch (error) {
-            log.error(`Error transforming game ${gameId}`, error)
+            log.error(`[Transformer] Error transforming game ${gameId}:`, error)
             // Continue processing next game
           }
         }
@@ -390,17 +366,11 @@ export class Transformer {
 
       return successCount
     } catch (error) {
-      log.error('Error transforming all games:', error)
+      log.error('[Transformer] Error transforming all games:', error)
       throw error
     }
   }
 
-  /**
-   * 处理额外字段并应用转换规则
-   * @param extraFields 要处理的额外字段
-   * @param processors 处理规则配置
-   * @returns 处理后的额外字段
-   */
   private static async processExtraFields(
     extraFields: { key: string; value: string[] }[],
     processors: any
@@ -410,23 +380,23 @@ export class Transformer {
         return []
       }
 
-      // 需要国际化的字段列表
+      // Define keys that need localization
       const keysToLocalize = ['scenario', 'illustration', 'voice', 'music', 'director']
 
-      // 获取所有可能的本地化字段映射
+      // Get all possible localization field mappings
       const localizedKeyMap = this.getLocalizedExtraFieldsMap()
       const result: { key: string; value: string[] }[] = []
 
-      // 处理每个额外字段
+      // Process each extra field
       for (const field of extraFields) {
-        // 查找对应的原始键（非本地化键名）
+        // Find the corresponding original key (non-localized key name)
         const originalKey = this.findOriginalKey(field.key, localizedKeyMap)
 
-        // 如果找到对应的原始键并且有匹配的处理规则
+        // If the corresponding original key is found and there are matching processing rules
         if (originalKey && processors[originalKey]) {
           const rules = processors[originalKey]
 
-          // 应用处理规则到值数组
+          // Apply processing rules to value array
           const newValues = field.value.map((value) => {
             let newValue = value
             for (const rule of rules) {
@@ -437,19 +407,19 @@ export class Transformer {
             return newValue
           })
 
-          // 检查是否需要国际化处理的字段
+          // Check if localization is needed for the field
           let keyToUse = field.key
           if (keysToLocalize.includes(originalKey)) {
             keyToUse = i18next.t(`scraper:extraMetadataFields.${originalKey}`)
           }
 
           result.push({
-            key: keyToUse, // 使用国际化后的键名或原始本地化键名
+            key: keyToUse, // Use localized key name or original key name
             value: newValues
           })
         } else {
-          // 没有找到匹配的处理规则，保持原样
-          // 检查是否需要国际化处理的字段
+          // No matching processing rules found, keep original
+          // Check if localization is needed for the field
           if (keysToLocalize.includes(field.key)) {
             result.push({
               key: i18next.t(`scraper:extraMetadataFields.${field.key}`),
@@ -463,16 +433,11 @@ export class Transformer {
 
       return result
     } catch (error) {
-      log.error('处理额外字段时出错:', error)
+      log.error('[Transformer] Error processing extra fields:', error)
       return extraFields || []
     }
   }
-  /**
-   * Find the original key name for a field (like director, scenario, etc.)
-   * @param localizedKey Localized key name
-   * @param localizedKeyMap Localized key name mapping table
-   * @returns Original key name, or null if not found
-   */
+
   private static findOriginalKey(
     localizedKey: string,
     localizedKeyMap: Record<string, Record<string, string>>
@@ -496,11 +461,6 @@ export class Transformer {
     return null
   }
 
-  /**
-   * Get effective language, supports fallback mechanism
-   * @param requestedLang Requested language
-   * @returns Valid language code
-   */
   private static getEffectiveLanguage(requestedLang: string): string {
     try {
       // Use language fallback mechanism provided by i18next
@@ -520,15 +480,11 @@ export class Transformer {
       // Use i18next current language or default to English
       return i18next.language || 'en'
     } catch (error) {
-      log.error('Error getting effective language:', error)
+      log.error('[Transformer] Error getting effective language:', error)
       return 'en'
     }
   }
 
-  /**
-   * Get all localized extra metadata fields
-   * @returns Record of language codes to field mappings
-   */
   private static getLocalizedExtraFields(): Record<string, Record<string, string>> {
     const result: Record<string, Record<string, string>> = {}
 
@@ -546,7 +502,7 @@ export class Transformer {
             result[lang] = resources.extraMetadataFields
           }
         } catch (error) {
-          log.warn(`Error loading localization file for ${lang} language:`, error)
+          log.warn(`[Transformer] Error loading localization file for ${lang} language:`, error)
         }
       })
 
@@ -560,16 +516,12 @@ export class Transformer {
         }
       }
     } catch (error) {
-      log.error('Error getting localized extra fields:', error)
+      log.error('[Transformer] Error getting localized extra fields:', error)
     }
 
     return result
   }
 
-  /**
-   * Get mapping from original key names to translated key names for localized fields
-   * @returns Record of language codes to mapping tables
-   */
   private static getLocalizedExtraFieldsMap(): Record<string, Record<string, string>> {
     const result: Record<string, Record<string, string>> = {}
     const fields = this.getLocalizedExtraFields()
@@ -585,11 +537,6 @@ export class Transformer {
     return result
   }
 
-  /**
-   * Apply transformed metadata to existing game
-   * @param gameId Game ID
-   * @param metadata New metadata
-   */
   static async applyMetadataToGame(gameId: string, metadata: GameMetadata): Promise<void> {
     try {
       const game = await GameDBManager.getGame(gameId)
@@ -615,17 +562,11 @@ export class Transformer {
       // Save updated game
       await GameDBManager.setGame(gameId, game)
     } catch (error) {
-      log.error(`Error applying metadata to game ${gameId}:`, error)
+      log.error(`[Transformer] Error applying metadata to game ${gameId}:`, error)
       throw error
     }
   }
 
-  /**
-   * Get localized label for extra metadata field
-   * @param key Original key name of the field
-   * @param lang Language to get the label in (defaults to current language)
-   * @returns Localized field label, or original key name if not found
-   */
   static getLocalizedFieldLabel(key: string, lang?: string): string {
     try {
       const currentLang = lang || i18next.language || 'en'
@@ -636,7 +577,7 @@ export class Transformer {
 
       return fieldLabels[key] || key
     } catch (error) {
-      log.error(`Error getting localized label for field ${key}:`, error)
+      log.error(`[Transformer] Error getting localized label for field ${key}:`, error)
       return key
     }
   }
@@ -648,9 +589,9 @@ export class Transformer {
     try {
       const data = JSON.stringify(transformer)
       await fse.writeFile(path.join(targetPath, `${transformer.name}.json`), data, 'utf-8')
-      log.info(`Transformer exported to ${targetPath}/${transformer.name}.json`)
+      log.info(`[Transformer] exported to ${targetPath}/${transformer.name}.json`)
     } catch (error) {
-      log.error(`Error exporting transformer to file:`, error)
+      log.error(`[Transformer] Error exporting transformer to file:`, error)
       throw error
     }
   }
@@ -672,9 +613,9 @@ export class Transformer {
       }
       transformerList.push(transformer)
       await ConfigDBManager.setConfigValue('metadata.transformer.list', transformerList)
-      log.info(`Transformer imported from ${filePath}`)
+      log.info(`[Transformer] imported from ${filePath}`)
     } catch (error) {
-      log.error(`Error importing transformer from file:`, error)
+      log.error(`[Transformer] Error importing transformer from file:`, error)
       throw error
     }
   }

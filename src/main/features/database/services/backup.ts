@@ -9,6 +9,7 @@ import { eventBus } from '~/core/events'
 export async function backupDatabase(targetPath: string, exclude?: string[]): Promise<void> {
   try {
     const dataPath = getDataPath()
+    // Stop all database operations before backup
     await baseDBManager.closeAllDatabases()
     await zipFolder(dataPath, targetPath, 'vnite-database', {
       exclude: exclude
@@ -16,7 +17,7 @@ export async function backupDatabase(targetPath: string, exclude?: string[]): Pr
     baseDBManager.initAllDatabases()
     eventBus.emit('db:backup-completed', { targetPath }, { source: 'backup-service' })
   } catch (error) {
-    log.error('Error backing up database:', error)
+    log.error('[DB] Error backing up database:', error)
     throw error
   }
 }
@@ -24,14 +25,16 @@ export async function backupDatabase(targetPath: string, exclude?: string[]): Pr
 export async function restoreDatabase(sourcePath: string): Promise<void> {
   try {
     const dataPath = getDataPath()
+    // Stop all database operations before restore
     await baseDBManager.closeAllDatabases()
     await fse.remove(dataPath)
     await unzipFile(sourcePath, dataPath)
     eventBus.emit('db:restore-completed', { sourcePath }, { source: 'backup-service' })
+    // Restart the application
     app.relaunch()
     app.exit()
   } catch (error) {
-    log.error('Error restoring database:', error)
+    log.error('[DB] Error restoring database:', error)
     throw error
   }
 }

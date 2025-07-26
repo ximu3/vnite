@@ -17,7 +17,7 @@ export class ConfigDBManager {
     try {
       return (await baseDBManager.getAllDocs(this.DB_NAME)) as configDocs
     } catch (error) {
-      log.error('Error getting all configs:', error)
+      log.error('[ConfigDB] Error getting all configs:', error)
       throw error
     }
   }
@@ -26,7 +26,7 @@ export class ConfigDBManager {
     try {
       return (await baseDBManager.getAllDocs(`${this.DB_NAME}-local`)) as configLocalDocs
     } catch (error) {
-      log.error('Error getting all local configs:', error)
+      log.error('[ConfigDB] Error getting all local configs:', error)
       throw error
     }
   }
@@ -48,7 +48,7 @@ export class ConfigDBManager {
         getValueByPath(DEFAULT_CONFIG_VALUES, path)
       )) as Get<configDocs, Path>
     } catch (error) {
-      log.error('Error getting config value:', error)
+      log.error('[ConfigDB] Error getting config value:', error)
       throw error
     }
   }
@@ -66,7 +66,7 @@ export class ConfigDBManager {
 
       await baseDBManager.setValue(this.DB_NAME, docId, remainingPath, value as any)
     } catch (error) {
-      log.error('Error setting config value:', error)
+      log.error('[ConfigDB] Error setting config value:', error)
       throw error
     }
   }
@@ -88,7 +88,7 @@ export class ConfigDBManager {
         getValueByPath(DEFAULT_CONFIG_LOCAL_VALUES, path)
       )) as Get<configLocalDocs, Path>
     } catch (error) {
-      log.error('Error getting local config value:', error)
+      log.error('[ConfigDB] Error getting local config value:', error)
       throw error
     }
   }
@@ -106,7 +106,7 @@ export class ConfigDBManager {
 
       await baseDBManager.setValue(`${this.DB_NAME}-local`, docId, remainingPath, value as any)
     } catch (error) {
-      log.error('Error setting local config value:', error)
+      log.error('[ConfigDB] Error setting local config value:', error)
       throw error
     }
   }
@@ -125,7 +125,7 @@ export class ConfigDBManager {
         'image/webp'
       )
     } catch (error) {
-      log.error('Error setting background image:', error)
+      log.error('[ConfigDB] Error setting background image:', error)
       throw error
     }
   }
@@ -141,6 +141,7 @@ export class ConfigDBManager {
       }
 
       if (format === 'file') {
+        // Store the image in a temporary file and return the file path
         return (await baseDBManager.getAttachment(this.DB_NAME, 'media', 'background.webp', {
           format: 'file',
           filePath: '#temp',
@@ -154,7 +155,7 @@ export class ConfigDBManager {
         )) as T extends 'file' ? string : Buffer
       }
     } catch (error) {
-      log.error('Error getting background image:', error)
+      log.error('[ConfigDB] Error getting background image:', error)
       throw error
     }
   }

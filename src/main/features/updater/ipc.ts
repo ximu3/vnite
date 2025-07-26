@@ -12,7 +12,7 @@ export function setupUpdaterIPC(): void {
     try {
       return await autoUpdater.downloadUpdate()
     } catch (error) {
-      log.error('Failed to download update:', error)
+      log.error('[AppUpdater] Failed to download update:', error)
       throw error
     }
   })
@@ -26,7 +26,7 @@ export function setupUpdaterIPC(): void {
     try {
       await updateUpdater()
     } catch (error) {
-      log.error('Failed to update auto-updater configuration:', error)
+      log.error('[AppUpdater] Failed to update auto-updater configuration:', error)
       throw error
     }
   })

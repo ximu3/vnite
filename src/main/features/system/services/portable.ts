@@ -25,9 +25,9 @@ export async function switch2PortableMode(): Promise<void> {
     await fse.emptyDir(portablePath)
     await fse.copy(basePath, portablePath)
     await fse.remove(basePath)
-    log.info('Switched to portable mode')
+    log.info('[System] Switched to portable mode')
   } catch (error) {
-    log.error('Failed to switch to portable mode', error)
+    log.error('[System] Failed to switch to portable mode', error)
     throw error
   }
 }
@@ -41,9 +41,9 @@ export async function switch2NormalMode(): Promise<void> {
     await fse.emptyDir(basePath)
     await fse.copy(portablePath, basePath)
     await fse.remove(path.join(getAppRootPath(), 'app'))
-    log.info('Switched to normal mode')
+    log.info('[System] Switched to normal mode')
   } catch (error) {
-    log.error('Failed to switch to normal mode', error)
+    log.error('[System] Failed to switch to normal mode', error)
     throw error
   }
 }
@@ -53,7 +53,7 @@ export async function checkPortableMode(): Promise<void> {
     const portablePath = path.join(getAppRootPath(), 'app')
     portableStore.isPortableMode = await fse.pathExists(portablePath)
   } catch (error) {
-    log.error('Failed to check portable mode', error)
+    log.error('[System] Failed to check portable mode', error)
     throw error
   }
 }
@@ -67,7 +67,7 @@ export async function switchDatabaseMode(): Promise<void> {
     }
     portableStore.isPortableMode = !portableStore.isPortableMode
   } catch (error) {
-    log.error('Failed to switch database schema', error)
+    log.error('[System] Failed to switch database schema', error)
     throw error
   }
 }

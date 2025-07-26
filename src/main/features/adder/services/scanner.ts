@@ -45,9 +45,6 @@ export class GameScanner extends EventEmitter {
     this.setupIPC()
   }
 
-  /**
-   * Setup IPC communication
-   */
   private setupIPC(): void {
     // Start scanning all game directories
     ipcManager.handle('scanner:scan-all', async () => {
@@ -113,9 +110,6 @@ export class GameScanner extends EventEmitter {
     )
   }
 
-  /**
-   * Get global scanner configuration
-   */
   private async getGlobalScannerConfig(): Promise<GlobalScannerConfig> {
     const scannerConfig = await ConfigDBManager.getConfigLocalValue('game.scanner')
     if (!scannerConfig) {
@@ -124,9 +118,6 @@ export class GameScanner extends EventEmitter {
     return scannerConfig as GlobalScannerConfig
   }
 
-  /**
-   * Start scanning all game directories
-   */
   public async startScan(): Promise<void> {
     if (this.scanProgress.status === 'scanning') {
       console.log('Scan already in progress')
@@ -166,7 +157,7 @@ export class GameScanner extends EventEmitter {
         }
       }
 
-      // Notify render process that scan has started
+      // Notify renderer process that scan has started
       ipcManager.send('scanner:scan-start', { ...this.scanProgress })
       eventBus.emit(
         'scanner:started',
@@ -231,9 +222,6 @@ export class GameScanner extends EventEmitter {
     }
   }
 
-  /**
-   * Scan specific directory
-   */
   public async scanSpecificScanner(scannerId: string): Promise<void> {
     if (this.scanProgress.status === 'scanning') {
       console.log('Scan already in progress')
@@ -308,7 +296,7 @@ export class GameScanner extends EventEmitter {
     const scannerId = scanner.id
     const scannerPath = scanner.path
     this.scanProgress.currentScannerId = scannerId
-    log.info(`Start scanning directory: ${scannerPath}`)
+    log.info(`[Scanner] Start scanning directory: ${scannerPath}`)
 
     // Get scanner progress object
     const scannerProgress = this.scanProgress.scannerProgresses[scannerId]
@@ -350,7 +338,7 @@ export class GameScanner extends EventEmitter {
         // Check status at the beginning of each loop
         if (this.scanProgress.status !== 'scanning') {
           // If not scanning, return directly without further processing
-          log.info(`Scanning stopped`)
+          log.info(`[Scanner] Scanning stopped`)
           // Notify that scan was stopped
           ipcManager.send('scanner:scan-stopped', { ...this.scanProgress })
           return
@@ -365,7 +353,7 @@ export class GameScanner extends EventEmitter {
 
         // Update progress after each folder is processed
         scannerProgress.processedFolders++
-        scannerProgress.currentFolder = '' // Clear current folder
+        scannerProgress.currentFolder = ''
         ipcManager.send('scanner:scan-progress', { ...this.scanProgress })
       }
 
@@ -375,7 +363,7 @@ export class GameScanner extends EventEmitter {
         ipcManager.send('scanner:scan-progress', { ...this.scanProgress })
       }
     } catch (error) {
-      log.error(`Error scanning directory ${scannerPath}:`, error)
+      log.error(`[Scanner] Error scanning directory ${scannerPath}:`, error)
       scannerProgress.status = 'error'
       scannerProgress.errorMessage = error instanceof Error ? error.message : String(error)
       throw error
@@ -433,9 +421,6 @@ export class GameScanner extends EventEmitter {
     }
   }
 
-  /**
-   * Apply ignore list to filter folders
-   */
   private applyIgnoreList(
     folders: { name: string; dirPath: string }[],
     ignoreList: string[]
@@ -453,12 +438,9 @@ export class GameScanner extends EventEmitter {
     })
   }
 
-  /**
-   * Stop scanning
-   */
   public stopScan(): void {
     if (this.scanProgress.status === 'scanning') {
-      log.info('Stopping scan')
+      log.info('[Scanner] Stopping scan')
 
       // Set status to idle immediately so all processing loops will exit
       this.scanProgress.status = 'idle'
@@ -479,9 +461,6 @@ export class GameScanner extends EventEmitter {
     }
   }
 
-  /**
-   * Fix failed folder
-   */
   public async fixFailedFolder(
     folderPath: string,
     gameId: string,
@@ -527,14 +506,11 @@ export class GameScanner extends EventEmitter {
         { source: 'game-scanner' }
       )
     } catch (error) {
-      log.error('Fix folder failed:', error)
+      log.error('[Scanner] Fix folder failed:', error)
       throw error
     }
   }
 
-  /**
-   * Ignore failed folder
-   */
   private ignoreFailedFolder(scannerId: string, folderPath: string): void {
     try {
       // Find the scanner progress
@@ -561,21 +537,15 @@ export class GameScanner extends EventEmitter {
         { source: 'game-scanner' }
       )
     } catch (error) {
-      log.error('Ignore failed folder failed:', error)
+      log.error('[Scanner] Ignore failed folder failed:', error)
       throw error
     }
   }
 
-  /**
-   * Get current scan progress
-   */
   public getScanProgress(): OverallScanProgress {
     return { ...this.scanProgress }
   }
 
-  /**
-   * Start periodic scan
-   */
   public async startPeriodicScan(): Promise<void> {
     // Stop existing timer scan
     this.stopPeriodicScan()
@@ -592,13 +562,13 @@ export class GameScanner extends EventEmitter {
 
       // Check if valid scan interval is set (interval <= 0 means auto scan is disabled)
       if (!interval || interval <= 0) {
-        log.info('Periodic scan is disabled (interval is <= 0)')
+        log.info('[Scanner] Periodic scan is disabled (interval is <= 0)')
         return
       }
 
       // Ensure interval is at least 5 minutes to prevent frequent scanning
       const safeInterval = Math.min(Math.max(interval, 60000 * 5), 2147483647)
-      log.info(`Setting global periodic scan at ${safeInterval}ms`)
+      log.info(`[Scanner] Setting global periodic scan at ${safeInterval}ms`)
 
       // Record last scan time
       this.lastScanTime = Date.now()
@@ -610,36 +580,30 @@ export class GameScanner extends EventEmitter {
           console.log(`Periodic scan triggered, but scan in progress, skipping this scan`)
           return
         }
-        log.info(`Periodic global scan triggered`)
+        log.info(`[Scanner] Periodic global scan triggered`)
         try {
           await this.startScan()
         } catch (error) {
-          log.error(`Global periodic scan failed:`, error)
+          log.error(`[Scanner] Global periodic scan failed:`, error)
         }
       }, safeInterval)
-      log.info(`Global periodic scan started`)
+      log.info(`[Scanner] Global periodic scan started`)
     } catch (error) {
-      log.error('Start periodic scan failed:', error)
+      log.error('[Scanner] Start periodic scan failed:', error)
       throw error
     }
   }
 
-  /**
-   * Stop periodic scan
-   */
   public stopPeriodicScan(): boolean {
     if (this.globalScanTimer) {
       clearInterval(this.globalScanTimer)
       this.globalScanTimer = null
-      log.info(`Global periodic scan stopped`)
+      log.info(`[Scanner] Global periodic scan stopped`)
       return true
     }
     return false
   }
 
-  /**
-   * Get periodic scan status
-   */
   public async getPeriodicScanStatus(): Promise<{
     active: boolean
     lastScanTime: number

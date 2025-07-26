@@ -22,7 +22,7 @@ export async function addGameMemory(gameId: string): Promise<void> {
       { source: 'game-memory' }
     )
   } catch (error) {
-    log.error('Error adding memory:', error)
+    log.error('[Game] Error adding memory:', error)
     throw error
   }
 }
@@ -44,7 +44,7 @@ export async function deleteGameMemory(gameId: string, memoryId: string): Promis
       { source: 'game-memory' }
     )
   } catch (error) {
-    log.error('Error deleting memory:', error)
+    log.error('[Game] Error deleting memory:', error)
     throw error
   }
 }
@@ -67,7 +67,7 @@ export async function updateGameMemoryCover(
       { source: 'game-memory' }
     )
   } catch (error) {
-    log.error('Error updating memory cover:', error)
+    log.error('[Game] Error updating memory cover:', error)
     throw error
   }
 }

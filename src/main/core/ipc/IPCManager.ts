@@ -7,9 +7,6 @@ import {
 import { ipcMain } from 'electron'
 import { BrowserWindow } from 'electron'
 
-/**
- * IPC - 包装 @electron-toolkit/typed-ipc 提供更便捷的API
- */
 export class IPCManager {
   private listener: IpcListener<IpcMainEvents>
   private emitter: IpcEmitter<IpcRendererEvents>
@@ -19,9 +16,6 @@ export class IPCManager {
     this.emitter = new IpcEmitter<IpcRendererEvents>()
   }
 
-  /**
-   * Listen to `channel`.
-   */
   on<E extends keyof ExtractArgs<IpcMainEvents>>(
     channel: Extract<E, string>,
     listener: (
@@ -32,9 +26,6 @@ export class IPCManager {
     this.listener.on(channel, listener)
   }
 
-  /**
-   * Handle a renderer invoke request.
-   */
   handle<E extends keyof ExtractHandler<IpcMainEvents>>(
     channel: Extract<E, string>,
     listener: (
@@ -47,9 +38,6 @@ export class IPCManager {
     this.listener.handle(channel, listener)
   }
 
-  /**
-   * Dispose all listeners and handlers.
-   */
   dispose(): void {
     this.listener.dispose()
   }
@@ -71,5 +59,4 @@ export class IPCManager {
   }
 }
 
-// 创建单例实例
 export const ipcManager = new IPCManager()

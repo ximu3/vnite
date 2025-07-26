@@ -32,7 +32,7 @@ export async function urlLauncher(gameId: string): Promise<void> {
 
     const args = urlConfig.browserPath
       ? ['""', urlConfig.browserPath, urlConfig.url] // Use the specified browser
-      : ['""', urlConfig.url] // Use the specified browser
+      : ['""', urlConfig.url] // Use the default browser
 
     const launcher = spawn('start', args, {
       shell: true,

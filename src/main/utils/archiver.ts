@@ -13,14 +13,6 @@ interface ZipOptions {
   exclude?: string[]
 }
 
-/**
- * compressed file
- * @param sourcePath Path to the folder to be compressed
- * @param targetDir Save directory for zip files
- * @param zipName Name of the compressed file (does not need to contain the .zip extension)
- * @param options Compression Options
- * @returns Returns the full path of the generated zip file
- */
 export async function zipFolder(
   sourcePath: string,
   targetDir: string,
@@ -99,7 +91,7 @@ export async function zipFolder(
 
     return outputPath
   } catch (error) {
-    log.error(`Failed to zip folder ${sourcePath}`, error)
+    log.error(`[Utils] Failed to zip folder ${sourcePath}`, error)
     throw error
   }
 }
@@ -109,13 +101,6 @@ interface UnzipOptions {
   overwrite?: boolean
 }
 
-/**
- * Decompressing ZIP files
- * @param zipPath ZIP file path
- * @param targetDir Unzip the target directory
- * @param options Decompression options
- * @returns Returns a list of the paths to the extracted files
- */
 export async function unzipFile(
   zipPath: string,
   targetDir: string,
@@ -146,7 +131,7 @@ export async function unzipFile(
 
     return extractedFiles
   } catch (error) {
-    log.error(`Failed to unzip file ${zipPath}`, error)
+    log.error(`[Utils] Failed to unzip file ${zipPath}`, error)
     throw error
   }
 }

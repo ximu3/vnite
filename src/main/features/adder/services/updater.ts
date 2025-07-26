@@ -16,11 +16,6 @@ import { scraperManager } from '~/features/scraper'
 import { ipcManager } from '~/core/ipc'
 import log from 'electron-log/main'
 
-/**
- * 批量更新多个游戏的元数据
- * @param params 批量更新参数
- * @returns 包含每个游戏更新结果的对象
- */
 export async function batchUpdateGameMetadata({
   gameIds,
   dataSource,
@@ -35,7 +30,7 @@ export async function batchUpdateGameMetadata({
   concurrency?: number
 }): Promise<BatchUpdateResults> {
   try {
-    // 准备返回结果对象
+    // Prepare the results object
     const results: BatchUpdateResults = {
       totalGames: gameIds.length,
       successfulUpdates: 0,
@@ -43,30 +38,29 @@ export async function batchUpdateGameMetadata({
       results: []
     }
 
-    // 当前处理游戏的计数
+    // Current processing game count
     let current = 0
     const total = gameIds.length
 
-    // 处理单个游戏的函数
+    // Process a single game
     const processGame = async (gameId: string): Promise<BatchUpdateResult> => {
-      // 获取游戏文档
+      // Get game document
       const gameDoc = await GameDBManager.getGame(gameId)
 
-      // 增加当前处理计数
       current++
 
       try {
-        // 如果游戏名称不存在，返回错误
+        // If no game document found, skip this game
         if (!gameDoc?.metadata?.name) {
           const result = {
             gameId,
             success: false,
-            error: '游戏名称不存在',
+            error: 'Game document not found or name is empty',
             dataSourceId: null,
             gameName: null
           }
 
-          // 发送失败进度通知
+          // Send failure progress notification
           ipcManager.send('adder:batch-update-game-metadata-progress', {
             gameId,
             gameName: null,
@@ -75,7 +69,7 @@ export async function batchUpdateGameMetadata({
             fields,
             options,
             status: 'error',
-            error: '游戏名称不存在',
+            error: 'Game document not found or name is empty',
             current,
             total
           })
@@ -83,13 +77,13 @@ export async function batchUpdateGameMetadata({
           return result
         }
 
-        // 获取游戏名称
+        // Get game name
         const gameName = gameDoc.metadata.name
 
-        // 检查是否已有该数据源的ID
+        // Check if there is an existing ID for the data source
         const existingDataSourceId = gameDoc.metadata[`${dataSource}Id`]
         if (existingDataSourceId) {
-          // 直接使用已有的数据源ID更新
+          // Update game metadata using existing data source ID
           await updateGameMetadata({
             dbId: gameId,
             dataSource,
@@ -98,7 +92,7 @@ export async function batchUpdateGameMetadata({
             options
           })
 
-          // 发送成功进度通知
+          // Send success progress notification
           ipcManager.send('adder:batch-update-game-metadata-progress', {
             gameId,
             gameName,
@@ -119,20 +113,20 @@ export async function batchUpdateGameMetadata({
           }
         }
 
-        // 搜索游戏
+        // Search for the game
         const searchResults = await scraperManager.searchGames(dataSource, gameName)
 
-        // 没有搜索结果
+        // No search results found
         if (!searchResults || searchResults.length === 0) {
           const result = {
             gameId,
             success: false,
-            error: '未找到匹配的游戏',
+            error: 'No matching game found',
             dataSourceId: null,
             gameName
           }
 
-          // 发送失败进度通知
+          // Send failure progress notification
           ipcManager.send('adder:batch-update-game-metadata-progress', {
             gameId,
             gameName,
@@ -141,7 +135,7 @@ export async function batchUpdateGameMetadata({
             fields,
             options,
             status: 'error',
-            error: '未找到匹配的游戏',
+            error: 'No matching game found',
             current,
             total
           })
@@ -149,10 +143,10 @@ export async function batchUpdateGameMetadata({
           return result
         }
 
-        // 直接使用第一个搜索结果
+        // Directly use the first search result
         const selectedResult = searchResults[0]
 
-        // 使用选出的结果更新游戏元数据
+        // Use the selected result to update game metadata
         await updateGameMetadata({
           dbId: gameId,
           dataSource,
@@ -161,7 +155,7 @@ export async function batchUpdateGameMetadata({
           options
         })
 
-        // 发送成功进度通知
+        // Send success progress notification
         ipcManager.send('adder:batch-update-game-metadata-progress', {
           gameId,
           gameName,
@@ -181,10 +175,10 @@ export async function batchUpdateGameMetadata({
           gameName
         }
       } catch (error) {
-        // 构造错误信息
-        const errorMessage = error instanceof Error ? error.message : '未知错误'
+        // Construct error message
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error'
 
-        // 发送失败进度通知
+        // Send failure progress notification
         ipcManager.send('adder:batch-update-game-metadata-progress', {
           gameId,
           gameName: gameDoc?.metadata?.name || null,
@@ -198,7 +192,7 @@ export async function batchUpdateGameMetadata({
           total
         })
 
-        // 返回错误结果
+        // Return error result
         return {
           gameId,
           success: false,
@@ -209,21 +203,21 @@ export async function batchUpdateGameMetadata({
       }
     }
 
-    // 分批处理所有游戏
+    // Process all games in batches
     const processBatch = async (gameIds: string[]): Promise<void> => {
       let successful = 0
       let failed = 0
 
-      // 分批处理游戏
+      // Process games in batches
       for (let i = 0; i < gameIds.length; i += concurrency) {
         const batch = gameIds.slice(i, i + concurrency)
 
-        // 创建处理任务，传入游戏ID和索引
+        // Create processing tasks, passing in game ID and index
         const batchPromises = batch.map((gameId) => processGame(gameId))
 
         const batchResults = await Promise.all(batchPromises)
 
-        // 处理结果
+        // Process results
         batchResults.forEach((result) => {
           if (result.success) {
             successful++
@@ -234,17 +228,17 @@ export async function batchUpdateGameMetadata({
         })
       }
 
-      // 更新最终结果
+      // Update final results
       results.successfulUpdates = successful
       results.failedUpdates = failed
     }
 
-    // 执行批处理
+    // Execute batch processing
     await processBatch(gameIds)
 
     return results
   } catch (error) {
-    log.error('[Updater] 批量更新游戏元数据失败:', error)
+    log.error('[MetadataUpdater] Batch update game metadata failed:', error)
     throw error
   }
 }
@@ -265,17 +259,17 @@ export async function updateGameMetadata({
   options?: GameMetadataUpdateOptions
 }): Promise<void> {
   try {
-    // 获取当前游戏文档
+    // Get current game document
     const gameDoc = await GameDBManager.getGame(dbId)
 
-    // 解析更新模式和字段
+    // Parse update modes and fields
     const updateAll = fields.includes('#all' as GameMetadataUpdateMode)
     const updateMissingOnly = fields.includes('#missing' as GameMetadataUpdateMode)
     const specificFields = fields.filter(
       (f) => f !== '#all' && f !== '#missing'
     ) as GameMetadataField[]
 
-    // 确定要更新的字段列表
+    // Determine the list of fields to update
     const fieldsToUpdate: GameMetadataField[] = updateAll
       ? [
           'name',
@@ -295,10 +289,10 @@ export async function updateGameMetadata({
           'icon'
         ]
       : updateMissingOnly
-        ? [] // 将在获取元数据后确定缺失字段
+        ? [] // Missing fields will be determined after fetching metadata
         : specificFields
 
-    // 设置默认选项
+    // Set default options
     const {
       overwriteExisting = true,
       updateImages = true,
@@ -306,44 +300,43 @@ export async function updateGameMetadata({
       sourcesPriority = []
     } = options
 
-    // 图像相关字段
+    // Image-related fields
     const imageFields: GameMetadataField[] = ['cover', 'background', 'logo', 'icon']
 
-    // 需要通过额外API获取的字段
+    // Fields that need to be fetched via additional API calls
     const specialFetchFields: GameMetadataField[] = ['description', 'tags', 'extra']
 
-    // 获取数据源能力信息
+    // Get provider capabilities information
     const providerInfo = scraperManager.getProviderInfo(dataSource)
     const providerCapabilities = providerInfo?.capabilities || []
 
-    // 第一步：获取基本元数据
+    // Step 1: Get base metadata
     const baseMetadata = await scraperManager.getGameMetadata(dataSource, {
       type: 'id',
       value: dataSourceId
     })
 
-    // 准备图像获取任务
+    // Prepare image fetching tasks
     const imageFetchTasks: Array<{ type: GameMetadataField; promise: Promise<string[]> }> = []
 
-    // 根据需要获取不同类型的图像
+    // Fetch different types of images as needed
     if (updateImages) {
-      // 处理图像字段
+      // Process image fields
       imageFields.forEach((imageField) => {
         if (updateAll || fieldsToUpdate.includes(imageField)) {
-          // 特殊处理背景图片，优先使用传入的URL
+          // If backgroundUrl is provided, use it for background images
           if (imageField === 'background' && backgroundUrl) {
             imageFetchTasks.push({
               type: imageField,
               promise: Promise.resolve([backgroundUrl])
             })
           } else {
-            // 检查当前数据源是否支持此图像类型的能力
             const methodName =
               `getGame${imageField.charAt(0).toUpperCase() + imageField.slice(1)}s` as ScraperCapabilities
 
-            // 判断数据源是否支持获取此类图像
+            // Check if the data source supports fetching this type of image
             if (providerCapabilities.includes(methodName)) {
-              // 当前数据源支持此图像类型，直接使用当前数据源
+              // The current data source supports this image type, use it directly
               imageFetchTasks.push({
                 type: imageField,
                 promise: (
@@ -357,11 +350,10 @@ export async function updateGameMetadata({
                 })
               })
             } else if (imageField === 'logo' || imageField === 'icon') {
-              // 特殊处理 logo 和 icon，使用 steamgriddb 作为备选
+              // Special handling for logo and icon, use steamgriddb as an alternative
               const alternativeSource = 'steamgriddb'
               const alternativeMethod = imageField === 'logo' ? 'getGameLogos' : 'getGameIcons'
 
-              // 已经获取到基本元数据，直接使用
               imageFetchTasks.push({
                 type: imageField,
                 promise: scraperManager[alternativeMethod](
@@ -380,17 +372,17 @@ export async function updateGameMetadata({
       })
     }
 
-    // 处理图片获取结果
+    // Process image fetching results
     const imageResults = await Promise.all(
       imageFetchTasks.map((task) => task.promise.then((urls) => ({ type: task.type, urls })))
     )
 
-    // 更新元数据对象
+    // Update metadata object
     const updatedMetadata = { ...gameDoc.metadata }
 
-    // 确定更新缺失字段的情况下需要更新的字段
+    // Determine which fields need to be updated in the case of missing fields
     if (updateMissingOnly) {
-      // 检查基本元数据中哪些字段是缺失的
+      // Check which fields are missing in the base metadata
       Object.keys(baseMetadata).forEach((key) => {
         const typedKey = key as keyof GameMetadata
         if (
@@ -404,23 +396,21 @@ export async function updateGameMetadata({
         }
       })
 
-      // 检查特殊字段是否缺失
+      // Check if special fields are missing
       if (!updatedMetadata.description || updatedMetadata.description === '') {
         fieldsToUpdate.push('description')
       }
-
       if (!updatedMetadata.tags || updatedMetadata.tags.length === 0) {
         fieldsToUpdate.push('tags')
       }
-
       if (!updatedMetadata.extra || updatedMetadata.extra.length === 0) {
         fieldsToUpdate.push('extra')
       }
     }
 
-    // 更新基本元数据字段
+    // Update base metadata object
     if (updateAll) {
-      // 全部替换基本元数据
+      // Replace all base metadata
       const basicFields = Object.keys(baseMetadata).filter(
         (key) =>
           !specialFetchFields.includes(key as GameMetadataField) &&
@@ -432,14 +422,14 @@ export async function updateGameMetadata({
         updatedMetadata[typedKey] = baseMetadata[typedKey] as any
       })
     } else {
-      // 更新指定的基本字段
+      // Update specified base fields
       fieldsToUpdate.forEach((field) => {
         if (
           !specialFetchFields.includes(field) &&
           !imageFields.includes(field) &&
           baseMetadata[field] !== undefined
         ) {
-          // 对数组类型的字段应用合并策略
+          // Apply merge strategy for array fields
           if (Array.isArray(baseMetadata[field])) {
             if (mergeStrategy === 'replace' || !updatedMetadata[field]) {
               updatedMetadata[field] = baseMetadata[field]
@@ -451,42 +441,42 @@ export async function updateGameMetadata({
               )
             }
           } else {
-            // 非数组字段直接替换
+            // Non-array fields are replaced directly
             updatedMetadata[field] = baseMetadata[field]
           }
         }
       })
     }
 
-    // 确保ID字段始终存在
+    // Ensure ID field always exists
     updatedMetadata[`${dataSource}Id`] = dataSourceId
 
-    // 确保originalName不为null
+    // Ensure originalName is not null
     if (updateAll || fieldsToUpdate.includes('originalName')) {
       updatedMetadata.originalName = baseMetadata.originalName ?? ''
     }
 
-    // 第二步：处理特殊字段 (description, tags, extra)
-    // 准备需要进行额外获取的特殊字段列表
+    // Step 2: Process special fields (description, tags, extra)
+    // Prepare a list of special fields that need to be fetched
     const needFetchSpecialFields: GameMetadataField[] = []
 
-    // 处理description字段
+    // Process description field
     if (updateAll || fieldsToUpdate.includes('description')) {
-      // 先检查baseMetadata中是否已有描述
+      // Check if baseMetadata already has a description
       if (baseMetadata.description && baseMetadata.description.trim()) {
-        // 如果主数据源已有描述，直接使用
+        // If the primary data source already has a description, use it directly
         updatedMetadata.description = baseMetadata.description
       } else {
-        // 如果主数据源没有描述，需要额外获取
+        // If the primary data source does not have a description, it needs to be fetched
         needFetchSpecialFields.push('description')
       }
     }
 
-    // 处理tags字段
+    // Process tags field
     if (updateAll || fieldsToUpdate.includes('tags')) {
-      // 先检查baseMetadata中是否已有标签
+      // Check if baseMetadata already has tags
       if (baseMetadata.tags && baseMetadata.tags.length > 0) {
-        // 如果主数据源已有标签，根据合并策略处理
+        // If the primary data source already has tags, process them according to the merge strategy
         if (mergeStrategy === 'replace' || !updatedMetadata.tags) {
           updatedMetadata.tags = baseMetadata.tags
         } else if (mergeStrategy === 'append') {
@@ -497,30 +487,30 @@ export async function updateGameMetadata({
           )
         }
       } else {
-        // 如果主数据源没有标签，需要额外获取
+        // If the primary data source does not have tags, it needs to be fetched
         needFetchSpecialFields.push('tags')
       }
     }
 
-    // 处理extra字段
+    // Process extra field
     if (updateAll || fieldsToUpdate.includes('extra')) {
-      // 先检查baseMetadata中是否已有额外信息
+      // Check if baseMetadata already has extra information
       if (baseMetadata.extra && baseMetadata.extra.length > 0) {
-        // 如果主数据源已有额外信息，根据合并策略处理
+        // If the primary data source already has extra information, process it according to the merge strategy
         if (mergeStrategy === 'replace' || !updatedMetadata.extra) {
           updatedMetadata.extra = baseMetadata.extra
         } else {
-          // 合并额外信息
+          // Merge extra information
           const extraMap = new Map()
 
-          // 先加入现有数据
+          // Add existing data first
           if (updatedMetadata.extra) {
             updatedMetadata.extra.forEach((e) => {
               extraMap.set(e.key, e.value)
             })
           }
 
-          // 根据合并策略添加新数据
+          // Add new data according to the merge strategy
           baseMetadata.extra.forEach((e) => {
             if (!extraMap.has(e.key) || overwriteExisting) {
               extraMap.set(e.key, e.value)
@@ -537,17 +527,17 @@ export async function updateGameMetadata({
           }))
         }
       } else {
-        // 如果主数据源没有额外信息，需要额外获取
+        // If the primary data source does not have extra information, it needs to be fetched
         needFetchSpecialFields.push('extra')
       }
     }
 
-    // 如果还有特殊字段需要获取，使用游戏名称进行额外搜索
+    // If there are still special fields to fetch, use the game name for additional searches
     if (needFetchSpecialFields.length > 0) {
       const gameName = baseMetadata.name || updatedMetadata.name
 
       if (gameName) {
-        // 使用游戏名称作为标识符
+        // Use game name as identifier
         const nameIdentifier = { type: 'name', value: gameName } as ScraperIdentifier
         const specialFetchPromises: {
           description?: Promise<GameDescriptionList>
@@ -555,7 +545,7 @@ export async function updateGameMetadata({
           extra?: Promise<GameExtraInfoList>
         } = {}
 
-        // 准备额外的获取任务
+        // Prepare additional fetch tasks
         if (needFetchSpecialFields.includes('description')) {
           specialFetchPromises.description = scraperManager.getGameDescriptionList(nameIdentifier)
         }
@@ -568,7 +558,7 @@ export async function updateGameMetadata({
           specialFetchPromises.extra = scraperManager.getGameExtraInfoList(nameIdentifier)
         }
 
-        // 执行额外的获取任务
+        // Execute additional fetch tasks
         const specialResults = await Promise.all(Object.values(specialFetchPromises))
         const specialResultsMap: {
           description?: GameDescriptionList
@@ -576,19 +566,19 @@ export async function updateGameMetadata({
           extra?: GameExtraInfoList
         } = {}
 
-        // 映射结果
+        // Map results
         let resultIndex = 0
         Object.keys(specialFetchPromises).forEach((key) => {
           specialResultsMap[key] = specialResults[resultIndex++]
         })
 
-        // 处理额外获取的描述
+        // Process additional fetched descriptions
         if (specialResultsMap.description) {
           const descriptions = specialResultsMap.description
           if (descriptions && descriptions.length > 0) {
             let selectedDescription = ''
 
-            // 按来源优先级选择
+            // Select based on source priority
             for (const sourceId of sourcesPriority) {
               const match = descriptions.find((d) => d.dataSource === sourceId && d.description)
               if (match) {
@@ -597,7 +587,7 @@ export async function updateGameMetadata({
               }
             }
 
-            // 如果没找到优先来源的描述，使用第一个
+            // If no specific source matched, use the first available description
             if (!selectedDescription && descriptions[0]) {
               selectedDescription = descriptions[0].description
             }
@@ -608,15 +598,15 @@ export async function updateGameMetadata({
           }
         }
 
-        // 处理额外获取的标签
+        // Process additional fetched tags
         if (specialResultsMap.tags) {
           const tagsList = specialResultsMap.tags
           if (tagsList && tagsList.length > 0) {
             if (mergeStrategy === 'replace' || !updatedMetadata.tags) {
-              // 使用第一个来源的标签
+              // Use first available tag
               updatedMetadata.tags = tagsList[0].tags
             } else {
-              // 合并所有来源的标签
+              // Merge all sources' tags
               const allTags = tagsList.flatMap((item) => item.tags)
 
               if (mergeStrategy === 'append') {
@@ -631,26 +621,26 @@ export async function updateGameMetadata({
           }
         }
 
-        // 处理额外获取的extra信息
+        // Process additional fetched extra information
         if (specialResultsMap.extra) {
           const extraInfo = specialResultsMap.extra
           if (extraInfo && extraInfo.length > 0) {
-            // 按合并策略处理extra信息
+            // Add new data according to the merge strategy
             if (mergeStrategy === 'replace' || !updatedMetadata.extra) {
-              // 使用第一个来源的extra
+              // Use first source's extra
               updatedMetadata.extra = extraInfo[0].extra
             } else {
-              // 合并所有来源的extra
+              // Merge all sources' extra
               const extraMap = new Map()
 
-              // 先加入现有数据
+              // Add existing data first
               if (updatedMetadata.extra) {
                 updatedMetadata.extra.forEach((e) => {
                   extraMap.set(e.key, e.value)
                 })
               }
 
-              // 根据合并策略添加新数据
+              // Add new data according to the merge strategy
               extraInfo.forEach((item) => {
                 item.extra.forEach((e) => {
                   if (!extraMap.has(e.key) || overwriteExisting) {
@@ -673,13 +663,13 @@ export async function updateGameMetadata({
       }
     }
 
-    // 更新游戏文档
+    // Update game document
     gameDoc.metadata = updatedMetadata
 
-    // 准备所有数据库写操作
+    // Prepare all database write operations
     const dbPromises: Promise<unknown>[] = [GameDBManager.setGame(dbId, gameDoc)]
 
-    // 添加图片保存操作
+    // Add image save operations
     if (updateImages) {
       imageResults.forEach((result) => {
         if (result.urls.length > 0 && result.urls[0]) {
@@ -694,10 +684,10 @@ export async function updateGameMetadata({
       })
     }
 
-    // 并行执行所有数据库操作
+    // Execute all database operations in parallel
     await Promise.all(dbPromises)
   } catch (error) {
-    log.error('[Updater] 更新游戏元数据失败:', error)
+    log.error('[MetadataUpdater] Failed to update game metadata:', error)
     throw error
   }
 }

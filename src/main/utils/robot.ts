@@ -1,4 +1,5 @@
 import koffi from 'koffi'
+import log from 'electron-log/main'
 
 // Loading user32.dll
 const user32 = koffi.load('user32.dll')
@@ -66,12 +67,12 @@ export function simulateHotkey(hotkey: string): void {
       keybd_event(vkCode, 0, KEYEVENTF_KEYUP, 0)
     })
 
-    console.log('simulate key:', {
+    log.info('[Utils] Simulate key:', {
       keys,
       originalHotkey: hotkey
     })
   } catch (error) {
-    console.error('Failed to simulate keystrokes:', {
+    log.error('[Utils] Failed to simulate keystrokes:', {
       error,
       hotkey,
       stack: error instanceof Error ? error.stack : undefined

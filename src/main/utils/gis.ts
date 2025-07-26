@@ -2,19 +2,11 @@ import { net } from 'electron'
 
 const REGEX = /\["(\bhttps?:\/\/[^"]+)",(\d+),(\d+)\],null/g
 
-/**
- * Convert Unicode to string
- * @param {string} content Content containing Unicode
- * @returns {string} Converted string
- */
 const unicodeToString = (content: string): string =>
   content.replace(/\\u[\dA-F]{4}/gi, (match) =>
     String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16))
   )
 
-/**
- * Result interface definition
- */
 export interface Result {
   url: string
   height: number
@@ -22,23 +14,11 @@ export interface Result {
   color?: [number, number, number]
 }
 
-/**
- * Options interface definition
- */
 export interface Options {
   query?: Record<string, string>
   userAgent?: string
 }
 
-/**
- * Asynchronous Google Image Search module
- * @async
- * @param {string} searchTerm Search keyword
- * @param {Options} options Search options
- * @param {Record<string, string>} options.query Custom query parameters
- * @param {string} options.userAgent User Agent used for the request
- * @returns {Promise<Result[]>} Array of results
- */
 export async function gis(searchTerm: string, options: Options = {}): Promise<Result[]> {
   if (!searchTerm || typeof searchTerm !== 'string')
     throw new TypeError('searchTerm must be a string.')

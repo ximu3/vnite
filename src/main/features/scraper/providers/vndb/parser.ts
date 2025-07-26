@@ -7,11 +7,6 @@ const urlMatcher = /\[url=(.*?)\](.*?)\[\/url\]/g
 const bMatcher = /\[b\](.*?)\[\/b\]/g
 const spoilerMatcher = /\[spoiler\](.*?)\[\/spoiler\]/g
 
-/**
- * Formatting description text, converting BBCode to HTML tags
- * @param description Text to be formatted
- * @returns Formatted text
- */
 export function formatDescription(description: string): string {
   if (description === null) {
     return ''
@@ -31,11 +26,6 @@ export function formatDescription(description: string): string {
   return formatted
 }
 
-/**
- * Remove all URL tags and keep only the text content.
- * @param description Text containing labels
- * @returns Plain text after removing labels
- */
 export function removeDescriptionTags(description: string | null): string {
   if (description === null) {
     return ''

@@ -18,8 +18,9 @@ export class TrayManager {
   private config: AppConfig | null = null
   private isQuitting: boolean = false
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  private constructor() {}
+  private constructor() {
+    // Private constructor to enforce singleton pattern
+  }
 
   public static async getInstance(mainWindow?: BrowserWindow): Promise<TrayManager> {
     if (!TrayManager.instance) {
@@ -43,6 +44,7 @@ export class TrayManager {
     this.mainWindow = mainWindow
     this.config = await ConfigDBManager.getConfigValue('general')
 
+    // Listen for configuration updates
     eventBus.on('tray:config-updated', async () => {
       await this.updateConfig()
     })
@@ -60,6 +62,7 @@ export class TrayManager {
     if (!this.mainWindow) return
 
     this.mainWindow.on('close', (event) => {
+      // Prevent closing if quitToTray is enabled
       if (!this.isQuitting && this.config?.quitToTray) {
         event.preventDefault()
         this.mainWindow?.hide()

@@ -12,17 +12,10 @@ import {
 } from './common'
 import log from 'electron-log/main.js'
 
-/**
- * DLsite Scraper Provider
- * Provides game metadata from DLsite - Japanese digital content marketplace
- */
 export const dlsiteProvider: ScraperProvider = {
   id: 'dlsite',
   name: 'DLsite',
 
-  /**
-   * Search for works on DLsite
-   */
   async searchGames(gameName: string): Promise<GameList> {
     try {
       return await searchDlsiteGames(gameName)
@@ -32,9 +25,6 @@ export const dlsiteProvider: ScraperProvider = {
     }
   },
 
-  /**
-   * Check if a work exists on DLsite
-   */
   async checkGameExists(identifier: ScraperIdentifier): Promise<boolean> {
     try {
       if (identifier.type === 'id') {
@@ -50,9 +40,6 @@ export const dlsiteProvider: ScraperProvider = {
     }
   },
 
-  /**
-   * Get work metadata from DLsite
-   */
   async getGameMetadata(identifier: ScraperIdentifier): Promise<GameMetadata> {
     try {
       if (identifier.type === 'id') {
@@ -66,9 +53,6 @@ export const dlsiteProvider: ScraperProvider = {
     }
   },
 
-  /**
-   * Get work backgrounds from DLsite
-   */
   async getGameBackgrounds(identifier: ScraperIdentifier): Promise<string[]> {
     try {
       if (identifier.type === 'id') {
@@ -82,9 +66,6 @@ export const dlsiteProvider: ScraperProvider = {
     }
   },
 
-  /**
-   * Get work covers from DLsite
-   */
   async getGameCovers(identifier: ScraperIdentifier): Promise<string[]> {
     try {
       let coverUrl: string

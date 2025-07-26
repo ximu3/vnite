@@ -3,58 +3,64 @@ import { portableStore } from './portable'
 import path from 'path'
 import fse from 'fs-extra'
 import os from 'os'
+import log from 'electron-log/main'
 
-/**
- * Get the path of the root directory of the application
- * @returns The path of the root directory of the application
- */
 export function getAppRootPath(): string {
-  if (app.isPackaged) {
-    return path.dirname(app.getPath('exe'))
-  } else {
-    return app.getAppPath()
+  try {
+    if (app.isPackaged) {
+      return path.dirname(app.getPath('exe'))
+    } else {
+      return app.getAppPath()
+    }
+  } catch (error) {
+    log.error('[System] Failed to get app root path:', error)
+    throw error
   }
 }
 
 export function getDataPath(file = ''): string {
-  const basePath = portableStore.isPortableMode
-    ? path.join(getAppRootPath(), 'app/database')
-    : path.join(app.getPath('userData'), 'app/database')
+  try {
+    const basePath = portableStore.isPortableMode
+      ? path.join(getAppRootPath(), 'app/database')
+      : path.join(app.getPath('userData'), 'app/database')
 
-  return path.join(basePath, file)
+    return path.join(basePath, file)
+  } catch (error) {
+    log.error('[System] Failed to get data path:', error)
+    throw error
+  }
 }
 
-/**
- * Get the logs file path
- * @returns The path of the logs file
- */
 export function getLogsPath(): string {
-  const basePath = portableStore.isPortableMode
-    ? path.join(getAppRootPath(), 'logs')
-    : app.getPath('logs')
-  return path.join(basePath, 'app.log')
+  try {
+    const basePath = portableStore.isPortableMode
+      ? path.join(getAppRootPath(), 'logs')
+      : app.getPath('logs')
+    return path.join(basePath, 'app.log')
+  } catch (error) {
+    log.error('[System] Failed to get logs path:', error)
+    throw error
+  }
 }
 
-/**
- * Get the path to the application log file
- * @param subDir The subdirectory to use
- * @returns The path to the application log file
- */
+}
+
 export function getAppTempPath(file?: string): string {
-  // Use electron's app.getPath('temp') to get the system temp directory.
-  // If the app is not accessible in the main process, use os.tmpdir()
-  const tempDir = app?.getPath?.('temp') || os.tmpdir()
+  try {
+    // Use electron's app.getPath('temp') to get the system temp directory.
+    // If the app is not accessible in the main process, use os.tmpdir()
+    const tempDir = app?.getPath?.('temp') || os.tmpdir()
 
-  // Creating application-specific temporary directory paths
-  const appTempDir = path.join(tempDir, 'vnite', file || '')
+    // Creating application-specific temporary directory paths
+    const appTempDir = path.join(tempDir, 'vnite', file || '')
 
-  return appTempDir
+    return appTempDir
+  } catch (error) {
+    log.error('[System] Failed to get app temp path:', error)
+    throw error
+  }
 }
 
-/**
- * Set up the temporary directory for the application
- * @returns The path of the temporary directory
- */
 export async function setupTempDirectory(): Promise<string> {
   try {
     const tempPath = getAppTempPath()
@@ -66,16 +72,16 @@ export async function setupTempDirectory(): Promise<string> {
     app.on('quit', async () => {
       try {
         await fse.remove(tempPath)
-        console.log('Temporary directory cleared')
+        log.info('[System] Temporary directory cleared')
       } catch (error) {
-        console.error('Failed to clean up temporary directory:', error)
+        log.error('[System] Failed to clean up temporary directory:', error)
       }
     })
 
-    console.log('Temporary directory is set:', tempPath)
+    log.info('[System] Temporary directory is set:', tempPath)
     return tempPath
   } catch (error) {
-    console.error('Failed to set up temporary directory:', error)
+    log.error('[System] Failed to set up temporary directory:', error)
     throw error
   }
 }

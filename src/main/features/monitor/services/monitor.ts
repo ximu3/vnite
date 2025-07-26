@@ -158,50 +158,50 @@ export class GameMonitor {
       const isProcessNameMode = process.isProcessNameMode === true
 
       if (isProcessNameMode) {
-        // 进程名称模式：直接使用进程名称
+        // Process name mode, use the process name directly
         const processName = process.path
-        console.log(`尝试终止进程名称: ${processName}`)
+        console.log(`Try to terminate process by name: ${processName}`)
 
         try {
-          // 使用 PowerShell 通过名称终止进程
+          // Use PowerShell to terminate the process by name
           const psCommand = `Get-Process -Name "${processName.replace('.exe', '')}" | Stop-Process -Force`
           await psManager.executeCommand(psCommand)
-          console.log(`进程 ${processName} 已成功终止。`)
+          console.log(`Process ${processName} has been terminated successfully.`)
           return true
         } catch (error) {
           const errorMessage = (error as any)?.message?.toLowerCase() || ''
 
-          // 如果进程不存在，则认为终止成功
+          // If the process does not exist, consider it terminated successfully
           if (
             errorMessage.includes('不存在') ||
             errorMessage.includes('找不到') ||
             errorMessage.includes('no process') ||
             errorMessage.includes('cannot find a process')
           ) {
-            console.log(`进程 ${processName} 不再存在。`)
+            console.log(`Process ${processName} does not exist anymore.`)
             return true
           }
 
-          console.error(`无法终止进程 ${processName}:`, error)
+          console.error(`Failed to terminate process ${processName}:`, error)
           return false
         }
       } else {
-        // 路径标准化
+        // Normalize the path
         const normalizedPath = this.normalizePath(process.path)
         const processName = path.basename(normalizedPath)
 
-        console.log(`尝试终止进程: ${normalizedPath}`)
+        console.log(`Try to terminate process: ${normalizedPath}`)
 
         try {
-          // 使用 PowerShell 通过精确路径匹配终止进程
+          // Use PowerShell to terminate the process by exact path
           const psCommand = `Get-Process | Where-Object {$_.Path -eq '${normalizedPath}'} | Stop-Process -Force`
           await psManager.executeCommand(psCommand)
-          console.log(`进程 ${processName} 已成功终止。`)
+          console.log(`Process ${processName} has been terminated successfully.`)
           return true
         } catch (error) {
           const errorMessage = (error as any)?.message?.toLowerCase() || ''
 
-          // 如果进程不存在，则认为终止成功
+          // If the process does not exist, consider it terminated successfully
           if (
             errorMessage.includes('不存在') ||
             errorMessage.includes('找不到') ||
@@ -209,16 +209,16 @@ export class GameMonitor {
             errorMessage.includes('cannot find') ||
             errorMessage.includes('没有找到进程')
           ) {
-            console.log(`进程 ${processName} 不再存在。`)
+            console.log(`Process ${processName} does not exist anymore.`)
             return true
           }
 
-          console.error(`无法终止进程 ${processName}:`, error)
+          console.error(`Failed to terminate process ${processName}:`, error)
           return false
         }
       }
     } catch (error) {
-      console.error('终止进程失败:', error)
+      console.error('Failed to terminate process:', error)
       return false
     }
   }
@@ -248,7 +248,7 @@ export class GameMonitor {
         ]
       }
     } catch (error) {
-      log.error(`game ${this.options.gameId} monitor initialization errors:`, error)
+      log.error(`[Monitor] Failed to initialize monitor for game ${this.options.gameId}:`, error)
     }
   }
 
@@ -396,7 +396,7 @@ export class GameMonitor {
         await this.handleGameExit()
       }
     } catch (error) {
-      log.error('Process checking error:', error)
+      log.error('[Monitor] Process checking error:', error)
     }
   }
 

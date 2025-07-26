@@ -11,7 +11,7 @@ export async function getSteamGames(steamId: string): Promise<SteamFormattedGame
   try {
     return await getUserSteamGames(steamId)
   } catch (error) {
-    log.error('Failed to get Steam game library:', error)
+    log.error('[Importer] Failed to get Steam game library:', error)
     throw error
   }
 }
@@ -25,7 +25,7 @@ export async function importSteamGames(games: SteamFormattedGameInfo[]): Promise
   try {
     return await importSelectedSteamGames(games)
   } catch (error) {
-    log.error('Failed to import Steam game:', error)
+    log.error('[Importer] Failed to import Steam game:', error)
     throw error
   }
 }

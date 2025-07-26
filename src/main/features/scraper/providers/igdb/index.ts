@@ -12,17 +12,10 @@ import {
 } from './common'
 import log from 'electron-log/main.js'
 
-/**
- * IGDB Scraper Provider
- * Provides comprehensive game metadata from the Internet Game Database
- */
 export const igdbProvider: ScraperProvider = {
   id: 'igdb',
   name: 'IGDB',
 
-  /**
-   * Search for games on IGDB
-   */
   async searchGames(gameName: string): Promise<GameList> {
     try {
       return await searchIGDBGames(gameName)
@@ -32,9 +25,6 @@ export const igdbProvider: ScraperProvider = {
     }
   },
 
-  /**
-   * Check if a game exists on IGDB
-   */
   async checkGameExists(identifier: ScraperIdentifier): Promise<boolean> {
     try {
       if (identifier.type === 'id') {
@@ -50,9 +40,6 @@ export const igdbProvider: ScraperProvider = {
     }
   },
 
-  /**
-   * Get game metadata from IGDB
-   */
   async getGameMetadata(identifier: ScraperIdentifier): Promise<GameMetadata> {
     try {
       if (identifier.type === 'id') {
@@ -66,9 +53,6 @@ export const igdbProvider: ScraperProvider = {
     }
   },
 
-  /**
-   * Get game backgrounds from IGDB
-   */
   async getGameBackgrounds(identifier: ScraperIdentifier): Promise<string[]> {
     try {
       if (identifier.type === 'id') {
@@ -82,9 +66,6 @@ export const igdbProvider: ScraperProvider = {
     }
   },
 
-  /**
-   * Get game covers from IGDB
-   */
   async getGameCovers(identifier: ScraperIdentifier): Promise<string[]> {
     try {
       let coverUrl: string

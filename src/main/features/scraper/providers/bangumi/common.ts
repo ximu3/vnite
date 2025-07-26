@@ -137,13 +137,6 @@ export async function searchBangumiGames(gameName: string): Promise<GameList> {
   }
 }
 
-/**
- * Generic function to extract field data from infobox
- * @param infobox infobox data
- * @param fields Array of field names to search for
- * @param options Configuration options
- * @returns Extracted data
- */
 function getInfoboxField<T = string[]>(
   infobox: { key: string; value: any }[] | undefined,
   fields: string[],

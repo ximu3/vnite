@@ -10,7 +10,7 @@ export async function setupAutoUpdater(): Promise<void> {
   }
 
   const allowPrerelease = await ConfigDBManager.getConfigValue('updater.allowPrerelease')
-  log.info('Allow pre-release:', allowPrerelease)
+  log.info('[AppUpdater] Allow pre-release:', allowPrerelease)
 
   autoUpdater.allowPrerelease = allowPrerelease
 
@@ -18,18 +18,18 @@ export async function setupAutoUpdater(): Promise<void> {
 
   // Add error handling
   autoUpdater.on('error', (error) => {
-    log.error('update error:', error)
+    log.error('[AppUpdater] Update error:', error)
     ipcManager.send('updater:update-error', error.message)
   })
 
   // Add processing to check for the start of an update
   autoUpdater.on('checking-for-update', () => {
-    log.info('Checking for updates...')
+    log.info('[AppUpdater] Checking for updates...')
     ipcManager.send('updater:checking-for-update')
   })
 
   autoUpdater.on('update-available', (info) => {
-    log.info('Discover the new version:', info.version)
+    log.info('[AppUpdater] Discover the new version:', info.version)
     const updateInfo = {
       version: info.version,
       releaseNotes: Array.isArray(info.releaseNotes)
@@ -40,7 +40,7 @@ export async function setupAutoUpdater(): Promise<void> {
   })
 
   autoUpdater.on('update-not-available', (info) => {
-    log.info('Currently in the latest version:', info.version)
+    log.info('[AppUpdater] Currently in the latest version:', info.version)
     ipcManager.send('updater:update-not-available')
   })
 
@@ -49,28 +49,24 @@ export async function setupAutoUpdater(): Promise<void> {
   })
 
   autoUpdater.on('update-downloaded', () => {
-    log.info('The update has finished downloading')
+    log.info('[AppUpdater] The update has finished downloading')
     ipcManager.send('updater:update-downloaded')
   })
 
   // Delay checking for updates to make sure the window is fully loaded
   setTimeout(() => {
     autoUpdater.checkForUpdates().catch((error) => {
-      log.error('Failure to automatically check for updates:', error)
+      log.error('[AppUpdater] Failure to automatically check for updates:', error)
     })
   }, 3000)
 }
 
-/**
- * Update auto-updater configuration
- * Re-read settings from the configuration database and apply them to autoUpdater
- */
 export async function updateUpdater(): Promise<void> {
   const allowPrerelease = await ConfigDBManager.getConfigValue('updater.allowPrerelease')
 
   autoUpdater.allowPrerelease = allowPrerelease
 
-  log.info('Updated auto-updater settings:', { allowPrerelease })
+  log.info('[AppUpdater] Updated auto-updater settings:', { allowPrerelease })
 }
 
 // const DBVersion = {

@@ -137,7 +137,7 @@ export class RendererEventBus {
     }
   ): Promise<boolean> {
     try {
-      const result = await ipcManager.invoke('eventbus:emit', eventType, data, {
+      const result = await ipcManager.invoke('events:emit', eventType, data, {
         source: `renderer:${options.source}`,
         correlationId: options.correlationId
       })
@@ -261,7 +261,7 @@ export class RendererEventBus {
    */
   async queryHistory(options?: EventHistoryQuery): Promise<EventHistoryEntry[]> {
     try {
-      const result = await ipcManager.invoke('eventbus:query-history', options)
+      const result = await ipcManager.invoke('events:query-history', options)
       console.debug(`[RendererEventBus] History queried, found ${result.length} events`)
       return result
     } catch (error) {
@@ -275,7 +275,7 @@ export class RendererEventBus {
    */
   async getTotalEvents(): Promise<number> {
     try {
-      const result = await ipcManager.invoke('eventbus:get-total-events')
+      const result = await ipcManager.invoke('events:get-total-events')
       console.debug(`[RendererEventBus] Total events: ${result}`)
       return result
     } catch (error) {
@@ -289,7 +289,7 @@ export class RendererEventBus {
    */
   async getEventsByType(): Promise<Record<string, number>> {
     try {
-      const result = await ipcManager.invoke('eventbus:get-events-by-type')
+      const result = await ipcManager.invoke('events:get-events-by-type')
       console.debug('[RendererEventBus] Events by type retrieved')
       return result
     } catch (error) {
@@ -303,7 +303,7 @@ export class RendererEventBus {
    */
   async getRecentEvents(limit: number = 10): Promise<EventHistoryEntry[]> {
     try {
-      const result = await ipcManager.invoke('eventbus:get-recent-events', limit)
+      const result = await ipcManager.invoke('events:get-recent-events', limit)
       console.debug(`[RendererEventBus] Recent events retrieved: ${result.length} events`)
       return result
     } catch (error) {
@@ -317,7 +317,7 @@ export class RendererEventBus {
    */
   async clearHistory(): Promise<void> {
     try {
-      await ipcManager.invoke('eventbus:clear-history')
+      await ipcManager.invoke('events:clear-history')
       console.info('[RendererEventBus] History cleared')
     } catch (error) {
       console.error('[RendererEventBus] Error clearing history:', error)
@@ -336,7 +336,7 @@ export class RendererEventBus {
     averageEventsPerMinute: number
   }> {
     try {
-      const result = await ipcManager.invoke('eventbus:get-history-stats')
+      const result = await ipcManager.invoke('events:get-history-stats')
       console.debug('[RendererEventBus] History stats retrieved')
       return result
     } catch (error) {
@@ -376,7 +376,7 @@ export class RendererEventBus {
    */
   private setupMainProcessEventForwarding(): void {
     // 监听来自主进程的事件转发
-    ipcManager.on('eventbus:event-emitted', (_e, eventType, data) => {
+    ipcManager.on('events:event-emitted', (_e, eventType, data) => {
       try {
         // 在本地 EventEmitter 中触发事件
         this.emitter.emit(eventType, data)

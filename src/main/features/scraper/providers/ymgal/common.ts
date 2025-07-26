@@ -29,7 +29,6 @@ const YMGAL_ROLE_MAPPING: Record<string, string> = {
 const BASE_URL = 'https://www.ymgal.games'
 const API_VERSION = '1'
 
-// Process staff data function for YMGal
 function processYMGalStaffData(
   staffList: Array<{
     sid: number
@@ -78,7 +77,6 @@ function processYMGalStaffData(
     }))
 }
 
-// Get Access Token
 async function getAccessToken(): Promise<string> {
   const tokenEndpoint = `${BASE_URL}/oauth/token`
   const params = new URLSearchParams({
@@ -101,7 +99,6 @@ async function getAccessToken(): Promise<string> {
   }
 }
 
-// Basic API Request Functions
 async function fetchYMGal<T>(endpoint: string, params?: Record<string, string>): Promise<T> {
   const token = await getAccessToken()
   const url = new URL(endpoint, BASE_URL)
@@ -131,7 +128,6 @@ async function fetchYMGal<T>(endpoint: string, params?: Record<string, string>):
   return data.data
 }
 
-// Search games
 export async function searchYMGalGames(gameName: string): Promise<GameList> {
   try {
     const data = await fetchYMGal<GameListResponse>('/open/archive/search-game', {
@@ -154,7 +150,6 @@ export async function searchYMGalGames(gameName: string): Promise<GameList> {
   }
 }
 
-// Functions to get developer details
 async function getOrganizationDetail(orgId: number): Promise<Organization> {
   const data = await fetchYMGal<OrganizationResponse>('/open/archive', {
     orgId: orgId.toString()
@@ -162,7 +157,6 @@ async function getOrganizationDetail(orgId: number): Promise<Organization> {
   return data.org
 }
 
-// Getting game metadata
 export async function getYMGalMetadata(gameId: string): Promise<GameMetadata> {
   try {
     const data = await fetchYMGal<GameDetailResponse>('/open/archive', {
@@ -259,7 +253,6 @@ export async function getGameBackgroundsByName(gameName: string): Promise<string
   }
 }
 
-// Get game cover
 export async function getGameCover(gameId: string): Promise<string> {
   try {
     const data = await fetchYMGal<GameDetailResponse>('/open/archive', {
@@ -290,7 +283,6 @@ export async function getGameCoverByName(gameName: string): Promise<string> {
   }
 }
 
-// Check if the game exists
 export async function checkYMGalExists(gameId: string): Promise<boolean> {
   try {
     await fetchYMGal('/open/archive', {

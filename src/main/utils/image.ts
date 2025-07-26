@@ -6,12 +6,6 @@ import fse from 'fs-extra'
 import { fileTypeFromBuffer } from 'file-type'
 import { gis } from '~/utils'
 
-/**
- * Search game related images
- * @param gameName name of game
- * @param imageType Image Type (icon, logo, hero, cover)
- * @returns Array of image links
- */
 export async function searchGameImages(
   gameName: string,
   imageType: 'icon' | 'logo' | 'hero' | 'cover' | string,

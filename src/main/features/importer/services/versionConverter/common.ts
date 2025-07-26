@@ -1,4 +1,3 @@
-// DatabaseV2toV3Converter.ts
 import { gameCollectionDoc, gameDoc, gameLocalDoc } from '@appTypes/models'
 import { app } from 'electron'
 import * as fse from 'fs-extra'
@@ -172,10 +171,6 @@ interface V2Config {
   }
 }
 
-/**
- * Import V2 database from zip file and convert to V3
- * @param zipFilePath zip file path
- */
 export async function convertV2toV3Database(zipFilePath: string): Promise<void> {
   console.log('Start importing database from ZIP file...')
 
@@ -208,9 +203,6 @@ export async function convertV2toV3Database(zipFilePath: string): Promise<void> 
   }
 }
 
-/**
- * Convert game data
- */
 async function convertGames(basePath: string): Promise<void> {
   console.log('Start converting game data...')
 
@@ -245,9 +237,6 @@ async function convertGames(basePath: string): Promise<void> {
   console.log(`Successful conversion of ${gameIds.length} games`)
 }
 
-/**
- * Convert individual game data
- */
 async function convertGame(gameId: string, gamePath: string): Promise<void> {
   console.log(`Converting the game: ${gameId}`)
 
@@ -386,9 +375,6 @@ async function convertGame(gameId: string, gamePath: string): Promise<void> {
   }
 }
 
-/**
- * Processing game image files
- */
 async function processGameImages(gameId: string, gamePath: string): Promise<void> {
   const imageTypes = ['background', 'cover', 'icon', 'logo']
   const possibleExtensions = ['webp', 'jpg', 'jpeg', 'png', 'gif', 'ico']
@@ -421,9 +407,6 @@ async function processGameImages(gameId: string, gamePath: string): Promise<void
   }
 }
 
-/**
- * Handling game save files
- */
 async function processGameSaves(gameId: string, gamePath: string): Promise<void> {
   const savesDir = path.join(gamePath, 'saves')
 
@@ -463,9 +446,6 @@ async function processGameSaves(gameId: string, gamePath: string): Promise<void>
   }
 }
 
-/**
- * Processing Game Memory Images
- */
 async function processGameMemories(gameId: string, gamePath: string): Promise<void> {
   const memoriesDir = path.join(gamePath, 'memories')
 
@@ -504,9 +484,6 @@ async function processGameMemories(gameId: string, gamePath: string): Promise<vo
   }
 }
 
-/**
- * Convert Collections Data
- */
 async function convertCollections(basePath: string): Promise<void> {
   console.log('Start converting collections data...')
 
@@ -542,9 +519,6 @@ async function convertCollections(basePath: string): Promise<void> {
   }
 }
 
-/**
- * Converting configuration data
- */
 async function convertConfig(basePath: string): Promise<void> {
   console.log('Start converting configuration data...')
 
@@ -641,9 +615,6 @@ async function convertConfig(basePath: string): Promise<void> {
   }
 }
 
-/**
- * Mapping Data Source Name
- */
 function mapDataSourceName(
   source: string
 ): 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite' {
@@ -665,9 +636,6 @@ function mapDataSourceName(
   }
 }
 
-/**
- * Mapping Sorted Fields
- */
 function mapSortField(
   field: string
 ):
@@ -693,9 +661,6 @@ function mapSortField(
   }
 }
 
-/**
- * Reading JSON files
- */
 async function readJsonFile<T>(filePath: string): Promise<T> {
   const exists = await fse.pathExists(filePath)
   if (!exists) {
@@ -710,9 +675,6 @@ async function readJsonFile<T>(filePath: string): Promise<T> {
   }
 }
 
-/**
- * Cleaning up temporary files
- */
 async function cleanupTempFiles(tempDir: string): Promise<void> {
   try {
     const exists = await fse.pathExists(tempDir)

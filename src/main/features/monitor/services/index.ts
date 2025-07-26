@@ -28,6 +28,6 @@ export async function startMonitor(gameId: string): Promise<void> {
     await monitor.init()
     monitor.start()
   } catch (error) {
-    log.error(`Failed to start monitor ${gameId}`, error)
+    log.error(`[Monitor] Failed to start monitor ${gameId}`, error)
   }
 }

@@ -4,11 +4,8 @@ import { addGameToDB } from '~/features/adder'
 import { ipcManager } from '~/core/ipc'
 import { net } from 'electron'
 
-/**
- * Getting information about a user's Steam library
- */
 export async function getUserSteamGames(steamId: string): Promise<SteamFormattedGameInfo[]> {
-  const endpoints = ['https://api.steampowered.com', 'https://api.ximu.dev/steam/api']
+  const endpoints = ['https://api.steampowered.com']
 
   const searchParams = new URLSearchParams({
     key: import.meta.env.VITE_STEAM_API_KEY,
@@ -51,9 +48,6 @@ export async function getUserSteamGames(steamId: string): Promise<SteamFormatted
   throw lastError || new Error('All endpoints failed')
 }
 
-/**
- * Importing selected Steam games into the database
- */
 export async function importSelectedSteamGames(games: SteamFormattedGameInfo[]): Promise<number> {
   try {
     const totalGames = games.length

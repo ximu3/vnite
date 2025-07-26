@@ -13,62 +13,30 @@ import log from 'electron-log/main'
 export class ScraperManager {
   private providers: Map<string, ScraperProvider> = new Map()
 
-  /**
-   * Register a scraper provider
-   * @param provider The scraper provider to register
-   */
   public registerProvider(provider: ScraperProvider): void {
     this.providers.set(provider.id, provider)
   }
 
-  /**
-   * Unregister a scraper provider
-   * @param providerId The ID of the provider to unregister
-   */
   public unregisterProvider(providerId: string): void {
     this.providers.delete(providerId)
   }
 
-  /**
-   * Get a registered provider by ID
-   * @param providerId The ID of the provider
-   * @returns The scraper provider or undefined if not found
-   */
   public getProvider(providerId: string): ScraperProvider | undefined {
     return this.providers.get(providerId)
   }
 
-  /**
-   * Get all registered providers
-   * @returns Array of all registered providers
-   */
   public getAllProviders(): ScraperProvider[] {
     return Array.from(this.providers.values())
   }
 
-  /**
-   * Get all provider IDs
-   * @returns Array of all provider IDs
-   */
   public getProviderIds(): string[] {
     return Array.from(this.providers.keys())
   }
 
-  /**
-   * Check if a provider is registered
-   * @param providerId The ID of the provider to check
-   * @returns True if provider is registered, false otherwise
-   */
   public hasProvider(providerId: string): boolean {
     return this.providers.has(providerId)
   }
 
-  /**
-   * Search games using a specific provider
-   * @param providerId The ID of the provider to use
-   * @param gameName The name of the game to search
-   * @returns Promise resolving to game list
-   */
   public async searchGames(providerId: string, gameName: string): Promise<GameList> {
     try {
       const provider = this.getProvider(providerId)
@@ -85,12 +53,6 @@ export class ScraperManager {
     }
   }
 
-  /**
-   * Check if a game exists using a specific provider
-   * @param providerId The ID of the provider to use
-   * @param identifier The game identifier
-   * @returns Promise resolving to boolean
-   */
   public async checkGameExists(
     providerId: string,
     identifier: ScraperIdentifier
@@ -110,12 +72,6 @@ export class ScraperManager {
     }
   }
 
-  /**
-   * Get game metadata using a specific provider
-   * @param providerId The ID of the provider to use
-   * @param identifier The game identifier
-   * @returns Promise resolving to game metadata
-   */
   public async getGameMetadata(
     providerId: string,
     identifier: ScraperIdentifier
@@ -136,12 +92,6 @@ export class ScraperManager {
     }
   }
 
-  /**
-   * Get game backgrounds using a specific provider
-   * @param providerId The ID of the provider to use
-   * @param identifier The game identifier
-   * @returns Promise resolving to array of background URLs
-   */
   public async getGameBackgrounds(
     providerId: string,
     identifier: ScraperIdentifier
@@ -157,16 +107,11 @@ export class ScraperManager {
       return provider.getGameBackgrounds(identifier)
     } catch (error) {
       log.error(`[Scraper] Failed to get game backgrounds using provider '${providerId}': ${error}`)
+      // Return an empty array on error, preventing interruptions
       return []
     }
   }
 
-  /**
-   * Get game covers using a specific provider
-   * @param providerId The ID of the provider to use
-   * @param identifier The game identifier
-   * @returns Promise resolving to array of cover URLs
-   */
   public async getGameCovers(providerId: string, identifier: ScraperIdentifier): Promise<string[]> {
     try {
       const provider = this.getProvider(providerId)
@@ -179,16 +124,11 @@ export class ScraperManager {
       return provider.getGameCovers(identifier)
     } catch (error) {
       log.error(`[Scraper] Failed to get game covers using provider '${providerId}': ${error}`)
+      // Return an empty array on error, preventing interruptions
       return []
     }
   }
 
-  /**
-   * Get game logos using a specific provider
-   * @param providerId The ID of the provider to use
-   * @param identifier The game identifier
-   * @returns Promise resolving to array of logo URLs
-   */
   public async getGameLogos(providerId: string, identifier: ScraperIdentifier): Promise<string[]> {
     try {
       const provider = this.getProvider(providerId)
@@ -201,16 +141,11 @@ export class ScraperManager {
       return provider.getGameLogos(identifier)
     } catch (error) {
       log.error(`[Scraper] Failed to get game logos using provider '${providerId}': ${error}`)
+      // Return an empty array on error, preventing interruptions
       return []
     }
   }
 
-  /**
-   * Get game icons using a specific provider
-   * @param providerId The ID of the provider to use
-   * @param identifier The game identifier
-   * @returns Promise resolving to array of icon URLs
-   */
   public async getGameIcons(providerId: string, identifier: ScraperIdentifier): Promise<string[]> {
     try {
       const provider = this.getProvider(providerId)
@@ -223,22 +158,15 @@ export class ScraperManager {
       return provider.getGameIcons(identifier)
     } catch (error) {
       log.error(`[Scraper] Failed to get game icons using provider '${providerId}': ${error}`)
+      // Return an empty array on error, preventing interruptions
       return []
     }
   }
 
-  /**
-   * Clear all registered providers
-   */
   public clearProviders(): void {
     this.providers.clear()
   }
 
-  /**
-   * Get capabilities of a specific provider
-   * @param provider The scraper provider
-   * @returns Array of capabilities implemented by the provider
-   */
   private getProviderCapabilities(provider: ScraperProvider): ScraperCapabilities[] {
     return Object.keys(provider)
       .filter((key) => key !== 'id' && key !== 'name')
@@ -262,12 +190,6 @@ export class ScraperManager {
     }
   }
 
-  /**
-   * Get provider Infos that implement specified capabilities
-   * @param capabilities Array of capability names that providers must implement
-   * @param requireAll If true, providers must implement all capabilities; if false, providers need only implement at least one capability
-   * @returns Array of provider Infos that implement the specified capabilities
-   */
   public getProviderInfosWithCapabilities(
     capabilities: ScraperCapabilities[],
     requireAll: boolean = true
@@ -300,11 +222,6 @@ export class ScraperManager {
     )
   }
 
-  /**
-   * Get game description list from multiple providers
-   * @param identifier The game identifier
-   * @returns Promise resolving to transformed game description list
-   */
   public async getGameDescriptionList(identifier: ScraperIdentifier): Promise<GameDescriptionList> {
     try {
       const providerIds = this.getProviderIdsWithCapabilities(['getGameMetadata'])
@@ -338,11 +255,6 @@ export class ScraperManager {
     }
   }
 
-  /**
-   * Get game tags list from multiple providers
-   * @param identifier The game identifier
-   * @returns Promise resolving to transformed game tags list
-   */
   public async getGameTagsList(identifier: ScraperIdentifier): Promise<GameTagsList> {
     try {
       const providerIds = this.getProviderIdsWithCapabilities(['getGameMetadata'])
@@ -376,11 +288,6 @@ export class ScraperManager {
     }
   }
 
-  /**
-   * Get game extra info list from multiple providers
-   * @param identifier The game identifier
-   * @returns Promise resolving to transformed game extra info list
-   */
   public async getGameExtraInfoList(identifier: ScraperIdentifier): Promise<GameExtraInfoList> {
     try {
       const providerIds = this.getProviderIdsWithCapabilities(['getGameMetadata'])

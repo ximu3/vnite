@@ -3,9 +3,6 @@ import { defaultPreset } from './preset'
 import fse from 'fs-extra'
 import log from 'electron-log/main.js'
 
-/**
- * A class to manage the theme of the application
- */
 export class ThemeManager {
   private static instance: ThemeManager | null = null
   private themePath: string
@@ -26,7 +23,7 @@ export class ThemeManager {
     try {
       await fse.writeFile(this.themePath, cssContent, 'utf-8')
     } catch (error) {
-      log.error('Failed to save topic:', error)
+      log.error('[Theme] Failed to save theme:', error)
     }
   }
 
@@ -43,7 +40,7 @@ export class ThemeManager {
         return await defaultPreset()
       }
     } catch (error) {
-      log.error('Failed to read topic:', error)
+      log.error('[Theme] Failed to read theme:', error)
     }
     return null
   }

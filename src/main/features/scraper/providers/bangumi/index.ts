@@ -12,17 +12,10 @@ import {
 } from './common'
 import log from 'electron-log/main.js'
 
-/**
- * Bangumi Scraper Provider
- * Provides game metadata from Bangumi - The ACGN subject database
- */
 export const bangumiProvider: ScraperProvider = {
   id: 'bangumi',
   name: 'Bangumi',
 
-  /**
-   * Search for games on Bangumi
-   */
   async searchGames(gameName: string): Promise<GameList> {
     try {
       return await searchBangumiGames(gameName)
@@ -32,9 +25,6 @@ export const bangumiProvider: ScraperProvider = {
     }
   },
 
-  /**
-   * Check if a game exists on Bangumi
-   */
   async checkGameExists(identifier: ScraperIdentifier): Promise<boolean> {
     try {
       if (identifier.type === 'id') {
@@ -50,9 +40,6 @@ export const bangumiProvider: ScraperProvider = {
     }
   },
 
-  /**
-   * Get game metadata from Bangumi
-   */
   async getGameMetadata(identifier: ScraperIdentifier): Promise<GameMetadata> {
     try {
       if (identifier.type === 'id') {
@@ -66,9 +53,6 @@ export const bangumiProvider: ScraperProvider = {
     }
   },
 
-  /**
-   * Get game backgrounds from Bangumi (via VNDB integration)
-   */
   async getGameBackgrounds(identifier: ScraperIdentifier): Promise<string[]> {
     try {
       if (identifier.type === 'id') {
@@ -82,9 +66,6 @@ export const bangumiProvider: ScraperProvider = {
     }
   },
 
-  /**
-   * Get game covers from Bangumi
-   */
   async getGameCovers(identifier: ScraperIdentifier): Promise<string[]> {
     try {
       let coverUrl: string

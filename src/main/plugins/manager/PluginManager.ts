@@ -1,24 +1,16 @@
-/**
- * 插件管理器
- *
- * 负责插件的发现、加载、安装、卸载、启用、禁用等核心功能
- */
-
 import { join, dirname } from 'path'
-import { app } from 'electron'
 import { promises as fs } from 'fs'
 import AdmZip from 'adm-zip'
 import { net } from 'electron'
 import { VnitePluginAPI } from '../api'
 import { PluginDBManager } from '~/core/database'
 import { eventBus } from '~/core/events'
-import log from 'electron-log'
+import log from 'electron-log/main'
 import type {
   PluginManifest,
   PluginInfo,
   PluginInstallOptions,
-  PluginSearchOptions,
-  PluginRegistry
+  PluginSearchOptions
 } from '@appTypes/plugin'
 import { IPlugin } from '../api/types'
 import { PluginStatus, PluginStatsData } from '@appTypes/plugin'
@@ -43,31 +35,25 @@ export class PluginManager {
     return PluginManager.instance
   }
 
-  /**
-   * 初始化插件管理器
-   */
   public async initialize(): Promise<void> {
     try {
       // 确保插件目录存在
       await fs.mkdir(this.pluginsDir, { recursive: true })
 
-      // 加载所有已安装的插件
+      // Load all installed plugins
       await this.discoverPlugins()
 
-      // 启用已安装且设置为启用的插件
+      // Enable plugins that are installed and set to enabled
       await this.loadEnabledPlugins()
 
-      log.info('插件管理器初始化完成')
-      // 可以选择发送系统启动完成事件或者移除这个事件
+      log.info('[Plugin] Plugin manager initialization completed')
+      // Can choose to send system startup complete event or remove this event
     } catch (error) {
-      log.error('插件管理器初始化失败:', error)
+      log.error('[Plugin] Plugin manager initialization failed:', error)
       throw error
     }
   }
 
-  /**
-   * 发现已安装的插件
-   */
   private async discoverPlugins(): Promise<void> {
     try {
       const entries = await fs.readdir(this.pluginsDir, { withFileTypes: true })
@@ -78,20 +64,17 @@ export class PluginManager {
         }
       }
 
-      log.info(`发现 ${this.plugins.size} 个已安装的插件`)
+      log.info(`[Plugin] Discovered ${this.plugins.size} installed plugins`)
     } catch (error) {
-      log.error('发现插件失败:', error)
+      log.error('[Plugin] Failed to discover plugins:', error)
     }
   }
 
-  /**
-   * 加载插件信息
-   */
   private async loadPluginInfo(pluginId: string): Promise<void> {
     try {
       const pluginDir = join(this.pluginsDir, pluginId)
 
-      // 优先查找 manifest.json，然后是 package.json
+      // Look for manifest.json first, then package.json
       let manifestPath = join(pluginDir, 'manifest.json')
       if (
         !(await fs.access(manifestPath).then(
@@ -102,21 +85,21 @@ export class PluginManager {
         manifestPath = join(pluginDir, 'package.json')
       }
 
-      // 检查manifest文件是否存在
+      // Check if manifest file exists
       try {
         await fs.access(manifestPath)
       } catch {
-        log.warn(`插件 ${pluginId} 缺少 manifest.json 或 package.json 文件`)
+        log.warn(`[Plugin] Plugin ${pluginId} is missing manifest.json or package.json file`)
         return
       }
 
-      // 读取manifest
+      // Read manifest
       const manifestContent = await fs.readFile(manifestPath, 'utf-8')
       const manifest: PluginManifest = JSON.parse(manifestContent)
 
-      // 验证manifest
+      // Validate manifest
       if (!this.validateManifest(manifest)) {
-        log.warn(`插件 ${pluginId} 的 manifest.json/package.json 格式不正确`)
+        log.warn(`[Plugin] Plugin ${pluginId} has an invalid manifest.json/package.json format`)
         return
       }
 
@@ -133,9 +116,9 @@ export class PluginManager {
       ipcManager.send('plugin:update-all-plugins', this.getSerializablePlugins())
       ipcManager.send('plugin:update-plugin-stats', this.getPluginStats())
 
-      log.info(`已加载插件信息: ${pluginId}`)
+      log.info(`[Plugin] Loaded plugin info: ${pluginId}`)
     } catch (error) {
-      log.error(`加载插件 ${pluginId} 信息失败:`, error)
+      log.error(`[Plugin] Failed to load plugin ${pluginId} info:`, error)
     }
   }
 
@@ -150,9 +133,6 @@ export class PluginManager {
     }
   }
 
-  /**
-   * 验证插件manifest
-   */
   private validateManifest(manifest: any): manifest is PluginManifest {
     return !!(
       manifest.id &&
@@ -163,152 +143,137 @@ export class PluginManager {
     )
   }
 
-  /**
-   * 加载已启用的插件
-   */
   private async loadEnabledPlugins(): Promise<void> {
-    // 获取所有已注册的插件ID
+    // Get all registered plugin IDs
     const pluginIds = Array.from(this.plugins.keys())
 
-    // 遍历所有插件，检查数据库中的启用状态
+    // Iterate through all plugins, check enabled status in database
     for (const pluginId of pluginIds) {
-      // 从数据库中获取插件的启用状态，默认为false
+      // Get plugin enabled status from database, default to false
       const isEnabled = await PluginDBManager.getPluginValue(
         'system',
         `plugins.${pluginId}.enabled`,
         false
       )
 
-      // 如果插件在数据库中标记为启用，则激活它
+      // If the plugin is marked as enabled in the database, activate it
       if (isEnabled) {
         await this.activatePlugin(pluginId)
       }
     }
   }
 
-  /**
-   * 激活插件
-   */
   public async activatePlugin(pluginId: string): Promise<void> {
     try {
       const pluginInfo = this.plugins.get(pluginId)
       if (!pluginInfo) {
-        throw new Error(`插件 ${pluginId} 不存在`)
+        throw new Error(`Plugin ${pluginId} does not exist`)
       }
 
       if (pluginInfo.status === PluginStatus.ENABLED) {
-        log.warn(`插件 ${pluginId} 已经启用`)
+        log.warn(`[Plugin] Plugin ${pluginId} is already enabled`)
         return
       }
 
-      // 设置状态为加载中
+      // Set status to loading
       this.updatePluginStatus(pluginId, PluginStatus.LOADING)
 
-      // 加载插件模块
+      // Load plugin module
       const pluginModule = await this.loadPluginModule(pluginInfo)
 
-      // 创建API实例
+      // Create API instance
       const api = new VnitePluginAPI(pluginId)
 
-      // 激活插件
+      // Activate plugin
       if (pluginModule.activate) {
         await pluginModule.activate(api)
       }
 
-      // 保存插件实例
+      // Save plugin instance
       pluginInfo.instance = pluginModule
       this.loadedModules.set(pluginId, pluginModule)
 
-      // 更新状态
+      // Update status
       this.updatePluginStatus(pluginId, PluginStatus.ENABLED)
       await PluginDBManager.setPluginValue('system', `plugins.${pluginId}.enabled`, true)
 
-      log.info(`插件 ${pluginId} 激活成功`)
+      log.info(`[Plugin] Plugin ${pluginId} activated successfully`)
       eventBus.emit('plugin:enabled', { pluginId }, { source: 'PluginManager' })
     } catch (error) {
-      log.error(`激活插件 ${pluginId} 失败:`, error)
+      log.error(`[Plugin] Failed to activate plugin ${pluginId}:`, error)
       const errorMessage = error instanceof Error ? error.message : String(error)
       this.updatePluginStatus(pluginId, PluginStatus.ERROR, errorMessage)
       throw error
     }
   }
 
-  /**
-   * 停用插件
-   */
   public async deactivatePlugin(pluginId: string, onQuit = false): Promise<void> {
     try {
       const pluginInfo = this.plugins.get(pluginId)
       if (!pluginInfo) {
-        throw new Error(`插件 ${pluginId} 不存在`)
+        throw new Error(`Plugin ${pluginId} does not exist`)
       }
 
       if (pluginInfo.status !== PluginStatus.ENABLED) {
-        log.warn(`插件 ${pluginId} 未启用`)
+        log.warn(`[Plugin] Plugin ${pluginId} is not enabled`)
         return
       }
 
       const pluginModule = this.loadedModules.get(pluginId)
       if (pluginModule && pluginModule.deactivate) {
-        // 创建API实例给deactivate使用
+        // Create API instance for deactivate to use
         const api = new VnitePluginAPI(pluginId)
         await pluginModule.deactivate(api)
       }
 
-      // 清理模块缓存
+      // Clear module cache
       this.loadedModules.delete(pluginId)
       pluginInfo.instance = undefined
 
-      // 更新状态
+      // Update status
       this.updatePluginStatus(pluginId, PluginStatus.DISABLED)
       !onQuit &&
         (await PluginDBManager.setPluginValue('system', `plugins.${pluginId}.enabled`, false))
 
-      log.info(`插件 ${pluginId} 停用成功`)
+      log.info(`[Plugin] Plugin ${pluginId} deactivated successfully`)
       eventBus.emit('plugin:disabled', { pluginId }, { source: 'PluginManager' })
     } catch (error) {
-      log.error(`停用插件 ${pluginId} 失败:`, error)
+      log.error(`[Plugin] Failed to deactivate plugin ${pluginId}:`, error)
       throw error
     }
   }
 
-  /**
-   * 加载插件模块
-   */
   private async loadPluginModule(pluginInfo: PluginInfo): Promise<IPlugin> {
     const mainPath = join(pluginInfo.installPath, pluginInfo.manifest.main)
 
     try {
-      // 动态导入模块 (支持 ESM 和 CJS)
+      // Dynamically import module (supports ESM and CJS)
       let pluginModule: any
       try {
-        // 尝试使用动态 import
+        // Try using dynamic import
         pluginModule = await import(mainPath)
       } catch {
-        // 回退到 require
+        // Fall back to require
         delete require.cache[require.resolve(mainPath)]
         // eslint-disable-next-line
         pluginModule = require(mainPath)
       }
 
-      // 支持ES模块和CommonJS模块
+      // Support both ES modules and CommonJS modules
       const plugin = pluginModule.default || pluginModule
 
       if (!plugin) {
-        throw new Error('插件模块未导出有效内容')
+        throw new Error('Plugin module did not export valid content')
       }
 
       return plugin
     } catch (error) {
-      log.error(`加载插件模块失败: ${mainPath}`, error)
+      log.error(`[Plugin] Failed to load plugin module: ${mainPath}`, error)
       const errorMessage = error instanceof Error ? error.message : String(error)
-      throw new Error(`无法加载插件模块: ${errorMessage}`)
+      throw new Error(`Unable to load plugin module: ${errorMessage}`)
     }
   }
 
-  /**
-   * 安装插件
-   */
   public async installPlugin(
     source: string | Buffer,
     options: PluginInstallOptions = {}
@@ -317,48 +282,43 @@ export class PluginManager {
       let pluginBuffer: Buffer
 
       if (typeof source === 'string') {
-        // 从URL下载
+        // Download from URL
         if (source.startsWith('http')) {
           pluginBuffer = await this.downloadPlugin(source)
         } else {
-          // 从本地文件读取
+          // Read from local file
           pluginBuffer = await fs.readFile(source)
         }
       } else {
         pluginBuffer = source
       }
 
-      // 解压并安装
+      // Extract and install
       await this.extractAndInstallPlugin(pluginBuffer, options)
     } catch (error) {
-      log.error('安装插件失败:', error)
+      log.error('[Plugin] Failed to install plugin:', error)
       throw error
     }
   }
 
-  /**
-   * 下载插件
-   */
   private async downloadPlugin(url: string): Promise<Buffer> {
     try {
-      // 使用Electron的net.fetch发起请求
       const response = await net.fetch(url)
 
       if (!response.ok) {
-        throw new Error(`请求失败：${response.status} ${response.statusText}`)
+        throw new Error(`Request failed: ${response.status} ${response.statusText}`)
       }
 
-      // 获取响应体
       const reader = response.body?.getReader()
       if (!reader) {
-        throw new Error('无法读取响应流')
+        throw new Error('Unable to read response stream')
       }
 
-      // 准备接收数据的数组
+      // Prepare array to receive data
       const chunks: Uint8Array[] = []
       let receivedLength = 0
 
-      // 读取数据流
+      // Read data stream
       while (true) {
         const { done, value } = await reader.read()
 
@@ -370,7 +330,7 @@ export class PluginManager {
         receivedLength += value.length
       }
 
-      // 合并所有接收到的数据块
+      // Combine all received data chunks
       const allChunks = new Uint8Array(receivedLength)
       let position = 0
       for (const chunk of chunks) {
@@ -378,17 +338,14 @@ export class PluginManager {
         position += chunk.length
       }
 
-      // 转换为Buffer并返回
+      // Convert to Buffer and return
       return Buffer.from(allChunks)
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error)
-      throw new Error(`下载插件失败: ${errorMessage}`)
+      throw new Error(`Failed to download plugin: ${errorMessage}`)
     }
   }
 
-  /**
-   * 解压并安装插件
-   */
   private async extractAndInstallPlugin(
     buffer: Buffer,
     options: PluginInstallOptions
@@ -397,15 +354,15 @@ export class PluginManager {
       const zip = new AdmZip(buffer)
       const entries = zip.getEntries()
 
-      // 调试：列出所有条目
-      log.info(`插件包内容 (共${entries.length}个条目):`)
+      // Debug: List all entries
+      log.info(`[Plugin] Plugin package contents (${entries.length} entries):`)
       entries.forEach((entry, index) => {
         log.debug(
-          `  ${index + 1}. ${entry.entryName} ${entry.isDirectory ? '(目录)' : `(文件, ${entry.header.size} bytes)`}`
+          `  ${index + 1}. ${entry.entryName} ${entry.isDirectory ? '(directory)' : `(file, ${entry.header.size} bytes)`}`
         )
       })
 
-      // 查找manifest文件 (支持 manifest.json 或 package.json)
+      // Find manifest file (supports manifest.json or package.json)
       const manifestEntry = entries.find(
         (entry) =>
           (entry.entryName.endsWith('manifest.json') || entry.entryName.endsWith('package.json')) &&
@@ -413,161 +370,157 @@ export class PluginManager {
       )
 
       if (!manifestEntry) {
-        throw new Error('插件包中未找到 manifest.json 或 package.json 文件')
+        throw new Error('No manifest.json or package.json file found in plugin package')
       }
 
-      // 解析manifest
+      // Parse manifest
       const manifestContent = manifestEntry.getData().toString('utf8')
       const manifest: PluginManifest = JSON.parse(manifestContent)
 
       if (!this.validateManifest(manifest)) {
-        throw new Error('插件 manifest.json/package.json 格式不正确')
+        throw new Error('Plugin manifest.json/package.json format is invalid')
       }
 
-      // 检查是否已安装
+      // Check if already installed
       if (this.plugins.has(manifest.id) && !options.overwrite) {
-        throw new Error(`插件 ${manifest.id} 已安装，使用 overwrite 选项强制覆盖`)
+        throw new Error(
+          `Plugin ${manifest.id} is already installed, use overwrite option to force replace`
+        )
       }
 
-      // 安装目录
+      // Installation directory
       const installDir = join(this.pluginsDir, manifest.id)
 
-      // 如果已存在，先删除
+      // If it already exists, delete it first
       try {
         await fs.rm(installDir, { recursive: true, force: true })
       } catch {
-        // 忽略删除错误
+        // Ignore deletion errors
       }
 
-      // 创建安装目录
+      // Create installation directory
       await fs.mkdir(installDir, { recursive: true })
 
-      // 解压文件
+      // Extract files
       const rootDir = dirname(manifestEntry.entryName)
-      log.info(`解压插件，根目录: "${rootDir}"，总条目数: ${entries.length}`)
+      log.info(
+        `[Plugin] Extracting plugin, root directory: "${rootDir}", total entries: ${entries.length}`
+      )
 
       let extractedFiles = 0
       for (const entry of entries) {
-        // 跳过目录
+        // Skip directories
         if (entry.isDirectory) {
-          log.debug(`跳过目录: ${entry.entryName}`)
+          log.debug(`[Plugin] Skipping directory: ${entry.entryName}`)
           continue
         }
 
         let relativePath: string
 
         if (rootDir === '.') {
-          // manifest在根目录的情况
+          // Manifest in root directory case
           relativePath = entry.entryName
         } else {
-          // manifest在子目录的情况
+          // Manifest in subdirectory case
           if (!entry.entryName.startsWith(rootDir)) {
-            log.debug(`跳过不在根目录的文件: ${entry.entryName}`)
+            log.debug(`[Plugin] Skipping file not in root directory: ${entry.entryName}`)
             continue
           }
           relativePath = entry.entryName.substring(rootDir.length + 1)
         }
 
-        // 跳过空的相对路径
+        // Skip empty relative paths
         if (!relativePath) {
-          log.debug(`跳过空相对路径: ${entry.entryName}`)
+          log.debug(`[Plugin] Skipping empty relative path: ${entry.entryName}`)
           continue
         }
 
         const targetPath = join(installDir, relativePath)
-        log.debug(`准备解压: ${entry.entryName} -> ${targetPath}`)
+        log.debug(`[Plugin] Preparing to extract: ${entry.entryName} -> ${targetPath}`)
 
         try {
-          // 确保目标目录存在
+          // Ensure target directory exists
           await fs.mkdir(dirname(targetPath), { recursive: true })
 
-          // 写入文件 - 转换为 Uint8Array
+          // Write file - convert to Uint8Array
           const fileData = new Uint8Array(entry.getData())
           await fs.writeFile(targetPath, fileData)
 
           extractedFiles++
-          log.debug(`已解压文件 ${extractedFiles}: ${relativePath} (${fileData.length} bytes)`)
+          log.debug(
+            `[Plugin] Extracted file ${extractedFiles}: ${relativePath} (${fileData.length} bytes)`
+          )
         } catch (error) {
-          log.error(`解压文件失败 ${relativePath}:`, error)
+          log.error(`[Plugin] Failed to extract file ${relativePath}:`, error)
           throw error
         }
       }
 
-      log.info(`成功解压 ${extractedFiles} 个文件到 ${installDir}`)
+      log.info(`[Plugin] Successfully extracted ${extractedFiles} files to ${installDir}`)
 
-      // 加载插件信息
+      // Load plugin info
       await this.loadPluginInfo(manifest.id)
 
-      // 自动启用
+      // Auto-enable
       if (options.autoEnable) {
         await this.activatePlugin(manifest.id)
       }
 
-      log.info(`插件 ${manifest.id} 安装成功`)
+      log.info(`[Plugin] Plugin ${manifest.id} installed successfully`)
       eventBus.emit(
         'plugin:installed',
         { pluginId: manifest.id, activate: !!options.autoEnable },
         { source: 'PluginManager' }
       )
 
-      options.onProgress?.(100, '安装完成')
+      options.onProgress?.(100, 'Installation complete')
     } catch (error) {
-      log.error('解压安装插件失败:', error)
+      log.error('[Plugin] Failed to extract and install plugin:', error)
       throw error
     }
   }
 
-  /**
-   * 卸载插件
-   */
   public async uninstallPlugin(pluginId: string): Promise<void> {
     try {
       const pluginInfo = this.plugins.get(pluginId)
       if (!pluginInfo) {
-        throw new Error(`插件 ${pluginId} 不存在`)
+        throw new Error(`Plugin ${pluginId} does not exist`)
       }
 
-      // 如果插件已启用，先停用
+      // If plugin is enabled, deactivate it first
       if (pluginInfo.status === PluginStatus.ENABLED) {
         await this.deactivatePlugin(pluginId)
       }
 
-      // 删除插件文件
+      // Delete plugin files
       await fs.rm(pluginInfo.installPath, { recursive: true, force: true })
 
-      // 从内存中移除
+      // Remove from memory
       this.plugins.delete(pluginId)
       this.loadedModules.delete(pluginId)
 
-      // 清理插件数据
+      // Clean up plugin data
       await PluginDBManager.removePlugin(pluginId)
 
       ipcManager.send('plugin:update-all-plugins', this.getSerializablePlugins())
       ipcManager.send('plugin:update-plugin-stats', this.getPluginStats())
 
-      log.info(`插件 ${pluginId} 卸载成功`)
+      log.info(`[Plugin] Plugin ${pluginId} uninstalled successfully`)
       eventBus.emit(
         'plugin:uninstalled',
         { pluginId, removeData: false },
         { source: 'PluginManager' }
       )
     } catch (error) {
-      log.error(`卸载插件 ${pluginId} 失败:`, error)
+      log.error(`[Plugin] Failed to uninstall plugin ${pluginId}:`, error)
       throw error
     }
   }
 
-  /**
-   * 搜索插件
-   */
-  /**
-   * 搜索本地已安装插件
-   * @param options 搜索选项
-   */
   public searchPlugins(options: PluginSearchOptions = {}): PluginInfo[] {
     let results = Array.from(this.plugins.values())
 
-    // 按关键词过滤
+    // Filter by keyword
     if (options.keyword) {
       const keyword = options.keyword.toLowerCase()
       results = results.filter(
@@ -579,17 +532,17 @@ export class PluginManager {
       )
     }
 
-    // 按分类过滤
+    // Filter by category
     if (options.category && options.category !== 'all') {
       results = results.filter((plugin) => plugin.manifest.category === options.category)
     }
 
-    // 按状态过滤
+    // Filter by status
     if (options.status) {
       results = results.filter((plugin) => plugin.status === options.status)
     }
 
-    // 排序
+    // Sort
     if (options.sort) {
       const { sort, order = 'asc' } = options
 
@@ -615,7 +568,7 @@ export class PluginManager {
             comparison = a.manifest.name.localeCompare(b.manifest.name)
         }
 
-        // 应用排序顺序
+        // Apply sort order
         return order === 'asc' ? comparison : -comparison
       })
     }
@@ -623,37 +576,30 @@ export class PluginManager {
     return results
   }
 
-  /**
-   * 获取插件信息
-   */
   public getPlugin(pluginId: string): PluginInfo | undefined {
     return this.plugins.get(pluginId)
   }
 
-  /**
-   * 获取所有插件
-   */
   public getAllPlugins(): PluginInfo[] {
     return Array.from(this.plugins.values())
   }
 
-  /**
-   * 获取序列化的插件数据（用于IPC通信）
-   */
   public getSerializablePlugins(): Omit<PluginInfo, 'instance'>[] {
-    return Array.from(this.plugins.values()).map((plugin) => ({
-      manifest: plugin.manifest,
-      status: plugin.status,
-      installPath: plugin.installPath,
-      installTime: plugin.installTime,
-      lastUpdateTime: plugin.lastUpdateTime,
-      error: plugin.error
-    }))
+    try {
+      return Array.from(this.plugins.values()).map((plugin) => ({
+        manifest: plugin.manifest,
+        status: plugin.status,
+        installPath: plugin.installPath,
+        installTime: plugin.installTime,
+        lastUpdateTime: plugin.lastUpdateTime,
+        error: plugin.error
+      }))
+    } catch (error) {
+      log.error('[Plugin] Failed to get serializable plugins:', error)
+      throw error
+    }
   }
 
-  /**
-   * 获取序列化的插件信息（用于IPC通信）
-   */
   public getSerializablePlugin(pluginId: string): Omit<PluginInfo, 'instance'> | undefined {
     const plugin = this.plugins.get(pluginId)
     if (!plugin) return undefined
@@ -668,16 +614,13 @@ export class PluginManager {
     }
   }
 
-  /**
-   * 更新插件状态
-   */
   private updatePluginStatus(pluginId: string, status: PluginStatus, error?: string): void {
     const pluginInfo = this.plugins.get(pluginId)
     if (pluginInfo) {
       pluginInfo.status = status
       if (error) {
         pluginInfo.error = error
-        // 发送插件错误事件
+        // Send plugin error event
         eventBus.emit(
           'plugin:error',
           {
@@ -696,38 +639,8 @@ export class PluginManager {
     }
   }
 
-  /**
-   * 初始化插件注册表
-   */
-  private initializeRegistries(): void {
-    this.registries = [
-      {
-        name: 'Official Registry',
-        url: 'https://plugins.vnite.app/registry',
-        enabled: true
-      }
-    ]
-  }
-
-  /**
-   * 添加插件注册表
-   */
-  public addRegistry(registry: PluginRegistry): void {
-    this.registries.push(registry)
-  }
-
-  /**
-   * 移除插件注册表
-   */
-  public removeRegistry(url: string): void {
-    this.registries = this.registries.filter((r) => r.url !== url)
-  }
-
-  /**
-   * 清理资源
-   */
   public async dispose(): Promise<void> {
-    // 停用所有插件
+    // Deactivate all plugins
     const enabledPlugins = Array.from(this.plugins.values()).filter(
       (plugin) => plugin.status === PluginStatus.ENABLED
     )
@@ -736,7 +649,7 @@ export class PluginManager {
       try {
         await this.deactivatePlugin(plugin.manifest.id, true)
       } catch (error) {
-        log.error(`停用插件 ${plugin.manifest.id} 失败:`, error)
+        log.error(`[Plugin] Failed to deactivate plugin ${plugin.manifest.id}:`, error)
       }
     }
 
@@ -745,5 +658,4 @@ export class PluginManager {
   }
 }
 
-// 导出单例实例
 export const pluginManager = PluginManager.getInstance()
