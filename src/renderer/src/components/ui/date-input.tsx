@@ -5,24 +5,28 @@ import { Input } from '@ui/input'
 import { CalendarIcon } from 'lucide-react'
 import { forwardRef } from 'react'
 
-interface DateInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {
+interface DateTimeInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {
   error?: boolean
+  mode?: 'date' | 'time' | 'datetime'
 }
 
-export const DateInput = forwardRef<HTMLInputElement, DateInputProps>(
-  ({ className, error, ...props }, ref) => {
+export const DateTimeInput = forwardRef<HTMLInputElement, DateTimeInputProps>(
+  ({ className, error, mode = 'date', ...props }, ref) => {
+    // 根据模式确定输入类型
+    const inputType = mode === 'time' ? 'time' : mode === 'datetime' ? 'datetime-local' : 'date'
+
     return (
       <div className="relative">
         <Input
-          type="date"
-          max={'9999-12-31'}
+          type={inputType}
+          max={mode === 'date' ? '9999-12-31' : undefined}
           ref={ref}
           className={cn(
             // Basic Style
             'pl-3 pr-10',
             // Remove the default date picker style
             '[&::-webkit-calendar-picker-indicator]:hidden',
-            // Year field highlighting style
+            // 日期和时间字段高亮样式
             '[&::-webkit-datetime-edit-year-field:focus]:bg-primary',
             '[&::-webkit-datetime-edit-year-field:focus]:text-primary-foreground',
             '[&::-webkit-datetime-edit-year-field:focus]:rounded-lg',
@@ -34,6 +38,19 @@ export const DateInput = forwardRef<HTMLInputElement, DateInputProps>(
             '[&::-webkit-datetime-edit-day-field:focus]:bg-primary',
             '[&::-webkit-datetime-edit-day-field:focus]:text-primary-foreground',
             '[&::-webkit-datetime-edit-day-field:focus]:rounded-lg',
+
+            '[&::-webkit-datetime-edit-hour-field:focus]:bg-primary',
+            '[&::-webkit-datetime-edit-hour-field:focus]:text-primary-foreground',
+            '[&::-webkit-datetime-edit-hour-field:focus]:rounded-lg',
+
+            '[&::-webkit-datetime-edit-minute-field:focus]:bg-primary',
+            '[&::-webkit-datetime-edit-minute-field:focus]:text-primary-foreground',
+            '[&::-webkit-datetime-edit-minute-field:focus]:rounded-lg',
+
+            '[&::-webkit-datetime-edit-second-field:focus]:bg-primary',
+            '[&::-webkit-datetime-edit-second-field:focus]:text-primary-foreground',
+            '[&::-webkit-datetime-edit-second-field:focus]:rounded-lg',
+
             // Error Status Style
             error && 'border-destructive focus-visible:ring-destructive',
             className
@@ -45,4 +62,5 @@ export const DateInput = forwardRef<HTMLInputElement, DateInputProps>(
     )
   }
 )
-DateInput.displayName = 'DateInput'
+
+DateTimeInput.displayName = 'DateTimeInput'

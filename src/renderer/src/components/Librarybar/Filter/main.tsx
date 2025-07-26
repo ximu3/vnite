@@ -2,7 +2,7 @@ import { cn } from '~/utils'
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
 import { Button } from '~/components/ui/button'
-import { DateInput } from '~/components/ui/date-input'
+import { DateTimeInput } from '~/components/ui/date-input'
 import { useFilterStore } from './store'
 import { FilterCombobox } from './FilterCombobox'
 import { Cross2Icon } from '@radix-ui/react-icons'
@@ -106,7 +106,7 @@ export function Filter({ children }: { children: React.ReactNode }): React.JSX.E
               </Button>
             </div>
             <div className={cn('flex flex-row gap-2 items-center justify-center')}>
-              <DateInput
+              <DateTimeInput
                 value={
                   filter['metadata.releaseDate']?.length > 0 ? filter['metadata.releaseDate'][0] : 0
                 }
@@ -121,7 +121,7 @@ export function Filter({ children }: { children: React.ReactNode }): React.JSX.E
                 }}
               />
               -
-              <DateInput
+              <DateTimeInput
                 value={
                   filter['metadata.releaseDate']?.length > 0 ? filter['metadata.releaseDate'][1] : 0
                 }

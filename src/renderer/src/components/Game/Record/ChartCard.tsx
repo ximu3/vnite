@@ -1,4 +1,4 @@
-import { DateInput } from '@ui/date-input'
+import { DateTimeInput } from '@ui/date-input'
 import { cn } from '~/utils'
 import { getGamePlayTimeByDateRange, getGameStartAndEndDate } from '~/stores/game'
 import { useState, useEffect } from 'react'
@@ -51,13 +51,13 @@ export function ChartCard({
       {!isEqual(timers, { start: '', end: '' }) ? (
         <>
           <div className={cn('flex flex-row gap-2 items-center')}>
-            <DateInput
+            <DateTimeInput
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
               className={cn('')}
             />
             <div>-</div>
-            <DateInput
+            <DateTimeInput
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
               className={cn('')}

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { ArrayInput } from '@ui/array-input'
-import { DateInput } from '@ui/date-input'
+import { DateTimeInput } from '@ui/date-input'
 import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
@@ -105,7 +105,7 @@ export function InformationDialog({ gameId }: { gameId: string }): React.JSX.Ele
           <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('detail.overview.information.fields.releaseDate')}
           </div>
-          <DateInput
+          <DateTimeInput
             value={releaseDate}
             onChange={(e) => setReleaseDate(e.target.value)}
             onBlur={saveReleaseDate}

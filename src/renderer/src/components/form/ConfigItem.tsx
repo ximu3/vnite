@@ -7,7 +7,7 @@ import { Input } from '@ui/input'
 import { Textarea } from '@ui/textarea'
 import { Switch } from '@ui/switch'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/select'
-import { DateInput } from '@ui/date-input'
+import { DateTimeInput } from '@ui/date-input'
 import { ArrayEditor } from '@ui/array-editor'
 import { Slider } from '@ui/slider'
 import { Button } from '@ui/button'
@@ -241,7 +241,7 @@ export function ConfigItem<
         const dateInputProps = props as ConfigItemProps<T, Path> & { controlType: 'dateinput' }
 
         return (
-          <DateInput
+          <DateTimeInput
             value={String(displayValue)}
             onChange={handleDateInputChange}
             onBlur={(e) => handleBlur(e)}
