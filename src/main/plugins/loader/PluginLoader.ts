@@ -9,6 +9,7 @@ import { promises as fs } from 'fs'
 import log from 'electron-log'
 import type { PluginManifest } from '@appTypes/plugin'
 import type { IPlugin } from '../api/types'
+import semver from 'semver'
 
 export class PluginLoader {
   /**
@@ -132,25 +133,13 @@ export class PluginLoader {
    * 检查版本兼容性
    */
   private static isVersionCompatible(installed: string, required: string): boolean {
-    // 简单的版本兼容性检查
-    // todo: 使用更完善的semver库
-
-    if (required.startsWith('^')) {
-      // 兼容主版本
-      const requiredMajor = required.substring(1).split('.')[0]
-      const installedMajor = installed.split('.')[0]
-      return requiredMajor === installedMajor
+    // 如果输入无效，则返回 false
+    if (!semver.valid(installed)) {
+      return false
     }
 
-    if (required.startsWith('~')) {
-      // 兼容次版本
-      const requiredMinor = required.substring(1).split('.').slice(0, 2).join('.')
-      const installedMinor = installed.split('.').slice(0, 2).join('.')
-      return requiredMinor === installedMinor
-    }
-
-    // 精确匹配
-    return installed === required
+    // 使用 semver.satisfies 检查已安装版本是否满足要求
+    return semver.satisfies(installed, required)
   }
 
   /**
