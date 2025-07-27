@@ -54,7 +54,7 @@ export function Titlebar(): React.JSX.Element {
       {/* 1. Main content area - Overflow content will be hidden when width is insufficient */}
       <div className="flex flex-row items-center w-full overflow-hidden">
         {/* Left: General buttons */}
-        <div className="flex flex-row items-center gap-2 px-3 pr-2 shrink-0">
+        <div className="flex flex-row items-center gap-2 px-3 pr-2 shrink-0 h-full">
           <Button
             variant={'thirdary'}
             size={'icon'}
@@ -74,7 +74,7 @@ export function Titlebar(): React.JSX.Element {
         </div>
 
         {/* Left: Library route specific buttons */}
-        <div className="flex flex-row items-center gap-2 px-3 shrink-0">
+        <div className="flex flex-row items-center gap-2 px-3 shrink-0 h-full">
           {isLibraryRoute && <LibraryTitlebarContent />}
         </div>
 
@@ -82,14 +82,14 @@ export function Titlebar(): React.JSX.Element {
         <div className="flex-grow"></div>
 
         {/* Right: Function button area */}
-        <div className="flex flex-row items-center gap-2 px-3 overflow-hidden shrink-0">
+        <div className="flex flex-row items-center gap-2 px-3 overflow-hidden shrink-0 h-full">
           {/* Log view button */}
           <Tooltip>
             <TooltipTrigger>
               <Button
                 variant="thirdary"
                 size={'icon'}
-                className={cn('p-1 h-[32px] w-[32px]')}
+                className={cn('h-[32px] w-[32px]')}
                 onClick={() => setLogDialogIsOpen(true)}
               >
                 <span className={cn('icon-[mdi--file-document] w-4 h-4')}></span>
@@ -105,7 +105,7 @@ export function Titlebar(): React.JSX.Element {
                 <Button
                   variant="thirdary"
                   size={'icon'}
-                  className={cn('p-1 h-[32px] w-[32px]')}
+                  className={cn('h-[32px] w-[32px]')}
                   onClick={() => setEnableNSFWBlur(!enableNSFWBlur)}
                 >
                   {enableNSFWBlur ? (
@@ -128,7 +128,7 @@ export function Titlebar(): React.JSX.Element {
                 <Button
                   variant="thirdary"
                   size={'icon'}
-                  className={cn('p-1 h-[32px] w-[32px]')}
+                  className={cn('h-[32px] w-[32px]')}
                   onClick={toggleTheme}
                 >
                   {isDark ? (
@@ -149,19 +149,19 @@ export function Titlebar(): React.JSX.Element {
             <Popover>
               <PopoverTrigger>
                 {syncStatus?.status === 'syncing' ? (
-                  <Button variant="thirdary" size={'icon'} className={cn('p-1 h-[32px] w-[32px]')}>
+                  <Button variant="thirdary" size={'icon'} className={cn('h-[32px] w-[32px]')}>
                     <span className={cn('icon-[mdi--cloud-sync-outline] w-4 h-4')}></span>
                   </Button>
                 ) : syncStatus?.status === 'success' ? (
-                  <Button variant="thirdary" size={'icon'} className={cn('p-1 h-[32px] w-[32px]')}>
+                  <Button variant="thirdary" size={'icon'} className={cn('h-[32px] w-[32px]')}>
                     <span className={cn('icon-[mdi--cloud-check-outline] w-4 h-4')}></span>
                   </Button>
                 ) : syncStatus?.status === 'error' ? (
-                  <Button variant="thirdary" size={'icon'} className={cn('p-1 h-[32px] w-[32px]')}>
+                  <Button variant="thirdary" size={'icon'} className={cn('h-[32px] w-[32px]')}>
                     <span className={cn('icon-[mdi--cloud-remove-outline] w-4 h-4')}></span>
                   </Button>
                 ) : (
-                  <Button variant="thirdary" size={'icon'} className={cn('p-1 h-[32px] w-[32px]')}>
+                  <Button variant="thirdary" size={'icon'} className={cn('h-[32px] w-[32px]')}>
                     <span className={cn('icon-[mdi--cloud-outline] w-4 h-4')}></span>
                   </Button>
                 )}
@@ -173,7 +173,7 @@ export function Titlebar(): React.JSX.Element {
           ) : (
             <Tooltip>
               <TooltipTrigger>
-                <Button variant="thirdary" size={'icon'} className={cn('p-1 h-[32px] w-[32px]')}>
+                <Button variant="thirdary" size={'icon'} className={cn('h-[32px] w-[32px]')}>
                   <span className={cn('icon-[mdi--cloud-cancel-outline] w-4 h-4')}></span>
                 </Button>
               </TooltipTrigger>
