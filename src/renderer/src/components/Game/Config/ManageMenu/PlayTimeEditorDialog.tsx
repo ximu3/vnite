@@ -1,13 +1,13 @@
-import { Button } from '~/components/ui/button'
-import { Dialog, DialogContent } from '~/components/ui/dialog'
-import { useState } from 'react'
-import { useGameState } from '~/hooks'
-import { cn } from '~/utils'
-import { useTranslation } from 'react-i18next'
 import { format } from 'date-fns'
 import { PlusCircleIcon } from 'lucide-react'
-import { TimerEditDialog } from './TimerEditDialog'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
+import { Dialog, DialogContent } from '~/components/ui/dialog'
+import { useGameState } from '~/hooks'
+import { cn } from '~/utils'
+import { TimerEditDialog } from './TimerEditDialog'
 
 export function PlayTimeEditorDialog({
   gameId,
@@ -145,7 +145,12 @@ export function PlayTimeEditorDialog({
                       <Button variant="default" size="sm" onClick={() => openEditTimer(index)}>
                         {t('utils:common.edit')}
                       </Button>
-                      <Button variant="thirdary" size="sm" onClick={() => deleteTimer(index)}>
+                      <Button
+                        variant="thirdary"
+                        className="hover:bg-destructive"
+                        size="sm"
+                        onClick={() => deleteTimer(index)}
+                      >
                         {t('utils:common.delete')}
                       </Button>
                     </div>

@@ -3,7 +3,8 @@
     "edit": "編集",
     "save": "保存",
     "cancel": "キャンセル",
-    "confirm": "確認"
+    "confirm": "確認",
+    "delete": "削除"
   },
   "hotkeySetting": {
     "title": "ホットキーの設定",

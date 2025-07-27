@@ -3,7 +3,8 @@
     "edit": "Edit",
     "save": "Save",
     "cancel": "Cancel",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "delete": "Delete"
   },
   "arrayEditor": {
     "clickPlusToAdd": "Click + to add elements",
