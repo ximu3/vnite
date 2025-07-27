@@ -31,7 +31,6 @@ export function TimerEditDialog({
   const [endDateTime, setEndDateTime] = useState('')
   const [error, setError] = useState<string | null>(null)
 
-  // 格式化日期时间为HTML datetime-local格式 (YYYY-MM-DDThh:mm)
   const formatForInput = (dateStr: string): string => {
     if (!dateStr) return ''
     try {
@@ -42,13 +41,13 @@ export function TimerEditDialog({
     }
   }
 
-  // 加载timer数据
   useEffect(() => {
     if (timer && isOpen) {
+      // Load existing timer data if editing
       setStartDateTime(formatForInput(timer.start))
       setEndDateTime(formatForInput(timer.end))
     } else if (isNew && isOpen) {
-      // 如果是新建，默认设置为当前日期时间
+      // Initialize with current time if adding new timer
       const now = new Date()
       setStartDateTime(format(now, "yyyy-MM-dd'T'HH:mm"))
       setEndDateTime('')
@@ -56,22 +55,19 @@ export function TimerEditDialog({
     setError(null)
   }, [timer, isOpen, isNew])
 
-  // 验证并保存
   const handleSave = (): void => {
-    // 验证开始时间
     if (!startDateTime || !endDateTime) {
-      setError(t('detail.timerEditor.startDateRequired', '必须设置开始时间和结束时间'))
+      setError(t('detail.timerEditor.startDateRequired'))
       return
     }
 
     let formattedEndDateTime = ''
     if (endDateTime) {
-      // 验证开始时间不能晚于结束时间
+      // Validate that start time is not after end time
       if (new Date(startDateTime) > new Date(endDateTime)) {
-        setError(t('detail.timerEditor.startAfterEnd', '开始时间不能晚于结束时间'))
+        setError(t('detail.timerEditor.startAfterEnd'))
         return
       }
-      // 将时间格式转为ISO格式
       formattedEndDateTime = new Date(endDateTime).toISOString()
     }
 
@@ -87,9 +83,7 @@ export function TimerEditDialog({
       <DialogContent className="w-[500px]">
         <DialogHeader>
           <DialogTitle>
-            {isNew
-              ? t('detail.timerEditor.addTimer', '添加游戏计时')
-              : t('detail.timerEditor.editTimer', '编辑游戏计时')}
+            {isNew ? t('detail.timerEditor.addTimer') : t('detail.timerEditor.editTimer')}
           </DialogTitle>
         </DialogHeader>
 
@@ -98,7 +92,7 @@ export function TimerEditDialog({
 
           <div className="grid gap-2">
             <label htmlFor="start-datetime" className="text-sm font-medium">
-              {t('detail.timerEditor.startDateTime', '开始时间')}
+              {t('detail.timerEditor.startDateTime')}
             </label>
             <DateTimeInput
               id="start-datetime"
@@ -111,7 +105,7 @@ export function TimerEditDialog({
 
           <div className="grid gap-2">
             <label htmlFor="end-datetime" className="text-sm font-medium">
-              {t('detail.timerEditor.endDateTime', '结束时间')}
+              {t('detail.timerEditor.endDateTime')}
             </label>
             <DateTimeInput
               id="end-datetime"
@@ -125,9 +119,9 @@ export function TimerEditDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
-            {t('utils:common.cancel', '取消')}
+            {t('utils:common.cancel')}
           </Button>
-          <Button onClick={handleSave}>{t('utils:common.save', '保存')}</Button>
+          <Button onClick={handleSave}>{t('utils:common.save')}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

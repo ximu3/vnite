@@ -307,7 +307,7 @@
       "rename": "名前変更",
       "editLogo": "ロゴを編集",
       "editPlayTime": "プレイ時間を編集",
-      "downloadMetadata": "メタデータをダウンロード",
+      "downloadMetadata": "メタデータを更新",
       "createShortcut": "ショートカットを作成",
       "browseLocalFiles": "ローカルファイルを閲覧",
       "delete": "削除",
@@ -318,6 +318,26 @@
       },
       "unmarkNSFW": "NSFW のマークを解除する",
       "markNSFW": "NSFW としてマークする"
+    },
+    "timersEditor": {
+      "title": "ゲームタイマー",
+      "addTimer": "タイマーを追加",
+      "timersList": "タイマーリスト",
+      "noTimers": "タイマー記録がありません",
+      "totalPlayTime": "総プレイ時間",
+      "startTime": "開始",
+      "endTime": "終了",
+      "ongoing": "進行中",
+      "duration": "時間",
+      "minutes": "分"
+    },
+    "timerEditor": {
+      "startDateRequired": "開始時間と終了時間を設定する必要があります",
+      "startAfterEnd": "開始時間は終了時間より後にできません",
+      "addTimer": "ゲームタイマーを追加",
+      "editTimer": "ゲームタイマーを編集",
+      "startDateTime": "開始時間",
+      "endDateTime": "終了時間"
     },
     "deleteAlert": {
       "title": "{{gameName}}を削除してもよろしいですか？",

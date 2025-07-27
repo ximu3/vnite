@@ -308,7 +308,7 @@
       "rename": "重新命名",
       "editLogo": "編輯徽標",
       "editPlayTime": "修改遊玩時間",
-      "downloadMetadata": "下載資料資料",
+      "downloadMetadata": "更新資料",
       "createShortcut": "建立捷徑",
       "browseLocalFiles": "瀏覽本機文件",
       "delete": "刪除",
@@ -319,6 +319,26 @@
       },
       "unmarkNSFW": "取消標記為 NSFW",
       "markNSFW": "標記為 NSFW"
+    },
+    "timersEditor": {
+      "title": "遊戲計時器",
+      "addTimer": "添加計時器",
+      "timersList": "計時器列表",
+      "noTimers": "沒有計時器記錄",
+      "totalPlayTime": "總遊戲時長",
+      "startTime": "開始",
+      "endTime": "結束",
+      "ongoing": "進行中",
+      "duration": "時長",
+      "minutes": "分鐘"
+    },
+    "timerEditor": {
+      "startDateRequired": "必須設置開始時間和結束時間",
+      "startAfterEnd": "開始時間不能晚於結束時間",
+      "addTimer": "添加遊戲計時",
+      "editTimer": "編輯遊戲計時",
+      "startDateTime": "開始時間",
+      "endDateTime": "結束時間"
     },
     "deleteAlert": {
       "title": "確定要刪除遊戲 {{gameName}} 嗎？",

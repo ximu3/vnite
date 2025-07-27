@@ -311,7 +311,7 @@
       "editPlayTime": "修改游玩时间",
       "markNSFW": "标记为NSFW",
       "unmarkNSFW": "取消标记为 NSFW",
-      "downloadMetadata": "下载资料数据",
+      "downloadMetadata": "更新资料数据",
       "createShortcut": "创建快捷方式",
       "browseLocalFiles": "浏览本地文件",
       "delete": "删除",
@@ -320,6 +320,26 @@
         "shortcutError": "创建快捷方式时出错",
         "gamePathNotSet": "游戏路径未设置"
       }
+    },
+    "timersEditor": {
+      "title": "游戏计时器",
+      "addTimer": "添加计时器",
+      "timersList": "计时器列表",
+      "noTimers": "没有计时器记录",
+      "totalPlayTime": "总游戏时长",
+      "startTime": "开始",
+      "endTime": "结束",
+      "ongoing": "进行中",
+      "duration": "时长",
+      "minutes": "分钟"
+    },
+    "timerEditor": {
+      "startDateRequired": "必须设置开始时间和结束时间",
+      "startAfterEnd": "开始时间不能晚于结束时间",
+      "addTimer": "添加游戏计时",
+      "editTimer": "编辑游戏计时",
+      "startDateTime": "开始时间",
+      "endDateTime": "结束时间"
     },
     "deleteAlert": {
       "title": "确定要删除游戏 {{gameName}} 吗？",

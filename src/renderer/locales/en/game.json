@@ -310,7 +310,7 @@
       "editPlayTime": "Edit Play Time",
       "markNSFW": "Mark as NSFW",
       "unmarkNSFW": "Unmark NSFW",
-      "downloadMetadata": "Download Metadata",
+      "downloadMetadata": "Update Metadata",
       "createShortcut": "Create Shortcut",
       "browseLocalFiles": "Browse Local Files",
       "delete": "Delete",
@@ -319,6 +319,26 @@
         "shortcutError": "Error creating shortcut",
         "gamePathNotSet": "Game path not set"
       }
+    },
+    "timersEditor": {
+      "title": "Game Timer",
+      "addTimer": "Add Timer",
+      "timersList": "Timers List",
+      "noTimers": "No timer records",
+      "totalPlayTime": "Total Play Time",
+      "startTime": "Start",
+      "endTime": "End",
+      "ongoing": "In progress",
+      "duration": "Duration",
+      "minutes": "minutes"
+    },
+    "timerEditor": {
+      "startDateRequired": "Start time and end time must be set",
+      "startAfterEnd": "Start time cannot be after end time",
+      "addTimer": "Add Game Timer",
+      "editTimer": "Edit Game Timer",
+      "startDateTime": "Start Time",
+      "endDateTime": "End Time"
     },
     "deleteAlert": {
       "title": "Are you sure you want to delete {{gameName}}?",
