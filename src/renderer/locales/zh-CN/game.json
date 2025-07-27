@@ -381,6 +381,7 @@
           "adjust": "调整",
           "set": "设置",
           "importFromFile": "从文件导入",
+          "importFromClipboard": "从剪贴板导入",
           "importFromUrl": "从链接导入",
           "searchImage": "搜索图片",
           "cropImage": "裁剪图片",
@@ -400,6 +401,8 @@
         },
         "notifications": {
           "fileSelectError": "选择文件失败: {{error}}",
+          "noImageInClipboard": "剪贴板中没有图片",
+          "clipboardImportError": "从剪贴板导入失败: {{error}}",
           "imageNotFound": "未找到当前图片",
           "getImageError": "获取当前图片失败: {{error}}",
           "downloading": "正在获取图片…",

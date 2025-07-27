@@ -1,12 +1,13 @@
 import {
-  GameMetadata,
-  GameList,
-  GameDescriptionList,
-  GameExtraInfoList,
-  GameTagsList,
-  ScraperIdentifier
-} from './utils'
-import { configDocs, BatchGameInfo } from './models'
+  EnhancedEventData,
+  EventData,
+  EventHistoryEntry,
+  EventHistoryQuery,
+  EventType
+} from '@appTypes/event'
+import { BatchUpdateGameMetadataProgress, OverallScanProgress } from '@appTypes/utils'
+import { ProgressInfo, UpdateCheckResult } from 'electron-updater'
+import { BatchGameInfo, configDocs } from './models'
 import {
   PluginConfiguration,
   PluginInfo,
@@ -16,22 +17,19 @@ import {
   PluginStatsData,
   PluginUpdateInfo
 } from './plugin'
-import { SteamFormattedGameInfo } from './utils'
 import {
-  ScraperCapabilities,
+  GameDescriptionList,
+  GameExtraInfoList,
+  GameList,
+  GameMetadata,
   GameMetadataField,
   GameMetadataUpdateMode,
-  GameMetadataUpdateOptions
+  GameMetadataUpdateOptions,
+  GameTagsList,
+  ScraperCapabilities,
+  ScraperIdentifier,
+  SteamFormattedGameInfo
 } from './utils'
-import { UpdateCheckResult, ProgressInfo } from 'electron-updater'
-import {
-  EventType,
-  EventData,
-  EnhancedEventData,
-  EventHistoryEntry,
-  EventHistoryQuery
-} from '@appTypes/event'
-import { OverallScanProgress, BatchUpdateGameMetadataProgress } from '@appTypes/utils'
 
 /**
  * IPC Events Type Definitions
@@ -98,6 +96,7 @@ type MainIpcEvents =
       }) => string
       'utils:save-game-icon-by-file': (gameId: string, filePath: string) => void
       'utils:download-temp-image': (url: string) => string
+      'utils:save-clipboard-image': () => string
       'utils:get-app-log-contents-in-current-lifetime': () => string
       'utils:copy-app-log-in-current-lifetime-to-clipboard-as-file': () => void
       'utils:open-log-path-in-explorer': () => void
