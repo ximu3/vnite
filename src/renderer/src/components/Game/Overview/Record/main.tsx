@@ -40,7 +40,7 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
             ? t('{{date, gameTime}}', { date: playingTime })
             : t('detail.overview.information.empty')
         }
-        icon="icon-[mdi--timer-outline] w-[16px] h-[16px]"
+        icon="icon-[mdi--timer-outline] w-[30px] h-[30px]"
         onClick={() => setIsPlayTimeEditorDialogOpen(true)}
       />
       {/* Last Run Date */}
@@ -52,7 +52,7 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
             ? t('{{date, niceDate}}', { date: lastRunDate })
             : t('detail.overview.record.neverRun')
         }
-        icon="icon-[mdi--calendar-blank-multiple] w-[16px] h-[16px]"
+        icon="icon-[mdi--calendar-blank-multiple] w-[28px] h-[28px]"
       />
       {/* Play Status */}
       <Popover>
@@ -61,7 +61,7 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
           className={cn('')}
           title={t('detail.overview.record.playStatus')}
           content={t(`utils:game.playStatus.${playStatus}`)}
-          icon="icon-[mdi--bookmark-outline] w-[16px] h-[16px]"
+          icon="icon-[mdi--bookmark-outline] w-[32px] h-[32px]"
         />
         <PopoverContent className="max-w-[150px] p-1">
           <div className="flex flex-col">
@@ -71,7 +71,7 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
                 onClick={() => changePlayStatus(opt)}
                 className={cn(
                   'flex flex-row items-center justify-between px-2 py-2 text-sm cursor-pointer',
-                  'hover:bg-background'
+                  'hover:bg-accent'
                 )}
               >
                 {t('utils:game.playStatus.' + opt)}
@@ -86,7 +86,7 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
         className={cn('')}
         title={t('detail.overview.record.rating')}
         content={score === -1 ? t('detail.overview.information.empty') : score.toFixed(1)}
-        icon="icon-[mdi--starburst-outline] w-[16px] h-[16px]"
+        icon="icon-[mdi--starburst-outline] w-[30px] h-[30px]"
         onClick={() => setIsScoreEditorDialogOpen(true)}
       />
     </div>
