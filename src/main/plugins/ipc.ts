@@ -1,6 +1,5 @@
 import { ipcManager } from '~/core/ipc'
 import { pluginService } from './services'
-import log from 'electron-log'
 import { PluginInstallOptions, PluginSearchOptions } from '@appTypes/plugin'
 
 export function setupPluginIPC(): void {
