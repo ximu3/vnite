@@ -25,10 +25,10 @@ export function CollectionMenu({
     removeGamesFromCollection
   } = useGameCollectionStore()
 
-  // Get the collection of all selected games
+  // Determine the status of collections for the selected games
   const collectionsStatus = Object.entries(collections).reduce<{
     inAll: string[] // All selected games in the collection
-    inSome: string[] // Selected games in the collection
+    inSome: string[] // Some selected games in the collection
   }>(
     (acc, [collectionId, collection]) => {
       const gamesInCollection = gameIds.filter((gameId) => collection.games.includes(gameId)).length
@@ -37,7 +37,7 @@ export function CollectionMenu({
         // All selected games are in this collection
         acc.inAll.push(collectionId)
       } else if (gamesInCollection > 0) {
-        // Some of the selected games in this collection
+        // Some selected games in this collection
         acc.inSome.push(collectionId)
       }
       return acc
@@ -45,12 +45,10 @@ export function CollectionMenu({
     { inAll: [], inSome: [] }
   )
 
-  // Batch add games to favorites
   const handleAddToCollection = (collectionId: string): void => {
     addGamesToCollection(collectionId, gameIds)
   }
 
-  // Batch Remove Games from Favorites
   const handleRemoveFromCollection = (collectionId: string): void => {
     removeGamesFromCollection(collectionId, gameIds)
   }
@@ -61,8 +59,9 @@ export function CollectionMenu({
         <ContextMenuSubTrigger>{t('batchEditor.contextMenu.addTo')}</ContextMenuSubTrigger>
         <ContextMenuPortal>
           <ContextMenuSubContent>
+            {/* Add to Collection */}
+            {/* Show collections that the selected games are not in */}
             {Object.entries(collections)
-              // Filter out favorites that all selected games are already in
               .filter(([key]) => !collectionsStatus.inAll.includes(key))
               .map(([key, value]) => (
                 <ContextMenuItem key={key} onClick={() => handleAddToCollection(key)}>
@@ -83,6 +82,9 @@ export function CollectionMenu({
         </ContextMenuPortal>
       </ContextMenuSub>
 
+      {/* Remove from Collection */}
+      {/* Show collections that the selected games are in */}
+      {/* Only show if there are collections to remove from */}
       {(collectionsStatus.inAll.length > 0 || collectionsStatus.inSome.length > 0) && (
         <ContextMenuSub>
           <ContextMenuSubTrigger>{t('batchEditor.contextMenu.removeFrom')}</ContextMenuSubTrigger>

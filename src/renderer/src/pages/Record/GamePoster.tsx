@@ -3,28 +3,18 @@ import { useRouter } from '@tanstack/react-router'
 import { HoverCardAnimation } from '~/components/animations/HoverCard'
 import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
 import { GameImage } from '~/components/ui/game-image'
-import { useGameState } from '~/hooks'
 import { cn, scrollToElement } from '~/utils'
 
 export function GamePoster({
   gameId,
   className,
-  isShowGameName = false,
-  blur = false,
-  additionalInfo,
-  infoStyle,
-  fontStyles
+  blur = false
 }: {
   gameId: string
   className?: string
-  isShowGameName?: boolean
   blur?: boolean
-  additionalInfo?: string
-  infoStyle?: string
-  fontStyles?: { name: string; additionalInfo: string }
 }): React.JSX.Element {
   const router = useRouter()
-  const [gameName] = useGameState(gameId, 'metadata.name')
   const setLazyloadMark = usePositionButtonStore((state) => state.setLazyloadMark)
   return (
     <div
@@ -46,15 +36,6 @@ export function GamePoster({
         }, 50)
       }}
     >
-      {/* Add a background mask layer */}
-      {isShowGameName && (
-        <div
-          className={cn(
-            'absolute inset-0 bg-muted/40 backdrop-blur-md z-10 border-t-0.5 border-white/30 pointer-events-none'
-          )}
-        />
-      )}
-
       <div className="relative z-0">
         <HoverCardAnimation className={cn('rounded-none shadow-none')}>
           <GameImage
@@ -75,27 +56,6 @@ export function GamePoster({
           />
         </HoverCardAnimation>
       </div>
-
-      {/* text content layer */}
-      {isShowGameName && (
-        <div
-          className={cn(
-            'absolute inset-0 z-20',
-            'flex flex-col gap-1 items-center justify-center',
-            'pointer-events-none',
-            infoStyle
-          )}
-        >
-          <div
-            className={cn('text-accent-foreground text-xl font-bold truncate', fontStyles?.name)}
-          >
-            {gameName}
-          </div>
-          <div className={cn('text-accent-foreground/80 text-lg', fontStyles?.additionalInfo)}>
-            {additionalInfo}
-          </div>
-        </div>
-      )}
     </div>
   )
 }

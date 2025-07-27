@@ -43,6 +43,7 @@ export function AllGamesComponent({
           </div>
           <div className={cn('flex flex-row gap-1 items-center justify-center select-none')}>
             <div className={cn('text-sm')}>{t('showcase.sorting.title')}</div>
+            {/* Sort By */}
             <Select value={by} onValueChange={setBy} defaultValue="name">
               <SelectTrigger className={cn('w-[130px] h-[26px] text-xs border-0')}>
                 <SelectValue placeholder="Select a fruit" className={cn('text-xs')} />
@@ -69,6 +70,7 @@ export function AllGamesComponent({
               </SelectContent>
             </Select>
           </div>
+          {/* Toggle Order */}
           <Button
             variant={'thirdary'}
             size={'icon'}

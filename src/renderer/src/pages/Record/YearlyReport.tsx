@@ -64,7 +64,7 @@ export function YearlyReport(): React.JSX.Element {
     originalMonth: item.month
   }))
 
-  // 饼图的数据处理
+  // Preparing data for pie chart
   const pieChartData = yearData.gameTypeDistribution.map((item, index) => ({
     ...item,
     percentValue: item.playTime / yearData.totalTime, // Adding percentage data
@@ -111,6 +111,7 @@ export function YearlyReport(): React.JSX.Element {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">{t('yearly.title')}</h2>
+        {/* Year Navigation */}
         <div className="flex items-center space-x-2">
           <Button variant="outline" size="icon" onClick={goToPreviousYear}>
             <ChevronLeft className="w-4 h-4" />
@@ -129,14 +130,16 @@ export function YearlyReport(): React.JSX.Element {
         </div>
       </div>
 
+      {/* Yearly Stats */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        {/* Yearly Play Time */}
         <StatCard
           title={t('yearly.stats.yearlyPlayTime')}
           value={formatGameTime(yearData.totalTime)}
           icon={<Clock className="w-4 h-4" />}
           className="col-span-1"
         />
-
+        {/* Total Play Months */}
         <StatCard
           title={t('yearly.stats.monthsPlayed')}
           value={t('yearly.stats.monthsCount', {
@@ -145,7 +148,7 @@ export function YearlyReport(): React.JSX.Element {
           icon={<CalendarIcon className="w-4 h-4" />}
           className="col-span-1"
         />
-
+        {/* Most Played Month */}
         <StatCard
           title={t('yearly.stats.mostPlayedMonth')}
           value={
@@ -164,6 +167,7 @@ export function YearlyReport(): React.JSX.Element {
       </div>
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        {/* Monthly Play Time Chart */}
         <Card>
           <CardHeader>
             <CardTitle>{t('yearly.chart.monthlyPlayTime')}</CardTitle>
@@ -189,7 +193,7 @@ export function YearlyReport(): React.JSX.Element {
             </ChartContainer>
           </CardContent>
         </Card>
-
+        {/* Monthly Play Days Chart */}
         <Card>
           <CardHeader>
             <CardTitle>{t('yearly.chart.monthlyPlayDays')}</CardTitle>
@@ -224,6 +228,7 @@ export function YearlyReport(): React.JSX.Element {
       </div>
 
       <div className="grid gap-4 xl:grid-cols-[auto_1fr]">
+        {/* Game Type Distribution Pie Chart */}
         <Card>
           <CardHeader>
             <CardTitle>{t('yearly.chart.timeDistribution')}</CardTitle>
@@ -265,7 +270,7 @@ export function YearlyReport(): React.JSX.Element {
             </ChartContainer>
           </CardContent>
         </Card>
-
+        {/* Yearly Game Rankings */}
         <Card>
           <CardHeader>
             <CardTitle>{t('yearly.yearlyGames.title')}</CardTitle>

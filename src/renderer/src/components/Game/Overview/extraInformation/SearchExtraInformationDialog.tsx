@@ -48,7 +48,7 @@ export function SearchExtraInformationDialog({
   }, [isOpen, t])
 
   useEffect(() => {
-    // 初始化选中的额外信息
+    // Set initial selected extra information when dialog opens
     if (isOpen && initialExtraInfo) {
       setSelectedExtraInfo(initialExtraInfo)
     }
@@ -110,6 +110,7 @@ export function SearchExtraInformationDialog({
         showCloseButton={false}
         className={cn('w-[50vw] h-[80vh] max-w-none flex flex-col gap-3')}
       >
+        {/* Extra Information List */}
         <Card className={cn('p-3 w-full h-full scrollbar-base overflow-auto')}>
           {extraInfoList.length > 0 ? (
             <div className="space-y-4">
@@ -156,7 +157,7 @@ export function SearchExtraInformationDialog({
           )}
         </Card>
 
-        {/* 搜索和操作按钮区域*/}
+        {/* Search and Action Buttons */}
         <Card className={cn('p-3')}>
           <div className={cn('flex flex-row gap-3')}>
             <Input

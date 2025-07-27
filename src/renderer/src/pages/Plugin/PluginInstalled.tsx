@@ -17,19 +17,17 @@ import { PluginInstalledCard } from './PluginInstalledCard'
 export function PluginInstalled(): React.JSX.Element {
   const { t } = useTranslation('plugin')
 
-  // Zustand store状态
   const plugins = usePluginInfoStore((state) => state.plugins)
   const loading = usePluginInfoStore((state) => state.loading)
   const installPluginFromFile = usePluginInfoStore((state) => state.installPluginFromFile)
 
-  // 本地状态 - 搜索和筛选
   const [keyword, setKeyword] = useState('')
   const [category, setCategory] = useState('all')
   const [sortBy, setSortBy] = useState('name')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [filteredPlugins, setFilteredPlugins] = useState<PluginInfo[]>([])
 
-  // 筛选和排序插件
+  // Filter and sort plugins whenever the list or filters change
   useEffect(() => {
     if (loading || !plugins.length) {
       setFilteredPlugins([])
@@ -38,7 +36,7 @@ export function PluginInstalled(): React.JSX.Element {
 
     let results = [...plugins]
 
-    // 关键词过滤
+    // Keyword filtering
     if (keyword) {
       const lowerKeyword = keyword.toLowerCase()
       results = results.filter(
@@ -50,12 +48,12 @@ export function PluginInstalled(): React.JSX.Element {
       )
     }
 
-    // 分类过滤
+    // Category filtering
     if (category !== 'all') {
       results = results.filter((plugin) => plugin.manifest.category === category)
     }
 
-    // 排序
+    // Sorting
     results.sort((a, b) => {
       let comparison = 0
       switch (sortBy) {
@@ -83,7 +81,7 @@ export function PluginInstalled(): React.JSX.Element {
 
   return (
     <div>
-      {/* 搜索和筛选工具栏 */}
+      {/* Search and filter toolbar */}
       {!loading && plugins.length > 0 && (
         <div className="flex flex-col md:flex-row gap-4 mb-4">
           <div className="flex flex-1 gap-2">
@@ -138,7 +136,7 @@ export function PluginInstalled(): React.JSX.Element {
         </div>
       )}
 
-      {/* 显示结果数 */}
+      {/* Show result count */}
       {!loading && keyword && (
         <div className="text-sm text-muted-foreground mb-4">
           {filteredPlugins.length > 0
@@ -147,7 +145,7 @@ export function PluginInstalled(): React.JSX.Element {
         </div>
       )}
 
-      {/* 插件列表 */}
+      {/* Plugin list */}
       {loading ? (
         <div className="flex items-center justify-center h-64">
           <div className="flex items-center space-x-2">

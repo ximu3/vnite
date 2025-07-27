@@ -32,6 +32,7 @@ export function DescriptionCard({
         >
           {t('detail.overview.sections.description')}
         </div>
+        {/* Actions */}
         <div className="flex items-center gap-3">
           <span
             onClick={() => setIsSearchDialogOpen(true)}

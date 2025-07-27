@@ -32,24 +32,24 @@ export function FloatingButtons(): React.JSX.Element {
     if (location.pathname.includes('/library/collections')) {
       const collectionId = location.pathname.split('/').pop()
       if (collectionId && collections[collectionId]) {
-        // 如果在集合详情页面，获取当前集合的所有游戏ID
+        // If in a collection page, get all games in that collection
         currentAllGameIds = collections[collectionId].games
       } else {
-        // 如果在集合主页面，获取所有集合的所有游戏ID
+        // If in main collection page, get all games from all collections
         currentAllGameIds = Object.values(collections).flatMap((collection) => collection.games)
       }
     } else {
-      // 如果不是在集合页面，获取所有游戏ID
+      // If not in a collection page, get all games from the registry
       currentAllGameIds = allGameIds
     }
     selectGames(currentAllGameIds)
   }
 
-  // 键盘快捷键处理
+  // Set up a keydown listener
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent): void => {
-      // Escape键退出批量模式
       if (e.key === 'Escape' && isBatchMode) {
+        // If in batch mode, clear selection on Escape key
         clearSelection()
       }
     }
@@ -62,6 +62,7 @@ export function FloatingButtons(): React.JSX.Element {
     <>
       <div className={cn('absolute bottom-4 w-full z-50 flex flex-row justify-center')}>
         <div className="rounded-lg p-2 bg-background/(--glass-opacity) justify-center items-center backdrop-blur-(--glass-blur) shadow-md flex flex-row">
+          {/* Add to Collection */}
           <Button
             size="sm"
             variant="ghost"
@@ -71,7 +72,7 @@ export function FloatingButtons(): React.JSX.Element {
             <span className="icon-[mdi--folder-plus-outline] w-4 h-4" />
             {t('batchEditor.floatingButtons.addToCollection')}
           </Button>
-
+          {/* Information Dialog */}
           <Button
             size="sm"
             variant="ghost"
@@ -81,7 +82,7 @@ export function FloatingButtons(): React.JSX.Element {
             <span className="icon-[mdi--pencil-outline] w-4 h-4" />
             {t('batchEditor.floatingButtons.editInfo')}
           </Button>
-
+          {/* Game Metadata Updater */}
           <Button
             size="sm"
             variant="ghost"
@@ -94,7 +95,7 @@ export function FloatingButtons(): React.JSX.Element {
             <span className="icon-[mdi--database-edit-outline] w-4 h-4" />
             {t('batchEditor.floatingButtons.updateMetadata')}
           </Button>
-
+          {/* Delete Game Alert */}
           <Button
             size="sm"
             variant="ghost"
@@ -106,7 +107,7 @@ export function FloatingButtons(): React.JSX.Element {
           </Button>
 
           <div className="h-5 w-px bg-border mx-2" />
-
+          {/* Clear Selection */}
           <Button
             size="sm"
             variant="ghost"
@@ -116,7 +117,7 @@ export function FloatingButtons(): React.JSX.Element {
             <span className="icon-[mdi--close] w-4 h-4" />
             {t('batchEditor.floatingButtons.cancel')}
           </Button>
-
+          {/* Select All Games */}
           <Button
             size="sm"
             variant="ghost"
@@ -126,14 +127,14 @@ export function FloatingButtons(): React.JSX.Element {
             <span className="icon-[mdi--select-all] w-4 h-4" />
             {t('batchEditor.floatingButtons.selectAll')}
           </Button>
-
+          {/* Selected Games Count */}
           <div className={cn('flex items-center px-2 text-sm text-muted-foreground')}>
             {t('batchEditor.floatingButtons.selected', { count: selectedGameIds.length })}
           </div>
         </div>
       </div>
 
-      {/* 对话框组件 */}
+      {/* Dialog Components */}
       {isAddCollectionDialogOpen && (
         <AddCollectionDialog gameIds={selectedGameIds} setIsOpen={setIsAddCollectionDialogOpen} />
       )}

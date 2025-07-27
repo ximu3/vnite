@@ -3,25 +3,14 @@ import { syncTo } from '../utils'
 
 export interface PluginState {
   initialized: boolean
-
   initializeStore: (data: any) => void
-
-  // 缓存的插件数据，结构为: { pluginId: { key: value } }
   pluginData: Record<string, Record<string, any>>
 
-  // 获取插件值
   getPluginValue: (pluginId: string, key: string, defaultValue?: any) => any
-
-  // 设置插件值
   setPluginValue: (pluginId: string, key: string, value: any) => Promise<void>
-
-  // 设置插件的所有数据（用于初始化）
   setPluginData: (pluginId: string, data: Record<string, any>) => void
-
-  // 删除插件数据
   deletePluginData: (pluginId: string) => void
 
-  // 获取所有插件ID
   getAllPluginIds: () => string[]
 }
 
@@ -44,7 +33,6 @@ export const usePluginStore = create<PluginState>((set, get) => ({
   },
 
   setPluginValue: async (pluginId: string, key: string, value: any): Promise<void> => {
-    // 先更新本地状态
     set((state) => ({
       pluginData: {
         ...state.pluginData,
@@ -55,7 +43,7 @@ export const usePluginStore = create<PluginState>((set, get) => ({
       }
     }))
 
-    // 同步到主进程
+    // Sync to main process
     try {
       await syncTo('plugin', pluginId, get().pluginData[pluginId])
     } catch (error) {

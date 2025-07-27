@@ -82,7 +82,7 @@ export function Database(): React.JSX.Element {
   }
 
   const handleSwitchClick = async (): Promise<void> => {
-    // If you want to switch to portable mode but do not have administrator permissions
+    // If user wants to switch to portable mode but do not have administrator permissions
     if (!isPortable && !isAdmin) {
       const isNeedAdminRights = await ipcManager.invoke(
         'system:check-if-portable-directory-needs-admin-rights'

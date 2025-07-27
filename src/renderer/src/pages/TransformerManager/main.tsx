@@ -27,19 +27,16 @@ export function TransformerManager(): React.JSX.Element {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [selectedTransformer, setSelectedTransformer] = useState<TransformerRule | null>(null)
 
-  // Open rule dialog
   const handleRuleClick = (transformer: TransformerRule): void => {
     setSelectedTransformer(transformer)
     setIsRuleDialogOpen(true)
   }
 
-  // Open edit dialog
   const handleEditClick = (transformer: TransformerRule): void => {
     setSelectedTransformer(transformer)
     setIsEditDialogOpen(true)
   }
 
-  // Open delete dialog
   const handleDeleteClick = (transformer: TransformerRule): void => {
     setSelectedTransformer(transformer)
     setIsDeleteDialogOpen(true)
@@ -67,7 +64,6 @@ export function TransformerManager(): React.JSX.Element {
     setTransformers(newTransformers)
   }
 
-  // Save rule edits
   const handleRuleSave = (updatedTransformer: TransformerRule): void => {
     const updatedTransformers = transformers.map((transformer) =>
       transformer.id === updatedTransformer.id ? updatedTransformer : transformer
@@ -121,7 +117,6 @@ export function TransformerManager(): React.JSX.Element {
     setTransformers([...transformers, newTransformer])
   }
 
-  // Add preset transformer
   const handleAddPreset = (preset: TransformerRule): void => {
     setTransformers([...transformers, preset])
   }
@@ -177,7 +172,6 @@ export function TransformerManager(): React.JSX.Element {
     }
   }
 
-  // Get total rule count
   const getTotalRuleCount = (): number => {
     return transformers.reduce((total, transformer) => {
       return (

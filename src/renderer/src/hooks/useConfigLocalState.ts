@@ -74,7 +74,7 @@ export function useConfigLocalState<
   const save = useCallback(async () => {
     if (!saveMode) return
 
-    // 使用 ref 中的最新值，而不是闭包捕获的 localValue
+    // Get the current value from the ref
     const currentValue = localValueRef.current
 
     if (isEqual(currentValue, originalValue)) return
@@ -90,13 +90,13 @@ export function useConfigLocalState<
     async (newValue: Get<configLocalDocs, Path>) => {
       if (isEqual(newValue, localValue) || !saveMode) return
 
-      // 更新本地状态
+      // Update local state
       setLocalValue(newValue)
 
-      // 直接保存到 store
+      // Save directly to store
       await useConfigLocalStore.getState().setConfigLocalValue(path, newValue)
 
-      // 更新原始值
+      // Update original value
       setOriginalValue(newValue)
     },
     [localValue, path, saveMode]

@@ -55,6 +55,7 @@ export function PresetSelecter({
 
   async function setPreset(presetName: string, gameId: string): Promise<void> {
     if (presetName === 'steam') {
+      // Steam ID is required for this preset
       if (steamId) {
         toast.promise(
           async () => {

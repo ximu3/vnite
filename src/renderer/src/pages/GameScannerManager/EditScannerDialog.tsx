@@ -110,6 +110,7 @@ export const EditScannerDialog: React.FC<EditScannerDialogProps> = ({
         <div
           className={cn('grid grid-cols-[auto_1fr] gap-y-3 gap-x-4 px-3 py-5 items-center text-sm')}
         >
+          {/* Path */}
           <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('editScanner.path')}
           </div>
@@ -124,7 +125,7 @@ export const EditScannerDialog: React.FC<EditScannerDialogProps> = ({
               <span className={cn('icon-[mdi--folder-open-outline] w-5 h-5')}></span>
             </Button>
           </div>
-
+          {/* Data Source */}
           <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('editScanner.dataSource')}
           </div>
@@ -145,7 +146,7 @@ export const EditScannerDialog: React.FC<EditScannerDialogProps> = ({
               ))}
             </SelectContent>
           </Select>
-
+          {/* Scan Depth */}
           <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('editScanner.scanDepth')}
           </div>

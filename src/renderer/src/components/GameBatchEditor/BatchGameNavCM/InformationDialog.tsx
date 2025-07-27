@@ -92,13 +92,14 @@ export function InformationDialog({
         <div
           className={cn('grid grid-cols-[auto_1fr] gap-y-3 gap-x-4 px-3 pt-5 items-center text-sm')}
         >
+          {/* Incremental Mode */}
           <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('batchEditor.information.incrementalMode')}
           </div>
           <div>
             <Switch checked={isIncremental} onCheckedChange={setIsIncremental} />
           </div>
-
+          {/* Developers */}
           <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('batchEditor.information.developers')}
           </div>
@@ -114,7 +115,7 @@ export function InformationDialog({
               <div className={cn('text-xs')}>{t('batchEditor.information.tooltip.developers')}</div>
             </TooltipContent>
           </Tooltip>
-
+          {/* Publishers */}
           <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('batchEditor.information.publishers')}
           </div>
@@ -130,7 +131,7 @@ export function InformationDialog({
               <div className={cn('text-xs')}>{t('batchEditor.information.tooltip.publishers')}</div>
             </TooltipContent>
           </Tooltip>
-
+          {/* Platforms */}
           <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('batchEditor.information.platforms')}
           </div>
@@ -146,7 +147,7 @@ export function InformationDialog({
               <div className={cn('text-xs')}>{t('batchEditor.information.tooltip.platforms')}</div>
             </TooltipContent>
           </Tooltip>
-
+          {/* Genres */}
           <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('batchEditor.information.genres')}
           </div>
@@ -162,7 +163,7 @@ export function InformationDialog({
               <div className={cn('text-xs')}>{t('batchEditor.information.tooltip.genres')}</div>
             </TooltipContent>
           </Tooltip>
-
+          {/* Confirm Button */}
           <div className={cn('col-span-2 flex justify-end mt-2')}>
             <Button onClick={handleConfirm}>{t('utils:common.confirm')}</Button>
           </div>

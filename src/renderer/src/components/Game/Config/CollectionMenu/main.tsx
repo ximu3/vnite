@@ -36,10 +36,12 @@ export function CollectionMenu({
 
   return (
     <DropdownMenuGroup>
+      {/* Add to Collection */}
       <DropdownMenuSub>
         <DropdownMenuSubTrigger>{t('detail.collection.addTo')}</DropdownMenuSubTrigger>
         <DropdownMenuPortal>
           <DropdownMenuSubContent className="max-w-[300px]">
+            {/* Display collections that do not contain the game */}
             <div className={cn('max-h-[224px] overflow-auto scrollbar-base-thin')}>
               {sortedCollections
                 .filter(([key]) => !gameInCollectionsId.includes(key))
@@ -56,6 +58,7 @@ export function CollectionMenu({
             {sortedCollections.filter(([key]) => !gameInCollectionsId.includes(key)).length > 0 && (
               <DropdownMenuSeparator />
             )}
+            {/* Add New Collection */}
             <DropdownMenuItem onSelect={openAddCollectionDialog}>
               <div className={cn('flex flex-row gap-2 items-center w-full')}>
                 <span className={cn('icon-[mdi--add] w-4 h-4')}></span>
@@ -65,11 +68,13 @@ export function CollectionMenu({
           </DropdownMenuSubContent>
         </DropdownMenuPortal>
       </DropdownMenuSub>
+      {/* Remove from Collection */}
       {gameInCollectionsId.length > 0 && (
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>{t('detail.collection.removeFrom')}</DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent className="max-w-[300px]">
+              {/* Only show if the game is in at least one collection */}
               {sortedCollections
                 .filter(([key]) => gameInCollectionsId.includes(key))
                 .map(([key, value]) => (

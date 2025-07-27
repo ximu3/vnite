@@ -29,7 +29,6 @@ const ITEMS_PER_PAGE = 12
 export function PluginBrowse(): React.JSX.Element {
   const { t } = useTranslation('plugin')
 
-  // 本地状态
   const [plugins, setPlugins] = useState<PluginPackage[]>([])
   const [loading, setLoading] = useState(false)
   const [keyword, setKeyword] = useState('')
@@ -39,7 +38,6 @@ export function PluginBrowse(): React.JSX.Element {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
 
-  // 加载插件列表
   const fetchPlugins = async (): Promise<void> => {
     setLoading(true)
 
@@ -56,7 +54,7 @@ export function PluginBrowse(): React.JSX.Element {
       setPlugins(response.plugins || [])
       setTotalPages(response.totalPages || 1)
     } catch (error) {
-      console.error('加载插件失败:', error)
+      console.error('Failed to load plugins:', error)
       toast.error(t('messages.loadPluginsFailed'))
       setPlugins([])
     } finally {
@@ -64,22 +62,21 @@ export function PluginBrowse(): React.JSX.Element {
     }
   }
 
-  // 初始加载和筛选条件变更时重新加载
+  // Fetch plugins when the component mounts or filter criteria change
   useEffect(() => {
     fetchPlugins()
   }, [currentPage, category, sortBy, sortOrder])
 
-  // 处理搜索
   const handleSearch = (): void => {
-    setCurrentPage(1) // 重置到第一页
+    setCurrentPage(1) // Reset to the first page
     fetchPlugins()
   }
 
-  // 生成分页项
+  // Generate pagination items
   const renderPaginationItems = (): React.JSX.Element[] => {
     const items = [] as React.JSX.Element[]
 
-    // 始终显示第一页
+    // Always show the first page
     if (totalPages > 1) {
       items.push(
         <PaginationItem key="first">
@@ -93,7 +90,7 @@ export function PluginBrowse(): React.JSX.Element {
       )
     }
 
-    // 显示省略号
+    // Show start ellipsis
     if (currentPage > 3) {
       items.push(
         <PaginationItem key="ellipsis-start">
@@ -102,15 +99,15 @@ export function PluginBrowse(): React.JSX.Element {
       )
     }
 
-    // 计算要显示的页码范围
+    // Calculate the range of pages to display
     let startPage = Math.max(2, currentPage - 1)
     let endPage = Math.min(totalPages - 1, currentPage + 1)
 
-    // 调整以确保显示适当数量的页码
+    // Adjust to ensure the appropriate number of pages are shown
     if (startPage === 2) endPage = Math.min(totalPages - 1, startPage + 2)
     if (endPage === totalPages - 1) startPage = Math.max(2, endPage - 2)
 
-    // 渲染中间页码
+    // Render middle page numbers
     for (let i = startPage; i <= endPage; i++) {
       items.push(
         <PaginationItem key={i}>
@@ -124,7 +121,7 @@ export function PluginBrowse(): React.JSX.Element {
       )
     }
 
-    // 显示末尾省略号
+    // Show end ellipsis
     if (currentPage < totalPages - 2) {
       items.push(
         <PaginationItem key="ellipsis-end">
@@ -133,7 +130,7 @@ export function PluginBrowse(): React.JSX.Element {
       )
     }
 
-    // 始终显示最后一页
+    // Always show the last page
     if (totalPages > 1) {
       items.push(
         <PaginationItem key="last">
@@ -152,8 +149,9 @@ export function PluginBrowse(): React.JSX.Element {
 
   return (
     <div className="space-y-4">
-      {/* 搜索和筛选 */}
+      {/* Search and filter */}
       <div className="flex flex-col md:flex-row gap-4">
+        {/* Search input */}
         <div className="flex flex-1 gap-2">
           <Input
             placeholder={t('search.placeholder')}
@@ -174,7 +172,7 @@ export function PluginBrowse(): React.JSX.Element {
             )}
           </Button>
         </div>
-
+        {/* Filters */}
         <div className="flex gap-2">
           <Select
             value={category}
@@ -189,7 +187,7 @@ export function PluginBrowse(): React.JSX.Element {
               <SelectItem value="scraper">{t('filters.scraper')}</SelectItem>
             </SelectContent>
           </Select>
-
+          {/* Sort by */}
           <Select
             value={sortBy}
             onValueChange={(setValue) => setSortBy(setValue as 'stars' | 'updated' | 'name')}
@@ -203,7 +201,7 @@ export function PluginBrowse(): React.JSX.Element {
               <SelectItem value="name">{t('filters.name')}</SelectItem>
             </SelectContent>
           </Select>
-
+          {/* Sort order */}
           <Button
             variant="ghost"
             size="icon"
@@ -219,7 +217,7 @@ export function PluginBrowse(): React.JSX.Element {
         </div>
       </div>
 
-      {/* 插件列表 */}
+      {/* Plugin list */}
       {loading ? (
         <div className="flex items-center justify-center h-64">
           <div className="flex items-center space-x-2">
@@ -251,7 +249,7 @@ export function PluginBrowse(): React.JSX.Element {
         </div>
       )}
 
-      {/* 分页控件 - 使用 shadcn/ui Pagination 组件 */}
+      {/* Pagination controls */}
       {totalPages > 1 && (
         <Pagination>
           <PaginationContent>

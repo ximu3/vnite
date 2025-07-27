@@ -57,28 +57,28 @@ export type ScraperCapabilities =
   | 'getGameLogos'
   | 'getGameIcons'
 
-// 定义可更新的元数据字段类型
+// Define the type for game metadata fields which can be updated
 export type GameMetadataField =
-  // 基本信息
+  // Basic information
   | 'name'
   | 'originalName'
   | 'releaseDate'
   | 'description'
 
-  // 开发和发布信息
+  // Development and release information
   | 'developers'
   | 'publishers'
 
-  // 分类信息
+  // Categorization
   | 'genres'
   | 'platforms'
   | 'tags'
 
-  // 其他信息
+  // Other information
   | 'relatedSites'
   | 'extra'
 
-  // 图像资源
+  // Image resources
   | 'cover'
   | 'background'
   | 'logo'
@@ -104,66 +104,57 @@ export const AllGameMetadataUpdateFields: (GameMetadataField | GameMetadataUpdat
   'icon'
 ]
 
-// 定义特殊更新模式
+// Special update modes
 export type GameMetadataUpdateMode = '#all' | '#missing'
 
-// 定义完整的更新选项类型
+// Define the complete update options type
 export interface GameMetadataUpdateOptions {
   /**
-   * 是否覆盖已存在的数据
+   * Overwrite existing metadata fields
    * @default true
    */
   overwriteExisting?: boolean
 
   /**
-   * 是否更新图像资源（当请求更新图像字段时）
+   * Update image resources (when requesting to update image fields)
    * @default true
    */
   updateImages?: boolean
 
   /**
-   * 合并策略 - 应用于数组类型的字段
-   * - 'replace': 完全替换现有数据
-   * - 'append': 将新数据追加到现有数据
-   * - 'merge': 合并新旧数据并移除重复项
+   * Merge strategy - Applied to array-type fields
+   * - 'replace': Completely replace existing data
+   * - 'append': Append new data to existing data
+   * - 'merge': Merge new and old data and remove duplicates
    * @default 'merge'
    */
   mergeStrategy?: 'replace' | 'append' | 'merge'
 
   /**
-   * 来源优先级列表 - 按优先级顺序的数据源ID数组
+   * Priority of data sources when updating metadata
    * @default []
    */
   sourcesPriority?: string[]
 }
 
 /**
- * 单个游戏的批量更新结果
+ * Single game metadata update result
  */
 export interface BatchUpdateResult {
-  /** 游戏数据库ID */
   gameId: string
-  /** 更新是否成功 */
   success: boolean
-  /** 如果失败，错误信息 */
   error?: string
-  /** 数据源ID（如果成功） */
   dataSourceId: string | null
-  /** 游戏名称 */
   gameName: string | null
 }
 
 /**
- * 批量更新的整体结果
+ * Batch update results summary
  */
 export interface BatchUpdateResults {
-  /** 总游戏数 */
   totalGames: number
-  /** 成功更新的游戏数 */
   successfulUpdates: number
-  /** 更新失败的游戏数 */
   failedUpdates: number
-  /** 每个游戏的详细结果 */
   results: BatchUpdateResult[]
 }
 

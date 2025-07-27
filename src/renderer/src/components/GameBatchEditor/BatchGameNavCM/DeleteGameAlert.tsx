@@ -39,12 +39,10 @@ export function DeleteGameAlert({
 
     toast.promise(
       async () => {
-        // Clear the selection in the batch editor
         clearSelection()
 
         console.log(`Deleting games: ${gameIdsToDelete.join(', ')}...`)
 
-        // Remove games from favorites
         removeGamesFromAllCollections(gameIdsToDelete)
 
         // Deleting games from the database
@@ -75,6 +73,7 @@ export function DeleteGameAlert({
           </AlertDialogTitle>
           <AlertDialogDescription>
             {t('batchEditor.delete.description')}
+            {/* Show the list of games to be deleted */}
             {gameIds.length > 1 && (
               <div className="mt-2">
                 <div className="mb-2 font-semibold">{t('batchEditor.delete.gamesList')}</div>

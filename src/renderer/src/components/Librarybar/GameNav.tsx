@@ -45,12 +45,12 @@ export function GameNav({
       store
 
     if (location.pathname.includes(`/library/games/`)) {
-      // 如果在游戏详情页面，把当前游戏ID添加到选择列表
+      // If the current route is already a game detail page, add the gameId to the batch editor store
       const routerGameId = location.pathname.split('/')[3]
       addGameId(routerGameId)
     }
 
-    // 如果是批量选择模式下的特殊操作，阻止默认导航
+    // If special operations are performed in batch selection mode, prevent default navigation
     if (event.shiftKey || event.ctrlKey || event.metaKey) {
       event.preventDefault()
 
@@ -101,9 +101,9 @@ export function GameNav({
 
       setLastSelectedId(gameId)
     } else {
-      // 正常点击 - 允许导航发生
+      // Normal click - allow navigation to occur
+      // If not in batch mode, clear the selected games
       clearGameIds()
-      // 不调用 preventDefault()，让 Link 组件处理导航
     }
   }
 
@@ -158,7 +158,6 @@ export function GameNav({
         ) : (
           <GameNavCM
             gameId={gameId}
-            groupId={groupId}
             openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
             openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
             openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}

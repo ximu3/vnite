@@ -73,6 +73,7 @@ export function TransformerItem({
         </div>
 
         <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+          {/* Move Up Button */}
           <Button
             className={cn(index === 0 && 'opacity-50 cursor-not-allowed')}
             variant={'ghost'}
@@ -82,7 +83,7 @@ export function TransformerItem({
           >
             <span className="w-5 h-5 icon-[mdi--chevron-up]"></span>
           </Button>
-
+          {/* Move Down Button */}
           <Button
             className={cn(index === totalCount - 1 && 'opacity-50 cursor-not-allowed')}
             variant={'ghost'}
@@ -92,7 +93,7 @@ export function TransformerItem({
           >
             <span className="w-5 h-5 icon-[mdi--chevron-down]"></span>
           </Button>
-
+          {/* Apply Button */}
           <Tooltip>
             <TooltipTrigger>
               <Button
@@ -106,7 +107,7 @@ export function TransformerItem({
             </TooltipTrigger>
             <TooltipContent side="bottom">{t('transformerItem.tooltips.apply')}</TooltipContent>
           </Tooltip>
-
+          {/* Edit Button */}
           <Tooltip>
             <TooltipTrigger>
               <Button variant="ghost" onClick={() => onEditClick(transformer)} size={'icon'}>
@@ -115,7 +116,7 @@ export function TransformerItem({
             </TooltipTrigger>
             <TooltipContent side="bottom">{t('transformerItem.tooltips.edit')}</TooltipContent>
           </Tooltip>
-
+          {/* Export Button */}
           <Tooltip>
             <TooltipTrigger>
               <Button variant="ghost" onClick={handleExport} size={'icon'}>
@@ -124,7 +125,7 @@ export function TransformerItem({
             </TooltipTrigger>
             <TooltipContent side="bottom">{t('transformerItem.tooltips.export')}</TooltipContent>
           </Tooltip>
-
+          {/* Delete Button */}
           <Tooltip>
             <TooltipTrigger>
               <Button

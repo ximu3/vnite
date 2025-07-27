@@ -40,7 +40,6 @@ export const GlobalSettingsDialog: React.FC<GlobalSettingsDialogProps> = ({ isOp
     }
   }, [isOpen, scannerConfig, updateGlobalSettings, updateIntervalMinutes])
 
-  // Save global settings
   const handleSave = async (): Promise<void> => {
     if (globalSettings.interval < 5 * 60 * 1000) {
       toast.error(t('notifications.intervalTooShort'))
@@ -66,6 +65,7 @@ export const GlobalSettingsDialog: React.FC<GlobalSettingsDialogProps> = ({ isOp
         <div
           className={cn('grid grid-cols-[auto_1fr] gap-y-3 gap-x-4 px-3 py-5 items-center text-sm')}
         >
+          {/* Scan interval */}
           <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('globalSettings.scanInterval')}
           </div>
@@ -84,7 +84,7 @@ export const GlobalSettingsDialog: React.FC<GlobalSettingsDialogProps> = ({ isOp
               <div className={cn('text-xs')}>{t('globalSettings.scanIntervalTooltip')}</div>
             </TooltipContent>
           </Tooltip>
-
+          {/* Ignore list */}
           <div className={cn('whitespace-nowrap select-none self-start mt-1')}>
             {t('globalSettings.ignoreList')}
           </div>

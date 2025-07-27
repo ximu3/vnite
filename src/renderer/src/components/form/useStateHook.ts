@@ -7,9 +7,6 @@ import type { HookType, DocType } from './types'
 import type { Paths, Get } from 'type-fest'
 import { usePluginState } from '~/hooks'
 
-/**
- * Hook工厂函数，根据hookType返回相应的hook
- */
 export function useStateHook<
   T extends HookType,
   Path extends Paths<DocType<T>, { bracketNotation: true }>,

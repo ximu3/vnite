@@ -27,9 +27,6 @@ type GameLocalStore = UseBoundStore<StoreApi<SingleGameLocalState>>
 
 const gameLocalStores: Record<string, GameLocalStore> = {}
 
-/**
- * Get or create a local store for the game
- */
 export function getGameLocalStore(gameId: string): GameLocalStore {
   if (!gameLocalStores[gameId]) {
     gameLocalStores[gameId] = create<SingleGameLocalState>((set, get) => ({

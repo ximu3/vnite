@@ -106,7 +106,6 @@ export const FailedFoldersDialog: React.FC<FailedFoldersDialogProps> = ({ isOpen
 
   const failedFolders = getAllFailedFolders()
 
-  // Handle folder selection
   const handleSelectFolder = (folder: {
     path: string
     name: string
@@ -119,14 +118,12 @@ export const FailedFoldersDialog: React.FC<FailedFoldersDialogProps> = ({ isOpen
     setDataSource(folder.dataSource || 'steam')
   }
 
-  // Handle going back
   const handleBack = (): void => {
     setSelectedFolder(undefined)
     setDataSourceId('')
     setDataSource('steam')
   }
 
-  // Handle fixing
   const handleFix = async (): Promise<void> => {
     if (!selectedFolder || !dataSourceId) return
 
@@ -154,6 +151,7 @@ export const FailedFoldersDialog: React.FC<FailedFoldersDialogProps> = ({ isOpen
 
         <div className="pb-1 space-y-4 max-h-[60vh] overflow-auto scrollbar-base">
           {selectedFolder ? (
+            // Details view for a selected folder
             <div className="p-4 space-y-4 border rounded-lg">
               <div>
                 <p className="font-medium">
@@ -197,6 +195,7 @@ export const FailedFoldersDialog: React.FC<FailedFoldersDialogProps> = ({ isOpen
               </div>
             </div>
           ) : (
+            // List of failed folders
             <Table className="">
               <TableHeader className="">
                 <TableRow>

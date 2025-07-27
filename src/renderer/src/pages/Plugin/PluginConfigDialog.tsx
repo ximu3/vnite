@@ -18,15 +18,10 @@ import { ipcManager } from '~/app/ipc'
 import { cn } from '~/utils'
 
 interface PluginConfigDialogProps {
-  /** 插件ID */
   pluginId: string
-  /** 插件名称 */
   pluginName: string
-  /** 是否显示对话框 */
   open: boolean
-  /** 关闭对话框的回调 */
   onClose: () => void
-  /** 配置保存后的回调 */
   onSave?: () => void
 }
 
@@ -42,7 +37,6 @@ export function PluginConfigDialog({
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
 
-  // 加载插件配置项
   const loadConfigurations = async (): Promise<void> => {
     if (!pluginId || !open) return
 
@@ -51,14 +45,13 @@ export function PluginConfigDialog({
       const result = await ipcManager.invoke('plugin:get-plugin-configuration', pluginId)
       setConfigurations(result || [])
     } catch (error) {
-      console.error('加载插件配置失败:', error)
+      console.error('Failed to load plugin configuration:', error)
       toast.error(t('messages.loadConfigurationFailed'))
     } finally {
       setLoading(false)
     }
   }
 
-  // 保存配置
   const handleSave = async (): Promise<void> => {
     setSaving(true)
     try {
@@ -66,16 +59,16 @@ export function PluginConfigDialog({
       onSave?.()
       onClose()
     } catch (error) {
-      console.error('保存插件配置失败:', error)
+      console.error('Failed to save plugin configuration:', error)
       toast.error(t('messages.saveConfigurationFailed'))
     } finally {
       setSaving(false)
     }
   }
 
-  // 将PluginConfiguration转换为ConfigItem所需的props
+  // Convert PluginConfiguration to props required by ConfigItem
   const getConfigItemProps = (config: PluginConfiguration): any => {
-    // 确保pluginId存在
+    // Ensure pluginId exists
     if (!pluginId) {
       return null
     }
@@ -90,7 +83,7 @@ export function PluginConfigDialog({
       controlClassName: config.controlClassName
     }
 
-    // 根据配置类型返回对应的props
+    // Handle different control types based on configuration
     switch (config.type) {
       case 'string':
         return {

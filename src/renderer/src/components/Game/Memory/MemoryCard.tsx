@@ -230,7 +230,7 @@ export function MemoryCard({
               />
             </Zoom>
 
-            {/* Add button area */}
+            {/* Actions */}
             {(!isCoverExist || !note) && (
               <div className={cn('flex flex-row gap-5 p-5 border-b-[1px]')}>
                 {!isCoverExist && (
@@ -277,6 +277,7 @@ export function MemoryCard({
         </Card>
       </ContextMenuTrigger>
       <ContextMenuContent>
+        {/* Cover Image */}
         <ContextMenuItem onSelect={handleCoverSelect}>
           {isCoverExist
             ? t('detail.memory.actions.changeCover')
@@ -288,6 +289,7 @@ export function MemoryCard({
           </ContextMenuItem>
         )}
 
+        {/* Note */}
         <ContextMenuItem
           onSelect={() => {
             setIsNoteDialogOpen(true)
@@ -296,6 +298,7 @@ export function MemoryCard({
           {note ? t('detail.memory.actions.editText') : t('detail.memory.actions.addText')}
         </ContextMenuItem>
         <ContextMenuSeparator />
+        {/* Export Options */}
         <ContextMenuGroup>
           <ContextMenuSub>
             <ContextMenuSubTrigger>{t('detail.memory.export.exportAs')}</ContextMenuSubTrigger>
@@ -334,6 +337,7 @@ export function MemoryCard({
           </ContextMenuSub>
         </ContextMenuGroup>
         <ContextMenuSeparator />
+        {/* Delete Memory */}
         <ContextMenuItem onSelect={handleDelete}>
           {t('detail.memory.actions.delete')}
         </ContextMenuItem>

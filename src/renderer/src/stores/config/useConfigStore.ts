@@ -48,7 +48,6 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
       get().setConfigValue(path, getValueByPath(DEFAULT_CONFIG_VALUES, path))
       return getValueByPath(DEFAULT_CONFIG_VALUES, path)
     }
-    // console.log('getConfigValue', path, value)
     return value
   },
 

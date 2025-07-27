@@ -27,6 +27,7 @@ export function RelatedSitesCard({
         >
           {t('detail.overview.sections.relatedSites')}
         </div>
+        {/* Actions */}
         <RelatedSitesDialog gameId={gameId} />
       </div>
       <SeparatorDashed />

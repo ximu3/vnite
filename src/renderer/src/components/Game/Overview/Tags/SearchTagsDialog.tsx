@@ -47,7 +47,7 @@ export function SearchTagsDialog({
   }, [isOpen, t])
 
   useEffect(() => {
-    // Initialize the selected tab when the dialog box is opened
+    // Initialize the selected tags when the dialog is opened
     if (isOpen && initialTags) {
       setSelectedTags(initialTags)
     }
@@ -107,6 +107,7 @@ export function SearchTagsDialog({
         showCloseButton={false}
         className={cn('w-[50vw] h-[80vh] max-w-none flex flex-col gap-3')}
       >
+        {/* Tags List */}
         <Card className={cn('p-3 w-full h-full scrollbar-base overflow-auto')}>
           {tagsList.length > 0 ? (
             <div className="space-y-4">

@@ -1,5 +1,3 @@
-'use client'
-
 import { Cross2Icon } from '@radix-ui/react-icons'
 import { Button } from '~/components/ui/button'
 import {
@@ -83,6 +81,7 @@ export function FilterCombobox({
             aria-expanded={open}
             className="justify-between non-draggable"
           >
+            {/* Display selected values */}
             <div className="flex flex-row gap-1 -ml-2 mx-1 my-1 p-0 pl-1 truncate w-[196px]">
               {selectedValues.length > 0 ? (
                 selectedValues.map((value) => (
@@ -108,6 +107,7 @@ export function FilterCombobox({
           className="w-[240px] p-0 max-w-none bg-transparent"
         >
           <Command className={cn('max-w-none bg-popover/[0.75]')}>
+            {/* Search Input */}
             <CommandInput
               placeholder={t('filter.combobox.search', { placeholder })}
               className={cn('non-draggable')}
@@ -115,6 +115,7 @@ export function FilterCombobox({
             <CommandEmpty>{t('filter.combobox.notFound', { placeholder })}</CommandEmpty>
             <CommandList className={cn('scrollbar-base')}>
               <CommandGroup>
+                {/* Display all values */}
                 {options.map((option) => (
                   <CommandItem
                     key={option.value}

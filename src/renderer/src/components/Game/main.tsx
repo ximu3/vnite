@@ -25,7 +25,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   const isEditingLogo = useGameDetailStore((state) => state.isEditingLogo)
   const setIsEditingLogo = useGameDetailStore((state) => state.setIsEditingLogo)
 
-  // Game settings-related state
+  // Game Logo position and size management
   const initialPosition = { x: 1.5, y: 24 }
   const initialSize = 100
   const [logoPosition, setLogoPosition, saveLogoPosition] = useGameState(
@@ -35,13 +35,13 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   )
   const [logoSize, setLogoSize, saveLogoSize] = useGameState(gameId, 'apperance.logo.size', true)
   const [logoVisible, setLogoVisible] = useGameState(gameId, 'apperance.logo.visible')
-
   const [localLogoPosition, setLocalLogoPosition] = useState(initialPosition)
 
   useEffect(() => {
     setLocalLogoPosition(logoPosition)
   }, [logoPosition])
 
+  // Logo-related handler functions
   const handleMouseMove = (e: MouseEvent): void => {
     if (dragging && logoRef.current) {
       setLocalLogoPosition({
@@ -50,20 +50,16 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
       })
     }
   }
-
   const handleMouseUp = async (): Promise<void> => {
     if (dragging) {
       setLogoPosition(localLogoPosition)
     }
     setDragging(false)
   }
-
   const handleReset = async (): Promise<void> => {
     setLocalLogoPosition(initialPosition)
     setLogoPosition(initialPosition)
   }
-
-  // Logo-related handler functions
   const handleWheel = (e: React.WheelEvent<HTMLDivElement>): void => {
     e.preventDefault()
     if (!logoRef.current) return
@@ -72,7 +68,6 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
     const newSize = Math.min(Math.max(logoSize + delta * 5, 30), 200) // Limit size between 30% and 200%
     setLogoSize(newSize)
   }
-
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>): void => {
     e.preventDefault()
     if (!logoRef.current) return
@@ -100,7 +95,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
       const scrollTop = (viewportElement as HTMLElement).scrollTop
       setScrollY(scrollTop)
 
-      // 触发自定义事件，通知Light组件进行视差滚动
+      // Dispatch a custom event to notify Light components of the scroll position
       window.dispatchEvent(
         new CustomEvent('game-scroll', {
           detail: { scrollY: scrollTop }
@@ -109,7 +104,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
     }
 
     viewportElement.addEventListener('scroll', handleScroll)
-    // 添加类名以便Light组件能找到滚动元素
+    // Add a class name so that Light components can find the scrollable element
     viewportElement.classList.add('scrollable-content')
 
     return (): void => {
@@ -130,9 +125,8 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
 
   return (
     <div className={cn('w-full h-full relative overflow-hidden shrink-0')}>
-      {/* 背景层已移至Light组件 */}
-
-      {/* Logo编辑控制面板 - 仅在编辑模式下显示 */}
+      {/* Logo Editing Control Panel */}
+      {/* Only visible when editing logo */}
       {isEditingLogo && (
         <div
           className={cn(
@@ -188,7 +182,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
         </div>
       )}
 
-      {/* Logo层 */}
+      {/* Logo Layer */}
       {logoVisible && (
         <div
           ref={logoRef}
@@ -200,7 +194,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
             top: `${localLogoPosition.y}vh`,
             cursor: dragging ? 'grabbing' : 'grab',
             transformOrigin: 'center center',
-            zIndex: isEditingLogo ? 30 : 10 // 编辑模式下提高z-index
+            zIndex: isEditingLogo ? 30 : 10 // Increase z-index in editing mode
           }}
           className={cn('absolute', 'will-change-transform')}
         >
@@ -214,23 +208,20 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
         </div>
       )}
 
-      {/* 可滚动内容区域 */}
+      {/* Scrollable Content Area */}
       <ScrollArea
         ref={scrollAreaRef}
         className={cn('relative h-full w-full overflow-auto rounded-none')}
       >
-        {/* 内容容器 */}
-        <div
-          className={cn('relative z-20 flex flex-col w-full min-h-[100vh]')}
-          // 背景渐变已移除，由Light组件处理
-        >
+        {/* Content Container */}
+        <div className={cn('relative z-20 flex flex-col w-full min-h-[100vh]')}>
           <div className="mt-[39vh]">
-            {/* 头部区域 */}
+            {/* Header Area */}
             <div ref={headerRef} className="pt-1">
               <Header gameId={gameId} />
             </div>
 
-            {/* 内容区域 */}
+            {/* Content Area */}
             <div className={cn('p-7 pt-4 h-full')}>
               <Tabs defaultValue="overview" className={cn('w-full')}>
                 <TabsList className={cn('w-full justify-start bg-transparent')} variant="underline">

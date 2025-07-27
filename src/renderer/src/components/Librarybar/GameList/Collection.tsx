@@ -31,7 +31,9 @@ export function Collection(): React.JSX.Element {
           defaultValue={defaultValues}
           className={cn('min-w-0 text-xs flex flex-col gap-2')}
         >
+          {/* Recent Games */}
           <RecentGames />
+          {/* Split games into their respective collections */}
           {sortedCollections.map(([key, value]) => (
             <AccordionItem key={key} value={key}>
               <CollectionCM collectionId={key}>
@@ -49,7 +51,7 @@ export function Collection(): React.JSX.Element {
               </AccordionContent>
             </AccordionItem>
           ))}
-
+          {/* All Games */}
           <AllGame />
         </Accordion>
       ) : (

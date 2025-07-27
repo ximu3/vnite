@@ -126,7 +126,6 @@ function getGamePlayStatus(gameId: string, t: any): string {
   return statusMap[status] || t('score.playStatus.unknown')
 }
 
-// Scoring category components
 function ScoreCategory({
   title,
   description,

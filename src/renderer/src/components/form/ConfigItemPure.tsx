@@ -11,10 +11,6 @@ export interface ConfigItemPureProps {
   disabled?: boolean
 }
 
-/**
- * 纯样式的ConfigItem组件，不涉及任何状态管理
- * 右侧控件完全由children参数传入
- */
 export function ConfigItemPure({
   title,
   description,

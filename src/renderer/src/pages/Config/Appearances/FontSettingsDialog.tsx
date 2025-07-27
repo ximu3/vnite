@@ -29,7 +29,6 @@ export function FontSettingsDialog({
   isOpen,
   onOpenChange
 }: FontSettingsDialogProps): React.JSX.Element {
-  // 从配置中获取当前字体设置
   const [font, setFont] = useConfigState('appearances.font')
   const [commandOpen, setCommandOpen] = useState(false)
   const [fonts, setFonts] = useState<string[]>([])
@@ -41,7 +40,6 @@ export function FontSettingsDialog({
 
   const { t } = useTranslation('config')
 
-  // 加载系统字体
   const loadSystemFonts = async (): Promise<void> => {
     try {
       setLoading(true)
@@ -50,37 +48,34 @@ export function FontSettingsDialog({
         setFonts(result)
       }
     } catch (error) {
-      console.error('加载系统字体失败:', error)
+      console.error('Failed to load system fonts:', error)
     } finally {
       setLoading(false)
     }
   }
 
-  // 当对话框打开时加载字体
+  // Load system fonts when the dialog opens
   useEffect(() => {
     loadSystemFonts()
-  }, [open])
+  }, [isOpen])
 
-  // 处理字体选择
   const handleFontSelect = (fontName: string): void => {
     changeFont(fontName)
     setFont(fontName)
     setCommandOpen(false)
   }
 
-  // 重置为软件默认字体
   const handleResetToSoftwareFont = (): void => {
     changeFont('LXGW WenKai Mono')
     setFont('LXGW WenKai Mono')
   }
 
-  // 重置为系统默认字体
   const handleResetToSystemFont = (): void => {
     changeFont('system-ui')
     setFont('system-ui')
   }
 
-  // 过滤后的字体列表
+  // Filtered font list
   const filteredFonts = searchTerm
     ? fonts.filter((f) => f.toLowerCase().includes(searchTerm.toLowerCase()))
     : fonts

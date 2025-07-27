@@ -34,10 +34,12 @@ export function CollectionMenu({
   const { t } = useTranslation('game')
   return (
     <ContextMenuGroup>
+      {/* Add to Collection */}
       <ContextMenuSub>
         <ContextMenuSubTrigger>{t('detail.collection.addTo')}</ContextMenuSubTrigger>
         <ContextMenuPortal>
           <ContextMenuSubContent className="max-w-[300px]">
+            {/* Display collections that do not contain the game */}
             <div className={cn('max-h-[224px] overflow-auto scrollbar-base-thin')}>
               {sortedCollections
                 .filter(([key]) => !gameInCollectionsId.includes(key))
@@ -47,11 +49,10 @@ export function CollectionMenu({
                   </ContextMenuItem>
                 ))}
             </div>
-
             {sortedCollections.filter(([key]) => !gameInCollectionsId.includes(key)).length > 0 && (
               <ContextMenuSeparator />
             )}
-
+            {/* Add New Collection */}
             <ContextMenuItem onSelect={openAddCollectionDialog}>
               <div className={cn('flex flex-row gap-2 items-center w-full')}>
                 <span className={cn('icon-[mdi--add] w-4 h-4')}></span>
@@ -61,11 +62,12 @@ export function CollectionMenu({
           </ContextMenuSubContent>
         </ContextMenuPortal>
       </ContextMenuSub>
-
+      {/* Remove from Collection */}
       {gameInCollectionsId.length > 0 && (
         <ContextMenuSub>
           <ContextMenuSubTrigger>{t('detail.collection.removeFrom')}</ContextMenuSubTrigger>
           <ContextMenuPortal>
+            {/* Only show if the game is in at least one collection */}
             <ContextMenuSubContent className="max-w-[300px]">
               {sortedCollections
                 .filter(([key]) => gameInCollectionsId.includes(key))

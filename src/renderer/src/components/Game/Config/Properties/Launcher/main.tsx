@@ -60,7 +60,7 @@ export function Launcher({ gameId }: { gameId: string }): React.JSX.Element {
           </CardHeader>
           <CardContent>
             <div className={cn('grid grid-cols-[120px_1fr] gap-x-5 gap-y-5 items-center')}>
-              {/* 启动模式选择 */}
+              {/* Launch Mode Selection */}
               <div className={cn('whitespace-nowrap select-none')}>
                 {t('detail.properties.launcher.mode.title')}
               </div>
@@ -104,7 +104,7 @@ export function Launcher({ gameId }: { gameId: string }): React.JSX.Element {
                 <Separator />
               </div>
 
-              {/* Magpie zoom options */}
+              {/* Magpie Scaling */}
               <div className={cn('whitespace-nowrap select-none')}>
                 {t('detail.properties.launcher.magpie.scaling')}
               </div>

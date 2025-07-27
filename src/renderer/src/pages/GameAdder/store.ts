@@ -12,7 +12,7 @@ export type GameList = {
   developers: string[]
 }[]
 
-export type GameAdderPage = 'search' | 'games' | 'screenshots'
+export type GameAdderPage = 'search' | 'games' | 'backgrounds'
 
 interface GameAdderState {
   isOpen: boolean

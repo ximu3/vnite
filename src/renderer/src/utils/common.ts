@@ -13,7 +13,6 @@ export function changeFont(fontFamily: string | null, defaultFallback: string = 
     document.documentElement.style.setProperty('--font-current', `"${defaultFallback}"`)
     return
   }
-  // 设置字体样式
   document.documentElement.style.setProperty('--font-current', `"${fontFamily}"`)
 }
 

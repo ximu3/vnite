@@ -56,7 +56,7 @@ export function FileLauncher({ gameId }: { gameId: string }): React.JSX.Element 
 
   return (
     <div className={cn('grid grid-cols-[120px_1fr] gap-x-5 gap-y-5 items-center')}>
-      {/* file path */}
+      {/* File Path */}
       <div className={cn('whitespace-nowrap select-none')}>
         {t('detail.properties.launcher.file.path')}
       </div>
@@ -72,12 +72,11 @@ export function FileLauncher({ gameId }: { gameId: string }): React.JSX.Element 
         </Button>
       </div>
 
-      {/* 分隔线 - 占满整行 */}
       <div className={cn('col-span-2')}>
         <Separator />
       </div>
 
-      {/* 监视器模式 */}
+      {/* Monitor Mode */}
       <div className={cn('whitespace-nowrap select-none')}>
         {t('detail.properties.launcher.monitor.title')}
       </div>
@@ -103,7 +102,7 @@ export function FileLauncher({ gameId }: { gameId: string }): React.JSX.Element 
         </Select>
       </div>
 
-      {/* 监视路径/进程名 */}
+      {/* Monitor Path / Process Name */}
       <div className={cn('whitespace-nowrap select-none')}>
         {['folder', 'file'].includes(monitorMode)
           ? t('detail.properties.launcher.monitor.path')

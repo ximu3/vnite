@@ -21,19 +21,19 @@ export function usePluginState<T = any, SaveMode extends boolean = false>(
   const pluginStore = usePluginStore()
   const initialValue = pluginStore.getPluginValue(pluginId, key, defaultValue)
 
-  // 使用本地状态存储当前值
+  // Use local state to store the current value
   const [localValue, setLocalValue] = useState<T>(initialValue)
 
-  // 存储来自store的原始值（仅在保存模式下使用）
+  // Store the original value from the store (only used in save mode)
   const [originalValue, setOriginalValue] = useState<T>(initialValue)
 
-  // 使用ref存储最新的本地值
+  // Use ref to store the latest local values
   const localValueRef = useRef(localValue)
   localValueRef.current = localValue
 
-  // 订阅store变化
+  // Subscribe to store changes
   useEffect(() => {
-    // 获取初始值并确保与store同步
+    // Get the initial value and make sure it's synchronized with the store
     const currentValue = usePluginStore.getState().getPluginValue(pluginId, key, defaultValue)
     if (!isEqual(currentValue, localValue)) {
       setLocalValue(currentValue)
@@ -60,12 +60,12 @@ export function usePluginState<T = any, SaveMode extends boolean = false>(
       if (isEqual(newValue, localValue)) return
 
       if (saveMode) {
-        // 保存模式：只更新本地状态，不修改store
+        // Save mode: Only update local state, don't modify the store
         setLocalValue(newValue)
       } else {
-        // 立即模式：先更新本地状态以获得即时响应
+        // Immediate mode: Update local state first for immediate response
         setLocalValue(newValue)
-        // 然后更新store
+        // Then update the store
         return usePluginStore.getState().setPluginValue(pluginId, key, newValue)
       }
     },
@@ -75,15 +75,15 @@ export function usePluginState<T = any, SaveMode extends boolean = false>(
   const save = useCallback(async () => {
     if (!saveMode) return
 
-    // 使用 ref 中的最新值，而不是闭包捕获的 localValue
+    // Get the current value from the ref
     const currentValue = localValueRef.current
 
     if (isEqual(currentValue, originalValue)) return
 
-    // 将本地更改应用到store
+    // Apply the local changes to the store
     await usePluginStore.getState().setPluginValue(pluginId, key, currentValue)
 
-    // 更新原始值以匹配保存的值
+    // Update original value to match the saved value
     setOriginalValue(currentValue)
   }, [saveMode, pluginId, key, originalValue])
 
@@ -91,13 +91,13 @@ export function usePluginState<T = any, SaveMode extends boolean = false>(
     async (newValue: T) => {
       if (isEqual(newValue, localValue) || !saveMode) return
 
-      // 更新本地状态
+      // Update local state
       setLocalValue(newValue)
 
-      // 直接保存到 store
+      // Save directly to store
       await usePluginStore.getState().setPluginValue(pluginId, key, newValue)
 
-      // 更新原始值
+      // Update original value
       setOriginalValue(newValue)
     },
     [localValue, pluginId, key, saveMode]

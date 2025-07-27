@@ -55,11 +55,12 @@ export function CollectionCM({
   return (
     <ContextMenu>
       <ContextMenuTrigger>{children}</ContextMenuTrigger>
-
       <ContextMenuContent className={cn('w-40')}>
+        {/* Rename Collection */}
         <ContextMenuItem onSelect={() => setIsRenaming(true)}>
           {t('showcase.collection.contextMenu.rename')}
         </ContextMenuItem>
+        {/* Update Game Metadata in Collection */}
         <ContextMenuItem
           onSelect={() => {
             setIsGameMetadataUpdaterDialogOpen(true)
@@ -69,11 +70,13 @@ export function CollectionCM({
           {t('showcase.collection.contextMenu.updateMetadata')}
         </ContextMenuItem>
         <ContextMenuSeparator />
+        {/* Delete Collection */}
         <ContextMenuItem onSelect={() => setIsDeleting(true)}>
           {t('showcase.collection.contextMenu.delete')}
         </ContextMenuItem>
       </ContextMenuContent>
 
+      {/* Rename Collection Dialog */}
       <Dialog open={isRenaming}>
         <DialogContent
           showCloseButton={false}
@@ -96,7 +99,7 @@ export function CollectionCM({
           <Button onClick={handleRename}>{t('utils:common.confirm')}</Button>
         </DialogContent>
       </Dialog>
-
+      {/* Delete Collection Confirmation Dialog */}
       <AlertDialog open={isDeleting}>
         <AlertDialogContent>
           <AlertDialogHeader>

@@ -10,14 +10,13 @@ export function MarkdownRenderer({
   content: string
   className?: string
 }): React.JSX.Element {
-  // 使用marked.parse的同步版本
   const rawHtml = marked.parse(content, { async: false }) as string
 
-  // 清理HTML以防止XSS攻击
+  // Clean the HTML to prevent XSS attacks
   const cleanHtml = DOMPurify.sanitize(rawHtml)
 
   return (
-    // 使用prose类来应用Typography样式
+    // Use prose class to apply Typography styles
     <div
       className={cn(
         'prose text-foreground',
@@ -27,7 +26,7 @@ export function MarkdownRenderer({
         'prose-a:text-primary', // Link Color
         'prose-a:no-underline hover:prose-a:underline', // underline effect
 
-        // 代码块样式
+        // Code block styles
         'prose-pre:bg-muted/30 prose-pre:text-muted-foreground prose-pre:rounded-md',
 
         className

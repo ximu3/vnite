@@ -73,6 +73,7 @@ export function ConfigItem<
 
   const handleSelectChange = useCallback(
     async (value: string) => {
+      // Convert string values to boolean if necessary
       if (value === 'true') {
         await setValueAndSave(true as any)
       } else if (value === 'false') {

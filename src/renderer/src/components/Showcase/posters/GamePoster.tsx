@@ -63,7 +63,7 @@ export function GamePoster({
   dragScenario,
   parentGap = 0,
   position = 'center',
-  inViewGames = [] // 当前视图中所有游戏的ID数组，用于Shift多选 - TODO
+  inViewGames = [] // TODO: Support shift+click selection
 }: {
   gameId: string
   groupId?: string
@@ -94,7 +94,7 @@ export function GamePoster({
   const [previewState, setPreviewState] = useState<PreviewState>({ type: 'idle' })
   const [showPlayButtonOnPoster] = useConfigState('appearances.showcase.showPlayButtonOnPoster')
 
-  // 批量选择相关状态和方法
+  // Batch mode and selection state
   const {
     selectedGamesMap,
     selectGame,
@@ -106,12 +106,11 @@ export function GamePoster({
 
   const isSelected = !!selectedGamesMap[gameId]
 
-  // 处理选择游戏
   const handleSelect = (e: React.MouseEvent): void => {
     e.stopPropagation()
 
     if (e.shiftKey && lastSelectedId && inViewGames.length > 0) {
-      // Shift+点击实现连续选择
+      // Shift+Click to select a range
       const lastIndex = inViewGames.indexOf(lastSelectedId)
       const currentIndex = inViewGames.indexOf(gameId)
 
@@ -123,11 +122,11 @@ export function GamePoster({
           selectGame(inViewGames[i])
         }
       } else {
-        // 如果找不到索引，只选择当前游戏
+        // If not found, only select the current game
         selectGame(gameId)
       }
     } else {
-      // 常规单击选择
+      // Regular click selection
       if (isSelected) {
         unselectGame(gameId)
       } else {
@@ -137,14 +136,14 @@ export function GamePoster({
     }
   }
 
-  // Ctrl+点击游戏封面时实现多选，而不是导航
+  // Ctrl+Click to select multiple games instead of navigating
   const handleGameClick = (e: React.MouseEvent): void => {
     if (e.ctrlKey || e.metaKey) {
       handleSelect(e)
     } else if (!isSelected) {
       navigateToGame(router, gameId, groupId || 'all')
     } else {
-      // 如果已选中且不按Ctrl键，仍然选择该游戏（取消其他选择）
+      // If already selected and not holding Ctrl, still select the game (deselect others)
       e.stopPropagation()
       selectGame(gameId)
       setLastSelectedId(gameId)
@@ -274,7 +273,7 @@ export function GamePoster({
                       'overflow-hidden'
                     )}
                   >
-                    {/* 多选圆点 */}
+                    {/* Multi-select dot */}
                     <div
                       className={cn(
                         'absolute left-2 top-2 shadow-md z-20 rounded-full w-4 h-4 flex items-center justify-center cursor-pointer',
@@ -355,13 +354,12 @@ export function GamePoster({
             </ContextMenuTrigger>
           </div>
 
-          {/* 根据是否处于批量模式切换上下文菜单 */}
+          {/* Switch context menu based on batch mode */}
           {isBatchMode ? (
             <BatchGameNavCM openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)} />
           ) : (
             <GameNavCM
               gameId={gameId}
-              groupId={groupId || 'all'}
               openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
               openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
               openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}

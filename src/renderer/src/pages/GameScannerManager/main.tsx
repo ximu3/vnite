@@ -47,30 +47,25 @@ export const GameScannerManager: React.FC = () => {
     initialize()
   }, [initialize])
 
-  // Handle adding a game scanner
   const handleAddScanner = (): void => {
     setEditingScanner({ id: null, isNew: true })
   }
 
-  // Handle editing global settings
   const handleEditGlobalSettings = (): void => {
     setShowingGlobalSettings(true)
   }
 
-  // Calculate overall progress percentage
   const calculateProgress = (): number => {
     if (scanProgress.totalScanners === 0) return 0
     return Math.round((scanProgress.processedScanners / scanProgress.totalScanners) * 100)
   }
 
-  // Get the count of all failed folders
   const getFailedFolderCount = (): number => {
     return Object.values(scanProgress?.scannerProgresses).reduce((total, progress) => {
       return total + (progress.failedFolders?.length || 0)
     }, 0)
   }
 
-  // Get status variant
   const getStatusVariant = (): 'default' | 'outline' | 'secondary' | 'destructive' => {
     switch (scanProgress.status) {
       case 'scanning':

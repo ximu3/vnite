@@ -68,15 +68,14 @@ function DialogContent({
         }}
         data-slot="dialog-content"
         className={cn(
-          // 移除直接应用在内容上的毛玻璃效果
           'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 translate-x-[-50%] translate-y-[-50%] rounded-lg p-6 shadow-lg duration-200'
         )}
         {...props}
       >
-        {/* 添加毛玻璃效果的背景层 */}
+        {/* Add backdrop blur effect */}
         <div className="absolute inset-0 bg-background/60 backdrop-filter backdrop-blur-[var(--glass-blur)] rounded-lg -z-10"></div>
 
-        {/* 确保内容清晰 */}
+        {/* Ensure content is clear */}
         <div className={cn('relative z-10 grid gap-4 w-auto', className)}>{children}</div>
 
         {showCloseButton && (

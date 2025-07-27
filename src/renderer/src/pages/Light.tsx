@@ -39,7 +39,7 @@ export function Light(): React.JSX.Element {
   const refreshId = useLightStore((state) => state.refreshId)
 
   useEffect(() => {
-    // 根据主题设置玻璃效果的模糊和透明度
+    // Set initial background based on the current theme
     if (isDark) {
       setGlassBlur(darkGlassBlur)
       setGlassOpacity(darkGlassOpacity)
@@ -49,13 +49,11 @@ export function Light(): React.JSX.Element {
     }
   }, [isDark, darkGlassBlur, darkGlassOpacity, lightGlassBlur, lightGlassOpacity])
 
-  // 获取游戏背景URL
   const getGameBackgroundUrl = (id: string): string => {
     const info = getAttachmentInfo('game', id, 'images/background.webp')
     return `attachment://game/${id}/images/background.webp?t=${info?.timestamp}`
   }
 
-  // 获取自定义背景URL
   const getCustomBackgroundUrl = (): string => {
     const info = getAttachmentInfo(
       'config',
@@ -65,7 +63,6 @@ export function Light(): React.JSX.Element {
     return `attachment://config/media/background-${isDark ? 'dark' : 'light'}.webp?t=${info?.timestamp}`
   }
 
-  // 检查自定义背景是否可用
   const isCustomBackgroundAvailable = (): boolean => {
     return (
       customBackground &&
@@ -73,10 +70,8 @@ export function Light(): React.JSX.Element {
     )
   }
 
-  // 获取最近游戏ID
   const getRecentGameId = (): string => sortGames('record.lastRunDate', 'desc')[0]
 
-  // 设置新背景图像URL
   const updateBackgroundImage = (newUrl: string, newGameId: string = ''): void => {
     if (newUrl === imageUrl) return
 
@@ -84,30 +79,30 @@ export function Light(): React.JSX.Element {
     if (newGameId) setGameId(newGameId)
   }
 
-  // 处理滚动事件
+  // Handle scroll events
   useEffect(() => {
     const handleScroll = (e: Event): void => {
-      // 获取滚动元素
+      // Get the scroll element
       const scrollElement = e.target as HTMLElement
 
-      // 计算滚动位置，限制最小为0（防止向上滚动超出）
+      // Calculate scroll position, limiting the minimum to 0 (to prevent scrolling up beyond the top)
       const currentScrollY = Math.max(0, scrollElement.scrollTop)
       setScrollY(currentScrollY)
     }
 
-    // 监听自定义事件
+    // Listen for custom events
     const handleGameScroll = (e: CustomEvent): void => {
       const currentScrollY = e.detail?.scrollY || 0
       setScrollY(currentScrollY)
     }
 
-    // 添加滚动事件监听
+    // Listen for custom events
     window.addEventListener('game-scroll', handleGameScroll as EventListener)
 
-    // 对文档添加滚动监听
+    // Listen for scroll events on the document
     document.addEventListener('scroll', handleScroll)
 
-    // 对所有标记为可滚动内容的元素添加监听
+    // Listen for scroll events on all elements marked as scrollable
     document.querySelectorAll('.scrollable-content').forEach((el) => {
       el.addEventListener('scroll', handleScroll)
     })
@@ -121,7 +116,7 @@ export function Light(): React.JSX.Element {
     }
   }, [])
 
-  // 当路径更改时更新背景
+  // Update background image based on the current route
   useEffect(() => {
     if (pathname.includes('/library/games/')) {
       const currentGameId = pathname.split('/games/')[1]?.split('/')[0]
@@ -162,18 +157,18 @@ export function Light(): React.JSX.Element {
     getAttachmentInfo
   ])
 
-  // 更新CSS变量
+  // Update CSS variables for glass effect
   useEffect(() => {
     document.documentElement.style.setProperty('--glass-opacity', glassOpacity * 100 + '%')
     document.documentElement.style.setProperty('--glass-blur', `${glassBlur}px`)
   }, [glassOpacity, glassBlur])
 
-  // 检查是否显示游戏详情页面背景
+  // Check if the game detail page background should be shown
   const isGameDetailRoute = pathname.includes('/library/games/') && gameId !== ''
 
   return (
     <div className="absolute top-0 left-0 w-full h-full pointer-events-none -z-10">
-      {/* 游戏详情页面专用背景层 - 仅在games路由显示 */}
+      {/* Game detail page specific background layer - only shown on games route */}
       {isGameDetailRoute && (
         <div
           ref={detailBackgroundRef}
@@ -184,10 +179,10 @@ export function Light(): React.JSX.Element {
             width: 'calc(100% - 327px)',
             height: 'calc(100% - 50px)',
             zIndex: 15,
-            clipPath: 'inset(0 0 0 0)' // 确保内容不会溢出这个容器
+            clipPath: 'inset(0 0 0 0)' // Ensure content does not overflow this container
           }}
         >
-          {/* 内部容器用于实现视差滚动效果 */}
+          {/* Internal container for parallax scrolling effect */}
           <div
             style={{
               width: '100%',
@@ -212,29 +207,18 @@ export function Light(): React.JSX.Element {
                 maskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)'
               }}
             />
-            {/* <GameImage
-              gameId={gameId}
-              key={`${gameId}-background-detail`}
-              type="background"
-              blur={enableNSFWBlur}
-              className={cn('w-full h-auto max-h-[55vh] object-top object-cover')}
-              fallback={<div className={cn('w-full h-full bg-background/15')} />}
-              style={{
-                maskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)'
-              }}
-            /> */}
           </div>
         </div>
       )}
 
-      {/* 玻璃效果层 */}
+      {/* Glass effect layer */}
       <div
         className={cn(
           'absolute top-0 left-0 w-full h-full bg-background/[var(--glass-opacity)] backdrop-filter backdrop-blur-[var(--glass-blur)] z-10'
         )}
       ></div>
 
-      {/* 背景图层 */}
+      {/* Background image layer */}
       <CrossfadeImage
         src={imageUrl}
         className="w-full h-full"

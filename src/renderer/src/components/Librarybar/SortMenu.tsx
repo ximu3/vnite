@@ -60,6 +60,7 @@ export function SortMenu({
         <div className={cn('flex flex-col gap-5')}>
           <div className={cn('flex flex-row gap-1 items-center justify-center')}>
             <div className={cn('text-sm whitespace-nowrap')}>{t('list.all.sortBy')}：</div>
+            {/* Sort By Select */}
             <Select value={by} onValueChange={setBy} defaultValue="name">
               <SelectTrigger className={cn('w-[130px] h-[26px] text-xs min-h-0')}>
                 <SelectValue placeholder="Select a fruit" className={cn('text-xs')} />
@@ -83,6 +84,7 @@ export function SortMenu({
                 </SelectGroup>
               </SelectContent>
             </Select>
+            {/* Toggle Order Button */}
             <Button
               variant={'thirdary'}
               size={'icon'}
@@ -96,6 +98,7 @@ export function SortMenu({
               )}
             </Button>
           </div>
+          {/* Play Status Order */}
           {selectedGroup === 'record.playStatus' && (
             <>
               <Separator />

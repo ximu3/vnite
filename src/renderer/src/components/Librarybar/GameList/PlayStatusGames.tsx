@@ -70,7 +70,9 @@ export function PlayStatusGames(): React.JSX.Element {
           type="multiple"
           className={cn('w-full text-xs flex flex-col gap-2')}
         >
+          {/* Recent Games */}
           <RecentGames />
+          {/* Split games into their respective play status */}
           {fields.map((field) => (
             <AccordionItem key={field} value={field}>
               <AccordionTrigger className={cn('text-xs p-1 pl-2')}>
@@ -90,6 +92,7 @@ export function PlayStatusGames(): React.JSX.Element {
               </AccordionContent>
             </AccordionItem>
           ))}
+          {/* All Games */}
           <AllGame />
         </Accordion>
       ) : (

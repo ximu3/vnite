@@ -77,17 +77,17 @@ export function CollectionPoster({
   const [enableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
   const length = collectionGames.length
 
-  // 批量选择相关状态和方法
+  // Batch mode and selection state
   const { selectedGamesMap, selectGames, unselectGames, isBatchMode } = useGameBatchEditorStore()
 
-  // 检查合集中的所有游戏是否都被选中
+  // Check if all games in the collection are selected
   const isCollectionFullySelected = (): boolean => {
     if (collectionGames.length === 0) return false
 
     return collectionGames.every((gameId) => selectedGamesMap[gameId])
   }
 
-  // 检查合集中是否有部分游戏被选中
+  // Check if some games in the collection are selected
   const isCollectionPartiallySelected = (): boolean => {
     if (collectionGames.length === 0) return false
 
@@ -100,28 +100,27 @@ export function CollectionPoster({
   const isSelected = isCollectionFullySelected()
   const isPartiallySelected = isCollectionPartiallySelected()
 
-  // 处理选择/取消选择合集
+  // Handle select/unselect collection
   const handleSelect = (e: React.MouseEvent): void => {
     e.stopPropagation()
 
     if (isSelected) {
-      // 如果所有游戏都被选中，则取消选择
+      // If all games are selected, unselect
       unselectGames(collectionGames)
     } else {
-      // 选择合集中的所有游戏
+      // Select all games in the collection
       selectGames(collectionGames)
     }
   }
 
-  // 处理合集点击
   const handleCollectionClick = (e: React.MouseEvent): void => {
     if (e.ctrlKey || e.metaKey) {
       handleSelect(e)
     } else if (isBatchMode && !e.ctrlKey && !e.metaKey) {
-      // 在批量模式下点击合集时，选择该合集
+      // In batch mode, select the collection on click
       handleSelect(e)
     } else {
-      // 默认行为：导航到合集页面
+      // Default behavior: navigate to collection page
       router.navigate({ to: `/library/collections/${collectionId}` })
     }
   }
@@ -210,7 +209,6 @@ export function CollectionPoster({
               )}
               onClick={handleCollectionClick}
             >
-              {/* <div className="absolute inset-0 z-10 transition-all duration-300 rounded-lg pointer-events-none bg-background/20 group-hover:bg-transparent" /> */}
               <HoverCardAnimation>
                 <GameImage
                   gameId={gameId}
@@ -229,7 +227,7 @@ export function CollectionPoster({
                   }
                 />
               </HoverCardAnimation>
-
+              {/* Hover Layer */}
               <div
                 className={cn(
                   'absolute inset-x-0 bottom-0 h-full bg-accent/50',
@@ -242,7 +240,7 @@ export function CollectionPoster({
                   'overflow-hidden'
                 )}
               >
-                {/* 多选圆点 */}
+                {/* Multi-select dot */}
                 <div
                   className={cn(
                     'absolute left-2 top-2 shadow-md z-20 rounded-full w-4 h-4 flex items-center justify-center cursor-pointer',
@@ -258,7 +256,7 @@ export function CollectionPoster({
                   {isSelected && <span className="icon-[mdi--check] w-3 h-3" />}
                   {isPartiallySelected && <span className="icon-[mdi--minus] w-3 h-3" />}
                 </div>
-
+                {/* Collection Length */}
                 <div className="absolute inset-0 flex items-center justify-center flex-grow">
                   <div className="text-xl font-semibold">{length}</div>
                 </div>

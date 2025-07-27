@@ -35,7 +35,6 @@ export function Config({ gameId }: { gameId: string }): React.JSX.Element {
             gameId={gameId}
             openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
           />
-          {/* <DropdownMenuSeparator /> */}
           <ManageMenu
             gameId={gameId}
             openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}

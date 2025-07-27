@@ -61,25 +61,6 @@
   }
 }
 
-/* 添加到您的全局CSS文件 */
-.background-fade-enter {
-  opacity: 0;
-}
-
-.background-fade-enter-active {
-  opacity: 1;
-  transition: opacity 300ms ease-in;
-}
-
-.background-fade-exit {
-  opacity: 1;
-}
-
-.background-fade-exit-active {
-  opacity: 0;
-  transition: opacity 300ms ease-out;
-}
-
 @font-face {
   font-family: 'LXGW WenKai Mono';
   src: url('@assets/fonts/LXGWWenKaiMono-Medium.ttf') format('truetype');

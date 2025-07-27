@@ -35,9 +35,7 @@ export function ManageMenu({
   const setIsPlayTimeEditorDialogOpen = useGameDetailStore(
     (state) => state.setIsPlayTimeEditorDialogOpen
   )
-  const setIsRatingEditorDialogOpen = useGameDetailStore(
-    (state) => state.setIsRatingEditorDialogOpen
-  )
+  const setIsScoreEditorDialogOpen = useGameDetailStore((state) => state.setIsScoreEditorDialogOpen)
   const setIsOpen = useGameAdderStore((state) => state.setIsOpen)
   const setName = useGameAdderStore((state) => state.setName)
   const setDbId = useGameAdderStore((state) => state.setDbId)
@@ -56,9 +54,11 @@ export function ManageMenu({
           <DropdownMenuSubTrigger>{t('detail.manage.title')}</DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent className="">
+              {/* Rename Game */}
               <DropdownMenuItem onSelect={openNameEditorDialog}>
                 {t('detail.manage.rename')}
               </DropdownMenuItem>
+              {/* Edit Game Logo */}
               <DropdownMenuItem
                 onClick={() => {
                   setIsEditingLogo(true)
@@ -66,14 +66,14 @@ export function ManageMenu({
               >
                 {t('detail.manage.editLogo')}
               </DropdownMenuItem>
-
+              {/* Edit Play Time */}
               <DropdownMenuItem onClick={() => setIsPlayTimeEditorDialogOpen(true)}>
                 {t('detail.manage.editPlayTime')}
               </DropdownMenuItem>
 
               <DropdownMenuSeparator />
 
-              {/* Game status selection submenu */}
+              {/* Play Status Menu */}
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
                   {t('detail.header.playStatus.label')}
@@ -114,16 +114,17 @@ export function ManageMenu({
                 </DropdownMenuPortal>
               </DropdownMenuSub>
 
-              {/* Rating menu item */}
-              <DropdownMenuItem onSelect={() => setIsRatingEditorDialogOpen(true)}>
+              {/* Change Score */}
+              <DropdownMenuItem onSelect={() => setIsScoreEditorDialogOpen(true)}>
                 {t('detail.header.rating.tooltip')}
               </DropdownMenuItem>
 
               <DropdownMenuSeparator />
-
+              {/* Mark as NSFW */}
               <DropdownMenuItem onClick={() => setNsfw(!nsfw)}>
                 {nsfw ? t('detail.manage.unmarkNSFW') : t('detail.manage.markNSFW')}
               </DropdownMenuItem>
+              {/* Update Metadata */}
               <DropdownMenuItem
                 onClick={() => {
                   setDbId(gameId)
@@ -133,6 +134,8 @@ export function ManageMenu({
               >
                 {t('detail.manage.downloadMetadata')}
               </DropdownMenuItem>
+              {/* Create Shortcut */}
+              {/* Only show if gamePath is set */}
               {gamePath !== '' && (
                 <DropdownMenuItem
                   onClick={async () => {
@@ -153,7 +156,8 @@ export function ManageMenu({
                   {t('detail.manage.createShortcut')}
                 </DropdownMenuItem>
               )}
-              {/* <DropdownMenuSeparator /> */}
+              {/* Browse Local Files */}
+              {/* Only work if gamePath or markPath is set */}
               <DropdownMenuItem
                 onClick={() => {
                   if (!gamePath && !markPath) {
@@ -166,6 +170,7 @@ export function ManageMenu({
                 {t('detail.manage.browseLocalFiles')}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
+              {/* Delete Game */}
               <DeleteGameAlert gameId={gameId}>
                 <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                   {t('detail.manage.delete')}

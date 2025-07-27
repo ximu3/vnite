@@ -20,15 +20,15 @@ export function Titlebar(): React.JSX.Element {
   const { t } = useTranslation('sidebar')
   const { setIsOpen: setLogDialogIsOpen } = useLogStore()
 
-  // 云同步相关
+  // Cloud Sync related
   const syncStatus = useCloudSyncStore((state) => state.status)
   const [cloudSyncEnabled] = useConfigLocalState('sync.enabled')
 
-  // 主题相关
+  // Theme related
   const { toggleTheme, isDark } = useTheme()
   const [showThemeSwitchInSidebar] = useConfigState('appearances.sidebar.showThemeSwitcher')
 
-  // NSFW模糊相关
+  // NSFW Blur related
   const [showNSFWBlurSwitchInSidebar] = useConfigState('appearances.sidebar.showNSFWBlurSwitcher')
   const [enableNSFWBlur, setEnableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
 
@@ -42,7 +42,6 @@ export function Titlebar(): React.JSX.Element {
     }
   }, [])
 
-  // 检查是否在library路由下
   const isLibraryRoute = location.pathname.startsWith('/library')
 
   return (
@@ -50,11 +49,11 @@ export function Titlebar(): React.JSX.Element {
       data-titlebar="true"
       className="flex flex-row draggable-area text-accent-foreground h-[50px] bg-transparent border-b w-full"
     >
-      {/* 内容分为两部分：1. 可伸缩/可隐藏的主内容区 2. 固定的窗口控制按钮区 */}
+      {/* Content split to two parts: 1. Resizable/Collapsible main content area 2. Fixed window control button area */}
 
-      {/* 1. 主内容区域 - 在宽度不足时会隐藏溢出内容 */}
+      {/* 1. Main content area - Overflow content will be hidden when width is insufficient */}
       <div className="flex flex-row items-center w-full overflow-hidden">
-        {/* 左侧：通用按钮 */}
+        {/* Left: General buttons */}
         <div className="flex flex-row items-center gap-2 px-3 pr-2 shrink-0">
           <Button
             variant={'thirdary'}
@@ -74,17 +73,17 @@ export function Titlebar(): React.JSX.Element {
           </Button>
         </div>
 
-        {/* 左侧：Library路由的功能按钮 */}
+        {/* Left: Library route specific buttons */}
         <div className="flex flex-row items-center gap-2 px-3 shrink-0">
           {isLibraryRoute && <LibraryTitlebarContent />}
         </div>
 
-        {/* 中间可伸缩空间 */}
+        {/* Middle resizable space */}
         <div className="flex-grow"></div>
 
-        {/* 右侧：功能按钮区域 */}
+        {/* Right: Function button area */}
         <div className="flex flex-row items-center gap-2 px-3 overflow-hidden shrink-0">
-          {/* 日志查看按钮 */}
+          {/* Log view button */}
           <Tooltip>
             <TooltipTrigger>
               <Button
@@ -99,7 +98,7 @@ export function Titlebar(): React.JSX.Element {
             <TooltipContent side="bottom">{t('actions.viewLogs')}</TooltipContent>
           </Tooltip>
 
-          {/* NSFW模糊切换按钮 */}
+          {/* NSFW Blur switch button */}
           {showNSFWBlurSwitchInSidebar && (
             <Tooltip>
               <TooltipTrigger>
@@ -122,7 +121,7 @@ export function Titlebar(): React.JSX.Element {
             </Tooltip>
           )}
 
-          {/* 主题切换按钮 */}
+          {/* Theme switch button */}
           {showThemeSwitchInSidebar && (
             <Tooltip>
               <TooltipTrigger>
@@ -145,7 +144,7 @@ export function Titlebar(): React.JSX.Element {
             </Tooltip>
           )}
 
-          {/* 云同步状态按钮 */}
+          {/* Cloud Sync status button */}
           {cloudSyncEnabled ? (
             <Popover>
               <PopoverTrigger>
@@ -184,7 +183,7 @@ export function Titlebar(): React.JSX.Element {
         </div>
       </div>
 
-      {/* 2. 窗口控制按钮区域 - 固定显示，永不隐藏 */}
+      {/* 2. Window control button area - Fixed display, never hidden */}
       <div className="flex flex-row ml-auto shrink-0">
         <Button
           variant={'ghost'}

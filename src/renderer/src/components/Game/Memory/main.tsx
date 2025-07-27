@@ -31,7 +31,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
   async function handleDelete(memoryId: string): Promise<void> {
     toast.promise(
       async () => {
-        // Remove first from sortedMemoryIds
+        // First, remove the memoryId from sortedMemoryIds
         setSortedMemoryIds((prev) => prev.filter((id) => id !== memoryId))
 
         // and then update the memoryList

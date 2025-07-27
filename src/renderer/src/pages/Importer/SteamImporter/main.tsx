@@ -123,7 +123,6 @@ export function SteamImporter(): React.JSX.Element {
     }
   }
 
-  // Filter games
   const filteredGames = games.filter((game) =>
     game.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
@@ -132,7 +131,6 @@ export function SteamImporter(): React.JSX.Element {
   const successCount = gameLogs.filter((g) => g.status === 'success').length
   const errorCount = gameLogs.filter((g) => g.status === 'error').length
 
-  // Processing dialog box closes
   const handleClose = (): void => {
     if (status !== 'processing') {
       setIsOpen(false)

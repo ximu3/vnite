@@ -79,15 +79,15 @@ export function useGameCollectionState<
   const save = useCallback(async () => {
     if (!saveMode) return
 
-    // 使用 ref 中的最新值，而不是闭包捕获的 localValue
+    // Get the current value from the ref
     const currentValue = localValueRef.current
 
     if (isEqual(currentValue, originalValue)) return
 
-    // 应用本地更改到存储
+    // Apply the local changes to the store
     await useGameCollectionStore.getState().setGameCollectionValue(collectionId, path, currentValue)
 
-    // 更新原始值以匹配保存的值
+    // Update original value to match the saved value
     setOriginalValue(currentValue)
   }, [saveMode, collectionId, path, originalValue])
 
@@ -95,13 +95,13 @@ export function useGameCollectionState<
     async (newValue: Get<gameCollectionDoc, Path>) => {
       if (isEqual(newValue, localValue) || !saveMode) return
 
-      // 更新本地状态
+      // Update local state
       setLocalValue(newValue)
 
-      // 直接保存到 store
+      // Save directly to store
       await useGameCollectionStore.getState().setGameCollectionValue(collectionId, path, newValue)
 
-      // 更新原始值
+      // Update original value
       setOriginalValue(newValue)
     },
     [localValue, collectionId, path, saveMode]

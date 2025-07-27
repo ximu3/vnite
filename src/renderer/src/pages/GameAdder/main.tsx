@@ -24,7 +24,7 @@ function GameAdderContent(): React.JSX.Element {
         return <Search />
       case 'games':
         return <GameList />
-      case 'screenshots':
+      case 'backgrounds':
         return <BackgroundList />
       default:
         return <Search />

@@ -10,7 +10,6 @@ import type {
 import i18next from 'i18next'
 
 interface PluginInfoStore {
-  // 状态
   plugins: PluginInfo[]
   stats: PluginStatsData | null
   loading: boolean
@@ -35,7 +34,6 @@ interface PluginInfoStore {
 }
 
 export const usePluginInfoStore = create<PluginInfoStore>((set) => ({
-  // 初始状态
   plugins: [],
   stats: null,
   loading: false,
@@ -45,14 +43,13 @@ export const usePluginInfoStore = create<PluginInfoStore>((set) => ({
   setStats: (stats) => set({ stats }),
   setUpdates: (updates) => set({ updates }),
 
-  // 操作方法
   loadPlugins: async () => {
     set({ loading: true })
     try {
       const result = await ipcManager.invoke('plugin:get-all-plugins')
       set({ plugins: result || [] })
     } catch (error) {
-      console.error('获取插件列表失败:', error)
+      console.error('Failed to load plugins:', error)
       toast.error(i18next.t('plugin:messages.loadPluginsFailed'))
     } finally {
       set({ loading: false })
@@ -64,7 +61,7 @@ export const usePluginInfoStore = create<PluginInfoStore>((set) => ({
       const result = await ipcManager.invoke('plugin:get-stats')
       set({ stats: result })
     } catch (error) {
-      console.error('获取插件统计信息失败:', error)
+      console.error('Failed to load plugin stats:', error)
     }
   },
 
@@ -94,7 +91,7 @@ export const usePluginInfoStore = create<PluginInfoStore>((set) => ({
         toast.error(i18next.t('plugin:messages.installFromFileFailed'))
       }
     } catch (error) {
-      console.error('从文件安装插件失败:', error)
+      console.error('Failed to install plugin from file:', error)
       toast.error(i18next.t('plugin:messages.installFromFileFailed'))
     }
   },
@@ -139,7 +136,7 @@ export const usePluginInfoStore = create<PluginInfoStore>((set) => ({
         !noToast && toast.info(i18next.t('plugin:messages.noUpdatesAvailable'))
       }
     } catch (error) {
-      console.error('检查更新失败:', error)
+      console.error('Failed to check for updates:', error)
       !noToast && toast.error(i18next.t('plugin:messages.checkUpdatesFailed'))
     } finally {
       set({ loading: false })

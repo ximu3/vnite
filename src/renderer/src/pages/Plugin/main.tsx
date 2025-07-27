@@ -18,7 +18,6 @@ import { PluginBrowse } from './PluginBrowse'
 export function Plugin(): React.JSX.Element {
   const { t } = useTranslation('plugin')
 
-  // Zustand store
   const installPluginFromFile = usePluginInfoStore((state) => state.installPluginFromFile)
   const stats = usePluginInfoStore((state) => state.stats)
   const loading = usePluginInfoStore((state) => state.loading)
@@ -29,13 +28,14 @@ export function Plugin(): React.JSX.Element {
       <ScrollArea className={cn('w-full h-full')}>
         <div className="w-full h-full pt-[34px] pb-6 px-6 overflow-auto">
           <div className="max-w-7xl space-y-6">
-            {/* 页面标题和操作按钮 */}
+            {/* Page title and action buttons */}
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-bold">{t('title')}</h1>
                 <p className="text-muted-foreground mt-1">{t('description')}</p>
               </div>
               <div className="flex items-center space-x-3">
+                {/* Update button */}
                 <Button
                   variant="outline"
                   onClick={() => {
@@ -46,6 +46,7 @@ export function Plugin(): React.JSX.Element {
                   <span className={cn('icon-[mdi--update] w-4 h-4 mr-2')}></span>
                   {t('actions.checkUpdates')}
                 </Button>
+                {/* Install plugin from file */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button>
@@ -63,9 +64,10 @@ export function Plugin(): React.JSX.Element {
               </div>
             </div>
 
-            {/* 统计信息 */}
+            {/* Statistics */}
             {stats && (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {/* Total counts */}
                 <Card>
                   <CardHeader className="">
                     <CardTitle className="text-sm font-medium">{t('stats.total')}</CardTitle>
@@ -74,6 +76,7 @@ export function Plugin(): React.JSX.Element {
                     <div className="text-2xl font-bold">{stats.total}</div>
                   </CardContent>
                 </Card>
+                {/* Enabled counts */}
                 <Card>
                   <CardHeader className="">
                     <CardTitle className="text-sm font-medium">{t('stats.enabled')}</CardTitle>
@@ -82,6 +85,7 @@ export function Plugin(): React.JSX.Element {
                     <div className="text-2xl font-bold text-primary">{stats.enabled}</div>
                   </CardContent>
                 </Card>
+                {/* Disabled counts */}
                 <Card>
                   <CardHeader className="">
                     <CardTitle className="text-sm font-medium">{t('stats.disabled')}</CardTitle>
@@ -90,6 +94,7 @@ export function Plugin(): React.JSX.Element {
                     <div className="text-2xl font-bold text-muted-foreground">{stats.disabled}</div>
                   </CardContent>
                 </Card>
+                {/* Error counts */}
                 <Card>
                   <CardHeader className="">
                     <CardTitle className="text-sm font-medium">{t('stats.errors')}</CardTitle>
@@ -101,7 +106,7 @@ export function Plugin(): React.JSX.Element {
               </div>
             )}
 
-            {/* 主要内容区域 */}
+            {/* Main content area */}
             <Tabs defaultValue="installed" className="w-full">
               <TabsList className="mb-2">
                 <TabsTrigger value="installed">{t('tabs.installed')}</TabsTrigger>

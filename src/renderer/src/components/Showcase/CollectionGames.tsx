@@ -42,21 +42,21 @@ export function CollectionGamesComponent({
 
   const selectGames = useGameBatchEditorStore((state) => state.selectGames)
 
-  // 键盘快捷键处理
+  // Keyboard shortcut handling
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent): void => {
-      // 检查当前是否有对话框元素处于活动状态
+      // Check if any dialog element is active
       const isDialogActive =
         document.querySelector('dialog[open]') !== null ||
         document.querySelector('.modal.active') !== null ||
         document.querySelector('[role="dialog"]') !== null
 
-      // 当对话框打开时，不执行快捷键功能
+      // When a dialog is open, do not execute shortcut key functions
       if (isDialogActive) {
         return
       }
 
-      // Ctrl + A 选择所有游戏
+      // Ctrl + A select all games
       if (e.ctrlKey && e.key === 'a') {
         e.preventDefault()
         selectGames(games)
@@ -120,7 +120,7 @@ export function CollectionGamesComponent({
               ref={gridContainerRef}
               className={cn(
                 'grid grid-cols-[repeat(auto-fill,148px)]',
-                '3xl:grid-cols-[repeat(auto-fill,176px)]',
+                // '3xl:grid-cols-[repeat(auto-fill,176px)]',
                 'justify-between gap-6 gap-y-[30px] w-full',
                 'pt-2 pb-6 pl-5 pr-5' // Add inner margins to show shadows
               )}

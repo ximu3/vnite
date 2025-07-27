@@ -51,7 +51,6 @@ export function RuleDialog({
     )
   }
 
-  // Update rule set
   const updateRuleSet = (
     category: keyof TransformerRule['processors'],
     index: number,
@@ -78,7 +77,6 @@ export function RuleDialog({
     })
   }
 
-  // Add new rule
   const addRule = (category: keyof TransformerRule['processors']): void => {
     if (!localTransformer) return
 
@@ -94,7 +92,6 @@ export function RuleDialog({
     })
   }
 
-  // Delete rule
   const deleteRule = (category: keyof TransformerRule['processors'], index: number): void => {
     if (!localTransformer) return
 

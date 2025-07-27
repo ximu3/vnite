@@ -78,6 +78,7 @@ export function WeeklyReport(): React.JSX.Element {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">{t('weekly.title')}</h2>
+        {/* Date Navigation */}
         <div className="flex items-center space-x-2">
           <Button variant="outline" size="icon" onClick={goToPreviousWeek}>
             <ChevronLeft className="w-4 h-4" />
@@ -95,6 +96,7 @@ export function WeeklyReport(): React.JSX.Element {
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        {/* Weekly Play Time Chart */}
         <Card className="md:col-span-2">
           <CardHeader>
             <CardTitle>{t('weekly.dailyPlayTime')}</CardTitle>
@@ -137,7 +139,7 @@ export function WeeklyReport(): React.JSX.Element {
             </ChartContainer>
           </CardContent>
         </Card>
-
+        {/* Weekly Highlights Card */}
         <Card>
           <CardHeader>
             <CardTitle>{t('weekly.highlights.title')}</CardTitle>
@@ -188,7 +190,7 @@ export function WeeklyReport(): React.JSX.Element {
             </div>
           </CardContent>
         </Card>
-
+        {/* Weekly Game Rankings */}
         <Card>
           <CardHeader>
             <CardTitle>{t('weekly.weeklyGames.title')}</CardTitle>

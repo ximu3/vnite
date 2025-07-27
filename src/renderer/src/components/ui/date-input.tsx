@@ -12,7 +12,7 @@ interface DateTimeInputProps extends Omit<React.InputHTMLAttributes<HTMLInputEle
 
 export const DateTimeInput = forwardRef<HTMLInputElement, DateTimeInputProps>(
   ({ className, error, mode = 'date', ...props }, ref) => {
-    // 根据模式确定输入类型
+    // Determine the input type based on the mode
     const inputType = mode === 'time' ? 'time' : mode === 'datetime' ? 'datetime-local' : 'date'
 
     return (
@@ -26,7 +26,7 @@ export const DateTimeInput = forwardRef<HTMLInputElement, DateTimeInputProps>(
             'pl-3 pr-10',
             // Remove the default date picker style
             '[&::-webkit-calendar-picker-indicator]:hidden',
-            // 日期和时间字段高亮样式
+            // Date and time field highlight styles
             '[&::-webkit-datetime-edit-year-field:focus]:bg-primary',
             '[&::-webkit-datetime-edit-year-field:focus]:text-primary-foreground',
             '[&::-webkit-datetime-edit-year-field:focus]:rounded-lg',

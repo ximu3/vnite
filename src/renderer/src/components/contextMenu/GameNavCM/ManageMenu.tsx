@@ -30,6 +30,7 @@ export function ManageMenu({
   openPlayingTimeEditorDialog: () => void
 }): React.JSX.Element {
   const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
+  const [markPath] = useGameLocalState(gameId, 'utils.markPath')
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [nsfw, setNsfw] = useGameState(gameId, 'apperance.nsfw')
   const [playStatus, setPlayStatus] = useGameState(gameId, 'record.playStatus')
@@ -38,6 +39,7 @@ export function ManageMenu({
   const [selectedGroup] = useConfigState('game.gameList.selectedGroup')
   const [isScoreDialogOpen, setIsScoreDialogOpen] = useState(false)
   const { refreshGameList } = useLibrarybarStore.getState()
+  // Open the game metadata adder dialog in single game updater mode
   const setIsOpen = useGameAdderStore((state) => state.setIsOpen)
   const setName = useGameAdderStore((state) => state.setName)
   const setDbId = useGameAdderStore((state) => state.setDbId)
@@ -100,15 +102,17 @@ export function ManageMenu({
           <ContextMenuSubTrigger>{t('detail.manage.title')}</ContextMenuSubTrigger>
           <ContextMenuPortal>
             <ContextMenuSubContent>
+              {/* Rename Game */}
               <ContextMenuItem onSelect={openNameEditorDialog}>
                 {t('detail.manage.rename')}
               </ContextMenuItem>
+              {/* Edit Play Time */}
               <ContextMenuItem onClick={openPlayingTimeEditorDialog}>
                 {t('detail.manage.editPlayTime')}
               </ContextMenuItem>
               <ContextMenuSeparator />
 
-              {/* Game status selection submenu */}
+              {/* Change Play Status */}
               <ContextMenuSub>
                 <ContextMenuSubTrigger>{t('detail.header.playStatus.label')}</ContextMenuSubTrigger>
                 <ContextMenuPortal>
@@ -147,7 +151,7 @@ export function ManageMenu({
                 </ContextMenuPortal>
               </ContextMenuSub>
 
-              {/* Rating menu item */}
+              {/* Change Score */}
               <ContextMenuItem
                 onSelect={(e) => {
                   e.preventDefault()
@@ -157,11 +161,12 @@ export function ManageMenu({
               >
                 {t('detail.header.rating.tooltip')}
               </ContextMenuItem>
-
               <ContextMenuSeparator />
+              {/* Mark/Unmark NSFW */}
               <ContextMenuItem onClick={() => setNsfw(!nsfw)}>
                 {nsfw ? t('detail.manage.unmarkNSFW') : t('detail.manage.markNSFW')}
               </ContextMenuItem>
+              {/* Update Metadata */}
               <ContextMenuItem
                 onClick={() => {
                   setDbId(gameId)
@@ -171,6 +176,8 @@ export function ManageMenu({
               >
                 {t('detail.manage.downloadMetadata')}
               </ContextMenuItem>
+              {/* Create Shortcut */}
+              {/* Only show if gamePath is set */}
               {gamePath !== '' && (
                 <ContextMenuItem
                   onClick={async () => {
@@ -191,19 +198,22 @@ export function ManageMenu({
                   {t('detail.manage.createShortcut')}
                 </ContextMenuItem>
               )}
-              {/* <ContextMenuSeparator /> */}
+              {/* Browse Local Files */}
+              {/* Only work if gamePath or markPath is set */}
               <ContextMenuItem
                 onClick={() => {
-                  if (gamePath) {
-                    ipcManager.invoke('system:open-path-in-explorer', gamePath)
-                  } else {
+                  if (!gamePath && !markPath) {
                     toast.warning(t('detail.manage.notifications.gamePathNotSet'))
+                  } else {
+                    ipcManager.invoke('system:open-path-in-explorer', gamePath || markPath)
                   }
                 }}
               >
                 {t('detail.manage.browseLocalFiles')}
               </ContextMenuItem>
               <ContextMenuSeparator />
+              {/* Delete Game */}
+              {/* Wrapped in DeleteGameAlert for confirmation */}
               <DeleteGameAlert gameId={gameId}>
                 <ContextMenuItem onSelect={(e) => e.preventDefault()}>
                   {t('detail.manage.delete')}
@@ -214,7 +224,7 @@ export function ManageMenu({
         </ContextMenuSub>
       </ContextMenuGroup>
 
-      {/* Rating dialog */}
+      {/* Score Input Dialog */}
       <Dialog open={isScoreDialogOpen} onOpenChange={setIsScoreDialogOpen}>
         <DialogContent showCloseButton={false} className="w-[500px]">
           <div className={cn('flex flex-row gap-3 items-center justify-center')}>

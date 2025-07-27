@@ -10,7 +10,7 @@ export function CloudSyncInfo({ className }: { className?: string }): React.JSX.
     <div className={cn('space-y-3', className)}>
       {status ? (
         <div className={cn('grid grid-cols-[auto_1fr] gap-x-2 gap-y-1')}>
-          {/* status line */}
+          {/* Status */}
           <div className={cn('whitespace-nowrap select-none')}>{t('cloudSync.info.status')}</div>
           <div>
             {status.status === 'syncing' ? (
@@ -35,11 +35,11 @@ export function CloudSyncInfo({ className }: { className?: string }): React.JSX.
             )}
           </div>
 
-          {/* message line */}
+          {/* Message */}
           <div className={cn('whitespace-nowrap select-none')}>{t('cloudSync.info.message')}</div>
           <div className={cn('truncate')}>{status.message}</div>
 
-          {/* time line */}
+          {/* Time */}
           <div className={cn('whitespace-nowrap select-none')}>{t('cloudSync.info.time')}</div>
           <div>{t('{{date, niceDateSeconds}}', { date: status.timestamp })}</div>
         </div>

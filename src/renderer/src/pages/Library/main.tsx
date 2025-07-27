@@ -11,7 +11,6 @@ export function Library({ className }: { className?: string }): React.JSX.Elemen
 
   return (
     <div className={cn('flex flex-row w-full h-full relative', className)}>
-      {/* 批量操作悬浮按钮组 */}
       {isBatchMode && <FloatingButtons />}
       <Librarybar />
       <Separator orientation="vertical" />

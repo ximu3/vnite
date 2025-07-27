@@ -1,69 +1,66 @@
 export interface PluginManifest {
-  /** 插件ID，必须唯一 */
+  /** Plugin ID, must be unique */
   id: string
-  /** 插件名称 */
+  /** Plugin name */
   name: string
-  /** 插件版本 */
+  /** Plugin version */
   version: string
-  /** 插件描述 */
+  /** Plugin description */
   description: string
-  /** 插件作者 */
+  /** Plugin author */
   author: string
-  /** 插件主页 */
+  /** Plugin homepage */
   homepage?: string
-  /** 插件许可证 */
+  /** Plugin license */
   license?: string
-  /** 最小支持的Vnite版本 */
+  /** Minimum supported Vnite version */
   vniteVersion: string
-  /** 插件主入口文件 */
+  /** Plugin main entry file */
   main: string
-  /** 插件图标路径 */
+  /** Plugin icon path */
   icon?: string
-  /** 插件关键词 */
+  /** Plugin keywords */
   keywords?: string[]
-  /** 插件分类 */
+  /** Plugin category */
   category?: PluginCategory
-  /** 依赖的其他插件 */
+  /** Plugin dependencies */
   dependencies?: Record<string, string>
-  /** 开发依赖 */
+  /** Development dependencies */
   devDependencies?: Record<string, string>
-  /** 插件配置项 */
+  /** Plugin configuration */
   configuration?: PluginConfiguration[]
-  /** Github仓库信息 */
+  /** Github repository information */
   repo?: {
     owner: string
     name: string
   }
 }
 
-// 基础插件配置项接口
 interface BasePluginConfiguration {
   id: string
   title: string
   default: any
   description?: string
-  /** 通用样式配置 */
+  /** Common style configuration */
   controlClassName?: string
 }
 
-// 字符串类型配置
 interface StringPluginConfiguration extends BasePluginConfiguration {
   type: 'string'
   controlOptions: {
     controlType: 'input' | 'textarea'
     inputType?: 'text' | 'email' | 'password' | 'url'
     placeholder?: string
-    rows?: number // textarea专用
+    rows?: number // for textarea
   }
 }
 
-// 数字类型配置
 interface NumberPluginConfiguration extends BasePluginConfiguration {
   type: 'number'
   controlOptions: {
     controlType: 'input' | 'slider'
     placeholder?: string
-    // slider专用配置
+    // slider specific configuration
     min?: number
     max?: number
     step?: number
@@ -71,7 +68,6 @@ interface NumberPluginConfiguration extends BasePluginConfiguration {
   }
 }
 
-// 布尔类型配置
 interface BooleanPluginConfiguration extends BasePluginConfiguration {
   type: 'boolean'
   controlOptions: {
@@ -79,7 +75,6 @@ interface BooleanPluginConfiguration extends BasePluginConfiguration {
   }
 }
 
-// 选择类型配置
 interface SelectPluginConfiguration extends BasePluginConfiguration {
   type: 'select'
   options: Array<{ label: string; value: any }>
@@ -89,7 +84,6 @@ interface SelectPluginConfiguration extends BasePluginConfiguration {
   }
 }
 
-// 数组类型配置
 interface ArrayPluginConfiguration extends BasePluginConfiguration {
   type: 'array'
   controlOptions: {
@@ -101,7 +95,6 @@ interface ArrayPluginConfiguration extends BasePluginConfiguration {
   }
 }
 
-// 日期类型配置
 interface DatePluginConfiguration extends BasePluginConfiguration {
   type: 'date'
   controlOptions: {
@@ -110,7 +103,6 @@ interface DatePluginConfiguration extends BasePluginConfiguration {
   }
 }
 
-// 文件类型配置
 interface FilePluginConfiguration extends BasePluginConfiguration {
   type: 'file'
   controlOptions: {
@@ -122,7 +114,6 @@ interface FilePluginConfiguration extends BasePluginConfiguration {
   }
 }
 
-// 快捷键类型配置
 interface HotkeyPluginConfiguration extends BasePluginConfiguration {
   type: 'hotkey'
   controlOptions: {
@@ -131,7 +122,7 @@ interface HotkeyPluginConfiguration extends BasePluginConfiguration {
   }
 }
 
-// 插件配置项联合类型
+// Plugin configuration union type
 export type PluginConfiguration =
   | StringPluginConfiguration
   | NumberPluginConfiguration
@@ -178,11 +169,8 @@ export interface PluginStatsData {
 }
 
 export interface PluginInstallOptions {
-  /** 是否自动启用 */
   autoEnable?: boolean
-  /** 是否覆盖已存在的插件 */
   overwrite?: boolean
-  /** 安装后的回调 */
   onProgress?: (progress: number, message: string) => void
 }
 
@@ -197,11 +185,8 @@ export interface PluginSearchOptions {
 }
 
 export interface PluginRegistry {
-  /** 注册表名称 */
   name: string
-  /** 注册表URL */
   url: string
-  /** 是否默认启用 */
   enabled: boolean
 }
 

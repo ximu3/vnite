@@ -58,6 +58,7 @@ export function ExtraInformationCard({
         <div className={cn('font-bold select-none cursor-pointer')} onClick={handleCopyExtra}>
           {t('detail.overview.sections.extraInfo')}
         </div>
+        {/* Actions */}
         <div className="flex items-center gap-3">
           <span
             className={cn(

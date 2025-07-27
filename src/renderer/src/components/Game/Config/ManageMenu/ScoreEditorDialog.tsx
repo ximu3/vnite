@@ -7,7 +7,7 @@ import { Input } from '~/components/ui/input'
 import { useGameState } from '~/hooks'
 import { cn } from '~/utils'
 
-export function RatingEditorDialog({
+export function ScoreEditorDialog({
   gameId,
   setIsOpen
 }: {
@@ -19,7 +19,6 @@ export function RatingEditorDialog({
   const [preScore, setPreScore] = useState(score === -1 ? '' : score.toString())
   const resetPreScore = (): void => setPreScore(score === -1 ? '' : score.toString())
 
-  // Score submission handler function
   function confirmScore(): void {
     if (preScore === '') {
       setScore(-1)

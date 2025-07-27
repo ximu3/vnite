@@ -101,6 +101,7 @@ export function BackgroundList(): React.JSX.Element {
     setIsAdding(true)
     try {
       if (dbId) {
+        // Updater Mode
         setGameMetadataUpdaterBackgroundUrl(backgroundUrl)
         setGameMetadataUpdaterDataSource(dataSource)
         setGameMetadataUpdaterGameIds([dbId])

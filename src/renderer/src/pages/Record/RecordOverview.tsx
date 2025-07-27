@@ -113,22 +113,27 @@ export function RecordOverview(): React.JSX.Element {
 
   return (
     <div className="space-y-4">
+      {/* Overview Stats */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {/* Total Games */}
         <StatCard
           title={t('overview.stats.totalGames')}
           value={`${totalGames} ${t('overview.unit.count')}`}
           icon={<ActivitySquare className="w-4 h-4" />}
         />
+        {/* Total Play Time */}
         <StatCard
           title={t('overview.stats.totalPlayTime')}
           value={formatGameTime(totalTime)}
           icon={<Clock className="w-4 h-4" />}
         />
+        {/* Total Play Days */}
         <StatCard
           title={t('overview.stats.totalPlayDays')}
           value={`${totalDays} ${t('overview.unit.day')}`}
           icon={<CalendarIcon className="w-4 h-4" />}
         />
+        {/* Total Play Times */}
         <StatCard
           title={t('overview.stats.totalPlayTimes')}
           value={`${totalTimes} ${t('overview.unit.times')}`}
@@ -137,6 +142,7 @@ export function RecordOverview(): React.JSX.Element {
       </div>
 
       <div className="grid gap-4 w-full xl:grid-cols-[1.5fr_1fr]">
+        {/* Yearly Play Time Chart */}
         <Card className="col-span-1">
           <CardHeader>
             <CardTitle>{t('overview.chart.yearlyPlayTime')}</CardTitle>
@@ -176,7 +182,7 @@ export function RecordOverview(): React.JSX.Element {
             </ChartContainer>
           </CardContent>
         </Card>
-
+        {/* Yearly Play Time Distribution Chart */}
         <Card className="col-span-1">
           <CardHeader>
             <CardTitle>{t('overview.chart.timeDistribution')}</CardTitle>
@@ -221,6 +227,7 @@ export function RecordOverview(): React.JSX.Element {
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        {/* Yearly Play Time Ranking */}
         <Card>
           <CardHeader>
             <CardTitle>{t('overview.ranking.playTimeRanking')}</CardTitle>
@@ -243,7 +250,7 @@ export function RecordOverview(): React.JSX.Element {
             </Button>
           </CardFooter>
         </Card>
-
+        {/* Yearly Score Ranking */}
         <Card>
           <CardHeader>
             <CardTitle>{t('overview.ranking.scoreRanking')}</CardTitle>

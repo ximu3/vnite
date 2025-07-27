@@ -5,7 +5,7 @@ import { cn, copyWithToast } from '~/utils'
 import { GameImage } from '../ui/game-image'
 import { Config } from './Config'
 import { PlayTimeEditorDialog } from './Config/ManageMenu/PlayTimeEditorDialog'
-import { RatingEditorDialog } from './Config/ManageMenu/RatingEditorDialog'
+import { ScoreEditorDialog } from './Config/ManageMenu/ScoreEditorDialog'
 import { Record } from './Overview/Record'
 import { StartGame } from './StartGame'
 import { StopGame } from './StopGame'
@@ -29,10 +29,8 @@ export function Header({
   const setIsPlayTimeEditorDialogOpen = useGameDetailStore(
     (state) => state.setIsPlayTimeEditorDialogOpen
   )
-  const isRatingEditorDialogOpen = useGameDetailStore((state) => state.isRatingEditorDialogOpen)
-  const setIsRatingEditorDialogOpen = useGameDetailStore(
-    (state) => state.setIsRatingEditorDialogOpen
-  )
+  const isScoreEditorDialogOpen = useGameDetailStore((state) => state.isScoreEditorDialogOpen)
+  const setIsScoreEditorDialogOpen = useGameDetailStore((state) => state.setIsScoreEditorDialogOpen)
 
   return (
     <>
@@ -66,8 +64,6 @@ export function Header({
                 '3xl:gap-5'
               )}
             >
-              {/* Game records and action buttons */}
-
               <div className={cn('flex flex-row gap-3 items-end z-20', '3xl:gap-5')}>
                 {/* Start/Stop game button */}
                 {runningGames.includes(gameId) ? (
@@ -81,6 +77,7 @@ export function Header({
               </div>
             </div>
           </div>
+          {/* Game cover image */}
           <div className="relative lg:mr-3 pb-1 shrink-0">
             <GameImage
               gameId={gameId}
@@ -90,9 +87,9 @@ export function Header({
               className={cn('w-auto h-[170px] object-cover rounded-lg shadow-md')}
               fallback={<div className="h-[170px]" />}
             />
-            {/* <div className="absolute inset-0 rounded-lg bg-background/15" /> */}
           </div>
         </div>
+        {/* Game record section */}
         <div className="pt-6">
           <Record gameId={gameId} />
         </div>
@@ -101,8 +98,8 @@ export function Header({
       {isPlayTimeEditorDialogOpen && (
         <PlayTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayTimeEditorDialogOpen} />
       )}
-      {isRatingEditorDialogOpen && (
-        <RatingEditorDialog gameId={gameId} setIsOpen={setIsRatingEditorDialogOpen} />
+      {isScoreEditorDialogOpen && (
+        <ScoreEditorDialog gameId={gameId} setIsOpen={setIsScoreEditorDialogOpen} />
       )}
     </>
   )

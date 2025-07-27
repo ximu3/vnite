@@ -32,6 +32,7 @@ export function TagsCard({
         >
           {t('detail.overview.sections.tags')}
         </div>
+        {/* Actions */}
         <div className="flex items-center gap-3">
           <span
             className={cn(

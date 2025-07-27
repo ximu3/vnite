@@ -46,6 +46,7 @@ export function InformationDialog({ gameId }: { gameId: string }): React.JSX.Ele
             'grid grid-cols-[auto_1fr] gap-y-3 gap-x-4 py-1 pr-2 items-center text-sm overflow-auto scrollbar-base-thin max-h-[70vh]'
           )}
         >
+          {/* Original Name */}
           <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('detail.overview.information.fields.originalName')}
           </div>
@@ -56,6 +57,7 @@ export function InformationDialog({ gameId }: { gameId: string }): React.JSX.Ele
             placeholder={t('detail.overview.information.empty')}
             className={cn('text-sm')}
           />
+          {/* Localized Name */}
           <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('detail.overview.information.fields.localizedName')}
           </div>
@@ -66,6 +68,7 @@ export function InformationDialog({ gameId }: { gameId: string }): React.JSX.Ele
             placeholder={t('detail.overview.information.empty')}
             className={cn('text-sm')}
           />
+          {/* Developers */}
           <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('detail.overview.information.fields.developers')}
           </div>
@@ -84,6 +87,7 @@ export function InformationDialog({ gameId }: { gameId: string }): React.JSX.Ele
               </div>
             </TooltipContent>
           </Tooltip>
+          {/* Publishers */}
           <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('detail.overview.information.fields.publishers')}
           </div>
@@ -102,6 +106,7 @@ export function InformationDialog({ gameId }: { gameId: string }): React.JSX.Ele
               </div>
             </TooltipContent>
           </Tooltip>
+          {/* Release Date */}
           <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('detail.overview.information.fields.releaseDate')}
           </div>
@@ -112,6 +117,7 @@ export function InformationDialog({ gameId }: { gameId: string }): React.JSX.Ele
             placeholder={t('detail.overview.information.empty')}
             className={cn('text-sm')}
           />
+          {/* Platforms */}
           <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('detail.overview.information.fields.platforms')}
           </div>
@@ -130,6 +136,7 @@ export function InformationDialog({ gameId }: { gameId: string }): React.JSX.Ele
               </div>
             </TooltipContent>
           </Tooltip>
+          {/* Genres */}
           <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('detail.overview.information.fields.genres')}
           </div>

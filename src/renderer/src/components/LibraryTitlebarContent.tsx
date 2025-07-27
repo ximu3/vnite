@@ -27,7 +27,6 @@ export function LibraryTitlebarContent(): React.JSX.Element {
     setIsSortMenuOpen(!isSortMenuOpen)
   }
 
-  // 获取分组显示文本
   const getGroupDisplayText = (groupValue: string): string => {
     switch (groupValue) {
       case 'none':
@@ -47,7 +46,7 @@ export function LibraryTitlebarContent(): React.JSX.Element {
 
   return (
     <div className="flex flex-row items-center justify-center gap-2">
-      {/* 搜索框 */}
+      {/* Search Box */}
       <div className="w-[250px]">
         <Tooltip>
           <TooltipTrigger className="w-full">
@@ -63,7 +62,7 @@ export function LibraryTitlebarContent(): React.JSX.Element {
           <TooltipContent side="bottom">{t('librarybar.search.tooltip')}</TooltipContent>
         </Tooltip>
       </div>
-      {/* 主页按钮 */}
+      {/* Home Button */}
       <Tooltip>
         <TooltipTrigger>
           <Nav
@@ -77,7 +76,7 @@ export function LibraryTitlebarContent(): React.JSX.Element {
         <TooltipContent side="bottom">{t('librarybar.home')}</TooltipContent>
       </Tooltip>
 
-      {/* 收藏按钮 */}
+      {/* Collections Button */}
       <Tooltip>
         <TooltipTrigger>
           <Nav
@@ -91,7 +90,7 @@ export function LibraryTitlebarContent(): React.JSX.Element {
         <TooltipContent side="bottom">{t('librarybar.collections')}</TooltipContent>
       </Tooltip>
 
-      {/* 筛选器 */}
+      {/* Filter */}
       <div className="relative pl-3">
         <Filter>
           <Button
@@ -122,7 +121,7 @@ export function LibraryTitlebarContent(): React.JSX.Element {
         )}
       </div>
 
-      {/* 分组按钮 */}
+      {/* Group By Button */}
       <Select value={selectedGroup} onValueChange={setSelectedGroup}>
         <Tooltip>
           <TooltipTrigger>
@@ -146,7 +145,7 @@ export function LibraryTitlebarContent(): React.JSX.Element {
         </SelectContent>
       </Select>
 
-      {/* 排序按钮 */}
+      {/* Sort Button */}
       <SortMenu isSortMenuOpen={isSortMenuOpen} setIsSortMenuOpen={setIsSortMenuOpen}>
         <Button
           onClick={toggleSortMenu}

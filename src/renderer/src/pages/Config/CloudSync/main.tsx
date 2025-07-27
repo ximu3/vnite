@@ -69,7 +69,7 @@ export function CloudSync(): React.JSX.Element {
     }
   }, [enabled, userName, t])
 
-  // Calculate storage percentage
+  // Calculate Storage Percentage
   useEffect(() => {
     if (totalQuota > 0) {
       setStoragePercentage((usedQuota / totalQuota) * 100)
@@ -172,12 +172,13 @@ export function CloudSync(): React.JSX.Element {
     return
   }
 
+  // Get Initials for Avatar
   const getInitials = (name: string): string => {
     if (!name) return 'U'
     return name.charAt(0).toUpperCase()
   }
 
-  const getEdtionText = (): string => {
+  const getEditionText = (): string => {
     if (userRole === 'community') {
       return t('cloudSync.official.communityEdition')
     } else if (userRole === 'developer') {
@@ -191,6 +192,7 @@ export function CloudSync(): React.JSX.Element {
     <div className={cn('flex flex-col gap-2')}>
       {enabled && (
         <Card className={cn('group p-4 px-6')}>
+          {/* Status */}
           {status ? (
             <div className={cn('flex flex-row gap-1 text-xs')}>
               <div className={cn('flex flex-row gap-2 items-center justify-between')}>
@@ -268,6 +270,7 @@ export function CloudSync(): React.JSX.Element {
               }}
             ></ConfigItem>
 
+            {/* Full Sync Button */}
             {enabled && (
               <ConfigItemPure
                 title={t('cloudSync.syncFull')}
@@ -348,7 +351,7 @@ export function CloudSync(): React.JSX.Element {
                               </DropdownMenu>
                               <div className="flex items-center gap-3 mt-1">
                                 <span className="bg-primary/20 text-primary text-xs px-2 py-0.5 rounded-lg font-medium">
-                                  {getEdtionText()}
+                                  {getEditionText()}
                                 </span>
                                 <span className="text-xs text-muted-foreground">
                                   {t('cloudSync.official.lastSync')}:{' '}
@@ -422,7 +425,6 @@ export function CloudSync(): React.JSX.Element {
               <Card className="shadow-sm">
                 <CardContent className="">
                   <div className="flex flex-col gap-5">
-                    {/* Self-hosted form items */}
                     <div className="grid grid-cols-[auto_1fr] gap-x-5 gap-y-4 items-center">
                       <div className="flex items-center gap-2 select-none whitespace-nowrap">
                         <HardDrive className="w-4 h-4" />

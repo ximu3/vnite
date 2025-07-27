@@ -41,7 +41,7 @@ export function LogDialog(): React.JSX.Element {
     }
   }
 
-  // 当对话框打开时获取日志
+  // Fetch logs when the dialog opens
   useEffect(() => {
     if (isOpen) {
       fetchLogs()
@@ -66,6 +66,7 @@ export function LogDialog(): React.JSX.Element {
           <DialogDescription>{t('description')}</DialogDescription>
         </DialogHeader>
 
+        {/* Log content */}
         <div
           ref={logContainerRef}
           className="h-full overflow-auto scrollbar-base-thin p-3 bg-accent/20 rounded-lg shadow-inner"
@@ -74,6 +75,7 @@ export function LogDialog(): React.JSX.Element {
         </div>
 
         <DialogFooter className="flex justify-between items-center sm:justify-between">
+          {/* Refresh logs button */}
           <Button
             variant="outline"
             size="sm"
@@ -84,6 +86,7 @@ export function LogDialog(): React.JSX.Element {
             <RefreshCcw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
             {t('refresh')}
           </Button>
+          {/* Scroll to bottom button */}
           <div className="flex flex-row items-center gap-3">
             <Button
               variant="thirdary"
@@ -93,6 +96,7 @@ export function LogDialog(): React.JSX.Element {
             >
               <span>{t('scrollToBottom')}</span>
             </Button>
+            {/* Open log folder button */}
             <Button
               variant="thirdary"
               size="sm"
@@ -103,6 +107,7 @@ export function LogDialog(): React.JSX.Element {
             >
               <span>{t('openLogFolder')}</span>
             </Button>
+            {/* Copy logs as a file to clipboard button */}
             <Button
               variant="secondary"
               size="sm"

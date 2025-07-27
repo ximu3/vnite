@@ -37,7 +37,6 @@ export function EditDialog({
     }
   }, [transformer, isOpen])
 
-  // Submit the form
   const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault()
     if (name.trim()) {

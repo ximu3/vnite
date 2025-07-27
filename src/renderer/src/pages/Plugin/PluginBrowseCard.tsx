@@ -15,21 +15,18 @@ interface PluginBrowseCardProps {
 
 export function PluginBrowseCard({ plugin, setPlugin }: PluginBrowseCardProps): React.JSX.Element {
   const { t } = useTranslation('plugin')
-  // Zustand store
   const installPlugin = usePluginInfoStore((state) => state.installPlugin)
 
   const [isInstalling, setIsInstalling] = useState(false)
 
-  // 对话框状态
   const [detailDialogOpen, setDetailDialogOpen] = useState(false)
 
-  // 格式化日期
   const formatDate = (date: Date): string => {
     return new Date(date).toLocaleDateString()
   }
 
-  // 阻止安装按钮点击事件冒泡到卡片
   const handleInstallClick = async (e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
+    // Prevent the card click event to avoid opening the detail dialog
     e.stopPropagation()
     try {
       setIsInstalling(true)
@@ -40,15 +37,14 @@ export function PluginBrowseCard({ plugin, setPlugin }: PluginBrowseCardProps): 
         },
         plugin.manifest.name
       )
-      setPlugin({ ...plugin, installed: true }) // 更新插件状态
+      setPlugin({ ...plugin, installed: true }) // Update plugin status
     } catch (error) {
-      console.error('安装插件失败:', error)
+      console.error('Failed to install plugin:', error)
     } finally {
       setIsInstalling(false)
     }
   }
 
-  // 打开插件详情对话框
   const handleCardClick = (): void => {
     setDetailDialogOpen(true)
   }
@@ -116,7 +112,6 @@ export function PluginBrowseCard({ plugin, setPlugin }: PluginBrowseCardProps): 
         </CardContent>
       </Card>
 
-      {/* 插件详情对话框 - 放置在卡片组件内 */}
       <PluginDetailDialog
         isOpen={detailDialogOpen}
         setIsOpen={setDetailDialogOpen}

@@ -135,6 +135,7 @@ export function SearchMediaDialog({
         showCloseButton={false}
         className={cn('w-[50vw] h-[80vh] max-w-none flex flex-col gap-3')}
       >
+        {/* Image List */}
         <Card className={cn('p-3 w-full h-full')}>
           <div className="w-full h-full">
             <div className={cn('w-full h-full scrollbar-base overflow-auto')}>
@@ -161,6 +162,7 @@ export function SearchMediaDialog({
             </div>
           </div>
         </Card>
+        {/* Data Source and Search */}
         <Card className={cn('p-3')}>
           <div className={cn('flex flex-row gap-3')}>
             <Select value={dataSource} onValueChange={setDataSource}>

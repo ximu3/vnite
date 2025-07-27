@@ -92,6 +92,7 @@ export function SearchDescriptionDialog({
         showCloseButton={false}
         className={cn('w-[50vw] h-[80vh] max-w-none flex flex-col gap-3')}
       >
+        {/* Description List */}
         <Card className={cn('p-3 w-full h-full')}>
           <div className="w-full h-full">
             <div className={cn('w-full h-full scrollbar-base overflow-auto')}>
@@ -131,6 +132,8 @@ export function SearchDescriptionDialog({
             </div>
           </div>
         </Card>
+
+        {/* Search and Action Buttons */}
         <Card className={cn('p-3')}>
           <div className={cn('flex flex-row gap-3')}>
             <Input

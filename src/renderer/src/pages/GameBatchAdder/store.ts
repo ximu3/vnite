@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { BatchGameInfo } from '@appTypes/models'
 
-export type DataSource = 'vndb' | 'igdb' | 'steam' | 'bangumi' | 'ymgal' | 'dlsite'
+export type DataSource = 'vndb' | 'igdb' | 'steam' | 'bangumi' | 'ymgal' | 'dlsite' | string
 export type GameStatus = 'idle' | 'loading' | 'success' | 'error' | 'existed'
 
 interface GameBatchAdderState {

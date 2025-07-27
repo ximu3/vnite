@@ -44,7 +44,6 @@ export const useConfigLocalStore = create<ConfigLocalState>((set, get) => ({
       return getValueByPath(DEFAULT_CONFIG_LOCAL_VALUES, path)
     }
     const value = getValueByPath(state.documents, path)
-    // console.log('getConfigValue', path, value)
     return value !== undefined ? value : getValueByPath(DEFAULT_CONFIG_LOCAL_VALUES, path)
   },
 

@@ -9,9 +9,6 @@ import type {
   EventHistoryQuery
 } from '@appTypes/event'
 
-/**
- * 浏览器兼容的简单 EventEmitter 实现
- */
 class SimpleEventEmitter {
   private listeners: Map<string | symbol, Array<(...args: any[]) => void>> = new Map()
   private maxListeners = 10
@@ -26,7 +23,7 @@ class SimpleEventEmitter {
     }
     const eventListeners = this.listeners.get(event)!
 
-    // 检查是否超过最大监听器数量
+    // Check if the listener already exists
     if (eventListeners.length >= this.maxListeners) {
       console.warn(
         `[SimpleEventEmitter] Max listeners (${this.maxListeners}) exceeded for event: ${String(event)}`
@@ -60,7 +57,7 @@ class SimpleEventEmitter {
   emit(event: string | symbol, ...args: any[]): boolean {
     const eventListeners = this.listeners.get(event)
     if (eventListeners && eventListeners.length > 0) {
-      // 创建副本以避免在执行过程中修改数组
+      // Create a copy to avoid modifying the array during execution
       const listenersToCall = [...eventListeners]
       listenersToCall.forEach((listener) => {
         try {
@@ -92,10 +89,6 @@ class SimpleEventEmitter {
   }
 }
 
-/**
- * 渲染进程的 EventBus
- * 通过 IPC 与主进程的 EventBus 进行通信
- */
 export class RendererEventBus {
   private emitter = new SimpleEventEmitter()
   private isInitialized = false
@@ -106,14 +99,10 @@ export class RendererEventBus {
     console.log('[RendererEventBus] Initialized')
   }
 
-  /**
-   * 初始化 EventBus（等待主进程准备就绪）
-   */
   async initialize(): Promise<void> {
     if (this.isInitialized) return
 
     try {
-      // 这里可以添加一些初始化检查
       this.isInitialized = true
 
       console.log('[RendererEventBus] Initialization completed')
@@ -123,11 +112,6 @@ export class RendererEventBus {
     }
   }
 
-  // ========== 核心事件方法 ==========
-
-  /**
-   * 发射事件到主进程
-   */
   async emit<T extends EventType>(
     eventType: T,
     data: EventData<T>,
@@ -149,16 +133,10 @@ export class RendererEventBus {
     }
   }
 
-  /**
-   * 监听事件（本地监听 + 主进程事件转发）
-   */
   on<T extends EventType>(eventType: T, handler: EventHandler<T>): EventUnsubscribe {
     return this.setupLocalHandler(eventType, handler)
   }
 
-  /**
-   * 设置本地事件处理器
-   */
   private setupLocalHandler<T extends EventType>(
     eventType: T,
     handler: EventHandler<T>
@@ -172,21 +150,16 @@ export class RendererEventBus {
       }
     }
 
-    // 注册本地监听器
     this.emitter.on(eventType, wrappedHandler)
 
     console.debug(`[RendererEventBus] Registered handler for: ${eventType}`)
-
-    // 返回取消订阅函数
+    // Return unsubscribe function
     return () => {
       this.emitter.off(eventType, wrappedHandler)
       console.debug(`[RendererEventBus] Unregistered handler for: ${eventType}`)
     }
   }
 
-  /**
-   * 一次性监听事件
-   */
   once<T extends EventType>(eventType: T, handler: EventHandler<T>): EventUnsubscribe {
     const wrappedHandler = async (data: EnhancedEventData<T>): Promise<void> => {
       try {
@@ -197,20 +170,15 @@ export class RendererEventBus {
       }
     }
 
-    // 注册一次性监听器
     this.emitter.once(eventType, wrappedHandler)
 
     console.debug(`[RendererEventBus] Registered once handler for: ${eventType}`)
-
     return () => {
       this.emitter.off(eventType, wrappedHandler)
       console.debug(`[RendererEventBus] Unregistered once handler for: ${eventType}`)
     }
   }
 
-  /**
-   * 等待特定事件
-   */
   waitFor<T extends EventType>(
     eventType: T,
     timeout?: number,
@@ -237,7 +205,7 @@ export class RendererEventBus {
           console.debug(
             `[RendererEventBus] Condition not met for: ${eventType}, continuing to wait`
           )
-          return // 继续等待
+          return // Continue waiting
         }
 
         cleanup()
@@ -254,11 +222,6 @@ export class RendererEventBus {
     })
   }
 
-  // ========== 事件历史查询方法（通过 IPC 调用主进程） ==========
-
-  /**
-   * 查询事件历史
-   */
   async queryHistory(options?: EventHistoryQuery): Promise<EventHistoryEntry[]> {
     try {
       const result = await ipcManager.invoke('events:query-history', options)
@@ -270,9 +233,6 @@ export class RendererEventBus {
     }
   }
 
-  /**
-   * 获取总事件数
-   */
   async getTotalEvents(): Promise<number> {
     try {
       const result = await ipcManager.invoke('events:get-total-events')
@@ -284,9 +244,6 @@ export class RendererEventBus {
     }
   }
 
-  /**
-   * 获取按类型分组的事件数
-   */
   async getEventsByType(): Promise<Record<string, number>> {
     try {
       const result = await ipcManager.invoke('events:get-events-by-type')
@@ -298,9 +255,6 @@ export class RendererEventBus {
     }
   }
 
-  /**
-   * 获取最近的事件
-   */
   async getRecentEvents(limit: number = 10): Promise<EventHistoryEntry[]> {
     try {
       const result = await ipcManager.invoke('events:get-recent-events', limit)
@@ -312,9 +266,6 @@ export class RendererEventBus {
     }
   }
 
-  /**
-   * 清空历史
-   */
   async clearHistory(): Promise<void> {
     try {
       await ipcManager.invoke('events:clear-history')
@@ -325,9 +276,6 @@ export class RendererEventBus {
     }
   }
 
-  /**
-   * 获取历史统计信息
-   */
   async getHistoryStats(): Promise<{
     totalEvents: number
     uniqueEventTypes: number
@@ -345,40 +293,24 @@ export class RendererEventBus {
     }
   }
 
-  // ========== 辅助方法 ==========
-
-  /**
-   * 清空所有本地监听器
-   */
   clearAllListeners(): void {
     console.info('[RendererEventBus] Clearing all local event listeners')
     this.emitter.removeAllListeners()
   }
 
-  /**
-   * 获取本地监听器数量
-   */
   listenerCount(eventType: string | symbol): number {
     return this.emitter.listenerCount(eventType)
   }
 
-  /**
-   * 获取所有本地事件名称
-   */
   eventNames(): Array<string | symbol> {
     return this.emitter.eventNames()
   }
 
-  // ========== 私有方法 ==========
-
-  /**
-   * 设置主进程事件转发
-   */
   private setupMainProcessEventForwarding(): void {
-    // 监听来自主进程的事件转发
+    // Listen for events from the main process
     ipcManager.on('events:event-emitted', (_e, eventType, data) => {
       try {
-        // 在本地 EventEmitter 中触发事件
+        // Trigger the event in the local EventEmitter
         this.emitter.emit(eventType, data)
         console.debug(`[RendererEventBus] Event received from main process: ${eventType}`)
       } catch (error) {
@@ -390,5 +322,4 @@ export class RendererEventBus {
   }
 }
 
-// 创建并导出单例
 export const eventBus = new RendererEventBus()

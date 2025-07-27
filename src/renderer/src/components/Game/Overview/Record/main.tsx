@@ -17,9 +17,7 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
   const setIsPlayTimeEditorDialogOpen = useGameDetailStore(
     (state) => state.setIsPlayTimeEditorDialogOpen
   )
-  const setIsRatingEditorDialogOpen = useGameDetailStore(
-    (state) => state.setIsRatingEditorDialogOpen
-  )
+  const setIsScoreEditorDialogOpen = useGameDetailStore((state) => state.setIsScoreEditorDialogOpen)
   const playStatusOptions: (typeof playStatus)[] = [
     'unplayed',
     'playing',
@@ -33,6 +31,7 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
   }
   return (
     <div className={cn('flex flex-row items-center gap-12 ml-1')}>
+      {/* Play Time */}
       <RecordCard
         className={cn('')}
         title={t('detail.overview.record.playTime')}
@@ -44,6 +43,7 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
         icon="icon-[mdi--timer-outline] w-[16px] h-[16px]"
         onClick={() => setIsPlayTimeEditorDialogOpen(true)}
       />
+      {/* Last Run Date */}
       <RecordCard
         className={cn('')}
         title={t('detail.overview.record.lastRunDate')}
@@ -54,6 +54,7 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
         }
         icon="icon-[mdi--calendar-blank-multiple] w-[16px] h-[16px]"
       />
+      {/* Play Status */}
       <Popover>
         <RecordCard
           asPopoverTrigger
@@ -80,12 +81,13 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
           </div>
         </PopoverContent>
       </Popover>
+      {/* Score */}
       <RecordCard
         className={cn('')}
         title={t('detail.overview.record.rating')}
         content={score === -1 ? t('detail.overview.information.empty') : score.toFixed(1)}
         icon="icon-[mdi--starburst-outline] w-[16px] h-[16px]"
-        onClick={() => setIsRatingEditorDialogOpen(true)}
+        onClick={() => setIsScoreEditorDialogOpen(true)}
       />
     </div>
   )

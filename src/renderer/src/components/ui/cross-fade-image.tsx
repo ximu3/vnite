@@ -6,8 +6,8 @@ interface CrossfadeImageProps {
   className?: string
   duration?: number
   onError?: () => void
-  blur?: boolean // 新增模糊选项
-  style?: React.CSSProperties // 允许传入自定义样式
+  blur?: boolean
+  style?: React.CSSProperties
 }
 
 export function CrossfadeImage({
@@ -16,10 +16,10 @@ export function CrossfadeImage({
   className = '',
   duration = 300,
   onError = () => {},
-  blur = false, // 默认不模糊
+  blur = false,
   style = {}
 }: CrossfadeImageProps): React.JSX.Element {
-  // 创建图片切换的过渡动画
+  // Create a transition for the image source
   const transitions = useTransition(src, {
     keys: (src) => src,
     from: { opacity: 0 },
@@ -29,13 +29,12 @@ export function CrossfadeImage({
       duration: duration,
       easing: easings.easeInOutQuad
     },
-    exitBeforeEnter: false // 确保同时显示前后图片实现交叉淡入淡出
+    exitBeforeEnter: false // Ensure both images are displayed simultaneously for crossfade
   })
 
-  // 添加模糊效果样式
   const blurStyle = blur ? { filter: 'blur(20px)' } : {}
 
-  // 合并所有样式
+  // Combine styles for the image
   const combinedStyle = {
     ...style,
     ...blurStyle,

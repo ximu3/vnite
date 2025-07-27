@@ -85,7 +85,6 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
     fetchAvailableDataSources()
   }, [])
 
-  // 批量更新进度状态
   const [progress, setProgress] = useState<{
     completed: number
     total: number
@@ -104,23 +103,23 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
 
   const isBatchMode = gameIds.length > 1
 
-  // 监听批量更新进度
+  // Listen for batch update progress events
   useEffect(() => {
     const handleProgress = (_: any, data: BatchUpdateGameMetadataProgress): void => {
       setProgress((prev) => {
-        // 查找是否已有该游戏的结果
+        // Check if the game already has a result
         const existingIndex = prev.results.findIndex((item) => item.gameId === data.gameId)
 
         const newResults = [...prev.results]
         if (existingIndex >= 0) {
-          // 更新现有结果
+          // Update existing result
           newResults[existingIndex] = data
         } else {
-          // 添加新结果
+          // Add new result
           newResults.push(data)
         }
 
-        // 计算成功和失败数量
+        // Calculate successful and failed counts
         const successful = newResults.filter((r) => r.status === 'success').length
         const failed = newResults.filter((r) => r.status === 'error').length
 
@@ -134,18 +133,16 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
         }
       })
 
-      // 同时更新Toast通知
+      // Update toast progress
       updateToastProgress(data)
     }
 
-    // 注册事件监听
+    // Register event listener
     ipcManager.onUnique('adder:batch-update-game-metadata-progress', handleProgress)
 
-    // 清理函数
     return () => {}
   }, [])
 
-  // Toast进度通知管理
   const updateToastProgress = (data: BatchUpdateGameMetadataProgress): void => {
     const progressText = `${data.current}/${data.total} (${Math.round((data.current / data.total) * 100)}%)`
 
@@ -160,20 +157,19 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
     )
   }
 
-  // 切换字段选择
   const toggleField = (field: GameMetadataField | GameMetadataUpdateMode): void => {
     if (field === '#all' || field === '#missing') {
       setSelectedFields([field])
       return
     }
 
-    // 如果已经选了#all或#missing，则清除
+    // If #all or #missing is selected, clear the selection
     if (selectedFields.includes('#all') || selectedFields.includes('#missing')) {
       setSelectedFields([field])
       return
     }
 
-    // 否则切换当前字段
+    // Otherwise toggle the current field
     if (selectedFields.includes(field)) {
       setSelectedFields(selectedFields.filter((f) => f !== field))
     } else {
@@ -181,7 +177,6 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
     }
   }
 
-  // 处理单个游戏更新
   const handleSingleUpdate = async (): Promise<void> => {
     if (!gameIds[0]) return
 
@@ -216,12 +211,11 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
     }
   }
 
-  // 处理批量更新
   const handleBatchUpdate = async (): Promise<void> => {
     setIsUpdating(true)
-    setShowProgress(true) // 显示进度页面
+    setShowProgress(true) // Show progress page
 
-    // 重置进度
+    // Reset progress
     setProgress({
       completed: 0,
       total: gameIds.length,
@@ -245,7 +239,7 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
       }
 
       await ipcManager.invoke('adder:batch-update-game-metadata', params)
-      await delay(1000) // 等待一段时间以确保进度更新
+      await delay(1000) // Wait for a moment to ensure progress updates
       toast.success(
         t('updater.notifications.batchComplete', {
           success: progress.successful,
@@ -255,10 +249,8 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
           id: 'batch-update'
         }
       )
-
-      // 不自动关闭对话框，让用户查看详细结果
     } catch (error) {
-      await delay(1000) // 等待一段时间以确保进度更新
+      await delay(1000) // Wait for a moment to ensure progress updates
       toast.error(
         t('updater.notifications.error', {
           message: error instanceof Error ? error.message : t('unknown')
@@ -272,7 +264,6 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
     }
   }
 
-  // 处理更新按钮点击
   const handleUpdate = (): void => {
     if (isBatchMode) {
       handleBatchUpdate()
@@ -281,7 +272,6 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
     }
   }
 
-  // 切换回设置页面
   const handleBackToSettings = (): void => {
     setShowProgress(false)
   }
@@ -298,10 +288,10 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
           <DialogDescription>{t('updater.dialog.description')}</DialogDescription>
         </DialogHeader>
         <div className="max-h-[45vh] lg:max-h-[65vh] overflow-y-auto scrollbar-base pb-1 pr-1">
-          {/* 根据状态显示设置页面或进度页面 */}
+          {/* Show settings or progress page based on state */}
           {(!isBatchMode || (isBatchMode && !showProgress)) && (
             <div className="space-y-6 py-1 w-full h-full">
-              {/* 数据源选择 */}
+              {/* Data source selection */}
               {isBatchMode && (
                 <div className="grid gap-2">
                   <Label htmlFor="dataSource" className="">
@@ -322,7 +312,7 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
                 </div>
               )}
 
-              {/* 要更新的字段 */}
+              {/* Fields to update */}
               <div className="grid gap-2">
                 <Label>{t('updater.dialog.updateFields')}</Label>
                 <div className="grid grid-cols-2 gap-2">
@@ -347,7 +337,7 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
                 </div>
               </div>
 
-              {/* 更新选项 */}
+              {/* Update options */}
               <div className="grid gap-2">
                 <Label>{t('updater.dialog.mergeStrategy')}</Label>
                 <div className="grid gap-4">
@@ -372,7 +362,7 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
                 </div>
               </div>
 
-              {/* 批量模式下的并发设置 */}
+              {/* Concurrency settings in batch mode */}
               {isBatchMode && (
                 <div className="grid gap-2">
                   <div className="flex items-center justify-between">
@@ -396,7 +386,7 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
             </div>
           )}
 
-          {/* 批量模式的进度页面 */}
+          {/* Progress page for batch mode */}
           {isBatchMode && showProgress && (
             <div className="py-1 space-y-4 h-full flex flex-col">
               <div className="space-y-2">

@@ -33,7 +33,6 @@ export function PluginDetailDialog({
   const { t } = useTranslation('plugin')
   const installPlugin = usePluginInfoStore((state) => state.installPlugin)
 
-  // 处理安装
   const handleInstall = async (): Promise<void> => {
     if (!plugin) return
 
@@ -46,16 +45,15 @@ export function PluginDetailDialog({
         },
         plugin.manifest.name
       )
-      setPlugin({ ...plugin, installed: true }) // 更新插件状态
+      setPlugin({ ...plugin, installed: true })
       setIsOpen(false)
     } catch (error) {
-      console.error('安装失败:', error)
+      console.error('Failed to install plugin:', error)
     } finally {
       setIsInstalling(false)
     }
   }
 
-  // 格式化日期
   const formatDate = (dateStr: string): string => {
     if (!dateStr) return t('search.unknownDate')
     return t('utils:format.niceDate', {
@@ -76,14 +74,14 @@ export function PluginDetailDialog({
         </DialogHeader>
 
         <div className="grid grid-cols-1 md:grid-cols-5 gap-6 h-[60vh] lg:h-[70vh] pr-2 pb-1 scrollbar-base overflow-auto">
-          {/* 左侧：README */}
+          {/* Left：README */}
           <div className="md:col-span-3 border-r pr-5">
             {plugin.readme ? <MarkdownRenderer content={plugin.readme} /> : t('details.noReadme')}
           </div>
 
-          {/* 右侧：详细信息 */}
+          {/* Right：Details */}
           <div className="md:col-span-2 flex flex-col gap-4">
-            {/* 基本信息 */}
+            {/* Basic Information */}
             <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium text-muted-foreground">
@@ -149,7 +147,7 @@ export function PluginDetailDialog({
               </div>
             </div>
 
-            {/* 操作按钮 */}
+            {/* Action Buttons */}
             <div className="space-y-2 mt-auto">
               <Button
                 variant="outline"

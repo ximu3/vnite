@@ -7,10 +7,9 @@ import type {
 } from '@appTypes/models'
 import type { Paths } from 'type-fest'
 
-// Hook类型定义
 export type HookType = 'config' | 'configLocal' | 'game' | 'gameLocal' | 'gameCollection' | 'plugin'
 
-// 根据hook类型获取对应的文档类型
+// According to the hook type, return the corresponding document type
 export type DocType<T extends HookType> = T extends 'config'
   ? configDocs
   : T extends 'configLocal'
@@ -25,7 +24,6 @@ export type DocType<T extends HookType> = T extends 'config'
             ? Record<string, any>
             : never
 
-// 基础组件props
 export interface BaseFormFieldProps<
   T extends HookType,
   Path extends Paths<DocType<T>, { bracketNotation: true }>
@@ -41,7 +39,6 @@ export interface BaseFormFieldProps<
   className?: string
 }
 
-// ConfigItem控件类型
 export type ControlType =
   | 'input'
   | 'textarea'
@@ -54,7 +51,6 @@ export type ControlType =
   | 'fileinput'
   | 'hotkey'
 
-// 基础ConfigItem props
 interface BaseConfigItemProps<
   T extends HookType,
   Path extends Paths<DocType<T>, { bracketNotation: true }>
@@ -65,39 +61,33 @@ interface BaseConfigItemProps<
   onChange?: (value: any) => void | Promise<void>
 }
 
-// Input控件特定props
 interface InputConfigProps {
   controlType: 'input'
   inputType?: 'text' | 'number' | 'email' | 'password' | 'url'
   placeholder?: string
 }
 
-// Textarea控件特定props
 interface TextareaConfigProps {
   controlType: 'textarea'
   placeholder?: string
   rows?: number
 }
 
-// Switch控件特定props
 interface SwitchConfigProps {
   controlType: 'switch'
 }
 
-// Select控件特定props
 interface SelectConfigProps {
   controlType: 'select'
   options: Array<{ value: string | number; label: string }>
   placeholder?: string
 }
 
-// DateInput控件特定props
 interface DateInputConfigProps {
   controlType: 'dateinput'
   placeholder?: string
 }
 
-// ArrayEditor控件特定props
 interface ArrayEditorConfigProps {
   controlType: 'arrayeditor'
   arrayEditorPlaceholder?: string
@@ -106,7 +96,6 @@ interface ArrayEditorConfigProps {
   arrayEditorDialogPlaceholder?: string
 }
 
-// Slider控件特定props
 interface SliderConfigProps {
   controlType: 'slider'
   min?: number
@@ -116,13 +105,11 @@ interface SliderConfigProps {
   debounceMs?: number
 }
 
-// Custom控件特定props - 纯样式，由用户传入自定义控件
 interface CustomConfigProps {
   controlType: 'custom'
   customControl: React.ReactNode
 }
 
-// FileInput控件特定props - 带文件选择对话框的输入框
 interface FileInputConfigProps {
   controlType: 'fileinput'
   placeholder?: string
@@ -132,13 +119,12 @@ interface FileInputConfigProps {
   buttonTooltip?: string
 }
 
-// Hotkey控件特定props - 快捷键设置控件
 interface HotkeyConfigProps {
   controlType: 'hotkey'
   inputClassName?: string
 }
 
-// ConfigItem组件props - 根据controlType进行联合类型
+// Combine all config item props into a single type
 export type ConfigItemProps<
   T extends HookType,
   Path extends Paths<DocType<T>, { bracketNotation: true }>

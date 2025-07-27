@@ -18,21 +18,21 @@ export function Showcase(): React.JSX.Element {
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const selectGames = useGameBatchEditorStore((state) => state.selectGames)
 
-  // 键盘快捷键处理
+  // Keyboard shortcut handling
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent): void => {
-      // 检查当前是否有对话框元素处于活动状态
+      // Check if any dialog element is active
       const isDialogActive =
         document.querySelector('dialog[open]') !== null ||
         document.querySelector('.modal.active') !== null ||
         document.querySelector('[role="dialog"]') !== null
 
-      // 当对话框打开时，不执行快捷键功能
+      // When a dialog is open, do not execute shortcut key functions
       if (isDialogActive) {
         return
       }
 
-      // Ctrl + A 选择所有游戏
+      // Ctrl + A select all games
       if (e.ctrlKey && e.key === 'a') {
         e.preventDefault()
         selectGames(gameIds)
@@ -57,6 +57,7 @@ export function Showcase(): React.JSX.Element {
           <ScrollToTopButton scrollAreaRef={scrollAreaRef} />
         </>
       ) : (
+        // Show Welcome Message
         <div className={cn('flex flex-col gap-1 items-center justify-center w-full h-full -mt-7')}>
           <div>
             <span className={cn('icon-[mdi--gamepad-variant] w-[60px] h-[60px]')}></span>

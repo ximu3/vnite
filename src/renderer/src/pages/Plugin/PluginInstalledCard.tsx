@@ -25,23 +25,18 @@ interface PluginInstalledCardProps {
 export function PluginInstalledCard({ plugin }: PluginInstalledCardProps): React.JSX.Element {
   const { t } = useTranslation('plugin')
 
-  // 从 store 获取状态和方法
   const updates = usePluginInfoStore((state) => state.updates)
   const togglePlugin = usePluginInfoStore((state) => state.togglePlugin)
   const installPlugin = usePluginInfoStore((state) => state.installPlugin)
   const uninstallPlugin = usePluginInfoStore((state) => state.uninstallPlugin)
 
-  // 本地状态
   const [isInstalling, setIsInstalling] = useState(false)
 
-  // 对话框状态
   const [configDialogOpen, setConfigDialogOpen] = useState(false)
   const [uninstallDialogOpen, setUninstallDialogOpen] = useState(false)
 
-  // 更新信息
   const updateInfo = updates?.find((u) => u.pluginId === plugin.manifest.id)
 
-  // 处理更新插件
   const handleUpdate = async (): Promise<void> => {
     if (!updateInfo) return
 
@@ -57,7 +52,6 @@ export function PluginInstalledCard({ plugin }: PluginInstalledCardProps): React
     }
   }
 
-  // 处理卸载插件
   const handleUninstall = async (): Promise<void> => {
     await uninstallPlugin(plugin.manifest.id, plugin.manifest.name)
     setUninstallDialogOpen(false)
@@ -159,7 +153,6 @@ export function PluginInstalledCard({ plugin }: PluginInstalledCardProps): React
         </CardContent>
       </Card>
 
-      {/* 配置对话框 */}
       <PluginConfigDialog
         pluginId={plugin.manifest.id}
         pluginName={plugin.manifest.name}
@@ -167,7 +160,6 @@ export function PluginInstalledCard({ plugin }: PluginInstalledCardProps): React
         onClose={() => setConfigDialogOpen(false)}
       />
 
-      {/* 卸载确认对话框 */}
       <AlertDialog
         open={uninstallDialogOpen}
         onOpenChange={(open) => !open && setUninstallDialogOpen(false)}

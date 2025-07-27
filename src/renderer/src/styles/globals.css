@@ -113,7 +113,6 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* 添加字体主题变量 */
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
 }
@@ -124,11 +123,9 @@
   }
   body {
     @apply bg-background text-foreground;
-    /* 默认使用系统字体 */
     font-family: var(--font-sans);
   }
 
-  /* 自定义字体类 */
   .font-custom {
     font-family: var(--font-current), var(--font-sans);
   }
@@ -140,24 +137,6 @@
 
 .scrollbar-base-thin {
   @apply rounded-sm scrollbar-track-transparent scrollbar-thumb-muted scrollbar-thumb-rounded-lg scrollbar scrollbar-w-1 scrollbar-h-1;
-}
-
-@layer utilities {
-  /* 自定义阴影 */
-  .shadow-custom-initial {
-    box-shadow:
-      0 2px 5px rgba(0, 0, 0, 0.15),
-      0 4px 8px rgba(0, 0, 0, 0.3);
-  }
-
-  .shadow-l-inner {
-    box-shadow: inset 2px 0 4px 0 rgb(0 0 0 / 0.05);
-  }
-
-  /* 自定义过渡属性 */
-  .transition-border {
-    transition-property: border-color, border-width;
-  }
 }
 
 @layer keyframes {

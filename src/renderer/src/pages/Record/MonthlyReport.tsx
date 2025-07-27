@@ -132,6 +132,7 @@ export function MonthlyReport(): React.JSX.Element {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">{t('monthly.title')}</h2>
+        {/* Month navigation buttons */}
         <div className="flex items-center space-x-2">
           <Button variant="outline" size="icon" onClick={goToPreviousMonth}>
             <ChevronLeft className="w-4 h-4" />
@@ -153,20 +154,21 @@ export function MonthlyReport(): React.JSX.Element {
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        {/* Monthly Play Time */}
         <StatCard
           title={t('monthly.stats.monthlyPlayTime')}
           value={formatGameTime(monthData.totalTime)}
           icon={<Clock className="w-4 h-4" />}
           className="col-span-1"
         />
-
+        {/* Days Played */}
         <StatCard
           title={t('monthly.stats.daysPlayed')}
           value={`${Object.values(monthData.dailyPlayTime).filter((time) => time > 0).length} ${t('monthly.unit.days')}`}
           icon={<CalendarIcon className="w-4 h-4" />}
           className="col-span-1"
         />
-
+        {/* Most Played Day */}
         <StatCard
           title={t('monthly.stats.mostPlayedDay')}
           value={
@@ -185,6 +187,7 @@ export function MonthlyReport(): React.JSX.Element {
       </div>
 
       <div className="grid gap-4 xl:grid-cols-[1fr_auto]">
+        {/* Weekly Play Time Chart */}
         <Card>
           <CardHeader>
             <CardTitle>{t('monthly.chart.weeklyPlayTime')}</CardTitle>
@@ -218,7 +221,7 @@ export function MonthlyReport(): React.JSX.Element {
             </ChartContainer>
           </CardContent>
         </Card>
-
+        {/* Weekly Play Days Calendar */}
         <Card>
           <CardHeader>
             <CardTitle>{t('monthly.chart.calendarTitle')}</CardTitle>
@@ -316,7 +319,7 @@ export function MonthlyReport(): React.JSX.Element {
             </div>
           </CardContent>
         </Card>
-
+        {/* Monthly Games Ranking */}
         <Card>
           <CardHeader>
             <CardTitle>{t('monthly.monthlyGames.title')}</CardTitle>

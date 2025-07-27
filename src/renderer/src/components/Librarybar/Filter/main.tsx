@@ -70,6 +70,7 @@ export function Filter({ children }: { children: React.ReactNode }): React.JSX.E
         <div className={cn('flex flex-col h-full gap-3')}>
           <div className={cn('flex flex-row justify-between items-center')}>
             <div className={cn('font-bold')}>{t('filter.panel.title')}</div>
+            {/* Close button */}
             <Button
               className={cn(
                 'non-draggable p-0 m-0 h-4 w-4 self-start hover:bg-transparent dark:hover:bg-transparent'
@@ -82,6 +83,7 @@ export function Filter({ children }: { children: React.ReactNode }): React.JSX.E
               <Cross2Icon className="w-4 h-4" />
             </Button>
           </div>
+          {/* Clear Filter Button */}
           <Button
             variant={'link'}
             className={cn('self-start p-0 -mb-2 -mt-2')}
@@ -90,6 +92,7 @@ export function Filter({ children }: { children: React.ReactNode }): React.JSX.E
             {t('filter.panel.clear')}
           </Button>
           <Separator />
+          {/* Release Date Filter */}
           <div className={cn('flex flex-col gap-1 items-start justify-start')}>
             <div className={cn('flex flex-row justify-between items-center w-full')}>
               <div className={cn('whitespace-nowrap text-sm text-foreground ml-[6px]')}>
@@ -138,7 +141,9 @@ export function Filter({ children }: { children: React.ReactNode }): React.JSX.E
             </div>
           </div>
           <Separator className={cn('mt-1')} />
+          {/* Filter Comboboxes for Metadata */}
           <div className={cn('h-full overflow-auto scrollbar-base-thin pr-3 -mr-3')}>
+            {/* Developers */}
             <div className={cn('flex flex-col gap-3 ')}>
               <div className={cn('flex flex-col gap-1 items-start justify-start')}>
                 <div className={cn('flex flex-row justify-between items-center w-full')}>
@@ -151,6 +156,7 @@ export function Filter({ children }: { children: React.ReactNode }): React.JSX.E
                   placeholder={t('filter.panel.developers')}
                 />
               </div>
+              {/* Publishers */}
               <div className={cn('flex flex-col gap-1 items-start justify-start')}>
                 <div className={cn('flex flex-row justify-between items-center w-full')}>
                   <div className={cn('whitespace-nowrap text-sm text-foreground ml-[6px]')}>
@@ -162,6 +168,7 @@ export function Filter({ children }: { children: React.ReactNode }): React.JSX.E
                   placeholder={t('filter.panel.publishers')}
                 />
               </div>
+              {/* Genres */}
               <div className={cn('flex flex-col gap-1 items-start justify-start')}>
                 <div className={cn('flex flex-row justify-between items-center w-full')}>
                   <div className={cn('whitespace-nowrap text-sm text-foreground ml-[6px]')}>
@@ -170,6 +177,7 @@ export function Filter({ children }: { children: React.ReactNode }): React.JSX.E
                 </div>
                 <FilterCombobox filed="metadata.genres" placeholder={t('filter.panel.genres')} />
               </div>
+              {/* Platforms */}
               <div className={cn('flex flex-col gap-1 items-start justify-start')}>
                 <div className={cn('flex flex-row justify-between items-center w-full')}>
                   <div className={cn('whitespace-nowrap text-sm text-foreground ml-[6px]')}>
@@ -181,6 +189,7 @@ export function Filter({ children }: { children: React.ReactNode }): React.JSX.E
                   placeholder={t('filter.panel.platforms')}
                 />
               </div>
+              {/* Tags */}
               <div className={cn('flex flex-col gap-1 items-start justify-start')}>
                 <div className={cn('flex flex-row justify-between items-center w-full')}>
                   <div className={cn('whitespace-nowrap text-sm text-foreground ml-[6px]')}>

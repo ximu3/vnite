@@ -41,12 +41,12 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
 
   const [originalName] = useGameState(gameId, 'metadata.originalName')
 
-  // 处理文件选择
   async function handleFileSelect(type: 'cover' | 'background' | 'icon' | 'logo'): Promise<void> {
     try {
       const filePath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
       if (!filePath) return
 
+      // If the selected file is an executable and the type is icon, set it directly, will get the icon from the executable
       if (filePath.endsWith('.exe') && type == 'icon') {
         await ipcManager.invoke('game:set-image', gameId, type, filePath)
         return
@@ -84,10 +84,9 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     }
   }
 
-  // 处理调整大小
   async function handleResize(type: 'cover' | 'background' | 'icon' | 'logo'): Promise<void> {
     try {
-      // 获取当前图像路径
+      // Get current image path
       const currentPath = await ipcManager.invoke('game:get-media-path', gameId, type)
       if (!currentPath) {
         toast.error(t('detail.properties.media.notifications.imageNotFound'))
@@ -105,7 +104,6 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     }
   }
 
-  // 处理URL输入
   function setMediaWithUrl(type: 'cover' | 'background' | 'icon' | 'logo', URL: string): void {
     toast.promise(
       async () => {
@@ -129,7 +127,6 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     )
   }
 
-  // 裁剪完成
   async function handleCropComplete(
     type: 'cover' | 'background' | 'icon' | 'logo',
     filePath: string
@@ -164,7 +161,6 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     )
   }
 
-  // 处理媒体删除
   async function handleDeleteMedia(type: 'cover' | 'background' | 'icon' | 'logo'): Promise<void> {
     toast.promise(
       async () => {
@@ -187,7 +183,6 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     )
   }
 
-  // 媒体控制按钮组件
   const MediaControls = ({
     type
   }: {
@@ -288,7 +283,6 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     </div>
   )
 
-  // 媒体卡片组件
   const MediaCard = ({
     type,
     aspectRatio

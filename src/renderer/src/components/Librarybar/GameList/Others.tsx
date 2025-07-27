@@ -32,7 +32,9 @@ export function Others({
           className={cn('w-full text-xs flex flex-col gap-2')}
           defaultValue={defaultValues}
         >
+          {/* Recent Games */}
           <RecentGames />
+          {/* Split games into their respective fields */}
           {fields.map((field) => (
             <AccordionItem key={field} value={field}>
               <AccordionTrigger defaultChecked className={cn('text-xs p-1 pl-2')}>
@@ -50,6 +52,7 @@ export function Others({
               </AccordionContent>
             </AccordionItem>
           ))}
+          {/* All Games */}
           <AllGame />
         </Accordion>
       ) : (

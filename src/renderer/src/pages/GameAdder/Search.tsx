@@ -110,7 +110,7 @@ export function Search({ className }: { className?: string }): React.JSX.Element
           throw new Error(t('gameAdder.search.notifications.invalidId'))
         }
         setDataSourceId(inputId)
-        setCurrentPage('screenshots')
+        setCurrentPage('backgrounds')
       })(),
       {
         loading: t('gameAdder.search.notifications.recognizing'),

@@ -39,7 +39,6 @@ export const GameScannerListItem: React.FC<GameScannerListItemProps> = ({
   const { scanProgress, scanScanner } = useGameScannerStore()
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
-  // Remove scanner
   const handleRemove = (): void => {
     // Update scanner list
     if (scannerConfig && scannerConfig.list) {
@@ -57,23 +56,18 @@ export const GameScannerListItem: React.FC<GameScannerListItemProps> = ({
     setShowDeleteDialog(false)
   }
 
-  // Scan single directory
   const handleScan = (): void => {
     scanScanner(scannerId)
   }
 
-  // Get data source display name
   const getDataSourceName = (): string => {
     return t(`dataSources.${scanner.dataSource}`, { defaultValue: scanner.dataSource })
   }
 
-  // Get progress for this scanner
   const scannerProgress = scanProgress?.scannerProgresses[scannerId] || null
 
-  // Check if current directory is being scanned
   const isScanning = scannerProgress?.status === 'scanning'
 
-  // Calculate progress percentage for this scanner
   const calculateProgress = (): number => {
     if (!scannerProgress || scannerProgress.totalFolders === 0) return 0
     return Math.round((scannerProgress.processedFolders / scannerProgress.totalFolders) * 100)
@@ -119,6 +113,7 @@ export const GameScannerListItem: React.FC<GameScannerListItemProps> = ({
       )}
 
       <div className="z-10 flex items-center flex-grow gap-4 overflow-hidden">
+        {/* Open path in file explorer */}
         <div
           className={cn(
             'flex items-center justify-center w-10 h-10 rounded-md bg-primary/10 ',
@@ -131,8 +126,10 @@ export const GameScannerListItem: React.FC<GameScannerListItemProps> = ({
         </div>
 
         <div className="flex-grow min-w-0">
+          {/* Scanner path */}
           <p className="text-sm font-medium truncate">{scanner.path}</p>
           <div className="flex items-center text-sm text-muted-foreground">
+            {/* Data source and scan depth */}
             <span>{t('list.item.dataSource', { name: getDataSourceName() })}</span>
             <span className="mx-1">•</span>
             <span>{t('list.item.depth', { level: scanner.depth })}</span>
@@ -155,6 +152,7 @@ export const GameScannerListItem: React.FC<GameScannerListItemProps> = ({
         <Badge variant={variant}>{label}</Badge>
 
         <div className="flex gap-1 ml-2">
+          {/* Start scan button */}
           <Tooltip>
             <TooltipTrigger>
               <Button
@@ -168,7 +166,7 @@ export const GameScannerListItem: React.FC<GameScannerListItemProps> = ({
             </TooltipTrigger>
             <TooltipContent side="bottom">{t('list.item.tooltips.scan')}</TooltipContent>
           </Tooltip>
-
+          {/* Edit scanner button */}
           <Tooltip>
             <TooltipTrigger>
               <Button
@@ -182,7 +180,7 @@ export const GameScannerListItem: React.FC<GameScannerListItemProps> = ({
             </TooltipTrigger>
             <TooltipContent side="bottom">{t('list.item.tooltips.edit')}</TooltipContent>
           </Tooltip>
-
+          {/* Delete scanner button */}
           <Tooltip>
             <TooltipTrigger>
               <Button

@@ -36,6 +36,8 @@ export function Sidebar(): React.JSX.Element {
       )}
     >
       <div className={cn('flex flex-col gap-2 items-center justify-center')}>
+        {/* Logo */}
+        {/* Click to go back */}
         <div
           className={cn(
             'font-mono text-shadow-lg text-2xl font-bold flex justify-center items-center text-primary non-draggable cursor-pointer'
@@ -46,6 +48,7 @@ export function Sidebar(): React.JSX.Element {
         >
           V
         </div>
+        {/* Library */}
         <Tooltip>
           <TooltipTrigger>
             <Nav
@@ -61,6 +64,7 @@ export function Sidebar(): React.JSX.Element {
           </TooltipTrigger>
           <TooltipContent side="right">{t('navigation.library')}</TooltipContent>
         </Tooltip>
+        {/* Records */}
         <Tooltip>
           <TooltipTrigger>
             <Nav variant="sidebar" to="/record" className="size-9 p-0">
@@ -69,6 +73,7 @@ export function Sidebar(): React.JSX.Element {
           </TooltipTrigger>
           <TooltipContent side="right">{t('navigation.records')}</TooltipContent>
         </Tooltip>
+        {/* Scanner */}
         <Tooltip>
           <TooltipTrigger>
             <Nav variant="sidebar" to="/scanner" className="size-9 p-0">
@@ -77,6 +82,7 @@ export function Sidebar(): React.JSX.Element {
           </TooltipTrigger>
           <TooltipContent side="right">{t('navigation.scanner')}</TooltipContent>
         </Tooltip>
+        {/* Transformer */}
         <Tooltip>
           <TooltipTrigger>
             <Nav variant="sidebar" to="/transformer" className="size-9 p-0">
@@ -85,6 +91,7 @@ export function Sidebar(): React.JSX.Element {
           </TooltipTrigger>
           <TooltipContent side="right">{t('navigation.transformer')}</TooltipContent>
         </Tooltip>
+        {/* Plugin */}
         <Tooltip>
           <TooltipTrigger>
             <Nav variant="sidebar" to="/plugin" className="size-9 p-0">
@@ -94,6 +101,7 @@ export function Sidebar(): React.JSX.Element {
           <TooltipContent side="right">{t('navigation.plugin')}</TooltipContent>
         </Tooltip>
       </div>
+      {/* Add Game */}
       <div className={cn('flex flex-col gap-2 items-center justify-center')}>
         <DropdownMenu>
           <Tooltip>
@@ -225,6 +233,7 @@ export function Sidebar(): React.JSX.Element {
             </DropdownMenuSub>
           </DropdownMenuContent>
         </DropdownMenu>
+        {/* Settings Button */}
         <Tooltip>
           <TooltipTrigger>
             <Nav variant="sidebar" to="/config" className="size-9 p-0">

@@ -1,4 +1,3 @@
-// 事件元数据接口
 export interface EventMetadata {
   id: string
   timestamp: number
@@ -6,11 +5,9 @@ export interface EventMetadata {
   correlationId?: string
 }
 
-// 所有应用事件类型定义
 export interface AppEvents {
   'app:ready': undefined
 
-  // ========== 游戏相关事件 ==========
   'game:added': {
     gameId: string
     name: string
@@ -35,7 +32,6 @@ export interface AppEvents {
     name: string
   }
 
-  // Game save events
   'game:save-created': {
     gameId: string
     saveId: string
@@ -51,7 +47,6 @@ export interface AppEvents {
     saveId: string
   }
 
-  // Game memory events
   'game:memory-created': {
     gameId: string
     memoryId: string
@@ -89,7 +84,6 @@ export interface AppEvents {
     removeData: boolean
   }
 
-  // ========== 扫描器相关事件 ==========
   'scanner:started': {
     scannerId: string
     scannerPath: string
@@ -119,7 +113,6 @@ export interface AppEvents {
     newLanguage: string
   }
 
-  // ========== 插件相关事件 ==========
   'plugin:loaded': {
     pluginId: string
     pluginName: string
@@ -140,9 +133,6 @@ export interface AppEvents {
     canRecover: boolean
   }
 
-  // ========== 数据库相关事件 ==========
-
-  // Database backup events
   'db:backup-completed': {
     targetPath: string
   }
@@ -174,9 +164,8 @@ export interface EventHistoryQuery {
   correlationId?: string
 }
 
-// 事件类型联合类型
 export type EventType = keyof AppEvents
 export type EventData<T extends EventType> = AppEvents[T]
 
-// 增强的事件数据（包含元数据）
+// Enhanced event data with metadata
 export type EnhancedEventData<T extends EventType> = AppEvents[T] & EventMetadata
