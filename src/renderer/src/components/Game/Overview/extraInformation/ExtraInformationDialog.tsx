@@ -71,7 +71,7 @@ export function ExtraInformationDialog({ gameId }: { gameId: string }): React.JS
         onClose={
           // Remove items with empty keys
           () => {
-            setExtra(extra.filter((item) => item.key.trim() !== ''))
+            setExtraAndSave(extra.filter((item) => item.key.trim() !== ''))
           }
         }
       >
