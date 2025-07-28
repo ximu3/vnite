@@ -26,11 +26,11 @@ export function RecordCard({
       {isInteractive ? (
         <ButtonWrapper>
           <Button variant={'bare'} size={'icon'} className={cn('group  mr-3')} onClick={onClick}>
-            <span className={cn(icon, 'w-[30px] h-[30px] group-hover:text-primary')}></span>
+            <span className={cn(icon, 'group-hover:text-primary')}></span>
           </Button>
         </ButtonWrapper>
       ) : (
-        <span className={cn(icon, 'w-[30px] h-[30px] mr-3')}></span>
+        <span className={cn(icon, 'mr-3')}></span>
       )}
 
       <div

@@ -3,7 +3,8 @@
     "edit": "編輯",
     "save": "儲存",
     "cancel": "取消",
-    "confirm": "確定"
+    "confirm": "確定",
+    "delete": "刪除"
   },
   "arrayEditor": {
     "clickPlusToAdd": "點擊 + 添加元素",
