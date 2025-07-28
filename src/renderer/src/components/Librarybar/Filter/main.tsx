@@ -152,7 +152,7 @@ export function Filter({ children }: { children: React.ReactNode }): React.JSX.E
                   </div>
                 </div>
                 <FilterCombobox
-                  filed="record.playStatus"
+                  field="record.playStatus"
                   placeholder={t('filter.panel.playStatus')}
                 />
               </div>
@@ -164,7 +164,7 @@ export function Filter({ children }: { children: React.ReactNode }): React.JSX.E
                   </div>
                 </div>
                 <FilterCombobox
-                  filed="metadata.developers"
+                  field="metadata.developers"
                   placeholder={t('filter.panel.developers')}
                 />
               </div>
@@ -176,7 +176,7 @@ export function Filter({ children }: { children: React.ReactNode }): React.JSX.E
                   </div>
                 </div>
                 <FilterCombobox
-                  filed="metadata.publishers"
+                  field="metadata.publishers"
                   placeholder={t('filter.panel.publishers')}
                 />
               </div>
@@ -187,7 +187,7 @@ export function Filter({ children }: { children: React.ReactNode }): React.JSX.E
                     {t('filter.panel.genres')}
                   </div>
                 </div>
-                <FilterCombobox filed="metadata.genres" placeholder={t('filter.panel.genres')} />
+                <FilterCombobox field="metadata.genres" placeholder={t('filter.panel.genres')} />
               </div>
               {/* Platforms */}
               <div className={cn('flex flex-col gap-1 items-start justify-start')}>
@@ -197,7 +197,7 @@ export function Filter({ children }: { children: React.ReactNode }): React.JSX.E
                   </div>
                 </div>
                 <FilterCombobox
-                  filed="metadata.platforms"
+                  field="metadata.platforms"
                   placeholder={t('filter.panel.platforms')}
                 />
               </div>
@@ -208,7 +208,7 @@ export function Filter({ children }: { children: React.ReactNode }): React.JSX.E
                     {t('filter.panel.tags')}
                   </div>
                 </div>
-                <FilterCombobox filed="metadata.tags" placeholder={t('filter.panel.tags')} />
+                <FilterCombobox field="metadata.tags" placeholder={t('filter.panel.tags')} />
               </div>
 
               {/* Extra information filtering section */}
@@ -223,7 +223,7 @@ export function Filter({ children }: { children: React.ReactNode }): React.JSX.E
                           {key}
                         </div>
                       </div>
-                      <FilterCombobox filed={`metadata.extra.${key}`} placeholder={key} />
+                      <FilterCombobox field={`metadata.extra.${key}`} placeholder={key} />
                     </div>
                   ))}
                 </>

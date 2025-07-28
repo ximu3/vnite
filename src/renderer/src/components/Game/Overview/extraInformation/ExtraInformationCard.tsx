@@ -96,7 +96,7 @@ export function ExtraInformationCard({
                 ) : (
                   item.value.map((val, i) => (
                     <div key={i} className={cn('flex items-center')}>
-                      <FilterAdder filed={`metadata.extra.${item.key || 'unknown'}`} value={val} />
+                      <FilterAdder field={`metadata.extra.${item.key || 'unknown'}`} value={val} />
                     </div>
                   ))
                 )}

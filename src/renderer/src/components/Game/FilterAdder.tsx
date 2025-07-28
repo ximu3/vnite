@@ -4,11 +4,11 @@ import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
 
 export function FilterAdder({
-  filed,
+  field,
   value,
   className
 }: {
-  filed: string
+  field: string
   value: string
   className?: string
 }): React.JSX.Element {
@@ -21,14 +21,14 @@ export function FilterAdder({
         className
       )}
       onClick={() => {
-        if (filed === 'metadata.releaseDate') {
-          updateFilter(filed, [value, value])
+        if (field === 'metadata.releaseDate') {
+          updateFilter(field, [value, value])
         } else {
-          if (!filter[filed]?.includes(value)) {
-            addFilter(filed, value)
+          if (!filter[field]?.includes(value)) {
+            addFilter(field, value)
           }
         }
-        toast.info(t('detail.filter.added', { field: filed, value }))
+        toast.info(t('detail.filter.added', { field: field, value }))
       }}
     >
       {value}

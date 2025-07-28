@@ -22,16 +22,16 @@ interface Option {
 }
 
 export function FilterCombobox({
-  filed,
+  field,
   placeholder
 }: {
-  filed: string
+  field: string
   placeholder: string
 }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [open, setOpen] = React.useState(false)
   const { filter, deleteFilter, addFilter } = useFilterStore()
-  const selectedValues = filter[filed] || []
+  const selectedValues = filter[field] || []
 
   const playStatusDefaultOrder = ['unplayed', 'playing', 'finished', 'multiple', 'shelved'] as const
 
@@ -39,18 +39,18 @@ export function FilterCombobox({
     let allValues: string[] = []
 
     // Check if it's an extra information field
-    if (filed.startsWith('metadata.extra.')) {
-      const extraKey = filed.replace('metadata.extra.', '')
+    if (field.startsWith('metadata.extra.')) {
+      const extraKey = field.replace('metadata.extra.', '')
       allValues = getAllExtraValuesForKey(extraKey)
       console.warn(`allValues: ${allValues} extraKey: ${extraKey}`)
     } else {
-      allValues = getAllValuesInKey(filed as any)
+      allValues = getAllValuesInKey(field as any)
     }
 
     const allOptions = allValues.map((value) => ({
       value,
       label:
-        filed === 'record.playStatus'
+        field === 'record.playStatus'
           ? t(`utils:game.playStatus.${value}`) // Translate play status
           : value
     }))
@@ -62,7 +62,7 @@ export function FilterCombobox({
 
       if (aSelected && !bSelected) return -1
       if (!aSelected && bSelected) return 1
-      if (filed === 'record.playStatus') {
+      if (field === 'record.playStatus') {
         // Sort play status by predefined order
         const orderIndexA = playStatusDefaultOrder.indexOf(a.value as any)
         const orderIndexB = playStatusDefaultOrder.indexOf(b.value as any)
@@ -70,15 +70,15 @@ export function FilterCombobox({
       }
       return a.label.localeCompare(b.label, 'zh-CN')
     })
-  }, [filed, selectedValues])
+  }, [field, selectedValues])
 
   const handleSelect = (value: string): void => {
     if (selectedValues.includes(value)) {
       // If already selected, remove it
-      deleteFilter(filed, value)
+      deleteFilter(field, value)
     } else {
       // If not selected, add it
-      addFilter(filed, value)
+      addFilter(field, value)
     }
   }
 
@@ -151,7 +151,7 @@ export function FilterCombobox({
         size={'icon'}
         variant={'outline'}
         onClick={() => {
-          deleteFilter(filed, '#all')
+          deleteFilter(field, '#all')
         }}
       >
         <Cross2Icon className="w-4 h-4" />

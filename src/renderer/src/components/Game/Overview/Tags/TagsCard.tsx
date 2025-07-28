@@ -51,7 +51,7 @@ export function TagsCard({
             ? t('detail.overview.tags.empty')
             : tags.map((tag) => (
                 <React.Fragment key={tag}>
-                  <FilterAdder filed="metadata.tags" value={tag} className={cn('')} />
+                  <FilterAdder field="metadata.tags" value={tag} className={cn('')} />
                 </React.Fragment>
               ))}
         </div>

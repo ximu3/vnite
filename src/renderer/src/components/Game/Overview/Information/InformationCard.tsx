@@ -97,7 +97,7 @@ export function InformationCard({
             ? t('detail.overview.information.empty')
             : developers.map((developer) => (
                 <React.Fragment key={developer}>
-                  <FilterAdder filed="metadata.developers" value={developer} className={cn('')} />
+                  <FilterAdder field="metadata.developers" value={developer} className={cn('')} />
                 </React.Fragment>
               ))}
         </div>
@@ -119,7 +119,7 @@ export function InformationCard({
             ? t('detail.overview.information.empty')
             : publishers.map((publisher) => (
                 <React.Fragment key={publisher}>
-                  <FilterAdder filed="metadata.publishers" value={publisher} className={cn('')} />
+                  <FilterAdder field="metadata.publishers" value={publisher} className={cn('')} />
                 </React.Fragment>
               ))}
         </div>
@@ -136,7 +136,7 @@ export function InformationCard({
             t('detail.overview.information.empty')
           ) : (
             <FilterAdder
-              filed="metadata.releaseDate"
+              field="metadata.releaseDate"
               className={cn('hover:no-underline')}
               value={releaseDate}
             />
@@ -157,7 +157,7 @@ export function InformationCard({
             ? t('detail.overview.information.empty')
             : platforms.map((platform) => (
                 <React.Fragment key={platform}>
-                  <FilterAdder filed="metadata.platforms" value={platform} />
+                  <FilterAdder field="metadata.platforms" value={platform} />
                 </React.Fragment>
               ))}
         </div>
@@ -176,7 +176,7 @@ export function InformationCard({
             ? t('detail.overview.information.empty')
             : genres.map((genre) => (
                 <React.Fragment key={genre}>
-                  <FilterAdder filed="metadata.genres" value={genre} />
+                  <FilterAdder field="metadata.genres" value={genre} />
                 </React.Fragment>
               ))}
         </div>
