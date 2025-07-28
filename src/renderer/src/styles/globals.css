@@ -1,4 +1,5 @@
 @import './base.css';
+@import './zoom.css';
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
