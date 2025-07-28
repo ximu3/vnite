@@ -132,7 +132,8 @@
     },
     "quickActions": {
       "title": "Quick Actions",
-      "addGame": "Add Game"
+      "addGame": "Add Game",
+      "capture": "Capture Memories"
     },
     "others": {
       "title": "Others",

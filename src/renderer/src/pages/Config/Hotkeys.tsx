@@ -71,6 +71,12 @@ export function Hotkeys(): React.JSX.Element {
                 title={t('hotkeys.quickActions.addGame')}
                 controlType="hotkey"
               />
+              <ConfigItem
+                hookType="configLocal"
+                path="hotkeys.capture"
+                title={t('hotkeys.quickActions.capture')}
+                controlType="hotkey"
+              />
             </div>
           </div>
 

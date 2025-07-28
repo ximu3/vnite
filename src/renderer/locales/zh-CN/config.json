@@ -132,7 +132,8 @@
     },
     "quickActions": {
       "title": "快捷操作",
-      "addGame": "添加游戏"
+      "addGame": "添加游戏",
+      "capture": "回忆截图"
     },
     "others": {
       "title": "其它",

@@ -11,6 +11,7 @@ import { spawn } from 'child_process'
 import { psManager } from '~/utils'
 import { ipcManager } from '~/core/ipc'
 import { eventBus } from '~/core/events'
+import { ActiveGameInfo } from '~/features/game'
 
 async function getProcessList(): Promise<
   Array<{
@@ -291,6 +292,8 @@ export class GameMonitor {
     this.startTime = new Date().toISOString()
     this.endTime = undefined
 
+    ActiveGameInfo.updateGameInfo(this.options.gameId)
+
     await this.checkProcesses()
 
     this.intervalId = setInterval(async () => {
@@ -348,6 +351,11 @@ export class GameMonitor {
         })
 
         if (processInfo) {
+          ActiveGameInfo.updateGameInfo(this.options.gameId, {
+            pid: processInfo.pid,
+            name: processInfo.name,
+            path: processInfo.executablePath
+          })
           console.log(
             `Game ${this.options.gameId} process ${isProcessNameMode ? processInfo.name : processInfo.executablePath} running`
           )
@@ -421,6 +429,8 @@ export class GameMonitor {
     this.exiting = true
 
     log.info(`Game ${this.options.gameId} Exit`)
+
+    ActiveGameInfo.removeGameInfo(this.options.gameId)
 
     // Record end time
     this.endTime = new Date().toISOString()

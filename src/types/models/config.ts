@@ -182,6 +182,9 @@ export interface configLocalDocs {
       }
     }
   }
+  hotkeys: {
+    capture: string
+  }
   game: {
     linkage: {
       localeEmulator: {
@@ -340,6 +343,9 @@ export const DEFAULT_CONFIG_LOCAL_VALUES: Readonly<configLocalDocs> = {
         password: ''
       }
     }
+  },
+  hotkeys: {
+    capture: 'alt+shift+z'
   },
   game: {
     linkage: {

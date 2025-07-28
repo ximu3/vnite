@@ -132,7 +132,8 @@
     },
     "quickActions": {
       "title": "クイックアクション",
-      "addGame": "ゲームを追加"
+      "addGame": "ゲームを追加",
+      "capture": "回憶をキャプチャ"
     },
     "others": {
       "title": "その他",

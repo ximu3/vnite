@@ -3,7 +3,7 @@ import { GameDBManager } from '~/core/database'
 import log from 'electron-log/main'
 import { eventBus } from '~/core/events'
 
-export async function addGameMemory(gameId: string): Promise<void> {
+export async function addGameMemory(gameId: string, img?: Buffer | string): Promise<void> {
   try {
     const memoryList = await GameDBManager.getGameValue(gameId, 'memory.memoryList')
     const memoryId = generateUUID()
@@ -11,6 +11,9 @@ export async function addGameMemory(gameId: string): Promise<void> {
     const memory = { _id: memoryId, date, note: '' }
     memoryList[memoryId] = memory
     await GameDBManager.setGameValue(gameId, 'memory.memoryList', memoryList)
+    if (img) {
+      await GameDBManager.setGameMemoryImage(gameId, memoryId, img)
+    }
 
     // Emit event after adding memory
     eventBus.emit(

@@ -15,7 +15,13 @@ import {
   parseGameIdFromUrl,
   restartAppAsAdmin
 } from './utils'
-import { getAppRootPath, getDataPath, getLogsPath, setupTempDirectory } from '~/features/system'
+import {
+  getAppRootPath,
+  getDataPath,
+  getLogsPath,
+  setupTempDirectory,
+  setupScreenshotService
+} from '~/features/system'
 import {
   TrayManager,
   setupTray,
@@ -280,6 +286,9 @@ app.whenReady().then(async () => {
   GameScannerManager.startPeriodicScan()
 
   pluginService.initialize()
+
+  // Setup screenshot service
+  setupScreenshotService()
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
