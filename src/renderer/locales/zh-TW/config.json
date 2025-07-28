@@ -147,6 +147,8 @@
     "syncFull": "全量同步",
     "syncFullDescription": "一次性同步所有數據，適用於新裝置與數據遷移",
     "syncFullButton": "全量同步",
+    "compact": "壓縮雲端資料庫",
+    "compactDescription": "清除雲端資料庫歷史版本以釋放雲同步空間",
     "modes": {
       "official": "官方",
       "selfHosted": "自託管"
@@ -163,6 +165,9 @@
       "fetchStorageFailed": "獲取儲存資訊失敗"
     },
     "notifications": {
+      "compacting": "正在壓縮雲端資料庫…",
+      "compactSuccess": "雲端資料庫壓縮成功",
+      "compactError": "雲端資料庫壓縮失敗",
       "updating": "正在更新雲同步配置…",
       "updateSuccess": "雲同步配置更新成功",
       "updateError": "雲同步配置更新失敗",

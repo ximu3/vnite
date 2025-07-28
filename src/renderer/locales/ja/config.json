@@ -147,6 +147,8 @@
     "syncFull": "全量同期",
     "syncFullDescription": "すべてのデータを一度に同期、新しいデバイスとデータ移行に適しています",
     "syncFullButton": "全量同期",
+    "compact": "クラウドデータベースを圧縮",
+    "compactDescription": "クラウドデータベースの履歴バージョンを削除してクラウド同期スペースを解放",
     "modes": {
       "official": "公式",
       "selfHosted": "セルフホスト"
@@ -163,6 +165,9 @@
       "fetchStorageFailed": "ストレージ情報の取得に失敗しました"
     },
     "notifications": {
+      "compacting": "クラウドデータベースを圧縮中…",
+      "compactSuccess": "クラウドデータベースの圧縮に成功しました",
+      "compactError": "クラウドデータベースの圧縮に失敗しました",
       "updating": "クラウド同期設定を更新中…",
       "updateSuccess": "クラウド同期設定が正常に更新されました",
       "updateError": "クラウド同期設定の更新に失敗しました",

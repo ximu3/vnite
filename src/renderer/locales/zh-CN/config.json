@@ -147,6 +147,8 @@
     "syncFull": "全量同步",
     "syncFullDescription": "一次性同步所有数据，适用于新设备与数据迁移",
     "syncFullButton": "全量同步",
+    "compact": "压缩云端数据库",
+    "compactDescription": "清除云端数据库历史版本以释放云同步空间",
     "modes": {
       "official": "官方",
       "selfHosted": "自托管"
@@ -163,6 +165,9 @@
       "fetchStorageFailed": "获取存储信息失败"
     },
     "notifications": {
+      "compacting": "正在压缩云端数据库…",
+      "compactSuccess": "云端数据库压缩成功",
+      "compactError": "云端数据库压缩失败",
       "updating": "正在更新云同步配置…",
       "updateSuccess": "云同步配置更新成功",
       "updateError": "云同步配置更新失败",

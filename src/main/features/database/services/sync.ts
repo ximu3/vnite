@@ -1,7 +1,7 @@
 import { ConfigDBManager } from '~/core/database'
 import { baseDBManager } from '~/core/database'
 import { ipcManager } from '~/core/ipc'
-import { getCouchDBSize } from '~/utils'
+import { getCouchDBSize } from './cloud'
 import { ROLE_QUOTAS } from '@appTypes/sync'
 import log from 'electron-log/main'
 

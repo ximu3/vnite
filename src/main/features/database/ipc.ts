@@ -1,6 +1,13 @@
-import { backupDatabase, restoreDatabase, startSync, stopSync, fullSync } from './services'
+import {
+  backupDatabase,
+  restoreDatabase,
+  startSync,
+  stopSync,
+  fullSync,
+  getCouchDBSize,
+  compactRemoteDatabase
+} from './services'
 import { baseDBManager, ConfigDBManager } from '~/core/database'
-import { getCouchDBSize } from '~/utils'
 import { ipcManager } from '~/core/ipc'
 import { DocChange } from '@appTypes/models'
 
@@ -40,9 +47,9 @@ export function setupDatabaseIPC(): void {
     await restoreDatabase(sourcePath)
   })
 
-  ipcManager.handle('db:get-couchdb-size', async () => {
+  ipcManager.handle('db:get-couchdb-size', async (_, refreshCache?: boolean) => {
     const username = await ConfigDBManager.getConfigLocalValue('sync.officialConfig.auth.username')
-    return await getCouchDBSize(username)
+    return await getCouchDBSize(username, refreshCache)
   })
 
   ipcManager.handle(
@@ -51,4 +58,9 @@ export function setupDatabaseIPC(): void {
       return await ConfigDBManager.setConfigBackgroundImage(path, theme)
     }
   )
+
+  ipcManager.handle('db:compact-remote-database', async (_) => {
+    const username = await ConfigDBManager.getConfigLocalValue('sync.officialConfig.auth.username')
+    await compactRemoteDatabase(username)
+  })
 }

@@ -61,7 +61,7 @@ export function CloudSync(): React.JSX.Element {
             setUsedQuota(dbSize)
           }
         } catch (error) {
-          console.error(t('cloudSync.errors.fetchStorageFailed'), error)
+          toast.error(t(`cloudSync.errors.fetchStorageFailed ${error}`))
         }
       }
 
@@ -87,6 +87,21 @@ export function CloudSync(): React.JSX.Element {
       toast.error(`${t('cloudSync.notifications.authError')}, ${message}`)
     })
   }, [])
+
+  const compactRemoteDatabase = async (): Promise<void> => {
+    toast.promise(
+      async () => {
+        await ipcManager.invoke('db:compact-remote-database')
+        const dbSize = await ipcManager.invoke('db:get-couchdb-size', true)
+        setUsedQuota(dbSize)
+      },
+      {
+        loading: t('cloudSync.notifications.compacting'),
+        success: t('cloudSync.notifications.compactSuccess'),
+        error: t('cloudSync.notifications.compactError')
+      }
+    )
+  }
 
   // Formatted Storage Size
   const formatStorage = (bytes: number): string => {
@@ -277,6 +292,15 @@ export function CloudSync(): React.JSX.Element {
                 description={t('cloudSync.syncFullDescription')}
               >
                 <Button onClick={handleFullSync}>{t('cloudSync.syncFullButton')}</Button>
+              </ConfigItemPure>
+            )}
+
+            {enabled && (
+              <ConfigItemPure
+                title={t('cloudSync.compact')}
+                description={t('cloudSync.compactDescription')}
+              >
+                <Button onClick={compactRemoteDatabase}>{t('cloudSync.compact')}</Button>
               </ConfigItemPure>
             )}
 

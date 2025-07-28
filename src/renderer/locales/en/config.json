@@ -147,6 +147,8 @@
     "syncFull": "Full Sync",
     "syncFullDescription": "Sync all data at once, suitable for new devices and data migration",
     "syncFullButton": "Full Sync",
+    "compact": "Compact Cloud Database",
+    "compactDescription": "Clear historical versions in cloud database to free up sync space",
     "modes": {
       "official": "Official",
       "selfHosted": "Self-hosted"
@@ -163,6 +165,9 @@
       "fetchStorageFailed": "Failed to fetch storage information"
     },
     "notifications": {
+      "compacting": "Compacting cloud database…",
+      "compactSuccess": "Cloud database compacted successfully",
+      "compactError": "Failed to compact cloud database",
       "updating": "Updating cloud sync configuration…",
       "updateSuccess": "Cloud sync configuration updated successfully",
       "updateError": "Failed to update cloud sync configuration",
