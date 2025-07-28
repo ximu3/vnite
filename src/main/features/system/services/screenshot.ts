@@ -8,41 +8,74 @@ import log from 'electron-log/main'
 let isScreenshotting = false
 let hotkey = 'alt+shift+z'
 let activeWin: ActiveWinResult | undefined
+let screenshots: Screenshots | undefined
 
 export async function setupScreenshotService(): Promise<void> {
-  hotkey = await ConfigDBManager.getConfigLocalValue('hotkeys.capture')
-  const screenshots = new Screenshots()
-  globalShortcut.register(hotkey, async () => {
-    if (isScreenshotting) {
-      console.warn('Screenshot service is already running')
+  try {
+    hotkey = await ConfigDBManager.getConfigLocalValue('hotkeys.capture')
+    screenshots = new Screenshots()
+    globalShortcut.register(hotkey, async () => {
+      if (isScreenshotting) {
+        console.warn('Screenshot service is already running')
+        return
+      }
+      isScreenshotting = true
+      // Get the active window to determine the game memory context
+      activeWin = await activeWindow()
+
+      screenshots?.startCapture()
+    })
+
+    globalShortcut.register('esc', () => {
+      if (screenshots?.$win?.isFocused()) {
+        screenshots.endCapture()
+      }
+    })
+    // Click cancel button callback event
+    screenshots.on('cancel', () => {
+      isScreenshotting = false
+    })
+    // Click confirm button callback event
+    screenshots.on('ok', (_e, buffer) => {
+      captureGameMemory(activeWin, buffer)
+      isScreenshotting = false
+    })
+    // Click save button callback event
+    screenshots.on('save', (_e, buffer) => {
+      captureGameMemory(activeWin, buffer)
+      isScreenshotting = false
+    })
+    log.info('[System] Screenshot service initialized with hotkey:', hotkey)
+  } catch (error) {
+    log.error('[System] Error setting up screenshot service:', error)
+    return
+  }
+}
+
+export function updateScreenshotHotkey(newHotkey: string): void {
+  try {
+    if (hotkey === newHotkey) {
       return
     }
-    isScreenshotting = true
-    // Get the active window to determine the game memory context
-    activeWin = await activeWindow()
+    // Unregister the old hotkey
+    globalShortcut.unregister(hotkey)
+    // Register the new hotkey
+    hotkey = newHotkey
+    globalShortcut.register(hotkey, async () => {
+      if (isScreenshotting) {
+        console.warn('Screenshot service is already running')
+        return
+      }
+      isScreenshotting = true
+      // Get the active window to determine the game memory context
+      activeWin = await activeWindow()
 
-    screenshots.startCapture()
-  })
-
-  globalShortcut.register('esc', () => {
-    if (screenshots.$win?.isFocused()) {
-      screenshots.endCapture()
-    }
-  })
-  // Click cancel button callback event
-  screenshots.on('cancel', () => {
-    isScreenshotting = false
-  })
-  // Click confirm button callback event
-  screenshots.on('ok', (_e, buffer) => {
-    captureGameMemory(activeWin, buffer)
-    isScreenshotting = false
-  })
-  // Click save button callback event
-  screenshots.on('save', (_e, buffer) => {
-    captureGameMemory(activeWin, buffer)
-    isScreenshotting = false
-  })
+      screenshots?.startCapture()
+    })
+  } catch (error) {
+    log.error('[System] Error updating screenshot hotkey:', error)
+    return
+  }
 }
 
 async function captureGameMemory(

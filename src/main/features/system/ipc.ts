@@ -28,7 +28,8 @@ import {
   saveGameIconByFile,
   switchDatabaseMode,
   updateLanguage,
-  updateOpenAtLogin
+  updateOpenAtLogin,
+  updateScreenshotHotkey
 } from './services'
 
 export function setupSystemIPC(): void {
@@ -195,6 +196,10 @@ export function setupSystemIPC(): void {
 
   ipcManager.handle('utils:save-clipboard-image', async () => {
     return await saveClipboardImage()
+  })
+
+  ipcManager.handle('system:update-screenshot-hotkey', (_, hotkey: string) => {
+    return updateScreenshotHotkey(hotkey)
   })
 
   mainWindow.on('maximize', () => {

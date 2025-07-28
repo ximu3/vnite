@@ -3,6 +3,7 @@ import { cn } from '~/utils'
 
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { ConfigItem } from '~/components/form/ConfigItem'
+import { ipcManager } from '~/app/ipc'
 
 export function Hotkeys(): React.JSX.Element {
   const { t } = useTranslation('config')
@@ -75,6 +76,9 @@ export function Hotkeys(): React.JSX.Element {
                 hookType="configLocal"
                 path="hotkeys.capture"
                 title={t('hotkeys.quickActions.capture')}
+                onChange={(hotkey) => {
+                  ipcManager.invoke('system:update-screenshot-hotkey', hotkey)
+                }}
                 controlType="hotkey"
               />
             </div>

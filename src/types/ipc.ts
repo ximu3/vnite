@@ -77,6 +77,7 @@ type MainIpcEvents =
       'system:check-admin-permissions': () => boolean
       'system:check-if-portable-directory-needs-admin-rights': () => boolean
       'system:get-fonts': () => string[]
+      'system:update-screenshot-hotkey': (hotkey: string) => void
 
       'app:update-language': (language: string) => void
       'app:get-app-version': () => string
