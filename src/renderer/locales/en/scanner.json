@@ -115,6 +115,8 @@
     "pathPlaceholder": "Select game scan directory",
     "dataSourcePlaceholder": "Select data source",
     "depthPlaceholder": "Select scan depth",
-    "depthTooltip": "Set the depth level for folder scanning"
+    "depthTooltip": "Set the depth level for folder scanning",
+    "targetCollection": "Target Collection",
+    "targetCollectionNone": "None"
   }
 }

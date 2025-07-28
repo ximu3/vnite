@@ -38,6 +38,18 @@ export class GameDBManager {
     }
   }
 
+  static async checkCollectionExists(collectionId: string): Promise<boolean> {
+    try {
+      const collections = (await baseDBManager.getAllDocs(
+        `${this.DB_NAME}-collection`
+      )) as gameCollectionDocs
+      return Object.prototype.hasOwnProperty.call(collections, collectionId)
+    } catch (error) {
+      log.error('[GameDB] Error checking collection existence:', error)
+      throw error
+    }
+  }
+
   static async getAllGamesLocal(): Promise<gameLocalDocs> {
     try {
       return (await baseDBManager.getAllDocs(`${this.DB_NAME}-local`)) as gameLocalDocs

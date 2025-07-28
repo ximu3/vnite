@@ -115,6 +115,8 @@
     "pathPlaceholder": "ゲームスキャンディレクトリを選択",
     "dataSourcePlaceholder": "データソースを選択",
     "depthPlaceholder": "スキャン深度を選択",
-    "depthTooltip": "フォルダスキャンの深度レベルを設定"
+    "depthTooltip": "フォルダスキャンの深度レベルを設定",
+    "targetCollection": "ターゲットコレクション",
+    "targetCollectionNone": "なし"
   }
 }

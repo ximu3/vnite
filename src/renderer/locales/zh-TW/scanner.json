@@ -115,6 +115,8 @@
     "pathPlaceholder": "選擇遊戲掃描目錄",
     "dataSourcePlaceholder": "選擇數據源",
     "depthPlaceholder": "選擇掃描深度",
-    "depthTooltip": "設置資料夾掃描的深度層級"
+    "depthTooltip": "設置資料夾掃描的深度層級",
+    "targetCollection": "目標收藏",
+    "targetCollectionNone": "無"
   }
 }

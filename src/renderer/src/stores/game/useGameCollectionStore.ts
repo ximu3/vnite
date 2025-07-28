@@ -22,6 +22,8 @@ export interface GameCollectionState {
     path: Path,
     value: Get<gameCollectionDoc, Path>
   ) => Promise<void>
+  checkCollectionExists: (collectionId: string) => boolean
+  getAllCollections: () => { id: string; name: string }[]
   initializeStore: (data: GameCollectionState['documents']) => void
   setDocument: (docId: string, data: gameCollectionDoc) => void
 
@@ -143,6 +145,21 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
     }))
 
     await syncTo('game-collection', collectionId, get().documents[collectionId])
+  },
+
+  checkCollectionExists: (collectionId: string): boolean => {
+    const state = get()
+    return !!state.documents[collectionId]
+  },
+
+  getAllCollections: (): { id: string; name: string }[] => {
+    const state = get()
+    // Sort collections by sort value
+    const sortedCollections = Object.values(state.documents).sort((a, b) => a.sort - b.sort)
+    return sortedCollections.map((col) => ({
+      id: col._id,
+      name: col.name || 'Unnamed Collection'
+    }))
   },
 
   initializeStore: (data): void => {

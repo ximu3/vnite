@@ -206,6 +206,7 @@ export interface configLocalDocs {
           path: string
           dataSource: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite' | string
           depth: number
+          targetCollection: string
         }
       }
     }
@@ -368,6 +369,7 @@ export const DEFAULT_CONFIG_LOCAL_VALUES: Readonly<configLocalDocs> = {
           path: string
           dataSource: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite'
           depth: number
+          targetCollection: string
         }
       }
     }

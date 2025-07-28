@@ -23,6 +23,7 @@ import { useGameScannerStore } from './store'
 import { ScraperCapabilities } from '@appTypes/utils'
 import { ipcManager } from '~/app/ipc'
 import { toast } from 'sonner'
+import { useGameCollectionStore } from '~/stores'
 
 interface EditScannerDialogProps {
   isOpen: boolean
@@ -41,6 +42,18 @@ export const EditScannerDialog: React.FC<EditScannerDialogProps> = ({
   const [scannerConfig, setScannerConfig] = useConfigLocalState('game.scanner')
   const { formState, initFormState, updateFormState, selectPath, createNewScanner } =
     useGameScannerStore()
+
+  const checkCollectionExists = useGameCollectionStore((state) => state.checkCollectionExists)
+  const getAllCollections = useGameCollectionStore((state) => state.getAllCollections)
+  const collections = getAllCollections()
+
+  useEffect(() => {
+    // Check if the target collection exists
+    if (formState.targetCollection && !checkCollectionExists(formState.targetCollection)) {
+      // Reset to 'none' if it doesn't exist
+      updateFormState({ targetCollection: 'none' })
+    }
+  }, [formState.targetCollection, checkCollectionExists, updateFormState])
 
   const [availableDataSources, setAvailableDataSources] = useState<
     { id: string; name: string; capabilities: ScraperCapabilities[] }[]
@@ -176,6 +189,26 @@ export const EditScannerDialog: React.FC<EditScannerDialogProps> = ({
               <div className={cn('text-xs')}>{t('editScanner.depthTooltip')}</div>
             </TooltipContent>
           </Tooltip>
+          {/* Target Collection */}
+          <div className={cn('whitespace-nowrap select-none justify-self-start')}>
+            {t('editScanner.targetCollection')}
+          </div>
+          <Select
+            value={formState.targetCollection}
+            onValueChange={(value) => updateFormState({ targetCollection: value })}
+          >
+            <SelectTrigger className={cn('text-sm w-full')}>
+              <SelectValue placeholder={t('editScanner.targetCollectionPlaceholder')} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">{t('editScanner.targetCollectionNone')}</SelectItem>
+              {collections.map((collection) => (
+                <SelectItem key={collection.id} value={collection.id}>
+                  {collection.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <DialogFooter>

@@ -17,6 +17,7 @@ interface ScannerForm {
   path: string
   dataSource: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite' | string
   depth: number
+  targetCollection: string
 }
 
 interface GlobalScannerSettings {
@@ -87,7 +88,8 @@ export const useGameScannerStore = create<GameScannerStore>((set, get) => ({
   formState: {
     path: '',
     dataSource: 'steam',
-    depth: 1
+    depth: 1,
+    targetCollection: 'none'
   },
   globalSettings: {
     interval: 0,
@@ -211,7 +213,8 @@ export const useGameScannerStore = create<GameScannerStore>((set, get) => ({
         formState: {
           path: scanner.path || '',
           dataSource: scanner.dataSource || 'steam',
-          depth: scanner.depth || scanner.deepth || 1
+          depth: scanner.depth || scanner.deepth || 1,
+          targetCollection: scanner.targetCollection || 'none'
         }
       })
     } else {
@@ -219,7 +222,8 @@ export const useGameScannerStore = create<GameScannerStore>((set, get) => ({
         formState: {
           path: '',
           dataSource: 'steam',
-          depth: 1
+          depth: 1,
+          targetCollection: 'none'
         }
       })
     }

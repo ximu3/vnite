@@ -395,10 +395,34 @@ export class GameScanner extends EventEmitter {
         if (gameResults && gameResults.length > 0) {
           // Use the first result as a match
           const match = gameResults[0]
+
+          // Get the target collection from scanner config
+          const scannerList = await ConfigDBManager.getConfigLocalValue('game.scanner.list')
+          let targetCollection = scannerList[scannerId]?.targetCollection || undefined
+          if (targetCollection === 'none') {
+            targetCollection = undefined // Convert 'none' to undefined
+          }
+          if (targetCollection) {
+            // Validate target collection
+            const isTargetCollectionValid =
+              await GameDBManager.checkCollectionExists(targetCollection)
+            if (!isTargetCollectionValid) {
+              targetCollection = undefined
+              ConfigDBManager.setConfigLocalValue('game.scanner.list', {
+                ...scannerList,
+                [scannerId]: {
+                  ...scannerList[scannerId],
+                  targetCollection: ''
+                }
+              })
+            }
+          }
+
           await addGameToDB({
             dataSource,
             dataSourceId: match.id,
-            dirPath: folder.dirPath
+            dirPath: folder.dirPath,
+            targetCollection
           })
         } else {
           // If no match is found
@@ -483,11 +507,33 @@ export class GameScanner extends EventEmitter {
         throw new Error('Failed folder not found')
       }
 
+      // Get the scanner target collection
+      const scannerList = await ConfigDBManager.getConfigLocalValue('game.scanner.list')
+      let targetCollection = scannerList[foundScannerId]?.targetCollection || undefined
+      if (targetCollection === 'none') {
+        targetCollection = undefined // Convert 'none' to undefined
+      }
+      if (targetCollection) {
+        // Validate target collection
+        const isTargetCollectionValid = await GameDBManager.checkCollectionExists(targetCollection)
+        if (!isTargetCollectionValid) {
+          targetCollection = undefined
+          ConfigDBManager.setConfigLocalValue('game.scanner.list', {
+            ...scannerList,
+            [foundScannerId]: {
+              ...scannerList[foundScannerId],
+              targetCollection: ''
+            }
+          })
+        }
+      }
+
       // Add game with provided game ID
       await addGameToDB({
         dataSource,
         dataSourceId: gameId,
-        dirPath: folderPath
+        dirPath: folderPath,
+        targetCollection
       })
 
       // Remove from failed list

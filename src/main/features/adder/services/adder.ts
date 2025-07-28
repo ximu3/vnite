@@ -14,13 +14,15 @@ export async function addGameToDB({
   dataSourceId,
   backgroundUrl,
   playTime,
-  dirPath
+  dirPath,
+  targetCollection
 }: {
   dataSource: string
   dataSourceId: string
   backgroundUrl?: string
   playTime?: number
   dirPath?: string
+  targetCollection?: string
 }): Promise<void> {
   try {
     const dbId = generateUUID()
@@ -226,7 +228,10 @@ export async function addGameToDB({
     // Prepare all database write operations
     const dbPromises: Promise<unknown>[] = [
       GameDBManager.setGame(dbId, gameDoc),
-      GameDBManager.setGameLocal(dbId, gameLocalDoc)
+      GameDBManager.setGameLocal(dbId, gameLocalDoc),
+      targetCollection
+        ? GameDBManager.addGameToCollection(dbId, targetCollection)
+        : Promise.resolve()
     ]
 
     // Prepare all image saving operations
