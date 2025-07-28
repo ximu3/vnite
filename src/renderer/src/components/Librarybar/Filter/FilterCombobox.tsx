@@ -28,9 +28,12 @@ export function FilterCombobox({
   filed: string
   placeholder: string
 }): React.JSX.Element {
+  const { t } = useTranslation('game')
   const [open, setOpen] = React.useState(false)
   const { filter, deleteFilter, addFilter } = useFilterStore()
   const selectedValues = filter[filed] || []
+
+  const playStatusDefaultOrder = ['unplayed', 'playing', 'finished', 'multiple', 'shelved'] as const
 
   const options: Option[] = React.useMemo(() => {
     let allValues: string[] = []
@@ -46,7 +49,10 @@ export function FilterCombobox({
 
     const allOptions = allValues.map((value) => ({
       value,
-      label: value
+      label:
+        filed === 'record.playStatus'
+          ? t(`utils:game.playStatus.${value}`) // Translate play status
+          : value
     }))
 
     // Sort: selected items appear first
@@ -56,6 +62,12 @@ export function FilterCombobox({
 
       if (aSelected && !bSelected) return -1
       if (!aSelected && bSelected) return 1
+      if (filed === 'record.playStatus') {
+        // Sort play status by predefined order
+        const orderIndexA = playStatusDefaultOrder.indexOf(a.value as any)
+        const orderIndexB = playStatusDefaultOrder.indexOf(b.value as any)
+        return orderIndexA - orderIndexB
+      }
       return a.label.localeCompare(b.label, 'zh-CN')
     })
   }, [filed, selectedValues])
@@ -70,7 +82,6 @@ export function FilterCombobox({
     }
   }
 
-  const { t } = useTranslation('game')
   return (
     <div className={cn('flex flex-row gap-2')}>
       <Popover open={open} onOpenChange={setOpen}>

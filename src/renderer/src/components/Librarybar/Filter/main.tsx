@@ -141,10 +141,22 @@ export function Filter({ children }: { children: React.ReactNode }): React.JSX.E
             </div>
           </div>
           <Separator className={cn('mt-1')} />
-          {/* Filter Comboboxes for Metadata */}
           <div className={cn('h-full overflow-auto scrollbar-base-thin pr-3 -mr-3')}>
-            {/* Developers */}
+            {/* Filter Comboboxes for Metadata */}
             <div className={cn('flex flex-col gap-3 ')}>
+              {/* Play Status */}
+              <div className={cn('flex flex-col gap-1 items-start justify-start')}>
+                <div className={cn('flex flex-row justify-between items-center w-full')}>
+                  <div className={cn('whitespace-nowrap text-sm text-foreground ml-[6px]')}>
+                    {t('filter.panel.playStatus')}
+                  </div>
+                </div>
+                <FilterCombobox
+                  filed="record.playStatus"
+                  placeholder={t('filter.panel.playStatus')}
+                />
+              </div>
+              {/* Developers */}
               <div className={cn('flex flex-col gap-1 items-start justify-start')}>
                 <div className={cn('flex flex-row justify-between items-center w-full')}>
                   <div className={cn('whitespace-nowrap text-sm text-foreground ml-[6px]')}>
