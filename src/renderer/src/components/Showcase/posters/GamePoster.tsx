@@ -140,13 +140,8 @@ export function GamePoster({
   const handleGameClick = (e: React.MouseEvent): void => {
     if (e.ctrlKey || e.metaKey) {
       handleSelect(e)
-    } else if (!isSelected) {
-      navigateToGame(router, gameId, groupId || 'all')
     } else {
-      // If already selected and not holding Ctrl, still select the game (deselect others)
-      e.stopPropagation()
-      selectGame(gameId)
-      setLastSelectedId(gameId)
+      navigateToGame(router, gameId, groupId || 'all')
     }
   }
 
