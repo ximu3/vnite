@@ -55,7 +55,7 @@ export function FileLauncher({ gameId }: { gameId: string }): React.JSX.Element 
   }
 
   return (
-    <div className={cn('grid grid-cols-[120px_1fr] gap-x-5 gap-y-5 items-center')}>
+    <>
       {/* File Path */}
       <div className={cn('whitespace-nowrap select-none')}>
         {t('detail.properties.launcher.file.path')}
@@ -82,7 +82,7 @@ export function FileLauncher({ gameId }: { gameId: string }): React.JSX.Element 
       </div>
       <div>
         <Select value={monitorMode} onValueChange={setMonitorMode}>
-          <SelectTrigger className={cn('w-[120px]')}>
+          <SelectTrigger className={cn('min-w-[120px]')}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -127,6 +127,6 @@ export function FileLauncher({ gameId }: { gameId: string }): React.JSX.Element 
           </Button>
         )}
       </div>
-    </div>
+    </>
   )
 }

@@ -60,7 +60,7 @@ export function UrlLauncher({ gameId }: { gameId: string }): React.JSX.Element {
   }
 
   return (
-    <div className={cn('grid grid-cols-[120px_1fr] gap-x-5 gap-y-5 items-center')}>
+    <>
       {/* URL Address */}
       <div className={cn('whitespace-nowrap select-none')}>
         {t('detail.properties.launcher.url.address')}
@@ -146,6 +146,6 @@ export function UrlLauncher({ gameId }: { gameId: string }): React.JSX.Element {
           </Button>
         )}
       </div>
-    </div>
+    </>
   )
 }

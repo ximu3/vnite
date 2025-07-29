@@ -95,7 +95,7 @@ export function PresetSelecter({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-[180px] justify-between"
+            className="min-w-[180px] justify-between"
           >
             {value
               ? presets.find((preset) => preset.value === value)?.label
@@ -103,7 +103,7 @@ export function PresetSelecter({
             <ChevronsUpDown className="w-4 h-4 ml-2 opacity-50 shrink-0" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[180px] p-0">
+        <PopoverContent className="max-w-[200px] p-0">
           <Command>
             <CommandInput placeholder={t('detail.properties.launcher.preset.search')} />
             <CommandList>

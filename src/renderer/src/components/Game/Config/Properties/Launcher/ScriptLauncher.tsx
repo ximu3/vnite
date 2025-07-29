@@ -63,7 +63,7 @@ export function ScriptLauncher({ gameId }: { gameId: string }): React.JSX.Elemen
   }
 
   return (
-    <div className={cn('grid grid-cols-[120px_1fr] gap-x-5 gap-y-5 items-center')}>
+    <>
       {/* Script Content */}
       <div className={cn('whitespace-nowrap select-none self-start pt-2')}>
         {t('detail.properties.launcher.script.content')}
@@ -148,6 +148,6 @@ export function ScriptLauncher({ gameId }: { gameId: string }): React.JSX.Elemen
           </Button>
         )}
       </div>
-    </div>
+    </>
   )
 }

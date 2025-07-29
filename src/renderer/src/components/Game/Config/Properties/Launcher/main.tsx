@@ -59,7 +59,7 @@ export function Launcher({ gameId }: { gameId: string }): React.JSX.Element {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className={cn('grid grid-cols-[120px_1fr] gap-x-5 gap-y-5 items-center')}>
+            <div className={cn('grid grid-cols-[auto_1fr] gap-x-5 gap-y-5 items-center')}>
               {/* Launch Mode Selection */}
               <div className={cn('whitespace-nowrap select-none')}>
                 {t('detail.properties.launcher.mode.title')}
@@ -86,19 +86,9 @@ export function Launcher({ gameId }: { gameId: string }): React.JSX.Element {
                 </Select>
               </div>
 
-              <div className={cn('col-span-2')}>
-                <div className={cn('w-full')}>
-                  <div className={cn(mode === 'file' ? 'block' : 'hidden')}>
-                    <FileLauncher gameId={gameId} />
-                  </div>
-                  <div className={cn(mode === 'url' ? 'block' : 'hidden')}>
-                    <UrlLauncher gameId={gameId} />
-                  </div>
-                  <div className={cn(mode === 'script' ? 'block' : 'hidden')}>
-                    <ScriptLauncher gameId={gameId} />
-                  </div>
-                </div>
-              </div>
+              {mode === 'file' && <FileLauncher gameId={gameId} />}
+              {mode === 'url' && <UrlLauncher gameId={gameId} />}
+              {mode === 'script' && <ScriptLauncher gameId={gameId} />}
 
               <div className={cn('col-span-2')}>
                 <Separator />
