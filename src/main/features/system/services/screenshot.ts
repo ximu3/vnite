@@ -24,26 +24,32 @@ export async function setupScreenshotService(): Promise<void> {
       activeWin = await activeWindow()
 
       screenshots?.startCapture()
+
+      globalShortcut.register('esc', () => {
+        if (screenshots?.$win?.isFocused()) {
+          screenshots.endCapture()
+          isScreenshotting = false
+          globalShortcut.unregister('esc')
+        }
+      })
     })
 
-    globalShortcut.register('esc', () => {
-      if (screenshots?.$win?.isFocused()) {
-        screenshots.endCapture()
-      }
-    })
     // Click cancel button callback event
     screenshots.on('cancel', () => {
       isScreenshotting = false
+      globalShortcut.unregister('esc')
     })
     // Click confirm button callback event
     screenshots.on('ok', (_e, buffer) => {
       captureGameMemory(activeWin, buffer)
       isScreenshotting = false
+      globalShortcut.unregister('esc')
     })
     // Click save button callback event
     screenshots.on('save', (_e, buffer) => {
       captureGameMemory(activeWin, buffer)
       isScreenshotting = false
+      globalShortcut.unregister('esc')
     })
     log.info('[System] Screenshot service initialized with hotkey:', hotkey)
   } catch (error) {
@@ -71,6 +77,13 @@ export function updateScreenshotHotkey(newHotkey: string): void {
       activeWin = await activeWindow()
 
       screenshots?.startCapture()
+
+      globalShortcut.register('esc', () => {
+        if (screenshots?.$win?.isFocused()) {
+          screenshots.endCapture()
+          globalShortcut.unregister('esc')
+        }
+      })
     })
   } catch (error) {
     log.error('[System] Error updating screenshot hotkey:', error)
