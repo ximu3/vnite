@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import html2canvas from 'html2canvas'
+import html2canvas from 'html2canvas-pro'
 import { cn } from '~/utils'
 
 export function Icon(): React.JSX.Element {
@@ -29,10 +29,10 @@ export function Icon(): React.JSX.Element {
       <div
         ref={logoRef}
         className={cn(
-          'flex items-center justify-center bg-gradient-to-tr from-primary to-accent rounded-[64px] w-[512px] h-[512px]'
+          'flex items-center justify-center bg-primary rounded-[76px] w-[512px] h-[512px]'
         )}
       >
-        <div className={cn('text-[470px] font-mono')}>V</div>
+        <div className={cn('text-[470px] text-shadow-lg font-mono')}>V</div>
       </div>
       <button
         onClick={handleExportAsImage}
