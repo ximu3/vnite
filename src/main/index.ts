@@ -99,9 +99,8 @@ function createWindow(): void {
     minHeight: 420,
     show: false,
     frame: false,
-    icon: icon,
     autoHideMenuBar: true,
-    ...(process.platform === 'linux' ? { icon } : {}),
+    ...(process.platform === 'linux' || is.dev ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false,

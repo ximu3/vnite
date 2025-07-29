@@ -3,7 +3,7 @@ import { GameDBManager, ConfigDBManager } from '~/core/database'
 import { eventBus } from '~/core/events'
 import { shell } from 'electron'
 import { convertToPng } from '~/utils'
-import icon from '../../../../../resources/icon.png?asset'
+import icon from '../../../../../resources/icon.ico?asset'
 import i18next from 'i18next'
 
 export interface AppConfig {
