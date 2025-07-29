@@ -48,7 +48,7 @@
     "font-list": "^1.5.1",
     "get-windows": "^9.2.0",
     "html-react-parser": "^5.2.5",
-    "html2canvas": "^1.4.1",
+    "html2canvas-pro": "^1.5.11",
     "i18next": "^25.3.1",
     "i18next-fs-backend": "^2.6.0",
     "i18next-resources-to-backend": "^1.2.1",
