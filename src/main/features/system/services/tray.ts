@@ -78,7 +78,7 @@ export class TrayManager {
     if (this.tray) return
 
     this.tray = new Tray(icon)
-    this.tray.setToolTip('vnite')
+    this.tray.setToolTip('Vnite')
     this.setTrayMenu()
     this.bindTrayEvents()
   }

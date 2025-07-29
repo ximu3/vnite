@@ -1,5 +1,5 @@
 appId: vnite
-productName: vnite
+productName: Vnite
 
 directories:
   buildResources: build
@@ -24,7 +24,7 @@ protocols:
       - vnite
 
 win:
-  executableName: vnite
+  executableName: Vnite
 
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
