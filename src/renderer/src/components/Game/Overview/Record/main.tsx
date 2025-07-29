@@ -30,7 +30,7 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
     refreshGameList()
   }
   return (
-    <div className={cn('flex flex-row items-center gap-12 ml-1')}>
+    <div className={cn('flex flex-row flex-wrap items-center gap-12 ml-1')}>
       {/* Play Time */}
       <RecordCard
         className={cn('')}

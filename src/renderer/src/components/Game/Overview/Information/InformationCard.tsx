@@ -62,7 +62,7 @@ export function InformationCard({
       <div className={cn('grid grid-cols-[auto_1fr] gap-x-3 gap-y-2 text-sm')}>
         {/* original name */}
         <div
-          className={cn('whitespace-nowrap select-none cursor-pointer')}
+          className={cn('select-none cursor-pointer max-w-[100px]')}
           onClick={() => copyWithToast(originalName)}
         >
           {t('detail.overview.information.fields.originalName')}
@@ -71,7 +71,7 @@ export function InformationCard({
 
         {/* name */}
         <div
-          className={cn('whitespace-nowrap select-none cursor-pointer')}
+          className={cn('select-none cursor-pointer max-w-[100px]')}
           onClick={() => copyWithToast(name)}
         >
           {t('detail.overview.information.fields.localizedName')}
@@ -82,7 +82,7 @@ export function InformationCard({
 
         {/* developers */}
         <div
-          className={cn('whitespace-nowrap select-none cursor-pointer')}
+          className={cn('select-none cursor-pointer max-w-[100px]')}
           onClick={() => copyWithToast(developers.join(', '))}
         >
           {t('detail.overview.information.fields.developers')}
@@ -104,7 +104,7 @@ export function InformationCard({
 
         {/* publishers */}
         <div
-          className={cn('whitespace-nowrap select-none cursor-pointer')}
+          className={cn('select-none cursor-pointer max-w-[100px]')}
           onClick={() => copyWithToast(publishers.join(', '))}
         >
           {t('detail.overview.information.fields.publishers')}
@@ -126,7 +126,7 @@ export function InformationCard({
 
         {/* releaseDate */}
         <div
-          className={cn('whitespace-nowrap select-none cursor-pointer')}
+          className={cn('select-none cursor-pointer max-w-[100px]')}
           onClick={() => copyWithToast(releaseDate)}
         >
           {t('detail.overview.information.fields.releaseDate')}
@@ -145,7 +145,7 @@ export function InformationCard({
 
         {/* platforms */}
         <div
-          className={cn('whitespace-nowrap select-none cursor-pointer')}
+          className={cn('select-none cursor-pointer max-w-[100px]')}
           onClick={() => copyWithToast(platforms.join(', '))}
         >
           {t('detail.overview.information.fields.platforms')}
@@ -164,7 +164,7 @@ export function InformationCard({
 
         {/* genres */}
         <div
-          className={cn('whitespace-nowrap select-none cursor-pointer')}
+          className={cn('select-none cursor-pointer max-w-[100px]')}
           onClick={() => copyWithToast(genres.join(', '))}
         >
           {t('detail.overview.information.fields.genres')}

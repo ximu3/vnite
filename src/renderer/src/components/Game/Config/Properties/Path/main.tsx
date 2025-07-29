@@ -130,7 +130,7 @@ export function Path({ gameId }: { gameId: string }): React.JSX.Element {
       <CardContent>
         <div className={cn('flex flex-col gap-5')}>
           {/* Path Setting */}
-          <div className={cn('grid grid-cols-[120px_1fr] gap-x-3 gap-y-5 items-center')}>
+          <div className={cn('grid grid-cols-[auto_1fr] gap-x-5 gap-y-5 items-center')}>
             {/* Game Path */}
             <div className={cn('whitespace-nowrap select-none self-center')}>
               {t('detail.properties.path.gamePath')}
