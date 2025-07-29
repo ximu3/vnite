@@ -46,7 +46,7 @@ export async function searchSteamGames(gameName: string): Promise<GameList> {
 
     const url = `${STEAM_URLS.STORE}/api/storesearch/?term=${encodeURIComponent(
       gameName
-    )}&l=${langConfig.apiLanguageCode}&cc=${langConfig.countryCode}`
+    )}&l=${langConfig.apiLanguageCode || 'english'}&cc=${langConfig.countryCode || 'US'}`
 
     const response = (await fetchSteamAPI(url)) as SteamStoreSearchResponse
 
@@ -94,7 +94,7 @@ async function fetchStoreTags(appId: string): Promise<string[]> {
 
     const response = await fetchWithTimeout(url, {
       headers: {
-        'Accept-Language': langConfig.acceptLanguageHeader
+        'Accept-Language': langConfig.acceptLanguageHeader || 'en-US,en;q=0.9'
       }
     })
 
@@ -128,7 +128,7 @@ export async function getSteamMetadata(appId: string): Promise<GameMetadata> {
     }) as SteamLanguageConfig
 
     // Get data in the current language
-    const urlLocal = `${STEAM_URLS.STORE}/api/appdetails?appids=${appId}&l=${langConfig.apiLanguageCode}`
+    const urlLocal = `${STEAM_URLS.STORE}/api/appdetails?appids=${appId}&l=${langConfig.apiLanguageCode || 'english'}`
 
     // Determine if we need to get the original English name (if current language is not English)
     const needsOriginalName = langConfig.apiLanguageCode !== 'english'
