@@ -44,6 +44,7 @@ export async function initI18n(): Promise<void> {
         fallbackLng: 'en',
         ns: namespaces,
         defaultNS: 'tray',
+        returnEmptyString: false,
         partialBundledLanguages: true,
         supportedLngs
       })

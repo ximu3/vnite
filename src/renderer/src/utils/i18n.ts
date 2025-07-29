@@ -37,6 +37,7 @@ export async function i18nInit(): Promise<void> {
       fallbackLng: 'en',
       defaultNS: 'sidebar',
       fallbackNS: 'sidebar',
+      returnEmptyString: false,
       ns: namespaces,
       interpolation: {
         escapeValue: false
