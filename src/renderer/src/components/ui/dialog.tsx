@@ -72,6 +72,8 @@ function DialogContent({
         )}
         {...props}
       >
+        {/* Split backdrop and content to ensure font clarity */}
+        {/* But it will introduce a slight delay, wait for fix */}
         {/* Add backdrop blur effect */}
         <div className="transform translate-z-0 absolute inset-0 dark:bg-background/[calc(var(--glass-opacity)*2)] dark:backdrop-filter dark:backdrop-blur-[var(--glass-blur)] bg-background rounded-lg -z-10"></div>
 
