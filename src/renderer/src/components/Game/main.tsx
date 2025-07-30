@@ -30,7 +30,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   const setIsEditingLogo = useGameDetailStore((state) => state.setIsEditingLogo)
 
   // Game Logo position and size management
-  const initialPosition = { x: 1.5, y: 24 }
+  const initialPosition = { x: 1.5, y: 35 }
   const initialSize = 100
   const [logoPosition, setLogoPosition, saveLogoPosition] = useGameState(
     gameId,
