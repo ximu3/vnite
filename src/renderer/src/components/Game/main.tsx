@@ -17,10 +17,14 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
   const headerRef = useRef<HTMLDivElement>(null)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
-  const [scrollY, setScrollY] = useState(0)
   const [dragging, setDragging] = useState(false)
   const offset = useRef({ x: 0, y: 0 })
   const logoRef = useRef<HTMLDivElement>(null)
+
+  // Add a ticking variable for requestAnimationFrame
+  const ticking = useRef(false)
+  // Store the current scroll position to avoid re-querying the DOM in the rAF callback
+  const currentScrollTop = useRef(0)
 
   const isEditingLogo = useGameDetailStore((state) => state.isEditingLogo)
   const setIsEditingLogo = useGameDetailStore((state) => state.setIsEditingLogo)
@@ -50,16 +54,19 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
       })
     }
   }
+
   const handleMouseUp = async (): Promise<void> => {
     if (dragging) {
       setLogoPosition(localLogoPosition)
     }
     setDragging(false)
   }
+
   const handleReset = async (): Promise<void> => {
     setLocalLogoPosition(initialPosition)
     setLogoPosition(initialPosition)
   }
+
   const handleWheel = (e: React.WheelEvent<HTMLDivElement>): void => {
     e.preventDefault()
     if (!logoRef.current) return
@@ -68,6 +75,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
     const newSize = Math.min(Math.max(logoSize + delta * 5, 30), 200) // Limit size between 30% and 200%
     setLogoSize(newSize)
   }
+
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>): void => {
     e.preventDefault()
     if (!logoRef.current) return
@@ -80,7 +88,15 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
     }
   }
 
-  // Scroll handling
+  // Use requestAnimationFrame for smoother updates
+  const updateLogoPosition = (): void => {
+    if (logoRef.current && logoVisible) {
+      logoRef.current.style.transform = `translateY(-${currentScrollTop.current * 1.5}px) scale(${logoSize / 100})`
+    }
+    ticking.current = false
+  }
+
+  // Scroll handling with imperative updates and requestAnimationFrame
   useEffect(() => {
     if (!scrollAreaRef.current) return
 
@@ -92,13 +108,19 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
     }
 
     const handleScroll = (): void => {
-      const scrollTop = (viewportElement as HTMLElement).scrollTop
-      setScrollY(scrollTop)
+      // Store the current scroll position
+      currentScrollTop.current = (viewportElement as HTMLElement).scrollTop
+
+      // Use requestAnimationFrame for smoother updates
+      if (!ticking.current) {
+        window.requestAnimationFrame(updateLogoPosition)
+        ticking.current = true
+      }
 
       // Dispatch a custom event to notify Light components of the scroll position
       window.dispatchEvent(
         new CustomEvent('game-scroll', {
-          detail: { scrollY: scrollTop }
+          detail: { scrollY: currentScrollTop.current }
         })
       )
     }
@@ -110,7 +132,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
     return (): void => {
       viewportElement.removeEventListener('scroll', handleScroll)
     }
-  }, [])
+  }, [logoSize, logoVisible])
 
   // Mouse event listeners
   useEffect(() => {
@@ -189,7 +211,6 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
           onMouseDown={handleMouseDown}
           onWheel={handleWheel}
           style={{
-            transform: `translateY(-${scrollY * 1}px) scale(${logoSize / 100})`,
             left: `${localLogoPosition.x}vw`,
             top: `${localLogoPosition.y}vh`,
             cursor: dragging ? 'grabbing' : 'grab',

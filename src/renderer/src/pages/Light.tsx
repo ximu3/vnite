@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useLocation } from '@tanstack/react-router'
 import { useConfigState, useGameState } from '~/hooks'
 import { useAttachmentStore } from '~/stores'
@@ -21,7 +21,6 @@ export function Light(): React.JSX.Element {
   const { pathname } = useLocation()
   const [gameId, setGameId] = useState<string>('')
   const [imageUrl, setImageUrl] = useState<string>('')
-  const [scrollY, setScrollY] = useState(0)
   const { getAttachmentInfo, setAttachmentError } = useAttachmentStore()
   const getGameCollectionValue = useGameCollectionStore((state) => state.getGameCollectionValue)
   const collections = useGameCollectionStore((state) => state.documents)
@@ -35,6 +34,7 @@ export function Light(): React.JSX.Element {
   const [enableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
   const detailBackgroundRef = useRef<HTMLDivElement>(null)
+  const parallaxContainerRef = useRef<HTMLDivElement>(null)
   const { isDark } = useTheme()
   const refreshId = useLightStore((state) => state.refreshId)
 
@@ -79,27 +79,51 @@ export function Light(): React.JSX.Element {
     if (newGameId) setGameId(newGameId)
   }
 
+  // Use requestAnimationFrame for smoother updates
+  let ticking = false
+
   // Handle scroll events
   useEffect(() => {
     const handleScroll = (e: Event): void => {
       // Get the scroll element
       const scrollElement = e.target as HTMLElement
 
-      // Calculate scroll position, limiting the minimum to 0 (to prevent scrolling up beyond the top)
+      // Calculate the scroll position, limiting the minimum value to 0 (to prevent scrolling up beyond the top)
       const currentScrollY = Math.max(0, scrollElement.scrollTop)
-      setScrollY(currentScrollY)
+
+      // Use requestAnimationFrame to optimize performance
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          // Directly update the parallax background position
+          if (parallaxContainerRef.current) {
+            parallaxContainerRef.current.style.transform = `translateY(-${currentScrollY * 1.2}px)`
+          }
+          ticking = false
+        })
+        ticking = true
+      }
     }
 
-    // Listen for custom events
+    // Handle custom scroll events dispatched by game components
     const handleGameScroll = (e: CustomEvent): void => {
       const currentScrollY = e.detail?.scrollY || 0
-      setScrollY(currentScrollY)
+
+      // Use requestAnimationFrame to optimize performance
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (parallaxContainerRef.current) {
+            parallaxContainerRef.current.style.transform = `translateY(-${currentScrollY * 1.2}px)`
+          }
+          ticking = false
+        })
+        ticking = true
+      }
     }
 
-    // Listen for custom events
+    // Listen for custom scroll events
     window.addEventListener('game-scroll', handleGameScroll as EventListener)
 
-    // Listen for scroll events on the document
+    // Listen for gameDetail scroll events
     document.addEventListener('scroll', handleScroll)
 
     // Listen for scroll events on all elements marked as scrollable
@@ -184,10 +208,10 @@ export function Light(): React.JSX.Element {
         >
           {/* Internal container for parallax scrolling effect */}
           <div
+            ref={parallaxContainerRef}
             style={{
               width: '100%',
               height: '100%',
-              transform: `translateY(-${scrollY * 1}px)`,
               maskImage: 'linear-gradient(to bottom, black 30%, transparent 70%)'
             }}
           >
