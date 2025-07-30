@@ -96,6 +96,20 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
     ticking.current = false
   }
 
+  // Reset scroll position when gameId changes
+  useEffect(() => {
+    // Reset scroll position
+    currentScrollTop.current = 0
+
+    // Find and reset the scroll container's position
+    if (scrollAreaRef.current) {
+      const viewportElement = scrollAreaRef.current.querySelector('[class*="size-full"]')
+      if (viewportElement) {
+        ;(viewportElement as HTMLElement).scrollTop = 0
+      }
+    }
+  }, [gameId])
+
   // Scroll handling with imperative updates and requestAnimationFrame
   useEffect(() => {
     if (!scrollAreaRef.current) return
