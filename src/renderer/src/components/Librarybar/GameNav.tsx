@@ -122,8 +122,8 @@ export function GameNav({
                 'text-xs p-3 h-5 rounded-none transition-none w-full',
                 highlightLocalGames && 'text-foreground',
                 highlightLocalGames && gamePath && 'text-accent-foreground',
-                highlightLocalGames && !gamePath && !isDarkMode && 'text-foreground/90',
-                isSelected && 'bg-accent/60'
+                highlightLocalGames && !gamePath && !isDarkMode && 'text-foreground',
+                isSelected && 'bg-accent/[calc(var(--glass-opacity)*2)]'
               )}
               to="/library/games/$gameId/$groupId"
               params={{ gameId, groupId: encodeURIComponent(groupId) }}
