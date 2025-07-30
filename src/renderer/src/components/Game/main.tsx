@@ -91,7 +91,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   // Use requestAnimationFrame for smoother updates
   const updateLogoPosition = (): void => {
     if (logoRef.current && logoVisible) {
-      logoRef.current.style.transform = `translateY(-${currentScrollTop.current * 1.5}px) scale(${logoSize / 100})`
+      logoRef.current.style.transform = `translateY(-${currentScrollTop.current * 1.3}px) scale(${logoSize / 100})`
     }
     ticking.current = false
   }

@@ -96,7 +96,7 @@ export function Light(): React.JSX.Element {
         window.requestAnimationFrame(() => {
           // Directly update the parallax background position
           if (parallaxContainerRef.current) {
-            parallaxContainerRef.current.style.transform = `translateY(-${currentScrollY * 1.2}px)`
+            parallaxContainerRef.current.style.transform = `translateY(-${currentScrollY * 1.1}px)`
           }
           ticking = false
         })
