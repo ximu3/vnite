@@ -66,7 +66,10 @@ export function Filter({ children }: { children: React.ReactNode }): React.JSX.E
         </PopoverTrigger>
         <TooltipContent side="bottom">{t('filter.title')}</TooltipContent>
       </Tooltip>
-      <PopoverContent side="right" className="w-[328px] h-screen bg-popover/[0.93]">
+      <PopoverContent
+        side="right"
+        className="w-[328px] h-screen bg-popover/[calc(var(--glass-opacity)*2.5)]"
+      >
         <div className={cn('flex flex-col h-full gap-3')}>
           <div className={cn('flex flex-row justify-between items-center')}>
             <div className={cn('font-bold')}>{t('filter.panel.title')}</div>

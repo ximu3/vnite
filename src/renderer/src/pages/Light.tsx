@@ -187,7 +187,7 @@ export function Light(): React.JSX.Element {
             style={{
               width: '100%',
               height: '100%',
-              transform: `translateY(-${scrollY * 0.4}px)`,
+              transform: `translateY(-${scrollY * 1}px)`,
               maskImage: 'linear-gradient(to bottom, black 30%, transparent 70%)'
             }}
           >

@@ -73,7 +73,7 @@ function DialogContent({
         {...props}
       >
         {/* Add backdrop blur effect */}
-        <div className="absolute inset-0 bg-background/60 backdrop-filter backdrop-blur-[var(--glass-blur)] rounded-lg -z-10"></div>
+        <div className="transform translate-z-0 absolute inset-0 dark:bg-background/[calc(var(--glass-opacity)*2)] dark:backdrop-filter dark:backdrop-blur-[var(--glass-blur)] bg-background rounded-lg -z-10"></div>
 
         {/* Ensure content is clear */}
         <div className={cn('relative z-10 grid gap-4 w-auto', className)}>{children}</div>

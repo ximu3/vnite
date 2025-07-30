@@ -186,8 +186,8 @@ export function TransformerManager(): React.JSX.Element {
 
   return (
     <div className="flex flex-col w-full h-full bg-transparent">
-      <ScrollArea className="px-6 w-full h-full">
-        <div className="py-[34px] pb-6">
+      <ScrollArea className="w-full h-full">
+        <div className="px-6 py-[34px] pb-6">
           {/* Title */}
           <div className="flex items-center justify-between mb-4 ">
             <h2 className="text-2xl font-bold">{t('title')}</h2>
@@ -236,7 +236,7 @@ export function TransformerManager(): React.JSX.Element {
             {/* Transformer list and operation card */}
             <Card className="flex flex-col flex-grow rounded-lg p-0 gap-0">
               {/* Transformer list header bar */}
-              <div className="flex items-center justify-between p-4 border-b bg-muted/30">
+              <div className="flex items-center justify-between p-4 border-b rounded-t-lg bg-muted/[calc(var(--glass-opacity)/2)]">
                 <div className="text-sm font-medium">{t('list.title')}</div>
                 <div className="flex items-center gap-2">
                   <Button size="sm" onClick={handleAddTransformer} disabled={isLoading}>

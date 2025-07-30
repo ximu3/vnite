@@ -267,12 +267,12 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     },
     glass: {
       dark: {
-        blur: 100,
-        opacity: 0.5
+        blur: 90,
+        opacity: 0.3
       },
       light: {
         blur: 130,
-        opacity: 0.8
+        opacity: 0.9
       }
     },
     enableNSFWBlur: true,

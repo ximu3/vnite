@@ -101,8 +101,8 @@ export const GameScannerManager: React.FC = () => {
 
   return (
     <div className="flex flex-col w-full h-full bg-transparent">
-      <ScrollArea className="px-6 w-full h-full">
-        <div className="pt-[34px] pb-6">
+      <ScrollArea className="w-full h-full">
+        <div className="pt-[34px] px-6 pb-6">
           {/* Header title */}
           <div className="flex items-center justify-between mb-4 ">
             <h2 className="text-2xl font-bold">{t('title')}</h2>
@@ -220,7 +220,7 @@ export const GameScannerManager: React.FC = () => {
             {/* Scanners list and action card */}
             <Card className="flex flex-col flex-grow rounded-lg p-0 gap-0">
               {/* Scanners list title bar */}
-              <div className="flex items-center justify-between p-4 border-b bg-muted/30">
+              <div className="flex items-center justify-between p-4 border-b bg-muted/[calc(var(--glass-opacity)/2)] rounded-t-lg">
                 <div className="text-sm font-medium">{t('list.title')}</div>
                 <Button
                   size="sm"

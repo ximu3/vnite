@@ -68,7 +68,7 @@ export function LibraryTitlebarContent(): React.JSX.Element {
           <Nav
             variant="librarybar"
             to="/library/home"
-            className="p-0 h-[32px] w-[32px] bg-input/30 hover:bg-input/50"
+            className="p-0 h-[32px] w-[32px] hover:bg-input/50"
           >
             <span className="icon-[mdi--home-outline] w-4 h-4"></span>
           </Nav>
@@ -82,7 +82,7 @@ export function LibraryTitlebarContent(): React.JSX.Element {
           <Nav
             variant="librarybar"
             to="/library/collections"
-            className="p-0 h-[32px] w-[32px] bg-input/30 hover:bg-input/50"
+            className="p-0 h-[32px] w-[32px] hover:bg-input/50"
           >
             <span className="icon-[mdi--collection] w-4 h-4"></span>
           </Nav>
@@ -127,7 +127,7 @@ export function LibraryTitlebarContent(): React.JSX.Element {
           <TooltipTrigger>
             <SelectTrigger
               noIcon
-              className="h-[32px] w-[32px] flex items-center justify-center bg-input/30 hover:bg-input/50 border-0 p-0"
+              className="h-[32px] w-[32px] flex items-center justify-center border-0 p-0"
             >
               <span className="icon-[mdi--format-list-group] w-4 h-4"></span>
             </SelectTrigger>

@@ -117,7 +117,7 @@ export function FilterCombobox({
           align="end"
           className="w-[240px] p-0 max-w-none bg-transparent"
         >
-          <Command className={cn('max-w-none bg-popover/[0.75]')}>
+          <Command className={cn('max-w-none')}>
             {/* Search Input */}
             <CommandInput
               placeholder={t('filter.combobox.search', { placeholder })}

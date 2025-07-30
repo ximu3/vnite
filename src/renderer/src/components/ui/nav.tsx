@@ -11,7 +11,8 @@ const navVariants = cva(
         default: 'hover:bg-accent/50 hover:text-accent-foreground',
         sidebar: 'hover:bg-accent/50 hover:text-accent-foreground min-h-0 min-w-0 p-2',
         gameList: 'hover:bg-accent/50 hover:text-accent-foreground relative',
-        librarybar: 'hover:bg-accent/50 hover:text-accent-foreground shadow-sm'
+        librarybar:
+          'dark:bg-input/[calc(var(--glass-opacity)/2)] hover:bg-accent/50 hover:text-accent-foreground shadow-sm'
       },
       size: {
         default: 'h-9 px-4 py-2',

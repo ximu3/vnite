@@ -159,7 +159,7 @@ export function Path({ gameId }: { gameId: string }): React.JSX.Element {
 
             <div className={cn('flex flex-row gap-3 items-start')}>
               <ArrayTextarea
-                className={cn('flex-1 max-h-[400px] min-h-[100px]')}
+                className={cn('flex-1 max-h-[400px] min-h-[100px] resize-none')}
                 value={savePaths}
                 onChange={setSavePaths}
                 onBlur={saveSavePaths}

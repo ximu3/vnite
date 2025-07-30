@@ -13,8 +13,8 @@ export function Record({ className }: { className?: string }): React.JSX.Element
   const { t } = useTranslation('record')
   return (
     <div className={cn('w-full h-full bg-transparent', className)}>
-      <ScrollArea className={cn('w-full h-full px-6')}>
-        <div className={cn('flex flex-col gap-6 pt-[34px] pb-6')}>
+      <ScrollArea className={cn('w-full h-full')}>
+        <div className={cn('flex flex-col gap-6 pt-[34px] px-6 pb-6')}>
           <div className={cn('text-2xl font-bold')}>{t('title')}</div>
 
           <Tabs defaultValue="overview" className="w-full">

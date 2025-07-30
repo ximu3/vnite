@@ -349,7 +349,7 @@ export function ConfigItem<
   }
 
   return (
-    <Card className={cn('w-full pb-5 shadow-sm bg-card/20', className)}>
+    <Card className={cn('w-full pb-5 shadow-sm bg-card/[calc(var(--glass-opacity)/3)]', className)}>
       <CardContent className="flex items-center justify-between">
         <div className="flex-col flex items-start justify-center gap-1">
           <div className="text-sm font-medium leading-none">{title}</div>

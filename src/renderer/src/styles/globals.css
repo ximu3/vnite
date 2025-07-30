@@ -133,11 +133,11 @@
 }
 
 .scrollbar-base {
-  @apply rounded-sm scrollbar-track-transparent scrollbar-thumb-muted scrollbar-thumb-rounded-lg scrollbar scrollbar-w-2 scrollbar-h-1;
+  @apply rounded-sm scrollbar-track-transparent scrollbar-thumb-border scrollbar-thumb-rounded-lg scrollbar scrollbar-w-2 scrollbar-h-1;
 }
 
 .scrollbar-base-thin {
-  @apply rounded-sm scrollbar-track-transparent scrollbar-thumb-muted scrollbar-thumb-rounded-lg scrollbar scrollbar-w-1 scrollbar-h-1;
+  @apply rounded-sm scrollbar-track-transparent scrollbar-thumb-border scrollbar-thumb-rounded-lg scrollbar scrollbar-w-1 scrollbar-h-1;
 }
 
 @layer keyframes {

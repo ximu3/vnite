@@ -34,16 +34,17 @@ export function GamePropertiesDialog({
             <TabsTrigger value="media">{t('detail.properties.tabs.media')}</TabsTrigger>
           </TabsList>
 
-          <ScrollArea className="h-[calc(95%-60px)]">
-            <TabsContent value="launcher" className="pr-5 pb-3">
+          {/* -ml-1 and pl-1 to show the left shadow */}
+          <ScrollArea className="h-[calc(95%-60px)] -ml-1">
+            <TabsContent value="launcher" className="pr-5 pb-3 pl-1">
               <Launcher gameId={gameId} />
             </TabsContent>
 
-            <TabsContent value="path" className="pr-5 pb-3">
+            <TabsContent value="path" className="pr-5 pb-3 pl-1">
               <Path gameId={gameId} />
             </TabsContent>
 
-            <TabsContent value="media" className="pr-5 pb-3">
+            <TabsContent value="media" className="pr-5 pb-3 pl-1">
               <Media gameId={gameId} />
             </TabsContent>
           </ScrollArea>

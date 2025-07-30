@@ -108,7 +108,7 @@ export function Appearances(): React.JSX.Element {
                 description={t('appearances.glass.blurDescription')}
                 controlType="slider"
                 min={0}
-                max={130}
+                max={150}
                 step={1}
                 formatValue={(value) => `${value}px`}
                 debounceMs={300}

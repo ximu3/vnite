@@ -189,7 +189,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
           onMouseDown={handleMouseDown}
           onWheel={handleWheel}
           style={{
-            transform: `translateY(-${scrollY * 0.7}px) scale(${logoSize / 100})`,
+            transform: `translateY(-${scrollY * 1}px) scale(${logoSize / 100})`,
             left: `${localLogoPosition.x}vw`,
             top: `${localLogoPosition.y}vh`,
             cursor: dragging ? 'grabbing' : 'grab',
@@ -215,7 +215,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
       >
         {/* Content Container */}
         <div className={cn('relative z-20 flex flex-col w-full min-h-[100vh]')}>
-          <div className="mt-[39vh]">
+          <div className="mt-[40vh]">
             {/* Header Area */}
             <div ref={headerRef} className="pt-1">
               <Header gameId={gameId} />
