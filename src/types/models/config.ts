@@ -267,7 +267,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     },
     glass: {
       dark: {
-        blur: 90,
+        blur: 130,
         opacity: 0.3
       },
       light: {
