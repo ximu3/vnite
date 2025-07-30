@@ -34,7 +34,9 @@
           "failureSingle": "添加图片失败",
           "failureMultiple": "添加图片失败",
           "image": "图片",
-          "images": "图片"
+          "images": "图片",
+          "success": "背景图片添加成功。",
+          "failure": "添加图片失败。"
         }
       },
       "settings": {
