@@ -211,6 +211,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
           onMouseDown={handleMouseDown}
           onWheel={handleWheel}
           style={{
+            transform: `scale(${logoSize / 100})`,
             left: `${localLogoPosition.x}vw`,
             top: `${localLogoPosition.y}vh`,
             cursor: dragging ? 'grabbing' : 'grab',
