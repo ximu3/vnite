@@ -1,20 +1,14 @@
 <div align="center">
   <img src="https://img.timero.xyz/i/2025/07/30/6889aec9cf6b8.png" alt="cover">
 
-  <h2 align="center">
+  <h1 align="center">
     Vnite
-  </h2>
+  </h1>
 
   <p align="center">
-    <a href="https://www.electronjs.org/" target="_blank">
-    <img src="https://img.shields.io/badge/Electron-47848F?style=flat-square&logo=electron&logoColor=white" alt="Electron">
-    </a>
-    <a href="https://reactjs.org/" target="_blank">
-      <img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React">
-    </a>
-    <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">
-      <img src="https://img.shields.io/badge/License-GPL%203.0-blue.svg?style=flat-square&logo=gnu&logoColor=white" alt="GPL-3.0 License">
-    </a>
+    <a href="https://www.electronjs.org/" target="_blank"><img src="https://img.shields.io/badge/Electron-47848F?style=flat-square&logo=electron&logoColor=white" alt="Electron"></a>
+    <a href="https://reactjs.org/" target="_blank"><img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React"></a>
+    <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank"><img src="https://img.shields.io/badge/License-GPL%203.0-blue.svg?style=flat-square&logo=gnu&logoColor=white" alt="GPL-3.0 License"></a>
     </br>
     <a href="https://github.com/ximu3/vnite/stargazers"><img src="https://img.shields.io/github/stars/ximu3/vnite?color=ffcb47&labelColor=black&style=flat-square&logo=github&label=Stars" /></a>
     <a href="https://github.com/ximu3/vnite/graphs/contributors"><img src="https://img.shields.io/github/contributors/ximu3/vnite?style=flat-square&logo=github&label=Contributors&labelColor=black" /></a>
