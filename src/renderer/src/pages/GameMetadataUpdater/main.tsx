@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -61,6 +61,39 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
   const { t } = useTranslation('game')
   const [defaultDataSource] = useConfigState('game.scraper.common.defaultDataSource')
 
+  // Create a ref to track the latest progress state
+  const progressRef = useRef<{
+    completed: number
+    total: number
+    current: number
+    successful: number
+    failed: number
+    results: BatchUpdateGameMetadataProgress[]
+  }>({
+    completed: 0,
+    total: gameIds.length,
+    current: 0,
+    successful: 0,
+    failed: 0,
+    results: []
+  })
+
+  const [progress, setProgress] = useState<{
+    completed: number
+    total: number
+    current: number
+    successful: number
+    failed: number
+    results: BatchUpdateGameMetadataProgress[]
+  }>({
+    completed: 0,
+    total: gameIds.length,
+    current: 0,
+    successful: 0,
+    failed: 0,
+    results: []
+  })
+
   useEffect(() => {
     if (!dataSource && defaultDataSource) {
       setDataSource(defaultDataSource)
@@ -85,22 +118,6 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
     fetchAvailableDataSources()
   }, [])
 
-  const [progress, setProgress] = useState<{
-    completed: number
-    total: number
-    current: number
-    successful: number
-    failed: number
-    results: BatchUpdateGameMetadataProgress[]
-  }>({
-    completed: 0,
-    total: gameIds.length,
-    current: 0,
-    successful: 0,
-    failed: 0,
-    results: []
-  })
-
   const isBatchMode = gameIds.length > 1
 
   // Listen for batch update progress events
@@ -123,7 +140,8 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
         const successful = newResults.filter((r) => r.status === 'success').length
         const failed = newResults.filter((r) => r.status === 'error').length
 
-        return {
+        // Create a new progress state
+        const newProgressState = {
           completed: data.current,
           total: data.total,
           current: data.current,
@@ -131,6 +149,11 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
           failed,
           results: newResults
         }
+
+        // Update ref to track latest progress state
+        progressRef.current = newProgressState
+
+        return newProgressState
       })
 
       // Update toast progress
@@ -216,14 +239,18 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
     setShowProgress(true) // Show progress page
 
     // Reset progress
-    setProgress({
+    const initialProgress = {
       completed: 0,
       total: gameIds.length,
       current: 0,
       successful: 0,
       failed: 0,
       results: []
-    })
+    }
+
+    // Simultaneously reset state and ref
+    setProgress(initialProgress)
+    progressRef.current = initialProgress
 
     toast.loading(t('updater.notifications.batchUpdating', { count: gameIds.length }), {
       id: 'batch-update'
@@ -240,10 +267,12 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
 
       await ipcManager.invoke('adder:batch-update-game-metadata', params)
       await delay(1000) // Wait for a moment to ensure progress updates
+
+      // Use the latest state from the ref, not the state captured in the closure
       toast.success(
         t('updater.notifications.batchComplete', {
-          success: progress.successful,
-          failed: progress.failed
+          success: progressRef.current.successful,
+          failed: progressRef.current.failed
         }),
         {
           id: 'batch-update'
