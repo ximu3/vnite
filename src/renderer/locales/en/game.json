@@ -93,6 +93,7 @@
     "collection": {
       "contextMenu": {
         "rename": "Rename",
+        "updateMetadata": "Update Metadata",
         "delete": "Delete",
         "deleteTitle": "Delete Collection",
         "deleteConfirm": "Are you sure you want to delete collection {{name}}?"

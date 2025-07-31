@@ -93,6 +93,7 @@
     "collection": {
       "contextMenu": {
         "rename": "重新命名",
+        "updateMetadata": "更新元數據",
         "delete": "刪除",
         "deleteTitle": "刪除收藏",
         "deleteConfirm": "確定要刪除收藏 {{name}} 嗎？"

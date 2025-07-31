@@ -92,6 +92,7 @@
     "collection": {
       "contextMenu": {
         "rename": "名前変更",
+        "updateMetadata": "メタデータを更新",
         "delete": "削除",
         "deleteTitle": "コレクション削除",
         "deleteConfirm": "コレクション「{{name}}」を削除してもよろしいですか？"
