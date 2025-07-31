@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://img.timero.xyz/i/2025/07/30/6889aec9cf6b8.png" alt="cover">
+  <img src="https://img.timero.xyz/i/2025/07/31/688b10f8bccfc.png" width="25%" height="25%" alt="cover">
 
   <h1 align="center">
     Vnite
