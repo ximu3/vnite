@@ -31,7 +31,14 @@ export function NameEditorDialog({
             }
           }}
         />
-        <Button onClick={() => setIsOpen(false)}>{t('utils:common.confirm')}</Button>
+        <Button
+          onClick={() => {
+            setIsOpen(false)
+            saveGameName()
+          }}
+        >
+          {t('utils:common.confirm')}
+        </Button>
       </DialogContent>
     </Dialog>
   )
