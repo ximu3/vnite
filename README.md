@@ -55,11 +55,27 @@ Vnite is a versatile game management software designed to provide a unified inte
 
 ## 📸 Screenshots
 
-![gameDetail](https://img.timero.xyz/i/2025/07/30/6889b679d5835.webp)
+<details open>
+<summary>Dark</summary>
 
-![home](https://img.timero.xyz/i/2025/07/30/6889b69460155.webp)
+![game](https://img.timero.xyz/i/2025/07/31/688b0cd59020b.png)
 
-![record](https://img.timero.xyz/i/2025/07/30/6889b6ddb9d59.webp)
+![home](https://img.timero.xyz/i/2025/07/31/688b0d0ba68cb.png)
+
+![record](https://img.timero.xyz/i/2025/07/31/688b0d38ac5dd.png)
+
+</details>
+
+<details>
+<summary>Light</summary>
+
+![game](https://img.timero.xyz/i/2025/07/31/688b0d5d5511e.png)
+
+![home](https://img.timero.xyz/i/2025/07/31/688b0d7ad4069.png)
+
+![record](https://img.timero.xyz/i/2025/07/31/688b0d9abcfee.png)
+
+</details>
 
 ## 💡 Planned Features
 
