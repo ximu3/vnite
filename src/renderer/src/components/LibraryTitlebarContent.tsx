@@ -89,7 +89,7 @@ export function LibraryTitlebarContent(): React.JSX.Element {
             onClick={toggleFilterMenu}
             variant="thirdary"
             size="icon"
-            className="h-[32px] w-[32px] hover:bg"
+            className="h-[32px] w-[32px]"
           >
             <span
               className={cn(
