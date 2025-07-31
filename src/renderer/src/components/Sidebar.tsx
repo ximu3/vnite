@@ -43,7 +43,7 @@ export function Sidebar(): React.JSX.Element {
             'font-mono text-shadow-lg text-2xl font-bold flex justify-center items-center text-primary non-draggable cursor-pointer'
           )}
           onClick={() => {
-            router.history.back()
+            router.navigate({ to: '/' })
           }}
         >
           V
