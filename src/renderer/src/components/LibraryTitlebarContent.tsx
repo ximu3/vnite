@@ -65,11 +65,7 @@ export function LibraryTitlebarContent(): React.JSX.Element {
       {/* Home Button */}
       <Tooltip>
         <TooltipTrigger>
-          <Nav
-            variant="librarybar"
-            to="/library/home"
-            className="p-0 h-[32px] w-[32px] hover:bg-input/50"
-          >
+          <Nav variant="librarybar" to="/library/home" className="p-0 h-[32px] w-[32px]">
             <span className="icon-[mdi--home-outline] w-4 h-4"></span>
           </Nav>
         </TooltipTrigger>
@@ -79,11 +75,7 @@ export function LibraryTitlebarContent(): React.JSX.Element {
       {/* Collections Button */}
       <Tooltip>
         <TooltipTrigger>
-          <Nav
-            variant="librarybar"
-            to="/library/collections"
-            className="p-0 h-[32px] w-[32px] hover:bg-input/50"
-          >
+          <Nav variant="librarybar" to="/library/collections" className="p-0 h-[32px] w-[32px]">
             <span className="icon-[mdi--collection] w-4 h-4"></span>
           </Nav>
         </TooltipTrigger>
@@ -97,7 +89,7 @@ export function LibraryTitlebarContent(): React.JSX.Element {
             onClick={toggleFilterMenu}
             variant="thirdary"
             size="icon"
-            className="h-[32px] w-[32px]"
+            className="h-[32px] w-[32px] hover:bg"
           >
             <span
               className={cn(
