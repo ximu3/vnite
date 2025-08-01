@@ -102,7 +102,7 @@ export function UpdateDialog(): React.JSX.Element {
           </div>
         </DialogContent>
       ) : (
-        <DialogContent>{t('dialog.latestVersion')}</DialogContent>
+        <DialogContent className={cn('w-[500px]')}>{t('dialog.latestVersion')}</DialogContent>
       )}
     </Dialog>
   )
