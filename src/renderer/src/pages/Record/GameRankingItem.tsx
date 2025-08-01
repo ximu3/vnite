@@ -1,7 +1,7 @@
 import { generateUUID } from '@appUtils'
-import { GameImage } from '~/components/ui/game-image'
 import { useRouter } from '@tanstack/react-router'
 import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
+import { GameImage } from '~/components/ui/game-image'
 import { useConfigState, useGameState } from '~/hooks'
 import { cn, scrollToElement } from '~/utils'
 
@@ -49,6 +49,7 @@ export function GameRankingItem({
         gameId={gameId}
         type={'cover'}
         blur={nsfw && enableNSFWBlur}
+        blurType="smallposter"
         className="object-cover w-10 h-10 rounded-md"
         fallback={<div className="w-10 h-10 rounded-md bg-primary" />}
       />

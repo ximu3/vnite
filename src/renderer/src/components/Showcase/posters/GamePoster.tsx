@@ -1,21 +1,21 @@
-import { Button } from '~/components/ui/button'
-import { ContextMenu, ContextMenuTrigger } from '~/components/ui/context-menu'
-import { GameImage } from '~/components/ui/game-image'
+import { useRouter } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useRouter } from '@tanstack/react-router'
 import { HoverCardAnimation } from '~/components/animations/HoverCard'
 import { GameNavCM } from '~/components/contextMenu/GameNavCM'
-import { BatchGameNavCM } from '~/components/GameBatchEditor/BatchGameNavCM'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
 import { GamePropertiesDialog } from '~/components/Game/Config/Properties'
+import { BatchGameNavCM } from '~/components/GameBatchEditor/BatchGameNavCM'
+import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
 import { useDragContext } from '~/components/Showcase/CollectionGames'
+import { Button } from '~/components/ui/button'
+import { ContextMenu, ContextMenuTrigger } from '~/components/ui/context-menu'
+import { GameImage } from '~/components/ui/game-image'
 import { useConfigState, useGameState } from '~/hooks'
 import { useRunningGames } from '~/pages/Library/store'
 import { useGameCollectionStore, useGameRegistry } from '~/stores/game'
-import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
 import { cn, navigateToGame, startGame, stopGame } from '~/utils'
 import {
   attachClosestEdge,
@@ -93,6 +93,12 @@ export function GamePoster({
   const [dragging, setDragging] = useState<boolean>(false)
   const [previewState, setPreviewState] = useState<PreviewState>({ type: 'idle' })
   const [showPlayButtonOnPoster] = useConfigState('appearances.showcase.showPlayButtonOnPoster')
+
+  const blur = nsfw && enableNSFWBlur
+  const name = gameData?.name ?? ''
+  const stringToBase64 = (str: string): string =>
+    btoa(String.fromCharCode(...new TextEncoder().encode(str)))
+  const obfuscatedName = stringToBase64(name).slice(0, name.length)
 
   // Batch mode and selection state
   const {
@@ -238,7 +244,7 @@ export function GamePoster({
                       draggable="false"
                       gameId={gameId}
                       type="cover"
-                      blur={nsfw && enableNSFWBlur}
+                      blur={blur}
                       alt={gameId}
                       className={cn(
                         'w-[148px] aspect-[2/3] cursor-pointer select-none object-cover rounded-lg',
@@ -343,7 +349,14 @@ export function GamePoster({
                 </div>
 
                 <div className="text-xs text-foreground truncate cursor-pointer select-none hover:underline w-[148px] text-center decoration-foreground">
-                  {gameData?.name}
+                  {blur ? (
+                    <>
+                      <span className="block group-hover:hidden truncate">{obfuscatedName}</span>
+                      <span className="hidden group-hover:block truncate">{name}</span>
+                    </>
+                  ) : (
+                    name
+                  )}
                 </div>
               </div>
             </ContextMenuTrigger>

@@ -1,18 +1,18 @@
-import { ContextMenu, ContextMenuTrigger } from '~/components/ui/context-menu'
-import { GameImage } from '~/components/ui/game-image'
+import { useLocation } from '@tanstack/react-router'
 import { Nav } from '@ui/nav'
 import React from 'react'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
 import { GamePropertiesDialog } from '~/components/Game/Config/Properties'
-import { useGameState, useGameLocalState, useConfigState } from '~/hooks'
+import { ContextMenu, ContextMenuTrigger } from '~/components/ui/context-menu'
+import { GameImage } from '~/components/ui/game-image'
+import { useConfigState, useGameLocalState, useGameState } from '~/hooks'
 import { cn } from '~/utils'
 import { GameNavCM } from '../contextMenu/GameNavCM'
 import { BatchGameNavCM } from '../GameBatchEditor/BatchGameNavCM'
 import { useGameBatchEditorStore } from '../GameBatchEditor/store'
 import { useTheme } from '../ThemeProvider'
-import { useLocation } from '@tanstack/react-router'
 
 export function GameNav({
   gameId,
@@ -25,6 +25,8 @@ export function GameNav({
   const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
   const [highlightLocalGames] = useConfigState('game.gameList.highlightLocalGames')
   const [markLocalGames] = useConfigState('game.gameList.markLocalGames')
+  const [nsfw] = useGameState(gameId, 'apperance.nsfw')
+  const [enableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
   const isDarkMode = useTheme().isDark
   const location = useLocation()
 
@@ -38,6 +40,10 @@ export function GameNav({
   const isBatchMode = useGameBatchEditorStore((state) => state.isBatchMode)
 
   console.warn('[DEBUG] GameNav')
+
+  const stringToBase64 = (str: string): string =>
+    btoa(String.fromCharCode(...new TextEncoder().encode(str)))
+  const obfuscatedGameName = stringToBase64(gameName).slice(0, gameName.length)
 
   const handleGameClick = (event: React.MouseEvent): void => {
     const store = useGameBatchEditorStore.getState()
@@ -119,7 +125,7 @@ export function GameNav({
             <Nav
               variant="gameList"
               className={cn(
-                'text-xs p-3 h-5 rounded-none transition-none w-full',
+                'text-xs p-3 h-5 rounded-none transition-none w-full group/gamenav',
                 highlightLocalGames && 'text-foreground',
                 highlightLocalGames && gamePath && 'text-accent-foreground',
                 highlightLocalGames && !gamePath && !isDarkMode && 'text-foreground',
@@ -141,7 +147,17 @@ export function GameNav({
                     }
                   />
                 </div>
-                <div className={cn('truncate w-[188px]')}>{gameName}</div>
+                {nsfw && enableNSFWBlur ? (
+                  <div className="relative w-[188px] truncate">
+                    <span className="group-hover/gamenav:opacity-0">{obfuscatedGameName}</span>
+                    <span className="absolute top-0 left-0 w-full truncate opacity-0 group-hover/gamenav:opacity-100">
+                      {gameName}
+                    </span>
+                  </div>
+                ) : (
+                  <div className={cn('truncate w-[188px]')}>{gameName}</div>
+                )}
+
                 {markLocalGames && gamePath && (
                   <span
                     className={cn(

@@ -1,4 +1,4 @@
-import { useTransition, animated, easings } from '@react-spring/web'
+import { animated, easings, useTransition } from '@react-spring/web'
 
 interface CrossfadeImageProps {
   src: string
@@ -32,7 +32,7 @@ export function CrossfadeImage({
     exitBeforeEnter: false // Ensure both images are displayed simultaneously for crossfade
   })
 
-  const blurStyle = blur ? { filter: 'blur(20px)' } : {}
+  const blurStyle = blur ? { filter: 'blur(48px)' } : {}
 
   // Combine styles for the image
   const combinedStyle = {
