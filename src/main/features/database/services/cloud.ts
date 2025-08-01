@@ -1,6 +1,7 @@
 import { net } from 'electron'
 import log from 'electron-log/main'
 import { ConfigDBManager } from '~/core/database'
+import { createOfficialRemoteDBWithPermissions } from '~/utils'
 
 // Cache interface definition
 interface CacheItem {
@@ -44,6 +45,15 @@ export async function getCouchDBSize(
     for (const db of dbs) {
       const dbName = `${username}-${db}`.replace('user', 'userdb')
       const url = `${serverUrl}/${dbName}`
+
+      // Check if the remote database exists, if not, create it
+      await createOfficialRemoteDBWithPermissions(
+        serverUrl,
+        dbName,
+        username,
+        import.meta.env.VITE_COUCHDB_USERNAME,
+        import.meta.env.VITE_COUCHDB_PASSWORD
+      )
 
       const authHeader = `Basic ${Buffer.from(`${adminUsername}:${adminPassword}`).toString('base64')}`
 
