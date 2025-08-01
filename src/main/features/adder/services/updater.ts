@@ -678,7 +678,9 @@ export async function updateGameMetadata({
               dbId,
               result.type as 'cover' | 'background' | 'logo' | 'icon',
               result.urls[0]
-            )
+            ).catch((err) => {
+              log.warn(`[Updater] Failed to save game image (${result.type}): ${err.message}`)
+            })
           )
         }
       })

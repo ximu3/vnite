@@ -236,21 +236,41 @@ export async function addGameToDB({
 
     // Prepare all image saving operations
     if (covers.length > 0 && covers[0]) {
-      dbPromises.push(GameDBManager.setGameImage(dbId, 'cover', covers[0]))
+      dbPromises.push(
+        GameDBManager.setGameImage(dbId, 'cover', covers[0]).catch((err) => {
+          log.warn(`[Adder] Failed to save game cover: ${err.message}`)
+        })
+      )
     }
 
     if (backgroundUrl) {
-      dbPromises.push(GameDBManager.setGameImage(dbId, 'background', backgroundUrl))
+      dbPromises.push(
+        GameDBManager.setGameImage(dbId, 'background', backgroundUrl).catch((err) => {
+          log.warn(`[Adder] Failed to save game background from URL: ${err.message}`)
+        })
+      )
     } else if (backgrounds.length > 0 && backgrounds[0]) {
-      dbPromises.push(GameDBManager.setGameImage(dbId, 'background', backgrounds[0]))
+      dbPromises.push(
+        GameDBManager.setGameImage(dbId, 'background', backgrounds[0]).catch((err) => {
+          log.warn(`[Adder] Failed to save game background: ${err.message}`)
+        })
+      )
     }
 
     if (icons.length > 0 && icons[0]) {
-      dbPromises.push(GameDBManager.setGameImage(dbId, 'icon', icons[0].toString()))
+      dbPromises.push(
+        GameDBManager.setGameImage(dbId, 'icon', icons[0].toString()).catch((err) => {
+          log.warn(`[Adder] Failed to save game icon: ${err.message}`)
+        })
+      )
     }
 
     if (logos.length > 0 && logos[0]) {
-      dbPromises.push(GameDBManager.setGameImage(dbId, 'logo', logos[0].toString()))
+      dbPromises.push(
+        GameDBManager.setGameImage(dbId, 'logo', logos[0].toString()).catch((err) => {
+          log.warn(`[Adder] Failed to save game logo: ${err.message}`)
+        })
+      )
     }
 
     // Execute all database operations (in parallel)
