@@ -48,7 +48,7 @@ export function Header({
           >
             <div
               className={cn(
-                'font-bold text-2xl text-accent-foreground cursor-pointer select-none text-shadow-lg group'
+                'font-bold text-2xl text-accent-foreground cursor-pointer select-none text-shadow-lg break-all group'
               )}
               onClick={() => copyWithToast(name)}
             >
@@ -63,7 +63,9 @@ export function Header({
             </div>
             {showOriginalNameInGameHeader && originalName && (
               <div
-                className={cn('font-bold text-accent-foreground cursor-pointer select-none group')}
+                className={cn(
+                  'font-bold text-accent-foreground cursor-pointer select-none break-all group'
+                )}
                 onClick={() => copyWithToast(originalName)}
               >
                 {blur ? (
