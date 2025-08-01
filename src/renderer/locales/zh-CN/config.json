@@ -26,6 +26,10 @@
       "manageFont": "管理字体",
       "manageFontDescription": "更换应用程序字体",
       "manage": "管理",
+      "size": "字体大小",
+      "sizeDescription": "调整应用程序的字体大小",
+      "weight": "字体粗细",
+      "weightDescription": "调整应用程序的字体粗细",
       "dialog": {
         "title": "字体设置",
         "description": "选择应用显示字体，更改将立即生效",

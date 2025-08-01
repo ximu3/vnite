@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { useRouter } from '@tanstack/react-router'
-import { setup, changeFont } from '~/utils'
+import { setup, changeFontFamily, changeFontSize, changeFontWeight } from '~/utils'
 import { useGameAdderStore } from './pages/GameAdder/store'
 import { randomGame } from './stores/game'
 import { useConfigState } from './hooks'
@@ -11,7 +11,9 @@ import { ipcManager } from './app/ipc'
 
 export function Setup(): React.JSX.Element {
   const router = useRouter()
-  const [font] = useConfigState('appearances.font')
+  const [fontFamily] = useConfigState('appearances.fonts.family')
+  const [fontSize] = useConfigState('appearances.fonts.size')
+  const [fontWeight] = useConfigState('appearances.fonts.weight')
   const gameIds = useGameRegistry((state) => state.gameIds)
   useEffect(() => {
     setup(router)
@@ -29,7 +31,9 @@ export function Setup(): React.JSX.Element {
     })
   }, [])
 
-  changeFont(font)
+  changeFontFamily(fontFamily)
+  changeFontSize(fontSize)
+  changeFontWeight(fontWeight)
   const [libraryHotkey] = useConfigState('hotkeys.library')
   const [recordHotkey] = useConfigState('hotkeys.record')
   const [scannerHotkey] = useConfigState('hotkeys.scanner')

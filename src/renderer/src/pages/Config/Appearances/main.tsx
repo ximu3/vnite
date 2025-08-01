@@ -5,7 +5,7 @@ import { ConfigItemPure } from '~/components/form/ConfigItemPure'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '~/components/ui/hover-card'
 import { useTranslation } from 'react-i18next'
 import { useAttachmentStore } from '~/stores'
-import { cn } from '~/utils'
+import { cn, changeFontSize, changeFontWeight } from '~/utils'
 import { ipcManager } from '~/app/ipc'
 import { useState } from 'react'
 import { FontSettingsDialog } from './FontSettingsDialog'
@@ -130,6 +130,7 @@ export function Appearances(): React.JSX.Element {
           </div>
           {/* Font Settings */}
           <div className={cn('space-y-4')}>
+            {/* Font Family */}
             <div className={cn('border-b pb-2')}>{t('appearances.font.title')}</div>
             <div className={cn('')}>
               <ConfigItemPure
@@ -145,6 +146,34 @@ export function Appearances(): React.JSX.Element {
                 </Button>
               </ConfigItemPure>
             </div>
+            {/* Font Size */}
+            <ConfigItem
+              hookType="config"
+              path="appearances.fonts.size"
+              title={t('appearances.font.size')}
+              description={t('appearances.font.sizeDescription')}
+              controlType="slider"
+              min={0.025}
+              max={2}
+              step={0.025}
+              formatValue={(value) => `${value}rem`}
+              debounceMs={300}
+              onChange={changeFontSize}
+            />
+            {/* Font Weight */}
+            <ConfigItem
+              hookType="config"
+              path="appearances.fonts.weight"
+              title={t('appearances.font.weight')}
+              description={t('appearances.font.weightDescription')}
+              controlType="slider"
+              min={100}
+              max={900}
+              step={50}
+              formatValue={(value) => `${value}`}
+              debounceMs={300}
+              onChange={changeFontWeight}
+            />
             <FontSettingsDialog isOpen={fontDialogOpen} onOpenChange={setFontDialogOpen} />
           </div>
           {/* Showcase Settings */}

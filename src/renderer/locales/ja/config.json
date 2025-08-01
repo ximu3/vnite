@@ -26,6 +26,10 @@
       "manageFont": "フォント管理",
       "manageFontDescription": "アプリケーションのフォントを変更",
       "manage": "管理",
+      "size": "フォントサイズ",
+      "sizeDescription": "アプリケーションのフォントサイズを調整",
+      "weight": "フォントの太さ",
+      "weightDescription": "アプリケーションのフォントの太さを調整",
       "dialog": {
         "title": "フォント設定",
         "description": "アプリケーションのフォントを選択、変更は即時反映されます",

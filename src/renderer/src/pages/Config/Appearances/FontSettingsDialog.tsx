@@ -17,7 +17,7 @@ import { Textarea } from '@ui/textarea'
 import { Label } from '@ui/label'
 import { ScrollArea } from '@ui/scroll-area'
 import { ipcManager } from '~/app/ipc'
-import { changeFont } from '~/utils'
+import { changeFontFamily } from '~/utils'
 import { useTranslation } from 'react-i18next'
 
 interface FontSettingsDialogProps {
@@ -29,7 +29,7 @@ export function FontSettingsDialog({
   isOpen,
   onOpenChange
 }: FontSettingsDialogProps): React.JSX.Element {
-  const [font, setFont] = useConfigState('appearances.font')
+  const [fontFamily, setFontFamily] = useConfigState('appearances.fonts.family')
   const [commandOpen, setCommandOpen] = useState(false)
   const [fonts, setFonts] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
@@ -60,19 +60,19 @@ export function FontSettingsDialog({
   }, [isOpen])
 
   const handleFontSelect = (fontName: string): void => {
-    changeFont(fontName)
-    setFont(fontName)
+    changeFontFamily(fontName)
+    setFontFamily(fontName)
     setCommandOpen(false)
   }
 
   const handleResetToSoftwareFont = (): void => {
-    changeFont('LXGW WenKai Mono')
-    setFont('LXGW WenKai Mono')
+    changeFontFamily('LXGW WenKai Mono')
+    setFontFamily('LXGW WenKai Mono')
   }
 
   const handleResetToSystemFont = (): void => {
-    changeFont('system-ui')
-    setFont('system-ui')
+    changeFontFamily('system-ui')
+    setFontFamily('system-ui')
   }
 
   // Filtered font list
@@ -99,9 +99,9 @@ export function FontSettingsDialog({
                     role="combobox"
                     aria-expanded={commandOpen}
                     className="justify-between font-normal w-[200px]"
-                    style={{ fontFamily: font || 'var(--font-sans)' }}
+                    style={{ fontFamily: fontFamily || 'var(--font-sans)' }}
                   >
-                    {font || t('appearances.font.dialog.systemDefaultFonts')}
+                    {fontFamily || t('appearances.font.dialog.systemDefaultFonts')}
                     <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
@@ -127,7 +127,7 @@ export function FontSettingsDialog({
                                 className="flex items-center"
                               >
                                 <span style={{ fontFamily: fontName }}>{fontName}</span>
-                                {font === fontName && <Check className="ml-auto h-4 w-4" />}
+                                {fontFamily === fontName && <Check className="ml-auto h-4 w-4" />}
                               </CommandItem>
                             ))}
                           </CommandGroup>
@@ -155,7 +155,7 @@ export function FontSettingsDialog({
               value={previewText}
               onChange={(e) => setPreviewText(e.target.value)}
               className="font-current h-[100px] resize-none"
-              style={{ fontFamily: font || 'var(--font-sans)' }}
+              style={{ fontFamily: fontFamily || 'var(--font-sans)' }}
             />
           </div>
         </div>

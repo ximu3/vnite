@@ -8,12 +8,67 @@ import { generateUUID } from '@appUtils'
 import { useRouter } from '@tanstack/react-router'
 import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
 
-export function changeFont(fontFamily: string | null, defaultFallback: string = 'system-ui'): void {
+export function changeFontFamily(
+  fontFamily: string | null,
+  defaultFallback: string = 'system-ui'
+): void {
   if (!fontFamily) {
     document.documentElement.style.setProperty('--font-current', `"${defaultFallback}"`)
     return
   }
   document.documentElement.style.setProperty('--font-current', `"${fontFamily}"`)
+}
+
+export function changeFontSize(fontSize: number): void {
+  document.documentElement.style.setProperty('--text-xs', `${fontSize * 0.75}rem`)
+  document.documentElement.style.setProperty('--text-sm', `${fontSize * 0.875}rem`)
+  document.documentElement.style.setProperty('--text-base', `${fontSize}rem`)
+  document.documentElement.style.setProperty('--text-lg', `${fontSize * 1.125}rem`)
+  document.documentElement.style.setProperty('--text-xl', `${fontSize * 1.25}rem`)
+  document.documentElement.style.setProperty('--text-2xl', `${fontSize * 1.5}rem`)
+  document.documentElement.style.setProperty('--text-3xl', `${fontSize * 1.875}rem`)
+  document.documentElement.style.setProperty('--text-4xl', `${fontSize * 2.25}rem`)
+  document.documentElement.style.setProperty('--text-5xl', `${fontSize * 3}rem`)
+  document.documentElement.style.setProperty('--text-6xl', `${fontSize * 3.75}rem`)
+  document.documentElement.style.setProperty('--text-7xl', `${fontSize * 4.5}rem`)
+  document.documentElement.style.setProperty('--text-8xl', `${fontSize * 6}rem`)
+  document.documentElement.style.setProperty('--text-9xl', `${fontSize * 8}rem`)
+}
+
+export function changeFontWeight(fontWeight: number): void {
+  document.documentElement.style.setProperty(
+    '--font-weight-thin',
+    `${((fontWeight * 1) / 4).toFixed(0)}`
+  )
+  document.documentElement.style.setProperty(
+    '--font-weight-extralight',
+    `${((fontWeight * 2) / 4).toFixed(0)}`
+  )
+  document.documentElement.style.setProperty(
+    '--font-weight-light',
+    `${((fontWeight * 3) / 4).toFixed(0)}`
+  )
+  document.documentElement.style.setProperty('--font-weight-normal', fontWeight.toString())
+  document.documentElement.style.setProperty(
+    '--font-weight-medium',
+    `${((fontWeight * 5) / 4).toFixed(0)}`
+  )
+  document.documentElement.style.setProperty(
+    '--font-weight-semibold',
+    `${((fontWeight * 6) / 4).toFixed(0)}`
+  )
+  document.documentElement.style.setProperty(
+    '--font-weight-bold',
+    `${((fontWeight * 7) / 4).toFixed(0)}`
+  )
+  document.documentElement.style.setProperty(
+    '--font-weight-extrabold',
+    `${((fontWeight * 8) / 4).toFixed(0)}`
+  )
+  document.documentElement.style.setProperty(
+    '--font-weight-black',
+    `${((fontWeight * 9) / 4).toFixed(0)}`
+  )
 }
 
 export function navigateToGame(

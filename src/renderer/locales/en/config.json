@@ -26,6 +26,10 @@
       "manageFont": "Manage Font",
       "manageFontDescription": "Change application font",
       "manage": "Manage",
+      "size": "Font Size",
+      "sizeDescription": "Adjust the font size for the application",
+      "weight": "Font Weight",
+      "weightDescription": "Adjust the font weight for the application",
       "dialog": {
         "title": "Font Settings",
         "description": "Select font for the application, changes will take effect immediately",

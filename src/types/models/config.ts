@@ -76,7 +76,11 @@ export interface configDocs {
       }
     }
     enableNSFWBlur: boolean
-    font: string
+    fonts: {
+      family: string
+      size: number
+      weight: number
+    }
   }
   hotkeys: {
     library: string
@@ -276,7 +280,11 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       }
     },
     enableNSFWBlur: true,
-    font: 'LXGW WenKai Mono'
+    fonts: {
+      family: 'LXGW WenKai Mono',
+      size: 1,
+      weight: 400
+    }
   },
   hotkeys: {
     library: 'alt+shift+l',
