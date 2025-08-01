@@ -1,0 +1,20 @@
+{
+  "learnSpelling": "スペルを学ぶ",
+  "lookUpSelection": "「{selection}」を調べる",
+  "searchWithGoogle": "Googleで検索",
+  "cut": "切り取り",
+  "copy": "コピー",
+  "paste": "貼り付け",
+  "selectAll": "すべて選択",
+  "saveImage": "画像を保存",
+  "saveImageAs": "名前を付けて画像を保存...",
+  "saveVideo": "動画を保存",
+  "saveVideoAs": "名前を付けて動画を保存...",
+  "copyLink": "リンクをコピー",
+  "saveLinkAs": "名前を付けてリンクを保存...",
+  "copyImage": "画像をコピー",
+  "copyImageAddress": "画像アドレスをコピー",
+  "copyVideoAddress": "動画アドレスをコピー",
+  "inspect": "要素を検証",
+  "services": "サービス"
+}

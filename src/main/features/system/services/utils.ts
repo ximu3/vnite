@@ -5,6 +5,46 @@ import log from 'electron-log/main'
 import fse from 'fs-extra'
 import { app } from 'electron'
 import { copyFileToClipboard } from '~/utils'
+import contextMenu from 'electron-context-menu'
+import i18next from 'i18next'
+
+export async function setupContextMenu(): Promise<void> {
+  contextMenu({
+    showLearnSpelling: true,
+    showLookUpSelection: true,
+    showSearchWithGoogle: true,
+    showSelectAll: false,
+    showCopyImage: true,
+    showCopyImageAddress: true,
+    showSaveImageAs: true,
+    showSaveImage: false,
+    showCopyVideoAddress: true,
+    showSaveVideoAs: true,
+    showSaveVideo: false,
+    showCopyLink: true,
+    showSaveLinkAs: true,
+    labels: {
+      learnSpelling: i18next.t('context-menu:learnSpelling'),
+      lookUpSelection: i18next.t('context-menu:lookUpSelection'),
+      searchWithGoogle: i18next.t('context-menu:searchWithGoogle'),
+      cut: i18next.t('context-menu:cut'),
+      copy: i18next.t('context-menu:copy'),
+      paste: i18next.t('context-menu:paste'),
+      selectAll: i18next.t('context-menu:selectAll'),
+      saveImage: i18next.t('context-menu:saveImage'),
+      saveImageAs: i18next.t('context-menu:saveImageAs'),
+      saveVideo: i18next.t('context-menu:saveVideo'),
+      saveVideoAs: i18next.t('context-menu:saveVideoAs'),
+      copyLink: i18next.t('context-menu:copyLink'),
+      saveLinkAs: i18next.t('context-menu:saveLinkAs'),
+      copyImage: i18next.t('context-menu:copyImage'),
+      copyImageAddress: i18next.t('context-menu:copyImageAddress'),
+      copyVideoAddress: i18next.t('context-menu:copyVideoAddress'),
+      inspect: i18next.t('context-menu:inspect'),
+      services: i18next.t('context-menu:services')
+    }
+  })
+}
 
 export async function setupOpenAtLogin(): Promise<void> {
   try {

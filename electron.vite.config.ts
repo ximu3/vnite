@@ -14,7 +14,7 @@ export default defineConfig({
         '@appUtils': resolve('src/utils')
       }
     },
-    plugins: [externalizeDepsPlugin()]
+    plugins: [externalizeDepsPlugin({ exclude: ['electron-context-menu'] })]
   },
   preload: {
     plugins: [externalizeDepsPlugin()]

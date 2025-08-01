@@ -1,0 +1,20 @@
+{
+  "learnSpelling": "Learn Spelling",
+  "lookUpSelection": "Look Up \"{selection}\"",
+  "searchWithGoogle": "Search with Google",
+  "cut": "Cut",
+  "copy": "Copy",
+  "paste": "Paste",
+  "selectAll": "Select All",
+  "saveImage": "Save Image",
+  "saveImageAs": "Save Image As...",
+  "saveVideo": "Save Video",
+  "saveVideoAs": "Save Video As...",
+  "copyLink": "Copy Link",
+  "saveLinkAs": "Save Link As...",
+  "copyImage": "Copy Image",
+  "copyImageAddress": "Copy Image Address",
+  "copyVideoAddress": "Copy Video Address",
+  "inspect": "Inspect Element",
+  "services": "Services"
+}

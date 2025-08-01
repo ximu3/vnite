@@ -39,6 +39,7 @@
     "crypto-js": "^4.2.0",
     "date-fns": "^4.1.0",
     "dompurify": "^3.2.6",
+    "electron-context-menu": "^4.1.0",
     "electron-log": "^5.4.1",
     "electron-screenshots": "^0.5.27",
     "electron-updater": "^6.3.9",

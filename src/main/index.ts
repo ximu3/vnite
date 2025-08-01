@@ -29,7 +29,8 @@ import {
   setupOpenAtLogin,
   portableStore,
   initI18n,
-  checkPortableMode
+  checkPortableMode,
+  setupContextMenu
 } from './features/system'
 import { GameScannerManager } from './features/adder'
 import { setupScraper } from './features/scraper'
@@ -264,6 +265,9 @@ app.whenReady().then(async () => {
   }
 
   await initI18n()
+
+  // Setup context menu
+  await setupContextMenu()
 
   // Setup tray
   trayManager = await setupTray(mainWindow)

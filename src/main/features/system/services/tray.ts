@@ -45,8 +45,12 @@ export class TrayManager {
     this.config = await ConfigDBManager.getConfigValue('general')
 
     // Listen for configuration updates
-    eventBus.on('tray:config-updated', async () => {
-      await this.updateConfig()
+    eventBus.on('tray:config-updated', () => {
+      this.updateConfig()
+    })
+
+    eventBus.on('language:changed', () => {
+      this.updateTrayMenu()
     })
 
     this.createTray()

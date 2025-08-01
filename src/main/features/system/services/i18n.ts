@@ -25,7 +25,7 @@ export async function initI18n(): Promise<void> {
   try {
     const language = await getLanguage()
 
-    const namespaces = ['tray', 'scraper']
+    const namespaces = ['tray', 'scraper', 'context-menu']
 
     const supportedLngs = ['zh-CN', 'zh-TW', 'ja', 'en', 'ru', 'fr', 'ko']
 
@@ -54,9 +54,9 @@ export async function initI18n(): Promise<void> {
   }
 }
 
-export function updateLanguage(language: string): void {
+export async function updateLanguage(language: string): Promise<void> {
   try {
-    i18next.changeLanguage(language)
+    await i18next.changeLanguage(language)
     eventBus.emit('language:changed', { newLanguage: language }, { source: 'i18n-service' })
   } catch (error) {
     log.error('[I18n] Failed to update language:', error)

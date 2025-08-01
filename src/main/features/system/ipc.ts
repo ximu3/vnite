@@ -161,7 +161,7 @@ export function setupSystemIPC(): void {
   })
 
   ipcManager.handle('app:update-language', async (_, language: string) => {
-    updateLanguage(language)
+    await updateLanguage(language)
   })
 
   ipcManager.handle(

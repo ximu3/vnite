@@ -1,0 +1,20 @@
+{
+  "learnSpelling": "學習拼寫",
+  "lookUpSelection": "查詢 \"{selection}\"",
+  "searchWithGoogle": "使用谷歌搜索",
+  "cut": "剪切",
+  "copy": "複製",
+  "paste": "粘貼",
+  "selectAll": "全選",
+  "saveImage": "保存圖片",
+  "saveImageAs": "圖片另存為...",
+  "saveVideo": "保存視頻",
+  "saveVideoAs": "視頻另存為...",
+  "copyLink": "複製鏈接",
+  "saveLinkAs": "鏈接另存為...",
+  "copyImage": "複製圖片",
+  "copyImageAddress": "複製圖片地址",
+  "copyVideoAddress": "複製視頻地址",
+  "inspect": "檢查元素",
+  "services": "服務"
+}
