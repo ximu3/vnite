@@ -18,6 +18,7 @@ export function DescriptionCard({
   const [description, setDescription] = useGameState(gameId, 'metadata.description')
   const [originalName] = useGameState(gameId, 'metadata.originalName')
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
 
   const handleSelectDescription = (newDescription: string): void => {
     setDescription(newDescription)
@@ -37,10 +38,15 @@ export function DescriptionCard({
           <span
             onClick={() => setIsSearchDialogOpen(true)}
             className={cn(
-              'invisible group-hover:visible cursor-pointer icon-[mdi--magnify] w-5 h-5 mb-[4px]'
+              'invisible group-hover:visible cursor-pointer icon-[mdi--magnify] w-5 h-5'
             )}
           ></span>
-          <DescriptionDialog gameId={gameId} />
+          <span
+            onClick={() => setIsEditDialogOpen(true)}
+            className={cn(
+              'invisible group-hover:visible w-5 h-5 icon-[mdi--square-edit-outline] cursor-pointer'
+            )}
+          ></span>
         </div>
       </div>
       <SeparatorDashed />
@@ -60,6 +66,12 @@ export function DescriptionCard({
           ? parse(description, HTMLParserOptions)
           : t('detail.overview.description.empty')}
       </div>
+
+      <DescriptionDialog
+        gameId={gameId}
+        isOpen={isEditDialogOpen}
+        setIsOpen={setIsEditDialogOpen}
+      />
 
       <SearchDescriptionDialog
         isOpen={isSearchDialogOpen}

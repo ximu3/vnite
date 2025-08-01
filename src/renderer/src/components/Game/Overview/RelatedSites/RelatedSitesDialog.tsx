@@ -1,11 +1,19 @@
 import { useTranslation } from 'react-i18next'
 import { Button } from '~/components/ui/button'
-import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog'
+import { Dialog, DialogContent } from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
 import { useGameState } from '~/hooks'
 import { cn } from '~/utils'
 
-export function RelatedSitesDialog({ gameId }: { gameId: string }): React.JSX.Element {
+export function RelatedSitesDialog({
+  gameId,
+  isOpen,
+  setIsOpen
+}: {
+  gameId: string
+  isOpen: boolean
+  setIsOpen: (isOpen: boolean) => void
+}): React.JSX.Element {
   const { t } = useTranslation('game')
   const [relatedSites, setRelatedSites, saveRelatedSites] = useGameState(
     gameId,
@@ -14,12 +22,7 @@ export function RelatedSitesDialog({ gameId }: { gameId: string }): React.JSX.El
   )
 
   return (
-    <Dialog>
-      <DialogTrigger>
-        <span
-          className={cn('invisible group-hover:visible w-5 h-5 icon-[mdi--square-edit-outline]')}
-        ></span>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className={cn('max-w-none flex flex-col gap-3 w-[60vw]')}>
         <Button
           variant="outline"

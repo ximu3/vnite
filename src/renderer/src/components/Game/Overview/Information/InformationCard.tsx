@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useGameState } from '~/hooks'
 import { cn, copyWithToast } from '~/utils'
@@ -21,6 +21,7 @@ export function InformationCard({
   const [releaseDate] = useGameState(gameId, 'metadata.releaseDate')
   const [genres] = useGameState(gameId, 'metadata.genres')
   const [platforms] = useGameState(gameId, 'metadata.platforms')
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
 
   const handleCopySummary = (): void => {
     const fields = {
@@ -54,7 +55,15 @@ export function InformationCard({
         <div className={cn('font-bold select-none cursor-pointer')} onClick={handleCopySummary}>
           {t('detail.overview.sections.basicInfo')}
         </div>
-        <InformationDialog gameId={gameId} />
+        {/* Actions */}
+        <div className="flex items-center gap-3">
+          <span
+            className={cn(
+              'invisible group-hover:visible w-5 h-5 icon-[mdi--square-edit-outline] cursor-pointer'
+            )}
+            onClick={() => setIsEditDialogOpen(true)}
+          ></span>
+        </div>
       </div>
 
       <SeparatorDashed />
@@ -181,6 +190,12 @@ export function InformationCard({
               ))}
         </div>
       </div>
+
+      <InformationDialog
+        gameId={gameId}
+        isOpen={isEditDialogOpen}
+        setIsOpen={setIsEditDialogOpen}
+      />
     </div>
   )
 }

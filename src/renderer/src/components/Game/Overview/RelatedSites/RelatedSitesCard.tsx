@@ -5,6 +5,7 @@ import { useGameState } from '~/hooks'
 import { cn, copyWithToast } from '~/utils'
 import { RelatedSitesDialog } from './RelatedSitesDialog'
 import { SeparatorDashed } from '@ui/separator-dashed'
+import { useState } from 'react'
 
 export function RelatedSitesCard({
   gameId,
@@ -15,6 +16,7 @@ export function RelatedSitesCard({
 }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [relatedSites] = useGameState(gameId, 'metadata.relatedSites')
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
 
   return (
     <div className={cn(className, 'group')}>
@@ -28,7 +30,14 @@ export function RelatedSitesCard({
           {t('detail.overview.sections.relatedSites')}
         </div>
         {/* Actions */}
-        <RelatedSitesDialog gameId={gameId} />
+        <div className="flex items-center gap-3">
+          <span
+            className={cn(
+              'invisible group-hover:visible w-5 h-5 icon-[mdi--square-edit-outline] cursor-pointer'
+            )}
+            onClick={() => setIsEditDialogOpen(true)}
+          ></span>
+        </div>
       </div>
       <SeparatorDashed />
       <div className={cn('flex flex-col text-sm justify-start gap-[6px] items-start')}>
@@ -43,6 +52,11 @@ export function RelatedSitesCard({
               />
             ))}
       </div>
+      <RelatedSitesDialog
+        gameId={gameId}
+        isOpen={isEditDialogOpen}
+        setIsOpen={setIsEditDialogOpen}
+      />
     </div>
   )
 }

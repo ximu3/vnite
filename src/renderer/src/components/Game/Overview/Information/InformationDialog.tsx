@@ -1,13 +1,21 @@
 import { useTranslation } from 'react-i18next'
 import { ArrayInput } from '@ui/array-input'
 import { DateTimeInput } from '@ui/date-input'
-import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog'
+import { Dialog, DialogContent } from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 import { useGameState } from '~/hooks'
 import { cn } from '~/utils'
 
-export function InformationDialog({ gameId }: { gameId: string }): React.JSX.Element {
+export function InformationDialog({
+  gameId,
+  isOpen,
+  setIsOpen
+}: {
+  gameId: string
+  isOpen: boolean
+  setIsOpen: (isOpen: boolean) => void
+}): React.JSX.Element {
   const { t } = useTranslation('game')
   const [originalName, setOriginalName, saveOriginalName] = useGameState(
     gameId,
@@ -34,12 +42,7 @@ export function InformationDialog({ gameId }: { gameId: string }): React.JSX.Ele
   const [platforms, setPlatforms, savePlatforms] = useGameState(gameId, 'metadata.platforms', true)
 
   return (
-    <Dialog>
-      <DialogTrigger>
-        <span
-          className={cn('invisible group-hover:visible w-5 h-5 icon-[mdi--square-edit-outline]')}
-        ></span>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="w-[500px] p-3">
         <div
           className={cn(

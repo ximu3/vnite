@@ -18,6 +18,7 @@ export function ExtraInformationCard({
   const [extra, setExtra] = useGameState(gameId, 'metadata.extra')
   const [originalName] = useGameState(gameId, 'metadata.originalName')
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
 
   const handleCopyExtra = (): void => {
     if (!extra || extra.length === 0) return
@@ -62,12 +63,16 @@ export function ExtraInformationCard({
         <div className="flex items-center gap-3">
           <span
             className={cn(
-              'cursor-pointer icon-[mdi--magnify] invisible group-hover:visible w-5 h-5 mb-[4px]'
+              'cursor-pointer icon-[mdi--magnify] invisible group-hover:visible w-5 h-5'
             )}
             onClick={() => setIsSearchDialogOpen(true)}
           ></span>
-
-          <ExtraInformationDialog gameId={gameId} />
+          <span
+            className={cn(
+              'invisible group-hover:visible w-5 h-5 icon-[mdi--square-edit-outline] cursor-pointer'
+            )}
+            onClick={() => setIsEditDialogOpen(true)}
+          ></span>
         </div>
       </div>
 
@@ -116,6 +121,12 @@ export function ExtraInformationCard({
             ? extra.flatMap((item) => item.value.map((val) => ({ key: item.key, value: val })))
             : []
         }
+      />
+
+      <ExtraInformationDialog
+        gameId={gameId}
+        isOpen={isEditDialogOpen}
+        setIsOpen={setIsEditDialogOpen}
       />
     </div>
   )

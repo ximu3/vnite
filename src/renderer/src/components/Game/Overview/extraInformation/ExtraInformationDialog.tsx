@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { Button } from '~/components/ui/button'
-import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog'
+import { Dialog, DialogContent } from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
 import {
   DropdownMenu,
@@ -13,7 +13,15 @@ import { useGameState } from '~/hooks'
 import { cn } from '~/utils'
 import { METADATA_EXTRA_PREDEFINED_KEYS } from '@appTypes/models'
 
-export function ExtraInformationDialog({ gameId }: { gameId: string }): React.JSX.Element {
+export function ExtraInformationDialog({
+  gameId,
+  isOpen,
+  setIsOpen
+}: {
+  gameId: string
+  isOpen: boolean
+  setIsOpen: (isOpen: boolean) => void
+}): React.JSX.Element {
   const { t } = useTranslation('game')
   const [extra, setExtra, saveExtra, setExtraAndSave] = useGameState(gameId, 'metadata.extra', true)
 
@@ -58,14 +66,7 @@ export function ExtraInformationDialog({ gameId }: { gameId: string }): React.JS
   }
 
   return (
-    <Dialog>
-      <DialogTrigger>
-        <span
-          className={cn(
-            'invisible group-hover:visible w-5 h-5 icon-[mdi--square-edit-outline] cursor-pointer'
-          )}
-        ></span>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent
         className={cn('w-[70vw] max-w-none flex flex-col gap-3')}
         onClose={

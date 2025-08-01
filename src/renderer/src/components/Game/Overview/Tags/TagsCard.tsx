@@ -18,6 +18,7 @@ export function TagsCard({
   const [tags, setTags] = useGameState(gameId, 'metadata.tags')
   const [originalName] = useGameState(gameId, 'metadata.originalName')
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
 
   const handleSelectTags = (newTags: string[]): void => {
     setTags(newTags)
@@ -36,12 +37,16 @@ export function TagsCard({
         <div className="flex items-center gap-3">
           <span
             className={cn(
-              'cursor-pointer icon-[mdi--magnify] invisible group-hover:visible w-5 h-5 mb-[4px]'
+              'cursor-pointer icon-[mdi--magnify] invisible group-hover:visible w-5 h-5'
             )}
             onClick={() => setIsSearchDialogOpen(true)}
           ></span>
-
-          <TagsDialog gameId={gameId} />
+          <span
+            className={cn(
+              'invisible group-hover:visible w-5 h-5 icon-[mdi--square-edit-outline] cursor-pointer'
+            )}
+            onClick={() => setIsEditDialogOpen(true)}
+          ></span>
         </div>
       </div>
       <SeparatorDashed />
@@ -56,6 +61,8 @@ export function TagsCard({
               ))}
         </div>
       </div>
+
+      <TagsDialog gameId={gameId} isOpen={isEditDialogOpen} setIsOpen={setIsEditDialogOpen} />
 
       <SearchTagsDialog
         isOpen={isSearchDialogOpen}
