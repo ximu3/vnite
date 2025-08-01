@@ -58,10 +58,6 @@ export async function searchSteamGames(gameName: string): Promise<GameList> {
       response.items.map((game) =>
         getSteamMetadata(game.id.toString()).catch((error) => {
           console.error(`Error fetching metadata for game ${game.id}:`, error)
-          return {
-            releaseDate: '',
-            developers: [] as string[]
-          }
         })
       )
     )
@@ -69,8 +65,8 @@ export async function searchSteamGames(gameName: string): Promise<GameList> {
     return response.items.map((game, index) => ({
       id: game.id.toString(),
       name: game.name,
-      releaseDate: gamesMetadata[index].releaseDate,
-      developers: gamesMetadata[index].developers
+      releaseDate: gamesMetadata[index]?.releaseDate || '',
+      developers: gamesMetadata[index]?.developers || []
     }))
   } catch (error) {
     if (error instanceof Error) {
@@ -182,7 +178,12 @@ export async function getSteamMetadata(appId: string): Promise<GameMetadata> {
           url: `${STEAM_URLS.STORE}/app/${appId}`
         }
       ],
-      tags: tags.length > 0 ? tags : gameData.genres?.map((genre) => genre.description) || []
+      tags: tags.length > 0 ? tags : gameData.genres?.map((genre) => genre.description) || [],
+      platforms: gameData.platforms
+        ? Object.keys(gameData.platforms).filter(
+            (platform) => gameData.platforms && gameData.platforms[platform]
+          )
+        : []
     }
   } catch (error) {
     console.error(`Error fetching metadata for game ${appId}:`, error)
@@ -225,7 +226,7 @@ export async function checkImageExists(url: string): Promise<boolean> {
   }
 }
 
-export async function getGameBackground(appId: string): Promise<string> {
+export async function getGameHero(appId: string): Promise<string> {
   const hdUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/library_hero_2x.jpg`
   const standardUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/library_hero.jpg`
 
@@ -234,6 +235,27 @@ export async function getGameBackground(appId: string): Promise<string> {
 
   // If HD image exists, return HD image URL, otherwise return standard image URL
   return hdExists ? hdUrl : standardUrl
+}
+
+export async function getGameScreenshots(appId: string): Promise<string[]> {
+  const langConfig = i18next.t('scraper:steam.config', {
+    returnObjects: true
+  }) as SteamLanguageConfig
+
+  // Get data in the current language
+  const urlLocal = `${STEAM_URLS.STORE}/api/appdetails?appids=${appId}&l=${langConfig.apiLanguageCode || 'english'}`
+
+  const data = (await fetchSteamAPI(urlLocal)) as SteamAppDetailsResponse
+  return data[appId]?.success
+    ? data[appId].data.screenshots?.map((screenshot) => screenshot.path_full) || []
+    : []
+}
+
+export async function getGameBackgrounds(appId: string): Promise<string[]> {
+  const heroUrl = await getGameHero(appId)
+  const screenshots = await getGameScreenshots(appId)
+
+  return [heroUrl, ...screenshots]
 }
 
 export async function getGameCover(appId: string): Promise<string> {
@@ -280,14 +302,14 @@ export async function getGameCoverByName(gameName: string): Promise<string> {
   }
 }
 
-export async function getGameBackgroundByName(gameName: string): Promise<string> {
+export async function getGameBackgroundsByName(gameName: string): Promise<string[]> {
   try {
     const games = await searchSteamGames(gameName)
-    if (games.length === 0) return ''
-    return getGameBackground(games[0].id)
+    if (games.length === 0) return []
+    return getGameBackgrounds(games[0].id)
   } catch (error) {
     console.error(`Error fetching screenshots for game ${gameName}:`, error)
-    return ''
+    return []
   }
 }
 

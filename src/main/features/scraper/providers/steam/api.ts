@@ -7,8 +7,8 @@ import {
   searchSteamGames,
   getGameLogo,
   getGameLogoByName,
-  getGameBackground,
-  getGameBackgroundByName
+  getGameBackgrounds,
+  getGameBackgroundsByName
 } from './common'
 import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
 
@@ -51,11 +51,11 @@ export async function getGameBackgroundsFromSteam(
   identifier: ScraperIdentifier
 ): Promise<string[]> {
   try {
-    const background =
+    const backgrounds =
       identifier.type === 'id'
-        ? await getGameBackground(identifier.value)
-        : await getGameBackgroundByName(identifier.value)
-    return background ? [background] : []
+        ? await getGameBackgrounds(identifier.value)
+        : await getGameBackgroundsByName(identifier.value)
+    return backgrounds.length > 0 ? backgrounds : []
   } catch (error) {
     console.error('Error fetching game backgrounds:', error)
     return []

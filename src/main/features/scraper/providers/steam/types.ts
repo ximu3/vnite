@@ -30,14 +30,21 @@ type SteamAppDetailsData = {
     id: number
     description: string
   }>
-  screenshots?: Array<{
+  screenshots?: {
+    id: number
+    path_thumbnail: string
     path_full: string
-  }>
+  }[]
   header_image?: string
   website?: string
   metacritic?: {
     score: number
     url: string
+  }
+  platforms?: {
+    windows: boolean
+    mac: boolean
+    linux: boolean
   }
 }
 

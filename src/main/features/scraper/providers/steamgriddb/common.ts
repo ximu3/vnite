@@ -1,7 +1,7 @@
 import { net } from 'electron'
 import {
-  getGameBackground as getGameBackgroundFromSteam,
-  getGameBackgroundByName as getGameBackgroundByNameFromSteam,
+  getGameBackgrounds as getGameBackgroundsFromSteam,
+  getGameBackgroundsByName as getGameBackgroundsByNameFromSteam,
   getGameCover as getGameCoverFromSteam,
   getGameCoverByName as getGameCoverByNameFromSteam,
   getGameLogo as getGameLogoFromSteam,
@@ -80,7 +80,7 @@ export async function getGameCovers(steamId: string): Promise<string[]> {
 
     const urls = data?.data?.map((grid: any) => grid.url) || []
 
-    // Put the steam cover at the beginning of the array
+    // Put the steam official cover at the beginning of the array
     const coverUrl = await getGameCoverFromSteam(steamId)
     if (coverUrl) {
       urls.unshift(coverUrl)
@@ -108,7 +108,7 @@ export async function getGameCoversByName(gameName: string): Promise<string[]> {
 
     const urls = data?.data?.map((grid: any) => grid.url) || []
 
-    // Put the steam cover at the beginning of the array
+    // Put the steam official cover at the beginning of the array
     const coverUrl = await getGameCoverByNameFromSteam(gameName)
     if (coverUrl) {
       urls.unshift(coverUrl)
@@ -136,10 +136,10 @@ export async function getGameBackgrounds(steamId: string): Promise<string[]> {
 
     const urls = data?.data?.map((hero: any) => hero.url) || []
 
-    // Put the game background at the beginning of the array
-    const heroUrl = await getGameBackgroundFromSteam(steamId)
-    if (heroUrl) {
-      urls.unshift(heroUrl)
+    // Put the steam official background at the beginning of the array
+    const heroUrl = await getGameBackgroundsFromSteam(steamId)
+    if (heroUrl[0]) {
+      urls.unshift(heroUrl[0])
     }
     return urls
   } catch (error) {
@@ -164,10 +164,10 @@ export async function getGameBackgroundsByName(gameName: string): Promise<string
 
     const urls = data?.data?.map((hero: any) => hero.url) || []
 
-    // Put the game background at the beginning of the array
-    const heroUrl = await getGameBackgroundByNameFromSteam(gameName)
-    if (heroUrl) {
-      urls.unshift(heroUrl)
+    // Put the steam official background at the beginning of the array
+    const heroUrl = await getGameBackgroundsByNameFromSteam(gameName)
+    if (heroUrl[0]) {
+      urls.unshift(heroUrl[0])
     }
     return urls
   } catch (error) {
@@ -192,7 +192,7 @@ export async function getGameLogos(steamId: string): Promise<string[]> {
 
     const urls = data?.data?.map((logo: any) => logo.url) || []
 
-    // Put the game logo at the beginning of the array
+    // Put the steam official logo at the beginning of the array
     const logoUrl = await getGameLogoFromSteam(steamId)
     if (logoUrl) {
       urls.unshift(logoUrl)
@@ -220,7 +220,7 @@ export async function getGameLogosByName(gameName: string): Promise<string[]> {
 
     const urls = data?.data?.map((logo: any) => logo.url) || []
 
-    // Put the game logo at the beginning of the array
+    // Put the steam official logo at the beginning of the array
     const logoUrl = await getGameLogoByNameFromSteam(gameName)
     if (logoUrl) {
       urls.unshift(logoUrl)
