@@ -1,6 +1,6 @@
 import { exec } from 'child_process'
 import { app, shell } from 'electron'
-import log from 'electron-log/main.js'
+import log from 'electron-log/main'
 import { fileTypeFromBuffer } from 'file-type'
 import fse from 'fs-extra'
 import koffi from 'koffi'
@@ -11,6 +11,8 @@ import { promisify } from 'util'
 import { getAppTempPath, getDataPath } from '~/features/system'
 import { psManager } from './Powershell'
 import { net } from 'electron'
+import { parse, isValid, format, parseISO } from 'date-fns'
+import { zhCN, enUS } from 'date-fns/locale'
 
 const execAsync = promisify(exec)
 
@@ -272,20 +274,56 @@ export function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-export function formatDate(dateString: string): string {
+export function formatDate(dateString: string, outputFormat: string = 'yyyy-MM-dd'): string {
   if (!dateString) return ''
 
   try {
-    const date = new Date(dateString)
-
-    // Check if the date is valid
-    if (isNaN(date.getTime())) {
-      return ''
+    // Try to parse the date string directly
+    try {
+      const date = parseISO(dateString)
+      if (isValid(date)) {
+        return format(date, outputFormat)
+      }
+    } catch {
+      // Ignore errors
     }
 
-    // Formatted as YYYY-MM-DD
-    return date.toISOString().split('T')[0]
+    // Define common formats and locales
+    const formats = [
+      { format: 'yyyy-MM-dd', locale: undefined },
+      { format: 'dd/MM/yyyy', locale: undefined },
+      { format: 'MM/dd/yyyy', locale: undefined },
+      { format: 'yyyy年MM月dd日', locale: zhCN },
+      { format: 'yyyy年 MM月 dd日', locale: zhCN },
+      { format: 'yyyy 年 MM 月 dd 日', locale: zhCN },
+      { format: 'dd MMM yyyy', locale: enUS },
+      { format: 'MMMM dd, yyyy', locale: enUS }
+    ]
+
+    // Try parsing with each format
+    for (const { format: fmt, locale } of formats) {
+      try {
+        const parsedDate = parse(dateString, fmt, new Date(), { locale })
+        if (isValid(parsedDate)) {
+          return format(parsedDate, outputFormat)
+        }
+      } catch {
+        // Ignore errors for this format
+        continue
+      }
+    }
+
+    // If all parsing attempts fail, try to create a Date object directly
+    const jsDate = new Date(dateString)
+    if (isValid(jsDate)) {
+      return format(jsDate, outputFormat)
+    }
+
+    log.warn(`[Utils] Unable to parse date: ${dateString}`)
+    // If all parsing attempts fail, return an empty string
+    return ''
   } catch {
+    log.error(`[Utils] Error formatting date: ${dateString}`)
     return ''
   }
 }
