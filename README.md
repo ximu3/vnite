@@ -24,33 +24,19 @@ Vnite is a versatile game management software designed to provide a unified inte
 ## ✨ Features
 
 - Modern user interface (with customizable themes)
-
 - Plugin support (with built-in plugin marketplace)
-
 - Real-time cloud synchronization for all game records, saves, and settings across multiple devices
-
 - Support for multiple data sources (Steam, IGDB, Bangumi, VNDB, YMGal, DLsite)
-
 - Supports automatic game library integration, each scanner can customize folder structure and data sources
-
 - Flexible metadata transformer, supports regex modification, replacement, merging, and exclusion of any metadata
-
 - Detailed reporting functionality, including annual, monthly, and weekly reports to review your gaming journey
-
 - Integration with other programs (such as one-click LE region switching, automatic Magpie scaling, emulator launching, etc.)
-
 - One-click import from Steam library (preserving game time)
-
 - Multiple launch methods (files, links, scripts), with high customizability and preset configurations
-
 - Dynamic categorization (by developer, tags, etc.)
-
 - Powerful filters with support for custom metadata fields
-
 - Session-based timer, supporting recording for individual files or folders
-
 - Support for launching games via system links
-
 - Complete separation of data and program for easy backup and customization
 
 ## 📸 Screenshots
