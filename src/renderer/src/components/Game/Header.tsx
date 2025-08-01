@@ -24,6 +24,7 @@ export function Header({
   const [showOriginalNameInGameHeader] = useConfigState('game.gameHeader.showOriginalName')
   const [enableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
+  const blur = enableNSFWBlur && nsfw
 
   const isPlayTimeEditorDialogOpen = useGameDetailStore((state) => state.isPlayTimeEditorDialogOpen)
   const setIsPlayTimeEditorDialogOpen = useGameDetailStore(
@@ -31,6 +32,9 @@ export function Header({
   )
   const isScoreEditorDialogOpen = useGameDetailStore((state) => state.isScoreEditorDialogOpen)
   const setIsScoreEditorDialogOpen = useGameDetailStore((state) => state.setIsScoreEditorDialogOpen)
+  const stringToBase64 = (str: string): string =>
+    btoa(String.fromCharCode(...new TextEncoder().encode(str)))
+  const obfuscatedName = stringToBase64(name).slice(0, name.length)
 
   return (
     <>
@@ -44,18 +48,32 @@ export function Header({
           >
             <div
               className={cn(
-                'font-bold text-2xl text-accent-foreground cursor-pointer select-none text-shadow-lg'
+                'font-bold text-2xl text-accent-foreground cursor-pointer select-none text-shadow-lg group'
               )}
               onClick={() => copyWithToast(name)}
             >
-              {name}
+              {blur ? (
+                <>
+                  <span className="block group-hover:hidden">{obfuscatedName}</span>
+                  <span className="hidden group-hover:block">{name}</span>
+                </>
+              ) : (
+                name
+              )}
             </div>
             {showOriginalNameInGameHeader && originalName && (
               <div
-                className={cn('font-bold text-accent-foreground cursor-pointer select-none')}
+                className={cn('font-bold text-accent-foreground cursor-pointer select-none group')}
                 onClick={() => copyWithToast(originalName)}
               >
-                {originalName}
+                {blur ? (
+                  <>
+                    <span className="block group-hover:hidden">{obfuscatedName}</span>
+                    <span className="hidden group-hover:block">{originalName}</span>
+                  </>
+                ) : (
+                  originalName
+                )}
               </div>
             )}
             <div
@@ -83,7 +101,7 @@ export function Header({
               gameId={gameId}
               key={`${gameId}-poster`}
               type="cover"
-              blur={enableNSFWBlur && nsfw}
+              blur={blur}
               className={cn('w-auto h-[170px] object-cover rounded-lg shadow-md')}
               fallback={<div className="h-[170px]" />}
             />

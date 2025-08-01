@@ -1,17 +1,17 @@
+import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '~/components/ui/button'
 import { GameImage } from '~/components/ui/game-image'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
-import { useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useGameState } from '~/hooks'
+import { useConfigState, useGameState } from '~/hooks'
 import { cn } from '~/utils'
+import { ScrollArea } from '../ui/scroll-area'
 import { Header } from './Header'
 import { Memory } from './Memory'
 import { Overview } from './Overview'
 import { Record } from './Record'
 import { Save } from './Save'
 import { useGameDetailStore } from './store'
-import { ScrollArea } from '../ui/scroll-area'
 
 export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
@@ -40,6 +40,9 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   const [logoSize, setLogoSize, saveLogoSize] = useGameState(gameId, 'apperance.logo.size', true)
   const [logoVisible, setLogoVisible] = useGameState(gameId, 'apperance.logo.visible')
   const [localLogoPosition, setLocalLogoPosition] = useState(initialPosition)
+
+  const [enableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
+  const [nsfw] = useGameState(gameId, 'apperance.nsfw')
 
   useEffect(() => {
     setLocalLogoPosition(logoPosition)
@@ -163,7 +166,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
     <div className={cn('w-full h-full relative overflow-hidden shrink-0')}>
       {/* Logo Editing Control Panel */}
       {/* Only visible when editing logo */}
-      {isEditingLogo && (
+      {isEditingLogo && (!enableNSFWBlur || !nsfw) && (
         <div
           className={cn(
             'absolute top-[10px] left-[10px] z-40 bg-transparent p-3 rounded-lg flex gap-3'
@@ -219,7 +222,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
       )}
 
       {/* Logo Layer */}
-      {logoVisible && (
+      {logoVisible && (!enableNSFWBlur || !nsfw) && (
         <div
           ref={logoRef}
           onMouseDown={handleMouseDown}

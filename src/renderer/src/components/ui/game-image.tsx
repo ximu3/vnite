@@ -10,6 +10,7 @@ interface GameImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src'
   shadow?: boolean
   flips?: boolean
   blur?: boolean
+  blurType?: 'bigposter' | 'poster' | 'smallposter'
 }
 
 export const GameImage: React.FC<GameImageProps> = ({
@@ -22,12 +23,19 @@ export const GameImage: React.FC<GameImageProps> = ({
   shadow = false,
   flips = false,
   blur = false,
+  blurType = 'poster',
   ...imgProps
 }) => {
   const [isLoaded, setIsLoaded] = useState(false)
   const { getAttachmentInfo, setAttachmentError } = useAttachmentStore()
 
   const attachmentInfo = getAttachmentInfo('game', gameId, `images/${type}.webp`)
+
+  const blurClassMap: Record<'bigposter' | 'poster' | 'smallposter', string> = {
+    bigposter: 'filter blur-[36px]',
+    poster: 'filter blur-[24px]',
+    smallposter: 'filter blur-[8px]'
+  }
 
   // If the image is known to have an error, return fallback directly
   const attachmentUrl = `attachment://game/${gameId}/images/${type}.webp?t=${
@@ -50,7 +58,7 @@ export const GameImage: React.FC<GameImageProps> = ({
           shadow && 'shadow-md shadow-black/50',
           // isLoaded ? 'opacity-100' : 'opacity-0',
           flips && '-scale-y-100',
-          blur && 'filter blur-xl',
+          blur && blurClassMap[blurType],
           className
         )}
         // loading="lazy"
