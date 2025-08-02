@@ -5,7 +5,7 @@ import { useRunningGames } from '~/pages/Library/store'
 import { getGameLocalStore, getGameStore } from '~/stores/game'
 import { ipcManager } from '~/app/ipc'
 import { generateUUID } from '@appUtils'
-import { useRouter } from '@tanstack/react-router'
+import { useRouter, useNavigate } from '@tanstack/react-router'
 import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
 
 export function changeFontFamily(
@@ -158,10 +158,17 @@ export function stopGame(gameId: string): void {
 /**
  * Logic for starting the game
  */
-export async function startGame(gameId: string, navigate?: (path: string) => void): Promise<void> {
+export async function startGame(
+  gameId: string,
+  navigate?: ReturnType<typeof useNavigate>,
+  groupId: string = 'all'
+): Promise<void> {
   // Navigate to the game details page
   if (navigate) {
-    navigate(`/library/games/${gameId}/all`)
+    navigate({
+      to: '/library/games/$gameId/$groupId',
+      params: { gameId, groupId: encodeURIComponent(groupId) }
+    })
   }
 
   // Get the latest list of running games

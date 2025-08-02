@@ -1,4 +1,4 @@
-import { useLocation } from '@tanstack/react-router'
+import { useLocation, useNavigate } from '@tanstack/react-router'
 import { Nav } from '@ui/nav'
 import React from 'react'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
@@ -13,6 +13,7 @@ import { GameNavCM } from '../contextMenu/GameNavCM'
 import { BatchGameNavCM } from '../GameBatchEditor/BatchGameNavCM'
 import { useGameBatchEditorStore } from '../GameBatchEditor/store'
 import { useTheme } from '../ThemeProvider'
+import { startGame } from '~/utils'
 
 export function GameNav({
   gameId,
@@ -29,6 +30,7 @@ export function GameNav({
   const [enableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
   const isDarkMode = useTheme().isDark
   const location = useLocation()
+  const navigate = useNavigate()
 
   // dialog box state
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
@@ -44,6 +46,12 @@ export function GameNav({
   const stringToBase64 = (str: string): string =>
     btoa(String.fromCharCode(...new TextEncoder().encode(str)))
   const obfuscatedGameName = stringToBase64(gameName).slice(0, gameName.length)
+
+  const handleDoubleClick = (event: React.MouseEvent): void => {
+    event.preventDefault()
+    event.stopPropagation()
+    startGame(gameId, navigate, groupId)
+  }
 
   const handleGameClick = (event: React.MouseEvent): void => {
     const store = useGameBatchEditorStore.getState()
@@ -119,6 +127,7 @@ export function GameNav({
         <ContextMenuTrigger>
           <div
             onClick={handleGameClick}
+            onDoubleClick={handleDoubleClick}
             data-game-id={gameId}
             data-group-id={encodeURIComponent(groupId)}
           >
