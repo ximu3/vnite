@@ -96,6 +96,7 @@ function setupEventForwarding(): void {
     'game:launched',
     'game:stopped',
     'game:deleted',
+    'game:play-status-changed',
     'scanner:started',
     'scanner:completed'
   ]

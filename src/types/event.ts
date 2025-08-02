@@ -62,6 +62,11 @@ export interface AppEvents {
     memoryId: string
   }
 
+  'game:play-status-changed': {
+    gameId: string
+    status: 'unplayed' | 'playing' | 'finished' | 'multiple' | 'shelved'
+  }
+
   'theme:preset-changed': {
     preset: string
   }

@@ -6,6 +6,7 @@ import { useGameState } from '~/hooks'
 import { cn } from '~/utils'
 import { useGameDetailStore } from '../../store'
 import { RecordCard } from './RecordCard'
+import { eventBus } from '~/app/events'
 
 export function Record({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
@@ -27,6 +28,7 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
   ]
   const changePlayStatus = (status: typeof playStatus): void => {
     setPlayStatus(status)
+    eventBus.emit('game:play-status-changed', { gameId, status }, { source: 'record' })
     refreshGameList()
   }
   return (

@@ -19,6 +19,7 @@ import { Dialog, DialogContent } from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
 import { Button } from '~/components/ui/button'
 import { cn } from '~/utils'
+import { eventBus } from '~/app/events'
 
 export function ManageMenu({
   gameId,
@@ -49,6 +50,7 @@ export function ManageMenu({
 
   const changePlayStatus = (value: typeof playStatus): void => {
     setPlayStatus(value)
+    eventBus.emit('game:play-status-changed', { gameId, status: value }, { source: 'manage-menu' })
     if (selectedGroup === 'record.playStatus') {
       refreshGameList()
     }
