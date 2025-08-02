@@ -104,7 +104,6 @@
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@types/react-lazy-load-image-component": "^1.6.4",
-    "@types/react-transition-group": "^4.4.12",
     "@types/react-window": "^1.8.8",
     "@types/semver": "^7.7.0",
     "@types/uuid": "^10.0.0",
