@@ -11,7 +11,12 @@ export async function backupDatabase(targetPath: string, exclude?: string[]): Pr
     const dataPath = getDataPath()
     // Stop all database operations before backup
     await baseDBManager.closeAllDatabases()
-    await zipFolder(dataPath, targetPath, 'vnite-database', {
+
+    // Generate timestamp for backup filename
+    const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '')
+    const backupName = `vnite-database-${timestamp}`
+
+    await zipFolder(dataPath, targetPath, backupName, {
       exclude: exclude
     })
     baseDBManager.initAllDatabases()
