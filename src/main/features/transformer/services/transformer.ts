@@ -454,7 +454,9 @@ export class Transformer {
     }
 
     // If localized key name is the same as original key name (untranslated case)
-    if (['director', 'scenario', 'illustration', 'music', 'engine'].includes(localizedKey)) {
+    if (
+      ['director', 'scenario', 'illustration', 'voice', 'music', 'engine'].includes(localizedKey)
+    ) {
       return localizedKey
     }
 

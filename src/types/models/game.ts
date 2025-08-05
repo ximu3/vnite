@@ -230,6 +230,7 @@ export const METADATA_EXTRA_PREDEFINED_KEYS = [
   'scenario',
   'illustration',
   'music',
+  'voice',
   'engine'
 ]
 
