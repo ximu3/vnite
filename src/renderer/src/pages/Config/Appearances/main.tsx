@@ -87,6 +87,7 @@ export function Appearances(): React.JSX.Element {
             <div className={cn('')}>
               <ConfigItemPure
                 title={t('appearances.background.image')}
+                controlClassName="flex flex-row gap-3"
                 description={t('appearances.background.imageDescription')}
               >
                 <HoverCard>
@@ -108,6 +109,12 @@ export function Appearances(): React.JSX.Element {
                             className="object-cover w-full h-auto"
                             onError={() => {
                               setAttachmentError('config', 'media', 'background.webp', true)
+                              setAttachmentError(
+                                'config',
+                                'media',
+                                `background-${isDark ? 'dark' : 'light'}.webp`,
+                                true
+                              )
                             }}
                           />
                         </div>
@@ -119,6 +126,29 @@ export function Appearances(): React.JSX.Element {
                     </div>
                   </HoverCardContent>
                 </HoverCard>
+
+                <Button
+                  variant="outline"
+                  className=""
+                  onClick={() => {
+                    try {
+                      ipcManager.invoke('db:remove-config-background', isDark ? 'dark' : 'light')
+                      setAttachmentError(
+                        'config',
+                        'media',
+                        `background-${isDark ? 'dark' : 'light'}.webp`,
+                        true
+                      )
+                      refresh()
+                      toast.success(t('appearances.notifications.removeBackgroundImageSuccess'))
+                    } catch (_error) {
+                      toast.error(t('appearances.notifications.removeBackgroundImageFailed'))
+                      return
+                    }
+                  }}
+                >
+                  {t('appearances.background.removeImage')}
+                </Button>
               </ConfigItemPure>
             </div>
           </div>
@@ -154,6 +184,7 @@ export function Appearances(): React.JSX.Element {
               />
             </div>
           </div>
+
           {/* Font Settings */}
           <div className={cn('space-y-4')}>
             {/* Font Family */}

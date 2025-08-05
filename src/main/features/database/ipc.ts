@@ -5,7 +5,6 @@ import {
   stopSync,
   fullSync,
   getCouchDBSize,
-  compactRemoteDatabase
   compactRemoteDatabase,
   resetAppearancesSettings
 } from './services'
@@ -60,6 +59,10 @@ export function setupDatabaseIPC(): void {
       return await ConfigDBManager.setConfigBackgroundImage(path, theme)
     }
   )
+
+  ipcManager.handle('db:remove-config-background', async (_, theme: 'dark' | 'light' | '#all') => {
+    return await ConfigDBManager.removeConfigBackgroundImage(theme)
+  })
 
   ipcManager.handle('db:compact-remote-database', async (_) => {
     const username = await ConfigDBManager.getConfigLocalValue('sync.officialConfig.auth.username')
