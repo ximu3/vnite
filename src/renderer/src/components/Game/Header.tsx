@@ -23,6 +23,7 @@ export function Header({
   const [originalName] = useGameState(gameId, 'metadata.originalName')
   const [showOriginalNameInGameHeader] = useConfigState('game.gameHeader.showOriginalName')
   const [enableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
+  const [showCover] = useConfigState('appearances.gameDetail.showCover')
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
   const blur = enableNSFWBlur && nsfw
 
@@ -99,14 +100,16 @@ export function Header({
           </div>
           {/* Game cover image */}
           <div className="relative lg:mr-3 pb-1 shrink-0">
-            <GameImage
-              gameId={gameId}
-              key={`${gameId}-poster`}
-              type="cover"
-              blur={blur}
-              className={cn('w-auto h-[170px] object-cover rounded-lg shadow-md')}
-              fallback={<div className="h-[170px]" />}
-            />
+            {showCover && (
+              <GameImage
+                gameId={gameId}
+                key={`${gameId}-poster`}
+                type="cover"
+                blur={blur}
+                className={cn('w-auto h-[170px] object-cover rounded-lg shadow-md')}
+                fallback={<div className="h-[170px]" />}
+              />
+            )}
           </div>
         </div>
         {/* Game record section */}

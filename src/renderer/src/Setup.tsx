@@ -19,6 +19,14 @@ export function Setup(): React.JSX.Element {
     setup(router)
   }, [])
 
+  const [contentTopPadding] = useConfigState('appearances.gameDetail.contentTopPadding')
+  const [headerMaxHeight] = useConfigState('appearances.gameDetail.headerMaxHeight')
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--content-top-padding', `${contentTopPadding}vh`)
+    document.documentElement.style.setProperty('--header-max-height', `${headerMaxHeight}vh`)
+  }, [contentTopPadding, headerMaxHeight])
+
   useEffect(() => {
     usePluginInfoStore.getState().loadPlugins()
     usePluginInfoStore.getState().loadStats()

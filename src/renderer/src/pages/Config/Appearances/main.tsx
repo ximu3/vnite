@@ -108,7 +108,6 @@ export function Appearances(): React.JSX.Element {
                             alt={t('appearances.background.currentBackground')}
                             className="object-cover w-full h-auto"
                             onError={() => {
-                              setAttachmentError('config', 'media', 'background.webp', true)
                               setAttachmentError(
                                 'config',
                                 'media',
@@ -286,6 +285,50 @@ export function Appearances(): React.JSX.Element {
                 title={t('appearances.gameDetail.showOriginalName')}
                 description={t('appearances.gameDetail.showOriginalNameDescription')}
                 controlType="switch"
+              />
+            </div>
+            <div className={cn('')}>
+              <ConfigItem
+                hookType="config"
+                path="appearances.gameDetail.showHeader"
+                title={t('appearances.gameDetail.showHeader')}
+                description={t('appearances.gameDetail.showHeaderDescription')}
+                controlType="switch"
+              />
+            </div>
+            <div className={cn('')}>
+              <ConfigItem
+                hookType="config"
+                path="appearances.gameDetail.headerMaxHeight"
+                title={t('appearances.gameDetail.headerMaxHeight')}
+                description={t('appearances.gameDetail.headerMaxHeightDescription')}
+                controlType="slider"
+                min={10}
+                max={100}
+                step={1}
+                formatValue={(value) => `${value}vh`}
+              />
+            </div>
+            <div className={cn('')}>
+              <ConfigItem
+                hookType="config"
+                path="appearances.gameDetail.showCover"
+                title={t('appearances.gameDetail.showCover')}
+                description={t('appearances.gameDetail.showCoverDescription')}
+                controlType="switch"
+              />
+            </div>
+            <div className={cn('')}>
+              <ConfigItem
+                hookType="config"
+                path="appearances.gameDetail.contentTopPadding"
+                title={t('appearances.gameDetail.contentTopPadding')}
+                description={t('appearances.gameDetail.contentTopPaddingDescription')}
+                controlType="slider"
+                min={0}
+                max={100}
+                step={1}
+                formatValue={(value) => `${value}vh`}
               />
             </div>
           </div>

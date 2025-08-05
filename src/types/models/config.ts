@@ -65,6 +65,12 @@ export interface configDocs {
     showcase: {
       showPlayButtonOnPoster: boolean
     }
+    gameDetail: {
+      showHeader: boolean
+      headerMaxHeight: number
+      showCover: boolean
+      contentTopPadding: number
+    }
     glass: {
       dark: {
         blur: number
@@ -264,10 +270,16 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       showNSFWBlurSwitcher: true
     },
     background: {
-      customBackground: false
+      customBackground: true
     },
     showcase: {
       showPlayButtonOnPoster: true
+    },
+    gameDetail: {
+      showHeader: true,
+      headerMaxHeight: 55, // in vh
+      showCover: true,
+      contentTopPadding: 40 // in vh
     },
     glass: {
       dark: {
@@ -282,7 +294,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     enableNSFWBlur: true,
     fonts: {
       family: 'LXGW WenKai Mono',
-      size: 1,
+      size: 1, // in rem
       weight: 400
     }
   },

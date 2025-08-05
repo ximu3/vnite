@@ -38,6 +38,8 @@ export function Light(): React.JSX.Element {
   const { isDark } = useTheme()
   const refreshId = useLightStore((state) => state.refreshId)
 
+  const [showHeader] = useConfigState('appearances.gameDetail.showHeader')
+
   useEffect(() => {
     // Set initial background based on the current theme
     if (isDark) {
@@ -215,22 +217,28 @@ export function Light(): React.JSX.Element {
               maskImage: 'linear-gradient(to bottom, black 30%, transparent 70%)'
             }}
           >
-            <CrossfadeImage
-              src={imageUrl}
-              className={cn('w-full h-auto max-h-[55vh] object-top object-cover')}
-              blur={enableNSFWBlur && nsfw}
-              duration={500}
-              onError={() => {
-                if (customBackground) {
-                  setAttachmentError('config', 'media', 'background.webp', true)
-                } else {
-                  setAttachmentError('game', gameId, 'images/background.webp', true)
-                }
-              }}
-              style={{
-                maskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)'
-              }}
-            />
+            {showHeader ? (
+              <CrossfadeImage
+                src={imageUrl}
+                className={cn(`w-full h-auto max-h-(--header-max-height) object-top object-cover`)}
+                blur={enableNSFWBlur && nsfw}
+                duration={500}
+                onError={() => {
+                  if (customBackground) {
+                    setAttachmentError('config', 'media', 'background.webp', true)
+                  } else {
+                    setAttachmentError('game', gameId, 'images/background.webp', true)
+                  }
+                }}
+                style={{
+                  maskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)'
+                }}
+              />
+            ) : (
+              <div
+                className={`w-full h-auto max-h-(--header-max-height) object-top object-cover`}
+              ></div>
+            )}
           </div>
         </div>
       )}
@@ -249,7 +257,12 @@ export function Light(): React.JSX.Element {
         duration={500}
         onError={() => {
           if (customBackground) {
-            setAttachmentError('config', 'media', 'background.webp', true)
+            setAttachmentError(
+              'config',
+              'media',
+              `background-${isDark ? 'dark' : 'light'}.webp`,
+              true
+            )
           } else {
             setAttachmentError('game', gameId, 'images/background.webp', true)
           }

@@ -254,7 +254,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
       >
         {/* Content Container */}
         <div className={cn('relative z-20 flex flex-col w-full min-h-[100vh]')}>
-          <div className="mt-[40vh]">
+          <div className={`mt-(--content-top-padding)`}>
             {/* Header Area */}
             <div ref={headerRef} className="pt-1">
               <Header gameId={gameId} />

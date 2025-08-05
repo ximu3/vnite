@@ -133,6 +133,8 @@ type MainIpcEvents =
         timestamp: number
       }) => void
       'db:compact-remote-database': () => void
+      'db:reset-appearances-settings': () => void
+      'db:remove-config-background': (theme: 'dark' | 'light' | '#all') => void
 
       // Game save management events
       'game:backup-save': (gameId: string) => string
