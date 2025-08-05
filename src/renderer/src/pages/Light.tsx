@@ -7,6 +7,7 @@ import { CrossfadeImage } from '@ui/cross-fade-image'
 import { cn } from '~/utils'
 import { useTheme } from '~/components/ThemeProvider'
 import { create } from 'zustand'
+import defaultBackground from '@assets/defaultBackground.webp'
 
 // eslint-disable-next-line
 export const useLightStore = create<{
@@ -62,14 +63,10 @@ export function Light(): React.JSX.Element {
       'media',
       `background-${isDark ? 'dark' : 'light'}.webp`
     )
+    if (info?.error && isDark) {
+      return defaultBackground
+    }
     return `attachment://config/media/background-${isDark ? 'dark' : 'light'}.webp?t=${info?.timestamp}`
-  }
-
-  const isCustomBackgroundAvailable = (): boolean => {
-    return (
-      customBackground &&
-      !getAttachmentInfo('config', 'media', `background-${isDark ? 'dark' : 'light'}.webp`)?.error
-    )
   }
 
   const getRecentGameId = (): string => sortGames('record.lastRunDate', 'desc')[0]
@@ -151,7 +148,7 @@ export function Light(): React.JSX.Element {
       const currentCollectionId = pathname.split('/collections/')[1]?.split('/')[0]
 
       if (!currentCollectionId) {
-        if (isCustomBackgroundAvailable()) {
+        if (customBackground) {
           updateBackgroundImage(getCustomBackgroundUrl())
         } else {
           const recentGameId = getRecentGameId()
@@ -165,7 +162,7 @@ export function Light(): React.JSX.Element {
         updateBackgroundImage(getGameBackgroundUrl(currentGameId), currentGameId)
       }
     } else {
-      if (isCustomBackgroundAvailable()) {
+      if (customBackground) {
         updateBackgroundImage(getCustomBackgroundUrl())
         return
       }
