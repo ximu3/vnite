@@ -6,6 +6,7 @@ import { igdbProvider } from './igdb'
 import { dlsiteProvider } from './dlsite'
 import { bangumiProvider } from './bangumi'
 import { googleProvider } from './google'
+import { erogamescapeProvider } from './erogamescape'
 
 export {
   vndbProvider,
@@ -15,7 +16,8 @@ export {
   igdbProvider,
   dlsiteProvider,
   bangumiProvider,
-  googleProvider
+  googleProvider,
+  erogamescapeProvider
 }
 
 export const builtinProviders = [
@@ -26,5 +28,6 @@ export const builtinProviders = [
   igdbProvider,
   dlsiteProvider,
   bangumiProvider,
-  googleProvider
+  googleProvider,
+  erogamescapeProvider
 ]

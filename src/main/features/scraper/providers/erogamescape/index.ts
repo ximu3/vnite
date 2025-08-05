@@ -1,0 +1,1 @@
+export { erogamescapeProvider } from './provider'
