@@ -1,4 +1,4 @@
-import { useRouter } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { HoverCardAnimation } from '~/components/animations/HoverCard'
@@ -28,7 +28,7 @@ export function BigGamePoster({
   className?: string
   inViewGames?: string[]
 }): React.JSX.Element {
-  const router = useRouter()
+  const navigate = useNavigate()
   const gameData = useGameRegistry((state) => state.gameMetaIndex[gameId])
   const runningGames = useRunningGames((state) => state.runningGames)
   const [playTime] = useGameState(gameId, 'record.playTime')
@@ -95,7 +95,7 @@ export function BigGamePoster({
     if (e.ctrlKey || e.metaKey) {
       handleSelect(e)
     } else {
-      navigateToGame(router, gameId, groupId)
+      navigateToGame(navigate, gameId, groupId)
     }
   }
 
@@ -185,7 +185,7 @@ export function BigGamePoster({
                         className="rounded-full w-[46px] h-[46px] p-0 bg-primary hover:bg-primary/90"
                         onClick={(e) => {
                           e.stopPropagation()
-                          navigateToGame(router, gameId, groupId || 'all')
+                          navigateToGame(navigate, gameId, groupId || 'all')
                           startGame(gameId)
                         }}
                       >

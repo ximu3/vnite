@@ -7,15 +7,15 @@ import { setupDBSync } from '~/stores/sync'
 import { useUpdaterStore } from '~/pages/Updater/store'
 import { useLibrarybarStore } from '~/components/Librarybar/store'
 import i18next from 'i18next'
+import { useRouter } from '@tanstack/react-router'
 
 /**
  * Setting the game URL startup listener
  * @param router Router instance from @tanstack/react-router
  */
-export function setupGameUrlListener(router: any): () => void {
+export function setupGameUrlListener(router: ReturnType<typeof useRouter>): () => void {
   const handleStartGameFromUrl = (_event: any, gameId: string): void => {
-    const navigateFunction = (path: string): void => router.navigate({ to: path })
-    startGame(gameId, navigateFunction)
+    startGame(gameId, router.navigate)
   }
 
   return ipcManager.on('game:start-from-url', handleStartGameFromUrl)

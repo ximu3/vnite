@@ -5,7 +5,7 @@ import { useRunningGames } from '~/pages/Library/store'
 import { getGameLocalStore, getGameStore } from '~/stores/game'
 import { ipcManager } from '~/app/ipc'
 import { generateUUID } from '@appUtils'
-import { useRouter, useNavigate } from '@tanstack/react-router'
+import { NavigateFn } from '@tanstack/react-router'
 import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
 
 export function changeFontFamily(
@@ -71,15 +71,14 @@ export function changeFontWeight(fontWeight: number): void {
   )
 }
 
-export function navigateToGame(
-  router: ReturnType<typeof useRouter>,
-  gameId: string,
-  groupId = 'all'
-): void {
+export function navigateToGame(navigate: NavigateFn, gameId: string, groupId = 'all'): void {
   const setLazyloadMark = usePositionButtonStore.getState().setLazyloadMark
-  router.navigate({ to: `/library/games/${gameId}/${encodeURIComponent(groupId)}` })
+  navigate({
+    to: '/library/games/$gameId/$groupId',
+    params: { gameId, groupId: encodeURIComponent(groupId) }
+  })
   scrollToElement({
-    selector: `[data-game-id="${gameId}"][data-group-id="${groupId}"]`
+    selector: `[data-game-id="${gameId}"][data-group-id="${encodeURIComponent(groupId)}"]`
   })
   setTimeout(() => {
     setLazyloadMark(generateUUID())
@@ -160,7 +159,7 @@ export function stopGame(gameId: string): void {
  */
 export async function startGame(
   gameId: string,
-  navigate?: ReturnType<typeof useNavigate>,
+  navigate?: NavigateFn,
   groupId: string = 'all'
 ): Promise<void> {
   // Navigate to the game details page

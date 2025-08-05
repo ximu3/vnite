@@ -1,4 +1,4 @@
-import { useRouter } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { HoverCardAnimation } from '~/components/animations/HoverCard'
@@ -73,7 +73,7 @@ export function GamePoster({
   position?: 'right' | 'left' | 'center'
   inViewGames?: string[]
 }): React.JSX.Element {
-  const router = useRouter()
+  const navigate = useNavigate()
   const gameData = useGameRegistry((state) => state.gameMetaIndex[gameId])
   const runningGames = useRunningGames((state) => state.runningGames)
   const reorderGamesInCollection = useGameCollectionStore((state) => state.reorderGamesInCollection)
@@ -147,7 +147,7 @@ export function GamePoster({
     if (e.ctrlKey || e.metaKey) {
       handleSelect(e)
     } else {
-      navigateToGame(router, gameId, groupId || 'all')
+      navigateToGame(navigate, gameId, groupId || 'all')
     }
   }
 
@@ -256,7 +256,7 @@ export function GamePoster({
                             'w-[148px] aspect-[2/3] cursor-pointer object-cover flex items-center justify-center bg-muted/50',
                             className
                           )}
-                          onClick={() => navigateToGame(router, gameId, groupId || 'all')}
+                          onClick={() => navigateToGame(navigate, gameId, groupId || 'all')}
                         >
                           <div className="p-1 font-bold truncate select-none">{gameName}</div>
                         </div>
@@ -312,7 +312,7 @@ export function GamePoster({
                             )}
                             onClick={(e) => {
                               e.stopPropagation()
-                              navigateToGame(router, gameId, groupId || 'all')
+                              navigateToGame(navigate, gameId, groupId || 'all')
                               startGame(gameId)
                             }}
                           >
