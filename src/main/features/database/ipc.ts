@@ -6,6 +6,8 @@ import {
   fullSync,
   getCouchDBSize,
   compactRemoteDatabase
+  compactRemoteDatabase,
+  resetAppearancesSettings
 } from './services'
 import { baseDBManager, ConfigDBManager } from '~/core/database'
 import { ipcManager } from '~/core/ipc'
@@ -62,5 +64,9 @@ export function setupDatabaseIPC(): void {
   ipcManager.handle('db:compact-remote-database', async (_) => {
     const username = await ConfigDBManager.getConfigLocalValue('sync.officialConfig.auth.username')
     await compactRemoteDatabase(username)
+  })
+
+  ipcManager.handle('db:reset-appearances-settings', async () => {
+    await resetAppearancesSettings()
   })
 }

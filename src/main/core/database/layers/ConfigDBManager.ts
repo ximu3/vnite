@@ -131,31 +131,52 @@ export class ConfigDBManager {
   }
 
   static async getConfigBackgroundImage<T extends 'buffer' | 'file' = 'buffer'>(
-    format: T = 'buffer' as T
+    format: T = 'buffer' as T,
+    theme: 'dark' | 'light' = 'dark'
   ): Promise<T extends 'file' ? string | null : Buffer | null> {
     try {
       if (
-        (await baseDBManager.checkAttachment(this.DB_NAME, 'media', 'background.webp')) === false
+        (await baseDBManager.checkAttachment(this.DB_NAME, 'media', `background-${theme}.webp`)) ===
+        false
       ) {
         return null
       }
 
       if (format === 'file') {
         // Store the image in a temporary file and return the file path
-        return (await baseDBManager.getAttachment(this.DB_NAME, 'media', 'background.webp', {
-          format: 'file',
-          filePath: '#temp',
-          ext: 'webp'
-        })) as T extends 'file' ? string : Buffer
+        return (await baseDBManager.getAttachment(
+          this.DB_NAME,
+          'media',
+          `background-${theme}.webp`,
+          {
+            format: 'file',
+            filePath: '#temp',
+            ext: 'webp'
+          }
+        )) as T extends 'file' ? string : Buffer
       } else {
         return (await baseDBManager.getAttachment(
           this.DB_NAME,
           'media',
-          'background.webp'
+          `background-${theme}.webp`
         )) as T extends 'file' ? string : Buffer
       }
     } catch (error) {
       log.error('[ConfigDB] Error getting background image:', error)
+      throw error
+    }
+  }
+
+  static async removeConfigBackgroundImage(theme: 'dark' | 'light' | '#all'): Promise<void> {
+    try {
+      if (theme === '#all') {
+        await baseDBManager.removeAttachment(this.DB_NAME, 'media', 'background-dark.webp')
+        await baseDBManager.removeAttachment(this.DB_NAME, 'media', 'background-light.webp')
+      } else {
+        await baseDBManager.removeAttachment(this.DB_NAME, 'media', `background-${theme}.webp`)
+      }
+    } catch (error) {
+      log.error('[ConfigDB] Error removing background image:', error)
       throw error
     }
   }

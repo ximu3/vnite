@@ -11,6 +11,7 @@ import { useState } from 'react'
 import { FontSettingsDialog } from './FontSettingsDialog'
 import { useTheme } from '~/components/ThemeProvider'
 import { useLightStore } from '~/pages/Light'
+import { toast } from 'sonner'
 
 export function Appearances(): React.JSX.Element {
   const { t } = useTranslation('config')
@@ -35,6 +36,17 @@ export function Appearances(): React.JSX.Element {
   )
   const backgroundUrl = `attachment://config/media/background-${isDark ? 'dark' : 'light'}.webp?t=${backgroundInfo?.timestamp}`
 
+  const resetAppearancesSettings = async (): Promise<void> => {
+    try {
+      await ipcManager.invoke('db:reset-appearances-settings')
+      refresh()
+      toast.success(t('appearances.notifications.resetAppearancesSettingsSuccess'))
+    } catch (_error) {
+      toast.error(t('appearances.notifications.resetAppearancesSettingsFailed'))
+      return
+    }
+  }
+
   return (
     <Card className={cn('group')}>
       <CardHeader>
@@ -46,6 +58,20 @@ export function Appearances(): React.JSX.Element {
       </CardHeader>
       <CardContent>
         <div className={cn('flex flex-col gap-8')}>
+          {/* Actions */}
+          <div className={cn('space-y-4')}>
+            <div className={cn('border-b pb-2')}>{t('appearances.actions.title')}</div>
+            <div className={cn('')}>
+              <ConfigItemPure
+                title={t('appearances.actions.resetAppearancesSettings')}
+                description={t('appearances.actions.resetAppearancesSettingsDescription')}
+              >
+                <Button variant="default" onClick={resetAppearancesSettings}>
+                  {t('appearances.actions.resetAppearancesSettings')}
+                </Button>
+              </ConfigItemPure>
+            </div>
+          </div>
           {/* Background Settings */}
           <div className={cn('space-y-4')}>
             <div className={cn('border-b pb-2')}>{t('appearances.background.title')}</div>
