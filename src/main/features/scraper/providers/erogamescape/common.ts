@@ -190,8 +190,7 @@ export async function getEsGameMetadata(identifier: ScraperIdentifier): Promise<
     relatedSites.push({ label: 'ErogameScape', url: `${esUrl}/game.php?game=${id}` })
     // illustrators
     const exIllustration: Required<UnArray<GameMetadata['extra']>> = {
-      // use abbr to ensure the text does not overflow the screen
-      key: 'Illust',
+      key: 'illustration', // change to support i18n extra key
       value: []
     }
     $('tr#kyaradeza > td > a').each((_, el) => {
@@ -202,7 +201,7 @@ export async function getEsGameMetadata(identifier: ScraperIdentifier): Promise<
     })
     // scenario writers
     const exScenario: Required<UnArray<GameMetadata['extra']>> = {
-      key: 'Scenario',
+      key: 'scenario', // change to support i18n extra key
       value: []
     }
     $('tr#shinario > td > a').each((_, el) => {
@@ -210,7 +209,7 @@ export async function getEsGameMetadata(identifier: ScraperIdentifier): Promise<
     })
     // composers
     const exMusic: Required<UnArray<GameMetadata['extra']>> = {
-      key: 'Composers',
+      key: 'music', // change to support i18n extra key
       value: []
     }
     $('tr#ongaku > td > a').each((_, el) => {
@@ -218,7 +217,7 @@ export async function getEsGameMetadata(identifier: ScraperIdentifier): Promise<
     })
     // CV
     const exCv: Required<UnArray<GameMetadata['extra']>> = {
-      key: 'CV',
+      key: 'voice', // change to support i18n extra key
       value: []
     }
     $('tr#seiyu > td > a').each((_, el) => {
