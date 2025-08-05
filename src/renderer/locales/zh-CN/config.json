@@ -21,6 +21,11 @@
   },
   "appearances": {
     "title": "外观",
+    "actions": {
+      "title": "操作",
+      "resetAppearancesSettings": "重置外观",
+      "resetAppearancesSettingsDescription": "将外观重置为默认值"
+    },
     "font": {
       "title": "字体",
       "manageFont": "管理字体",
@@ -50,7 +55,8 @@
       "imageDescription": "选择自定义背景图片",
       "selectImage": "选择图片",
       "currentBackground": "当前背景图片",
-      "noBackground": "未设置背景图片"
+      "noBackground": "未设置背景图片",
+      "removeImage": "删除图片"
     },
     "showcase": {
       "title": "海报墙",
@@ -76,7 +82,15 @@
     "gameDetail": {
       "title": "游戏详情页",
       "showOriginalName": "在标题旁显示原名",
-      "showOriginalNameDescription": "在游戏详情页游戏标题旁显示原名"
+      "showOriginalNameDescription": "在游戏详情页游戏标题旁显示原名",
+      "contentTopPadding": "内容顶部间距",
+      "contentTopPaddingDescription": "设置游戏详情页内容的顶部间距",
+      "showHeader": "显示头图",
+      "showHeaderDescription": "在游戏详情页显示头图",
+      "headerMaxHeight": "头图最大高度",
+      "headerMaxHeightDescription": "设置游戏详情页头图的最大高度",
+      "showCover": "显示封面",
+      "showCoverDescription": "在游戏详情页显示封面"
     },
     "sidebar": {
       "title": "侧边栏",
@@ -84,6 +98,12 @@
       "showThemeSwitcherDescription": "在侧边栏显示主题切换按钮",
       "showNSFWBlurSwitcher": "显示 NSFW 内容开关",
       "showNSFWBlurSwitcherDescription": "在侧边栏显示 NSFW 模糊切换器"
+    },
+    "notifications": {
+      "resetAppearancesSettingsSuccess": "外观重置成功",
+      "resetAppearancesSettingsFailed": "外观重置失败",
+      "removeBackgroundImageSuccess": "背景图片删除成功",
+      "removeBackgroundImageFailed": "背景图片删除失败"
     }
   },
   "advanced": {

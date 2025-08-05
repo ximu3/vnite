@@ -21,6 +21,11 @@
   },
   "appearances": {
     "title": "外觀",
+    "actions": {
+      "title": "操作",
+      "resetAppearancesSettings": "重置外觀",
+      "resetAppearancesSettingsDescription": "將外觀重置為默認值"
+    },
     "font": {
       "title": "字體",
       "manageFont": "管理字體",
@@ -50,7 +55,8 @@
       "imageDescription": "選擇自定義背景圖片",
       "selectImage": "選擇圖片",
       "currentBackground": "當前背景圖片",
-      "noBackground": "未設置背景圖片"
+      "noBackground": "未設置背景圖片",
+      "removeImage": "刪除圖片"
     },
     "showcase": {
       "title": "海報牆",
@@ -76,7 +82,15 @@
     "gameDetail": {
       "title": "遊戲詳情頁",
       "showOriginalName": "在標題旁顯示原名",
-      "showOriginalNameDescription": "在遊戲詳情頁遊戲標題旁顯示原名"
+      "showOriginalNameDescription": "在遊戲詳情頁遊戲標題旁顯示原名",
+      "contentTopPadding": "內容頂部間距",
+      "contentTopPaddingDescription": "設置遊戲詳情頁內容的頂部間距",
+      "showHeader": "顯示頭圖",
+      "showHeaderDescription": "在遊戲詳情頁顯示頭圖",
+      "headerMaxHeight": "頭圖最大高度",
+      "headerMaxHeightDescription": "設置遊戲詳情頁頭圖的最大高度",
+      "showCover": "顯示封面",
+      "showCoverDescription": "在遊戲詳情頁顯示封面"
     },
     "sidebar": {
       "title": "側邊欄",
@@ -84,6 +98,12 @@
       "showThemeSwitcherDescription": "在側邊欄顯示主題切換按鈕",
       "showNSFWBlurSwitcher": "顯示 NSFW 內容開關",
       "showNSFWBlurSwitcherDescription": "在側邊欄顯示 NSFW 模糊切換器"
+    },
+    "notifications": {
+      "resetAppearancesSettingsSuccess": "外觀重置成功",
+      "resetAppearancesSettingsFailed": "外觀重置失敗",
+      "removeBackgroundImageSuccess": "背景圖片刪除成功",
+      "removeBackgroundImageFailed": "背景圖片刪除失敗"
     }
   },
   "advanced": {

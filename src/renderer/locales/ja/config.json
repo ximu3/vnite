@@ -21,6 +21,11 @@
   },
   "appearances": {
     "title": "外観",
+    "actions": {
+      "title": "アクション",
+      "resetAppearancesSettings": "外観をリセット",
+      "resetAppearancesSettingsDescription": "外観をデフォルト値にリセット"
+    },
     "font": {
       "title": "フォント",
       "manageFont": "フォント管理",
@@ -50,7 +55,8 @@
       "imageDescription": "カスタム背景画像を選択",
       "selectImage": "画像を選択",
       "currentBackground": "現在の背景画像",
-      "noBackground": "背景画像が設定されていません"
+      "noBackground": "背景画像が設定されていません",
+      "removeImage": "画像を削除"
     },
     "showcase": {
       "title": "ポスターボード",
@@ -76,7 +82,15 @@
     "gameDetail": {
       "title": "ゲーム詳細ページ",
       "showOriginalName": "タイトルの隣に原名を表示",
-      "showOriginalNameDescription": "ゲーム詳細ページのタイトルの隣に原名を表示"
+      "showOriginalNameDescription": "ゲーム詳細ページのタイトルの隣に原名を表示",
+      "contentTopPadding": "コンテンツ上部の余白",
+      "contentTopPaddingDescription": "ゲーム詳細ページのコンテンツ上部の余白を設定します",
+      "showHeader": "ヘッダー画像を表示",
+      "showHeaderDescription": "ゲーム詳細ページにヘッダー画像を表示します",
+      "headerMaxHeight": "ヘッダー画像の最大高さ",
+      "headerMaxHeightDescription": "ゲーム詳細ページのヘッダー画像の最大高さを設定します",
+      "showCover": "カバー画像を表示",
+      "showCoverDescription": "ゲーム詳細ページにカバー画像を表示します"
     },
     "sidebar": {
       "title": "サイドバー",
@@ -84,6 +98,12 @@
       "showThemeSwitcherDescription": "サイドバーにテーマ切り替えボタンを表示",
       "showNSFWBlurSwitcher": "NSFW コンテンツのスイッチャーを表示",
       "showNSFWBlurSwitcherDescription": "サイドバーにNSFWぼかし切り替えを表示"
+    },
+    "notifications": {
+      "resetAppearancesSettingsSuccess": "外観のリセットに成功しました",
+      "resetAppearancesSettingsFailed": "外観のリセットに失敗しました",
+      "removeBackgroundImageSuccess": "背景画像の削除に成功しました",
+      "removeBackgroundImageFailed": "背景画像の削除に失敗しました"
     }
   },
   "advanced": {
