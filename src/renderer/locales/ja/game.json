@@ -215,7 +215,14 @@
         "empty": "関連サイトなし",
         "addLink": "リンクを追加",
         "nameLabel": "サイト名",
-        "urlLabel": "URL"
+        "urlLabel": "URL",
+        "search": {
+          "loading": "関連サイトを検索中…",
+          "success": "検索成功",
+          "error": "検索失敗：{{message}}",
+          "notFound": "関連サイトが見つかりません",
+          "searchError": "検索エラー：{{error}}"
+        }
       },
       "information": {
         "fields": {
@@ -233,6 +240,13 @@
           "publishers": "パブリッシャーはカンマで区切ります",
           "platforms": "プラットフォームはカンマで区切ります",
           "genres": "ジャンルはカンマで区切ります"
+        },
+        "search": {
+          "loading": "ゲーム情報を検索中…",
+          "success": "検索成功",
+          "error": "検索失敗：{{message}}",
+          "notFound": "関連情報が見つかりません",
+          "searchError": "検索エラー：{{error}}"
         }
       },
       "extraInformation": {

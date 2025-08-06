@@ -4,6 +4,7 @@ import { useGameState } from '~/hooks'
 import { cn, copyWithToast } from '~/utils'
 import { FilterAdder } from '../../FilterAdder'
 import { InformationDialog } from './InformationDialog'
+import { SearchInformationDialog } from './SearchInformationDialog'
 import { SeparatorDashed } from '@ui/separator-dashed'
 
 export function InformationCard({
@@ -14,14 +15,15 @@ export function InformationCard({
   className?: string
 }): React.JSX.Element {
   const { t } = useTranslation('game')
-  const [originalName] = useGameState(gameId, 'metadata.originalName')
-  const [name] = useGameState(gameId, 'metadata.name')
-  const [developers] = useGameState(gameId, 'metadata.developers')
-  const [publishers] = useGameState(gameId, 'metadata.publishers')
-  const [releaseDate] = useGameState(gameId, 'metadata.releaseDate')
-  const [genres] = useGameState(gameId, 'metadata.genres')
-  const [platforms] = useGameState(gameId, 'metadata.platforms')
+  const [originalName, setOriginalName] = useGameState(gameId, 'metadata.originalName')
+  const [name, setName] = useGameState(gameId, 'metadata.name')
+  const [developers, setDevelopers] = useGameState(gameId, 'metadata.developers')
+  const [publishers, setPublishers] = useGameState(gameId, 'metadata.publishers')
+  const [releaseDate, setReleaseDate] = useGameState(gameId, 'metadata.releaseDate')
+  const [genres, setGenres] = useGameState(gameId, 'metadata.genres')
+  const [platforms, setPlatforms] = useGameState(gameId, 'metadata.platforms')
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false)
 
   const handleCopySummary = (): void => {
     const fields = {
@@ -49,6 +51,45 @@ export function InformationCard({
     )
   }
 
+  const handleSelectInformation = (information: {
+    name?: string
+    originalName?: string
+    releaseDate?: string
+    developers?: string[]
+    publishers?: string[]
+    genres?: string[]
+    platforms?: string[]
+  }): void => {
+    if (information.name !== undefined) {
+      // Update name if provided
+      setName(information.name)
+    }
+    if (information.originalName !== undefined) {
+      // Update originalName if provided
+      setOriginalName(information.originalName)
+    }
+    if (information.releaseDate !== undefined) {
+      // Update releaseDate if provided
+      setReleaseDate(information.releaseDate)
+    }
+    if (information.developers !== undefined) {
+      // Update developers if provided
+      setDevelopers(information.developers)
+    }
+    if (information.publishers !== undefined) {
+      // Update publishers if provided
+      setPublishers(information.publishers)
+    }
+    if (information.genres !== undefined) {
+      // Update genres if provided
+      setGenres(information.genres)
+    }
+    if (information.platforms !== undefined) {
+      // Update platforms if provided
+      setPlatforms(information.platforms)
+    }
+  }
+
   return (
     <div className={cn(className, 'group')}>
       <div className={cn('flex flex-row justify-between items-center')}>
@@ -57,6 +98,12 @@ export function InformationCard({
         </div>
         {/* Actions */}
         <div className="flex items-center gap-3">
+          <span
+            className={cn(
+              'cursor-pointer icon-[mdi--magnify] invisible group-hover:visible w-5 h-5'
+            )}
+            onClick={() => setIsSearchDialogOpen(true)}
+          ></span>
           <span
             className={cn(
               'invisible group-hover:visible w-5 h-5 icon-[mdi--square-edit-outline] cursor-pointer'
@@ -195,6 +242,22 @@ export function InformationCard({
         gameId={gameId}
         isOpen={isEditDialogOpen}
         setIsOpen={setIsEditDialogOpen}
+      />
+
+      <SearchInformationDialog
+        isOpen={isSearchDialogOpen}
+        onClose={() => setIsSearchDialogOpen(false)}
+        gameTitle={originalName || name}
+        onSelect={handleSelectInformation}
+        initialInformation={{
+          name,
+          originalName,
+          releaseDate,
+          developers,
+          publishers,
+          genres,
+          platforms
+        }}
       />
     </div>
   )

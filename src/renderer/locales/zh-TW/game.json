@@ -216,7 +216,14 @@
         "empty": "暫無相關網站",
         "addLink": "添加連結",
         "nameLabel": "網站名稱",
-        "urlLabel": "網站連結"
+        "urlLabel": "網站連結",
+        "search": {
+          "loading": "正在搜尋相關網站…",
+          "success": "搜尋成功",
+          "error": "搜尋失敗：{{message}}",
+          "notFound": "未找到相關網站",
+          "searchError": "搜尋錯誤：{{error}}"
+        }
       },
       "information": {
         "fields": {
@@ -234,6 +241,13 @@
           "publishers": "發行商之間用英文逗號分隔",
           "platforms": "平台之間用英文逗號分隔",
           "genres": "類型之間用英文逗號分隔"
+        },
+        "search": {
+          "loading": "正在搜尋遊戲資訊…",
+          "success": "搜尋成功",
+          "error": "搜尋失敗：{{message}}",
+          "notFound": "未找到相關資訊",
+          "searchError": "搜尋錯誤：{{error}}"
         }
       },
       "extraInformation": {

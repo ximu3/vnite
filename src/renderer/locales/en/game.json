@@ -216,7 +216,14 @@
         "empty": "No related sites",
         "addLink": "Add Link",
         "nameLabel": "Website Name",
-        "urlLabel": "Website URL"
+        "urlLabel": "Website URL",
+        "search": {
+          "loading": "Searching for related sites…",
+          "success": "Search successful",
+          "error": "Search failed: {{message}}",
+          "notFound": "No related sites found",
+          "searchError": "Search error: {{error}}"
+        }
       },
       "information": {
         "fields": {
@@ -234,6 +241,13 @@
           "publishers": "Separate publishers with commas",
           "platforms": "Separate platforms with commas",
           "genres": "Separate genres with commas"
+        },
+        "search": {
+          "loading": "Searching for game information…",
+          "success": "Search successful",
+          "error": "Search failed: {{message}}",
+          "notFound": "No related information found",
+          "searchError": "Search error: {{error}}"
         }
       },
       "extraInformation": {

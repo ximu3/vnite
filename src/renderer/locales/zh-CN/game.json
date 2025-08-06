@@ -216,7 +216,14 @@
         "empty": "暂无相关网站",
         "addLink": "添加链接",
         "nameLabel": "网站名称",
-        "urlLabel": "网站链接"
+        "urlLabel": "网站链接",
+        "search": {
+          "loading": "正在搜索相关网站…",
+          "success": "搜索成功",
+          "error": "搜索失败：{{message}}",
+          "notFound": "未找到相关网站",
+          "searchError": "搜索错误：{{error}}"
+        }
       },
       "information": {
         "fields": {
@@ -234,6 +241,13 @@
           "publishers": "发行商之间用英文逗号分隔",
           "platforms": "平台之间用英文逗号分隔",
           "genres": "类型之间用英文逗号分隔"
+        },
+        "search": {
+          "loading": "正在搜索游戏信息…",
+          "success": "搜索成功",
+          "error": "搜索失败：{{message}}",
+          "notFound": "未找到相关信息",
+          "searchError": "搜索错误：{{error}}"
         }
       },
       "extraInformation": {

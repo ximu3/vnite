@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useGameState } from '~/hooks'
 import { cn, copyWithToast } from '~/utils'
 import { RelatedSitesDialog } from './RelatedSitesDialog'
+import { SearchRelatedSitesDialog } from './SearchRelatedSitesDialog'
 import { SeparatorDashed } from '@ui/separator-dashed'
 import { useState } from 'react'
 
@@ -15,8 +16,15 @@ export function RelatedSitesCard({
   className?: string
 }): React.JSX.Element {
   const { t } = useTranslation('game')
-  const [relatedSites] = useGameState(gameId, 'metadata.relatedSites')
+  const [relatedSites, setRelatedSites] = useGameState(gameId, 'metadata.relatedSites')
+  const [originalName] = useGameState(gameId, 'metadata.originalName')
+  const [name] = useGameState(gameId, 'metadata.name')
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false)
+
+  const handleSelectRelatedSites = (newRelatedSites: { label: string; url: string }[]): void => {
+    setRelatedSites(newRelatedSites)
+  }
 
   return (
     <div className={cn(className, 'group')}>
@@ -31,6 +39,12 @@ export function RelatedSitesCard({
         </div>
         {/* Actions */}
         <div className="flex items-center gap-3">
+          <span
+            className={cn(
+              'cursor-pointer icon-[mdi--magnify] invisible group-hover:visible w-5 h-5'
+            )}
+            onClick={() => setIsSearchDialogOpen(true)}
+          ></span>
           <span
             className={cn(
               'invisible group-hover:visible w-5 h-5 icon-[mdi--square-edit-outline] cursor-pointer'
@@ -56,6 +70,14 @@ export function RelatedSitesCard({
         gameId={gameId}
         isOpen={isEditDialogOpen}
         setIsOpen={setIsEditDialogOpen}
+      />
+
+      <SearchRelatedSitesDialog
+        isOpen={isSearchDialogOpen}
+        onClose={() => setIsSearchDialogOpen(false)}
+        gameTitle={originalName || name}
+        onSelect={handleSelectRelatedSites}
+        initialRelatedSites={relatedSites}
       />
     </div>
   )

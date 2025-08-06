@@ -116,11 +116,11 @@ export function SearchExtraInformationDialog({
             <div className="space-y-4">
               {extraInfoList.map((source) => (
                 <Card key={source.dataSource} className="rounded-lg p-4 shadow-xs">
-                  <div className="mb-2">
-                    <Badge className="mb-2">{source.dataSource}</Badge>
+                  <div className="">
+                    <Badge className="">{source.dataSource}</Badge>
                   </div>
                   {source.extra.map((extraItem) => (
-                    <div key={extraItem.key} className="mb-3">
+                    <div key={extraItem.key} className="">
                       <div className="mb-1 font-medium">{extraItem.key}</div>
                       <div className="flex flex-wrap gap-2">
                         {extraItem.value.map((val) => (
