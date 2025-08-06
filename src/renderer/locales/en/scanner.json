@@ -41,6 +41,7 @@
       "depth": "Depth {{level}}",
       "progress": "{{percentage}}% Complete",
       "games": "{{count}} Games",
+      "targetCollection": "Target Collection {{collection}}",
       "statusLabels": {
         "idle": "Idle",
         "scanning": "Scanning",

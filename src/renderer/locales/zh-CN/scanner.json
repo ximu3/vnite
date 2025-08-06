@@ -41,6 +41,7 @@
       "depth": "{{level}} 深度",
       "progress": "{{percentage}}% 完成",
       "games": "{{count}} 个游戏",
+      "targetCollection": "{{collection}} 目标收藏",
       "statusLabels": {
         "idle": "空闲",
         "scanning": "扫描中",

@@ -41,6 +41,7 @@
       "depth": "深さ {{level}}",
       "progress": "{{percentage}}% 完了",
       "games": "ゲーム {{count}}個",
+      "targetCollection": "ターゲットコレクション {{collection}}",
       "statusLabels": {
         "idle": "待機中",
         "scanning": "スキャン中",

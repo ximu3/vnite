@@ -18,12 +18,13 @@ import { useConfigLocalState } from '~/hooks'
 import { cn } from '~/utils'
 import { useGameScannerStore } from './store'
 import { ipcManager } from '~/app/ipc'
+import { useGameCollectionState } from '~/hooks/useGameCollectionState'
 
 interface GameScannerListItemProps {
   scanner: {
     path: string
     dataSource: string
-    depth: number
+    targetCollection: string
   }
   scannerId: string
   onEditClick: () => void
@@ -38,6 +39,7 @@ export const GameScannerListItem: React.FC<GameScannerListItemProps> = ({
   const [scannerConfig, setScannerConfig] = useConfigLocalState('game.scanner')
   const { scanProgress, scanScanner } = useGameScannerStore()
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [targetCollectionName] = useGameCollectionState(scanner.targetCollection, 'name')
 
   const handleRemove = (): void => {
     // Update scanner list
@@ -131,8 +133,6 @@ export const GameScannerListItem: React.FC<GameScannerListItemProps> = ({
           <div className="flex items-center text-sm text-muted-foreground">
             {/* Data source and scan depth */}
             <span>{t('list.item.dataSource', { name: getDataSourceName() })}</span>
-            <span className="mx-1">•</span>
-            <span>{t('list.item.depth', { level: scanner.depth })}</span>
 
             {/* Scan status information */}
             {scannerProgress && scannerProgress.status !== 'idle' && (
@@ -141,6 +141,12 @@ export const GameScannerListItem: React.FC<GameScannerListItemProps> = ({
                 <span>{t('list.item.progress', { percentage: calculateProgress() })}</span>
                 <span className="mx-1">•</span>
                 <span>{t('list.item.games', { count: scannerProgress.scannedGames || 0 })}</span>
+              </>
+            )}
+            {targetCollectionName && targetCollectionName !== 'none' && (
+              <>
+                <span className="mx-1">•</span>
+                <span>{t('list.item.targetCollection', { collection: targetCollectionName })}</span>
               </>
             )}
           </div>
