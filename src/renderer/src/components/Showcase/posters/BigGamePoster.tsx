@@ -1,3 +1,4 @@
+import { NSFWBlurLevel } from '@appTypes/models'
 import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -34,7 +35,7 @@ export function BigGamePoster({
   const [playTime] = useGameState(gameId, 'record.playTime')
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
-  const [enableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
+  const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = useState(false)
   const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = useState(false)
   const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = useState(false)
@@ -42,7 +43,6 @@ export function BigGamePoster({
   const [showPlayButtonOnPoster] = useConfigState('appearances.showcase.showPlayButtonOnPoster')
   const { t } = useTranslation('game')
 
-  const blur = nsfw && enableNSFWBlur
   const name = gameData?.name ?? ''
   const stringToBase64 = (str: string): string =>
     btoa(String.fromCharCode(...new TextEncoder().encode(str)))
@@ -122,7 +122,7 @@ export function BigGamePoster({
                   onClick={handleGameClick}
                   gameId={gameId}
                   type="background"
-                  blur={blur}
+                  blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
                   blurType="bigposter"
                   className={cn(
                     'h-[222px] aspect-[3/2] cursor-pointer select-none object-cover rounded-lg bg-accent/30',
@@ -222,7 +222,7 @@ export function BigGamePoster({
             </div>
 
             <div className="text-xs cursor-pointer select-none text-foreground hover:underline decoration-foreground truncate w-[333px] text-center">
-              {blur ? (
+              {nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImageAndTitle ? (
                 <>
                   <span className="block group-hover:hidden truncate">{obfuscatedName}</span>
                   <span className="hidden group-hover:block truncate">{name}</span>

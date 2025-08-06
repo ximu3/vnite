@@ -4,17 +4,21 @@
     "library": "遊戲庫",
     "records": "記錄",
     "scanner": "掃描器",
-    "transformer": "轉換器"
+    "transformer": "轉換器",
+    "plugin": "外掛"
   },
   "actions": {
     "viewLogs": "查看日誌",
+    "nsfwLevel": {
+      "off": "NSFW：不隱藏",
+      "blurImage": "NSFW：隱藏圖片",
+      "blurImageAndTitle": "NSFW：隱藏圖片與標題"
+    },
     "darkMode": "暗色模式",
     "lightMode": "亮色模式",
     "cloudSyncDisabled": "雲同步未開啟",
     "addGame": "添加遊戲",
-    "settings": "設定",
-    "enableNSFWBlur": "隱藏 NSFW 內容",
-    "disableNSFWBlur": "顯示 NSFW 內容"
+    "settings": "設定"
   },
   "adder": {
     "addGame": "新增遊戲",

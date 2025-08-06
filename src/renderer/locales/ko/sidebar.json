@@ -11,9 +11,7 @@
     "lightMode": "라이트 모드",
     "cloudSyncDisabled": "클라우드 동기화 비활성화됨",
     "addGame": "게임 추가",
-    "settings": "설정",
-    "disableNSFWBlur": "NSFW 콘텐츠 표시",
-    "enableNSFWBlur": "NSFW 콘텐츠 숨김"
+    "settings": "설정"
   },
   "adder": {
     "addGame": "게임 추가",

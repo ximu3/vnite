@@ -9,8 +9,11 @@
   },
   "actions": {
     "viewLogs": "View Logs",
-    "enableNSFWBlur": "Hide NSFW Content",
-    "disableNSFWBlur": "Show NSFW Content",
+    "nsfwLevel": {
+      "off": "NSFW: Show all",
+      "blurImage": "NSFW: Hide images",
+      "blurImageAndTitle": "NSFW: Hide images and titles"
+    },
     "darkMode": "Dark Mode",
     "lightMode": "Light Mode",
     "cloudSyncDisabled": "Cloud Sync Disabled",

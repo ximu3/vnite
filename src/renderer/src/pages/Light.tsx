@@ -1,13 +1,14 @@
-import { useEffect, useRef, useState } from 'react'
+import { NSFWBlurLevel } from '@appTypes/models'
+import defaultBackground from '@assets/defaultBackground.webp'
 import { useLocation } from '@tanstack/react-router'
+import { CrossfadeImage } from '@ui/cross-fade-image'
+import { useEffect, useRef, useState } from 'react'
+import { create } from 'zustand'
+import { useTheme } from '~/components/ThemeProvider'
 import { useConfigState, useGameState } from '~/hooks'
 import { useAttachmentStore } from '~/stores'
 import { sortGames, useGameCollectionStore } from '~/stores/game'
-import { CrossfadeImage } from '@ui/cross-fade-image'
 import { cn } from '~/utils'
-import { useTheme } from '~/components/ThemeProvider'
-import { create } from 'zustand'
-import defaultBackground from '@assets/defaultBackground.webp'
 
 // eslint-disable-next-line
 export const useLightStore = create<{
@@ -32,7 +33,7 @@ export function Light(): React.JSX.Element {
   const [lightGlassOpacity] = useConfigState('appearances.glass.light.opacity')
   const [glassBlur, setGlassBlur] = useState(darkGlassBlur)
   const [glassOpacity, setGlassOpacity] = useState(darkGlassOpacity)
-  const [enableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
+  const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
   const detailBackgroundRef = useRef<HTMLDivElement>(null)
   const parallaxContainerRef = useRef<HTMLDivElement>(null)
@@ -218,7 +219,7 @@ export function Light(): React.JSX.Element {
               <CrossfadeImage
                 src={imageUrl}
                 className={cn(`w-full h-auto max-h-(--header-max-height) object-top object-cover`)}
-                blur={enableNSFWBlur && nsfw}
+                blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
                 duration={500}
                 onError={() => {
                   if (customBackground) {

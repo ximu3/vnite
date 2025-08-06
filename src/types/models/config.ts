@@ -1,3 +1,9 @@
+export enum NSFWBlurLevel {
+  Off = 0,
+  BlurImage = 1,
+  BlurImageAndTitle = 2,
+  HideGame = 3 // TODO: reserved for future implementation
+}
 export interface configDocs {
   general: {
     openAtLogin: boolean
@@ -81,7 +87,7 @@ export interface configDocs {
         opacity: number
       }
     }
-    enableNSFWBlur: boolean
+    nsfwBlurLevel: NSFWBlurLevel
     fonts: {
       family: string
       size: number
@@ -290,7 +296,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
         opacity: 0.9
       }
     },
-    enableNSFWBlur: true,
+    nsfwBlurLevel: NSFWBlurLevel.Off,
     fonts: {
       family: 'LXGW WenKai Mono',
       size: 1, // in rem

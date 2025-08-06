@@ -1,11 +1,12 @@
-import { GameImage } from '~/components/ui/game-image'
-import { useEffect, useRef, useState } from 'react'
+import { NSFWBlurLevel } from '@appTypes/models'
 import { useRouter } from '@tanstack/react-router'
+import { useEffect, useRef, useState } from 'react'
 import { HoverCardAnimation } from '~/components/animations/HoverCard'
 import { CollectionCM } from '~/components/contextMenu/CollectionCM'
+import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
+import { GameImage } from '~/components/ui/game-image'
 import { useConfigState, useGameState } from '~/hooks'
 import { useGameCollectionStore } from '~/stores'
-import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
 import { cn } from '~/utils'
 import {
   attachClosestEdge,
@@ -74,7 +75,7 @@ export function CollectionPoster({
   const gameId = collections[collectionId].games[0]
   const collectionGames = collections[collectionId].games
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
-  const [enableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
+  const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
   const length = collectionGames.length
 
   // Batch mode and selection state
@@ -213,7 +214,7 @@ export function CollectionPoster({
                 <GameImage
                   gameId={gameId}
                   type="cover"
-                  blur={nsfw && enableNSFWBlur}
+                  blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
                   alt={gameId}
                   className={cn('w-[155px] h-[155px] cursor-pointer object-cover', className)}
                   draggable="false"

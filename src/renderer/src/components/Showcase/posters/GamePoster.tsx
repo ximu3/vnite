@@ -1,3 +1,4 @@
+import { NSFWBlurLevel } from '@appTypes/models'
 import { useNavigate } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -81,7 +82,7 @@ export function GamePoster({
   const [playTime] = useGameState(gameId, 'record.playTime')
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
-  const [enableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
+  const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = useState(false)
   const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = useState(false)
   const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = useState(false)
@@ -94,7 +95,6 @@ export function GamePoster({
   const [previewState, setPreviewState] = useState<PreviewState>({ type: 'idle' })
   const [showPlayButtonOnPoster] = useConfigState('appearances.showcase.showPlayButtonOnPoster')
 
-  const blur = nsfw && enableNSFWBlur
   const name = gameData?.name ?? ''
   const stringToBase64 = (str: string): string =>
     btoa(String.fromCharCode(...new TextEncoder().encode(str)))
@@ -244,7 +244,7 @@ export function GamePoster({
                       draggable="false"
                       gameId={gameId}
                       type="cover"
-                      blur={blur}
+                      blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
                       alt={gameId}
                       className={cn(
                         'w-[148px] aspect-[2/3] cursor-pointer select-none object-cover rounded-lg',
@@ -349,7 +349,7 @@ export function GamePoster({
                 </div>
 
                 <div className="text-xs text-foreground truncate cursor-pointer select-none hover:underline w-[148px] text-center decoration-foreground">
-                  {blur ? (
+                  {nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImageAndTitle ? (
                     <>
                       <span className="block group-hover:hidden truncate">{obfuscatedName}</span>
                       <span className="hidden group-hover:block truncate">{name}</span>

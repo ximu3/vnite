@@ -1,17 +1,18 @@
+import { NSFWBlurLevel } from '@appTypes/models'
+import { useRouter, useRouterState } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { ipcManager } from '~/app/ipc'
 import { Button } from '~/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
-import { cn } from '~/utils'
-import { useState, useEffect } from 'react'
-import { useRouter, useRouterState } from '@tanstack/react-router'
-import { useTranslation } from 'react-i18next'
 import { useConfigLocalState, useConfigState } from '~/hooks'
-import { useCloudSyncStore } from '../pages/Config/CloudSync/store'
-import { CloudSyncInfo } from '../pages/Config/CloudSync/Info'
-import { useTheme } from './ThemeProvider'
-import { LibraryTitlebarContent } from './LibraryTitlebarContent'
-import { ipcManager } from '~/app/ipc'
 import { useLogStore } from '~/pages/Log'
+import { cn } from '~/utils'
+import { CloudSyncInfo } from '../pages/Config/CloudSync/Info'
+import { useCloudSyncStore } from '../pages/Config/CloudSync/store'
+import { LibraryTitlebarContent } from './LibraryTitlebarContent'
+import { useTheme } from './ThemeProvider'
 
 export function Titlebar(): React.JSX.Element {
   const [ismaximize, setIsmaximize] = useState(false)
@@ -30,7 +31,20 @@ export function Titlebar(): React.JSX.Element {
 
   // NSFW Blur related
   const [showNSFWBlurSwitchInSidebar] = useConfigState('appearances.sidebar.showNSFWBlurSwitcher')
-  const [enableNSFWBlur, setEnableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
+  const [nsfwBlurLevel, setNsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
+  const [nsfwTooltipOpen, setNsfwTooltipOpen] = useState(false) // prevent unwanted auto-closing on click
+  const nextLevel = (current: NSFWBlurLevel): NSFWBlurLevel => (current + 1) % 3
+  const prevLevel = (current: NSFWBlurLevel): NSFWBlurLevel => (current - 1 + 3) % 3
+  const nsfwIconMap = {
+    [NSFWBlurLevel.Off]: 'icon-[mdi--eye-outline]',
+    [NSFWBlurLevel.BlurImage]: 'icon-[mdi--image-off-outline]',
+    [NSFWBlurLevel.BlurImageAndTitle]: 'icon-[mdi--eye-off-outline]'
+  }
+  const nsfwTooltips = {
+    [NSFWBlurLevel.Off]: t('actions.nsfwLevel.off'),
+    [NSFWBlurLevel.BlurImage]: t('actions.nsfwLevel.blurImage'),
+    [NSFWBlurLevel.BlurImageAndTitle]: t('actions.nsfwLevel.blurImageAndTitle')
+  }
 
   useEffect(() => {
     const removeMaximizeListener = ipcManager.on('window:maximized', () => setIsmaximize(true))
@@ -100,24 +114,29 @@ export function Titlebar(): React.JSX.Element {
 
           {/* NSFW Blur switch button */}
           {showNSFWBlurSwitchInSidebar && (
-            <Tooltip>
-              <TooltipTrigger>
+            <Tooltip open={nsfwTooltipOpen}>
+              <TooltipTrigger
+                onMouseEnter={() => setNsfwTooltipOpen(true)}
+                onMouseLeave={() => setNsfwTooltipOpen(false)}
+              >
                 <Button
                   variant="thirdary"
                   size={'icon'}
                   className={cn('h-[32px] w-[32px]')}
-                  onClick={() => setEnableNSFWBlur(!enableNSFWBlur)}
+                  onMouseDown={(e) => {
+                    e.preventDefault()
+                    if (e.button === 0) {
+                      setNsfwBlurLevel(nextLevel(nsfwBlurLevel))
+                    } else if (e.button === 2) {
+                      setNsfwBlurLevel(prevLevel(nsfwBlurLevel))
+                    }
+                  }}
+                  onContextMenu={(e) => e.preventDefault()}
                 >
-                  {enableNSFWBlur ? (
-                    <span className={cn('icon-[mdi--eye-off-outline] w-4 h-4')}></span>
-                  ) : (
-                    <span className={cn('icon-[mdi--eye-outline] w-4 h-4')}></span>
-                  )}
+                  <span className={`${nsfwIconMap[nsfwBlurLevel]} w-4 h-4`} />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom">
-                {enableNSFWBlur ? t('actions.disableNSFWBlur') : t('actions.enableNSFWBlur')}
-              </TooltipContent>
+              <TooltipContent side="bottom">{nsfwTooltips[nsfwBlurLevel]}</TooltipContent>
             </Tooltip>
           )}
 

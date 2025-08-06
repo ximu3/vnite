@@ -1,3 +1,7 @@
+import { CalendarIcon, ClockIcon, GamepadIcon, Trophy } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import AutoSizer from 'react-virtualized-auto-sizer'
+import { FixedSizeList } from 'react-window'
 import { Badge } from '~/components/ui/badge'
 import { Card } from '~/components/ui/card'
 import { GameImage } from '~/components/ui/game-image'
@@ -7,11 +11,8 @@ import {
   HoverCardPortal,
   HoverCardTrigger
 } from '~/components/ui/hover-card'
-import { CalendarIcon, ClockIcon, GamepadIcon, Trophy } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
-import AutoSizer from 'react-virtualized-auto-sizer'
-import { FixedSizeList } from 'react-window'
 
+import { NSFWBlurLevel } from '@appTypes/models'
 import { useConfigState, useGameState } from '~/hooks'
 import { getGamePlayTime, getGameStore, useGameRegistry } from '~/stores/game'
 import { getGamesByScoreRange } from '~/stores/game/recordUtils'
@@ -24,7 +25,7 @@ function GameScoreCard({ gameId }: { gameId: string }): React.JSX.Element {
   const gameInfo = gameMetaIndex[gameId] || { name: t('score.gameInfo.unknown') }
   const [score] = useGameState(gameId, 'record.score')
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
-  const [enableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
+  const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
   const playTime = getGamePlayTime(gameId)
 
   return (
@@ -34,7 +35,7 @@ function GameScoreCard({ gameId }: { gameId: string }): React.JSX.Element {
           <div className="relative group">
             <GamePoster
               gameId={gameId}
-              blur={nsfw && enableNSFWBlur}
+              blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
               className={cn(
                 'object-cover rounded-lg shadow-md',
                 'w-[120px] h-[180px] cursor-pointer object-cover',
@@ -55,7 +56,7 @@ function GameScoreCard({ gameId }: { gameId: string }): React.JSX.Element {
               gameId={gameId}
               type="background"
               alt={gameId}
-              blur={nsfw && enableNSFWBlur}
+              blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
               className="object-cover w-full h-full rounded-lg"
               draggable="false"
             />
