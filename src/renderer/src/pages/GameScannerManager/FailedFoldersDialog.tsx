@@ -28,6 +28,7 @@ import { useTranslation } from 'react-i18next'
 import { useGameScannerStore } from './store'
 import { ScraperCapabilities } from '@appTypes/utils'
 import { ipcManager } from '~/app/ipc'
+import { useConfigLocalState } from '~/hooks'
 import { toast } from 'sonner'
 
 interface FailedFoldersDialogProps {
@@ -39,6 +40,7 @@ export const FailedFoldersDialog: React.FC<FailedFoldersDialogProps> = ({ isOpen
   const { t } = useTranslation('scanner')
 
   const { scanProgress, fixFailedFolder, ignoreFailedFolder } = useGameScannerStore()
+  const [scannerConfig, setScannerConfig] = useConfigLocalState('game.scanner')
 
   const [selectedFolder, setSelectedFolder] = useState<{
     path: string
@@ -237,7 +239,13 @@ export const FailedFoldersDialog: React.FC<FailedFoldersDialogProps> = ({ isOpen
                         size="sm"
                         variant="outline"
                         className="ml-2"
-                        onClick={() => ignoreFailedFolder(folder.scannerId, folder.path)}
+                        onClick={() => {
+                          ignoreFailedFolder(folder.scannerId, folder.path)
+                          setScannerConfig({
+                            ...scannerConfig,
+                            ignoreList: [...(scannerConfig.ignoreList || []), folder.path]
+                          })
+                        }}
                       >
                         {t('actions.ignore')}
                       </Button>

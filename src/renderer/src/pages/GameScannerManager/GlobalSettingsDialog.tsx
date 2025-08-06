@@ -57,7 +57,7 @@ export const GlobalSettingsDialog: React.FC<GlobalSettingsDialogProps> = ({ isOp
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="w-[500px]">
+      <DialogContent className="w-[70vw]">
         <DialogHeader>
           <DialogTitle>{t('globalSettings.title')}</DialogTitle>
         </DialogHeader>
@@ -91,7 +91,7 @@ export const GlobalSettingsDialog: React.FC<GlobalSettingsDialogProps> = ({ isOp
           <Tooltip>
             <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
               <ArrayTextarea
-                className="h-[100px] resize-none"
+                className="h-[30vh] lg:h-[50vh] resize-none"
                 placeholder={t('globalSettings.ignoreListPlaceholder')}
                 value={globalSettings.ignoreList}
                 onChange={(value: string[]) => updateGlobalSettings({ ignoreList: value })}
