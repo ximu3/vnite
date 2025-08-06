@@ -129,7 +129,7 @@ export function Search({ className }: { className?: string }): React.JSX.Element
         </div>
         <div>
           <Select onValueChange={setDataSource} value={dataSource}>
-            <SelectTrigger className={cn('w-[130px]')}>
+            <SelectTrigger className={cn('min-w-[130px]')}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
