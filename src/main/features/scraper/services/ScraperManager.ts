@@ -7,6 +7,7 @@ import {
   GameTagsList,
   GameExtraInfoList
 } from '@appTypes/utils'
+import { withTimeout } from '~/utils'
 import { Transformer } from '~/features/transformer'
 import log from 'electron-log/main'
 
@@ -225,14 +226,20 @@ export class ScraperManager {
   public async getGameDescriptionList(identifier: ScraperIdentifier): Promise<GameDescriptionList> {
     try {
       const providerIds = this.getProviderIdsWithCapabilities(['getGameMetadata'])
+      const TIMEOUT_MS = 5000
 
       // Execute all requests in parallel
       const metadataResults = await Promise.allSettled(
         providerIds.map(async (providerId) => {
           try {
-            const metadata = await this.getGameMetadata(providerId, identifier)
+            const metadata = await withTimeout(
+              this.getGameMetadata(providerId, identifier),
+              TIMEOUT_MS,
+              providerId
+            )
             return { dataSource: providerId, description: metadata.description || '' }
-          } catch {
+          } catch (error) {
+            log.warn(`[Scraper] Failed to get metadata from ${providerId}: ${error}`)
             return { dataSource: providerId, description: '' }
           }
         })
@@ -258,14 +265,20 @@ export class ScraperManager {
   public async getGameTagsList(identifier: ScraperIdentifier): Promise<GameTagsList> {
     try {
       const providerIds = this.getProviderIdsWithCapabilities(['getGameMetadata'])
+      const TIMEOUT_MS = 5000
 
       // Execute all requests in parallel
       const metadataResults = await Promise.allSettled(
         providerIds.map(async (providerId) => {
           try {
-            const metadata = await this.getGameMetadata(providerId, identifier)
+            const metadata = await withTimeout(
+              this.getGameMetadata(providerId, identifier),
+              TIMEOUT_MS,
+              providerId
+            )
             return { dataSource: providerId, tags: metadata.tags || [] }
-          } catch {
+          } catch (error) {
+            log.warn(`[Scraper] Failed to get metadata from ${providerId}: ${error}`)
             return { dataSource: providerId, tags: [] }
           }
         })
@@ -291,14 +304,20 @@ export class ScraperManager {
   public async getGameExtraInfoList(identifier: ScraperIdentifier): Promise<GameExtraInfoList> {
     try {
       const providerIds = this.getProviderIdsWithCapabilities(['getGameMetadata'])
+      const TIMEOUT_MS = 5000
 
       // Execute all requests in parallel
       const metadataResults = await Promise.allSettled(
         providerIds.map(async (providerId) => {
           try {
-            const metadata = await this.getGameMetadata(providerId, identifier)
+            const metadata = await withTimeout(
+              this.getGameMetadata(providerId, identifier),
+              TIMEOUT_MS,
+              providerId
+            )
             return { dataSource: providerId, extra: metadata.extra || [] }
-          } catch {
+          } catch (error) {
+            log.warn(`[Scraper] Failed to get metadata from ${providerId}: ${error}`)
             return { dataSource: providerId, extra: [] }
           }
         })

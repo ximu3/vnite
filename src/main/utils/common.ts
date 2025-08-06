@@ -328,6 +328,18 @@ export function formatDate(dateString: string, outputFormat: string = 'yyyy-MM-d
   }
 }
 
+export async function withTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs: number,
+  providerId: string
+): Promise<T> {
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    setTimeout(() => {
+      reject(new Error(`Request to provider ${providerId} timed out after ${timeoutMs}ms`))
+    }, timeoutMs)
+  })
+
+  return Promise.race([promise, timeoutPromise])
 }
 
 interface UrlShortcutOptions {
