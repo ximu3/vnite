@@ -1,6 +1,6 @@
 import { GameDBManager, ConfigDBManager } from '~/core/database'
 import { scraperManager } from '~/features/scraper'
-import { selectPathDialog, getSubfoldersByDepth } from '~/utils'
+import { selectPathDialog, getGameFolders } from '~/utils'
 import { generateUUID } from '@appUtils'
 import { launcherPreset } from '~/features/launcher'
 import { saveGameIconByFile } from '~/features/game'
@@ -341,7 +341,7 @@ export async function getBatchGameAdderData(): Promise<BatchGameInfo[]> {
       'game.scraper.common.defaultDataSource'
     )
     // Get the subfolders in the selected directory
-    const games = await getSubfoldersByDepth(dirPath, 1)
+    const games = await getGameFolders(dirPath)
     const data = games.map(async (game) => {
       return {
         dataId: generateUUID(),

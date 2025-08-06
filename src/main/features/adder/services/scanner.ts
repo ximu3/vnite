@@ -1,7 +1,7 @@
 import * as fse from 'fs-extra'
 import { EventEmitter } from 'events'
 import { ConfigDBManager, GameDBManager } from '~/core/database'
-import { getSubfoldersByDepth } from '~/utils'
+import { getGameFolders } from '~/utils'
 import { addGameToDB } from './adder'
 import { scraperManager } from '~/features/scraper'
 import { OverallScanProgress } from '@appTypes/utils'
@@ -13,7 +13,7 @@ import { eventBus } from '~/core/events'
 interface ScannerConfig {
   path: string
   dataSource: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite'
-  depth: number
+  targetCollection: string
 }
 
 // Global scanner configuration
@@ -322,7 +322,7 @@ export class GameScanner extends EventEmitter {
       let foldersToScan: { name: string; dirPath: string }[] = []
 
       // Get subfolders at specified depth
-      foldersToScan = await getSubfoldersByDepth(scannerPath, scanner.depth)
+      foldersToScan = await getGameFolders(scannerPath)
 
       // Apply ignore list
       foldersToScan = this.applyIgnoreList(foldersToScan, ignoreList)

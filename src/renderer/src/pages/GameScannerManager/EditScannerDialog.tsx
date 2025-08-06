@@ -17,7 +17,6 @@ import {
 } from '~/components/ui/select'
 import { Button } from '~/components/ui/button'
 import { useConfigLocalState } from '~/hooks'
-import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 import { cn } from '~/utils'
 import { useGameScannerStore } from './store'
 import { ScraperCapabilities } from '@appTypes/utils'
@@ -159,36 +158,6 @@ export const EditScannerDialog: React.FC<EditScannerDialogProps> = ({
               ))}
             </SelectContent>
           </Select>
-          {/* Scan Depth */}
-          <div className={cn('whitespace-nowrap select-none justify-self-start')}>
-            {t('editScanner.scanDepth')}
-          </div>
-          <Tooltip>
-            <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
-              <Select
-                value={formState.depth.toString()}
-                onValueChange={(value) =>
-                  updateFormState({
-                    depth: parseInt(value)
-                  })
-                }
-              >
-                <SelectTrigger className={cn('w-full text-sm')}>
-                  <SelectValue placeholder={t('editScanner.depthPlaceholder')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1">1</SelectItem>
-                  <SelectItem value="2">2</SelectItem>
-                  <SelectItem value="3">3</SelectItem>
-                  <SelectItem value="4">4</SelectItem>
-                  <SelectItem value="5">5</SelectItem>
-                </SelectContent>
-              </Select>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              <div className={cn('text-xs')}>{t('editScanner.depthTooltip')}</div>
-            </TooltipContent>
-          </Tooltip>
           {/* Target Collection */}
           <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('editScanner.targetCollection')}
