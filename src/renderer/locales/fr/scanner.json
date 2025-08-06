@@ -1,15 +1,15 @@
 {
   "title": "",
   "status": {
-    "idle": "",
-    "scanning": "",
-    "paused": "",
-    "completed": "",
-    "error": "",
-    "unknown": ""
+    "idle": "Idle",
+    "scanning": "Scanning",
+    "paused": "Pausé",
+    "completed": "Complété",
+    "error": "Erreur",
+    "unknown": "Inconnu"
   },
   "metrics": {
-    "scanners": "",
+    "scanners": "{{count}} Scanneurs",
     "games": "",
     "scanInterval": "",
     "failures": ""

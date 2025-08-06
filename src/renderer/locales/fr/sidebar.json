@@ -1,5 +1,5 @@
 {
-  "title": "",
+  "title": "vnite",
   "navigation": {
     "library": "Bibliothèque de jeux",
     "records": "Enregistrements",
@@ -12,7 +12,8 @@
     "lightMode": "",
     "cloudSyncDisabled": "",
     "addGame": "",
-    "settings": ""
+    "settings": "",
+    "viewLogs": "Voir les logs"
   },
   "adder": {
     "addGame": "",

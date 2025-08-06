@@ -1,7 +1,7 @@
 {
-  "showMainWindow": "",
-  "settings": "",
-  "openAtLogin": "",
-  "quitToTray": "",
-  "quit": ""
+  "showMainWindow": "Afficher la fenêtre principale",
+  "settings": "Paramètres",
+  "openAtLogin": "Ouvrir à l'Identification",
+  "quitToTray": "Sortir vers Tray",
+  "quit": "Arrêter"
 }

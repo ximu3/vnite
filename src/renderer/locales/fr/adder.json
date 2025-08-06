@@ -1,22 +1,22 @@
 {
   "gameAdder": {
     "dialog": {
-      "title": ""
+      "title": "Ajouter le jeu"
     },
     "notifications": {
-      "loading": ""
+      "loading": "Veuillez patienter l'ajout du jeu pour compléter"
     },
     "gameList": {
       "columns": {
-        "name": "",
-        "releaseDate": "",
-        "developers": ""
+        "name": "Nom du jeu",
+        "releaseDate": "Date de sortie",
+        "developers": "Développeurs"
       },
-      "unknown": "",
-      "selected": ""
+      "unknown": "Inconnu",
+      "selected": "Jeu sélectionné: {{name}}"
     },
     "backgrounds": {
-      "title": "",
+      "title": "Image de fond",
       "noImages": "",
       "notifications": {
         "loading": "",

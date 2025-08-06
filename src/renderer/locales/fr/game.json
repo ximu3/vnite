@@ -1,16 +1,16 @@
 {
   "librarybar": {
-    "home": "",
-    "collections": "",
+    "home": "Home",
+    "collections": "Collections",
     "search": {
-      "placeholder": "",
-      "tooltip": ""
+      "placeholder": "Recherche",
+      "tooltip": "Supporte la recherche par nom de jeu, développeur, date de sortie et autres métadonnées"
     },
-    "groupBy": "",
+    "groupBy": "Grouper par",
     "groups": {
-      "none": "",
-      "collection": "",
-      "developers": "",
+      "none": "Pas de groupe",
+      "collection": "Collection",
+      "developers": "Développeurs",
       "genres": "",
       "playStatus": ""
     }

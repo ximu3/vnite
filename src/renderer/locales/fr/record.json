@@ -1,16 +1,16 @@
 {
   "title": "",
   "tabs": {
-    "overview": "",
-    "weekly": "",
-    "monthly": "",
-    "yearly": "",
-    "score": ""
+    "overview": "Aperçu",
+    "weekly": "Rapport hebdomadaire",
+    "monthly": "Rapport mensuel",
+    "yearly": "Rapport annuel",
+    "score": "Rapport sur les résultats"
   },
   "overview": {
-    "title": "",
+    "title": "Aperçu",
     "stats": {
-      "totalGames": "",
+      "totalGames": "Total des jeux",
       "totalPlayTime": "",
       "totalPlayDays": "",
       "totalPlayTimes": ""

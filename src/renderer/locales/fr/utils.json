@@ -1,12 +1,14 @@
 {
   "common": {
-    "save": "",
-    "cancel": "",
-    "confirm": ""
+    "save": "Sauvegarder",
+    "cancel": "Annuler",
+    "confirm": "Confirmation",
+    "edit": "Modifier",
+    "delete": "Supprimer"
   },
   "arrayEditor": {
-    "clickPlusToAdd": "",
-    "addElement": "",
+    "clickPlusToAdd": "Cliquer sur + pour ajouter des éléments",
+    "addElement": "Ajouter élément",
     "editElement": "",
     "enterElement": "",
     "add": "",
