@@ -91,6 +91,7 @@
       "neverRunShort": "从未运行"
     },
     "collection": {
+      "noCollections": "暂无收藏",
       "contextMenu": {
         "rename": "重命名",
         "updateMetadata": "更新元数据",

@@ -91,6 +91,7 @@
       "neverRunShort": "Never played"
     },
     "collection": {
+      "noCollections": "No collections",
       "contextMenu": {
         "rename": "Rename",
         "updateMetadata": "Update Metadata",

@@ -69,6 +69,11 @@ export function Collections(): React.JSX.Element {
           'pt-3 pb-6 pl-5 pr-5' // Add inner margins to show shadows
         )}
       >
+        {sortedCollectionIds.length === 0 && (
+          <div className="text-muted-foreground text-sm">
+            {t('showcase.collection.noCollections')}
+          </div>
+        )}
         {/* Render using the sorted ID array */}
         {sortedCollectionIds.map((collectionId, index) => (
           <div

@@ -90,6 +90,7 @@
       "neverRunShort": "未プレイ"
     },
     "collection": {
+      "noCollections": "コレクションはありません",
       "contextMenu": {
         "rename": "名前変更",
         "updateMetadata": "メタデータを更新",
