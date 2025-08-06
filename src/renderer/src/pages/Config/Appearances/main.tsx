@@ -11,12 +11,14 @@ import { useState } from 'react'
 import { FontSettingsDialog } from './FontSettingsDialog'
 import { useTheme } from '~/components/ThemeProvider'
 import { useLightStore } from '~/pages/Light'
+import { useLibraryStore } from '~/pages/Library/store'
 import { toast } from 'sonner'
 
 export function Appearances(): React.JSX.Element {
   const { t } = useTranslation('config')
   const { isDark } = useTheme()
   const refresh = useLightStore((state) => state.refresh)
+  const resetLibraryBarWidth = useLibraryStore((state) => state.resetLibraryBarWidth)
 
   const [fontDialogOpen, setFontDialogOpen] = useState(false)
 
@@ -39,6 +41,7 @@ export function Appearances(): React.JSX.Element {
   const resetAppearancesSettings = async (): Promise<void> => {
     try {
       await ipcManager.invoke('db:reset-appearances-settings')
+      resetLibraryBarWidth() // Reset library bar width to default
       refresh()
       toast.success(t('appearances.notifications.resetAppearancesSettingsSuccess'))
     } catch (_error) {

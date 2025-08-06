@@ -8,6 +8,7 @@ import { cn } from '~/utils'
 import { BigGamePoster } from './posters/BigGamePoster'
 import { GamePoster } from './posters/GamePoster'
 import { SeparatorDashed } from '@ui/separator-dashed'
+import { useLibraryStore } from '~/pages/Library/store'
 
 export function RecentGames(): React.JSX.Element {
   const games = sortGames('record.lastRunDate', 'desc')
@@ -18,6 +19,7 @@ export function RecentGames(): React.JSX.Element {
     })
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [showRecentGamesInGameList] = useConfigState('game.gameList.showRecentGames')
+  const libraryBarWidth = useLibraryStore((state) => state.libraryBarWidth)
 
   const scroll = throttle((direction: 'left' | 'right'): void => {
     if (!scrollContainerRef.current) return
@@ -30,7 +32,10 @@ export function RecentGames(): React.JSX.Element {
   }, 750)
   const { t } = useTranslation('game')
   return (
-    <div className={cn('w-[calc(100vw-327px)] flex flex-col gap-1')}>
+    <div
+      className={cn('flex flex-col gap-1')}
+      style={{ width: `calc(100vw - ${libraryBarWidth + 57 - (libraryBarWidth === 0 ? 1 : 0)}px)` }}
+    >
       <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>
         <div className={cn('text-accent-foreground select-none flex-shrink-0')}>
           {t('showcase.sections.recentGames')}

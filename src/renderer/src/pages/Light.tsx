@@ -8,6 +8,7 @@ import { useTheme } from '~/components/ThemeProvider'
 import { useConfigState, useGameState } from '~/hooks'
 import { useAttachmentStore } from '~/stores'
 import { sortGames, useGameCollectionStore } from '~/stores/game'
+import { useLibraryStore } from '~/pages/Library/store'
 import { cn } from '~/utils'
 
 // eslint-disable-next-line
@@ -37,6 +38,7 @@ export function Light(): React.JSX.Element {
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
   const detailBackgroundRef = useRef<HTMLDivElement>(null)
   const parallaxContainerRef = useRef<HTMLDivElement>(null)
+  const libraryBarWidth = useLibraryStore((state) => state.libraryBarWidth)
   const { isDark } = useTheme()
   const refreshId = useLightStore((state) => state.refreshId)
 
@@ -198,9 +200,9 @@ export function Light(): React.JSX.Element {
           ref={detailBackgroundRef}
           className={cn('absolute overflow-hidden', 'will-change-transform')}
           style={{
-            left: '327px',
+            left: `${libraryBarWidth + 57 - (libraryBarWidth === 0 ? 1 : 0)}px`,
             top: '50px',
-            width: 'calc(100% - 327px)',
+            width: `calc(100% - ${libraryBarWidth + 57 - (libraryBarWidth === 0 ? 1 : 0)}px)`,
             height: 'calc(100% - 50px)',
             zIndex: 15,
             clipPath: 'inset(0 0 0 0)' // Ensure content does not overflow this container

@@ -14,6 +14,7 @@ import { GameNavCM } from '../contextMenu/GameNavCM'
 import { BatchGameNavCM } from '../GameBatchEditor/BatchGameNavCM'
 import { useGameBatchEditorStore } from '../GameBatchEditor/store'
 import { useTheme } from '../ThemeProvider'
+import { useLibraryStore } from '~/pages/Library/store'
 
 export function GameNav({
   gameId,
@@ -31,6 +32,8 @@ export function GameNav({
   const isDarkMode = useTheme().isDark
   const location = useLocation()
   const navigate = useNavigate()
+
+  const libraryBarWidth = useLibraryStore((state) => state.libraryBarWidth)
 
   // dialog box state
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
@@ -157,14 +160,16 @@ export function GameNav({
                   />
                 </div>
                 {nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImageAndTitle ? (
-                  <div className="relative w-[188px] truncate">
+                  <div className="relative truncate" style={{ width: `${libraryBarWidth - 60}px` }}>
                     <span className="group-hover/gamenav:opacity-0">{obfuscatedGameName}</span>
                     <span className="absolute top-0 left-0 w-full truncate opacity-0 group-hover/gamenav:opacity-100">
                       {gameName}
                     </span>
                   </div>
                 ) : (
-                  <div className={cn('truncate w-[188px]')}>{gameName}</div>
+                  <div className={cn('truncate')} style={{ width: `${libraryBarWidth - 60}px` }}>
+                    {gameName}
+                  </div>
                 )}
 
                 {markLocalGames && gamePath && (

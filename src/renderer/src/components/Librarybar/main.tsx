@@ -28,9 +28,7 @@ export function Librarybar(): React.JSX.Element {
   }, [])
 
   return (
-    <div
-      className={cn('flex flex-col gap-6 bg-transparent w-[270px] h-full relative group shrink-0')}
-    >
+    <div className={cn('flex flex-col gap-6 bg-transparent w-full h-full relative group shrink-0')}>
       <div className={cn('p-0 w-full h-full')}>
         <GameList query={query} selectedGroup={selectedGroup} />
       </div>
