@@ -99,11 +99,11 @@ export function SearchDescriptionDialog({
               <div className={cn('flex flex-col gap-3 h-[62vh]')}>
                 {descriptionList.length > 0 ? (
                   descriptionList.map((item, index) => (
-                    <div
+                    <Card
                       key={index}
                       onClick={() => setSelectedDescription(item.description)}
                       className={cn(
-                        'cursor-pointer p-3 bg-muted text-muted-foreground rounded-lg relative',
+                        'cursor-pointer p-4 rounded-lg shadow-xs relative transition-colors',
                         item.description === selectedDescription
                           ? 'bg-accent text-accent-foreground'
                           : 'hover:bg-accent hover:text-accent-foreground'
@@ -123,10 +123,12 @@ export function SearchDescriptionDialog({
                         {parse(item.description, HTMLParserOptions)}
                       </div>
                       <Badge className="absolute bottom-2 right-2">{item.dataSource}</Badge>
-                    </div>
+                    </Card>
                   ))
                 ) : (
-                  <div>{t('detail.overview.description.empty')}</div>
+                  <div className="flex items-center justify-center h-full text-muted-foreground">
+                    {t('detail.overview.description.empty')}
+                  </div>
                 )}
               </div>
             </div>

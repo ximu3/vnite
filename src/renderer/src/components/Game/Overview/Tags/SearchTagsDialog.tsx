@@ -112,7 +112,7 @@ export function SearchTagsDialog({
           {tagsList.length > 0 ? (
             <div className="space-y-4">
               {tagsList.map((source) => (
-                <div key={source.dataSource} className="p-2 rounded-lg bg-background">
+                <Card key={source.dataSource} className="p-4 rounded-lg shadow-xs">
                   <div className="mb-2">
                     <Badge className="mb-2">{source.dataSource}</Badge>
                   </div>
@@ -134,7 +134,7 @@ export function SearchTagsDialog({
                       </div>
                     ))}
                   </div>
-                </div>
+                </Card>
               ))}
             </div>
           ) : (

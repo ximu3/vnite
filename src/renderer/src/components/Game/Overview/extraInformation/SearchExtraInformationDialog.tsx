@@ -115,7 +115,7 @@ export function SearchExtraInformationDialog({
           {extraInfoList.length > 0 ? (
             <div className="space-y-4">
               {extraInfoList.map((source) => (
-                <div key={source.dataSource} className="p-2 rounded-lg bg-background">
+                <Card key={source.dataSource} className="rounded-lg p-4 shadow-xs">
                   <div className="mb-2">
                     <Badge className="mb-2">{source.dataSource}</Badge>
                   </div>
@@ -147,7 +147,7 @@ export function SearchExtraInformationDialog({
                       </div>
                     </div>
                   ))}
-                </div>
+                </Card>
               ))}
             </div>
           ) : (
