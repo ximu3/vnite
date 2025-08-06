@@ -1,3 +1,4 @@
+import { NSFWBlurLevel } from '@appTypes/models'
 import { useLocation, useNavigate } from '@tanstack/react-router'
 import { Nav } from '@ui/nav'
 import React from 'react'
@@ -8,12 +9,11 @@ import { GamePropertiesDialog } from '~/components/Game/Config/Properties'
 import { ContextMenu, ContextMenuTrigger } from '~/components/ui/context-menu'
 import { GameImage } from '~/components/ui/game-image'
 import { useConfigState, useGameLocalState, useGameState } from '~/hooks'
-import { cn } from '~/utils'
+import { cn, startGame } from '~/utils'
 import { GameNavCM } from '../contextMenu/GameNavCM'
 import { BatchGameNavCM } from '../GameBatchEditor/BatchGameNavCM'
 import { useGameBatchEditorStore } from '../GameBatchEditor/store'
 import { useTheme } from '../ThemeProvider'
-import { startGame } from '~/utils'
 
 export function GameNav({
   gameId,
@@ -27,7 +27,7 @@ export function GameNav({
   const [highlightLocalGames] = useConfigState('game.gameList.highlightLocalGames')
   const [markLocalGames] = useConfigState('game.gameList.markLocalGames')
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
-  const [enableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
+  const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
   const isDarkMode = useTheme().isDark
   const location = useLocation()
   const navigate = useNavigate()
@@ -156,7 +156,7 @@ export function GameNav({
                     }
                   />
                 </div>
-                {nsfw && enableNSFWBlur ? (
+                {nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImageAndTitle ? (
                   <div className="relative w-[188px] truncate">
                     <span className="group-hover/gamenav:opacity-0">{obfuscatedGameName}</span>
                     <span className="absolute top-0 left-0 w-full truncate opacity-0 group-hover/gamenav:opacity-100">

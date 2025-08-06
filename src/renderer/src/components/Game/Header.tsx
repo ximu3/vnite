@@ -1,3 +1,4 @@
+import { NSFWBlurLevel } from '@appTypes/models'
 import React from 'react'
 import { useConfigState, useGameState } from '~/hooks'
 import { useRunningGames } from '~/pages/Library/store'
@@ -22,10 +23,9 @@ export function Header({
   const [name] = useGameState(gameId, 'metadata.name')
   const [originalName] = useGameState(gameId, 'metadata.originalName')
   const [showOriginalNameInGameHeader] = useConfigState('game.gameHeader.showOriginalName')
-  const [enableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
   const [showCover] = useConfigState('appearances.gameDetail.showCover')
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
-  const blur = enableNSFWBlur && nsfw
+  const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
 
   const isPlayTimeEditorDialogOpen = useGameDetailStore((state) => state.isPlayTimeEditorDialogOpen)
   const setIsPlayTimeEditorDialogOpen = useGameDetailStore(
@@ -53,7 +53,7 @@ export function Header({
               )}
               onClick={() => copyWithToast(name)}
             >
-              {blur ? (
+              {nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImageAndTitle ? (
                 <>
                   <span className="block group-hover:hidden">{obfuscatedName}</span>
                   <span className="hidden group-hover:block">{name}</span>
@@ -69,7 +69,7 @@ export function Header({
                 )}
                 onClick={() => copyWithToast(originalName)}
               >
-                {blur ? (
+                {nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImageAndTitle ? (
                   <>
                     <span className="block group-hover:hidden">{obfuscatedName}</span>
                     <span className="hidden group-hover:block">{originalName}</span>
@@ -105,7 +105,7 @@ export function Header({
                 gameId={gameId}
                 key={`${gameId}-poster`}
                 type="cover"
-                blur={blur}
+                blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
                 className={cn('w-auto h-[170px] object-cover rounded-lg shadow-md')}
                 fallback={<div className="h-[170px]" />}
               />

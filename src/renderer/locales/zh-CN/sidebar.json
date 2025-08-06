@@ -9,8 +9,11 @@
   },
   "actions": {
     "viewLogs": "查看日志",
-    "enableNSFWBlur": "隐藏 NSFW 内容",
-    "disableNSFWBlur": "显示 NSFW 内容",
+    "nsfwLevel": {
+      "off": "NSFW: 不隐藏",
+      "blurImage": "NSFW: 隐藏图片",
+      "blurImageAndTitle": "NSFW: 隐藏图片与标题"
+    },
     "darkMode": "暗色模式",
     "lightMode": "亮色模式",
     "cloudSyncDisabled": "云同步未开启",

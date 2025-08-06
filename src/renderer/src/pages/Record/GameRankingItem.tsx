@@ -1,3 +1,4 @@
+import { NSFWBlurLevel } from '@appTypes/models'
 import { generateUUID } from '@appUtils'
 import { useRouter } from '@tanstack/react-router'
 import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
@@ -20,7 +21,7 @@ export function GameRankingItem({
 }: GameRankingItemProps): React.JSX.Element {
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
-  const [enableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
+  const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
   const router = useRouter()
   const setLazyloadMark = usePositionButtonStore((state) => state.setLazyloadMark)
 
@@ -48,7 +49,7 @@ export function GameRankingItem({
       <GameImage
         gameId={gameId}
         type={'cover'}
-        blur={nsfw && enableNSFWBlur}
+        blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
         blurType="smallposter"
         className="object-cover w-10 h-10 rounded-md"
         fallback={<div className="w-10 h-10 rounded-md bg-primary" />}

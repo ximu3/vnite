@@ -1,3 +1,4 @@
+import { NSFWBlurLevel } from '@appTypes/models'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '~/components/ui/button'
@@ -41,8 +42,9 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   const [logoVisible, setLogoVisible] = useGameState(gameId, 'apperance.logo.visible')
   const [localLogoPosition, setLocalLogoPosition] = useState(initialPosition)
 
-  const [enableNSFWBlur] = useConfigState('appearances.enableNSFWBlur')
+  const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
+  const hideLogo = nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage
 
   useEffect(() => {
     setLocalLogoPosition(logoPosition)
@@ -166,7 +168,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
     <div className={cn('w-full h-full relative overflow-hidden shrink-0')}>
       {/* Logo Editing Control Panel */}
       {/* Only visible when editing logo */}
-      {isEditingLogo && (!enableNSFWBlur || !nsfw) && (
+      {isEditingLogo && !hideLogo && (
         <div
           className={cn(
             'absolute top-[10px] left-[10px] z-40 bg-transparent p-3 rounded-lg flex gap-3'
@@ -222,7 +224,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
       )}
 
       {/* Logo Layer */}
-      {logoVisible && (!enableNSFWBlur || !nsfw) && (
+      {logoVisible && !hideLogo && (
         <div
           ref={logoRef}
           onMouseDown={handleMouseDown}

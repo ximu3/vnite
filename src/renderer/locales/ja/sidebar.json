@@ -4,17 +4,21 @@
     "library": "ゲームライブラリ",
     "records": "記録",
     "scanner": "スキャナー",
-    "transformer": "変換器"
+    "transformer": "変換器",
+    "plugin": "プラグイン"
   },
   "actions": {
     "viewLogs": "ログを表示",
+    "nsfwLevel": {
+      "off": "NSFW：非表示なし",
+      "blurImage": "NSFW：画像を非表示",
+      "blurImageAndTitle": "NSFW：画像とタイトルを非表示"
+    },
     "darkMode": "ダークモード",
     "lightMode": "ライトモード",
     "cloudSyncDisabled": "クラウド同期が無効",
     "addGame": "ゲームを追加",
-    "settings": "設定",
-    "enableNSFWBlur": "NSFW コンテンツを非表示にする",
-    "disableNSFWBlur": "NSFW コンテンツを表示する"
+    "settings": "設定"
   },
   "adder": {
     "addGame": "ゲームを追加",
