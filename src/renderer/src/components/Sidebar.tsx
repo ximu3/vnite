@@ -119,6 +119,17 @@ export function Sidebar(): React.JSX.Element {
             <TooltipContent side="right">{t('actions.addGame')}</TooltipContent>
           </Tooltip>
           <DropdownMenuContent side="right" className="">
+            <DropdownMenuItem
+              onClick={() => {
+                router.navigate({ to: '/scanner' })
+                setEditingScanner({
+                  id: null,
+                  isNew: true
+                })
+              }}
+            >
+              <div>{t('adder.addScanner')}</div>
+            </DropdownMenuItem>
             <DropdownMenuSub>
               <DropdownMenuSubTrigger>{t('adder.addGame')}</DropdownMenuSubTrigger>
               <DropdownMenuPortal>
@@ -206,17 +217,6 @@ export function Sidebar(): React.JSX.Element {
                 </DropdownMenuSubContent>
               </DropdownMenuPortal>
             </DropdownMenuSub>
-            <DropdownMenuItem
-              onClick={() => {
-                router.navigate({ to: '/scanner' })
-                setEditingScanner({
-                  id: null,
-                  isNew: true
-                })
-              }}
-            >
-              <div>{t('adder.addScanner')}</div>
-            </DropdownMenuItem>
             <DropdownMenuSub>
               <DropdownMenuSubTrigger>{t('adder.importFromThirdParty')}</DropdownMenuSubTrigger>
               <DropdownMenuPortal>

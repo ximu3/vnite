@@ -5,7 +5,8 @@ import { RecentGames } from './RecentGames'
 import { Collections } from './Collections'
 import { AllGames } from './AllGames'
 import { useGameRegistry } from '~/stores/game'
-import { useGameAdderStore } from '~/pages/GameAdder/store'
+import { useNavigate } from '@tanstack/react-router'
+import { useGameScannerStore } from '~/pages/GameScannerManager/store'
 import { useTranslation } from 'react-i18next'
 import { ScrollToTopButton } from './ScrollToTopButton'
 import { useRef, useEffect } from 'react'
@@ -14,9 +15,10 @@ import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
 export function Showcase(): React.JSX.Element {
   const { t } = useTranslation('game')
   const gameIds = useGameRegistry((state) => state.gameIds)
-  const setIsOpen = useGameAdderStore((state) => state.setIsOpen)
+  const setEditingScanner = useGameScannerStore((state) => state.setEditingScanner)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const selectGames = useGameBatchEditorStore((state) => state.selectGames)
+  const navigate = useNavigate()
 
   // Keyboard shortcut handling
   useEffect(() => {
@@ -67,7 +69,11 @@ export function Showcase(): React.JSX.Element {
             variant={'outline'}
             className={cn('mt-4')}
             onClick={() => {
-              setIsOpen(true)
+              navigate({ to: '/scanner' })
+              setEditingScanner({
+                id: null,
+                isNew: true
+              })
             }}
             size={'icon'}
           >
