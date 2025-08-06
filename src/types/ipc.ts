@@ -19,12 +19,18 @@ import {
 } from './plugin'
 import {
   GameDescriptionList,
+  GameDevelopersList,
   GameExtraInfoList,
+  GameGenresList,
+  GameInformationList,
   GameList,
   GameMetadata,
   GameMetadataField,
   GameMetadataUpdateMode,
   GameMetadataUpdateOptions,
+  GamePlatformsList,
+  GamePublishersList,
+  GameRelatedSitesList,
   GameTagsList,
   ScraperCapabilities,
   ScraperIdentifier,
@@ -213,6 +219,12 @@ type MainIpcEvents =
       'scraper:get-game-description-list': (identifier: ScraperIdentifier) => GameDescriptionList
       'scraper:get-game-tags-list': (identifier: ScraperIdentifier) => GameTagsList
       'scraper:get-game-extra-info-list': (identifier: ScraperIdentifier) => GameExtraInfoList
+      'scraper:get-game-developers-list': (identifier: ScraperIdentifier) => GameDevelopersList
+      'scraper:get-game-publishers-list': (identifier: ScraperIdentifier) => GamePublishersList
+      'scraper:get-game-genres-list': (identifier: ScraperIdentifier) => GameGenresList
+      'scraper:get-game-platforms-list': (identifier: ScraperIdentifier) => GamePlatformsList
+      'scraper:get-game-related-sites-list': (identifier: ScraperIdentifier) => GameRelatedSitesList
+      'scraper:get-game-information-list': (identifier: ScraperIdentifier) => GameInformationList
       'scraper:get-provider-infos-with-capabilities': (
         capabilities: ScraperCapabilities[],
         requireAll?: boolean

@@ -48,6 +48,47 @@ export type GameExtraInfoList = {
   }[]
 }[]
 
+export type GameDevelopersList = {
+  dataSource: string
+  developers: string[]
+}[]
+
+export type GamePublishersList = {
+  dataSource: string
+  publishers: string[]
+}[]
+
+export type GameGenresList = {
+  dataSource: string
+  genres: string[]
+}[]
+
+export type GamePlatformsList = {
+  dataSource: string
+  platforms: string[]
+}[]
+
+export type GameRelatedSitesList = {
+  dataSource: string
+  relatedSites: {
+    label: string
+    url: string
+  }[]
+}[]
+
+export type GameInformationList = {
+  dataSource: string
+  information: {
+    name?: string
+    originalName?: string
+    releaseDate?: string
+    developers?: string[]
+    publishers?: string[]
+    genres?: string[]
+    platforms?: string[]
+  }
+}[]
+
 export type ScraperCapabilities =
   | 'searchGames'
   | 'checkGameExists'

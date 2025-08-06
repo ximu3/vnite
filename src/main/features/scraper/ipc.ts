@@ -69,6 +69,42 @@ export function setupScraperIPC(): void {
   )
 
   ipcManager.handle(
+    'scraper:get-game-developers-list',
+    async (_, identifier: ScraperIdentifier) => {
+      return await scraperManager.getGameDevelopersList(identifier)
+    }
+  )
+
+  ipcManager.handle(
+    'scraper:get-game-publishers-list',
+    async (_, identifier: ScraperIdentifier) => {
+      return await scraperManager.getGamePublishersList(identifier)
+    }
+  )
+
+  ipcManager.handle('scraper:get-game-genres-list', async (_, identifier: ScraperIdentifier) => {
+    return await scraperManager.getGameGenresList(identifier)
+  })
+
+  ipcManager.handle('scraper:get-game-platforms-list', async (_, identifier: ScraperIdentifier) => {
+    return await scraperManager.getGamePlatformsList(identifier)
+  })
+
+  ipcManager.handle(
+    'scraper:get-game-related-sites-list',
+    async (_, identifier: ScraperIdentifier) => {
+      return await scraperManager.getGameRelatedSitesList(identifier)
+    }
+  )
+
+  ipcManager.handle(
+    'scraper:get-game-information-list',
+    async (_, identifier: ScraperIdentifier) => {
+      return await scraperManager.getGameInformationList(identifier)
+    }
+  )
+
+  ipcManager.handle(
     'scraper:get-provider-infos-with-capabilities',
     async (_, capabilities: ScraperCapabilities[], requireAll = true) => {
       return scraperManager.getProviderInfosWithCapabilities(capabilities, requireAll)

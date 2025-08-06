@@ -9,6 +9,11 @@ import {
   GameDescriptionList,
   GameTagsList,
   GameExtraInfoList,
+  GameDevelopersList,
+  GamePublishersList,
+  GameGenresList,
+  GamePlatformsList,
+  GameRelatedSitesList,
   ScraperCapabilities
 } from '@appTypes/utils'
 import { GameDBManager } from '~/core/database'
@@ -304,7 +309,16 @@ export async function updateGameMetadata({
     const imageFields: GameMetadataField[] = ['cover', 'background', 'logo', 'icon']
 
     // Fields that need to be fetched via additional API calls
-    const specialFetchFields: GameMetadataField[] = ['description', 'tags', 'extra']
+    const specialFetchFields: GameMetadataField[] = [
+      'description',
+      'tags',
+      'extra',
+      'developers',
+      'publishers',
+      'genres',
+      'platforms',
+      'relatedSites'
+    ]
 
     // Get provider capabilities information
     const providerInfo = scraperManager.getProviderInfo(dataSource)
@@ -405,6 +419,21 @@ export async function updateGameMetadata({
       }
       if (!updatedMetadata.extra || updatedMetadata.extra.length === 0) {
         fieldsToUpdate.push('extra')
+      }
+      if (!updatedMetadata.developers || updatedMetadata.developers.length === 0) {
+        fieldsToUpdate.push('developers')
+      }
+      if (!updatedMetadata.publishers || updatedMetadata.publishers.length === 0) {
+        fieldsToUpdate.push('publishers')
+      }
+      if (!updatedMetadata.genres || updatedMetadata.genres.length === 0) {
+        fieldsToUpdate.push('genres')
+      }
+      if (!updatedMetadata.platforms || updatedMetadata.platforms.length === 0) {
+        fieldsToUpdate.push('platforms')
+      }
+      if (!updatedMetadata.relatedSites || updatedMetadata.relatedSites.length === 0) {
+        fieldsToUpdate.push('relatedSites')
       }
     }
 
@@ -532,6 +561,105 @@ export async function updateGameMetadata({
       }
     }
 
+    // Process developers field
+    if (updateAll || fieldsToUpdate.includes('developers')) {
+      if (baseMetadata.developers && baseMetadata.developers.length > 0) {
+        if (mergeStrategy === 'replace' || !updatedMetadata.developers) {
+          updatedMetadata.developers = baseMetadata.developers
+        } else if (mergeStrategy === 'append') {
+          updatedMetadata.developers = [
+            ...(updatedMetadata.developers || []),
+            ...baseMetadata.developers
+          ]
+        } else if (mergeStrategy === 'merge') {
+          updatedMetadata.developers = Array.from(
+            new Set([...(updatedMetadata.developers || []), ...baseMetadata.developers])
+          )
+        }
+      } else {
+        needFetchSpecialFields.push('developers')
+      }
+    }
+
+    // Process publishers field
+    if (updateAll || fieldsToUpdate.includes('publishers')) {
+      if (baseMetadata.publishers && baseMetadata.publishers.length > 0) {
+        if (mergeStrategy === 'replace' || !updatedMetadata.publishers) {
+          updatedMetadata.publishers = baseMetadata.publishers
+        } else if (mergeStrategy === 'append') {
+          updatedMetadata.publishers = [
+            ...(updatedMetadata.publishers || []),
+            ...baseMetadata.publishers
+          ]
+        } else if (mergeStrategy === 'merge') {
+          updatedMetadata.publishers = Array.from(
+            new Set([...(updatedMetadata.publishers || []), ...baseMetadata.publishers])
+          )
+        }
+      } else {
+        needFetchSpecialFields.push('publishers')
+      }
+    }
+
+    // Process genres field
+    if (updateAll || fieldsToUpdate.includes('genres')) {
+      if (baseMetadata.genres && baseMetadata.genres.length > 0) {
+        if (mergeStrategy === 'replace' || !updatedMetadata.genres) {
+          updatedMetadata.genres = baseMetadata.genres
+        } else if (mergeStrategy === 'append') {
+          updatedMetadata.genres = [...(updatedMetadata.genres || []), ...baseMetadata.genres]
+        } else if (mergeStrategy === 'merge') {
+          updatedMetadata.genres = Array.from(
+            new Set([...(updatedMetadata.genres || []), ...baseMetadata.genres])
+          )
+        }
+      } else {
+        needFetchSpecialFields.push('genres')
+      }
+    }
+
+    // Process platforms field
+    if (updateAll || fieldsToUpdate.includes('platforms')) {
+      if (baseMetadata.platforms && baseMetadata.platforms.length > 0) {
+        if (mergeStrategy === 'replace' || !updatedMetadata.platforms) {
+          updatedMetadata.platforms = baseMetadata.platforms
+        } else if (mergeStrategy === 'append') {
+          updatedMetadata.platforms = [
+            ...(updatedMetadata.platforms || []),
+            ...baseMetadata.platforms
+          ]
+        } else if (mergeStrategy === 'merge') {
+          updatedMetadata.platforms = Array.from(
+            new Set([...(updatedMetadata.platforms || []), ...baseMetadata.platforms])
+          )
+        }
+      } else {
+        needFetchSpecialFields.push('platforms')
+      }
+    }
+
+    // Process relatedSites field
+    if (updateAll || fieldsToUpdate.includes('relatedSites')) {
+      if (baseMetadata.relatedSites && baseMetadata.relatedSites.length > 0) {
+        if (mergeStrategy === 'replace' || !updatedMetadata.relatedSites) {
+          updatedMetadata.relatedSites = baseMetadata.relatedSites
+        } else if (mergeStrategy === 'append') {
+          updatedMetadata.relatedSites = [
+            ...(updatedMetadata.relatedSites || []),
+            ...baseMetadata.relatedSites
+          ]
+        } else if (mergeStrategy === 'merge') {
+          // For relatedSites, merge by URL to avoid duplicates
+          const sitesMap = new Map()
+          updatedMetadata.relatedSites?.forEach((site) => sitesMap.set(site.url, site))
+          baseMetadata.relatedSites.forEach((site) => sitesMap.set(site.url, site))
+          updatedMetadata.relatedSites = Array.from(sitesMap.values())
+        }
+      } else {
+        needFetchSpecialFields.push('relatedSites')
+      }
+    }
+
     // If there are still special fields to fetch, use the game name for additional searches
     if (needFetchSpecialFields.length > 0) {
       const gameName = baseMetadata.name || updatedMetadata.name
@@ -543,6 +671,11 @@ export async function updateGameMetadata({
           description?: Promise<GameDescriptionList>
           tags?: Promise<GameTagsList>
           extra?: Promise<GameExtraInfoList>
+          developers?: Promise<GameDevelopersList>
+          publishers?: Promise<GamePublishersList>
+          genres?: Promise<GameGenresList>
+          platforms?: Promise<GamePlatformsList>
+          relatedSites?: Promise<GameRelatedSitesList>
         } = {}
 
         // Prepare additional fetch tasks
@@ -558,12 +691,37 @@ export async function updateGameMetadata({
           specialFetchPromises.extra = scraperManager.getGameExtraInfoList(nameIdentifier)
         }
 
+        if (needFetchSpecialFields.includes('developers')) {
+          specialFetchPromises.developers = scraperManager.getGameDevelopersList(nameIdentifier)
+        }
+
+        if (needFetchSpecialFields.includes('publishers')) {
+          specialFetchPromises.publishers = scraperManager.getGamePublishersList(nameIdentifier)
+        }
+
+        if (needFetchSpecialFields.includes('genres')) {
+          specialFetchPromises.genres = scraperManager.getGameGenresList(nameIdentifier)
+        }
+
+        if (needFetchSpecialFields.includes('platforms')) {
+          specialFetchPromises.platforms = scraperManager.getGamePlatformsList(nameIdentifier)
+        }
+
+        if (needFetchSpecialFields.includes('relatedSites')) {
+          specialFetchPromises.relatedSites = scraperManager.getGameRelatedSitesList(nameIdentifier)
+        }
+
         // Execute additional fetch tasks
         const specialResults = await Promise.all(Object.values(specialFetchPromises))
         const specialResultsMap: {
           description?: GameDescriptionList
           tags?: GameTagsList
           extra?: GameExtraInfoList
+          developers?: GameDevelopersList
+          publishers?: GamePublishersList
+          genres?: GameGenresList
+          platforms?: GamePlatformsList
+          relatedSites?: GameRelatedSitesList
         } = {}
 
         // Map results
@@ -657,6 +815,112 @@ export async function updateGameMetadata({
                 key,
                 value
               }))
+            }
+          }
+        }
+
+        // Process additional fetched developers
+        if (specialResultsMap.developers) {
+          const developersList = specialResultsMap.developers
+          if (developersList && developersList.length > 0) {
+            if (mergeStrategy === 'replace' || !updatedMetadata.developers) {
+              updatedMetadata.developers = developersList[0].developers
+            } else {
+              const allDevelopers = developersList.flatMap((item) => item.developers)
+              if (mergeStrategy === 'append') {
+                updatedMetadata.developers = [
+                  ...(updatedMetadata.developers || []),
+                  ...allDevelopers
+                ]
+              } else {
+                updatedMetadata.developers = Array.from(
+                  new Set([...(updatedMetadata.developers || []), ...allDevelopers])
+                )
+              }
+            }
+          }
+        }
+
+        // Process additional fetched publishers
+        if (specialResultsMap.publishers) {
+          const publishersList = specialResultsMap.publishers
+          if (publishersList && publishersList.length > 0) {
+            if (mergeStrategy === 'replace' || !updatedMetadata.publishers) {
+              updatedMetadata.publishers = publishersList[0].publishers
+            } else {
+              const allPublishers = publishersList.flatMap((item) => item.publishers)
+              if (mergeStrategy === 'append') {
+                updatedMetadata.publishers = [
+                  ...(updatedMetadata.publishers || []),
+                  ...allPublishers
+                ]
+              } else {
+                updatedMetadata.publishers = Array.from(
+                  new Set([...(updatedMetadata.publishers || []), ...allPublishers])
+                )
+              }
+            }
+          }
+        }
+
+        // Process additional fetched genres
+        if (specialResultsMap.genres) {
+          const genresList = specialResultsMap.genres
+          if (genresList && genresList.length > 0) {
+            if (mergeStrategy === 'replace' || !updatedMetadata.genres) {
+              updatedMetadata.genres = genresList[0].genres
+            } else {
+              const allGenres = genresList.flatMap((item) => item.genres)
+              if (mergeStrategy === 'append') {
+                updatedMetadata.genres = [...(updatedMetadata.genres || []), ...allGenres]
+              } else {
+                updatedMetadata.genres = Array.from(
+                  new Set([...(updatedMetadata.genres || []), ...allGenres])
+                )
+              }
+            }
+          }
+        }
+
+        // Process additional fetched platforms
+        if (specialResultsMap.platforms) {
+          const platformsList = specialResultsMap.platforms
+          if (platformsList && platformsList.length > 0) {
+            if (mergeStrategy === 'replace' || !updatedMetadata.platforms) {
+              updatedMetadata.platforms = platformsList[0].platforms
+            } else {
+              const allPlatforms = platformsList.flatMap((item) => item.platforms)
+              if (mergeStrategy === 'append') {
+                updatedMetadata.platforms = [...(updatedMetadata.platforms || []), ...allPlatforms]
+              } else {
+                updatedMetadata.platforms = Array.from(
+                  new Set([...(updatedMetadata.platforms || []), ...allPlatforms])
+                )
+              }
+            }
+          }
+        }
+
+        // Process additional fetched related sites
+        if (specialResultsMap.relatedSites) {
+          const relatedSitesList = specialResultsMap.relatedSites
+          if (relatedSitesList && relatedSitesList.length > 0) {
+            if (mergeStrategy === 'replace' || !updatedMetadata.relatedSites) {
+              updatedMetadata.relatedSites = relatedSitesList[0].relatedSites
+            } else {
+              const allSites = relatedSitesList.flatMap((item) => item.relatedSites)
+              if (mergeStrategy === 'append') {
+                updatedMetadata.relatedSites = [
+                  ...(updatedMetadata.relatedSites || []),
+                  ...allSites
+                ]
+              } else {
+                // For relatedSites, merge by URL to avoid duplicates
+                const sitesMap = new Map()
+                updatedMetadata.relatedSites?.forEach((site) => sitesMap.set(site.url, site))
+                allSites.forEach((site) => sitesMap.set(site.url, site))
+                updatedMetadata.relatedSites = Array.from(sitesMap.values())
+              }
             }
           }
         }

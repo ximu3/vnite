@@ -1,5 +1,16 @@
 import { configDocs } from '@appTypes/models'
-import { GameDescriptionList, GameExtraInfoList, GameMetadata, GameTagsList } from '@appTypes/utils'
+import {
+  GameDescriptionList,
+  GameExtraInfoList,
+  GameMetadata,
+  GameTagsList,
+  GameDevelopersList,
+  GamePublishersList,
+  GameGenresList,
+  GamePlatformsList,
+  GameRelatedSitesList,
+  GameInformationList
+} from '@appTypes/utils'
 import { generateUUID } from '@appUtils'
 import log from 'electron-log/main'
 import fse from 'fs-extra'
@@ -252,6 +263,316 @@ export class Transformer {
       )
     } catch (error) {
       log.error('[Transformer] Error transforming extra info:', error)
+      throw error
+    }
+  }
+
+  static async transformDevelopersList(
+    developers: GameDevelopersList
+  ): Promise<GameDevelopersList> {
+    try {
+      // Get transformer enabled status
+      const enabled = await ConfigDBManager.getConfigValue('metadata.transformer.enabled')
+      if (!enabled) {
+        return developers
+      }
+
+      // Get transformer configuration list
+      const transformerList = await ConfigDBManager.getConfigValue('metadata.transformer.list')
+      if (!transformerList || transformerList.length === 0) {
+        return developers
+      }
+
+      // Create deep copy to avoid modifying the original object
+      const transformedDevelopers: GameDevelopersList = JSON.parse(JSON.stringify(developers))
+
+      // Apply rules from all transformers
+      for (const transformer of transformerList) {
+        // Process developers array
+        for (const devSource of transformedDevelopers) {
+          if (devSource.developers && Array.isArray(devSource.developers)) {
+            devSource.developers = devSource.developers
+              .map((developer) => {
+                let transformedDeveloper = developer
+                if (transformer.processors.developers) {
+                  for (const rule of transformer.processors.developers) {
+                    for (const pattern of rule.match) {
+                      transformedDeveloper = transformedDeveloper.replace(
+                        new RegExp(pattern, 'g'),
+                        rule.replace
+                      )
+                    }
+                  }
+                }
+                return transformedDeveloper === '' ? null : transformedDeveloper
+              })
+              // Filter out empty values
+              .filter(
+                (dev: string | null) => dev !== null && dev !== undefined && dev !== ''
+              ) as string[]
+          }
+        }
+      }
+
+      return transformedDevelopers
+    } catch (error) {
+      log.error('[Transformer] Error transforming developers:', error)
+      throw error
+    }
+  }
+
+  static async transformPublishersList(
+    publishers: GamePublishersList
+  ): Promise<GamePublishersList> {
+    try {
+      // Get transformer enabled status
+      const enabled = await ConfigDBManager.getConfigValue('metadata.transformer.enabled')
+      if (!enabled) {
+        return publishers
+      }
+
+      // Get transformer configuration list
+      const transformerList = await ConfigDBManager.getConfigValue('metadata.transformer.list')
+      if (!transformerList || transformerList.length === 0) {
+        return publishers
+      }
+
+      // Create deep copy to avoid modifying the original object
+      const transformedPublishers: GamePublishersList = JSON.parse(JSON.stringify(publishers))
+
+      // Apply rules from all transformers
+      for (const transformer of transformerList) {
+        // Process publishers array
+        for (const pubSource of transformedPublishers) {
+          if (pubSource.publishers && Array.isArray(pubSource.publishers)) {
+            pubSource.publishers = pubSource.publishers
+              .map((publisher) => {
+                let transformedPublisher = publisher
+                if (transformer.processors.publishers) {
+                  for (const rule of transformer.processors.publishers) {
+                    for (const pattern of rule.match) {
+                      transformedPublisher = transformedPublisher.replace(
+                        new RegExp(pattern, 'g'),
+                        rule.replace
+                      )
+                    }
+                  }
+                }
+                return transformedPublisher === '' ? null : transformedPublisher
+              })
+              // Filter out empty values
+              .filter(
+                (pub: string | null) => pub !== null && pub !== undefined && pub !== ''
+              ) as string[]
+          }
+        }
+      }
+
+      return transformedPublishers
+    } catch (error) {
+      log.error('[Transformer] Error transforming publishers:', error)
+      throw error
+    }
+  }
+
+  static async transformGenresList(genres: GameGenresList): Promise<GameGenresList> {
+    try {
+      // Get transformer enabled status
+      const enabled = await ConfigDBManager.getConfigValue('metadata.transformer.enabled')
+      if (!enabled) {
+        return genres
+      }
+
+      // Get transformer configuration list
+      const transformerList = await ConfigDBManager.getConfigValue('metadata.transformer.list')
+      if (!transformerList || transformerList.length === 0) {
+        return genres
+      }
+
+      // Create deep copy to avoid modifying the original object
+      const transformedGenres: GameGenresList = JSON.parse(JSON.stringify(genres))
+
+      // Apply rules from all transformers
+      for (const transformer of transformerList) {
+        // Process genres array
+        for (const genreSource of transformedGenres) {
+          if (genreSource.genres && Array.isArray(genreSource.genres)) {
+            genreSource.genres = genreSource.genres
+              .map((genre) => {
+                let transformedGenre = genre
+                if (transformer.processors.genres) {
+                  for (const rule of transformer.processors.genres) {
+                    for (const pattern of rule.match) {
+                      transformedGenre = transformedGenre.replace(
+                        new RegExp(pattern, 'g'),
+                        rule.replace
+                      )
+                    }
+                  }
+                }
+                return transformedGenre === '' ? null : transformedGenre
+              })
+              // Filter out empty values
+              .filter(
+                (genre: string | null) => genre !== null && genre !== undefined && genre !== ''
+              ) as string[]
+          }
+        }
+      }
+
+      return transformedGenres
+    } catch (error) {
+      log.error('[Transformer] Error transforming genres:', error)
+      throw error
+    }
+  }
+
+  static async transformPlatformsList(platforms: GamePlatformsList): Promise<GamePlatformsList> {
+    try {
+      // Get transformer enabled status
+      const enabled = await ConfigDBManager.getConfigValue('metadata.transformer.enabled')
+      if (!enabled) {
+        return platforms
+      }
+
+      // Get transformer configuration list
+      const transformerList = await ConfigDBManager.getConfigValue('metadata.transformer.list')
+      if (!transformerList || transformerList.length === 0) {
+        return platforms
+      }
+
+      // Create deep copy to avoid modifying the original object
+      const transformedPlatforms: GamePlatformsList = JSON.parse(JSON.stringify(platforms))
+
+      // Apply rules from all transformers
+      for (const transformer of transformerList) {
+        // Process platforms array
+        for (const platformSource of transformedPlatforms) {
+          if (platformSource.platforms && Array.isArray(platformSource.platforms)) {
+            platformSource.platforms = platformSource.platforms
+              .map((platform) => {
+                let transformedPlatform = platform
+                if (transformer.processors.platforms) {
+                  for (const rule of transformer.processors.platforms) {
+                    for (const pattern of rule.match) {
+                      transformedPlatform = transformedPlatform.replace(
+                        new RegExp(pattern, 'g'),
+                        rule.replace
+                      )
+                    }
+                  }
+                }
+                return transformedPlatform === '' ? null : transformedPlatform
+              })
+              // Filter out empty values
+              .filter(
+                (platform: string | null) =>
+                  platform !== null && platform !== undefined && platform !== ''
+              ) as string[]
+          }
+        }
+      }
+
+      return transformedPlatforms
+    } catch (error) {
+      log.error('[Transformer] Error transforming platforms:', error)
+      throw error
+    }
+  }
+
+  static async transformRelatedSitesList(
+    relatedSites: GameRelatedSitesList
+  ): Promise<GameRelatedSitesList> {
+    try {
+      // Get transformer enabled status
+      const enabled = await ConfigDBManager.getConfigValue('metadata.transformer.enabled')
+      if (!enabled) {
+        return relatedSites
+      }
+
+      // Get transformer configuration list
+      const transformerList = await ConfigDBManager.getConfigValue('metadata.transformer.list')
+      if (!transformerList || transformerList.length === 0) {
+        return relatedSites
+      }
+
+      // Create deep copy to avoid modifying the original object
+      const transformedRelatedSites: GameRelatedSitesList = JSON.parse(JSON.stringify(relatedSites))
+
+      // Apply rules from all transformers (no specific processor for relatedSites, return as-is)
+      // Note: relatedSites transformation is not currently supported by the processor
+      // This method is provided for consistency and future extension
+
+      return transformedRelatedSites
+    } catch (error) {
+      log.error('[Transformer] Error transforming related sites:', error)
+      throw error
+    }
+  }
+
+  static async transformInformationList(
+    informationList: GameInformationList
+  ): Promise<GameInformationList> {
+    try {
+      // Get transformer enabled status
+      const enabled = await ConfigDBManager.getConfigValue('metadata.transformer.enabled')
+      if (!enabled) {
+        return informationList
+      }
+
+      // Get transformer configuration list
+      const transformerList = await ConfigDBManager.getConfigValue('metadata.transformer.list')
+      if (!transformerList || transformerList.length === 0) {
+        return informationList
+      }
+
+      // Create deep copy to avoid modifying the original object
+      const transformedInformationList: GameInformationList = JSON.parse(
+        JSON.stringify(informationList)
+      )
+
+      // Apply rules from all transformers
+      for (const transformer of transformerList) {
+        // Process information for each data source
+        for (const infoItem of transformedInformationList) {
+          if (infoItem.information) {
+            const info = infoItem.information
+
+            // Apply transformation rules to each field
+            this.applyProcessorRules(info, 'name', transformer.processors.name)
+            this.applyProcessorRules(info, 'originalName', transformer.processors.originalName)
+            // Note: releaseDate processor may not exist, skip if not available
+            if ((transformer.processors as any).releaseDate) {
+              this.applyProcessorRules(
+                info,
+                'releaseDate',
+                (transformer.processors as any).releaseDate
+              )
+            }
+            this.applyProcessorRules(info, 'developers', transformer.processors.developers)
+            this.applyProcessorRules(info, 'publishers', transformer.processors.publishers)
+            this.applyProcessorRules(info, 'genres', transformer.processors.genres)
+            this.applyProcessorRules(info, 'platforms', transformer.processors.platforms)
+          }
+        }
+      }
+
+      // Filter out items without valid information
+      return transformedInformationList.filter((item) => {
+        const info = item.information
+        return (
+          info &&
+          (info.name ||
+            info.originalName ||
+            info.releaseDate ||
+            (info.developers && info.developers.length > 0) ||
+            (info.publishers && info.publishers.length > 0) ||
+            (info.genres && info.genres.length > 0) ||
+            (info.platforms && info.platforms.length > 0))
+        )
+      })
+    } catch (error) {
+      log.error('[Transformer] Error transforming information list:', error)
       throw error
     }
   }
