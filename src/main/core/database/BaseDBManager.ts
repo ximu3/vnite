@@ -523,6 +523,12 @@ export class BaseDBManager {
 
     try {
       const doc = await db.get(docId)
+
+      // Check if attachment exists before trying to remove it
+      if (!doc._attachments || !doc._attachments[attachmentId]) {
+        return // Skip if attachment doesn't exist
+      }
+
       await db.removeAttachment(docId, attachmentId, doc._rev)
       // Notify the change to the renderer to sync the attachment removal
       ipcManager.send('db:attachment-changed', {
@@ -532,6 +538,9 @@ export class BaseDBManager {
         timestamp: Date.now()
       })
     } catch (error) {
+      if ((error as any).name === 'not_found') {
+        return // Skip if document doesn't exist
+      }
       console.error('Error removing attachment:', error)
       throw error
     }
