@@ -1,15 +1,15 @@
 {
   "dlsite": {
-    "workType": "",
-    "releaseDate": "",
-    "series": "",
-    "maker": ""
+    "workType": "Format du produit",
+    "releaseDate": "Date de sortie",
+    "series": "Nom de série",
+    "maker": "Marque"
   },
   "steam": {
-    "officialWebsite": "",
-    "steamStore": "",
+    "officialWebsite": "Site Officiel",
+    "steamStore": "Magasin Steam",
     "config": {
-      "apiLanguageCode": "",
+      "apiLanguageCode": "français",
       "urlLanguageCode": "",
       "acceptLanguageHeader": "",
       "countryCode": ""

@@ -1,17 +1,19 @@
 {
-  "title": "",
+  "title": "Paramètres de Vnite",
   "general": {
-    "title": "",
-    "language": "",
-    "openAtLogin": "",
-    "theme": "",
+    "title": "Général",
+    "language": "Langue",
+    "openAtLogin": "Ouvrir à l'Identification",
+    "theme": "Style du thème",
     "darkTheme": "",
     "lightTheme": "",
     "followSystem": "",
     "closeMainPanel": "",
     "action": "",
     "quitApp": "",
-    "minimizeToTray": ""
+    "minimizeToTray": "",
+    "languageDescription": "Choisissez la langue d'affichage pour l'application",
+    "openAtLoginDescription": "Ouvrir automatiquement l'application au démarrage du système"
   },
   "appearances": {
     "title": "",

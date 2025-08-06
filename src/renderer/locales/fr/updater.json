@@ -1,13 +1,13 @@
 {
   "dialog": {
-    "title": "",
+    "title": "Nouvelle version trouvée {{version}}",
     "noReleaseNotes": "",
-    "latestVersion": "",
-    "downloadProgress": ""
+    "latestVersion": "Déjà à jour",
+    "downloadProgress": "{{percent}}% - {{speed}} MB/s"
   },
   "actions": {
-    "skipUpdate": "",
-    "update": "",
-    "install": ""
+    "skipUpdate": "Mise à jour du thème",
+    "update": "Mettre à jour maintenant",
+    "install": "Installer maintenant"
   }
 }

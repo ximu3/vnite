@@ -1,21 +1,21 @@
 {
   "steamImporter": {
     "dialog": {
-      "title": "",
-      "description": ""
+      "title": "Importer des jeux Steam",
+      "description": "Veuillez saisir votre identifiant Steam pour importer votre bibliothèque de jeux. Vous pouvez trouver votre identifiant dans l'URL de votre profil."
     },
     "input": {
-      "steamId": "",
-      "fetch": "",
-      "searching": ""
+      "steamId": "Entrer identifiant Steam",
+      "fetch": "Trouver",
+      "searching": "Recherche de jeux…"
     },
     "status": {
       "initial": {
-        "title": "",
-        "description": ""
+        "title": "Commencer à importer",
+        "description": "Veuillez saisir votre identifiant Steam pour obtenir votre liste de jeux"
       },
       "ready": {
-        "title": "",
+        "title": "Prêt à trouver",
         "description": ""
       },
       "loading": {
