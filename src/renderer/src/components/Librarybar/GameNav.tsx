@@ -9,12 +9,12 @@ import { GamePropertiesDialog } from '~/components/Game/Config/Properties'
 import { ContextMenu, ContextMenuTrigger } from '~/components/ui/context-menu'
 import { GameImage } from '~/components/ui/game-image'
 import { useConfigState, useGameLocalState, useGameState } from '~/hooks'
+import { useLibraryStore } from '~/pages/Library/store'
 import { cn, startGame } from '~/utils'
 import { GameNavCM } from '../contextMenu/GameNavCM'
 import { BatchGameNavCM } from '../GameBatchEditor/BatchGameNavCM'
 import { useGameBatchEditorStore } from '../GameBatchEditor/store'
 import { useTheme } from '../ThemeProvider'
-import { useLibraryStore } from '~/pages/Library/store'
 
 export function GameNav({
   gameId,
@@ -160,23 +160,27 @@ export function GameNav({
                   />
                 </div>
                 {nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImageAndTitle ? (
-                  <div className="relative truncate" style={{ width: `${libraryBarWidth - 60}px` }}>
+                  <div
+                    className="relative truncate"
+                    style={{ width: `${libraryBarWidth - (markLocalGames ? 70 : 60)}px` }}
+                  >
                     <span className="group-hover/gamenav:opacity-0">{obfuscatedGameName}</span>
                     <span className="absolute top-0 left-0 w-full truncate opacity-0 group-hover/gamenav:opacity-100">
                       {gameName}
                     </span>
                   </div>
                 ) : (
-                  <div className={cn('truncate')} style={{ width: `${libraryBarWidth - 60}px` }}>
+                  <div
+                    className={cn('truncate')}
+                    style={{ width: `${libraryBarWidth - (markLocalGames ? 70 : 60)}px` }}
+                  >
                     {gameName}
                   </div>
                 )}
 
                 {markLocalGames && gamePath && (
                   <span
-                    className={cn(
-                      'icon-[mdi--check-outline] w-[10px] h-[10px] mr-[-6px] flex-shrink-0'
-                    )}
+                    className={cn('icon-[mdi--check-outline] w-[10px] h-[10px] flex-shrink-0')}
                   ></span>
                 )}
               </div>
