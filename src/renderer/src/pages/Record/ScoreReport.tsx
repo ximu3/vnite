@@ -1,7 +1,5 @@
 import { CalendarIcon, ClockIcon, GamepadIcon, Trophy } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import AutoSizer from 'react-virtualized-auto-sizer'
-import { FixedSizeList } from 'react-window'
 import { Badge } from '~/components/ui/badge'
 import { Card } from '~/components/ui/card'
 import { GameImage } from '~/components/ui/game-image'
@@ -31,15 +29,14 @@ function GameScoreCard({ gameId }: { gameId: string }): React.JSX.Element {
   return (
     <HoverCard>
       <HoverCardTrigger asChild>
-        <div className={cn('w-[120px] cursor-pointer object-cover', '3xl:w-[150px]')}>
+        <div className={cn('w-[120px] cursor-pointer object-cover')}>
           <div className="relative group">
             <GamePoster
               gameId={gameId}
               blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
               className={cn(
                 'object-cover rounded-lg shadow-md',
-                'w-[120px] h-[180px] cursor-pointer object-cover',
-                '3xl:w-[150px] 3xl:h-[225px]'
+                'w-[120px] h-[180px] cursor-pointer object-cover'
               )}
             />
             <div className="absolute px-2 py-1 text-xs font-medium rounded-full bottom-2 right-2 bg-primary/90 text-primary-foreground backdrop-blur-sm">
@@ -161,28 +158,14 @@ function ScoreCategory({
             {t('score.categories.gamesCount', { count: games.length })}
           </Badge>
         </div>
-        <div className="h-[280px] 3xl:h-[325px] p-6 pt-0 lg:w-4/5 lg:pt-6">
-          <AutoSizer>
-            {({ height, width }) => {
-              const itemSize = height <= 250 ? 150 : 180
-              return (
-                <FixedSizeList
-                  height={height}
-                  itemCount={games.length}
-                  itemSize={itemSize}
-                  className={cn('overflow-auto scrollbar-base')}
-                  width={width}
-                  layout="horizontal"
-                >
-                  {({ index, style }) => (
-                    <div style={style} className={cn('pt-1', index == 0 && 'pl-1')}>
-                      <GameScoreCard gameId={games[index]} />
-                    </div>
-                  )}
-                </FixedSizeList>
-              )
-            }}
-          </AutoSizer>
+        <div className="p-6 lg:w-4/5 w-full overflow-auto scrollbar-base">
+          <div className="grid justify-between grid-cols-[repeat(auto-fill,120px)] gap-4">
+            {games.map((gameId, index) => (
+              <div key={gameId} className={cn('flex-shrink-0', index === 0 && 'ml-1')}>
+                <GameScoreCard gameId={gameId} />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </Card>
