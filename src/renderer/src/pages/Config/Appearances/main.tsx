@@ -58,14 +58,14 @@ export function Appearances(): React.JSX.Element {
   )
   const backgroundUrl = `attachment://config/media/background-${isDark ? 'dark' : 'light'}.webp?t=${backgroundInfo?.timestamp}`
 
-  const resetAppearancesSettings = async (): Promise<void> => {
+  const resetAppearancesSettings = async (noToast = false): Promise<void> => {
     try {
       await ipcManager.invoke('db:reset-appearances-settings')
       resetLibraryBarWidth() // Reset library bar width to default
       refresh()
-      toast.success(t('appearances.notifications.resetAppearancesSettingsSuccess'))
+      !noToast && toast.success(t('appearances.notifications.resetAppearancesSettingsSuccess'))
     } catch (_error) {
-      toast.error(t('appearances.notifications.resetAppearancesSettingsFailed'))
+      !noToast && toast.error(t('appearances.notifications.resetAppearancesSettingsFailed'))
       return
     }
   }
@@ -90,7 +90,7 @@ export function Appearances(): React.JSX.Element {
                 title={t('appearances.actions.resetAppearancesSettings')}
                 description={t('appearances.actions.resetAppearancesSettingsDescription')}
               >
-                <Button variant="default" onClick={resetAppearancesSettings}>
+                <Button variant="default" onClick={() => resetAppearancesSettings()}>
                   {t('appearances.actions.resetAppearancesSettings')}
                 </Button>
               </ConfigItemPure>
@@ -112,7 +112,7 @@ export function Appearances(): React.JSX.Element {
                       <DropdownMenuItem
                         onClick={() => {
                           try {
-                            resetAppearancesSettings()
+                            resetAppearancesSettings(true)
                             toast.success(t('appearances.notifications.loadPresetSuccess'))
                           } catch (_error) {
                             toast.error(t('appearances.notifications.loadPresetFailed'))
