@@ -181,7 +181,7 @@ export async function getGetchuGameMetadata(identifier: ScraperIdentifier): Prom
       to: 'UNICODE',
       from: 'EUCJP'
     })
-    const descriptionStr = Encoding.codeToString(unicodeArray)
+    const descriptionStr = Encoding.codeToString(unicodeArray).replace(/^\s+|\s+$/g, '')
 
     resolve({
       name: name,
