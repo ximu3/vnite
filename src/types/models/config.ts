@@ -72,9 +72,10 @@ export interface configDocs {
       showPlayButtonOnPoster: boolean
     }
     gameDetail: {
-      showHeader: boolean
       headerMaxHeight: number
+      headerLayout: 'default' | 'compact'
       showCover: boolean
+      showLogo: boolean
       contentTopPadding: number
     }
     glass: {
@@ -281,9 +282,10 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       showPlayButtonOnPoster: true
     },
     gameDetail: {
-      showHeader: true,
       headerMaxHeight: 55, // in vh
+      headerLayout: 'default',
       showCover: true,
+      showLogo: true,
       contentTopPadding: 40 // in vh
     },
     glass: {

@@ -13,12 +13,29 @@ import { useTheme } from '~/components/ThemeProvider'
 import { useLightStore } from '~/pages/Light'
 import { useLibraryStore } from '~/pages/Library/store'
 import { toast } from 'sonner'
+import {
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuPortal
+} from '~/components/ui/dropdown-menu'
+import { useConfigState } from '~/hooks'
 
 export function Appearances(): React.JSX.Element {
   const { t } = useTranslation('config')
   const { isDark } = useTheme()
   const refresh = useLightStore((state) => state.refresh)
   const resetLibraryBarWidth = useLibraryStore((state) => state.resetLibraryBarWidth)
+  const setLibraryBarWidth = useLibraryStore((state) => state.setLibraryBarWidth)
+
+  const [_showHeaderImage, setShowHeaderImage] = useConfigState(
+    'appearances.gameDetail.showHeaderImage'
+  )
+  const [_headerLayout, setHeaderLayout] = useConfigState('appearances.gameDetail.headerLayout')
+  const [_contentTopPadding, setContentTopPadding] = useConfigState(
+    'appearances.gameDetail.contentTopPadding'
+  )
 
   const [fontDialogOpen, setFontDialogOpen] = useState(false)
 
@@ -64,6 +81,7 @@ export function Appearances(): React.JSX.Element {
           {/* Actions */}
           <div className={cn('space-y-4')}>
             <div className={cn('border-b pb-2')}>{t('appearances.actions.title')}</div>
+            {/* Reset Appearances */}
             <div className={cn('')}>
               <ConfigItemPure
                 title={t('appearances.actions.resetAppearancesSettings')}
@@ -72,6 +90,54 @@ export function Appearances(): React.JSX.Element {
                 <Button variant="default" onClick={resetAppearancesSettings}>
                   {t('appearances.actions.resetAppearancesSettings')}
                 </Button>
+              </ConfigItemPure>
+            </div>
+            {/* Presets Select */}
+            <div className={cn('')}>
+              <ConfigItemPure
+                title={t('appearances.actions.loadPreset')}
+                description={t('appearances.actions.loadPresetDescription')}
+              >
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="w-full justify-between font-normal">
+                      {t('appearances.actions.selectPreset')}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuPortal>
+                    <DropdownMenuContent className="">
+                      <DropdownMenuItem
+                        onClick={() => {
+                          try {
+                            resetAppearancesSettings()
+                            toast.success(t('appearances.notifications.loadPresetSuccess'))
+                          } catch (_error) {
+                            toast.error(t('appearances.notifications.loadPresetFailed'))
+                            return
+                          }
+                        }}
+                      >
+                        {t('appearances.actions.presets.default')}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          try {
+                            setShowHeaderImage(false)
+                            setHeaderLayout('compact')
+                            setContentTopPadding(0)
+                            setLibraryBarWidth(0)
+                            toast.success(t('appearances.notifications.loadPresetSuccess'))
+                          } catch (_error) {
+                            toast.error(t('appearances.notifications.loadPresetFailed'))
+                            return
+                          }
+                        }}
+                      >
+                        {t('appearances.actions.presets.noHeaderImage')}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenuPortal>
+                </DropdownMenu>
               </ConfigItemPure>
             </div>
           </div>
@@ -293,18 +359,31 @@ export function Appearances(): React.JSX.Element {
             <div className={cn('')}>
               <ConfigItem
                 hookType="config"
-                path="appearances.gameDetail.showHeader"
-                title={t('appearances.gameDetail.showHeader')}
-                description={t('appearances.gameDetail.showHeaderDescription')}
+                path="appearances.gameDetail.showHeaderImage"
+                title={t('appearances.gameDetail.showHeaderImage')}
+                description={t('appearances.gameDetail.showHeaderImageDescription')}
                 controlType="switch"
               />
             </div>
             <div className={cn('')}>
               <ConfigItem
                 hookType="config"
-                path="appearances.gameDetail.headerMaxHeight"
-                title={t('appearances.gameDetail.headerMaxHeight')}
-                description={t('appearances.gameDetail.headerMaxHeightDescription')}
+                path="appearances.gameDetail.headerLayout"
+                title={t('appearances.gameDetail.headerLayout')}
+                description={t('appearances.gameDetail.headerLayoutDescription')}
+                controlType="select"
+                options={[
+                  { value: 'default', label: t('appearances.gameDetail.headerLayoutDefault') },
+                  { value: 'compact', label: t('appearances.gameDetail.headerLayoutCompact') }
+                ]}
+              />
+            </div>
+            <div className={cn('')}>
+              <ConfigItem
+                hookType="config"
+                path="appearances.gameDetail.headerImageMaxHeight"
+                title={t('appearances.gameDetail.headerImageMaxHeight')}
+                description={t('appearances.gameDetail.headerImageMaxHeightDescription')}
                 controlType="slider"
                 min={10}
                 max={100}
@@ -318,6 +397,15 @@ export function Appearances(): React.JSX.Element {
                 path="appearances.gameDetail.showCover"
                 title={t('appearances.gameDetail.showCover')}
                 description={t('appearances.gameDetail.showCoverDescription')}
+                controlType="switch"
+              />
+            </div>
+            <div className={cn('')}>
+              <ConfigItem
+                hookType="config"
+                path="appearances.gameDetail.showLogo"
+                title={t('appearances.gameDetail.showLogo')}
+                description={t('appearances.gameDetail.showLogoDescription')}
                 controlType="switch"
               />
             </div>

@@ -24,7 +24,14 @@
     "actions": {
       "title": "操作",
       "resetAppearancesSettings": "重置外观",
-      "resetAppearancesSettingsDescription": "将外观重置为默认值"
+      "resetAppearancesSettingsDescription": "将外观重置为默认值",
+      "loadPreset": "加载预设",
+      "loadPresetDescription": "选择一个预设来快速应用一组外观设置",
+      "selectPreset": "选择预设",
+      "presets": {
+        "default": "默认",
+        "noHeaderImage": "无头图"
+      }
     },
     "font": {
       "title": "字体",
@@ -85,12 +92,18 @@
       "showOriginalNameDescription": "在游戏详情页游戏标题旁显示原名",
       "contentTopPadding": "内容顶部间距",
       "contentTopPaddingDescription": "设置游戏详情页内容的顶部间距",
-      "showHeader": "显示头图",
-      "showHeaderDescription": "在游戏详情页显示头图",
-      "headerMaxHeight": "头图最大高度",
-      "headerMaxHeightDescription": "设置游戏详情页头图的最大高度",
+      "headerLayout": "Header 布局",
+      "headerLayoutDescription": "选择游戏详情页 Header 的布局方式",
+      "headerLayoutDefault": "默认",
+      "headerLayoutCompact": "紧凑",
+      "showHeaderImage": "显示头图",
+      "showHeaderImageDescription": "在游戏详情页显示头图",
+      "headerImageMaxHeight": "头图最大高度",
+      "headerImageMaxHeightDescription": "设置游戏详情页头图的最大高度",
       "showCover": "显示封面",
-      "showCoverDescription": "在游戏详情页显示封面"
+      "showCoverDescription": "在游戏详情页显示封面",
+      "showLogo": "显示 Logo",
+      "showLogoDescription": "在游戏详情页显示 Logo"
     },
     "sidebar": {
       "title": "侧边栏",
@@ -103,7 +116,9 @@
       "resetAppearancesSettingsSuccess": "外观重置成功",
       "resetAppearancesSettingsFailed": "外观重置失败",
       "removeBackgroundImageSuccess": "背景图片删除成功",
-      "removeBackgroundImageFailed": "背景图片删除失败"
+      "removeBackgroundImageFailed": "背景图片删除失败",
+      "loadPresetSuccess": "预设加载成功",
+      "loadPresetFailed": "预设加载失败"
     }
   },
   "advanced": {

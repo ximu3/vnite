@@ -24,7 +24,14 @@
     "actions": {
       "title": "Actions",
       "resetAppearancesSettings": "Reset Appearances",
-      "resetAppearancesSettingsDescription": "Reset appearances to default values"
+      "resetAppearancesSettingsDescription": "Reset appearances to default values",
+      "loadPreset": "Load Preset",
+      "loadPresetDescription": "Select a preset to quickly apply a set of appearance settings",
+      "selectPreset": "Select Preset",
+      "presets": {
+        "default": "Default",
+        "noHeaderImage": "No Header Image"
+      }
     },
     "font": {
       "title": "Font",
@@ -85,10 +92,14 @@
       "showOriginalNameDescription": "Show original name next to game title in detail page",
       "contentTopPadding": "Content Top Padding",
       "contentTopPaddingDescription": "Set the top padding of content in game details page",
-      "showHeader": "Show Header Image",
-      "showHeaderDescription": "Display header image in game details page",
-      "headerMaxHeight": "Header Maximum Height",
-      "headerMaxHeightDescription": "Set the maximum height of header image in game details page",
+      "headerLayout": "Header Layout",
+      "headerLayoutDescription": "Choose the layout style for the header in game details page",
+      "headerLayoutDefault": "Default",
+      "headerLayoutCompact": "Compact",
+      "showHeaderImage": "Show Header Image",
+      "showHeaderImageDescription": "Display header image in game details page",
+      "headerImageMaxHeight": "Header Maximum Height",
+      "headerImageMaxHeightDescription": "Set the maximum height of header image in game details page",
       "showCover": "Show Cover",
       "showCoverDescription": "Display cover image in game details page"
     },
@@ -103,7 +114,9 @@
       "resetAppearancesSettingsSuccess": "Appearance reset successfully",
       "resetAppearancesSettingsFailed": "Failed to reset appearance",
       "removeBackgroundImageSuccess": "Background image removed successfully",
-      "removeBackgroundImageFailed": "Failed to remove background image"
+      "removeBackgroundImageFailed": "Failed to remove background image",
+      "loadPresetSuccess": "Preset loaded successfully",
+      "loadPresetFailed": "Failed to load preset"
     }
   },
   "advanced": {

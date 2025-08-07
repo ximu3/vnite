@@ -31,6 +31,7 @@ export function ManageMenu({
   const [nsfw, setNsfw] = useGameState(gameId, 'apperance.nsfw')
   const [playStatus, setPlayStatus] = useGameState(gameId, 'record.playStatus')
   const [selectedGroup] = useConfigState('game.gameList.selectedGroup')
+  const [showLogo] = useConfigState('appearances.gameDetail.showLogo')
   const { refreshGameList } = useLibrarybarStore.getState()
   const setIsEditingLogo = useGameDetailStore((state) => state.setIsEditingLogo)
   const setIsPlayTimeEditorDialogOpen = useGameDetailStore(
@@ -61,13 +62,15 @@ export function ManageMenu({
                 {t('detail.manage.rename')}
               </DropdownMenuItem>
               {/* Edit Game Logo */}
-              <DropdownMenuItem
-                onClick={() => {
-                  setIsEditingLogo(true)
-                }}
-              >
-                {t('detail.manage.editLogo')}
-              </DropdownMenuItem>
+              {showLogo && (
+                <DropdownMenuItem
+                  onClick={() => {
+                    setIsEditingLogo(true)
+                  }}
+                >
+                  {t('detail.manage.editLogo')}
+                </DropdownMenuItem>
+              )}
               {/* Edit Play Time */}
               <DropdownMenuItem onClick={() => setIsPlayTimeEditorDialogOpen(true)}>
                 {t('detail.manage.editPlayTime')}

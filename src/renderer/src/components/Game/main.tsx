@@ -8,6 +8,7 @@ import { useConfigState, useGameState } from '~/hooks'
 import { cn } from '~/utils'
 import { ScrollArea } from '../ui/scroll-area'
 import { Header } from './Header'
+import { HeaderCompact } from './HeaderCompact'
 import { Memory } from './Memory'
 import { Overview } from './Overview'
 import { Record } from './Record'
@@ -21,6 +22,8 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   const [dragging, setDragging] = useState(false)
   const offset = useRef({ x: 0, y: 0 })
   const logoRef = useRef<HTMLDivElement>(null)
+  const [headerLayout] = useConfigState('appearances.gameDetail.headerLayout')
+  const [showLogo] = useConfigState('appearances.gameDetail.showLogo')
 
   // Add a ticking variable for requestAnimationFrame
   const ticking = useRef(false)
@@ -32,6 +35,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
 
   // Game Logo position and size management
   const initialPosition = { x: 1.5, y: 35 }
+  const initialPositionInCompact = { x: 70, y: 5 } // Adjusted for compact header
   const initialSize = 100
   const [logoPosition, setLogoPosition, saveLogoPosition] = useGameState(
     gameId,
@@ -164,11 +168,14 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
     }
   }, [dragging, localLogoPosition])
 
+  const isInitialPosition = (pos: { x: number; y: number }): boolean =>
+    pos.x === initialPosition.x && pos.y === initialPosition.y
+
   return (
     <div className={cn('w-full h-full relative overflow-hidden shrink-0')}>
       {/* Logo Editing Control Panel */}
       {/* Only visible when editing logo */}
-      {isEditingLogo && !hideLogo && (
+      {showLogo && isEditingLogo && !hideLogo && (
         <div
           className={cn(
             'absolute top-[10px] left-[10px] z-40 bg-transparent p-3 rounded-lg flex gap-3'
@@ -224,15 +231,15 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
       )}
 
       {/* Logo Layer */}
-      {logoVisible && !hideLogo && (
+      {showLogo && logoVisible && !hideLogo && (
         <div
           ref={logoRef}
           onMouseDown={handleMouseDown}
           onWheel={handleWheel}
           style={{
             transform: `scale(${logoSize / 100})`,
-            left: `${localLogoPosition.x}vw`,
-            top: `${localLogoPosition.y}vh`,
+            left: `${headerLayout === 'compact' && isInitialPosition(localLogoPosition) ? initialPositionInCompact.x : localLogoPosition.x}vw`,
+            top: `${headerLayout === 'compact' && isInitialPosition(localLogoPosition) ? initialPositionInCompact.y : localLogoPosition.y}vh`,
             cursor: dragging ? 'grabbing' : 'grab',
             transformOrigin: 'center center',
             zIndex: isEditingLogo ? 30 : 10 // Increase z-index in editing mode
@@ -252,14 +259,21 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
       {/* Scrollable Content Area */}
       <ScrollArea
         ref={scrollAreaRef}
-        className={cn('relative h-full w-full overflow-auto rounded-none')}
+        className={cn(
+          'relative h-full w-full overflow-auto rounded-none',
+          headerLayout === 'compact' && 'py-5 lg:px-5 px-3'
+        )}
       >
         {/* Content Container */}
         <div className={cn('relative z-20 flex flex-col w-full min-h-[100vh]')}>
           <div className={`mt-(--content-top-padding)`}>
             {/* Header Area */}
             <div ref={headerRef} className="pt-1">
-              <Header gameId={gameId} />
+              {headerLayout === 'compact' ? (
+                <HeaderCompact gameId={gameId} />
+              ) : (
+                <Header gameId={gameId} />
+              )}
             </div>
 
             {/* Content Area */}

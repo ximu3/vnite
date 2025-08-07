@@ -24,7 +24,14 @@
     "actions": {
       "title": "操作",
       "resetAppearancesSettings": "重置外觀",
-      "resetAppearancesSettingsDescription": "將外觀重置為默認值"
+      "resetAppearancesSettingsDescription": "將外觀重置為默認值",
+      "loadPreset": "加載預設",
+      "loadPresetDescription": "選擇一個預設來快速應用一組外觀設置",
+      "selectPreset": "選擇預設",
+      "presets": {
+        "default": "默認",
+        "noHeaderImage": "無頭圖"
+      }
     },
     "font": {
       "title": "字體",
@@ -85,12 +92,18 @@
       "showOriginalNameDescription": "在遊戲詳情頁遊戲標題旁顯示原名",
       "contentTopPadding": "內容頂部間距",
       "contentTopPaddingDescription": "設置遊戲詳情頁內容的頂部間距",
-      "showHeader": "顯示頭圖",
-      "showHeaderDescription": "在遊戲詳情頁顯示頭圖",
-      "headerMaxHeight": "頭圖最大高度",
-      "headerMaxHeightDescription": "設置遊戲詳情頁頭圖的最大高度",
+      "headerLayout": "Header 布局",
+      "headerLayoutDescription": "選擇遊戲詳情頁 Header 的佈局方式",
+      "headerLayoutDefault": "默認",
+      "headerLayoutCompact": "緊湊",
+      "showHeaderImage": "顯示頭圖",
+      "showHeaderImageDescription": "在遊戲詳情頁顯示頭圖",
+      "headerImageMaxHeight": "頭圖最大高度",
+      "headerImageMaxHeightDescription": "設置遊戲詳情頁頭圖的最大高度",
       "showCover": "顯示封面",
-      "showCoverDescription": "在遊戲詳情頁顯示封面"
+      "showCoverDescription": "在遊戲詳情頁顯示封面",
+      "showLogo": "顯示 Logo",
+      "showLogoDescription": "在遊戲詳情頁顯示 Logo"
     },
     "sidebar": {
       "title": "側邊欄",
@@ -103,7 +116,9 @@
       "resetAppearancesSettingsSuccess": "外觀重置成功",
       "resetAppearancesSettingsFailed": "外觀重置失敗",
       "removeBackgroundImageSuccess": "背景圖片刪除成功",
-      "removeBackgroundImageFailed": "背景圖片刪除失敗"
+      "removeBackgroundImageFailed": "背景圖片刪除失敗",
+      "loadPresetSuccess": "預設加載成功",
+      "loadPresetFailed": "預設加載失敗"
     }
   },
   "advanced": {

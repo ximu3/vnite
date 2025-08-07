@@ -24,7 +24,14 @@
     "actions": {
       "title": "アクション",
       "resetAppearancesSettings": "外観をリセット",
-      "resetAppearancesSettingsDescription": "外観をデフォルト値にリセット"
+      "resetAppearancesSettingsDescription": "外観をデフォルト値にリセット",
+      "loadPreset": "プリセットを読み込む",
+      "loadPresetDescription": "プリセットを選択して、一連の外観設定を迅速に適用",
+      "selectPreset": "プリセットを選択",
+      "presets": {
+        "default": "デフォルト",
+        "noHeaderImage": "ヘッダー画像なし"
+      }
     },
     "font": {
       "title": "フォント",
@@ -85,12 +92,18 @@
       "showOriginalNameDescription": "ゲーム詳細ページのタイトルの隣に原名を表示",
       "contentTopPadding": "コンテンツ上部の余白",
       "contentTopPaddingDescription": "ゲーム詳細ページのコンテンツ上部の余白を設定します",
-      "showHeader": "ヘッダー画像を表示",
-      "showHeaderDescription": "ゲーム詳細ページにヘッダー画像を表示します",
-      "headerMaxHeight": "ヘッダー画像の最大高さ",
-      "headerMaxHeightDescription": "ゲーム詳細ページのヘッダー画像の最大高さを設定します",
+      "headerLayout": "ヘッダーのレイアウト",
+      "headerLayoutDescription": "ゲーム詳細ページのヘッダーのレイアウト方法を選択",
+      "headerLayoutDefault": "デフォルト",
+      "headerLayoutCompact": "コンパクト",
+      "showHeaderImage": "ヘッダー画像を表示",
+      "showHeaderImageDescription": "ゲーム詳細ページにヘッダー画像を表示します",
+      "headerImageMaxHeight": "ヘッダー画像の最大高さ",
+      "headerImageMaxHeightDescription": "ゲーム詳細ページのヘッダー画像の最大高さを設定します",
       "showCover": "カバー画像を表示",
-      "showCoverDescription": "ゲーム詳細ページにカバー画像を表示します"
+      "showCoverDescription": "ゲーム詳細ページにカバー画像を表示します",
+      "showLogo": "ロゴを表示",
+      "showLogoDescription": "ゲーム詳細ページにロゴを表示"
     },
     "sidebar": {
       "title": "サイドバー",
@@ -103,7 +116,9 @@
       "resetAppearancesSettingsSuccess": "外観のリセットに成功しました",
       "resetAppearancesSettingsFailed": "外観のリセットに失敗しました",
       "removeBackgroundImageSuccess": "背景画像の削除に成功しました",
-      "removeBackgroundImageFailed": "背景画像の削除に失敗しました"
+      "removeBackgroundImageFailed": "背景画像の削除に失敗しました",
+      "loadPresetSuccess": "プリセットの読み込みに成功しました",
+      "loadPresetFailed": "プリセットの読み込みに失敗しました"
     }
   },
   "advanced": {
