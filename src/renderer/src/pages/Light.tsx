@@ -42,7 +42,7 @@ export function Light(): React.JSX.Element {
   const { isDark } = useTheme()
   const refreshId = useLightStore((state) => state.refreshId)
 
-  const [showHeader] = useConfigState('appearances.gameDetail.showHeader')
+  const [showHeaderImage] = useConfigState('appearances.gameDetail.showHeaderImage')
 
   useEffect(() => {
     // Set initial background based on the current theme
@@ -217,7 +217,7 @@ export function Light(): React.JSX.Element {
               maskImage: 'linear-gradient(to bottom, black 30%, transparent 70%)'
             }}
           >
-            {showHeader ? (
+            {showHeaderImage ? (
               <CrossfadeImage
                 src={imageUrl}
                 className={cn(`w-full h-auto max-h-(--header-max-height) object-top object-cover`)}

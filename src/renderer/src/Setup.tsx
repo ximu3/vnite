@@ -20,12 +20,12 @@ export function Setup(): React.JSX.Element {
   }, [])
 
   const [contentTopPadding] = useConfigState('appearances.gameDetail.contentTopPadding')
-  const [headerMaxHeight] = useConfigState('appearances.gameDetail.headerMaxHeight')
+  const [headerImageMaxHeight] = useConfigState('appearances.gameDetail.headerImageMaxHeight')
 
   useEffect(() => {
     document.documentElement.style.setProperty('--content-top-padding', `${contentTopPadding}vh`)
-    document.documentElement.style.setProperty('--header-max-height', `${headerMaxHeight}vh`)
-  }, [contentTopPadding, headerMaxHeight])
+    document.documentElement.style.setProperty('--header-max-height', `${headerImageMaxHeight}vh`)
+  }, [contentTopPadding, headerImageMaxHeight])
 
   useEffect(() => {
     usePluginInfoStore.getState().loadPlugins()

@@ -72,8 +72,9 @@ export interface configDocs {
       showPlayButtonOnPoster: boolean
     }
     gameDetail: {
-      headerMaxHeight: number
       headerLayout: 'default' | 'compact'
+      showHeaderImage: boolean
+      headerImageMaxHeight: number
       showCover: boolean
       showLogo: boolean
       contentTopPadding: number
@@ -282,8 +283,9 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       showPlayButtonOnPoster: true
     },
     gameDetail: {
-      headerMaxHeight: 55, // in vh
       headerLayout: 'default',
+      showHeaderImage: true,
+      headerImageMaxHeight: 55, // in vh
       showCover: true,
       showLogo: true,
       contentTopPadding: 40 // in vh

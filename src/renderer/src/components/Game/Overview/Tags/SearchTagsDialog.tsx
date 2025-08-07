@@ -113,8 +113,8 @@ export function SearchTagsDialog({
             <div className="space-y-4">
               {tagsList.map((source) => (
                 <Card key={source.dataSource} className="p-4 rounded-lg shadow-xs">
-                  <div className="mb-2">
-                    <Badge className="mb-2">{source.dataSource}</Badge>
+                  <div className="">
+                    <Badge className="">{source.dataSource}</Badge>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {source.tags.map((tag) => (
