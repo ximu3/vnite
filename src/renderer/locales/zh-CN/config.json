@@ -88,6 +88,13 @@
     },
     "gameDetail": {
       "title": "游戏详情页",
+      "glassBackgroundImage": "毛玻璃背景图",
+      "glassBackgroundImageDescription": "设置游戏详情页的毛玻璃背景图",
+      "glassBackgroundImageOptions": {
+        "background": "背景图",
+        "cover": "封面图",
+        "logo": "徽标"
+      },
       "showOriginalName": "在标题旁显示原名",
       "showOriginalNameDescription": "在游戏详情页游戏标题旁显示原名",
       "contentTopPadding": "内容顶部间距",

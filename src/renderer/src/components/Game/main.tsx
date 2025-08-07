@@ -259,13 +259,15 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
       {/* Scrollable Content Area */}
       <ScrollArea
         ref={scrollAreaRef}
-        className={cn(
-          'relative h-full w-full overflow-auto rounded-none',
-          headerLayout === 'compact' && 'py-5 lg:px-5 px-3'
-        )}
+        className={cn('relative h-full w-full overflow-auto rounded-none')}
       >
         {/* Content Container */}
-        <div className={cn('relative z-20 flex flex-col w-full min-h-[100vh]')}>
+        <div
+          className={cn(
+            'relative z-20 flex flex-col w-full min-h-[100vh]',
+            headerLayout === 'compact' && 'p-4'
+          )}
+        >
           <div className={`mt-(--content-top-padding)`}>
             {/* Header Area */}
             <div ref={headerRef} className="pt-1">

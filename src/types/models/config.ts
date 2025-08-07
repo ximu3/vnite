@@ -73,6 +73,7 @@ export interface configDocs {
     }
     gameDetail: {
       headerLayout: 'default' | 'compact'
+      glassBackgroundImage: 'background' | 'cover' | 'logo'
       showHeaderImage: boolean
       headerImageMaxHeight: number
       showCover: boolean
@@ -284,6 +285,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     },
     gameDetail: {
       headerLayout: 'default',
+      glassBackgroundImage: 'background',
       showHeaderImage: true,
       headerImageMaxHeight: 55, // in vh
       showCover: true,

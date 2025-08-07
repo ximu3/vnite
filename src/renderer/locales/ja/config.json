@@ -88,6 +88,13 @@
     },
     "gameDetail": {
       "title": "ゲーム詳細ページ",
+      "glassBackgroundImage": "フロストガラス背景画像",
+      "glassBackgroundImageDescription": "ゲーム詳細ページのフロストガラス背景画像を設定します",
+      "glassBackgroundImageOptions": {
+        "background": "背景画像",
+        "cover": "カバー画像",
+        "logo": "ロゴ"
+      },
       "showOriginalName": "タイトルの隣に原名を表示",
       "showOriginalNameDescription": "ゲーム詳細ページのタイトルの隣に原名を表示",
       "contentTopPadding": "コンテンツ上部の余白",

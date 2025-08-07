@@ -88,6 +88,13 @@
     },
     "gameDetail": {
       "title": "遊戲詳情頁",
+      "glassBackgroundImage": "磨砂玻璃背景圖",
+      "glassBackgroundImageDescription": "設置遊戲詳情頁的磨砂玻璃背景圖",
+      "glassBackgroundImageOptions": {
+        "background": "背景圖",
+        "cover": "封面圖",
+        "logo": "徽標"
+      },
       "showOriginalName": "在標題旁顯示原名",
       "showOriginalNameDescription": "在遊戲詳情頁遊戲標題旁顯示原名",
       "contentTopPadding": "內容頂部間距",

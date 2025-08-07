@@ -88,6 +88,13 @@
     },
     "gameDetail": {
       "title": "Game Detail Page",
+      "glassBackgroundImage": "Frosted Glass Background Image",
+      "glassBackgroundImageDescription": "Set the frosted glass background image for the game detail page",
+      "glassBackgroundImageOptions": {
+        "background": "Background Image",
+        "cover": "Cover Image",
+        "logo": "Logo"
+      },
       "showOriginalName": "Show Original Name Next to Title",
       "showOriginalNameDescription": "Show original name next to game title in detail page",
       "contentTopPadding": "Content Top Padding",

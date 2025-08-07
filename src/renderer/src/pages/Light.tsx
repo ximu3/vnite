@@ -43,6 +43,7 @@ export function Light(): React.JSX.Element {
   const refreshId = useLightStore((state) => state.refreshId)
 
   const [showHeaderImage] = useConfigState('appearances.gameDetail.showHeaderImage')
+  const [gameGlassBackgroundImage] = useConfigState('appearances.gameDetail.glassBackgroundImage')
 
   useEffect(() => {
     // Set initial background based on the current theme
@@ -56,8 +57,8 @@ export function Light(): React.JSX.Element {
   }, [isDark, darkGlassBlur, darkGlassOpacity, lightGlassBlur, lightGlassOpacity])
 
   const getGameBackgroundUrl = (id: string): string => {
-    const info = getAttachmentInfo('game', id, 'images/background.webp')
-    return `attachment://game/${id}/images/background.webp?t=${info?.timestamp}`
+    const info = getAttachmentInfo('game', id, `images/${gameGlassBackgroundImage}.webp`)
+    return `attachment://game/${id}/images/${gameGlassBackgroundImage}.webp?t=${info?.timestamp}`
   }
 
   const getCustomBackgroundUrl = (): string => {

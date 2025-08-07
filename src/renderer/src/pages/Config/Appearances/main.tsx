@@ -36,6 +36,9 @@ export function Appearances(): React.JSX.Element {
   const [_contentTopPadding, setContentTopPadding] = useConfigState(
     'appearances.gameDetail.contentTopPadding'
   )
+  const [_glassBackgroundImage, setGlassBackgroundImage] = useConfigState(
+    'appearances.gameDetail.glassBackgroundImage'
+  )
 
   const [fontDialogOpen, setFontDialogOpen] = useState(false)
 
@@ -126,6 +129,7 @@ export function Appearances(): React.JSX.Element {
                             setHeaderLayout('compact')
                             setContentTopPadding(0)
                             setLibraryBarWidth(0)
+                            setGlassBackgroundImage('cover')
                             toast.success(t('appearances.notifications.loadPresetSuccess'))
                           } catch (_error) {
                             toast.error(t('appearances.notifications.loadPresetFailed'))
@@ -347,6 +351,29 @@ export function Appearances(): React.JSX.Element {
           {/* Game detail page settings */}
           <div className={cn('space-y-4')}>
             <div className={cn('border-b pb-2')}>{t('appearances.gameDetail.title')}</div>
+            <div className={cn('')}>
+              <ConfigItem
+                hookType="config"
+                path="appearances.gameDetail.glassBackgroundImage"
+                title={t('appearances.gameDetail.glassBackgroundImage')}
+                description={t('appearances.gameDetail.glassBackgroundImageDescription')}
+                controlType="select"
+                options={[
+                  {
+                    value: 'background',
+                    label: t('appearances.gameDetail.glassBackgroundImageOptions.background')
+                  },
+                  {
+                    value: 'cover',
+                    label: t('appearances.gameDetail.glassBackgroundImageOptions.cover')
+                  },
+                  {
+                    value: 'logo',
+                    label: t('appearances.gameDetail.glassBackgroundImageOptions.logo')
+                  }
+                ]}
+              />
+            </div>
             <div className={cn('')}>
               <ConfigItem
                 hookType="config"
