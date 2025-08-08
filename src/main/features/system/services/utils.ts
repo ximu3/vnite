@@ -21,8 +21,8 @@ export async function setupContextMenu(): Promise<void> {
     showCopyVideoAddress: true,
     showSaveVideoAs: true,
     showSaveVideo: false,
-    showCopyLink: true,
-    showSaveLinkAs: true,
+    showCopyLink: false,
+    showSaveLinkAs: false,
     labels: {
       learnSpelling: i18next.t('context-menu:learnSpelling'),
       lookUpSelection: i18next.t('context-menu:lookUpSelection'),
