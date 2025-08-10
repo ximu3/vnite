@@ -16,6 +16,7 @@ import { getGamePlayTime, getGameStore, useGameRegistry } from '~/stores/game'
 import { getGamesByScoreRange } from '~/stores/game/recordUtils'
 import { cn } from '~/utils'
 import { GamePoster } from './GamePoster'
+import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
 
 function GameScoreCard({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('record')
@@ -124,18 +125,26 @@ function getGamePlayStatus(gameId: string, t: any): string {
   return statusMap[status] || t('score.playStatus.unknown')
 }
 
+function PlaceHolder(): React.JSX.Element {
+  return (
+    <div className={cn('w-[120px] h-[180px] cursor-pointer object-cover', 'bg-transparent')}></div>
+  )
+}
+
 function ScoreCategory({
   title,
   description,
   minScore,
   maxScore,
-  className
+  className,
+  scrollPosition
 }: {
   title: string
   description: string
   minScore: number
   maxScore: number
   className: string
+  scrollPosition: { x: number; y: number }
 }): React.JSX.Element | null {
   const { t } = useTranslation('record')
   const games = getGamesByScoreRange(minScore, maxScore)
@@ -162,7 +171,13 @@ function ScoreCategory({
           <div className="grid justify-between grid-cols-[repeat(auto-fill,120px)] gap-4">
             {games.map((gameId, index) => (
               <div key={gameId} className={cn('flex-shrink-0', index === 0 && 'ml-1')}>
-                <GameScoreCard gameId={gameId} />
+                <LazyLoadComponent
+                  placeholder={<PlaceHolder />}
+                  scrollPosition={scrollPosition}
+                  threshold={300}
+                >
+                  <GameScoreCard gameId={gameId} />
+                </LazyLoadComponent>
               </div>
             ))}
           </div>
@@ -173,7 +188,11 @@ function ScoreCategory({
 }
 
 // Main Scoring Report Component
-export function ScoreReport(): React.JSX.Element {
+export function ScoreReportComponent({
+  scrollPosition
+}: {
+  scrollPosition: { x: number; y: number }
+}): React.JSX.Element {
   const { t } = useTranslation('record')
 
   return (
@@ -190,6 +209,7 @@ export function ScoreReport(): React.JSX.Element {
         description={t('score.categories.excellent.description')}
         minScore={9}
         maxScore={10}
+        scrollPosition={scrollPosition}
         className="border-primary"
       />
 
@@ -198,6 +218,7 @@ export function ScoreReport(): React.JSX.Element {
         description={t('score.categories.great.description')}
         minScore={8}
         maxScore={8.9}
+        scrollPosition={scrollPosition}
         className="border-secondary"
       />
 
@@ -206,6 +227,7 @@ export function ScoreReport(): React.JSX.Element {
         description={t('score.categories.good.description')}
         minScore={7}
         maxScore={7.9}
+        scrollPosition={scrollPosition}
         className="border-accent"
       />
 
@@ -214,6 +236,7 @@ export function ScoreReport(): React.JSX.Element {
         description={t('score.categories.average.description')}
         minScore={6}
         maxScore={6.9}
+        scrollPosition={scrollPosition}
         className="border-muted"
       />
 
@@ -222,8 +245,11 @@ export function ScoreReport(): React.JSX.Element {
         description={t('score.categories.notRecommended.description')}
         minScore={0}
         maxScore={5.9}
+        scrollPosition={scrollPosition}
         className="border-destructive"
       />
     </div>
   )
 }
+
+export const ScoreReport = trackWindowScroll(ScoreReportComponent)
