@@ -8,7 +8,6 @@ import {
   TokenResponse
 } from './types'
 import { getGameBackgroundsFromVNDB, getGameCoverFromVNDB } from '../vndb/api'
-import i18next from 'i18next'
 import { METADATA_EXTRA_PREDEFINED_KEYS } from '@appTypes/models'
 import { net } from 'electron'
 
@@ -40,8 +39,6 @@ function processYMGalStaffData(
 ): Array<{ key: string; value: string[] }> {
   // Group staff by role
   const staffByRole: Record<string, Set<string>> = {}
-  // Translation map, stores the translated role name for each mapped role
-  const translationMap: Record<string, string> = {}
 
   // Process each staff member
   staffList.forEach((staffMember) => {
@@ -51,10 +48,6 @@ function processYMGalStaffData(
     // Check if the role exists in the mapping table
     const mappedRole = YMGAL_ROLE_MAPPING[jobName]
     if (mappedRole && METADATA_EXTRA_PREDEFINED_KEYS.includes(mappedRole)) {
-      // Translate role name using i18next
-      const translatedRole = i18next.t(`scraper:extraMetadataFields.${mappedRole}`)
-      translationMap[mappedRole] = translatedRole
-
       // Staff name with description if available
       let staffName = staffMember.empName
       if (staffMember.desc) {
@@ -72,7 +65,7 @@ function processYMGalStaffData(
   // Generate results according to the order in METADATA_EXTRA_PREDEFINED_KEYS
   return METADATA_EXTRA_PREDEFINED_KEYS.filter((role) => staffByRole[role]) // Only keep roles that have data
     .map((role) => ({
-      key: translationMap[role],
+      key: role,
       value: Array.from(staffByRole[role])
     }))
 }

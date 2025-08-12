@@ -72,18 +72,12 @@ async function fetchVNDB<T>(params: VNDBRequestParams): Promise<VNDBResponse<T>>
 function processStaffData(staff: VNStaff[]): Array<{ key: string; value: string[] }> {
   // Group staff by role
   const staffByRole: Record<string, Set<string>> = {}
-  // Translation map, stores the translated role name for each mapped role
-  const translationMap: Record<string, string> = {}
 
   // Process each staff member
   staff.forEach((staffMember) => {
     // Check if the role exists in the mapping table
     const mappedRole = VNDB_ROLE_MAPPING[staffMember.role]
     if (mappedRole && METADATA_EXTRA_PREDEFINED_KEYS.includes(mappedRole)) {
-      // Translate role name using i18next
-      const translatedRole = i18next.t(`scraper:extraMetadataFields.${mappedRole}`)
-      translationMap[mappedRole] = translatedRole
-
       // Add to corresponding role group (using Set for automatic deduplication)
       if (!staffByRole[mappedRole]) {
         staffByRole[mappedRole] = new Set()
@@ -95,7 +89,7 @@ function processStaffData(staff: VNStaff[]): Array<{ key: string; value: string[
   // Generate results according to the order in METADATA_EXTRA_PREDEFINED_KEYS
   return METADATA_EXTRA_PREDEFINED_KEYS.filter((role) => staffByRole[role]) // Only keep roles that have data
     .map((role) => ({
-      key: translationMap[role],
+      key: role,
       value: Array.from(staffByRole[role])
     }))
 }
