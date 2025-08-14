@@ -453,6 +453,9 @@ export class GameScanner extends EventEmitter {
       return folders
     }
 
+    // Normalize ignore patterns
+    ignoreList = ignoreList.map((pattern) => pattern.trim()).filter((pattern) => pattern.length > 0)
+
     // Convert ignore list to regex patterns
     const regexList = ignoreList.map((pattern) => new RegExp(pattern))
 
