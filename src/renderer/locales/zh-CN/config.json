@@ -96,7 +96,7 @@
         "logo": "徽标"
       },
       "showOriginalName": "在标题旁显示原名",
-      "showOriginalNameDescription": "在游戏详情页游戏标题旁显示原名",
+      "showOriginalNameDescription": "在游戏详情页的游戏标题旁显示原名",
       "contentTopPadding": "内容顶部间距",
       "contentTopPaddingDescription": "设置游戏详情页内容的顶部间距",
       "headerLayout": "Header 布局",

@@ -262,7 +262,7 @@
     "title": "刮削器",
     "common": {
       "title": "通用",
-      "defaultDataSource": "預設資料來源",
+      "defaultDataSource": "預設資料源",
       "defaultDataSourceDescription": "選擇預設資料來源"
     },
     "vndb": {

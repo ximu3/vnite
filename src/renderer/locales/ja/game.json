@@ -21,7 +21,8 @@
     },
     "recent": {
       "title": "最近のゲーム",
-      "hide": "非表示"
+      "hide": "非表示",
+      "empty": "最近のゲームはありません"
     },
     "filter": {
       "results": "フィルター結果",
@@ -420,7 +421,8 @@
           "importFromUrl": "URLからインポート",
           "searchImage": "画像を検索",
           "cropImage": "画像を切り抜き",
-          "deleteImage": "画像を削除"
+          "deleteImage": "画像を削除",
+          "importFromClipboard": "クリップボードからインポート"
         },
         "search": {
           "title": "画像を検索",
@@ -455,7 +457,9 @@
           "cropIncomplete": "切り抜きが完了していません",
           "deleting": "画像を削除中…",
           "deleteSuccess": "画像を削除しました",
-          "deleteError": "削除失敗"
+          "deleteError": "削除失敗",
+          "noImageInClipboard": "クリップボードに画像がありません",
+          "clipboardImportError": "クリップボードからのインポートに失敗しました: {{error}}"
         }
       },
       "launcher": {
