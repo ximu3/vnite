@@ -421,7 +421,8 @@
           "importFromUrl": "從連結匯入",
           "searchImage": "搜尋圖片",
           "cropImage": "裁剪圖片",
-          "deleteImage": "刪除圖片"
+          "deleteImage": "刪除圖片",
+          "importFromClipboard": "從剪貼簿匯入"
         },
         "search": {
           "title": "搜尋圖片",
@@ -456,7 +457,9 @@
           "cropIncomplete": "裁剪未完成",
           "deleting": "正在刪除…",
           "deleteSuccess": "刪除成功",
-          "deleteError": "刪除失敗"
+          "deleteError": "刪除失敗",
+          "noImageInClipboard": "剪貼簿中沒有圖片",
+          "clipboardImportError": "從剪貼簿匯入失敗: {{error}}"
         }
       },
       "launcher": {
