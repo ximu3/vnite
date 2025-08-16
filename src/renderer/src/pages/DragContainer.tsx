@@ -2,16 +2,16 @@ import { generateUUID } from '@appUtils'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { ipcManager } from '~/app/ipc'
 import { useConfigState } from '~/hooks'
 import { cn } from '~/utils'
 import { useGameAdderStore } from './GameAdder/store'
 import { useGameBatchAdderStore } from './GameBatchAdder/store'
-import { ipcManager } from '~/app/ipc'
 
 export function DragContainer({ children }: { children: React.ReactNode }): React.JSX.Element {
   const { t } = useTranslation('sidebar')
   const [isDragging, setIsDragging] = useState(false)
-  const { setIsOpen: setGameAdderIsOpen, setName, setDirPath } = useGameAdderStore()
+  const { setIsOpen: setGameAdderIsOpen, setName, setDirPath, setGamePath } = useGameAdderStore()
   const { actions: gameBatchAdderActions } = useGameBatchAdderStore()
   const [defaultDataSource] = useConfigState('game.scraper.common.defaultDataSource')
 
@@ -61,6 +61,7 @@ export function DragContainer({ children }: { children: React.ReactNode }): Reac
       const gameInfo: {
         name: string
         dirPath: string
+        gamePath: string
       }[] = []
 
       paths.forEach((path) => {
@@ -68,14 +69,17 @@ export function DragContainer({ children }: { children: React.ReactNode }): Reac
         if (isDirectory) {
           gameInfo.push({
             name: window.api.path.basename(path),
-            dirPath: path
+            dirPath: path,
+            gamePath: ''
           })
         } else {
           const dirPath = window.api.path.dirname(path)
           const name = window.api.path.basename(dirPath)
+          const gamePath = window.api.path.extname(path).toLowerCase() === '.exe' ? path : ''
           gameInfo.push({
             name,
-            dirPath
+            dirPath,
+            gamePath
           })
         }
       })
@@ -102,6 +106,7 @@ export function DragContainer({ children }: { children: React.ReactNode }): Reac
       } else {
         setName(gameInfo[0].name)
         setDirPath(gameInfo[0].dirPath)
+        setGamePath(gameInfo[0].gamePath)
         setGameAdderIsOpen(true)
       }
     }

@@ -1,16 +1,16 @@
 import {
-  addGameToDB,
-  getBatchGameAdderData,
-  addGameToDBWithoutMetadata,
-  updateGameMetadata,
-  batchUpdateGameMetadata
-} from './services'
-import {
   GameMetadataField,
   GameMetadataUpdateMode,
   GameMetadataUpdateOptions
 } from '@appTypes/utils'
 import { ipcManager } from '~/core/ipc'
+import {
+  addGameToDB,
+  addGameToDBWithoutMetadata,
+  batchUpdateGameMetadata,
+  getBatchGameAdderData,
+  updateGameMetadata
+} from './services'
 
 export function setupAdderIPC(): void {
   ipcManager.handle(
@@ -21,15 +21,17 @@ export function setupAdderIPC(): void {
         dataSource,
         dataSourceId,
         backgroundUrl,
-        dirPath
+        dirPath,
+        gamePath
       }: {
         dataSource: string
         dataSourceId: string
         backgroundUrl?: string
         dirPath?: string
+        gamePath?: string
       }
     ) => {
-      await addGameToDB({ dataSource, dataSourceId, backgroundUrl, dirPath })
+      await addGameToDB({ dataSource, dataSourceId, backgroundUrl, dirPath, gamePath })
     }
   )
 

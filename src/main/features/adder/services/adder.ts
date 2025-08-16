@@ -1,23 +1,23 @@
-import { GameDBManager, ConfigDBManager } from '~/core/database'
-import { scraperManager } from '~/features/scraper'
-import { selectPathDialog, getGameFolders } from '~/utils'
-import { generateUUID } from '@appUtils'
-import { launcherPreset } from '~/features/launcher'
-import { saveGameIconByFile } from '~/features/game'
-import { DEFAULT_GAME_VALUES, DEFAULT_GAME_LOCAL_VALUES, BatchGameInfo } from '@appTypes/models'
-import { eventBus } from '~/core/events'
+import { BatchGameInfo, DEFAULT_GAME_LOCAL_VALUES, DEFAULT_GAME_VALUES } from '@appTypes/models'
 import {
   GameDescriptionList,
-  GameExtraInfoList,
-  GameMetadata,
-  GameTagsList,
   GameDevelopersList,
-  GamePublishersList,
+  GameExtraInfoList,
   GameGenresList,
+  GameMetadata,
   GamePlatformsList,
-  GameRelatedSitesList
+  GamePublishersList,
+  GameRelatedSitesList,
+  GameTagsList
 } from '@appTypes/utils'
+import { generateUUID } from '@appUtils'
 import log from 'electron-log/main'
+import { ConfigDBManager, GameDBManager } from '~/core/database'
+import { eventBus } from '~/core/events'
+import { saveGameIconByFile } from '~/features/game'
+import { launcherPreset } from '~/features/launcher'
+import { scraperManager } from '~/features/scraper'
+import { getGameFolders, selectPathDialog } from '~/utils'
 
 export async function addGameToDB({
   dataSource,
@@ -25,6 +25,7 @@ export async function addGameToDB({
   backgroundUrl,
   playTime,
   dirPath,
+  gamePath,
   targetCollection
 }: {
   dataSource: string
@@ -32,6 +33,7 @@ export async function addGameToDB({
   backgroundUrl?: string
   playTime?: number
   dirPath?: string
+  gamePath?: string
   targetCollection?: string
 }): Promise<void> {
   try {
@@ -253,6 +255,7 @@ export async function addGameToDB({
     const gameLocalDoc = JSON.parse(JSON.stringify(DEFAULT_GAME_LOCAL_VALUES))
     gameLocalDoc._id = dbId
     gameLocalDoc.utils.markPath = dirPath ?? ''
+    gameLocalDoc.path.gamePath = gamePath ?? ''
 
     // Prepare image fetching tasks
     const imagePromises: {
@@ -396,6 +399,9 @@ export async function addGameToDB({
 
     // Execute all database operations (in parallel)
     await Promise.all(dbPromises)
+
+    // Set the launcher preset
+    gamePath && (await launcherPreset('default', dbId))
 
     // Emit event to notify other parts of the application
     eventBus.emit(

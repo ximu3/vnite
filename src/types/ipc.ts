@@ -178,6 +178,7 @@ type MainIpcEvents =
         dataSourceId: string
         backgroundUrl?: string
         dirPath?: string
+        gamePath?: string
       }) => void
       'adder:update-game-metadata': (data: {
         dbId: string
