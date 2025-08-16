@@ -1,3 +1,7 @@
+import { useRouter } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { ipcManager } from '~/app/ipc'
 import { Button } from '~/components/ui/button'
 import {
   DropdownMenu,
@@ -11,14 +15,10 @@ import {
 } from '~/components/ui/dropdown-menu'
 import { Nav } from '~/components/ui/nav'
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
-import { useTranslation } from 'react-i18next'
-import { useRouter } from '@tanstack/react-router'
-import { toast } from 'sonner'
 import { useGameAdderStore } from '~/pages/GameAdder/store'
 import { useGameBatchAdderStore } from '~/pages/GameBatchAdder/store'
 import { useGameScannerStore } from '~/pages/GameScannerManager/store'
 import { useSteamImporterStore } from '~/pages/Importer/SteamImporter/store'
-import { ipcManager } from '~/app/ipc'
 import { cn } from '~/utils'
 
 export function Sidebar(): React.JSX.Element {
@@ -183,36 +183,6 @@ export function Sidebar(): React.JSX.Element {
                     }}
                   >
                     <div>{t('adder.addBatch')}</div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={async () => {
-                      try {
-                        toast.info(t('notifications.selectGamePath'))
-                        const gamePath = await ipcManager.invoke('system:select-path-dialog', [
-                          'openFile'
-                        ])
-                        if (!gamePath) {
-                          return
-                        }
-                        toast.promise(
-                          (async (): Promise<void> => {
-                            await ipcManager.invoke(
-                              'adder:add-game-to-db-without-metadata',
-                              gamePath
-                            )
-                          })(),
-                          {
-                            loading: t('notifications.adding'),
-                            success: t('notifications.addSuccess'),
-                            error: t('notifications.addError')
-                          }
-                        )
-                      } catch (_error) {
-                        toast.error(t('notifications.addError'))
-                      }
-                    }}
-                  >
-                    <div>{t('adder.addCustom')}</div>
                   </DropdownMenuItem>
                 </DropdownMenuSubContent>
               </DropdownMenuPortal>

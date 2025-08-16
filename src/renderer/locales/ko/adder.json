@@ -46,7 +46,11 @@
         "recognizing": "게임 식별 중…",
         "recognized": "게임 식별에 성공했습니다",
         "invalidId": "유효하지 않은 ID",
-        "recognizeError": "게임 식별에 실패했습니다: {{message}}"
+        "recognizeError": "게임 식별에 실패했습니다: {{message}}",
+        "selectGamePath": "게임 경로를 선택해주세요",
+        "adding": "게임 추가 중…",
+        "addSuccess": "게임 추가에 성공했습니다",
+        "addError": "게임을 추가하는 중 오류가 발생했습니다"
       },
       "dataSources": {
         "label": "자료 출처",

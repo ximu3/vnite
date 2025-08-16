@@ -34,8 +34,11 @@
       "gameNamePlaceholder": "請輸入遊戲名稱",
       "gameId": "遊戲ID",
       "gameIdPlaceholder": "請輸入遊戲ID",
+      "gamePath": "遊戲路徑",
+      "gamePathPlaceholder": "請選擇遊戲路徑",
       "searchButton": "搜尋",
       "recognizeButton": "識別",
+      "addButton": "添加",
       "notifications": {
         "enterName": "請輸入遊戲名稱",
         "searching": "搜尋遊戲中…",
@@ -46,10 +49,15 @@
         "recognizing": "識別遊戲中…",
         "recognized": "識別遊戲成功",
         "invalidId": "無效ID",
-        "recognizeError": "識別遊戲失敗: {{message}}"
+        "recognizeError": "識別遊戲失敗: {{message}}",
+        "selectGamePath": "請選擇遊戲路徑",
+        "adding": "正在添加遊戲…",
+        "addSuccess": "添加遊戲成功",
+        "addError": "添加遊戲時出錯"
       },
       "dataSources": {
         "label": "資料來源",
+        "none": "無",
         "steam": "Steam",
         "vndb": "VNDB",
         "bangumi": "Bangumi",

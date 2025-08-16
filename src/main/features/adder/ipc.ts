@@ -63,9 +63,12 @@ export function setupAdderIPC(): void {
     return await getBatchGameAdderData()
   })
 
-  ipcManager.handle('adder:add-game-to-db-without-metadata', async (_, gamePath: string) => {
-    await addGameToDBWithoutMetadata(gamePath)
-  })
+  ipcManager.handle(
+    'adder:add-game-to-db-without-metadata',
+    async (_, dirPath: string, gamePath: string) => {
+      await addGameToDBWithoutMetadata(dirPath, gamePath)
+    }
+  )
 
   ipcManager.handle(
     'adder:batch-update-game-metadata',
