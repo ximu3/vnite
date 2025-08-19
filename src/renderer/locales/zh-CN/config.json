@@ -340,5 +340,36 @@
       "manageDescription": "管理和配置元数据转换器",
       "manageButton": "管理"
     }
+  },
+  "memory": {
+    "title": "回忆",
+    "storageBackend": {
+      "title": "截图储存后端",
+      "description": "选择截图的保存位置\n如果您选择不将截图保存在数据库，那么这些截图将不会出现在游戏的“回忆”页面中",
+      "options": {
+        "database": "数据库",
+        "fileSystem": "文件系统",
+        "both": "数据库 & 文件系统"
+      }
+    },
+    "saveDir": {
+      "title": "截图储存文件夹",
+      "description": "选择保存截图的根文件夹",
+      "placeholder": "输入保存截图的根文件夹路径"
+    },
+    "namingRule": {
+      "title": "命名规则",
+      "description": "截图文件的命名规则，不可使用路径无效字符 [<>:\"/\\|?*]\n目前支持的占位符：\n\n%name% - 当前运行中的游戏的名称（游戏名称中的路径无效字符会被替换）\n%datetime% - 截图时间点的日期和时间\n%timestamp% - 截图时间点的毫秒级时间戳",
+      "placeholder": "输入截图文件的命名规则"
+    },
+    "snippingMode": {
+      "title": "截图模式",
+      "description": "选择截图模式",
+      "options": {
+        "rectangle": "矩形",
+        "activeWindow": "活动窗口",
+        "fullscreen": "全屏幕"
+      }
+    }
   }
 }
