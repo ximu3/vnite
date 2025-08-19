@@ -174,6 +174,14 @@ export interface configDocs {
       }[]
     }
   }
+  memory: {
+    image: {
+      storageBackend: 'filesystem' | 'database' | 'both'
+      saveDir: string
+      namingRule: string
+    }
+    snippingMode: 'rectangle' | 'activewindow' | 'fullscreen'
+  }
 }
 
 export interface configLocalDocs {
@@ -348,6 +356,14 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
         }
       ]
     }
+  },
+  memory: {
+    image: {
+      storageBackend: 'database',
+      saveDir: '',
+      namingRule: '%datetime%'
+    },
+    snippingMode: 'rectangle'
   }
 } as const
 
