@@ -4,14 +4,21 @@
     "library": "게임 라이브러리",
     "records": "기록",
     "scanner": "스캐너",
-    "transformer": "변환기"
+    "transformer": "변환기",
+    "plugin": "플러그인"
   },
   "actions": {
     "darkMode": "다크 모드",
     "lightMode": "라이트 모드",
     "cloudSyncDisabled": "클라우드 동기화 비활성화됨",
     "addGame": "게임 추가",
-    "settings": "설정"
+    "settings": "설정",
+    "viewLogs": "로그 보기",
+    "nsfwLevel": {
+      "off": "NSFW: 모두 보기",
+      "blurImage": "NSFW: 이미지 숨기기",
+      "blurImageAndTitle": "NSFW: 이미지와 타이틀 숨기기"
+    }
   },
   "adder": {
     "addGame": "게임 추가",

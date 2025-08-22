@@ -12,7 +12,12 @@
     "action": "동작",
     "quitApp": "Vnite 종료",
     "minimizeToTray": "트레이로 최소화",
-    "hideWindowAfterGameStart": "게임 실행 후 트레이로 최소화"
+    "hideWindowAfterGameStart": "게임 실행 후 트레이로 최소화",
+    "languageDescription": "어플리케이션에 표시될 언어를 선택해주세요",
+    "openAtLoginDescription": "시스템 시작시 자동으로 실행",
+    "themeDescription": "어플리케이션에 적용할 테마를 선택해주세요",
+    "closeMainPanelDescription": "메인 창을 닫을 때의 행동을 선택해주세요",
+    "hideWindowAfterGameStartDescription": "게임을 실행한 후 메인 창을 자동으로 숨깁니다"
   },
   "appearances": {
     "title": "표시",
@@ -48,6 +53,26 @@
       "title": "사이드바",
       "showThemeSwitcher": "테마 변경 메뉴 표시",
       "showNSFWBlurSwitcher": "NSFW 콘텐츠 숨김/표시 메뉴 보이기"
+    },
+    "actions": {
+      "title": "동작",
+      "resetAppearancesSettings": "표시 설정 초기화",
+      "resetAppearancesSettingsDescription": "외관에 관한 설정들을 초기 값으로 되돌립니다",
+      "loadPreset": "프리셋 불러오기",
+      "loadPresetDescription": "프리셋을 선택해 표시 설정을 빠르게 적용하세요",
+      "selectPreset": "프리셋 선택",
+      "presets": {
+        "default": "기본",
+        "noHeaderImage": "헤더 이미지 없음"
+      }
+    },
+    "font": {
+      "title": "글꼴",
+      "manageFont": "글꼴 관리",
+      "manageFontDescription": "어플리케이션 글꼴 선택",
+      "manage": "관리",
+      "size": "글꼴 크기",
+      "sizeDescription": "어플리케이션에 표시될 글꼴의 크기를 지정해주세요"
     }
   },
   "advanced": {
