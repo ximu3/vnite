@@ -34,8 +34,11 @@
       "gameNamePlaceholder": "请输入游戏名称",
       "gameId": "游戏ID",
       "gameIdPlaceholder": "请输入游戏ID",
+      "gamePath": "游戏路径",
+      "gamePathPlaceholder": "请选择游戏路径",
       "searchButton": "搜索",
       "recognizeButton": "识别",
+      "addButton": "添加",
       "notifications": {
         "enterName": "请输入游戏名称",
         "searching": "搜索游戏中…",
@@ -46,10 +49,15 @@
         "recognizing": "识别游戏中…",
         "recognized": "识别游戏成功",
         "invalidId": "无效ID",
-        "recognizeError": "识别游戏失败: {{message}}"
+        "recognizeError": "识别游戏失败: {{message}}",
+        "selectGamePath": "请选择游戏路径",
+        "adding": "正在添加游戏…",
+        "addSuccess": "添加游戏成功",
+        "addError": "添加游戏时出错"
       },
       "dataSources": {
         "label": "数据来源",
+        "none": "无",
         "steam": "Steam",
         "vndb": "VNDB",
         "bangumi": "Bangumi",

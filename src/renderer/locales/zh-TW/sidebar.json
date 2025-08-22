@@ -35,10 +35,6 @@
     "getBatchGamesFailed": "批量獲取遊戲失敗: ",
     "getBatchGamesSuccess": "批量獲取遊戲成功",
     "unknownError": "未知錯誤",
-    "selectLibraryFolder": "請選擇庫資料夾…",
-    "selectGamePath": "請選擇遊戲路徑",
-    "adding": "正在添加遊戲…",
-    "addSuccess": "添加遊戲成功",
-    "addError": "添加遊戲時出錯"
+    "selectLibraryFolder": "請選擇庫資料夾…"
   }
 }

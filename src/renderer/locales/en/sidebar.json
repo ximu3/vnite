@@ -35,10 +35,6 @@
     "getBatchGamesFailed": "Failed to get games in batch: ",
     "getBatchGamesSuccess": "Successfully got games in batch",
     "unknownError": "Unknown error",
-    "selectLibraryFolder": "Please select library folder…",
-    "selectGamePath": "Please select game path",
-    "adding": "Adding game…",
-    "addSuccess": "Successfully added game",
-    "addError": "Error adding game"
+    "selectLibraryFolder": "Please select library folder…"
   }
 }

@@ -178,6 +178,7 @@ type MainIpcEvents =
         dataSourceId: string
         backgroundUrl?: string
         dirPath?: string
+        gamePath?: string
       }) => void
       'adder:update-game-metadata': (data: {
         dbId: string
@@ -188,7 +189,7 @@ type MainIpcEvents =
         options?: GameMetadataUpdateOptions
       }) => void
       'adder:get-batch-game-adder-data': () => BatchGameInfo[]
-      'adder:add-game-to-db-without-metadata': (gamePath: string) => void
+      'adder:add-game-to-db-without-metadata': (dirPath: string, gamePath: string) => void
       'adder:batch-update-game-metadata': (data: {
         gameIds: string[]
         dataSource: string

@@ -1,23 +1,24 @@
-import { GameDBManager, ConfigDBManager } from '~/core/database'
-import { scraperManager } from '~/features/scraper'
-import { selectPathDialog, getGameFolders } from '~/utils'
-import { generateUUID } from '@appUtils'
-import { launcherPreset } from '~/features/launcher'
-import { saveGameIconByFile } from '~/features/game'
-import { DEFAULT_GAME_VALUES, DEFAULT_GAME_LOCAL_VALUES, BatchGameInfo } from '@appTypes/models'
-import { eventBus } from '~/core/events'
+import { BatchGameInfo, DEFAULT_GAME_LOCAL_VALUES, DEFAULT_GAME_VALUES } from '@appTypes/models'
 import {
   GameDescriptionList,
-  GameExtraInfoList,
-  GameMetadata,
-  GameTagsList,
   GameDevelopersList,
-  GamePublishersList,
+  GameExtraInfoList,
   GameGenresList,
+  GameMetadata,
   GamePlatformsList,
-  GameRelatedSitesList
+  GamePublishersList,
+  GameRelatedSitesList,
+  GameTagsList
 } from '@appTypes/utils'
+import { generateUUID } from '@appUtils'
 import log from 'electron-log/main'
+import path from 'path'
+import { ConfigDBManager, GameDBManager } from '~/core/database'
+import { eventBus } from '~/core/events'
+import { saveGameIconByFile } from '~/features/game'
+import { launcherPreset } from '~/features/launcher'
+import { scraperManager } from '~/features/scraper'
+import { getGameFolders, selectPathDialog } from '~/utils'
 
 export async function addGameToDB({
   dataSource,
@@ -25,6 +26,7 @@ export async function addGameToDB({
   backgroundUrl,
   playTime,
   dirPath,
+  gamePath,
   targetCollection
 }: {
   dataSource: string
@@ -32,6 +34,7 @@ export async function addGameToDB({
   backgroundUrl?: string
   playTime?: number
   dirPath?: string
+  gamePath?: string
   targetCollection?: string
 }): Promise<void> {
   try {
@@ -253,6 +256,7 @@ export async function addGameToDB({
     const gameLocalDoc = JSON.parse(JSON.stringify(DEFAULT_GAME_LOCAL_VALUES))
     gameLocalDoc._id = dbId
     gameLocalDoc.utils.markPath = dirPath ?? ''
+    gameLocalDoc.path.gamePath = gamePath ?? ''
 
     // Prepare image fetching tasks
     const imagePromises: {
@@ -397,6 +401,9 @@ export async function addGameToDB({
     // Execute all database operations (in parallel)
     await Promise.all(dbPromises)
 
+    // Set the launcher preset
+    if (gamePath) await launcherPreset('default', dbId)
+
     // Emit event to notify other parts of the application
     eventBus.emit(
       'game:added',
@@ -414,11 +421,14 @@ export async function addGameToDB({
   }
 }
 
-export async function addGameToDBWithoutMetadata(gamePath: string): Promise<void> {
+export async function addGameToDBWithoutMetadata(
+  dirPath: string,
+  gamePath?: string
+): Promise<void> {
   try {
     const dbId = generateUUID()
     // Get the game name from the path
-    const gameName = gamePath.split('\\').pop() ?? ''
+    const gameName = path.basename(gamePath || dirPath)
     // Create a new game document with default values, deep copy to avoid mutation
     const gameDoc = JSON.parse(JSON.stringify(DEFAULT_GAME_VALUES))
     // Set the game document properties
@@ -431,12 +441,15 @@ export async function addGameToDBWithoutMetadata(gamePath: string): Promise<void
     const gameLocalDoc = JSON.parse(JSON.stringify(DEFAULT_GAME_LOCAL_VALUES))
     // Set the game local document properties
     gameLocalDoc._id = dbId
-    gameLocalDoc.path.gamePath = gamePath
+    gameLocalDoc.path.gamePath = gamePath ?? ''
+    gameLocalDoc.utils.markPath = dirPath ?? ''
     await GameDBManager.setGameLocal(dbId, gameLocalDoc)
 
     // Set the launcher preset and save the game icon
-    await launcherPreset('default', dbId)
-    await saveGameIconByFile(dbId, gamePath)
+    if (gamePath) {
+      await launcherPreset('default', dbId)
+      await saveGameIconByFile(dbId, gamePath)
+    }
 
     eventBus.emit(
       'game:added',

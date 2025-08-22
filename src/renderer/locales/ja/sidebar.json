@@ -35,10 +35,6 @@
     "getBatchGamesFailed": "ゲームの一括取得に失敗しました: ",
     "getBatchGamesSuccess": "ゲームの一括取得に成功しました",
     "unknownError": "不明なエラー",
-    "selectLibraryFolder": "ライブラリフォルダを選択してください…",
-    "selectGamePath": "ゲームパスを選択してください",
-    "adding": "ゲームを追加中…",
-    "addSuccess": "ゲームの追加に成功しました",
-    "addError": "ゲームの追加中にエラーが発生しました"
+    "selectLibraryFolder": "ライブラリフォルダを選択してください…"
   }
 }

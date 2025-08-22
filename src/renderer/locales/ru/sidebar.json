@@ -28,10 +28,6 @@
     "getBatchGamesFailed": "Не удалось получить игры: ",
     "getBatchGamesSuccess": "Игры успешно получены",
     "unknownError": "Неизвестная ошибка",
-    "selectLibraryFolder": "Пожалуйста, выберите папку библиотеки…",
-    "selectGamePath": "Пожалуйста, выберите путь к игре",
-    "adding": "Добавление игры…",
-    "addSuccess": "Игра успешно добавлена",
-    "addError": "Ошибка при добавлении игры"
+    "selectLibraryFolder": "Пожалуйста, выберите папку библиотеки…"
   }
 }

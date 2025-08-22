@@ -1,7 +1,7 @@
-import { create } from 'zustand'
-import { toast } from 'sonner'
-import { useConfigStore } from '~/stores'
 import i18next from 'i18next'
+import { toast } from 'sonner'
+import { create } from 'zustand'
+import { useConfigStore } from '~/stores'
 
 export type DataSource = 'vndb' | 'igdb' | 'steam' | 'bangumi' | 'ymgal' | 'dlsite' | string
 
@@ -37,6 +37,8 @@ interface GameAdderState {
   setBackgroundUrl: (backgroundUrl: string) => void
   dirPath: string
   setDirPath: (dirPath: string) => void
+  gamePath: string
+  setGamePath: (gamePath: string) => void
   handleClose: () => void
 }
 
@@ -63,6 +65,8 @@ export const useGameAdderStore = create<GameAdderState>((set, get) => ({
   setBackgroundUrl: (backgroundUrl): void => set({ backgroundUrl }),
   dirPath: '',
   setDirPath: (dirPath): void => set({ dirPath }),
+  gamePath: '',
+  setGamePath: (gamePath): void => set({ gamePath }),
   handleClose: (): void => {
     const {
       isLoading,
@@ -76,7 +80,8 @@ export const useGameAdderStore = create<GameAdderState>((set, get) => ({
       setBackgroundUrl,
       setGameList,
       setIsLoading,
-      setDirPath
+      setDirPath,
+      setGamePath
     } = get()
     if (isLoading) {
       toast.warning(i18next.t('adder:gameAdder.loading'))
@@ -87,6 +92,7 @@ export const useGameAdderStore = create<GameAdderState>((set, get) => ({
     setDataSource(useConfigStore.getState().getConfigValue('game.scraper.common.defaultDataSource'))
     setDbId('')
     setDirPath('')
+    setGamePath('')
     setDataSourceId('')
     setName('')
     setBackgroundList([])
