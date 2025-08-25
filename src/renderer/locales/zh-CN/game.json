@@ -295,6 +295,11 @@
         "editText": "修改文字",
         "delete": "删除"
       },
+      "setAs": {
+        "title": "设置为",
+        "cover": "游戏封面",
+        "background": "游戏背景"
+      },
       "export": {
         "exportAs": "转存为",
         "image": "图片",
@@ -312,7 +317,11 @@
         "imageCopied": "图片已成功复制到剪切板",
         "imageCopyError": "复制图片到剪切板失败: {{error}}",
         "markdownCopied": "Markdown 已复制到剪贴板",
-        "markdownCopyError": "复制到剪贴板失败: {{error}}"
+        "markdownCopyError": "复制到剪贴板失败: {{error}}",
+        "setCoverSuccess": "已成功设置为游戏封面",
+        "setCoverError": "设置为游戏封面失败: {{error}}",
+        "setBackgroundSuccess": "已成功设置为游戏背景",
+        "setBackgroundError": "设置为游戏背景失败: {{error}}"
       },
       "dialog": {
         "markdownHint": "支持 Markdown 语法"

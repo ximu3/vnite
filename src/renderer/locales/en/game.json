@@ -295,6 +295,11 @@
         "editText": "Edit Text",
         "delete": "Delete"
       },
+      "setAs": {
+        "title": "Set As",
+        "cover": "Game Cover",
+        "background": "Game Background"
+      },
       "export": {
         "exportAs": "Export As",
         "image": "Image",
@@ -312,7 +317,11 @@
         "imageCopied": "Image successfully copied to clipboard",
         "imageCopyError": "Failed to copy image to clipboard: {{error}}",
         "markdownCopied": "Markdown copied to clipboard",
-        "markdownCopyError": "Failed to copy to clipboard: {{error}}"
+        "markdownCopyError": "Failed to copy to clipboard: {{error}}",
+        "setCoverSuccess": "Successfully set as game cover",
+        "setCoverError": "Failed to set as game cover: {{error}}",
+        "setBackgroundSuccess": "Successfully set as game background",
+        "setBackgroundError": "Failed to set as game background: {{error}}"
       },
       "dialog": {
         "markdownHint": "Markdown syntax supported"

@@ -295,6 +295,11 @@
         "editText": "テキストを編集",
         "delete": "削除"
       },
+      "setAs": {
+        "title": "設定",
+        "cover": "ゲームカバー",
+        "background": "ゲーム背景"
+      },
       "export": {
         "exportAs": "エクスポート形式",
         "image": "画像",
@@ -312,7 +317,11 @@
         "imageCopied": "画像をクリップボードにコピーしました",
         "imageCopyError": "画像のクリップボードへのコピーに失敗しました: {{error}}",
         "markdownCopied": "Markdownをクリップボードにコピーしました",
-        "markdownCopyError": "クリップボードへのコピーに失敗しました: {{error}}"
+        "markdownCopyError": "クリップボードへのコピーに失敗しました: {{error}}",
+        "setCoverSuccess": "ゲームカバーとして設定しました",
+        "setCoverError": "ゲームカバーの設定に失敗しました: {{error}}",
+        "setBackgroundSuccess": "ゲーム背景として設定しました",
+        "setBackgroundError": "ゲーム背景の設定に失敗しました: {{error}}"
       },
       "dialog": {
         "markdownHint": "Markdown記法をサポートしています"
