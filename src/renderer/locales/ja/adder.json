@@ -59,8 +59,12 @@
         "bangumi": "Bangumi",
         "igdb": "IGDB",
         "ymgal": "YMGal",
-        "dlsite": "DLsite"
-      }
+        "dlsite": "DLsite",
+        "none": "なし"
+      },
+      "gamePath": "ゲームパス",
+      "addButton": "追加",
+      "gamePathPlaceholder": "ゲームパスを選択してください"
     }
   },
   "gameBatchAdder": {
