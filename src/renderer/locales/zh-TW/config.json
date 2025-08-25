@@ -340,5 +340,12 @@
       "manageDescription": "管理和配置元數據轉換器",
       "manageButton": "管理"
     }
+  },
+  "memory": {
+    "storageBackend": {
+      "options": {
+        "database": "資料庫"
+      }
+    }
   }
 }
