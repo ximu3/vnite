@@ -35,7 +35,7 @@ export function SearchMediaDialog({
 }: SearchMediaDialogProps): React.JSX.Element {
   const { t } = useTranslation('game')
   const [searchTitle, setSearchTitle] = useState(gameTitle)
-  const [dataSource, setDataSource] = useState('steamgriddb')
+  const [dataSource, setDataSource] = useState('google')
   const [availableDataSources, setAvailableDataSources] = useState<
     { id: string; name: string; capabilities: ScraperCapabilities[] }[]
   >([])
@@ -125,7 +125,7 @@ export function SearchMediaDialog({
   function handleClose(): void {
     setSelectedImage('')
     setImageList([])
-    setDataSource('steamgriddb')
+    setDataSource('google')
     onClose()
   }
 
