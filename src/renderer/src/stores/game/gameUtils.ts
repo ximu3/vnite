@@ -594,8 +594,15 @@ export function getGameStartAndEndDate(gameId: string): { start: string; end: st
       return `${year}-${month}-${day}`
     }
 
-    const start = new Date(timers[0].start)
-    const end = new Date(timers[timers.length - 1].end)
+    const startTimestamps = timers.map((t) => Date.parse(t.start)).filter((ts) => !isNaN(ts))
+    const endTimestamps = timers.map((t) => Date.parse(t.end)).filter((ts) => !isNaN(ts))
+
+    if (endTimestamps.length === 0 || startTimestamps.length === 0) {
+      return { start: '', end: '' }
+    }
+
+    const start = new Date(Math.min(...startTimestamps))
+    const end = new Date(Math.max(...endTimestamps))
 
     return {
       start: formatDate(start),
