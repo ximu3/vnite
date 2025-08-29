@@ -12,6 +12,13 @@ export interface ClearableInputProps extends InputProps {
   onClear?: () => void
 }
 
+interface StepperInputProps extends InputProps {
+  inputClassName?: string
+  step?: number
+  min?: number
+  max?: number
+}
+
 function Input({ className, type, ...props }: React.ComponentProps<'input'>): React.JSX.Element {
   return (
     <input
@@ -78,7 +85,70 @@ const ClearableInput = React.forwardRef<HTMLInputElement, ClearableInputProps>(
   }
 )
 
+const StepperInput = React.forwardRef<HTMLInputElement, StepperInputProps>(
+  ({ className, inputClassName, step = 1, min, max, value, onChange, ...props }, ref) => {
+    const numericValue = Number(value) || 0
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+      let value = Number(e.target.value)
+
+      if (min !== undefined && value < min) value = min
+      if (max !== undefined && value > max) value = max
+
+      onChange?.({ ...e, target: { ...e.target, value: String(value) } })
+    }
+
+    const handleStep = (delta: number, e?: React.MouseEvent | React.KeyboardEvent): void => {
+      const newValue = numericValue + (e?.shiftKey ? delta * 10 : delta)
+      const event = {
+        target: { value: String(newValue) }
+      } as React.ChangeEvent<HTMLInputElement>
+      handleChange(event)
+    }
+
+    return (
+      <div className={cn('relative w-full group', className)}>
+        <Input
+          ref={ref}
+          type="number"
+          value={value}
+          onChange={handleChange}
+          className={cn(
+            'pr-10 appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none',
+            inputClassName
+          )}
+          {...props}
+        />
+        <div
+          className={cn(
+            'absolute right-1 top-1/2 -translate-y-1/2 hidden group-focus-within:flex flex-col z-10',
+            'bg-popover/(--glass-opacity) backdrop-filter backdrop-blur-[32px] rounded-md'
+          )}
+        >
+          <Button
+            variant="outline"
+            size="icon"
+            className="w-8 h-8 p-0 flex items-center justify-center"
+            onClick={(e) => handleStep(step, e)}
+          >
+            <span className="icon-[mdi--keyboard-arrow-up] w-5 h-5"></span>
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            className="w-8 h-8 p-0 flex items-center justify-center"
+            onClick={(e) => handleStep(-step, e)}
+          >
+            <span className="icon-[mdi--keyboard-arrow-down] w-5 h-5"></span>
+          </Button>
+        </div>
+      </div>
+    )
+  }
+)
+
 Input.displayName = 'Input'
 ClearableInput.displayName = 'ClearableInput'
+StepperInput.displayName = 'StepperInput'
 
-export { ClearableInput, Input }
+export { ClearableInput, Input, StepperInput }
