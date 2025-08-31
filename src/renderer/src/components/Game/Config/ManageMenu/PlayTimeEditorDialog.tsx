@@ -80,11 +80,17 @@ export function PlayTimeEditorDialog({
   }
 
   const handleSave = (): void => {
+    // TEMPORARY: preserve fuzzy play time for compatibility with old data
+    // (e.g. imported from Steam, previous manual edits)
+    // should be removed in the future when related issues are resolved
+    const oldTimersTime = calculateTotalPlayTime(record.timers)
+    const fuzzyTime = Math.max(0, record.playTime - oldTimersTime)
+
     const playTimeMs = calculateTotalPlayTime(timers)
     setRecord({
       ...record,
       timers: timers,
-      playTime: playTimeMs
+      playTime: playTimeMs + fuzzyTime
     })
     setIsOpen(false)
   }
