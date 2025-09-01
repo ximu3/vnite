@@ -14,9 +14,14 @@ export interface ClearableInputProps extends InputProps {
 
 interface StepperInputProps extends InputProps {
   inputClassName?: string
-  step?: number
   min?: number
   max?: number
+  steps?: {
+    default: number
+    shift?: number
+    ctrl?: number
+    alt?: number
+  }
 }
 
 function Input({ className, type, ...props }: React.ComponentProps<'input'>): React.JSX.Element {
@@ -86,10 +91,14 @@ const ClearableInput = React.forwardRef<HTMLInputElement, ClearableInputProps>(
 )
 
 const StepperInput = React.forwardRef<HTMLInputElement, StepperInputProps>(
-  ({ className, inputClassName, step = 1, min, max, value, onChange, ...props }, ref) => {
+  (
+    { className, inputClassName, steps = { default: 1 }, min, max, value, onChange, ...props },
+    ref
+  ) => {
     const numericValue = Number(value) || 0
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+      // NOTE: can't handle scientific notation input such as `2e6`
       let value = Number(e.target.value)
 
       if (min !== undefined && value < min) value = min
@@ -98,8 +107,15 @@ const StepperInput = React.forwardRef<HTMLInputElement, StepperInputProps>(
       onChange?.({ ...e, target: { ...e.target, value: String(value) } })
     }
 
-    const handleStep = (delta: number, e?: React.MouseEvent | React.KeyboardEvent): void => {
-      const newValue = numericValue + (e?.shiftKey ? delta * 10 : delta)
+    const handleStep = (direction: 1 | -1, e?: React.MouseEvent | React.KeyboardEvent): void => {
+      let step = steps?.default ?? 1
+      if (e) {
+        if (e.shiftKey) step = steps?.shift ?? step
+        else if (e.ctrlKey) step = steps?.ctrl ?? step
+        else if (e.altKey) step = steps?.alt ?? step
+      }
+
+      const newValue = numericValue + step * direction
       const event = {
         target: { value: String(newValue) }
       } as React.ChangeEvent<HTMLInputElement>
@@ -129,7 +145,7 @@ const StepperInput = React.forwardRef<HTMLInputElement, StepperInputProps>(
             variant="outline"
             size="icon"
             className="w-8 h-8 p-0 flex items-center justify-center"
-            onClick={(e) => handleStep(step, e)}
+            onClick={(e) => handleStep(1, e)}
           >
             <span className="icon-[mdi--keyboard-arrow-up] w-5 h-5"></span>
           </Button>
@@ -137,7 +153,7 @@ const StepperInput = React.forwardRef<HTMLInputElement, StepperInputProps>(
             variant="outline"
             size="icon"
             className="w-8 h-8 p-0 flex items-center justify-center"
-            onClick={(e) => handleStep(-step, e)}
+            onClick={(e) => handleStep(-1, e)}
           >
             <span className="icon-[mdi--keyboard-arrow-down] w-5 h-5"></span>
           </Button>

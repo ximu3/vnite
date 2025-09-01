@@ -71,6 +71,7 @@ export function ChartCard({
                 value={minValue}
                 min={0}
                 max={24 * 60}
+                steps={{ default: 1, shift: 10 }}
                 onChange={(e) => setMinValue(Number(e.target.value))}
                 inputClassName="pl-6 pr-8 w-full"
               />
