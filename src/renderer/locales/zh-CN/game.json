@@ -351,6 +351,7 @@
       "title": "游戏计时器",
       "addTimer": "添加计时器",
       "timersList": "计时器列表",
+      "fuzzyTime": "计时器未记录游玩时间",
       "noTimers": "没有计时器记录",
       "totalPlayTime": "总游戏时长",
       "startTime": "开始",
