@@ -577,6 +577,7 @@ async function convertConfig(basePath: string): Promise<void> {
         highlightLocalGames: v2Config.others.gameList.highlightLocalGames,
         markLocalGames: v2Config.others.gameList.markLocalGames,
         showRecentGames: v2Config.appearances.gameList.showRecentGamesInGameList,
+        showAllGamesInGroup: true,
         showCollapseButton: true,
         playingStatusOrder: ['unplayed', 'playing', 'finished', 'multiple', 'shelved'],
         playStatusAccordionOpen: ['unplayed', 'playing', 'finished', 'multiple', 'shelved'],
