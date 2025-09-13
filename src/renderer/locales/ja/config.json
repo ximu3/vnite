@@ -81,6 +81,8 @@
       "title": "ゲームリスト",
       "showRecentGames": "最近のゲームセクションを表示",
       "showRecentGamesDescription": "ゲームリストに最近プレイしたゲームを表示",
+      "showAllGamesInGroup": "グループ内のすべてのゲームセクションを表示",
+      "showAllGamesInGroupDescription": "ゲームリストのグループ内にすべてのゲームを表示",
       "highlightLocalGames": "ローカルゲームをハイライト",
       "highlightLocalGamesDescription": "ゲームリストでローカルゲームをハイライト表示",
       "markLocalGames": "ローカルゲームにマーク",

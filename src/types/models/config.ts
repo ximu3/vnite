@@ -50,6 +50,7 @@ export interface configDocs {
       highlightLocalGames: boolean
       markLocalGames: boolean
       showRecentGames: boolean
+      showAllGamesInGroup: boolean
       showCollapseButton: boolean
       playingStatusOrder: string[]
       playStatusAccordionOpen: string[]
@@ -270,6 +271,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       highlightLocalGames: true,
       markLocalGames: false,
       showRecentGames: true,
+      showAllGamesInGroup: true,
       showCollapseButton: true,
       playingStatusOrder: ['unplayed', 'playing', 'finished', 'multiple', 'shelved'],
       playStatusAccordionOpen: ['unplayed', 'playing', 'finished', 'multiple', 'shelved'],

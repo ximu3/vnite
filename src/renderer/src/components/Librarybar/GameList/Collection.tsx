@@ -12,10 +12,12 @@ import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
 import { AllGame } from './AllGame'
 import { RecentGames } from './RecentGames'
+import { useConfigState } from '~/hooks'
 
 export function Collection(): React.JSX.Element {
   const collections = useGameCollectionStore((state) => state.documents)
   const defaultValues = [...Object.keys(collections), 'all', 'recentGames']
+  const [showAllGamesInGroup] = useConfigState('game.gameList.showAllGamesInGroup')
 
   // Sort collections by the sort field
   const sortedCollections = useMemo(() => {
@@ -52,7 +54,7 @@ export function Collection(): React.JSX.Element {
             </AccordionItem>
           ))}
           {/* All Games */}
-          <AllGame />
+          {showAllGamesInGroup && <AllGame />}
         </Accordion>
       ) : (
         <Accordion

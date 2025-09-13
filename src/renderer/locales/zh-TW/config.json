@@ -81,6 +81,8 @@
       "title": "遊戲列表",
       "showRecentGames": "顯示最近遊戲欄目",
       "showRecentGamesDescription": "在遊戲列表中顯示最近遊玩的遊戲",
+      "showAllGamesInGroup": "在分組中顯示所有遊戲欄目",
+      "showAllGamesInGroupDescription": "在遊戲列表的分組中顯示所有遊戲",
       "highlightLocalGames": "突顯本機遊戲",
       "highlightLocalGamesDescription": "在遊戲列表中突顯顯示本機遊戲",
       "markLocalGames": "標記本機遊戲",

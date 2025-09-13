@@ -81,6 +81,8 @@
       "title": "Game List",
       "showRecentGames": "Show Recent Games Section",
       "showRecentGamesDescription": "Show recently played games in game list",
+      "showAllGamesInGroup": "Show All Games in Group Section",
+      "showAllGamesInGroupDescription": "Show all games in groups in game list",
       "highlightLocalGames": "Highlight Local Games",
       "highlightLocalGamesDescription": "Highlight local games in game list",
       "markLocalGames": "Mark Local Games",

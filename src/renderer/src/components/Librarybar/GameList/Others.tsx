@@ -19,6 +19,7 @@ export function Others({
 }): React.JSX.Element {
   const [by] = useConfigState('game.gameList.sort.by')
   const [order] = useConfigState('game.gameList.sort.order')
+  const [showAllGamesInGroup] = useConfigState('game.gameList.showAllGamesInGroup')
 
   const fields = getAllValuesInKey(fieldName)
   const defaultValues = [...fields, 'all', 'recentGames']
@@ -53,7 +54,7 @@ export function Others({
             </AccordionItem>
           ))}
           {/* All Games */}
-          <AllGame />
+          {showAllGamesInGroup && <AllGame />}
         </Accordion>
       ) : (
         <Accordion

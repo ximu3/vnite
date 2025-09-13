@@ -26,6 +26,7 @@ export function PlayStatusGames(): React.JSX.Element {
   )
   const [by] = useConfigState('game.gameList.sort.by')
   const [order] = useConfigState('game.gameList.sort.order')
+  const [showAllGamesInGroup] = useConfigState('game.gameList.showAllGamesInGroup')
 
   const fields_tmp = getAllValuesInKey('record.playStatus')
   const fields = playStatusOrder.filter((item) => fields_tmp.includes(item))
@@ -93,7 +94,7 @@ export function PlayStatusGames(): React.JSX.Element {
             </AccordionItem>
           ))}
           {/* All Games */}
-          <AllGame />
+          {showAllGamesInGroup && <AllGame />}
         </Accordion>
       ) : (
         <Accordion

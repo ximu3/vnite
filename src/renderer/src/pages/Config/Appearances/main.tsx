@@ -332,6 +332,14 @@ export function Appearances(): React.JSX.Element {
 
               <ConfigItem
                 hookType="config"
+                path="game.gameList.showAllGamesInGroup"
+                title={t('appearances.gameList.showAllGamesInGroup')}
+                description={t('appearances.gameList.showAllGamesInGroupDescription')}
+                controlType="switch"
+              />
+
+              <ConfigItem
+                hookType="config"
                 path="game.gameList.highlightLocalGames"
                 title={t('appearances.gameList.highlightLocalGames')}
                 description={t('appearances.gameList.highlightLocalGamesDescription')}
