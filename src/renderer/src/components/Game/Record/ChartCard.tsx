@@ -1,11 +1,12 @@
 import { DateTimeInput } from '@ui/date-input'
-import { cn } from '~/utils'
-import { getGamePlayTimeByDateRange, getGameStartAndEndDate } from '~/stores/game'
-import { useState, useEffect } from 'react'
-import { TimerChart } from './TimerChart'
 import { isEqual } from 'lodash'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { StepperInput } from '~/components/ui/input'
 import { SeparatorDashed } from '~/components/ui/separator-dashed'
+import { getGamePlayTimeByDateRange, getGameStartAndEndDate } from '~/stores/game'
+import { cn } from '~/utils'
+import { TimerChart } from './TimerChart'
 
 export function ChartCard({
   gameId,
@@ -18,6 +19,7 @@ export function ChartCard({
   const timers = getGameStartAndEndDate(gameId)
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
+  const [minValue, setMinValue] = useState(0)
   const [playTimeByDateRange, setPlayTimeByDateRange] = useState<Record<string, number>>({})
 
   useEffect(() => {
@@ -62,6 +64,19 @@ export function ChartCard({
               onChange={(e) => setEndDate(e.target.value)}
               className={cn('')}
             />
+            <div className="w-px h-9 bg-primary" />
+            <div className={cn('relative flex w-28 items-center')}>
+              <span className="absolute left-2">{'>'}</span>
+              <StepperInput
+                value={minValue}
+                min={0}
+                max={24 * 60}
+                steps={{ default: 1, shift: 10 }}
+                onChange={(e) => setMinValue(Number(e.target.value))}
+                inputClassName="pl-6 pr-8 w-full"
+              />
+              <span className="absolute right-2">min</span>
+            </div>
           </div>
           {!startDate || !endDate ? (
             t('detail.chart.selectRange')
@@ -73,7 +88,11 @@ export function ChartCard({
             </div>
           ) : (
             <div className={cn('max-h-full rounded-lg py-3', '3xl:max-h-full')}>
-              <TimerChart data={playTimeByDateRange} className={cn('w-full max-h-[30vh] -ml-3')} />
+              <TimerChart
+                data={playTimeByDateRange}
+                minMinutes={minValue}
+                className={cn('w-full max-h-[30vh] -ml-3')}
+              />
             </div>
           )}
         </>

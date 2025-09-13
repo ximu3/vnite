@@ -12,6 +12,18 @@ export interface ClearableInputProps extends InputProps {
   onClear?: () => void
 }
 
+interface StepperInputProps extends InputProps {
+  inputClassName?: string
+  min?: number
+  max?: number
+  steps?: {
+    default: number
+    shift?: number
+    ctrl?: number
+    alt?: number
+  }
+}
+
 function Input({ className, type, ...props }: React.ComponentProps<'input'>): React.JSX.Element {
   return (
     <input
@@ -78,7 +90,81 @@ const ClearableInput = React.forwardRef<HTMLInputElement, ClearableInputProps>(
   }
 )
 
+const StepperInput = React.forwardRef<HTMLInputElement, StepperInputProps>(
+  (
+    { className, inputClassName, steps = { default: 1 }, min, max, value, onChange, ...props },
+    ref
+  ) => {
+    const numericValue = Number(value) || 0
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+      // NOTE: can't handle scientific notation input such as `2e6`
+      let value = Number(e.target.value)
+
+      if (min !== undefined && value < min) value = min
+      if (max !== undefined && value > max) value = max
+
+      onChange?.({ ...e, target: { ...e.target, value: String(value) } })
+    }
+
+    const handleStep = (direction: 1 | -1, e?: React.MouseEvent | React.KeyboardEvent): void => {
+      let step = steps?.default ?? 1
+      if (e) {
+        if (e.shiftKey) step = steps?.shift ?? step
+        else if (e.ctrlKey) step = steps?.ctrl ?? step
+        else if (e.altKey) step = steps?.alt ?? step
+      }
+
+      const newValue = numericValue + step * direction
+      const event = {
+        target: { value: String(newValue) }
+      } as React.ChangeEvent<HTMLInputElement>
+      handleChange(event)
+    }
+
+    return (
+      <div className={cn('relative w-full group', className)}>
+        <Input
+          ref={ref}
+          type="number"
+          value={value}
+          onChange={handleChange}
+          className={cn(
+            'pr-10 appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none',
+            inputClassName
+          )}
+          {...props}
+        />
+        <div
+          className={cn(
+            'absolute right-1 top-1/2 -translate-y-1/2 hidden group-focus-within:flex flex-col z-10',
+            'bg-popover/(--glass-opacity) backdrop-filter backdrop-blur-[32px] rounded-md'
+          )}
+        >
+          <Button
+            variant="outline"
+            size="icon"
+            className="w-8 h-8 p-0 flex items-center justify-center"
+            onClick={(e) => handleStep(1, e)}
+          >
+            <span className="icon-[mdi--keyboard-arrow-up] w-5 h-5"></span>
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            className="w-8 h-8 p-0 flex items-center justify-center"
+            onClick={(e) => handleStep(-1, e)}
+          >
+            <span className="icon-[mdi--keyboard-arrow-down] w-5 h-5"></span>
+          </Button>
+        </div>
+      </div>
+    )
+  }
+)
+
 Input.displayName = 'Input'
 ClearableInput.displayName = 'ClearableInput'
+StepperInput.displayName = 'StepperInput'
 
-export { ClearableInput, Input }
+export { ClearableInput, Input, StepperInput }

@@ -351,6 +351,7 @@
       "title": "Game Timer",
       "addTimer": "Add Timer",
       "timersList": "Timers List",
+      "fuzzyTime": "Time Not Tracked by Timers",
       "noTimers": "No timer records",
       "totalPlayTime": "Total Play Time",
       "startTime": "Start",

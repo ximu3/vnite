@@ -351,6 +351,7 @@
       "title": "ゲームタイマー",
       "addTimer": "タイマーを追加",
       "timersList": "タイマーリスト",
+      "fuzzyTime": "タイマー未記録のプレイ時間",
       "noTimers": "タイマー記録がありません",
       "totalPlayTime": "総プレイ時間",
       "startTime": "開始",

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
 import { Dialog, DialogContent } from '~/components/ui/dialog'
+import { StepperInput } from '~/components/ui/input'
 import { useGameState } from '~/hooks'
 import { cn } from '~/utils'
 import { TimerEditDialog } from './TimerEditDialog'
@@ -19,7 +20,20 @@ export function PlayTimeEditorDialog({
   const { t } = useTranslation('game')
   const [record, setRecord] = useGameState(gameId, 'record')
 
+  const calculateTotalPlayTime = (timersList: { start: string; end: string }[]): number => {
+    return timersList.reduce((total, timer) => {
+      if (!timer.start || !timer.end) return total
+      const start = new Date(timer.start).getTime()
+      const end = new Date(timer.end).getTime()
+      return total + Math.max(0, end - start)
+    }, 0) // milliseconds
+  }
+
   const [timers, setTimers] = useState<{ start: string; end: string }[]>(record.timers || [])
+  const [fuzzyTime, setFuzzyTime] = useState(() => {
+    const oldTimersTime = calculateTotalPlayTime(record.timers)
+    return Math.max(0, record.playTime - oldTimersTime) / 1000 / 60
+  })
 
   const [isTimerDialogOpen, setIsTimerDialogOpen] = useState(false)
   const [editingTimer, setEditingTimer] = useState<{ start: string; end: string } | undefined>(
@@ -38,15 +52,6 @@ export function PlayTimeEditorDialog({
   const calculateDuration = (start: string, end: string): number => {
     if (!start || !end) return 0
     return Math.floor((new Date(end).getTime() - new Date(start).getTime()) / 1000 / 60) // minutes
-  }
-
-  const calculateTotalPlayTime = (timersList: { start: string; end: string }[]): number => {
-    return timersList.reduce((total, timer) => {
-      if (!timer.start || !timer.end) return total
-      const start = new Date(timer.start).getTime()
-      const end = new Date(timer.end).getTime()
-      return total + Math.max(0, end - start)
-    }, 0) // milliseconds
   }
 
   const openAddTimer = (): void => {
@@ -80,11 +85,13 @@ export function PlayTimeEditorDialog({
   }
 
   const handleSave = (): void => {
+    // preserve fuzzy play time for compatibility with old data
+    // (e.g. imported from Steam, previous manual edits)
     const playTimeMs = calculateTotalPlayTime(timers)
     setRecord({
       ...record,
       timers: timers,
-      playTime: playTimeMs
+      playTime: playTimeMs + fuzzyTime * 60 * 1000
     })
     setIsOpen(false)
   }
@@ -106,7 +113,7 @@ export function PlayTimeEditorDialog({
           </Button>
 
           {/* Timer List */}
-          <div className="mb-4">
+          <div className="mb-2">
             <h4 className="text-md font-semibold mb-2">{t('detail.timersEditor.timersList')}</h4>
             {timers.length === 0 ? (
               <div className="text-muted-foreground p-4 text-center bg-muted rounded-md">
@@ -160,11 +167,31 @@ export function PlayTimeEditorDialog({
             )}
           </div>
 
+          {/* Fuzzy Time Input */}
+          <div>
+            <h4 className="text-md font-semibold mb-2">{t('detail.timersEditor.fuzzyTime')}</h4>
+            <div className="flex gap-3 items-center">
+              <div className={cn('relative flex w-1/3 items-center')}>
+                <StepperInput
+                  value={fuzzyTime}
+                  min={0}
+                  steps={{ default: 5, shift: 600, alt: 60, ctrl: 1 }}
+                  onChange={(e) => setFuzzyTime(Number(e.target.value))}
+                  inputClassName="pl-4 pr-8 w-full"
+                />
+                <span className="absolute right-2">min</span>
+              </div>
+              <div>{`(${t('{{date, gameTime}}', { date: Number(fuzzyTime) * 60 * 1000 })})`}</div>
+            </div>
+          </div>
+
           <div className="flex items-center justify-between border-t pt-4 mt-2">
             {/* Total Play Time */}
             <div className="text-md">
               <span className="font-medium">{t('detail.timersEditor.totalPlayTime')}:</span>{' '}
-              {t('{{date, gameTime}}', { date: calculateTotalPlayTime(timers) })}
+              {t('{{date, gameTime}}', {
+                date: calculateTotalPlayTime(timers) + fuzzyTime * 60 * 1000
+              })}
             </div>
             {/* Save and Cancel Buttons */}
             <div className="flex space-x-2">

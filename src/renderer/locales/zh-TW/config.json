@@ -346,7 +346,31 @@
   "memory": {
     "storageBackend": {
       "options": {
-        "database": "資料庫"
+        "database": "資料庫",
+        "fileSystem": "檔案系統",
+        "both": "資料庫 & 檔案系統"
+      },
+      "title": "截圖儲存後端",
+      "description": "選擇截圖的儲存位置\n如果您選擇不將截圖儲存至資料庫，那麼這些截圖將不會出現在遊戲的「回憶」頁面中"
+    },
+    "title": "回憶",
+    "saveDir": {
+      "title": "截圖儲存資料夾",
+      "description": "選擇儲存截圖的根資料夾",
+      "placeholder": "輸入儲存截圖的根資料夾路徑"
+    },
+    "namingRule": {
+      "title": "命名規則",
+      "description": "截圖檔案的命名規則，不可使用路徑無效字元 [<>:\"/\\|?*]\n目前支援的佔位符：\n\n%name% - 當前運行中的遊戲名稱（遊戲名稱中的路徑無效字元會被替換）\n%datetime% - 截圖時間點的日期和時間\n%timestamp% - 截圖時間點的毫秒級時間戳",
+      "placeholder": "輸入截圖檔案的命名規則"
+    },
+    "snippingMode": {
+      "title": "截圖模式",
+      "description": "選擇截圖模式",
+      "options": {
+        "rectangle": "矩形",
+        "activeWindow": "活動視窗",
+        "fullscreen": "全螢幕"
       }
     }
   }

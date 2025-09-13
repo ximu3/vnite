@@ -312,10 +312,19 @@
         "imageCopied": "圖片已成功複製到剪貼簿",
         "imageCopyError": "複製圖片到剪貼簿失敗: {{error}}",
         "markdownCopied": "Markdown 已複製到剪貼簿",
-        "markdownCopyError": "複製到剪貼簿失敗: {{error}}"
+        "markdownCopyError": "複製到剪貼簿失敗: {{error}}",
+        "setCoverSuccess": "已成功設置為遊戲封面",
+        "setCoverError": "設置為遊戲封面失敗：{{error}}",
+        "setBackgroundSuccess": "已成功設置為遊戲背景",
+        "setBackgroundError": "設置為遊戲背景失敗：{{error}}"
       },
       "dialog": {
         "markdownHint": "支援 Markdown 語法"
+      },
+      "setAs": {
+        "title": "設置為",
+        "cover": "遊戲封面",
+        "background": "遊戲背景"
       }
     },
     "config": {
@@ -342,6 +351,7 @@
       "title": "遊戲計時器",
       "addTimer": "添加計時器",
       "timersList": "計時器列表",
+      "fuzzyTime": "計時器未記錄遊玩時間",
       "noTimers": "沒有計時器記錄",
       "totalPlayTime": "總遊戲時長",
       "startTime": "開始",
