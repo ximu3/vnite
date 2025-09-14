@@ -1,7 +1,7 @@
 import { useRouter, useSearch } from '@tanstack/react-router'
 import { CalendarIcon, ChevronLeft, ChevronRight, Clock, Trophy } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { Button, buttonVariants } from '~/components/ui/button'
 import { Calendar } from '~/components/ui/calendar'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
@@ -67,7 +67,13 @@ export function MonthlyReport(): React.JSX.Element {
 
   const currentMonthName = getLocalizedMonth(selectedDate.getMonth())
 
-  // Preparing data for charts
+  // Data for charts, not weekly but daily
+  const dailyChartData = Object.entries(monthData.dailyPlayTime).map(([date, playTime]) => ({
+    date: date,
+    playTime: playTime / 3600000
+  }))
+
+  // Preparing data for charts (replaced by the above one)
   const weeklyChartData = monthData.weeklyPlayTime
     .map((item) => ({
       week: t('monthly.chart.weekFormat', { week: item.week }),
@@ -209,30 +215,32 @@ export function MonthlyReport(): React.JSX.Element {
           </CardHeader>
           <CardContent className="pt-0">
             <ChartContainer config={chartConfig} className="h-[320px] w-full">
-              <AreaChart data={weeklyChartData}>
+              <BarChart data={dailyChartData}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="week" tickLine={false} axisLine={false} tickMargin={10} />
+                <XAxis
+                  dataKey="date"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={10}
+                  tickFormatter={(value) => value.slice(8)} // Day only
+                />
                 <YAxis tickLine={false} axisLine={false} tickMargin={10} />
                 <ChartTooltip
                   content={(props) => (
                     <ChartTooltipContent
                       {...props}
                       formatter={(value) => formatGameTime((value as number) * 3600000)}
-                      labelFormatter={(week) => `${week}`}
                       hideIndicator={false}
                       color="var(--primary)"
                     />
                   )}
                 />
-                <Area
-                  type="monotone"
+                <Bar
                   dataKey="playTime"
-                  stroke="var(--primary)"
-                  strokeWidth={2}
-                  fillOpacity={0.3}
                   fill="var(--primary)"
+                  radius={[4, 4, 0, 0]}
                 />
-              </AreaChart>
+              </BarChart>
             </ChartContainer>
           </CardContent>
         </Card>
