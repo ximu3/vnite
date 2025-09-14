@@ -1,12 +1,12 @@
+import { useRouter, useSearch } from '@tanstack/react-router'
+import { CalendarIcon, ChevronLeft, ChevronRight, Clock, Trophy } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { Button, buttonVariants } from '~/components/ui/button'
 import { Calendar } from '~/components/ui/calendar'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '~/components/ui/chart'
 import { Separator } from '~/components/ui/separator'
-import { CalendarIcon, ChevronLeft, ChevronRight, Clock, Trophy } from 'lucide-react'
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 
 import { getMonthlyPlayData } from '~/stores/game/recordUtils'
 import { cn } from '~/utils'
@@ -16,7 +16,22 @@ import { StatCard } from './StatCard'
 export function MonthlyReport(): React.JSX.Element {
   const { t } = useTranslation('record')
 
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+  const router = useRouter()
+  const search = useSearch({ from: '/record' })
+  const selectedDate = new Date(search.date)
+
+  const setSelectedDate = (newDate: Date): void => {
+    router.navigate({
+      to: '/record',
+      search: {
+        tab: 'monthly',
+        date: newDate.toISOString(),
+        year: newDate.getFullYear().toString()
+      }
+    })
+  }
+
+  // const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const monthData = getMonthlyPlayData(selectedDate)
 
   const goToPreviousMonth = (): void => {

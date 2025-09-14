@@ -80,7 +80,20 @@ const libraryCollectionGamesRoute = createRoute({
 const recordRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/record',
-  component: Record
+  component: Record,
+  validateSearch: (search) => {
+    const tab = typeof search.tab === 'string' ? search.tab : 'overview'
+    const date =
+      typeof search.date === 'string' && !isNaN(Date.parse(search.date))
+        ? search.date
+        : new Date().toISOString()
+    const year =
+      typeof search.year === 'string' && /^\d{4}$/.test(search.year)
+        ? search.year
+        : String(new Date().getFullYear())
+
+    return { tab, date, year }
+  }
 })
 
 const configRoute = createRoute({

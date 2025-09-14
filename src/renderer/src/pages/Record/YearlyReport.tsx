@@ -1,32 +1,46 @@
-import { useState } from 'react'
+import { useRouter, useSearch } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
-import { Button } from '~/components/ui/button'
-import { ChevronLeft, ChevronRight, Clock, CalendarIcon, Trophy } from 'lucide-react'
+import { CalendarIcon, ChevronLeft, ChevronRight, Clock, Trophy } from 'lucide-react'
 import {
   Bar,
   BarChart,
   CartesianGrid,
-  XAxis,
-  YAxis,
+  Cell,
   Line,
   LineChart,
-  PieChart,
   Pie,
-  Cell
+  PieChart,
+  XAxis,
+  YAxis
 } from 'recharts'
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '~/components/ui/chart'
 import type { ValueType } from 'recharts/types/component/DefaultTooltipContent'
+import { Button } from '~/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '~/components/ui/chart'
 
-import { StatCard } from './StatCard'
-import { GameRankingItem } from './GameRankingItem'
 import { getYearlyPlayData } from '~/stores/game/recordUtils'
+import { GameRankingItem } from './GameRankingItem'
+import { StatCard } from './StatCard'
 
 export function YearlyReport(): React.JSX.Element {
   const { t } = useTranslation('record')
 
-  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear())
+  const router = useRouter()
+  const search = useSearch({ from: '/record' })
+  const selectedYear = Number(search.year)
+
+  const setSelectedYear = (newYear: number): void => {
+    router.navigate({
+      to: '/record',
+      search: {
+        ...search,
+        year: newYear.toString()
+      }
+    })
+  }
+
+  // const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear())
   const yearData = getYearlyPlayData(selectedYear)
 
   const goToPreviousYear = (): void => setSelectedYear(selectedYear - 1)
