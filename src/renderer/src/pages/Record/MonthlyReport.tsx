@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '~/components/ui/chart'
 import { Separator } from '~/components/ui/separator'
 
-import { getMonthlyPlayData } from '~/stores/game/recordUtils'
+import { getMonthlyPlayData, parseLocalDate } from '~/stores/game/recordUtils'
 import { cn } from '~/utils'
 import { GameRankingItem } from './GameRankingItem'
 import { StatCard } from './StatCard'
@@ -27,6 +27,33 @@ export function MonthlyReport(): React.JSX.Element {
         tab: 'monthly',
         date: newDate.toISOString(),
         year: newDate.getFullYear().toString()
+      }
+    })
+  }
+  const handleBarClick = (data: any): void => {
+    type DailyChartItem = (typeof dailyChartData)[number]
+    const { date } = data.payload as DailyChartItem
+    const dateUTC = parseLocalDate(date) // YYYY-MM-DD
+    const isoDate = dateUTC.toISOString()
+
+    router.navigate({
+      to: '/record',
+      search: {
+        tab: 'weekly',
+        date: isoDate,
+        year: dateUTC.getFullYear().toString()
+      }
+    })
+  }
+  const handleDayClick = (day: Date): void => {
+    const isoDate = day.toISOString()
+
+    router.navigate({
+      to: '/record',
+      search: {
+        tab: 'weekly',
+        date: isoDate,
+        year: day.getFullYear().toString()
       }
     })
   }
@@ -238,6 +265,8 @@ export function MonthlyReport(): React.JSX.Element {
                 <Bar
                   dataKey="playTime"
                   fill="var(--primary)"
+                  onClick={handleBarClick}
+                  cursor="pointer"
                   radius={[4, 4, 0, 0]}
                 />
               </BarChart>
@@ -255,6 +284,7 @@ export function MonthlyReport(): React.JSX.Element {
               selected={selectedDate}
               month={selectedDate} // Controls the displayed month
               onMonthChange={(date) => setSelectedDate(date)}
+              onDayClick={handleDayClick}
               className="p-0 rounded-md select-none"
               classNames={{
                 day: cn(

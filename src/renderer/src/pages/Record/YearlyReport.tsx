@@ -39,6 +39,36 @@ export function YearlyReport(): React.JSX.Element {
       }
     })
   }
+  const handleBarClick = (data: any): void => {
+    type MonthlyChartItem = (typeof monthlyChartData)[number]
+    const { originalMonth } = data.payload as MonthlyChartItem
+    const dateUTC = new Date(Date.UTC(selectedYear, originalMonth, 2, 0, 0, 0, 0)) // to avoid timezone issues
+    const isoDate = dateUTC.toISOString()
+
+    router.navigate({
+      to: '/record',
+      search: {
+        tab: 'monthly',
+        date: isoDate,
+        year: dateUTC.getFullYear().toString()
+      }
+    })
+  }
+  const handleDotClick = (data: any): void => {
+    type MonthlyChartItem = (typeof monthlyDaysChartData)[number]
+    const { originalMonth } = data.payload as MonthlyChartItem
+    const dateUTC = new Date(Date.UTC(selectedYear, originalMonth, 2, 0, 0, 0, 0))
+    const isoDate = dateUTC.toISOString()
+
+    router.navigate({
+      to: '/record',
+      search: {
+        tab: 'monthly',
+        date: isoDate,
+        year: search.year
+      }
+    })
+  }
 
   // const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear())
   const yearData = getYearlyPlayData(selectedYear)
@@ -202,7 +232,13 @@ export function YearlyReport(): React.JSX.Element {
                     />
                   )}
                 />
-                <Bar dataKey="playTime" fill="var(--primary)" radius={[4, 4, 0, 0]} />
+                <Bar
+                  dataKey="playTime"
+                  fill="var(--primary)"
+                  onClick={handleBarClick}
+                  cursor="pointer"
+                  radius={[4, 4, 0, 0]}
+                />
               </BarChart>
             </ChartContainer>
           </CardContent>
@@ -233,7 +269,13 @@ export function YearlyReport(): React.JSX.Element {
                   dataKey="playDays"
                   stroke="var(--primary)"
                   strokeWidth={2}
-                  dot={false}
+                  dot={{ r: 0 }}
+                  activeDot={{
+                    r: 4,
+                    fill: 'var(--primary)',
+                    cursor: 'pointer',
+                    onClick: (_e, payload) => handleDotClick(payload)
+                  }}
                 />
               </LineChart>
             </ChartContainer>
