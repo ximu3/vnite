@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/ui/dialog'
 import { Button } from '~/components/ui/button'
 import { cn } from '~/utils'
+import { ipcManager } from '~/app/ipc'
 
 interface ImageViewerDialogProps {
   isOpen: boolean
@@ -164,6 +165,42 @@ export function ImageViewerDialog({
     lastTranslate.current = { x: 0, y: 0 }
   }
 
+  // Copy current original image to clipboard
+  const copyImageToClipboard = async (): Promise<void> => {
+    try {
+      if (!imagePath) return
+      const buffer: any = await ipcManager.invoke('system:read-file-buffer', imagePath)
+      const uint8 = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer.data ?? buffer)
+      const ext = imagePath.split('.').pop()?.toLowerCase()
+      const mime = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg'
+      const blob = new Blob([uint8], { type: mime })
+      const item = new ClipboardItem({ [mime]: blob })
+      await navigator.clipboard.write([item])
+    } catch (e) {
+      console.error('copyImageToClipboard error', e)
+    }
+  }
+
+  // Save current original image as file
+  const saveImageAs = async (): Promise<void> => {
+    try {
+      if (!imagePath) return
+      const buffer: any = await ipcManager.invoke('system:read-file-buffer', imagePath)
+      const uint8 = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer.data ?? buffer)
+      const ext = imagePath.split('.').pop()?.toLowerCase() || 'png'
+      const mime = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg'
+      const blob = new Blob([uint8], { type: mime })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `image.${ext}`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch (e) {
+      console.error('saveImageAs error', e)
+    }
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
@@ -188,6 +225,14 @@ export function ImageViewerDialog({
             </Button>
             <Button size="sm" variant="outline" onClick={reset}>
               <span className={cn('icon-[mdi--refresh] w-4 h-4')}></span>
+            </Button>
+          </div>
+          <div className={cn('flex items-center gap-2')}>
+            <Button size="sm" variant="outline" onClick={copyImageToClipboard}>
+              {t('detail.memory.export.toClipboard')}
+            </Button>
+            <Button size="sm" variant="outline" onClick={saveImageAs}>
+              {t('detail.memory.export.saveAs')}
             </Button>
           </div>
           <div
