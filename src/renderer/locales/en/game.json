@@ -136,6 +136,9 @@
       "start": "Start Game",
       "stop": "Stop Game"
     },
+    "contextMenu": {
+      "editMediaProperties": "Edit Media Properties"
+    },
     "save": {
       "table": {
         "date": "Date",

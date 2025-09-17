@@ -1,7 +1,14 @@
 import { NSFWBlurLevel } from '@appTypes/models'
 import React from 'react'
 import { useConfigState, useGameState } from '~/hooks'
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger
+} from '~/components/ui/context-menu'
 import { useRunningGames } from '~/pages/Library/store'
+import { useTranslation } from 'react-i18next'
 import { cn, copyWithToast } from '~/utils'
 import { GameImage } from '../ui/game-image'
 import { Config } from './Config'
@@ -11,6 +18,7 @@ import { Record } from './Overview/Record'
 import { StartGame } from './StartGame'
 import { StopGame } from './StopGame'
 import { useGameDetailStore } from './store'
+import { GamePropertiesDialog } from './Config/Properties'
 
 export function Header({
   gameId,
@@ -36,6 +44,9 @@ export function Header({
   const stringToBase64 = (str: string): string =>
     btoa(String.fromCharCode(...new TextEncoder().encode(str)))
   const obfuscatedName = stringToBase64(name).slice(0, name.length)
+
+  const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = React.useState(false)
+  const { t } = useTranslation('game')
 
   return (
     <>
@@ -98,19 +109,28 @@ export function Header({
               </div>
             </div>
           </div>
-          {/* Game cover image */}
-          <div className="relative lg:mr-3 pb-1 shrink-0">
-            {showCover && (
-              <GameImage
-                gameId={gameId}
-                key={`${gameId}-poster`}
-                type="cover"
-                blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
-                className={cn('w-auto h-[170px] object-cover rounded-lg shadow-md')}
-                fallback={<div className="h-[170px]" />}
-              />
-            )}
-          </div>
+          {/* Game cover image with context menu */}
+          <ContextMenu>
+            <ContextMenuTrigger asChild>
+              <div className="relative lg:mr-3 pb-1 shrink-0">
+                {showCover && (
+                  <GameImage
+                    gameId={gameId}
+                    key={`${gameId}-poster`}
+                    type="cover"
+                    blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
+                    className={cn('w-auto h-[170px] object-cover rounded-lg shadow-md')}
+                    fallback={<div className="h-[170px]" />}
+                  />
+                )}
+              </div>
+            </ContextMenuTrigger>
+            <ContextMenuContent className={cn('w-40')}>
+              <ContextMenuItem onSelect={() => setIsPropertiesDialogOpen(true)}>
+                {t('detail.contextMenu.editMediaProperties')}
+              </ContextMenuItem>
+            </ContextMenuContent>
+          </ContextMenu>
         </div>
         {/* Game record section */}
         <div className="pt-6">
@@ -123,6 +143,14 @@ export function Header({
       )}
       {isScoreEditorDialogOpen && (
         <ScoreEditorDialog gameId={gameId} setIsOpen={setIsScoreEditorDialogOpen} />
+      )}
+      {isPropertiesDialogOpen && (
+        <GamePropertiesDialog
+          gameId={gameId}
+          isOpen={isPropertiesDialogOpen}
+          setIsOpen={setIsPropertiesDialogOpen}
+          defaultTab={'media'}
+        />
       )}
     </>
   )

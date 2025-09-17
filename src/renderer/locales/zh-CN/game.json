@@ -136,6 +136,9 @@
       "start": "开始游戏",
       "stop": "停止游戏"
     },
+    "contextMenu": {
+      "editMediaProperties": "修改媒体属性"
+    },
     "save": {
       "table": {
         "date": "日期",
