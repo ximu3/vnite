@@ -36,6 +36,8 @@ export function Path({ gameId }: { gameId: string }): React.JSX.Element {
   const [markerPath] = useGameLocalState(gameId, 'utils.markPath')
   const [maxSaveBackups, setMaxSaveBackups] = useGameState(gameId, 'save.maxBackups')
   const [savePathSize, setSavePathSize] = useState(0)
+  const [screenshotPath, setScreenshotPath, saveScreenshotPath, setScreenshotPathAndSave] =
+    useGameLocalState(gameId, 'path.screenshotPath', true)
 
   useEffect(() => {
     if ((savePaths.length === 1 && savePaths[0] === '') || savePaths.length === 0 || !savePaths) {
@@ -47,6 +49,19 @@ export function Path({ gameId }: { gameId: string }): React.JSX.Element {
       .then((size: number) => setSavePathSize(size))
       .catch(() => setSavePathSize(NaN))
   }, [savePaths])
+
+  async function selectScreenshotFolderPath(): Promise<void> {
+    const folderPath = await ipcManager.invoke(
+      'system:select-path-dialog',
+      ['openDirectory'],
+      undefined,
+      gamePath || markerPath
+    )
+    if (!folderPath) {
+      return
+    }
+    await setScreenshotPathAndSave(folderPath)
+  }
 
   function formatSize(bytes: number): string {
     if (savePathSize === -1) return ''
@@ -144,6 +159,22 @@ export function Path({ gameId }: { gameId: string }): React.JSX.Element {
               />
               <Button variant={'outline'} size={'icon'} onClick={selectGamePath}>
                 <span className={cn('icon-[mdi--file-outline] w-5 h-5')}></span>
+              </Button>
+            </div>
+
+            {/* Screenshot Path */}
+            <div className={cn('whitespace-nowrap select-none self-center')}>
+              {t('detail.properties.path.screenshotPath')}
+            </div>
+            <div className={cn('flex flex-row gap-3 items-center')}>
+              <Input
+                className={cn('flex-1')}
+                value={screenshotPath || ''}
+                onChange={(e) => setScreenshotPath(e.target.value)}
+                onBlur={saveScreenshotPath}
+              />
+              <Button variant={'outline'} size={'icon'} onClick={selectScreenshotFolderPath}>
+                <span className={cn('icon-[mdi--folder-outline] w-5 h-5')}></span>
               </Button>
             </div>
 
