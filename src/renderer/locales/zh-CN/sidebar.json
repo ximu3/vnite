@@ -18,7 +18,11 @@
     "lightMode": "亮色模式",
     "cloudSyncDisabled": "云同步未开启",
     "addGame": "添加游戏",
-    "settings": "设置"
+    "settings": "设置",
+    "autoMonitor": {
+      "on": "自动监控：开启 (可能会损失一定性能)",
+      "off": "自动监控：关闭"
+    }
   },
   "adder": {
     "addGame": "添加游戏",

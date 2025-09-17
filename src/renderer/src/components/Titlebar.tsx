@@ -27,6 +27,15 @@ export function Titlebar(): React.JSX.Element {
 
   // Theme related
   const { toggleTheme, isDark } = useTheme()
+
+  // Auto Monitor related
+  const [isAutoMonitorEnabled, setIsAutoMonitorEnabled] = useState(false)
+
+  const handleToggleAutoMonitor = async (): Promise<void> => {
+    const newStatus = !isAutoMonitorEnabled
+    await ipcManager.invoke('monitor:set-auto-start', newStatus)
+    setIsAutoMonitorEnabled(newStatus)
+  }
   const [showThemeSwitchInSidebar] = useConfigState('appearances.sidebar.showThemeSwitcher')
 
   // NSFW Blur related
@@ -45,6 +54,10 @@ export function Titlebar(): React.JSX.Element {
     [NSFWBlurLevel.BlurImage]: t('actions.nsfwLevel.blurImage'),
     [NSFWBlurLevel.BlurImageAndTitle]: t('actions.nsfwLevel.blurImageAndTitle')
   }
+
+  useEffect(() => {
+    ipcManager.invoke('monitor:get-auto-start').then(setIsAutoMonitorEnabled)
+  }, [])
 
   useEffect(() => {
     const removeMaximizeListener = ipcManager.on('window:maximized', () => setIsmaximize(true))
@@ -139,6 +152,27 @@ export function Titlebar(): React.JSX.Element {
               <TooltipContent side="bottom">{nsfwTooltips[nsfwBlurLevel]}</TooltipContent>
             </Tooltip>
           )}
+
+          {/* Auto Monitor toggle button */}
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                variant="thirdary"
+                size={'icon'}
+                className={cn('h-[32px] w-[32px]')}
+                onClick={handleToggleAutoMonitor}
+              >
+                {isAutoMonitorEnabled ? (
+                  <span className={cn('icon-[tabler--antenna] w-4 h-4')}></span>
+                ) : (
+                  <span className={cn('icon-[tabler--antenna-off] w-4 h-4')}></span>
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              {isAutoMonitorEnabled ? t('actions.autoMonitor.on') : t('actions.autoMonitor.off')}
+            </TooltipContent>
+          </Tooltip>
 
           {/* Theme switch button */}
           {showThemeSwitchInSidebar && (

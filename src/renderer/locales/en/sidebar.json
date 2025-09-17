@@ -18,7 +18,11 @@
     "lightMode": "Light Mode",
     "cloudSyncDisabled": "Cloud Sync Disabled",
     "addGame": "Add Game",
-    "settings": "Settings"
+    "settings": "Settings",
+    "autoMonitor": {
+      "on": "Auto Monitor: On (may impact performance)",
+      "off": "Auto Monitor: Off"
+    }
   },
   "adder": {
     "addGame": "Add Game",

@@ -12,8 +12,12 @@
     "lightMode": "",
     "cloudSyncDisabled": "",
     "addGame": "",
-    "settings": "",
-    "viewLogs": "Voir les logs"
+    "settings": "Paramètres",
+    "viewLogs": "Voir les logs",
+    "autoMonitor": {
+      "on": "Surveillance auto : activée (peut impacter les performances)",
+      "off": "Surveillance auto : désactivée"
+    }
   },
   "adder": {
     "addGame": "",

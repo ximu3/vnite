@@ -4,6 +4,7 @@ import { ConfigDBManager, GameDBManager } from '~/core/database'
 import { delay } from '~/utils'
 import { fileLauncher, scriptLauncher, urlLauncher } from './launcher'
 import { defaultPreset, lePreset, steamPreset, vbaPreset } from './preset'
+import { startMonitor } from '~/features/monitor/services'
 import { eventBus } from '~/core/events'
 
 export async function launcherPreset(
@@ -58,6 +59,14 @@ export async function launcher(gameId: string): Promise<void> {
       },
       { source: 'launcher' }
     )
+
+    // Start monitor to record timers and update charts regardless of auto-monitor scanning state
+    try {
+      await startMonitor(gameId)
+    } catch (err) {
+      log.warn(`[Launcher] startMonitor failed for ${gameId}`, err)
+    }
+
     log.info(`[Launcher] Launched game ${gameId}`)
   } catch (error) {
     log.error(`[Launcher] Failed to launch game ${gameId}`, error)

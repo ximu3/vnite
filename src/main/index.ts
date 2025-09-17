@@ -3,10 +3,11 @@ import { app, BrowserWindow, ipcMain, shell, protocol } from 'electron'
 import log from 'electron-log/main'
 import windowStateKeeper from 'electron-window-state'
 import { join } from 'path'
-import { baseDBManager, GameDBManager } from '~/core/database'
+import { baseDBManager, ConfigDBManager, GameDBManager } from '~/core/database'
 import { startSync } from '~/features/database'
 import icon from '../../resources/icon.png?asset'
 import { AuthManager, handleAuthCallback } from './features/account'
+import { AutoMonitor } from './features/monitor/services/auto'
 import { ipcManager, setupIPC } from './core/ipc'
 import { setupAutoUpdater } from './features/updater'
 import {
@@ -256,7 +257,11 @@ app.whenReady().then(async () => {
 
   baseDBManager.initAllDatabases()
 
-  AuthManager.init()
+  try {
+    AuthManager.init()
+  } catch (error) {
+    log.error('[Account] AuthManager initialization failed:', error)
+  }
 
   try {
     AuthManager.updateUserInfo()
@@ -280,6 +285,17 @@ app.whenReady().then(async () => {
 
   // Sync all databases with remote
   startSync()
+
+  // Start auto monitor if enabled (delay to ensure all services are ready)
+  try {
+    const autoMonitorEnabled = await ConfigDBManager.getConfigValue('monitor.autoStart')
+    if (autoMonitorEnabled) {
+      await AutoMonitor.start()
+      log.info('[AutoMonitor] Auto monitor started on app launch')
+    }
+  } catch (error) {
+    log.error('[AutoMonitor] Failed to start on app launch:', error)
+  }
 
   // Setup auto updater
   setupAutoUpdater()

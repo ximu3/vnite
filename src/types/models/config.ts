@@ -11,6 +11,9 @@ export interface configDocs {
     language: string
     hideWindowAfterGameStart: boolean
   }
+  monitor: {
+    autoStart: boolean
+  }
   game: {
     scraper: {
       common: {
@@ -246,6 +249,9 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     quitToTray: false,
     language: '',
     hideWindowAfterGameStart: true
+  },
+  monitor: {
+    autoStart: false
   },
   game: {
     scraper: {
