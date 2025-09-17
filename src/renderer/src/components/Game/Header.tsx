@@ -19,6 +19,9 @@ import { StartGame } from './StartGame'
 import { StopGame } from './StopGame'
 import { useGameDetailStore } from './store'
 import { GamePropertiesDialog } from './Config/Properties'
+import { ImageViewerDialog } from './Config/Properties/Media/ImageViewerDialog'
+import { ipcManager } from '~/app/ipc'
+import { toast } from 'sonner'
 
 export function Header({
   gameId,
@@ -47,6 +50,23 @@ export function Header({
 
   const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = React.useState(false)
   const { t } = useTranslation('game')
+
+  const [isImageViewerOpen, setIsImageViewerOpen] = React.useState(false)
+  const [imageViewerPath, setImageViewerPath] = React.useState<string | null>(null)
+
+  async function openLargeCover(): Promise<void> {
+    try {
+      const currentPath = await ipcManager.invoke('game:get-media-path', gameId, 'cover')
+      if (!currentPath) {
+        toast.error(t('detail.properties.media.notifications.imageNotFound'))
+        return
+      }
+      setImageViewerPath(currentPath)
+      setIsImageViewerOpen(true)
+    } catch (error) {
+      toast.error(t('detail.properties.media.notifications.getImageError', { error }))
+    }
+  }
 
   return (
     <>
@@ -129,6 +149,13 @@ export function Header({
               <ContextMenuItem onSelect={() => setIsPropertiesDialogOpen(true)}>
                 {t('detail.contextMenu.editMediaProperties')}
               </ContextMenuItem>
+              <ContextMenuItem
+                onSelect={() => {
+                  void openLargeCover()
+                }}
+              >
+                {t('detail.properties.media.actions.viewLargeImage')}
+              </ContextMenuItem>
             </ContextMenuContent>
           </ContextMenu>
         </div>
@@ -150,6 +177,13 @@ export function Header({
           isOpen={isPropertiesDialogOpen}
           setIsOpen={setIsPropertiesDialogOpen}
           defaultTab={'media'}
+        />
+      )}
+      {isImageViewerOpen && (
+        <ImageViewerDialog
+          isOpen={isImageViewerOpen}
+          imagePath={imageViewerPath}
+          onClose={() => setIsImageViewerOpen(false)}
         />
       )}
     </>

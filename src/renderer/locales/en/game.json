@@ -434,6 +434,7 @@
           "importFromClipboard": "Import from clipboard",
           "importFromUrl": "Import from URL",
           "searchImage": "Search image",
+          "viewLargeImage": "View large image",
           "cropImage": "Crop image",
           "deleteImage": "Delete image"
         },

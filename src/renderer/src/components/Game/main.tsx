@@ -7,6 +7,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { useConfigState, useGameState } from '~/hooks'
 import { cn } from '~/utils'
 import { ScrollArea } from '../ui/scroll-area'
+import { ImageViewerDialog } from './Config/Properties/Media/ImageViewerDialog'
+import { ipcManager } from '~/app/ipc'
+import { toast } from 'sonner'
 import {
   ContextMenu,
   ContextMenuContent,
@@ -180,6 +183,22 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
     pos.x === initialPosition.x && pos.y === initialPosition.y
 
   const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = useState(false)
+  const [isImageViewerOpen, setIsImageViewerOpen] = useState(false)
+  const [imageViewerPath, setImageViewerPath] = useState<string | null>(null)
+
+  async function openLargeBackground(): Promise<void> {
+    try {
+      const currentPath = await ipcManager.invoke('game:get-media-path', gameId, 'background')
+      if (!currentPath) {
+        toast.error(t('detail.properties.media.notifications.imageNotFound'))
+        return
+      }
+      setImageViewerPath(currentPath)
+      setIsImageViewerOpen(true)
+    } catch (error) {
+      toast.error(t('detail.properties.media.notifications.getImageError', { error }))
+    }
+  }
 
   return (
     <div className={cn('w-full h-full relative overflow-hidden shrink-0')}>
@@ -350,6 +369,13 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
             <ContextMenuItem onSelect={() => setIsPropertiesDialogOpen(true)}>
               修改媒体属性
             </ContextMenuItem>
+            <ContextMenuItem
+              onSelect={() => {
+                void openLargeBackground()
+              }}
+            >
+              {t('detail.properties.media.actions.viewLargeImage')}
+            </ContextMenuItem>
           </ContextMenuContent>
         </ContextMenu>
       </ScrollArea>
@@ -360,6 +386,13 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
           isOpen={isPropertiesDialogOpen}
           setIsOpen={setIsPropertiesDialogOpen}
           defaultTab={'media'}
+        />
+      )}
+      {isImageViewerOpen && (
+        <ImageViewerDialog
+          isOpen={isImageViewerOpen}
+          imagePath={imageViewerPath}
+          onClose={() => setIsImageViewerOpen(false)}
         />
       )}
     </div>

@@ -434,6 +434,7 @@
           "importFromClipboard": "从剪贴板导入",
           "importFromUrl": "从链接导入",
           "searchImage": "搜索图片",
+          "viewLargeImage": "查看大图",
           "cropImage": "裁剪图片",
           "deleteImage": "删除图片"
         },
