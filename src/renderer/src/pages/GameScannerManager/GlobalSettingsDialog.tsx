@@ -45,10 +45,14 @@ export const GlobalSettingsDialog: React.FC<GlobalSettingsDialogProps> = ({ isOp
       toast.error(t('notifications.intervalTooShort'))
       return
     }
+    const normalize = (p: string): string => p.trim().replace(/\\/g, '/').replace(/\/+$/, '')
+    const dedupedIgnoreList = Array.from(
+      new Set((globalSettings.ignoreList || []).map(normalize).filter((v) => v.length > 0))
+    ).sort()
     const updatedConfig = {
       ...scannerConfig,
       interval: globalSettings.interval,
-      ignoreList: globalSettings.ignoreList
+      ignoreList: dedupedIgnoreList
     }
     await setScannerConfig(updatedConfig)
     await ipcManager.invoke('scanner:start-periodic-scan')
