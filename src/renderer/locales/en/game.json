@@ -371,6 +371,7 @@
     "deleteAlert": {
       "title": "Are you sure you want to delete {{gameName}}?",
       "description": "All data for this game will be permanently deleted. This action cannot be undone.",
+      "addToIgnore": "Add this game folder to the scanner ignore list",
       "notifications": {
         "deleting": "Deleting game {{gameName}}…",
         "deleted": "Game {{gameName}} has been deleted",
@@ -572,6 +573,7 @@
       "description": "All data for selected games will be permanently deleted. This action cannot be undone.",
       "gamesList": "Games to be deleted:",
       "unnamedGame": "Unnamed Game",
+      "addToIgnore": "Add these game folders to the scanner ignore list",
       "notifications": {
         "deleting": "Deleting {{count}} games…",
         "success": "{{count}} games deleted",

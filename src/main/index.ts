@@ -256,7 +256,11 @@ app.whenReady().then(async () => {
 
   baseDBManager.initAllDatabases()
 
-  AuthManager.init()
+  try {
+    AuthManager.init()
+  } catch (error) {
+    log.error('[Account] Failed to initialize AuthManager:', error)
+  }
 
   try {
     AuthManager.updateUserInfo()

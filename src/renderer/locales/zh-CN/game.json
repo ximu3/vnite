@@ -371,6 +371,7 @@
     "deleteAlert": {
       "title": "确定要删除游戏 {{gameName}} 吗？",
       "description": "删除后，游戏的所有数据将被永久删除。此操作不可逆。",
+      "addToIgnore": "将此游戏文件夹加入扫描器忽略列表",
       "notifications": {
         "deleting": "正在删除游戏 {{gameName}}…",
         "deleted": "游戏 {{gameName}} 已删除",
@@ -572,6 +573,7 @@
       "description": "删除后，所选游戏的所有数据将被永久删除。此操作不可逆。",
       "gamesList": "将要删除的游戏：",
       "unnamedGame": "未命名游戏",
+      "addToIgnore": "将这些游戏文件夹加入扫描器忽略列表",
       "notifications": {
         "deleting": "正在删除{{count}} 个游戏…",
         "success": "{{count}} 个游戏已删除",

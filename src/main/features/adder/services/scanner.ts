@@ -1,4 +1,5 @@
 import * as fse from 'fs-extra'
+import * as path from 'path'
 import { EventEmitter } from 'events'
 import { ConfigDBManager, GameDBManager } from '~/core/database'
 import { getGameFolders } from '~/utils'
@@ -453,15 +454,58 @@ export class GameScanner extends EventEmitter {
       return folders
     }
 
-    // Normalize ignore patterns
-    ignoreList = ignoreList.map((pattern) => pattern.trim()).filter((pattern) => pattern.length > 0)
+    // Normalize and de-duplicate ignore patterns
+    const normalizedIgnore = Array.from(
+      new Set(
+        ignoreList
+          .map((p) => p.trim())
+          .filter((p) => p.length > 0)
+          // Normalize path separators to forward slashes for consistent matching
+          .map((p) => p.replace(/\\/g, '/'))
+      )
+    ).sort()
 
-    // Convert ignore list to regex patterns
-    const regexList = ignoreList.map((pattern) => new RegExp(pattern))
+    // Build regex list (best-effort: invalid patterns are skipped)
+    const regexList: RegExp[] = []
+    for (const pattern of normalizedIgnore) {
+      try {
+        regexList.push(new RegExp(pattern, 'i'))
+      } catch (_e) {
+        // Skip invalid regex, it will still be handled by literal rules below if applicable
+      }
+    }
+
+    // Split into path-based and name-based literal rules
+    const pathIgnores = normalizedIgnore
+      .filter((p) => p.includes('/'))
+      .map((p) => p.replace(/\/+$/, '').toLowerCase())
+    const nameIgnores = normalizedIgnore.filter((p) => !p.includes('/')).map((p) => p.toLowerCase())
 
     // Filter out folders matching ignore patterns
     return folders.filter((folder) => {
-      return !regexList.some((regex) => regex.test(folder.name))
+      const folderNameLower = folder.name.toLowerCase()
+      const normalizedDirPath = path
+        .normalize(folder.dirPath)
+        .replace(/\\/g, '/')
+        .replace(/\/+$/, '')
+      const normalizedDirPathLower = normalizedDirPath.toLowerCase()
+
+      // 0) Regex-based ignore: match against name or full path
+      for (const rx of regexList) {
+        if (rx.test(folder.name) || rx.test(normalizedDirPath)) return false
+      }
+
+      // 1) Name-based ignore: exact match on folder name (case-insensitive)
+      if (nameIgnores.includes(folderNameLower)) return false
+
+      // 2) Path-based ignore: ignore the directory itself and all its descendants
+      for (const ig of pathIgnores) {
+        if (normalizedDirPathLower === ig || normalizedDirPathLower.startsWith(ig + '/')) {
+          return false
+        }
+      }
+
+      return true
     })
   }
 
