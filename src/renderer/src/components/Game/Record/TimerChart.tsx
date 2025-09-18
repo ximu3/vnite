@@ -1,7 +1,9 @@
+import { useRouter } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from 'recharts'
 import type { ValueType } from 'recharts/types/component/DefaultTooltipContent'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '~/components/ui/chart'
+import { parseLocalDate } from '~/stores/game/recordUtils'
 import { cn } from '~/utils'
 
 interface DailyPlayTime {
@@ -26,8 +28,23 @@ export const TimerChart = ({
   filter0?: boolean
 }): React.JSX.Element => {
   const { t } = useTranslation('game')
+  const router = useRouter()
   const formatGameTime = (time: number): string => {
     return t('utils:format.gameTime', { time })
+  }
+
+  const handleBarClick = (entry: (typeof chartData)[number]): void => {
+    const dateUTC = parseLocalDate(entry.date) // YYYY-MM-DD
+    const isoDate = dateUTC.toISOString()
+
+    router.navigate({
+      to: '/record',
+      search: {
+        tab: 'weekly',
+        date: isoDate,
+        year: dateUTC.getFullYear().toString()
+      }
+    })
   }
 
   // Converting data into the format Recharts needs
@@ -106,6 +123,8 @@ export const TimerChart = ({
             <Cell
               key={`${entry.date}-${entry.group}`}
               fill={entry.group === 0 ? 'var(--primary)' : 'var(--secondary)'}
+              onClick={() => handleBarClick(entry)}
+              cursor="pointer"
             />
           ))}
         </Bar>

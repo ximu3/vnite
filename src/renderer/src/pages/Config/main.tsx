@@ -1,8 +1,8 @@
+import { useRouter, useSearch } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import { Button } from '~/components/ui/button'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
-import { useTranslation } from 'react-i18next'
-import { useRouter } from '@tanstack/react-router'
 import { cn } from '~/utils'
 import { About } from './About'
 import { Advanced } from './Advanced'
@@ -18,9 +18,18 @@ import { Theme } from './Theme'
 export function Config({ className }: { className?: string }): React.JSX.Element {
   const { t } = useTranslation('config')
   const router = useRouter()
+  const { tab } = useSearch({ from: '/config' })
 
   const handleGoBack = (): void => {
     router.history.back()
+  }
+
+  const handleTabChange = (value: string): void => {
+    router.navigate({
+      to: '/config',
+      search: { tab: value },
+      replace: true
+    })
   }
 
   return (
@@ -40,7 +49,7 @@ export function Config({ className }: { className?: string }): React.JSX.Element
             </Button>
           </div>
 
-          <Tabs defaultValue="general" className="w-full">
+          <Tabs value={tab} onValueChange={handleTabChange} className="w-full">
             <TabsList className="mb-4">
               <TabsTrigger value="general">{t('general.title')}</TabsTrigger>
               <TabsTrigger value="appearances">{t('appearances.title')}</TabsTrigger>

@@ -1,14 +1,14 @@
+import { useRouter, useSearch } from '@tanstack/react-router'
+import { CalendarIcon, ChevronLeft, ChevronRight, Clock, Trophy } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { Button, buttonVariants } from '~/components/ui/button'
 import { Calendar } from '~/components/ui/calendar'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '~/components/ui/chart'
 import { Separator } from '~/components/ui/separator'
-import { CalendarIcon, ChevronLeft, ChevronRight, Clock, Trophy } from 'lucide-react'
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 
-import { getMonthlyPlayData } from '~/stores/game/recordUtils'
+import { getMonthlyPlayData, parseLocalDate } from '~/stores/game/recordUtils'
 import { cn } from '~/utils'
 import { GameRankingItem } from './GameRankingItem'
 import { StatCard } from './StatCard'
@@ -16,7 +16,49 @@ import { StatCard } from './StatCard'
 export function MonthlyReport(): React.JSX.Element {
   const { t } = useTranslation('record')
 
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+  const router = useRouter()
+  const search = useSearch({ from: '/record' })
+  const selectedDate = new Date(search.date)
+
+  const setSelectedDate = (newDate: Date): void => {
+    router.navigate({
+      to: '/record',
+      search: {
+        tab: 'monthly',
+        date: newDate.toISOString(),
+        year: newDate.getFullYear().toString()
+      }
+    })
+  }
+  const handleBarClick = (data: any): void => {
+    type DailyChartItem = (typeof dailyChartData)[number]
+    const { date } = data.payload as DailyChartItem
+    const dateUTC = parseLocalDate(date) // YYYY-MM-DD
+    const isoDate = dateUTC.toISOString()
+
+    router.navigate({
+      to: '/record',
+      search: {
+        tab: 'weekly',
+        date: isoDate,
+        year: dateUTC.getFullYear().toString()
+      }
+    })
+  }
+  const handleDayClick = (day: Date): void => {
+    const isoDate = day.toISOString()
+
+    router.navigate({
+      to: '/record',
+      search: {
+        tab: 'weekly',
+        date: isoDate,
+        year: day.getFullYear().toString()
+      }
+    })
+  }
+
+  // const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const monthData = getMonthlyPlayData(selectedDate)
 
   const goToPreviousMonth = (): void => {
@@ -52,7 +94,13 @@ export function MonthlyReport(): React.JSX.Element {
 
   const currentMonthName = getLocalizedMonth(selectedDate.getMonth())
 
-  // Preparing data for charts
+  // Data for charts, not weekly but daily
+  const dailyChartData = Object.entries(monthData.dailyPlayTime).map(([date, playTime]) => ({
+    date: date,
+    playTime: playTime / 3600000
+  }))
+
+  // Preparing data for charts (replaced by the above one)
   const weeklyChartData = monthData.weeklyPlayTime
     .map((item) => ({
       week: t('monthly.chart.weekFormat', { week: item.week }),
@@ -194,30 +242,34 @@ export function MonthlyReport(): React.JSX.Element {
           </CardHeader>
           <CardContent className="pt-0">
             <ChartContainer config={chartConfig} className="h-[320px] w-full">
-              <AreaChart data={weeklyChartData}>
+              <BarChart data={dailyChartData}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="week" tickLine={false} axisLine={false} tickMargin={10} />
+                <XAxis
+                  dataKey="date"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={10}
+                  tickFormatter={(value) => value.slice(8)} // Day only
+                />
                 <YAxis tickLine={false} axisLine={false} tickMargin={10} />
                 <ChartTooltip
                   content={(props) => (
                     <ChartTooltipContent
                       {...props}
                       formatter={(value) => formatGameTime((value as number) * 3600000)}
-                      labelFormatter={(week) => `${week}`}
                       hideIndicator={false}
                       color="var(--primary)"
                     />
                   )}
                 />
-                <Area
-                  type="monotone"
+                <Bar
                   dataKey="playTime"
-                  stroke="var(--primary)"
-                  strokeWidth={2}
-                  fillOpacity={0.3}
                   fill="var(--primary)"
+                  onClick={handleBarClick}
+                  cursor="pointer"
+                  radius={[4, 4, 0, 0]}
                 />
-              </AreaChart>
+              </BarChart>
             </ChartContainer>
           </CardContent>
         </Card>
@@ -232,6 +284,7 @@ export function MonthlyReport(): React.JSX.Element {
               selected={selectedDate}
               month={selectedDate} // Controls the displayed month
               onMonthChange={(date) => setSelectedDate(date)}
+              onDayClick={handleDayClick}
               className="p-0 rounded-md select-none"
               classNames={{
                 day: cn(
