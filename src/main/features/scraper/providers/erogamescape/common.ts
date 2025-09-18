@@ -7,6 +7,7 @@ import { ReadableStream } from 'stream/web'
 import { UnArray } from './types'
 import { getchuProvider } from '../getchu'
 import { vndbProvider } from '../vndb'
+import { fanzaProvider } from '../fanza'
 
 const esUrl = 'https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki'
 
@@ -312,9 +313,13 @@ export async function getEsGameMetadata(identifier: ScraperIdentifier): Promise<
     } else {
       platform = 'Windows'
     }
-    // get description from getchu
+    // get description from fanza > getchu
     let description = ''
-    if (getchuProvider.getGameMetadata) {
+    if (fanzaProvider.getGameMetadata) {
+      const fanzaMeta = await fanzaProvider.getGameMetadata({ type: 'name', value: name })
+      description = fanzaMeta.description
+    }
+    if (description === '' && getchuProvider.getGameMetadata) {
       const getchuMeta = await getchuProvider.getGameMetadata({ type: 'name', value: name })
       description = getchuMeta.description
     }
