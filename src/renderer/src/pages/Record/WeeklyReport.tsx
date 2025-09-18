@@ -1,20 +1,34 @@
-import { useState } from 'react'
+import { useRouter, useSearch } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '~/components/ui/chart'
 import { Separator } from '~/components/ui/separator'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 
 import { getWeeklyPlayData, parseLocalDate } from '~/stores/game/recordUtils'
 import { GameRankingItem } from './GameRankingItem'
 
 export function WeeklyReport(): React.JSX.Element {
   const { t } = useTranslation('record')
+  const router = useRouter()
+  const search = useSearch({ from: '/record' })
+  const selectedDate = new Date(search.date)
 
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+  const setSelectedDate = (newDate: Date): void => {
+    router.navigate({
+      to: '/record',
+      search: {
+        tab: 'weekly',
+        date: newDate.toISOString(),
+        year: newDate.getFullYear().toString()
+      }
+    })
+  }
+
+  // const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const weekData = getWeeklyPlayData(selectedDate)
 
   const goToPreviousWeek = (): void => {

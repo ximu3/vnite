@@ -260,7 +260,7 @@ app.whenReady().then(async () => {
   try {
     AuthManager.init()
   } catch (error) {
-    log.error('[Account] AuthManager initialization failed:', error)
+    log.error('[Account] Failed to initialize AuthManager:', error)
   }
 
   try {

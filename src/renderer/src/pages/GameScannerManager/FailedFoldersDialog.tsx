@@ -241,9 +241,17 @@ export const FailedFoldersDialog: React.FC<FailedFoldersDialogProps> = ({ isOpen
                         className="ml-2"
                         onClick={() => {
                           ignoreFailedFolder(folder.scannerId, folder.path)
+                          const normalize = (p: string): string =>
+                            p.trim().replace(/\\/g, '/').replace(/\/+$/, '')
+                          const current = (scannerConfig.ignoreList || [])
+                            .map(normalize)
+                            .filter((p) => p.length > 0)
+                          const next = Array.from(
+                            new Set([...current, normalize(folder.path)])
+                          ).sort()
                           setScannerConfig({
                             ...scannerConfig,
-                            ignoreList: [...(scannerConfig.ignoreList || []), folder.path]
+                            ignoreList: next
                           })
                         }}
                       >
