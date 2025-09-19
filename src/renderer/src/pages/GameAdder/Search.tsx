@@ -16,10 +16,12 @@ import {
 } from '~/components/ui/select'
 import { cn } from '~/utils'
 import { GameList, useGameAdderStore } from './store'
+import { useGameLocalState } from '~/hooks'
 
 export function Search({ className }: { className?: string }): React.JSX.Element {
   const { t } = useTranslation('adder')
   const {
+    dbId,
     dataSource,
     setDataSource,
     name,
@@ -34,6 +36,21 @@ export function Search({ className }: { className?: string }): React.JSX.Element
     setCurrentPage,
     handleClose
   } = useGameAdderStore()
+
+  const PathRowWithDb = ({ gameId }: { gameId: string }): React.JSX.Element | null => {
+    const [dbGamePath] = useGameLocalState(gameId, 'path.gamePath')
+    const [markPath] = useGameLocalState(gameId, 'utils.markPath')
+    if (!gameId) return null
+    const displayPath = dbGamePath || markPath || ''
+    return (
+      <>
+        <div className={cn('whitespace-nowrap select-none')}>{t('gameAdder.search.gamePath')}</div>
+        <div className={cn('text-xs text-muted-foreground break-all select-text')}>
+          {displayPath || '-'}
+        </div>
+      </>
+    )
+  }
 
   const [availableDataSources, setAvailableDataSources] = React.useState<
     { id: string; name: string; capabilities: ScraperCapabilities[] }[]
@@ -161,6 +178,17 @@ export function Search({ className }: { className?: string }): React.JSX.Element
   return (
     <div className={cn('w-[500px] h-auto', className)}>
       <div className={cn('grid grid-cols-[auto_1fr] gap-x-5 gap-y-2 text-sm items-center')}>
+        {dbId ? (
+          <PathRowWithDb gameId={dbId} />
+        ) : (
+          <>
+            <div className={cn('whitespace-nowrap select-none')}>{t('gameAdder.search.gamePath')}</div>
+            <div className={cn('text-xs text-muted-foreground break-all select-text')}>
+              {gamePath || dirPath || '-'}
+            </div>
+          </>
+        )}
+
         {/* Data source selection */}
         <div className={cn('whitespace-nowrap select-none')}>
           {t('gameAdder.search.dataSource')}
