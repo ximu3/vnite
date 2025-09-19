@@ -3,7 +3,8 @@ import {
   createRootRoute,
   createRoute,
   createRouter,
-  redirect
+  redirect,
+  SearchSchemaInput
 } from '@tanstack/react-router'
 import { Game } from '~/components/Game'
 import { Showcase } from '~/components/Showcase'
@@ -81,7 +82,7 @@ const recordRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/record',
   component: Record,
-  validateSearch: (search) => {
+  validateSearch: (search: { tab?: string; date?: string; year?: string } & SearchSchemaInput) => {
     const tab = typeof search.tab === 'string' ? search.tab : 'overview'
     const date =
       typeof search.date === 'string' && !isNaN(Date.parse(search.date))
@@ -100,7 +101,7 @@ const configRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/config',
   component: Config,
-  validateSearch: (search: Record<string, unknown>) => {
+  validateSearch: (search: Record<string, unknown> & SearchSchemaInput) => {
     return {
       tab: typeof search.tab === 'string' ? search.tab : 'general'
     }
