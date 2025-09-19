@@ -93,6 +93,7 @@ export function Setup(): React.JSX.Element {
   useHotkeys(
     recordHotkey,
     () => {
+      // @ts-ignore - temporarily disable type check for `/record` route since it handles missing `search` parameter internally
       router.navigate({ to: '/record' })
     },
     {
@@ -111,6 +112,7 @@ export function Setup(): React.JSX.Element {
   useHotkeys(
     configHotkey,
     () => {
+      // @ts-ignore - temporarily disable type check for `/config` route since it handles missing `search` parameter internally
       router.navigate({ to: '/config' })
     },
     {
