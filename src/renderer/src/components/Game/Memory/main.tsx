@@ -1,7 +1,7 @@
 import { cn } from '~/utils'
 import { Button } from '~/components/ui/button'
 import { toast } from 'sonner'
-import { useGameState } from '~/hooks'
+import { useGameLocalState, useGameState } from '~/hooks'
 import { MemoryCard } from './MemoryCard'
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -15,9 +15,18 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
     true
   )
   const [sortedMemoryIds, setSortedMemoryIds] = useState<string[]>([])
+  const [screenshotPath] = useGameLocalState(gameId, 'path.screenshotPath')
 
   async function addMemory(): Promise<void> {
     await ipcManager.invoke('game:add-memory', gameId)
+  }
+
+  async function openScreenshotDir(): Promise<void> {
+    if (!screenshotPath) {
+      toast.error(t('detail.memory.notifications.screenshotPathNotSet'))
+      return
+    }
+    await ipcManager.invoke('system:open-path-in-explorer', screenshotPath)
   }
 
   useEffect(() => {
@@ -63,9 +72,12 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
 
   return (
     <div className={cn('w-full h-full min-h-[22vh] flex flex-col pt-2 gap-5')}>
-      <div>
+      <div className={cn('flex items-center gap-3')}>
         <Button variant="default" size={'icon'} onClick={addMemory}>
           <span className={cn('icon-[mdi--add] w-6 h-6')}></span>
+        </Button>
+        <Button variant="secondary" onClick={openScreenshotDir}>
+          {t('detail.memory.actions.openScreenshotDir')}
         </Button>
       </div>
       <div className="grid w-full xl:grid-cols-3 lg:grid-cols-2 gap-x-5 gap-y-5">

@@ -11,6 +11,13 @@ import { StartGame } from './StartGame'
 import { StopGame } from './StopGame'
 import { useGameDetailStore } from './store'
 import { useTranslation } from 'react-i18next'
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger
+} from '~/components/ui/context-menu'
+import { GamePropertiesDialog } from './Config/Properties'
 
 export function HeaderCompact({
   gameId,
@@ -40,22 +47,33 @@ export function HeaderCompact({
     btoa(String.fromCharCode(...new TextEncoder().encode(str)))
   const obfuscatedName = stringToBase64(name).slice(0, name.length)
 
+  const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = React.useState(false)
+
   return (
     <>
       <div className={cn('flex-col flex gap-5 px-7 py-5 pl-6 pt-6 relative mb-5', className)}>
         <div className="flex flex-row gap-1 h-[200px] justify-between items-start">
           {/* Game cover image */}
           {showCover && (
-            <div className="relative mr-3 pb-1 h-[200px] shrink-0">
-              <GameImage
-                gameId={gameId}
-                key={`${gameId}-poster`}
-                type="cover"
-                blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
-                className={cn('w-auto h-full object-cover rounded-lg shadow-md')}
-                fallback={<div className="h-[170px]" />}
-              />
-            </div>
+            <ContextMenu>
+              <ContextMenuTrigger asChild>
+                <div className="relative mr-3 pb-1 h-[200px] shrink-0">
+                  <GameImage
+                    gameId={gameId}
+                    key={`${gameId}-poster`}
+                    type="cover"
+                    blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
+                    className={cn('w-auto h-full object-cover rounded-lg shadow-md')}
+                    fallback={<div className="h-[170px]" />}
+                  />
+                </div>
+              </ContextMenuTrigger>
+              <ContextMenuContent className={cn('w-40')}>
+                <ContextMenuItem onSelect={() => setIsPropertiesDialogOpen(true)}>
+                  {t('detail.contextMenu.editMediaProperties')}
+                </ContextMenuItem>
+              </ContextMenuContent>
+            </ContextMenu>
           )}
 
           {/* Main Content */}
@@ -145,6 +163,14 @@ export function HeaderCompact({
       )}
       {isScoreEditorDialogOpen && (
         <ScoreEditorDialog gameId={gameId} setIsOpen={setIsScoreEditorDialogOpen} />
+      )}
+      {isPropertiesDialogOpen && (
+        <GamePropertiesDialog
+          gameId={gameId}
+          isOpen={isPropertiesDialogOpen}
+          setIsOpen={setIsPropertiesDialogOpen}
+          defaultTab={'media'}
+        />
       )}
     </>
   )

@@ -136,6 +136,9 @@
       "start": "开始游戏",
       "stop": "停止游戏"
     },
+    "contextMenu": {
+      "editMediaProperties": "修改媒体属性"
+    },
     "save": {
       "table": {
         "date": "日期",
@@ -286,15 +289,16 @@
       }
     },
     "memory": {
-      "actions": {
-        "add": "添加",
-        "addCover": "添加封面",
-        "changeCover": "更换封面",
-        "adjustCover": "调整封面",
-        "addText": "添加文字",
-        "editText": "修改文字",
-        "delete": "删除"
-      },
+        "actions": {
+          "add": "添加",
+          "addCover": "添加封面",
+          "changeCover": "更换封面",
+          "adjustCover": "调整封面",
+          "addText": "添加文字",
+          "editText": "修改文字",
+          "delete": "删除",
+          "openScreenshotDir": "打开截图目录"
+        },
       "setAs": {
         "title": "设置为",
         "cover": "游戏封面",
@@ -307,22 +311,23 @@
         "toClipboard": "导出至剪切板",
         "saveAs": "另存为"
       },
-      "notifications": {
-        "deleting": "正在删除…",
-        "deleteSuccess": "删除成功",
-        "deleteError": "删除失败: {{error}}",
-        "selectFileError": "选择文件失败: {{error}}",
-        "imageNotFound": "未找到当前图片",
-        "getImageError": "获取当前图片失败: {{error}}",
-        "imageCopied": "图片已成功复制到剪切板",
-        "imageCopyError": "复制图片到剪切板失败: {{error}}",
-        "markdownCopied": "Markdown 已复制到剪贴板",
-        "markdownCopyError": "复制到剪贴板失败: {{error}}",
-        "setCoverSuccess": "已成功设置为游戏封面",
-        "setCoverError": "设置为游戏封面失败: {{error}}",
-        "setBackgroundSuccess": "已成功设置为游戏背景",
-        "setBackgroundError": "设置为游戏背景失败: {{error}}"
-      },
+        "notifications": {
+          "deleting": "正在删除…",
+          "deleteSuccess": "删除成功",
+          "deleteError": "删除失败: {{error}}",
+          "selectFileError": "选择文件失败: {{error}}",
+          "imageNotFound": "未找到当前图片",
+          "getImageError": "获取当前图片失败: {{error}}",
+          "imageCopied": "图片已成功复制到剪切板",
+          "imageCopyError": "复制图片到剪切板失败: {{error}}",
+          "markdownCopied": "Markdown 已复制到剪贴板",
+          "markdownCopyError": "复制到剪贴板失败: {{error}}",
+          "setCoverSuccess": "已成功设置为游戏封面",
+          "setCoverError": "设置为游戏封面失败: {{error}}",
+          "setBackgroundSuccess": "已成功设置为游戏背景",
+          "setBackgroundError": "设置为游戏背景失败: {{error}}",
+          "screenshotPathNotSet": "未设置截图路径"
+        },
       "dialog": {
         "markdownHint": "支持 Markdown 语法"
       }
@@ -403,6 +408,7 @@
         "title": "游戏与存档",
         "gamePath": "游戏路径",
         "savePath": "存档路径",
+        "screenshotPath": "截图路径",
         "addFolder": "添加文件夹",
         "addFile": "添加文件",
         "maxBackups": "最大存档备份数量",
@@ -432,6 +438,7 @@
           "importFromClipboard": "从剪贴板导入",
           "importFromUrl": "从链接导入",
           "searchImage": "搜索图片",
+          "viewLargeImage": "查看大图",
           "cropImage": "裁剪图片",
           "deleteImage": "删除图片"
         },

@@ -27,6 +27,7 @@ import { useTranslation } from 'react-i18next'
 import Zoom from 'react-medium-image-zoom'
 import { ipcManager } from '~/app/ipc'
 import { useLightStore } from '~/pages/Light'
+import { ImageViewerDialog } from '../Config/Properties/Media/ImageViewerDialog'
 
 export function MemoryCard({
   gameId,
@@ -62,10 +63,26 @@ export function MemoryCard({
   const [gameName] = useGameState(gameId, 'metadata.name')
   const memoryRef = useRef<HTMLDivElement>(null)
   const refreshLight = useLightStore((state) => state.refresh)
+  const [isImageViewerOpen, setIsImageViewerOpen] = useState(false)
+  const [imageViewerPath, setImageViewerPath] = useState<string | null>(null)
 
   function handleCropComplete(filePath: string): void {
     ipcManager.invoke('game:update-memory-cover', gameId, memoryId, filePath)
     setCropDialogState({ isOpen: false, type: '', imagePath: null, isResizing: false })
+  }
+
+  async function handleViewLargeImage(): Promise<void> {
+    try {
+      const currentPath = await ipcManager.invoke('game:get-memory-cover-path', gameId, memoryId)
+      if (!currentPath) {
+        toast.error(t('detail.memory.notifications.imageNotFound'))
+        return
+      }
+      setImageViewerPath(currentPath)
+      setIsImageViewerOpen(true)
+    } catch (error) {
+      toast.error(t('detail.memory.notifications.getImageError', { error }))
+    }
   }
 
   async function handleCoverSelect(): Promise<void> {
@@ -294,6 +311,15 @@ export function MemoryCard({
             {t('detail.memory.actions.adjustCover')}
           </ContextMenuItem>
         )}
+        {isCoverExist && (
+          <ContextMenuItem
+            onSelect={() => {
+              void handleViewLargeImage()
+            }}
+          >
+            {t('detail.properties.media.actions.viewLargeImage')}
+          </ContextMenuItem>
+        )}
 
         {/* Note */}
         <ContextMenuItem
@@ -420,6 +446,13 @@ export function MemoryCard({
         setNote={setNote}
         saveNote={saveNote}
       ></NoteDialog>
+      {isImageViewerOpen && (
+        <ImageViewerDialog
+          isOpen={isImageViewerOpen}
+          imagePath={imageViewerPath}
+          onClose={() => setIsImageViewerOpen(false)}
+        />
+      )}
     </ContextMenu>
   )
 }

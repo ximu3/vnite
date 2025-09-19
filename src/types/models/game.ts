@@ -93,6 +93,7 @@ export interface gameLocalDoc {
   path: {
     gamePath: string
     savePaths: string[]
+    screenshotPath?: string
   }
   launcher: {
     mode: 'file' | 'url' | 'script'
@@ -126,7 +127,8 @@ export const DEFAULT_GAME_LOCAL_VALUES: Readonly<gameLocalDoc> = {
   _id: '',
   path: {
     gamePath: '',
-    savePaths: []
+    savePaths: [],
+    screenshotPath: ''
   },
   launcher: {
     mode: 'file',
