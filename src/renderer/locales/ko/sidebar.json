@@ -14,6 +14,10 @@
     "addGame": "게임 추가",
     "settings": "설정",
     "viewLogs": "로그 보기",
+    "autoMonitor": {
+      "on": "자동 모니터링: 켜짐 (성능에 영향을 줄 수 있음)",
+      "off": "자동 모니터링: 꺼짐"
+    },
     "nsfwLevel": {
       "off": "NSFW: 모두 보기",
       "blurImage": "NSFW: 이미지 숨기기",

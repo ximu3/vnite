@@ -4,6 +4,7 @@ import { setupDatabaseIPC } from '~/features/database'
 import { setupGameIPC } from '~/features/game/ipc'
 import { setupImporterIPC } from '~/features/importer'
 import { setupLauncherIPC } from '~/features/launcher'
+import { setupMonitorIPC } from '~/features/monitor/ipc'
 import { setupScraperIPC } from '~/features/scraper'
 import { setupSystemIPC } from '~/features/system'
 import { setupThemeIPC } from '~/features/theme'
@@ -19,6 +20,7 @@ export function setupIPC(): void {
   setupGameIPC()
   setupImporterIPC()
   setupLauncherIPC()
+  setupMonitorIPC()
   setupScraperIPC()
   setupSystemIPC()
   setupThemeIPC()

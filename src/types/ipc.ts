@@ -66,6 +66,11 @@ type MainIpcEvents =
   | {
       // Handler events (request-response communication from renderer to main)
 
+      // Monitor auto start toggle
+      'monitor:set-auto-start': (enabled: boolean) => void
+      'monitor:get-auto-start': () => boolean
+      'monitor:get-active-games': () => string[]
+
       'system:select-path-dialog': (
         properties: NonNullable<Electron.OpenDialogOptions['properties']>,
         extensions?: string[],
@@ -356,6 +361,7 @@ type RendererIpcEvents = {
 
   'game:exiting': [gameId: string]
   'game:exited': [gameId: string]
+  'game:started': [{ gameId: string }]
   'game:start-from-url': [gameId: string]
 
   'importer:import-steam-games-progress': [
