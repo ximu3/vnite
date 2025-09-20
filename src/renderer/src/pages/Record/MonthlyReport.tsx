@@ -176,6 +176,34 @@ export function MonthlyReport(): React.JSX.Element {
     return t('utils:format.gameTime', { time })
   }
 
+  // Calendar heatmap
+  const HEAT_LEVELS = 8
+  const MIN_RATIO = 0.2
+  const MAX_RATIO = 0.9
+  const maxPlayTime = Math.max(1, ...Object.values(monthData.dailyPlayTime))
+
+  const heatLevelsByDate: Record<string, number> = {}
+  for (const [dateStr, playTime] of Object.entries(monthData.dailyPlayTime)) {
+    if (!playTime) continue
+    const ratio = playTime / maxPlayTime
+    const level = Math.min(HEAT_LEVELS, Math.ceil(ratio * HEAT_LEVELS))
+    heatLevelsByDate[dateStr] = level
+  }
+
+  const heatModifiers: Record<string, (date: Date) => boolean> = {}
+  const heatModifiersStyles: Record<string, React.CSSProperties> = {}
+  for (let level = 1; level <= HEAT_LEVELS; level++) {
+    const ratio = MIN_RATIO + ((MAX_RATIO - MIN_RATIO) * (level - 1)) / (HEAT_LEVELS - 1)
+
+    heatModifiers[`heat${level}`] = (date: Date) => {
+      const dateStr = t('utils:format.niceISO', { date })
+      return heatLevelsByDate[dateStr] === level
+    }
+    heatModifiersStyles[`heat${level}`] = {
+      backgroundColor: `color-mix(in srgb, var(--primary) ${ratio * 100}%, transparent)`
+    }
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -281,7 +309,6 @@ export function MonthlyReport(): React.JSX.Element {
           <CardContent>
             <Calendar
               mode="single"
-              selected={selectedDate}
               month={selectedDate} // Controls the displayed month
               onMonthChange={(date) => setSelectedDate(date)}
               onDayClick={handleDayClick}
@@ -297,21 +324,15 @@ export function MonthlyReport(): React.JSX.Element {
                 played: (date) => {
                   const dateStr = t('utils:format.niceISO', { date })
                   return !!monthData.dailyPlayTime[dateStr] && monthData.dailyPlayTime[dateStr] > 0
-                }
+                },
+                ...heatModifiers
               }}
               modifiersStyles={{
                 today: {
                   backgroundColor: 'var(--card)',
                   color: 'inherit'
                 },
-                selected: {
-                  backgroundColor: 'var(--card)',
-                  color: 'inherit'
-                },
-                played: {
-                  backgroundColor: 'color-mix(in srgb, var(--primary) 80%, transparent)',
-                  color: 'var(--primary-foreground)'
-                }
+                ...heatModifiersStyles
               }}
             />
           </CardContent>
