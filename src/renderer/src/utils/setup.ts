@@ -34,8 +34,15 @@ export function setupCloudSyncListener(): () => void {
   return ipcManager.on('db:sync-status', handleSyncStatus)
 }
 
-export function setupGameExitListeners(): () => void {
+export function setupGameStatusListeners(): () => void {
   const { setRunningGames } = useRunningGames.getState()
+
+  const startedListener = ipcManager.on('game:started', (_, { gameId }: { gameId: string }) => {
+    const { runningGames } = useRunningGames.getState()
+    if (!runningGames.includes(gameId)) {
+      setRunningGames([...runningGames, gameId])
+    }
+  })
   const { refreshGameList } = useLibrarybarStore.getState()
 
   // Game is exiting listener
@@ -65,6 +72,7 @@ export function setupGameExitListeners(): () => void {
   })
 
   return () => {
+    startedListener()
     exitingListener()
     exitedListener()
   }
@@ -133,12 +141,25 @@ export async function setup(router: any): Promise<() => void> {
   const cleanupFunctions = [
     setupGameUrlListener(router),
     setupCloudSyncListener(),
-    setupGameExitListeners(),
+    setupGameStatusListeners(),
     await setupDBSync(),
     setupUpdateListener(),
     setupFullSyncListener(),
     setupUserInfoListener()
   ]
+
+  // Seed running games from main process in case monitoring started before listeners attached
+  try {
+    const { setRunningGames } = useRunningGames.getState()
+    const activeGameIds = await ipcManager.invoke('monitor:get-active-games')
+    if (Array.isArray(activeGameIds) && activeGameIds.length > 0) {
+      const current = useRunningGames.getState().runningGames
+      const merged = Array.from(new Set([...current, ...activeGameIds]))
+      setRunningGames(merged)
+    }
+  } catch (err) {
+    console.error('[Renderer] Failed to seed running games:', err)
+  }
 
   return () => {
     cleanupFunctions.forEach((cleanup) => {

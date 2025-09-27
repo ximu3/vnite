@@ -18,7 +18,11 @@
     "lightMode": "ライトモード",
     "cloudSyncDisabled": "クラウド同期が無効",
     "addGame": "ゲームを追加",
-    "settings": "設定"
+    "settings": "設定",
+    "autoMonitor": {
+      "on": "自動モニター: オン (パフォーマンスに影響する可能性があります)",
+      "off": "自動モニター: オフ"
+    }
   },
   "adder": {
     "addGame": "ゲームを追加",

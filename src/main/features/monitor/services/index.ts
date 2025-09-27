@@ -1,3 +1,4 @@
+import { ipcManager } from '~/core/ipc'
 import { GameMonitor } from './monitor'
 import { GameDBManager } from '~/core/database'
 import log from 'electron-log/main.js'
@@ -27,6 +28,7 @@ export async function startMonitor(gameId: string): Promise<void> {
     })
     await monitor.init()
     monitor.start()
+    ipcManager.send('game:started', { gameId })
   } catch (error) {
     log.error(`[Monitor] Failed to start monitor ${gameId}`, error)
   }
