@@ -53,9 +53,6 @@ export interface configDocs {
       showAllGamesInGroup: boolean
       showCollapseButton: boolean
       playingStatusOrder: string[]
-      playStatusAccordionOpen: string[]
-      allGamesAccordionOpen: boolean
-      recentGamesAccordionOpen: boolean
     }
     gameHeader: {
       showOriginalName: boolean
@@ -273,10 +270,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       showRecentGames: true,
       showAllGamesInGroup: true,
       showCollapseButton: true,
-      playingStatusOrder: ['unplayed', 'playing', 'finished', 'multiple', 'shelved'],
-      playStatusAccordionOpen: ['unplayed', 'playing', 'finished', 'multiple', 'shelved'],
-      allGamesAccordionOpen: true,
-      recentGamesAccordionOpen: true
+      playingStatusOrder: ['unplayed', 'playing', 'finished', 'multiple', 'shelved']
     },
     gameHeader: {
       showOriginalName: false

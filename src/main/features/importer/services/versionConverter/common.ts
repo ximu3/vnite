@@ -3,11 +3,10 @@ import { app } from 'electron'
 import * as fse from 'fs-extra'
 import * as path from 'path'
 import { v4 as uuidv4 } from 'uuid'
+import { ConfigDBManager, GameDBManager } from '~/core/database'
 import { stopSync } from '~/features/database'
-import { ConfigDBManager } from '~/core/database'
-import { GameDBManager } from '~/core/database'
-import { zipFolder, unzipFile } from '~/utils'
 import { getAppTempPath } from '~/features/system'
+import { unzipFile, zipFolder } from '~/utils'
 
 // v2 Database Type Definition
 interface V2GameMetadata {
@@ -579,10 +578,7 @@ async function convertConfig(basePath: string): Promise<void> {
         showRecentGames: v2Config.appearances.gameList.showRecentGamesInGameList,
         showAllGamesInGroup: true,
         showCollapseButton: true,
-        playingStatusOrder: ['unplayed', 'playing', 'finished', 'multiple', 'shelved'],
-        playStatusAccordionOpen: ['unplayed', 'playing', 'finished', 'multiple', 'shelved'],
-        allGamesAccordionOpen: true,
-        recentGamesAccordionOpen: true
+        playingStatusOrder: ['unplayed', 'playing', 'finished', 'multiple', 'shelved']
       },
       gameHeader: {
         showOriginalName: v2Config.appearances.gameHeader.showOriginalNameInGameHeader
