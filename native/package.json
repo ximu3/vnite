@@ -27,8 +27,7 @@
     "build:debug": "napi build --platform -o dist",
     "format:rs": "cargo fmt",
     "version": "napi version",
-    "test": "tsx test.ts",
-    "prepare": "napi build --platform --release -o dist"
+    "test": "tsx test.ts"
   },
   "devDependencies": {
     "@emnapi/core": "^1.5.0",
