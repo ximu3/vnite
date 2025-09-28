@@ -294,7 +294,9 @@ export function getAllValuesInKey<Path extends Paths<gameDoc, { bracketNotation:
       }
     }
 
-    return Array.from(values).filter((item) => item != '')
+    return Array.from(values)
+      .filter((item) => item != '')
+      .sort((a, b) => a.localeCompare(b))
   } catch (error) {
     console.error('Fatal error in getAllValuesInKey:', error)
     return []
