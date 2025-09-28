@@ -7,6 +7,7 @@
       "tooltip": "支援透過遊戲名、開發者、發行日期等中繼資料進行搜尋"
     },
     "gameListSettings": "遊戲列表設定",
+    "collapseAllGroups": "收起全部分組",
     "groupBy": "分組依據",
     "groups": {
       "none": "無分組",

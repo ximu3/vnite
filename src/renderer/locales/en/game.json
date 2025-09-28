@@ -7,6 +7,7 @@
       "tooltip": "Supports searching by game name, developer, release date and other metadata"
     },
     "gameListSettings": "Game List Settings",
+    "collapseAllGroups": "Collapse All Groups",
     "groupBy": "Group by",
     "groups": {
       "none": "No Grouping",

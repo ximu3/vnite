@@ -7,6 +7,7 @@
       "tooltip": "支持通过游戏名、开发者、发行日期等元数据进行搜索"
     },
     "gameListSettings": "游戏列表设置",
+    "collapseAllGroups": "折叠所有分组",
     "groupBy": "分组依据",
     "groups": {
       "none": "无分组",

@@ -14,6 +14,7 @@ import { Separator } from '~/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 import { useConfigState } from '~/hooks'
 import { cn } from '~/utils'
+import { useGameListStore } from './store'
 
 export function SortMenu({
   isSortMenuOpen,
@@ -28,6 +29,7 @@ export function SortMenu({
   const [selectedGroup, setSelectedGroup] = useConfigState('game.gameList.selectedGroup')
   const [by, setBy] = useConfigState('game.gameList.sort.by')
   const [order, setOrder] = useConfigState('game.gameList.sort.order')
+  const setOpenValues = useGameListStore((s) => s.setOpenValues)
 
   const toggleOrder = (): void => {
     setOrder(order === 'asc' ? 'desc' : 'asc')
@@ -116,6 +118,20 @@ export function SortMenu({
                 </SelectItem>
               </SelectContent>
             </Select>
+            {/* Quickly collapse Button */}
+            <Tooltip>
+              <TooltipTrigger>
+                <Button
+                  variant={'thirdary'}
+                  size={'icon'}
+                  className={cn('h-[26px] w-[26px] ml-1')}
+                  onClick={() => setOpenValues(selectedGroup, [])}
+                >
+                  <span className={cn('icon-[mdi--collapse-all-outline] w-4 h-4')}></span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">{t('librarybar.collapseAllGroups')}</TooltipContent>
+            </Tooltip>
           </div>
 
           {/* Play Status Order */}
