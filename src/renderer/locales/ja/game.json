@@ -6,6 +6,7 @@
       "placeholder": "検索",
       "tooltip": "ゲーム名、開発者、リリース日などのメタデータで検索できます"
     },
+    "gameListSettings": "ゲームリスト設定",
     "groupBy": "グループ分け",
     "groups": {
       "none": "グループなし",
