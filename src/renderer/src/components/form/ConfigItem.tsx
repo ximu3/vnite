@@ -14,7 +14,7 @@ import { Button } from '@ui/button'
 import { HotkeySetting } from '@ui/hotkey-setting'
 import { cn } from '~/utils'
 import { ipcManager } from '~/app/ipc'
-import { Checkboxes } from '../ui/checkboxes'
+import { Checkboxes } from '@ui/checkboxes'
 
 export function ConfigItem<
   T extends HookType,

@@ -1,6 +1,6 @@
 import { cn } from '~/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
-import { ConfigItem } from '~/components/form'
+import { ConfigItem } from '~/components/form/ConfigItem'
 import { useTranslation } from 'react-i18next'
 import { useState, useEffect } from 'react'
 import { ipcManager } from '~/app/ipc'
