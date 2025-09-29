@@ -1,11 +1,12 @@
-import { net } from 'electron'
 import { Readable } from 'stream'
 import { ReadableStream } from 'stream/web'
 import * as cheerio from 'cheerio'
 import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
 import Encoding from 'encoding-japanese'
 import { text } from 'stream/consumers'
+import { fetchProxy } from '../../utils/ScraperUtils'
 
+const SCRAPER_ID = 'getchu'
 const getchuUrl = 'https://www.getchu.com'
 
 // preserves a piece of cache since getchu's search engine is super slow,
@@ -23,7 +24,7 @@ async function fetchFromGetchu(
   Object.entries(params).forEach(([key, value]) => {
     url.searchParams.append(key, String(value))
   })
-  const response = await net.fetch(url.toString(), {
+  const response = await fetchProxy(SCRAPER_ID, url.toString(), {
     headers: {
       Accept:
         'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',

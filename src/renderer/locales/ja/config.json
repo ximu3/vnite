@@ -276,6 +276,24 @@
         "minor": "軽度のネタバレ (1)",
         "all": "すべてのネタバレ (2)"
       }
+    },"proxy": {
+      "title": "プロキシ",
+      "enable": "プロキシを有効化",
+      "enableDescription": "スクレイパーがプロキシサーバーを経由してインターネットに接続します",
+      "enableScrapers": "以下のスクレイパーでプロキシを使用",
+      "enableScrapersDescription": "プロキシ経由で接続する必要があるスクレイパーを選択してください",
+      "protocol": "プロキシプロトコル",
+      "protocolDescription": "プロキシサーバーのプロトコルを選択してください",
+      "protocols": {
+        "http": "HTTP",
+        "https": "HTTPS",
+        "socks4": "SOCKS4",
+        "socks5": "SOCKS5"
+      },
+      "host": "ホスト名",
+      "hostDescription": "プロキシサーバーのホスト名またはIPアドレス",
+      "port": "ポート番号",
+      "portDescription": "プロキシサーバーのポート番号"
     },
     "dataSources": {
       "steam": "Steam",

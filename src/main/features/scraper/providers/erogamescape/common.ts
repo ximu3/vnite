@@ -1,13 +1,14 @@
 import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
 import * as cheerio from 'cheerio'
-import { net } from 'electron'
 import log from 'electron-log/main.js'
 import { Readable } from 'stream'
 import { ReadableStream } from 'stream/web'
 import { UnArray } from './types'
 import { getchuProvider } from '../getchu'
 import { vndbProvider } from '../vndb'
+import { fetchProxy } from '../../utils/ScraperUtils'
 
+const SCRAPER_ID = 'erogamescape'
 const esUrl = 'https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki'
 
 async function fetchFromEs(
@@ -19,7 +20,7 @@ async function fetchFromEs(
     url.searchParams.append(key, String(value))
   })
 
-  const response = await net.fetch(url.toString(), {
+  const response = await fetchProxy(SCRAPER_ID, url.toString(), {
     headers: {
       Accept:
         'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',

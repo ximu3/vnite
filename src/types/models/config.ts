@@ -19,6 +19,13 @@ export interface configDocs {
       vndb: {
         tagSpoilerLevel: 0 | 1 | 2
       }
+      proxy: {
+        enable: boolean
+        enableScrapers: string[]
+        protocol: 'http' | 'https' | 'socks4' | 'socks5'
+        host: string
+        port: number
+      }
     }
     showcase: {
       sort: {
@@ -254,6 +261,13 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       },
       vndb: {
         tagSpoilerLevel: 0
+      },
+      proxy: {
+        enable: false,
+        enableScrapers: [],
+        protocol: 'http',
+        host: '',
+        port: 0
       }
     },
     showcase: {

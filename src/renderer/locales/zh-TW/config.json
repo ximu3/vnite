@@ -277,6 +277,25 @@
         "all": "所有劇透 (2)"
       }
     },
+    "proxy": {
+      "title": "代理",
+      "enable": "啟用代理",
+      "enableDescription": "讓刮削器透過代理伺服器連線至網際網路",
+      "enableScrapers": "為以下刮削器啟用代理",
+      "enableScrapersDescription": "選擇需要透過代理連線的刮削器",
+      "protocol": "代理協議",
+      "protocolDescription": "選擇代理伺服器的協議",
+      "protocols": {
+        "http": "HTTP",
+        "https": "HTTPS",
+        "socks4": "SOCKS4",
+        "socks5": "SOCKS5"
+      },
+      "host": "主機名稱",
+      "hostDescription": "代理伺服器的主機名稱或 IP 位址",
+      "port": "連接埠號",
+      "portDescription": "代理伺服器的連接埠號"
+    },
     "dataSources": {
       "steam": "Steam",
       "vndb": "VNDB",

@@ -9,7 +9,9 @@ import {
 } from './types'
 import { getGameBackgroundsFromVNDB, getGameCoverFromVNDB } from '../vndb/api'
 import { METADATA_EXTRA_PREDEFINED_KEYS } from '@appTypes/models'
-import { net } from 'electron'
+import { fetchProxy } from '../../utils/ScraperUtils'
+
+const SCRAPER_ID = 'ymgal'
 
 // YMGal job titles mapped to predefined roles
 const YMGAL_ROLE_MAPPING: Record<string, string> = {
@@ -80,7 +82,7 @@ async function getAccessToken(): Promise<string> {
   })
 
   try {
-    const response = await net.fetch(`${tokenEndpoint}?${params}`)
+    const response = await fetchProxy(SCRAPER_ID, `${tokenEndpoint}?${params}`)
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
@@ -101,7 +103,7 @@ async function fetchYMGal<T>(endpoint: string, params?: Record<string, string>):
     })
   }
 
-  const response = await net.fetch(url.toString(), {
+  const response = await fetchProxy(SCRAPER_ID, url.toString(), {
     headers: {
       Accept: 'application/json;charset=utf-8',
       Authorization: `Bearer ${token}`,

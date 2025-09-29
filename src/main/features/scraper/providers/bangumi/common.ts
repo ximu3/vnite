@@ -2,8 +2,10 @@ import { GameList, GameMetadata } from '@appTypes/utils'
 import { BangumiSearchResult, BangumiSubject } from './types'
 import { getGameBackgroundsFromVNDB } from '../vndb/api'
 import i18next from 'i18next'
-import { net } from 'electron'
 import { METADATA_EXTRA_PREDEFINED_KEYS } from '@appTypes/models'
+import { fetchProxy } from '../../utils/ScraperUtils'
+
+const SCRAPER_ID = 'bangumi'
 
 // Mapping table from Bangumi fields to predefined roles
 const BANGUMI_ROLE_MAPPING: Record<string, string> = {
@@ -100,7 +102,7 @@ async function fetchBangumi<T>(
 
   const apiKey = import.meta.env.VITE_BANGUMI_API_KEY || ''
 
-  const response = await net.fetch(url.toString(), {
+  const response = await fetchProxy(SCRAPER_ID, url.toString(), {
     headers: {
       Accept: 'application/json',
       'User-Agent': 'ximu3/vnite/4.0.0-alpha.0 (https://github.com/ximu3/vnite)',

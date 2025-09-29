@@ -181,6 +181,25 @@
         "all": ""
       }
     },
+    "proxy": {
+      "title": "",
+      "enable": "",
+      "enableDescription": "",
+      "enableScrapers": "",
+      "enableScrapersDescription": "",
+      "protocol": "",
+      "protocolDescription": "",
+      "protocols": {
+        "http": "",
+        "https": "",
+        "socks4": "",
+        "socks5": ""
+      },
+      "host": "",
+      "hostDescription": "",
+      "port": "",
+      "portDescription": ""
+    },
     "dataSources": {
       "steam": "",
       "vndb": "",

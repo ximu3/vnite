@@ -275,6 +275,25 @@
         "all": "All Spoilers (2)"
       }
     },
+    "proxy": {
+      "title": "Proxy",
+      "enable": "Enable Proxy",
+      "enableDescription": "Allow scrapers to connect to the internet through a proxy server",
+      "enableScrapers": "Apply Proxy to Scrapers",
+      "enableScrapersDescription": "Select which scrapers should use the proxy",
+      "protocol": "Proxy Protocol",
+      "protocolDescription": "Choose the proxy server protocol",
+      "protocols": {
+        "http": "HTTP",
+        "https": "HTTPS",
+        "socks4": "SOCKS4",
+        "socks5": "SOCKS5"
+      },
+      "host": "Host",
+      "hostDescription": "Hostname or IP address of the proxy server",
+      "port": "Port",
+      "portDescription": "Port number of the proxy server"
+    },
     "dataSources": {
       "steam": "Steam",
       "vndb": "VNDB",

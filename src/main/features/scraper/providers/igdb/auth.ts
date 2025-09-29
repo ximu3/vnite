@@ -1,5 +1,7 @@
-import { net } from 'electron'
 import { IGDBAuthResponse, IGDBAuthConfig } from './types'
+import { fetchProxy } from '../../utils/ScraperUtils'
+
+const SCRAPER_ID = 'igdb'
 
 export class IGDBAuthManager {
   private clientId: string
@@ -32,7 +34,8 @@ export class IGDBAuthManager {
   // Refresh Access Token
   private async refreshToken(): Promise<void> {
     try {
-      const response = await net.fetch(
+      const response = await fetchProxy(
+        SCRAPER_ID,
         'https://id.twitch.tv/oauth2/token?' +
           new URLSearchParams({
             client_id: this.clientId,
@@ -84,7 +87,7 @@ export class IGDBClient {
   async request<T>(endpoint: string, query: string): Promise<T> {
     try {
       const headers = await this.authManager.getHeaders()
-      const response = await net.fetch(`${this.baseUrl}/${endpoint}`, {
+      const response = await fetchProxy(SCRAPER_ID, `${this.baseUrl}/${endpoint}`, {
         method: 'POST',
         headers,
         body: query

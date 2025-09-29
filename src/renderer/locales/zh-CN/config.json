@@ -277,6 +277,25 @@
         "all": "所有剧透 (2)"
       }
     },
+    "proxy": {
+      "title": "代理",
+      "enable": "启用代理",
+      "enableDescription": "刮削器通过代理服务器连接到互联网",
+      "enableScrapers": "为以下刮削器启用代理",
+      "enableScrapersDescription": "选择需要通过代理连接的刮削器",
+      "protocol": "代理协议",
+      "protocolDescription": "选择代理服务器的协议",
+      "protocols": {
+        "http": "HTTP",
+        "https": "HTTPS",
+        "socks4": "SOCKS4",
+        "socks5": "SOCKS5"
+      },
+      "host": "主机名",
+      "hostDescription": "代理服务器的主机名或IP地址",
+      "port": "端口号",
+      "portDescription": "代理服务器的端口号"
+    },
     "dataSources": {
       "steam": "Steam",
       "vndb": "VNDB",

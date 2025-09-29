@@ -1,16 +1,18 @@
-import { net } from 'electron'
 import * as cheerio from 'cheerio'
 import { GameList, GameMetadata } from '@appTypes/utils'
 import { getLanguage } from '~/features/system/services/i18n'
 import { extractReleaseDateWithLibrary } from './i18n'
 import i18next from 'i18next'
+import { fetchProxy } from '../../utils/ScraperUtils'
+
+const SCRAPER_ID = 'dlsite'
 
 export async function searchDlsiteGames(gameName: string): Promise<GameList> {
   const encodedQuery = encodeURIComponent(gameName.trim()).replace(/%20/g, '+')
   const language = await getLanguage()
   const url = `https://www.dlsite.com/maniax/fsr/=/language/jp/keyword/${encodedQuery}/?locale=${language}`
 
-  const response = await net.fetch(url, {
+  const response = await fetchProxy(SCRAPER_ID, url, {
     headers: {
       'User-Agent':
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
@@ -62,7 +64,7 @@ export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata>
   const language = await getLanguage()
   const url = `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html?locale=${language}`
 
-  const response = await net.fetch(url, {
+  const response = await fetchProxy(SCRAPER_ID, url, {
     headers: {
       'User-Agent':
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
@@ -285,7 +287,7 @@ export async function getGameBackgrounds(dlsiteId: string): Promise<string[]> {
     const url = `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html`
     const language = await getLanguage()
 
-    const response = await net.fetch(url, {
+    const response = await fetchProxy(SCRAPER_ID, url, {
       headers: {
         'User-Agent':
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
@@ -345,7 +347,7 @@ export async function getGameCover(dlsiteId: string): Promise<string> {
     const url = `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html`
     const language = await getLanguage()
 
-    const response = await net.fetch(url, {
+    const response = await fetchProxy(SCRAPER_ID, url, {
       headers: {
         'User-Agent':
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
@@ -415,7 +417,7 @@ export async function checkGameExists(dlsiteId: string): Promise<boolean> {
   try {
     const url = `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html`
 
-    const response = await net.fetch(url, {
+    const response = await fetchProxy(SCRAPER_ID, url, {
       headers: {
         'User-Agent':
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',

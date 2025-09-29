@@ -206,6 +206,25 @@
         "all": "모든 스포일러 (2)"
       }
     },
+    "proxy": {
+      "title": "",
+      "enable": "",
+      "enableDescription": "",
+      "enableScrapers": "",
+      "enableScrapersDescription": "",
+      "protocol": "",
+      "protocolDescription": "",
+      "protocols": {
+        "http": "",
+        "https": "",
+        "socks4": "",
+        "socks5": ""
+      },
+      "host": "",
+      "hostDescription": "",
+      "port": "",
+      "portDescription": ""
+    },
     "dataSources": {
       "steam": "Steam",
       "vndb": "VNDB",
