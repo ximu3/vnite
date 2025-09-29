@@ -70,7 +70,8 @@ export function Others({
           key={`${fieldName}_no`}
           type="multiple"
           className={cn('w-full text-xs flex flex-col gap-2')}
-          defaultValue={['all', 'recentGames']}
+          value={openValues}
+          onValueChange={handleAccordionChange}
         >
           <RecentGames />
           <AllGame />

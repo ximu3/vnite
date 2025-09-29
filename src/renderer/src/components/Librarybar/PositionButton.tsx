@@ -64,30 +64,41 @@ export const PositionButton = React.memo(function PositionButton({
 
     if (!currentGameId) return result
 
-    // The pathname is double-encoded, so it needs to be decoded again
-    const [groupKey, groupValue] = decodeURIComponent(currentGroupId).split(':')
-    if (currentGroupId && selectedGroup === groupKey) {
+    if (currentGroupId) {
+      // The pathname is double-encoded, so it needs to be decoded again
+      const [groupKey, groupValue] = decodeURIComponent(currentGroupId).split(':')
       result.selector = `[data-game-id="${currentGameId}"][data-group-id="${currentGroupId}"]`
-      if (!useGameListStore.getState().getOpenValues(groupKey).includes(groupValue)) {
-        result.waitForOpen = { groupKey, itemKey: groupValue }
+
+      const target = document.querySelector(result.selector)
+      if (target) {
+        return result
       }
-      return result
+
+      // try to open the accordion item if the target element is not found
+      if (currentGroupId === 'all' || currentGroupId === 'recentGames') {
+        result.waitForOpen = { groupKey: selectedGroup, itemKey: currentGroupId }
+        return result
+      }
+
+      if (
+        selectedGroup === groupKey &&
+        !useGameListStore.getState().getOpenValues(groupKey).includes(groupValue)
+      ) {
+        result.waitForOpen = { groupKey, itemKey: groupValue }
+        return result
+      }
     }
 
     //* fallback to scroll to the game in allGames
+    result.selector = `[data-game-id="${currentGameId}"][data-group-id="all"]`
+    result.highlight = true
     if (useGameListStore.getState().getOpenValues(selectedGroup).includes('all')) {
-      return {
-        selector: `[data-game-id="${currentGameId}"][data-group-id="all"]`,
-        waitForOpen: { groupKey: '', itemKey: '' },
-        highlight: true
-      }
+      result.waitForOpen = { groupKey: '', itemKey: '' }
     } else {
-      return {
-        selector: `[data-game-id="${currentGameId}"][data-group-id="all"]`,
-        waitForOpen: { groupKey: selectedGroup, itemKey: 'all' },
-        highlight: true
-      }
+      result.waitForOpen = { groupKey: selectedGroup, itemKey: 'all' }
     }
+
+    return result
   }
 
   // Scroll to target element

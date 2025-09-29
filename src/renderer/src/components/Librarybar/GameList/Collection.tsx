@@ -69,7 +69,8 @@ export function Collection(): React.JSX.Element {
         <Accordion
           key={'collection-no'}
           type="multiple"
-          defaultValue={['all', 'recentGames']}
+          value={openValues}
+          onValueChange={handleAccordionChange}
           className={cn('w-full text-xs flex flex-col gap-2 ')}
         >
           <RecentGames />
