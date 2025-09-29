@@ -87,9 +87,13 @@ impl WmiMonitor {
     }
 
     // spare tasks with 3 seconds to do cleanups and shutdown, otherwise forcefully abort them
-    if let Some(tasks) = self.background_tasks.lock().await.take() {
+    if let Some(mut tasks) = self.background_tasks.lock().await.take() {
       match tokio::time::timeout(tokio::time::Duration::from_secs(3), async {
-        tasks.join_all().await;
+        while let Some(res) = tasks.join_next().await {
+          if let Err(e) = res {
+            log::error(&format!("failed to wait tasks shutdown: {:?}", e));
+          }
+        }
       })
       .await
       {
@@ -97,6 +101,7 @@ impl WmiMonitor {
           log::info("monitoring tasks have been shutdown gracefully");
         }
         Err(_) => {
+          tasks.abort_all();
           log::info("timeout, forcefully shutdown monitoring tasks");
         }
       }
