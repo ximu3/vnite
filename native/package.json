@@ -1,0 +1,43 @@
+{
+  "name": "vnite-native",
+  "version": "0.1.0",
+  "description": "Provide native interface for Vnite to interact with Win32 API",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "browser": "browser.js",
+  "license": "GPL-3.0",
+  "files": [
+    "index.d.ts",
+    "index.js",
+    "browser.js"
+  ],
+  "napi": {
+    "binaryName": "vnite-native",
+    "targets": [
+      "x86_64-pc-windows-msvc"
+    ]
+  },
+  "engines": {
+    "node": ">= 12.22.0 < 13 || >= 14.17.0 < 15 || >= 15.12.0 < 16 || >= 16.0.0"
+  },
+  "scripts": {
+    "artifacts": "napi artifacts",
+    "build": "napi build --platform --release -o dist",
+    "build:debug": "napi build --platform -o dist",
+    "format:rs": "cargo fmt",
+    "version": "napi version",
+    "test": "tsx test.ts"
+  },
+  "devDependencies": {
+    "@emnapi/core": "^1.5.0",
+    "@emnapi/runtime": "^1.5.0",
+    "@napi-rs/cli": "^3.2.0",
+    "@napi-rs/wasm-runtime": "^1.0.4",
+    "@tybys/wasm-util": "^0.10.0",
+    "emnapi": "^1.5.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  },
+  "packageManager": "pnpm@10.17.0"
+}

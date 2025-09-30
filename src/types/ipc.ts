@@ -62,6 +62,10 @@ type MainIpcEvents =
       'app:switch-to-normal-mode': []
 
       'launcher:start-game': [gameId: string]
+
+      'native-monitor:add-local-game': [gameId: string, monitorPath: string]
+      'native-monitor:remove-local-game': [monitorPath: string]
+      'native-monitor:update-local-game': []
     }
   | {
       // Handler events (request-response communication from renderer to main)
@@ -354,6 +358,7 @@ type RendererIpcEvents = {
   // EventBus events forwarded from main process
   'events:event-emitted': [eventType: EventType, data: EnhancedEventData<EventType>]
 
+  'game:started': [gameId: string]
   'game:exiting': [gameId: string]
   'game:exited': [gameId: string]
   'game:start-from-url': [gameId: string]

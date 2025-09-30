@@ -1,7 +1,7 @@
 import { spawn } from 'child_process'
 import { GameDBManager } from '~/core/database'
-import { startMonitor } from '~/features/monitor'
 import { shell } from 'electron'
+import { startPhantomMonitor } from '~/features/monitor'
 
 export async function fileLauncher(gameId: string): Promise<void> {
   try {
@@ -15,7 +15,7 @@ export async function fileLauncher(gameId: string): Promise<void> {
     }
 
     // Startup Monitor
-    await startMonitor(gameId)
+    await startPhantomMonitor(gameId)
   } catch (error) {
     console.error(`Error in fileLauncher for game ${gameId}:`, error)
     throw error
@@ -48,7 +48,7 @@ export async function urlLauncher(gameId: string): Promise<void> {
     launcher.unref()
 
     // Startup Monitor
-    await startMonitor(gameId)
+    await startPhantomMonitor(gameId)
   } catch (err) {
     console.error(`Error in urlLauncher for game ${gameId}:`, err)
     throw err
@@ -88,7 +88,7 @@ export async function scriptLauncher(gameId: string): Promise<void> {
     launcher.unref()
 
     // Startup Monitor
-    await startMonitor(gameId)
+    await startPhantomMonitor(gameId)
   } catch (err) {
     console.error(`Error in scriptLauncher for game ${gameId}:`, err)
     throw err

@@ -49,6 +49,7 @@ export function UrlLauncher({ gameId }: { gameId: string }): React.JSX.Element {
         return
       }
       await setMonitorPathAndSave(monitorPath)
+      ipcManager.send('native-monitor:update-local-game')
     }
     if (monitorMode === 'folder') {
       const monitorPath = await ipcManager.invoke('system:select-path-dialog', ['openDirectory'])
@@ -56,6 +57,7 @@ export function UrlLauncher({ gameId }: { gameId: string }): React.JSX.Element {
         return
       }
       await setMonitorPathAndSave(monitorPath)
+      ipcManager.send('native-monitor:update-local-game')
     }
   }
 
@@ -132,7 +134,10 @@ export function UrlLauncher({ gameId }: { gameId: string }): React.JSX.Element {
           className={cn('flex-1')}
           value={monitorPath}
           onChange={(e) => setMonitorPath(e.target.value)}
-          onBlur={saveMonitorPath}
+          onBlur={() => {
+            saveMonitorPath()
+            ipcManager.send('native-monitor:update-local-game')
+          }}
         />
         {['folder', 'file'].includes(monitorMode) && (
           <Button variant={'outline'} size={'icon'} onClick={selectMonitorPath}>
