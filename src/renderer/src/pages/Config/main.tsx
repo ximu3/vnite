@@ -14,6 +14,7 @@ import { Hotkeys } from './Hotkeys'
 import { Metadata } from './Metadata'
 import { Scraper } from './Scraper'
 import { Theme } from './Theme'
+import { Network } from './Network'
 
 export function Config({ className }: { className?: string }): React.JSX.Element {
   const { t } = useTranslation('config')
@@ -60,6 +61,7 @@ export function Config({ className }: { className?: string }): React.JSX.Element
               <TabsTrigger value="cloudSync">{t('cloudSync.title')}</TabsTrigger>
               <TabsTrigger value="scraper">{t('scraper.title')}</TabsTrigger>
               <TabsTrigger value="database">{t('database.title')}</TabsTrigger>
+              <TabsTrigger value="network">{t('network.title')}</TabsTrigger>
               <TabsTrigger value="about">{t('about.title')}</TabsTrigger>
             </TabsList>
 
@@ -97,6 +99,10 @@ export function Config({ className }: { className?: string }): React.JSX.Element
 
             <TabsContent value="database">
               <Database />
+            </TabsContent>
+
+            <TabsContent value="network">
+              <Network />
             </TabsContent>
 
             <TabsContent value="about">

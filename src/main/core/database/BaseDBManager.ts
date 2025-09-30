@@ -1,7 +1,7 @@
 import PouchDB from 'pouchdb'
 import { SyncOptions, AttachmentReturnType } from './types'
 import { convertBufferToFile, convertFileToBuffer, convertBufferToTempFile } from '~/utils'
-import { getDataPath } from '~/features/system'
+import { getDataPath, setupProxy } from '~/features/system'
 import { getValueByPath, setValueByPath } from '@appUtils'
 import { fileTypeFromBuffer } from 'file-type'
 import upsertPlugin from 'pouchdb-upsert'
@@ -26,18 +26,28 @@ export class BaseDBManager {
     this.initDatabase('game-collection')
     this.initDatabase('game-local')
     this.initDatabase('config')
-    this.initDatabase('config-local')
+    this.initDatabase('config-local', async (change) => {
+      if (change.doc && change.doc._id === 'network') {
+        // If network config changed, update the proxy settings
+        setupProxy()
+      }
+    })
     this.initDatabase('plugin')
   }
 
-  private initDatabase(dbName: string): PouchDB.Database {
+  private initDatabase(
+    dbName: string,
+    appendChangeListener?: (
+      change: PouchDB.Core.ChangesResponseChange<object>
+    ) => void | Promise<void>
+  ): PouchDB.Database {
     const dbPath = getDataPath(dbName)
     const db = new PouchDB(dbPath, { auto_compaction: true })
 
     // Store the database instance
     this.dbInstances[dbName] = db
 
-    this.startChangeListener(dbName)
+    this.startChangeListener(dbName, appendChangeListener)
 
     log.info(`[BaseDB] Database ${dbName} initialized at ${dbPath}`)
     return db
@@ -562,7 +572,12 @@ export class BaseDBManager {
     }
   }
 
-  private startChangeListener(dbName: string): void {
+  private startChangeListener(
+    dbName: string,
+    appendChangeListener?: (
+      change: PouchDB.Core.ChangesResponseChange<object>
+    ) => void | Promise<void>
+  ): void {
     if (this.changeListeners[dbName]) {
       this.stopChangeListener(dbName)
     }
@@ -587,6 +602,10 @@ export class BaseDBManager {
             data: { _id: docId, ...data },
             timestamp: Date.now()
           })
+
+          if (appendChangeListener) {
+            await appendChangeListener(change)
+          }
 
           console.log('Database change:', dbName, docId, data)
         } catch (error) {
