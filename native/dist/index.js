@@ -557,8 +557,13 @@ if (!nativeBinding) {
 }
 
 module.exports = nativeBinding
+module.exports.addKnownGame = nativeBinding.addKnownGame
+module.exports.getAllProcess = nativeBinding.getAllProcess
 module.exports.initLogger = nativeBinding.initLogger
+module.exports.isRunning = nativeBinding.isRunning
 module.exports.ProcessEventType = nativeBinding.ProcessEventType
+module.exports.removeKnownGame = nativeBinding.removeKnownGame
+module.exports.replaceKnownGames = nativeBinding.replaceKnownGames
 module.exports.startMonitoring = nativeBinding.startMonitoring
 module.exports.stopLogger = nativeBinding.stopLogger
 module.exports.stopMonitoring = nativeBinding.stopMonitoring
