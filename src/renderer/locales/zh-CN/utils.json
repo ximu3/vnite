@@ -62,6 +62,7 @@
     "niceISO": "{{date, niceISO}}"
   },
   "notifications": {
+    "gameStarted": "游戏已启动",
     "gameExiting": "正在退出游戏…",
     "gameExited": "游戏已退出",
     "fullSyncing": "正在同步数据…",
