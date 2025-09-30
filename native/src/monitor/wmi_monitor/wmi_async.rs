@@ -40,9 +40,17 @@ pub unsafe fn wmi_event_monitor(
     None,
   );
   if hr.is_err() {
-    log::error("CoInitializeSecurity failed");
-    Com::CoUninitialize();
-    return hr;
+    let err = hr.unwrap_err();
+    // Check if error code = 0x80010119
+    // Security must be initialized before any interfaces are marshalled or unmarshalled.
+    // It cannot be changed once initialized. (0x80010119)
+    #[allow(overflowing_literals)]
+    if !err.code().eq(&HRESULT(0x80010119)) {
+      log::error("CoInitializeSecurity failed");
+      Com::CoUninitialize();
+      return Err(err);
+    }
+    log::info("CoInitializeSecurity is already set, skip initializing security");
   }
 
   // Step 3: Create WMI locator

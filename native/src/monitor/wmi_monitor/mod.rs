@@ -45,38 +45,40 @@ impl WmiMonitor {
 
     // spawn and hold a new thread to send messages
     tasks.spawn_blocking(move || {
-      log::info("ProcMonitor tx task has been spawned");
+      log::info("ProcMonitor tx channel has been spawned");
       unsafe {
         if let Err(e) = wmi_async::wmi_event_monitor(t_rx, tx) {
-          log::error("ProcMonitor tx task received a WMI error");
+          log::error("ProcMonitor tx channel received a WMI error");
           log::error(e.to_string().as_str());
-          log::error("ProcMonitor tx task has been accidentally stopped");
+          log::error("ProcMonitor tx channel has been accidentally stopped");
         }
       }
-      log::info("ProcMonitor tx task has been stopped");
+      log::info("ProcMonitor tx channel has been stopped");
     });
 
     // spawn and hold a new task to receive messages
     tasks.spawn(async move {
-      log::info("ProcMonitor rx task has been spawned");
+      log::info("ProcMonitor rx channel has been spawned");
       loop {
         tokio::select! {
           _ = t_rx2.recv() => {
-            log::info("ProcMonitor rx task has been stopped");
+            log::info("ProcMonitor rx channel has been stopped");
             break;
           }
           op_data = rx.recv() => {
             if let Some(data) = op_data {
+              // log::info(format!("rcv a message: path: {}, pid: {}, status: {:?}", data.path, data.pid, data.status).as_str());
               Self::recv_notification(data).await;
             } else {
-              log::error("ProcMonitor rx task accidentally stopped, likely caused by termination of the tx half");
+              log::error("ProcMonitor rx channel accidentally stopped, likely caused by termination of the tx half");
+              break;
             }
           }
         }
       }
     });
 
-    // keep tasks running in background by transfering ownership to a static variable
+    // keep a stub of all tasks running in background
     *self.background_tasks.lock().await = Some(tasks);
   }
 
