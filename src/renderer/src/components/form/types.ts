@@ -124,11 +124,6 @@ interface HotkeyConfigProps {
   inputClassName?: string
 }
 
-interface CheckboxesProps {
-  controlType: 'checkboxes'
-  values: Array<{ value: string; label: string }>
-}
-
 // Combine all config item props into a single type
 export type ConfigItemProps<
   T extends HookType,
@@ -145,5 +140,4 @@ export type ConfigItemProps<
     | CustomConfigProps
     | FileInputConfigProps
     | HotkeyConfigProps
-    | CheckboxesProps
   )

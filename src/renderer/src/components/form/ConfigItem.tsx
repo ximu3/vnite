@@ -14,7 +14,6 @@ import { Button } from '@ui/button'
 import { HotkeySetting } from '@ui/hotkey-setting'
 import { cn } from '~/utils'
 import { ipcManager } from '~/app/ipc'
-import { Checkboxes } from '@ui/checkboxes'
 
 export function ConfigItem<
   T extends HookType,
@@ -339,19 +338,6 @@ export function ConfigItem<
             defaultHotkey={String(displayValue)}
             onHotkeyChange={handleHotkeyChange}
             inputClassName={hotkeyProps.inputClassName}
-            className={controlClassName}
-          />
-        )
-      }
-
-      case 'checkboxes': {
-        const checkboxesProps = props as ConfigItemProps<T, Path> & { controlType: 'checkboxes' }
-
-        return (
-          <Checkboxes
-            value={Array.isArray(displayValue) ? displayValue : []}
-            values={checkboxesProps.values}
-            onChange={handleArrayChange}
             className={controlClassName}
           />
         )

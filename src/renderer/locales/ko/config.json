@@ -206,25 +206,6 @@
         "all": "모든 스포일러 (2)"
       }
     },
-    "proxy": {
-      "title": "",
-      "enable": "",
-      "enableDescription": "",
-      "enableScrapers": "",
-      "enableScrapersDescription": "",
-      "protocol": "",
-      "protocolDescription": "",
-      "protocols": {
-        "http": "",
-        "https": "",
-        "socks4": "",
-        "socks5": ""
-      },
-      "host": "",
-      "hostDescription": "",
-      "port": "",
-      "portDescription": ""
-    },
     "dataSources": {
       "steam": "Steam",
       "vndb": "VNDB",
@@ -282,6 +263,28 @@
       "enable": "변환기 활성화",
       "manage": "변환기 규칙 관리",
       "manageButton": "관리"
+    }
+  },
+  "network": {
+    "title": "",
+    "proxy": {
+      "title": "",
+      "enable": "",
+      "enableDescription": "",
+      "protocol": "",
+      "protocolDescription": "",
+      "protocols": {
+        "http": "",
+        "https": "",
+        "socks4": "",
+        "socks5": ""
+      },
+      "host": "",
+      "hostDescription": "",
+      "port": "",
+      "portDescription": "",
+      "bypassRules": "",
+      "bypassRulesDescription": ""
     }
   }
 }

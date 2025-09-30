@@ -2,9 +2,7 @@ import { GameList, GameMetadata } from '@appTypes/utils'
 import { SteamAppDetailsResponse, SteamStoreSearchResponse, SteamLanguageConfig } from './types'
 import { formatDate } from '~/utils'
 import i18next from 'i18next'
-import { fetchProxy } from '../../utils/ScraperUtils'
-
-const SCRAPER_ID = 'steam'
+import { net } from 'electron'
 
 // Define base URL constants
 const STEAM_URLS = {
@@ -23,7 +21,7 @@ async function fetchWithTimeout(
   const timeoutId = setTimeout(() => controller.abort(), timeout)
 
   try {
-    const response = await fetchProxy(SCRAPER_ID, url, {
+    const response = await net.fetch(url, {
       ...options,
       signal: controller.signal
     })
@@ -216,7 +214,7 @@ export async function getSteamMetadataByName(gameName: string): Promise<GameMeta
 
 export async function checkImageExists(url: string): Promise<boolean> {
   try {
-    const response = await fetchProxy(SCRAPER_ID, url, {
+    const response = await net.fetch(url, {
       method: 'HEAD' // Only get header information, don't download the actual image content
     })
 

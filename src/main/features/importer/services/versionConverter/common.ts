@@ -560,13 +560,6 @@ async function convertConfig(basePath: string): Promise<void> {
         },
         vndb: {
           tagSpoilerLevel: 0
-        },
-        proxy: {
-          enable: false,
-          enableScrapers: [],
-          protocol: 'http',
-          host: '',
-          port: 0
         }
       },
       showcase: {

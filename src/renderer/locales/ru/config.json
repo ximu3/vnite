@@ -175,25 +175,6 @@
         "all": "Все спойлеры (2)"
       }
     },
-    "proxy": {
-      "title": "",
-      "enable": "",
-      "enableDescription": "",
-      "enableScrapers": "",
-      "enableScrapersDescription": "",
-      "protocol": "",
-      "protocolDescription": "",
-      "protocols": {
-        "http": "",
-        "https": "",
-        "socks4": "",
-        "socks5": ""
-      },
-      "host": "",
-      "hostDescription": "",
-      "port": "",
-      "portDescription": ""
-    },
     "dataSources": {
       "steam": "Steam",
       "vndb": "VNDB",
@@ -251,6 +232,28 @@
       "enable": "Включить преобразователь",
       "manage": "Настроить правила",
       "manageButton": "Настроить"
+    }
+  },
+  "network": {
+    "title": "",
+    "proxy": {
+      "title": "",
+      "enable": "",
+      "enableDescription": "",
+      "protocol": "",
+      "protocolDescription": "",
+      "protocols": {
+        "http": "",
+        "https": "",
+        "socks4": "",
+        "socks5": ""
+      },
+      "host": "",
+      "hostDescription": "",
+      "port": "",
+      "portDescription": "",
+      "bypassRules": "",
+      "bypassRulesDescription": ""
     }
   }
 }

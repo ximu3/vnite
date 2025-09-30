@@ -12,11 +12,9 @@ import {
 } from './types'
 import { GameMetadata } from '@appTypes/utils'
 import { METADATA_EXTRA_PREDEFINED_KEYS } from '@appTypes/models'
+import { net } from 'electron'
 import { ConfigDBManager } from '~/core/database'
 import i18next from 'i18next'
-import { fetchProxy } from '../../utils/ScraperUtils'
-
-const SCRAPER_ID = 'vndb'
 
 const VNDB_ROLE_MAPPING: Record<string, string> = {
   director: 'director',
@@ -48,7 +46,7 @@ async function fetchVNDB<T>(params: VNDBRequestParams): Promise<VNDBResponse<T>>
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS)
 
-    const response = await fetchProxy(SCRAPER_ID, endpoint, {
+    const response = await net.fetch(endpoint, {
       ...requestConfig,
       signal: controller.signal
     })
