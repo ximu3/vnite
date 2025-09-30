@@ -13,6 +13,7 @@
     "typecheck": "npm run typecheck:node && npm run typecheck:web",
     "start": "electron-vite preview",
     "dev": "electron-vite dev",
+    "prebuild": "napi build --cwd native --platform --release -o dist",
     "build": "npm run typecheck && electron-vite build",
     "postinstall": "electron-builder install-app-deps && patch-package",
     "build:unpack": "npm run build && electron-builder --dir",
