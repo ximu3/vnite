@@ -278,6 +278,73 @@ export class GameMonitor {
     return executableFiles
   }
 
+  // Compare the given gameId with its own
+  public isGame(gameId: string): boolean {
+    return this.options.gameId === gameId
+  }
+
+  // Imitate monitoring behaviours to preserve compatibility.
+  // This function may be invoked multiple times in a single GameMonitor object if the
+  // monitoring mode is `folder` and there are more than one executables inside that folder
+  // are launched.
+  public async phantomStart(gameId: string, fullpath: string, pid: number): Promise<void> {
+    if (this.monitoredProcesses.some((process) => process.pid === pid)) {
+      return
+    }
+    const monitoredProcess = {
+      path: fullpath,
+      pid: pid,
+      isRunning: true,
+      isScaled: false
+    }
+    this.isRunning = true
+    this.startTime = new Date().toISOString()
+    this.endTime = undefined
+
+    ActiveGameInfo.updateGameInfo(gameId, {
+      pid: pid,
+      path: fullpath
+    })
+
+    // Check if Magpie scaling is enabled
+    const useMagpie = await GameDBManager.getGameLocalValue(gameId, 'launcher.useMagpie')
+    const magpiePath = await ConfigDBManager.getConfigLocalValue('game.linkage.magpie.path')
+    const magpieHotkey = await ConfigDBManager.getConfigLocalValue('game.linkage.magpie.hotkey')
+
+    if (useMagpie && !monitoredProcess.isScaled && magpiePath) {
+      await startMagpie()
+      // Wait a while for the game window to fully load
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      // Simulate pressing the Magpie shortcut
+      simulateHotkey(magpieHotkey)
+      monitoredProcess.isScaled = true
+    }
+
+    this.monitoredProcesses.push(monitoredProcess)
+  }
+
+  // Imitate monitoring behaviours to preserve compatibility.
+  // This function may be invoked multiple times in a single GameMonitor object if the
+  // monitoring mode is `folder` and there are more than one executables inside that folder
+  // are terminated.
+  // Return `true` if all the processes are stopped, `false` if there are still some processes
+  // keep running.
+  public async phantomStop(pid: number): Promise<boolean> {
+    const process = this.monitoredProcesses.find((process) => process.pid === pid)
+    if (process) {
+      process.isRunning = false
+    }
+    // if all monitored processes are stopped
+    if (
+      this.monitoredProcesses.length === 0 ||
+      this.monitoredProcesses.every((x) => !x.isRunning)
+    ) {
+      this.handleGameExit()
+      return true
+    }
+    return false
+  }
+
   public async start(): Promise<void> {
     if (this.isRunning) {
       return
@@ -485,5 +552,9 @@ export class GameMonitor {
       startTime: this.startTime,
       endTime: this.endTime
     }
+  }
+
+  public getMonitorPath(): string {
+    return this.options.config.path
   }
 }
