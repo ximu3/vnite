@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use napi::threadsafe_function::ThreadsafeFunctionCallMode;
 use std::sync::OnceLock;
 use tokio::sync::mpsc;
@@ -30,13 +32,13 @@ pub async fn init_logger(
       match data {
         LogMsg::Info { msg } => {
           fn_info.call(
-            Ok(format!("[native] {}", msg)),
+            Ok(format!("[Native] {}", msg)),
             ThreadsafeFunctionCallMode::NonBlocking,
           );
         }
         LogMsg::Error { msg } => {
           fn_err.call(
-            Ok(format!("[native] {}", msg)),
+            Ok(format!("[Native] {}", msg)),
             ThreadsafeFunctionCallMode::NonBlocking,
           );
         }
@@ -47,6 +49,7 @@ pub async fn init_logger(
     rcv_task: handle,
     tx: tx,
   });
+  info("Logger setup completed");
 }
 
 pub fn stop_logger() {
