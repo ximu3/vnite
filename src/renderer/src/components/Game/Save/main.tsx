@@ -1,3 +1,7 @@
+import { isEqual } from 'lodash'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { ipcManager } from '~/app/ipc'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import {
@@ -8,16 +12,16 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table'
-import { isEqual } from 'lodash'
-import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { useGameLocalState, useGameState } from '~/hooks'
 import { cn } from '~/utils'
-import { ipcManager } from '~/app/ipc'
 
 export function Save({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
-  const [saveList, setSaveList, saveSaveList] = useGameState(gameId, 'save.saveList', true)
+  const [saveList, setSaveList, saveSaveList, setSaveListAndSave] = useGameState(
+    gameId,
+    'save.saveList',
+    true
+  )
 
   const [savePaths] = useGameLocalState(gameId, 'path.savePaths')
 
@@ -66,7 +70,7 @@ export function Save({ gameId }: { gameId: string }): React.JSX.Element {
         locked: !saveList[saveId]?.locked
       }
     }
-    setSaveList(newSaveList)
+    setSaveListAndSave(newSaveList)
   }
 
   return (
