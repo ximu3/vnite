@@ -57,10 +57,6 @@ export function ManageMenu({
           <DropdownMenuSubTrigger>{t('detail.manage.title')}</DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent className="">
-              {/* Rename Game */}
-              <DropdownMenuItem onSelect={openInformationEditorDialog}>
-                {t('detail.manage.rename')}
-              </DropdownMenuItem>
               {/* Edit Game Logo */}
               {showLogo && (
                 <DropdownMenuItem
@@ -71,13 +67,6 @@ export function ManageMenu({
                   {t('detail.manage.editLogo')}
                 </DropdownMenuItem>
               )}
-              {/* Edit Play Time */}
-              <DropdownMenuItem onClick={() => setIsPlayTimeEditorDialogOpen(true)}>
-                {t('detail.manage.editPlayTime')}
-              </DropdownMenuItem>
-
-              <DropdownMenuSeparator />
-
               {/* Play Status Menu */}
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
@@ -118,16 +107,24 @@ export function ManageMenu({
                   </DropdownMenuSubContent>
                 </DropdownMenuPortal>
               </DropdownMenuSub>
-
               {/* Change Score */}
               <DropdownMenuItem onSelect={() => setIsScoreEditorDialogOpen(true)}>
                 {t('detail.header.rating.tooltip')}
               </DropdownMenuItem>
-
-              <DropdownMenuSeparator />
               {/* Mark as NSFW */}
               <DropdownMenuItem onClick={() => setNsfw(!nsfw)}>
                 {nsfw ? t('detail.manage.unmarkNSFW') : t('detail.manage.markNSFW')}
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator />
+
+              {/* Rename Game */}
+              <DropdownMenuItem onSelect={openInformationEditorDialog}>
+                {t('detail.manage.rename')}
+              </DropdownMenuItem>
+              {/* Edit Play Time */}
+              <DropdownMenuItem onClick={() => setIsPlayTimeEditorDialogOpen(true)}>
+                {t('detail.manage.editPlayTime')}
               </DropdownMenuItem>
               {/* Update Metadata */}
               <DropdownMenuItem
@@ -139,6 +136,9 @@ export function ManageMenu({
               >
                 {t('detail.manage.downloadMetadata')}
               </DropdownMenuItem>
+
+              <DropdownMenuSeparator />
+
               {/* Create Shortcut */}
               {/* Only show if gamePath is set */}
               {gamePath !== '' && (
@@ -174,7 +174,9 @@ export function ManageMenu({
               >
                 {t('detail.manage.browseLocalFiles')}
               </DropdownMenuItem>
+
               <DropdownMenuSeparator />
+
               {/* Delete Game */}
               <DeleteGameAlert gameId={gameId}>
                 <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
