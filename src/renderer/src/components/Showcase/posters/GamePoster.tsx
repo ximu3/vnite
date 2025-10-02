@@ -49,7 +49,7 @@ function Preview({
       )}
     >
       <div className="absolute top-[25%] z-20 flex justify-center pointer-events-none w-full h-[50%]">
-        <div className="text-accent-foreground text-lg font-semibold w-[90%] text-center break-words whitespace-normal overflow-hidden">
+        <div className="text-accent-foreground w-[90%] text-center break-words whitespace-normal overflow-hidden">
           {title}
         </div>
       </div>
