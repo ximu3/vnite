@@ -33,6 +33,7 @@
       "sortBy": "Sort by",
       "sortOptions": {
         "name": "Name",
+        "sortName": "Sort Name",
         "releaseDate": "Release Date",
         "lastRunDate": "Last Played Date",
         "addDate": "Date Added",
@@ -76,6 +77,7 @@
       "label": "Sort by",
       "options": {
         "name": "Name",
+        "sortName": "Sort Name",
         "releaseDate": "Release Date",
         "lastRunDate": "Last Played Date",
         "addDate": "Date Added",
@@ -233,6 +235,7 @@
         "fields": {
           "originalName": "Original Name",
           "localizedName": "Localized Name",
+          "sortName": "Sort Name",
           "developers": "Developers",
           "publishers": "Publishers",
           "releaseDate": "Release Date",

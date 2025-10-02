@@ -33,6 +33,7 @@
       "sortBy": "排序依據",
       "sortOptions": {
         "name": "名稱",
+        "sortName": "排序名稱",
         "releaseDate": "發布日期",
         "lastRunDate": "最後執行日期",
         "addDate": "添加日期",
@@ -76,6 +77,7 @@
       "label": "排序依據",
       "options": {
         "name": "名稱",
+        "sortName": "排序名稱",
         "releaseDate": "發布日期",
         "lastRunDate": "最後執行日期",
         "addDate": "添加日期",
@@ -230,6 +232,7 @@
         "fields": {
           "originalName": "原名",
           "localizedName": "譯名",
+          "sortName": "排序名稱",
           "developers": "開發商",
           "publishers": "發行商",
           "releaseDate": "發行日期",

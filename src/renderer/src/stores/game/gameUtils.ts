@@ -1,7 +1,7 @@
 import type { MaxPlayTimeDay, gameDoc } from '@appTypes/models'
 import { calculateDailyPlayTime } from '@appUtils'
 import i18next from 'i18next'
-import type { Paths } from 'type-fest'
+import type { Get, Paths } from 'type-fest'
 import { parseLocalDate } from '~/stores/game/recordUtils'
 import { useConfigStore } from '../config'
 import { useGameRegistry } from './gameRegistry'
@@ -64,8 +64,16 @@ export function sortGames<Path extends Paths<gameDoc, { bracketNotation: true }>
     const storeA = getGameStore(a)
     const storeB = getGameStore(b)
 
-    const valueA = storeA.getState().getValue(by)
-    const valueB = storeB.getState().getValue(by)
+    let valueA = storeA.getState().getValue(by)
+    let valueB = storeB.getState().getValue(by)
+
+    if (by === 'metadata.sortName') {
+      const nameA = storeA.getState().getValue('metadata.name')
+      const nameB = storeB.getState().getValue('metadata.name')
+
+      valueA = (valueA as string)?.trim() ? valueA : (nameA as Get<gameDoc, Path>)
+      valueB = (valueB as string)?.trim() ? valueB : (nameB as Get<gameDoc, Path>)
+    }
 
     if (valueA == null && valueB == null) return 0
     if (valueA == null) return order === 'asc' ? 1 : -1
@@ -73,7 +81,7 @@ export function sortGames<Path extends Paths<gameDoc, { bracketNotation: true }>
     if (valueA === valueB) return 0
 
     if (typeof valueA === 'string' && typeof valueB === 'string') {
-      if (by === 'metadata.name') {
+      if (by === 'metadata.name' || by === 'metadata.sortName') {
         return order === 'asc'
           ? valueA.localeCompare(valueB, language || undefined)
           : valueB.localeCompare(valueA, language || undefined)

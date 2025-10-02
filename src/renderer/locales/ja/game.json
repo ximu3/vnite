@@ -33,6 +33,7 @@
       "sortBy": "並び順",
       "sortOptions": {
         "name": "名前",
+        "sortName": "ソート名",
         "releaseDate": "リリース日",
         "lastRunDate": "最終プレイ日",
         "addDate": "追加日",
@@ -76,6 +77,7 @@
       "label": "並び順",
       "options": {
         "name": "名前",
+        "sortName": "ソート名",
         "releaseDate": "リリース日",
         "lastRunDate": "最終プレイ日",
         "addDate": "追加日",
@@ -230,6 +232,7 @@
         "fields": {
           "originalName": "オリジナル名",
           "localizedName": "ローカライズ名",
+          "sortName": "ソート名",
           "developers": "開発元",
           "publishers": "パブリッシャー",
           "releaseDate": "リリース日",

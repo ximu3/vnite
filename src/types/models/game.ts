@@ -9,6 +9,7 @@ export interface gameDoc {
   metadata: {
     name: string
     originalName: string
+    sortName: string
     releaseDate: string
     description: string
     developers: string[]
@@ -170,6 +171,7 @@ export const DEFAULT_GAME_VALUES: Readonly<gameDoc> = {
   metadata: {
     name: '',
     originalName: '',
+    sortName: '',
     releaseDate: '',
     description: '',
     developers: [] as string[],

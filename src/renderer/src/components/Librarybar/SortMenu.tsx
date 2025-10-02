@@ -1,3 +1,5 @@
+import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '~/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
 import {
@@ -11,8 +13,6 @@ import {
 } from '~/components/ui/select'
 import { Separator } from '~/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
-import React from 'react'
-import { useTranslation } from 'react-i18next'
 import { useConfigState } from '~/hooks'
 import { cn } from '~/utils'
 
@@ -69,6 +69,9 @@ export function SortMenu({
                 <SelectGroup>
                   <SelectLabel>{t('list.all.sortBy')}：</SelectLabel>
                   <SelectItem value="metadata.name">{t('list.all.sortOptions.name')}</SelectItem>
+                  <SelectItem value="metadata.sortName">
+                    {t('list.all.sortOptions.sortName')}
+                  </SelectItem>
                   <SelectItem value="metadata.releaseDate">
                     {t('list.all.sortOptions.releaseDate')}
                   </SelectItem>

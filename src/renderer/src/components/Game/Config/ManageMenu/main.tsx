@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { eventBus } from '~/app/events'
 import { ipcManager } from '~/app/ipc'
 import { useLibrarybarStore } from '~/components/Librarybar/store'
 import {
@@ -15,14 +16,13 @@ import { useConfigState, useGameLocalState, useGameState } from '~/hooks'
 import { useGameAdderStore } from '~/pages/GameAdder/store'
 import { useGameDetailStore } from '../../store'
 import { DeleteGameAlert } from './DeleteGameAlert'
-import { eventBus } from '~/app/events'
 
 export function ManageMenu({
   gameId,
-  openNameEditorDialog
+  openInformationEditorDialog
 }: {
   gameId: string
-  openNameEditorDialog: () => void
+  openInformationEditorDialog: () => void
 }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
@@ -58,7 +58,7 @@ export function ManageMenu({
           <DropdownMenuPortal>
             <DropdownMenuSubContent className="">
               {/* Rename Game */}
-              <DropdownMenuItem onSelect={openNameEditorDialog}>
+              <DropdownMenuItem onSelect={openInformationEditorDialog}>
                 {t('detail.manage.rename')}
               </DropdownMenuItem>
               {/* Edit Game Logo */}

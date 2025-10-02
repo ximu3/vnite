@@ -1,26 +1,27 @@
 import { NSFWBlurLevel } from '@appTypes/models'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Button } from '~/components/ui/button'
-import { GameImage } from '~/components/ui/game-image'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
-import { useConfigState, useGameState } from '~/hooks'
-import { cn } from '~/utils'
-import { ScrollArea } from '../ui/scroll-area'
-import { ImageViewerDialog } from './Config/Properties/Media/ImageViewerDialog'
-import { ipcManager } from '~/app/ipc'
 import { toast } from 'sonner'
+import { ipcManager } from '~/app/ipc'
+import { Button } from '~/components/ui/button'
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger
 } from '~/components/ui/context-menu'
+import { GameImage } from '~/components/ui/game-image'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
+import { useConfigState, useGameState } from '~/hooks'
+import { cn } from '~/utils'
+import { ScrollArea } from '../ui/scroll-area'
 import { GamePropertiesDialog } from './Config/Properties'
+import { ImageViewerDialog } from './Config/Properties/Media/ImageViewerDialog'
 import { Header } from './Header'
 import { HeaderCompact } from './HeaderCompact'
 import { Memory } from './Memory'
 import { Overview } from './Overview'
+import { InformationDialog } from './Overview/Information/InformationDialog'
 import { Record } from './Record'
 import { Save } from './Save'
 import { useGameDetailStore } from './store'
@@ -42,6 +43,8 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
 
   const isEditingLogo = useGameDetailStore((state) => state.isEditingLogo)
   const setIsEditingLogo = useGameDetailStore((state) => state.setIsEditingLogo)
+  const isInformationDialogOpen = useGameDetailStore((s) => s.isInformationDialogOpen)
+  const setIsInformationDialogOpen = useGameDetailStore((s) => s.setIsInformationDialogOpen)
 
   // Game Logo position and size management
   const initialPosition = { x: 1.5, y: 35 }
@@ -96,7 +99,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   }
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>): void => {
-      e.preventDefault()
+    e.preventDefault()
     if (!isEditingLogo) return
     if (!logoRef.current) return
     if (e.button === 0) {
@@ -393,6 +396,13 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
           isOpen={isImageViewerOpen}
           imagePath={imageViewerPath}
           onClose={() => setIsImageViewerOpen(false)}
+        />
+      )}
+      {isInformationDialogOpen && (
+        <InformationDialog
+          gameId={gameId}
+          isOpen={isInformationDialogOpen}
+          setIsOpen={setIsInformationDialogOpen}
         />
       )}
     </div>

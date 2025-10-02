@@ -1,11 +1,11 @@
+import { SeparatorDashed } from '@ui/separator-dashed'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useGameState } from '~/hooks'
 import { cn, copyWithToast } from '~/utils'
 import { FilterAdder } from '../../FilterAdder'
-import { InformationDialog } from './InformationDialog'
+import { useGameDetailStore } from '../../store'
 import { SearchInformationDialog } from './SearchInformationDialog'
-import { SeparatorDashed } from '@ui/separator-dashed'
 
 export function InformationCard({
   gameId,
@@ -17,12 +17,13 @@ export function InformationCard({
   const { t } = useTranslation('game')
   const [originalName, setOriginalName] = useGameState(gameId, 'metadata.originalName')
   const [name, setName] = useGameState(gameId, 'metadata.name')
+  const [sortName] = useGameState(gameId, 'metadata.sortName')
   const [developers, setDevelopers] = useGameState(gameId, 'metadata.developers')
   const [publishers, setPublishers] = useGameState(gameId, 'metadata.publishers')
   const [releaseDate, setReleaseDate] = useGameState(gameId, 'metadata.releaseDate')
   const [genres, setGenres] = useGameState(gameId, 'metadata.genres')
   const [platforms, setPlatforms] = useGameState(gameId, 'metadata.platforms')
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const setIsEditDialogOpen = useGameDetailStore((s) => s.setIsInformationDialogOpen)
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false)
 
   const handleCopySummary = (): void => {
@@ -136,6 +137,15 @@ export function InformationCard({
           {name === originalName || name === '' ? t('detail.overview.information.empty') : name}
         </div>
 
+        {/* sortName */}
+        <div
+          className={cn('select-none cursor-pointer max-w-[100px]')}
+          onClick={() => copyWithToast(sortName)}
+        >
+          {t('detail.overview.information.fields.sortName')}
+        </div>
+        <div>{sortName === '' ? t('detail.overview.information.empty') : sortName}</div>
+
         {/* developers */}
         <div
           className={cn('select-none cursor-pointer max-w-[100px]')}
@@ -237,12 +247,6 @@ export function InformationCard({
               ))}
         </div>
       </div>
-
-      <InformationDialog
-        gameId={gameId}
-        isOpen={isEditDialogOpen}
-        setIsOpen={setIsEditDialogOpen}
-      />
 
       <SearchInformationDialog
         isOpen={isSearchDialogOpen}
