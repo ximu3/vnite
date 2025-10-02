@@ -43,6 +43,7 @@ export interface configDocs {
           | 'record.playTime'
         order: 'asc' | 'desc'
       }
+      overrideCollectionSort: boolean
       selectedGroup:
         | 'none'
         | 'collection'
@@ -269,6 +270,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
         by: 'metadata.name',
         order: 'desc' as const
       },
+      overrideCollectionSort: false,
       selectedGroup: 'collection',
       highlightLocalGames: true,
       markLocalGames: false,
