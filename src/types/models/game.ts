@@ -82,6 +82,15 @@ export interface gameCollectionDoc {
   _id: string
   name: string
   sort: number
+  sortBy:
+    | 'metadata.name'
+    | 'metadata.sortName'
+    | 'metadata.releaseDate'
+    | 'record.lastRunDate'
+    | 'record.addDate'
+    | 'record.playTime'
+    | 'custom'
+  sortOrder: 'asc' | 'desc'
   games: string[]
 }
 
@@ -163,6 +172,8 @@ export const DEFAULT_GAME_COLLECTION_VALUES: Readonly<gameCollectionDoc> = {
   _id: '',
   name: '',
   sort: 0,
+  sortBy: 'custom',
+  sortOrder: 'asc',
   games: []
 } as const
 

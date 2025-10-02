@@ -1,12 +1,12 @@
-import { create } from 'zustand'
-import { getValueByPath, setValueByPath, generateUUID } from '@appUtils'
 import {
+  DEFAULT_GAME_COLLECTION_VALUES,
   gameCollectionDoc,
-  gameCollectionDocs,
-  DEFAULT_GAME_COLLECTION_VALUES
+  gameCollectionDocs
 } from '@appTypes/models'
-import type { Get, Paths } from 'type-fest'
+import { generateUUID, getValueByPath, setValueByPath } from '@appUtils'
 import { toast } from 'sonner'
+import type { Get, Paths } from 'type-fest'
+import { create } from 'zustand'
 import { syncTo } from '../utils'
 
 export interface GameCollectionState {
@@ -185,6 +185,8 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
         _id: id,
         name,
         sort: newSort,
+        sortBy: 'custom',
+        sortOrder: 'asc',
         games: gameIds ? [...gameIds] : []
       }
 

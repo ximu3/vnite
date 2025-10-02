@@ -24,6 +24,7 @@ export interface configDocs {
       sort: {
         by:
           | 'metadata.name'
+          | 'metadata.sortName'
           | 'metadata.releaseDate'
           | 'record.lastRunDate'
           | 'record.addDate'
@@ -35,6 +36,7 @@ export interface configDocs {
       sort: {
         by:
           | 'metadata.name'
+          | 'metadata.sortName'
           | 'metadata.releaseDate'
           | 'record.lastRunDate'
           | 'record.addDate'
