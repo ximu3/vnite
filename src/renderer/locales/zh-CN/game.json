@@ -42,7 +42,8 @@
     },
     "playStatus": {
       "adjustOrder": "调整顺序"
-    }
+    },
+    "overrideCollectionSort": "覆盖收藏排序"
   },
   "filter": {
     "title": "高级筛选",
@@ -81,7 +82,8 @@
         "releaseDate": "发布日期",
         "lastRunDate": "最后运行日期",
         "addDate": "添加日期",
-        "playTime": "游玩时间"
+        "playTime": "游玩时间",
+        "custom": "自定义顺序"
       }
     },
     "gameCard": {
@@ -340,7 +342,7 @@
     },
     "manage": {
       "title": "管理",
-      "rename": "重命名",
+      "rename": "修改基本信息",
       "editLogo": "编辑徽标",
       "editPlayTime": "修改游玩时间",
       "markNSFW": "标记为NSFW",

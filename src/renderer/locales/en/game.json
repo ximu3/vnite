@@ -42,7 +42,8 @@
     },
     "playStatus": {
       "adjustOrder": "Adjust Order"
-    }
+    },
+    "overrideCollectionSort": "Override Collection Sort"
   },
   "filter": {
     "title": "Advanced Filter",
@@ -81,7 +82,8 @@
         "releaseDate": "Release Date",
         "lastRunDate": "Last Played Date",
         "addDate": "Date Added",
-        "playTime": "Play Time"
+        "playTime": "Play Time",
+        "custom": "Custom Order"
       }
     },
     "gameCard": {
@@ -338,7 +340,7 @@
     },
     "manage": {
       "title": "Manage",
-      "rename": "Rename",
+      "rename": "Edit Basic Information",
       "editLogo": "Edit Logo",
       "editPlayTime": "Edit Play Time",
       "markNSFW": "Mark as NSFW",
