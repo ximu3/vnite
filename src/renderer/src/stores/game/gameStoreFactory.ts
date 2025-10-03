@@ -1,9 +1,9 @@
-import { create, StoreApi, UseBoundStore } from 'zustand'
+import { DEFAULT_GAME_VALUES, gameDoc } from '@appTypes/models'
 import { getValueByPath, setValueByPath } from '@appUtils'
-import { gameDoc, DEFAULT_GAME_VALUES } from '@appTypes/models'
-import { useGameRegistry } from './gameRegistry'
 import type { Get, Paths } from 'type-fest'
+import { create, StoreApi, UseBoundStore } from 'zustand'
 import { syncTo } from '../utils'
+import { useGameRegistry } from './gameRegistry'
 
 // Type definitions for individual game stores
 export interface SingleGameState {
@@ -32,6 +32,7 @@ const gameStores: Record<string, GameStore> = {}
 function extractMetaInfo(data: gameDoc): {
   name: string
   originalName?: string
+  sortName?: string
   genres?: string[]
   addDate?: string
   lastRunDate?: string
@@ -40,6 +41,7 @@ function extractMetaInfo(data: gameDoc): {
   return {
     name: data.metadata?.name || '',
     originalName: data.metadata?.originalName || '',
+    sortName: data.metadata?.sortName || '',
     genres: data.metadata?.genres,
     addDate: data.record?.addDate,
     lastRunDate: data.record?.lastRunDate,
@@ -87,6 +89,7 @@ export function getGameStore(gameId: string): GameStore {
         const metaFields = [
           'metadata.name',
           'metadata.originalName',
+          'metadata.sortName',
           'metadata.genre',
           'record.addDate',
           'record.lastRunDate',

@@ -6,6 +6,8 @@
       "placeholder": "Search",
       "tooltip": "Supports searching by game name, developer, release date and other metadata"
     },
+    "gameListSettings": "Game List Settings",
+    "collapseAllGroups": "Collapse All Groups",
     "groupBy": "Group by",
     "groups": {
       "none": "No Grouping",
@@ -33,6 +35,7 @@
       "sortBy": "Sort by",
       "sortOptions": {
         "name": "Name",
+        "sortName": "Sort Name",
         "releaseDate": "Release Date",
         "lastRunDate": "Last Played Date",
         "addDate": "Date Added",
@@ -41,7 +44,8 @@
     },
     "playStatus": {
       "adjustOrder": "Adjust Order"
-    }
+    },
+    "overrideCollectionSort": "Override Collection Sort"
   },
   "filter": {
     "title": "Advanced Filter",
@@ -76,10 +80,12 @@
       "label": "Sort by",
       "options": {
         "name": "Name",
+        "sortName": "Sort Name",
         "releaseDate": "Release Date",
         "lastRunDate": "Last Played Date",
         "addDate": "Date Added",
-        "playTime": "Play Time"
+        "playTime": "Play Time",
+        "custom": "Custom Order"
       }
     },
     "gameCard": {
@@ -233,6 +239,7 @@
         "fields": {
           "originalName": "Original Name",
           "localizedName": "Localized Name",
+          "sortName": "Sort Name",
           "developers": "Developers",
           "publishers": "Publishers",
           "releaseDate": "Release Date",
@@ -335,7 +342,7 @@
     },
     "manage": {
       "title": "Manage",
-      "rename": "Rename",
+      "rename": "Edit Basic Information",
       "editLogo": "Edit Logo",
       "editPlayTime": "Edit Play Time",
       "markNSFW": "Mark as NSFW",

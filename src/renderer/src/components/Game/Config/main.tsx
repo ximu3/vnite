@@ -10,16 +10,16 @@ import {
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
 import { cn } from '~/utils'
+import { useGameDetailStore } from '../store'
 import { CollectionMenu } from './CollectionMenu'
 import { ManageMenu } from './ManageMenu'
-import { NameEditorDialog } from './ManageMenu/NameEditorDialog'
 import { GamePropertiesDialog } from './Properties'
 
 export function Config({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
 
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
-  const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = React.useState(false)
+  const setIsInformationDialogOpen = useGameDetailStore((s) => s.setIsInformationDialogOpen)
   const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = React.useState(false)
 
   return (
@@ -37,7 +37,7 @@ export function Config({ gameId }: { gameId: string }): React.JSX.Element {
           />
           <ManageMenu
             gameId={gameId}
-            openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
+            openInformationEditorDialog={() => setIsInformationDialogOpen(true)}
           />
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={() => setIsPropertiesDialogOpen(true)}>
@@ -47,9 +47,6 @@ export function Config({ gameId }: { gameId: string }): React.JSX.Element {
       </DropdownMenu>
       {isAddCollectionDialogOpen && (
         <AddCollectionDialog gameIds={[gameId]} setIsOpen={setIsAddCollectionDialogOpen} />
-      )}
-      {isNameEditorDialogOpen && (
-        <NameEditorDialog gameId={gameId} setIsOpen={setIsNameEditorDialogOpen} />
       )}
       {isPropertiesDialogOpen && (
         <GamePropertiesDialog

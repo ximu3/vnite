@@ -24,6 +24,7 @@ export interface configDocs {
       sort: {
         by:
           | 'metadata.name'
+          | 'metadata.sortName'
           | 'metadata.releaseDate'
           | 'record.lastRunDate'
           | 'record.addDate'
@@ -35,12 +36,14 @@ export interface configDocs {
       sort: {
         by:
           | 'metadata.name'
+          | 'metadata.sortName'
           | 'metadata.releaseDate'
           | 'record.lastRunDate'
           | 'record.addDate'
           | 'record.playTime'
         order: 'asc' | 'desc'
       }
+      overrideCollectionSort: boolean
       selectedGroup:
         | 'none'
         | 'collection'
@@ -53,9 +56,6 @@ export interface configDocs {
       showAllGamesInGroup: boolean
       showCollapseButton: boolean
       playingStatusOrder: string[]
-      playStatusAccordionOpen: string[]
-      allGamesAccordionOpen: boolean
-      recentGamesAccordionOpen: boolean
     }
     gameHeader: {
       showOriginalName: boolean
@@ -267,16 +267,14 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
         by: 'metadata.name',
         order: 'desc' as const
       },
+      overrideCollectionSort: false,
       selectedGroup: 'collection',
       highlightLocalGames: true,
       markLocalGames: false,
       showRecentGames: true,
       showAllGamesInGroup: true,
       showCollapseButton: true,
-      playingStatusOrder: ['unplayed', 'playing', 'finished', 'multiple', 'shelved'],
-      playStatusAccordionOpen: ['unplayed', 'playing', 'finished', 'multiple', 'shelved'],
-      allGamesAccordionOpen: true,
-      recentGamesAccordionOpen: true
+      playingStatusOrder: ['unplayed', 'playing', 'finished', 'multiple', 'shelved']
     },
     gameHeader: {
       showOriginalName: false

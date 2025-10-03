@@ -1,6 +1,6 @@
-import { useTranslation } from 'react-i18next'
 import { ArrayInput } from '@ui/array-input'
 import { DateTimeInput } from '@ui/date-input'
+import { useTranslation } from 'react-i18next'
 import { Dialog, DialogContent } from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
@@ -22,6 +22,7 @@ export function InformationDialog({
     'metadata.originalName',
     true
   )
+  const [sortName, setSortName, saveSortName] = useGameState(gameId, 'metadata.sortName', true)
   const [name, setName, saveName] = useGameState(gameId, 'metadata.name', true)
   const [developers, setDevelopers, saveDevelopers] = useGameState(
     gameId,
@@ -68,6 +69,17 @@ export function InformationDialog({
             value={name}
             onChange={(e) => setName(e.target.value)}
             onBlur={saveName}
+            placeholder={t('detail.overview.information.empty')}
+            className={cn('text-sm')}
+          />
+          {/* Sort Name */}
+          <div className={cn('whitespace-nowrap select-none justify-self-start')}>
+            {t('detail.overview.information.fields.sortName')}
+          </div>
+          <Input
+            value={sortName}
+            onChange={(e) => setSortName(e.target.value)}
+            onBlur={saveSortName}
             placeholder={t('detail.overview.information.empty')}
             className={cn('text-sm')}
           />

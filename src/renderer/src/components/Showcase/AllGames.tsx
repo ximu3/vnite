@@ -1,3 +1,6 @@
+import { SeparatorDashed } from '@ui/separator-dashed'
+import { useTranslation } from 'react-i18next'
+import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
 import { Button } from '~/components/ui/button'
 import {
   Select,
@@ -8,13 +11,10 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select'
-import { useTranslation } from 'react-i18next'
-import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
 import { useConfigState } from '~/hooks'
 import { sortGames } from '~/stores/game'
 import { cn } from '~/utils'
 import { GamePoster } from './posters/GamePoster'
-import { SeparatorDashed } from '@ui/separator-dashed'
 
 function PlaceHolder(): React.JSX.Element {
   return (
@@ -53,6 +53,9 @@ export function AllGamesComponent({
                   <SelectLabel>{t('showcase.sorting.label')}</SelectLabel>
                   <SelectItem value="metadata.name">
                     {t('showcase.sorting.options.name')}
+                  </SelectItem>
+                  <SelectItem value="metadata.sortName">
+                    {t('showcase.sorting.options.sortName')}
                   </SelectItem>
                   <SelectItem value="metadata.releaseDate">
                     {t('showcase.sorting.options.releaseDate')}

@@ -6,6 +6,8 @@
       "placeholder": "搜尋",
       "tooltip": "支援透過遊戲名、開發者、發行日期等中繼資料進行搜尋"
     },
+    "gameListSettings": "遊戲列表設定",
+    "collapseAllGroups": "收起全部分組",
     "groupBy": "分組依據",
     "groups": {
       "none": "無分組",
@@ -33,6 +35,7 @@
       "sortBy": "排序依據",
       "sortOptions": {
         "name": "名稱",
+        "sortName": "排序名稱",
         "releaseDate": "發布日期",
         "lastRunDate": "最後執行日期",
         "addDate": "添加日期",
@@ -41,7 +44,8 @@
     },
     "playStatus": {
       "adjustOrder": "調整順序"
-    }
+    },
+    "overrideCollectionSort": "覆蓋收藏排序"
   },
   "filter": {
     "title": "進階篩選",
@@ -76,10 +80,12 @@
       "label": "排序依據",
       "options": {
         "name": "名稱",
+        "sortName": "排序名稱",
         "releaseDate": "發布日期",
         "lastRunDate": "最後執行日期",
         "addDate": "添加日期",
-        "playTime": "遊玩時間"
+        "playTime": "遊玩時間",
+        "custom": "自訂順序"
       }
     },
     "gameCard": {
@@ -230,6 +236,7 @@
         "fields": {
           "originalName": "原名",
           "localizedName": "譯名",
+          "sortName": "排序名稱",
           "developers": "開發商",
           "publishers": "發行商",
           "releaseDate": "發行日期",
@@ -332,7 +339,7 @@
     },
     "manage": {
       "title": "管理",
-      "rename": "重新命名",
+      "rename": "修改基本資訊",
       "editLogo": "編輯徽標",
       "editPlayTime": "修改遊玩時間",
       "downloadMetadata": "更新資料",
