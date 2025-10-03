@@ -9,6 +9,7 @@ import {
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { useConfigState } from '~/hooks'
 import { useGameCollectionStore } from '~/stores'
+import { sortGames } from '~/stores/game'
 import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
 import { useGameListStore } from '../store'
@@ -16,6 +17,9 @@ import { AllGame } from './AllGame'
 import { RecentGames } from './RecentGames'
 
 export function Collection(): React.JSX.Element {
+  const [by] = useConfigState('game.gameList.sort.by')
+  const [order] = useConfigState('game.gameList.sort.order')
+  const [overrideCollectionSort] = useConfigState('game.gameList.overrideCollectionSort')
   const collections = useGameCollectionStore((state) => state.documents)
   const defaultValues = [...Object.keys(collections), 'all', 'recentGames']
   const [showAllGamesInGroup] = useConfigState('game.gameList.showAllGamesInGroup')
@@ -56,9 +60,11 @@ export function Collection(): React.JSX.Element {
                 </AccordionTrigger>
               </CollectionCM>
               <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1 w-full')}>
-                {value.games.map((game) => (
-                  <GameNav key={game} gameId={game} groupId={`collection:${key}`} />
-                ))}
+                {(overrideCollectionSort ? sortGames(by, order, value.games) : value.games).map(
+                  (game) => (
+                    <GameNav key={game} gameId={game} groupId={`collection:${key}`} />
+                  )
+                )}
               </AccordionContent>
             </AccordionItem>
           ))}

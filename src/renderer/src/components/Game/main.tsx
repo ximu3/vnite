@@ -1,16 +1,27 @@
 import { NSFWBlurLevel } from '@appTypes/models'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { ipcManager } from '~/app/ipc'
 import { Button } from '~/components/ui/button'
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger
+} from '~/components/ui/context-menu'
 import { GameImage } from '~/components/ui/game-image'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { useConfigState, useGameState } from '~/hooks'
 import { cn } from '~/utils'
 import { ScrollArea } from '../ui/scroll-area'
+import { GamePropertiesDialog } from './Config/Properties'
+import { ImageViewerDialog } from './Config/Properties/Media/ImageViewerDialog'
 import { Header } from './Header'
 import { HeaderCompact } from './HeaderCompact'
 import { Memory } from './Memory'
 import { Overview } from './Overview'
+import { InformationDialog } from './Overview/Information/InformationDialog'
 import { Record } from './Record'
 import { Save } from './Save'
 import { useGameDetailStore } from './store'
@@ -32,6 +43,8 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
 
   const isEditingLogo = useGameDetailStore((state) => state.isEditingLogo)
   const setIsEditingLogo = useGameDetailStore((state) => state.setIsEditingLogo)
+  const isInformationDialogOpen = useGameDetailStore((s) => s.isInformationDialogOpen)
+  const setIsInformationDialogOpen = useGameDetailStore((s) => s.setIsInformationDialogOpen)
 
   // Game Logo position and size management
   const initialPosition = { x: 1.5, y: 35 }
@@ -87,6 +100,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>): void => {
     e.preventDefault()
+    if (!isEditingLogo) return
     if (!logoRef.current) return
     if (e.button === 0) {
       setDragging(true)
@@ -171,6 +185,24 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   const isInitialPosition = (pos: { x: number; y: number }): boolean =>
     pos.x === initialPosition.x && pos.y === initialPosition.y
 
+  const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = useState(false)
+  const [isImageViewerOpen, setIsImageViewerOpen] = useState(false)
+  const [imageViewerPath, setImageViewerPath] = useState<string | null>(null)
+
+  async function openLargeBackground(): Promise<void> {
+    try {
+      const currentPath = await ipcManager.invoke('game:get-media-path', gameId, 'background')
+      if (!currentPath) {
+        toast.error(t('detail.properties.media.notifications.imageNotFound'))
+        return
+      }
+      setImageViewerPath(currentPath)
+      setIsImageViewerOpen(true)
+    } catch (error) {
+      toast.error(t('detail.properties.media.notifications.getImageError', { error }))
+    }
+  }
+
   return (
     <div className={cn('w-full h-full relative overflow-hidden shrink-0')}>
       {/* Logo Editing Control Panel */}
@@ -232,28 +264,37 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
 
       {/* Logo Layer */}
       {showLogo && logoVisible && !hideLogo && (
-        <div
-          ref={logoRef}
-          onMouseDown={handleMouseDown}
-          onWheel={handleWheel}
-          style={{
-            transform: `scale(${logoSize / 100})`,
-            left: `${headerLayout === 'compact' && isInitialPosition(localLogoPosition) ? initialPositionInCompact.x : localLogoPosition.x}vw`,
-            top: `${headerLayout === 'compact' && isInitialPosition(localLogoPosition) ? initialPositionInCompact.y : localLogoPosition.y}vh`,
-            cursor: dragging ? 'grabbing' : 'grab',
-            transformOrigin: 'center center',
-            zIndex: isEditingLogo ? 30 : 10 // Increase z-index in editing mode
-          }}
-          className={cn('absolute', 'will-change-transform')}
-        >
-          <GameImage
-            gameId={gameId}
-            key={`${gameId}-logo`}
-            type="logo"
-            className={cn('w-auto max-h-[15vh] object-contain')}
-            fallback={<div className={cn('')} />}
-          />
-        </div>
+        <ContextMenu>
+          <ContextMenuTrigger asChild>
+            <div
+              ref={logoRef}
+              onMouseDown={handleMouseDown}
+              onWheel={handleWheel}
+              style={{
+                transform: `scale(${logoSize / 100})`,
+                left: `${headerLayout === 'compact' && isInitialPosition(localLogoPosition) ? initialPositionInCompact.x : localLogoPosition.x}vw`,
+                top: `${headerLayout === 'compact' && isInitialPosition(localLogoPosition) ? initialPositionInCompact.y : localLogoPosition.y}vh`,
+                cursor: isEditingLogo ? (dragging ? 'grabbing' : 'grab') : 'default',
+                transformOrigin: 'center center',
+                zIndex: isEditingLogo ? 30 : 10
+              }}
+              className={cn('absolute', 'will-change-transform')}
+            >
+              <GameImage
+                gameId={gameId}
+                key={`${gameId}-logo`}
+                type="logo"
+                className={cn('w-auto max-h-[15vh] object-contain')}
+                fallback={<div className={cn('')} />}
+              />
+            </div>
+          </ContextMenuTrigger>
+          <ContextMenuContent className={cn('w-40')}>
+            <ContextMenuItem onSelect={() => setIsPropertiesDialogOpen(true)}>
+              {t('detail.contextMenu.editMediaProperties')}
+            </ContextMenuItem>
+          </ContextMenuContent>
+        </ContextMenu>
       )}
 
       {/* Scrollable Content Area */}
@@ -261,58 +302,109 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
         ref={scrollAreaRef}
         className={cn('relative h-full w-full overflow-auto rounded-none')}
       >
-        {/* Content Container */}
-        <div
-          className={cn(
-            'relative z-20 flex flex-col w-full min-h-[100vh]',
-            headerLayout === 'compact' && 'p-4'
-          )}
-        >
-          <div className={`mt-(--content-top-padding)`}>
-            {/* Header Area */}
-            <div ref={headerRef} className="pt-1">
-              {headerLayout === 'compact' ? (
-                <HeaderCompact gameId={gameId} />
-              ) : (
-                <Header gameId={gameId} />
+        {/* Content Container with custom context menu */}
+        <ContextMenu>
+          <ContextMenuTrigger asChild>
+            <div
+              className={cn(
+                'relative z-20 flex flex-col w-full min-h-[100vh]',
+                headerLayout === 'compact' && 'p-4'
               )}
-            </div>
+            >
+              <div
+                className={`mt-(--content-top-padding)`}
+                onContextMenu={(e) => {
+                  // Preserve native context menu inside this area
+                  e.stopPropagation()
+                }}
+              >
+                {/* Header Area */}
+                <div ref={headerRef} className="pt-1">
+                  {headerLayout === 'compact' ? (
+                    <HeaderCompact gameId={gameId} />
+                  ) : (
+                    <Header gameId={gameId} />
+                  )}
+                </div>
 
-            {/* Content Area */}
-            <div className={cn('p-7 pt-4 h-full')}>
-              <Tabs defaultValue="overview" className={cn('w-full')}>
-                <TabsList className={cn('w-full justify-start bg-transparent')} variant="underline">
-                  <TabsTrigger className={cn('w-1/4')} value="overview" variant="underline">
-                    {t('detail.tabs.overview')}
-                  </TabsTrigger>
-                  <TabsTrigger className={cn('w-1/4')} value="record" variant="underline">
-                    {t('detail.tabs.record')}
-                  </TabsTrigger>
-                  <TabsTrigger className={cn('w-1/4')} value="save" variant="underline">
-                    {t('detail.tabs.save')}
-                  </TabsTrigger>
-                  <TabsTrigger className={cn('w-1/4')} value="memory" variant="underline">
-                    {t('detail.tabs.memory')}
-                  </TabsTrigger>
-                </TabsList>
+                {/* Content Area */}
+                <div className={cn('p-7 pt-4 h-full')}>
+                  <Tabs defaultValue="overview" className={cn('w-full')}>
+                    <TabsList
+                      className={cn('w-full justify-start bg-transparent')}
+                      variant="underline"
+                    >
+                      <TabsTrigger className={cn('w-1/4')} value="overview" variant="underline">
+                        {t('detail.tabs.overview')}
+                      </TabsTrigger>
+                      <TabsTrigger className={cn('w-1/4')} value="record" variant="underline">
+                        {t('detail.tabs.record')}
+                      </TabsTrigger>
+                      <TabsTrigger className={cn('w-1/4')} value="save" variant="underline">
+                        {t('detail.tabs.save')}
+                      </TabsTrigger>
+                      <TabsTrigger className={cn('w-1/4')} value="memory" variant="underline">
+                        {t('detail.tabs.memory')}
+                      </TabsTrigger>
+                    </TabsList>
 
-                <TabsContent value="overview">
-                  <Overview gameId={gameId} />
-                </TabsContent>
-                <TabsContent value="record">
-                  <Record gameId={gameId} />
-                </TabsContent>
-                <TabsContent value="save">
-                  <Save gameId={gameId} />
-                </TabsContent>
-                <TabsContent value="memory">
-                  <Memory gameId={gameId} />
-                </TabsContent>
-              </Tabs>
+                    <TabsContent value="overview">
+                      <Overview gameId={gameId} />
+                    </TabsContent>
+                    <TabsContent value="record">
+                      <Record gameId={gameId} />
+                    </TabsContent>
+                    <TabsContent value="save">
+                      <Save gameId={gameId} />
+                    </TabsContent>
+                    <TabsContent value="memory">
+                      <Memory gameId={gameId} />
+                    </TabsContent>
+                  </Tabs>
+                </div>
+              </div>
+              {/* Close content container div */}
             </div>
-          </div>
-        </div>
+          </ContextMenuTrigger>
+
+          {/* Custom context menu for the background area of content container */}
+          <ContextMenuContent className={cn('w-40')}>
+            <ContextMenuItem onSelect={() => setIsPropertiesDialogOpen(true)}>
+              修改媒体属性
+            </ContextMenuItem>
+            <ContextMenuItem
+              onSelect={() => {
+                void openLargeBackground()
+              }}
+            >
+              {t('detail.properties.media.actions.viewLargeImage')}
+            </ContextMenuItem>
+          </ContextMenuContent>
+        </ContextMenu>
       </ScrollArea>
+
+      {isPropertiesDialogOpen && (
+        <GamePropertiesDialog
+          gameId={gameId}
+          isOpen={isPropertiesDialogOpen}
+          setIsOpen={setIsPropertiesDialogOpen}
+          defaultTab={'media'}
+        />
+      )}
+      {isImageViewerOpen && (
+        <ImageViewerDialog
+          isOpen={isImageViewerOpen}
+          imagePath={imageViewerPath}
+          onClose={() => setIsImageViewerOpen(false)}
+        />
+      )}
+      {isInformationDialogOpen && (
+        <InformationDialog
+          gameId={gameId}
+          isOpen={isInformationDialogOpen}
+          setIsOpen={setIsInformationDialogOpen}
+        />
+      )}
     </div>
   )
 }

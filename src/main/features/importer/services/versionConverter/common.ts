@@ -255,6 +255,7 @@ async function convertGame(gameId: string, gamePath: string): Promise<void> {
       metadata: {
         name: metadata.name || '',
         originalName: metadata.originalName || '',
+        sortName: '',
         releaseDate: metadata.releaseDate || '',
         description: metadata.description || '',
         developers: metadata.developers || [],
@@ -572,6 +573,7 @@ async function convertConfig(basePath: string): Promise<void> {
           by: mapSortField(v2Config.others.gameList.sort.by),
           order: v2Config.others.gameList.sort.order
         },
+        overrideCollectionSort: false,
         selectedGroup: selectedGroupMap[v2Config.others.gameList.selectedGroup] || 'none',
         highlightLocalGames: v2Config.others.gameList.highlightLocalGames,
         markLocalGames: v2Config.others.gameList.markLocalGames,

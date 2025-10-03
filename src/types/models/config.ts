@@ -24,6 +24,7 @@ export interface configDocs {
       sort: {
         by:
           | 'metadata.name'
+          | 'metadata.sortName'
           | 'metadata.releaseDate'
           | 'record.lastRunDate'
           | 'record.addDate'
@@ -35,12 +36,14 @@ export interface configDocs {
       sort: {
         by:
           | 'metadata.name'
+          | 'metadata.sortName'
           | 'metadata.releaseDate'
           | 'record.lastRunDate'
           | 'record.addDate'
           | 'record.playTime'
         order: 'asc' | 'desc'
       }
+      overrideCollectionSort: boolean
       selectedGroup:
         | 'none'
         | 'collection'
@@ -264,6 +267,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
         by: 'metadata.name',
         order: 'desc' as const
       },
+      overrideCollectionSort: false,
       selectedGroup: 'collection',
       highlightLocalGames: true,
       markLocalGames: false,

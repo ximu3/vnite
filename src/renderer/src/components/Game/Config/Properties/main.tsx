@@ -11,11 +11,13 @@ import { useTranslation } from 'react-i18next'
 export function GamePropertiesDialog({
   gameId,
   isOpen,
-  setIsOpen
+  setIsOpen,
+  defaultTab
 }: {
   gameId: string
   isOpen: boolean
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+  defaultTab?: 'launcher' | 'path' | 'media'
 }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [gameName] = useGameState(gameId, 'metadata.name')
@@ -27,7 +29,7 @@ export function GamePropertiesDialog({
           <DialogTitle>{`${gameName} - ${t('detail.properties.title')}`}</DialogTitle>
         </DialogHeader>
 
-        <Tabs defaultValue="launcher" className="flex-1 flex flex-col h-full">
+        <Tabs defaultValue={defaultTab ?? 'launcher'} className="flex-1 flex flex-col h-full">
           <TabsList className="">
             <TabsTrigger value="launcher">{t('detail.properties.tabs.launcher')}</TabsTrigger>
             <TabsTrigger value="path">{t('detail.properties.tabs.path')}</TabsTrigger>

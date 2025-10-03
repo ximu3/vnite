@@ -473,7 +473,7 @@ export class GameDBManager {
 
   static async removeGameMemoryImage(gameId: string, memoryId: string): Promise<void> {
     try {
-      await baseDBManager.removeAttachment(this.DB_NAME, gameId, `memories/${memoryId}.webp`)
+      await baseDBManager.removeAttachment(this.DB_NAME, gameId, `images/memories/${memoryId}.webp`)
     } catch (error) {
       log.error('[GameDB] Error removing game memory image:', error)
       throw error

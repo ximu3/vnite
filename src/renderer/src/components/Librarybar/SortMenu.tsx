@@ -1,7 +1,5 @@
-import React from 'react'
-import { useTranslation } from 'react-i18next'
-import { Button } from '~/components/ui/button'
-import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
+import { Button } from '@ui/button'
+import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
 import {
   Select,
   SelectContent,
@@ -9,9 +7,12 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '~/components/ui/select'
-import { Separator } from '~/components/ui/separator'
-import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
+} from '@ui/select'
+import { Separator } from '@ui/separator'
+import { Switch } from '@ui/switch'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
+import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { useConfigState } from '~/hooks'
 import { cn } from '~/utils'
 import { useGameListStore } from './store'
@@ -30,6 +31,9 @@ export function SortMenu({
   const [by, setBy] = useConfigState('game.gameList.sort.by')
   const [order, setOrder] = useConfigState('game.gameList.sort.order')
   const setOpenValues = useGameListStore((s) => s.setOpenValues)
+  const [overrideCollectionSort, setOverrideCollectionSort] = useConfigState(
+    'game.gameList.overrideCollectionSort'
+  )
 
   const toggleOrder = (): void => {
     setOrder(order === 'asc' ? 'desc' : 'asc')
@@ -69,6 +73,9 @@ export function SortMenu({
               <SelectContent>
                 <SelectGroup>
                   <SelectItem value="metadata.name">{t('list.all.sortOptions.name')}</SelectItem>
+                  <SelectItem value="metadata.sortName">
+                    {t('list.all.sortOptions.sortName')}
+                  </SelectItem>
                   <SelectItem value="metadata.releaseDate">
                     {t('list.all.sortOptions.releaseDate')}
                   </SelectItem>
@@ -175,6 +182,20 @@ export function SortMenu({
                     </div>
                   </React.Fragment>
                 ))}
+              </div>
+            </>
+          )}
+
+          {/* Collection settings */}
+          {selectedGroup === 'collection' && (
+            <>
+              <Separator />
+              <div className="flex flex-row gap-5 items-center justify-between">
+                <div className="text-sm whitespace-nowrap">{t('list.overrideCollectionSort')}</div>
+                <Switch
+                  checked={overrideCollectionSort}
+                  onCheckedChange={setOverrideCollectionSort}
+                />
               </div>
             </>
           )}

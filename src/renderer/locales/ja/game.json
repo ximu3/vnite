@@ -35,6 +35,7 @@
       "sortBy": "並び順",
       "sortOptions": {
         "name": "名前",
+        "sortName": "ソート名",
         "releaseDate": "リリース日",
         "lastRunDate": "最終プレイ日",
         "addDate": "追加日",
@@ -43,7 +44,8 @@
     },
     "playStatus": {
       "adjustOrder": "順序を調整"
-    }
+    },
+    "overrideCollectionSort": "コレクションの並び順を上書き"
   },
   "filter": {
     "title": "詳細フィルター",
@@ -78,10 +80,12 @@
       "label": "並び順",
       "options": {
         "name": "名前",
+        "sortName": "ソート名",
         "releaseDate": "リリース日",
         "lastRunDate": "最終プレイ日",
         "addDate": "追加日",
-        "playTime": "プレイ時間"
+        "playTime": "プレイ時間",
+        "custom": "カスタム順序"
       }
     },
     "gameCard": {
@@ -232,6 +236,7 @@
         "fields": {
           "originalName": "オリジナル名",
           "localizedName": "ローカライズ名",
+          "sortName": "ソート名",
           "developers": "開発元",
           "publishers": "パブリッシャー",
           "releaseDate": "リリース日",
@@ -334,7 +339,7 @@
     },
     "manage": {
       "title": "管理",
-      "rename": "名前変更",
+      "rename": "基本情報を編集",
       "editLogo": "ロゴを編集",
       "editPlayTime": "プレイ時間を編集",
       "downloadMetadata": "メタデータを更新",

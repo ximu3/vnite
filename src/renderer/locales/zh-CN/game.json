@@ -35,6 +35,7 @@
       "sortBy": "排序依据",
       "sortOptions": {
         "name": "名称",
+        "sortName": "排序名称",
         "releaseDate": "发布日期",
         "lastRunDate": "最后运行日期",
         "addDate": "添加日期",
@@ -43,7 +44,8 @@
     },
     "playStatus": {
       "adjustOrder": "调整顺序"
-    }
+    },
+    "overrideCollectionSort": "覆盖收藏排序"
   },
   "filter": {
     "title": "高级筛选",
@@ -78,10 +80,12 @@
       "label": "排序依据",
       "options": {
         "name": "名称",
+        "sortName": "排序名称",
         "releaseDate": "发布日期",
         "lastRunDate": "最后运行日期",
         "addDate": "添加日期",
-        "playTime": "游玩时间"
+        "playTime": "游玩时间",
+        "custom": "自定义顺序"
       }
     },
     "gameCard": {
@@ -137,6 +141,9 @@
     "actions": {
       "start": "开始游戏",
       "stop": "停止游戏"
+    },
+    "contextMenu": {
+      "editMediaProperties": "修改媒体属性"
     },
     "save": {
       "table": {
@@ -232,6 +239,7 @@
         "fields": {
           "originalName": "原名",
           "localizedName": "译名",
+          "sortName": "排序名称",
           "developers": "开发商",
           "publishers": "发行商",
           "releaseDate": "发行日期",
@@ -295,7 +303,8 @@
         "adjustCover": "调整封面",
         "addText": "添加文字",
         "editText": "修改文字",
-        "delete": "删除"
+        "delete": "删除",
+        "openScreenshotDir": "打开截图目录"
       },
       "setAs": {
         "title": "设置为",
@@ -323,7 +332,8 @@
         "setCoverSuccess": "已成功设置为游戏封面",
         "setCoverError": "设置为游戏封面失败: {{error}}",
         "setBackgroundSuccess": "已成功设置为游戏背景",
-        "setBackgroundError": "设置为游戏背景失败: {{error}}"
+        "setBackgroundError": "设置为游戏背景失败: {{error}}",
+        "screenshotPathNotSet": "未设置截图路径"
       },
       "dialog": {
         "markdownHint": "支持 Markdown 语法"
@@ -334,7 +344,7 @@
     },
     "manage": {
       "title": "管理",
-      "rename": "重命名",
+      "rename": "修改基本信息",
       "editLogo": "编辑徽标",
       "editPlayTime": "修改游玩时间",
       "markNSFW": "标记为NSFW",
@@ -405,6 +415,7 @@
         "title": "游戏与存档",
         "gamePath": "游戏路径",
         "savePath": "存档路径",
+        "screenshotPath": "截图路径",
         "addFolder": "添加文件夹",
         "addFile": "添加文件",
         "maxBackups": "最大存档备份数量",
@@ -434,6 +445,7 @@
           "importFromClipboard": "从剪贴板导入",
           "importFromUrl": "从链接导入",
           "searchImage": "搜索图片",
+          "viewLargeImage": "查看大图",
           "cropImage": "裁剪图片",
           "deleteImage": "删除图片"
         },
