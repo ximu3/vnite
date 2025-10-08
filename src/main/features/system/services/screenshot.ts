@@ -1,6 +1,6 @@
 import Screenshots from 'electron-screenshots'
 import { Monitor, Window } from 'node-screenshots-new'
-import { globalShortcut } from 'electron'
+import { globalShortcut, app } from 'electron'
 import { activeWindow, Result as ActiveWinResult } from 'get-windows'
 import { ActiveGameInfo, addGameMemory } from '~/features/game'
 import { ConfigDBManager, GameDBManager } from '~/core/database'
@@ -9,6 +9,8 @@ import path from 'path'
 import { existsSync, createWriteStream } from 'fs'
 import { mkdir } from 'fs/promises'
 import { convertToWebP } from '~/utils'
+import * as native from 'vnite-native'
+import i18next from 'i18next'
 
 let isScreenshotting = false
 let hotkey = 'alt+shift+z'
@@ -67,7 +69,7 @@ async function hotkeyCallback(): Promise<void> {
   switch (await ConfigDBManager.getConfigValue('memory.snippingMode')) {
     case 'rectangle': {
       if (isScreenshotting) {
-        console.warn('Screenshot service is already running')
+        log.warn('[System] Screenshot service is already running')
         return
       }
       isScreenshotting = true
@@ -85,7 +87,7 @@ async function hotkeyCallback(): Promise<void> {
     case 'activewindow': {
       const buffer = await captureActiveWindow()
       if (!buffer) {
-        console.warn('No active window for snipping')
+        log.warn('[System] No active window for snipping')
         return
       }
       captureToPersistenceLayer(activeWin, buffer)
@@ -94,7 +96,7 @@ async function hotkeyCallback(): Promise<void> {
     case 'fullscreen': {
       const buffer = await captureFullScreen()
       if (!buffer) {
-        console.warn('No screen for snipping')
+        log.warn('[System] No screen for snipping')
         return
       }
       captureToPersistenceLayer(activeWin, buffer)
@@ -112,30 +114,62 @@ async function captureToPersistenceLayer(
   const storageBackend = await ConfigDBManager.getConfigValue('memory.image.storageBackend')
   const shouldCaptureToDatabase = storageBackend !== 'filesystem'
   const shouldCaptureToFilesystem = storageBackend !== 'database'
+  let imagePath: string | undefined
 
   if (shouldCaptureToDatabase) {
-    captureGameMemory(activeWin, buffer)
+    const succeeded = await captureGameMemory(activeWin, buffer)
+    // returns immediately if failed to avoid send notification
+    if (!succeeded && !shouldCaptureToFilesystem) {
+      return
+    }
   }
   if (shouldCaptureToFilesystem) {
-    captureToFileSystem(activeWin, buffer)
+    imagePath = await captureToFileSystem(activeWin, buffer)
+    // returns immediately if failed to avoid send notification
+    if (!imagePath) {
+      return
+    }
   }
+
+  // if user is not saving screenshot to file system, create a temporary file in user's
+  // temp directory that can be deleted by the system at any time
+  if (!imagePath) {
+    imagePath = path.join(app.getPath('temp'), 'vnite-temp-screenshot.png')
+    try {
+      const stream = createWriteStream(imagePath)
+      stream.write(buffer)
+      stream.end()
+    } catch (error) {
+      log.error("[System] Failed to write screenshot file to user's temporary path: ", error)
+    }
+  }
+
+  // display a system notification
+  native.sendSystemNotification(
+    'vnite',
+    null,
+    i18next.t('system-notification:screenshotSaved'),
+    null,
+    imagePath,
+    false
+  )
 }
 
 async function captureGameMemory(
   activeWin: ActiveWinResult | undefined,
   buffer: Buffer
-): Promise<void> {
+): Promise<boolean> {
   try {
     const activeGameInfos = ActiveGameInfo.infos
     if (activeGameInfos.length === 0) {
-      console.warn('No active game found for memory capture')
-      return
+      log.warn('[System] No active game found for memory capture')
+      return false
     }
 
     if (!activeWin) {
       await addGameMemory(activeGameInfos[0].gameId, buffer)
       log.warn('[System] No active window found, using first active game info for memory capture')
-      return
+      return true
     }
 
     const activeGame = ActiveGameInfo.getGameInfoByPid(activeWin.owner.processId)
@@ -147,11 +181,11 @@ async function captureGameMemory(
       log.warn(
         `[System] No matching game found for active window, using first active game info for memory capture`
       )
-      return
     }
+    return true
   } catch (error) {
     log.error('[System] Error capturing game memory:', error)
-    return
+    return false
   }
 }
 
@@ -191,32 +225,34 @@ async function captureFullScreen(): Promise<Buffer | undefined> {
 async function captureToFileSystem(
   activeWin: ActiveWinResult | undefined,
   buffer: Buffer
-): Promise<void> {
+): Promise<string | undefined> {
+  let sanitizedName = ''
   const activeGameInfos = ActiveGameInfo.infos
   if (activeGameInfos.length === 0) {
-    console.warn('No active game found for capturing')
-    return
-  }
-  const rootDir = await ConfigDBManager.getConfigValue('memory.image.saveDir')
-  if (rootDir === '') {
-    console.warn('Capturing root directory is empty')
-    return
-  }
-  let gameId = activeGameInfos[0].gameId
-  if (!activeWin) {
-    log.warn('[System] No active window found, using first active game info for memory capture')
+    // if no game is activated, give it a general name
+    sanitizedName = '[Unknown]'
   } else {
-    const activeGame = ActiveGameInfo.getGameInfoByPid(activeWin.owner.processId)
-    if (activeGame) {
-      gameId = activeGame.gameId
-    } else {
-      log.warn(
-        '[System] No matching game found for active window, using first active game info for memory capture'
-      )
+    const rootDir = await ConfigDBManager.getConfigValue('memory.image.saveDir')
+    if (rootDir === '') {
+      log.warn('[System] Capturing root directory is empty')
+      return
     }
+    let gameId = activeGameInfos[0].gameId
+    if (!activeWin) {
+      log.warn('[System] No active window found, using first active game info for memory capture')
+    } else {
+      const activeGame = ActiveGameInfo.getGameInfoByPid(activeWin.owner.processId)
+      if (activeGame) {
+        gameId = activeGame.gameId
+      } else {
+        log.warn(
+          '[System] No matching game found for active window, using first active game info for memory capture'
+        )
+      }
+    }
+    const game = await GameDBManager.getGame(gameId)
+    sanitizedName = game.metadata.name.replace(/[<>:"/\\|?*]/g, ' ')
   }
-  const game = await GameDBManager.getGame(gameId)
-  const sanitizedName = game.metadata.name.replace(/[<>:"/\\|?*]/g, ' ')
   const saveDir = path.join(
     await ConfigDBManager.getConfigValue('memory.image.saveDir'),
     sanitizedName
@@ -244,6 +280,7 @@ async function captureToFileSystem(
   } catch (error) {
     log.error('[System] Error creating write stream for screenshot:', error)
   }
+  return filePath
 }
 
 function getPathValidLocalTime(): string {
