@@ -11,6 +11,7 @@ import { setupTransformerIPC } from '~/features/transformer'
 import { setupUpdaterIPC } from '~/features/updater'
 import { setupPluginIPC } from '~/plugins'
 import { setupEventBusIPC } from '../events'
+import { setupNativeMonitorIPC } from '~/features/monitor'
 
 export function setupIPC(): void {
   setupAccountIPC()
@@ -26,4 +27,5 @@ export function setupIPC(): void {
   setupUpdaterIPC()
   setupPluginIPC()
   setupEventBusIPC()
+  setupNativeMonitorIPC()
 }
