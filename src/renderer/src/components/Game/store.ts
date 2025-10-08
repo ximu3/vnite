@@ -9,6 +9,9 @@ export interface GameDetailStore {
 
   isScoreEditorDialogOpen: boolean
   setIsScoreEditorDialogOpen: (open: boolean) => void
+
+  isInformationDialogOpen: boolean
+  setIsInformationDialogOpen: (open: boolean) => void
 }
 
 export const useGameDetailStore = create<GameDetailStore>((set) => ({
@@ -19,5 +22,8 @@ export const useGameDetailStore = create<GameDetailStore>((set) => ({
   setIsPlayTimeEditorDialogOpen: (open): void => set({ isPlayTimeEditorDialogOpen: open }),
 
   isScoreEditorDialogOpen: false,
-  setIsScoreEditorDialogOpen: (open) => set({ isScoreEditorDialogOpen: open })
+  setIsScoreEditorDialogOpen: (open) => set({ isScoreEditorDialogOpen: open }),
+
+  isInformationDialogOpen: false,
+  setIsInformationDialogOpen: (open): void => set({ isInformationDialogOpen: open })
 }))

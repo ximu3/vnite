@@ -9,6 +9,7 @@ import { useConfigState } from '~/hooks'
 import { filterGames, getAllValuesInKey, sortGames } from '~/stores/game'
 import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
+import { useGameListStore } from '../store'
 import { AllGame } from './AllGame'
 import { RecentGames } from './RecentGames'
 
@@ -24,14 +25,22 @@ export function Others({
   const fields = getAllValuesInKey(fieldName)
   const defaultValues = [...fields, 'all', 'recentGames']
 
+  const setOpenValues = useGameListStore((s) => s.setOpenValues)
+  const openValues = useGameListStore((s) => s.getOpenValues(fieldName))
+  const handleAccordionChange = (v: string[]): void => {
+    const valid = v.filter((key) => defaultValues.includes(key)) // Remove the zombie key in storge
+    setOpenValues(fieldName, valid)
+  }
+
   return (
     <ScrollArea className={cn('w-full h-full pr-3 -mr-3 pb-1 pt-1')}>
       {defaultValues.length > 2 ? (
         <Accordion
-          key={`${fieldName}_yes`}
+          key={`${fieldName}`}
+          value={openValues}
+          onValueChange={handleAccordionChange}
           type="multiple"
           className={cn('w-full text-xs flex flex-col gap-2')}
-          defaultValue={defaultValues}
         >
           {/* Recent Games */}
           <RecentGames />
@@ -61,7 +70,8 @@ export function Others({
           key={`${fieldName}_no`}
           type="multiple"
           className={cn('w-full text-xs flex flex-col gap-2')}
-          defaultValue={defaultValues}
+          value={openValues}
+          onValueChange={handleAccordionChange}
         >
           <RecentGames />
           <AllGame />

@@ -1,8 +1,10 @@
-import { Button } from '~/components/ui/button'
-import React, { useEffect, useRef, useState } from 'react'
 import { useRouterState } from '@tanstack/react-router'
-import { cn, scrollToElement } from '~/utils'
+import React, { useEffect, useRef, useState } from 'react'
 import { create } from 'zustand'
+import { Button } from '~/components/ui/button'
+import { useConfigState } from '~/hooks'
+import { cn, scrollToElement } from '~/utils'
+import { useGameListStore } from './store'
 
 interface PositionButtonProps {
   className?: string
@@ -38,32 +40,95 @@ export const PositionButton = React.memo(function PositionButton({
   const lazyloadMark = usePositionButtonStore((state) => state.lazyloadMark)
   const [isTargetVisible, setIsTargetVisible] = useState(true)
   const visibilityTimeout = useRef<NodeJS.Timeout | null>(null)
+  const [selectedGroup] = useConfigState('game.gameList.selectedGroup')
 
   // Determine if you are on the game details page
   const isGameDetailPage = pathname.includes('/library/games/')
 
   // Get the selector of the target element
-  const getTargetSelector = (): string => {
-    if (targetSelector) return targetSelector
+  const getTargetSelector = (): {
+    selector: string
+    waitForOpen: { groupKey: string; itemKey: string }
+    highlight: boolean
+  } => {
+    const result = {
+      selector: targetSelector || '',
+      waitForOpen: { groupKey: '', itemKey: '' },
+      highlight: false
+    }
+    if (targetSelector) return result
 
     // Builds the game element selector based on the current path by default
     const currentGameId = pathname.split('/games/')[1]?.split('/')[0]
     const currentGroupId = decodeURIComponent(pathname.split('/games/')[1]?.split('/')[1] || '')
 
-    if (!currentGameId || !currentGroupId) return ''
-    return `[data-game-id="${currentGameId}"][data-group-id="${currentGroupId}"]`
+    if (!currentGameId) return result
+
+    if (currentGroupId) {
+      // The pathname is double-encoded, so it needs to be decoded again
+      const [groupKey, groupValue] = decodeURIComponent(currentGroupId).split(':')
+      result.selector = `[data-game-id="${currentGameId}"][data-group-id="${currentGroupId}"]`
+
+      const target = document.querySelector(result.selector)
+      if (target) {
+        return result
+      }
+
+      // try to open the accordion item if the target element is not found
+      if (currentGroupId === 'all' || currentGroupId === 'recentGames') {
+        result.waitForOpen = { groupKey: selectedGroup, itemKey: currentGroupId }
+        return result
+      }
+
+      if (
+        selectedGroup === groupKey &&
+        !useGameListStore.getState().getOpenValues(groupKey).includes(groupValue)
+      ) {
+        result.waitForOpen = { groupKey, itemKey: groupValue }
+        return result
+      }
+    }
+
+    //* fallback to scroll to the game in allGames
+    result.selector = `[data-game-id="${currentGameId}"][data-group-id="all"]`
+    result.highlight = true
+    if (useGameListStore.getState().getOpenValues(selectedGroup).includes('all')) {
+      result.waitForOpen = { groupKey: '', itemKey: '' }
+    } else {
+      result.waitForOpen = { groupKey: selectedGroup, itemKey: 'all' }
+    }
+
+    return result
   }
 
   // Scroll to target element
   const scrollToTarget = (): void => {
-    const selector = getTargetSelector()
+    const { selector, waitForOpen, highlight } = getTargetSelector()
     if (!selector) return
 
-    scrollToElement({
-      selector,
-      behavior: scrollBehavior,
-      block: 'center'
-    })
+    const doScroll = (): void => {
+      scrollToElement({ selector, behavior: scrollBehavior, block: 'center' })
+    }
+
+    const doHighlight = (): void => {
+      const el = document.querySelector<HTMLElement>(selector)
+      if (el) {
+        const prevBackground = el.style.backgroundColor
+        el.style.backgroundColor = 'var(--accent)'
+        setTimeout(() => {
+          el.style.backgroundColor = prevBackground
+        }, 1500)
+      }
+    }
+
+    const { groupKey, itemKey } = waitForOpen
+    if (groupKey && itemKey) {
+      useGameListStore.getState().openItem(groupKey, itemKey)
+      setTimeout(doScroll, 500)
+    } else {
+      doScroll()
+    }
+    if (highlight) setTimeout(doHighlight, 600)
   }
 
   // Set element visibility listener - always on top of the component
@@ -71,7 +136,7 @@ export const PositionButton = React.memo(function PositionButton({
     // If you are not on the game details page, the listening logic is not executed
     if (!isGameDetailPage) return
 
-    const selector = getTargetSelector()
+    const { selector } = getTargetSelector()
     if (!selector) return
 
     const targetElement = document.querySelector(selector)

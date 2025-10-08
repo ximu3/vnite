@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next'
 import { HoverCardAnimation } from '~/components/animations/HoverCard'
 import { GameNavCM } from '~/components/contextMenu/GameNavCM'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
-import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
 import { GamePropertiesDialog } from '~/components/Game/Config/Properties'
+import { InformationDialog } from '~/components/Game/Overview/Information/InformationDialog'
 import { BatchGameNavCM } from '~/components/GameBatchEditor/BatchGameNavCM'
 import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
 import { useDragContext } from '~/components/Showcase/CollectionGames'
@@ -49,7 +49,7 @@ function Preview({
       )}
     >
       <div className="absolute top-[25%] z-20 flex justify-center pointer-events-none w-full h-[50%]">
-        <div className="text-accent-foreground text-lg font-semibold w-[90%] text-center break-words whitespace-normal overflow-hidden">
+        <div className="text-accent-foreground w-[90%] text-center break-words whitespace-normal overflow-hidden">
           {title}
         </div>
       </div>
@@ -85,7 +85,7 @@ export function GamePoster({
   const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = useState(false)
   const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = useState(false)
-  const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = useState(false)
+  const [isInformationDialogOpen, setIsInformationDialogOpen] = useState(false)
   const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = useState(false)
   const { t } = useTranslation('game')
   const { setIsDraggingGlobal } = useDragContext()
@@ -347,7 +347,7 @@ export function GamePoster({
             <GameNavCM
               gameId={gameId}
               openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
-              openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
+              openNameEditorDialog={() => setIsInformationDialogOpen(true)}
               openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
               openPropertiesDialog={() => setIsPropertiesDialogOpen(true)}
             />
@@ -358,8 +358,12 @@ export function GamePoster({
       {isAddCollectionDialogOpen && (
         <AddCollectionDialog gameIds={[gameId]} setIsOpen={setIsAddCollectionDialogOpen} />
       )}
-      {isNameEditorDialogOpen && (
-        <NameEditorDialog gameId={gameId} setIsOpen={setIsNameEditorDialogOpen} />
+      {isInformationDialogOpen && (
+        <InformationDialog
+          gameId={gameId}
+          isOpen={isInformationDialogOpen}
+          setIsOpen={setIsInformationDialogOpen}
+        />
       )}
       {isPlayTimeEditorDialogOpen && (
         <PlayTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayTimeEditorDialogOpen} />

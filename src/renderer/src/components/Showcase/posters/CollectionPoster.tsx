@@ -49,7 +49,7 @@ function Preview({
         )}
       >
         <div className="flex flex-col items-center justify-center gap-1">
-          <div className={cn('text-accent-foreground text-lg font-semibold')}>{collectionName}</div>
+          <div className={cn('text-accent-foreground text-lg')}>{collectionName}</div>
           <div className={cn('text-accent-foreground/70')}>{`( ${collectionLength} )`}</div>
         </div>
       </div>

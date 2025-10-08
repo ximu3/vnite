@@ -1,12 +1,10 @@
-import { Button } from '~/components/ui/button'
-import { ClearableInput } from '~/components/ui/input'
-import { Nav } from '~/components/ui/nav'
-import { Select, SelectTrigger, SelectContent, SelectItem } from '~/components/ui/select'
-import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 import { isEqual } from 'lodash'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useConfigState } from '~/hooks'
+import { Button } from '~/components/ui/button'
+import { ClearableInput } from '~/components/ui/input'
+import { Nav } from '~/components/ui/nav'
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
 import { cn } from '~/utils'
 import { Filter } from './Librarybar/Filter'
 import { useFilterStore } from './Librarybar/Filter/store'
@@ -15,7 +13,6 @@ import { useLibrarybarStore } from './Librarybar/store'
 
 export function LibraryTitlebarContent(): React.JSX.Element {
   const { t } = useTranslation('game')
-  const [selectedGroup, setSelectedGroup] = useConfigState('game.gameList.selectedGroup')
   const query = useLibrarybarStore((state) => state.query)
   const setQuery = useLibrarybarStore((state) => state.setQuery)
   const filter = useFilterStore((state) => state.filter)
@@ -25,23 +22,6 @@ export function LibraryTitlebarContent(): React.JSX.Element {
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false)
   const toggleSortMenu = (): void => {
     setIsSortMenuOpen(!isSortMenuOpen)
-  }
-
-  const getGroupDisplayText = (groupValue: string): string => {
-    switch (groupValue) {
-      case 'none':
-        return t('librarybar.groups.none')
-      case 'collection':
-        return t('librarybar.groups.collection')
-      case 'metadata.developers':
-        return t('librarybar.groups.developers')
-      case 'metadata.genres':
-        return t('librarybar.groups.genres')
-      case 'record.playStatus':
-        return t('librarybar.groups.playStatus')
-      default:
-        return t('librarybar.groups.none')
-    }
   }
 
   return (
@@ -112,30 +92,6 @@ export function LibraryTitlebarContent(): React.JSX.Element {
           </Button>
         )}
       </div>
-
-      {/* Group By Button */}
-      <Select value={selectedGroup} onValueChange={setSelectedGroup}>
-        <Tooltip>
-          <TooltipTrigger>
-            <SelectTrigger
-              noIcon
-              className="h-[32px] w-[32px] flex items-center justify-center border-0 p-0"
-            >
-              <span className="icon-[mdi--format-list-group] w-4 h-4"></span>
-            </SelectTrigger>
-          </TooltipTrigger>
-          <TooltipContent side="bottom">
-            {t('librarybar.groupBy')}: {getGroupDisplayText(selectedGroup)}
-          </TooltipContent>
-        </Tooltip>
-        <SelectContent>
-          <SelectItem value="none">{t('librarybar.groups.none')}</SelectItem>
-          <SelectItem value="collection">{t('librarybar.groups.collection')}</SelectItem>
-          <SelectItem value="metadata.developers">{t('librarybar.groups.developers')}</SelectItem>
-          <SelectItem value="metadata.genres">{t('librarybar.groups.genres')}</SelectItem>
-          <SelectItem value="record.playStatus">{t('librarybar.groups.playStatus')}</SelectItem>
-        </SelectContent>
-      </Select>
 
       {/* Sort Button */}
       <SortMenu isSortMenuOpen={isSortMenuOpen} setIsSortMenuOpen={setIsSortMenuOpen}>

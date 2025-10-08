@@ -6,6 +6,8 @@
       "placeholder": "搜索",
       "tooltip": "支持通过游戏名、开发者、发行日期等元数据进行搜索"
     },
+    "gameListSettings": "游戏列表设置",
+    "collapseAllGroups": "折叠所有分组",
     "groupBy": "分组依据",
     "groups": {
       "none": "无分组",
@@ -33,6 +35,7 @@
       "sortBy": "排序依据",
       "sortOptions": {
         "name": "名称",
+        "sortName": "排序名称",
         "releaseDate": "发布日期",
         "lastRunDate": "最后运行日期",
         "addDate": "添加日期",
@@ -41,7 +44,8 @@
     },
     "playStatus": {
       "adjustOrder": "调整顺序"
-    }
+    },
+    "overrideCollectionSort": "覆盖收藏排序"
   },
   "filter": {
     "title": "高级筛选",
@@ -76,10 +80,12 @@
       "label": "排序依据",
       "options": {
         "name": "名称",
+        "sortName": "排序名称",
         "releaseDate": "发布日期",
         "lastRunDate": "最后运行日期",
         "addDate": "添加日期",
-        "playTime": "游玩时间"
+        "playTime": "游玩时间",
+        "custom": "自定义顺序"
       }
     },
     "gameCard": {
@@ -233,6 +239,7 @@
         "fields": {
           "originalName": "原名",
           "localizedName": "译名",
+          "sortName": "排序名称",
           "developers": "开发商",
           "publishers": "发行商",
           "releaseDate": "发行日期",
@@ -289,16 +296,16 @@
       }
     },
     "memory": {
-        "actions": {
-          "add": "添加",
-          "addCover": "添加封面",
-          "changeCover": "更换封面",
-          "adjustCover": "调整封面",
-          "addText": "添加文字",
-          "editText": "修改文字",
-          "delete": "删除",
-          "openScreenshotDir": "打开截图目录"
-        },
+      "actions": {
+        "add": "添加",
+        "addCover": "添加封面",
+        "changeCover": "更换封面",
+        "adjustCover": "调整封面",
+        "addText": "添加文字",
+        "editText": "修改文字",
+        "delete": "删除",
+        "openScreenshotDir": "打开截图目录"
+      },
       "setAs": {
         "title": "设置为",
         "cover": "游戏封面",
@@ -311,23 +318,23 @@
         "toClipboard": "导出至剪切板",
         "saveAs": "另存为"
       },
-        "notifications": {
-          "deleting": "正在删除…",
-          "deleteSuccess": "删除成功",
-          "deleteError": "删除失败: {{error}}",
-          "selectFileError": "选择文件失败: {{error}}",
-          "imageNotFound": "未找到当前图片",
-          "getImageError": "获取当前图片失败: {{error}}",
-          "imageCopied": "图片已成功复制到剪切板",
-          "imageCopyError": "复制图片到剪切板失败: {{error}}",
-          "markdownCopied": "Markdown 已复制到剪贴板",
-          "markdownCopyError": "复制到剪贴板失败: {{error}}",
-          "setCoverSuccess": "已成功设置为游戏封面",
-          "setCoverError": "设置为游戏封面失败: {{error}}",
-          "setBackgroundSuccess": "已成功设置为游戏背景",
-          "setBackgroundError": "设置为游戏背景失败: {{error}}",
-          "screenshotPathNotSet": "未设置截图路径"
-        },
+      "notifications": {
+        "deleting": "正在删除…",
+        "deleteSuccess": "删除成功",
+        "deleteError": "删除失败: {{error}}",
+        "selectFileError": "选择文件失败: {{error}}",
+        "imageNotFound": "未找到当前图片",
+        "getImageError": "获取当前图片失败: {{error}}",
+        "imageCopied": "图片已成功复制到剪切板",
+        "imageCopyError": "复制图片到剪切板失败: {{error}}",
+        "markdownCopied": "Markdown 已复制到剪贴板",
+        "markdownCopyError": "复制到剪贴板失败: {{error}}",
+        "setCoverSuccess": "已成功设置为游戏封面",
+        "setCoverError": "设置为游戏封面失败: {{error}}",
+        "setBackgroundSuccess": "已成功设置为游戏背景",
+        "setBackgroundError": "设置为游戏背景失败: {{error}}",
+        "screenshotPathNotSet": "未设置截图路径"
+      },
       "dialog": {
         "markdownHint": "支持 Markdown 语法"
       }
@@ -337,7 +344,7 @@
     },
     "manage": {
       "title": "管理",
-      "rename": "重命名",
+      "rename": "修改基本信息",
       "editLogo": "编辑徽标",
       "editPlayTime": "修改游玩时间",
       "markNSFW": "标记为NSFW",

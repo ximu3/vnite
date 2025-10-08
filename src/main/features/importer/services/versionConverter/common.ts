@@ -3,11 +3,10 @@ import { app } from 'electron'
 import * as fse from 'fs-extra'
 import * as path from 'path'
 import { v4 as uuidv4 } from 'uuid'
+import { ConfigDBManager, GameDBManager } from '~/core/database'
 import { stopSync } from '~/features/database'
-import { ConfigDBManager } from '~/core/database'
-import { GameDBManager } from '~/core/database'
-import { zipFolder, unzipFile } from '~/utils'
 import { getAppTempPath } from '~/features/system'
+import { unzipFile, zipFolder } from '~/utils'
 
 // v2 Database Type Definition
 interface V2GameMetadata {
@@ -256,6 +255,7 @@ async function convertGame(gameId: string, gamePath: string): Promise<void> {
       metadata: {
         name: metadata.name || '',
         originalName: metadata.originalName || '',
+        sortName: '',
         releaseDate: metadata.releaseDate || '',
         description: metadata.description || '',
         developers: metadata.developers || [],
@@ -573,16 +573,14 @@ async function convertConfig(basePath: string): Promise<void> {
           by: mapSortField(v2Config.others.gameList.sort.by),
           order: v2Config.others.gameList.sort.order
         },
+        overrideCollectionSort: false,
         selectedGroup: selectedGroupMap[v2Config.others.gameList.selectedGroup] || 'none',
         highlightLocalGames: v2Config.others.gameList.highlightLocalGames,
         markLocalGames: v2Config.others.gameList.markLocalGames,
         showRecentGames: v2Config.appearances.gameList.showRecentGamesInGameList,
         showAllGamesInGroup: true,
         showCollapseButton: true,
-        playingStatusOrder: ['unplayed', 'playing', 'finished', 'multiple', 'shelved'],
-        playStatusAccordionOpen: ['unplayed', 'playing', 'finished', 'multiple', 'shelved'],
-        allGamesAccordionOpen: true,
-        recentGamesAccordionOpen: true
+        playingStatusOrder: ['unplayed', 'playing', 'finished', 'multiple', 'shelved']
       },
       gameHeader: {
         showOriginalName: v2Config.appearances.gameHeader.showOriginalNameInGameHeader
