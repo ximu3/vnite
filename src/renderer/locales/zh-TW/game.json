@@ -375,7 +375,8 @@
         "deleting": "正在刪除遊戲 {{gameName}}…",
         "deleted": "遊戲 {{gameName}} 已刪除",
         "error": "刪除遊戲 {{gameName}} 失敗: {{message}}"
-      }
+      },
+      "addToIgnore": "將此遊戲資料夾加入掃描器忽略清單"
     },
     "playTimeEditor": {
       "expressionSupport": "支援四則運算表達式",
@@ -522,6 +523,9 @@
           }
         }
       }
+    },
+    "contextMenu": {
+      "editMediaProperties": "編輯媒體屬性"
     }
   },
   "batchEditor": {
@@ -576,7 +580,8 @@
         "deleting": "正在刪除{{count}} 個遊戲…",
         "success": "{{count}} 個遊戲已刪除",
         "error": "刪除{{count}} 個遊戲失敗: {{message}}"
-      }
+      },
+      "addToIgnore": "將這些遊戲資料夾加入掃描器忽略清單"
     }
   },
   "updater": {
