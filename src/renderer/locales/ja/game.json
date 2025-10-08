@@ -375,7 +375,8 @@
         "deleting": "ゲーム{{gameName}}を削除中…",
         "deleted": "ゲーム{{gameName}}を削除しました",
         "error": "ゲーム{{gameName}}の削除に失敗しました: {{message}}"
-      }
+      },
+      "addToIgnore": "このゲームフォルダをスキャナ無視リストに追加する"
     },
     "playTimeEditor": {
       "expressionSupport": "計算式をサポートしています",
@@ -576,7 +577,8 @@
         "deleting": "{{count}}個のゲームを削除中…",
         "success": "{{count}}個のゲームを削除しました",
         "error": "{{count}}個のゲームの削除に失敗しました: {{message}}"
-      }
+      },
+      "addToIgnore": "これらのゲームフォルダをスキャナ無視リストに追加する"
     }
   },
   "updater": {
