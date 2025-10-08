@@ -10,6 +10,7 @@ crate-type = ["cdylib"]
 [dependencies]
 napi = { version = "3.0.0", features = ["async"] }
 napi-derive = "3.0.0"
+quick-xml = "0.38.3"
 tokio = { version = "1.47.1", features = ["full"] }
 windows = { version = "0.62", features = [
   "Win32_System_Diagnostics_ToolHelp",
@@ -20,6 +21,8 @@ windows = { version = "0.62", features = [
   "Win32_Security",
   "Win32_System_Rpc",
   "Win32_System_Ole",
+  "UI_Notifications",
+  "Data_Xml_Dom",
 ] }
 windows-core = "0.62.0"
 

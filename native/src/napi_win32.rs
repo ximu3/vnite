@@ -12,3 +12,15 @@ pub struct ProcessInfo {
 pub fn get_all_process() -> Vec<ProcessInfo> {
   win32::get_all_process()
 }
+
+#[napi(js_name = "sendSystemNotification")]
+pub fn send_notification(
+  app_id: String,
+  title: Option<String>,
+  line1: Option<String>,
+  line2: Option<String>,
+  image_path: Option<String>,
+  silent: Option<bool>,
+) {
+  win32::send_notification(app_id, title, line1, line2, image_path, silent);
+}
