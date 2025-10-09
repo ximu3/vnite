@@ -564,6 +564,7 @@ module.exports.isRunning = nativeBinding.isRunning
 module.exports.ProcessEventType = nativeBinding.ProcessEventType
 module.exports.removeKnownGame = nativeBinding.removeKnownGame
 module.exports.replaceKnownGames = nativeBinding.replaceKnownGames
+module.exports.sendSystemNotification = nativeBinding.sendSystemNotification
 module.exports.startMonitoring = nativeBinding.startMonitoring
 module.exports.stopLogger = nativeBinding.stopLogger
 module.exports.stopMonitoring = nativeBinding.stopMonitoring

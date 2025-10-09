@@ -370,6 +370,10 @@
         "activeWindow": "Active Window",
         "fullscreen": "Full Screen"
       }
+    },
+    "enableNotificationSound": {
+      "title": "Notification Sound",
+      "description": "Choose whether to play a system notification sound on receiving a capture notification"
     }
   }
 }

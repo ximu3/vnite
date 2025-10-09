@@ -271,6 +271,13 @@ export function Database(): React.JSX.Element {
               />
               <ConfigItem
                 hookType="config"
+                path="memory.enableNotificationSound"
+                title={t('memory.enableNotificationSound.title')}
+                description={t('memory.enableNotificationSound.description')}
+                controlType="switch"
+              />
+              <ConfigItem
+                hookType="config"
                 path="memory.image.storageBackend"
                 title={t('memory.storageBackend.title')}
                 description={t('memory.storageBackend.description')}

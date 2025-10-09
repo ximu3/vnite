@@ -182,6 +182,7 @@ export interface configDocs {
       namingRule: string
     }
     snippingMode: 'rectangle' | 'activewindow' | 'fullscreen'
+    enableNotificationSound: boolean
   }
 }
 
@@ -363,7 +364,8 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       saveDir: '',
       namingRule: '%datetime%'
     },
-    snippingMode: 'rectangle'
+    snippingMode: 'rectangle',
+    enableNotificationSound: true
   }
 } as const
 

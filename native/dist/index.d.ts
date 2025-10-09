@@ -29,6 +29,8 @@ export declare function removeKnownGame(path: string): Promise<void>
 
 export declare function replaceKnownGames(localGamePathes: Array<string>, localGameIds: Array<string>): Promise<void>
 
+export declare function sendSystemNotification(appId: string, title?: string | undefined | null, line1?: string | undefined | null, line2?: string | undefined | null, imagePath?: string | undefined | null, silent?: boolean | undefined | null): void
+
 export declare function startMonitoring(localGamePathes: Array<string>, localGameIds: Array<string>, callback?: ((err: Error | null, arg: ProcessEvent) => void) | undefined | null): Promise<void>
 
 export declare function stopLogger(): void
