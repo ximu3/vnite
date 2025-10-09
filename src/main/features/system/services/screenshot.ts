@@ -144,6 +144,7 @@ async function captureToPersistenceLayer(
     }
   }
 
+  const isSilent = !(await ConfigDBManager.getConfigValue('memory.enableNotificationSound'))
   // display a system notification
   native.sendSystemNotification(
     'vnite',
@@ -151,7 +152,7 @@ async function captureToPersistenceLayer(
     i18next.t('system-notification:screenshotSaved'),
     null,
     imagePath,
-    false
+    isSilent
   )
 }
 

@@ -372,6 +372,10 @@
         "activeWindow": "アクティブウィンドウ",
         "fullscreen": "フルスクリーン"
       }
+    },
+    "enableNotificationSound": {
+      "title": "システム通知音",
+      "description": "スクリーンショット成功のシステム通知を受ける際に通知音を鳴らすかどうかを選択する"
     }
   }
 }

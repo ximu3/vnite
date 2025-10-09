@@ -372,6 +372,10 @@
         "activeWindow": "活動視窗",
         "fullscreen": "全螢幕"
       }
+    },
+    "enableNotificationSound": {
+      "title": "系統通知音效",
+      "description": "選擇是否在收到截圖成功系統通知時播放通知音效"
     }
   }
 }
