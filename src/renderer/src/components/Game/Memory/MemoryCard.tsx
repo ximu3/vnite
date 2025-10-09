@@ -332,61 +332,65 @@ export function MemoryCard({
         <ContextMenuSeparator />
         {/* Set As Game Media */}
         {isCoverExist && (
-          <ContextMenuGroup>
-            <ContextMenuSub>
-              <ContextMenuSubTrigger>{t('detail.memory.setAs.title')}</ContextMenuSubTrigger>
-              <ContextMenuPortal>
-                <ContextMenuSubContent>
-                  <ContextMenuItem
-                    onSelect={async () => {
-                      try {
-                        const coverPath = await ipcManager.invoke(
-                          'game:get-memory-cover-path',
-                          gameId,
-                          memoryId
-                        )
-                        if (!coverPath) {
-                          toast.error(t('detail.memory.notifications.imageNotFound'))
-                          return
+          <>
+            <ContextMenuGroup>
+              <ContextMenuSub>
+                <ContextMenuSubTrigger>{t('detail.memory.setAs.title')}</ContextMenuSubTrigger>
+                <ContextMenuPortal>
+                  <ContextMenuSubContent>
+                    <ContextMenuItem
+                      onSelect={async () => {
+                        try {
+                          const coverPath = await ipcManager.invoke(
+                            'game:get-memory-cover-path',
+                            gameId,
+                            memoryId
+                          )
+                          if (!coverPath) {
+                            toast.error(t('detail.memory.notifications.imageNotFound'))
+                            return
+                          }
+                          await ipcManager.invoke('game:set-image', gameId, 'cover', coverPath)
+                          refreshLight()
+                          toast.success(t('detail.memory.notifications.setCoverSuccess'))
+                        } catch (error) {
+                          toast.error(t('detail.memory.notifications.setCoverError', { error }))
                         }
-                        await ipcManager.invoke('game:set-image', gameId, 'cover', coverPath)
-                        refreshLight()
-                        toast.success(t('detail.memory.notifications.setCoverSuccess'))
-                      } catch (error) {
-                        toast.error(t('detail.memory.notifications.setCoverError', { error }))
-                      }
-                    }}
-                  >
-                    {t('detail.memory.setAs.cover')}
-                  </ContextMenuItem>
-                  <ContextMenuItem
-                    onSelect={async () => {
-                      try {
-                        const coverPath = await ipcManager.invoke(
-                          'game:get-memory-cover-path',
-                          gameId,
-                          memoryId
-                        )
-                        if (!coverPath) {
-                          toast.error(t('detail.memory.notifications.imageNotFound'))
-                          return
+                      }}
+                    >
+                      {t('detail.memory.setAs.cover')}
+                    </ContextMenuItem>
+                    <ContextMenuItem
+                      onSelect={async () => {
+                        try {
+                          const coverPath = await ipcManager.invoke(
+                            'game:get-memory-cover-path',
+                            gameId,
+                            memoryId
+                          )
+                          if (!coverPath) {
+                            toast.error(t('detail.memory.notifications.imageNotFound'))
+                            return
+                          }
+                          await ipcManager.invoke('game:set-image', gameId, 'background', coverPath)
+                          refreshLight()
+                          toast.success(t('detail.memory.notifications.setBackgroundSuccess'))
+                        } catch (error) {
+                          toast.error(
+                            t('detail.memory.notifications.setBackgroundError', { error })
+                          )
                         }
-                        await ipcManager.invoke('game:set-image', gameId, 'background', coverPath)
-                        refreshLight()
-                        toast.success(t('detail.memory.notifications.setBackgroundSuccess'))
-                      } catch (error) {
-                        toast.error(t('detail.memory.notifications.setBackgroundError', { error }))
-                      }
-                    }}
-                  >
-                    {t('detail.memory.setAs.background')}
-                  </ContextMenuItem>
-                </ContextMenuSubContent>
-              </ContextMenuPortal>
-            </ContextMenuSub>
-          </ContextMenuGroup>
+                      }}
+                    >
+                      {t('detail.memory.setAs.background')}
+                    </ContextMenuItem>
+                  </ContextMenuSubContent>
+                </ContextMenuPortal>
+              </ContextMenuSub>
+            </ContextMenuGroup>
+            <ContextMenuSeparator />
+          </>
         )}
-        <ContextMenuSeparator />
         {/* Export Options */}
         <ContextMenuGroup>
           <ContextMenuSub>
