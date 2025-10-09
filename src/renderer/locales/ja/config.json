@@ -377,5 +377,27 @@
       "title": "システム通知音",
       "description": "スクリーンショット成功のシステム通知を受ける際に通知音を鳴らすかどうかを選択する"
     }
+  },
+  "network": {
+    "title": "ネットワーク",
+    "proxy": {
+      "title": "プロキシ",
+      "enable": "プロキシを有効化",
+      "enableDescription": "プロキシサーバーを経由してインターネットに接続します",
+      "protocol": "プロキシプロトコル",
+      "protocolDescription": "プロキシサーバーのプロトコルを選択してください",
+      "protocols": {
+        "http": "HTTP",
+        "https": "HTTPS",
+        "socks4": "SOCKS4",
+        "socks5": "SOCKS5"
+      },
+      "host": "ホスト名",
+      "hostDescription": "プロキシサーバーのホスト名またはIPアドレス",
+      "port": "ポート番号",
+      "portDescription": "プロキシサーバーのポート番号",
+      "bypassRules": "バイパスルール",
+      "bypassRulesDescription": "プロキシサーバーを経由しないアドレスの一覧。カンマで区切ります\n例：.foobar.com,*test.com,192.168.1.1/16,<local>\n<local>はローカルアドレス(127.0.0.1またはlocalhost)を表します"
+    }
   }
 }

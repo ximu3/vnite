@@ -30,7 +30,8 @@ import {
   portableStore,
   initI18n,
   checkPortableMode,
-  setupContextMenu
+  setupContextMenu,
+  setupProxy
 } from './features/system'
 import { GameScannerManager } from './features/adder'
 import { setupScraper } from './features/scraper'
@@ -256,6 +257,9 @@ app.whenReady().then(async () => {
   createWindow()
 
   baseDBManager.initAllDatabases()
+
+  // Setup proxy config
+  await setupProxy()
 
   try {
     AuthManager.init()

@@ -239,6 +239,15 @@ export interface configLocalDocs {
       }
     }
   }
+  network: {
+    proxy: {
+      enable: boolean
+      protocol: 'http' | 'https' | 'socks4' | 'socks5'
+      host: string
+      port: number
+      bypassRules: string
+    }
+  }
 }
 
 export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
@@ -420,6 +429,15 @@ export const DEFAULT_CONFIG_LOCAL_VALUES: Readonly<configLocalDocs> = {
           targetCollection: string
         }
       }
+    }
+  },
+  network: {
+    proxy: {
+      enable: false,
+      protocol: 'http',
+      host: '',
+      port: 0,
+      bypassRules: '<local>,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fd00::/8'
     }
   }
 } as const

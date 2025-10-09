@@ -239,5 +239,27 @@
       "manage": "",
       "manageButton": ""
     }
+  },
+  "network": {
+    "title": "",
+    "proxy": {
+      "title": "",
+      "enable": "",
+      "enableDescription": "",
+      "protocol": "",
+      "protocolDescription": "",
+      "protocols": {
+        "http": "",
+        "https": "",
+        "socks4": "",
+        "socks5": ""
+      },
+      "host": "",
+      "hostDescription": "",
+      "port": "",
+      "portDescription": "",
+      "bypassRules": "",
+      "bypassRulesDescription": ""
+    }
   }
 }
