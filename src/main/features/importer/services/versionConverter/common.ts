@@ -538,7 +538,8 @@ async function convertConfig(basePath: string): Promise<void> {
       openAtLogin: v2Config.general.openAtLogin,
       quitToTray: v2Config.general.quitToTray,
       language: '',
-      hideWindowAfterGameStart: true
+      hideWindowAfterGameStart: true,
+      processMonitor: 'new'
     })
 
     const selectedGroupMap: Record<
