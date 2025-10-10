@@ -17,7 +17,15 @@
     "quitApp": "退出vnite",
     "minimizeToTray": "最小化到托盘",
     "hideWindowAfterGameStart": "启动游戏后最小化到托盘",
-    "hideWindowAfterGameStartDescription": "启动游戏后自动隐藏主窗口"
+    "hideWindowAfterGameStartDescription": "启动游戏后自动隐藏主窗口",
+    "processMonitor": {
+      "title": "进程监控方式",
+      "description": "选择监控游戏进程的方式。游戏启动中无法变更此设置\n\n自动: 更效率，您无需从 Vnite 面板启动游戏\n传统: 更稳定，您必须从 Vnite 面板启动游戏",
+      "options": {
+        "new": "自动",
+        "legacy": "传统"
+      }
+    }
   },
   "appearances": {
     "title": "外观",
