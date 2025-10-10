@@ -1,21 +1,6 @@
 import * as native from './dist'
 
 async function testMonitor(): Promise<void> {
-  await native.initLogger(
-    (err, msg) => {
-      if (err) {
-        console.error('err: ', err)
-      }
-      console.log(msg)
-    },
-    (err, msg) => {
-      if (err) {
-        console.error('err: ', err)
-      }
-      console.error(msg)
-    }
-  )
-
   await native.startMonitoring(
     [
       'c:\\program files\\windowsapps\\microsoft.windowscalculator_11.2502.2.0_x64__8wekyb3d8bbwe\\calculatorapp.exe'
@@ -33,7 +18,7 @@ async function testMonitor(): Promise<void> {
   )
   setTimeout(() => {
     native.stopMonitoring()
-  }, 10000)
+  }, 5000)
 }
 
 function testGetProcess(): void {
@@ -42,8 +27,28 @@ function testGetProcess(): void {
   })
 }
 
+async function testLogger(): Promise<void> {
+  await native.initLogger(
+    (err, msg) => {
+      if (err) {
+        console.error('err: ', err)
+      }
+      console.log(msg)
+    },
+    (err, msg) => {
+      if (err) {
+        console.error('err: ', err)
+      }
+      console.error(msg)
+    }
+  )
+  setTimeout(() => {
+    native.stopLogger()
+  }, 3000)
+}
+
 async function main(): Promise<void> {
-  testGetProcess()
+  await testMonitor()
 }
 
 main()
