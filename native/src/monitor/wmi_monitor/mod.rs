@@ -11,8 +11,11 @@ mod wmi_async;
 const CHANNEL_SIZE: usize = 64;
 
 pub struct WmiMonitor {
-  /// Monitoring tasks
-  background_tasks: Mutex<Option<task::JoinSet<()>>>,
+  /// Process monitor rx half (managed by tokio runtime)
+  rx_task: Mutex<Option<task::JoinHandle<()>>>,
+
+  /// Process monitor tx half (managed by OS thread)
+  tx_task: Mutex<Option<std::thread::JoinHandle<()>>>,
 
   /// Termination signal sender used for gracefully stop monitoring tasks.
   /// A `watch` channel would be preferred, but tokio crate doesn't give
@@ -24,7 +27,8 @@ pub struct WmiMonitor {
 impl WmiMonitor {
   pub fn new() -> Self {
     WmiMonitor {
-      background_tasks: Mutex::new(None),
+      rx_task: Mutex::new(None),
+      tx_task: Mutex::new(None),
       term_sender: Mutex::new(None),
     }
   }
@@ -41,28 +45,30 @@ impl WmiMonitor {
     // monitor channel
     let (tx, mut rx) = mpsc::channel::<ProcessInfo>(CHANNEL_SIZE);
 
-    let mut tasks: task::JoinSet<()> = task::JoinSet::new();
-
-    // spawn and hold a new thread to send messages
-    tasks.spawn_blocking(move || {
+    // Spawn an OS managed thread instead of a tokio runtime managed thread.
+    // Spawning an async thread doesn't work because there are many `!Send` COM objects used in the
+    // WMI monitor.
+    // Spawning a blocking thread that managed by tokio runtime by using `tokio::task::spawn_blocking()`
+    // also will cause problem, making Node event loop remain alive that prevents application from being
+    // terminated completely. This appears to be a bug in NAPI-RS itself.
+    let tx_task = std::thread::spawn(move || unsafe {
       log::info("ProcMonitor tx channel has been spawned");
-      unsafe {
-        if let Err(e) = wmi_async::wmi_event_monitor(t_rx, tx) {
-          log::error("ProcMonitor tx channel received a WMI error");
-          log::error(e.to_string().as_str());
-          log::error("ProcMonitor tx channel has been accidentally stopped");
-        }
+      if let Err(e) = wmi_async::wmi_event_monitor(t_rx, tx) {
+        log::error("ProcMonitor tx channel received a WMI error");
+        log::error(e.to_string().as_str());
+        log::error("ProcMonitor tx channel has been accidentally stopped");
+      } else {
+        log::info("ProcMonitor tx channel has been gracefully stopped");
       }
-      log::info("ProcMonitor tx channel has been stopped");
     });
 
     // spawn and hold a new task to receive messages
-    tasks.spawn(async move {
+    let rx_task = tokio::spawn(async move {
       log::info("ProcMonitor rx channel has been spawned");
       loop {
         tokio::select! {
           _ = t_rx2.recv() => {
-            log::info("ProcMonitor rx channel has been stopped");
+            log::info("ProcMonitor rx channel has been gracefully stopped");
             break;
           }
           op_data = rx.recv() => {
@@ -79,7 +85,8 @@ impl WmiMonitor {
     });
 
     // keep a stub of all tasks running in background
-    *self.background_tasks.lock().await = Some(tasks);
+    *self.tx_task.lock().await = Some(tx_task);
+    *self.rx_task.lock().await = Some(rx_task);
   }
 
   pub async fn stop_monitoring(&self) {
@@ -88,23 +95,14 @@ impl WmiMonitor {
       let _ = sender.send(true);
     }
 
-    // spare tasks with 3 seconds to do cleanups and shutdown, otherwise forcefully abort them
-    if let Some(mut tasks) = self.background_tasks.lock().await.take() {
-      match tokio::time::timeout(tokio::time::Duration::from_secs(3), async {
-        while let Some(res) = tasks.join_next().await {
-          if let Err(e) = res {
-            log::error(&format!("failed to wait tasks shutdown: {:?}", e));
-          }
-        }
-      })
-      .await
-      {
-        Ok(_) => {
-          log::info("monitoring tasks have been shutdown gracefully");
-        }
+    // spare rx task with 1 seconds to do cleanups and shutdown, otherwise forcefully abort it
+    if let Some(rx_task) = self.rx_task.lock().await.take() {
+      let abort_handle = rx_task.abort_handle();
+      match tokio::time::timeout(tokio::time::Duration::from_secs(1), rx_task).await {
+        Ok(_) => {}
         Err(_) => {
-          tasks.abort_all();
-          log::info("timeout, forcefully shutdown monitoring tasks");
+          abort_handle.abort();
+          log::info("forcefully shutdown ProcMonitor rx channel");
         }
       }
     }
