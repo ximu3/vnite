@@ -66,6 +66,7 @@ type MainIpcEvents =
       'native-monitor:add-local-game': [gameId: string, monitorPath: string]
       'native-monitor:remove-local-game': [monitorPath: string]
       'native-monitor:update-local-game': []
+      'system:change-process-monitor': [monitor: 'new' | 'legacy']
     }
   | {
       // Handler events (request-response communication from renderer to main)

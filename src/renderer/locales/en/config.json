@@ -17,7 +17,15 @@
     "quitApp": "Quit vnite",
     "minimizeToTray": "Minimize to Tray",
     "hideWindowAfterGameStart": "Minimize to tray after game launch",
-    "hideWindowAfterGameStartDescription": "Automatically hide main window after launching a game"
+    "hideWindowAfterGameStartDescription": "Automatically hide main window after launching a game",
+    "processMonitor": {
+      "title": "Process Monitor",
+      "description": "Choose how to detect a game process. This setting cannot be changed while any games are running\n\nAuto: More efficient, you don't have to launch games from Vnite\nLegacy: More stable, you must launch games from Vnite",
+      "options": {
+        "new": "Auto",
+        "legacy": "Legacy"
+      }
+    }
   },
   "appearances": {
     "title": "Appearances",

@@ -10,6 +10,7 @@ export interface configDocs {
     quitToTray: boolean
     language: string
     hideWindowAfterGameStart: boolean
+    processMonitor: 'new' | 'legacy'
   }
   game: {
     scraper: {
@@ -255,7 +256,8 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     openAtLogin: false,
     quitToTray: false,
     language: '',
-    hideWindowAfterGameStart: true
+    hideWindowAfterGameStart: true,
+    processMonitor: 'new'
   },
   game: {
     scraper: {
