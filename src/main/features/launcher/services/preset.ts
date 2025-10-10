@@ -18,7 +18,10 @@ export async function defaultPreset(gameId: string): Promise<void> {
     monitorMode,
     monitorPath
   })
-  await native.addKnownGame(monitorPath, gameId)
+  const procMode = await ConfigDBManager.getConfigValue('general.processMonitor')
+  if (procMode === 'new') {
+    await native.addKnownGame(monitorPath, gameId)
+  }
 }
 
 export async function lePreset(gameId: string): Promise<void> {
@@ -42,7 +45,10 @@ export async function lePreset(gameId: string): Promise<void> {
     monitorMode,
     monitorPath
   })
-  await native.addKnownGame(monitorPath, gameId)
+  const procMode = await ConfigDBManager.getConfigValue('general.processMonitor')
+  if (procMode === 'new') {
+    await native.addKnownGame(monitorPath, gameId)
+  }
 }
 
 export async function steamPreset(gameId: string, steamId: string): Promise<void> {
@@ -60,7 +66,10 @@ export async function steamPreset(gameId: string, steamId: string): Promise<void
     monitorMode,
     monitorPath
   })
-  await native.addKnownGame(monitorPath, gameId)
+  const procMode = await ConfigDBManager.getConfigValue('general.processMonitor')
+  if (procMode === 'new') {
+    await native.addKnownGame(monitorPath, gameId)
+  }
 }
 
 export async function vbaPreset(gameId: string): Promise<void> {
@@ -85,5 +94,8 @@ export async function vbaPreset(gameId: string): Promise<void> {
     monitorMode,
     monitorPath
   })
-  await native.addKnownGame(monitorPath, gameId)
+  const procMode = await ConfigDBManager.getConfigValue('general.processMonitor')
+  if (procMode === 'new') {
+    await native.addKnownGame(monitorPath, gameId)
+  }
 }

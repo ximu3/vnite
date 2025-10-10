@@ -31,6 +31,7 @@ import {
   updateOpenAtLogin,
   updateScreenshotHotkey
 } from './services'
+import { setupNativeMonitor, stopNativeMonitor } from '~/features/monitor'
 
 export function setupSystemIPC(): void {
   ipcManager.on('window:minimize', () => {
@@ -208,5 +209,13 @@ export function setupSystemIPC(): void {
 
   mainWindow.on('unmaximize', () => {
     ipcManager.send('window:unmaximized')
+  })
+
+  ipcManager.on('system:change-process-monitor', async (_, monitor: 'new' | 'legacy') => {
+    if (monitor === 'new') {
+      await setupNativeMonitor()
+    } else if (monitor === 'legacy') {
+      await stopNativeMonitor()
+    }
   })
 }
