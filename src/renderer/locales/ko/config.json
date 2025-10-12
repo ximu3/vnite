@@ -206,6 +206,11 @@
         "all": "모든 스포일러 (2)"
       }
     },
+    "dlsite": {
+      "title": "",
+      "findIdInName": "",
+      "findIdInNameDescription": ""
+    },
     "dataSources": {
       "steam": "Steam",
       "vndb": "VNDB",

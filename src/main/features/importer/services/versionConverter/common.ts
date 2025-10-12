@@ -561,6 +561,9 @@ async function convertConfig(basePath: string): Promise<void> {
         },
         vndb: {
           tagSpoilerLevel: 0
+        },
+        dlsite: {
+          findIdInName: false
         }
       },
       showcase: {

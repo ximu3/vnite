@@ -20,6 +20,9 @@ export interface configDocs {
       vndb: {
         tagSpoilerLevel: 0 | 1 | 2
       }
+      dlsite: {
+        findIdInName: boolean
+      }
     }
     showcase: {
       sort: {
@@ -266,6 +269,9 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       },
       vndb: {
         tagSpoilerLevel: 0
+      },
+      dlsite: {
+        findIdInName: false
       }
     },
     showcase: {
