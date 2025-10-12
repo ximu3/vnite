@@ -6,28 +6,30 @@ import { extractReleaseDateWithLibrary } from './i18n'
 import { ConfigDBManager } from '~/core/database'
 import i18next from 'i18next'
 
-const ID_REGEX = new RegExp('(rj|re|vj)\\d{4,}', 'i')
+const ID_REGEX = /(rj|re|vj)\d{4,}/gi
 
 export async function searchDlsiteGames(gameName: string): Promise<GameList> {
   const findIdInName = await ConfigDBManager.getConfigValue('game.scraper.dlsite.findIdInName')
   if (findIdInName) {
     // Check if the game name contains a id pattern like "RJ123456"
-    const dlsiteIds = ID_REGEX.exec(gameName)
-    if (dlsiteIds && dlsiteIds.length > 0) {
+    const matchIds = [...gameName.matchAll(ID_REGEX)]
+    if (matchIds.length > 0) {
       // Return the first sucessfully fetched result
-      for (const key in dlsiteIds) {
-        const dlsiteId = key.toUpperCase()
+      for (let i = 0; i < matchIds.length; i++) {
+        const dlsiteId = matchIds[i][0].toUpperCase()
         try {
           const gameMetadata = await getDlsiteMetadata(dlsiteId)
-          const result: GameList = [
-            {
-              id: dlsiteId,
-              name: gameMetadata.name,
-              releaseDate: gameMetadata.releaseDate,
-              developers: gameMetadata.developers
-            }
-          ]
-          return result
+          if (gameMetadata.name && gameMetadata.name.length > 0) {
+            const result: GameList = [
+              {
+                id: dlsiteId,
+                name: gameMetadata.name,
+                releaseDate: gameMetadata.releaseDate,
+                developers: gameMetadata.developers
+              }
+            ]
+            return result
+          }
         } catch (error) {
           console.info(`Error fetching metadata for extracted ID ${dlsiteId}:`, error)
         }
