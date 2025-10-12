@@ -13,26 +13,24 @@ export async function searchDlsiteGames(gameName: string): Promise<GameList> {
   if (findIdInName) {
     // Check if the game name contains a id pattern like "RJ123456"
     const matchIds = [...gameName.matchAll(ID_REGEX)]
-    if (matchIds.length > 0) {
-      // Return the first sucessfully fetched result
-      for (let i = 0; i < matchIds.length; i++) {
-        const dlsiteId = matchIds[i][0].toUpperCase()
-        try {
-          const gameMetadata = await getDlsiteMetadata(dlsiteId)
-          if (gameMetadata.name && gameMetadata.name.length > 0) {
-            const result: GameList = [
-              {
-                id: dlsiteId,
-                name: gameMetadata.name,
-                releaseDate: gameMetadata.releaseDate,
-                developers: gameMetadata.developers
-              }
-            ]
-            return result
-          }
-        } catch (error) {
-          console.info(`Error fetching metadata for extracted ID ${dlsiteId}:`, error)
+    // Return the first sucessfully fetched result
+    for (let i = 0; i < matchIds.length; i++) {
+      const dlsiteId = matchIds[i][0].toUpperCase()
+      try {
+        const gameMetadata = await getDlsiteMetadata(dlsiteId)
+        if (gameMetadata.name && gameMetadata.name.length > 0) {
+          const result: GameList = [
+            {
+              id: dlsiteId,
+              name: gameMetadata.name,
+              releaseDate: gameMetadata.releaseDate,
+              developers: gameMetadata.developers
+            }
+          ]
+          return result
         }
+      } catch (error) {
+        console.info(`Error fetching metadata for extracted ID ${dlsiteId}:`, error)
       }
     }
   }
