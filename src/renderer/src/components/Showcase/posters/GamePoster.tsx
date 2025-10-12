@@ -292,7 +292,7 @@ export function GamePoster({
 
                     {/* Play button */}
                     <div className="absolute inset-0 flex items-center justify-center flex-grow">
-                      {showPlayButtonOnPoster && (
+                      {showPlayButtonOnPoster && !isSelected && (
                         <PlayButton
                           type={runningGames.includes(gameId) ? 'stop' : 'play'}
                           gameId={gameId}
