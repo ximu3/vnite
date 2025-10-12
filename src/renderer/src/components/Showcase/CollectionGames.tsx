@@ -1,3 +1,4 @@
+import { NSFWFilterMode } from '@appTypes/models'
 import {
   Select,
   SelectContent,
@@ -14,9 +15,10 @@ import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-comp
 import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
 import { Button } from '~/components/ui/button'
 import { ScrollArea } from '~/components/ui/scroll-area'
+import { useConfigState } from '~/hooks'
 import { useGameCollectionState } from '~/hooks/useGameCollectionState'
 import { useGameCollectionStore } from '~/stores'
-import { sortGames } from '~/stores/game/gameUtils'
+import { filterGamesByNSFW, sortGames } from '~/stores/game/gameUtils'
 import { cn } from '~/utils'
 import { GamePoster } from './posters/GamePoster'
 
@@ -52,7 +54,9 @@ export function CollectionGamesComponent({
   }
   const { t } = useTranslation('game')
   const collections = useGameCollectionStore((state) => state.documents)
-  const games = collections[collectionId]?.games
+  const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
+
+  const games = filterGamesByNSFW(nsfwFilterMode, collections[collectionId]?.games)
   const sortedGames = by === 'custom' ? games : sortGames(by, order, games)
   const collectionName = collections[collectionId]?.name
 
@@ -193,7 +197,7 @@ export function CollectionGamesComponent({
             >
               {sortedGames?.map((gameId, index) => (
                 <div
-                  key={gameId}
+                  key={`${gameId}_${nsfwFilterMode}`}
                   className={cn(
                     'flex-shrink-0' // Preventing compression
                   )}
@@ -202,7 +206,11 @@ export function CollectionGamesComponent({
                     <GamePoster
                       gameId={gameId}
                       groupId={`collection:${collectionId}`}
-                      dragScenario={by === 'custom' ? 'reorder-games-in-collection' : undefined}
+                      dragScenario={
+                        by === 'custom' && nsfwFilterMode === NSFWFilterMode.All
+                          ? 'reorder-games-in-collection'
+                          : undefined
+                      }
                       parentGap={gap}
                       position={
                         (index % columns === 0 && 'left') ||

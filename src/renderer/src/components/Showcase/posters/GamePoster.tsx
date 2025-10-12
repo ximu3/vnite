@@ -153,8 +153,10 @@ export function GamePoster({
 
   useEffect(() => {
     if (!dragScenario || !collectionId) return
+
     const el = ref_.current
     invariant(el)
+
     return combine(
       draggable({
         element: el,
@@ -218,7 +220,7 @@ export function GamePoster({
   }, [dragScenario, collectionId, gameId, reorderGamesInCollection, setIsDraggingGlobal])
 
   return (
-    <div ref={ref_} className="relative overflow-visible">
+    <div ref={ref_} className="relative overflow-visible select-none">
       {dragging ? (
         <Preview title={gameData?.name ?? ''} transparentBackground={true} />
       ) : (
