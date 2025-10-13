@@ -285,6 +285,11 @@
         "all": "所有剧透 (2)"
       }
     },
+    "dlsite": {
+      "title": "DLsite 设置",
+      "findIdInName": "识别文件夹名中的DLsite ID",
+      "findIdInNameDescription": "启用后，会优先从文件夹名中提取DLsite作品ID（如 RJ123456）以获取游戏信息。"
+    },
     "dataSources": {
       "steam": "Steam",
       "vndb": "VNDB",

@@ -285,6 +285,11 @@
         "all": "所有劇透 (2)"
       }
     },
+    "dlsite": {
+      "title": "DLsite 設定",
+      "findIdInName": "識別資料夾名稱中的DLsite ID",
+      "findIdInNameDescription": "啟用後，會優先從資料夾名稱中提取DLsite作品ID（如 RJ123456）以取得遊戲資訊。"
+    },
     "dataSources": {
       "steam": "Steam",
       "vndb": "VNDB",

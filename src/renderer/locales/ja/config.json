@@ -285,6 +285,11 @@
         "all": "すべてのネタバレ (2)"
       }
     },
+    "dlsite": {
+      "title": "DLsite 設定",
+      "findIdInName": "フォルダ名からDLsite IDを認識",
+      "findIdInNameDescription": "有効にすると、フォルダ名からDLsite作品ID（例：RJ123456）を優先的に抽出し、ゲーム情報を取得します。"
+    },
     "dataSources": {
       "steam": "Steam",
       "vndb": "VNDB",

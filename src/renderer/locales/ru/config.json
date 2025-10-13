@@ -175,6 +175,11 @@
         "all": "Все спойлеры (2)"
       }
     },
+    "dlsite": {
+      "title": "",
+      "findIdInName": "",
+      "findIdInNameDescription": ""
+    },
     "dataSources": {
       "steam": "Steam",
       "vndb": "VNDB",
