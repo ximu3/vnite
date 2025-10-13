@@ -7,7 +7,7 @@ import {
 } from '~/components/ui/accordion'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { useConfigState } from '~/hooks'
-import { filterGames, getAllValuesInKey, sortGames } from '~/stores/game'
+import { filterGames, filterGamesByNSFW, getAllValuesInKey, sortGames } from '~/stores/game'
 import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
 import { useGameListStore } from '../store'
@@ -19,6 +19,7 @@ export function PlayStatusGames(): React.JSX.Element {
   const [by] = useConfigState('game.gameList.sort.by')
   const [order] = useConfigState('game.gameList.sort.order')
   const [showAllGamesInGroup] = useConfigState('game.gameList.showAllGamesInGroup')
+  const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
 
   const fields_tmp = getAllValuesInKey('record.playStatus')
   const fields = playStatusOrder.filter((item) => fields_tmp.includes(item))
@@ -59,25 +60,29 @@ export function PlayStatusGames(): React.JSX.Element {
           {/* Recent Games */}
           <RecentGames />
           {/* Split games into their respective play status */}
-          {fields.map((field) => (
-            <AccordionItem key={field} value={field}>
-              <AccordionTrigger className={cn('text-xs p-1 pl-2')}>
-                <div className={cn('flex flex-row items-center justify-start gap-1')}>
-                  <div className={cn('text-xs')}>{convertFieldToTitle(field)}</div>
-                  <div className={cn('text-2xs text-foreground/50')}>
-                    ({filterGames({ ['record.playStatus']: [field] }).length})
+          {fields.map((field) => {
+            const gameIds = filterGamesByNSFW(
+              nsfwFilterMode,
+              filterGames({ ['record.playStatus']: [field] })
+            )
+            if (gameIds.length === 0) return <></>
+
+            return (
+              <AccordionItem key={field} value={field}>
+                <AccordionTrigger className={cn('text-xs p-1 pl-2')}>
+                  <div className={cn('flex flex-row items-center justify-start gap-1')}>
+                    <div className={cn('text-xs')}>{convertFieldToTitle(field)}</div>
+                    <div className={cn('text-2xs text-foreground/50')}>({gameIds.length})</div>
                   </div>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
-                {sortGames(by, order, filterGames({ ['record.playStatus']: [field] })).map(
-                  (game) => (
+                </AccordionTrigger>
+                <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
+                  {sortGames(by, order, gameIds).map((game) => (
                     <GameNav key={game} gameId={game} groupId={`record.playStatus:${field}`} />
-                  )
-                )}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
+                  ))}
+                </AccordionContent>
+              </AccordionItem>
+            )
+          })}
           {/* All Games */}
           {showAllGamesInGroup && <AllGame />}
         </Accordion>

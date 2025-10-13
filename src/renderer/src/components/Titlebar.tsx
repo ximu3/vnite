@@ -1,4 +1,4 @@
-import { NSFWBlurLevel } from '@appTypes/models'
+import { NSFWBlurLevel, NSFWFilterMode } from '@appTypes/models'
 import { useRouter, useRouterState } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -32,18 +32,32 @@ export function Titlebar(): React.JSX.Element {
   // NSFW Blur related
   const [showNSFWBlurSwitchInSidebar] = useConfigState('appearances.sidebar.showNSFWBlurSwitcher')
   const [nsfwBlurLevel, setNsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
-  const [nsfwTooltipOpen, setNsfwTooltipOpen] = useState(false) // prevent unwanted auto-closing on click
-  const nextLevel = (current: NSFWBlurLevel): NSFWBlurLevel => (current + 1) % 3
-  const prevLevel = (current: NSFWBlurLevel): NSFWBlurLevel => (current - 1 + 3) % 3
-  const nsfwIconMap = {
+  const [nsfwFilterMode, setNsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
+  const [nsfwLevelTooltipOpen, setNsfwLevelTooltipOpen] = useState(false) // prevent unwanted auto-closing on click
+  const [nsfwFilterTooltipOpen, setNsfwFilterTooltipOpen] = useState(false) // prevent unwanted auto-closing on click
+  const nextBlurLevel = (current: NSFWBlurLevel): NSFWBlurLevel => (current + 1) % 3
+  const prevBlurLevel = (current: NSFWBlurLevel): NSFWBlurLevel => (current - 1 + 3) % 3
+  const nextFilterMode = (current: NSFWFilterMode): NSFWFilterMode => (current + 1) % 3
+  const prevFilterMode = (current: NSFWFilterMode): NSFWFilterMode => (current - 1 + 3) % 3
+  const nsfwBlurIconMap = {
     [NSFWBlurLevel.Off]: 'icon-[mdi--eye-outline]',
     [NSFWBlurLevel.BlurImage]: 'icon-[mdi--image-off-outline]',
     [NSFWBlurLevel.BlurImageAndTitle]: 'icon-[mdi--eye-off-outline]'
   }
-  const nsfwTooltips = {
+  const nsfwFilterIconMap = {
+    [NSFWFilterMode.All]: 'ALL',
+    [NSFWFilterMode.HideNSFW]: 'SFW',
+    [NSFWFilterMode.OnlyNSFW]: 'NSFW'
+  }
+  const nsfwBlurTooltips = {
     [NSFWBlurLevel.Off]: t('actions.nsfwLevel.off'),
     [NSFWBlurLevel.BlurImage]: t('actions.nsfwLevel.blurImage'),
     [NSFWBlurLevel.BlurImageAndTitle]: t('actions.nsfwLevel.blurImageAndTitle')
+  }
+  const nsfwFilterTooltips = {
+    [NSFWFilterMode.All]: t('actions.nsfwFilter.all'),
+    [NSFWFilterMode.HideNSFW]: t('actions.nsfwFilter.hideNSFW'),
+    [NSFWFilterMode.OnlyNSFW]: t('actions.nsfwFilter.onlyNSFW')
   }
 
   useEffect(() => {
@@ -112,32 +126,69 @@ export function Titlebar(): React.JSX.Element {
             <TooltipContent side="bottom">{t('actions.viewLogs')}</TooltipContent>
           </Tooltip>
 
-          {/* NSFW Blur switch button */}
           {showNSFWBlurSwitchInSidebar && (
-            <Tooltip open={nsfwTooltipOpen}>
-              <TooltipTrigger
-                onMouseEnter={() => setNsfwTooltipOpen(true)}
-                onMouseLeave={() => setNsfwTooltipOpen(false)}
-              >
-                <Button
-                  variant="thirdary"
-                  size={'icon'}
-                  className={cn('h-[32px] w-[32px]')}
-                  onMouseDown={(e) => {
-                    e.preventDefault()
-                    if (e.button === 0) {
-                      setNsfwBlurLevel(nextLevel(nsfwBlurLevel))
-                    } else if (e.button === 2) {
-                      setNsfwBlurLevel(prevLevel(nsfwBlurLevel))
-                    }
-                  }}
-                  onContextMenu={(e) => e.preventDefault()}
+            <>
+              {/* NSFW Filter switch button */}
+              <Tooltip open={nsfwFilterTooltipOpen}>
+                <TooltipTrigger
+                  // Prevent tooltip from disappearing after clicking the button
+                  onMouseEnter={() => setNsfwFilterTooltipOpen(true)}
+                  onMouseLeave={() => setNsfwFilterTooltipOpen(false)}
                 >
-                  <span className={`${nsfwIconMap[nsfwBlurLevel]} w-4 h-4`} />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">{nsfwTooltips[nsfwBlurLevel]}</TooltipContent>
-            </Tooltip>
+                  <Button
+                    variant="thirdary"
+                    size={'icon'}
+                    className={cn('h-[32px] w-[32px] relative')}
+                    onMouseDown={(e) => {
+                      e.preventDefault()
+                      if (e.button === 0) {
+                        setNsfwFilterMode(nextFilterMode(nsfwFilterMode))
+                      } else if (e.button === 2) {
+                        setNsfwFilterMode(prevFilterMode(nsfwFilterMode))
+                      }
+                    }}
+                    onContextMenu={(e) => e.preventDefault()}
+                  >
+                    <span className={`icon-[mdi--eye-outline] w-4 h-4`} />
+                    <span className="absolute bottom-[2px] right-0 text-[8px] font-bold px-1">
+                      {nsfwFilterIconMap[nsfwFilterMode]}
+                    </span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="pointer-events-none">
+                  {nsfwFilterTooltips[nsfwFilterMode]}
+                </TooltipContent>
+              </Tooltip>
+
+              {/* NSFW Blur switch button */}
+              <Tooltip open={nsfwLevelTooltipOpen}>
+                <TooltipTrigger
+                  // Prevent tooltip from disappearing after clicking the button
+                  onMouseEnter={() => setNsfwLevelTooltipOpen(true)}
+                  onMouseLeave={() => setNsfwLevelTooltipOpen(false)}
+                >
+                  <Button
+                    variant="thirdary"
+                    size={'icon'}
+                    className={cn('h-[32px] w-[32px]')}
+                    onMouseDown={(e) => {
+                      e.preventDefault()
+                      if (e.button === 0) {
+                        setNsfwBlurLevel(nextBlurLevel(nsfwBlurLevel))
+                      } else if (e.button === 2) {
+                        setNsfwBlurLevel(prevBlurLevel(nsfwBlurLevel))
+                      }
+                    }}
+                    onContextMenu={(e) => e.preventDefault()}
+                  >
+                    <span className={`${nsfwBlurIconMap[nsfwBlurLevel]} w-4 h-4`} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="pointer-events-none">
+                  {nsfwBlurTooltips[nsfwBlurLevel]}
+                </TooltipContent>
+              </Tooltip>
+            </>
           )}
 
           {/* Theme switch button */}

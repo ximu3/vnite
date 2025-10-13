@@ -1,17 +1,18 @@
-import { Button } from '~/components/ui/button'
+import { SeparatorDashed } from '@ui/separator-dashed'
 import { throttle } from 'lodash'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Button } from '~/components/ui/button'
 import { useConfigState } from '~/hooks'
-import { getGameStore, sortGames } from '~/stores/game'
+import { useLibraryStore } from '~/pages/Library/store'
+import { filterGamesByNSFW, getGameStore, sortGames } from '~/stores/game'
 import { cn } from '~/utils'
 import { BigGamePoster } from './posters/BigGamePoster'
 import { GamePoster } from './posters/GamePoster'
-import { SeparatorDashed } from '@ui/separator-dashed'
-import { useLibraryStore } from '~/pages/Library/store'
 
 export function RecentGames(): React.JSX.Element {
-  const games = sortGames('record.lastRunDate', 'desc')
+  const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
+  const games = sortGames('record.lastRunDate', 'desc', filterGamesByNSFW(nsfwFilterMode))
     .slice(0, 15)
     .filter((id) => {
       const date = getGameStore(id).getState().getValue('record.lastRunDate')

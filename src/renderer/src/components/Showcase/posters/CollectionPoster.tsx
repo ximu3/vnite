@@ -7,6 +7,7 @@ import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
 import { GameImage } from '~/components/ui/game-image'
 import { useConfigState, useGameState } from '~/hooks'
 import { useGameCollectionStore } from '~/stores'
+import { filterGamesByNSFW } from '~/stores/game'
 import { cn } from '~/utils'
 import {
   attachClosestEdge,
@@ -61,12 +62,14 @@ export function CollectionPoster({
   collectionId,
   className,
   parentGap = 24,
-  position = 'center'
+  position = 'center',
+  dragScenario
 }: {
   collectionId: string
   className?: string
   parentGap?: number // Gap(px) between posters
   position?: 'right' | 'left' | 'center' // poster position in the container
+  dragScenario?: string
 }): React.JSX.Element {
   const router = useRouter()
   const collections = useGameCollectionStore((state) => state.documents)
@@ -76,7 +79,8 @@ export function CollectionPoster({
   const collectionGames = collections[collectionId].games
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
   const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
-  const length = collectionGames.length
+  const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
+  const length = filterGamesByNSFW(nsfwFilterMode, collectionGames).length
 
   // Batch mode and selection state
   const { selectedGamesMap, selectGames, unselectGames, isBatchMode } = useGameBatchEditorStore()
@@ -132,6 +136,8 @@ export function CollectionPoster({
   const [previewState, setPreviewState] = useState<PreviewState>({ type: 'idle' })
 
   useEffect(() => {
+    if (!dragScenario) return
+
     const el = ref_.current
     invariant(el)
 
@@ -148,14 +154,14 @@ export function CollectionPoster({
             nativeSetDragImage
           })
         },
-        getInitialData: () => ({ dragScenario: 'reorder-collections', uuid: collectionId }),
+        getInitialData: () => ({ dragScenario: dragScenario, uuid: collectionId }),
         onDragStart: () => setDragging(true),
         onDrop: () => setDragging(false)
       }),
 
       dropTargetForElements({
         element: el,
-        canDrop: ({ source }) => source.data.dragScenario === 'reorder-collections',
+        canDrop: ({ source }) => source.data.dragScenario === dragScenario,
         getData: ({ input, element }) => {
           // your base data you want to attach to the drop target
           const data = { uuid: collectionId }

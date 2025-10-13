@@ -14,6 +14,11 @@
       "blurImage": "NSFW: 隐藏图片",
       "blurImageAndTitle": "NSFW: 隐藏图片与标题"
     },
+    "nsfwFilter": {
+      "all": "显示全部游戏",
+      "hideNSFW": "隐藏NSFW游戏",
+      "onlyNSFW": "仅显示NSFW游戏"
+    },
     "darkMode": "暗色模式",
     "lightMode": "亮色模式",
     "cloudSyncDisabled": "云同步未开启",

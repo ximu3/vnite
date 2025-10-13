@@ -1,14 +1,18 @@
-import { Button } from '~/components/ui/button'
+import { NSFWFilterMode } from '@appTypes/models'
+import { SeparatorDashed } from '@ui/separator-dashed'
 import { throttle } from 'lodash'
-import { useRef, useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Button } from '~/components/ui/button'
+import { useConfigState } from '~/hooks'
+import { useLibraryStore } from '~/pages/Library/store'
 import { useGameCollectionStore } from '~/stores'
+import { filterGamesByNSFW } from '~/stores/game'
 import { cn } from '~/utils'
 import { CollectionPoster } from './posters/CollectionPoster'
-import { SeparatorDashed } from '@ui/separator-dashed'
-import { useLibraryStore } from '~/pages/Library/store'
 
 export function Collections(): React.JSX.Element {
+  const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
   const collections = useGameCollectionStore((state) => state.documents)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const scroll = throttle((direction: 'left' | 'right'): void => {
@@ -27,7 +31,8 @@ export function Collections(): React.JSX.Element {
     return Object.values(collections)
       .sort((a, b) => a.sort - b.sort)
       .map((collection) => collection._id)
-  }, [collections])
+      .filter((id) => filterGamesByNSFW(nsfwFilterMode, collections[id]?.games).length > 0)
+  }, [collections, nsfwFilterMode])
 
   const { t } = useTranslation('game')
 
@@ -64,7 +69,7 @@ export function Collections(): React.JSX.Element {
       <div
         ref={scrollContainerRef}
         className={cn(
-          'flex flex-row gap-8 grow',
+          'flex flex-row gap-8 grow select-none',
           'w-full overflow-x-auto scrollbar-none scroll-smooth',
           'pt-3 pb-6 pl-5 pr-5' // Add inner margins to show shadows
         )}
@@ -77,7 +82,7 @@ export function Collections(): React.JSX.Element {
         {/* Render using the sorted ID array */}
         {sortedCollectionIds.map((collectionId, index) => (
           <div
-            key={collectionId}
+            key={`${collectionId}_${nsfwFilterMode}`}
             className={cn(
               'flex-shrink-0' // Preventing compression
             )}
@@ -89,6 +94,9 @@ export function Collections(): React.JSX.Element {
                 (index === 0 && 'left') ||
                 (index === sortedCollectionIds.length - 1 && 'right') ||
                 'center'
+              }
+              dragScenario={
+                nsfwFilterMode === NSFWFilterMode.All ? 'reorder-collections' : undefined
               }
             />
           </div>
