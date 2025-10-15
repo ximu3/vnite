@@ -4,11 +4,13 @@ import { eventBus } from '~/core/events'
 import { GameDBManager } from '~/core/database'
 import { GameMonitor } from './monitor'
 import { ipcManager } from '~/core/ipc'
+import { Mutex } from 'async-mutex'
 
-// A static monitor hash map that keeps a stub of all running game processes,
-// preventing GC from reclaiming memory.
+// A static monitor {gameId - GameMonitor} hash map that keeps a stub of all running
+// game processes, preventing GC from reclaiming memory.
 // When a known process is terminated, it is designed to be removed from this hash map.
 const monitors: Map<string, GameMonitor> = new Map()
+const mutex: Mutex = new Mutex()
 
 // The TypeScript configuration "isolatedModules" is enabled, which prohibits the use
 // of enum values directly. This const mirrors `native.Process.ProcessEventType`.
@@ -57,14 +59,16 @@ export async function processEventCallback(
     }
     // a known game process is stopped...
     case ProcessEventType.Termination: {
-      const monitor = monitors.get(gameId)
-      if (!monitor) {
-        return
-      }
-      if (await monitor.phantomStop(arg.pid)) {
-        // if game was stopped, remove corresponding monitor from hash map
-        monitors.delete(gameId)
-      }
+      await mutex.runExclusive(async () => {
+        const monitor = monitors.get(gameId)
+        if (!monitor) {
+          return
+        }
+        if (await monitor.phantomStop(arg.pid)) {
+          // if game was stopped, remove corresponding monitor from hash map
+          monitors.delete(gameId)
+        }
+      })
       break
     }
   }
@@ -90,37 +94,39 @@ export async function startPhantomMonitor(
   path?: string,
   pid?: number
 ): Promise<void> {
-  let notFound = false
-  let monitor = monitors.get(gameId)
-  // if not found, spawn a new one
-  if (!monitor) {
-    monitor = await spawnLegacyMonitor(gameId)
-    notFound = true
-  }
-  // if spawning failed, do nothing and returns
-  if (!monitor) {
-    return
-  }
+  await mutex.runExclusive(async () => {
+    let notFound = false
+    let monitor = monitors.get(gameId)
+    // if not found, spawn a new one
+    if (!monitor) {
+      notFound = true
+      monitor = await spawnLegacyMonitor(gameId)
+      // if spawning failed, do nothing and returns
+      if (!monitor) {
+        return
+      }
+    }
 
-  if (pid && path) {
-    // imitate monitoring
-    await monitor.phantomStart(gameId, path, pid)
-  }
+    if (pid && path) {
+      // imitate monitoring
+      await monitor.phantomStart(gameId, path, pid)
+    }
 
-  // a new game is just started
-  if (notFound) {
-    monitors.set(gameId, monitor)
-    // send message to notify renderer thread
-    ipcManager.send('game:started', gameId)
-    // Emit event after launching the game
-    eventBus.emit(
-      'game:launched',
-      {
-        gameId
-      },
-      { source: 'nativeMonitor' }
-    )
-  }
+    // a new game is just started
+    if (notFound) {
+      monitors.set(gameId, monitor)
+      // send message to notify renderer thread
+      ipcManager.send('game:started', gameId)
+      // Emit event after launching the game
+      eventBus.emit(
+        'game:launched',
+        {
+          gameId
+        },
+        { source: 'nativeMonitor' }
+      )
+    }
+  })
 }
 
 // Spawn a legacy monitor without really monitoring the game for compatibility reasons
