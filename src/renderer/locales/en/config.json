@@ -283,6 +283,11 @@
         "all": "All Spoilers (2)"
       }
     },
+    "dlsite": {
+      "title": "DLsite Settings",
+      "findIdInName": "Detect DLsite ID from Folder Name",
+      "findIdInNameDescription": "When enabled, the app will prioritize extracting the DLsite work ID (e.g., RJ123456) from the folder name to fetch game information."
+    },
     "dataSources": {
       "steam": "Steam",
       "vndb": "VNDB",

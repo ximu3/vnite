@@ -181,6 +181,11 @@
         "all": ""
       }
     },
+    "dlsite": {
+      "title": "",
+      "findIdInName": "",
+      "findIdInNameDescription": ""
+    },
     "dataSources": {
       "steam": "",
       "vndb": "",

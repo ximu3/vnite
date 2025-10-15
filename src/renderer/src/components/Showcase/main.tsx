@@ -1,24 +1,46 @@
-import { cn } from '~/utils'
-import { ScrollArea } from '~/components/ui/scroll-area'
-import { Button } from '~/components/ui/button'
-import { RecentGames } from './RecentGames'
-import { Collections } from './Collections'
-import { AllGames } from './AllGames'
-import { useGameRegistry } from '~/stores/game'
 import { useNavigate } from '@tanstack/react-router'
-import { useGameScannerStore } from '~/pages/GameScannerManager/store'
+import { Button } from '@ui/button'
+import { ScrollArea } from '@ui/scroll-area'
+import { isEqual } from 'lodash'
+import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ScrollToTopButton } from './ScrollToTopButton'
-import { useRef, useEffect } from 'react'
 import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
+import { useGameScannerStore } from '~/pages/GameScannerManager/store'
+import { useGameRegistry } from '~/stores/game'
+import { cn } from '~/utils'
+import { useFilterStore } from '../Librarybar/Filter/store'
+import { useLibrarybarStore } from '../Librarybar/store'
+import { AllGames } from './AllGames'
+import { Collections } from './Collections'
+import { FilterSearchGames } from './FilterSearchGames'
+import { RecentGames } from './RecentGames'
+import { ScrollToTopButton } from './ScrollToTopButton'
 
 export function Showcase(): React.JSX.Element {
+  const query = useLibrarybarStore((state) => state.query)
+  const { filter } = useFilterStore()
+
   const { t } = useTranslation('game')
   const gameIds = useGameRegistry((state) => state.gameIds)
   const setEditingScanner = useGameScannerStore((state) => state.setEditingScanner)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const selectGames = useGameBatchEditorStore((state) => state.selectGames)
   const navigate = useNavigate()
+
+  let MainContent: React.JSX.Element
+  if (!isEqual(filter, {})) {
+    MainContent = <FilterSearchGames mode={'filter'} />
+  } else if (query && query.trim() !== '') {
+    MainContent = <FilterSearchGames mode={'search'} />
+  } else {
+    MainContent = (
+      <>
+        <RecentGames />
+        <Collections />
+        <AllGames />
+      </>
+    )
+  }
 
   // Keyboard shortcut handling
   useEffect(() => {
@@ -50,11 +72,7 @@ export function Showcase(): React.JSX.Element {
       {gameIds.length !== 0 ? (
         <>
           <ScrollArea ref={scrollAreaRef} className={cn('w-full h-full')}>
-            <div className={cn('pt-[18px] flex flex-col gap-3')}>
-              <RecentGames />
-              <Collections />
-              <AllGames />
-            </div>
+            <div className={cn('pt-[18px] flex flex-col gap-3')}>{MainContent}</div>
           </ScrollArea>
           <ScrollToTopButton scrollAreaRef={scrollAreaRef} />
         </>

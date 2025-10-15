@@ -1,8 +1,12 @@
 export enum NSFWBlurLevel {
   Off = 0,
   BlurImage = 1,
-  BlurImageAndTitle = 2,
-  HideGame = 3 // TODO: reserved for future implementation
+  BlurImageAndTitle = 2
+}
+export enum NSFWFilterMode {
+  All = 0,
+  HideNSFW = 1,
+  OnlyNSFW = 2
 }
 export interface configDocs {
   general: {
@@ -19,6 +23,9 @@ export interface configDocs {
       }
       vndb: {
         tagSpoilerLevel: 0 | 1 | 2
+      }
+      dlsite: {
+        findIdInName: boolean
       }
     }
     showcase: {
@@ -93,6 +100,7 @@ export interface configDocs {
       }
     }
     nsfwBlurLevel: NSFWBlurLevel
+    nsfwFilterMode: NSFWFilterMode
     fonts: {
       family: string
       size: number
@@ -266,6 +274,9 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       },
       vndb: {
         tagSpoilerLevel: 0
+      },
+      dlsite: {
+        findIdInName: false
       }
     },
     showcase: {
@@ -323,6 +334,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       }
     },
     nsfwBlurLevel: NSFWBlurLevel.Off,
+    nsfwFilterMode: NSFWFilterMode.All,
     fonts: {
       family: 'LXGW WenKai Mono',
       size: 1, // in rem

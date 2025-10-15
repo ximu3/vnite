@@ -72,6 +72,20 @@ export function Scraper(): React.JSX.Element {
               />
             </div>
           </div>
+
+          {/* DLSite Settings */}
+          <div className={cn('space-y-4')}>
+            <div className={cn('border-b pb-2')}>{t('scraper.dlsite.title')}</div>
+            <div className={cn('space-y-4')}>
+              <ConfigItem
+                hookType="config"
+                path="game.scraper.dlsite.findIdInName"
+                title={t('scraper.dlsite.findIdInName')}
+                controlType="switch"
+                description={t('scraper.dlsite.findIdInNameDescription')}
+              />
+            </div>
+          </div>
         </div>
       </CardContent>
     </Card>

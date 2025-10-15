@@ -1,4 +1,4 @@
-import type { MaxPlayTimeDay, gameDoc } from '@appTypes/models'
+import { NSFWFilterMode, type MaxPlayTimeDay, type gameDoc } from '@appTypes/models'
 import { calculateDailyPlayTime } from '@appUtils'
 import i18next from 'i18next'
 import type { Get, Paths } from 'type-fest'
@@ -49,6 +49,22 @@ export function randomGame(): string | null {
   if (gameIds.length === 0) return null
   const randomIndex = Math.floor(Math.random() * gameIds.length)
   return gameIds[randomIndex]
+}
+
+export function checkGameNSFW(mode: NSFWFilterMode, gameId: string): boolean {
+  switch (mode) {
+    case NSFWFilterMode.HideNSFW:
+      return !getGameStore(gameId).getState().getValue('apperance.nsfw')
+    case NSFWFilterMode.OnlyNSFW:
+      return getGameStore(gameId).getState().getValue('apperance.nsfw')
+    default:
+      return true
+  }
+}
+
+export function filterGamesByNSFW(mode: NSFWFilterMode, gameIds?: string[]): string[] {
+  if (!gameIds) gameIds = useGameRegistry.getState().gameIds
+  return [...gameIds].filter((id) => checkGameNSFW(mode, id))
 }
 
 // sorting function

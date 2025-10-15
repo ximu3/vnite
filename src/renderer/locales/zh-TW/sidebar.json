@@ -14,6 +14,11 @@
       "blurImage": "NSFW：隱藏圖片",
       "blurImageAndTitle": "NSFW：隱藏圖片與標題"
     },
+    "nsfwFilter": {
+      "all": "顯示全部遊戲",
+      "hideNSFW": "隱藏NSFW遊戲",
+      "onlyNSFW": "僅顯示NSFW遊戲"
+    },
     "darkMode": "暗色模式",
     "lightMode": "亮色模式",
     "cloudSyncDisabled": "雲同步未開啟",

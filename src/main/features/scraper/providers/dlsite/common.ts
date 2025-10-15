@@ -3,9 +3,37 @@ import * as cheerio from 'cheerio'
 import { GameList, GameMetadata } from '@appTypes/utils'
 import { getLanguage } from '~/features/system/services/i18n'
 import { extractReleaseDateWithLibrary } from './i18n'
+import { ConfigDBManager } from '~/core/database'
 import i18next from 'i18next'
 
+const ID_REGEX = /(rj|re|vj)\d{4,}/gi
+
 export async function searchDlsiteGames(gameName: string): Promise<GameList> {
+  const findIdInName = await ConfigDBManager.getConfigValue('game.scraper.dlsite.findIdInName')
+  if (findIdInName) {
+    // Check if the game name contains a id pattern like "RJ123456"
+    const matchIds = [...gameName.matchAll(ID_REGEX)]
+    // Return the first sucessfully fetched result
+    for (let i = 0; i < matchIds.length; i++) {
+      const dlsiteId = matchIds[i][0].toUpperCase()
+      try {
+        const gameMetadata = await getDlsiteMetadata(dlsiteId)
+        if (gameMetadata.name && gameMetadata.name.length > 0) {
+          const result: GameList = [
+            {
+              id: dlsiteId,
+              name: gameMetadata.name,
+              releaseDate: gameMetadata.releaseDate,
+              developers: gameMetadata.developers
+            }
+          ]
+          return result
+        }
+      } catch (error) {
+        console.info(`Error fetching metadata for extracted ID ${dlsiteId}:`, error)
+      }
+    }
+  }
   const encodedQuery = encodeURIComponent(gameName.trim()).replace(/%20/g, '+')
   const language = await getLanguage()
   const url = `https://www.dlsite.com/maniax/fsr/=/language/jp/keyword/${encodedQuery}/?locale=${language}`
