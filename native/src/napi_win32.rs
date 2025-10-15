@@ -13,6 +13,11 @@ pub fn get_all_process() -> Vec<ProcessInfo> {
   win32::get_all_process()
 }
 
+#[napi(js_name = "isElevatedPrivilege")]
+pub fn is_elevated_privilege() -> bool {
+  win32::is_elevated_privilege()
+}
+
 #[napi(js_name = "sendSystemNotification")]
 pub fn send_notification(
   app_id: String,
