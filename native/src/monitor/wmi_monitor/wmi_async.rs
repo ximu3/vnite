@@ -9,7 +9,7 @@ use windows::{
 };
 
 use crate::log;
-use crate::monitor::{ProcessInfo, ProcessStatus};
+use crate::monitor::{ProcessMessage, ProcessStatus};
 
 /// Receive notification from WMI when a process get created or terminated.
 ///
@@ -17,8 +17,8 @@ use crate::monitor::{ProcessInfo, ProcessStatus};
 ///
 /// Mostly referenced from: https://learn.microsoft.com/en-us/windows/win32/wmisdk/example--receiving-event-notifications-through-wmi-
 pub unsafe fn wmi_event_monitor(
-  mut rx_term: broadcast::Receiver<bool>,
-  tx: mpsc::Sender<ProcessInfo>,
+  mut rx_term: broadcast::Receiver<()>,
+  tx: mpsc::Sender<ProcessMessage>,
 ) -> Result<()> {
   // Step 1: Initialize COM for this thread
   let hres = Com::CoInitializeEx(None, Com::COINIT_MULTITHREADED);
@@ -218,7 +218,7 @@ pub unsafe fn wmi_event_monitor(
 /// It's the caller's responsibility to allocate and deallocate memory for it.
 unsafe fn spawn_sink(
   s_type: SinkType,
-  tx: mpsc::Sender<ProcessInfo>,
+  tx: mpsc::Sender<ProcessMessage>,
   app: &Wmi::IUnsecuredApartment,
   unsafe_p_sink: *mut Wmi::IWbemObjectSink,
 ) -> Result<IUnknown> {
@@ -256,7 +256,7 @@ enum SinkType {
 
 #[implement(Wmi::IWbemObjectSink)]
 struct ProcessSink {
-  tx: mpsc::Sender<ProcessInfo>,
+  tx: mpsc::Sender<ProcessMessage>,
   s_type: SinkType,
 }
 impl Wmi::IWbemObjectSink_Impl for ProcessSink_Impl {
@@ -383,12 +383,12 @@ impl Wmi::IWbemObjectSink_Impl for ProcessSink_Impl {
         let pid = v_pid.Anonymous.Anonymous.Anonymous.uintVal;
         // check sink type and send corresponding message
         let msg = match self.s_type {
-          SinkType::ProcessStart => ProcessInfo {
+          SinkType::ProcessStart => ProcessMessage {
             path: path,
             pid: pid,
             status: ProcessStatus::Started,
           },
-          SinkType::ProcessStop => ProcessInfo {
+          SinkType::ProcessStop => ProcessMessage {
             path: path,
             pid: pid,
             status: ProcessStatus::Terminated,
