@@ -32,9 +32,8 @@ impl Drop for HandleGuard {
 }
 
 pub fn get_all_process() -> Vec<ProcessInfo> {
-  let mut processes: Vec<ProcessInfo> = Vec::new();
   // Allocate a reasonable amount of memory in advance
-  processes.reserve(512);
+  let mut processes: Vec<ProcessInfo> = Vec::with_capacity(512);
 
   unsafe {
     // Create a snapshot of all running processes
