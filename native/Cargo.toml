@@ -23,6 +23,8 @@ windows = { version = "0.62", features = [
   "Win32_System_Ole",
   "UI_Notifications",
   "Data_Xml_Dom",
+  "Win32_UI_Accessibility",
+  "Win32_UI_WindowsAndMessaging"
 ] }
 windows-core = "0.62.0"
 
