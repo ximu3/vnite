@@ -74,6 +74,12 @@ export async function processEventCallback(
   }
 }
 
+export async function removeMonitorStub(gameId: string): Promise<void> {
+  await mutex.runExclusive(() => {
+    monitors.delete(gameId)
+  })
+}
+
 // Update known game list
 export async function updateKnownGames(): Promise<void> {
   const allLocalGames = await GameDBManager.getAllGamesLocal()
@@ -107,10 +113,8 @@ export async function startPhantomMonitor(
       }
     }
 
-    if (pid && path) {
-      // imitate monitoring
-      await monitor.phantomStart(gameId, path, pid)
-    }
+    // imitate monitoring
+    await monitor.phantomStart(gameId, path, pid)
 
     // a new game is just started
     if (notFound) {

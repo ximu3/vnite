@@ -13,6 +13,7 @@ import { ipcManager } from '~/core/ipc'
 import { eventBus } from '~/core/events'
 import { ActiveGameInfo } from '~/features/game'
 import { Mutex } from 'async-mutex'
+import { removeMonitorStub } from './nativeMonitor'
 
 async function getProcessList(): Promise<
   Array<{
@@ -154,6 +155,7 @@ export class GameMonitor {
         await this.terminateProcess(monitored)
       }
     }
+    removeMonitorStub(this.options.gameId)
     this.handleGameExit()
   }
 
@@ -292,9 +294,22 @@ export class GameMonitor {
   // This function may be invoked multiple times in a single GameMonitor object if the
   // monitoring mode is `folder` and there are more than one executables inside that folder
   // are launched.
-  public async phantomStart(gameId: string, fullpath: string, pid: number): Promise<void> {
+  public async phantomStart(gameId: string, fullpath?: string, pid?: number): Promise<void> {
     await this.mutex.runExclusive(async () => {
-      if (this.monitoredProcesses.some((process) => process.pid === pid)) {
+      if (pid && this.monitoredProcesses.some((process) => process.pid === pid)) {
+        return
+      }
+      // When users launch game from Vnite, this method will be invoked by a main thread IPC
+      // listener, which in turn is notified by the renderer thread.
+      // In that case, the renderer has no prior knowledge of the path and pid, so we just
+      // record the start time and return, waiting for the message from the native monitor so
+      // this method is get invoked again with the path and pid present.
+      // If the user is unlucky enough to encounter an event loss case, they can still manually
+      // stop the game from the Vnite main window to ensure the play time is recorded properly.
+      if (!this.startTime) {
+        this.startTime = new Date().toISOString()
+      }
+      if (!fullpath || !pid) {
         return
       }
       const monitoredProcess = {
@@ -304,8 +319,6 @@ export class GameMonitor {
         isScaled: false
       }
       this.isRunning = true
-      this.startTime = new Date().toISOString()
-      this.endTime = undefined
 
       ActiveGameInfo.updateGameInfo(gameId, {
         pid: pid,
