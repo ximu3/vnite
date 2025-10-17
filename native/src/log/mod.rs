@@ -65,7 +65,10 @@ pub fn info(msg: &str) {
       msg: msg.to_string(),
     });
   } else {
-    println!("{msg}");
+    println!(
+      "[{}] {msg}",
+      chrono::Local::now().format("%Y-%m-%d %H:%M:%S%.6f")
+    );
   }
 }
 
@@ -75,10 +78,17 @@ pub fn error(msg: &str) {
       msg: msg.to_string(),
     });
   } else {
-    eprintln!("{msg}");
+    eprintln!(
+      "[{}] {msg}",
+      chrono::Local::now().format("%Y-%m-%d %H:%M:%S%.6f")
+    );
   }
 }
 
 pub fn debug(msg: &str) {
-  println!("[DEBUG] {}", msg);
+  println!(
+    "[{}] [DEBUG] {}",
+    chrono::Local::now().format("%Y-%m-%d %H:%M:%S%.6f"),
+    msg
+  );
 }

@@ -1,14 +1,22 @@
 use napi::threadsafe_function::ThreadsafeFunctionCallMode;
+use regex::Regex;
 use std::{collections::HashMap, sync::LazyLock};
 use tokio::sync::Mutex;
 
 use crate::{
   log,
-  monitor::{ProcessInfo, ProcessStatus},
+  monitor::{ProcessMessage, ProcessStatus},
   napi_monitor::ProcessEvent,
   napi_monitor::ProcessEventType,
   utils::types::NapiWeakThreadsafeFunction,
 };
+
+struct KnownGameProcessInfo {
+  pid: u32,
+  status: ProcessStatus,
+  path: String,
+  game_id: String,
+}
 
 pub struct GameManager {
   /// A full list of local games (path - game_id pair).
@@ -17,12 +25,12 @@ pub struct GameManager {
   known_games: HashMap<String, String>,
 
   /// All currently running known game processes.
-  /// The key is always fullpath of the process, not the folder or executable name.
+  /// The key is always "{full_path}-{pid}" of the process, not the folder or executable name.
   ///
   /// Only processes contained in `known_games` will be inserted into this hashmap.
   /// When a running process is terminated, it will be remove from this hashmap.
   /// Typically there is only 1 entry stored in this hashmap, unless a user is playing 2 or more games simultaneously.
-  running_games: HashMap<String, ProcessInfo>,
+  running_process: HashMap<String, KnownGameProcessInfo>,
 
   /// Threadsafe NodeJS callback get invoked when a known process get created or terminated
   callback: Option<NapiWeakThreadsafeFunction<ProcessEvent, ()>>,
@@ -32,7 +40,7 @@ impl GameManager {
   fn new() -> Self {
     Self {
       known_games: HashMap::new(),
-      running_games: HashMap::new(),
+      running_process: HashMap::new(),
       callback: None,
     }
   }
@@ -69,8 +77,6 @@ impl GameManager {
   pub fn remove_known_game(&mut self, path: &str) {
     let l_path = path.to_lowercase();
     self.known_games.remove(&l_path);
-    self.running_games.remove(&l_path);
-    // should we invoke callback?
   }
 
   pub fn get_known_game_id_exact(&self, l_path: &str) -> Option<&String> {
@@ -89,10 +95,25 @@ impl GameManager {
   }
 
   pub fn is_running(&self, path: &str) -> bool {
-    self.running_games.contains_key(&path.to_lowercase())
+    let mut is_running = false;
+    for (k, _) in &self.running_process {
+      let re = Regex::new(format!(r"^{}-\d+$", path).as_str());
+      match re {
+        Ok(re) => {
+          if re.is_match(k) {
+            is_running = true;
+            break;
+          }
+        }
+        Err(_) => {
+          continue;
+        }
+      }
+    }
+    is_running
   }
 
-  pub fn handle_message(&mut self, msg: ProcessInfo) {
+  pub fn handle_wmi_message(&mut self, msg: ProcessMessage) {
     let l_path = msg.path.to_lowercase();
     // check directory & fullpath & process name
     let game_id = match self.get_known_game_id(&l_path) {
@@ -100,17 +121,30 @@ impl GameManager {
       None => return,
     };
     let pid = msg.pid;
+    let key = format!("{l_path}-{}", msg.pid);
     match msg.status {
       ProcessStatus::Started => {
         // handle race condition
-        if let Some(prev) = self.running_games.get(&l_path) {
-          if prev.status == ProcessStatus::Terminated && prev.pid == msg.pid {
+        if let Some(prev) = self.running_process.get(&key) {
+          if prev.status == ProcessStatus::Terminated {
             // process termination notification is received before creation, remove it and return
-            self.running_games.remove(&l_path);
+            self.running_process.remove(&key);
+            return;
+          } else if prev.status == ProcessStatus::Started {
+            // a process which has the same full path and pid with current message is already traced,
+            // may be a duplication delivery, ignore it
             return;
           }
         }
-        self.running_games.insert(l_path.clone(), msg);
+        self.running_process.insert(
+          key,
+          KnownGameProcessInfo {
+            pid: msg.pid,
+            status: msg.status,
+            path: l_path.clone(),
+            game_id: game_id.clone(),
+          },
+        );
         log::info(format!("game started: {}, pid: {}", l_path, pid).as_str());
         if let Some(callback) = &self.callback {
           callback.call(
@@ -120,16 +154,14 @@ impl GameManager {
               pid: pid,
               id: game_id,
             }),
-            ThreadsafeFunctionCallMode::NonBlocking,
+            ThreadsafeFunctionCallMode::Blocking,
           );
         }
       }
       ProcessStatus::Terminated => {
-        if let Some(prev) = self.running_games.remove(&l_path) {
-          if prev.status == ProcessStatus::Started && prev.pid == msg.pid {
-            // ...multiple processes?
-
-            // normal case, we have removed the process, just invoke the callback
+        if let Some(prev) = self.running_process.get(&key) {
+          if prev.status == ProcessStatus::Started {
+            self.running_process.remove(&key);
             log::info(format!("game stopped: {}, pid: {}", l_path, pid).as_str());
             if let Some(callback) = &self.callback {
               callback.call(
@@ -139,14 +171,83 @@ impl GameManager {
                   pid: pid,
                   id: game_id,
                 }),
-                ThreadsafeFunctionCallMode::NonBlocking,
+                ThreadsafeFunctionCallMode::Blocking,
               );
             }
+            return;
+          } else if prev.status == ProcessStatus::Terminated {
+            // a process which has the same full path and pid with current message is already traced,
+            // may be a duplication delivery, ignore it
             return;
           }
         }
         // unsual case, maybe a race condition, insert the message
-        self.running_games.insert(l_path, msg);
+        self.running_process.insert(
+          key,
+          KnownGameProcessInfo {
+            pid: msg.pid,
+            status: msg.status,
+            path: l_path,
+            game_id: game_id,
+          },
+        );
+      }
+    }
+  }
+
+  pub fn handle_etw_message(&mut self, msg: ProcessMessage) {
+    match msg.status {
+      ProcessStatus::Started => {
+        let l_path = msg.path.to_lowercase();
+        // check directory & fullpath & process name
+        let game_id = match self.get_known_game_id(&l_path) {
+          Some(id) => id.clone(),
+          None => return,
+        };
+        // create a unique key using path and pid combination, to handle multiple instances case
+        let key = format!("{l_path}-{}", msg.pid);
+        // if already have it, may be a dulplication event
+        if self.running_process.get(&key).is_some() {
+          return;
+        }
+
+        self.running_process.insert(
+          key,
+          KnownGameProcessInfo {
+            pid: msg.pid,
+            status: msg.status,
+            path: l_path.clone(),
+            game_id: game_id.clone(),
+          },
+        );
+        log::info(format!("game started: {}, pid: {}", l_path, msg.pid).as_str());
+        if let Some(callback) = &self.callback {
+          callback.call(
+            Ok(ProcessEvent {
+              event_type: ProcessEventType::Creation,
+              full_path: l_path,
+              pid: msg.pid,
+              id: game_id,
+            }),
+            ThreadsafeFunctionCallMode::Blocking,
+          );
+        }
+      }
+      ProcessStatus::Terminated => {
+        for (_, game_info) in self.running_process.extract_if(|_, v| v.pid == msg.pid) {
+          log::info(format!("game stopped: {}, pid: {}", game_info.path, game_info.pid).as_str());
+          if let Some(callback) = &self.callback {
+            callback.call(
+              Ok(ProcessEvent {
+                event_type: ProcessEventType::Termination,
+                full_path: game_info.path,
+                pid: game_info.pid,
+                id: game_info.game_id,
+              }),
+              ThreadsafeFunctionCallMode::Blocking,
+            );
+          }
+        }
       }
     }
   }

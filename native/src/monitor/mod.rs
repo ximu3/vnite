@@ -2,35 +2,47 @@ use std::sync::LazyLock;
 use tokio::sync::Mutex;
 
 use crate::{
-  monitor::wmi_monitor::WmiMonitor, napi_monitor::ProcessEvent,
-  utils::types::NapiWeakThreadsafeFunction, win32,
+  log,
+  monitor::{etw_monitor::EtwMonitor, wmi_monitor::WmiMonitor},
+  napi_monitor::ProcessEvent,
+  utils::types::NapiWeakThreadsafeFunction,
+  win32,
 };
 
+pub mod etw_monitor;
 mod gm;
 mod wmi_monitor;
+
+trait WinProcessMonitor: Send {
+  fn start_monitoring(&mut self) -> windows_core::Result<()>;
+  fn stop_monitoring(&mut self);
+}
 
 #[derive(Debug, PartialEq)]
 enum ProcessStatus {
   Started,
   Terminated,
 }
-struct ProcessInfo {
+
+struct ProcessMessage {
   pid: u32,
   status: ProcessStatus,
   path: String,
 }
 
-static WMI_MONITOR: LazyLock<Mutex<Option<WmiMonitor>>> = LazyLock::new(|| Mutex::new(None));
+static PROCESS_MONITOR: LazyLock<Mutex<Option<Box<dyn WinProcessMonitor + Send>>>> =
+  LazyLock::new(|| Mutex::new(None));
 
 pub async fn start_monitoring(
   local_game_pathes: Vec<String>,
   local_game_ids: Vec<String>,
   callback: Option<NapiWeakThreadsafeFunction<ProcessEvent, ()>>,
 ) {
-  let mut guard_monitor = WMI_MONITOR.lock().await;
+  let mut guard_monitor = PROCESS_MONITOR.lock().await;
+
   // stop monitoring if already existed
-  if let Some(monitor) = guard_monitor.take() {
-    monitor.stop_monitoring().await;
+  if let Some(mut monitor) = guard_monitor.take() {
+    monitor.stop_monitoring();
   }
 
   // initialize known games
@@ -40,9 +52,23 @@ pub async fn start_monitoring(
     .init(local_game_pathes, local_game_ids, callback);
 
   // initialize a monitor and start monitoring
-  let monitor = WmiMonitor::new();
-  monitor.start_monitoring().await;
+  let mut monitor: Box<dyn WinProcessMonitor> = if win32::is_elevated_privilege() {
+    log::info("application is running with elevated privilege, using ETW process monitor");
+    Box::new(EtwMonitor::new())
+  } else {
+    log::info("application is running with normal privilege, using WMI process monitor");
+    Box::new(WmiMonitor::new())
+  };
+
+  let result = monitor.start_monitoring();
+  if result.is_err() {
+    log::error("failed to start native monitor");
+    return;
+  }
+
   *guard_monitor = Some(monitor);
+  // drop mutex guard immediately after using to avoid potential dead lock
+  drop(guard_monitor);
 
   // fire and forget a background concurrency to check games at startup
   tokio::spawn(async {
@@ -56,7 +82,7 @@ pub async fn startup_process_check() {
   let all_process = win32::get_all_process();
   let mut gm_guard = gm::get().lock().await;
   for proc in all_process {
-    gm_guard.handle_message(ProcessInfo {
+    gm_guard.handle_wmi_message(ProcessMessage {
       pid: proc.pid,
       status: ProcessStatus::Started,
       path: proc.full_path,
@@ -65,8 +91,10 @@ pub async fn startup_process_check() {
 }
 
 pub async fn stop_monitoring() {
-  if let Some(monitor) = WMI_MONITOR.lock().await.take() {
-    monitor.stop_monitoring().await;
+  if let Some(mut monitor) = PROCESS_MONITOR.lock().await.take() {
+    monitor.stop_monitoring();
+    // yield back control to tokio runtime to do cleanups (...or wait for a short duration?)
+    tokio::task::yield_now().await;
   }
 }
 
