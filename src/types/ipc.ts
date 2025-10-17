@@ -363,6 +363,7 @@ type RendererIpcEvents = {
   'game:exiting': [gameId: string]
   'game:exited': [gameId: string]
   'game:start-from-url': [gameId: string]
+  'game:launch-failed': [gameId: string]
 
   'importer:import-steam-games-progress': [
     {
