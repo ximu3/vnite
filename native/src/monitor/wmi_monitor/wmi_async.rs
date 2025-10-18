@@ -202,6 +202,7 @@ pub unsafe fn wmi_event_monitor(
 
   // do cleanups after receiving signal
   let _ = services.CancelAsyncCall(&*unsafe_p_s_sink);
+  let _ = services.CancelAsyncCall(&*unsafe_p_e_sink);
   std::alloc::dealloc(unsafe_p_e_sink as *mut u8, sink_layout);
   drop(e_unk_stub);
   std::alloc::dealloc(unsafe_p_s_sink as *mut u8, sink_layout);
