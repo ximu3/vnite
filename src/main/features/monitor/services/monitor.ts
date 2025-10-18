@@ -12,6 +12,8 @@ import { psManager } from '~/utils'
 import { ipcManager } from '~/core/ipc'
 import { eventBus } from '~/core/events'
 import { ActiveGameInfo } from '~/features/game'
+import { Mutex } from 'async-mutex'
+import { removeMonitorStub } from './nativeMonitor'
 
 async function getProcessList(): Promise<
   Array<{
@@ -112,6 +114,8 @@ export class GameMonitor {
   private endTime?: string
   private exiting: boolean = false
   private stopping: boolean = false
+  // a mutex for operations which need to write `monitoredProcesses`
+  private mutex: Mutex
 
   constructor(options: GameMonitorOptions) {
     this.options = {
@@ -120,7 +124,7 @@ export class GameMonitor {
       magpieHotkey: 'win+alt+a',
       ...options
     }
-
+    this.mutex = new Mutex()
     this.setupIpcListener()
   }
 
@@ -151,6 +155,7 @@ export class GameMonitor {
         await this.terminateProcess(monitored)
       }
     }
+    removeMonitorStub(this.options.gameId)
     this.handleGameExit()
   }
 
@@ -226,28 +231,30 @@ export class GameMonitor {
 
   public async init(): Promise<void> {
     try {
-      if (this.options.config.mode === 'folder') {
-        const files = await this.getExecutableFiles(this.options.config.path)
-        this.monitoredProcesses = files.map((file) => ({
-          path: file,
-          isRunning: false
-        }))
-      } else if (this.options.config.mode === 'file') {
-        this.monitoredProcesses = [
-          {
-            path: this.options.config.path,
+      await this.mutex.runExclusive(async () => {
+        if (this.options.config.mode === 'folder') {
+          const files = await this.getExecutableFiles(this.options.config.path)
+          this.monitoredProcesses = files.map((file) => ({
+            path: file,
             isRunning: false
-          }
-        ]
-      } else if (this.options.config.mode === 'process') {
-        this.monitoredProcesses = [
-          {
-            path: this.options.config.path,
-            isRunning: false,
-            isProcessNameMode: true // Mark as process name monitoring mode
-          }
-        ]
-      }
+          }))
+        } else if (this.options.config.mode === 'file') {
+          this.monitoredProcesses = [
+            {
+              path: this.options.config.path,
+              isRunning: false
+            }
+          ]
+        } else if (this.options.config.mode === 'process') {
+          this.monitoredProcesses = [
+            {
+              path: this.options.config.path,
+              isRunning: false,
+              isProcessNameMode: true // Mark as process name monitoring mode
+            }
+          ]
+        }
+      })
     } catch (error) {
       log.error(`[Monitor] Failed to initialize monitor for game ${this.options.gameId}:`, error)
     }
@@ -287,40 +294,53 @@ export class GameMonitor {
   // This function may be invoked multiple times in a single GameMonitor object if the
   // monitoring mode is `folder` and there are more than one executables inside that folder
   // are launched.
-  public async phantomStart(gameId: string, fullpath: string, pid: number): Promise<void> {
-    if (this.monitoredProcesses.some((process) => process.pid === pid)) {
-      return
-    }
-    const monitoredProcess = {
-      path: fullpath,
-      pid: pid,
-      isRunning: true,
-      isScaled: false
-    }
-    this.isRunning = true
-    this.startTime = new Date().toISOString()
-    this.endTime = undefined
+  public async phantomStart(gameId: string, fullpath?: string, pid?: number): Promise<void> {
+    await this.mutex.runExclusive(async () => {
+      if (pid && this.monitoredProcesses.some((process) => process.pid === pid)) {
+        return
+      }
+      // When users launch game from Vnite, this method will be invoked by a main thread IPC
+      // listener, which in turn is notified by the renderer thread.
+      // In that case, the renderer has no prior knowledge of the path and pid, so we just
+      // record the start time and return, waiting for the message from the native monitor so
+      // this method is get invoked again with the path and pid present.
+      // If the user is unlucky enough to encounter an event loss case, they can still manually
+      // stop the game from the Vnite main window to ensure the play time is recorded properly.
+      if (!this.startTime) {
+        this.startTime = new Date().toISOString()
+      }
+      if (!fullpath || !pid) {
+        return
+      }
+      const monitoredProcess = {
+        path: fullpath,
+        pid: pid,
+        isRunning: true,
+        isScaled: false
+      }
+      this.isRunning = true
 
-    ActiveGameInfo.updateGameInfo(gameId, {
-      pid: pid,
-      path: fullpath
+      ActiveGameInfo.updateGameInfo(gameId, {
+        pid: pid,
+        path: fullpath
+      })
+
+      // Check if Magpie scaling is enabled
+      const useMagpie = await GameDBManager.getGameLocalValue(gameId, 'launcher.useMagpie')
+      const magpiePath = await ConfigDBManager.getConfigLocalValue('game.linkage.magpie.path')
+
+      if (useMagpie && !monitoredProcess.isScaled && magpiePath) {
+        await startMagpie()
+        // Wait a while for the game window to fully load
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+        // Simulate pressing the Magpie shortcut
+        const magpieHotkey = await ConfigDBManager.getConfigLocalValue('game.linkage.magpie.hotkey')
+        simulateHotkey(magpieHotkey)
+        monitoredProcess.isScaled = true
+      }
+
+      this.monitoredProcesses.push(monitoredProcess)
     })
-
-    // Check if Magpie scaling is enabled
-    const useMagpie = await GameDBManager.getGameLocalValue(gameId, 'launcher.useMagpie')
-    const magpiePath = await ConfigDBManager.getConfigLocalValue('game.linkage.magpie.path')
-    const magpieHotkey = await ConfigDBManager.getConfigLocalValue('game.linkage.magpie.hotkey')
-
-    if (useMagpie && !monitoredProcess.isScaled && magpiePath) {
-      await startMagpie()
-      // Wait a while for the game window to fully load
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      // Simulate pressing the Magpie shortcut
-      simulateHotkey(magpieHotkey)
-      monitoredProcess.isScaled = true
-    }
-
-    this.monitoredProcesses.push(monitoredProcess)
   }
 
   // Imitate monitoring behaviours to preserve compatibility.
@@ -330,19 +350,22 @@ export class GameMonitor {
   // Return `true` if all the processes are stopped, `false` if there are still some processes
   // keep running.
   public async phantomStop(pid: number): Promise<boolean> {
-    const process = this.monitoredProcesses.find((process) => process.pid === pid)
-    if (process) {
-      process.isRunning = false
-    }
-    // if all monitored processes are stopped
-    if (
-      this.monitoredProcesses.length === 0 ||
-      this.monitoredProcesses.every((x) => !x.isRunning)
-    ) {
-      this.handleGameExit()
-      return true
-    }
-    return false
+    const isAllExited = await this.mutex.runExclusive(() => {
+      const process = this.monitoredProcesses.find((process) => process.pid === pid)
+      if (process) {
+        process.isRunning = false
+      }
+      // if all monitored processes are stopped
+      if (
+        this.monitoredProcesses.length === 0 ||
+        this.monitoredProcesses.every((x) => !x.isRunning)
+      ) {
+        this.handleGameExit()
+        return true
+      }
+      return false
+    })
+    return isAllExited
   }
 
   public async start(): Promise<void> {
@@ -488,6 +511,7 @@ export class GameMonitor {
     }
   }
 
+  // Do not require mutex in this method, this will result in a dead lock
   private async handleGameExit(): Promise<void> {
     if (this.exiting) {
       return

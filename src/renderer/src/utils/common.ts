@@ -244,8 +244,8 @@ export async function startGame(
       launcherConfig.monitorMode &&
       launcherConfig.monitorPath
     ) {
-      ipcManager.send('launcher:start-game', gameId)
       setRunningGames([...runningGames, gameId])
+      ipcManager.send('launcher:start-game', gameId)
       if (getGameValue('record.playStatus') === 'unplayed') {
         setGameValue('record.playStatus', 'playing')
       }

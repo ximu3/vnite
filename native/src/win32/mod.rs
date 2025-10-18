@@ -1,4 +1,6 @@
 mod notification;
+mod nt_path;
+mod privilege;
 mod process;
 mod hook;
 
@@ -6,6 +8,21 @@ use crate::{log, napi_win32::ProcessInfo};
 
 pub fn get_all_process() -> Vec<ProcessInfo> {
   process::get_all_process()
+}
+
+pub fn is_elevated_privilege() -> bool {
+  let result = privilege::is_elevated_privilege();
+  match result {
+    Err(e) => {
+      log::error(e.message().as_str());
+      false
+    }
+    Ok(v) => v,
+  }
+}
+
+pub fn nt_to_dos_path(nt_path: &str) -> Option<String> {
+  nt_path::nt_to_dos_path(nt_path)
 }
 
 pub fn send_notification(
