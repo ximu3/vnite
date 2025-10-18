@@ -73,6 +73,36 @@ export function setupGameStartListeners(): () => void {
   }
 }
 
+export function setupGameLaunchFailedListeners(): () => void {
+  const { refreshGameList } = useLibrarybarStore.getState()
+
+  const failedListener = ipcManager.on('game:launch-failed', (_, gameId: string) => {
+    const { runningGames, setRunningGames } = useRunningGames.getState()
+    if (!runningGames.includes(gameId)) {
+      return
+    }
+    const newRunningGames = runningGames.filter((elem) => elem !== gameId)
+    // Update the list of running games
+    setRunningGames(newRunningGames)
+
+    // Refresh the game list
+    refreshGameList()
+
+    toast.info(i18next.t('utils:notifications.gameLaunchFailed'), {
+      id: `${gameId}-launch-failed`
+    })
+
+    // Turn off notifications after 4 seconds
+    setTimeout(() => {
+      toast.dismiss(`${gameId}-launch-failed`)
+    }, 4000)
+  })
+
+  return () => {
+    failedListener()
+  }
+}
+
 export function setupGameExitListeners(): () => void {
   const { setRunningGames } = useRunningGames.getState()
   const { refreshGameList } = useLibrarybarStore.getState()
@@ -173,6 +203,7 @@ export async function setup(router: any): Promise<() => void> {
     setupGameUrlListener(router),
     setupCloudSyncListener(),
     setupGameStartListeners(),
+    setupGameLaunchFailedListeners(),
     setupGameExitListeners(),
     await setupDBSync(),
     setupUpdateListener(),

@@ -69,6 +69,7 @@
     "fullSynced": "資料同步完成",
     "fullSyncError": "資料同步失敗",
     "updateUserInfoError": "官方雲同步帳號登入過期，請重新登入",
-    "checkingForUpdate": "正在檢查更新…"
+    "checkingForUpdate": "正在檢查更新…",
+    "gameLaunchFailed": "游戲啓動失敗"
   }
 }
