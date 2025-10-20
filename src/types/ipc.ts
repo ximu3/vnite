@@ -109,6 +109,7 @@ type MainIpcEvents =
       'utils:save-game-icon-by-file': (gameId: string, filePath: string) => void
       'utils:download-temp-image': (url: string) => string
       'utils:save-clipboard-image': () => string
+      'utils:write-clipboard-image': (data: string, type: 'path') => boolean
       'utils:get-app-log-contents-in-current-lifetime': () => string
       'utils:copy-app-log-in-current-lifetime-to-clipboard-as-file': () => void
       'utils:open-log-path-in-explorer': () => void

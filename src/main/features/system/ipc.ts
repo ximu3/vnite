@@ -1,6 +1,7 @@
 import { generateUUID } from '@appUtils'
 import { app, OpenDialogOptions } from 'electron'
 import { ipcManager } from '~/core/ipc'
+import { setupNativeMonitor, stopNativeMonitor } from '~/features/monitor'
 import { mainWindow } from '~/index'
 import {
   checkAdminPermissions,
@@ -14,7 +15,8 @@ import {
   readFileBuffer,
   saveClipboardImage,
   selectMultiplePathDialog,
-  selectPathDialog
+  selectPathDialog,
+  writeClipboardImage
 } from '~/utils'
 import {
   copyAppLogInCurrentLifetimeToClipboardAsFile,
@@ -31,7 +33,6 @@ import {
   updateOpenAtLogin,
   updateScreenshotHotkey
 } from './services'
-import { setupNativeMonitor, stopNativeMonitor } from '~/features/monitor'
 
 export function setupSystemIPC(): void {
   ipcManager.on('window:minimize', () => {
@@ -197,6 +198,10 @@ export function setupSystemIPC(): void {
 
   ipcManager.handle('utils:save-clipboard-image', async () => {
     return await saveClipboardImage()
+  })
+
+  ipcManager.handle('utils:write-clipboard-image', async (_, data: string, type: 'path') => {
+    return await writeClipboardImage(data, type)
   })
 
   ipcManager.handle('system:update-screenshot-hotkey', (_, hotkey: string) => {

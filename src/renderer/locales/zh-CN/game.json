@@ -315,7 +315,7 @@
         "exportAs": "转存为",
         "image": "图片",
         "markdown": "Markdown",
-        "toClipboard": "导出至剪切板",
+        "toClipboard": "导出至剪贴板",
         "saveAs": "另存为"
       },
       "notifications": {
@@ -325,8 +325,8 @@
         "selectFileError": "选择文件失败: {{error}}",
         "imageNotFound": "未找到当前图片",
         "getImageError": "获取当前图片失败: {{error}}",
-        "imageCopied": "图片已成功复制到剪切板",
-        "imageCopyError": "复制图片到剪切板失败: {{error}}",
+        "imageCopied": "图片已成功复制到剪贴板",
+        "imageCopyError": "复制图片到剪贴板失败: {{error}}",
         "markdownCopied": "Markdown 已复制到剪贴板",
         "markdownCopyError": "复制到剪贴板失败: {{error}}",
         "setCoverSuccess": "已成功设置为游戏封面",

@@ -31,8 +31,8 @@
     }
   },
   "clipboard": {
-    "copied": "已复制到剪切板",
-    "copyError": "复制文本到剪切板失败: {{error}}"
+    "copied": "已复制到剪贴板",
+    "copyError": "复制文本到剪贴板失败: {{error}}"
   },
   "game": {
     "stopping": {

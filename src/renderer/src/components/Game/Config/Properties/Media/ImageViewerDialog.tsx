@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/ui/dialog'
-import { Button } from '~/components/ui/button'
-import { cn } from '~/utils'
+import { toast } from 'sonner'
 import { ipcManager } from '~/app/ipc'
+import { Button } from '~/components/ui/button'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/ui/dialog'
+import { cn } from '~/utils'
 
 interface ImageViewerDialogProps {
   isOpen: boolean
@@ -166,19 +167,16 @@ export function ImageViewerDialog({
   }
 
   // Copy current original image to clipboard
-  const copyImageToClipboard = async (): Promise<void> => {
-    try {
-      if (!imagePath) return
-      const buffer: any = await ipcManager.invoke('system:read-file-buffer', imagePath)
-      const uint8 = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer.data ?? buffer)
-      const ext = imagePath.split('.').pop()?.toLowerCase()
-      const mime = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg'
-      const blob = new Blob([uint8], { type: mime })
-      const item = new ClipboardItem({ [mime]: blob })
-      await navigator.clipboard.write([item])
-    } catch (e) {
-      console.error('copyImageToClipboard error', e)
-    }
+  const copyImageToClipboard = (): void => {
+    if (!imagePath) return
+    ipcManager
+      .invoke('utils:write-clipboard-image', imagePath, 'path')
+      .then(() => {
+        toast.success(t('utils:clipboard.copied'), { duration: 1000 })
+      })
+      .catch((error) => {
+        toast.error(t('utils:clipboard.copyError', { error }))
+      })
   }
 
   // Save current original image as file
