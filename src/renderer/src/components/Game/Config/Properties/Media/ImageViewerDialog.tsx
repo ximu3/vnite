@@ -31,6 +31,12 @@ export function ImageViewerDialog({
     height: 0
   })
 
+  const wrappedOnClose = (): void => {
+    if (imagePath) ipcManager.invoke('system:delete-temp-file', imagePath)
+
+    onClose()
+  }
+
   useEffect(() => {
     if (!isOpen) return
     // Reset state on open
@@ -193,7 +199,7 @@ export function ImageViewerDialog({
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={wrappedOnClose}>
       <DialogContent
         className={cn('w-[80vw] h-[80vh] max-w-none p-0 overflow-hidden flex flex-col gap-0')}
       >

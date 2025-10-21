@@ -90,6 +90,7 @@ type MainIpcEvents =
       'system:check-if-portable-directory-needs-admin-rights': () => boolean
       'system:get-fonts': () => string[]
       'system:update-screenshot-hotkey': (hotkey: string) => void
+      'system:delete-temp-file': (path: string) => void
 
       'app:update-language': (language: string) => void
       'app:get-app-version': () => string

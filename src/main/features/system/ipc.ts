@@ -22,6 +22,7 @@ import {
 import {
   copyAppLogInCurrentLifetimeToClipboardAsFile,
   createGameShortcut,
+  deleteTempFile,
   getAppLogContentsInCurrentLifetime,
   getAppRootPath,
   getLanguage,
@@ -125,6 +126,10 @@ export function setupSystemIPC(): void {
 
   ipcManager.handle('system:open-path-in-explorer', async (_, filePath: string) => {
     await openPathInExplorer(filePath)
+  })
+
+  ipcManager.handle('system:delete-temp-file', async (_, filePath: string) => {
+    await deleteTempFile(filePath)
   })
 
   ipcManager.handle('utils:open-database-path-in-explorer', async () => {
