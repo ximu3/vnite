@@ -122,6 +122,7 @@ export function ImageViewerDialog({
   const onImageLoad = (): void => {
     if (!imgRef.current) return
     setNaturalSize({ width: imgRef.current.naturalWidth, height: imgRef.current.naturalHeight })
+    fitToScreen()
   }
 
   // Keyboard shortcuts: + to zoom in, - to zoom out, 0 to reset, f to fit
@@ -211,16 +212,16 @@ export function ImageViewerDialog({
           onMouseLeave={onMouseUp}
         >
           <div className={cn('flex items-center gap-2')}>
-            <Button size="sm" variant="outline" onClick={zoomOut}>
+            <Button size="icon" variant="outline" onClick={zoomOut}>
               <span className={cn('icon-[mdi--magnify-minus-outline] w-4 h-4')}></span>
             </Button>
-            <Button size="sm" variant="outline" onClick={zoomIn}>
+            <Button size="icon" variant="outline" onClick={zoomIn}>
               <span className={cn('icon-[mdi--magnify-plus-outline] w-4 h-4')}></span>
             </Button>
-            <Button size="sm" variant="outline" onClick={fitToScreen}>
+            <Button size="icon" variant="outline" onClick={fitToScreen}>
               <span className={cn('icon-[mdi--fit-to-screen-outline] w-4 h-4')}></span>
             </Button>
-            <Button size="sm" variant="outline" onClick={reset}>
+            <Button size="icon" variant="outline" onClick={reset}>
               <span className={cn('icon-[mdi--refresh] w-4 h-4')}></span>
             </Button>
           </div>
