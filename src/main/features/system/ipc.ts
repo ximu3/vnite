@@ -14,6 +14,7 @@ import {
   openPathInExplorer,
   readFileBuffer,
   saveClipboardImage,
+  saveImageAsFileDialog,
   selectMultiplePathDialog,
   selectPathDialog,
   writeClipboardImage
@@ -109,6 +110,10 @@ export function setupSystemIPC(): void {
       return await selectMultiplePathDialog(properties, extensions, defaultPath)
     }
   )
+
+  ipcManager.handle('system:save-image-as-file-dialog', async (_event, sourcePath: string) => {
+    return await saveImageAsFileDialog(sourcePath)
+  })
 
   ipcManager.handle('system:get-fonts', async () => {
     return await getSystemFonts()

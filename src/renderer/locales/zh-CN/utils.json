@@ -34,6 +34,10 @@
     "copied": "已复制到剪贴板",
     "copyError": "复制文本到剪贴板失败: {{error}}"
   },
+  "saveFile": {
+    "success": "文件保存成功",
+    "error": "文件保存失败：{{error}}"
+  },
   "game": {
     "stopping": {
       "loading": "正在停止游戏…",

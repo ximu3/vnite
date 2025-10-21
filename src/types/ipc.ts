@@ -81,6 +81,7 @@ type MainIpcEvents =
         extensions?: string[],
         defaultPath?: string
       ) => string[] | undefined
+      'system:save-image-as-file-dialog': (sourcePath: string) => boolean
       'system:get-path-size': (paths: string[]) => number
       'system:read-file-buffer': (filePath: string) => Buffer
       'system:open-path-in-explorer': (filePath: string) => void

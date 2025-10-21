@@ -180,23 +180,16 @@ export function ImageViewerDialog({
   }
 
   // Save current original image as file
-  const saveImageAs = async (): Promise<void> => {
-    try {
-      if (!imagePath) return
-      const buffer: any = await ipcManager.invoke('system:read-file-buffer', imagePath)
-      const uint8 = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer.data ?? buffer)
-      const ext = imagePath.split('.').pop()?.toLowerCase() || 'png'
-      const mime = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg'
-      const blob = new Blob([uint8], { type: mime })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `image.${ext}`
-      a.click()
-      URL.revokeObjectURL(url)
-    } catch (e) {
-      console.error('saveImageAs error', e)
-    }
+  const saveImageAs = (): void => {
+    if (!imagePath) return
+    ipcManager
+      .invoke('system:save-image-as-file-dialog', imagePath)
+      .then((success: boolean) => {
+        if (success) toast.success(t('utils:saveFile.success'), { duration: 1000 })
+      })
+      .catch((error) => {
+        toast.error(t('utils:saveFile.error', { error }))
+      })
   }
 
   return (
