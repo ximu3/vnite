@@ -81,6 +81,7 @@ type MainIpcEvents =
         extensions?: string[],
         defaultPath?: string
       ) => string[] | undefined
+      'system:save-image-as-file-dialog': (sourcePath: string) => boolean
       'system:get-path-size': (paths: string[]) => number
       'system:read-file-buffer': (filePath: string) => Buffer
       'system:open-path-in-explorer': (filePath: string) => void
@@ -89,6 +90,7 @@ type MainIpcEvents =
       'system:check-if-portable-directory-needs-admin-rights': () => boolean
       'system:get-fonts': () => string[]
       'system:update-screenshot-hotkey': (hotkey: string) => void
+      'system:delete-temp-file': (path: string) => void
 
       'app:update-language': (language: string) => void
       'app:get-app-version': () => string
@@ -109,6 +111,7 @@ type MainIpcEvents =
       'utils:save-game-icon-by-file': (gameId: string, filePath: string) => void
       'utils:download-temp-image': (url: string) => string
       'utils:save-clipboard-image': () => string
+      'utils:write-clipboard-image': (data: string, type: 'path') => boolean
       'utils:get-app-log-contents-in-current-lifetime': () => string
       'utils:copy-app-log-in-current-lifetime-to-clipboard-as-file': () => void
       'utils:open-log-path-in-explorer': () => void

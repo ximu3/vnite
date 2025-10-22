@@ -1,6 +1,7 @@
 import { generateUUID } from '@appUtils'
 import { app, OpenDialogOptions } from 'electron'
 import { ipcManager } from '~/core/ipc'
+import { setupNativeMonitor, stopNativeMonitor } from '~/features/monitor'
 import { mainWindow } from '~/index'
 import {
   checkAdminPermissions,
@@ -13,12 +14,15 @@ import {
   openPathInExplorer,
   readFileBuffer,
   saveClipboardImage,
+  saveImageAsFileDialog,
   selectMultiplePathDialog,
-  selectPathDialog
+  selectPathDialog,
+  writeClipboardImage
 } from '~/utils'
 import {
   copyAppLogInCurrentLifetimeToClipboardAsFile,
   createGameShortcut,
+  deleteTempFile,
   getAppLogContentsInCurrentLifetime,
   getAppRootPath,
   getLanguage,
@@ -31,7 +35,6 @@ import {
   updateOpenAtLogin,
   updateScreenshotHotkey
 } from './services'
-import { setupNativeMonitor, stopNativeMonitor } from '~/features/monitor'
 
 export function setupSystemIPC(): void {
   ipcManager.on('window:minimize', () => {
@@ -109,6 +112,10 @@ export function setupSystemIPC(): void {
     }
   )
 
+  ipcManager.handle('system:save-image-as-file-dialog', async (_event, sourcePath: string) => {
+    return await saveImageAsFileDialog(sourcePath)
+  })
+
   ipcManager.handle('system:get-fonts', async () => {
     return await getSystemFonts()
   })
@@ -119,6 +126,10 @@ export function setupSystemIPC(): void {
 
   ipcManager.handle('system:open-path-in-explorer', async (_, filePath: string) => {
     await openPathInExplorer(filePath)
+  })
+
+  ipcManager.handle('system:delete-temp-file', async (_, filePath: string) => {
+    await deleteTempFile(filePath)
   })
 
   ipcManager.handle('utils:open-database-path-in-explorer', async () => {
@@ -197,6 +208,10 @@ export function setupSystemIPC(): void {
 
   ipcManager.handle('utils:save-clipboard-image', async () => {
     return await saveClipboardImage()
+  })
+
+  ipcManager.handle('utils:write-clipboard-image', async (_, data: string, type: 'path') => {
+    return await writeClipboardImage(data, type)
   })
 
   ipcManager.handle('system:update-screenshot-hotkey', (_, hotkey: string) => {

@@ -34,6 +34,10 @@
     "copied": "Copied to clipboard",
     "copyError": "Failed to copy text to clipboard: {{error}}"
   },
+  "saveFile": {
+    "success": "File saved successfully",
+    "error": "Failed to save file: {{error}}"
+  },
   "game": {
     "stopping": {
       "loading": "Stopping game…",
