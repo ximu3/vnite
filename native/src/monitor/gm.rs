@@ -11,6 +11,10 @@ use crate::{
   utils::types::NapiWeakThreadsafeFunction,
 };
 
+/// Threadsafe NodeJS callback get invoked when a foreground window is changed
+static FOREGROUND_CALLBACK: std::sync::Mutex<Option<NapiWeakThreadsafeFunction<String, ()>>> =
+  std::sync::Mutex::new(None);
+
 struct KnownGameProcessInfo {
   pid: u32,
   status: ProcessStatus,
@@ -28,12 +32,17 @@ pub struct GameManager {
   /// The key is always "{full_path}-{pid}" of the process, not the folder or executable name.
   ///
   /// Only processes contained in `known_games` will be inserted into this hashmap.
-  /// When a running process is terminated, it will be remove from this hashmap.
+  /// When a running process is terminated, it is designed to be remove from this hashmap.
   /// Typically there is only 1 entry stored in this hashmap, unless a user is playing 2 or more games simultaneously.
   running_process: HashMap<String, KnownGameProcessInfo>,
 
   /// Threadsafe NodeJS callback get invoked when a known process get created or terminated
-  callback: Option<NapiWeakThreadsafeFunction<ProcessEvent, ()>>,
+  process_callback: Option<NapiWeakThreadsafeFunction<ProcessEvent, ()>>,
+
+  /// Current Foreground process PID only if the process is a known game, otherwise 0
+  foreground_pid: u32,
+  foreground_wait_time: u64,
+  foreground_timeout_handle: Option<tokio::task::JoinHandle<()>>,
 }
 
 impl GameManager {
@@ -41,7 +50,10 @@ impl GameManager {
     Self {
       known_games: HashMap::new(),
       running_process: HashMap::new(),
-      callback: None,
+      process_callback: None,
+      foreground_pid: 0,
+      foreground_wait_time: 10,
+      foreground_timeout_handle: None,
     }
   }
 
@@ -52,7 +64,7 @@ impl GameManager {
     callback: Option<NapiWeakThreadsafeFunction<ProcessEvent, ()>>,
   ) {
     self.init_known_games(pathes, ids);
-    self.set_callback(callback);
+    self.set_process_callback(callback);
   }
 
   pub fn init_known_games(&mut self, pathes: Vec<String>, ids: Vec<String>) {
@@ -66,8 +78,27 @@ impl GameManager {
     }
   }
 
-  pub fn set_callback(&mut self, callback: Option<NapiWeakThreadsafeFunction<ProcessEvent, ()>>) {
-    self.callback = callback;
+  pub fn set_foreground_callback(&self, callback: Option<NapiWeakThreadsafeFunction<String, ()>>) {
+    if let Ok(mut callback_guard) = FOREGROUND_CALLBACK.lock() {
+      *callback_guard = callback;
+    }
+  }
+
+  pub fn unset_foreground_callback(&self) {
+    if let Ok(mut callback_guard) = FOREGROUND_CALLBACK.lock() {
+      *callback_guard = None;
+    }
+  }
+
+  pub fn set_foreground_wait_time(&mut self, wait_time: u64) {
+    self.foreground_wait_time = wait_time;
+  }
+
+  pub fn set_process_callback(
+    &mut self,
+    callback: Option<NapiWeakThreadsafeFunction<ProcessEvent, ()>>,
+  ) {
+    self.process_callback = callback;
   }
 
   pub fn add_known_game(&mut self, path: String, id: String) {
@@ -113,6 +144,61 @@ impl GameManager {
     is_running
   }
 
+  /// Handle a foreground change message.
+  /// Note the `msg` can be 0 if current process has insufficient privilege to retrieve the target window.
+  pub fn handle_foreground_message(&mut self, msg: u32) {
+    if self.running_process.len() == 0 {
+      return;
+    }
+    for (_, info) in &self.running_process {
+      // if the incoming foreground pid is not a running game's pid, proceeds to the next iteration
+      if info.pid != msg {
+        continue;
+      }
+      // if the incoming foreground pid equals the previous foreground pid, do nothing
+      // (this happens if a game has multiple windows and the user is switching between those windows)
+      if self.foreground_pid == msg {
+        return;
+      }
+      // a game window comes into foreground, send the message to Node 
+      self.foreground_pid = msg;
+      let game_id = info.game_id.clone();
+      let timeout = self.foreground_wait_time;
+      if let Some(handle) = self.foreground_timeout_handle.take() {
+        handle.abort();
+      }
+      self.foreground_timeout_handle = Some(tokio::spawn(async move {
+        tokio::time::sleep(tokio::time::Duration::from_secs(timeout)).await;
+        if let Ok(callback_guard) = FOREGROUND_CALLBACK.lock() {
+          if let Some(callback) = &*callback_guard {
+            callback.call(Ok(game_id), ThreadsafeFunctionCallMode::Blocking);
+          }
+        }
+      }));
+      return;
+    }
+    // no running games pid matched, user switched foreground window to a non game window
+
+    // if the previous foreground window pid is already a non game window pid, do nothing
+    if self.foreground_pid == 0 {
+      return;
+    }
+    // otherwise, user switched from a game window, send the message to Node
+    self.foreground_pid = 0;
+    let timeout = self.foreground_wait_time;
+    if let Some(handle) = self.foreground_timeout_handle.take() {
+      handle.abort();
+    }
+    self.foreground_timeout_handle = Some(tokio::spawn(async move {
+      tokio::time::sleep(tokio::time::Duration::from_secs(timeout)).await;
+      if let Ok(callback_guard) = FOREGROUND_CALLBACK.lock() {
+        if let Some(callback) = &*callback_guard {
+          callback.call(Ok(String::new()), ThreadsafeFunctionCallMode::Blocking);
+        }
+      }
+    }));
+  }
+
   pub fn handle_wmi_message(&mut self, msg: ProcessMessage) {
     let l_path = msg.path.to_lowercase();
     // check directory & fullpath & process name
@@ -145,8 +231,9 @@ impl GameManager {
             game_id: game_id.clone(),
           },
         );
+        self.foreground_pid = msg.pid;
         log::info(format!("game started: {}, pid: {}", l_path, pid).as_str());
-        if let Some(callback) = &self.callback {
+        if let Some(callback) = &self.process_callback {
           callback.call(
             Ok(ProcessEvent {
               event_type: ProcessEventType::Creation,
@@ -162,8 +249,9 @@ impl GameManager {
         if let Some(prev) = self.running_process.get(&key) {
           if prev.status == ProcessStatus::Started {
             self.running_process.remove(&key);
+            self.foreground_pid = 0;
             log::info(format!("game stopped: {}, pid: {}", l_path, pid).as_str());
-            if let Some(callback) = &self.callback {
+            if let Some(callback) = &self.process_callback {
               callback.call(
                 Ok(ProcessEvent {
                   event_type: ProcessEventType::Termination,
@@ -220,8 +308,9 @@ impl GameManager {
             game_id: game_id.clone(),
           },
         );
+        self.foreground_pid = msg.pid;
         log::info(format!("game started: {}, pid: {}", l_path, msg.pid).as_str());
-        if let Some(callback) = &self.callback {
+        if let Some(callback) = &self.process_callback {
           callback.call(
             Ok(ProcessEvent {
               event_type: ProcessEventType::Creation,
@@ -235,8 +324,9 @@ impl GameManager {
       }
       ProcessStatus::Terminated => {
         for (_, game_info) in self.running_process.extract_if(|_, v| v.pid == msg.pid) {
+          self.foreground_pid = 0;
           log::info(format!("game stopped: {}, pid: {}", game_info.path, game_info.pid).as_str());
-          if let Some(callback) = &self.callback {
+          if let Some(callback) = &self.process_callback {
             callback.call(
               Ok(ProcessEvent {
                 event_type: ProcessEventType::Termination,
