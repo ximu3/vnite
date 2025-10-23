@@ -45,6 +45,10 @@
   "weekly": {
     "title": "週間ゲームレポート",
     "dailyPlayTime": "日別プレイ時間",
+    "playTimeLine": {
+      "title": "ゲームタイムライン",
+      "noRecords": "今週のプレイ記録はありません"
+    },
     "totalWeeklyTime": "今週の合計: {{time, gameTime}}",
     "highlights": {
       "title": "今週のデータ",

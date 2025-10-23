@@ -45,6 +45,10 @@
   "weekly": {
     "title": "周游戏报告",
     "dailyPlayTime": "每日游戏时间",
+    "playTimeLine": {
+      "title": "游戏时间线",
+      "noRecords": "本周没有游戏记录"
+    },
     "totalWeeklyTime": "本周共游戏 {{time, gameTime}}",
     "highlights": {
       "title": "本周数据",
