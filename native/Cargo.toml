@@ -25,6 +25,8 @@ windows = { version = "0.62", features = [
   "Win32_System_Ole",
   "UI_Notifications",
   "Data_Xml_Dom",
+  "Win32_UI_Accessibility",
+  "Win32_UI_WindowsAndMessaging",
   "Win32_Foundation",
   "Win32_System_Diagnostics_Etw",
   "Win32_System_Time",

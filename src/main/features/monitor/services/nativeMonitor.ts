@@ -1,10 +1,11 @@
 import * as native from 'vnite-native'
 import log from 'electron-log/main.js'
 import { eventBus } from '~/core/events'
-import { GameDBManager } from '~/core/database'
+import { GameDBManager, ConfigDBManager } from '~/core/database'
 import { GameMonitor } from './monitor'
 import { ipcManager } from '~/core/ipc'
 import { Mutex } from 'async-mutex'
+import i18next from 'i18next'
 
 // A static monitor {gameId - GameMonitor} hash map that keeps a stub of all running
 // game processes, preventing GC from reclaiming memory.
@@ -157,4 +158,61 @@ async function spawnLegacyMonitor(gameId: string): Promise<GameMonitor | undefin
     log.error(`[Monitor] Failed to start monitor ${gameId}`, error)
     return undefined
   }
+}
+
+async function foregroundEventCallback(err: Error | null, gameId: string): Promise<void> {
+  if (err) {
+    log.error('failed to invoke foreground event callback from native module: ', err.message)
+    return
+  }
+  await mutex.runExclusive(async () => {
+    for (const [id, monitor] of monitors) {
+      if (gameId !== id) {
+        monitor.pushForegroundChange('p')
+      } else {
+        monitor.pushForegroundChange('c')
+      }
+    }
+    // send system notification if needed
+    if (!(await ConfigDBManager.getConfigValue('general.showForegroundNotification'))) {
+      return
+    }
+    if (monitors.size === 1) {
+      for (const [_, monitor] of monitors) {
+        const diff = monitor.diffForegroundChange()
+        if (diff === 1) {
+          native.sendSystemNotification(
+            'vnite',
+            i18next.t('system-notification:timerResumed'),
+            null,
+            null,
+            null,
+            true
+          )
+        } else if (diff === -1) {
+          native.sendSystemNotification(
+            'vnite',
+            i18next.t('system-notification:timerPaused'),
+            null,
+            null,
+            null,
+            true
+          )
+        }
+      }
+    }
+  })
+}
+
+export async function enableForegroundHook(): Promise<void> {
+  const waitTime = await ConfigDBManager.getConfigValue('general.foregroundWaitTime')
+  await native.installForegroundHook(foregroundEventCallback, waitTime)
+}
+
+export async function disableForegroundHook(): Promise<void> {
+  await native.uninstallForegroundHook()
+}
+
+export function changeForegroundWaitTime(waitTime: number): void {
+  native.setForegroundWaitTime(waitTime)
 }

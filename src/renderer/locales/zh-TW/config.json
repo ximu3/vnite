@@ -25,6 +25,19 @@
         "new": "自動",
         "legacy": "傳統"
       }
+    },
+    "timerTitle": "游戲計時器",
+    "foregroundTimer": {
+      "title": "前臺計時",
+      "description": "選擇當游戲视窗切換至後臺運行時是否暫停計時器。此功能僅在進程監控方式為'自動'時有效。\n游戲運行中無法變更此設置"
+    },
+    "foregroundWaitTime": {
+      "title": "緩衝時間",
+      "description": "當游戲持續在前臺/後臺運行此時間后，繼續/暫停計時器\n游戲運行中無法變更此設置"
+    },
+    "foregroundNotification": {
+      "title": "計時器通知",
+      "description": "當計時器暫停/繼續時，發送系統通知"
     }
   },
   "appearances": {

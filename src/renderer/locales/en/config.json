@@ -25,6 +25,19 @@
         "new": "Auto",
         "legacy": "Legacy"
       }
+    },
+    "timerTitle": "Game Timer",
+    "foregroundTimer": {
+      "title": "Foreground Timer",
+      "description": "Choose whether or not to pause the timer when game window switches to background. Available only if the Auto monitor is enabled.\nCannnot be changed while games are running"
+    },
+    "foregroundWaitTime": {
+      "title": "Wait Time",
+      "description": "Pause/resume timer after the game has been running in background/foreground for this duration\nCannnot be changed while games are running"
+    },
+    "foregroundNotification": {
+      "title": "Timer Notification",
+      "description": "Send a system notification when timer becomes paused/resumed"
     }
   },
   "appearances": {

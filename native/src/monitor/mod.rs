@@ -9,8 +9,9 @@ use crate::{
   win32,
 };
 
-pub mod etw_monitor;
-mod gm;
+pub mod gm;
+
+mod etw_monitor;
 mod wmi_monitor;
 
 trait WinProcessMonitor: Send {
@@ -24,7 +25,7 @@ enum ProcessStatus {
   Terminated,
 }
 
-struct ProcessMessage {
+pub struct ProcessMessage {
   pid: u32,
   status: ProcessStatus,
   path: String,

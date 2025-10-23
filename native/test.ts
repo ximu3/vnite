@@ -48,8 +48,22 @@ async function testLogger(): Promise<void> {
   }, 3000)
 }
 
+async function testHook(): Promise<void> {
+  await native.installForegroundHook((err: Error | null, arg: string) => {
+    if (err) {
+      console.error('err: ', err)
+      return
+    }
+    console.log(`from node. pid: ${arg}`)
+  })
+  setTimeout(async () => {
+    console.log('stop')
+    await native.uninstallForegroundHook()
+  }, 10000)
+}
+
 async function main(): Promise<void> {
-  testMonitor()
+  testHook()
 }
 
 main()

@@ -2,7 +2,6 @@ mod notification;
 mod nt_path;
 mod privilege;
 mod process;
-// pub mod hook;
 
 use crate::{log, napi_win32::ProcessInfo};
 
