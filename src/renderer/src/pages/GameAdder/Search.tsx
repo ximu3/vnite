@@ -40,12 +40,14 @@ export function Search({ className }: { className?: string }): React.JSX.Element
   const PathRowWithDb = ({ gameId }: { gameId: string }): React.JSX.Element | null => {
     const [dbGamePath] = useGameLocalState(gameId, 'path.gamePath')
     const [markPath] = useGameLocalState(gameId, 'utils.markPath')
-    if (!gameId) return null
+    if (!gameId || (!dbGamePath && !markPath)) return null
     const displayPath = dbGamePath || markPath || ''
     return (
       <>
-        <div className={cn('whitespace-nowrap select-none')}>{t('gameAdder.search.gamePath')}</div>
-        <div className={cn('text-xs text-muted-foreground break-all select-text')}>
+        <div className={cn('whitespace-nowrap select-none pb-1.5')}>
+          {t('gameAdder.search.gamePath')}
+        </div>
+        <div className={cn('text-xs text-muted-foreground break-all select-text pb-1.5')}>
           {displayPath || '-'}
         </div>
       </>
@@ -181,12 +183,16 @@ export function Search({ className }: { className?: string }): React.JSX.Element
         {dbId ? (
           <PathRowWithDb gameId={dbId} />
         ) : (
-          <>
-            <div className={cn('whitespace-nowrap select-none')}>{t('gameAdder.search.gamePath')}</div>
-            <div className={cn('text-xs text-muted-foreground break-all select-text')}>
-              {gamePath || dirPath || '-'}
-            </div>
-          </>
+          (gamePath || dirPath) && (
+            <>
+              <div className={cn('whitespace-nowrap select-none pb-1.5')}>
+                {t('gameAdder.search.gamePath')}
+              </div>
+              <div className={cn('text-xs text-muted-foreground break-all select-text pb-1.5')}>
+                {gamePath || dirPath || '-'}
+              </div>
+            </>
+          )
         )}
 
         {/* Data source selection */}

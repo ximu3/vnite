@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/ui/dialog'
-import { Button } from '~/components/ui/button'
-import { cn } from '~/utils'
+import { toast } from 'sonner'
 import { ipcManager } from '~/app/ipc'
+import { Button } from '~/components/ui/button'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/ui/dialog'
+import { cn } from '~/utils'
 
 interface ImageViewerDialogProps {
   isOpen: boolean
@@ -29,6 +30,12 @@ export function ImageViewerDialog({
     width: 0,
     height: 0
   })
+
+  const wrappedOnClose = (): void => {
+    if (imagePath) ipcManager.invoke('system:delete-temp-file', imagePath)
+
+    onClose()
+  }
 
   useEffect(() => {
     if (!isOpen) return
@@ -115,6 +122,7 @@ export function ImageViewerDialog({
   const onImageLoad = (): void => {
     if (!imgRef.current) return
     setNaturalSize({ width: imgRef.current.naturalWidth, height: imgRef.current.naturalHeight })
+    fitToScreen()
   }
 
   // Keyboard shortcuts: + to zoom in, - to zoom out, 0 to reset, f to fit
@@ -166,43 +174,33 @@ export function ImageViewerDialog({
   }
 
   // Copy current original image to clipboard
-  const copyImageToClipboard = async (): Promise<void> => {
-    try {
-      if (!imagePath) return
-      const buffer: any = await ipcManager.invoke('system:read-file-buffer', imagePath)
-      const uint8 = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer.data ?? buffer)
-      const ext = imagePath.split('.').pop()?.toLowerCase()
-      const mime = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg'
-      const blob = new Blob([uint8], { type: mime })
-      const item = new ClipboardItem({ [mime]: blob })
-      await navigator.clipboard.write([item])
-    } catch (e) {
-      console.error('copyImageToClipboard error', e)
-    }
+  const copyImageToClipboard = (): void => {
+    if (!imagePath) return
+    ipcManager
+      .invoke('utils:write-clipboard-image', imagePath, 'path')
+      .then(() => {
+        toast.success(t('utils:clipboard.copied'), { duration: 1000 })
+      })
+      .catch((error) => {
+        toast.error(t('utils:clipboard.copyError', { error }))
+      })
   }
 
   // Save current original image as file
-  const saveImageAs = async (): Promise<void> => {
-    try {
-      if (!imagePath) return
-      const buffer: any = await ipcManager.invoke('system:read-file-buffer', imagePath)
-      const uint8 = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer.data ?? buffer)
-      const ext = imagePath.split('.').pop()?.toLowerCase() || 'png'
-      const mime = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg'
-      const blob = new Blob([uint8], { type: mime })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `image.${ext}`
-      a.click()
-      URL.revokeObjectURL(url)
-    } catch (e) {
-      console.error('saveImageAs error', e)
-    }
+  const saveImageAs = (): void => {
+    if (!imagePath) return
+    ipcManager
+      .invoke('system:save-image-as-file-dialog', imagePath)
+      .then((success: boolean) => {
+        if (success) toast.success(t('utils:saveFile.success'), { duration: 1000 })
+      })
+      .catch((error) => {
+        toast.error(t('utils:saveFile.error', { error }))
+      })
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={wrappedOnClose}>
       <DialogContent
         className={cn('w-[80vw] h-[80vh] max-w-none p-0 overflow-hidden flex flex-col gap-0')}
       >
@@ -214,16 +212,16 @@ export function ImageViewerDialog({
           onMouseLeave={onMouseUp}
         >
           <div className={cn('flex items-center gap-2')}>
-            <Button size="sm" variant="outline" onClick={zoomOut}>
+            <Button size="icon" variant="outline" onClick={zoomOut}>
               <span className={cn('icon-[mdi--magnify-minus-outline] w-4 h-4')}></span>
             </Button>
-            <Button size="sm" variant="outline" onClick={zoomIn}>
+            <Button size="icon" variant="outline" onClick={zoomIn}>
               <span className={cn('icon-[mdi--magnify-plus-outline] w-4 h-4')}></span>
             </Button>
-            <Button size="sm" variant="outline" onClick={fitToScreen}>
+            <Button size="icon" variant="outline" onClick={fitToScreen}>
               <span className={cn('icon-[mdi--fit-to-screen-outline] w-4 h-4')}></span>
             </Button>
-            <Button size="sm" variant="outline" onClick={reset}>
+            <Button size="icon" variant="outline" onClick={reset}>
               <span className={cn('icon-[mdi--refresh] w-4 h-4')}></span>
             </Button>
           </div>

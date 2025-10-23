@@ -128,7 +128,7 @@ export function CollectionGamesComponent({
 
   return (
     <DragContext.Provider value={{ isDraggingGlobal, setIsDraggingGlobal }}>
-      <div className={cn('flex flex-col gap-3 h-full bg-transparent')}>
+      <div className={cn('flex flex-col gap-3 h-full bg-transparent pt-4')}>
         <div className={cn('flex flex-row gap-5 items-center justify-center pl-5 pt-2')}>
           <div className={cn('text-accent-foreground select-none flex-shrink-0')}>
             {collectionName}

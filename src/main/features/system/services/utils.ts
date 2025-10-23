@@ -1,12 +1,13 @@
-import { GameDBManager, ConfigDBManager } from '~/core/database'
-import { createUrlShortcut, convertToIcon, openPathInExplorer } from '~/utils'
-import { getAppTempPath, getLogsPath } from './path'
+import { app } from 'electron'
+import contextMenu from 'electron-context-menu'
 import log from 'electron-log/main'
 import fse from 'fs-extra'
-import { app } from 'electron'
-import { copyFileToClipboard } from '~/utils'
-import contextMenu from 'electron-context-menu'
 import i18next from 'i18next'
+import os from 'os'
+import path from 'path'
+import { ConfigDBManager, GameDBManager } from '~/core/database'
+import { convertToIcon, copyFileToClipboard, createUrlShortcut, openPathInExplorer } from '~/utils'
+import { getAppTempPath, getLogsPath } from './path'
 
 export async function setupContextMenu(): Promise<void> {
   contextMenu({
@@ -173,5 +174,24 @@ export async function createGameShortcut(gameId: string, targetPath: string): Pr
     })
   } catch (error) {
     log.error('[Utils] Error creating game shortcut:', error)
+  }
+}
+
+export async function deleteTempFile(filePath: string): Promise<void> {
+  try {
+    const tempDir = os.tmpdir()
+    const resolvedPath = path.resolve(filePath)
+
+    if (path.relative(tempDir, resolvedPath).startsWith('..')) {
+      console.warn(`[deleteTempFile] Refused to delete non-temp file: ${resolvedPath}`)
+      return
+    }
+
+    if (await fse.pathExists(resolvedPath)) {
+      await fse.remove(resolvedPath)
+      console.log(`[deleteTempFile] Temp file deleted: ${resolvedPath}`)
+    }
+  } catch (error) {
+    console.error('[deleteTempFile] Error deleting temp file:', error)
   }
 }
