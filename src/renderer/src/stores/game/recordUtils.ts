@@ -163,6 +163,11 @@ export function getWeeklyPlayData(date = new Date()): {
       if (filteredTimers.length > 0) {
         weeklyPlayTimers[gameId] = filteredTimers
       }
+
+      // Make sure it is sorted, don't care about other exceptions (overlap, empty time, ...)
+      weeklyPlayTimers[gameId].sort(
+        (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime()
+      )
     }
 
     // Get the most played games (in order of time)
