@@ -167,7 +167,6 @@ async function foregroundEventCallback(err: Error | null, gameId: string): Promi
   }
   await mutex.runExclusive(async () => {
     for (const [id, monitor] of monitors) {
-      log.info(`node, id: ${gameId}`)
       if (gameId !== id) {
         monitor.pushForegroundChange('p')
       } else {
