@@ -124,7 +124,7 @@ export function getWeeklyPlayData(date = new Date()): {
       totalTime += dayTotal
 
       // Update the day you play the most games
-      if (mostPlayedDay === null || dayTotal > mostPlayedDay.playTime) {
+      if (dayTotal > (mostPlayedDay?.playTime ?? 0)) {
         mostPlayedDay = {
           date: dateStr,
           playTime: dayTotal
@@ -256,7 +256,7 @@ export function getMonthlyPlayData(date = new Date()): {
       totalTime += dayTotal
 
       // Update the day when you play the most games
-      if (mostPlayedDay === null || dayTotal > mostPlayedDay.playTime) {
+      if (dayTotal > (mostPlayedDay?.playTime ?? 0)) {
         mostPlayedDay = {
           date: dateStr,
           playTime: dayTotal
@@ -366,7 +366,7 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
     // Find the month with most play time
     let mostPlayedMonth: MostPlayedMonth | null = null
     for (let month = 0; month < 12; month++) {
-      if (mostPlayedMonth === null || monthlyPlayTime[month] > mostPlayedMonth.playTime) {
+      if (monthlyPlayTime[month] > (mostPlayedMonth?.playTime ?? 0)) {
         mostPlayedMonth = {
           month,
           playTime: monthlyPlayTime[month]

@@ -112,7 +112,7 @@ export function MonthlyReport(): React.JSX.Element {
 
   // Find the week with the longest game
   const mostPlayedWeek =
-    weeklyChartData.length > 0
+    weeklyChartData.filter((week) => week.playTime > 0).length > 0
       ? weeklyChartData.reduce(
           (max, current) => (current.playTime > max.playTime ? current : max),
           weeklyChartData[0]
@@ -365,7 +365,9 @@ export function MonthlyReport(): React.JSX.Element {
                   </p>
                 </div>
               ) : (
-                <p>{t('monthly.highlights.noRecords')}</p>
+                <div className="col-span-2 py-6 text-center text-sm text-muted-foreground">
+                  {t('monthly.highlights.noRecords')}
+                </div>
               )}
 
               <Separator />
@@ -409,7 +411,9 @@ export function MonthlyReport(): React.JSX.Element {
                 />
               ))
             ) : (
-              <p className="col-span-2">{t('monthly.monthlyGames.noRecords')}</p>
+              <div className="col-span-2 py-6 text-center text-sm text-muted-foreground">
+                {t('monthly.monthlyGames.noRecords')}
+              </div>
             )}
           </CardContent>
         </Card>

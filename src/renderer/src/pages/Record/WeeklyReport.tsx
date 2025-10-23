@@ -378,7 +378,9 @@ export function WeeklyReport(): React.JSX.Element {
                   </p>
                 </div>
               ) : (
-                <p>{t('weekly.highlights.noRecords')}</p>
+                <div className="py-6 text-center text-sm text-muted-foreground">
+                  {t('weekly.highlights.noRecords')}
+                </div>
               )}
 
               <Separator />
@@ -422,7 +424,7 @@ export function WeeklyReport(): React.JSX.Element {
                 ))
               ) : (
                 <div className="py-6 text-center text-sm text-muted-foreground">
-                  {t('weekly.playTimeLine.noRecords')}
+                  {t('weekly.weeklyGames.noRecords')}
                 </div>
               )}
             </div>
