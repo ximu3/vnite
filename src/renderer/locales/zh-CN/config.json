@@ -25,6 +25,19 @@
         "new": "自动",
         "legacy": "传统"
       }
+    },
+    "timerTitle": "游戏计时器",
+    "foregroundTimer": {
+      "title": "前台计时",
+      "description": "选择当游戏窗口切换至后台运行时是否暂停计时器。此功能仅在进程监控方式为'自动'时有效。\n游戏运行中无法变更此设置"
+    },
+    "foregroundWaitTime": {
+      "title": "缓冲时间",
+      "description": "当游戏持续在前台/后台运行此时间后，继续/暂停计时器\n游戏运行中无法变更此设置"
+    },
+    "foregroundNotification": {
+      "title": "计时器通知",
+      "description": "当计时器暂停/继续时，发送系统通知"
     }
   },
   "appearances": {

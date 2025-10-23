@@ -15,11 +15,16 @@ import { cn } from '~/utils'
 import { useTheme } from '~/components/ThemeProvider'
 import { ipcManager } from '~/app/ipc'
 import { eventBus } from '~/app/events'
+import { useConfigState } from '~/hooks'
+import { useRunningGames } from '~/pages/Library/store'
 
 export function General(): React.JSX.Element {
   const { themeSetting, setThemeSetting } = useTheme()
   const { t } = useTranslation('config')
   const { i18n } = useTranslation()
+  const [enableForegroundTimer] = useConfigState('general.enableForegroundTimer')
+  const [processMonitor] = useConfigState('general.processMonitor')
+  const { runningGames } = useRunningGames.getState()
 
   const languageOptions = [
     { value: 'zh-CN', label: '简体中文' },
@@ -121,6 +126,52 @@ export function General(): React.JSX.Element {
             description={t('general.hideWindowAfterGameStartDescription')}
             controlType="switch"
           />
+
+          {/* Foreground Window Settings */}
+          <div className={cn('space-y-4')}>
+            <div className={cn('border-b pb-2')}>{t('general.timerTitle')}</div>
+            <div className={cn(' space-y-4')}>
+              <ConfigItem
+                hookType="config"
+                path="general.enableForegroundTimer"
+                title={t('general.foregroundTimer.title')}
+                description={t('general.foregroundTimer.description')}
+                controlType="switch"
+                disabled={runningGames.length > 0 || processMonitor !== 'new'}
+                onChange={(value: boolean) => {
+                  ipcManager.send('system:change-foreground-timer', value)
+                }}
+              />
+
+              <ConfigItem
+                hookType="config"
+                path="general.foregroundWaitTime"
+                title={t('general.foregroundWaitTime.title')}
+                description={t('general.foregroundWaitTime.description')}
+                controlType="slider"
+                min={0}
+                max={30}
+                step={1}
+                formatValue={(value) => `${value}s`}
+                debounceMs={300}
+                disabled={
+                  runningGames.length > 0 || !enableForegroundTimer || processMonitor !== 'new'
+                }
+                onChange={(value: number) => {
+                  ipcManager.send('system:change-foreground-timer-wait-time', value)
+                }}
+              />
+
+              <ConfigItem
+                hookType="config"
+                path="general.showForegroundNotification"
+                title={t('general.foregroundNotification.title')}
+                description={t('general.foregroundNotification.description')}
+                controlType="switch"
+                disabled={!enableForegroundTimer || processMonitor !== 'new'}
+              />
+            </div>
+          </div>
         </div>
       </CardContent>
     </Card>
