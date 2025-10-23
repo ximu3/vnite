@@ -365,7 +365,12 @@
       "endTime": "終了",
       "ongoing": "進行中",
       "duration": "時間",
-      "minutes": "分"
+      "minutes": "分",
+      "error": {
+        "overlapMessage": "タイマー {{first}} と {{second}} が重複しています！",
+        "invalidTime": "タイマー {{index}} の開始または終了時刻が無効です！",
+        "endBeforeStart": "タイマー {{index}} の終了時刻が開始時刻より前です！"
+      }
     },
     "timerEditor": {
       "startDateRequired": "開始時間と終了時間を設定する必要があります",
