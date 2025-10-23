@@ -187,8 +187,13 @@ export function PlayTimeEditorDialog({
                 {timers.map((timer, index) => (
                   <Card
                     key={index}
-                    className="flex flex-row items-center justify-between bg-accent/40 p-3 rounded-md"
+                    className="relative flex flex-row items-center justify-between bg-accent/40 p-3 rounded-md"
                   >
+                    {/* Index */}
+                    <div className="absolute inset-0 flex items-center justify-center text-xl text-muted-foreground/50 pointer-events-none select-none">
+                      {index + 1}
+                    </div>
+
                     {/* Timer Details */}
                     <div className="flex-1">
                       {/* Start Time */}
