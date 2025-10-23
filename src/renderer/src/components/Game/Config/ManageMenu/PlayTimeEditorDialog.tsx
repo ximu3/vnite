@@ -220,12 +220,7 @@ export function PlayTimeEditorDialog({
                       <Button variant="default" size="sm" onClick={() => openEditTimer(index)}>
                         {t('utils:common.edit')}
                       </Button>
-                      <Button
-                        variant="thirdary"
-                        className="hover:bg-destructive"
-                        size="sm"
-                        onClick={() => deleteTimer(index)}
-                      >
+                      <Button variant="delete" size="sm" onClick={() => deleteTimer(index)}>
                         {t('utils:common.delete')}
                       </Button>
                     </div>
