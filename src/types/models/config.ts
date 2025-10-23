@@ -271,7 +271,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     processMonitor: 'new',
     enableForegroundTimer: true,
     foregroundWaitTime: 10,
-    showForegroundNotification: true
+    showForegroundNotification: false
   },
   game: {
     scraper: {
