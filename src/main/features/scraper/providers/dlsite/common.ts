@@ -8,6 +8,14 @@ import i18next from 'i18next'
 
 const ID_REGEX = /(rj|re|vj)\d{4,}/gi
 
+function buildDlsiteWorkUrl(dlsiteId: string, language?: string): string {
+  const localePart = language ? `?locale=${language}` : ''
+  if (dlsiteId.startsWith('VJ')) {
+    return `https://www.dlsite.com/pro/work/=/product_id/${dlsiteId}.html${localePart}`
+  }
+  return `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html${localePart}`
+}
+
 export async function searchDlsiteGames(gameName: string): Promise<GameList> {
   const findIdInName = await ConfigDBManager.getConfigValue('game.scraper.dlsite.findIdInName')
   if (findIdInName) {
@@ -88,7 +96,7 @@ export async function searchDlsiteGames(gameName: string): Promise<GameList> {
 export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata> {
   // Try to access the work page
   const language = await getLanguage()
-  const url = `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html?locale=${language}`
+  const url = buildDlsiteWorkUrl(dlsiteId, language)
 
   const response = await net.fetch(url, {
     headers: {
@@ -310,7 +318,7 @@ export async function getDlsiteMetadataByName(gameName: string): Promise<GameMet
 
 export async function getGameBackgrounds(dlsiteId: string): Promise<string[]> {
   try {
-    const url = `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html`
+    const url = buildDlsiteWorkUrl(dlsiteId)
     const language = await getLanguage()
 
     const response = await net.fetch(url, {
@@ -370,7 +378,7 @@ export async function getGameBackgroundsByName(gameName: string): Promise<string
 
 export async function getGameCover(dlsiteId: string): Promise<string> {
   try {
-    const url = `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html`
+    const url = buildDlsiteWorkUrl(dlsiteId)
     const language = await getLanguage()
 
     const response = await net.fetch(url, {
@@ -441,7 +449,7 @@ export async function getGameCoverByName(gameName: string): Promise<string> {
 
 export async function checkGameExists(dlsiteId: string): Promise<boolean> {
   try {
-    const url = `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html`
+    const url = buildDlsiteWorkUrl(dlsiteId)
 
     const response = await net.fetch(url, {
       headers: {
