@@ -112,6 +112,8 @@ export class GameMonitor {
   private ipcHandler?: (_event: Electron.IpcMainInvokeEvent, gameId: string) => Promise<void>
   private startTime?: string
   private endTime?: string
+  // 'p' stands for 'pause' and 'c' stands for 'continue'
+  private foregroundChanges: { time: string; eventType: 'p' | 'c' }[] = []
   private exiting: boolean = false
   private stopping: boolean = false
   // a mutex for operations which need to write `monitoredProcesses`
@@ -288,6 +290,30 @@ export class GameMonitor {
   // Compare the given gameId with its own
   public isGame(gameId: string): boolean {
     return this.options.gameId === gameId
+  }
+
+  public pushForegroundChange(eventType: 'p' | 'c'): void {
+    const time = new Date().toISOString()
+    this.foregroundChanges.push({ time, eventType })
+  }
+
+  // return value
+  // 0 stands for no change
+  // 1 stands for resumption
+  // -1 stands for pause
+  public diffForegroundChange(): number {
+    if (this.foregroundChanges.length < 2) {
+      return 0
+    }
+    const prev = this.foregroundChanges.at(-2)!.eventType
+    const cur = this.foregroundChanges.at(-1)!.eventType
+    if (prev === 'p' && cur === 'c') {
+      return 1
+    }
+    if (prev === 'c' && cur === 'p') {
+      return -1
+    }
+    return 0
   }
 
   // Imitate monitoring behaviours to preserve compatibility.
@@ -534,16 +560,39 @@ export class GameMonitor {
     ipcManager.send('game:exiting', this.options.gameId)
 
     const timers = await GameDBManager.getGameValue(this.options.gameId, 'record.timers')
+    let playTime = await GameDBManager.getGameValue(this.options.gameId, 'record.playTime')
 
-    timers.push({
-      start: this.startTime || '',
-      end: this.endTime
-    })
+    let time = this.startTime!
+    let stat = 'c'
+    for (const change of this.foregroundChanges) {
+      if (change.eventType === stat) {
+        continue
+      }
+      switch (change.eventType) {
+        case 'p': // status changed from 'continue' to 'pause', push this playing period
+          timers.push({
+            start: time,
+            end: change.time
+          })
+          playTime += new Date(change.time).getTime() - new Date(time).getTime()
+          break
+        case 'c': // status changed from 'pause' to 'continue', keep the start time (just break)
+          break
+      }
+      stat = change.eventType
+      time = change.time
+    }
+    // after the end of loop, check if we need to record the last playing period
+    if (stat === 'c') {
+      timers.push({
+        start: time,
+        end: this.endTime
+      })
+      playTime += new Date(this.endTime).getTime() - new Date(time).getTime()
+    }
+
     await GameDBManager.setGameValue(this.options.gameId, 'record.timers', timers)
     await GameDBManager.setGameValue(this.options.gameId, 'record.lastRunDate', this.endTime)
-
-    let playTime = await GameDBManager.getGameValue(this.options.gameId, 'record.playTime')
-    playTime += new Date(this.endTime).getTime() - new Date(this.startTime!).getTime()
     await GameDBManager.setGameValue(this.options.gameId, 'record.playTime', playTime)
 
     // Stop monitoring

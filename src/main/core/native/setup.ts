@@ -1,6 +1,11 @@
 import * as native from 'vnite-native'
 import log from 'electron-log/main.js'
-import { setupNativeMonitor, stopNativeMonitor } from '~/features/monitor'
+import {
+  setupNativeMonitor,
+  stopNativeMonitor,
+  enableForegroundHook,
+  disableForegroundHook
+} from '~/features/monitor'
 import { ConfigDBManager } from '~/core/database'
 
 export async function setupNativeModule(): Promise<void> {
@@ -19,11 +24,25 @@ export async function setupNativeModule(): Promise<void> {
       log.error(msg)
     }
   )
-  // setupNativeMonitor
   try {
+    // setupNativeMonitor
     const mode = await ConfigDBManager.getConfigValue('general.processMonitor')
     if (mode === 'new') {
       await setupNativeMonitor()
+      // install foreground hook
+      const isEnableForegroundHook = await ConfigDBManager.getConfigValue(
+        'general.enableForegroundTimer'
+      )
+      if (isEnableForegroundHook) {
+        await enableForegroundHook()
+      }
+    } else if (mode === 'legacy') {
+      const isEnableForegroundHook = await ConfigDBManager.getConfigValue(
+        'general.enableForegroundTimer'
+      )
+      if (isEnableForegroundHook) {
+        await ConfigDBManager.setConfigValue('general.enableForegroundTimer', false)
+      }
     }
   } catch (err) {
     log.error('failed to setup native process monitor', err)
@@ -32,6 +51,7 @@ export async function setupNativeModule(): Promise<void> {
 
 // Send a termination signal to the native module to shut it down gracefully
 export async function nativeCleanup(): Promise<void> {
+  await disableForegroundHook()
   await stopNativeMonitor()
   native.stopLogger()
 }

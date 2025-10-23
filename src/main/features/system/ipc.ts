@@ -31,7 +31,14 @@ import {
   updateOpenAtLogin,
   updateScreenshotHotkey
 } from './services'
-import { setupNativeMonitor, stopNativeMonitor } from '~/features/monitor'
+import {
+  setupNativeMonitor,
+  stopNativeMonitor,
+  enableForegroundHook,
+  disableForegroundHook,
+  changeForegroundWaitTime
+} from '~/features/monitor'
+import { ConfigDBManager } from '~/core/database'
 
 export function setupSystemIPC(): void {
   ipcManager.on('window:minimize', () => {
@@ -216,6 +223,20 @@ export function setupSystemIPC(): void {
       await setupNativeMonitor()
     } else if (monitor === 'legacy') {
       await stopNativeMonitor()
+      await ConfigDBManager.setConfigValue('general.enableForegroundTimer', false)
+      await disableForegroundHook()
     }
+  })
+
+  ipcManager.on('system:change-foreground-timer', async (_, isEnabled: boolean) => {
+    if (isEnabled) {
+      await enableForegroundHook()
+    } else {
+      await disableForegroundHook()
+    }
+  })
+
+  ipcManager.on('system:change-foreground-timer-wait-time', async (_, waitTime: number) => {
+    changeForegroundWaitTime(waitTime)
   })
 }

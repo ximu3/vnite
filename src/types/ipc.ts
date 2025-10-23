@@ -67,6 +67,8 @@ type MainIpcEvents =
       'native-monitor:remove-local-game': [monitorPath: string]
       'native-monitor:update-local-game': []
       'system:change-process-monitor': [monitor: 'new' | 'legacy']
+      'system:change-foreground-timer': [isEnabled: boolean]
+      'system:change-foreground-timer-wait-time': [waitTime: number]
     }
   | {
       // Handler events (request-response communication from renderer to main)
