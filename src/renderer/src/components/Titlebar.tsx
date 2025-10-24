@@ -1,4 +1,4 @@
-import { NSFWBlurLevel, NSFWFilterMode } from '@appTypes/models'
+import { GameTimerStatus, NSFWBlurLevel, NSFWFilterMode, TimerStatus } from '@appTypes/models'
 import { useRouter, useRouterState } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -66,14 +66,23 @@ export function Titlebar(): React.JSX.Element {
   }
 
   // timer status indicator
-  const [timerStatus, setTimerStatus] = useState<'idle' | 'on' | 'paused'>('idle')
+  const [timerStatusList, setTimerStatusList] = useState<GameTimerStatus[]>([])
+  const timerStatus: 'on' | 'idle' | 'paused' =
+    timerStatusList.length === 0
+      ? 'idle'
+      : timerStatusList.some((x) => x.status === TimerStatus.Resumed)
+        ? 'on'
+        : 'paused'
 
   useEffect(() => {
     const removeMaximizeListener = ipcManager.on('window:maximized', () => setIsmaximize(true))
     const removeUnmaximizeListener = ipcManager.on('window:unmaximized', () => setIsmaximize(false))
-    const removeTimerStatusListener = ipcManager.on('monitor:timer-status-change', (_, status) => {
-      setTimerStatus(status)
-    })
+    const removeTimerStatusListener = ipcManager.on(
+      'monitor:timer-status-change',
+      (_, statusList) => {
+        setTimerStatusList(statusList)
+      }
+    )
 
     return (): void => {
       removeMaximizeListener()
@@ -126,18 +135,33 @@ export function Titlebar(): React.JSX.Element {
           {/* Timer status indicator */}
           <Tooltip>
             <TooltipTrigger>
-              <Button
-                variant="bare"
-                size={'icon'}
-                className={cn('h-[32px] w-[32px] aspect-square')}
-                disabled
+              <div
+                className={cn(
+                  `flex items-center justify-start px-2 py-1 gap-1 rounded-md bg-input/[calc(var(--glass-opacity)/2)] cursor-pointer non-draggable`
+                )}
               >
                 <span
-                  className={`w-4 h-4 aspect-square rounded-full ${timerStatus === 'idle' ? 'bg-sky-700/50' : timerStatus === 'on' ? 'bg-emerald-600/50' : 'bg-amber-700/50'}`}
-                ></span>
-              </Button>
+                  className={`w-2 h-2 rounded-full ${timerStatus === 'idle' ? 'bg-sky-700/50' : timerStatus === 'on' ? 'bg-emerald-600/50' : 'bg-amber-700/50'}`}
+                />
+                <span className="text-xs">{timerStatusTooltips[timerStatus]}</span>
+              </div>
             </TooltipTrigger>
-            <TooltipContent side="bottom">{timerStatusTooltips[timerStatus]}</TooltipContent>
+            <TooltipContent side="bottom">
+              {timerStatusList.length === 0 ? (
+                <span className="text-xs">{timerStatusTooltips[timerStatus]}</span>
+              ) : (
+                timerStatusList.map((status, idx) => {
+                  return (
+                    <div key={idx} className="flex items-center gap-1">
+                      <span
+                        className={`w-2 h-2 rounded-full ${status.status === TimerStatus.Resumed ? 'bg-emerald-600/50' : 'bg-amber-700/50'}`}
+                      />
+                      <p>{status.name}</p>
+                    </div>
+                  )
+                })
+              )}
+            </TooltipContent>
           </Tooltip>
 
           {/* Log view button */}

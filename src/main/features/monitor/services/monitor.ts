@@ -14,11 +14,7 @@ import { eventBus } from '~/core/events'
 import { ActiveGameInfo } from '~/features/game'
 import { Mutex } from 'async-mutex'
 import { removeMonitorStub } from './nativeMonitor'
-
-export enum TimerStatus {
-  Resumed,
-  Paused
-}
+import { TimerStatus } from '@appTypes/models'
 
 async function getProcessList(): Promise<
   Array<{

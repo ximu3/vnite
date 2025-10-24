@@ -44,8 +44,8 @@
     "selectLibraryFolder": "Please select library folder…"
   },
   "timerStatus": {
-    "idle": "Timer: Idle",
-    "on": "Timer: On",
-    "paused": "Timer: Paused"
+    "idle": "Timer: idle",
+    "on": "Timer: on",
+    "paused": "Timer: paused"
   }
 }
