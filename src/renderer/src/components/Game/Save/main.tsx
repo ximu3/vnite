@@ -136,10 +136,8 @@ export function Save({ gameId }: { gameId: string }): React.JSX.Element {
                             {t('detail.save.actions.switch')}
                           </Button>
                           <Button
-                            variant={'outline'}
-                            className={cn(
-                              'min-h-0 h-8 hover:bg-destructive hover:text-destructive-foreground'
-                            )}
+                            variant="delete"
+                            className={cn('min-h-0 h-8 ')}
                             onClick={() => deleteGameSave(saveId)}
                           >
                             {t('detail.save.actions.delete')}

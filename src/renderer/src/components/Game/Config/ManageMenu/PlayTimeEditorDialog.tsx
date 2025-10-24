@@ -2,6 +2,7 @@ import { format } from 'date-fns'
 import { PlusCircleIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
 import { Dialog, DialogContent } from '~/components/ui/dialog'
@@ -9,6 +10,11 @@ import { StepperInput } from '~/components/ui/input'
 import { useGameState } from '~/hooks'
 import { cn } from '~/utils'
 import { TimerEditDialog } from './TimerEditDialog'
+
+interface Timer {
+  start: string
+  end: string
+}
 
 export function PlayTimeEditorDialog({
   gameId,
@@ -20,7 +26,7 @@ export function PlayTimeEditorDialog({
   const { t } = useTranslation('game')
   const [record, setRecord] = useGameState(gameId, 'record')
 
-  const calculateTotalPlayTime = (timersList: { start: string; end: string }[]): number => {
+  const calculateTotalPlayTime = (timersList: Timer[]): number => {
     return timersList.reduce((total, timer) => {
       if (!timer.start || !timer.end) return total
       const start = new Date(timer.start).getTime()
@@ -29,16 +35,67 @@ export function PlayTimeEditorDialog({
     }, 0) // milliseconds
   }
 
-  const [timers, setTimers] = useState<{ start: string; end: string }[]>(record.timers || [])
+  const validateAndSort = (
+    timers: Timer[]
+  ): {
+    message: string | null
+    sortedTimers: Timer[]
+  } => {
+    const timersWithIndex = timers.map((timer, originalIndex) => ({
+      timer,
+      originalIndex,
+      timerStamped: { start: new Date(timer.start).getTime(), end: new Date(timer.end).getTime() }
+    }))
+
+    for (const { originalIndex, timerStamped } of timersWithIndex) {
+      if (isNaN(timerStamped.start) || isNaN(timerStamped.end)) {
+        return {
+          message: t('detail.timersEditor.error.invalidTime', { index: originalIndex + 1 }),
+          sortedTimers: timers
+        }
+      }
+
+      if (timerStamped.end < timerStamped.start) {
+        return {
+          message: t('detail.timersEditor.error.endBeforeStart', { index: originalIndex + 1 }),
+          sortedTimers: timers
+        }
+      }
+    }
+
+    const sortedWithIndex = [...timersWithIndex].sort(
+      (a, b) => a.timerStamped.start - b.timerStamped.start
+    )
+
+    for (let i = 1; i < sortedWithIndex.length; i++) {
+      const prevEnd = sortedWithIndex[i - 1].timerStamped.end
+      const currStart = sortedWithIndex[i].timerStamped.start
+
+      if (prevEnd > currStart) {
+        return {
+          message: t('detail.timersEditor.error.overlapMessage', {
+            first: sortedWithIndex[i - 1].originalIndex + 1,
+            second: sortedWithIndex[i].originalIndex + 1
+          }),
+          sortedTimers: sortedWithIndex.map((item) => item.timer)
+        }
+      }
+    }
+
+    return {
+      message: null,
+      sortedTimers: sortedWithIndex.map((item) => item.timer)
+    }
+  }
+
+  const [timers, setTimers] = useState<Timer[]>(record.timers || [])
   const [fuzzyTime, setFuzzyTime] = useState(() => {
     const oldTimersTime = calculateTotalPlayTime(record.timers)
     return Math.max(0, record.playTime - oldTimersTime) / 1000 / 60
   })
 
   const [isTimerDialogOpen, setIsTimerDialogOpen] = useState(false)
-  const [editingTimer, setEditingTimer] = useState<{ start: string; end: string } | undefined>(
-    undefined
-  )
+  const [editingTimer, setEditingTimer] = useState<Timer | undefined>(undefined)
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
 
   const formatDateTime = (dateStr: string): string => {
@@ -66,7 +123,7 @@ export function PlayTimeEditorDialog({
     setIsTimerDialogOpen(true)
   }
 
-  const saveTimer = (timer: { start: string; end: string }): void => {
+  const saveTimer = (timer: Timer): void => {
     if (editingIndex !== null) {
       // Update existing timer
       const newTimers = [...timers]
@@ -85,12 +142,18 @@ export function PlayTimeEditorDialog({
   }
 
   const handleSave = (): void => {
+    const { message, sortedTimers } = validateAndSort(timers)
+    if (message) {
+      toast.error(message)
+      return
+    }
+
     // preserve fuzzy play time for compatibility with old data
     // (e.g. imported from Steam, previous manual edits)
-    const playTimeMs = calculateTotalPlayTime(timers)
+    const playTimeMs = calculateTotalPlayTime(sortedTimers)
     setRecord({
       ...record,
-      timers: timers,
+      timers: sortedTimers,
       playTime: playTimeMs + fuzzyTime * 60 * 1000
     })
     setIsOpen(false)
@@ -124,8 +187,13 @@ export function PlayTimeEditorDialog({
                 {timers.map((timer, index) => (
                   <Card
                     key={index}
-                    className="flex flex-row items-center justify-between bg-accent/40 p-3 rounded-md"
+                    className="relative flex flex-row items-center justify-between bg-accent/40 p-3 rounded-md"
                   >
+                    {/* Index */}
+                    <div className="absolute inset-0 flex items-center justify-center text-xl text-muted-foreground/50 pointer-events-none select-none">
+                      {index + 1}
+                    </div>
+
                     {/* Timer Details */}
                     <div className="flex-1">
                       {/* Start Time */}
@@ -152,12 +220,7 @@ export function PlayTimeEditorDialog({
                       <Button variant="default" size="sm" onClick={() => openEditTimer(index)}>
                         {t('utils:common.edit')}
                       </Button>
-                      <Button
-                        variant="thirdary"
-                        className="hover:bg-destructive"
-                        size="sm"
-                        onClick={() => deleteTimer(index)}
-                      >
+                      <Button variant="delete" size="sm" onClick={() => deleteTimer(index)}>
                         {t('utils:common.delete')}
                       </Button>
                     </div>

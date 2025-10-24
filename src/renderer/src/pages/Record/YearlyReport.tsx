@@ -342,7 +342,9 @@ export function YearlyReport(): React.JSX.Element {
                 />
               ))
             ) : (
-              <p className="col-span-full">{t('yearly.yearlyGames.noRecords')}</p>
+              <div className="col-span-full py-6 text-center text-sm text-muted-foreground">
+                {t('yearly.yearlyGames.noRecords')}
+              </div>
             )}
           </CardContent>
         </Card>

@@ -365,7 +365,12 @@
       "endTime": "結束",
       "ongoing": "進行中",
       "duration": "時長",
-      "minutes": "分鐘"
+      "minutes": "分鐘",
+      "error": {
+        "overlapMessage": "計時器 {{first}} 和 {{second}} 重疊！",
+        "invalidTime": "計時器 {{index}} 的開始或結束時間無效！",
+        "endBeforeStart": "計時器 {{index}} 的結束時間早於開始時間！"
+      }
     },
     "timerEditor": {
       "startDateRequired": "必須設置開始時間和結束時間",

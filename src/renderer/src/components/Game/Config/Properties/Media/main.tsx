@@ -10,9 +10,9 @@ import { useGameState } from '~/hooks'
 import { useLightStore } from '~/pages/Light'
 import { cn } from '~/utils'
 import { CropDialog } from './CropDialog'
+import { ImageViewerDialog } from './ImageViewerDialog'
 import { SearchMediaDialog } from './SearchMediaDialog'
 import { UrlDialog } from './UrlDialog'
-import { ImageViewerDialog } from './ImageViewerDialog'
 
 export function Media({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
@@ -304,9 +304,9 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
         <TooltipTrigger>
           <Button
             onClick={() => handleDeleteMedia(type)}
-            variant={'outline'}
+            variant="delete"
             size={'icon'}
-            className={cn('w-7 h-7 hover:bg-destructive hover:text-destructive-foreground')}
+            className={cn('w-7 h-7')}
           >
             <span className={cn('icon-[mdi--delete-outline] w-4 h-4')}></span>
           </Button>

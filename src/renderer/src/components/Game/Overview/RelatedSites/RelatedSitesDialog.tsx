@@ -103,9 +103,8 @@ export function RelatedSitesDialog({
                   <span className={cn('icon-[mdi--keyboard-arrow-down] w-4 h-4')}></span>
                 </Button>
                 <Button
-                  variant="outline"
+                  variant="delete"
                   size={'icon'}
-                  className={cn('hover:bg-destructive hover:text-destructive-foreground')}
                   onClick={() => {
                     const newRelatedSites = [...relatedSites]
                     newRelatedSites.splice(i, 1)

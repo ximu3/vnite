@@ -368,7 +368,12 @@
       "endTime": "End",
       "ongoing": "In progress",
       "duration": "Duration",
-      "minutes": "minutes"
+      "minutes": "minutes",
+      "error": {
+        "overlapMessage": "Timers {{first}} and {{second}} overlap!",
+        "invalidTime": "Timer {{index}} has invalid start or end time!",
+        "endBeforeStart": "Timer {{index}} ends before it starts!"
+      }
     },
     "timerEditor": {
       "startDateRequired": "Start time and end time must be set",
