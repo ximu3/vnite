@@ -1,7 +1,7 @@
 {
   "dlsite": {
-    "workType": "作品类型",
-    "releaseDate": "贩卖日",
+    "workType": "作品形式",
+    "releaseDate": "发售日",
     "series": "系列名",
     "maker": "商标名"
   },
