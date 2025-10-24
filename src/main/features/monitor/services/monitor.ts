@@ -15,6 +15,11 @@ import { ActiveGameInfo } from '~/features/game'
 import { Mutex } from 'async-mutex'
 import { removeMonitorStub } from './nativeMonitor'
 
+export enum TimerStatus {
+  Resumed,
+  Paused
+}
+
 async function getProcessList(): Promise<
   Array<{
     name: string
@@ -112,8 +117,7 @@ export class GameMonitor {
   private ipcHandler?: (_event: Electron.IpcMainInvokeEvent, gameId: string) => Promise<void>
   private startTime?: string
   private endTime?: string
-  // 'p' stands for 'pause' and 'c' stands for 'continue'
-  private foregroundChanges: { time: string; eventType: 'p' | 'c' }[] = []
+  private foregroundChanges: { time: string; eventType: TimerStatus }[] = []
   private exiting: boolean = false
   private stopping: boolean = false
   // a mutex for operations which need to write `monitoredProcesses`
@@ -292,17 +296,17 @@ export class GameMonitor {
     return this.options.gameId === gameId
   }
 
-  public pushForegroundChange(eventType: 'p' | 'c'): void {
+  public pushForegroundChange(eventType: TimerStatus): void {
     const time = new Date().toISOString()
     this.foregroundChanges.push({ time, eventType })
   }
 
-  public getTimerStatus(): 'p' | 'c' {
+  public getTimerStatus(): TimerStatus {
     if (this.foregroundChanges.length === 0) {
       if (this.endTime) {
-        return 'p'
+        return TimerStatus.Paused
       }
-      return 'c'
+      return TimerStatus.Resumed
     }
     return this.foregroundChanges.at(-1)!.eventType
   }
@@ -317,10 +321,10 @@ export class GameMonitor {
     }
     const prev = this.foregroundChanges.at(-2)!.eventType
     const cur = this.foregroundChanges.at(-1)!.eventType
-    if (prev === 'p' && cur === 'c') {
+    if (prev === TimerStatus.Paused && cur === TimerStatus.Resumed) {
       return 1
     }
-    if (prev === 'c' && cur === 'p') {
+    if (prev === TimerStatus.Resumed && cur === TimerStatus.Paused) {
       return -1
     }
     return 0
@@ -573,27 +577,27 @@ export class GameMonitor {
     let playTime = await GameDBManager.getGameValue(this.options.gameId, 'record.playTime')
 
     let time = this.startTime!
-    let stat = 'c'
+    let stat = TimerStatus.Resumed
     for (const change of this.foregroundChanges) {
       if (change.eventType === stat) {
         continue
       }
       switch (change.eventType) {
-        case 'p': // status changed from 'continue' to 'pause', push this playing period
+        case TimerStatus.Paused: // status changed from 'continue' to 'pause', push this playing period
           timers.push({
             start: time,
             end: change.time
           })
           playTime += new Date(change.time).getTime() - new Date(time).getTime()
           break
-        case 'c': // status changed from 'pause' to 'continue', keep the start time (just break)
+        case TimerStatus.Resumed: // status changed from 'pause' to 'continue', keep the start time (just break)
           break
       }
       stat = change.eventType
       time = change.time
     }
     // after the end of loop, check if we need to record the last playing period
-    if (stat === 'c') {
+    if (stat === TimerStatus.Resumed) {
       timers.push({
         start: time,
         end: this.endTime

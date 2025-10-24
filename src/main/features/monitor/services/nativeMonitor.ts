@@ -2,7 +2,7 @@ import * as native from 'vnite-native'
 import log from 'electron-log/main.js'
 import { eventBus } from '~/core/events'
 import { GameDBManager, ConfigDBManager } from '~/core/database'
-import { GameMonitor } from './monitor'
+import { GameMonitor, TimerStatus } from './monitor'
 import { ipcManager } from '~/core/ipc'
 import { Mutex } from 'async-mutex'
 
@@ -169,9 +169,9 @@ async function foregroundEventCallback(err: Error | null, gameId: string): Promi
   await mutex.runExclusive(async () => {
     for (const [id, monitor] of monitors) {
       if (gameId !== id) {
-        monitor.pushForegroundChange('p')
+        monitor.pushForegroundChange(TimerStatus.Paused)
       } else {
-        monitor.pushForegroundChange('c')
+        monitor.pushForegroundChange(TimerStatus.Resumed)
       }
     }
     refreshTimerStatus()
@@ -184,7 +184,7 @@ export function refreshTimerStatus(): void {
     return
   }
   for (const [_, monitor] of monitors) {
-    if (monitor.getTimerStatus() === 'c') {
+    if (monitor.getTimerStatus() === TimerStatus.Resumed) {
       ipcManager.send('monitor:timer-status-change', 'on')
       return
     }
