@@ -137,7 +137,7 @@ export function Titlebar(): React.JSX.Element {
             <TooltipTrigger>
               <div
                 className={cn(
-                  `flex items-center justify-start px-2 py-1 gap-1 rounded-md bg-input/[calc(var(--glass-opacity)/2)] cursor-pointer non-draggable`
+                  `flex items-center justify-start shadow-sm px-2 py-1 gap-2 mr-3 rounded-md bg-input/[calc(var(--glass-opacity)/2)] cursor-pointer non-draggable`
                 )}
               >
                 <span
@@ -152,7 +152,7 @@ export function Titlebar(): React.JSX.Element {
               ) : (
                 timerStatusList.map((status, idx) => {
                   return (
-                    <div key={idx} className="flex items-center gap-1">
+                    <div key={idx} className="flex items-center gap-1.5 h-5">
                       <span
                         className={`w-2 h-2 rounded-full ${status.status === TimerStatus.Resumed ? 'bg-emerald-600/50' : 'bg-amber-700/50'}`}
                       />
