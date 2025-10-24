@@ -42,5 +42,10 @@
     "getBatchGamesSuccess": "Successfully got games in batch",
     "unknownError": "Unknown error",
     "selectLibraryFolder": "Please select library folder…"
+  },
+  "timerStatus": {
+    "idle": "Timer: idle",
+    "on": "Timer: on",
+    "paused": "Timer: paused"
   }
 }

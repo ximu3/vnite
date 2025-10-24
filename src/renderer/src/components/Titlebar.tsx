@@ -1,4 +1,4 @@
-import { NSFWBlurLevel, NSFWFilterMode } from '@appTypes/models'
+import { GameTimerStatus, NSFWBlurLevel, NSFWFilterMode, TimerStatus } from '@appTypes/models'
 import { useRouter, useRouterState } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -59,14 +59,35 @@ export function Titlebar(): React.JSX.Element {
     [NSFWFilterMode.HideNSFW]: t('actions.nsfwFilter.hideNSFW'),
     [NSFWFilterMode.OnlyNSFW]: t('actions.nsfwFilter.onlyNSFW')
   }
+  const timerStatusTooltips = {
+    idle: t('timerStatus.idle'),
+    on: t('timerStatus.on'),
+    paused: t('timerStatus.paused')
+  }
+
+  // timer status indicator
+  const [timerStatusList, setTimerStatusList] = useState<GameTimerStatus[]>([])
+  const timerStatus: 'on' | 'idle' | 'paused' =
+    timerStatusList.length === 0
+      ? 'idle'
+      : timerStatusList.some((x) => x.status === TimerStatus.Resumed)
+        ? 'on'
+        : 'paused'
 
   useEffect(() => {
     const removeMaximizeListener = ipcManager.on('window:maximized', () => setIsmaximize(true))
     const removeUnmaximizeListener = ipcManager.on('window:unmaximized', () => setIsmaximize(false))
+    const removeTimerStatusListener = ipcManager.on(
+      'monitor:timer-status-change',
+      (_, statusList) => {
+        setTimerStatusList(statusList)
+      }
+    )
 
     return (): void => {
       removeMaximizeListener()
       removeUnmaximizeListener()
+      removeTimerStatusListener()
     }
   }, [])
 
@@ -111,6 +132,38 @@ export function Titlebar(): React.JSX.Element {
 
         {/* Right: Function button area */}
         <div className="flex flex-row items-center gap-2 px-3 overflow-hidden shrink-0 h-full">
+          {/* Timer status indicator */}
+          <Tooltip>
+            <TooltipTrigger>
+              <div
+                className={cn(
+                  `flex items-center justify-start px-2 py-1 gap-1 rounded-md bg-input/[calc(var(--glass-opacity)/2)] cursor-pointer non-draggable`
+                )}
+              >
+                <span
+                  className={`w-2 h-2 rounded-full ${timerStatus === 'idle' ? 'bg-sky-700/50' : timerStatus === 'on' ? 'bg-emerald-600/50' : 'bg-amber-700/50'}`}
+                />
+                <span className="text-xs">{timerStatusTooltips[timerStatus]}</span>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              {timerStatusList.length === 0 ? (
+                <span className="text-xs">{timerStatusTooltips[timerStatus]}</span>
+              ) : (
+                timerStatusList.map((status, idx) => {
+                  return (
+                    <div key={idx} className="flex items-center gap-1">
+                      <span
+                        className={`w-2 h-2 rounded-full ${status.status === TimerStatus.Resumed ? 'bg-emerald-600/50' : 'bg-amber-700/50'}`}
+                      />
+                      <p>{status.name}</p>
+                    </div>
+                  )
+                })
+              )}
+            </TooltipContent>
+          </Tooltip>
+
           {/* Log view button */}
           <Tooltip>
             <TooltipTrigger>

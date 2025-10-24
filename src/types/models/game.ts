@@ -262,3 +262,13 @@ export interface Timer {
   start: string
   end: string
 }
+
+export enum TimerStatus {
+  Resumed,
+  Paused
+}
+
+export interface GameTimerStatus {
+  name: string
+  status: TimerStatus
+}

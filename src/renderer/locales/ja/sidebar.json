@@ -41,5 +41,10 @@
     "getBatchGamesSuccess": "ゲームの一括取得に成功しました",
     "unknownError": "不明なエラー",
     "selectLibraryFolder": "ライブラリフォルダを選択してください…"
+  },
+  "timerStatus": {
+    "idle": "タイマー: 停止",
+    "on": "タイマー: 作動中",
+    "paused": "タイマー: 一時停止"
   }
 }

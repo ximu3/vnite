@@ -7,7 +7,7 @@ import {
 } from '@appTypes/event'
 import { BatchUpdateGameMetadataProgress, OverallScanProgress } from '@appTypes/utils'
 import { ProgressInfo, UpdateCheckResult } from 'electron-updater'
-import { BatchGameInfo, configDocs } from './models'
+import { BatchGameInfo, configDocs, GameTimerStatus } from './models'
 import {
   PluginConfiguration,
   PluginInfo,
@@ -398,6 +398,8 @@ type RendererIpcEvents = {
 
   'plugin:update-all-plugins': [plugins: Omit<PluginInfo, 'instance'>[]]
   'plugin:update-plugin-stats': [stats: PluginStatsData]
+
+  'monitor:timer-status-change': [gameTimerStatus: GameTimerStatus[]]
 }
 
 // Export types for use in both main and renderer

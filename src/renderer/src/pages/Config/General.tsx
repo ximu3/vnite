@@ -161,15 +161,6 @@ export function General(): React.JSX.Element {
                   ipcManager.send('system:change-foreground-timer-wait-time', value)
                 }}
               />
-
-              <ConfigItem
-                hookType="config"
-                path="general.showForegroundNotification"
-                title={t('general.foregroundNotification.title')}
-                description={t('general.foregroundNotification.description')}
-                controlType="switch"
-                disabled={!enableForegroundTimer || processMonitor !== 'new'}
-              />
             </div>
           </div>
         </div>

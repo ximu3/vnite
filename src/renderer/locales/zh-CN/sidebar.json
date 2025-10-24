@@ -41,5 +41,10 @@
     "getBatchGamesSuccess": "批量获取游戏成功",
     "unknownError": "未知错误",
     "selectLibraryFolder": "请选择库文件夹…"
+  },
+  "timerStatus": {
+    "idle": "计时器: 空闲",
+    "on": "计时器: 运行中",
+    "paused": "计时器: 暂停"
   }
 }

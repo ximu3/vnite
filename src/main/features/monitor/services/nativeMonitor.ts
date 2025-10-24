@@ -5,7 +5,7 @@ import { GameDBManager, ConfigDBManager } from '~/core/database'
 import { GameMonitor } from './monitor'
 import { ipcManager } from '~/core/ipc'
 import { Mutex } from 'async-mutex'
-import i18next from 'i18next'
+import { GameTimerStatus, TimerStatus } from '@appTypes/models'
 
 // A static monitor {gameId - GameMonitor} hash map that keeps a stub of all running
 // game processes, preventing GC from reclaiming memory.
@@ -60,16 +60,7 @@ export async function processEventCallback(
     }
     // a known game process is stopped...
     case ProcessEventType.Termination: {
-      await mutex.runExclusive(async () => {
-        const monitor = monitors.get(gameId)
-        if (!monitor) {
-          return
-        }
-        if (await monitor.phantomStop(arg.pid)) {
-          // if game was stopped, remove corresponding monitor from hash map
-          monitors.delete(gameId)
-        }
-      })
+      await stopPhantomMonitor(gameId, arg.pid)
       break
     }
   }
@@ -79,6 +70,7 @@ export async function removeMonitorStub(gameId: string): Promise<void> {
   await mutex.runExclusive(() => {
     monitors.delete(gameId)
   })
+  await refreshTimerStatus()
 }
 
 // Update known game list
@@ -93,6 +85,25 @@ export async function updateKnownGames(): Promise<void> {
     ids.push(doc._id)
   })
   await native.replaceKnownGames(pathes, ids)
+}
+
+async function stopPhantomMonitor(gameId: string, pid?: number): Promise<void> {
+  await mutex.runExclusive(async () => {
+    const monitor = monitors.get(gameId)
+    if (!monitor) {
+      await refreshTimerStatus()
+      return
+    }
+    if (pid) {
+      if (await monitor.phantomStop(pid)) {
+        // if game was stopped, remove corresponding monitor from hash map
+        monitors.delete(gameId)
+      }
+    } else {
+      monitors.delete(gameId)
+    }
+    await refreshTimerStatus()
+  })
 }
 
 // Start monitor without really monitoring the game for compatibility reasons
@@ -131,6 +142,7 @@ export async function startPhantomMonitor(
         { source: 'nativeMonitor' }
       )
     }
+    await refreshTimerStatus()
   })
 }
 
@@ -168,40 +180,28 @@ async function foregroundEventCallback(err: Error | null, gameId: string): Promi
   await mutex.runExclusive(async () => {
     for (const [id, monitor] of monitors) {
       if (gameId !== id) {
-        monitor.pushForegroundChange('p')
+        monitor.pushForegroundChange(TimerStatus.Paused)
       } else {
-        monitor.pushForegroundChange('c')
+        monitor.pushForegroundChange(TimerStatus.Resumed)
       }
     }
-    // send system notification if needed
-    if (!(await ConfigDBManager.getConfigValue('general.showForegroundNotification'))) {
-      return
-    }
-    if (monitors.size === 1) {
-      for (const [_, monitor] of monitors) {
-        const diff = monitor.diffForegroundChange()
-        if (diff === 1) {
-          native.sendSystemNotification(
-            'vnite',
-            i18next.t('system-notification:timerResumed'),
-            null,
-            null,
-            null,
-            true
-          )
-        } else if (diff === -1) {
-          native.sendSystemNotification(
-            'vnite',
-            i18next.t('system-notification:timerPaused'),
-            null,
-            null,
-            null,
-            true
-          )
-        }
-      }
-    }
+    await refreshTimerStatus()
   })
+}
+
+export async function refreshTimerStatus(): Promise<void> {
+  if (monitors.size === 0) {
+    ipcManager.send('monitor:timer-status-change', [])
+    return
+  }
+  const gameTimerStatus: GameTimerStatus[] = []
+  for (const [gameId, monitor] of monitors) {
+    gameTimerStatus.push({
+      name: (await GameDBManager.getGame(gameId)).metadata.name,
+      status: monitor.getTimerStatus()
+    })
+  }
+  ipcManager.send('monitor:timer-status-change', gameTimerStatus)
 }
 
 export async function enableForegroundHook(): Promise<void> {
