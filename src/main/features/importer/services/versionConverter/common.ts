@@ -539,7 +539,10 @@ async function convertConfig(basePath: string): Promise<void> {
       quitToTray: v2Config.general.quitToTray,
       language: '',
       hideWindowAfterGameStart: true,
-      processMonitor: 'new'
+      processMonitor: 'new',
+      enableForegroundTimer: true,
+      foregroundWaitTime: 10,
+      showForegroundNotification: false
     })
 
     const selectedGroupMap: Record<
