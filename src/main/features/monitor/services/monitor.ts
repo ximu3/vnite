@@ -297,6 +297,16 @@ export class GameMonitor {
     this.foregroundChanges.push({ time, eventType })
   }
 
+  public getTimerStatus(): 'p' | 'c' {
+    if (this.foregroundChanges.length === 0) {
+      if (this.endTime) {
+        return 'p'
+      }
+      return 'c'
+    }
+    return this.foregroundChanges.at(-1)!.eventType
+  }
+
   // return value
   // 0 stands for no change
   // 1 stands for resumption

@@ -398,6 +398,8 @@ type RendererIpcEvents = {
 
   'plugin:update-all-plugins': [plugins: Omit<PluginInfo, 'instance'>[]]
   'plugin:update-plugin-stats': [stats: PluginStatsData]
+
+  'monitor:timer-status-change': [status: 'idle' | 'on' | 'paused']
 }
 
 // Export types for use in both main and renderer

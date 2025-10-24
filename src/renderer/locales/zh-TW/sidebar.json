@@ -41,5 +41,10 @@
     "getBatchGamesSuccess": "批量獲取遊戲成功",
     "unknownError": "未知錯誤",
     "selectLibraryFolder": "請選擇庫資料夾…"
+  },
+  "timerStatus": {
+    "idle": "計時器: 空閑",
+    "on": "計時器: 運行中",
+    "paused": "計時器: 暫停"
   }
 }

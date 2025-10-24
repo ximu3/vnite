@@ -59,14 +59,26 @@ export function Titlebar(): React.JSX.Element {
     [NSFWFilterMode.HideNSFW]: t('actions.nsfwFilter.hideNSFW'),
     [NSFWFilterMode.OnlyNSFW]: t('actions.nsfwFilter.onlyNSFW')
   }
+  const timerStatusTooltips = {
+    idle: t('timerStatus.idle'),
+    on: t('timerStatus.on'),
+    paused: t('timerStatus.paused')
+  }
+
+  // timer status indicator
+  const [timerStatus, setTimerStatus] = useState<'idle' | 'on' | 'paused'>('idle')
 
   useEffect(() => {
     const removeMaximizeListener = ipcManager.on('window:maximized', () => setIsmaximize(true))
     const removeUnmaximizeListener = ipcManager.on('window:unmaximized', () => setIsmaximize(false))
+    const removeTimerStatusListener = ipcManager.on('monitor:timer-status-change', (_, status) => {
+      setTimerStatus(status)
+    })
 
     return (): void => {
       removeMaximizeListener()
       removeUnmaximizeListener()
+      removeTimerStatusListener()
     }
   }, [])
 
@@ -111,6 +123,23 @@ export function Titlebar(): React.JSX.Element {
 
         {/* Right: Function button area */}
         <div className="flex flex-row items-center gap-2 px-3 overflow-hidden shrink-0 h-full">
+          {/* Timer status indicator */}
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                variant="bare"
+                size={'icon'}
+                className={cn('h-[32px] w-[32px] aspect-square')}
+                disabled
+              >
+                <span
+                  className={`w-4 h-4 aspect-square rounded-full ${timerStatus === 'idle' ? 'bg-sky-700/50' : timerStatus === 'on' ? 'bg-emerald-600/50' : 'bg-amber-700/50'}`}
+                ></span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">{timerStatusTooltips[timerStatus]}</TooltipContent>
+          </Tooltip>
+
           {/* Log view button */}
           <Tooltip>
             <TooltipTrigger>

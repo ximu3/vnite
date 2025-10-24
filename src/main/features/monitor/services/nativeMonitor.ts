@@ -5,7 +5,6 @@ import { GameDBManager, ConfigDBManager } from '~/core/database'
 import { GameMonitor } from './monitor'
 import { ipcManager } from '~/core/ipc'
 import { Mutex } from 'async-mutex'
-import i18next from 'i18next'
 
 // A static monitor {gameId - GameMonitor} hash map that keeps a stub of all running
 // game processes, preventing GC from reclaiming memory.
@@ -69,6 +68,7 @@ export async function processEventCallback(
           // if game was stopped, remove corresponding monitor from hash map
           monitors.delete(gameId)
         }
+        refreshTimerStatus()
       })
       break
     }
@@ -131,6 +131,7 @@ export async function startPhantomMonitor(
         { source: 'nativeMonitor' }
       )
     }
+    refreshTimerStatus()
   })
 }
 
@@ -173,35 +174,22 @@ async function foregroundEventCallback(err: Error | null, gameId: string): Promi
         monitor.pushForegroundChange('c')
       }
     }
-    // send system notification if needed
-    if (!(await ConfigDBManager.getConfigValue('general.showForegroundNotification'))) {
+    refreshTimerStatus()
+  })
+}
+
+export function refreshTimerStatus(): void {
+  if (monitors.size === 0) {
+    ipcManager.send('monitor:timer-status-change', 'idle')
+    return
+  }
+  for (const [_, monitor] of monitors) {
+    if (monitor.getTimerStatus() === 'c') {
+      ipcManager.send('monitor:timer-status-change', 'on')
       return
     }
-    if (monitors.size === 1) {
-      for (const [_, monitor] of monitors) {
-        const diff = monitor.diffForegroundChange()
-        if (diff === 1) {
-          native.sendSystemNotification(
-            'vnite',
-            i18next.t('system-notification:timerResumed'),
-            null,
-            null,
-            null,
-            true
-          )
-        } else if (diff === -1) {
-          native.sendSystemNotification(
-            'vnite',
-            i18next.t('system-notification:timerPaused'),
-            null,
-            null,
-            null,
-            true
-          )
-        }
-      }
-    }
-  })
+  }
+  ipcManager.send('monitor:timer-status-change', 'paused')
 }
 
 export async function enableForegroundHook(): Promise<void> {
