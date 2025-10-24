@@ -39,7 +39,7 @@ export function Collections(): React.JSX.Element {
   return (
     <div
       className={cn('flex flex-col gap-1')}
-      style={{ width: `calc(100vw - ${libraryBarWidth + 57 - (libraryBarWidth === 0 ? 1 : 0)}px)` }}
+      style={{ width: `calc(100vw - ${libraryBarWidth + 60 - (libraryBarWidth === 0 ? 1 : 0)}px)` }}
     >
       <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>
         <div className={cn('text-accent-foreground select-none flex-shrink-0')}>

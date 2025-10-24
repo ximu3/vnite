@@ -9,6 +9,7 @@ import { useGameCollectionStore } from '~/stores'
 import { filterGamesByNSFW } from '~/stores/game'
 import { cn } from '~/utils'
 import { CollectionPoster } from './posters/CollectionPoster'
+import { useLibraryStore } from '~/pages/Library/store'
 
 export function CollectionPage(): React.JSX.Element {
   const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
@@ -18,6 +19,8 @@ export function CollectionPage(): React.JSX.Element {
   const gridContainerRef = useRef<HTMLDivElement | null>(null)
 
   const selectGames = useGameBatchEditorStore((state) => state.selectGames)
+
+  const libraryBarWidth = useLibraryStore((state) => state.libraryBarWidth)
 
   // Keyboard shortcut handling
   useEffect(() => {
@@ -83,10 +86,13 @@ export function CollectionPage(): React.JSX.Element {
   const { t } = useTranslation('game')
 
   return (
-    <div className={cn('flex flex-col gap-3 h-full bg-transparent select-none')}>
+    <div
+      className={cn('flex flex-col gap-3 h-full bg-transparent select-none')}
+      style={{ width: `calc(100vw - ${libraryBarWidth + 60 - (libraryBarWidth === 0 ? 1 : 0)}px)` }}
+    >
       <ScrollArea className={cn('w-full h-full pb-2')}>
         <div className={cn('w-full flex flex-col gap-1 pt-[18px]')}>
-          <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>
+          <div className={cn('flex flex-row items-center gap-5 justify-center px-5')}>
             <div className={cn('text-accent-foreground select-none flex-shrink-0')}>
               {t('showcase.sections.collections')}
             </div>
