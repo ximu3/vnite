@@ -34,10 +34,6 @@
     "foregroundWaitTime": {
       "title": "Wait Time",
       "description": "Pause/resume timer after the game has been running in background/foreground for this duration\nCannnot be changed while games are running"
-    },
-    "foregroundNotification": {
-      "title": "Timer Notification",
-      "description": "Send a system notification when timer becomes paused/resumed"
     }
   },
   "appearances": {

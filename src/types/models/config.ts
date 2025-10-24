@@ -17,7 +17,6 @@ export interface configDocs {
     processMonitor: 'new' | 'legacy'
     enableForegroundTimer: boolean
     foregroundWaitTime: number
-    showForegroundNotification: boolean
   }
   game: {
     scraper: {
@@ -270,8 +269,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     hideWindowAfterGameStart: true,
     processMonitor: 'new',
     enableForegroundTimer: true,
-    foregroundWaitTime: 10,
-    showForegroundNotification: false
+    foregroundWaitTime: 10
   },
   game: {
     scraper: {

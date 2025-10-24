@@ -34,10 +34,6 @@
     "foregroundWaitTime": {
       "title": "ウェイトタイム",
       "description": "ゲームがフォアグラウンド/バックグラウンドに切り替えられ一定の時間後、タイマーを継続/一時停止する\nゲーム実行中は変更できません"
-    },
-    "foregroundNotification": {
-      "title": "タイマー通知",
-      "description": "タイマーが一時停止/継続する際にシステム通信を受信する"
     }
   },
   "appearances": {

@@ -34,10 +34,6 @@
     "foregroundWaitTime": {
       "title": "緩衝時間",
       "description": "當游戲持續在前臺/後臺運行此時間后，繼續/暫停計時器\n游戲運行中無法變更此設置"
-    },
-    "foregroundNotification": {
-      "title": "計時器通知",
-      "description": "當計時器暫停/繼續時，發送系統通知"
     }
   },
   "appearances": {
