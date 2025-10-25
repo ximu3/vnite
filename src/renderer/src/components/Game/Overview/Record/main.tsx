@@ -22,6 +22,7 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
   const playStatusOptions: (typeof playStatus)[] = [
     'unplayed',
     'playing',
+    'partial',
     'finished',
     'multiple',
     'shelved'

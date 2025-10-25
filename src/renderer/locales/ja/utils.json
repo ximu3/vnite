@@ -54,6 +54,7 @@
     "playStatus": {
       "unplayed": "未プレイ",
       "playing": "プレイ中",
+      "partial": "一部完了",
       "finished": "完了",
       "multiple": "複数周回",
       "shelved": "保留中",

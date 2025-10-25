@@ -64,7 +64,7 @@ export interface AppEvents {
 
   'game:play-status-changed': {
     gameId: string
-    status: 'unplayed' | 'playing' | 'finished' | 'multiple' | 'shelved'
+    status: 'unplayed' | 'playing' | 'partial' | 'finished' | 'multiple' | 'shelved'
   }
 
   'theme:preset-changed': {

@@ -73,7 +73,7 @@ interface V2GameRecord {
   lastRunDate: string
   score: number
   playingTime: number
-  playStatus: 'unplayed' | 'playing' | 'finished' | 'multiple' | 'shelved'
+  playStatus: 'unplayed' | 'playing' | 'partial' | 'finished' | 'multiple' | 'shelved'
   timer: {
     start: string
     end: string
@@ -587,7 +587,7 @@ async function convertConfig(basePath: string): Promise<void> {
         showRecentGames: v2Config.appearances.gameList.showRecentGamesInGameList,
         showAllGamesInGroup: true,
         showCollapseButton: true,
-        playingStatusOrder: ['unplayed', 'playing', 'finished', 'multiple', 'shelved']
+        playingStatusOrder: ['unplayed', 'playing', 'partial', 'finished', 'multiple', 'shelved']
       },
       gameHeader: {
         showOriginalName: v2Config.appearances.gameHeader.showOriginalNameInGameHeader

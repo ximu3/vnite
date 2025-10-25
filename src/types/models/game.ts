@@ -35,7 +35,7 @@ export interface gameDoc {
     lastRunDate: string
     score: number
     playTime: number
-    playStatus: 'unplayed' | 'playing' | 'finished' | 'multiple' | 'shelved'
+    playStatus: 'unplayed' | 'playing' | 'partial' | 'finished' | 'multiple' | 'shelved'
     timers: {
       start: string
       end: string

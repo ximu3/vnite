@@ -33,7 +33,14 @@ export function FilterCombobox({
   const { filter, deleteFilter, addFilter } = useFilterStore()
   const selectedValues = filter[field] || []
 
-  const playStatusDefaultOrder = ['unplayed', 'playing', 'finished', 'multiple', 'shelved'] as const
+  const playStatusDefaultOrder = [
+    'unplayed',
+    'playing',
+    'partial',
+    'finished',
+    'multiple',
+    'shelved'
+  ] as const
 
   const options: Option[] = React.useMemo(() => {
     let allValues: string[] = []
