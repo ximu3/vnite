@@ -37,6 +37,8 @@ export function PlayStatusGames(): React.JSX.Element {
         return t('utils:game.playStatus.unplayed')
       case 'playing':
         return t('utils:game.playStatus.playing')
+      case 'partial':
+        return t('utils:game.playStatus.partial')
       case 'finished':
         return t('utils:game.playStatus.finished')
       case 'multiple':

@@ -122,6 +122,12 @@ export function ManageMenu({
                       {t('utils:game.playStatus.playing')}
                     </ContextMenuItem>
                     <ContextMenuItem
+                      onClick={() => changePlayStatus('partial')}
+                      className={playStatus === 'partial' ? 'bg-accent' : ''}
+                    >
+                      {t('utils:game.playStatus.partial')}
+                    </ContextMenuItem>
+                    <ContextMenuItem
                       onClick={() => changePlayStatus('finished')}
                       className={playStatus === 'finished' ? 'bg-accent' : ''}
                     >

@@ -119,6 +119,7 @@ function getGamePlayStatus(gameId: string, t: any): string {
   const statusMap: Record<string, string> = {
     unplayed: t('utils:game.playStatus.unplayed'),
     playing: t('utils:game.playStatus.playing'),
+    partial: t('utils:game.playStatus.partial'),
     finished: t('utils:game.playStatus.finished'),
     multiple: t('utils:game.playStatus.multiple'),
     shelved: t('utils:game.playStatus.shelved')

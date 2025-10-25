@@ -54,6 +54,7 @@
     "playStatus": {
       "unplayed": "未開始",
       "playing": "遊玩中",
+      "partial": "部分完成",
       "finished": "已完成",
       "multiple": "多周目",
       "shelved": "擱置中",

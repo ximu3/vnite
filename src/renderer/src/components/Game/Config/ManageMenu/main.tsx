@@ -87,6 +87,12 @@ export function ManageMenu({
                       {t('utils:game.playStatus.playing')}
                     </DropdownMenuItem>
                     <DropdownMenuItem
+                      onClick={() => changePlayStatus('partial')}
+                      className={playStatus === 'partial' ? 'bg-accent' : ''}
+                    >
+                      {t('utils:game.playStatus.partial')}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
                       onClick={() => changePlayStatus('finished')}
                       className={playStatus === 'finished' ? 'bg-accent' : ''}
                     >

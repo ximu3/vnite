@@ -301,7 +301,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       showRecentGames: true,
       showAllGamesInGroup: true,
       showCollapseButton: true,
-      playingStatusOrder: ['unplayed', 'playing', 'finished', 'multiple', 'shelved']
+      playingStatusOrder: ['unplayed', 'playing', 'partial', 'finished', 'multiple', 'shelved']
     },
     gameHeader: {
       showOriginalName: false
