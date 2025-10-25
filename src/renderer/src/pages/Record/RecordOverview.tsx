@@ -1,8 +1,7 @@
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-
 import { ActivitySquare, Calendar as CalendarIcon, Clock, Trophy } from 'lucide-react'
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
+import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Area, AreaChart, Bar, BarChart, Brush, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { Button } from '~/components/ui/button'
 import {
   Card,
@@ -111,6 +110,72 @@ export function RecordOverview(): React.JSX.Element {
     return t('utils:format.gameTime', { time })
   }
 
+  const containerRef = useRef<HTMLDivElement>(null)
+  const travellerCoordsRef = useRef({ x1: 0, y1: 0, x2: 0, y2: 0 })
+  useEffect(() => {
+    let observer: MutationObserver
+
+    const updateCoords = (c1: SVGCircleElement, c2: SVGCircleElement): void => {
+      travellerCoordsRef.current = {
+        x1: parseFloat(c1.getAttribute('cx') || '0') + parseFloat(c1.getAttribute('r') || '0'),
+        y1: parseFloat(c1.getAttribute('cy') || '0'),
+        x2: parseFloat(c2.getAttribute('cx') || '0') - parseFloat(c2.getAttribute('r') || '0'),
+        y2: parseFloat(c2.getAttribute('cy') || '0')
+      }
+    }
+
+    const initObserver = (): void => {
+      const travellers = containerRef.current?.querySelectorAll<SVGCircleElement>(
+        '.recharts-brush-traveller circle'
+      )
+
+      if (!travellers || travellers.length !== 2) return
+      clearInterval(interval)
+
+      const [c1, c2] = travellers
+      updateCoords(c1, c2)
+      observer = new MutationObserver(() => updateCoords(c1, c2))
+
+      travellers.forEach((c) =>
+        observer.observe(c, { attributes: true, attributeFilter: ['cx', 'cy'] })
+      )
+    }
+
+    const interval = setInterval(initObserver, 50)
+    return () => {
+      clearInterval(interval)
+      observer?.disconnect()
+    }
+  }, [])
+
+  const lineRef = useRef<SVGLineElement>(null)
+  useEffect(() => {
+    let frameId: number
+    let lastCoords = { x1: 0, y1: 0, x2: 0, y2: 0 }
+
+    const loop = (): void => {
+      if (lineRef.current) {
+        const { x1, y1, x2, y2 } = travellerCoordsRef.current
+        if (
+          x1 !== lastCoords.x1 ||
+          y1 !== lastCoords.y1 ||
+          x2 !== lastCoords.x2 ||
+          y2 !== lastCoords.y2
+        ) {
+          lineRef.current.setAttribute('x1', String(x1))
+          lineRef.current.setAttribute('y1', String(y1))
+          lineRef.current.setAttribute('x2', String(x2))
+          lineRef.current.setAttribute('y2', String(y2))
+          lastCoords = { x1, y1, x2, y2 }
+        }
+      }
+      frameId = requestAnimationFrame(loop)
+    }
+
+    loop()
+    return () => cancelAnimationFrame(frameId)
+  }, [])
+
   return (
     <div className="space-y-4">
       {/* Overview Stats */}
@@ -149,8 +214,17 @@ export function RecordOverview(): React.JSX.Element {
             <CardDescription>{formatGameTime(getTotalplayTimeYearly())}</CardDescription>
           </CardHeader>
           <CardContent className="pt-0">
-            <ChartContainer config={yearlyChartConfig} className="h-[250px] 3xl:h-[320px] w-full">
-              <AreaChart data={yearlyPlayData}>
+            <ChartContainer
+              ref={containerRef}
+              config={yearlyChartConfig}
+              className="h-[250px] 3xl:h-[320px] w-full"
+              overlay={
+                <svg className="w-full h-full">
+                  <line ref={lineRef} stroke="var(--primary)" strokeWidth={2} />
+                </svg>
+              }
+            >
+              <AreaChart data={yearlyPlayData} margin={{ top: 0, right: 10, bottom: 5, left: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
                 <XAxis
                   dataKey="formattedDate"
@@ -177,6 +251,27 @@ export function RecordOverview(): React.JSX.Element {
                   strokeWidth={2}
                   fillOpacity={0.3}
                   fill="var(--primary)"
+                />
+                <Brush
+                  dataKey="formattedDate"
+                  stroke="transparent"
+                  fill="transparent"
+                  dy={2}
+                  height={8}
+                  traveller={({ x, y, height }: any) => {
+                    const radius = 4
+                    return (
+                      <circle
+                        cx={x + height / 2}
+                        cy={y + height / 2}
+                        r={radius}
+                        fill={'var(--primary)'}
+                        fillOpacity={0.3}
+                        stroke={'var(--primary)'}
+                        strokeWidth={2}
+                      />
+                    )
+                  }}
                 />
               </AreaChart>
             </ChartContainer>
