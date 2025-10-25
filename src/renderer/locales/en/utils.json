@@ -54,7 +54,7 @@
     "playStatus": {
       "unplayed": "Unplayed",
       "playing": "Playing",
-      "partial": "Partial Completed",
+      "partial": "Partially Completed",
       "finished": "Completed",
       "multiple": "Multiple Runs",
       "shelved": "Shelved",
