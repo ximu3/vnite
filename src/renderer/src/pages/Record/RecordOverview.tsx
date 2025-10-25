@@ -111,69 +111,46 @@ export function RecordOverview(): React.JSX.Element {
   }
 
   const containerRef = useRef<HTMLDivElement>(null)
-  const travellerCoordsRef = useRef({ x1: 0, y1: 0, x2: 0, y2: 0 })
+  const lineRef = useRef<SVGLineElement>(null)
+
   useEffect(() => {
     let observer: MutationObserver
 
-    const updateCoords = (c1: SVGCircleElement, c2: SVGCircleElement): void => {
-      travellerCoordsRef.current = {
-        x1: parseFloat(c1.getAttribute('cx') || '0') + parseFloat(c1.getAttribute('r') || '0'),
-        y1: parseFloat(c1.getAttribute('cy') || '0'),
-        x2: parseFloat(c2.getAttribute('cx') || '0') - parseFloat(c2.getAttribute('r') || '0'),
-        y2: parseFloat(c2.getAttribute('cy') || '0')
-      }
+    const updateLine = (c1: SVGCircleElement, c2: SVGCircleElement): void => {
+      if (!lineRef.current) return
+      const x1 = parseFloat(c1.getAttribute('cx') || '0') + parseFloat(c1.getAttribute('r') || '0')
+      const y1 = parseFloat(c1.getAttribute('cy') || '0')
+      const x2 = parseFloat(c2.getAttribute('cx') || '0') - parseFloat(c2.getAttribute('r') || '0')
+      const y2 = parseFloat(c2.getAttribute('cy') || '0')
+      lineRef.current.setAttribute('x1', String(x1))
+      lineRef.current.setAttribute('y1', String(y1))
+      lineRef.current.setAttribute('x2', String(x2))
+      lineRef.current.setAttribute('y2', String(y2))
     }
 
-    const initObserver = (): void => {
+    const initObserver = (): boolean => {
       const travellers = containerRef.current?.querySelectorAll<SVGCircleElement>(
         '.recharts-brush-traveller circle'
       )
-
-      if (!travellers || travellers.length !== 2) return
-      clearInterval(interval)
+      if (!travellers || travellers.length !== 2) return false
 
       const [c1, c2] = travellers
-      updateCoords(c1, c2)
-      observer = new MutationObserver(() => updateCoords(c1, c2))
+      updateLine(c1, c2)
+      observer = new MutationObserver(() => requestAnimationFrame(() => updateLine(c1, c2)))
 
       travellers.forEach((c) =>
         observer.observe(c, { attributes: true, attributeFilter: ['cx', 'cy'] })
       )
+      return true
     }
 
-    const interval = setInterval(initObserver, 50)
+    const interval = setInterval(() => {
+      if (initObserver()) clearInterval(interval)
+    }, 50)
     return () => {
       clearInterval(interval)
       observer?.disconnect()
     }
-  }, [])
-
-  const lineRef = useRef<SVGLineElement>(null)
-  useEffect(() => {
-    let frameId: number
-    let lastCoords = { x1: 0, y1: 0, x2: 0, y2: 0 }
-
-    const loop = (): void => {
-      if (lineRef.current) {
-        const { x1, y1, x2, y2 } = travellerCoordsRef.current
-        if (
-          x1 !== lastCoords.x1 ||
-          y1 !== lastCoords.y1 ||
-          x2 !== lastCoords.x2 ||
-          y2 !== lastCoords.y2
-        ) {
-          lineRef.current.setAttribute('x1', String(x1))
-          lineRef.current.setAttribute('y1', String(y1))
-          lineRef.current.setAttribute('x2', String(x2))
-          lineRef.current.setAttribute('y2', String(y2))
-          lastCoords = { x1, y1, x2, y2 }
-        }
-      }
-      frameId = requestAnimationFrame(loop)
-    }
-
-    loop()
-    return () => cancelAnimationFrame(frameId)
   }, [])
 
   return (
