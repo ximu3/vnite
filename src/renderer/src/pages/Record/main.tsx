@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { cn } from '~/utils'
 
 import { useRouter, useSearch } from '@tanstack/react-router'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { MonthlyReport } from './MonthlyReport'
 import { RecordOverview } from './RecordOverview'
@@ -18,6 +19,31 @@ export function Record({ className }: { className?: string }): React.JSX.Element
   const handleTabChange = (value: string): void => {
     router.navigate({ to: '/record', search: { ...search, tab: value } })
   }
+
+  const TAB_ORDER = ['overview', 'yearly', 'monthly', 'weekly', 'scores']
+  useEffect(() => {
+    const getNextIndex = (currentIndex: number, direction: 'left' | 'right'): number => {
+      const length = TAB_ORDER.length
+      return direction === 'left'
+        ? (currentIndex - 1 + length) % length
+        : (currentIndex + 1) % length
+    }
+
+    const handleCtrlArrow = (e: KeyboardEvent): void => {
+      if (!e.ctrlKey) return
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return
+
+      const currentIndex = TAB_ORDER.indexOf(search.tab || 'overview')
+      if (currentIndex === -1) return
+
+      e.preventDefault()
+      const nextIndex = getNextIndex(currentIndex, e.key === 'ArrowLeft' ? 'left' : 'right')
+      handleTabChange(TAB_ORDER[nextIndex])
+    }
+
+    window.addEventListener('keydown', handleCtrlArrow)
+    return () => window.removeEventListener('keydown', handleCtrlArrow)
+  }, [search.tab, handleTabChange])
 
   return (
     <div className={cn('w-full h-full bg-transparent', className)}>

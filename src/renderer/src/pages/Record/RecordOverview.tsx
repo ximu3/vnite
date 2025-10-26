@@ -1,8 +1,7 @@
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-
 import { ActivitySquare, Calendar as CalendarIcon, Clock, Trophy } from 'lucide-react'
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
+import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Area, AreaChart, Bar, BarChart, Brush, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { Button } from '~/components/ui/button'
 import {
   Card,
@@ -111,6 +110,49 @@ export function RecordOverview(): React.JSX.Element {
     return t('utils:format.gameTime', { time })
   }
 
+  const containerRef = useRef<HTMLDivElement>(null)
+  const lineRef = useRef<SVGLineElement>(null)
+
+  useEffect(() => {
+    let observer: MutationObserver
+
+    const updateLine = (c1: SVGCircleElement, c2: SVGCircleElement): void => {
+      if (!lineRef.current) return
+      const x1 = parseFloat(c1.getAttribute('cx') || '0') + parseFloat(c1.getAttribute('r') || '0')
+      const y1 = parseFloat(c1.getAttribute('cy') || '0')
+      const x2 = parseFloat(c2.getAttribute('cx') || '0') - parseFloat(c2.getAttribute('r') || '0')
+      const y2 = parseFloat(c2.getAttribute('cy') || '0')
+      lineRef.current.setAttribute('x1', String(x1))
+      lineRef.current.setAttribute('y1', String(y1))
+      lineRef.current.setAttribute('x2', String(x2))
+      lineRef.current.setAttribute('y2', String(y2))
+    }
+
+    const initObserver = (): boolean => {
+      const travellers = containerRef.current?.querySelectorAll<SVGCircleElement>(
+        '.recharts-brush-traveller circle'
+      )
+      if (!travellers || travellers.length !== 2) return false
+
+      const [c1, c2] = travellers
+      updateLine(c1, c2)
+      observer = new MutationObserver(() => requestAnimationFrame(() => updateLine(c1, c2)))
+
+      travellers.forEach((c) =>
+        observer.observe(c, { attributes: true, attributeFilter: ['cx', 'cy'] })
+      )
+      return true
+    }
+
+    const interval = setInterval(() => {
+      if (initObserver()) clearInterval(interval)
+    }, 50)
+    return () => {
+      clearInterval(interval)
+      observer?.disconnect()
+    }
+  }, [])
+
   return (
     <div className="space-y-4">
       {/* Overview Stats */}
@@ -149,8 +191,17 @@ export function RecordOverview(): React.JSX.Element {
             <CardDescription>{formatGameTime(getTotalplayTimeYearly())}</CardDescription>
           </CardHeader>
           <CardContent className="pt-0">
-            <ChartContainer config={yearlyChartConfig} className="h-[250px] 3xl:h-[320px] w-full">
-              <AreaChart data={yearlyPlayData}>
+            <ChartContainer
+              ref={containerRef}
+              config={yearlyChartConfig}
+              className="h-[250px] 3xl:h-[320px] w-full"
+              overlay={
+                <svg className="w-full h-full">
+                  <line ref={lineRef} stroke="var(--primary)" strokeWidth={2} />
+                </svg>
+              }
+            >
+              <AreaChart data={yearlyPlayData} margin={{ top: 0, right: 10, bottom: 5, left: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
                 <XAxis
                   dataKey="formattedDate"
@@ -177,6 +228,27 @@ export function RecordOverview(): React.JSX.Element {
                   strokeWidth={2}
                   fillOpacity={0.3}
                   fill="var(--primary)"
+                />
+                <Brush
+                  dataKey="formattedDate"
+                  stroke="transparent"
+                  fill="transparent"
+                  dy={2}
+                  height={8}
+                  traveller={({ x, y, height }: any) => {
+                    const radius = 4
+                    return (
+                      <circle
+                        cx={x + height / 2}
+                        cy={y + height / 2}
+                        r={radius}
+                        fill={'var(--primary)'}
+                        fillOpacity={0.3}
+                        stroke={'var(--primary)'}
+                        strokeWidth={2}
+                      />
+                    )
+                  }}
                 />
               </AreaChart>
             </ChartContainer>

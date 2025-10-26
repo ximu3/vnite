@@ -1,5 +1,6 @@
 import { useRouter, useSearch } from '@tanstack/react-router'
 import { CalendarIcon, ChevronLeft, ChevronRight, Clock, Trophy } from 'lucide-react'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { Button, buttonVariants } from '~/components/ui/button'
@@ -7,7 +8,6 @@ import { Calendar } from '~/components/ui/calendar'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '~/components/ui/chart'
 import { Separator } from '~/components/ui/separator'
-
 import { getMonthlyPlayData, parseLocalDate } from '~/stores/game/recordUtils'
 import { cn } from '~/utils'
 import { GameRankingItem } from './GameRankingItem'
@@ -72,6 +72,21 @@ export function MonthlyReport(): React.JSX.Element {
     nextMonth.setMonth(selectedDate.getMonth() + 1)
     setSelectedDate(nextMonth)
   }
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent): void => {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault()
+        goToPreviousMonth()
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault()
+        goToNextMonth()
+      }
+    }
+
+    window.addEventListener('keydown', handleKey, { capture: true })
+    return () => window.removeEventListener('keydown', handleKey, { capture: true })
+  }, [goToPreviousMonth, goToNextMonth])
 
   // Get month name
   const getLocalizedMonth = (monthIndex: number): string => {
