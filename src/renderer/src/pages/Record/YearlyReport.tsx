@@ -1,7 +1,7 @@
 import { useRouter, useSearch } from '@tanstack/react-router'
-import { useTranslation } from 'react-i18next'
-
 import { CalendarIcon, ChevronLeft, ChevronRight, Clock, Trophy } from 'lucide-react'
+import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Bar,
   BarChart,
@@ -18,7 +18,6 @@ import type { ValueType } from 'recharts/types/component/DefaultTooltipContent'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '~/components/ui/chart'
-
 import { getYearlyPlayData } from '~/stores/game/recordUtils'
 import { GameRankingItem } from './GameRankingItem'
 import { StatCard } from './StatCard'
@@ -39,6 +38,7 @@ export function YearlyReport(): React.JSX.Element {
       }
     })
   }
+
   const handleBarClick = (data: any): void => {
     type MonthlyChartItem = (typeof monthlyChartData)[number]
     const { originalMonth } = data.payload as MonthlyChartItem
@@ -75,6 +75,21 @@ export function YearlyReport(): React.JSX.Element {
 
   const goToPreviousYear = (): void => setSelectedYear(selectedYear - 1)
   const goToNextYear = (): void => setSelectedYear(selectedYear + 1)
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent): void => {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault()
+        goToPreviousYear()
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault()
+        goToNextYear()
+      }
+    }
+
+    window.addEventListener('keydown', handleKey, { capture: true })
+    return () => window.removeEventListener('keydown', handleKey, { capture: true })
+  }, [goToPreviousYear, goToNextYear])
 
   // Month Name Localization
   const getLocalizedMonth = (monthIndex: number): string => {

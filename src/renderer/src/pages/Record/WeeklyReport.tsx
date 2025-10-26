@@ -1,7 +1,7 @@
 import { generateUUID } from '@appUtils'
 import { useRouter, useSearch } from '@tanstack/react-router'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Fragment } from 'react'
+import { Fragment, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   Area,
@@ -55,6 +55,21 @@ export function WeeklyReport(): React.JSX.Element {
     nextWeek.setDate(selectedDate.getDate() + 7)
     setSelectedDate(nextWeek)
   }
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent): void => {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault()
+        goToPreviousWeek()
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault()
+        goToNextWeek()
+      }
+    }
+
+    window.addEventListener('keydown', handleKey, { capture: true })
+    return () => window.removeEventListener('keydown', handleKey, { capture: true })
+  }, [goToPreviousWeek, goToNextWeek])
 
   const setLazyloadMark = usePositionButtonStore((state) => state.setLazyloadMark)
   const handleTimeLineClick = (data: any): void => {
