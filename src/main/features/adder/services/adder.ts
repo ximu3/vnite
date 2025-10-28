@@ -388,6 +388,13 @@ export async function addGameToDB({
           log.warn(`[Adder] Failed to save game icon: ${err.message}`)
         })
       )
+    } else if (gamePath) {
+      // If no icon fetched, try to save icon from the game executable
+      dbPromises.push(
+        saveGameIconByFile(dbId, gamePath).catch((err) => {
+          log.warn(`[Adder] Failed to save game icon from executable: ${err.message}`)
+        })
+      )
     }
 
     if (logos.length > 0 && logos[0]) {
