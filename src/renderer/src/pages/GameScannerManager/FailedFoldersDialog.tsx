@@ -152,10 +152,10 @@ export const FailedFoldersDialog: React.FC<FailedFoldersDialogProps> = ({ isOpen
           <DialogTitle>{t('failedFolders.title')}</DialogTitle>
         </DialogHeader>
 
-        <div className="pb-1 space-y-4 max-h-[60vh] overflow-auto scrollbar-base">
+        <div className="space-y-4 p-3 -m-3 max-h-[60vh] overflow-auto scrollbar-base">
           {selectedFolder ? (
             // Details view for a selected folder
-            <div className="p-4 space-y-4 border rounded-lg">
+            <div className="p-4 space-y-4 shadow-md rounded-lg bg-popover">
               <div>
                 <p className="font-medium">
                   {t('failedFolders.fixing', { name: selectedFolder.name })}
