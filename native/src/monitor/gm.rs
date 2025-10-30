@@ -6,9 +6,9 @@ use tokio::sync::Mutex;
 use crate::{
   log,
   monitor::{ProcessMessage, ProcessStatus},
-  napi_monitor::ProcessEvent,
-  napi_monitor::ProcessEventType,
+  napi_monitor::{ProcessEvent, ProcessEventType},
   utils::types::NapiWeakThreadsafeFunction,
+  win32,
 };
 
 /// Threadsafe NodeJS callback get invoked when a foreground window is changed
@@ -144,10 +144,22 @@ impl GameManager {
     is_running
   }
 
+  pub fn is_magpie_pid(pid: u32) -> bool {
+    let mut full_path = win32::get_process_full_path_by_pid(pid);
+    full_path.make_ascii_lowercase();
+    if full_path.ends_with("magpie.exe") {
+      return true;
+    }
+    false
+  }
+
   /// Handle a foreground change message.
   /// Note the `msg` can be 0 if current process has insufficient privilege to retrieve the target window.
   pub fn handle_foreground_message(&mut self, msg: u32) {
     if self.running_process.len() == 0 {
+      return;
+    }
+    if Self::is_magpie_pid(msg) {
       return;
     }
     for (_, info) in &self.running_process {
@@ -160,7 +172,7 @@ impl GameManager {
       if self.foreground_pid == msg {
         return;
       }
-      // a game window comes into foreground, send the message to Node 
+      // a game window comes into foreground, send the message to Node
       self.foreground_pid = msg;
       let game_id = info.game_id.clone();
       let timeout = self.foreground_wait_time;
