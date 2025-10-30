@@ -156,10 +156,7 @@ impl GameManager {
   /// Handle a foreground change message.
   /// Note the `msg` can be 0 if current process has insufficient privilege to retrieve the target window.
   pub fn handle_foreground_message(&mut self, msg: u32) {
-    if self.running_process.len() == 0 {
-      return;
-    }
-    if Self::is_magpie_pid(msg) {
+    if self.running_process.len() == 0 || Self::is_magpie_pid(msg){
       return;
     }
     for (_, info) in &self.running_process {
