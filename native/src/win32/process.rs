@@ -104,6 +104,32 @@ pub fn get_all_process() -> Vec<ProcessInfo> {
   processes
 }
 
+pub fn get_process_full_path_by_pid(pid: u32) -> String {
+  unsafe {
+    match OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, pid) {
+      Ok(handle) => {
+        let _handle_guard = HandleGuard::new(handle);
+        let mut buffer = [0u16; 256];
+        let mut size = buffer.len() as u32;
+        let success = QueryFullProcessImageNameW(
+          handle,
+          PROCESS_NAME_WIN32,
+          windows::core::PWSTR(buffer.as_mut_ptr()),
+          &mut size,
+        );
+        if success.is_ok() && size > 0 {
+          // Safe bounds check before slicing
+          let safe_size = std::cmp::min(size as usize, buffer.len());
+          String::from_utf16_lossy(&buffer[..safe_size])
+        } else {
+          String::new()
+        }
+      }
+      Err(_) => String::new(),
+    }
+  }
+}
+
 // Helper function to safely extract process name from proc_entry
 fn get_process_name_fallback(proc_entry: &PROCESSENTRY32W) -> String {
   // Find the null terminator safely

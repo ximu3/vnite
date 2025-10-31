@@ -9,6 +9,10 @@ pub fn get_all_process() -> Vec<ProcessInfo> {
   process::get_all_process()
 }
 
+pub fn get_process_full_path_by_pid(pid: u32) -> String {
+  process::get_process_full_path_by_pid(pid)
+}
+
 pub fn is_elevated_privilege() -> bool {
   let result = privilege::is_elevated_privilege();
   match result {
