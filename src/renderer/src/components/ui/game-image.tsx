@@ -11,6 +11,7 @@ interface GameImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src'
   flips?: boolean
   blur?: boolean
   blurType?: 'bigposter' | 'poster' | 'smallposter'
+  initialMask?: boolean
 }
 
 export const GameImage: React.FC<GameImageProps> = ({
@@ -24,6 +25,7 @@ export const GameImage: React.FC<GameImageProps> = ({
   flips = false,
   blur = false,
   blurType = 'poster',
+  initialMask = false,
   ...imgProps
 }) => {
   const [isLoaded, setIsLoaded] = useState(false)
@@ -93,7 +95,7 @@ export const GameImage: React.FC<GameImageProps> = ({
         Mask Overlay
         -----------------
         Purpose:
-          - Prevent NSFW image flash before the image fully loads
+          - Prevent NSFW image flash before the image fully loads (usually occurs on the initial program load)
 
         Notes:
           - Must not depend on any React state or conditional rendering as initial DOM must exist to cover the image
@@ -101,10 +103,12 @@ export const GameImage: React.FC<GameImageProps> = ({
           - Only used for the initial mask; not applied continuously for NSFW
             because hover/scale animation may expose edges that cannot be fully blurred
       */}
-      <div
-        ref={maskRef}
-        className={cn('absolute inset-0 bg-transparent backdrop-blur-2xl pointer-events-none')}
-      />
+      {initialMask && (
+        <div
+          ref={maskRef}
+          className={cn('absolute inset-0 bg-transparent backdrop-blur-2xl pointer-events-none')}
+        />
+      )}
     </div>
   )
 }

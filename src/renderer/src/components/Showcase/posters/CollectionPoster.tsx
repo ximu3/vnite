@@ -223,6 +223,8 @@ export function CollectionPoster({
                   gameId={gameId}
                   type="cover"
                   blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
+                  initialMask={true}
+                  blurType="poster"
                   alt={gameId}
                   className={cn('w-[155px] h-[155px] cursor-pointer object-cover', className)}
                   draggable="false"
