@@ -47,7 +47,8 @@
     "dailyPlayTime": "每日游戏时间",
     "playTimeLine": {
       "title": "游戏时间线",
-      "noRecords": "本周没有游戏记录"
+      "noRecords": "本周没有游戏记录",
+      "mergeMaxInterval": "合并的最大间隔"
     },
     "totalWeeklyTime": "本周共游戏 {{time, gameTime}}",
     "highlights": {
