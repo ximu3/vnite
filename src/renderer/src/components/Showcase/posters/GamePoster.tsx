@@ -247,6 +247,8 @@ export function GamePoster({
                       gameId={gameId}
                       type="cover"
                       blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
+                      initialMask={true}
+                      blurType="poster"
                       alt={gameId}
                       className={cn(
                         'w-[148px] aspect-[2/3] cursor-pointer select-none object-cover rounded-lg',

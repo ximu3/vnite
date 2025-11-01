@@ -123,6 +123,7 @@ export function BigGamePoster({
                   gameId={gameId}
                   type="background"
                   blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
+                  initialMask={true}
                   blurType="bigposter"
                   className={cn(
                     'h-[222px] aspect-[3/2] cursor-pointer select-none object-cover rounded-lg bg-accent/30',
