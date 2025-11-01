@@ -1,4 +1,8 @@
 import { ArrayTextarea } from '@ui/array-textarea'
+import React, { useCallback, useEffect, useImperativeHandle, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { ipcManager } from '~/app/ipc'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
@@ -13,14 +17,17 @@ import {
 } from '~/components/ui/select'
 import { Separator } from '~/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
-import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { useGameLocalState, useGameState } from '~/hooks'
 import { cn } from '~/utils'
-import { ipcManager } from '~/app/ipc'
 
-export function Path({ gameId }: { gameId: string }): React.JSX.Element {
+export interface PathHandle {
+  save: () => Promise<void>
+}
+
+function PathComponent(
+  { gameId }: { gameId: string },
+  ref: React.Ref<PathHandle>
+): React.JSX.Element {
   const { t } = useTranslation('game')
   const [monitorPath] = useGameLocalState(gameId, 'launcher.fileConfig.monitorPath')
   const [gamePath, setGamePath, saveGamePath, setGamePathAndSave] = useGameLocalState(
@@ -38,6 +45,11 @@ export function Path({ gameId }: { gameId: string }): React.JSX.Element {
   const [savePathSize, setSavePathSize] = useState(0)
   const [screenshotPath, setScreenshotPath, saveScreenshotPath, setScreenshotPathAndSave] =
     useGameLocalState(gameId, 'path.screenshotPath', true)
+
+  const saveAll = useCallback(async () => {
+    await Promise.all([saveGamePath(), saveSavePaths(), saveScreenshotPath()])
+  }, [saveGamePath, saveSavePaths, saveScreenshotPath])
+  useImperativeHandle(ref, () => ({ save: saveAll }), [saveAll])
 
   useEffect(() => {
     if ((savePaths.length === 1 && savePaths[0] === '') || savePaths.length === 0 || !savePaths) {
@@ -257,3 +269,5 @@ export function Path({ gameId }: { gameId: string }): React.JSX.Element {
     </Card>
   )
 }
+
+export const Path = React.forwardRef(PathComponent)

@@ -1,8 +1,8 @@
-import { cn } from '~/utils'
-import { useGameLocalState } from '~/hooks'
-import { Input } from '~/components/ui/input'
+import React, { useCallback, useImperativeHandle } from 'react'
+import { useTranslation } from 'react-i18next'
+import { ipcManager } from '~/app/ipc'
 import { Button } from '~/components/ui/button'
-import { Separator } from '~/components/ui/separator'
+import { Input } from '~/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -12,10 +12,18 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select'
-import { useTranslation } from 'react-i18next'
-import { ipcManager } from '~/app/ipc'
+import { Separator } from '~/components/ui/separator'
+import { useGameLocalState } from '~/hooks'
+import { cn } from '~/utils'
 
-export function FileLauncher({ gameId }: { gameId: string }): React.JSX.Element {
+export interface FileLauncherHandle {
+  save: () => Promise<void>
+}
+
+function FileLauncherComponent(
+  { gameId }: { gameId: string },
+  ref: React.Ref<FileLauncherHandle>
+): React.JSX.Element {
   const { t } = useTranslation('game')
   const [path, setPath, savePath, setPathAndSave] = useGameLocalState(
     gameId,
@@ -55,6 +63,12 @@ export function FileLauncher({ gameId }: { gameId: string }): React.JSX.Element 
       ipcManager.send('native-monitor:update-local-game')
     }
   }
+
+  const saveAll = useCallback(async () => {
+    await Promise.all([savePath(), saveMonitorPath()])
+    ipcManager.send('native-monitor:update-local-game')
+  }, [savePath, saveMonitorPath])
+  useImperativeHandle(ref, () => ({ save: saveAll }), [saveAll])
 
   return (
     <>
@@ -116,8 +130,7 @@ export function FileLauncher({ gameId }: { gameId: string }): React.JSX.Element 
           value={monitorPath}
           onChange={(e) => setMonitorPath(e.target.value)}
           onBlur={() => {
-            saveMonitorPath()
-            ipcManager.send('native-monitor:update-local-game')
+            saveMonitorPath().then(() => ipcManager.send('native-monitor:update-local-game'))
           }}
         />
         {['folder', 'file'].includes(monitorMode) && (
@@ -135,3 +148,5 @@ export function FileLauncher({ gameId }: { gameId: string }): React.JSX.Element 
     </>
   )
 }
+
+export const FileLauncher = React.forwardRef(FileLauncherComponent)
