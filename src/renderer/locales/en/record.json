@@ -47,7 +47,8 @@
     "dailyPlayTime": "Daily Play Time",
     "playTimeLine": {
       "title": "Game Timeline",
-      "noRecords": "No gaming records this week"
+      "noRecords": "No gaming records this week",
+      "mergeMaxInterval": "Maximum Interval to Merge"
     },
     "totalWeeklyTime": "This Week: {{time, gameTime}}",
     "highlights": {
