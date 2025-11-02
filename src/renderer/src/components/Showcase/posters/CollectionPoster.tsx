@@ -75,12 +75,14 @@ export function CollectionPoster({
   const collections = useGameCollectionStore((state) => state.documents)
   const reorderCollections = useGameCollectionStore((state) => state.reorderCollections)
   const collectionName = collections[collectionId].name
-  const gameId = collections[collectionId].games[0]
   const collectionGames = collections[collectionId].games
-  const [nsfw] = useGameState(gameId, 'apperance.nsfw')
   const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
   const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
-  const length = filterGamesByNSFW(nsfwFilterMode, collectionGames).length
+
+  const filterGames = filterGamesByNSFW(nsfwFilterMode, collectionGames)
+  const length = filterGames.length // length > 0, guaranteed by parent component
+  const gameId = filterGames[0]
+  const [nsfw] = useGameState(gameId, 'apperance.nsfw')
 
   // Batch mode and selection state
   const { selectedGamesMap, selectGames, unselectGames, isBatchMode } = useGameBatchEditorStore()
@@ -221,6 +223,8 @@ export function CollectionPoster({
                   gameId={gameId}
                   type="cover"
                   blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
+                  initialMask={true}
+                  blurType="poster"
                   alt={gameId}
                   className={cn('w-[155px] h-[155px] cursor-pointer object-cover', className)}
                   draggable="false"

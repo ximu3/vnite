@@ -24,7 +24,7 @@ export function CrossfadeImage({
     keys: (src) => src,
     from: { opacity: 0 },
     enter: { opacity: 1 },
-    leave: { opacity: 0 },
+    leave: { opacity: 0, filter: blur ? 'blur(48px)' : 'none' }, // Prevent NSFW flash during fade-out
     config: {
       duration: duration,
       easing: easings.easeInOutQuad
