@@ -452,8 +452,11 @@ export function getPlayTimeDistribution(): { hour: number; value: number }[] {
 
           distribution[hour] += segmentTime
 
-          // Move to next hour
-          current = new Date(hourEnd.getTime() + 1)
+          // Move to the next hour boundary
+          // Using setHours() instead of manual time calculation to properly handle
+          // daylight saving time (DST) transitions where hours may be skipped or repeated
+          current = new Date(current)
+          current.setHours(current.getHours() + 1, 0, 0, 0)
         }
       }
     }
