@@ -27,6 +27,32 @@ export function parseLocalDate(str: string): Date {
   return new Date(y, m - 1, d)
 }
 
+// Maximum allowed play time per day (24 hours in milliseconds)
+const MAX_DAILY_PLAYTIME = 24 * 60 * 60 * 1000
+
+/**
+ * Caps daily play time to 24 hours maximum
+ *
+ * @TODO Fix the root cause: Multiple game instances running simultaneously
+ * can cause calculated play time to exceed 24 hours per day
+ *
+ * @param playTime - Raw play time in milliseconds
+ * @param date - Date for logging (optional)
+ * @returns Play time capped at 24 hours
+ */
+export function capDailyPlayTime(playTime: number, date?: Date | string): number {
+  if (playTime <= MAX_DAILY_PLAYTIME) {
+    return playTime
+  }
+
+  const hours = (playTime / 3600000).toFixed(2)
+  const dateStr = date ? ` on ${date}` : ''
+
+  console.warn(`Play time exceeds 24 hours${dateStr}: ${hours} hours, capped to 24 hours`)
+
+  return MAX_DAILY_PLAYTIME
+}
+
 /**
  * Calculate the game time (in milliseconds) for a specific date
  */
@@ -119,6 +145,8 @@ export function getWeeklyPlayData(date = new Date()): {
         // Accumulate the total play time for each game
         gamePlayTime[gameId] = (gamePlayTime[gameId] || 0) + playTime
       }
+
+      dayTotal = capDailyPlayTime(dayTotal, dayDate)
 
       dailyPlayTime[dateStr] = dayTotal
       totalTime += dayTotal
@@ -251,6 +279,8 @@ export function getMonthlyPlayData(date = new Date()): {
         gamePlayTime[gameId] = (gamePlayTime[gameId] || 0) + playTime
       }
 
+      dayTotal = capDailyPlayTime(dayTotal, dayDate)
+
       dailyPlayTime[dateStr] = dayTotal
       weeklyPlayTime[weekOfMonth] = (weeklyPlayTime[weekOfMonth] || 0) + dayTotal
       totalTime += dayTotal
@@ -353,6 +383,7 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
 
       // If this day has any play time, add it to the monthly stats
       if (dayTotal > 0) {
+        dayTotal = capDailyPlayTime(dayTotal, currentDate)
         const dateStr = i18next.format(currentDate, 'niceISO')
         monthlyPlayDays[month].add(dateStr)
         monthlyPlayTime[month] += dayTotal
@@ -440,6 +471,7 @@ export function getPlayTimeDistribution(): { hour: number; value: number }[] {
         const end = new Date(timer.end)
 
         let current = new Date(start)
+
         while (current < end) {
           const hour = current.getHours()
 

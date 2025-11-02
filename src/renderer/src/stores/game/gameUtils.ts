@@ -6,6 +6,7 @@ import { parseLocalDate } from '~/stores/game/recordUtils'
 import { useConfigStore } from '../config'
 import { useGameRegistry } from './gameRegistry'
 import { getGameStore } from './gameStoreFactory'
+import { capDailyPlayTime } from '~/stores/game/recordUtils'
 
 // Search Functions
 export function searchGames(query: string): string[] {
@@ -686,6 +687,8 @@ export function getPlayedDaysYearly(): { [date: string]: number } {
           playTime += calculateDailyPlayTime(current, timers)
         }
       }
+
+      playTime = capDailyPlayTime(playTime, dateStr)
 
       datesArray.push({ date: dateStr, playTime })
       current.setDate(current.getDate() - 1)
