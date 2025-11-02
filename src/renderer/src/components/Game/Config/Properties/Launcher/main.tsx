@@ -1,5 +1,7 @@
-import { cn } from '~/utils'
-import { useGameLocalState, useConfigLocalState } from '~/hooks'
+import React, { useCallback, useImperativeHandle, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { ipcManager } from '~/app/ipc'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import {
   Select,
@@ -10,17 +12,23 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select'
-import { Switch } from '~/components/ui/switch'
 import { Separator } from '~/components/ui/separator'
-import { toast } from 'sonner'
-import { FileLauncher } from './FileLauncher'
-import { UrlLauncher } from './UrlLauncher'
-import { ScriptLauncher } from './ScriptLauncher'
+import { Switch } from '~/components/ui/switch'
+import { useConfigLocalState, useGameLocalState } from '~/hooks'
+import { cn } from '~/utils'
+import { FileLauncher, FileLauncherHandle } from './FileLauncher'
 import { PresetSelecter } from './PresetSelecter'
-import { useTranslation } from 'react-i18next'
-import { ipcManager } from '~/app/ipc'
+import { ScriptLauncher, ScriptLauncherHandle } from './ScriptLauncher'
+import { UrlLauncher, UrlLauncherHandle } from './UrlLauncher'
 
-export function Launcher({ gameId }: { gameId: string }): React.JSX.Element {
+export interface LauncherHandle {
+  save: () => Promise<void>
+}
+
+function LauncherComponent(
+  { gameId }: { gameId: string },
+  ref: React.Ref<LauncherHandle>
+): React.JSX.Element {
   const { t } = useTranslation('game')
   const [mode, setMode] = useGameLocalState(gameId, 'launcher.mode')
   const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
@@ -43,6 +51,21 @@ export function Launcher({ gameId }: { gameId: string }): React.JSX.Element {
     }
     setUseMagpie(!useMagpie)
   }
+
+  const fileRef = useRef<FileLauncherHandle>(null)
+  const urlRef = useRef<UrlLauncherHandle>(null)
+  const scriptRef = useRef<ScriptLauncherHandle>(null)
+
+  const saveAll = useCallback(async () => {
+    if (fileRef.current) {
+      await fileRef.current?.save()
+    } else if (urlRef.current) {
+      await urlRef.current?.save()
+    } else if (scriptRef.current) {
+      await scriptRef.current?.save()
+    }
+  }, [])
+  useImperativeHandle(ref, () => ({ save: saveAll }), [saveAll])
 
   return (
     <Card className={cn('group')}>
@@ -86,9 +109,9 @@ export function Launcher({ gameId }: { gameId: string }): React.JSX.Element {
                 </Select>
               </div>
 
-              {mode === 'file' && <FileLauncher gameId={gameId} />}
-              {mode === 'url' && <UrlLauncher gameId={gameId} />}
-              {mode === 'script' && <ScriptLauncher gameId={gameId} />}
+              {mode === 'file' && <FileLauncher gameId={gameId} ref={fileRef} />}
+              {mode === 'url' && <UrlLauncher gameId={gameId} ref={urlRef} />}
+              {mode === 'script' && <ScriptLauncher gameId={gameId} ref={scriptRef} />}
 
               <div className={cn('col-span-2')}>
                 <Separator />
@@ -112,3 +135,5 @@ export function Launcher({ gameId }: { gameId: string }): React.JSX.Element {
     </Card>
   )
 }
+
+export const Launcher = React.forwardRef(LauncherComponent)
