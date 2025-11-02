@@ -47,7 +47,8 @@
     "dailyPlayTime": "日別プレイ時間",
     "playTimeLine": {
       "title": "ゲームタイムライン",
-      "noRecords": "今週のプレイ記録はありません"
+      "noRecords": "今週のプレイ記録はありません",
+      "mergeMaxInterval": "結合する最大間隔"
     },
     "totalWeeklyTime": "今週の合計: {{time, gameTime}}",
     "highlights": {
