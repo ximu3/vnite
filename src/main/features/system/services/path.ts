@@ -1,9 +1,9 @@
 import { app } from 'electron'
-import { portableStore } from './portable'
-import path from 'path'
+import log from 'electron-log/main'
 import fse from 'fs-extra'
 import os from 'os'
-import log from 'electron-log/main'
+import path from 'path'
+import { portableStore } from './portable'
 
 export function getAppRootPath(): string {
   try {
@@ -92,6 +92,19 @@ export async function setupTempDirectory(): Promise<string> {
     return tempPath
   } catch (error) {
     log.error('[System] Failed to set up temporary directory:', error)
+    throw error
+  }
+}
+
+export async function checkIfPathExist(paths: string[]): Promise<boolean[]> {
+  try {
+    if (!Array.isArray(paths)) throw new TypeError('paths must be an array of strings')
+
+    const results = await Promise.all(paths.map(async (path) => await fse.pathExists(path)))
+
+    return results
+  } catch (error) {
+    log.error('[System] Failed to check path exist:', error)
     throw error
   }
 }

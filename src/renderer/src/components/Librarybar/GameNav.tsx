@@ -1,7 +1,7 @@
 import { NSFWBlurLevel } from '@appTypes/models'
 import { useLocation, useNavigate } from '@tanstack/react-router'
 import { Nav } from '@ui/nav'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
 import { GamePropertiesDialog } from '~/components/Game/Config/Properties'
@@ -9,6 +9,7 @@ import { ContextMenu, ContextMenuTrigger } from '~/components/ui/context-menu'
 import { GameImage } from '~/components/ui/game-image'
 import { useConfigState, useGameLocalState, useGameState } from '~/hooks'
 import { useLibraryStore } from '~/pages/Library/store'
+import { useGamePathStore } from '~/stores/game/gamePathStore'
 import { cn, startGame } from '~/utils'
 import { GameNavCM } from '../contextMenu/GameNavCM'
 import { InformationDialog } from '../Game/Overview/Information/InformationDialog'
@@ -25,6 +26,14 @@ export function GameNav({
 }): React.JSX.Element {
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
+  const isPathValid = useGamePathStore((s) => s.paths[gamePath]?.valid)
+
+  useEffect(() => {
+    if (gamePath) {
+      useGamePathStore.getState().requestValidity(gamePath)
+    }
+  }, [gamePath])
+
   const [highlightLocalGames] = useConfigState('game.gameList.highlightLocalGames')
   const [markLocalGames] = useConfigState('game.gameList.markLocalGames')
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
@@ -139,7 +148,9 @@ export function GameNav({
               className={cn(
                 'text-xs p-3 h-5 rounded-none transition-none w-full group/gamenav',
                 highlightLocalGames && 'text-foreground',
-                highlightLocalGames && gamePath && 'text-accent-foreground',
+                highlightLocalGames &&
+                  gamePath &&
+                  (isPathValid ? 'text-accent-foreground' : 'text-destructive'),
                 highlightLocalGames && !gamePath && !isDarkMode && 'text-foreground',
                 isSelected && 'bg-accent/[calc(var(--glass-opacity)*2)]'
               )}
@@ -180,7 +191,12 @@ export function GameNav({
 
                 {markLocalGames && gamePath && (
                   <span
-                    className={cn('icon-[mdi--check-outline] w-[10px] h-[10px] flex-shrink-0')}
+                    className={cn(
+                      isPathValid === false
+                        ? 'icon-[mdi--alert-circle-outline] w-[12px] h-[12px]'
+                        : 'icon-[mdi--check-outline] w-[10px] h-[10px]',
+                      'flex-shrink-0'
+                    )}
                   ></span>
                 )}
               </div>

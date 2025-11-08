@@ -90,6 +90,7 @@ type MainIpcEvents =
       'system:get-language': () => string
       'system:check-admin-permissions': () => boolean
       'system:check-if-portable-directory-needs-admin-rights': () => boolean
+      'system:check-if-path-exist': (paths: string[]) => boolean[]
       'system:get-fonts': () => string[]
       'system:update-screenshot-hotkey': (hotkey: string) => void
       'system:delete-temp-file': (path: string) => void

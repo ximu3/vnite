@@ -1,6 +1,14 @@
 import { generateUUID } from '@appUtils'
 import { app, OpenDialogOptions } from 'electron'
+import { ConfigDBManager } from '~/core/database'
 import { ipcManager } from '~/core/ipc'
+import {
+  changeForegroundWaitTime,
+  disableForegroundHook,
+  enableForegroundHook,
+  setupNativeMonitor,
+  stopNativeMonitor
+} from '~/features/monitor'
 import { mainWindow } from '~/index'
 import {
   checkAdminPermissions,
@@ -19,6 +27,7 @@ import {
   writeClipboardImage
 } from '~/utils'
 import {
+  checkIfPathExist,
   copyAppLogInCurrentLifetimeToClipboardAsFile,
   createGameShortcut,
   deleteTempFile,
@@ -34,14 +43,6 @@ import {
   updateOpenAtLogin,
   updateScreenshotHotkey
 } from './services'
-import {
-  setupNativeMonitor,
-  stopNativeMonitor,
-  enableForegroundHook,
-  disableForegroundHook,
-  changeForegroundWaitTime
-} from '~/features/monitor'
-import { ConfigDBManager } from '~/core/database'
 
 export function setupSystemIPC(): void {
   ipcManager.on('window:minimize', () => {
@@ -177,6 +178,10 @@ export function setupSystemIPC(): void {
 
   ipcManager.handle('system:check-if-portable-directory-needs-admin-rights', async () => {
     return await checkIfDirectoryNeedsAdminRights(getAppRootPath())
+  })
+
+  ipcManager.handle('system:check-if-path-exist', async (_, paths: string[]) => {
+    return await checkIfPathExist(paths)
   })
 
   ipcManager.handle('app:update-language', async (_, language: string) => {
