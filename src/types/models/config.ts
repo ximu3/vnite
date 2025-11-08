@@ -65,7 +65,6 @@ export interface configDocs {
       showRecentGames: boolean
       showAllGamesInGroup: boolean
       showCollapseButton: boolean
-      playingStatusOrder: string[]
     }
     gameHeader: {
       showOriginalName: boolean
@@ -300,8 +299,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       markLocalGames: false,
       showRecentGames: true,
       showAllGamesInGroup: true,
-      showCollapseButton: true,
-      playingStatusOrder: ['unplayed', 'playing', 'partial', 'finished', 'multiple', 'shelved']
+      showCollapseButton: true
     },
     gameHeader: {
       showOriginalName: false
