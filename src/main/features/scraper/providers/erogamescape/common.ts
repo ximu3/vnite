@@ -26,7 +26,8 @@ async function fetchFromEs(
         'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
       Referer: esUrl,
       'User-Agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36'
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
+      'Accept-Encoding': 'br, gzip, deflate'
     }
   })
   const bodyReader = Readable.fromWeb(response.body as ReadableStream<Uint8Array>)
@@ -189,6 +190,10 @@ export async function getEsGameMetadata(identifier: ScraperIdentifier): Promise<
       relatedSites.push({ label: 'Official Site', url: officialSite })
     }
     relatedSites.push({ label: 'ErogameScape', url: `${esUrl}/game.php?game=${id}` })
+    const coverUrl = $('div#main_image img').attr('src')
+    if (coverUrl) {
+      relatedSites.push({ label: 'Cover', url: coverUrl })
+    }
     // illustrators
     const exIllustration: Required<UnArray<GameMetadata['extra']>> = {
       key: 'illustration', // change to support i18n extra key
