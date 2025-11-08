@@ -195,6 +195,11 @@ export interface configDocs {
     snippingMode: 'rectangle' | 'activewindow' | 'fullscreen'
     enableNotificationSound: boolean
   }
+  record: {
+    weekly: {
+      mergeInterval: number
+    }
+  }
 }
 
 export interface configLocalDocs {
@@ -393,6 +398,11 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     },
     snippingMode: 'rectangle',
     enableNotificationSound: true
+  },
+  record: {
+    weekly: {
+      mergeInterval: 0
+    }
   }
 } as const
 
