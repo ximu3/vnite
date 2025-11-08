@@ -1,14 +1,14 @@
+import { useRouter, useSearch } from '@tanstack/react-router'
+import { CalendarIcon, ChevronLeft, ChevronRight, Clock, Trophy } from 'lucide-react'
+import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { Button, buttonVariants } from '~/components/ui/button'
 import { Calendar } from '~/components/ui/calendar'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '~/components/ui/chart'
 import { Separator } from '~/components/ui/separator'
-import { CalendarIcon, ChevronLeft, ChevronRight, Clock, Trophy } from 'lucide-react'
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
-
-import { getMonthlyPlayData } from '~/stores/game/recordUtils'
+import { getMonthlyPlayData, parseLocalDate } from '~/stores/game/recordUtils'
 import { cn } from '~/utils'
 import { GameRankingItem } from './GameRankingItem'
 import { StatCard } from './StatCard'
@@ -16,7 +16,49 @@ import { StatCard } from './StatCard'
 export function MonthlyReport(): React.JSX.Element {
   const { t } = useTranslation('record')
 
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+  const router = useRouter()
+  const search = useSearch({ from: '/record' })
+  const selectedDate = new Date(search.date)
+
+  const setSelectedDate = (newDate: Date): void => {
+    router.navigate({
+      to: '/record',
+      search: {
+        tab: 'monthly',
+        date: newDate.toISOString(),
+        year: newDate.getFullYear().toString()
+      }
+    })
+  }
+  const handleBarClick = (data: any): void => {
+    type DailyChartItem = (typeof dailyChartData)[number]
+    const { date } = data.payload as DailyChartItem
+    const dateUTC = parseLocalDate(date) // YYYY-MM-DD
+    const isoDate = dateUTC.toISOString()
+
+    router.navigate({
+      to: '/record',
+      search: {
+        tab: 'weekly',
+        date: isoDate,
+        year: dateUTC.getFullYear().toString()
+      }
+    })
+  }
+  const handleDayClick = (day: Date): void => {
+    const isoDate = day.toISOString()
+
+    router.navigate({
+      to: '/record',
+      search: {
+        tab: 'weekly',
+        date: isoDate,
+        year: day.getFullYear().toString()
+      }
+    })
+  }
+
+  // const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const monthData = getMonthlyPlayData(selectedDate)
 
   const goToPreviousMonth = (): void => {
@@ -30,6 +72,21 @@ export function MonthlyReport(): React.JSX.Element {
     nextMonth.setMonth(selectedDate.getMonth() + 1)
     setSelectedDate(nextMonth)
   }
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent): void => {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault()
+        goToPreviousMonth()
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault()
+        goToNextMonth()
+      }
+    }
+
+    window.addEventListener('keydown', handleKey, { capture: true })
+    return () => window.removeEventListener('keydown', handleKey, { capture: true })
+  }, [goToPreviousMonth, goToNextMonth])
 
   // Get month name
   const getLocalizedMonth = (monthIndex: number): string => {
@@ -52,7 +109,13 @@ export function MonthlyReport(): React.JSX.Element {
 
   const currentMonthName = getLocalizedMonth(selectedDate.getMonth())
 
-  // Preparing data for charts
+  // Data for charts, not weekly but daily
+  const dailyChartData = Object.entries(monthData.dailyPlayTime).map(([date, playTime]) => ({
+    date: date,
+    playTime: playTime / 3600000
+  }))
+
+  // Preparing data for charts (replaced by the above one)
   const weeklyChartData = monthData.weeklyPlayTime
     .map((item) => ({
       week: t('monthly.chart.weekFormat', { week: item.week }),
@@ -64,7 +127,7 @@ export function MonthlyReport(): React.JSX.Element {
 
   // Find the week with the longest game
   const mostPlayedWeek =
-    weeklyChartData.length > 0
+    weeklyChartData.filter((week) => week.playTime > 0).length > 0
       ? weeklyChartData.reduce(
           (max, current) => (current.playTime > max.playTime ? current : max),
           weeklyChartData[0]
@@ -126,6 +189,34 @@ export function MonthlyReport(): React.JSX.Element {
 
   const formatGameTime = (time: number): string => {
     return t('utils:format.gameTime', { time })
+  }
+
+  // Calendar heatmap
+  const HEAT_LEVELS = 8
+  const MIN_RATIO = 0.2
+  const MAX_RATIO = 0.9
+  const maxPlayTime = Math.max(1, ...Object.values(monthData.dailyPlayTime))
+
+  const heatLevelsByDate: Record<string, number> = {}
+  for (const [dateStr, playTime] of Object.entries(monthData.dailyPlayTime)) {
+    if (!playTime) continue
+    const ratio = playTime / maxPlayTime
+    const level = Math.min(HEAT_LEVELS, Math.ceil(ratio * HEAT_LEVELS))
+    heatLevelsByDate[dateStr] = level
+  }
+
+  const heatModifiers: Record<string, (date: Date) => boolean> = {}
+  const heatModifiersStyles: Record<string, React.CSSProperties> = {}
+  for (let level = 1; level <= HEAT_LEVELS; level++) {
+    const ratio = MIN_RATIO + ((MAX_RATIO - MIN_RATIO) * (level - 1)) / (HEAT_LEVELS - 1)
+
+    heatModifiers[`heat${level}`] = (date: Date) => {
+      const dateStr = t('utils:format.niceISO', { date })
+      return heatLevelsByDate[dateStr] === level
+    }
+    heatModifiersStyles[`heat${level}`] = {
+      backgroundColor: `color-mix(in srgb, var(--primary) ${ratio * 100}%, transparent)`
+    }
   }
 
   return (
@@ -194,30 +285,34 @@ export function MonthlyReport(): React.JSX.Element {
           </CardHeader>
           <CardContent className="pt-0">
             <ChartContainer config={chartConfig} className="h-[320px] w-full">
-              <AreaChart data={weeklyChartData}>
+              <BarChart data={dailyChartData}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="week" tickLine={false} axisLine={false} tickMargin={10} />
+                <XAxis
+                  dataKey="date"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={10}
+                  tickFormatter={(value) => value.slice(8)} // Day only
+                />
                 <YAxis tickLine={false} axisLine={false} tickMargin={10} />
                 <ChartTooltip
                   content={(props) => (
                     <ChartTooltipContent
                       {...props}
                       formatter={(value) => formatGameTime((value as number) * 3600000)}
-                      labelFormatter={(week) => `${week}`}
                       hideIndicator={false}
                       color="var(--primary)"
                     />
                   )}
                 />
-                <Area
-                  type="monotone"
+                <Bar
                   dataKey="playTime"
-                  stroke="var(--primary)"
-                  strokeWidth={2}
-                  fillOpacity={0.3}
                   fill="var(--primary)"
+                  onClick={handleBarClick}
+                  cursor="pointer"
+                  radius={[4, 4, 0, 0]}
                 />
-              </AreaChart>
+              </BarChart>
             </ChartContainer>
           </CardContent>
         </Card>
@@ -229,9 +324,9 @@ export function MonthlyReport(): React.JSX.Element {
           <CardContent>
             <Calendar
               mode="single"
-              selected={selectedDate}
               month={selectedDate} // Controls the displayed month
               onMonthChange={(date) => setSelectedDate(date)}
+              onDayClick={handleDayClick}
               className="p-0 rounded-md select-none"
               classNames={{
                 day: cn(
@@ -244,21 +339,15 @@ export function MonthlyReport(): React.JSX.Element {
                 played: (date) => {
                   const dateStr = t('utils:format.niceISO', { date })
                   return !!monthData.dailyPlayTime[dateStr] && monthData.dailyPlayTime[dateStr] > 0
-                }
+                },
+                ...heatModifiers
               }}
               modifiersStyles={{
                 today: {
                   backgroundColor: 'var(--card)',
                   color: 'inherit'
                 },
-                selected: {
-                  backgroundColor: 'var(--card)',
-                  color: 'inherit'
-                },
-                played: {
-                  backgroundColor: 'color-mix(in srgb, var(--primary) 80%, transparent)',
-                  color: 'var(--primary-foreground)'
-                }
+                ...heatModifiersStyles
               }}
             />
           </CardContent>
@@ -291,7 +380,9 @@ export function MonthlyReport(): React.JSX.Element {
                   </p>
                 </div>
               ) : (
-                <p>{t('monthly.highlights.noRecords')}</p>
+                <div className="col-span-2 py-6 text-center text-sm text-muted-foreground">
+                  {t('monthly.highlights.noRecords')}
+                </div>
               )}
 
               <Separator />
@@ -335,7 +426,9 @@ export function MonthlyReport(): React.JSX.Element {
                 />
               ))
             ) : (
-              <p className="col-span-2">{t('monthly.monthlyGames.noRecords')}</p>
+              <div className="col-span-2 py-6 text-center text-sm text-muted-foreground">
+                {t('monthly.monthlyGames.noRecords')}
+              </div>
             )}
           </CardContent>
         </Card>

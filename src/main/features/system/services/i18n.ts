@@ -25,7 +25,7 @@ export async function initI18n(): Promise<void> {
   try {
     const language = await getLanguage()
 
-    const namespaces = ['tray', 'scraper', 'context-menu']
+    const namespaces = ['tray', 'scraper', 'context-menu', 'system-notification']
 
     const supportedLngs = ['zh-CN', 'zh-TW', 'ja', 'en', 'ru', 'fr', 'ko']
 

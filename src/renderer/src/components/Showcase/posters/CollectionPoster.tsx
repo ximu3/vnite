@@ -7,6 +7,7 @@ import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
 import { GameImage } from '~/components/ui/game-image'
 import { useConfigState, useGameState } from '~/hooks'
 import { useGameCollectionStore } from '~/stores'
+import { filterGamesByNSFW } from '~/stores/game'
 import { cn } from '~/utils'
 import {
   attachClosestEdge,
@@ -49,7 +50,7 @@ function Preview({
         )}
       >
         <div className="flex flex-col items-center justify-center gap-1">
-          <div className={cn('text-accent-foreground text-lg font-semibold')}>{collectionName}</div>
+          <div className={cn('text-accent-foreground text-lg')}>{collectionName}</div>
           <div className={cn('text-accent-foreground/70')}>{`( ${collectionLength} )`}</div>
         </div>
       </div>
@@ -61,22 +62,27 @@ export function CollectionPoster({
   collectionId,
   className,
   parentGap = 24,
-  position = 'center'
+  position = 'center',
+  dragScenario
 }: {
   collectionId: string
   className?: string
   parentGap?: number // Gap(px) between posters
   position?: 'right' | 'left' | 'center' // poster position in the container
+  dragScenario?: string
 }): React.JSX.Element {
   const router = useRouter()
   const collections = useGameCollectionStore((state) => state.documents)
   const reorderCollections = useGameCollectionStore((state) => state.reorderCollections)
   const collectionName = collections[collectionId].name
-  const gameId = collections[collectionId].games[0]
   const collectionGames = collections[collectionId].games
-  const [nsfw] = useGameState(gameId, 'apperance.nsfw')
   const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
-  const length = collectionGames.length
+  const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
+
+  const filterGames = filterGamesByNSFW(nsfwFilterMode, collectionGames)
+  const length = filterGames.length // length > 0, guaranteed by parent component
+  const gameId = filterGames[0]
+  const [nsfw] = useGameState(gameId, 'apperance.nsfw')
 
   // Batch mode and selection state
   const { selectedGamesMap, selectGames, unselectGames, isBatchMode } = useGameBatchEditorStore()
@@ -132,6 +138,8 @@ export function CollectionPoster({
   const [previewState, setPreviewState] = useState<PreviewState>({ type: 'idle' })
 
   useEffect(() => {
+    if (!dragScenario) return
+
     const el = ref_.current
     invariant(el)
 
@@ -148,14 +156,14 @@ export function CollectionPoster({
             nativeSetDragImage
           })
         },
-        getInitialData: () => ({ dragScenario: 'reorder-collections', uuid: collectionId }),
+        getInitialData: () => ({ dragScenario: dragScenario, uuid: collectionId }),
         onDragStart: () => setDragging(true),
         onDrop: () => setDragging(false)
       }),
 
       dropTargetForElements({
         element: el,
-        canDrop: ({ source }) => source.data.dragScenario === 'reorder-collections',
+        canDrop: ({ source }) => source.data.dragScenario === dragScenario,
         getData: ({ input, element }) => {
           // your base data you want to attach to the drop target
           const data = { uuid: collectionId }
@@ -215,6 +223,8 @@ export function CollectionPoster({
                   gameId={gameId}
                   type="cover"
                   blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
+                  initialMask={true}
+                  blurType="poster"
                   alt={gameId}
                   className={cn('w-[155px] h-[155px] cursor-pointer object-cover', className)}
                   draggable="false"

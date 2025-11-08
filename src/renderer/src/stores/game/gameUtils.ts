@@ -1,11 +1,12 @@
-import type { MaxPlayTimeDay, gameDoc } from '@appTypes/models'
+import { NSFWFilterMode, type MaxPlayTimeDay, type gameDoc } from '@appTypes/models'
 import { calculateDailyPlayTime } from '@appUtils'
 import i18next from 'i18next'
-import type { Paths } from 'type-fest'
+import type { Get, Paths } from 'type-fest'
 import { parseLocalDate } from '~/stores/game/recordUtils'
 import { useConfigStore } from '../config'
 import { useGameRegistry } from './gameRegistry'
 import { getGameStore } from './gameStoreFactory'
+import { capDailyPlayTime } from '~/stores/game/recordUtils'
 
 // Search Functions
 export function searchGames(query: string): string[] {
@@ -51,6 +52,22 @@ export function randomGame(): string | null {
   return gameIds[randomIndex]
 }
 
+export function checkGameNSFW(mode: NSFWFilterMode, gameId: string): boolean {
+  switch (mode) {
+    case NSFWFilterMode.HideNSFW:
+      return !getGameStore(gameId).getState().getValue('apperance.nsfw')
+    case NSFWFilterMode.OnlyNSFW:
+      return getGameStore(gameId).getState().getValue('apperance.nsfw')
+    default:
+      return true
+  }
+}
+
+export function filterGamesByNSFW(mode: NSFWFilterMode, gameIds?: string[]): string[] {
+  if (!gameIds) gameIds = useGameRegistry.getState().gameIds
+  return [...gameIds].filter((id) => checkGameNSFW(mode, id))
+}
+
 // sorting function
 export function sortGames<Path extends Paths<gameDoc, { bracketNotation: true }>>(
   by: Path,
@@ -64,8 +81,16 @@ export function sortGames<Path extends Paths<gameDoc, { bracketNotation: true }>
     const storeA = getGameStore(a)
     const storeB = getGameStore(b)
 
-    const valueA = storeA.getState().getValue(by)
-    const valueB = storeB.getState().getValue(by)
+    let valueA = storeA.getState().getValue(by)
+    let valueB = storeB.getState().getValue(by)
+
+    if (by === 'metadata.sortName') {
+      const nameA = storeA.getState().getValue('metadata.name')
+      const nameB = storeB.getState().getValue('metadata.name')
+
+      valueA = (valueA as string)?.trim() ? valueA : (nameA as Get<gameDoc, Path>)
+      valueB = (valueB as string)?.trim() ? valueB : (nameB as Get<gameDoc, Path>)
+    }
 
     if (valueA == null && valueB == null) return 0
     if (valueA == null) return order === 'asc' ? 1 : -1
@@ -73,7 +98,7 @@ export function sortGames<Path extends Paths<gameDoc, { bracketNotation: true }>
     if (valueA === valueB) return 0
 
     if (typeof valueA === 'string' && typeof valueB === 'string') {
-      if (by === 'metadata.name') {
+      if (by === 'metadata.name' || by === 'metadata.sortName') {
         return order === 'asc'
           ? valueA.localeCompare(valueB, language || undefined)
           : valueB.localeCompare(valueA, language || undefined)
@@ -294,7 +319,9 @@ export function getAllValuesInKey<Path extends Paths<gameDoc, { bracketNotation:
       }
     }
 
-    return Array.from(values).filter((item) => item != '')
+    return Array.from(values)
+      .filter((item) => item != '')
+      .sort((a, b) => a.localeCompare(b))
   } catch (error) {
     console.error('Fatal error in getAllValuesInKey:', error)
     return []
@@ -594,8 +621,15 @@ export function getGameStartAndEndDate(gameId: string): { start: string; end: st
       return `${year}-${month}-${day}`
     }
 
-    const start = new Date(timers[0].start)
-    const end = new Date(timers[timers.length - 1].end)
+    const startTimestamps = timers.map((t) => Date.parse(t.start)).filter((ts) => !isNaN(ts))
+    const endTimestamps = timers.map((t) => Date.parse(t.end)).filter((ts) => !isNaN(ts))
+
+    if (endTimestamps.length === 0 || startTimestamps.length === 0) {
+      return { start: '', end: '' }
+    }
+
+    const start = new Date(Math.min(...startTimestamps))
+    const end = new Date(Math.max(...endTimestamps))
 
     return {
       start: formatDate(start),
@@ -653,6 +687,8 @@ export function getPlayedDaysYearly(): { [date: string]: number } {
           playTime += calculateDailyPlayTime(current, timers)
         }
       }
+
+      playTime = capDailyPlayTime(playTime, dateStr)
 
       datesArray.push({ date: dateStr, playTime })
       current.setDate(current.getDate() - 1)

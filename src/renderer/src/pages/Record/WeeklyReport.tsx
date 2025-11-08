@@ -1,21 +1,117 @@
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-
-import { Button } from '~/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '~/components/ui/chart'
-import { Separator } from '~/components/ui/separator'
+import { generateUUID } from '@appUtils'
+import { useRouter, useSearch } from '@tanstack/react-router'
+import { Button } from '@ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/card'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
+import { Separator } from '@ui/separator'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
-
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  ReferenceLine,
+  XAxis,
+  YAxis
+} from 'recharts'
+import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
+import { getGameStore } from '~/stores/game'
 import { getWeeklyPlayData, parseLocalDate } from '~/stores/game/recordUtils'
+import { scrollToElement } from '~/utils'
 import { GameRankingItem } from './GameRankingItem'
+import { MergeIntervalSliderPopover } from './MergeIntervalSliderPopover'
+
+interface TimeLineRow {
+  gameLabel: string
+  gameId: string
+  color: string
+  [key: `offset${number}`]: number
+  [key: `duration${number}`]: number
+  endOffset: number
+}
+
+function buildTimeLineChartData(
+  weekData: ReturnType<typeof getWeeklyPlayData>,
+  weekStartTime: number,
+  nextWeekStart: Date,
+  mergeMaxDurationMin: number // min
+): TimeLineRow[] {
+  const maxGapMs = mergeMaxDurationMin * 60 * 1000
+
+  const mergeTimers = (
+    timers: { start: string; end: string }[]
+  ): { start: number; end: number }[] => {
+    if (!timers || timers.length === 0) return []
+
+    const sorted = timers
+      .map((t) => ({
+        start: new Date(t.start).getTime(),
+        end: new Date(t.end).getTime()
+      }))
+      .sort((a, b) => a.start - b.start) // Although it is sorted in upstream...
+
+    const merged: { start: number; end: number }[] = []
+    let current = { ...sorted[0] }
+
+    for (let i = 1; i < sorted.length; i++) {
+      const gap = sorted[i].start - current.end
+      if (gap <= maxGapMs) {
+        current.end = Math.max(current.end, sorted[i].end)
+      } else {
+        merged.push(current)
+        current = { ...sorted[i] }
+      }
+    }
+    merged.push(current)
+    return merged
+  }
+
+  return Object.entries(weekData.weeklyPlayTimers).map(([gameId, timers], gameIndex) => {
+    const mergedTimers = mergeTimers(timers)
+    const gameLabel = getGameStore(gameId).getState().getValue('metadata.name')
+    const color = gameIndex % 2 === 0 ? 'var(--primary)' : 'var(--secondary)'
+
+    const row: TimeLineRow = { gameLabel, gameId, color, endOffset: 0 }
+    let accumulated = 0
+
+    mergedTimers.forEach((timer, idx) => {
+      const startTime = timer.start - weekStartTime
+      const endTime = timer.end - weekStartTime
+      const duration = endTime - startTime
+
+      const offset = startTime - accumulated
+      row[`offset${idx}`] = offset
+      row[`duration${idx}`] = duration
+      accumulated += offset + duration
+    })
+
+    row.endOffset = nextWeekStart.getTime() - weekStartTime - accumulated
+    return row
+  })
+}
 
 export function WeeklyReport(): React.JSX.Element {
   const { t } = useTranslation('record')
+  const router = useRouter()
+  const search = useSearch({ from: '/record' })
+  const selectedDate = new Date(search.date)
 
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date())
-  const weekData = getWeeklyPlayData(selectedDate)
+  const setSelectedDate = (newDate: Date): void => {
+    router.navigate({
+      to: '/record',
+      search: {
+        tab: 'weekly',
+        date: newDate.toISOString(),
+        year: newDate.getFullYear().toString()
+      }
+    })
+  }
+
+  const weekData = useMemo(() => getWeeklyPlayData(selectedDate), [search])
 
   const goToPreviousWeek = (): void => {
     const prevWeek = new Date(selectedDate)
@@ -29,6 +125,35 @@ export function WeeklyReport(): React.JSX.Element {
     setSelectedDate(nextWeek)
   }
 
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent): void => {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault()
+        goToPreviousWeek()
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault()
+        goToNextWeek()
+      }
+    }
+
+    window.addEventListener('keydown', handleKey, { capture: true })
+    return () => window.removeEventListener('keydown', handleKey, { capture: true })
+  }, [goToPreviousWeek, goToNextWeek])
+
+  const setLazyloadMark = usePositionButtonStore((state) => state.setLazyloadMark)
+  const handleTimeLineClick = (data: any): void => {
+    const gameId = data.gameId
+    router.navigate({ to: `/library/games/${gameId}/all` })
+    setTimeout(() => {
+      scrollToElement({
+        selector: `[data-game-id="${gameId}"][data-group-id="all"]`
+      })
+      setTimeout(() => {
+        setLazyloadMark(generateUUID())
+      }, 100)
+    }, 50)
+  }
+
   // Formatting weekly date ranges
   const weekStart = parseLocalDate(weekData.dates[0])
   const weekEnd = parseLocalDate(weekData.dates[weekData.dates.length - 1])
@@ -38,6 +163,7 @@ export function WeeklyReport(): React.JSX.Element {
     startDate: weekStart,
     endDate: weekEnd
   })
+  const weekStartTime = weekStart.getTime()
 
   const getLocalizedWeekday = (dayIndex: number): string => {
     const weekdayKeys = [
@@ -53,15 +179,41 @@ export function WeeklyReport(): React.JSX.Element {
   }
 
   // Converting daily game time to graphical data
-  const dailyChartData = weekData.dates.map((date) => {
-    const dayDate = parseLocalDate(date)
-    return {
-      date,
-      weekday: getLocalizedWeekday(dayDate.getDay()),
-      playTime: (weekData.dailyPlayTime[date] || 0) / 60000, // Convert to minutes
-      fullDate: date
-    }
-  })
+  const dailyChartData = useMemo(() => {
+    return weekData.dates.map((date) => {
+      const dayDate = parseLocalDate(date)
+      return {
+        date,
+        weekday: getLocalizedWeekday(dayDate.getDay()),
+        playTime: (weekData.dailyPlayTime[date] || 0) / 60000, // Convert to minutes
+        fullDate: date
+      }
+    })
+  }, [search])
+
+  const [mergeInterval, setMergeInterval] = useState(0)
+  const timeLineChartDataFlat = useMemo(() => {
+    return buildTimeLineChartData(weekData, weekStartTime, nextWeekStart, mergeInterval)
+  }, [search, mergeInterval])
+
+  const handleSliderCommit = useCallback(
+    (value: number) => {
+      setMergeInterval(value)
+    },
+    [setMergeInterval]
+  )
+
+  const maxTimersCount = Math.max(
+    0,
+    ...Object.values(weekData.weeklyPlayTimers).map((timers) => timers.length)
+  )
+  const totalHeight = timeLineChartDataFlat.length * 60 + 40
+
+  const twelveHours = 12 * 60 * 60 * 1000
+  const xTicks: number[] = []
+  for (let t = 0; t <= nextWeekStart.getTime() - weekStartTime; t += twelveHours) {
+    xTicks.push(t)
+  }
 
   const chartConfig = {
     playTime: {
@@ -139,6 +291,135 @@ export function WeeklyReport(): React.JSX.Element {
             </ChartContainer>
           </CardContent>
         </Card>
+        {/* Weekly Play Time Line Chart */}
+        <Card className="md:col-span-2">
+          <CardHeader className="flex flex-row">
+            <CardTitle>{t('weekly.playTimeLine.title')}</CardTitle>
+            <MergeIntervalSliderPopover
+              title={t('weekly.playTimeLine.mergeMaxInterval')}
+              initialValue={mergeInterval}
+              min={0}
+              max={120}
+              step={5}
+              onCommit={handleSliderCommit}
+            />
+          </CardHeader>
+          <CardContent className="pt-0">
+            {Object.keys(weekData.weeklyPlayTimers).length === 0 ? (
+              <div className="py-6 text-center text-sm text-muted-foreground">
+                {t('weekly.playTimeLine.noRecords')}
+              </div>
+            ) : (
+              <ChartContainer
+                config={chartConfig}
+                className="w-full"
+                style={{ height: `${totalHeight}px` }}
+              >
+                <BarChart data={timeLineChartDataFlat} layout="vertical">
+                  <XAxis
+                    type="number"
+                    tickLine={false}
+                    axisLine={false}
+                    ticks={xTicks}
+                    tickFormatter={(t) => {
+                      const date = new Date(t + weekStartTime)
+                      const hours = String(date.getHours()).padStart(2, '0')
+                      const minutes = String(date.getMinutes()).padStart(2, '0')
+
+                      if (hours === '00' && minutes === '00') {
+                        const month = String(date.getMonth() + 1).padStart(2, '0')
+                        const day = String(date.getDate()).padStart(2, '0')
+                        return `${month}-${day}`
+                      } else {
+                        return `${hours}:${minutes}`
+                      }
+                    }}
+                    orientation="top"
+                  />
+                  <YAxis
+                    type="category"
+                    dataKey="gameLabel"
+                    tickLine={false}
+                    axisLine={false}
+                    width="auto"
+                  />
+                  {xTicks.map((t, idx) => (
+                    <ReferenceLine
+                      key={t}
+                      x={t}
+                      stroke={'var(--muted-foreground)'}
+                      strokeOpacity={idx % 2 === 0 ? 0.6 : 0.25}
+                      strokeWidth={1}
+                      strokeDasharray="3 3"
+                    />
+                  ))}
+                  <ChartTooltip
+                    content={(props) => (
+                      <ChartTooltipContent
+                        {...props}
+                        blockFormatter
+                        labelFormatter={(label, data) => {
+                          if (!data || data.length === 0) return label
+
+                          const row = data[0].payload
+                          const gameName = row.gameLabel
+
+                          let totalTime = 0
+                          for (let i = 0; i < maxTimersCount; i++) {
+                            const durationKey = `duration${i}`
+                            if (row[durationKey] != null) {
+                              totalTime += row[durationKey]
+                            }
+                          }
+
+                          return `${gameName}\n${formatGameTime(totalTime)} (${((totalTime / weekData.totalTime) * 100).toFixed(2)}%)`
+                        }}
+                        labelClassName="leading-loose"
+                        hideIndicator={false}
+                        color="var(--primary)"
+                      />
+                    )}
+                  />
+                  {Array.from({ length: maxTimersCount }).map((_, idx) => (
+                    <Fragment key={`${search.date}-${idx}`}>
+                      <Bar
+                        key={`${search.date}-offset${idx}`}
+                        dataKey={`offset${idx}`}
+                        stackId={'a'}
+                        fill="transparent"
+                        onClick={handleTimeLineClick}
+                        cursor="pointer"
+                      />
+                      <Bar
+                        key={`${search.date}-duration${idx}`}
+                        dataKey={`duration${idx}`}
+                        stackId={'a'}
+                        radius={2}
+                        fill={'var(--primary)'}
+                        onClick={handleTimeLineClick}
+                        cursor="pointer"
+                      >
+                        {timeLineChartDataFlat.map((row) => (
+                          <Cell key={row.gameId} fill={row.color} />
+                        ))}
+                      </Bar>
+                    </Fragment>
+                  ))}
+                  {/* In order to make the end area also clickable */}
+                  <Bar
+                    key={`${search.date}-endOffset`}
+                    dataKey={`endOffset`}
+                    stackId={'a'}
+                    radius={2}
+                    fill="transparent"
+                    onClick={handleTimeLineClick}
+                    cursor="pointer"
+                  ></Bar>
+                </BarChart>
+              </ChartContainer>
+            )}
+          </CardContent>
+        </Card>
         {/* Weekly Highlights Card */}
         <Card>
           <CardHeader>
@@ -164,7 +445,9 @@ export function WeeklyReport(): React.JSX.Element {
                   </p>
                 </div>
               ) : (
-                <p>{t('weekly.highlights.noRecords')}</p>
+                <div className="py-6 text-center text-sm text-muted-foreground">
+                  {t('weekly.highlights.noRecords')}
+                </div>
               )}
 
               <Separator />
@@ -207,7 +490,9 @@ export function WeeklyReport(): React.JSX.Element {
                   />
                 ))
               ) : (
-                <p>{t('weekly.weeklyGames.noRecords')}</p>
+                <div className="py-6 text-center text-sm text-muted-foreground">
+                  {t('weekly.weeklyGames.noRecords')}
+                </div>
               )}
             </div>
           </CardContent>

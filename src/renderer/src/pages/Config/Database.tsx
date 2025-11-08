@@ -19,12 +19,15 @@ import { toast } from 'sonner'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ipcManager } from '~/app/ipc'
+import { ConfigItem } from '~/components/form/ConfigItem'
+import { useConfigState } from '~/hooks'
 
 export function Database(): React.JSX.Element {
   const { t } = useTranslation('config')
   const [isPortable, setIsPortable] = useState<boolean>(false)
   const [isAdmin, setIsAdmin] = useState<boolean>(false)
   const [switchDialogOpen, setSwitchDialogOpen] = useState<boolean>(false)
+  const [imgStorageBackend] = useConfigState('memory.image.storageBackend')
 
   useEffect(() => {
     ipcManager.invoke('app:is-portable-mode').then((isPortable) => {
@@ -113,130 +116,202 @@ export function Database(): React.JSX.Element {
       }
     )
   }
-
   return (
-    <Card className={cn('group')}>
-      <CardHeader>
-        <CardTitle className={cn('relative')}>
-          <div className={cn('flex flex-row justify-between items-center')}>
-            <div className={cn('flex items-center')}>{t('database.title')}</div>
-          </div>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className={cn('space-y-5 w-full')}>
-          {/* Portable Mode Setting */}
-          <ConfigItemPure
-            title={t('database.portableMode')}
-            description={t('database.portableModeDescription')}
-          >
-            <Switch
-              checked={isPortable}
-              onClick={handleSwitchClick}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
-                  handleSwitchClick()
-                }
-              }}
-            />
-            <AlertDialog open={switchDialogOpen} onOpenChange={setSwitchDialogOpen}>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>
-                    {t('database.confirmSwitch', {
-                      mode: isPortable ? t('database.modes.normal') : t('database.modes.portable')
-                    })}
-                  </AlertDialogTitle>
-                  <AlertDialogDescription>
-                    {!isPortable && (
-                      <>
-                        {t('database.portableAdminRequired')}
-                        <br />
-                      </>
-                    )}
-                    {t('database.switchDescription')}
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>{t('utils:common.cancel')}</AlertDialogCancel>
-                  <AlertDialogAction onClick={switchDatabaseMode}>
-                    {t('utils:common.confirm')}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </ConfigItemPure>
-
-          <Separator />
-
-          {/* Database Operations */}
-          <div className={cn('space-y-4')}>
+    <>
+      <Card className={cn('group')}>
+        <CardHeader>
+          <CardTitle className={cn('relative')}>
+            <div className={cn('flex flex-row justify-between items-center')}>
+              <div className={cn('flex items-center')}>{t('database.title')}</div>
+            </div>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className={cn('space-y-5 w-full')}>
+            {/* Portable Mode Setting */}
             <ConfigItemPure
-              title={t('database.openFolder')}
-              description={t('database.openFolderDescription')}
+              title={t('database.portableMode')}
+              description={t('database.portableModeDescription')}
             >
-              <Button
-                variant={'outline'}
-                onClick={async () => {
-                  await ipcManager.invoke('utils:open-database-path-in-explorer')
+              <Switch
+                checked={isPortable}
+                onClick={handleSwitchClick}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    handleSwitchClick()
+                  }
                 }}
-              >
-                {t('database.openFolder')}
-              </Button>
-            </ConfigItemPure>
-
-            <ConfigItemPure
-              title={t('database.backup')}
-              description={t('database.backupDescription')}
-            >
-              <div className={cn('flex flex-row gap-5 items-center')}>
-                <Button onClick={backup}>{t('database.backup')}</Button>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button>{t('database.import')}</Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>{t('database.confirmImport')}</AlertDialogTitle>
-                      <AlertDialogDescription>{t('database.importWarning')}</AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>{t('utils:common.cancel')}</AlertDialogCancel>
-                      <AlertDialogAction onClick={restore}>
-                        {t('utils:common.confirm')}
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
-            </ConfigItemPure>
-
-            <ConfigItemPure
-              title={t('database.importV2')}
-              description={t('database.importV2Description')}
-            >
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant={'outline'}>{t('database.importV2')}</Button>
-                </AlertDialogTrigger>
+              />
+              <AlertDialog open={switchDialogOpen} onOpenChange={setSwitchDialogOpen}>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>{t('database.confirmImportV2')}</AlertDialogTitle>
-                    <AlertDialogDescription>{t('database.importV2Warning')}</AlertDialogDescription>
+                    <AlertDialogTitle>
+                      {t('database.confirmSwitch', {
+                        mode: isPortable ? t('database.modes.normal') : t('database.modes.portable')
+                      })}
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      {!isPortable && (
+                        <>
+                          {t('database.portableAdminRequired')}
+                          <br />
+                        </>
+                      )}
+                      {t('database.switchDescription')}
+                    </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>{t('utils:common.cancel')}</AlertDialogCancel>
-                    <AlertDialogAction onClick={importV2Data}>
+                    <AlertDialogAction onClick={switchDatabaseMode}>
                       {t('utils:common.confirm')}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
             </ConfigItemPure>
+
+            <Separator />
+
+            {/* Database Operations */}
+            <div className={cn('space-y-4')}>
+              <ConfigItemPure
+                title={t('database.openFolder')}
+                description={t('database.openFolderDescription')}
+              >
+                <Button
+                  variant={'outline'}
+                  onClick={async () => {
+                    await ipcManager.invoke('utils:open-database-path-in-explorer')
+                  }}
+                >
+                  {t('database.openFolder')}
+                </Button>
+              </ConfigItemPure>
+
+              <ConfigItemPure
+                title={t('database.backup')}
+                description={t('database.backupDescription')}
+              >
+                <div className={cn('flex flex-row gap-5 items-center')}>
+                  <Button onClick={backup}>{t('database.backup')}</Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button>{t('database.import')}</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>{t('database.confirmImport')}</AlertDialogTitle>
+                        <AlertDialogDescription>{t('database.importWarning')}</AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>{t('utils:common.cancel')}</AlertDialogCancel>
+                        <AlertDialogAction onClick={restore}>
+                          {t('utils:common.confirm')}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              </ConfigItemPure>
+
+              <ConfigItemPure
+                title={t('database.importV2')}
+                description={t('database.importV2Description')}
+              >
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant={'outline'}>{t('database.importV2')}</Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>{t('database.confirmImportV2')}</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        {t('database.importV2Warning')}
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>{t('utils:common.cancel')}</AlertDialogCancel>
+                      <AlertDialogAction onClick={importV2Data}>
+                        {t('utils:common.confirm')}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </ConfigItemPure>
+            </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+      <div className="py-2" />
+      {/* memory related configurations */}
+      <Card className={cn('group')}>
+        <CardHeader>
+          <CardTitle className={cn('relative')}>
+            <div className={cn('flex flex-row justify-between items-center')}>
+              <div className={cn('flex items-center')}>{t('memory.title')}</div>
+            </div>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className={cn('space-y-5 w-full')}>
+            {/* Database Operations */}
+            <div className={cn('space-y-4')}>
+              <ConfigItem
+                hookType="config"
+                path="memory.snippingMode"
+                title={t('memory.snippingMode.title')}
+                description={t('memory.snippingMode.description')}
+                controlType="select"
+                options={[
+                  { value: 'rectangle', label: t('memory.snippingMode.options.rectangle') },
+                  { value: 'activewindow', label: t('memory.snippingMode.options.activeWindow') },
+                  { value: 'fullscreen', label: t('memory.snippingMode.options.fullscreen') }
+                ]}
+              />
+              <ConfigItem
+                hookType="config"
+                path="memory.enableNotificationSound"
+                title={t('memory.enableNotificationSound.title')}
+                description={t('memory.enableNotificationSound.description')}
+                controlType="switch"
+              />
+              <ConfigItem
+                hookType="config"
+                path="memory.image.storageBackend"
+                title={t('memory.storageBackend.title')}
+                description={t('memory.storageBackend.description')}
+                controlType="select"
+                options={[
+                  { value: 'database', label: t('memory.storageBackend.options.database') },
+                  { value: 'filesystem', label: t('memory.storageBackend.options.fileSystem') },
+                  { value: 'both', label: t('memory.storageBackend.options.both') }
+                ]}
+              />
+              <ConfigItem
+                hookType="config"
+                path="memory.image.saveDir"
+                title={t('memory.saveDir.title')}
+                description={t('memory.saveDir.description')}
+                controlType="fileinput"
+                placeholder={t('memory.saveDir.placeholder')}
+                dialogType="openDirectory"
+                disabled={imgStorageBackend === 'database'}
+              />
+              <ConfigItem
+                hookType="config"
+                path="memory.image.namingRule"
+                title={t('memory.namingRule.title')}
+                description={t('memory.namingRule.description')}
+                controlType="input"
+                inputType="text"
+                placeholder={t('memory.namingRule.placeholder')}
+                disabled={imgStorageBackend === 'database'}
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </>
   )
 }

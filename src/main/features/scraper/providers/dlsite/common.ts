@@ -3,9 +3,45 @@ import * as cheerio from 'cheerio'
 import { GameList, GameMetadata } from '@appTypes/utils'
 import { getLanguage } from '~/features/system/services/i18n'
 import { extractReleaseDateWithLibrary } from './i18n'
+import { ConfigDBManager } from '~/core/database'
 import i18next from 'i18next'
 
+const ID_REGEX = /(rj|re|vj)\d{4,}/gi
+
+function buildDlsiteWorkUrl(dlsiteId: string, language?: string): string {
+  const localePart = language ? `?locale=${language}` : ''
+  if (dlsiteId.startsWith('VJ')) {
+    return `https://www.dlsite.com/pro/work/=/product_id/${dlsiteId}.html${localePart}`
+  }
+  return `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html${localePart}`
+}
+
 export async function searchDlsiteGames(gameName: string): Promise<GameList> {
+  const findIdInName = await ConfigDBManager.getConfigValue('game.scraper.dlsite.findIdInName')
+  if (findIdInName) {
+    // Check if the game name contains a id pattern like "RJ123456"
+    const matchIds = [...gameName.matchAll(ID_REGEX)]
+    // Return the first sucessfully fetched result
+    for (let i = 0; i < matchIds.length; i++) {
+      const dlsiteId = matchIds[i][0].toUpperCase()
+      try {
+        const gameMetadata = await getDlsiteMetadata(dlsiteId)
+        if (gameMetadata.name && gameMetadata.name.length > 0) {
+          const result: GameList = [
+            {
+              id: dlsiteId,
+              name: gameMetadata.name,
+              releaseDate: gameMetadata.releaseDate,
+              developers: gameMetadata.developers
+            }
+          ]
+          return result
+        }
+      } catch (error) {
+        console.info(`Error fetching metadata for extracted ID ${dlsiteId}:`, error)
+      }
+    }
+  }
   const encodedQuery = encodeURIComponent(gameName.trim()).replace(/%20/g, '+')
   const language = await getLanguage()
   const url = `https://www.dlsite.com/maniax/fsr/=/language/jp/keyword/${encodedQuery}/?locale=${language}`
@@ -60,7 +96,7 @@ export async function searchDlsiteGames(gameName: string): Promise<GameList> {
 export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata> {
   // Try to access the work page
   const language = await getLanguage()
-  const url = `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html?locale=${language}`
+  const url = buildDlsiteWorkUrl(dlsiteId, language)
 
   const response = await net.fetch(url, {
     headers: {
@@ -282,7 +318,7 @@ export async function getDlsiteMetadataByName(gameName: string): Promise<GameMet
 
 export async function getGameBackgrounds(dlsiteId: string): Promise<string[]> {
   try {
-    const url = `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html`
+    const url = buildDlsiteWorkUrl(dlsiteId)
     const language = await getLanguage()
 
     const response = await net.fetch(url, {
@@ -342,7 +378,7 @@ export async function getGameBackgroundsByName(gameName: string): Promise<string
 
 export async function getGameCover(dlsiteId: string): Promise<string> {
   try {
-    const url = `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html`
+    const url = buildDlsiteWorkUrl(dlsiteId)
     const language = await getLanguage()
 
     const response = await net.fetch(url, {
@@ -413,7 +449,7 @@ export async function getGameCoverByName(gameName: string): Promise<string> {
 
 export async function checkGameExists(dlsiteId: string): Promise<boolean> {
   try {
-    const url = `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html`
+    const url = buildDlsiteWorkUrl(dlsiteId)
 
     const response = await net.fetch(url, {
       headers: {

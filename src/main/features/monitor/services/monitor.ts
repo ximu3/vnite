@@ -12,6 +12,9 @@ import { psManager } from '~/utils'
 import { ipcManager } from '~/core/ipc'
 import { eventBus } from '~/core/events'
 import { ActiveGameInfo } from '~/features/game'
+import { Mutex } from 'async-mutex'
+import { removeMonitorStub } from './nativeMonitor'
+import { TimerStatus } from '@appTypes/models'
 
 async function getProcessList(): Promise<
   Array<{
@@ -110,8 +113,11 @@ export class GameMonitor {
   private ipcHandler?: (_event: Electron.IpcMainInvokeEvent, gameId: string) => Promise<void>
   private startTime?: string
   private endTime?: string
+  private foregroundChanges: { time: string; eventType: TimerStatus }[] = []
   private exiting: boolean = false
   private stopping: boolean = false
+  // a mutex for operations which need to write `monitoredProcesses`
+  private mutex: Mutex
 
   constructor(options: GameMonitorOptions) {
     this.options = {
@@ -120,7 +126,7 @@ export class GameMonitor {
       magpieHotkey: 'win+alt+a',
       ...options
     }
-
+    this.mutex = new Mutex()
     this.setupIpcListener()
   }
 
@@ -151,6 +157,7 @@ export class GameMonitor {
         await this.terminateProcess(monitored)
       }
     }
+    removeMonitorStub(this.options.gameId)
     this.handleGameExit()
   }
 
@@ -226,28 +233,30 @@ export class GameMonitor {
 
   public async init(): Promise<void> {
     try {
-      if (this.options.config.mode === 'folder') {
-        const files = await this.getExecutableFiles(this.options.config.path)
-        this.monitoredProcesses = files.map((file) => ({
-          path: file,
-          isRunning: false
-        }))
-      } else if (this.options.config.mode === 'file') {
-        this.monitoredProcesses = [
-          {
-            path: this.options.config.path,
+      await this.mutex.runExclusive(async () => {
+        if (this.options.config.mode === 'folder') {
+          const files = await this.getExecutableFiles(this.options.config.path)
+          this.monitoredProcesses = files.map((file) => ({
+            path: file,
             isRunning: false
-          }
-        ]
-      } else if (this.options.config.mode === 'process') {
-        this.monitoredProcesses = [
-          {
-            path: this.options.config.path,
-            isRunning: false,
-            isProcessNameMode: true // Mark as process name monitoring mode
-          }
-        ]
-      }
+          }))
+        } else if (this.options.config.mode === 'file') {
+          this.monitoredProcesses = [
+            {
+              path: this.options.config.path,
+              isRunning: false
+            }
+          ]
+        } else if (this.options.config.mode === 'process') {
+          this.monitoredProcesses = [
+            {
+              path: this.options.config.path,
+              isRunning: false,
+              isProcessNameMode: true // Mark as process name monitoring mode
+            }
+          ]
+        }
+      })
     } catch (error) {
       log.error(`[Monitor] Failed to initialize monitor for game ${this.options.gameId}:`, error)
     }
@@ -276,6 +285,123 @@ export class GameMonitor {
 
     await scan(dirPath)
     return executableFiles
+  }
+
+  // Compare the given gameId with its own
+  public isGame(gameId: string): boolean {
+    return this.options.gameId === gameId
+  }
+
+  public pushForegroundChange(eventType: TimerStatus): void {
+    const time = new Date().toISOString()
+    this.foregroundChanges.push({ time, eventType })
+  }
+
+  public getTimerStatus(): TimerStatus {
+    if (this.foregroundChanges.length === 0) {
+      if (this.endTime) {
+        return TimerStatus.Paused
+      }
+      return TimerStatus.Resumed
+    }
+    return this.foregroundChanges.at(-1)!.eventType
+  }
+
+  // return value
+  // 0 stands for no change
+  // 1 stands for resumption
+  // -1 stands for pause
+  public diffForegroundChange(): number {
+    if (this.foregroundChanges.length < 2) {
+      return 0
+    }
+    const prev = this.foregroundChanges.at(-2)!.eventType
+    const cur = this.foregroundChanges.at(-1)!.eventType
+    if (prev === TimerStatus.Paused && cur === TimerStatus.Resumed) {
+      return 1
+    }
+    if (prev === TimerStatus.Resumed && cur === TimerStatus.Paused) {
+      return -1
+    }
+    return 0
+  }
+
+  // Imitate monitoring behaviours to preserve compatibility.
+  // This function may be invoked multiple times in a single GameMonitor object if the
+  // monitoring mode is `folder` and there are more than one executables inside that folder
+  // are launched.
+  public async phantomStart(gameId: string, fullpath?: string, pid?: number): Promise<void> {
+    await this.mutex.runExclusive(async () => {
+      if (pid && this.monitoredProcesses.some((process) => process.pid === pid)) {
+        return
+      }
+      // When users launch game from Vnite, this method will be invoked by a main thread IPC
+      // listener, which in turn is notified by the renderer thread.
+      // In that case, the renderer has no prior knowledge of the path and pid, so we just
+      // record the start time and return, waiting for the message from the native monitor so
+      // this method is get invoked again with the path and pid present.
+      // If the user is unlucky enough to encounter an event loss case, they can still manually
+      // stop the game from the Vnite main window to ensure the play time is recorded properly.
+      if (!this.startTime) {
+        this.startTime = new Date().toISOString()
+      }
+      if (!fullpath || !pid) {
+        return
+      }
+      const monitoredProcess = {
+        path: fullpath,
+        pid: pid,
+        isRunning: true,
+        isScaled: false
+      }
+      this.isRunning = true
+
+      ActiveGameInfo.updateGameInfo(gameId, {
+        pid: pid,
+        path: fullpath
+      })
+
+      // Check if Magpie scaling is enabled
+      const useMagpie = await GameDBManager.getGameLocalValue(gameId, 'launcher.useMagpie')
+      const magpiePath = await ConfigDBManager.getConfigLocalValue('game.linkage.magpie.path')
+
+      if (useMagpie && !monitoredProcess.isScaled && magpiePath) {
+        await startMagpie()
+        // Wait a while for the game window to fully load
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+        // Simulate pressing the Magpie shortcut
+        const magpieHotkey = await ConfigDBManager.getConfigLocalValue('game.linkage.magpie.hotkey')
+        simulateHotkey(magpieHotkey)
+        monitoredProcess.isScaled = true
+      }
+
+      this.monitoredProcesses.push(monitoredProcess)
+    })
+  }
+
+  // Imitate monitoring behaviours to preserve compatibility.
+  // This function may be invoked multiple times in a single GameMonitor object if the
+  // monitoring mode is `folder` and there are more than one executables inside that folder
+  // are terminated.
+  // Return `true` if all the processes are stopped, `false` if there are still some processes
+  // keep running.
+  public async phantomStop(pid: number): Promise<boolean> {
+    const isAllExited = await this.mutex.runExclusive(() => {
+      const process = this.monitoredProcesses.find((process) => process.pid === pid)
+      if (process) {
+        process.isRunning = false
+      }
+      // if all monitored processes are stopped
+      if (
+        this.monitoredProcesses.length === 0 ||
+        this.monitoredProcesses.every((x) => !x.isRunning)
+      ) {
+        this.handleGameExit()
+        return true
+      }
+      return false
+    })
+    return isAllExited
   }
 
   public async start(): Promise<void> {
@@ -421,6 +547,7 @@ export class GameMonitor {
     }
   }
 
+  // Do not require mutex in this method, this will result in a dead lock
   private async handleGameExit(): Promise<void> {
     if (this.exiting) {
       return
@@ -443,16 +570,39 @@ export class GameMonitor {
     ipcManager.send('game:exiting', this.options.gameId)
 
     const timers = await GameDBManager.getGameValue(this.options.gameId, 'record.timers')
+    let playTime = await GameDBManager.getGameValue(this.options.gameId, 'record.playTime')
 
-    timers.push({
-      start: this.startTime || '',
-      end: this.endTime
-    })
+    let time = this.startTime!
+    let stat = TimerStatus.Resumed
+    for (const change of this.foregroundChanges) {
+      if (change.eventType === stat) {
+        continue
+      }
+      switch (change.eventType) {
+        case TimerStatus.Paused: // status changed from 'continue' to 'pause', push this playing period
+          timers.push({
+            start: time,
+            end: change.time
+          })
+          playTime += new Date(change.time).getTime() - new Date(time).getTime()
+          break
+        case TimerStatus.Resumed: // status changed from 'pause' to 'continue', keep the start time (just break)
+          break
+      }
+      stat = change.eventType
+      time = change.time
+    }
+    // after the end of loop, check if we need to record the last playing period
+    if (stat === TimerStatus.Resumed) {
+      timers.push({
+        start: time,
+        end: this.endTime
+      })
+      playTime += new Date(this.endTime).getTime() - new Date(time).getTime()
+    }
+
     await GameDBManager.setGameValue(this.options.gameId, 'record.timers', timers)
     await GameDBManager.setGameValue(this.options.gameId, 'record.lastRunDate', this.endTime)
-
-    let playTime = await GameDBManager.getGameValue(this.options.gameId, 'record.playTime')
-    playTime += new Date(this.endTime).getTime() - new Date(this.startTime!).getTime()
     await GameDBManager.setGameValue(this.options.gameId, 'record.playTime', playTime)
 
     // Stop monitoring
@@ -485,5 +635,9 @@ export class GameMonitor {
       startTime: this.startTime,
       endTime: this.endTime
     }
+  }
+
+  public getMonitorPath(): string {
+    return this.options.config.path
   }
 }

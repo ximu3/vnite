@@ -10,13 +10,13 @@ import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTi
 import { GamePropertiesDialog } from '~/components/Game/Config/Properties'
 import { BatchGameNavCM } from '~/components/GameBatchEditor/BatchGameNavCM'
 import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
-import { Button } from '~/components/ui/button'
 import { ContextMenu, ContextMenuTrigger } from '~/components/ui/context-menu'
 import { GameImage } from '~/components/ui/game-image'
 import { useConfigState, useGameState } from '~/hooks'
 import { useRunningGames } from '~/pages/Library/store'
 import { useGameRegistry } from '~/stores/game'
-import { cn, navigateToGame, startGame, stopGame } from '~/utils'
+import { cn, navigateToGame } from '~/utils'
+import { PlayButton } from './PlayButton'
 
 export function BigGamePoster({
   gameId,
@@ -123,6 +123,7 @@ export function BigGamePoster({
                   gameId={gameId}
                   type="background"
                   blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
+                  initialMask={true}
                   blurType="bigposter"
                   className={cn(
                     'h-[222px] aspect-[3/2] cursor-pointer select-none object-cover rounded-lg bg-accent/30',
@@ -167,31 +168,13 @@ export function BigGamePoster({
 
                 {/* Play button */}
                 <div className="absolute inset-0 flex items-center justify-center flex-grow">
-                  {showPlayButtonOnPoster &&
-                    (runningGames.includes(gameId) ? (
-                      <Button
-                        variant="secondary"
-                        className="rounded-full w-[46px] h-[46px] p-0 bg-secondary hover:bg-secondary/90"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          stopGame(gameId)
-                        }}
-                      >
-                        <span className="icon-[mdi--stop] text-secondary-foreground w-7 h-7"></span>
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="default"
-                        className="rounded-full w-[46px] h-[46px] p-0 bg-primary hover:bg-primary/90"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          navigateToGame(navigate, gameId, groupId || 'all')
-                          startGame(gameId)
-                        }}
-                      >
-                        <span className="icon-[mdi--play] text-primary-foreground w-7 h-7"></span>
-                      </Button>
-                    ))}
+                  {showPlayButtonOnPoster && (
+                    <PlayButton
+                      type={runningGames.includes(gameId) ? 'stop' : 'play'}
+                      gameId={gameId}
+                      groupId={groupId}
+                    />
+                  )}
                 </div>
 
                 {/* Game info */}

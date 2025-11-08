@@ -1,8 +1,12 @@
 export enum NSFWBlurLevel {
   Off = 0,
   BlurImage = 1,
-  BlurImageAndTitle = 2,
-  HideGame = 3 // TODO: reserved for future implementation
+  BlurImageAndTitle = 2
+}
+export enum NSFWFilterMode {
+  All = 0,
+  HideNSFW = 1,
+  OnlyNSFW = 2
 }
 export interface configDocs {
   general: {
@@ -10,6 +14,9 @@ export interface configDocs {
     quitToTray: boolean
     language: string
     hideWindowAfterGameStart: boolean
+    processMonitor: 'new' | 'legacy'
+    enableForegroundTimer: boolean
+    foregroundWaitTime: number
   }
   game: {
     scraper: {
@@ -19,11 +26,15 @@ export interface configDocs {
       vndb: {
         tagSpoilerLevel: 0 | 1 | 2
       }
+      dlsite: {
+        findIdInName: boolean
+      }
     }
     showcase: {
       sort: {
         by:
           | 'metadata.name'
+          | 'metadata.sortName'
           | 'metadata.releaseDate'
           | 'record.lastRunDate'
           | 'record.addDate'
@@ -35,12 +46,14 @@ export interface configDocs {
       sort: {
         by:
           | 'metadata.name'
+          | 'metadata.sortName'
           | 'metadata.releaseDate'
           | 'record.lastRunDate'
           | 'record.addDate'
           | 'record.playTime'
         order: 'asc' | 'desc'
       }
+      overrideCollectionSort: boolean
       selectedGroup:
         | 'none'
         | 'collection'
@@ -50,11 +63,9 @@ export interface configDocs {
       highlightLocalGames: boolean
       markLocalGames: boolean
       showRecentGames: boolean
+      showAllGamesInGroup: boolean
       showCollapseButton: boolean
       playingStatusOrder: string[]
-      playStatusAccordionOpen: string[]
-      allGamesAccordionOpen: boolean
-      recentGamesAccordionOpen: boolean
     }
     gameHeader: {
       showOriginalName: boolean
@@ -91,6 +102,7 @@ export interface configDocs {
       }
     }
     nsfwBlurLevel: NSFWBlurLevel
+    nsfwFilterMode: NSFWFilterMode
     fonts: {
       family: string
       size: number
@@ -174,6 +186,15 @@ export interface configDocs {
       }[]
     }
   }
+  memory: {
+    image: {
+      storageBackend: 'filesystem' | 'database' | 'both'
+      saveDir: string
+      namingRule: string
+    }
+    snippingMode: 'rectangle' | 'activewindow' | 'fullscreen'
+    enableNotificationSound: boolean
+  }
 }
 
 export interface configLocalDocs {
@@ -229,6 +250,15 @@ export interface configLocalDocs {
       }
     }
   }
+  network: {
+    proxy: {
+      enable: boolean
+      protocol: 'http' | 'https' | 'socks4' | 'socks5'
+      host: string
+      port: number
+      bypassRules: string
+    }
+  }
 }
 
 export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
@@ -236,7 +266,10 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     openAtLogin: false,
     quitToTray: false,
     language: '',
-    hideWindowAfterGameStart: true
+    hideWindowAfterGameStart: true,
+    processMonitor: 'new',
+    enableForegroundTimer: true,
+    foregroundWaitTime: 10
   },
   game: {
     scraper: {
@@ -245,6 +278,9 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       },
       vndb: {
         tagSpoilerLevel: 0
+      },
+      dlsite: {
+        findIdInName: false
       }
     },
     showcase: {
@@ -258,15 +294,14 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
         by: 'metadata.name',
         order: 'desc' as const
       },
+      overrideCollectionSort: false,
       selectedGroup: 'collection',
       highlightLocalGames: true,
       markLocalGames: false,
       showRecentGames: true,
+      showAllGamesInGroup: true,
       showCollapseButton: true,
-      playingStatusOrder: ['unplayed', 'playing', 'finished', 'multiple', 'shelved'],
-      playStatusAccordionOpen: ['unplayed', 'playing', 'finished', 'multiple', 'shelved'],
-      allGamesAccordionOpen: true,
-      recentGamesAccordionOpen: true
+      playingStatusOrder: ['unplayed', 'playing', 'partial', 'finished', 'multiple', 'shelved']
     },
     gameHeader: {
       showOriginalName: false
@@ -303,6 +338,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       }
     },
     nsfwBlurLevel: NSFWBlurLevel.Off,
+    nsfwFilterMode: NSFWFilterMode.All,
     fonts: {
       family: 'LXGW WenKai Mono',
       size: 1, // in rem
@@ -348,6 +384,15 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
         }
       ]
     }
+  },
+  memory: {
+    image: {
+      storageBackend: 'database',
+      saveDir: '',
+      namingRule: '%datetime%'
+    },
+    snippingMode: 'rectangle',
+    enableNotificationSound: true
   }
 } as const
 
@@ -402,6 +447,15 @@ export const DEFAULT_CONFIG_LOCAL_VALUES: Readonly<configLocalDocs> = {
           targetCollection: string
         }
       }
+    }
+  },
+  network: {
+    proxy: {
+      enable: false,
+      protocol: 'http',
+      host: '',
+      port: 0,
+      bypassRules: '<local>,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fd00::/8'
     }
   }
 } as const

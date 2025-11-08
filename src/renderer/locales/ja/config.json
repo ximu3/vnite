@@ -4,20 +4,37 @@
     "title": "一般",
     "language": "言語",
     "languageDescription": "アプリケーションの表示言語を選択",
-    "openAtLogin": "ログイン時に開く",
+    "openAtLogin": "起動時に開く",
     "openAtLoginDescription": "システム起動時に自動的にアプリケーションを開く",
     "theme": "テーマスタイル",
     "themeDescription": "アプリケーションのテーマスタイルを選択",
     "darkTheme": "ダーク",
     "lightTheme": "ライト",
     "followSystem": "システムに従う",
-    "closeMainPanel": "メインパネルを閉じる",
+    "closeMainPanel": "メインウィンドウを閉じる",
     "closeMainPanelDescription": "メインウィンドウを閉じる時の動作を選択",
     "action": "アクション",
     "quitApp": "vniteを終了",
     "minimizeToTray": "トレイに最小化",
     "hideWindowAfterGameStart": "ゲーム起動後にトレイに最小化する",
-    "hideWindowAfterGameStartDescription": "ゲーム起動後に自動的にメインウィンドウを隠す"
+    "hideWindowAfterGameStartDescription": "ゲーム起動後に自動的にメインウィンドウを隠す",
+    "processMonitor": {
+      "title": "プロセスモニター",
+      "description": "ゲームプロセスをモニタリングする方法を選択する。ゲーム起動中はこの設定を変更できません\n\n自動: 効率重視、Vnite からゲームを起動する必要がありません\nレガシー: 安定性重視、必ず Vnite からゲームを起動する必要があります",
+      "options": {
+        "new": "自動",
+        "legacy": "レガシー"
+      }
+    },
+    "timerTitle": "ゲームタイマー",
+    "foregroundTimer": {
+      "title": "フォアグラウンドタイマー",
+      "description": "ゲームウィンドウがバックグラウンドに切り替えられる際にタイマーを一時停止するかどうかを選択する。プロセスモニターが「自動」に設定された場合のみ機能する。\nゲーム実行中は変更できません"
+    },
+    "foregroundWaitTime": {
+      "title": "ウェイトタイム",
+      "description": "ゲームがフォアグラウンド/バックグラウンドに切り替えられ一定の時間後、タイマーを継続/一時停止する\nゲーム実行中は変更できません"
+    }
   },
   "appearances": {
     "title": "外観",
@@ -81,6 +98,8 @@
       "title": "ゲームリスト",
       "showRecentGames": "最近のゲームセクションを表示",
       "showRecentGamesDescription": "ゲームリストに最近プレイしたゲームを表示",
+      "showAllGamesInGroup": "グループ内のすべてのゲームセクションを表示",
+      "showAllGamesInGroupDescription": "ゲームリストのグループ内にすべてのゲームを表示",
       "highlightLocalGames": "ローカルゲームをハイライト",
       "highlightLocalGamesDescription": "ゲームリストでローカルゲームをハイライト表示",
       "markLocalGames": "ローカルゲームにマーク",
@@ -275,6 +294,11 @@
         "all": "すべてのネタバレ (2)"
       }
     },
+    "dlsite": {
+      "title": "DLsite 設定",
+      "findIdInName": "フォルダ名からDLsite IDを認識",
+      "findIdInNameDescription": "有効にすると、フォルダ名からDLsite作品ID（例：RJ123456）を優先的に抽出し、ゲーム情報を取得します。"
+    },
     "dataSources": {
       "steam": "Steam",
       "vndb": "VNDB",
@@ -339,6 +363,63 @@
       "manage": "変換ルールを管理",
       "manageDescription": "メタデータ変換器を管理・設定する",
       "manageButton": "管理"
+    }
+  },
+  "memory": {
+    "title": "メモリー",
+    "storageBackend": {
+      "title": "画像保存先",
+      "description": "スクリーンショット画像の保存先を選択する\nデータベースに保存しない場合、記録されたスクリーンショットはゲームのメモリータブに表示されません",
+      "options": {
+        "database": "データベース",
+        "fileSystem": "ファイルシステム",
+        "both": "データベース & ファイルシステム"
+      }
+    },
+    "saveDir": {
+      "title": "保存フォルダ",
+      "description": "スクリーンショットを保存するルートディレクトリを選択する",
+      "placeholder": "保存するルートディレクトリを入力"
+    },
+    "namingRule": {
+      "title": "ネーミングルール",
+      "description": "スクリーンショットファイルのネーミングルール、ファイル名として使用禁止の記号 [<>:\"/\\|?*] は使用できません\n現在使用可能なプレースホルダ：\n\n%name% - 実行中のゲームの名称（ファイル名として使用禁止の記号が存在する場合置き換えされる）\n%datetime% - スクリーンショットを記録した時点の日付\n%timestamp% - スクリーンショットを記録した時点のミリ秒タイムスタンプ",
+      "placeholder": "ネーミングルールを入力"
+    },
+    "snippingMode": {
+      "title": "キャプチャーモード",
+      "description": "スクリーンショットを記録するモードを選択する",
+      "options": {
+        "rectangle": "矩形",
+        "activeWindow": "アクティブウィンドウ",
+        "fullscreen": "フルスクリーン"
+      }
+    },
+    "enableNotificationSound": {
+      "title": "システム通知音",
+      "description": "スクリーンショット成功のシステム通知を受ける際に通知音を鳴らすかどうかを選択する"
+    }
+  },
+  "network": {
+    "title": "ネットワーク",
+    "proxy": {
+      "title": "プロキシ",
+      "enable": "プロキシを有効化",
+      "enableDescription": "プロキシサーバーを経由してインターネットに接続します",
+      "protocol": "プロキシプロトコル",
+      "protocolDescription": "プロキシサーバーのプロトコルを選択してください",
+      "protocols": {
+        "http": "HTTP",
+        "https": "HTTPS",
+        "socks4": "SOCKS4",
+        "socks5": "SOCKS5"
+      },
+      "host": "ホスト名",
+      "hostDescription": "プロキシサーバーのホスト名またはIPアドレス",
+      "port": "ポート番号",
+      "portDescription": "プロキシサーバーのポート番号",
+      "bypassRules": "バイパスルール",
+      "bypassRulesDescription": "プロキシサーバーを経由しないアドレスの一覧。カンマで区切ります\n例：.foobar.com,*test.com,192.168.1.1/16,<local>\n<local>はローカルアドレス(127.0.0.1またはlocalhost)を表します"
     }
   }
 }

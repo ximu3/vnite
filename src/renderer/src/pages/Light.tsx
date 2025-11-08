@@ -1,5 +1,5 @@
 import { NSFWBlurLevel } from '@appTypes/models'
-import defaultBackground from '@assets/defaultBackground.webp'
+import defaultBackground from '@assets/defaultBackground.png'
 import { useLocation } from '@tanstack/react-router'
 import { CrossfadeImage } from '@ui/cross-fade-image'
 import { useEffect, useRef, useState } from 'react'

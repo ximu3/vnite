@@ -1,3 +1,11 @@
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { eventBus } from '~/app/events'
+import { ipcManager } from '~/app/ipc'
+import { DeleteGameAlert } from '~/components/Game/Config/ManageMenu/DeleteGameAlert'
+import { useLibrarybarStore } from '~/components/Librarybar/store'
+import { Button } from '~/components/ui/button'
 import {
   ContextMenuGroup,
   ContextMenuItem,
@@ -7,19 +15,11 @@ import {
   ContextMenuSubContent,
   ContextMenuSubTrigger
 } from '~/components/ui/context-menu'
-import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
-import { DeleteGameAlert } from '~/components/Game/Config/ManageMenu/DeleteGameAlert'
-import { useGameLocalState, useGameState, useConfigState } from '~/hooks'
-import { useGameAdderStore } from '~/pages/GameAdder/store'
-import { useLibrarybarStore } from '~/components/Librarybar/store'
-import { ipcManager } from '~/app/ipc'
-import { useState } from 'react'
 import { Dialog, DialogContent } from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
-import { Button } from '~/components/ui/button'
+import { useConfigState, useGameLocalState, useGameState } from '~/hooks'
+import { useGameAdderStore } from '~/pages/GameAdder/store'
 import { cn } from '~/utils'
-import { eventBus } from '~/app/events'
 
 export function ManageMenu({
   gameId,
@@ -104,16 +104,6 @@ export function ManageMenu({
           <ContextMenuSubTrigger>{t('detail.manage.title')}</ContextMenuSubTrigger>
           <ContextMenuPortal>
             <ContextMenuSubContent>
-              {/* Rename Game */}
-              <ContextMenuItem onSelect={openNameEditorDialog}>
-                {t('detail.manage.rename')}
-              </ContextMenuItem>
-              {/* Edit Play Time */}
-              <ContextMenuItem onClick={openPlayingTimeEditorDialog}>
-                {t('detail.manage.editPlayTime')}
-              </ContextMenuItem>
-              <ContextMenuSeparator />
-
               {/* Change Play Status */}
               <ContextMenuSub>
                 <ContextMenuSubTrigger>{t('detail.header.playStatus.label')}</ContextMenuSubTrigger>
@@ -130,6 +120,12 @@ export function ManageMenu({
                       className={playStatus === 'playing' ? 'bg-accent' : ''}
                     >
                       {t('utils:game.playStatus.playing')}
+                    </ContextMenuItem>
+                    <ContextMenuItem
+                      onClick={() => changePlayStatus('partial')}
+                      className={playStatus === 'partial' ? 'bg-accent' : ''}
+                    >
+                      {t('utils:game.playStatus.partial')}
                     </ContextMenuItem>
                     <ContextMenuItem
                       onClick={() => changePlayStatus('finished')}
@@ -152,7 +148,6 @@ export function ManageMenu({
                   </ContextMenuSubContent>
                 </ContextMenuPortal>
               </ContextMenuSub>
-
               {/* Change Score */}
               <ContextMenuItem
                 onSelect={(e) => {
@@ -163,10 +158,20 @@ export function ManageMenu({
               >
                 {t('detail.header.rating.tooltip')}
               </ContextMenuItem>
-              <ContextMenuSeparator />
               {/* Mark/Unmark NSFW */}
               <ContextMenuItem onClick={() => setNsfw(!nsfw)}>
                 {nsfw ? t('detail.manage.unmarkNSFW') : t('detail.manage.markNSFW')}
+              </ContextMenuItem>
+
+              <ContextMenuSeparator />
+
+              {/* Rename Game */}
+              <ContextMenuItem onSelect={openNameEditorDialog}>
+                {t('detail.manage.rename')}
+              </ContextMenuItem>
+              {/* Edit Play Time */}
+              <ContextMenuItem onClick={openPlayingTimeEditorDialog}>
+                {t('detail.manage.editPlayTime')}
               </ContextMenuItem>
               {/* Update Metadata */}
               <ContextMenuItem
@@ -178,6 +183,9 @@ export function ManageMenu({
               >
                 {t('detail.manage.downloadMetadata')}
               </ContextMenuItem>
+
+              <ContextMenuSeparator />
+
               {/* Create Shortcut */}
               {/* Only show if gamePath is set */}
               {gamePath !== '' && (
@@ -213,7 +221,9 @@ export function ManageMenu({
               >
                 {t('detail.manage.browseLocalFiles')}
               </ContextMenuItem>
+
               <ContextMenuSeparator />
+
               {/* Delete Game */}
               {/* Wrapped in DeleteGameAlert for confirmation */}
               <DeleteGameAlert gameId={gameId}>

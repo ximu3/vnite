@@ -34,8 +34,11 @@
       "gameNamePlaceholder": "Please enter game name",
       "gameId": "Game ID",
       "gameIdPlaceholder": "Please enter game ID",
+      "gamePath": "Game Path",
+      "gamePathPlaceholder": "Please select the game path",
       "searchButton": "Search",
       "recognizeButton": "Recognize",
+      "addButton": "Add",
       "notifications": {
         "enterName": "Please enter game name",
         "searching": "Searching games…",
@@ -46,10 +49,15 @@
         "recognizing": "Recognizing game…",
         "recognized": "Game recognized successfully",
         "invalidId": "Invalid ID",
-        "recognizeError": "Failed to recognize game: {{message}}"
+        "recognizeError": "Failed to recognize game: {{message}}",
+        "selectGamePath": "Please select game path",
+        "adding": "Adding game…",
+        "addSuccess": "Successfully added game",
+        "addError": "Error adding game"
       },
       "dataSources": {
         "label": "Data Sources",
+        "none": "None",
         "steam": "Steam",
         "vndb": "VNDB",
         "bangumi": "Bangumi",

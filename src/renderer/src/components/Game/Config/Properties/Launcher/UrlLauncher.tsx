@@ -1,8 +1,8 @@
-import { cn } from '~/utils'
-import { useGameLocalState } from '~/hooks'
-import { Input } from '~/components/ui/input'
+import React, { useCallback, useImperativeHandle } from 'react'
+import { useTranslation } from 'react-i18next'
+import { ipcManager } from '~/app/ipc'
 import { Button } from '~/components/ui/button'
-import { Separator } from '~/components/ui/separator'
+import { Input } from '~/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -12,10 +12,18 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select'
-import { useTranslation } from 'react-i18next'
-import { ipcManager } from '~/app/ipc'
+import { Separator } from '~/components/ui/separator'
+import { useGameLocalState } from '~/hooks'
+import { cn } from '~/utils'
 
-export function UrlLauncher({ gameId }: { gameId: string }): React.JSX.Element {
+export interface UrlLauncherHandle {
+  save: () => Promise<void>
+}
+
+function UrlLauncherComponent(
+  { gameId }: { gameId: string },
+  ref: React.Ref<UrlLauncherHandle>
+): React.JSX.Element {
   const { t } = useTranslation('game')
   const [url, setUrl, saveUrl] = useGameLocalState(gameId, 'launcher.urlConfig.url', true)
   const [browserPath, setBrowserPath, saveBrowserPath, setBrowserPathAndSave] = useGameLocalState(
@@ -49,6 +57,7 @@ export function UrlLauncher({ gameId }: { gameId: string }): React.JSX.Element {
         return
       }
       await setMonitorPathAndSave(monitorPath)
+      ipcManager.send('native-monitor:update-local-game')
     }
     if (monitorMode === 'folder') {
       const monitorPath = await ipcManager.invoke('system:select-path-dialog', ['openDirectory'])
@@ -56,8 +65,15 @@ export function UrlLauncher({ gameId }: { gameId: string }): React.JSX.Element {
         return
       }
       await setMonitorPathAndSave(monitorPath)
+      ipcManager.send('native-monitor:update-local-game')
     }
   }
+
+  const saveAll = useCallback(async () => {
+    await Promise.all([saveUrl(), saveMonitorPath(), saveBrowserPath()])
+    ipcManager.send('native-monitor:update-local-game')
+  }, [saveUrl, saveMonitorPath, saveBrowserPath])
+  useImperativeHandle(ref, () => ({ save: saveAll }), [saveAll])
 
   return (
     <>
@@ -132,7 +148,9 @@ export function UrlLauncher({ gameId }: { gameId: string }): React.JSX.Element {
           className={cn('flex-1')}
           value={monitorPath}
           onChange={(e) => setMonitorPath(e.target.value)}
-          onBlur={saveMonitorPath}
+          onBlur={() => {
+            saveMonitorPath().then(() => ipcManager.send('native-monitor:update-local-game'))
+          }}
         />
         {['folder', 'file'].includes(monitorMode) && (
           <Button variant={'outline'} size={'icon'} onClick={selectMonitorPath}>
@@ -149,3 +167,5 @@ export function UrlLauncher({ gameId }: { gameId: string }): React.JSX.Element {
     </>
   )
 }
+
+export const UrlLauncher = React.forwardRef(UrlLauncherComponent)

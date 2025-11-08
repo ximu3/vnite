@@ -5,6 +5,7 @@ import { delay } from '~/utils'
 import { fileLauncher, scriptLauncher, urlLauncher } from './launcher'
 import { defaultPreset, lePreset, steamPreset, vbaPreset } from './preset'
 import { eventBus } from '~/core/events'
+import { ipcManager } from '~/core/ipc'
 
 export async function launcherPreset(
   presetName: string,
@@ -60,6 +61,7 @@ export async function launcher(gameId: string): Promise<void> {
     )
     log.info(`[Launcher] Launched game ${gameId}`)
   } catch (error) {
+    ipcManager.send('game:launch-failed', gameId)
     log.error(`[Launcher] Failed to launch game ${gameId}`, error)
   }
 }

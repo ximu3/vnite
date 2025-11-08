@@ -46,7 +46,11 @@
         "recognizing": "Распознавание игры…",
         "recognized": "Игра успешно распознана",
         "invalidId": "Неверный ID",
-        "recognizeError": "Не удалось распознать игру: {{message}}"
+        "recognizeError": "Не удалось распознать игру: {{message}}",
+        "selectGamePath": "Пожалуйста, выберите путь к игре",
+        "adding": "Добавление игры…",
+        "addSuccess": "Игра успешно добавлена",
+        "addError": "Ошибка при добавлении игры"
       },
       "dataSources": {
         "label": "Источники данных",

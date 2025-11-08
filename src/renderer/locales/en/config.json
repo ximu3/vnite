@@ -17,7 +17,24 @@
     "quitApp": "Quit vnite",
     "minimizeToTray": "Minimize to Tray",
     "hideWindowAfterGameStart": "Minimize to tray after game launch",
-    "hideWindowAfterGameStartDescription": "Automatically hide main window after launching a game"
+    "hideWindowAfterGameStartDescription": "Automatically hide main window after launching a game",
+    "processMonitor": {
+      "title": "Process Monitor",
+      "description": "Choose how to detect a game process. This setting cannot be changed while any games are running\n\nAuto: More efficient, you don't have to launch games from Vnite\nLegacy: More stable, you must launch games from Vnite",
+      "options": {
+        "new": "Auto",
+        "legacy": "Legacy"
+      }
+    },
+    "timerTitle": "Game Timer",
+    "foregroundTimer": {
+      "title": "Foreground Timer",
+      "description": "Choose whether or not to pause the timer when game window switches to background. Available only if the Auto monitor is enabled.\nCannnot be changed while games are running"
+    },
+    "foregroundWaitTime": {
+      "title": "Wait Time",
+      "description": "Pause/resume timer after the game has been running in background/foreground for this duration\nCannnot be changed while games are running"
+    }
   },
   "appearances": {
     "title": "Appearances",
@@ -81,6 +98,8 @@
       "title": "Game List",
       "showRecentGames": "Show Recent Games Section",
       "showRecentGamesDescription": "Show recently played games in game list",
+      "showAllGamesInGroup": "Show All Games in Group Section",
+      "showAllGamesInGroupDescription": "Show all games in groups in game list",
       "highlightLocalGames": "Highlight Local Games",
       "highlightLocalGamesDescription": "Highlight local games in game list",
       "markLocalGames": "Mark Local Games",
@@ -273,6 +292,11 @@
         "all": "All Spoilers (2)"
       }
     },
+    "dlsite": {
+      "title": "DLsite Settings",
+      "findIdInName": "Detect DLsite ID from Folder Name",
+      "findIdInNameDescription": "When enabled, the app will prioritize extracting the DLsite work ID (e.g., RJ123456) from the folder name to fetch game information."
+    },
     "dataSources": {
       "steam": "Steam",
       "vndb": "VNDB",
@@ -337,6 +361,63 @@
       "manage": "Manage Transformer Rules",
       "manageDescription": "Manage and configure metadata transformer",
       "manageButton": "Manage"
+    }
+  },
+  "memory": {
+    "title": "Memory",
+    "storageBackend": {
+      "title": "Image Storage Backend",
+      "description": "Choose where to save screenshots\nIf you choose not to save screenshots in the database, your screenshots will not appear in the memory tab of corresponding games",
+      "options": {
+        "database": "Database",
+        "fileSystem": "File System",
+        "both": "Database & File System"
+      }
+    },
+    "saveDir": {
+      "title": "Save Directory",
+      "description": "Root directory for storing screenshots",
+      "placeholder": "Enter the root path to save screenshots"
+    },
+    "namingRule": {
+      "title": "Naming Rule",
+      "description": "Naming rule for each screenshot file, path-invalid characters [<>:\"/\\|?*] are not allowed\nCurrently supported placeholders:\n\n%name% - the active game's title (with path-disallowed characters sanitized)\n%datetime% - date time when the screenshot was taken\n%timestamp% - unix epoch (ms) when the screenshot was taken",
+      "placeholder": "Enter the naming rule for captured files"
+    },
+    "snippingMode": {
+      "title": "Snipping Mode",
+      "description": "Choose a snipping mode when taking screenshots",
+      "options": {
+        "rectangle": "Rectangle",
+        "activeWindow": "Active Window",
+        "fullscreen": "Full Screen"
+      }
+    },
+    "enableNotificationSound": {
+      "title": "Notification Sound",
+      "description": "Choose whether to play a system notification sound on receiving a capture notification"
+    }
+  },
+  "network" : {
+    "title": "Network",
+    "proxy": {
+      "title": "Proxy",
+      "enable": "Enable Proxy",
+      "enableDescription": "Connect to the internet through a proxy server",
+      "protocol": "Proxy Protocol",
+      "protocolDescription": "Choose the proxy server protocol",
+      "protocols": {
+        "http": "HTTP",
+        "https": "HTTPS",
+        "socks4": "SOCKS4",
+        "socks5": "SOCKS5"
+      },
+      "host": "Host",
+      "hostDescription": "Hostname or IP address of the proxy server",
+      "port": "Port",
+      "portDescription": "Port number of the proxy server",
+      "bypassRules": "Bypass Rules",
+      "bypassRulesDescription": "List of addresses that do not connect through the proxy server, separated by commas\nExample: .foobar.com,*test.com,192.168.1.1/16,<local>\n<local> represents local addresses (127.0.0.1 or localhost)"
     }
   }
 }

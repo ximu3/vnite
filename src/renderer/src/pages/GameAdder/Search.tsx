@@ -1,5 +1,10 @@
-import { cn } from '~/utils'
+import { ScraperCapabilities } from '@appTypes/utils'
+import React, { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { ipcManager } from '~/app/ipc'
 import { Button } from '~/components/ui/button'
+import { Input } from '~/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -9,26 +14,45 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select'
-import { Input } from '~/components/ui/input'
-import { toast } from 'sonner'
+import { cn } from '~/utils'
 import { GameList, useGameAdderStore } from './store'
-import React, { useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
-import { ipcManager } from '~/app/ipc'
-import { ScraperCapabilities } from '@appTypes/utils'
+import { useGameLocalState } from '~/hooks'
 
 export function Search({ className }: { className?: string }): React.JSX.Element {
   const { t } = useTranslation('adder')
   const {
+    dbId,
     dataSource,
     setDataSource,
     name,
     setName,
+    gamePath,
+    setGamePath,
+    dirPath,
+    setDirPath,
     dataSourceId,
     setDataSourceId,
     setGameList,
-    setCurrentPage
+    setCurrentPage,
+    handleClose
   } = useGameAdderStore()
+
+  const PathRowWithDb = ({ gameId }: { gameId: string }): React.JSX.Element | null => {
+    const [dbGamePath] = useGameLocalState(gameId, 'path.gamePath')
+    const [markPath] = useGameLocalState(gameId, 'utils.markPath')
+    if (!gameId || (!dbGamePath && !markPath)) return null
+    const displayPath = dbGamePath || markPath || ''
+    return (
+      <>
+        <div className={cn('whitespace-nowrap select-none pb-1.5')}>
+          {t('gameAdder.search.gamePath')}
+        </div>
+        <div className={cn('text-xs text-muted-foreground break-all select-text pb-1.5')}>
+          {displayPath || '-'}
+        </div>
+      </>
+    )
+  }
 
   const [availableDataSources, setAvailableDataSources] = React.useState<
     { id: string; name: string; capabilities: ScraperCapabilities[] }[]
@@ -120,9 +144,57 @@ export function Search({ className }: { className?: string }): React.JSX.Element
     )
   }
 
+  async function addGameDirectly(): Promise<void> {
+    if (!dirPath) {
+      toast.warning(t('gameAdder.search.notifications.selectGamePath'))
+      return
+    }
+    toast.promise(
+      (async (): Promise<void> => {
+        await ipcManager.invoke('adder:add-game-to-db-without-metadata', dirPath, gamePath)
+        handleClose()
+      })(),
+      {
+        loading: t('gameAdder.search.notifications.adding'),
+        success: t('gameAdder.search.notifications.addSuccess'),
+        error: t('gameAdder.search.notifications.addError')
+      }
+    )
+  }
+
+  async function selectGamePath(): Promise<void> {
+    const selectedPath = await ipcManager.invoke(
+      'system:select-path-dialog',
+      ['openFile'],
+      undefined,
+      gamePath || dirPath
+    )
+    if (!selectedPath) {
+      return
+    }
+    const newdirPath = window.api.path.dirname(selectedPath)
+    setDirPath(newdirPath)
+    setGamePath(selectedPath)
+  }
+
   return (
     <div className={cn('w-[500px] h-auto', className)}>
       <div className={cn('grid grid-cols-[auto_1fr] gap-x-5 gap-y-2 text-sm items-center')}>
+        {dbId ? (
+          <PathRowWithDb gameId={dbId} />
+        ) : (
+          (gamePath || dirPath) && (
+            <>
+              <div className={cn('whitespace-nowrap select-none pb-1.5')}>
+                {t('gameAdder.search.gamePath')}
+              </div>
+              <div className={cn('text-xs text-muted-foreground break-all select-text pb-1.5')}>
+                {gamePath || dirPath || '-'}
+              </div>
+            </>
+          )
+        )}
+
         {/* Data source selection */}
         <div className={cn('whitespace-nowrap select-none')}>
           {t('gameAdder.search.dataSource')}
@@ -135,6 +207,7 @@ export function Search({ className }: { className?: string }): React.JSX.Element
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>{t('gameAdder.search.dataSources.label')}</SelectLabel>
+                <SelectItem value="none">{t('gameAdder.search.dataSources.none')}</SelectItem>
                 {availableDataSources.map((provider) => (
                   <SelectItem key={provider.id} value={provider.id}>
                     {provider.name}
@@ -145,39 +218,65 @@ export function Search({ className }: { className?: string }): React.JSX.Element
           </Select>
         </div>
 
-        {/* Game Name Input */}
-        <div className={cn('whitespace-nowrap select-none')}>{t('gameAdder.search.gameName')}</div>
-        <div className={cn('flex flex-row gap-3')}>
-          <Input
-            className={cn('flex-1')}
-            ref={gameNameInput}
-            value={inputName}
-            onChange={(e) => setInputName(e.target.value)}
-            placeholder={t('gameAdder.search.gameNamePlaceholder')}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') searchGames()
-              if (e.key === 'ArrowUp' || e.key === 'ArrowDown') gameIdInput.current?.focus()
-            }}
-          />
-          <Button onClick={searchGames}>{t('gameAdder.search.searchButton')}</Button>
-        </div>
+        {dataSource !== 'none' ? (
+          <>
+            {/* Game Name Input */}
+            <div className={cn('whitespace-nowrap select-none')}>
+              {t('gameAdder.search.gameName')}
+            </div>
+            <div className={cn('flex flex-row gap-3')}>
+              <Input
+                className={cn('flex-1')}
+                ref={gameNameInput}
+                value={inputName}
+                onChange={(e) => setInputName(e.target.value)}
+                placeholder={t('gameAdder.search.gameNamePlaceholder')}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') searchGames()
+                  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') gameIdInput.current?.focus()
+                }}
+              />
+              <Button onClick={searchGames}>{t('gameAdder.search.searchButton')}</Button>
+            </div>
 
-        {/* Game ID Input */}
-        <div className={cn('whitespace-nowrap select-none')}>{t('gameAdder.search.gameId')}</div>
-        <div className={cn('flex flex-row gap-3')}>
-          <Input
-            className={cn('flex-1')}
-            ref={gameIdInput}
-            value={inputId}
-            onChange={(e) => setInputId(e.target.value)}
-            placeholder={t('gameAdder.search.gameIdPlaceholder')}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') recognizeGame()
-              if (e.key === 'ArrowUp' || e.key === 'ArrowDown') gameNameInput.current?.focus()
-            }}
-          />
-          <Button onClick={recognizeGame}>{t('gameAdder.search.recognizeButton')}</Button>
-        </div>
+            {/* Game ID Input */}
+            <div className={cn('whitespace-nowrap select-none')}>
+              {t('gameAdder.search.gameId')}
+            </div>
+            <div className={cn('flex flex-row gap-3')}>
+              <Input
+                className={cn('flex-1')}
+                ref={gameIdInput}
+                value={inputId}
+                onChange={(e) => setInputId(e.target.value)}
+                placeholder={t('gameAdder.search.gameIdPlaceholder')}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') recognizeGame()
+                  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') gameNameInput.current?.focus()
+                }}
+              />
+              <Button onClick={recognizeGame}>{t('gameAdder.search.recognizeButton')}</Button>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className={cn('whitespace-nowrap select-none')}>
+              {t('gameAdder.search.gamePath')}
+            </div>
+            <div className={cn('flex flex-row gap-3')}>
+              <Input
+                className={cn('flex-1')}
+                placeholder={t('gameAdder.search.gamePathPlaceholder')}
+                value={gamePath || dirPath}
+                readOnly
+              />
+              <Button variant={'outline'} size={'icon'} onClick={selectGamePath}>
+                <span className={cn('icon-[mdi--file-outline] w-5 h-5')}></span>
+              </Button>
+              <Button onClick={addGameDirectly}>{t('gameAdder.search.addButton')}</Button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   )

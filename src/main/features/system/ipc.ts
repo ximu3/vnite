@@ -13,12 +13,15 @@ import {
   openPathInExplorer,
   readFileBuffer,
   saveClipboardImage,
+  saveImageAsFileDialog,
   selectMultiplePathDialog,
-  selectPathDialog
+  selectPathDialog,
+  writeClipboardImage
 } from '~/utils'
 import {
   copyAppLogInCurrentLifetimeToClipboardAsFile,
   createGameShortcut,
+  deleteTempFile,
   getAppLogContentsInCurrentLifetime,
   getAppRootPath,
   getLanguage,
@@ -31,6 +34,14 @@ import {
   updateOpenAtLogin,
   updateScreenshotHotkey
 } from './services'
+import {
+  setupNativeMonitor,
+  stopNativeMonitor,
+  enableForegroundHook,
+  disableForegroundHook,
+  changeForegroundWaitTime
+} from '~/features/monitor'
+import { ConfigDBManager } from '~/core/database'
 
 export function setupSystemIPC(): void {
   ipcManager.on('window:minimize', () => {
@@ -108,6 +119,10 @@ export function setupSystemIPC(): void {
     }
   )
 
+  ipcManager.handle('system:save-image-as-file-dialog', async (_event, sourcePath: string) => {
+    return await saveImageAsFileDialog(sourcePath)
+  })
+
   ipcManager.handle('system:get-fonts', async () => {
     return await getSystemFonts()
   })
@@ -118,6 +133,10 @@ export function setupSystemIPC(): void {
 
   ipcManager.handle('system:open-path-in-explorer', async (_, filePath: string) => {
     await openPathInExplorer(filePath)
+  })
+
+  ipcManager.handle('system:delete-temp-file', async (_, filePath: string) => {
+    await deleteTempFile(filePath)
   })
 
   ipcManager.handle('utils:open-database-path-in-explorer', async () => {
@@ -198,6 +217,10 @@ export function setupSystemIPC(): void {
     return await saveClipboardImage()
   })
 
+  ipcManager.handle('utils:write-clipboard-image', async (_, data: string, type: 'path') => {
+    return await writeClipboardImage(data, type)
+  })
+
   ipcManager.handle('system:update-screenshot-hotkey', (_, hotkey: string) => {
     return updateScreenshotHotkey(hotkey)
   })
@@ -208,5 +231,27 @@ export function setupSystemIPC(): void {
 
   mainWindow.on('unmaximize', () => {
     ipcManager.send('window:unmaximized')
+  })
+
+  ipcManager.on('system:change-process-monitor', async (_, monitor: 'new' | 'legacy') => {
+    if (monitor === 'new') {
+      await setupNativeMonitor()
+    } else if (monitor === 'legacy') {
+      await stopNativeMonitor()
+      await ConfigDBManager.setConfigValue('general.enableForegroundTimer', false)
+      await disableForegroundHook()
+    }
+  })
+
+  ipcManager.on('system:change-foreground-timer', async (_, isEnabled: boolean) => {
+    if (isEnabled) {
+      await enableForegroundHook()
+    } else {
+      await disableForegroundHook()
+    }
+  })
+
+  ipcManager.on('system:change-foreground-timer-wait-time', async (_, waitTime: number) => {
+    changeForegroundWaitTime(waitTime)
   })
 }

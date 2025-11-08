@@ -27,6 +27,32 @@ export function parseLocalDate(str: string): Date {
   return new Date(y, m - 1, d)
 }
 
+// Maximum allowed play time per day (24 hours in milliseconds)
+const MAX_DAILY_PLAYTIME = 24 * 60 * 60 * 1000
+
+/**
+ * Caps daily play time to 24 hours maximum
+ *
+ * @TODO Fix the root cause: Multiple game instances running simultaneously
+ * can cause calculated play time to exceed 24 hours per day
+ *
+ * @param playTime - Raw play time in milliseconds
+ * @param date - Date for logging (optional)
+ * @returns Play time capped at 24 hours
+ */
+export function capDailyPlayTime(playTime: number, date?: Date | string): number {
+  if (playTime <= MAX_DAILY_PLAYTIME) {
+    return playTime
+  }
+
+  const hours = (playTime / 3600000).toFixed(2)
+  const dateStr = date ? ` on ${date}` : ''
+
+  console.warn(`Play time exceeds 24 hours${dateStr}: ${hours} hours, capped to 24 hours`)
+
+  return MAX_DAILY_PLAYTIME
+}
+
 /**
  * Calculate the game time (in milliseconds) for a specific date
  */
@@ -71,6 +97,7 @@ export function getWeeklyPlayData(date = new Date()): {
   dates: string[]
   totalTime: number
   dailyPlayTime: { [date: string]: number }
+  weeklyPlayTimers: { [gameId: string]: { start: string; end: string }[] }
   mostPlayedDay: WeeklyMostPlayedDay | null
   mostPlayedGames: { gameId: string; playTime: number }[]
 } {
@@ -119,11 +146,13 @@ export function getWeeklyPlayData(date = new Date()): {
         gamePlayTime[gameId] = (gamePlayTime[gameId] || 0) + playTime
       }
 
+      dayTotal = capDailyPlayTime(dayTotal, dayDate)
+
       dailyPlayTime[dateStr] = dayTotal
       totalTime += dayTotal
 
       // Update the day you play the most games
-      if (mostPlayedDay === null || dayTotal > mostPlayedDay.playTime) {
+      if (dayTotal > (mostPlayedDay?.playTime ?? 0)) {
         mostPlayedDay = {
           date: dateStr,
           playTime: dayTotal
@@ -131,17 +160,52 @@ export function getWeeklyPlayData(date = new Date()): {
       }
     }
 
-    // Get the most played games (in order of time)
-    const mostPlayedGames = Object.entries(gamePlayTime)
+    const playedGames = Object.entries(gamePlayTime)
       .map(([gameId, playTime]) => ({ gameId, playTime }))
       .filter((item) => item.playTime > 0)
       .sort((a, b) => b.playTime - a.playTime)
-      .slice(0, 3)
+
+    const weeklyPlayTimers: { [gameId: string]: { start: string; end: string }[] } = {}
+    for (const { gameId } of playedGames) {
+      const store = getGameStore(gameId)
+      const timers = store.getState().getValue('record.timers') || []
+      const filteredTimers: { start: string; end: string }[] = []
+
+      // Get timers in the range
+      for (const timer of timers) {
+        const start = new Date(timer.start)
+        const end = new Date(timer.end)
+
+        // If the timer record does not overlap with the target range, it is skipped
+        if (end < weekStart || start >= weekEnd) continue
+
+        const clippedStart = start < weekStart ? weekStart : start
+        const clippedEnd = end > weekEnd ? weekEnd : end
+
+        filteredTimers.push({
+          start: clippedStart.toISOString(),
+          end: clippedEnd.toISOString()
+        })
+      }
+
+      if (filteredTimers.length > 0) {
+        weeklyPlayTimers[gameId] = filteredTimers
+      }
+
+      // Make sure it is sorted, don't care about other exceptions (overlap, empty time, ...)
+      weeklyPlayTimers[gameId].sort(
+        (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime()
+      )
+    }
+
+    // Get the most played games (in order of time)
+    const mostPlayedGames = playedGames.slice(0, 3)
 
     return {
       dates,
       totalTime,
       dailyPlayTime,
+      weeklyPlayTimers,
       mostPlayedDay,
       mostPlayedGames
     }
@@ -151,6 +215,7 @@ export function getWeeklyPlayData(date = new Date()): {
       dates: [],
       totalTime: 0,
       dailyPlayTime: {},
+      weeklyPlayTimers: {},
       mostPlayedDay: null,
       mostPlayedGames: []
     }
@@ -214,12 +279,14 @@ export function getMonthlyPlayData(date = new Date()): {
         gamePlayTime[gameId] = (gamePlayTime[gameId] || 0) + playTime
       }
 
+      dayTotal = capDailyPlayTime(dayTotal, dayDate)
+
       dailyPlayTime[dateStr] = dayTotal
       weeklyPlayTime[weekOfMonth] = (weeklyPlayTime[weekOfMonth] || 0) + dayTotal
       totalTime += dayTotal
 
       // Update the day when you play the most games
-      if (mostPlayedDay === null || dayTotal > mostPlayedDay.playTime) {
+      if (dayTotal > (mostPlayedDay?.playTime ?? 0)) {
         mostPlayedDay = {
           date: dateStr,
           playTime: dayTotal
@@ -316,6 +383,7 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
 
       // If this day has any play time, add it to the monthly stats
       if (dayTotal > 0) {
+        dayTotal = capDailyPlayTime(dayTotal, currentDate)
         const dateStr = i18next.format(currentDate, 'niceISO')
         monthlyPlayDays[month].add(dateStr)
         monthlyPlayTime[month] += dayTotal
@@ -329,7 +397,7 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
     // Find the month with most play time
     let mostPlayedMonth: MostPlayedMonth | null = null
     for (let month = 0; month < 12; month++) {
-      if (mostPlayedMonth === null || monthlyPlayTime[month] > mostPlayedMonth.playTime) {
+      if (monthlyPlayTime[month] > (mostPlayedMonth?.playTime ?? 0)) {
         mostPlayedMonth = {
           month,
           playTime: monthlyPlayTime[month]
@@ -403,6 +471,7 @@ export function getPlayTimeDistribution(): { hour: number; value: number }[] {
         const end = new Date(timer.end)
 
         let current = new Date(start)
+
         while (current < end) {
           const hour = current.getHours()
 
@@ -415,8 +484,11 @@ export function getPlayTimeDistribution(): { hour: number; value: number }[] {
 
           distribution[hour] += segmentTime
 
-          // Move to next hour
-          current = new Date(hourEnd.getTime() + 1)
+          // Move to the next hour boundary
+          // Using setHours() instead of manual time calculation to properly handle
+          // daylight saving time (DST) transitions where hours may be skipped or repeated
+          current = new Date(current)
+          current.setHours(current.getHours() + 1, 0, 0, 0)
         }
       }
     }

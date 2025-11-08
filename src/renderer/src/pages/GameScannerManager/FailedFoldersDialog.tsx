@@ -30,6 +30,7 @@ import { ScraperCapabilities } from '@appTypes/utils'
 import { ipcManager } from '~/app/ipc'
 import { useConfigLocalState } from '~/hooks'
 import { toast } from 'sonner'
+import { GameSearch } from '~/components/GameSearch/GameSearch'
 
 interface FailedFoldersDialogProps {
   isOpen: boolean
@@ -37,7 +38,7 @@ interface FailedFoldersDialogProps {
 }
 
 export const FailedFoldersDialog: React.FC<FailedFoldersDialogProps> = ({ isOpen, onClose }) => {
-  const { t } = useTranslation('scanner')
+  const { t } = useTranslation(['scanner', 'adder'])
 
   const { scanProgress, fixFailedFolder, ignoreFailedFolder } = useGameScannerStore()
   const [scannerConfig, setScannerConfig] = useConfigLocalState('game.scanner')
@@ -151,10 +152,10 @@ export const FailedFoldersDialog: React.FC<FailedFoldersDialogProps> = ({ isOpen
           <DialogTitle>{t('failedFolders.title')}</DialogTitle>
         </DialogHeader>
 
-        <div className="pb-1 space-y-4 max-h-[60vh] overflow-auto scrollbar-base">
+        <div className="space-y-4 p-3 -m-3 max-h-[60vh] overflow-auto scrollbar-base">
           {selectedFolder ? (
             // Details view for a selected folder
-            <div className="p-4 space-y-4 border rounded-lg">
+            <div className="p-4 space-y-4 shadow-md rounded-lg bg-popover">
               <div>
                 <p className="font-medium">
                   {t('failedFolders.fixing', { name: selectedFolder.name })}
@@ -163,6 +164,14 @@ export const FailedFoldersDialog: React.FC<FailedFoldersDialogProps> = ({ isOpen
               </div>
 
               <div className="grid grid-cols-[auto_1fr] gap-y-4 gap-x-4 items-center">
+                {/* Full folder path */}
+                <div className="select-none whitespace-nowrap">
+                  {t('failedFolders.table.location')}
+                </div>
+                <div className="text-xs text-muted-foreground break-all select-text">
+                  {selectedFolder.path}
+                </div>
+
                 <div className="select-none whitespace-nowrap">{t('failedFolders.dataSource')}</div>
                 <Select value={dataSource} onValueChange={setDataSource}>
                   <SelectTrigger className="">
@@ -176,6 +185,13 @@ export const FailedFoldersDialog: React.FC<FailedFoldersDialogProps> = ({ isOpen
                     ))}
                   </SelectContent>
                 </Select>
+
+                {/* Reusable game search component */}
+                <GameSearch
+                  dataSource={dataSource}
+                  defaultName={selectedFolder?.name}
+                  onPick={(id) => setDataSourceId(id)}
+                />
 
                 <div className="select-none whitespace-nowrap">
                   {t('failedFolders.dataSourceId')}
@@ -241,9 +257,17 @@ export const FailedFoldersDialog: React.FC<FailedFoldersDialogProps> = ({ isOpen
                         className="ml-2"
                         onClick={() => {
                           ignoreFailedFolder(folder.scannerId, folder.path)
+                          const normalize = (p: string): string =>
+                            p.trim().replace(/\\/g, '/').replace(/\/+$/, '')
+                          const current = (scannerConfig.ignoreList || [])
+                            .map(normalize)
+                            .filter((p) => p.length > 0)
+                          const next = Array.from(
+                            new Set([...current, normalize(folder.path)])
+                          ).sort()
                           setScannerConfig({
                             ...scannerConfig,
-                            ignoreList: [...(scannerConfig.ignoreList || []), folder.path]
+                            ignoreList: next
                           })
                         }}
                       >

@@ -2,7 +2,9 @@
   "common": {
     "save": "저장",
     "cancel": "취소",
-    "confirm": "확인"
+    "confirm": "확인",
+    "edit": "편집",
+    "delete": "제거"
   },
   "arrayEditor": {
     "clickPlusToAdd": "+ 를 클릭하여 요소 추가",

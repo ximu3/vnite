@@ -6,6 +6,8 @@
       "placeholder": "Search",
       "tooltip": "Supports searching by game name, developer, release date and other metadata"
     },
+    "gameListSettings": "Game List Settings",
+    "collapseAllGroups": "Collapse All Groups",
     "groupBy": "Group by",
     "groups": {
       "none": "No Grouping",
@@ -33,6 +35,7 @@
       "sortBy": "Sort by",
       "sortOptions": {
         "name": "Name",
+        "sortName": "Sort Name",
         "releaseDate": "Release Date",
         "lastRunDate": "Last Played Date",
         "addDate": "Date Added",
@@ -41,7 +44,8 @@
     },
     "playStatus": {
       "adjustOrder": "Adjust Order"
-    }
+    },
+    "overrideCollectionSort": "Override Collection Sort"
   },
   "filter": {
     "title": "Advanced Filter",
@@ -76,10 +80,12 @@
       "label": "Sort by",
       "options": {
         "name": "Name",
+        "sortName": "Sort Name",
         "releaseDate": "Release Date",
         "lastRunDate": "Last Played Date",
         "addDate": "Date Added",
-        "playTime": "Play Time"
+        "playTime": "Play Time",
+        "custom": "Custom Order"
       }
     },
     "gameCard": {
@@ -135,6 +141,9 @@
     "actions": {
       "start": "Start Game",
       "stop": "Stop Game"
+    },
+    "contextMenu": {
+      "editMediaProperties": "Edit Media Properties"
     },
     "save": {
       "table": {
@@ -230,6 +239,7 @@
         "fields": {
           "originalName": "Original Name",
           "localizedName": "Localized Name",
+          "sortName": "Sort Name",
           "developers": "Developers",
           "publishers": "Publishers",
           "releaseDate": "Release Date",
@@ -295,6 +305,11 @@
         "editText": "Edit Text",
         "delete": "Delete"
       },
+      "setAs": {
+        "title": "Set As",
+        "cover": "Game Cover",
+        "background": "Game Background"
+      },
       "export": {
         "exportAs": "Export As",
         "image": "Image",
@@ -312,7 +327,11 @@
         "imageCopied": "Image successfully copied to clipboard",
         "imageCopyError": "Failed to copy image to clipboard: {{error}}",
         "markdownCopied": "Markdown copied to clipboard",
-        "markdownCopyError": "Failed to copy to clipboard: {{error}}"
+        "markdownCopyError": "Failed to copy to clipboard: {{error}}",
+        "setCoverSuccess": "Successfully set as game cover",
+        "setCoverError": "Failed to set as game cover: {{error}}",
+        "setBackgroundSuccess": "Successfully set as game background",
+        "setBackgroundError": "Failed to set as game background: {{error}}"
       },
       "dialog": {
         "markdownHint": "Markdown syntax supported"
@@ -323,7 +342,7 @@
     },
     "manage": {
       "title": "Manage",
-      "rename": "Rename",
+      "rename": "Edit Basic Information",
       "editLogo": "Edit Logo",
       "editPlayTime": "Edit Play Time",
       "markNSFW": "Mark as NSFW",
@@ -342,13 +361,19 @@
       "title": "Game Timer",
       "addTimer": "Add Timer",
       "timersList": "Timers List",
+      "fuzzyTime": "Time Not Tracked by Timers",
       "noTimers": "No timer records",
       "totalPlayTime": "Total Play Time",
       "startTime": "Start",
       "endTime": "End",
       "ongoing": "In progress",
       "duration": "Duration",
-      "minutes": "minutes"
+      "minutes": "minutes",
+      "error": {
+        "overlapMessage": "Timers {{first}} and {{second}} overlap!",
+        "invalidTime": "Timer {{index}} has invalid start or end time!",
+        "endBeforeStart": "Timer {{index}} ends before it starts!"
+      }
     },
     "timerEditor": {
       "startDateRequired": "Start time and end time must be set",
@@ -361,6 +386,7 @@
     "deleteAlert": {
       "title": "Are you sure you want to delete {{gameName}}?",
       "description": "All data for this game will be permanently deleted. This action cannot be undone.",
+      "addToIgnore": "Add this game folder to the scanner ignore list",
       "notifications": {
         "deleting": "Deleting game {{gameName}}…",
         "deleted": "Game {{gameName}} has been deleted",
@@ -421,6 +447,7 @@
           "importFromClipboard": "Import from clipboard",
           "importFromUrl": "Import from URL",
           "searchImage": "Search image",
+          "viewLargeImage": "View large image",
           "cropImage": "Crop image",
           "deleteImage": "Delete image"
         },
@@ -562,6 +589,7 @@
       "description": "All data for selected games will be permanently deleted. This action cannot be undone.",
       "gamesList": "Games to be deleted:",
       "unnamedGame": "Unnamed Game",
+      "addToIgnore": "Add these game folders to the scanner ignore list",
       "notifications": {
         "deleting": "Deleting {{count}} games…",
         "success": "{{count}} games deleted",

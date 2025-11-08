@@ -1,11 +1,11 @@
-import { cn } from '~/utils'
-import { Button } from '~/components/ui/button'
-import { toast } from 'sonner'
-import { useGameAdderStore } from './store'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useGameMetadataUpdaterStore } from '../GameMetadataUpdater/store'
+import { toast } from 'sonner'
 import { ipcManager } from '~/app/ipc'
+import { Button } from '~/components/ui/button'
+import { cn } from '~/utils'
+import { useGameMetadataUpdaterStore } from '../GameMetadataUpdater/store'
+import { useGameAdderStore } from './store'
 
 export function BackgroundList(): React.JSX.Element {
   const { t } = useTranslation('adder')
@@ -18,6 +18,7 @@ export function BackgroundList(): React.JSX.Element {
     dataSource,
     dbId,
     dirPath,
+    gamePath,
     handleClose
   } = useGameAdderStore()
 
@@ -119,7 +120,8 @@ export function BackgroundList(): React.JSX.Element {
           dataSource,
           dataSourceId,
           backgroundUrl,
-          dirPath
+          dirPath,
+          gamePath
         })
         setIsAdding(false)
         handleClose()

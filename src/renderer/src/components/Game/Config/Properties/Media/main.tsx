@@ -10,6 +10,7 @@ import { useGameState } from '~/hooks'
 import { useLightStore } from '~/pages/Light'
 import { cn } from '~/utils'
 import { CropDialog } from './CropDialog'
+import { ImageViewerDialog } from './ImageViewerDialog'
 import { SearchMediaDialog } from './SearchMediaDialog'
 import { UrlDialog } from './UrlDialog'
 
@@ -40,6 +41,9 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
   const [searchType, setSearchType] = useState<'cover' | 'background' | 'icon' | 'logo'>('cover')
 
   const [originalName] = useGameState(gameId, 'metadata.originalName')
+
+  const [isImageViewerOpen, setIsImageViewerOpen] = useState(false)
+  const [imageViewerPath, setImageViewerPath] = useState<string | null>(null)
 
   async function handleFileSelect(type: 'cover' | 'background' | 'icon' | 'logo'): Promise<void> {
     try {
@@ -99,6 +103,22 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
         imagePath: currentPath,
         isResizing: true
       })
+    } catch (error) {
+      toast.error(t('detail.properties.media.notifications.getImageError', { error }))
+    }
+  }
+
+  async function handleViewLargeImage(
+    type: 'cover' | 'background' | 'icon' | 'logo'
+  ): Promise<void> {
+    try {
+      const currentPath = await ipcManager.invoke('game:get-media-path', gameId, type)
+      if (!currentPath) {
+        toast.error(t('detail.properties.media.notifications.imageNotFound'))
+        return
+      }
+      setImageViewerPath(currentPath)
+      setIsImageViewerOpen(true)
     } catch (error) {
       toast.error(t('detail.properties.media.notifications.getImageError', { error }))
     }
@@ -253,6 +273,21 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
       <Tooltip>
         <TooltipTrigger>
           <Button
+            onClick={() => handleViewLargeImage(type)}
+            variant={'outline'}
+            size={'icon'}
+            className={cn('w-7 h-7')}
+          >
+            <span className={cn('icon-[mdi--magnify-plus-cursor] w-4 h-4')}></span>
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">
+          {t('detail.properties.media.actions.viewLargeImage')}
+        </TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger>
+          <Button
             onClick={() => handleResize(type)}
             variant={'outline'}
             size={'icon'}
@@ -269,9 +304,9 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
         <TooltipTrigger>
           <Button
             onClick={() => handleDeleteMedia(type)}
-            variant={'outline'}
+            variant="delete"
             size={'icon'}
-            className={cn('w-7 h-7 hover:bg-destructive hover:text-destructive-foreground')}
+            className={cn('w-7 h-7')}
           >
             <span className={cn('icon-[mdi--delete-outline] w-4 h-4')}></span>
           </Button>
@@ -346,6 +381,11 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
             isResizing: false
           })
         }}
+      />
+      <ImageViewerDialog
+        isOpen={isImageViewerOpen}
+        imagePath={imageViewerPath}
+        onClose={() => setIsImageViewerOpen(false)}
       />
     </div>
   )

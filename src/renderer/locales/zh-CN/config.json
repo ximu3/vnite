@@ -17,7 +17,24 @@
     "quitApp": "退出vnite",
     "minimizeToTray": "最小化到托盘",
     "hideWindowAfterGameStart": "启动游戏后最小化到托盘",
-    "hideWindowAfterGameStartDescription": "启动游戏后自动隐藏主窗口"
+    "hideWindowAfterGameStartDescription": "启动游戏后自动隐藏主窗口",
+    "processMonitor": {
+      "title": "进程监控方式",
+      "description": "选择监控游戏进程的方式。游戏启动中无法变更此设置\n\n自动: 更效率，您无需从 Vnite 面板启动游戏\n传统: 更稳定，您必须从 Vnite 面板启动游戏",
+      "options": {
+        "new": "自动",
+        "legacy": "传统"
+      }
+    },
+    "timerTitle": "游戏计时器",
+    "foregroundTimer": {
+      "title": "前台计时",
+      "description": "选择当游戏窗口切换至后台运行时是否暂停计时器。此功能仅在进程监控方式为'自动'时有效。\n游戏运行中无法变更此设置"
+    },
+    "foregroundWaitTime": {
+      "title": "缓冲时间",
+      "description": "当游戏持续在前台/后台运行此时间后，继续/暂停计时器\n游戏运行中无法变更此设置"
+    }
   },
   "appearances": {
     "title": "外观",
@@ -81,7 +98,9 @@
       "title": "游戏列表",
       "showRecentGames": "显示最近游戏栏目",
       "showRecentGamesDescription": "在游戏列表中显示最近游玩的游戏",
-      "highlightLocalGames": "高亮本地游戏",
+      "showAllGamesInGroup": "在分组中显示所有游戏栏目",
+      "showAllGamesInGroupDescription": "在游戏列表的分组中显示所有游戏",
+      "highlightLocalGames": "高亮显示本地游戏",
       "highlightLocalGamesDescription": "在游戏列表中高亮显示本地游戏",
       "markLocalGames": "标记本地游戏",
       "markLocalGamesDescription": "在游戏列表中标记本地已安装的游戏"
@@ -275,6 +294,11 @@
         "all": "所有剧透 (2)"
       }
     },
+    "dlsite": {
+      "title": "DLsite 设置",
+      "findIdInName": "识别文件夹名中的DLsite ID",
+      "findIdInNameDescription": "启用后，会优先从文件夹名中提取DLsite作品ID（如 RJ123456）以获取游戏信息。"
+    },
     "dataSources": {
       "steam": "Steam",
       "vndb": "VNDB",
@@ -339,6 +363,63 @@
       "manage": "管理转换规则",
       "manageDescription": "管理和配置元数据转换器",
       "manageButton": "管理"
+    }
+  },
+  "memory": {
+    "title": "回忆",
+    "storageBackend": {
+      "title": "截图储存后端",
+      "description": "选择截图的保存位置\n如果您选择不将截图保存在数据库，那么这些截图将不会出现在游戏的“回忆”页面中",
+      "options": {
+        "database": "数据库",
+        "fileSystem": "文件系统",
+        "both": "数据库 & 文件系统"
+      }
+    },
+    "saveDir": {
+      "title": "截图储存文件夹",
+      "description": "选择保存截图的根文件夹",
+      "placeholder": "输入保存截图的根文件夹路径"
+    },
+    "namingRule": {
+      "title": "命名规则",
+      "description": "截图文件的命名规则，不可使用路径无效字符 [<>:\"/\\|?*]\n目前支持的占位符：\n\n%name% - 当前运行中的游戏的名称（游戏名称中的路径无效字符会被替换）\n%datetime% - 截图时间点的日期和时间\n%timestamp% - 截图时间点的毫秒级时间戳",
+      "placeholder": "输入截图文件的命名规则"
+    },
+    "snippingMode": {
+      "title": "截图模式",
+      "description": "选择截图模式",
+      "options": {
+        "rectangle": "矩形",
+        "activeWindow": "活动窗口",
+        "fullscreen": "全屏幕"
+      }
+    },
+    "enableNotificationSound": {
+      "title": "系统通知音效",
+      "description": "选择是否在收到截图成功系统通知时播放通知音效"
+    }
+  },
+  "network": {
+    "title": "网络",
+    "proxy": {
+      "title": "代理",
+      "enable": "启用代理",
+      "enableDescription": "通过代理服务器连接到互联网",
+      "protocol": "代理协议",
+      "protocolDescription": "选择代理服务器的协议",
+      "protocols": {
+        "http": "HTTP",
+        "https": "HTTPS",
+        "socks4": "SOCKS4",
+        "socks5": "SOCKS5"
+      },
+      "host": "主机名",
+      "hostDescription": "代理服务器的主机名或IP地址",
+      "port": "端口号",
+      "portDescription": "代理服务器的端口号",
+      "bypassRules": "绕过规则",
+      "bypassRulesDescription": "不通过代理服务器连接的地址列表，使用逗号分隔\n如：.foobar.com,*test.com,192.168.1.1/16,<local>\n<local>代表本地地址(127.0.0.1或localhost)"
     }
   }
 }

@@ -1,5 +1,7 @@
 import { CalendarIcon, ClockIcon, GamepadIcon, Trophy } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import AutoSizer from 'react-virtualized-auto-sizer'
+import { FixedSizeList } from 'react-window'
 import { Badge } from '~/components/ui/badge'
 import { Card } from '~/components/ui/card'
 import { GameImage } from '~/components/ui/game-image'
@@ -16,7 +18,6 @@ import { getGamePlayTime, getGameStore, useGameRegistry } from '~/stores/game'
 import { getGamesByScoreRange } from '~/stores/game/recordUtils'
 import { cn } from '~/utils'
 import { GamePoster } from './GamePoster'
-import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
 
 function GameScoreCard({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('record')
@@ -30,14 +31,15 @@ function GameScoreCard({ gameId }: { gameId: string }): React.JSX.Element {
   return (
     <HoverCard>
       <HoverCardTrigger asChild>
-        <div className={cn('w-[120px] cursor-pointer object-cover')}>
+        <div className={cn('w-[120px] cursor-pointer object-cover', '3xl:w-[150px]')}>
           <div className="relative group">
             <GamePoster
               gameId={gameId}
               blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
               className={cn(
                 'object-cover rounded-lg shadow-md',
-                'w-[120px] h-[180px] cursor-pointer object-cover'
+                'w-[120px] h-[180px] cursor-pointer object-cover',
+                '3xl:w-[150px] 3xl:h-[225px]'
               )}
             />
             <div className="absolute px-2 py-1 text-xs font-medium rounded-full bottom-2 right-2 bg-primary/90 text-primary-foreground backdrop-blur-sm">
@@ -117,6 +119,7 @@ function getGamePlayStatus(gameId: string, t: any): string {
   const statusMap: Record<string, string> = {
     unplayed: t('utils:game.playStatus.unplayed'),
     playing: t('utils:game.playStatus.playing'),
+    partial: t('utils:game.playStatus.partial'),
     finished: t('utils:game.playStatus.finished'),
     multiple: t('utils:game.playStatus.multiple'),
     shelved: t('utils:game.playStatus.shelved')
@@ -125,26 +128,18 @@ function getGamePlayStatus(gameId: string, t: any): string {
   return statusMap[status] || t('score.playStatus.unknown')
 }
 
-function PlaceHolder(): React.JSX.Element {
-  return (
-    <div className={cn('w-[120px] h-[180px] cursor-pointer object-cover', 'bg-transparent')}></div>
-  )
-}
-
 function ScoreCategory({
   title,
   description,
   minScore,
   maxScore,
-  className,
-  scrollPosition
+  className
 }: {
   title: string
   description: string
   minScore: number
   maxScore: number
   className: string
-  scrollPosition: { x: number; y: number }
 }): React.JSX.Element | null {
   const { t } = useTranslation('record')
   const games = getGamesByScoreRange(minScore, maxScore)
@@ -167,20 +162,28 @@ function ScoreCategory({
             {t('score.categories.gamesCount', { count: games.length })}
           </Badge>
         </div>
-        <div className="p-6 lg:w-4/5 w-full overflow-auto scrollbar-base">
-          <div className="grid justify-between grid-cols-[repeat(auto-fill,120px)] gap-4">
-            {games.map((gameId, index) => (
-              <div key={gameId} className={cn('flex-shrink-0', index === 0 && 'ml-1')}>
-                <LazyLoadComponent
-                  placeholder={<PlaceHolder />}
-                  scrollPosition={scrollPosition}
-                  threshold={300}
+        <div className="h-[280px] 3xl:h-[325px] p-6 pt-0 lg:w-4/5 lg:pt-6">
+          <AutoSizer>
+            {({ height, width }) => {
+              const itemSize = height <= 250 ? 150 : 180
+              return (
+                <FixedSizeList
+                  height={height}
+                  itemCount={games.length}
+                  itemSize={itemSize}
+                  className={cn('overflow-auto scrollbar-base')}
+                  width={width}
+                  layout="horizontal"
                 >
-                  <GameScoreCard gameId={gameId} />
-                </LazyLoadComponent>
-              </div>
-            ))}
-          </div>
+                  {({ index, style }) => (
+                    <div style={style} className={cn('pt-1', index == 0 && 'pl-1')}>
+                      <GameScoreCard gameId={games[index]} />
+                    </div>
+                  )}
+                </FixedSizeList>
+              )
+            }}
+          </AutoSizer>
         </div>
       </div>
     </Card>
@@ -188,11 +191,7 @@ function ScoreCategory({
 }
 
 // Main Scoring Report Component
-export function ScoreReportComponent({
-  scrollPosition
-}: {
-  scrollPosition: { x: number; y: number }
-}): React.JSX.Element {
+export function ScoreReport(): React.JSX.Element {
   const { t } = useTranslation('record')
 
   return (
@@ -209,7 +208,6 @@ export function ScoreReportComponent({
         description={t('score.categories.excellent.description')}
         minScore={9}
         maxScore={10}
-        scrollPosition={scrollPosition}
         className="border-primary"
       />
 
@@ -218,7 +216,6 @@ export function ScoreReportComponent({
         description={t('score.categories.great.description')}
         minScore={8}
         maxScore={8.9}
-        scrollPosition={scrollPosition}
         className="border-secondary"
       />
 
@@ -227,7 +224,6 @@ export function ScoreReportComponent({
         description={t('score.categories.good.description')}
         minScore={7}
         maxScore={7.9}
-        scrollPosition={scrollPosition}
         className="border-accent"
       />
 
@@ -236,7 +232,6 @@ export function ScoreReportComponent({
         description={t('score.categories.average.description')}
         minScore={6}
         maxScore={6.9}
-        scrollPosition={scrollPosition}
         className="border-muted"
       />
 
@@ -245,11 +240,8 @@ export function ScoreReportComponent({
         description={t('score.categories.notRecommended.description')}
         minScore={0}
         maxScore={5.9}
-        scrollPosition={scrollPosition}
         className="border-destructive"
       />
     </div>
   )
 }
-
-export const ScoreReport = trackWindowScroll(ScoreReportComponent)

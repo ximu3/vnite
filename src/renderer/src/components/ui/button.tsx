@@ -1,5 +1,5 @@
-import { Slot as SlotPrimitive } from 'radix-ui'
 import { cva, type VariantProps } from 'class-variance-authority'
+import { Slot as SlotPrimitive } from 'radix-ui'
 import * as React from 'react'
 
 import { cn } from '~/utils'
@@ -12,6 +12,8 @@ const buttonVariants = cva(
         default: 'bg-primary text-primary-foreground shadow-sm hover:bg-primary/90',
         destructive:
           'bg-destructive text-white shadow-sm hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',
+        delete:
+          'dark:bg-input/[calc(var(--glass-opacity)/2)] dark:hover:bg-destructive/[calc(var(--glass-opacity))] shadow-sm text-background-foreground hover:text-destructive-foreground hover:bg-destructive/[calc(var(--glass-opacity)/3)]',
         outline:
           'dark:bg-input/[calc(var(--glass-opacity)/2)] dark:hover:bg-accent/[calc(var(--glass-opacity))] shadow-sm text-background-foreground hover:text-accent-foreground hover:bg-accent/[calc(var(--glass-opacity)/3)]',
         thirdary:
@@ -26,7 +28,8 @@ const buttonVariants = cva(
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',
         sm: 'h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5',
         lg: 'h-10 rounded-md px-6 has-[>svg]:px-4',
-        icon: 'size-9'
+        icon: 'size-9',
+        'icon-sm': 'size-4'
       }
     },
     defaultVariants: {

@@ -14,6 +14,11 @@
       "blurImage": "NSFW：画像を非表示",
       "blurImageAndTitle": "NSFW：画像とタイトルを非表示"
     },
+    "nsfwFilter": {
+      "all": "すべてのゲームを表示",
+      "hideNSFW": "NSFWゲームを非表示",
+      "onlyNSFW": "NSFWゲームのみ表示"
+    },
     "darkMode": "ダークモード",
     "lightMode": "ライトモード",
     "cloudSyncDisabled": "クラウド同期が無効",
@@ -35,10 +40,11 @@
     "getBatchGamesFailed": "ゲームの一括取得に失敗しました: ",
     "getBatchGamesSuccess": "ゲームの一括取得に成功しました",
     "unknownError": "不明なエラー",
-    "selectLibraryFolder": "ライブラリフォルダを選択してください…",
-    "selectGamePath": "ゲームパスを選択してください",
-    "adding": "ゲームを追加中…",
-    "addSuccess": "ゲームの追加に成功しました",
-    "addError": "ゲームの追加中にエラーが発生しました"
+    "selectLibraryFolder": "ライブラリフォルダを選択してください…"
+  },
+  "timerStatus": {
+    "idle": "タイマー: 停止",
+    "on": "タイマー: 作動中",
+    "paused": "タイマー: 一時停止"
   }
 }

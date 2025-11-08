@@ -21,7 +21,8 @@
     },
     "recent": {
       "title": "최근 게임",
-      "hide": "숨기기"
+      "hide": "숨기기",
+      "empty": "최근 게임 없음"
     },
     "filter": {
       "results": "필터 결과",
@@ -54,7 +55,8 @@
       "genres": "장르",
       "platforms": "플랫폼",
       "tags": "태그",
-      "extraInfo": "추가 정보"
+      "extraInfo": "추가 정보",
+      "playStatus": "플레이 상태"
     },
     "combobox": {
       "select": "{{placeholder}} 선택",

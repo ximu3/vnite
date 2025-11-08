@@ -28,10 +28,6 @@
     "getBatchGamesFailed": "",
     "getBatchGamesSuccess": "",
     "unknownError": "",
-    "selectLibraryFolder": "",
-    "selectGamePath": "",
-    "adding": "",
-    "addSuccess": "",
-    "addError": ""
+    "selectLibraryFolder": ""
   }
 }

@@ -7,7 +7,7 @@ import {
 } from '@appTypes/event'
 import { BatchUpdateGameMetadataProgress, OverallScanProgress } from '@appTypes/utils'
 import { ProgressInfo, UpdateCheckResult } from 'electron-updater'
-import { BatchGameInfo, configDocs } from './models'
+import { BatchGameInfo, configDocs, GameTimerStatus } from './models'
 import {
   PluginConfiguration,
   PluginInfo,
@@ -62,6 +62,13 @@ type MainIpcEvents =
       'app:switch-to-normal-mode': []
 
       'launcher:start-game': [gameId: string]
+
+      'native-monitor:add-local-game': [gameId: string, monitorPath: string]
+      'native-monitor:remove-local-game': [monitorPath: string]
+      'native-monitor:update-local-game': []
+      'system:change-process-monitor': [monitor: 'new' | 'legacy']
+      'system:change-foreground-timer': [isEnabled: boolean]
+      'system:change-foreground-timer-wait-time': [waitTime: number]
     }
   | {
       // Handler events (request-response communication from renderer to main)
@@ -76,6 +83,7 @@ type MainIpcEvents =
         extensions?: string[],
         defaultPath?: string
       ) => string[] | undefined
+      'system:save-image-as-file-dialog': (sourcePath: string) => boolean
       'system:get-path-size': (paths: string[]) => number
       'system:read-file-buffer': (filePath: string) => Buffer
       'system:open-path-in-explorer': (filePath: string) => void
@@ -84,6 +92,7 @@ type MainIpcEvents =
       'system:check-if-portable-directory-needs-admin-rights': () => boolean
       'system:get-fonts': () => string[]
       'system:update-screenshot-hotkey': (hotkey: string) => void
+      'system:delete-temp-file': (path: string) => void
 
       'app:update-language': (language: string) => void
       'app:get-app-version': () => string
@@ -104,6 +113,7 @@ type MainIpcEvents =
       'utils:save-game-icon-by-file': (gameId: string, filePath: string) => void
       'utils:download-temp-image': (url: string) => string
       'utils:save-clipboard-image': () => string
+      'utils:write-clipboard-image': (data: string, type: 'path') => boolean
       'utils:get-app-log-contents-in-current-lifetime': () => string
       'utils:copy-app-log-in-current-lifetime-to-clipboard-as-file': () => void
       'utils:open-log-path-in-explorer': () => void
@@ -178,6 +188,7 @@ type MainIpcEvents =
         dataSourceId: string
         backgroundUrl?: string
         dirPath?: string
+        gamePath?: string
       }) => void
       'adder:update-game-metadata': (data: {
         dbId: string
@@ -188,7 +199,7 @@ type MainIpcEvents =
         options?: GameMetadataUpdateOptions
       }) => void
       'adder:get-batch-game-adder-data': () => BatchGameInfo[]
-      'adder:add-game-to-db-without-metadata': (gamePath: string) => void
+      'adder:add-game-to-db-without-metadata': (dirPath: string, gamePath: string) => void
       'adder:batch-update-game-metadata': (data: {
         gameIds: string[]
         dataSource: string
@@ -353,9 +364,11 @@ type RendererIpcEvents = {
   // EventBus events forwarded from main process
   'events:event-emitted': [eventType: EventType, data: EnhancedEventData<EventType>]
 
+  'game:started': [gameId: string]
   'game:exiting': [gameId: string]
   'game:exited': [gameId: string]
   'game:start-from-url': [gameId: string]
+  'game:launch-failed': [gameId: string]
 
   'importer:import-steam-games-progress': [
     {
@@ -385,6 +398,8 @@ type RendererIpcEvents = {
 
   'plugin:update-all-plugins': [plugins: Omit<PluginInfo, 'instance'>[]]
   'plugin:update-plugin-stats': [stats: PluginStatsData]
+
+  'monitor:timer-status-change': [gameTimerStatus: GameTimerStatus[]]
 }
 
 // Export types for use in both main and renderer

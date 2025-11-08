@@ -1,17 +1,17 @@
+import { METADATA_EXTRA_PREDEFINED_KEYS } from '@appTypes/models'
 import { useTranslation } from 'react-i18next'
+import { ArrayInput } from '~/components/ui/array-input'
 import { Button } from '~/components/ui/button'
 import { Dialog, DialogContent } from '~/components/ui/dialog'
-import { Input } from '~/components/ui/input'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
-import { ArrayInput } from '~/components/ui/array-input'
+import { Input } from '~/components/ui/input'
 import { useGameState } from '~/hooks'
 import { cn } from '~/utils'
-import { METADATA_EXTRA_PREDEFINED_KEYS } from '@appTypes/models'
 
 export function ExtraInformationDialog({
   gameId,
@@ -168,12 +168,7 @@ export function ExtraInformationDialog({
                 >
                   <span className={cn('icon-[mdi--keyboard-arrow-down] w-4 h-4')}></span>
                 </Button>
-                <Button
-                  variant="outline"
-                  size={'icon'}
-                  className={cn('hover:bg-destructive hover:text-destructive-foreground')}
-                  onClick={() => removeItem(i)}
-                >
+                <Button variant="delete" size={'icon'} onClick={() => removeItem(i)}>
                   <span className={cn('icon-[mdi--delete-outline] w-4 h-4')}></span>
                 </Button>
               </div>

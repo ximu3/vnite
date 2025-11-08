@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { AccordionContent, AccordionItem, AccordionTrigger } from '~/components/ui/accordion'
 import {
   ContextMenu,
@@ -5,9 +6,8 @@ import {
   ContextMenuItem,
   ContextMenuTrigger
 } from '~/components/ui/context-menu'
-import { useTranslation } from 'react-i18next'
 import { useConfigState } from '~/hooks'
-import { getGameStore, sortGames } from '~/stores/game'
+import { filterGamesByNSFW, getGameStore, sortGames } from '~/stores/game'
 import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
 
@@ -15,7 +15,8 @@ export function RecentGames(): React.JSX.Element {
   const [showRecentGamesInGameList, setShowRecentGamesInGameList] = useConfigState(
     'game.gameList.showRecentGames'
   )
-  const games = sortGames('record.lastRunDate', 'desc')
+  const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
+  const games = sortGames('record.lastRunDate', 'desc', filterGamesByNSFW(nsfwFilterMode))
     .slice(0, 5)
     .filter((id) => {
       const date = getGameStore(id).getState().getValue('record.lastRunDate')

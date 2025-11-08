@@ -14,6 +14,12 @@
       "blurImage": "NSFW: Hide images",
       "blurImageAndTitle": "NSFW: Hide images and titles"
     },
+    "nsfwFilter": {
+      "all": "Show all games",
+      "hideNSFW": "Hide NSFW games",
+      "onlyNSFW": "Show only NSFW games"
+    },
+
     "darkMode": "Dark Mode",
     "lightMode": "Light Mode",
     "cloudSyncDisabled": "Cloud Sync Disabled",
@@ -35,10 +41,11 @@
     "getBatchGamesFailed": "Failed to get games in batch: ",
     "getBatchGamesSuccess": "Successfully got games in batch",
     "unknownError": "Unknown error",
-    "selectLibraryFolder": "Please select library folder…",
-    "selectGamePath": "Please select game path",
-    "adding": "Adding game…",
-    "addSuccess": "Successfully added game",
-    "addError": "Error adding game"
+    "selectLibraryFolder": "Please select library folder…"
+  },
+  "timerStatus": {
+    "idle": "Timer: idle",
+    "on": "Timer: on",
+    "paused": "Timer: paused"
   }
 }

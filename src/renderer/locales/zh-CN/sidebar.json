@@ -14,6 +14,11 @@
       "blurImage": "NSFW: 隐藏图片",
       "blurImageAndTitle": "NSFW: 隐藏图片与标题"
     },
+    "nsfwFilter": {
+      "all": "显示全部游戏",
+      "hideNSFW": "隐藏NSFW游戏",
+      "onlyNSFW": "仅显示NSFW游戏"
+    },
     "darkMode": "暗色模式",
     "lightMode": "亮色模式",
     "cloudSyncDisabled": "云同步未开启",
@@ -35,10 +40,11 @@
     "getBatchGamesFailed": "批量获取游戏失败: ",
     "getBatchGamesSuccess": "批量获取游戏成功",
     "unknownError": "未知错误",
-    "selectLibraryFolder": "请选择库文件夹…",
-    "selectGamePath": "请选择游戏路径",
-    "adding": "正在添加游戏…",
-    "addSuccess": "添加游戏成功",
-    "addError": "添加游戏时出错"
+    "selectLibraryFolder": "请选择库文件夹…"
+  },
+  "timerStatus": {
+    "idle": "计时器: 空闲",
+    "on": "计时器: 运行中",
+    "paused": "计时器: 暂停"
   }
 }

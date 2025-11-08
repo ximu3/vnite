@@ -8,6 +8,7 @@ import { useUpdaterStore } from '~/pages/Updater/store'
 import { useLibrarybarStore } from '~/components/Librarybar/store'
 import i18next from 'i18next'
 import { useRouter } from '@tanstack/react-router'
+import { getGameStore } from '~/stores/game'
 
 /**
  * Setting the game URL startup listener
@@ -32,6 +33,74 @@ export function setupCloudSyncListener(): () => void {
   }
 
   return ipcManager.on('db:sync-status', handleSyncStatus)
+}
+
+export function setupGameStartListeners(): () => void {
+  const { refreshGameList } = useLibrarybarStore.getState()
+
+  const startedListener = ipcManager.on('game:started', (_, gameId: string) => {
+    const gameStore = getGameStore(gameId)
+    const setGameValue = gameStore.getState().setValue
+    const getGameValue = gameStore.getState().getValue
+    // Get the latest list of running games
+    const { runningGames, setRunningGames } = useRunningGames.getState()
+
+    if (runningGames.includes(gameId)) {
+      return
+    }
+    // Update the list of running games
+    setRunningGames([...runningGames, gameId])
+
+    if (getGameValue('record.playStatus') === 'unplayed') {
+      setGameValue('record.playStatus', 'playing')
+    }
+
+    // Refresh the game list
+    refreshGameList()
+
+    toast.info(i18next.t('utils:notifications.gameStarted'), {
+      id: `${gameId}-started`
+    })
+
+    // Turn off notifications after 4 seconds
+    setTimeout(() => {
+      toast.dismiss(`${gameId}-started`)
+    }, 4000)
+  })
+
+  return () => {
+    startedListener()
+  }
+}
+
+export function setupGameLaunchFailedListeners(): () => void {
+  const { refreshGameList } = useLibrarybarStore.getState()
+
+  const failedListener = ipcManager.on('game:launch-failed', (_, gameId: string) => {
+    const { runningGames, setRunningGames } = useRunningGames.getState()
+    if (!runningGames.includes(gameId)) {
+      return
+    }
+    const newRunningGames = runningGames.filter((elem) => elem !== gameId)
+    // Update the list of running games
+    setRunningGames(newRunningGames)
+
+    // Refresh the game list
+    refreshGameList()
+
+    toast.info(i18next.t('utils:notifications.gameLaunchFailed'), {
+      id: `${gameId}-launch-failed`
+    })
+
+    // Turn off notifications after 4 seconds
+    setTimeout(() => {
+      toast.dismiss(`${gameId}-launch-failed`)
+    }, 4000)
+  })
+
+  return () => {
+    failedListener()
+  }
 }
 
 export function setupGameExitListeners(): () => void {
@@ -133,6 +202,8 @@ export async function setup(router: any): Promise<() => void> {
   const cleanupFunctions = [
     setupGameUrlListener(router),
     setupCloudSyncListener(),
+    setupGameStartListeners(),
+    setupGameLaunchFailedListeners(),
     setupGameExitListeners(),
     await setupDBSync(),
     setupUpdateListener(),

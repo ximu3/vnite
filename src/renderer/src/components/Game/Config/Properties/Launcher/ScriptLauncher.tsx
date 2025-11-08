@@ -1,9 +1,9 @@
-import { cn } from '~/utils'
-import { useGameLocalState } from '~/hooks'
-import { Input } from '~/components/ui/input'
-import { Button } from '~/components/ui/button'
+import React, { useCallback, useImperativeHandle } from 'react'
+import { useTranslation } from 'react-i18next'
+import { ipcManager } from '~/app/ipc'
 import { ArrayTextarea } from '~/components/ui/array-textarea'
-import { Separator } from '~/components/ui/separator'
+import { Button } from '~/components/ui/button'
+import { Input } from '~/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -13,10 +13,18 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select'
-import { useTranslation } from 'react-i18next'
-import { ipcManager } from '~/app/ipc'
+import { Separator } from '~/components/ui/separator'
+import { useGameLocalState } from '~/hooks'
+import { cn } from '~/utils'
 
-export function ScriptLauncher({ gameId }: { gameId: string }): React.JSX.Element {
+export interface ScriptLauncherHandle {
+  save: () => Promise<void>
+}
+
+function ScriptLauncherComponent(
+  { gameId }: { gameId: string },
+  ref: React.Ref<ScriptLauncherHandle>
+): React.JSX.Element {
   const { t } = useTranslation('game')
   const [command, setCommand, saveCommand] = useGameLocalState(
     gameId,
@@ -52,6 +60,7 @@ export function ScriptLauncher({ gameId }: { gameId: string }): React.JSX.Elemen
         return
       }
       await setMonitorPathAndSave(monitorPath)
+      ipcManager.send('native-monitor:update-local-game')
     }
     if (monitorMode === 'folder') {
       const monitorPath = await ipcManager.invoke('system:select-path-dialog', ['openDirectory'])
@@ -59,8 +68,15 @@ export function ScriptLauncher({ gameId }: { gameId: string }): React.JSX.Elemen
         return
       }
       await setMonitorPathAndSave(monitorPath)
+      ipcManager.send('native-monitor:update-local-game')
     }
   }
+
+  const saveAll = useCallback(async () => {
+    await Promise.all([saveCommand(), saveWorkingDirectory(), saveMonitorPath()])
+    ipcManager.send('native-monitor:update-local-game')
+  }, [saveCommand, saveWorkingDirectory, saveMonitorPath])
+  useImperativeHandle(ref, () => ({ save: saveAll }), [saveAll])
 
   return (
     <>
@@ -134,7 +150,9 @@ export function ScriptLauncher({ gameId }: { gameId: string }): React.JSX.Elemen
           className={cn('flex-1')}
           value={monitorPath}
           onChange={(e) => setMonitorPath(e.target.value)}
-          onBlur={saveMonitorPath}
+          onBlur={() => {
+            saveMonitorPath().then(() => ipcManager.send('native-monitor:update-local-game'))
+          }}
         />
         {['folder', 'file'].includes(monitorMode) && (
           <Button variant={'outline'} size={'icon'} onClick={selectMonitorPath}>
@@ -151,3 +169,5 @@ export function ScriptLauncher({ gameId }: { gameId: string }): React.JSX.Elemen
     </>
   )
 }
+
+export const ScriptLauncher = React.forwardRef(ScriptLauncherComponent)

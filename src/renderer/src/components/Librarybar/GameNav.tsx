@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from '@tanstack/react-router'
 import { Nav } from '@ui/nav'
 import React from 'react'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
-import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
 import { GamePropertiesDialog } from '~/components/Game/Config/Properties'
 import { ContextMenu, ContextMenuTrigger } from '~/components/ui/context-menu'
@@ -12,6 +11,7 @@ import { useConfigState, useGameLocalState, useGameState } from '~/hooks'
 import { useLibraryStore } from '~/pages/Library/store'
 import { cn, startGame } from '~/utils'
 import { GameNavCM } from '../contextMenu/GameNavCM'
+import { InformationDialog } from '../Game/Overview/Information/InformationDialog'
 import { BatchGameNavCM } from '../GameBatchEditor/BatchGameNavCM'
 import { useGameBatchEditorStore } from '../GameBatchEditor/store'
 import { useTheme } from '../ThemeProvider'
@@ -38,7 +38,7 @@ export function GameNav({
   // dialog box state
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
   const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = React.useState(false)
-  const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = React.useState(false)
+  const [isInformationDialogOpen, setIsInformationDialogOpen] = React.useState(false)
   const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = React.useState(false)
 
   const isSelected = useGameBatchEditorStore((state) => state.selectedGamesMap[gameId])
@@ -193,7 +193,7 @@ export function GameNav({
           <GameNavCM
             gameId={gameId}
             openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
-            openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
+            openNameEditorDialog={() => setIsInformationDialogOpen(true)}
             openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
             openPropertiesDialog={() => setIsPropertiesDialogOpen(true)}
           />
@@ -203,8 +203,12 @@ export function GameNav({
       {isAddCollectionDialogOpen && (
         <AddCollectionDialog gameIds={[gameId]} setIsOpen={setIsAddCollectionDialogOpen} />
       )}
-      {isNameEditorDialogOpen && (
-        <NameEditorDialog gameId={gameId} setIsOpen={setIsNameEditorDialogOpen} />
+      {isInformationDialogOpen && (
+        <InformationDialog
+          gameId={gameId}
+          isOpen={isInformationDialogOpen}
+          setIsOpen={setIsInformationDialogOpen}
+        />
       )}
       {isPlayTimeEditorDialogOpen && (
         <PlayTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayTimeEditorDialogOpen} />

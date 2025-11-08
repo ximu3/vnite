@@ -6,6 +6,8 @@
       "placeholder": "検索",
       "tooltip": "ゲーム名、開発者、リリース日などのメタデータで検索できます"
     },
+    "gameListSettings": "ゲームリスト設定",
+    "collapseAllGroups": "すべてのグループを折りたたむ",
     "groupBy": "グループ分け",
     "groups": {
       "none": "グループなし",
@@ -33,6 +35,7 @@
       "sortBy": "並び順",
       "sortOptions": {
         "name": "名前",
+        "sortName": "ソート名",
         "releaseDate": "リリース日",
         "lastRunDate": "最終プレイ日",
         "addDate": "追加日",
@@ -41,7 +44,8 @@
     },
     "playStatus": {
       "adjustOrder": "順序を調整"
-    }
+    },
+    "overrideCollectionSort": "コレクションの並び順を上書き"
   },
   "filter": {
     "title": "詳細フィルター",
@@ -76,10 +80,12 @@
       "label": "並び順",
       "options": {
         "name": "名前",
+        "sortName": "ソート名",
         "releaseDate": "リリース日",
         "lastRunDate": "最終プレイ日",
         "addDate": "追加日",
-        "playTime": "プレイ時間"
+        "playTime": "プレイ時間",
+        "custom": "カスタム順序"
       }
     },
     "gameCard": {
@@ -230,6 +236,7 @@
         "fields": {
           "originalName": "オリジナル名",
           "localizedName": "ローカライズ名",
+          "sortName": "ソート名",
           "developers": "開発元",
           "publishers": "パブリッシャー",
           "releaseDate": "リリース日",
@@ -295,6 +302,11 @@
         "editText": "テキストを編集",
         "delete": "削除"
       },
+      "setAs": {
+        "title": "設定",
+        "cover": "ゲームカバー",
+        "background": "ゲーム背景"
+      },
       "export": {
         "exportAs": "エクスポート形式",
         "image": "画像",
@@ -312,7 +324,11 @@
         "imageCopied": "画像をクリップボードにコピーしました",
         "imageCopyError": "画像のクリップボードへのコピーに失敗しました: {{error}}",
         "markdownCopied": "Markdownをクリップボードにコピーしました",
-        "markdownCopyError": "クリップボードへのコピーに失敗しました: {{error}}"
+        "markdownCopyError": "クリップボードへのコピーに失敗しました: {{error}}",
+        "setCoverSuccess": "ゲームカバーとして設定しました",
+        "setCoverError": "ゲームカバーの設定に失敗しました: {{error}}",
+        "setBackgroundSuccess": "ゲーム背景として設定しました",
+        "setBackgroundError": "ゲーム背景の設定に失敗しました: {{error}}"
       },
       "dialog": {
         "markdownHint": "Markdown記法をサポートしています"
@@ -323,7 +339,7 @@
     },
     "manage": {
       "title": "管理",
-      "rename": "名前変更",
+      "rename": "基本情報を編集",
       "editLogo": "ロゴを編集",
       "editPlayTime": "プレイ時間を編集",
       "downloadMetadata": "メタデータを更新",
@@ -342,13 +358,19 @@
       "title": "ゲームタイマー",
       "addTimer": "タイマーを追加",
       "timersList": "タイマーリスト",
+      "fuzzyTime": "タイマー未記録のプレイ時間",
       "noTimers": "タイマー記録がありません",
       "totalPlayTime": "総プレイ時間",
       "startTime": "開始",
       "endTime": "終了",
       "ongoing": "進行中",
       "duration": "時間",
-      "minutes": "分"
+      "minutes": "分",
+      "error": {
+        "overlapMessage": "タイマー {{first}} と {{second}} が重複しています！",
+        "invalidTime": "タイマー {{index}} の開始または終了時刻が無効です！",
+        "endBeforeStart": "タイマー {{index}} の終了時刻が開始時刻より前です！"
+      }
     },
     "timerEditor": {
       "startDateRequired": "開始時間と終了時間を設定する必要があります",
@@ -365,7 +387,8 @@
         "deleting": "ゲーム{{gameName}}を削除中…",
         "deleted": "ゲーム{{gameName}}を削除しました",
         "error": "ゲーム{{gameName}}の削除に失敗しました: {{message}}"
-      }
+      },
+      "addToIgnore": "このゲームフォルダをスキャナ無視リストに追加する"
     },
     "playTimeEditor": {
       "expressionSupport": "計算式をサポートしています",
@@ -566,7 +589,8 @@
         "deleting": "{{count}}個のゲームを削除中…",
         "success": "{{count}}個のゲームを削除しました",
         "error": "{{count}}個のゲームの削除に失敗しました: {{message}}"
-      }
+      },
+      "addToIgnore": "これらのゲームフォルダをスキャナ無視リストに追加する"
     }
   },
   "updater": {

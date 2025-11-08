@@ -46,7 +46,11 @@
         "recognizing": "ゲームを認識中…",
         "recognized": "ゲームの認識に成功しました",
         "invalidId": "無効なID",
-        "recognizeError": "ゲームの認識に失敗しました: {{message}}"
+        "recognizeError": "ゲームの認識に失敗しました: {{message}}",
+        "selectGamePath": "ゲームパスを選択してください",
+        "adding": "ゲームを追加中…",
+        "addSuccess": "ゲームの追加に成功しました",
+        "addError": "ゲームの追加中にエラーが発生しました"
       },
       "dataSources": {
         "label": "データソース",
@@ -55,8 +59,12 @@
         "bangumi": "Bangumi",
         "igdb": "IGDB",
         "ymgal": "YMGal",
-        "dlsite": "DLsite"
-      }
+        "dlsite": "DLsite",
+        "none": "なし"
+      },
+      "gamePath": "ゲームパス",
+      "addButton": "追加",
+      "gamePathPlaceholder": "ゲームパスを選択してください"
     }
   },
   "gameBatchAdder": {

@@ -1,11 +1,26 @@
+import { NSFWFilterMode } from '@appTypes/models'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue
+} from '@ui/select'
 import { SeparatorDashed } from '@ui/separator-dashed'
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
+import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
+import { Button } from '~/components/ui/button'
 import { ScrollArea } from '~/components/ui/scroll-area'
+import { useConfigState } from '~/hooks'
+import { useGameCollectionState } from '~/hooks/useGameCollectionState'
 import { useGameCollectionStore } from '~/stores'
+import { filterGamesByNSFW, sortGames } from '~/stores/game/gameUtils'
 import { cn } from '~/utils'
 import { GamePoster } from './posters/GamePoster'
-import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
 
 export type DragContextType = {
   isDraggingGlobal: boolean
@@ -32,8 +47,17 @@ export function CollectionGamesComponent({
   collectionId: string
   scrollPosition: { x: number; y: number }
 }): React.JSX.Element {
+  const [by, setBy] = useGameCollectionState(collectionId, 'sortBy')
+  const [order, setOrder] = useGameCollectionState(collectionId, 'sortOrder')
+  const toggleOrder = (): void => {
+    setOrder(order === 'asc' ? 'desc' : 'asc')
+  }
+  const { t } = useTranslation('game')
   const collections = useGameCollectionStore((state) => state.documents)
-  const games = collections[collectionId]?.games
+  const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
+
+  const games = filterGamesByNSFW(nsfwFilterMode, collections[collectionId]?.games)
+  const sortedGames = by === 'custom' ? games : sortGames(by, order, games)
   const collectionName = collections[collectionId]?.name
 
   const [gap, setGap] = useState<number>(0)
@@ -104,17 +128,63 @@ export function CollectionGamesComponent({
 
   return (
     <DragContext.Provider value={{ isDraggingGlobal, setIsDraggingGlobal }}>
-      <div className={cn('flex flex-col gap-3 h-full bg-transparent')}>
-        <ScrollArea className={cn('w-full h-full pb-2')}>
-          <div className={cn('w-full flex flex-col gap-1 pt-[18px]')}>
-            <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>
-              <div className={cn('text-accent-foreground select-none flex-shrink-0')}>
-                {collectionName}
-              </div>
-
-              <SeparatorDashed className="border-border" />
-            </div>
-
+      <div className={cn('flex flex-col gap-3 h-full bg-transparent pt-4')}>
+        <div className={cn('flex flex-row gap-5 items-center justify-center pl-5 pt-2')}>
+          <div className={cn('text-accent-foreground select-none flex-shrink-0')}>
+            {collectionName}
+          </div>
+          <div className={cn('flex flex-row gap-1 items-center justify-center select-none')}>
+            <div className={cn('text-sm')}>{t('showcase.sorting.title')}</div>
+            {/* Sort By */}
+            <Select value={by} onValueChange={setBy} defaultValue="name">
+              <SelectTrigger className={cn('w-[130px] h-[26px] text-xs border-0')}>
+                <SelectValue placeholder="Select a fruit" className={cn('text-xs')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>{t('showcase.sorting.label')}</SelectLabel>
+                  <SelectItem value="metadata.name">
+                    {t('showcase.sorting.options.name')}
+                  </SelectItem>
+                  <SelectItem value="metadata.sortName">
+                    {t('showcase.sorting.options.sortName')}
+                  </SelectItem>
+                  <SelectItem value="metadata.releaseDate">
+                    {t('showcase.sorting.options.releaseDate')}
+                  </SelectItem>
+                  <SelectItem value="record.lastRunDate">
+                    {t('showcase.sorting.options.lastRunDate')}
+                  </SelectItem>
+                  <SelectItem value="record.addDate">
+                    {t('showcase.sorting.options.addDate')}
+                  </SelectItem>
+                  <SelectItem value="record.playTime">
+                    {t('showcase.sorting.options.playTime')}
+                  </SelectItem>
+                  <SelectItem value="custom">{t('showcase.sorting.options.custom')}</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+          {/* Toggle Order */}
+          {by !== 'custom' && (
+            <Button
+              variant={'thirdary'}
+              size={'icon'}
+              className={cn('h-[26px] w-[26px] -ml-3')}
+              onClick={toggleOrder}
+            >
+              {order === 'asc' ? (
+                <span className={cn('icon-[mdi--arrow-up] w-4 h-4')}></span>
+              ) : (
+                <span className={cn('icon-[mdi--arrow-down] w-4 h-4')}></span>
+              )}
+            </Button>
+          )}
+          <SeparatorDashed className="border-border" />
+        </div>
+        <ScrollArea className={cn('w-full flex-1 min-h-0 pb-2')}>
+          <div className={cn('w-full flex flex-col gap-1')}>
             {/* Game List Container */}
             <div
               ref={gridContainerRef}
@@ -125,9 +195,9 @@ export function CollectionGamesComponent({
                 'pt-2 pb-6 pl-5 pr-5' // Add inner margins to show shadows
               )}
             >
-              {games?.map((gameId, index) => (
+              {sortedGames?.map((gameId, index) => (
                 <div
-                  key={gameId}
+                  key={`${gameId}_${nsfwFilterMode}`}
                   className={cn(
                     'flex-shrink-0' // Preventing compression
                   )}
@@ -136,7 +206,11 @@ export function CollectionGamesComponent({
                     <GamePoster
                       gameId={gameId}
                       groupId={`collection:${collectionId}`}
-                      dragScenario="reorder-games-in-collection"
+                      dragScenario={
+                        by === 'custom' && nsfwFilterMode === NSFWFilterMode.All
+                          ? 'reorder-games-in-collection'
+                          : undefined
+                      }
                       parentGap={gap}
                       position={
                         (index % columns === 0 && 'left') ||

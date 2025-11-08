@@ -1,17 +1,18 @@
-import { Button } from '~/components/ui/button'
+import { SeparatorDashed } from '@ui/separator-dashed'
 import { throttle } from 'lodash'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Button } from '~/components/ui/button'
 import { useConfigState } from '~/hooks'
-import { getGameStore, sortGames } from '~/stores/game'
+import { useLibraryStore } from '~/pages/Library/store'
+import { filterGamesByNSFW, getGameStore, sortGames } from '~/stores/game'
 import { cn } from '~/utils'
 import { BigGamePoster } from './posters/BigGamePoster'
 import { GamePoster } from './posters/GamePoster'
-import { SeparatorDashed } from '@ui/separator-dashed'
-import { useLibraryStore } from '~/pages/Library/store'
 
 export function RecentGames(): React.JSX.Element {
-  const games = sortGames('record.lastRunDate', 'desc')
+  const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
+  const games = sortGames('record.lastRunDate', 'desc', filterGamesByNSFW(nsfwFilterMode))
     .slice(0, 15)
     .filter((id) => {
       const date = getGameStore(id).getState().getValue('record.lastRunDate')
@@ -34,7 +35,7 @@ export function RecentGames(): React.JSX.Element {
   return (
     <div
       className={cn('flex flex-col gap-1')}
-      style={{ width: `calc(100vw - ${libraryBarWidth + 57 - (libraryBarWidth === 0 ? 1 : 0)}px)` }}
+      style={{ width: `calc(100vw - ${libraryBarWidth + 60 - (libraryBarWidth === 0 ? 1 : 0)}px)` }}
     >
       <div className={cn('flex flex-row items-center gap-5 justify-center pl-5')}>
         <div className={cn('text-accent-foreground select-none flex-shrink-0')}>

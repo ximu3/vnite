@@ -1,23 +1,24 @@
 import {
-  createRouter,
+  createHashHistory,
   createRootRoute,
   createRoute,
+  createRouter,
   redirect,
-  createHashHistory
+  SearchSchemaInput
 } from '@tanstack/react-router'
-import { RootLayout } from '../layouts/RootLayout'
-import { Library } from '~/pages/Library'
-import { Record } from '~/pages/Record'
+import { Game } from '~/components/Game'
+import { Showcase } from '~/components/Showcase'
+import { CollectionGames } from '~/components/Showcase/CollectionGames'
+import { CollectionPage } from '~/components/Showcase/CollectionPage'
 import { Config } from '~/pages/Config'
 import { GameScannerManager } from '~/pages/GameScannerManager'
-import { TransformerManager } from '~/pages/TransformerManager'
+import { Library } from '~/pages/Library'
 import { Plugin } from '~/pages/Plugin/main'
+import { Record } from '~/pages/Record'
+import { TransformerManager } from '~/pages/TransformerManager'
 import { Icon } from '~/pages/arts/Icon'
 import { Logo } from '~/pages/arts/Logo'
-import { Showcase } from '~/components/Showcase'
-import { CollectionPage } from '~/components/Showcase/CollectionPage'
-import { Game } from '~/components/Game'
-import { CollectionGames } from '~/components/Showcase/CollectionGames'
+import { RootLayout } from '../layouts/RootLayout'
 
 const hashHistory = createHashHistory()
 
@@ -80,13 +81,31 @@ const libraryCollectionGamesRoute = createRoute({
 const recordRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/record',
-  component: Record
+  component: Record,
+  validateSearch: (search: { tab?: string; date?: string; year?: string } & SearchSchemaInput) => {
+    const tab = typeof search.tab === 'string' ? search.tab : 'overview'
+    const date =
+      typeof search.date === 'string' && !isNaN(Date.parse(search.date))
+        ? search.date
+        : new Date().toISOString()
+    const year =
+      typeof search.year === 'string' && /^\d{4}$/.test(search.year)
+        ? search.year
+        : String(new Date().getFullYear())
+
+    return { tab, date, year }
+  }
 })
 
 const configRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/config',
-  component: Config
+  component: Config,
+  validateSearch: (search: Record<string, unknown> & SearchSchemaInput) => {
+    return {
+      tab: typeof search.tab === 'string' ? search.tab : 'general'
+    }
+  }
 })
 
 const scannerRoute = createRoute({

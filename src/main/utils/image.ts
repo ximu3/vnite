@@ -1,4 +1,4 @@
-import { clipboard, net } from 'electron'
+import { clipboard, nativeImage, net } from 'electron'
 import { fileTypeFromBuffer } from 'file-type'
 import fse from 'fs-extra'
 import sharp from 'sharp'
@@ -211,6 +211,26 @@ export async function saveClipboardImage(): Promise<string> {
     return filePath
   } catch (error) {
     console.error('Failed to save image in clipboard:', error)
+    throw error
+  }
+}
+
+export async function writeClipboardImage(data: string, type: 'path'): Promise<boolean> {
+  try {
+    let buffer
+    switch (type) {
+      case 'path':
+        buffer = await sharp(data).png().toBuffer()
+    }
+    const image = nativeImage.createFromBuffer(buffer)
+
+    if (!image.isEmpty()) {
+      clipboard.writeImage(image)
+      return true
+    }
+    return false
+  } catch (error) {
+    console.error('Failed to write image to clipboard:', error)
     throw error
   }
 }

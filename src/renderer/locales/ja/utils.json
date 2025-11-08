@@ -34,6 +34,10 @@
     "copied": "クリップボードにコピーしました",
     "copyError": "クリップボードへのテキストのコピーに失敗しました: {{error}}"
   },
+  "saveFile": {
+    "success": "ファイルが正常に保存されました",
+    "error": "ファイルの保存に失敗しました：{{error}}"
+  },
   "game": {
     "stopping": {
       "loading": "ゲームを停止中…",
@@ -50,6 +54,7 @@
     "playStatus": {
       "unplayed": "未プレイ",
       "playing": "プレイ中",
+      "partial": "一部完了",
       "finished": "完了",
       "multiple": "複数周回",
       "shelved": "保留中",
@@ -62,12 +67,14 @@
     "niceISO": "{{date, niceISO}}"
   },
   "notifications": {
+    "gameStarted": "ゲームが起動されました",
     "gameExiting": "ゲームを終了しています…",
     "gameExited": "ゲームが終了しました",
     "fullSyncing": "データを同期しています…",
     "fullSynced": "データ同期が完了しました",
     "fullSyncError": "データ同期に失敗しました",
     "updateUserInfoError": "公式クラウド同期アカウントのログインが期限切れです。再度ログインしてください",
-    "checkingForUpdate": "更新を確認中…"
+    "checkingForUpdate": "更新を確認中…",
+    "gameLaunchFailed": "ゲームの起動が失敗しました"
   }
 }

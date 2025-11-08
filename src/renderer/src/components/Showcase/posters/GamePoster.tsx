@@ -5,19 +5,18 @@ import { useTranslation } from 'react-i18next'
 import { HoverCardAnimation } from '~/components/animations/HoverCard'
 import { GameNavCM } from '~/components/contextMenu/GameNavCM'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
-import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
 import { GamePropertiesDialog } from '~/components/Game/Config/Properties'
+import { InformationDialog } from '~/components/Game/Overview/Information/InformationDialog'
 import { BatchGameNavCM } from '~/components/GameBatchEditor/BatchGameNavCM'
 import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
 import { useDragContext } from '~/components/Showcase/CollectionGames'
-import { Button } from '~/components/ui/button'
 import { ContextMenu, ContextMenuTrigger } from '~/components/ui/context-menu'
 import { GameImage } from '~/components/ui/game-image'
 import { useConfigState, useGameState } from '~/hooks'
 import { useRunningGames } from '~/pages/Library/store'
 import { useGameCollectionStore, useGameRegistry } from '~/stores/game'
-import { cn, navigateToGame, startGame, stopGame } from '~/utils'
+import { cn, navigateToGame } from '~/utils'
 import {
   attachClosestEdge,
   calPreviewOffset,
@@ -32,6 +31,7 @@ import {
   type Edge,
   type PreviewState
 } from '~/utils/dnd-utills'
+import { PlayButton } from './PlayButton'
 
 function Preview({
   title,
@@ -49,7 +49,7 @@ function Preview({
       )}
     >
       <div className="absolute top-[25%] z-20 flex justify-center pointer-events-none w-full h-[50%]">
-        <div className="text-accent-foreground text-lg font-semibold w-[90%] text-center break-words whitespace-normal overflow-hidden">
+        <div className="text-accent-foreground w-[90%] text-center break-words whitespace-normal overflow-hidden">
           {title}
         </div>
       </div>
@@ -85,7 +85,7 @@ export function GamePoster({
   const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = useState(false)
   const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = useState(false)
-  const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = useState(false)
+  const [isInformationDialogOpen, setIsInformationDialogOpen] = useState(false)
   const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = useState(false)
   const { t } = useTranslation('game')
   const { setIsDraggingGlobal } = useDragContext()
@@ -153,8 +153,10 @@ export function GamePoster({
 
   useEffect(() => {
     if (!dragScenario || !collectionId) return
+
     const el = ref_.current
     invariant(el)
+
     return combine(
       draggable({
         element: el,
@@ -218,7 +220,7 @@ export function GamePoster({
   }, [dragScenario, collectionId, gameId, reorderGamesInCollection, setIsDraggingGlobal])
 
   return (
-    <div ref={ref_} className="relative overflow-visible">
+    <div ref={ref_} className="relative overflow-visible select-none">
       {dragging ? (
         <Preview title={gameData?.name ?? ''} transparentBackground={true} />
       ) : (
@@ -245,6 +247,8 @@ export function GamePoster({
                       gameId={gameId}
                       type="cover"
                       blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
+                      initialMask={true}
+                      blurType="poster"
                       alt={gameId}
                       className={cn(
                         'w-[148px] aspect-[2/3] cursor-pointer select-none object-cover rounded-lg',
@@ -290,35 +294,13 @@ export function GamePoster({
 
                     {/* Play button */}
                     <div className="absolute inset-0 flex items-center justify-center flex-grow">
-                      {showPlayButtonOnPoster &&
-                        (runningGames.includes(gameId) ? (
-                          <Button
-                            variant="secondary"
-                            className={cn(
-                              'rounded-full w-[46px] h-[46px] p-0 shadow-sm bg-secondary hover:bg-secondary/90'
-                            )}
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              stopGame(gameId)
-                            }}
-                          >
-                            <span className="icon-[mdi--stop] text-secondary-foreground w-7 h-7"></span>
-                          </Button>
-                        ) : (
-                          <Button
-                            variant="default"
-                            className={cn(
-                              'rounded-full w-[46px] h-[46px] p-0 bg-primary hover:bg-primary/90'
-                            )}
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              navigateToGame(navigate, gameId, groupId || 'all')
-                              startGame(gameId)
-                            }}
-                          >
-                            <span className="icon-[mdi--play] text-primary-foreground w-7 h-7"></span>
-                          </Button>
-                        ))}
+                      {showPlayButtonOnPoster && !isSelected && (
+                        <PlayButton
+                          type={runningGames.includes(gameId) ? 'stop' : 'play'}
+                          gameId={gameId}
+                          groupId={groupId}
+                        />
+                      )}
                     </div>
 
                     {/* Game info */}
@@ -369,7 +351,7 @@ export function GamePoster({
             <GameNavCM
               gameId={gameId}
               openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
-              openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
+              openNameEditorDialog={() => setIsInformationDialogOpen(true)}
               openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
               openPropertiesDialog={() => setIsPropertiesDialogOpen(true)}
             />
@@ -380,8 +362,12 @@ export function GamePoster({
       {isAddCollectionDialogOpen && (
         <AddCollectionDialog gameIds={[gameId]} setIsOpen={setIsAddCollectionDialogOpen} />
       )}
-      {isNameEditorDialogOpen && (
-        <NameEditorDialog gameId={gameId} setIsOpen={setIsNameEditorDialogOpen} />
+      {isInformationDialogOpen && (
+        <InformationDialog
+          gameId={gameId}
+          isOpen={isInformationDialogOpen}
+          setIsOpen={setIsInformationDialogOpen}
+        />
       )}
       {isPlayTimeEditorDialogOpen && (
         <PlayTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayTimeEditorDialogOpen} />

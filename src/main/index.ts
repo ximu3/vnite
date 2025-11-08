@@ -30,13 +30,15 @@ import {
   portableStore,
   initI18n,
   checkPortableMode,
-  setupContextMenu
+  setupContextMenu,
+  setupProxy
 } from './features/system'
 import { GameScannerManager } from './features/adder'
 import { setupScraper } from './features/scraper'
 import { cleanupPowerShell } from './utils'
 import { pluginService } from './plugins'
 import { net } from 'electron'
+import { nativeCleanup, setupNativeModule } from './core/native'
 
 export let mainWindow: BrowserWindow
 
@@ -256,7 +258,14 @@ app.whenReady().then(async () => {
 
   baseDBManager.initAllDatabases()
 
-  AuthManager.init()
+  // Setup proxy config
+  await setupProxy()
+
+  try {
+    AuthManager.init()
+  } catch (error) {
+    log.error('[Account] Failed to initialize AuthManager:', error)
+  }
 
   try {
     AuthManager.updateUserInfo()
@@ -293,6 +302,9 @@ app.whenReady().then(async () => {
   // Setup screenshot service
   setupScreenshotService()
 
+  // Setup native module
+  await setupNativeModule()
+
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
@@ -311,9 +323,10 @@ app.on('window-all-closed', () => {
 })
 
 // Add cleanup logic before application exit
-app.on('before-quit', () => {
+app.on('before-quit', async () => {
   // Clean up PowerShell instance
   cleanupPowerShell()
+  await nativeCleanup()
 
   // Clean up tray
   if (trayManager) {
@@ -327,13 +340,15 @@ process.on('exit', () => {
 })
 
 // Handle unexpected exits
-process.on('SIGINT', () => {
+process.on('SIGINT', async () => {
   cleanupPowerShell()
+  await nativeCleanup()
   app.quit()
 })
 
-process.on('SIGTERM', () => {
+process.on('SIGTERM', async () => {
   cleanupPowerShell()
+  await nativeCleanup()
   app.quit()
 })
 

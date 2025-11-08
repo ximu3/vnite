@@ -1,6 +1,7 @@
 node_modules
 dist
 out
+.idea
 .DS_Store
 .eslintcache
 *.log*
@@ -9,3 +10,4 @@ out
 .env.*.local
 dev
 app
+/target

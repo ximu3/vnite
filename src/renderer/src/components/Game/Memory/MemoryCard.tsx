@@ -26,6 +26,8 @@ import html2canvas from 'html2canvas-pro'
 import { useTranslation } from 'react-i18next'
 import Zoom from 'react-medium-image-zoom'
 import { ipcManager } from '~/app/ipc'
+import { useLightStore } from '~/pages/Light'
+import { ImageViewerDialog } from '../Config/Properties/Media/ImageViewerDialog'
 
 export function MemoryCard({
   gameId,
@@ -60,10 +62,27 @@ export function MemoryCard({
   const [isCoverExist, setIsCoverExist] = useState(true)
   const [gameName] = useGameState(gameId, 'metadata.name')
   const memoryRef = useRef<HTMLDivElement>(null)
+  const refreshLight = useLightStore((state) => state.refresh)
+  const [isImageViewerOpen, setIsImageViewerOpen] = useState(false)
+  const [imageViewerPath, setImageViewerPath] = useState<string | null>(null)
 
   function handleCropComplete(filePath: string): void {
     ipcManager.invoke('game:update-memory-cover', gameId, memoryId, filePath)
     setCropDialogState({ isOpen: false, type: '', imagePath: null, isResizing: false })
+  }
+
+  async function handleViewLargeImage(): Promise<void> {
+    try {
+      const currentPath = await ipcManager.invoke('game:get-memory-cover-path', gameId, memoryId)
+      if (!currentPath) {
+        toast.error(t('detail.memory.notifications.imageNotFound'))
+        return
+      }
+      setImageViewerPath(currentPath)
+      setIsImageViewerOpen(true)
+    } catch (error) {
+      toast.error(t('detail.memory.notifications.getImageError', { error }))
+    }
   }
 
   async function handleCoverSelect(): Promise<void> {
@@ -292,6 +311,15 @@ export function MemoryCard({
             {t('detail.memory.actions.adjustCover')}
           </ContextMenuItem>
         )}
+        {isCoverExist && (
+          <ContextMenuItem
+            onSelect={() => {
+              void handleViewLargeImage()
+            }}
+          >
+            {t('detail.properties.media.actions.viewLargeImage')}
+          </ContextMenuItem>
+        )}
 
         {/* Note */}
         <ContextMenuItem
@@ -302,6 +330,67 @@ export function MemoryCard({
           {note ? t('detail.memory.actions.editText') : t('detail.memory.actions.addText')}
         </ContextMenuItem>
         <ContextMenuSeparator />
+        {/* Set As Game Media */}
+        {isCoverExist && (
+          <>
+            <ContextMenuGroup>
+              <ContextMenuSub>
+                <ContextMenuSubTrigger>{t('detail.memory.setAs.title')}</ContextMenuSubTrigger>
+                <ContextMenuPortal>
+                  <ContextMenuSubContent>
+                    <ContextMenuItem
+                      onSelect={async () => {
+                        try {
+                          const coverPath = await ipcManager.invoke(
+                            'game:get-memory-cover-path',
+                            gameId,
+                            memoryId
+                          )
+                          if (!coverPath) {
+                            toast.error(t('detail.memory.notifications.imageNotFound'))
+                            return
+                          }
+                          await ipcManager.invoke('game:set-image', gameId, 'cover', coverPath)
+                          refreshLight()
+                          toast.success(t('detail.memory.notifications.setCoverSuccess'))
+                        } catch (error) {
+                          toast.error(t('detail.memory.notifications.setCoverError', { error }))
+                        }
+                      }}
+                    >
+                      {t('detail.memory.setAs.cover')}
+                    </ContextMenuItem>
+                    <ContextMenuItem
+                      onSelect={async () => {
+                        try {
+                          const coverPath = await ipcManager.invoke(
+                            'game:get-memory-cover-path',
+                            gameId,
+                            memoryId
+                          )
+                          if (!coverPath) {
+                            toast.error(t('detail.memory.notifications.imageNotFound'))
+                            return
+                          }
+                          await ipcManager.invoke('game:set-image', gameId, 'background', coverPath)
+                          refreshLight()
+                          toast.success(t('detail.memory.notifications.setBackgroundSuccess'))
+                        } catch (error) {
+                          toast.error(
+                            t('detail.memory.notifications.setBackgroundError', { error })
+                          )
+                        }
+                      }}
+                    >
+                      {t('detail.memory.setAs.background')}
+                    </ContextMenuItem>
+                  </ContextMenuSubContent>
+                </ContextMenuPortal>
+              </ContextMenuSub>
+            </ContextMenuGroup>
+            <ContextMenuSeparator />
+          </>
+        )}
         {/* Export Options */}
         <ContextMenuGroup>
           <ContextMenuSub>
@@ -361,6 +450,13 @@ export function MemoryCard({
         setNote={setNote}
         saveNote={saveNote}
       ></NoteDialog>
+      {isImageViewerOpen && (
+        <ImageViewerDialog
+          isOpen={isImageViewerOpen}
+          imagePath={imageViewerPath}
+          onClose={() => setIsImageViewerOpen(false)}
+        />
+      )}
     </ContextMenu>
   )
 }

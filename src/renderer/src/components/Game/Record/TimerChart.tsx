@@ -1,7 +1,9 @@
+import { useRouter } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
+import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from 'recharts'
 import type { ValueType } from 'recharts/types/component/DefaultTooltipContent'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '~/components/ui/chart'
-import { useTranslation } from 'react-i18next'
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
+import { parseLocalDate } from '~/stores/game/recordUtils'
 import { cn } from '~/utils'
 
 interface DailyPlayTime {
@@ -11,20 +13,38 @@ interface DailyPlayTime {
 interface ChartData {
   date: string
   playTime: number
+  group: number
 }
 
 export const TimerChart = ({
   data,
   className,
+  minMinutes = 0,
   filter0 = true
 }: {
   data: DailyPlayTime
   className?: string
+  minMinutes?: number
   filter0?: boolean
 }): React.JSX.Element => {
   const { t } = useTranslation('game')
+  const router = useRouter()
   const formatGameTime = (time: number): string => {
     return t('utils:format.gameTime', { time })
+  }
+
+  const handleBarClick = (entry: (typeof chartData)[number]): void => {
+    const dateUTC = parseLocalDate(entry.date) // YYYY-MM-DD
+    const isoDate = dateUTC.toISOString()
+
+    router.navigate({
+      to: '/record',
+      search: {
+        tab: 'weekly',
+        date: isoDate,
+        year: dateUTC.getFullYear().toString()
+      }
+    })
   }
 
   // Converting data into the format Recharts needs
@@ -34,15 +54,28 @@ export const TimerChart = ({
     chartData = Object.entries(data)
       .map(([date, playTime]) => ({
         date,
-        playTime: playTime / 1000 / 60 // Converting milliseconds to minutes
+        playTime: playTime / 1000 / 60, // Converting milliseconds to minutes
+        group: 0
       }))
-      .filter((item) => item.playTime > 0) // Filter out days with 0 hours of gameplay
+      .filter((item) => item.playTime > minMinutes) // Filter out days less than `minMinutes` hours of gameplay
   } else {
     chartData = Object.entries(data).map(([date, playTime]) => ({
       date,
-      playTime: playTime / 1000 / 60 // Converting milliseconds to minutes
+      playTime: playTime / 1000 / 60, // Converting milliseconds to minutes
+      group: 0
     }))
   }
+
+  // Grouping logic: mark group when month changes
+  let currentGroup = 0
+  let lastMonth: string | null = null
+
+  chartData = chartData.map((item) => {
+    const month = item.date.slice(0, 7) // YYYY-MM
+    if (month !== lastMonth && lastMonth !== null) currentGroup = 1 - currentGroup // toggle group
+    lastMonth = month
+    return { ...item, group: currentGroup }
+  })
 
   // Chart Configuration
   const chartConfig = {
@@ -84,9 +117,17 @@ export const TimerChart = ({
         {/* histogram */}
         <Bar
           dataKey="playTime"
-          fill="var(--primary)"
           radius={[4, 4, 0, 0]} // terete
-        />
+        >
+          {chartData.map((entry) => (
+            <Cell
+              key={`${entry.date}-${entry.group}`}
+              fill={entry.group === 0 ? 'var(--primary)' : 'var(--secondary)'}
+              onClick={() => handleBarClick(entry)}
+              cursor="pointer"
+            />
+          ))}
+        </Bar>
       </BarChart>
     </ChartContainer>
   )

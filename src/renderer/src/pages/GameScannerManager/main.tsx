@@ -1,8 +1,4 @@
-import { Badge } from '~/components/ui/badge'
-import { Button } from '~/components/ui/button'
-import { Card } from '~/components/ui/card'
 import { Progress } from '@ui/progress'
-import { ScrollArea } from '~/components/ui/scroll-area'
 import {
   AlertTriangle,
   Folder,
@@ -15,6 +11,10 @@ import {
 } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Badge } from '~/components/ui/badge'
+import { Button } from '~/components/ui/button'
+import { Card } from '~/components/ui/card'
+import { ScrollArea } from '~/components/ui/scroll-area'
 import { useConfigLocalState } from '~/hooks'
 import { cn } from '~/utils'
 import { EditScannerDialog } from './EditScannerDialog'
@@ -182,13 +182,7 @@ export const GameScannerManager: React.FC = () => {
                 {/* Right: Action buttons group */}
                 <div className="flex gap-2">
                   {scanProgress.status === 'scanning' ? (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="hover:text-destructive-foreground hover:bg-destructive"
-                      onClick={stopScan}
-                      disabled={isStopping}
-                    >
+                    <Button size="sm" variant="delete" onClick={stopScan} disabled={isStopping}>
                       <StopCircle className="w-4 h-4 mr-2" />
                       {t('actions.stop')}
                     </Button>

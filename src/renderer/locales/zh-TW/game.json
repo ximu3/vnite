@@ -6,6 +6,8 @@
       "placeholder": "搜尋",
       "tooltip": "支援透過遊戲名、開發者、發行日期等中繼資料進行搜尋"
     },
+    "gameListSettings": "遊戲列表設定",
+    "collapseAllGroups": "收起全部分組",
     "groupBy": "分組依據",
     "groups": {
       "none": "無分組",
@@ -33,6 +35,7 @@
       "sortBy": "排序依據",
       "sortOptions": {
         "name": "名稱",
+        "sortName": "排序名稱",
         "releaseDate": "發布日期",
         "lastRunDate": "最後執行日期",
         "addDate": "添加日期",
@@ -41,7 +44,8 @@
     },
     "playStatus": {
       "adjustOrder": "調整順序"
-    }
+    },
+    "overrideCollectionSort": "覆蓋收藏排序"
   },
   "filter": {
     "title": "進階篩選",
@@ -76,10 +80,12 @@
       "label": "排序依據",
       "options": {
         "name": "名稱",
+        "sortName": "排序名稱",
         "releaseDate": "發布日期",
         "lastRunDate": "最後執行日期",
         "addDate": "添加日期",
-        "playTime": "遊玩時間"
+        "playTime": "遊玩時間",
+        "custom": "自訂順序"
       }
     },
     "gameCard": {
@@ -230,6 +236,7 @@
         "fields": {
           "originalName": "原名",
           "localizedName": "譯名",
+          "sortName": "排序名稱",
           "developers": "開發商",
           "publishers": "發行商",
           "releaseDate": "發行日期",
@@ -312,10 +319,19 @@
         "imageCopied": "圖片已成功複製到剪貼簿",
         "imageCopyError": "複製圖片到剪貼簿失敗: {{error}}",
         "markdownCopied": "Markdown 已複製到剪貼簿",
-        "markdownCopyError": "複製到剪貼簿失敗: {{error}}"
+        "markdownCopyError": "複製到剪貼簿失敗: {{error}}",
+        "setCoverSuccess": "已成功設置為遊戲封面",
+        "setCoverError": "設置為遊戲封面失敗：{{error}}",
+        "setBackgroundSuccess": "已成功設置為遊戲背景",
+        "setBackgroundError": "設置為遊戲背景失敗：{{error}}"
       },
       "dialog": {
         "markdownHint": "支援 Markdown 語法"
+      },
+      "setAs": {
+        "title": "設置為",
+        "cover": "遊戲封面",
+        "background": "遊戲背景"
       }
     },
     "config": {
@@ -323,7 +339,7 @@
     },
     "manage": {
       "title": "管理",
-      "rename": "重新命名",
+      "rename": "修改基本資訊",
       "editLogo": "編輯徽標",
       "editPlayTime": "修改遊玩時間",
       "downloadMetadata": "更新資料",
@@ -342,13 +358,19 @@
       "title": "遊戲計時器",
       "addTimer": "添加計時器",
       "timersList": "計時器列表",
+      "fuzzyTime": "計時器未記錄遊玩時間",
       "noTimers": "沒有計時器記錄",
       "totalPlayTime": "總遊戲時長",
       "startTime": "開始",
       "endTime": "結束",
       "ongoing": "進行中",
       "duration": "時長",
-      "minutes": "分鐘"
+      "minutes": "分鐘",
+      "error": {
+        "overlapMessage": "計時器 {{first}} 和 {{second}} 重疊！",
+        "invalidTime": "計時器 {{index}} 的開始或結束時間無效！",
+        "endBeforeStart": "計時器 {{index}} 的結束時間早於開始時間！"
+      }
     },
     "timerEditor": {
       "startDateRequired": "必須設置開始時間和結束時間",
@@ -365,7 +387,8 @@
         "deleting": "正在刪除遊戲 {{gameName}}…",
         "deleted": "遊戲 {{gameName}} 已刪除",
         "error": "刪除遊戲 {{gameName}} 失敗: {{message}}"
-      }
+      },
+      "addToIgnore": "將此遊戲資料夾加入掃描器忽略清單"
     },
     "playTimeEditor": {
       "expressionSupport": "支援四則運算表達式",
@@ -512,6 +535,9 @@
           }
         }
       }
+    },
+    "contextMenu": {
+      "editMediaProperties": "編輯媒體屬性"
     }
   },
   "batchEditor": {
@@ -566,7 +592,8 @@
         "deleting": "正在刪除{{count}} 個遊戲…",
         "success": "{{count}} 個遊戲已刪除",
         "error": "刪除{{count}} 個遊戲失敗: {{message}}"
-      }
+      },
+      "addToIgnore": "將這些遊戲資料夾加入掃描器忽略清單"
     }
   },
   "updater": {

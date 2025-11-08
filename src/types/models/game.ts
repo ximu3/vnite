@@ -9,6 +9,7 @@ export interface gameDoc {
   metadata: {
     name: string
     originalName: string
+    sortName: string
     releaseDate: string
     description: string
     developers: string[]
@@ -34,7 +35,7 @@ export interface gameDoc {
     lastRunDate: string
     score: number
     playTime: number
-    playStatus: 'unplayed' | 'playing' | 'finished' | 'multiple' | 'shelved'
+    playStatus: 'unplayed' | 'playing' | 'partial' | 'finished' | 'multiple' | 'shelved'
     timers: {
       start: string
       end: string
@@ -81,6 +82,15 @@ export interface gameCollectionDoc {
   _id: string
   name: string
   sort: number
+  sortBy:
+    | 'metadata.name'
+    | 'metadata.sortName'
+    | 'metadata.releaseDate'
+    | 'record.lastRunDate'
+    | 'record.addDate'
+    | 'record.playTime'
+    | 'custom'
+  sortOrder: 'asc' | 'desc'
   games: string[]
 }
 
@@ -93,6 +103,7 @@ export interface gameLocalDoc {
   path: {
     gamePath: string
     savePaths: string[]
+    screenshotPath?: string
   }
   launcher: {
     mode: 'file' | 'url' | 'script'
@@ -126,7 +137,8 @@ export const DEFAULT_GAME_LOCAL_VALUES: Readonly<gameLocalDoc> = {
   _id: '',
   path: {
     gamePath: '',
-    savePaths: []
+    savePaths: [],
+    screenshotPath: ''
   },
   launcher: {
     mode: 'file',
@@ -160,6 +172,8 @@ export const DEFAULT_GAME_COLLECTION_VALUES: Readonly<gameCollectionDoc> = {
   _id: '',
   name: '',
   sort: 0,
+  sortBy: 'custom',
+  sortOrder: 'asc',
   games: []
 } as const
 
@@ -168,6 +182,7 @@ export const DEFAULT_GAME_VALUES: Readonly<gameDoc> = {
   metadata: {
     name: '',
     originalName: '',
+    sortName: '',
     releaseDate: '',
     description: '',
     developers: [] as string[],
@@ -246,4 +261,14 @@ export interface BatchGameInfo {
 export interface Timer {
   start: string
   end: string
+}
+
+export enum TimerStatus {
+  Resumed,
+  Paused
+}
+
+export interface GameTimerStatus {
+  name: string
+  status: TimerStatus
 }

@@ -1,36 +1,95 @@
-import { useState } from 'react'
+import { useRouter, useSearch } from '@tanstack/react-router'
+import { CalendarIcon, ChevronLeft, ChevronRight, Clock, Trophy } from 'lucide-react'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
-import { Button } from '~/components/ui/button'
-import { ChevronLeft, ChevronRight, Clock, CalendarIcon, Trophy } from 'lucide-react'
 import {
   Bar,
   BarChart,
   CartesianGrid,
-  XAxis,
-  YAxis,
+  Cell,
   Line,
   LineChart,
-  PieChart,
   Pie,
-  Cell
+  PieChart,
+  XAxis,
+  YAxis
 } from 'recharts'
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '~/components/ui/chart'
 import type { ValueType } from 'recharts/types/component/DefaultTooltipContent'
-
-import { StatCard } from './StatCard'
-import { GameRankingItem } from './GameRankingItem'
+import { Button } from '~/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '~/components/ui/chart'
 import { getYearlyPlayData } from '~/stores/game/recordUtils'
+import { GameRankingItem } from './GameRankingItem'
+import { StatCard } from './StatCard'
 
 export function YearlyReport(): React.JSX.Element {
   const { t } = useTranslation('record')
 
-  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear())
+  const router = useRouter()
+  const search = useSearch({ from: '/record' })
+  const selectedYear = Number(search.year)
+
+  const setSelectedYear = (newYear: number): void => {
+    router.navigate({
+      to: '/record',
+      search: {
+        ...search,
+        year: newYear.toString()
+      }
+    })
+  }
+
+  const handleBarClick = (data: any): void => {
+    type MonthlyChartItem = (typeof monthlyChartData)[number]
+    const { originalMonth } = data.payload as MonthlyChartItem
+    const dateUTC = new Date(Date.UTC(selectedYear, originalMonth, 2, 0, 0, 0, 0)) // to avoid timezone issues
+    const isoDate = dateUTC.toISOString()
+
+    router.navigate({
+      to: '/record',
+      search: {
+        tab: 'monthly',
+        date: isoDate,
+        year: dateUTC.getFullYear().toString()
+      }
+    })
+  }
+  const handleDotClick = (data: any): void => {
+    type MonthlyChartItem = (typeof monthlyDaysChartData)[number]
+    const { originalMonth } = data.payload as MonthlyChartItem
+    const dateUTC = new Date(Date.UTC(selectedYear, originalMonth, 2, 0, 0, 0, 0))
+    const isoDate = dateUTC.toISOString()
+
+    router.navigate({
+      to: '/record',
+      search: {
+        tab: 'monthly',
+        date: isoDate,
+        year: search.year
+      }
+    })
+  }
+
+  // const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear())
   const yearData = getYearlyPlayData(selectedYear)
 
   const goToPreviousYear = (): void => setSelectedYear(selectedYear - 1)
   const goToNextYear = (): void => setSelectedYear(selectedYear + 1)
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent): void => {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault()
+        goToPreviousYear()
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault()
+        goToNextYear()
+      }
+    }
+
+    window.addEventListener('keydown', handleKey, { capture: true })
+    return () => window.removeEventListener('keydown', handleKey, { capture: true })
+  }, [goToPreviousYear, goToNextYear])
 
   // Month Name Localization
   const getLocalizedMonth = (monthIndex: number): string => {
@@ -188,7 +247,13 @@ export function YearlyReport(): React.JSX.Element {
                     />
                   )}
                 />
-                <Bar dataKey="playTime" fill="var(--primary)" radius={[4, 4, 0, 0]} />
+                <Bar
+                  dataKey="playTime"
+                  fill="var(--primary)"
+                  onClick={handleBarClick}
+                  cursor="pointer"
+                  radius={[4, 4, 0, 0]}
+                />
               </BarChart>
             </ChartContainer>
           </CardContent>
@@ -219,7 +284,13 @@ export function YearlyReport(): React.JSX.Element {
                   dataKey="playDays"
                   stroke="var(--primary)"
                   strokeWidth={2}
-                  dot={false}
+                  dot={{ r: 0 }}
+                  activeDot={{
+                    r: 4,
+                    fill: 'var(--primary)',
+                    cursor: 'pointer',
+                    onClick: (_e, payload) => handleDotClick(payload)
+                  }}
                 />
               </LineChart>
             </ChartContainer>
@@ -286,7 +357,9 @@ export function YearlyReport(): React.JSX.Element {
                 />
               ))
             ) : (
-              <p className="col-span-full">{t('yearly.yearlyGames.noRecords')}</p>
+              <div className="col-span-full py-6 text-center text-sm text-muted-foreground">
+                {t('yearly.yearlyGames.noRecords')}
+              </div>
             )}
           </CardContent>
         </Card>

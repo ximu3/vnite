@@ -34,6 +34,10 @@
     "copied": "Copied to clipboard",
     "copyError": "Failed to copy text to clipboard: {{error}}"
   },
+  "saveFile": {
+    "success": "File saved successfully",
+    "error": "Failed to save file: {{error}}"
+  },
   "game": {
     "stopping": {
       "loading": "Stopping game…",
@@ -50,6 +54,7 @@
     "playStatus": {
       "unplayed": "Unplayed",
       "playing": "Playing",
+      "partial": "Partially Completed",
       "finished": "Completed",
       "multiple": "Multiple Runs",
       "shelved": "Shelved",
@@ -62,12 +67,14 @@
     "niceISO": "{{date, niceISO}}"
   },
   "notifications": {
+    "gameStarted": "Game started",
     "gameExiting": "Exiting game…",
     "gameExited": "Game has exited",
     "fullSyncing": "Syncing data…",
     "fullSynced": "Data sync completed",
     "fullSyncError": "Data sync failed",
     "updateUserInfoError": "Official cloud sync account login expired, please log in again",
-    "checkingForUpdate": "Checking for updates…"
+    "checkingForUpdate": "Checking for updates…",
+    "gameLaunchFailed": "Failed to launch game"
   }
 }
