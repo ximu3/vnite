@@ -93,7 +93,8 @@
       "weeklyPlayTime": "每週遊戲時長",
       "calendarTitle": "月度遊戲日曆",
       "weekFormat": "第{{week}}周",
-      "weekDateRange": "{{week}}（{{startDay}}日-{{endDay}}日）"
+      "weekDateRange": "{{week}}（{{startDay}}日-{{endDay}}日）",
+      "useAlternateColor": "使用交替颜色"
     },
     "highlights": {
       "title": "本月資料",

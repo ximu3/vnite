@@ -199,6 +199,9 @@ export interface configDocs {
     weekly: {
       mergeInterval: number
     }
+    monthly: {
+      useAlternateColor: boolean
+    }
   }
 }
 
@@ -402,6 +405,9 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
   record: {
     weekly: {
       mergeInterval: 0
+    },
+    monthly: {
+      useAlternateColor: true
     }
   }
 } as const
