@@ -1,7 +1,8 @@
-import * as React from 'react'
 import { Popover as PopoverPrimitive } from 'radix-ui'
+import * as React from 'react'
 
 import { cn } from '~/utils'
+import { Button } from './button'
 
 function Popover({
   ...props
@@ -43,4 +44,25 @@ function PopoverAnchor({
   return <PopoverPrimitive.Anchor data-slot="popover-anchor" {...props} />
 }
 
-export { Popover, PopoverTrigger, PopoverContent, PopoverAnchor }
+function SettingsPopover({
+  children,
+  className,
+  buttonClassName
+}: {
+  children: React.ReactNode
+  className?: string
+  buttonClassName?: string
+}): React.JSX.Element {
+  return (
+    <Popover>
+      <PopoverTrigger>
+        <Button variant="bare" size="icon-sm" className={cn('group ml-1', buttonClassName)}>
+          <span className={cn('icon-[mdi--cog] group-hover:text-primary')} />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className={className}>{children}</PopoverContent>
+    </Popover>
+  )
+}
+
+export { Popover, PopoverAnchor, PopoverContent, PopoverTrigger, SettingsPopover }

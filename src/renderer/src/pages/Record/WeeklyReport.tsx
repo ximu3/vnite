@@ -23,8 +23,8 @@ import { useConfigState } from '~/hooks'
 import { getGameStore } from '~/stores/game'
 import { getWeeklyPlayData, parseLocalDate } from '~/stores/game/recordUtils'
 import { scrollToElement } from '~/utils'
+import { MergeIntervalSliderPopover } from './Config/MergeIntervalSliderPopover'
 import { GameRankingItem } from './GameRankingItem'
-import { MergeIntervalSliderPopover } from './MergeIntervalSliderPopover'
 
 interface TimeLineRow {
   gameLabel: string
