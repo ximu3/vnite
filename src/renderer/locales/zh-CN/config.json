@@ -87,6 +87,13 @@
       "showPlayButtonOnPoster": "在海报上显示游玩按钮",
       "showPlayButtonOnPosterDescription": "在海报上显示游玩按钮"
     },
+    "scrollbar": {
+      "title": "滚动条",
+      "blur": "模糊度",
+      "blurDescription": "滚动条的模糊度",
+      "opacity": "透明度",
+      "opacityDescription": "滚动条的透明度"
+    },
     "glass": {
       "title": "毛玻璃",
       "blur": "模糊度",

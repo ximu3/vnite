@@ -81,6 +81,10 @@ export interface configDocs {
     showcase: {
       showPlayButtonOnPoster: boolean
     }
+    scrollbar: {
+      blur: number
+      opacity: number
+    }
     gameDetail: {
       headerLayout: 'default' | 'compact'
       glassBackgroundImage: 'background' | 'cover' | 'logo'
@@ -323,6 +327,10 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     },
     showcase: {
       showPlayButtonOnPoster: true
+    },
+    scrollbar: {
+      blur: 32,
+      opacity: 0.7
     },
     gameDetail: {
       headerLayout: 'default',

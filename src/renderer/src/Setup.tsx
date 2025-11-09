@@ -14,6 +14,8 @@ export function Setup(): React.JSX.Element {
   const [fontFamily] = useConfigState('appearances.fonts.family')
   const [fontSize] = useConfigState('appearances.fonts.size')
   const [fontWeight] = useConfigState('appearances.fonts.weight')
+  const [scrollbarBlur] = useConfigState('appearances.scrollbar.blur')
+  const [scrollbarOpacity] = useConfigState('appearances.scrollbar.opacity')
   const gameIds = useGameRegistry((state) => state.gameIds)
   useEffect(() => {
     setup(router)
@@ -25,7 +27,9 @@ export function Setup(): React.JSX.Element {
   useEffect(() => {
     document.documentElement.style.setProperty('--content-top-padding', `${contentTopPadding}vh`)
     document.documentElement.style.setProperty('--header-max-height', `${headerImageMaxHeight}vh`)
-  }, [contentTopPadding, headerImageMaxHeight])
+    document.documentElement.style.setProperty('--scrollbar-blur', `${scrollbarBlur}px`)
+    document.documentElement.style.setProperty('--scrollbar-opacity', scrollbarOpacity * 100 + '%')
+  }, [contentTopPadding, headerImageMaxHeight, scrollbarBlur, scrollbarOpacity])
 
   useEffect(() => {
     usePluginInfoStore.getState().loadPlugins()

@@ -87,6 +87,13 @@
       "showPlayButtonOnPoster": "ポスターにプレイボタンを表示",
       "showPlayButtonOnPosterDescription": "ポスター上にプレイボタンを表示する"
     },
+    "scrollbar": {
+      "title": "スクロールバー",
+      "blur": "ぼかし",
+      "blurDescription": "スクロールバーのぼかし度",
+      "opacity": "透明度",
+      "opacityDescription": "スクロールバーの透明度"
+    },
     "glass": {
       "title": "フロストガラス",
       "blur": "ぼかし",

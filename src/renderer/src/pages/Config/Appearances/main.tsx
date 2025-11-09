@@ -318,6 +318,37 @@ export function Appearances(): React.JSX.Element {
               />
             </div>
           </div>
+
+          {/* Scrollbar Settings */}
+          <div className={cn('space-y-4')}>
+            <div className={cn('border-b pb-2')}>{t('appearances.scrollbar.title')}</div>
+            <div className={cn('space-y-4')}>
+              <ConfigItem
+                hookType="config"
+                path="appearances.scrollbar.blur"
+                title={t('appearances.scrollbar.blur')}
+                description={t('appearances.scrollbar.blurDescription')}
+                controlType="slider"
+                min={0}
+                max={150}
+                step={1}
+                formatValue={(value) => `${value}px`}
+                debounceMs={300}
+              />
+              <ConfigItem
+                hookType="config"
+                path="appearances.scrollbar.opacity"
+                title={t('appearances.scrollbar.opacity')}
+                description={t('appearances.scrollbar.opacityDescription')}
+                controlType="slider"
+                min={0}
+                max={1}
+                step={0.01}
+                formatValue={(value) => `${Math.round(value * 100)}%`}
+                debounceMs={300}
+              />
+            </div>
+          </div>
           {/* Game List Settings */}
           <div className={cn('space-y-4')}>
             <div className={cn('border-b pb-2')}>{t('appearances.gameList.title')}</div>
