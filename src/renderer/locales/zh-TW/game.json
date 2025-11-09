@@ -45,7 +45,12 @@
     "playStatus": {
       "adjustOrder": "調整順序"
     },
-    "overrideCollectionSort": "覆蓋收藏排序"
+    "overrideCollectionSort": "覆蓋收藏排序",
+    "empty": {
+      "developers": "暫無開發商",
+      "genres": "暫無類型",
+      "collection": "未收藏"
+    }
   },
   "filter": {
     "title": "進階篩選",

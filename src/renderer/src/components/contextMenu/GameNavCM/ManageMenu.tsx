@@ -1,3 +1,4 @@
+import { DEFAULT_PLAY_STATUS_ORDER } from '@appTypes/models'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -109,42 +110,15 @@ export function ManageMenu({
                 <ContextMenuSubTrigger>{t('detail.header.playStatus.label')}</ContextMenuSubTrigger>
                 <ContextMenuPortal>
                   <ContextMenuSubContent>
-                    <ContextMenuItem
-                      onClick={() => changePlayStatus('unplayed')}
-                      className={playStatus === 'unplayed' ? 'bg-accent' : ''}
-                    >
-                      {t('utils:game.playStatus.unplayed')}
-                    </ContextMenuItem>
-                    <ContextMenuItem
-                      onClick={() => changePlayStatus('playing')}
-                      className={playStatus === 'playing' ? 'bg-accent' : ''}
-                    >
-                      {t('utils:game.playStatus.playing')}
-                    </ContextMenuItem>
-                    <ContextMenuItem
-                      onClick={() => changePlayStatus('partial')}
-                      className={playStatus === 'partial' ? 'bg-accent' : ''}
-                    >
-                      {t('utils:game.playStatus.partial')}
-                    </ContextMenuItem>
-                    <ContextMenuItem
-                      onClick={() => changePlayStatus('finished')}
-                      className={playStatus === 'finished' ? 'bg-accent' : ''}
-                    >
-                      {t('utils:game.playStatus.finished')}
-                    </ContextMenuItem>
-                    <ContextMenuItem
-                      onClick={() => changePlayStatus('multiple')}
-                      className={playStatus === 'multiple' ? 'bg-accent' : ''}
-                    >
-                      {t('utils:game.playStatus.multiple')}
-                    </ContextMenuItem>
-                    <ContextMenuItem
-                      onClick={() => changePlayStatus('shelved')}
-                      className={playStatus === 'shelved' ? 'bg-accent' : ''}
-                    >
-                      {t('utils:game.playStatus.shelved')}
-                    </ContextMenuItem>
+                    {DEFAULT_PLAY_STATUS_ORDER.map((status) => (
+                      <ContextMenuItem
+                        key={status}
+                        onClick={() => changePlayStatus(status)}
+                        className={playStatus === status ? 'bg-accent' : ''}
+                      >
+                        {t(`utils:game.playStatus.${status}`)}
+                      </ContextMenuItem>
+                    ))}
                   </ContextMenuSubContent>
                 </ContextMenuPortal>
               </ContextMenuSub>

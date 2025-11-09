@@ -45,7 +45,12 @@
     "playStatus": {
       "adjustOrder": "順序を調整"
     },
-    "overrideCollectionSort": "コレクションの並び順を上書き"
+    "overrideCollectionSort": "コレクションの並び順を上書き",
+    "empty": {
+      "developers": "開発者なし",
+      "genres": "ジャンルなし",
+      "collection": "未コレクション"
+    }
   },
   "filter": {
     "title": "詳細フィルター",

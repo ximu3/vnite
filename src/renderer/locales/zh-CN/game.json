@@ -45,7 +45,12 @@
     "playStatus": {
       "adjustOrder": "调整顺序"
     },
-    "overrideCollectionSort": "覆盖收藏排序"
+    "overrideCollectionSort": "覆盖收藏排序",
+    "empty": {
+      "developers": "暂无开发商",
+      "genres": "暂无类型",
+      "collection": "未收藏"
+    }
   },
   "filter": {
     "title": "高级筛选",

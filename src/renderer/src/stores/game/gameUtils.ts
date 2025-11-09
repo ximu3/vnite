@@ -2,11 +2,10 @@ import { NSFWFilterMode, type MaxPlayTimeDay, type gameDoc } from '@appTypes/mod
 import { calculateDailyPlayTime } from '@appUtils'
 import i18next from 'i18next'
 import type { Get, Paths } from 'type-fest'
-import { parseLocalDate } from '~/stores/game/recordUtils'
+import { capDailyPlayTime, parseLocalDate } from '~/stores/game/recordUtils'
 import { useConfigStore } from '../config'
 import { useGameRegistry } from './gameRegistry'
 import { getGameStore } from './gameStoreFactory'
-import { capDailyPlayTime } from '~/stores/game/recordUtils'
 
 // Search Functions
 export function searchGames(query: string): string[] {
@@ -134,6 +133,7 @@ export function filterGames(
         for (const [path, values] of Object.entries(criteria)) {
           try {
             if (!Array.isArray(values) || values.length === 0) continue
+            const allowEmpty = values.includes('__empty__')
 
             // Handling paths in metadata.extra.xxx format
             if (path.startsWith('metadata.extra.')) {
@@ -229,23 +229,30 @@ export function filterGames(
                   matches = metadataValue.some(
                     (item) =>
                       item != null &&
-                      values.some((value) =>
-                        item.toString().toLowerCase().includes(value.toLowerCase())
+                      values.some(
+                        (value) =>
+                          value !== '__empty__' &&
+                          item.toString().toLowerCase().includes(value.toLowerCase())
                       )
                   )
+                  if (allowEmpty && metadataValue.length === 0) matches = true
                 } catch (error) {
                   console.error(`Array filtering error for ${gameId}:`, error)
                   matches = false
                 }
               } else if (metadataValue != null) {
                 try {
-                  matches = values.some((value) =>
-                    metadataValue.toString().toLowerCase().includes(value.toLowerCase())
+                  matches = values.some(
+                    (value) =>
+                      value !== '__empty__' &&
+                      metadataValue.toString().toLowerCase().includes(value.toLowerCase())
                   )
                 } catch (error) {
                   console.error(`Value filtering error for ${gameId}:`, error)
                   matches = false
                 }
+              } else {
+                if (allowEmpty) matches = true
               }
 
               if (!matches) {

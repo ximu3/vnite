@@ -1,8 +1,9 @@
-import { create, StoreApi, UseBoundStore } from 'zustand'
+import { DEFAULT_GAME_LOCAL_VALUES, gameLocalDoc } from '@appTypes/models'
 import { getValueByPath, setValueByPath } from '@appUtils'
-import { gameLocalDoc, DEFAULT_GAME_LOCAL_VALUES } from '@appTypes/models'
 import type { Get, Paths } from 'type-fest'
+import { create, StoreApi, UseBoundStore } from 'zustand'
 import { syncTo } from '../utils'
+import { useGamePathStore } from './gamePathStore'
 
 // 单个游戏本地 store 的类型定义
 export interface SingleGameLocalState {
@@ -87,6 +88,12 @@ export function initializeGameLocalStores(documents: Record<string, gameLocalDoc
     const store = getGameLocalStore(gameId)
     store.getState().initialize(gameData)
   })
+
+  const gamePaths = Object.values(documents)
+    .map((doc) => doc.path?.gamePath)
+    .filter((p): p is string => !!p)
+  useGamePathStore.getState().addPaths(gamePaths)
+  useGamePathStore.getState().verifyAll()
 }
 
 export function deleteGameLocalStore(gameId: string): void {

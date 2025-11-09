@@ -240,6 +240,15 @@ export interface MaxPlayTimeDay {
   playTime: number
 }
 
+export const DEFAULT_PLAY_STATUS_ORDER: gameDoc['record']['playStatus'][] = [
+  'unplayed',
+  'playing',
+  'partial',
+  'finished',
+  'multiple',
+  'shelved'
+]
+
 export const METADATA_EXTRA_PREDEFINED_KEYS = [
   'director',
   'scenario',

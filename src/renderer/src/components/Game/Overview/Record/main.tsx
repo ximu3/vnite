@@ -1,12 +1,13 @@
+import { DEFAULT_PLAY_STATUS_ORDER } from '@appTypes/models/game'
 import { Check } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { eventBus } from '~/app/events'
 import { useLibrarybarStore } from '~/components/Librarybar/store'
 import { Popover, PopoverContent } from '~/components/ui/popover'
 import { useGameState } from '~/hooks'
 import { cn } from '~/utils'
 import { useGameDetailStore } from '../../store'
 import { RecordCard } from './RecordCard'
-import { eventBus } from '~/app/events'
 
 export function Record({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
@@ -19,14 +20,7 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
     (state) => state.setIsPlayTimeEditorDialogOpen
   )
   const setIsScoreEditorDialogOpen = useGameDetailStore((state) => state.setIsScoreEditorDialogOpen)
-  const playStatusOptions: (typeof playStatus)[] = [
-    'unplayed',
-    'playing',
-    'partial',
-    'finished',
-    'multiple',
-    'shelved'
-  ]
+
   const changePlayStatus = (status: typeof playStatus): void => {
     setPlayStatus(status)
     eventBus.emit('game:play-status-changed', { gameId, status }, { source: 'record' })
@@ -68,7 +62,7 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
         />
         <PopoverContent className="max-w-[150px] p-1">
           <div className="flex flex-col">
-            {playStatusOptions.map((opt) => (
+            {DEFAULT_PLAY_STATUS_ORDER.map((opt) => (
               <div
                 key={opt}
                 onClick={() => changePlayStatus(opt)}

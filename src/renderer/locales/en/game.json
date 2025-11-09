@@ -45,7 +45,12 @@
     "playStatus": {
       "adjustOrder": "Adjust Order"
     },
-    "overrideCollectionSort": "Override Collection Sort"
+    "overrideCollectionSort": "Override Collection Sort",
+    "empty": {
+      "developers": "No developer",
+      "genres": "No genre",
+      "collection": "Uncollected"
+    }
   },
   "filter": {
     "title": "Advanced Filter",

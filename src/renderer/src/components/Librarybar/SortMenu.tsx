@@ -15,7 +15,7 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useConfigState } from '~/hooks'
 import { cn } from '~/utils'
-import { useGameListStore } from './store'
+import { useGameListStore, usePlayStatusOrderStore } from './store'
 
 export function SortMenu({
   isSortMenuOpen,
@@ -39,7 +39,7 @@ export function SortMenu({
     setOrder(order === 'asc' ? 'desc' : 'asc')
   }
 
-  const [playStatusOrder, setPlayStatusOrder] = useConfigState('game.gameList.playingStatusOrder')
+  const { playStatusOrder, setPlayStatusOrder } = usePlayStatusOrderStore()
   const handleMoveUp = (index: number): void => {
     if (index === 0) return
     const newOrder: string[] = [...playStatusOrder]

@@ -1,3 +1,4 @@
+import { DEFAULT_PLAY_STATUS_ORDER } from '@appTypes/models/game'
 import { debounce } from 'lodash'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
@@ -90,5 +91,33 @@ export const useGameListStore = create<GameListStore>()(
         })
     }),
     { name: 'game-list-accordion-state' }
+  )
+)
+
+interface PlayStatusOrderStore {
+  playStatusOrder: string[]
+  setPlayStatusOrder: (order: string[]) => void
+}
+
+export const usePlayStatusOrderStore = create<PlayStatusOrderStore>()(
+  persist(
+    (set) => ({
+      playStatusOrder: DEFAULT_PLAY_STATUS_ORDER,
+      setPlayStatusOrder: (order: string[]) => {
+        set({ playStatusOrder: order })
+      }
+    }),
+    {
+      name: 'game-list-play-status-order',
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          const stored = state.playStatusOrder || []
+          const hasMissing = DEFAULT_PLAY_STATUS_ORDER.some((item) => !stored.includes(item))
+          if (hasMissing) {
+            state.playStatusOrder = DEFAULT_PLAY_STATUS_ORDER
+          }
+        }
+      }
+    }
   )
 )

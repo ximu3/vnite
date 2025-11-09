@@ -1,3 +1,4 @@
+import { DEFAULT_PLAY_STATUS_ORDER } from '@appTypes/models'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { eventBus } from '~/app/events'
@@ -74,42 +75,15 @@ export function ManageMenu({
                 </DropdownMenuSubTrigger>
                 <DropdownMenuPortal>
                   <DropdownMenuSubContent>
-                    <DropdownMenuItem
-                      onClick={() => changePlayStatus('unplayed')}
-                      className={playStatus === 'unplayed' ? 'bg-accent' : ''}
-                    >
-                      {t('utils:game.playStatus.unplayed')}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => changePlayStatus('playing')}
-                      className={playStatus === 'playing' ? 'bg-accent' : ''}
-                    >
-                      {t('utils:game.playStatus.playing')}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => changePlayStatus('partial')}
-                      className={playStatus === 'partial' ? 'bg-accent' : ''}
-                    >
-                      {t('utils:game.playStatus.partial')}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => changePlayStatus('finished')}
-                      className={playStatus === 'finished' ? 'bg-accent' : ''}
-                    >
-                      {t('utils:game.playStatus.finished')}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => changePlayStatus('multiple')}
-                      className={playStatus === 'multiple' ? 'bg-accent' : ''}
-                    >
-                      {t('utils:game.playStatus.multiple')}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => changePlayStatus('shelved')}
-                      className={playStatus === 'shelved' ? 'bg-accent' : ''}
-                    >
-                      {t('utils:game.playStatus.shelved')}
-                    </DropdownMenuItem>
+                    {DEFAULT_PLAY_STATUS_ORDER.map((status) => (
+                      <DropdownMenuItem
+                        key={status}
+                        onClick={() => changePlayStatus(status)}
+                        className={playStatus === status ? 'bg-accent' : ''}
+                      >
+                        {t(`utils:game.playStatus.${status}`)}
+                      </DropdownMenuItem>
+                    ))}
                   </DropdownMenuSubContent>
                 </DropdownMenuPortal>
               </DropdownMenuSub>

@@ -1,5 +1,6 @@
+import { DEFAULT_PLAY_STATUS_ORDER } from '@appTypes/models/game'
 import { Cross2Icon } from '@radix-ui/react-icons'
-import { Button } from '~/components/ui/button'
+import { Button } from '@ui/button'
 import {
   Command,
   CommandEmpty,
@@ -7,14 +8,14 @@ import {
   CommandInput,
   CommandItem,
   CommandList
-} from '~/components/ui/command'
-import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
+} from '@ui/command'
+import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
 import { Check, ChevronsUpDown } from 'lucide-react'
 import * as React from 'react'
-import { getAllValuesInKey, getAllExtraValuesForKey } from '~/stores/game'
+import { useTranslation } from 'react-i18next'
+import { getAllExtraValuesForKey, getAllValuesInKey } from '~/stores/game'
 import { cn } from '~/utils'
 import { useFilterStore } from './store'
-import { useTranslation } from 'react-i18next'
 
 interface Option {
   value: string
@@ -32,15 +33,6 @@ export function FilterCombobox({
   const [open, setOpen] = React.useState(false)
   const { filter, deleteFilter, addFilter } = useFilterStore()
   const selectedValues = filter[field] || []
-
-  const playStatusDefaultOrder = [
-    'unplayed',
-    'playing',
-    'partial',
-    'finished',
-    'multiple',
-    'shelved'
-  ] as const
 
   const options: Option[] = React.useMemo(() => {
     let allValues: string[] = []
@@ -71,8 +63,8 @@ export function FilterCombobox({
       if (!aSelected && bSelected) return 1
       if (field === 'record.playStatus') {
         // Sort play status by predefined order
-        const orderIndexA = playStatusDefaultOrder.indexOf(a.value as any)
-        const orderIndexB = playStatusDefaultOrder.indexOf(b.value as any)
+        const orderIndexA = DEFAULT_PLAY_STATUS_ORDER.indexOf(a.value as any)
+        const orderIndexB = DEFAULT_PLAY_STATUS_ORDER.indexOf(b.value as any)
         return orderIndexA - orderIndexB
       }
       return a.label.localeCompare(b.label, 'zh-CN')
