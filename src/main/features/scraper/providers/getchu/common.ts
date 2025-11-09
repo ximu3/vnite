@@ -30,7 +30,8 @@ async function fetchFromGetchu(
       Referer: 'https://www.getchu.com/top.html',
       'User-Agent':
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
-      Cookie: 'getchu_adalt_flag=getchu.com'
+      Cookie: 'getchu_adalt_flag=getchu.com',
+      'Accept-Encoding': 'br, gzip, deflate'
     }
   })
   const bodyReader = Readable.fromWeb(response.body as ReadableStream<Uint8Array>)
@@ -47,13 +48,16 @@ async function pipeToCheerio<T>(
   ) => void
 ): Promise<T> {
   return new Promise<T>((resolve, reject) => {
-    const cheerioStream = cheerio.decodeStream({}, (err, $) => {
-      if (err) {
-        reject(err)
-        return
+    const cheerioStream = cheerio.decodeStream(
+      { encoding: { userEncoding: 'EUC-JP' } },
+      (err, $) => {
+        if (err) {
+          reject(err)
+          return
+        }
+        func($, resolve, reject, err)
       }
-      func($, resolve, reject, err)
-    })
+    )
     // Handle stream errors
     readable.on('error', reject)
     cheerioStream.on('error', reject)
@@ -173,21 +177,11 @@ export async function getGetchuGameMetadata(identifier: ScraperIdentifier): Prom
     // description
     const description = $('div.tabletitle.tabletitle_1 + div > span').text()
 
-    const eucjpBytes = new Uint8Array(description.length)
-    for (let i = 0; i < description.length; i++) {
-      eucjpBytes[i] = description.charCodeAt(i)
-    }
-    const unicodeArray = Encoding.convert(eucjpBytes, {
-      to: 'UNICODE',
-      from: 'EUCJP'
-    })
-    const descriptionStr = Encoding.codeToString(unicodeArray).replace(/^\s+|\s+$/g, '')
-
     resolve({
       name: name,
       originalName: name,
       releaseDate: '',
-      description: descriptionStr,
+      description: description,
       developers: [brand],
       relatedSites: [],
       tags: []

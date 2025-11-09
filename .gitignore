@@ -10,3 +10,4 @@ out
 .env.*.local
 dev
 app
+/target

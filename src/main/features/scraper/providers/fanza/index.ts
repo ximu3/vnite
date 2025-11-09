@@ -1,0 +1,1 @@
+export { fanzaProvider } from './provider'
