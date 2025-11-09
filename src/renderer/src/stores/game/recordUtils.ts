@@ -228,6 +228,7 @@ export function getWeeklyPlayData(date = new Date()): {
 export function getMonthlyPlayData(date = new Date()): {
   totalTime: number
   dailyPlayTime: { [date: string]: number }
+  dailyWeekNumber: { [date: string]: number } // The key is the same as the above variable
   mostPlayedDay: MonthlyMostPlayedDay | null
   weeklyPlayTime: { week: number; playTime: number }[]
   mostPlayedGames: { gameId: string; playTime: number }[]
@@ -247,6 +248,7 @@ export function getMonthlyPlayData(date = new Date()): {
 
     // Calculate daily play time
     const dailyPlayTime: { [date: string]: number } = {}
+    const dailyWeekNumber: { [date: string]: number } = {}
     const weeklyPlayTime: { [week: number]: number } = {}
     let totalTime = 0
     let mostPlayedDay: MonthlyMostPlayedDay | null = null
@@ -282,6 +284,7 @@ export function getMonthlyPlayData(date = new Date()): {
       dayTotal = capDailyPlayTime(dayTotal, dayDate)
 
       dailyPlayTime[dateStr] = dayTotal
+      dailyWeekNumber[dateStr] = weekOfMonth
       weeklyPlayTime[weekOfMonth] = (weeklyPlayTime[weekOfMonth] || 0) + dayTotal
       totalTime += dayTotal
 
@@ -309,6 +312,7 @@ export function getMonthlyPlayData(date = new Date()): {
     return {
       totalTime,
       dailyPlayTime,
+      dailyWeekNumber,
       mostPlayedDay,
       weeklyPlayTime: weeklyPlayTimeArray,
       mostPlayedGames
@@ -318,6 +322,7 @@ export function getMonthlyPlayData(date = new Date()): {
     return {
       totalTime: 0,
       dailyPlayTime: {},
+      dailyWeekNumber: {},
       mostPlayedDay: null,
       weeklyPlayTime: [],
       mostPlayedGames: []

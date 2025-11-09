@@ -93,7 +93,8 @@
       "weeklyPlayTime": "週間プレイ時間",
       "calendarTitle": "月間ゲームカレンダー",
       "weekFormat": "第{{week}}週",
-      "weekDateRange": "{{week}}（{{startDay}}日-{{endDay}}日）"
+      "weekDateRange": "{{week}}（{{startDay}}日-{{endDay}}日）",
+      "useAlternateColor": "交互色を使用する"
     },
     "highlights": {
       "title": "月間データ",

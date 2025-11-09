@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/c
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
 import { Separator } from '@ui/separator'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
+import { Fragment, useCallback, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   Area,
@@ -19,11 +19,12 @@ import {
   YAxis
 } from 'recharts'
 import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
+import { useConfigState } from '~/hooks'
 import { getGameStore } from '~/stores/game'
 import { getWeeklyPlayData, parseLocalDate } from '~/stores/game/recordUtils'
 import { scrollToElement } from '~/utils'
+import { MergeIntervalSliderPopover } from './Config/MergeIntervalSliderPopover'
 import { GameRankingItem } from './GameRankingItem'
-import { MergeIntervalSliderPopover } from './MergeIntervalSliderPopover'
 
 interface TimeLineRow {
   gameLabel: string
@@ -190,8 +191,7 @@ export function WeeklyReport(): React.JSX.Element {
       }
     })
   }, [search])
-
-  const [mergeInterval, setMergeInterval] = useState(0)
+  const [mergeInterval, setMergeInterval] = useConfigState('record.weekly.mergeInterval')
   const timeLineChartDataFlat = useMemo(() => {
     return buildTimeLineChartData(weekData, weekStartTime, nextWeekStart, mergeInterval)
   }, [search, mergeInterval])

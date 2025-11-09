@@ -1,13 +1,16 @@
 import { useRouter, useSearch } from '@tanstack/react-router'
+import { Button, buttonVariants } from '@ui/button'
+import { Calendar } from '@ui/calendar'
+import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
+import { SettingsPopover } from '@ui/popover'
+import { Separator } from '@ui/separator'
+import { Switch } from '@ui/switch'
 import { CalendarIcon, ChevronLeft, ChevronRight, Clock, Trophy } from 'lucide-react'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
-import { Button, buttonVariants } from '~/components/ui/button'
-import { Calendar } from '~/components/ui/calendar'
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '~/components/ui/chart'
-import { Separator } from '~/components/ui/separator'
+import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from 'recharts'
+import { useConfigState } from '~/hooks'
 import { getMonthlyPlayData, parseLocalDate } from '~/stores/game/recordUtils'
 import { cn } from '~/utils'
 import { GameRankingItem } from './GameRankingItem'
@@ -15,6 +18,9 @@ import { StatCard } from './StatCard'
 
 export function MonthlyReport(): React.JSX.Element {
   const { t } = useTranslation('record')
+  const [useAlternateColor, setUseAlternateColor] = useConfigState(
+    'record.monthly.useAlternateColor'
+  )
 
   const router = useRouter()
   const search = useSearch({ from: '/record' })
@@ -112,7 +118,8 @@ export function MonthlyReport(): React.JSX.Element {
   // Data for charts, not weekly but daily
   const dailyChartData = Object.entries(monthData.dailyPlayTime).map(([date, playTime]) => ({
     date: date,
-    playTime: playTime / 3600000
+    playTime: playTime / 3600000,
+    week: monthData.dailyWeekNumber[date]
   }))
 
   // Preparing data for charts (replaced by the above one)
@@ -280,8 +287,14 @@ export function MonthlyReport(): React.JSX.Element {
       <div className="grid gap-4 xl:grid-cols-[1fr_auto]">
         {/* Weekly Play Time Chart */}
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row">
             <CardTitle>{t('monthly.chart.weeklyPlayTime')}</CardTitle>
+            <SettingsPopover className="flex justify-between">
+              <p className="text-sm font-medium text-foreground">
+                {t('monthly.chart.useAlternateColor')}
+              </p>
+              <Switch checked={useAlternateColor} onCheckedChange={setUseAlternateColor} />
+            </SettingsPopover>
           </CardHeader>
           <CardContent className="pt-0">
             <ChartContainer config={chartConfig} className="h-[320px] w-full">
@@ -305,13 +318,20 @@ export function MonthlyReport(): React.JSX.Element {
                     />
                   )}
                 />
-                <Bar
-                  dataKey="playTime"
-                  fill="var(--primary)"
-                  onClick={handleBarClick}
-                  cursor="pointer"
-                  radius={[4, 4, 0, 0]}
-                />
+                <Bar dataKey="playTime" radius={[4, 4, 0, 0]}>
+                  {dailyChartData.map((entry) => (
+                    <Cell
+                      key={`${entry.date}`}
+                      fill={
+                        entry.week % 2 === 1 || !useAlternateColor
+                          ? 'var(--primary)'
+                          : 'var(--secondary)'
+                      }
+                      onClick={() => handleBarClick(entry)}
+                      cursor="pointer"
+                    />
+                  ))}
+                </Bar>
               </BarChart>
             </ChartContainer>
           </CardContent>

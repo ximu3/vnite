@@ -93,7 +93,8 @@
       "weeklyPlayTime": "Weekly Play Time",
       "calendarTitle": "Monthly Gaming Calendar",
       "weekFormat": "Week {{week}}",
-      "weekDateRange": "{{week}} ({{startDay}}-{{endDay}})"
+      "weekDateRange": "{{week}} ({{startDay}}-{{endDay}})",
+      "useAlternateColor": "Use alternating colors"
     },
     "highlights": {
       "title": "Monthly Data",
