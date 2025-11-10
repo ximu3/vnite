@@ -161,6 +161,10 @@ export class BaseDBManager {
     return result.rows.reduce(
       (acc, row) => {
         if (row.doc) {
+          // ignore CouchDB internal design documents
+          if (row.id.startsWith('_design/')) {
+            return acc
+          }
           acc[row.doc._id] = row.doc
         }
         return acc
