@@ -226,33 +226,44 @@ export function filterGames(
 
               if (Array.isArray(metadataValue)) {
                 try {
-                  matches = metadataValue.some(
-                    (item) =>
-                      item != null &&
-                      values.some(
-                        (value) =>
-                          value !== '__empty__' &&
-                          item.toString().toLowerCase().includes(value.toLowerCase())
-                      )
-                  )
-                  if (allowEmpty && metadataValue.length === 0) matches = true
+                  const isEmptyArray =
+                    metadataValue.length === 0 ||
+                    metadataValue.every((item) => item == null || item.toString().trim() === '')
+
+                  if (isEmptyArray) {
+                    matches = allowEmpty
+                  } else {
+                    matches = metadataValue.some(
+                      (item) =>
+                        item != null &&
+                        values.some(
+                          (value) =>
+                            value !== '__empty__' &&
+                            item.toString().toLowerCase().includes(value.toLowerCase())
+                        )
+                    )
+                  }
                 } catch (error) {
                   console.error(`Array filtering error for ${gameId}:`, error)
                   matches = false
                 }
               } else if (metadataValue != null) {
                 try {
-                  matches = values.some(
-                    (value) =>
-                      value !== '__empty__' &&
-                      metadataValue.toString().toLowerCase().includes(value.toLowerCase())
-                  )
+                  if (metadataValue.toString().trim() === '') {
+                    matches = allowEmpty
+                  } else {
+                    matches = values.some(
+                      (value) =>
+                        value !== '__empty__' &&
+                        metadataValue.toString().toLowerCase().includes(value.toLowerCase())
+                    )
+                  }
                 } catch (error) {
                   console.error(`Value filtering error for ${gameId}:`, error)
                   matches = false
                 }
               } else {
-                if (allowEmpty) matches = true
+                matches = allowEmpty
               }
 
               if (!matches) {
