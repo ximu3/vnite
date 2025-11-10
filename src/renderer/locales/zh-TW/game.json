@@ -450,7 +450,8 @@
           "searchImage": "搜尋圖片",
           "cropImage": "裁剪圖片",
           "deleteImage": "刪除圖片",
-          "importFromClipboard": "從剪貼簿匯入"
+          "importFromClipboard": "從剪貼簿匯入",
+          "viewLargeImage": "查看原圖"
         },
         "search": {
           "title": "搜尋圖片",
