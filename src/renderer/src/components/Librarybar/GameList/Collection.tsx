@@ -45,10 +45,10 @@ export function Collection(): React.JSX.Element {
     [collections]
   )
 
-  const uncollectedGameIds = useMemo(
-    () => gameIds.filter((id) => !collectedGameIds.has(id)),
-    [gameIds, collectedGameIds]
-  )
+  const uncollectedGameIds = useMemo(() => {
+    const uncollected = gameIds.filter((id) => !collectedGameIds.has(id))
+    return filterGamesByNSFW(nsfwFilterMode, uncollected)
+  }, [gameIds, collectedGameIds, nsfwFilterMode])
 
   return (
     <ScrollArea className={cn('w-full h-full pr-3 -mr-3 pt-1 pb-1')}>
