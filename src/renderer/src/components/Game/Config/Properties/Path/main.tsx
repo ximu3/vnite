@@ -43,6 +43,8 @@ function PathComponent(
   const [markerPath] = useGameLocalState(gameId, 'utils.markPath')
   const [maxSaveBackups, setMaxSaveBackups] = useGameState(gameId, 'save.maxBackups')
   const [savePathSize, setSavePathSize] = useState(0)
+  const [isGamePathValid, setIsGamePathValid] = useState(true)
+  const [isScreenshotPathValid, setIsScreenshotPathValid] = useState(true)
   const [screenshotPath, setScreenshotPath, saveScreenshotPath, setScreenshotPathAndSave] =
     useGameLocalState(gameId, 'path.screenshotPath', true)
 
@@ -50,6 +52,28 @@ function PathComponent(
     await Promise.all([saveGamePath(), saveSavePaths(), saveScreenshotPath()])
   }, [saveGamePath, saveSavePaths, saveScreenshotPath])
   useImperativeHandle(ref, () => ({ save: saveAll }), [saveAll])
+
+  useEffect(() => {
+    if (!gamePath) {
+      setIsGamePathValid(true)
+      return
+    }
+    ipcManager
+      .invoke('system:check-if-path-exist', [gamePath])
+      .then((res: boolean[]) => setIsGamePathValid(res[0]))
+      .catch(() => setIsGamePathValid(false))
+  }, [gamePath])
+
+  useEffect(() => {
+    if (!screenshotPath) {
+      setIsScreenshotPathValid(true)
+      return
+    }
+    ipcManager
+      .invoke('system:check-if-path-exist', [screenshotPath])
+      .then((res: boolean[]) => setIsScreenshotPathValid(res[0]))
+      .catch(() => setIsScreenshotPathValid(false))
+  }, [screenshotPath])
 
   useEffect(() => {
     if ((savePaths.length === 1 && savePaths[0] === '') || savePaths.length === 0 || !savePaths) {
@@ -164,6 +188,7 @@ function PathComponent(
             </div>
             <div className={cn('flex flex-row gap-3 items-center')}>
               <Input
+                aria-invalid={!isGamePathValid}
                 className={cn('flex-1')}
                 value={gamePath}
                 onChange={(e) => setGamePath(e.target.value)}
@@ -180,6 +205,7 @@ function PathComponent(
             </div>
             <div className={cn('flex flex-row gap-3 items-center')}>
               <Input
+                aria-invalid={!isScreenshotPathValid}
                 className={cn('flex-1')}
                 value={screenshotPath || ''}
                 onChange={(e) => setScreenshotPath(e.target.value)}
