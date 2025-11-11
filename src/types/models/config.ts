@@ -62,6 +62,7 @@ export interface configDocs {
         | 'record.playStatus'
       highlightLocalGames: boolean
       markLocalGames: boolean
+      warnInvalidGamePaths: boolean
       showRecentGames: boolean
       showAllGamesInGroup: boolean
       showCollapseButton: boolean
@@ -309,6 +310,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       selectedGroup: 'collection',
       highlightLocalGames: true,
       markLocalGames: false,
+      warnInvalidGamePaths: true,
       showRecentGames: true,
       showAllGamesInGroup: true,
       showCollapseButton: true

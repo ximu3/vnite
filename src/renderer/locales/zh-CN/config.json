@@ -110,7 +110,9 @@
       "highlightLocalGames": "高亮显示本地游戏",
       "highlightLocalGamesDescription": "在游戏列表中高亮显示本地游戏",
       "markLocalGames": "标记本地游戏",
-      "markLocalGamesDescription": "在游戏列表中标记本地已安装的游戏"
+      "markLocalGamesDescription": "在游戏列表中标记本地已安装的游戏",
+      "warnInvalidGamePaths": "提示无效游戏路径",
+      "warnInvalidGamePathsDescription": "对因系统文件变动导致游戏路径无效的游戏进行提示（需要开启“标记本地游戏”）"
     },
     "gameDetail": {
       "title": "游戏详情页",

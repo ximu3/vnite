@@ -103,7 +103,9 @@
       "highlightLocalGames": "Highlight Local Games",
       "highlightLocalGamesDescription": "Highlight local games in game list",
       "markLocalGames": "Mark Local Games",
-      "markLocalGamesDescription": "Mark installed local games in game list"
+      "markLocalGamesDescription": "Mark installed local games in game list",
+      "warnInvalidGamePaths": "Warn about invalid game paths",
+      "warnInvalidGamePathsDescription": "Display warnings for games whose paths have become invalid due to system file changes (requires 'Mark local games' to be enabled)"
     },
     "gameDetail": {
       "title": "Game Detail Page",
@@ -398,7 +400,7 @@
       "description": "Choose whether to play a system notification sound on receiving a capture notification"
     }
   },
-  "network" : {
+  "network": {
     "title": "Network",
     "proxy": {
       "title": "Proxy",

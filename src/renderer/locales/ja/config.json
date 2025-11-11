@@ -110,7 +110,9 @@
       "highlightLocalGames": "ローカルゲームをハイライト",
       "highlightLocalGamesDescription": "ゲームリストでローカルゲームをハイライト表示",
       "markLocalGames": "ローカルゲームにマーク",
-      "markLocalGamesDescription": "ゲームリストでローカルにインストールされているゲームにマークを付ける"
+      "markLocalGamesDescription": "ゲームリストでローカルにインストールされているゲームにマークを付ける",
+      "warnInvalidGamePaths": "無効なゲームパスを警告",
+      "warnInvalidGamePathsDescription": "システムファイルの変更によってゲームパスが無効になったゲームに警告を表示します（「ローカルゲームをマーク」を有効にする必要があります）"
     },
     "gameDetail": {
       "title": "ゲーム詳細ページ",
