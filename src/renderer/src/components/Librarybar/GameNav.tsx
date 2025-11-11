@@ -148,9 +148,7 @@ export function GameNav({
               className={cn(
                 'text-xs p-3 h-5 rounded-none transition-none w-full group/gamenav',
                 highlightLocalGames && 'text-foreground',
-                highlightLocalGames &&
-                  gamePath &&
-                  (isPathValid ? 'text-accent-foreground' : 'text-destructive'),
+                highlightLocalGames && gamePath && isPathValid && 'text-accent-foreground',
                 highlightLocalGames && !gamePath && !isDarkMode && 'text-foreground',
                 isSelected && 'bg-accent/[calc(var(--glass-opacity)*2)]'
               )}
