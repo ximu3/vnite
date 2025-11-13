@@ -39,7 +39,8 @@
         "releaseDate": "Release Date",
         "lastRunDate": "Last Played Date",
         "addDate": "Date Added",
-        "playTime": "Play Time"
+        "playTime": "Play Time",
+        "score": "Score"
       }
     },
     "playStatus": {
@@ -90,6 +91,7 @@
         "lastRunDate": "Last Played Date",
         "addDate": "Date Added",
         "playTime": "Play Time",
+        "score": "Score",
         "custom": "Custom Order"
       }
     },

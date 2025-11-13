@@ -39,6 +39,7 @@ export interface configDocs {
           | 'record.lastRunDate'
           | 'record.addDate'
           | 'record.playTime'
+          | 'record.score'
         order: 'asc' | 'desc'
       }
     }
@@ -51,6 +52,7 @@ export interface configDocs {
           | 'record.lastRunDate'
           | 'record.addDate'
           | 'record.playTime'
+          | 'record.score'
         order: 'asc' | 'desc'
       }
       overrideCollectionSort: boolean

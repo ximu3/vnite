@@ -70,6 +70,9 @@ export function AllGamesComponent({
                   <SelectItem value="record.playTime">
                     {t('showcase.sorting.options.playTime')}
                   </SelectItem>
+                  <SelectItem value="record.score">
+                    {t('showcase.sorting.options.score')}
+                  </SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>

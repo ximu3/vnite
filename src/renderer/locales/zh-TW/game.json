@@ -39,7 +39,8 @@
         "releaseDate": "發布日期",
         "lastRunDate": "最後執行日期",
         "addDate": "添加日期",
-        "playTime": "遊玩時間"
+        "playTime": "遊玩時間",
+        "score": "評分"
       }
     },
     "playStatus": {
@@ -90,6 +91,7 @@
         "lastRunDate": "最後執行日期",
         "addDate": "添加日期",
         "playTime": "遊玩時間",
+        "score": "評分",
         "custom": "自訂順序"
       }
     },

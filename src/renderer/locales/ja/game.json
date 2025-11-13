@@ -39,7 +39,8 @@
         "releaseDate": "リリース日",
         "lastRunDate": "最終プレイ日",
         "addDate": "追加日",
-        "playTime": "プレイ時間"
+        "playTime": "プレイ時間",
+        "score": "スコア"
       }
     },
     "playStatus": {
@@ -90,6 +91,7 @@
         "lastRunDate": "最終プレイ日",
         "addDate": "追加日",
         "playTime": "プレイ時間",
+        "score": "スコア",
         "custom": "カスタム順序"
       }
     },
