@@ -262,7 +262,11 @@ export class BaseDBManager {
       // Full sync without live options
       await localDb.sync(remoteDb, {
         live: false,
-        retry: true
+        retry: true,
+        // filter out CouchDB internal design documents
+        filter(doc) {
+          return !doc._id.startsWith('_design/')
+        }
       })
       log.info(`[Sync] ${dbName} Full synchronization completed successfully`)
     } catch (error) {
@@ -324,7 +328,11 @@ export class BaseDBManager {
       this.syncHandlers[dbName] = localDb
         .sync(remoteDb, {
           live: true,
-          retry: true
+          retry: true,
+          // filter out CouchDB internal design documents
+          filter(doc) {
+            return !doc._id.startsWith('_design/')
+          }
         })
         .on('change', (info) => {
           console.log(`[${dbName}] sync change:`, info)
