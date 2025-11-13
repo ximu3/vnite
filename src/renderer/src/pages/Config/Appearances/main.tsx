@@ -384,6 +384,14 @@ export function Appearances(): React.JSX.Element {
                 description={t('appearances.gameList.markLocalGamesDescription')}
                 controlType="switch"
               />
+
+              <ConfigItem
+                hookType="config"
+                path="game.gameList.warnInvalidGamePaths"
+                title={t('appearances.gameList.warnInvalidGamePaths')}
+                description={t('appearances.gameList.warnInvalidGamePathsDescription')}
+                controlType="switch"
+              />
             </div>
           </div>
 

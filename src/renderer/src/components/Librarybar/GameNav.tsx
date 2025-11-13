@@ -36,6 +36,7 @@ export function GameNav({
 
   const [highlightLocalGames] = useConfigState('game.gameList.highlightLocalGames')
   const [markLocalGames] = useConfigState('game.gameList.markLocalGames')
+  const [warnInvalidGamePaths] = useConfigState('game.gameList.warnInvalidGamePaths')
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
   const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
   const isDarkMode = useTheme().isDark
@@ -148,9 +149,7 @@ export function GameNav({
               className={cn(
                 'text-xs p-3 h-5 rounded-none transition-none w-full group/gamenav',
                 highlightLocalGames && 'text-foreground',
-                highlightLocalGames &&
-                  gamePath &&
-                  (isPathValid ? 'text-accent-foreground' : 'text-destructive'),
+                highlightLocalGames && gamePath && isPathValid && 'text-accent-foreground',
                 highlightLocalGames && !gamePath && !isDarkMode && 'text-foreground',
                 isSelected && 'bg-accent/[calc(var(--glass-opacity)*2)]'
               )}
@@ -189,15 +188,11 @@ export function GameNav({
                   </div>
                 )}
 
-                {markLocalGames && gamePath && (
-                  <span
-                    className={cn(
-                      isPathValid === false
-                        ? 'icon-[mdi--alert-circle-outline] w-[12px] h-[12px]'
-                        : 'icon-[mdi--check-outline] w-[10px] h-[10px]',
-                      'flex-shrink-0'
-                    )}
-                  ></span>
+                {markLocalGames && gamePath && isPathValid && (
+                  <span className="icon-[mdi--check-outline] w-[10px] h-[10px] flex-shrink-0" />
+                )}
+                {markLocalGames && gamePath && !isPathValid && warnInvalidGamePaths && (
+                  <span className="icon-[mdi--alert-circle-outline] w-[12px] h-[12px] text-destructive flex-shrink-0" />
                 )}
               </div>
             </Nav>
