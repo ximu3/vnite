@@ -34,8 +34,11 @@
       "gameNamePlaceholder": "ゲーム名を入力してください",
       "gameId": "ゲームID",
       "gameIdPlaceholder": "ゲームIDを入力してください",
+      "gamePath": "ゲームパス",
+      "gamePathPlaceholder": "ゲームパスを選択してください",
       "searchButton": "検索",
       "recognizeButton": "認識",
+      "addButton": "追加",
       "notifications": {
         "enterName": "ゲーム名を入力してください",
         "searching": "ゲームを検索中…",
@@ -54,17 +57,14 @@
       },
       "dataSources": {
         "label": "データソース",
+        "none": "なし",
         "steam": "Steam",
         "vndb": "VNDB",
         "bangumi": "Bangumi",
         "igdb": "IGDB",
         "ymgal": "YMGal",
-        "dlsite": "DLsite",
-        "none": "なし"
-      },
-      "gamePath": "ゲームパス",
-      "addButton": "追加",
-      "gamePathPlaceholder": "ゲームパスを選択してください"
+        "dlsite": "DLsite"
+      }
     }
   },
   "gameBatchAdder": {

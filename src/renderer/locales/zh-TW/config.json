@@ -375,16 +375,16 @@
     }
   },
   "memory": {
+    "title": "回憶",
     "storageBackend": {
+      "title": "截圖儲存後端",
+      "description": "選擇截圖的儲存位置\n如果您選擇不將截圖儲存至資料庫，那麼這些截圖將不會出現在遊戲的「回憶」頁面中",
       "options": {
         "database": "資料庫",
         "fileSystem": "檔案系統",
         "both": "資料庫 & 檔案系統"
-      },
-      "title": "截圖儲存後端",
-      "description": "選擇截圖的儲存位置\n如果您選擇不將截圖儲存至資料庫，那麼這些截圖將不會出現在遊戲的「回憶」頁面中"
+      }
     },
-    "title": "回憶",
     "saveDir": {
       "title": "截圖儲存資料夾",
       "description": "選擇儲存截圖的根資料夾",

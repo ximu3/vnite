@@ -57,8 +57,8 @@
         "confirm": "削除確認"
       },
       "tooltips": {
-        "edit": "編集",
         "scan": "スキャン",
+        "edit": "編集",
         "delete": "削除"
       }
     }

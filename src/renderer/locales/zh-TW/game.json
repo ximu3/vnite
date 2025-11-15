@@ -149,6 +149,9 @@
       "start": "開始遊戲",
       "stop": "停止遊戲"
     },
+    "contextMenu": {
+      "editMediaProperties": "編輯媒體屬性"
+    },
     "save": {
       "table": {
         "date": "日期",
@@ -307,7 +310,13 @@
         "adjustCover": "調整封面",
         "addText": "添加文字",
         "editText": "修改文字",
-        "delete": "刪除"
+        "delete": "刪除",
+        "openScreenshotDir": "打開截圖目錄"
+      },
+      "setAs": {
+        "title": "設置為",
+        "cover": "遊戲封面",
+        "background": "遊戲背景"
       },
       "export": {
         "exportAs": "轉存為",
@@ -330,15 +339,11 @@
         "setCoverSuccess": "已成功設置為遊戲封面",
         "setCoverError": "設置為遊戲封面失敗：{{error}}",
         "setBackgroundSuccess": "已成功設置為遊戲背景",
-        "setBackgroundError": "設置為遊戲背景失敗：{{error}}"
+        "setBackgroundError": "設置為遊戲背景失敗：{{error}}",
+        "screenshotPathNotSet": "未設定截圖路徑"
       },
       "dialog": {
         "markdownHint": "支援 Markdown 語法"
-      },
-      "setAs": {
-        "title": "設置為",
-        "cover": "遊戲封面",
-        "background": "遊戲背景"
       }
     },
     "config": {
@@ -349,6 +354,8 @@
       "rename": "修改基本資訊",
       "editLogo": "編輯徽標",
       "editPlayTime": "修改遊玩時間",
+      "markNSFW": "標記為 NSFW",
+      "unmarkNSFW": "取消標記為 NSFW",
       "downloadMetadata": "更新資料",
       "createShortcut": "建立捷徑",
       "browseLocalFiles": "瀏覽本機文件",
@@ -357,9 +364,7 @@
         "shortcutCreated": "已建立捷徑",
         "shortcutError": "建立捷徑時出錯",
         "gamePathNotSet": "遊戲路徑未設定"
-      },
-      "unmarkNSFW": "取消標記為 NSFW",
-      "markNSFW": "標記為 NSFW"
+      }
     },
     "timersEditor": {
       "title": "遊戲計時器",
@@ -390,12 +395,12 @@
     "deleteAlert": {
       "title": "確定要刪除遊戲 {{gameName}} 嗎？",
       "description": "刪除後，遊戲的所有資料將被永久刪除。此操作不可逆。",
+      "addToIgnore": "將此遊戲資料夾加入掃描器忽略清單",
       "notifications": {
         "deleting": "正在刪除遊戲 {{gameName}}…",
         "deleted": "遊戲 {{gameName}} 已刪除",
         "error": "刪除遊戲 {{gameName}} 失敗: {{message}}"
-      },
-      "addToIgnore": "將此遊戲資料夾加入掃描器忽略清單"
+      }
     },
     "playTimeEditor": {
       "expressionSupport": "支援四則運算表達式",
@@ -422,6 +427,7 @@
         "title": "遊戲與存檔",
         "gamePath": "遊戲路徑",
         "savePath": "存檔路徑",
+        "screenshotPath": "截圖路徑",
         "addFolder": "添加資料夾",
         "addFile": "添加文件",
         "maxBackups": "最大存檔備份數量",
@@ -448,12 +454,12 @@
           "adjust": "調整",
           "set": "設定",
           "importFromFile": "從文件匯入",
+          "importFromClipboard": "從剪貼簿匯入",
           "importFromUrl": "從連結匯入",
           "searchImage": "搜尋圖片",
+          "viewLargeImage": "查看原圖",
           "cropImage": "裁剪圖片",
-          "deleteImage": "刪除圖片",
-          "importFromClipboard": "從剪貼簿匯入",
-          "viewLargeImage": "查看原圖"
+          "deleteImage": "刪除圖片"
         },
         "search": {
           "title": "搜尋圖片",
@@ -469,6 +475,8 @@
         },
         "notifications": {
           "fileSelectError": "選擇文件失敗: {{error}}",
+          "noImageInClipboard": "剪貼簿中沒有圖片",
+          "clipboardImportError": "從剪貼簿匯入失敗: {{error}}",
           "imageNotFound": "未找到目前圖片",
           "getImageError": "獲取目前圖片失敗: {{error}}",
           "downloading": "正在獲取圖片…",
@@ -488,9 +496,7 @@
           "cropIncomplete": "裁剪未完成",
           "deleting": "正在刪除…",
           "deleteSuccess": "刪除成功",
-          "deleteError": "刪除失敗",
-          "noImageInClipboard": "剪貼簿中沒有圖片",
-          "clipboardImportError": "從剪貼簿匯入失敗: {{error}}"
+          "deleteError": "刪除失敗"
         }
       },
       "launcher": {
@@ -543,9 +549,6 @@
           }
         }
       }
-    },
-    "contextMenu": {
-      "editMediaProperties": "編輯媒體屬性"
     }
   },
   "batchEditor": {
@@ -596,12 +599,12 @@
       "description": "刪除後，所選遊戲的所有資料將被永久刪除。此操作不可逆。",
       "gamesList": "將要刪除的遊戲：",
       "unnamedGame": "未命名遊戲",
+      "addToIgnore": "將這些遊戲資料夾加入掃描器忽略清單",
       "notifications": {
         "deleting": "正在刪除{{count}} 個遊戲…",
         "success": "{{count}} 個遊戲已刪除",
         "error": "刪除{{count}} 個遊戲失敗: {{message}}"
-      },
-      "addToIgnore": "將這些遊戲資料夾加入掃描器忽略清單"
+      }
     }
   },
   "updater": {
@@ -659,6 +662,7 @@
       "batchComplete": "批次更新完成！成功: {{success}}, 失敗: {{failed}}",
       "error": "更新失敗: {{message}}",
       "noDataSources": "找不到兼容的資料來源"
-    }
+    },
+    "unknown": "未知錯誤"
   }
 }

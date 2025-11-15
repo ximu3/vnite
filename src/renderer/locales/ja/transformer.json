@@ -18,6 +18,7 @@
   "ruleDialog": {
     "title": "ルール設定",
     "loading": "読み込み中…",
+    "noRules": "ルールがまだ設定されていません",
     "categories": {
       "name": "名称",
       "originalName": "原名",
@@ -39,21 +40,20 @@
     "addDialogTitle": "マッチングルールを追加",
     "addDialogPlaceholder": "マッチング内容を入力してください",
     "cancel": "キャンセル",
-    "save": "保存",
-    "noRules": "ルールがまだ設定されていません"
+    "save": "保存"
   },
   "notifications": {
     "applyLoading": "すべてのトランスフォーマーを適用しています…",
     "applySuccess": "すべての変換器が正常に変換されました",
     "applyError": "すべての変換器の変換中にエラーが発生しました",
+    "applyOneLoading": "変換器「{{name}}」を適用しています…",
+    "applyOneSuccess": "変換器「{{name}}」を正常に適用しました",
+    "applyOneError": "変換器「{{name}}」の適用中にエラーが発生しました",
     "presetAdded": "プリセットが追加されました",
     "importSuccess": "変換器のインポートに成功しました",
     "importError": "変換器のインポートに失敗しました",
     "exportSuccess": "変換器のエクスポートに成功しました",
-    "exportError": "変換器のエクスポートに失敗しました",
-    "applyOneLoading": "変換器「{{name}}」を適用しています…",
-    "applyOneSuccess": "変換器「{{name}}」を正常に適用しました",
-    "applyOneError": "変換器「{{name}}」の適用中にエラーが発生しました"
+    "exportError": "変換器のエクスポートに失敗しました"
   },
   "editDialog": {
     "title": "変換器を編集",
@@ -78,9 +78,9 @@
     "rulesCount": "{{count}}個のルール",
     "tooltips": {
       "apply": "適用",
-      "delete": "削除",
+      "edit": "編集",
       "export": "エクスポート",
-      "edit": "編集"
+      "delete": "削除"
     }
   },
   "presets": {

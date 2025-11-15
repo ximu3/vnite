@@ -149,6 +149,9 @@
       "start": "ゲーム開始",
       "stop": "ゲーム停止"
     },
+    "contextMenu": {
+      "editMediaProperties": "メディアの属性を編集"
+    },
     "save": {
       "table": {
         "date": "日付",
@@ -307,7 +310,8 @@
         "adjustCover": "カバーを調整",
         "addText": "テキストを追加",
         "editText": "テキストを編集",
-        "delete": "削除"
+        "delete": "削除",
+        "openScreenshotDir": "スクリーンショットフォルダを開く"
       },
       "setAs": {
         "title": "設定",
@@ -335,7 +339,8 @@
         "setCoverSuccess": "ゲームカバーとして設定しました",
         "setCoverError": "ゲームカバーの設定に失敗しました: {{error}}",
         "setBackgroundSuccess": "ゲーム背景として設定しました",
-        "setBackgroundError": "ゲーム背景の設定に失敗しました: {{error}}"
+        "setBackgroundError": "ゲーム背景の設定に失敗しました: {{error}}",
+        "screenshotPathNotSet": "スクリーンショット保存先が設定されていません"
       },
       "dialog": {
         "markdownHint": "Markdown記法をサポートしています"
@@ -349,6 +354,8 @@
       "rename": "基本情報を編集",
       "editLogo": "ロゴを編集",
       "editPlayTime": "プレイ時間を編集",
+      "markNSFW": "NSFW としてマークする",
+      "unmarkNSFW": "NSFW のマークを解除する",
       "downloadMetadata": "メタデータを更新",
       "createShortcut": "ショートカットを作成",
       "browseLocalFiles": "ローカルファイルを閲覧",
@@ -357,9 +364,7 @@
         "shortcutCreated": "ショートカットを作成しました",
         "shortcutError": "ショートカットの作成でエラーが発生しました",
         "gamePathNotSet": "ゲームパスが設定されていません"
-      },
-      "unmarkNSFW": "NSFW のマークを解除する",
-      "markNSFW": "NSFW としてマークする"
+      }
     },
     "timersEditor": {
       "title": "ゲームタイマー",
@@ -390,12 +395,12 @@
     "deleteAlert": {
       "title": "{{gameName}}を削除してもよろしいですか？",
       "description": "このゲームのすべてのデータが完全に削除されます。この操作は元に戻せません。",
+      "addToIgnore": "このゲームフォルダをスキャナ無視リストに追加する",
       "notifications": {
         "deleting": "ゲーム{{gameName}}を削除中…",
         "deleted": "ゲーム{{gameName}}を削除しました",
         "error": "ゲーム{{gameName}}の削除に失敗しました: {{message}}"
-      },
-      "addToIgnore": "このゲームフォルダをスキャナ無視リストに追加する"
+      }
     },
     "playTimeEditor": {
       "expressionSupport": "計算式をサポートしています",
@@ -422,6 +427,7 @@
         "title": "ゲームとセーブ",
         "gamePath": "ゲームパス",
         "savePath": "セーブパス",
+        "screenshotPath": "スクリーンショット保存先",
         "addFolder": "フォルダを追加",
         "addFile": "ファイルを追加",
         "maxBackups": "セーブバックアップの最大数",
@@ -448,11 +454,12 @@
           "adjust": "調整",
           "set": "設定",
           "importFromFile": "ファイルからインポート",
+          "importFromClipboard": "クリップボードからインポート",
           "importFromUrl": "URLからインポート",
           "searchImage": "画像を検索",
+          "viewLargeImage": "拡大画像で表示",
           "cropImage": "画像を切り抜き",
-          "deleteImage": "画像を削除",
-          "importFromClipboard": "クリップボードからインポート"
+          "deleteImage": "画像を削除"
         },
         "search": {
           "title": "画像を検索",
@@ -468,6 +475,8 @@
         },
         "notifications": {
           "fileSelectError": "ファイルの選択に失敗しました: {{error}}",
+          "noImageInClipboard": "クリップボードに画像がありません",
+          "clipboardImportError": "クリップボードからのインポートに失敗しました: {{error}}",
           "imageNotFound": "画像が見つかりません",
           "getImageError": "画像の取得に失敗しました: {{error}}",
           "downloading": "画像をダウンロード中…",
@@ -487,9 +496,7 @@
           "cropIncomplete": "切り抜きが完了していません",
           "deleting": "画像を削除中…",
           "deleteSuccess": "画像を削除しました",
-          "deleteError": "削除失敗",
-          "noImageInClipboard": "クリップボードに画像がありません",
-          "clipboardImportError": "クリップボードからのインポートに失敗しました: {{error}}"
+          "deleteError": "削除失敗"
         }
       },
       "launcher": {
@@ -592,12 +599,12 @@
       "description": "選択したゲームのすべてのデータが完全に削除されます。この操作は元に戻せません。",
       "gamesList": "削除されるゲーム：",
       "unnamedGame": "名前のないゲーム",
+      "addToIgnore": "これらのゲームフォルダをスキャナ無視リストに追加する",
       "notifications": {
         "deleting": "{{count}}個のゲームを削除中…",
         "success": "{{count}}個のゲームを削除しました",
         "error": "{{count}}個のゲームの削除に失敗しました: {{message}}"
-      },
-      "addToIgnore": "これらのゲームフォルダをスキャナ無視リストに追加する"
+      }
     }
   },
   "updater": {
@@ -655,6 +662,7 @@
       "batchComplete": "一括更新完了！成功: {{success}}、失敗: {{failed}}",
       "error": "更新に失敗しました: {{message}}",
       "noDataSources": "互換性のあるデータソースが見つかりません"
-    }
+    },
+    "unknown": "不明なエラー"
   }
 }

@@ -6,6 +6,14 @@
     "confirm": "確認",
     "delete": "削除"
   },
+  "arrayEditor": {
+    "clickPlusToAdd": "+ をクリックして要素を追加",
+    "addElement": "要素を追加",
+    "editElement": "要素を編集",
+    "enterElement": "要素を入力",
+    "add": "追加",
+    "update": "更新"
+  },
   "hotkeySetting": {
     "title": "ホットキーの設定",
     "recording": "[ホットキーを押してください…]",
@@ -21,14 +29,6 @@
     "notifications": {
       "hotkeyUpdated": "ホットキーが更新されました"
     }
-  },
-  "arrayEditor": {
-    "clickPlusToAdd": "+ をクリックして要素を追加",
-    "addElement": "要素を追加",
-    "editElement": "要素を編集",
-    "enterElement": "要素を入力",
-    "add": "追加",
-    "update": "更新"
   },
   "clipboard": {
     "copied": "クリップボードにコピーしました",
