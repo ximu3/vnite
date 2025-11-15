@@ -310,7 +310,8 @@
         "adjustCover": "Adjust Cover",
         "addText": "Add Text",
         "editText": "Edit Text",
-        "delete": "Delete"
+        "delete": "Delete",
+        "openScreenshotDir": "Open Screenshot Directory"
       },
       "setAs": {
         "title": "Set As",
@@ -338,7 +339,8 @@
         "setCoverSuccess": "Successfully set as game cover",
         "setCoverError": "Failed to set as game cover: {{error}}",
         "setBackgroundSuccess": "Successfully set as game background",
-        "setBackgroundError": "Failed to set as game background: {{error}}"
+        "setBackgroundError": "Failed to set as game background: {{error}}",
+        "screenshotPathNotSet": "Screenshot path not set"
       },
       "dialog": {
         "markdownHint": "Markdown syntax supported"
@@ -425,6 +427,7 @@
         "title": "Game & Save",
         "gamePath": "Game Path",
         "savePath": "Save Path",
+        "screenshotPath": "Screenshot Path",
         "addFolder": "Add Folder",
         "addFile": "Add File",
         "maxBackups": "Maximum Save Backups",
@@ -659,6 +662,7 @@
       "batchComplete": "Batch update complete! Success: {{success}}, Failed: {{failed}}",
       "error": "Update failed: {{message}}",
       "noDataSources": "No compatible data sources found"
-    }
+    },
+    "unknown": "Unknown error"
   }
 }

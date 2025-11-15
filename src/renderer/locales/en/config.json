@@ -87,6 +87,13 @@
       "showPlayButtonOnPoster": "Show Play Button on Poster",
       "showPlayButtonOnPosterDescription": "Show play button on the poster"
     },
+    "scrollbar": {
+      "title": "Scrollbar",
+      "blur": "Blur",
+      "blurDescription": "Blur level of the scrollbar",
+      "opacity": "Opacity",
+      "opacityDescription": "Opacity of the scrollbar"
+    },
     "glass": {
       "title": "Frosted Glass",
       "blur": "Blur",
@@ -129,7 +136,9 @@
       "headerImageMaxHeight": "Header Maximum Height",
       "headerImageMaxHeightDescription": "Set the maximum height of header image in game details page",
       "showCover": "Show Cover",
-      "showCoverDescription": "Display cover image in game details page"
+      "showCoverDescription": "Display cover image in game details page",
+      "showLogo": "Show Logo",
+      "showLogoDescription": "Display logo in the game detail page"
     },
     "sidebar": {
       "title": "Sidebar",
