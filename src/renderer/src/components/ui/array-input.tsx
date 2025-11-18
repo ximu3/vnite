@@ -1,14 +1,14 @@
-import React, {
-  ChangeEvent,
-  CompositionEvent,
-  useState,
-  useEffect,
-  useCallback,
-  useMemo
-} from 'react'
 import { Input } from '@ui/input'
 import { Textarea } from '@ui/textarea'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
+import React, {
+  ChangeEvent,
+  CompositionEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react'
 import { cn } from '~/utils'
 
 interface ArrayInputProps {
@@ -43,6 +43,7 @@ export function ArrayInput({
       let timeoutId: NodeJS.Timeout
       return (newValue: string): any => {
         clearTimeout(timeoutId)
+        newValue = newValue.replace(/，/g, ',')
         timeoutId = setTimeout(() => {
           const endsWithComma = newValue.endsWith(',')
           const newArray = newValue
