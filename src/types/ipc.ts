@@ -5,6 +5,7 @@ import {
   EventHistoryQuery,
   EventType
 } from '@appTypes/event'
+import { RenderOptions } from '@appTypes/poster/poster'
 import { BatchUpdateGameMetadataProgress, OverallScanProgress } from '@appTypes/utils'
 import { ProgressInfo, UpdateCheckResult } from 'electron-updater'
 import { BatchGameInfo, configDocs, GameTimerStatus } from './models'
@@ -324,6 +325,8 @@ type MainIpcEvents =
       'plugin:check-updates': () => PluginUpdateInfo[]
       'plugin:get-stats': () => PluginStatsData
       'plugin:get-plugin-configuration': (pluginId: string) => PluginConfiguration[]
+
+      'poster:render': (args: { id: string; payload: any; options?: RenderOptions }) => void
     }
 
 // Renderer process IPC events - handled by renderer process

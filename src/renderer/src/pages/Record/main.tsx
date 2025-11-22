@@ -9,6 +9,7 @@ import { MonthlyReport } from './MonthlyReport'
 import { RecordOverview } from './RecordOverview'
 import { ScoreReport } from './ScoreReport'
 import { WeeklyReport } from './WeeklyReport'
+import { WIP } from './WIP'
 import { YearlyReport } from './YearlyReport'
 
 export function Record({ className }: { className?: string }): React.JSX.Element {
@@ -58,6 +59,7 @@ export function Record({ className }: { className?: string }): React.JSX.Element
               <TabsTrigger value="monthly">{t('tabs.monthly')}</TabsTrigger>
               <TabsTrigger value="weekly">{t('tabs.weekly')}</TabsTrigger>
               <TabsTrigger value="scores">{t('tabs.score')}</TabsTrigger>
+              <TabsTrigger value="WIP">{t('tabs.score')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview">
@@ -78,6 +80,10 @@ export function Record({ className }: { className?: string }): React.JSX.Element
 
             <TabsContent value="scores">
               <ScoreReport />
+            </TabsContent>
+
+            <TabsContent value="WIP">
+              <WIP />
             </TabsContent>
           </Tabs>
         </div>
