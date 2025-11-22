@@ -1,1 +1,0 @@
-export { testPoster } from './test'

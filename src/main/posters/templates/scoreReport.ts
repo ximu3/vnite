@@ -2,12 +2,13 @@ import { PosterTemplate } from '@appTypes/poster'
 import { ScoreReportPayload } from '@appTypes/poster/templates'
 import { createCanvas } from '~/posters/engine/canvas'
 import { drawImageCover, loadGameImagesByType } from '~/posters/engine/image'
-import { getAllGameScore, ScoreReportData } from '~/posters/utils/score'
+import { getAllGameScore, scoreLevels, ScoreReportData } from '~/posters/utils/score'
+import { drawTextFit } from '../engine/text'
 
 interface CanvasLayout {
   width: number
   height: number
-  lines: number[] // 四条横线的y坐标
+  lines: number[] // The y coordinate of the five horizontal split lines
   games: {
     gameId: string
     x1: number
@@ -45,7 +46,7 @@ function calCanvasLayout(data: ScoreReportData, payload: ScoreReportPayload): Ca
     heightsS.push(rowsS * H_small + (rowsS - 1) * gap + 2 * padding)
   }
 
-  // 穷举计算最佳的游戏封面尺寸
+  // Calculate the best game cover size
   const n = heightsL.length
   let bestDiff = Infinity
   let bestConfig: boolean[] = [] // true = L
@@ -62,10 +63,8 @@ function calCanvasLayout(data: ScoreReportData, payload: ScoreReportPayload): Ca
     }
   }
 
-  // 计算每个游戏封面的布局位置
-  const configPerLevel = Object.fromEntries(
-    ['level1', 'level2', 'level3', 'level4', 'level5'].map((k, i) => [k, bestConfig[i]])
-  )
+  // Calculate the layout position of each game cover
+  const configPerLevel = Object.fromEntries(scoreLevels.map((k, i) => [k, bestConfig[i]]))
   const res: CanvasLayout = { width: 1600, height: 900, lines: [], games: [] }
   let lastLineY = 0
   for (const [level, games] of Object.entries(data)) {
@@ -85,7 +84,7 @@ function calCanvasLayout(data: ScoreReportData, payload: ScoreReportPayload): Ca
 
       res.games.push({ gameId, x1, y1, x2, y2 })
 
-      // 下一个封面的位置
+      // Position of the next cover
       x1 = x2 + gap
       x2 = x1 + (useLarge ? W_big : W_small)
     }
@@ -107,17 +106,31 @@ export const scoreReportPoster: PosterTemplate<ScoreReportPayload> = {
     const scores = await getAllGameScore()
     const { height, width, lines, games } = calCanvasLayout(scores, payload)
 
-    const { canvas, ctx } = createCanvas(width, height)
+    const { canvas, ctx } = await createCanvas(width, height)
 
     const images = await loadGameImagesByType(
       games.map((g) => g.gameId),
       'cover'
     )
+    const gameNames = Object.values(scores).flatMap((levelGames) =>
+      levelGames.map((g) => g.gameName)
+    )
 
     for (let i = 0; i < games.length; i++) {
       const { x1, x2, y1, y2 } = games[i]
       const img = images[i]
-      drawImageCover(ctx, img, x1, y1, x2, y2)
+
+      const placeholder: Parameters<typeof drawImageCover>[6] = (ctx, x1, y1, x2, y2) => {
+        const w = x2 - x1
+        const h = y2 - y1
+        ctx.strokeStyle = 'hsl(223 30% 75%)'
+        ctx.lineWidth = 2
+        ctx.strokeRect(x1, y1, w, h)
+
+        drawTextFit(ctx, gameNames[i], x1, y1, x2, y2)
+      }
+
+      drawImageCover(ctx, img, x1, y1, x2, y2, placeholder)
     }
 
     const titleColors = [

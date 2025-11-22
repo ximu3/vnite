@@ -27,36 +27,46 @@ export function drawImageCover(
   x1: number,
   y1: number,
   x2: number,
-  y2: number
+  y2: number,
+  placeholder?: (ctx: CanvasContext, x1: number, y1: number, x2: number, y2: number) => void
 ): void {
   const wTarget = x2 - x1
   const hTarget = y2 - y1
 
-  const imgRatio = img.width / img.height
-  const targetRatio = wTarget / hTarget
+  if (img) {
+    const imgRatio = img.width / img.height
+    const targetRatio = wTarget / hTarget
 
-  let sx = 0
-  let sy = 0
-  let sWidth = img.width
-  let sHeight = img.height
+    let sx = 0
+    let sy = 0
+    let sWidth = img.width
+    let sHeight = img.height
 
-  if (imgRatio > targetRatio) {
-    sWidth = img.height * targetRatio
-    sx = (img.width - sWidth) / 2
+    if (imgRatio > targetRatio) {
+      sWidth = img.height * targetRatio
+      sx = (img.width - sWidth) / 2
+    } else {
+      sHeight = img.width / targetRatio
+      sy = (img.height - sHeight) / 2
+    }
+
+    ctx.drawImage(
+      img,
+      sx,
+      sy,
+      sWidth,
+      sHeight, // Crop source
+      x1,
+      y1,
+      wTarget,
+      hTarget // Target box
+    )
   } else {
-    sHeight = img.width / targetRatio
-    sy = (img.height - sHeight) / 2
-  }
+    ctx.save()
 
-  ctx.drawImage(
-    img,
-    sx,
-    sy,
-    sWidth,
-    sHeight, // 裁剪源
-    x1,
-    y1,
-    wTarget,
-    hTarget // 目标框
-  )
+    if (placeholder) {
+      placeholder(ctx, x1, y1, x2, y2)
+    }
+    ctx.restore()
+  }
 }
