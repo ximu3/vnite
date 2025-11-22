@@ -7,11 +7,21 @@ export function WIP(): React.JSX.Element {
   // const { t } = useTranslation('record')
 
   const a = async (): Promise<void> => {
-    toast.promise(invokePosterRender('test', { title: '11', subtitle: '22' }), {
-      loading: '1',
-      success: '2',
-      error: (_err) => '3'
-    })
+    toast.promise(
+      invokePosterRender('scoreReport', {
+        maxWidth: 1600,
+        titleWidth: 10,
+        gameCoverHeightLarge: 300,
+        gameCoverHeightSmall: 210,
+        padding: 10,
+        gap: 10
+      }),
+      {
+        loading: '1',
+        success: '2',
+        error: (_err) => '3'
+      }
+    )
   }
 
   return (

@@ -1,0 +1,153 @@
+import { PosterTemplate } from '@appTypes/poster'
+import { ScoreReportPayload } from '@appTypes/poster/templates'
+import { createCanvas } from '~/posters/engine/canvas'
+import { drawImageCover, loadGameImagesByType } from '~/posters/engine/image'
+import { getAllGameScore, ScoreReportData } from '~/posters/utils/score'
+
+interface CanvasLayout {
+  width: number
+  height: number
+  lines: number[] // 四条横线的y坐标
+  games: {
+    gameId: string
+    x1: number
+    y1: number
+    x2: number
+    y2: number
+  }[]
+}
+
+function calCanvasLayout(data: ScoreReportData, payload: ScoreReportPayload): CanvasLayout {
+  const ratio = 2 / 3
+  const H_big = payload.gameCoverHeightLarge
+  const H_small = payload.gameCoverHeightSmall
+  const W_big = H_big * ratio
+  const W_small = H_small * ratio
+
+  const padding = payload.padding
+  const gap = payload.gap
+  const maxWidth = payload.maxWidth
+  const targetHeight = (maxWidth * 9) / 16
+
+  const heightsL: number[] = []
+  const heightsS: number[] = []
+  for (const score of Object.values(data)) {
+    const numGames = score.length
+
+    const rowsL = Math.ceil(
+      numGames / Math.floor((maxWidth - payload.titleWidth - gap) / (W_big + gap))
+    )
+    const rowsS = Math.ceil(
+      numGames / Math.floor((maxWidth - payload.titleWidth - gap) / (W_small + gap))
+    )
+
+    heightsL.push(rowsL * H_big + (rowsL - 1) * gap + 2 * padding)
+    heightsS.push(rowsS * H_small + (rowsS - 1) * gap + 2 * padding)
+  }
+
+  // 穷举计算最佳的游戏封面尺寸
+  const n = heightsL.length
+  let bestDiff = Infinity
+  let bestConfig: boolean[] = [] // true = L
+  for (let mask = 0; mask < 1 << n; mask++) {
+    let totalHeight = 0
+    for (let i = 0; i < n; i++) {
+      const useBig = !!(mask & (1 << i))
+      totalHeight += useBig ? heightsL[i] : heightsS[i]
+    }
+    const diff = Math.abs(totalHeight - targetHeight)
+    if (diff < bestDiff) {
+      bestDiff = diff
+      bestConfig = Array.from({ length: n }, (_, i) => !!(mask & (1 << i)))
+    }
+  }
+
+  // 计算每个游戏封面的布局位置
+  const configPerLevel = Object.fromEntries(
+    ['level1', 'level2', 'level3', 'level4', 'level5'].map((k, i) => [k, bestConfig[i]])
+  )
+  const res: CanvasLayout = { width: 1600, height: 900, lines: [], games: [] }
+  let lastLineY = 0
+  for (const [level, games] of Object.entries(data)) {
+    let x1 = payload.titleWidth + padding
+    let y1 = lastLineY + padding
+    const useLarge = configPerLevel[level]
+    let x2 = x1 + (useLarge ? W_big : W_small)
+    let y2 = y1 + (useLarge ? H_big : H_small)
+
+    for (const { gameId } of games) {
+      if (x2 > maxWidth - padding) {
+        x1 = payload.titleWidth + padding
+        y1 = y2 + gap
+        x2 = x1 + (useLarge ? W_big : W_small)
+        y2 = y1 + (useLarge ? H_big : H_small)
+      }
+
+      res.games.push({ gameId, x1, y1, x2, y2 })
+
+      // 下一个封面的位置
+      x1 = x2 + gap
+      x2 = x1 + (useLarge ? W_big : W_small)
+    }
+    lastLineY = y2 + padding
+    res.lines.push(lastLineY)
+  }
+  const maxX = Math.max(...res.games.map((g) => g.x2))
+  const maxY = Math.max(...res.games.map((g) => g.y2))
+  res.height = maxY + padding
+  res.width = maxX + padding
+
+  return res
+}
+
+export const scoreReportPoster: PosterTemplate<ScoreReportPayload> = {
+  id: 'scoreReport',
+
+  async render(payload) {
+    const scores = await getAllGameScore()
+    const { height, width, lines, games } = calCanvasLayout(scores, payload)
+
+    const { canvas, ctx } = createCanvas(width, height)
+
+    const images = await loadGameImagesByType(
+      games.map((g) => g.gameId),
+      'cover'
+    )
+
+    for (let i = 0; i < games.length; i++) {
+      const { x1, x2, y1, y2 } = games[i]
+      const img = images[i]
+      drawImageCover(ctx, img, x1, y1, x2, y2)
+    }
+
+    const titleColors = [
+      payload.titleColor1,
+      payload.titleColor2,
+      payload.titleColor3,
+      payload.titleColor4,
+      payload.titleColor5
+    ]
+    let lastY = 0
+    for (let i = 0; i < lines.length; i++) {
+      const y1 = lastY
+      const y2 = lines[i]
+      const height = y2 - y1
+
+      ctx.fillStyle = titleColors[i]
+      ctx.fillRect(0, y1, payload.titleWidth, height)
+
+      lastY = y2
+    }
+
+    ctx.strokeStyle = payload.splitColor
+    ctx.lineWidth = payload.splitWidth
+    for (const y of lines) {
+      ctx.beginPath()
+      ctx.moveTo(0, y)
+      ctx.lineTo(width, y)
+      ctx.stroke()
+    }
+
+    return { canvas, width, height }
+  }
+}

@@ -1,10 +1,14 @@
-import type { RenderOptions, TemplatePayloads } from '@appTypes/poster'
+import { defaultPayloadMap, type RenderOptions, type TemplatePayloads } from '@appTypes/poster'
 import { ipcManager } from '~/app/ipc'
 
 export async function invokePosterRender<T extends keyof TemplatePayloads>(
   templateId: T,
-  payload: TemplatePayloads[T],
+  payload: Partial<TemplatePayloads[T]>,
   options: RenderOptions = { outputPath: 'C:/Users/zj/Downloads' }
 ): Promise<void> {
-  return ipcManager.invoke('poster:render', { id: templateId, payload, options })
+  return ipcManager.invoke('poster:render', {
+    id: templateId,
+    payload: { ...defaultPayloadMap[templateId], ...payload },
+    options
+  })
 }

@@ -7,7 +7,7 @@ import { fontManager } from './font'
 export function createCanvas(
   width: number,
   height: number,
-  bg: string = '#fff'
+  bg: string = 'hsl(230 24% 19%)'
 ): { canvas: Canvas; ctx: CanvasContext } {
   const canvas = new Canvas(width, height)
   const ctx = canvas.getContext('2d')
@@ -17,6 +17,9 @@ export function createCanvas(
 
   fontManager.reset()
   fontManager.apply(ctx)
+
+  ctx.imageSmoothingEnabled = true
+  ctx.imageSmoothingQuality = 'high'
 
   return { canvas, ctx }
 }

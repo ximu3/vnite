@@ -2,7 +2,7 @@ import { TemplatePayloads } from '@appTypes/poster'
 import path from 'path'
 import { PosterTemplate, RenderOptions, RenderResult } from '../../types/poster/poster'
 import { saveCanvas } from './engine/canvas'
-import { testPoster } from './templates'
+import { scoreReportPoster } from './templates/scoreReport'
 
 export class PosterRegistrar {
   private static templates = new Map<string, PosterTemplate<any>>()
@@ -37,7 +37,7 @@ export class PosterRegistrar {
 const templates: {
   [K in keyof TemplatePayloads]: PosterTemplate<TemplatePayloads[K]>
 } = {
-  test: testPoster
+  scoreReport: scoreReportPoster
 } as const
 
 for (const [id, tpl] of Object.entries(templates)) {
