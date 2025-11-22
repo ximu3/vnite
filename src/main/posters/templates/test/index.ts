@@ -1,12 +1,8 @@
 import { CanvasImage, PosterTemplate } from '@appTypes/poster/poster'
+import { TestPosterPayload } from '@appTypes/poster/templates'
 import { GameDBManager } from '~/core/database'
 import { createCanvas } from '~/posters/engine/canvas'
 import { loadGameImagesByType } from '~/posters/engine/image'
-
-export interface TestPosterPayload {
-  title: string
-  subtitle: string
-}
 
 export const testPoster: PosterTemplate<TestPosterPayload> = {
   id: 'test',

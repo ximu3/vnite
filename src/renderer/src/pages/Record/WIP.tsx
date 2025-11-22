@@ -1,24 +1,17 @@
 import { toast } from 'sonner'
-import { ipcManager } from '~/app/ipc'
 import { Button } from '~/components/ui/button'
+import { invokePosterRender } from '~/utils'
 
 // Main Scoring Report Component
 export function WIP(): React.JSX.Element {
   // const { t } = useTranslation('record')
 
   const a = async (): Promise<void> => {
-    toast.promise(
-      ipcManager.invoke('poster:render', {
-        id: 'test',
-        payload: { title: '11', subntitle: '22' },
-        options: { outputPath: 'C:/Users/zj/Downloads' }
-      }),
-      {
-        loading: '1',
-        success: '2',
-        error: (err) => '3'
-      }
-    )
+    toast.promise(invokePosterRender('test', { title: '11', subtitle: '22' }), {
+      loading: '1',
+      success: '2',
+      error: (_err) => '3'
+    })
   }
 
   return (

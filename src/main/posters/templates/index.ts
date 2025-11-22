@@ -1,1 +1,1 @@
-export { testPoster, type TestPosterPayload } from './test'
+export { testPoster } from './test'
