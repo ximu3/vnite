@@ -1,13 +1,13 @@
-import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog'
-import { TooltipContent, TooltipTrigger, Tooltip } from '~/components/ui/tooltip'
 import { ArrayInput } from '@ui/array-input'
-import { Switch } from '~/components/ui/switch'
-import { Button } from '~/components/ui/button'
-import { cn } from '~/utils'
-import { useGameState } from '~/hooks'
+import { Button } from '@ui/button'
+import { Dialog, DialogContent, DialogTrigger } from '@ui/dialog'
+import { Switch } from '@ui/switch'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import { useState } from 'react'
-import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { useGameState } from '~/hooks'
+import { cn } from '~/utils'
 
 export function InformationDialog({
   gameIds,
@@ -38,6 +38,13 @@ export function InformationDialog({
     platforms: useGameState(gameId, 'metadata.platforms')
   }))
 
+  function santizeArray(list: string[]): string[] {
+    // The list may contain empty strings, either from legacy/incorrect data
+    // or from user input in ArrayInput (e.g., trailing commas).
+    // We sanitize the value here to remove empty strings and maintain consistent metadata.
+    return list.map((s) => s.trim()).filter((s) => s.length > 0)
+  }
+
   const handleConfirm = async (): Promise<void> => {
     try {
       gameStates.forEach(
@@ -49,20 +56,28 @@ export function InformationDialog({
         }) => {
           if (developers.length > 0) {
             setGameDevelopers(
-              isIncremental ? [...new Set([...currentDevelopers, ...developers])] : developers
+              santizeArray(
+                isIncremental ? [...new Set([...currentDevelopers, ...developers])] : developers
+              )
             )
           }
           if (publishers.length > 0) {
             setGamePublishers(
-              isIncremental ? [...new Set([...currentPublishers, ...publishers])] : publishers
+              santizeArray(
+                isIncremental ? [...new Set([...currentPublishers, ...publishers])] : publishers
+              )
             )
           }
           if (genres.length > 0) {
-            setGameGenres(isIncremental ? [...new Set([...currentGenres, ...genres])] : genres)
+            setGameGenres(
+              santizeArray(isIncremental ? [...new Set([...currentGenres, ...genres])] : genres)
+            )
           }
           if (platforms.length > 0) {
             setGamePlatforms(
-              isIncremental ? [...new Set([...currentPlatforms, ...platforms])] : platforms
+              santizeArray(
+                isIncremental ? [...new Set([...currentPlatforms, ...platforms])] : platforms
+              )
             )
           }
         }
