@@ -4,14 +4,15 @@ import { setupDatabaseIPC } from '~/features/database'
 import { setupGameIPC } from '~/features/game/ipc'
 import { setupImporterIPC } from '~/features/importer'
 import { setupLauncherIPC } from '~/features/launcher'
+import { setupNativeMonitorIPC } from '~/features/monitor'
 import { setupScraperIPC } from '~/features/scraper'
 import { setupSystemIPC } from '~/features/system'
 import { setupThemeIPC } from '~/features/theme'
 import { setupTransformerIPC } from '~/features/transformer'
 import { setupUpdaterIPC } from '~/features/updater'
 import { setupPluginIPC } from '~/plugins'
+import { setupPosterIPC } from '~/posters'
 import { setupEventBusIPC } from '../events'
-import { setupNativeMonitorIPC } from '~/features/monitor'
 
 export function setupIPC(): void {
   setupAccountIPC()
@@ -26,6 +27,7 @@ export function setupIPC(): void {
   setupTransformerIPC()
   setupUpdaterIPC()
   setupPluginIPC()
+  setupPosterIPC()
   setupEventBusIPC()
   setupNativeMonitorIPC()
 }

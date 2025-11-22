@@ -1,0 +1,1 @@
+export { setupPosterIPC } from './ipc'

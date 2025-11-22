@@ -82,6 +82,7 @@
     "semver": "^7.7.2",
     "sharp": "^0.34.2",
     "sharp-ico": "^0.1.5",
+    "skia-canvas": "^3.0.8",
     "sonner": "^2.0.6",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.11",
