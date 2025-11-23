@@ -1,9 +1,8 @@
-import { PosterTemplate } from '@appTypes/poster'
-import { ScoreReportPayload } from '@appTypes/poster/templates'
+import { PosterTemplate, ScoreReportPayload } from '@appTypes/poster'
 import { createCanvas } from '~/posters/engine/canvas'
 import { drawImageCover, loadGameImagesByType } from '~/posters/engine/image'
-import { getAllGameScore, scoreLevels, ScoreReportData } from '~/posters/utils/score'
-import { drawTextFit } from '../engine/text'
+import { drawTextFit } from '~/posters/engine/text'
+import { getAllGameScore, ScoreReportData } from '~/posters/utils/score'
 
 interface CanvasLayout {
   width: number
@@ -28,49 +27,21 @@ function calCanvasLayout(data: ScoreReportData, payload: ScoreReportPayload): Ca
   const padding = payload.padding
   const gap = payload.gap
   const maxWidth = payload.maxWidth
-  const targetHeight = (maxWidth * 9) / 16
-
-  const heightsL: number[] = []
-  const heightsS: number[] = []
-  for (const score of Object.values(data)) {
-    const numGames = score.length
-
-    const rowsL = Math.ceil(
-      numGames / Math.floor((maxWidth - payload.titleWidth - gap) / (W_big + gap))
-    )
-    const rowsS = Math.ceil(
-      numGames / Math.floor((maxWidth - payload.titleWidth - gap) / (W_small + gap))
-    )
-
-    heightsL.push(rowsL * H_big + (rowsL - 1) * gap + 2 * padding)
-    heightsS.push(rowsS * H_small + (rowsS - 1) * gap + 2 * padding)
-  }
-
-  // Calculate the best game cover size
-  const n = heightsL.length
-  let bestDiff = Infinity
-  let bestConfig: boolean[] = [] // true = L
-  for (let mask = 0; mask < 1 << n; mask++) {
-    let totalHeight = 0
-    for (let i = 0; i < n; i++) {
-      const useBig = !!(mask & (1 << i))
-      totalHeight += useBig ? heightsL[i] : heightsS[i]
-    }
-    const diff = Math.abs(totalHeight - targetHeight)
-    if (diff < bestDiff) {
-      bestDiff = diff
-      bestConfig = Array.from({ length: n }, (_, i) => !!(mask & (1 << i)))
-    }
-  }
 
   // Calculate the layout position of each game cover
-  const configPerLevel = Object.fromEntries(scoreLevels.map((k, i) => [k, bestConfig[i]]))
+  const configPerLevel = [
+    payload.useSamllCover1,
+    payload.useSamllCover2,
+    payload.useSamllCover3,
+    payload.useSamllCover4,
+    payload.useSamllCover5
+  ] // true for small
   const res: CanvasLayout = { width: 1600, height: 900, lines: [], games: [] }
   let lastLineY = 0
   for (const [level, games] of Object.entries(data)) {
     let x1 = payload.titleWidth + padding
     let y1 = lastLineY + padding
-    const useLarge = configPerLevel[level]
+    const useLarge = !configPerLevel[level]
     let x2 = x1 + (useLarge ? W_big : W_small)
     let y2 = y1 + (useLarge ? H_big : H_small)
 
@@ -127,7 +98,7 @@ export const scoreReportPoster: PosterTemplate<ScoreReportPayload> = {
         ctx.lineWidth = 2
         ctx.strokeRect(x1, y1, w, h)
 
-        drawTextFit(ctx, gameNames[i], x1, y1, x2, y2)
+        drawTextFit(ctx, gameNames[i], x1, y1, x2, y2, 4 / 5, 3 / 4)
       }
 
       drawImageCover(ctx, img, x1, y1, x2, y2, placeholder)

@@ -3,13 +3,18 @@ export interface ScoreReportPayload {
   titleWidth: number
   gameCoverHeightSmall: number
   gameCoverHeightLarge: number
-  padding: number // 每个等级框的的上下左右内边距
-  gap: number // 游戏海报排列的xy间距
+  padding: number //  padding of each level box
+  gap: number // xy spacing of the game poster
   titleColor1: string
   titleColor2: string
   titleColor3: string
   titleColor4: string
   titleColor5: string
+  useSamllCover1: boolean
+  useSamllCover2: boolean
+  useSamllCover3: boolean
+  useSamllCover4: boolean
+  useSamllCover5: boolean
   splitColor: string
   splitWidth: number
 }
@@ -26,6 +31,11 @@ const defaultScoreReportPayload: ScoreReportPayload = {
   titleColor3: '#ffff00',
   titleColor4: '#fff2cc',
   titleColor5: '#ffffff',
+  useSamllCover1: false,
+  useSamllCover2: false,
+  useSamllCover3: false,
+  useSamllCover4: false,
+  useSamllCover5: false,
   splitColor: 'hsl(223 30% 75%)',
   splitWidth: 2
 }

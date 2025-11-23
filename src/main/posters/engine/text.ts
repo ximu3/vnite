@@ -8,17 +8,19 @@ export function drawTextFit(
   y1: number,
   x2: number,
   y2: number,
+  width_scale: number = 1,
+  height_scale: number = 1,
   color: string = 'hsl(223 30% 75%)',
-  originalSize: number = 28
+  originalFontSize: number = 28
 ): void {
   // Original, for drawing
   const width_o = x2 - x1
   const height_o = y2 - y1
   // Scaled, for calculation
-  const width_s = ((x2 - x1) * 4) / 5
-  const height_s = ((y2 - y1) * 3) / 4
+  const width_s = (x2 - x1) * width_scale
+  const height_s = (y2 - y1) * height_scale
 
-  let fontSize = originalSize
+  let fontSize = originalFontSize
   fontManager.setFontSize(fontSize)
   fontManager.apply(ctx)
 
