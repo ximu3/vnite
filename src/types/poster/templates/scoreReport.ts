@@ -19,6 +19,10 @@ export interface ScoreReportPayload {
   useSamllCover5: boolean
   splitColor: string
   splitWidth: number
+  drawScore: boolean
+  scoreColor: string
+  fontColor: string
+  backgroundColor: string
 }
 
 export const defaultScoreReportPayload: ScoreReportPayload = {
@@ -39,7 +43,11 @@ export const defaultScoreReportPayload: ScoreReportPayload = {
   useSamllCover4: false,
   useSamllCover5: false,
   splitColor: 'hsl(223 30% 75%)',
-  splitWidth: 2
+  splitWidth: 2,
+  drawScore: true,
+  scoreColor: 'hsl(223 45% 44%)',
+  fontColor: 'hsl(0 0% 100%)',
+  backgroundColor: 'hsl(230 24% 19%)'
 }
 
 export const scoreReportSchema: FieldSchema<ScoreReportPayload>[] = [
@@ -59,6 +67,12 @@ export const scoreReportSchema: FieldSchema<ScoreReportPayload>[] = [
     max: 600,
     step: 5
   },
+  { key: 'drawScore', type: 'checkbox' },
+  { key: 'scoreColor', type: 'color' },
+  { key: 'fontColor', type: 'color' },
+  { key: 'backgroundColor', type: 'color' },
+  { key: 'splitColor', type: 'color' },
+  { key: 'splitWidth', type: 'number', min: 1, max: 20, step: 1 },
   { key: 'padding', type: 'number', min: 0, max: 30, step: 1 },
   { key: 'gap', type: 'number', min: 0, max: 30, step: 1 },
   { key: 'titleColor1', type: 'color' },
@@ -70,7 +84,5 @@ export const scoreReportSchema: FieldSchema<ScoreReportPayload>[] = [
   { key: 'useSamllCover2', type: 'checkbox' },
   { key: 'useSamllCover3', type: 'checkbox' },
   { key: 'useSamllCover4', type: 'checkbox' },
-  { key: 'useSamllCover5', type: 'checkbox' },
-  { key: 'splitColor', type: 'color' },
-  { key: 'splitWidth', type: 'number', min: 1, max: 20, step: 1 }
+  { key: 'useSamllCover5', type: 'checkbox' }
 ]

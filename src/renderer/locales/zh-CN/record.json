@@ -273,6 +273,18 @@
         },
         "splitWidth": {
           "title": "分割线宽度"
+        },
+        "drawScore": {
+          "title": "绘制评分"
+        },
+        "scoreColor": {
+          "title": "评分背景颜色"
+        },
+        "fontColor": {
+          "title": "字体颜色"
+        },
+        "backgroundColor": {
+          "title": "背景颜色"
         }
       }
     }

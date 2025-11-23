@@ -273,6 +273,18 @@
         },
         "splitWidth": {
           "title": "区切り線の幅"
+        },
+        "drawScore": {
+          "title": "スコアを描く"
+        },
+        "scoreColor": {
+          "title": "スコアの背景色"
+        },
+        "fontColor": {
+          "title": "文字の色"
+        },
+        "backgroundColor": {
+          "title": "背景色"
         }
       }
     }

@@ -273,6 +273,18 @@
         },
         "splitWidth": {
           "title": "Split Line Width"
+        },
+        "drawScore": {
+          "title": "Draw Score"
+        },
+        "scoreColor": {
+          "title": "Score Background Color"
+        },
+        "fontColor": {
+          "title": "Font Color"
+        },
+        "backgroundColor": {
+          "title": "Background Color"
         }
       }
     }

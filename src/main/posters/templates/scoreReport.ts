@@ -1,8 +1,9 @@
-import { PosterTemplate, ScoreReportPayload } from '@appTypes/poster'
+import { CanvasContext, PosterTemplate, ScoreReportPayload } from '@appTypes/poster'
 import { createCanvas } from '~/posters/engine/canvas'
 import { drawImageCover, loadGameImagesByType } from '~/posters/engine/image'
 import { drawTextFit } from '~/posters/engine/text'
 import { getAllGameScore, scoreLevels, ScoreReportData } from '~/posters/utils/score'
+import { fontManager } from '../engine/font'
 
 interface CanvasLayout {
   width: number
@@ -14,10 +15,15 @@ interface CanvasLayout {
     y1: number
     x2: number
     y2: number
+    scoreX: number
+    scoreY: number
   }[]
 }
 
-function calCanvasLayout(data: ScoreReportData, payload: ScoreReportPayload): CanvasLayout {
+const SCORE_R = 24
+const SCORE_MARGIN = 8
+
+function calcCanvasLayout(data: ScoreReportData, payload: ScoreReportPayload): CanvasLayout {
   const ratio = 2 / 3
   const H_big = payload.gameCoverHeightLarge
   const H_small = payload.gameCoverHeightSmall
@@ -53,7 +59,15 @@ function calCanvasLayout(data: ScoreReportData, payload: ScoreReportPayload): Ca
         y2 = y1 + (useLarge ? H_big : H_small)
       }
 
-      res.games.push({ gameId, x1, y1, x2, y2 })
+      res.games.push({
+        gameId,
+        x1,
+        y1,
+        x2,
+        y2,
+        scoreX: x2 - SCORE_R - SCORE_MARGIN,
+        scoreY: y2 - SCORE_R - SCORE_MARGIN
+      })
 
       // Position of the next cover
       x1 = x2 + gap
@@ -70,38 +84,71 @@ function calCanvasLayout(data: ScoreReportData, payload: ScoreReportPayload): Ca
   return res
 }
 
+function drawScoreCircle(
+  ctx: CanvasContext,
+  x: number,
+  y: number,
+  r: number,
+  score: number,
+  circleColor: string,
+  fontColor: string
+): void {
+  // Circle
+  ctx.beginPath()
+  ctx.fillStyle = circleColor
+  ctx.arc(x, y, r, 0, Math.PI * 2)
+  ctx.fill()
+
+  // Text
+  fontManager.setFontSize(18)
+  fontManager.setFontWeight('bold')
+  fontManager.apply(ctx)
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+  ctx.fillStyle = fontColor
+  ctx.fillText(String(score), x, y)
+}
+
 export const scoreReportPoster: PosterTemplate<ScoreReportPayload> = {
   id: 'scoreReport',
 
   async render(payload) {
-    const scores = await getAllGameScore()
-    const { height, width, lines, games } = calCanvasLayout(scores, payload)
+    const scoreData = await getAllGameScore()
+    const { height, width, lines, games } = calcCanvasLayout(scoreData, payload)
 
-    const { canvas, ctx } = await createCanvas(width, height)
+    const { canvas, ctx } = await createCanvas(width, height, payload.backgroundColor)
 
     const images = await loadGameImagesByType(
       games.map((g) => g.gameId),
       'cover'
     )
-    const gameNames = Object.values(scores).flatMap((levelGames) =>
-      levelGames.map((g) => g.gameName)
-    )
+    const scoreDataFlat = scoreLevels.flatMap((level) => scoreData[level] ?? [])
 
     for (let i = 0; i < games.length; i++) {
-      const { x1, x2, y1, y2 } = games[i]
+      const { x1, x2, y1, y2, scoreX, scoreY } = games[i]
       const img = images[i]
 
       const placeholder: Parameters<typeof drawImageCover>[6] = (ctx, x1, y1, x2, y2) => {
         const w = x2 - x1
         const h = y2 - y1
-        ctx.strokeStyle = 'hsl(223 30% 75%)'
+        ctx.strokeStyle = payload.splitColor
         ctx.lineWidth = 2
         ctx.strokeRect(x1, y1, w, h)
 
-        drawTextFit(ctx, gameNames[i], x1, y1, x2, y2, 4 / 5, 3 / 4)
+        drawTextFit(ctx, scoreDataFlat[i].gameName, x1, y1, x2, y2, 4 / 5, 3 / 4, payload.fontColor)
       }
 
       drawImageCover(ctx, img, x1, y1, x2, y2, placeholder)
+      if (payload.drawScore)
+        drawScoreCircle(
+          ctx,
+          scoreX,
+          scoreY,
+          SCORE_R,
+          scoreDataFlat[i].score,
+          payload.scoreColor,
+          payload.fontColor
+        )
     }
 
     const titleColors = [
