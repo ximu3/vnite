@@ -1,4 +1,4 @@
-import { CanvasContext } from '@appTypes/poster/poster'
+import { CanvasContext } from '@appTypes/poster'
 import fse from 'fs-extra'
 import path from 'path'
 import { Canvas, loadImage } from 'skia-canvas'

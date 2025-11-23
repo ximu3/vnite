@@ -1,4 +1,4 @@
-import { CanvasContext } from '@appTypes/poster/poster'
+import { CanvasContext } from '@appTypes/poster'
 
 type FontStyle = 'normal' | 'italic' | 'oblique'
 type FontVariant = 'normal' | 'small-caps'

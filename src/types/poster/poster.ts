@@ -18,7 +18,7 @@ export interface RenderResult {
   height: number
 }
 
-export interface RenderReponse {
+export interface RenderResponse {
   outputFile: string
 }
 

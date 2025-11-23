@@ -1,4 +1,4 @@
-import { CanvasContext, CanvasImage } from '@appTypes/poster/poster'
+import { CanvasContext, CanvasImage } from '@appTypes/poster'
 import { loadImage } from 'skia-canvas'
 import { GameDBManager } from '~/core/database'
 

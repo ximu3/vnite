@@ -252,19 +252,19 @@
         "titleColor5": {
           "title": "Level 5 Title Color"
         },
-        "useSamllCover1": {
+        "useSmallCover1": {
           "title": "Use Small Cover for Level 1"
         },
-        "useSamllCover2": {
+        "useSmallCover2": {
           "title": "Use Small Cover for Level 2"
         },
-        "useSamllCover3": {
+        "useSmallCover3": {
           "title": "Use Small Cover for Level 3"
         },
-        "useSamllCover4": {
+        "useSmallCover4": {
           "title": "Use Small Cover for Level 4"
         },
-        "useSamllCover5": {
+        "useSmallCover5": {
           "title": "Use Small Cover for Level 5"
         },
         "splitColor": {

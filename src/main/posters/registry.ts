@@ -1,4 +1,4 @@
-import { PosterTemplate, RenderOptions, RenderReponse, TemplatePayloads } from '@appTypes/poster'
+import { PosterTemplate, RenderOptions, RenderResponse, TemplatePayloads } from '@appTypes/poster'
 import { format } from 'date-fns'
 import path from 'path'
 import { saveCanvas } from './engine/canvas'
@@ -18,7 +18,7 @@ export class PosterRegistrar {
     id: T,
     payload: TemplatePayloads[T],
     options: RenderOptions
-  ): Promise<RenderReponse> {
+  ): Promise<RenderResponse> {
     const tpl = this.templates.get(id as string)
     if (!tpl) throw new Error(`Unknown template: ${id}`)
 

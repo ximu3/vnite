@@ -252,19 +252,19 @@
         "titleColor5": {
           "title": "レベル5タイトルカラー"
         },
-        "useSamllCover1": {
+        "useSmallCover1": {
           "title": "レベル1に小カバーを使用"
         },
-        "useSamllCover2": {
+        "useSmallCover2": {
           "title": "レベル2に小カバーを使用"
         },
-        "useSamllCover3": {
+        "useSmallCover3": {
           "title": "レベル3に小カバーを使用"
         },
-        "useSamllCover4": {
+        "useSmallCover4": {
           "title": "レベル4に小カバーを使用"
         },
-        "useSamllCover5": {
+        "useSmallCover5": {
           "title": "レベル5に小カバーを使用"
         },
         "splitColor": {

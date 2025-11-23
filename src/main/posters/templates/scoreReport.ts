@@ -36,11 +36,11 @@ function calcCanvasLayout(data: ScoreReportData, payload: ScoreReportPayload): C
 
   // Calculate the layout position of each game cover
   const configPerLevel: Record<(typeof scoreLevels)[number], boolean> = {
-    level1: payload.useSamllCover1,
-    level2: payload.useSamllCover2,
-    level3: payload.useSamllCover3,
-    level4: payload.useSamllCover4,
-    level5: payload.useSamllCover5
+    level1: payload.useSmallCover1,
+    level2: payload.useSmallCover2,
+    level3: payload.useSmallCover3,
+    level4: payload.useSmallCover4,
+    level5: payload.useSmallCover5
   } // true for small
   const res: CanvasLayout = { width: 1600, height: 900, lines: [], games: [] }
   let lastLineY = 0

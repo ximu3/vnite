@@ -252,19 +252,19 @@
         "titleColor5": {
           "title": "级别5标题栏颜色"
         },
-        "useSamllCover1": {
+        "useSmallCover1": {
           "title": "为级别1使用小封面"
         },
-        "useSamllCover2": {
+        "useSmallCover2": {
           "title": "为级别2使用小封面"
         },
-        "useSamllCover3": {
+        "useSmallCover3": {
           "title": "为级别3使用小封面"
         },
-        "useSamllCover4": {
+        "useSmallCover4": {
           "title": "为级别4使用小封面"
         },
-        "useSamllCover5": {
+        "useSmallCover5": {
           "title": "为级别5使用小封面"
         },
         "splitColor": {

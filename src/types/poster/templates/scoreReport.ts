@@ -12,11 +12,11 @@ export interface ScoreReportPayload {
   titleColor3: string
   titleColor4: string
   titleColor5: string
-  useSamllCover1: boolean
-  useSamllCover2: boolean
-  useSamllCover3: boolean
-  useSamllCover4: boolean
-  useSamllCover5: boolean
+  useSmallCover1: boolean
+  useSmallCover2: boolean
+  useSmallCover3: boolean
+  useSmallCover4: boolean
+  useSmallCover5: boolean
   splitColor: string
   splitWidth: number
   drawScore: boolean
@@ -37,11 +37,11 @@ export const defaultScoreReportPayload: ScoreReportPayload = {
   titleColor3: '#ffff00',
   titleColor4: '#fff2cc',
   titleColor5: '#ffffff',
-  useSamllCover1: false,
-  useSamllCover2: false,
-  useSamllCover3: false,
-  useSamllCover4: false,
-  useSamllCover5: false,
+  useSmallCover1: false,
+  useSmallCover2: false,
+  useSmallCover3: false,
+  useSmallCover4: false,
+  useSmallCover5: false,
   splitColor: 'hsl(223 30% 75%)',
   splitWidth: 2,
   drawScore: true,
@@ -80,9 +80,9 @@ export const scoreReportSchema: FieldSchema<ScoreReportPayload>[] = [
   { key: 'titleColor3', type: 'color' },
   { key: 'titleColor4', type: 'color' },
   { key: 'titleColor5', type: 'color' },
-  { key: 'useSamllCover1', type: 'checkbox' },
-  { key: 'useSamllCover2', type: 'checkbox' },
-  { key: 'useSamllCover3', type: 'checkbox' },
-  { key: 'useSamllCover4', type: 'checkbox' },
-  { key: 'useSamllCover5', type: 'checkbox' }
+  { key: 'useSmallCover1', type: 'checkbox' },
+  { key: 'useSmallCover2', type: 'checkbox' },
+  { key: 'useSmallCover3', type: 'checkbox' },
+  { key: 'useSmallCover4', type: 'checkbox' },
+  { key: 'useSmallCover5', type: 'checkbox' }
 ]
