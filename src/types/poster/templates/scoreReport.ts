@@ -1,0 +1,76 @@
+import { FieldSchema } from './schema'
+
+export interface ScoreReportPayload {
+  maxWidth: number
+  titleWidth: number
+  gameCoverHeightSmall: number
+  gameCoverHeightLarge: number
+  padding: number //  padding of each level box
+  gap: number // xy spacing of the game poster
+  titleColor1: string
+  titleColor2: string
+  titleColor3: string
+  titleColor4: string
+  titleColor5: string
+  useSamllCover1: boolean
+  useSamllCover2: boolean
+  useSamllCover3: boolean
+  useSamllCover4: boolean
+  useSamllCover5: boolean
+  splitColor: string
+  splitWidth: number
+}
+
+export const defaultScoreReportPayload: ScoreReportPayload = {
+  maxWidth: 1600,
+  titleWidth: 50,
+  gameCoverHeightSmall: 210,
+  gameCoverHeightLarge: 300,
+  padding: 10,
+  gap: 10,
+  titleColor1: '#ff0000',
+  titleColor2: '#ffc000',
+  titleColor3: '#ffff00',
+  titleColor4: '#fff2cc',
+  titleColor5: '#ffffff',
+  useSamllCover1: false,
+  useSamllCover2: false,
+  useSamllCover3: false,
+  useSamllCover4: false,
+  useSamllCover5: false,
+  splitColor: 'hsl(223 30% 75%)',
+  splitWidth: 2
+}
+
+export const scoreReportSchema: FieldSchema<ScoreReportPayload>[] = [
+  { key: 'maxWidth', type: 'number', min: 800, max: 3000, step: 10 },
+  { key: 'titleWidth', type: 'number', min: 0, max: 100, step: 5 },
+  {
+    key: 'gameCoverHeightSmall',
+    type: 'number',
+    min: 50,
+    max: 500,
+    step: 5
+  },
+  {
+    key: 'gameCoverHeightLarge',
+    type: 'number',
+    min: 100,
+    max: 600,
+    step: 5
+  },
+  { key: 'padding', type: 'number', min: 0, max: 30, step: 1 },
+  { key: 'gap', type: 'number', min: 0, max: 30, step: 1 },
+  { key: 'titleColor1', type: 'color' },
+  { key: 'titleColor2', type: 'color' },
+  { key: 'titleColor3', type: 'color' },
+  { key: 'titleColor4', type: 'color' },
+  { key: 'titleColor5', type: 'color' },
+  { key: 'useSamllCover1', type: 'checkbox' },
+  { key: 'useSamllCover2', type: 'checkbox' },
+  { key: 'useSamllCover3', type: 'checkbox' },
+  { key: 'useSamllCover4', type: 'checkbox' },
+  { key: 'useSamllCover5', type: 'checkbox' },
+  { key: 'splitColor', type: 'color' },
+  { key: 'splitWidth', type: 'number', min: 1, max: 20, step: 1 }
+]

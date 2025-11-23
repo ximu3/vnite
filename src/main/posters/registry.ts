@@ -1,6 +1,6 @@
-import { TemplatePayloads } from '@appTypes/poster'
+import { PosterTemplate, RenderOptions, RenderReponse, TemplatePayloads } from '@appTypes/poster'
+import { format } from 'date-fns'
 import path from 'path'
-import { PosterTemplate, RenderOptions, RenderResult } from '../../types/poster/poster'
 import { saveCanvas } from './engine/canvas'
 import { scoreReportPoster } from './templates/scoreReport'
 
@@ -17,20 +17,20 @@ export class PosterRegistrar {
   static async render<T extends keyof TemplatePayloads>(
     id: T,
     payload: TemplatePayloads[T],
-    options?: RenderOptions
-  ): Promise<RenderResult> {
+    options: RenderOptions
+  ): Promise<RenderReponse> {
     const tpl = this.templates.get(id as string)
     if (!tpl) throw new Error(`Unknown template: ${id}`)
 
     const result = await tpl.render(payload)
 
-    if (options?.outputPath) {
-      const filename = `${id}-${Date.now()}.png`
-      const filePath = path.join(options.outputPath, filename)
-      await saveCanvas(result.canvas, filePath)
-    }
+    const now = new Date()
+    const timestamp = format(now, 'yyyyMMdd-HHmmss')
+    const filename = `${id}-${timestamp}.png`
+    const filePath = path.join(options.outputPath, filename)
+    await saveCanvas(result.canvas, filePath)
 
-    return result
+    return { outputFile: filePath }
   }
 }
 

@@ -5,11 +5,11 @@ import { cn } from '~/utils'
 import { useRouter, useSearch } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { GenerateReport } from './GeneratePoster/main'
 import { MonthlyReport } from './MonthlyReport'
 import { RecordOverview } from './RecordOverview'
 import { ScoreReport } from './ScoreReport'
 import { WeeklyReport } from './WeeklyReport'
-import { WIP } from './WIP'
 import { YearlyReport } from './YearlyReport'
 
 export function Record({ className }: { className?: string }): React.JSX.Element {
@@ -83,7 +83,7 @@ export function Record({ className }: { className?: string }): React.JSX.Element
             </TabsContent>
 
             <TabsContent value="WIP">
-              <WIP />
+              <GenerateReport />
             </TabsContent>
           </Tabs>
         </div>

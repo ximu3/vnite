@@ -2,7 +2,7 @@ import { PosterTemplate, ScoreReportPayload } from '@appTypes/poster'
 import { createCanvas } from '~/posters/engine/canvas'
 import { drawImageCover, loadGameImagesByType } from '~/posters/engine/image'
 import { drawTextFit } from '~/posters/engine/text'
-import { getAllGameScore, ScoreReportData } from '~/posters/utils/score'
+import { getAllGameScore, scoreLevels, ScoreReportData } from '~/posters/utils/score'
 
 interface CanvasLayout {
   width: number
@@ -29,13 +29,13 @@ function calCanvasLayout(data: ScoreReportData, payload: ScoreReportPayload): Ca
   const maxWidth = payload.maxWidth
 
   // Calculate the layout position of each game cover
-  const configPerLevel = [
-    payload.useSamllCover1,
-    payload.useSamllCover2,
-    payload.useSamllCover3,
-    payload.useSamllCover4,
-    payload.useSamllCover5
-  ] // true for small
+  const configPerLevel: Record<(typeof scoreLevels)[number], boolean> = {
+    level1: payload.useSamllCover1,
+    level2: payload.useSamllCover2,
+    level3: payload.useSamllCover3,
+    level4: payload.useSamllCover4,
+    level5: payload.useSamllCover5
+  } // true for small
   const res: CanvasLayout = { width: 1600, height: 900, lines: [], games: [] }
   let lastLineY = 0
   for (const [level, games] of Object.entries(data)) {

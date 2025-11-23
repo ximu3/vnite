@@ -5,13 +5,17 @@ export type CanvasContext = SkiaCtx
 export type CanvasImage = SkiaImage
 
 export interface RenderOptions {
-  outputPath?: string
+  outputPath: string
 }
 
 export interface RenderResult {
   canvas: Canvas
   width: number
   height: number
+}
+
+export interface RenderReponse {
+  outputFile: string
 }
 
 export interface PosterTemplate<Payload> {
