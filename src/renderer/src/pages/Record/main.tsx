@@ -59,7 +59,7 @@ export function Record({ className }: { className?: string }): React.JSX.Element
               <TabsTrigger value="monthly">{t('tabs.monthly')}</TabsTrigger>
               <TabsTrigger value="weekly">{t('tabs.weekly')}</TabsTrigger>
               <TabsTrigger value="scores">{t('tabs.score')}</TabsTrigger>
-              <TabsTrigger value="WIP">{'WIP'}</TabsTrigger>
+              <TabsTrigger value="poster">{t('tabs.poster')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview">
@@ -82,7 +82,7 @@ export function Record({ className }: { className?: string }): React.JSX.Element
               <ScoreReport />
             </TabsContent>
 
-            <TabsContent value="WIP">
+            <TabsContent value="poster">
               <GenerateReport />
             </TabsContent>
           </Tabs>

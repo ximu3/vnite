@@ -1,10 +1,11 @@
 import { TemplatePayloads } from '@appTypes/poster'
 import { FieldSchema } from '@appTypes/poster/templates/schema'
+import { Card, CardContent } from '@ui/card'
 import { ColorPicker } from '@ui/color-picker'
 import { Input, StepperInput } from '@ui/input'
 import { Switch } from '@ui/switch'
 import React from 'react'
-import { Card, CardContent } from '~/components/ui/card'
+import { useTranslation } from 'react-i18next'
 import { usePosterTemplateStore } from '../store'
 
 function FieldControl<T extends keyof TemplatePayloads>({
@@ -60,18 +61,22 @@ function FieldControl<T extends keyof TemplatePayloads>({
 function ConfigFormRow<T extends keyof TemplatePayloads>({
   template,
   field,
-  value
+  value,
+  title,
+  description
 }: {
   template: T
   field: FieldSchema<TemplatePayloads[T]>
   value: TemplatePayloads[T][keyof TemplatePayloads[T]]
+  title: string
+  description?: string
 }): React.JSX.Element {
   return (
     <Card>
       <CardContent className="flex items-center justify-between space-x-4">
         <div className="flex flex-col">
-          <span className="text-xs text-gray-500">{String(field.key)}</span>
-          <span className="text-sm font-medium">{String(field.key)}</span>
+          <div className="text-sm font-medium leading-none">{title}</div>
+          {description && <div className="text-sm text-muted-foreground">{description}</div>}
         </div>
         <FieldControl template={template} field={field} value={value} />
       </CardContent>
@@ -86,6 +91,7 @@ export function ConfigForm<T extends keyof TemplatePayloads>({
   template: T
   schema: FieldSchema<TemplatePayloads[T]>[]
 }): React.JSX.Element {
+  const { t } = useTranslation('record')
   const payload = usePosterTemplateStore((s) => s.payloads[template])
 
   return (
@@ -93,14 +99,20 @@ export function ConfigForm<T extends keyof TemplatePayloads>({
       <CardContent className="grid grid-cols-2 gap-x-8 gap-y-3 relative">
         <div className="absolute top-0 bottom-0 left-1/2 border-r border-1 border-primary pointer-events-none" />
 
-        {schema.map((field) => (
-          <ConfigFormRow
-            key={String(field.key)}
-            template={template}
-            field={field}
-            value={payload[field.key]}
-          />
-        ))}
+        {schema.map((field) => {
+          const descriptionKey = `poster.${template}.${field.key as string}.description`
+          const description = t(descriptionKey)
+          return (
+            <ConfigFormRow
+              key={String(field.key)}
+              template={template}
+              field={field}
+              value={payload[field.key]}
+              title={t(`poster.${template}.${field.key as string}.title`)}
+              description={description !== descriptionKey ? description : undefined}
+            />
+          )
+        })}
       </CardContent>
     </Card>
   )

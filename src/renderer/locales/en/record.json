@@ -5,7 +5,8 @@
     "weekly": "Weekly Report",
     "monthly": "Monthly Report",
     "yearly": "Annual Report",
-    "score": "Score Report"
+    "score": "Score Report",
+    "poster": "Export Report"
   },
   "overview": {
     "title": "Overview",
@@ -196,6 +197,79 @@
       "playTime": "Play Time: {{time, gameTime}}",
       "lastRun": "Last Played: {{date, niceDate}}",
       "ratingLabel": "Rating"
+    }
+  },
+  "poster": {
+    "_action": {
+      "render": "Render Poster",
+      "reset": "Reset Configuration"
+    },
+    "_message": {
+      "loading": "Rendering...",
+      "success": "Rendered successfully: {{file}}",
+      "error": "Rendering failed"
+    },
+    "scoreReport": {
+      "maxWidth": {
+        "title": "Max Width",
+        "description": "Maximum width of the entire canvas"
+      },
+      "titleWidth": {
+        "title": "Title Width"
+      },
+      "gameCoverHeightSmall": {
+        "title": "Small Cover Height",
+        "description": "Height of small game cover"
+      },
+      "gameCoverHeightLarge": {
+        "title": "Large Cover Height",
+        "description": "Height of large game cover"
+      },
+      "padding": {
+        "title": "Padding",
+        "description": "Overall padding for each level row"
+      },
+      "gap": {
+        "title": "Gap",
+        "description": "Spacing between game posters"
+      },
+      "titleColor1": {
+        "title": "Level 1 Title Color"
+      },
+      "titleColor2": {
+        "title": "Level 2 Title Color"
+      },
+      "titleColor3": {
+        "title": "Level 3 Title Color"
+      },
+      "titleColor4": {
+        "title": "Level 4 Title Color"
+      },
+      "titleColor5": {
+        "title": "Level 5 Title Color"
+      },
+      "useSamllCover1": {
+        "title": "Use Small Cover for Level 1"
+      },
+      "useSamllCover2": {
+        "title": "Use Small Cover for Level 2"
+      },
+      "useSamllCover3": {
+        "title": "Use Small Cover for Level 3"
+      },
+      "useSamllCover4": {
+        "title": "Use Small Cover for Level 4"
+      },
+      "useSamllCover5": {
+        "title": "Use Small Cover for Level 5"
+      },
+      "splitColor": {
+        "title": "Split Line Color",
+        "description": "Split line between each level row"
+      },
+      "splitWidth": {
+        "title": "Split Line Width"
+      }
     }
   }
 }
