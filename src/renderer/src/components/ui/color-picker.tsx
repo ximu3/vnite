@@ -1,6 +1,6 @@
 import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
 import { converter, parse } from 'culori'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { HslColorPicker } from 'react-colorful'
 import { cn } from '~/utils'
 
@@ -23,14 +23,27 @@ function cssToHsl(css: string): HSL {
 
 function ColorPicker({ value, onChange, className }: ColorPickerProps): React.JSX.Element {
   const [hsl, setHsl] = useState<HSL>(cssToHsl(value))
+  const [isOpen, setIsOpen] = useState(false)
+
+  useEffect(() => {
+    if (!isOpen) {
+      setHsl(cssToHsl(value))
+    }
+  }, [value, isOpen])
 
   const handleChange = (newHsl: HSL): void => {
     setHsl(newHsl)
-    onChange?.(`hsl(${hsl.h} ${hsl.s}% ${hsl.l}%)`)
+  }
+
+  const handlePopoverOpenChange = (open: boolean): void => {
+    if (!open) {
+      onChange?.(`hsl(${hsl.h} ${hsl.s}% ${hsl.l}%)`)
+    }
+    setIsOpen(open)
   }
 
   return (
-    <Popover>
+    <Popover open={isOpen} onOpenChange={handlePopoverOpenChange}>
       <PopoverTrigger className={cn('w-6 h-6', className)}>
         <div
           className={cn(
