@@ -200,75 +200,80 @@
     }
   },
   "poster": {
-    "_action": {
+    "action": {
       "render": "生成海報",
       "reset": "重置配置項"
     },
-    "_message": {
+    "message": {
       "loading": "渲染中...",
       "success": "渲染完成：{{file}}",
       "error": "渲染失敗"
     },
-    "scoreReport": {
-      "maxWidth": {
-        "title": "最大寬度",
-        "description": "整個畫面的最大寬度限制"
-      },
-      "titleWidth": {
-        "title": "標題欄寬度"
-      },
-      "gameCoverHeightSmall": {
-        "title": "小封面高度",
-        "description": "小號的遊戲封面高度"
-      },
-      "gameCoverHeightLarge": {
-        "title": "大封面高度",
-        "description": "大號的遊戲封面高度"
-      },
-      "padding": {
-        "title": "內邊距",
-        "description": "每個級別欄的整體內邊距"
-      },
-      "gap": {
-        "title": "間距",
-        "description": "各遊戲海報之間的間距"
-      },
-      "titleColor1": {
-        "title": "級別1標題欄顏色"
-      },
-      "titleColor2": {
-        "title": "級別2標題欄顏色"
-      },
-      "titleColor3": {
-        "title": "級別3標題欄顏色"
-      },
-      "titleColor4": {
-        "title": "級別4標題欄顏色"
-      },
-      "titleColor5": {
-        "title": "級別5標題欄顏色"
-      },
-      "useSamllCover1": {
-        "title": "為級別1使用小封面"
-      },
-      "useSamllCover2": {
-        "title": "為級別2使用小封面"
-      },
-      "useSamllCover3": {
-        "title": "為級別3使用小封面"
-      },
-      "useSamllCover4": {
-        "title": "為級別4使用小封面"
-      },
-      "useSamllCover5": {
-        "title": "為級別5使用小封面"
-      },
-      "splitColor": {
-        "title": "分割線顏色",
-        "description": "每個級別欄之間的分割線"
-      },
-      "splitWidth": {
-        "title": "分割線寬度"
+    "renderOptions": {
+      "outputPath": "輸出資料夾"
+    },
+    "templates": {
+      "scoreReport": {
+        "maxWidth": {
+          "title": "最大寬度",
+          "description": "整個畫面的最大寬度限制"
+        },
+        "titleWidth": {
+          "title": "標題欄寬度"
+        },
+        "gameCoverHeightSmall": {
+          "title": "小封面高度",
+          "description": "小號的遊戲封面高度"
+        },
+        "gameCoverHeightLarge": {
+          "title": "大封面高度",
+          "description": "大號的遊戲封面高度"
+        },
+        "padding": {
+          "title": "內邊距",
+          "description": "每個級別欄的整體內邊距"
+        },
+        "gap": {
+          "title": "間距",
+          "description": "各遊戲海報之間的間距"
+        },
+        "titleColor1": {
+          "title": "級別1標題欄顏色"
+        },
+        "titleColor2": {
+          "title": "級別2標題欄顏色"
+        },
+        "titleColor3": {
+          "title": "級別3標題欄顏色"
+        },
+        "titleColor4": {
+          "title": "級別4標題欄顏色"
+        },
+        "titleColor5": {
+          "title": "級別5標題欄顏色"
+        },
+        "useSamllCover1": {
+          "title": "為級別1使用小封面"
+        },
+        "useSamllCover2": {
+          "title": "為級別2使用小封面"
+        },
+        "useSamllCover3": {
+          "title": "為級別3使用小封面"
+        },
+        "useSamllCover4": {
+          "title": "為級別4使用小封面"
+        },
+        "useSamllCover5": {
+          "title": "為級別5使用小封面"
+        },
+        "splitColor": {
+          "title": "分割線顏色",
+          "description": "每個級別欄之間的分割線"
+        },
+        "splitWidth": {
+          "title": "分割線寬度"
+        }
       }
     }
   }

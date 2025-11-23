@@ -8,6 +8,10 @@ export interface RenderOptions {
   outputPath: string
 }
 
+export const defaultRenderOptions = {
+  outputPath: ''
+} as const
+
 export interface RenderResult {
   canvas: Canvas
   width: number

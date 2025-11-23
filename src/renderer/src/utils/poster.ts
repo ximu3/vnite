@@ -9,7 +9,7 @@ import { ipcManager } from '~/app/ipc'
 export async function invokePosterRender<T extends keyof TemplatePayloads>(
   templateId: T,
   payload: Partial<TemplatePayloads[T]>,
-  options: RenderOptions = { outputPath: 'C:/Users/zj/Downloads' }
+  options: RenderOptions
 ): Promise<RenderReponse> {
   return ipcManager.invoke('poster:render', {
     id: templateId,

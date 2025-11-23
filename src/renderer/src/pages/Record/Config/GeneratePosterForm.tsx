@@ -100,7 +100,7 @@ export function ConfigForm<T extends keyof TemplatePayloads>({
         <div className="absolute top-0 bottom-0 left-1/2 border-r border-1 border-primary pointer-events-none" />
 
         {schema.map((field) => {
-          const descriptionKey = `poster.${template}.${field.key as string}.description`
+          const descriptionKey = `poster.templates.${template}.${field.key as string}.description`
           const description = t(descriptionKey)
           return (
             <ConfigFormRow
@@ -108,7 +108,7 @@ export function ConfigForm<T extends keyof TemplatePayloads>({
               template={template}
               field={field}
               value={payload[field.key]}
-              title={t(`poster.${template}.${field.key as string}.title`)}
+              title={t(`poster.templates.${template}.${field.key as string}.title`)}
               description={description !== descriptionKey ? description : undefined}
             />
           )

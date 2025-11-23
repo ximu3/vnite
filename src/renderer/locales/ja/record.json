@@ -200,75 +200,80 @@
     }
   },
   "poster": {
-    "_action": {
+    "action": {
       "render": "ポスターを生成",
       "reset": "設定をリセット"
     },
-    "_message": {
+    "message": {
       "loading": "レンダリング中...",
       "success": "レンダリング完了：{{file}}",
       "error": "レンダリングに失敗しました"
     },
-    "scoreReport": {
-      "maxWidth": {
-        "title": "最大幅",
-        "description": "キャンバス全体の最大幅"
-      },
-      "titleWidth": {
-        "title": "タイトル幅"
-      },
-      "gameCoverHeightSmall": {
-        "title": "小カバー高さ",
-        "description": "小サイズのゲームカバー高さ"
-      },
-      "gameCoverHeightLarge": {
-        "title": "大カバー高さ",
-        "description": "大サイズのゲームカバー高さ"
-      },
-      "padding": {
-        "title": "パディング",
-        "description": "各レベル行の全体パディング"
-      },
-      "gap": {
-        "title": "間隔",
-        "description": "ゲームポスター間の間隔"
-      },
-      "titleColor1": {
-        "title": "レベル1タイトルカラー"
-      },
-      "titleColor2": {
-        "title": "レベル2タイトルカラー"
-      },
-      "titleColor3": {
-        "title": "レベル3タイトルカラー"
-      },
-      "titleColor4": {
-        "title": "レベル4タイトルカラー"
-      },
-      "titleColor5": {
-        "title": "レベル5タイトルカラー"
-      },
-      "useSamllCover1": {
-        "title": "レベル1に小カバーを使用"
-      },
-      "useSamllCover2": {
-        "title": "レベル2に小カバーを使用"
-      },
-      "useSamllCover3": {
-        "title": "レベル3に小カバーを使用"
-      },
-      "useSamllCover4": {
-        "title": "レベル4に小カバーを使用"
-      },
-      "useSamllCover5": {
-        "title": "レベル5に小カバーを使用"
-      },
-      "splitColor": {
-        "title": "区切り線の色",
-        "description": "各レベル行の区切り線"
-      },
-      "splitWidth": {
-        "title": "区切り線の幅"
+    "renderOptions": {
+      "outputPath": "出力フォルダー"
+    },
+    "templates": {
+      "scoreReport": {
+        "maxWidth": {
+          "title": "最大幅",
+          "description": "キャンバス全体の最大幅"
+        },
+        "titleWidth": {
+          "title": "タイトル幅"
+        },
+        "gameCoverHeightSmall": {
+          "title": "小カバー高さ",
+          "description": "小サイズのゲームカバー高さ"
+        },
+        "gameCoverHeightLarge": {
+          "title": "大カバー高さ",
+          "description": "大サイズのゲームカバー高さ"
+        },
+        "padding": {
+          "title": "パディング",
+          "description": "各レベル行の全体パディング"
+        },
+        "gap": {
+          "title": "間隔",
+          "description": "ゲームポスター間の間隔"
+        },
+        "titleColor1": {
+          "title": "レベル1タイトルカラー"
+        },
+        "titleColor2": {
+          "title": "レベル2タイトルカラー"
+        },
+        "titleColor3": {
+          "title": "レベル3タイトルカラー"
+        },
+        "titleColor4": {
+          "title": "レベル4タイトルカラー"
+        },
+        "titleColor5": {
+          "title": "レベル5タイトルカラー"
+        },
+        "useSamllCover1": {
+          "title": "レベル1に小カバーを使用"
+        },
+        "useSamllCover2": {
+          "title": "レベル2に小カバーを使用"
+        },
+        "useSamllCover3": {
+          "title": "レベル3に小カバーを使用"
+        },
+        "useSamllCover4": {
+          "title": "レベル4に小カバーを使用"
+        },
+        "useSamllCover5": {
+          "title": "レベル5に小カバーを使用"
+        },
+        "splitColor": {
+          "title": "区切り線の色",
+          "description": "各レベル行の区切り線"
+        },
+        "splitWidth": {
+          "title": "区切り線の幅"
+        }
       }
     }
   }
