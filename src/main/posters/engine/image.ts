@@ -1,6 +1,7 @@
 import { CanvasContext, CanvasImage } from '@appTypes/poster'
 import { loadImage } from 'skia-canvas'
 import { GameDBManager } from '~/core/database'
+import { crop } from './smartcrop-sharp'
 
 export async function loadGameImagesByType(
   gameIds: string[],
@@ -21,7 +22,7 @@ export async function loadGameImagesByType(
   )
 }
 
-export function drawImageCover(
+export async function drawImageCover(
   ctx: CanvasContext,
   img: CanvasImage | null,
   x1: number,
@@ -29,7 +30,7 @@ export function drawImageCover(
   x2: number,
   y2: number,
   placeholder?: (ctx: CanvasContext, x1: number, y1: number, x2: number, y2: number) => void
-): void {
+): Promise<void> {
   const wTarget = x2 - x1
   const hTarget = y2 - y1
 
@@ -42,12 +43,29 @@ export function drawImageCover(
     let sWidth = img.width
     let sHeight = img.height
 
-    if (imgRatio > targetRatio) {
-      sWidth = img.height * targetRatio
-      sx = (img.width - sWidth) / 2
+    // Symmetric metric for aspect ratio difference:
+    // - swapping imgRatio and targetRatio does not change the value
+    // - swapping width and height of either ratio (transpose) also preserves the value
+    const ratioDiff = Math.abs(Math.log(imgRatio / targetRatio))
+
+    // Use smartcrop when the cropped portion exceeds roughly 22% relative to the visible area
+    // Computed as: exp(ratioDiff) - 1
+    if (ratioDiff > 0.2) {
+      const bestCrop = (await crop(img, { width: wTarget, height: hTarget })).topCrop
+      if (bestCrop) {
+        sx = bestCrop.x
+        sy = bestCrop.y
+        sWidth = bestCrop.width
+        sHeight = bestCrop.height
+      }
     } else {
-      sHeight = img.width / targetRatio
-      sy = (img.height - sHeight) / 2
+      if (imgRatio > targetRatio) {
+        sWidth = img.height * targetRatio
+        sx = (img.width - sWidth) / 2
+      } else {
+        sHeight = img.width / targetRatio
+        sy = (img.height - sHeight) / 2
+      }
     }
 
     ctx.drawImage(
