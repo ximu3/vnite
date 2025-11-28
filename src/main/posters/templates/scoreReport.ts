@@ -138,7 +138,7 @@ export const scoreReportPoster: PosterTemplate<ScoreReportPayload> = {
         drawTextFit(ctx, scoreDataFlat[i].gameName, x1, y1, x2, y2, 4 / 5, 3 / 4, payload.fontColor)
       }
 
-      drawImageCover(ctx, img, x1, y1, x2, y2, placeholder)
+      await drawImageCover(ctx, img, x1, y1, x2, y2, placeholder)
       if (payload.drawScore)
         drawScoreCircle(
           ctx,
