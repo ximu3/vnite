@@ -5,6 +5,7 @@ import { cn } from '~/utils'
 import { useRouter, useSearch } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { GenerateReport } from './GeneratePoster/main'
 import { MonthlyReport } from './MonthlyReport'
 import { RecordOverview } from './RecordOverview'
 import { ScoreReport } from './ScoreReport'
@@ -58,6 +59,7 @@ export function Record({ className }: { className?: string }): React.JSX.Element
               <TabsTrigger value="monthly">{t('tabs.monthly')}</TabsTrigger>
               <TabsTrigger value="weekly">{t('tabs.weekly')}</TabsTrigger>
               <TabsTrigger value="scores">{t('tabs.score')}</TabsTrigger>
+              <TabsTrigger value="poster">{t('tabs.poster')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview">
@@ -78,6 +80,10 @@ export function Record({ className }: { className?: string }): React.JSX.Element
 
             <TabsContent value="scores">
               <ScoreReport />
+            </TabsContent>
+
+            <TabsContent value="poster">
+              <GenerateReport />
             </TabsContent>
           </Tabs>
         </div>
