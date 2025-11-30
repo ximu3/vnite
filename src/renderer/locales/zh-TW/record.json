@@ -142,6 +142,9 @@
       "byGameType": "按遊戲類型統計",
       "typePercentage": "{{type}}: {{percent}}%"
     },
+    "dialog": {
+      "gameTypeDetail": "遊戲類型詳情"
+    },
     "format": {
       "hours": "{{value}} 小時",
       "days": "{{value}} 天"

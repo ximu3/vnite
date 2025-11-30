@@ -142,6 +142,9 @@
       "byGameType": "By Game Type",
       "typePercentage": "{{type}}: {{percent}}%"
     },
+    "dialog": {
+      "gameTypeDetail": "Game Type Details"
+    },
     "format": {
       "hours": "{{value}} hrs",
       "days": "{{value}} days"

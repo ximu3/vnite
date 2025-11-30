@@ -1,6 +1,11 @@
 import { useRouter, useSearch } from '@tanstack/react-router'
+import { Button } from '@ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/card'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@ui/dialog'
+import { ScrollArea } from '@ui/scroll-area'
 import { CalendarIcon, ChevronLeft, ChevronRight, Clock, Trophy } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   Bar,
@@ -11,19 +16,20 @@ import {
   LineChart,
   Pie,
   PieChart,
+  Sector,
   XAxis,
   YAxis
 } from 'recharts'
 import type { ValueType } from 'recharts/types/component/DefaultTooltipContent'
-import { Button } from '~/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '~/components/ui/chart'
 import { getYearlyPlayData } from '~/stores/game/recordUtils'
 import { GameRankingItem } from './GameRankingItem'
 import { StatCard } from './StatCard'
 
 export function YearlyReport(): React.JSX.Element {
   const { t } = useTranslation('record')
+
+  const [showGameTypeDetail, setShowGameTypeDetail] = useState(false)
+  const [typeDetailIndex, setTypeDetailIndex] = useState<number>(0)
 
   const router = useRouter()
   const search = useSearch({ from: '/record' })
@@ -70,8 +76,8 @@ export function YearlyReport(): React.JSX.Element {
     })
   }
 
-  // const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear())
-  const yearData = getYearlyPlayData(selectedYear)
+  // selectedYear is from search: const selectedYear = Number(search.year)
+  const yearData = useMemo(() => getYearlyPlayData(selectedYear), [search])
 
   const goToPreviousYear = (): void => setSelectedYear(selectedYear - 1)
   const goToNextYear = (): void => setSelectedYear(selectedYear + 1)
@@ -126,7 +132,7 @@ export function YearlyReport(): React.JSX.Element {
   // Preparing data for pie chart
   const pieChartData = yearData.gameTypeDistribution.map((item, index) => ({
     ...item,
-    percentValue: item.playTime / yearData.totalTime, // Adding percentage data
+    percentValue: item.summary / yearData.totalTime, // Adding percentage data
     color: `var(--chart-${(index % 5) + 1})` // Using shadcn's chart color variable
   }))
 
@@ -312,10 +318,21 @@ export function YearlyReport(): React.JSX.Element {
                   data={pieChartData}
                   cx="50%"
                   cy="50%"
+                  activeShape={(props: any) => <Sector {...props} outerRadius={105} />}
                   labelLine={false}
                   outerRadius={100}
-                  dataKey="playTime"
+                  dataKey="summary"
                   nameKey="type"
+                  onClick={(_data, index) => {
+                    setTypeDetailIndex(index)
+                    setShowGameTypeDetail(true)
+                  }}
+                  // During the Pie chart animation, labels temporarily disappear and only show after the animation completes.
+                  // Toggling the Dialog state causes a re-render, which retriggers the animation and makes the labels vanish briefly.
+                  // To improve the UX, the animation is temporarily disabled so that labels remain visible immediately when the Dialog closes.
+                  // In the future, this could potentially be addressed by isolating this component to prevent unnecessary re-renders.
+                  isAnimationActive={false}
+                  cursor="pointer"
                   label={({ type, percentValue }) =>
                     t('yearly.chart.typePercentage', {
                       type,
@@ -364,6 +381,28 @@ export function YearlyReport(): React.JSX.Element {
           </CardContent>
         </Card>
       </div>
+
+      {/* Game Rating Ranking - Dialog */}
+      <Dialog open={showGameTypeDetail} onOpenChange={setShowGameTypeDetail}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('yearly.dialog.gameTypeDetail')}</DialogTitle>
+            <DialogDescription>{pieChartData[typeDetailIndex].type}</DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="h-[60vh] pr-4">
+            <div className="w-[500px] space-y-2">
+              {pieChartData[typeDetailIndex].detail.map(({ gameId, playTime }, index) => (
+                <GameRankingItem
+                  key={gameId}
+                  gameId={gameId}
+                  rank={index + 1}
+                  extraInfo={formatGameTime(playTime)}
+                />
+              ))}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
