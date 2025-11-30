@@ -339,7 +339,11 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
   monthlyPlayDays: { month: number; days: number }[]
   mostPlayedMonth: MostPlayedMonth | null
   mostPlayedGames: { gameId: string; playTime: number }[]
-  gameTypeDistribution: { type: string; playTime: number }[]
+  gameTypeDistribution: {
+    type: string
+    detail: { gameId: string; playTime: number }[]
+    summary: number
+  }[]
 } {
   try {
     // Calculate the beginning and end of the year
@@ -350,7 +354,9 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
     const monthlyPlayDays: { [month: number]: Set<string> } = {}
     let totalTime = 0
     const gamePlayTime: { [gameId: string]: number } = {}
-    const gameTypeTime: { [type: string]: number } = {}
+    const gameTypeTime: {
+      [type: string]: { detail: { gameId: string; playTime: number }[]; summary: number }
+    } = {}
 
     const { gameIds } = useGameRegistry.getState()
 
@@ -382,7 +388,17 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
           // Accumulate play time to game stats
           gamePlayTime[gameId] = (gamePlayTime[gameId] || 0) + playTime
           // Accumulate play time to game type
-          gameTypeTime[gameType] = (gameTypeTime[gameType] || 0) + playTime
+          gameTypeTime[gameType] = gameTypeTime[gameType] || {
+            detail: [],
+            summary: 0
+          }
+          const existing = gameTypeTime[gameType].detail.find((e) => e.gameId === gameId)
+          if (existing) {
+            existing.playTime += playTime
+          } else {
+            gameTypeTime[gameType].detail.push({ gameId, playTime })
+          }
+          gameTypeTime[gameType].summary += playTime
         }
       }
 
@@ -428,8 +444,12 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
 
     // Game Type Distribution
     const gameTypeDistribution = Object.entries(gameTypeTime)
-      .map(([type, playTime]) => ({ type, playTime }))
-      .sort((a, b) => b.playTime - a.playTime)
+      .map(([type, { detail, summary }]) => ({
+        type,
+        detail: detail.slice().sort((a, b) => b.playTime - a.playTime),
+        summary
+      }))
+      .sort((a, b) => b.summary - a.summary)
 
     return {
       totalTime,
