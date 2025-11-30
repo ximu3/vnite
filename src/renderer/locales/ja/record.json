@@ -140,7 +140,8 @@
       "monthlyPlayDays": "月別プレイ日数",
       "timeDistribution": "年間プレイ時間分布",
       "byGameType": "ゲームタイプ別",
-      "typePercentage": "{{type}}: {{percent}}%"
+      "typePercentage": "{{type}}: {{percent}}%",
+      "hideLowPercentType": "低い割合のタイプを非表示"
     },
     "dialog": {
       "gameTypeDetail": "ゲームタイプの詳細"

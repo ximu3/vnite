@@ -208,6 +208,9 @@ export interface configDocs {
     monthly: {
       useAlternateColor: boolean
     }
+    yearly: {
+      hideLowPercentType: boolean
+    }
   }
 }
 
@@ -418,6 +421,9 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     },
     monthly: {
       useAlternateColor: true
+    },
+    yearly: {
+      hideLowPercentType: true
     }
   }
 } as const

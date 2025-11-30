@@ -140,7 +140,8 @@
       "monthlyPlayDays": "Days Played Each Month",
       "timeDistribution": "Annual Gaming Distribution",
       "byGameType": "By Game Type",
-      "typePercentage": "{{type}}: {{percent}}%"
+      "typePercentage": "{{type}}: {{percent}}%",
+      "hideLowPercentType": "Hide Low-Percentage Types"
     },
     "dialog": {
       "gameTypeDetail": "Game Type Details"
