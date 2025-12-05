@@ -200,7 +200,11 @@
         "tags": "Tags",
         "basicInfo": "Basic Information",
         "extraInfo": "Additional Information",
+        "relatedGames": "Related Games",
         "relatedSites": "Related Sites"
+      },
+      "relatedGames": {
+        "empty": "No related games"
       },
       "description": {
         "empty": "No description available",

@@ -3,6 +3,7 @@ import { calculateDailyPlayTime } from '@appUtils'
 import i18next from 'i18next'
 import type { Get, Paths } from 'type-fest'
 import { capDailyPlayTime, parseLocalDate } from '~/stores/game/recordUtils'
+import { jaroWinkler } from '~/utils'
 import { useConfigStore } from '../config'
 import { useGameRegistry } from './gameRegistry'
 import { getGameStore } from './gameStoreFactory'
@@ -292,6 +293,83 @@ export function filterGames(
     console.error('Fatal error in filterGames:', error)
     return []
   }
+}
+
+function computeGameSimilarity(
+  a: gameDoc,
+  b: gameDoc
+): { titleSim: number; devSim: number; totalSim: number } {
+  // ---- name / originalName: Jaro-Winkler Similarity ----
+  const hasAName = !!a.metadata.name
+  const hasAOri = !!a.metadata.originalName
+  const hasBName = !!b.metadata.name
+  const hasBOri = !!b.metadata.originalName
+
+  let titleScore = 0
+  let titleWeightSum = 0
+
+  if (hasAName && hasBName) {
+    titleScore += jaroWinkler(a.metadata.name.toLowerCase(), b.metadata.name.toLowerCase())
+    titleWeightSum += 1
+  }
+  if (hasAOri && hasBOri) {
+    titleScore += jaroWinkler(
+      a.metadata.originalName.toLowerCase(),
+      b.metadata.originalName.toLowerCase()
+    )
+    titleWeightSum += 1
+  }
+
+  const titleSim = titleWeightSum > 0 ? titleScore / titleWeightSum : 0
+
+  // ---- developers: Jaccard Similarity ----
+  let devSim = 0
+  if (a.metadata.developers.length && b.metadata.developers.length) {
+    const setA = new Set(a.metadata.developers)
+    const setB = new Set(b.metadata.developers)
+
+    let intersection = 0
+    for (const x of setA) {
+      if (setB.has(x)) intersection++
+    }
+
+    const union = setA.size + setB.size - intersection
+    if (union !== 0) devSim = intersection / union
+  }
+
+  const nameWeight = 0.7
+  const devWeight = 0.3
+
+  return { titleSim, devSim, totalSim: titleSim * nameWeight + devSim * devWeight }
+}
+
+export function getSimilarGames(
+  targetId: string,
+  limit = 5
+): { gameId: string; gameName: string; score: number }[] {
+  const { gameIds } = useGameRegistry.getState()
+  const results: { gameId: string; gameName: string; score: number }[] = []
+
+  const targetGame = getGameStore(targetId).getState().data
+  if (!targetGame) return results
+
+  for (const id of gameIds) {
+    if (id === targetId) continue
+
+    const store = getGameStore(id)
+    const game = store.getState().data
+    if (!game) continue
+
+    const score = computeGameSimilarity(targetGame, game)
+    if (score.totalSim >= 0.3) {
+      // At minimum, games sharing the same developers should be accepted.
+      const displayName =
+        game.metadata.name?.trim() !== '' ? game.metadata.name : (game.metadata.originalName ?? '')
+      results.push({ gameId: id, gameName: displayName, score: score.totalSim })
+    }
+  }
+
+  return results.sort((a, b) => b.score - a.score).slice(0, limit)
 }
 
 // Get all unique values for a key

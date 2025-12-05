@@ -200,7 +200,11 @@
         "tags": "标签",
         "basicInfo": "基本信息",
         "extraInfo": "附加信息",
+        "relatedGames": "相关游戏",
         "relatedSites": "相关网站"
+      },
+      "relatedGames": {
+        "empty": "暂无相关游戏"
       },
       "description": {
         "empty": "暂无简介",
