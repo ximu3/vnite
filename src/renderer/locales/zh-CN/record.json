@@ -140,7 +140,11 @@
       "monthlyPlayDays": "月度游戏天数",
       "timeDistribution": "年度游戏时间分布",
       "byGameType": "按游戏类型统计",
-      "typePercentage": "{{type}}: {{percent}}%"
+      "typePercentage": "{{type}}: {{percent}}%",
+      "hideLowPercentType": "隐藏低占比类型"
+    },
+    "dialog": {
+      "gameTypeDetail": "游戏类型详情"
     },
     "format": {
       "hours": "{{value}} 小时",

@@ -36,9 +36,8 @@ export function MonthlyReport(): React.JSX.Element {
       }
     })
   }
-  const handleBarClick = (data: any): void => {
-    type DailyChartItem = (typeof dailyChartData)[number]
-    const { date } = data.payload as DailyChartItem
+  const handleBarClick = (payload: (typeof dailyChartData)[number]): void => {
+    const { date } = payload
     const dateUTC = parseLocalDate(date) // YYYY-MM-DD
     const isoDate = dateUTC.toISOString()
 
