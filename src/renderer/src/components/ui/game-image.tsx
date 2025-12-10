@@ -1,4 +1,5 @@
 import React, { ImgHTMLAttributes, useRef, useState } from 'react'
+import smartcrop from 'smartcrop'
 import { useAttachmentStore } from '~/stores'
 import { cn } from '~/utils'
 
@@ -31,6 +32,8 @@ export const GameImage: React.FC<GameImageProps> = ({
   const [isLoaded, setIsLoaded] = useState(false)
   const { getAttachmentInfo, setAttachmentError } = useAttachmentStore()
   const maskRef = useRef<HTMLDivElement>(null)
+  const imgRef = useRef<HTMLImageElement>(null)
+  const [objectPosition, setObjectPosition] = useState('center')
 
   const attachmentInfo = getAttachmentInfo('game', gameId, `images/${type}.webp`)
 
@@ -59,6 +62,48 @@ export const GameImage: React.FC<GameImageProps> = ({
     }
   }
 
+  const smartCrop = async (): Promise<void> => {
+    const img = imgRef.current
+    if (img && type === 'cover') {
+      try {
+        await img.decode?.()
+
+        const clientRatio = img.clientWidth / img.clientHeight
+        const imgRatio = img.naturalWidth / img.naturalHeight
+
+        // Symmetric metric for aspect ratio difference:
+        // - swapping imgRatio and clientRatio does not change the value
+        // - swapping width and height of either ratio (transpose) also preserves the value
+        const ratioDiff = Math.abs(Math.log(imgRatio / clientRatio))
+
+        // Use smartcrop when the cropped portion exceeds roughly 22% relative to the visible area
+        // Computed as: exp(ratioDiff) - 1
+        if (ratioDiff > 0.2) {
+          const result = await smartcrop.crop(img, {
+            width: img.clientWidth,
+            height: img.clientHeight
+          })
+
+          const crop = result.topCrop
+
+          // The meaning of objectPosition is: the point at (u%, v%) in the source image
+          // aligns with the point at (u%, v%) in the display container.
+          // Therefore, the following calculation is based on the equations:
+          // crop.x + crop.width * u = img.naturalWidth * u
+          // crop.y + crop.height * v = img.naturalHeight * v
+          let u = (crop.x / (img.naturalWidth - crop.width)) * 100
+          let v = (crop.y / (img.naturalHeight - crop.height)) * 100
+          u = u >= 0 && u <= 100 ? u : 50
+          v = v >= 0 && v <= 100 ? v : 50
+
+          setObjectPosition(`${u}% ${v}%`)
+        }
+      } catch (err) {
+        console.error('smartcrop error:', err)
+      }
+    }
+  }
+
   return (
     <div className={cn('relative overflow-hidden', className)}>
       {!isLoaded && (
@@ -66,6 +111,7 @@ export const GameImage: React.FC<GameImageProps> = ({
       )}
 
       <img
+        ref={imgRef}
         src={attachmentUrl}
         className={cn(
           'transition-opacity duration-300',
@@ -75,10 +121,15 @@ export const GameImage: React.FC<GameImageProps> = ({
           blur && blurClassMap[blurType],
           className
         )}
+        style={{
+          objectFit: 'cover',
+          objectPosition
+        }}
         // loading="lazy"
         // decoding="async"
         onLoad={() => {
           setIsLoaded(true)
+          smartCrop()
           onUpdated?.()
           clearMaskOverlay()
         }}
