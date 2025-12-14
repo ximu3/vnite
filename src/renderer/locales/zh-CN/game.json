@@ -382,10 +382,17 @@
       "ongoing": "进行中",
       "duration": "时长",
       "minutes": "分钟",
+      "confirmImport": "确定要保存更改吗？",
+      "importWarning": "检测到曾进行导入操作，原始数据将被覆盖。确定要继续保存吗？",
+      "action": {
+        "importFromClipboard": "从剪贴板导入",
+        "exportToClipboard": "导出至剪贴板"
+      },
       "error": {
         "overlapMessage": "计时器 {{first}} 和 {{second}} 重叠！",
         "invalidTime": "计时器 {{index}} 的开始或结束时间无效！",
-        "endBeforeStart": "计时器 {{index}} 的结束时间早于开始时间！"
+        "endBeforeStart": "计时器 {{index}} 的结束时间早于开始时间！",
+        "invalidJson": "无效的 Json 格式: {{error}}"
       }
     },
     "timerEditor": {

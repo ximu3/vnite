@@ -1,15 +1,9 @@
-import { Button } from '~/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from '~/components/ui/dialog'
-import { useState, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Button } from '@ui/button'
+import { DateTimeInput } from '@ui/date-input'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@ui/dialog'
 import { format } from 'date-fns'
-import { DateTimeInput } from '~/components/ui/date-input'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface TimerEditDialogProps {
   isOpen: boolean
@@ -50,7 +44,7 @@ export function TimerEditDialog({
       // Initialize with current time if adding new timer
       const now = new Date()
       setStartDateTime(format(now, "yyyy-MM-dd'T'HH:mm"))
-      setEndDateTime('')
+      setEndDateTime(format(now, "yyyy-MM-dd'T'HH:mm"))
     }
     setError(null)
   }, [timer, isOpen, isNew])

@@ -382,10 +382,17 @@
       "ongoing": "進行中",
       "duration": "時間",
       "minutes": "分",
+      "confirmImport": "変更を保存してもよろしいですか？",
+      "importWarning": "インポート操作が検出されました。元のデータは上書きされます。続行しますか？",
+      "action": {
+        "importFromClipboard": "クリップボードからインポート",
+        "exportToClipboard": "クリップボードにエクスポート"
+      },
       "error": {
         "overlapMessage": "タイマー {{first}} と {{second}} が重複しています！",
-        "invalidTime": "タイマー {{index}} の開始または終了時刻が無効です！",
-        "endBeforeStart": "タイマー {{index}} の終了時刻が開始時刻より前です！"
+        "invalidTime": "タイマー {{index}} の開始または終了時間が無効です！",
+        "endBeforeStart": "タイマー {{index}} の終了時間が開始時間より前です！",
+        "invalidJson": "無効な JSON 形式: {{error}}"
       }
     },
     "timerEditor": {

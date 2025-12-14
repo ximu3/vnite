@@ -1,19 +1,70 @@
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@ui/alert-dialog'
+import { Button } from '@ui/button'
+import { Card } from '@ui/card'
+import { Dialog, DialogContent } from '@ui/dialog'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from '@ui/dropdown-menu'
+import { StepperInput } from '@ui/input'
 import { format } from 'date-fns'
-import { PlusCircleIcon } from 'lucide-react'
+import { Menu, PlusCircleIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { Button } from '~/components/ui/button'
-import { Card } from '~/components/ui/card'
-import { Dialog, DialogContent } from '~/components/ui/dialog'
-import { StepperInput } from '~/components/ui/input'
 import { useGameState } from '~/hooks'
-import { cn } from '~/utils'
+import { cn, copyWithToast } from '~/utils'
 import { TimerEditDialog } from './TimerEditDialog'
 
 interface Timer {
   start: string
   end: string
+}
+
+function validateTimer(value: unknown): { valid: boolean; message?: string } {
+  if (typeof value !== 'object' || value === null) return { valid: false, message: 'Not an object' }
+
+  const obj = value as Record<string, unknown>
+  const keys = Object.keys(obj)
+
+  if (keys.length !== 2) return { valid: false, message: 'Number of keys is not 2' }
+  if (!keys.includes('start') || !keys.includes('end'))
+    return { valid: false, message: 'Missing start or end key' }
+  if (typeof obj.start !== 'string' || typeof obj.end !== 'string')
+    return { valid: false, message: 'Values must be strings' }
+  if (isNaN(Date.parse(obj.start)) || isNaN(Date.parse(obj.end)))
+    return { valid: false, message: 'Invalid date' }
+
+  return { valid: true }
+}
+
+function parseTimers(data: string): Timer[] {
+  const parsed = JSON.parse(data)
+
+  if (!Array.isArray(parsed)) {
+    throw new Error('Not an array')
+  }
+
+  for (const [index, item] of parsed.entries()) {
+    const validation = validateTimer(item)
+    if (!validation.valid) {
+      throw new Error(`Invalid timer item at index ${index}: ${validation.message}`)
+    }
+  }
+
+  return parsed
 }
 
 export function PlayTimeEditorDialog({
@@ -25,6 +76,8 @@ export function PlayTimeEditorDialog({
 }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [record, setRecord] = useGameState(gameId, 'record')
+  const [hasImported, setHasImported] = useState(false)
+  const [alertOpen, setAlertOpen] = useState(false)
 
   const calculateTotalPlayTime = (timersList: Timer[]): number => {
     return timersList.reduce((total, timer) => {
@@ -159,21 +212,59 @@ export function PlayTimeEditorDialog({
     setIsOpen(false)
   }
 
+  const handleExportClipboard = (): void => {
+    copyWithToast(JSON.stringify(record.timers))
+  }
+
+  const handleImportClipboard = (): void => {
+    navigator.clipboard
+      .readText()
+      .then((data) => {
+        setTimers(parseTimers(data))
+        setHasImported(true)
+      })
+      .catch((error) => {
+        toast.error(t('detail.timersEditor.error.invalidJson', { error: error.message }))
+      })
+  }
+
   return (
     <>
       <Dialog open={true} onOpenChange={setIsOpen}>
         <DialogContent showCloseButton={true} className={cn('w-[600px] flex flex-col gap-3')}>
           <h3 className="text-xl font-bold mb-2">{t('detail.timersEditor.title')}</h3>
 
-          {/* Add Timer */}
-          <Button
-            variant="outline"
-            onClick={openAddTimer}
-            className="flex items-center gap-2 w-full"
-          >
-            <PlusCircleIcon className="h-4 w-4" />
-            {t('detail.timersEditor.addTimer')}
-          </Button>
+          <div className="flex flex-row gap-2">
+            {/* Add Timer */}
+            <Button
+              variant="outline"
+              onClick={openAddTimer}
+              className="flex items-center gap-2 flex-1"
+            >
+              <PlusCircleIcon className="h-4 w-4" />
+              {t('detail.timersEditor.addTimer')}
+            </Button>
+
+            {/* Timer Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  <Menu className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="mr-5">
+                <DropdownMenuItem onSelect={handleExportClipboard}>
+                  {t('detail.timersEditor.action.exportToClipboard')}
+                </DropdownMenuItem>
+                {/* <DropdownMenuItem>To File</DropdownMenuItem> */}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={handleImportClipboard}>
+                  {t('detail.timersEditor.action.importFromClipboard')}
+                </DropdownMenuItem>
+                {/* <DropdownMenuItem>From File</DropdownMenuItem> */}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
 
           {/* Timer List */}
           <div className="mb-2">
@@ -261,7 +352,17 @@ export function PlayTimeEditorDialog({
               <Button variant="outline" onClick={() => setIsOpen(false)}>
                 {t('utils:common.cancel')}
               </Button>
-              <Button onClick={handleSave}>{t('utils:common.save')}</Button>
+              <Button
+                onClick={() => {
+                  if (hasImported) {
+                    setAlertOpen(true)
+                  } else {
+                    handleSave()
+                  }
+                }}
+              >
+                {t('utils:common.save')}
+              </Button>
             </div>
           </div>
         </DialogContent>
@@ -275,6 +376,22 @@ export function PlayTimeEditorDialog({
         timer={editingTimer}
         isNew={editingIndex === null}
       />
+
+      {/* Alert Dialog for Restore Timers*/}
+      <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('detail.timersEditor.confirmImport')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('detail.timersEditor.importWarning')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('utils:common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleSave}>{t('utils:common.confirm')}</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }
