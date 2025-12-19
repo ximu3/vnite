@@ -65,6 +65,7 @@ export interface configDocs {
       highlightLocalGames: boolean
       markLocalGames: boolean
       warnInvalidGamePaths: boolean
+      showSortInformation: boolean
       showRecentGames: boolean
       showAllGamesInGroup: boolean
       showCollapseButton: boolean
@@ -316,6 +317,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       highlightLocalGames: true,
       markLocalGames: false,
       warnInvalidGamePaths: true,
+      showSortInformation: true,
       showRecentGames: true,
       showAllGamesInGroup: true,
       showCollapseButton: true

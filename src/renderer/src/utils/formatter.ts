@@ -13,3 +13,27 @@ export function formatDateToISO(dateString: string): string {
 
   return `${year}-${month}-${day}`
 }
+
+/**
+ * Format duration to a compact string (e.g. 45m, 2.5h, 12h).
+ * Automatically chooses minutes or hours for the most compact display.
+ *
+ * @param milliseconds The duration in milliseconds.
+ * @returns The formatted duration string.
+ */
+export function formatDurationCompact(milliseconds: number): string {
+  if (!Number.isFinite(milliseconds) || milliseconds <= 0) {
+    return '0m'
+  }
+
+  const minutes = milliseconds / (1000 * 60)
+
+  if (minutes < 99) {
+    return `${Math.round(minutes)}m`
+  } else {
+    const hours = minutes / 60
+
+    if (hours < 100) return `${hours.toFixed(1)}h`
+    else return `${Math.round(hours)}h`
+  }
+}

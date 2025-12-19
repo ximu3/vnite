@@ -107,6 +107,8 @@
       "showRecentGamesDescription": "ゲームリストに最近プレイしたゲームを表示",
       "showAllGamesInGroup": "グループ内のすべてのゲームセクションを表示",
       "showAllGamesInGroupDescription": "ゲームリストのグループ内にすべてのゲームを表示",
+      "showSortInformation": "ソート情報を表示",
+      "showSortInformationDescription": "ゲームリストに現在のソート情報を表示します（プレイ時間とスコアのみ対応）",
       "highlightLocalGames": "ローカルゲームをハイライト",
       "highlightLocalGamesDescription": "ゲームリストでローカルゲームをハイライト表示",
       "markLocalGames": "ローカルゲームにマーク",

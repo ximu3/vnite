@@ -1,26 +1,26 @@
-import { Button } from '~/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { ipcManager } from '~/app/ipc'
 import { ConfigItem } from '~/components/form/ConfigItem'
 import { ConfigItemPure } from '~/components/form/ConfigItemPure'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '~/components/ui/hover-card'
-import { useTranslation } from 'react-i18next'
-import { useAttachmentStore } from '~/stores'
-import { cn, changeFontSize, changeFontWeight } from '~/utils'
-import { ipcManager } from '~/app/ipc'
-import { useState } from 'react'
-import { FontSettingsDialog } from './FontSettingsDialog'
 import { useTheme } from '~/components/ThemeProvider'
-import { useLightStore } from '~/pages/Light'
-import { useLibraryStore } from '~/pages/Library/store'
-import { toast } from 'sonner'
+import { Button } from '~/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import {
   DropdownMenu,
-  DropdownMenuItem,
   DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenuPortal
+  DropdownMenuItem,
+  DropdownMenuPortal,
+  DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '~/components/ui/hover-card'
 import { useConfigState } from '~/hooks'
+import { useLibraryStore } from '~/pages/Library/store'
+import { useLightStore } from '~/pages/Light'
+import { useAttachmentStore } from '~/stores'
+import { changeFontSize, changeFontWeight, cn } from '~/utils'
+import { FontSettingsDialog } from './FontSettingsDialog'
 
 export function Appearances(): React.JSX.Element {
   const { t } = useTranslation('config')
@@ -366,6 +366,14 @@ export function Appearances(): React.JSX.Element {
                 path="game.gameList.showAllGamesInGroup"
                 title={t('appearances.gameList.showAllGamesInGroup')}
                 description={t('appearances.gameList.showAllGamesInGroupDescription')}
+                controlType="switch"
+              />
+
+              <ConfigItem
+                hookType="config"
+                path="game.gameList.showSortInformation"
+                title={t('appearances.gameList.showSortInformation')}
+                description={t('appearances.gameList.showSortInformationDescription')}
                 controlType="switch"
               />
 

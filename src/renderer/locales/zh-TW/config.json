@@ -107,6 +107,8 @@
       "showRecentGamesDescription": "在遊戲列表中顯示最近遊玩的遊戲",
       "showAllGamesInGroup": "在分組中顯示所有遊戲欄目",
       "showAllGamesInGroupDescription": "在遊戲列表的分組中顯示所有遊戲",
+      "showSortInformation": "顯示排序資訊",
+      "showSortInformationDescription": "在遊戲列表中顯示當前的排序資訊（僅支援遊玩時間、評分）",
       "highlightLocalGames": "突顯本機遊戲",
       "highlightLocalGamesDescription": "在遊戲列表中突顯顯示本機遊戲",
       "markLocalGames": "標記本機遊戲",

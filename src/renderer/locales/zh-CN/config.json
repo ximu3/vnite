@@ -107,6 +107,8 @@
       "showRecentGamesDescription": "在游戏列表中显示最近游玩的游戏",
       "showAllGamesInGroup": "在分组中显示所有游戏栏目",
       "showAllGamesInGroupDescription": "在游戏列表的分组中显示所有游戏",
+      "showSortInformation": "显示排序信息",
+      "showSortInformationDescription": "在游戏列表中显示当前的排序信息（仅支持游玩时间、评分）",
       "highlightLocalGames": "高亮显示本地游戏",
       "highlightLocalGamesDescription": "在游戏列表中高亮显示本地游戏",
       "markLocalGames": "标记本地游戏",
