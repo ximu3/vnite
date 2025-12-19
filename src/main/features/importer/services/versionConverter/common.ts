@@ -586,7 +586,6 @@ async function convertConfig(basePath: string): Promise<void> {
         showRecentGames: v2Config.appearances.gameList.showRecentGamesInGameList,
         showAllGamesInGroup: true,
         showSortInformation: true,
-        showCollapseButton: true,
         warnInvalidGamePaths: true
       },
       gameHeader: {

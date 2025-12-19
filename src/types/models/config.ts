@@ -68,7 +68,6 @@ export interface configDocs {
       showSortInformation: boolean
       showRecentGames: boolean
       showAllGamesInGroup: boolean
-      showCollapseButton: boolean
     }
     gameHeader: {
       showOriginalName: boolean
@@ -319,8 +318,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       warnInvalidGamePaths: true,
       showSortInformation: true,
       showRecentGames: true,
-      showAllGamesInGroup: true,
-      showCollapseButton: true
+      showAllGamesInGroup: true
     },
     gameHeader: {
       showOriginalName: false
