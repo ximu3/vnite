@@ -157,7 +157,10 @@ export function GameNav({
               params={{ gameId, groupId: encodeURIComponent(groupId) }}
               resetScroll={false}
             >
-              <div className={cn('flex flex-row gap-2 items-center w-full')}>
+              <div
+                className={cn('flex flex-row gap-2 items-center w-full')}
+                style={{ width: `${libraryBarWidth - 25}px` }}
+              >
                 <div className={cn('flex items-center')}>
                   <GameImage
                     gameId={gameId}
@@ -170,22 +173,14 @@ export function GameNav({
                   />
                 </div>
                 {nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImageAndTitle ? (
-                  <div
-                    className="relative truncate"
-                    style={{ width: `${libraryBarWidth - (markLocalGames ? 70 : 60)}px` }}
-                  >
+                  <div className="relative truncate flex-1">
                     <span className="group-hover/gamenav:opacity-0">{obfuscatedGameName}</span>
                     <span className="absolute top-0 left-0 w-full truncate opacity-0 group-hover/gamenav:opacity-100">
                       {gameName}
                     </span>
                   </div>
                 ) : (
-                  <div
-                    className={cn('truncate')}
-                    style={{ width: `${libraryBarWidth - (markLocalGames ? 70 : 60)}px` }}
-                  >
-                    {gameName}
-                  </div>
+                  <div className={cn('truncate flex-1')}>{gameName}</div>
                 )}
 
                 {markLocalGames && gamePath && isPathValid && (
