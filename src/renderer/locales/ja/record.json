@@ -1,5 +1,6 @@
 {
   "title": "私のゲーム記録",
+  "hotkeyHelp": "Ctrl + ←/→：タブ切替\n←/→：日付切替（年/月/週レポート）",
   "tabs": {
     "overview": "概要",
     "weekly": "週間レポート",

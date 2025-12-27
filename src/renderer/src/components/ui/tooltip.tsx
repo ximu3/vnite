@@ -1,7 +1,8 @@
-import * as React from 'react'
 import { Tooltip as TooltipPrimitive } from 'radix-ui'
+import * as React from 'react'
 
 import { cn } from '~/utils'
+import { Button } from './button'
 
 function TooltipProvider({
   delayDuration = 0,
@@ -56,4 +57,23 @@ function TooltipContent({
   )
 }
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }
+function HelpTooltip({
+  children,
+  className,
+  ...props
+}: React.ComponentProps<typeof TooltipPrimitive.Content>): React.JSX.Element {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button variant="bare" size="icon-sm" className={cn('group ml-2')}>
+          <span className={cn('icon-[mdi--help-circle] group-hover:text-primary')} />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent className={cn('whitespace-pre leading-relaxed', className)} {...props}>
+        {children}
+      </TooltipContent>
+    </Tooltip>
+  )
+}
+
+export { HelpTooltip, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger }

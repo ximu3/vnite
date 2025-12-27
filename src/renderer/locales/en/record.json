@@ -1,5 +1,6 @@
 {
   "title": "My Game Records",
+  "hotkeyHelp": "Ctrl + ←/→: Switch tabs\n←/→: Change date (annual/monthly/weekly)",
   "tabs": {
     "overview": "Overview",
     "weekly": "Weekly Report",
