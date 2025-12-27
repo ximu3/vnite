@@ -400,24 +400,26 @@ export function YearlyReport(): React.JSX.Element {
 
       {/* Game Rating Ranking - Dialog */}
       <Dialog open={showGameTypeDetail} onOpenChange={setShowGameTypeDetail}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t('yearly.dialog.gameTypeDetail')}</DialogTitle>
-            <DialogDescription>{pieChartData[typeDetailIndex].type}</DialogDescription>
-          </DialogHeader>
-          <ScrollArea className="h-[60vh] pr-4">
-            <div className="w-[500px] space-y-2">
-              {pieChartData[typeDetailIndex].detail.map(({ gameId, playTime }, index) => (
-                <GameRankingItem
-                  key={gameId}
-                  gameId={gameId}
-                  rank={index + 1}
-                  extraInfo={formatGameTime(playTime)}
-                />
-              ))}
-            </div>
-          </ScrollArea>
-        </DialogContent>
+        {pieChartData[typeDetailIndex] && (
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{t('yearly.dialog.gameTypeDetail')}</DialogTitle>
+              <DialogDescription>{pieChartData[typeDetailIndex].type}</DialogDescription>
+            </DialogHeader>
+            <ScrollArea className="h-[60vh] pr-4">
+              <div className="w-[500px] space-y-2">
+                {pieChartData[typeDetailIndex].detail.map(({ gameId, playTime }, index) => (
+                  <GameRankingItem
+                    key={gameId}
+                    gameId={gameId}
+                    rank={index + 1}
+                    extraInfo={formatGameTime(playTime)}
+                  />
+                ))}
+              </div>
+            </ScrollArea>
+          </DialogContent>
+        )}
       </Dialog>
     </div>
   )
