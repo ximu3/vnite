@@ -5,14 +5,15 @@ import { useTranslation } from 'react-i18next'
 import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { useConfigState } from '~/hooks'
+import { useLibraryStore } from '~/pages/Library/store'
 import { useGameCollectionStore } from '~/stores'
-import { filterGamesByNSFW } from '~/stores/game'
+import { filterGamesByLocal, filterGamesByNSFW } from '~/stores/game'
 import { cn } from '~/utils'
 import { CollectionPoster } from './posters/CollectionPoster'
-import { useLibraryStore } from '~/pages/Library/store'
 
 export function CollectionPage(): React.JSX.Element {
   const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
+  const [localFilterMode] = useConfigState('appearances.localGameFilterMode')
   const collections = useGameCollectionStore((state) => state.documents)
   const [gap, setGap] = useState<number>(0)
   const [columns, setColumns] = useState<number>(0)
@@ -52,8 +53,14 @@ export function CollectionPage(): React.JSX.Element {
     return Object.values(collections)
       .sort((a, b) => a.sort - b.sort)
       .map((collection) => collection._id)
-      .filter((id) => filterGamesByNSFW(nsfwFilterMode, collections[id]?.games).length > 0)
-  }, [collections, nsfwFilterMode])
+      .filter(
+        (id) =>
+          filterGamesByLocal(
+            localFilterMode,
+            filterGamesByNSFW(nsfwFilterMode, collections[id]?.games)
+          ).length > 0
+      )
+  }, [collections, nsfwFilterMode, localFilterMode])
 
   useEffect(() => {
     const calculateGap = (): void => {

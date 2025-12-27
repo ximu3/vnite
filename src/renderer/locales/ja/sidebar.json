@@ -19,6 +19,11 @@
       "hideNSFW": "NSFWゲームを非表示",
       "onlyNSFW": "NSFWゲームのみ表示"
     },
+    "localGameFilter": {
+      "all": "すべてのゲームを表示",
+      "hideLocal": "ローカルゲームを非表示",
+      "onlyLocal": "ローカルゲームのみ表示"
+    },
     "darkMode": "ダークモード",
     "lightMode": "ライトモード",
     "cloudSyncDisabled": "クラウド同期が無効",

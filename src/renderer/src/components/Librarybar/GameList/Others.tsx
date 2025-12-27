@@ -7,7 +7,13 @@ import {
 } from '~/components/ui/accordion'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { useConfigState } from '~/hooks'
-import { filterGames, filterGamesByNSFW, getAllValuesInKey, sortGames } from '~/stores/game'
+import {
+  filterGames,
+  filterGamesByLocal,
+  filterGamesByNSFW,
+  getAllValuesInKey,
+  sortGames
+} from '~/stores/game'
 import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
 import { useGameListStore } from '../store'
@@ -23,6 +29,7 @@ export function Others({
   const [order] = useConfigState('game.gameList.sort.order')
   const [showAllGamesInGroup] = useConfigState('game.gameList.showAllGamesInGroup')
   const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
+  const [localFilterMode] = useConfigState('appearances.localGameFilterMode')
   const { t } = useTranslation('game')
   const emptyAccordionName = {
     'metadata.developers': t('list.empty.developers'),
@@ -54,9 +61,9 @@ export function Others({
           {/* Split games into their respective fields */}
           {(fieldName === 'metadata.developers' || fieldName === 'metadata.genres') &&
             fields.map((field) => {
-              const gameIds = filterGamesByNSFW(
-                nsfwFilterMode,
-                filterGames({ [fieldName]: [field] })
+              const gameIds = filterGamesByLocal(
+                localFilterMode,
+                filterGamesByNSFW(nsfwFilterMode, filterGames({ [fieldName]: [field] }))
               )
               if (gameIds.length === 0) return <></>
 

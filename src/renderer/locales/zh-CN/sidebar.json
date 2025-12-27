@@ -19,6 +19,11 @@
       "hideNSFW": "隐藏NSFW游戏",
       "onlyNSFW": "仅显示NSFW游戏"
     },
+    "localGameFilter": {
+      "all": "显示全部游戏",
+      "hideLocal": "隐藏本地游戏",
+      "onlyLocal": "仅显示本地游戏"
+    },
     "darkMode": "暗色模式",
     "lightMode": "亮色模式",
     "cloudSyncDisabled": "云同步未开启",

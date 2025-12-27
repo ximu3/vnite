@@ -7,7 +7,7 @@ import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
 import { GameImage } from '~/components/ui/game-image'
 import { useConfigState, useGameState } from '~/hooks'
 import { useGameCollectionStore } from '~/stores'
-import { filterGamesByNSFW } from '~/stores/game'
+import { filterGamesByLocal, filterGamesByNSFW } from '~/stores/game'
 import { cn } from '~/utils'
 import {
   attachClosestEdge,
@@ -78,8 +78,12 @@ export function CollectionPoster({
   const collectionGames = collections[collectionId].games
   const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
   const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
+  const [localFilterMode] = useConfigState('appearances.localGameFilterMode')
 
-  const filterGames = filterGamesByNSFW(nsfwFilterMode, collectionGames)
+  const filterGames = filterGamesByLocal(
+    localFilterMode,
+    filterGamesByNSFW(nsfwFilterMode, collectionGames)
+  )
   const length = filterGames.length // length > 0, guaranteed by parent component
   const gameId = filterGames[0]
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
