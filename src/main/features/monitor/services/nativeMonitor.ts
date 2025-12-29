@@ -151,9 +151,11 @@ export async function startPhantomMonitor(
           const gameLocal = await GameDBManager.getGameLocal(gameId)
           const mode = gameLocal.launcher.mode
           const modeConfig = gameLocal.launcher[`${mode}Config`]
-          if (!native.isRunning(modeConfig.monitorPath, modeConfig.monitorMode === 'folder')) {
+          if (
+            !(await native.isRunning(modeConfig.monitorPath, modeConfig.monitorMode === 'folder'))
+          ) {
             await mutex.runExclusive(async () => {
-              if (monitor.getStatus().isRunning) {
+              if (monitors.has(gameId)) {
                 native.sendSystemNotification(
                   'vnite',
                   i18next.t('system-notification:unableToDetectProcess'),

@@ -127,7 +127,8 @@ impl GameManager {
 
   pub fn is_running(&self, path: &str, is_folder: Option<bool>) -> bool {
     let mut is_running = false;
-    let normalized_path = path.trim_end_matches(['/', '\\']);
+    let lower_path = path.to_ascii_lowercase();
+    let normalized_path = lower_path.trim_end_matches(['/', '\\']);
     let escaped_path = regex::escape(normalized_path);
 
     for (k, _) in &self.running_process {
