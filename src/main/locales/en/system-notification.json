@@ -1,3 +1,5 @@
 {
-  "screenshotSaved": "Screenshot has been saved"
+  "screenshotSaved": "Screenshot has been saved",
+  "unableToDetectProcess": "Unable to detect game process",
+  "unableToDetectProcessDetail": "Unable to automatically track game time because no game process was detected. This may be due to insufficient permissions for Vnite. Please try restarting Vnite with administrator privileges."
 }

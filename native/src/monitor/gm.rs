@@ -125,10 +125,17 @@ impl GameManager {
       .or_else(|| self.get_known_game_id_exact(l_exe))
   }
 
-  pub fn is_running(&self, path: &str) -> bool {
+  pub fn is_running(&self, path: &str, is_folder: Option<bool>) -> bool {
     let mut is_running = false;
+    let normalized_path = path.trim_end_matches(['/', '\\']);
+    let escaped_path = regex::escape(normalized_path);
+
     for (k, _) in &self.running_process {
-      let re = Regex::new(format!(r"^{}-\d+$", path).as_str());
+      let re = if is_folder.is_some_and(|x| x) {
+        Regex::new(format!(r"^{}[/\\][^/\\]+-\d+$", escaped_path).as_str())
+      } else {
+        Regex::new(format!(r"^{}-\d+$", escaped_path).as_str())
+      };
       match re {
         Ok(re) => {
           if re.is_match(k) {
@@ -156,7 +163,7 @@ impl GameManager {
   /// Handle a foreground change message.
   /// Note the `msg` can be 0 if current process has insufficient privilege to retrieve the target window.
   pub fn handle_foreground_message(&mut self, msg: u32) {
-    if self.running_process.len() == 0 || Self::is_magpie_pid(msg){
+    if self.running_process.len() == 0 || Self::is_magpie_pid(msg) {
       return;
     }
     for (_, info) in &self.running_process {
