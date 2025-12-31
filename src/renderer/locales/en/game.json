@@ -382,10 +382,17 @@
       "ongoing": "In progress",
       "duration": "Duration",
       "minutes": "minutes",
+      "confirmImport": "Are you sure you want to save changes?",
+      "importWarning": "An import operation was detected; original data will be overwritten. Do you want to continue?",
+      "action": {
+        "importFromClipboard": "Import from clipboard",
+        "exportToClipboard": "Export to clipboard"
+      },
       "error": {
         "overlapMessage": "Timers {{first}} and {{second}} overlap!",
         "invalidTime": "Timer {{index}} has invalid start or end time!",
-        "endBeforeStart": "Timer {{index}} ends before it starts!"
+        "endBeforeStart": "Timer {{index}} ends before it starts!",
+        "invalidJson": "Invalid JSON format: {{error}}"
       }
     },
     "timerEditor": {
