@@ -196,12 +196,12 @@ export function GameNav({
                 )}
 
                 {showSortInformation && by === 'record.playTime' && playTime > 0 && (
-                  <span className="flex-shrink-0 text-foreground">
+                  <span className="flex-shrink-0 text-foreground mr-1.5">
                     {formatDurationCompact(playTime)}
                   </span>
                 )}
                 {showSortInformation && by === 'record.score' && score !== -1 && (
-                  <span className="flex-shrink-0 text-foreground">{score.toFixed(1)}</span>
+                  <span className="flex-shrink-0 text-foreground mr-1.5">{score.toFixed(1)}</span>
                 )}
               </div>
             </Nav>
