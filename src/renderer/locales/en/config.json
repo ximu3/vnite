@@ -107,6 +107,8 @@
       "showRecentGamesDescription": "Show recently played games in game list",
       "showAllGamesInGroup": "Show All Games in Group Section",
       "showAllGamesInGroupDescription": "Show all games in groups in game list",
+      "showSortInformation": "Show sort information",
+      "showSortInformationDescription": "Display the current sort information in the game list (only supports playtime and score)",
       "highlightLocalGames": "Highlight Local Games",
       "highlightLocalGamesDescription": "Highlight local games in game list",
       "markLocalGames": "Mark Local Games",

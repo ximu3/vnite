@@ -10,7 +10,7 @@ import { GameImage } from '~/components/ui/game-image'
 import { useConfigState, useGameLocalState, useGameState } from '~/hooks'
 import { useLibraryStore } from '~/pages/Library/store'
 import { useGamePathStore } from '~/stores/game/gamePathStore'
-import { cn, startGame } from '~/utils'
+import { cn, formatDurationCompact, startGame } from '~/utils'
 import { GameNavCM } from '../contextMenu/GameNavCM'
 import { InformationDialog } from '../Game/Overview/Information/InformationDialog'
 import { BatchGameNavCM } from '../GameBatchEditor/BatchGameNavCM'
@@ -25,6 +25,8 @@ export function GameNav({
   groupId: string
 }): React.JSX.Element {
   const [gameName] = useGameState(gameId, 'metadata.name')
+  const [playTime] = useGameState(gameId, 'record.playTime')
+  const [score] = useGameState(gameId, 'record.score')
   const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
   const isPathValid = useGamePathStore((s) => s.paths[gamePath]?.valid)
 
@@ -39,6 +41,8 @@ export function GameNav({
   const [warnInvalidGamePaths] = useConfigState('game.gameList.warnInvalidGamePaths')
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
   const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
+  const [by] = useConfigState('game.gameList.sort.by')
+  const [showSortInformation] = useConfigState('game.gameList.showSortInformation')
   const isDarkMode = useTheme().isDark
   const location = useLocation()
   const navigate = useNavigate()
@@ -157,7 +161,10 @@ export function GameNav({
               params={{ gameId, groupId: encodeURIComponent(groupId) }}
               resetScroll={false}
             >
-              <div className={cn('flex flex-row gap-2 items-center w-full')}>
+              <div
+                className={cn('flex flex-row gap-2 items-center w-full')}
+                style={{ width: `${libraryBarWidth - 25}px` }}
+              >
                 <div className={cn('flex items-center')}>
                   <GameImage
                     gameId={gameId}
@@ -169,30 +176,32 @@ export function GameNav({
                     }
                   />
                 </div>
+
                 {nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImageAndTitle ? (
-                  <div
-                    className="relative truncate"
-                    style={{ width: `${libraryBarWidth - (markLocalGames ? 70 : 60)}px` }}
-                  >
+                  <div className="relative truncate flex-1">
                     <span className="group-hover/gamenav:opacity-0">{obfuscatedGameName}</span>
                     <span className="absolute top-0 left-0 w-full truncate opacity-0 group-hover/gamenav:opacity-100">
                       {gameName}
                     </span>
                   </div>
                 ) : (
-                  <div
-                    className={cn('truncate')}
-                    style={{ width: `${libraryBarWidth - (markLocalGames ? 70 : 60)}px` }}
-                  >
-                    {gameName}
-                  </div>
+                  <div className={cn('truncate flex-1')}>{gameName}</div>
                 )}
 
                 {markLocalGames && gamePath && isPathValid && (
                   <span className="icon-[mdi--check-outline] w-[10px] h-[10px] flex-shrink-0" />
                 )}
                 {markLocalGames && gamePath && !isPathValid && warnInvalidGamePaths && (
-                  <span className="icon-[mdi--alert-circle-outline] w-[12px] h-[12px] text-destructive flex-shrink-0" />
+                  <span className="icon-[mdi--alert-circle-outline] w-[10px] h-[10px] text-destructive flex-shrink-0" />
+                )}
+
+                {showSortInformation && by === 'record.playTime' && playTime > 0 && (
+                  <span className="flex-shrink-0 text-foreground">
+                    {formatDurationCompact(playTime)}
+                  </span>
+                )}
+                {showSortInformation && by === 'record.score' && score !== -1 && (
+                  <span className="flex-shrink-0 text-foreground">{score.toFixed(1)}</span>
                 )}
               </div>
             </Nav>

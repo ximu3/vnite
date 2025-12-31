@@ -32,8 +32,7 @@
       "title": "Список игр",
       "showRecentGames": "Показывать раздел «Недавние»",
       "highlightLocalGames": "Подсвечивать локальные игры",
-      "markLocalGames": "Помечать локальные игры",
-      "showCollapseButton": "Показывать кнопку сворачивания"
+      "markLocalGames": "Помечать локальные игры"
     },
     "gameDetail": {
       "title": "Страница игры",

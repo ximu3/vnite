@@ -42,8 +42,7 @@
       "title": "게임 목록",
       "showRecentGames": "최근 게임 섹션 표시",
       "highlightLocalGames": "로컬 게임 강조",
-      "markLocalGames": "로컬 게임 표시",
-      "showCollapseButton": "접기 버튼 표시"
+      "markLocalGames": "로컬 게임 표시"
     },
     "gameDetail": {
       "title": "게임 상세 페이지",
