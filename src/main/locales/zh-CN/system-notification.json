@@ -1,3 +1,5 @@
 {
-  "screenshotSaved": "截图已保存"
+  "screenshotSaved": "截图已保存",
+  "unableToDetectProcess": "未检测到游戏进程",
+  "unableToDetectProcessDetail": "由于未检测到游戏进程，Vnite 无法自动统计游戏时间。这可能是由于 Vnite 权限不足所导致，请尝试以管理员权限重新启动 Vntie"
 }

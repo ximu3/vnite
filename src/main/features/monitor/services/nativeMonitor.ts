@@ -6,6 +6,7 @@ import { GameMonitor } from './monitor'
 import { ipcManager } from '~/core/ipc'
 import { Mutex } from 'async-mutex'
 import { GameTimerStatus, TimerStatus } from '@appTypes/models'
+import i18next from 'i18next'
 
 // A static monitor {gameId - GameMonitor} hash map that keeps a stub of all running
 // game processes, preventing GC from reclaiming memory.
@@ -106,7 +107,9 @@ async function stopPhantomMonitor(gameId: string, pid?: number): Promise<void> {
   })
 }
 
-// Start monitor without really monitoring the game for compatibility reasons
+// Start monitor without really monitoring the game for compatibility reason.
+// If the game is being launched from main window, the `path` and `pid` is supposed to be `undefined`,
+// if this function is invoked from a process event callback, the `path` and `pid` is supposed to be set.
 export async function startPhantomMonitor(
   gameId: string,
   path?: string,
@@ -141,6 +144,28 @@ export async function startPhantomMonitor(
         },
         { source: 'nativeMonitor' }
       )
+      // if vnite is running under normal privilege while the game is running with elevated privilege,
+      // notify users vnite is not able to detect game process
+      if (path === undefined && !native.isElevatedPrivilege()) {
+        setTimeout(async () => {
+          const gameLocal = await GameDBManager.getGameLocal(gameId)
+          const mode = gameLocal.launcher.mode
+          const modeConfig = gameLocal.launcher[`${mode}Config`]
+          if (
+            !(await native.isRunning(modeConfig.monitorPath, modeConfig.monitorMode === 'folder'))
+          ) {
+            await mutex.runExclusive(async () => {
+              if (monitors.has(gameId)) {
+                native.sendSystemNotification(
+                  'vnite',
+                  i18next.t('system-notification:unableToDetectProcess'),
+                  i18next.t('system-notification:unableToDetectProcessDetail')
+                )
+              }
+            })
+          }
+        }, 3000)
+      }
     }
     await refreshTimerStatus()
   })

@@ -48,6 +48,6 @@ pub async fn replace_known_games(local_game_pathes: Vec<String>, local_game_ids:
 }
 
 #[napi(js_name = "isRunning")]
-pub async fn is_running(path: String) -> bool {
-  monitor::is_running(path).await
+pub async fn is_running(path: String, is_folder: Option<bool>) -> bool {
+  monitor::is_running(path, is_folder).await
 }

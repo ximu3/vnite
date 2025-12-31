@@ -114,6 +114,6 @@ pub async fn replace_known_games(local_game_pathes: Vec<String>, local_game_ids:
     .init_known_games(local_game_pathes, local_game_ids);
 }
 
-pub async fn is_running(path: String) -> bool {
-  gm::get().lock().await.is_running(&path)
+pub async fn is_running(path: String, is_folder: Option<bool>) -> bool {
+  gm::get().lock().await.is_running(&path, is_folder)
 }
