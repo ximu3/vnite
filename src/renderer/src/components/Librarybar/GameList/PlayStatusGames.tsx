@@ -2,7 +2,13 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@u
 import { ScrollArea } from '@ui/scroll-area'
 import { useTranslation } from 'react-i18next'
 import { useConfigState } from '~/hooks'
-import { filterGames, filterGamesByNSFW, getAllValuesInKey, sortGames } from '~/stores/game'
+import {
+  filterGames,
+  filterGamesByLocal,
+  filterGamesByNSFW,
+  getAllValuesInKey,
+  sortGames
+} from '~/stores/game'
 import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
 import { useGameListStore, usePlayStatusOrderStore } from '../store'
@@ -14,6 +20,7 @@ export function PlayStatusGames(): React.JSX.Element {
   const [order] = useConfigState('game.gameList.sort.order')
   const [showAllGamesInGroup] = useConfigState('game.gameList.showAllGamesInGroup')
   const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
+  const [localFilterMode] = useConfigState('appearances.localGameFilterMode')
   const playStatusOrder = usePlayStatusOrderStore((s) => s.playStatusOrder)
 
   const fields_tmp = getAllValuesInKey('record.playStatus')
@@ -41,9 +48,9 @@ export function PlayStatusGames(): React.JSX.Element {
           <RecentGames />
           {/* Split games into their respective play status */}
           {fields.map((field) => {
-            const gameIds = filterGamesByNSFW(
-              nsfwFilterMode,
-              filterGames({ ['record.playStatus']: [field] })
+            const gameIds = filterGamesByLocal(
+              localFilterMode,
+              filterGamesByNSFW(nsfwFilterMode, filterGames({ ['record.playStatus']: [field] }))
             )
             if (gameIds.length === 0) return <></>
 

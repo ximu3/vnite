@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
 import { AccordionContent, AccordionItem, AccordionTrigger } from '~/components/ui/accordion'
 import { useConfigState } from '~/hooks'
-import { filterGamesByNSFW, sortGames } from '~/stores/game'
+import { filterGamesByLocal, filterGamesByNSFW, sortGames } from '~/stores/game'
 import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
 
@@ -24,7 +24,12 @@ export function AllGameComponent({
   const [by] = useConfigState('game.gameList.sort.by')
   const [order] = useConfigState('game.gameList.sort.order')
   const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
-  const games = sortGames(by, order, filterGamesByNSFW(nsfwFilterMode))
+  const [localFilterMode] = useConfigState('appearances.localGameFilterMode')
+  const games = sortGames(
+    by,
+    order,
+    filterGamesByLocal(localFilterMode, filterGamesByNSFW(nsfwFilterMode))
+  )
   const { t } = useTranslation('game')
 
   return (

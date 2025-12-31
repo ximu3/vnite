@@ -5,14 +5,19 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '~/components/ui/button'
 import { useConfigState } from '~/hooks'
 import { useLibraryStore } from '~/pages/Library/store'
-import { filterGamesByNSFW, getGameStore, sortGames } from '~/stores/game'
+import { filterGamesByLocal, filterGamesByNSFW, getGameStore, sortGames } from '~/stores/game'
 import { cn } from '~/utils'
 import { BigGamePoster } from './posters/BigGamePoster'
 import { GamePoster } from './posters/GamePoster'
 
 export function RecentGames(): React.JSX.Element {
   const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
-  const games = sortGames('record.lastRunDate', 'desc', filterGamesByNSFW(nsfwFilterMode))
+  const [localFilterMode] = useConfigState('appearances.localGameFilterMode')
+  const games = sortGames(
+    'record.lastRunDate',
+    'desc',
+    filterGamesByLocal(localFilterMode, filterGamesByNSFW(nsfwFilterMode))
+  )
     .slice(0, 15)
     .filter((id) => {
       const date = getGameStore(id).getState().getValue('record.lastRunDate')

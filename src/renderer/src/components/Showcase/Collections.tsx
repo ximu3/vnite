@@ -7,12 +7,13 @@ import { Button } from '~/components/ui/button'
 import { useConfigState } from '~/hooks'
 import { useLibraryStore } from '~/pages/Library/store'
 import { useGameCollectionStore } from '~/stores'
-import { filterGamesByNSFW } from '~/stores/game'
+import { filterGamesByLocal, filterGamesByNSFW } from '~/stores/game'
 import { cn } from '~/utils'
 import { CollectionPoster } from './posters/CollectionPoster'
 
 export function Collections(): React.JSX.Element {
   const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
+  const [localFilterMode] = useConfigState('appearances.localGameFilterMode')
   const collections = useGameCollectionStore((state) => state.documents)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const scroll = throttle((direction: 'left' | 'right'): void => {
@@ -31,8 +32,14 @@ export function Collections(): React.JSX.Element {
     return Object.values(collections)
       .sort((a, b) => a.sort - b.sort)
       .map((collection) => collection._id)
-      .filter((id) => filterGamesByNSFW(nsfwFilterMode, collections[id]?.games).length > 0)
-  }, [collections, nsfwFilterMode])
+      .filter(
+        (id) =>
+          filterGamesByLocal(
+            localFilterMode,
+            filterGamesByNSFW(nsfwFilterMode, collections[id]?.games)
+          ).length > 0
+      )
+  }, [collections, nsfwFilterMode, localFilterMode])
 
   const { t } = useTranslation('game')
 

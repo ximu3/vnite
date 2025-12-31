@@ -1,10 +1,17 @@
-import { NSFWFilterMode, type MaxPlayTimeDay, type gameDoc } from '@appTypes/models'
+import {
+  LocalGameFilterMode,
+  NSFWFilterMode,
+  type MaxPlayTimeDay,
+  type gameDoc
+} from '@appTypes/models'
 import { calculateDailyPlayTime } from '@appUtils'
 import i18next from 'i18next'
 import type { Get, Paths } from 'type-fest'
 import { capDailyPlayTime, parseLocalDate } from '~/stores/game/recordUtils'
 import { jaroWinkler } from '~/utils'
 import { useConfigStore } from '../config'
+import { getGameLocalStore } from './gameLocalStoreFactory'
+import { useGamePathStore } from './gamePathStore'
 import { useGameRegistry } from './gameRegistry'
 import { getGameStore } from './gameStoreFactory'
 
@@ -66,6 +73,29 @@ export function checkGameNSFW(mode: NSFWFilterMode, gameId: string): boolean {
 export function filterGamesByNSFW(mode: NSFWFilterMode, gameIds?: string[]): string[] {
   if (!gameIds) gameIds = useGameRegistry.getState().gameIds
   return [...gameIds].filter((id) => checkGameNSFW(mode, id))
+}
+
+export function filterGamesByLocal(mode: LocalGameFilterMode, gameIds?: string[]): string[] {
+  if (!gameIds) gameIds = useGameRegistry.getState().gameIds
+
+  const localPaths = useGamePathStore.getState().paths
+
+  return [...gameIds].filter((id) => {
+    switch (mode) {
+      case LocalGameFilterMode.HideLocal: {
+        const gamePath = getGameLocalStore(id).getState().getValue('path.gamePath')
+        const isPathValid = localPaths[gamePath]?.valid ?? false
+        return !isPathValid
+      }
+      case LocalGameFilterMode.OnlyLocal: {
+        const gamePath = getGameLocalStore(id).getState().getValue('path.gamePath')
+        const isPathValid = localPaths[gamePath]?.valid ?? false
+        return isPathValid
+      }
+      default:
+        return true
+    }
+  })
 }
 
 // sorting function

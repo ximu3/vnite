@@ -12,7 +12,7 @@ import {
   SelectValue
 } from '~/components/ui/select'
 import { useConfigState } from '~/hooks'
-import { filterGamesByNSFW, sortGames } from '~/stores/game'
+import { filterGamesByLocal, filterGamesByNSFW, sortGames } from '~/stores/game'
 import { cn } from '~/utils'
 import { GamePoster } from './posters/GamePoster'
 
@@ -30,7 +30,12 @@ export function AllGamesComponent({
   const [by, setBy] = useConfigState('game.showcase.sort.by')
   const [order, setOrder] = useConfigState('game.showcase.sort.order')
   const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
-  const games = sortGames(by, order, filterGamesByNSFW(nsfwFilterMode))
+  const [localFilterMode] = useConfigState('appearances.localGameFilterMode')
+  const games = sortGames(
+    by,
+    order,
+    filterGamesByLocal(localFilterMode, filterGamesByNSFW(nsfwFilterMode))
+  )
   const toggleOrder = (): void => {
     setOrder(order === 'asc' ? 'desc' : 'asc')
   }

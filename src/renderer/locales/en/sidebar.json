@@ -19,6 +19,11 @@
       "hideNSFW": "Hide NSFW games",
       "onlyNSFW": "Show only NSFW games"
     },
+    "localGameFilter": {
+      "all": "Show all games",
+      "hideLocal": "Hide local games",
+      "onlyLocal": "Show only local games"
+    },
     "darkMode": "Dark Mode",
     "lightMode": "Light Mode",
     "cloudSyncDisabled": "Cloud Sync Disabled",

@@ -8,6 +8,11 @@ export enum NSFWFilterMode {
   HideNSFW = 1,
   OnlyNSFW = 2
 }
+export enum LocalGameFilterMode {
+  All = 0,
+  HideLocal = 1,
+  OnlyLocal = 2
+}
 export interface configDocs {
   general: {
     openAtLogin: boolean
@@ -109,6 +114,7 @@ export interface configDocs {
     }
     nsfwBlurLevel: NSFWBlurLevel
     nsfwFilterMode: NSFWFilterMode
+    localGameFilterMode: LocalGameFilterMode
     fonts: {
       family: string
       size: number
@@ -360,6 +366,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     },
     nsfwBlurLevel: NSFWBlurLevel.Off,
     nsfwFilterMode: NSFWFilterMode.All,
+    localGameFilterMode: LocalGameFilterMode.All,
     fonts: {
       family: 'LXGW WenKai Mono',
       size: 1, // in rem

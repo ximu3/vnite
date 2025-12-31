@@ -10,7 +10,7 @@ import {
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { useConfigState } from '~/hooks'
 import { useGameCollectionStore } from '~/stores'
-import { filterGamesByNSFW, sortGames, useGameRegistry } from '~/stores/game'
+import { filterGamesByLocal, filterGamesByNSFW, sortGames, useGameRegistry } from '~/stores/game'
 import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
 import { useGameListStore } from '../store'
@@ -26,6 +26,7 @@ export function Collection(): React.JSX.Element {
   const defaultValues = [...Object.keys(collections), '__empty__', 'all', 'recentGames']
   const [showAllGamesInGroup] = useConfigState('game.gameList.showAllGamesInGroup')
   const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
+  const [localFilterMode] = useConfigState('appearances.localGameFilterMode')
 
   const setOpenValues = useGameListStore((s) => s.setOpenValues)
   const openValues = useGameListStore((s) => s.getOpenValues('collection'))
@@ -47,8 +48,8 @@ export function Collection(): React.JSX.Element {
 
   const uncollectedGameIds = useMemo(() => {
     const uncollected = gameIds.filter((id) => !collectedGameIds.has(id))
-    return filterGamesByNSFW(nsfwFilterMode, uncollected)
-  }, [gameIds, collectedGameIds, nsfwFilterMode])
+    return filterGamesByLocal(localFilterMode, filterGamesByNSFW(nsfwFilterMode, uncollected))
+  }, [gameIds, collectedGameIds, nsfwFilterMode, localFilterMode])
 
   return (
     <ScrollArea className={cn('w-full h-full pr-3 -mr-3 pt-1 pb-1')}>
@@ -64,7 +65,10 @@ export function Collection(): React.JSX.Element {
           <RecentGames />
           {/* Split games into their respective collections */}
           {sortedCollections.map(([key, value]) => {
-            const gameIds = filterGamesByNSFW(nsfwFilterMode, value.games)
+            const gameIds = filterGamesByLocal(
+              localFilterMode,
+              filterGamesByNSFW(nsfwFilterMode, value.games)
+            )
             if (gameIds.length === 0) return <></>
 
             return (
