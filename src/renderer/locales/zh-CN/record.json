@@ -1,5 +1,6 @@
 {
   "title": "我的游戏记录",
+  "hotkeyHelp": "Ctrl + ←/→：切换标签\n←/→：切换日期（年/月/周报）",
   "tabs": {
     "overview": "总览",
     "weekly": "周报",

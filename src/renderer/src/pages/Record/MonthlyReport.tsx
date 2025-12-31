@@ -80,6 +80,8 @@ export function MonthlyReport(): React.JSX.Element {
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent): void => {
+      if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return
+
       if (e.key === 'ArrowLeft') {
         e.preventDefault()
         goToPreviousMonth()

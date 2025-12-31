@@ -55,7 +55,7 @@ function SettingsPopover({
 }): React.JSX.Element {
   return (
     <Popover>
-      <PopoverTrigger>
+      <PopoverTrigger asChild>
         <Button variant="bare" size="icon-sm" className={cn('group ml-1', buttonClassName)}>
           <span className={cn('icon-[mdi--cog] group-hover:text-primary')} />
         </Button>
