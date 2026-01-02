@@ -100,6 +100,7 @@ export function WeeklyReport(): React.JSX.Element {
   const router = useRouter()
   const search = useSearch({ from: '/record' })
   const selectedDate = new Date(search.date)
+  const dateTs = selectedDate.getTime()
 
   const setSelectedDate = (newDate: Date): void => {
     router.navigate({
@@ -112,7 +113,7 @@ export function WeeklyReport(): React.JSX.Element {
     })
   }
 
-  const weekData = useMemo(() => getWeeklyPlayData(selectedDate), [search])
+  const weekData = useMemo(() => getWeeklyPlayData(selectedDate), [dateTs])
 
   const goToPreviousWeek = (): void => {
     const prevWeek = new Date(selectedDate)
@@ -192,11 +193,11 @@ export function WeeklyReport(): React.JSX.Element {
         fullDate: date
       }
     })
-  }, [search])
+  }, [dateTs])
   const [mergeInterval, setMergeInterval] = useConfigState('record.weekly.mergeInterval')
   const timeLineChartDataFlat = useMemo(() => {
     return buildTimeLineChartData(weekData, weekStartTime, nextWeekStart, mergeInterval)
-  }, [search, mergeInterval])
+  }, [dateTs, mergeInterval])
 
   const handleSliderCommit = useCallback(
     (value: number) => {
