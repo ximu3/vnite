@@ -71,6 +71,10 @@ export function calculateDailyPlayTime(date: Date, timers: gameDoc['record']['ti
     for (const timer of timers) {
       const start = new Date(timer.start)
       const end = new Date(timer.end)
+      if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+        console.warn('Invalid timer record:', timer)
+        continue
+      }
 
       // If the timer record does not overlap with the target date, it is skipped
       if (end < targetDate || start >= nextDay) continue
@@ -175,6 +179,10 @@ export function getWeeklyPlayData(date = new Date()): {
       for (const timer of timers) {
         const start = new Date(timer.start)
         const end = new Date(timer.end)
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+          console.warn('Invalid timer record:', timer)
+          continue
+        }
 
         // If the timer record does not overlap with the target range, it is skipped
         if (end < weekStart || start >= weekEnd) continue
@@ -494,6 +502,10 @@ export function getPlayTimeDistribution(): { hour: number; value: number }[] {
       for (const timer of timers) {
         const start = new Date(timer.start)
         const end = new Date(timer.end)
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+          console.warn('Invalid timer record:', timer)
+          continue
+        }
 
         let current = new Date(start)
 
