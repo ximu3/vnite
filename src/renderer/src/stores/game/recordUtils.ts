@@ -29,6 +29,7 @@ export function parseLocalDate(str: string): Date {
 
 // Maximum allowed play time per day (24 hours in milliseconds)
 const MAX_DAILY_PLAYTIME = 24 * 60 * 60 * 1000
+const ONE_DAY = MAX_DAILY_PLAYTIME
 
 /**
  * Caps daily play time to 24 hours maximum
@@ -374,53 +375,61 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
       monthlyPlayDays[month] = new Set()
     }
 
-    // Iterate through each day of the year
-    const currentDate = new Date(yearStart)
-    while (currentDate <= yearEnd) {
-      const month = currentDate.getMonth()
+    for (const gameId of gameIds) {
+      const store = getGameStore(gameId)
+      const timers = store.getState().getValue('record.timers') || []
+      const gameGenres = store.getState().getValue('metadata.genres') || []
 
-      // Calculate total play time for this day
-      let dayTotal = 0
-      for (const gameId of gameIds) {
-        const store = getGameStore(gameId)
-        const timers = store.getState().getValue('record.timers') || []
-        const gameGenres = store.getState().getValue('metadata.genres') || []
-        const gameType =
-          gameGenres.length > 0 ? (gameGenres[0] === '' ? '未分类' : gameGenres[0]) : '未分类'
+      // gameTypeTime initialization
+      const gameType =
+        gameGenres.length > 0 ? (gameGenres[0] === '' ? '未分类' : gameGenres[0]) : '未分类'
+      gameTypeTime[gameType] = gameTypeTime[gameType] || {
+        detail: [],
+        summary: 0
+      }
+      gameTypeTime[gameType].detail.push({ gameId, playTime: 0 })
 
-        // Use calculateDailyPlayTime to get accurate play time for this day
-        const playTime = calculateDailyPlayTime(currentDate, timers)
-        dayTotal += playTime
+      for (const timer of timers) {
+        const start = new Date(timer.start).getTime()
+        const end = new Date(timer.end).getTime()
+        if (isNaN(start) || isNaN(end)) continue
+        if (end < yearStart.getTime() || start > yearEnd.getTime()) continue
 
-        if (playTime > 0) {
-          // Accumulate play time to game stats
-          gamePlayTime[gameId] = (gamePlayTime[gameId] || 0) + playTime
-          // Accumulate play time to game type
-          gameTypeTime[gameType] = gameTypeTime[gameType] || {
-            detail: [],
-            summary: 0
-          }
-          const existing = gameTypeTime[gameType].detail.find((e) => e.gameId === gameId)
-          if (existing) {
-            existing.playTime += playTime
-          } else {
-            gameTypeTime[gameType].detail.push({ gameId, playTime })
-          }
-          gameTypeTime[gameType].summary += playTime
+        const overlapStartY = Math.max(start, yearStart.getTime())
+        const overlapEndY = Math.min(end, yearEnd.getTime())
+
+        // gamePlayTime accumulation
+        gamePlayTime[gameId] = (gamePlayTime[gameId] || 0) + (overlapEndY - overlapStartY)
+
+        // gameTypeTime accumulation
+        gameTypeTime[gameType].detail[gameTypeTime[gameType].detail.length - 1].playTime +=
+          overlapEndY - overlapStartY
+        gameTypeTime[gameType].summary += overlapEndY - overlapStartY
+
+        // iterate through each day in the overlap period
+        const currentDate = new Date(overlapStartY)
+        currentDate.setHours(0, 0, 0, 0)
+        const dayEnd = new Date(overlapEndY)
+        dayEnd.setHours(23, 59, 59, 999)
+
+        while (currentDate <= dayEnd) {
+          const playTime =
+            Math.min(currentDate.getTime() + ONE_DAY - 1, overlapEndY) -
+            Math.max(currentDate.getTime(), overlapStartY)
+
+          const dateStr = i18next.format(currentDate, 'niceISO')
+          const month = currentDate.getMonth()
+          monthlyPlayDays[month].add(dateStr)
+          monthlyPlayTime[month] += playTime
+          totalTime += playTime
+
+          currentDate.setDate(currentDate.getDate() + 1)
         }
       }
 
-      // If this day has any play time, add it to the monthly stats
-      if (dayTotal > 0) {
-        dayTotal = capDailyPlayTime(dayTotal, currentDate)
-        const dateStr = i18next.format(currentDate, 'niceISO')
-        monthlyPlayDays[month].add(dateStr)
-        monthlyPlayTime[month] += dayTotal
-        totalTime += dayTotal
+      if (gameTypeTime[gameType].detail[gameTypeTime[gameType].detail.length - 1].playTime === 0) {
+        gameTypeTime[gameType].detail.pop()
       }
-
-      // Move to the next day
-      currentDate.setDate(currentDate.getDate() + 1)
     }
 
     // Find the month with most play time
