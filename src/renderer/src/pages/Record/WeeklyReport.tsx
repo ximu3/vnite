@@ -18,6 +18,7 @@ import {
   XAxis,
   YAxis
 } from 'recharts'
+import stringWidth from 'string-width'
 import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
 import { useConfigState } from '~/hooks'
 import { getGameStore } from '~/stores/game'
@@ -345,6 +346,31 @@ export function WeeklyReport(): React.JSX.Element {
                     tickLine={false}
                     axisLine={false}
                     width="auto"
+                    tickFormatter={(text) => {
+                      const maxSegmentWidth = 25
+                      const segments = String(text).split(/\s+/)
+
+                      for (let i = 0; i < segments.length; i++) {
+                        const seg = segments[i]
+
+                        if (stringWidth(seg) > maxSegmentWidth) {
+                          let acc = 0
+                          let cutIndex = 0
+
+                          for (const ch of seg) {
+                            const w = stringWidth(ch)
+                            if (acc + w > maxSegmentWidth) break
+                            acc += w
+                            cutIndex += ch.length
+                          }
+
+                          segments[i] = seg.slice(0, cutIndex) + '…'
+                          return segments.slice(0, i + 1).join(' ')
+                        }
+                      }
+
+                      return segments.join(' ')
+                    }}
                   />
                   {xTicks.map((t, idx) => (
                     <ReferenceLine
