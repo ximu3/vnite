@@ -27,7 +27,6 @@ import {
   getTotalPlayedDays,
   getTotalPlayedTimes,
   getTotalplayTime,
-  getTotalplayTimeYearly,
   sortGames,
   useGameRegistry
 } from '~/stores/game'
@@ -91,6 +90,8 @@ export function RecordOverview(): React.JSX.Element {
       formattedDate: date.slice(5) // Only the month-date portion is displayed
     }))
     .sort((a, b) => a.date.localeCompare(b.date)) // Sort by date
+
+  const yearlyTotalPlayTime = Object.values(playedDaysYearly).reduce((sum, item) => sum + item, 0)
 
   const yearlyChartConfig = {
     playTime: {
@@ -188,7 +189,7 @@ export function RecordOverview(): React.JSX.Element {
         <Card className="col-span-1">
           <CardHeader>
             <CardTitle>{t('overview.chart.yearlyPlayTime')}</CardTitle>
-            <CardDescription>{formatGameTime(getTotalplayTimeYearly())}</CardDescription>
+            <CardDescription>{formatGameTime(yearlyTotalPlayTime)}</CardDescription>
           </CardHeader>
           <CardContent className="pt-0">
             <ChartContainer
