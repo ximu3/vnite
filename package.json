@@ -87,6 +87,7 @@
     "skia-canvas": "^3.0.8",
     "smartcrop": "^2.0.5",
     "sonner": "^2.0.6",
+    "string-width": "^8.1.0",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.11",
     "tw-animate-css": "^1.3.4",

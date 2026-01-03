@@ -18,6 +18,7 @@ import {
   XAxis,
   YAxis
 } from 'recharts'
+import stringWidth from 'string-width'
 import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
 import { useConfigState } from '~/hooks'
 import { getGameStore } from '~/stores/game'
@@ -100,6 +101,7 @@ export function WeeklyReport(): React.JSX.Element {
   const router = useRouter()
   const search = useSearch({ from: '/record' })
   const selectedDate = new Date(search.date)
+  const dateTs = selectedDate.getTime()
 
   const setSelectedDate = (newDate: Date): void => {
     router.navigate({
@@ -112,7 +114,7 @@ export function WeeklyReport(): React.JSX.Element {
     })
   }
 
-  const weekData = useMemo(() => getWeeklyPlayData(selectedDate), [search])
+  const weekData = useMemo(() => getWeeklyPlayData(selectedDate), [dateTs])
 
   const goToPreviousWeek = (): void => {
     const prevWeek = new Date(selectedDate)
@@ -192,11 +194,11 @@ export function WeeklyReport(): React.JSX.Element {
         fullDate: date
       }
     })
-  }, [search])
+  }, [dateTs])
   const [mergeInterval, setMergeInterval] = useConfigState('record.weekly.mergeInterval')
   const timeLineChartDataFlat = useMemo(() => {
     return buildTimeLineChartData(weekData, weekStartTime, nextWeekStart, mergeInterval)
-  }, [search, mergeInterval])
+  }, [dateTs, mergeInterval])
 
   const handleSliderCommit = useCallback(
     (value: number) => {
@@ -344,6 +346,31 @@ export function WeeklyReport(): React.JSX.Element {
                     tickLine={false}
                     axisLine={false}
                     width="auto"
+                    tickFormatter={(text) => {
+                      const maxSegmentWidth = 25
+                      const segments = String(text).split(/\s+/)
+
+                      for (let i = 0; i < segments.length; i++) {
+                        const seg = segments[i]
+
+                        if (stringWidth(seg) > maxSegmentWidth) {
+                          let acc = 0
+                          let cutIndex = 0
+
+                          for (const ch of seg) {
+                            const w = stringWidth(ch)
+                            if (acc + w > maxSegmentWidth) break
+                            acc += w
+                            cutIndex += ch.length
+                          }
+
+                          segments[i] = seg.slice(0, cutIndex) + '…'
+                          return segments.slice(0, i + 1).join(' ')
+                        }
+                      }
+
+                      return segments.join(' ')
+                    }}
                   />
                   {xTicks.map((t, idx) => (
                     <ReferenceLine

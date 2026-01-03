@@ -82,8 +82,7 @@ export function YearlyReport(): React.JSX.Element {
     })
   }
 
-  // selectedYear is from search: const selectedYear = Number(search.year)
-  const yearData = useMemo(() => getYearlyPlayData(selectedYear), [search])
+  const yearData = useMemo(() => getYearlyPlayData(selectedYear), [selectedYear])
 
   const goToPreviousYear = (): void => setSelectedYear(selectedYear - 1)
   const goToNextYear = (): void => setSelectedYear(selectedYear + 1)
