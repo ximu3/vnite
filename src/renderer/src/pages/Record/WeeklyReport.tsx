@@ -3,9 +3,11 @@ import { useRouter, useSearch } from '@tanstack/react-router'
 import { Button } from '@ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/card'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@ui/dialog'
+import { ScrollArea } from '@ui/scroll-area'
 import { Separator } from '@ui/separator'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Fragment, useCallback, useEffect, useMemo } from 'react'
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   Area,
@@ -98,6 +100,9 @@ function buildTimeLineChartData(
 
 export function WeeklyReport(): React.JSX.Element {
   const { t } = useTranslation('record')
+
+  const [showMoreTimeGames, setShowMoreTimeGames] = useState(false)
+
   const router = useRouter()
   const search = useSearch({ from: '/record' })
   const selectedDate = new Date(search.date)
@@ -504,20 +509,27 @@ export function WeeklyReport(): React.JSX.Element {
         </Card>
         {/* Weekly Game Rankings */}
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>{t('weekly.weeklyGames.title')}</CardTitle>
+            {weekData.mostPlayedGames.length > 3 && (
+              <Button variant="ghost" size="icon" onClick={() => setShowMoreTimeGames(true)}>
+                <span className="icon-[mdi--chevron-double-right] w-5 h-5"></span>
+              </Button>
+            )}
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               {weekData.mostPlayedGames.length > 0 ? (
-                weekData.mostPlayedGames.map((game, index) => (
-                  <GameRankingItem
-                    key={game.gameId}
-                    gameId={game.gameId}
-                    rank={index + 1}
-                    extraInfo={formatGameTime(game.playTime)}
-                  />
-                ))
+                weekData.mostPlayedGames
+                  .slice(0, 3)
+                  .map((game, index) => (
+                    <GameRankingItem
+                      key={game.gameId}
+                      gameId={game.gameId}
+                      rank={index + 1}
+                      extraInfo={formatGameTime(game.playTime)}
+                    />
+                  ))
               ) : (
                 <div className="py-6 text-center text-sm text-muted-foreground">
                   {t('weekly.weeklyGames.noRecords')}
@@ -527,6 +539,28 @@ export function WeeklyReport(): React.JSX.Element {
           </CardContent>
         </Card>
       </div>
+
+      {/* Game Time Ranking - Dialog */}
+      <Dialog open={showMoreTimeGames} onOpenChange={setShowMoreTimeGames}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('overview.ranking.playTimeRanking')}</DialogTitle>
+            <DialogDescription>{t('overview.ranking.allGamesByPlayTime')}</DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="h-[60vh] pr-4">
+            <div className="w-[500px] space-y-2">
+              {weekData.mostPlayedGames.map(({ gameId, playTime }, index) => (
+                <GameRankingItem
+                  key={gameId}
+                  gameId={gameId}
+                  rank={index + 1}
+                  extraInfo={formatGameTime(playTime)}
+                />
+              ))}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

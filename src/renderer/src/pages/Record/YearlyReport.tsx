@@ -35,6 +35,7 @@ export function YearlyReport(): React.JSX.Element {
   )
 
   const [showGameTypeDetail, setShowGameTypeDetail] = useState(false)
+  const [showMoreTimeGames, setShowMoreTimeGames] = useState(false)
   const [typeDetailIndex, setTypeDetailIndex] = useState<number>(0)
 
   const router = useRouter()
@@ -377,19 +378,26 @@ export function YearlyReport(): React.JSX.Element {
         </Card>
         {/* Yearly Game Rankings */}
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>{t('yearly.yearlyGames.title')}</CardTitle>
+            {yearData.mostPlayedGames.length > 5 && (
+              <Button variant="ghost" size="icon" onClick={() => setShowMoreTimeGames(true)}>
+                <span className="icon-[mdi--chevron-double-right] w-5 h-5"></span>
+              </Button>
+            )}
           </CardHeader>
           <CardContent className="grid grid-cols-1 gap-4">
             {yearData.mostPlayedGames.length > 0 ? (
-              yearData.mostPlayedGames.map((game, index) => (
-                <GameRankingItem
-                  key={game.gameId}
-                  gameId={game.gameId}
-                  rank={index + 1}
-                  extraInfo={formatGameTime(game.playTime)}
-                />
-              ))
+              yearData.mostPlayedGames
+                .slice(0, 5)
+                .map((game, index) => (
+                  <GameRankingItem
+                    key={game.gameId}
+                    gameId={game.gameId}
+                    rank={index + 1}
+                    extraInfo={formatGameTime(game.playTime)}
+                  />
+                ))
             ) : (
               <div className="col-span-full py-6 text-center text-sm text-muted-foreground">
                 {t('yearly.yearlyGames.noRecords')}
@@ -421,6 +429,28 @@ export function YearlyReport(): React.JSX.Element {
             </ScrollArea>
           </DialogContent>
         )}
+      </Dialog>
+
+      {/* Game Time Ranking - Dialog */}
+      <Dialog open={showMoreTimeGames} onOpenChange={setShowMoreTimeGames}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('overview.ranking.playTimeRanking')}</DialogTitle>
+            <DialogDescription>{t('overview.ranking.allGamesByPlayTime')}</DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="h-[60vh] pr-4">
+            <div className="w-[500px] space-y-2">
+              {yearData.mostPlayedGames.map(({ gameId, playTime }, index) => (
+                <GameRankingItem
+                  key={gameId}
+                  gameId={gameId}
+                  rank={index + 1}
+                  extraInfo={formatGameTime(playTime)}
+                />
+              ))}
+            </div>
+          </ScrollArea>
+        </DialogContent>
       </Dialog>
     </div>
   )

@@ -208,7 +208,7 @@ export function getWeeklyPlayData(date = new Date()): {
     }
 
     // Get the most played games (in order of time)
-    const mostPlayedGames = playedGames.slice(0, 3)
+    const mostPlayedGames = playedGames
 
     return {
       dates,
@@ -311,7 +311,6 @@ export function getMonthlyPlayData(date = new Date()): {
       .map(([gameId, playTime]) => ({ gameId, playTime }))
       .filter((item) => item.playTime > 0)
       .sort((a, b) => b.playTime - a.playTime)
-      .slice(0, 3)
 
     // Converting weekly playtime into an array
     const weeklyPlayTimeArray = Object.entries(weeklyPlayTime)
@@ -448,7 +447,6 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
       .map(([gameId, playTime]) => ({ gameId, playTime }))
       .filter((item) => item.playTime > 0)
       .sort((a, b) => b.playTime - a.playTime)
-      .slice(0, 5)
 
     // Convert to array format
     const monthlyPlayTimeArray = Object.entries(monthlyPlayTime)
