@@ -1,11 +1,11 @@
+import { generateUUID } from '@appUtils'
+import log from 'electron-log/main'
 import fse from 'fs-extra'
 import path from 'path'
-import { zipFolder, unzipFile } from '~/utils'
-import { getAppTempPath } from '~/features/system'
-import { generateUUID } from '@appUtils'
 import { GameDBManager } from '~/core/database'
-import log from 'electron-log/main'
 import { eventBus } from '~/core/events'
+import { getAppTempPath } from '~/features/system'
+import { unzipFile, zipFolder } from '~/utils'
 
 export async function backupGameSave(gameId: string): Promise<void> {
   try {
@@ -89,7 +89,8 @@ export async function restoreGameSave(gameId: string, saveId: string): Promise<v
           // Copy the file from the temporary backup directory to the game save path
           await fse.copy(path.join(tempFilesPath, backupName), pathInGame)
         } catch (error) {
-          log.error(`[Game] [Game] Failed to restore ${pathInGame}:`, error)
+          log.error(`[Game] Failed to restore ${pathInGame}:`, error)
+          throw error
         }
       })
     )
