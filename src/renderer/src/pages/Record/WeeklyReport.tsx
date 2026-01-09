@@ -3,9 +3,11 @@ import { useRouter, useSearch } from '@tanstack/react-router'
 import { Button } from '@ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/card'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@ui/dialog'
+import { ScrollArea } from '@ui/scroll-area'
 import { Separator } from '@ui/separator'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Fragment, useCallback, useEffect, useMemo } from 'react'
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   Area,
@@ -18,6 +20,7 @@ import {
   XAxis,
   YAxis
 } from 'recharts'
+import stringWidth from 'string-width'
 import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
 import { useConfigState } from '~/hooks'
 import { getGameStore } from '~/stores/game'
@@ -97,9 +100,13 @@ function buildTimeLineChartData(
 
 export function WeeklyReport(): React.JSX.Element {
   const { t } = useTranslation('record')
+
+  const [showMoreTimeGames, setShowMoreTimeGames] = useState(false)
+
   const router = useRouter()
   const search = useSearch({ from: '/record' })
   const selectedDate = new Date(search.date)
+  const dateTs = selectedDate.getTime()
 
   const setSelectedDate = (newDate: Date): void => {
     router.navigate({
@@ -112,7 +119,7 @@ export function WeeklyReport(): React.JSX.Element {
     })
   }
 
-  const weekData = useMemo(() => getWeeklyPlayData(selectedDate), [search])
+  const weekData = useMemo(() => getWeeklyPlayData(selectedDate), [dateTs])
 
   const goToPreviousWeek = (): void => {
     const prevWeek = new Date(selectedDate)
@@ -192,11 +199,11 @@ export function WeeklyReport(): React.JSX.Element {
         fullDate: date
       }
     })
-  }, [search])
+  }, [dateTs])
   const [mergeInterval, setMergeInterval] = useConfigState('record.weekly.mergeInterval')
   const timeLineChartDataFlat = useMemo(() => {
     return buildTimeLineChartData(weekData, weekStartTime, nextWeekStart, mergeInterval)
-  }, [search, mergeInterval])
+  }, [dateTs, mergeInterval])
 
   const handleSliderCommit = useCallback(
     (value: number) => {
@@ -344,6 +351,31 @@ export function WeeklyReport(): React.JSX.Element {
                     tickLine={false}
                     axisLine={false}
                     width="auto"
+                    tickFormatter={(text) => {
+                      const maxSegmentWidth = 25
+                      const segments = String(text).split(/\s+/)
+
+                      for (let i = 0; i < segments.length; i++) {
+                        const seg = segments[i]
+
+                        if (stringWidth(seg) > maxSegmentWidth) {
+                          let acc = 0
+                          let cutIndex = 0
+
+                          for (const ch of seg) {
+                            const w = stringWidth(ch)
+                            if (acc + w > maxSegmentWidth) break
+                            acc += w
+                            cutIndex += ch.length
+                          }
+
+                          segments[i] = seg.slice(0, cutIndex) + '…'
+                          return segments.slice(0, i + 1).join(' ')
+                        }
+                      }
+
+                      return segments.join(' ')
+                    }}
                   />
                   {xTicks.map((t, idx) => (
                     <ReferenceLine
@@ -477,20 +509,27 @@ export function WeeklyReport(): React.JSX.Element {
         </Card>
         {/* Weekly Game Rankings */}
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>{t('weekly.weeklyGames.title')}</CardTitle>
+            {weekData.mostPlayedGames.length > 3 && (
+              <Button variant="ghost" size="icon" onClick={() => setShowMoreTimeGames(true)}>
+                <span className="icon-[mdi--chevron-double-right] w-5 h-5"></span>
+              </Button>
+            )}
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               {weekData.mostPlayedGames.length > 0 ? (
-                weekData.mostPlayedGames.map((game, index) => (
-                  <GameRankingItem
-                    key={game.gameId}
-                    gameId={game.gameId}
-                    rank={index + 1}
-                    extraInfo={formatGameTime(game.playTime)}
-                  />
-                ))
+                weekData.mostPlayedGames
+                  .slice(0, 3)
+                  .map((game, index) => (
+                    <GameRankingItem
+                      key={game.gameId}
+                      gameId={game.gameId}
+                      rank={index + 1}
+                      extraInfo={formatGameTime(game.playTime)}
+                    />
+                  ))
               ) : (
                 <div className="py-6 text-center text-sm text-muted-foreground">
                   {t('weekly.weeklyGames.noRecords')}
@@ -500,6 +539,28 @@ export function WeeklyReport(): React.JSX.Element {
           </CardContent>
         </Card>
       </div>
+
+      {/* Game Time Ranking - Dialog */}
+      <Dialog open={showMoreTimeGames} onOpenChange={setShowMoreTimeGames}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('overview.ranking.playTimeRanking')}</DialogTitle>
+            <DialogDescription>{t('overview.ranking.allGamesByPlayTime')}</DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="h-[60vh] pr-4">
+            <div className="w-[500px] space-y-2">
+              {weekData.mostPlayedGames.map(({ gameId, playTime }, index) => (
+                <GameRankingItem
+                  key={gameId}
+                  gameId={gameId}
+                  rank={index + 1}
+                  extraInfo={formatGameTime(playTime)}
+                />
+              ))}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
