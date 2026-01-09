@@ -386,7 +386,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
           {/* Custom context menu for the background area of content container */}
           <ContextMenuContent className={cn('w-40')}>
             <ContextMenuItem onSelect={() => openPropertiesDialog('media')}>
-              修改媒体属性
+              {t('detail.contextMenu.editMediaProperties')}
             </ContextMenuItem>
             <ContextMenuItem
               onSelect={() => {
