@@ -15,6 +15,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { useConfigState, useGameState } from '~/hooks'
 import { cn } from '~/utils'
 import { ScrollArea } from '../ui/scroll-area'
+import { PlayTimeEditorDialog } from './Config/ManageMenu/PlayTimeEditorDialog'
+import { ScoreEditorDialog } from './Config/ManageMenu/ScoreEditorDialog'
 import { GamePropertiesDialog } from './Config/Properties'
 import { ImageViewerDialog } from './Config/Properties/Media/ImageViewerDialog'
 import { Header } from './Header'
@@ -48,6 +50,12 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   const propertiesDialogState = useGameDetailStore((s) => s.propertiesDialog)
   const closePropertiesDialog = useGameDetailStore((s) => s.closePropertiesDialog)
   const openPropertiesDialog = useGameDetailStore((s) => s.openPropertiesDialog)
+  const isPlayTimeEditorDialogOpen = useGameDetailStore((state) => state.isPlayTimeEditorDialogOpen)
+  const setIsPlayTimeEditorDialogOpen = useGameDetailStore(
+    (state) => state.setIsPlayTimeEditorDialogOpen
+  )
+  const isScoreEditorDialogOpen = useGameDetailStore((state) => state.isScoreEditorDialogOpen)
+  const setIsScoreEditorDialogOpen = useGameDetailStore((state) => state.setIsScoreEditorDialogOpen)
 
   // Game Logo position and size management
   const initialPosition = { x: 1.5, y: 35 }
@@ -410,6 +418,12 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
           isOpen={isInformationDialogOpen}
           setIsOpen={setIsInformationDialogOpen}
         />
+      )}
+      {isPlayTimeEditorDialogOpen && (
+        <PlayTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayTimeEditorDialogOpen} />
+      )}
+      {isScoreEditorDialogOpen && (
+        <ScoreEditorDialog gameId={gameId} setIsOpen={setIsScoreEditorDialogOpen} />
       )}
     </div>
   )

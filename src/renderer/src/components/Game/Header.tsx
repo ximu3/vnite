@@ -14,8 +14,6 @@ import { useRunningGames } from '~/pages/Library/store'
 import { cn, copyWithToast } from '~/utils'
 import { GameImage } from '../ui/game-image'
 import { Config } from './Config'
-import { PlayTimeEditorDialog } from './Config/ManageMenu/PlayTimeEditorDialog'
-import { ScoreEditorDialog } from './Config/ManageMenu/ScoreEditorDialog'
 import { ImageViewerDialog } from './Config/Properties/Media/ImageViewerDialog'
 import { Record } from './Overview/Record'
 import { StartGame } from './StartGame'
@@ -37,12 +35,6 @@ export function Header({
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
   const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
 
-  const isPlayTimeEditorDialogOpen = useGameDetailStore((state) => state.isPlayTimeEditorDialogOpen)
-  const setIsPlayTimeEditorDialogOpen = useGameDetailStore(
-    (state) => state.setIsPlayTimeEditorDialogOpen
-  )
-  const isScoreEditorDialogOpen = useGameDetailStore((state) => state.isScoreEditorDialogOpen)
-  const setIsScoreEditorDialogOpen = useGameDetailStore((state) => state.setIsScoreEditorDialogOpen)
   const openPropertiesDialog = useGameDetailStore((state) => state.openPropertiesDialog)
 
   const stringToBase64 = (str: string): string =>
@@ -165,12 +157,6 @@ export function Header({
         </div>
       </div>
 
-      {isPlayTimeEditorDialogOpen && (
-        <PlayTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayTimeEditorDialogOpen} />
-      )}
-      {isScoreEditorDialogOpen && (
-        <ScoreEditorDialog gameId={gameId} setIsOpen={setIsScoreEditorDialogOpen} />
-      )}
       {isImageViewerOpen && (
         <ImageViewerDialog
           isOpen={isImageViewerOpen}
