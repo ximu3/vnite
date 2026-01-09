@@ -43,6 +43,8 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   // Store the current scroll position to avoid re-querying the DOM in the rAF callback
   const currentScrollTop = useRef(0)
 
+  const lastDetailTab = useGameDetailStore((s) => s.lastDetailTab)
+  const setLastDetailTab = useGameDetailStore((s) => s.setLastDetailTab)
   const isEditingLogo = useGameDetailStore((state) => state.isEditingLogo)
   const setIsEditingLogo = useGameDetailStore((state) => state.setIsEditingLogo)
   const isInformationDialogOpen = useGameDetailStore((s) => s.isInformationDialogOpen)
@@ -339,7 +341,11 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
 
                 {/* Content Area */}
                 <div className={cn('p-7 pt-4 h-full')}>
-                  <Tabs defaultValue="overview" className={cn('w-full')}>
+                  <Tabs
+                    value={lastDetailTab}
+                    onValueChange={(value) => setLastDetailTab(value as typeof lastDetailTab)}
+                    className={cn('w-full')}
+                  >
                     <TabsList
                       className={cn('w-full justify-start bg-transparent')}
                       variant="underline"

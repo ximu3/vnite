@@ -3,6 +3,9 @@ import { create } from 'zustand'
 export type PropertiesDialogTab = 'launcher' | 'path' | 'media'
 
 export interface GameDetailStore {
+  lastDetailTab: 'overview' | 'record' | 'save' | 'memory'
+  setLastDetailTab: (tab: 'overview' | 'record' | 'save' | 'memory') => void
+
   isEditingLogo: boolean
   setIsEditingLogo: (isEditing: boolean) => void
 
@@ -21,6 +24,9 @@ export interface GameDetailStore {
 }
 
 export const useGameDetailStore = create<GameDetailStore>((set) => ({
+  lastDetailTab: 'overview',
+  setLastDetailTab: (tab) => set({ lastDetailTab: tab }),
+
   isEditingLogo: false,
   setIsEditingLogo: (isEditing): void => set({ isEditingLogo: isEditing }),
 
