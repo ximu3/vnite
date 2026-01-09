@@ -1,7 +1,9 @@
-import { cn } from '~/utils'
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
-import { Separator } from '~/components/ui/separator'
-import { Button } from '~/components/ui/button'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { ipcManager } from '~/app/ipc'
+import { ConfigItem } from '~/components/form/ConfigItem'
+import { ConfigItemPure } from '~/components/form/ConfigItemPure'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,14 +15,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from '~/components/ui/alert-dialog'
+import { Button } from '~/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import { Separator } from '~/components/ui/separator'
 import { Switch } from '~/components/ui/switch'
-import { ConfigItemPure } from '~/components/form/ConfigItemPure'
-import { toast } from 'sonner'
-import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { ipcManager } from '~/app/ipc'
-import { ConfigItem } from '~/components/form/ConfigItem'
 import { useConfigState } from '~/hooks'
+import { useBackupStore } from '~/stores/utils'
+import { cn } from '~/utils'
 
 export function Database(): React.JSX.Element {
   const { t } = useTranslation('config')
@@ -28,6 +29,7 @@ export function Database(): React.JSX.Element {
   const [isAdmin, setIsAdmin] = useState<boolean>(false)
   const [switchDialogOpen, setSwitchDialogOpen] = useState<boolean>(false)
   const [imgStorageBackend] = useConfigState('memory.image.storageBackend')
+  const setIsBackingUp = useBackupStore((state) => state.setBackingUp)
 
   useEffect(() => {
     ipcManager.invoke('app:is-portable-mode').then((isPortable) => {
@@ -40,18 +42,24 @@ export function Database(): React.JSX.Element {
   }, [])
 
   const backup = async (): Promise<void> => {
-    toast.promise(
-      async () => {
-        const targetPath = await ipcManager.invoke('system:select-path-dialog', ['openDirectory'])
-        if (!targetPath) return
-        await ipcManager.invoke('db:backup', targetPath)
-      },
-      {
-        loading: t('database.notifications.backingUp'),
-        success: t('database.notifications.backupSuccess'),
-        error: t('database.notifications.backupError')
-      }
-    )
+    setIsBackingUp(true)
+    toast
+      .promise(
+        async () => {
+          const targetPath = await ipcManager.invoke('system:select-path-dialog', ['openDirectory'])
+          if (!targetPath) return
+          await ipcManager.invoke('db:backup', targetPath)
+        },
+        {
+          loading: t('database.notifications.backingUp'),
+          success: t('database.notifications.backupSuccess'),
+          error: t('database.notifications.backupError')
+        }
+      )
+      .unwrap()
+      .finally(() => {
+        setIsBackingUp(false)
+      })
   }
 
   const restore = async (): Promise<void> => {
@@ -202,7 +210,9 @@ export function Database(): React.JSX.Element {
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>{t('database.confirmImport')}</AlertDialogTitle>
-                        <AlertDialogDescription>{t('database.importWarning')}</AlertDialogDescription>
+                        <AlertDialogDescription>
+                          {t('database.importWarning')}
+                        </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>{t('utils:common.cancel')}</AlertDialogCancel>

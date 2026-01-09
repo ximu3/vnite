@@ -1,4 +1,5 @@
 import { DocChange } from '@appTypes/models'
+import { create } from 'zustand'
 import { ipcManager } from '~/app/ipc'
 
 /**
@@ -29,3 +30,13 @@ export async function syncTo<T extends Record<string, any>>(
     throw error
   }
 }
+
+interface BackupState {
+  isBackingUp: boolean
+  setBackingUp: (value: boolean) => void
+}
+
+export const useBackupStore = create<BackupState>((set) => ({
+  isBackingUp: false,
+  setBackingUp: (value) => set({ isBackingUp: value })
+}))
