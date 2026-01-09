@@ -1,19 +1,19 @@
-import React, { useCallback } from 'react'
-import { useStateHook } from './useStateHook'
-import type { ConfigItemProps, HookType, DocType } from './types'
-import type { Paths } from 'type-fest'
-import { Card, CardContent } from '@ui/card'
-import { Input } from '@ui/input'
-import { Textarea } from '@ui/textarea'
-import { Switch } from '@ui/switch'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/select'
-import { DateTimeInput } from '@ui/date-input'
 import { ArrayEditor } from '@ui/array-editor'
-import { Slider } from '@ui/slider'
 import { Button } from '@ui/button'
+import { Card, CardContent } from '@ui/card'
+import { DateTimeInput } from '@ui/date-input'
 import { HotkeySetting } from '@ui/hotkey-setting'
-import { cn } from '~/utils'
+import { Input } from '@ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/select'
+import { Slider } from '@ui/slider'
+import { Switch } from '@ui/switch'
+import { Textarea } from '@ui/textarea'
+import React, { useCallback } from 'react'
+import type { Paths } from 'type-fest'
 import { ipcManager } from '~/app/ipc'
+import { cn } from '~/utils'
+import type { ConfigItemProps, DocType, HookType } from './types'
+import { useStateHook } from './useStateHook'
 
 export function ConfigItem<
   T extends HookType,
@@ -128,10 +128,16 @@ export function ConfigItem<
   const handleFileSelect = useCallback(
     async (
       dialogType: 'openFile' | 'openDirectory' = 'openFile',
-      _filters?: Array<{ name: string; extensions: string[] }>
+      _filters?: Array<{ name: string; extensions: string[] }>,
+      defaultPath?: string
     ) => {
       try {
-        const selectedPath = await ipcManager.invoke('system:select-path-dialog', [dialogType])
+        const selectedPath = await ipcManager.invoke(
+          'system:select-path-dialog',
+          [dialogType],
+          undefined,
+          defaultPath || undefined
+        )
         if (selectedPath) {
           await setValueAndSave(selectedPath as any)
           if (onChange) {
@@ -304,7 +310,11 @@ export function ConfigItem<
         const fileInputProps = props as ConfigItemProps<T, Path> & { controlType: 'fileinput' }
         const dialogType = fileInputProps.dialogType || 'openFile'
         const filters = fileInputProps.dialogFilters
-        const buttonIcon = fileInputProps.buttonIcon || 'icon-[mdi--file-outline]'
+        const buttonIcon =
+          fileInputProps.buttonIcon ||
+          (dialogType === 'openDirectory'
+            ? 'icon-[mdi--folder-outline]'
+            : 'icon-[mdi--file-outline]')
         const buttonTooltip = fileInputProps.buttonTooltip
 
         return (
@@ -320,7 +330,7 @@ export function ConfigItem<
             <Button
               variant="outline"
               size="icon"
-              onClick={() => handleFileSelect(dialogType, filters)}
+              onClick={() => handleFileSelect(dialogType, filters, value)}
               disabled={disabled}
               title={buttonTooltip}
             >

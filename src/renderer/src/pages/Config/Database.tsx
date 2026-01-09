@@ -19,7 +19,7 @@ import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { Separator } from '~/components/ui/separator'
 import { Switch } from '~/components/ui/switch'
-import { useConfigState } from '~/hooks'
+import { useConfigLocalState, useConfigState } from '~/hooks'
 import { useBackupStore } from '~/stores/utils'
 import { cn } from '~/utils'
 
@@ -29,6 +29,7 @@ export function Database(): React.JSX.Element {
   const [isAdmin, setIsAdmin] = useState<boolean>(false)
   const [switchDialogOpen, setSwitchDialogOpen] = useState<boolean>(false)
   const [imgStorageBackend] = useConfigState('memory.image.storageBackend')
+  const [defaultBackupPath] = useConfigLocalState('database.defaultBackupPath')
   const setIsBackingUp = useBackupStore((state) => state.setBackingUp)
 
   useEffect(() => {
@@ -46,7 +47,12 @@ export function Database(): React.JSX.Element {
     toast
       .promise(
         async () => {
-          const targetPath = await ipcManager.invoke('system:select-path-dialog', ['openDirectory'])
+          const targetPath = await ipcManager.invoke(
+            'system:select-path-dialog',
+            ['openDirectory'],
+            undefined,
+            defaultBackupPath || undefined
+          )
           if (!targetPath) return
           await ipcManager.invoke('db:backup', targetPath)
         },
@@ -249,6 +255,16 @@ export function Database(): React.JSX.Element {
                   </AlertDialogContent>
                 </AlertDialog>
               </ConfigItemPure>
+
+              <ConfigItem
+                hookType="configLocal"
+                path="database.defaultBackupPath"
+                title={t('database.defaultBackupPath.title')}
+                description={t('database.defaultBackupPath.description')}
+                controlType="fileinput"
+                placeholder={t('database.defaultBackupPath.placeholder')}
+                dialogType="openDirectory"
+              />
             </div>
           </div>
         </CardContent>

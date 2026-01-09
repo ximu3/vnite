@@ -341,6 +341,11 @@
     "importWarning": "匯入資料庫將覆蓋目前資料庫，此操作不可逆！操作結束後應用將自動重啟。",
     "confirmImportV2": "確定要匯入V2資料庫嗎？",
     "importV2Warning": "匯入V2資料庫將覆蓋目前資料庫，此操作不可逆！操作結束後應用將自動重啟。",
+    "defaultBackupPath": {
+      "title": "資料庫預設備份目錄",
+      "description": "設定此路徑後，備份操作的選擇對話框將預設開啟至該目錄。",
+      "placeholder": "輸入資料庫預設備份目錄"
+    },
     "portableAdminRequired": "注意：便攜模式可能需要管理員權限。",
     "notifications": {
       "backingUp": "正在備份資料庫…",
