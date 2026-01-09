@@ -1,5 +1,12 @@
 import { NSFWBlurLevel } from '@appTypes/models'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger
+} from '~/components/ui/context-menu'
 import { useConfigState, useGameState } from '~/hooks'
 import { useRunningGames } from '~/pages/Library/store'
 import { cn, copyWithToast } from '~/utils'
@@ -10,14 +17,6 @@ import { ScoreEditorDialog } from './Config/ManageMenu/ScoreEditorDialog'
 import { StartGame } from './StartGame'
 import { StopGame } from './StopGame'
 import { useGameDetailStore } from './store'
-import { useTranslation } from 'react-i18next'
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuTrigger
-} from '~/components/ui/context-menu'
-import { GamePropertiesDialog } from './Config/Properties'
 
 export function HeaderCompact({
   gameId,
@@ -43,11 +42,11 @@ export function HeaderCompact({
   )
   const isScoreEditorDialogOpen = useGameDetailStore((state) => state.isScoreEditorDialogOpen)
   const setIsScoreEditorDialogOpen = useGameDetailStore((state) => state.setIsScoreEditorDialogOpen)
+  const openPropertiesDialog = useGameDetailStore((state) => state.openPropertiesDialog)
+
   const stringToBase64 = (str: string): string =>
     btoa(String.fromCharCode(...new TextEncoder().encode(str)))
   const obfuscatedName = stringToBase64(name).slice(0, name.length)
-
-  const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = React.useState(false)
 
   return (
     <>
@@ -69,7 +68,7 @@ export function HeaderCompact({
                 </div>
               </ContextMenuTrigger>
               <ContextMenuContent className={cn('w-40')}>
-                <ContextMenuItem onSelect={() => setIsPropertiesDialogOpen(true)}>
+                <ContextMenuItem onSelect={() => openPropertiesDialog('media')}>
                   {t('detail.contextMenu.editMediaProperties')}
                 </ContextMenuItem>
               </ContextMenuContent>
@@ -163,14 +162,6 @@ export function HeaderCompact({
       )}
       {isScoreEditorDialogOpen && (
         <ScoreEditorDialog gameId={gameId} setIsOpen={setIsScoreEditorDialogOpen} />
-      )}
-      {isPropertiesDialogOpen && (
-        <GamePropertiesDialog
-          gameId={gameId}
-          isOpen={isPropertiesDialogOpen}
-          setIsOpen={setIsPropertiesDialogOpen}
-          defaultTab={'media'}
-        />
       )}
     </>
   )

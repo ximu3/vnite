@@ -13,14 +13,13 @@ import { cn } from '~/utils'
 import { useGameDetailStore } from '../store'
 import { CollectionMenu } from './CollectionMenu'
 import { ManageMenu } from './ManageMenu'
-import { GamePropertiesDialog } from './Properties'
 
 export function Config({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
 
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = React.useState(false)
   const setIsInformationDialogOpen = useGameDetailStore((s) => s.setIsInformationDialogOpen)
-  const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = React.useState(false)
+  const openPropertiesDialog = useGameDetailStore((state) => state.openPropertiesDialog)
 
   return (
     <>
@@ -40,20 +39,14 @@ export function Config({ gameId }: { gameId: string }): React.JSX.Element {
             openInformationEditorDialog={() => setIsInformationDialogOpen(true)}
           />
           <DropdownMenuSeparator />
-          <DropdownMenuItem onSelect={() => setIsPropertiesDialogOpen(true)}>
+          <DropdownMenuItem onSelect={() => openPropertiesDialog()}>
             <div>{t('detail.config.properties')}</div>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
       {isAddCollectionDialogOpen && (
         <AddCollectionDialog gameIds={[gameId]} setIsOpen={setIsAddCollectionDialogOpen} />
-      )}
-      {isPropertiesDialogOpen && (
-        <GamePropertiesDialog
-          gameId={gameId}
-          isOpen={isPropertiesDialogOpen}
-          setIsOpen={setIsPropertiesDialogOpen}
-        />
       )}
     </>
   )

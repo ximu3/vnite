@@ -14,6 +14,7 @@ import {
 } from '~/components/ui/table'
 import { useGameLocalState, useGameState } from '~/hooks'
 import { cn } from '~/utils'
+import { useGameDetailStore } from '../store'
 
 export function Save({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
@@ -22,6 +23,8 @@ export function Save({ gameId }: { gameId: string }): React.JSX.Element {
     'save.saveList',
     true
   )
+
+  const openPropertiesDialog = useGameDetailStore((state) => state.openPropertiesDialog)
 
   const [savePaths] = useGameLocalState(gameId, 'path.savePaths')
 
@@ -150,6 +153,11 @@ export function Save({ gameId }: { gameId: string }): React.JSX.Element {
             </TableBody>
           </Table>
         </div>
+      </div>
+      <div className="mt-4">
+        <Button variant="secondary" onClick={() => openPropertiesDialog('path')}>
+          {t('detail.save.openPropertiesDialog')}
+        </Button>
       </div>
     </div>
   )

@@ -1,5 +1,7 @@
 import { create } from 'zustand'
 
+export type PropertiesDialogTab = 'launcher' | 'path' | 'media'
+
 export interface GameDetailStore {
   isEditingLogo: boolean
   setIsEditingLogo: (isEditing: boolean) => void
@@ -12,6 +14,10 @@ export interface GameDetailStore {
 
   isInformationDialogOpen: boolean
   setIsInformationDialogOpen: (open: boolean) => void
+
+  propertiesDialog: { open: false } | { open: true; defaultTab: PropertiesDialogTab }
+  openPropertiesDialog: (defaultTab?: PropertiesDialogTab) => void
+  closePropertiesDialog: () => void
 }
 
 export const useGameDetailStore = create<GameDetailStore>((set) => ({
@@ -25,5 +31,10 @@ export const useGameDetailStore = create<GameDetailStore>((set) => ({
   setIsScoreEditorDialogOpen: (open) => set({ isScoreEditorDialogOpen: open }),
 
   isInformationDialogOpen: false,
-  setIsInformationDialogOpen: (open): void => set({ isInformationDialogOpen: open })
+  setIsInformationDialogOpen: (open): void => set({ isInformationDialogOpen: open }),
+
+  propertiesDialog: { open: false },
+  openPropertiesDialog: (defaultTab = 'launcher') =>
+    set({ propertiesDialog: { open: true, defaultTab } }),
+  closePropertiesDialog: () => set({ propertiesDialog: { open: false } })
 }))

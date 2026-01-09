@@ -1,27 +1,26 @@
 import { NSFWBlurLevel } from '@appTypes/models'
 import React from 'react'
-import { useConfigState, useGameState } from '~/hooks'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { ipcManager } from '~/app/ipc'
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger
 } from '~/components/ui/context-menu'
+import { useConfigState, useGameState } from '~/hooks'
 import { useRunningGames } from '~/pages/Library/store'
-import { useTranslation } from 'react-i18next'
 import { cn, copyWithToast } from '~/utils'
 import { GameImage } from '../ui/game-image'
 import { Config } from './Config'
 import { PlayTimeEditorDialog } from './Config/ManageMenu/PlayTimeEditorDialog'
 import { ScoreEditorDialog } from './Config/ManageMenu/ScoreEditorDialog'
+import { ImageViewerDialog } from './Config/Properties/Media/ImageViewerDialog'
 import { Record } from './Overview/Record'
 import { StartGame } from './StartGame'
 import { StopGame } from './StopGame'
 import { useGameDetailStore } from './store'
-import { GamePropertiesDialog } from './Config/Properties'
-import { ImageViewerDialog } from './Config/Properties/Media/ImageViewerDialog'
-import { ipcManager } from '~/app/ipc'
-import { toast } from 'sonner'
 
 export function Header({
   gameId,
@@ -44,11 +43,12 @@ export function Header({
   )
   const isScoreEditorDialogOpen = useGameDetailStore((state) => state.isScoreEditorDialogOpen)
   const setIsScoreEditorDialogOpen = useGameDetailStore((state) => state.setIsScoreEditorDialogOpen)
+  const openPropertiesDialog = useGameDetailStore((state) => state.openPropertiesDialog)
+
   const stringToBase64 = (str: string): string =>
     btoa(String.fromCharCode(...new TextEncoder().encode(str)))
   const obfuscatedName = stringToBase64(name).slice(0, name.length)
 
-  const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = React.useState(false)
   const { t } = useTranslation('game')
 
   const [isImageViewerOpen, setIsImageViewerOpen] = React.useState(false)
@@ -146,7 +146,7 @@ export function Header({
               </div>
             </ContextMenuTrigger>
             <ContextMenuContent className={cn('w-40')}>
-              <ContextMenuItem onSelect={() => setIsPropertiesDialogOpen(true)}>
+              <ContextMenuItem onSelect={() => openPropertiesDialog('media')}>
                 {t('detail.contextMenu.editMediaProperties')}
               </ContextMenuItem>
               <ContextMenuItem
@@ -170,14 +170,6 @@ export function Header({
       )}
       {isScoreEditorDialogOpen && (
         <ScoreEditorDialog gameId={gameId} setIsOpen={setIsScoreEditorDialogOpen} />
-      )}
-      {isPropertiesDialogOpen && (
-        <GamePropertiesDialog
-          gameId={gameId}
-          isOpen={isPropertiesDialogOpen}
-          setIsOpen={setIsPropertiesDialogOpen}
-          defaultTab={'media'}
-        />
       )}
       {isImageViewerOpen && (
         <ImageViewerDialog

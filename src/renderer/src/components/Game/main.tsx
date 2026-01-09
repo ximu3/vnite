@@ -45,6 +45,9 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   const setIsEditingLogo = useGameDetailStore((state) => state.setIsEditingLogo)
   const isInformationDialogOpen = useGameDetailStore((s) => s.isInformationDialogOpen)
   const setIsInformationDialogOpen = useGameDetailStore((s) => s.setIsInformationDialogOpen)
+  const propertiesDialogState = useGameDetailStore((s) => s.propertiesDialog)
+  const closePropertiesDialog = useGameDetailStore((s) => s.closePropertiesDialog)
+  const openPropertiesDialog = useGameDetailStore((s) => s.openPropertiesDialog)
 
   // Game Logo position and size management
   const initialPosition = { x: 1.5, y: 35 }
@@ -185,7 +188,6 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   const isInitialPosition = (pos: { x: number; y: number }): boolean =>
     pos.x === initialPosition.x && pos.y === initialPosition.y
 
-  const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = useState(false)
   const [isImageViewerOpen, setIsImageViewerOpen] = useState(false)
   const [imageViewerPath, setImageViewerPath] = useState<string | null>(null)
 
@@ -290,7 +292,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
             </div>
           </ContextMenuTrigger>
           <ContextMenuContent className={cn('w-40')}>
-            <ContextMenuItem onSelect={() => setIsPropertiesDialogOpen(true)}>
+            <ContextMenuItem onSelect={() => openPropertiesDialog('media')}>
               {t('detail.contextMenu.editMediaProperties')}
             </ContextMenuItem>
           </ContextMenuContent>
@@ -369,7 +371,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
 
           {/* Custom context menu for the background area of content container */}
           <ContextMenuContent className={cn('w-40')}>
-            <ContextMenuItem onSelect={() => setIsPropertiesDialogOpen(true)}>
+            <ContextMenuItem onSelect={() => openPropertiesDialog('media')}>
               修改媒体属性
             </ContextMenuItem>
             <ContextMenuItem
@@ -383,12 +385,16 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
         </ContextMenu>
       </ScrollArea>
 
-      {isPropertiesDialogOpen && (
+      {propertiesDialogState.open && (
         <GamePropertiesDialog
           gameId={gameId}
-          isOpen={isPropertiesDialogOpen}
-          setIsOpen={setIsPropertiesDialogOpen}
-          defaultTab={'media'}
+          isOpen={propertiesDialogState.open}
+          setIsOpen={(open) => {
+            if (!open) {
+              closePropertiesDialog()
+            }
+          }}
+          defaultTab={propertiesDialogState.defaultTab}
         />
       )}
       {isImageViewerOpen && (
