@@ -273,6 +273,9 @@ export interface configLocalDocs {
       }
     }
   }
+  database: {
+    defaultBackupPath: string
+  }
   network: {
     proxy: {
       enable: boolean
@@ -436,6 +439,9 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
 } as const
 
 export const DEFAULT_CONFIG_LOCAL_VALUES: Readonly<configLocalDocs> = {
+  database: {
+    defaultBackupPath: ''
+  },
   userInfo: {
     name: '',
     email: '',

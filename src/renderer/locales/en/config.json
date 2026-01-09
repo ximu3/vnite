@@ -341,6 +341,11 @@
     "importWarning": "Importing a database will overwrite the current database. This operation is irreversible! The application will restart automatically after the operation.",
     "confirmImportV2": "Are you sure you want to import the V2 database?",
     "importV2Warning": "Importing a V2 database will overwrite the current database. This operation is irreversible! The application will restart automatically after the operation.",
+    "defaultBackupPath": {
+      "title": "Default Database Backup Path",
+      "description": "When set, the backup dialog will open at this directory by default.",
+      "placeholder": "Enter the default database backup path"
+    },
     "portableAdminRequired": "Note: Portable mode may require administrator privileges.",
     "notifications": {
       "backingUp": "Backing up database…",
