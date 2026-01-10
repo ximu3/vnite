@@ -118,6 +118,7 @@
     "depthPlaceholder": "Select scan depth",
     "depthTooltip": "Set the depth level for folder scanning",
     "targetCollection": "Target Collection",
-    "targetCollectionNone": "None"
+    "targetCollectionNone": "None",
+    "normalizeFolderName": "Use simplified folder name for metadata scraping"
   }
 }

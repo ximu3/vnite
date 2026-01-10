@@ -44,7 +44,11 @@ export class ScraperManager {
     return this.providers.has(providerId)
   }
 
-  public async searchGames(providerId: string, gameName: string): Promise<GameList> {
+  public async searchGames(
+    providerId: string,
+    gameName: string,
+    gamePath?: string
+  ): Promise<GameList> {
     try {
       const provider = this.getProvider(providerId)
       if (!provider) {
@@ -53,7 +57,7 @@ export class ScraperManager {
       if (!provider.searchGames) {
         throw new Error(`Provider '${providerId}' does not support searching games`)
       }
-      return provider.searchGames(gameName)
+      return provider.searchGames(gameName, gamePath)
     } catch (error) {
       log.error(`[Scraper] Failed to search games using provider '${providerId}': ${error}`)
       throw error

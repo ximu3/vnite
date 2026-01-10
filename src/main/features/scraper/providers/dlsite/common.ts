@@ -16,11 +16,12 @@ function buildDlsiteWorkUrl(dlsiteId: string, language?: string): string {
   return `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html${localePart}`
 }
 
-export async function searchDlsiteGames(gameName: string): Promise<GameList> {
+export async function searchDlsiteGames(gameName: string, gamePath?: string): Promise<GameList> {
   const findIdInName = await ConfigDBManager.getConfigValue('game.scraper.dlsite.findIdInName')
   if (findIdInName) {
     // Check if the game name contains a id pattern like "RJ123456"
-    const matchIds = [...gameName.matchAll(ID_REGEX)]
+    const matchSource = typeof gamePath !== 'undefined' && gamePath ? gamePath : gameName
+    const matchIds = [...matchSource.matchAll(ID_REGEX)]
     // Return the first sucessfully fetched result
     for (let i = 0; i < matchIds.length; i++) {
       const dlsiteId = matchIds[i][0].toUpperCase()

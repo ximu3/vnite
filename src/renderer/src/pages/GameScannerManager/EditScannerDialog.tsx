@@ -23,6 +23,7 @@ import { ScraperCapabilities } from '@appTypes/utils'
 import { ipcManager } from '~/app/ipc'
 import { toast } from 'sonner'
 import { useGameCollectionStore } from '~/stores'
+import { Switch } from '~/components/ui/switch'
 
 interface EditScannerDialogProps {
   isOpen: boolean
@@ -178,6 +179,16 @@ export const EditScannerDialog: React.FC<EditScannerDialogProps> = ({
               ))}
             </SelectContent>
           </Select>
+          {/* Normalize Folder Name */}
+          <div className={cn('whitespace-nowrap select-none justify-self-start')}>
+            {t('editScanner.normalizeFolderName')}
+          </div>
+          <Switch
+            checked={formState.normalizeFolderName}
+            onCheckedChange={(checked) =>
+              updateFormState({ normalizeFolderName: Boolean(checked) })
+            }
+          ></Switch>
         </div>
 
         <DialogFooter>

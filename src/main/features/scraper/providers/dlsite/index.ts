@@ -16,9 +16,9 @@ export const dlsiteProvider: ScraperProvider = {
   id: 'dlsite',
   name: 'DLsite',
 
-  async searchGames(gameName: string): Promise<GameList> {
+  async searchGames(gameName: string, gamePath?: string): Promise<GameList> {
     try {
-      return await searchDlsiteGames(gameName)
+      return await searchDlsiteGames(gameName, gamePath)
     } catch (error) {
       log.error('DLsite search games error:', error)
       return []

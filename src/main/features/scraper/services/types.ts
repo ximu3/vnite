@@ -5,7 +5,7 @@ export interface ScraperProvider {
   id: string
   name: string
 
-  searchGames?(gameName: string): Promise<GameList>
+  searchGames?(gameName: string, gamePath?: string): Promise<GameList>
   checkGameExists?(identifier: ScraperIdentifier): Promise<boolean>
   getGameMetadata?(identifier: ScraperIdentifier): Promise<GameMetadata>
   getGameBackgrounds?(identifier: ScraperIdentifier): Promise<string[]>

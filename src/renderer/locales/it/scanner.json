@@ -115,6 +115,7 @@
     "pathPlaceholder": "",
     "dataSourcePlaceholder": "",
     "depthPlaceholder": "",
-    "depthTooltip": ""
+    "depthTooltip": "",
+    "normalizeFolderName": ""
   }
 }
