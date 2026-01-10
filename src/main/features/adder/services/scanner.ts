@@ -15,6 +15,7 @@ interface ScannerConfig {
   path: string
   dataSource: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite'
   targetCollection: string
+  normalizeFolderName: boolean
 }
 
 // Global scanner configuration
@@ -350,7 +351,7 @@ export class GameScanner extends EventEmitter {
         ipcManager.send('scanner:scan-progress', { ...this.scanProgress })
 
         // Process the folder
-        await this.processFolder(scanner.dataSource, folder, scannerId)
+        await this.processFolder(scanner.dataSource, folder, scannerId, scanner.normalizeFolderName)
 
         // Update progress after each folder is processed
         scannerProgress.processedFolders++
@@ -377,7 +378,8 @@ export class GameScanner extends EventEmitter {
   private async processFolder(
     dataSource: string,
     folder: { name: string; dirPath: string },
-    scannerId: string
+    scannerId: string,
+    normalizeFolderName: boolean
   ): Promise<void> {
     if (this.scanProgress.status !== 'scanning') {
       return // Exit if scanning has been stopped
@@ -390,8 +392,13 @@ export class GameScanner extends EventEmitter {
       const gameExists = await GameDBManager.checkGameExitsByPath(folder.dirPath)
 
       if (!gameExists) {
+        let searchName = folder.name
+        if (normalizeFolderName) {
+          searchName = this.normalizeFolderName(folder.name)
+        }
+
         // Use folder name as game name for search
-        const gameResults = await scraperManager.searchGames(dataSource, folder.name)
+        const gameResults = await scraperManager.searchGames(dataSource, searchName, folder.dirPath)
 
         if (gameResults && gameResults.length > 0) {
           // Use the first result as a match
@@ -444,6 +451,21 @@ export class GameScanner extends EventEmitter {
       })
       ipcManager.send('scanner:scan-folder-error', { ...this.scanProgress })
     }
+  }
+
+  private normalizeFolderName(name: string): string {
+    if (!name) return ''
+    const normalized = name
+      // 1. Remove content within brackets
+      .replace(/[[(（【].*?[\])）】]/g, ' ')
+      // 2. Replace special characters with spaces
+      .replace(/[_\-!！~～.·•★☆※#@^$%&+=|\\/:;"'<>,?]/g, ' ')
+      // 3. Clean up multiple spaces
+      .replace(/\s+/g, ' ')
+      // 4. Trim
+      .trim()
+
+    return normalized.length > 0 ? normalized : name
   }
 
   private applyIgnoreList(

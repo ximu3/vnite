@@ -118,6 +118,7 @@
     "depthPlaceholder": "選擇掃描深度",
     "depthTooltip": "設置資料夾掃描的深度層級",
     "targetCollection": "目標收藏",
-    "targetCollectionNone": "無"
+    "targetCollectionNone": "無",
+    "normalizeFolderName": "使用簡化後的資料夾名稱進行刮削"
   }
 }
