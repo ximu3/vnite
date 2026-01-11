@@ -1,20 +1,22 @@
 import { Outlet } from '@tanstack/react-router'
 import { Toaster } from '@ui/sonner'
-import { Titlebar } from '~/components/Titlebar'
-import { LogDialog } from '~/pages/Log'
-import { ThemeProvider } from '~/components/ThemeProvider'
 import { Sidebar } from '~/components/Sidebar'
+import { ThemeProvider } from '~/components/ThemeProvider'
+import { Titlebar } from '~/components/Titlebar'
+import { DragContainer } from '~/pages/DragContainer'
 import { GameAdder } from '~/pages/GameAdder'
 import { GameBatchAdder } from '~/pages/GameBatchAdder'
-import { UpdateDialog } from '~/pages/Updater'
 import { GameMetadataUpdaterDialog } from '~/pages/GameMetadataUpdater'
 import { Importer } from '~/pages/Importer'
-import { Setup } from '~/Setup'
 import { Light } from '~/pages/Light'
-import { DragContainer } from '~/pages/DragContainer'
+import { LogDialog } from '~/pages/Log'
+import { UpdateDialog } from '~/pages/Updater'
+import { Setup } from '~/Setup'
+import { useBackupStore } from '~/stores/utils'
 
 export function RootLayout(): React.JSX.Element {
   console.warn('[DEBUG] RootLayout')
+  const isBackingUp = useBackupStore((state) => state.isBackingUp)
 
   return (
     <ThemeProvider>
@@ -32,6 +34,9 @@ export function RootLayout(): React.JSX.Element {
             </div>
           </div>
         </DragContainer>
+        {isBackingUp && (
+          <div className="fixed inset-0 bg-black/80 z-[999] pointer-events-auto"></div>
+        )}
       </div>
       <GameAdder />
       <GameBatchAdder />

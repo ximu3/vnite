@@ -341,6 +341,11 @@
     "importWarning": "导入数据库将覆盖当前数据库，此操作不可逆！操作结束后应用将自动重启。",
     "confirmImportV2": "确定要导入V2数据库吗？",
     "importV2Warning": "导入V2数据库将覆盖当前数据库，此操作不可逆！操作结束后应用将自动重启。",
+    "defaultBackupPath": {
+      "title": "数据库默认备份目录",
+      "description": "设置此路径后，备份操作的选择对话框将默认打开到该目录。",
+      "placeholder": "输入数据库默认备份目录"
+    },
     "portableAdminRequired": "注意：便携模式可能需要管理员权限。",
     "notifications": {
       "backingUp": "正在备份数据库…",
