@@ -5,6 +5,7 @@ import { ScrollArea } from '~/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { useGameState } from '~/hooks'
 import { cn } from '~/utils'
+import { PropertiesDialogTab } from '../../store'
 import { Launcher, LauncherHandle } from './Launcher'
 import { Media } from './Media'
 import { Path, PathHandle } from './Path'
@@ -18,13 +19,11 @@ export function GamePropertiesDialog({
   gameId: string
   isOpen: boolean
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
-  defaultTab?: 'launcher' | 'path' | 'media'
+  defaultTab?: PropertiesDialogTab
 }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [gameName] = useGameState(gameId, 'metadata.name')
-  const [activeTab, setActiveTab] = useState<'launcher' | 'path' | 'media'>(
-    defaultTab ?? 'launcher'
-  )
+  const [activeTab, setActiveTab] = useState<PropertiesDialogTab>(defaultTab ?? 'launcher')
 
   const pathRef = useRef<PathHandle>(null)
   const launcherRef = useRef<LauncherHandle>(null)
@@ -35,7 +34,7 @@ export function GamePropertiesDialog({
     } else if (activeTab === 'launcher') {
       await launcherRef.current?.save()
     }
-    setActiveTab(newTab as 'launcher' | 'path' | 'media')
+    setActiveTab(newTab as PropertiesDialogTab)
   }
 
   return (

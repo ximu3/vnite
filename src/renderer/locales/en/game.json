@@ -153,6 +153,7 @@
       "editMediaProperties": "Edit Media Properties"
     },
     "save": {
+      "openPropertiesDialog": "Set Save Path",
       "table": {
         "date": "Date",
         "note": "Note",
