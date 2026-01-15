@@ -3,11 +3,13 @@ import { Button, buttonVariants } from '@ui/button'
 import { Calendar } from '@ui/calendar'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@ui/dialog'
 import { SettingsPopover } from '@ui/popover'
+import { ScrollArea } from '@ui/scroll-area'
 import { Separator } from '@ui/separator'
 import { Switch } from '@ui/switch'
 import { CalendarIcon, ChevronLeft, ChevronRight, Clock, Trophy } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from 'recharts'
 import { useConfigState } from '~/hooks'
@@ -21,6 +23,8 @@ export function MonthlyReport(): React.JSX.Element {
   const [useAlternateColor, setUseAlternateColor] = useConfigState(
     'record.monthly.useAlternateColor'
   )
+
+  const [showMoreTimeGames, setShowMoreTimeGames] = useState(false)
 
   const router = useRouter()
   const search = useSearch({ from: '/record' })
@@ -433,19 +437,26 @@ export function MonthlyReport(): React.JSX.Element {
         </Card>
         {/* Monthly Games Ranking */}
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>{t('monthly.monthlyGames.title')}</CardTitle>
+            {monthData.mostPlayedGames.length > 3 && (
+              <Button variant="ghost" size="icon" onClick={() => setShowMoreTimeGames(true)}>
+                <span className="icon-[mdi--chevron-double-right] w-5 h-5"></span>
+              </Button>
+            )}
           </CardHeader>
           <CardContent className="grid grid-cols-1 gap-2 -mt-1">
             {monthData.mostPlayedGames.length > 0 ? (
-              monthData.mostPlayedGames.map((game, index) => (
-                <GameRankingItem
-                  key={game.gameId}
-                  gameId={game.gameId}
-                  rank={index + 1}
-                  extraInfo={formatGameTime(game.playTime)}
-                />
-              ))
+              monthData.mostPlayedGames
+                .slice(0, 3)
+                .map((game, index) => (
+                  <GameRankingItem
+                    key={game.gameId}
+                    gameId={game.gameId}
+                    rank={index + 1}
+                    extraInfo={formatGameTime(game.playTime)}
+                  />
+                ))
             ) : (
               <div className="col-span-2 py-6 text-center text-sm text-muted-foreground">
                 {t('monthly.monthlyGames.noRecords')}
@@ -454,6 +465,28 @@ export function MonthlyReport(): React.JSX.Element {
           </CardContent>
         </Card>
       </div>
+
+      {/* Game Time Ranking - Dialog */}
+      <Dialog open={showMoreTimeGames} onOpenChange={setShowMoreTimeGames}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('overview.ranking.playTimeRanking')}</DialogTitle>
+            <DialogDescription>{t('overview.ranking.allGamesByPlayTime')}</DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="h-[60vh] pr-4">
+            <div className="w-[500px] space-y-2">
+              {monthData.mostPlayedGames.map(({ gameId, playTime }, index) => (
+                <GameRankingItem
+                  key={gameId}
+                  gameId={gameId}
+                  rank={index + 1}
+                  extraInfo={formatGameTime(playTime)}
+                />
+              ))}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
