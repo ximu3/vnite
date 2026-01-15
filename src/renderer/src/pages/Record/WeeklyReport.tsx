@@ -29,13 +29,23 @@ import { scrollToElement } from '~/utils'
 import { MergeIntervalSliderPopover } from './Config/MergeIntervalSliderPopover'
 import { GameRankingItem } from './GameRankingItem'
 
+/**
+ * Represents a row of data for the timeline chart.
+ * The timeline chart is implemented as a stacked bar chart,
+ * where the solid-colored bars represent `duration` (actual playtime),
+ * and the transparent bars represent `offset` (gaps between play sessions).
+ *
+ * Therefore, the keys for each bar must not be reused when switching pages,
+ * as it may cause rendering order issues.
+ */
 interface TimeLineRow {
   gameLabel: string
   gameId: string
   color: string
-  [key: `offset${number}`]: number
-  [key: `duration${number}`]: number
-  endOffset: number
+  [key: `offset${number}`]: number // Represents the gap between the end of the previous segment and the start of the current one
+  [key: `duration${number}`]: number // Represents the duration of the current segment
+  endOffset: number // Ensures a clickable Bar exists at the end of the timeline
+  accurateTotal: number // Used to display the precise total duration (merging close segments may introduce slight inaccuracies)
 }
 
 function buildTimeLineChartData(
@@ -48,8 +58,8 @@ function buildTimeLineChartData(
 
   const mergeTimers = (
     timers: { start: string; end: string }[]
-  ): { start: number; end: number }[] => {
-    if (!timers || timers.length === 0) return []
+  ): { timers: { start: number; end: number }[]; accurateTotal: number } => {
+    if (!timers || timers.length === 0) return { timers: [], accurateTotal: 0 }
 
     const sorted = timers
       .map((t) => ({
@@ -59,10 +69,12 @@ function buildTimeLineChartData(
       .sort((a, b) => a.start - b.start) // Although it is sorted in upstream...
 
     const merged: { start: number; end: number }[] = []
+    let total = sorted[0].end - sorted[0].start
     let current = { ...sorted[0] }
 
     for (let i = 1; i < sorted.length; i++) {
       const gap = sorted[i].start - current.end
+      total += sorted[i].end - sorted[i].start
       if (gap <= maxGapMs) {
         current.end = Math.max(current.end, sorted[i].end)
       } else {
@@ -71,15 +83,15 @@ function buildTimeLineChartData(
       }
     }
     merged.push(current)
-    return merged
+    return { timers: merged, accurateTotal: total }
   }
 
   return Object.entries(weekData.weeklyPlayTimers).map(([gameId, timers], gameIndex) => {
-    const mergedTimers = mergeTimers(timers)
+    const { timers: mergedTimers, accurateTotal } = mergeTimers(timers)
     const gameLabel = getGameStore(gameId).getState().getValue('metadata.name')
     const color = gameIndex % 2 === 0 ? 'var(--primary)' : 'var(--secondary)'
 
-    const row: TimeLineRow = { gameLabel, gameId, color, endOffset: 0 }
+    const row: TimeLineRow = { gameLabel, gameId, color, endOffset: 0, accurateTotal }
     let accumulated = 0
 
     mergedTimers.forEach((timer, idx) => {
@@ -395,16 +407,9 @@ export function WeeklyReport(): React.JSX.Element {
                         labelFormatter={(label, data) => {
                           if (!data || data.length === 0) return label
 
-                          const row = data[0].payload
+                          const row: TimeLineRow = data[0].payload
                           const gameName = row.gameLabel
-
-                          let totalTime = 0
-                          for (let i = 0; i < maxTimersCount; i++) {
-                            const durationKey = `duration${i}`
-                            if (row[durationKey] != null) {
-                              totalTime += row[durationKey]
-                            }
-                          }
+                          const totalTime = row.accurateTotal
 
                           return `${gameName}\n${formatGameTime(totalTime)} (${((totalTime / weekData.totalTime) * 100).toFixed(2)}%)`
                         }}
