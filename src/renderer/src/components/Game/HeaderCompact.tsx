@@ -1,17 +1,18 @@
 import { NSFWBlurLevel } from '@appTypes/models'
-import React from 'react'
-import { useTranslation } from 'react-i18next'
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger
-} from '~/components/ui/context-menu'
+} from '@ui/context-menu'
+import { GameImage } from '@ui/game-image'
+import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { useConfigState, useGameState } from '~/hooks'
 import { useRunningGames } from '~/pages/Library/store'
 import { cn, copyWithToast } from '~/utils'
-import { GameImage } from '../ui/game-image'
 import { Config } from './Config'
+import { PLAY_STATUS_ICONS } from './Overview/Record/RecordIcon'
 import { StartGame } from './StartGame'
 import { StopGame } from './StopGame'
 import { useGameDetailStore } from './store'
@@ -102,7 +103,7 @@ export function HeaderCompact({
 
             {/* Play Status */}
             <div className={cn('select-none cursor-pointer flex items-center gap-1')}>
-              <span className="icon-[mdi--bookmark-outline]"></span>
+              <span className={PLAY_STATUS_ICONS[playStatus]}></span>
               {t('detail.overview.record.playStatus')}
             </div>
             <div>{t(`utils:game.playStatus.${playStatus}`)}</div>
