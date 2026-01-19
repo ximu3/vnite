@@ -46,6 +46,7 @@
     },
     "starting": {
       "pathRequired": "請先設定遊戲路徑",
+      "pathInvalid": "遊戲路徑無效，請重新設定",
       "configuringLauncher": "正在配置啟動器…",
       "configSuccess": "啟動器配置成功",
       "configError": "配置錯誤: {{message}}",

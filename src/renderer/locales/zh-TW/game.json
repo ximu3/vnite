@@ -153,6 +153,7 @@
       "editMediaProperties": "編輯媒體屬性"
     },
     "save": {
+      "openPropertiesDialog": "設定存檔路徑",
       "table": {
         "date": "日期",
         "note": "備註",

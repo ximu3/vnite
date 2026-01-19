@@ -153,6 +153,7 @@
       "editMediaProperties": "メディアの属性を編集"
     },
     "save": {
+      "openPropertiesDialog": "セーブパスを設定",
       "table": {
         "date": "日付",
         "note": "メモ",

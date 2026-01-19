@@ -46,6 +46,7 @@
     },
     "starting": {
       "pathRequired": "Please set game path first",
+      "pathInvalid": "Game path is invalid, please reconfigure",
       "configuringLauncher": "Configuring launcher…",
       "configSuccess": "Launcher configured successfully",
       "configError": "Configuration error: {{message}}",
