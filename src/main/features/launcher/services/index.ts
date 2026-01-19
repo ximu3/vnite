@@ -1,11 +1,11 @@
 import { BrowserWindow } from 'electron'
 import log from 'electron-log/main.js'
 import { ConfigDBManager, GameDBManager } from '~/core/database'
+import { eventBus } from '~/core/events'
+import { ipcManager } from '~/core/ipc'
 import { delay } from '~/utils'
 import { fileLauncher, scriptLauncher, urlLauncher } from './launcher'
 import { defaultPreset, lePreset, steamPreset, vbaPreset } from './preset'
-import { eventBus } from '~/core/events'
-import { ipcManager } from '~/core/ipc'
 
 export async function launcherPreset(
   presetName: string,
@@ -38,16 +38,17 @@ export async function launcher(gameId: string): Promise<void> {
     const hideWindowAfterGameStart = await ConfigDBManager.getConfigValue(
       'general.hideWindowAfterGameStart'
     )
-    if (hideWindowAfterGameStart && mainWindow) {
-      await delay(1000) // Delay to improve user experience
-      mainWindow.hide()
-    }
+
     if (mode === 'file') {
       await fileLauncher(gameId)
     } else if (mode === 'url') {
       await urlLauncher(gameId)
     } else if (mode === 'script') {
       await scriptLauncher(gameId)
+    }
+    if (hideWindowAfterGameStart && mainWindow) {
+      await delay(1000) // Delay to improve user experience
+      mainWindow.hide()
     }
     // Emit event after launching the game
     eventBus.emit(

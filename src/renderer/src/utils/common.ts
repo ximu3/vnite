@@ -1,12 +1,12 @@
+import { generateUUID } from '@appUtils'
+import { NavigateFn } from '@tanstack/react-router'
 import { Element, HTMLReactParserOptions } from 'html-react-parser'
 import i18next from 'i18next'
 import { toast } from 'sonner'
+import { ipcManager } from '~/app/ipc'
+import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
 import { useRunningGames } from '~/pages/Library/store'
 import { getGameLocalStore, getGameStore } from '~/stores/game'
-import { ipcManager } from '~/app/ipc'
-import { generateUUID } from '@appUtils'
-import { NavigateFn } from '@tanstack/react-router'
-import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
 
 export function changeFontFamily(
   fontFamily: string | null,
@@ -180,8 +180,13 @@ export async function startGame(
   const setGameValue = gameStore.getState().setValue
   const getGameValue = gameStore.getState().getValue
 
-  if (getGameLocalValue('path.gamePath') === '') {
-    toast.warning(i18next.t('utils:game.starting.pathRequired'))
+  const gamePath = getGameLocalValue('path.gamePath')
+  const gamePathExists = (await ipcManager.invoke('system:check-if-path-exist', [gamePath]))[0]
+
+  if (!gamePathExists) {
+    if (gamePath === '') toast.warning(i18next.t('utils:game.starting.pathRequired'))
+    else toast.warning(i18next.t('utils:game.starting.pathInvalid'))
+
     const filePath = await ipcManager.invoke(
       'system:select-path-dialog',
       ['openFile'],
