@@ -54,11 +54,11 @@ export function setupSystemIPC(): void {
   })
 
   ipcManager.on('window:restore-and-focus', () => {
-    if (mainWindow.isMinimized()) {
-      mainWindow.restore()
-    }
     if (!mainWindow.isVisible()) {
       mainWindow.show()
+    }
+    if (mainWindow.isMinimized()) {
+      mainWindow.restore()
     }
     mainWindow.focus()
   })
