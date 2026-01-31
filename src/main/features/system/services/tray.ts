@@ -1,10 +1,9 @@
-import { app, Tray, Menu, nativeImage, BrowserWindow } from 'electron'
-import { GameDBManager, ConfigDBManager } from '~/core/database'
+import { app, BrowserWindow, Menu, nativeImage, shell, Tray } from 'electron'
+import i18next from 'i18next'
+import { ConfigDBManager, GameDBManager } from '~/core/database'
 import { eventBus } from '~/core/events'
-import { shell } from 'electron'
 import { convertToPng } from '~/utils'
 import icon from '../../../../../resources/icon.ico?asset'
-import i18next from 'i18next'
 
 export interface AppConfig {
   openAtLogin: boolean
@@ -215,11 +214,11 @@ export class TrayManager {
   private showMainWindow(): void {
     if (!this.mainWindow) return
 
-    if (this.mainWindow.isMinimized()) {
-      this.mainWindow.restore()
-    }
     if (!this.mainWindow.isVisible()) {
       this.mainWindow.show()
+    }
+    if (this.mainWindow.isMinimized()) {
+      this.mainWindow.restore()
     }
     this.mainWindow.focus()
   }
