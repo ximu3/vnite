@@ -232,7 +232,7 @@ export async function refreshTimerStatus(): Promise<void> {
     const game = await GameDBManager.getGame(gameId)
     
     if (!game) {
-      // If game is missing from DB, it's a zombie monitor. Clean it up
+      log.warn(`[Monitor] Removing monitor for non-existent game ID: ${gameId}`)
       monitors.delete(gameId)
       continue
     }
