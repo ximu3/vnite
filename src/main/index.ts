@@ -4,7 +4,7 @@ import log from 'electron-log/main'
 import windowStateKeeper from 'electron-window-state'
 import { join } from 'path'
 import { baseDBManager, GameDBManager } from '~/core/database'
-import { startSync } from '~/features/database'
+import { startSync, runMigrations } from '~/features/database'
 import icon from '../../resources/icon.png?asset'
 import { AuthManager, handleAuthCallback } from './features/account'
 import { ipcManager, setupIPC } from './core/ipc'
@@ -257,6 +257,9 @@ app.whenReady().then(async () => {
   createWindow()
 
   baseDBManager.initAllDatabases()
+
+  // Run database migrations
+  await runMigrations()
 
   // Setup proxy config
   await setupProxy()
