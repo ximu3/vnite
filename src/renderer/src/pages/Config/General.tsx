@@ -148,17 +148,14 @@ export function General(): React.JSX.Element {
                 path="general.foregroundWaitTime"
                 title={t('general.foregroundWaitTime.title')}
                 description={t('general.foregroundWaitTime.description')}
-                controlType="slider"
+                controlType="input"
+                inputType="number"
                 min={0}
-                max={30}
-                step={1}
-                formatValue={(value) => `${value}s`}
-                debounceMs={300}
                 disabled={
                   runningGames.length > 0 || !enableForegroundTimer || processMonitor !== 'new'
                 }
-                onChange={(value: number) => {
-                  ipcManager.send('system:change-foreground-timer-wait-time', value)
+                onChange={(value: string) => {
+                  ipcManager.send('system:change-foreground-timer-wait-time', Number(value))
                 }}
               />
             </div>
