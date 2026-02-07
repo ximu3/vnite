@@ -100,13 +100,16 @@ async function isValidGame(gameId: string, doc: any): Promise<boolean> {
     }
 
     // Check if the monitor path exists asynchronously
-    try {
-      await fs.promises.access(monitorPath, fs.constants.F_OK)
-      return true
-    } catch {
-      log.info(`[DB] Game ${gameId} monitor path does not exist: ${monitorPath}`)
-      return false
-    }
+    // not desired - e.g., user may have external drive disconnected, doesn't mean game is invalid
+    // try {
+    //   await fs.promises.access(monitorPath, fs.constants.F_OK)
+    //   return true
+    // } catch {
+    //   log.info(`[DB] Game ${gameId} monitor path does not exist: ${monitorPath}`)
+    //   return false
+    // }
+
+    return true
   } catch (error) {
     log.warn(`[DB] Error validating game ${gameId}:`, error)
     return false
