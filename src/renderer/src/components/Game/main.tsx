@@ -14,6 +14,7 @@ import { GameImage } from '~/components/ui/game-image'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { useConfigState, useGameState } from '~/hooks'
 import { cn } from '~/utils'
+import { ScrollToTopButton } from '../Showcase/ScrollToTopButton'
 import { ScrollArea } from '../ui/scroll-area'
 import { PlayTimeEditorDialog } from './Config/ManageMenu/PlayTimeEditorDialog'
 import { ScoreEditorDialog } from './Config/ManageMenu/ScoreEditorDialog'
@@ -398,6 +399,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
           </ContextMenuContent>
         </ContextMenu>
       </ScrollArea>
+      <ScrollToTopButton scrollAreaRef={scrollAreaRef} threshold={500} />
 
       {propertiesDialogState.open && (
         <GamePropertiesDialog
