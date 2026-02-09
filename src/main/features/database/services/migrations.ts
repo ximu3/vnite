@@ -15,12 +15,14 @@ export async function runMigrations(): Promise<void> {
 
     log.info(`[DB] Current version: ${currentVersion}, Last version: ${lastVersion}`)
 
-    if (semver.eq(currentVersion, lastVersion)) {
-      return
-    } else if (semver.lte(lastVersion, '4.6.0') && semver.gt(currentVersion, '4.6.0')) {
-      log.info('[DB] Running migration for version > 4.6.0: Cleaning up zombie games')
-      await cleanupZombieGames()
-    }
+    // if (semver.eq(currentVersion, lastVersion)) {
+    //   return
+    // } else if (semver.lte(lastVersion, '4.6.0') && semver.gt(currentVersion, '4.6.0')) {
+    //   log.info('[DB] Running migration for version > 4.6.0: Cleaning up zombie games')
+    //   await cleanupZombieGames()
+    // }
+
+    await cleanupZombieGames()
 
     // Update stored version
     await ConfigDBManager.setConfigValue('app.lastVersion', currentVersion)
@@ -78,36 +80,17 @@ async function cleanupZombieGames(): Promise<void> {
 }
 
 /**
- * Check if a game has a valid monitor path
+ * Check if a game has a path
+ * Does not filter out manually added games without paths
  * Returns false for games that should be removed
  */
 async function isValidGame(gameId: string, doc: any): Promise<boolean> {
   try {
-    // Check if launcher mode exists
-    const mode = doc.launcher?.mode
-    if (!mode) {
-      log.warn(`[DB] Game ${gameId} has no launcher mode`)
+
+    if (!doc.path) {
+      log.warn(`[DB] Game ${gameId} has no path info`)
       return true
     }
-
-    // Check if mode config exists
-    const modeConfig = doc.launcher[`${mode}Config`]
-    const monitorPath = modeConfig?.monitorPath
-
-    if (!monitorPath) {
-      log.warn(`[DB] Game ${gameId} has no monitor path`)
-      return true
-    }
-
-    // Check if the monitor path exists asynchronously
-    // not desired - e.g., user may have external drive disconnected, doesn't mean game is invalid
-    // try {
-    //   await fs.promises.access(monitorPath, fs.constants.F_OK)
-    //   return true
-    // } catch {
-    //   log.info(`[DB] Game ${gameId} monitor path does not exist: ${monitorPath}`)
-    //   return false
-    // }
 
     return true
   } catch (error) {
