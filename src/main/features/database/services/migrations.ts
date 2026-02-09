@@ -80,15 +80,14 @@ async function cleanupZombieGames(): Promise<void> {
 }
 
 /**
- * Check if a game has a path
+ * Check if a game has path.gamePath
  * Does not filter out manually added games without paths
  * Returns false for games that should be removed
  */
 async function isValidGame(gameId: string, doc: any): Promise<boolean> {
   try {
-
-    if (!doc.path) {
-      log.warn(`[DB] Game ${gameId} has no path info`)
+    if (doc?.path?.gamePath == null) {
+      log.warn(`[DB] Game ${gameId} is missing gamePath`)
       return true
     }
 
