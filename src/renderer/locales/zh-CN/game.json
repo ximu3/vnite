@@ -442,6 +442,14 @@
         "screenshotPath": "截图路径",
         "addFolder": "添加文件夹",
         "addFile": "添加文件",
+        "search": {
+          "tooltip": "搜索存档路径",
+          "results": "搜索结果",
+          "noResults": "未找到存档路径",
+          "loading": "正在搜索存档路径…",
+          "success": "搜索成功",
+          "error": "搜索失败：{{message}}"
+        },
         "maxBackups": "最大存档备份数量",
         "notifications": {
           "configuring": "正在配置预设…",

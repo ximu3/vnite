@@ -442,6 +442,14 @@
         "screenshotPath": "Screenshot Path",
         "addFolder": "Add Folder",
         "addFile": "Add File",
+        "search": {
+          "tooltip": "Search save path",
+          "results": "Search Results",
+          "noResults": "No save path found",
+          "loading": "Searching save path…",
+          "success": "Search successful",
+          "error": "Search failed: {{message}}"
+        },
         "maxBackups": "Maximum Save Backups",
         "notifications": {
           "configuring": "Configuring preset…",

@@ -4,11 +4,10 @@ import {
   type MaxPlayTimeDay,
   type gameDoc
 } from '@appTypes/models'
-import { calculateDailyPlayTime } from '@appUtils'
+import { calculateDailyPlayTime, jaroWinkler } from '@appUtils'
 import i18next from 'i18next'
 import type { Get, Paths } from 'type-fest'
 import { capDailyPlayTime, parseLocalDate } from '~/stores/game/recordUtils'
-import { jaroWinkler } from '~/utils'
 import { useConfigStore } from '../config'
 import { getGameLocalStore } from './gameLocalStoreFactory'
 import { useGamePathStore } from './gamePathStore'

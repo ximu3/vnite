@@ -442,6 +442,14 @@
         "screenshotPath": "截圖路徑",
         "addFolder": "添加資料夾",
         "addFile": "添加文件",
+        "search": {
+          "tooltip": "搜尋存檔路徑",
+          "results": "搜尋結果",
+          "noResults": "未找到存檔路徑",
+          "loading": "正在搜尋存檔路徑…",
+          "success": "搜尋成功",
+          "error": "搜尋失敗：{{message}}"
+        },
         "maxBackups": "最大存檔備份數量",
         "notifications": {
           "configuring": "正在配置預設…",

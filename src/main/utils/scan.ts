@@ -1,5 +1,6 @@
-import * as path from 'path'
+import log from 'electron-log/main'
 import * as fse from 'fs-extra'
+import * as path from 'path'
 
 // Define executable file extensions
 const EXECUTABLE_EXTENSIONS = ['.exe', '.app', '.bat', '.cmd', '.sh', '.lnk', '.url']
@@ -185,4 +186,45 @@ async function processBatch<T, R>(
   await Promise.all(pending)
 
   return results
+}
+
+export type WalkOptions = {
+  maxDepth?: number
+  onDir?: (fullPath: string, depth: number) => void | Promise<void>
+  onFile?: (fullPath: string, depth: number) => void | Promise<void>
+  filter?: (name: string, fullPath: string, isDir: boolean) => boolean
+}
+
+export async function walkFs(root: string, options: WalkOptions = {}): Promise<void> {
+  const { maxDepth = 50, onDir, onFile, filter } = options
+
+  if (!(await fse.pathExists(root))) return
+
+  async function walk(dir: string, depth: number): Promise<void> {
+    if (depth > maxDepth) return
+
+    let entries: fse.Dirent[]
+
+    try {
+      entries = await fse.readdir(dir, { withFileTypes: true })
+
+      for (const entry of entries) {
+        const full = path.join(dir, entry.name)
+        const isDir = entry.isDirectory()
+
+        if (filter && !filter(entry.name, full, isDir)) continue
+
+        if (isDir) {
+          await onDir?.(full, depth)
+          await walk(full, depth + 1)
+        } else {
+          await onFile?.(full, depth)
+        }
+      }
+    } catch (error) {
+      log.error('Error walking directory:', error)
+    }
+  }
+
+  await walk(root, 0)
 }
