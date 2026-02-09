@@ -87,7 +87,7 @@ async function isValidGame(gameId: string, doc: any): Promise<boolean> {
     const mode = doc.launcher?.mode
     if (!mode) {
       log.warn(`[DB] Game ${gameId} has no launcher mode`)
-      return false
+      return true
     }
 
     // Check if mode config exists
@@ -96,7 +96,7 @@ async function isValidGame(gameId: string, doc: any): Promise<boolean> {
 
     if (!monitorPath) {
       log.warn(`[DB] Game ${gameId} has no monitor path`)
-      return false
+      return true
     }
 
     // Check if the monitor path exists asynchronously
