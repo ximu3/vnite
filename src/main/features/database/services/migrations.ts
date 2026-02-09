@@ -85,7 +85,7 @@ async function isValidGame(gameId: string, doc: any): Promise<boolean> {
   try {
     if (doc?.path?.gamePath == null) {
       log.warn(`[DB] Game ${gameId} is missing gamePath`)
-      return true
+      return false
     }
 
     return true
