@@ -2,7 +2,6 @@ import { GameDBManager, ConfigDBManager } from '~/core/database'
 import { app } from 'electron'
 import semver from 'semver'
 import log from 'electron-log/main'
-import * as fs from 'fs'
 
 /**
  * Run database migrations based on app version
@@ -15,14 +14,12 @@ export async function runMigrations(): Promise<void> {
 
     log.info(`[DB] Current version: ${currentVersion}, Last version: ${lastVersion}`)
 
-    // if (semver.eq(currentVersion, lastVersion)) {
-    //   return
-    // } else if (semver.lte(lastVersion, '4.6.0') && semver.gt(currentVersion, '4.6.0')) {
-    //   log.info('[DB] Running migration for version > 4.6.0: Cleaning up zombie games')
-    //   await cleanupZombieGames()
-    // }
-
-    await cleanupZombieGames()
+    if (semver.eq(currentVersion, lastVersion)) {
+      return
+    } else if (semver.lte(lastVersion, '4.6.0') && semver.gt(currentVersion, '4.6.0')) {
+      log.info('[DB] Running migration for version > 4.6.0: Cleaning up zombie games')
+      await cleanupZombieGames()
+    }
 
     // Update stored version
     await ConfigDBManager.setConfigValue('app.lastVersion', currentVersion)
