@@ -1,3 +1,4 @@
+import { NSFWBlurLevel } from '@appTypes/models'
 import { generateUUID } from '@appUtils'
 import { useRouter, useSearch } from '@tanstack/react-router'
 import { Button } from '@ui/button'
@@ -23,6 +24,7 @@ import {
 import stringWidth from 'string-width'
 import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
 import { useConfigState } from '~/hooks'
+import { useConfigStore } from '~/stores/config'
 import { getGameStore } from '~/stores/game'
 import { getWeeklyPlayData, parseLocalDate } from '~/stores/game/recordUtils'
 import { scrollToElement } from '~/utils'
@@ -39,13 +41,18 @@ import { GameRankingItem } from './GameRankingItem'
  * as it may cause rendering order issues.
  */
 interface TimeLineRow {
-  gameLabel: string
+  gameLabel: string // Game name displayed on the Y-axis (may be blurred based on NSFW settings)
+  gameLabelTooltip: string // Unblurred game name for tooltip display
   gameId: string
   color: string
   [key: `offset${number}`]: number // Represents the gap between the end of the previous segment and the start of the current one
   [key: `duration${number}`]: number // Represents the duration of the current segment
   endOffset: number // Ensures a clickable Bar exists at the end of the timeline
   accurateTotal: number // Used to display the precise total duration (merging close segments may introduce slight inaccuracies)
+}
+
+function stringToBase64(str: string): string {
+  return btoa(String.fromCharCode(...new TextEncoder().encode(str)))
 }
 
 function buildTimeLineChartData(
@@ -86,12 +93,28 @@ function buildTimeLineChartData(
     return { timers: merged, accurateTotal: total }
   }
 
+  const nsfwBlurLevel = useConfigStore.getState().getConfigValue('appearances.nsfwBlurLevel')
+
   return Object.entries(weekData.weeklyPlayTimers).map(([gameId, timers], gameIndex) => {
     const { timers: mergedTimers, accurateTotal } = mergeTimers(timers)
-    const gameLabel = getGameStore(gameId).getState().getValue('metadata.name')
     const color = gameIndex % 2 === 0 ? 'var(--primary)' : 'var(--secondary)'
+    const store = getGameStore(gameId)
+    let gameLabel = store.getState().getValue('metadata.name')
+    const gameLabelTooltip = gameLabel // The name in tooltip is not blurred
+    if (nsfwBlurLevel >= NSFWBlurLevel.BlurImageAndTitle) {
+      if (store.getState().getValue('apperance.nsfw')) {
+        gameLabel = stringToBase64(gameLabel).slice(0, gameLabel.length)
+      }
+    }
 
-    const row: TimeLineRow = { gameLabel, gameId, color, endOffset: 0, accurateTotal }
+    const row: TimeLineRow = {
+      gameLabel,
+      gameLabelTooltip,
+      gameId,
+      color,
+      endOffset: 0,
+      accurateTotal
+    }
     let accumulated = 0
 
     mergedTimers.forEach((timer, idx) => {
@@ -114,6 +137,7 @@ export function WeeklyReport(): React.JSX.Element {
   const { t } = useTranslation('record')
 
   const [showMoreTimeGames, setShowMoreTimeGames] = useState(false)
+  const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
 
   const router = useRouter()
   const search = useSearch({ from: '/record' })
@@ -215,7 +239,7 @@ export function WeeklyReport(): React.JSX.Element {
   const [mergeInterval, setMergeInterval] = useConfigState('record.weekly.mergeInterval')
   const timeLineChartDataFlat = useMemo(() => {
     return buildTimeLineChartData(weekData, weekStartTime, nextWeekStart, mergeInterval)
-  }, [dateTs, mergeInterval])
+  }, [dateTs, mergeInterval, nsfwBlurLevel])
 
   const handleSliderCommit = useCallback(
     (value: number) => {
@@ -408,7 +432,7 @@ export function WeeklyReport(): React.JSX.Element {
                           if (!data || data.length === 0) return label
 
                           const row: TimeLineRow = data[0].payload
-                          const gameName = row.gameLabel
+                          const gameName = row.gameLabelTooltip
                           const totalTime = row.accurateTotal
 
                           return `${gameName}\n${formatGameTime(totalTime)} (${((totalTime / weekData.totalTime) * 100).toFixed(2)}%)`

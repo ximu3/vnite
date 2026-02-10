@@ -25,10 +25,14 @@ export function GameRankingItem({
   const router = useRouter()
   const setLazyloadMark = usePositionButtonStore((state) => state.setLazyloadMark)
 
+  const stringToBase64 = (str: string): string =>
+    btoa(String.fromCharCode(...new TextEncoder().encode(str)))
+  const obfuscatedName = stringToBase64(gameName).slice(0, gameName.length)
+
   return (
     <div
       className={cn(
-        'flex items-center space-x-4 py-2 px-3 cursor-pointer hover:bg-accent hover:text-accent-foreground transition-all rounded-lg',
+        'flex items-center space-x-4 py-2 px-3 cursor-pointer hover:bg-accent hover:text-accent-foreground transition-all rounded-lg group',
         className
       )}
       onClick={() => {
@@ -55,7 +59,14 @@ export function GameRankingItem({
         fallback={<div className="w-10 h-10 rounded-md bg-primary" />}
       />
       <div className="flex-grow min-w-0">
-        <p className="text-sm font-medium truncate">{gameName}</p>
+        {nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImageAndTitle ? (
+          <p className="text-sm font-medium">
+            <span className="block group-hover:hidden truncate">{obfuscatedName}</span>
+            <span className="hidden group-hover:block truncate">{gameName}</span>
+          </p>
+        ) : (
+          <p className="text-sm font-medium truncate">{gameName}</p>
+        )}
       </div>
       <div className="flex-shrink-0 text-sm text-muted-foreground">{extraInfo}</div>
     </div>
