@@ -1,3 +1,4 @@
+import { SeparatorDashed } from '@ui/separator-dashed'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useGameState } from '~/hooks'
@@ -5,7 +6,6 @@ import { cn, copyWithToast } from '~/utils'
 import { FilterAdder } from '../../FilterAdder'
 import { SearchTagsDialog } from './SearchTagsDialog'
 import { TagsDialog } from './TagsDialog'
-import { SeparatorDashed } from '@ui/separator-dashed'
 
 export function TagsCard({
   gameId,
@@ -37,13 +37,13 @@ export function TagsCard({
         <div className="flex items-center gap-3">
           <span
             className={cn(
-              'cursor-pointer icon-[mdi--magnify] invisible group-hover:visible w-5 h-5'
+              'invisible group-hover:visible hover:text-primary cursor-pointer icon-[mdi--magnify] w-5 h-5'
             )}
             onClick={() => setIsSearchDialogOpen(true)}
           ></span>
           <span
             className={cn(
-              'invisible group-hover:visible w-5 h-5 icon-[mdi--square-edit-outline] cursor-pointer'
+              'invisible group-hover:visible hover:text-primary cursor-pointer icon-[mdi--square-edit-outline] w-5 h-5'
             )}
             onClick={() => setIsEditDialogOpen(true)}
           ></span>

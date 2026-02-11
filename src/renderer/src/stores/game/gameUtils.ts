@@ -4,11 +4,10 @@ import {
   type MaxPlayTimeDay,
   type gameDoc
 } from '@appTypes/models'
-import { calculateDailyPlayTime } from '@appUtils'
+import { calculateDailyPlayTime, jaroWinkler } from '@appUtils'
 import i18next from 'i18next'
 import type { Get, Paths } from 'type-fest'
 import { capDailyPlayTime, parseLocalDate } from '~/stores/game/recordUtils'
-import { jaroWinkler } from '~/utils'
 import { useConfigStore } from '../config'
 import { getGameLocalStore } from './gameLocalStoreFactory'
 import { useGamePathStore } from './gamePathStore'
@@ -381,20 +380,19 @@ export function getSimilarGames(
   const results: { gameId: string; gameName: string; score: number }[] = []
 
   const targetGame = getGameStore(targetId).getState().data
-  if (!targetGame) return results
+  if (!targetGame || !targetGame.metadata) return results
 
   for (const id of gameIds) {
     if (id === targetId) continue
 
     const store = getGameStore(id)
     const game = store.getState().data
-    if (!game) continue
+    if (!game || !game.metadata) continue
 
     const score = computeGameSimilarity(targetGame, game)
     if (score.totalSim >= 0.3) {
       // At minimum, games sharing the same developers should be accepted.
-      const displayName =
-        game.metadata.name?.trim() !== '' ? game.metadata.name : (game.metadata.originalName ?? '')
+      const displayName = (game.metadata.name || game.metadata.originalName) ?? ''
       results.push({ gameId: id, gameName: displayName, score: score.totalSim })
     }
   }

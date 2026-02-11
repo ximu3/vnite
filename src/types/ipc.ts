@@ -155,6 +155,7 @@ type MainIpcEvents =
       'db:remove-config-background': (theme: 'dark' | 'light' | '#all') => void
 
       // Game save management events
+      'game:search-save-paths': (gameId: string) => string[]
       'game:backup-save': (gameId: string) => string
       'game:restore-save': (gameId: string, saveId: string) => void
       'game:delete-save': (gameId: string, saveId: string) => void

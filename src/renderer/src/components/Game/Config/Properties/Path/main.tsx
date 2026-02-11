@@ -1,11 +1,9 @@
 import { ArrayTextarea } from '@ui/array-textarea'
-import React, { useCallback, useEffect, useImperativeHandle, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
-import { ipcManager } from '~/app/ipc'
-import { Button } from '~/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
-import { Input } from '~/components/ui/input'
+import { Button } from '@ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
+import { Checkbox } from '@ui/checkbox'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@ui/dialog'
+import { Input } from '@ui/input'
 import {
   Select,
   SelectContent,
@@ -14,9 +12,13 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue
-} from '~/components/ui/select'
-import { Separator } from '~/components/ui/separator'
-import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
+} from '@ui/select'
+import { Separator } from '@ui/separator'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
+import React, { useCallback, useEffect, useImperativeHandle, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { ipcManager } from '~/app/ipc'
 import { useGameLocalState, useGameState } from '~/hooks'
 import { cn } from '~/utils'
 
@@ -47,6 +49,41 @@ function PathComponent(
   const [isScreenshotPathValid, setIsScreenshotPathValid] = useState(true)
   const [screenshotPath, setScreenshotPath, saveScreenshotPath, setScreenshotPathAndSave] =
     useGameLocalState(gameId, 'path.screenshotPath', true)
+
+  const [showSearchDialog, setShowSearchDialog] = useState(false)
+  const [searchResults, setSearchResults] = useState<string[]>([])
+  const [selectedSearchResults, setSelectedSearchResults] = useState<Record<string, boolean>>({})
+
+  const openSearchDialog = async (): Promise<void> => {
+    const promise = ipcManager.invoke('game:search-save-paths', gameId)
+
+    toast.promise(promise, {
+      loading: t('detail.properties.path.search.loading'),
+      error: (err) => t('detail.properties.path.search.error', { message: err.message })
+    })
+
+    promise.then((results) => {
+      setSearchResults(results ?? [])
+
+      const map: Record<string, boolean> = {}
+      ;(results ?? []).forEach((p) => (map[p] = false))
+
+      setSelectedSearchResults(map)
+      setShowSearchDialog(true)
+    })
+  }
+
+  const confirmSearchSelection = async (): Promise<void> => {
+    const picked = Object.keys(selectedSearchResults).filter((p) => selectedSearchResults[p])
+    if (picked.length === 0) {
+      setShowSearchDialog(false)
+      return
+    }
+    const combined = savePaths.concat(picked)
+    const newSavePaths = Array.from(new Set(combined))
+    await setSavePathsAndSave(newSavePaths.filter(Boolean))
+    setShowSearchDialog(false)
+  }
 
   const saveAll = useCallback(async () => {
     await Promise.all([saveGamePath(), saveSavePaths(), saveScreenshotPath()])
@@ -228,12 +265,22 @@ function PathComponent(
 
             <div className={cn('flex flex-row gap-3 items-start')}>
               <ArrayTextarea
-                className={cn('flex-1 max-h-[400px] min-h-[100px] resize-none')}
+                className={cn('flex-1 max-h-[400px] min-h-[130px] resize-none')}
                 value={savePaths}
                 onChange={setSavePaths}
                 onBlur={saveSavePaths}
               />
               <div className={cn('flex flex-col gap-3')}>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button variant={'outline'} size={'icon'} onClick={openSearchDialog}>
+                      <span className={cn('icon-[mdi--magnify] w-5 h-5')}></span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">
+                    {t('detail.properties.path.search.tooltip')}
+                  </TooltipContent>
+                </Tooltip>
                 <Tooltip>
                   <TooltipTrigger>
                     <Button variant={'outline'} size={'icon'} onClick={selectSaveFolderPath}>
@@ -292,6 +339,44 @@ function PathComponent(
           </div>
         </div>
       </CardContent>
+
+      <Dialog open={showSearchDialog} onOpenChange={setShowSearchDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('detail.properties.path.search.results')}</DialogTitle>
+          </DialogHeader>
+          <div className={cn('flex items-center justify-between mb-3')}>
+            <div className={cn('flex flex-col gap-2')}>
+              {searchResults.length === 0 ? (
+                <div className={cn('text-sm text-muted-foreground')}>
+                  {t('detail.properties.path.search.noResults')}
+                </div>
+              ) : (
+                searchResults.map((p, index) => (
+                  <div key={p} className="flex flex-row items-center gap-2">
+                    <Checkbox
+                      id={`search-result-${index}`}
+                      checked={!!selectedSearchResults[p]}
+                      onCheckedChange={(val: boolean | 'indeterminate') =>
+                        setSelectedSearchResults((prev) => ({ ...prev, [p]: !!val }))
+                      }
+                    />
+                    <label htmlFor={`search-result-${index}`}>{p}</label>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant={'ghost'} onClick={() => setShowSearchDialog(false)}>
+              {t('utils:common.cancel')}
+            </Button>
+            <Button className={cn('ml-2')} onClick={confirmSearchSelection}>
+              {t('utils:common.confirm')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   )
 }

@@ -1,12 +1,13 @@
-import {
-  deleteGameSave,
-  restoreGameSave,
-  addGameMemory,
-  deleteGameMemory,
-  updateGameMemoryCover
-} from './services'
 import { GameDBManager } from '~/core/database'
 import { ipcManager } from '~/core/ipc'
+import {
+  addGameMemory,
+  deleteGameMemory,
+  deleteGameSave,
+  restoreGameSave,
+  searchGameSavePaths,
+  updateGameMemoryCover
+} from './services'
 
 export function setupGameIPC(): void {
   ipcManager.handle(
@@ -15,6 +16,10 @@ export function setupGameIPC(): void {
       return await GameDBManager.setGameImage(gameId, type, image)
     }
   )
+
+  ipcManager.handle('game:search-save-paths', async (_, gameId: string) => {
+    return await searchGameSavePaths(gameId)
+  })
 
   ipcManager.handle('game:delete-save', async (_, gameId: string, saveId: string) => {
     await deleteGameSave(gameId, saveId)

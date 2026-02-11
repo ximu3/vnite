@@ -153,6 +153,7 @@
       "editMediaProperties": "メディアの属性を編集"
     },
     "save": {
+      "openPropertiesDialog": "セーブパスを設定",
       "table": {
         "date": "日付",
         "note": "メモ",
@@ -441,6 +442,14 @@
         "screenshotPath": "スクリーンショット保存先",
         "addFolder": "フォルダを追加",
         "addFile": "ファイルを追加",
+        "search": {
+          "tooltip": "検索セーブパス",
+          "results": "検索結果",
+          "noResults": "セーブパスが見つかりません",
+          "loading": "セーブパスを検索中…",
+          "success": "検索成功",
+          "error": "検索失敗：{{message}}"
+        },
         "maxBackups": "セーブバックアップの最大数",
         "notifications": {
           "configuring": "プリセットを設定中…",

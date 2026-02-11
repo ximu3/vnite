@@ -46,6 +46,7 @@
     },
     "starting": {
       "pathRequired": "先にゲームパスを設定してください",
+      "pathInvalid": "ゲームパスが無効です，再設定してください。",
       "configuringLauncher": "ランチャーを設定中…",
       "configSuccess": "ランチャーの設定に成功しました",
       "configError": "設定エラー: {{message}}",

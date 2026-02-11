@@ -1,7 +1,7 @@
 /**
  * Compute the Jaro similarity between two strings.
  */
-function jaro(s1: string, s2: string): number {
+export function jaro(s1: string, s2: string): number {
   const len1 = s1.length
   const len2 = s2.length
 

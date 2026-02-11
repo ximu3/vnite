@@ -14,7 +14,10 @@ import { GameImage } from '~/components/ui/game-image'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { useConfigState, useGameState } from '~/hooks'
 import { cn } from '~/utils'
+import { ScrollToTopButton } from '../Showcase/ScrollToTopButton'
 import { ScrollArea } from '../ui/scroll-area'
+import { PlayTimeEditorDialog } from './Config/ManageMenu/PlayTimeEditorDialog'
+import { ScoreEditorDialog } from './Config/ManageMenu/ScoreEditorDialog'
 import { GamePropertiesDialog } from './Config/Properties'
 import { ImageViewerDialog } from './Config/Properties/Media/ImageViewerDialog'
 import { Header } from './Header'
@@ -41,10 +44,21 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   // Store the current scroll position to avoid re-querying the DOM in the rAF callback
   const currentScrollTop = useRef(0)
 
+  const lastDetailTab = useGameDetailStore((s) => s.lastDetailTab)
+  const setLastDetailTab = useGameDetailStore((s) => s.setLastDetailTab)
   const isEditingLogo = useGameDetailStore((state) => state.isEditingLogo)
   const setIsEditingLogo = useGameDetailStore((state) => state.setIsEditingLogo)
   const isInformationDialogOpen = useGameDetailStore((s) => s.isInformationDialogOpen)
   const setIsInformationDialogOpen = useGameDetailStore((s) => s.setIsInformationDialogOpen)
+  const propertiesDialogState = useGameDetailStore((s) => s.propertiesDialog)
+  const closePropertiesDialog = useGameDetailStore((s) => s.closePropertiesDialog)
+  const openPropertiesDialog = useGameDetailStore((s) => s.openPropertiesDialog)
+  const isPlayTimeEditorDialogOpen = useGameDetailStore((state) => state.isPlayTimeEditorDialogOpen)
+  const setIsPlayTimeEditorDialogOpen = useGameDetailStore(
+    (state) => state.setIsPlayTimeEditorDialogOpen
+  )
+  const isScoreEditorDialogOpen = useGameDetailStore((state) => state.isScoreEditorDialogOpen)
+  const setIsScoreEditorDialogOpen = useGameDetailStore((state) => state.setIsScoreEditorDialogOpen)
 
   // Game Logo position and size management
   const initialPosition = { x: 1.5, y: 35 }
@@ -185,7 +199,6 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   const isInitialPosition = (pos: { x: number; y: number }): boolean =>
     pos.x === initialPosition.x && pos.y === initialPosition.y
 
-  const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = useState(false)
   const [isImageViewerOpen, setIsImageViewerOpen] = useState(false)
   const [imageViewerPath, setImageViewerPath] = useState<string | null>(null)
 
@@ -290,7 +303,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
             </div>
           </ContextMenuTrigger>
           <ContextMenuContent className={cn('w-40')}>
-            <ContextMenuItem onSelect={() => setIsPropertiesDialogOpen(true)}>
+            <ContextMenuItem onSelect={() => openPropertiesDialog('media')}>
               {t('detail.contextMenu.editMediaProperties')}
             </ContextMenuItem>
           </ContextMenuContent>
@@ -329,7 +342,11 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
 
                 {/* Content Area */}
                 <div className={cn('p-7 pt-4 h-full')}>
-                  <Tabs defaultValue="overview" className={cn('w-full')}>
+                  <Tabs
+                    value={lastDetailTab}
+                    onValueChange={(value) => setLastDetailTab(value as typeof lastDetailTab)}
+                    className={cn('w-full')}
+                  >
                     <TabsList
                       className={cn('w-full justify-start bg-transparent')}
                       variant="underline"
@@ -369,8 +386,8 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
 
           {/* Custom context menu for the background area of content container */}
           <ContextMenuContent className={cn('w-40')}>
-            <ContextMenuItem onSelect={() => setIsPropertiesDialogOpen(true)}>
-              修改媒体属性
+            <ContextMenuItem onSelect={() => openPropertiesDialog('media')}>
+              {t('detail.contextMenu.editMediaProperties')}
             </ContextMenuItem>
             <ContextMenuItem
               onSelect={() => {
@@ -382,13 +399,18 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
           </ContextMenuContent>
         </ContextMenu>
       </ScrollArea>
+      <ScrollToTopButton scrollAreaRef={scrollAreaRef} threshold={500} />
 
-      {isPropertiesDialogOpen && (
+      {propertiesDialogState.open && (
         <GamePropertiesDialog
           gameId={gameId}
-          isOpen={isPropertiesDialogOpen}
-          setIsOpen={setIsPropertiesDialogOpen}
-          defaultTab={'media'}
+          isOpen={propertiesDialogState.open}
+          setIsOpen={(open) => {
+            if (!open) {
+              closePropertiesDialog()
+            }
+          }}
+          defaultTab={propertiesDialogState.defaultTab}
         />
       )}
       {isImageViewerOpen && (
@@ -404,6 +426,12 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
           isOpen={isInformationDialogOpen}
           setIsOpen={setIsInformationDialogOpen}
         />
+      )}
+      {isPlayTimeEditorDialogOpen && (
+        <PlayTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayTimeEditorDialogOpen} />
+      )}
+      {isScoreEditorDialogOpen && (
+        <ScoreEditorDialog gameId={gameId} setIsOpen={setIsScoreEditorDialogOpen} />
       )}
     </div>
   )

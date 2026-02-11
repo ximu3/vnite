@@ -8,6 +8,7 @@ import { useGameState } from '~/hooks'
 import { cn } from '~/utils'
 import { useGameDetailStore } from '../../store'
 import { RecordCard } from './RecordCard'
+import { PLAY_STATUS_ICONS } from './RecordIcon'
 
 export function Record({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
@@ -58,7 +59,7 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
           className={cn('')}
           title={t('detail.overview.record.playStatus')}
           content={t(`utils:game.playStatus.${playStatus}`)}
-          icon="icon-[mdi--bookmark-outline] w-[32px] h-[32px]"
+          icon={cn(PLAY_STATUS_ICONS[playStatus], 'w-[32px] h-[32px]')}
         />
         <PopoverContent className="max-w-[150px] p-1">
           <div className="flex flex-col">
