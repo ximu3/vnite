@@ -293,7 +293,9 @@
     "common": {
       "title": "Common",
       "defaultDataSource": "Default Data Source",
-      "defaultDataSourceDescription": "Choose default data source"
+      "defaultDataSourceDescription": "Choose default data source",
+      "defaultMediaDataSource": "Default Media Data Source",
+      "defaultMediaDataSourceDescription": "Select the default search data source used on the “Properties → Media” page\nSome data sources do not support icon or logo searches. If the selected default source is unavailable, the system will automatically fall back to Google"
     },
     "vndb": {
       "title": "VNDB Settings",

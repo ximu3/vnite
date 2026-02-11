@@ -293,7 +293,9 @@
     "common": {
       "title": "通用",
       "defaultDataSource": "預設資料源",
-      "defaultDataSourceDescription": "選擇預設資料來源"
+      "defaultDataSourceDescription": "選擇預設資料來源",
+      "defaultMediaDataSource": "預設媒體資料來源",
+      "defaultMediaDataSourceDescription": "選擇「屬性 → 媒體」頁面使用的預設搜尋資料來源\n部分資料來源不支援圖示或徽標搜尋；當所選預設資料來源不可用時，將自動回退至「Google」"
     },
     "vndb": {
       "title": "VNDB 設置",

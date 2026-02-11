@@ -1,22 +1,38 @@
-import { cn } from '~/utils'
-import { Dialog, DialogContent } from '~/components/ui/dialog'
-import { Button } from '~/components/ui/button'
-import { Input } from '~/components/ui/input'
+import { ScraperCapabilities } from '@appTypes/utils'
+import { Button } from '@ui/button'
+import { Card } from '@ui/card'
+import { Dialog, DialogContent } from '@ui/dialog'
+import { Input } from '@ui/input'
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
-  SelectTrigger,
-  SelectValue,
   SelectLabel,
-  SelectGroup
-} from '~/components/ui/select'
-import { Card } from '~/components/ui/card'
-import { useState, useEffect } from 'react'
-import { toast } from 'sonner'
+  SelectTrigger,
+  SelectValue
+} from '@ui/select'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 import { ipcManager } from '~/app/ipc'
-import { ScraperCapabilities } from '@appTypes/utils'
+import { useConfigState } from '~/hooks'
+import { cn } from '~/utils'
+
+function checkMediaCapability(capabilities: ScraperCapabilities[], type: string): boolean {
+  switch (type) {
+    case 'cover':
+      return capabilities.includes('getGameCovers')
+    case 'icon':
+      return capabilities.includes('getGameIcons')
+    case 'logo':
+      return capabilities.includes('getGameLogos')
+    case 'background':
+      return capabilities.includes('getGameBackgrounds')
+    default:
+      return false
+  }
+}
 
 interface SearchMediaDialogProps {
   isOpen: boolean
@@ -36,6 +52,7 @@ export function SearchMediaDialog({
   const { t } = useTranslation('game')
   const [searchTitle, setSearchTitle] = useState(gameTitle)
   const [dataSource, setDataSource] = useState('google')
+  const [defaultMediaDataSource] = useConfigState('game.scraper.common.defaultMediaDataSource')
   const [availableDataSources, setAvailableDataSources] = useState<
     { id: string; name: string; capabilities: ScraperCapabilities[] }[]
   >([])
@@ -54,6 +71,15 @@ export function SearchMediaDialog({
     }
     fetchAvailableDataSources()
   }, [])
+
+  useEffect(() => {
+    const defaultSource = availableDataSources.find((s) => s.id === defaultMediaDataSource)
+    if (!defaultSource) return
+
+    if (checkMediaCapability(defaultSource.capabilities, type)) {
+      setDataSource(defaultMediaDataSource)
+    }
+  }, [defaultMediaDataSource, availableDataSources, setDataSource])
 
   useEffect(() => {
     if (isOpen) {
@@ -173,20 +199,7 @@ export function SearchMediaDialog({
                 <SelectGroup>
                   <SelectLabel>{t('detail.properties.media.search.dataSource')}</SelectLabel>
                   {availableDataSources
-                    .filter((source) => {
-                      switch (type) {
-                        case 'cover':
-                          return source.capabilities.includes('getGameCovers')
-                        case 'icon':
-                          return source.capabilities.includes('getGameIcons')
-                        case 'logo':
-                          return source.capabilities.includes('getGameLogos')
-                        case 'background':
-                          return source.capabilities.includes('getGameBackgrounds')
-                        default:
-                          return false
-                      }
-                    })
+                    .filter((source) => checkMediaCapability(source.capabilities, type))
                     .map((source) => (
                       <SelectItem key={source.id} value={source.id}>
                         {source.name}

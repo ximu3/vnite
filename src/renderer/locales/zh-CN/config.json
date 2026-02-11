@@ -293,7 +293,9 @@
     "common": {
       "title": "通用",
       "defaultDataSource": "默认数据源",
-      "defaultDataSourceDescription": "选择默认数据源"
+      "defaultDataSourceDescription": "选择默认数据源",
+      "defaultMediaDataSource": "默认媒体数据源",
+      "defaultMediaDataSourceDescription": "选择“属性 → 媒体”页面使用的默认搜索数据源\n部分数据源不支持图标或徽标搜索；当所选默认数据源不可用时，将自动回退至「Google」"
     },
     "vndb": {
       "title": "VNDB 设置",

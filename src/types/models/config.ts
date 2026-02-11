@@ -27,6 +27,7 @@ export interface configDocs {
     scraper: {
       common: {
         defaultDataSource: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite' | string
+        defaultMediaDataSource: 'google' | string
       }
       vndb: {
         tagSpoilerLevel: 0 | 1 | 2
@@ -300,7 +301,8 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
   game: {
     scraper: {
       common: {
-        defaultDataSource: 'steam'
+        defaultDataSource: 'steam',
+        defaultMediaDataSource: 'google'
       },
       vndb: {
         tagSpoilerLevel: 0
