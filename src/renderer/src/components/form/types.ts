@@ -65,6 +65,8 @@ interface InputConfigProps {
   controlType: 'input'
   inputType?: 'text' | 'number' | 'email' | 'password' | 'url'
   placeholder?: string
+  min?: number
+  max?: number
 }
 
 interface TextareaConfigProps {

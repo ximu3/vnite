@@ -179,6 +179,8 @@ export function ConfigItem<
         const inputProps = props as ConfigItemProps<T, Path> & { controlType: 'input' }
         const inputType = inputProps.inputType || 'text'
         const placeholder = inputProps.placeholder
+        const min = inputProps.min
+        const max = inputProps.max
 
         return (
           <Input
@@ -187,6 +189,8 @@ export function ConfigItem<
             onChange={handleInputChange}
             onBlur={(e) => handleBlur(e)}
             placeholder={placeholder}
+            min={min}
+            max={max}
             disabled={disabled}
             className={cn('max-w-xs', controlClassName)}
           />
