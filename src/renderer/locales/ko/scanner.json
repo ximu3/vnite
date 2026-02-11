@@ -116,6 +116,6 @@
     "dataSourcePlaceholder": "자료 출처 선택",
     "depthPlaceholder": "스캔 깊이 선택",
     "depthTooltip": "폴더를 스캔하는 깊이 단계를 설정",
-    "normalizeFolderName": "단순화된 폴더 이름으로 메타데이터를 수집"
+    "normalizeFolderName": "폴더 이름 정리"
   }
 }

@@ -119,6 +119,6 @@
     "depthTooltip": "Set the depth level for folder scanning",
     "targetCollection": "Target Collection",
     "targetCollectionNone": "None",
-    "normalizeFolderName": "Use simplified folder name for metadata scraping"
+    "normalizeFolderName": "Clean Folder Name"
   }
 }

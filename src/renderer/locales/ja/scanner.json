@@ -119,6 +119,6 @@
     "depthTooltip": "フォルダスキャンの深度レベルを設定",
     "targetCollection": "ターゲットコレクション",
     "targetCollectionNone": "なし",
-    "normalizeFolderName": "簡略化済みのフォルダ名でメタデータを取得"
+    "normalizeFolderName": "フォルダ名を正規化"
   }
 }
