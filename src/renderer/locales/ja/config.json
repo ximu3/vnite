@@ -293,7 +293,9 @@
     "common": {
       "title": "一般",
       "defaultDataSource": "デフォルトデータソース",
-      "defaultDataSourceDescription": "デフォルトデータソースを選択"
+      "defaultDataSourceDescription": "デフォルトデータソースを選択",
+      "defaultMediaDataSource": "デフォルトのメディアデータソース",
+      "defaultMediaDataSourceDescription": "「プロパティ → メディア」ページで使用するデフォルトの検索データソースを選択\n一部のデータソースはアイコンまたはロゴ検索に対応していません。選択したデフォルトデータソースが利用できない場合は、自動的に「Google」にフォールバックします"
     },
     "vndb": {
       "title": "VNDB 設定",
@@ -341,6 +343,11 @@
     "importWarning": "データベースのインポートは現在のデータベースを上書きします。この操作は元に戻せません！操作後、アプリケーションは自動的に再起動します。",
     "confirmImportV2": "V2データベースをインポートしてもよろしいですか？",
     "importV2Warning": "V2データベースのインポートは現在のデータベースを上書きします。この操作は元に戻せません！操作後、アプリケーションは自動的に再起動します。",
+    "defaultBackupPath": {
+      "title": "データベースのデフォルトバックアップフォルダ",
+      "description": "このパスを設定すると、バックアップ操作時の選択ダイアログがこのディレクトリを初期表示します。",
+      "placeholder": "デフォルトのデータベースバックアップフォルダを入力してください"
+    },
     "portableAdminRequired": "注意：ポータブルモードには管理者権限が必要な場合があります。",
     "notifications": {
       "backingUp": "データベースをバックアップ中…",

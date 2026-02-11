@@ -27,6 +27,7 @@ export interface configDocs {
     scraper: {
       common: {
         defaultDataSource: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite' | string
+        defaultMediaDataSource: 'google' | string
       }
       vndb: {
         tagSpoilerLevel: 0 | 1 | 2
@@ -273,6 +274,9 @@ export interface configLocalDocs {
       }
     }
   }
+  database: {
+    defaultBackupPath: string
+  }
   network: {
     proxy: {
       enable: boolean
@@ -297,7 +301,8 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
   game: {
     scraper: {
       common: {
-        defaultDataSource: 'steam'
+        defaultDataSource: 'steam',
+        defaultMediaDataSource: 'google'
       },
       vndb: {
         tagSpoilerLevel: 0
@@ -436,6 +441,9 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
 } as const
 
 export const DEFAULT_CONFIG_LOCAL_VALUES: Readonly<configLocalDocs> = {
+  database: {
+    defaultBackupPath: ''
+  },
   userInfo: {
     name: '',
     email: '',

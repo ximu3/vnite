@@ -371,7 +371,8 @@ export function Titlebar(): React.JSX.Element {
       </div>
 
       {/* 2. Window control button area - Fixed display, never hidden */}
-      <div className="flex flex-row ml-auto shrink-0">
+      <div className="flex flex-row ml-auto shrink-0 z-[1000]">
+        {/*z-[1000] Larger than global database backup overlay */}
         <Button
           variant={'ghost'}
           className={cn(

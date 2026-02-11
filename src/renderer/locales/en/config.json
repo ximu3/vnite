@@ -293,7 +293,9 @@
     "common": {
       "title": "Common",
       "defaultDataSource": "Default Data Source",
-      "defaultDataSourceDescription": "Choose default data source"
+      "defaultDataSourceDescription": "Choose default data source",
+      "defaultMediaDataSource": "Default Media Data Source",
+      "defaultMediaDataSourceDescription": "Select the default search data source used on the “Properties → Media” page\nSome data sources do not support icon or logo searches. If the selected default source is unavailable, the system will automatically fall back to Google"
     },
     "vndb": {
       "title": "VNDB Settings",
@@ -341,6 +343,11 @@
     "importWarning": "Importing a database will overwrite the current database. This operation is irreversible! The application will restart automatically after the operation.",
     "confirmImportV2": "Are you sure you want to import the V2 database?",
     "importV2Warning": "Importing a V2 database will overwrite the current database. This operation is irreversible! The application will restart automatically after the operation.",
+    "defaultBackupPath": {
+      "title": "Default Database Backup Path",
+      "description": "When set, the backup dialog will open at this directory by default.",
+      "placeholder": "Enter the default database backup path"
+    },
     "portableAdminRequired": "Note: Portable mode may require administrator privileges.",
     "notifications": {
       "backingUp": "Backing up database…",

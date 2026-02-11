@@ -1,14 +1,17 @@
-import { cn } from '~/utils'
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
-import { ConfigItem } from '~/components/form/ConfigItem'
-import { useTranslation } from 'react-i18next'
-import { useState, useEffect } from 'react'
-import { ipcManager } from '~/app/ipc'
 import { ScraperCapabilities } from '@appTypes/utils'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { ipcManager } from '~/app/ipc'
+import { ConfigItem } from '~/components/form/ConfigItem'
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import { cn } from '~/utils'
 
 export function Scraper(): React.JSX.Element {
   const { t } = useTranslation('config')
   const [availableDataSources, setAvailableDataSources] = useState<
+    { id: string; name: string; capabilities: ScraperCapabilities[] }[]
+  >([])
+  const [availableMediaDataSources, setAvailableMediaDataSources] = useState<
     { id: string; name: string; capabilities: ScraperCapabilities[] }[]
   >([])
 
@@ -21,6 +24,18 @@ export function Scraper(): React.JSX.Element {
       setAvailableDataSources(availableDataSources)
     }
     fetchAvailableDataSources()
+  }, [])
+
+  useEffect(() => {
+    const fetchAvailableMediaDataSources = async (): Promise<void> => {
+      const availableDataSources = await ipcManager.invoke(
+        'scraper:get-provider-infos-with-capabilities',
+        ['getGameCovers', 'getGameIcons', 'getGameLogos', 'getGameBackgrounds'],
+        false
+      )
+      setAvailableMediaDataSources(availableDataSources)
+    }
+    fetchAvailableMediaDataSources()
   }, [])
 
   return (
@@ -45,6 +60,21 @@ export function Scraper(): React.JSX.Element {
                 controlType="select"
                 description={t('scraper.common.defaultDataSourceDescription')}
                 options={availableDataSources.map((ds) => ({
+                  value: ds.id,
+                  label: ds.name
+                }))}
+                controlClassName="w-[200px]"
+              />
+            </div>
+
+            <div className={cn('space-y-4')}>
+              <ConfigItem
+                hookType="config"
+                path="game.scraper.common.defaultMediaDataSource"
+                title={t('scraper.common.defaultMediaDataSource')}
+                controlType="select"
+                description={t('scraper.common.defaultMediaDataSourceDescription')}
+                options={availableMediaDataSources.map((ds) => ({
                   value: ds.id,
                   label: ds.name
                 }))}
