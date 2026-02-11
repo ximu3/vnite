@@ -791,74 +791,70 @@ export function getSortedGameIds(order: 'asc' | 'desc' = 'asc'): string[] {
 
 // Get annual play days
 export function getPlayedDaysYearly(): { [date: string]: number } {
+  const ONE_DAY = 24 * 60 * 60 * 1000
   try {
     const { gameIds } = useGameRegistry.getState()
-    const currentDate = new Date()
-    const lastYearDate = new Date(currentDate)
-    lastYearDate.setFullYear(lastYearDate.getFullYear() - 1)
+
+    const oneYearAgo = new Date()
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1)
+    const windowStart = oneYearAgo.getTime()
+    const windowEnd = Date.now()
 
     const result: { [date: string]: number } = {}
-    const current = new Date(currentDate)
-    const datesArray: { date: string; playTime: number }[] = []
-
-    while (current.getTime() >= lastYearDate.getTime()) {
-      const dateStr = current.toLocaleDateString('en-CA')
-      let playTime = 0
-
-      for (const gameId of gameIds) {
-        const store = getGameStore(gameId)
-        const timers = store.getState().getValue('record.timers')
-
-        if (timers) {
-          playTime += calculateDailyPlayTime(current, timers)
-        }
-      }
-
-      playTime = capDailyPlayTime(playTime, dateStr)
-
-      datesArray.push({ date: dateStr, playTime })
-      current.setDate(current.getDate() - 1)
+    const startDay = new Date(windowStart)
+    startDay.setHours(0, 0, 0, 0)
+    const endDay = new Date(windowEnd)
+    endDay.setHours(0, 0, 0, 0)
+    let d = startDay.getTime()
+    while (d <= endDay.getTime()) {
+      const dateStr = new Date(d).toLocaleDateString('en-CA')
+      result[dateStr] = 0
+      d += ONE_DAY
     }
 
-    datesArray.sort((a, b) => a.date.localeCompare(b.date))
-    datesArray.forEach(({ date, playTime }) => {
-      result[date] = playTime
-    })
+    for (const gameId of gameIds) {
+      const store = getGameStore(gameId)
+      const timers = store.getState().getValue('record.timers')
+      if (!timers) continue
+
+      for (const timer of timers) {
+        const start = new Date(timer.start).getTime()
+        const end = new Date(timer.end).getTime()
+
+        if (isNaN(start) || isNaN(end)) continue
+        if (end <= windowStart || start >= windowEnd) continue
+
+        const overlapStart = Math.max(start, windowStart)
+        const overlapEnd = Math.min(end, windowEnd)
+
+        const dayStart = new Date(overlapStart)
+        dayStart.setHours(0, 0, 0, 0)
+        const dayEnd = new Date(overlapEnd)
+        dayEnd.setHours(23, 59, 59, 999)
+
+        let currentDay = dayStart.getTime()
+        const endDay = dayEnd.getTime()
+
+        while (currentDay <= endDay) {
+          const playTime =
+            Math.min(currentDay + ONE_DAY - 1, overlapEnd) - Math.max(currentDay, overlapStart)
+
+          const dateStr = new Date(currentDay).toLocaleDateString('en-CA')
+          result[dateStr] = (result[dateStr] || 0) + playTime
+
+          currentDay += ONE_DAY
+        }
+      }
+    }
+
+    for (const dateStr in result) {
+      result[dateStr] = capDailyPlayTime(result[dateStr], dateStr)
+    }
 
     return result
   } catch (error) {
     console.error(`Error in getPlayedDaysYearly:`, error)
     return {}
-  }
-}
-
-// Get total annual playtime
-export function getTotalplayTimeYearly(): number {
-  try {
-    const { gameIds } = useGameRegistry.getState()
-    const currentDate = new Date()
-    const lastYearDate = new Date(currentDate)
-    lastYearDate.setFullYear(lastYearDate.getFullYear() - 1)
-
-    let totalPlayTime = 0
-    const current = new Date(currentDate)
-
-    while (current.getTime() >= lastYearDate.getTime()) {
-      for (const gameId of gameIds) {
-        const store = getGameStore(gameId)
-        const timers = store.getState().getValue('record.timers')
-
-        if (timers) {
-          totalPlayTime += calculateDailyPlayTime(current, timers)
-        }
-      }
-      current.setDate(current.getDate() - 1)
-    }
-
-    return totalPlayTime
-  } catch (error) {
-    console.error(`Error in getTotalplayTimeYearly:`, error)
-    return 0
   }
 }
 

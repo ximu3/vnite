@@ -1,11 +1,14 @@
+import { NSFWBlurLevel } from '@appTypes/models'
 import { generateUUID } from '@appUtils'
 import { useRouter, useSearch } from '@tanstack/react-router'
 import { Button } from '@ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/card'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@ui/dialog'
+import { ScrollArea } from '@ui/scroll-area'
 import { Separator } from '@ui/separator'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Fragment, useCallback, useEffect, useMemo } from 'react'
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   Area,
@@ -18,21 +21,38 @@ import {
   XAxis,
   YAxis
 } from 'recharts'
+import stringWidth from 'string-width'
 import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
 import { useConfigState } from '~/hooks'
+import { useConfigStore } from '~/stores/config'
 import { getGameStore } from '~/stores/game'
 import { getWeeklyPlayData, parseLocalDate } from '~/stores/game/recordUtils'
 import { scrollToElement } from '~/utils'
 import { MergeIntervalSliderPopover } from './Config/MergeIntervalSliderPopover'
 import { GameRankingItem } from './GameRankingItem'
 
+/**
+ * Represents a row of data for the timeline chart.
+ * The timeline chart is implemented as a stacked bar chart,
+ * where the solid-colored bars represent `duration` (actual playtime),
+ * and the transparent bars represent `offset` (gaps between play sessions).
+ *
+ * Therefore, the keys for each bar must not be reused when switching pages,
+ * as it may cause rendering order issues.
+ */
 interface TimeLineRow {
-  gameLabel: string
+  gameLabel: string // Game name displayed on the Y-axis (may be blurred based on NSFW settings)
+  gameLabelTooltip: string // Unblurred game name for tooltip display
   gameId: string
   color: string
-  [key: `offset${number}`]: number
-  [key: `duration${number}`]: number
-  endOffset: number
+  [key: `offset${number}`]: number // Represents the gap between the end of the previous segment and the start of the current one
+  [key: `duration${number}`]: number // Represents the duration of the current segment
+  endOffset: number // Ensures a clickable Bar exists at the end of the timeline
+  accurateTotal: number // Used to display the precise total duration (merging close segments may introduce slight inaccuracies)
+}
+
+function stringToBase64(str: string): string {
+  return btoa(String.fromCharCode(...new TextEncoder().encode(str)))
 }
 
 function buildTimeLineChartData(
@@ -45,8 +65,8 @@ function buildTimeLineChartData(
 
   const mergeTimers = (
     timers: { start: string; end: string }[]
-  ): { start: number; end: number }[] => {
-    if (!timers || timers.length === 0) return []
+  ): { timers: { start: number; end: number }[]; accurateTotal: number } => {
+    if (!timers || timers.length === 0) return { timers: [], accurateTotal: 0 }
 
     const sorted = timers
       .map((t) => ({
@@ -56,10 +76,12 @@ function buildTimeLineChartData(
       .sort((a, b) => a.start - b.start) // Although it is sorted in upstream...
 
     const merged: { start: number; end: number }[] = []
+    let total = sorted[0].end - sorted[0].start
     let current = { ...sorted[0] }
 
     for (let i = 1; i < sorted.length; i++) {
       const gap = sorted[i].start - current.end
+      total += sorted[i].end - sorted[i].start
       if (gap <= maxGapMs) {
         current.end = Math.max(current.end, sorted[i].end)
       } else {
@@ -68,15 +90,31 @@ function buildTimeLineChartData(
       }
     }
     merged.push(current)
-    return merged
+    return { timers: merged, accurateTotal: total }
   }
 
-  return Object.entries(weekData.weeklyPlayTimers).map(([gameId, timers], gameIndex) => {
-    const mergedTimers = mergeTimers(timers)
-    const gameLabel = getGameStore(gameId).getState().getValue('metadata.name')
-    const color = gameIndex % 2 === 0 ? 'var(--primary)' : 'var(--secondary)'
+  const nsfwBlurLevel = useConfigStore.getState().getConfigValue('appearances.nsfwBlurLevel')
 
-    const row: TimeLineRow = { gameLabel, gameId, color, endOffset: 0 }
+  return Object.entries(weekData.weeklyPlayTimers).map(([gameId, timers], gameIndex) => {
+    const { timers: mergedTimers, accurateTotal } = mergeTimers(timers)
+    const color = gameIndex % 2 === 0 ? 'var(--primary)' : 'var(--secondary)'
+    const store = getGameStore(gameId)
+    let gameLabel = store.getState().getValue('metadata.name')
+    const gameLabelTooltip = gameLabel // The name in tooltip is not blurred
+    if (nsfwBlurLevel >= NSFWBlurLevel.BlurImageAndTitle) {
+      if (store.getState().getValue('apperance.nsfw')) {
+        gameLabel = stringToBase64(gameLabel).slice(0, gameLabel.length)
+      }
+    }
+
+    const row: TimeLineRow = {
+      gameLabel,
+      gameLabelTooltip,
+      gameId,
+      color,
+      endOffset: 0,
+      accurateTotal
+    }
     let accumulated = 0
 
     mergedTimers.forEach((timer, idx) => {
@@ -97,9 +135,14 @@ function buildTimeLineChartData(
 
 export function WeeklyReport(): React.JSX.Element {
   const { t } = useTranslation('record')
+
+  const [showMoreTimeGames, setShowMoreTimeGames] = useState(false)
+  const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
+
   const router = useRouter()
   const search = useSearch({ from: '/record' })
   const selectedDate = new Date(search.date)
+  const dateTs = selectedDate.getTime()
 
   const setSelectedDate = (newDate: Date): void => {
     router.navigate({
@@ -112,7 +155,7 @@ export function WeeklyReport(): React.JSX.Element {
     })
   }
 
-  const weekData = useMemo(() => getWeeklyPlayData(selectedDate), [search])
+  const weekData = useMemo(() => getWeeklyPlayData(selectedDate), [dateTs])
 
   const goToPreviousWeek = (): void => {
     const prevWeek = new Date(selectedDate)
@@ -192,11 +235,11 @@ export function WeeklyReport(): React.JSX.Element {
         fullDate: date
       }
     })
-  }, [search])
+  }, [dateTs])
   const [mergeInterval, setMergeInterval] = useConfigState('record.weekly.mergeInterval')
   const timeLineChartDataFlat = useMemo(() => {
     return buildTimeLineChartData(weekData, weekStartTime, nextWeekStart, mergeInterval)
-  }, [search, mergeInterval])
+  }, [dateTs, mergeInterval, nsfwBlurLevel])
 
   const handleSliderCommit = useCallback(
     (value: number) => {
@@ -344,6 +387,31 @@ export function WeeklyReport(): React.JSX.Element {
                     tickLine={false}
                     axisLine={false}
                     width="auto"
+                    tickFormatter={(text) => {
+                      const maxSegmentWidth = 25
+                      const segments = String(text).split(/\s+/)
+
+                      for (let i = 0; i < segments.length; i++) {
+                        const seg = segments[i]
+
+                        if (stringWidth(seg) > maxSegmentWidth) {
+                          let acc = 0
+                          let cutIndex = 0
+
+                          for (const ch of seg) {
+                            const w = stringWidth(ch)
+                            if (acc + w > maxSegmentWidth) break
+                            acc += w
+                            cutIndex += ch.length
+                          }
+
+                          segments[i] = seg.slice(0, cutIndex) + '…'
+                          return segments.slice(0, i + 1).join(' ')
+                        }
+                      }
+
+                      return segments.join(' ')
+                    }}
                   />
                   {xTicks.map((t, idx) => (
                     <ReferenceLine
@@ -363,16 +431,9 @@ export function WeeklyReport(): React.JSX.Element {
                         labelFormatter={(label, data) => {
                           if (!data || data.length === 0) return label
 
-                          const row = data[0].payload
-                          const gameName = row.gameLabel
-
-                          let totalTime = 0
-                          for (let i = 0; i < maxTimersCount; i++) {
-                            const durationKey = `duration${i}`
-                            if (row[durationKey] != null) {
-                              totalTime += row[durationKey]
-                            }
-                          }
+                          const row: TimeLineRow = data[0].payload
+                          const gameName = row.gameLabelTooltip
+                          const totalTime = row.accurateTotal
 
                           return `${gameName}\n${formatGameTime(totalTime)} (${((totalTime / weekData.totalTime) * 100).toFixed(2)}%)`
                         }}
@@ -477,20 +538,27 @@ export function WeeklyReport(): React.JSX.Element {
         </Card>
         {/* Weekly Game Rankings */}
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>{t('weekly.weeklyGames.title')}</CardTitle>
+            {weekData.mostPlayedGames.length > 3 && (
+              <Button variant="ghost" size="icon" onClick={() => setShowMoreTimeGames(true)}>
+                <span className="icon-[mdi--chevron-double-right] w-5 h-5"></span>
+              </Button>
+            )}
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               {weekData.mostPlayedGames.length > 0 ? (
-                weekData.mostPlayedGames.map((game, index) => (
-                  <GameRankingItem
-                    key={game.gameId}
-                    gameId={game.gameId}
-                    rank={index + 1}
-                    extraInfo={formatGameTime(game.playTime)}
-                  />
-                ))
+                weekData.mostPlayedGames
+                  .slice(0, 3)
+                  .map((game, index) => (
+                    <GameRankingItem
+                      key={game.gameId}
+                      gameId={game.gameId}
+                      rank={index + 1}
+                      extraInfo={formatGameTime(game.playTime)}
+                    />
+                  ))
               ) : (
                 <div className="py-6 text-center text-sm text-muted-foreground">
                   {t('weekly.weeklyGames.noRecords')}
@@ -500,6 +568,28 @@ export function WeeklyReport(): React.JSX.Element {
           </CardContent>
         </Card>
       </div>
+
+      {/* Game Time Ranking - Dialog */}
+      <Dialog open={showMoreTimeGames} onOpenChange={setShowMoreTimeGames}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('overview.ranking.playTimeRanking')}</DialogTitle>
+            <DialogDescription>{t('overview.ranking.allGamesByPlayTime')}</DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="h-[60vh] pr-4">
+            <div className="w-[500px] space-y-2">
+              {weekData.mostPlayedGames.map(({ gameId, playTime }, index) => (
+                <GameRankingItem
+                  key={gameId}
+                  gameId={gameId}
+                  rank={index + 1}
+                  extraInfo={formatGameTime(playTime)}
+                />
+              ))}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

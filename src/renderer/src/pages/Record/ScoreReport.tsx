@@ -1,23 +1,45 @@
+import { NSFWBlurLevel } from '@appTypes/models'
+import { Badge } from '@ui/badge'
+import { Card } from '@ui/card'
+import { GameImage } from '@ui/game-image'
+import { HoverCard, HoverCardContent, HoverCardPortal, HoverCardTrigger } from '@ui/hover-card'
 import { CalendarIcon, ClockIcon, GamepadIcon, Trophy } from 'lucide-react'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
-import { Badge } from '~/components/ui/badge'
-import { Card } from '~/components/ui/card'
-import { GameImage } from '~/components/ui/game-image'
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardPortal,
-  HoverCardTrigger
-} from '~/components/ui/hover-card'
-
-import { NSFWBlurLevel } from '@appTypes/models'
+import { create } from 'zustand'
+import { ScoreEditorDialog } from '~/components/Game/Config/ManageMenu/ScoreEditorDialog'
 import { useConfigState, useGameState } from '~/hooks'
 import { getGamePlayTime, getGameStore, useGameRegistry } from '~/stores/game'
 import { getGamesByScoreRange } from '~/stores/game/recordUtils'
 import { cn } from '~/utils'
 import { GamePoster } from './GamePoster'
+
+interface ScoreReportStore {
+  scoreEditorState: { open: true; gameId: string } | { open: false }
+  scoreReportVersion: number
+
+  openScoreEditor: (gameId: string) => void
+  closeScoreEditor: () => void
+  bumpVersion: () => void
+}
+
+const useScoreReportStore = create<ScoreReportStore>((set) => ({
+  scoreEditorState: { open: false },
+  scoreReportVersion: 0,
+
+  openScoreEditor: (gameId) =>
+    set({
+      scoreEditorState: { open: true, gameId }
+    }),
+
+  closeScoreEditor: () =>
+    set({
+      scoreEditorState: { open: false }
+    }),
+  bumpVersion: () => set((s) => ({ scoreReportVersion: s.scoreReportVersion + 1 }))
+}))
 
 function GameScoreCard({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('record')
@@ -27,6 +49,8 @@ function GameScoreCard({ gameId }: { gameId: string }): React.JSX.Element {
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
   const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
   const playTime = getGamePlayTime(gameId)
+
+  const openScoreEditor = useScoreReportStore((s) => s.openScoreEditor)
 
   return (
     <HoverCard>
@@ -42,7 +66,10 @@ function GameScoreCard({ gameId }: { gameId: string }): React.JSX.Element {
                 '3xl:w-[150px] 3xl:h-[225px]'
               )}
             />
-            <div className="absolute px-2 py-1 text-xs font-medium rounded-full bottom-2 right-2 bg-primary/90 text-primary-foreground backdrop-blur-sm">
+            <div
+              className="absolute px-2 py-1 text-xs font-medium rounded-full bottom-2 right-2 bg-primary/90 hover:bg-accent/90 text-primary-foreground backdrop-blur-sm"
+              onClick={() => openScoreEditor(gameId)}
+            >
               {score.toFixed(1)}
             </div>
           </div>
@@ -98,7 +125,10 @@ function GameScoreCard({ gameId }: { gameId: string }): React.JSX.Element {
               </div>
             </div>
             <div className="flex flex-col items-center flex-shrink-0">
-              <div className="flex items-center justify-center text-lg font-bold rounded-full shadow-md w-14 h-14 bg-primary text-primary-foreground">
+              <div
+                className="flex items-center justify-center text-lg font-bold rounded-full shadow-md w-14 h-14 bg-primary hover:bg-accent cursor-pointer text-primary-foreground"
+                onClick={() => openScoreEditor(gameId)}
+              >
                 {score.toFixed(1)}
               </div>
               <span className="mt-1 text-xs text-muted-foreground">
@@ -142,7 +172,9 @@ function ScoreCategory({
   className: string
 }): React.JSX.Element | null {
   const { t } = useTranslation('record')
-  const games = getGamesByScoreRange(minScore, maxScore)
+
+  const version = useScoreReportStore((s) => s.scoreReportVersion)
+  const games = useMemo(() => getGamesByScoreRange(minScore, maxScore), [version])
 
   if (games.length === 0) {
     return null
@@ -194,6 +226,8 @@ function ScoreCategory({
 export function ScoreReport(): React.JSX.Element {
   const { t } = useTranslation('record')
 
+  const { scoreEditorState, closeScoreEditor, bumpVersion } = useScoreReportStore()
+
   return (
     <div className="space-y-6">
       <div className="flex items-center mb-2 space-x-2">
@@ -242,6 +276,18 @@ export function ScoreReport(): React.JSX.Element {
         maxScore={5.9}
         className="border-destructive"
       />
+
+      {scoreEditorState.open && (
+        <ScoreEditorDialog
+          gameId={scoreEditorState.gameId}
+          setIsOpen={(open) => {
+            if (!open) {
+              closeScoreEditor()
+              bumpVersion()
+            }
+          }}
+        />
+      )}
     </div>
   )
 }
