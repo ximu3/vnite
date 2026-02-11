@@ -118,6 +118,7 @@
     "depthPlaceholder": "选择扫描深度",
     "depthTooltip": "设置文件夹扫描的深度层级",
     "targetCollection": "目标收藏",
-    "targetCollectionNone": "无"
+    "targetCollectionNone": "无",
+    "normalizeFolderName": "使用简化后的文件夹名进行刮削"
   }
 }
