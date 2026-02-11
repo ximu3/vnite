@@ -76,6 +76,12 @@ impl GameManager {
       let l_path = path.to_lowercase();
       self.known_games.insert(l_path, id);
     }
+    
+    // Clean up running processes that are no longer in known_games
+    // This prevents zombie monitors when games are deleted
+    self.running_process.retain(|_, info| {
+      self.known_games.contains_key(&info.path)
+    });
   }
 
   pub fn set_foreground_callback(&self, callback: Option<NapiWeakThreadsafeFunction<String, ()>>) {
@@ -108,6 +114,10 @@ impl GameManager {
   pub fn remove_known_game(&mut self, path: &str) {
     let l_path = path.to_lowercase();
     self.known_games.remove(&l_path);
+    
+    // Clean up any running processes for this game
+    // This prevents zombie monitors when a game is deleted
+    self.running_process.retain(|_, info| info.path != l_path);
   }
 
   pub fn get_known_game_id_exact(&self, l_path: &str) -> Option<&String> {
