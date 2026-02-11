@@ -113,10 +113,19 @@
     "path": "路徑",
     "dataSource": "數據源",
     "scanDepth": "掃描深度",
+    "scanMode": "掃描模式",
     "pathPlaceholder": "選擇遊戲掃描目錄",
     "dataSourcePlaceholder": "選擇數據源",
     "depthPlaceholder": "選擇掃描深度",
     "depthTooltip": "設置資料夾掃描的深度層級",
+    "scanModePlaceholder": "選擇掃描模式",
+    "scanModes": {
+      "auto": "自動（依可執行檔判定）",
+      "hierarchy": "層級（依層級）"
+    },
+    "hierarchyLevel": "層級級別",
+    "hierarchyLevelPlaceholder": "0",
+    "hierarchyLevelHelp": "預設 0：Path 下的第一級子資料夾視為遊戲資料夾。",
     "targetCollection": "目標收藏",
     "targetCollectionNone": "無",
     "normalizeFolderName": "清理資料夾名"

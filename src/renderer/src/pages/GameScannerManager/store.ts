@@ -16,7 +16,8 @@ interface FailedFolder {
 interface ScannerForm {
   path: string
   dataSource: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite' | string
-  depth: number
+  scanMode: 'auto' | 'hierarchy'
+  hierarchyLevel: number
   targetCollection: string
   normalizeFolderName: boolean
 }
@@ -89,7 +90,8 @@ export const useGameScannerStore = create<GameScannerStore>((set, get) => ({
   formState: {
     path: '',
     dataSource: 'steam',
-    depth: 1,
+    scanMode: 'auto',
+    hierarchyLevel: 0,
     targetCollection: 'none',
     normalizeFolderName: false
   },
@@ -211,11 +213,29 @@ export const useGameScannerStore = create<GameScannerStore>((set, get) => ({
   // Edit Scanner Operations
   initFormState: (scanner, isNew): void => {
     if (!isNew && scanner) {
+      const legacyDepth =
+        typeof scanner.depth === 'number'
+          ? scanner.depth
+          : typeof scanner.deepth === 'number'
+            ? scanner.deepth
+            : undefined
+      const inferredLevel =
+        typeof scanner.hierarchyLevel === 'number'
+          ? scanner.hierarchyLevel
+          : typeof legacyDepth === 'number'
+            ? legacyDepth - 1
+            : 0
+      const inferredMode =
+        scanner.scanMode === 'hierarchy' || typeof scanner.hierarchyLevel === 'number'
+          ? 'hierarchy'
+          : 'auto'
+
       set({
         formState: {
           path: scanner.path || '',
           dataSource: scanner.dataSource || 'steam',
-          depth: scanner.depth || scanner.deepth || 1,
+          scanMode: inferredMode,
+          hierarchyLevel: Math.max(0, Math.floor(inferredLevel)),
           targetCollection: scanner.targetCollection || 'none',
           normalizeFolderName: scanner.normalizeFolderName || false
         }
@@ -225,7 +245,8 @@ export const useGameScannerStore = create<GameScannerStore>((set, get) => ({
         formState: {
           path: '',
           dataSource: 'steam',
-          depth: 1,
+          scanMode: 'auto',
+          hierarchyLevel: 0,
           targetCollection: 'none',
           normalizeFolderName: false
         }

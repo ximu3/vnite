@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogFooter
 } from '~/components/ui/dialog'
-import { Input } from '~/components/ui/input'
+import { Input, StepperInput } from '~/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -159,6 +159,60 @@ export const EditScannerDialog: React.FC<EditScannerDialogProps> = ({
               ))}
             </SelectContent>
           </Select>
+          {/* Scan Mode */}
+          <div className={cn('whitespace-nowrap select-none justify-self-start')}>
+            {t('editScanner.scanMode', { defaultValue: 'Scan Mode' })}
+          </div>
+          <Select
+            value={formState.scanMode}
+            onValueChange={(value: 'auto' | 'hierarchy' | string) =>
+              updateFormState({ scanMode: value === 'hierarchy' ? 'hierarchy' : 'auto' })
+            }
+          >
+            <SelectTrigger className={cn('w-full text-sm')}>
+              <SelectValue
+                placeholder={t('editScanner.scanModePlaceholder', {
+                  defaultValue: 'Select scan mode'
+                })}
+              />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="auto">
+                {t('editScanner.scanModes.auto', { defaultValue: 'Auto (by executables)' })}
+              </SelectItem>
+              <SelectItem value="hierarchy">
+                {t('editScanner.scanModes.hierarchy', { defaultValue: 'Hierarchy (by level)' })}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+          {/* Hierarchy Level */}
+          {formState.scanMode === 'hierarchy' && (
+            <>
+              <div className={cn('whitespace-nowrap select-none justify-self-start')}>
+                {t('editScanner.hierarchyLevel', { defaultValue: 'Hierarchy Level' })}
+              </div>
+              <div className={cn('flex flex-col gap-1')}>
+                <StepperInput
+                  min={0}
+                  step={1}
+                  steps={{ default: 1, shift: 10 }}
+                  value={formState.hierarchyLevel ?? 0}
+                  onChange={(e) => {
+                    const next = Math.max(0, Math.floor(Number(e.target.value) || 0))
+                    updateFormState({ hierarchyLevel: next })
+                  }}
+                  inputClassName={cn('text-sm')}
+                  placeholder={t('editScanner.hierarchyLevelPlaceholder', { defaultValue: '0' })}
+                />
+                <div className={cn('text-xs text-muted-foreground select-none')}>
+                  {t('editScanner.hierarchyLevelHelp', {
+                    defaultValue:
+                      'Default 0: the first-level subfolder under Path is treated as the game folder.'
+                  })}
+                </div>
+              </div>
+            </>
+          )}
           {/* Target Collection */}
           <div className={cn('whitespace-nowrap select-none justify-self-start')}>
             {t('editScanner.targetCollection')}

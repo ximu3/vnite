@@ -23,6 +23,69 @@ export async function getGameFolders(dirPath: string): Promise<
   return await scanForGameFolders(dirPath)
 }
 
+export async function getGameEntityFoldersByHierarchyLevel(
+  rootPath: string,
+  hierarchyLevel: number
+): Promise<
+  {
+    name: string
+    dirPath: string
+  }[]
+> {
+  const level = Number.isFinite(hierarchyLevel) ? Math.max(0, Math.floor(hierarchyLevel)) : 0
+
+  if (!(await fse.pathExists(rootPath))) {
+    throw new Error('Directory does not exist')
+  }
+
+  const listSubdirectories = async (dirPath: string): Promise<string[]> => {
+    try {
+      const entries = await fse.readdir(dirPath, { withFileTypes: true })
+      const dirs: string[] = []
+
+      for (const entry of entries) {
+        const fullPath = path.join(dirPath, entry.name)
+
+        if (entry.isDirectory()) {
+          dirs.push(fullPath)
+          continue
+        }
+
+        if (entry.isSymbolicLink()) {
+          try {
+            const stats = await fse.stat(fullPath)
+            if (stats.isDirectory()) dirs.push(fullPath)
+          } catch (_error) {
+            // ignore broken links / permission errors
+          }
+        }
+      }
+
+      return dirs
+    } catch (error) {
+      log.error('Error reading directory:', dirPath, error)
+      return []
+    }
+  }
+
+  // In hierarchy mode, the target entity folder is determined by path depth (not by executables).
+  // level=0 => first-level subfolders under rootPath
+  // level=1 => second-level subfolders under rootPath, etc.
+  const targetDepth = level + 1
+  let currentDirs = [path.normalize(rootPath)]
+
+  for (let depth = 0; depth < targetDepth; depth++) {
+    const childrenNested = await processBatch(currentDirs, listSubdirectories, MAX_CONCURRENCY)
+    const children = childrenNested.flat().map((p) => path.normalize(p))
+    currentDirs = Array.from(new Set(children))
+    if (currentDirs.length === 0) break
+  }
+
+  return currentDirs
+    .sort((a, b) => a.localeCompare(b))
+    .map((dirPath) => ({ name: path.basename(dirPath), dirPath }))
+}
+
 async function scanForGameFolders(rootPath: string): Promise<
   {
     name: string

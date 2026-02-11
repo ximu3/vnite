@@ -113,10 +113,19 @@
     "path": "パス",
     "dataSource": "データソース",
     "scanDepth": "スキャン深度",
+    "scanMode": "スキャンモード",
     "pathPlaceholder": "ゲームスキャンディレクトリを選択",
     "dataSourcePlaceholder": "データソースを選択",
     "depthPlaceholder": "スキャン深度を選択",
     "depthTooltip": "フォルダスキャンの深度レベルを設定",
+    "scanModePlaceholder": "スキャンモードを選択",
+    "scanModes": {
+      "auto": "自動（実行ファイルから判定）",
+      "hierarchy": "階層（レベル指定）"
+    },
+    "hierarchyLevel": "階層レベル",
+    "hierarchyLevelPlaceholder": "0",
+    "hierarchyLevelHelp": "既定 0：Path 直下の第1階層サブフォルダをゲームフォルダとして扱います。",
     "targetCollection": "ターゲットコレクション",
     "targetCollectionNone": "なし",
     "normalizeFolderName": "フォルダ名を正規化"

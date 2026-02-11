@@ -269,7 +269,13 @@ export interface configLocalDocs {
         [key: string]: {
           path: string
           dataSource: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite' | string
+          scanMode?: 'auto' | 'hierarchy'
+          hierarchyLevel?: number
+          // Backward compatibility for old configs
+          depth?: number
+          deepth?: number
           targetCollection: string
+          normalizeFolderName?: boolean
         }
       }
     }
@@ -491,7 +497,12 @@ export const DEFAULT_CONFIG_LOCAL_VALUES: Readonly<configLocalDocs> = {
         [key: string]: {
           path: string
           dataSource: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite'
+          scanMode?: 'auto' | 'hierarchy'
+          hierarchyLevel?: number
+          depth?: number
+          deepth?: number
           targetCollection: string
+          normalizeFolderName?: boolean
         }
       }
     }

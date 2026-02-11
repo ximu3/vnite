@@ -113,10 +113,19 @@
     "path": "Path",
     "dataSource": "Data Source",
     "scanDepth": "Scan Depth",
+    "scanMode": "Scan Mode",
     "pathPlaceholder": "Select game scan directory",
     "dataSourcePlaceholder": "Select data source",
     "depthPlaceholder": "Select scan depth",
     "depthTooltip": "Set the depth level for folder scanning",
+    "scanModePlaceholder": "Select scan mode",
+    "scanModes": {
+      "auto": "Auto (by executables)",
+      "hierarchy": "Hierarchy (by level)"
+    },
+    "hierarchyLevel": "Hierarchy Level",
+    "hierarchyLevelPlaceholder": "0",
+    "hierarchyLevelHelp": "Default 0: the first-level subfolder under Path is treated as the game folder.",
     "targetCollection": "Target Collection",
     "targetCollectionNone": "None",
     "normalizeFolderName": "Clean Folder Name"

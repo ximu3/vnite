@@ -559,7 +559,8 @@ async function convertConfig(basePath: string): Promise<void> {
     await ConfigDBManager.setConfigValue('game', {
       scraper: {
         common: {
-          defaultDataSource: mapDataSourceName(v2Config.scraper.defaultDataSource)
+          defaultDataSource: mapDataSourceName(v2Config.scraper.defaultDataSource),
+          defaultMediaDataSource: 'google'
         },
         vndb: {
           tagSpoilerLevel: 0

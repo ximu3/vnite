@@ -2,7 +2,7 @@ import * as fse from 'fs-extra'
 import * as path from 'path'
 import { EventEmitter } from 'events'
 import { ConfigDBManager, GameDBManager } from '~/core/database'
-import { getGameFolders } from '~/utils'
+import { getGameEntityFoldersByHierarchyLevel, getGameFolders } from '~/utils'
 import { addGameToDB } from './adder'
 import { scraperManager } from '~/features/scraper'
 import { OverallScanProgress } from '@appTypes/utils'
@@ -13,9 +13,14 @@ import { eventBus } from '~/core/events'
 // Scanner configuration type
 interface ScannerConfig {
   path: string
-  dataSource: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite'
+  dataSource: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite' | string
   targetCollection: string
-  normalizeFolderName: boolean
+  scanMode?: 'auto' | 'hierarchy'
+  hierarchyLevel?: number
+  // Backward compatibility for old configs
+  depth?: number
+  deepth?: number
+  normalizeFolderName?: boolean
 }
 
 // Global scanner configuration
@@ -323,8 +328,26 @@ export class GameScanner extends EventEmitter {
       // Get all folders
       let foldersToScan: { name: string; dirPath: string }[] = []
 
-      // Get subfolders at specified depth
-      foldersToScan = await getGameFolders(scannerPath)
+      // Get folders based on scan mode
+      const scanMode = scanner.scanMode === 'hierarchy' ? 'hierarchy' : 'auto'
+      if (scanMode === 'hierarchy') {
+        const legacyDepth =
+          typeof scanner.depth === 'number'
+            ? scanner.depth
+            : typeof scanner.deepth === 'number'
+              ? scanner.deepth
+              : undefined
+        const level =
+          typeof scanner.hierarchyLevel === 'number'
+            ? scanner.hierarchyLevel
+            : typeof legacyDepth === 'number'
+              ? legacyDepth - 1
+              : 0
+
+        foldersToScan = await getGameEntityFoldersByHierarchyLevel(scannerPath, level)
+      } else {
+        foldersToScan = await getGameFolders(scannerPath)
+      }
 
       // Apply ignore list
       foldersToScan = this.applyIgnoreList(foldersToScan, ignoreList)
@@ -351,7 +374,12 @@ export class GameScanner extends EventEmitter {
         ipcManager.send('scanner:scan-progress', { ...this.scanProgress })
 
         // Process the folder
-        await this.processFolder(scanner.dataSource, folder, scannerId, scanner.normalizeFolderName)
+        await this.processFolder(
+          scanner.dataSource,
+          folder,
+          scannerId,
+          Boolean(scanner.normalizeFolderName)
+        )
 
         // Update progress after each folder is processed
         scannerProgress.processedFolders++
