@@ -130,8 +130,9 @@ export function SearchMediaDialog({
         return
       }
 
-      setImageList(result)
-      setSelectedImage(result[0])
+      const uniqueResult = [...new Set(result)]
+      setImageList(uniqueResult)
+      setSelectedImage(uniqueResult[0])
     } catch (error) {
       toast.error(t('detail.properties.media.notifications.searchError', { message: error }))
     } finally {
