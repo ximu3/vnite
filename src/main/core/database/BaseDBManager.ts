@@ -1,14 +1,18 @@
-import PouchDB from 'pouchdb'
-import { SyncOptions, AttachmentReturnType } from './types'
-import { convertBufferToFile, convertFileToBuffer, convertBufferToTempFile } from '~/utils'
-import { getDataPath, setupProxy } from '~/features/system'
 import { getValueByPath, setValueByPath } from '@appUtils'
-import { fileTypeFromBuffer } from 'file-type'
-import upsertPlugin from 'pouchdb-upsert'
 import { net } from 'electron'
 import log from 'electron-log/main'
+import { fileTypeFromBuffer } from 'file-type'
+import PouchDB from 'pouchdb'
+import upsertPlugin from 'pouchdb-upsert'
 import { ipcManager } from '~/core/ipc'
-import { createOfficialRemoteDBWithPermissions } from '~/utils'
+import { getDataPath, setupProxy } from '~/features/system'
+import {
+  convertBufferToFile,
+  convertBufferToTempFile,
+  convertFileToBuffer,
+  createOfficialRemoteDBWithPermissions
+} from '~/utils'
+import { AttachmentReturnType, SyncOptions } from './types'
 
 PouchDB.plugin(upsertPlugin)
 
@@ -71,13 +75,13 @@ export class BaseDBManager {
         return
       }
 
+      if (path === '#all' && value === '#delete') {
+        await this.removeDoc(dbName, docId)
+        return
+      }
+
       await db.upsert(docId, (doc: any) => {
         if (path === '#all') {
-          // If path is '#all', we replace the entire document
-          if (value === '#delete') {
-            // If value is '#delete', we delete the document
-            return { _id: docId, _deleted: true }
-          }
           return {
             ...doc,
             ...value
