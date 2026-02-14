@@ -21,6 +21,7 @@ import { useGameCollectionStore } from '~/stores'
 import { filterGamesByLocal, filterGamesByNSFW, sortGames } from '~/stores/game/gameUtils'
 import { cn } from '~/utils'
 import { GamePoster } from './posters/GamePoster'
+import { PlaceHolder } from './posters/PlaceHolder'
 
 export type DragContextType = {
   isDraggingGlobal: boolean
@@ -206,7 +207,11 @@ export function CollectionGamesComponent({
                     'flex-shrink-0' // Preventing compression
                   )}
                 >
-                  <LazyLoadComponent threshold={300} scrollPosition={scrollPosition}>
+                  <LazyLoadComponent
+                    threshold={300}
+                    scrollPosition={scrollPosition}
+                    placeholder={<PlaceHolder />} // Necessary for scroll restoration
+                  >
                     <GamePoster
                       gameId={gameId}
                       groupId={`collection:${collectionId}`}
