@@ -1,16 +1,17 @@
 import { METADATA_EXTRA_PREDEFINED_KEYS } from '@appTypes/models'
-import { useTranslation } from 'react-i18next'
-import { ArrayInput } from '~/components/ui/array-input'
-import { Button } from '~/components/ui/button'
-import { Dialog, DialogContent } from '~/components/ui/dialog'
+import { ArrayInput } from '@ui/array-input'
+import { Button } from '@ui/button'
+import { Dialog, DialogContent } from '@ui/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
-} from '~/components/ui/dropdown-menu'
-import { Input } from '~/components/ui/input'
+} from '@ui/dropdown-menu'
+import { Input } from '@ui/input'
+import { useTranslation } from 'react-i18next'
 import { useGameState } from '~/hooks'
+import { getAllExtraKeys } from '~/stores/game'
 import { cn } from '~/utils'
 
 export function ExtraInformationDialog({
@@ -24,6 +25,14 @@ export function ExtraInformationDialog({
 }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [extra, setExtra, saveExtra, setExtraAndSave] = useGameState(gameId, 'metadata.extra', true)
+  const extraKeyForSelect = Array.from(
+    new Set([
+      ...METADATA_EXTRA_PREDEFINED_KEYS.map((key) =>
+        t(`detail.overview.extraInformation.fields.${key}`, key)
+      ),
+      ...getAllExtraKeys().sort((a, b) => a.localeCompare(b))
+    ])
+  )
 
   const addNewItem = (): void => {
     const newItem = { key: '', value: [] }
@@ -69,12 +78,27 @@ export function ExtraInformationDialog({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent
         className={cn('w-[70vw] max-w-none flex flex-col gap-3')}
-        onClose={
-          // Remove items with empty keys
-          () => {
-            setExtraAndSave(extra.filter((item) => item.key.trim() !== ''))
+        onClose={() => {
+          const mergedExtraMap: Record<string, string[]> = {}
+
+          for (const item of extra) {
+            // Remove items with empty keys
+            if (!item.key.trim()) continue
+
+            if (!mergedExtraMap[item.key]) {
+              mergedExtraMap[item.key] = []
+            }
+
+            mergedExtraMap[item.key].push(...item.value)
           }
-        }
+
+          setExtraAndSave(
+            Object.entries(mergedExtraMap).map(([key, value]) => ({
+              key,
+              value: [...new Set(value)]
+            }))
+          )
+        }}
       >
         <div className={cn('ml-3')}>
           <Button variant="outline" onClick={addNewItem} className={cn('w-[fit-content]')}>
@@ -98,19 +122,13 @@ export function ExtraInformationDialog({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent side="bottom" align="start">
-                    {METADATA_EXTRA_PREDEFINED_KEYS.map((key) => (
-                      <DropdownMenuItem
-                        key={key}
-                        onClick={() =>
-                          setPredefinedKey(
-                            i,
-                            t(`detail.overview.extraInformation.fields.${key}`, key)
-                          )
-                        }
-                      >
-                        {t(`detail.overview.extraInformation.fields.${key}`, key)}
-                      </DropdownMenuItem>
-                    ))}
+                    <div className={cn('max-h-[288px] overflow-auto scrollbar-base-thin')}>
+                      {extraKeyForSelect.map((key) => (
+                        <DropdownMenuItem key={key} onClick={() => setPredefinedKey(i, key)}>
+                          {key}
+                        </DropdownMenuItem>
+                      ))}
+                    </div>
                   </DropdownMenuContent>
                 </DropdownMenu>
                 <Input
