@@ -376,24 +376,44 @@ export function getSimilarGames(
   targetId: string,
   limit = 5
 ): { gameId: string; gameName: string; score: number }[] {
+  function checkGameDocValid(doc: gameDoc | null): doc is gameDoc {
+    /*
+     * Due to historical legacy issues, the `gameDoc` records in the database may be
+     * missing required fields. To prevent runtime errors, perform a validation check.
+     */
+    if (!doc) return false
+    const { metadata } = doc
+    return (
+      metadata &&
+      typeof metadata.name === 'string' &&
+      typeof metadata.originalName === 'string' &&
+      Array.isArray(metadata.developers)
+    )
+  }
+
   const { gameIds } = useGameRegistry.getState()
   const results: { gameId: string; gameName: string; score: number }[] = []
 
   const targetGame = getGameStore(targetId).getState().data
-  if (!targetGame || !targetGame.metadata) return results
+  if (!checkGameDocValid(targetGame)) return results
 
   for (const id of gameIds) {
     if (id === targetId) continue
 
     const store = getGameStore(id)
     const game = store.getState().data
-    if (!game || !game.metadata) continue
+    if (!checkGameDocValid(game)) continue
 
-    const score = computeGameSimilarity(targetGame, game)
-    if (score.totalSim >= 0.3) {
-      // At minimum, games sharing the same developers should be accepted.
-      const displayName = (game.metadata.name || game.metadata.originalName) ?? ''
-      results.push({ gameId: id, gameName: displayName, score: score.totalSim })
+    try {
+      const score = computeGameSimilarity(targetGame, game)
+      if (score.totalSim >= 0.3) {
+        // At minimum, games sharing the same developers should be accepted.
+        const displayName = (game.metadata.name || game.metadata.originalName) ?? ''
+        results.push({ gameId: id, gameName: displayName, score: score.totalSim })
+      }
+    } catch (error) {
+      console.error(`Error computing similarity for ${targetId} and ${id}:`, error)
+      continue
     }
   }
 
