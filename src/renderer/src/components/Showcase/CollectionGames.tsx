@@ -22,6 +22,7 @@ import { filterGamesByLocal, filterGamesByNSFW, sortGames } from '~/stores/game/
 import { cn } from '~/utils'
 import { GamePoster } from './posters/GamePoster'
 import { PlaceHolder } from './posters/PlaceHolder'
+import { ScrollToTopButton } from './ScrollToTopButton'
 
 export type DragContextType = {
   isDraggingGlobal: boolean
@@ -68,6 +69,7 @@ export function CollectionGamesComponent({
   const [gap, setGap] = useState<number>(0)
   const [columns, setColumns] = useState<number>(0)
   const gridContainerRef = useRef<HTMLDivElement | null>(null)
+  const scrollAreaRef = useRef<HTMLDivElement>(null)
 
   const selectGames = useGameBatchEditorStore((state) => state.selectGames)
 
@@ -188,7 +190,7 @@ export function CollectionGamesComponent({
           )}
           <SeparatorDashed className="border-border" />
         </div>
-        <ScrollArea className={cn('w-full flex-1 min-h-0 pb-2')}>
+        <ScrollArea ref={scrollAreaRef} className={cn('w-full flex-1 min-h-0 pb-2')}>
           <div className={cn('w-full flex flex-col gap-1')}>
             {/* Game List Container */}
             <div
@@ -233,6 +235,7 @@ export function CollectionGamesComponent({
             </div>
           </div>
         </ScrollArea>
+        <ScrollToTopButton scrollAreaRef={scrollAreaRef} />
       </div>
     </DragContext.Provider>
   )
