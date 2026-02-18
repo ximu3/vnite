@@ -37,12 +37,11 @@ export function GameNav({
   }, [gamePath])
 
   const [highlightLocalGames] = useConfigState('game.gameList.highlightLocalGames')
-  const [markLocalGames] = useConfigState('game.gameList.markLocalGames')
+  const [gameNavStyle] = useConfigState('game.gameList.gameNavStyle')
   const [warnInvalidGamePaths] = useConfigState('game.gameList.warnInvalidGamePaths')
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
   const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
   const [by] = useConfigState('game.gameList.sort.by')
-  const [showSortInformation] = useConfigState('game.gameList.showSortInformation')
   const isDarkMode = useTheme().isDark
   const location = useLocation()
   const navigate = useNavigate()
@@ -138,6 +137,80 @@ export function GameNav({
     }
   }
 
+  const navLayout: React.ReactNode[] = []
+  for (const element of gameNavStyle) {
+    switch (element.type) {
+      case 'gameIcon': {
+        navLayout.push(
+          <div className={cn('flex items-center')}>
+            <GameImage
+              gameId={gameId}
+              type="icon"
+              alt="icon"
+              className={cn('w-[18px] h-[18px] rounded-md object-cover bg-accent shadow-sm')}
+              fallback={
+                <span className={cn('icon-[mdi--gamepad-variant] w-[18px] h-[18px]')}></span>
+              }
+            />
+          </div>
+        )
+        break
+      }
+
+      case 'gameName': {
+        navLayout.push(
+          nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImageAndTitle ? (
+            <div className="relative truncate flex-1">
+              <span className="group-hover/gamenav:opacity-0">{obfuscatedGameName}</span>
+              <span className="absolute top-0 left-0 w-full truncate opacity-0 group-hover/gamenav:opacity-100">
+                {gameName}
+              </span>
+            </div>
+          ) : (
+            <div className={cn('truncate flex-1')}>{gameName}</div>
+          )
+        )
+        break
+      }
+
+      case 'sortInfo': {
+        if (groupId !== 'recentGames') {
+          if (by === 'record.playTime' && playTime > 0) {
+            navLayout.push(
+              <span className="flex-shrink-0 text-muted-foreground">
+                {formatDurationCompact(playTime)}
+              </span>
+            )
+          } else if (by === 'record.score' && score !== -1) {
+            navLayout.push(
+              <span className="flex-shrink-0 text-muted-foreground">{score.toFixed(1)}</span>
+            )
+          }
+        }
+        break
+      }
+
+      case 'localFlag': {
+        if (gamePath && isPathValid) {
+          navLayout.push(
+            <span className="icon-[mdi--check-outline] w-[10px] h-[10px] flex-shrink-0" />
+          )
+        } else if (gamePath && !isPathValid && warnInvalidGamePaths) {
+          navLayout.push(
+            <span className="icon-[mdi--alert-circle-outline] w-[10px] h-[10px] text-destructive flex-shrink-0" />
+          )
+        } else if (element.reserveSpace) {
+          navLayout.push(<span className="w-[10px] h-[10px] flex-shrink-0" />)
+        }
+        break
+      }
+
+      case 'playStatus': {
+        break
+      }
+    }
+  }
+
   return (
     <>
       <ContextMenu>
@@ -165,44 +238,7 @@ export function GameNav({
                 className={cn('flex flex-row gap-2 items-center w-full')}
                 style={{ width: `${libraryBarWidth - 25}px` }}
               >
-                <div className={cn('flex items-center')}>
-                  <GameImage
-                    gameId={gameId}
-                    type="icon"
-                    alt="icon"
-                    className={cn('w-[18px] h-[18px] rounded-md object-cover bg-accent shadow-sm')}
-                    fallback={
-                      <span className={cn('icon-[mdi--gamepad-variant] w-[18px] h-[18px]')}></span>
-                    }
-                  />
-                </div>
-
-                {nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImageAndTitle ? (
-                  <div className="relative truncate flex-1">
-                    <span className="group-hover/gamenav:opacity-0">{obfuscatedGameName}</span>
-                    <span className="absolute top-0 left-0 w-full truncate opacity-0 group-hover/gamenav:opacity-100">
-                      {gameName}
-                    </span>
-                  </div>
-                ) : (
-                  <div className={cn('truncate flex-1')}>{gameName}</div>
-                )}
-
-                {markLocalGames && gamePath && isPathValid && (
-                  <span className="icon-[mdi--check-outline] w-[10px] h-[10px] flex-shrink-0" />
-                )}
-                {markLocalGames && gamePath && !isPathValid && warnInvalidGamePaths && (
-                  <span className="icon-[mdi--alert-circle-outline] w-[10px] h-[10px] text-destructive flex-shrink-0" />
-                )}
-
-                {showSortInformation && by === 'record.playTime' && playTime > 0 && (
-                  <span className="flex-shrink-0 text-foreground mr-1.5">
-                    {formatDurationCompact(playTime)}
-                  </span>
-                )}
-                {showSortInformation && by === 'record.score' && score !== -1 && (
-                  <span className="flex-shrink-0 text-foreground mr-1.5">{score.toFixed(1)}</span>
-                )}
+                {navLayout}
               </div>
             </Nav>
           </div>

@@ -114,7 +114,20 @@
       "markLocalGames": "標記本機遊戲",
       "markLocalGamesDescription": "在遊戲列表中標記本機已安裝的遊戲",
       "warnInvalidGamePaths": "提示無效遊戲路徑",
-      "warnInvalidGamePathsDescription": "對因系統檔案變動導致遊戲路徑無效的遊戲進行提示（需要開啟「標記本地遊戲」）"
+      "warnInvalidGamePathsDescription": "對因系統檔案變動導致遊戲路徑無效的遊戲進行提示（需要開啟「標記本地遊戲」）",
+      "gameNavStyle": {
+        "title": "顯示樣式",
+        "description": "設定遊戲列表的顯示樣式，拖曳以排序，點擊可切換對應元素的顯示狀態。\n\n關於遊玩狀態與本地標記：\n實線：即使不顯示圖示，也保留空白以維持視覺對齊。\n虛線：不保留空白。",
+        "gameIcon": "遊戲圖示",
+        "gameName": "遊戲名稱",
+        "sortInfo": "排序資訊",
+        "localFlag": "本地標記",
+        "playStatus": "遊玩狀態",
+        "gameIconDescription": "遊戲應用程式的圖示",
+        "sortInfoDescription": "按遊玩時間或評分排序時，顯示對應的排序資訊",
+        "playStatusDescription": "以圖示顯示遊玩狀態",
+        "localFlagDescription": "以圖示顯示遊戲路徑是否有效"
+      }
     },
     "gameDetail": {
       "title": "遊戲詳情頁",
