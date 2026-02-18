@@ -13,6 +13,7 @@ import { useGamePathStore } from '~/stores/game/gamePathStore'
 import { cn, formatDurationCompact, startGame } from '~/utils'
 import { GameNavCM } from '../contextMenu/GameNavCM'
 import { InformationDialog } from '../Game/Overview/Information/InformationDialog'
+import { PLAY_STATUS_COLORS, PLAY_STATUS_ICONS } from '../Game/Overview/Record/RecordIcon'
 import { BatchGameNavCM } from '../GameBatchEditor/BatchGameNavCM'
 import { useGameBatchEditorStore } from '../GameBatchEditor/store'
 import { useTheme } from '../ThemeProvider'
@@ -27,6 +28,7 @@ export function GameNav({
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [playTime] = useGameState(gameId, 'record.playTime')
   const [score] = useGameState(gameId, 'record.score')
+  const [playStatus] = useGameState(gameId, 'record.playStatus')
   const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
   const isPathValid = useGamePathStore((s) => s.paths[gamePath]?.valid)
 
@@ -144,6 +146,7 @@ export function GameNav({
         navLayout.push(
           <div className={cn('flex items-center')}>
             <GameImage
+              key={`${gameId}-icon`}
               gameId={gameId}
               type="icon"
               alt="icon"
@@ -160,14 +163,16 @@ export function GameNav({
       case 'gameName': {
         navLayout.push(
           nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImageAndTitle ? (
-            <div className="relative truncate flex-1">
+            <div key={`${gameId}-name-nsfw`} className="relative truncate flex-1">
               <span className="group-hover/gamenav:opacity-0">{obfuscatedGameName}</span>
               <span className="absolute top-0 left-0 w-full truncate opacity-0 group-hover/gamenav:opacity-100">
                 {gameName}
               </span>
             </div>
           ) : (
-            <div className={cn('truncate flex-1')}>{gameName}</div>
+            <div key={`${gameId}-name`} className={cn('truncate flex-1')}>
+              {gameName}
+            </div>
           )
         )
         break
@@ -177,13 +182,15 @@ export function GameNav({
         if (groupId !== 'recentGames') {
           if (by === 'record.playTime' && playTime > 0) {
             navLayout.push(
-              <span className="flex-shrink-0 text-muted-foreground">
+              <span key={`${gameId}-sort-playtime`} className="flex-shrink-0 text-muted-foreground">
                 {formatDurationCompact(playTime)}
               </span>
             )
           } else if (by === 'record.score' && score !== -1) {
             navLayout.push(
-              <span className="flex-shrink-0 text-muted-foreground">{score.toFixed(1)}</span>
+              <span key={`${gameId}-sort-score`} className="flex-shrink-0 text-muted-foreground">
+                {score.toFixed(1)}
+              </span>
             )
           }
         }
@@ -193,20 +200,46 @@ export function GameNav({
       case 'localFlag': {
         if (gamePath && isPathValid) {
           navLayout.push(
-            <span className="icon-[mdi--check-outline] w-[10px] h-[10px] flex-shrink-0" />
+            <span
+              key={`${gameId}-local-flag-valid`}
+              className="icon-[mdi--check-outline] w-[10px] h-[10px] flex-shrink-0"
+            />
           )
         } else if (gamePath && !isPathValid && warnInvalidGamePaths) {
           navLayout.push(
-            <span className="icon-[mdi--alert-circle-outline] w-[10px] h-[10px] text-destructive flex-shrink-0" />
+            <span
+              key={`${gameId}-local-flag-invalid`}
+              className="icon-[mdi--alert-circle-outline] w-[10px] h-[10px] text-destructive flex-shrink-0"
+            />
           )
         } else if (element.reserveSpace) {
-          navLayout.push(<span className="w-[10px] h-[10px] flex-shrink-0" />)
+          navLayout.push(
+            <span
+              key={`${gameId}-local-flag-space`}
+              className="icon-[mdi--check-outline] w-[10px] h-[10px] flex-shrink-0"
+            />
+          )
         }
         break
       }
 
       case 'playStatus': {
-        break
+        if (playStatus !== 'unplayed') {
+          navLayout.push(
+            <span
+              key={`${gameId}-play-status-${playStatus}`}
+              className={cn(
+                PLAY_STATUS_ICONS[playStatus],
+                PLAY_STATUS_COLORS[playStatus],
+                'w-[16px] h-[16px] flex-shrink-0'
+              )}
+            />
+          )
+        } else if (element.reserveSpace) {
+          navLayout.push(
+            <span key={`${gameId}-play-status-space`} className="w-[16px] h-[16px] flex-shrink-0" />
+          )
+        }
       }
     }
   }
