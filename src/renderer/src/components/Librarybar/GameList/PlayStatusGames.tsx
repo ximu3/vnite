@@ -1,6 +1,7 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@ui/accordion'
 import { ScrollArea } from '@ui/scroll-area'
 import { useTranslation } from 'react-i18next'
+import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
 import { useConfigState } from '~/hooks'
 import {
   filterGames,
@@ -12,10 +13,15 @@ import {
 import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
 import { useGameListStore, usePlayStatusOrderStore } from '../store'
-import { AllGame } from './AllGame'
+import { AllGameComponent } from './AllGame'
+import { PlaceHolder } from './PlaceHolder'
 import { RecentGames } from './RecentGames'
 
-export function PlayStatusGames(): React.JSX.Element {
+export function PlayStatusGamesComponent({
+  scrollPosition
+}: {
+  scrollPosition: { x: number; y: number }
+}): React.JSX.Element {
   const [by] = useConfigState('game.gameList.sort.by')
   const [order] = useConfigState('game.gameList.sort.order')
   const [showAllGamesInGroup] = useConfigState('game.gameList.showAllGamesInGroup')
@@ -64,14 +70,23 @@ export function PlayStatusGames(): React.JSX.Element {
                 </AccordionTrigger>
                 <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
                   {sortGames(by, order, gameIds).map((game) => (
-                    <GameNav key={game} gameId={game} groupId={`record.playStatus:${field}`} />
+                    <LazyLoadComponent
+                      key={game}
+                      threshold={300}
+                      scrollPosition={scrollPosition}
+                      placeholder={
+                        <PlaceHolder gameId={game} groupId={`record.playStatus:${field}`} />
+                      }
+                    >
+                      <GameNav key={game} gameId={game} groupId={`record.playStatus:${field}`} />
+                    </LazyLoadComponent>
                   ))}
                 </AccordionContent>
               </AccordionItem>
             )
           })}
           {/* All Games */}
-          {showAllGamesInGroup && <AllGame />}
+          {showAllGamesInGroup && <AllGameComponent scrollPosition={scrollPosition} />}
         </Accordion>
       ) : (
         <Accordion
@@ -81,9 +96,11 @@ export function PlayStatusGames(): React.JSX.Element {
           defaultValue={['all', 'recentGames']}
         >
           <RecentGames />
-          <AllGame />
+          <AllGameComponent scrollPosition={scrollPosition} />
         </Accordion>
       )}
     </ScrollArea>
   )
 }
+
+export const PlayStatusGames = trackWindowScroll(PlayStatusGamesComponent)
