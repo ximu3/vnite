@@ -1,8 +1,8 @@
 import { GameList, GameMetadata } from '@appTypes/utils'
-import { SteamAppDetailsResponse, SteamStoreSearchResponse, SteamLanguageConfig } from './types'
-import { formatDate } from '~/utils'
-import i18next from 'i18next'
 import { net } from 'electron'
+import i18next from 'i18next'
+import { formatDate } from '~/utils'
+import { SteamAppDetailsResponse, SteamLanguageConfig, SteamStoreSearchResponse } from './types'
 
 // Define base URL constants
 const STEAM_URLS = {
@@ -44,25 +44,43 @@ export async function searchSteamGames(gameName: string): Promise<GameList> {
       returnObjects: true
     }) as SteamLanguageConfig
 
-    const url = `${STEAM_URLS.STORE}/api/storesearch/?term=${encodeURIComponent(
+    const candidateCC = new Set([langConfig.countryCode, 'HK', 'US', 'JP'].filter(Boolean))
+    const urlBase = `${STEAM_URLS.STORE}/api/storesearch/?term=${encodeURIComponent(
       gameName
-    )}&l=${langConfig.apiLanguageCode || 'english'}&cc=${langConfig.countryCode || 'US'}`
+    )}&l=${langConfig.apiLanguageCode || 'english'}`
 
-    const response = (await fetchSteamAPI(url)) as SteamStoreSearchResponse
+    const resultsPerRegion = await Promise.all(
+      Array.from(candidateCC).map(async (cc) => {
+        const url = `${urlBase}&cc=${cc}`
+        try {
+          const response = (await fetchSteamAPI(url)) as SteamStoreSearchResponse
+          if (!response.items || response.items.length === 0) return []
+          return response.items
+        } catch (err) {
+          console.error(`Error fetching region ${cc}:`, err)
+          return []
+        }
+      })
+    )
 
-    if (!response.items || response.items.length === 0) {
+    const merged: Record<number, SteamStoreSearchResponse['items'][number]> = {}
+    resultsPerRegion.flat().forEach((game) => {
+      if (!merged[game.id]) merged[game.id] = game
+    })
+
+    if (Object.keys(merged).length === 0) {
       throw new Error('No games found')
     }
 
     const gamesMetadata = await Promise.all(
-      response.items.map((game) =>
+      Object.values(merged).map((game) =>
         getSteamMetadata(game.id.toString()).catch((error) => {
           console.error(`Error fetching metadata for game ${game.id}:`, error)
         })
       )
     )
 
-    return response.items.map((game, index) => ({
+    return Object.values(merged).map((game, index) => ({
       id: game.id.toString(),
       name: game.name,
       releaseDate: gamesMetadata[index]?.releaseDate || '',
