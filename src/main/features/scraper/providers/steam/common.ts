@@ -277,25 +277,56 @@ export async function getGameBackgrounds(appId: string): Promise<string[]> {
 }
 
 export async function getGameCover(appId: string): Promise<string> {
-  const hdUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/library_600x900_2x.jpg`
-  const standardUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/library_600x900.jpg`
+  const langConfig = i18next.t('scraper:steam.config', {
+    returnObjects: true
+  }) as SteamLanguageConfig
 
-  // Check if HD image exists
-  const hdExists = await checkImageExists(hdUrl)
+  const candidateUrl = [
+    ...(langConfig.apiLanguageCode
+      ? [
+          `${STEAM_URLS.CDN}/steam/apps/${appId}/library_600x900_${langConfig.apiLanguageCode}_2x.jpg`,
+          `${STEAM_URLS.CDN}/steam/apps/${appId}/library_600x900_${langConfig.apiLanguageCode}.jpg`
+        ]
+      : []),
+    `${STEAM_URLS.CDN}/steam/apps/${appId}/library_600x900_2x.jpg`
+  ]
+  const fallbackUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/library_600x900.jpg`
 
-  // If HD image exists, return HD image URL, otherwise return standard image URL
-  return hdExists ? hdUrl : standardUrl
+  // Try all candidate URLs and return the first one that exists
+  for (const url of candidateUrl) {
+    if (await checkImageExists(url)) {
+      return url
+    }
+  }
+
+  // If no candidate URLs exist, return fallback URL
+  // TODO: Some newer games use URLs containing a {hash} segment instead of the standard pattern
+  return fallbackUrl
 }
 
 export async function getGameLogo(appId: string): Promise<string> {
-  const hdUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/logo_2x.png`
-  const standardUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/logo.png`
+  const langConfig = i18next.t('scraper:steam.config', {
+    returnObjects: true
+  }) as SteamLanguageConfig
 
-  // Check if HD image exists
-  const hdExists = await checkImageExists(hdUrl)
+  const candidateUrl = [
+    ...(langConfig.apiLanguageCode
+      ? [
+          `${STEAM_URLS.CDN}/steam/apps/${appId}/logo_${langConfig.apiLanguageCode}_2x.png`,
+          `${STEAM_URLS.CDN}/steam/apps/${appId}/logo_${langConfig.apiLanguageCode}.png`
+        ]
+      : []),
+    `${STEAM_URLS.CDN}/steam/apps/${appId}/logo_2x.png`
+  ]
+  const fallbackUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/logo.png`
 
-  // If HD image exists, return HD image URL, otherwise return standard image URL
-  return hdExists ? hdUrl : standardUrl
+  // Try all candidate URLs and return the first one that exists
+  for (const url of candidateUrl) {
+    if (await checkImageExists(url)) {
+      return url
+    }
+  }
+  return fallbackUrl
 }
 
 export async function checkSteamGameExists(appId: string): Promise<boolean> {
