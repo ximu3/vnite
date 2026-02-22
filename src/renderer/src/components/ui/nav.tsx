@@ -1,6 +1,7 @@
-import * as React from 'react'
 import { Link, LinkProps } from '@tanstack/react-router'
 import { cva, type VariantProps } from 'class-variance-authority'
+import * as React from 'react'
+import { forwardRef } from 'react'
 import { cn } from '~/utils'
 
 const navVariants = cva(
@@ -35,18 +36,23 @@ export interface NavProps extends LinkProps, VariantProps<typeof navVariants> {
   children?: React.ReactNode
 }
 
-function Nav({ className, variant, size, children, ...props }: NavProps): React.JSX.Element {
-  return (
-    <Link
-      className={cn(navVariants({ variant, size, className }))}
-      activeProps={{
-        className: '!bg-accent/[calc(var(--glass-opacity)*2)] !text-accent-foreground !shadow-sm'
-      }}
-      {...props}
-    >
-      {children}
-    </Link>
-  )
-}
+const Nav = forwardRef<HTMLAnchorElement, NavProps>(
+  ({ className, variant, size, children, ...props }, ref) => {
+    return (
+      <Link
+        ref={ref}
+        className={cn(navVariants({ variant, size, className }))}
+        activeProps={{
+          className: '!bg-accent/[calc(var(--glass-opacity)*2)] !text-accent-foreground !shadow-sm'
+        }}
+        {...props}
+      >
+        {children}
+      </Link>
+    )
+  }
+)
+
+Nav.displayName = 'Nav'
 
 export { Nav }

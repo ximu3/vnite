@@ -1,7 +1,8 @@
 import { NSFWBlurLevel } from '@appTypes/models'
 import { useLocation, useNavigate } from '@tanstack/react-router'
 import { Nav } from '@ui/nav'
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
 import { GamePropertiesDialog } from '~/components/Game/Config/Properties'
@@ -139,14 +140,49 @@ export function GameNav({
     }
   }
 
+  // Automatically expand too long game names on hover
+  const nameDisplayRef = useRef<HTMLSpanElement>(null)
+  const nameMeasureRef = useRef<HTMLSpanElement>(null)
+  const navRef = useRef<HTMLAnchorElement>(null)
+  const [rect, setRect] = useState<DOMRect | null>(null)
+  useEffect(() => {
+    const nav = navRef.current
+    if (!nav) return
+
+    const handleEnter = (): void => {
+      const display = nameDisplayRef.current
+      const measure = nameMeasureRef.current
+      if (!display || !measure) return
+
+      const displayRect = display.getBoundingClientRect()
+      const navRect = nav.getBoundingClientRect()
+
+      if (measure.scrollWidth > display.offsetWidth) {
+        setRect({
+          top: navRect.top,
+          left: displayRect.left,
+          width: displayRect.width
+        } as DOMRect) // Only these parts are used
+      }
+    }
+
+    const handleLeave = (): void => setRect(null)
+
+    nav.addEventListener('mouseenter', handleEnter)
+    nav.addEventListener('mouseleave', handleLeave)
+    return () => {
+      nav.removeEventListener('mouseenter', handleEnter)
+      nav.removeEventListener('mouseleave', handleLeave)
+    }
+  }, [])
+
   const navLayout: React.ReactNode[] = []
   for (const element of gameNavStyle) {
     switch (element.type) {
       case 'gameIcon': {
         navLayout.push(
-          <div className={cn('flex items-center')}>
+          <div key={`${gameId}-icon`} className={cn('flex items-center')}>
             <GameImage
-              key={`${gameId}-icon`}
               gameId={gameId}
               type="icon"
               alt="icon"
@@ -162,18 +198,42 @@ export function GameNav({
 
       case 'gameName': {
         navLayout.push(
-          nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImageAndTitle ? (
-            <div key={`${gameId}-name-nsfw`} className="relative truncate flex-1">
-              <span className="group-hover/gamenav:opacity-0">{obfuscatedGameName}</span>
-              <span className="absolute top-0 left-0 w-full truncate opacity-0 group-hover/gamenav:opacity-100">
-                {gameName}
-              </span>
-            </div>
-          ) : (
-            <div key={`${gameId}-name`} className={cn('truncate flex-1')}>
+          <div key={`${gameId}-name`} className={cn('relative flex-1 min-w-0')}>
+            <span ref={nameDisplayRef} className={cn('block truncate')}>
+              {nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImageAndTitle
+                ? obfuscatedGameName
+                : gameName}
+            </span>
+            <span
+              ref={nameMeasureRef}
+              className="absolute invisible whitespace-nowrap pointer-events-none"
+            >
               {gameName}
-            </div>
-          )
+            </span>
+
+            {rect &&
+              createPortal(
+                <div
+                  style={{
+                    position: 'fixed',
+                    top: rect.top,
+                    left: rect.left,
+                    minWidth: rect.width,
+                    maxWidth: '60vw'
+                  }}
+                  className={cn(
+                    'whitespace-nowrap py-1 pr-1 z-[9999] pointer-events-none',
+                    'text-xs bg-accent/[calc(var(--glass-opacity)*2)]',
+                    highlightLocalGames && 'text-foreground',
+                    highlightLocalGames && gamePath && isPathValid && 'text-accent-foreground',
+                    highlightLocalGames && !gamePath && !isDarkMode && 'text-foreground'
+                  )}
+                >
+                  {gameName}
+                </div>,
+                document.body
+              )}
+          </div>
         )
         break
       }
@@ -214,10 +274,7 @@ export function GameNav({
           )
         } else if (element.reserveSpace) {
           navLayout.push(
-            <span
-              key={`${gameId}-local-flag-space`}
-              className="icon-[mdi--check-outline] w-[10px] h-[10px] flex-shrink-0"
-            />
+            <span key={`${gameId}-local-flag-space`} className="w-[10px] h-[10px] flex-shrink-0" />
           )
         }
         break
@@ -255,9 +312,10 @@ export function GameNav({
             data-group-id={encodeURIComponent(groupId)}
           >
             <Nav
+              ref={navRef}
               variant="gameList"
               className={cn(
-                'text-xs p-3 h-5 rounded-none transition-none w-full group/gamenav',
+                'text-xs p-3 h-5 rounded-none transition-none w-full',
                 highlightLocalGames && 'text-foreground',
                 highlightLocalGames && gamePath && isPathValid && 'text-accent-foreground',
                 highlightLocalGames && !gamePath && !isDarkMode && 'text-foreground',
