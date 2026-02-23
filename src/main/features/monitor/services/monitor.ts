@@ -601,9 +601,12 @@ export class GameMonitor {
       playTime += new Date(this.endTime).getTime() - new Date(time).getTime()
     }
 
-    await GameDBManager.setGameValue(this.options.gameId, 'record.timers', timers)
-    await GameDBManager.setGameValue(this.options.gameId, 'record.lastRunDate', this.endTime)
-    await GameDBManager.setGameValue(this.options.gameId, 'record.playTime', playTime)
+    // check existence before adding records
+    if (await GameDBManager.getGame(this.options.gameId)) {
+      await GameDBManager.setGameValue(this.options.gameId, 'record.timers', timers)
+      await GameDBManager.setGameValue(this.options.gameId, 'record.lastRunDate', this.endTime)
+      await GameDBManager.setGameValue(this.options.gameId, 'record.playTime', playTime)
+    }
 
     // Stop monitoring
     this.stop()
