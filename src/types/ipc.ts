@@ -64,8 +64,6 @@ type MainIpcEvents =
 
       'launcher:start-game': [gameId: string]
 
-      'native-monitor:add-local-game': [gameId: string, monitorPath: string]
-      'native-monitor:remove-local-game': [monitorPath: string]
       'native-monitor:update-local-game': []
       'system:change-process-monitor': [monitor: 'new' | 'legacy']
       'system:change-foreground-timer': [isEnabled: boolean]
