@@ -394,6 +394,10 @@
         "both": "数据库 & 文件系统"
       }
     },
+    "saveToClipboard": {
+      "title": "保存到剪贴板",
+      "description": "截图后自动将图片保存到剪贴板"
+    },
     "saveDir": {
       "title": "截图储存文件夹",
       "description": "选择保存截图的根文件夹",
