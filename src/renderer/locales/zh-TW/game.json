@@ -440,6 +440,7 @@
         "gamePath": "遊戲路徑",
         "savePath": "存檔路徑",
         "screenshotPath": "截圖路徑",
+        "screenshotPathTooltip": "留空時將自動使用「設定 → 資料庫」中設定的截圖路徑",
         "addFolder": "添加資料夾",
         "addFile": "添加文件",
         "search": {

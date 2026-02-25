@@ -1,11 +1,11 @@
-import { cn } from '~/utils'
-import { Button } from '~/components/ui/button'
-import { toast } from 'sonner'
-import { useGameLocalState, useGameState } from '~/hooks'
-import { MemoryCard } from './MemoryCard'
-import { useState, useEffect } from 'react'
+import { Button } from '@ui/button'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 import { ipcManager } from '~/app/ipc'
+import { useConfigState, useGameLocalState, useGameState } from '~/hooks'
+import { cn } from '~/utils'
+import { MemoryCard } from './MemoryCard'
 
 export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
@@ -16,17 +16,35 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
   )
   const [sortedMemoryIds, setSortedMemoryIds] = useState<string[]>([])
   const [screenshotPath] = useGameLocalState(gameId, 'path.screenshotPath')
+  const [gameName] = useGameState(gameId, 'metadata.name')
+  const [rootSaveDir] = useConfigState('memory.image.saveDir')
 
   async function addMemory(): Promise<void> {
     await ipcManager.invoke('game:add-memory', gameId)
   }
 
   async function openScreenshotDir(): Promise<void> {
-    if (!screenshotPath) {
-      toast.error(t('detail.memory.notifications.screenshotPathNotSet'))
+    if (screenshotPath) {
+      await ipcManager.invoke('system:open-path-in-explorer', screenshotPath)
       return
     }
-    await ipcManager.invoke('system:open-path-in-explorer', screenshotPath)
+
+    //* Try to use the default path which will be created in some configurations.
+    if (rootSaveDir) {
+      // This sanitization is kept consistent with src/main/features/system/services/screenshot.ts
+      const sanitizedName = gameName.replace(/[<>:"/\\|?*]/g, ' ')
+      const candidatePaths = [window.api.path.join(rootSaveDir, sanitizedName), rootSaveDir]
+
+      for (const path of candidatePaths) {
+        const [exists] = await ipcManager.invoke('system:check-if-path-exist', [path])
+
+        if (exists) {
+          await ipcManager.invoke('system:open-path-in-explorer', path)
+          return
+        }
+      }
+    }
+    toast.error(t('detail.memory.notifications.screenshotPathNotSet'))
   }
 
   useEffect(() => {
