@@ -583,11 +583,15 @@ async function convertConfig(basePath: string): Promise<void> {
         overrideCollectionSort: false,
         selectedGroup: selectedGroupMap[v2Config.others.gameList.selectedGroup] || 'none',
         highlightLocalGames: v2Config.others.gameList.highlightLocalGames,
-        markLocalGames: v2Config.others.gameList.markLocalGames,
         showRecentGames: v2Config.appearances.gameList.showRecentGamesInGameList,
         showAllGamesInGroup: true,
-        showSortInformation: true,
-        warnInvalidGamePaths: true
+        warnInvalidGamePaths: true,
+        gameNavStyle: [
+          { type: 'gameIcon' },
+          { type: 'gameName' },
+          { type: 'sortInfo' },
+          { type: 'localFlag', reserveSpace: false }
+        ]
       },
       gameHeader: {
         showOriginalName: v2Config.appearances.gameHeader.showOriginalNameInGameHeader

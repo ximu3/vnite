@@ -107,14 +107,23 @@
       "showRecentGamesDescription": "ゲームリストに最近プレイしたゲームを表示",
       "showAllGamesInGroup": "グループ内のすべてのゲームセクションを表示",
       "showAllGamesInGroupDescription": "ゲームリストのグループ内にすべてのゲームを表示",
-      "showSortInformation": "ソート情報を表示",
-      "showSortInformationDescription": "ゲームリストに現在のソート情報を表示します（プレイ時間とスコアのみ対応）",
       "highlightLocalGames": "ローカルゲームをハイライト",
       "highlightLocalGamesDescription": "ゲームリストでローカルゲームをハイライト表示",
-      "markLocalGames": "ローカルゲームにマーク",
-      "markLocalGamesDescription": "ゲームリストでローカルにインストールされているゲームにマークを付ける",
       "warnInvalidGamePaths": "無効なゲームパスを警告",
-      "warnInvalidGamePathsDescription": "システムファイルの変更によってゲームパスが無効になったゲームに警告を表示します（「ローカルゲームをマーク」を有効にする必要があります）"
+      "warnInvalidGamePathsDescription": "システムファイルの変更によってゲームパスが無効になったゲームに警告を表示します（「表示スタイル」で「ローカルフラグ」を有効にする必要があります）",
+      "gameNavStyle": {
+        "title": "表示スタイル",
+        "description": "ゲームリストの表示スタイルを設定します。ドラッグして並び替え、クリックして各要素の表示状態を切り替えます。\n\n遊玩状況とローカルフラグについて：\n実線：アイコンを表示しない場合でも、視覚的な整列を保つために空白が確保されます。\n破線：空白は確保されません。",
+        "gameIcon": "ゲームアイコン",
+        "gameName": "ゲーム名",
+        "sortInfo": "ソート情報",
+        "localFlag": "ローカルフラグ",
+        "playStatus": "プレイ状況",
+        "gameIconDescription": "ゲームアプリケーションのアイコン",
+        "sortInfoDescription": "プレイ時間や評価でソートする際に、対応するソート情報を表示します",
+        "playStatusDescription": "アイコンでプレイ状況を表示します",
+        "localFlagDescription": "アイコンでゲームのパスが有効かどうかを表示します"
+      }
     },
     "gameDetail": {
       "title": "ゲーム詳細ページ",

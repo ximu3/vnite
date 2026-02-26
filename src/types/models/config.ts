@@ -13,6 +13,19 @@ export enum LocalGameFilterMode {
   HideLocal = 1,
   OnlyLocal = 2
 }
+
+export type GameNavElementType = 'gameIcon' | 'gameName' | 'localFlag' | 'playStatus' | 'sortInfo'
+export type ReservableType = 'localFlag' | 'playStatus'
+export type NonReservableType = Exclude<GameNavElementType, ReservableType>
+export type GameNavElement =
+  | {
+      type: NonReservableType
+    }
+  | {
+      type: ReservableType
+      reserveSpace: boolean
+    }
+
 export interface configDocs {
   general: {
     openAtLogin: boolean
@@ -69,11 +82,10 @@ export interface configDocs {
         | 'metadata.developers'
         | 'record.playStatus'
       highlightLocalGames: boolean
-      markLocalGames: boolean
       warnInvalidGamePaths: boolean
-      showSortInformation: boolean
       showRecentGames: boolean
       showAllGamesInGroup: boolean
+      gameNavStyle: GameNavElement[]
     }
     gameHeader: {
       showOriginalName: boolean
@@ -331,11 +343,15 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       overrideCollectionSort: false,
       selectedGroup: 'collection',
       highlightLocalGames: true,
-      markLocalGames: false,
       warnInvalidGamePaths: true,
-      showSortInformation: true,
       showRecentGames: true,
-      showAllGamesInGroup: true
+      showAllGamesInGroup: true,
+      gameNavStyle: [
+        { type: 'gameIcon' },
+        { type: 'gameName' },
+        { type: 'sortInfo' },
+        { type: 'localFlag', reserveSpace: false }
+      ]
     },
     gameHeader: {
       showOriginalName: false
