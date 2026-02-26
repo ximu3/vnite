@@ -596,7 +596,8 @@
         "developers": "开发商之间用英文逗号分隔",
         "publishers": "发行商之间用英文逗号分隔",
         "platforms": "平台之间用英文逗号分隔",
-        "genres": "类型之间用英文逗号分隔"
+        "genres": "类型之间用英文逗号分隔",
+        "extraKey": "单次仅支持对一个附加信息进行修改"
       },
       "success": "已批量修改游戏信息",
       "error": "修改游戏信息失败: {{message}}"
@@ -641,7 +642,7 @@
       "platforms": "平台",
       "tags": "标签",
       "relatedSites": "相关网站",
-      "extra": "额外信息",
+      "extra": "附加信息",
       "cover": "封面",
       "background": "背景",
       "logo": "徽标",

@@ -596,7 +596,8 @@
         "developers": "Separate developers with commas",
         "publishers": "Separate publishers with commas",
         "platforms": "Separate platforms with commas",
-        "genres": "Separate genres with commas"
+        "genres": "Separate genres with commas",
+        "extraKey": "Only one additional information can be modified at a time"
       },
       "success": "Batch edited game information",
       "error": "Failed to edit game information: {{message}}"
@@ -641,7 +642,7 @@
       "platforms": "Platforms",
       "tags": "Tags",
       "relatedSites": "Related Sites",
-      "extra": "Extra Information",
+      "extra": "Additional Information",
       "cover": "Cover",
       "background": "Background",
       "logo": "Logo",
