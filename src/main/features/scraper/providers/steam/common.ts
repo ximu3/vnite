@@ -1,8 +1,8 @@
 import { GameList, GameMetadata } from '@appTypes/utils'
-import { SteamAppDetailsResponse, SteamStoreSearchResponse, SteamLanguageConfig } from './types'
-import { formatDate } from '~/utils'
-import i18next from 'i18next'
 import { net } from 'electron'
+import i18next from 'i18next'
+import { formatDate } from '~/utils'
+import { SteamAppDetailsResponse, SteamLanguageConfig, SteamStoreSearchResponse } from './types'
 
 // Define base URL constants
 const STEAM_URLS = {
@@ -44,25 +44,43 @@ export async function searchSteamGames(gameName: string): Promise<GameList> {
       returnObjects: true
     }) as SteamLanguageConfig
 
-    const url = `${STEAM_URLS.STORE}/api/storesearch/?term=${encodeURIComponent(
+    const candidateCC = new Set([langConfig.countryCode, 'HK', 'US', 'JP'].filter(Boolean))
+    const urlBase = `${STEAM_URLS.STORE}/api/storesearch/?term=${encodeURIComponent(
       gameName
-    )}&l=${langConfig.apiLanguageCode || 'english'}&cc=${langConfig.countryCode || 'US'}`
+    )}&l=${langConfig.apiLanguageCode || 'english'}`
 
-    const response = (await fetchSteamAPI(url)) as SteamStoreSearchResponse
+    const resultsPerRegion = await Promise.all(
+      Array.from(candidateCC).map(async (cc) => {
+        const url = `${urlBase}&cc=${cc}`
+        try {
+          const response = (await fetchSteamAPI(url)) as SteamStoreSearchResponse
+          if (!response.items || response.items.length === 0) return []
+          return response.items
+        } catch (err) {
+          console.error(`Error fetching region ${cc}:`, err)
+          return []
+        }
+      })
+    )
 
-    if (!response.items || response.items.length === 0) {
+    const merged: Record<number, SteamStoreSearchResponse['items'][number]> = {}
+    resultsPerRegion.flat().forEach((game) => {
+      if (!merged[game.id]) merged[game.id] = game
+    })
+
+    if (Object.keys(merged).length === 0) {
       throw new Error('No games found')
     }
 
     const gamesMetadata = await Promise.all(
-      response.items.map((game) =>
+      Object.values(merged).map((game) =>
         getSteamMetadata(game.id.toString()).catch((error) => {
           console.error(`Error fetching metadata for game ${game.id}:`, error)
         })
       )
     )
 
-    return response.items.map((game, index) => ({
+    return Object.values(merged).map((game, index) => ({
       id: game.id.toString(),
       name: game.name,
       releaseDate: gamesMetadata[index]?.releaseDate || '',
@@ -259,25 +277,56 @@ export async function getGameBackgrounds(appId: string): Promise<string[]> {
 }
 
 export async function getGameCover(appId: string): Promise<string> {
-  const hdUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/library_600x900_2x.jpg`
-  const standardUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/library_600x900.jpg`
+  const langConfig = i18next.t('scraper:steam.config', {
+    returnObjects: true
+  }) as SteamLanguageConfig
 
-  // Check if HD image exists
-  const hdExists = await checkImageExists(hdUrl)
+  const candidateUrl = [
+    ...(langConfig.apiLanguageCode
+      ? [
+          `${STEAM_URLS.CDN}/steam/apps/${appId}/library_600x900_${langConfig.apiLanguageCode}_2x.jpg`,
+          `${STEAM_URLS.CDN}/steam/apps/${appId}/library_600x900_${langConfig.apiLanguageCode}.jpg`
+        ]
+      : []),
+    `${STEAM_URLS.CDN}/steam/apps/${appId}/library_600x900_2x.jpg`
+  ]
+  const fallbackUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/library_600x900.jpg`
 
-  // If HD image exists, return HD image URL, otherwise return standard image URL
-  return hdExists ? hdUrl : standardUrl
+  // Try all candidate URLs and return the first one that exists
+  for (const url of candidateUrl) {
+    if (await checkImageExists(url)) {
+      return url
+    }
+  }
+
+  // If no candidate URLs exist, return fallback URL
+  // TODO: Some newer games use URLs containing a {hash} segment instead of the standard pattern
+  return fallbackUrl
 }
 
 export async function getGameLogo(appId: string): Promise<string> {
-  const hdUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/logo_2x.png`
-  const standardUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/logo.png`
+  const langConfig = i18next.t('scraper:steam.config', {
+    returnObjects: true
+  }) as SteamLanguageConfig
 
-  // Check if HD image exists
-  const hdExists = await checkImageExists(hdUrl)
+  const candidateUrl = [
+    ...(langConfig.apiLanguageCode
+      ? [
+          `${STEAM_URLS.CDN}/steam/apps/${appId}/logo_${langConfig.apiLanguageCode}_2x.png`,
+          `${STEAM_URLS.CDN}/steam/apps/${appId}/logo_${langConfig.apiLanguageCode}.png`
+        ]
+      : []),
+    `${STEAM_URLS.CDN}/steam/apps/${appId}/logo_2x.png`
+  ]
+  const fallbackUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/logo.png`
 
-  // If HD image exists, return HD image URL, otherwise return standard image URL
-  return hdExists ? hdUrl : standardUrl
+  // Try all candidate URLs and return the first one that exists
+  for (const url of candidateUrl) {
+    if (await checkImageExists(url)) {
+      return url
+    }
+  }
+  return fallbackUrl
 }
 
 export async function checkSteamGameExists(appId: string): Promise<boolean> {
