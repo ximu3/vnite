@@ -15,12 +15,7 @@ import { useConfigState } from '~/hooks'
 import { filterGamesByLocal, filterGamesByNSFW, sortGames } from '~/stores/game'
 import { cn } from '~/utils'
 import { GamePoster } from './posters/GamePoster'
-
-function PlaceHolder(): React.JSX.Element {
-  return (
-    <div className={cn('w-[148px] h-[222px] cursor-pointer object-cover', 'bg-transparent')}></div>
-  )
-}
+import { PlaceHolder } from './posters/PlaceHolder'
 
 export function AllGamesComponent({
   scrollPosition

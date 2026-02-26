@@ -6,10 +6,11 @@ import {
   ContextMenuSub,
   ContextMenuSubContent,
   ContextMenuSubTrigger
-} from '~/components/ui/context-menu'
+} from '@ui/context-menu'
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useGameCollectionStore } from '~/stores'
 import { cn } from '~/utils'
-import { useTranslation } from 'react-i18next'
 
 export function CollectionMenu({
   gameIds,
@@ -53,6 +54,10 @@ export function CollectionMenu({
     removeGamesFromCollection(collectionId, gameIds)
   }
 
+  const sortedCollections = useMemo(() => {
+    return Object.entries(collections).sort(([, a], [, b]) => a.sort - b.sort)
+  }, [collections])
+
   return (
     <ContextMenuGroup>
       <ContextMenuSub>
@@ -61,7 +66,7 @@ export function CollectionMenu({
           <ContextMenuSubContent>
             {/* Add to Collection */}
             {/* Show collections that the selected games are not in */}
-            {Object.entries(collections)
+            {sortedCollections
               .filter(([key]) => !collectionsStatus.inAll.includes(key))
               .map(([key, value]) => (
                 <ContextMenuItem key={key} onClick={() => handleAddToCollection(key)}>
@@ -69,8 +74,8 @@ export function CollectionMenu({
                 </ContextMenuItem>
               ))}
 
-            {Object.entries(collections).filter(([key]) => !collectionsStatus.inAll.includes(key))
-              .length > 0 && <ContextMenuSeparator />}
+            {sortedCollections.filter(([key]) => !collectionsStatus.inAll.includes(key)).length >
+              0 && <ContextMenuSeparator />}
 
             <ContextMenuItem onSelect={openAddCollectionDialog}>
               <div className={cn('flex flex-row gap-2 items-center w-full')}>
@@ -90,7 +95,7 @@ export function CollectionMenu({
           <ContextMenuSubTrigger>{t('batchEditor.contextMenu.removeFrom')}</ContextMenuSubTrigger>
           <ContextMenuPortal>
             <ContextMenuSubContent>
-              {Object.entries(collections)
+              {sortedCollections
                 .filter(
                   ([key]) =>
                     collectionsStatus.inAll.includes(key) || collectionsStatus.inSome.includes(key)
