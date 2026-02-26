@@ -440,6 +440,7 @@
         "gamePath": "ゲームパス",
         "savePath": "セーブパス",
         "screenshotPath": "スクリーンショット保存先",
+        "screenshotPathTooltip": "未入力の場合、「設定 → データベース」で設定されたスクリーンショットの保存先が自動的に使用されます",
         "addFolder": "フォルダを追加",
         "addFile": "ファイルを追加",
         "search": {

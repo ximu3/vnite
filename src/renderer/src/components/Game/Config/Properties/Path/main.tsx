@@ -241,13 +241,20 @@ function PathComponent(
               {t('detail.properties.path.screenshotPath')}
             </div>
             <div className={cn('flex flex-row gap-3 items-center')}>
-              <Input
-                aria-invalid={!isScreenshotPathValid}
-                className={cn('flex-1')}
-                value={screenshotPath || ''}
-                onChange={(e) => setScreenshotPath(e.target.value)}
-                onBlur={saveScreenshotPath}
-              />
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Input
+                    aria-invalid={!isScreenshotPathValid}
+                    className={cn('flex-1')}
+                    value={screenshotPath || ''}
+                    onChange={(e) => setScreenshotPath(e.target.value)}
+                    onBlur={saveScreenshotPath}
+                  />
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  {t('detail.properties.path.screenshotPathTooltip')}
+                </TooltipContent>
+              </Tooltip>
               <Button variant={'outline'} size={'icon'} onClick={selectScreenshotFolderPath}>
                 <span className={cn('icon-[mdi--folder-outline] w-5 h-5')}></span>
               </Button>

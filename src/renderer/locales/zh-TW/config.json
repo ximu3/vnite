@@ -403,6 +403,10 @@
         "both": "資料庫 & 檔案系統"
       }
     },
+    "saveToClipboard": {
+      "title": "儲存至剪貼簿",
+      "description": "截圖後自動將圖片儲存至剪貼簿"
+    },
     "saveDir": {
       "title": "截圖儲存資料夾",
       "description": "選擇儲存截圖的根資料夾",

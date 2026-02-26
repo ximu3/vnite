@@ -440,6 +440,7 @@
         "gamePath": "Game Path",
         "savePath": "Save Path",
         "screenshotPath": "Screenshot Path",
+        "screenshotPathTooltip": "If left empty, the screenshot path configured under \"Settings → Database\" will be used automatically.",
         "addFolder": "Add Folder",
         "addFile": "Add File",
         "search": {

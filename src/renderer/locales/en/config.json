@@ -403,6 +403,10 @@
         "both": "Database & File System"
       }
     },
+    "saveToClipboard": {
+      "title": "Save to Clipboard",
+      "description": "Automatically copy the captured image to the clipboard after taking a screenshot"
+    },
     "saveDir": {
       "title": "Save Directory",
       "description": "Root directory for storing screenshots",

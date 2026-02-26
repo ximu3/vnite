@@ -216,6 +216,7 @@ export interface configDocs {
       storageBackend: 'filesystem' | 'database' | 'both'
       saveDir: string
       namingRule: string
+      saveToClipboard: boolean
     }
     snippingMode: 'rectangle' | 'activewindow' | 'fullscreen'
     enableNotificationSound: boolean
@@ -444,7 +445,8 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     image: {
       storageBackend: 'database',
       saveDir: '',
-      namingRule: '%datetime%'
+      namingRule: '%datetime%',
+      saveToClipboard: false
     },
     snippingMode: 'rectangle',
     enableNotificationSound: true

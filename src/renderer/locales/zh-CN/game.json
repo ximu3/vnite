@@ -440,6 +440,7 @@
         "gamePath": "游戏路径",
         "savePath": "存档路径",
         "screenshotPath": "截图路径",
+        "screenshotPathTooltip": "留空时将自动使用“设置 → 数据库”中配置的截图路径",
         "addFolder": "添加文件夹",
         "addFile": "添加文件",
         "search": {
