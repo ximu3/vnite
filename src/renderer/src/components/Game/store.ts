@@ -1,11 +1,9 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
 export type PropertiesDialogTab = 'launcher' | 'path' | 'media'
 
 export interface GameDetailStore {
-  lastDetailTab: 'overview' | 'record' | 'save' | 'memory'
-  setLastDetailTab: (tab: 'overview' | 'record' | 'save' | 'memory') => void
-
   isEditingLogo: boolean
   setIsEditingLogo: (isEditing: boolean) => void
 
@@ -24,9 +22,6 @@ export interface GameDetailStore {
 }
 
 export const useGameDetailStore = create<GameDetailStore>((set) => ({
-  lastDetailTab: 'overview',
-  setLastDetailTab: (tab) => set({ lastDetailTab: tab }),
-
   isEditingLogo: false,
   setIsEditingLogo: (isEditing): void => set({ isEditingLogo: isEditing }),
 
@@ -44,3 +39,21 @@ export const useGameDetailStore = create<GameDetailStore>((set) => ({
     set({ propertiesDialog: { open: true, defaultTab } }),
   closePropertiesDialog: () => set({ propertiesDialog: { open: false } })
 }))
+
+interface GameDetailTabStore {
+  lastDetailTab: 'overview' | 'record' | 'save' | 'memory'
+  setLastDetailTab: (tab: 'overview' | 'record' | 'save' | 'memory') => void
+}
+
+export const useGameDetailTabStore = create<GameDetailTabStore>()(
+  persist(
+    (set) => ({
+      lastDetailTab: 'overview',
+      setLastDetailTab: (tab) => set({ lastDetailTab: tab })
+    }),
+    {
+      name: 'game-detail-last-tab',
+      partialize: (state) => ({ lastDetailTab: state.lastDetailTab })
+    }
+  )
+)

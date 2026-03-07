@@ -6,7 +6,31 @@ import { StepperInput } from '~/components/ui/input'
 import { SeparatorDashed } from '~/components/ui/separator-dashed'
 import { getGamePlayTimeByDateRange, getGameStartAndEndDate } from '~/stores/game'
 import { cn } from '~/utils'
-import { TimerChart } from './TimerChart'
+import { DailyPlayTime, TimeGranularity, TimerChart } from './TimerChart'
+
+function recommendGranularity(chartData: DailyPlayTime): TimeGranularity {
+  const monthSet = new Set<string>()
+
+  Object.entries(chartData).forEach(([date, _playTime]) => {
+    const month = date.slice(0, 7) // YYYY-MM
+    monthSet.add(month)
+  })
+
+  const d = Object.keys(chartData).length
+  const m = monthSet.size
+
+  if (d <= 30) {
+    return 'day'
+  } else if (d > 30 && d <= 60) {
+    if (m <= 3) {
+      return 'day'
+    } else {
+      return 'month'
+    }
+  } else {
+    return 'month'
+  }
+}
 
 export function ChartCard({
   gameId,
@@ -21,6 +45,7 @@ export function ChartCard({
   const [endDate, setEndDate] = useState('')
   const [minValue, setMinValue] = useState(0)
   const [playTimeByDateRange, setPlayTimeByDateRange] = useState<Record<string, number>>({})
+  const [granularity, setGranularity] = useState<TimeGranularity>('day')
 
   useEffect(() => {
     setStartDate(timers.start)
@@ -43,6 +68,7 @@ export function ChartCard({
     ) {
       const data = getGamePlayTimeByDateRange(gameId, startDate, endDate)
       setPlayTimeByDateRange(data)
+      setGranularity(recommendGranularity(data))
     }
   }, [startDate, endDate, timers.start, timers.end, gameId])
 
@@ -64,19 +90,23 @@ export function ChartCard({
               onChange={(e) => setEndDate(e.target.value)}
               className={cn('')}
             />
-            <div className="w-px h-9 bg-primary" />
-            <div className={cn('relative flex w-28 items-center')}>
-              <span className="absolute left-2">{'>'}</span>
-              <StepperInput
-                value={minValue}
-                min={0}
-                max={24 * 60}
-                steps={{ default: 1, shift: 10 }}
-                onChange={(e) => setMinValue(Number(e.target.value))}
-                inputClassName="pl-6 pr-8 w-full"
-              />
-              <span className="absolute right-2">min</span>
-            </div>
+            {granularity === 'day' && (
+              <>
+                <div className="w-px h-9 bg-primary" />
+                <div className={cn('relative flex w-28 items-center')}>
+                  <span className="absolute left-2">{'>'}</span>
+                  <StepperInput
+                    value={minValue}
+                    min={0}
+                    max={24 * 60}
+                    steps={{ default: 1, shift: 10 }}
+                    onChange={(e) => setMinValue(Number(e.target.value))}
+                    inputClassName="pl-6 pr-8 w-full"
+                  />
+                  <span className="absolute right-2">min</span>
+                </div>
+              </>
+            )}
           </div>
           {!startDate || !endDate ? (
             t('detail.chart.selectRange')
@@ -90,8 +120,9 @@ export function ChartCard({
             <div className={cn('max-h-full rounded-lg py-3', '3xl:max-h-full')}>
               <TimerChart
                 data={playTimeByDateRange}
-                minMinutes={minValue}
+                minMinutes={granularity === 'day' ? 0 : minValue}
                 className={cn('w-full max-h-[30vh] -ml-3')}
+                granularity={granularity}
               />
             </div>
           )}

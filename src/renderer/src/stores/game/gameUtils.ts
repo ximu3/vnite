@@ -4,10 +4,9 @@ import {
   type MaxPlayTimeDay,
   type gameDoc
 } from '@appTypes/models'
-import { calculateDailyPlayTime, jaroWinkler } from '@appUtils'
-import i18next from 'i18next'
+import { jaroWinkler } from '@appUtils'
 import type { Get, Paths } from 'type-fest'
-import { capDailyPlayTime, parseLocalDate } from '~/stores/game/recordUtils'
+import { capDailyPlayTime, formatLocalDateKey, parseLocalDate } from '~/stores/game/recordUtils'
 import { useConfigStore } from '../config'
 import { getGameLocalStore } from './gameLocalStoreFactory'
 import { useGamePathStore } from './gamePathStore'
@@ -591,42 +590,47 @@ export function getGamePlayTimeByDateRange(
   try {
     const store = getGameStore(gameId)
     const timers = store.getState().getValue('record.timers')
+    if (!timers || timers.length === 0) return {}
 
-    if (!timers || timers.length === 0) {
+    const start = parseLocalDate(startDate)
+    const end = parseLocalDate(endDate)
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      console.error(`Invalid date range: ${startDate} to ${endDate}`)
       return {}
     }
 
-    try {
-      // const start = new Date(startDate)
-      const start = parseLocalDate(startDate)
-      // const end = new Date(endDate)
-      const end = parseLocalDate(endDate)
+    const dailyPlayTime: Record<string, number> = {}
 
-      // Date of validation
-      if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-        console.error(`Invalid date range: ${startDate} to ${endDate}`)
-        return {}
+    for (const t of timers) {
+      const timerStart = new Date(t.start)
+      const timerEnd = new Date(t.end)
+
+      const overlapStart = Math.max(timerStart.getTime(), start.getTime())
+      const overlapEnd = Math.min(timerEnd.getTime(), end.getTime())
+      if (overlapEnd <= overlapStart) continue
+
+      const current = new Date(overlapStart)
+      current.setHours(0, 0, 0, 0)
+      const lastDay = new Date(overlapEnd)
+      lastDay.setHours(0, 0, 0, 0)
+
+      while (current <= lastDay) {
+        const dayStart = new Date(current)
+        const dayEnd = new Date(current)
+        dayEnd.setHours(23, 59, 59, 999)
+
+        const dayOverlapStart = Math.max(overlapStart, dayStart.getTime())
+        const dayOverlapEnd = Math.min(overlapEnd, dayEnd.getTime())
+        const playTime = Math.max(0, dayOverlapEnd - dayOverlapStart)
+
+        const key = formatLocalDateKey(current)
+        dailyPlayTime[key] = (dailyPlayTime[key] || 0) + playTime
+
+        current.setDate(current.getDate() + 1)
       }
-
-      const result: { [date: string]: number } = {}
-      const current = new Date(start)
-
-      while (current <= end) {
-        try {
-          const dateStr = i18next.format(current, 'niceISO')
-          result[dateStr] = calculateDailyPlayTime(current, timers)
-          current.setDate(current.getDate() + 1)
-        } catch (error) {
-          console.error(`Error processing date in getGamePlayTimeByDateRange:`, error)
-          current.setDate(current.getDate() + 1)
-        }
-      }
-
-      return result
-    } catch (error) {
-      console.error(`Error in date range processing for ${gameId}:`, error)
-      return {}
     }
+
+    return dailyPlayTime
   } catch (error) {
     console.error(`Fatal error in getGamePlayTimeByDateRange for ${gameId}:`, error)
     return {}
@@ -684,35 +688,43 @@ export function getGameMaxPlayTimeDay(gameId: string): MaxPlayTimeDay | null {
   try {
     const store = getGameStore(gameId)
     const timers = store.getState().getValue('record.timers')
+    if (!timers || timers.length === 0) return null
 
-    if (!timers || timers.length === 0) {
-      return null
-    }
+    const dailyPlayTime: Record<string, number> = {}
 
-    const allDates = new Set<string>()
-    timers.forEach((timer) => {
-      const start = new Date(timer.start)
-      const end = new Date(timer.end)
+    for (const t of timers) {
+      const start = new Date(t.start)
+      const end = new Date(t.end)
+
       const current = new Date(start)
+      current.setHours(0, 0, 0, 0)
+      const lastDay = new Date(end)
+      lastDay.setHours(0, 0, 0, 0)
 
-      while (current <= end) {
-        allDates.add(i18next.format(current, 'niceISO'))
+      while (current <= lastDay) {
+        const dayStart = new Date(current)
+        const dayEnd = new Date(current)
+        dayEnd.setHours(23, 59, 59, 999)
+
+        const overlapStart = Math.max(start.getTime(), dayStart.getTime())
+        const overlapEnd = Math.min(end.getTime(), dayEnd.getTime())
+        const playTime = Math.max(0, overlapEnd - overlapStart)
+
+        const key = formatLocalDateKey(current)
+        dailyPlayTime[key] = (dailyPlayTime[key] || 0) + playTime
+
         current.setDate(current.getDate() + 1)
       }
-    })
+    }
 
     let maxDate = ''
     let maxTime = 0
-
-    allDates.forEach((dateStr) => {
-      const currentDate = new Date(dateStr)
-      const playTime = calculateDailyPlayTime(currentDate, timers)
-
-      if (playTime > maxTime) {
-        maxDate = dateStr
-        maxTime = playTime
+    for (const [date, time] of Object.entries(dailyPlayTime)) {
+      if (time > maxTime) {
+        maxTime = time
+        maxDate = date
       }
-    })
+    }
 
     return maxDate ? { date: maxDate, playTime: maxTime } : null
   } catch (error) {

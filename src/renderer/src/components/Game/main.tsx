@@ -27,7 +27,7 @@ import { Overview } from './Overview'
 import { InformationDialog } from './Overview/Information/InformationDialog'
 import { Record } from './Record'
 import { Save } from './Save'
-import { useGameDetailStore } from './store'
+import { useGameDetailStore, useGameDetailTabStore } from './store'
 
 export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
@@ -44,8 +44,8 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   // Store the current scroll position to avoid re-querying the DOM in the rAF callback
   const currentScrollTop = useRef(0)
 
-  const lastDetailTab = useGameDetailStore((s) => s.lastDetailTab)
-  const setLastDetailTab = useGameDetailStore((s) => s.setLastDetailTab)
+  const lastDetailTab = useGameDetailTabStore((s) => s.lastDetailTab)
+  const setLastDetailTab = useGameDetailTabStore((s) => s.setLastDetailTab)
   const isEditingLogo = useGameDetailStore((state) => state.isEditingLogo)
   const setIsEditingLogo = useGameDetailStore((state) => state.setIsEditingLogo)
   const isInformationDialogOpen = useGameDetailStore((s) => s.isInformationDialogOpen)
