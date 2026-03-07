@@ -3,15 +3,19 @@ import { useTranslation } from 'react-i18next'
 import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from 'recharts'
 import type { ValueType } from 'recharts/types/component/DefaultTooltipContent'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '~/components/ui/chart'
-import { parseLocalDate } from '~/stores/game/recordUtils'
+import { formatLocalDateKey, parseLocalDate } from '~/stores/game/recordUtils'
 import { cn } from '~/utils'
 
-interface DailyPlayTime {
+export interface DailyPlayTime {
   [date: string]: number
 }
 
+export type TimeGranularity = 'day' | 'month'
+
 interface ChartData {
-  date: string
+  jumpDate: string
+  label: string
+  granularity: TimeGranularity
   playTime: number
   group: number
 }
@@ -20,12 +24,14 @@ export const TimerChart = ({
   data,
   className,
   minMinutes = 0,
-  filter0 = true
+  filter0 = true,
+  granularity = 'day'
 }: {
   data: DailyPlayTime
   className?: string
   minMinutes?: number
   filter0?: boolean
+  granularity?: TimeGranularity
 }): React.JSX.Element => {
   const { t } = useTranslation('game')
   const router = useRouter()
@@ -33,14 +39,14 @@ export const TimerChart = ({
     return t('utils:format.gameTime', { time })
   }
 
-  const handleBarClick = (entry: (typeof chartData)[number]): void => {
-    const dateUTC = parseLocalDate(entry.date) // YYYY-MM-DD
+  const handleBarClick = (entry: ChartData): void => {
+    const dateUTC = parseLocalDate(entry.jumpDate) // YYYY-MM-DD
     const isoDate = dateUTC.toISOString()
 
     router.navigate({
       to: '/record',
       search: {
-        tab: 'weekly',
+        tab: entry.granularity === 'month' ? 'monthly' : 'weekly',
         date: isoDate,
         year: dateUTC.getFullYear().toString()
       }
@@ -53,29 +59,70 @@ export const TimerChart = ({
   if (filter0) {
     chartData = Object.entries(data)
       .map(([date, playTime]) => ({
-        date,
+        jumpDate: date,
+        label: date.slice(5), // Month-Day
+        granularity: 'day' as TimeGranularity,
         playTime: playTime / 1000 / 60, // Converting milliseconds to minutes
         group: 0
       }))
-      .filter((item) => item.playTime > minMinutes) // Filter out days less than `minMinutes` hours of gameplay
+      .filter((item) => item.playTime > minMinutes) // Filter out days less than `minMinutes` of gameplay
   } else {
     chartData = Object.entries(data).map(([date, playTime]) => ({
-      date,
+      jumpDate: date,
+      label: date.slice(5), // Month-Day
+      granularity: 'day',
       playTime: playTime / 1000 / 60, // Converting milliseconds to minutes
       group: 0
     }))
   }
 
-  // Grouping logic: mark group when month changes
-  let currentGroup = 0
-  let lastMonth: string | null = null
+  // * Granularity Adjustment
+  if (granularity === 'month') {
+    const monthRecord: Record<string, ChartData> = {}
 
-  chartData = chartData.map((item) => {
-    const month = item.date.slice(0, 7) // YYYY-MM
-    if (month !== lastMonth && lastMonth !== null) currentGroup = 1 - currentGroup // toggle group
-    lastMonth = month
-    return { ...item, group: currentGroup }
-  })
+    chartData.forEach((item) => {
+      const date = parseLocalDate(item.jumpDate)
+      date.setDate(1)
+      const key = formatLocalDateKey(date)
+
+      if (!monthRecord[key]) {
+        monthRecord[key] = {
+          jumpDate: key,
+          label: key.slice(0, 7), // YYYY-MM
+          granularity: 'month',
+          playTime: 0,
+          group: 0
+        }
+      }
+
+      monthRecord[key].playTime += item.playTime
+    })
+
+    chartData = Object.values(monthRecord).sort((a, b) => a.jumpDate.localeCompare(b.jumpDate))
+  }
+
+  // * Grouping logic: mark group when month/year changes
+  if (granularity === 'day') {
+    let currentGroup = 0
+    let lastMonth: string | null = null
+
+    chartData = chartData.map((item) => {
+      const month = item.jumpDate.slice(0, 7) // YYYY-MM
+      if (month !== lastMonth && lastMonth !== null) currentGroup = 1 - currentGroup // toggle group
+      lastMonth = month
+      return { ...item, group: currentGroup }
+    })
+  } else if (granularity === 'month') {
+    let currentGroup = 0
+    let lastYear: string | null = null
+
+    chartData = chartData.map((item) => {
+      const year = item.jumpDate.slice(0, 4) // YYYY
+      if (year !== lastYear && lastYear !== null) currentGroup = 1 - currentGroup // toggle group
+      lastYear = year
+      return { ...item, group: currentGroup }
+    })
+  }
 
   // Chart Configuration
   const chartConfig = {
@@ -91,13 +138,7 @@ export const TimerChart = ({
         <CartesianGrid strokeDasharray="3 3" vertical={false} />
 
         {/* X-shaft alignment */}
-        <XAxis
-          dataKey="date"
-          tickLine={false}
-          axisLine={false}
-          tickMargin={10}
-          tickFormatter={(value) => value.slice(5)} // Month-Day only
-        />
+        <XAxis dataKey="label" tickLine={false} axisLine={false} tickMargin={10} />
 
         {/* Y-shaft arrangement */}
         <YAxis tickLine={false} axisLine={false} tickMargin={10} />
@@ -121,7 +162,7 @@ export const TimerChart = ({
         >
           {chartData.map((entry) => (
             <Cell
-              key={`${entry.date}-${entry.group}`}
+              key={`${entry.jumpDate}-${entry.group}`}
               fill={entry.group === 0 ? 'var(--primary)' : 'var(--secondary)'}
               onClick={() => handleBarClick(entry)}
               cursor="pointer"
