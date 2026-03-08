@@ -33,7 +33,7 @@
     },
     "foregroundWaitTime": {
       "title": "Wait Time",
-      "description": "Pause/resume timer after the game has been running in background/foreground for this duration\nCannnot be changed while games are running"
+      "description": "Pause/resume timer after the game has been running in background/foreground for this duration (second)\nCannnot be changed while games are running"
     }
   },
   "appearances": {
