@@ -539,7 +539,6 @@ async function convertConfig(basePath: string): Promise<void> {
       quitToTray: v2Config.general.quitToTray,
       language: '',
       hideWindowAfterGameStart: true,
-      processMonitor: 'new',
       enableForegroundTimer: true,
       foregroundWaitTime: 10
     })

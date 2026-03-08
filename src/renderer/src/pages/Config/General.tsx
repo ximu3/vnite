@@ -23,7 +23,6 @@ export function General(): React.JSX.Element {
   const { t } = useTranslation('config')
   const { i18n } = useTranslation()
   const [enableForegroundTimer] = useConfigState('general.enableForegroundTimer')
-  const [processMonitor] = useConfigState('general.processMonitor')
   const { runningGames } = useRunningGames.getState()
 
   const languageOptions = [
@@ -137,7 +136,7 @@ export function General(): React.JSX.Element {
                 title={t('general.foregroundTimer.title')}
                 description={t('general.foregroundTimer.description')}
                 controlType="switch"
-                disabled={runningGames.length > 0 || processMonitor !== 'new'}
+                disabled={runningGames.length > 0}
                 onChange={(value: boolean) => {
                   ipcManager.send('system:change-foreground-timer', value)
                 }}
@@ -151,9 +150,7 @@ export function General(): React.JSX.Element {
                 controlType="input"
                 inputType="number"
                 min={0}
-                disabled={
-                  runningGames.length > 0 || !enableForegroundTimer || processMonitor !== 'new'
-                }
+                disabled={runningGames.length > 0 || !enableForegroundTimer}
                 onChange={(value: string) => {
                   ipcManager.send('system:change-foreground-timer-wait-time', Number(value))
                 }}

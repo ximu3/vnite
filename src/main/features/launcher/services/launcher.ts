@@ -15,12 +15,7 @@ export async function fileLauncher(gameId: string): Promise<void> {
     }
 
     // Startup Monitor
-    const mode = await ConfigDBManager.getConfigValue('general.processMonitor')
-    if (mode === 'new') {
-      await startPhantomMonitor(gameId)
-    } else {
-      await startMonitor(gameId)
-    }
+    await startPhantomMonitor(gameId)
   } catch (error) {
     console.error(`Error in fileLauncher for game ${gameId}:`, error)
     throw error
@@ -53,12 +48,7 @@ export async function urlLauncher(gameId: string): Promise<void> {
     launcher.unref()
 
     // Startup Monitor
-    const mode = await ConfigDBManager.getConfigValue('general.processMonitor')
-    if (mode === 'new') {
-      await startPhantomMonitor(gameId)
-    } else {
-      await startMonitor(gameId)
-    }
+    await startPhantomMonitor(gameId)
   } catch (err) {
     console.error(`Error in urlLauncher for game ${gameId}:`, err)
     throw err
@@ -98,12 +88,7 @@ export async function scriptLauncher(gameId: string): Promise<void> {
     launcher.unref()
 
     // Startup Monitor
-    const mode = await ConfigDBManager.getConfigValue('general.processMonitor')
-    if (mode === 'new') {
-      await startPhantomMonitor(gameId)
-    } else {
-      await startMonitor(gameId)
-    }
+    await startPhantomMonitor(gameId)
   } catch (err) {
     console.error(`Error in scriptLauncher for game ${gameId}:`, err)
     throw err
