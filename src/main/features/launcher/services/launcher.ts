@@ -1,7 +1,7 @@
 import { spawn } from 'child_process'
-import { ConfigDBManager, GameDBManager } from '~/core/database'
+import { GameDBManager } from '~/core/database'
 import { shell } from 'electron'
-import { startMonitor, startPhantomMonitor } from '~/features/monitor'
+import { startPhantomMonitor } from '~/features/monitor'
 
 export async function fileLauncher(gameId: string): Promise<void> {
   try {
