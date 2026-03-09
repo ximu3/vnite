@@ -51,3 +51,8 @@ pub async fn replace_known_games(local_game_pathes: Vec<String>, local_game_ids:
 pub async fn is_running(path: String, is_folder: Option<bool>) -> bool {
   monitor::is_running(path, is_folder).await
 }
+
+#[napi(js_name = "manualUpdateProcessStatus")]
+pub async fn manual_update_process_status() {
+  monitor::manual_update_process_status().await;
+}

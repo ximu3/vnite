@@ -31,6 +31,7 @@ impl Drop for HandleGuard {
   }
 }
 
+/// Get all process infomation (pid, full path)
 pub fn get_all_process() -> Vec<ProcessInfo> {
   // Allocate a reasonable amount of memory in advance
   let mut processes: Vec<ProcessInfo> = Vec::with_capacity(512);
@@ -104,6 +105,40 @@ pub fn get_all_process() -> Vec<ProcessInfo> {
   processes
 }
 
+/// Get all process (PID only)
+pub fn get_all_process_pid() -> Vec<u32> {
+  let mut processes: Vec<u32> = Vec::with_capacity(512);
+
+  unsafe {
+    let snapshot = match CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0) {
+      Ok(handle) => handle,
+      Err(_) => return processes,
+    };
+
+    let _snapshot_guard = HandleGuard::new(snapshot);
+
+    let mut proc_entry = PROCESSENTRY32W {
+      dwSize: std::mem::size_of::<PROCESSENTRY32W>() as u32,
+      ..Default::default()
+    };
+
+    if Process32FirstW(snapshot, &mut proc_entry).is_ok() {
+      loop {
+        let pid = proc_entry.th32ProcessID;
+        processes.push(pid);
+
+        // Get the next process
+        if Process32NextW(snapshot, &mut proc_entry).is_err() {
+          break;
+        }
+      }
+    }
+  }
+
+  processes
+}
+
+/// Get full path of a process using a given PID
 pub fn get_process_full_path_by_pid(pid: u32) -> String {
   unsafe {
     match OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, pid) {

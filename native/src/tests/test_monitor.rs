@@ -8,7 +8,7 @@ async fn test_monitor() {
     vec!["123456-abcdef".to_string()],
     None
   ).await;
-  tokio::time::sleep(tokio::time::Duration::from_secs(10)).await;
+  tokio::time::sleep(tokio::time::Duration::from_secs(20)).await;
   let is_running = monitor::gm::get().lock().await.is_running("C:\\Program Files\\CMake\\bin", Some(true));
   println!("is running: {}", is_running);
   monitor::stop_monitoring().await;

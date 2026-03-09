@@ -166,7 +166,7 @@ impl GameManager {
   /// Handle a foreground change message.
   /// Note the `msg` can be 0 if current process has insufficient privilege to retrieve the target window.
   pub fn handle_foreground_message(&mut self, msg: u32) {
-    if self.running_process.len() == 0 || Self::is_magpie_pid(msg) {
+    if Self::is_magpie_pid(msg) {
       return;
     }
     for (_, info) in &self.running_process {
@@ -218,6 +218,7 @@ impl GameManager {
     }));
   }
 
+  #[allow(dead_code)]
   pub fn handle_wmi_message(&mut self, msg: ProcessMessage) {
     let l_path = msg.path.to_lowercase();
     // check directory & fullpath & process name
@@ -302,10 +303,10 @@ impl GameManager {
     }
   }
 
-  pub fn handle_etw_message(&mut self, msg: ProcessMessage) {
+  pub fn handle_process_message(&mut self, msg: ProcessMessage) {
+    let l_path = msg.path.to_lowercase();
     match msg.status {
       ProcessStatus::Started => {
-        let l_path = msg.path.to_lowercase();
         // check directory & fullpath & process name
         let game_id = match self.get_known_game_id(&l_path) {
           Some(id) => id.clone(),
@@ -343,7 +344,6 @@ impl GameManager {
       }
       ProcessStatus::Terminated => {
         for (_, game_info) in self.running_process.extract_if(|_, v| v.pid == msg.pid) {
-          self.foreground_pid = 0;
           log::info(format!("game stopped: {}, pid: {}", game_info.path, game_info.pid).as_str());
           if let Some(callback) = &self.process_callback {
             callback.call(
