@@ -44,7 +44,7 @@ impl Polling {
         self.process_cache.insert(
           pid,
           ProcessInfo {
-            pid,
+            pid: pid,
             path: path.clone(),
             accessible: accessible,
             pinned: true,
@@ -96,7 +96,7 @@ impl Polling {
       }
     }
 
-    // remove unpinned processes and send process termination message
+    // remove unpinned processes
     self
       .process_cache
       .retain(|_, process: &mut ProcessInfo| process.pinned);
