@@ -19,7 +19,10 @@ import { ipcManager } from '~/app/ipc'
 import { useConfigState } from '~/hooks'
 import { cn } from '~/utils'
 
-function checkMediaCapability(capabilities: ScraperCapabilities[], type: string): boolean {
+type MediaType = 'cover' | 'icon' | 'logo' | 'background'
+type DataSourceMap = Record<MediaType, string>
+
+function checkMediaCapability(capabilities: ScraperCapabilities[], type: MediaType): boolean {
   switch (type) {
     case 'cover':
       return capabilities.includes('getGameCovers')
@@ -37,7 +40,7 @@ function checkMediaCapability(capabilities: ScraperCapabilities[], type: string)
 interface SearchMediaDialogProps {
   isOpen: boolean
   onClose: () => void
-  type: string
+  type: MediaType
   gameTitle: string
   onSelect: (imagePath: string) => void
 }
@@ -51,7 +54,12 @@ export function SearchMediaDialog({
 }: SearchMediaDialogProps): React.JSX.Element {
   const { t } = useTranslation('game')
   const [searchTitle, setSearchTitle] = useState(gameTitle)
-  const [dataSource, setDataSource] = useState('google')
+  const [dataSources, setDataSources] = useState<DataSourceMap>({
+    cover: 'google',
+    icon: 'google',
+    logo: 'google',
+    background: 'google'
+  })
   const [defaultMediaDataSource] = useConfigState('game.scraper.common.defaultMediaDataSource')
   const [availableDataSources, setAvailableDataSources] = useState<
     { id: string; name: string; capabilities: ScraperCapabilities[] }[]
@@ -76,10 +84,20 @@ export function SearchMediaDialog({
     const defaultSource = availableDataSources.find((s) => s.id === defaultMediaDataSource)
     if (!defaultSource) return
 
-    if (checkMediaCapability(defaultSource.capabilities, type)) {
-      setDataSource(defaultMediaDataSource)
+    const nextDataSources: DataSourceMap = {
+      cover: 'google',
+      icon: 'google',
+      logo: 'google',
+      background: 'google'
     }
-  }, [defaultMediaDataSource, availableDataSources, setDataSource])
+
+    for (const t of ['cover', 'icon', 'logo', 'background'] as MediaType[]) {
+      if (checkMediaCapability(defaultSource.capabilities, t)) {
+        nextDataSources[t] = defaultMediaDataSource
+      }
+    }
+    setDataSources(nextDataSources)
+  }, [defaultMediaDataSource, availableDataSources])
 
   useEffect(() => {
     if (isOpen) {
@@ -100,25 +118,25 @@ export function SearchMediaDialog({
       let result: string[] = []
       switch (type) {
         case 'cover':
-          result = await ipcManager.invoke('scraper:get-game-covers', dataSource, {
+          result = await ipcManager.invoke('scraper:get-game-covers', dataSources.cover, {
             type: 'name',
             value: searchTitle
           })
           break
         case 'icon':
-          result = await ipcManager.invoke('scraper:get-game-icons', dataSource, {
+          result = await ipcManager.invoke('scraper:get-game-icons', dataSources.icon, {
             type: 'name',
             value: searchTitle
           })
           break
         case 'logo':
-          result = await ipcManager.invoke('scraper:get-game-logos', dataSource, {
+          result = await ipcManager.invoke('scraper:get-game-logos', dataSources.logo, {
             type: 'name',
             value: searchTitle
           })
           break
         case 'background':
-          result = await ipcManager.invoke('scraper:get-game-backgrounds', dataSource, {
+          result = await ipcManager.invoke('scraper:get-game-backgrounds', dataSources.background, {
             type: 'name',
             value: searchTitle
           })
@@ -152,7 +170,6 @@ export function SearchMediaDialog({
   function handleClose(): void {
     setSelectedImage('')
     setImageList([])
-    setDataSource('google')
     onClose()
   }
 
@@ -192,7 +209,10 @@ export function SearchMediaDialog({
         {/* Data Source and Search */}
         <Card className={cn('p-3')}>
           <div className={cn('flex flex-row gap-3')}>
-            <Select value={dataSource} onValueChange={setDataSource}>
+            <Select
+              value={dataSources[type]}
+              onValueChange={(value) => setDataSources((prev) => ({ ...prev, [type]: value }))}
+            >
               <SelectTrigger className={cn('w-72')}>
                 <SelectValue placeholder={t('detail.properties.media.search.dataSource')} />
               </SelectTrigger>
