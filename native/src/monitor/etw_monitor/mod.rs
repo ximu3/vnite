@@ -37,7 +37,7 @@ impl EtwMonitor {
               }
               None => { }
             }
-            gm::get().lock().await.handle_etw_message(data);
+            gm::get().lock().await.handle_process_message(data);
           } else {
             log::error("ETW monitor rx channel accidentally stopped, likely caused by termination of the tx half");
             break;
@@ -107,6 +107,10 @@ impl WinProcessMonitor for EtwMonitor {
     if let Some(mut tracer) = self.tracer.take() {
       let _ = tracer.stop_trace(true);
     }
+  }
+
+  fn manual_update_process_status(&mut self) {
+    // do nothing since the ETW monitor will automatically update process status very quickly after process creation/termination events
   }
 }
 

@@ -26,23 +26,13 @@ export async function setupNativeModule(): Promise<void> {
   )
   try {
     // setupNativeMonitor
-    const mode = await ConfigDBManager.getConfigValue('general.processMonitor')
-    if (mode === 'new') {
-      await setupNativeMonitor()
-      // install foreground hook
-      const isEnableForegroundHook = await ConfigDBManager.getConfigValue(
-        'general.enableForegroundTimer'
-      )
-      if (isEnableForegroundHook) {
-        await enableForegroundHook()
-      }
-    } else if (mode === 'legacy') {
-      const isEnableForegroundHook = await ConfigDBManager.getConfigValue(
-        'general.enableForegroundTimer'
-      )
-      if (isEnableForegroundHook) {
-        await ConfigDBManager.setConfigValue('general.enableForegroundTimer', false)
-      }
+    await setupNativeMonitor()
+    // install foreground hook
+    const isEnableForegroundHook = await ConfigDBManager.getConfigValue(
+      'general.enableForegroundTimer'
+    )
+    if (isEnableForegroundHook) {
+      await enableForegroundHook()
     }
   } catch (err) {
     log.error('failed to setup native process monitor', err)

@@ -18,14 +18,6 @@
     "minimizeToTray": "最小化到系統匣",
     "hideWindowAfterGameStart": "啟動遊戲後最小化到系統匣",
     "hideWindowAfterGameStartDescription": "啟動遊戲後自動隱藏主窗口",
-    "processMonitor": {
-      "title": "進程監控方式",
-      "description": "選擇監控游戲進程的方式。游戲啓動中無法變更此設置\n\n自動: 更效率，您無需從 Vnite 面板啓動游戲\n傳動: 更穩定，您必須從 Vnite 面板啓動游戲",
-      "options": {
-        "new": "自動",
-        "legacy": "傳統"
-      }
-    },
     "timerTitle": "游戲計時器",
     "foregroundTimer": {
       "title": "前臺計時",
@@ -33,7 +25,7 @@
     },
     "foregroundWaitTime": {
       "title": "緩衝時間",
-      "description": "當游戲持續在前臺/後臺運行此時間后，繼續/暫停計時器\n游戲運行中無法變更此設置"
+      "description": "當游戲持續在前臺/後臺運行此時間（秒）后，繼續/暫停計時器\n游戲運行中無法變更此設置"
     }
   },
   "appearances": {

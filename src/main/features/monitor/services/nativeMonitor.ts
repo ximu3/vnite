@@ -151,6 +151,8 @@ export async function startPhantomMonitor(
         },
         { source: 'nativeMonitor' }
       )
+      // immediately update process status for polling monitor
+      await native.manualUpdateProcessStatus()
       // if vnite is running under normal privilege while the game is running with elevated privilege,
       // notify users vnite is not able to detect game process
       if (path === undefined && !native.isElevatedPrivilege()) {
@@ -171,7 +173,7 @@ export async function startPhantomMonitor(
               }
             })
           }
-        }, 3000)
+        }, 5000)
       }
     }
     await refreshTimerStatus()

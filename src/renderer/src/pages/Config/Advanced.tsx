@@ -64,21 +64,6 @@ export function Advanced(): React.JSX.Element {
             description={t('advanced.magpie.hotkeyDescription')}
             controlType="hotkey"
           />
-
-          {/* Process Monitor */}
-          <ConfigItem
-            hookType="config"
-            path="general.processMonitor"
-            title={t('general.processMonitor.title')}
-            description={t('general.processMonitor.description')}
-            controlType="select"
-            options={[
-              { value: 'new', label: t('general.processMonitor.options.new') },
-              { value: 'legacy', label: t('general.processMonitor.options.legacy') }
-            ]}
-            disabled={runningGames.length > 0}
-            onChange={onMonitorChange}
-          />
         </div>
       </CardContent>
     </Card>

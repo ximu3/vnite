@@ -18,14 +18,6 @@
     "minimizeToTray": "トレイに最小化",
     "hideWindowAfterGameStart": "ゲーム起動後にトレイに最小化する",
     "hideWindowAfterGameStartDescription": "ゲーム起動後に自動的にメインウィンドウを隠す",
-    "processMonitor": {
-      "title": "プロセスモニター",
-      "description": "ゲームプロセスをモニタリングする方法を選択する。ゲーム起動中はこの設定を変更できません\n\n自動: 効率重視、Vnite からゲームを起動する必要がありません\nレガシー: 安定性重視、必ず Vnite からゲームを起動する必要があります",
-      "options": {
-        "new": "自動",
-        "legacy": "レガシー"
-      }
-    },
     "timerTitle": "ゲームタイマー",
     "foregroundTimer": {
       "title": "フォアグラウンドタイマー",
@@ -33,7 +25,7 @@
     },
     "foregroundWaitTime": {
       "title": "ウェイトタイム",
-      "description": "ゲームがフォアグラウンド/バックグラウンドに切り替えられ一定の時間後、タイマーを継続/一時停止する\nゲーム実行中は変更できません"
+      "description": "ゲームがフォアグラウンド/バックグラウンドに切り替えられ一定の時間後（秒）、タイマーを継続/一時停止する\nゲーム実行中は変更できません"
     }
   },
   "appearances": {

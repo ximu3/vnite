@@ -32,7 +32,6 @@ export interface configDocs {
     quitToTray: boolean
     language: string
     hideWindowAfterGameStart: boolean
-    processMonitor: 'new' | 'legacy'
     enableForegroundTimer: boolean
     foregroundWaitTime: number
   }
@@ -313,7 +312,6 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     quitToTray: false,
     language: '',
     hideWindowAfterGameStart: true,
-    processMonitor: 'new',
     enableForegroundTimer: true,
     foregroundWaitTime: 10
   },

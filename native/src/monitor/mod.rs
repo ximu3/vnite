@@ -3,7 +3,7 @@ use tokio::sync::Mutex;
 
 use crate::{
   log,
-  monitor::{etw_monitor::EtwMonitor, wmi_monitor::WmiMonitor},
+  monitor::{etw_monitor::EtwMonitor, polling_monitor::PollingMonitor},
   napi_monitor::ProcessEvent,
   utils::types::NapiWeakThreadsafeFunction,
   win32,
@@ -12,11 +12,12 @@ use crate::{
 pub mod gm;
 
 mod etw_monitor;
-mod wmi_monitor;
+mod polling_monitor;
 
 trait WinProcessMonitor: Send {
   fn start_monitoring(&mut self) -> windows_core::Result<()>;
   fn stop_monitoring(&mut self);
+  fn manual_update_process_status(&mut self);
 }
 
 #[derive(Debug, PartialEq)]
@@ -53,12 +54,14 @@ pub async fn start_monitoring(
     .init(local_game_pathes, local_game_ids, callback);
 
   // initialize a monitor and start monitoring
-  let mut monitor: Box<dyn WinProcessMonitor> = if win32::is_elevated_privilege() {
+  let is_elevated = win32::is_elevated_privilege();
+  let mut monitor: Box<dyn WinProcessMonitor> = if is_elevated {
     log::info("application is running with elevated privilege, using ETW process monitor");
     Box::new(EtwMonitor::new())
   } else {
-    log::info("application is running with normal privilege, using WMI process monitor");
-    Box::new(WmiMonitor::new())
+    log::info("application is running with normal privilege, using polling monitor");
+    // Box::new(WmiMonitor::new())
+    Box::new(PollingMonitor::new())
   };
 
   let result = monitor.start_monitoring();
@@ -72,10 +75,12 @@ pub async fn start_monitoring(
   drop(guard_monitor);
 
   // fire and forget a background concurrency to check games at startup
-  tokio::spawn(async {
-    tokio::time::sleep(tokio::time::Duration::from_secs(10)).await;
-    startup_process_check().await;
-  });
+  if is_elevated {
+    tokio::spawn(async {
+      tokio::time::sleep(tokio::time::Duration::from_secs(10)).await;
+      startup_process_check().await;
+    });
+  }
 }
 
 pub async fn stop_monitoring() {
@@ -105,12 +110,18 @@ pub async fn is_running(path: String, is_folder: Option<bool>) -> bool {
   gm::get().lock().await.is_running(&path, is_folder)
 }
 
+pub async fn manual_update_process_status() {
+  if let Some(monitor) = PROCESS_MONITOR.lock().await.as_mut() {
+    monitor.manual_update_process_status();
+  }
+}
+
 /// Check if there are any known games already running at startup
 async fn startup_process_check() {
   let all_process = win32::get_all_process();
   let mut gm_guard = gm::get().lock().await;
   for proc in all_process {
-    gm_guard.handle_wmi_message(ProcessMessage {
+    gm_guard.handle_process_message(ProcessMessage {
       pid: proc.pid,
       status: ProcessStatus::Started,
       path: proc.full_path,
