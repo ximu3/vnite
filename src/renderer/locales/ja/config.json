@@ -296,7 +296,9 @@
       "defaultDataSource": "デフォルトデータソース",
       "defaultDataSourceDescription": "デフォルトデータソースを選択",
       "defaultMediaDataSource": "デフォルトのメディアデータソース",
-      "defaultMediaDataSourceDescription": "「プロパティ → メディア」ページで使用するデフォルトの検索データソースを選択\n一部のデータソースはアイコンまたはロゴ検索に対応していません。選択したデフォルトデータソースが利用できない場合は、自動的に「Google」にフォールバックします"
+      "defaultMediaDataSourceDescription": "「プロパティ → メディア」ページで使用するデフォルトの検索データソースを選択\n一部のデータソースはアイコンまたはロゴ検索に対応していません。選択したデフォルトデータソースが利用できない場合は、自動的に「Google」にフォールバックします",
+      "cacheDescriptionImages": "説明文の画像をキャッシュ",
+      "cacheDescriptionImagesDescription": "ゲームの説明文に含まれる画像をローカルにダウンロード・キャッシュし、オフライン閲覧と読み込み速度の向上を実現します"
     },
     "vndb": {
       "title": "VNDB 設定",

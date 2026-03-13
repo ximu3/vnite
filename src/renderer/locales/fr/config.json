@@ -165,7 +165,9 @@
     "title": "",
     "common": {
       "title": "",
-      "defaultDataSource": ""
+      "defaultDataSource": "",
+      "cacheDescriptionImages": "",
+      "cacheDescriptionImagesDescription": ""
     },
     "vndb": {
       "title": "",

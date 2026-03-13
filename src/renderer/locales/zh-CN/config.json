@@ -296,7 +296,9 @@
       "defaultDataSource": "默认数据源",
       "defaultDataSourceDescription": "选择默认数据源",
       "defaultMediaDataSource": "默认媒体数据源",
-      "defaultMediaDataSourceDescription": "选择“属性 → 媒体”页面使用的默认搜索数据源\n部分数据源不支持图标或徽标搜索；当所选默认数据源不可用时，将自动回退至「Google」"
+      "defaultMediaDataSourceDescription": "选择“属性 → 媒体”页面使用的默认搜索数据源\n部分数据源不支持图标或徽标搜索；当所选默认数据源不可用时，将自动回退至「Google」",
+      "cacheDescriptionImages": "缓存简介内图片到本地",
+      "cacheDescriptionImagesDescription": "将游戏简介中的图片下载并缓存到本地，以实现离线查看和加快加载速度"
     },
     "vndb": {
       "title": "VNDB 设置",

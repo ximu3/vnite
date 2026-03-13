@@ -40,6 +40,7 @@ export interface configDocs {
       common: {
         defaultDataSource: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite' | string
         defaultMediaDataSource: 'google' | string
+        cacheDescriptionImages: boolean
       }
       vndb: {
         tagSpoilerLevel: 0 | 1 | 2
@@ -319,7 +320,8 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     scraper: {
       common: {
         defaultDataSource: 'steam',
-        defaultMediaDataSource: 'google'
+        defaultMediaDataSource: 'google',
+        cacheDescriptionImages: false
       },
       vndb: {
         tagSpoilerLevel: 0

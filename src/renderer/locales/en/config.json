@@ -296,7 +296,9 @@
       "defaultDataSource": "Default Data Source",
       "defaultDataSourceDescription": "Choose default data source",
       "defaultMediaDataSource": "Default Media Data Source",
-      "defaultMediaDataSourceDescription": "Select the default search data source used on the “Properties → Media” page\nSome data sources do not support icon or logo searches. If the selected default source is unavailable, the system will automatically fall back to Google"
+      "defaultMediaDataSourceDescription": "Select the default search data source used on the \"Properties → Media\" page\nSome data sources do not support icon or logo searches. If the selected default source is unavailable, the system will automatically fall back to Google",
+      "cacheDescriptionImages": "Cache Description Images",
+      "cacheDescriptionImagesDescription": "Download and cache images in game descriptions locally for offline viewing and faster loading"
     },
     "vndb": {
       "title": "VNDB Settings",

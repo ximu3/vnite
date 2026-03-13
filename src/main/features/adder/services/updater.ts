@@ -18,6 +18,7 @@ import {
 } from '@appTypes/utils'
 import { GameDBManager } from '~/core/database'
 import { scraperManager } from '~/features/scraper'
+import { cacheDescriptionImages } from '~/features/scraper/services/descriptionImageCache'
 import { ipcManager } from '~/core/ipc'
 import log from 'electron-log/main'
 
@@ -952,6 +953,8 @@ export async function updateGameMetadata({
 
     // Execute all database operations in parallel
     await Promise.all(dbPromises)
+
+    await cacheDescriptionImages(updatedMetadata.description, dbId)
   } catch (error) {
     log.error('[MetadataUpdater] Failed to update game metadata:', error)
     throw error
