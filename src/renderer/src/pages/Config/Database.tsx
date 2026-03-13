@@ -297,6 +297,13 @@ export function Database(): React.JSX.Element {
               />
               <ConfigItem
                 hookType="config"
+                path="memory.image.saveToClipboard"
+                title={t('memory.saveToClipboard.title')}
+                description={t('memory.saveToClipboard.description')}
+                controlType="switch"
+              />
+              <ConfigItem
+                hookType="config"
                 path="memory.enableNotificationSound"
                 title={t('memory.enableNotificationSound.title')}
                 description={t('memory.enableNotificationSound.description')}

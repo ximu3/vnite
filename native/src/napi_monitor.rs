@@ -37,9 +37,9 @@ pub async fn add_known_game(path: String, id: String) {
   monitor::add_known_game(path, id).await;
 }
 
-#[napi(js_name = "removeKnownGame")]
-pub async fn remove_known_game(path: String) {
-  monitor::remove_known_game(path).await;
+#[napi(js_name = "removeKnownGameById")]
+pub async fn remove_known_game_by_id(game_id: String) {
+  monitor::remove_known_game_by_id(game_id).await;
 }
 
 #[napi(js_name = "replaceKnownGames")]

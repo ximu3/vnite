@@ -5,16 +5,7 @@ import { useConfigState } from '~/hooks'
 import { filterGamesByLocal, filterGamesByNSFW, sortGames } from '~/stores/game'
 import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
-
-function PlaceHolder({ gameId }: { gameId: string }): React.JSX.Element {
-  return (
-    <div
-      className={cn('p-3 h-5 rounded-none bg-transparent')}
-      data-game-id={gameId}
-      data-group-id={'all'}
-    ></div>
-  )
-}
+import { PlaceHolder } from './PlaceHolder'
 
 export function AllGameComponent({
   scrollPosition
@@ -46,7 +37,7 @@ export function AllGameComponent({
             key={gameId}
             threshold={300}
             scrollPosition={scrollPosition}
-            placeholder={<PlaceHolder gameId={gameId} />}
+            placeholder={<PlaceHolder gameId={gameId} groupId="all" />}
           >
             <GameNav gameId={gameId} groupId="all" />
           </LazyLoadComponent>

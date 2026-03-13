@@ -1,17 +1,20 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger
-} from '~/components/ui/accordion'
-import { ScrollArea } from '~/components/ui/scroll-area'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@ui/accordion'
+import { ScrollArea } from '@ui/scroll-area'
 import { useTranslation } from 'react-i18next'
+import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
 import { useConfigState } from '~/hooks'
 import { searchGames, sortGames } from '~/stores/game'
 import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
+import { PlaceHolder } from './PlaceHolder'
 
-export function Search({ query }: { query: string }): React.JSX.Element {
+export function SearchComponent({
+  query,
+  scrollPosition
+}: {
+  query: string
+  scrollPosition: { x: number; y: number }
+}): React.JSX.Element {
   const [by] = useConfigState('game.gameList.sort.by')
   const [order] = useConfigState('game.gameList.sort.order')
   const { t } = useTranslation('game')
@@ -29,7 +32,14 @@ export function Search({ query }: { query: string }): React.JSX.Element {
           </AccordionTrigger>
           <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
             {games.map((game) => (
-              <GameNav key={game} gameId={game} groupId={'0'} />
+              <LazyLoadComponent
+                key={game}
+                threshold={300}
+                scrollPosition={scrollPosition}
+                placeholder={<PlaceHolder gameId={game} groupId={'0'} />}
+              >
+                <GameNav key={game} gameId={game} groupId={'0'} />
+              </LazyLoadComponent>
             ))}
           </AccordionContent>
         </AccordionItem>
@@ -37,3 +47,4 @@ export function Search({ query }: { query: string }): React.JSX.Element {
     </ScrollArea>
   )
 }
+export const Search = trackWindowScroll(SearchComponent)

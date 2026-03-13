@@ -1,11 +1,7 @@
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@ui/accordion'
+import { ScrollArea } from '@ui/scroll-area'
 import { useTranslation } from 'react-i18next'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger
-} from '~/components/ui/accordion'
-import { ScrollArea } from '~/components/ui/scroll-area'
+import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
 import { useConfigState } from '~/hooks'
 import {
   filterGames,
@@ -17,13 +13,16 @@ import {
 import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
 import { useGameListStore } from '../store'
-import { AllGame } from './AllGame'
+import { AllGameComponent } from './AllGame'
+import { PlaceHolder } from './PlaceHolder'
 import { RecentGames } from './RecentGames'
 
-export function Others({
-  fieldName
+function OthersComponent({
+  fieldName,
+  scrollPosition
 }: {
   fieldName: 'metadata.developers' | 'metadata.genres' // It can also be 'none'
+  scrollPosition: { x: number; y: number }
 }): React.JSX.Element {
   const [by] = useConfigState('game.gameList.sort.by')
   const [order] = useConfigState('game.gameList.sort.order')
@@ -79,7 +78,16 @@ export function Others({
                   </AccordionTrigger>
                   <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
                     {sortGames(by, order, gameIds).map((game) => (
-                      <GameNav key={game} gameId={game} groupId={`${fieldName}:${field}`} />
+                      <LazyLoadComponent
+                        key={`${game}`}
+                        threshold={300}
+                        scrollPosition={scrollPosition}
+                        placeholder={
+                          <PlaceHolder gameId={game} groupId={`${fieldName}:${field}`} />
+                        }
+                      >
+                        <GameNav gameId={game} groupId={`${fieldName}:${field}`} />
+                      </LazyLoadComponent>
                     ))}
                   </AccordionContent>
                 </AccordionItem>
@@ -87,7 +95,7 @@ export function Others({
             })}
 
           {/* All Games */}
-          {showAllGamesInGroup && <AllGame />}
+          {showAllGamesInGroup && <AllGameComponent scrollPosition={scrollPosition} />}
         </Accordion>
       ) : (
         <Accordion
@@ -98,9 +106,11 @@ export function Others({
           onValueChange={handleAccordionChange}
         >
           <RecentGames />
-          <AllGame />
+          <AllGameComponent scrollPosition={scrollPosition} />
         </Accordion>
       )}
     </ScrollArea>
   )
 }
+
+export const Others = trackWindowScroll(OthersComponent)

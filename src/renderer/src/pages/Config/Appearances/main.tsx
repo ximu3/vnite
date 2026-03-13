@@ -21,6 +21,7 @@ import { useLightStore } from '~/pages/Light'
 import { useAttachmentStore } from '~/stores'
 import { changeFontSize, changeFontWeight, cn } from '~/utils'
 import { FontSettingsDialog } from './FontSettingsDialog'
+import { GamenavStyleSetting } from './GameNavStyleSetting'
 
 export function Appearances(): React.JSX.Element {
   const { t } = useTranslation('config')
@@ -353,6 +354,16 @@ export function Appearances(): React.JSX.Element {
           <div className={cn('space-y-4')}>
             <div className={cn('border-b pb-2')}>{t('appearances.gameList.title')}</div>
             <div className={cn(' space-y-4')}>
+              <GamenavStyleSetting />
+
+              <ConfigItem
+                hookType="config"
+                path="game.gameList.warnInvalidGamePaths"
+                title={t('appearances.gameList.warnInvalidGamePaths')}
+                description={t('appearances.gameList.warnInvalidGamePathsDescription')}
+                controlType="switch"
+              />
+
               <ConfigItem
                 hookType="config"
                 path="game.gameList.showRecentGames"
@@ -371,33 +382,9 @@ export function Appearances(): React.JSX.Element {
 
               <ConfigItem
                 hookType="config"
-                path="game.gameList.showSortInformation"
-                title={t('appearances.gameList.showSortInformation')}
-                description={t('appearances.gameList.showSortInformationDescription')}
-                controlType="switch"
-              />
-
-              <ConfigItem
-                hookType="config"
                 path="game.gameList.highlightLocalGames"
                 title={t('appearances.gameList.highlightLocalGames')}
                 description={t('appearances.gameList.highlightLocalGamesDescription')}
-                controlType="switch"
-              />
-
-              <ConfigItem
-                hookType="config"
-                path="game.gameList.markLocalGames"
-                title={t('appearances.gameList.markLocalGames')}
-                description={t('appearances.gameList.markLocalGamesDescription')}
-                controlType="switch"
-              />
-
-              <ConfigItem
-                hookType="config"
-                path="game.gameList.warnInvalidGamePaths"
-                title={t('appearances.gameList.warnInvalidGamePaths')}
-                description={t('appearances.gameList.warnInvalidGamePathsDescription')}
                 controlType="switch"
               />
             </div>

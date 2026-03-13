@@ -1,16 +1,16 @@
-import Screenshots from 'electron-screenshots'
-import { Monitor, Window } from 'node-screenshots-new'
-import { globalShortcut, app } from 'electron'
-import { activeWindow, Result as ActiveWinResult } from 'get-windows'
-import { ActiveGameInfo, addGameMemory } from '~/features/game'
-import { ConfigDBManager, GameDBManager } from '~/core/database'
+import { app, clipboard, globalShortcut, nativeImage } from 'electron'
 import log from 'electron-log/main'
-import path from 'path'
-import { existsSync, createWriteStream } from 'fs'
+import Screenshots from 'electron-screenshots'
+import { createWriteStream, existsSync } from 'fs'
 import { mkdir } from 'fs/promises'
-import { convertToWebP } from '~/utils'
-import * as native from 'vnite-native'
+import { activeWindow, Result as ActiveWinResult } from 'get-windows'
 import i18next from 'i18next'
+import { Monitor, Window } from 'node-screenshots-new'
+import path from 'path'
+import * as native from 'vnite-native'
+import { ConfigDBManager, GameDBManager } from '~/core/database'
+import { ActiveGameInfo, addGameMemory } from '~/features/game'
+import { convertToWebP } from '~/utils'
 
 let isScreenshotting = false
 let hotkey = 'alt+shift+z'
@@ -112,10 +112,23 @@ async function captureToPersistenceLayer(
   buffer: Buffer
 ): Promise<void> {
   const storageBackend = await ConfigDBManager.getConfigValue('memory.image.storageBackend')
+  const shouldCaptureToClipboard = await ConfigDBManager.getConfigValue(
+    'memory.image.saveToClipboard'
+  )
   const shouldCaptureToDatabase = storageBackend !== 'filesystem'
   const shouldCaptureToFilesystem = storageBackend !== 'database'
   let imagePath: string | undefined
 
+  if (shouldCaptureToClipboard) {
+    try {
+      const image = nativeImage.createFromBuffer(buffer)
+      if (!image.isEmpty()) {
+        clipboard.writeImage(image)
+      }
+    } catch (error) {
+      log.error('[System] Error saving screenshot to clipboard:', error)
+    }
+  }
   if (shouldCaptureToDatabase) {
     const succeeded = await captureGameMemory(activeWin, buffer)
     // returns immediately if failed to avoid send notification

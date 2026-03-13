@@ -105,9 +105,11 @@ impl GameManager {
     self.known_games.insert(path.to_lowercase(), id);
   }
 
-  pub fn remove_known_game(&mut self, path: &str) {
-    let l_path = path.to_lowercase();
-    self.known_games.remove(&l_path);
+  pub fn remove_known_game_by_id(&mut self, game_id: &str) {
+    self
+      .running_process
+      .retain(|_, info| info.game_id != game_id);
+    self.known_games.retain(|_, id| id != game_id);
   }
 
   pub fn get_known_game_id_exact(&self, l_path: &str) -> Option<&String> {

@@ -78,19 +78,6 @@ pub async fn start_monitoring(
   });
 }
 
-/// Check if there are any known games already running at startup
-pub async fn startup_process_check() {
-  let all_process = win32::get_all_process();
-  let mut gm_guard = gm::get().lock().await;
-  for proc in all_process {
-    gm_guard.handle_wmi_message(ProcessMessage {
-      pid: proc.pid,
-      status: ProcessStatus::Started,
-      path: proc.full_path,
-    });
-  }
-}
-
 pub async fn stop_monitoring() {
   if let Some(mut monitor) = PROCESS_MONITOR.lock().await.take() {
     monitor.stop_monitoring();
@@ -103,8 +90,8 @@ pub async fn add_known_game(path: String, id: String) {
   gm::get().lock().await.add_known_game(path, id);
 }
 
-pub async fn remove_known_game(path: String) {
-  gm::get().lock().await.remove_known_game(&path);
+pub async fn remove_known_game_by_id(game_id: String) {
+  gm::get().lock().await.remove_known_game_by_id(&game_id);
 }
 
 pub async fn replace_known_games(local_game_pathes: Vec<String>, local_game_ids: Vec<String>) {
@@ -116,4 +103,17 @@ pub async fn replace_known_games(local_game_pathes: Vec<String>, local_game_ids:
 
 pub async fn is_running(path: String, is_folder: Option<bool>) -> bool {
   gm::get().lock().await.is_running(&path, is_folder)
+}
+
+/// Check if there are any known games already running at startup
+async fn startup_process_check() {
+  let all_process = win32::get_all_process();
+  let mut gm_guard = gm::get().lock().await;
+  for proc in all_process {
+    gm_guard.handle_wmi_message(ProcessMessage {
+      pid: proc.pid,
+      status: ProcessStatus::Started,
+      path: proc.full_path,
+    });
+  }
 }
