@@ -1,0 +1,297 @@
+{
+  "title": "",
+  "hotkeyHelp": "",
+  "tabs": {
+    "overview": "",
+    "weekly": "",
+    "monthly": "",
+    "yearly": "",
+    "score": "",
+    "poster": ""
+  },
+  "overview": {
+    "title": "",
+    "stats": {
+      "totalGames": "",
+      "totalPlayTime": "",
+      "totalPlayDays": "",
+      "totalPlayTimes": ""
+    },
+    "chart": {
+      "yearlyPlayTime": "",
+      "timeDistribution": "",
+      "peakHour": ""
+    },
+    "ranking": {
+      "playTimeRanking": "",
+      "scoreRanking": "",
+      "viewMore": "",
+      "allGamesByPlayTime": "",
+      "allGamesByScore": ""
+    },
+    "format": {
+      "hour": "",
+      "minute": "",
+      "hourValue": "",
+      "minuteValue": ""
+    },
+    "unit": {
+      "count": "",
+      "day": "",
+      "times": ""
+    },
+    "misc": {
+      "noScore": ""
+    }
+  },
+  "weekly": {
+    "title": "",
+    "dailyPlayTime": "",
+    "playTimeLine": {
+      "title": "",
+      "noRecords": "",
+      "mergeMaxInterval": ""
+    },
+    "totalWeeklyTime": "",
+    "highlights": {
+      "title": "",
+      "longestDay": "",
+      "dateFormat": "",
+      "playTime": "",
+      "noRecords": "",
+      "frequency": "",
+      "daysPlayed": "",
+      "percentage": ""
+    },
+    "weeklyGames": {
+      "title": "",
+      "noRecords": ""
+    },
+    "weekdays": {
+      "sunday": "",
+      "monday": "",
+      "tuesday": "",
+      "wednesday": "",
+      "thursday": "",
+      "friday": "",
+      "saturday": ""
+    },
+    "dateRange": ""
+  },
+  "monthly": {
+    "title": "",
+    "yearMonth": "",
+    "stats": {
+      "monthlyPlayTime": "",
+      "daysPlayed": "",
+      "mostPlayedDay": ""
+    },
+    "unit": {
+      "days": "",
+      "noRecord": "",
+      "playTime": ""
+    },
+    "chart": {
+      "weeklyPlayTime": "",
+      "calendarTitle": "",
+      "weekFormat": "",
+      "weekDateRange": "",
+      "useAlternateColor": ""
+    },
+    "highlights": {
+      "title": "",
+      "longestWeek": "",
+      "noRecords": "",
+      "frequency": "",
+      "daysCount": "",
+      "percentage": ""
+    },
+    "monthlyGames": {
+      "title": "",
+      "noRecords": ""
+    },
+    "months": {
+      "january": "",
+      "february": "",
+      "march": "",
+      "april": "",
+      "may": "",
+      "june": "",
+      "july": "",
+      "august": "",
+      "september": "",
+      "october": "",
+      "november": "",
+      "december": ""
+    }
+  },
+  "yearly": {
+    "title": "",
+    "yearDisplay": "",
+    "stats": {
+      "yearlyPlayTime": "",
+      "monthsPlayed": "",
+      "monthsCount": "",
+      "mostPlayedMonth": "",
+      "noRecord": "",
+      "playTimeDesc": ""
+    },
+    "chart": {
+      "monthlyPlayTime": "",
+      "monthlyPlayDays": "",
+      "timeDistribution": "",
+      "byGameType": "",
+      "typePercentage": "",
+      "hideLowPercentType": ""
+    },
+    "dialog": {
+      "gameTypeDetail": ""
+    },
+    "format": {
+      "hours": "",
+      "days": ""
+    },
+    "yearlyGames": {
+      "title": "",
+      "noRecords": ""
+    },
+    "months": {
+      "january": "",
+      "february": "",
+      "march": "",
+      "april": "",
+      "may": "",
+      "june": "",
+      "july": "",
+      "august": "",
+      "september": "",
+      "october": "",
+      "november": "",
+      "december": ""
+    }
+  },
+  "score": {
+    "title": "",
+    "description": "",
+    "categories": {
+      "excellent": {
+        "title": "",
+        "description": ""
+      },
+      "great": {
+        "title": "",
+        "description": ""
+      },
+      "good": {
+        "title": "",
+        "description": ""
+      },
+      "average": {
+        "title": "",
+        "description": ""
+      },
+      "notRecommended": {
+        "title": "",
+        "description": ""
+      },
+      "gamesCount": ""
+    },
+    "gameInfo": {
+      "unknown": "",
+      "addDate": "",
+      "playTime": "",
+      "lastRun": "",
+      "ratingLabel": ""
+    }
+  },
+  "poster": {
+    "action": {
+      "render": "",
+      "reset": ""
+    },
+    "message": {
+      "loading": "",
+      "success": "",
+      "error": ""
+    },
+    "renderOptions": {
+      "outputPath": ""
+    },
+    "templates": {
+      "scoreReport": {
+        "maxWidth": {
+          "title": "",
+          "description": ""
+        },
+        "titleWidth": {
+          "title": ""
+        },
+        "gameCoverHeightSmall": {
+          "title": "",
+          "description": ""
+        },
+        "gameCoverHeightLarge": {
+          "title": "",
+          "description": ""
+        },
+        "padding": {
+          "title": "",
+          "description": ""
+        },
+        "gap": {
+          "title": "",
+          "description": ""
+        },
+        "titleColor1": {
+          "title": ""
+        },
+        "titleColor2": {
+          "title": ""
+        },
+        "titleColor3": {
+          "title": ""
+        },
+        "titleColor4": {
+          "title": ""
+        },
+        "titleColor5": {
+          "title": ""
+        },
+        "useSmallCover1": {
+          "title": ""
+        },
+        "useSmallCover2": {
+          "title": ""
+        },
+        "useSmallCover3": {
+          "title": ""
+        },
+        "useSmallCover4": {
+          "title": ""
+        },
+        "useSmallCover5": {
+          "title": ""
+        },
+        "splitColor": {
+          "title": "",
+          "description": ""
+        },
+        "splitWidth": {
+          "title": ""
+        },
+        "drawScore": {
+          "title": ""
+        },
+        "scoreColor": {
+          "title": ""
+        },
+        "fontColor": {
+          "title": ""
+        },
+        "backgroundColor": {
+          "title": ""
+        }
+      }
+    }
+  }
+}

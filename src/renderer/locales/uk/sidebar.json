@@ -1,0 +1,55 @@
+{
+  "title": "",
+  "navigation": {
+    "library": "",
+    "records": "",
+    "scanner": "",
+    "transformer": "",
+    "plugin": ""
+  },
+  "actions": {
+    "viewLogs": "",
+    "nsfwLevel": {
+      "off": "",
+      "blurImage": "",
+      "blurImageAndTitle": ""
+    },
+    "nsfwFilter": {
+      "all": "",
+      "hideNSFW": "",
+      "onlyNSFW": ""
+    },
+    "localGameFilter": {
+      "all": "",
+      "hideLocal": "",
+      "onlyLocal": ""
+    },
+    "darkMode": "",
+    "lightMode": "",
+    "cloudSyncDisabled": "",
+    "addGame": "",
+    "settings": ""
+  },
+  "adder": {
+    "addGame": "",
+    "addSingle": "",
+    "addBatch": "",
+    "addCustom": "",
+    "addScanner": "",
+    "importFromThirdParty": "",
+    "steam": ""
+  },
+  "notifications": {
+    "noGamesFound": "",
+    "gettingBatchGames": "",
+    "getBatchGamesFailed": "",
+    "getBatchGamesSuccess": "",
+    "unknownError": "",
+    "selectLibraryFolder": ""
+  },
+  "timerStatus": {
+    "idle": "",
+    "on": "",
+    "paused": ""
+  }
+}

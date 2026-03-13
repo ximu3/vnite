@@ -1,0 +1,81 @@
+{
+  "common": {
+    "edit": "",
+    "save": "",
+    "cancel": "",
+    "confirm": "",
+    "delete": ""
+  },
+  "arrayEditor": {
+    "clickPlusToAdd": "",
+    "addElement": "",
+    "editElement": "",
+    "enterElement": "",
+    "add": "",
+    "update": ""
+  },
+  "hotkeySetting": {
+    "title": "",
+    "recording": "",
+    "placeholder": "",
+    "startRecordButton": "",
+    "recordingButton": "",
+    "currentKeys": "",
+    "supportedKeys": "",
+    "errors": {
+      "invalidHotkey": "",
+      "duplicateKeys": ""
+    },
+    "notifications": {
+      "hotkeyUpdated": ""
+    }
+  },
+  "clipboard": {
+    "copied": "",
+    "copyError": ""
+  },
+  "saveFile": {
+    "success": "",
+    "error": ""
+  },
+  "game": {
+    "stopping": {
+      "loading": "",
+      "success": "",
+      "error": ""
+    },
+    "starting": {
+      "pathRequired": "",
+      "pathInvalid": "",
+      "configuringLauncher": "",
+      "configSuccess": "",
+      "configError": "",
+      "runtimeError": ""
+    },
+    "playStatus": {
+      "unplayed": "",
+      "playing": "",
+      "partial": "",
+      "finished": "",
+      "multiple": "",
+      "shelved": "",
+      "unknown": ""
+    }
+  },
+  "format": {
+    "gameTime": "",
+    "niceDate": "",
+    "niceISO": ""
+  },
+  "notifications": {
+    "gameStarted": "",
+    "gameExiting": "",
+    "gameExited": "",
+    "fullSyncing": "",
+    "fullSynced": "",
+    "fullSyncError": "",
+    "updateUserInfoError": "",
+    "checkingForUpdate": "",
+    "gameLaunchFailed": ""
+  }
+}
