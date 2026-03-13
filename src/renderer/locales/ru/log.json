@@ -1,0 +1,14 @@
+{
+  "title": "",
+  "description": "",
+  "refresh": "",
+  "scrollToBottom": "",
+  "openLogFolder": "",
+  "copy": "",
+  "copied": "",
+  "fetchError": "",
+  "notifications": {
+    "fetchError": "",
+    "copyError": ""
+  }
+}
