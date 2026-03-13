@@ -163,7 +163,9 @@
     "title": "Поиск данных",
     "common": {
       "title": "Общие",
-      "defaultDataSource": "Источник данных по умолчанию"
+      "defaultDataSource": "Источник данных по умолчанию",
+      "cacheDescriptionImages": "Кэшировать изображения описания",
+      "cacheDescriptionImagesDescription": "Загружать и кэшировать изображения из описаний игр локально для просмотра офлайн и быстрой загрузки"
     },
     "vndb": {
       "title": "Настройки VNDB",

@@ -418,6 +418,37 @@ export class GameDBManager {
     }
   }
 
+  static async setGameDescriptionImage(
+    gameId: string,
+    hash: string,
+    image: Buffer | string
+  ): Promise<void> {
+    try {
+      image = await convertToWebP(image)
+      await baseDBManager.putAttachment(
+        this.DB_NAME,
+        gameId,
+        `images/description/${hash}.webp`,
+        image
+      )
+    } catch (error) {
+      log.error('[GameDB] Error setting game image:', error)
+      throw error
+    }
+  }
+
+  static async listGameDescriptionImageHashes(gameId: string): Promise<string[]> {
+    try {
+      const attachments = await baseDBManager.listAttachmentNames(this.DB_NAME, gameId)
+      return Object.keys(attachments)
+        .filter((key) => key.startsWith('images/description/') && key.endsWith('.webp'))
+        .map((key) => key.substring(19, key.length - 5)) // Extract hash from attachment id
+    } catch (error) {
+      log.error('[GameDB] Error listing game description image hashes:', error)
+      throw error
+    }
+  }
+
   static async setGameSave(
     gameId: string,
     saveId: string,
@@ -488,6 +519,15 @@ export class GameDBManager {
       await baseDBManager.removeAttachment(this.DB_NAME, gameId, `images/${type}.webp`)
     } catch (error) {
       log.error('[GameDB] Error removing game image:', error)
+      throw error
+    }
+  }
+
+  static async removeGameDescriptionImage(gameId: string, hash: string): Promise<void> {
+    try {
+      await baseDBManager.removeAttachment(this.DB_NAME, gameId, `images/description/${hash}.webp`)
+    } catch (error) {
+      log.error('[GameDB] Error removing game description image:', error)
       throw error
     }
   }

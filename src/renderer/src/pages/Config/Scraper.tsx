@@ -81,6 +81,16 @@ export function Scraper(): React.JSX.Element {
                 controlClassName="w-[200px]"
               />
             </div>
+
+            <div className={cn('space-y-4')}>
+              <ConfigItem
+                hookType="config"
+                path="game.scraper.common.cacheDescriptionImages"
+                title={t('scraper.common.cacheDescriptionImages')}
+                controlType="switch"
+                description={t('scraper.common.cacheDescriptionImagesDescription')}
+              />
+            </div>
           </div>
 
           {/* VNDB Settings */}

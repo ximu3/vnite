@@ -17,6 +17,7 @@ import { ConfigDBManager, GameDBManager } from '~/core/database'
 import { eventBus } from '~/core/events'
 import { saveGameIconByFile } from '~/features/game'
 import { launcherPreset } from '~/features/launcher'
+import { cacheDescriptionImages } from '~/features/scraper/services/descriptionImageCache'
 import { scraperManager } from '~/features/scraper'
 import { getGameFolders, selectPathDialog } from '~/utils'
 
@@ -407,6 +408,8 @@ export async function addGameToDB({
 
     // Execute all database operations (in parallel)
     await Promise.all(dbPromises)
+
+    await cacheDescriptionImages(metadata.description, dbId)
 
     // Set the launcher preset
     if (gamePath) await launcherPreset('default', dbId)

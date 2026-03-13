@@ -560,7 +560,8 @@ async function convertConfig(basePath: string): Promise<void> {
       scraper: {
         common: {
           defaultDataSource: mapDataSourceName(v2Config.scraper.defaultDataSource),
-          defaultMediaDataSource: 'google'
+          defaultMediaDataSource: 'google',
+          cacheDescriptionImages: false
         },
         vndb: {
           tagSpoilerLevel: 0
