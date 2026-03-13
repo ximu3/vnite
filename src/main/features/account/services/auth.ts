@@ -283,6 +283,8 @@ export class AuthManager {
         refreshToken
       })
 
+      await ConfigDBManager.setConfigLocalValue('sync.mode', 'official')
+
       // Save CouchDB Credentials
       await ConfigDBManager.setConfigLocalValue('sync.officialConfig', {
         auth: {
