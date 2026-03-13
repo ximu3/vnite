@@ -18,6 +18,18 @@ interface MostPlayedMonth {
 }
 
 /**
+ * Formats a local date to a string key
+ * @param date The date to format
+ * @returns The formatted date string in YYYY-MM-DD format
+ */
+export function formatLocalDateKey(date: Date): string {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
+
+/**
  * for a date string in the format YYYY-MM-DD
  * if use `new Date(str)` it will be parsed as UTC time
  * this function is used to parse the date string to local time
