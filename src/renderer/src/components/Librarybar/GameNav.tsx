@@ -208,7 +208,9 @@ export function GameNav({
               ref={nameMeasureRef}
               className="absolute invisible whitespace-nowrap pointer-events-none"
             >
-              {gameName}
+              {nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImageAndTitle
+                ? 'This is a deliberately long string to ensure the blurred NSFW game name is fully visible when hovered over.'
+                : gameName}
             </span>
 
             {rect &&
