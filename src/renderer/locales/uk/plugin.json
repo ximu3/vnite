@@ -1,0 +1,125 @@
+{
+  "title": "",
+  "description": "",
+  "actions": {
+    "checkUpdates": "",
+    "installPlugin": "",
+    "installFromRegistry": "",
+    "installFromFile": "",
+    "installFirstPlugin": "",
+    "install": "",
+    "installing": "",
+    "installed": "",
+    "update": "",
+    "updating": "",
+    "enable": "",
+    "disable": "",
+    "uninstall": "",
+    "configure": "",
+    "cancel": "",
+    "save": "",
+    "saving": ""
+  },
+  "details": {
+    "readme": "",
+    "noReadme": "",
+    "author": "",
+    "description": "",
+    "category": "",
+    "version": "",
+    "created": "",
+    "updated": "",
+    "stars": "",
+    "viewOnGithub": "",
+    "visitHomepage": "",
+    "readmeNotFound": "",
+    "readmeLoadFailed": ""
+  },
+  "dialogs": {
+    "uninstall": {
+      "title": "",
+      "description": "",
+      "confirm": "",
+      "cancel": ""
+    }
+  },
+  "stats": {
+    "total": "",
+    "enabled": "",
+    "disabled": "",
+    "errors": ""
+  },
+  "status": {
+    "enabled": "",
+    "disabled": "",
+    "error": ""
+  },
+  "tabs": {
+    "installed": "",
+    "browse": ""
+  },
+  "emptyState": {
+    "title": "",
+    "description": ""
+  },
+  "search": {
+    "placeholder": "",
+    "noPluginsFound": "",
+    "tryDifferentKeyword": "",
+    "localPluginsPlaceholder": "",
+    "localResults": "",
+    "noLocalResults": "",
+    "noLocalMatchesTitle": "",
+    "noLocalMatchesDescription": "",
+    "unknownDate": ""
+  },
+  "messages": {
+    "loading": "",
+    "loadPluginsFailed": "",
+    "searchPluginsFailed": "",
+    "installSuccess": "",
+    "installFailed": "",
+    "installFromFileFailed": "",
+    "uninstallSuccess": "",
+    "uninstallFailed": "",
+    "activateSuccess": "",
+    "activateFailed": "",
+    "deactivateSuccess": "",
+    "deactivateFailed": "",
+    "updatesAvailable": "",
+    "noUpdatesAvailable": "",
+    "checkUpdatesFailed": "",
+    "configurationSaved": "",
+    "saveConfigurationFailed": "",
+    "loadConfigurationFailed": ""
+  },
+  "configDialog": {
+    "title": "",
+    "description": "",
+    "noConfiguration": ""
+  },
+  "filters": {
+    "category": "",
+    "allCategories": "",
+    "common": "",
+    "scraper": "",
+    "sortBy": "",
+    "name": "",
+    "status": "",
+    "author": "",
+    "date": "",
+    "stars": "",
+    "updated": "",
+    "ascending": "",
+    "descending": ""
+  },
+  "pagination": {
+    "previous": "",
+    "next": "",
+    "page": ""
+  },
+  "categories": {
+    "common": "",
+    "scraper": ""
+  }
+}
