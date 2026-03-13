@@ -2,15 +2,9 @@ import { cn } from '~/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { ConfigItem } from '~/components/form/ConfigItem'
 import { useTranslation } from 'react-i18next'
-import { useRunningGames } from '~/pages/Library/store'
-import { ipcManager } from '~/app/ipc'
 
 export function Advanced(): React.JSX.Element {
   const { t } = useTranslation('config')
-  const { runningGames } = useRunningGames.getState()
-  const onMonitorChange = async (value: 'new' | 'legacy'): Promise<void> => {
-    ipcManager.send('system:change-process-monitor', value)
-  }
 
   return (
     <Card className={cn('group')}>
