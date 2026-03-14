@@ -594,6 +594,7 @@ export function getGamePlayTimeByDateRange(
 
     const start = parseLocalDate(startDate)
     const end = parseLocalDate(endDate)
+    end.setHours(23, 59, 59, 999)
     if (isNaN(start.getTime()) || isNaN(end.getTime())) {
       console.error(`Invalid date range: ${startDate} to ${endDate}`)
       return {}
