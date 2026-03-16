@@ -159,9 +159,13 @@ export function PlayTimeEditorDialog({
     }
   }
 
-  const calculateDuration = (start: string, end: string): number => {
-    if (!start || !end) return 0
-    return Math.floor((new Date(end).getTime() - new Date(start).getTime()) / 1000 / 60) // minutes
+  const formatDuration = (start: string, end: string): string => {
+    if (!start || !end) return '0'
+    const minutes = (new Date(end).getTime() - new Date(start).getTime()) / 1000 / 60 // minutes
+
+    if (minutes >= 1) return String(Math.floor(minutes))
+    else if (minutes > 0) return '< 1'
+    return '0'
   }
 
   const openAddTimer = (): void => {
@@ -301,7 +305,7 @@ export function PlayTimeEditorDialog({
                       {timer.start && timer.end && (
                         <div className="text-sm text-muted-foreground mt-1">
                           {t('detail.timersEditor.duration')}:{' '}
-                          {calculateDuration(timer.start, timer.end)}{' '}
+                          {formatDuration(timer.start, timer.end)}{' '}
                           {t('detail.timersEditor.minutes')}
                         </div>
                       )}
