@@ -76,6 +76,7 @@
     "fullSyncError": "数据同步失败",
     "updateUserInfoError": "官方云同步账号登录过期，请重新登录",
     "checkingForUpdate": "正在检查更新…",
+    "checkForUpdateFailed": "检查失败",
     "gameLaunchFailed": "游戏启动失败"
   }
 }

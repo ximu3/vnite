@@ -76,6 +76,7 @@
     "fullSyncError": "データ同期に失敗しました",
     "updateUserInfoError": "公式クラウド同期アカウントのログインが期限切れです。再度ログインしてください",
     "checkingForUpdate": "更新を確認中…",
+    "checkForUpdateFailed": "更新の確認に失敗しました",
     "gameLaunchFailed": "ゲームの起動が失敗しました"
   }
 }
