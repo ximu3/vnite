@@ -177,6 +177,31 @@
       "placeholder": "Enter the path to Magpie.exe",
       "hotkeyLabel": "Magpie scaling hotkey",
       "hotkeyDescription": "Set hotkey for Magpie scaling"
+    },
+    "randomGameRule": {
+      "title": "Random Game Filter Configuration",
+      "validate": "Validate",
+      "notifications": {
+        "loading": "Validating...",
+        "completed": "Validation Passed",
+        "error": {
+          "not_object": "Must be an object",
+          "must_have_single_key": "Must contain only a single key",
+          "invalid_operator": "Invalid operator",
+          "must_be_array": "Value must be an array",
+          "must_be_string": "Elements must be strings",
+          "invalid_json": "Invalid JSON",
+          "unknown": "Unknown error"
+        }
+      },
+      "presets": {
+        "default": "Default",
+        "filterPlayStatus": "Filter by Play Status",
+        "filterCollection": "Filter by Collection"
+      },
+      "preset": "Preset Configuration",
+      "search": "Search Configuration",
+      "noPresetFound": "No configuration found"
     }
   },
   "theme": {
