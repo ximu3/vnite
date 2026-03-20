@@ -107,7 +107,7 @@ pub async fn replace_known_games(local_game_pathes: Vec<String>, local_game_ids:
 }
 
 pub async fn is_running(path: String, is_folder: Option<bool>) -> bool {
-  gm::get().lock().await.is_running(&path, is_folder)
+  gm::get().lock().await.is_running(path, is_folder)
 }
 
 pub async fn manual_update_process_status() {

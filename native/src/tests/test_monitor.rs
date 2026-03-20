@@ -9,7 +9,7 @@ async fn test_monitor() {
     None
   ).await;
   tokio::time::sleep(tokio::time::Duration::from_secs(20)).await;
-  let is_running = monitor::gm::get().lock().await.is_running("C:\\Program Files\\CMake\\bin", Some(true));
+  let is_running = monitor::gm::get().lock().await.is_running("C:\\Program Files\\CMake\\bin".to_string(), Some(true));
   println!("is running: {}", is_running);
   monitor::stop_monitoring().await;
 }
