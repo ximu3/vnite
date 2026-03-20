@@ -121,15 +121,16 @@ function applyRandomFilterRule(rule: object, pool: readonly string[]): string[] 
   }
 }
 
-export function randomGame(): string | null {
+export function randomGame(currentGameId?: string): string | null {
   const { gameIds } = useGameRegistry.getState()
-  if (gameIds.length === 0) return null
+  const filteredGameIds = currentGameId ? gameIds.filter((id) => id !== currentGameId) : gameIds
+  if (filteredGameIds.length === 0) return null
 
   try {
     const RandomFilterRule = JSON.parse(
       useConfigStore.getState().getConfigValue('game.randomGameRule')
     )
-    const randomPool = applyRandomFilterRule(RandomFilterRule, gameIds)
+    const randomPool = applyRandomFilterRule(RandomFilterRule, filteredGameIds)
     if (randomPool.length === 0) return null
 
     const randomIndex = Math.floor(Math.random() * randomPool.length)
