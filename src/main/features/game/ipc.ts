@@ -6,7 +6,11 @@ import {
   deleteGameSave,
   restoreGameSave,
   searchGameSavePaths,
-  updateGameMemoryCover
+  updateGameMemoryCover,
+  calculateStorageSize,
+  batchCalculateStorageSize,
+  cancelBatchStorageSizeCalculation,
+  isBatchStorageSizeCalculationRunning
 } from './services'
 
 export function setupGameIPC(): void {
@@ -68,5 +72,21 @@ export function setupGameIPC(): void {
 
   ipcManager.handle('game:check-exits-by-path', async (_, gamePath: string) => {
     return await GameDBManager.checkGameExitsByPath(gamePath)
+  })
+
+  ipcManager.handle('game:calculate-storage-size', async (_, gameId: string) => {
+    return await calculateStorageSize(gameId)
+  })
+
+  ipcManager.handle('game:batch-calculate-storage-size', async (_, gameIds: string[]) => {
+    return await batchCalculateStorageSize(gameIds)
+  })
+
+  ipcManager.handle('game:cancel-batch-storage-size-calculation', async () => {
+    cancelBatchStorageSizeCalculation()
+  })
+
+  ipcManager.handle('game:is-batch-storage-size-calculation-running', async () => {
+    return isBatchStorageSizeCalculationRunning()
   })
 }

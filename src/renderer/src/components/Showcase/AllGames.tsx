@@ -73,6 +73,9 @@ export function AllGamesComponent({
                   <SelectItem value="record.score">
                     {t('showcase.sorting.options.score')}
                   </SelectItem>
+                  <SelectItem value="record.storageSize">
+                    {t('showcase.sorting.options.storageSize')}
+                  </SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>

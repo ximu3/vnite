@@ -2,10 +2,11 @@ import { DEFAULT_PLAY_STATUS_ORDER } from '@appTypes/models/game'
 import { Check } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { eventBus } from '~/app/events'
+import { ipcManager } from '~/app/ipc'
 import { useLibrarybarStore } from '~/components/Librarybar/store'
 import { Popover, PopoverContent } from '~/components/ui/popover'
 import { useGameState } from '~/hooks'
-import { cn } from '~/utils'
+import { cn, formatStorageSize } from '~/utils'
 import { useGameDetailStore } from '../../store'
 import { RecordCard } from './RecordCard'
 import { PLAY_STATUS_ICONS } from './RecordIcon'
@@ -16,6 +17,7 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
   const [score] = useGameState(gameId, 'record.score')
   const [playingTime] = useGameState(gameId, 'record.playTime')
   const [playStatus, setPlayStatus] = useGameState(gameId, 'record.playStatus')
+  const [storageSize, setStorageSize] = useGameState(gameId, 'record.storageSize')
   const { refreshGameList } = useLibrarybarStore.getState()
   const setIsPlayTimeEditorDialogOpen = useGameDetailStore(
     (state) => state.setIsPlayTimeEditorDialogOpen
@@ -27,6 +29,12 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
     eventBus.emit('game:play-status-changed', { gameId, status }, { source: 'record' })
     refreshGameList()
   }
+
+  const handleCalculateStorageSize = async (): Promise<void> => {
+    const size = await ipcManager.invoke('game:calculate-storage-size', gameId)
+    setStorageSize(size)
+  }
+
   return (
     <div className={cn('flex flex-row flex-wrap items-center gap-12 ml-1')}>
       {/* Play Time */}
@@ -86,6 +94,14 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
         content={score === -1 ? t('detail.overview.information.empty') : score.toFixed(1)}
         icon="icon-[mdi--starburst-outline] w-[30px] h-[30px]"
         onClick={() => setIsScoreEditorDialogOpen(true)}
+      />
+      {/* Storage Size */}
+      <RecordCard
+        className={cn('')}
+        title={t('detail.overview.record.storageSize')}
+        content={formatStorageSize(storageSize, t('detail.overview.record.storageSizeEmpty'), 2)}
+        icon="icon-[mdi--harddisk] w-[30px] h-[30px]"
+        onClick={handleCalculateStorageSize}
       />
     </div>
   )

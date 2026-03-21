@@ -40,7 +40,8 @@
         "lastRunDate": "Last Played Date",
         "addDate": "Date Added",
         "playTime": "Play Time",
-        "score": "Score"
+        "score": "Score",
+        "storageSize": "Game Size"
       }
     },
     "playStatus": {
@@ -66,7 +67,12 @@
       "genres": "Genres",
       "platforms": "Platforms",
       "tags": "Tags",
-      "extraInfo": "Additional Information"
+      "extraInfo": "Additional Information",
+      "storageSize": "Game Size",
+      "storageSizeMin": "Min",
+      "storageSizeMax": "Max",
+      "mib": "MiB",
+      "gib": "GiB"
     },
     "combobox": {
       "select": "Select {{placeholder}}",
@@ -92,7 +98,8 @@
         "addDate": "Date Added",
         "playTime": "Play Time",
         "score": "Score",
-        "custom": "Custom Order"
+        "custom": "Custom Order",
+        "storageSize": "Game Size"
       }
     },
     "gameCard": {
@@ -304,7 +311,9 @@
         "lastRunDate": "Last Played Date",
         "playStatus": "Play Status",
         "rating": "My Rating",
-        "neverRun": "Never played"
+        "neverRun": "Never played",
+        "storageSize": "Game Size",
+        "storageSizeEmpty": "Not calculated"
       }
     },
     "memory": {
@@ -364,11 +373,14 @@
       "downloadMetadata": "Update Metadata",
       "createShortcut": "Create Shortcut",
       "browseLocalFiles": "Browse Local Files",
+      "calculateStorageSize": "Calculate Game Size",
       "delete": "Delete",
       "notifications": {
         "shortcutCreated": "Shortcut created",
         "shortcutError": "Error creating shortcut",
-        "gamePathNotSet": "Game path not set"
+        "gamePathNotSet": "Game path not set",
+        "storageSizeCalculated": "Game size calculated: {{size}}",
+        "storageSizeError": "Failed to calculate game size"
       }
     },
     "timersEditor": {
@@ -610,7 +622,25 @@
       "delete": "Delete",
       "cancel": "Cancel",
       "selectAll": "Select All",
-      "selected": "{{count}} items selected"
+      "selected": "{{count}} items selected",
+      "calculateSize": "Calculate Size",
+      "calculatingSize": "Calculating..."
+    },
+    "storageSize": {
+      "confirmTitle": "Calculate Game Size",
+      "confirmDescription": "Calculating game sizes may take a while depending on the number of games and files. You can continue with other operations during the calculation.",
+      "calculateAll": "Calculate All Selected Games",
+      "calculateUncached": "Calculate Only Uncached Games",
+      "uncachedCount": "{{count}} uncached",
+      "cancel": "Cancel",
+      "alreadyRunning": "A game size calculation is already in progress. Please wait for it to finish or cancel it first.",
+      "cancelled": "Calculation cancelled",
+      "cancelling": "Cancelling calculation...",
+      "notifications": {
+        "progress": "{{current}}/{{total}}: {{name}}",
+        "complete": "Calculation complete: {{success}} succeeded, {{failed}} failed",
+        "error": "Calculation failed: {{message}}"
+      }
     },
     "selection": {
       "selectAll": "Select All",

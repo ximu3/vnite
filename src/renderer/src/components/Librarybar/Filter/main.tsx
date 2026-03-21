@@ -5,6 +5,7 @@ import { Button } from '~/components/ui/button'
 import { DateTimeInput } from '~/components/ui/date-input'
 import { useFilterStore } from './store'
 import { FilterCombobox } from './FilterCombobox'
+import { StorageSizeFilter } from './StorageSizeFilter'
 import { Cross2Icon } from '@radix-ui/react-icons'
 import { Separator } from '~/components/ui/separator'
 import { useTranslation } from 'react-i18next'
@@ -143,6 +144,13 @@ export function Filter({ children }: { children: React.ReactNode }): React.JSX.E
               />
             </div>
           </div>
+          <Separator className={cn('mt-1')} />
+          {/* Storage Size Filter */}
+          <StorageSizeFilter
+            value={filter['record.storageSize']}
+            onChange={(value) => updateFilter('record.storageSize', value)}
+            onClear={() => deleteFilter('record.storageSize', '#all')}
+          />
           <Separator className={cn('mt-1')} />
           <div className={cn('h-full overflow-auto scrollbar-base-thin pr-3 -mr-3')}>
             {/* Filter Comboboxes for Metadata */}

@@ -384,7 +384,12 @@
       "manage": "管理转换规则",
       "manageDescription": "管理和配置元数据转换器",
       "manageButton": "管理"
-    }
+    },
+    "storage": {
+      "title": "存储"
+    },
+    "autoCalculateStorageSize": "自动计算游戏大小",
+    "autoCalculateStorageSizeDescription": "添加游戏时自动计算其存储文件夹大小。对于包含大量文件的游戏，可能会降低添加速度。"
   },
   "memory": {
     "title": "回忆",

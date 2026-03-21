@@ -89,6 +89,9 @@ export function SortMenu({
                     {t('list.all.sortOptions.playTime')}
                   </SelectItem>
                   <SelectItem value="record.score">{t('list.all.sortOptions.score')}</SelectItem>
+                  <SelectItem value="record.storageSize">
+                    {t('list.all.sortOptions.storageSize')}
+                  </SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>

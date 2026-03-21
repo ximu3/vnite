@@ -240,7 +240,12 @@
       "enable": "",
       "manage": "",
       "manageButton": ""
-    }
+    },
+    "storage": {
+      "title": ""
+    },
+    "autoCalculateStorageSize": "",
+    "autoCalculateStorageSizeDescription": ""
   },
   "network": {
     "title": "",

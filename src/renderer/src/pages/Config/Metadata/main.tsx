@@ -50,6 +50,19 @@ export function Metadata(): React.JSX.Element {
               </ConfigItemPure>
             </div>
           </div>
+
+          <div className={cn('space-y-4')}>
+            <div className={cn('border-b pb-2')}>{t('metadata.storage.title')}</div>
+            <div className={cn('space-y-4')}>
+              <ConfigItem
+                hookType="config"
+                path="metadata.autoCalculateStorageSize"
+                title={t('metadata.autoCalculateStorageSize')}
+                description={t('metadata.autoCalculateStorageSizeDescription')}
+                controlType="switch"
+              />
+            </div>
+          </div>
         </div>
       </CardContent>
     </Card>

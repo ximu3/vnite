@@ -1,4 +1,9 @@
-import { gameCollectionDoc, gameDoc, gameLocalDoc } from '@appTypes/models'
+import {
+  gameCollectionDoc,
+  gameDoc,
+  gameLocalDoc,
+  STORAGE_SIZE_NOT_CALCULATED
+} from '@appTypes/models'
 import { app } from 'electron'
 import * as fse from 'fs-extra'
 import * as path from 'path'
@@ -276,7 +281,8 @@ async function convertGame(gameId: string, gamePath: string): Promise<void> {
         score: record.score || -1,
         playTime: record.playingTime || 0,
         playStatus: record.playStatus || 'unplayed',
-        timers: record.timer || []
+        timers: record.timer || [],
+        storageSize: STORAGE_SIZE_NOT_CALCULATED
       },
       save: {
         saveList: {},

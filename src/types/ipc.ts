@@ -179,6 +179,23 @@ type MainIpcEvents =
       // Game management events
       'game:check-exits-by-path': (gamePath: string) => boolean
       'game:delete': (gameId: string) => void
+      'game:calculate-storage-size': (gameId: string) => number
+      'game:batch-calculate-storage-size': (gameIds: string[]) => {
+        taskId: string
+        wasCancelled: boolean
+        total: number
+        successful: number
+        failed: number
+        results: Array<{
+          gameId: string
+          gameName: string
+          size: number
+          status: 'success' | 'error'
+          error?: string
+        }>
+      }
+      'game:cancel-batch-storage-size-calculation': () => void
+      'game:is-batch-storage-size-calculation-running': () => boolean
 
       // Authentication events
       'account:auth-signin': () => boolean
@@ -400,6 +417,19 @@ type RendererIpcEvents = {
   'scanner:scan-resumed': [progress: OverallScanProgress]
 
   'adder:batch-update-game-metadata-progress': [progress: BatchUpdateGameMetadataProgress]
+
+  'game:batch-calculate-storage-size-progress': [
+    progress: {
+      taskId: string
+      gameId: string
+      gameName: string
+      current: number
+      total: number
+      status: 'processing' | 'success' | 'error'
+      size?: number
+      error?: string
+    }
+  ]
 
   'plugin:update-all-plugins': [plugins: Omit<PluginInfo, 'instance'>[]]
   'plugin:update-plugin-stats': [stats: PluginStatsData]

@@ -35,7 +35,8 @@
         "releaseDate": "Дате выпуска",
         "lastRunDate": "Последней дате запуска",
         "addDate": "Дате добавления",
-        "playTime": "Времени игры"
+        "playTime": "Времени игры",
+        "storageSize": "Размер игры"
       }
     },
     "playStatus": {
@@ -54,7 +55,12 @@
       "genres": "Жанры",
       "platforms": "Платформы",
       "tags": "Теги",
-      "extraInfo": "Дополнительная информация"
+      "extraInfo": "Дополнительная информация",
+      "storageSize": "Размер игры",
+      "storageSizeMin": "Мин",
+      "storageSizeMax": "Макс",
+      "mib": "МиБ",
+      "gib": "ГиБ"
     },
     "combobox": {
       "select": "Выберите {{placeholder}}",
@@ -77,7 +83,8 @@
         "releaseDate": "Дате выпуска",
         "lastRunDate": "Последней дате запуска",
         "addDate": "Дате добавления",
-        "playTime": "Времени игры"
+        "playTime": "Времени игры",
+        "storageSize": "Размер игры"
       }
     },
     "gameCard": {
@@ -262,7 +269,9 @@
         "lastRunDate": "Дата последнего запуска",
         "playStatus": "Статус прохождения",
         "rating": "Моя оценка",
-        "neverRun": "Не запускалась"
+        "neverRun": "Не запускалась",
+        "storageSize": "Размер игры",
+        "storageSizeEmpty": "Не вычислено"
       }
     },
     "memory": {
@@ -309,11 +318,14 @@
       "downloadMetadata": "Загрузить метаданные",
       "createShortcut": "Создать ярлык",
       "browseLocalFiles": "Обзор локальных файлов",
+      "calculateStorageSize": "Вычислить размер игры",
       "delete": "Удалить",
       "notifications": {
         "shortcutCreated": "Ярлык создан",
         "shortcutError": "Ошибка создания ярлыка",
-        "gamePathNotSet": "Путь к игре не задан"
+        "gamePathNotSet": "Путь к игре не задан",
+        "storageSizeCalculated": "Размер игры вычислен: {{size}}",
+        "storageSizeError": "Не удалось вычислить размер игры"
       }
     },
     "deleteAlert": {
@@ -497,6 +509,26 @@
       },
       "success": "Информация успешно обновлена",
       "error": "Не удалось обновить информацию: {{message}}"
+    },
+    "floatingButtons": {
+      "calculateSize": "Рассчитать размер",
+      "calculatingSize": "Расчёт..."
+    },
+    "storageSize": {
+      "confirmTitle": "Рассчитать размер игры",
+      "confirmDescription": "Расчёт размера игры может занять некоторое время в зависимости от количества игр и файлов. Во время расчёта вы можете продолжать другие операции.",
+      "calculateAll": "Рассчитать все выбранные игры",
+      "calculateUncached": "Рассчитать только нерассчитанные игры",
+      "uncachedCount": "{{count}} не рассчитано",
+      "cancel": "Отмена",
+      "alreadyRunning": "Расчёт размера игры уже выполняется. Дождитесь завершения или отмените.",
+      "cancelled": "Расчёт отменён",
+      "cancelling": "Отмена расчёта...",
+      "notifications": {
+        "progress": "{{current}}/{{total}}: {{name}}",
+        "complete": "Расчёт завершён: {{success}} успешно, {{failed}} с ошибками",
+        "error": "Ошибка расчёта: {{message}}"
+      }
     },
     "delete": {
       "title": "Удалить {{count}} игр?",

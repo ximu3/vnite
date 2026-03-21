@@ -35,7 +35,8 @@
         "releaseDate": "",
         "lastRunDate": "",
         "addDate": "",
-        "playTime": ""
+        "playTime": "",
+        "storageSize": ""
       }
     },
     "playStatus": {
@@ -54,7 +55,12 @@
       "genres": "",
       "platforms": "",
       "tags": "",
-      "extraInfo": ""
+      "extraInfo": "",
+      "storageSize": "",
+      "storageSizeMin": "",
+      "storageSizeMax": "",
+      "mib": "",
+      "gib": ""
     },
     "combobox": {
       "select": "",
@@ -77,7 +83,8 @@
         "releaseDate": "",
         "lastRunDate": "",
         "addDate": "",
-        "playTime": ""
+        "playTime": "",
+        "storageSize": ""
       }
     },
     "gameCard": {
@@ -263,7 +270,9 @@
         "lastRunDate": "",
         "playStatus": "",
         "rating": "",
-        "neverRun": ""
+        "neverRun": "",
+        "storageSize": "",
+        "storageSizeEmpty": ""
       }
     },
     "memory": {
@@ -312,11 +321,14 @@
       "downloadMetadata": "",
       "createShortcut": "",
       "browseLocalFiles": "",
+      "calculateStorageSize": "",
       "delete": "",
       "notifications": {
         "shortcutCreated": "",
         "shortcutError": "",
-        "gamePathNotSet": ""
+        "gamePathNotSet": "",
+        "storageSizeCalculated": "",
+        "storageSizeError": ""
       }
     },
     "deleteAlert": {
@@ -500,6 +512,26 @@
       },
       "success": "",
       "error": ""
+    },
+    "floatingButtons": {
+      "calculateSize": "",
+      "calculatingSize": ""
+    },
+    "storageSize": {
+      "confirmTitle": "",
+      "confirmDescription": "",
+      "calculateAll": "",
+      "calculateUncached": "",
+      "uncachedCount": "",
+      "cancel": "",
+      "alreadyRunning": "",
+      "cancelled": "",
+      "cancelling": "",
+      "notifications": {
+        "progress": "",
+        "complete": "",
+        "error": ""
+      }
     },
     "delete": {
       "title": "",

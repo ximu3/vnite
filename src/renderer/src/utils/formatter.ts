@@ -37,3 +37,26 @@ export function formatDurationCompact(milliseconds: number): string {
     else return `${Math.round(hours)}h`
   }
 }
+
+/**
+ * Format bytes to human readable size string
+ * @param bytes Size in bytes
+ * @param emptyText Text to return when bytes is negative (default: empty string)
+ * @param precision Decimal places (default: 1)
+ * @returns Formatted size string (e.g. "1.5 GiB")
+ */
+export function formatStorageSize(bytes: number, emptyText = '', precision = 1): string {
+  if (bytes < 0) return emptyText
+  if (bytes === 0) return '0 B'
+
+  const units = ['B', 'KiB', 'MiB', 'GiB', 'TiB']
+  let i = 0
+  let size = bytes
+
+  while (size >= 1024 && i < units.length - 1) {
+    size /= 1024
+    i++
+  }
+
+  return `${size.toFixed(precision)} ${units[i]}`
+}

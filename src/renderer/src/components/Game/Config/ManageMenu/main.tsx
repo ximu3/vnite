@@ -17,6 +17,7 @@ import { useConfigState, useGameLocalState, useGameState } from '~/hooks'
 import { useGameAdderStore } from '~/pages/GameAdder/store'
 import { useGameDetailStore } from '../../store'
 import { DeleteGameAlert } from './DeleteGameAlert'
+import { formatStorageSize } from '~/utils'
 
 export function ManageMenu({
   gameId,
@@ -154,6 +155,25 @@ export function ManageMenu({
               >
                 {t('detail.manage.browseLocalFiles')}
               </DropdownMenuItem>
+              {/* Calculate Storage Size */}
+              {(gamePath || markPath) && (
+                <DropdownMenuItem
+                  onClick={async () => {
+                    const size = await ipcManager.invoke('game:calculate-storage-size', gameId)
+                    if (size >= 0) {
+                      toast.success(
+                        t('detail.manage.notifications.storageSizeCalculated', {
+                          size: formatStorageSize(size, '', 2)
+                        })
+                      )
+                    } else {
+                      toast.error(t('detail.manage.notifications.storageSizeError'))
+                    }
+                  }}
+                >
+                  {t('detail.manage.calculateStorageSize')}
+                </DropdownMenuItem>
+              )}
 
               <DropdownMenuSeparator />
 

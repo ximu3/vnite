@@ -20,7 +20,7 @@ import { Dialog, DialogContent } from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
 import { useConfigState, useGameLocalState, useGameState } from '~/hooks'
 import { useGameAdderStore } from '~/pages/GameAdder/store'
-import { cn } from '~/utils'
+import { cn, formatStorageSize } from '~/utils'
 
 export function ManageMenu({
   gameId,
@@ -195,6 +195,25 @@ export function ManageMenu({
               >
                 {t('detail.manage.browseLocalFiles')}
               </ContextMenuItem>
+              {/* Calculate Storage Size */}
+              {(gamePath || markPath) && (
+                <ContextMenuItem
+                  onClick={async () => {
+                    const size = await ipcManager.invoke('game:calculate-storage-size', gameId)
+                    if (size >= 0) {
+                      toast.success(
+                        t('detail.manage.notifications.storageSizeCalculated', {
+                          size: formatStorageSize(size, '', 2)
+                        })
+                      )
+                    } else {
+                      toast.error(t('detail.manage.notifications.storageSizeError'))
+                    }
+                  }}
+                >
+                  {t('detail.manage.calculateStorageSize')}
+                </ContextMenuItem>
+              )}
 
               <ContextMenuSeparator />
 
