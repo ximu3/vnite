@@ -158,17 +158,19 @@ export function ManageMenu({
               {/* Calculate Storage Size */}
               {(gamePath || markPath) && (
                 <DropdownMenuItem
-                  onClick={async () => {
-                    const size = await ipcManager.invoke('game:calculate-storage-size', gameId)
-                    if (size >= 0) {
-                      toast.success(
-                        t('detail.manage.notifications.storageSizeCalculated', {
-                          size: formatStorageSize(size, '', 2)
-                        })
-                      )
-                    } else {
-                      toast.error(t('detail.manage.notifications.storageSizeError'))
-                    }
+                  onClick={() => {
+                    toast.promise(ipcManager.invoke('game:calculate-storage-size', gameId), {
+                      loading: t('detail.manage.notifications.calculatingStorageSize'),
+                      success: (size: number) => {
+                        if (size >= 0) {
+                          return t('detail.manage.notifications.storageSizeCalculated', {
+                            size: formatStorageSize(size, '', 2)
+                          })
+                        }
+                        throw new Error('Calculation failed')
+                      },
+                      error: () => t('detail.manage.notifications.storageSizeError')
+                    })
                   }}
                 >
                   {t('detail.manage.calculateStorageSize')}

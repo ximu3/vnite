@@ -379,8 +379,11 @@
         "shortcutCreated": "Shortcut created",
         "shortcutError": "Error creating shortcut",
         "gamePathNotSet": "Game path not set",
+        "calculatingStorageSize": "Calculating game size...",
         "storageSizeCalculated": "Game size calculated: {{size}}",
-        "storageSizeError": "Failed to calculate game size"
+        "storageSizeError": "Failed to calculate game size",
+        "storageSizeConfirm": "Calculate game size? This may take a moment.",
+        "storageSizeRecalculateConfirm": "Current size: {{currentSize}}. Recalculate game size?"
       }
     },
     "timersEditor": {

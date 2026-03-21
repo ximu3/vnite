@@ -379,8 +379,11 @@
         "shortcutCreated": "已建立捷徑",
         "shortcutError": "建立捷徑時出錯",
         "gamePathNotSet": "遊戲路徑未設定",
+        "calculatingStorageSize": "正在計算遊戲大小...",
         "storageSizeCalculated": "遊戲大小已計算：{{size}}",
-        "storageSizeError": "計算遊戲大小失敗"
+        "storageSizeError": "計算遊戲大小失敗",
+        "storageSizeConfirm": "計算遊戲大小？這可能需要一些時間。",
+        "storageSizeRecalculateConfirm": "當前大小：{{currentSize}}。重新計算遊戲大小？"
       }
     },
     "timersEditor": {

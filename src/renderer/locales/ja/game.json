@@ -379,8 +379,11 @@
         "shortcutCreated": "ショートカットを作成しました",
         "shortcutError": "ショートカットの作成でエラーが発生しました",
         "gamePathNotSet": "ゲームパスが設定されていません",
+        "calculatingStorageSize": "ゲームサイズを計算中...",
         "storageSizeCalculated": "ゲームサイズを計算しました：{{size}}",
-        "storageSizeError": "ゲームサイズの計算に失敗しました"
+        "storageSizeError": "ゲームサイズの計算に失敗しました",
+        "storageSizeConfirm": "ゲームサイズを計算しますか？少し時間がかかる場合があります。",
+        "storageSizeRecalculateConfirm": "現在のサイズ：{{currentSize}}。ゲームサイズを再計算しますか？"
       }
     },
     "timersEditor": {

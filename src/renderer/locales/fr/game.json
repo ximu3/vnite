@@ -324,8 +324,11 @@
         "shortcutCreated": "",
         "shortcutError": "",
         "gamePathNotSet": "",
+        "calculatingStorageSize": "",
         "storageSizeCalculated": "",
-        "storageSizeError": ""
+        "storageSizeError": "",
+        "storageSizeConfirm": "",
+        "storageSizeRecalculateConfirm": ""
       }
     },
     "deleteAlert": {

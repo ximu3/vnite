@@ -324,8 +324,11 @@
         "shortcutCreated": "Ярлык создан",
         "shortcutError": "Ошибка создания ярлыка",
         "gamePathNotSet": "Путь к игре не задан",
+        "calculatingStorageSize": "Вычисление размера игры...",
         "storageSizeCalculated": "Размер игры вычислен: {{size}}",
-        "storageSizeError": "Не удалось вычислить размер игры"
+        "storageSizeError": "Не удалось вычислить размер игры",
+        "storageSizeConfirm": "Вычислить размер игры? Это может занять некоторое время.",
+        "storageSizeRecalculateConfirm": "Текущий размер: {{currentSize}}. Вычислить размер игры заново?"
       }
     },
     "deleteAlert": {
