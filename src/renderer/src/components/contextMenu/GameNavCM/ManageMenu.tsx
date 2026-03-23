@@ -204,7 +204,7 @@ export function ManageMenu({
                       success: (size: number) => {
                         if (size >= 0) {
                           return t('detail.manage.notifications.storageSizeCalculated', {
-                            size: formatStorageSize(size, '', 2)
+                            size: formatStorageSize(size)
                           })
                         }
                         throw new Error('Calculation failed')

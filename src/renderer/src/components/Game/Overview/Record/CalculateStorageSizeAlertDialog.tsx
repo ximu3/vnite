@@ -37,7 +37,7 @@ export function CalculateStorageSizeAlertDialog({
         // Update the store with the new size
         getGameStore(gameId).getState().setValue('record.storageSize', size)
         return t('detail.manage.notifications.storageSizeCalculated', {
-          size: formatStorageSize(size, '', 2)
+          size: formatStorageSize(size)
         })
       },
       error: () => t('detail.manage.notifications.storageSizeError')
@@ -55,7 +55,7 @@ export function CalculateStorageSizeAlertDialog({
           <AlertDialogDescription>
             {hasCalculatedSize
               ? t('detail.manage.notifications.storageSizeRecalculateConfirm', {
-                  currentSize: formatStorageSize(storageSize, '', 2)
+                  currentSize: formatStorageSize(storageSize)
                 })
               : t('detail.manage.notifications.storageSizeConfirm')}
           </AlertDialogDescription>

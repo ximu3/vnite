@@ -45,7 +45,7 @@ export function formatDurationCompact(milliseconds: number): string {
  * @param precision Decimal places (default: 1)
  * @returns Formatted size string (e.g. "1.5 GiB")
  */
-export function formatStorageSize(bytes: number, emptyText = '', precision = 1): string {
+export function formatStorageSize(bytes: number, emptyText = '', precision = 2): string {
   if (bytes < 0) return emptyText
   if (bytes === 0) return '0 B'
 

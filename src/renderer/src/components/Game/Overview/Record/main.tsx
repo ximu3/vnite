@@ -95,7 +95,7 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
         <RecordCard
           className={cn('')}
           title={t('detail.overview.record.storageSize')}
-          content={formatStorageSize(storageSize, t('detail.overview.record.storageSizeEmpty'), 2)}
+          content={formatStorageSize(storageSize, t('detail.overview.record.storageSizeEmpty'))}
           icon="icon-[mdi--harddisk] w-[30px] h-[30px]"
         />
       </CalculateStorageSizeAlertDialog>
