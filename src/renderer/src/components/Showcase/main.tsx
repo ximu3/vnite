@@ -22,27 +22,13 @@ export function Showcase(): React.JSX.Element {
 
   const { t } = useTranslation('game')
   const gameIds = useGameRegistry((state) => state.gameIds)
+  const gamesLoaded = useGameRegistry((state) => state.gamesLoaded)
   const setEditingScanner = useGameScannerStore((state) => state.setEditingScanner)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const selectGames = useGameBatchEditorStore((state) => state.selectGames)
   const navigate = useNavigate()
 
-  let MainContent: React.JSX.Element
-  if (!isEqual(filter, {})) {
-    MainContent = <FilterSearchGames mode={'filter'} />
-  } else if (query && query.trim() !== '') {
-    MainContent = <FilterSearchGames mode={'search'} />
-  } else {
-    MainContent = (
-      <>
-        <RecentGames />
-        <Collections />
-        <AllGames />
-      </>
-    )
-  }
-
-  // Keyboard shortcut handling
+  // Keyboard shortcut handling - must be before any conditional returns
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent): void => {
       // Check if any dialog element is active
@@ -66,6 +52,35 @@ export function Showcase(): React.JSX.Element {
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [selectGames, gameIds])
+
+  // Show loading state while games are being loaded
+  if (!gamesLoaded) {
+    return (
+      <div className={cn('flex flex-col gap-1 items-center justify-center w-full h-full -mt-7')}>
+        <div
+          className={cn(
+            'animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full'
+          )}
+        />
+        <div className={cn('text-muted-foreground mt-2')}>{t('showcase.loadingGames')}</div>
+      </div>
+    )
+  }
+
+  let MainContent: React.JSX.Element
+  if (!isEqual(filter, {})) {
+    MainContent = <FilterSearchGames mode={'filter'} />
+  } else if (query && query.trim() !== '') {
+    MainContent = <FilterSearchGames mode={'search'} />
+  } else {
+    MainContent = (
+      <>
+        <RecentGames />
+        <Collections />
+        <AllGames />
+      </>
+    )
+  }
 
   return (
     <div className={cn('flex flex-col gap-3 h-full w-full bg-transparent')}>

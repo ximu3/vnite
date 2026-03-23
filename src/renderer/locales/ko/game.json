@@ -66,6 +66,7 @@
   },
   "showcase": {
     "welcome": "Vnite에 어서오세요, 당신의 첫 게임을 등록해주세요.",
+    "loadingGames": "게임 데이터 로딩 중...",
     "sections": {
       "recentGames": "최근 게임",
       "collections": "내 컬렉션",

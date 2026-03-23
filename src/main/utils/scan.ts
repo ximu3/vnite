@@ -93,9 +93,9 @@ async function scanForGameFolders(rootPath: string): Promise<
   }[]
 > {
   // Read directory contents
-  let items: string[] = []
+  let items: fse.Dirent[] = []
   try {
-    items = await fse.readdir(rootPath)
+    items = await fse.readdir(rootPath, { withFileTypes: true })
   } catch (error) {
     console.error('Error reading directory:', rootPath, error)
     return []
@@ -107,46 +107,51 @@ async function scanForGameFolders(rootPath: string): Promise<
   // Folders to scan further
   const foldersToScan: { name: string; dirPath: string }[] = []
 
-  // Process each directory item in parallel
-  const itemProcessingPromises = items.map(async (item) => {
-    const fullPath = path.join(rootPath, item)
+  const results = await processBatch(
+    items,
+    async (item) => {
+      if (!item.isDirectory() && !item.isSymbolicLink()) return null
+      const fullPath = path.join(rootPath, item.name)
 
-    try {
-      const stats = await fse.stat(fullPath)
+      try {
+        let isDir = true
+        if (item.isSymbolicLink()) {
+          const stats = await fse.stat(fullPath)
+          isDir = stats.isDirectory()
+        }
 
-      if (stats.isDirectory()) {
-        // Check if this folder contains executable files
-        const containsExecutable = await checkForExecutables(fullPath)
+        if (isDir) {
+          // Check if this folder contains executable files
+          const containsExecutable = await checkForExecutables(fullPath)
 
-        if (containsExecutable) {
-          // If contains executable file, mark as game folder
-          return {
-            type: 'game',
-            folder: {
-              name: item,
-              dirPath: fullPath
+          if (containsExecutable) {
+            // If contains executable file, mark as game folder
+            return {
+              type: 'game',
+              folder: {
+                name: item.name,
+                dirPath: fullPath
+              }
             }
-          }
-        } else {
-          // If doesn't contain executable file, add to scan list
-          return {
-            type: 'scan',
-            folder: {
-              name: item,
-              dirPath: fullPath
+          } else {
+            // If doesn't contain executable file, add to scan list
+            return {
+              type: 'scan',
+              folder: {
+                name: item.name,
+                dirPath: fullPath
+              }
             }
           }
         }
+        return null
+      } catch (error) {
+        console.error(`Error processing ${fullPath}:`, error)
+        return null
       }
-      return null
-    } catch (error) {
-      console.error(`Error processing ${fullPath}:`, error)
-      return null
-    }
-  })
-
-  // Wait for all items to be processed
-  const results = await Promise.all(itemProcessingPromises)
+    },
+    MAX_CONCURRENCY
+  )
 
   // Categorize results
   results.forEach((result) => {
@@ -178,30 +183,31 @@ async function scanForGameFolders(rootPath: string): Promise<
 
 async function checkForExecutables(dirPath: string): Promise<boolean> {
   try {
-    const items = await fse.readdir(dirPath)
+    const items = await fse.readdir(dirPath, { withFileTypes: true })
+    let loopCount = 0
 
-    // Check files for executables in parallel
-    const checkPromises = items.map(async (item) => {
-      try {
-        const fullPath = path.join(dirPath, item)
-        const stats = await fse.stat(fullPath)
-
-        if (!stats.isDirectory()) {
-          // Check if file extension is executable
-          const extension = path.extname(item).toLowerCase()
-          return EXECUTABLE_EXTENSIONS.includes(extension)
-        }
-        return false
-      } catch (_error) {
-        return false
+    for (const item of items) {
+      if (++loopCount % 50 === 0) {
+        // In long loops, yield to event loop to prevent blocking (especially for protocol.ts image requests)
+        await new Promise((resolve) => setImmediate(resolve))
       }
-    })
 
-    // Wait for all checks to complete with Promise.all
-    const results = await Promise.all(checkPromises)
+      if (item.isSymbolicLink()) {
+        const fullPath = path.join(dirPath, item.name)
+        const stats = await fse.stat(fullPath)
+        if (stats.isFile()) {
+          const extension = path.extname(item.name).toLowerCase()
+          if (EXECUTABLE_EXTENSIONS.includes(extension)) return true
+        }
+      } else if (item.isFile()) {
+        const extension = path.extname(item.name).toLowerCase()
+        if (EXECUTABLE_EXTENSIONS.includes(extension)) {
+          return true
+        }
+      }
+    }
 
-    // Return true if any file is executable
-    return results.some((result) => result === true)
+    return false
   } catch (error) {
     console.error(`Error checking executables (${dirPath}):`, error)
     return false
@@ -214,39 +220,35 @@ async function processBatch<T, R>(
   concurrency: number
 ): Promise<R[]> {
   const results: R[] = []
-  const pending: Promise<void>[] = []
+  const executing = new Set<Promise<void>>()
 
   for (const item of items) {
+    // Yield to event loop to prevent blocking (especially for protocol.ts image requests)
+    await new Promise((resolve) => setImmediate(resolve))
+
     // Create processing task
-    const task = async (): Promise<void> => {
-      try {
-        const result = await processor(item)
+    const promise = processor(item)
+      .then((result) => {
         results.push(result)
-      } catch (error) {
+      })
+      .catch((error) => {
         console.error('Error processing task:', error)
-      }
-    }
+      })
 
-    // Add task to queue
-    const taskPromise = task()
-    pending.push(taskPromise)
+    // Add task to executing pool
+    executing.add(promise)
 
-    // If max concurrency reached, wait for one task to complete
-    if (pending.length >= concurrency) {
-      await Promise.race(pending)
-      // Remove completed task
-      const completedIndex = await Promise.race(
-        pending.map(async (p, i) => {
-          await p
-          return i
-        })
-      )
-      pending.splice(completedIndex, 1)
+    // Remove task from pool when done
+    promise.finally(() => executing.delete(promise))
+
+    // If max concurrency reached, wait for at least one task to complete
+    if (executing.size >= concurrency) {
+      await Promise.race(executing)
     }
   }
 
   // Wait for all remaining tasks to complete
-  await Promise.all(pending)
+  await Promise.all(executing)
 
   return results
 }
@@ -271,7 +273,14 @@ export async function walkFs(root: string, options: WalkOptions = {}): Promise<v
     try {
       entries = await fse.readdir(dir, { withFileTypes: true })
 
+      let loopCount = 0
+
       for (const entry of entries) {
+        if (++loopCount % 50 === 0) {
+          // In long loops, yield to event loop to prevent blocking (especially for protocol.ts image requests)
+          await new Promise((resolve) => setImmediate(resolve))
+        }
+
         const full = path.join(dir, entry.name)
         const isDir = entry.isDirectory()
 

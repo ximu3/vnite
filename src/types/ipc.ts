@@ -68,6 +68,9 @@ type MainIpcEvents =
       'system:change-process-monitor': [monitor: 'new' | 'legacy']
       'system:change-foreground-timer': [isEnabled: boolean]
       'system:change-foreground-timer-wait-time': [waitTime: number]
+
+      // Database phase events
+      'db:games-loaded': []
     }
   | {
       // Handler events (request-response communication from renderer to main)

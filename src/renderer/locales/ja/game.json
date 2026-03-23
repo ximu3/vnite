@@ -76,6 +76,7 @@
   },
   "showcase": {
     "welcome": "Vniteへようこそ、最初のゲームスキャナーを追加してください。",
+    "loadingGames": "ゲームデータを読み込んでいます...",
     "sections": {
       "recentGames": "最近のゲーム",
       "collections": "マイコレクション",

@@ -22,12 +22,17 @@ interface GameRegistry {
   // initialization state
   initialized: boolean
   setInitialized: (value: boolean) => void
+
+  // games loaded state (phase 2 loading complete)
+  gamesLoaded: boolean
+  setGamesLoaded: (value: boolean) => void
 }
 
 export const useGameRegistry = create<GameRegistry>((set) => ({
   gameIds: [],
   gameMetaIndex: {},
   initialized: false,
+  gamesLoaded: false,
 
   registerGame: (gameId, metaInfo): void =>
     set((state) => ({
@@ -60,5 +65,6 @@ export const useGameRegistry = create<GameRegistry>((set) => ({
       }
     }),
 
-  setInitialized: (value): void => set({ initialized: value })
+  setInitialized: (value): void => set({ initialized: value }),
+  setGamesLoaded: (value): void => set({ gamesLoaded: value })
 }))
