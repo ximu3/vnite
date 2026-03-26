@@ -63,7 +63,7 @@ export async function processEventCallback(
   switch (arg.eventType) {
     // a known game process is started...
     case ProcessEventType.Creation: {
-      startPhantomMonitor(gameId, arg.fullPath, arg.pid)
+      await startPhantomMonitor(gameId, arg.fullPath, arg.pid)
       break
     }
     // a known game process is stopped...
@@ -153,28 +153,6 @@ export async function startPhantomMonitor(
       )
       // immediately update process status for polling monitor
       await native.manualUpdateProcessStatus()
-      // if vnite is running under normal privilege while the game is running with elevated privilege,
-      // notify users vnite is not able to detect game process
-      if (path === undefined && !native.isElevatedPrivilege()) {
-        setTimeout(async () => {
-          const gameLocal = await GameDBManager.getGameLocal(gameId)
-          const mode = gameLocal.launcher.mode
-          const modeConfig = gameLocal.launcher[`${mode}Config`]
-          if (
-            !(await native.isRunning(modeConfig.monitorPath, modeConfig.monitorMode === 'folder'))
-          ) {
-            await mutex.runExclusive(async () => {
-              if (monitors.has(gameId)) {
-                native.sendSystemNotification(
-                  'vnite',
-                  i18next.t('system-notification:unableToDetectProcess'),
-                  i18next.t('system-notification:unableToDetectProcessDetail')
-                )
-              }
-            })
-          }
-        }, 5000)
-      }
     }
     await refreshTimerStatus()
   })
