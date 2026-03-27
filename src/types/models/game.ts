@@ -110,7 +110,6 @@ export interface gameLocalDoc {
     mode: 'file' | 'url' | 'script'
     fileConfig: {
       path: string
-      workingDirectory: string
       args: string[]
       monitorMode: 'file' | 'folder' | 'process'
       monitorPath: string
@@ -145,7 +144,6 @@ export const DEFAULT_GAME_LOCAL_VALUES: Readonly<gameLocalDoc> = {
     mode: 'file',
     fileConfig: {
       path: '',
-      workingDirectory: '',
       args: [],
       monitorMode: 'folder',
       monitorPath: ''

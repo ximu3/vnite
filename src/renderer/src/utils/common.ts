@@ -257,12 +257,7 @@ export async function startGame(
   // Validating configurations against different modes
   if (launcherMode === 'file') {
     const launcherConfig = getGameLocalValue(`launcher.${launcherMode}Config`)
-    if (
-      launcherConfig.path &&
-      launcherConfig.workingDirectory &&
-      launcherConfig.monitorMode &&
-      launcherConfig.monitorPath
-    ) {
+    if (launcherConfig.path && launcherConfig.monitorMode && launcherConfig.monitorPath) {
       ipcManager.send('launcher:start-game', gameId)
       setRunningGames([...runningGames, gameId])
       if (getGameValue('record.playStatus') === 'unplayed') {

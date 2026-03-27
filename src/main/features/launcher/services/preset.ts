@@ -1,19 +1,17 @@
-import { GameDBManager, ConfigDBManager } from '~/core/database'
 import path from 'path'
 import * as native from 'vnite-native'
+import { ConfigDBManager, GameDBManager } from '~/core/database'
 
 export async function defaultPreset(gameId: string): Promise<void> {
   const gamePath = await GameDBManager.getGameLocalValue(gameId, 'path.gamePath')
 
   const mode = 'file'
-  const workingDirectory = path.dirname(gamePath)
   const monitorMode = 'folder'
   const monitorPath = path.dirname(gamePath)
 
   await GameDBManager.setGameLocalValue(gameId, 'launcher.mode', mode)
   await GameDBManager.setGameLocalValue(gameId, `launcher.${mode}Config`, {
     path: gamePath,
-    workingDirectory,
     args: [],
     monitorMode,
     monitorPath

@@ -335,7 +335,6 @@ async function convertGame(gameId: string, gamePath: string): Promise<void> {
         mode: launcher.mode,
         fileConfig: {
           path: launcher.fileConfig.path,
-          workingDirectory: launcher.fileConfig.workingDirectory,
           args: [],
           monitorMode: launcher.fileConfig.timerMode,
           monitorPath: launcher.fileConfig.timerPath
