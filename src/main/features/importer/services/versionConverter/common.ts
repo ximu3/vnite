@@ -280,7 +280,8 @@ async function convertGame(gameId: string, gamePath: string): Promise<void> {
       },
       save: {
         saveList: {},
-        maxBackups: 7
+        maxBackups: 7,
+        autoRestoreSave: false
       },
       memory: {
         memoryList: {}
@@ -301,7 +302,7 @@ async function convertGame(gameId: string, gamePath: string): Promise<void> {
     // Processing of archived data
     if (save) {
       Object.keys(save).forEach((saveId) => {
-        if (!gameDoc.save) gameDoc.save = { saveList: {}, maxBackups: 7 }
+        if (!gameDoc.save) gameDoc.save = { saveList: {}, maxBackups: 7, autoRestoreSave: false }
         gameDoc.save.saveList[saveId] = {
           _id: save[saveId].id,
           date: save[saveId].date,

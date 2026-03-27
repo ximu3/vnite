@@ -74,9 +74,33 @@ export async function backupGameSave(gameId: string): Promise<void> {
   }
 }
 
-export async function restoreGameSave(gameId: string, saveId: string): Promise<void> {
+export async function restoreGameSave(
+  gameId: string,
+  saveId: string,
+  skipIfTargetNewer?: boolean
+): Promise<void> {
   try {
     const savePaths = await GameDBManager.getGameLocalValue(gameId, 'path.savePaths')
+
+    if (skipIfTargetNewer) {
+      const saveList = await GameDBManager.getGameValue(gameId, 'save.saveList')
+      const saveTs = new Date(saveList[saveId].date).getTime()
+
+      if (Number.isNaN(saveTs)) {
+        throw new Error(`[Game] Invalid save date, ${saveList[saveId].date}`)
+      }
+
+      for (const pathInGame of savePaths) {
+        const stat = await fse.stat(pathInGame).catch(() => null)
+        if (!stat) continue
+
+        // 2s tolerance
+        if (stat.mtimeMs - 2000 > saveTs) {
+          throw new Error(`Abort restore: target file is newer than save.`)
+        }
+      }
+    }
+
     const tempFilesPath = getAppTempPath(`save-files-${Date.now()}/`)
     const tempZipPath = await GameDBManager.getGameSave(gameId, saveId, 'file')
     await fse.ensureDir(tempFilesPath)

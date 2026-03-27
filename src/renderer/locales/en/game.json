@@ -452,6 +452,7 @@
           "error": "Search failed: {{message}}"
         },
         "maxBackups": "Maximum Save Backups",
+        "autoRestoreSave": "Automatically restore the latest save on launch",
         "notifications": {
           "configuring": "Configuring preset…",
           "success": "Preset configured successfully"

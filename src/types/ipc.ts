@@ -155,7 +155,7 @@ type MainIpcEvents =
       // Game save management events
       'game:search-save-paths': (gameId: string) => string[]
       'game:backup-save': (gameId: string) => string
-      'game:restore-save': (gameId: string, saveId: string) => void
+      'game:restore-save': (gameId: string, saveId: string, skipIfTargetNewer?: boolean) => void
       'game:delete-save': (gameId: string, saveId: string) => void
 
       // Game memory management events
