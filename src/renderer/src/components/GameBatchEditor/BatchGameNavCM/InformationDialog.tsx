@@ -1,6 +1,7 @@
 import { METADATA_EXTRA_PREDEFINED_KEYS } from '@appTypes/models'
 import { ArrayInput } from '@ui/array-input'
 import { Button } from '@ui/button'
+import { Checkbox } from '@ui/checkbox'
 import { Dialog, DialogContent, DialogTrigger } from '@ui/dialog'
 import {
   DropdownMenu,
@@ -9,7 +10,9 @@ import {
   DropdownMenuTrigger
 } from '@ui/dropdown-menu'
 import { Input } from '@ui/input'
-import { Switch } from '@ui/switch'
+import { Label } from '@ui/label'
+import { Separator } from '@ui/separator'
+import { Tabs, TabsList, TabsTrigger } from '@ui/tabs'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -30,13 +33,14 @@ export function InformationDialog({
   children?: React.ReactNode
 }): React.JSX.Element {
   const { t } = useTranslation('game')
-  const [isIncremental, setIsIncremental] = useState(true)
+  const [editMode, setEditMode] = useState<'incremental' | 'replace' | 'delete'>('incremental')
   const [developers, setDevelopers] = useState<string[]>([])
   const [publishers, setPublishers] = useState<string[]>([])
   const [genres, setGenres] = useState<string[]>([])
   const [platforms, setPlatforms] = useState<string[]>([])
   const [extraKey, setExtraKey] = useState('')
   const [extraValue, setExtraValue] = useState<string[]>([])
+  const [fieldsToClear, setFieldsToClear] = useState<string[]>([])
 
   const gameStates = gameIds.map((gameId) => ({
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -60,6 +64,8 @@ export function InformationDialog({
     ])
   )
 
+  const extraKeyForDelete = getAllExtraKeys(gameIds).sort((a, b) => a.localeCompare(b))
+
   function sanitizeArray(list: string[]): string[] {
     // The list may contain empty strings, either from legacy/incorrect data
     // or from user input in ArrayInput (e.g., trailing commas).
@@ -77,48 +83,69 @@ export function InformationDialog({
           platforms: [currentPlatforms, setGamePlatforms],
           extra: [currentExtra, setGameExtra]
         }) => {
-          if (developers.length > 0) {
-            setGameDevelopers(
-              sanitizeArray(
-                isIncremental ? [...new Set([...currentDevelopers, ...developers])] : developers
-              )
-            )
-          }
-          if (publishers.length > 0) {
-            setGamePublishers(
-              sanitizeArray(
-                isIncremental ? [...new Set([...currentPublishers, ...publishers])] : publishers
-              )
-            )
-          }
-          if (genres.length > 0) {
-            setGameGenres(
-              sanitizeArray(isIncremental ? [...new Set([...currentGenres, ...genres])] : genres)
-            )
-          }
-          if (platforms.length > 0) {
-            setGamePlatforms(
-              sanitizeArray(
-                isIncremental ? [...new Set([...currentPlatforms, ...platforms])] : platforms
-              )
-            )
-          }
-          if (extraKey.trim() !== '' && extraValue.length > 0) {
-            const newGameExtra = currentExtra.map((item) => ({
-              key: item.key,
-              value: [...item.value]
-            }))
-
-            const existingItem = newGameExtra.find((item) => item.key === extraKey)
-            if (existingItem) {
-              existingItem.value = sanitizeArray(
-                isIncremental ? [...new Set([...existingItem.value, ...extraValue])] : extraValue
-              )
-            } else {
-              newGameExtra.push({ key: extraKey, value: sanitizeArray(extraValue) })
+          const updateField = (
+            fieldName: string,
+            current: string[],
+            toUpdate: string[],
+            setter: (val: string[]) => void
+          ): void => {
+            if (editMode === 'delete') {
+              // In delete mode, clear the field if selected
+              if (fieldsToClear.includes(fieldName)) {
+                setter([])
+              }
+              return
             }
+            if (toUpdate.length === 0) return
 
-            setGameExtra(newGameExtra)
+            let next: string[]
+            if (editMode === 'incremental') {
+              next = [...new Set([...current, ...toUpdate])]
+            } else if (editMode === 'replace') {
+              next = toUpdate
+            } else {
+              return
+            }
+            setter(sanitizeArray(next))
+          }
+
+          updateField('developers', currentDevelopers, developers, setGameDevelopers)
+          updateField('publishers', currentPublishers, publishers, setGamePublishers)
+          updateField('genres', currentGenres, genres, setGameGenres)
+          updateField('platforms', currentPlatforms, platforms, setGamePlatforms)
+
+          // Handle extra fields in delete mode
+          if (editMode === 'delete') {
+            const extraFieldsToClear = fieldsToClear
+              .filter((field) => field.startsWith('extra.'))
+              .map((field) => field.replace('extra.', ''))
+
+            if (extraFieldsToClear.length > 0) {
+              const newGameExtra = currentExtra.filter(
+                (item) => !extraFieldsToClear.includes(item.key)
+              )
+              setGameExtra(newGameExtra)
+            }
+          } else {
+            if (extraKey.trim() !== '' && extraValue.length > 0) {
+              const newGameExtra = currentExtra.map((item) => ({
+                key: item.key,
+                value: [...item.value]
+              }))
+
+              const existingItem = newGameExtra.find((item) => item.key === extraKey)
+              if (existingItem) {
+                existingItem.value = sanitizeArray(
+                  editMode === 'incremental'
+                    ? [...new Set([...existingItem.value, ...extraValue])]
+                    : extraValue
+                )
+              } else {
+                newGameExtra.push({ key: extraKey, value: sanitizeArray(extraValue) })
+              }
+
+              setGameExtra(newGameExtra)
+            }
           }
         }
       )
@@ -128,6 +155,9 @@ export function InformationDialog({
       setPublishers([])
       setGenres([])
       setPlatforms([])
+      setExtraKey('')
+      setExtraValue([])
+      setFieldsToClear([])
 
       toast.success(t('batchEditor.information.success'))
     } catch (error) {
@@ -143,99 +173,148 @@ export function InformationDialog({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       {children && <DialogTrigger className={cn('w-full')}>{children}</DialogTrigger>}
-      <DialogContent className="w-[500px]">
-        <div
-          className={cn('grid grid-cols-[auto_1fr] gap-y-3 gap-x-4 px-3 pt-5 items-center text-sm')}
-        >
-          {/* Incremental Mode */}
+      <DialogContent className="w-[500px] flex flex-col">
+        {/* Mode Selection */}
+        <div className="grid grid-cols-[auto_1fr] gap-y-3 gap-x-4 px-3 pt-5 items-center text-sm">
           <div className={cn('whitespace-nowrap select-none justify-self-start')}>
-            {t('batchEditor.information.incrementalMode')}
+            {t('batchEditor.information.mode.title')}
           </div>
-          <div>
-            <Switch checked={isIncremental} onCheckedChange={setIsIncremental} />
-          </div>
-          {/* Developers */}
-          <div className={cn('whitespace-nowrap select-none justify-self-start')}>
-            {t('batchEditor.information.developers')}
-          </div>
-          <ArrayInput
-            value={developers}
-            onChange={setDevelopers}
-            placeholder={t('batchEditor.information.placeholder.developers')}
-            tooltipText={t('batchEditor.information.tooltip.developers')}
-          />
-          {/* Publishers */}
-          <div className={cn('whitespace-nowrap select-none justify-self-start')}>
-            {t('batchEditor.information.publishers')}
-          </div>
-          <ArrayInput
-            value={publishers}
-            onChange={setPublishers}
-            placeholder={t('batchEditor.information.placeholder.publishers')}
-            tooltipText={t('batchEditor.information.tooltip.publishers')}
-          />
-          {/* Platforms */}
-          <div className={cn('whitespace-nowrap select-none justify-self-start')}>
-            {t('batchEditor.information.platforms')}
-          </div>
-          <ArrayInput
-            value={platforms}
-            onChange={setPlatforms}
-            placeholder={t('batchEditor.information.placeholder.platforms')}
-            tooltipText={t('batchEditor.information.tooltip.platforms')}
-          />
-          {/* Genres */}
-          <div className={cn('whitespace-nowrap select-none justify-self-start')}>
-            {t('batchEditor.information.genres')}
-          </div>
-          <ArrayInput
-            value={genres}
-            onChange={setGenres}
-            placeholder={t('batchEditor.information.placeholder.genres')}
-            tooltipText={t('batchEditor.information.tooltip.genres')}
-          />
-          {/* Extra information */}
-          <div className="col-span-2 flex gap-1 items-center mt-1">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon" className={cn('flex-shrink-0')}>
-                  <span className={cn('icon-[mdi--lightning-bolt] w-4 h-4')}></span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent side="bottom" align="start">
-                <div className={cn('max-h-[288px] overflow-auto scrollbar-base-thin')}>
-                  {extraKeyForSelect.map((key) => (
-                    <DropdownMenuItem key={key} onClick={() => setExtraKey(key)}>
-                      {key}
-                    </DropdownMenuItem>
-                  ))}
+          <Tabs
+            value={editMode}
+            onValueChange={(v) => setEditMode(v as 'incremental' | 'replace' | 'delete')}
+            className="w-full"
+          >
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="incremental">
+                {t('batchEditor.information.mode.incremental')}
+              </TabsTrigger>
+              <TabsTrigger value="replace">{t('batchEditor.information.mode.replace')}</TabsTrigger>
+              <TabsTrigger value="delete">{t('batchEditor.information.mode.delete')}</TabsTrigger>
+            </TabsList>
+          </Tabs>
+          <Separator className="my-4 col-span-2" />
+        </div>
+
+        {editMode !== 'delete' ? (
+          <div
+            className={cn('grid grid-cols-[auto_1fr] gap-y-3 gap-x-4 px-3 items-center text-sm')}
+          >
+            {[
+              {
+                id: 'developers',
+                value: developers,
+                setter: setDevelopers
+              },
+              {
+                id: 'publishers',
+                value: publishers,
+                setter: setPublishers
+              },
+              {
+                id: 'platforms',
+                value: platforms,
+                setter: setPlatforms
+              },
+              {
+                id: 'genres',
+                value: genres,
+                setter: setGenres
+              }
+            ].map((field) => (
+              <div key={field.id} className="contents">
+                <div className={cn('whitespace-nowrap select-none justify-self-start')}>
+                  {t(`batchEditor.information.${field.id}`)}
                 </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Tooltip>
-              <TooltipTrigger>
-                <Input
-                  value={extraKey}
-                  onChange={(e) => setExtraKey(e.target.value)}
-                  placeholder={t('detail.overview.extraInformation.enterKey')}
-                  className={cn('w-30')}
+                <ArrayInput
+                  value={field.value}
+                  onChange={field.setter}
+                  placeholder={t(`batchEditor.information.placeholder.${field.id}`)}
+                  tooltipText={t(`batchEditor.information.tooltip.${field.id}`)}
                 />
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                <div className="text-xs">{t('batchEditor.information.tooltip.extraKey')}</div>
-              </TooltipContent>
-            </Tooltip>
-            <ArrayInput
-              value={extraValue}
-              onChange={(value) => setExtraValue(value)}
-              placeholder={t('detail.overview.extraInformation.enterValue')}
-              tooltipText={t('detail.overview.extraInformation.valueTip')}
-            />
+              </div>
+            ))}
+            <div className="col-span-2 flex gap-1 items-center mt-1">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="icon" className={cn('flex-shrink-0')}>
+                    <span className={cn('icon-[mdi--lightning-bolt] w-4 h-4')}></span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent side="bottom" align="start">
+                  <div className={cn('max-h-[288px] overflow-auto scrollbar-base-thin')}>
+                    {extraKeyForSelect.map((key) => (
+                      <DropdownMenuItem key={key} onClick={() => setExtraKey(key)}>
+                        {key}
+                      </DropdownMenuItem>
+                    ))}
+                  </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Input
+                    value={extraKey}
+                    onChange={(e) => setExtraKey(e.target.value)}
+                    placeholder={t('detail.overview.extraInformation.enterKey')}
+                    className={cn('w-30')}
+                  />
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <div className="text-xs">{t('batchEditor.information.tooltip.extraKey')}</div>
+                </TooltipContent>
+              </Tooltip>
+
+              <ArrayInput
+                value={extraValue}
+                onChange={(value) => setExtraValue(value)}
+                placeholder={t('detail.overview.extraInformation.enterValue')}
+                tooltipText={t('detail.overview.extraInformation.valueTip')}
+              />
+            </div>
           </div>
-          {/* Confirm Button */}
-          <div className={cn('col-span-2 flex justify-end mt-2')}>
-            <Button onClick={handleConfirm}>{t('utils:common.confirm')}</Button>
+        ) : (
+          <div className="space-y-3">
+            <div className="text-sm font-medium">{t('batchEditor.information.clearFields')}</div>
+
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { id: 'developers', label: t('batchEditor.information.developers') },
+                { id: 'publishers', label: t('batchEditor.information.publishers') },
+                { id: 'platforms', label: t('batchEditor.information.platforms') },
+                { id: 'genres', label: t('batchEditor.information.genres') },
+                ...extraKeyForDelete.map((key) => ({
+                  id: `extra.${key}`,
+                  label: key
+                }))
+              ].map((field) => {
+                const safeId = `clear-${encodeURIComponent(field.id)}`
+
+                return (
+                  <div key={field.id} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={safeId}
+                      checked={fieldsToClear.includes(field.id)}
+                      onCheckedChange={(checked) => {
+                        setFieldsToClear(
+                          checked
+                            ? [...fieldsToClear, field.id]
+                            : fieldsToClear.filter((f) => f !== field.id)
+                        )
+                      }}
+                    />
+                    <Label htmlFor={safeId} className="text-sm">
+                      {field.label}
+                    </Label>
+                  </div>
+                )
+              })}
+            </div>
           </div>
+        )}
+
+        {/* Confirm Button */}
+        <div className={cn('flex justify-end mt-auto')}>
+          <Button onClick={handleConfirm}>{t('utils:common.confirm')}</Button>
         </div>
       </DialogContent>
     </Dialog>
