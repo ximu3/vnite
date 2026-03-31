@@ -84,14 +84,21 @@ async function getAllLocalGamesPair(): Promise<[string[], string[]]> {
   const ids: string[] = []
   for (const doc of Object.values(allLocalGames)) {
     if (!doc) {
+      log.warn('[Monitor] Detected an undefined local game doc, database may be corrupt')
       continue
     }
     const mode = doc.launcher?.mode
     if (!mode) {
+      log.warn(
+        `[Monitor] Detected an undefined local game launcher mode, database may be corrupt. Local doc id: ${doc._id}, path: ${doc?.path?.gamePath}`
+      )
       continue
     }
     const path = doc.launcher[`${mode}Config`]?.monitorPath
     if (!path) {
+      log.warn(
+        `[Monitor] Detected an undefined monitorPath. Local doc id: ${doc._id}, mode: ${mode}, game path: ${doc?.path?.gamePath}`
+      )
       continue
     }
     pathes.push(path)
