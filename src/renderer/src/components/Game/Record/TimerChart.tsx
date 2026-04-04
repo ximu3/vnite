@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from 'recharts'
 import type { ValueType } from 'recharts/types/component/DefaultTooltipContent'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '~/components/ui/chart'
+import { getBusinessDateKey, getConfiguredDayBoundaryHour } from '~/stores/game/dayBoundaryUtils'
 import { formatLocalDateKey, parseLocalDate } from '~/stores/game/recordUtils'
 import { cn } from '~/utils'
 
@@ -40,15 +41,17 @@ export const TimerChart = ({
   }
 
   const handleBarClick = (entry: ChartData): void => {
-    const dateUTC = parseLocalDate(entry.jumpDate) // YYYY-MM-DD
-    const isoDate = dateUTC.toISOString()
+    const dayBoundaryHour = getConfiguredDayBoundaryHour()
+    const queryDate = parseLocalDate(entry.jumpDate)
+    queryDate.setHours(23, 59, 59, 999)
+    const businessYear = getBusinessDateKey(queryDate, dayBoundaryHour).slice(0, 4)
 
     router.navigate({
       to: '/record',
       search: {
         tab: entry.granularity === 'month' ? 'monthly' : 'weekly',
-        date: isoDate,
-        year: dateUTC.getFullYear().toString()
+        date: queryDate.toISOString(),
+        year: businessYear
       }
     })
   }

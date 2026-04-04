@@ -15,12 +15,59 @@ import { GameScannerManager } from '~/pages/GameScannerManager'
 import { Library } from '~/pages/Library'
 import { Plugin } from '~/pages/Plugin/main'
 import { Record } from '~/pages/Record'
+import { getBusinessDateKey, getConfiguredDayBoundaryHour } from '~/stores/game/dayBoundaryUtils'
 import { TransformerManager } from '~/pages/TransformerManager'
 import { Icon } from '~/pages/arts/Icon'
 import { Logo } from '~/pages/arts/Logo'
 import { RootLayout } from '../layouts/RootLayout'
 
 const hashHistory = createHashHistory()
+const ABSOLUTE_ISO_DATE_REGEX =
+  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?(?:Z|[+-]\d{2}:\d{2})$/
+
+/**
+ * Validate and normalize `/record?date=` as absolute ISO datetime.
+ *
+ * Record search contract:
+ * - `date` is the real query timestamp (no business-day boundary alignment in router).
+ * - `date` input must include explicit timezone (`Z` or `±HH:mm`) and is canonicalized to UTC ISO.
+ * - `year` is a business-year label (boundary-aware at yearly granularity).
+ *   Router derives it from `date` only when `year` is missing.
+ */
+function normalizeRecordDateSearchValue(
+  value: unknown,
+  dayBoundaryHour: number
+): { date: string; businessYear: string } | undefined {
+  if (typeof value !== 'string' || !ABSOLUTE_ISO_DATE_REGEX.test(value)) {
+    return undefined
+  }
+
+  const parsed = new Date(value)
+  if (isNaN(parsed.getTime())) return undefined
+
+  const businessDateKey = getBusinessDateKey(parsed, dayBoundaryHour)
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(businessDateKey)) {
+    return undefined
+  }
+
+  return {
+    date: parsed.toISOString(),
+    businessYear: businessDateKey.slice(0, 4)
+  }
+}
+
+function getRecordDefaultDateAndYear(dayBoundaryHour: number): { date: string; year: string } {
+  const now = new Date()
+  const businessDateKey = getBusinessDateKey(now, dayBoundaryHour)
+  const businessYear = /^\d{4}-\d{2}-\d{2}$/.test(businessDateKey)
+    ? businessDateKey.slice(0, 4)
+    : String(now.getFullYear())
+
+  return {
+    date: now.toISOString(),
+    year: businessYear
+  }
+}
 
 const rootRoute = createRootRoute({
   component: RootLayout
@@ -83,17 +130,24 @@ const recordRoute = createRoute({
   path: '/record',
   component: Record,
   validateSearch: (search: { tab?: string; date?: string; year?: string } & SearchSchemaInput) => {
+    const dayBoundaryHour = getConfiguredDayBoundaryHour()
     const tab = typeof search.tab === 'string' ? search.tab : 'overview'
-    const date =
-      typeof search.date === 'string' && !isNaN(Date.parse(search.date))
-        ? search.date
-        : new Date().toISOString()
-    const year =
-      typeof search.year === 'string' && /^\d{4}$/.test(search.year)
-        ? search.year
-        : String(new Date().getFullYear())
+    const validatedDate = normalizeRecordDateSearchValue(search.date, dayBoundaryHour)
+    const validatedYear =
+      typeof search.year === 'string' && /^\d{4}$/.test(search.year) ? search.year : undefined
 
-    return { tab, date, year }
+    if (validatedDate) {
+      return {
+        tab,
+        date: validatedDate.date,
+        year: validatedYear ?? validatedDate.businessYear
+      }
+    }
+
+    const defaultDateAndYear = getRecordDefaultDateAndYear(dayBoundaryHour)
+    const year = validatedYear ?? defaultDateAndYear.year
+
+    return { tab, date: defaultDateAndYear.date, year }
   }
 })
 

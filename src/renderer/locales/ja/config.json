@@ -26,6 +26,11 @@
     "foregroundWaitTime": {
       "title": "ウェイトタイム",
       "description": "ゲームがフォアグラウンド/バックグラウンドに切り替えられ一定の時間後（秒）、タイマーを継続/一時停止する\nゲーム実行中は変更できません"
+    },
+    "statisticsTitle": "統計",
+    "dayBoundaryHour": {
+      "title": "日付の区切り時刻",
+      "description": "統計はこの時刻で1日を区切ります。4:00に設定すると、0:00-3:59は前日として集計されます。"
     }
   },
   "appearances": {

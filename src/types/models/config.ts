@@ -222,6 +222,7 @@ export interface configDocs {
     enableNotificationSound: boolean
   }
   record: {
+    dayBoundaryHour: number
     weekly: {
       mergeInterval: number
     }
@@ -452,6 +453,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     enableNotificationSound: true
   },
   record: {
+    dayBoundaryHour: 0,
     weekly: {
       mergeInterval: 0
     },
