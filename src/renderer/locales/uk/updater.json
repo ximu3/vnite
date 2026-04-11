@@ -1,0 +1,13 @@
+{
+  "dialog": {
+    "title": "Знайдено нову версію {{version}}",
+    "noReleaseNotes": "Немає приміток до випуску",
+    "latestVersion": "Уже оновлено",
+    "downloadProgress": "{{percent}}%: {{speed}} МБ / с"
+  },
+  "actions": {
+    "skipUpdate": "Пропустити оновлення",
+    "update": "Оновитися зараз",
+    "install": "Встановити зараз"
+  }
+}

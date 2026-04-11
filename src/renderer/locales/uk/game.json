@@ -1,0 +1,690 @@
+{
+  "librarybar": {
+    "home": "Головна",
+    "collections": "Колекції",
+    "search": {
+      "placeholder": "Пошук",
+      "tooltip": "Підтримує пошук за назвою гри, розробником, датою випуску та іншими метаданими"
+    },
+    "gameListSettings": "Налаштування списку ігор",
+    "collapseAllGroups": "Сховати всі групи",
+    "groupBy": "Групувати за",
+    "groups": {
+      "none": "Без групування",
+      "collection": "Колекція",
+      "developers": "Розробники",
+      "genres": "Жанри",
+      "playStatus": "Стан гри"
+    }
+  },
+  "list": {
+    "search": {
+      "results": "Результати пошуку"
+    },
+    "recent": {
+      "title": "Останні ігри",
+      "hide": "Сховати",
+      "empty": "Немає останніх ігор"
+    },
+    "filter": {
+      "results": "Відфільтрувати результати",
+      "noResults": "Не знайдено ігор, що відповідають вашим критеріям"
+    },
+    "all": {
+      "title": "Усі ігри",
+      "sortBy": "Сортувати за",
+      "sortOptions": {
+        "name": "Назвою",
+        "sortName": "Сортувати за назвою",
+        "releaseDate": "Датою випуску",
+        "lastRunDate": "Датою останнього запуску",
+        "addDate": "Датою додавання",
+        "playTime": "Часом гри",
+        "score": "Рахунком"
+      }
+    },
+    "playStatus": {
+      "adjustOrder": "Змінити порядок"
+    },
+    "overrideCollectionSort": "Перевизначити сортування колекції",
+    "empty": {
+      "developers": "Без розробника",
+      "genres": "Без жанру",
+      "collection": "Не додано в колекцію"
+    }
+  },
+  "filter": {
+    "title": "Розширений фільтр",
+    "panel": {
+      "title": "Фільтри",
+      "clear": "Очистити фільтри",
+      "releaseDate": "Дата випуску",
+      "clearFilter": "Очистити",
+      "playStatus": "Стан гри",
+      "developers": "Розробники",
+      "publishers": "Видавці",
+      "genres": "Жанри",
+      "platforms": "Платформи",
+      "tags": "Теги",
+      "extraInfo": "Додаткова інформація"
+    },
+    "combobox": {
+      "select": "Виберіть {{placeholder}}",
+      "search": "Пошук {{placeholder}}",
+      "notFound": "{{placeholder}} не знайдено"
+    }
+  },
+  "showcase": {
+    "welcome": "Ласкаво просимо до Vnite. Додайте свій перший ігровий сканер.",
+    "sections": {
+      "recentGames": "Останні ігри",
+      "collections": "Мої колекції",
+      "allGames": "Усі ігри"
+    },
+    "sorting": {
+      "title": "Сортувати за:",
+      "label": "Сортувати за",
+      "options": {
+        "name": "Назвою",
+        "sortName": "Сортувати за назвою",
+        "releaseDate": "Датою випуску",
+        "lastRunDate": "Останньою датою запуску",
+        "addDate": "Датою додавання",
+        "playTime": "Часом гри",
+        "score": "Рахунком",
+        "custom": "Власний порядок"
+      }
+    },
+    "gameCard": {
+      "noPlayRecord": "Відсутні дані про запуску",
+      "neverRun": "Ні разу не зіграно",
+      "playRecord": "Запис гри",
+      "totalPlayTime": "Загальний час гри: {{time, gameTime}}",
+      "lastRunDate": "Дата останнього запуску: {{date, niceDate}}",
+      "neverRunShort": "Ні разу не зіграно"
+    },
+    "collection": {
+      "noCollections": "Немає колекцій",
+      "contextMenu": {
+        "rename": "Перейменувати",
+        "updateMetadata": "Оновити метадані",
+        "delete": "Видалити",
+        "deleteTitle": "Видалити колекція",
+        "deleteConfirm": "Упевнені, що хочете видалити колекцію «{{name}}»?"
+      }
+    }
+  },
+  "detail": {
+    "tabs": {
+      "overview": "Огляд",
+      "record": "Записи",
+      "save": "Збереження",
+      "memory": "Спогади"
+    },
+    "logoManagePanel": {
+      "resetPosition": "Скинути позицію",
+      "resetSize": "Скинути розмір",
+      "hideLogo": "Приховати логотип",
+      "showLogo": "Показати логотип"
+    },
+    "header": {
+      "playStatus": {
+        "label": "Стан гри",
+        "tooltip": "Змінити стан гри"
+      },
+      "rating": {
+        "title": "Моя оцінка",
+        "errors": {
+          "invalidNumber": "Введіть дійсний номер",
+          "negative": "Оцінка не може бути негативною",
+          "tooHigh": "Оцінка не може перевищувати 10"
+        },
+        "success": "Оцінку збережено",
+        "warning": "Автоматично округлюється до 1 знака після коми",
+        "cleared": "Оцінку прибрано",
+        "tooltip": "Змінити оцінку"
+      }
+    },
+    "actions": {
+      "start": "Запустити гру",
+      "stop": "Зупинити гру"
+    },
+    "contextMenu": {
+      "editMediaProperties": "Редагувати властивості медіафайлу"
+    },
+    "save": {
+      "openPropertiesDialog": "Встановити шлях для збереження",
+      "table": {
+        "date": "Дата",
+        "note": "Примітка",
+        "actions": "Дії"
+      },
+      "empty": "Немає збережень",
+      "actions": {
+        "switch": "Перемкнутися",
+        "delete": "Видалити"
+      },
+      "notifications": {
+        "locked": "Це збереження заблоковано",
+        "deleteLoading": "Видалення збереження…",
+        "deleteSuccess": "Збереження успішно видалено",
+        "deleteError": "Не вдалося видалити збереження: {{message}}",
+        "switchLoading": "Перемикання збереження…",
+        "switchSuccess": "Збереження успішно перемкнуто",
+        "switchError": "Не вдалося перемкнути збереження: {{message}}",
+        "noSavePath": "Шлях до збереження не знайдено"
+      }
+    },
+    "filter": {
+      "added": "Фільтр додано, {{field}}: {{value}}"
+    },
+    "record": {
+      "card": {
+        "title": "Дані про гру",
+        "noData": "Ви ще не грали в цю гру.",
+        "playStats": "Ви грали {{totalTime, gameTime}} протягом {{days}} днів, у середньому {{averageTime, gameTime}} на день,",
+        "immersion": "і занурилися на {{time, gameTime}} {{date, niceDate}}.",
+        "history": "Ви додали цю гру {{addDate, niceDate}} і востаннє грали в неї {{lastPlayDate, niceDate}}. Сподіваємося, що ця подорож залишить у вас цікаві спогади."
+      }
+    },
+    "chart": {
+      "title": "Графік часу гри",
+      "label": "Час гри",
+      "selectRange": "Виберіть діапазон дат",
+      "dateError": "Дата початку не може бути пізнішою за дату закінчення",
+      "rangeLimit": "Виберіть дати між {{startDate, niceDate}} та {{endDate, niceDate}}",
+      "noData": ""
+    },
+    "overview": {
+      "sections": {
+        "description": "",
+        "tags": "",
+        "basicInfo": "",
+        "extraInfo": "",
+        "relatedGames": "",
+        "relatedSites": ""
+      },
+      "relatedGames": {
+        "empty": ""
+      },
+      "description": {
+        "empty": "",
+        "htmlHint": "",
+        "search": {
+          "loading": "",
+          "success": "",
+          "error": "",
+          "notFound": "",
+          "searchError": "",
+          "selectRequired": ""
+        }
+      },
+      "tags": {
+        "empty": "",
+        "separator": "",
+        "search": {
+          "loading": "",
+          "success": "",
+          "error": "",
+          "notFound": "",
+          "searchError": "",
+          "selectRequired": ""
+        }
+      },
+      "search": {
+        "placeholder": ""
+      },
+      "relatedSites": {
+        "empty": "",
+        "addLink": "",
+        "nameLabel": "",
+        "urlLabel": "",
+        "search": {
+          "loading": "",
+          "success": "",
+          "error": "",
+          "notFound": "",
+          "searchError": ""
+        }
+      },
+      "information": {
+        "fields": {
+          "originalName": "",
+          "localizedName": "",
+          "sortName": "",
+          "developers": "",
+          "publishers": "",
+          "releaseDate": "",
+          "platforms": "",
+          "genres": ""
+        },
+        "empty": "",
+        "hints": {
+          "developers": "",
+          "publishers": "",
+          "platforms": "",
+          "genres": ""
+        },
+        "search": {
+          "loading": "",
+          "success": "",
+          "error": "",
+          "notFound": "",
+          "searchError": ""
+        }
+      },
+      "extraInformation": {
+        "title": "",
+        "valueTip": "",
+        "enterKey": "",
+        "enterValue": "",
+        "addNew": "",
+        "empty": "",
+        "emptyValue": "",
+        "fields": {
+          "director": "",
+          "scenario": "",
+          "illustration": "",
+          "music": "",
+          "voice": "",
+          "engine": ""
+        },
+        "search": {
+          "loading": "",
+          "success": "",
+          "error": "",
+          "notFound": "",
+          "searchError": "",
+          "selectRequired": ""
+        }
+      },
+      "record": {
+        "title": "",
+        "playTime": "",
+        "lastRunDate": "",
+        "playStatus": "",
+        "rating": "",
+        "neverRun": ""
+      }
+    },
+    "memory": {
+      "actions": {
+        "add": "",
+        "addCover": "",
+        "changeCover": "",
+        "adjustCover": "",
+        "addText": "",
+        "editText": "",
+        "delete": "",
+        "openScreenshotDir": ""
+      },
+      "setAs": {
+        "title": "",
+        "cover": "",
+        "background": ""
+      },
+      "export": {
+        "exportAs": "",
+        "image": "",
+        "markdown": "",
+        "toClipboard": "",
+        "saveAs": ""
+      },
+      "notifications": {
+        "deleting": "",
+        "deleteSuccess": "",
+        "deleteError": "",
+        "selectFileError": "",
+        "imageNotFound": "",
+        "getImageError": "",
+        "imageCopied": "",
+        "imageCopyError": "",
+        "markdownCopied": "",
+        "markdownCopyError": "",
+        "setCoverSuccess": "",
+        "setCoverError": "",
+        "setBackgroundSuccess": "",
+        "setBackgroundError": "",
+        "screenshotPathNotSet": ""
+      },
+      "dialog": {
+        "markdownHint": ""
+      }
+    },
+    "config": {
+      "properties": ""
+    },
+    "manage": {
+      "title": "",
+      "rename": "",
+      "editLogo": "",
+      "editPlayTime": "",
+      "markNSFW": "",
+      "unmarkNSFW": "",
+      "downloadMetadata": "",
+      "createShortcut": "",
+      "browseLocalFiles": "",
+      "delete": "",
+      "notifications": {
+        "shortcutCreated": "",
+        "shortcutError": "",
+        "gamePathNotSet": ""
+      }
+    },
+    "timersEditor": {
+      "title": "",
+      "addTimer": "",
+      "timersList": "",
+      "fuzzyTime": "",
+      "noTimers": "",
+      "totalPlayTime": "",
+      "startTime": "",
+      "endTime": "",
+      "ongoing": "",
+      "duration": "",
+      "minutes": "",
+      "confirmImport": "",
+      "importWarning": "",
+      "action": {
+        "importFromClipboard": "",
+        "exportToClipboard": ""
+      },
+      "error": {
+        "overlapMessage": "",
+        "invalidTime": "",
+        "endBeforeStart": "",
+        "invalidJson": ""
+      }
+    },
+    "timerEditor": {
+      "startDateRequired": "",
+      "startAfterEnd": "",
+      "addTimer": "",
+      "editTimer": "",
+      "startDateTime": "",
+      "endDateTime": ""
+    },
+    "deleteAlert": {
+      "title": "",
+      "description": "",
+      "addToIgnore": "",
+      "notifications": {
+        "deleting": "",
+        "deleted": "",
+        "error": ""
+      }
+    },
+    "playTimeEditor": {
+      "expressionSupport": "",
+      "placeholder": ""
+    },
+    "collection": {
+      "addTo": "",
+      "removeFrom": "",
+      "newCollection": "",
+      "dialog": {
+        "title": "",
+        "description": "",
+        "add": ""
+      }
+    },
+    "properties": {
+      "title": "",
+      "tabs": {
+        "launcher": "",
+        "path": "",
+        "media": ""
+      },
+      "path": {
+        "title": "",
+        "gamePath": "",
+        "savePath": "",
+        "screenshotPath": "",
+        "screenshotPathTooltip": "",
+        "addFolder": "",
+        "addFile": "",
+        "search": {
+          "tooltip": "",
+          "results": "",
+          "noResults": "",
+          "loading": "",
+          "success": "",
+          "error": ""
+        },
+        "maxBackups": "",
+        "notifications": {
+          "configuring": "",
+          "success": ""
+        }
+      },
+      "media": {
+        "types": {
+          "icon": "",
+          "background": "",
+          "cover": "",
+          "logo": ""
+        },
+        "empty": {
+          "icon": "",
+          "background": "",
+          "cover": "",
+          "logo": "",
+          "images": ""
+        },
+        "actions": {
+          "adjust": "",
+          "set": "",
+          "importFromFile": "",
+          "importFromClipboard": "",
+          "importFromUrl": "",
+          "searchImage": "",
+          "viewLargeImage": "",
+          "cropImage": "",
+          "deleteImage": ""
+        },
+        "search": {
+          "title": "",
+          "dataSource": "",
+          "searchTitle": ""
+        },
+        "url": {
+          "empty": ""
+        },
+        "crop": {
+          "title": "",
+          "size": ""
+        },
+        "notifications": {
+          "fileSelectError": "",
+          "noImageInClipboard": "",
+          "clipboardImportError": "",
+          "imageNotFound": "",
+          "getImageError": "",
+          "downloading": "",
+          "downloadSuccess": "",
+          "downloadError": "",
+          "processing": "",
+          "success": "",
+          "error": "",
+          "searching": "",
+          "searchSuccess": "",
+          "searchError": "",
+          "noResultsFound": "",
+          "selectImage": "",
+          "cropping": "",
+          "cropSuccess": "",
+          "cropError": "",
+          "cropIncomplete": "",
+          "deleting": "",
+          "deleteSuccess": "",
+          "deleteError": ""
+        }
+      },
+      "launcher": {
+        "title": "",
+        "setGamePathFirst": "",
+        "mode": {
+          "title": "",
+          "file": "",
+          "url": "",
+          "script": ""
+        },
+        "monitor": {
+          "title": "",
+          "mode": {
+            "folder": "",
+            "file": "",
+            "process": ""
+          },
+          "path": "",
+          "processName": ""
+        },
+        "file": {
+          "path": "",
+          "workingDirectory": ""
+        },
+        "script": {
+          "content": "",
+          "workingDirectory": ""
+        },
+        "url": {
+          "address": "",
+          "browser": "",
+          "defaultBrowser": ""
+        },
+        "magpie": {
+          "scaling": "",
+          "pathNotSet": ""
+        },
+        "preset": {
+          "title": "",
+          "search": "",
+          "default": "",
+          "le": "",
+          "steam": "",
+          "vba": "",
+          "steamIdRequired": "",
+          "notifications": {
+            "configuring": "",
+            "success": ""
+          }
+        }
+      }
+    }
+  },
+  "batchEditor": {
+    "contextMenu": {
+      "addTo": "",
+      "removeFrom": "",
+      "newCollection": "",
+      "editInfo": "",
+      "updateMetadata": "",
+      "delete": ""
+    },
+    "information": {
+      "incrementalMode": "",
+      "developers": "",
+      "publishers": "",
+      "platforms": "",
+      "genres": "",
+      "placeholder": {
+        "developers": "",
+        "publishers": "",
+        "platforms": "",
+        "genres": ""
+      },
+      "tooltip": {
+        "developers": "",
+        "publishers": "",
+        "platforms": "",
+        "genres": "",
+        "extraKey": ""
+      },
+      "success": "",
+      "error": ""
+    },
+    "floatingButtons": {
+      "addToCollection": "",
+      "editInfo": "",
+      "updateMetadata": "",
+      "delete": "",
+      "cancel": "",
+      "selectAll": "",
+      "selected": ""
+    },
+    "selection": {
+      "selectAll": "",
+      "unselectAll": ""
+    },
+    "delete": {
+      "title": "",
+      "description": "",
+      "gamesList": "",
+      "unnamedGame": "",
+      "addToIgnore": "",
+      "notifications": {
+        "deleting": "",
+        "success": "",
+        "error": ""
+      }
+    }
+  },
+  "updater": {
+    "fields": {
+      "#all": "",
+      "#missing": "",
+      "name": "",
+      "originalName": "",
+      "releaseDate": "",
+      "description": "",
+      "developers": "",
+      "publishers": "",
+      "genres": "",
+      "platforms": "",
+      "tags": "",
+      "relatedSites": "",
+      "extra": "",
+      "cover": "",
+      "background": "",
+      "logo": "",
+      "icon": ""
+    },
+    "dialog": {
+      "title": "",
+      "batchTitle": "",
+      "description": "",
+      "dataSource": "",
+      "selectDataSource": "",
+      "updateFields": "",
+      "mergeStrategy": "",
+      "replace": "",
+      "merge": "",
+      "append": "",
+      "concurrency": "",
+      "concurrencyDescription": "",
+      "progress": "",
+      "progressCount": "",
+      "successful": "",
+      "failed": "",
+      "processing": "",
+      "error": "",
+      "back": "",
+      "close": "",
+      "cancel": "",
+      "update": "",
+      "startBatch": "",
+      "updating": "",
+      "batchUpdating": ""
+    },
+    "notifications": {
+      "updating": "",
+      "batchUpdating": "",
+      "processing": "",
+      "success": "",
+      "batchComplete": "",
+      "error": "",
+      "noDataSources": ""
+    },
+    "unknown": ""
+  }
+}

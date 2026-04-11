@@ -1,0 +1,29 @@
+{
+  "dlsite": {
+    "workType": "Формат продукту",
+    "releaseDate": "Дата виходу",
+    "series": "Назва серії",
+    "maker": "Бренд"
+  },
+  "steam": {
+    "officialWebsite": "Офіційний вебсайт",
+    "steamStore": "Крамниця Steam",
+    "config": {
+      "apiLanguageCode": "українська",
+      "urlLanguageCode": "uk-ua",
+      "acceptLanguageHeader": "uk-UA,uk;q=0.9,en;q=0.8",
+      "countryCode": "UA"
+    }
+  },
+  "vndb": {
+    "languageCode": "ua"
+  },
+  "extraMetadataFields": {
+    "director": "Режисер",
+    "scenario": "Сценарист",
+    "illustration": "Художник",
+    "music": "Музика",
+    "voice": "Актор дубляжу",
+    "engine": "Рушій"
+  }
+}
