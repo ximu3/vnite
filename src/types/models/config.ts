@@ -279,9 +279,6 @@ export interface configLocalDocs {
         path: string
         hotkey: string
       }
-      upscaler: {
-        path: string
-      }
     }
     scanner: {
       interval: number
@@ -297,7 +294,6 @@ export interface configLocalDocs {
           deepth?: number
           targetCollection: string
           normalizeFolderName?: boolean
-          upscaleScale?: number
         }
       }
     }
@@ -518,9 +514,6 @@ export const DEFAULT_CONFIG_LOCAL_VALUES: Readonly<configLocalDocs> = {
       magpie: {
         path: '',
         hotkey: 'win+shift+a'
-      },
-      upscaler: {
-        path: ''
       }
     },
     scanner: {
@@ -536,7 +529,6 @@ export const DEFAULT_CONFIG_LOCAL_VALUES: Readonly<configLocalDocs> = {
           deepth?: number
           targetCollection: string
           normalizeFolderName?: boolean
-          upscaleScale?: number
         }
       }
     }

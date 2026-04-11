@@ -13,8 +13,6 @@ export interface GameMetadataUpdaterStore {
   setDataSource: (dataSource: string) => void
   backgroundUrl: string
   setBackgroundUrl: (backgroundUrl: string) => void
-  upscaleScale: number
-  setUpscaleScale: (upscaleScale: number) => void
   handleClose: () => void
 }
 
@@ -31,8 +29,6 @@ export const useGameMetadataUpdaterStore = create<GameMetadataUpdaterStore>((set
   setDataSource: (dataSource) => set({ dataSource }),
   backgroundUrl: '',
   setBackgroundUrl: (backgroundUrl) => set({ backgroundUrl }),
-  upscaleScale: 0,
-  setUpscaleScale: (upscaleScale) => set({ upscaleScale }),
   handleClose: () => {
     set({
       open: false,
@@ -40,8 +36,7 @@ export const useGameMetadataUpdaterStore = create<GameMetadataUpdaterStore>((set
       gameIds: [],
       dataSourceId: '',
       dataSource: '',
-      backgroundUrl: '',
-      upscaleScale: 0
+      backgroundUrl: ''
     })
   }
 }))

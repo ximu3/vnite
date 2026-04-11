@@ -6,10 +6,6 @@
     "edit": "편집",
     "delete": "제거"
   },
-  "upscale": {
-    "label": "배경 이미지 초해상도 업스케일",
-    "noUpscale": "업스케일 없음"
-  },
   "arrayEditor": {
     "clickPlusToAdd": "+ 를 클릭하여 요소 추가",
     "addElement": "요소 추가",

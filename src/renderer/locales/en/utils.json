@@ -6,10 +6,6 @@
     "confirm": "Confirm",
     "delete": "Delete"
   },
-  "upscale": {
-    "label": "Upscale background image",
-    "noUpscale": "No upscale"
-  },
   "arrayEditor": {
     "clickPlusToAdd": "Click + to add elements",
     "addElement": "Add Element",

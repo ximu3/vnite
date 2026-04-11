@@ -41,17 +41,6 @@ export function Advanced(): React.JSX.Element {
               dialogType="openFile"
             />
 
-            {/* Upscaler Path */}
-            <ConfigItem
-              hookType="configLocal"
-              path="game.linkage.upscaler.path"
-              title={t('advanced.upscaler.name')}
-              description={t('advanced.upscaler.description')}
-              controlType="fileinput"
-              placeholder={t('advanced.upscaler.placeholder')}
-              dialogType="openFile"
-            />
-
             {/* Magpie Path */}
             <ConfigItem
               hookType="configLocal"

@@ -6,10 +6,6 @@
     "confirm": "確定",
     "delete": "刪除"
   },
-  "upscale": {
-    "label": "超分辨率放大背景圖",
-    "noUpscale": "不放大"
-  },
   "arrayEditor": {
     "clickPlusToAdd": "點擊 + 添加元素",
     "addElement": "添加元素",

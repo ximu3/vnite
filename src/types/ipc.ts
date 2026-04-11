@@ -208,7 +208,6 @@ type MainIpcEvents =
         dataSource: string
         dataSourceId: string
         backgroundUrl?: string
-        upscaleScale?: number
         dirPath?: string
         gamePath?: string
       }) => void
@@ -218,7 +217,6 @@ type MainIpcEvents =
         dataSourceId: string
         fields?: (GameMetadataField | GameMetadataUpdateMode)[]
         backgroundUrl?: string
-        upscaleScale?: number
         options?: GameMetadataUpdateOptions
       }) => void
       'adder:get-batch-game-adder-data': () => BatchGameInfo[]
@@ -227,7 +225,6 @@ type MainIpcEvents =
         gameIds: string[]
         dataSource: string
         fields?: (GameMetadataField | GameMetadataUpdateMode)[]
-        upscaleScale?: number
         options?: GameMetadataUpdateOptions
         concurrency?: number
       }) => void

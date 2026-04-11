@@ -476,7 +476,6 @@ export class GameScanner extends EventEmitter {
             dataSource,
             dataSourceId: match.id,
             dirPath: folder.dirPath,
-            upscaleScale: scannerList[scannerId]?.upscaleScale,
             targetCollection
           })
         } else {
@@ -649,7 +648,6 @@ export class GameScanner extends EventEmitter {
         dataSource,
         dataSourceId: gameId,
         dirPath: folderPath,
-        upscaleScale: scannerList[foundScannerId]?.upscaleScale,
         targetCollection
       })
 

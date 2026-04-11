@@ -1,14 +1,10 @@
-import { execFile } from 'child_process'
 import { clipboard, nativeImage, net } from 'electron'
 import { fileTypeFromBuffer } from 'file-type'
 import fse from 'fs-extra'
 import sharp from 'sharp'
 import ico from 'sharp-ico'
-import { promisify } from 'util'
 import { getAppTempPath } from '~/features/system'
 import { gis } from '~/utils'
-
-const execFileAsync = promisify(execFile)
 
 export async function searchGameImages(
   gameName: string,
@@ -236,57 +232,5 @@ export async function writeClipboardImage(data: string, type: 'path'): Promise<b
   } catch (error) {
     console.error('Failed to write image to clipboard:', error)
     throw error
-  }
-}
-
-export async function upscaleImage(
-  input: Buffer | string,
-  exePath: string,
-  options: { scale?: number } = {}
-): Promise<Buffer> {
-  const scale = options.scale ?? 2
-  const suffix = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
-  const inputPath = getAppTempPath(`upscale_input_${suffix}.png`)
-  const outputPath = getAppTempPath(`upscale_output_${suffix}.png`)
-
-  try {
-    // Prepare input: convert to local PNG file
-    let imageBuffer: Buffer
-    if (typeof input === 'string' && input.startsWith('http')) {
-      const response = await net.fetch(input)
-      if (!response.ok) {
-        throw new Error(`Failed to fetch image: ${response.statusText}`)
-      }
-      imageBuffer = Buffer.from(await response.arrayBuffer())
-    } else if (typeof input === 'string') {
-      imageBuffer = await fse.readFile(input)
-    } else {
-      imageBuffer = input
-    }
-
-    // Convert to PNG for maximum compatibility with ncnn-vulkan tools
-    sharp.cache(false)
-    const pngBuffer = await sharp(imageBuffer, { limitInputPixels: false }).png().toBuffer()
-    await fse.writeFile(inputPath, pngBuffer)
-
-    // Build arguments: all three tools share -i -o -s interface
-    const args = ['-i', inputPath, '-o', outputPath, '-s', String(scale)]
-
-    // Execute the upscaler
-    await execFileAsync(exePath, args, {
-      timeout: 5 * 60 * 1000, // 5 minute timeout
-      windowsHide: true
-    })
-
-    // Read and return the output
-    const result = await fse.readFile(outputPath)
-    return result
-  } catch (error) {
-    console.error('Error upscaling image:', error)
-    throw error
-  } finally {
-    // Clean up temp files
-    await fse.remove(inputPath).catch(() => {})
-    await fse.remove(outputPath).catch(() => {})
   }
 }

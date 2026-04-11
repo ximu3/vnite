@@ -207,11 +207,6 @@
       "preset": "預設配置",
       "search": "搜尋配置",
       "noPresetFound": "未找到配置"
-    },
-    "upscaler": {
-      "name": "waifu2x-ncnn-vulkan / realcugan-ncnn-vulkan / realesrgan-ncnn-vulkan",
-      "description": "用於超分辨率放大遊戲背景圖的工具",
-      "placeholder": "請輸入超分辨率放大工具的路徑"
     }
   },
   "theme": {

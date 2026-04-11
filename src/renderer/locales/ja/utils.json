@@ -6,10 +6,6 @@
     "confirm": "確認",
     "delete": "削除"
   },
-  "upscale": {
-    "label": "背景画像を超解像アップスケール",
-    "noUpscale": "拡大なし"
-  },
   "arrayEditor": {
     "clickPlusToAdd": "+ をクリックして要素を追加",
     "addElement": "要素を追加",

@@ -21,20 +21,17 @@ import { scraperManager } from '~/features/scraper'
 import { cacheDescriptionImages } from '~/features/scraper/services/descriptionImageCache'
 import { ipcManager } from '~/core/ipc'
 import log from 'electron-log/main'
-import { upscaleBackgroundImage } from './adder'
 
 export async function batchUpdateGameMetadata({
   gameIds,
   dataSource,
   fields = ['#all'] as (GameMetadataField | GameMetadataUpdateMode)[],
-  upscaleScale,
   options = {},
   concurrency = 5
 }: {
   gameIds: string[]
   dataSource: string
   fields?: (GameMetadataField | GameMetadataUpdateMode)[]
-  upscaleScale?: number
   options?: GameMetadataUpdateOptions
   concurrency?: number
 }): Promise<BatchUpdateResults> {
@@ -98,7 +95,6 @@ export async function batchUpdateGameMetadata({
             dataSource,
             dataSourceId: existingDataSourceId,
             fields,
-            upscaleScale,
             options
           })
 
@@ -162,7 +158,6 @@ export async function batchUpdateGameMetadata({
           dataSource,
           dataSourceId: selectedResult.id,
           fields,
-          upscaleScale,
           options
         })
 
@@ -260,7 +255,6 @@ export async function updateGameMetadata({
   dataSourceId,
   fields = ['#all'] as (GameMetadataField | GameMetadataUpdateMode)[],
   backgroundUrl,
-  upscaleScale,
   options = {}
 }: {
   dbId: string
@@ -268,7 +262,6 @@ export async function updateGameMetadata({
   dataSourceId: string
   fields?: (GameMetadataField | GameMetadataUpdateMode)[]
   backgroundUrl?: string
-  upscaleScale?: number
   options?: GameMetadataUpdateOptions
 }): Promise<void> {
   try {
@@ -943,24 +936,19 @@ export async function updateGameMetadata({
 
     // Add image save operations
     if (updateImages) {
-      for (const result of imageResults) {
+      imageResults.forEach((result) => {
         if (result.urls.length > 0 && result.urls[0]) {
-          let imageData: Buffer | string = result.urls[0]
-          // Apply upscaling for background images if requested
-          if (result.type === 'background') {
-            imageData = await upscaleBackgroundImage(result.urls[0], upscaleScale)
-          }
           dbPromises.push(
             GameDBManager.setGameImage(
               dbId,
               result.type as 'cover' | 'background' | 'logo' | 'icon',
-              imageData
+              result.urls[0]
             ).catch((err) => {
               log.warn(`[Updater] Failed to save game image (${result.type}): ${err.message}`)
             })
           )
         }
-      }
+      })
     }
 
     // Execute all database operations in parallel

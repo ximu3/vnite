@@ -4,10 +4,6 @@
     "cancel": "Отмена",
     "confirm": "Подтвердить"
   },
-  "upscale": {
-    "label": "",
-    "noUpscale": ""
-  },
   "arrayEditor": {
     "clickPlusToAdd": "Нажмите +, чтобы добавить элемент",
     "addElement": "Добавить элемент",

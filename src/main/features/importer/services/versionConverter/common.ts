@@ -621,9 +621,6 @@ async function convertConfig(basePath: string): Promise<void> {
       magpie: {
         path: v2Config.advanced.linkage.magpie.path,
         hotkey: v2Config.advanced.linkage.magpie.hotkey
-      },
-      upscaler: {
-        path: ''
       }
     })
 

@@ -4,7 +4,6 @@ import { toast } from 'sonner'
 import { ipcManager } from '~/app/ipc'
 import { Button } from '~/components/ui/button'
 import { cn } from '~/utils'
-import { UpscaleSelect } from '~/components/utils/UpscaleSelect'
 import { useGameMetadataUpdaterStore } from '../GameMetadataUpdater/store'
 import { useGameAdderStore } from './store'
 
@@ -20,8 +19,6 @@ export function BackgroundList(): React.JSX.Element {
     dbId,
     dirPath,
     gamePath,
-    upscaleScale,
-    setUpscaleScale,
     handleClose
   } = useGameAdderStore()
 
@@ -30,8 +27,7 @@ export function BackgroundList(): React.JSX.Element {
     setBackgroundUrl: setGameMetadataUpdaterBackgroundUrl,
     setDataSource: setGameMetadataUpdaterDataSource,
     setDataSourceId: setGameMetadataUpdaterDataSourceId,
-    setGameIds: setGameMetadataUpdaterGameIds,
-    setUpscaleScale: setGameMetadataUpdaterUpscaleScale
+    setGameIds: setGameMetadataUpdaterGameIds
   } = useGameMetadataUpdaterStore()
 
   const [isAdding, setIsAdding] = useState(false)
@@ -113,7 +109,7 @@ export function BackgroundList(): React.JSX.Element {
         setIsGameMetadataUpdaterDialogOpen(true)
         setIsAdding(false)
         setGameMetadataUpdaterDataSourceId(dataSourceId)
-        setGameMetadataUpdaterUpscaleScale(upscaleScale)
+        setIsAdding(false)
         handleClose()
         return
       } else {
@@ -124,7 +120,6 @@ export function BackgroundList(): React.JSX.Element {
           dataSource,
           dataSourceId,
           backgroundUrl,
-          upscaleScale,
           dirPath,
           gamePath
         })
@@ -174,15 +169,8 @@ export function BackgroundList(): React.JSX.Element {
             </div>
           </div>
         </div>
-        <div className={cn('flex flex-row-reverse items-center gap-3')}>
+        <div className={cn('flex flex-row-reverse')}>
           <Button onClick={addGameToDB}>{t('utils:common.confirm')}</Button>
-          {!dbId && (
-            <UpscaleSelect
-              value={upscaleScale}
-              onValueChange={setUpscaleScale}
-              triggerClassName="w-[140px] h-8 text-sm"
-            />
-          )}
         </div>
       </div>
     </div>

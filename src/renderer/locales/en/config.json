@@ -207,11 +207,6 @@
       "preset": "Preset Configuration",
       "search": "Search Configuration",
       "noPresetFound": "No configuration found"
-    },
-    "upscaler": {
-      "name": "waifu2x-ncnn-vulkan / realcugan-ncnn-vulkan / realesrgan-ncnn-vulkan",
-      "description": "These tools are used for super-resolution upscaling of game background images",
-      "placeholder": "Enter the path to the upscaler executable"
     }
   },
   "theme": {
