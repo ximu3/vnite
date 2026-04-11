@@ -26,6 +26,11 @@
     "foregroundWaitTime": {
       "title": "緩衝時間",
       "description": "當游戲持續在前臺/後臺運行此時間（秒）后，繼續/暫停計時器\n游戲運行中無法變更此設置"
+    },
+    "statisticsTitle": "統計",
+    "dayBoundaryHour": {
+      "title": "日期分界時間",
+      "description": "統計會在此時刻切分每天。設定為 4:00 時，0:00-3:59 會計入前一天。"
     }
   },
   "appearances": {

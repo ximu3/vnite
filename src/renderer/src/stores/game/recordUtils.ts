@@ -1,6 +1,14 @@
 import type { gameDoc } from '@appTypes/models'
-import i18next from 'i18next'
 import { getGameStore, useGameRegistry } from '~/stores/game'
+import {
+  formatLocalDateKey,
+  getBusinessDateKey,
+  getBusinessDayStartFromKey,
+  getConfiguredDayBoundaryHour,
+  getDateKeysInRange,
+  parseLocalDate,
+  splitTimeRangeByBusinessDay
+} from './dayBoundaryUtils'
 
 interface WeeklyMostPlayedDay {
   date: string
@@ -17,37 +25,20 @@ interface MostPlayedMonth {
   playTime: number
 }
 
-/**
- * Formats a local date to a string key
- * @param date The date to format
- * @returns The formatted date string in YYYY-MM-DD format
- */
-export function formatLocalDateKey(date: Date): string {
-  const y = date.getFullYear()
-  const m = String(date.getMonth() + 1).padStart(2, '0')
-  const d = String(date.getDate()).padStart(2, '0')
-  return `${y}-${m}-${d}`
-}
-
-/**
- * for a date string in the format YYYY-MM-DD
- * if use `new Date(str)` it will be parsed as UTC time
- * this function is used to parse the date string to local time
- */
-export function parseLocalDate(str: string): Date {
-  const [y, m, d] = str.split('-').map(Number)
-  return new Date(y, m - 1, d)
-}
+export { formatLocalDateKey, parseLocalDate }
 
 // Maximum allowed play time per day (24 hours in milliseconds)
 const MAX_DAILY_PLAYTIME = 24 * 60 * 60 * 1000
-const ONE_DAY = MAX_DAILY_PLAYTIME
 
 /**
  * Caps daily play time to 24 hours maximum
  *
  * @TODO Fix the root cause: Multiple game instances running simultaneously
  * can cause calculated play time to exceed 24 hours per day
+ *
+ * Note:
+ * Business-day boundary configuration only changes how intervals are split into days.
+ * A single business day still has an absolute upper bound of 24 hours.
  *
  * @param playTime - Raw play time in milliseconds
  * @param date - Date for logging (optional)
@@ -69,14 +60,16 @@ export function capDailyPlayTime(playTime: number, date?: Date | string): number
 /**
  * Calculate the game time (in milliseconds) for a specific date
  */
-export function calculateDailyPlayTime(date: Date, timers: gameDoc['record']['timers']): number {
+export function calculateDailyPlayTime(
+  dateKey: string,
+  timers: gameDoc['record']['timers'],
+  dayBoundaryHour = getConfiguredDayBoundaryHour()
+): number {
   try {
-    // Make sure we only deal with the date part and don't care about the time
-    const targetDate = new Date(date)
-    targetDate.setHours(0, 0, 0, 0)
-
+    const targetDate = getBusinessDayStartFromKey(dateKey, dayBoundaryHour)
     const nextDay = new Date(targetDate)
-    nextDay.setDate(targetDate.getDate() + 1)
+    nextDay.setDate(nextDay.getDate() + 1)
+    nextDay.setHours(dayBoundaryHour, 0, 0, 0)
 
     let totalPlayTime = 0
 
@@ -90,7 +83,7 @@ export function calculateDailyPlayTime(date: Date, timers: gameDoc['record']['ti
       }
 
       // If the timer record does not overlap with the target date, it is skipped
-      if (end < targetDate || start >= nextDay) continue
+      if (end <= targetDate || start >= nextDay) continue
 
       // Calculate overlap time
       const overlapStart = start < targetDate ? targetDate : start
@@ -119,22 +112,28 @@ export function getWeeklyPlayData(date = new Date()): {
   mostPlayedGames: { gameId: string; playTime: number }[]
 } {
   try {
-    // Calculate the beginning (Monday) and end (Sunday) of the week
-    const weekStart = new Date(date)
-    weekStart.setDate(date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1))
-    weekStart.setHours(0, 0, 0, 0)
+    const dayBoundaryHour = getConfiguredDayBoundaryHour()
+    const selectedBusinessDateKey = getBusinessDateKey(date, dayBoundaryHour)
+    const selectedBusinessDate = parseLocalDate(selectedBusinessDateKey)
 
-    const weekEnd = new Date(weekStart)
-    weekEnd.setDate(weekStart.getDate() + 6)
-    weekEnd.setHours(23, 59, 59, 999)
+    // Calculate week start (Monday) using business-date labels.
+    const weekStartDate = new Date(selectedBusinessDate)
+    weekStartDate.setDate(
+      selectedBusinessDate.getDate() -
+        selectedBusinessDate.getDay() +
+        (selectedBusinessDate.getDay() === 0 ? -6 : 1)
+    )
 
-    // Generate an array of dates for the week
-    const dates: string[] = []
-    const current = new Date(weekStart)
-    while (current <= weekEnd) {
-      dates.push(i18next.format(current, 'niceISO'))
-      current.setDate(current.getDate() + 1)
-    }
+    const weekStartDateKey = formatLocalDateKey(weekStartDate)
+    const weekStart = getBusinessDayStartFromKey(weekStartDateKey, dayBoundaryHour)
+    const weekEndExclusive = new Date(weekStart)
+    weekEndExclusive.setDate(weekEndExclusive.getDate() + 7)
+    weekEndExclusive.setHours(dayBoundaryHour, 0, 0, 0)
+
+    // Generate an array of date labels for this week.
+    const weekEndDate = new Date(weekStartDate)
+    weekEndDate.setDate(weekEndDate.getDate() + 6)
+    const dates = getDateKeysInRange(weekStartDateKey, formatLocalDateKey(weekEndDate))
 
     // Calculate daily play time
     const dailyPlayTime: { [date: string]: number } = {}
@@ -146,8 +145,6 @@ export function getWeeklyPlayData(date = new Date()): {
 
     // Every day
     for (const dateStr of dates) {
-      // const dayDate = new Date(dateStr)
-      const dayDate = parseLocalDate(dateStr)
       let dayTotal = 0
 
       // Iterate through all the games
@@ -156,14 +153,14 @@ export function getWeeklyPlayData(date = new Date()): {
         const timers = store.getState().getValue('record.timers') || []
 
         // Calculate the playtime of the game on this day
-        const playTime = calculateDailyPlayTime(dayDate, timers)
+        const playTime = calculateDailyPlayTime(dateStr, timers, dayBoundaryHour)
         dayTotal += playTime
 
         // Accumulate the total play time for each game
         gamePlayTime[gameId] = (gamePlayTime[gameId] || 0) + playTime
       }
 
-      dayTotal = capDailyPlayTime(dayTotal, dayDate)
+      dayTotal = capDailyPlayTime(dayTotal, dateStr)
 
       dailyPlayTime[dateStr] = dayTotal
       totalTime += dayTotal
@@ -198,10 +195,15 @@ export function getWeeklyPlayData(date = new Date()): {
         }
 
         // If the timer record does not overlap with the target range, it is skipped
-        if (end < weekStart || start >= weekEnd) continue
+        const startMs = start.getTime()
+        const endMs = end.getTime()
+        const weekStartMs = weekStart.getTime()
+        const weekEndMs = weekEndExclusive.getTime()
 
-        const clippedStart = start < weekStart ? weekStart : start
-        const clippedEnd = end > weekEnd ? weekEnd : end
+        if (endMs <= weekStartMs || startMs >= weekEndMs) continue
+
+        const clippedStart = new Date(Math.max(startMs, weekStartMs))
+        const clippedEnd = new Date(Math.min(endMs, weekEndMs))
 
         filteredTimers.push({
           start: clippedStart.toISOString(),
@@ -210,13 +212,9 @@ export function getWeeklyPlayData(date = new Date()): {
       }
 
       if (filteredTimers.length > 0) {
+        filteredTimers.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
         weeklyPlayTimers[gameId] = filteredTimers
       }
-
-      // Make sure it is sorted, don't care about other exceptions (overlap, empty time, ...)
-      weeklyPlayTimers[gameId].sort(
-        (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime()
-      )
     }
 
     // Get the most played games (in order of time)
@@ -255,17 +253,22 @@ export function getMonthlyPlayData(date = new Date()): {
   mostPlayedGames: { gameId: string; playTime: number }[]
 } {
   try {
-    // Calculation of beginning and end of month
-    const monthStart = new Date(date.getFullYear(), date.getMonth(), 1)
-    const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59, 999)
+    const dayBoundaryHour = getConfiguredDayBoundaryHour()
+    const selectedBusinessDateKey = getBusinessDateKey(date, dayBoundaryHour)
+    const selectedBusinessDate = parseLocalDate(selectedBusinessDateKey)
 
-    // Generate an array of dates for this month
-    const dates: string[] = []
-    const current = new Date(monthStart)
-    while (current <= monthEnd) {
-      dates.push(i18next.format(current, 'niceISO'))
-      current.setDate(current.getDate() + 1)
-    }
+    // Use business-date labels to determine month boundaries.
+    const monthStart = new Date(
+      selectedBusinessDate.getFullYear(),
+      selectedBusinessDate.getMonth(),
+      1
+    )
+    const monthEnd = new Date(
+      selectedBusinessDate.getFullYear(),
+      selectedBusinessDate.getMonth() + 1,
+      0
+    )
+    const dates = getDateKeysInRange(formatLocalDateKey(monthStart), formatLocalDateKey(monthEnd))
 
     // Calculate daily play time
     const dailyPlayTime: { [date: string]: number } = {}
@@ -279,7 +282,6 @@ export function getMonthlyPlayData(date = new Date()): {
 
     // Every day
     for (const dateStr of dates) {
-      // const dayDate = new Date(dateStr)
       const dayDate = parseLocalDate(dateStr)
       let dayTotal = 0
 
@@ -295,14 +297,14 @@ export function getMonthlyPlayData(date = new Date()): {
         const timers = store.getState().getValue('record.timers') || []
 
         // Calculate the playtime of the game on this day
-        const playTime = calculateDailyPlayTime(dayDate, timers)
+        const playTime = calculateDailyPlayTime(dateStr, timers, dayBoundaryHour)
         dayTotal += playTime
 
         // Accumulate the total play time for each game
         gamePlayTime[gameId] = (gamePlayTime[gameId] || 0) + playTime
       }
 
-      dayTotal = capDailyPlayTime(dayTotal, dayDate)
+      dayTotal = capDailyPlayTime(dayTotal, dateStr)
 
       dailyPlayTime[dateStr] = dayTotal
       dailyWeekNumber[dateStr] = weekOfMonth
@@ -366,13 +368,18 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
   }[]
 } {
   try {
-    // Calculate the beginning and end of the year
-    const yearStart = new Date(year, 0, 1)
-    const yearEnd = new Date(year, 11, 31, 23, 59, 59, 999)
+    const dayBoundaryHour = getConfiguredDayBoundaryHour()
+
+    // Year range in business-day timeline: [Jan 1st boundary, next Jan 1st boundary)
+    const yearStart = getBusinessDayStartFromKey(`${year}-01-01`, dayBoundaryHour)
+    const yearEndExclusive = getBusinessDayStartFromKey(`${year + 1}-01-01`, dayBoundaryHour)
+    const yearStartMs = yearStart.getTime()
+    const yearEndMs = yearEndExclusive.getTime()
 
     const monthlyPlayTime: { [month: number]: number } = {}
     const monthlyPlayDays: { [month: number]: Set<string> } = {}
     let totalTime = 0
+    let abnormalTimerCount = 0
     const gamePlayTime: { [gameId: string]: number } = {}
     const gameTypeTime: {
       [type: string]: { detail: { gameId: string; playTime: number }[]; summary: number }
@@ -404,10 +411,11 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
         const start = new Date(timer.start).getTime()
         const end = new Date(timer.end).getTime()
         if (isNaN(start) || isNaN(end)) continue
-        if (end < yearStart.getTime() || start > yearEnd.getTime()) continue
+        if (end <= yearStartMs || start >= yearEndMs) continue
 
-        const overlapStartY = Math.max(start, yearStart.getTime())
-        const overlapEndY = Math.min(end, yearEnd.getTime())
+        const overlapStartY = Math.max(start, yearStartMs)
+        const overlapEndY = Math.min(end, yearEndMs)
+        if (overlapEndY <= overlapStartY) continue
 
         // gamePlayTime accumulation
         gamePlayTime[gameId] = (gamePlayTime[gameId] || 0) + (overlapEndY - overlapStartY)
@@ -417,30 +425,29 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
           overlapEndY - overlapStartY
         gameTypeTime[gameType].summary += overlapEndY - overlapStartY
 
-        // iterate through each day in the overlap period
-        const currentDate = new Date(overlapStartY)
-        currentDate.setHours(0, 0, 0, 0)
-        const dayEnd = new Date(overlapEndY)
-        dayEnd.setHours(23, 59, 59, 999)
+        const daySegments = splitTimeRangeByBusinessDay(overlapStartY, overlapEndY, dayBoundaryHour)
+        if (daySegments.length === 0) {
+          abnormalTimerCount += 1
+        }
+        for (const segment of daySegments) {
+          const playTime = segment.endMs - segment.startMs
+          const month = parseLocalDate(segment.key).getMonth()
 
-        while (currentDate <= dayEnd) {
-          const playTime =
-            Math.min(currentDate.getTime() + ONE_DAY - 1, overlapEndY) -
-            Math.max(currentDate.getTime(), overlapStartY)
-
-          const dateStr = i18next.format(currentDate, 'niceISO')
-          const month = currentDate.getMonth()
-          monthlyPlayDays[month].add(dateStr)
+          monthlyPlayDays[month].add(segment.key)
           monthlyPlayTime[month] += playTime
           totalTime += playTime
-
-          currentDate.setDate(currentDate.getDate() + 1)
         }
       }
 
       if (gameTypeTime[gameType].detail[gameTypeTime[gameType].detail.length - 1].playTime === 0) {
         gameTypeTime[gameType].detail.pop()
       }
+    }
+
+    if (abnormalTimerCount > 0) {
+      console.warn(
+        `[getYearlyPlayData] Dropped ${abnormalTimerCount} abnormal timer range(s) while aggregating year ${year}.`
+      )
     }
 
     // Find the month with most play time

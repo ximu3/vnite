@@ -7,8 +7,17 @@ import {
 } from '@appTypes/models'
 import { jaroWinkler } from '@appUtils'
 import type { Get, Paths } from 'type-fest'
-import { capDailyPlayTime, formatLocalDateKey, parseLocalDate } from '~/stores/game/recordUtils'
+import { capDailyPlayTime } from '~/stores/game/recordUtils'
 import { useConfigStore } from '../config'
+import {
+  getBusinessDateKey,
+  getBusinessDateKeyFromRangeEnd,
+  getBusinessDayStartFromKey,
+  getConfiguredDayBoundaryHour,
+  getDateKeysInRange,
+  getNextBusinessDayStartFromKey,
+  splitTimeRangeByBusinessDay
+} from './dayBoundaryUtils'
 import { getGameLocalStore } from './gameLocalStoreFactory'
 import { useGamePathStore } from './gamePathStore'
 import { useGameRegistry } from './gameRegistry'
@@ -710,42 +719,43 @@ export function getGamePlayTimeByDateRange(
     const timers = store.getState().getValue('record.timers')
     if (!timers || timers.length === 0) return {}
 
-    const start = parseLocalDate(startDate)
-    const end = parseLocalDate(endDate)
-    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+    const dayBoundaryHour = getConfiguredDayBoundaryHour()
+    const rangeStart = getBusinessDayStartFromKey(startDate, dayBoundaryHour).getTime()
+    const rangeEnd = getNextBusinessDayStartFromKey(endDate, dayBoundaryHour).getTime()
+
+    if (!Number.isFinite(rangeStart) || !Number.isFinite(rangeEnd) || rangeEnd <= rangeStart) {
       console.error(`Invalid date range: ${startDate} to ${endDate}`)
       return {}
     }
 
     const dailyPlayTime: Record<string, number> = {}
+    let abnormalTimerCount = 0
 
     for (const t of timers) {
       const timerStart = new Date(t.start)
       const timerEnd = new Date(t.end)
+      const timerStartMs = timerStart.getTime()
+      const timerEndMs = timerEnd.getTime()
+      if (isNaN(timerStartMs) || isNaN(timerEndMs)) continue
 
-      const overlapStart = Math.max(timerStart.getTime(), start.getTime())
-      const overlapEnd = Math.min(timerEnd.getTime(), end.getTime())
+      const overlapStart = Math.max(timerStartMs, rangeStart)
+      const overlapEnd = Math.min(timerEndMs, rangeEnd)
       if (overlapEnd <= overlapStart) continue
 
-      const current = new Date(overlapStart)
-      current.setHours(0, 0, 0, 0)
-      const lastDay = new Date(overlapEnd)
-      lastDay.setHours(0, 0, 0, 0)
-
-      while (current <= lastDay) {
-        const dayStart = new Date(current)
-        const dayEnd = new Date(current)
-        dayEnd.setHours(23, 59, 59, 999)
-
-        const dayOverlapStart = Math.max(overlapStart, dayStart.getTime())
-        const dayOverlapEnd = Math.min(overlapEnd, dayEnd.getTime())
-        const playTime = Math.max(0, dayOverlapEnd - dayOverlapStart)
-
-        const key = formatLocalDateKey(current)
-        dailyPlayTime[key] = (dailyPlayTime[key] || 0) + playTime
-
-        current.setDate(current.getDate() + 1)
+      const daySegments = splitTimeRangeByBusinessDay(overlapStart, overlapEnd, dayBoundaryHour)
+      if (daySegments.length === 0) {
+        abnormalTimerCount += 1
       }
+      for (const segment of daySegments) {
+        const playTime = segment.endMs - segment.startMs
+        dailyPlayTime[segment.key] = (dailyPlayTime[segment.key] || 0) + playTime
+      }
+    }
+
+    if (abnormalTimerCount > 0) {
+      console.warn(
+        `[getGamePlayTimeByDateRange] Dropped ${abnormalTimerCount} abnormal timer range(s) for game ${gameId}.`
+      )
     }
 
     return dailyPlayTime
@@ -762,33 +772,34 @@ export function getGamePlayedDates(gameId: string): Set<string> {
   try {
     const store = getGameStore(gameId)
     const timers = store.getState().getValue('record.timers')
+    const dayBoundaryHour = getConfiguredDayBoundaryHour()
+    let abnormalTimerCount = 0
 
     if (!timers || timers.length === 0) {
       return playDays
     }
 
     timers.forEach((timer) => {
-      // Convert to time in the user's local time zone
-      const start = new Date(timer.start)
-      const end = new Date(timer.end)
+      const startMs = new Date(timer.start).getTime()
+      const endMs = new Date(timer.end).getTime()
+      if (isNaN(startMs) || isNaN(endMs) || endMs <= startMs) {
+        return
+      }
 
-      // Get a date string in the local time zone
-      const startDay = start.toLocaleDateString()
-      const endDay = end.toLocaleDateString()
-
-      if (startDay === endDay) {
-        playDays.add(startDay)
-      } else {
-        const current = new Date(start)
-        // Set to the start time of the day (local time zone)
-        current.setHours(0, 0, 0, 0)
-
-        while (current <= end) {
-          playDays.add(current.toLocaleDateString())
-          current.setDate(current.getDate() + 1)
-        }
+      const daySegments = splitTimeRangeByBusinessDay(startMs, endMs, dayBoundaryHour)
+      if (daySegments.length === 0) {
+        abnormalTimerCount += 1
+      }
+      for (const segment of daySegments) {
+        playDays.add(segment.key)
       }
     })
+
+    if (abnormalTimerCount > 0) {
+      console.warn(
+        `[getGamePlayedDates] Dropped ${abnormalTimerCount} abnormal timer range(s) for game ${gameId}.`
+      )
+    }
   } catch (error) {
     console.error(`Error in getGamePlayedDates for ${gameId}:`, error)
   }
@@ -806,33 +817,33 @@ export function getGameMaxPlayTimeDay(gameId: string): MaxPlayTimeDay | null {
   try {
     const store = getGameStore(gameId)
     const timers = store.getState().getValue('record.timers')
+    const dayBoundaryHour = getConfiguredDayBoundaryHour()
     if (!timers || timers.length === 0) return null
 
     const dailyPlayTime: Record<string, number> = {}
+    let abnormalTimerCount = 0
 
     for (const t of timers) {
       const start = new Date(t.start)
       const end = new Date(t.end)
+      const startMs = start.getTime()
+      const endMs = end.getTime()
+      if (isNaN(startMs) || isNaN(endMs) || endMs <= startMs) continue
 
-      const current = new Date(start)
-      current.setHours(0, 0, 0, 0)
-      const lastDay = new Date(end)
-      lastDay.setHours(0, 0, 0, 0)
-
-      while (current <= lastDay) {
-        const dayStart = new Date(current)
-        const dayEnd = new Date(current)
-        dayEnd.setHours(23, 59, 59, 999)
-
-        const overlapStart = Math.max(start.getTime(), dayStart.getTime())
-        const overlapEnd = Math.min(end.getTime(), dayEnd.getTime())
-        const playTime = Math.max(0, overlapEnd - overlapStart)
-
-        const key = formatLocalDateKey(current)
-        dailyPlayTime[key] = (dailyPlayTime[key] || 0) + playTime
-
-        current.setDate(current.getDate() + 1)
+      const daySegments = splitTimeRangeByBusinessDay(startMs, endMs, dayBoundaryHour)
+      if (daySegments.length === 0) {
+        abnormalTimerCount += 1
       }
+      for (const segment of daySegments) {
+        const playTime = segment.endMs - segment.startMs
+        dailyPlayTime[segment.key] = (dailyPlayTime[segment.key] || 0) + playTime
+      }
+    }
+
+    if (abnormalTimerCount > 0) {
+      console.warn(
+        `[getGameMaxPlayTimeDay] Dropped ${abnormalTimerCount} abnormal timer range(s) for game ${gameId}.`
+      )
     }
 
     let maxDate = ''
@@ -884,16 +895,10 @@ export function getGameStartAndEndDate(gameId: string): { start: string; end: st
   try {
     const store = getGameStore(gameId)
     const timers = store.getState().getValue('record.timers')
+    const dayBoundaryHour = getConfiguredDayBoundaryHour()
 
     if (!timers || timers.length === 0) {
       return { start: '', end: '' }
-    }
-
-    const formatDate = (date: Date): string => {
-      const year = date.getFullYear()
-      const month = String(date.getMonth() + 1).padStart(2, '0')
-      const day = String(date.getDate()).padStart(2, '0')
-      return `${year}-${month}-${day}`
     }
 
     const startTimestamps = timers.map((t) => Date.parse(t.start)).filter((ts) => !isNaN(ts))
@@ -903,12 +908,12 @@ export function getGameStartAndEndDate(gameId: string): { start: string; end: st
       return { start: '', end: '' }
     }
 
-    const start = new Date(Math.min(...startTimestamps))
-    const end = new Date(Math.max(...endTimestamps))
+    const start = Math.min(...startTimestamps)
+    const end = Math.max(...endTimestamps)
 
     return {
-      start: formatDate(start),
-      end: formatDate(end)
+      start: getBusinessDateKey(start, dayBoundaryHour),
+      end: getBusinessDateKeyFromRangeEnd(end, dayBoundaryHour)
     }
   } catch (error) {
     console.error(`Error in getGameStartAndEndDate for ${gameId}:`, error)
@@ -940,26 +945,23 @@ export function getSortedGameIds(order: 'asc' | 'desc' = 'asc'): string[] {
 
 // Get annual play days
 export function getPlayedDaysYearly(): { [date: string]: number } {
-  const ONE_DAY = 24 * 60 * 60 * 1000
   try {
     const { gameIds } = useGameRegistry.getState()
+    const dayBoundaryHour = getConfiguredDayBoundaryHour()
 
     const oneYearAgo = new Date()
     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1)
     const windowStart = oneYearAgo.getTime()
     const windowEnd = Date.now()
+    if (windowEnd <= windowStart) return {}
 
     const result: { [date: string]: number } = {}
-    const startDay = new Date(windowStart)
-    startDay.setHours(0, 0, 0, 0)
-    const endDay = new Date(windowEnd)
-    endDay.setHours(0, 0, 0, 0)
-    let d = startDay.getTime()
-    while (d <= endDay.getTime()) {
-      const dateStr = new Date(d).toLocaleDateString('en-CA')
+    const startKey = getBusinessDateKey(windowStart, dayBoundaryHour)
+    const endKey = getBusinessDateKeyFromRangeEnd(windowEnd, dayBoundaryHour)
+    for (const dateStr of getDateKeysInRange(startKey, endKey)) {
       result[dateStr] = 0
-      d += ONE_DAY
     }
+    let abnormalTimerCount = 0
 
     for (const gameId of gameIds) {
       const store = getGameStore(gameId)
@@ -975,25 +977,24 @@ export function getPlayedDaysYearly(): { [date: string]: number } {
 
         const overlapStart = Math.max(start, windowStart)
         const overlapEnd = Math.min(end, windowEnd)
+        if (overlapEnd <= overlapStart) continue
 
-        const dayStart = new Date(overlapStart)
-        dayStart.setHours(0, 0, 0, 0)
-        const dayEnd = new Date(overlapEnd)
-        dayEnd.setHours(23, 59, 59, 999)
+        const daySegments = splitTimeRangeByBusinessDay(overlapStart, overlapEnd, dayBoundaryHour)
+        if (daySegments.length === 0) {
+          abnormalTimerCount += 1
+        }
 
-        let currentDay = dayStart.getTime()
-        const endDay = dayEnd.getTime()
-
-        while (currentDay <= endDay) {
-          const playTime =
-            Math.min(currentDay + ONE_DAY - 1, overlapEnd) - Math.max(currentDay, overlapStart)
-
-          const dateStr = new Date(currentDay).toLocaleDateString('en-CA')
-          result[dateStr] = (result[dateStr] || 0) + playTime
-
-          currentDay += ONE_DAY
+        for (const segment of daySegments) {
+          const playTime = segment.endMs - segment.startMs
+          result[segment.key] = (result[segment.key] || 0) + playTime
         }
       }
+    }
+
+    if (abnormalTimerCount > 0) {
+      console.warn(
+        `[getPlayedDaysYearly] Dropped ${abnormalTimerCount} abnormal timer range(s) while aggregating yearly play days.`
+      )
     }
 
     for (const dateStr in result) {

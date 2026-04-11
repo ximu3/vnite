@@ -157,6 +157,22 @@ export function General(): React.JSX.Element {
               />
             </div>
           </div>
+
+          {/* Record Statistics Settings */}
+          <div className={cn('space-y-4')}>
+            <div className={cn('border-b pb-2')}>{t('general.statisticsTitle')}</div>
+            <ConfigItem
+              hookType="config"
+              path="record.dayBoundaryHour"
+              title={t('general.dayBoundaryHour.title')}
+              description={t('general.dayBoundaryHour.description')}
+              controlType="slider"
+              min={0}
+              max={23}
+              step={1}
+              formatValue={(value) => `${value}:00`}
+            />
+          </div>
         </div>
       </CardContent>
     </Card>

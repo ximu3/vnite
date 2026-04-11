@@ -13,7 +13,12 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from 'recharts'
 import { useConfigState } from '~/hooks'
-import { getMonthlyPlayData, parseLocalDate } from '~/stores/game/recordUtils'
+import {
+  getBusinessDateKey,
+  getConfiguredDayBoundaryHour,
+  parseLocalDate
+} from '~/stores/game/dayBoundaryUtils'
+import { getMonthlyPlayData } from '~/stores/game/recordUtils'
 import { cn } from '~/utils'
 import { GameRankingItem } from './GameRankingItem'
 import { StatCard } from './StatCard'
@@ -23,46 +28,54 @@ export function MonthlyReport(): React.JSX.Element {
   const [useAlternateColor, setUseAlternateColor] = useConfigState(
     'record.monthly.useAlternateColor'
   )
+  const dayBoundaryHour = getConfiguredDayBoundaryHour()
 
   const [showMoreTimeGames, setShowMoreTimeGames] = useState(false)
 
   const router = useRouter()
   const search = useSearch({ from: '/record' })
   const selectedDate = new Date(search.date)
+  const selectedBusinessDateKey = getBusinessDateKey(selectedDate, dayBoundaryHour)
+  const selectedBusinessDate = parseLocalDate(selectedBusinessDateKey)
 
-  const setSelectedDate = (newDate: Date): void => {
+  const setSelectedDate = (newDate: Date, businessYear: string): void => {
     router.navigate({
       to: '/record',
       search: {
         tab: 'monthly',
         date: newDate.toISOString(),
-        year: newDate.getFullYear().toString()
+        year: businessYear
       }
     })
   }
   const handleBarClick = (payload: (typeof dailyChartData)[number]): void => {
     const { date } = payload
-    const dateUTC = parseLocalDate(date) // YYYY-MM-DD
-    const isoDate = dateUTC.toISOString()
+    const queryDate = parseLocalDate(date)
+    queryDate.setHours(23, 59, 59, 999)
+    const isoDate = queryDate.toISOString()
+    const businessYear = getBusinessDateKey(queryDate, dayBoundaryHour).slice(0, 4)
 
     router.navigate({
       to: '/record',
       search: {
         tab: 'weekly',
         date: isoDate,
-        year: dateUTC.getFullYear().toString()
+        year: businessYear
       }
     })
   }
   const handleDayClick = (day: Date): void => {
-    const isoDate = day.toISOString()
+    const queryDate = new Date(day)
+    queryDate.setHours(23, 59, 59, 999)
+    const isoDate = queryDate.toISOString()
+    const businessYear = getBusinessDateKey(queryDate, dayBoundaryHour).slice(0, 4)
 
     router.navigate({
       to: '/record',
       search: {
         tab: 'weekly',
         date: isoDate,
-        year: day.getFullYear().toString()
+        year: businessYear
       }
     })
   }
@@ -70,16 +83,26 @@ export function MonthlyReport(): React.JSX.Element {
   // const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const monthData = getMonthlyPlayData(selectedDate)
 
+  const getTargetMonthDate = (offset: number): Date => {
+    const targetMonth = new Date(
+      selectedBusinessDate.getFullYear(),
+      selectedBusinessDate.getMonth() + offset,
+      1
+    )
+    targetMonth.setHours(23, 59, 59, 999)
+    return targetMonth
+  }
+
   const goToPreviousMonth = (): void => {
-    const prevMonth = new Date(selectedDate)
-    prevMonth.setMonth(selectedDate.getMonth() - 1)
-    setSelectedDate(prevMonth)
+    const prevMonth = getTargetMonthDate(-1)
+    const businessYear = getBusinessDateKey(prevMonth, dayBoundaryHour).slice(0, 4)
+    setSelectedDate(prevMonth, businessYear)
   }
 
   const goToNextMonth = (): void => {
-    const nextMonth = new Date(selectedDate)
-    nextMonth.setMonth(selectedDate.getMonth() + 1)
-    setSelectedDate(nextMonth)
+    const nextMonth = getTargetMonthDate(1)
+    const businessYear = getBusinessDateKey(nextMonth, dayBoundaryHour).slice(0, 4)
+    setSelectedDate(nextMonth, businessYear)
   }
 
   useEffect(() => {
@@ -118,7 +141,7 @@ export function MonthlyReport(): React.JSX.Element {
     return t(monthKeys[monthIndex])
   }
 
-  const currentMonthName = getLocalizedMonth(selectedDate.getMonth())
+  const currentMonthName = getLocalizedMonth(selectedBusinessDate.getMonth())
 
   // Data for charts, not weekly but daily
   const dailyChartData = Object.entries(monthData.dailyPlayTime).map(([date, playTime]) => ({
@@ -186,8 +209,8 @@ export function MonthlyReport(): React.JSX.Element {
   } | null = null
   if (mostPlayedWeek) {
     mostPlayedWeekDateRange = getWeekDateRange(
-      selectedDate.getFullYear(),
-      selectedDate.getMonth(),
+      selectedBusinessDate.getFullYear(),
+      selectedBusinessDate.getMonth(),
       mostPlayedWeek.weekNumber
     )
   }
@@ -241,15 +264,16 @@ export function MonthlyReport(): React.JSX.Element {
             <ChevronLeft className="w-4 h-4" />
           </Button>
           <div className="text-sm font-medium">
-            {t('monthly.yearMonth', { year: selectedDate.getFullYear(), month: currentMonthName })}
+            {t('monthly.yearMonth', {
+              year: selectedBusinessDate.getFullYear(),
+              month: currentMonthName
+            })}
           </div>
           <Button
             variant="outline"
             size="icon"
             onClick={goToNextMonth}
-            disabled={
-              new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0) > new Date()
-            }
+            disabled={getTargetMonthDate(1).getTime() > Date.now()}
           >
             <ChevronRight className="w-4 h-4" />
           </Button>
@@ -276,7 +300,7 @@ export function MonthlyReport(): React.JSX.Element {
           title={t('monthly.stats.mostPlayedDay')}
           value={
             monthData.mostPlayedDay
-              ? t('utils:format.niceDate', { date: new Date(monthData.mostPlayedDay.date) })
+              ? t('utils:format.niceDate', { date: parseLocalDate(monthData.mostPlayedDay.date) })
               : t('monthly.unit.noRecord')
           }
           description={
@@ -349,8 +373,12 @@ export function MonthlyReport(): React.JSX.Element {
           <CardContent>
             <Calendar
               mode="single"
-              month={selectedDate} // Controls the displayed month
-              onMonthChange={(date) => setSelectedDate(date)}
+              month={selectedBusinessDate}
+              onMonthChange={(date) => {
+                const queryDate = new Date(date.getFullYear(), date.getMonth(), 1, 23, 59, 59, 999)
+                const businessYear = getBusinessDateKey(queryDate, dayBoundaryHour).slice(0, 4)
+                setSelectedDate(queryDate, businessYear)
+              }}
               onDayClick={handleDayClick}
               className="p-0 rounded-md select-none"
               classNames={{

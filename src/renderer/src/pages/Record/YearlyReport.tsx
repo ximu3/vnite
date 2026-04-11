@@ -24,6 +24,7 @@ import {
 } from 'recharts'
 import type { ValueType } from 'recharts/types/component/DefaultTooltipContent'
 import { useConfigState } from '~/hooks'
+import { getBusinessDateKey, getConfiguredDayBoundaryHour } from '~/stores/game/dayBoundaryUtils'
 import { getYearlyPlayData } from '~/stores/game/recordUtils'
 import { GameRankingItem } from './GameRankingItem'
 import { StatCard } from './StatCard'
@@ -33,6 +34,7 @@ export function YearlyReport(): React.JSX.Element {
   const [hideLowPercentType, setHideLowPercentType] = useConfigState(
     'record.yearly.hideLowPercentType'
   )
+  const dayBoundaryHour = getConfiguredDayBoundaryHour()
 
   const [showGameTypeDetail, setShowGameTypeDetail] = useState(false)
   const [showMoreTimeGames, setShowMoreTimeGames] = useState(false)
@@ -41,12 +43,17 @@ export function YearlyReport(): React.JSX.Element {
   const router = useRouter()
   const search = useSearch({ from: '/record' })
   const selectedYear = Number(search.year)
+  const parsedBusinessYear = Number(getBusinessDateKey(new Date(), dayBoundaryHour).slice(0, 4))
+  const currentBusinessYear = Number.isFinite(parsedBusinessYear)
+    ? parsedBusinessYear
+    : new Date().getFullYear()
 
   const setSelectedYear = (newYear: number): void => {
     router.navigate({
       to: '/record',
       search: {
-        ...search,
+        tab: 'yearly',
+        date: search.date,
         year: newYear.toString()
       }
     })
@@ -55,30 +62,30 @@ export function YearlyReport(): React.JSX.Element {
   const handleBarClick = (data: any): void => {
     type MonthlyChartItem = (typeof monthlyChartData)[number]
     const { originalMonth } = data.payload as MonthlyChartItem
-    const dateUTC = new Date(Date.UTC(selectedYear, originalMonth, 2, 0, 0, 0, 0)) // to avoid timezone issues
-    const isoDate = dateUTC.toISOString()
+    const queryDate = new Date(selectedYear, originalMonth, 1, 23, 59, 59, 999)
+    const businessYear = getBusinessDateKey(queryDate, dayBoundaryHour).slice(0, 4)
 
     router.navigate({
       to: '/record',
       search: {
         tab: 'monthly',
-        date: isoDate,
-        year: dateUTC.getFullYear().toString()
+        date: queryDate.toISOString(),
+        year: businessYear
       }
     })
   }
   const handleDotClick = (data: any): void => {
     type MonthlyChartItem = (typeof monthlyDaysChartData)[number]
     const { originalMonth } = data.payload as MonthlyChartItem
-    const dateUTC = new Date(Date.UTC(selectedYear, originalMonth, 2, 0, 0, 0, 0))
-    const isoDate = dateUTC.toISOString()
+    const queryDate = new Date(selectedYear, originalMonth, 1, 23, 59, 59, 999)
+    const businessYear = getBusinessDateKey(queryDate, dayBoundaryHour).slice(0, 4)
 
     router.navigate({
       to: '/record',
       search: {
         tab: 'monthly',
-        date: isoDate,
-        year: search.year
+        date: queryDate.toISOString(),
+        year: businessYear
       }
     })
   }
@@ -198,7 +205,7 @@ export function YearlyReport(): React.JSX.Element {
             variant="outline"
             size="icon"
             onClick={goToNextYear}
-            disabled={selectedYear >= new Date().getFullYear()}
+            disabled={selectedYear >= currentBusinessYear}
           >
             <ChevronRight className="w-4 h-4" />
           </Button>

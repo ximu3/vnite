@@ -26,6 +26,11 @@
     "foregroundWaitTime": {
       "title": "Wait Time",
       "description": "Pause/resume timer after the game has been running in background/foreground for this duration (second)\nCannnot be changed while games are running"
+    },
+    "statisticsTitle": "Statistics",
+    "dayBoundaryHour": {
+      "title": "Day Boundary",
+      "description": "Daily stats are split at this time. If set to 4:00, 0:00-3:59 counts as the previous day."
     }
   },
   "appearances": {

@@ -26,6 +26,12 @@ import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
 import { useConfigState } from '~/hooks'
 import { useConfigStore } from '~/stores/config'
 import { getGameStore } from '~/stores/game'
+import {
+  getBusinessDateKey,
+  getBusinessDayStartFromKey,
+  getConfiguredDayBoundaryHour,
+  getNextBusinessDayStartFromKey
+} from '~/stores/game/dayBoundaryUtils'
 import { getWeeklyPlayData, parseLocalDate } from '~/stores/game/recordUtils'
 import { scrollToElement } from '~/utils'
 import { MergeIntervalSliderPopover } from './Config/MergeIntervalSliderPopover'
@@ -58,7 +64,7 @@ function stringToBase64(str: string): string {
 function buildTimeLineChartData(
   weekData: ReturnType<typeof getWeeklyPlayData>,
   weekStartTime: number,
-  nextWeekStart: Date,
+  nextWeekStartTime: number,
   mergeMaxDurationMin: number // min
 ): TimeLineRow[] {
   const maxGapMs = mergeMaxDurationMin * 60 * 1000
@@ -128,7 +134,7 @@ function buildTimeLineChartData(
       accumulated += offset + duration
     })
 
-    row.endOffset = nextWeekStart.getTime() - weekStartTime - accumulated
+    row.endOffset = nextWeekStartTime - weekStartTime - accumulated
     return row
   })
 }
@@ -138,19 +144,20 @@ export function WeeklyReport(): React.JSX.Element {
 
   const [showMoreTimeGames, setShowMoreTimeGames] = useState(false)
   const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
+  const dayBoundaryHour = getConfiguredDayBoundaryHour()
 
   const router = useRouter()
   const search = useSearch({ from: '/record' })
   const selectedDate = new Date(search.date)
   const dateTs = selectedDate.getTime()
 
-  const setSelectedDate = (newDate: Date): void => {
+  const setSelectedDate = (newDate: Date, businessYear: string): void => {
     router.navigate({
       to: '/record',
       search: {
         tab: 'weekly',
         date: newDate.toISOString(),
-        year: newDate.getFullYear().toString()
+        year: businessYear
       }
     })
   }
@@ -158,15 +165,17 @@ export function WeeklyReport(): React.JSX.Element {
   const weekData = useMemo(() => getWeeklyPlayData(selectedDate), [dateTs])
 
   const goToPreviousWeek = (): void => {
-    const prevWeek = new Date(selectedDate)
-    prevWeek.setDate(selectedDate.getDate() - 7)
-    setSelectedDate(prevWeek)
+    const prevWeek = new Date(dateTs)
+    prevWeek.setDate(prevWeek.getDate() - 7)
+    const businessYear = getBusinessDateKey(prevWeek, dayBoundaryHour).slice(0, 4)
+    setSelectedDate(prevWeek, businessYear)
   }
 
   const goToNextWeek = (): void => {
-    const nextWeek = new Date(selectedDate)
-    nextWeek.setDate(selectedDate.getDate() + 7)
-    setSelectedDate(nextWeek)
+    const nextWeek = new Date(dateTs)
+    nextWeek.setDate(nextWeek.getDate() + 7)
+    const businessYear = getBusinessDateKey(nextWeek, dayBoundaryHour).slice(0, 4)
+    setSelectedDate(nextWeek, businessYear)
   }
 
   useEffect(() => {
@@ -201,15 +210,17 @@ export function WeeklyReport(): React.JSX.Element {
   }
 
   // Formatting weekly date ranges
-  const weekStart = parseLocalDate(weekData.dates[0])
-  const weekEnd = parseLocalDate(weekData.dates[weekData.dates.length - 1])
-  const nextWeekStart = new Date(weekEnd)
-  nextWeekStart.setDate(weekEnd.getDate() + 1)
+  const weekStartKey = weekData.dates[0] ?? getBusinessDateKey(selectedDate, dayBoundaryHour)
+  const weekEndKey = weekData.dates[weekData.dates.length - 1] ?? weekStartKey
+  const weekStart = parseLocalDate(weekStartKey)
+  const weekEnd = parseLocalDate(weekEndKey)
+  const nextWeekStart = getNextBusinessDayStartFromKey(weekEndKey, dayBoundaryHour)
   const weekRange = t('weekly.dateRange', {
     startDate: weekStart,
     endDate: weekEnd
   })
-  const weekStartTime = weekStart.getTime()
+  const weekStartTime = getBusinessDayStartFromKey(weekStartKey, dayBoundaryHour).getTime()
+  const nextWeekStartTime = nextWeekStart.getTime()
 
   const getLocalizedWeekday = (dayIndex: number): string => {
     const weekdayKeys = [
@@ -238,7 +249,7 @@ export function WeeklyReport(): React.JSX.Element {
   }, [dateTs])
   const [mergeInterval, setMergeInterval] = useConfigState('record.weekly.mergeInterval')
   const timeLineChartDataFlat = useMemo(() => {
-    return buildTimeLineChartData(weekData, weekStartTime, nextWeekStart, mergeInterval)
+    return buildTimeLineChartData(weekData, weekStartTime, nextWeekStartTime, mergeInterval)
   }, [dateTs, mergeInterval, nsfwBlurLevel])
 
   const handleSliderCommit = useCallback(
@@ -256,7 +267,7 @@ export function WeeklyReport(): React.JSX.Element {
 
   const twelveHours = 12 * 60 * 60 * 1000
   const xTicks: number[] = []
-  for (let t = 0; t <= nextWeekStart.getTime() - weekStartTime; t += twelveHours) {
+  for (let t = 0; t <= nextWeekStartTime - weekStartTime; t += twelveHours) {
     xTicks.push(t)
   }
 
@@ -285,7 +296,7 @@ export function WeeklyReport(): React.JSX.Element {
             variant="outline"
             size="icon"
             onClick={goToNextWeek}
-            disabled={new Date(nextWeekStart) > new Date()}
+            disabled={nextWeekStartTime > Date.now()}
           >
             <ChevronRight className="w-4 h-4" />
           </Button>
@@ -368,10 +379,12 @@ export function WeeklyReport(): React.JSX.Element {
                     ticks={xTicks}
                     tickFormatter={(t) => {
                       const date = new Date(t + weekStartTime)
-                      const hours = String(date.getHours()).padStart(2, '0')
-                      const minutes = String(date.getMinutes()).padStart(2, '0')
+                      const hour = date.getHours()
+                      const minute = date.getMinutes()
+                      const hours = String(hour).padStart(2, '0')
+                      const minutes = String(minute).padStart(2, '0')
 
-                      if (hours === '00' && minutes === '00') {
+                      if (hour === dayBoundaryHour && minute === 0) {
                         const month = String(date.getMonth() + 1).padStart(2, '0')
                         const day = String(date.getDate()).padStart(2, '0')
                         return `${month}-${day}`
