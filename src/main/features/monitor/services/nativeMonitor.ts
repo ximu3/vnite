@@ -6,7 +6,6 @@ import { GameMonitor } from './monitor'
 import { ipcManager } from '~/core/ipc'
 import { Mutex } from 'async-mutex'
 import { GameTimerStatus, TimerStatus } from '@appTypes/models'
-import i18next from 'i18next'
 
 // A static monitor {gameId - GameMonitor} hash map that keeps a stub of all running
 // game processes, preventing GC from reclaiming memory.
@@ -25,15 +24,7 @@ const ProcessEventType = {
 // A path can be either a folder or a file depends on `launcher.mode`.
 // Normalization will be performed within the native module. We can simply hand over the path as it is.
 export async function setupNativeMonitor(): Promise<void> {
-  const allLocalGames = await GameDBManager.getAllGamesLocal()
-  const pathes: string[] = []
-  const ids: string[] = []
-  Object.values(allLocalGames).forEach((doc) => {
-    const mode = doc.launcher.mode
-    const path = doc.launcher[`${mode}Config`].monitorPath
-    pathes.push(path)
-    ids.push(doc._id)
-  })
+  const [ids, pathes] = await getAllLocalGamesPair()
   await native.startMonitoring(pathes, ids, processEventCallback)
 
   // Listen for game deletion to clean up monitor status
@@ -63,7 +54,7 @@ export async function processEventCallback(
   switch (arg.eventType) {
     // a known game process is started...
     case ProcessEventType.Creation: {
-      startPhantomMonitor(gameId, arg.fullPath, arg.pid)
+      await startPhantomMonitor(gameId, arg.fullPath, arg.pid)
       break
     }
     // a known game process is stopped...
@@ -83,16 +74,37 @@ export async function removeMonitorStub(gameId: string): Promise<void> {
 
 // Update known game list
 export async function updateKnownGames(): Promise<void> {
+  const [ids, pathes] = await getAllLocalGamesPair()
+  await native.replaceKnownGames(pathes, ids)
+}
+
+async function getAllLocalGamesPair(): Promise<[string[], string[]]> {
   const allLocalGames = await GameDBManager.getAllGamesLocal()
   const pathes: string[] = []
   const ids: string[] = []
-  Object.values(allLocalGames).forEach((doc) => {
-    const mode = doc.launcher.mode
-    const path = doc.launcher[`${mode}Config`].monitorPath
+  for (const doc of Object.values(allLocalGames)) {
+    if (!doc) {
+      log.warn('[Monitor] Detected an undefined local game doc, database may be corrupt')
+      continue
+    }
+    const mode = doc.launcher?.mode
+    if (!mode) {
+      log.warn(
+        `[Monitor] Detected an undefined local game launcher mode, database may be corrupt. Local doc id: ${doc._id}, path: ${doc?.path?.gamePath}`
+      )
+      continue
+    }
+    const path = doc.launcher[`${mode}Config`]?.monitorPath
+    if (!path) {
+      log.warn(
+        `[Monitor] Detected an undefined monitorPath. Local doc id: ${doc._id}, mode: ${mode}, game path: ${doc?.path?.gamePath}`
+      )
+      continue
+    }
     pathes.push(path)
     ids.push(doc._id)
-  })
-  await native.replaceKnownGames(pathes, ids)
+  }
+  return [ids, pathes]
 }
 
 async function stopPhantomMonitor(gameId: string, pid?: number): Promise<void> {
@@ -153,28 +165,6 @@ export async function startPhantomMonitor(
       )
       // immediately update process status for polling monitor
       await native.manualUpdateProcessStatus()
-      // if vnite is running under normal privilege while the game is running with elevated privilege,
-      // notify users vnite is not able to detect game process
-      if (path === undefined && !native.isElevatedPrivilege()) {
-        setTimeout(async () => {
-          const gameLocal = await GameDBManager.getGameLocal(gameId)
-          const mode = gameLocal.launcher.mode
-          const modeConfig = gameLocal.launcher[`${mode}Config`]
-          if (
-            !(await native.isRunning(modeConfig.monitorPath, modeConfig.monitorMode === 'folder'))
-          ) {
-            await mutex.runExclusive(async () => {
-              if (monitors.has(gameId)) {
-                native.sendSystemNotification(
-                  'vnite',
-                  i18next.t('system-notification:unableToDetectProcess'),
-                  i18next.t('system-notification:unableToDetectProcessDetail')
-                )
-              }
-            })
-          }
-        }, 5000)
-      }
     }
     await refreshTimerStatus()
   })
