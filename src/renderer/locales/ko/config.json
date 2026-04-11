@@ -88,6 +88,11 @@
       "name": "Magpie",
       "placeholder": "Magpie.exe의 경로를 입력하세요",
       "hotkeyLabel": "Magpie 스케일링 단축키"
+    },
+    "upscaler": {
+      "name": "waifu2x-ncnn-vulkan / realcugan-ncnn-vulkan / realesrgan-ncnn-vulkan",
+      "description": "게임 배경 이미지 초해상도 업스케일에 사용하는 도구입니다",
+      "placeholder": "업스케일러 경로를 입력하세요"
     }
   },
   "theme": {

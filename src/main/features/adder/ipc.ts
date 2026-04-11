@@ -21,17 +21,26 @@ export function setupAdderIPC(): void {
         dataSource,
         dataSourceId,
         backgroundUrl,
+        upscaleScale,
         dirPath,
         gamePath
       }: {
         dataSource: string
         dataSourceId: string
         backgroundUrl?: string
+        upscaleScale?: number
         dirPath?: string
         gamePath?: string
       }
     ) => {
-      await addGameToDB({ dataSource, dataSourceId, backgroundUrl, dirPath, gamePath })
+      await addGameToDB({
+        dataSource,
+        dataSourceId,
+        backgroundUrl,
+        upscaleScale,
+        dirPath,
+        gamePath
+      })
     }
   )
 
@@ -45,6 +54,7 @@ export function setupAdderIPC(): void {
         dataSourceId,
         fields,
         backgroundUrl,
+        upscaleScale,
         options
       }: {
         dbId: string
@@ -52,10 +62,19 @@ export function setupAdderIPC(): void {
         dataSourceId: string
         fields?: (GameMetadataField | GameMetadataUpdateMode)[]
         backgroundUrl?: string
+        upscaleScale?: number
         options?: GameMetadataUpdateOptions
       }
     ) => {
-      await updateGameMetadata({ dbId, dataSource, dataSourceId, fields, backgroundUrl, options })
+      await updateGameMetadata({
+        dbId,
+        dataSource,
+        dataSourceId,
+        fields,
+        backgroundUrl,
+        upscaleScale,
+        options
+      })
     }
   )
 
@@ -78,17 +97,26 @@ export function setupAdderIPC(): void {
         gameIds,
         dataSource,
         fields,
+        upscaleScale,
         options,
         concurrency
       }: {
         gameIds: string[]
         dataSource: string
         fields?: (GameMetadataField | GameMetadataUpdateMode)[]
+        upscaleScale?: number
         options?: GameMetadataUpdateOptions
         concurrency?: number
       }
     ) => {
-      await batchUpdateGameMetadata({ gameIds, dataSource, fields, options, concurrency })
+      await batchUpdateGameMetadata({
+        gameIds,
+        dataSource,
+        fields,
+        upscaleScale,
+        options,
+        concurrency
+      })
     }
   )
 }

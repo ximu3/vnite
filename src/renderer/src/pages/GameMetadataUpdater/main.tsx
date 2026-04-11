@@ -31,6 +31,7 @@ import { useConfigState } from '~/hooks'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { cn } from '~/utils'
 import { delay } from '@appUtils'
+import { UpscaleSelectField } from '~/components/utils/UpscaleSelect'
 
 export function GameMetadataUpdaterDialog(): React.JSX.Element {
   const {
@@ -38,6 +39,8 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
     gameIds,
     dataSourceId,
     backgroundUrl,
+    upscaleScale,
+    setUpscaleScale,
     handleClose,
     dataSource,
     setDataSource,
@@ -213,6 +216,7 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
         dataSourceId: dataSourceId!,
         fields: selectedFields,
         backgroundUrl,
+        upscaleScale,
         options
       }
 
@@ -261,6 +265,7 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
         gameIds,
         dataSource,
         fields: selectedFields,
+        upscaleScale,
         options,
         concurrency
       }
@@ -390,6 +395,13 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
                   </Select>
                 </div>
               </div>
+
+              {/* Upscale background option */}
+              <UpscaleSelectField
+                value={upscaleScale}
+                onValueChange={setUpscaleScale}
+                id="upscale-scale"
+              />
 
               {/* Concurrency settings in batch mode */}
               {isBatchMode && (

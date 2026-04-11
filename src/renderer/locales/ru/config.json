@@ -57,6 +57,11 @@
       "name": "Magpie",
       "placeholder": "Укажите путь к Magpie.exe",
       "hotkeyLabel": "Клавиша масштабирования Magpie"
+    },
+    "upscaler": {
+      "name": "waifu2x-ncnn-vulkan / realcugan-ncnn-vulkan / realesrgan-ncnn-vulkan",
+      "description": "Эти инструменты используются для суперразрешения фоновых изображений игр",
+      "placeholder": "Укажите путь к апскейлеру"
     }
   },
   "theme": {

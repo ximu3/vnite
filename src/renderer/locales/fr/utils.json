@@ -6,6 +6,10 @@
     "edit": "Modifier",
     "delete": "Supprimer"
   },
+  "upscale": {
+    "label": "Mise à l'échelle de l'image d'arrière-plan",
+    "noUpscale": "Aucune mise à l'échelle"
+  },
   "arrayEditor": {
     "clickPlusToAdd": "Cliquer sur + pour ajouter des éléments",
     "addElement": "Ajouter élément",
