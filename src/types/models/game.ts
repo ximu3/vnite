@@ -52,6 +52,7 @@ export interface gameDoc {
       }
     }
     maxBackups: number
+    autoRestoreSave: boolean
   }
   memory: {
     memoryList: {
@@ -111,7 +112,6 @@ export interface gameLocalDoc {
     mode: 'file' | 'url' | 'script'
     fileConfig: {
       path: string
-      workingDirectory: string
       args: string[]
       monitorMode: 'file' | 'folder' | 'process'
       monitorPath: string
@@ -146,7 +146,6 @@ export const DEFAULT_GAME_LOCAL_VALUES: Readonly<gameLocalDoc> = {
     mode: 'file',
     fileConfig: {
       path: '',
-      workingDirectory: '',
       args: [],
       monitorMode: 'folder',
       monitorPath: ''
@@ -215,7 +214,8 @@ export const DEFAULT_GAME_VALUES: Readonly<gameDoc> = {
   },
   save: {
     saveList: {},
-    maxBackups: 7
+    maxBackups: 7,
+    autoRestoreSave: false
   },
   memory: {
     memoryList: {}

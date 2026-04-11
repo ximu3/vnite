@@ -19,6 +19,7 @@ import React, { useCallback, useEffect, useImperativeHandle, useState } from 're
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { ipcManager } from '~/app/ipc'
+import { Switch } from '~/components/ui/switch'
 import { useGameLocalState, useGameState } from '~/hooks'
 import { cn } from '~/utils'
 
@@ -49,6 +50,7 @@ function PathComponent(
   const [isScreenshotPathValid, setIsScreenshotPathValid] = useState(true)
   const [screenshotPath, setScreenshotPath, saveScreenshotPath, setScreenshotPathAndSave] =
     useGameLocalState(gameId, 'path.screenshotPath', true)
+  const [autoRestoreSave, setAutoRestoreSave] = useGameState(gameId, 'save.autoRestoreSave')
 
   const [showSearchDialog, setShowSearchDialog] = useState(false)
   const [searchResults, setSearchResults] = useState<string[]>([])
@@ -342,6 +344,16 @@ function PathComponent(
                   </SelectGroup>
                 </SelectContent>
               </Select>
+            </div>
+          </div>
+
+          {/* Auto restore newest backup save */}
+          <div className={cn('flex flex-row gap-5 items-center justify-start text-sm')}>
+            <div className={cn('whitespace-nowrap select-none')}>
+              {t('detail.properties.path.autoRestoreSave')}
+            </div>
+            <div>
+              <Switch checked={autoRestoreSave} onCheckedChange={setAutoRestoreSave} />
             </div>
           </div>
         </div>

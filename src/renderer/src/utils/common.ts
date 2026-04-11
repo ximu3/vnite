@@ -222,17 +222,42 @@ export async function startGame(
     return
   }
 
+  const autoRestoreSave = getGameValue('save.autoRestoreSave')
+  if (autoRestoreSave) {
+    const saveList = getGameValue('save.saveList')
+    const latestSaveId = Object.entries(saveList).reduce(
+      (latest, [saveId, save]) => {
+        const ts = new Date(save.date).getTime()
+        if (Number.isNaN(ts)) return latest
+
+        if (!latest || ts > latest.ts) {
+          return { saveId, ts }
+        }
+        return latest
+      },
+      null as null | { saveId: string; ts: number }
+    )?.saveId
+
+    if (latestSaveId) {
+      const promise = ipcManager.invoke('game:restore-save', gameId, latestSaveId, true)
+
+      toast.promise(promise, {
+        loading: i18next.t('game:detail.save.notifications.switchLoading'),
+        success: i18next.t('game:detail.save.notifications.switchSuccess'),
+        error: (err) =>
+          i18next.t('game:detail.save.notifications.switchError', { message: err.message })
+      })
+
+      await promise.catch(() => {})
+    }
+  }
+
   const launcherMode = getGameLocalValue('launcher.mode')
 
   // Validating configurations against different modes
   if (launcherMode === 'file') {
     const launcherConfig = getGameLocalValue(`launcher.${launcherMode}Config`)
-    if (
-      launcherConfig.path &&
-      launcherConfig.workingDirectory &&
-      launcherConfig.monitorMode &&
-      launcherConfig.monitorPath
-    ) {
+    if (launcherConfig.path && launcherConfig.monitorMode && launcherConfig.monitorPath) {
       ipcManager.send('launcher:start-game', gameId)
       setRunningGames([...runningGames, gameId])
       if (getGameValue('record.playStatus') === 'unplayed') {

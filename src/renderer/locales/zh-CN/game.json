@@ -468,6 +468,7 @@
           "error": "搜索失败：{{message}}"
         },
         "maxBackups": "最大存档备份数量",
+        "autoRestoreSave": "启动时自动还原最新存档",
         "notifications": {
           "configuring": "正在配置预设…",
           "success": "预设配置成功"

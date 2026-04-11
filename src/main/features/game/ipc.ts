@@ -29,9 +29,12 @@ export function setupGameIPC(): void {
     await deleteGameSave(gameId, saveId)
   })
 
-  ipcManager.handle('game:restore-save', async (_, gameId: string, saveId: string) => {
-    await restoreGameSave(gameId, saveId)
-  })
+  ipcManager.handle(
+    'game:restore-save',
+    async (_, gameId: string, saveId: string, skipIfTargetNewer?: boolean) => {
+      await restoreGameSave(gameId, saveId, skipIfTargetNewer)
+    }
+  )
 
   ipcManager.handle('game:delete', async (_, gameId: string) => {
     await GameDBManager.removeGame(gameId)
