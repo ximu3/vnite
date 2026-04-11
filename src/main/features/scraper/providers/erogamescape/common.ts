@@ -9,7 +9,7 @@ import { getchuProvider } from '../getchu'
 import { vndbProvider } from '../vndb'
 import { fanzaProvider } from '../fanza'
 
-const esUrl = 'https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki'
+const esUrl = 'https://erogamescape.org/~ap2/ero/toukei_kaiseki'
 
 async function fetchFromEs(
   endpoint: string,
@@ -344,28 +344,40 @@ export async function getEsGameMetadata(identifier: ScraperIdentifier): Promise<
 }
 
 export async function getEsGameBackgrounds(identifier: ScraperIdentifier): Promise<string[]> {
+  const images: string[] = []
+
   const id = await ensureEsId(identifier)
   if (id === '') {
     return []
   }
-  let readable: Readable | null = null
-  const fetchBackgroundOrSkip = async (path: string): Promise<void> => {
-    if (readable) {
-      return
-    }
+
+  const fetchBackground = async (path: string): Promise<void> => {
     const [status, bodyStream] = await fetchFromEs(path, {
       game: id
     })
     if (status === 200) {
-      readable = bodyStream
+      await pipeToCheerio(bodyStream, ($, resolve) => {
+        $('div#images img').each((_, el) => {
+          let src = $(el).attr('src')
+          if (src) {
+            if (src.startsWith('//')) {
+              src = 'https:' + src
+            }
+            images.push(src)
+          }
+        })
+        resolve(images)
+      })
     } else if (status !== 404) {
       throw new Error(`HTTP error! status: ${status}`)
     }
   }
   // fetching order: FANZA > DLSite > VNDB
-  await fetchBackgroundOrSkip('/game_dmm.php')
-  await fetchBackgroundOrSkip('/game_dlsite.php')
-  if (!readable) {
+  await fetchBackground('/game_dmm.php')
+  await fetchBackground('/game_dlsite.php')
+
+  // fall back to use VNDB
+  if (images.length === 0) {
     if (!vndbProvider.getGameBackgrounds) {
       return []
     }
@@ -376,16 +388,8 @@ export async function getEsGameBackgrounds(identifier: ScraperIdentifier): Promi
       return await vndbProvider.getGameBackgrounds({ type: 'name', value: gameName })
     }
   }
-  return pipeToCheerio(readable, ($, resolve) => {
-    const images: string[] = []
-    $('div#images img').each((_, el) => {
-      const src = $(el).attr('src')
-      if (src) {
-        images.push(src)
-      }
-    })
-    resolve(images)
-  })
+
+  return images
 }
 
 export async function getEsGameCovers(identifier: ScraperIdentifier): Promise<string[]> {
