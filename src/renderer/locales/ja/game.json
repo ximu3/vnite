@@ -40,7 +40,8 @@
         "lastRunDate": "最終プレイ日",
         "addDate": "追加日",
         "playTime": "プレイ時間",
-        "score": "スコア"
+        "score": "スコア",
+        "storageSize": "ゲームサイズ"
       }
     },
     "playStatus": {
@@ -66,7 +67,12 @@
       "genres": "ジャンル",
       "platforms": "プラットフォーム",
       "tags": "タグ",
-      "extraInfo": "追加情報"
+      "extraInfo": "追加情報",
+      "storageSize": "ゲームサイズ",
+      "storageSizeMin": "最小",
+      "storageSizeMax": "最大",
+      "mib": "MiB",
+      "gib": "GiB"
     },
     "combobox": {
       "select": "{{placeholder}}を選択",
@@ -92,7 +98,8 @@
         "addDate": "追加日",
         "playTime": "プレイ時間",
         "score": "スコア",
-        "custom": "カスタム順序"
+        "custom": "カスタム順序",
+        "storageSize": "ゲームサイズ"
       }
     },
     "gameCard": {
@@ -304,7 +311,9 @@
         "lastRunDate": "最終プレイ日",
         "playStatus": "プレイ状況",
         "rating": "評価",
-        "neverRun": "プレイしたことがありません"
+        "neverRun": "プレイしたことがありません",
+        "storageSize": "ゲームサイズ",
+        "storageSizeEmpty": "未計算"
       }
     },
     "memory": {
@@ -364,11 +373,17 @@
       "downloadMetadata": "メタデータを更新",
       "createShortcut": "ショートカットを作成",
       "browseLocalFiles": "ローカルファイルを閲覧",
+      "calculateStorageSize": "ゲームサイズを計算",
       "delete": "削除",
       "notifications": {
         "shortcutCreated": "ショートカットを作成しました",
         "shortcutError": "ショートカットの作成でエラーが発生しました",
-        "gamePathNotSet": "ゲームパスが設定されていません"
+        "gamePathNotSet": "ゲームパスが設定されていません",
+        "calculatingStorageSize": "ゲームサイズを計算中...",
+        "storageSizeCalculated": "ゲームサイズを計算しました：{{size}}",
+        "storageSizeError": "ゲームサイズの計算に失敗しました",
+        "storageSizeConfirm": "ゲームサイズを計算しますか？少し時間がかかる場合があります。",
+        "storageSizeRecalculateConfirm": "現在のサイズ：{{currentSize}}。ゲームサイズを再計算しますか？"
       }
     },
     "timersEditor": {
@@ -610,7 +625,25 @@
       "delete": "削除",
       "cancel": "キャンセル",
       "selectAll": "すべて選択",
-      "selected": "{{count}}項目選択済み"
+      "selected": "{{count}}項目選択済み",
+      "calculateSize": "サイズを計算",
+      "calculatingSize": "計算中..."
+    },
+    "storageSize": {
+      "confirmTitle": "ゲームサイズを計算",
+      "confirmDescription": "ゲームサイズの計算には、ゲーム数やファイル数によって時間がかかる場合があります。計算中も他の操作を続けることができます。",
+      "calculateAll": "選択したすべてのゲームを計算",
+      "calculateUncached": "未計算のゲームのみ計算",
+      "uncachedCount": "{{count}}件未計算",
+      "cancel": "キャンセル",
+      "alreadyRunning": "ゲームサイズの計算が既に実行中です。完了するまでお待ちいただくか、先にキャンセルしてください。",
+      "cancelled": "計算がキャンセルされました",
+      "cancelling": "計算をキャンセル中...",
+      "notifications": {
+        "progress": "{{current}}/{{total}}: {{name}}",
+        "complete": "計算完了：{{success}}件成功、{{failed}}件失敗",
+        "error": "計算に失敗しました：{{message}}"
+      }
     },
     "selection": {
       "selectAll": "すべて選択",

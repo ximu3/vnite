@@ -6,11 +6,14 @@ import { useGameBatchEditorStore } from './store'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { InformationDialog } from './BatchGameNavCM/InformationDialog'
 import { DeleteGameAlert } from './BatchGameNavCM/DeleteGameAlert'
+import { CalculateStorageSizeDialog } from './BatchGameNavCM/CalculateStorageSizeDialog'
 import { useGameMetadataUpdaterStore } from '~/pages/GameMetadataUpdater'
 import { useEffect } from 'react'
 import { useGameRegistry } from '~/stores/game'
 import { useLocation } from '@tanstack/react-router'
 import { useGameCollectionStore } from '~/stores/game'
+import { useBatchStorageSizeStore } from '~/stores/batchStorageSizeStore'
+import { Loader2 } from 'lucide-react'
 
 export function FloatingButtons(): React.JSX.Element {
   const { t } = useTranslation('game')
@@ -19,6 +22,7 @@ export function FloatingButtons(): React.JSX.Element {
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = useState(false)
   const [isInformationDialogOpen, setIsInformationDialogOpen] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [showCalculateSizeDialog, setShowCalculateSizeDialog] = useState(false)
   const {
     setGameIds: setGameMetadataUpdaterGameIds,
     setIsOpen: setIsGameMetadataUpdaterDialogOpen
@@ -26,6 +30,7 @@ export function FloatingButtons(): React.JSX.Element {
   const allGameIds = useGameRegistry((state) => state.gameIds)
   const collections = useGameCollectionStore((state) => state.documents)
   const location = useLocation()
+  const { isRunning: isCalculationRunning, startCalculation } = useBatchStorageSizeStore()
 
   function selectAllGames(): void {
     let currentAllGameIds: string[] = []
@@ -57,6 +62,10 @@ export function FloatingButtons(): React.JSX.Element {
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isBatchMode, clearSelection])
+
+  const handleBatchCalculateStorageSize = async (gameIds: string[]): Promise<void> => {
+    await startCalculation(gameIds, t)
+  }
 
   return (
     <>
@@ -94,6 +103,26 @@ export function FloatingButtons(): React.JSX.Element {
           >
             <span className="icon-[mdi--database-edit-outline] w-4 h-4" />
             {t('batchEditor.floatingButtons.updateMetadata')}
+          </Button>
+          {/* Calculate Storage Size */}
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => setShowCalculateSizeDialog(true)}
+            disabled={selectedGameIds.length === 0 || isCalculationRunning}
+            className="flex items-center gap-1"
+          >
+            {isCalculationRunning ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                {t('batchEditor.floatingButtons.calculatingSize')}
+              </>
+            ) : (
+              <>
+                <span className="icon-[mdi--harddisk] w-4 h-4" />
+                {t('batchEditor.floatingButtons.calculateSize')}
+              </>
+            )}
           </Button>
           {/* Delete Game Alert */}
           <Button
@@ -152,6 +181,15 @@ export function FloatingButtons(): React.JSX.Element {
           gameIds={selectedGameIds}
           isOpen={showDeleteConfirm}
           setIsOpen={setShowDeleteConfirm}
+        />
+      )}
+
+      {showCalculateSizeDialog && (
+        <CalculateStorageSizeDialog
+          gameIds={selectedGameIds}
+          isOpen={showCalculateSizeDialog}
+          setIsOpen={setShowCalculateSizeDialog}
+          onConfirm={handleBatchCalculateStorageSize}
         />
       )}
     </>

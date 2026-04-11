@@ -59,6 +59,7 @@ export interface configDocs {
           | 'record.addDate'
           | 'record.playTime'
           | 'record.score'
+          | 'record.storageSize'
         order: 'asc' | 'desc'
       }
     }
@@ -72,6 +73,7 @@ export interface configDocs {
           | 'record.addDate'
           | 'record.playTime'
           | 'record.score'
+          | 'record.storageSize'
         order: 'asc' | 'desc'
       }
       overrideCollectionSort: boolean
@@ -211,6 +213,7 @@ export interface configDocs {
         }
       }[]
     }
+    autoCalculateStorageSize: boolean
   }
   memory: {
     image: {
@@ -441,7 +444,8 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
           }
         }
       ]
-    }
+    },
+    autoCalculateStorageSize: false
   },
   memory: {
     image: {

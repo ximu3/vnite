@@ -40,6 +40,7 @@ export interface gameDoc {
       start: string
       end: string
     }[]
+    storageSize: number
   }
   save: {
     saveList: {
@@ -89,6 +90,7 @@ export interface gameCollectionDoc {
     | 'record.lastRunDate'
     | 'record.addDate'
     | 'record.playTime'
+    | 'record.storageSize'
     | 'custom'
   sortOrder: 'asc' | 'desc'
   games: string[]
@@ -177,6 +179,11 @@ export const DEFAULT_GAME_COLLECTION_VALUES: Readonly<gameCollectionDoc> = {
   games: []
 } as const
 
+/**
+ * Storage size value indicating the size has not been calculated yet
+ */
+export const STORAGE_SIZE_NOT_CALCULATED = -1
+
 export const DEFAULT_GAME_VALUES: Readonly<gameDoc> = {
   _id: '',
   metadata: {
@@ -203,7 +210,8 @@ export const DEFAULT_GAME_VALUES: Readonly<gameDoc> = {
     score: -1,
     playTime: 0,
     playStatus: 'unplayed',
-    timers: []
+    timers: [],
+    storageSize: STORAGE_SIZE_NOT_CALCULATED
   },
   save: {
     saveList: {},

@@ -409,7 +409,12 @@
       "manage": "Manage Transformer Rules",
       "manageDescription": "Manage and configure metadata transformer",
       "manageButton": "Manage"
-    }
+    },
+    "storage": {
+      "title": "Storage"
+    },
+    "autoCalculateStorageSize": "Automatically calculate game size",
+    "autoCalculateStorageSizeDescription": "Automatically calculate the game folder size when adding games. For games with a large number of files, this may slow down the adding process."
   },
   "memory": {
     "title": "Memory",

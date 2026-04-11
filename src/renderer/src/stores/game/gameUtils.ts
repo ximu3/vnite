@@ -2,7 +2,8 @@ import {
   LocalGameFilterMode,
   NSFWFilterMode,
   type MaxPlayTimeDay,
-  type gameDoc
+  type gameDoc,
+  STORAGE_SIZE_NOT_CALCULATED
 } from '@appTypes/models'
 import { jaroWinkler } from '@appUtils'
 import type { Get, Paths } from 'type-fest'
@@ -332,6 +333,38 @@ export function filterGames(
                 console.error(`Date comparison error for ${gameId}:`, error)
                 matchesAllCriteria = false
                 break
+              }
+            } else if (
+              path === 'record.storageSize' &&
+              Array.isArray(values) &&
+              values.length > 0
+            ) {
+              // Storage size range filtering logic
+              const filterValue = values[0]
+              if (filterValue.startsWith('range:')) {
+                const parts = filterValue.split(':')
+                const minStr = parts[1] || ''
+                const maxStr = parts[2] || ''
+                const minBytes = minStr ? parseInt(minStr, 10) : 0
+                const maxBytes = maxStr ? parseInt(maxStr, 10) : Infinity
+
+                // Get storage size from record
+                const storageSize = store.getState().getValue('record.storageSize')
+
+                // Exclude games with uncalculated size or undefined
+                if (
+                  storageSize === STORAGE_SIZE_NOT_CALCULATED ||
+                  storageSize === undefined ||
+                  storageSize === null
+                ) {
+                  matchesAllCriteria = false
+                  break
+                }
+
+                if (storageSize < minBytes || storageSize > maxBytes) {
+                  matchesAllCriteria = false
+                  break
+                }
               }
             } else {
               // Other types of filtering logic
@@ -839,7 +872,8 @@ export function getGameRecord(gameId: string): gameDoc['record'] {
       score: 0,
       playTime: 0,
       playStatus: 'unplayed',
-      timers: []
+      timers: [],
+      storageSize: STORAGE_SIZE_NOT_CALCULATED
     }
   }
 }

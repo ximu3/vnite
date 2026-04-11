@@ -409,7 +409,12 @@
       "manage": "管理轉換規則",
       "manageDescription": "管理和配置元數據轉換器",
       "manageButton": "管理"
-    }
+    },
+    "storage": {
+      "title": "儲存"
+    },
+    "autoCalculateStorageSize": "自動計算遊戲大小",
+    "autoCalculateStorageSizeDescription": "新增遊戲時自動計算其儲存資料夾大小。對於包含大量檔案的遊戲，可能會降低新增速度。"
   },
   "memory": {
     "title": "回憶",

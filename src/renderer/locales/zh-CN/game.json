@@ -40,7 +40,8 @@
         "lastRunDate": "最后运行日期",
         "addDate": "添加日期",
         "playTime": "游玩时间",
-        "score": "评分"
+        "score": "评分",
+        "storageSize": "游戏大小"
       }
     },
     "playStatus": {
@@ -66,7 +67,12 @@
       "genres": "类别",
       "platforms": "平台",
       "tags": "标签",
-      "extraInfo": "附加信息"
+      "extraInfo": "附加信息",
+      "storageSize": "游戏大小",
+      "storageSizeMin": "最小",
+      "storageSizeMax": "最大",
+      "mib": "MiB",
+      "gib": "GiB"
     },
     "combobox": {
       "select": "选择{{placeholder}}",
@@ -92,7 +98,8 @@
         "addDate": "添加日期",
         "playTime": "游玩时间",
         "score": "评分",
-        "custom": "自定义顺序"
+        "custom": "自定义顺序",
+        "storageSize": "游戏大小"
       }
     },
     "gameCard": {
@@ -304,7 +311,9 @@
         "lastRunDate": "最后运行日期",
         "playStatus": "游玩状态",
         "rating": "我的评分",
-        "neverRun": "从未运行"
+        "neverRun": "从未运行",
+        "storageSize": "游戏大小",
+        "storageSizeEmpty": "未计算"
       }
     },
     "memory": {
@@ -364,11 +373,17 @@
       "downloadMetadata": "更新资料数据",
       "createShortcut": "创建快捷方式",
       "browseLocalFiles": "浏览本地文件",
+      "calculateStorageSize": "计算游戏大小",
       "delete": "删除",
       "notifications": {
         "shortcutCreated": "已创建快捷方式",
         "shortcutError": "创建快捷方式时出错",
-        "gamePathNotSet": "游戏路径未设置"
+        "gamePathNotSet": "游戏路径未设置",
+        "calculatingStorageSize": "正在计算游戏大小...",
+        "storageSizeCalculated": "游戏大小已计算：{{size}}",
+        "storageSizeError": "计算游戏大小失败",
+        "storageSizeConfirm": "计算游戏大小？这可能需要一些时间。",
+        "storageSizeRecalculateConfirm": "当前大小：{{currentSize}}。重新计算游戏大小？"
       }
     },
     "timersEditor": {
@@ -610,7 +625,25 @@
       "delete": "删除",
       "cancel": "取消",
       "selectAll": "全选",
-      "selected": "已选择 {{count}} 项"
+      "selected": "已选择 {{count}} 项",
+      "calculateSize": "计算大小",
+      "calculatingSize": "计算中..."
+    },
+    "storageSize": {
+      "confirmTitle": "计算游戏大小",
+      "confirmDescription": "计算游戏大小可能需要较长时间，具体取决于游戏数量和文件数量。计算期间您可以继续进行其他操作。",
+      "calculateAll": "计算所有选中的游戏",
+      "calculateUncached": "仅计算未计算的游戏",
+      "uncachedCount": "{{count}} 个未计算",
+      "cancel": "取消",
+      "alreadyRunning": "已有游戏大小计算任务正在进行中，请等待完成或先取消。",
+      "cancelled": "计算已取消",
+      "cancelling": "正在取消计算...",
+      "notifications": {
+        "progress": "{{current}}/{{total}}: {{name}}",
+        "complete": "计算完成：{{success}} 成功，{{failed}} 失败",
+        "error": "计算失败：{{message}}"
+      }
     },
     "selection": {
       "selectAll": "全选",

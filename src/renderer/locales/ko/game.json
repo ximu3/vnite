@@ -36,7 +36,8 @@
         "releaseDate": "발매일자",
         "lastRunDate": "마지막 플레이 일자",
         "addDate": "추가된 날짜",
-        "playTime": "플레이 시간"
+        "playTime": "플레이 시간",
+        "storageSize": "게임 크기"
       }
     },
     "playStatus": {
@@ -56,7 +57,12 @@
       "platforms": "플랫폼",
       "tags": "태그",
       "extraInfo": "추가 정보",
-      "playStatus": "플레이 상태"
+      "playStatus": "플레이 상태",
+      "storageSize": "게임 크기",
+      "storageSizeMin": "최소",
+      "storageSizeMax": "최대",
+      "mib": "MiB",
+      "gib": "GiB"
     },
     "combobox": {
       "select": "{{placeholder}} 선택",
@@ -79,7 +85,8 @@
         "releaseDate": "발매 일자",
         "lastRunDate": "마지막 플레이 일자",
         "addDate": "추가된 날짜",
-        "playTime": "플레이 시간"
+        "playTime": "플레이 시간",
+        "storageSize": "게임 크기"
       }
     },
     "gameCard": {
@@ -265,7 +272,9 @@
         "lastRunDate": "마지막 플레이 일자",
         "playStatus": "플레이 상태",
         "rating": "내 평가",
-        "neverRun": "플레이하지 않음"
+        "neverRun": "플레이하지 않음",
+        "storageSize": "게임 크기",
+        "storageSizeEmpty": "미계산"
       }
     },
     "memory": {
@@ -312,11 +321,17 @@
       "downloadMetadata": "메타데이터 다운로드",
       "createShortcut": "바로가기 생성",
       "browseLocalFiles": "로컬 파일 찾기",
+      "calculateStorageSize": "게임 크기 계산",
       "delete": "제거",
       "notifications": {
         "shortcutCreated": "바로가기 생성됨",
         "shortcutError": "바로가기 생성에 실패했습니다",
-        "gamePathNotSet": "게임 경로가 설정되지 않음"
+        "gamePathNotSet": "게임 경로가 설정되지 않음",
+        "calculatingStorageSize": "게임 크기 계산 중...",
+        "storageSizeCalculated": "게임 크기 계산 완료: {{size}}",
+        "storageSizeError": "게임 크기 계산 실패",
+        "storageSizeConfirm": "게임 크기를 계산하시겠습니까? 시간이 걸릴 수 있습니다.",
+        "storageSizeRecalculateConfirm": "현재 크기: {{currentSize}}. 게임 크기를 다시 계산하시겠습니까?"
       },
       "markNSFW": "NSFW로 표시",
       "unmarkNSFW": "NSFW 표시 삭제"
@@ -502,6 +517,26 @@
       },
       "success": "게임 정보를 일괄 수정했습니다",
       "error": "게임 정보 수정에 실패했습니다: {{message}}"
+    },
+    "floatingButtons": {
+      "calculateSize": "크기 계산",
+      "calculatingSize": "계산 중..."
+    },
+    "storageSize": {
+      "confirmTitle": "게임 크기 계산",
+      "confirmDescription": "게임 크기 계산은 게임 수와 파일 수에 따라 시간이 걸릴 수 있습니다. 계산 중에도 다른 작업을 계속할 수 있습니다.",
+      "calculateAll": "선택한 모든 게임 계산",
+      "calculateUncached": "미계산 게임만 계산",
+      "uncachedCount": "{{count}}개 미계산",
+      "cancel": "취소",
+      "alreadyRunning": "게임 크기 계산이 이미 진행 중입니다. 완료될 때까지 기다리거나 먼저 취소해주세요.",
+      "cancelled": "계산이 취소되었습니다",
+      "cancelling": "계산 취소 중...",
+      "notifications": {
+        "progress": "{{current}}/{{total}}: {{name}}",
+        "complete": "계산 완료: {{success}}개 성공, {{failed}}개 실패",
+        "error": "계산 실패: {{message}}"
+      }
     },
     "delete": {
       "title": "선택한 {{count}}개의 게임을 삭제하시겠습니까?",

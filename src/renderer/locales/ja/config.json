@@ -409,7 +409,12 @@
       "manage": "変換ルールを管理",
       "manageDescription": "メタデータ変換器を管理・設定する",
       "manageButton": "管理"
-    }
+    },
+    "storage": {
+      "title": "ストレージ"
+    },
+    "autoCalculateStorageSize": "ゲームサイズを自動計算",
+    "autoCalculateStorageSizeDescription": "ゲーム追加時にその保存フォルダのサイズを自動計算します。ファイル数が多いゲームの場合、追加処理が遅くなる可能性があります。"
   },
   "memory": {
     "title": "メモリー",

@@ -269,7 +269,12 @@
       "enable": "변환기 활성화",
       "manage": "변환기 규칙 관리",
       "manageButton": "관리"
-    }
+    },
+    "storage": {
+      "title": "저장소"
+    },
+    "autoCalculateStorageSize": "게임 크기 자동 계산",
+    "autoCalculateStorageSizeDescription": "게임 추가 시 해당 저장 폴더의 크기를 자동으로 계산합니다. 파일 수가 많은 게임의 경우 추가 속도가 느려질 수 있습니다."
   },
   "network": {
     "title": "",

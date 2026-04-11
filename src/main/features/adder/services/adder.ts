@@ -15,7 +15,11 @@ import log from 'electron-log/main'
 import path from 'path'
 import { ConfigDBManager, GameDBManager } from '~/core/database'
 import { eventBus } from '~/core/events'
-import { saveGameIconByFile } from '~/features/game'
+import {
+  saveGameIconByFile,
+  calculateStorageSizeForPath,
+  isAutoCalculateStorageSizeEnabled
+} from '~/features/game'
 import { launcherPreset } from '~/features/launcher'
 import { cacheDescriptionImages } from '~/features/scraper/services/descriptionImageCache'
 import { scraperManager } from '~/features/scraper'
@@ -254,6 +258,12 @@ export async function addGameToDB({
     }
     gameDoc.record.addDate = new Date().toISOString()
 
+    // Calculate storage size if enabled
+    const autoCalculateSize = await isAutoCalculateStorageSizeEnabled()
+    if (autoCalculateSize && dirPath) {
+      gameDoc.record.storageSize = await calculateStorageSizeForPath(dirPath)
+    }
+
     const gameLocalDoc = JSON.parse(JSON.stringify(DEFAULT_GAME_LOCAL_VALUES))
     gameLocalDoc._id = dbId
     gameLocalDoc.utils.markPath = dirPath ?? ''
@@ -445,6 +455,13 @@ export async function addGameToDBWithoutMetadata(
     gameDoc._id = dbId
     gameDoc.record.addDate = new Date().toISOString()
     gameDoc.metadata.name = gameName
+
+    // Calculate storage size if enabled
+    const autoCalculateSize = await isAutoCalculateStorageSizeEnabled()
+    if (autoCalculateSize && dirPath) {
+      gameDoc.record.storageSize = await calculateStorageSizeForPath(dirPath)
+    }
+
     await GameDBManager.setGame(dbId, gameDoc)
 
     // Create a new game local document with default values, deep copy to avoid mutation

@@ -10,12 +10,13 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useConfigState, useGameState } from '~/hooks'
 import { useRunningGames } from '~/pages/Library/store'
-import { cn, copyWithToast } from '~/utils'
+import { cn, copyWithToast, formatStorageSize } from '~/utils'
 import { Config } from './Config'
 import { PLAY_STATUS_ICONS } from './Overview/Record/RecordIcon'
 import { StartGame } from './StartGame'
 import { StopGame } from './StopGame'
 import { useGameDetailStore } from './store'
+import { CalculateStorageSizeAlertDialog } from './Overview/Record/CalculateStorageSizeAlertDialog'
 
 export function HeaderCompact({
   gameId,
@@ -30,6 +31,7 @@ export function HeaderCompact({
   const [score] = useGameState(gameId, 'record.score')
   const [playingTime] = useGameState(gameId, 'record.playTime')
   const [playStatus] = useGameState(gameId, 'record.playStatus')
+  const [storageSize] = useGameState(gameId, 'record.storageSize')
   const [name] = useGameState(gameId, 'metadata.name')
   const [showCover] = useConfigState('appearances.gameDetail.showCover')
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
@@ -43,19 +45,19 @@ export function HeaderCompact({
 
   return (
     <div className={cn('flex-col flex gap-5 px-7 py-5 pl-6 pt-6 relative mb-5', className)}>
-      <div className="flex flex-row gap-1 h-[200px] justify-between items-start">
+      <div className="flex flex-row gap-1 h-[220px] justify-between items-start">
         {/* Game cover image */}
         {showCover && (
           <ContextMenu>
             <ContextMenuTrigger asChild>
-              <div className="relative mr-3 pb-1 h-[200px] shrink-0">
+              <div className="relative mr-3 pb-1 h-[220px] shrink-0">
                 <GameImage
                   gameId={gameId}
                   key={`${gameId}-poster`}
                   type="cover"
                   blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
                   className={cn('w-auto h-full object-cover rounded-lg shadow-md')}
-                  fallback={<div className="h-[170px]" />}
+                  fallback={<div className="h-full" />}
                 />
               </div>
             </ContextMenuTrigger>
@@ -124,6 +126,17 @@ export function HeaderCompact({
               {lastRunDate
                 ? t('{{date, niceDate}}', { date: lastRunDate })
                 : t('detail.overview.record.neverRun')}
+            </div>
+
+            {/* Storage Size */}
+            <CalculateStorageSizeAlertDialog gameId={gameId}>
+              <div className={cn('select-none cursor-pointer flex items-center gap-1')}>
+                <span className="icon-[mdi--harddisk]"></span>
+                {t('detail.overview.record.storageSize')}
+              </div>
+            </CalculateStorageSizeAlertDialog>
+            <div>
+              {formatStorageSize(storageSize, t('detail.overview.record.storageSizeEmpty'))}
             </div>
           </div>
 

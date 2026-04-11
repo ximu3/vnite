@@ -11,7 +11,7 @@ import { GameImage } from '~/components/ui/game-image'
 import { useConfigState, useGameLocalState, useGameState } from '~/hooks'
 import { useLibraryStore } from '~/pages/Library/store'
 import { useGamePathStore } from '~/stores/game/gamePathStore'
-import { cn, formatDurationCompact, startGame } from '~/utils'
+import { cn, formatDurationCompact, formatStorageSize, startGame } from '~/utils'
 import { GameNavCM } from '../contextMenu/GameNavCM'
 import { InformationDialog } from '../Game/Overview/Information/InformationDialog'
 import { PLAY_STATUS_COLORS, PLAY_STATUS_ICONS } from '../Game/Overview/Record/RecordIcon'
@@ -30,6 +30,7 @@ export function GameNav({
   const [playTime] = useGameState(gameId, 'record.playTime')
   const [score] = useGameState(gameId, 'record.score')
   const [playStatus] = useGameState(gameId, 'record.playStatus')
+  const [storageSize] = useGameState(gameId, 'record.storageSize')
   const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
   const isPathValid = useGamePathStore((s) => s.paths[gamePath]?.valid)
 
@@ -252,6 +253,12 @@ export function GameNav({
             navLayout.push(
               <span key={`${gameId}-sort-score`} className="flex-shrink-0 text-muted-foreground">
                 {score.toFixed(1)}
+              </span>
+            )
+          } else if (by === 'record.storageSize' && storageSize >= 0) {
+            navLayout.push(
+              <span key={`${gameId}-sort-storage`} className="flex-shrink-0 text-muted-foreground">
+                {formatStorageSize(storageSize)}
               </span>
             )
           }
