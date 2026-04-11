@@ -599,7 +599,12 @@
       "delete": "Batch Delete"
     },
     "information": {
-      "incrementalMode": "Incremental Mode",
+      "mode": {
+        "title": "Edit Mode",
+        "incremental": "Incremental",
+        "replace": "Replace",
+        "delete": "Clear"
+      },
       "developers": "Developers",
       "publishers": "Publishers",
       "platforms": "Platforms",
@@ -615,9 +620,10 @@
         "publishers": "Separate publishers with commas",
         "platforms": "Separate platforms with commas",
         "genres": "Separate genres with commas",
-        "extraKey": "Only one additional information can be modified at a time"
+        "extraKey": "Only one extra info can be modified at a time"
       },
-      "success": "Batch edited game information",
+      "clearFields": "Select fields to clear",
+      "success": "Bulk modified game information",
       "error": "Failed to edit game information: {{message}}"
     },
     "floatingButtons": {

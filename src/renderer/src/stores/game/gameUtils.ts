@@ -590,11 +590,12 @@ export function getAllValuesInKey<Path extends Paths<gameDoc, { bracketNotation:
 
 /**
  * Get all extra information key names from all games
+ * @param {string[]} [gameIds] Optional array of game IDs to limit the search scope. If not provided, all games will be included.
  * @returns {string[]} Array of all extra information key names
  */
-export function getAllExtraKeys(): string[] {
+export function getAllExtraKeys(gameIds?: string[]): string[] {
   try {
-    const { gameIds } = useGameRegistry.getState()
+    if (!gameIds) gameIds = useGameRegistry.getState().gameIds
     const keys = new Set<string>()
 
     for (const gameId of gameIds) {

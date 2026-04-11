@@ -599,7 +599,12 @@
       "delete": "删除"
     },
     "information": {
-      "incrementalMode": "增量模式",
+      "mode": {
+        "title": "编辑模式",
+        "incremental": "增量",
+        "replace": "替换",
+        "delete": "清空"
+      },
       "developers": "开发商",
       "publishers": "发行商",
       "platforms": "平台",
@@ -617,6 +622,7 @@
         "genres": "类型之间用英文逗号分隔",
         "extraKey": "单次仅支持对一个附加信息进行修改"
       },
+      "clearFields": "选择要清空的字段",
       "success": "已批量修改游戏信息",
       "error": "修改游戏信息失败: {{message}}"
     },

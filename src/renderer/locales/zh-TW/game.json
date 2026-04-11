@@ -599,7 +599,12 @@
       "delete": "批次刪除"
     },
     "information": {
-      "incrementalMode": "增量模式",
+      "mode": {
+        "title": "編輯模式",
+        "incremental": "增量",
+        "replace": "替換",
+        "delete": "清空"
+      },
       "developers": "開發商",
       "publishers": "發行商",
       "platforms": "平台",
@@ -617,6 +622,7 @@
         "genres": "類型之間用英文逗號分隔",
         "extraKey": "單次僅支援對一個附加資訊進行修改"
       },
+      "clearFields": "選擇要清空的欄位",
       "success": "已批次修改遊戲資訊",
       "error": "修改遊戲資訊失敗: {{message}}"
     },
