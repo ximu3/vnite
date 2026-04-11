@@ -23,7 +23,13 @@ export class IPCManager {
       ...args: ExtractArgs<IpcMainEvents>[E]
     ) => void | Promise<void>
   ): void {
-    this.listener.on(channel, listener)
+    this.listener.on(channel, (e, ...args) => {
+      if (!this.isTrustedSender(e.sender)) {
+        console.warn(`Blocked untrusted IPC event on channel: ${String(channel)}`)
+        return
+      }
+      return listener(e, ...args)
+    })
   }
 
   handle<E extends keyof ExtractHandler<IpcMainEvents>>(
@@ -35,7 +41,12 @@ export class IPCManager {
       | ReturnType<ExtractHandler<IpcMainEvents>[E]>
       | Promise<ReturnType<ExtractHandler<IpcMainEvents>[E]>>
   ): void {
-    this.listener.handle(channel, listener)
+    this.listener.handle(channel, async (e, ...args) => {
+      if (!this.isTrustedSender(e.sender)) {
+        throw new Error(`Unauthorized IPC sender for channel: ${String(channel)}`)
+      }
+      return listener(e, ...args)
+    })
   }
 
   dispose(): void {
