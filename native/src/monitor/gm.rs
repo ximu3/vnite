@@ -7,7 +7,7 @@ use crate::{
   log,
   monitor::{ProcessMessage, ProcessStatus},
   napi_monitor::{ProcessEvent, ProcessEventType},
-  utils::types::NapiWeakThreadsafeFunction,
+  utils::{path::normalize_os_path, types::NapiWeakThreadsafeFunction},
   win32,
 };
 
@@ -73,7 +73,7 @@ impl GameManager {
     let size = pathes.len();
     self.known_games.reserve(size);
     for (path, id) in pathes.into_iter().zip(ids.into_iter()) {
-      let l_path = path.to_lowercase();
+      let l_path = normalize_os_path(path);
       self.known_games.insert(l_path, id);
     }
   }
@@ -102,7 +102,7 @@ impl GameManager {
   }
 
   pub fn add_known_game(&mut self, path: String, id: String) {
-    self.known_games.insert(path.to_lowercase(), id);
+    self.known_games.insert(normalize_os_path(path), id);
   }
 
   pub fn remove_known_game_by_id(&mut self, game_id: &str) {
@@ -127,11 +127,10 @@ impl GameManager {
       .or_else(|| self.get_known_game_id_exact(l_exe))
   }
 
-  pub fn is_running(&self, path: &str, is_folder: Option<bool>) -> bool {
+  pub fn is_running(&self, path: String, is_folder: Option<bool>) -> bool {
     let mut is_running = false;
-    let lower_path = path.to_ascii_lowercase();
-    let normalized_path = lower_path.trim_end_matches(['/', '\\']);
-    let escaped_path = regex::escape(normalized_path);
+    let normalized_path = normalize_os_path(path);
+    let escaped_path = regex::escape(&normalized_path);
 
     for (k, _) in &self.running_process {
       let re = if is_folder.is_some_and(|x| x) {
