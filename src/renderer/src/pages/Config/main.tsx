@@ -1,8 +1,6 @@
-import { useRouter, useSearch } from '@tanstack/react-router'
+import { ScrollArea } from '@ui/scroll-area'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
 import { useTranslation } from 'react-i18next'
-import { Button } from '~/components/ui/button'
-import { ScrollArea } from '~/components/ui/scroll-area'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { cn } from '~/utils'
 import { About } from './About'
 import { Advanced } from './Advanced'
@@ -12,45 +10,27 @@ import { Database } from './Database'
 import { General } from './General'
 import { Hotkeys } from './Hotkeys'
 import { Metadata } from './Metadata'
-import { Scraper } from './Scraper'
-import { Theme } from './Theme'
 import { Network } from './Network'
+import { Scraper } from './Scraper'
+import { ConfigTab, useConfigTabStore } from './store'
+import { Theme } from './Theme'
 
 export function Config({ className }: { className?: string }): React.JSX.Element {
   const { t } = useTranslation('config')
-  const router = useRouter()
-  const { tab } = useSearch({ from: '/config' })
-
-  const handleGoBack = (): void => {
-    router.history.back()
-  }
-
-  const handleTabChange = (value: string): void => {
-    router.navigate({
-      to: '/config',
-      search: { tab: value },
-      replace: true
-    })
-  }
+  const tab = useConfigTabStore((state) => state.lastConfigTab)
+  const setTab = useConfigTabStore((state) => state.setLastConfigTab)
 
   return (
     <div className={cn('w-full h-full bg-transparent', className)}>
       <ScrollArea className={cn('w-full h-full')}>
         <div className={cn('flex flex-col gap-6 py-[34px] px-6')}>
-          <div className={cn('flex flex-row items-end gap-5')}>
-            <div className={cn('text-2xl font-bold')}>{t('title')}</div>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={handleGoBack}
-              className="w-[26px] h-[26px]"
-              aria-label={t('common.back')}
-            >
-              <span className={cn('icon-[mdi--keyboard-return] w-4 h-4')}></span>
-            </Button>
-          </div>
+          <div className={cn('text-2xl font-bold')}>{t('title')}</div>
 
-          <Tabs value={tab} onValueChange={handleTabChange} className="w-full">
+          <Tabs
+            value={tab}
+            onValueChange={(value) => setTab(value as ConfigTab)}
+            className="w-full"
+          >
             <TabsList className="mb-4">
               <TabsTrigger value="general">{t('general.title')}</TabsTrigger>
               <TabsTrigger value="appearances">{t('appearances.title')}</TabsTrigger>

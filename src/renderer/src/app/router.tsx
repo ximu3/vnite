@@ -100,12 +100,7 @@ const recordRoute = createRoute({
 const configRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/config',
-  component: Config,
-  validateSearch: (search: Record<string, unknown> & SearchSchemaInput) => {
-    return {
-      tab: typeof search.tab === 'string' ? search.tab : 'general'
-    }
-  }
+  component: Config
 })
 
 const scannerRoute = createRoute({
