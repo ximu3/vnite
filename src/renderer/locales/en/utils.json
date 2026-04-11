@@ -76,6 +76,7 @@
     "fullSyncError": "Data sync failed",
     "updateUserInfoError": "Official cloud sync account login expired, please log in again",
     "checkingForUpdate": "Checking for updates…",
+    "checkForUpdateFailed": "Check for updates failed",
     "gameLaunchFailed": "Failed to launch game"
   }
 }

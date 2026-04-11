@@ -1,15 +1,15 @@
-import { cn } from '~/utils'
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
-import { Separator } from '~/components/ui/separator'
-import { Link } from '~/components/ui/link'
-import { Button } from '~/components/ui/button'
-import { ConfigItem } from '~/components/form/ConfigItem'
-import { ConfigItemPure } from '~/components/form/ConfigItemPure'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useUpdaterStore } from '~/pages/Updater/store'
 import { toast } from 'sonner'
 import { ipcManager } from '~/app/ipc'
+import { ConfigItem } from '~/components/form/ConfigItem'
+import { ConfigItemPure } from '~/components/form/ConfigItemPure'
+import { Button } from '~/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import { Link } from '~/components/ui/link'
+import { Separator } from '~/components/ui/separator'
+import { useUpdaterStore } from '~/pages/Updater/store'
+import { cn } from '~/utils'
 
 export function About(): React.JSX.Element {
   const { t } = useTranslation('config')
@@ -54,9 +54,20 @@ export function About(): React.JSX.Element {
                     id: 'checking-for-update'
                   })
                   setUpdateInfo(null)
-                  await ipcManager.invoke('updater:check-update')
-                  toast.dismiss('checking-for-update')
-                  setUpdateDialogIsOpen(true)
+                  try {
+                    await Promise.race([
+                      ipcManager.invoke('updater:check-update'),
+                      new Promise<never>((_, reject) =>
+                        setTimeout(() => reject(new Error('timeout')), 10000)
+                      )
+                    ])
+
+                    toast.dismiss('checking-for-update')
+                    setUpdateDialogIsOpen(true)
+                  } catch {
+                    toast.dismiss('checking-for-update')
+                    toast.error(t('utils:notifications.checkForUpdateFailed'))
+                  }
                 }}
               >
                 <span className={cn('icon-[mdi--reload] w-4 h-4')}></span>
