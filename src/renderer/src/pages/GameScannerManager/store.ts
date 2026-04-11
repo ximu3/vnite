@@ -225,10 +225,7 @@ export const useGameScannerStore = create<GameScannerStore>((set, get) => ({
           : typeof legacyDepth === 'number'
             ? legacyDepth - 1
             : 0
-      const inferredMode =
-        scanner.scanMode === 'hierarchy' || typeof scanner.hierarchyLevel === 'number'
-          ? 'hierarchy'
-          : 'auto'
+      const inferredMode = scanner.scanMode === 'hierarchy' ? 'hierarchy' : 'auto'
 
       set({
         formState: {
