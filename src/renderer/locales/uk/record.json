@@ -1,0 +1,297 @@
+{
+  "title": "Мої ігрові записи",
+  "hotkeyHelp": "Ctrl + ←/→: перемикання вкладок\n←/→: зміна дати (рік / місяць / тиждень)",
+  "tabs": {
+    "overview": "Огляд",
+    "weekly": "Щотижневий звіт",
+    "monthly": "Щомісячний звіт",
+    "yearly": "Річний звіт",
+    "score": "Звіт з оцінок",
+    "poster": "Експортувати звіт"
+  },
+  "overview": {
+    "title": "Огляд",
+    "stats": {
+      "totalGames": "Усього ігор",
+      "totalPlayTime": "Загальний час гри",
+      "totalPlayDays": "Усього днів гри",
+      "totalPlayTimes": "Усього запусків"
+    },
+    "chart": {
+      "yearlyPlayTime": "Час у грі (за минулий рік)",
+      "timeDistribution": "Розподіл ігрового часу",
+      "peakHour": "Пікові ігрові години: {{hour}}:00 – {{nextHour}}:00"
+    },
+    "ranking": {
+      "playTimeRanking": "Рейтинг ігрового часу",
+      "scoreRanking": "Рейтинг оцінок",
+      "viewMore": "Більше",
+      "allGamesByPlayTime": "Усі ігри, відсортовані за часом гри",
+      "allGamesByScore": "Усі ігри, відсортовані за оцінкою"
+    },
+    "format": {
+      "hour": "год",
+      "minute": "хв",
+      "hourValue": "{{value}} год",
+      "minuteValue": "{{value}} хв"
+    },
+    "unit": {
+      "count": "ігор",
+      "day": "днів",
+      "times": "разів"
+    },
+    "misc": {
+      "noScore": "Без оцінки"
+    }
+  },
+  "weekly": {
+    "title": "Щотижневий ігровий звіт",
+    "dailyPlayTime": "Щоденний час гри",
+    "playTimeLine": {
+      "title": "Хронологія гри",
+      "noRecords": "Цього тижня без ігрових записів",
+      "mergeMaxInterval": "Максимальний інтервал для об’єднання"
+    },
+    "totalWeeklyTime": "Цього тижня: {{time, gameTime}}",
+    "highlights": {
+      "title": "Дані за тиждень",
+      "longestDay": "Найдовший ігровий день",
+      "dateFormat": "{{weekday}} ({{date, niceDate}})",
+      "playTime": "",
+      "noRecords": "",
+      "frequency": "",
+      "daysPlayed": "",
+      "percentage": ""
+    },
+    "weeklyGames": {
+      "title": "",
+      "noRecords": ""
+    },
+    "weekdays": {
+      "sunday": "",
+      "monday": "",
+      "tuesday": "",
+      "wednesday": "",
+      "thursday": "",
+      "friday": "",
+      "saturday": ""
+    },
+    "dateRange": ""
+  },
+  "monthly": {
+    "title": "",
+    "yearMonth": "",
+    "stats": {
+      "monthlyPlayTime": "",
+      "daysPlayed": "",
+      "mostPlayedDay": ""
+    },
+    "unit": {
+      "days": "",
+      "noRecord": "",
+      "playTime": ""
+    },
+    "chart": {
+      "weeklyPlayTime": "",
+      "calendarTitle": "",
+      "weekFormat": "",
+      "weekDateRange": "",
+      "useAlternateColor": ""
+    },
+    "highlights": {
+      "title": "",
+      "longestWeek": "",
+      "noRecords": "",
+      "frequency": "",
+      "daysCount": "",
+      "percentage": ""
+    },
+    "monthlyGames": {
+      "title": "",
+      "noRecords": ""
+    },
+    "months": {
+      "january": "",
+      "february": "",
+      "march": "",
+      "april": "",
+      "may": "",
+      "june": "",
+      "july": "",
+      "august": "",
+      "september": "",
+      "october": "",
+      "november": "",
+      "december": ""
+    }
+  },
+  "yearly": {
+    "title": "",
+    "yearDisplay": "",
+    "stats": {
+      "yearlyPlayTime": "",
+      "monthsPlayed": "",
+      "monthsCount": "",
+      "mostPlayedMonth": "",
+      "noRecord": "",
+      "playTimeDesc": ""
+    },
+    "chart": {
+      "monthlyPlayTime": "",
+      "monthlyPlayDays": "",
+      "timeDistribution": "",
+      "byGameType": "",
+      "typePercentage": "",
+      "hideLowPercentType": ""
+    },
+    "dialog": {
+      "gameTypeDetail": ""
+    },
+    "format": {
+      "hours": "",
+      "days": ""
+    },
+    "yearlyGames": {
+      "title": "",
+      "noRecords": ""
+    },
+    "months": {
+      "january": "",
+      "february": "",
+      "march": "",
+      "april": "",
+      "may": "",
+      "june": "",
+      "july": "",
+      "august": "",
+      "september": "",
+      "october": "",
+      "november": "",
+      "december": ""
+    }
+  },
+  "score": {
+    "title": "",
+    "description": "",
+    "categories": {
+      "excellent": {
+        "title": "",
+        "description": ""
+      },
+      "great": {
+        "title": "",
+        "description": ""
+      },
+      "good": {
+        "title": "",
+        "description": ""
+      },
+      "average": {
+        "title": "",
+        "description": ""
+      },
+      "notRecommended": {
+        "title": "",
+        "description": ""
+      },
+      "gamesCount": ""
+    },
+    "gameInfo": {
+      "unknown": "",
+      "addDate": "",
+      "playTime": "",
+      "lastRun": "",
+      "ratingLabel": ""
+    }
+  },
+  "poster": {
+    "action": {
+      "render": "",
+      "reset": ""
+    },
+    "message": {
+      "loading": "",
+      "success": "",
+      "error": ""
+    },
+    "renderOptions": {
+      "outputPath": ""
+    },
+    "templates": {
+      "scoreReport": {
+        "maxWidth": {
+          "title": "",
+          "description": ""
+        },
+        "titleWidth": {
+          "title": ""
+        },
+        "gameCoverHeightSmall": {
+          "title": "",
+          "description": ""
+        },
+        "gameCoverHeightLarge": {
+          "title": "",
+          "description": ""
+        },
+        "padding": {
+          "title": "",
+          "description": ""
+        },
+        "gap": {
+          "title": "",
+          "description": ""
+        },
+        "titleColor1": {
+          "title": ""
+        },
+        "titleColor2": {
+          "title": ""
+        },
+        "titleColor3": {
+          "title": ""
+        },
+        "titleColor4": {
+          "title": ""
+        },
+        "titleColor5": {
+          "title": ""
+        },
+        "useSmallCover1": {
+          "title": ""
+        },
+        "useSmallCover2": {
+          "title": ""
+        },
+        "useSmallCover3": {
+          "title": ""
+        },
+        "useSmallCover4": {
+          "title": ""
+        },
+        "useSmallCover5": {
+          "title": ""
+        },
+        "splitColor": {
+          "title": "",
+          "description": ""
+        },
+        "splitWidth": {
+          "title": ""
+        },
+        "drawScore": {
+          "title": ""
+        },
+        "scoreColor": {
+          "title": ""
+        },
+        "fontColor": {
+          "title": ""
+        },
+        "backgroundColor": {
+          "title": ""
+        }
+      }
+    }
+  }
+}

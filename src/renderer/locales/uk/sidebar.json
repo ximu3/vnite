@@ -1,0 +1,55 @@
+{
+  "title": "vnite",
+  "navigation": {
+    "library": "Ігрова бібліотека",
+    "records": "Записи",
+    "scanner": "Сканер",
+    "transformer": "Перетворювач",
+    "plugin": "Плагіни"
+  },
+  "actions": {
+    "viewLogs": "Переглянути журнали",
+    "nsfwLevel": {
+      "off": "NSFW: Показати все",
+      "blurImage": "NSFW: Приховати зображення",
+      "blurImageAndTitle": "NSFW: Приховати зображення та назви"
+    },
+    "nsfwFilter": {
+      "all": "Показати всі жанри",
+      "hideNSFW": "Приховати NSFW ігри",
+      "onlyNSFW": "Показати лише NSFW ігри"
+    },
+    "localGameFilter": {
+      "all": "Показати всі ігри",
+      "hideLocal": "Приховати локальні ігри",
+      "onlyLocal": "Показати лише локальні ігри"
+    },
+    "darkMode": "Темний режим",
+    "lightMode": "Світлий режим",
+    "cloudSyncDisabled": "Хмарну синхронізацію вимкнено",
+    "addGame": "Додати гру",
+    "settings": "Налаштування"
+  },
+  "adder": {
+    "addGame": "Додати гру",
+    "addSingle": "Додати одну",
+    "addBatch": "Додати партією",
+    "addCustom": "Додати вручну",
+    "addScanner": "Додати сканер",
+    "importFromThirdParty": "Імпорт зі сторонніх джерел",
+    "steam": "Steam"
+  },
+  "notifications": {
+    "noGamesFound": "Жодної гри не знайдено",
+    "gettingBatchGames": "Отримання ігор партією…",
+    "getBatchGamesFailed": "Не вдалося отримати ігри партією: ",
+    "getBatchGamesSuccess": "Партію ігор успішно отримано",
+    "unknownError": "Невідома помилка",
+    "selectLibraryFolder": "Виберіть теку бібліотеки…"
+  },
+  "timerStatus": {
+    "idle": "Таймер: очікування",
+    "on": "Таймер: увімк",
+    "paused": "Таймер: призупинено"
+  }
+}

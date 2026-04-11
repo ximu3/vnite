@@ -1,0 +1,116 @@
+{
+  "gameAdder": {
+    "dialog": {
+      "title": "Додати гру"
+    },
+    "notifications": {
+      "loading": "Зачекайте, поки гра буде додана"
+    },
+    "gameList": {
+      "columns": {
+        "name": "Назва гри",
+        "releaseDate": "Дата випуску",
+        "developers": "Розробники"
+      },
+      "unknown": "Невідомо",
+      "selected": "Обрані ігри: {{name}}"
+    },
+    "backgrounds": {
+      "title": "Фонове зображення",
+      "noImages": "Немає зображень",
+      "notifications": {
+        "loading": "Отримання зображень…",
+        "success": "Зображення успішно отримано",
+        "error": "Не вдалося отримати зображення: {{message}}",
+        "noImages": "Не знайдено ігрових зображень",
+        "adding": "Додавання гри…",
+        "addSuccess": "Гру успішно додано",
+        "addError": "Не вдалося додати ігру: {{message}}"
+      }
+    },
+    "search": {
+      "dataSource": "Джерело даних",
+      "gameName": "Назва гри",
+      "gameNamePlaceholder": "Введіть назву гри",
+      "gameId": "Ігровий ID",
+      "gameIdPlaceholder": "Введіть ігровий ID",
+      "gamePath": "Шлях до гри",
+      "gamePathPlaceholder": "Виберіть шлях до гри",
+      "searchButton": "Пошук",
+      "recognizeButton": "Опізнати",
+      "addButton": "Додати",
+      "notifications": {
+        "enterName": "Введіть назву гри",
+        "searching": "Пошук ігор…",
+        "found": "Знайдено {{count}} ігор",
+        "notFound": "Не знайдено жодної гри",
+        "searchError": "Не вдалося знайти: {{message}}",
+        "enterId": "Введіть ігровий ID",
+        "recognizing": "Розпізнання гри…",
+        "recognized": "Гру успішно розпізнано",
+        "invalidId": "Неправильний ID",
+        "recognizeError": "Не вдалося розпізнати гру: {{message}}",
+        "selectGamePath": "Вкажіть шлях до гри",
+        "adding": "Додавання гри…",
+        "addSuccess": "Гру успішно додано",
+        "addError": "Помилка під час додавання гри"
+      },
+      "dataSources": {
+        "label": "Джерела даних",
+        "none": "Немає",
+        "steam": "Steam",
+        "vndb": "VNDB",
+        "bangumi": "Bangumi",
+        "igdb": "IGDB",
+        "ymgal": "YMGal",
+        "dlsite": "DLsite"
+      }
+    }
+  },
+  "gameBatchAdder": {
+    "dialog": {
+      "title": "Додати ігри пакетно",
+      "waitForCompletion": "Зачекайте, поки завершиться додавання гри"
+    },
+    "status": {
+      "loading": "Додавання",
+      "success": "Успішно додано",
+      "error": "Не вдалося додати",
+      "waiting": "Очікується додавання",
+      "existed": "Вже існує"
+    },
+    "table": {
+      "columns": {
+        "dataSource": "Джерело даних",
+        "name": "Назва гри",
+        "id": "Ігровий ID",
+        "status": "Статус",
+        "actions": "Дії"
+      }
+    },
+    "form": {
+      "dataSource": "Джерело даних",
+      "namePlaceholder": "Введіть назву гри",
+      "idPlaceholder": "Ігровий ID (необов’язково)"
+    },
+    "actions": {
+      "retry": "Повторити",
+      "add": "Додати",
+      "delete": "Видалити",
+      "addAll": "Додати все",
+      "adding": "Додавання…"
+    },
+    "notifications": {
+      "addingGame": "Додавання гри {{name}}…",
+      "gameAdded": "Гру {{name}} успішно додано",
+      "addingGames": "Додавання ігор…",
+      "gamesAdded": "Ігри успішно додано",
+      "gameAddFailed": "Не вдалося додати гру"
+    },
+    "errors": {
+      "gameNotFound": "Гру не знайдено: {{name}}",
+      "gameIsBeingAdded": "Гра вже додається",
+      "gameAlreadyAdded": "Гру вже додано"
+    }
+  }
+}

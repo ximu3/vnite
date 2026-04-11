@@ -1,0 +1,81 @@
+{
+  "common": {
+    "edit": "Редагувати",
+    "save": "Зберегти",
+    "cancel": "Скасувати",
+    "confirm": "Підтвердити",
+    "delete": "Видалити"
+  },
+  "arrayEditor": {
+    "clickPlusToAdd": "Натисніть +, щоби додати елементи",
+    "addElement": "Додати елемент",
+    "editElement": "Редагувати елемент",
+    "enterElement": "Введіть елемент",
+    "add": "Додати",
+    "update": "Оновити"
+  },
+  "hotkeySetting": {
+    "title": "Встановити комбінацію",
+    "recording": "[Натисніть комбінацію…]",
+    "placeholder": "Введіть або запишіть комбінацію, наприклад: ctrl+a+b",
+    "startRecordButton": "Натисніть, щоби розпочати запис",
+    "recordingButton": "Записування…",
+    "currentKeys": "Натиснуті клавіші",
+    "supportedKeys": "Підтримуються такі клавіші, як літери, цифри, стрілки, Esc, Tab, Enter, пробіл тощо, які також можна використовувати в комбінаціях",
+    "errors": {
+      "invalidHotkey": "Введіть дійсну комбінацію",
+      "duplicateKeys": "Комбінація не може містити дублікати клавіш"
+    },
+    "notifications": {
+      "hotkeyUpdated": "Комбінацію оновлено"
+    }
+  },
+  "clipboard": {
+    "copied": "Скопійовано до буфера обміну",
+    "copyError": "Не вдалося скопіювати текст у буфер обміну: {{error}}"
+  },
+  "saveFile": {
+    "success": "Файл успішно збережено",
+    "error": "Не вдалося зберегти файл: {{error}}"
+  },
+  "game": {
+    "stopping": {
+      "loading": "Зупинення гри…",
+      "success": "Гру зупинено",
+      "error": "Не вдалося зупинити гру: {{message}}"
+    },
+    "starting": {
+      "pathRequired": "Спочатку вкажіть шлях до гри",
+      "pathInvalid": "Шлях до гри недійсний, переналаштуйте його",
+      "configuringLauncher": "Налаштування лаунчера…",
+      "configSuccess": "Лаунчер успішно налаштовано",
+      "configError": "Помилка налаштування: {{message}}",
+      "runtimeError": "Помилка конфігурації під час виконання, перевірте її!"
+    },
+    "playStatus": {
+      "unplayed": "Не запускалася",
+      "playing": "Відтворюється",
+      "partial": "Частково завершено",
+      "finished": "",
+      "multiple": "",
+      "shelved": "",
+      "unknown": ""
+    }
+  },
+  "format": {
+    "gameTime": "",
+    "niceDate": "",
+    "niceISO": ""
+  },
+  "notifications": {
+    "gameStarted": "",
+    "gameExiting": "",
+    "gameExited": "",
+    "fullSyncing": "",
+    "fullSynced": "",
+    "fullSyncError": "",
+    "updateUserInfoError": "",
+    "checkingForUpdate": "",
+    "gameLaunchFailed": ""
+  }
+}

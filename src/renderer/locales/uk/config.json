@@ -1,0 +1,450 @@
+{
+  "title": "Налаштування Vnite",
+  "general": {
+    "title": "Загальні",
+    "language": "Мова",
+    "languageDescription": "Обрати мову інтерфейсу для застосунку",
+    "openAtLogin": "Відкривати при вході",
+    "openAtLoginDescription": "Автоматично запускати застосунок під час завантаження системи",
+    "theme": "Стиль теми",
+    "themeDescription": "Обрати стиль теми для застосунку",
+    "darkTheme": "Темна",
+    "lightTheme": "Світла",
+    "followSystem": "Як у системі",
+    "closeMainPanel": "Закривати головну панель",
+    "closeMainPanelDescription": "Обрати дію при закритті головного вікна",
+    "action": "Дія",
+    "quitApp": "Вийти з Vnite",
+    "minimizeToTray": "Згорнути в лоток",
+    "hideWindowAfterGameStart": "Згортати в лоток після запуску гри",
+    "hideWindowAfterGameStartDescription": "Автоматично ховати головне вікно після запуску гри",
+    "timerTitle": "Ігровий таймер",
+    "foregroundTimer": {
+      "title": "Таймер переднього плану",
+      "description": "Виберіть, чи призупиняти таймер, коли вікно гри переходить у фоновий режим. Доступно лише за умови ввімкненого автоматичного моніторингу.\nНеможливо змінити під час роботи ігор"
+    },
+    "foregroundWaitTime": {
+      "title": "Час очікування",
+      "description": "Призупинити / відновити таймер після того, як гра працювала у фоновому / активному режимі протягом цього часу (с)\nНеможливо змінити, поки запущені ігри"
+    }
+  },
+  "appearances": {
+    "title": "Вигляд",
+    "actions": {
+      "title": "Дії",
+      "resetAppearancesSettings": "Скинути вигляд",
+      "resetAppearancesSettingsDescription": "Скинути вигляд до типових значень",
+      "loadPreset": "Завантажити передустановку",
+      "loadPresetDescription": "Виберіть передустановку, щоби швидко застосувати набір налаштувань вигляду",
+      "selectPreset": "Вибрати передустановку",
+      "presets": {
+        "default": "Типово",
+        "noHeaderImage": "Без зображення заголовка"
+      }
+    },
+    "font": {
+      "title": "Шрифт",
+      "manageFont": "Керувати шрифтами",
+      "manageFontDescription": "Змінити шрифт застосунку",
+      "manage": "Керувати",
+      "size": "Розмір шрифту",
+      "sizeDescription": "",
+      "weight": "",
+      "weightDescription": "",
+      "dialog": {
+        "title": "",
+        "description": "",
+        "currentFont": "",
+        "systemDefaultFonts": "",
+        "searchFont": "",
+        "preview": "",
+        "resetToDefault": "",
+        "resetToSystem": "",
+        "finish": ""
+      }
+    },
+    "background": {
+      "title": "",
+      "customBackground": "",
+      "customBackgroundDescription": "",
+      "image": "",
+      "imageDescription": "",
+      "selectImage": "",
+      "currentBackground": "",
+      "noBackground": "",
+      "removeImage": ""
+    },
+    "showcase": {
+      "title": "",
+      "showPlayButtonOnPoster": "",
+      "showPlayButtonOnPosterDescription": ""
+    },
+    "scrollbar": {
+      "title": "",
+      "blur": "",
+      "blurDescription": "",
+      "opacity": "",
+      "opacityDescription": ""
+    },
+    "glass": {
+      "title": "",
+      "blur": "",
+      "blurDescription": "",
+      "opacity": "",
+      "opacityDescription": ""
+    },
+    "gameList": {
+      "title": "",
+      "showRecentGames": "",
+      "showRecentGamesDescription": "",
+      "showAllGamesInGroup": "",
+      "showAllGamesInGroupDescription": "",
+      "highlightLocalGames": "",
+      "highlightLocalGamesDescription": "",
+      "warnInvalidGamePaths": "",
+      "warnInvalidGamePathsDescription": "",
+      "gameNavStyle": {
+        "title": "",
+        "description": "",
+        "gameIcon": "",
+        "gameName": "",
+        "sortInfo": "",
+        "localFlag": "",
+        "playStatus": "",
+        "gameIconDescription": "",
+        "sortInfoDescription": "",
+        "playStatusDescription": "",
+        "localFlagDescription": ""
+      }
+    },
+    "gameDetail": {
+      "title": "",
+      "glassBackgroundImage": "",
+      "glassBackgroundImageDescription": "",
+      "glassBackgroundImageOptions": {
+        "background": "",
+        "cover": "",
+        "logo": ""
+      },
+      "showOriginalName": "",
+      "showOriginalNameDescription": "",
+      "contentTopPadding": "",
+      "contentTopPaddingDescription": "",
+      "headerLayout": "",
+      "headerLayoutDescription": "",
+      "headerLayoutDefault": "",
+      "headerLayoutCompact": "",
+      "showHeaderImage": "",
+      "showHeaderImageDescription": "",
+      "headerImageMaxHeight": "",
+      "headerImageMaxHeightDescription": "",
+      "showCover": "",
+      "showCoverDescription": "",
+      "showLogo": "",
+      "showLogoDescription": ""
+    },
+    "sidebar": {
+      "title": "",
+      "showThemeSwitcher": "",
+      "showThemeSwitcherDescription": "",
+      "showNSFWBlurSwitcher": "",
+      "showNSFWBlurSwitcherDescription": ""
+    },
+    "notifications": {
+      "resetAppearancesSettingsSuccess": "",
+      "resetAppearancesSettingsFailed": "",
+      "removeBackgroundImageSuccess": "",
+      "removeBackgroundImageFailed": "",
+      "loadPresetSuccess": "",
+      "loadPresetFailed": ""
+    }
+  },
+  "advanced": {
+    "title": "",
+    "localeEmulator": {
+      "name": "",
+      "description": "",
+      "placeholder": ""
+    },
+    "visualBoyAdvance": {
+      "name": "",
+      "description": "",
+      "placeholder": ""
+    },
+    "magpie": {
+      "name": "",
+      "description": "",
+      "placeholder": "",
+      "hotkeyLabel": "",
+      "hotkeyDescription": ""
+    }
+  },
+  "theme": {
+    "title": "",
+    "saveButton": "",
+    "presetThemes": "",
+    "searchTheme": "",
+    "noPresetFound": "",
+    "presets": {
+      "default": "",
+      "mutsumi": "",
+      "moonlight": ""
+    },
+    "notifications": {
+      "themeSaved": "",
+      "configuring": "",
+      "configured": ""
+    }
+  },
+  "hotkeys": {
+    "title": "",
+    "pageNavigation": {
+      "title": "",
+      "library": "",
+      "record": "",
+      "scanner": "",
+      "config": "",
+      "goBack": "",
+      "goForward": ""
+    },
+    "quickActions": {
+      "title": "",
+      "addGame": "",
+      "capture": ""
+    },
+    "others": {
+      "title": "",
+      "randomGame": ""
+    }
+  },
+  "cloudSync": {
+    "title": "",
+    "enable": "",
+    "enableDescription": "",
+    "syncMode": "",
+    "syncFull": "",
+    "syncFullDescription": "",
+    "syncFullButton": "",
+    "compact": "",
+    "compactDescription": "",
+    "modes": {
+      "official": "",
+      "selfHosted": ""
+    },
+    "status": {
+      "syncing": "",
+      "success": "",
+      "error": "",
+      "noInfo": ""
+    },
+    "errors": {
+      "incompleteConfig": "",
+      "loginRequired": "",
+      "fetchStorageFailed": ""
+    },
+    "notifications": {
+      "compacting": "",
+      "compactSuccess": "",
+      "compactError": "",
+      "updating": "",
+      "updateSuccess": "",
+      "updateError": "",
+      "loggingIn": "",
+      "loginSuccess": "",
+      "loginError": "",
+      "authSuccess": "",
+      "authError": "",
+      "registering": "",
+      "registerSuccess": "",
+      "registerError": ""
+    },
+    "official": {
+      "connectTitle": "",
+      "connectDescription": "",
+      "login": "",
+      "register": "",
+      "logout": "",
+      "adminEdition": "",
+      "developerEdition": "",
+      "premiumEdition": "",
+      "communityEdition": "",
+      "lastSync": "",
+      "notSynced": "",
+      "connected": "",
+      "disconnected": "",
+      "storage": "",
+      "used": ""
+    },
+    "selfHosted": {
+      "title": "",
+      "description": "",
+      "serverAddress": "",
+      "username": "",
+      "password": "",
+      "info": ""
+    },
+    "info": {
+      "status": "",
+      "message": "",
+      "time": ""
+    }
+  },
+  "scraper": {
+    "title": "",
+    "common": {
+      "title": "",
+      "defaultDataSource": "",
+      "defaultDataSourceDescription": "",
+      "defaultMediaDataSource": "",
+      "defaultMediaDataSourceDescription": "",
+      "cacheDescriptionImages": "",
+      "cacheDescriptionImagesDescription": ""
+    },
+    "vndb": {
+      "title": "",
+      "tagSpoilerLevel": "",
+      "tagSpoilerLevelDescription": "",
+      "tagSpoilerLevels": {
+        "none": "",
+        "minor": "",
+        "all": ""
+      }
+    },
+    "dlsite": {
+      "title": "",
+      "findIdInName": "",
+      "findIdInNameDescription": ""
+    },
+    "dataSources": {
+      "steam": "",
+      "vndb": "",
+      "bangumi": "",
+      "igdb": "",
+      "ymgal": "",
+      "dlsite": ""
+    }
+  },
+  "database": {
+    "title": "",
+    "portableMode": "",
+    "portableModeDescription": "",
+    "modes": {
+      "portable": "",
+      "normal": ""
+    },
+    "confirmSwitch": "",
+    "switchDescription": "",
+    "openFolder": "",
+    "openFolderDescription": "",
+    "backup": "",
+    "backupDescription": "",
+    "import": "",
+    "importDescription": "",
+    "importV2": "",
+    "importV2Description": "",
+    "confirmImport": "",
+    "importWarning": "",
+    "confirmImportV2": "",
+    "importV2Warning": "",
+    "defaultBackupPath": {
+      "title": "",
+      "description": "",
+      "placeholder": ""
+    },
+    "portableAdminRequired": "",
+    "notifications": {
+      "backingUp": "",
+      "backupSuccess": "",
+      "backupError": "",
+      "importing": "",
+      "importSuccess": "",
+      "importError": "",
+      "restartCountdown": "",
+      "switchingMode": "",
+      "switchSuccess": "",
+      "switchError": "",
+      "adminRightsRequired": ""
+    }
+  },
+  "about": {
+    "title": "",
+    "author": "",
+    "version": "",
+    "repository": "",
+    "feedback": "",
+    "group": "",
+    "prerelease": ""
+  },
+  "metadata": {
+    "title": "",
+    "transformer": {
+      "title": "",
+      "enable": "",
+      "enableDescription": "",
+      "manage": "",
+      "manageDescription": "",
+      "manageButton": ""
+    }
+  },
+  "memory": {
+    "title": "",
+    "storageBackend": {
+      "title": "",
+      "description": "",
+      "options": {
+        "database": "",
+        "fileSystem": "",
+        "both": ""
+      }
+    },
+    "saveToClipboard": {
+      "title": "",
+      "description": ""
+    },
+    "saveDir": {
+      "title": "",
+      "description": "",
+      "placeholder": ""
+    },
+    "namingRule": {
+      "title": "",
+      "description": "",
+      "placeholder": ""
+    },
+    "snippingMode": {
+      "title": "",
+      "description": "",
+      "options": {
+        "rectangle": "",
+        "activeWindow": "",
+        "fullscreen": ""
+      }
+    },
+    "enableNotificationSound": {
+      "title": "",
+      "description": ""
+    }
+  },
+  "network": {
+    "title": "",
+    "proxy": {
+      "title": "",
+      "enable": "",
+      "enableDescription": "",
+      "protocol": "",
+      "protocolDescription": "",
+      "protocols": {
+        "http": "",
+        "https": "",
+        "socks4": "",
+        "socks5": ""
+      },
+      "host": "",
+      "hostDescription": "",
+      "port": "",
+      "portDescription": "",
+      "bypassRules": "",
+      "bypassRulesDescription": ""
+    }
+  }
+}

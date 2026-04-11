@@ -1,0 +1,125 @@
+{
+  "title": "Менеджер плагінів",
+  "description": "Керуйте своїм застосунком та розширюйте його можливості за допомогою плагінів",
+  "actions": {
+    "checkUpdates": "Перевірити оновлення",
+    "installPlugin": "Встановити плагін",
+    "installFromRegistry": "Встановити з реєстру",
+    "installFromFile": "Встановити з файлу",
+    "installFirstPlugin": "Встановити свій перший плагін",
+    "install": "Встановити",
+    "installing": "Встановлення",
+    "installed": "Встановлено",
+    "update": "Оновити",
+    "updating": "Оновлення",
+    "enable": "Увімкнути",
+    "disable": "Вимкнути",
+    "uninstall": "Видалити",
+    "configure": "Налаштувати",
+    "cancel": "Скасувати",
+    "save": "Зберегти",
+    "saving": "Збереження..."
+  },
+  "details": {
+    "readme": "README",
+    "noReadme": "У цього плагіна немає файлу README",
+    "author": "Автор",
+    "description": "Опис",
+    "category": "Категорія",
+    "version": "Версія",
+    "created": "Створено",
+    "updated": "Оновлено",
+    "stars": "Зірок",
+    "viewOnGithub": "Переглянути на GitHub",
+    "visitHomepage": "Відвідати головну сторінку",
+    "readmeNotFound": "Файл README не знайдено",
+    "readmeLoadFailed": "Не вдалося завантажити README"
+  },
+  "dialogs": {
+    "uninstall": {
+      "title": "Видалити плагін",
+      "description": "Упевнені, що хочете видалити цей плагін?",
+      "confirm": "Видалити",
+      "cancel": "Скасувати"
+    }
+  },
+  "stats": {
+    "total": "Усього",
+    "enabled": "Увімкнено",
+    "disabled": "",
+    "errors": ""
+  },
+  "status": {
+    "enabled": "",
+    "disabled": "",
+    "error": "Помилка"
+  },
+  "tabs": {
+    "installed": "",
+    "browse": ""
+  },
+  "emptyState": {
+    "title": "",
+    "description": ""
+  },
+  "search": {
+    "placeholder": "",
+    "noPluginsFound": "",
+    "tryDifferentKeyword": "",
+    "localPluginsPlaceholder": "",
+    "localResults": "",
+    "noLocalResults": "",
+    "noLocalMatchesTitle": "",
+    "noLocalMatchesDescription": "",
+    "unknownDate": ""
+  },
+  "messages": {
+    "loading": "",
+    "loadPluginsFailed": "",
+    "searchPluginsFailed": "",
+    "installSuccess": "",
+    "installFailed": "",
+    "installFromFileFailed": "",
+    "uninstallSuccess": "",
+    "uninstallFailed": "",
+    "activateSuccess": "",
+    "activateFailed": "",
+    "deactivateSuccess": "",
+    "deactivateFailed": "",
+    "updatesAvailable": "",
+    "noUpdatesAvailable": "",
+    "checkUpdatesFailed": "",
+    "configurationSaved": "",
+    "saveConfigurationFailed": "",
+    "loadConfigurationFailed": ""
+  },
+  "configDialog": {
+    "title": "",
+    "description": "",
+    "noConfiguration": ""
+  },
+  "filters": {
+    "category": "",
+    "allCategories": "",
+    "common": "",
+    "scraper": "",
+    "sortBy": "",
+    "name": "",
+    "status": "",
+    "author": "",
+    "date": "",
+    "stars": "",
+    "updated": "",
+    "ascending": "",
+    "descending": ""
+  },
+  "pagination": {
+    "previous": "",
+    "next": "",
+    "page": ""
+  },
+  "categories": {
+    "common": "",
+    "scraper": ""
+  }
+}
