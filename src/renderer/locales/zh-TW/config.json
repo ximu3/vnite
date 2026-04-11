@@ -177,6 +177,31 @@
       "placeholder": "請輸入Magpie.exe的路徑",
       "hotkeyLabel": "Magpie 縮放快捷鍵",
       "hotkeyDescription": "設置 Magpie 縮放的快捷鍵"
+    },
+    "randomGameRule": {
+      "title": "隨機遊戲篩選配置",
+      "validate": "驗證",
+      "notifications": {
+        "loading": "正在校驗...",
+        "completed": "校驗通過",
+        "error": {
+          "not_object": "必須為 object",
+          "must_have_single_key": "必須僅包含單個鍵",
+          "invalid_operator": "無效操作符",
+          "must_be_array": "值必須為陣列",
+          "must_be_string": "元素必須為字串",
+          "invalid_json": "無效 JSON",
+          "unknown": "未知錯誤"
+        }
+      },
+      "presets": {
+        "default": "預設",
+        "filterPlayStatus": "篩選遊玩狀態",
+        "filterCollection": "篩選收藏"
+      },
+      "preset": "預設配置",
+      "search": "搜尋配置",
+      "noPresetFound": "未找到配置"
     }
   },
   "theme": {

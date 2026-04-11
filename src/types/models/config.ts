@@ -90,6 +90,7 @@ export interface configDocs {
     gameHeader: {
       showOriginalName: boolean
     }
+    randomGameRule: string
   }
   appearances: {
     sidebar: {
@@ -356,7 +357,8 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     },
     gameHeader: {
       showOriginalName: false
-    }
+    },
+    randomGameRule: `{ "gameNameNot": [] }`
   },
   appearances: {
     sidebar: {

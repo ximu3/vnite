@@ -12,6 +12,7 @@ import { getGameLocalStore } from './gameLocalStoreFactory'
 import { useGamePathStore } from './gamePathStore'
 import { useGameRegistry } from './gameRegistry'
 import { getGameStore } from './gameStoreFactory'
+import { useGameCollectionStore } from './useGameCollectionStore'
 
 // Search Functions
 export function searchGames(query: string): string[] {
@@ -50,11 +51,94 @@ export function searchGames(query: string): string[] {
   return potentialMatches
 }
 
-export function randomGame(): string | null {
+function applyRandomFilterRule(rule: object, pool: readonly string[]): string[] {
+  const key = Object.keys(rule)[0]
+  const arg = rule[key]
+
+  if (['and', 'or', 'playStatusIs', 'inCollection', 'gameNameNot'].includes(key)) {
+    if (!Array.isArray(arg)) return [...pool]
+  } else if (key === 'not') {
+    if (typeof arg !== 'object' || arg === null) return [...pool]
+  } else {
+    // Unknown operator, return original pool
+    return [...pool]
+  }
+
+  switch (key) {
+    case 'and': {
+      let current = [...pool]
+      for (const sub of arg) {
+        current = applyRandomFilterRule(sub, current)
+      }
+      return current
+    }
+
+    case 'or': {
+      const union = new Set<string>()
+
+      for (const sub of arg) {
+        const subResult = applyRandomFilterRule(sub, pool)
+        subResult.forEach((id) => union.add(id))
+      }
+
+      return Array.from(union)
+    }
+
+    case 'not': {
+      const excluded = new Set(applyRandomFilterRule(arg, pool))
+      return pool.filter((id) => !excluded.has(id))
+    }
+
+    case 'playStatusIs':
+      return pool.filter((id) =>
+        arg.includes(getGameStore(id).getState().getValue('record.playStatus'))
+      )
+
+    case 'inCollection': {
+      const collections = useGameCollectionStore.getState().documents
+      const current: Set<string> = new Set()
+
+      for (const collection of Object.values(collections)) {
+        if (arg.includes(collection.name)) {
+          collection.games.forEach((id) => current.add(id))
+        }
+      }
+
+      return pool.filter((id) => current.has(id))
+    }
+
+    case 'gameNameNot':
+      return pool.filter(
+        (id) =>
+          !(
+            arg.includes(getGameStore(id).getState().getValue('metadata.name')) ||
+            arg.includes(getGameStore(id).getState().getValue('metadata.originalName'))
+          )
+      )
+
+    default:
+      throw new Error(`Unknown operator: ${key}`)
+  }
+}
+
+export function randomGame(currentGameId?: string): string | null {
   const { gameIds } = useGameRegistry.getState()
-  if (gameIds.length === 0) return null
-  const randomIndex = Math.floor(Math.random() * gameIds.length)
-  return gameIds[randomIndex]
+  const filteredGameIds = currentGameId ? gameIds.filter((id) => id !== currentGameId) : gameIds
+  if (filteredGameIds.length === 0) return null
+
+  try {
+    const RandomFilterRule = JSON.parse(
+      useConfigStore.getState().getConfigValue('game.randomGameRule')
+    )
+    const randomPool = applyRandomFilterRule(RandomFilterRule, filteredGameIds)
+    if (randomPool.length === 0) return null
+
+    const randomIndex = Math.floor(Math.random() * randomPool.length)
+    return randomPool[randomIndex]
+  } catch (error) {
+    console.error('Error selecting random game:', error)
+    return null
+  }
 }
 
 export function checkGameNSFW(mode: NSFWFilterMode, gameId: string): boolean {

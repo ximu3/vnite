@@ -1,13 +1,12 @@
+import { useRouter } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
-import { useRouter } from '@tanstack/react-router'
-import { setup, changeFontFamily, changeFontSize, changeFontWeight } from '~/utils'
-import { useGameAdderStore } from './pages/GameAdder/store'
-import { randomGame } from './stores/game'
-import { useConfigState } from './hooks'
-import { useGameRegistry } from './stores/game'
-import { usePluginInfoStore } from './pages/Plugin/store'
+import { changeFontFamily, changeFontSize, changeFontWeight, navigateToGame, setup } from '~/utils'
 import { ipcManager } from './app/ipc'
+import { useConfigState } from './hooks'
+import { useGameAdderStore } from './pages/GameAdder/store'
+import { usePluginInfoStore } from './pages/Plugin/store'
+import { randomGame } from './stores/game'
 
 export function Setup(): React.JSX.Element {
   const router = useRouter()
@@ -16,7 +15,6 @@ export function Setup(): React.JSX.Element {
   const [fontWeight] = useConfigState('appearances.fonts.weight')
   const [scrollbarBlur] = useConfigState('appearances.scrollbar.blur')
   const [scrollbarOpacity] = useConfigState('appearances.scrollbar.opacity')
-  const gameIds = useGameRegistry((state) => state.gameIds)
   useEffect(() => {
     setup(router)
   }, [])
@@ -58,19 +56,16 @@ export function Setup(): React.JSX.Element {
   const setIsGameAdderOpen = useGameAdderStore((state) => state.setIsOpen)
 
   function randomGameDetail(): void {
-    const randomGameId = randomGame()
+    let randomGameId: string | null = null
+    if (router.state.location.pathname.startsWith('/library/games/')) {
+      const currentGameId = router.state.location.pathname.split('/')[3]
+      randomGameId = randomGame(currentGameId)
+    } else {
+      randomGameId = randomGame()
+    }
+
     if (randomGameId) {
-      if (router.state.location.pathname.startsWith('/library/games/')) {
-        if (gameIds.length === 1) {
-          return
-        }
-        const currentGameId = router.state.location.pathname.split('/')[3]
-        if (currentGameId === randomGameId) {
-          randomGameDetail()
-          return
-        }
-      }
-      router.navigate({ to: `/library/games/${randomGameId}/all` })
+      navigateToGame(router.navigate, randomGameId)
     } else {
       router.navigate({ to: '/library' })
     }

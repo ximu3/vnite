@@ -177,6 +177,31 @@
       "placeholder": "请输入Magpie.exe的路径",
       "hotkeyLabel": "Magpie 缩放快捷键",
       "hotkeyDescription": "设置 Magpie 缩放的快捷键"
+    },
+    "randomGameRule": {
+      "title": "随机游戏筛选配置",
+      "validate": "验证",
+      "notifications": {
+        "loading": "正在校验...",
+        "completed": "校验通过",
+        "error": {
+          "not_object": "必须为 object",
+          "must_have_single_key": "必须仅包含单个键",
+          "invalid_operator": "无效操作符",
+          "must_be_array": "值必须为数组",
+          "must_be_string": "元素必须为字符串",
+          "invalid_json": "无效 JSON",
+          "unknown": "未知错误"
+        }
+      },
+      "presets": {
+        "default": "默认",
+        "filterPlayStatus": "筛选游玩状态",
+        "filterCollection": "筛选收藏"
+      },
+      "preset": "预设配置",
+      "search": "搜索配置",
+      "noPresetFound": "未找到配置"
     }
   },
   "theme": {

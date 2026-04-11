@@ -177,6 +177,31 @@
       "placeholder": "Magpie.exeのパスを入力してください",
       "hotkeyLabel": "Magpieスケーリングホットキー",
       "hotkeyDescription": "Magpieスケーリングのホットキーを設定"
+    },
+    "randomGameRule": {
+      "title": "ランダムゲームフィルター設定",
+      "validate": "検証",
+      "notifications": {
+        "loading": "検証中...",
+        "completed": "検証完了",
+        "error": {
+          "not_object": "オブジェクトである必要があります",
+          "must_have_single_key": "単一のキーのみ含める必要があります",
+          "invalid_operator": "無効な演算子",
+          "must_be_array": "値は配列である必要があります",
+          "must_be_string": "要素は文字列である必要があります",
+          "invalid_json": "無効な JSON",
+          "unknown": "不明なエラー"
+        }
+      },
+      "presets": {
+        "default": "デフォルト",
+        "filterPlayStatus": "プレイ状況でフィルター",
+        "filterCollection": "コレクションでフィルター"
+      },
+      "preset": "プリセット設定",
+      "search": "設定を検索",
+      "noPresetFound": "設定が見つかりません"
     }
   },
   "theme": {
