@@ -1,4 +1,5 @@
 import {
+  DEFAULT_CONFIG_VALUES,
   gameCollectionDoc,
   gameDoc,
   gameLocalDoc,
@@ -601,7 +602,8 @@ async function convertConfig(basePath: string): Promise<void> {
       },
       gameHeader: {
         showOriginalName: v2Config.appearances.gameHeader.showOriginalNameInGameHeader
-      }
+      },
+      randomGameRule: DEFAULT_CONFIG_VALUES.game.randomGameRule
     })
 
     // Converting Appearance Configuration
