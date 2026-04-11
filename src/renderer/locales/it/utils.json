@@ -4,6 +4,10 @@
     "cancel": "",
     "confirm": ""
   },
+  "upscale": {
+    "label": "",
+    "noUpscale": ""
+  },
   "arrayEditor": {
     "clickPlusToAdd": "",
     "addElement": "",

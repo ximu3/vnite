@@ -207,6 +207,11 @@
       "preset": "プリセット設定",
       "search": "設定を検索",
       "noPresetFound": "設定が見つかりません"
+    },
+    "upscaler": {
+      "name": "waifu2x-ncnn-vulkan / realcugan-ncnn-vulkan / realesrgan-ncnn-vulkan",
+      "description": "ゲーム背景画像の超解像アップスケールに使用するツールです",
+      "placeholder": "アップスケーラーのパスを入力してください"
     }
   },
   "theme": {

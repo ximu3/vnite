@@ -24,6 +24,7 @@ import { ipcManager } from '~/app/ipc'
 import { toast } from 'sonner'
 import { useGameCollectionStore } from '~/stores'
 import { Switch } from '~/components/ui/switch'
+import { UpscaleSelectRow } from '~/components/utils/UpscaleSelect'
 
 interface EditScannerDialogProps {
   isOpen: boolean
@@ -243,6 +244,12 @@ export const EditScannerDialog: React.FC<EditScannerDialogProps> = ({
               updateFormState({ normalizeFolderName: Boolean(checked) })
             }
           ></Switch>
+          {/* Upscale Scale */}
+          <UpscaleSelectRow
+            value={formState.upscaleScale || 0}
+            onValueChange={(value) => updateFormState({ upscaleScale: value })}
+            triggerClassName={cn('w-full text-sm')}
+          />
         </div>
 
         <DialogFooter>

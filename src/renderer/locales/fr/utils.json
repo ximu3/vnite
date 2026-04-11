@@ -6,6 +6,10 @@
     "edit": "Modifier",
     "delete": "Supprimer"
   },
+  "upscale": {
+    "label": "",
+    "noUpscale": ""
+  },
   "arrayEditor": {
     "clickPlusToAdd": "Cliquer sur + pour ajouter des éléments",
     "addElement": "Ajouter élément",
