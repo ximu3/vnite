@@ -44,6 +44,14 @@ export let mainWindow: BrowserWindow
 
 export let trayManager: TrayManager
 
+// Track whether game data has been loaded
+let gamesLoaded = false
+
+// Export function to check if games are loaded
+export function isGamesLoaded(): boolean {
+  return gamesLoaded
+}
+
 log.initialize()
 
 global.fetch = net.fetch as typeof global.fetch
@@ -254,12 +262,12 @@ app.whenReady().then(async () => {
   // Setup scraper providers
   setupScraper()
 
-  createWindow()
-
   baseDBManager.initAllDatabases()
 
   // Setup proxy config
   await setupProxy()
+
+  createWindow()
 
   try {
     AuthManager.init()
@@ -293,9 +301,16 @@ app.whenReady().then(async () => {
   // Setup auto updater
   setupAutoUpdater()
 
-  // Initialize the game scanner
-  GameScannerManager.startScan()
-  GameScannerManager.startPeriodicScan()
+  ipcManager.on('db:games-loaded', () => {
+    log.info('[App] Games DB loaded, starting scanner...')
+    gamesLoaded = true
+    GameScannerManager.startScan().catch((err) => {
+      log.error('[Scanner] Startup scan failed:', err)
+    })
+    GameScannerManager.startPeriodicScan()
+  })
+
+  // Note: Scanner will be started after games are loaded (see db:games-loaded handler above)
 
   pluginService.initialize()
 

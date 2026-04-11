@@ -21,9 +21,17 @@ import {
 import { isEqual } from 'lodash'
 
 /**
+ * Database loading phases:
+ * - Phase 1: Critical data for UI rendering (loaded sequentially)
+ * - Phase 2: Game data (loaded in background, can be large)
+ */
+const DB_PHASE1 = ['config', 'config-local', 'plugin', 'game-collection'] as const
+const DB_PHASE2 = ['game', 'game-local'] as const
+
+/**
  * Mapping database names to corresponding data initialization functions
  */
-const DB_INITIALIZERS = {
+const DB_INITIALIZERS: Record<string, (data: any) => Promise<void>> = {
   game: async (data: gameDocs): Promise<void> => {
     initializeGameStores(data)
     console.log(`[DB] game: initialized ${Object.keys(data).length} game store`)
@@ -195,19 +203,33 @@ const DB_CHANGE_HANDLERS = {
 export async function setupDBSync(): Promise<void> {
   console.log('[DB] Setting up database synchronization...')
 
-  // Initialize each database
-  const dbNames = Object.keys(DB_INITIALIZERS)
-
-  for (const dbName of dbNames) {
+  // Phase 1: Load critical data for UI rendering
+  for (const dbName of DB_PHASE1) {
     try {
-      // Get all documents
       const data = await ipcManager.invoke('db:get-all-docs', dbName)
-      // Call the corresponding initialization function
       await DB_INITIALIZERS[dbName](data)
     } catch (error) {
       console.error(`[DB] ${dbName} Initialization Failure:`, error)
     }
   }
+
+  console.log('[DB] Phase 1 complete, UI ready')
+
+  // Phase 2: Load game data in background (can be large)
+  Promise.all(
+    DB_PHASE2.map(async (dbName) => {
+      try {
+        const data = await ipcManager.invoke('db:get-all-docs', dbName)
+        await DB_INITIALIZERS[dbName](data)
+      } catch (error) {
+        console.error(`[DB] ${dbName} Initialization Failure:`, error)
+      }
+    })
+  ).then(() => {
+    useGameRegistry.getState().setGamesLoaded(true)
+    ipcManager.send('db:games-loaded')
+    console.log('[DB] Phase 2 complete, games ready')
+  })
 
   // Listening to database changes
   ipcManager.on('db:doc-changed', (_, change: DocChange) => {

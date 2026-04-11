@@ -70,6 +70,7 @@
   },
   "showcase": {
     "welcome": "",
+    "loadingGames": "",
     "sections": {
       "recentGames": "",
       "collections": "",

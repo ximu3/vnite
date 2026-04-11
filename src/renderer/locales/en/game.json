@@ -82,6 +82,7 @@
   },
   "showcase": {
     "welcome": "Welcome to Vnite, please add your first game scanner.",
+    "loadingGames": "Loading games...",
     "sections": {
       "recentGames": "Recent Games",
       "collections": "My Collections",

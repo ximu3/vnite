@@ -9,6 +9,7 @@ import { OverallScanProgress } from '@appTypes/utils'
 import log from 'electron-log/main'
 import { ipcManager } from '~/core/ipc'
 import { eventBus } from '~/core/events'
+import { isGamesLoaded } from '~/index'
 
 // Scanner configuration type
 interface ScannerConfig {
@@ -126,6 +127,14 @@ export class GameScanner extends EventEmitter {
   }
 
   public async startScan(): Promise<void> {
+    // Check if games are loaded before scanning
+    if (!isGamesLoaded()) {
+      log.warn('[Scanner] Cannot start scan: games not loaded yet')
+      this.scanProgress.status = 'error'
+      this.scanProgress.errorMessage = 'Game data is still loading, please wait and try again'
+      ipcManager.send('scanner:scan-error', { ...this.scanProgress })
+      return
+    }
     if (this.scanProgress.status === 'scanning') {
       console.log('Scan already in progress')
       return // Already scanning
@@ -230,6 +239,15 @@ export class GameScanner extends EventEmitter {
   }
 
   public async scanSpecificScanner(scannerId: string): Promise<void> {
+    // Check if games are loaded before scanning
+    if (!isGamesLoaded()) {
+      log.warn('[Scanner] Cannot start scan: games not loaded yet')
+      this.scanProgress.status = 'error'
+      this.scanProgress.errorMessage = 'Game data is still loading, please wait and try again'
+      ipcManager.send('scanner:scan-error', { ...this.scanProgress })
+      return
+    }
+
     if (this.scanProgress.status === 'scanning') {
       console.log('Scan already in progress')
       return // Already scanning
