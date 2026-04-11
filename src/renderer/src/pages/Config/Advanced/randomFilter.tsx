@@ -1,6 +1,7 @@
 import { Button } from '@ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { Textarea } from '@ui/textarea'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useConfigState } from '~/hooks'
@@ -8,6 +9,8 @@ import { cn } from '~/utils'
 import { PresetSelecter } from './PresetSelecter'
 
 type Operator = 'and' | 'or' | 'not' | 'inCollection' | 'gameNameNot' | 'playStatusIs'
+
+const RANDOM_GAME_FILTER_GUIDE_URL = 'https://vnite.ximu.dev/guide/random-game-filter'
 
 export interface ValidationError {
   path: string
@@ -66,6 +69,10 @@ export function RandomFilter(): React.JSX.Element {
   const [randomGameRule, setRandomGameRule, saveRandomGameRule, setAndSaveRandomGameRule] =
     useConfigState('game.randomGameRule', true)
 
+  const openGuide = (): void => {
+    window.open(RANDOM_GAME_FILTER_GUIDE_URL, '_blank', 'noopener,noreferrer')
+  }
+
   const validateRandomFilterRule = async (jsonStr: string): Promise<void> => {
     try {
       const obj = JSON.parse(jsonStr)
@@ -101,7 +108,28 @@ export function RandomFilter(): React.JSX.Element {
       <CardHeader>
         <CardTitle className={cn('relative')}>
           <div className={cn('flex flex-row justify-between items-center')}>
-            <div className={cn('flex items-center')}>{t('advanced.randomGameRule.title')}</div>
+            <div className={cn('flex items-center gap-1')}>
+              <span>{t('advanced.randomGameRule.title')}</span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="bare"
+                    size="icon-sm"
+                    className={cn('group')}
+                    onClick={openGuide}
+                    aria-label={t('advanced.randomGameRule.openGuide')}
+                  >
+                    <span
+                      className={cn('icon-[mdi--help-circle] size-4 group-hover:text-primary')}
+                    />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  {t('advanced.randomGameRule.openGuide')}
+                </TooltipContent>
+              </Tooltip>
+            </div>
             <div className={cn('flex items-center flex-row gap-6')}>
               <Button variant="secondary" onClick={() => validateAndSave()}>
                 {t('advanced.randomGameRule.validate')}

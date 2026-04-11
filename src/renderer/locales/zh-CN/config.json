@@ -185,6 +185,7 @@
     },
     "randomGameRule": {
       "title": "随机游戏筛选配置",
+      "openGuide": "查看文档",
       "validate": "验证",
       "notifications": {
         "loading": "正在校验...",

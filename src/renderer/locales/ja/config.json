@@ -185,6 +185,7 @@
     },
     "randomGameRule": {
       "title": "ランダムゲームフィルター設定",
+      "openGuide": "ドキュメントを開く",
       "validate": "検証",
       "notifications": {
         "loading": "検証中...",

@@ -185,6 +185,7 @@
     },
     "randomGameRule": {
       "title": "Random Game Filter Configuration",
+      "openGuide": "Open documentation",
       "validate": "Validate",
       "notifications": {
         "loading": "Validating...",
