@@ -391,11 +391,16 @@
       "title": "游戏计时器",
       "addTimer": "添加计时器",
       "timersList": "计时器列表",
+      "dailyPlayTimes": "按日期记录",
+      "addDailyPlayTime": "添加日期记录",
       "fuzzyTime": "计时器未记录游玩时间",
       "noTimers": "没有计时器记录",
+      "noDailyPlayTimes": "没有按日期记录",
       "totalPlayTime": "总游戏时长",
       "startTime": "开始",
       "endTime": "结束",
+      "date": "日期",
+      "playTime": "游玩时间",
       "ongoing": "进行中",
       "duration": "时长",
       "minutes": "分钟",
@@ -419,6 +424,12 @@
       "editTimer": "编辑游戏计时",
       "startDateTime": "开始时间",
       "endDateTime": "结束时间"
+    },
+    "dailyPlayTimeEditor": {
+      "addDailyPlayTime": "添加日期记录",
+      "editDailyPlayTime": "编辑日期记录",
+      "dateRequired": "请选择有效日期",
+      "playTimeRequired": "游玩时间必须大于 0"
     },
     "deleteAlert": {
       "title": "确定要删除游戏 {{gameName}} 吗？",

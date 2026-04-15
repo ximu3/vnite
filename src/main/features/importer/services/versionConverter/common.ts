@@ -283,6 +283,7 @@ async function convertGame(gameId: string, gamePath: string): Promise<void> {
         playTime: record.playingTime || 0,
         playStatus: record.playStatus || 'unplayed',
         timers: record.timer || [],
+        dailyPlayTimes: [],
         storageSize: STORAGE_SIZE_NOT_CALCULATED
       },
       save: {
