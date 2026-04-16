@@ -67,6 +67,25 @@ export function generateUUID(): string {
   return v4()
 }
 
+export function calculateLastRunDateFromTimers(timer: Timer[]): string {
+  if (!timer || timer.length === 0) {
+    return ''
+  }
+
+  const latestEnd = timer.reduce((latest, timerItem) => {
+    const start = new Date(timerItem.start).getTime()
+    const end = new Date(timerItem.end).getTime()
+
+    if (isNaN(start) || isNaN(end) || end < start) {
+      return latest
+    }
+
+    return Math.max(latest, end)
+  }, Number.NEGATIVE_INFINITY)
+
+  return Number.isFinite(latestEnd) ? new Date(latestEnd).toISOString() : ''
+}
+
 export const calculateDailyPlayTime = (date: Date, timer: Timer[]): number => {
   const dayStart = new Date(date)
   dayStart.setHours(0, 0, 0, 0)

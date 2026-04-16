@@ -183,6 +183,8 @@ type MainIpcEvents =
       'game:check-exits-by-path': (gamePath: string) => boolean
       'game:delete': (gameId: string) => void
       'game:calculate-storage-size': (gameId: string) => number
+      'game:recalculate-last-run-date': (gameId: string) => string
+      'game:hide-from-recent-games': (gameId: string) => void
       'game:batch-calculate-storage-size': (gameIds: string[]) => {
         taskId: string
         wasCancelled: boolean

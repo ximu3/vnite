@@ -24,7 +24,13 @@
     "recent": {
       "title": "Recent Games",
       "hide": "Hide",
-      "empty": "No recent games"
+      "remove": "Remove from Recent Games",
+      "empty": "No recent games",
+      "notifications": {
+        "removing": "Removing from recent games…",
+        "removed": "Removed from recent games",
+        "removeError": "Failed to remove from recent games"
+      }
     },
     "filter": {
       "results": "Filter Results",
@@ -369,6 +375,7 @@
       "rename": "Edit Basic Information",
       "editLogo": "Edit Logo",
       "editPlayTime": "Edit Play Time",
+      "recalculateLastRunDate": "Recalculate Last Played Date",
       "markNSFW": "Mark as NSFW",
       "unmarkNSFW": "Unmark NSFW",
       "downloadMetadata": "Update Metadata",
@@ -384,7 +391,12 @@
         "storageSizeCalculated": "Game size calculated: {{size}}",
         "storageSizeError": "Failed to calculate game size",
         "storageSizeConfirm": "Calculate game size? This may take a moment.",
-        "storageSizeRecalculateConfirm": "Current size: {{currentSize}}. Recalculate game size?"
+        "storageSizeRecalculateConfirm": "Current size: {{currentSize}}. Recalculate game size?",
+        "recalculatingLastRunDate": "Recalculating last played date…",
+        "lastRunDateRecalculated": "Last played date updated to {{date, niceDate}}",
+        "lastRunDateCleared": "No valid timers found. Last played date cleared",
+        "lastRunDateRecalculateError": "Failed to recalculate last played date",
+        "lastRunDateRecalculateConfirm": "The last played date will be recalculated from the current timer list. If no valid timers exist, the date will be cleared."
       }
     },
     "timersEditor": {

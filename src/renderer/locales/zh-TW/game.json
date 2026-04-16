@@ -24,7 +24,13 @@
     "recent": {
       "title": "最近遊戲",
       "hide": "隱藏",
-      "empty": "暫無最近遊戲"
+      "remove": "從最近遊戲中移除",
+      "empty": "暫無最近遊戲",
+      "notifications": {
+        "removing": "正在從最近遊戲中移除…",
+        "removed": "已從最近遊戲中移除",
+        "removeError": "從最近遊戲中移除失敗"
+      }
     },
     "filter": {
       "results": "篩選結果",
@@ -369,6 +375,7 @@
       "rename": "修改基本資訊",
       "editLogo": "編輯徽標",
       "editPlayTime": "修改遊玩時間",
+      "recalculateLastRunDate": "重新計算最後執行日期",
       "markNSFW": "標記為 NSFW",
       "unmarkNSFW": "取消標記為 NSFW",
       "downloadMetadata": "更新資料",
@@ -384,7 +391,12 @@
         "storageSizeCalculated": "遊戲大小已計算：{{size}}",
         "storageSizeError": "計算遊戲大小失敗",
         "storageSizeConfirm": "計算遊戲大小？這可能需要一些時間。",
-        "storageSizeRecalculateConfirm": "當前大小：{{currentSize}}。重新計算遊戲大小？"
+        "storageSizeRecalculateConfirm": "當前大小：{{currentSize}}。重新計算遊戲大小？",
+        "recalculatingLastRunDate": "正在重新計算最後執行日期…",
+        "lastRunDateRecalculated": "最後執行日期已更新為 {{date, niceDate}}",
+        "lastRunDateCleared": "沒有有效的計時器，最後執行日期已清除",
+        "lastRunDateRecalculateError": "重新計算最後執行日期失敗",
+        "lastRunDateRecalculateConfirm": "將根據目前的計時器列表重新設定最後執行日期。若沒有有效的計時器，將清除該日期。"
       }
     },
     "timersEditor": {

@@ -15,9 +15,10 @@ import {
 } from '~/components/ui/dropdown-menu'
 import { useConfigState, useGameLocalState, useGameState } from '~/hooks'
 import { useGameAdderStore } from '~/pages/GameAdder/store'
+import { formatStorageSize } from '~/utils'
+import { RecalculateLastRunDateAlertDialog } from '../../Overview/Record/RecalculateLastRunDateAlertDialog'
 import { useGameDetailStore } from '../../store'
 import { DeleteGameAlert } from './DeleteGameAlert'
-import { formatStorageSize } from '~/utils'
 
 export function ManageMenu({
   gameId,
@@ -176,6 +177,12 @@ export function ManageMenu({
                   {t('detail.manage.calculateStorageSize')}
                 </DropdownMenuItem>
               )}
+              {/* Recalculate Last Run Date */}
+              <RecalculateLastRunDateAlertDialog gameId={gameId}>
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                  {t('detail.manage.recalculateLastRunDate')}
+                </DropdownMenuItem>
+              </RecalculateLastRunDateAlertDialog>
 
               <DropdownMenuSeparator />
 

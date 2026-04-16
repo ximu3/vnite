@@ -6,9 +6,9 @@ import { useEffect, useRef, useState } from 'react'
 import { create } from 'zustand'
 import { useTheme } from '~/components/ThemeProvider'
 import { useConfigState, useGameState } from '~/hooks'
-import { useAttachmentStore } from '~/stores'
-import { sortGames, useGameCollectionStore } from '~/stores/game'
 import { useLibraryStore } from '~/pages/Library/store'
+import { useAttachmentStore } from '~/stores'
+import { getRecentGameIds, useGameCollectionStore, useGameRegistry } from '~/stores/game'
 import { cn } from '~/utils'
 
 // eslint-disable-next-line
@@ -27,6 +27,7 @@ export function Light(): React.JSX.Element {
   const { getAttachmentInfo, setAttachmentError } = useAttachmentStore()
   const getGameCollectionValue = useGameCollectionStore((state) => state.getGameCollectionValue)
   const collections = useGameCollectionStore((state) => state.documents)
+  const gameMetaIndex = useGameRegistry((state) => state.gameMetaIndex)
   const [customBackground] = useConfigState('appearances.background.customBackground')
   const [darkGlassBlur] = useConfigState('appearances.glass.dark.blur')
   const [darkGlassOpacity] = useConfigState('appearances.glass.dark.opacity')
@@ -73,13 +74,24 @@ export function Light(): React.JSX.Element {
     return `attachment://config/media/background-${isDark ? 'dark' : 'light'}.webp?t=${info?.timestamp}`
   }
 
-  const getRecentGameId = (): string => sortGames('record.lastRunDate', 'desc')[0]
+  const getRecentGameId = (): string => getRecentGameIds(1)[0] || ''
 
   const updateBackgroundImage = (newUrl: string, newGameId: string = ''): void => {
     if (newUrl === imageUrl) return
 
     setImageUrl(newUrl)
     if (newGameId) setGameId(newGameId)
+  }
+
+  const updateRecentGameBackgroundImage = (): void => {
+    const recentGameId = getRecentGameId()
+    if (recentGameId) {
+      updateBackgroundImage(getGameBackgroundUrl(recentGameId), recentGameId)
+      return
+    }
+
+    updateBackgroundImage(defaultBackground)
+    setGameId('')
   }
 
   // Use requestAnimationFrame for smoother updates
@@ -155,8 +167,7 @@ export function Light(): React.JSX.Element {
         if (customBackground) {
           updateBackgroundImage(getCustomBackgroundUrl())
         } else {
-          const recentGameId = getRecentGameId()
-          updateBackgroundImage(getGameBackgroundUrl(recentGameId), recentGameId)
+          updateRecentGameBackgroundImage()
         }
         return
       }
@@ -171,13 +182,13 @@ export function Light(): React.JSX.Element {
         return
       }
 
-      const recentGameId = getRecentGameId()
-      updateBackgroundImage(getGameBackgroundUrl(recentGameId), recentGameId)
+      updateRecentGameBackgroundImage()
     }
   }, [
     pathname,
     getGameCollectionValue,
     collections,
+    gameMetaIndex,
     customBackground,
     isDark,
     refreshId,

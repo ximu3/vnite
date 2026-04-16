@@ -3,26 +3,29 @@ import { Button } from '~/components/ui/button'
 import { PopoverTrigger } from '~/components/ui/popover'
 import { cn } from '~/utils'
 
-export function RecordCard({
-  title,
-  content,
-  icon,
-  onClick,
-  asPopoverTrigger,
-  className = ''
-}: {
+interface RecordCardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClick'> {
   title: string
   content: string
   icon?: string
   onClick?: () => void
   asPopoverTrigger?: boolean
   className?: string
-}): React.JSX.Element {
+}
+
+export const RecordCard = React.forwardRef<HTMLDivElement, RecordCardProps>(function RecordCard(
+  { title, content, icon, onClick, asPopoverTrigger, className = '', ...props },
+  ref
+): React.JSX.Element {
   const ButtonWrapper = ({ children }: { children: React.ReactNode }): React.JSX.Element =>
     asPopoverTrigger ? <PopoverTrigger asChild>{children}</PopoverTrigger> : <>{children}</>
   const isInteractive = onClick || asPopoverTrigger
+
   return (
-    <div className={cn('flex flex-row justify-center items-center', className)}>
+    <div
+      ref={ref}
+      className={cn('flex flex-row justify-center items-center', className)}
+      {...props}
+    >
       {isInteractive ? (
         <ButtonWrapper>
           <Button variant={'bare'} size={'icon'} className={cn('group  mr-3')} onClick={onClick}>
@@ -49,4 +52,6 @@ export function RecordCard({
       </div>
     </div>
   )
-}
+})
+
+RecordCard.displayName = 'RecordCard'

@@ -605,6 +605,7 @@ export class GameMonitor {
     if (await GameDBManager.getGame(this.options.gameId)) {
       await GameDBManager.setGameValue(this.options.gameId, 'record.timers', timers)
       await GameDBManager.setGameValue(this.options.gameId, 'record.lastRunDate', this.endTime)
+      await GameDBManager.setGameValue(this.options.gameId, 'record.hideFromRecentGames', false)
       await GameDBManager.setGameValue(this.options.gameId, 'record.playTime', playTime)
     }
 

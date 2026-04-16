@@ -628,12 +628,13 @@ export function getRecentlyPlayedGames(count = 5): string[] {
     const gamesWithLastRunDate = gameIds.map((gameId) => {
       const store = getGameStore(gameId)
       const lastRunDate = store.getState().getValue('record.lastRunDate')
-      return { gameId, lastRunDate }
+      const hideFromRecentGames = store.getState().getValue('record.hideFromRecentGames')
+      return { gameId, lastRunDate, hideFromRecentGames }
     })
 
     // Sort by last run date
     return gamesWithLastRunDate
-      .filter((game) => game.lastRunDate) // Filter out games with no run date
+      .filter((game) => game.lastRunDate && game.hideFromRecentGames !== true)
       .sort((a, b) => new Date(b.lastRunDate).getTime() - new Date(a.lastRunDate).getTime())
       .slice(0, count)
       .map((game) => game.gameId)

@@ -64,6 +64,7 @@ export function GamePoster({
   dragScenario,
   parentGap = 0,
   position = 'center',
+  showRemoveFromRecent = false,
   inViewGames = [] // TODO: Support shift+click selection
 }: {
   gameId: string
@@ -72,6 +73,7 @@ export function GamePoster({
   dragScenario?: string
   parentGap?: number
   position?: 'right' | 'left' | 'center'
+  showRemoveFromRecent?: boolean
   inViewGames?: string[]
 }): React.JSX.Element {
   const navigate = useNavigate()
@@ -354,6 +356,7 @@ export function GamePoster({
               openNameEditorDialog={() => setIsInformationDialogOpen(true)}
               openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
               openPropertiesDialog={() => setIsPropertiesDialogOpen(true)}
+              showRemoveFromRecent={showRemoveFromRecent}
             />
           )}
         </ContextMenu>

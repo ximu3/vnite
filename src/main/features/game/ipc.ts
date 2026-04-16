@@ -10,7 +10,9 @@ import {
   calculateStorageSize,
   batchCalculateStorageSize,
   cancelBatchStorageSizeCalculation,
-  isBatchStorageSizeCalculationRunning
+  isBatchStorageSizeCalculationRunning,
+  recalculateLastRunDate,
+  hideGameFromRecentGames
 } from './services'
 
 export function setupGameIPC(): void {
@@ -91,5 +93,13 @@ export function setupGameIPC(): void {
 
   ipcManager.handle('game:is-batch-storage-size-calculation-running', async () => {
     return isBatchStorageSizeCalculationRunning()
+  })
+
+  ipcManager.handle('game:recalculate-last-run-date', async (_, gameId: string) => {
+    return await recalculateLastRunDate(gameId)
+  })
+
+  ipcManager.handle('game:hide-from-recent-games', async (_, gameId: string) => {
+    await hideGameFromRecentGames(gameId)
   })
 }

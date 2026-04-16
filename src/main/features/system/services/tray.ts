@@ -168,7 +168,12 @@ export class TrayManager {
       const gameDocs = await GameDBManager.getAllGames()
       const recentGameIds = (
         await GameDBManager.sortGames({ by: 'record.lastRunDate', order: 'desc' })
-      ).slice(0, 5)
+      )
+        .filter((gameId) => {
+          const game = gameDocs[gameId]
+          return game?.record?.lastRunDate && game.record.hideFromRecentGames !== true
+        })
+        .slice(0, 5)
 
       const recentGames = await Promise.all(
         recentGameIds.map(async (gameId) => {
