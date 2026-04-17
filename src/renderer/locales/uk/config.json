@@ -209,8 +209,7 @@
     },
     "quickActions": {
       "title": "",
-      "addGame": "",
-      "capture": ""
+      "addGame": ""
     },
     "others": {
       "title": "",
@@ -410,15 +409,6 @@
       "title": "",
       "description": "",
       "placeholder": ""
-    },
-    "snippingMode": {
-      "title": "",
-      "description": "",
-      "options": {
-        "rectangle": "",
-        "activeWindow": "",
-        "fullscreen": ""
-      }
     },
     "enableNotificationSound": {
       "title": "",

@@ -222,7 +222,6 @@ export interface configDocs {
       namingRule: string
       saveToClipboard: boolean
     }
-    snippingMode: 'rectangle' | 'activewindow' | 'fullscreen'
     enableNotificationSound: boolean
   }
   record: {
@@ -265,7 +264,9 @@ export interface configLocalDocs {
     }
   }
   hotkeys: {
-    capture: string
+    captureRectangle: string
+    captureActiveWindow: string
+    captureFullscreen: string
   }
   game: {
     linkage: {
@@ -455,7 +456,6 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       namingRule: '%datetime%',
       saveToClipboard: false
     },
-    snippingMode: 'rectangle',
     enableNotificationSound: true
   },
   record: {
@@ -501,7 +501,9 @@ export const DEFAULT_CONFIG_LOCAL_VALUES: Readonly<configLocalDocs> = {
     }
   },
   hotkeys: {
-    capture: 'alt+shift+z'
+    captureRectangle: '',
+    captureActiveWindow: 'alt+shift+z',
+    captureFullscreen: ''
   },
   game: {
     linkage: {

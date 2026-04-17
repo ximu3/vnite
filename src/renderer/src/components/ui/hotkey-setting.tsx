@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 import { Button } from '~/components/ui/button'
-import { Input } from '~/components/ui/input'
 import {
   Dialog,
   DialogContent,
@@ -8,13 +9,12 @@ import {
   DialogTitle,
   DialogTrigger
 } from '~/components/ui/dialog'
-import { toast } from 'sonner'
-import { useTranslation } from 'react-i18next'
+import { Input } from '~/components/ui/input'
 import { cn } from '~/utils'
 
 interface HotkeySettingProps {
   defaultHotkey: string
-  onHotkeyChange: (newHotkey: string) => void
+  onHotkeyChange: (newHotkey: string) => boolean | void | Promise<boolean | void>
   inputClassName?: string
   className?: string
 }
@@ -147,16 +147,42 @@ export function HotkeySetting({
     setPressedKeys([])
   }
 
-  const handleSave = (): void => {
+  const submitHotkeyChange = async (hotkey: string): Promise<boolean | void> => {
+    try {
+      return await onHotkeyChange(hotkey)
+    } catch (error) {
+      console.error('Failed to update hotkey:', error)
+      toast.error(t('utils:hotkeySetting.errors.unknown'))
+      return false
+    }
+  }
+
+  const handleSave = async (): Promise<void> => {
     if (tempHotkey && validateHotkey(tempHotkey)) {
-      onHotkeyChange(tempHotkey)
+      const succeeded = await submitHotkeyChange(tempHotkey)
+      if (succeeded === false) {
+        return
+      }
       toast.success(t('utils:hotkeySetting.notifications.hotkeyUpdated'))
       setIsOpen(false)
     }
   }
 
+  const handleClear = async (): Promise<void> => {
+    const succeeded = await submitHotkeyChange('')
+    if (succeeded === false) {
+      return
+    }
+    toast.success(t('utils:hotkeySetting.notifications.hotkeyUpdated'))
+    setIsOpen(false)
+  }
+
   // Shortcut keys for formatting the display
   const formatHotkey = (hotkey: string): string => {
+    if (!hotkey.trim()) {
+      return t('utils:hotkeySetting.unset')
+    }
+
     return hotkey
       .split('+')
       .map((key) => key.charAt(0).toUpperCase() + key.slice(1))
@@ -212,6 +238,9 @@ export function HotkeySetting({
         <div className="flex justify-end space-x-4">
           <Button variant="ghost" onClick={() => setIsOpen(false)}>
             {t('utils:common.cancel')}
+          </Button>
+          <Button variant="outline" onClick={handleClear}>
+            {t('utils:hotkeySetting.clearButton')}
           </Button>
           <Button onClick={handleSave} disabled={!tempHotkey}>
             {t('utils:common.save')}

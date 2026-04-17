@@ -16,15 +16,19 @@
   },
   "hotkeySetting": {
     "title": "設定快捷鍵",
+    "unset": "未設定",
     "recording": "[按下快捷鍵…]",
     "placeholder": "輸入或記錄快捷鍵，如: ctrl+a+b",
     "startRecordButton": "點擊開始記錄",
     "recordingButton": "正在記錄…",
+    "clearButton": "清除",
     "currentKeys": "目前按下的鍵",
     "supportedKeys": "支援的按鍵包括字母、數字、方向鍵、Esc、Tab、Enter、Space 等，可以組合使用多個按鍵",
     "errors": {
       "invalidHotkey": "請輸入有效的快捷鍵",
-      "duplicateKeys": "快捷鍵不能包含重複的按鍵"
+      "duplicateKeys": "快捷鍵不能包含重複的按鍵",
+      "registrationFailed": "註冊該快捷鍵失敗，可能格式無效或已被系統佔用",
+      "unknown": "快捷鍵更新失敗"
     },
     "notifications": {
       "hotkeyUpdated": "快捷鍵已更新"

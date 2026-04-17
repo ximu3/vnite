@@ -285,18 +285,6 @@ export function Database(): React.JSX.Element {
             <div className={cn('space-y-4')}>
               <ConfigItem
                 hookType="config"
-                path="memory.snippingMode"
-                title={t('memory.snippingMode.title')}
-                description={t('memory.snippingMode.description')}
-                controlType="select"
-                options={[
-                  { value: 'rectangle', label: t('memory.snippingMode.options.rectangle') },
-                  { value: 'activewindow', label: t('memory.snippingMode.options.activeWindow') },
-                  { value: 'fullscreen', label: t('memory.snippingMode.options.fullscreen') }
-                ]}
-              />
-              <ConfigItem
-                hookType="config"
                 path="memory.image.saveToClipboard"
                 title={t('memory.saveToClipboard.title')}
                 description={t('memory.saveToClipboard.description')}

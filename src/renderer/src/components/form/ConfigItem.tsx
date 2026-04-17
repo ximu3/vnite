@@ -32,6 +32,7 @@ export function ConfigItem<
     disabled = false,
     className = '',
     controlClassName = '',
+    beforeChange,
     onChange
   } = props
   const [value, setValue, save, setValueAndSave] = useStateHook(
@@ -153,12 +154,20 @@ export function ConfigItem<
 
   const handleHotkeyChange = useCallback(
     async (newHotkey: string) => {
+      if (beforeChange) {
+        const shouldChange = await beforeChange(newHotkey)
+        if (!shouldChange) {
+          return false
+        }
+      }
+
       await setValueAndSave(newHotkey as any)
       if (onChange) {
         await onChange(newHotkey)
       }
+      return true
     },
-    [setValueAndSave, onChange]
+    [beforeChange, setValueAndSave, onChange]
   )
 
   const handleBlur = useCallback(

@@ -241,7 +241,9 @@
     "quickActions": {
       "title": "Quick Actions",
       "addGame": "Add Game",
-      "capture": "Capture Memories"
+      "captureRectangle": "Capture Rectangle",
+      "captureActiveWindow": "Capture Active Window",
+      "captureFullscreen": "Capture Full Screen"
     },
     "others": {
       "title": "Others",
@@ -446,15 +448,6 @@
       "title": "Naming Rule",
       "description": "Naming rule for each screenshot file, path-invalid characters [<>:\"/\\|?*] are not allowed\nCurrently supported placeholders:\n\n%name% - the active game's title (with path-disallowed characters sanitized)\n%datetime% - date time when the screenshot was taken\n%timestamp% - unix epoch (ms) when the screenshot was taken",
       "placeholder": "Enter the naming rule for captured files"
-    },
-    "snippingMode": {
-      "title": "Snipping Mode",
-      "description": "Choose a snipping mode when taking screenshots",
-      "options": {
-        "rectangle": "Rectangle",
-        "activeWindow": "Active Window",
-        "fullscreen": "Full Screen"
-      }
     },
     "enableNotificationSound": {
       "title": "Notification Sound",

@@ -241,7 +241,9 @@
     "quickActions": {
       "title": "快捷操作",
       "addGame": "添加游戏",
-      "capture": "回忆截图"
+      "captureRectangle": "自由框选截图",
+      "captureActiveWindow": "活动窗口截图",
+      "captureFullscreen": "全屏截图"
     },
     "others": {
       "title": "其它",
@@ -446,15 +448,6 @@
       "title": "命名规则",
       "description": "截图文件的命名规则，不可使用路径无效字符 [<>:\"/\\|?*]\n目前支持的占位符：\n\n%name% - 当前运行中的游戏的名称（游戏名称中的路径无效字符会被替换）\n%datetime% - 截图时间点的日期和时间\n%timestamp% - 截图时间点的毫秒级时间戳",
       "placeholder": "输入截图文件的命名规则"
-    },
-    "snippingMode": {
-      "title": "截图模式",
-      "description": "选择截图模式",
-      "options": {
-        "rectangle": "矩形",
-        "activeWindow": "活动窗口",
-        "fullscreen": "全屏幕"
-      }
     },
     "enableNotificationSound": {
       "title": "系统通知音效",
