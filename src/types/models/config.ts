@@ -298,6 +298,7 @@ export interface configLocalDocs {
   }
   database: {
     defaultBackupPath: string
+    migrationCompleted: string[]
   }
   memory: {
     image: {
@@ -475,7 +476,8 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
 
 export const DEFAULT_CONFIG_LOCAL_VALUES: Readonly<configLocalDocs> = {
   database: {
-    defaultBackupPath: ''
+    defaultBackupPath: '',
+    migrationCompleted: []
   },
   memory: {
     image: {
