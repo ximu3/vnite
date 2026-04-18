@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { ipcManager } from '~/app/ipc'
-import { useConfigState, useGameLocalState, useGameState } from '~/hooks'
+import { useConfigLocalState, useGameLocalState, useGameState } from '~/hooks'
 import { cn } from '~/utils'
 import { MemoryCard } from './MemoryCard'
 
@@ -17,7 +17,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
   const [sortedMemoryIds, setSortedMemoryIds] = useState<string[]>([])
   const [screenshotPath] = useGameLocalState(gameId, 'path.screenshotPath')
   const [gameName] = useGameState(gameId, 'metadata.name')
-  const [rootSaveDir] = useConfigState('memory.image.saveDir')
+  const [rootSaveDir] = useConfigLocalState('memory.image.saveDir')
 
   async function addMemory(): Promise<void> {
     await ipcManager.invoke('game:add-memory', gameId)

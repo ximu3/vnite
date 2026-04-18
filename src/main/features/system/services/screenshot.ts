@@ -207,7 +207,7 @@ async function captureToPersistenceLayer(
   activeWin: ActiveWinResult | undefined,
   buffer: Buffer
 ): Promise<void> {
-  const storageBackend = await ConfigDBManager.getConfigValue('memory.image.storageBackend')
+  const storageBackend = await ConfigDBManager.getConfigLocalValue('memory.image.storageBackend')
   const shouldCaptureToClipboard = await ConfigDBManager.getConfigValue(
     'memory.image.saveToClipboard'
   )
@@ -342,7 +342,7 @@ async function captureToFileSystem(
     // if no game is activated, give it a general name
     sanitizedName = '[Unknown]'
   } else {
-    const rootDir = await ConfigDBManager.getConfigValue('memory.image.saveDir')
+    const rootDir = await ConfigDBManager.getConfigLocalValue('memory.image.saveDir')
     if (rootDir === '') {
       log.warn('[System] Capturing root directory is empty')
       return
@@ -364,13 +364,13 @@ async function captureToFileSystem(
     sanitizedName = game.metadata.name.replace(/[<>:"/\\|?*]/g, ' ')
   }
   const saveDir = path.join(
-    await ConfigDBManager.getConfigValue('memory.image.saveDir'),
+    await ConfigDBManager.getConfigLocalValue('memory.image.saveDir'),
     sanitizedName
   )
   if (!existsSync(saveDir)) {
     await mkdir(saveDir)
   }
-  const fileName = (await ConfigDBManager.getConfigValue('memory.image.namingRule'))
+  const fileName = (await ConfigDBManager.getConfigLocalValue('memory.image.namingRule'))
     .replace(/[<>:"/\\|?*]/g, '')
     .replace('%name%', sanitizedName)
     .replace('%datetime%', getPathValidLocalTime())

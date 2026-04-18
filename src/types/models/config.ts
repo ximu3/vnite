@@ -217,9 +217,6 @@ export interface configDocs {
   }
   memory: {
     image: {
-      storageBackend: 'filesystem' | 'database' | 'both'
-      saveDir: string
-      namingRule: string
       saveToClipboard: boolean
     }
     enableNotificationSound: boolean
@@ -301,6 +298,13 @@ export interface configLocalDocs {
   }
   database: {
     defaultBackupPath: string
+  }
+  memory: {
+    image: {
+      storageBackend: 'filesystem' | 'database' | 'both'
+      saveDir: string
+      namingRule: string
+    }
   }
   network: {
     proxy: {
@@ -451,9 +455,6 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
   },
   memory: {
     image: {
-      storageBackend: 'database',
-      saveDir: '',
-      namingRule: '%datetime%',
       saveToClipboard: false
     },
     enableNotificationSound: true
@@ -475,6 +476,13 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
 export const DEFAULT_CONFIG_LOCAL_VALUES: Readonly<configLocalDocs> = {
   database: {
     defaultBackupPath: ''
+  },
+  memory: {
+    image: {
+      storageBackend: 'database',
+      saveDir: '',
+      namingRule: '%datetime%'
+    }
   },
   userInfo: {
     name: '',
