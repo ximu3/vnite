@@ -547,7 +547,9 @@ async function convertConfig(basePath: string): Promise<void> {
       language: '',
       hideWindowAfterGameStart: true,
       enableForegroundTimer: true,
-      foregroundWaitTime: 10
+      foregroundWaitTime: 10,
+      ignoreShortInterruptions: 0,
+      ignoreShortSessions: 0
     })
 
     const selectedGroupMap: Record<

@@ -21,11 +21,19 @@
     "timerTitle": "游戏计时器",
     "foregroundTimer": {
       "title": "前台计时",
-      "description": "选择当游戏窗口切换至后台运行时是否暂停计时器。此功能仅在进程监控方式为'自动'时有效。\n游戏运行中无法变更此设置"
+      "description": "选择当游戏窗口切换至后台运行时是否暂停计时器。\n游戏运行中无法变更此设置"
     },
     "foregroundWaitTime": {
       "title": "缓冲时间",
       "description": "当游戏持续在前台/后台运行此时间（秒）后，继续/暂停计时器\n游戏运行中无法变更此设置"
+    },
+    "ignoreShortInterruptions": {
+      "title": "忽略短暂中断",
+      "description": "保存游戏时间记录时，自动将间隔低于设定值（秒）的两条记录合并为一条记录。设定值为 0 时禁用此功能。"
+    },
+    "ignoreShortSessions": {
+      "title": "忽略短暂记录",
+      "description": "保存游戏时间记录时，忽略低于设定值（秒）的记录。若与「忽略短暂中断」同时启用，会在「忽略短暂中断」后执行。设定值为 0 时禁用此功能。"
     },
     "statisticsTitle": "统计",
     "dayBoundaryHour": {

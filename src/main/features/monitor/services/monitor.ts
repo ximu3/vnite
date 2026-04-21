@@ -569,8 +569,7 @@ export class GameMonitor {
 
     ipcManager.send('game:exiting', this.options.gameId)
 
-    const timers = await GameDBManager.getGameValue(this.options.gameId, 'record.timers')
-    let playTime = await GameDBManager.getGameValue(this.options.gameId, 'record.playTime')
+    const timers: { start: string; end: string }[] = []
 
     let time = this.startTime!
     let stat = TimerStatus.Resumed
@@ -584,7 +583,6 @@ export class GameMonitor {
             start: time,
             end: change.time
           })
-          playTime += new Date(change.time).getTime() - new Date(time).getTime()
           break
         case TimerStatus.Resumed: // status changed from 'pause' to 'continue', keep the start time (just break)
           break
@@ -598,12 +596,49 @@ export class GameMonitor {
         start: time,
         end: this.endTime
       })
-      playTime += new Date(this.endTime).getTime() - new Date(time).getTime()
+    }
+
+    const breakThreshold =
+      (await ConfigDBManager.getConfigValue('general.ignoreShortInterruptions')) * 1000
+    const sessionThreshold =
+      (await ConfigDBManager.getConfigValue('general.ignoreShortSessions')) * 1000
+
+    let filteredTimers = timers
+    if (breakThreshold > 0 && timers.length >= 2) {
+      filteredTimers = []
+      filteredTimers.push(timers[0])
+      for (let i = 1; i < timers.length; i++) {
+        const prevEnd = new Date(timers[i - 1].end).getTime()
+        const curStart = new Date(timers[i].start).getTime()
+        if (curStart - prevEnd < breakThreshold) {
+          const prevFiltered = filteredTimers.pop()
+          if (prevFiltered) {
+            filteredTimers.push({ start: prevFiltered.start, end: timers[i].end })
+          } else {
+            filteredTimers.push(timers[i])
+          }
+        } else {
+          filteredTimers.push(timers[i])
+        }
+      }
+    }
+
+    if (sessionThreshold > 0) {
+      filteredTimers = filteredTimers.filter((timer) => {
+        return new Date(timer.end).getTime() - new Date(timer.start).getTime() > sessionThreshold
+      })
+    }
+
+    const dbTimers = await GameDBManager.getGameValue(this.options.gameId, 'record.timers')
+    let playTime = await GameDBManager.getGameValue(this.options.gameId, 'record.playTime')
+    for (const timer of filteredTimers) {
+      dbTimers.push(timer)
+      playTime += new Date(timer.end).getTime() - new Date(timer.start).getTime()
     }
 
     // check existence before adding records
     if (await GameDBManager.getGame(this.options.gameId)) {
-      await GameDBManager.setGameValue(this.options.gameId, 'record.timers', timers)
+      await GameDBManager.setGameValue(this.options.gameId, 'record.timers', dbTimers)
       await GameDBManager.setGameValue(this.options.gameId, 'record.lastRunDate', this.endTime)
       await GameDBManager.setGameValue(this.options.gameId, 'record.playTime', playTime)
     }
