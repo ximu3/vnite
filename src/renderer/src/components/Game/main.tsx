@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { ipcManager } from '~/app/ipc'
+import { ImageViewerDialog } from '~/components/dialog/ImageViewerDialog'
 import { Button } from '~/components/ui/button'
 import {
   ContextMenu,
@@ -19,7 +20,6 @@ import { ScrollArea } from '../ui/scroll-area'
 import { PlayTimeEditorDialog } from './Config/ManageMenu/PlayTimeEditorDialog'
 import { ScoreEditorDialog } from './Config/ManageMenu/ScoreEditorDialog'
 import { GamePropertiesDialog } from './Config/Properties'
-import { ImageViewerDialog } from './Config/Properties/Media/ImageViewerDialog'
 import { Header } from './Header'
 import { HeaderCompact } from './HeaderCompact'
 import { Memory } from './Memory'
@@ -53,6 +53,9 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   const propertiesDialogState = useGameDetailStore((s) => s.propertiesDialog)
   const closePropertiesDialog = useGameDetailStore((s) => s.closePropertiesDialog)
   const openPropertiesDialog = useGameDetailStore((s) => s.openPropertiesDialog)
+  const imageViewerDialogState = useGameDetailStore((s) => s.imageViewerDialog)
+  const openImageViewerDialog = useGameDetailStore((s) => s.openImageViewerDialog)
+  const closeImageViewerDialog = useGameDetailStore((s) => s.closeImageViewerDialog)
   const isPlayTimeEditorDialogOpen = useGameDetailStore((state) => state.isPlayTimeEditorDialogOpen)
   const setIsPlayTimeEditorDialogOpen = useGameDetailStore(
     (state) => state.setIsPlayTimeEditorDialogOpen
@@ -199,9 +202,6 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   const isInitialPosition = (pos: { x: number; y: number }): boolean =>
     pos.x === initialPosition.x && pos.y === initialPosition.y
 
-  const [isImageViewerOpen, setIsImageViewerOpen] = useState(false)
-  const [imageViewerPath, setImageViewerPath] = useState<string | null>(null)
-
   async function openLargeBackground(): Promise<void> {
     try {
       const currentPath = await ipcManager.invoke('game:get-media-path', gameId, 'background')
@@ -209,8 +209,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
         toast.error(t('detail.properties.media.notifications.imageNotFound'))
         return
       }
-      setImageViewerPath(currentPath)
-      setIsImageViewerOpen(true)
+      openImageViewerDialog(currentPath)
     } catch (error) {
       toast.error(t('detail.properties.media.notifications.getImageError', { error }))
     }
@@ -413,11 +412,11 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
           defaultTab={propertiesDialogState.defaultTab}
         />
       )}
-      {isImageViewerOpen && (
+      {imageViewerDialogState.open && (
         <ImageViewerDialog
-          isOpen={isImageViewerOpen}
-          imagePath={imageViewerPath}
-          onClose={() => setIsImageViewerOpen(false)}
+          isOpen={imageViewerDialogState.open}
+          imagePath={imageViewerDialogState.imagePath}
+          onClose={closeImageViewerDialog}
         />
       )}
       {isInformationDialogOpen && (

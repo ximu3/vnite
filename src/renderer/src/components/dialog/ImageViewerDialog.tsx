@@ -1,9 +1,10 @@
+import { Button } from '@ui/button'
+import { Card } from '@ui/card'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@ui/dialog'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { ipcManager } from '~/app/ipc'
-import { Button } from '~/components/ui/button'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/ui/dialog'
 import { cn } from '~/utils'
 
 interface ImageViewerDialogProps {
@@ -242,40 +243,44 @@ export function ImageViewerDialog({
               : `${Math.round(scale * 100)}%`}
           </div>
         </div>
-        <div
-          ref={containerRef}
-          className={cn(
-            'flex-1 bg-background/50 overflow-hidden relative cursor-grab active:cursor-grabbing'
-          )}
-          onWheel={handleWheel}
-          onMouseDown={onMouseDown}
-          onMouseMove={onMouseMove}
-          onMouseUp={onMouseUp}
-          onDoubleClick={onDoubleClick}
-        >
-          {imagePath ? (
-            <div className={cn('absolute inset-0 flex items-center justify-center')}>
-              <img
-                ref={imgRef}
-                src={`file://${imagePath}`}
-                className={cn('select-none pointer-events-none')}
-                style={{
-                  transform: `translate(${translate.x}px, ${translate.y}px) scale(${scale})`,
-                  transformOrigin: 'center center',
-                  maxWidth: 'none',
-                  maxHeight: 'none'
-                }}
-                onLoad={onImageLoad}
-              />
-            </div>
-          ) : (
-            <div
-              className={cn('w-full h-full flex items-center justify-center text-muted-foreground')}
-            >
-              {t('detail.properties.media.empty.images')}
-            </div>
-          )}
-        </div>
+        <Card className={cn('mx-4 mb-4 min-h-0 flex-1 overflow-hidden rounded-md p-0 shadow-sm')}>
+          <div
+            ref={containerRef}
+            className={cn(
+              'relative h-full w-full cursor-grab overflow-hidden bg-background/50 active:cursor-grabbing'
+            )}
+            onWheel={handleWheel}
+            onMouseDown={onMouseDown}
+            onMouseMove={onMouseMove}
+            onMouseUp={onMouseUp}
+            onDoubleClick={onDoubleClick}
+          >
+            {imagePath ? (
+              <div className={cn('absolute inset-0 flex items-center justify-center')}>
+                <img
+                  ref={imgRef}
+                  src={`file://${imagePath}`}
+                  className={cn('pointer-events-none select-none')}
+                  style={{
+                    transform: `translate(${translate.x}px, ${translate.y}px) scale(${scale})`,
+                    transformOrigin: 'center center',
+                    maxWidth: 'none',
+                    maxHeight: 'none'
+                  }}
+                  onLoad={onImageLoad}
+                />
+              </div>
+            ) : (
+              <div
+                className={cn(
+                  'flex h-full w-full items-center justify-center text-muted-foreground'
+                )}
+              >
+                {t('detail.properties.media.empty.images')}
+              </div>
+            )}
+          </div>
+        </Card>
       </DialogContent>
     </Dialog>
   )

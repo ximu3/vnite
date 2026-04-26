@@ -22,7 +22,7 @@ import { useGameState } from '~/hooks'
 import { useLightStore } from '~/pages/Light'
 import { cn, formatDateToISO } from '~/utils'
 import { CropDialog } from '../Config/Properties/Media/CropDialog'
-import { ImageViewerDialog } from '../Config/Properties/Media/ImageViewerDialog'
+import { useGameDetailStore } from '../store'
 import { MarkdownPreview } from './MarkdownPreview'
 import { NoteDialog, type NoteDialogMode } from './NoteDialog'
 
@@ -59,8 +59,7 @@ export function MemoryCard({
   const [gameName] = useGameState(gameId, 'metadata.name')
   const memoryRef = useRef<HTMLDivElement>(null)
   const refreshLight = useLightStore((state) => state.refresh)
-  const [isImageViewerOpen, setIsImageViewerOpen] = useState(false)
-  const [imageViewerPath, setImageViewerPath] = useState<string | null>(null)
+  const openImageViewerDialog = useGameDetailStore((state) => state.openImageViewerDialog)
   const hasNote = Boolean(note?.trim())
 
   function openNoteDialog(mode: NoteDialogMode): void {
@@ -91,8 +90,7 @@ export function MemoryCard({
         toast.error(t('detail.memory.notifications.imageNotFound'))
         return
       }
-      setImageViewerPath(currentPath)
-      setIsImageViewerOpen(true)
+      openImageViewerDialog(currentPath)
     } catch (error) {
       toast.error(t('detail.memory.notifications.getImageError', { error }))
     }
@@ -591,13 +589,6 @@ export function MemoryCard({
           note={note}
           saveNote={saveNote}
           initialMode={noteDialogMode}
-        />
-      )}
-      {isImageViewerOpen && (
-        <ImageViewerDialog
-          isOpen={isImageViewerOpen}
-          imagePath={imageViewerPath}
-          onClose={() => setIsImageViewerOpen(false)}
         />
       )}
     </ContextMenu>

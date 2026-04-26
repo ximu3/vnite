@@ -8,15 +8,17 @@ import {
 import { GameImage } from '@ui/game-image'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { ipcManager } from '~/app/ipc'
 import { useConfigState, useGameState } from '~/hooks'
 import { useRunningGames } from '~/pages/Library/store'
 import { cn, copyWithToast, formatStorageSize } from '~/utils'
 import { Config } from './Config'
+import { CalculateStorageSizeAlertDialog } from './Overview/Record/CalculateStorageSizeAlertDialog'
 import { PLAY_STATUS_ICONS } from './Overview/Record/RecordIcon'
 import { StartGame } from './StartGame'
 import { StopGame } from './StopGame'
 import { useGameDetailStore } from './store'
-import { CalculateStorageSizeAlertDialog } from './Overview/Record/CalculateStorageSizeAlertDialog'
 
 export function HeaderCompact({
   gameId,
@@ -38,10 +40,24 @@ export function HeaderCompact({
   const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
 
   const openPropertiesDialog = useGameDetailStore((state) => state.openPropertiesDialog)
+  const openImageViewerDialog = useGameDetailStore((state) => state.openImageViewerDialog)
 
   const stringToBase64 = (str: string): string =>
     btoa(String.fromCharCode(...new TextEncoder().encode(str)))
   const obfuscatedName = stringToBase64(name).slice(0, name.length)
+
+  async function openLargeCover(): Promise<void> {
+    try {
+      const currentPath = await ipcManager.invoke('game:get-media-path', gameId, 'cover')
+      if (!currentPath) {
+        toast.error(t('detail.properties.media.notifications.imageNotFound'))
+        return
+      }
+      openImageViewerDialog(currentPath)
+    } catch (error) {
+      toast.error(t('detail.properties.media.notifications.getImageError', { error }))
+    }
+  }
 
   return (
     <div className={cn('flex-col flex gap-5 px-7 py-5 pl-6 pt-6 relative mb-5', className)}>
@@ -64,6 +80,13 @@ export function HeaderCompact({
             <ContextMenuContent className={cn('w-40')}>
               <ContextMenuItem onSelect={() => openPropertiesDialog('media')}>
                 {t('detail.contextMenu.editMediaProperties')}
+              </ContextMenuItem>
+              <ContextMenuItem
+                onSelect={() => {
+                  void openLargeCover()
+                }}
+              >
+                {t('detail.properties.media.actions.viewLargeImage')}
               </ContextMenuItem>
             </ContextMenuContent>
           </ContextMenu>

@@ -3,6 +3,8 @@ import { persist } from 'zustand/middleware'
 
 export type PropertiesDialogTab = 'launcher' | 'path' | 'media'
 
+type ImageViewerDialogState = { open: false; imagePath: null } | { open: true; imagePath: string }
+
 export interface GameDetailStore {
   isEditingLogo: boolean
   setIsEditingLogo: (isEditing: boolean) => void
@@ -19,6 +21,10 @@ export interface GameDetailStore {
   propertiesDialog: { open: false } | { open: true; defaultTab: PropertiesDialogTab }
   openPropertiesDialog: (defaultTab?: PropertiesDialogTab) => void
   closePropertiesDialog: () => void
+
+  imageViewerDialog: ImageViewerDialogState
+  openImageViewerDialog: (imagePath: string) => void
+  closeImageViewerDialog: () => void
 }
 
 export const useGameDetailStore = create<GameDetailStore>((set) => ({
@@ -37,7 +43,11 @@ export const useGameDetailStore = create<GameDetailStore>((set) => ({
   propertiesDialog: { open: false },
   openPropertiesDialog: (defaultTab = 'launcher') =>
     set({ propertiesDialog: { open: true, defaultTab } }),
-  closePropertiesDialog: () => set({ propertiesDialog: { open: false } })
+  closePropertiesDialog: () => set({ propertiesDialog: { open: false } }),
+
+  imageViewerDialog: { open: false, imagePath: null },
+  openImageViewerDialog: (imagePath) => set({ imageViewerDialog: { open: true, imagePath } }),
+  closeImageViewerDialog: () => set({ imageViewerDialog: { open: false, imagePath: null } })
 }))
 
 interface GameDetailTabStore {
