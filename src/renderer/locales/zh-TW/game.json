@@ -328,6 +328,9 @@
         "delete": "刪除",
         "openScreenshotDir": "打開截圖目錄"
       },
+      "views": {
+        "grid": "卡片"
+      },
       "setAs": {
         "title": "設置為",
         "cover": "遊戲封面",

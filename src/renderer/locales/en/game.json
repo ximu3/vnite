@@ -328,6 +328,9 @@
         "delete": "Delete",
         "openScreenshotDir": "Open Screenshot Directory"
       },
+      "views": {
+        "grid": "Cards"
+      },
       "setAs": {
         "title": "Set As",
         "cover": "Game Cover",

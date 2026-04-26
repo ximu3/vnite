@@ -14,9 +14,8 @@ import {
 } from '@ui/context-menu'
 import { GameImage } from '@ui/game-image'
 import html2canvas from 'html2canvas-pro'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import Zoom from 'react-medium-image-zoom'
 import { toast } from 'sonner'
 import { ipcManager } from '~/app/ipc'
 import { useGameState } from '~/hooks'
@@ -62,6 +61,7 @@ export function MemoryCard({
   const refreshLight = useLightStore((state) => state.refresh)
   const [isImageViewerOpen, setIsImageViewerOpen] = useState(false)
   const [imageViewerPath, setImageViewerPath] = useState<string | null>(null)
+  const hasNote = Boolean(note?.trim())
 
   function openNoteDialog(mode: NoteDialogMode): void {
     setNoteDialogMode(mode)
@@ -70,7 +70,18 @@ export function MemoryCard({
 
   function handleCropComplete(filePath: string): void {
     ipcManager.invoke('game:update-memory-cover', gameId, memoryId, filePath)
+    setIsCoverExist(true)
     setCropDialogState({ isOpen: false, type: '', imagePath: null, isResizing: false })
+  }
+
+  function handlePreviewKeyDown(event: React.KeyboardEvent): void {
+    if (event.key !== 'Enter' && event.key !== ' ') return
+    event.preventDefault()
+    openNoteDialog('preview')
+  }
+
+  function shouldIgnorePreviewClick(event: React.MouseEvent): boolean {
+    return Boolean((event.target as HTMLElement).closest('a'))
   }
 
   async function handleViewLargeImage(): Promise<void> {
@@ -234,77 +245,210 @@ export function MemoryCard({
     }
   }
 
+  function renderDateBadge(): React.JSX.Element {
+    return (
+      <div
+        className={cn(
+          'pointer-events-none absolute top-2 right-2 z-20 rounded-md bg-background/85 px-2 py-1 text-[11px] leading-none text-muted-foreground shadow-sm backdrop-blur'
+        )}
+      >
+        {t('{{date, niceDate}}', { date })}
+      </div>
+    )
+  }
+
+  function renderCoverImage(): React.JSX.Element {
+    return (
+      <button
+        type="button"
+        className={cn(
+          'absolute inset-0 z-0 h-full w-full cursor-zoom-in overflow-hidden border-0 bg-transparent p-0 text-left'
+        )}
+        onClick={() => {
+          void handleViewLargeImage()
+        }}
+        aria-label={t('detail.properties.media.actions.viewLargeImage')}
+      >
+        <GameImage
+          type={`memories/${memoryId}`}
+          gameId={gameId}
+          className={cn('h-full w-full rounded-none shadow-none')}
+          fallback={<MemoryCoverFallback onMissing={() => setIsCoverExist(false)} />}
+          onError={() => setIsCoverExist(false)}
+          onUpdated={() => setIsCoverExist(true)}
+        />
+      </button>
+    )
+  }
+
+  function renderAddNoteButton(): React.JSX.Element {
+    return (
+      <Button
+        type="button"
+        size="icon"
+        className={cn(
+          'absolute top-2 left-2 z-20 size-8 opacity-0 transition-opacity group-hover:opacity-100'
+        )}
+        onClick={(event) => {
+          event.stopPropagation()
+          openNoteDialog('edit')
+        }}
+        aria-label={t('detail.memory.actions.addText')}
+      >
+        <span className={cn('icon-[mdi--note-plus-outline] size-4')} />
+      </Button>
+    )
+  }
+
+  function renderAddCoverButton(): React.JSX.Element {
+    return (
+      <Button
+        type="button"
+        variant="secondary"
+        size="icon"
+        className={cn(
+          'absolute top-2 left-2 z-20 size-8 opacity-0 transition-opacity group-hover:opacity-100'
+        )}
+        onClick={(event) => {
+          event.stopPropagation()
+          void handleCoverSelect()
+        }}
+        aria-label={t('detail.memory.actions.addCover')}
+      >
+        <span className={cn('icon-[mdi--image-plus] size-4')} />
+      </Button>
+    )
+  }
+
+  function renderCoverNoteOverlay(): React.JSX.Element {
+    return (
+      <div
+        className={cn(
+          'absolute inset-x-0 bottom-0 z-10 h-[40%] cursor-pointer overflow-hidden border-t border-border/60 bg-background/70 p-4 shadow-[0_-8px_24px_rgba(0,0,0,0.12)] backdrop-blur-md transition-[height,background-color,backdrop-filter] duration-300 ease-out group-hover:h-[80%] motion-reduce:transition-none'
+        )}
+        role="button"
+        tabIndex={0}
+        onClick={(event) => {
+          if (shouldIgnorePreviewClick(event)) return
+          openNoteDialog('preview')
+        }}
+        onKeyDown={handlePreviewKeyDown}
+      >
+        {renderCardMarkdownPreview('prose-pre:max-h-20')}
+      </div>
+    )
+  }
+
+  function renderCardMarkdownPreview(
+    codeBlockMaxHeight: 'prose-pre:max-h-20' | 'prose-pre:max-h-24'
+  ): React.JSX.Element {
+    return (
+      <MarkdownPreview
+        value={note}
+        className={cn(
+          'scrollbar-base-thin h-full overflow-y-auto pr-2 overscroll-contain',
+          'prose-headings:my-1 prose-h1:text-base prose-h2:text-base prose-h3:text-sm',
+          'prose-p:my-1.5 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5',
+          'prose-blockquote:my-1 prose-pre:my-2',
+          codeBlockMaxHeight
+        )}
+      />
+    )
+  }
+
+  function renderCoverWithNote(): React.JSX.Element {
+    return (
+      <>
+        {renderCoverImage()}
+        {renderCoverNoteOverlay()}
+      </>
+    )
+  }
+
+  function renderCoverOnly(): React.JSX.Element {
+    return (
+      <>
+        {renderCoverImage()}
+        {renderAddNoteButton()}
+      </>
+    )
+  }
+
+  function renderNoteOnly(): React.JSX.Element {
+    return (
+      <>
+        {renderAddCoverButton()}
+
+        <div
+          className={cn('h-full w-full cursor-pointer overflow-hidden p-4')}
+          role="button"
+          tabIndex={0}
+          onClick={(event) => {
+            if (shouldIgnorePreviewClick(event)) return
+            openNoteDialog('preview')
+          }}
+          onKeyDown={handlePreviewKeyDown}
+        >
+          {renderCardMarkdownPreview('prose-pre:max-h-24')}
+        </div>
+      </>
+    )
+  }
+
+  function renderEmptyCard(): React.JSX.Element {
+    return (
+      <div
+        className={cn(
+          'flex h-full w-full flex-col items-center justify-center gap-3 p-4 text-center text-sm text-muted-foreground'
+        )}
+      >
+        <span className={cn('icon-[mdi--note-text-outline] size-8')} />
+        <div className={cn('flex flex-wrap justify-center gap-2')}>
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            onClick={(event) => {
+              event.stopPropagation()
+              void handleCoverSelect()
+            }}
+          >
+            {t('detail.memory.actions.addCover')}
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            onClick={(event) => {
+              event.stopPropagation()
+              openNoteDialog('edit')
+            }}
+          >
+            {t('detail.memory.actions.addText')}
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  function renderCardContent(): React.JSX.Element {
+    if (isCoverExist && hasNote) return renderCoverWithNote()
+    if (isCoverExist) return renderCoverOnly()
+    if (hasNote) return renderNoteOnly()
+    return renderEmptyCard()
+  }
+
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild className={cn('w-full')}>
         <Card
           ref={memoryRef}
           key={memoryId}
-          className={cn('w-full h-auto shadow-md img-initial p-0')}
+          className={cn(
+            'group relative aspect-square w-full gap-0 overflow-hidden rounded-lg p-0 shadow-md img-initial'
+          )}
         >
-          <div className={cn('w-full flex flex-col')}>
-            {/* Cover Image */}
-            <Zoom>
-              <GameImage
-                type={`memories/${memoryId}`}
-                gameId={gameId}
-                className={cn('w-full h-auto rounded-lg shadow-md')}
-                fallback={<div />}
-                onError={() => setIsCoverExist(false)}
-                onUpdated={() => setIsCoverExist(true)}
-              />
-            </Zoom>
-
-            {/* Actions */}
-            {(!isCoverExist || !note) && (
-              <div className={cn('flex flex-row gap-5 p-5 border-b-[1px]')}>
-                {!isCoverExist && (
-                  <Button onClick={handleCoverSelect}>{t('detail.memory.actions.addCover')}</Button>
-                )}
-                {!note && (
-                  <Button
-                    onClick={() => {
-                      openNoteDialog('edit')
-                    }}
-                  >
-                    {t('detail.memory.actions.addText')}
-                  </Button>
-                )}
-              </div>
-            )}
-
-            {/* Content area */}
-            <div
-              className={cn('p-5', note && 'cursor-pointer')}
-              role={note ? 'button' : undefined}
-              tabIndex={note ? 0 : undefined}
-              onClick={(event) => {
-                if (!note) return
-                if ((event.target as HTMLElement).closest('a')) return
-                openNoteDialog('preview')
-              }}
-              onKeyDown={(event) => {
-                if (!note) return
-                if (event.key !== 'Enter' && event.key !== ' ') return
-                event.preventDefault()
-                openNoteDialog('preview')
-              }}
-            >
-              <MarkdownPreview value={note} />
-            </div>
-
-            {/* Date display area */}
-            <div
-              className={cn(
-                'flex flex-row-reverse px-5 pb-5 items-center gap-2 text-xs text-primary-foreground/90'
-              )}
-            >
-              <div className={cn('rounded-lg px-2 py-1 text-center bg-primary/90')}>
-                {t('{{date, niceDate}}', { date })}
-              </div>
-              <div className={cn('rounded-lg px-2 py-1 text-center bg-primary/90')}>{gameName}</div>
-            </div>
-          </div>
+          {renderDateBadge()}
+          {renderCardContent()}
         </Card>
       </ContextMenuTrigger>
       <ContextMenuContent>
@@ -317,15 +461,6 @@ export function MemoryCard({
         {isCoverExist && (
           <ContextMenuItem onSelect={handleResize}>
             {t('detail.memory.actions.adjustCover')}
-          </ContextMenuItem>
-        )}
-        {isCoverExist && (
-          <ContextMenuItem
-            onSelect={() => {
-              void handleViewLargeImage()
-            }}
-          >
-            {t('detail.properties.media.actions.viewLargeImage')}
           </ContextMenuItem>
         )}
 
@@ -396,7 +531,6 @@ export function MemoryCard({
                 </ContextMenuPortal>
               </ContextMenuSub>
             </ContextMenuGroup>
-            <ContextMenuSeparator />
           </>
         )}
         {/* Export Options */}
@@ -468,4 +602,12 @@ export function MemoryCard({
       )}
     </ContextMenu>
   )
+}
+
+function MemoryCoverFallback({ onMissing }: { onMissing: () => void }): React.JSX.Element {
+  useEffect(() => {
+    onMissing()
+  }, [onMissing])
+
+  return <div />
 }

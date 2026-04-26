@@ -328,6 +328,9 @@
         "delete": "删除",
         "openScreenshotDir": "打开截图目录"
       },
+      "views": {
+        "grid": "卡片"
+      },
       "setAs": {
         "title": "设置为",
         "cover": "游戏封面",

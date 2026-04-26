@@ -1,16 +1,20 @@
 import { Button } from '@ui/button'
+import { Tabs, TabsList, TabsTrigger } from '@ui/tabs'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { ipcManager } from '~/app/ipc'
 import { useConfigState, useGameLocalState, useGameState } from '~/hooks'
 import { cn } from '~/utils'
-import { MemoryCard } from './MemoryCard'
+import { MemoryCardView } from './MemoryCardView'
+
+type MemoryViewMode = 'grid'
 
 export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [memoryList, , , setMemoryListAndSave] = useGameState(gameId, 'memory.memoryList', true)
   const [sortedMemoryIds, setSortedMemoryIds] = useState<string[]>([])
+  const [viewMode, setViewMode] = useState<MemoryViewMode>('grid')
   const [screenshotPath] = useGameLocalState(gameId, 'path.screenshotPath')
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [rootSaveDir] = useConfigState('memory.image.saveDir')
@@ -86,63 +90,38 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
 
   return (
     <div className={cn('w-full h-full min-h-[22vh] flex flex-col pt-2 gap-5')}>
-      <div className={cn('flex items-center gap-3')}>
-        <Button variant="default" size={'icon'} onClick={addMemory}>
-          <span className={cn('icon-[mdi--add] w-6 h-6')}></span>
-        </Button>
-        <Button variant="secondary" onClick={openScreenshotDir}>
-          {t('detail.memory.actions.openScreenshotDir')}
-        </Button>
-      </div>
-      <div className="grid w-full xl:grid-cols-3 lg:grid-cols-2 gap-x-5 gap-y-5">
-        <div className="flex flex-col gap-5">
-          {sortedMemoryIds
-            .filter((_, i) => i % 3 === 0)
-            .map((id) => (
-              <MemoryCard
-                key={`memory-${id}`}
-                gameId={gameId}
-                memoryId={id}
-                handleDelete={() => handleDelete(id)}
-                note={memoryList[id]?.note}
-                date={memoryList[id]?.date}
-                saveNote={(note) => saveNote(id, note)}
-              />
-            ))}
+      <div className={cn('flex items-center justify-between gap-3')}>
+        <div className={cn('flex items-center gap-3')}>
+          <Button variant="default" size={'icon'} onClick={addMemory}>
+            <span className={cn('icon-[mdi--add] w-6 h-6')}></span>
+          </Button>
+          <Button variant="secondary" onClick={openScreenshotDir}>
+            {t('detail.memory.actions.openScreenshotDir')}
+          </Button>
         </div>
 
-        <div className="flex flex-col gap-5">
-          {sortedMemoryIds
-            .filter((_, i) => i % 3 === 1)
-            .map((id) => (
-              <MemoryCard
-                key={`memory-${id}`}
-                gameId={gameId}
-                memoryId={id}
-                handleDelete={() => handleDelete(id)}
-                note={memoryList[id]?.note}
-                date={memoryList[id]?.date}
-                saveNote={(note) => saveNote(id, note)}
-              />
-            ))}
-        </div>
-
-        <div className="flex flex-col gap-5">
-          {sortedMemoryIds
-            .filter((_, i) => i % 3 === 2)
-            .map((id) => (
-              <MemoryCard
-                key={`memory-${id}`}
-                gameId={gameId}
-                memoryId={id}
-                handleDelete={() => handleDelete(id)}
-                note={memoryList[id]?.note}
-                date={memoryList[id]?.date}
-                saveNote={(note) => saveNote(id, note)}
-              />
-            ))}
-        </div>
+        <Tabs
+          value={viewMode}
+          onValueChange={(value) => setViewMode(value as MemoryViewMode)}
+          className={cn('shrink-0')}
+        >
+          <TabsList>
+            <TabsTrigger value="grid" className={cn('gap-2 px-4')}>
+              <span className={cn('icon-[mdi--view-grid-outline] size-4')} />
+              {t('detail.memory.views.grid', { defaultValue: 'Cards' })}
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
+      {viewMode === 'grid' && (
+        <MemoryCardView
+          gameId={gameId}
+          memoryIds={sortedMemoryIds}
+          memoryList={memoryList}
+          onDelete={handleDelete}
+          onSaveNote={saveNote}
+        />
+      )}
     </div>
   )
 }
