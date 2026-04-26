@@ -9,11 +9,7 @@ import { MemoryCard } from './MemoryCard'
 
 export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
-  const [memoryList, setMemoryList, saveMemoryList, setMemoryListAndSave] = useGameState(
-    gameId,
-    'memory.memoryList',
-    true
-  )
+  const [memoryList, , , setMemoryListAndSave] = useGameState(gameId, 'memory.memoryList', true)
   const [sortedMemoryIds, setSortedMemoryIds] = useState<string[]>([])
   const [screenshotPath] = useGameLocalState(gameId, 'path.screenshotPath')
   const [gameName] = useGameState(gameId, 'metadata.name')
@@ -77,7 +73,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
     )
   }
 
-  async function setNote(memoryId: string, note: string): Promise<void> {
+  async function saveNote(memoryId: string, note: string): Promise<void> {
     const newMemoryList = {
       ...memoryList,
       [memoryId]: {
@@ -85,7 +81,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
         note
       }
     }
-    setMemoryList(newMemoryList)
+    await setMemoryListAndSave(newMemoryList)
   }
 
   return (
@@ -110,8 +106,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
                 handleDelete={() => handleDelete(id)}
                 note={memoryList[id]?.note}
                 date={memoryList[id]?.date}
-                setNote={(note) => setNote(id, note)}
-                saveNote={saveMemoryList}
+                saveNote={(note) => saveNote(id, note)}
               />
             ))}
         </div>
@@ -127,8 +122,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
                 handleDelete={() => handleDelete(id)}
                 note={memoryList[id]?.note}
                 date={memoryList[id]?.date}
-                setNote={(note) => setNote(id, note)}
-                saveNote={saveMemoryList}
+                saveNote={(note) => saveNote(id, note)}
               />
             ))}
         </div>
@@ -144,8 +138,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
                 handleDelete={() => handleDelete(id)}
                 note={memoryList[id]?.note}
                 date={memoryList[id]?.date}
-                setNote={(note) => setNote(id, note)}
-                saveNote={saveMemoryList}
+                saveNote={(note) => saveNote(id, note)}
               />
             ))}
         </div>

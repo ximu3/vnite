@@ -1,33 +1,31 @@
-import { cn, formatDateToISO } from '~/utils'
-import { GameImage } from '~/components/ui/game-image'
-import { Card } from '~/components/ui/card'
+import { Button } from '@ui/button'
+import { Card } from '@ui/card'
 import {
   ContextMenu,
   ContextMenuContent,
+  ContextMenuGroup,
   ContextMenuItem,
   ContextMenuPortal,
   ContextMenuSeparator,
-  ContextMenuTrigger,
   ContextMenuSub,
   ContextMenuSubContent,
   ContextMenuSubTrigger,
-  ContextMenuGroup
-} from '~/components/ui/context-menu'
-import { Button } from '~/components/ui/button'
-import { useGameState } from '~/hooks'
-import { NoteDialog } from './NoteDialog'
-import { useState, useRef } from 'react'
-import { TargetBlankLink } from '~/components/utils/TargetBlankLink'
-import { CropDialog } from '../Config/Properties/Media/CropDialog'
-import Markdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
-import { toast } from 'sonner'
+  ContextMenuTrigger
+} from '@ui/context-menu'
+import { GameImage } from '@ui/game-image'
 import html2canvas from 'html2canvas-pro'
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Zoom from 'react-medium-image-zoom'
+import { toast } from 'sonner'
 import { ipcManager } from '~/app/ipc'
+import { useGameState } from '~/hooks'
 import { useLightStore } from '~/pages/Light'
+import { cn, formatDateToISO } from '~/utils'
+import { CropDialog } from '../Config/Properties/Media/CropDialog'
 import { ImageViewerDialog } from '../Config/Properties/Media/ImageViewerDialog'
+import { MarkdownPreview } from './MarkdownPreview'
+import { NoteDialog, type NoteDialogMode } from './NoteDialog'
 
 export function MemoryCard({
   gameId,
@@ -35,7 +33,6 @@ export function MemoryCard({
   handleDelete,
   note,
   date,
-  setNote,
   saveNote
 }: {
   gameId: string
@@ -43,11 +40,11 @@ export function MemoryCard({
   handleDelete: () => void
   note: string
   date: string
-  setNote: (note: string) => void
-  saveNote: () => Promise<void>
+  saveNote: (note: string) => Promise<void>
 }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [isNoteDialogOpen, setIsNoteDialogOpen] = useState(false)
+  const [noteDialogMode, setNoteDialogMode] = useState<NoteDialogMode>('edit')
   const [cropDialogState, setCropDialogState] = useState<{
     isOpen: boolean
     type: string
@@ -65,6 +62,11 @@ export function MemoryCard({
   const refreshLight = useLightStore((state) => state.refresh)
   const [isImageViewerOpen, setIsImageViewerOpen] = useState(false)
   const [imageViewerPath, setImageViewerPath] = useState<string | null>(null)
+
+  function openNoteDialog(mode: NoteDialogMode): void {
+    setNoteDialogMode(mode)
+    setIsNoteDialogOpen(true)
+  }
 
   function handleCropComplete(filePath: string): void {
     ipcManager.invoke('game:update-memory-cover', gameId, memoryId, filePath)
@@ -262,7 +264,7 @@ export function MemoryCard({
                 {!note && (
                   <Button
                     onClick={() => {
-                      setIsNoteDialogOpen(true)
+                      openNoteDialog('edit')
                     }}
                   >
                     {t('detail.memory.actions.addText')}
@@ -272,17 +274,23 @@ export function MemoryCard({
             )}
 
             {/* Content area */}
-            <div className={cn('p-5')}>
-              <article className={cn('prose prose-sm dark:prose-invert max-w-none')}>
-                <Markdown
-                  remarkPlugins={[remarkGfm]}
-                  components={{
-                    a: TargetBlankLink
-                  }}
-                >
-                  {note}
-                </Markdown>
-              </article>
+            <div
+              className={cn('p-5', note && 'cursor-pointer')}
+              role={note ? 'button' : undefined}
+              tabIndex={note ? 0 : undefined}
+              onClick={(event) => {
+                if (!note) return
+                if ((event.target as HTMLElement).closest('a')) return
+                openNoteDialog('preview')
+              }}
+              onKeyDown={(event) => {
+                if (!note) return
+                if (event.key !== 'Enter' && event.key !== ' ') return
+                event.preventDefault()
+                openNoteDialog('preview')
+              }}
+            >
+              <MarkdownPreview value={note} />
             </div>
 
             {/* Date display area */}
@@ -324,7 +332,7 @@ export function MemoryCard({
         {/* Note */}
         <ContextMenuItem
           onSelect={() => {
-            setIsNoteDialogOpen(true)
+            openNoteDialog('edit')
           }}
         >
           {note ? t('detail.memory.actions.editText') : t('detail.memory.actions.addText')}
@@ -443,13 +451,14 @@ export function MemoryCard({
         imagePath={cropDialogState.imagePath}
         onCropComplete={(filePath) => handleCropComplete(filePath)}
       />
-      <NoteDialog
-        isOpen={isNoteDialogOpen}
-        setIsOpen={setIsNoteDialogOpen}
-        note={note}
-        setNote={setNote}
-        saveNote={saveNote}
-      ></NoteDialog>
+      {isNoteDialogOpen && (
+        <NoteDialog
+          setIsOpen={setIsNoteDialogOpen}
+          note={note}
+          saveNote={saveNote}
+          initialMode={noteDialogMode}
+        />
+      )}
       {isImageViewerOpen && (
         <ImageViewerDialog
           isOpen={isImageViewerOpen}

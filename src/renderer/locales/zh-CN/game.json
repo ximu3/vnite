@@ -357,8 +357,29 @@
         "setBackgroundError": "设置为游戏背景失败: {{error}}",
         "screenshotPathNotSet": "未设置截图路径"
       },
-      "dialog": {
-        "markdownHint": "支持 Markdown 语法"
+      "editor": {
+        "edit": "编辑",
+        "preview": "预览",
+        "placeholder": "使用 Markdown 记录内容...",
+        "emptyPreview": "暂无可预览内容",
+        "toolbar": {
+          "heading1": "一级标题",
+          "heading2": "二级标题",
+          "heading3": "三级标题",
+          "heading4": "四级标题",
+          "bold": "加粗",
+          "italic": "斜体",
+          "strikethrough": "删除线",
+          "underline": "下划线",
+          "quote": "引用",
+          "bulletedList": "无序列表",
+          "numberedList": "有序列表",
+          "taskList": "任务列表",
+          "inlineCode": "行内代码",
+          "codeBlock": "代码块",
+          "link": "链接",
+          "horizontalRule": "分割线"
+        }
       }
     },
     "config": {

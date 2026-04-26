@@ -357,8 +357,29 @@
         "setBackgroundError": "Failed to set as game background: {{error}}",
         "screenshotPathNotSet": "Screenshot path not set"
       },
-      "dialog": {
-        "markdownHint": "Markdown syntax supported"
+      "editor": {
+        "edit": "Edit",
+        "preview": "Preview",
+        "placeholder": "Write with Markdown...",
+        "emptyPreview": "Nothing to preview",
+        "toolbar": {
+          "heading1": "Heading 1",
+          "heading2": "Heading 2",
+          "heading3": "Heading 3",
+          "heading4": "Heading 4",
+          "bold": "Bold",
+          "italic": "Italic",
+          "strikethrough": "Strikethrough",
+          "underline": "Underline",
+          "quote": "Quote",
+          "bulletedList": "Bulleted list",
+          "numberedList": "Numbered list",
+          "taskList": "Task list",
+          "inlineCode": "Inline code",
+          "codeBlock": "Code block",
+          "link": "Link",
+          "horizontalRule": "Horizontal rule"
+        }
       }
     },
     "config": {

@@ -356,9 +356,6 @@
         "setBackgroundSuccess": "ゲーム背景として設定しました",
         "setBackgroundError": "ゲーム背景の設定に失敗しました: {{error}}",
         "screenshotPathNotSet": "スクリーンショット保存先が設定されていません"
-      },
-      "dialog": {
-        "markdownHint": "Markdown記法をサポートしています"
       }
     },
     "config": {
