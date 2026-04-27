@@ -329,7 +329,8 @@
         "openScreenshotDir": "Open Screenshot Directory"
       },
       "views": {
-        "grid": "Cards"
+        "grid": "Cards",
+        "masonry": "Masonry"
       },
       "setAs": {
         "title": "Set As",

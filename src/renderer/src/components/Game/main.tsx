@@ -1,8 +1,6 @@
 import { NSFWBlurLevel } from '@appTypes/models'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
-import { ipcManager } from '~/app/ipc'
 import { ImageViewerDialog } from '~/components/dialog/ImageViewerDialog'
 import { Button } from '~/components/ui/button'
 import {
@@ -28,6 +26,7 @@ import { InformationDialog } from './Overview/Information/InformationDialog'
 import { Record } from './Record'
 import { Save } from './Save'
 import { useGameDetailStore, useGameDetailTabStore } from './store'
+import { openLargeGameMediaImage } from './utils'
 
 export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
@@ -201,19 +200,6 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
 
   const isInitialPosition = (pos: { x: number; y: number }): boolean =>
     pos.x === initialPosition.x && pos.y === initialPosition.y
-
-  async function openLargeBackground(): Promise<void> {
-    try {
-      const currentPath = await ipcManager.invoke('game:get-media-path', gameId, 'background')
-      if (!currentPath) {
-        toast.error(t('detail.properties.media.notifications.imageNotFound'))
-        return
-      }
-      openImageViewerDialog(currentPath)
-    } catch (error) {
-      toast.error(t('detail.properties.media.notifications.getImageError', { error }))
-    }
-  }
 
   return (
     <div className={cn('w-full h-full relative overflow-hidden shrink-0')}>
@@ -390,7 +376,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
             </ContextMenuItem>
             <ContextMenuItem
               onSelect={() => {
-                void openLargeBackground()
+                void openLargeGameMediaImage({ gameId, type: 'background', openImageViewerDialog })
               }}
             >
               {t('detail.properties.media.actions.viewLargeImage')}

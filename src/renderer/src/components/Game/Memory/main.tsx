@@ -1,23 +1,33 @@
 import { Button } from '@ui/button'
 import { Tabs, TabsList, TabsTrigger } from '@ui/tabs'
-import { useEffect, useState } from 'react'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
+import i18next from 'i18next'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { eventBus } from '~/app/events'
 import { ipcManager } from '~/app/ipc'
 import { useConfigState, useGameLocalState, useGameState } from '~/hooks'
 import { cn } from '~/utils'
 import { MemoryCardView } from './MemoryCardView'
+import { MemoryCropDialogHost } from './MemoryCropDialogHost'
+import { MemoryMasonryItemInfo, MemoryMasonryView } from './MemoryMasonryView'
 
-type MemoryViewMode = 'grid'
+type MemoryViewMode = 'grid' | 'masonry'
 
 export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [memoryList, , , setMemoryListAndSave] = useGameState(gameId, 'memory.memoryList', true)
-  const [sortedMemoryIds, setSortedMemoryIds] = useState<string[]>([])
   const [viewMode, setViewMode] = useState<MemoryViewMode>('grid')
+  const [masonryRefreshKey, setMasonryRefreshKey] = useState(0)
+  const [masonryItemByMemoryId, setMasonryItemByMemoryId] = useState<
+    Record<string, MemoryMasonryItemInfo>
+  >({})
+
   const [screenshotPath] = useGameLocalState(gameId, 'path.screenshotPath')
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [rootSaveDir] = useConfigState('memory.image.saveDir')
+  const [masonryColumnWidth] = useConfigState('appearances.memory.masonryColumnWidth')
 
   async function addMemory(): Promise<void> {
     await ipcManager.invoke('game:add-memory', gameId)
@@ -47,21 +57,76 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
     toast.error(t('detail.memory.notifications.screenshotPathNotSet'))
   }
 
-  useEffect(() => {
-    // Recalculate sortedMemoryIds when memoryList is updated.
-    const ids = Object.keys(memoryList)
+  const sortedMemoryIds = useMemo(() => {
+    return Object.keys(memoryList)
       .filter((id) => memoryList[id] && memoryList[id].date) // Filter out invalid data
       .sort((a, b) => memoryList[b].date.localeCompare(memoryList[a].date))
-    setSortedMemoryIds(ids)
   }, [memoryList])
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function loadMemoryMasonryItems(): Promise<void> {
+      if (sortedMemoryIds.length === 0) {
+        setMasonryItemByMemoryId({})
+        return
+      }
+
+      try {
+        const masonryItems = await ipcManager.invoke(
+          'game:get-memory-masonry-items',
+          gameId,
+          sortedMemoryIds
+        )
+
+        if (cancelled) return
+        setMasonryItemByMemoryId(masonryItems)
+      } catch (error) {
+        if (cancelled) return
+        toast.error(i18next.t('game:detail.memory.notifications.getImageError', { error }))
+      }
+    }
+
+    void loadMemoryMasonryItems()
+
+    return (): void => {
+      cancelled = true
+    }
+  }, [gameId, masonryRefreshKey, sortedMemoryIds])
+
+  useEffect(() => {
+    const refreshMasonryItems = ({ gameId: changedGameId }: { gameId: string }): void => {
+      if (changedGameId !== gameId) return
+
+      setMasonryRefreshKey((current) => current + 1)
+    }
+
+    const unsubscribeMemoryCreated = eventBus.on('game:memory-created', refreshMasonryItems)
+    const unsubscribeMemoryCoverUpdated = eventBus.on(
+      'game:memory-cover-updated',
+      refreshMasonryItems
+    )
+
+    return (): void => {
+      unsubscribeMemoryCreated()
+      unsubscribeMemoryCoverUpdated()
+    }
+  }, [gameId])
+
+  function handleMasonryCoverMissing(memoryId: string): void {
+    setMasonryItemByMemoryId((prev) => {
+      if (!prev[memoryId]) return prev
+
+      const next = { ...prev }
+      delete next[memoryId]
+      return next
+    })
+  }
 
   async function handleDelete(memoryId: string): Promise<void> {
     toast.promise(
       async () => {
-        // First, remove the memoryId from sortedMemoryIds
-        setSortedMemoryIds((prev) => prev.filter((id) => id !== memoryId))
-
-        // and then update the memoryList
+        // update the memoryList
         const newMemoryList = { ...memoryList }
         delete newMemoryList[memoryId]
         await setMemoryListAndSave(newMemoryList)
@@ -102,14 +167,30 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
 
         <Tabs
           value={viewMode}
-          onValueChange={(value) => setViewMode(value as MemoryViewMode)}
+          onValueChange={(v) => setViewMode(v as MemoryViewMode)}
           className={cn('shrink-0')}
         >
-          <TabsList>
-            <TabsTrigger value="grid" className={cn('gap-2 px-4')}>
-              <span className={cn('icon-[mdi--view-grid-outline] size-4')} />
-              {t('detail.memory.views.grid', { defaultValue: 'Cards' })}
-            </TabsTrigger>
+          <TabsList className={cn('gap-1')}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className={cn('inline-flex')}>
+                  <TabsTrigger value="grid" className={cn('size-8 px-0 py-0')}>
+                    <span className={cn('icon-[mdi--view-grid-outline] size-4')} />
+                  </TabsTrigger>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">{t('detail.memory.views.grid')}</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className={cn('inline-flex')}>
+                  <TabsTrigger value="masonry" className={cn('size-8 px-0 py-0')}>
+                    <span className={cn('icon-[mdi--view-quilt-outline] size-4')} />
+                  </TabsTrigger>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">{t('detail.memory.views.masonry')}</TooltipContent>
+            </Tooltip>
           </TabsList>
         </Tabs>
       </div>
@@ -122,6 +203,17 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
           onSaveNote={saveNote}
         />
       )}
+      {viewMode === 'masonry' && (
+        <MemoryMasonryView
+          gameId={gameId}
+          memoryIds={sortedMemoryIds}
+          masonryItemByMemoryId={masonryItemByMemoryId}
+          columnWidth={masonryColumnWidth}
+          onCoverMissing={handleMasonryCoverMissing}
+          onDelete={handleDelete}
+        />
+      )}
+      <MemoryCropDialogHost />
     </div>
   )
 }

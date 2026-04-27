@@ -17,14 +17,16 @@ import html2canvas from 'html2canvas-pro'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { eventBus } from '~/app/events'
 import { ipcManager } from '~/app/ipc'
 import { useGameState } from '~/hooks'
 import { useLightStore } from '~/pages/Light'
 import { cn, formatDateToISO } from '~/utils'
-import { CropDialog } from '../Config/Properties/Media/CropDialog'
 import { useGameDetailStore } from '../store'
+import { openLargeMemoryImage } from '../utils'
 import { MarkdownPreview } from './MarkdownPreview'
 import { NoteDialog, type NoteDialogMode } from './NoteDialog'
+import { useMemoryStore } from './store'
 
 export function MemoryCard({
   gameId,
@@ -44,22 +46,13 @@ export function MemoryCard({
   const { t } = useTranslation('game')
   const [isNoteDialogOpen, setIsNoteDialogOpen] = useState(false)
   const [noteDialogMode, setNoteDialogMode] = useState<NoteDialogMode>('edit')
-  const [cropDialogState, setCropDialogState] = useState<{
-    isOpen: boolean
-    type: string
-    imagePath: string | null
-    isResizing: boolean
-  }>({
-    isOpen: false,
-    type: '',
-    imagePath: null,
-    isResizing: false
-  })
   const [isCoverExist, setIsCoverExist] = useState(true)
+  const [coverRefreshKey, setCoverRefreshKey] = useState(0)
   const [gameName] = useGameState(gameId, 'metadata.name')
   const memoryRef = useRef<HTMLDivElement>(null)
   const refreshLight = useLightStore((state) => state.refresh)
   const openImageViewerDialog = useGameDetailStore((state) => state.openImageViewerDialog)
+  const openCropDialog = useMemoryStore((state) => state.openCropDialog)
   const hasNote = Boolean(note?.trim())
 
   function openNoteDialog(mode: NoteDialogMode): void {
@@ -67,11 +60,30 @@ export function MemoryCard({
     setIsNoteDialogOpen(true)
   }
 
-  function handleCropComplete(filePath: string): void {
-    ipcManager.invoke('game:update-memory-cover', gameId, memoryId, filePath)
-    setIsCoverExist(true)
-    setCropDialogState({ isOpen: false, type: '', imagePath: null, isResizing: false })
-  }
+  useEffect(() => {
+    const handleMemoryImageAvailable = ({
+      gameId: changedGameId,
+      memoryId: changedMemoryId
+    }: {
+      gameId: string
+      memoryId: string
+    }): void => {
+      if (changedGameId !== gameId || changedMemoryId !== memoryId) return
+      setIsCoverExist(true)
+      setCoverRefreshKey((current) => current + 1)
+    }
+
+    const unsubscribeMemoryCreated = eventBus.on('game:memory-created', handleMemoryImageAvailable)
+    const unsubscribeMemoryCoverUpdated = eventBus.on(
+      'game:memory-cover-updated',
+      handleMemoryImageAvailable
+    )
+
+    return (): void => {
+      unsubscribeMemoryCreated()
+      unsubscribeMemoryCoverUpdated()
+    }
+  }, [gameId, memoryId])
 
   function handlePreviewKeyDown(event: React.KeyboardEvent): void {
     if (event.key !== 'Enter' && event.key !== ' ') return
@@ -83,27 +95,14 @@ export function MemoryCard({
     return Boolean((event.target as HTMLElement).closest('a'))
   }
 
-  async function handleViewLargeImage(): Promise<void> {
-    try {
-      const currentPath = await ipcManager.invoke('game:get-memory-cover-path', gameId, memoryId)
-      if (!currentPath) {
-        toast.error(t('detail.memory.notifications.imageNotFound'))
-        return
-      }
-      openImageViewerDialog(currentPath)
-    } catch (error) {
-      toast.error(t('detail.memory.notifications.getImageError', { error }))
-    }
-  }
-
   async function handleCoverSelect(): Promise<void> {
     try {
       const filePath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
       if (!filePath) return
 
-      setCropDialogState({
-        isOpen: true,
-        type: '',
+      openCropDialog({
+        gameId,
+        memoryId,
         imagePath: filePath,
         isResizing: false
       })
@@ -121,9 +120,9 @@ export function MemoryCard({
         return
       }
 
-      setCropDialogState({
-        isOpen: true,
-        type: '',
+      openCropDialog({
+        gameId,
+        memoryId,
         imagePath: currentPath,
         isResizing: true
       })
@@ -263,11 +262,12 @@ export function MemoryCard({
           'absolute inset-0 z-0 h-full w-full cursor-zoom-in overflow-hidden border-0 bg-transparent p-0 text-left'
         )}
         onClick={() => {
-          void handleViewLargeImage()
+          void openLargeMemoryImage({ gameId, memoryId, openImageViewerDialog })
         }}
         aria-label={t('detail.properties.media.actions.viewLargeImage')}
       >
         <GameImage
+          key={`memory-cover-${memoryId}-${coverRefreshKey}`}
           type={`memories/${memoryId}`}
           gameId={gameId}
           className={cn('h-full w-full rounded-none shadow-none')}
@@ -575,14 +575,6 @@ export function MemoryCard({
           {t('detail.memory.actions.delete')}
         </ContextMenuItem>
       </ContextMenuContent>
-      <CropDialog
-        isOpen={cropDialogState.isOpen}
-        onClose={() =>
-          setCropDialogState({ isOpen: false, type: '', imagePath: null, isResizing: false })
-        }
-        imagePath={cropDialogState.imagePath}
-        onCropComplete={(filePath) => handleCropComplete(filePath)}
-      />
       {isNoteDialogOpen && (
         <NoteDialog
           setIsOpen={setIsNoteDialogOpen}

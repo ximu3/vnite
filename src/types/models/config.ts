@@ -118,6 +118,9 @@ export interface configDocs {
       showLogo: boolean
       contentTopPadding: number
     }
+    memory: {
+      masonryColumnWidth: number
+    }
     glass: {
       dark: {
         blur: number
@@ -387,6 +390,9 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       showCover: true,
       showLogo: true,
       contentTopPadding: 40 // in vh
+    },
+    memory: {
+      masonryColumnWidth: 220
     },
     glass: {
       dark: {

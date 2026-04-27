@@ -8,8 +8,6 @@ import {
 import { GameImage } from '@ui/game-image'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
-import { ipcManager } from '~/app/ipc'
 import { useConfigState, useGameState } from '~/hooks'
 import { useRunningGames } from '~/pages/Library/store'
 import { cn, copyWithToast, formatStorageSize } from '~/utils'
@@ -19,6 +17,7 @@ import { PLAY_STATUS_ICONS } from './Overview/Record/RecordIcon'
 import { StartGame } from './StartGame'
 import { StopGame } from './StopGame'
 import { useGameDetailStore } from './store'
+import { openLargeGameMediaImage } from './utils'
 
 export function HeaderCompact({
   gameId,
@@ -46,19 +45,6 @@ export function HeaderCompact({
     btoa(String.fromCharCode(...new TextEncoder().encode(str)))
   const obfuscatedName = stringToBase64(name).slice(0, name.length)
 
-  async function openLargeCover(): Promise<void> {
-    try {
-      const currentPath = await ipcManager.invoke('game:get-media-path', gameId, 'cover')
-      if (!currentPath) {
-        toast.error(t('detail.properties.media.notifications.imageNotFound'))
-        return
-      }
-      openImageViewerDialog(currentPath)
-    } catch (error) {
-      toast.error(t('detail.properties.media.notifications.getImageError', { error }))
-    }
-  }
-
   return (
     <div className={cn('flex-col flex gap-5 px-7 py-5 pl-6 pt-6 relative mb-5', className)}>
       <div className="flex flex-row gap-1 h-[220px] justify-between items-start">
@@ -83,7 +69,7 @@ export function HeaderCompact({
               </ContextMenuItem>
               <ContextMenuItem
                 onSelect={() => {
-                  void openLargeCover()
+                  void openLargeGameMediaImage({ gameId, type: 'cover', openImageViewerDialog })
                 }}
               >
                 {t('detail.properties.media.actions.viewLargeImage')}

@@ -10,6 +10,7 @@ import { useGameState } from '~/hooks'
 import { useLightStore } from '~/pages/Light'
 import { cn } from '~/utils'
 import { useGameDetailStore } from '../../../store'
+import { openLargeGameMediaImage } from '../../../utils'
 import { CropDialog } from './CropDialog'
 import { SearchMediaDialog } from './SearchMediaDialog'
 import { UrlDialog } from './UrlDialog'
@@ -101,21 +102,6 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
         imagePath: currentPath,
         isResizing: true
       })
-    } catch (error) {
-      toast.error(t('detail.properties.media.notifications.getImageError', { error }))
-    }
-  }
-
-  async function handleViewLargeImage(
-    type: 'cover' | 'background' | 'icon' | 'logo'
-  ): Promise<void> {
-    try {
-      const currentPath = await ipcManager.invoke('game:get-media-path', gameId, type)
-      if (!currentPath) {
-        toast.error(t('detail.properties.media.notifications.imageNotFound'))
-        return
-      }
-      openImageViewerDialog(currentPath)
     } catch (error) {
       toast.error(t('detail.properties.media.notifications.getImageError', { error }))
     }
@@ -270,7 +256,7 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
       <Tooltip>
         <TooltipTrigger>
           <Button
-            onClick={() => handleViewLargeImage(type)}
+            onClick={() => openLargeGameMediaImage({ gameId, type, openImageViewerDialog })}
             variant={'outline'}
             size={'icon'}
             className={cn('w-7 h-7')}

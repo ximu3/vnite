@@ -329,7 +329,8 @@
         "openScreenshotDir": "打開截圖目錄"
       },
       "views": {
-        "grid": "卡片"
+        "grid": "卡片",
+        "masonry": "瀑布流"
       },
       "setAs": {
         "title": "設置為",

@@ -1,8 +1,6 @@
 import { NSFWBlurLevel } from '@appTypes/models'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
-import { ipcManager } from '~/app/ipc'
 import {
   ContextMenu,
   ContextMenuContent,
@@ -18,6 +16,7 @@ import { Record } from './Overview/Record'
 import { StartGame } from './StartGame'
 import { StopGame } from './StopGame'
 import { useGameDetailStore } from './store'
+import { openLargeGameMediaImage } from './utils'
 
 export function Header({
   gameId,
@@ -42,19 +41,6 @@ export function Header({
   const obfuscatedName = stringToBase64(name).slice(0, name.length)
 
   const { t } = useTranslation('game')
-
-  async function openLargeCover(): Promise<void> {
-    try {
-      const currentPath = await ipcManager.invoke('game:get-media-path', gameId, 'cover')
-      if (!currentPath) {
-        toast.error(t('detail.properties.media.notifications.imageNotFound'))
-        return
-      }
-      openImageViewerDialog(currentPath)
-    } catch (error) {
-      toast.error(t('detail.properties.media.notifications.getImageError', { error }))
-    }
-  }
 
   return (
     <div className={cn('flex-col flex gap-5 px-7 py-5 pl-6 pt-6 relative', className)}>
@@ -136,7 +122,7 @@ export function Header({
             </ContextMenuItem>
             <ContextMenuItem
               onSelect={() => {
-                void openLargeCover()
+                void openLargeGameMediaImage({ gameId, type: 'cover', openImageViewerDialog })
               }}
             >
               {t('detail.properties.media.actions.viewLargeImage')}

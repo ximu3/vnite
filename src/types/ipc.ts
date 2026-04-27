@@ -178,6 +178,10 @@ type MainIpcEvents =
       ) => string | null
       'game:remove-media': (gameId: string, type: 'cover' | 'background' | 'icon' | 'logo') => void
       'game:get-memory-cover-path': (gameId: string, memoryId: string) => string | null
+      'game:get-memory-masonry-items': (
+        gameId: string,
+        memoryIds: string[]
+      ) => Record<string, { heightRatio: number }>
 
       // Game management events
       'game:check-exits-by-path': (gamePath: string) => boolean
