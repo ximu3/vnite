@@ -25,6 +25,7 @@ import { cn, formatDateToISO } from '~/utils'
 import { useGameDetailStore } from '../store'
 import { openLargeMemoryImage } from '../utils'
 import { MarkdownPreview } from './MarkdownPreview'
+import { exportMemoryNoteMarkdown } from './memoryNoteExport'
 import type { NoteDialogMode } from './NoteDialog'
 import { useMemoryStore } from './store'
 
@@ -212,30 +213,15 @@ export function MemoryCard({
   }
 
   const handleExportMarkdown = async (type: 'clipboard' | 'file'): Promise<void> => {
-    if (!note) return
-
-    const coverPath = await ipcManager.invoke('game:get-memory-cover-path', gameId, memoryId)
-
-    const markdownContent = `# ${gameName} - ${t('{{date, niceDate}}', { date })}\n\n![cover](${coverPath})\n\n${note}`
-
-    if (type === 'clipboard') {
-      // Copy to clipboard
-      try {
-        await navigator.clipboard.writeText(markdownContent)
-        toast.success(t('detail.memory.notifications.markdownCopied'))
-      } catch (error) {
-        toast.error(t('detail.memory.notifications.markdownCopyError', { error }))
-      }
-    } else {
-      // Save as file
-      const blob = new Blob([markdownContent], { type: 'text/markdown' })
-      const url = URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = `${gameName}-memory-${formatDateToISO(date)}.md`
-      link.click()
-      URL.revokeObjectURL(url)
-    }
+    await exportMemoryNoteMarkdown({
+      gameId,
+      memoryId,
+      gameName,
+      date,
+      dateLabel: t('{{date, niceDate}}', { date }),
+      note,
+      type
+    })
   }
 
   function renderDateBadge(): React.JSX.Element {

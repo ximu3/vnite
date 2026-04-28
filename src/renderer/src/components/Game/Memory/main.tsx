@@ -11,6 +11,7 @@ import { useConfigState, useGameLocalState, useGameState } from '~/hooks'
 import { cn } from '~/utils'
 import { MemoryCardView } from './MemoryCardView'
 import { MemoryCropDialogHost } from './MemoryCropDialogHost'
+import { MemoryListView } from './MemoryListView'
 import { MemoryMasonryItemInfo, MemoryMasonryView } from './MemoryMasonryView'
 import { MemoryNoteDialogHost } from './MemoryNoteDialogHost'
 import { useMemoryStore } from './store'
@@ -23,6 +24,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
   const [viewMode, setViewMode] = useState<MemoryViewMode>('grid')
   const [pendingNoteMemoryId, setPendingNoteMemoryId] = useState<string | null>(null)
   const [masonryRefreshKey, setMasonryRefreshKey] = useState(0)
+  const [hasLoadedMasonryItems, setHasLoadedMasonryItems] = useState(false)
   const [masonryItemByMemoryId, setMasonryItemByMemoryId] = useState<
     Record<string, MemoryMasonryItemInfo>
   >({})
@@ -60,7 +62,6 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
       }
 
       if (viewMode === 'list') {
-        // TODO: Wire this branch to the future list-view tab when that layout is implemented.
         setPendingNoteMemoryId(memory._id)
       }
     } catch (error) {
@@ -98,14 +99,28 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
       .sort((a, b) => memoryList[b].date.localeCompare(memoryList[a].date))
   }, [memoryList])
 
+  const noteMemoryIds = useMemo(() => {
+    return sortedMemoryIds.filter((id) => Boolean(memoryList[id]?.note?.trim()))
+  }, [memoryList, sortedMemoryIds])
+
+  const masonryMemoryIds = useMemo(() => {
+    return sortedMemoryIds.filter((id) => {
+      const itemInfo = masonryItemByMemoryId[id]
+      return Boolean(itemInfo && itemInfo.heightRatio > 0)
+    })
+  }, [masonryItemByMemoryId, sortedMemoryIds])
+
   useEffect(() => {
     let cancelled = false
 
     async function loadMemoryMasonryItems(): Promise<void> {
       if (sortedMemoryIds.length === 0) {
         setMasonryItemByMemoryId({})
+        setHasLoadedMasonryItems(true)
         return
       }
+
+      setHasLoadedMasonryItems(false)
 
       try {
         const masonryItems = await ipcManager.invoke(
@@ -116,8 +131,10 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
 
         if (cancelled) return
         setMasonryItemByMemoryId(masonryItems)
+        setHasLoadedMasonryItems(true)
       } catch (error) {
         if (cancelled) return
+        setHasLoadedMasonryItems(true)
         toast.error(i18next.t('game:detail.memory.notifications.getImageError', { error }))
       }
     }
@@ -203,6 +220,16 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
     await setMemoryListAndSave(newMemoryList)
   }
 
+  function renderEmptyState(): React.JSX.Element {
+    return (
+      <div
+        className={cn('flex min-h-32 items-center justify-center text-sm text-muted-foreground')}
+      >
+        {t('detail.memory.empty')}
+      </div>
+    )
+  }
+
   return (
     <div className={cn('w-full h-full min-h-[22vh] flex flex-col pt-2 gap-5')}>
       <div className={cn('flex items-center justify-between gap-3')}>
@@ -241,10 +268,21 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
               </TooltipTrigger>
               <TooltipContent side="bottom">{t('detail.memory.views.masonry')}</TooltipContent>
             </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className={cn('inline-flex')}>
+                  <TabsTrigger value="list" className={cn('size-8 px-0 py-0')}>
+                    <span className={cn('icon-[mdi--format-list-text] size-4')} />
+                  </TabsTrigger>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">{t('detail.memory.views.list')}</TooltipContent>
+            </Tooltip>
           </TabsList>
         </Tabs>
       </div>
-      {viewMode === 'grid' && (
+      {viewMode === 'grid' && sortedMemoryIds.length === 0 && renderEmptyState()}
+      {viewMode === 'grid' && sortedMemoryIds.length > 0 && (
         <MemoryCardView
           gameId={gameId}
           memoryIds={sortedMemoryIds}
@@ -252,13 +290,27 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
           onDelete={handleDelete}
         />
       )}
-      {viewMode === 'masonry' && (
+      {viewMode === 'masonry' &&
+        hasLoadedMasonryItems &&
+        masonryMemoryIds.length === 0 &&
+        renderEmptyState()}
+      {viewMode === 'masonry' && masonryMemoryIds.length > 0 && (
         <MemoryMasonryView
           gameId={gameId}
           memoryIds={sortedMemoryIds}
           masonryItemByMemoryId={masonryItemByMemoryId}
           columnWidth={masonryColumnWidth}
           onCoverMissing={handleMasonryCoverMissing}
+          onDelete={handleDelete}
+        />
+      )}
+      {viewMode === 'list' && noteMemoryIds.length === 0 && renderEmptyState()}
+      {viewMode === 'list' && noteMemoryIds.length > 0 && (
+        <MemoryListView
+          gameId={gameId}
+          gameName={gameName}
+          memoryIds={noteMemoryIds}
+          memoryList={memoryList}
           onDelete={handleDelete}
         />
       )}

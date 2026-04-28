@@ -318,6 +318,7 @@
       }
     },
     "memory": {
+      "empty": "No memories to display",
       "actions": {
         "add": "Add",
         "addCover": "Add Cover",
@@ -330,7 +331,15 @@
       },
       "views": {
         "grid": "Cards",
-        "masonry": "Masonry"
+        "masonry": "Masonry",
+        "list": "List"
+      },
+      "list": {
+        "untitled": "Untitled note",
+        "table": {
+          "note": "Note",
+          "date": "Time"
+        }
       },
       "setAs": {
         "title": "Set As",

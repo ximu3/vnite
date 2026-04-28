@@ -318,6 +318,7 @@
       }
     },
     "memory": {
+      "empty": "暂无可展示的回忆",
       "actions": {
         "add": "添加",
         "addCover": "添加封面",
@@ -330,7 +331,15 @@
       },
       "views": {
         "grid": "卡片",
-        "masonry": "瀑布流"
+        "masonry": "瀑布流",
+        "list": "列表"
+      },
+      "list": {
+        "untitled": "未命名笔记",
+        "table": {
+          "note": "笔记",
+          "date": "时间"
+        }
       },
       "setAs": {
         "title": "设置为",
