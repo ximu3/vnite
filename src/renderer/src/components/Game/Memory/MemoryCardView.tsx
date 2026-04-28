@@ -8,14 +8,12 @@ export function MemoryCardView({
   gameId,
   memoryIds,
   memoryList,
-  onDelete,
-  onSaveNote
+  onDelete
 }: {
   gameId: string
   memoryIds: string[]
   memoryList: MemoryList
   onDelete: (memoryId: string) => void
-  onSaveNote: (memoryId: string, note: string) => Promise<void>
 }): React.JSX.Element {
   return (
     <div
@@ -36,7 +34,6 @@ export function MemoryCardView({
             handleDelete={() => onDelete(id)}
             note={memory.note}
             date={memory.date}
-            saveNote={(note) => onSaveNote(id, note)}
           />
         )
       })}

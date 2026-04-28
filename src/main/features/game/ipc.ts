@@ -42,7 +42,7 @@ export function setupGameIPC(): void {
   })
 
   ipcManager.handle('game:add-memory', async (_, gameId: string) => {
-    await addGameMemory(gameId)
+    return await addGameMemory(gameId)
   })
 
   ipcManager.handle('game:delete-memory', async (_, gameId: string, memoryId: string) => {

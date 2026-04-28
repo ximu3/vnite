@@ -1,10 +1,10 @@
 import { Card } from '@ui/card'
 import { Dialog, DialogContent } from '@ui/dialog'
 import { Tabs, TabsList, TabsTrigger } from '@ui/tabs'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { cn } from '~/utils'
-import { MarkdownEditor } from './MarkdownEditor'
+import { MarkdownEditor, type MarkdownEditorHandle } from './MarkdownEditor'
 import { MarkdownPreview } from './MarkdownPreview'
 
 export type NoteDialogMode = 'edit' | 'preview'
@@ -23,6 +23,19 @@ export function NoteDialog({
   const { t } = useTranslation('game')
   const [draft, setDraft] = useState(note ?? '')
   const [mode, setMode] = useState<NoteDialogMode>(initialMode)
+  const editorRef = useRef<MarkdownEditorHandle>(null)
+
+  useEffect(() => {
+    if (mode !== 'edit') return
+
+    const frameId = window.requestAnimationFrame(() => {
+      editorRef.current?.focusEditorEnd()
+    })
+
+    return (): void => {
+      window.cancelAnimationFrame(frameId)
+    }
+  }, [mode])
 
   async function closeDialog(): Promise<void> {
     if (draft !== (note ?? '')) {
@@ -40,6 +53,11 @@ export function NoteDialog({
   return (
     <Dialog open onOpenChange={handleOpenChange}>
       <DialogContent
+        onOpenAutoFocus={(event) => {
+          if (mode === 'edit') {
+            event.preventDefault()
+          }
+        }}
         className={cn(
           'w-[min(980px,82vw)] h-[82vh] max-w-none min-w-[640px] flex min-h-0 flex-col gap-3'
         )}
@@ -59,7 +77,7 @@ export function NoteDialog({
 
         <div className={cn('min-h-0 flex-1')}>
           {mode === 'edit' ? (
-            <MarkdownEditor value={draft} onChange={setDraft} />
+            <MarkdownEditor ref={editorRef} value={draft} onChange={setDraft} />
           ) : (
             <Card
               className={cn(

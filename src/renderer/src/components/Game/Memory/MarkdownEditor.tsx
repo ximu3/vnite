@@ -12,7 +12,7 @@ import {
 import { Button } from '@ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import CodeMirror, { type ReactCodeMirrorRef } from '@uiw/react-codemirror'
-import { useMemo, useRef } from 'react'
+import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from '~/components/ThemeProvider'
 import { cn } from '~/utils'
@@ -21,6 +21,10 @@ type ToolbarAction = {
   label: string
   icon: string
   run: (view: EditorView) => void
+}
+
+export interface MarkdownEditorHandle {
+  focusEditorEnd: () => void
 }
 
 /**
@@ -63,16 +67,43 @@ const markdownInlineFormatting = ViewPlugin.fromClass(MarkdownInlineFormattingPl
   decorations: (plugin) => plugin.decorations
 })
 
-export function MarkdownEditor({
-  value,
-  onChange
-}: {
-  value: string
-  onChange: (value: string) => void
-}): React.JSX.Element {
+export const MarkdownEditor = forwardRef<
+  MarkdownEditorHandle,
+  {
+    value: string
+    onChange: (value: string) => void
+  }
+>(function MarkdownEditor(
+  {
+    value,
+    onChange
+  }: {
+    value: string
+    onChange: (value: string) => void
+  },
+  ref
+): React.JSX.Element {
   const { t } = useTranslation('game')
   const { isDark } = useTheme()
   const editorRef = useRef<ReactCodeMirrorRef>(null)
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      focusEditorEnd: (): void => {
+        const view = editorRef.current?.view
+        if (!view) return
+
+        const end = view.state.doc.length
+        view.dispatch({
+          selection: { anchor: end },
+          scrollIntoView: true
+        })
+        view.focus()
+      }
+    }),
+    []
+  )
 
   const extensions = useMemo(
     () => [
@@ -261,7 +292,7 @@ export function MarkdownEditor({
       </div>
     </div>
   )
-}
+})
 
 /**
  * Wraps the selected text, or the nearest inferred text segment, with inline Markdown markers.

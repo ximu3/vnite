@@ -25,7 +25,7 @@ import { cn, formatDateToISO } from '~/utils'
 import { useGameDetailStore } from '../store'
 import { openLargeMemoryImage } from '../utils'
 import { MarkdownPreview } from './MarkdownPreview'
-import { NoteDialog, type NoteDialogMode } from './NoteDialog'
+import type { NoteDialogMode } from './NoteDialog'
 import { useMemoryStore } from './store'
 
 export function MemoryCard({
@@ -33,19 +33,15 @@ export function MemoryCard({
   memoryId,
   handleDelete,
   note,
-  date,
-  saveNote
+  date
 }: {
   gameId: string
   memoryId: string
   handleDelete: () => void
   note: string
   date: string
-  saveNote: (note: string) => Promise<void>
 }): React.JSX.Element {
   const { t } = useTranslation('game')
-  const [isNoteDialogOpen, setIsNoteDialogOpen] = useState(false)
-  const [noteDialogMode, setNoteDialogMode] = useState<NoteDialogMode>('edit')
   const [isCoverExist, setIsCoverExist] = useState(true)
   const [coverRefreshKey, setCoverRefreshKey] = useState(0)
   const [gameName] = useGameState(gameId, 'metadata.name')
@@ -53,11 +49,11 @@ export function MemoryCard({
   const refreshLight = useLightStore((state) => state.refresh)
   const openImageViewerDialog = useGameDetailStore((state) => state.openImageViewerDialog)
   const openCropDialog = useMemoryStore((state) => state.openCropDialog)
+  const openNoteDialog = useMemoryStore((state) => state.openNoteDialog)
   const hasNote = Boolean(note?.trim())
 
-  function openNoteDialog(mode: NoteDialogMode): void {
-    setNoteDialogMode(mode)
-    setIsNoteDialogOpen(true)
+  function openMemoryNoteDialog(mode: NoteDialogMode): void {
+    openNoteDialog({ memoryId, initialMode: mode })
   }
 
   useEffect(() => {
@@ -88,7 +84,7 @@ export function MemoryCard({
   function handlePreviewKeyDown(event: React.KeyboardEvent): void {
     if (event.key !== 'Enter' && event.key !== ' ') return
     event.preventDefault()
-    openNoteDialog('preview')
+    openMemoryNoteDialog('preview')
   }
 
   function shouldIgnorePreviewClick(event: React.MouseEvent): boolean {
@@ -289,7 +285,7 @@ export function MemoryCard({
         )}
         onClick={(event) => {
           event.stopPropagation()
-          openNoteDialog('edit')
+          openMemoryNoteDialog('edit')
         }}
         aria-label={t('detail.memory.actions.addText')}
       >
@@ -328,7 +324,7 @@ export function MemoryCard({
         tabIndex={0}
         onClick={(event) => {
           if (shouldIgnorePreviewClick(event)) return
-          openNoteDialog('preview')
+          openMemoryNoteDialog('preview')
         }}
         onKeyDown={handlePreviewKeyDown}
       >
@@ -383,7 +379,7 @@ export function MemoryCard({
           tabIndex={0}
           onClick={(event) => {
             if (shouldIgnorePreviewClick(event)) return
-            openNoteDialog('preview')
+            openMemoryNoteDialog('preview')
           }}
           onKeyDown={handlePreviewKeyDown}
         >
@@ -418,7 +414,7 @@ export function MemoryCard({
             size="sm"
             onClick={(event) => {
               event.stopPropagation()
-              openNoteDialog('edit')
+              openMemoryNoteDialog('edit')
             }}
           >
             {t('detail.memory.actions.addText')}
@@ -465,7 +461,7 @@ export function MemoryCard({
         {/* Note */}
         <ContextMenuItem
           onSelect={() => {
-            openNoteDialog('edit')
+            openMemoryNoteDialog('edit')
           }}
         >
           {note ? t('detail.memory.actions.editText') : t('detail.memory.actions.addText')}
@@ -575,14 +571,6 @@ export function MemoryCard({
           {t('detail.memory.actions.delete')}
         </ContextMenuItem>
       </ContextMenuContent>
-      {isNoteDialogOpen && (
-        <NoteDialog
-          setIsOpen={setIsNoteDialogOpen}
-          note={note}
-          saveNote={saveNote}
-          initialMode={noteDialogMode}
-        />
-      )}
     </ContextMenu>
   )
 }

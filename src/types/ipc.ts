@@ -8,7 +8,7 @@ import {
 import { PosterRenderArgs, RenderResponse, TemplatePayloads } from '@appTypes/poster'
 import { BatchUpdateGameMetadataProgress, OverallScanProgress } from '@appTypes/utils'
 import { ProgressInfo, UpdateCheckResult } from 'electron-updater'
-import { BatchGameInfo, configDocs, GameTimerStatus } from './models'
+import { BatchGameInfo, configDocs, GameTimerStatus, gameDoc } from './models'
 import {
   PluginConfiguration,
   PluginInfo,
@@ -162,7 +162,7 @@ type MainIpcEvents =
       'game:delete-save': (gameId: string, saveId: string) => void
 
       // Game memory management events
-      'game:add-memory': (gameId: string) => void
+      'game:add-memory': (gameId: string) => gameDoc['memory']['memoryList'][string]
       'game:delete-memory': (gameId: string, memoryId: string) => void
       'game:update-memory-cover': (gameId: string, memoryId: string, imgPath: string) => void
 

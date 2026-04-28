@@ -12,13 +12,16 @@ import { cn } from '~/utils'
 import { MemoryCardView } from './MemoryCardView'
 import { MemoryCropDialogHost } from './MemoryCropDialogHost'
 import { MemoryMasonryItemInfo, MemoryMasonryView } from './MemoryMasonryView'
+import { MemoryNoteDialogHost } from './MemoryNoteDialogHost'
+import { useMemoryStore } from './store'
 
-type MemoryViewMode = 'grid' | 'masonry'
+type MemoryViewMode = 'grid' | 'masonry' | 'list'
 
 export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [memoryList, , , setMemoryListAndSave] = useGameState(gameId, 'memory.memoryList', true)
   const [viewMode, setViewMode] = useState<MemoryViewMode>('grid')
+  const [pendingNoteMemoryId, setPendingNoteMemoryId] = useState<string | null>(null)
   const [masonryRefreshKey, setMasonryRefreshKey] = useState(0)
   const [masonryItemByMemoryId, setMasonryItemByMemoryId] = useState<
     Record<string, MemoryMasonryItemInfo>
@@ -28,9 +31,41 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [rootSaveDir] = useConfigState('memory.image.saveDir')
   const [masonryColumnWidth] = useConfigState('appearances.memory.masonryColumnWidth')
+  const openCropDialog = useMemoryStore((state) => state.openCropDialog)
+  const openNoteDialog = useMemoryStore((state) => state.openNoteDialog)
+
+  async function promptMemoryCoverSelection(memoryId: string): Promise<void> {
+    try {
+      const filePath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
+      if (!filePath) return
+
+      openCropDialog({
+        gameId,
+        memoryId,
+        imagePath: filePath,
+        isResizing: false
+      })
+    } catch (error) {
+      toast.error(t('detail.memory.notifications.selectFileError', { error }))
+    }
+  }
 
   async function addMemory(): Promise<void> {
-    await ipcManager.invoke('game:add-memory', gameId)
+    try {
+      const memory = await ipcManager.invoke('game:add-memory', gameId)
+
+      if (viewMode === 'masonry') {
+        await promptMemoryCoverSelection(memory._id)
+        return
+      }
+
+      if (viewMode === 'list') {
+        // TODO: Wire this branch to the future list-view tab when that layout is implemented.
+        setPendingNoteMemoryId(memory._id)
+      }
+    } catch (error) {
+      toast.error(t('detail.memory.notifications.createError', { error }))
+    }
   }
 
   async function openScreenshotDir(): Promise<void> {
@@ -113,6 +148,18 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
     }
   }, [gameId])
 
+  useEffect(() => {
+    if (!pendingNoteMemoryId) return
+    if (!memoryList[pendingNoteMemoryId]) return
+
+    // Wait for the DB -> store sync to materialize the new memory before opening NoteDialog.
+    openNoteDialog({
+      memoryId: pendingNoteMemoryId,
+      initialMode: 'edit'
+    })
+    setPendingNoteMemoryId(null)
+  }, [memoryList, openNoteDialog, pendingNoteMemoryId])
+
   function handleMasonryCoverMissing(memoryId: string): void {
     setMasonryItemByMemoryId((prev) => {
       if (!prev[memoryId]) return prev
@@ -143,10 +190,13 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
   }
 
   async function saveNote(memoryId: string, note: string): Promise<void> {
+    const currentMemory = memoryList[memoryId]
+    if (!currentMemory) return
+
     const newMemoryList = {
       ...memoryList,
       [memoryId]: {
-        ...memoryList[memoryId],
+        ...currentMemory,
         note
       }
     }
@@ -157,7 +207,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
     <div className={cn('w-full h-full min-h-[22vh] flex flex-col pt-2 gap-5')}>
       <div className={cn('flex items-center justify-between gap-3')}>
         <div className={cn('flex items-center gap-3')}>
-          <Button variant="default" size={'icon'} onClick={addMemory}>
+          <Button variant="default" size="icon" onClick={addMemory}>
             <span className={cn('icon-[mdi--add] w-6 h-6')}></span>
           </Button>
           <Button variant="secondary" onClick={openScreenshotDir}>
@@ -200,7 +250,6 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
           memoryIds={sortedMemoryIds}
           memoryList={memoryList}
           onDelete={handleDelete}
-          onSaveNote={saveNote}
         />
       )}
       {viewMode === 'masonry' && (
@@ -214,6 +263,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
         />
       )}
       <MemoryCropDialogHost />
+      <MemoryNoteDialogHost memoryList={memoryList} saveNote={saveNote} />
     </div>
   )
 }
