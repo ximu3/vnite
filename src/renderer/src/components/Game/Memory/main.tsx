@@ -287,6 +287,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
           gameId={gameId}
           memoryIds={sortedMemoryIds}
           memoryList={memoryList}
+          masonryItemByMemoryId={masonryItemByMemoryId}
           onDelete={handleDelete}
         />
       )}

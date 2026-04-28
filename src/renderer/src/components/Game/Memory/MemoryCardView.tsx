@@ -1,6 +1,7 @@
 import type { gameDoc } from '@appTypes/models/game'
 import { cn } from '~/utils'
 import { MemoryCard } from './MemoryCard'
+import type { MemoryMasonryItemInfo } from './MemoryMasonryView'
 
 type MemoryList = gameDoc['memory']['memoryList']
 
@@ -8,11 +9,13 @@ export function MemoryCardView({
   gameId,
   memoryIds,
   memoryList,
+  masonryItemByMemoryId,
   onDelete
 }: {
   gameId: string
   memoryIds: string[]
   memoryList: MemoryList
+  masonryItemByMemoryId: Record<string, MemoryMasonryItemInfo>
   onDelete: (memoryId: string) => void
 }): React.JSX.Element {
   return (
@@ -34,6 +37,7 @@ export function MemoryCardView({
             handleDelete={() => onDelete(id)}
             note={memory.note}
             date={memory.date}
+            coverHeightRatio={masonryItemByMemoryId[id]?.heightRatio}
           />
         )
       })}

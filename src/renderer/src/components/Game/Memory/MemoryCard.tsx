@@ -1,3 +1,20 @@
+/**
+ * Memory card layout summary:
+ * - Branches:
+ *   - cover + note
+ *   - cover only
+ *   - note only
+ *   - empty
+ * - Cover rendering:
+ *   - a blurred background fill layer
+ *   - a foreground cover layer rendered with `object-fit: contain`
+ * - Cover + note sizing:
+ *   - `restOverlayRatio = max(0.2, 1 - coverHeightRatio)`
+ *   - when `coverHeightRatio >= 0.8`, clamp the rest overlay to `0.2`
+ *   - `hoverOverlayRatio = max(restOverlayRatio, min(0.8, requiredOverlayRatio))`
+ * - The computed overlay ratios are written to CSS variables and drive both the foreground
+ *   image area and the note overlay height.
+ */
 import { Button } from '@ui/button'
 import { Card } from '@ui/card'
 import {
@@ -13,15 +30,14 @@ import {
   ContextMenuTrigger
 } from '@ui/context-menu'
 import { GameImage } from '@ui/game-image'
-import html2canvas from 'html2canvas-pro'
-import { useEffect, useRef, useState } from 'react'
+import { type CSSProperties, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { eventBus } from '~/app/events'
 import { ipcManager } from '~/app/ipc'
 import { useGameState } from '~/hooks'
 import { useLightStore } from '~/pages/Light'
-import { cn, formatDateToISO } from '~/utils'
+import { cn } from '~/utils'
 import { useGameDetailStore } from '../store'
 import { openLargeMemoryImage } from '../utils'
 import { MarkdownPreview } from './MarkdownPreview'
@@ -29,34 +45,50 @@ import { exportMemoryNoteMarkdown } from './memoryNoteExport'
 import type { NoteDialogMode } from './NoteDialog'
 import { useMemoryStore } from './store'
 
+const CARD_NOTE_MIN_RATIO = 0.2
+const CARD_NOTE_MAX_RATIO = 0.8
+
 export function MemoryCard({
   gameId,
   memoryId,
   handleDelete,
   note,
-  date
+  date,
+  coverHeightRatio
 }: {
   gameId: string
   memoryId: string
   handleDelete: () => void
   note: string
   date: string
+  coverHeightRatio?: number
 }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [isCoverExist, setIsCoverExist] = useState(true)
   const [coverRefreshKey, setCoverRefreshKey] = useState(0)
+  const [requiredOverlayRatio, setRequiredOverlayRatio] = useState(CARD_NOTE_MIN_RATIO)
   const [gameName] = useGameState(gameId, 'metadata.name')
   const memoryRef = useRef<HTMLDivElement>(null)
+  const noteMeasureRef = useRef<HTMLDivElement>(null)
   const refreshLight = useLightStore((state) => state.refresh)
   const openImageViewerDialog = useGameDetailStore((state) => state.openImageViewerDialog)
   const openCropDialog = useMemoryStore((state) => state.openCropDialog)
   const openNoteDialog = useMemoryStore((state) => state.openNoteDialog)
   const hasNote = Boolean(note?.trim())
+  const { restOverlayRatio, hoverOverlayRatio } = getCoverWithNoteLayout(
+    coverHeightRatio,
+    requiredOverlayRatio
+  )
+  const coverWithNoteStyle = {
+    '--memory-overlay-rest': `${restOverlayRatio * 100}%`,
+    '--memory-overlay-hover': `${hoverOverlayRatio * 100}%`
+  } as CSSProperties
 
   function openMemoryNoteDialog(mode: NoteDialogMode): void {
     openNoteDialog({ memoryId, initialMode: mode })
   }
 
+  // Sync the local cover state when this memory receives a new or updated cover image.
   useEffect(() => {
     const handleMemoryImageAvailable = ({
       gameId: changedGameId,
@@ -81,6 +113,35 @@ export function MemoryCard({
       unsubscribeMemoryCoverUpdated()
     }
   }, [gameId, memoryId])
+
+  // Measure the rendered note content so the hover overlay can expand to the required height.
+  useEffect(() => {
+    if (!(isCoverExist && hasNote)) {
+      setRequiredOverlayRatio(CARD_NOTE_MIN_RATIO)
+      return
+    }
+
+    const card = memoryRef.current
+    const noteMeasure = noteMeasureRef.current
+    if (!card || !noteMeasure) return
+
+    const updateRequiredOverlayRatio = (): void => {
+      const cardHeight = card.clientHeight
+      if (!cardHeight) return
+
+      setRequiredOverlayRatio(noteMeasure.getBoundingClientRect().height / cardHeight)
+    }
+
+    updateRequiredOverlayRatio()
+
+    const observer = new ResizeObserver(updateRequiredOverlayRatio)
+    observer.observe(card)
+    observer.observe(noteMeasure)
+
+    return (): void => {
+      observer.disconnect()
+    }
+  }, [hasNote, isCoverExist, note])
 
   function handlePreviewKeyDown(event: React.KeyboardEvent): void {
     if (event.key !== 'Enter' && event.key !== ' ') return
@@ -128,90 +189,6 @@ export function MemoryCard({
     }
   }
 
-  const handleExportAsImage = async (): Promise<void> => {
-    if (memoryRef.current) {
-      try {
-        // Create a clone of the original element
-        const clone = memoryRef.current.cloneNode(true) as HTMLElement
-
-        // Setting the style of a cloned element
-        clone.style.width = '800px'
-        clone.style.position = 'absolute'
-        clone.style.left = '-9999px'
-
-        // Adds the cloned element to the body
-        document.body.appendChild(clone)
-
-        const canvas = await html2canvas(clone, {
-          backgroundColor: null,
-          allowTaint: true,
-          useCORS: true,
-          removeContainer: true,
-          scale: 2
-        })
-
-        const dataUrl = canvas.toDataURL('image/png')
-        const link = document.createElement('a')
-        link.href = dataUrl
-        link.download = `${gameName}-memory-${formatDateToISO(date)}.png`
-        link.click()
-      } finally {
-        // Remove temporarily cloned nodes
-        const clone = document.querySelector('[style*="left: -9999px"]')
-        if (clone) {
-          document.body.removeChild(clone)
-        }
-      }
-    }
-  }
-
-  const handleExportAsImageToClipboard = async (): Promise<void> => {
-    if (memoryRef.current) {
-      try {
-        // Creating a Clone Node
-        const clone = memoryRef.current.cloneNode(true) as HTMLElement
-        clone.style.width = '800px'
-        clone.style.position = 'absolute'
-        clone.style.left = '-9999px'
-        document.body.appendChild(clone)
-
-        const canvas = await html2canvas(clone, {
-          backgroundColor: null,
-          allowTaint: true,
-          useCORS: true,
-          removeContainer: true,
-          scale: 2
-        })
-
-        // Converting canvas to blob
-        canvas.toBlob((blob) => {
-          if (!blob) {
-            throw new Error('Failed to create blob from canvas')
-          }
-
-          const clipboardItem = new ClipboardItem({
-            [blob.type]: blob
-          })
-
-          navigator.clipboard
-            .write([clipboardItem])
-            .then(() => {
-              toast.success(t('detail.memory.notifications.imageCopied'))
-            })
-            .catch((error) => {
-              toast.error(t('detail.memory.notifications.imageCopyError', { error }))
-            })
-        }, 'image/png')
-      } finally {
-        // Remove temporarily cloned nodes
-        const clone = document.querySelector('[style*="left: -9999px"]')
-        if (clone) {
-          document.body.removeChild(clone)
-        }
-      }
-    }
-  }
-
   const handleExportMarkdown = async (type: 'clipboard' | 'file'): Promise<void> => {
     await exportMemoryNoteMarkdown({
       gameId,
@@ -236,28 +213,52 @@ export function MemoryCard({
     )
   }
 
-  function renderCoverImage(): React.JSX.Element {
+  function renderCoverBackgroundImage(keySuffix: string): React.JSX.Element {
     return (
-      <button
-        type="button"
+      <GameImage
+        key={`memory-cover-background-${memoryId}-${coverRefreshKey}-${keySuffix}`}
+        type={`memories/${memoryId}`}
+        gameId={gameId}
+        className={cn('absolute inset-0 h-full w-full rounded-none shadow-none')}
+        fallback={<MemoryCoverFallback onMissing={() => setIsCoverExist(false)} />}
+        onError={() => setIsCoverExist(false)}
+        onUpdated={() => setIsCoverExist(true)}
+      />
+    )
+  }
+
+  function renderForegroundCoverImage({
+    keySuffix,
+    className,
+    style
+  }: {
+    keySuffix: string
+    className: string
+    style?: CSSProperties
+  }): React.JSX.Element {
+    return (
+      <GameImage
+        key={`memory-cover-foreground-${memoryId}-${coverRefreshKey}-${keySuffix}`}
+        type={`memories/${memoryId}`}
+        gameId={gameId}
+        className={cn('rounded-none shadow-none', className)}
+        // GameImage defaults to object-fit cover, so the foreground cover branch must override
+        // the inline image style here to preserve full-image contain positioning.
+        style={style}
+        fallback={<MemoryCoverFallback onMissing={() => setIsCoverExist(false)} />}
+        onError={() => setIsCoverExist(false)}
+        onUpdated={() => setIsCoverExist(true)}
+      />
+    )
+  }
+
+  function renderCoverBackgroundBlurOverlay(): React.JSX.Element {
+    return (
+      <div
         className={cn(
-          'absolute inset-0 z-0 h-full w-full cursor-zoom-in overflow-hidden border-0 bg-transparent p-0 text-left'
+          'pointer-events-none absolute inset-0 z-[1] bg-background/20 backdrop-blur-md'
         )}
-        onClick={() => {
-          void openLargeMemoryImage({ gameId, memoryId, openImageViewerDialog })
-        }}
-        aria-label={t('detail.properties.media.actions.viewLargeImage')}
-      >
-        <GameImage
-          key={`memory-cover-${memoryId}-${coverRefreshKey}`}
-          type={`memories/${memoryId}`}
-          gameId={gameId}
-          className={cn('h-full w-full rounded-none shadow-none')}
-          fallback={<MemoryCoverFallback onMissing={() => setIsCoverExist(false)} />}
-          onError={() => setIsCoverExist(false)}
-          onUpdated={() => setIsCoverExist(true)}
-        />
-      </button>
+      />
     )
   }
 
@@ -273,9 +274,8 @@ export function MemoryCard({
           event.stopPropagation()
           openMemoryNoteDialog('edit')
         }}
-        aria-label={t('detail.memory.actions.addText')}
       >
-        <span className={cn('icon-[mdi--note-plus-outline] size-4')} />
+        <span className={cn('icon-[mdi--text-box-plus-outline] size-4')} />
       </Button>
     )
   }
@@ -293,29 +293,9 @@ export function MemoryCard({
           event.stopPropagation()
           void handleCoverSelect()
         }}
-        aria-label={t('detail.memory.actions.addCover')}
       >
         <span className={cn('icon-[mdi--image-plus] size-4')} />
       </Button>
-    )
-  }
-
-  function renderCoverNoteOverlay(): React.JSX.Element {
-    return (
-      <div
-        className={cn(
-          'absolute inset-x-0 bottom-0 z-10 h-[40%] cursor-pointer overflow-hidden border-t border-border/60 bg-background/70 p-4 shadow-[0_-8px_24px_rgba(0,0,0,0.12)] backdrop-blur-md transition-[height,background-color,backdrop-filter] duration-300 ease-out group-hover:h-[80%] motion-reduce:transition-none'
-        )}
-        role="button"
-        tabIndex={0}
-        onClick={(event) => {
-          if (shouldIgnorePreviewClick(event)) return
-          openMemoryNoteDialog('preview')
-        }}
-        onKeyDown={handlePreviewKeyDown}
-      >
-        {renderCardMarkdownPreview('prose-pre:max-h-20')}
-      </div>
     )
   }
 
@@ -327,10 +307,24 @@ export function MemoryCard({
         value={note}
         className={cn(
           'scrollbar-base-thin h-full overflow-y-auto pr-2 overscroll-contain',
-          'prose-headings:my-1 prose-h1:text-base prose-h2:text-base prose-h3:text-sm',
-          'prose-p:my-1.5 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5',
-          'prose-blockquote:my-1 prose-pre:my-2',
+          'prose-headings:my-0.5 prose-h1:text-base prose-h2:text-base prose-h3:text-sm',
+          'prose-p:my-1 prose-ul:my-0.5 prose-ol:my-0.5 prose-li:my-0',
+          'prose-blockquote:my-0.5 prose-pre:my-1.5',
           codeBlockMaxHeight
+        )}
+      />
+    )
+  }
+
+  function renderCardMarkdownPreviewMeasurement(): React.JSX.Element {
+    return (
+      <MarkdownPreview
+        value={note}
+        className={cn(
+          'pr-2',
+          'prose-headings:my-0.5 prose-h1:text-base prose-h2:text-base prose-h3:text-sm',
+          'prose-p:my-1 prose-ul:my-0.5 prose-ol:my-0.5 prose-li:my-0',
+          'prose-blockquote:my-0.5 prose-pre:my-1.5 prose-pre:max-h-none'
         )}
       />
     )
@@ -338,19 +332,82 @@ export function MemoryCard({
 
   function renderCoverWithNote(): React.JSX.Element {
     return (
-      <>
-        {renderCoverImage()}
-        {renderCoverNoteOverlay()}
-      </>
+      <div className={cn('absolute inset-0')} style={coverWithNoteStyle}>
+        {renderCoverBackgroundImage('with-note')}
+        {renderCoverBackgroundBlurOverlay()}
+
+        <div
+          className={cn(
+            'absolute inset-x-0 top-0 z-[2] cursor-zoom-in overflow-hidden',
+            'transition-[bottom] duration-300 ease-out motion-reduce:transition-none',
+            '[bottom:var(--memory-overlay-rest)] group-hover:[bottom:var(--memory-overlay-hover)]'
+          )}
+          onClick={() => {
+            void openLargeMemoryImage({ gameId, memoryId, openImageViewerDialog })
+          }}
+        >
+          {renderForegroundCoverImage({
+            keySuffix: 'with-note',
+            className: cn('h-full w-full'),
+            style: {
+              objectFit: 'contain',
+              objectPosition: 'top center'
+            }
+          })}
+        </div>
+
+        <div
+          ref={noteMeasureRef}
+          className={cn('pointer-events-none invisible absolute inset-x-0 bottom-0 px-4 py-2')}
+        >
+          {renderCardMarkdownPreviewMeasurement()}
+        </div>
+
+        <div
+          className={cn(
+            'absolute inset-x-0 bottom-0 z-10 cursor-pointer overflow-hidden border-t border-border/60 bg-background/70 px-4 py-2',
+            'h-[var(--memory-overlay-rest)] transition-[height,background-color] duration-300 ease-out',
+            'group-hover:h-[var(--memory-overlay-hover)] motion-reduce:transition-none',
+            'shadow-[0_-8px_24px_rgba(0,0,0,0.12)]'
+          )}
+          role="button"
+          tabIndex={0}
+          onClick={(event) => {
+            if (shouldIgnorePreviewClick(event)) return
+            openMemoryNoteDialog('preview')
+          }}
+          onKeyDown={handlePreviewKeyDown}
+        >
+          {renderCardMarkdownPreview('prose-pre:max-h-20')}
+        </div>
+      </div>
     )
   }
 
   function renderCoverOnly(): React.JSX.Element {
     return (
-      <>
-        {renderCoverImage()}
+      <div className={cn('absolute inset-0')}>
+        {renderCoverBackgroundImage('cover-only')}
+        {renderCoverBackgroundBlurOverlay()}
+
+        <div
+          className={cn('absolute inset-0 z-[2] cursor-zoom-in overflow-hidden')}
+          onClick={() => {
+            void openLargeMemoryImage({ gameId, memoryId, openImageViewerDialog })
+          }}
+        >
+          {renderForegroundCoverImage({
+            keySuffix: 'cover-only',
+            className: cn('h-full w-full'),
+            style: {
+              objectFit: 'contain',
+              objectPosition: 'center'
+            }
+          })}
+        </div>
+
         {renderAddNoteButton()}
-      </>
+      </div>
     )
   }
 
@@ -520,19 +577,6 @@ export function MemoryCard({
             <ContextMenuPortal>
               <ContextMenuSubContent>
                 <ContextMenuSub>
-                  <ContextMenuSubTrigger>{t('detail.memory.export.image')}</ContextMenuSubTrigger>
-                  <ContextMenuPortal>
-                    <ContextMenuSubContent>
-                      <ContextMenuItem onSelect={handleExportAsImageToClipboard}>
-                        {t('detail.memory.export.toClipboard')}
-                      </ContextMenuItem>
-                      <ContextMenuItem onSelect={handleExportAsImage}>
-                        {t('detail.memory.export.saveAs')}
-                      </ContextMenuItem>
-                    </ContextMenuSubContent>
-                  </ContextMenuPortal>
-                </ContextMenuSub>
-                <ContextMenuSub>
                   <ContextMenuSubTrigger>
                     {t('detail.memory.export.markdown')}
                   </ContextMenuSubTrigger>
@@ -561,7 +605,34 @@ export function MemoryCard({
   )
 }
 
+function getCoverWithNoteLayout(
+  coverHeightRatio: number | undefined,
+  requiredOverlayRatio: number
+): { restOverlayRatio: number; hoverOverlayRatio: number } {
+  const restOverlayRatio = getRestOverlayRatio(coverHeightRatio)
+  const hoverOverlayRatio = Math.max(
+    restOverlayRatio,
+    Math.min(CARD_NOTE_MAX_RATIO, requiredOverlayRatio)
+  )
+
+  return {
+    restOverlayRatio,
+    hoverOverlayRatio
+  }
+}
+
+function getRestOverlayRatio(coverHeightRatio: number | undefined): number {
+  const normalizedHeightRatio = coverHeightRatio && coverHeightRatio > 0 ? coverHeightRatio : 1
+
+  if (normalizedHeightRatio >= CARD_NOTE_MAX_RATIO) {
+    return CARD_NOTE_MIN_RATIO
+  }
+
+  return Math.max(CARD_NOTE_MIN_RATIO, 1 - normalizedHeightRatio)
+}
+
 function MemoryCoverFallback({ onMissing }: { onMissing: () => void }): React.JSX.Element {
+  // Notify the card once the image falls back so it can switch away from cover-based layouts.
   useEffect(() => {
     onMissing()
   }, [onMissing])
