@@ -331,8 +331,15 @@
       },
       "views": {
         "grid": "Cards",
-        "masonry": "Masonry",
+        "masonry": "Gallery",
         "list": "List"
+      },
+      "pagination": {
+        "first": "First Page",
+        "previous": "Previous Page",
+        "next": "Next Page",
+        "last": "Last Page",
+        "pageStatus": "{{current}} / {{total}}"
       },
       "list": {
         "untitled": "Untitled note",

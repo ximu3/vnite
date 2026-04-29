@@ -150,8 +150,8 @@
     },
     "memory": {
       "title": "回忆",
-      "masonryColumnWidth": "瀑布流列宽",
-      "masonryColumnWidthDescription": "根据回忆区域可用宽度和该像素值自动计算瀑布流列数"
+      "masonryColumnWidth": "照片墙列宽",
+      "masonryColumnWidthDescription": "根据回忆区域可用宽度和该像素值自动计算照片墙列数"
     },
     "sidebar": {
       "title": "侧边栏",

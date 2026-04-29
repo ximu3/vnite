@@ -120,6 +120,9 @@ export interface configDocs {
     }
     memory: {
       masonryColumnWidth: number
+      gridItemsPerPage: number
+      masonryItemsPerPage: number
+      listItemsPerPage: number
     }
     glass: {
       dark: {
@@ -392,7 +395,10 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       contentTopPadding: 40 // in vh
     },
     memory: {
-      masonryColumnWidth: 220
+      masonryColumnWidth: 220,
+      gridItemsPerPage: 12,
+      masonryItemsPerPage: 20,
+      listItemsPerPage: 20
     },
     glass: {
       dark: {

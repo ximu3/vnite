@@ -331,8 +331,15 @@
       },
       "views": {
         "grid": "卡片",
-        "masonry": "瀑布流",
+        "masonry": "照片牆",
         "list": "列表"
+      },
+      "pagination": {
+        "first": "首頁",
+        "previous": "上一頁",
+        "next": "下一頁",
+        "last": "末頁",
+        "pageStatus": "{{current}} / {{total}}"
       },
       "list": {
         "untitled": "未命名筆記",

@@ -9,19 +9,41 @@ import { eventBus } from '~/app/events'
 import { ipcManager } from '~/app/ipc'
 import { useConfigState, useGameLocalState, useGameState } from '~/hooks'
 import { cn } from '~/utils'
+import { DEFAULT_MEMORY_PAGE_BY_VIEW, useGameDetailStore, useGameDetailTabStore } from '../store'
 import { MemoryCardView } from './MemoryCardView'
 import { MemoryCropDialogHost } from './MemoryCropDialogHost'
 import { MemoryListView } from './MemoryListView'
 import { MemoryMasonryItemInfo, MemoryMasonryView } from './MemoryMasonryView'
 import { MemoryNoteDialogHost } from './MemoryNoteDialogHost'
+import { MemoryPaginationBar } from './MemoryPaginationBar'
+import { MEMORY_ITEMS_PER_PAGE_OPTIONS, type MemoryViewMode } from './paginationOptions'
 import { useMemoryStore } from './store'
 
-type MemoryViewMode = 'grid' | 'masonry' | 'list'
+function getTotalPages(itemCount: number, itemsPerPage: number): number {
+  return Math.max(1, Math.ceil(itemCount / itemsPerPage))
+}
+
+function clampPage(page: number, totalPages: number): number {
+  return Math.min(Math.max(page, 1), totalPages)
+}
+
+function paginateMemoryIds(memoryIds: string[], page: number, itemsPerPage: number): string[] {
+  const startIndex = (page - 1) * itemsPerPage
+  return memoryIds.slice(startIndex, startIndex + itemsPerPage)
+}
+
+type ViewPaginationState = {
+  currentPage: number
+  totalPages: number
+  itemCount: number
+  itemsPerPage: number
+  pagedMemoryIds: string[]
+  setItemsPerPage: (itemsPerPage: number) => Promise<void>
+}
 
 export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [memoryList, , , setMemoryListAndSave] = useGameState(gameId, 'memory.memoryList', true)
-  const [viewMode, setViewMode] = useState<MemoryViewMode>('grid')
   const [pendingNoteMemoryId, setPendingNoteMemoryId] = useState<string | null>(null)
   const [masonryRefreshKey, setMasonryRefreshKey] = useState(0)
   const [hasLoadedMasonryItems, setHasLoadedMasonryItems] = useState(false)
@@ -33,6 +55,21 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [rootSaveDir] = useConfigState('memory.image.saveDir')
   const [masonryColumnWidth] = useConfigState('appearances.memory.masonryColumnWidth')
+  const [gridItemsPerPage, setGridItemsPerPage] = useConfigState(
+    'appearances.memory.gridItemsPerPage'
+  )
+  const [masonryItemsPerPage, setMasonryItemsPerPage] = useConfigState(
+    'appearances.memory.masonryItemsPerPage'
+  )
+  const [listItemsPerPage, setListItemsPerPage] = useConfigState(
+    'appearances.memory.listItemsPerPage'
+  )
+  const pageByView = useGameDetailStore(
+    (state) => state.memoryPageByGameId[gameId] ?? DEFAULT_MEMORY_PAGE_BY_VIEW
+  )
+  const setMemoryPageByView = useGameDetailStore((state) => state.setMemoryPageByView)
+  const viewMode = useGameDetailTabStore((state) => state.lastMemoryViewMode)
+  const setLastMemoryViewMode = useGameDetailTabStore((state) => state.setLastMemoryViewMode)
   const openCropDialog = useMemoryStore((state) => state.openCropDialog)
   const openNoteDialog = useMemoryStore((state) => state.openNoteDialog)
 
@@ -55,6 +92,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
   async function addMemory(): Promise<void> {
     try {
       const memory = await ipcManager.invoke('game:add-memory', gameId)
+      setMemoryPageByView(gameId, viewMode, 1)
 
       if (viewMode === 'masonry') {
         await promptMemoryCoverSelection(memory._id)
@@ -110,6 +148,88 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
     })
   }, [masonryItemByMemoryId, sortedMemoryIds])
 
+  function getViewPaginationState(mode: MemoryViewMode): ViewPaginationState {
+    switch (mode) {
+      case 'grid': {
+        const totalPages = getTotalPages(sortedMemoryIds.length, gridItemsPerPage)
+        const currentPage = clampPage(pageByView.grid, totalPages)
+
+        return {
+          currentPage,
+          totalPages,
+          itemCount: sortedMemoryIds.length,
+          itemsPerPage: gridItemsPerPage,
+          pagedMemoryIds: paginateMemoryIds(sortedMemoryIds, currentPage, gridItemsPerPage),
+          setItemsPerPage: setGridItemsPerPage
+        }
+      }
+      case 'masonry': {
+        const totalPages = getTotalPages(masonryMemoryIds.length, masonryItemsPerPage)
+        const currentPage = clampPage(pageByView.masonry, totalPages)
+
+        return {
+          currentPage,
+          totalPages,
+          itemCount: masonryMemoryIds.length,
+          itemsPerPage: masonryItemsPerPage,
+          pagedMemoryIds: paginateMemoryIds(masonryMemoryIds, currentPage, masonryItemsPerPage),
+          setItemsPerPage: setMasonryItemsPerPage
+        }
+      }
+      case 'list': {
+        const totalPages = getTotalPages(noteMemoryIds.length, listItemsPerPage)
+        const currentPage = clampPage(pageByView.list, totalPages)
+
+        return {
+          currentPage,
+          totalPages,
+          itemCount: noteMemoryIds.length,
+          itemsPerPage: listItemsPerPage,
+          pagedMemoryIds: paginateMemoryIds(noteMemoryIds, currentPage, listItemsPerPage),
+          setItemsPerPage: setListItemsPerPage
+        }
+      }
+    }
+  }
+
+  function getTotalPagesForView(mode: MemoryViewMode): number {
+    return getViewPaginationState(mode).totalPages
+  }
+
+  const activePagination = getViewPaginationState(viewMode)
+
+  // Clamp each view's current page when data size or page size changes.
+  useEffect(() => {
+    const nextGridPage = clampPage(pageByView.grid, getTotalPagesForView('grid'))
+    const nextMasonryPage = clampPage(pageByView.masonry, getTotalPagesForView('masonry'))
+    const nextListPage = clampPage(pageByView.list, getTotalPagesForView('list'))
+
+    if (nextGridPage !== pageByView.grid) {
+      setMemoryPageByView(gameId, 'grid', nextGridPage)
+    }
+
+    if (nextMasonryPage !== pageByView.masonry) {
+      setMemoryPageByView(gameId, 'masonry', nextMasonryPage)
+    }
+
+    if (nextListPage !== pageByView.list) {
+      setMemoryPageByView(gameId, 'list', nextListPage)
+    }
+  }, [
+    gameId,
+    gridItemsPerPage,
+    listItemsPerPage,
+    masonryItemsPerPage,
+    masonryMemoryIds.length,
+    noteMemoryIds.length,
+    pageByView.grid,
+    pageByView.list,
+    pageByView.masonry,
+    setMemoryPageByView,
+    sortedMemoryIds.length
+  ])
+
+  // Load masonry cover metadata used by both the gallery layout and grid cards.
   useEffect(() => {
     let cancelled = false
 
@@ -146,6 +266,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
     }
   }, [gameId, masonryRefreshKey, sortedMemoryIds])
 
+  // Refresh masonry metadata when memory items are created or their covers change.
   useEffect(() => {
     const refreshMasonryItems = ({ gameId: changedGameId }: { gameId: string }): void => {
       if (changedGameId !== gameId) return
@@ -165,6 +286,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
     }
   }, [gameId])
 
+  // Open the note editor after the newly created list item has synced back into the store.
   useEffect(() => {
     if (!pendingNoteMemoryId) return
     if (!memoryList[pendingNoteMemoryId]) return
@@ -232,7 +354,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
 
   return (
     <div className={cn('w-full h-full min-h-[22vh] flex flex-col pt-2 gap-5')}>
-      <div className={cn('flex items-center justify-between gap-3')}>
+      <div className={cn('flex items-center gap-3')}>
         <div className={cn('flex items-center gap-3')}>
           <Button variant="default" size="icon" onClick={addMemory}>
             <span className={cn('icon-[mdi--add] w-6 h-6')}></span>
@@ -242,9 +364,26 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
           </Button>
         </div>
 
+        <div className={cn('min-w-0 flex-1')}>
+          {activePagination.itemCount > 0 && (
+            <MemoryPaginationBar
+              currentPage={activePagination.currentPage}
+              totalPages={activePagination.totalPages}
+              itemsPerPage={activePagination.itemsPerPage}
+              itemsPerPageOptions={MEMORY_ITEMS_PER_PAGE_OPTIONS[viewMode]}
+              onPageChange={(page) => {
+                setMemoryPageByView(gameId, viewMode, page)
+              }}
+              onItemsPerPageChange={(itemsPerPage) => {
+                void activePagination.setItemsPerPage(itemsPerPage)
+              }}
+            />
+          )}
+        </div>
+
         <Tabs
           value={viewMode}
-          onValueChange={(v) => setViewMode(v as MemoryViewMode)}
+          onValueChange={(v) => setLastMemoryViewMode(v as MemoryViewMode)}
           className={cn('shrink-0')}
         >
           <TabsList className={cn('gap-1')}>
@@ -285,7 +424,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
       {viewMode === 'grid' && sortedMemoryIds.length > 0 && (
         <MemoryCardView
           gameId={gameId}
-          memoryIds={sortedMemoryIds}
+          memoryIds={activePagination.pagedMemoryIds}
           memoryList={memoryList}
           masonryItemByMemoryId={masonryItemByMemoryId}
           onDelete={handleDelete}
@@ -298,7 +437,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
       {viewMode === 'masonry' && masonryMemoryIds.length > 0 && (
         <MemoryMasonryView
           gameId={gameId}
-          memoryIds={sortedMemoryIds}
+          memoryIds={activePagination.pagedMemoryIds}
           masonryItemByMemoryId={masonryItemByMemoryId}
           columnWidth={masonryColumnWidth}
           onCoverMissing={handleMasonryCoverMissing}
@@ -310,7 +449,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
         <MemoryListView
           gameId={gameId}
           gameName={gameName}
-          memoryIds={noteMemoryIds}
+          memoryIds={activePagination.pagedMemoryIds}
           memoryList={memoryList}
           onDelete={handleDelete}
         />
