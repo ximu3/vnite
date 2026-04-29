@@ -318,6 +318,7 @@
       }
     },
     "memory": {
+      "empty": "表示できるメモリーはありません",
       "actions": {
         "add": "追加",
         "addCover": "カバーを追加",
@@ -327,6 +328,25 @@
         "editText": "テキストを編集",
         "delete": "削除",
         "openScreenshotDir": "スクリーンショットフォルダを開く"
+      },
+      "views": {
+        "grid": "カード",
+        "masonry": "ギャラリー",
+        "list": "リスト"
+      },
+      "pagination": {
+        "first": "最初のページ",
+        "previous": "前のページ",
+        "next": "次のページ",
+        "last": "最後のページ",
+        "pageStatus": "{{current}} / {{total}}"
+      },
+      "list": {
+        "untitled": "無題のノート",
+        "table": {
+          "note": "ノート",
+          "date": "時間"
+        }
       },
       "setAs": {
         "title": "設定",
@@ -356,6 +376,30 @@
         "setBackgroundSuccess": "ゲーム背景として設定しました",
         "setBackgroundError": "ゲーム背景の設定に失敗しました: {{error}}",
         "screenshotPathNotSet": "スクリーンショット保存先が設定されていません"
+      },
+      "editor": {
+        "edit": "編集",
+        "preview": "プレビュー",
+        "placeholder": "Markdownで記録を入力...",
+        "emptyPreview": "プレビューする内容がありません",
+        "toolbar": {
+          "heading1": "見出し 1",
+          "heading2": "見出し 2",
+          "heading3": "見出し 3",
+          "heading4": "見出し 4",
+          "bold": "太字",
+          "italic": "斜体",
+          "strikethrough": "取り消し線",
+          "underline": "下線",
+          "quote": "引用",
+          "bulletedList": "箇条書きリスト",
+          "numberedList": "番号付きリスト",
+          "taskList": "タスクリスト",
+          "inlineCode": "インラインコード",
+          "codeBlock": "コードブロック",
+          "link": "リンク",
+          "horizontalRule": "区切り線"
+        }
       }
     },
     "config": {
