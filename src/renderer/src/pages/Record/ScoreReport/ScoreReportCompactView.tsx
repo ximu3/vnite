@@ -33,7 +33,7 @@ function CompactScoreCategory({ category }: CompactScoreCategoryProps): React.JS
             {t('score.categories.gamesCount', { count: games.length })}
           </Badge>
         </div>
-        <div className="h-[280px] 3xl:h-[325px] p-6 pt-0 lg:w-4/5 lg:pt-6">
+        <div className="h-[280px] 3xl:h-[325px] p-6 pt-0 pb-4 lg:w-4/5 lg:pt-6">
           <AutoSizer>
             {({ height, width }) => {
               const itemSize = height <= 250 ? 150 : 180
@@ -42,7 +42,10 @@ function CompactScoreCategory({ category }: CompactScoreCategoryProps): React.JS
                   height={height}
                   itemCount={games.length}
                   itemSize={itemSize}
-                  className={cn('overflow-auto scrollbar-base')}
+                  className={cn(
+                    'overflow-auto scrollbar-base',
+                    '!scrollbar-h-[10px] scrollbar-hover:!scrollbar-thumb-primary'
+                  )}
                   width={width}
                   layout="horizontal"
                 >
