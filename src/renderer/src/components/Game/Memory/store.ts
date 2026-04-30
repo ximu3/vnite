@@ -7,14 +7,12 @@ export type MemoryCropDialogState =
       gameId: null
       memoryId: null
       imagePath: null
-      isResizing: false
     }
   | {
       open: true
       gameId: string
       memoryId: string
       imagePath: string
-      isResizing: boolean
     }
 
 export type MemoryNoteDialogState =
@@ -31,12 +29,7 @@ export type MemoryNoteDialogState =
 
 interface MemoryStore {
   cropDialog: MemoryCropDialogState
-  openCropDialog: (params: {
-    gameId: string
-    memoryId: string
-    imagePath: string
-    isResizing: boolean
-  }) => void
+  openCropDialog: (params: { gameId: string; memoryId: string; imagePath: string }) => void
   closeCropDialog: () => void
   noteDialog: MemoryNoteDialogState
   openNoteDialog: (params: { memoryId: string; initialMode?: NoteDialogMode }) => void
@@ -47,8 +40,7 @@ const closedCropDialogState: MemoryCropDialogState = {
   open: false,
   gameId: null,
   memoryId: null,
-  imagePath: null,
-  isResizing: false
+  imagePath: null
 }
 
 const closedNoteDialogState: MemoryNoteDialogState = {
@@ -59,14 +51,13 @@ const closedNoteDialogState: MemoryNoteDialogState = {
 
 export const useMemoryStore = create<MemoryStore>((set) => ({
   cropDialog: closedCropDialogState,
-  openCropDialog: ({ gameId, memoryId, imagePath, isResizing }): void =>
+  openCropDialog: ({ gameId, memoryId, imagePath }): void =>
     set({
       cropDialog: {
         open: true,
         gameId,
         memoryId,
-        imagePath,
-        isResizing
+        imagePath
       }
     }),
   closeCropDialog: (): void => set({ cropDialog: closedCropDialogState }),

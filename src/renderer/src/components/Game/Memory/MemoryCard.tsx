@@ -161,8 +161,7 @@ export function MemoryCard({
       openCropDialog({
         gameId,
         memoryId,
-        imagePath: filePath,
-        isResizing: false
+        imagePath: filePath
       })
     } catch (error) {
       toast.error(t('detail.memory.notifications.selectFileError', { error }))
@@ -181,8 +180,7 @@ export function MemoryCard({
       openCropDialog({
         gameId,
         memoryId,
-        imagePath: currentPath,
-        isResizing: true
+        imagePath: currentPath
       })
     } catch (error) {
       toast.error(t('detail.memory.notifications.getImageError', { error }))

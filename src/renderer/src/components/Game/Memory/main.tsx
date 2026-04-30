@@ -81,8 +81,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
       openCropDialog({
         gameId,
         memoryId,
-        imagePath: filePath,
-        isResizing: false
+        imagePath: filePath
       })
     } catch (error) {
       toast.error(t('detail.memory.notifications.selectFileError', { error }))
