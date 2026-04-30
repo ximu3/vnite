@@ -1,6 +1,7 @@
 import { Button } from '@ui/button'
 import { Tabs, TabsList, TabsTrigger } from '@ui/tabs'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
+import { sanitizeFilenameComponent } from '@appUtils'
 import i18next from 'i18next'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -114,8 +115,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
 
     //* Try to use the default path which will be created in some configurations.
     if (rootSaveDir) {
-      // This sanitization is kept consistent with src/main/features/system/services/screenshot.ts
-      const sanitizedName = gameName.replace(/[<>:"/\\|?*]/g, ' ')
+      const sanitizedName = sanitizeFilenameComponent(gameName)
       const candidatePaths = [window.api.path.join(rootSaveDir, sanitizedName), rootSaveDir]
 
       for (const path of candidatePaths) {

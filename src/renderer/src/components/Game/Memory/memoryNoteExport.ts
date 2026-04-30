@@ -1,3 +1,4 @@
+import { sanitizeFilenameComponent } from '@appUtils'
 import i18next from 'i18next'
 import { toast } from 'sonner'
 import { ipcManager } from '~/app/ipc'
@@ -46,7 +47,7 @@ export async function exportMemoryNoteMarkdown({
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = url
-  link.download = `${gameName}-memory-${formatDateToISO(date)}.md`
+  link.download = `${sanitizeFilenameComponent(gameName)}-memory-${formatDateToISO(date)}.md`
   link.click()
   URL.revokeObjectURL(url)
 }
