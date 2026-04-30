@@ -1,0 +1,128 @@
+import { gameDoc, NSFWBlurLevel } from '@appTypes/models'
+import { Badge } from '@ui/badge'
+import { GameImage } from '@ui/game-image'
+import { HoverCard, HoverCardContent, HoverCardPortal, HoverCardTrigger } from '@ui/hover-card'
+import { CalendarIcon, ClockIcon, GamepadIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { useConfigState, useGameState } from '~/hooks'
+import { getGamePlayTime, getGameStore, useGameRegistry } from '~/stores/game'
+import { cn } from '~/utils'
+import { GamePoster } from '../GamePoster'
+import { useScoreReportStore } from '../store'
+
+interface GameScoreCardProps {
+  gameId: string
+  size?: 'compact' | 'detailed'
+}
+
+function getGamePlayStatus(gameId: string, t: (key: string) => string): string {
+  const gameStore = getGameStore(gameId)
+  const status = gameStore.getState().getValue('record.playStatus')
+
+  const statusMap: Record<gameDoc['record']['playStatus'], string> = {
+    unplayed: t('utils:game.playStatus.unplayed'),
+    playing: t('utils:game.playStatus.playing'),
+    partial: t('utils:game.playStatus.partial'),
+    finished: t('utils:game.playStatus.finished'),
+    multiple: t('utils:game.playStatus.multiple'),
+    shelved: t('utils:game.playStatus.shelved')
+  }
+
+  return statusMap[status] ?? t('utils:game.playStatus.unknown')
+}
+
+export function GameScoreCard({ gameId }: GameScoreCardProps): React.JSX.Element {
+  const { t } = useTranslation('record')
+  const { gameMetaIndex } = useGameRegistry()
+  const gameInfo = gameMetaIndex[gameId] || { name: t('score.gameInfo.unknown') }
+  const [score] = useGameState(gameId, 'record.score')
+  const [nsfw] = useGameState(gameId, 'apperance.nsfw')
+  const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
+  const playTime = getGamePlayTime(gameId)
+  const openScoreEditor = useScoreReportStore((s) => s.openScoreEditor)
+
+  return (
+    <HoverCard>
+      <HoverCardTrigger asChild>
+        <div className={cn('w-[120px] cursor-pointer object-cover')}>
+          <div className="relative group">
+            <GamePoster
+              gameId={gameId}
+              blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
+              className={cn('w-[120px] h-[180px] cursor-pointer object-cover rounded-lg shadow-md')}
+            />
+            <div
+              className="absolute px-2 py-1 text-xs font-medium rounded-full bottom-2 right-2 bg-primary/90 hover:bg-accent/90 text-primary-foreground backdrop-blur-sm"
+              onClick={() => openScoreEditor(gameId)}
+            >
+              {score.toFixed(1)}
+            </div>
+          </div>
+          <div className="px-1 mt-2 text-sm font-medium text-center truncate">{gameInfo.name}</div>
+        </div>
+      </HoverCardTrigger>
+      <HoverCardPortal>
+        <HoverCardContent className="relative rounded-lg w-80" side="right" sideOffset={16}>
+          <div className="absolute inset-0 rounded-lg">
+            <GameImage
+              gameId={gameId}
+              type="background"
+              alt={gameId}
+              blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
+              className="object-cover w-full h-full rounded-lg"
+              draggable="false"
+            />
+            <div className="absolute inset-0 rounded-lg bg-popover/[0.6]" />
+          </div>
+          <div className="relative flex justify-between space-x-4">
+            <div className="flex-1 space-y-1">
+              <h4 className="text-sm font-semibold text-accent-foreground">{gameInfo.name}</h4>
+              {gameInfo.genre && (
+                <div className="flex items-center pt-2">
+                  <GamepadIcon className="mr-2 h-3.5 w-3.5" />
+                  <span className="text-xs">{gameInfo.genre}</span>
+                </div>
+              )}
+              {gameInfo.addDate && (
+                <div className="flex items-center pt-1">
+                  <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                  <span className="text-xs">
+                    {t('score.gameInfo.addDate', { date: new Date(gameInfo.addDate) })}
+                  </span>
+                </div>
+              )}
+              <div className="flex items-center pt-1">
+                <ClockIcon className="mr-2 h-3.5 w-3.5" />
+                <span className="text-xs">{t('score.gameInfo.playTime', { time: playTime })}</span>
+              </div>
+              {gameInfo.lastRunDate && (
+                <div className="flex items-center pt-1">
+                  <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                  <span className="text-xs">
+                    {t('score.gameInfo.lastRun', { date: new Date(gameInfo.lastRunDate) })}
+                  </span>
+                </div>
+              )}
+              <div className="pt-2">
+                <Badge variant="secondary" className="mr-1">
+                  {getGamePlayStatus(gameId, t)}
+                </Badge>
+              </div>
+            </div>
+            <div className="flex flex-col items-center flex-shrink-0">
+              <div
+                className="flex items-center justify-center text-lg font-bold rounded-full shadow-md w-14 h-14 bg-primary hover:bg-accent cursor-pointer text-primary-foreground"
+                onClick={() => openScoreEditor(gameId)}
+              >
+                {score.toFixed(1)}
+              </div>
+              <span className="mt-1 text-xs text-muted-foreground">
+                {t('score.gameInfo.ratingLabel')}
+              </span>
+            </div>
+          </div>
+        </HoverCardContent>
+      </HoverCardPortal>
+    </HoverCard>
+  )
+}
