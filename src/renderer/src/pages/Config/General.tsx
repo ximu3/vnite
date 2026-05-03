@@ -155,6 +155,26 @@ export function General(): React.JSX.Element {
                   ipcManager.send('system:change-foreground-timer-wait-time', Number(value))
                 }}
               />
+
+              <ConfigItem
+                hookType="config"
+                path="general.ignoreShortInterruptions"
+                title={t('general.ignoreShortInterruptions.title')}
+                description={t('general.ignoreShortInterruptions.description')}
+                controlType="input"
+                inputType="number"
+                min={0}
+              />
+
+              <ConfigItem
+                hookType="config"
+                path="general.ignoreShortSessions"
+                title={t('general.ignoreShortSessions.title')}
+                description={t('general.ignoreShortSessions.description')}
+                controlType="input"
+                inputType="number"
+                min={0}
+              />
             </div>
           </div>
 

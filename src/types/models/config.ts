@@ -34,6 +34,8 @@ export interface configDocs {
     hideWindowAfterGameStart: boolean
     enableForegroundTimer: boolean
     foregroundWaitTime: number
+    ignoreShortInterruptions: number
+    ignoreShortSessions: number
   }
   game: {
     scraper: {
@@ -323,7 +325,9 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     language: '',
     hideWindowAfterGameStart: true,
     enableForegroundTimer: true,
-    foregroundWaitTime: 10
+    foregroundWaitTime: 10,
+    ignoreShortInterruptions: 0,
+    ignoreShortSessions: 0
   },
   game: {
     scraper: {

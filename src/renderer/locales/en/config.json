@@ -21,11 +21,19 @@
     "timerTitle": "Game Timer",
     "foregroundTimer": {
       "title": "Foreground Timer",
-      "description": "Choose whether or not to pause the timer when game window switches to background. Available only if the Auto monitor is enabled.\nCannnot be changed while games are running"
+      "description": "Choose whether or not to pause the timer when game window switches to background.\nCannnot be changed while games are running"
     },
     "foregroundWaitTime": {
       "title": "Wait Time",
-      "description": "Pause/resume timer after the game has been running in background/foreground for this duration (second)\nCannnot be changed while games are running"
+      "description": "Pause/resume timer after the game has been running in background/foreground for this duration (seconds)\nCannnot be changed while games are running"
+    },
+    "ignoreShortInterruptions": {
+      "title": "Ignore Short Interruptions",
+      "description": "Merge two play records if the gap is below the specified threshold (seconds). Set to 0 to disable this feature."
+    },
+    "ignoreShortSessions": {
+      "title": "Ignore Short Sessions",
+      "description": "Discard sessions shorter than the threshold (sec). Applied after \"Ignore Short Interruptions.\" Set to 0 to disable this feature."
     },
     "statisticsTitle": "Statistics",
     "dayBoundaryHour": {
