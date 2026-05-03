@@ -120,6 +120,12 @@ export interface configDocs {
       showLogo: boolean
       contentTopPadding: number
     }
+    memory: {
+      masonryColumnWidth: number
+      gridItemsPerPage: number
+      masonryItemsPerPage: number
+      listItemsPerPage: number
+    }
     glass: {
       dark: {
         blur: number
@@ -395,6 +401,12 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       showCover: true,
       showLogo: true,
       contentTopPadding: 40 // in vh
+    },
+    memory: {
+      masonryColumnWidth: 220,
+      gridItemsPerPage: 12,
+      masonryItemsPerPage: 20,
+      listItemsPerPage: 20
     },
     glass: {
       dark: {

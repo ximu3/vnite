@@ -303,9 +303,6 @@
         "imageCopyError": "Не удалось скопировать изображение: {{error}}",
         "markdownCopied": "Markdown скопирован в буфер",
         "markdownCopyError": "Не удалось скопировать в буфер: {{error}}"
-      },
-      "dialog": {
-        "markdownHint": "Поддерживается синтаксис Markdown"
       }
     },
     "config": {

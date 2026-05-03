@@ -156,6 +156,11 @@
       "showLogo": "ロゴを表示",
       "showLogoDescription": "ゲーム詳細ページにロゴを表示"
     },
+    "memory": {
+      "title": "メモリー",
+      "masonryColumnWidth": "ギャラリー列幅",
+      "masonryColumnWidthDescription": "メモリー領域の利用可能な幅とこのピクセル値に基づいて、ギャラリーの列数を自動計算します"
+    },
     "sidebar": {
       "title": "サイドバー",
       "showThemeSwitcher": "テーマ切り替えボタンを表示",

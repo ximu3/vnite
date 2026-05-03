@@ -156,6 +156,11 @@
       "showLogo": "顯示 Logo",
       "showLogoDescription": "在遊戲詳情頁顯示 Logo"
     },
+    "memory": {
+      "title": "回憶",
+      "masonryColumnWidth": "照片牆欄寬",
+      "masonryColumnWidthDescription": "根據回憶區域可用寬度與此像素值自動計算照片牆欄數"
+    },
     "sidebar": {
       "title": "側邊欄",
       "showThemeSwitcher": "顯示主題切換按鈕",

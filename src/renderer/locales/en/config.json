@@ -156,6 +156,11 @@
       "showLogo": "Show Logo",
       "showLogoDescription": "Display logo in the game detail page"
     },
+    "memory": {
+      "title": "Memory",
+      "masonryColumnWidth": "Gallery Column Width",
+      "masonryColumnWidthDescription": "Automatically calculate the gallery column count from the available width and this pixel value"
+    },
     "sidebar": {
       "title": "Sidebar",
       "showThemeSwitcher": "Show Theme Switcher",

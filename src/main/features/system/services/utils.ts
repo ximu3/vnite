@@ -1,3 +1,4 @@
+import { sanitizeFilenameComponent } from '@appUtils'
 import { app } from 'electron'
 import contextMenu from 'electron-context-menu'
 import log from 'electron-log/main'
@@ -150,6 +151,7 @@ export async function createGameShortcut(gameId: string, targetPath: string): Pr
   try {
     // Get game information
     const gameName = await GameDBManager.getGameValue(gameId, 'metadata.name')
+    const shortcutName = sanitizeFilenameComponent(gameName)
 
     const originalIconPath = await GameDBManager.getGameImage(gameId, 'icon', 'file')
 
@@ -168,7 +170,7 @@ export async function createGameShortcut(gameId: string, targetPath: string): Pr
       url: `vnite://rungameid/${gameId}`,
       iconPath: iconPath,
       targetPath: targetPath,
-      name: gameName,
+      name: shortcutName,
       description: `Launch ${gameName} in Vnite`,
       categories: ['Game']
     })

@@ -37,7 +37,7 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "cursor-pointer non-draggable shadow-sm data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/[calc(var(--glass-opacity)/2)] dark:hover:bg-accent/[calc(var(--glass-opacity))] hover:bg-accent/[calc(var(--glass-opacity)/3)] flex w-fit items-center justify-between gap-2 rounded-md bg-transparent px-3 py-2 text-sm whitespace-nowrap transition-[color_box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "cursor-pointer non-draggable shadow-sm data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/[calc(var(--glass-opacity)/2)] dark:hover:bg-accent/[calc(var(--glass-opacity))] hover:bg-accent/[calc(var(--glass-opacity)/3)] flex w-fit items-center justify-between rounded-md bg-transparent text-sm whitespace-nowrap transition-[color_box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:gap-2 data-[size=sm]:gap-1 data-[size=default]:px-3 data-[size=sm]:px-2 data-[size=default]:py-2 data-[size=sm]:py-1.5 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}
@@ -45,7 +45,9 @@ function SelectTrigger({
       {children}
       {!noIcon && (
         <SelectPrimitive.Icon asChild>
-          <ChevronDownIcon className="size-4 opacity-50" />
+          <ChevronDownIcon
+            className={cn(size === 'sm' ? 'size-3 opacity-50' : 'size-4 opacity-50')}
+          />
         </SelectPrimitive.Icon>
       )}
     </SelectPrimitive.Trigger>

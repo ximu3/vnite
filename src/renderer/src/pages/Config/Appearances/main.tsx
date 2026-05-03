@@ -493,6 +493,22 @@ export function Appearances(): React.JSX.Element {
             </div>
           </div>
 
+          {/* Memory settings */}
+          <div className={cn('space-y-4')}>
+            <div className={cn('border-b pb-2')}>{t('appearances.memory.title')}</div>
+            <ConfigItem
+              hookType="config"
+              path="appearances.memory.masonryColumnWidth"
+              title={t('appearances.memory.masonryColumnWidth')}
+              description={t('appearances.memory.masonryColumnWidthDescription')}
+              controlType="slider"
+              min={120}
+              max={480}
+              step={10}
+              formatValue={(value) => `${value}px`}
+            />
+          </div>
+
           {/* Sidebar Settings */}
           <div className={cn('space-y-4')}>
             <div className={cn('border-b pb-2')}>{t('appearances.sidebar.title')}</div>

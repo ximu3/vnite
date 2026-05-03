@@ -77,3 +77,12 @@ export function jaroWinkler(s1: string, s2: string, p: number = 0.1): number {
 
   return jaroDistance + prefixLength * p * (1 - jaroDistance)
 }
+
+const INVALID_FILENAME_CHAR_PATTERN = /[<>:"/\\|?*]/g
+
+/**
+ * Remove characters that are invalid in a single filename or directory component on Windows.
+ */
+export function sanitizeFilenameComponent(value: string, replacement = ' '): string {
+  return value.replace(INVALID_FILENAME_CHAR_PATTERN, replacement)
+}
