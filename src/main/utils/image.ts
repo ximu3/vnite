@@ -1,3 +1,5 @@
+import { Mutex } from 'async-mutex'
+import { spawn } from 'child_process'
 import { clipboard, nativeImage, net } from 'electron'
 import { fileTypeFromBuffer } from 'file-type'
 import fse from 'fs-extra'
@@ -5,6 +7,7 @@ import sharp from 'sharp'
 import ico from 'sharp-ico'
 import { getAppTempPath } from '~/features/system'
 import { gis } from '~/utils'
+const upscalerProcessMutex = new Mutex()
 
 export async function searchGameImages(
   gameName: string,
@@ -232,5 +235,96 @@ export async function writeClipboardImage(data: string, type: 'path'): Promise<b
   } catch (error) {
     console.error('Failed to write image to clipboard:', error)
     throw error
+  }
+}
+
+export async function upscaleImage(
+  input: Buffer | string,
+  exePath: string,
+  options: { scale?: number } = {}
+): Promise<Buffer> {
+  const MIN_UPSCALE_SCALE = 2
+  const MAX_UPSCALE_SCALE = 4
+  const scale = options.scale ?? 2
+  if (
+    !Number.isFinite(scale) ||
+    !Number.isInteger(scale) ||
+    scale < MIN_UPSCALE_SCALE ||
+    scale > MAX_UPSCALE_SCALE
+  ) {
+    throw new Error(
+      `Invalid upscale scale: ${String(scale)}. Expected an integer between ${MIN_UPSCALE_SCALE} and ${MAX_UPSCALE_SCALE}.`
+    )
+  }
+  const suffix = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+  const inputPath = getAppTempPath(`upscale_input_${suffix}.png`)
+  const outputPath = getAppTempPath(`upscale_output_${suffix}.png`)
+
+  try {
+    // Prepare input: convert to local PNG file
+    let imageBuffer: Buffer
+    if (typeof input === 'string' && input.startsWith('http')) {
+      const response = await net.fetch(input)
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.statusText}`)
+      }
+      imageBuffer = Buffer.from(await response.arrayBuffer())
+    } else if (typeof input === 'string') {
+      imageBuffer = await fse.readFile(input)
+    } else {
+      imageBuffer = input
+    }
+
+    // Convert to PNG for maximum compatibility with ncnn-vulkan tools
+    sharp.cache(false)
+    const pngBuffer = await sharp(imageBuffer, { limitInputPixels: false }).png().toBuffer()
+    await fse.writeFile(inputPath, pngBuffer)
+
+    // Build arguments: all three tools share -i -o -s interface
+    const args = ['-i', inputPath, '-o', outputPath, '-s', String(scale)]
+
+    // Serialize external upscaler processes to avoid stacking multiple GPU-heavy jobs.
+    await upscalerProcessMutex.runExclusive(async () => {
+      await new Promise<void>((resolve, reject) => {
+        const child = spawn(exePath, args, {
+          windowsHide: true,
+          stdio: 'ignore'
+        })
+
+        const timeout: ReturnType<typeof setTimeout> = setTimeout(
+          () => {
+            child.kill()
+            reject(new Error('Upscaler process timed out after 5 minutes.'))
+          },
+          5 * 60 * 1000
+        )
+
+        child.on('error', (error) => {
+          clearTimeout(timeout)
+          reject(error)
+        })
+
+        child.on('close', (code) => {
+          clearTimeout(timeout)
+          if (code === 0) {
+            resolve()
+            return
+          }
+
+          reject(new Error(`Upscaler process exited with code ${String(code)}`))
+        })
+      })
+    })
+
+    // Read and return the output
+    const result = await fse.readFile(outputPath)
+    return result
+  } catch (error) {
+    console.error('Error upscaling image:', error)
+    throw error
+  } finally {
+    // Clean up temp files
+    await fse.remove(inputPath).catch(() => {})
+    await fse.remove(outputPath).catch(() => {})
   }
 }

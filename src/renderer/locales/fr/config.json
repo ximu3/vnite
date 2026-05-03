@@ -59,6 +59,11 @@
       "name": "",
       "placeholder": "",
       "hotkeyLabel": ""
+    },
+    "upscaler": {
+      "name": "",
+      "description": "",
+      "placeholder": ""
     }
   },
   "theme": {

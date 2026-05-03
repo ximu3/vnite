@@ -23,12 +23,33 @@ import {
 import { launcherPreset } from '~/features/launcher'
 import { cacheDescriptionImages } from '~/features/scraper/services/descriptionImageCache'
 import { scraperManager } from '~/features/scraper'
-import { getGameFolders, selectPathDialog } from '~/utils'
+import { getGameFolders, selectPathDialog, upscaleImage } from '~/utils'
+
+export async function upscaleBackgroundImage(
+  imageSource: Buffer | string,
+  upscaleScale?: number
+): Promise<Buffer | string> {
+  if (upscaleScale === undefined || upscaleScale === null || upscaleScale === 0) {
+    return imageSource
+  }
+
+  try {
+    const upscalerPath = await ConfigDBManager.getConfigLocalValue('game.linkage.upscaler.path')
+    if (upscalerPath) {
+      return await upscaleImage(imageSource, upscalerPath, { scale: upscaleScale })
+    }
+  } catch (err) {
+    log.warn(`[Adder] Failed to upscale background image, using original:`, err)
+  }
+
+  return imageSource
+}
 
 export async function addGameToDB({
   dataSource,
   dataSourceId,
   backgroundUrl,
+  upscaleScale,
   playTime,
   dirPath,
   gamePath,
@@ -37,6 +58,7 @@ export async function addGameToDB({
   dataSource: string
   dataSourceId: string
   backgroundUrl?: string
+  upscaleScale?: number
   playTime?: number
   dirPath?: string
   gamePath?: string
@@ -380,14 +402,16 @@ export async function addGameToDB({
     }
 
     if (backgroundUrl) {
+      const bgImage = await upscaleBackgroundImage(backgroundUrl, upscaleScale)
       dbPromises.push(
-        GameDBManager.setGameImage(dbId, 'background', backgroundUrl).catch((err) => {
+        GameDBManager.setGameImage(dbId, 'background', bgImage).catch((err) => {
           log.warn(`[Adder] Failed to save game background from URL: ${err.message}`)
         })
       )
     } else if (backgrounds.length > 0 && backgrounds[0]) {
+      const bgImage = await upscaleBackgroundImage(backgrounds[0], upscaleScale)
       dbPromises.push(
-        GameDBManager.setGameImage(dbId, 'background', backgrounds[0]).catch((err) => {
+        GameDBManager.setGameImage(dbId, 'background', bgImage).catch((err) => {
           log.warn(`[Adder] Failed to save game background: ${err.message}`)
         })
       )
