@@ -36,6 +36,7 @@ export interface gameDoc {
     score: number
     playTime: number
     playStatus: 'unplayed' | 'playing' | 'partial' | 'finished' | 'multiple' | 'shelved'
+    hideFromRecentGames: boolean
     timers: {
       start: string
       end: string
@@ -213,6 +214,7 @@ export const DEFAULT_GAME_VALUES: Readonly<gameDoc> = {
     score: -1,
     playTime: 0,
     playStatus: 'unplayed',
+    hideFromRecentGames: false,
     timers: [],
     dailyPlayTimes: [],
     storageSize: STORAGE_SIZE_NOT_CALCULATED

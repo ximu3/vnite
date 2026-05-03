@@ -36,6 +36,7 @@ function extractMetaInfo(data: gameDoc): {
   genres?: string[]
   addDate?: string
   lastRunDate?: string
+  hideFromRecentGames?: boolean
   score?: number
 } {
   return {
@@ -45,6 +46,7 @@ function extractMetaInfo(data: gameDoc): {
     genres: data.metadata?.genres,
     addDate: data.record?.addDate,
     lastRunDate: data.record?.lastRunDate,
+    hideFromRecentGames: data.record?.hideFromRecentGames,
     score: data.record?.score
   }
 }
@@ -93,6 +95,7 @@ export function getGameStore(gameId: string): GameStore {
           'metadata.genre',
           'record.addDate',
           'record.lastRunDate',
+          'record.hideFromRecentGames',
           'record.score'
         ]
         if (metaFields.includes(path as string)) {

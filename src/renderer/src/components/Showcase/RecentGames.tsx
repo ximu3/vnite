@@ -5,7 +5,12 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '~/components/ui/button'
 import { useConfigState } from '~/hooks'
 import { useLibraryStore } from '~/pages/Library/store'
-import { filterGamesByLocal, filterGamesByNSFW, getGameStore, sortGames } from '~/stores/game'
+import {
+  filterGamesByLocal,
+  filterGamesByNSFW,
+  getRecentGameIds,
+  useGameRegistry
+} from '~/stores/game'
 import { cn } from '~/utils'
 import { BigGamePoster } from './posters/BigGamePoster'
 import { GamePoster } from './posters/GamePoster'
@@ -13,16 +18,11 @@ import { GamePoster } from './posters/GamePoster'
 export function RecentGames(): React.JSX.Element {
   const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
   const [localFilterMode] = useConfigState('appearances.localGameFilterMode')
-  const games = sortGames(
-    'record.lastRunDate',
-    'desc',
+  useGameRegistry((state) => state.gameMetaIndex)
+  const games = getRecentGameIds(
+    15,
     filterGamesByLocal(localFilterMode, filterGamesByNSFW(nsfwFilterMode))
   )
-    .slice(0, 15)
-    .filter((id) => {
-      const date = getGameStore(id).getState().getValue('record.lastRunDate')
-      return date && date !== ''
-    })
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [showRecentGamesInGameList] = useConfigState('game.gameList.showRecentGames')
   const libraryBarWidth = useLibraryStore((state) => state.libraryBarWidth)
@@ -90,9 +90,14 @@ export function RecentGames(): React.JSX.Element {
               )}
             >
               {showRecentGamesInGameList ? (
-                <BigGamePoster className="" gameId={game} groupId="recentGames" />
+                <BigGamePoster
+                  className=""
+                  gameId={game}
+                  groupId="recentGames"
+                  showRemoveFromRecent
+                />
               ) : (
-                <BigGamePoster gameId={game} />
+                <BigGamePoster gameId={game} showRemoveFromRecent />
               )}
             </div>
           ) : (
@@ -103,9 +108,9 @@ export function RecentGames(): React.JSX.Element {
               )}
             >
               {index < 5 && showRecentGamesInGameList ? (
-                <GamePoster gameId={game} groupId="recentGames" />
+                <GamePoster gameId={game} groupId="recentGames" showRemoveFromRecent />
               ) : (
-                <GamePoster gameId={game} />
+                <GamePoster gameId={game} showRemoveFromRecent />
               )}
             </div>
           )

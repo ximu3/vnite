@@ -8,7 +8,9 @@ import {
   cancelBatchStorageSizeCalculation,
   deleteGameMemory,
   deleteGameSave,
+  hideGameFromRecentGames,
   isBatchStorageSizeCalculationRunning,
+  recalculateLastRunDate,
   restoreGameSave,
   searchGameSavePaths,
   updateGameMemoryCover
@@ -120,5 +122,13 @@ export function setupGameIPC(): void {
 
   ipcManager.handle('game:is-batch-storage-size-calculation-running', async () => {
     return isBatchStorageSizeCalculationRunning()
+  })
+
+  ipcManager.handle('game:recalculate-last-run-date', async (_, gameId: string) => {
+    return await recalculateLastRunDate(gameId)
+  })
+
+  ipcManager.handle('game:hide-from-recent-games', async (_, gameId: string) => {
+    await hideGameFromRecentGames(gameId)
   })
 }

@@ -7,7 +7,12 @@ import {
   ContextMenuTrigger
 } from '~/components/ui/context-menu'
 import { useConfigState } from '~/hooks'
-import { filterGamesByLocal, filterGamesByNSFW, getGameStore, sortGames } from '~/stores/game'
+import {
+  filterGamesByLocal,
+  filterGamesByNSFW,
+  getRecentGameIds,
+  useGameRegistry
+} from '~/stores/game'
 import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
 
@@ -17,16 +22,11 @@ export function RecentGames(): React.JSX.Element {
   )
   const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
   const [localFilterMode] = useConfigState('appearances.localGameFilterMode')
-  const games = sortGames(
-    'record.lastRunDate',
-    'desc',
+  useGameRegistry((state) => state.gameMetaIndex)
+  const games = getRecentGameIds(
+    5,
     filterGamesByLocal(localFilterMode, filterGamesByNSFW(nsfwFilterMode))
   )
-    .slice(0, 5)
-    .filter((id) => {
-      const date = getGameStore(id).getState().getValue('record.lastRunDate')
-      return date && date !== ''
-    })
   const { t } = useTranslation('game')
   return (
     <>

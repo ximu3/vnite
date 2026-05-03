@@ -242,6 +242,20 @@ export function sortGames<Path extends Paths<gameDoc, { bracketNotation: true }>
   })
 }
 
+export function getRecentGameIds(count = 5, gameIds?: string[]): string[] {
+  if (!gameIds) gameIds = useGameRegistry.getState().gameIds
+
+  const visibleRecentGameIds = gameIds.filter((id) => {
+    const store = getGameStore(id)
+    const lastRunDate = store.getState().getValue('record.lastRunDate')
+    const hideFromRecentGames = store.getState().getValue('record.hideFromRecentGames')
+
+    return Boolean(lastRunDate) && hideFromRecentGames !== true
+  })
+
+  return sortGames('record.lastRunDate', 'desc', visibleRecentGameIds).slice(0, count)
+}
+
 export function filterGames(
   criteria: Partial<Record<Paths<gameDoc, { bracketNotation: true }>, string[]>>
 ): string[] {
@@ -892,7 +906,9 @@ export function getGameRecord(gameId: string): gameDoc['record'] {
         score: 0,
         playTime: 0,
         playStatus: 'unplayed',
+        hideFromRecentGames: false,
         timers: [],
+        storageSize: STORAGE_SIZE_NOT_CALCULATED,
         dailyPlayTimes: []
       }
     )
@@ -904,6 +920,7 @@ export function getGameRecord(gameId: string): gameDoc['record'] {
       score: 0,
       playTime: 0,
       playStatus: 'unplayed',
+      hideFromRecentGames: false,
       timers: [],
       dailyPlayTimes: [],
       storageSize: STORAGE_SIZE_NOT_CALCULATED

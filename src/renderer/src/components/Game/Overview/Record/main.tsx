@@ -8,6 +8,7 @@ import { useGameState } from '~/hooks'
 import { cn, formatStorageSize } from '~/utils'
 import { useGameDetailStore } from '../../store'
 import { CalculateStorageSizeAlertDialog } from './CalculateStorageSizeAlertDialog'
+import { RecalculateLastRunDateAlertDialog } from './RecalculateLastRunDateAlertDialog'
 import { RecordCard } from './RecordCard'
 import { PLAY_STATUS_ICONS } from './RecordIcon'
 
@@ -45,16 +46,18 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
         onClick={() => setIsPlayTimeEditorDialogOpen(true)}
       />
       {/* Last Run Date */}
-      <RecordCard
-        className={cn('')}
-        title={t('detail.overview.record.lastRunDate')}
-        content={
-          lastRunDate
-            ? t('{{date, niceDate}}', { date: lastRunDate })
-            : t('detail.overview.record.neverRun')
-        }
-        icon="icon-[mdi--calendar-blank-multiple] w-[28px] h-[28px]"
-      />
+      <RecalculateLastRunDateAlertDialog gameId={gameId}>
+        <RecordCard
+          className={cn('')}
+          title={t('detail.overview.record.lastRunDate')}
+          content={
+            lastRunDate
+              ? t('{{date, niceDate}}', { date: lastRunDate })
+              : t('detail.overview.record.neverRun')
+          }
+          icon="icon-[mdi--calendar-blank-multiple] w-[28px] h-[28px]"
+        />
+      </RecalculateLastRunDateAlertDialog>
       {/* Play Status */}
       <Popover>
         <RecordCard

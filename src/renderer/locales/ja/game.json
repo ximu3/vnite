@@ -24,7 +24,13 @@
     "recent": {
       "title": "最近のゲーム",
       "hide": "非表示",
-      "empty": "最近のゲームはありません"
+      "remove": "最近のゲームから削除",
+      "empty": "最近のゲームはありません",
+      "notifications": {
+        "removing": "最近のゲームから削除中…",
+        "removed": "最近のゲームから削除しました",
+        "removeError": "最近のゲームからの削除に失敗しました"
+      }
     },
     "filter": {
       "results": "フィルター結果",
@@ -410,6 +416,7 @@
       "rename": "基本情報を編集",
       "editLogo": "ロゴを編集",
       "editPlayTime": "プレイ時間を編集",
+      "recalculateLastRunDate": "最終プレイ日を再計算",
       "markNSFW": "NSFW としてマークする",
       "unmarkNSFW": "NSFW のマークを解除する",
       "downloadMetadata": "メタデータを更新",
@@ -425,7 +432,12 @@
         "storageSizeCalculated": "ゲームサイズを計算しました：{{size}}",
         "storageSizeError": "ゲームサイズの計算に失敗しました",
         "storageSizeConfirm": "ゲームサイズを計算しますか？少し時間がかかる場合があります。",
-        "storageSizeRecalculateConfirm": "現在のサイズ：{{currentSize}}。ゲームサイズを再計算しますか？"
+        "storageSizeRecalculateConfirm": "現在のサイズ：{{currentSize}}。ゲームサイズを再計算しますか？",
+        "recalculatingLastRunDate": "最終プレイ日を再計算中…",
+        "lastRunDateRecalculated": "最終プレイ日を {{date, niceDate}} に更新しました",
+        "lastRunDateCleared": "有効なタイマーが見つかりません。最終プレイ日をクリアしました",
+        "lastRunDateRecalculateError": "最終プレイ日の再計算に失敗しました",
+        "lastRunDateRecalculateConfirm": "現在のタイマーリストから最終プレイ日を再計算します。有効なタイマーがない場合、日付はクリアされます。"
       }
     },
     "timersEditor": {

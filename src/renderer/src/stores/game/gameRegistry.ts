@@ -5,6 +5,7 @@ interface GameMetaInfo {
   genre?: string
   addDate?: string
   lastRunDate?: string
+  hideFromRecentGames?: boolean
   score?: number
 }
 

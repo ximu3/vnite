@@ -352,6 +352,7 @@ export function GameNav({
             openNameEditorDialog={() => setIsInformationDialogOpen(true)}
             openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
             openPropertiesDialog={() => setIsPropertiesDialogOpen(true)}
+            showRemoveFromRecent={groupId === 'recentGames'}
           />
         )}
       </ContextMenu>

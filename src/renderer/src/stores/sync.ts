@@ -91,7 +91,8 @@ const DB_CHANGE_HANDLERS = {
         name: data.metadata?.name || '',
         genre: data.metadata?.genre,
         addDate: data.record?.addDate,
-        lastRunDate: data.record?.lastRunDate
+        lastRunDate: data.record?.lastRunDate,
+        hideFromRecentGames: data.record?.hideFromRecentGames
       })
     }
 

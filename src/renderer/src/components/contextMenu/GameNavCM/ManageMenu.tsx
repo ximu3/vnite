@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { eventBus } from '~/app/events'
 import { ipcManager } from '~/app/ipc'
 import { DeleteGameAlert } from '~/components/Game/Config/ManageMenu/DeleteGameAlert'
+import { RecalculateLastRunDateAlertDialog } from '~/components/Game/Overview/Record/RecalculateLastRunDateAlertDialog'
 import { useLibrarybarStore } from '~/components/Librarybar/store'
 import { Button } from '~/components/ui/button'
 import {
@@ -216,6 +217,12 @@ export function ManageMenu({
                   {t('detail.manage.calculateStorageSize')}
                 </ContextMenuItem>
               )}
+              {/* Recalculate Last Run Date */}
+              <RecalculateLastRunDateAlertDialog gameId={gameId}>
+                <ContextMenuItem onSelect={(e) => e.preventDefault()}>
+                  {t('detail.manage.recalculateLastRunDate')}
+                </ContextMenuItem>
+              </RecalculateLastRunDateAlertDialog>
 
               <ContextMenuSeparator />
 

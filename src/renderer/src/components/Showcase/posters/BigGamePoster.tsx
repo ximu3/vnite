@@ -22,11 +22,13 @@ export function BigGamePoster({
   gameId,
   groupId,
   className,
+  showRemoveFromRecent = false,
   inViewGames = [] // TODO: Support shift selection in BigGamePoster
 }: {
   gameId: string
   groupId?: string
   className?: string
+  showRemoveFromRecent?: boolean
   inViewGames?: string[]
 }): React.JSX.Element {
   const navigate = useNavigate()
@@ -228,6 +230,7 @@ export function BigGamePoster({
           openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
           openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
           openPropertiesDialog={() => setIsPropertiesDialogOpen(true)}
+          showRemoveFromRecent={showRemoveFromRecent}
         />
       )}
 
