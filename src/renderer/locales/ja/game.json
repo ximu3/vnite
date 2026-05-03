@@ -391,11 +391,16 @@
       "title": "ゲームタイマー",
       "addTimer": "タイマーを追加",
       "timersList": "タイマーリスト",
+      "dailyPlayTimes": "日付記録",
+      "addDailyPlayTime": "日付記録を追加",
       "fuzzyTime": "タイマー未記録のプレイ時間",
       "noTimers": "タイマー記録がありません",
+      "noDailyPlayTimes": "日付のみの記録がありません",
       "totalPlayTime": "総プレイ時間",
       "startTime": "開始",
       "endTime": "終了",
+      "date": "日付",
+      "playTime": "プレイ時間",
       "ongoing": "進行中",
       "duration": "時間",
       "minutes": "分",
@@ -419,6 +424,12 @@
       "editTimer": "ゲームタイマーを編集",
       "startDateTime": "開始時間",
       "endDateTime": "終了時間"
+    },
+    "dailyPlayTimeEditor": {
+      "addDailyPlayTime": "日付記録を追加",
+      "editDailyPlayTime": "日付記録を編集",
+      "dateRequired": "有効な日付を選択してください",
+      "playTimeRequired": "プレイ時間は 0 より大きくする必要があります"
     },
     "deleteAlert": {
       "title": "{{gameName}}を削除してもよろしいですか？",

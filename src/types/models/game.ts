@@ -40,6 +40,10 @@ export interface gameDoc {
       start: string
       end: string
     }[]
+    dailyPlayTimes: {
+      date: string
+      playTime: number
+    }[]
     storageSize: number
   }
   save: {
@@ -210,6 +214,7 @@ export const DEFAULT_GAME_VALUES: Readonly<gameDoc> = {
     playTime: 0,
     playStatus: 'unplayed',
     timers: [],
+    dailyPlayTimes: [],
     storageSize: STORAGE_SIZE_NOT_CALCULATED
   },
   save: {
@@ -243,6 +248,11 @@ export interface Timer {
   end: string
 }
 
+export interface DailyPlayTime {
+  date: string
+  playTime: number
+}
+
 export interface MaxPlayTimeDay {
   date: string
   playTime: number
@@ -273,11 +283,6 @@ export interface BatchGameInfo {
   id: string
   status: 'idle' | 'loading' | 'success' | 'error' | 'existed'
   dirPath: string
-}
-
-export interface Timer {
-  start: string
-  end: string
 }
 
 export enum TimerStatus {

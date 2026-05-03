@@ -1,9 +1,8 @@
-import { cn } from '~/utils'
+import { Trans, useTranslation } from 'react-i18next'
+import { SeparatorDashed } from '~/components/ui/separator-dashed'
 import { useGameState } from '~/hooks'
 import { getGameMaxPlayTimeDay, getGamePlayDays } from '~/stores/game'
-import { useTranslation } from 'react-i18next'
-import { Trans } from 'react-i18next'
-import { SeparatorDashed } from '~/components/ui/separator-dashed'
+import { cn } from '~/utils'
 
 export function RecordCard({
   gameId,
@@ -17,15 +16,15 @@ export function RecordCard({
   const playDays = getGamePlayDays(gameId)
   const [playingTime] = useGameState(gameId, 'record.playTime')
   const [lastRunDate] = useGameState(gameId, 'record.lastRunDate')
-  const [timers] = useGameState(gameId, 'record.timers')
   const equalPlayingTime = playingTime / playDays
   const maxPlayTimeDay = getGameMaxPlayTimeDay(gameId)
+  const hasDatedPlayData = playDays > 0
 
   return (
     <div className={cn(className, 'w-auto')}>
       <div className={cn('font-bold')}>{t('detail.record.card.title')}</div>
       <SeparatorDashed />
-      {lastRunDate && timers.length !== 0 ? (
+      {hasDatedPlayData ? (
         <>
           <div className={cn('flex flex-row')}>
             <Trans
@@ -56,20 +55,22 @@ export function RecordCard({
               }}
             />
           </div>
-          <div className={cn('flex flex-row')}>
-            <Trans
-              i18nKey="game:detail.record.card.history"
-              t={t}
-              values={{
-                addDate: addDate,
-                lastPlayDate: lastRunDate
-              }}
-              components={{
-                addDate: <span className={cn('font-bold')} />,
-                lastPlayDate: <span className={cn('font-bold')} />
-              }}
-            />
-          </div>
+          {lastRunDate && (
+            <div className={cn('flex flex-row')}>
+              <Trans
+                i18nKey="game:detail.record.card.history"
+                t={t}
+                values={{
+                  addDate: addDate,
+                  lastPlayDate: lastRunDate
+                }}
+                components={{
+                  addDate: <span className={cn('font-bold')} />,
+                  lastPlayDate: <span className={cn('font-bold')} />
+                }}
+              />
+            </div>
+          )}
         </>
       ) : (
         t('detail.record.card.noData')
