@@ -265,10 +265,18 @@ export function WeeklyReport(): React.JSX.Element {
   )
   const totalHeight = timeLineChartDataFlat.length * 60 + 40
 
+  const fourHours = 4 * 60 * 60 * 1000
   const twelveHours = 12 * 60 * 60 * 1000
+  const oneDay = 24 * 60 * 60 * 1000
   const xTicks: number[] = []
-  for (let t = 0; t <= nextWeekStartTime - weekStartTime; t += twelveHours) {
+  for (let t = 0; t <= nextWeekStartTime - weekStartTime; t += fourHours) {
     xTicks.push(t)
+  }
+
+  const getTimeLineTickOpacity = (tick: number): number => {
+    if (tick % oneDay === 0) return 0.6
+    if (tick % twelveHours === 0) return 0.35
+    return 0.15
   }
 
   const chartConfig = {
@@ -378,13 +386,18 @@ export function WeeklyReport(): React.JSX.Element {
                     axisLine={false}
                     ticks={xTicks}
                     tickFormatter={(t) => {
-                      const date = new Date(t + weekStartTime)
+                      const tick = Number(t)
+                      const isDayBoundary = tick % oneDay === 0
+                      const isMidpoint = tick % twelveHours === 0
+                      if (!isDayBoundary && !isMidpoint) return ''
+
+                      const date = new Date(tick + weekStartTime)
                       const hour = date.getHours()
                       const minute = date.getMinutes()
                       const hours = String(hour).padStart(2, '0')
                       const minutes = String(minute).padStart(2, '0')
 
-                      if (hour === dayBoundaryHour && minute === 0) {
+                      if (isDayBoundary) {
                         const month = String(date.getMonth() + 1).padStart(2, '0')
                         const day = String(date.getDate()).padStart(2, '0')
                         return `${month}-${day}`
@@ -426,16 +439,18 @@ export function WeeklyReport(): React.JSX.Element {
                       return segments.join(' ')
                     }}
                   />
-                  {xTicks.map((t, idx) => (
-                    <ReferenceLine
-                      key={t}
-                      x={t}
-                      stroke={'var(--muted-foreground)'}
-                      strokeOpacity={idx % 2 === 0 ? 0.6 : 0.25}
-                      strokeWidth={1}
-                      strokeDasharray="3 3"
-                    />
-                  ))}
+                  {xTicks.map((t) => {
+                    return (
+                      <ReferenceLine
+                        key={t}
+                        x={t}
+                        stroke={'var(--muted-foreground)'}
+                        strokeOpacity={getTimeLineTickOpacity(t)}
+                        strokeWidth={1}
+                        strokeDasharray="3 3"
+                      />
+                    )
+                  })}
                   <ChartTooltip
                     content={(props) => (
                       <ChartTooltipContent
