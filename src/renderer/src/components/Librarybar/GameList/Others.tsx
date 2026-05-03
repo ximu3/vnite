@@ -14,6 +14,7 @@ import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
 import { useGameListStore } from '../store'
 import { AllGameComponent } from './AllGame'
+import { GroupSortSummary } from './GroupSortSummary'
 import { PlaceHolder } from './PlaceHolder'
 import { RecentGames } from './RecentGames'
 
@@ -74,6 +75,7 @@ function OthersComponent({
                         {field !== '__empty__' ? field : emptyAccordionName[fieldName]}
                       </div>
                       <div className={cn('text-2xs text-foreground/50')}>({gameIds.length})</div>
+                      <GroupSortSummary gameIds={gameIds} by={by} />
                     </div>
                   </AccordionTrigger>
                   <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>

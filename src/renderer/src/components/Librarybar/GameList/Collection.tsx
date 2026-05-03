@@ -11,6 +11,7 @@ import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
 import { useGameListStore } from '../store'
 import { AllGameComponent } from './AllGame'
+import { GroupSortSummary } from './GroupSortSummary'
 import { PlaceHolder } from './PlaceHolder'
 import { RecentGames } from './RecentGames'
 
@@ -79,6 +80,7 @@ export function CollectionComponent({
                     <div className={cn('flex flex-row items-center justify-start gap-1')}>
                       <div className={cn('text-xs')}>{value.name}</div>
                       <div className={cn('text-2xs text-foreground/50')}>({gameIds.length})</div>
+                      <GroupSortSummary gameIds={gameIds} by={by} />
                     </div>
                   </AccordionTrigger>
                 </CollectionCM>
@@ -107,6 +109,7 @@ export function CollectionComponent({
                   <div className={cn('text-2xs text-foreground/50')}>
                     ({uncollectedGameIds.length})
                   </div>
+                  <GroupSortSummary gameIds={uncollectedGameIds} by={by} />
                 </div>
               </AccordionTrigger>
               <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1 w-full')}>

@@ -10,7 +10,7 @@ export const useGameAdder = (): {
   addAllGames: () => Promise<void>
 } => {
   const { t } = useTranslation('adder')
-  const { games, actions } = useGameBatchAdderStore()
+  const { games, upscaleScale, actions } = useGameBatchAdderStore()
 
   const searchGame = async (game: BatchGameInfo): Promise<string> => {
     const result = await ipcManager.invoke('scraper:search-games', game.dataSource, game.name)
@@ -49,6 +49,7 @@ export const useGameAdder = (): {
         await ipcManager.invoke('adder:add-game-to-db', {
           dataSource: game.dataSource,
           dataSourceId: gameId,
+          upscaleScale,
           dirPath: game.dirPath
         })
 
@@ -58,7 +59,7 @@ export const useGameAdder = (): {
         throw error
       }
     },
-    [games, actions, t]
+    [games, actions, t, upscaleScale]
   )
 
   const addAllGames = useCallback(async () => {

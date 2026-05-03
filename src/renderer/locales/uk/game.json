@@ -346,9 +346,6 @@
         "setBackgroundSuccess": "",
         "setBackgroundError": "",
         "screenshotPathNotSet": ""
-      },
-      "dialog": {
-        "markdownHint": ""
       }
     },
     "config": {

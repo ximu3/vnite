@@ -318,6 +318,7 @@
       }
     },
     "memory": {
+      "empty": "No memories to display",
       "actions": {
         "add": "Add",
         "addCover": "Add Cover",
@@ -327,6 +328,25 @@
         "editText": "Edit Text",
         "delete": "Delete",
         "openScreenshotDir": "Open Screenshot Directory"
+      },
+      "views": {
+        "grid": "Cards",
+        "masonry": "Gallery",
+        "list": "List"
+      },
+      "pagination": {
+        "first": "First Page",
+        "previous": "Previous Page",
+        "next": "Next Page",
+        "last": "Last Page",
+        "pageStatus": "{{current}} / {{total}}"
+      },
+      "list": {
+        "untitled": "Untitled note",
+        "table": {
+          "note": "Note",
+          "date": "Time"
+        }
       },
       "setAs": {
         "title": "Set As",
@@ -357,8 +377,29 @@
         "setBackgroundError": "Failed to set as game background: {{error}}",
         "screenshotPathNotSet": "Screenshot path not set"
       },
-      "dialog": {
-        "markdownHint": "Markdown syntax supported"
+      "editor": {
+        "edit": "Edit",
+        "preview": "Preview",
+        "placeholder": "Write with Markdown...",
+        "emptyPreview": "Nothing to preview",
+        "toolbar": {
+          "heading1": "Heading 1",
+          "heading2": "Heading 2",
+          "heading3": "Heading 3",
+          "heading4": "Heading 4",
+          "bold": "Bold",
+          "italic": "Italic",
+          "strikethrough": "Strikethrough",
+          "underline": "Underline",
+          "quote": "Quote",
+          "bulletedList": "Bulleted list",
+          "numberedList": "Numbered list",
+          "taskList": "Task list",
+          "inlineCode": "Inline code",
+          "codeBlock": "Code block",
+          "link": "Link",
+          "horizontalRule": "Horizontal rule"
+        }
       }
     },
     "config": {
@@ -391,11 +432,16 @@
       "title": "Game Timer",
       "addTimer": "Add Timer",
       "timersList": "Timers List",
+      "dailyPlayTimes": "Date Records",
+      "addDailyPlayTime": "Add Date Record",
       "fuzzyTime": "Time Not Tracked by Timers",
       "noTimers": "No timer records",
+      "noDailyPlayTimes": "No date-only records",
       "totalPlayTime": "Total Play Time",
       "startTime": "Start",
       "endTime": "End",
+      "date": "Date",
+      "playTime": "Play Time",
       "ongoing": "In progress",
       "duration": "Duration",
       "minutes": "minutes",
@@ -419,6 +465,12 @@
       "editTimer": "Edit Game Timer",
       "startDateTime": "Start Time",
       "endDateTime": "End Time"
+    },
+    "dailyPlayTimeEditor": {
+      "addDailyPlayTime": "Add Date Record",
+      "editDailyPlayTime": "Edit Date Record",
+      "dateRequired": "Please select a valid date",
+      "playTimeRequired": "Play time must be greater than 0"
     },
     "deleteAlert": {
       "title": "Are you sure you want to delete {{gameName}}?",

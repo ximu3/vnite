@@ -6,6 +6,7 @@ import { useConfigState } from '~/hooks'
 import { searchGames, sortGames } from '~/stores/game'
 import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
+import { GroupSortSummary } from './GroupSortSummary'
 import { PlaceHolder } from './PlaceHolder'
 
 export function SearchComponent({
@@ -28,7 +29,11 @@ export function SearchComponent({
       >
         <AccordionItem value="all">
           <AccordionTrigger className={cn('text-xs p-1 pl-2')}>
-            {t('list.search.results')}
+            <div className={cn('flex flex-row items-center justify-start gap-1')}>
+              <div className={cn('text-xs')}>{t('list.search.results')}</div>
+              <div className={cn('text-2xs text-foreground/50')}>({games.length})</div>
+              <GroupSortSummary gameIds={games} by={by} />
+            </div>
           </AccordionTrigger>
           <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
             {games.map((game) => (

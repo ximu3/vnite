@@ -6,6 +6,10 @@
     "confirm": "确定",
     "delete": "删除"
   },
+  "upscale": {
+    "label": "超分辨率放大背景图",
+    "noUpscale": "不放大"
+  },
   "arrayEditor": {
     "clickPlusToAdd": "点击 + 添加元素",
     "addElement": "添加元素",

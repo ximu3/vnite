@@ -35,6 +35,8 @@ interface GameAdderState {
   setBackgroundList: (backgroundList: string[]) => void
   backgroundUrl: string
   setBackgroundUrl: (backgroundUrl: string) => void
+  upscaleScale: number
+  setUpscaleScale: (upscaleScale: number) => void
   dirPath: string
   setDirPath: (dirPath: string) => void
   gamePath: string
@@ -63,6 +65,8 @@ export const useGameAdderStore = create<GameAdderState>((set, get) => ({
   setBackgroundList: (backgroundList): void => set({ backgroundList }),
   backgroundUrl: '',
   setBackgroundUrl: (backgroundUrl): void => set({ backgroundUrl }),
+  upscaleScale: 0,
+  setUpscaleScale: (upscaleScale): void => set({ upscaleScale }),
   dirPath: '',
   setDirPath: (dirPath): void => set({ dirPath }),
   gamePath: '',
@@ -78,6 +82,7 @@ export const useGameAdderStore = create<GameAdderState>((set, get) => ({
       setName,
       setBackgroundList,
       setBackgroundUrl,
+      setUpscaleScale,
       setGameList,
       setIsLoading,
       setDirPath,
@@ -97,6 +102,7 @@ export const useGameAdderStore = create<GameAdderState>((set, get) => ({
     setName('')
     setBackgroundList([])
     setBackgroundUrl('')
+    setUpscaleScale(0)
     setGameList([])
     setIsLoading(false)
   }

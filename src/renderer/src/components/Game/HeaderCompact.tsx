@@ -12,11 +12,12 @@ import { useConfigState, useGameState } from '~/hooks'
 import { useRunningGames } from '~/pages/Library/store'
 import { cn, copyWithToast, formatStorageSize } from '~/utils'
 import { Config } from './Config'
+import { CalculateStorageSizeAlertDialog } from './Overview/Record/CalculateStorageSizeAlertDialog'
 import { PLAY_STATUS_ICONS } from './Overview/Record/RecordIcon'
 import { StartGame } from './StartGame'
 import { StopGame } from './StopGame'
 import { useGameDetailStore } from './store'
-import { CalculateStorageSizeAlertDialog } from './Overview/Record/CalculateStorageSizeAlertDialog'
+import { openLargeGameMediaImage } from './utils'
 
 export function HeaderCompact({
   gameId,
@@ -38,6 +39,7 @@ export function HeaderCompact({
   const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
 
   const openPropertiesDialog = useGameDetailStore((state) => state.openPropertiesDialog)
+  const openImageViewerDialog = useGameDetailStore((state) => state.openImageViewerDialog)
 
   const stringToBase64 = (str: string): string =>
     btoa(String.fromCharCode(...new TextEncoder().encode(str)))
@@ -64,6 +66,13 @@ export function HeaderCompact({
             <ContextMenuContent className={cn('w-40')}>
               <ContextMenuItem onSelect={() => openPropertiesDialog('media')}>
                 {t('detail.contextMenu.editMediaProperties')}
+              </ContextMenuItem>
+              <ContextMenuItem
+                onSelect={() => {
+                  void openLargeGameMediaImage({ gameId, type: 'cover', openImageViewerDialog })
+                }}
+              >
+                {t('detail.properties.media.actions.viewLargeImage')}
               </ContextMenuItem>
             </ContextMenuContent>
           </ContextMenu>

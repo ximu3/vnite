@@ -1,16 +1,17 @@
+import sharp from 'sharp'
 import { GameDBManager } from '~/core/database'
 import { ipcManager } from '~/core/ipc'
 import {
   addGameMemory,
+  batchCalculateStorageSize,
+  calculateStorageSize,
+  cancelBatchStorageSizeCalculation,
   deleteGameMemory,
   deleteGameSave,
+  isBatchStorageSizeCalculationRunning,
   restoreGameSave,
   searchGameSavePaths,
-  updateGameMemoryCover,
-  calculateStorageSize,
-  batchCalculateStorageSize,
-  cancelBatchStorageSizeCalculation,
-  isBatchStorageSizeCalculationRunning
+  updateGameMemoryCover
 } from './services'
 
 export function setupGameIPC(): void {
@@ -41,7 +42,7 @@ export function setupGameIPC(): void {
   })
 
   ipcManager.handle('game:add-memory', async (_, gameId: string) => {
-    await addGameMemory(gameId)
+    return await addGameMemory(gameId)
   })
 
   ipcManager.handle('game:delete-memory', async (_, gameId: string, memoryId: string) => {
@@ -58,6 +59,34 @@ export function setupGameIPC(): void {
   ipcManager.handle('game:get-memory-cover-path', async (_, gameId: string, memoryId: string) => {
     return await GameDBManager.getGameMemoryImage(gameId, memoryId, 'file')
   })
+
+  ipcManager.handle(
+    'game:get-memory-masonry-items',
+    async (_, gameId: string, memoryIds: string[]) => {
+      const entries = await Promise.all(
+        memoryIds.map(async (memoryId) => {
+          try {
+            const imageBuffer = await GameDBManager.getGameMemoryImage(gameId, memoryId, 'buffer')
+            if (!imageBuffer) return null
+
+            const metadata = await sharp(imageBuffer).metadata()
+            if (!metadata.width || !metadata.height) return null
+
+            return [
+              memoryId,
+              {
+                heightRatio: metadata.height / metadata.width
+              }
+            ] as const
+          } catch {
+            return null
+          }
+        })
+      )
+
+      return Object.fromEntries(entries.filter((entry) => entry !== null))
+    }
+  )
 
   ipcManager.handle(
     'game:get-media-path',

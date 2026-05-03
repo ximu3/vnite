@@ -1,3 +1,4 @@
+import { sanitizeFilenameComponent } from '@appUtils'
 import { app, clipboard, globalShortcut, nativeImage } from 'electron'
 import log from 'electron-log/main'
 import Screenshots from 'electron-screenshots'
@@ -361,7 +362,7 @@ async function captureToFileSystem(
       }
     }
     const game = await GameDBManager.getGame(gameId)
-    sanitizedName = game.metadata.name.replace(/[<>:"/\\|?*]/g, ' ')
+    sanitizedName = sanitizeFilenameComponent(game.metadata.name)
   }
   const saveDir = path.join(
     await ConfigDBManager.getConfigLocalValue('memory.image.saveDir'),
@@ -371,12 +372,12 @@ async function captureToFileSystem(
     await mkdir(saveDir)
   }
   const fileName = (await ConfigDBManager.getConfigLocalValue('memory.image.namingRule'))
-    .replace(/[<>:"/\\|?*]/g, '')
     .replace('%name%', sanitizedName)
     .replace('%datetime%', getPathValidLocalTime())
     .replace('%timestamp%', Date.now().toString())
+  const sanitizedFileName = sanitizeFilenameComponent(fileName, '')
   const webpBuffer = await convertToWebP(buffer)
-  const filePath = path.join(saveDir, `${fileName}.webp`)
+  const filePath = path.join(saveDir, `${sanitizedFileName}.webp`)
   try {
     const writeStream = createWriteStream(filePath)
     writeStream.write(webpBuffer)
