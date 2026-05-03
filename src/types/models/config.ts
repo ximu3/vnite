@@ -225,12 +225,8 @@ export interface configDocs {
   }
   memory: {
     image: {
-      storageBackend: 'filesystem' | 'database' | 'both'
-      saveDir: string
-      namingRule: string
       saveToClipboard: boolean
     }
-    snippingMode: 'rectangle' | 'activewindow' | 'fullscreen'
     enableNotificationSound: boolean
   }
   record: {
@@ -273,7 +269,9 @@ export interface configLocalDocs {
     }
   }
   hotkeys: {
-    capture: string
+    captureRectangle: string
+    captureActiveWindow: string
+    captureFullscreen: string
   }
   game: {
     linkage: {
@@ -312,6 +310,14 @@ export interface configLocalDocs {
   }
   database: {
     defaultBackupPath: string
+    migrationCompleted: string[]
+  }
+  memory: {
+    image: {
+      storageBackend: 'filesystem' | 'database' | 'both'
+      saveDir: string
+      namingRule: string
+    }
   }
   network: {
     proxy: {
@@ -470,12 +476,8 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
   },
   memory: {
     image: {
-      storageBackend: 'database',
-      saveDir: '',
-      namingRule: '%datetime%',
       saveToClipboard: false
     },
-    snippingMode: 'rectangle',
     enableNotificationSound: true
   },
   record: {
@@ -494,7 +496,15 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
 
 export const DEFAULT_CONFIG_LOCAL_VALUES: Readonly<configLocalDocs> = {
   database: {
-    defaultBackupPath: ''
+    defaultBackupPath: '',
+    migrationCompleted: []
+  },
+  memory: {
+    image: {
+      storageBackend: 'database',
+      saveDir: '',
+      namingRule: '%datetime%'
+    }
   },
   userInfo: {
     name: '',
@@ -521,7 +531,9 @@ export const DEFAULT_CONFIG_LOCAL_VALUES: Readonly<configLocalDocs> = {
     }
   },
   hotkeys: {
-    capture: 'alt+shift+z'
+    captureRectangle: '',
+    captureActiveWindow: 'alt+shift+z',
+    captureFullscreen: ''
   },
   game: {
     linkage: {

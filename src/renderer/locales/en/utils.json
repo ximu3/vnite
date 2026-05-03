@@ -20,15 +20,19 @@
   },
   "hotkeySetting": {
     "title": "Set Hotkey",
+    "unset": "Not set",
     "recording": "[Press hotkey…]",
     "placeholder": "Type or record hotkey, e.g.: ctrl+a+b",
     "startRecordButton": "Click to start recording",
     "recordingButton": "Recording…",
+    "clearButton": "Clear",
     "currentKeys": "Currently pressed keys",
     "supportedKeys": "Supported keys include letters, numbers, arrow keys, Esc, Tab, Enter, Space, etc., and can be used in combination",
     "errors": {
       "invalidHotkey": "Please enter a valid hotkey",
-      "duplicateKeys": "Hotkey cannot contain duplicate keys"
+      "duplicateKeys": "Hotkey cannot contain duplicate keys",
+      "registrationFailed": "Failed to register this hotkey. It may be invalid or already used by the system.",
+      "unknown": "Failed to update hotkey"
     },
     "notifications": {
       "hotkeyUpdated": "Hotkey updated"

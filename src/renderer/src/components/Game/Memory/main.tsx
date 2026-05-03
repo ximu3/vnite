@@ -1,14 +1,14 @@
+import { sanitizeFilenameComponent } from '@appUtils'
 import { Button } from '@ui/button'
 import { Tabs, TabsList, TabsTrigger } from '@ui/tabs'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
-import { sanitizeFilenameComponent } from '@appUtils'
 import i18next from 'i18next'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { eventBus } from '~/app/events'
 import { ipcManager } from '~/app/ipc'
-import { useConfigState, useGameLocalState, useGameState } from '~/hooks'
+import { useConfigLocalState, useConfigState, useGameLocalState, useGameState } from '~/hooks'
 import { cn } from '~/utils'
 import { DEFAULT_MEMORY_PAGE_BY_VIEW, useGameDetailStore, useGameDetailTabStore } from '../store'
 import { MemoryCardView } from './MemoryCardView'
@@ -54,7 +54,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
 
   const [screenshotPath] = useGameLocalState(gameId, 'path.screenshotPath')
   const [gameName] = useGameState(gameId, 'metadata.name')
-  const [rootSaveDir] = useConfigState('memory.image.saveDir')
+  const [rootSaveDir] = useConfigLocalState('memory.image.saveDir')
   const [masonryColumnWidth] = useConfigState('appearances.memory.masonryColumnWidth')
   const [gridItemsPerPage, setGridItemsPerPage] = useConfigState(
     'appearances.memory.gridItemsPerPage'

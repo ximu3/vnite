@@ -1,12 +1,32 @@
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { ipcManager } from '~/app/ipc'
+import { ConfigItem } from '~/components/form/ConfigItem'
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { cn } from '~/utils'
 
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
-import { ConfigItem } from '~/components/form/ConfigItem'
-import { ipcManager } from '~/app/ipc'
+type ScreenshotHotkeyName = 'captureRectangle' | 'captureActiveWindow' | 'captureFullscreen'
 
 export function Hotkeys(): React.JSX.Element {
-  const { t } = useTranslation('config')
+  const { t } = useTranslation(['config', 'utils'])
+
+  const updateScreenshotHotkey = async (
+    hotkeyName: ScreenshotHotkeyName,
+    hotkey: string
+  ): Promise<boolean> => {
+    const result = await ipcManager.invoke('system:update-screenshot-hotkey', hotkeyName, hotkey)
+
+    if (result.success) {
+      return true
+    }
+
+    const errorMessage =
+      result.reason === 'registrationFailed'
+        ? t('utils:hotkeySetting.errors.registrationFailed')
+        : t('utils:hotkeySetting.errors.unknown')
+    toast.error(errorMessage)
+    return false
+  }
 
   return (
     <Card className={cn('group')}>
@@ -74,10 +94,28 @@ export function Hotkeys(): React.JSX.Element {
               />
               <ConfigItem
                 hookType="configLocal"
-                path="hotkeys.capture"
-                title={t('hotkeys.quickActions.capture')}
-                onChange={(hotkey) => {
-                  ipcManager.invoke('system:update-screenshot-hotkey', hotkey)
+                path="hotkeys.captureRectangle"
+                title={t('hotkeys.quickActions.captureRectangle')}
+                beforeChange={(hotkey) => {
+                  return updateScreenshotHotkey('captureRectangle', hotkey)
+                }}
+                controlType="hotkey"
+              />
+              <ConfigItem
+                hookType="configLocal"
+                path="hotkeys.captureActiveWindow"
+                title={t('hotkeys.quickActions.captureActiveWindow')}
+                beforeChange={(hotkey) => {
+                  return updateScreenshotHotkey('captureActiveWindow', hotkey)
+                }}
+                controlType="hotkey"
+              />
+              <ConfigItem
+                hookType="configLocal"
+                path="hotkeys.captureFullscreen"
+                title={t('hotkeys.quickActions.captureFullscreen')}
+                beforeChange={(hotkey) => {
+                  return updateScreenshotHotkey('captureFullscreen', hotkey)
                 }}
                 controlType="hotkey"
               />

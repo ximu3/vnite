@@ -259,7 +259,9 @@
     "quickActions": {
       "title": "クイックアクション",
       "addGame": "ゲームを追加",
-      "capture": "回憶をキャプチャ"
+      "captureRectangle": "範囲選択キャプチャ",
+      "captureActiveWindow": "アクティブウィンドウをキャプチャ",
+      "captureFullscreen": "フルスクリーンキャプチャ"
     },
     "others": {
       "title": "その他",
@@ -464,15 +466,6 @@
       "title": "ネーミングルール",
       "description": "スクリーンショットファイルのネーミングルール、ファイル名として使用禁止の記号 [<>:\"/\\|?*] は使用できません\n現在使用可能なプレースホルダ：\n\n%name% - 実行中のゲームの名称（ファイル名として使用禁止の記号が存在する場合置き換えされる）\n%datetime% - スクリーンショットを記録した時点の日付\n%timestamp% - スクリーンショットを記録した時点のミリ秒タイムスタンプ",
       "placeholder": "ネーミングルールを入力"
-    },
-    "snippingMode": {
-      "title": "キャプチャーモード",
-      "description": "スクリーンショットを記録するモードを選択する",
-      "options": {
-        "rectangle": "矩形",
-        "activeWindow": "アクティブウィンドウ",
-        "fullscreen": "フルスクリーン"
-      }
     },
     "enableNotificationSound": {
       "title": "システム通知音",

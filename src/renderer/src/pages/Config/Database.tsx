@@ -19,7 +19,7 @@ import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { Separator } from '~/components/ui/separator'
 import { Switch } from '~/components/ui/switch'
-import { useConfigLocalState, useConfigState } from '~/hooks'
+import { useConfigLocalState } from '~/hooks'
 import { useBackupStore } from '~/stores/utils'
 import { cn } from '~/utils'
 
@@ -28,7 +28,7 @@ export function Database(): React.JSX.Element {
   const [isPortable, setIsPortable] = useState<boolean>(false)
   const [isAdmin, setIsAdmin] = useState<boolean>(false)
   const [switchDialogOpen, setSwitchDialogOpen] = useState<boolean>(false)
-  const [imgStorageBackend] = useConfigState('memory.image.storageBackend')
+  const [imgStorageBackend] = useConfigLocalState('memory.image.storageBackend')
   const [defaultBackupPath] = useConfigLocalState('database.defaultBackupPath')
   const setIsBackingUp = useBackupStore((state) => state.setBackingUp)
 
@@ -285,18 +285,6 @@ export function Database(): React.JSX.Element {
             <div className={cn('space-y-4')}>
               <ConfigItem
                 hookType="config"
-                path="memory.snippingMode"
-                title={t('memory.snippingMode.title')}
-                description={t('memory.snippingMode.description')}
-                controlType="select"
-                options={[
-                  { value: 'rectangle', label: t('memory.snippingMode.options.rectangle') },
-                  { value: 'activewindow', label: t('memory.snippingMode.options.activeWindow') },
-                  { value: 'fullscreen', label: t('memory.snippingMode.options.fullscreen') }
-                ]}
-              />
-              <ConfigItem
-                hookType="config"
                 path="memory.image.saveToClipboard"
                 title={t('memory.saveToClipboard.title')}
                 description={t('memory.saveToClipboard.description')}
@@ -310,7 +298,7 @@ export function Database(): React.JSX.Element {
                 controlType="switch"
               />
               <ConfigItem
-                hookType="config"
+                hookType="configLocal"
                 path="memory.image.storageBackend"
                 title={t('memory.storageBackend.title')}
                 description={t('memory.storageBackend.description')}
@@ -322,7 +310,7 @@ export function Database(): React.JSX.Element {
                 ]}
               />
               <ConfigItem
-                hookType="config"
+                hookType="configLocal"
                 path="memory.image.saveDir"
                 title={t('memory.saveDir.title')}
                 description={t('memory.saveDir.description')}
@@ -332,7 +320,7 @@ export function Database(): React.JSX.Element {
                 disabled={imgStorageBackend === 'database'}
               />
               <ConfigItem
-                hookType="config"
+                hookType="configLocal"
                 path="memory.image.namingRule"
                 title={t('memory.namingRule.title')}
                 description={t('memory.namingRule.description')}

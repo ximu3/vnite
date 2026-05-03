@@ -259,7 +259,9 @@
     "quickActions": {
       "title": "快捷操作",
       "addGame": "添加遊戲",
-      "capture": "回憶截圖"
+      "captureRectangle": "自由框選截圖",
+      "captureActiveWindow": "活動視窗截圖",
+      "captureFullscreen": "全螢幕截圖"
     },
     "others": {
       "title": "其它",
@@ -464,15 +466,6 @@
       "title": "命名規則",
       "description": "截圖檔案的命名規則，不可使用路徑無效字元 [<>:\"/\\|?*]\n目前支援的佔位符：\n\n%name% - 當前運行中的遊戲名稱（遊戲名稱中的路徑無效字元會被替換）\n%datetime% - 截圖時間點的日期和時間\n%timestamp% - 截圖時間點的毫秒級時間戳",
       "placeholder": "輸入截圖檔案的命名規則"
-    },
-    "snippingMode": {
-      "title": "截圖模式",
-      "description": "選擇截圖模式",
-      "options": {
-        "rectangle": "矩形",
-        "activeWindow": "活動視窗",
-        "fullscreen": "全螢幕"
-      }
     },
     "enableNotificationSound": {
       "title": "系統通知音效",

@@ -1,44 +1,43 @@
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
-import { app, BrowserWindow, ipcMain, shell, protocol } from 'electron'
+import { app, BrowserWindow, ipcMain, net, protocol, shell } from 'electron'
 import log from 'electron-log/main'
 import windowStateKeeper from 'electron-window-state'
 import { join } from 'path'
-import { baseDBManager, GameDBManager } from '~/core/database'
+import { baseDBManager, GameDBManager, runDatabaseMigrations } from '~/core/database'
 import { startSync } from '~/features/database'
-import icon from '../../resources/icon.png?asset'
-import { AuthManager, handleAuthCallback } from './features/account'
-import { ipcManager, setupIPC } from './core/ipc'
-import { setupAutoUpdater } from './features/updater'
-import {
-  checkAdminPermissions,
-  checkIfDirectoryNeedsAdminRights,
-  parseGameIdFromUrl,
-  restartAppAsAdmin
-} from './utils'
 import {
   getAppRootPath,
   getDataPath,
   getLogsPath,
-  setupTempDirectory,
-  setupScreenshotService
+  setupScreenshotService,
+  setupTempDirectory
 } from '~/features/system'
-import {
-  TrayManager,
-  setupTray,
-  setupProtocols,
-  setupOpenAtLogin,
-  portableStore,
-  initI18n,
-  checkPortableMode,
-  setupContextMenu,
-  setupProxy
-} from './features/system'
+import icon from '../../resources/icon.png?asset'
+import { ipcManager, setupIPC } from './core/ipc'
+import { nativeCleanup, setupNativeModule } from './core/native'
+import { AuthManager, handleAuthCallback } from './features/account'
 import { GameScannerManager } from './features/adder'
 import { setupScraper } from './features/scraper'
-import { cleanupPowerShell } from './utils'
+import {
+  checkPortableMode,
+  initI18n,
+  portableStore,
+  setupContextMenu,
+  setupOpenAtLogin,
+  setupProtocols,
+  setupProxy,
+  setupTray,
+  TrayManager
+} from './features/system'
+import { setupAutoUpdater } from './features/updater'
 import { pluginService } from './plugins'
-import { net } from 'electron'
-import { nativeCleanup, setupNativeModule } from './core/native'
+import {
+  checkAdminPermissions,
+  checkIfDirectoryNeedsAdminRights,
+  cleanupPowerShell,
+  parseGameIdFromUrl,
+  restartAppAsAdmin
+} from './utils'
 
 export let mainWindow: BrowserWindow
 
@@ -263,6 +262,7 @@ app.whenReady().then(async () => {
   setupScraper()
 
   baseDBManager.initAllDatabases()
+  await runDatabaseMigrations(app.getVersion())
 
   // Setup proxy config
   await setupProxy()

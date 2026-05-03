@@ -8,7 +8,7 @@ import {
 import { PosterRenderArgs, RenderResponse, TemplatePayloads } from '@appTypes/poster'
 import { BatchUpdateGameMetadataProgress, OverallScanProgress } from '@appTypes/utils'
 import { ProgressInfo, UpdateCheckResult } from 'electron-updater'
-import { BatchGameInfo, configDocs, GameTimerStatus, gameDoc } from './models'
+import { BatchGameInfo, configDocs, configLocalDocs, gameDoc, GameTimerStatus } from './models'
 import {
   PluginConfiguration,
   PluginInfo,
@@ -94,7 +94,10 @@ type MainIpcEvents =
       'system:check-if-portable-directory-needs-admin-rights': () => boolean
       'system:check-if-path-exist': (paths: string[]) => boolean[]
       'system:get-fonts': () => string[]
-      'system:update-screenshot-hotkey': (hotkey: string) => void
+      'system:update-screenshot-hotkey': (
+        hotkeyName: keyof configLocalDocs['hotkeys'],
+        hotkey: string
+      ) => { success: true } | { success: false; reason: 'registrationFailed' | 'unknown' }
       'system:delete-temp-file': (path: string) => void
 
       'app:update-language': (language: string) => void

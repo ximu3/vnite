@@ -58,6 +58,7 @@ interface BaseConfigItemProps<
   title: string
   description?: string
   controlClassName?: string
+  beforeChange?: (value: any) => boolean | Promise<boolean>
   onChange?: (value: any) => void | Promise<void>
 }
 

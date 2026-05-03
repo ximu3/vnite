@@ -226,8 +226,8 @@ export function setupSystemIPC(): void {
     return await writeClipboardImage(data, type)
   })
 
-  ipcManager.handle('system:update-screenshot-hotkey', (_, hotkey: string) => {
-    return updateScreenshotHotkey(hotkey)
+  ipcManager.handle('system:update-screenshot-hotkey', (_, hotkeyName, hotkey) => {
+    return updateScreenshotHotkey(hotkeyName, hotkey)
   })
 
   mainWindow.on('maximize', () => {

@@ -14,105 +14,201 @@ import { ActiveGameInfo, addGameMemory } from '~/features/game'
 import { convertToWebP } from '~/utils'
 
 let isScreenshotting = false
-let hotkey = 'alt+shift+z'
-let activeWin: ActiveWinResult | undefined
+let rectangleActiveWin: ActiveWinResult | undefined
 let screenshots: Screenshots | undefined
+
+type ScreenshotMode = 'rectangle' | 'activewindow' | 'fullscreen'
+type ScreenshotHotkeyName = 'captureRectangle' | 'captureActiveWindow' | 'captureFullscreen'
+type ScreenshotHotkeyUpdateResult =
+  | { success: true }
+  | { success: false; reason: 'registrationFailed' | 'unknown' }
+
+const screenshotHotkeyConfigPaths = {
+  captureRectangle: 'hotkeys.captureRectangle',
+  captureActiveWindow: 'hotkeys.captureActiveWindow',
+  captureFullscreen: 'hotkeys.captureFullscreen'
+} as const
+
+const screenshotHotkeyModes: Record<ScreenshotHotkeyName, ScreenshotMode> = {
+  captureRectangle: 'rectangle',
+  captureActiveWindow: 'activewindow',
+  captureFullscreen: 'fullscreen'
+}
+
+const registeredHotkeys: Partial<Record<ScreenshotHotkeyName, string>> = {}
 
 export async function setupScreenshotService(): Promise<void> {
   try {
-    hotkey = await ConfigDBManager.getConfigLocalValue('hotkeys.capture')
     screenshots = new Screenshots()
-    globalShortcut.register(hotkey, hotkeyCallback)
+    await registerScreenshotHotkeys()
 
     // Click cancel button callback event
     screenshots.on('cancel', () => {
-      isScreenshotting = false
-      globalShortcut.unregister('esc')
+      resetScreenshotState()
     })
     // Click confirm button callback event
     screenshots.on('ok', (_e, buffer) => {
-      captureToPersistenceLayer(activeWin, buffer)
-      isScreenshotting = false
-      globalShortcut.unregister('esc')
+      completeRectangleCapture(buffer)
     })
     // Click save button callback event
     screenshots.on('save', (_e, buffer) => {
-      captureToPersistenceLayer(activeWin, buffer)
-      isScreenshotting = false
-      globalShortcut.unregister('esc')
+      completeRectangleCapture(buffer)
     })
-    log.info('[System] Screenshot service initialized with hotkey:', hotkey)
+    log.info('[System] Screenshot service initialized with hotkeys:', registeredHotkeys)
   } catch (error) {
     log.error('[System] Error setting up screenshot service:', error)
     return
   }
 }
 
-export function updateScreenshotHotkey(newHotkey: string): void {
+export async function updateScreenshotHotkey(
+  hotkeyName: ScreenshotHotkeyName,
+  newHotkey: string
+): Promise<ScreenshotHotkeyUpdateResult> {
   try {
-    if (hotkey === newHotkey) {
-      return
+    const oldHotkey = registeredHotkeys[hotkeyName]
+    const normalizedHotkey = newHotkey.trim()
+
+    if (oldHotkey === normalizedHotkey) {
+      return { success: true }
     }
-    // Unregister the old hotkey
-    globalShortcut.unregister(hotkey)
-    // Register the new hotkey
-    hotkey = newHotkey
-    globalShortcut.register(hotkey, hotkeyCallback)
+
+    if (!normalizedHotkey) {
+      if (oldHotkey) {
+        globalShortcut.unregister(oldHotkey)
+        delete registeredHotkeys[hotkeyName]
+      }
+      return { success: true }
+    }
+
+    const isRegistered = globalShortcut.register(normalizedHotkey, () => {
+      captureByMode(screenshotHotkeyModes[hotkeyName]).catch((error) => {
+        log.error(`[System] Error capturing screenshot with hotkey ${hotkeyName}:`, error)
+      })
+    })
+    if (!isRegistered) {
+      return { success: false, reason: 'registrationFailed' }
+    }
+
+    if (oldHotkey) {
+      globalShortcut.unregister(oldHotkey)
+      delete registeredHotkeys[hotkeyName]
+    }
+
+    registeredHotkeys[hotkeyName] = normalizedHotkey
+    return { success: true }
   } catch (error) {
     log.error('[System] Error updating screenshot hotkey:', error)
-    return
+    return { success: false, reason: 'unknown' }
   }
 }
 
-async function hotkeyCallback(): Promise<void> {
-  // Get the active window to determine the game memory context
-  activeWin = await activeWindow()
-  switch (await ConfigDBManager.getConfigValue('memory.snippingMode')) {
-    case 'rectangle': {
-      if (isScreenshotting) {
-        log.warn('[System] Screenshot service is already running')
-        return
-      }
-      isScreenshotting = true
-      screenshots?.startCapture()
-
-      globalShortcut.register('esc', () => {
-        if (screenshots?.$win?.isFocused()) {
-          screenshots.endCapture()
-          isScreenshotting = false
-          globalShortcut.unregister('esc')
-        }
-      })
-      return
-    }
-    case 'activewindow': {
-      const buffer = await captureActiveWindow()
-      if (!buffer) {
-        log.warn('[System] No active window for snipping')
-        return
-      }
-      captureToPersistenceLayer(activeWin, buffer)
-      return
-    }
-    case 'fullscreen': {
-      const buffer = await captureFullScreen()
-      if (!buffer) {
-        log.warn('[System] No screen for snipping')
-        return
-      }
-      captureToPersistenceLayer(activeWin, buffer)
-      return
-    }
-    default:
-      return
+async function registerScreenshotHotkeys(): Promise<void> {
+  for (const hotkeyName of Object.keys(screenshotHotkeyConfigPaths) as ScreenshotHotkeyName[]) {
+    const hotkey = await ConfigDBManager.getConfigLocalValue(
+      screenshotHotkeyConfigPaths[hotkeyName]
+    )
+    registerScreenshotHotkey(hotkeyName, hotkey)
   }
+}
+
+function registerScreenshotHotkey(hotkeyName: ScreenshotHotkeyName, hotkey: string): void {
+  const normalizedHotkey = hotkey.trim()
+  if (!normalizedHotkey) {
+    return
+  }
+
+  const isRegistered = globalShortcut.register(normalizedHotkey, () => {
+    captureByMode(screenshotHotkeyModes[hotkeyName]).catch((error) => {
+      log.error(`[System] Error capturing screenshot with hotkey ${hotkeyName}:`, error)
+    })
+  })
+
+  if (isRegistered) {
+    registeredHotkeys[hotkeyName] = normalizedHotkey
+  } else {
+    log.warn(`[System] Failed to register screenshot hotkey ${hotkeyName}: ${normalizedHotkey}`)
+  }
+}
+
+async function captureByMode(mode: ScreenshotMode): Promise<void> {
+  if (isScreenshotting) {
+    log.warn('[System] Screenshot service is already running')
+    return
+  }
+
+  isScreenshotting = true
+  let shouldReset = true
+
+  try {
+    // Get the active window to determine the game memory context
+    const activeWin = await activeWindow()
+
+    switch (mode) {
+      case 'rectangle': {
+        if (!screenshots) {
+          log.warn('[System] Screenshot service is not initialized')
+          return
+        }
+        rectangleActiveWin = activeWin
+        screenshots.startCapture()
+        shouldReset = false
+
+        globalShortcut.register('esc', () => {
+          if (screenshots?.$win?.isFocused()) {
+            screenshots.endCapture()
+            resetScreenshotState()
+          }
+        })
+        return
+      }
+      case 'activewindow': {
+        const buffer = await captureActiveWindow()
+        if (!buffer) {
+          log.warn('[System] No active window for snipping')
+          return
+        }
+        await captureToPersistenceLayer(activeWin, buffer)
+        return
+      }
+      case 'fullscreen': {
+        const buffer = await captureFullScreen()
+        if (!buffer) {
+          log.warn('[System] No screen for snipping')
+          return
+        }
+        await captureToPersistenceLayer(activeWin, buffer)
+        return
+      }
+      default:
+        return
+    }
+  } finally {
+    if (shouldReset) {
+      resetScreenshotState()
+    }
+  }
+}
+
+function completeRectangleCapture(buffer: Buffer): void {
+  const activeWin = rectangleActiveWin
+  captureToPersistenceLayer(activeWin, buffer).catch((error) => {
+    log.error('[System] Error saving rectangle screenshot:', error)
+  })
+  resetScreenshotState()
+}
+
+function resetScreenshotState(): void {
+  isScreenshotting = false
+  rectangleActiveWin = undefined
+  globalShortcut.unregister('esc')
 }
 
 async function captureToPersistenceLayer(
   activeWin: ActiveWinResult | undefined,
   buffer: Buffer
 ): Promise<void> {
-  const storageBackend = await ConfigDBManager.getConfigValue('memory.image.storageBackend')
+  const storageBackend = await ConfigDBManager.getConfigLocalValue('memory.image.storageBackend')
   const shouldCaptureToClipboard = await ConfigDBManager.getConfigValue(
     'memory.image.saveToClipboard'
   )
@@ -247,7 +343,7 @@ async function captureToFileSystem(
     // if no game is activated, give it a general name
     sanitizedName = '[Unknown]'
   } else {
-    const rootDir = await ConfigDBManager.getConfigValue('memory.image.saveDir')
+    const rootDir = await ConfigDBManager.getConfigLocalValue('memory.image.saveDir')
     if (rootDir === '') {
       log.warn('[System] Capturing root directory is empty')
       return
@@ -269,13 +365,13 @@ async function captureToFileSystem(
     sanitizedName = sanitizeFilenameComponent(game.metadata.name)
   }
   const saveDir = path.join(
-    await ConfigDBManager.getConfigValue('memory.image.saveDir'),
+    await ConfigDBManager.getConfigLocalValue('memory.image.saveDir'),
     sanitizedName
   )
   if (!existsSync(saveDir)) {
     await mkdir(saveDir)
   }
-  const fileName = (await ConfigDBManager.getConfigValue('memory.image.namingRule'))
+  const fileName = (await ConfigDBManager.getConfigLocalValue('memory.image.namingRule'))
     .replace('%name%', sanitizedName)
     .replace('%datetime%', getPathValidLocalTime())
     .replace('%timestamp%', Date.now().toString())
