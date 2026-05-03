@@ -34,6 +34,8 @@ export interface configDocs {
     hideWindowAfterGameStart: boolean
     enableForegroundTimer: boolean
     foregroundWaitTime: number
+    ignoreShortInterruptions: number
+    ignoreShortSessions: number
   }
   game: {
     scraper: {
@@ -117,6 +119,12 @@ export interface configDocs {
       showCover: boolean
       showLogo: boolean
       contentTopPadding: number
+    }
+    memory: {
+      masonryColumnWidth: number
+      gridItemsPerPage: number
+      masonryItemsPerPage: number
+      listItemsPerPage: number
     }
     glass: {
       dark: {
@@ -279,6 +287,9 @@ export interface configLocalDocs {
         path: string
         hotkey: string
       }
+      upscaler: {
+        path: string
+      }
     }
     scanner: {
       interval: number
@@ -294,6 +305,7 @@ export interface configLocalDocs {
           deepth?: number
           targetCollection: string
           normalizeFolderName?: boolean
+          upscaleScale?: number
         }
       }
     }
@@ -319,7 +331,9 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     language: '',
     hideWindowAfterGameStart: true,
     enableForegroundTimer: true,
-    foregroundWaitTime: 10
+    foregroundWaitTime: 10,
+    ignoreShortInterruptions: 0,
+    ignoreShortSessions: 0
   },
   game: {
     scraper: {
@@ -387,6 +401,12 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       showCover: true,
       showLogo: true,
       contentTopPadding: 40 // in vh
+    },
+    memory: {
+      masonryColumnWidth: 220,
+      gridItemsPerPage: 12,
+      masonryItemsPerPage: 20,
+      listItemsPerPage: 20
     },
     glass: {
       dark: {
@@ -514,6 +534,9 @@ export const DEFAULT_CONFIG_LOCAL_VALUES: Readonly<configLocalDocs> = {
       magpie: {
         path: '',
         hotkey: 'win+shift+a'
+      },
+      upscaler: {
+        path: ''
       }
     },
     scanner: {
@@ -529,6 +552,7 @@ export const DEFAULT_CONFIG_LOCAL_VALUES: Readonly<configLocalDocs> = {
           deepth?: number
           targetCollection: string
           normalizeFolderName?: boolean
+          upscaleScale?: number
         }
       }
     }

@@ -173,6 +173,10 @@
   "score": {
     "title": "Game Rating Report",
     "description": "Below is your game library categorized by ratings. Scroll through each category and hover over games for more details.",
+    "views": {
+      "compact": "Compact",
+      "detailed": "Detailed"
+    },
     "categories": {
       "excellent": {
         "title": "Outstanding (9-10)",

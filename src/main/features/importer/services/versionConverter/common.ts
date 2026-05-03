@@ -284,6 +284,7 @@ async function convertGame(gameId: string, gamePath: string): Promise<void> {
         playStatus: record.playStatus || 'unplayed',
         hideFromRecentGames: false,
         timers: record.timer || [],
+        dailyPlayTimes: [],
         storageSize: STORAGE_SIZE_NOT_CALCULATED
       },
       save: {
@@ -548,7 +549,9 @@ async function convertConfig(basePath: string): Promise<void> {
       language: '',
       hideWindowAfterGameStart: true,
       enableForegroundTimer: true,
-      foregroundWaitTime: 10
+      foregroundWaitTime: 10,
+      ignoreShortInterruptions: 0,
+      ignoreShortSessions: 0
     })
 
     const selectedGroupMap: Record<
@@ -624,6 +627,9 @@ async function convertConfig(basePath: string): Promise<void> {
       magpie: {
         path: v2Config.advanced.linkage.magpie.path,
         hotkey: v2Config.advanced.linkage.magpie.hotkey
+      },
+      upscaler: {
+        path: ''
       }
     })
 

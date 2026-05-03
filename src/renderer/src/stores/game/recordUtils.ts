@@ -1,4 +1,4 @@
-import type { gameDoc } from '@appTypes/models'
+import type { DailyPlayTime, Timer } from '@appTypes/models'
 import { getGameStore, useGameRegistry } from '~/stores/game'
 import {
   formatLocalDateKey,
@@ -30,6 +30,94 @@ export { formatLocalDateKey, parseLocalDate }
 // Maximum allowed play time per day (24 hours in milliseconds)
 const MAX_DAILY_PLAYTIME = 24 * 60 * 60 * 1000
 
+export interface CalculateDailyPlayTimeOptions {
+  dateKey: string
+  timers: Timer[]
+  dayBoundaryHour?: number
+  dailyPlayTimes?: DailyPlayTime[]
+}
+
+/**
+ * Normalize date-only untracked play time records into a canonical list.
+ *
+ * The database should already contain records in this canonical form. Write
+ * paths must call this before persisting `record.dailyPlayTimes`; read-side
+ * callers use it defensively.
+ *
+ * Date-only play time is user-entered or imported play time that is known only
+ * at the day level. It must not be converted into fake timer intervals because
+ * that would pollute hour-of-day distribution and timeline charts.
+ *
+ * Normalization rules:
+ * - Invalid date keys are dropped. Date keys must be strict local `YYYY-MM-DD`.
+ * - Non-finite, zero, or negative play time values are dropped.
+ * - Multiple records for the same date are merged by summing `playTime`.
+ * - The returned list is sorted by date ascending for stable storage and diffs.
+ *
+ * @param dailyPlayTimes Raw date-only play time records.
+ * @returns Canonical daily play time records.
+ */
+export function normalizeDailyPlayTimes(
+  dailyPlayTimes: DailyPlayTime[] | undefined
+): DailyPlayTime[] {
+  if (!Array.isArray(dailyPlayTimes)) return []
+
+  const byDate = new Map<string, number>()
+
+  for (const item of dailyPlayTimes || []) {
+    const date = typeof item?.date === 'string' ? item.date : ''
+    if (isNaN(parseLocalDate(date).getTime())) continue
+
+    const playTime = Number(item.playTime)
+    if (!Number.isFinite(playTime) || playTime <= 0) continue
+
+    byDate.set(date, (byDate.get(date) || 0) + playTime)
+  }
+
+  return Array.from(byDate.entries())
+    .map(([date, playTime]) => ({ date, playTime }))
+    .sort((a, b) => a.date.localeCompare(b.date))
+}
+
+/**
+ * Calculate total date-only untracked play time.
+ *
+ * Persisted records are expected to be canonical already; normalization here is
+ * defensive so calculations remain stable for legacy, synced, or otherwise
+ * malformed data.
+ *
+ * @param dailyPlayTimes Raw date-only play time records.
+ * @returns Total valid date-only play time in milliseconds.
+ */
+export function calculateTotalDailyPlayTime(dailyPlayTimes: DailyPlayTime[] | undefined): number {
+  return normalizeDailyPlayTimes(dailyPlayTimes).reduce((total, item) => total + item.playTime, 0)
+}
+
+/**
+ * Return canonical date-only untracked play time records inside an optional date range.
+ *
+ * Persisted records are expected to be canonical already, normalization here is defensive.
+ *
+ * The optional range filter is inclusive and compares normalized `YYYY-MM-DD`
+ * strings lexicographically, which is safe for this date format.
+ *
+ * @param dailyPlayTimes Raw date-only play time records.
+ * @param startDate Optional inclusive lower date key (`YYYY-MM-DD`).
+ * @param endDate Optional inclusive upper date key (`YYYY-MM-DD`).
+ * @returns Canonical date-only records in ascending date order.
+ */
+export function getDailyPlayTimesInRange(
+  dailyPlayTimes: DailyPlayTime[] | undefined,
+  startDate?: string,
+  endDate?: string
+): DailyPlayTime[] {
+  return normalizeDailyPlayTimes(dailyPlayTimes).filter((item) => {
+    if (startDate && item.date < startDate) return false
+    if (endDate && item.date > endDate) return false
+    return true
+  })
+}
+
 /**
  * Caps daily play time to 24 hours maximum
  *
@@ -58,13 +146,22 @@ export function capDailyPlayTime(playTime: number, date?: Date | string): number
 }
 
 /**
- * Calculate the game time (in milliseconds) for a specific date
+ * Calculate the game time for one business-date key.
+ *
+ * The options object keeps timer data, boundary configuration, and date-only
+ * records named at call sites. That is intentional because `dayBoundaryHour` and
+ * `dailyPlayTimes` are both optional context, and positional arguments make
+ * those values easy to swap as this calculation grows.
+ *
+ * @param options Date key, precise timers, optional day-boundary hour, and optional date-only records.
+ * @returns Total play time for the requested business date in milliseconds.
  */
-export function calculateDailyPlayTime(
-  dateKey: string,
-  timers: gameDoc['record']['timers'],
-  dayBoundaryHour = getConfiguredDayBoundaryHour()
-): number {
+export function calculateDailyPlayTime({
+  dateKey,
+  timers,
+  dayBoundaryHour = getConfiguredDayBoundaryHour(),
+  dailyPlayTimes
+}: CalculateDailyPlayTimeOptions): number {
   try {
     const targetDate = getBusinessDayStartFromKey(dateKey, dayBoundaryHour)
     const nextDay = new Date(targetDate)
@@ -93,7 +190,12 @@ export function calculateDailyPlayTime(
       totalPlayTime += overlapEnd.getTime() - overlapStart.getTime()
     }
 
-    return totalPlayTime
+    const dailyPlayTime = getDailyPlayTimesInRange(dailyPlayTimes, dateKey, dateKey).reduce(
+      (total, item) => total + item.playTime,
+      0
+    )
+
+    return totalPlayTime + dailyPlayTime
   } catch (error) {
     console.error('Error in calculateDailyPlayTime:', error)
     return 0
@@ -151,9 +253,15 @@ export function getWeeklyPlayData(date = new Date()): {
       for (const gameId of gameIds) {
         const store = getGameStore(gameId)
         const timers = store.getState().getValue('record.timers') || []
+        const dailyPlayTimes = store.getState().getValue('record.dailyPlayTimes') || []
 
         // Calculate the playtime of the game on this day
-        const playTime = calculateDailyPlayTime(dateStr, timers, dayBoundaryHour)
+        const playTime = calculateDailyPlayTime({
+          dateKey: dateStr,
+          timers,
+          dayBoundaryHour,
+          dailyPlayTimes
+        })
         dayTotal += playTime
 
         // Accumulate the total play time for each game
@@ -295,9 +403,15 @@ export function getMonthlyPlayData(date = new Date()): {
       for (const gameId of gameIds) {
         const store = getGameStore(gameId)
         const timers = store.getState().getValue('record.timers') || []
+        const dailyPlayTimes = store.getState().getValue('record.dailyPlayTimes') || []
 
         // Calculate the playtime of the game on this day
-        const playTime = calculateDailyPlayTime(dateStr, timers, dayBoundaryHour)
+        const playTime = calculateDailyPlayTime({
+          dateKey: dateStr,
+          timers,
+          dayBoundaryHour,
+          dailyPlayTimes
+        })
         dayTotal += playTime
 
         // Accumulate the total play time for each game
@@ -396,6 +510,7 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
     for (const gameId of gameIds) {
       const store = getGameStore(gameId)
       const timers = store.getState().getValue('record.timers') || []
+      const dailyPlayTimes = store.getState().getValue('record.dailyPlayTimes') || []
       const gameGenres = store.getState().getValue('metadata.genres') || []
 
       // gameTypeTime initialization
@@ -437,6 +552,20 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
           monthlyPlayTime[month] += playTime
           totalTime += playTime
         }
+      }
+
+      for (const item of normalizeDailyPlayTimes(dailyPlayTimes)) {
+        if (item.date < `${year}-01-01` || item.date >= `${year + 1}-01-01`) continue
+
+        const month = parseLocalDate(item.date).getMonth()
+
+        gamePlayTime[gameId] = (gamePlayTime[gameId] || 0) + item.playTime
+        gameTypeTime[gameType].detail[gameTypeTime[gameType].detail.length - 1].playTime +=
+          item.playTime
+        gameTypeTime[gameType].summary += item.playTime
+        monthlyPlayDays[month].add(item.date)
+        monthlyPlayTime[month] += item.playTime
+        totalTime += item.playTime
       }
 
       if (gameTypeTime[gameType].detail[gameTypeTime[gameType].detail.length - 1].playTime === 0) {

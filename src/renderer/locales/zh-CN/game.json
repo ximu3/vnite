@@ -324,6 +324,7 @@
       }
     },
     "memory": {
+      "empty": "暂无可展示的回忆",
       "actions": {
         "add": "添加",
         "addCover": "添加封面",
@@ -333,6 +334,25 @@
         "editText": "修改文字",
         "delete": "删除",
         "openScreenshotDir": "打开截图目录"
+      },
+      "views": {
+        "grid": "卡片",
+        "masonry": "照片墙",
+        "list": "列表"
+      },
+      "pagination": {
+        "first": "首页",
+        "previous": "上一页",
+        "next": "下一页",
+        "last": "末页",
+        "pageStatus": "{{current}} / {{total}}"
+      },
+      "list": {
+        "untitled": "未命名笔记",
+        "table": {
+          "note": "笔记",
+          "date": "时间"
+        }
       },
       "setAs": {
         "title": "设置为",
@@ -363,8 +383,29 @@
         "setBackgroundError": "设置为游戏背景失败: {{error}}",
         "screenshotPathNotSet": "未设置截图路径"
       },
-      "dialog": {
-        "markdownHint": "支持 Markdown 语法"
+      "editor": {
+        "edit": "编辑",
+        "preview": "预览",
+        "placeholder": "使用 Markdown 记录内容...",
+        "emptyPreview": "暂无可预览内容",
+        "toolbar": {
+          "heading1": "一级标题",
+          "heading2": "二级标题",
+          "heading3": "三级标题",
+          "heading4": "四级标题",
+          "bold": "加粗",
+          "italic": "斜体",
+          "strikethrough": "删除线",
+          "underline": "下划线",
+          "quote": "引用",
+          "bulletedList": "无序列表",
+          "numberedList": "有序列表",
+          "taskList": "任务列表",
+          "inlineCode": "行内代码",
+          "codeBlock": "代码块",
+          "link": "链接",
+          "horizontalRule": "分割线"
+        }
       }
     },
     "config": {
@@ -403,11 +444,16 @@
       "title": "游戏计时器",
       "addTimer": "添加计时器",
       "timersList": "计时器列表",
+      "dailyPlayTimes": "按日期记录",
+      "addDailyPlayTime": "添加日期记录",
       "fuzzyTime": "计时器未记录游玩时间",
       "noTimers": "没有计时器记录",
+      "noDailyPlayTimes": "没有按日期记录",
       "totalPlayTime": "总游戏时长",
       "startTime": "开始",
       "endTime": "结束",
+      "date": "日期",
+      "playTime": "游玩时间",
       "ongoing": "进行中",
       "duration": "时长",
       "minutes": "分钟",
@@ -431,6 +477,12 @@
       "editTimer": "编辑游戏计时",
       "startDateTime": "开始时间",
       "endDateTime": "结束时间"
+    },
+    "dailyPlayTimeEditor": {
+      "addDailyPlayTime": "添加日期记录",
+      "editDailyPlayTime": "编辑日期记录",
+      "dateRequired": "请选择有效日期",
+      "playTimeRequired": "游玩时间必须大于 0"
     },
     "deleteAlert": {
       "title": "确定要删除游戏 {{gameName}} 吗？",

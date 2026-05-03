@@ -14,6 +14,7 @@ import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
 import { useGameListStore, usePlayStatusOrderStore } from '../store'
 import { AllGameComponent } from './AllGame'
+import { GroupSortSummary } from './GroupSortSummary'
 import { PlaceHolder } from './PlaceHolder'
 import { RecentGames } from './RecentGames'
 
@@ -66,6 +67,7 @@ export function PlayStatusGamesComponent({
                   <div className={cn('flex flex-row items-center justify-start gap-1')}>
                     <div className={cn('text-xs')}>{t(`utils:game.playStatus.${field}`)}</div>
                     <div className={cn('text-2xs text-foreground/50')}>({gameIds.length})</div>
+                    <GroupSortSummary gameIds={gameIds} by={by} />
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>

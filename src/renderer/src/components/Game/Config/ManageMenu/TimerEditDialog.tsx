@@ -1,3 +1,4 @@
+import type { Timer } from '@appTypes/models'
 import { Button } from '@ui/button'
 import { DateTimeInput } from '@ui/date-input'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@ui/dialog'
@@ -8,8 +9,8 @@ import { useTranslation } from 'react-i18next'
 interface TimerEditDialogProps {
   isOpen: boolean
   onClose: () => void
-  onSave: (timer: { start: string; end: string }) => void
-  timer?: { start: string; end: string }
+  onSave: (timer: Timer) => void
+  timer?: Timer
   isNew?: boolean
 }
 

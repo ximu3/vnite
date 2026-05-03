@@ -1,13 +1,17 @@
 import {
   LocalGameFilterMode,
   NSFWFilterMode,
+  STORAGE_SIZE_NOT_CALCULATED,
   type MaxPlayTimeDay,
-  type gameDoc,
-  STORAGE_SIZE_NOT_CALCULATED
+  type gameDoc
 } from '@appTypes/models'
 import { jaroWinkler } from '@appUtils'
 import type { Get, Paths } from 'type-fest'
-import { capDailyPlayTime } from '~/stores/game/recordUtils'
+import {
+  capDailyPlayTime,
+  getDailyPlayTimesInRange,
+  normalizeDailyPlayTimes
+} from '~/stores/game/recordUtils'
 import { useConfigStore } from '../config'
 import {
   getBusinessDateKey,
@@ -730,8 +734,9 @@ export function getGamePlayTimeByDateRange(
 ): { [date: string]: number } {
   try {
     const store = getGameStore(gameId)
-    const timers = store.getState().getValue('record.timers')
-    if (!timers || timers.length === 0) return {}
+    const timers = store.getState().getValue('record.timers') || []
+    const recordedDailyPlayTimes = store.getState().getValue('record.dailyPlayTimes') || []
+    if (timers.length === 0 && recordedDailyPlayTimes.length === 0) return {}
 
     const dayBoundaryHour = getConfiguredDayBoundaryHour()
     const rangeStart = getBusinessDayStartFromKey(startDate, dayBoundaryHour).getTime()
@@ -766,6 +771,14 @@ export function getGamePlayTimeByDateRange(
       }
     }
 
+    for (const { date, playTime } of getDailyPlayTimesInRange(
+      recordedDailyPlayTimes,
+      startDate,
+      endDate
+    )) {
+      dailyPlayTime[date] = (dailyPlayTime[date] || 0) + playTime
+    }
+
     if (abnormalTimerCount > 0) {
       console.warn(
         `[getGamePlayTimeByDateRange] Dropped ${abnormalTimerCount} abnormal timer range(s) for game ${gameId}.`
@@ -786,18 +799,19 @@ export function getGamePlayedDates(gameId: string): Set<string> {
   try {
     const store = getGameStore(gameId)
     const timers = store.getState().getValue('record.timers')
+    const recordedDailyPlayTimes = store.getState().getValue('record.dailyPlayTimes')
     const dayBoundaryHour = getConfiguredDayBoundaryHour()
     let abnormalTimerCount = 0
 
-    if (!timers || timers.length === 0) {
-      return playDays
+    for (const item of normalizeDailyPlayTimes(recordedDailyPlayTimes)) {
+      playDays.add(item.date)
     }
 
-    timers.forEach((timer) => {
+    for (const timer of timers || []) {
       const startMs = new Date(timer.start).getTime()
       const endMs = new Date(timer.end).getTime()
       if (isNaN(startMs) || isNaN(endMs) || endMs <= startMs) {
-        return
+        continue
       }
 
       const daySegments = splitTimeRangeByBusinessDay(startMs, endMs, dayBoundaryHour)
@@ -807,7 +821,7 @@ export function getGamePlayedDates(gameId: string): Set<string> {
       for (const segment of daySegments) {
         playDays.add(segment.key)
       }
-    })
+    }
 
     if (abnormalTimerCount > 0) {
       console.warn(
@@ -830,9 +844,10 @@ export function getGamePlayDays(gameId: string): number {
 export function getGameMaxPlayTimeDay(gameId: string): MaxPlayTimeDay | null {
   try {
     const store = getGameStore(gameId)
-    const timers = store.getState().getValue('record.timers')
+    const timers = store.getState().getValue('record.timers') || []
+    const recordedDailyPlayTimes = store.getState().getValue('record.dailyPlayTimes') || []
     const dayBoundaryHour = getConfiguredDayBoundaryHour()
-    if (!timers || timers.length === 0) return null
+    if (timers.length === 0 && recordedDailyPlayTimes.length === 0) return null
 
     const dailyPlayTime: Record<string, number> = {}
     let abnormalTimerCount = 0
@@ -852,6 +867,10 @@ export function getGameMaxPlayTimeDay(gameId: string): MaxPlayTimeDay | null {
         const playTime = segment.endMs - segment.startMs
         dailyPlayTime[segment.key] = (dailyPlayTime[segment.key] || 0) + playTime
       }
+    }
+
+    for (const { date, playTime } of getDailyPlayTimesInRange(recordedDailyPlayTimes)) {
+      dailyPlayTime[date] = (dailyPlayTime[date] || 0) + playTime
     }
 
     if (abnormalTimerCount > 0) {
@@ -889,7 +908,8 @@ export function getGameRecord(gameId: string): gameDoc['record'] {
         playStatus: 'unplayed',
         hideFromRecentGames: false,
         timers: [],
-        storageSize: STORAGE_SIZE_NOT_CALCULATED
+        storageSize: STORAGE_SIZE_NOT_CALCULATED,
+        dailyPlayTimes: []
       }
     )
   } catch (error) {
@@ -902,6 +922,7 @@ export function getGameRecord(gameId: string): gameDoc['record'] {
       playStatus: 'unplayed',
       hideFromRecentGames: false,
       timers: [],
+      dailyPlayTimes: [],
       storageSize: STORAGE_SIZE_NOT_CALCULATED
     }
   }
@@ -911,26 +932,30 @@ export function getGameRecord(gameId: string): gameDoc['record'] {
 export function getGameStartAndEndDate(gameId: string): { start: string; end: string } {
   try {
     const store = getGameStore(gameId)
-    const timers = store.getState().getValue('record.timers')
+    const timers = store.getState().getValue('record.timers') || []
+    const recordedDailyPlayTimes = store.getState().getValue('record.dailyPlayTimes') || []
     const dayBoundaryHour = getConfiguredDayBoundaryHour()
+    const dateKeys: string[] = []
 
-    if (!timers || timers.length === 0) {
-      return { start: '', end: '' }
+    for (const timer of timers) {
+      const start = Date.parse(timer.start)
+      const end = Date.parse(timer.end)
+      if (!isNaN(start)) dateKeys.push(getBusinessDateKey(start, dayBoundaryHour))
+      if (!isNaN(end)) dateKeys.push(getBusinessDateKeyFromRangeEnd(end, dayBoundaryHour))
     }
 
-    const startTimestamps = timers.map((t) => Date.parse(t.start)).filter((ts) => !isNaN(ts))
-    const endTimestamps = timers.map((t) => Date.parse(t.end)).filter((ts) => !isNaN(ts))
-
-    if (endTimestamps.length === 0 || startTimestamps.length === 0) {
-      return { start: '', end: '' }
+    for (const item of normalizeDailyPlayTimes(recordedDailyPlayTimes)) {
+      dateKeys.push(item.date)
     }
 
-    const start = Math.min(...startTimestamps)
-    const end = Math.max(...endTimestamps)
+    const validDateKeys = dateKeys.filter(Boolean).sort((a, b) => a.localeCompare(b))
+    if (validDateKeys.length === 0) {
+      return { start: '', end: '' }
+    }
 
     return {
-      start: getBusinessDateKey(start, dayBoundaryHour),
-      end: getBusinessDateKeyFromRangeEnd(end, dayBoundaryHour)
+      start: validDateKeys[0],
+      end: validDateKeys[validDateKeys.length - 1]
     }
   } catch (error) {
     console.error(`Error in getGameStartAndEndDate for ${gameId}:`, error)
@@ -982,8 +1007,8 @@ export function getPlayedDaysYearly(): { [date: string]: number } {
 
     for (const gameId of gameIds) {
       const store = getGameStore(gameId)
-      const timers = store.getState().getValue('record.timers')
-      if (!timers) continue
+      const timers = store.getState().getValue('record.timers') || []
+      const recordedDailyPlayTimes = store.getState().getValue('record.dailyPlayTimes') || []
 
       for (const timer of timers) {
         const start = new Date(timer.start).getTime()
@@ -1005,6 +1030,14 @@ export function getPlayedDaysYearly(): { [date: string]: number } {
           const playTime = segment.endMs - segment.startMs
           result[segment.key] = (result[segment.key] || 0) + playTime
         }
+      }
+
+      for (const { date, playTime } of getDailyPlayTimesInRange(
+        recordedDailyPlayTimes,
+        startKey,
+        endKey
+      )) {
+        result[date] = (result[date] || 0) + playTime
       }
     }
 

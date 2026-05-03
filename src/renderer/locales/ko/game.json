@@ -306,9 +306,6 @@
         "imageCopyError": "이미지를 클립보드에 복사하는 데 실패했습니다: {{error}}",
         "markdownCopied": "마크다운이 클립보드에 복사되었습니다",
         "markdownCopyError": "클립보드에 복사하는 데 실패했습니다: {{error}}"
-      },
-      "dialog": {
-        "markdownHint": "마크다운 문법 지원됨"
       }
     },
     "config": {

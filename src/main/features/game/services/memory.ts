@@ -1,9 +1,13 @@
 import { generateUUID } from '@appUtils'
+import type { gameDoc } from '@appTypes/models'
 import { GameDBManager } from '~/core/database'
 import log from 'electron-log/main'
 import { eventBus } from '~/core/events'
 
-export async function addGameMemory(gameId: string, img?: Buffer | string): Promise<void> {
+export async function addGameMemory(
+  gameId: string,
+  img?: Buffer | string
+): Promise<gameDoc['memory']['memoryList'][string]> {
   try {
     const memoryList = await GameDBManager.getGameValue(gameId, 'memory.memoryList')
     const memoryId = generateUUID()
@@ -24,6 +28,8 @@ export async function addGameMemory(gameId: string, img?: Buffer | string): Prom
       },
       { source: 'game-memory' }
     )
+
+    return memory
   } catch (error) {
     log.error('[Game] Error adding memory:', error)
     throw error

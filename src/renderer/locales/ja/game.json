@@ -324,6 +324,7 @@
       }
     },
     "memory": {
+      "empty": "表示できるメモリーはありません",
       "actions": {
         "add": "追加",
         "addCover": "カバーを追加",
@@ -333,6 +334,25 @@
         "editText": "テキストを編集",
         "delete": "削除",
         "openScreenshotDir": "スクリーンショットフォルダを開く"
+      },
+      "views": {
+        "grid": "カード",
+        "masonry": "ギャラリー",
+        "list": "リスト"
+      },
+      "pagination": {
+        "first": "最初のページ",
+        "previous": "前のページ",
+        "next": "次のページ",
+        "last": "最後のページ",
+        "pageStatus": "{{current}} / {{total}}"
+      },
+      "list": {
+        "untitled": "無題のノート",
+        "table": {
+          "note": "ノート",
+          "date": "時間"
+        }
       },
       "setAs": {
         "title": "設定",
@@ -363,8 +383,29 @@
         "setBackgroundError": "ゲーム背景の設定に失敗しました: {{error}}",
         "screenshotPathNotSet": "スクリーンショット保存先が設定されていません"
       },
-      "dialog": {
-        "markdownHint": "Markdown記法をサポートしています"
+      "editor": {
+        "edit": "編集",
+        "preview": "プレビュー",
+        "placeholder": "Markdownで記録を入力...",
+        "emptyPreview": "プレビューする内容がありません",
+        "toolbar": {
+          "heading1": "見出し 1",
+          "heading2": "見出し 2",
+          "heading3": "見出し 3",
+          "heading4": "見出し 4",
+          "bold": "太字",
+          "italic": "斜体",
+          "strikethrough": "取り消し線",
+          "underline": "下線",
+          "quote": "引用",
+          "bulletedList": "箇条書きリスト",
+          "numberedList": "番号付きリスト",
+          "taskList": "タスクリスト",
+          "inlineCode": "インラインコード",
+          "codeBlock": "コードブロック",
+          "link": "リンク",
+          "horizontalRule": "区切り線"
+        }
       }
     },
     "config": {
@@ -403,11 +444,16 @@
       "title": "ゲームタイマー",
       "addTimer": "タイマーを追加",
       "timersList": "タイマーリスト",
+      "dailyPlayTimes": "日付記録",
+      "addDailyPlayTime": "日付記録を追加",
       "fuzzyTime": "タイマー未記録のプレイ時間",
       "noTimers": "タイマー記録がありません",
+      "noDailyPlayTimes": "日付のみの記録がありません",
       "totalPlayTime": "総プレイ時間",
       "startTime": "開始",
       "endTime": "終了",
+      "date": "日付",
+      "playTime": "プレイ時間",
       "ongoing": "進行中",
       "duration": "時間",
       "minutes": "分",
@@ -431,6 +477,12 @@
       "editTimer": "ゲームタイマーを編集",
       "startDateTime": "開始時間",
       "endDateTime": "終了時間"
+    },
+    "dailyPlayTimeEditor": {
+      "addDailyPlayTime": "日付記録を追加",
+      "editDailyPlayTime": "日付記録を編集",
+      "dateRequired": "有効な日付を選択してください",
+      "playTimeRequired": "プレイ時間は 0 より大きくする必要があります"
     },
     "deleteAlert": {
       "title": "{{gameName}}を削除してもよろしいですか？",

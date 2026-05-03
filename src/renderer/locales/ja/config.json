@@ -21,11 +21,19 @@
     "timerTitle": "ゲームタイマー",
     "foregroundTimer": {
       "title": "フォアグラウンドタイマー",
-      "description": "ゲームウィンドウがバックグラウンドに切り替えられる際にタイマーを一時停止するかどうかを選択する。プロセスモニターが「自動」に設定された場合のみ機能する。\nゲーム実行中は変更できません"
+      "description": "ゲームウィンドウがバックグラウンドに切り替えられる際にタイマーを一時停止するかどうかを選択する。\nゲーム実行中は変更できません"
     },
     "foregroundWaitTime": {
       "title": "ウェイトタイム",
       "description": "ゲームがフォアグラウンド/バックグラウンドに切り替えられ一定の時間後（秒）、タイマーを継続/一時停止する\nゲーム実行中は変更できません"
+    },
+    "ignoreShortInterruptions": {
+      "title": "短時間の中断を無視",
+      "description": "プレイ時間の記録を保存する際、記録間の間隔が設定値（秒）未満の場合、自動的に1つの記録に統合する。設定値が0の場合、この機能は無効になります。"
+    },
+    "ignoreShortSessions": {
+      "title": "短時間の記録を無視",
+      "description": "プレイ時間の記録を保存する際、設定値（秒）未満の記録を無視。「短時間の中断を無視」の後に適用。設定値が0の場合、この機能は無効になります。"
     },
     "statisticsTitle": "統計",
     "dayBoundaryHour": {
@@ -148,6 +156,11 @@
       "showLogo": "ロゴを表示",
       "showLogoDescription": "ゲーム詳細ページにロゴを表示"
     },
+    "memory": {
+      "title": "メモリー",
+      "masonryColumnWidth": "ギャラリー列幅",
+      "masonryColumnWidthDescription": "メモリー領域の利用可能な幅とこのピクセル値に基づいて、ギャラリーの列数を自動計算します"
+    },
     "sidebar": {
       "title": "サイドバー",
       "showThemeSwitcher": "テーマ切り替えボタンを表示",
@@ -208,6 +221,11 @@
       "preset": "プリセット設定",
       "search": "設定を検索",
       "noPresetFound": "設定が見つかりません"
+    },
+    "upscaler": {
+      "name": "waifu2x-ncnn-vulkan / realcugan-ncnn-vulkan / realesrgan-ncnn-vulkan",
+      "description": "ゲーム背景画像の超解像アップスケールに使用するツールです",
+      "placeholder": "アップスケーラーのパスを入力してください"
     }
   },
   "theme": {

@@ -173,6 +173,10 @@
   "score": {
     "title": "遊戲評分報告",
     "description": "以下是您的遊戲庫按評分分類的結果。您可以滑動瀏覽每個類別中的遊戲，並將滑鼠懸停在遊戲上查看詳細資訊。",
+    "views": {
+      "compact": "緊湊",
+      "detailed": "詳細"
+    },
     "categories": {
       "excellent": {
         "title": "極佳體驗 (9-10分)",
