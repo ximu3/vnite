@@ -79,7 +79,6 @@ export function CollectionComponent({
                   <AccordionTrigger className={cn('text-xs p-1 pl-2')}>
                     <div className={cn('flex flex-row items-center justify-start gap-1')}>
                       <div className={cn('text-xs')}>{value.name}</div>
-                      <div className={cn('text-2xs text-foreground/50')}>({gameIds.length})</div>
                       <GroupSortSummary gameIds={gameIds} by={by} />
                     </div>
                   </AccordionTrigger>
@@ -106,9 +105,6 @@ export function CollectionComponent({
               <AccordionTrigger className={cn('text-xs p-1 pl-2')}>
                 <div className={cn('flex flex-row items-center justify-start gap-1')}>
                   <div className={cn('text-xs')}>{t('list.empty.collection')}</div>
-                  <div className={cn('text-2xs text-foreground/50')}>
-                    ({uncollectedGameIds.length})
-                  </div>
                   <GroupSortSummary gameIds={uncollectedGameIds} by={by} />
                 </div>
               </AccordionTrigger>

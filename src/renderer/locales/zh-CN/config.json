@@ -116,6 +116,18 @@
       "highlightLocalGamesDescription": "在游戏列表中高亮显示本地游戏",
       "warnInvalidGamePaths": "提示无效游戏路径",
       "warnInvalidGamePathsDescription": "对因系统文件变动导致游戏路径无效的游戏进行提示（需要在“显示样式”中开启“本地标记”）",
+      "groupSortSummary": {
+        "title": "分组排序信息",
+        "description": "设置游戏列表分组标题中默认显示的汇总信息",
+        "followSort": "分组排序信息显示跟随游戏列表排序依据",
+        "followSortDescription": "启用后，当游戏列表按游戏时间、游戏评分或游戏大小排序时，优先显示对应的分组汇总信息",
+        "options": {
+          "none": "不显示",
+          "storageSize": "游戏大小",
+          "playTime": "游戏时间",
+          "score": "游戏评分"
+        }
+      },
       "gameNavStyle": {
         "title": "显示样式",
         "description": "配置游戏列表的显示样式，拖拽进行排序，单击切换对应元素的显示状态\n\n关于游玩状态与本地标记的说明：\n实线：即使不需要显示图标，也保留空白占位，以保持视觉对齐。\n虚线：不保留空白占位。",

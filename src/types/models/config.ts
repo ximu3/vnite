@@ -78,6 +78,10 @@ export interface configDocs {
           | 'record.storageSize'
         order: 'asc' | 'desc'
       }
+      groupSortSummary: {
+        by: 'none' | 'record.playTime' | 'record.score' | 'record.storageSize'
+        followSort: boolean
+      }
       overrideCollectionSort: boolean
       selectedGroup:
         | 'none'
@@ -365,6 +369,10 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       sort: {
         by: 'metadata.name',
         order: 'desc' as const
+      },
+      groupSortSummary: {
+        by: 'none',
+        followSort: true
       },
       overrideCollectionSort: false,
       selectedGroup: 'collection',
