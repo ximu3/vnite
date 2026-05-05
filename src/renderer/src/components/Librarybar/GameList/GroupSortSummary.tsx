@@ -22,7 +22,6 @@ type GroupSortSummaryData =
       type: 'storageSize'
       totalStorageSize: number
       calculatedCount: number
-      totalCount: number
     }
   | null
 
@@ -43,11 +42,7 @@ function summariesEqual(a: GroupSortSummaryData, b: GroupSortSummaryData): boole
   }
 
   if (a.type === 'storageSize' && b.type === 'storageSize') {
-    return (
-      a.totalStorageSize === b.totalStorageSize &&
-      a.calculatedCount === b.calculatedCount &&
-      a.totalCount === b.totalCount
-    )
+    return a.totalStorageSize === b.totalStorageSize && a.calculatedCount === b.calculatedCount
   }
 
   return false
@@ -106,8 +101,7 @@ function computeGroupSortSummary(
         ? {
             type: 'storageSize',
             totalStorageSize,
-            calculatedCount,
-            totalCount: gameIds.length
+            calculatedCount
           }
         : null
     }
@@ -217,32 +211,29 @@ export function GroupSortSummary({
   const effectiveBy = resolveSummarySortBy(by, configuredBy, followSort)
 
   const summary = useGroupSortSummary(gameIds, effectiveBy)
+  const totalCount = gameIds.length
+  let content = `(${totalCount})`
 
-  if (!summary) {
-    return null
-  }
-
-  let content: string | null = null
-  switch (summary.type) {
-    case 'playTime':
-      content = `(${formatDurationCompact(summary.totalPlayTime)})`
-      break
-    case 'score':
-      if (summary.averageScore < 0) {
-        return null
-      }
-      content = `(avg: ${summary.averageScore.toFixed(1)})`
-      break
-    case 'storageSize':
-      if (summary.totalStorageSize <= 0) {
-        return null
-      }
-      content = `(${formatStorageSize(summary.totalStorageSize)}${
-        summary.calculatedCount < summary.totalCount
-          ? `, ${summary.calculatedCount}/${summary.totalCount}`
-          : ''
-      })`
-      break
+  if (summary) {
+    switch (summary.type) {
+      case 'playTime':
+        content = `(${formatDurationCompact(summary.totalPlayTime)}, ${totalCount})`
+        break
+      case 'score':
+        if (summary.averageScore >= 0) {
+          content = `(avg: ${summary.averageScore.toFixed(1)}, ${totalCount})`
+        }
+        break
+      case 'storageSize':
+        if (summary.totalStorageSize > 0) {
+          content = `(${formatStorageSize(summary.totalStorageSize)}, ${
+            summary.calculatedCount < totalCount
+              ? `${summary.calculatedCount}/${totalCount}`
+              : totalCount
+          })`
+        }
+        break
+    }
   }
 
   return <span className={cn('text-2xs text-foreground/50', className)}>{content}</span>

@@ -74,7 +74,6 @@ function OthersComponent({
                       <div className={cn('text-xs')}>
                         {field !== '__empty__' ? field : emptyAccordionName[fieldName]}
                       </div>
-                      <div className={cn('text-2xs text-foreground/50')}>({gameIds.length})</div>
                       <GroupSortSummary gameIds={gameIds} by={by} />
                     </div>
                   </AccordionTrigger>
