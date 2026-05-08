@@ -1,5 +1,6 @@
 export * from './memory'
 export * from './utils'
+export * from './image'
 export * from './save'
 export * from './active'
 export * from './size'

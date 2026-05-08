@@ -561,7 +561,11 @@
           "searchImage": "搜索图片",
           "viewLargeImage": "查看大图",
           "cropImage": "裁剪图片",
+          "upscaleImage": "超分背景图",
           "deleteImage": "删除图片"
+        },
+        "upscale": {
+          "title": "选择放大倍率"
         },
         "search": {
           "title": "搜索图片",
@@ -596,6 +600,9 @@
           "cropSuccess": "裁剪成功",
           "cropError": "裁剪失败",
           "cropIncomplete": "裁剪未完成",
+          "upscaling": "正在以 {{scale}}x 超分背景图…",
+          "upscaleSuccess": "背景图已按 {{scale}}x 超分",
+          "upscaleError": "背景图超分失败: {{message}}",
           "deleting": "正在删除…",
           "deleteSuccess": "删除成功",
           "deleteError": "删除失败"

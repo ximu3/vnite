@@ -180,6 +180,7 @@ type MainIpcEvents =
         type: 'cover' | 'background' | 'icon' | 'logo'
       ) => string | null
       'game:remove-media': (gameId: string, type: 'cover' | 'background' | 'icon' | 'logo') => void
+      'game:upscale-background': (gameId: string, upscaleScale?: number) => void
       'game:get-memory-cover-path': (gameId: string, memoryId: string) => string | null
       'game:get-memory-masonry-items': (
         gameId: string,

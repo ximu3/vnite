@@ -21,7 +21,7 @@ import { scraperManager } from '~/features/scraper'
 import { cacheDescriptionImages } from '~/features/scraper/services/descriptionImageCache'
 import { ipcManager } from '~/core/ipc'
 import log from 'electron-log/main'
-import { upscaleBackgroundImage } from './adder'
+import { tryUpscaleGameImage } from '~/features/game'
 
 export async function batchUpdateGameMetadata({
   gameIds,
@@ -946,9 +946,9 @@ export async function updateGameMetadata({
       for (const result of imageResults) {
         if (result.urls.length > 0 && result.urls[0]) {
           let imageData: Buffer | string = result.urls[0]
-          // Apply upscaling for background images if requested
+          // Background images can be post-processed before they are stored.
           if (result.type === 'background') {
-            imageData = await upscaleBackgroundImage(result.urls[0], upscaleScale)
+            imageData = await tryUpscaleGameImage(result.urls[0], upscaleScale)
           }
           dbPromises.push(
             GameDBManager.setGameImage(

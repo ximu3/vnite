@@ -561,7 +561,11 @@
           "searchImage": "Search image",
           "viewLargeImage": "View large image",
           "cropImage": "Crop image",
+          "upscaleImage": "Upscale background",
           "deleteImage": "Delete image"
+        },
+        "upscale": {
+          "title": "Choose upscale factor"
         },
         "search": {
           "title": "Search Images",
@@ -596,6 +600,9 @@
           "cropSuccess": "Crop successful",
           "cropError": "Crop failed",
           "cropIncomplete": "Crop incomplete",
+          "upscaling": "Upscaling background to {{scale}}x…",
+          "upscaleSuccess": "Background upscaled to {{scale}}x",
+          "upscaleError": "Failed to upscale background: {{message}}",
           "deleting": "Deleting…",
           "deleteSuccess": "Delete successful",
           "deleteError": "Delete failed"
