@@ -413,7 +413,7 @@
     },
     "manage": {
       "title": "管理",
-      "rename": "基本情報を編集",
+      "editInfo": "基本情報を編集",
       "editLogo": "ロゴを編集",
       "editPlayTime": "プレイ時間を編集",
       "recalculateLastRunDate": "最終プレイ日を再計算",

@@ -100,9 +100,9 @@ export function ManageMenu({
 
               <DropdownMenuSeparator />
 
-              {/* Rename Game */}
+              {/* Edit Game Information */}
               <DropdownMenuItem onSelect={openInformationEditorDialog}>
-                {t('detail.manage.rename')}
+                {t('detail.manage.editInfo')}
               </DropdownMenuItem>
               {/* Edit Play Time */}
               <DropdownMenuItem onClick={() => setIsPlayTimeEditorDialogOpen(true)}>

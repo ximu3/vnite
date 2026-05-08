@@ -413,7 +413,7 @@
     },
     "manage": {
       "title": "Manage",
-      "rename": "Edit Basic Information",
+      "editInfo": "Edit Basic Information",
       "editLogo": "Edit Logo",
       "editPlayTime": "Edit Play Time",
       "recalculateLastRunDate": "Recalculate Last Played Date",

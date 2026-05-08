@@ -413,7 +413,7 @@
     },
     "manage": {
       "title": "管理",
-      "rename": "修改基本信息",
+      "editInfo": "修改基本信息",
       "editLogo": "编辑徽标",
       "editPlayTime": "修改游玩时间",
       "recalculateLastRunDate": "重新计算最后运行日期",
