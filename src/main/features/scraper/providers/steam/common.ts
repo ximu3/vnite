@@ -245,14 +245,18 @@ export async function checkImageExists(url: string): Promise<boolean> {
 }
 
 export async function getGameHero(appId: string): Promise<string> {
-  const hdUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/library_hero_2x.jpg`
-  const standardUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/library_hero.jpg`
+  const candidateUrls = [
+    `${STEAM_URLS.CDN}/steam/apps/${appId}/library_hero_2x.jpg`,
+    `${STEAM_URLS.CDN}/steam/apps/${appId}/library_hero.jpg`
+  ]
 
-  // Check if HD image exists
-  const hdExists = await checkImageExists(hdUrl)
+  for (const url of candidateUrls) {
+    if (await checkImageExists(url)) {
+      return url
+    }
+  }
 
-  // If HD image exists, return HD image URL, otherwise return standard image URL
-  return hdExists ? hdUrl : standardUrl
+  return ''
 }
 
 export async function getGameScreenshots(appId: string): Promise<string[]> {
@@ -273,7 +277,7 @@ export async function getGameBackgrounds(appId: string): Promise<string[]> {
   const heroUrl = await getGameHero(appId)
   const screenshots = await getGameScreenshots(appId)
 
-  return [heroUrl, ...screenshots]
+  return heroUrl ? [heroUrl, ...screenshots] : screenshots
 }
 
 export async function getGameCover(appId: string): Promise<string> {
@@ -288,9 +292,9 @@ export async function getGameCover(appId: string): Promise<string> {
           `${STEAM_URLS.CDN}/steam/apps/${appId}/library_600x900_${langConfig.apiLanguageCode}.jpg`
         ]
       : []),
-    `${STEAM_URLS.CDN}/steam/apps/${appId}/library_600x900_2x.jpg`
+    `${STEAM_URLS.CDN}/steam/apps/${appId}/library_600x900_2x.jpg`,
+    `${STEAM_URLS.CDN}/steam/apps/${appId}/library_600x900.jpg`
   ]
-  const fallbackUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/library_600x900.jpg`
 
   // Try all candidate URLs and return the first one that exists
   for (const url of candidateUrl) {
@@ -299,9 +303,11 @@ export async function getGameCover(appId: string): Promise<string> {
     }
   }
 
-  // If no candidate URLs exist, return fallback URL
-  // TODO: Some newer games use URLs containing a {hash} segment instead of the standard pattern
-  return fallbackUrl
+  // Some newer games use hashed asset paths rather than the standard Steam CDN
+  // naming pattern. Return an empty string here so api.ts can convert it to `[]`
+  // instead of surfacing a broken URL to the renderer.
+  // TODO: Investigate whether the hashed asset URL can be resolved reliably.
+  return ''
 }
 
 export async function getGameLogo(appId: string): Promise<string> {
@@ -316,9 +322,9 @@ export async function getGameLogo(appId: string): Promise<string> {
           `${STEAM_URLS.CDN}/steam/apps/${appId}/logo_${langConfig.apiLanguageCode}.png`
         ]
       : []),
-    `${STEAM_URLS.CDN}/steam/apps/${appId}/logo_2x.png`
+    `${STEAM_URLS.CDN}/steam/apps/${appId}/logo_2x.png`,
+    `${STEAM_URLS.CDN}/steam/apps/${appId}/logo.png`
   ]
-  const fallbackUrl = `${STEAM_URLS.CDN}/steam/apps/${appId}/logo.png`
 
   // Try all candidate URLs and return the first one that exists
   for (const url of candidateUrl) {
@@ -326,7 +332,8 @@ export async function getGameLogo(appId: string): Promise<string> {
       return url
     }
   }
-  return fallbackUrl
+
+  return ''
 }
 
 export async function checkSteamGameExists(appId: string): Promise<boolean> {
