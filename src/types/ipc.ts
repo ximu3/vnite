@@ -23,6 +23,7 @@ import {
   GameDevelopersList,
   GameExtraInfoList,
   GameGenresList,
+  GameImageUpscaleOptions,
   GameInformationList,
   GameList,
   GameMetadata,
@@ -118,6 +119,7 @@ type MainIpcEvents =
       }) => string
       'utils:save-game-icon-by-file': (gameId: string, filePath: string) => void
       'utils:download-temp-image': (url: string) => string
+      'utils:test-upscaler': () => void
       'utils:save-clipboard-image': () => string
       'utils:write-clipboard-image': (data: string, type: 'path') => boolean
       'utils:get-app-log-contents-in-current-lifetime': () => string
@@ -180,12 +182,12 @@ type MainIpcEvents =
         type: 'cover' | 'background' | 'icon' | 'logo'
       ) => string | null
       'game:remove-media': (gameId: string, type: 'cover' | 'background' | 'icon' | 'logo') => void
-      'game:upscale-background': (gameId: string, upscaleScale?: number) => void
       'game:get-memory-cover-path': (gameId: string, memoryId: string) => string | null
       'game:get-memory-masonry-items': (
         gameId: string,
         memoryIds: string[]
       ) => Record<string, { heightRatio: number }>
+      'game:upscale-background': (gameId: string) => void
 
       // Game management events
       'game:check-exits-by-path': (gamePath: string) => boolean
@@ -218,7 +220,8 @@ type MainIpcEvents =
         dataSource: string
         dataSourceId: string
         backgroundUrl?: string
-        upscaleScale?: number
+        upscaleEnabled?: boolean
+        upscaleOptionsOverride?: GameImageUpscaleOptions
         dirPath?: string
         gamePath?: string
       }) => void
@@ -228,7 +231,8 @@ type MainIpcEvents =
         dataSourceId: string
         fields?: (GameMetadataField | GameMetadataUpdateMode)[]
         backgroundUrl?: string
-        upscaleScale?: number
+        upscaleEnabled?: boolean
+        upscaleOptionsOverride?: GameImageUpscaleOptions
         options?: GameMetadataUpdateOptions
       }) => void
       'adder:get-batch-game-adder-data': () => BatchGameInfo[]
@@ -237,7 +241,8 @@ type MainIpcEvents =
         gameIds: string[]
         dataSource: string
         fields?: (GameMetadataField | GameMetadataUpdateMode)[]
-        upscaleScale?: number
+        upscaleEnabled?: boolean
+        upscaleOptionsOverride?: GameImageUpscaleOptions
         options?: GameMetadataUpdateOptions
         concurrency?: number
       }) => void

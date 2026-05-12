@@ -225,7 +225,17 @@
     "upscaler": {
       "name": "waifu2x-ncnn-vulkan / realcugan-ncnn-vulkan / realesrgan-ncnn-vulkan",
       "description": "用於超分辨率放大遊戲背景圖的工具",
-      "placeholder": "請輸入超分辨率放大工具的路徑"
+      "placeholder": "請輸入超分辨率放大工具的路徑",
+      "configure": "配置超分參數",
+      "dialog": {
+        "title": "超分參數配置",
+        "backendLabel": "超分辨率後端",
+        "backendHint": "目前路徑無法識別為受支援的超分辨率後端，若已設定路徑，請注意不要修改可執行程式名稱",
+        "test": "測試可用性",
+        "testing": "正在測試超分工具可用性…",
+        "testSuccess": "超分工具測試通過",
+        "testError": "超分工具測試失敗：{{message}}"
+      }
     }
   },
   "theme": {

@@ -1,5 +1,6 @@
+import { getUpscalerBackendByPath } from '@appTypes/utils'
 import { sanitizeFilenameComponent } from '@appUtils'
-import { app } from 'electron'
+import { app, nativeImage } from 'electron'
 import contextMenu from 'electron-context-menu'
 import log from 'electron-log/main'
 import fse from 'fs-extra'
@@ -7,7 +8,14 @@ import i18next from 'i18next'
 import os from 'os'
 import path from 'path'
 import { ConfigDBManager, GameDBManager } from '~/core/database'
-import { convertToIcon, copyFileToClipboard, createUrlShortcut, openPathInExplorer } from '~/utils'
+import {
+  convertToIcon,
+  copyFileToClipboard,
+  createUrlShortcut,
+  openPathInExplorer,
+  upscaleImage
+} from '~/utils'
+import icon from '../../../../../resources/icon.png?asset'
 import { getAppTempPath, getLogsPath } from './path'
 
 export async function setupContextMenu(): Promise<void> {
@@ -176,6 +184,36 @@ export async function createGameShortcut(gameId: string, targetPath: string): Pr
     })
   } catch (error) {
     log.error('[Utils] Error creating game shortcut:', error)
+  }
+}
+
+export async function testUpscalerAvailability(): Promise<void> {
+  const storedPath = await ConfigDBManager.getConfigLocalValue('game.linkage.upscaler.path')
+  const resolvedPath = (storedPath ?? '').trim()
+  if (!resolvedPath) {
+    throw new Error('Upscaler path is not configured')
+  }
+
+  if (!(await fse.pathExists(resolvedPath))) {
+    throw new Error(`Upscaler executable not found: ${resolvedPath}`)
+  }
+
+  const backend = getUpscalerBackendByPath(resolvedPath)
+  if (!backend) {
+    throw new Error(`Unsupported upscaler executable: ${resolvedPath}`)
+  }
+  const upscalerConfig = await ConfigDBManager.getConfigLocalValue('game.linkage.upscaler.config')
+  const options = upscalerConfig[backend]
+
+  const iconImage = nativeImage.createFromPath(icon)
+  if (iconImage.isEmpty()) {
+    throw new Error(`Failed to load bundled app icon for upscaler test: ${icon}`)
+  }
+  const inputBuffer = iconImage.toPNG()
+
+  const outputBuffer = await upscaleImage(inputBuffer, resolvedPath, options)
+  if (outputBuffer.length === 0) {
+    throw new Error(`Upscaler test produced no output for backend: ${backend}`)
   }
 }
 

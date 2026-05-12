@@ -564,9 +564,6 @@
           "upscaleImage": "超分背景图",
           "deleteImage": "删除图片"
         },
-        "upscale": {
-          "title": "选择放大倍率"
-        },
         "search": {
           "title": "搜索图片",
           "dataSource": "数据源",

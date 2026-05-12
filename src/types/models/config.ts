@@ -1,3 +1,5 @@
+import { DEFAULT_LOCAL_UPSCALER_CONFIG, type LocalUpscalerConfig } from '../utils/upscaler'
+
 export enum NSFWBlurLevel {
   Off = 0,
   BlurImage = 1,
@@ -287,6 +289,7 @@ export interface configLocalDocs {
       }
       upscaler: {
         path: string
+        config: LocalUpscalerConfig
       }
     }
     scanner: {
@@ -548,7 +551,8 @@ export const DEFAULT_CONFIG_LOCAL_VALUES: Readonly<configLocalDocs> = {
         hotkey: 'win+shift+a'
       },
       upscaler: {
-        path: ''
+        path: '',
+        config: DEFAULT_LOCAL_UPSCALER_CONFIG
       }
     },
     scanner: {

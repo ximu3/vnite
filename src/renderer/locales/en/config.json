@@ -225,7 +225,17 @@
     "upscaler": {
       "name": "waifu2x-ncnn-vulkan / realcugan-ncnn-vulkan / realesrgan-ncnn-vulkan",
       "description": "These tools are used for super-resolution upscaling of game background images",
-      "placeholder": "Enter the path to the upscaler executable"
+      "placeholder": "Enter the path to the upscaler executable",
+      "configure": "Configure upscaler options",
+      "dialog": {
+        "title": "Upscaler Options",
+        "backendLabel": "Super-resolution backend",
+        "backendHint": "The current path does not match a supported super-resolution backend. If a path is already set, do not rename the executable.",
+        "test": "Test availability",
+        "testing": "Testing upscaler availability…",
+        "testSuccess": "Upscaler test passed",
+        "testError": "Upscaler test failed: {{message}}"
+      }
     }
   },
   "theme": {

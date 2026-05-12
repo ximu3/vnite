@@ -3,14 +3,13 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { ipcManager } from '~/app/ipc'
 import { Button } from '~/components/ui/button'
+import { UpscaleConfigControl } from '~/components/utils/UpscaleConfigControl'
 import { cn } from '~/utils'
-import { UpscaleSelect } from '~/components/utils/UpscaleSelect'
 import { useGameMetadataUpdaterStore } from '../GameMetadataUpdater/store'
 import { useGameAdderStore } from './store'
 
 export function BackgroundList(): React.JSX.Element {
-  const { t } = useTranslation('adder')
-  const { t: tUtils } = useTranslation('utils')
+  const { t } = useTranslation(['adder', 'game'])
   const {
     backgroundUrl,
     setBackgroundUrl,
@@ -21,8 +20,8 @@ export function BackgroundList(): React.JSX.Element {
     dbId,
     dirPath,
     gamePath,
-    upscaleScale,
-    setUpscaleScale,
+    enableUpscale,
+    setEnableUpscale,
     handleClose
   } = useGameAdderStore()
 
@@ -32,7 +31,7 @@ export function BackgroundList(): React.JSX.Element {
     setDataSource: setGameMetadataUpdaterDataSource,
     setDataSourceId: setGameMetadataUpdaterDataSourceId,
     setGameIds: setGameMetadataUpdaterGameIds,
-    setUpscaleScale: setGameMetadataUpdaterUpscaleScale
+    setEnableUpscale: setGameMetadataUpdaterEnableUpscale
   } = useGameMetadataUpdaterStore()
 
   const [isAdding, setIsAdding] = useState(false)
@@ -114,7 +113,7 @@ export function BackgroundList(): React.JSX.Element {
         setIsGameMetadataUpdaterDialogOpen(true)
         setIsAdding(false)
         setGameMetadataUpdaterDataSourceId(dataSourceId)
-        setGameMetadataUpdaterUpscaleScale(upscaleScale)
+        setGameMetadataUpdaterEnableUpscale(enableUpscale)
         handleClose()
         return
       } else {
@@ -125,7 +124,7 @@ export function BackgroundList(): React.JSX.Element {
           dataSource,
           dataSourceId,
           backgroundUrl,
-          upscaleScale,
+          upscaleEnabled: enableUpscale,
           dirPath,
           gamePath
         })
@@ -178,11 +177,10 @@ export function BackgroundList(): React.JSX.Element {
         <div className={cn('flex flex-row-reverse items-center gap-3')}>
           <Button onClick={addGameToDB}>{t('utils:common.confirm')}</Button>
           {!dbId && (
-            <UpscaleSelect
-              value={upscaleScale}
-              onValueChange={setUpscaleScale}
-              aria-label={tUtils('upscale.label')}
-              triggerClassName="w-[140px] h-8 text-sm"
+            <UpscaleConfigControl
+              checked={enableUpscale}
+              onCheckedChange={setEnableUpscale}
+              label={t('game:detail.properties.media.actions.upscaleImage')}
             />
           )}
         </div>

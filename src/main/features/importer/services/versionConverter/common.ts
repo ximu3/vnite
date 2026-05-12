@@ -1,4 +1,5 @@
 import {
+  DEFAULT_CONFIG_LOCAL_VALUES,
   DEFAULT_CONFIG_VALUES,
   gameCollectionDoc,
   gameDoc,
@@ -629,7 +630,8 @@ async function convertConfig(basePath: string): Promise<void> {
         hotkey: v2Config.advanced.linkage.magpie.hotkey
       },
       upscaler: {
-        path: ''
+        path: '',
+        config: DEFAULT_CONFIG_LOCAL_VALUES.game.linkage.upscaler.config
       }
     })
 

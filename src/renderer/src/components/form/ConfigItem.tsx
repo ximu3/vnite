@@ -329,6 +329,7 @@ export function ConfigItem<
             ? 'icon-[mdi--folder-outline]'
             : 'icon-[mdi--file-outline]')
         const buttonTooltip = fileInputProps.buttonTooltip
+        const buttonSlot = fileInputProps.buttonSlot
 
         return (
           <div className={cn('flex flex-row gap-3', controlClassName)}>
@@ -349,6 +350,7 @@ export function ConfigItem<
             >
               <span className={cn(buttonIcon, 'w-5 h-5')}></span>
             </Button>
+            {buttonSlot}
           </div>
         )
       }

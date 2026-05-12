@@ -564,9 +564,6 @@
           "upscaleImage": "背景を超解像",
           "deleteImage": "画像を削除"
         },
-        "upscale": {
-          "title": "拡大倍率を選択"
-        },
         "search": {
           "title": "画像を検索",
           "dataSource": "データソース",

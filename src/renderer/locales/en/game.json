@@ -564,9 +564,6 @@
           "upscaleImage": "Upscale background",
           "deleteImage": "Delete image"
         },
-        "upscale": {
-          "title": "Choose upscale factor"
-        },
         "search": {
           "title": "Search Images",
           "dataSource": "Data Source",

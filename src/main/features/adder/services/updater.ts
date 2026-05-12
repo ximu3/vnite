@@ -1,40 +1,43 @@
 import {
+  BatchUpdateResult,
+  BatchUpdateResults,
+  GameDescriptionList,
+  GameDevelopersList,
+  GameExtraInfoList,
+  GameGenresList,
   GameMetadata,
-  ScraperIdentifier,
   GameMetadataField,
   GameMetadataUpdateMode,
   GameMetadataUpdateOptions,
-  BatchUpdateResults,
-  BatchUpdateResult,
-  GameDescriptionList,
-  GameTagsList,
-  GameExtraInfoList,
-  GameDevelopersList,
-  GamePublishersList,
-  GameGenresList,
   GamePlatformsList,
+  GamePublishersList,
   GameRelatedSitesList,
-  ScraperCapabilities
+  GameTagsList,
+  ScraperCapabilities,
+  ScraperIdentifier,
+  type GameImageUpscaleOptions
 } from '@appTypes/utils'
+import log from 'electron-log/main'
 import { GameDBManager } from '~/core/database'
+import { ipcManager } from '~/core/ipc'
+import { tryUpscaleGameImage } from '~/features/game'
 import { scraperManager } from '~/features/scraper'
 import { cacheDescriptionImages } from '~/features/scraper/services/descriptionImageCache'
-import { ipcManager } from '~/core/ipc'
-import log from 'electron-log/main'
-import { tryUpscaleGameImage } from '~/features/game'
 
 export async function batchUpdateGameMetadata({
   gameIds,
   dataSource,
   fields = ['#all'] as (GameMetadataField | GameMetadataUpdateMode)[],
-  upscaleScale,
+  upscaleEnabled,
+  upscaleOptionsOverride,
   options = {},
   concurrency = 5
 }: {
   gameIds: string[]
   dataSource: string
   fields?: (GameMetadataField | GameMetadataUpdateMode)[]
-  upscaleScale?: number
+  upscaleEnabled?: boolean
+  upscaleOptionsOverride?: GameImageUpscaleOptions
   options?: GameMetadataUpdateOptions
   concurrency?: number
 }): Promise<BatchUpdateResults> {
@@ -98,7 +101,8 @@ export async function batchUpdateGameMetadata({
             dataSource,
             dataSourceId: existingDataSourceId,
             fields,
-            upscaleScale,
+            upscaleEnabled,
+            upscaleOptionsOverride,
             options
           })
 
@@ -162,7 +166,8 @@ export async function batchUpdateGameMetadata({
           dataSource,
           dataSourceId: selectedResult.id,
           fields,
-          upscaleScale,
+          upscaleEnabled,
+          upscaleOptionsOverride,
           options
         })
 
@@ -260,7 +265,8 @@ export async function updateGameMetadata({
   dataSourceId,
   fields = ['#all'] as (GameMetadataField | GameMetadataUpdateMode)[],
   backgroundUrl,
-  upscaleScale,
+  upscaleEnabled,
+  upscaleOptionsOverride,
   options = {}
 }: {
   dbId: string
@@ -268,7 +274,8 @@ export async function updateGameMetadata({
   dataSourceId: string
   fields?: (GameMetadataField | GameMetadataUpdateMode)[]
   backgroundUrl?: string
-  upscaleScale?: number
+  upscaleEnabled?: boolean
+  upscaleOptionsOverride?: GameImageUpscaleOptions
   options?: GameMetadataUpdateOptions
 }): Promise<void> {
   try {
@@ -948,7 +955,11 @@ export async function updateGameMetadata({
           let imageData: Buffer | string = result.urls[0]
           // Background images can be post-processed before they are stored.
           if (result.type === 'background') {
-            imageData = await tryUpscaleGameImage(result.urls[0], upscaleScale)
+            imageData = await tryUpscaleGameImage(
+              result.urls[0],
+              upscaleEnabled,
+              upscaleOptionsOverride
+            )
           }
           dbPromises.push(
             GameDBManager.setGameImage(
