@@ -38,15 +38,17 @@ export function Search({ className }: { className?: string }): React.JSX.Element
   } = useGameAdderStore()
 
   const PathRowWithDb = ({ gameId }: { gameId: string }): React.JSX.Element | null => {
+    const [dbGamePath] = useGameLocalState(gameId, 'path.gamePath')
     const [rootPath] = useGameLocalState(gameId, 'utils.rootPath')
-    if (!gameId || !rootPath) return null
+    if (!gameId || (!dbGamePath && !rootPath)) return null
+    const displayPath = dbGamePath || rootPath || ''
     return (
       <>
         <div className={cn('whitespace-nowrap select-none pb-1.5')}>
           {t('gameAdder.search.gamePath')}
         </div>
         <div className={cn('text-xs text-muted-foreground break-all select-text pb-1.5')}>
-          {rootPath || '-'}
+          {displayPath || '-'}
         </div>
       </>
     )
