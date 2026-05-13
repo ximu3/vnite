@@ -44,6 +44,7 @@ function PathComponent(
     true
   )
   const [markerPath] = useGameLocalState(gameId, 'utils.markPath')
+  const [rootPath] = useGameLocalState(gameId, 'utils.rootPath')
   const [maxSaveBackups, setMaxSaveBackups] = useGameState(gameId, 'save.maxBackups')
   const [savePathSize, setSavePathSize] = useState(0)
   const [isGamePathValid, setIsGamePathValid] = useState(true)
@@ -130,7 +131,7 @@ function PathComponent(
       'system:select-path-dialog',
       ['openDirectory'],
       undefined,
-      gamePath || markerPath
+      rootPath
     )
     if (!folderPath) {
       return
@@ -189,7 +190,7 @@ function PathComponent(
       'system:select-multiple-path-dialog',
       ['openDirectory'],
       undefined,
-      gamePath || markerPath
+      rootPath
     )
     if (!folderPath) {
       return
@@ -203,7 +204,7 @@ function PathComponent(
       'system:select-multiple-path-dialog',
       ['openFile'],
       undefined,
-      gamePath || markerPath
+      rootPath
     )
     if (!filePath) {
       return

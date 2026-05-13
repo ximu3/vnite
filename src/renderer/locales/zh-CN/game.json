@@ -422,6 +422,9 @@
       "downloadMetadata": "更新资料数据",
       "createShortcut": "创建快捷方式",
       "browseLocalFiles": "浏览本地文件",
+      "modifyRootPath": "修改根目录",
+      "selectDirectory": "选择目录",
+      "recalculateStorageSize": "重新计算游戏大小",
       "calculateStorageSize": "计算游戏大小",
       "delete": "删除",
       "notifications": {

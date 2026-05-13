@@ -361,6 +361,9 @@
       "downloadMetadata": "",
       "createShortcut": "",
       "browseLocalFiles": "",
+      "modifyRootPath": "",
+      "selectDirectory": "",
+      "recalculateStorageSize": "",
       "delete": "",
       "notifications": {
         "shortcutCreated": "",

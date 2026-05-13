@@ -18,6 +18,7 @@ export function GameNavCM({
   openAddCollectionDialog,
   openNameEditorDialog,
   openPlayTimeEditorDialog,
+  openModifyRootPathDialog,
   openPropertiesDialog,
   showRemoveFromRecent = false
 }: {
@@ -25,6 +26,7 @@ export function GameNavCM({
   openAddCollectionDialog: () => void
   openNameEditorDialog: () => void
   openPlayTimeEditorDialog: () => void
+  openModifyRootPathDialog: () => void
   openPropertiesDialog: () => void
   showRemoveFromRecent?: boolean
 }): React.JSX.Element {
@@ -72,6 +74,7 @@ export function GameNavCM({
         gameId={gameId}
         openNameEditorDialog={openNameEditorDialog}
         openPlayingTimeEditorDialog={openPlayTimeEditorDialog}
+        openModifyRootPathDialog={openModifyRootPathDialog}
       />
       <ContextMenuSeparator />
       {/* Open Game Properties Dialog */}

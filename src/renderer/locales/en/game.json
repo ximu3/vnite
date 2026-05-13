@@ -422,6 +422,9 @@
       "downloadMetadata": "Update Metadata",
       "createShortcut": "Create Shortcut",
       "browseLocalFiles": "Browse Local Files",
+      "modifyRootPath": "Modify Root Path",
+      "selectDirectory": "Select Directory",
+      "recalculateStorageSize": "Recalculate Game Size",
       "calculateStorageSize": "Calculate Game Size",
       "delete": "Delete",
       "notifications": {

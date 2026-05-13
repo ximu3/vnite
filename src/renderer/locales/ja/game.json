@@ -422,6 +422,9 @@
       "downloadMetadata": "メタデータを更新",
       "createShortcut": "ショートカットを作成",
       "browseLocalFiles": "ローカルファイルを閲覧",
+      "modifyRootPath": "ルートパスを変更",
+      "selectDirectory": "ディレクトリを選択",
+      "recalculateStorageSize": "ゲームサイズを再計算",
       "calculateStorageSize": "ゲームサイズを計算",
       "delete": "削除",
       "notifications": {

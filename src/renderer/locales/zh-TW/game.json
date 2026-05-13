@@ -422,6 +422,9 @@
       "downloadMetadata": "更新資料",
       "createShortcut": "建立捷徑",
       "browseLocalFiles": "瀏覽本機文件",
+      "modifyRootPath": "修改根目錄",
+      "selectDirectory": "選擇目錄",
+      "recalculateStorageSize": "重新計算遊戲大小",
       "calculateStorageSize": "計算遊戲大小",
       "delete": "刪除",
       "notifications": {

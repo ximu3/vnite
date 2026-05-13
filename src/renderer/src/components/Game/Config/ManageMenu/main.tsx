@@ -29,7 +29,7 @@ export function ManageMenu({
 }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
-  const [markPath] = useGameLocalState(gameId, 'utils.markPath')
+  const [rootPath] = useGameLocalState(gameId, 'utils.rootPath')
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [nsfw, setNsfw] = useGameState(gameId, 'apperance.nsfw')
   const [playStatus, setPlayStatus] = useGameState(gameId, 'record.playStatus')
@@ -41,6 +41,9 @@ export function ManageMenu({
     (state) => state.setIsPlayTimeEditorDialogOpen
   )
   const setIsScoreEditorDialogOpen = useGameDetailStore((state) => state.setIsScoreEditorDialogOpen)
+  const setIsModifyRootPathDialogOpen = useGameDetailStore(
+    (state) => state.setIsModifyRootPathDialogOpen
+  )
   const setIsOpen = useGameAdderStore((state) => state.setIsOpen)
   const setName = useGameAdderStore((state) => state.setName)
   const setDbId = useGameAdderStore((state) => state.setDbId)
@@ -144,20 +147,26 @@ export function ManageMenu({
                 </DropdownMenuItem>
               )}
               {/* Browse Local Files */}
-              {/* Only work if gamePath or markPath is set */}
+              {/* Only work if rootPath is set */}
               <DropdownMenuItem
                 onClick={() => {
-                  if (!gamePath && !markPath) {
+                  if (!rootPath) {
                     toast.warning(t('detail.manage.notifications.gamePathNotSet'))
                   } else {
-                    ipcManager.invoke('system:open-path-in-explorer', gamePath || markPath)
+                    ipcManager.invoke('system:open-path-in-explorer', rootPath)
                   }
                 }}
               >
                 {t('detail.manage.browseLocalFiles')}
               </DropdownMenuItem>
+              {/* Modify Root Path */}
+              {rootPath && (
+                <DropdownMenuItem onSelect={() => setIsModifyRootPathDialogOpen(true)}>
+                  {t('detail.manage.modifyRootPath')}
+                </DropdownMenuItem>
+              )}
               {/* Calculate Storage Size */}
-              {(gamePath || markPath) && (
+              {rootPath && (
                 <DropdownMenuItem
                   onClick={() => {
                     toast.promise(ipcManager.invoke('game:calculate-storage-size', gameId), {

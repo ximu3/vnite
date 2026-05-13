@@ -23,7 +23,7 @@ import {
 import { launcherPreset } from '~/features/launcher'
 import { cacheDescriptionImages } from '~/features/scraper/services/descriptionImageCache'
 import { scraperManager } from '~/features/scraper'
-import { getGameFolders, selectPathDialog, upscaleImage } from '~/utils'
+import { getGameFolders, selectPathDialog, upscaleImage, inferRootPath } from '~/utils'
 
 export async function upscaleBackgroundImage(
   imageSource: Buffer | string,
@@ -53,7 +53,8 @@ export async function addGameToDB({
   playTime,
   dirPath,
   gamePath,
-  targetCollection
+  targetCollection,
+  scanRoot
 }: {
   dataSource: string
   dataSourceId: string
@@ -63,7 +64,8 @@ export async function addGameToDB({
   dirPath?: string
   gamePath?: string
   targetCollection?: string
-}): Promise<void> {
+  scanRoot?: string
+}): Promise<string> {
   try {
     const dbId = generateUUID()
 
@@ -280,16 +282,17 @@ export async function addGameToDB({
     }
     gameDoc.record.addDate = new Date().toISOString()
 
-    // Calculate storage size if enabled
-    const autoCalculateSize = await isAutoCalculateStorageSizeEnabled()
-    if (autoCalculateSize && dirPath) {
-      gameDoc.record.storageSize = await calculateStorageSizeForPath(dirPath)
-    }
-
     const gameLocalDoc = JSON.parse(JSON.stringify(DEFAULT_GAME_LOCAL_VALUES))
     gameLocalDoc._id = dbId
     gameLocalDoc.utils.markPath = dirPath ?? ''
+    gameLocalDoc.utils.rootPath = inferRootPath(gameLocalDoc.utils.markPath, scanRoot)
     gameLocalDoc.path.gamePath = gamePath ?? ''
+
+    // Calculate storage size if enabled
+    const autoCalculateSize = await isAutoCalculateStorageSizeEnabled()
+    if (autoCalculateSize && gameLocalDoc.utils.rootPath) {
+      gameDoc.record.storageSize = await calculateStorageSizeForPath(gameLocalDoc.utils.rootPath)
+    }
 
     // Prepare image fetching tasks
     const imagePromises: {
@@ -459,6 +462,8 @@ export async function addGameToDB({
       },
       { source: 'adder' }
     )
+
+    return dbId
   } catch (error) {
     log.error('[Adder] Failed to add game to database:', error)
     throw error
@@ -480,20 +485,21 @@ export async function addGameToDBWithoutMetadata(
     gameDoc.record.addDate = new Date().toISOString()
     gameDoc.metadata.name = gameName
 
-    // Calculate storage size if enabled
-    const autoCalculateSize = await isAutoCalculateStorageSizeEnabled()
-    if (autoCalculateSize && dirPath) {
-      gameDoc.record.storageSize = await calculateStorageSizeForPath(dirPath)
-    }
-
-    await GameDBManager.setGame(dbId, gameDoc)
-
     // Create a new game local document with default values, deep copy to avoid mutation
     const gameLocalDoc = JSON.parse(JSON.stringify(DEFAULT_GAME_LOCAL_VALUES))
     // Set the game local document properties
     gameLocalDoc._id = dbId
     gameLocalDoc.path.gamePath = gamePath ?? ''
     gameLocalDoc.utils.markPath = dirPath ?? ''
+    gameLocalDoc.utils.rootPath = inferRootPath(gameLocalDoc.utils.markPath)
+
+    // Calculate storage size if enabled
+    const autoCalculateSize = await isAutoCalculateStorageSizeEnabled()
+    if (autoCalculateSize && gameLocalDoc.utils.rootPath) {
+      gameDoc.record.storageSize = await calculateStorageSizeForPath(gameLocalDoc.utils.rootPath)
+    }
+
+    await GameDBManager.setGame(dbId, gameDoc)
     await GameDBManager.setGameLocal(dbId, gameLocalDoc)
 
     // Set the launcher preset and save the game icon

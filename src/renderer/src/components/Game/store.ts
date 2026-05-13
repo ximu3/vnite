@@ -20,6 +20,9 @@ export interface GameDetailStore {
   isInformationDialogOpen: boolean
   setIsInformationDialogOpen: (open: boolean) => void
 
+  isModifyRootPathDialogOpen: boolean
+  setIsModifyRootPathDialogOpen: (open: boolean) => void
+
   propertiesDialog: { open: false } | { open: true; defaultTab: PropertiesDialogTab }
   openPropertiesDialog: (defaultTab?: PropertiesDialogTab) => void
   closePropertiesDialog: () => void
@@ -50,6 +53,9 @@ export const useGameDetailStore = create<GameDetailStore>((set) => ({
 
   isInformationDialogOpen: false,
   setIsInformationDialogOpen: (open): void => set({ isInformationDialogOpen: open }),
+
+  isModifyRootPathDialogOpen: false,
+  setIsModifyRootPathDialogOpen: (open): void => set({ isModifyRootPathDialogOpen: open }),
 
   propertiesDialog: { open: false },
   openPropertiesDialog: (defaultTab = 'launcher') =>

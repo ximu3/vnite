@@ -5,6 +5,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
+import { ModifyRootPathDialog } from '~/components/Game/Config/ManageMenu/ModifyRootPathDialog'
 import { GamePropertiesDialog } from '~/components/Game/Config/Properties'
 import { ContextMenu, ContextMenuTrigger } from '~/components/ui/context-menu'
 import { GameImage } from '~/components/ui/game-image'
@@ -57,6 +58,7 @@ export function GameNav({
   const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = React.useState(false)
   const [isInformationDialogOpen, setIsInformationDialogOpen] = React.useState(false)
   const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = React.useState(false)
+  const [isModifyRootPathDialogOpen, setIsModifyRootPathDialogOpen] = React.useState(false)
 
   const isSelected = useGameBatchEditorStore((state) => state.selectedGamesMap[gameId])
   const isBatchMode = useGameBatchEditorStore((state) => state.isBatchMode)
@@ -351,6 +353,7 @@ export function GameNav({
             openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
             openNameEditorDialog={() => setIsInformationDialogOpen(true)}
             openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
+            openModifyRootPathDialog={() => setIsModifyRootPathDialogOpen(true)}
             openPropertiesDialog={() => setIsPropertiesDialogOpen(true)}
             showRemoveFromRecent={groupId === 'recentGames'}
           />
@@ -375,6 +378,13 @@ export function GameNav({
           gameId={gameId}
           isOpen={isPropertiesDialogOpen}
           setIsOpen={setIsPropertiesDialogOpen}
+        />
+      )}
+      {isModifyRootPathDialogOpen && (
+        <ModifyRootPathDialog
+          gameId={gameId}
+          isOpen={isModifyRootPathDialogOpen}
+          setIsOpen={setIsModifyRootPathDialogOpen}
         />
       )}
     </>

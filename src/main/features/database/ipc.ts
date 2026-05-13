@@ -11,9 +11,30 @@ import {
 import { baseDBManager, ConfigDBManager } from '~/core/database'
 import { ipcManager } from '~/core/ipc'
 import { DocChange } from '@appTypes/models'
+import { shouldReinferRootPath } from '~/utils'
 
 export function setupDatabaseIPC(): void {
   ipcManager.handle('db:doc-changed', async (_event, change: DocChange) => {
+    // Ensure rootPath consistency when saving game-local data.
+    // If gamePath changed and rootPath is empty or gamePath falls outside rootPath,
+    // re-infer rootPath from the directory of gamePath before saving.
+    if (change.dbName === 'game-local' && change.data?.path?.gamePath) {
+      const oldGamePath = await baseDBManager.getValue(
+        change.dbName,
+        change.docId,
+        'path.gamePath',
+        ''
+      )
+      const newRootPath = shouldReinferRootPath(
+        oldGamePath,
+        change.data.path.gamePath,
+        change.data.utils?.rootPath ?? ''
+      )
+      if (newRootPath !== null) {
+        change.data.utils = { ...change.data.utils, rootPath: newRootPath }
+      }
+    }
+
     return await baseDBManager.setValue(change.dbName, change.docId, '#all', change.data)
   })
 

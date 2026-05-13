@@ -319,6 +319,9 @@
       "downloadMetadata": "",
       "createShortcut": "",
       "browseLocalFiles": "",
+      "modifyRootPath": "",
+      "selectDirectory": "",
+      "recalculateStorageSize": "",
       "calculateStorageSize": "",
       "delete": "",
       "notifications": {

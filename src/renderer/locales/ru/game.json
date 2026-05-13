@@ -316,6 +316,9 @@
       "downloadMetadata": "Загрузить метаданные",
       "createShortcut": "Создать ярлык",
       "browseLocalFiles": "Обзор локальных файлов",
+      "modifyRootPath": "Изменить корневой путь",
+      "selectDirectory": "Выбрать папку",
+      "recalculateStorageSize": "Пересчитать размер игры",
       "calculateStorageSize": "Вычислить размер игры",
       "delete": "Удалить",
       "notifications": {

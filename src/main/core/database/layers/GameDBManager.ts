@@ -1,5 +1,5 @@
 import { baseDBManager } from '../BaseDBManager'
-import { convertToWebP } from '~/utils'
+import { convertToWebP, isPathWithinRoot } from '~/utils'
 import {
   gameDoc,
   gameDocs,
@@ -216,22 +216,34 @@ export class GameDBManager {
     }
   }
 
-  static async checkGameExitsByPath(path: string): Promise<boolean> {
+  static async checkGameExitsByPath(inputPath: string): Promise<boolean> {
+    try {
+      const gameId = await this.findExistingGameIdByPath(inputPath)
+      return gameId !== null
+    } catch (error) {
+      log.error('[GameDB] Error checking game existence by path:', error)
+      throw error
+    }
+  }
+
+  static async findExistingGameIdByPath(inputPath: string): Promise<string | null> {
     try {
       const games = await this.getAllGamesLocal()
 
       const gameArray = Object.values(games)
       const results = await Promise.all(
         gameArray.map(async (game) => {
-          const gamePath = await this.getGameLocalValue(game._id, 'path.gamePath')
-          const markPath = await this.getGameLocalValue(game._id, 'utils.markPath')
-          return gamePath.includes(path) || markPath === path
+          const rootPath = game.utils?.rootPath
+          if (rootPath && isPathWithinRoot(inputPath, rootPath)) {
+            return game._id
+          }
+          return null
         })
       )
 
-      return results.some((result) => result)
+      return results.find((id): id is string => id !== null) || null
     } catch (error) {
-      log.error('[GameDB] Error checking game existence by path:', error)
+      log.error('[GameDB] Error finding existing game ID by path:', error)
       throw error
     }
   }

@@ -319,6 +319,9 @@
       "downloadMetadata": "메타데이터 다운로드",
       "createShortcut": "바로가기 생성",
       "browseLocalFiles": "로컬 파일 찾기",
+      "modifyRootPath": "루트 경로 수정",
+      "selectDirectory": "디렉터리 선택",
+      "recalculateStorageSize": "게임 크기 다시 계산",
       "calculateStorageSize": "게임 크기 계산",
       "delete": "제거",
       "notifications": {

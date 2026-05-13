@@ -30,8 +30,7 @@ export function DeleteGameAlert({
   const { t } = useTranslation('game')
   const navigate = useNavigate()
   const [gameName] = useGameState(gameId, 'metadata.name')
-  const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
-  const [markPath] = useGameLocalState(gameId, 'utils.markPath')
+  const [rootPath] = useGameLocalState(gameId, 'utils.rootPath')
   const { removeGameFromAllCollections } = useGameCollectionStore()
   const [scannerConfig, setScannerConfig] = useConfigLocalState('game.scanner')
   const [addToIgnore, setAddToIgnore] = useState<boolean>(true)
@@ -41,20 +40,18 @@ export function DeleteGameAlert({
       async () => {
         // Optionally add path to ignore list before deletion
         try {
-          const chosenPath = (typeof gamePath === 'string' && gamePath.trim().length > 0)
-            ? gamePath
-            : (typeof markPath === 'string' ? markPath : '')
+          const chosenPath = rootPath || ''
           if (addToIgnore && typeof chosenPath === 'string' && chosenPath.trim().length > 0) {
-            const normalize = (p: string): string => p.trim().replace(/\\/g, '/').replace(/\/+$/, '')
+            const normalize = (p: string): string =>
+              p.trim().replace(/\\/g, '/').replace(/\/+$/, '')
             const current = ((scannerConfig?.ignoreList as string[]) || [])
               .map(normalize)
               .filter((p) => p.length > 0)
             const next = Array.from(new Set([...current, normalize(chosenPath)])).sort()
             // Update nested path directly to avoid overwriting other fields and reduce race risks
-            await useConfigLocalStore.getState().setConfigLocalValue(
-              'game.scanner.ignoreList' as any,
-              next as any
-            )
+            await useConfigLocalStore
+              .getState()
+              .setConfigLocalValue('game.scanner.ignoreList' as any, next as any)
             // Also update local state for immediate UI feedback
             await setScannerConfig({
               ...(scannerConfig || { interval: 0, list: {} }),
