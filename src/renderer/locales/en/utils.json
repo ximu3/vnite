@@ -8,7 +8,12 @@
   },
   "upscale": {
     "label": "Upscale background image",
-    "noUpscale": "No upscale"
+    "noUpscale": "No upscale",
+    "scaleLabel": "Scale",
+    "modelLabel": "Model",
+    "denoiseLevelLabel": "Denoise",
+    "noDenoise": "No denoise (-1)",
+    "denoiseLevel": "Level {{level}}"
   },
   "arrayEditor": {
     "clickPlusToAdd": "Click + to add elements",

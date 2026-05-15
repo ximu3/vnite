@@ -1,14 +1,14 @@
-import { useGameBatchAdderStore } from './store'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { Button } from '~/components/ui/button'
+import { UpscaleConfigControl } from '~/components/utils/UpscaleConfigControl'
 import { GameListTable } from './GameListTable'
 import { useGameAdder } from './hooks/useGameAdder'
-import { Button } from '~/components/ui/button'
-import { toast } from 'sonner'
-import { useTranslation } from 'react-i18next'
-import { UpscaleSelectField } from '~/components/utils/UpscaleSelect'
+import { useGameBatchAdderStore } from './store'
 
 export function GameList(): React.JSX.Element {
-  const { t } = useTranslation('adder')
-  const { isLoading, upscaleScale, actions } = useGameBatchAdderStore()
+  const { t } = useTranslation(['adder', 'game'])
+  const { isLoading, enableUpscale, actions } = useGameBatchAdderStore()
   const { addAllGames } = useGameAdder()
 
   const handleAddAll = (): void => {
@@ -27,7 +27,12 @@ export function GameList(): React.JSX.Element {
           <Button disabled={isLoading} onClick={handleAddAll}>
             {isLoading ? t('gameBatchAdder.actions.adding') : t('gameBatchAdder.actions.addAll')}
           </Button>
-          <UpscaleSelectField value={upscaleScale} onValueChange={actions.setUpscaleScale} />
+          <UpscaleConfigControl
+            checked={enableUpscale}
+            onCheckedChange={actions.setEnableUpscale}
+            label={t('game:detail.properties.media.actions.upscaleImage')}
+            disabled={isLoading}
+          />
         </div>
       </div>
     </div>

@@ -349,7 +349,7 @@ export function GameNav({
           <GameNavCM
             gameId={gameId}
             openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
-            openNameEditorDialog={() => setIsInformationDialogOpen(true)}
+            openInformationEditorDialog={() => setIsInformationDialogOpen(true)}
             openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
             openPropertiesDialog={() => setIsPropertiesDialogOpen(true)}
             showRemoveFromRecent={groupId === 'recentGames'}

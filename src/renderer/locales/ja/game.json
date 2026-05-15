@@ -413,7 +413,7 @@
     },
     "manage": {
       "title": "管理",
-      "rename": "基本情報を編集",
+      "editInfo": "基本情報を編集",
       "editLogo": "ロゴを編集",
       "editPlayTime": "プレイ時間を編集",
       "recalculateLastRunDate": "最終プレイ日を再計算",
@@ -561,6 +561,7 @@
           "searchImage": "画像を検索",
           "viewLargeImage": "拡大画像で表示",
           "cropImage": "画像を切り抜き",
+          "upscaleImage": "背景を超解像",
           "deleteImage": "画像を削除"
         },
         "search": {
@@ -596,6 +597,9 @@
           "cropSuccess": "切り抜きに成功しました",
           "cropError": "切り抜きに失敗しました",
           "cropIncomplete": "切り抜きが完了していません",
+          "upscaling": "背景画像を {{scale}}x で超解像中…",
+          "upscaleSuccess": "背景画像を {{scale}}x で超解像しました",
+          "upscaleError": "背景画像の超解像に失敗しました: {{message}}",
           "deleting": "画像を削除中…",
           "deleteSuccess": "画像を削除しました",
           "deleteError": "削除失敗"

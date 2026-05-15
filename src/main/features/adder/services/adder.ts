@@ -8,7 +8,8 @@ import {
   GamePlatformsList,
   GamePublishersList,
   GameRelatedSitesList,
-  GameTagsList
+  GameTagsList,
+  type GameImageUpscaleOptions
 } from '@appTypes/utils'
 import { generateUUID } from '@appUtils'
 import log from 'electron-log/main'
@@ -16,40 +17,22 @@ import path from 'path'
 import { ConfigDBManager, GameDBManager } from '~/core/database'
 import { eventBus } from '~/core/events'
 import {
-  saveGameIconByFile,
   calculateStorageSizeForPath,
-  isAutoCalculateStorageSizeEnabled
+  isAutoCalculateStorageSizeEnabled,
+  saveGameIconByFile,
+  tryUpscaleGameImage
 } from '~/features/game'
 import { launcherPreset } from '~/features/launcher'
-import { cacheDescriptionImages } from '~/features/scraper/services/descriptionImageCache'
 import { scraperManager } from '~/features/scraper'
-import { getGameFolders, selectPathDialog, upscaleImage } from '~/utils'
-
-export async function upscaleBackgroundImage(
-  imageSource: Buffer | string,
-  upscaleScale?: number
-): Promise<Buffer | string> {
-  if (upscaleScale === undefined || upscaleScale === null || upscaleScale === 0) {
-    return imageSource
-  }
-
-  try {
-    const upscalerPath = await ConfigDBManager.getConfigLocalValue('game.linkage.upscaler.path')
-    if (upscalerPath) {
-      return await upscaleImage(imageSource, upscalerPath, { scale: upscaleScale })
-    }
-  } catch (err) {
-    log.warn(`[Adder] Failed to upscale background image, using original:`, err)
-  }
-
-  return imageSource
-}
+import { cacheDescriptionImages } from '~/features/scraper/services/descriptionImageCache'
+import { getGameFolders, selectPathDialog } from '~/utils'
 
 export async function addGameToDB({
   dataSource,
   dataSourceId,
   backgroundUrl,
-  upscaleScale,
+  upscaleEnabled,
+  upscaleOptionsOverride,
   playTime,
   dirPath,
   gamePath,
@@ -58,7 +41,8 @@ export async function addGameToDB({
   dataSource: string
   dataSourceId: string
   backgroundUrl?: string
-  upscaleScale?: number
+  upscaleEnabled?: boolean
+  upscaleOptionsOverride?: GameImageUpscaleOptions
   playTime?: number
   dirPath?: string
   gamePath?: string
@@ -402,16 +386,24 @@ export async function addGameToDB({
     }
 
     if (backgroundUrl) {
-      const bgImage = await upscaleBackgroundImage(backgroundUrl, upscaleScale)
+      const backgroundImage = await tryUpscaleGameImage(
+        backgroundUrl,
+        upscaleEnabled,
+        upscaleOptionsOverride
+      )
       dbPromises.push(
-        GameDBManager.setGameImage(dbId, 'background', bgImage).catch((err) => {
+        GameDBManager.setGameImage(dbId, 'background', backgroundImage).catch((err) => {
           log.warn(`[Adder] Failed to save game background from URL: ${err.message}`)
         })
       )
     } else if (backgrounds.length > 0 && backgrounds[0]) {
-      const bgImage = await upscaleBackgroundImage(backgrounds[0], upscaleScale)
+      const backgroundImage = await tryUpscaleGameImage(
+        backgrounds[0],
+        upscaleEnabled,
+        upscaleOptionsOverride
+      )
       dbPromises.push(
-        GameDBManager.setGameImage(dbId, 'background', bgImage).catch((err) => {
+        GameDBManager.setGameImage(dbId, 'background', backgroundImage).catch((err) => {
           log.warn(`[Adder] Failed to save game background: ${err.message}`)
         })
       )

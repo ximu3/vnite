@@ -6,7 +6,7 @@ import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { GameImage } from '~/components/ui/game-image'
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
-import { useGameState } from '~/hooks'
+import { useConfigLocalState, useGameState } from '~/hooks'
 import { useLightStore } from '~/pages/Light'
 import { cn } from '~/utils'
 import { useGameDetailStore } from '../../../store'
@@ -15,10 +15,19 @@ import { CropDialog } from './CropDialog'
 import { SearchMediaDialog } from './SearchMediaDialog'
 import { UrlDialog } from './UrlDialog'
 
+import { getUpscalerBackendByPath } from '@appTypes/utils'
+import { UpscalerConfigDialog } from '~/components/utils/UpscalerConfigDialog'
+
 export function Media({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
   const refreshLight = useLightStore((state) => state.refresh)
   const openImageViewerDialog = useGameDetailStore((state) => state.openImageViewerDialog)
+  const [upscalerPath] = useConfigLocalState('game.linkage.upscaler.path')
+  const [upscalerConfig] = useConfigLocalState('game.linkage.upscaler.config')
+  const activeUpscalerBackend = getUpscalerBackendByPath(upscalerPath)
+  const currentUpscaleScale = activeUpscalerBackend
+    ? upscalerConfig[activeUpscalerBackend].scale
+    : 2
 
   const [isUrlDialogOpen, setIsUrlDialogOpen] = useState({
     icon: false,
@@ -38,11 +47,45 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     imagePath: null,
     isResizing: false
   })
+  const [originalName] = useGameState(gameId, 'metadata.originalName')
 
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false)
   const [searchType, setSearchType] = useState<'cover' | 'background' | 'icon' | 'logo'>('cover')
 
-  const [originalName] = useGameState(gameId, 'metadata.originalName')
+  const [isUpscalerDialogOpen, setIsUpscalerDialogOpen] = useState(false)
+  const [isUpscalingBackground, setIsUpscalingBackground] = useState(false)
+
+  function handleOpenUpscaleDialog(): void {
+    setIsUpscalerDialogOpen(true)
+  }
+
+  async function handleUpscaleBackground(): Promise<void> {
+    setIsUpscalingBackground(true)
+
+    toast.promise(
+      async () => {
+        try {
+          await ipcManager.invoke('game:upscale-background', gameId)
+          refreshLight()
+          setIsUpscalerDialogOpen(false)
+        } finally {
+          setIsUpscalingBackground(false)
+        }
+      },
+      {
+        loading: t('detail.properties.media.notifications.upscaling', {
+          scale: currentUpscaleScale
+        }),
+        success: t('detail.properties.media.notifications.upscaleSuccess', {
+          scale: currentUpscaleScale
+        }),
+        error: (err) =>
+          t('detail.properties.media.notifications.upscaleError', {
+            message: err.message
+          })
+      }
+    )
+  }
 
   async function handleFileSelect(type: 'cover' | 'background' | 'icon' | 'logo'): Promise<void> {
     try {
@@ -283,6 +326,24 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
           {t('detail.properties.media.actions.cropImage')}
         </TooltipContent>
       </Tooltip>
+      {type === 'background' && (
+        <Tooltip>
+          <TooltipTrigger>
+            <Button
+              onClick={handleOpenUpscaleDialog}
+              variant={'outline'}
+              size={'icon'}
+              className={cn('w-7 h-7')}
+              disabled={isUpscalingBackground || !activeUpscalerBackend}
+            >
+              <span className={cn('icon-[mdi--arrow-expand-all] w-4 h-4')}></span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            {t('detail.properties.media.actions.upscaleImage')}
+          </TooltipContent>
+        </Tooltip>
+      )}
       <Tooltip>
         <TooltipTrigger>
           <Button
@@ -364,6 +425,11 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
             isResizing: false
           })
         }}
+      />
+      <UpscalerConfigDialog
+        open={isUpscalerDialogOpen}
+        onOpenChange={setIsUpscalerDialogOpen}
+        onConfirm={handleUpscaleBackground}
       />
     </div>
   )

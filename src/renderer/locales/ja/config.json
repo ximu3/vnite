@@ -225,7 +225,17 @@
     "upscaler": {
       "name": "waifu2x-ncnn-vulkan / realcugan-ncnn-vulkan / realesrgan-ncnn-vulkan",
       "description": "ゲーム背景画像の超解像アップスケールに使用するツールです",
-      "placeholder": "アップスケーラーのパスを入力してください"
+      "placeholder": "アップスケーラーのパスを入力してください",
+      "configure": "アップスケール設定を開く",
+      "dialog": {
+        "title": "アップスケール設定",
+        "backendLabel": "超解像 backend",
+        "backendHint": "現在のパスは対応する超解像 backend として認識できません。すでにパスを設定している場合は、実行ファイル名を変更しないでください。",
+        "test": "動作確認",
+        "testing": "アップスケーラーの動作を確認しています…",
+        "testSuccess": "アップスケーラーのテストに成功しました",
+        "testError": "アップスケーラーのテストに失敗しました: {{message}}"
+      }
     }
   },
   "theme": {

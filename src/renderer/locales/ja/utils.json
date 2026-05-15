@@ -8,7 +8,12 @@
   },
   "upscale": {
     "label": "背景画像を超解像アップスケール",
-    "noUpscale": "拡大なし"
+    "noUpscale": "拡大なし",
+    "scaleLabel": "倍率",
+    "modelLabel": "モデル",
+    "denoiseLevelLabel": "ノイズ除去",
+    "noDenoise": "ノイズ除去なし (-1)",
+    "denoiseLevel": "レベル {{level}}"
   },
   "arrayEditor": {
     "clickPlusToAdd": "+ をクリックして要素を追加",

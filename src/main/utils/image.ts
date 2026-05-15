@@ -1,8 +1,10 @@
+import { getUpscalerBackendByPath, type GameImageUpscaleOptions } from '@appTypes/utils'
 import { Mutex } from 'async-mutex'
 import { spawn } from 'child_process'
 import { clipboard, nativeImage, net } from 'electron'
 import { fileTypeFromBuffer } from 'file-type'
 import fse from 'fs-extra'
+import path from 'path'
 import sharp from 'sharp'
 import ico from 'sharp-ico'
 import { getAppTempPath } from '~/features/system'
@@ -241,21 +243,8 @@ export async function writeClipboardImage(data: string, type: 'path'): Promise<b
 export async function upscaleImage(
   input: Buffer | string,
   exePath: string,
-  options: { scale?: number } = {}
+  options: GameImageUpscaleOptions = {}
 ): Promise<Buffer> {
-  const MIN_UPSCALE_SCALE = 2
-  const MAX_UPSCALE_SCALE = 4
-  const scale = options.scale ?? 2
-  if (
-    !Number.isFinite(scale) ||
-    !Number.isInteger(scale) ||
-    scale < MIN_UPSCALE_SCALE ||
-    scale > MAX_UPSCALE_SCALE
-  ) {
-    throw new Error(
-      `Invalid upscale scale: ${String(scale)}. Expected an integer between ${MIN_UPSCALE_SCALE} and ${MAX_UPSCALE_SCALE}.`
-    )
-  }
   const suffix = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
   const inputPath = getAppTempPath(`upscale_input_${suffix}.png`)
   const outputPath = getAppTempPath(`upscale_output_${suffix}.png`)
@@ -280,8 +269,7 @@ export async function upscaleImage(
     const pngBuffer = await sharp(imageBuffer, { limitInputPixels: false }).png().toBuffer()
     await fse.writeFile(inputPath, pngBuffer)
 
-    // Build arguments: all three tools share -i -o -s interface
-    const args = ['-i', inputPath, '-o', outputPath, '-s', String(scale)]
+    const args = buildUpscalerArgs(exePath, inputPath, outputPath, options)
 
     // Serialize external upscaler processes to avoid stacking multiple GPU-heavy jobs.
     await upscalerProcessMutex.runExclusive(async () => {
@@ -327,4 +315,57 @@ export async function upscaleImage(
     await fse.remove(inputPath).catch(() => {})
     await fse.remove(outputPath).catch(() => {})
   }
+}
+
+function buildUpscalerArgs(
+  exePath: string,
+  inputPath: string,
+  outputPath: string,
+  options: GameImageUpscaleOptions
+): string[] {
+  const backend = getUpscalerBackendByPath(exePath)
+  if (!backend) {
+    throw new Error(`Unsupported upscaler executable: ${exePath}`)
+  }
+
+  const args = ['-i', inputPath, '-o', outputPath]
+  const modelRoot = path.dirname(exePath)
+
+  if (options.scale !== undefined) {
+    args.push('-s', String(options.scale))
+  }
+
+  switch (backend) {
+    case 'waifu2x': {
+      if (options.model) {
+        args.push('-m', path.join(modelRoot, options.model))
+      }
+
+      if (options.denoiseLevel !== undefined) {
+        args.push('-n', String(options.denoiseLevel))
+      }
+
+      break
+    }
+    case 'realcugan': {
+      if (options.model) {
+        args.push('-m', path.join(modelRoot, options.model))
+      }
+
+      if (options.denoiseLevel !== undefined) {
+        args.push('-n', String(options.denoiseLevel))
+      }
+
+      break
+    }
+    case 'realesrgan': {
+      if (options.model) {
+        args.push('-m', path.join(modelRoot, 'models'), '-n', options.model)
+      }
+
+      break
+    }
+  }
+
+  return args
 }

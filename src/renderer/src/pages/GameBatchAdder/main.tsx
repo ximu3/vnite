@@ -10,7 +10,7 @@ export function GameBatchAdder(): React.JSX.Element {
   const {
     isOpen,
     isLoading,
-    actions: { setIsOpen, setGames, setIsLoading, setUpscaleScale }
+    actions: { setIsOpen, setGames, setIsLoading, setEnableUpscale }
   } = useGameBatchAdderStore()
 
   const handleClose = (): void => {
@@ -22,7 +22,7 @@ export function GameBatchAdder(): React.JSX.Element {
     setIsOpen(false)
     setGames([])
     setIsLoading(false)
-    setUpscaleScale(0)
+    setEnableUpscale(false)
   }
 
   return (

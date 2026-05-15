@@ -1,8 +1,19 @@
-import { useState, useEffect, useRef } from 'react'
 import { Loader2 } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
+import {
+  AllGameMetadataUpdateFields,
+  BatchUpdateGameMetadataProgress,
+  GameMetadataField,
+  GameMetadataUpdateMode,
+  GameMetadataUpdateOptions,
+  ScraperCapabilities
+} from '@appTypes/utils'
+import { delay } from '@appUtils'
 import { Button } from '@ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/card'
+import { Checkbox } from '@ui/checkbox'
 import {
   Dialog,
   DialogContent,
@@ -11,27 +22,17 @@ import {
   DialogHeader,
   DialogTitle
 } from '@ui/dialog'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/select'
-import { Checkbox } from '@ui/checkbox'
 import { Label } from '@ui/label'
-import { Slider } from '@ui/slider'
 import { Progress } from '@ui/progress'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/card'
-import { ipcManager } from '~/app/ipc'
-import {
-  BatchUpdateGameMetadataProgress,
-  GameMetadataUpdateOptions,
-  GameMetadataField,
-  GameMetadataUpdateMode
-} from '@appTypes/utils'
-import { ScraperCapabilities, AllGameMetadataUpdateFields } from '@appTypes/utils'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/select'
+import { Slider } from '@ui/slider'
 import { useTranslation } from 'react-i18next'
-import { useGameMetadataUpdaterStore } from './store'
-import { useConfigState } from '~/hooks'
+import { ipcManager } from '~/app/ipc'
 import { ScrollArea } from '~/components/ui/scroll-area'
+import { UpscaleConfigControl } from '~/components/utils/UpscaleConfigControl'
+import { useConfigState } from '~/hooks'
 import { cn } from '~/utils'
-import { delay } from '@appUtils'
-import { UpscaleSelectField } from '~/components/utils/UpscaleSelect'
+import { useGameMetadataUpdaterStore } from './store'
 
 export function GameMetadataUpdaterDialog(): React.JSX.Element {
   const {
@@ -39,8 +40,8 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
     gameIds,
     dataSourceId,
     backgroundUrl,
-    upscaleScale,
-    setUpscaleScale,
+    enableUpscale,
+    setEnableUpscale,
     handleClose,
     dataSource,
     setDataSource,
@@ -216,7 +217,7 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
         dataSourceId: dataSourceId!,
         fields: selectedFields,
         backgroundUrl,
-        upscaleScale,
+        upscaleEnabled: enableUpscale,
         options
       }
 
@@ -265,7 +266,7 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
         gameIds,
         dataSource,
         fields: selectedFields,
-        upscaleScale,
+        upscaleEnabled: enableUpscale,
         options,
         concurrency
       }
@@ -397,10 +398,11 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
               </div>
 
               {/* Upscale background option */}
-              <UpscaleSelectField
-                value={upscaleScale}
-                onValueChange={setUpscaleScale}
-                id="upscale-scale"
+              <UpscaleConfigControl
+                checked={enableUpscale}
+                onCheckedChange={setEnableUpscale}
+                label={t('detail.properties.media.actions.upscaleImage')}
+                disabled={isUpdating}
               />
 
               {/* Concurrency settings in batch mode */}

@@ -8,7 +8,12 @@
   },
   "upscale": {
     "label": "超分辨率放大背景圖",
-    "noUpscale": "不放大"
+    "noUpscale": "不放大",
+    "scaleLabel": "倍率",
+    "modelLabel": "模型",
+    "denoiseLevelLabel": "降噪",
+    "noDenoise": "不降噪 (-1)",
+    "denoiseLevel": "等級 {{level}}"
   },
   "arrayEditor": {
     "clickPlusToAdd": "點擊 + 添加元素",
