@@ -39,9 +39,9 @@ export function Search({ className }: { className?: string }): React.JSX.Element
 
   const PathRowWithDb = ({ gameId }: { gameId: string }): React.JSX.Element | null => {
     const [dbGamePath] = useGameLocalState(gameId, 'path.gamePath')
-    const [markPath] = useGameLocalState(gameId, 'utils.markPath')
-    if (!gameId || (!dbGamePath && !markPath)) return null
-    const displayPath = dbGamePath || markPath || ''
+    const [rootPath] = useGameLocalState(gameId, 'utils.rootPath')
+    if (!gameId || (!dbGamePath && !rootPath)) return null
+    const displayPath = dbGamePath || rootPath || ''
     return (
       <>
         <div className={cn('whitespace-nowrap select-none pb-1.5')}>

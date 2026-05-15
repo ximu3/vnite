@@ -435,6 +435,7 @@
       "path": {
         "title": "",
         "gamePath": "",
+        "rootPath": "",
         "savePath": "",
         "screenshotPath": "",
         "screenshotPathTooltip": "",

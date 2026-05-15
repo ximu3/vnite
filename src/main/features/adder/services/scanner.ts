@@ -2,10 +2,15 @@ import * as fse from 'fs-extra'
 import * as path from 'path'
 import { EventEmitter } from 'events'
 import { ConfigDBManager, GameDBManager } from '~/core/database'
-import { getGameEntityFoldersByHierarchyLevel, getGameFolders } from '~/utils'
+import {
+  getGameEntityFoldersByHierarchyLevel,
+  getGameFolders,
+  inferRootPath,
+  isPathWithinRoot
+} from '~/utils'
 import { addGameToDB } from './adder'
 import { scraperManager } from '~/features/scraper'
-import { OverallScanProgress } from '@appTypes/utils'
+import { OverallScanProgress, ScannerProgress } from '@appTypes/utils'
 import log from 'electron-log/main'
 import { ipcManager } from '~/core/ipc'
 import { eventBus } from '~/core/events'
@@ -47,6 +52,7 @@ export class GameScanner extends EventEmitter {
   private globalScanTimer: NodeJS.Timeout | null = null
   private lastScanTime: number = 0
   private autoStartPeriodicScan: boolean = true
+  private countedGameIds: Set<string> = new Set()
 
   constructor() {
     super()
@@ -159,6 +165,7 @@ export class GameScanner extends EventEmitter {
         scannedGames: 0,
         scannerProgresses: {}
       }
+      this.countedGameIds = new Set()
 
       // Initialize progress for each scanner
       for (const scannerId of scannerIds) {
@@ -273,6 +280,7 @@ export class GameScanner extends EventEmitter {
         scannedGames: 0,
         scannerProgresses: {}
       }
+      this.countedGameIds = new Set()
       this.scanProgress.scannerProgresses[scannerId] = {
         status: 'idle',
         processedFolders: 0,
@@ -434,11 +442,22 @@ export class GameScanner extends EventEmitter {
     const scannerProgress = this.scanProgress.scannerProgresses[scannerId]
 
     try {
-      // Check if the game already exists
-      const gameExists = await GameDBManager.checkGameExitsByPath(folder.dirPath)
+      // Check if the game already exists — deduplicate by game ID
+      const existingGameId = await GameDBManager.findExistingGameIdByPath(folder.dirPath)
 
-      if (!gameExists) {
+      if (existingGameId) {
+        // Already exists — only count once per unique game ID
+        if (!this.countedGameIds.has(existingGameId)) {
+          this.countedGameIds.add(existingGameId)
+          scannerProgress.scannedGames++
+          this.scanProgress.scannedGames++
+        }
+      } else {
         let searchName = folder.name
+        const rootPath = inferRootPath(folder.dirPath)
+        if (rootPath && rootPath !== folder.dirPath) {
+          searchName = path.basename(rootPath)
+        }
         if (normalizeFolderName) {
           searchName = this.normalizeFolderName(folder.name)
         }
@@ -472,22 +491,24 @@ export class GameScanner extends EventEmitter {
             }
           }
 
-          await addGameToDB({
+          const dbId = await addGameToDB({
             dataSource,
             dataSourceId: match.id,
             dirPath: folder.dirPath,
             upscaleScale: scannerList[scannerId]?.upscaleScale,
-            targetCollection
+            targetCollection,
+            scanRoot: this.currentScannerConfig?.path
           })
+          this.countedGameIds.add(dbId)
+          await this.cleanDuplicateFailedFolders(dbId, scannerProgress)
         } else {
           // If no match is found
           throw new Error(`No games found matching "${folder.name}"`)
         }
+        // Count the newly added game
+        scannerProgress.scannedGames++
+        this.scanProgress.scannedGames++
       }
-
-      // Update the scanner's game count
-      scannerProgress.scannedGames++
-      this.scanProgress.scannedGames++
     } catch (error) {
       // Record failed folder
       scannerProgress.failedFolders.push({
@@ -595,6 +616,7 @@ export class GameScanner extends EventEmitter {
         scannedGames: 0,
         scannerProgresses: {}
       }
+      this.countedGameIds = new Set()
 
       // Reset current scanner config
       this.currentScannerConfig = null
@@ -645,17 +667,21 @@ export class GameScanner extends EventEmitter {
       }
 
       // Add game with provided game ID
-      await addGameToDB({
+      const dbId = await addGameToDB({
         dataSource,
         dataSourceId: gameId,
         dirPath: folderPath,
         upscaleScale: scannerList[foundScannerId]?.upscaleScale,
-        targetCollection
+        targetCollection,
+        scanRoot: scannerList[foundScannerId]?.path
       })
 
       // Remove from failed list
       const scannerProgress = this.scanProgress.scannerProgresses[foundScannerId]
       scannerProgress.failedFolders.splice(foundIndex, 1)
+
+      await this.cleanDuplicateFailedFolders(dbId, scannerProgress)
+
       scannerProgress.scannedGames++
       this.scanProgress.scannedGames++
       ipcManager.send('scanner:scan-folder-fixed', { ...this.scanProgress })
@@ -671,6 +697,23 @@ export class GameScanner extends EventEmitter {
     } catch (error) {
       log.error('[Scanner] Fix folder failed:', error)
       throw error
+    }
+  }
+
+  private async cleanDuplicateFailedFolders(
+    dbId: string,
+    scannerProgress: ScannerProgress
+  ): Promise<void> {
+    // Additionally remove other failed folders under the same rootPath
+    const rootPath = await GameDBManager.getGameLocalValue(dbId, 'utils.rootPath')
+    if (rootPath) {
+      for (let i = scannerProgress.failedFolders.length - 1; i >= 0; i--) {
+        if (isPathWithinRoot(scannerProgress.failedFolders[i].path, rootPath)) {
+          scannerProgress.failedFolders.splice(i, 1)
+          scannerProgress.totalFolders--
+          scannerProgress.processedFolders--
+        }
+      }
     }
   }
 

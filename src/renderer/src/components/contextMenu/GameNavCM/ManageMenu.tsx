@@ -33,7 +33,7 @@ export function ManageMenu({
   openPlayingTimeEditorDialog: () => void
 }): React.JSX.Element {
   const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
-  const [markPath] = useGameLocalState(gameId, 'utils.markPath')
+  const [rootPath] = useGameLocalState(gameId, 'utils.rootPath')
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [nsfw, setNsfw] = useGameState(gameId, 'apperance.nsfw')
   const [playStatus, setPlayStatus] = useGameState(gameId, 'record.playStatus')
@@ -184,20 +184,20 @@ export function ManageMenu({
                 </ContextMenuItem>
               )}
               {/* Browse Local Files */}
-              {/* Only work if gamePath or markPath is set */}
+              {/* Only work if rootPath is set */}
               <ContextMenuItem
                 onClick={() => {
-                  if (!gamePath && !markPath) {
+                  if (!rootPath) {
                     toast.warning(t('detail.manage.notifications.gamePathNotSet'))
                   } else {
-                    ipcManager.invoke('system:open-path-in-explorer', gamePath || markPath)
+                    ipcManager.invoke('system:open-path-in-explorer', rootPath)
                   }
                 }}
               >
                 {t('detail.manage.browseLocalFiles')}
               </ContextMenuItem>
               {/* Calculate Storage Size */}
-              {(gamePath || markPath) && (
+              {rootPath && (
                 <ContextMenuItem
                   onClick={() => {
                     toast.promise(ipcManager.invoke('game:calculate-storage-size', gameId), {
