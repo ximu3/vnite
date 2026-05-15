@@ -41,9 +41,6 @@ export function ManageMenu({
     (state) => state.setIsPlayTimeEditorDialogOpen
   )
   const setIsScoreEditorDialogOpen = useGameDetailStore((state) => state.setIsScoreEditorDialogOpen)
-  const setIsModifyRootPathDialogOpen = useGameDetailStore(
-    (state) => state.setIsModifyRootPathDialogOpen
-  )
   const setIsOpen = useGameAdderStore((state) => state.setIsOpen)
   const setName = useGameAdderStore((state) => state.setName)
   const setDbId = useGameAdderStore((state) => state.setDbId)
@@ -159,12 +156,6 @@ export function ManageMenu({
               >
                 {t('detail.manage.browseLocalFiles')}
               </DropdownMenuItem>
-              {/* Modify Root Path */}
-              {rootPath && (
-                <DropdownMenuItem onSelect={() => setIsModifyRootPathDialogOpen(true)}>
-                  {t('detail.manage.modifyRootPath')}
-                </DropdownMenuItem>
-              )}
               {/* Calculate Storage Size */}
               {rootPath && (
                 <DropdownMenuItem

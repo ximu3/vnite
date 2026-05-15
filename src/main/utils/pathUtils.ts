@@ -175,16 +175,18 @@ export function inferRootPath(markPath: string, scanRoot?: string): string {
 
 /**
  * Determine whether rootPath needs re-inference based on gamePath.
- * Returns the inferred rootPath if inconsistent, or null if already consistent.
- * Used as a pre-save check: when gamePath changes, rootPath should be
- * re-inferred if it is empty or gamePath falls outside the current rootPath.
+ * Returns the inferred rootPath if re-inference is needed, or null if already consistent.
+ * Used as a pre-save check: rootPath is re-inferred when:
+ * - gamePath changed and rootPath is empty or gamePath falls outside the current rootPath
+ * - gamePath unchanged but rootPath is empty (auto-fill to prevent missing rootPath)
  */
 export function shouldReinferRootPath(
   oldGamePath: string,
   newGamePath: string,
   rootPath: string
 ): string | null {
-  if (!newGamePath || oldGamePath === newGamePath) return null
+  if (!newGamePath) return null
+  if (oldGamePath === newGamePath && rootPath) return null
   if (!rootPath || !isPathWithinRoot(newGamePath, rootPath)) {
     return inferRootPath(path.dirname(newGamePath))
   }

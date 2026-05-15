@@ -44,7 +44,11 @@ function PathComponent(
     true
   )
   const [markerPath] = useGameLocalState(gameId, 'utils.markPath')
-  const [rootPath] = useGameLocalState(gameId, 'utils.rootPath')
+  const [rootPath, setRootPath, saveRootPath, setRootPathAndSave] = useGameLocalState(
+    gameId,
+    'utils.rootPath',
+    true
+  )
   const [maxSaveBackups, setMaxSaveBackups] = useGameState(gameId, 'save.maxBackups')
   const [savePathSize, setSavePathSize] = useState(0)
   const [isGamePathValid, setIsGamePathValid] = useState(true)
@@ -89,8 +93,8 @@ function PathComponent(
   }
 
   const saveAll = useCallback(async () => {
-    await Promise.all([saveGamePath(), saveSavePaths(), saveScreenshotPath()])
-  }, [saveGamePath, saveSavePaths, saveScreenshotPath])
+    await Promise.all([saveGamePath(), saveRootPath(), saveSavePaths(), saveScreenshotPath()])
+  }, [saveGamePath, saveRootPath, saveSavePaths, saveScreenshotPath])
   useImperativeHandle(ref, () => ({ save: saveAll }), [saveAll])
 
   useEffect(() => {
@@ -185,6 +189,19 @@ function PathComponent(
     }
   }
 
+  async function selectRootPath(): Promise<void> {
+    const folderPath = await ipcManager.invoke(
+      'system:select-path-dialog',
+      ['openDirectory'],
+      undefined,
+      rootPath
+    )
+    if (!folderPath) {
+      return
+    }
+    await setRootPathAndSave(folderPath)
+  }
+
   async function selectSaveFolderPath(): Promise<void> {
     const folderPath = await ipcManager.invoke(
       'system:select-multiple-path-dialog',
@@ -236,6 +253,22 @@ function PathComponent(
               />
               <Button variant={'outline'} size={'icon'} onClick={selectGamePath}>
                 <span className={cn('icon-[mdi--file-outline] w-5 h-5')}></span>
+              </Button>
+            </div>
+
+            {/* Root Path */}
+            <div className={cn('whitespace-nowrap select-none self-center')}>
+              {t('detail.properties.path.rootPath')}
+            </div>
+            <div className={cn('flex flex-row gap-3 items-center')}>
+              <Input
+                className={cn('flex-1')}
+                value={rootPath || ''}
+                onChange={(e) => setRootPath(e.target.value)}
+                onBlur={saveRootPath}
+              />
+              <Button variant={'outline'} size={'icon'} onClick={selectRootPath}>
+                <span className={cn('icon-[mdi--folder-outline] w-5 h-5')}></span>
               </Button>
             </div>
 

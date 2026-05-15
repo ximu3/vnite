@@ -422,9 +422,6 @@
       "downloadMetadata": "Update Metadata",
       "createShortcut": "Create Shortcut",
       "browseLocalFiles": "Browse Local Files",
-      "modifyRootPath": "Modify Root Path",
-      "selectDirectory": "Select Directory",
-      "recalculateStorageSize": "Recalculate Game Size",
       "calculateStorageSize": "Calculate Game Size",
       "delete": "Delete",
       "notifications": {
@@ -521,6 +518,7 @@
       "path": {
         "title": "Game & Save",
         "gamePath": "Game Path",
+        "rootPath": "Root Path",
         "savePath": "Save Path",
         "screenshotPath": "Screenshot Path",
         "screenshotPathTooltip": "If left empty, the screenshot path configured under \"Settings → Database\" will be used automatically.",

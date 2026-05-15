@@ -26,13 +26,11 @@ import { cn, formatStorageSize } from '~/utils'
 export function ManageMenu({
   gameId,
   openNameEditorDialog,
-  openPlayingTimeEditorDialog,
-  openModifyRootPathDialog
+  openPlayingTimeEditorDialog
 }: {
   gameId: string
   openNameEditorDialog: () => void
   openPlayingTimeEditorDialog: () => void
-  openModifyRootPathDialog: () => void
 }): React.JSX.Element {
   const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
   const [rootPath] = useGameLocalState(gameId, 'utils.rootPath')
@@ -198,12 +196,6 @@ export function ManageMenu({
               >
                 {t('detail.manage.browseLocalFiles')}
               </ContextMenuItem>
-              {/* Modify Root Path */}
-              {rootPath && (
-                <ContextMenuItem onSelect={openModifyRootPathDialog}>
-                  {t('detail.manage.modifyRootPath')}
-                </ContextMenuItem>
-              )}
               {/* Calculate Storage Size */}
               {rootPath && (
                 <ContextMenuItem

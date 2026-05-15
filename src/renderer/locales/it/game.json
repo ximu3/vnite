@@ -319,9 +319,6 @@
       "downloadMetadata": "",
       "createShortcut": "",
       "browseLocalFiles": "",
-      "modifyRootPath": "",
-      "selectDirectory": "",
-      "recalculateStorageSize": "",
       "calculateStorageSize": "",
       "delete": "",
       "notifications": {
@@ -368,6 +365,7 @@
       "path": {
         "title": "",
         "gamePath": "",
+        "rootPath": "",
         "savePath": "",
         "addFolder": "",
         "addFile": "",

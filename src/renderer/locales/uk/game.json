@@ -361,9 +361,6 @@
       "downloadMetadata": "",
       "createShortcut": "",
       "browseLocalFiles": "",
-      "modifyRootPath": "",
-      "selectDirectory": "",
-      "recalculateStorageSize": "",
       "delete": "",
       "notifications": {
         "shortcutCreated": "",
@@ -438,6 +435,7 @@
       "path": {
         "title": "",
         "gamePath": "",
+        "rootPath": "",
         "savePath": "",
         "screenshotPath": "",
         "screenshotPathTooltip": "",

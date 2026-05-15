@@ -422,9 +422,6 @@
       "downloadMetadata": "メタデータを更新",
       "createShortcut": "ショートカットを作成",
       "browseLocalFiles": "ローカルファイルを閲覧",
-      "modifyRootPath": "ルートパスを変更",
-      "selectDirectory": "ディレクトリを選択",
-      "recalculateStorageSize": "ゲームサイズを再計算",
       "calculateStorageSize": "ゲームサイズを計算",
       "delete": "削除",
       "notifications": {
@@ -521,6 +518,7 @@
       "path": {
         "title": "ゲームとセーブ",
         "gamePath": "ゲームパス",
+        "rootPath": "ルートパス",
         "savePath": "セーブパス",
         "screenshotPath": "スクリーンショット保存先",
         "screenshotPathTooltip": "未入力の場合、「設定 → データベース」で設定されたスクリーンショットの保存先が自動的に使用されます",

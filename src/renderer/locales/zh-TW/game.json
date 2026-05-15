@@ -422,9 +422,6 @@
       "downloadMetadata": "更新資料",
       "createShortcut": "建立捷徑",
       "browseLocalFiles": "瀏覽本機文件",
-      "modifyRootPath": "修改根目錄",
-      "selectDirectory": "選擇目錄",
-      "recalculateStorageSize": "重新計算遊戲大小",
       "calculateStorageSize": "計算遊戲大小",
       "delete": "刪除",
       "notifications": {
@@ -521,6 +518,7 @@
       "path": {
         "title": "遊戲與存檔",
         "gamePath": "遊戲路徑",
+        "rootPath": "根目錄",
         "savePath": "存檔路徑",
         "screenshotPath": "截圖路徑",
         "screenshotPathTooltip": "留空時將自動使用「設定 → 資料庫」中設定的截圖路徑",

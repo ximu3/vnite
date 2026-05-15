@@ -17,7 +17,6 @@ import { ScrollToTopButton } from '../Showcase/ScrollToTopButton'
 import { ScrollArea } from '../ui/scroll-area'
 import { PlayTimeEditorDialog } from './Config/ManageMenu/PlayTimeEditorDialog'
 import { ScoreEditorDialog } from './Config/ManageMenu/ScoreEditorDialog'
-import { ModifyRootPathDialog } from './Config/ManageMenu/ModifyRootPathDialog'
 import { GamePropertiesDialog } from './Config/Properties'
 import { Header } from './Header'
 import { HeaderCompact } from './HeaderCompact'
@@ -62,10 +61,6 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   )
   const isScoreEditorDialogOpen = useGameDetailStore((state) => state.isScoreEditorDialogOpen)
   const setIsScoreEditorDialogOpen = useGameDetailStore((state) => state.setIsScoreEditorDialogOpen)
-  const isModifyRootPathDialogOpen = useGameDetailStore((state) => state.isModifyRootPathDialogOpen)
-  const setIsModifyRootPathDialogOpen = useGameDetailStore(
-    (state) => state.setIsModifyRootPathDialogOpen
-  )
 
   // Game Logo position and size management
   const initialPosition = { x: 1.5, y: 35 }
@@ -422,13 +417,6 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
       )}
       {isScoreEditorDialogOpen && (
         <ScoreEditorDialog gameId={gameId} setIsOpen={setIsScoreEditorDialogOpen} />
-      )}
-      {isModifyRootPathDialogOpen && (
-        <ModifyRootPathDialog
-          gameId={gameId}
-          isOpen={isModifyRootPathDialogOpen}
-          setIsOpen={setIsModifyRootPathDialogOpen}
-        />
       )}
     </div>
   )

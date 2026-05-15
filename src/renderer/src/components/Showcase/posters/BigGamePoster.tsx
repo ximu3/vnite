@@ -17,7 +17,6 @@ import { useRunningGames } from '~/pages/Library/store'
 import { useGameRegistry } from '~/stores/game'
 import { cn, navigateToGame } from '~/utils'
 import { PlayButton } from './PlayButton'
-import { ModifyRootPathDialog } from '~/components/Game/Config/ManageMenu/ModifyRootPathDialog'
 
 export function BigGamePoster({
   gameId,
@@ -43,7 +42,6 @@ export function BigGamePoster({
   const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = useState(false)
   const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = useState(false)
   const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = useState(false)
-  const [isModifyRootPathDialogOpen, setIsModifyRootPathDialogOpen] = useState(false)
   const [showPlayButtonOnPoster] = useConfigState('appearances.showcase.showPlayButtonOnPoster')
   const { t } = useTranslation('game')
 
@@ -232,7 +230,6 @@ export function BigGamePoster({
           openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
           openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
           openPropertiesDialog={() => setIsPropertiesDialogOpen(true)}
-          openModifyRootPathDialog={() => setIsModifyRootPathDialogOpen(true)}
           showRemoveFromRecent={showRemoveFromRecent}
         />
       )}
@@ -251,13 +248,6 @@ export function BigGamePoster({
           gameId={gameId}
           isOpen={isPropertiesDialogOpen}
           setIsOpen={setIsPropertiesDialogOpen}
-        />
-      )}
-      {isModifyRootPathDialogOpen && (
-        <ModifyRootPathDialog
-          gameId={gameId}
-          isOpen={isModifyRootPathDialogOpen}
-          setIsOpen={setIsModifyRootPathDialogOpen}
         />
       )}
     </ContextMenu>

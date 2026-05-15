@@ -8,7 +8,6 @@ import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
 import { GamePropertiesDialog } from '~/components/Game/Config/Properties'
 import { InformationDialog } from '~/components/Game/Overview/Information/InformationDialog'
-import { ModifyRootPathDialog } from '~/components/Game/Config/ManageMenu/ModifyRootPathDialog'
 import { BatchGameNavCM } from '~/components/GameBatchEditor/BatchGameNavCM'
 import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
 import { useDragContext } from '~/components/Showcase/CollectionGames'
@@ -90,7 +89,6 @@ export function GamePoster({
   const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = useState(false)
   const [isInformationDialogOpen, setIsInformationDialogOpen] = useState(false)
   const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = useState(false)
-  const [isModifyRootPathDialogOpen, setIsModifyRootPathDialogOpen] = useState(false)
   const { t } = useTranslation('game')
   const { setIsDraggingGlobal } = useDragContext()
   const ref_ = useRef<HTMLDivElement>(null)
@@ -358,7 +356,6 @@ export function GamePoster({
               openNameEditorDialog={() => setIsInformationDialogOpen(true)}
               openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
               openPropertiesDialog={() => setIsPropertiesDialogOpen(true)}
-              openModifyRootPathDialog={() => setIsModifyRootPathDialogOpen(true)}
               showRemoveFromRecent={showRemoveFromRecent}
             />
           )}
@@ -383,13 +380,6 @@ export function GamePoster({
           gameId={gameId}
           isOpen={isPropertiesDialogOpen}
           setIsOpen={setIsPropertiesDialogOpen}
-        />
-      )}
-      {isModifyRootPathDialogOpen && (
-        <ModifyRootPathDialog
-          gameId={gameId}
-          isOpen={isModifyRootPathDialogOpen}
-          setIsOpen={setIsModifyRootPathDialogOpen}
         />
       )}
 

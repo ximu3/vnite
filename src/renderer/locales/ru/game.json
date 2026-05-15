@@ -316,9 +316,6 @@
       "downloadMetadata": "Загрузить метаданные",
       "createShortcut": "Создать ярлык",
       "browseLocalFiles": "Обзор локальных файлов",
-      "modifyRootPath": "Изменить корневой путь",
-      "selectDirectory": "Выбрать папку",
-      "recalculateStorageSize": "Пересчитать размер игры",
       "calculateStorageSize": "Вычислить размер игры",
       "delete": "Удалить",
       "notifications": {
@@ -365,6 +362,7 @@
       "path": {
         "title": "Путь игры и сохранений",
         "gamePath": "Путь к игре",
+        "rootPath": "Корневой путь",
         "savePath": "Путь к сохранениям",
         "addFolder": "Добавить папку",
         "addFile": "Добавить файл",

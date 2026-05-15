@@ -319,9 +319,6 @@
       "downloadMetadata": "메타데이터 다운로드",
       "createShortcut": "바로가기 생성",
       "browseLocalFiles": "로컬 파일 찾기",
-      "modifyRootPath": "루트 경로 수정",
-      "selectDirectory": "디렉터리 선택",
-      "recalculateStorageSize": "게임 크기 다시 계산",
       "calculateStorageSize": "게임 크기 계산",
       "delete": "제거",
       "notifications": {
@@ -370,6 +367,7 @@
       "path": {
         "title": "게임 & 세이브",
         "gamePath": "게임 경로",
+        "rootPath": "루트 경로",
         "savePath": "세이브 경로",
         "addFolder": "폴더 추가",
         "addFile": "파일 추가",
