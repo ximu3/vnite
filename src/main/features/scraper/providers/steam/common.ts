@@ -269,6 +269,18 @@ export async function getGameScreenshots(appId: string): Promise<string[]> {
     : []
 }
 
+export async function getGameHeader(appId: string): Promise<string> {
+  const langConfig = i18next.t('scraper:steam.config', {
+    returnObjects: true
+  }) as SteamLanguageConfig
+
+  const urlLocal = `${STEAM_URLS.STORE}/api/appdetails?appids=${appId}&l=${langConfig.apiLanguageCode || 'english'}`
+  const data = (await fetchSteamAPI(urlLocal)) as SteamAppDetailsResponse
+
+  // Steam appdetails exposes the store header capsule URL as header_image.
+  return data[appId]?.success ? data[appId].data.header_image || '' : ''
+}
+
 export async function getGameBackgrounds(appId: string): Promise<string[]> {
   const heroUrl = await getGameHero(appId)
   const screenshots = await getGameScreenshots(appId)
@@ -359,6 +371,17 @@ export async function getGameBackgroundsByName(gameName: string): Promise<string
   } catch (error) {
     console.error(`Error fetching screenshots for game ${gameName}:`, error)
     return []
+  }
+}
+
+export async function getGameHeaderByName(gameName: string): Promise<string> {
+  try {
+    const games = await searchSteamGames(gameName)
+    if (games.length === 0) return ''
+    return getGameHeader(games[0].id)
+  } catch (error) {
+    console.error(`Error fetching header for game ${gameName}:`, error)
+    return ''
   }
 }
 
