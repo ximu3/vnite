@@ -16,14 +16,6 @@ import { CropDialog } from './CropDialog'
 import { SearchMediaDialog } from './SearchMediaDialog'
 import { UrlDialog } from './UrlDialog'
 
-const MEDIA_CARD_CONFIGS: Array<{ type: GameMediaType; aspectRatio: string }> = [
-  { type: 'cover', aspectRatio: '2/3' },
-  { type: 'background', aspectRatio: '2' },
-  { type: 'icon', aspectRatio: '1' },
-  { type: 'logo', aspectRatio: '3/2' },
-  { type: 'wideCover', aspectRatio: '3/2' }
-]
-
 export function Media({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
   const refreshLight = useLightStore((state) => state.refresh)
@@ -304,28 +296,38 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
 
   const MediaCard = ({
     type,
-    aspectRatio
+    previewHeightVh,
+    spanTwoColumns
   }: {
     type: GameMediaType
-    aspectRatio: string
+    previewHeightVh: number
+    spanTwoColumns?: boolean
   }): React.JSX.Element => (
-    <Card className="h-full flex flex-col">
+    <Card className={cn('flex flex-col', spanTwoColumns && 'col-span-2')}>
       <CardHeader>
         <CardTitle>{t(`detail.properties.media.types.${type}`)}</CardTitle>
       </CardHeader>
-      <CardContent className={cn('-mt-2 flex-1 flex flex-col')}>
-        <div className={cn('flex flex-col gap-2 h-full')}>
-          <MediaControls type={type} />
-          <div className={cn('flex-1 flex items-center justify-center')}>
-            <GameImage
-              gameId={gameId}
-              type={type}
-              className={cn(
-                `aspect-[${aspectRatio}] object-${type === 'logo' ? 'contain' : 'cover'} h-auto max-h-full`
-              )}
-              fallback={<div>{t(`detail.properties.media.empty.${type}`)}</div>}
-            />
-          </div>
+      <CardContent className={cn('-mt-2 flex flex-col gap-2')}>
+        <MediaControls type={type} />
+        <div
+          className={cn(
+            'flex w-full items-center justify-center overflow-hidden rounded-md border bg-muted/15 p-2'
+          )}
+          style={{
+            height: `${previewHeightVh}vh`
+          }}
+        >
+          <GameImage
+            gameId={gameId}
+            type={type}
+            fit="contain"
+            className={cn('h-full w-full rounded-md')}
+            fallback={
+              <div className={cn('flex h-full w-full items-center justify-center text-center')}>
+                {t(`detail.properties.media.empty.${type}`)}
+              </div>
+            }
+          />
         </div>
       </CardContent>
     </Card>
@@ -333,9 +335,11 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
 
   return (
     <div className={cn('grid grid-cols-[1fr_1.5fr] gap-3 w-full h-full')}>
-      {MEDIA_CARD_CONFIGS.map(({ type, aspectRatio }) => (
-        <MediaCard key={type} type={type} aspectRatio={aspectRatio} />
-      ))}
+      <MediaCard type="cover" previewHeightVh={40} />
+      <MediaCard type="background" previewHeightVh={40} />
+      <MediaCard type="icon" previewHeightVh={20} />
+      <MediaCard type="logo" previewHeightVh={20} />
+      <MediaCard type="wideCover" previewHeightVh={40} spanTwoColumns />
 
       <CropDialog
         isOpen={cropDialogState.isOpen}
