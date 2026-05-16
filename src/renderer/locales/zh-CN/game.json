@@ -223,7 +223,20 @@
       },
       "description": {
         "empty": "暂无简介",
-        "htmlHint": "支持使用 HTML 标签",
+        "editor": {
+          "placeholder": "使用 HTML 编写简介…",
+          "toolbar": {
+            "heading1": "标题 1",
+            "heading2": "标题 2",
+            "heading3": "标题 3",
+            "paragraph": "段落",
+            "lineBreak": "换行",
+            "bold": "加粗",
+            "italic": "斜体",
+            "underline": "下划线",
+            "image": "图片"
+          }
+        },
         "search": {
           "loading": "正在搜索游戏描述…",
           "success": "搜索成功",

@@ -223,7 +223,20 @@
       },
       "description": {
         "empty": "説明はありません",
-        "htmlHint": "HTMLタグがサポートされています",
+        "editor": {
+          "placeholder": "HTMLで説明を入力…",
+          "toolbar": {
+            "heading1": "見出し 1",
+            "heading2": "見出し 2",
+            "heading3": "見出し 3",
+            "paragraph": "段落",
+            "lineBreak": "改行",
+            "bold": "太字",
+            "italic": "斜体",
+            "underline": "下線",
+            "image": "画像"
+          }
+        },
         "search": {
           "loading": "ゲームの説明を検索中…",
           "success": "検索成功",

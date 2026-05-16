@@ -223,7 +223,20 @@
       },
       "description": {
         "empty": "暫無簡介",
-        "htmlHint": "支援使用 HTML 標籤",
+        "editor": {
+          "placeholder": "使用 HTML 編寫簡介…",
+          "toolbar": {
+            "heading1": "標題 1",
+            "heading2": "標題 2",
+            "heading3": "標題 3",
+            "paragraph": "段落",
+            "lineBreak": "換行",
+            "bold": "粗體",
+            "italic": "斜體",
+            "underline": "底線",
+            "image": "圖片"
+          }
+        },
         "search": {
           "loading": "正在搜尋遊戲描述…",
           "success": "搜尋成功",
