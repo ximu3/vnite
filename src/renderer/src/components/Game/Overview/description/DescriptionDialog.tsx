@@ -1,8 +1,9 @@
+import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Dialog, DialogContent } from '~/components/ui/dialog'
-import { Textarea } from '~/components/ui/textarea'
-import { cn } from '~/utils'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/ui/dialog'
 import { useGameState } from '~/hooks'
+import { cn } from '~/utils'
+import { HtmlDescriptionEditor, type HtmlDescriptionEditorHandle } from './HtmlDescriptionEditor'
 
 export function DescriptionDialog({
   gameId,
@@ -14,24 +15,50 @@ export function DescriptionDialog({
   setIsOpen: (isOpen: boolean) => void
 }): React.JSX.Element {
   const { t } = useTranslation('game')
-  const [description, setDescription, saveDescription] = useGameState(
-    gameId,
-    'metadata.description',
-    true
-  )
+  const [draft, setDraft, saveDraft] = useGameState(gameId, 'metadata.description', true)
+  const editorRef = useRef<HtmlDescriptionEditorHandle>(null)
+
+  useEffect(() => {
+    if (!isOpen) return
+
+    const frameId = window.requestAnimationFrame(() => {
+      editorRef.current?.focusEditorEnd()
+    })
+
+    return (): void => {
+      window.cancelAnimationFrame(frameId)
+    }
+  }, [isOpen])
+
+  async function closeDialog(): Promise<void> {
+    await saveDraft()
+    setIsOpen(false)
+  }
+
+  function handleOpenChange(open: boolean): void {
+    if (open) {
+      setIsOpen(true)
+      return
+    }
+
+    void closeDialog()
+  }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className={cn('w-[70vw] h-[70vh] lg:h-[80vh] max-w-none flex flex-col gap-5')}>
-        <div className={cn('text-xs -mb-2')}>{t('detail.overview.description.htmlHint')}</div>
-        <Textarea
-          spellCheck={false}
-          className={cn('grow resize-none')}
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          onBlur={saveDescription}
-          placeholder={t('detail.overview.description.empty')}
-        />
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogContent
+        onOpenAutoFocus={(event) => {
+          event.preventDefault()
+        }}
+        className={cn('w-[min(1100px,86vw)] h-[82vh] max-w-none flex min-h-0 flex-col gap-4')}
+      >
+        <DialogHeader className={cn('gap-1')}>
+          <DialogTitle>{t('detail.overview.sections.description')}</DialogTitle>
+        </DialogHeader>
+
+        <div className={cn('min-h-0 flex-1')}>
+          <HtmlDescriptionEditor ref={editorRef} value={draft} onChange={setDraft} />
+        </div>
       </DialogContent>
     </Dialog>
   )
