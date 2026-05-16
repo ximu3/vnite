@@ -138,6 +138,7 @@ export function BigGamePoster({
                   onClick={handleGameClick}
                   gameId={gameId}
                   type="wideCover"
+                  forceSmartCrop
                   blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
                   initialMask={true}
                   blurType="bigposter"
@@ -147,6 +148,7 @@ export function BigGamePoster({
                       onClick={handleGameClick}
                       gameId={gameId}
                       type="background"
+                      forceSmartCrop
                       blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
                       initialMask={true}
                       blurType="bigposter"
