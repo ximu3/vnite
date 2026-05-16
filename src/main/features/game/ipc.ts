@@ -1,3 +1,4 @@
+import type { GameMediaType } from '@appTypes/models'
 import sharp from 'sharp'
 import { GameDBManager } from '~/core/database'
 import { ipcManager } from '~/core/ipc'
@@ -19,7 +20,7 @@ import {
 export function setupGameIPC(): void {
   ipcManager.handle(
     'game:set-image',
-    async (_, gameId: string, type: 'background' | 'cover' | 'logo' | 'icon', image: string) => {
+    async (_, gameId: string, type: GameMediaType, image: string) => {
       return await GameDBManager.setGameImage(gameId, type, image)
     }
   )
@@ -90,19 +91,13 @@ export function setupGameIPC(): void {
     }
   )
 
-  ipcManager.handle(
-    'game:get-media-path',
-    async (_, gameId: string, type: 'cover' | 'background' | 'icon' | 'logo') => {
-      return await GameDBManager.getGameImage(gameId, type, 'file')
-    }
-  )
+  ipcManager.handle('game:get-media-path', async (_, gameId: string, type: GameMediaType) => {
+    return await GameDBManager.getGameImage(gameId, type, 'file')
+  })
 
-  ipcManager.handle(
-    'game:remove-media',
-    async (_, gameId: string, type: 'cover' | 'background' | 'icon' | 'logo') => {
-      return await GameDBManager.removeGameImage(gameId, type)
-    }
-  )
+  ipcManager.handle('game:remove-media', async (_, gameId: string, type: GameMediaType) => {
+    return await GameDBManager.removeGameImage(gameId, type)
+  })
 
   ipcManager.handle('game:check-exits-by-path', async (_, gamePath: string) => {
     return await GameDBManager.checkGameExitsByPath(gamePath)

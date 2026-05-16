@@ -6,6 +6,10 @@ export const googleProvider: ScraperProvider = {
   id: 'google',
   name: 'Google',
 
+  async getGameWideCovers(identifier: ScraperIdentifier): Promise<string[]> {
+    return await searchGameImages(identifier.value, 'hero')
+  },
+
   async getGameBackgrounds(identifier: ScraperIdentifier): Promise<string[]> {
     return await searchGameImages(identifier.value, 'hero')
   },

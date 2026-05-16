@@ -543,13 +543,15 @@
           "icon": "圖示",
           "background": "背景",
           "cover": "封面",
-          "logo": "徽標"
+          "logo": "徽標",
+          "wideCover": "寬幅封面"
         },
         "empty": {
           "icon": "暫無圖示",
           "background": "暫無背景",
           "cover": "暫無封面",
           "logo": "暫無徽標",
+          "wideCover": "暫無寬幅封面",
           "images": "暫無圖片"
         },
         "actions": {

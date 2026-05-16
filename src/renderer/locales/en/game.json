@@ -543,13 +543,15 @@
           "icon": "Icon",
           "background": "Background",
           "cover": "Cover",
-          "logo": "Logo"
+          "logo": "Logo",
+          "wideCover": "Wide Cover"
         },
         "empty": {
           "icon": "No icon",
           "background": "No background",
           "cover": "No cover",
           "logo": "No logo",
+          "wideCover": "No wide cover",
           "images": "No images"
         },
         "actions": {

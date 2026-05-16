@@ -543,13 +543,15 @@
           "icon": "アイコン",
           "background": "背景",
           "cover": "カバー",
-          "logo": "ロゴ"
+          "logo": "ロゴ",
+          "wideCover": "ワイドカバー"
         },
         "empty": {
           "icon": "アイコンなし",
           "background": "背景なし",
           "cover": "カバーなし",
           "logo": "ロゴなし",
+          "wideCover": "ワイドカバーなし",
           "images": "画像なし"
         },
         "actions": {

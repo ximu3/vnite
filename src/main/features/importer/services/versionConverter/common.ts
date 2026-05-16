@@ -1,5 +1,6 @@
 import {
   DEFAULT_CONFIG_VALUES,
+  GameMediaType,
   gameCollectionDoc,
   gameDoc,
   gameLocalDoc,
@@ -385,7 +386,7 @@ async function convertGame(gameId: string, gamePath: string): Promise<void> {
 }
 
 async function processGameImages(gameId: string, gamePath: string): Promise<void> {
-  const imageTypes = ['background', 'cover', 'icon', 'logo']
+  const imageTypes: GameMediaType[] = ['background', 'cover', 'icon', 'logo', 'wideCover']
   const possibleExtensions = ['webp', 'jpg', 'jpeg', 'png', 'gif', 'ico']
 
   for (const type of imageTypes) {
@@ -399,7 +400,7 @@ async function processGameImages(gameId: string, gamePath: string): Promise<void
       if (exists) {
         try {
           const imageData = await fse.readFile(imagePath)
-          await GameDBManager.setGameImage(gameId, type as any, imageData)
+          await GameDBManager.setGameImage(gameId, type, imageData)
 
           imageFound = true
           console.log(`Processed ${type} image for game ${gameId}`)

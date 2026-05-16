@@ -1,3 +1,4 @@
+import type { GameMediaType } from '@appTypes/models'
 import { ScraperCapabilities } from '@appTypes/utils'
 import { Button } from '@ui/button'
 import { Card } from '@ui/card'
@@ -19,10 +20,9 @@ import { ipcManager } from '~/app/ipc'
 import { useConfigState } from '~/hooks'
 import { cn } from '~/utils'
 
-type MediaType = 'cover' | 'icon' | 'logo' | 'background'
-type DataSourceMap = Record<MediaType, string>
+type DataSourceMap = Record<GameMediaType, string>
 
-function checkMediaCapability(capabilities: ScraperCapabilities[], type: MediaType): boolean {
+function checkMediaCapability(capabilities: ScraperCapabilities[], type: GameMediaType): boolean {
   switch (type) {
     case 'cover':
       return capabilities.includes('getGameCovers')
@@ -32,6 +32,8 @@ function checkMediaCapability(capabilities: ScraperCapabilities[], type: MediaTy
       return capabilities.includes('getGameLogos')
     case 'background':
       return capabilities.includes('getGameBackgrounds')
+    case 'wideCover':
+      return capabilities.includes('getGameWideCovers')
     default:
       return false
   }
@@ -40,7 +42,7 @@ function checkMediaCapability(capabilities: ScraperCapabilities[], type: MediaTy
 interface SearchMediaDialogProps {
   isOpen: boolean
   onClose: () => void
-  type: MediaType
+  type: GameMediaType
   gameTitle: string
   onSelect: (imagePath: string) => void
 }
@@ -58,7 +60,8 @@ export function SearchMediaDialog({
     cover: 'google',
     icon: 'google',
     logo: 'google',
-    background: 'google'
+    background: 'google',
+    wideCover: 'google'
   })
   const [defaultMediaDataSource] = useConfigState('game.scraper.common.defaultMediaDataSource')
   const [availableDataSources, setAvailableDataSources] = useState<
@@ -72,7 +75,13 @@ export function SearchMediaDialog({
     const fetchAvailableDataSources = async (): Promise<void> => {
       const sources = await ipcManager.invoke(
         'scraper:get-provider-infos-with-capabilities',
-        ['getGameCovers', 'getGameIcons', 'getGameLogos', 'getGameBackgrounds'],
+        [
+          'getGameCovers',
+          'getGameIcons',
+          'getGameLogos',
+          'getGameBackgrounds',
+          'getGameWideCovers'
+        ],
         false
       )
       setAvailableDataSources(sources)
@@ -88,10 +97,11 @@ export function SearchMediaDialog({
       cover: 'google',
       icon: 'google',
       logo: 'google',
-      background: 'google'
+      background: 'google',
+      wideCover: 'google'
     }
 
-    for (const t of ['cover', 'icon', 'logo', 'background'] as MediaType[]) {
+    for (const t of ['cover', 'icon', 'logo', 'background', 'wideCover'] as GameMediaType[]) {
       if (checkMediaCapability(defaultSource.capabilities, t)) {
         nextDataSources[t] = defaultMediaDataSource
       }
@@ -137,6 +147,12 @@ export function SearchMediaDialog({
           break
         case 'background':
           result = await ipcManager.invoke('scraper:get-game-backgrounds', dataSources.background, {
+            type: 'name',
+            value: searchTitle
+          })
+          break
+        case 'wideCover':
+          result = await ipcManager.invoke('scraper:get-game-wide-covers', dataSources.wideCover, {
             type: 'name',
             value: searchTitle
           })

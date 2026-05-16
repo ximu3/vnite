@@ -1,3 +1,4 @@
+import type { GameMediaType } from '@appTypes/models'
 import { baseDBManager } from '../BaseDBManager'
 import { convertToWebP } from '~/utils'
 import {
@@ -317,7 +318,7 @@ export class GameDBManager {
 
   static async setGameImage(
     gameId: string,
-    type: 'background' | 'cover' | 'icon' | 'logo',
+    type: GameMediaType,
     image: Buffer | string
   ): Promise<void> {
     try {
@@ -331,7 +332,7 @@ export class GameDBManager {
 
   static async getGameImage<T extends 'buffer' | 'file' = 'buffer'>(
     gameId: string,
-    type: 'background' | 'cover' | 'icon' | 'logo',
+    type: GameMediaType,
     format: T = 'buffer' as T
   ): Promise<T extends 'file' ? string | null : Buffer | null> {
     try {
@@ -511,10 +512,7 @@ export class GameDBManager {
     }
   }
 
-  static async removeGameImage(
-    gameId: string,
-    type: 'background' | 'cover' | 'icon' | 'logo'
-  ): Promise<void> {
+  static async removeGameImage(gameId: string, type: GameMediaType): Promise<void> {
     try {
       await baseDBManager.removeAttachment(this.DB_NAME, gameId, `images/${type}.webp`)
     } catch (error) {

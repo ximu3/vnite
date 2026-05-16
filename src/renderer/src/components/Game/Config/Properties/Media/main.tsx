@@ -1,3 +1,4 @@
+import type { GameMediaType } from '@appTypes/models'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -15,21 +16,30 @@ import { CropDialog } from './CropDialog'
 import { SearchMediaDialog } from './SearchMediaDialog'
 import { UrlDialog } from './UrlDialog'
 
+const MEDIA_CARD_CONFIGS: Array<{ type: GameMediaType; aspectRatio: string }> = [
+  { type: 'cover', aspectRatio: '2/3' },
+  { type: 'background', aspectRatio: '2' },
+  { type: 'icon', aspectRatio: '1' },
+  { type: 'logo', aspectRatio: '3/2' },
+  { type: 'wideCover', aspectRatio: '3/2' }
+]
+
 export function Media({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
   const refreshLight = useLightStore((state) => state.refresh)
   const openImageViewerDialog = useGameDetailStore((state) => state.openImageViewerDialog)
 
-  const [isUrlDialogOpen, setIsUrlDialogOpen] = useState({
+  const [isUrlDialogOpen, setIsUrlDialogOpen] = useState<Record<GameMediaType, boolean>>({
     icon: false,
     cover: false,
     background: false,
-    logo: false
+    logo: false,
+    wideCover: false
   })
 
   const [cropDialogState, setCropDialogState] = useState<{
     isOpen: boolean
-    type: 'cover' | 'background' | 'icon' | 'logo'
+    type: GameMediaType
     imagePath: string | null
     isResizing: boolean
   }>({
@@ -40,11 +50,11 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
   })
 
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false)
-  const [searchType, setSearchType] = useState<'cover' | 'background' | 'icon' | 'logo'>('cover')
+  const [searchType, setSearchType] = useState<GameMediaType>('cover')
 
   const [originalName] = useGameState(gameId, 'metadata.originalName')
 
-  async function handleFileSelect(type: 'cover' | 'background' | 'icon' | 'logo'): Promise<void> {
+  async function handleFileSelect(type: GameMediaType): Promise<void> {
     try {
       const filePath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
       if (!filePath) return
@@ -66,9 +76,7 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     }
   }
 
-  async function handleClipboardImport(
-    type: 'cover' | 'background' | 'icon' | 'logo'
-  ): Promise<void> {
+  async function handleClipboardImport(type: GameMediaType): Promise<void> {
     try {
       const filePath = await ipcManager.invoke('utils:save-clipboard-image')
       if (!filePath) {
@@ -87,7 +95,7 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     }
   }
 
-  async function handleResize(type: 'cover' | 'background' | 'icon' | 'logo'): Promise<void> {
+  async function handleResize(type: GameMediaType): Promise<void> {
     try {
       // Get current image path
       const currentPath = await ipcManager.invoke('game:get-media-path', gameId, type)
@@ -107,7 +115,7 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     }
   }
 
-  function setMediaWithUrl(type: 'cover' | 'background' | 'icon' | 'logo', URL: string): void {
+  function setMediaWithUrl(type: GameMediaType, URL: string): void {
     toast.promise(
       async () => {
         setIsUrlDialogOpen({ ...isUrlDialogOpen, [type]: false })
@@ -130,10 +138,7 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     )
   }
 
-  async function handleCropComplete(
-    type: 'cover' | 'background' | 'icon' | 'logo',
-    filePath: string
-  ): Promise<void> {
+  async function handleCropComplete(type: GameMediaType, filePath: string): Promise<void> {
     setCropDialogState({ isOpen: false, type: 'cover', imagePath: null, isResizing: false })
 
     const action = cropDialogState.isResizing
@@ -164,7 +169,7 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     )
   }
 
-  async function handleDeleteMedia(type: 'cover' | 'background' | 'icon' | 'logo'): Promise<void> {
+  async function handleDeleteMedia(type: GameMediaType): Promise<void> {
     toast.promise(
       async () => {
         await ipcManager.invoke('game:remove-media', gameId, type)
@@ -186,11 +191,7 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     )
   }
 
-  const MediaControls = ({
-    type
-  }: {
-    type: 'cover' | 'background' | 'icon' | 'logo'
-  }): React.JSX.Element => (
+  const MediaControls = ({ type }: { type: GameMediaType }): React.JSX.Element => (
     <div className={cn('flex flex-row gap-2')}>
       <Tooltip>
         <TooltipTrigger>
@@ -305,7 +306,7 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     type,
     aspectRatio
   }: {
-    type: 'cover' | 'background' | 'icon' | 'logo'
+    type: GameMediaType
     aspectRatio: string
   }): React.JSX.Element => (
     <Card className="h-full flex flex-col">
@@ -332,10 +333,9 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
 
   return (
     <div className={cn('grid grid-cols-[1fr_1.5fr] gap-3 w-full h-full')}>
-      <MediaCard type="cover" aspectRatio="2/3" />
-      <MediaCard type="background" aspectRatio="2" />
-      <MediaCard type="icon" aspectRatio="1" />
-      <MediaCard type="logo" aspectRatio="3/2" />
+      {MEDIA_CARD_CONFIGS.map(({ type, aspectRatio }) => (
+        <MediaCard key={type} type={type} aspectRatio={aspectRatio} />
+      ))}
 
       <CropDialog
         isOpen={cropDialogState.isOpen}
