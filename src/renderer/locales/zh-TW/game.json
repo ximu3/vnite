@@ -568,7 +568,12 @@
         "search": {
           "title": "搜尋圖片",
           "dataSource": "資料源",
-          "searchTitle": "搜尋標題"
+          "searchTitle": "搜尋標題",
+          "searchType": "搜尋方式",
+          "quickFill": "快速填入",
+          "byName": "按名稱搜尋",
+          "byId": "按 ID 搜尋",
+          "storedId": "已儲存 ID"
         },
         "url": {
           "empty": "請輸入連結地址"
@@ -592,6 +597,7 @@
           "searching": "搜尋中…",
           "searchSuccess": "搜尋成功",
           "searchError": "搜尋失敗: {{message}}",
+          "emptySearchValue": "請輸入搜尋內容",
           "noResultsFound": "未找到相關圖片",
           "selectImage": "請選擇一張圖片",
           "cropping": "正在裁剪…",

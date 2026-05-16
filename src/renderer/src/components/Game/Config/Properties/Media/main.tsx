@@ -46,6 +46,12 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
 
   const [originalName] = useGameState(gameId, 'metadata.originalName')
 
+  const [name] = useGameState(gameId, 'metadata.name')
+  const [steamId] = useGameState(gameId, 'metadata.steamId')
+  const [vndbId] = useGameState(gameId, 'metadata.vndbId')
+  const [igdbId] = useGameState(gameId, 'metadata.igdbId')
+  const [ymgalId] = useGameState(gameId, 'metadata.ymgalId')
+
   async function handleFileSelect(type: GameMediaType): Promise<void> {
     try {
       const filePath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
@@ -353,7 +359,17 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
         isOpen={isSearchDialogOpen}
         onClose={() => setIsSearchDialogOpen(false)}
         type={searchType}
-        gameTitle={originalName}
+        searchContext={{
+          name,
+          originalName,
+          storedIds: {
+            steam: steamId,
+            steamgriddb: steamId,
+            vndb: vndbId,
+            igdb: igdbId,
+            ymgal: ymgalId
+          }
+        }}
         onSelect={async (imagePath) => {
           toast.loading(t('detail.properties.media.notifications.downloading'), {
             id: 'download-image-toast'
