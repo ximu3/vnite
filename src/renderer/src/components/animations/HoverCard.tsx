@@ -91,19 +91,13 @@ export function HoverCardAnimation({
   return (
     <animated.div
       ref={cardRef}
-      className={cn(
-        'relative overflow-hidden rounded-lg',
-        'transform-gpu',
-        'will-change-transform',
-        className
-      )}
+      className={cn('relative overflow-hidden rounded-lg', className)}
       {...rest}
     >
       {/* Image layer */}
       <animated.div
         style={{
           transform: springs.imageScale.to((s) => `scale(${s})`),
-          willChange: 'transform',
           width: '100%',
           height: '100%'
         }}
