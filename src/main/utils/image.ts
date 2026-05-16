@@ -11,23 +11,74 @@ const upscalerProcessMutex = new Mutex()
 
 export async function searchGameImages(
   gameName: string,
-  imageType: 'icon' | 'logo' | 'hero' | 'cover' | string,
+  promptTerms: string | string[],
   limit: number = 30
 ): Promise<string[]> {
   try {
-    const imageUrls: string[] = []
+    const normalizedTerms = normalizePromptTerms(promptTerms)
+    const queries =
+      normalizedTerms.length > 0
+        ? normalizedTerms.map((term) => `"${normalizeGoogleSearchTerm(gameName)}" ${term}`)
+        : [`"${normalizeGoogleSearchTerm(gameName)}"`]
 
-    // Using Google Image Search
-    const results = await gis(`"${gameName}" ${imageType === 'hero' ? 'wallpaper' : imageType}`)
-    for (const result of results.slice(0, limit)) {
-      imageUrls.push(result.url || '')
+    const validQueries = queries.filter(Boolean)
+    if (validQueries.length === 0) {
+      return []
     }
 
-    return imageUrls
+    // Google Search officially documents quotes, but we did not find reliable, detailed
+    // Web Search documentation for composing stable mixed boolean expressions such as
+    // AND + OR with parentheses. To avoid relying on brittle query parsing rules, run
+    // one simple query per media hint term and merge the results afterward.
+    const resultsByQuery = await Promise.all(validQueries.map((query) => gis(query)))
+    const rankedUrls: Record<string, { hitCount: number; seenOrder: number }> = {}
+
+    for (const results of resultsByQuery) {
+      let seenOrder = 0
+      for (const result of results.slice(0, limit)) {
+        const url = result.url || ''
+        if (!url) continue
+
+        const existing = rankedUrls[url]
+        if (existing) {
+          existing.hitCount += 1
+          existing.seenOrder = Math.min(existing.seenOrder, seenOrder)
+        } else {
+          rankedUrls[url] = { hitCount: 1, seenOrder: seenOrder }
+        }
+
+        seenOrder += 1
+      }
+    }
+
+    return Object.entries(rankedUrls)
+      .sort(
+        ([_aUrl, aRank], [_bUrl, bRank]) =>
+          bRank.hitCount - aRank.hitCount || aRank.seenOrder - bRank.seenOrder
+      )
+      .slice(0, limit)
+      .map(([url]) => url)
   } catch (error) {
     console.error('Error searching for images:', error)
     return []
   }
+}
+
+function normalizePromptTerms(promptTerms: string | string[]): string[] {
+  const uniqueTerms = new Set<string>()
+
+  for (const term of Array.isArray(promptTerms) ? promptTerms : [promptTerms]) {
+    const normalizedTerm = normalizeGoogleSearchTerm(term)
+    if (!normalizedTerm) continue
+
+    uniqueTerms.add(normalizedTerm)
+  }
+
+  return Array.from(uniqueTerms)
+}
+
+function normalizeGoogleSearchTerm(term: string): string {
+  return term.replace(/"/g, ' ').replace(/\s+/g, ' ').trim()
 }
 
 export async function convertToWebP(

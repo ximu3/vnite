@@ -8,6 +8,7 @@ import {
 import { PosterRenderArgs, RenderResponse, TemplatePayloads } from '@appTypes/poster'
 import { BatchUpdateGameMetadataProgress, OverallScanProgress } from '@appTypes/utils'
 import { ProgressInfo, UpdateCheckResult } from 'electron-updater'
+import type { GameMediaType } from './models'
 import { BatchGameInfo, configDocs, configLocalDocs, gameDoc, GameTimerStatus } from './models'
 import {
   PluginConfiguration,
@@ -170,16 +171,9 @@ type MainIpcEvents =
       'game:update-memory-cover': (gameId: string, memoryId: string, imgPath: string) => void
 
       // Game media management events
-      'game:set-image': (
-        gameId: string,
-        type: 'background' | 'cover' | 'logo' | 'icon',
-        image: string
-      ) => void
-      'game:get-media-path': (
-        gameId: string,
-        type: 'cover' | 'background' | 'icon' | 'logo'
-      ) => string | null
-      'game:remove-media': (gameId: string, type: 'cover' | 'background' | 'icon' | 'logo') => void
+      'game:set-image': (gameId: string, type: GameMediaType, image: string) => void
+      'game:get-media-path': (gameId: string, type: GameMediaType) => string | null
+      'game:remove-media': (gameId: string, type: GameMediaType) => void
       'game:get-memory-cover-path': (gameId: string, memoryId: string) => string | null
       'game:get-memory-masonry-items': (
         gameId: string,
@@ -254,6 +248,10 @@ type MainIpcEvents =
         identifier: ScraperIdentifier
       ) => GameMetadata
       'scraper:get-game-backgrounds': (
+        dataSource: string,
+        identifier: ScraperIdentifier
+      ) => string[]
+      'scraper:get-game-wide-covers': (
         dataSource: string,
         identifier: ScraperIdentifier
       ) => string[]

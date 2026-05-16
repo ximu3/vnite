@@ -8,6 +8,8 @@ interface GameImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src'
   type: 'background' | 'cover' | 'icon' | 'logo' | string
   onUpdated?: () => void
   fallback?: React.ReactNode
+  fit?: 'cover' | 'contain'
+  forceSmartCrop?: boolean
   shadow?: boolean
   flips?: boolean
   blur?: boolean
@@ -22,6 +24,8 @@ export const GameImage: React.FC<GameImageProps> = ({
   onError,
   onUpdated,
   fallback = <div>No Pictures</div>,
+  fit = 'cover',
+  forceSmartCrop = false,
   shadow = false,
   flips = false,
   blur = false,
@@ -64,7 +68,8 @@ export const GameImage: React.FC<GameImageProps> = ({
 
   const smartCrop = async (): Promise<void> => {
     const img = imgRef.current
-    if (img && type === 'cover') {
+    if (img && fit === 'cover' && (forceSmartCrop || type === 'cover')) {
+      // bigPoster in recent games also need smart crop
       try {
         await img.decode?.()
 
@@ -122,7 +127,7 @@ export const GameImage: React.FC<GameImageProps> = ({
           className
         )}
         style={{
-          objectFit: 'cover',
+          objectFit: fit,
           objectPosition
         }}
         // loading="lazy"

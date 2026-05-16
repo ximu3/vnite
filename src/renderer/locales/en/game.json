@@ -543,13 +543,15 @@
           "icon": "Icon",
           "background": "Background",
           "cover": "Cover",
-          "logo": "Logo"
+          "logo": "Logo",
+          "wideCover": "Wide Cover"
         },
         "empty": {
           "icon": "No icon",
           "background": "No background",
           "cover": "No cover",
           "logo": "No logo",
+          "wideCover": "No wide cover",
           "images": "No images"
         },
         "actions": {
@@ -566,7 +568,12 @@
         "search": {
           "title": "Search Images",
           "dataSource": "Data Source",
-          "searchTitle": "Search Title"
+          "searchTitle": "Search Title",
+          "searchType": "Search Type",
+          "quickFill": "Quick Fill",
+          "byName": "Search by Name",
+          "byId": "Search by ID",
+          "storedId": "Stored ID"
         },
         "url": {
           "empty": "Please enter a link address"
@@ -590,6 +597,7 @@
           "searching": "Searching…",
           "searchSuccess": "Search successful",
           "searchError": "Search failed: {{message}}",
+          "emptySearchValue": "Please enter a search value",
           "noResultsFound": "No images found",
           "selectImage": "Please select an image",
           "cropping": "Cropping…",

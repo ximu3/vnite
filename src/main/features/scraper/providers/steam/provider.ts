@@ -5,6 +5,7 @@ import {
   getGameMetadataFromSteam,
   checkGameExistsOnSteam,
   getGameBackgroundsFromSteam,
+  getGameWideCoversFromSteam,
   getGameCoversFromSteam,
   getGameLogosFromSteam
 } from './api'
@@ -36,6 +37,10 @@ export const steamProvider: ScraperProvider = {
 
   async getGameBackgrounds(identifier: ScraperIdentifier): Promise<string[]> {
     return await getGameBackgroundsFromSteam(identifier)
+  },
+
+  async getGameWideCovers(identifier: ScraperIdentifier): Promise<string[]> {
+    return await getGameWideCoversFromSteam(identifier)
   },
 
   async getGameCovers(identifier: ScraperIdentifier): Promise<string[]> {

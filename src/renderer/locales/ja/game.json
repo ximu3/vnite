@@ -543,13 +543,15 @@
           "icon": "アイコン",
           "background": "背景",
           "cover": "カバー",
-          "logo": "ロゴ"
+          "logo": "ロゴ",
+          "wideCover": "ワイドカバー"
         },
         "empty": {
           "icon": "アイコンなし",
           "background": "背景なし",
           "cover": "カバーなし",
           "logo": "ロゴなし",
+          "wideCover": "ワイドカバーなし",
           "images": "画像なし"
         },
         "actions": {
@@ -566,7 +568,12 @@
         "search": {
           "title": "画像を検索",
           "dataSource": "データソース",
-          "searchTitle": "検索タイトル"
+          "searchTitle": "検索タイトル",
+          "searchType": "検索方式",
+          "quickFill": "クイック入力",
+          "byName": "名前で検索",
+          "byId": "IDで検索",
+          "storedId": "保存済み ID"
         },
         "url": {
           "empty": "リンクアドレスを入力してください"
@@ -590,6 +597,7 @@
           "searching": "検索中…",
           "searchSuccess": "検索に成功しました",
           "searchError": "検索に失敗しました: {{message}}",
+          "emptySearchValue": "検索内容を入力してください",
           "noResultsFound": "画像が見つかりませんでした",
           "selectImage": "画像を選択してください",
           "cropping": "切り抜き中…",

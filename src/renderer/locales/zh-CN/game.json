@@ -543,13 +543,15 @@
           "icon": "图标",
           "background": "背景",
           "cover": "封面",
-          "logo": "徽标"
+          "logo": "徽标",
+          "wideCover": "宽幅封面"
         },
         "empty": {
           "icon": "暂无图标",
           "background": "暂无背景",
           "cover": "暂无封面",
           "logo": "暂无徽标",
+          "wideCover": "暂无宽幅封面",
           "images": "暂无图片"
         },
         "actions": {
@@ -566,7 +568,12 @@
         "search": {
           "title": "搜索图片",
           "dataSource": "数据源",
-          "searchTitle": "搜索标题"
+          "searchTitle": "搜索标题",
+          "searchType": "搜索方式",
+          "quickFill": "快速填充",
+          "byName": "按名称搜索",
+          "byId": "按 ID 搜索",
+          "storedId": "已存储 ID"
         },
         "url": {
           "empty": "请输入链接地址"
@@ -590,6 +597,7 @@
           "searching": "搜索中…",
           "searchSuccess": "搜索成功",
           "searchError": "搜索失败: {{message}}",
+          "emptySearchValue": "请输入搜索内容",
           "noResultsFound": "未找到相关图片",
           "selectImage": "请选择一张图片",
           "cropping": "正在裁剪…",

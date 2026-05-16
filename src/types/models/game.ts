@@ -1,5 +1,7 @@
 import { Paths } from 'type-fest'
 
+export type GameMediaType = 'cover' | 'background' | 'icon' | 'logo' | 'wideCover'
+
 export type gameDocs = {
   [gameId: string]: gameDoc
 }

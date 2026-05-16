@@ -123,6 +123,25 @@ export class ScraperManager {
     }
   }
 
+  public async getGameWideCovers(
+    providerId: string,
+    identifier: ScraperIdentifier
+  ): Promise<string[]> {
+    try {
+      const provider = this.getProvider(providerId)
+      if (!provider) {
+        throw new Error(`Provider '${providerId}' not found`)
+      }
+      if (!provider.getGameWideCovers) {
+        throw new Error(`Provider '${providerId}' does not support getting game wide covers`)
+      }
+      return provider.getGameWideCovers(identifier)
+    } catch (error) {
+      log.error(`[Scraper] Failed to get game wide covers using provider '${providerId}': ${error}`)
+      return []
+    }
+  }
+
   public async getGameCovers(providerId: string, identifier: ScraperIdentifier): Promise<string[]> {
     try {
       const provider = this.getProvider(providerId)
