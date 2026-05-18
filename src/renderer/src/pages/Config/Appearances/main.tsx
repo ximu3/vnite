@@ -358,6 +358,40 @@ export function Appearances(): React.JSX.Element {
 
               <ConfigItem
                 hookType="config"
+                path="game.gameList.groupSortSummary.by"
+                title={t('appearances.gameList.groupSortSummary.title')}
+                description={t('appearances.gameList.groupSortSummary.description')}
+                controlType="select"
+                options={[
+                  {
+                    value: 'none',
+                    label: t('appearances.gameList.groupSortSummary.options.none')
+                  },
+                  {
+                    value: 'record.storageSize',
+                    label: t('appearances.gameList.groupSortSummary.options.storageSize')
+                  },
+                  {
+                    value: 'record.playTime',
+                    label: t('appearances.gameList.groupSortSummary.options.playTime')
+                  },
+                  {
+                    value: 'record.score',
+                    label: t('appearances.gameList.groupSortSummary.options.score')
+                  }
+                ]}
+              />
+
+              <ConfigItem
+                hookType="config"
+                path="game.gameList.groupSortSummary.followSort"
+                title={t('appearances.gameList.groupSortSummary.followSort')}
+                description={t('appearances.gameList.groupSortSummary.followSortDescription')}
+                controlType="switch"
+              />
+
+              <ConfigItem
+                hookType="config"
                 path="game.gameList.warnInvalidGamePaths"
                 title={t('appearances.gameList.warnInvalidGamePaths')}
                 description={t('appearances.gameList.warnInvalidGamePathsDescription')}
