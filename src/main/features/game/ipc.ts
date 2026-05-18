@@ -13,7 +13,8 @@ import {
   recalculateLastRunDate,
   restoreGameSave,
   searchGameSavePaths,
-  updateGameMemoryCover
+  updateGameMemoryCover,
+  upscaleGameBackground
 } from './services'
 
 export function setupGameIPC(): void {
@@ -103,6 +104,10 @@ export function setupGameIPC(): void {
       return await GameDBManager.removeGameImage(gameId, type)
     }
   )
+
+  ipcManager.handle('game:upscale-background', async (_, gameId: string) => {
+    await upscaleGameBackground(gameId)
+  })
 
   ipcManager.handle('game:check-exits-by-path', async (_, gamePath: string) => {
     return await GameDBManager.checkGameExitsByPath(gamePath)

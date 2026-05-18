@@ -413,7 +413,7 @@
     },
     "manage": {
       "title": "管理",
-      "rename": "修改基本信息",
+      "editInfo": "修改基本信息",
       "editLogo": "编辑徽标",
       "editPlayTime": "修改游玩时间",
       "recalculateLastRunDate": "重新计算最后运行日期",
@@ -561,6 +561,7 @@
           "searchImage": "搜索图片",
           "viewLargeImage": "查看大图",
           "cropImage": "裁剪图片",
+          "upscaleImage": "超分背景图",
           "deleteImage": "删除图片"
         },
         "search": {
@@ -596,6 +597,9 @@
           "cropSuccess": "裁剪成功",
           "cropError": "裁剪失败",
           "cropIncomplete": "裁剪未完成",
+          "upscaling": "正在以 {{scale}}x 超分背景图…",
+          "upscaleSuccess": "背景图已按 {{scale}}x 超分",
+          "upscaleError": "背景图超分失败: {{message}}",
           "deleting": "正在删除…",
           "deleteSuccess": "删除成功",
           "deleteError": "删除失败"

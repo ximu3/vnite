@@ -413,7 +413,7 @@
     },
     "manage": {
       "title": "Manage",
-      "rename": "Edit Basic Information",
+      "editInfo": "Edit Basic Information",
       "editLogo": "Edit Logo",
       "editPlayTime": "Edit Play Time",
       "recalculateLastRunDate": "Recalculate Last Played Date",
@@ -561,6 +561,7 @@
           "searchImage": "Search image",
           "viewLargeImage": "View large image",
           "cropImage": "Crop image",
+          "upscaleImage": "Upscale background",
           "deleteImage": "Delete image"
         },
         "search": {
@@ -596,6 +597,9 @@
           "cropSuccess": "Crop successful",
           "cropError": "Crop failed",
           "cropIncomplete": "Crop incomplete",
+          "upscaling": "Upscaling background to {{scale}}x…",
+          "upscaleSuccess": "Background upscaled to {{scale}}x",
+          "upscaleError": "Failed to upscale background: {{message}}",
           "deleting": "Deleting…",
           "deleteSuccess": "Delete successful",
           "deleteError": "Delete failed"

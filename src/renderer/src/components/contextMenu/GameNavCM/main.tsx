@@ -16,14 +16,14 @@ import { useLibrarybarStore } from '~/components/Librarybar/store'
 export function GameNavCM({
   gameId,
   openAddCollectionDialog,
-  openNameEditorDialog,
+  openInformationEditorDialog,
   openPlayTimeEditorDialog,
   openPropertiesDialog,
   showRemoveFromRecent = false
 }: {
   gameId: string
   openAddCollectionDialog: () => void
-  openNameEditorDialog: () => void
+  openInformationEditorDialog: () => void
   openPlayTimeEditorDialog: () => void
   openPropertiesDialog: () => void
   showRemoveFromRecent?: boolean
@@ -70,7 +70,7 @@ export function GameNavCM({
       {/* This menu includes renaming, editing playtime, and other management options */}
       <ManageMenu
         gameId={gameId}
-        openNameEditorDialog={openNameEditorDialog}
+        openInformationEditorDialog={openInformationEditorDialog}
         openPlayingTimeEditorDialog={openPlayTimeEditorDialog}
       />
       <ContextMenuSeparator />

@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next'
 import { HoverCardAnimation } from '~/components/animations/HoverCard'
 import { GameNavCM } from '~/components/contextMenu/GameNavCM'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
-import { NameEditorDialog } from '~/components/Game/Config/ManageMenu/NameEditorDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
 import { GamePropertiesDialog } from '~/components/Game/Config/Properties'
+import { InformationDialog } from '~/components/Game/Overview/Information/InformationDialog'
 import { BatchGameNavCM } from '~/components/GameBatchEditor/BatchGameNavCM'
 import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
 import { ContextMenu, ContextMenuTrigger } from '~/components/ui/context-menu'
@@ -40,7 +40,7 @@ export function BigGamePoster({
   const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = useState(false)
   const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = useState(false)
-  const [isNameEditorDialogOpen, setIsNameEditorDialogOpen] = useState(false)
+  const [isInformationDialogOpen, setIsInformationDialogOpen] = useState(false)
   const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = useState(false)
   const [showPlayButtonOnPoster] = useConfigState('appearances.showcase.showPlayButtonOnPoster')
   const { t } = useTranslation('game')
@@ -227,7 +227,7 @@ export function BigGamePoster({
         <GameNavCM
           gameId={gameId}
           openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
-          openNameEditorDialog={() => setIsNameEditorDialogOpen(true)}
+          openInformationEditorDialog={() => setIsInformationDialogOpen(true)}
           openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
           openPropertiesDialog={() => setIsPropertiesDialogOpen(true)}
           showRemoveFromRecent={showRemoveFromRecent}
@@ -237,8 +237,12 @@ export function BigGamePoster({
       {isAddCollectionDialogOpen && (
         <AddCollectionDialog gameIds={[gameId]} setIsOpen={setIsAddCollectionDialogOpen} />
       )}
-      {isNameEditorDialogOpen && (
-        <NameEditorDialog gameId={gameId} setIsOpen={setIsNameEditorDialogOpen} />
+      {isInformationDialogOpen && (
+        <InformationDialog
+          gameId={gameId}
+          isOpen={isInformationDialogOpen}
+          setIsOpen={setIsInformationDialogOpen}
+        />
       )}
       {isPlayTimeEditorDialogOpen && (
         <PlayTimeEditorDialog gameId={gameId} setIsOpen={setIsPlayTimeEditorDialogOpen} />

@@ -1,9 +1,9 @@
 import type {
   configDocs,
   configLocalDocs,
+  gameCollectionDoc,
   gameDoc,
-  gameLocalDoc,
-  gameCollectionDoc
+  gameLocalDoc
 } from '@appTypes/models'
 import type { Paths } from 'type-fest'
 
@@ -120,6 +120,7 @@ interface FileInputConfigProps {
   dialogType?: 'openFile' | 'openDirectory'
   buttonIcon?: string
   buttonTooltip?: string
+  buttonSlot?: React.ReactNode
 }
 
 interface HotkeyConfigProps {

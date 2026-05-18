@@ -25,11 +25,11 @@ import { cn, formatStorageSize } from '~/utils'
 
 export function ManageMenu({
   gameId,
-  openNameEditorDialog,
+  openInformationEditorDialog,
   openPlayingTimeEditorDialog
 }: {
   gameId: string
-  openNameEditorDialog: () => void
+  openInformationEditorDialog: () => void
   openPlayingTimeEditorDialog: () => void
 }): React.JSX.Element {
   const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
@@ -140,9 +140,9 @@ export function ManageMenu({
 
               <ContextMenuSeparator />
 
-              {/* Rename Game */}
-              <ContextMenuItem onSelect={openNameEditorDialog}>
-                {t('detail.manage.rename')}
+              {/* Edit Game Information */}
+              <ContextMenuItem onSelect={openInformationEditorDialog}>
+                {t('detail.manage.editInfo')}
               </ContextMenuItem>
               {/* Edit Play Time */}
               <ContextMenuItem onClick={openPlayingTimeEditorDialog}>

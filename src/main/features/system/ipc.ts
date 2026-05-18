@@ -39,6 +39,7 @@ import {
   portableStore,
   saveGameIconByFile,
   switchDatabaseMode,
+  testUpscalerAvailability,
   updateLanguage,
   updateOpenAtLogin,
   updateScreenshotHotkey
@@ -216,6 +217,10 @@ export function setupSystemIPC(): void {
 
   ipcManager.handle('utils:download-temp-image', async (_, url: string) => {
     return await downloadTempImage(url)
+  })
+
+  ipcManager.handle('utils:test-upscaler', async () => {
+    await testUpscalerAvailability()
   })
 
   ipcManager.handle('utils:save-clipboard-image', async () => {

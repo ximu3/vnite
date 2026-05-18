@@ -1,4 +1,5 @@
 import {
+  GameImageUpscaleOptions,
   GameMetadataField,
   GameMetadataUpdateMode,
   GameMetadataUpdateOptions
@@ -21,14 +22,16 @@ export function setupAdderIPC(): void {
         dataSource,
         dataSourceId,
         backgroundUrl,
-        upscaleScale,
+        upscaleEnabled,
+        upscaleOptionsOverride,
         dirPath,
         gamePath
       }: {
         dataSource: string
         dataSourceId: string
         backgroundUrl?: string
-        upscaleScale?: number
+        upscaleEnabled?: boolean
+        upscaleOptionsOverride?: GameImageUpscaleOptions
         dirPath?: string
         gamePath?: string
       }
@@ -37,7 +40,8 @@ export function setupAdderIPC(): void {
         dataSource,
         dataSourceId,
         backgroundUrl,
-        upscaleScale,
+        upscaleEnabled,
+        upscaleOptionsOverride,
         dirPath,
         gamePath
       })
@@ -54,7 +58,8 @@ export function setupAdderIPC(): void {
         dataSourceId,
         fields,
         backgroundUrl,
-        upscaleScale,
+        upscaleEnabled,
+        upscaleOptionsOverride,
         options
       }: {
         dbId: string
@@ -62,7 +67,8 @@ export function setupAdderIPC(): void {
         dataSourceId: string
         fields?: (GameMetadataField | GameMetadataUpdateMode)[]
         backgroundUrl?: string
-        upscaleScale?: number
+        upscaleEnabled?: boolean
+        upscaleOptionsOverride?: GameImageUpscaleOptions
         options?: GameMetadataUpdateOptions
       }
     ) => {
@@ -72,7 +78,8 @@ export function setupAdderIPC(): void {
         dataSourceId,
         fields,
         backgroundUrl,
-        upscaleScale,
+        upscaleEnabled,
+        upscaleOptionsOverride,
         options
       })
     }
@@ -97,14 +104,16 @@ export function setupAdderIPC(): void {
         gameIds,
         dataSource,
         fields,
-        upscaleScale,
+        upscaleEnabled,
+        upscaleOptionsOverride,
         options,
         concurrency
       }: {
         gameIds: string[]
         dataSource: string
         fields?: (GameMetadataField | GameMetadataUpdateMode)[]
-        upscaleScale?: number
+        upscaleEnabled?: boolean
+        upscaleOptionsOverride?: GameImageUpscaleOptions
         options?: GameMetadataUpdateOptions
         concurrency?: number
       }
@@ -113,7 +122,8 @@ export function setupAdderIPC(): void {
         gameIds,
         dataSource,
         fields,
-        upscaleScale,
+        upscaleEnabled,
+        upscaleOptionsOverride,
         options,
         concurrency
       })
