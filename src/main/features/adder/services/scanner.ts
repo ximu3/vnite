@@ -1,4 +1,4 @@
-import { OverallScanProgress } from '@appTypes/utils'
+import { OverallScanProgress, ScannerProgress } from '@appTypes/utils'
 import log from 'electron-log/main'
 import { EventEmitter } from 'events'
 import * as fse from 'fs-extra'
@@ -8,7 +8,12 @@ import { eventBus } from '~/core/events'
 import { ipcManager } from '~/core/ipc'
 import { scraperManager } from '~/features/scraper'
 import { isGamesLoaded } from '~/index'
-import { getGameEntityFoldersByHierarchyLevel, getGameFolders, inferRootPath, isPathWithinRoot } from '~/utils'
+import {
+  getGameEntityFoldersByHierarchyLevel,
+  getGameFolders,
+  inferRootPath,
+  isPathWithinRoot
+} from '~/utils'
 import { addGameToDB } from './adder'
 
 // Scanner configuration type
