@@ -1,5 +1,6 @@
 import { baseDBManager } from '../BaseDBManager'
 import { convertToWebP, isPathWithinRoot } from '~/utils'
+import path from 'path'
 import {
   gameDoc,
   gameDocs,
@@ -233,11 +234,10 @@ export class GameDBManager {
       const gameArray = Object.values(games)
       const results = await Promise.all(
         gameArray.map(async (game) => {
-          const rootPath = game.utils?.rootPath
-          if (rootPath && isPathWithinRoot(inputPath, rootPath)) {
-            return game._id
-          }
-          return null
+          const gamePath = game.path?.gamePath
+          const rootPath =
+            game.utils?.rootPath || (gamePath ? path.dirname(gamePath) : '') || game.utils?.markPath
+          return rootPath && isPathWithinRoot(inputPath, rootPath) ? game._id : null
         })
       )
 

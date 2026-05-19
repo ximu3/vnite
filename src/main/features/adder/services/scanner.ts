@@ -459,7 +459,7 @@ export class GameScanner extends EventEmitter {
           searchName = path.basename(rootPath)
         }
         if (normalizeFolderName) {
-          searchName = this.normalizeFolderName(folder.name)
+          searchName = this.normalizeFolderName(searchName)
         }
 
         // Use folder name as game name for search
