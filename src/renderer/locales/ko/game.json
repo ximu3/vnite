@@ -313,7 +313,7 @@
     },
     "manage": {
       "title": "관리",
-      "rename": "이름 바꾸기",
+      "editInfo": "이름 바꾸기",
       "editLogo": "로고 변경",
       "editPlayTime": "플레이 시간 변경",
       "downloadMetadata": "메타데이터 다운로드",

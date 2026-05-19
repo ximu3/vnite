@@ -1,3 +1,5 @@
+import { DEFAULT_LOCAL_UPSCALER_CONFIG, type LocalUpscalerConfig } from '../utils/upscaler'
+
 export enum NSFWBlurLevel {
   Off = 0,
   BlurImage = 1,
@@ -77,6 +79,10 @@ export interface configDocs {
           | 'record.score'
           | 'record.storageSize'
         order: 'asc' | 'desc'
+      }
+      groupSortSummary: {
+        by: 'none' | 'record.playTime' | 'record.score' | 'record.storageSize'
+        followSort: boolean
       }
       overrideCollectionSort: boolean
       selectedGroup:
@@ -287,6 +293,7 @@ export interface configLocalDocs {
       }
       upscaler: {
         path: string
+        config: LocalUpscalerConfig
       }
     }
     scanner: {
@@ -365,6 +372,10 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       sort: {
         by: 'metadata.name',
         order: 'desc' as const
+      },
+      groupSortSummary: {
+        by: 'none',
+        followSort: true
       },
       overrideCollectionSort: false,
       selectedGroup: 'collection',
@@ -548,7 +559,8 @@ export const DEFAULT_CONFIG_LOCAL_VALUES: Readonly<configLocalDocs> = {
         hotkey: 'win+shift+a'
       },
       upscaler: {
-        path: ''
+        path: '',
+        config: DEFAULT_LOCAL_UPSCALER_CONFIG
       }
     },
     scanner: {

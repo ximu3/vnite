@@ -1,16 +1,16 @@
 // hooks/useGameAdder.ts
-import { useCallback } from 'react'
-import { useGameBatchAdderStore } from '../store'
 import { BatchGameInfo } from '@appTypes/models'
+import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ipcManager } from '~/app/ipc'
+import { useGameBatchAdderStore } from '../store'
 
 export const useGameAdder = (): {
   addGame: (dataId: string) => Promise<void>
   addAllGames: () => Promise<void>
 } => {
   const { t } = useTranslation('adder')
-  const { games, upscaleScale, actions } = useGameBatchAdderStore()
+  const { games, enableUpscale, actions } = useGameBatchAdderStore()
 
   const searchGame = async (game: BatchGameInfo): Promise<string> => {
     const result = await ipcManager.invoke('scraper:search-games', game.dataSource, game.name)
@@ -49,7 +49,7 @@ export const useGameAdder = (): {
         await ipcManager.invoke('adder:add-game-to-db', {
           dataSource: game.dataSource,
           dataSourceId: gameId,
-          upscaleScale,
+          upscaleEnabled: enableUpscale,
           dirPath: game.dirPath
         })
 
@@ -59,7 +59,7 @@ export const useGameAdder = (): {
         throw error
       }
     },
-    [games, actions, t, upscaleScale]
+    [games, actions, t, enableUpscale]
   )
 
   const addAllGames = useCallback(async () => {

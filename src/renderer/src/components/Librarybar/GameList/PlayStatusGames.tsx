@@ -66,7 +66,6 @@ export function PlayStatusGamesComponent({
                 <AccordionTrigger className={cn('text-xs p-1 pl-2')}>
                   <div className={cn('flex flex-row items-center justify-start gap-1')}>
                     <div className={cn('text-xs')}>{t(`utils:game.playStatus.${field}`)}</div>
-                    <div className={cn('text-2xs text-foreground/50')}>({gameIds.length})</div>
                     <GroupSortSummary gameIds={gameIds} by={by} />
                   </div>
                 </AccordionTrigger>

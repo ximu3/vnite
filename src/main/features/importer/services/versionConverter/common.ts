@@ -1,4 +1,5 @@
 import {
+  DEFAULT_CONFIG_LOCAL_VALUES,
   DEFAULT_CONFIG_VALUES,
   gameCollectionDoc,
   gameDoc,
@@ -591,6 +592,7 @@ async function convertConfig(basePath: string): Promise<void> {
           by: mapSortField(v2Config.others.gameList.sort.by),
           order: v2Config.others.gameList.sort.order
         },
+        groupSortSummary: DEFAULT_CONFIG_VALUES.game.gameList.groupSortSummary,
         overrideCollectionSort: false,
         selectedGroup: selectedGroupMap[v2Config.others.gameList.selectedGroup] || 'none',
         highlightLocalGames: v2Config.others.gameList.highlightLocalGames,
@@ -629,7 +631,8 @@ async function convertConfig(basePath: string): Promise<void> {
         hotkey: v2Config.advanced.linkage.magpie.hotkey
       },
       upscaler: {
-        path: ''
+        path: '',
+        config: DEFAULT_CONFIG_LOCAL_VALUES.game.linkage.upscaler.config
       }
     })
 

@@ -353,7 +353,7 @@ export function GamePoster({
             <GameNavCM
               gameId={gameId}
               openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
-              openNameEditorDialog={() => setIsInformationDialogOpen(true)}
+              openInformationEditorDialog={() => setIsInformationDialogOpen(true)}
               openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
               openPropertiesDialog={() => setIsPropertiesDialogOpen(true)}
               showRemoveFromRecent={showRemoveFromRecent}

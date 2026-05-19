@@ -1,14 +1,13 @@
 import type { configDocs } from '@appTypes/models/config'
 import { STORAGE_SIZE_NOT_CALCULATED } from '@appTypes/models/game'
 import { useEffect, useMemo, useState } from 'react'
+import { useConfigState } from '~/hooks'
 import { getGameStore, type SingleGameState } from '~/stores/game'
 import { cn, formatDurationCompact, formatStorageSize } from '~/utils'
 
 type GameListSortBy = configDocs['game']['gameList']['sort']['by']
-type SummarySortBy = Extract<
-  GameListSortBy,
-  'record.playTime' | 'record.score' | 'record.storageSize'
->
+type GroupSortSummaryConfigBy = configDocs['game']['gameList']['groupSortSummary']['by']
+type SummarySortBy = Exclude<GroupSortSummaryConfigBy, 'none'>
 
 type GroupSortSummaryData =
   | {
@@ -23,7 +22,6 @@ type GroupSortSummaryData =
       type: 'storageSize'
       totalStorageSize: number
       calculatedCount: number
-      totalCount: number
     }
   | null
 
@@ -44,18 +42,17 @@ function summariesEqual(a: GroupSortSummaryData, b: GroupSortSummaryData): boole
   }
 
   if (a.type === 'storageSize' && b.type === 'storageSize') {
-    return (
-      a.totalStorageSize === b.totalStorageSize &&
-      a.calculatedCount === b.calculatedCount &&
-      a.totalCount === b.totalCount
-    )
+    return a.totalStorageSize === b.totalStorageSize && a.calculatedCount === b.calculatedCount
   }
 
   return false
 }
 
-function computeGroupSortSummary(gameIds: string[], by: GameListSortBy): GroupSortSummaryData {
-  if (gameIds.length === 0 || !isSummarySortBy(by)) {
+function computeGroupSortSummary(
+  gameIds: string[],
+  by: SummarySortBy | null
+): GroupSortSummaryData {
+  if (gameIds.length === 0 || !by) {
     return null
   }
 
@@ -104,8 +101,7 @@ function computeGroupSortSummary(gameIds: string[], by: GameListSortBy): GroupSo
         ? {
             type: 'storageSize',
             totalStorageSize,
-            calculatedCount,
-            totalCount: gameIds.length
+            calculatedCount
           }
         : null
     }
@@ -155,7 +151,7 @@ function getGameIdsMembershipHash(gameIds: string[]): string {
   return `${count}:${xor.toString(16)}:${sum.toString(16)}`
 }
 
-function useGroupSortSummary(gameIds: string[], by: GameListSortBy): GroupSortSummaryData {
+function useGroupSortSummary(gameIds: string[], by: SummarySortBy | null): GroupSortSummaryData {
   const gameIdsMembershipHash = useMemo(() => getGameIdsMembershipHash(gameIds), [gameIds])
   const [summary, setSummary] = useState<GroupSortSummaryData>(() =>
     computeGroupSortSummary(gameIds, by)
@@ -165,7 +161,7 @@ function useGroupSortSummary(gameIds: string[], by: GameListSortBy): GroupSortSu
     const nextSummary = computeGroupSortSummary(gameIds, by)
     setSummary((prev) => (summariesEqual(prev, nextSummary) ? prev : nextSummary))
 
-    if (!isSummarySortBy(by) || gameIds.length === 0) {
+    if (!by || gameIds.length === 0) {
       return
     }
 
@@ -189,6 +185,18 @@ function useGroupSortSummary(gameIds: string[], by: GameListSortBy): GroupSortSu
   return summary
 }
 
+function resolveSummarySortBy(
+  currentSortBy: GameListSortBy,
+  configuredBy: GroupSortSummaryConfigBy,
+  followSort: boolean
+): SummarySortBy | null {
+  if (followSort && isSummarySortBy(currentSortBy)) {
+    return currentSortBy
+  }
+
+  return configuredBy === 'none' ? null : configuredBy
+}
+
 export function GroupSortSummary({
   gameIds,
   by,
@@ -198,33 +206,34 @@ export function GroupSortSummary({
   by: GameListSortBy
   className?: string
 }): React.JSX.Element | null {
-  const summary = useGroupSortSummary(gameIds, by)
+  const [configuredBy] = useConfigState('game.gameList.groupSortSummary.by')
+  const [followSort] = useConfigState('game.gameList.groupSortSummary.followSort')
+  const effectiveBy = resolveSummarySortBy(by, configuredBy, followSort)
 
-  if (!summary) {
-    return null
-  }
+  const summary = useGroupSortSummary(gameIds, effectiveBy)
+  const totalCount = gameIds.length
+  let content = `(${totalCount})`
 
-  let content: string | null = null
-  switch (summary.type) {
-    case 'playTime':
-      content = `(${formatDurationCompact(summary.totalPlayTime)})`
-      break
-    case 'score':
-      if (summary.averageScore < 0) {
-        return null
-      }
-      content = `(avg: ${summary.averageScore.toFixed(1)})`
-      break
-    case 'storageSize':
-      if (summary.totalStorageSize <= 0) {
-        return null
-      }
-      content = `(${formatStorageSize(summary.totalStorageSize)}${
-        summary.calculatedCount < summary.totalCount
-          ? `, ${summary.calculatedCount}/${summary.totalCount}`
-          : ''
-      })`
-      break
+  if (summary) {
+    switch (summary.type) {
+      case 'playTime':
+        content = `(${formatDurationCompact(summary.totalPlayTime)}, ${totalCount})`
+        break
+      case 'score':
+        if (summary.averageScore >= 0) {
+          content = `(avg: ${summary.averageScore.toFixed(1)}, ${totalCount})`
+        }
+        break
+      case 'storageSize':
+        if (summary.totalStorageSize > 0) {
+          content = `(${formatStorageSize(summary.totalStorageSize)}, ${
+            summary.calculatedCount < totalCount
+              ? `${summary.calculatedCount}/${totalCount}`
+              : totalCount
+          })`
+        }
+        break
+    }
   }
 
   return <span className={cn('text-2xs text-foreground/50', className)}>{content}</span>

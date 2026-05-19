@@ -29,7 +29,6 @@ export function AllGameComponent({
       <AccordionTrigger className={cn('text-xs p-1 pl-2')}>
         <div className={cn('flex flex-row items-center justify-start gap-1')}>
           <div className={cn('text-xs')}>{t('list.all.title')}</div>
-          <div className={cn('text-2xs text-foreground/50')}>({games.length})</div>
           <GroupSortSummary gameIds={games} by={by} />
         </div>
       </AccordionTrigger>

@@ -1,20 +1,15 @@
+import { OverallScanProgress } from '@appTypes/utils'
+import log from 'electron-log/main'
+import { EventEmitter } from 'events'
 import * as fse from 'fs-extra'
 import * as path from 'path'
-import { EventEmitter } from 'events'
 import { ConfigDBManager, GameDBManager } from '~/core/database'
-import {
-  getGameEntityFoldersByHierarchyLevel,
-  getGameFolders,
-  inferRootPath,
-  isPathWithinRoot
-} from '~/utils'
-import { addGameToDB } from './adder'
-import { scraperManager } from '~/features/scraper'
-import { OverallScanProgress, ScannerProgress } from '@appTypes/utils'
-import log from 'electron-log/main'
-import { ipcManager } from '~/core/ipc'
 import { eventBus } from '~/core/events'
+import { ipcManager } from '~/core/ipc'
+import { scraperManager } from '~/features/scraper'
 import { isGamesLoaded } from '~/index'
+import { getGameEntityFoldersByHierarchyLevel, getGameFolders, inferRootPath, isPathWithinRoot } from '~/utils'
+import { addGameToDB } from './adder'
 
 // Scanner configuration type
 interface ScannerConfig {
@@ -491,11 +486,14 @@ export class GameScanner extends EventEmitter {
             }
           }
 
+          const upscaleScale = scannerList[scannerId]?.upscaleScale ?? 0
+
           const dbId = await addGameToDB({
             dataSource,
             dataSourceId: match.id,
             dirPath: folder.dirPath,
-            upscaleScale: scannerList[scannerId]?.upscaleScale,
+            upscaleEnabled: upscaleScale > 0,
+            upscaleOptionsOverride: upscaleScale > 0 ? { scale: upscaleScale } : undefined,
             targetCollection,
             scanRoot: this.currentScannerConfig?.path
           })
@@ -666,12 +664,15 @@ export class GameScanner extends EventEmitter {
         }
       }
 
+      const upscaleScale = scannerList[foundScannerId]?.upscaleScale ?? 0
+
       // Add game with provided game ID
       const dbId = await addGameToDB({
         dataSource,
         dataSourceId: gameId,
         dirPath: folderPath,
-        upscaleScale: scannerList[foundScannerId]?.upscaleScale,
+        upscaleEnabled: upscaleScale > 0,
+        upscaleOptionsOverride: upscaleScale > 0 ? { scale: upscaleScale } : undefined,
         targetCollection,
         scanRoot: scannerList[foundScannerId]?.path
       })
