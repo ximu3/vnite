@@ -16,6 +16,8 @@ import { net } from 'electron'
 import { ConfigDBManager } from '~/core/database'
 import i18next from 'i18next'
 
+const VNDB_SEARCH_SORT = 'searchrank'
+
 const VNDB_ROLE_MAPPING: Record<string, string> = {
   director: 'director',
   scenario: 'scenario',
@@ -101,6 +103,7 @@ export async function searchVNDBGames(gameName: string): Promise<SimpleGameInfo[
     const data = await fetchVNDB<VNBasicInfo>({
       filters: ['search', '=', gameName],
       fields,
+      sort: VNDB_SEARCH_SORT,
       results: 30
     })
 
@@ -193,7 +196,8 @@ export async function getVNMetadataByName(vnName: string): Promise<GameMetadata>
   try {
     const data = await fetchVNDB<VNDetailInfo>({
       filters: ['search', '=', vnName],
-      fields
+      fields,
+      sort: VNDB_SEARCH_SORT
     })
 
     if (!data.results.length) {
@@ -289,7 +293,8 @@ export async function getGameBackgroundsByName(name: string): Promise<string[]> 
   try {
     const data = await fetchVNDB<VNWithScreenshotsAndTitles>({
       filters: ['search', '=', name],
-      fields
+      fields,
+      sort: VNDB_SEARCH_SORT
     })
 
     if (data.results.length > 0) {
@@ -332,6 +337,7 @@ export async function getGameCoverByName(name: string): Promise<string> {
     const data = await fetchVNDB<VNWithCover>({
       filters: ['search', '=', name],
       fields,
+      sort: VNDB_SEARCH_SORT,
       results: 1
     })
 
