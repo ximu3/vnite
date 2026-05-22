@@ -4,7 +4,7 @@
     "library": "游戏库",
     "records": "记录",
     "scanner": "扫描器",
-    "databaseAnalysis": "数据库分析",
+    "databaseInspector": "数据库检查器",
     "transformer": "转换器",
     "plugin": "插件"
   },

@@ -8,15 +8,8 @@ import {
 import { PosterRenderArgs, RenderResponse, TemplatePayloads } from '@appTypes/poster'
 import { BatchUpdateGameMetadataProgress, OverallScanProgress } from '@appTypes/utils'
 import { ProgressInfo, UpdateCheckResult } from 'electron-updater'
-import {
-  BatchGameInfo,
-  configDocs,
-  configLocalDocs,
-  GameDatabaseStorageDetail,
-  gameDoc,
-  GameTimerStatus,
-  LocalDatabaseStorageReport
-} from './models'
+import { BatchGameInfo, configDocs, configLocalDocs, gameDoc, GameTimerStatus } from './models'
+import { GameDatabaseStorageDetail, LocalDatabaseStorageReport } from './models/databaseInspector'
 import {
   PluginConfiguration,
   PluginInfo,

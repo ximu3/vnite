@@ -11,7 +11,7 @@ import { Showcase } from '~/components/Showcase'
 import { CollectionGames } from '~/components/Showcase/CollectionGames'
 import { CollectionPage } from '~/components/Showcase/CollectionPage'
 import { Config } from '~/pages/Config'
-import { DatabaseAnalysis, DatabaseAnalysisGameDetail } from '~/pages/DatabaseAnalysis'
+import { DatabaseInspector, DatabaseInspectorGameDetail } from '~/pages/DatabaseInspector'
 import { GameScannerManager } from '~/pages/GameScannerManager'
 import { Library } from '~/pages/Library'
 import { Plugin } from '~/pages/Plugin/main'
@@ -164,18 +164,18 @@ const scannerRoute = createRoute({
   component: GameScannerManager
 })
 
-const databaseAnalysisRoute = createRoute({
+const databaseInspectorRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/database-analysis',
-  component: DatabaseAnalysis
+  path: '/database-inspector',
+  component: DatabaseInspector
 })
 
-const databaseAnalysisGameRoute = createRoute({
+const databaseInspectorGameRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/database-analysis/games/$gameId',
-  component: function DatabaseAnalysisGameComponent() {
-    const { gameId } = databaseAnalysisGameRoute.useParams()
-    return <DatabaseAnalysisGameDetail gameId={gameId} />
+  path: '/database-inspector/games/$gameId',
+  component: function DatabaseInspectorGameComponent() {
+    const { gameId } = databaseInspectorGameRoute.useParams()
+    return <DatabaseInspectorGameDetail gameId={gameId} />
   }
 })
 
@@ -215,8 +215,8 @@ const routeTree = rootRoute.addChildren([
   recordRoute,
   configRoute,
   scannerRoute,
-  databaseAnalysisRoute,
-  databaseAnalysisGameRoute,
+  databaseInspectorRoute,
+  databaseInspectorGameRoute,
   transformerRoute,
   pluginRoute,
   iconRoute,

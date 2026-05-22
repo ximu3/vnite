@@ -12,7 +12,7 @@ export interface Loadable<T> {
   isRefreshing: boolean
 }
 
-interface DatabaseAnalysisState {
+interface DatabaseInspectorState {
   overview: Loadable<LocalDatabaseStorageReport>
   detailsByGameId: Record<string, Loadable<GameDatabaseStorageDetail>>
   ensureOverview: () => Promise<void>
@@ -47,7 +47,7 @@ function getErrorMessage(error: unknown): string {
   return String(error)
 }
 
-export const useDatabaseAnalysisStore = create<DatabaseAnalysisState>((set, get) => ({
+export const useDatabaseInspectorStore = create<DatabaseInspectorState>((set, get) => ({
   overview: createEmptyLoadable<LocalDatabaseStorageReport>(),
   detailsByGameId: {},
 

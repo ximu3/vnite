@@ -5,7 +5,7 @@ import { Alert, AlertDescription, AlertTitle } from '@ui/alert'
 import { Button } from '@ui/button'
 import { Card, CardContent } from '@ui/card'
 
-export function DatabaseAnalysisRefreshFailedAlert({
+export function DatabaseInspectorRefreshFailedAlert({
   title,
   description
 }: {
@@ -21,7 +21,7 @@ export function DatabaseAnalysisRefreshFailedAlert({
   )
 }
 
-export function DatabaseAnalysisLoadingCard({ message }: { message: string }): React.JSX.Element {
+export function DatabaseInspectorLoadingCard({ message }: { message: string }): React.JSX.Element {
   return (
     <Card>
       <CardContent className="flex min-h-[16rem] flex-col items-center justify-center gap-3">
@@ -32,7 +32,7 @@ export function DatabaseAnalysisLoadingCard({ message }: { message: string }): R
   )
 }
 
-export function DatabaseAnalysisErrorCard({
+export function DatabaseInspectorErrorCard({
   error,
   retryLabel,
   onRetry

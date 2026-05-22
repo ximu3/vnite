@@ -4,7 +4,7 @@
     "library": "遊戲庫",
     "records": "記錄",
     "scanner": "掃描器",
-    "databaseAnalysis": "資料庫分析",
+    "databaseInspector": "資料庫檢查器",
     "transformer": "轉換器",
     "plugin": "外掛"
   },

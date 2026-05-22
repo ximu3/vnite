@@ -1,4 +1,4 @@
 export * from './config'
-export * from './databaseAnalysis'
+export * from './databaseInspector'
 export * from './game'
 export * from './utils'

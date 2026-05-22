@@ -29,7 +29,7 @@ export function filterPieChartDataByMinimumPercent<T extends { value: number }>(
 export function resolveLoadableViewState<T>(
   loadable: Loadable<T> | undefined
 ): LoadableViewState<T> {
-  if (loadable?.data) {
+  if (loadable && loadable.data !== null) {
     return {
       kind: 'ready',
       data: loadable.data,

@@ -79,12 +79,12 @@ function SortableTableHead({
   )
 }
 
-export function DatabaseAnalysisGameTable({
+export function DatabaseInspectorGameTable({
   games
 }: {
   games: OverviewGameStorageSummary[]
 }): React.JSX.Element {
-  const { t } = useTranslation('databaseAnalysis')
+  const { t } = useTranslation('databaseInspector')
   const navigate = useNavigate()
   const [query, setQuery] = useState('')
   const [sortBy, setSortBy] = useState<OverviewSortKey>('total')
@@ -116,7 +116,7 @@ export function DatabaseAnalysisGameTable({
 
   const openGameDetail = (gameId: string): void => {
     navigate({
-      to: '/database-analysis/games/$gameId',
+      to: '/database-inspector/games/$gameId',
       params: { gameId }
     })
   }

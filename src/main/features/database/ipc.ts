@@ -1,20 +1,20 @@
-import { DocChange } from '@appTypes/models'
-import { baseDBManager, ConfigDBManager } from '~/core/database'
-import { ipcManager } from '~/core/ipc'
 import {
   backupDatabase,
-  compactRemoteDatabase,
-  fullSync,
-  getCouchDBSize,
-  getGameAttachmentTempFile,
-  getGameStorageDetail,
-  getLocalStorageReport,
-  removeGameImageAttachment,
-  resetAppearancesSettings,
   restoreDatabase,
   startSync,
-  stopSync
+  stopSync,
+  fullSync,
+  getCouchDBSize,
+  compactRemoteDatabase,
+  resetAppearancesSettings,
+  getLocalStorageReport,
+  getGameStorageDetail,
+  getGameAttachmentTempFile,
+  removeGameImageAttachment
 } from './services'
+import { baseDBManager, ConfigDBManager } from '~/core/database'
+import { ipcManager } from '~/core/ipc'
+import { DocChange } from '@appTypes/models'
 
 export function setupDatabaseIPC(): void {
   ipcManager.handle('db:doc-changed', async (_event, change: DocChange) => {

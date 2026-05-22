@@ -41,13 +41,13 @@ import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
 import { ScrollToTopButton } from '~/components/Showcase/ScrollToTopButton'
 import { ImageViewerDialog } from '~/components/dialog/ImageViewerDialog'
 import { cn, formatStorageSize, scrollToElement } from '~/utils'
-import { DatabaseAnalysisMetricCard } from './MetricCard'
+import { DatabaseInspectorMetricCard } from './MetricCard'
 import {
-  DatabaseAnalysisErrorCard,
-  DatabaseAnalysisLoadingCard,
-  DatabaseAnalysisRefreshFailedAlert
+  DatabaseInspectorErrorCard,
+  DatabaseInspectorLoadingCard,
+  DatabaseInspectorRefreshFailedAlert
 } from './StateViews'
-import { useDatabaseAnalysisStore } from './store'
+import { useDatabaseInspectorStore } from './store'
 import { resolveLoadableViewState } from './utils'
 
 const ATTACHMENT_CATEGORY_ORDER: DatabaseAttachmentCategory[] = [
@@ -67,14 +67,14 @@ function getCategoryLabel(
   return t(`categories.${category}`)
 }
 
-export function DatabaseAnalysisGameDetail({ gameId }: { gameId: string }): React.JSX.Element {
-  const { t } = useTranslation('databaseAnalysis')
+export function DatabaseInspectorGameDetail({ gameId }: { gameId: string }): React.JSX.Element {
+  const { t } = useTranslation('databaseInspector')
   const navigate = useNavigate()
   const scrollAreaRef = useRef<HTMLDivElement>(null)
-  const detail = useDatabaseAnalysisStore((state) => state.detailsByGameId[gameId])
-  const ensureGameDetail = useDatabaseAnalysisStore((state) => state.ensureGameDetail)
-  const refreshGameDetail = useDatabaseAnalysisStore((state) => state.refreshGameDetail)
-  const invalidateOverview = useDatabaseAnalysisStore((state) => state.invalidateOverview)
+  const detail = useDatabaseInspectorStore((state) => state.detailsByGameId[gameId])
+  const ensureGameDetail = useDatabaseInspectorStore((state) => state.ensureGameDetail)
+  const refreshGameDetail = useDatabaseInspectorStore((state) => state.refreshGameDetail)
+  const invalidateOverview = useDatabaseInspectorStore((state) => state.invalidateOverview)
   const [filter, setFilter] = useState<DetailFilter>('all')
   const [imageViewer, setImageViewer] = useState<{ open: boolean; path: string | null }>({
     open: false,
@@ -150,10 +150,10 @@ export function DatabaseAnalysisGameDetail({ gameId }: { gameId: string }): Reac
   const pageContent = (() => {
     switch (viewState.kind) {
       case 'loading':
-        return <DatabaseAnalysisLoadingCard message={t('messages.loading')} />
+        return <DatabaseInspectorLoadingCard message={t('messages.loading')} />
       case 'error':
         return (
-          <DatabaseAnalysisErrorCard
+          <DatabaseInspectorErrorCard
             error={viewState.error}
             retryLabel={t('actions.retry')}
             onRetry={() => void handleRefresh()}
@@ -216,25 +216,25 @@ export function DatabaseAnalysisGameDetail({ gameId }: { gameId: string }): Reac
             </Card>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <DatabaseAnalysisMetricCard
+              <DatabaseInspectorMetricCard
                 title={t('summary.logicalPayloadBytes')}
                 value={formatStorageSize(report.summary.totalLogicalPayloadBytes)}
                 hint={t('detail.summary.totalHint')}
                 icon={<HardDrive className="w-4 h-4" />}
               />
-              <DatabaseAnalysisMetricCard
+              <DatabaseInspectorMetricCard
                 title={t('summary.documents')}
                 value={formatStorageSize(report.summary.estimatedDocBytes)}
                 hint={t('detail.summary.documentsHint')}
                 icon={<Database className="w-4 h-4" />}
               />
-              <DatabaseAnalysisMetricCard
+              <DatabaseInspectorMetricCard
                 title={t('summary.attachmentBytes')}
                 value={formatStorageSize(report.summary.attachmentBytes)}
                 hint={t('detail.summary.attachmentsHint')}
                 icon={<ImageIcon className="w-4 h-4" />}
               />
-              <DatabaseAnalysisMetricCard
+              <DatabaseInspectorMetricCard
                 title={t('summary.attachmentCount')}
                 value={report.summary.attachmentCount.toLocaleString()}
                 hint={t('detail.summary.attachmentCountHint')}
@@ -336,7 +336,7 @@ export function DatabaseAnalysisGameDetail({ gameId }: { gameId: string }): Reac
               <Button
                 variant="ghost"
                 className="px-0"
-                onClick={() => navigate({ to: '/database-analysis' })}
+                onClick={() => navigate({ to: '/database-inspector' })}
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 {t('detail.backToOverview')}
@@ -366,7 +366,7 @@ export function DatabaseAnalysisGameDetail({ gameId }: { gameId: string }): Reac
           </div>
 
           {viewState.kind === 'ready' && viewState.staleError && (
-            <DatabaseAnalysisRefreshFailedAlert
+            <DatabaseInspectorRefreshFailedAlert
               title={t('messages.refreshFailedTitle')}
               description={t('messages.refreshFailedDescription', {
                 error: viewState.staleError

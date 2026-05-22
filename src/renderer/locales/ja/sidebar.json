@@ -4,7 +4,7 @@
     "library": "ゲームライブラリ",
     "records": "記録",
     "scanner": "スキャナー",
-    "databaseAnalysis": "データベース分析",
+    "databaseInspector": "データベースインスペクター",
     "transformer": "変換器",
     "plugin": "プラグイン"
   },

@@ -12,14 +12,14 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
 import { ScrollArea } from '@ui/scroll-area'
 import { ScrollToTopButton } from '~/components/Showcase/ScrollToTopButton'
 import { cn, formatStorageSize } from '~/utils'
-import { DatabaseAnalysisGameTable } from './GameTable'
-import { DatabaseAnalysisMetricCard } from './MetricCard'
+import { DatabaseInspectorGameTable } from './GameTable'
+import { DatabaseInspectorMetricCard } from './MetricCard'
 import {
-  DatabaseAnalysisErrorCard,
-  DatabaseAnalysisLoadingCard,
-  DatabaseAnalysisRefreshFailedAlert
+  DatabaseInspectorErrorCard,
+  DatabaseInspectorLoadingCard,
+  DatabaseInspectorRefreshFailedAlert
 } from './StateViews'
-import { useDatabaseAnalysisStore } from './store'
+import { useDatabaseInspectorStore } from './store'
 import { filterPieChartDataByMinimumPercent, resolveLoadableViewState } from './utils'
 
 const ATTACHMENT_CATEGORY_ORDER: DatabaseAttachmentCategory[] = [
@@ -49,13 +49,13 @@ function truncateLabel(value: string, maxLength = 18): string {
   return `${value.slice(0, maxLength - 1)}…`
 }
 
-export function DatabaseAnalysis(): React.JSX.Element {
-  const { t } = useTranslation('databaseAnalysis')
+export function DatabaseInspector(): React.JSX.Element {
+  const { t } = useTranslation('databaseInspector')
   const navigate = useNavigate()
   const scrollAreaRef = useRef<HTMLDivElement>(null)
-  const overview = useDatabaseAnalysisStore((state) => state.overview)
-  const ensureOverview = useDatabaseAnalysisStore((state) => state.ensureOverview)
-  const refreshOverview = useDatabaseAnalysisStore((state) => state.refreshOverview)
+  const overview = useDatabaseInspectorStore((state) => state.overview)
+  const ensureOverview = useDatabaseInspectorStore((state) => state.ensureOverview)
+  const refreshOverview = useDatabaseInspectorStore((state) => state.refreshOverview)
 
   useEffect(() => {
     void ensureOverview()
@@ -107,7 +107,7 @@ export function DatabaseAnalysis(): React.JSX.Element {
 
   const openGameDetail = (gameId: string): void => {
     navigate({
-      to: '/database-analysis/games/$gameId',
+      to: '/database-inspector/games/$gameId',
       params: { gameId }
     })
   }
@@ -115,10 +115,10 @@ export function DatabaseAnalysis(): React.JSX.Element {
   const pageContent = (() => {
     switch (viewState.kind) {
       case 'loading':
-        return <DatabaseAnalysisLoadingCard message={t('messages.loading')} />
+        return <DatabaseInspectorLoadingCard message={t('messages.loading')} />
       case 'error':
         return (
-          <DatabaseAnalysisErrorCard
+          <DatabaseInspectorErrorCard
             error={viewState.error}
             retryLabel={t('actions.retry')}
             onRetry={() => void handleRefresh()}
@@ -130,25 +130,25 @@ export function DatabaseAnalysis(): React.JSX.Element {
         return (
           <>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <DatabaseAnalysisMetricCard
+              <DatabaseInspectorMetricCard
                 title={t('summary.physicalBytes')}
                 value={formatStorageSize(report.summary.physicalBytes)}
                 hint={t('summary.physicalBytesHint')}
                 icon={<HardDrive className="w-4 h-4" />}
               />
-              <DatabaseAnalysisMetricCard
+              <DatabaseInspectorMetricCard
                 title={t('summary.logicalPayloadBytes')}
                 value={formatStorageSize(report.summary.logicalPayloadBytes)}
                 hint={t('summary.logicalPayloadBytesHint')}
                 icon={<Database className="w-4 h-4" />}
               />
-              <DatabaseAnalysisMetricCard
+              <DatabaseInspectorMetricCard
                 title={t('summary.attachmentBytes')}
                 value={formatStorageSize(report.summary.attachmentBytes)}
                 hint={t('summary.attachmentBytesHint')}
                 icon={<ImageIcon className="w-4 h-4" />}
               />
-              <DatabaseAnalysisMetricCard
+              <DatabaseInspectorMetricCard
                 title={t('summary.attachmentCount')}
                 value={report.summary.attachmentCount.toLocaleString()}
                 hint={t('summary.attachmentCountHint', {
@@ -278,7 +278,7 @@ export function DatabaseAnalysis(): React.JSX.Element {
               </Card>
             </div>
 
-            <DatabaseAnalysisGameTable games={report.games} />
+            <DatabaseInspectorGameTable games={report.games} />
           </>
         )
       }
@@ -312,7 +312,7 @@ export function DatabaseAnalysis(): React.JSX.Element {
           </div>
 
           {viewState.kind === 'ready' && viewState.staleError && (
-            <DatabaseAnalysisRefreshFailedAlert
+            <DatabaseInspectorRefreshFailedAlert
               title={t('messages.refreshFailedTitle')}
               description={t('messages.refreshFailedDescription', {
                 error: viewState.staleError

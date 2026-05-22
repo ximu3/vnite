@@ -53,9 +53,8 @@ function createEmptyAttachmentCategoryBytes(): AttachmentCategoryBytes {
 }
 
 function estimateDocBytes(doc: DbDoc): number {
-  const cloned = JSON.parse(JSON.stringify(doc)) as DbDoc
-  delete cloned._attachments
-  return Buffer.byteLength(JSON.stringify(cloned), 'utf8')
+  const { _attachments, ...rest } = doc
+  return Buffer.byteLength(JSON.stringify(rest), 'utf8')
 }
 
 function classifyAttachment(attachmentId: string): DatabaseAttachmentCategory {
@@ -82,7 +81,10 @@ function classifyAttachment(attachmentId: string): DatabaseAttachmentCategory {
   return 'other'
 }
 
-function summarizeAttachments(attachments: AttachmentMap | undefined): {
+function summarizeAttachments(
+  attachments: AttachmentMap | undefined,
+  options: { sortEntries?: boolean } = {}
+): {
   totalBytes: number
   totalCount: number
   categoryBytes: AttachmentCategoryBytes
@@ -92,6 +94,7 @@ function summarizeAttachments(attachments: AttachmentMap | undefined): {
   const entries: GameAttachmentEntry[] = []
   let totalBytes = 0
   let totalCount = 0
+  const sortEntries = options.sortEntries ?? false
 
   if (!attachments) {
     return { totalBytes, totalCount, categoryBytes, entries }
@@ -113,10 +116,12 @@ function summarizeAttachments(attachments: AttachmentMap | undefined): {
     })
   }
 
-  entries.sort((a, b) => {
-    if (b.bytes !== a.bytes) return b.bytes - a.bytes
-    return a.attachmentId.localeCompare(b.attachmentId)
-  })
+  if (sortEntries) {
+    entries.sort((a, b) => {
+      if (b.bytes !== a.bytes) return b.bytes - a.bytes
+      return a.attachmentId.localeCompare(b.attachmentId)
+    })
+  }
 
   return { totalBytes, totalCount, categoryBytes, entries }
 }
@@ -166,14 +171,12 @@ export async function getLocalStorageReport(): Promise<LocalDatabaseStorageRepor
 
   const gameDocs = docsByDatabase.get('game') ?? {}
   const gameLocalDocs = docsByDatabase.get('game-local') ?? {}
-  const gameIds = Array.from(
-    new Set(
-      [...Object.keys(gameDocs), ...Object.keys(gameLocalDocs)].filter((id) => id !== 'collections')
-    )
-  )
+  const gameIds = [...Object.keys(gameDocs)].filter((id) => id !== 'collections')
 
   const attachmentCategoryBytes = createEmptyAttachmentCategoryBytes()
   const games: OverviewGameStorageSummary[] = []
+  let totalAttachmentBytes = 0
+  let totalAttachmentCount = 0
 
   for (const gameId of gameIds) {
     const gameDoc = gameDocs[gameId]
@@ -181,6 +184,13 @@ export async function getLocalStorageReport(): Promise<LocalDatabaseStorageRepor
     const gameDocBytes = gameDoc ? estimateDocBytes(gameDoc) : 0
     const gameLocalDocBytes = gameLocalDoc ? estimateDocBytes(gameLocalDoc) : 0
     const attachmentSummary = summarizeAttachments(gameDoc?._attachments)
+
+    totalAttachmentBytes += attachmentSummary.totalBytes
+    totalAttachmentCount += attachmentSummary.totalCount
+
+    for (const category of ATTACHMENT_CATEGORIES) {
+      attachmentCategoryBytes[category] += attachmentSummary.categoryBytes[category]
+    }
 
     games.push({
       gameId,
@@ -197,33 +207,18 @@ export async function getLocalStorageReport(): Promise<LocalDatabaseStorageRepor
 
   let totalPhysicalBytes = 0
   let totalLogicalPayloadBytes = 0
-  let totalAttachmentBytes = 0
-  let totalAttachmentCount = 0
 
   for (const dbName of DATABASE_NAMES) {
     const docs = Object.values(docsByDatabase.get(dbName) ?? {})
     const estimatedDocBytes = docs.reduce((total, doc) => total + estimateDocBytes(doc), 0)
-    const attachmentSummaries = docs.map((doc) => summarizeAttachments(doc._attachments))
-    const attachmentBytes = attachmentSummaries.reduce(
-      (total, summary) => total + summary.totalBytes,
-      0
-    )
-    const attachmentCount = attachmentSummaries.reduce(
-      (total, summary) => total + summary.totalCount,
-      0
-    )
 
     totalPhysicalBytes += physicalBytesByDatabase.get(dbName) ?? 0
-    totalLogicalPayloadBytes += estimatedDocBytes + attachmentBytes
-    totalAttachmentBytes += attachmentBytes
-    totalAttachmentCount += attachmentCount
-
-    for (const attachmentSummary of attachmentSummaries) {
-      for (const category of ATTACHMENT_CATEGORIES) {
-        attachmentCategoryBytes[category] += attachmentSummary.categoryBytes[category]
-      }
-    }
+    totalLogicalPayloadBytes += estimatedDocBytes
   }
+
+  // Attachment reporting in DatabaseInspector is intentionally game-focused.
+  // The config database can store theme background attachments, but we ignore them here.
+  totalLogicalPayloadBytes += totalAttachmentBytes
 
   return {
     generatedAt: new Date().toISOString(),
@@ -245,7 +240,9 @@ export async function getGameStorageDetail(gameId: string): Promise<GameDatabase
     getDocIfExists('game-local', gameId)
   ])
 
-  const attachmentSummary = summarizeAttachments(gameDoc?._attachments)
+  const attachmentSummary = summarizeAttachments(gameDoc?._attachments, {
+    sortEntries: true
+  })
   const gameDocBytes = gameDoc ? estimateDocBytes(gameDoc) : 0
   const gameLocalDocBytes = gameLocalDoc ? estimateDocBytes(gameLocalDoc) : 0
 

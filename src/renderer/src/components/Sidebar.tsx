@@ -105,16 +105,16 @@ export function Sidebar(): React.JSX.Element {
           <TooltipTrigger>
             <Nav
               variant="sidebar"
-              to="/database-analysis"
+              to="/database-inspector"
               activeOptions={{
                 exact: false
               }}
               className="size-9 p-0"
             >
-              <span className={cn('icon-[mdi--database-search-outline] w-5 h-5')}></span>
+              <span className={cn('icon-[mdi--database-eye] w-5 h-5')}></span>
             </Nav>
           </TooltipTrigger>
-          <TooltipContent side="right">{t('navigation.databaseAnalysis')}</TooltipContent>
+          <TooltipContent side="right">{t('navigation.databaseInspector')}</TooltipContent>
         </Tooltip>
       </div>
       {/* Add Game */}

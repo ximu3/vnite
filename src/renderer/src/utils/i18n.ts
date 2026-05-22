@@ -18,7 +18,7 @@ export async function i18nInit(): Promise<void> {
     'record',
     'scanner',
     'transformer',
-    'databaseAnalysis'
+    'databaseInspector'
   ]
 
   const supportedLngs = ['zh-CN', 'zh-TW', 'ja', 'en', 'ru', 'fr', 'ko']
