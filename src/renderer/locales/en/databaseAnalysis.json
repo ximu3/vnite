@@ -1,0 +1,83 @@
+{
+  "title": "Database Analysis",
+  "description": "Inspect the composition of the local database.",
+  "generatedAt": "Generated",
+  "actions": {
+    "refresh": "Refresh Report",
+    "retry": "Retry"
+  },
+  "messages": {
+    "loading": "Analyzing local database…",
+    "noAttachments": "No database attachments were found.",
+    "noMatchingGames": "No games match the current filter.",
+    "refreshFailedTitle": "Refresh failed",
+    "refreshFailedDescription": "Showing the last successful report. Error: {{error}}"
+  },
+  "summary": {
+    "physicalBytes": "Physical Footprint",
+    "physicalBytesHint": "On-disk size of local database files",
+    "logicalPayloadBytes": "Logical Payload",
+    "logicalPayloadBytesHint": "Estimated current document + attachment payload",
+    "attachmentBytes": "Attachment Bytes",
+    "attachmentBytesHint": "Current attachment payload stored in the database",
+    "attachmentCount": "Attachment Count",
+    "attachmentCountHint": "Found across {{count}} games",
+    "documents": "Document Payload"
+  },
+  "charts": {
+    "attachmentDistribution": {
+      "title": "By Attachment Type",
+      "description": "Attachment payload grouped by category"
+    },
+    "largestGames": {
+      "title": "Largest Games",
+      "description": "Top games by estimated database footprint"
+    }
+  },
+  "table": {
+    "title": "Game Footprint",
+    "description": "Drill into a game to inspect attachment-level details.",
+    "searchPlaceholder": "Search games…",
+    "columns": {
+      "name": "Game",
+      "total": "Total",
+      "attachments": "Attachments",
+      "attachmentCount": "Count",
+      "save": "Save"
+    }
+  },
+  "detail": {
+    "backToOverview": "Back to Overview",
+    "description": "Attachment-level breakdown for game ID: {{gameId}}",
+    "hero": {
+      "total": "Total",
+      "attachments": "Attachments",
+      "documents": "Documents"
+    },
+    "summary": {
+      "totalHint": "Current document payload plus current attachments",
+      "documentsHint": "Estimated payload from database documents",
+      "attachmentsHint": "Stored binary attachment payload",
+      "attachmentCountHint": "Current attachment entries stored in the database"
+    },
+    "filters": {
+      "all": "All"
+    },
+    "table": {
+      "title": "Attachment Entries",
+      "columns": {
+        "type": "Type",
+        "attachmentId": "Attachment ID",
+        "size": "Size",
+        "contentType": "Content Type"
+      }
+    }
+  },
+  "categories": {
+    "memory": "Memory",
+    "save": "Save",
+    "descriptionImage": "Description Cache",
+    "media": "Media",
+    "other": "Other"
+  }
+}

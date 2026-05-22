@@ -8,7 +8,15 @@ import {
 import { PosterRenderArgs, RenderResponse, TemplatePayloads } from '@appTypes/poster'
 import { BatchUpdateGameMetadataProgress, OverallScanProgress } from '@appTypes/utils'
 import { ProgressInfo, UpdateCheckResult } from 'electron-updater'
-import { BatchGameInfo, configDocs, configLocalDocs, gameDoc, GameTimerStatus } from './models'
+import {
+  BatchGameInfo,
+  configDocs,
+  configLocalDocs,
+  GameDatabaseStorageDetail,
+  gameDoc,
+  GameTimerStatus,
+  LocalDatabaseStorageReport
+} from './models'
 import {
   PluginConfiguration,
   PluginInfo,
@@ -147,6 +155,8 @@ type MainIpcEvents =
       'db:set-config-background': (path: string, theme: 'dark' | 'light') => void
       'db:check-attachment': (dbName: string, docId: string, attachmentId: string) => boolean
       'db:get-all-docs': (dbName: string) => Record<string, any>
+      'db:get-local-storage-report': () => LocalDatabaseStorageReport
+      'db:get-game-storage-detail': (gameId: string) => GameDatabaseStorageDetail
       'db:restart-sync': () => void
       'db:full-sync': () => void
       'db:stop-sync': () => void

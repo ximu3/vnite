@@ -1,0 +1,83 @@
+{
+  "title": "資料庫分析",
+  "description": "查看本地資料庫構成。",
+  "generatedAt": "生成時間",
+  "actions": {
+    "refresh": "重新整理報表",
+    "retry": "重試"
+  },
+  "messages": {
+    "loading": "正在分析本地資料庫…",
+    "noAttachments": "未發現資料庫附件。",
+    "noMatchingGames": "沒有符合目前篩選條件的遊戲。",
+    "refreshFailedTitle": "重新整理失敗",
+    "refreshFailedDescription": "目前仍顯示上一次成功產生的報表。錯誤：{{error}}"
+  },
+  "summary": {
+    "physicalBytes": "實體占用",
+    "physicalBytesHint": "本地資料庫檔案在磁碟上的占用",
+    "logicalPayloadBytes": "邏輯載荷",
+    "logicalPayloadBytesHint": "目前文件與附件內容的估算體積",
+    "attachmentBytes": "附件體積",
+    "attachmentBytesHint": "目前資料庫內附件的內容體積",
+    "attachmentCount": "附件數量",
+    "attachmentCountHint": "分佈在 {{count}} 個遊戲中",
+    "documents": "文件載荷"
+  },
+  "charts": {
+    "attachmentDistribution": {
+      "title": "按附件類型分佈",
+      "description": "按附件分類統計的體積分佈"
+    },
+    "largestGames": {
+      "title": "占用最大的遊戲",
+      "description": "按估算資料庫占用排序的遊戲"
+    }
+  },
+  "table": {
+    "title": "遊戲占用明細",
+    "description": "點擊某個遊戲可繼續查看附件層級的詳細資訊。",
+    "searchPlaceholder": "搜尋遊戲…",
+    "columns": {
+      "name": "遊戲",
+      "total": "總占用",
+      "attachments": "附件",
+      "attachmentCount": "數量",
+      "save": "存檔"
+    }
+  },
+  "detail": {
+    "backToOverview": "返回總覽",
+    "description": "遊戲 ID：{{gameId}} 的附件層級占用分析",
+    "hero": {
+      "total": "總占用",
+      "attachments": "附件",
+      "documents": "文件"
+    },
+    "summary": {
+      "totalHint": "目前文件載荷與目前附件載荷之和",
+      "documentsHint": "來自資料庫文件的估算載荷",
+      "attachmentsHint": "存放在資料庫中的二進位附件載荷",
+      "attachmentCountHint": "目前保存在資料庫中的附件條目數"
+    },
+    "filters": {
+      "all": "全部"
+    },
+    "table": {
+      "title": "附件條目",
+      "columns": {
+        "type": "類型",
+        "attachmentId": "附件 ID",
+        "size": "大小",
+        "contentType": "內容類型"
+      }
+    }
+  },
+  "categories": {
+    "memory": "回憶",
+    "save": "存檔",
+    "descriptionImage": "簡介快取",
+    "media": "媒體資源",
+    "other": "其他"
+  }
+}

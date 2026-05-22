@@ -11,14 +11,15 @@ import { Showcase } from '~/components/Showcase'
 import { CollectionGames } from '~/components/Showcase/CollectionGames'
 import { CollectionPage } from '~/components/Showcase/CollectionPage'
 import { Config } from '~/pages/Config'
+import { DatabaseAnalysis, DatabaseAnalysisGameDetail } from '~/pages/DatabaseAnalysis'
 import { GameScannerManager } from '~/pages/GameScannerManager'
 import { Library } from '~/pages/Library'
 import { Plugin } from '~/pages/Plugin/main'
 import { Record } from '~/pages/Record'
-import { getBusinessDateKey, getConfiguredDayBoundaryHour } from '~/stores/game/dayBoundaryUtils'
 import { TransformerManager } from '~/pages/TransformerManager'
 import { Icon } from '~/pages/arts/Icon'
 import { Logo } from '~/pages/arts/Logo'
+import { getBusinessDateKey, getConfiguredDayBoundaryHour } from '~/stores/game/dayBoundaryUtils'
 import { RootLayout } from '../layouts/RootLayout'
 
 const hashHistory = createHashHistory()
@@ -163,6 +164,21 @@ const scannerRoute = createRoute({
   component: GameScannerManager
 })
 
+const databaseAnalysisRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/database-analysis',
+  component: DatabaseAnalysis
+})
+
+const databaseAnalysisGameRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/database-analysis/games/$gameId',
+  component: function DatabaseAnalysisGameComponent() {
+    const { gameId } = databaseAnalysisGameRoute.useParams()
+    return <DatabaseAnalysisGameDetail gameId={gameId} />
+  }
+})
+
 const transformerRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/transformer',
@@ -199,6 +215,8 @@ const routeTree = rootRoute.addChildren([
   recordRoute,
   configRoute,
   scannerRoute,
+  databaseAnalysisRoute,
+  databaseAnalysisGameRoute,
   transformerRoute,
   pluginRoute,
   iconRoute,

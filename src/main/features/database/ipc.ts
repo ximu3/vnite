@@ -1,16 +1,18 @@
-import {
-  backupDatabase,
-  restoreDatabase,
-  startSync,
-  stopSync,
-  fullSync,
-  getCouchDBSize,
-  compactRemoteDatabase,
-  resetAppearancesSettings
-} from './services'
+import { DocChange } from '@appTypes/models'
 import { baseDBManager, ConfigDBManager } from '~/core/database'
 import { ipcManager } from '~/core/ipc'
-import { DocChange } from '@appTypes/models'
+import {
+  backupDatabase,
+  compactRemoteDatabase,
+  fullSync,
+  getCouchDBSize,
+  getGameStorageDetail,
+  getLocalStorageReport,
+  resetAppearancesSettings,
+  restoreDatabase,
+  startSync,
+  stopSync
+} from './services'
 
 export function setupDatabaseIPC(): void {
   ipcManager.handle('db:doc-changed', async (_event, change: DocChange) => {
@@ -19,6 +21,14 @@ export function setupDatabaseIPC(): void {
 
   ipcManager.handle('db:get-all-docs', async (_event, dbName: string) => {
     return await baseDBManager.getAllDocs(dbName)
+  })
+
+  ipcManager.handle('db:get-local-storage-report', async () => {
+    return await getLocalStorageReport()
+  })
+
+  ipcManager.handle('db:get-game-storage-detail', async (_, gameId: string) => {
+    return await getGameStorageDetail(gameId)
   })
 
   ipcManager.handle('db:restart-sync', async (_) => {

@@ -100,6 +100,22 @@ export function Sidebar(): React.JSX.Element {
           </TooltipTrigger>
           <TooltipContent side="right">{t('navigation.plugin')}</TooltipContent>
         </Tooltip>
+        {/* Database Analysis */}
+        <Tooltip>
+          <TooltipTrigger>
+            <Nav
+              variant="sidebar"
+              to="/database-analysis"
+              activeOptions={{
+                exact: false
+              }}
+              className="size-9 p-0"
+            >
+              <span className={cn('icon-[mdi--database-search-outline] w-5 h-5')}></span>
+            </Nav>
+          </TooltipTrigger>
+          <TooltipContent side="right">{t('navigation.databaseAnalysis')}</TooltipContent>
+        </Tooltip>
       </div>
       {/* Add Game */}
       <div className={cn('flex flex-col gap-2 items-center justify-center')}>

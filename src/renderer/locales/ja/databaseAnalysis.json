@@ -1,0 +1,83 @@
+{
+  "title": "データベース分析",
+  "description": "ローカルデータベースの構成を確認します。",
+  "generatedAt": "生成時刻",
+  "actions": {
+    "refresh": "レポートを更新",
+    "retry": "再試行"
+  },
+  "messages": {
+    "loading": "ローカルデータベースを分析しています…",
+    "noAttachments": "データベース添付ファイルは見つかりませんでした。",
+    "noMatchingGames": "現在のフィルターに一致するゲームはありません。",
+    "refreshFailedTitle": "更新に失敗しました",
+    "refreshFailedDescription": "前回正常に生成されたレポートを表示しています。エラー: {{error}}"
+  },
+  "summary": {
+    "physicalBytes": "物理使用量",
+    "physicalBytesHint": "ローカルデータベースファイルのディスク使用量",
+    "logicalPayloadBytes": "論理ペイロード",
+    "logicalPayloadBytesHint": "現在のドキュメントと添付内容の推定サイズ",
+    "attachmentBytes": "添付サイズ",
+    "attachmentBytesHint": "データベース内の添付ファイル内容サイズ",
+    "attachmentCount": "添付数",
+    "attachmentCountHint": "{{count}} 本のゲームに分布",
+    "documents": "ドキュメントペイロード"
+  },
+  "charts": {
+    "attachmentDistribution": {
+      "title": "添付種類別",
+      "description": "添付カテゴリごとのサイズ分布"
+    },
+    "largestGames": {
+      "title": "容量の大きいゲーム",
+      "description": "推定データベース使用量順のゲーム"
+    }
+  },
+  "table": {
+    "title": "ゲーム使用量一覧",
+    "description": "ゲームをクリックすると添付ファイル単位の詳細を確認できます。",
+    "searchPlaceholder": "ゲームを検索…",
+    "columns": {
+      "name": "ゲーム",
+      "total": "総量",
+      "attachments": "添付",
+      "attachmentCount": "数",
+      "save": "セーブ"
+    }
+  },
+  "detail": {
+    "backToOverview": "一覧へ戻る",
+    "description": "ゲーム ID: {{gameId}} の添付ファイル単位の使用量分析",
+    "hero": {
+      "total": "総量",
+      "attachments": "添付",
+      "documents": "ドキュメント"
+    },
+    "summary": {
+      "totalHint": "現在のドキュメントペイロードと現在の添付ペイロードの合計",
+      "documentsHint": "データベースドキュメント由来の推定ペイロード",
+      "attachmentsHint": "データベースに保存されたバイナリ添付ペイロード",
+      "attachmentCountHint": "現在データベースに保存されている添付エントリ数"
+    },
+    "filters": {
+      "all": "すべて"
+    },
+    "table": {
+      "title": "添付エントリ",
+      "columns": {
+        "type": "種類",
+        "attachmentId": "添付 ID",
+        "size": "サイズ",
+        "contentType": "Content Type"
+      }
+    }
+  },
+  "categories": {
+    "memory": "メモリ",
+    "save": "セーブ",
+    "descriptionImage": "説明キャッシュ",
+    "media": "メディア",
+    "other": "その他"
+  }
+}
