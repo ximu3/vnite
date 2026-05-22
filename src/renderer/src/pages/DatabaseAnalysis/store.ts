@@ -20,6 +20,7 @@ interface DatabaseAnalysisState {
   ensureGameDetail: (gameId: string) => Promise<void>
   refreshGameDetail: (gameId: string) => Promise<void>
   clearAllDetails: () => void
+  invalidateOverview: () => void
 }
 
 let overviewPromise: Promise<void> | null = null
@@ -195,5 +196,9 @@ export const useDatabaseAnalysisStore = create<DatabaseAnalysisState>((set, get)
 
   clearAllDetails: (): void => {
     set({ detailsByGameId: {} })
+  },
+
+  invalidateOverview: (): void => {
+    set({ overview: createEmptyLoadable<LocalDatabaseStorageReport>() })
   }
 }))

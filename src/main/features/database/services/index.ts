@@ -1,4 +1,5 @@
 export * from './analysis'
+export * from './attachment'
 export * from './backup'
 export * from './cloud'
 export * from './sync'

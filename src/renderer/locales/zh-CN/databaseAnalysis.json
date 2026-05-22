@@ -71,6 +71,14 @@
         "size": "大小",
         "contentType": "内容类型"
       }
+    },
+    "imageActions": {
+      "viewError": "加载附件失败：{{error}}",
+      "deleteImage": "删除图片",
+      "deleteConfirmTitle": "删除图片附件",
+      "deleteConfirmDescription": "此操作将永久删除附件 \"{{attachmentId}}\"，不可撤销。",
+      "deleteSuccess": "附件已删除",
+      "deleteError": "删除附件失败：{{error}}"
     }
   },
   "categories": {

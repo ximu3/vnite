@@ -11,16 +11,35 @@ import {
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import type { DatabaseAttachmentCategory } from '@appTypes/models'
+import type { DatabaseAttachmentCategory, GameAttachmentEntry } from '@appTypes/models'
 import { generateUUID } from '@appUtils'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@ui/alert-dialog'
 import { Badge } from '@ui/badge'
 import { Button } from '@ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger
+} from '@ui/context-menu'
 import { GameImage } from '@ui/game-image'
 import { ScrollArea } from '@ui/scroll-area'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@ui/table'
+import { toast } from 'sonner'
+import { ipcManager } from '~/app/ipc'
 import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
 import { ScrollToTopButton } from '~/components/Showcase/ScrollToTopButton'
+import { ImageViewerDialog } from '~/components/dialog/ImageViewerDialog'
 import { cn, formatStorageSize, scrollToElement } from '~/utils'
 import { DatabaseAnalysisMetricCard } from './MetricCard'
 import {
@@ -55,7 +74,13 @@ export function DatabaseAnalysisGameDetail({ gameId }: { gameId: string }): Reac
   const detail = useDatabaseAnalysisStore((state) => state.detailsByGameId[gameId])
   const ensureGameDetail = useDatabaseAnalysisStore((state) => state.ensureGameDetail)
   const refreshGameDetail = useDatabaseAnalysisStore((state) => state.refreshGameDetail)
+  const invalidateOverview = useDatabaseAnalysisStore((state) => state.invalidateOverview)
   const [filter, setFilter] = useState<DetailFilter>('all')
+  const [imageViewer, setImageViewer] = useState<{ open: boolean; path: string | null }>({
+    open: false,
+    path: null
+  })
+  const [deleteTarget, setDeleteTarget] = useState<GameAttachmentEntry | null>(null)
   const setLazyloadMark = usePositionButtonStore((state) => state.setLazyloadMark)
 
   useEffect(() => {
@@ -78,6 +103,48 @@ export function DatabaseAnalysisGameDetail({ gameId }: { gameId: string }): Reac
     } catch {
       // The stale state banner already explains the refresh failure.
     }
+  }
+
+  const handleViewAttachment = async (entry: GameAttachmentEntry): Promise<void> => {
+    try {
+      const tempPath = await ipcManager.invoke(
+        'db:get-attachment-temp-file',
+        gameId,
+        entry.attachmentId
+      )
+      if (!tempPath) {
+        toast.error(t('detail.imageActions.viewError', { error: 'File not found' }))
+        return
+      }
+      setImageViewer({ open: true, path: tempPath as string })
+    } catch (error) {
+      toast.error(
+        t('detail.imageActions.viewError', {
+          error: error instanceof Error ? error.message : String(error)
+        })
+      )
+    }
+  }
+
+  const handleDeleteAttachment = async (): Promise<void> => {
+    if (!deleteTarget) return
+    try {
+      await ipcManager.invoke('db:remove-game-attachment', gameId, deleteTarget.attachmentId)
+      toast.success(t('detail.imageActions.deleteSuccess'))
+      setDeleteTarget(null)
+      invalidateOverview()
+      await refreshGameDetail(gameId)
+    } catch (error) {
+      toast.error(
+        t('detail.imageActions.deleteError', {
+          error: error instanceof Error ? error.message : String(error)
+        })
+      )
+    }
+  }
+
+  const isImageAttachment = (entry: GameAttachmentEntry): boolean => {
+    return entry.contentType?.startsWith('image/') ?? false
   }
 
   const pageContent = (() => {
@@ -212,16 +279,37 @@ export function DatabaseAnalysisGameDetail({ gameId }: { gameId: string }): Reac
                   </TableHeader>
                   <TableBody>
                     {filteredAttachments.length > 0 ? (
-                      filteredAttachments.map((entry) => (
-                        <TableRow key={entry.attachmentId}>
-                          <TableCell>{getCategoryLabel(entry.category, t)}</TableCell>
-                          <TableCell className="max-w-[32rem] truncate">
-                            {entry.attachmentId}
-                          </TableCell>
-                          <TableCell>{formatStorageSize(entry.bytes)}</TableCell>
-                          <TableCell>{entry.contentType || 'application/octet-stream'}</TableCell>
-                        </TableRow>
-                      ))
+                      filteredAttachments.map((entry) => {
+                        const isImage = isImageAttachment(entry)
+                        const row = (
+                          <TableRow
+                            key={entry.attachmentId}
+                            className={cn(isImage && 'cursor-pointer')}
+                            onClick={isImage ? () => void handleViewAttachment(entry) : undefined}
+                          >
+                            <TableCell>{getCategoryLabel(entry.category, t)}</TableCell>
+                            <TableCell className="max-w-[32rem] truncate">
+                              {entry.attachmentId}
+                            </TableCell>
+                            <TableCell>{formatStorageSize(entry.bytes)}</TableCell>
+                            <TableCell>{entry.contentType || 'application/octet-stream'}</TableCell>
+                          </TableRow>
+                        )
+                        if (!isImage) return row
+                        return (
+                          <ContextMenu key={entry.attachmentId}>
+                            <ContextMenuTrigger asChild>{row}</ContextMenuTrigger>
+                            <ContextMenuContent>
+                              <ContextMenuItem
+                                variant="destructive"
+                                onSelect={() => setDeleteTarget(entry)}
+                              >
+                                {t('detail.imageActions.deleteImage')}
+                              </ContextMenuItem>
+                            </ContextMenuContent>
+                          </ContextMenu>
+                        )
+                      })
                     ) : (
                       <TableRow>
                         <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
@@ -289,7 +377,37 @@ export function DatabaseAnalysisGameDetail({ gameId }: { gameId: string }): Reac
           {pageContent}
         </div>
       </ScrollArea>
+
       <ScrollToTopButton scrollAreaRef={scrollAreaRef} threshold={500} />
+
+      <ImageViewerDialog
+        isOpen={imageViewer.open}
+        imagePath={imageViewer.path}
+        onClose={() => setImageViewer({ open: false, path: null })}
+      />
+      <AlertDialog
+        open={deleteTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null)
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('detail.imageActions.deleteConfirmTitle')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('detail.imageActions.deleteConfirmDescription', {
+                attachmentId: deleteTarget?.attachmentId ?? ''
+              })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('utils:common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={() => void handleDeleteAttachment()}>
+              {t('detail.imageActions.deleteImage')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

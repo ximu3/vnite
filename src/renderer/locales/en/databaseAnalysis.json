@@ -71,6 +71,14 @@
         "size": "Size",
         "contentType": "Content Type"
       }
+    },
+    "imageActions": {
+      "viewError": "Failed to load attachment: {{error}}",
+      "deleteImage": "Delete Image",
+      "deleteConfirmTitle": "Delete Image Attachment",
+      "deleteConfirmDescription": "This will permanently delete the attachment \"{{attachmentId}}\". This action cannot be undone.",
+      "deleteSuccess": "Attachment deleted successfully",
+      "deleteError": "Failed to delete attachment: {{error}}"
     }
   },
   "categories": {

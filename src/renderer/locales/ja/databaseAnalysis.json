@@ -71,6 +71,14 @@
         "size": "サイズ",
         "contentType": "Content Type"
       }
+    },
+    "imageActions": {
+      "viewError": "添付ファイルの読み込みに失敗しました：{{error}}",
+      "deleteImage": "画像を削除",
+      "deleteConfirmTitle": "画像添付を削除",
+      "deleteConfirmDescription": "添付「{{attachmentId}}」を完全に削除します。この操作は取り消せません。",
+      "deleteSuccess": "添付を削除しました",
+      "deleteError": "添付の削除に失敗しました：{{error}}"
     }
   },
   "categories": {
