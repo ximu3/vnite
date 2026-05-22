@@ -454,7 +454,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
         />
       )}
       <MemoryCropDialogHost />
-      <MemoryNoteDialogHost memoryList={memoryList} saveNote={saveNote} />
+      <MemoryNoteDialogHost gameId={gameId} memoryList={memoryList} saveNote={saveNote} />
     </div>
   )
 }

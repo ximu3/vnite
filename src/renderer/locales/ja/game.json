@@ -371,6 +371,7 @@
         "deleteSuccess": "削除に成功しました",
         "deleteError": "削除に失敗しました: {{error}}",
         "selectFileError": "ファイルの選択に失敗しました: {{error}}",
+        "insertImageError": "画像の挿入に失敗しました: {{error}}",
         "imageNotFound": "画像が見つかりません",
         "getImageError": "画像の取得に失敗しました: {{error}}",
         "imageCopied": "画像をクリップボードにコピーしました",

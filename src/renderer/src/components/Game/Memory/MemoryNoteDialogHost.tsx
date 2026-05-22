@@ -6,9 +6,11 @@ import { useMemoryStore } from './store'
 type MemoryList = gameDoc['memory']['memoryList']
 
 export function MemoryNoteDialogHost({
+  gameId,
   memoryList,
   saveNote
 }: {
+  gameId: string
   memoryList: MemoryList
   saveNote: (memoryId: string, note: string) => Promise<void>
 }): React.JSX.Element | null {
@@ -34,6 +36,7 @@ export function MemoryNoteDialogHost({
   return (
     <NoteDialog
       key={`memory-note-${noteDialog.memoryId}-${noteDialog.initialMode}`}
+      gameId={gameId}
       setIsOpen={(open) => {
         if (!open) {
           closeNoteDialog()

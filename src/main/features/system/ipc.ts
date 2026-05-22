@@ -37,6 +37,7 @@ import {
   getSystemFonts,
   openLogPathInExplorer,
   portableStore,
+  resolveImageSourceToFilePath,
   saveGameIconByFile,
   switchDatabaseMode,
   testUpscalerAvailability,
@@ -225,6 +226,10 @@ export function setupSystemIPC(): void {
 
   ipcManager.handle('utils:save-clipboard-image', async () => {
     return await saveClipboardImage()
+  })
+
+  ipcManager.handle('utils:resolve-image-source-to-file-path', async (_, source: string) => {
+    return await resolveImageSourceToFilePath(source)
   })
 
   ipcManager.handle('utils:write-clipboard-image', async (_, data: string, type: 'path') => {

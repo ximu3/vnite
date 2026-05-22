@@ -371,6 +371,7 @@
         "deleteSuccess": "删除成功",
         "deleteError": "删除失败: {{error}}",
         "selectFileError": "选择文件失败: {{error}}",
+        "insertImageError": "插入图片失败: {{error}}",
         "imageNotFound": "未找到当前图片",
         "getImageError": "获取当前图片失败: {{error}}",
         "imageCopied": "图片已成功复制到剪贴板",

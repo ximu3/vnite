@@ -8,7 +8,7 @@ import path from 'path'
 import sharp from 'sharp'
 import ico from 'sharp-ico'
 import { getAppTempPath } from '~/features/system'
-import { gis } from '~/utils'
+import { gis } from './gis'
 const upscalerProcessMutex = new Mutex()
 
 export async function searchGameImages(

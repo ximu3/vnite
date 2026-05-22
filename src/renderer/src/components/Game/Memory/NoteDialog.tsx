@@ -3,18 +3,23 @@ import { Dialog, DialogContent } from '@ui/dialog'
 import { Tabs, TabsList, TabsTrigger } from '@ui/tabs'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { ipcManager } from '~/app/ipc'
 import { cn } from '~/utils'
+import { useGameDetailStore } from '../store'
 import { MarkdownEditor, type MarkdownEditorHandle } from './MarkdownEditor'
 import { MarkdownPreview } from './MarkdownPreview'
 
 export type NoteDialogMode = 'edit' | 'preview'
 
 export function NoteDialog({
+  gameId,
   setIsOpen,
   note,
   saveNote,
   initialMode = 'edit'
 }: {
+  gameId: string
   setIsOpen: (isOpen: boolean) => void
   note: string
   saveNote: (note: string) => Promise<void>
@@ -24,6 +29,7 @@ export function NoteDialog({
   const [draft, setDraft] = useState(note ?? '')
   const [mode, setMode] = useState<NoteDialogMode>(initialMode)
   const editorRef = useRef<MarkdownEditorHandle>(null)
+  const openImageViewerDialog = useGameDetailStore((state) => state.openImageViewerDialog)
 
   useEffect(() => {
     if (mode !== 'edit') return
@@ -50,6 +56,15 @@ export function NoteDialog({
     void closeDialog()
   }
 
+  async function handlePreviewImageClick(source: string): Promise<void> {
+    try {
+      const imagePath = await ipcManager.invoke('utils:resolve-image-source-to-file-path', source)
+      openImageViewerDialog(imagePath)
+    } catch (error) {
+      toast.error(t('detail.memory.notifications.getImageError', { error }))
+    }
+  }
+
   return (
     <Dialog open onOpenChange={handleOpenChange}>
       <DialogContent
@@ -66,10 +81,10 @@ export function NoteDialog({
           <div className={cn('flex items-center pr-8')}>
             <TabsList>
               <TabsTrigger value="edit" className={cn('px-5')}>
-                {t('detail.memory.editor.edit', { defaultValue: 'Edit' })}
+                {t('detail.memory.editor.edit')}
               </TabsTrigger>
               <TabsTrigger value="preview" className={cn('px-5')}>
-                {t('detail.memory.editor.preview', { defaultValue: 'Preview' })}
+                {t('detail.memory.editor.preview')}
               </TabsTrigger>
             </TabsList>
           </div>
@@ -77,7 +92,7 @@ export function NoteDialog({
 
         <div className={cn('min-h-0 flex-1')}>
           {mode === 'edit' ? (
-            <MarkdownEditor ref={editorRef} value={draft} onChange={setDraft} />
+            <MarkdownEditor ref={editorRef} gameId={gameId} value={draft} onChange={setDraft} />
           ) : (
             <Card
               className={cn(
@@ -86,9 +101,10 @@ export function NoteDialog({
             >
               <MarkdownPreview
                 value={draft}
-                emptyLabel={t('detail.memory.editor.emptyPreview', {
-                  defaultValue: 'Nothing to preview'
-                })}
+                onImageClick={(source) => {
+                  void handlePreviewImageClick(source)
+                }}
+                emptyLabel={t('detail.memory.editor.emptyPreview')}
               />
             </Card>
           )}

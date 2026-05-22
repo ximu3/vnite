@@ -371,6 +371,7 @@
         "deleteSuccess": "Deleted successfully",
         "deleteError": "Delete failed: {{error}}",
         "selectFileError": "Failed to select file: {{error}}",
+        "insertImageError": "Failed to insert image: {{error}}",
         "imageNotFound": "Current image not found",
         "getImageError": "Failed to get current image: {{error}}",
         "imageCopied": "Image successfully copied to clipboard",

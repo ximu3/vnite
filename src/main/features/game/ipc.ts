@@ -2,6 +2,7 @@ import sharp from 'sharp'
 import { GameDBManager } from '~/core/database'
 import { ipcManager } from '~/core/ipc'
 import {
+  addGameMemoryInlineImage,
   addGameMemory,
   batchCalculateStorageSize,
   calculateStorageSize,
@@ -61,6 +62,10 @@ export function setupGameIPC(): void {
 
   ipcManager.handle('game:get-memory-cover-path', async (_, gameId: string, memoryId: string) => {
     return await GameDBManager.getGameMemoryImage(gameId, memoryId, 'file')
+  })
+
+  ipcManager.handle('game:add-memory-inline-image', async (_, gameId: string, imgPath: string) => {
+    return await addGameMemoryInlineImage(gameId, imgPath)
   })
 
   ipcManager.handle(

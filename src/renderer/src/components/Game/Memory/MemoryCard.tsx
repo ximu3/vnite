@@ -303,6 +303,7 @@ export function MemoryCard({
     return (
       <MarkdownPreview
         value={note}
+        renderImages={false}
         className={cn(
           'scrollbar-base-thin h-full overflow-y-auto pr-2 overscroll-contain',
           'prose-headings:my-0.5 prose-h1:text-base prose-h2:text-base prose-h3:text-sm',
@@ -318,6 +319,7 @@ export function MemoryCard({
     return (
       <MarkdownPreview
         value={note}
+        renderImages={false}
         className={cn(
           'pr-2',
           'prose-headings:my-0.5 prose-h1:text-base prose-h2:text-base prose-h3:text-sm',
@@ -505,7 +507,7 @@ export function MemoryCard({
             openMemoryNoteDialog('edit')
           }}
         >
-          {note ? t('detail.memory.actions.editText') : t('detail.memory.actions.addText')}
+          {hasNote ? t('detail.memory.actions.editText') : t('detail.memory.actions.addText')}
         </ContextMenuItem>
         <ContextMenuSeparator />
         {/* Set As Game Media */}
