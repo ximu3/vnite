@@ -360,11 +360,7 @@
         "background": "遊戲背景"
       },
       "export": {
-        "exportAs": "轉存為",
-        "image": "圖片",
-        "markdown": "Markdown",
-        "toClipboard": "匯出至剪貼簿",
-        "saveAs": "另存為"
+        "all": "匯出全部"
       },
       "notifications": {
         "deleting": "正在刪除…",
@@ -376,8 +372,11 @@
         "getImageError": "獲取目前圖片失敗: {{error}}",
         "imageCopied": "圖片已成功複製到剪貼簿",
         "imageCopyError": "複製圖片到剪貼簿失敗: {{error}}",
-        "markdownCopied": "Markdown 已複製到剪貼簿",
-        "markdownCopyError": "複製到剪貼簿失敗: {{error}}",
+        "exportLoading": "正在匯出回憶…",
+        "exportSuccess": "回憶匯出成功",
+        "exportEmpty": "無可匯出內容",
+        "exportCanceled": "已取消匯出回憶",
+        "exportError": "匯出回憶失敗: {{error}}",
         "setCoverSuccess": "已成功設置為遊戲封面",
         "setCoverError": "設置為遊戲封面失敗：{{error}}",
         "setBackgroundSuccess": "已成功設置為遊戲背景",
@@ -561,6 +560,8 @@
           "importFromUrl": "從連結匯入",
           "searchImage": "搜尋圖片",
           "viewLargeImage": "查看原圖",
+          "copyToClipboard": "複製到剪貼簿",
+          "saveAs": "另存為",
           "cropImage": "裁剪圖片",
           "upscaleImage": "超分背景圖",
           "deleteImage": "刪除圖片"

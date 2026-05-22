@@ -2,33 +2,26 @@ import type { gameDoc } from '@appTypes/models/game'
 import {
   ContextMenu,
   ContextMenuContent,
-  ContextMenuGroup,
   ContextMenuItem,
-  ContextMenuPortal,
   ContextMenuSeparator,
-  ContextMenuSub,
-  ContextMenuSubContent,
-  ContextMenuSubTrigger,
   ContextMenuTrigger
 } from '@ui/context-menu'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@ui/table'
 import { useTranslation } from 'react-i18next'
 import { cn } from '~/utils'
+import { exportAllMemories } from './memoryExport'
 import { getMemoryNoteDisplay } from './memoryNoteDisplay'
-import { exportMemoryNoteMarkdown } from './memoryNoteExport'
 import { useMemoryStore } from './store'
 
 type MemoryList = gameDoc['memory']['memoryList']
 
 export function MemoryListView({
   gameId,
-  gameName,
   memoryIds,
   memoryList,
   onDelete
 }: {
   gameId: string
-  gameName: string
   memoryIds: string[]
   memoryList: MemoryList
   onDelete: (memoryId: string) => Promise<void>
@@ -106,56 +99,13 @@ export function MemoryListView({
                   <ContextMenuItem onSelect={() => openEditor(id)}>
                     {t('detail.memory.actions.editText')}
                   </ContextMenuItem>
-                  <ContextMenuGroup>
-                    <ContextMenuSub>
-                      <ContextMenuSubTrigger>
-                        {t('detail.memory.export.exportAs')}
-                      </ContextMenuSubTrigger>
-                      <ContextMenuPortal>
-                        <ContextMenuSubContent>
-                          <ContextMenuSub>
-                            <ContextMenuSubTrigger>
-                              {t('detail.memory.export.markdown')}
-                            </ContextMenuSubTrigger>
-                            <ContextMenuPortal>
-                              <ContextMenuSubContent>
-                                <ContextMenuItem
-                                  onSelect={() =>
-                                    void exportMemoryNoteMarkdown({
-                                      gameId,
-                                      memoryId: id,
-                                      gameName,
-                                      date: memory.date,
-                                      dateLabel,
-                                      note: memory.note,
-                                      type: 'clipboard'
-                                    })
-                                  }
-                                >
-                                  {t('detail.memory.export.toClipboard')}
-                                </ContextMenuItem>
-                                <ContextMenuItem
-                                  onSelect={() =>
-                                    void exportMemoryNoteMarkdown({
-                                      gameId,
-                                      memoryId: id,
-                                      gameName,
-                                      date: memory.date,
-                                      dateLabel,
-                                      note: memory.note,
-                                      type: 'file'
-                                    })
-                                  }
-                                >
-                                  {t('detail.memory.export.saveAs')}
-                                </ContextMenuItem>
-                              </ContextMenuSubContent>
-                            </ContextMenuPortal>
-                          </ContextMenuSub>
-                        </ContextMenuSubContent>
-                      </ContextMenuPortal>
-                    </ContextMenuSub>
-                  </ContextMenuGroup>
+                  <ContextMenuItem
+                    onSelect={() => {
+                      void exportAllMemories(gameId)
+                    }}
+                  >
+                    {t('detail.memory.export.all')}
+                  </ContextMenuItem>
                   <ContextMenuSeparator />
                   <ContextMenuItem onSelect={() => void onDelete(id)}>
                     {t('detail.memory.actions.delete')}

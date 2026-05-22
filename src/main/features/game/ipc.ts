@@ -9,6 +9,7 @@ import {
   cancelBatchStorageSizeCalculation,
   deleteGameMemory,
   deleteGameSave,
+  exportAllGameMemories,
   hideGameFromRecentGames,
   isBatchStorageSizeCalculationRunning,
   recalculateLastRunDate,
@@ -66,6 +67,10 @@ export function setupGameIPC(): void {
 
   ipcManager.handle('game:add-memory-inline-image', async (_, gameId: string, imgPath: string) => {
     return await addGameMemoryInlineImage(gameId, imgPath)
+  })
+
+  ipcManager.handle('game:export-all-memories', async (_, gameId: string) => {
+    return await exportAllGameMemories(gameId)
   })
 
   ipcManager.handle(

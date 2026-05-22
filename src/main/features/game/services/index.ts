@@ -1,5 +1,6 @@
 export * from './active'
 export * from './memory'
+export * from './memoryExport'
 export * from './record'
 export * from './save'
 export * from './size'

@@ -288,13 +288,6 @@
         "editText": "텍스트 수정",
         "delete": "제거"
       },
-      "export": {
-        "exportAs": "다른 형식으로 내보내기",
-        "image": "이미지",
-        "markdown": "마크다운",
-        "toClipboard": "클립보드로 내보내기",
-        "saveAs": "다른 이름으로 저장"
-      },
       "notifications": {
         "deleting": "제거 중…",
         "deleteSuccess": "성공적으로 제거했습니다",
@@ -303,9 +296,7 @@
         "imageNotFound": "현재 이미지를 찾을 수 없습니다",
         "getImageError": "현재 이미지를 얻어오는 데 실패했습니다: {{error}}",
         "imageCopied": "이미지를 성공적으로 클립보드에 복사했습니다",
-        "imageCopyError": "이미지를 클립보드에 복사하는 데 실패했습니다: {{error}}",
-        "markdownCopied": "마크다운이 클립보드에 복사되었습니다",
-        "markdownCopyError": "클립보드에 복사하는 데 실패했습니다: {{error}}"
+        "imageCopyError": "이미지를 클립보드에 복사하는 데 실패했습니다: {{error}}"
       }
     },
     "config": {

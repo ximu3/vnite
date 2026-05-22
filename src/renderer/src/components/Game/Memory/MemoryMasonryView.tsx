@@ -19,6 +19,7 @@ import { useLightStore } from '~/pages/Light'
 import { cn } from '~/utils'
 import { useGameDetailStore } from '../store'
 import { openLargeMemoryImage } from '../utils'
+import { exportAllMemories } from './memoryExport'
 import { useMemoryStore } from './store'
 
 const MASONRY_GAP_PX = 6
@@ -237,6 +238,14 @@ function MemoryMasonryItem({
             </ContextMenuPortal>
           </ContextMenuSub>
         </ContextMenuGroup>
+        <ContextMenuSeparator />
+        <ContextMenuItem
+          onSelect={() => {
+            void exportAllMemories(gameId)
+          }}
+        >
+          {t('detail.memory.export.all')}
+        </ContextMenuItem>
         <ContextMenuSeparator />
         <ContextMenuItem onSelect={() => void onDelete(memoryId)}>
           {t('detail.memory.actions.delete')}

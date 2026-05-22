@@ -172,6 +172,7 @@ type MainIpcEvents =
       'game:delete-memory': (gameId: string, memoryId: string) => void
       'game:update-memory-cover': (gameId: string, memoryId: string, imgPath: string) => void
       'game:add-memory-inline-image': (gameId: string, imgPath: string) => string
+      'game:export-all-memories': (gameId: string) => 'success' | 'empty' | 'canceled'
 
       // Game media management events
       'game:set-image': (

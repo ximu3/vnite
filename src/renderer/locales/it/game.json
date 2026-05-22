@@ -286,13 +286,6 @@
         "editText": "",
         "delete": ""
       },
-      "export": {
-        "exportAs": "",
-        "image": "",
-        "markdown": "",
-        "toClipboard": "",
-        "saveAs": ""
-      },
       "notifications": {
         "deleting": "",
         "deleteSuccess": "",
@@ -301,9 +294,7 @@
         "imageNotFound": "",
         "getImageError": "",
         "imageCopied": "",
-        "imageCopyError": "",
-        "markdownCopied": "",
-        "markdownCopyError": ""
+        "imageCopyError": ""
       }
     },
     "config": {

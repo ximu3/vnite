@@ -323,13 +323,6 @@
         "cover": "",
         "background": ""
       },
-      "export": {
-        "exportAs": "",
-        "image": "",
-        "markdown": "",
-        "toClipboard": "",
-        "saveAs": ""
-      },
       "notifications": {
         "deleting": "",
         "deleteSuccess": "",
@@ -339,8 +332,6 @@
         "getImageError": "",
         "imageCopied": "",
         "imageCopyError": "",
-        "markdownCopied": "",
-        "markdownCopyError": "",
         "setCoverSuccess": "",
         "setCoverError": "",
         "setBackgroundSuccess": "",
