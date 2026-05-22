@@ -1,6 +1,7 @@
 export interface VNDBRequestParams {
   filters: Array<unknown>
   fields: string | string[]
+  sort?: string
   results?: number
 }
 
