@@ -9,6 +9,7 @@
   },
   "actions": {
     "viewLogs": "查看日誌",
+    "libraryFilters": "遊戲庫過濾",
     "nsfwLevel": {
       "off": "NSFW：不隱藏",
       "blurImage": "NSFW：隱藏圖片",

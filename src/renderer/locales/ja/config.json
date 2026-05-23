@@ -178,7 +178,9 @@
       "showThemeSwitcher": "テーマ切り替えボタンを表示",
       "showThemeSwitcherDescription": "サイドバーにテーマ切り替えボタンを表示",
       "showNSFWBlurSwitcher": "NSFW コンテンツのスイッチャーを表示",
-      "showNSFWBlurSwitcherDescription": "サイドバーにNSFWぼかし切り替えを表示"
+      "showNSFWBlurSwitcherDescription": "サイドバーにNSFWぼかし切り替えを表示",
+      "showLocalGameFilterSwitcher": "ローカルゲームフィルターを表示",
+      "showLocalGameFilterSwitcherDescription": "タイトルバーにローカルゲームフィルターボタンを表示"
     },
     "customVisibilityFilter": {
       "title": "カスタム可視性フィルター",

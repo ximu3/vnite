@@ -106,6 +106,7 @@ export interface configDocs {
     sidebar: {
       showThemeSwitcher: boolean
       showNSFWBlurSwitcher: boolean
+      showLocalGameFilterSwitcher: boolean
       showCustomVisibilityFilterSwitcher: boolean
     }
     background: {
@@ -405,6 +406,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     sidebar: {
       showThemeSwitcher: true,
       showNSFWBlurSwitcher: true,
+      showLocalGameFilterSwitcher: true,
       showCustomVisibilityFilterSwitcher: false
     },
     background: {

@@ -9,6 +9,7 @@
   },
   "actions": {
     "viewLogs": "View Logs",
+    "libraryFilters": "Library Filters",
     "nsfwLevel": {
       "off": "NSFW: Show all",
       "blurImage": "NSFW: Hide images",

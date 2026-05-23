@@ -9,6 +9,7 @@
   },
   "actions": {
     "viewLogs": "ログを表示",
+    "libraryFilters": "ライブラリフィルター",
     "nsfwLevel": {
       "off": "NSFW：非表示なし",
       "blurImage": "NSFW：画像を非表示",

@@ -571,6 +571,22 @@ export function Appearances(): React.JSX.Element {
                 description={t('appearances.sidebar.showNSFWBlurSwitcherDescription')}
                 controlType="switch"
               />
+
+              <ConfigItem
+                hookType="config"
+                path="appearances.sidebar.showLocalGameFilterSwitcher"
+                title={t('appearances.sidebar.showLocalGameFilterSwitcher')}
+                description={t('appearances.sidebar.showLocalGameFilterSwitcherDescription')}
+                controlType="switch"
+              />
+
+              <ConfigItem
+                hookType="config"
+                path="appearances.sidebar.showCustomVisibilityFilterSwitcher"
+                title={t('appearances.customVisibilityFilter.showButton')}
+                description={t('appearances.customVisibilityFilter.showButtonDescription')}
+                controlType="switch"
+              />
             </div>
           </div>
 
@@ -580,14 +596,6 @@ export function Appearances(): React.JSX.Element {
               {t('appearances.customVisibilityFilter.title')}
             </div>
             <div className={cn('space-y-4')}>
-              <ConfigItem
-                hookType="config"
-                path="appearances.sidebar.showCustomVisibilityFilterSwitcher"
-                title={t('appearances.customVisibilityFilter.showButton')}
-                description={t('appearances.customVisibilityFilter.showButtonDescription')}
-                controlType="switch"
-              />
-
               <ConfigItemPure
                 title={t('appearances.customVisibilityFilter.excludedPathPrefixes')}
                 description={t(

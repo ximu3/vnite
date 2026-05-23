@@ -9,6 +9,7 @@
   },
   "actions": {
     "viewLogs": "查看日志",
+    "libraryFilters": "游戏库过滤",
     "nsfwLevel": {
       "off": "NSFW: 不隐藏",
       "blurImage": "NSFW: 隐藏图片",

@@ -178,7 +178,9 @@
       "showThemeSwitcher": "Show Theme Switcher",
       "showThemeSwitcherDescription": "Show theme switcher button in sidebar",
       "showNSFWBlurSwitcher": "Show NSFW Content Switcher",
-      "showNSFWBlurSwitcherDescription": "Show NSFW blur toggle in sidebar"
+      "showNSFWBlurSwitcherDescription": "Show NSFW blur toggle in sidebar",
+      "showLocalGameFilterSwitcher": "Show Local Game Filter",
+      "showLocalGameFilterSwitcherDescription": "Show local game filter button in titlebar"
     },
     "customVisibilityFilter": {
       "title": "Custom Visibility Filter",
