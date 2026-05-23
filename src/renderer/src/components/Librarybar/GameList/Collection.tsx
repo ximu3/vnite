@@ -6,7 +6,7 @@ import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-comp
 import { CollectionCM } from '~/components/contextMenu/CollectionCM'
 import { useConfigState } from '~/hooks'
 import { useGameCollectionStore } from '~/stores'
-import { filterGamesByLocal, filterGamesByNSFW, sortGames, useGameRegistry } from '~/stores/game'
+import { sortGames, useVisibleGameIds } from '~/stores/game'
 import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
 import { useGameListStore } from '../store'
@@ -24,11 +24,9 @@ export function CollectionComponent({
   const [order] = useConfigState('game.gameList.sort.order')
   const [overrideCollectionSort] = useConfigState('game.gameList.overrideCollectionSort')
   const collections = useGameCollectionStore((state) => state.documents)
-  const gameIds = useGameRegistry((s) => s.gameIds)
+  const visibleGameIds = useVisibleGameIds()
   const defaultValues = [...Object.keys(collections), '__empty__', 'all', 'recentGames']
   const [showAllGamesInGroup] = useConfigState('game.gameList.showAllGamesInGroup')
-  const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
-  const [localFilterMode] = useConfigState('appearances.localGameFilterMode')
 
   const setOpenValues = useGameListStore((s) => s.setOpenValues)
   const openValues = useGameListStore((s) => s.getOpenValues('collection'))
@@ -47,11 +45,11 @@ export function CollectionComponent({
     () => new Set(Object.values(collections).flatMap((c) => c.games)),
     [collections]
   )
+  const visibleGameIdSet = useMemo(() => new Set(visibleGameIds), [visibleGameIds])
 
   const uncollectedGameIds = useMemo(() => {
-    const uncollected = gameIds.filter((id) => !collectedGameIds.has(id))
-    return filterGamesByLocal(localFilterMode, filterGamesByNSFW(nsfwFilterMode, uncollected))
-  }, [gameIds, collectedGameIds, nsfwFilterMode, localFilterMode])
+    return visibleGameIds.filter((id) => !collectedGameIds.has(id))
+  }, [visibleGameIds, collectedGameIds])
 
   return (
     <ScrollArea className={cn('w-full h-full pr-3 -mr-3 pt-1 pb-1')}>
@@ -67,10 +65,7 @@ export function CollectionComponent({
           <RecentGames />
           {/* Split games into their respective collections */}
           {sortedCollections.map(([key, value]) => {
-            const gameIds = filterGamesByLocal(
-              localFilterMode,
-              filterGamesByNSFW(nsfwFilterMode, value.games)
-            )
+            const gameIds = value.games.filter((gameId) => visibleGameIdSet.has(gameId))
             if (gameIds.length === 0) return <></>
 
             return (

@@ -2,11 +2,11 @@ import { useNavigate } from '@tanstack/react-router'
 import { Button } from '@ui/button'
 import { ScrollArea } from '@ui/scroll-area'
 import { isEqual } from 'lodash'
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
 import { useGameScannerStore } from '~/pages/GameScannerManager/store'
-import { useGameRegistry } from '~/stores/game'
+import { filterGames, searchGames, useGameRegistry, useVisibleGameIds } from '~/stores/game'
 import { cn } from '~/utils'
 import { useFilterStore } from '../Librarybar/Filter/store'
 import { useLibrarybarStore } from '../Librarybar/store'
@@ -22,11 +22,23 @@ export function Showcase(): React.JSX.Element {
 
   const { t } = useTranslation('game')
   const gameIds = useGameRegistry((state) => state.gameIds)
+  const visibleGameIds = useVisibleGameIds()
   const gamesLoaded = useGameRegistry((state) => state.gamesLoaded)
   const setEditingScanner = useGameScannerStore((state) => state.setEditingScanner)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const selectGames = useGameBatchEditorStore((state) => state.selectGames)
   const navigate = useNavigate()
+  const displayedGameIds = useMemo(() => {
+    if (!isEqual(filter, {})) {
+      return filterGames(filter)
+    }
+
+    if (query && query.trim() !== '') {
+      return searchGames(query)
+    }
+
+    return visibleGameIds
+  }, [filter, query, visibleGameIds])
 
   // Keyboard shortcut handling - must be before any conditional returns
   useEffect(() => {
@@ -45,13 +57,13 @@ export function Showcase(): React.JSX.Element {
       // Ctrl + A select all games
       if (e.ctrlKey && e.key === 'a') {
         e.preventDefault()
-        selectGames(gameIds)
+        selectGames(displayedGameIds)
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [selectGames, gameIds])
+  }, [displayedGameIds, selectGames])
 
   // Show loading state while games are being loaded
   if (!gamesLoaded) {

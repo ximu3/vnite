@@ -3,13 +3,7 @@ import { ScrollArea } from '@ui/scroll-area'
 import { useTranslation } from 'react-i18next'
 import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
 import { useConfigState } from '~/hooks'
-import {
-  filterGames,
-  filterGamesByLocal,
-  filterGamesByNSFW,
-  getAllValuesInKey,
-  sortGames
-} from '~/stores/game'
+import { filterGames, getAllValuesInKey, sortGames, useVisibleGameIds } from '~/stores/game'
 import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
 import { useGameListStore } from '../store'
@@ -28,15 +22,14 @@ function OthersComponent({
   const [by] = useConfigState('game.gameList.sort.by')
   const [order] = useConfigState('game.gameList.sort.order')
   const [showAllGamesInGroup] = useConfigState('game.gameList.showAllGamesInGroup')
-  const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
-  const [localFilterMode] = useConfigState('appearances.localGameFilterMode')
+  const visibleGameIds = useVisibleGameIds()
   const { t } = useTranslation('game')
   const emptyAccordionName = {
     'metadata.developers': t('list.empty.developers'),
     'metadata.genres': t('list.empty.genres')
   }
 
-  const fields = [...getAllValuesInKey(fieldName), '__empty__']
+  const fields = [...getAllValuesInKey(fieldName, visibleGameIds), '__empty__']
   const defaultValues = [...fields, 'all', 'recentGames']
 
   const setOpenValues = useGameListStore((s) => s.setOpenValues)
@@ -61,10 +54,7 @@ function OthersComponent({
           {/* Split games into their respective fields */}
           {(fieldName === 'metadata.developers' || fieldName === 'metadata.genres') &&
             fields.map((field) => {
-              const gameIds = filterGamesByLocal(
-                localFilterMode,
-                filterGamesByNSFW(nsfwFilterMode, filterGames({ [fieldName]: [field] }))
-              )
+              const gameIds = filterGames({ [fieldName]: [field] }, visibleGameIds)
               if (gameIds.length === 0) return <></>
 
               return (

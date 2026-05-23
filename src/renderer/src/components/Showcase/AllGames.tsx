@@ -12,7 +12,7 @@ import {
   SelectValue
 } from '~/components/ui/select'
 import { useConfigState } from '~/hooks'
-import { filterGamesByLocal, filterGamesByNSFW, sortGames } from '~/stores/game'
+import { sortGames, useVisibleGameIds } from '~/stores/game'
 import { cn } from '~/utils'
 import { GamePoster } from './posters/GamePoster'
 import { PlaceHolder } from './posters/PlaceHolder'
@@ -24,13 +24,8 @@ export function AllGamesComponent({
 }): React.JSX.Element {
   const [by, setBy] = useConfigState('game.showcase.sort.by')
   const [order, setOrder] = useConfigState('game.showcase.sort.order')
-  const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
-  const [localFilterMode] = useConfigState('appearances.localGameFilterMode')
-  const games = sortGames(
-    by,
-    order,
-    filterGamesByLocal(localFilterMode, filterGamesByNSFW(nsfwFilterMode))
-  )
+  const visibleGameIds = useVisibleGameIds()
+  const games = sortGames(by, order, visibleGameIds)
   const toggleOrder = (): void => {
     setOrder(order === 'asc' ? 'desc' : 'asc')
   }

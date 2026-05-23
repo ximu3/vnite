@@ -77,10 +77,10 @@ export function GameScoreCard({ gameId }: GameScoreCardProps): React.JSX.Element
           <div className="relative flex justify-between space-x-4">
             <div className="flex-1 space-y-1">
               <h4 className="text-sm font-semibold text-accent-foreground">{gameInfo.name}</h4>
-              {gameInfo.genre && (
+              {gameInfo.genres && gameInfo.genres.length > 0 && (
                 <div className="flex items-center pt-2">
                   <GamepadIcon className="mr-2 h-3.5 w-3.5" />
-                  <span className="text-xs">{gameInfo.genre}</span>
+                  <span className="text-xs">{gameInfo.genres.join(', ')}</span>
                 </div>
               )}
               {gameInfo.addDate && (

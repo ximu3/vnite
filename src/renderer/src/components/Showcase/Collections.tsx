@@ -7,14 +7,14 @@ import { Button } from '~/components/ui/button'
 import { useConfigState } from '~/hooks'
 import { useLibraryStore } from '~/pages/Library/store'
 import { useGameCollectionStore } from '~/stores'
-import { filterGamesByLocal, filterGamesByNSFW } from '~/stores/game'
+import { useVisibleGameIds } from '~/stores/game'
 import { cn } from '~/utils'
 import { CollectionPoster } from './posters/CollectionPoster'
 
 export function Collections(): React.JSX.Element {
   const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
-  const [localFilterMode] = useConfigState('appearances.localGameFilterMode')
   const collections = useGameCollectionStore((state) => state.documents)
+  const visibleGameIds = useVisibleGameIds()
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const scroll = throttle((direction: 'left' | 'right'): void => {
     if (!scrollContainerRef.current) return
@@ -26,20 +26,15 @@ export function Collections(): React.JSX.Element {
     })
   }, 750)
   const libraryBarWidth = useLibraryStore((state) => state.libraryBarWidth)
+  const visibleGameIdSet = useMemo(() => new Set(visibleGameIds), [visibleGameIds])
 
   // Sort collections by the sort field
   const sortedCollectionIds = useMemo(() => {
     return Object.values(collections)
       .sort((a, b) => a.sort - b.sort)
       .map((collection) => collection._id)
-      .filter(
-        (id) =>
-          filterGamesByLocal(
-            localFilterMode,
-            filterGamesByNSFW(nsfwFilterMode, collections[id]?.games)
-          ).length > 0
-      )
-  }, [collections, nsfwFilterMode, localFilterMode])
+      .filter((id) => collections[id]?.games.some((gameId) => visibleGameIdSet.has(gameId)))
+  }, [collections, visibleGameIdSet])
 
   const { t } = useTranslation('game')
 

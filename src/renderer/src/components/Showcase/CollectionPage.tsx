@@ -7,14 +7,14 @@ import { ScrollArea } from '~/components/ui/scroll-area'
 import { useConfigState } from '~/hooks'
 import { useLibraryStore } from '~/pages/Library/store'
 import { useGameCollectionStore } from '~/stores'
-import { filterGamesByLocal, filterGamesByNSFW } from '~/stores/game'
+import { useVisibleGameIds } from '~/stores/game'
 import { cn } from '~/utils'
 import { CollectionPoster } from './posters/CollectionPoster'
 
 export function CollectionPage(): React.JSX.Element {
   const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
-  const [localFilterMode] = useConfigState('appearances.localGameFilterMode')
   const collections = useGameCollectionStore((state) => state.documents)
+  const visibleGameIds = useVisibleGameIds()
   const [gap, setGap] = useState<number>(0)
   const [columns, setColumns] = useState<number>(0)
   const gridContainerRef = useRef<HTMLDivElement | null>(null)
@@ -40,27 +40,23 @@ export function CollectionPage(): React.JSX.Element {
       // Ctrl + A select all games
       if (e.ctrlKey && e.key === 'a') {
         e.preventDefault()
-        selectGames(Object.values(collections).flatMap((collection) => collection.games))
+        selectGames(visibleGameIds)
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [selectGames, collections])
+  }, [selectGames, visibleGameIds])
+
+  const visibleGameIdSet = useMemo(() => new Set(visibleGameIds), [visibleGameIds])
 
   // Sort collections by the sort field
   const sortedCollectionIds = useMemo(() => {
     return Object.values(collections)
       .sort((a, b) => a.sort - b.sort)
       .map((collection) => collection._id)
-      .filter(
-        (id) =>
-          filterGamesByLocal(
-            localFilterMode,
-            filterGamesByNSFW(nsfwFilterMode, collections[id]?.games)
-          ).length > 0
-      )
-  }, [collections, nsfwFilterMode, localFilterMode])
+      .filter((id) => collections[id]?.games.some((gameId) => visibleGameIdSet.has(gameId)))
+  }, [collections, visibleGameIdSet])
 
   useEffect(() => {
     const calculateGap = (): void => {

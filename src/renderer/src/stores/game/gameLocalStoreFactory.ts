@@ -3,6 +3,7 @@ import { getValueByPath, setValueByPath } from '@appUtils'
 import type { Get, Paths } from 'type-fest'
 import { create, StoreApi, UseBoundStore } from 'zustand'
 import { syncTo } from '../utils'
+import { useGameRegistry } from './gameRegistry'
 import { useGamePathStore } from './gamePathStore'
 
 // 单个游戏本地 store 的类型定义
@@ -63,6 +64,12 @@ export function getGameLocalStore(gameId: string): GameLocalStore {
         setValueByPath(currentData, path, value)
         set({ data: currentData })
 
+        if (path === 'path.gamePath') {
+          useGameRegistry
+            .getState()
+            .updateGameMeta(gameId, { gamePath: currentData.path?.gamePath || '' })
+        }
+
         await syncTo('game-local', gameId, currentData)
       },
 
@@ -71,6 +78,8 @@ export function getGameLocalStore(gameId: string): GameLocalStore {
           data,
           initialized: true
         })
+
+        useGameRegistry.getState().updateGameMeta(gameId, { gamePath: data.path?.gamePath || '' })
       },
 
       getData: (): gameLocalDoc | null => get().data

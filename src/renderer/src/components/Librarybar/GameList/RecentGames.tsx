@@ -7,12 +7,7 @@ import {
   ContextMenuTrigger
 } from '~/components/ui/context-menu'
 import { useConfigState } from '~/hooks'
-import {
-  filterGamesByLocal,
-  filterGamesByNSFW,
-  getRecentGameIds,
-  useGameRegistry
-} from '~/stores/game'
+import { getRecentGameIds, useVisibleGameIds } from '~/stores/game'
 import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
 
@@ -20,13 +15,8 @@ export function RecentGames(): React.JSX.Element {
   const [showRecentGamesInGameList, setShowRecentGamesInGameList] = useConfigState(
     'game.gameList.showRecentGames'
   )
-  const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
-  const [localFilterMode] = useConfigState('appearances.localGameFilterMode')
-  useGameRegistry((state) => state.gameMetaIndex)
-  const games = getRecentGameIds(
-    5,
-    filterGamesByLocal(localFilterMode, filterGamesByNSFW(nsfwFilterMode))
-  )
+  const visibleGameIds = useVisibleGameIds()
+  const games = getRecentGameIds(5, visibleGameIds)
   const { t } = useTranslation('game')
   return (
     <>
