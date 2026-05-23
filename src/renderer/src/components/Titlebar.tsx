@@ -37,10 +37,16 @@ export function Titlebar(): React.JSX.Element {
 
   // NSFW Blur related
   const [showNSFWBlurSwitchInSidebar] = useConfigState('appearances.sidebar.showNSFWBlurSwitcher')
+  const [showCustomVisibilityFilterSwitcherInSidebar] = useConfigState(
+    'appearances.sidebar.showCustomVisibilityFilterSwitcher'
+  )
   const [nsfwBlurLevel, setNsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
   const [nsfwFilterMode, setNsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
   const [localGameFilterMode, setLocalGameFilterMode] = useConfigState(
     'appearances.localGameFilterMode'
+  )
+  const [customVisibilityFilterEnabled, setCustomVisibilityFilterEnabled] = useConfigState(
+    'appearances.customVisibilityFilter.enabled'
   )
   const [nsfwFilterTooltipOpen, setNsfwFilterTooltipOpen] = useState(false) // prevent unwanted auto-closing on click
   const [localGameFilterTooltipOpen, setLocalGameFilterTooltipOpen] = useState(false) // prevent unwanted auto-closing on click
@@ -65,6 +71,9 @@ export function Titlebar(): React.JSX.Element {
     [LocalGameFilterMode.OnlyLocal]: 'icon-[mdi--laptop]',
     [LocalGameFilterMode.HideLocal]: 'icon-[mdi--earth]'
   }
+  const customVisibilityFilterIcon = customVisibilityFilterEnabled
+    ? 'icon-[mdi--folder-hidden]'
+    : 'icon-[mdi--folder-eye-outline]'
   const nsfwBlurTooltips = {
     [NSFWBlurLevel.Off]: t('actions.nsfwLevel.off'),
     [NSFWBlurLevel.BlurImage]: t('actions.nsfwLevel.blurImage'),
@@ -80,6 +89,9 @@ export function Titlebar(): React.JSX.Element {
     [LocalGameFilterMode.HideLocal]: t('actions.localGameFilter.hideLocal'),
     [LocalGameFilterMode.OnlyLocal]: t('actions.localGameFilter.onlyLocal')
   }
+  const customVisibilityFilterTooltip = customVisibilityFilterEnabled
+    ? t('actions.customVisibilityFilter.on')
+    : t('actions.customVisibilityFilter.off')
   const timerStatusTooltips = {
     idle: t('timerStatus.idle'),
     on: t('timerStatus.on'),
@@ -228,6 +240,21 @@ export function Titlebar(): React.JSX.Element {
               {localGameFilterTooltips[localGameFilterMode]}
             </TooltipContent>
           </Tooltip>
+          {showCustomVisibilityFilterSwitcherInSidebar && (
+            <Tooltip>
+              <TooltipTrigger>
+                <Button
+                  variant="thirdary"
+                  size={'icon'}
+                  className={cn('h-[32px] w-[32px]')}
+                  onClick={() => setCustomVisibilityFilterEnabled(!customVisibilityFilterEnabled)}
+                >
+                  <span className={cn(customVisibilityFilterIcon, 'w-4 h-4')}></span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">{customVisibilityFilterTooltip}</TooltipContent>
+            </Tooltip>
+          )}
           {/* NSFW Filter/Blur switch button */}
           {showNSFWBlurSwitchInSidebar && (
             <Tooltip open={nsfwFilterTooltipOpen}>

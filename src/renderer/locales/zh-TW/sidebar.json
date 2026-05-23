@@ -24,6 +24,10 @@
       "hideLocal": "隱藏本地遊戲",
       "onlyLocal": "僅顯示本地遊戲"
     },
+    "customVisibilityFilter": {
+      "on": "自訂過濾: 已啟用",
+      "off": "自訂過濾: 已停用"
+    },
     "darkMode": "暗色模式",
     "lightMode": "亮色模式",
     "cloudSyncDisabled": "雲同步未開啟",

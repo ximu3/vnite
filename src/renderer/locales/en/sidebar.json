@@ -24,6 +24,10 @@
       "hideLocal": "Hide local games",
       "onlyLocal": "Show only local games"
     },
+    "customVisibilityFilter": {
+      "on": "Custom filter: on",
+      "off": "Custom filter: off"
+    },
     "darkMode": "Dark Mode",
     "lightMode": "Light Mode",
     "cloudSyncDisabled": "Cloud Sync Disabled",

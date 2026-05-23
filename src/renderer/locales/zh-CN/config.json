@@ -180,6 +180,17 @@
       "showNSFWBlurSwitcher": "显示 NSFW 内容开关",
       "showNSFWBlurSwitcherDescription": "在侧边栏显示 NSFW 模糊切换器"
     },
+    "customVisibilityFilter": {
+      "title": "自定义可见性过滤",
+      "showButton": "显示自定义过滤按钮",
+      "showButtonDescription": "在标题栏显示自定义可见性过滤开关按钮",
+      "excludedPathPrefixes": "排除路径前缀",
+      "excludedPathPrefixesDescription": "每行一个路径前缀，匹配该路径或其子路径下的游戏",
+      "excludedPathPrefixesPlaceholder": "每行输入一个路径前缀",
+      "excludedGameNames": "排除游戏名",
+      "excludedGameNamesDescription": "每行一个游戏名，完整匹配译名或原名后隐藏该游戏",
+      "excludedGameNamesPlaceholder": "每行输入一个游戏名"
+    },
     "notifications": {
       "resetAppearancesSettingsSuccess": "外观重置成功",
       "resetAppearancesSettingsFailed": "外观重置失败",

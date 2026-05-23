@@ -24,6 +24,10 @@
       "hideLocal": "ローカルゲームを非表示",
       "onlyLocal": "ローカルゲームのみ表示"
     },
+    "customVisibilityFilter": {
+      "on": "カスタムフィルター: 有効",
+      "off": "カスタムフィルター: 無効"
+    },
     "darkMode": "ダークモード",
     "lightMode": "ライトモード",
     "cloudSyncDisabled": "クラウド同期が無効",

@@ -5,6 +5,7 @@ import { ipcManager } from '~/app/ipc'
 import { ConfigItem } from '~/components/form/ConfigItem'
 import { ConfigItemPure } from '~/components/form/ConfigItemPure'
 import { useTheme } from '~/components/ThemeProvider'
+import { ArrayTextarea } from '~/components/ui/array-textarea'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import {
@@ -39,6 +40,14 @@ export function Appearances(): React.JSX.Element {
   )
   const [_glassBackgroundImage, setGlassBackgroundImage] = useConfigState(
     'appearances.gameDetail.glassBackgroundImage'
+  )
+  const [excludedPathPrefixes, setExcludedPathPrefixes, saveExcludedPathPrefixes] = useConfigState(
+    'appearances.customVisibilityFilter.excludedPathPrefixes',
+    true
+  )
+  const [excludedGameNames, setExcludedGameNames, saveExcludedGameNames] = useConfigState(
+    'appearances.customVisibilityFilter.excludedGameNames',
+    true
   )
 
   const [fontDialogOpen, setFontDialogOpen] = useState(false)
@@ -562,6 +571,54 @@ export function Appearances(): React.JSX.Element {
                 description={t('appearances.sidebar.showNSFWBlurSwitcherDescription')}
                 controlType="switch"
               />
+            </div>
+          </div>
+
+          {/* Custom visibility filter settings */}
+          <div className={cn('space-y-4')}>
+            <div className={cn('border-b pb-2')}>
+              {t('appearances.customVisibilityFilter.title')}
+            </div>
+            <div className={cn('space-y-4')}>
+              <ConfigItem
+                hookType="config"
+                path="appearances.sidebar.showCustomVisibilityFilterSwitcher"
+                title={t('appearances.customVisibilityFilter.showButton')}
+                description={t('appearances.customVisibilityFilter.showButtonDescription')}
+                controlType="switch"
+              />
+
+              <ConfigItemPure
+                title={t('appearances.customVisibilityFilter.excludedPathPrefixes')}
+                description={t(
+                  'appearances.customVisibilityFilter.excludedPathPrefixesDescription'
+                )}
+                controlClassName="w-[600px]"
+              >
+                <ArrayTextarea
+                  value={excludedPathPrefixes}
+                  onChange={setExcludedPathPrefixes}
+                  onBlur={saveExcludedPathPrefixes}
+                  placeholder={t(
+                    'appearances.customVisibilityFilter.excludedPathPrefixesPlaceholder'
+                  )}
+                  className="min-h-[112px] w-full"
+                />
+              </ConfigItemPure>
+
+              <ConfigItemPure
+                title={t('appearances.customVisibilityFilter.excludedGameNames')}
+                description={t('appearances.customVisibilityFilter.excludedGameNamesDescription')}
+                controlClassName="w-[600px]"
+              >
+                <ArrayTextarea
+                  value={excludedGameNames}
+                  onChange={setExcludedGameNames}
+                  onBlur={saveExcludedGameNames}
+                  placeholder={t('appearances.customVisibilityFilter.excludedGameNamesPlaceholder')}
+                  className="min-h-[112px] w-full"
+                />
+              </ConfigItemPure>
             </div>
           </div>
         </div>

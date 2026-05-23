@@ -180,6 +180,17 @@
       "showNSFWBlurSwitcher": "Show NSFW Content Switcher",
       "showNSFWBlurSwitcherDescription": "Show NSFW blur toggle in sidebar"
     },
+    "customVisibilityFilter": {
+      "title": "Custom Visibility Filter",
+      "showButton": "Show custom filter button",
+      "showButtonDescription": "Show the custom visibility filter toggle in the titlebar",
+      "excludedPathPrefixes": "Excluded path prefixes",
+      "excludedPathPrefixesDescription": "One path prefix per line. Hide games whose game path matches the prefix or its children",
+      "excludedPathPrefixesPlaceholder": "Enter one path prefix per line",
+      "excludedGameNames": "Excluded game names",
+      "excludedGameNamesDescription": "One game name per line. Hide games when the localized or original name matches exactly",
+      "excludedGameNamesPlaceholder": "Enter one game name per line"
+    },
     "notifications": {
       "resetAppearancesSettingsSuccess": "Appearance reset successfully",
       "resetAppearancesSettingsFailed": "Failed to reset appearance",

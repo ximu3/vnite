@@ -180,6 +180,17 @@
       "showNSFWBlurSwitcher": "顯示 NSFW 內容開關",
       "showNSFWBlurSwitcherDescription": "在側邊欄顯示 NSFW 模糊切換器"
     },
+    "customVisibilityFilter": {
+      "title": "自訂可見性過濾",
+      "showButton": "顯示自訂過濾按鈕",
+      "showButtonDescription": "在標題欄顯示自訂可見性過濾開關按鈕",
+      "excludedPathPrefixes": "排除路徑前綴",
+      "excludedPathPrefixesDescription": "每行一個路徑前綴，匹配該路徑或其子路徑下的遊戲",
+      "excludedPathPrefixesPlaceholder": "每行輸入一個路徑前綴",
+      "excludedGameNames": "排除遊戲名稱",
+      "excludedGameNamesDescription": "每行一個遊戲名稱，完整匹配譯名或原名後隱藏該遊戲",
+      "excludedGameNamesPlaceholder": "每行輸入一個遊戲名稱"
+    },
     "notifications": {
       "resetAppearancesSettingsSuccess": "外觀重置成功",
       "resetAppearancesSettingsFailed": "外觀重置失敗",
