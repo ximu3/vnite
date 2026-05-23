@@ -12,7 +12,7 @@ export interface ClearableInputProps extends InputProps {
   onClear?: () => void
 }
 
-interface StepperInputProps extends InputProps {
+export interface StepperInputProps extends InputProps {
   inputClassName?: string
   min?: number
   max?: number
@@ -123,7 +123,7 @@ const StepperInput = React.forwardRef<HTMLInputElement, StepperInputProps>(
     }
 
     return (
-      <div className={cn('relative w-full group', className)}>
+      <div className={cn('relative w-full group/stepper', className)}>
         <Input
           ref={ref}
           type="number"
@@ -137,7 +137,7 @@ const StepperInput = React.forwardRef<HTMLInputElement, StepperInputProps>(
         />
         <div
           className={cn(
-            'absolute right-1 top-1/2 -translate-y-1/2 hidden group-focus-within:flex flex-col z-10',
+            'absolute right-1 top-1/2 -translate-y-1/2 hidden group-focus-within/stepper:flex flex-col z-10',
             'bg-popover/(--glass-opacity) backdrop-filter backdrop-blur-[32px] rounded-md'
           )}
         >
@@ -145,6 +145,7 @@ const StepperInput = React.forwardRef<HTMLInputElement, StepperInputProps>(
             variant="outline"
             size="icon"
             className="w-8 h-8 p-0 flex items-center justify-center"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={(e) => handleStep(1, e)}
           >
             <span className="icon-[mdi--keyboard-arrow-up] w-5 h-5"></span>
@@ -153,6 +154,7 @@ const StepperInput = React.forwardRef<HTMLInputElement, StepperInputProps>(
             variant="outline"
             size="icon"
             className="w-8 h-8 p-0 flex items-center justify-center"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={(e) => handleStep(-1, e)}
           >
             <span className="icon-[mdi--keyboard-arrow-down] w-5 h-5"></span>

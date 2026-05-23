@@ -5,6 +5,7 @@ import type {
   gameDoc,
   gameLocalDoc
 } from '@appTypes/models'
+import type { StepperInputProps } from '@ui/input'
 import type { Paths } from 'type-fest'
 
 export type HookType = 'config' | 'configLocal' | 'game' | 'gameLocal' | 'gameCollection' | 'plugin'
@@ -62,13 +63,19 @@ interface BaseConfigItemProps<
   onChange?: (value: any) => void | Promise<void>
 }
 
-interface InputConfigProps {
+interface TextInputConfigProps {
   controlType: 'input'
-  inputType?: 'text' | 'number' | 'email' | 'password' | 'url'
+  inputType?: 'text' | 'email' | 'password' | 'url'
   placeholder?: string
-  min?: number
-  max?: number
 }
+
+interface NumberInputConfigProps extends Pick<StepperInputProps, 'min' | 'max' | 'steps'> {
+  controlType: 'input'
+  inputType: 'number'
+  placeholder?: string
+}
+
+type InputConfigProps = TextInputConfigProps | NumberInputConfigProps
 
 interface TextareaConfigProps {
   controlType: 'textarea'

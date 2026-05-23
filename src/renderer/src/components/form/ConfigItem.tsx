@@ -3,7 +3,7 @@ import { Button } from '@ui/button'
 import { Card, CardContent } from '@ui/card'
 import { DateTimeInput } from '@ui/date-input'
 import { HotkeySetting } from '@ui/hotkey-setting'
-import { Input } from '@ui/input'
+import { Input, StepperInput } from '@ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/select'
 import { Slider } from '@ui/slider'
 import { Switch } from '@ui/switch'
@@ -177,7 +177,7 @@ export function ConfigItem<
         await onChange(e.target.value)
       }
     },
-    [save]
+    [save, onChange]
   )
 
   const renderControl = (): React.ReactElement => {
@@ -187,9 +187,28 @@ export function ConfigItem<
       case 'input': {
         const inputProps = props as ConfigItemProps<T, Path> & { controlType: 'input' }
         const inputType = inputProps.inputType || 'text'
-        const placeholder = inputProps.placeholder
-        const min = inputProps.min
-        const max = inputProps.max
+        const { placeholder } = inputProps
+
+        if (inputType === 'number') {
+          const { min, max, steps } = inputProps as typeof inputProps & {
+            controlType: 'input'
+            inputType: 'number'
+          }
+
+          return (
+            <StepperInput
+              value={String(displayValue)}
+              onChange={handleInputChange}
+              onBlur={(e) => handleBlur(e)}
+              placeholder={placeholder}
+              min={min}
+              max={max}
+              steps={steps}
+              disabled={disabled}
+              className={cn('max-w-xs', controlClassName)}
+            />
+          )
+        }
 
         return (
           <Input
@@ -198,8 +217,6 @@ export function ConfigItem<
             onChange={handleInputChange}
             onBlur={(e) => handleBlur(e)}
             placeholder={placeholder}
-            min={min}
-            max={max}
             disabled={disabled}
             className={cn('max-w-xs', controlClassName)}
           />

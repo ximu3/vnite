@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
-import { ConfigItem } from '~/components/form/ConfigItem'
-import { ConfigItemPure } from '~/components/form/ConfigItemPure'
+import { useTranslation } from 'react-i18next'
+
+import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import {
   Select,
   SelectContent,
@@ -9,14 +9,16 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue
-} from '~/components/ui/select'
-import { useTranslation } from 'react-i18next'
-import { cn } from '~/utils'
-import { useTheme } from '~/components/ThemeProvider'
-import { ipcManager } from '~/app/ipc'
+} from '@ui/select'
+
 import { eventBus } from '~/app/events'
+import { ipcManager } from '~/app/ipc'
+import { ConfigItem } from '~/components/form/ConfigItem'
+import { ConfigItemPure } from '~/components/form/ConfigItemPure'
+import { useTheme } from '~/components/ThemeProvider'
 import { useConfigState } from '~/hooks'
 import { useRunningGames } from '~/pages/Library/store'
+import { cn } from '~/utils'
 
 export function General(): React.JSX.Element {
   const { themeSetting, setThemeSetting } = useTheme()
@@ -150,6 +152,7 @@ export function General(): React.JSX.Element {
                 controlType="input"
                 inputType="number"
                 min={0}
+                steps={{ default: 1, shift: 5 }}
                 disabled={runningGames.length > 0 || !enableForegroundTimer}
                 onChange={(value: string) => {
                   ipcManager.send('system:change-foreground-timer-wait-time', Number(value))
@@ -164,6 +167,7 @@ export function General(): React.JSX.Element {
                 controlType="input"
                 inputType="number"
                 min={0}
+                steps={{ default: 60, ctrl: 30, alt: 5, shift: 300 }}
               />
 
               <ConfigItem
@@ -174,6 +178,7 @@ export function General(): React.JSX.Element {
                 controlType="input"
                 inputType="number"
                 min={0}
+                steps={{ default: 1, shift: 5 }}
               />
             </div>
           </div>
