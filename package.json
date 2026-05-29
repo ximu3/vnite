@@ -34,6 +34,7 @@
     "@react-spring/web": "^10.0.1",
     "@tailwindcss/vite": "^4.1.11",
     "@tanstack/react-router": "^1.125.6",
+    "@tanstack/react-virtual": "^3.13.26",
     "@uiw/react-codemirror": "^4.25.9",
     "adm-zip": "^0.5.16",
     "async-mutex": "^0.5.0",
