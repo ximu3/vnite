@@ -2,7 +2,15 @@ import { observeElementOffset, useVirtualizer, type Virtualizer } from '@tanstac
 import { SeparatorDashed } from '@ui/separator-dashed'
 import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { GameNavCM } from '~/components/contextMenu/GameNavCM'
+import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
+import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
+import { GamePropertiesDialog } from '~/components/Game/Config/Properties'
+import { InformationDialog } from '~/components/Game/Overview/Information/InformationDialog'
+import { BatchGameNavCM } from '~/components/GameBatchEditor/BatchGameNavCM'
+import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
 import { Button } from '~/components/ui/button'
+import { ContextMenu, ContextMenuTrigger } from '~/components/ui/context-menu'
 import {
   Select,
   SelectContent,
@@ -80,7 +88,14 @@ export function AllGames(): React.JSX.Element {
     scrollMargin: 0
   })
   const [scrollViewport, setScrollViewport] = useState<HTMLDivElement | null>(null)
+  const [contextMenuGameId, setContextMenuGameId] = useState<string | null>(null)
+  const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = useState(false)
+  const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = useState(false)
+  const [isInformationDialogOpen, setIsInformationDialogOpen] = useState(false)
+  const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = useState(false)
+  const isBatchMode = useGameBatchEditorStore((state) => state.isBatchMode)
   const measureFrameRef = useRef<number | null>(null)
+  const pendingContextMenuGameIdRef = useRef<string | null>(null)
   const gridOuterRef = useRef<HTMLDivElement>(null)
   const rowsHostRef = useRef<HTMLDivElement>(null)
   const measureGridRef = useRef<() => void>(() => {})
@@ -181,6 +196,15 @@ export function AllGames(): React.JSX.Element {
 
   const virtualRows = rowVirtualizer.getVirtualItems()
 
+  // The shared trigger covers the whole grid area, so only allow the native
+  // contextmenu event to reach Radix when a poster cell captured a game id.
+  // Gap/blank-space right clicks are swallowed here instead of opening a menu.
+  const handleGridContextMenu = (event: React.MouseEvent<HTMLDivElement>): void => {
+    if (!pendingContextMenuGameIdRef.current) {
+      event.preventDefault()
+    }
+  }
+
   return (
     <div className={cn('w-full flex flex-col gap-1')}>
       <div className={cn('flex flex-row items-center gap-5 justify-center px-5')}>
@@ -246,54 +270,107 @@ export function AllGames(): React.JSX.Element {
 
       {/* Game List Container */}
       <div ref={gridOuterRef} className={cn('w-full pt-3 pl-5 pr-5 pb-6')}>
-        <div
-          ref={rowsHostRef}
-          className={cn('w-full relative')}
-          style={{ height: rowVirtualizer.getTotalSize() }}
-        >
-          {virtualRows.map((virtualRow) => {
-            const rowGameIds = rows[virtualRow.index]
-            if (!rowGameIds) return null
+        <ContextMenu>
+          <ContextMenuTrigger asChild>
+            <div
+              ref={rowsHostRef}
+              className={cn('w-full relative')}
+              style={{ height: rowVirtualizer.getTotalSize() }}
+              onContextMenuCapture={() => {
+                pendingContextMenuGameIdRef.current = null
+              }}
+              onContextMenu={handleGridContextMenu}
+            >
+              {virtualRows.map((virtualRow) => {
+                const rowGameIds = rows[virtualRow.index]
+                if (!rowGameIds) return null
 
-            const fillerCount = columnCount - rowGameIds.length
+                const fillerCount = columnCount - rowGameIds.length
 
-            return (
-              <div
-                key={virtualRow.key}
-                className={cn('absolute left-0 top-0 w-full')}
-                style={{
-                  height: virtualRow.size,
-                  transform: `translateY(${
-                    virtualRow.start - rowVirtualizer.options.scrollMargin
-                  }px)`
-                }}
-              >
-                <div
-                  className={cn('flex items-start justify-between')}
-                  style={{ height: SHOWCASE_POSTER_ITEM_OUTER_HEIGHT }}
-                >
-                  {rowGameIds.map((gameId) => (
+                return (
+                  <div
+                    key={virtualRow.key}
+                    className={cn('absolute left-0 top-0 w-full')}
+                    style={{
+                      height: virtualRow.size,
+                      transform: `translateY(${
+                        virtualRow.start - rowVirtualizer.options.scrollMargin
+                      }px)`
+                    }}
+                  >
                     <div
-                      key={gameId}
-                      className={cn('flex-shrink-0')}
-                      style={{ width: SHOWCASE_POSTER_CARD_WIDTH }}
+                      className={cn('flex items-start justify-between')}
+                      style={{ height: SHOWCASE_POSTER_ITEM_OUTER_HEIGHT }}
                     >
-                      <GamePoster gameId={gameId} />
+                      {rowGameIds.map((gameId) => (
+                        <div
+                          key={gameId}
+                          className={cn('flex-shrink-0')}
+                          style={{ width: SHOWCASE_POSTER_CARD_WIDTH }}
+                          onContextMenuCapture={() => {
+                            pendingContextMenuGameIdRef.current = gameId
+                            setContextMenuGameId(gameId)
+                          }}
+                        >
+                          <GamePoster gameId={gameId} disableContextMenu={true} />
+                        </div>
+                      ))}
+                      {Array.from({ length: fillerCount }, (_, fillerIndex) => (
+                        <div
+                          key={`all-games-row-${virtualRow.index}-filler-${fillerIndex}`}
+                          className={cn('pointer-events-none flex-shrink-0')}
+                          style={{ width: SHOWCASE_POSTER_CARD_WIDTH }}
+                        />
+                      ))}
                     </div>
-                  ))}
-                  {Array.from({ length: fillerCount }, (_, fillerIndex) => (
-                    <div
-                      key={`all-games-row-${virtualRow.index}-filler-${fillerIndex}`}
-                      className={cn('pointer-events-none flex-shrink-0')}
-                      style={{ width: SHOWCASE_POSTER_CARD_WIDTH }}
-                    />
-                  ))}
-                </div>
-              </div>
+                  </div>
+                )
+              })}
+            </div>
+          </ContextMenuTrigger>
+
+          {isBatchMode ? (
+            <BatchGameNavCM openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)} />
+          ) : (
+            contextMenuGameId && (
+              <GameNavCM
+                gameId={contextMenuGameId}
+                openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
+                openInformationEditorDialog={() => setIsInformationDialogOpen(true)}
+                openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
+                openPropertiesDialog={() => setIsPropertiesDialogOpen(true)}
+              />
             )
-          })}
-        </div>
+          )}
+        </ContextMenu>
       </div>
+
+      {contextMenuGameId && isAddCollectionDialogOpen && (
+        <AddCollectionDialog
+          gameIds={[contextMenuGameId]}
+          setIsOpen={setIsAddCollectionDialogOpen}
+        />
+      )}
+      {contextMenuGameId && isInformationDialogOpen && (
+        <InformationDialog
+          gameId={contextMenuGameId}
+          isOpen={isInformationDialogOpen}
+          setIsOpen={setIsInformationDialogOpen}
+        />
+      )}
+      {contextMenuGameId && isPlayTimeEditorDialogOpen && (
+        <PlayTimeEditorDialog
+          gameId={contextMenuGameId}
+          setIsOpen={setIsPlayTimeEditorDialogOpen}
+        />
+      )}
+      {contextMenuGameId && isPropertiesDialogOpen && (
+        <GamePropertiesDialog
+          gameId={contextMenuGameId}
+          isOpen={isPropertiesDialogOpen}
+          setIsOpen={setIsPropertiesDialogOpen}
+        />
+      )}
     </div>
   )
 }

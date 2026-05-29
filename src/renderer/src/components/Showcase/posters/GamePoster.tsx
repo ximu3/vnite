@@ -65,7 +65,8 @@ export function GamePoster({
   parentGap = 0,
   position = 'center',
   showRemoveFromRecent = false,
-  inViewGames = [] // TODO: Support shift+click selection
+  inViewGames = [], // TODO: Support shift+click selection
+  disableContextMenu = false
 }: {
   gameId: string
   groupId?: string
@@ -75,6 +76,7 @@ export function GamePoster({
   position?: 'right' | 'left' | 'center'
   showRemoveFromRecent?: boolean
   inViewGames?: string[]
+  disableContextMenu?: boolean
 }): React.JSX.Element {
   const navigate = useNavigate()
   const gameData = useGameRegistry((state) => state.gameMetaIndex[gameId])
@@ -221,130 +223,132 @@ export function GamePoster({
     )
   }, [dragScenario, collectionId, gameId, reorderGamesInCollection, setIsDraggingGlobal])
 
+  const posterBody = (
+    <div className="relative">
+      <div
+        className="flex flex-col items-center justify-center gap-[8px] cursor-pointer group"
+        onClick={handleGameClick}
+      >
+        <div
+          className={cn(
+            'rounded-lg shadow-md',
+            'transition-all duration-300 ease-in-out',
+            isSelected
+              ? 'ring-2 ring-primary'
+              : 'ring-0 ring-border group-hover:ring-2 group-hover:ring-primary',
+            'relative overflow-hidden group'
+          )}
+        >
+          <HoverCardAnimation>
+            <GameImage
+              draggable="false"
+              gameId={gameId}
+              type="cover"
+              blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
+              initialMask={true}
+              blurType="poster"
+              alt={gameId}
+              className={cn(
+                'w-[148px] aspect-[2/3] cursor-pointer select-none object-cover rounded-lg',
+                className
+              )}
+              fallback={
+                <div
+                  className={cn(
+                    'w-[148px] aspect-[2/3] cursor-pointer object-cover flex items-center justify-center bg-muted/50',
+                    className
+                  )}
+                  onClick={() => navigateToGame(navigate, gameId, groupId || 'all')}
+                >
+                  <div className="p-1 font-bold truncate select-none">{gameName}</div>
+                </div>
+              }
+            />
+          </HoverCardAnimation>
+
+          {/* Hover overlay */}
+          <div
+            className={cn(
+              'absolute inset-x-0 bottom-0 h-full bg-accent/50',
+              'transition-opacity duration-300 ease-in-out',
+              'flex flex-col p-[10px] text-accent-foreground',
+              isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
+              'overflow-hidden'
+            )}
+          >
+            {/* Multi-select dot */}
+            <div
+              className={cn(
+                'absolute left-2 top-2 shadow-md z-20 rounded-full w-4 h-4 flex items-center justify-center cursor-pointer',
+                'transition-colors duration-200',
+                isSelected ? 'bg-primary text-primary-foreground' : 'bg-muted/70 hover:bg-muted/90'
+              )}
+              onClick={handleSelect}
+            >
+              {isSelected && <span className="icon-[mdi--check] w-3 h-3" />}
+            </div>
+
+            {/* Play button */}
+            <div className="absolute inset-0 flex items-center justify-center flex-grow">
+              {showPlayButtonOnPoster && !isSelected && (
+                <PlayButton
+                  type={runningGames.includes(gameId) ? 'stop' : 'play'}
+                  gameId={gameId}
+                  groupId={groupId}
+                />
+              )}
+            </div>
+
+            {/* Game info */}
+            <div className="flex flex-col gap-2 mt-auto text-xs font-semibold select-none">
+              {/* Play time */}
+              <div className="flex flex-row items-center justify-start gap-2">
+                <span className="icon-[mdi--access-time] w-4 h-4"></span>
+                <div>
+                  {playTime
+                    ? t('utils:format.gameTime', { time: playTime })
+                    : t('showcase.gameCard.noPlayRecord')}
+                </div>
+              </div>
+
+              {/* Last run time */}
+              <div className="flex flex-row items-center justify-start gap-2">
+                <span className="icon-[mdi--calendar-blank-outline] w-4 h-4"></span>
+                <div>
+                  {gameData?.lastRunDate
+                    ? t('utils:format.niceDate', {
+                        date: new Date(gameData.lastRunDate)
+                      })
+                    : t('showcase.gameCard.neverRun')}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="text-xs text-foreground truncate cursor-pointer select-none hover:underline w-[148px] text-center decoration-foreground">
+          {nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImageAndTitle ? (
+            <>
+              <span className="block group-hover:hidden truncate">{obfuscatedName}</span>
+              <span className="hidden group-hover:block truncate">{name}</span>
+            </>
+          ) : (
+            name
+          )}
+        </div>
+      </div>
+    </div>
+  )
+
   return (
     <div ref={ref_} className="relative overflow-visible select-none">
       {dragging ? (
         <Preview title={gameData?.name ?? ''} transparentBackground={true} />
+      ) : disableContextMenu ? (
+        posterBody
       ) : (
         <ContextMenu>
-          <div className="relative">
-            <ContextMenuTrigger>
-              <div
-                className="flex flex-col items-center justify-center gap-[8px] cursor-pointer group"
-                onClick={handleGameClick}
-              >
-                <div
-                  className={cn(
-                    'rounded-lg shadow-md',
-                    'transition-all duration-300 ease-in-out',
-                    isSelected
-                      ? 'ring-2 ring-primary'
-                      : 'ring-0 ring-border group-hover:ring-2 group-hover:ring-primary',
-                    'relative overflow-hidden group'
-                  )}
-                >
-                  <HoverCardAnimation>
-                    <GameImage
-                      draggable="false"
-                      gameId={gameId}
-                      type="cover"
-                      blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
-                      initialMask={true}
-                      blurType="poster"
-                      alt={gameId}
-                      className={cn(
-                        'w-[148px] aspect-[2/3] cursor-pointer select-none object-cover rounded-lg',
-                        className
-                      )}
-                      fallback={
-                        <div
-                          className={cn(
-                            'w-[148px] aspect-[2/3] cursor-pointer object-cover flex items-center justify-center bg-muted/50',
-                            className
-                          )}
-                          onClick={() => navigateToGame(navigate, gameId, groupId || 'all')}
-                        >
-                          <div className="p-1 font-bold truncate select-none">{gameName}</div>
-                        </div>
-                      }
-                    />
-                  </HoverCardAnimation>
-
-                  {/* Hover overlay */}
-                  <div
-                    className={cn(
-                      'absolute inset-x-0 bottom-0 h-full bg-accent/50',
-                      'transition-opacity duration-300 ease-in-out',
-                      'flex flex-col p-[10px] text-accent-foreground',
-                      isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
-                      'overflow-hidden'
-                    )}
-                  >
-                    {/* Multi-select dot */}
-                    <div
-                      className={cn(
-                        'absolute left-2 top-2 shadow-md z-20 rounded-full w-4 h-4 flex items-center justify-center cursor-pointer',
-                        'transition-colors duration-200',
-                        isSelected
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-muted/70 hover:bg-muted/90'
-                      )}
-                      onClick={handleSelect}
-                    >
-                      {isSelected && <span className="icon-[mdi--check] w-3 h-3" />}
-                    </div>
-
-                    {/* Play button */}
-                    <div className="absolute inset-0 flex items-center justify-center flex-grow">
-                      {showPlayButtonOnPoster && !isSelected && (
-                        <PlayButton
-                          type={runningGames.includes(gameId) ? 'stop' : 'play'}
-                          gameId={gameId}
-                          groupId={groupId}
-                        />
-                      )}
-                    </div>
-
-                    {/* Game info */}
-                    <div className="flex flex-col gap-2 mt-auto text-xs font-semibold select-none">
-                      {/* Play time */}
-                      <div className="flex flex-row items-center justify-start gap-2">
-                        <span className="icon-[mdi--access-time] w-4 h-4"></span>
-                        <div>
-                          {playTime
-                            ? t('utils:format.gameTime', { time: playTime })
-                            : t('showcase.gameCard.noPlayRecord')}
-                        </div>
-                      </div>
-
-                      {/* Last run time */}
-                      <div className="flex flex-row items-center justify-start gap-2">
-                        <span className="icon-[mdi--calendar-blank-outline] w-4 h-4"></span>
-                        <div>
-                          {gameData?.lastRunDate
-                            ? t('utils:format.niceDate', {
-                                date: new Date(gameData.lastRunDate)
-                              })
-                            : t('showcase.gameCard.neverRun')}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="text-xs text-foreground truncate cursor-pointer select-none hover:underline w-[148px] text-center decoration-foreground">
-                  {nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImageAndTitle ? (
-                    <>
-                      <span className="block group-hover:hidden truncate">{obfuscatedName}</span>
-                      <span className="hidden group-hover:block truncate">{name}</span>
-                    </>
-                  ) : (
-                    name
-                  )}
-                </div>
-              </div>
-            </ContextMenuTrigger>
-          </div>
+          <ContextMenuTrigger asChild>{posterBody}</ContextMenuTrigger>
 
           {/* Switch context menu based on batch mode */}
           {isBatchMode ? (
