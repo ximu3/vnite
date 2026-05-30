@@ -179,6 +179,9 @@
         "delete": "削除"
       },
       "notifications": {
+        "backupLoading": "セーブデータをバックアップ中…",
+        "backupSuccess": "セーブデータのバックアップが完了しました",
+        "backupError": "セーブデータのバックアップに失敗しました: {{message}}",
         "locked": "このセーブデータはロックされています",
         "deleteLoading": "セーブデータを削除中…",
         "deleteSuccess": "セーブデータを削除しました",

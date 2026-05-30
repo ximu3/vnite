@@ -8,69 +8,110 @@ import { eventBus } from '~/core/events'
 import { getAppTempPath } from '~/features/system'
 import { unzipFile, walkFs, zipFolder } from '~/utils'
 
-export async function backupGameSave(gameId: string): Promise<void> {
-  try {
-    const saveId = generateUUID()
-    const savePaths = await GameDBManager.getGameLocalValue(gameId, 'path.savePaths')
-    const maxSaveNumber = await GameDBManager.getGameValue(gameId, 'save.maxBackups')
-    const tempFilesPath = getAppTempPath(`save-files-${Date.now()}/`)
-    const tempZipPath = getAppTempPath(`save-zip-${Date.now()}/`)
-    await fse.ensureDir(tempFilesPath)
-    await fse.ensureDir(tempZipPath)
-
-    const saveList = await GameDBManager.getGameValue(gameId, 'save.saveList')
-
-    const saveIds = Object.keys(saveList).filter((key) => !saveList[key].locked)
-
-    // If the number of saves exceeds the maximum, delete the oldest ones
-    if (saveIds.length >= maxSaveNumber) {
-      saveIds.sort(
-        (a, b) => new Date(saveList[a].date).getTime() - new Date(saveList[b].date).getTime()
-      )
-
-      const deleteCount = saveIds.length - Number(maxSaveNumber) + 1
-      const oldestSaveIds = saveIds.slice(0, deleteCount)
-
-      for (const saveId of oldestSaveIds) {
-        delete saveList[saveId]
-        await GameDBManager.removeGameSave(gameId, saveId)
-      }
+type InFlightGameSaveOperation =
+  | {
+      type: 'backup'
+      promise: Promise<string>
+    }
+  | {
+      type: 'restore'
+      promise: Promise<void>
     }
 
-    await Promise.all(
-      savePaths.map(async (pathInGame) => {
-        const backupName = path.basename(pathInGame)
-        try {
-          // Copy the file to the temporary backup directory
-          await fse.copy(pathInGame, path.join(tempFilesPath, backupName))
-        } catch (error) {
-          log.error(`[Game] Failed to backup ${pathInGame}:`, error)
+const inFlightGameSaveOperations: Record<string, InFlightGameSaveOperation | undefined> = {}
+const BACKUP_BLOCKED_BY_RESTORE_ERROR = 'Abort backup: restore is in progress.'
+const RESTORE_BLOCKED_BY_BACKUP_ERROR = 'Abort restore: backup is in progress.'
+const RESTORE_BLOCKED_BY_RESTORE_ERROR = 'Abort restore: restore is already in progress.'
+
+export async function backupGameSave(gameId: string): Promise<string> {
+  const inFlightOperation = inFlightGameSaveOperations[gameId]
+  if (inFlightOperation) {
+    if (inFlightOperation.type === 'backup') {
+      return await inFlightOperation.promise
+    }
+
+    throw new Error(BACKUP_BLOCKED_BY_RESTORE_ERROR)
+  }
+
+  const backupTask = (async (): Promise<string> => {
+    try {
+      const saveId = generateUUID()
+      const savePaths = await GameDBManager.getGameLocalValue(gameId, 'path.savePaths')
+      const maxSaveNumber = await GameDBManager.getGameValue(gameId, 'save.maxBackups')
+      const tempFilesPath = getAppTempPath(`save-files-${Date.now()}/`)
+      const tempZipPath = getAppTempPath(`save-zip-${Date.now()}/`)
+      await fse.ensureDir(tempFilesPath)
+      await fse.ensureDir(tempZipPath)
+
+      const saveList = await GameDBManager.getGameValue(gameId, 'save.saveList')
+
+      const saveIds = Object.keys(saveList).filter((key) => !saveList[key].locked)
+
+      // If the number of saves exceeds the maximum, delete the oldest ones
+      if (saveIds.length >= maxSaveNumber) {
+        saveIds.sort(
+          (a, b) => new Date(saveList[a].date).getTime() - new Date(saveList[b].date).getTime()
+        )
+
+        const deleteCount = saveIds.length - Number(maxSaveNumber) + 1
+        const oldestSaveIds = saveIds.slice(0, deleteCount)
+
+        for (const saveId of oldestSaveIds) {
+          delete saveList[saveId]
+          await GameDBManager.removeGameSave(gameId, saveId)
         }
-      })
-    )
+      }
 
-    // Create a zip file from the temporary backup directory
-    const zipPath = await zipFolder(tempFilesPath, tempZipPath, saveId)
-    await GameDBManager.setGameSave(gameId, saveId, zipPath)
+      await Promise.all(
+        savePaths.map(async (pathInGame) => {
+          const backupName = path.basename(pathInGame)
+          try {
+            // Copy the file to the temporary backup directory
+            await fse.copy(pathInGame, path.join(tempFilesPath, backupName))
+          } catch (error) {
+            log.error(`[Game] Failed to backup ${pathInGame}:`, error)
+          }
+        })
+      )
 
-    saveList[saveId] = { _id: saveId, date: new Date().toISOString(), note: '', locked: false }
-    await GameDBManager.setGameValue(gameId, 'save.saveList', saveList)
+      // Create a zip file from the temporary backup directory
+      const zipPath = await zipFolder(tempFilesPath, tempZipPath, saveId)
+      await GameDBManager.setGameSave(gameId, saveId, zipPath)
 
-    await fse.remove(tempFilesPath)
-    await fse.remove(tempZipPath)
+      saveList[saveId] = { _id: saveId, date: new Date().toISOString(), note: '', locked: false }
+      await GameDBManager.setGameValue(gameId, 'save.saveList', saveList)
 
-    // Emit event after saving the game
-    eventBus.emit(
-      'game:save-created',
-      {
-        gameId,
-        saveId
-      },
-      { source: 'game-save' }
-    )
-  } catch (error) {
-    log.error('[Game] Error backing up game save:', error)
-    throw error
+      await fse.remove(tempFilesPath)
+      await fse.remove(tempZipPath)
+
+      // Emit event after saving the game
+      eventBus.emit(
+        'game:save-created',
+        {
+          gameId,
+          saveId
+        },
+        { source: 'game-save' }
+      )
+
+      return saveId
+    } catch (error) {
+      log.error('[Game] Error backing up game save:', error)
+      throw error
+    }
+  })()
+
+  inFlightGameSaveOperations[gameId] = {
+    type: 'backup',
+    promise: backupTask
+  }
+
+  try {
+    return await backupTask
+  } finally {
+    if (inFlightGameSaveOperations[gameId]?.promise === backupTask) {
+      delete inFlightGameSaveOperations[gameId]
+    }
   }
 }
 
@@ -79,59 +120,83 @@ export async function restoreGameSave(
   saveId: string,
   skipIfTargetNewer?: boolean
 ): Promise<void> {
-  try {
-    const savePaths = await GameDBManager.getGameLocalValue(gameId, 'path.savePaths')
-
-    if (skipIfTargetNewer) {
-      const saveList = await GameDBManager.getGameValue(gameId, 'save.saveList')
-      const saveTs = new Date(saveList[saveId].date).getTime()
-
-      if (Number.isNaN(saveTs)) {
-        throw new Error(`[Game] Invalid save date, ${saveList[saveId].date}`)
-      }
-
-      for (const pathInGame of savePaths) {
-        const stat = await fse.stat(pathInGame).catch(() => null)
-        if (!stat) continue
-
-        // 2s tolerance
-        if (stat.mtimeMs - 2000 > saveTs) {
-          throw new Error(`Abort restore: target file is newer than save.`)
-        }
-      }
+  const inFlightOperation = inFlightGameSaveOperations[gameId]
+  if (inFlightOperation) {
+    if (inFlightOperation.type === 'backup') {
+      throw new Error(RESTORE_BLOCKED_BY_BACKUP_ERROR)
     }
 
-    const tempFilesPath = getAppTempPath(`save-files-${Date.now()}/`)
-    const tempZipPath = await GameDBManager.getGameSave(gameId, saveId, 'file')
-    await fse.ensureDir(tempFilesPath)
+    throw new Error(RESTORE_BLOCKED_BY_RESTORE_ERROR)
+  }
 
-    await unzipFile(tempZipPath, tempFilesPath)
+  const restoreTask = (async (): Promise<void> => {
+    try {
+      const savePaths = await GameDBManager.getGameLocalValue(gameId, 'path.savePaths')
 
-    await Promise.all(
-      savePaths.map(async (pathInGame) => {
-        const backupName = path.basename(pathInGame)
-        try {
-          // Copy the file from the temporary backup directory to the game save path
-          await fse.copy(path.join(tempFilesPath, backupName), pathInGame)
-        } catch (error) {
-          log.error(`[Game] Failed to restore ${pathInGame}:`, error)
-          throw error
+      if (skipIfTargetNewer) {
+        const saveList = await GameDBManager.getGameValue(gameId, 'save.saveList')
+        const saveTs = new Date(saveList[saveId].date).getTime()
+
+        if (Number.isNaN(saveTs)) {
+          throw new Error(`[Game] Invalid save date, ${saveList[saveId].date}`)
         }
-      })
-    )
 
-    // Emit event after restoring the game
-    eventBus.emit(
-      'game:save-restored',
-      {
-        gameId,
-        saveId
-      },
-      { source: 'game-save' }
-    )
-  } catch (error) {
-    log.error('[Game] Error restoring game save:', error)
-    throw error
+        for (const pathInGame of savePaths) {
+          const stat = await fse.stat(pathInGame).catch(() => null)
+          if (!stat) continue
+
+          // 2s tolerance
+          if (stat.mtimeMs - 2000 > saveTs) {
+            throw new Error(`Abort restore: target file is newer than save.`)
+          }
+        }
+      }
+
+      const tempFilesPath = getAppTempPath(`save-files-${Date.now()}/`)
+      const tempZipPath = await GameDBManager.getGameSave(gameId, saveId, 'file')
+      await fse.ensureDir(tempFilesPath)
+
+      await unzipFile(tempZipPath, tempFilesPath)
+
+      await Promise.all(
+        savePaths.map(async (pathInGame) => {
+          const backupName = path.basename(pathInGame)
+          try {
+            // Copy the file from the temporary backup directory to the game save path
+            await fse.copy(path.join(tempFilesPath, backupName), pathInGame)
+          } catch (error) {
+            log.error(`[Game] Failed to restore ${pathInGame}:`, error)
+            throw error
+          }
+        })
+      )
+
+      // Emit event after restoring the game
+      eventBus.emit(
+        'game:save-restored',
+        {
+          gameId,
+          saveId
+        },
+        { source: 'game-save' }
+      )
+    } catch (error) {
+      log.error('[Game] Error restoring game save:', error)
+      throw error
+    }
+  })()
+
+  inFlightGameSaveOperations[gameId] = {
+    type: 'restore',
+    promise: restoreTask
+  }
+
+  try {
+    return await restoreTask
+  } finally {
+    if (inFlightGameSaveOperations[gameId]?.promise === restoreTask) {
+      delete inFlightGameSaveOperations[gameId]
+    }
   }
 }
 

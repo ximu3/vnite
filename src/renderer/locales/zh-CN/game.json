@@ -179,6 +179,9 @@
         "delete": "删除"
       },
       "notifications": {
+        "backupLoading": "备份存档中…",
+        "backupSuccess": "存档备份成功",
+        "backupError": "存档备份失败: {{message}}",
         "locked": "该存档已锁定",
         "deleteLoading": "删除存档中…",
         "deleteSuccess": "删除存档成功",

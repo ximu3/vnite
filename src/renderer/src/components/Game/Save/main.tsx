@@ -1,17 +1,12 @@
 import { isEqual } from 'lodash'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+
+import { Button } from '@ui/button'
+import { Input } from '@ui/input'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@ui/table'
 import { ipcManager } from '~/app/ipc'
-import { Button } from '~/components/ui/button'
-import { Input } from '~/components/ui/input'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '~/components/ui/table'
 import { useGameLocalState, useGameState } from '~/hooks'
 import { cn } from '~/utils'
 import { useGameDetailStore } from '../store'
@@ -27,25 +22,45 @@ export function Save({ gameId }: { gameId: string }): React.JSX.Element {
   const openPropertiesDialog = useGameDetailStore((state) => state.openPropertiesDialog)
 
   const [savePaths] = useGameLocalState(gameId, 'path.savePaths')
+  const [isBackingUp, setIsBackingUp] = useState(false)
+  const hasSavePath = savePaths.some(Boolean)
 
-  async function restoreGameSave(saveId: string): Promise<void> {
-    if (isEqual(savePaths, [''])) {
+  function backupGameSave(): void {
+    if (isBackingUp) {
+      return
+    }
+
+    if (!hasSavePath) {
       toast.error(t('detail.save.notifications.noSavePath'))
       return
     }
-    toast.promise(
-      (async (): Promise<void> => {
-        await ipcManager.invoke('game:restore-save', gameId, saveId)
-      })(),
-      {
-        loading: t('detail.save.notifications.switchLoading'),
-        success: t('detail.save.notifications.switchSuccess'),
-        error: (err) => t('detail.save.notifications.switchError', { message: err.message })
-      }
-    )
+
+    setIsBackingUp(true)
+
+    const backupPromise = ipcManager
+      .invoke('game:backup-save', gameId)
+      .finally(() => setIsBackingUp(false))
+
+    toast.promise(backupPromise, {
+      loading: t('detail.save.notifications.backupLoading'),
+      success: t('detail.save.notifications.backupSuccess'),
+      error: (err) => t('detail.save.notifications.backupError', { message: err.message })
+    })
   }
 
-  async function deleteGameSave(saveId: string): Promise<void> {
+  function restoreGameSave(saveId: string): void {
+    if (!hasSavePath) {
+      toast.error(t('detail.save.notifications.noSavePath'))
+      return
+    }
+    toast.promise(ipcManager.invoke('game:restore-save', gameId, saveId), {
+      loading: t('detail.save.notifications.switchLoading'),
+      success: t('detail.save.notifications.switchSuccess'),
+      error: (err) => t('detail.save.notifications.switchError', { message: err.message })
+    })
+  }
+
+  function deleteGameSave(saveId: string): void {
     if (saveList[saveId]?.locked) {
       toast(t('detail.save.notifications.locked'), { duration: 1000 })
       return
@@ -78,6 +93,20 @@ export function Save({ gameId }: { gameId: string }): React.JSX.Element {
 
   return (
     <div className="pt-2 bg-transparent w-full min-h-[22vh]">
+      <div className="mb-4">
+        <div className="flex flex-wrap gap-3">
+          <Button size="icon" onClick={backupGameSave} disabled={isBackingUp}>
+            <span className={cn('icon-[mdi--backup-restore] w-4 h-4')}></span>
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => openPropertiesDialog('path')}
+            disabled={isBackingUp}
+          >
+            {t('detail.save.openPropertiesDialog')}
+          </Button>
+        </div>
+      </div>
       <div className="w-full h-full">
         <div className={cn('h-full')}>
           <Table className="h-full">
@@ -104,6 +133,7 @@ export function Save({ gameId }: { gameId: string }): React.JSX.Element {
                       <TableCell className={cn('pr-10', '3xl:pr-24')}>
                         <Input
                           value={save.note}
+                          disabled={isBackingUp}
                           onChange={(e) =>
                             setSaveList({
                               ...saveList,
@@ -120,6 +150,7 @@ export function Save({ gameId }: { gameId: string }): React.JSX.Element {
                             variant={'outline'}
                             size={'icon'}
                             className={cn('h-8 w-8', saveList[saveId]?.locked ? 'border-ring' : '')}
+                            disabled={isBackingUp}
                             onClick={() => toggleLock(saveId)}
                           >
                             <span
@@ -134,6 +165,7 @@ export function Save({ gameId }: { gameId: string }): React.JSX.Element {
                           <Button
                             variant={'outline'}
                             className={cn('min-h-0 h-8')}
+                            disabled={isBackingUp}
                             onClick={() => restoreGameSave(saveId)}
                           >
                             {t('detail.save.actions.switch')}
@@ -141,6 +173,7 @@ export function Save({ gameId }: { gameId: string }): React.JSX.Element {
                           <Button
                             variant="delete"
                             className={cn('min-h-0 h-8 ')}
+                            disabled={isBackingUp}
                             onClick={() => deleteGameSave(saveId)}
                           >
                             {t('detail.save.actions.delete')}
@@ -153,11 +186,6 @@ export function Save({ gameId }: { gameId: string }): React.JSX.Element {
             </TableBody>
           </Table>
         </div>
-      </div>
-      <div className="mt-4">
-        <Button variant="secondary" onClick={() => openPropertiesDialog('path')}>
-          {t('detail.save.openPropertiesDialog')}
-        </Button>
       </div>
     </div>
   )
