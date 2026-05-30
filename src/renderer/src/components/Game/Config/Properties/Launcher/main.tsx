@@ -32,8 +32,20 @@ function LauncherComponent(
   const { t } = useTranslation('game')
   const [mode, setMode] = useGameLocalState(gameId, 'launcher.mode')
   const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
+  const [fileConfig] = useGameLocalState(gameId, 'launcher.fileConfig')
+  const [urlConfig] = useGameLocalState(gameId, 'launcher.urlConfig')
+  const [scriptConfig] = useGameLocalState(gameId, 'launcher.scriptConfig')
   const [useMagpie, setUseMagpie] = useGameLocalState(gameId, 'launcher.useMagpie')
   const [magpiePath, setMagpiePath] = useConfigLocalState('game.linkage.magpie.path')
+  const shouldPromptUserToSetGamePath =
+    !gamePath &&
+    (mode === 'file'
+      ? !fileConfig.path && fileConfig.args.length === 0 && !fileConfig.monitorPath
+      : mode === 'url'
+        ? !urlConfig.url && !urlConfig.browserPath && !urlConfig.monitorPath
+        : !scriptConfig.workingDirectory &&
+          scriptConfig.command.length === 0 &&
+          !scriptConfig.monitorPath)
 
   async function selectMagpiePath(): Promise<void> {
     const magpiePath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
@@ -69,7 +81,7 @@ function LauncherComponent(
 
   return (
     <Card className={cn('group')}>
-      {gamePath ? (
+      {!shouldPromptUserToSetGamePath ? (
         <>
           <CardHeader>
             <CardTitle className={cn('relative')}>
