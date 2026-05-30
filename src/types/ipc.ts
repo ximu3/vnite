@@ -66,7 +66,7 @@ type MainIpcEvents =
 
       'launcher:start-game': [gameId: string]
 
-      'native-monitor:update-local-game': []
+      'native-monitor:update-local-game': [gameId: string]
       'system:change-process-monitor': [monitor: 'new' | 'legacy']
       'system:change-foreground-timer': [isEnabled: boolean]
       'system:change-foreground-timer-wait-time': [waitTime: number]

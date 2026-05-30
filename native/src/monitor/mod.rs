@@ -95,8 +95,8 @@ pub async fn add_known_game(path: String, id: String) {
   gm::get().lock().await.add_known_game(path, id);
 }
 
-pub async fn remove_known_game_by_id(game_id: String) {
-  gm::get().lock().await.remove_known_game_by_id(&game_id);
+pub async fn remove_known_game_by_id(game_id: String, preserve_running_process: bool) {
+  gm::get().lock().await.remove_known_game_by_id(&game_id, preserve_running_process);
 }
 
 pub async fn replace_known_games(local_game_pathes: Vec<String>, local_game_ids: Vec<String>) {

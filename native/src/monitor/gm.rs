@@ -105,10 +105,12 @@ impl GameManager {
     self.known_games.insert(normalize_os_path(path), id);
   }
 
-  pub fn remove_known_game_by_id(&mut self, game_id: &str) {
-    self
-      .running_process
-      .retain(|_, info| info.game_id != game_id);
+  pub fn remove_known_game_by_id(&mut self, game_id: &str, preserve_running_process: bool) {
+    if !preserve_running_process {
+      self
+        .running_process
+        .retain(|_, info| info.game_id != game_id);
+    }
     self.known_games.retain(|_, id| id != game_id);
   }
 

@@ -91,6 +91,15 @@ export class GameDBManager {
     }
   }
 
+  static async getExistingGameLocal(gameId: string): Promise<gameLocalDoc | null> {
+    try {
+      return await baseDBManager.getExistingDoc<gameLocalDoc>(`${this.DB_NAME}-local`, gameId)
+    } catch (error) {
+      log.error('[GameDB] Error getting existing local game:', error)
+      throw error
+    }
+  }
+
   static async setGameLocal(gameId: string, data: Partial<gameLocalDoc>): Promise<void> {
     try {
       await baseDBManager.setValue(`${this.DB_NAME}-local`, gameId, '#all', data)
