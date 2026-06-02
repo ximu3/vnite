@@ -5,7 +5,7 @@ import { GameDBManager, ConfigDBManager } from '~/core/database'
 import { GameMonitor } from './monitor'
 import { ipcManager } from '~/core/ipc'
 import { Mutex } from 'async-mutex'
-import { GameTimerStatus, TimerStatus } from '@appTypes/models'
+import { GameTimerStatus, TimerStatus, gameLocalDoc } from '@appTypes/models'
 
 // A static monitor {gameId - GameMonitor} hash map that keeps a stub of all running
 // game processes, preventing GC from reclaiming memory.
@@ -30,7 +30,7 @@ export async function setupNativeMonitor(): Promise<void> {
   // Listen for game deletion to clean up monitor status
   // This prevents the monitor from tracking games that no longer exist
   eventBus.on('game:deleted', async ({ gameId }) => {
-    await native.removeKnownGameById(gameId)
+    await native.removeKnownGameById(gameId, false)
     await removeMonitorStub(gameId)
   })
 }
@@ -78,33 +78,53 @@ export async function updateKnownGames(): Promise<void> {
   await native.replaceKnownGames(pathes, ids)
 }
 
+export async function updateKnownGame(gameId: string): Promise<void> {
+  await native.removeKnownGameById(gameId, true)
+
+  const doc = await GameDBManager.getExistingGameLocal(gameId)
+  const pair = getLocalGamePair(doc)
+  if (!pair) {
+    return
+  }
+
+  await native.addKnownGame(pair[1], pair[0])
+}
+
 async function getAllLocalGamesPair(): Promise<[string[], string[]]> {
   const allLocalGames = await GameDBManager.getAllGamesLocal()
   const pathes: string[] = []
   const ids: string[] = []
   for (const doc of Object.values(allLocalGames)) {
-    if (!doc) {
-      log.warn('[Monitor] Detected an undefined local game doc, database may be corrupt')
+    const pair = getLocalGamePair(doc)
+    if (!pair) {
       continue
     }
-    const mode = doc.launcher?.mode
-    if (!mode) {
-      log.warn(
-        `[Monitor] Detected an undefined local game launcher mode, database may be corrupt. Local doc id: ${doc._id}, path: ${doc?.path?.gamePath}`
-      )
-      continue
-    }
-    const path = doc.launcher[`${mode}Config`]?.monitorPath
-    if (!path) {
-      log.warn(
-        `[Monitor] Detected an undefined monitorPath. Local doc id: ${doc._id}, mode: ${mode}, game path: ${doc?.path?.gamePath}`
-      )
-      continue
-    }
-    pathes.push(path)
-    ids.push(doc._id)
+    ids.push(pair[0])
+    pathes.push(pair[1])
   }
   return [ids, pathes]
+}
+
+function getLocalGamePair(doc?: gameLocalDoc | null): [string, string] | undefined {
+  if (!doc) {
+    log.warn('[Monitor] Detected an undefined local game doc, database may be corrupt')
+    return undefined
+  }
+  const mode = doc.launcher?.mode
+  if (!mode) {
+    log.warn(
+      `[Monitor] Detected an undefined local game launcher mode, database may be corrupt. Local doc id: ${doc._id}, path: ${doc?.path?.gamePath}`
+    )
+    return undefined
+  }
+  const monitorPath = doc.launcher[`${mode}Config`]?.monitorPath
+  if (!monitorPath) {
+    log.warn(
+      `[Monitor] Detected an undefined monitorPath. Local doc id: ${doc._id}, mode: ${mode}, game path: ${doc?.path?.gamePath}`
+    )
+    return undefined
+  }
+  return [doc._id, monitorPath]
 }
 
 async function stopPhantomMonitor(gameId: string, pid?: number): Promise<void> {

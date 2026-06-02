@@ -173,6 +173,19 @@ export class BaseDBManager {
     )
   }
 
+  async getExistingDoc<T = Record<string, any>>(dbName: string, docId: string): Promise<T | null> {
+    const db = this.getDatabase(dbName)
+
+    try {
+      return (await db.get(docId)) as T
+    } catch (error: any) {
+      if (error?.name === 'not_found') {
+        return null
+      }
+      throw error
+    }
+  }
+
   async setAllDocs(dbName: string, docs: any[]): Promise<void> {
     const db = this.getDatabase(dbName)
 

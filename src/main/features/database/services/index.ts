@@ -1,4 +1,6 @@
+export * from './analysis'
+export * from './attachment'
 export * from './backup'
-export * from './sync'
 export * from './cloud'
+export * from './sync'
 export * from './utils'

@@ -1,0 +1,91 @@
+{
+  "title": "数据库检查器",
+  "description": "查看本地数据库构成。",
+  "generatedAt": "生成时间",
+  "actions": {
+    "refresh": "刷新报表",
+    "retry": "重试"
+  },
+  "messages": {
+    "loading": "正在分析本地数据库…",
+    "noAttachments": "未发现数据库附件。",
+    "noMatchingGames": "没有符合当前筛选条件的游戏。",
+    "refreshFailedTitle": "刷新失败",
+    "refreshFailedDescription": "当前仍显示上一次成功生成的报表。错误：{{error}}"
+  },
+  "summary": {
+    "physicalBytes": "物理占用",
+    "physicalBytesHint": "本地数据库文件在磁盘上的占用",
+    "logicalPayloadBytes": "逻辑载荷",
+    "logicalPayloadBytesHint": "当前文档与附件内容的估算体积",
+    "attachmentBytes": "附件体积",
+    "attachmentBytesHint": "当前数据库内附件的内容体积",
+    "attachmentCount": "附件数量",
+    "attachmentCountHint": "分布在 {{count}} 个游戏中",
+    "documents": "文档载荷"
+  },
+  "charts": {
+    "attachmentDistribution": {
+      "title": "按附件类型分布",
+      "description": "按附件分类统计的体积分布"
+    },
+    "largestGames": {
+      "title": "占用最大的游戏",
+      "description": "按估算数据库占用排序的游戏"
+    }
+  },
+  "table": {
+    "title": "游戏占用明细",
+    "description": "点击某个游戏可继续查看附件级别的详细信息。",
+    "searchPlaceholder": "搜索游戏…",
+    "columns": {
+      "name": "游戏",
+      "total": "总占用",
+      "attachments": "附件",
+      "attachmentCount": "数量",
+      "save": "存档"
+    }
+  },
+  "detail": {
+    "backToOverview": "返回总览",
+    "description": "游戏 ID：{{gameId}} 的附件级别占用分析",
+    "hero": {
+      "total": "总占用",
+      "attachments": "附件",
+      "documents": "文档"
+    },
+    "summary": {
+      "totalHint": "当前文档载荷与当前附件载荷之和",
+      "documentsHint": "来自数据库文档的估算载荷",
+      "attachmentsHint": "存放在数据库中的二进制附件载荷",
+      "attachmentCountHint": "当前保存在数据库中的附件条目数"
+    },
+    "filters": {
+      "all": "全部"
+    },
+    "table": {
+      "title": "附件条目",
+      "columns": {
+        "type": "类型",
+        "attachmentId": "附件 ID",
+        "size": "大小",
+        "contentType": "内容类型"
+      }
+    },
+    "imageActions": {
+      "viewError": "加载附件失败：{{error}}",
+      "deleteImage": "删除图片",
+      "deleteConfirmTitle": "删除图片附件",
+      "deleteConfirmDescription": "此操作将永久删除附件 \"{{attachmentId}}\"，不可撤销。",
+      "deleteSuccess": "附件已删除",
+      "deleteError": "删除附件失败：{{error}}"
+    }
+  },
+  "categories": {
+    "memory": "回忆",
+    "save": "存档",
+    "descriptionImage": "简介缓存",
+    "media": "媒体资源",
+    "other": "其他"
+  }
+}

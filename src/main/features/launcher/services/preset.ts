@@ -1,6 +1,6 @@
 import path from 'path'
-import * as native from 'vnite-native'
 import { ConfigDBManager, GameDBManager } from '~/core/database'
+import { updateKnownGame } from '~/features/monitor/services/nativeMonitor'
 
 export async function defaultPreset(gameId: string): Promise<void> {
   const gamePath = await GameDBManager.getGameLocalValue(gameId, 'path.gamePath')
@@ -16,7 +16,7 @@ export async function defaultPreset(gameId: string): Promise<void> {
     monitorMode,
     monitorPath
   })
-  await native.addKnownGame(monitorPath, gameId)
+  await updateKnownGame(gameId)
 }
 
 export async function lePreset(gameId: string): Promise<void> {
@@ -40,7 +40,7 @@ export async function lePreset(gameId: string): Promise<void> {
     monitorMode,
     monitorPath
   })
-  await native.addKnownGame(monitorPath, gameId)
+  await updateKnownGame(gameId)
 }
 
 export async function steamPreset(gameId: string, steamId: string): Promise<void> {
@@ -58,7 +58,7 @@ export async function steamPreset(gameId: string, steamId: string): Promise<void
     monitorMode,
     monitorPath
   })
-  await native.addKnownGame(monitorPath, gameId)
+  await updateKnownGame(gameId)
 }
 
 export async function vbaPreset(gameId: string): Promise<void> {
@@ -83,5 +83,5 @@ export async function vbaPreset(gameId: string): Promise<void> {
     monitorMode,
     monitorPath
   })
-  await native.addKnownGame(monitorPath, gameId)
+  await updateKnownGame(gameId)
 }

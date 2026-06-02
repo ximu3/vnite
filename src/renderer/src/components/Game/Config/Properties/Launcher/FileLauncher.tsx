@@ -25,6 +25,9 @@ function FileLauncherComponent(
   ref: React.Ref<FileLauncherHandle>
 ): React.JSX.Element {
   const { t } = useTranslation('game')
+  const updateKnownGame = useCallback(() => {
+    ipcManager.send('native-monitor:update-local-game', gameId)
+  }, [gameId])
   const [path, setPath, savePath, setPathAndSave] = useGameLocalState(
     gameId,
     'launcher.fileConfig.path',
@@ -52,7 +55,7 @@ function FileLauncherComponent(
         return
       }
       await setMonitorPathAndSave(monitorPath)
-      ipcManager.send('native-monitor:update-local-game')
+      updateKnownGame()
     }
     if (monitorMode === 'folder') {
       const monitorPath = await ipcManager.invoke('system:select-path-dialog', ['openDirectory'])
@@ -60,14 +63,14 @@ function FileLauncherComponent(
         return
       }
       await setMonitorPathAndSave(monitorPath)
-      ipcManager.send('native-monitor:update-local-game')
+      updateKnownGame()
     }
   }
 
   const saveAll = useCallback(async () => {
     await Promise.all([savePath(), saveMonitorPath()])
-    ipcManager.send('native-monitor:update-local-game')
-  }, [savePath, saveMonitorPath])
+    updateKnownGame()
+  }, [savePath, saveMonitorPath, updateKnownGame])
   useImperativeHandle(ref, () => ({ save: saveAll }), [saveAll])
 
   return (
@@ -130,7 +133,7 @@ function FileLauncherComponent(
           value={monitorPath}
           onChange={(e) => setMonitorPath(e.target.value)}
           onBlur={() => {
-            saveMonitorPath().then(() => ipcManager.send('native-monitor:update-local-game'))
+            saveMonitorPath().then(updateKnownGame)
           }}
         />
         {['folder', 'file'].includes(monitorMode) && (

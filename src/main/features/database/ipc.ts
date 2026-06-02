@@ -6,7 +6,11 @@ import {
   fullSync,
   getCouchDBSize,
   compactRemoteDatabase,
-  resetAppearancesSettings
+  resetAppearancesSettings,
+  getLocalStorageReport,
+  getGameStorageDetail,
+  getGameAttachmentTempFile,
+  removeGameImageAttachment
 } from './services'
 import { baseDBManager, ConfigDBManager } from '~/core/database'
 import { ipcManager } from '~/core/ipc'
@@ -40,6 +44,14 @@ export function setupDatabaseIPC(): void {
 
   ipcManager.handle('db:get-all-docs', async (_event, dbName: string) => {
     return await baseDBManager.getAllDocs(dbName)
+  })
+
+  ipcManager.handle('db:get-local-storage-report', async () => {
+    return await getLocalStorageReport()
+  })
+
+  ipcManager.handle('db:get-game-storage-detail', async (_, gameId: string) => {
+    return await getGameStorageDetail(gameId)
   })
 
   ipcManager.handle('db:restart-sync', async (_) => {
@@ -93,4 +105,18 @@ export function setupDatabaseIPC(): void {
   ipcManager.handle('db:reset-appearances-settings', async () => {
     await resetAppearancesSettings()
   })
+
+  ipcManager.handle(
+    'db:get-attachment-temp-file',
+    async (_, gameId: string, attachmentId: string) => {
+      return await getGameAttachmentTempFile(gameId, attachmentId)
+    }
+  )
+
+  ipcManager.handle(
+    'db:remove-game-attachment',
+    async (_, gameId: string, attachmentId: string) => {
+      await removeGameImageAttachment(gameId, attachmentId)
+    }
+  )
 }

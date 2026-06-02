@@ -10,6 +10,7 @@ import { BatchUpdateGameMetadataProgress, OverallScanProgress } from '@appTypes/
 import { ProgressInfo, UpdateCheckResult } from 'electron-updater'
 import type { GameMediaType } from './models'
 import { BatchGameInfo, configDocs, configLocalDocs, gameDoc, GameTimerStatus } from './models'
+import { GameDatabaseStorageDetail, LocalDatabaseStorageReport } from './models/databaseInspector'
 import {
   PluginConfiguration,
   PluginInfo,
@@ -66,7 +67,7 @@ type MainIpcEvents =
 
       'launcher:start-game': [gameId: string]
 
-      'native-monitor:update-local-game': []
+      'native-monitor:update-local-game': [gameId: string]
       'system:change-process-monitor': [monitor: 'new' | 'legacy']
       'system:change-foreground-timer': [isEnabled: boolean]
       'system:change-foreground-timer-wait-time': [waitTime: number]
@@ -149,6 +150,10 @@ type MainIpcEvents =
       'db:set-config-background': (path: string, theme: 'dark' | 'light') => void
       'db:check-attachment': (dbName: string, docId: string, attachmentId: string) => boolean
       'db:get-all-docs': (dbName: string) => Record<string, any>
+      'db:get-local-storage-report': () => LocalDatabaseStorageReport
+      'db:get-game-storage-detail': (gameId: string) => GameDatabaseStorageDetail
+      'db:get-attachment-temp-file': (gameId: string, attachmentId: string) => string | null
+      'db:remove-game-attachment': (gameId: string, attachmentId: string) => void
       'db:restart-sync': () => void
       'db:full-sync': () => void
       'db:stop-sync': () => void
