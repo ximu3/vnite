@@ -373,23 +373,23 @@
         "background": "游戏背景"
       },
       "export": {
-        "exportAs": "转存为",
-        "image": "图片",
-        "markdown": "Markdown",
-        "toClipboard": "导出至剪贴板",
-        "saveAs": "另存为"
+        "all": "导出全部"
       },
       "notifications": {
         "deleting": "正在删除…",
         "deleteSuccess": "删除成功",
         "deleteError": "删除失败: {{error}}",
         "selectFileError": "选择文件失败: {{error}}",
+        "insertImageError": "插入图片失败: {{error}}",
         "imageNotFound": "未找到当前图片",
         "getImageError": "获取当前图片失败: {{error}}",
         "imageCopied": "图片已成功复制到剪贴板",
         "imageCopyError": "复制图片到剪贴板失败: {{error}}",
-        "markdownCopied": "Markdown 已复制到剪贴板",
-        "markdownCopyError": "复制到剪贴板失败: {{error}}",
+        "exportLoading": "正在导出回忆…",
+        "exportSuccess": "回忆导出成功",
+        "exportEmpty": "无可导出内容",
+        "exportCanceled": "已取消导出回忆",
+        "exportError": "导出回忆失败: {{error}}",
         "setCoverSuccess": "已成功设置为游戏封面",
         "setCoverError": "设置为游戏封面失败: {{error}}",
         "setBackgroundSuccess": "已成功设置为游戏背景",
@@ -576,6 +576,8 @@
           "importFromUrl": "从链接导入",
           "searchImage": "搜索图片",
           "viewLargeImage": "查看大图",
+          "copyToClipboard": "复制到剪贴板",
+          "saveAs": "另存为",
           "cropImage": "裁剪图片",
           "upscaleImage": "超分背景图",
           "deleteImage": "删除图片"

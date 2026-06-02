@@ -373,23 +373,23 @@
         "background": "Game Background"
       },
       "export": {
-        "exportAs": "Export As",
-        "image": "Image",
-        "markdown": "Markdown",
-        "toClipboard": "Export to Clipboard",
-        "saveAs": "Save As"
+        "all": "Export All"
       },
       "notifications": {
         "deleting": "Deleting…",
         "deleteSuccess": "Deleted successfully",
         "deleteError": "Delete failed: {{error}}",
         "selectFileError": "Failed to select file: {{error}}",
+        "insertImageError": "Failed to insert image: {{error}}",
         "imageNotFound": "Current image not found",
         "getImageError": "Failed to get current image: {{error}}",
         "imageCopied": "Image successfully copied to clipboard",
         "imageCopyError": "Failed to copy image to clipboard: {{error}}",
-        "markdownCopied": "Markdown copied to clipboard",
-        "markdownCopyError": "Failed to copy to clipboard: {{error}}",
+        "exportLoading": "Exporting memories…",
+        "exportSuccess": "Memories exported successfully",
+        "exportEmpty": "There is nothing to export",
+        "exportCanceled": "Memory export canceled",
+        "exportError": "Failed to export memory: {{error}}",
         "setCoverSuccess": "Successfully set as game cover",
         "setCoverError": "Failed to set as game cover: {{error}}",
         "setBackgroundSuccess": "Successfully set as game background",
@@ -576,6 +576,8 @@
           "importFromUrl": "Import from URL",
           "searchImage": "Search image",
           "viewLargeImage": "View large image",
+          "copyToClipboard": "Copy to Clipboard",
+          "saveAs": "Save As",
           "cropImage": "Crop image",
           "upscaleImage": "Upscale background",
           "deleteImage": "Delete image"

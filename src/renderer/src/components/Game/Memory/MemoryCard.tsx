@@ -35,13 +35,12 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { eventBus } from '~/app/events'
 import { ipcManager } from '~/app/ipc'
-import { useGameState } from '~/hooks'
 import { useLightStore } from '~/pages/Light'
 import { cn } from '~/utils'
 import { useGameDetailStore } from '../store'
 import { openLargeMemoryImage } from '../utils'
 import { MarkdownPreview } from './MarkdownPreview'
-import { exportMemoryNoteMarkdown } from './memoryNoteExport'
+import { exportAllMemories } from './memoryExport'
 import type { NoteDialogMode } from './NoteDialog'
 import { useMemoryStore } from './store'
 
@@ -67,7 +66,6 @@ export function MemoryCard({
   const [isCoverExist, setIsCoverExist] = useState(true)
   const [coverRefreshKey, setCoverRefreshKey] = useState(0)
   const [requiredOverlayRatio, setRequiredOverlayRatio] = useState(CARD_NOTE_MIN_RATIO)
-  const [gameName] = useGameState(gameId, 'metadata.name')
   const memoryRef = useRef<HTMLDivElement>(null)
   const noteMeasureRef = useRef<HTMLDivElement>(null)
   const refreshLight = useLightStore((state) => state.refresh)
@@ -187,18 +185,6 @@ export function MemoryCard({
     }
   }
 
-  const handleExportMarkdown = async (type: 'clipboard' | 'file'): Promise<void> => {
-    await exportMemoryNoteMarkdown({
-      gameId,
-      memoryId,
-      gameName,
-      date,
-      dateLabel: t('{{date, niceDate}}', { date }),
-      note,
-      type
-    })
-  }
-
   function renderDateBadge(): React.JSX.Element {
     return (
       <div
@@ -303,6 +289,7 @@ export function MemoryCard({
     return (
       <MarkdownPreview
         value={note}
+        renderImages={false}
         className={cn(
           'scrollbar-base-thin h-full overflow-y-auto pr-2 overscroll-contain',
           'prose-headings:my-0.5 prose-h1:text-base prose-h2:text-base prose-h3:text-sm',
@@ -318,6 +305,7 @@ export function MemoryCard({
     return (
       <MarkdownPreview
         value={note}
+        renderImages={false}
         className={cn(
           'pr-2',
           'prose-headings:my-0.5 prose-h1:text-base prose-h2:text-base prose-h3:text-sm',
@@ -505,12 +493,12 @@ export function MemoryCard({
             openMemoryNoteDialog('edit')
           }}
         >
-          {note ? t('detail.memory.actions.editText') : t('detail.memory.actions.addText')}
+          {hasNote ? t('detail.memory.actions.editText') : t('detail.memory.actions.addText')}
         </ContextMenuItem>
-        <ContextMenuSeparator />
         {/* Set As Game Media */}
         {isCoverExist && (
           <>
+            <ContextMenuSeparator />
             <ContextMenuGroup>
               <ContextMenuSub>
                 <ContextMenuSubTrigger>{t('detail.memory.setAs.title')}</ContextMenuSubTrigger>
@@ -568,31 +556,14 @@ export function MemoryCard({
             </ContextMenuGroup>
           </>
         )}
-        {/* Export Options */}
-        <ContextMenuGroup>
-          <ContextMenuSub>
-            <ContextMenuSubTrigger>{t('detail.memory.export.exportAs')}</ContextMenuSubTrigger>
-            <ContextMenuPortal>
-              <ContextMenuSubContent>
-                <ContextMenuSub>
-                  <ContextMenuSubTrigger>
-                    {t('detail.memory.export.markdown')}
-                  </ContextMenuSubTrigger>
-                  <ContextMenuPortal>
-                    <ContextMenuSubContent>
-                      <ContextMenuItem onSelect={() => handleExportMarkdown('clipboard')}>
-                        {t('detail.memory.export.toClipboard')}
-                      </ContextMenuItem>
-                      <ContextMenuItem onSelect={() => handleExportMarkdown('file')}>
-                        {t('detail.memory.export.saveAs')}
-                      </ContextMenuItem>
-                    </ContextMenuSubContent>
-                  </ContextMenuPortal>
-                </ContextMenuSub>
-              </ContextMenuSubContent>
-            </ContextMenuPortal>
-          </ContextMenuSub>
-        </ContextMenuGroup>
+        <ContextMenuSeparator />
+        <ContextMenuItem
+          onSelect={() => {
+            void exportAllMemories(gameId)
+          }}
+        >
+          {t('detail.memory.export.all')}
+        </ContextMenuItem>
         <ContextMenuSeparator />
         {/* Delete Memory */}
         <ContextMenuItem onSelect={handleDelete}>

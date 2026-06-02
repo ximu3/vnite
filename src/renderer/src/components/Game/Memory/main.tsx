@@ -447,14 +447,13 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
       {viewMode === 'list' && noteMemoryIds.length > 0 && (
         <MemoryListView
           gameId={gameId}
-          gameName={gameName}
           memoryIds={activePagination.pagedMemoryIds}
           memoryList={memoryList}
           onDelete={handleDelete}
         />
       )}
       <MemoryCropDialogHost />
-      <MemoryNoteDialogHost memoryList={memoryList} saveNote={saveNote} />
+      <MemoryNoteDialogHost gameId={gameId} memoryList={memoryList} saveNote={saveNote} />
     </div>
   )
 }

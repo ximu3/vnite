@@ -7,11 +7,12 @@ import fse from 'fs-extra'
 import i18next from 'i18next'
 import os from 'os'
 import path from 'path'
-import { ConfigDBManager, GameDBManager } from '~/core/database'
+import { baseDBManager, ConfigDBManager, GameDBManager } from '~/core/database'
 import {
   convertToIcon,
   copyFileToClipboard,
   createUrlShortcut,
+  downloadTempImage,
   openPathInExplorer,
   upscaleImage
 } from '~/utils'
@@ -215,6 +216,38 @@ export async function testUpscalerAvailability(): Promise<void> {
   if (outputBuffer.length === 0) {
     throw new Error(`Upscaler test produced no output for backend: ${backend}`)
   }
+}
+
+export async function resolveImageSourceToFilePath(source: string): Promise<string> {
+  if (!source) {
+    throw new Error('Image source is empty')
+  }
+
+  if (/^https?:\/\//i.test(source)) {
+    return await downloadTempImage(source)
+  }
+
+  if (/^attachment:\/\//i.test(source)) {
+    const url = new URL(source)
+    const dbName = url.host
+    const pathSegments = decodeURIComponent(url.pathname).split('/').filter(Boolean)
+
+    if (pathSegments.length < 2) {
+      throw new Error(`Invalid attachment URL: ${source}`)
+    }
+
+    const [docId, ...attachmentParts] = pathSegments
+    const attachmentId = attachmentParts.join('/')
+    const ext = path.extname(attachmentId).slice(1) || 'webp'
+
+    return await baseDBManager.getAttachment(dbName, docId, attachmentId, {
+      format: 'file',
+      filePath: '#temp',
+      ext
+    })
+  }
+
+  return source
 }
 
 export async function deleteTempFile(filePath: string): Promise<void> {

@@ -392,6 +392,25 @@ export class GameDBManager {
     }
   }
 
+  static async setGameMemoryInlineImage(
+    gameId: string,
+    imageId: string,
+    image: Buffer | string
+  ): Promise<void> {
+    try {
+      image = await convertToWebP(image)
+      await baseDBManager.putAttachment(
+        this.DB_NAME,
+        gameId,
+        `images/memories/inline/${imageId}.webp`,
+        image
+      )
+    } catch (error) {
+      log.error('[GameDB] Error setting game memory inline image:', error)
+      throw error
+    }
+  }
+
   static async getGameMemoryImage<T extends 'buffer' | 'file' = 'buffer'>(
     gameId: string,
     memoryId: string,

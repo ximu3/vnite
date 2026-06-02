@@ -228,10 +228,10 @@ export function ImageViewerDialog({
           </div>
           <div className={cn('flex items-center gap-2')}>
             <Button size="sm" variant="outline" onClick={copyImageToClipboard}>
-              {t('detail.memory.export.toClipboard')}
+              {t('detail.properties.media.actions.copyToClipboard')}
             </Button>
             <Button size="sm" variant="outline" onClick={saveImageAs}>
-              {t('detail.memory.export.saveAs')}
+              {t('detail.properties.media.actions.saveAs')}
             </Button>
           </div>
           <div

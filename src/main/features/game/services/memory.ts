@@ -80,3 +80,14 @@ export async function updateGameMemoryCover(
     throw error
   }
 }
+
+export async function addGameMemoryInlineImage(gameId: string, imgPath: string): Promise<string> {
+  try {
+    const imageId = generateUUID()
+    await GameDBManager.setGameMemoryInlineImage(gameId, imageId, imgPath)
+    return `attachment://game/${gameId}/images/memories/inline/${imageId}.webp`
+  } catch (error) {
+    log.error('[Game] Error adding memory inline image:', error)
+    throw error
+  }
+}

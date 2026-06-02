@@ -120,6 +120,7 @@ type MainIpcEvents =
       }) => string
       'utils:save-game-icon-by-file': (gameId: string, filePath: string) => void
       'utils:download-temp-image': (url: string) => string
+      'utils:resolve-image-source-to-file-path': (source: string) => string
       'utils:test-upscaler': () => void
       'utils:save-clipboard-image': () => string
       'utils:write-clipboard-image': (data: string, type: 'path') => boolean
@@ -171,6 +172,8 @@ type MainIpcEvents =
       'game:add-memory': (gameId: string) => gameDoc['memory']['memoryList'][string]
       'game:delete-memory': (gameId: string, memoryId: string) => void
       'game:update-memory-cover': (gameId: string, memoryId: string, imgPath: string) => void
+      'game:add-memory-inline-image': (gameId: string, imgPath: string) => string
+      'game:export-all-memories': (gameId: string) => 'success' | 'empty' | 'canceled'
 
       // Game media management events
       'game:set-image': (gameId: string, type: GameMediaType, image: string) => void

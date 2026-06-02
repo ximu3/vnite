@@ -284,13 +284,6 @@
         "editText": "Редактировать текст",
         "delete": "Удалить"
       },
-      "export": {
-        "exportAs": "Экспортировать как",
-        "image": "Изображение",
-        "markdown": "Markdown",
-        "toClipboard": "В буфер обмена",
-        "saveAs": "Сохранить как"
-      },
       "notifications": {
         "deleting": "Удаление…",
         "deleteSuccess": "Успешно удалено",
@@ -299,9 +292,7 @@
         "imageNotFound": "Изображение не найдено",
         "getImageError": "Ошибка получения изображения: {{error}}",
         "imageCopied": "Изображение скопировано в буфер",
-        "imageCopyError": "Не удалось скопировать изображение: {{error}}",
-        "markdownCopied": "Markdown скопирован в буфер",
-        "markdownCopyError": "Не удалось скопировать в буфер: {{error}}"
+        "imageCopyError": "Не удалось скопировать изображение: {{error}}"
       }
     },
     "config": {

@@ -14,13 +14,15 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import CodeMirror, { type ReactCodeMirrorRef } from '@uiw/react-codemirror'
 import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { ipcManager } from '~/app/ipc'
 import { useTheme } from '~/components/ThemeProvider'
 import { cn } from '~/utils'
 
 type ToolbarAction = {
   label: string
   icon: string
-  run: (view: EditorView) => void
+  run: (view: EditorView) => void | Promise<void>
 }
 
 export interface MarkdownEditorHandle {
@@ -70,14 +72,17 @@ const markdownInlineFormatting = ViewPlugin.fromClass(MarkdownInlineFormattingPl
 export const MarkdownEditor = forwardRef<
   MarkdownEditorHandle,
   {
+    gameId: string
     value: string
     onChange: (value: string) => void
   }
 >(function MarkdownEditor(
   {
+    gameId,
     value,
     onChange
   }: {
+    gameId: string
     value: string
     onChange: (value: string) => void
   },
@@ -134,94 +139,113 @@ export const MarkdownEditor = forwardRef<
     const view = editorRef.current?.view
     if (!view) return
 
-    action.run(view)
+    void action.run(view)
+  }
+
+  async function handleInsertImage(view: EditorView): Promise<void> {
+    try {
+      const filePath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
+      if (!filePath) return
+
+      const attachmentUrl = await ipcManager.invoke(
+        'game:add-memory-inline-image',
+        gameId,
+        filePath
+      )
+      insertImage(view, attachmentUrl)
+    } catch (error) {
+      toast.error(t('detail.memory.notifications.insertImageError', { error }))
+    }
   }
 
   const toolbarActions: ToolbarAction[][] = [
     [
       {
-        label: t('detail.memory.editor.toolbar.heading1', { defaultValue: 'Heading 1' }),
+        label: t('detail.memory.editor.toolbar.heading1'),
         icon: 'icon-[mdi--format-header-1]',
         run: (view) => applyHeading(view, 1)
       },
       {
-        label: t('detail.memory.editor.toolbar.heading2', { defaultValue: 'Heading 2' }),
+        label: t('detail.memory.editor.toolbar.heading2'),
         icon: 'icon-[mdi--format-header-2]',
         run: (view) => applyHeading(view, 2)
       },
       {
-        label: t('detail.memory.editor.toolbar.heading3', { defaultValue: 'Heading 3' }),
+        label: t('detail.memory.editor.toolbar.heading3'),
         icon: 'icon-[mdi--format-header-3]',
         run: (view) => applyHeading(view, 3)
       },
       {
-        label: t('detail.memory.editor.toolbar.heading4', { defaultValue: 'Heading 4' }),
+        label: t('detail.memory.editor.toolbar.heading4'),
         icon: 'icon-[mdi--format-header-4]',
         run: (view) => applyHeading(view, 4)
       }
     ],
     [
       {
-        label: t('detail.memory.editor.toolbar.bold', { defaultValue: 'Bold' }),
+        label: t('detail.memory.editor.toolbar.bold'),
         icon: 'icon-[mdi--format-bold]',
         run: (view) => wrapSelection(view, '**', '**')
       },
       {
-        label: t('detail.memory.editor.toolbar.italic', { defaultValue: 'Italic' }),
+        label: t('detail.memory.editor.toolbar.italic'),
         icon: 'icon-[mdi--format-italic]',
         run: (view) => wrapSelection(view, '*', '*')
       },
       {
-        label: t('detail.memory.editor.toolbar.underline', { defaultValue: 'Underline' }),
+        label: t('detail.memory.editor.toolbar.underline'),
         icon: 'icon-[mdi--format-underline]',
         run: (view) => wrapSelection(view, '<u>', '</u>')
       },
       {
-        label: t('detail.memory.editor.toolbar.strikethrough', { defaultValue: 'Strikethrough' }),
+        label: t('detail.memory.editor.toolbar.strikethrough'),
         icon: 'icon-[mdi--format-strikethrough]',
         run: (view) => wrapSelection(view, '~~', '~~')
       },
       {
-        label: t('detail.memory.editor.toolbar.inlineCode', { defaultValue: 'Inline code' }),
+        label: t('detail.memory.editor.toolbar.inlineCode'),
         icon: 'icon-[mdi--code-tags]',
         run: (view) => wrapSelection(view, '`', '`')
       },
       {
-        label: t('detail.memory.editor.toolbar.link', { defaultValue: 'Link' }),
+        label: t('detail.memory.editor.toolbar.link'),
         icon: 'icon-[mdi--link-variant]',
         run: insertLink
+      },
+      {
+        label: t('detail.memory.editor.toolbar.image'),
+        icon: 'icon-[mdi--image-outline]',
+        run: handleInsertImage
       }
     ],
     [
       {
-        label: t('detail.memory.editor.toolbar.quote', { defaultValue: 'Quote' }),
+        label: t('detail.memory.editor.toolbar.quote'),
         icon: 'icon-[mdi--format-quote-close]',
         run: (view) => prefixSelectedLines(view, '> ')
       },
       {
-        label: t('detail.memory.editor.toolbar.bulletedList', { defaultValue: 'Bulleted list' }),
+        label: t('detail.memory.editor.toolbar.bulletedList'),
         icon: 'icon-[mdi--format-list-bulleted]',
         run: (view) => prefixSelectedLines(view, '- ', stripListPrefix)
       },
       {
-        label: t('detail.memory.editor.toolbar.numberedList', { defaultValue: 'Numbered list' }),
+        label: t('detail.memory.editor.toolbar.numberedList'),
         icon: 'icon-[mdi--format-list-numbered]',
         run: (view) => prefixSelectedLines(view, (index) => `${index + 1}. `, stripListPrefix)
       },
       {
-        label: t('detail.memory.editor.toolbar.taskList', { defaultValue: 'Task list' }),
+        label: t('detail.memory.editor.toolbar.taskList'),
         icon: 'icon-[mdi--checkbox-marked-outline]',
         run: (view) => prefixSelectedLines(view, '- [ ] ', stripListPrefix)
       },
       {
-        label: t('detail.memory.editor.toolbar.codeBlock', { defaultValue: 'Code block' }),
+        label: t('detail.memory.editor.toolbar.codeBlock'),
         icon: 'icon-[mdi--code-braces]',
         run: insertCodeBlock
       },
       {
-        label: t('detail.memory.editor.toolbar.horizontalRule', {
-          defaultValue: 'Horizontal rule'
-        }),
+        label: t('detail.memory.editor.toolbar.horizontalRule'),
         icon: 'icon-[mdi--minus]',
         run: insertHorizontalRule
       }
@@ -267,9 +291,7 @@ export const MarkdownEditor = forwardRef<
           height="100%"
           theme={isDark ? 'dark' : 'light'}
           extensions={extensions}
-          placeholder={t('detail.memory.editor.placeholder', {
-            defaultValue: 'Write with Markdown...'
-          })}
+          placeholder={t('detail.memory.editor.placeholder')}
           basicSetup={{
             autocompletion: true,
             closeBrackets: true,
@@ -426,6 +448,35 @@ function insertLink(view: EditorView): void {
   view.dispatch({
     changes: { from: selection.from, to: selection.to, insert },
     selection: { anchor: selectionFrom, head: selectionFrom + 3 },
+    scrollIntoView: true
+  })
+  view.focus()
+}
+
+/**
+ * Inserts a Markdown image at the current selection.
+ *
+ * Non-empty selections become the image alt text. The inserted image is separated from adjacent
+ * paragraph text with blank lines when needed so it behaves like a block element in preview.
+ *
+ * @param view - The active CodeMirror editor view.
+ * @param url - The already-uploaded image URL to embed in Markdown.
+ */
+function insertImage(view: EditorView, url: string): void {
+  const range = view.state.selection.main
+  const selected = range.empty ? '' : view.state.sliceDoc(range.from, range.to).trim()
+  const altText = selected || 'image'
+  const before = range.from > 0 ? view.state.sliceDoc(range.from - 1, range.from) : '\n'
+  const after =
+    range.to < view.state.doc.length ? view.state.sliceDoc(range.to, range.to + 1) : '\n'
+  const prefix = before === '\n' ? '' : '\n\n'
+  const suffix = after === '\n' ? '\n' : '\n\n'
+  const insert = `${prefix}![${altText}](${url})${suffix}`
+  const cursor = range.from + insert.length
+
+  view.dispatch({
+    changes: { from: range.from, to: range.to, insert },
+    selection: { anchor: cursor },
     scrollIntoView: true
   })
   view.focus()
