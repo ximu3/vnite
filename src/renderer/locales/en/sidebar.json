@@ -10,6 +10,7 @@
   },
   "actions": {
     "viewLogs": "View Logs",
+    "libraryFilters": "Library Filters",
     "nsfwLevel": {
       "off": "NSFW: Show all",
       "blurImage": "NSFW: Hide images",
@@ -24,6 +25,10 @@
       "all": "Show all games",
       "hideLocal": "Hide local games",
       "onlyLocal": "Show only local games"
+    },
+    "customVisibilityFilter": {
+      "on": "Custom filter: on",
+      "off": "Custom filter: off"
     },
     "darkMode": "Dark Mode",
     "lightMode": "Light Mode",

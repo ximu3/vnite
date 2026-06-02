@@ -178,7 +178,20 @@
       "showThemeSwitcher": "テーマ切り替えボタンを表示",
       "showThemeSwitcherDescription": "サイドバーにテーマ切り替えボタンを表示",
       "showNSFWBlurSwitcher": "NSFW コンテンツのスイッチャーを表示",
-      "showNSFWBlurSwitcherDescription": "サイドバーにNSFWぼかし切り替えを表示"
+      "showNSFWBlurSwitcherDescription": "サイドバーにNSFWぼかし切り替えを表示",
+      "showLocalGameFilterSwitcher": "ローカルゲームフィルターを表示",
+      "showLocalGameFilterSwitcherDescription": "タイトルバーにローカルゲームフィルターボタンを表示"
+    },
+    "customVisibilityFilter": {
+      "title": "カスタム可視性フィルター",
+      "showButton": "カスタムフィルターボタンを表示",
+      "showButtonDescription": "タイトルバーにカスタム可視性フィルターの切り替えボタンを表示",
+      "excludedPathPrefixes": "除外するパス接頭辞",
+      "excludedPathPrefixesDescription": "1 行に 1 つのパス接頭辞。該当パスまたはその配下にあるゲームを非表示にします",
+      "excludedPathPrefixesPlaceholder": "1 行に 1 つのパス接頭辞を入力",
+      "excludedGameNames": "除外するゲーム名",
+      "excludedGameNamesDescription": "1 行に 1 つのゲーム名。訳名または原名が完全一致したゲームを非表示にします",
+      "excludedGameNamesPlaceholder": "1 行に 1 つのゲーム名を入力"
     },
     "notifications": {
       "resetAppearancesSettingsSuccess": "外観のリセットに成功しました",

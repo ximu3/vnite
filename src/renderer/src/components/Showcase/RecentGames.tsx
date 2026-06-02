@@ -5,24 +5,14 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '~/components/ui/button'
 import { useConfigState } from '~/hooks'
 import { useLibraryStore } from '~/pages/Library/store'
-import {
-  filterGamesByLocal,
-  filterGamesByNSFW,
-  getRecentGameIds,
-  useGameRegistry
-} from '~/stores/game'
+import { getRecentGameIds, useVisibleGameIds } from '~/stores/game'
 import { cn } from '~/utils'
 import { BigGamePoster } from './posters/BigGamePoster'
 import { GamePoster } from './posters/GamePoster'
 
 export function RecentGames(): React.JSX.Element {
-  const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
-  const [localFilterMode] = useConfigState('appearances.localGameFilterMode')
-  useGameRegistry((state) => state.gameMetaIndex)
-  const games = getRecentGameIds(
-    15,
-    filterGamesByLocal(localFilterMode, filterGamesByNSFW(nsfwFilterMode))
-  )
+  const visibleGameIds = useVisibleGameIds()
+  const games = getRecentGameIds(15, visibleGameIds)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [showRecentGamesInGameList] = useConfigState('game.gameList.showRecentGames')
   const libraryBarWidth = useLibraryStore((state) => state.libraryBarWidth)

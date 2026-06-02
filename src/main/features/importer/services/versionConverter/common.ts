@@ -616,7 +616,9 @@ async function convertConfig(basePath: string): Promise<void> {
     // Converting Appearance Configuration
     await ConfigDBManager.setConfigValue('appearances.sidebar', {
       showThemeSwitcher: v2Config.appearances.sidebar.showThemeSwitchInSidebar,
-      showNSFWBlurSwitcher: true
+      showNSFWBlurSwitcher: true,
+      showLocalGameFilterSwitcher: true,
+      showCustomVisibilityFilterSwitcher: false
     })
 
     // Converting Local Configurations - Game Associations

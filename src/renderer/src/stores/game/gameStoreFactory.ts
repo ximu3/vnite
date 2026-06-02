@@ -3,7 +3,7 @@ import { getValueByPath, setValueByPath } from '@appUtils'
 import type { Get, Paths } from 'type-fest'
 import { create, StoreApi, UseBoundStore } from 'zustand'
 import { syncTo } from '../utils'
-import { useGameRegistry } from './gameRegistry'
+import { type GameMetaInfo, useGameRegistry } from './gameRegistry'
 
 // Type definitions for individual game stores
 export interface SingleGameState {
@@ -28,26 +28,29 @@ type GameStore = UseBoundStore<StoreApi<SingleGameState>>
 
 const gameStores: Record<string, GameStore> = {}
 
+function getGameValueWithFallback<Path extends Paths<gameDoc, { bracketNotation: true }>>(
+  data: gameDoc,
+  path: Path
+): Get<gameDoc, Path> {
+  const value = getValueByPath(data, path)
+  return (value !== undefined ? value : getValueByPath(DEFAULT_GAME_VALUES, path)) as Get<
+    gameDoc,
+    Path
+  >
+}
+
 // Extract basic metadata information
-function extractMetaInfo(data: gameDoc): {
-  name: string
-  originalName?: string
-  sortName?: string
-  genres?: string[]
-  addDate?: string
-  lastRunDate?: string
-  hideFromRecentGames?: boolean
-  score?: number
-} {
+function extractMetaInfo(data: gameDoc): GameMetaInfo {
   return {
-    name: data.metadata?.name || '',
-    originalName: data.metadata?.originalName || '',
-    sortName: data.metadata?.sortName || '',
-    genres: data.metadata?.genres,
-    addDate: data.record?.addDate,
-    lastRunDate: data.record?.lastRunDate,
-    hideFromRecentGames: data.record?.hideFromRecentGames,
-    score: data.record?.score
+    name: getGameValueWithFallback(data, 'metadata.name'),
+    originalName: getGameValueWithFallback(data, 'metadata.originalName'),
+    sortName: getGameValueWithFallback(data, 'metadata.sortName'),
+    genres: getGameValueWithFallback(data, 'metadata.genres'),
+    addDate: getGameValueWithFallback(data, 'record.addDate'),
+    lastRunDate: getGameValueWithFallback(data, 'record.lastRunDate'),
+    hideFromRecentGames: getGameValueWithFallback(data, 'record.hideFromRecentGames'),
+    score: getGameValueWithFallback(data, 'record.score'),
+    nsfw: getGameValueWithFallback(data, 'apperance.nsfw')
   }
 }
 
@@ -92,7 +95,8 @@ export function getGameStore(gameId: string): GameStore {
           'metadata.name',
           'metadata.originalName',
           'metadata.sortName',
-          'metadata.genre',
+          'metadata.genres',
+          'apperance.nsfw',
           'record.addDate',
           'record.lastRunDate',
           'record.hideFromRecentGames',

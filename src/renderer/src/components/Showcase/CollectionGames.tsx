@@ -18,7 +18,7 @@ import { ScrollArea } from '~/components/ui/scroll-area'
 import { useConfigState } from '~/hooks'
 import { useGameCollectionState } from '~/hooks/useGameCollectionState'
 import { useGameCollectionStore } from '~/stores'
-import { filterGamesByLocal, filterGamesByNSFW, sortGames } from '~/stores/game/gameUtils'
+import { sortGames, useVisibleGameIds } from '~/stores/game'
 import { cn } from '~/utils'
 import { GamePoster } from './posters/GamePoster'
 import { PlaceHolder } from './posters/PlaceHolder'
@@ -57,12 +57,7 @@ export function CollectionGamesComponent({
   const { t } = useTranslation('game')
   const collections = useGameCollectionStore((state) => state.documents)
   const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
-  const [localFilterMode] = useConfigState('appearances.localGameFilterMode')
-
-  const games = filterGamesByLocal(
-    localFilterMode,
-    filterGamesByNSFW(nsfwFilterMode, collections[collectionId]?.games)
-  )
+  const games = useVisibleGameIds(collections[collectionId]?.games)
   const sortedGames = by === 'custom' ? games : sortGames(by, order, games)
   const collectionName = collections[collectionId]?.name
 
@@ -96,7 +91,7 @@ export function CollectionGamesComponent({
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [selectGames, collections])
+  }, [selectGames, games])
 
   useEffect(() => {
     const calculateGap = (): void => {

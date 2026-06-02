@@ -97,13 +97,6 @@ const DB_CHANGE_HANDLERS = {
     } else {
       // Otherwise initialize the game store
       gameStore.getState().initialize(data)
-      useGameRegistry.getState().registerGame(docId, {
-        name: data.metadata?.name || '',
-        genre: data.metadata?.genre,
-        addDate: data.record?.addDate,
-        lastRunDate: data.record?.lastRunDate,
-        hideFromRecentGames: data.record?.hideFromRecentGames
-      })
     }
 
     console.log(`[DB] Game ${docId} Data has been updated!`)

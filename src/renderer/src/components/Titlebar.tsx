@@ -37,10 +37,19 @@ export function Titlebar(): React.JSX.Element {
 
   // NSFW Blur related
   const [showNSFWBlurSwitchInSidebar] = useConfigState('appearances.sidebar.showNSFWBlurSwitcher')
+  const [showLocalGameFilterSwitcherInSidebar] = useConfigState(
+    'appearances.sidebar.showLocalGameFilterSwitcher'
+  )
+  const [showCustomVisibilityFilterSwitcherInSidebar] = useConfigState(
+    'appearances.sidebar.showCustomVisibilityFilterSwitcher'
+  )
   const [nsfwBlurLevel, setNsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
   const [nsfwFilterMode, setNsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
   const [localGameFilterMode, setLocalGameFilterMode] = useConfigState(
     'appearances.localGameFilterMode'
+  )
+  const [customVisibilityFilterEnabled, setCustomVisibilityFilterEnabled] = useConfigState(
+    'appearances.customVisibilityFilter.enabled'
   )
   const [nsfwFilterTooltipOpen, setNsfwFilterTooltipOpen] = useState(false) // prevent unwanted auto-closing on click
   const [localGameFilterTooltipOpen, setLocalGameFilterTooltipOpen] = useState(false) // prevent unwanted auto-closing on click
@@ -65,6 +74,9 @@ export function Titlebar(): React.JSX.Element {
     [LocalGameFilterMode.OnlyLocal]: 'icon-[mdi--laptop]',
     [LocalGameFilterMode.HideLocal]: 'icon-[mdi--earth]'
   }
+  const customVisibilityFilterIcon = customVisibilityFilterEnabled
+    ? 'icon-[mdi--folder-hidden]'
+    : 'icon-[mdi--folder-eye-outline]'
   const nsfwBlurTooltips = {
     [NSFWBlurLevel.Off]: t('actions.nsfwLevel.off'),
     [NSFWBlurLevel.BlurImage]: t('actions.nsfwLevel.blurImage'),
@@ -80,6 +92,9 @@ export function Titlebar(): React.JSX.Element {
     [LocalGameFilterMode.HideLocal]: t('actions.localGameFilter.hideLocal'),
     [LocalGameFilterMode.OnlyLocal]: t('actions.localGameFilter.onlyLocal')
   }
+  const customVisibilityFilterTooltip = customVisibilityFilterEnabled
+    ? t('actions.customVisibilityFilter.on')
+    : t('actions.customVisibilityFilter.off')
   const timerStatusTooltips = {
     idle: t('timerStatus.idle'),
     on: t('timerStatus.on'),
@@ -113,6 +128,161 @@ export function Titlebar(): React.JSX.Element {
   }, [])
 
   const isLibraryRoute = location.pathname.startsWith('/library')
+
+  //* Library Filter Controls Logic *//
+  const isLocalGameFilterActive = localGameFilterMode !== LocalGameFilterMode.All
+  const isCustomVisibilityFilterActive = customVisibilityFilterEnabled
+  const isNsfwFilterActive = nsfwFilterMode !== NSFWFilterMode.All
+  const hasAnyLibraryFilterActive =
+    isLocalGameFilterActive || isCustomVisibilityFilterActive || isNsfwFilterActive
+
+  const renderLocalGameFilterButton = (className = 'h-[32px] w-[32px]'): React.JSX.Element => (
+    <Button
+      variant="thirdary"
+      size="icon"
+      className={cn(className)}
+      onMouseDown={(e) => {
+        e.preventDefault()
+        if (e.button === 0) {
+          setLocalGameFilterMode(nextLocalGameFilterMode(localGameFilterMode))
+        } else if (e.button === 2) {
+          setLocalGameFilterMode(prevLocalGameFilterMode(localGameFilterMode))
+        }
+      }}
+      onContextMenu={(e) => e.preventDefault()}
+    >
+      <span className={`${localGameFilterIconMap[localGameFilterMode]} w-4 h-4`} />
+    </Button>
+  )
+
+  const renderLocalGameFilterControl = (): React.JSX.Element => (
+    <Tooltip open={localGameFilterTooltipOpen}>
+      <TooltipTrigger
+        // Prevent tooltip from disappearing after clicking the button
+        onMouseEnter={() => setLocalGameFilterTooltipOpen(true)}
+        onMouseLeave={() => setLocalGameFilterTooltipOpen(false)}
+      >
+        {renderLocalGameFilterButton()}
+      </TooltipTrigger>
+      <TooltipContent side="bottom" className="pointer-events-none">
+        {localGameFilterTooltips[localGameFilterMode]}
+      </TooltipContent>
+    </Tooltip>
+  )
+
+  const renderCustomVisibilityFilterButton = (
+    className = 'h-[32px] w-[32px]'
+  ): React.JSX.Element => (
+    <Button
+      variant="thirdary"
+      size="icon"
+      className={cn(className)}
+      onClick={() => setCustomVisibilityFilterEnabled(!customVisibilityFilterEnabled)}
+    >
+      <span className={cn(customVisibilityFilterIcon, 'w-4 h-4')}></span>
+    </Button>
+  )
+
+  const renderCustomVisibilityFilterControl = (): React.JSX.Element => (
+    <Tooltip>
+      <TooltipTrigger>{renderCustomVisibilityFilterButton()}</TooltipTrigger>
+      <TooltipContent side="bottom">{customVisibilityFilterTooltip}</TooltipContent>
+    </Tooltip>
+  )
+
+  const renderNsfwFilterButton = (className = 'h-[32px] w-[32px]'): React.JSX.Element => (
+    <Button
+      variant="thirdary"
+      size="icon"
+      className={cn('relative', className)}
+      onMouseDown={(e) => {
+        e.preventDefault()
+        if (e.button === 0) {
+          setNsfwFilterMode(nextNSFWFilterMode(nsfwFilterMode))
+        } else if (e.button === 2) {
+          setNsfwBlurLevel(nextBlurLevel(nsfwBlurLevel))
+        }
+      }}
+      onContextMenu={(e) => e.preventDefault()}
+    >
+      <span className={`${nsfwBlurIconMap[nsfwBlurLevel]} w-4 h-4`} />
+      <span className="absolute bottom-[2px] right-0 text-[8px] font-bold px-1">
+        {nsfwFilterIconMap[nsfwFilterMode]}
+      </span>
+    </Button>
+  )
+
+  const renderNsfwFilterControl = (): React.JSX.Element => (
+    <Tooltip open={nsfwFilterTooltipOpen}>
+      <TooltipTrigger
+        // Prevent tooltip from disappearing after clicking the button
+        onMouseEnter={() => setNsfwFilterTooltipOpen(true)}
+        onMouseLeave={() => setNsfwFilterTooltipOpen(false)}
+      >
+        {renderNsfwFilterButton()}
+      </TooltipTrigger>
+      <TooltipContent side="bottom" className="pointer-events-none whitespace-pre-wrap text-center">
+        {`${nsfwFilterTooltips[nsfwFilterMode]}\n${nsfwBlurTooltips[nsfwBlurLevel]}`}
+      </TooltipContent>
+    </Tooltip>
+  )
+
+  const visibleFilterControls = [
+    showLocalGameFilterSwitcherInSidebar ? (
+      <div key="local">{renderLocalGameFilterControl()}</div>
+    ) : null,
+    showCustomVisibilityFilterSwitcherInSidebar ? (
+      <div key="custom">{renderCustomVisibilityFilterControl()}</div>
+    ) : null,
+    showNSFWBlurSwitchInSidebar ? <div key="nsfw">{renderNsfwFilterControl()}</div> : null
+  ].filter(Boolean)
+  const shouldUseFilterPopover = visibleFilterControls.length === 3
+
+  const filterPopoverContent = (
+    <div className="flex min-w-[240px] flex-col gap-3">
+      <div className="flex items-center justify-between gap-3">
+        <span className="text-sm">{localGameFilterTooltips[localGameFilterMode]}</span>
+        {renderLocalGameFilterButton('h-[32px] w-[32px] shrink-0')}
+      </div>
+      <div className="flex items-center justify-between gap-3">
+        <span className="text-sm">{customVisibilityFilterTooltip}</span>
+        {renderCustomVisibilityFilterButton('h-[32px] w-[32px] shrink-0')}
+      </div>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-col gap-0.5">
+          <span className="text-sm">{nsfwFilterTooltips[nsfwFilterMode]}</span>
+          <span className="text-xs text-muted-foreground">{nsfwBlurTooltips[nsfwBlurLevel]}</span>
+        </div>
+        {renderNsfwFilterButton('h-[32px] w-[32px] shrink-0')}
+      </div>
+    </div>
+  )
+
+  const renderFilterPopoverTrigger = (): React.JSX.Element => (
+    <Button variant="thirdary" size="icon" className="relative h-[32px] w-[32px]">
+      <span
+        className={cn(
+          'icon-[mdi--eye] h-4 w-4',
+          hasAnyLibraryFilterActive
+            ? 'absolute top-[5px] left-1/2 -translate-x-1/2'
+            : 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
+        )}
+      ></span>
+      {hasAnyLibraryFilterActive && (
+        <span className="absolute bottom-[2px] left-1/2 flex -translate-x-1/2 items-center gap-[2px]">
+          <span className="inline-flex w-[7px] justify-center text-[7px] font-black leading-none">
+            {isLocalGameFilterActive ? 'L' : ''}
+          </span>
+          <span className="inline-flex w-[7px] justify-center text-[7px] font-black leading-none">
+            {isCustomVisibilityFilterActive ? 'C' : ''}
+          </span>
+          <span className="inline-flex w-[7px] justify-center text-[7px] font-black leading-none">
+            {isNsfwFilterActive ? 'N' : ''}
+          </span>
+        </span>
+      )}
+    </Button>
+  )
 
   return (
     <div
@@ -200,70 +370,22 @@ export function Titlebar(): React.JSX.Element {
             <TooltipContent side="bottom">{t('actions.viewLogs')}</TooltipContent>
           </Tooltip>
 
-          {/* Local game filter */}
-          <Tooltip open={localGameFilterTooltipOpen}>
-            <TooltipTrigger
-              // Prevent tooltip from disappearing after clicking the button
-              onMouseEnter={() => setLocalGameFilterTooltipOpen(true)}
-              onMouseLeave={() => setLocalGameFilterTooltipOpen(false)}
-            >
-              <Button
-                variant="thirdary"
-                size={'icon'}
-                className={cn('h-[32px] w-[32px]')}
-                onMouseDown={(e) => {
-                  e.preventDefault()
-                  if (e.button === 0) {
-                    setLocalGameFilterMode(nextLocalGameFilterMode(localGameFilterMode))
-                  } else if (e.button === 2) {
-                    setLocalGameFilterMode(prevLocalGameFilterMode(localGameFilterMode))
-                  }
-                }}
-                onContextMenu={(e) => e.preventDefault()}
-              >
-                <span className={`${localGameFilterIconMap[localGameFilterMode]} w-4 h-4`} />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" className="pointer-events-none">
-              {localGameFilterTooltips[localGameFilterMode]}
-            </TooltipContent>
-          </Tooltip>
-          {/* NSFW Filter/Blur switch button */}
-          {showNSFWBlurSwitchInSidebar && (
-            <Tooltip open={nsfwFilterTooltipOpen}>
-              <TooltipTrigger
-                // Prevent tooltip from disappearing after clicking the button
-                onMouseEnter={() => setNsfwFilterTooltipOpen(true)}
-                onMouseLeave={() => setNsfwFilterTooltipOpen(false)}
-              >
-                <Button
-                  variant="thirdary"
-                  size="icon"
-                  className="h-[32px] w-[32px] relative"
-                  onMouseDown={(e) => {
-                    e.preventDefault()
-                    if (e.button === 0) {
-                      setNsfwFilterMode(nextNSFWFilterMode(nsfwFilterMode))
-                    } else if (e.button === 2) {
-                      setNsfwBlurLevel(nextBlurLevel(nsfwBlurLevel))
-                    }
-                  }}
-                  onContextMenu={(e) => e.preventDefault()}
-                >
-                  <span className={`${nsfwBlurIconMap[nsfwBlurLevel]} w-4 h-4`} />
-                  <span className="absolute bottom-[2px] right-0 text-[8px] font-bold px-1">
-                    {nsfwFilterIconMap[nsfwFilterMode]}
-                  </span>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent
-                side="bottom"
-                className="pointer-events-none whitespace-pre-wrap text-center"
-              >
-                {`${nsfwFilterTooltips[nsfwFilterMode]}\n${nsfwBlurTooltips[nsfwBlurLevel]}`}
-              </TooltipContent>
-            </Tooltip>
-          )}
+          {visibleFilterControls.length > 0 &&
+            (shouldUseFilterPopover ? (
+              <Popover>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <PopoverTrigger asChild>{renderFilterPopoverTrigger()}</PopoverTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">{t('actions.libraryFilters')}</TooltipContent>
+                </Tooltip>
+                <PopoverContent side="bottom" className="w-auto">
+                  {filterPopoverContent}
+                </PopoverContent>
+              </Popover>
+            ) : (
+              visibleFilterControls
+            ))}
 
           {/* Theme switch button */}
           {showThemeSwitchInSidebar && (

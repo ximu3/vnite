@@ -10,6 +10,7 @@
   },
   "actions": {
     "viewLogs": "查看日誌",
+    "libraryFilters": "遊戲庫過濾",
     "nsfwLevel": {
       "off": "NSFW：不隱藏",
       "blurImage": "NSFW：隱藏圖片",
@@ -24,6 +25,10 @@
       "all": "顯示全部遊戲",
       "hideLocal": "隱藏本地遊戲",
       "onlyLocal": "僅顯示本地遊戲"
+    },
+    "customVisibilityFilter": {
+      "on": "自訂過濾: 已啟用",
+      "off": "自訂過濾: 已停用"
     },
     "darkMode": "暗色模式",
     "lightMode": "亮色模式",

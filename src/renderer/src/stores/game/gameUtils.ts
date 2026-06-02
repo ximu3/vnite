@@ -1,10 +1,4 @@
-import {
-  LocalGameFilterMode,
-  NSFWFilterMode,
-  STORAGE_SIZE_NOT_CALCULATED,
-  type MaxPlayTimeDay,
-  type gameDoc
-} from '@appTypes/models'
+import { STORAGE_SIZE_NOT_CALCULATED, type MaxPlayTimeDay, type gameDoc } from '@appTypes/models'
 import { jaroWinkler } from '@appUtils'
 import type { Get, Paths } from 'type-fest'
 import {
@@ -22,32 +16,32 @@ import {
   getNextBusinessDayStartFromKey,
   splitTimeRangeByBusinessDay
 } from './dayBoundaryUtils'
-import { getGameLocalStore } from './gameLocalStoreFactory'
-import { useGamePathStore } from './gamePathStore'
 import { useGameRegistry } from './gameRegistry'
 import { getGameStore } from './gameStoreFactory'
 import { useGameCollectionStore } from './useGameCollectionStore'
 
 // Search Functions
-export function searchGames(query: string): string[] {
-  if (!query.trim()) return useGameRegistry.getState().gameIds
+export function searchGames(query: string, gameIds?: readonly string[]): string[] {
+  if (!query.trim()) return gameIds ? [...gameIds] : useGameRegistry.getState().gameIds
 
   const lowercaseQuery = query.toLowerCase()
-  const { gameIds, gameMetaIndex } = useGameRegistry.getState()
+  const sourceGameIds = gameIds ? [...gameIds] : useGameRegistry.getState().gameIds
+  const { gameMetaIndex } = useGameRegistry.getState()
 
   // Filter by light indexing first
-  const potentialMatches = gameIds.filter((id) => {
+  const potentialMatches = sourceGameIds.filter((id) => {
     const meta = gameMetaIndex[id]
     return (
       meta &&
       (meta.name.toLowerCase().includes(lowercaseQuery) ||
-        (meta.genre && meta.genre.toLowerCase().includes(lowercaseQuery)))
+        meta.originalName?.toLowerCase().includes(lowercaseQuery) ||
+        meta.genres?.some((genre) => genre.toLowerCase().includes(lowercaseQuery)))
     )
   })
 
   // If need to search deeper
   if (potentialMatches.length === 0) {
-    return gameIds.filter((id) => {
+    return sourceGameIds.filter((id) => {
       const store = getGameStore(id)
       const game = store.getState().data
       if (!game?.metadata) return false
@@ -155,45 +149,6 @@ export function randomGame(currentGameId?: string): string | null {
   }
 }
 
-export function checkGameNSFW(mode: NSFWFilterMode, gameId: string): boolean {
-  switch (mode) {
-    case NSFWFilterMode.HideNSFW:
-      return !getGameStore(gameId).getState().getValue('apperance.nsfw')
-    case NSFWFilterMode.OnlyNSFW:
-      return getGameStore(gameId).getState().getValue('apperance.nsfw')
-    default:
-      return true
-  }
-}
-
-export function filterGamesByNSFW(mode: NSFWFilterMode, gameIds?: string[]): string[] {
-  if (!gameIds) gameIds = useGameRegistry.getState().gameIds
-  return [...gameIds].filter((id) => checkGameNSFW(mode, id))
-}
-
-export function filterGamesByLocal(mode: LocalGameFilterMode, gameIds?: string[]): string[] {
-  if (!gameIds) gameIds = useGameRegistry.getState().gameIds
-
-  const localPaths = useGamePathStore.getState().paths
-
-  return [...gameIds].filter((id) => {
-    switch (mode) {
-      case LocalGameFilterMode.HideLocal: {
-        const gamePath = getGameLocalStore(id).getState().getValue('path.gamePath')
-        const isPathValid = localPaths[gamePath]?.valid ?? false
-        return !isPathValid
-      }
-      case LocalGameFilterMode.OnlyLocal: {
-        const gamePath = getGameLocalStore(id).getState().getValue('path.gamePath')
-        const isPathValid = localPaths[gamePath]?.valid ?? false
-        return isPathValid
-      }
-      default:
-        return true
-    }
-  })
-}
-
 // sorting function
 export function sortGames<Path extends Paths<gameDoc, { bracketNotation: true }>>(
   by: Path,
@@ -257,13 +212,14 @@ export function getRecentGameIds(count = 5, gameIds?: string[]): string[] {
 }
 
 export function filterGames(
-  criteria: Partial<Record<Paths<gameDoc, { bracketNotation: true }>, string[]>>
+  criteria: Partial<Record<Paths<gameDoc, { bracketNotation: true }>, string[]>>,
+  gameIds?: readonly string[]
 ): string[] {
   try {
-    const { gameIds } = useGameRegistry.getState()
+    const sourceGameIds = gameIds ? [...gameIds] : useGameRegistry.getState().gameIds
     const results: string[] = []
 
-    for (const gameId of gameIds) {
+    for (const gameId of sourceGameIds) {
       try {
         const store = getGameStore(gameId)
         const game = store.getState().data
@@ -565,13 +521,14 @@ export function getSimilarGames(
 
 // Get all unique values for a key
 export function getAllValuesInKey<Path extends Paths<gameDoc, { bracketNotation: true }>>(
-  path: Path
+  path: Path,
+  gameIds?: readonly string[]
 ): string[] {
   try {
-    const { gameIds } = useGameRegistry.getState()
+    const sourceGameIds = gameIds ? [...gameIds] : useGameRegistry.getState().gameIds
     const values = new Set<string>()
 
-    for (const gameId of gameIds) {
+    for (const gameId of sourceGameIds) {
       try {
         const store = getGameStore(gameId)
 
@@ -668,12 +625,12 @@ export function getAllExtraKeys(gameIds?: string[]): string[] {
  * @param {string} key Extra information key name
  * @returns {string[]} Array of all distinct values under the specified key
  */
-export function getAllExtraValuesForKey(key: string): string[] {
+export function getAllExtraValuesForKey(key: string, gameIds?: readonly string[]): string[] {
   try {
-    const { gameIds } = useGameRegistry.getState()
+    const sourceGameIds = gameIds ? [...gameIds] : useGameRegistry.getState().gameIds
     const values = new Set<string>()
 
-    for (const gameId of gameIds) {
+    for (const gameId of sourceGameIds) {
       try {
         const store = getGameStore(gameId)
         let extraArray: Array<{ key: string; value: string[] }> | undefined

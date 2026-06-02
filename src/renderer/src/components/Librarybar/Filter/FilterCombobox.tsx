@@ -69,7 +69,7 @@ export function FilterCombobox({
       }
       return a.label.localeCompare(b.label, 'zh-CN')
     })
-  }, [field, selectedValues])
+  }, [field, selectedValues, t])
 
   const handleSelect = (value: string): void => {
     if (selectedValues.includes(value)) {

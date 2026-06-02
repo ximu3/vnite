@@ -10,6 +10,7 @@
   },
   "actions": {
     "viewLogs": "ログを表示",
+    "libraryFilters": "ライブラリフィルター",
     "nsfwLevel": {
       "off": "NSFW：非表示なし",
       "blurImage": "NSFW：画像を非表示",
@@ -24,6 +25,10 @@
       "all": "すべてのゲームを表示",
       "hideLocal": "ローカルゲームを非表示",
       "onlyLocal": "ローカルゲームのみ表示"
+    },
+    "customVisibilityFilter": {
+      "on": "カスタムフィルター: 有効",
+      "off": "カスタムフィルター: 無効"
     },
     "darkMode": "ダークモード",
     "lightMode": "ライトモード",

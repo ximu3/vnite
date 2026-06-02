@@ -106,6 +106,8 @@ export interface configDocs {
     sidebar: {
       showThemeSwitcher: boolean
       showNSFWBlurSwitcher: boolean
+      showLocalGameFilterSwitcher: boolean
+      showCustomVisibilityFilterSwitcher: boolean
     }
     background: {
       customBackground: boolean
@@ -145,6 +147,11 @@ export interface configDocs {
     nsfwBlurLevel: NSFWBlurLevel
     nsfwFilterMode: NSFWFilterMode
     localGameFilterMode: LocalGameFilterMode
+    customVisibilityFilter: {
+      enabled: boolean
+      excludedPathPrefixes: string[]
+      excludedGameNames: string[]
+    }
     fonts: {
       family: string
       size: number
@@ -398,7 +405,9 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
   appearances: {
     sidebar: {
       showThemeSwitcher: true,
-      showNSFWBlurSwitcher: true
+      showNSFWBlurSwitcher: true,
+      showLocalGameFilterSwitcher: true,
+      showCustomVisibilityFilterSwitcher: false
     },
     background: {
       customBackground: true
@@ -438,6 +447,11 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     nsfwBlurLevel: NSFWBlurLevel.Off,
     nsfwFilterMode: NSFWFilterMode.All,
     localGameFilterMode: LocalGameFilterMode.All,
+    customVisibilityFilter: {
+      enabled: false,
+      excludedPathPrefixes: [],
+      excludedGameNames: []
+    },
     fonts: {
       family: 'LXGW WenKai Mono',
       size: 1, // in rem

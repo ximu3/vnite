@@ -3,13 +3,7 @@ import { ScrollArea } from '@ui/scroll-area'
 import { useTranslation } from 'react-i18next'
 import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
 import { useConfigState } from '~/hooks'
-import {
-  filterGames,
-  filterGamesByLocal,
-  filterGamesByNSFW,
-  getAllValuesInKey,
-  sortGames
-} from '~/stores/game'
+import { filterGames, getAllValuesInKey, sortGames, useVisibleGameIds } from '~/stores/game'
 import { cn } from '~/utils'
 import { GameNav } from '../GameNav'
 import { useGameListStore, usePlayStatusOrderStore } from '../store'
@@ -26,11 +20,10 @@ export function PlayStatusGamesComponent({
   const [by] = useConfigState('game.gameList.sort.by')
   const [order] = useConfigState('game.gameList.sort.order')
   const [showAllGamesInGroup] = useConfigState('game.gameList.showAllGamesInGroup')
-  const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
-  const [localFilterMode] = useConfigState('appearances.localGameFilterMode')
   const playStatusOrder = usePlayStatusOrderStore((s) => s.playStatusOrder)
+  const visibleGameIds = useVisibleGameIds()
 
-  const fields_tmp = getAllValuesInKey('record.playStatus')
+  const fields_tmp = getAllValuesInKey('record.playStatus', visibleGameIds)
   const fields = playStatusOrder.filter((item) => fields_tmp.includes(item))
 
   const setOpenValues = useGameListStore((s) => s.setOpenValues)
@@ -55,10 +48,7 @@ export function PlayStatusGamesComponent({
           <RecentGames />
           {/* Split games into their respective play status */}
           {fields.map((field) => {
-            const gameIds = filterGamesByLocal(
-              localFilterMode,
-              filterGamesByNSFW(nsfwFilterMode, filterGames({ ['record.playStatus']: [field] }))
-            )
+            const gameIds = filterGames({ ['record.playStatus']: [field] }, visibleGameIds)
             if (gameIds.length === 0) return <></>
 
             return (
