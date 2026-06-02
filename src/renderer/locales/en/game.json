@@ -223,7 +223,20 @@
       },
       "description": {
         "empty": "No description available",
-        "htmlHint": "HTML tags are supported",
+        "editor": {
+          "placeholder": "Write with HTML...",
+          "toolbar": {
+            "heading1": "Heading 1",
+            "heading2": "Heading 2",
+            "heading3": "Heading 3",
+            "paragraph": "Paragraph",
+            "lineBreak": "Line break",
+            "bold": "Bold",
+            "italic": "Italic",
+            "underline": "Underline",
+            "image": "Image"
+          }
+        },
         "search": {
           "loading": "Searching for game descriptions…",
           "success": "Search successful",

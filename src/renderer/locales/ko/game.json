@@ -194,7 +194,6 @@
       },
       "description": {
         "empty": "설명이 없습니다",
-        "htmlHint": "HTML 태그가 지원됩니다",
         "search": {
           "loading": "게임 설명 검색 중…",
           "success": "검색 성공",

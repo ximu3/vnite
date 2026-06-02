@@ -1,15 +1,14 @@
-import { cn } from '~/utils'
-import { Dialog, DialogContent } from '~/components/ui/dialog'
-import { Button } from '~/components/ui/button'
-import { Input } from '~/components/ui/input'
-import { Card } from '~/components/ui/card'
-import { Badge } from '~/components/ui/badge'
-import { useState, useEffect } from 'react'
-import { toast } from 'sonner'
-import parse from 'html-react-parser'
-import { HTMLParserOptions } from '~/utils'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 import { ipcManager } from '~/app/ipc'
+import { Badge } from '~/components/ui/badge'
+import { Button } from '~/components/ui/button'
+import { Card } from '~/components/ui/card'
+import { Dialog, DialogContent } from '~/components/ui/dialog'
+import { Input } from '~/components/ui/input'
+import { cn } from '~/utils'
+import { DescriptionHtmlContent } from './DescriptionHtmlContent'
 
 interface SearchDescriptionDialogProps {
   isOpen: boolean
@@ -109,7 +108,8 @@ export function SearchDescriptionDialog({
                           : 'hover:bg-accent hover:text-accent-foreground'
                       )}
                     >
-                      <div
+                      <DescriptionHtmlContent
+                        value={item.description}
                         className={cn(
                           'text-sm',
                           'prose-a:text-primary', // Link Color
@@ -119,9 +119,7 @@ export function SearchDescriptionDialog({
                           'break-words',
                           'leading-7'
                         )}
-                      >
-                        {parse(item.description, HTMLParserOptions)}
-                      </div>
+                      />
                       <Badge className="absolute bottom-2 right-2">{item.dataSource}</Badge>
                     </Card>
                   ))

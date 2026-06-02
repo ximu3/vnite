@@ -1,10 +1,10 @@
 import { SeparatorDashed } from '@ui/separator-dashed'
-import parse from 'html-react-parser'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useGameState } from '~/hooks'
-import { cn, copyWithToast, HTMLParserOptions } from '~/utils'
+import { cn, copyWithToast } from '~/utils'
 import { DescriptionDialog } from './DescriptionDialog'
+import { DescriptionHtmlContent } from './DescriptionHtmlContent'
 import { SearchDescriptionDialog } from './SearchDescriptionDialog'
 
 export function DescriptionCard({
@@ -65,7 +65,9 @@ export function DescriptionCard({
       <SeparatorDashed />
 
       {!isCollapsed && (
-        <div
+        <DescriptionHtmlContent
+          value={description}
+          emptyLabel={t('detail.overview.description.empty')}
           className={cn(
             'text-sm',
             'prose-a:text-primary', // Link Color
@@ -75,11 +77,7 @@ export function DescriptionCard({
             'break-words',
             'leading-7'
           )}
-        >
-          {description
-            ? parse(description, HTMLParserOptions)
-            : t('detail.overview.description.empty')}
-        </div>
+        />
       )}
 
       <DescriptionDialog
