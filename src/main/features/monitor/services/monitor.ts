@@ -6,7 +6,6 @@ import { updateRecentGamesInTray } from '~/features/system'
 import { GameDBManager, ConfigDBManager } from '~/core/database'
 import log from 'electron-log/main.js'
 import { backupGameSave } from '~/features/game'
-import { isEqual } from 'lodash'
 import { spawn } from 'child_process'
 import { psManager } from '~/utils'
 import { ipcManager } from '~/core/ipc'
@@ -651,7 +650,7 @@ export class GameMonitor {
 
     const savePaths = await GameDBManager.getGameLocalValue(this.options.gameId, 'path.savePaths')
 
-    if (!isEqual(savePaths, ['']) && savePaths.length > 0) {
+    if (savePaths.some(Boolean)) {
       await backupGameSave(this.options.gameId)
     }
 

@@ -120,7 +120,7 @@ function PathComponent(
   }, [screenshotPath])
 
   useEffect(() => {
-    if ((savePaths.length === 1 && savePaths[0] === '') || savePaths.length === 0 || !savePaths) {
+    if (!savePaths.some(Boolean)) {
       setSavePathSize(-1)
       return
     }

@@ -5,6 +5,7 @@ import { ipcManager } from '~/core/ipc'
 import {
   addGameMemoryInlineImage,
   addGameMemory,
+  backupGameSave,
   batchCalculateStorageSize,
   calculateStorageSize,
   cancelBatchStorageSizeCalculation,
@@ -30,6 +31,10 @@ export function setupGameIPC(): void {
 
   ipcManager.handle('game:search-save-paths', async (_, gameId: string) => {
     return await searchGameSavePaths(gameId)
+  })
+
+  ipcManager.handle('game:backup-save', async (_, gameId: string) => {
+    return await backupGameSave(gameId)
   })
 
   ipcManager.handle('game:delete-save', async (_, gameId: string, saveId: string) => {

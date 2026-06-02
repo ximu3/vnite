@@ -179,6 +179,9 @@
         "delete": "Delete"
       },
       "notifications": {
+        "backupLoading": "Backing up save…",
+        "backupSuccess": "Save backed up successfully",
+        "backupError": "Failed to back up save: {{message}}",
         "locked": "This save is locked",
         "deleteLoading": "Deleting save…",
         "deleteSuccess": "Save deleted successfully",
