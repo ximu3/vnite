@@ -1,8 +1,9 @@
-import { cn } from '~/utils'
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
-import { ConfigItem } from '~/components/form/ConfigItem'
 import { useTranslation } from 'react-i18next'
+
+import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
+import { ConfigItem } from '~/components/form/ConfigItem'
 import { useConfigLocalState } from '~/hooks'
+import { cn } from '~/utils'
 
 export function Network(): React.JSX.Element {
   const { t } = useTranslation('config')
@@ -65,6 +66,9 @@ export function Network(): React.JSX.Element {
                   controlType="input"
                   inputType="number"
                   description={t('network.proxy.portDescription')}
+                  min={1}
+                  max={65535}
+                  steps={{ default: 1, shift: 10, alt: 100, ctrl: 1000 }}
                   controlClassName="w-[100px]"
                 />
               )}
