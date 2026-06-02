@@ -30,6 +30,13 @@ export function setupScraperIPC(): void {
   )
 
   ipcManager.handle(
+    'scraper:get-game-wide-covers',
+    async (_, dataSource: string, identifier: ScraperIdentifier) => {
+      return await scraperManager.getGameWideCovers(dataSource, identifier)
+    }
+  )
+
+  ipcManager.handle(
     'scraper:get-game-covers',
     async (_, dataSource: string, identifier: ScraperIdentifier) => {
       return await scraperManager.getGameCovers(dataSource, identifier)

@@ -49,6 +49,20 @@ export function BigGamePoster({
   const stringToBase64 = (str: string): string =>
     btoa(String.fromCharCode(...new TextEncoder().encode(str)))
   const obfuscatedName = stringToBase64(name).slice(0, name.length)
+  const posterImageClassName = cn(
+    'h-[222px] aspect-[3/2] cursor-pointer select-none object-cover rounded-lg bg-accent/30',
+    className
+  )
+  const titleFallback = (
+    <div
+      className={cn(
+        'w-[333px] aspect-[3/2] cursor-pointer object-cover flex items-center justify-center font-bold bg-muted/50',
+        className
+      )}
+    >
+      {gameName}
+    </div>
+  )
 
   // Batch selection state
   const {
@@ -123,23 +137,24 @@ export function BigGamePoster({
                 <GameImage
                   onClick={handleGameClick}
                   gameId={gameId}
-                  type="background"
+                  type="wideCover"
+                  forceSmartCrop
                   blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
                   initialMask={true}
                   blurType="bigposter"
-                  className={cn(
-                    'h-[222px] aspect-[3/2] cursor-pointer select-none object-cover rounded-lg bg-accent/30',
-                    className
-                  )}
+                  className={posterImageClassName}
                   fallback={
-                    <div
-                      className={cn(
-                        'w-[333px] aspect-[3/2] cursor-pointer object-cover flex items-center justify-center font-bold bg-muted/50',
-                        className
-                      )}
-                    >
-                      {gameName}
-                    </div>
+                    <GameImage
+                      onClick={handleGameClick}
+                      gameId={gameId}
+                      type="background"
+                      forceSmartCrop
+                      blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
+                      initialMask={true}
+                      blurType="bigposter"
+                      className={posterImageClassName}
+                      fallback={titleFallback}
+                    />
                   }
                 />
               </HoverCardAnimation>

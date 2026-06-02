@@ -1,8 +1,7 @@
+import type { GameMediaType } from '@appTypes/models'
 import i18next from 'i18next'
 import { toast } from 'sonner'
 import { ipcManager } from '~/app/ipc'
-
-type GameMediaType = 'cover' | 'background' | 'icon' | 'logo'
 
 type OpenImageViewerDialog = (imagePath: string) => void
 

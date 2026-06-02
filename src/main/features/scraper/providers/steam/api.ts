@@ -1,16 +1,18 @@
+import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
 import {
+  checkSteamGameExists,
+  getGameBackgrounds,
+  getGameBackgroundsByName,
   getGameCover,
   getGameCoverByName,
-  getSteamMetadata,
-  getSteamMetadataByName,
-  checkSteamGameExists,
-  searchSteamGames,
+  getGameHeader,
+  getGameHeaderByName,
   getGameLogo,
   getGameLogoByName,
-  getGameBackgrounds,
-  getGameBackgroundsByName
+  getSteamMetadata,
+  getSteamMetadataByName,
+  searchSteamGames
 } from './common'
-import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
 
 export async function searchGamesFromSteam(gameName: string): Promise<GameList> {
   try {
@@ -58,6 +60,19 @@ export async function getGameBackgroundsFromSteam(
     return backgrounds.length > 0 ? backgrounds : []
   } catch (error) {
     console.error('Error fetching game backgrounds:', error)
+    return []
+  }
+}
+
+export async function getGameWideCoversFromSteam(identifier: ScraperIdentifier): Promise<string[]> {
+  try {
+    const wideCover =
+      identifier.type === 'id'
+        ? await getGameHeader(identifier.value)
+        : await getGameHeaderByName(identifier.value)
+    return wideCover ? [wideCover] : []
+  } catch (error) {
+    console.error('Error fetching game wide cover:', error)
     return []
   }
 }

@@ -1,3 +1,4 @@
+import type { GameMediaType } from '@appTypes/models'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -29,16 +30,17 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     ? upscalerConfig[activeUpscalerBackend].scale
     : 2
 
-  const [isUrlDialogOpen, setIsUrlDialogOpen] = useState({
+  const [isUrlDialogOpen, setIsUrlDialogOpen] = useState<Record<GameMediaType, boolean>>({
     icon: false,
     cover: false,
     background: false,
-    logo: false
+    logo: false,
+    wideCover: false
   })
 
   const [cropDialogState, setCropDialogState] = useState<{
     isOpen: boolean
-    type: 'cover' | 'background' | 'icon' | 'logo'
+    type: GameMediaType
     imagePath: string | null
     isResizing: boolean
   }>({
@@ -50,7 +52,7 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
   const [originalName] = useGameState(gameId, 'metadata.originalName')
 
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false)
-  const [searchType, setSearchType] = useState<'cover' | 'background' | 'icon' | 'logo'>('cover')
+  const [searchType, setSearchType] = useState<GameMediaType>('cover')
 
   const [isUpscalerDialogOpen, setIsUpscalerDialogOpen] = useState(false)
   const [isUpscalingBackground, setIsUpscalingBackground] = useState(false)
@@ -87,7 +89,13 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     )
   }
 
-  async function handleFileSelect(type: 'cover' | 'background' | 'icon' | 'logo'): Promise<void> {
+  const [name] = useGameState(gameId, 'metadata.name')
+  const [steamId] = useGameState(gameId, 'metadata.steamId')
+  const [vndbId] = useGameState(gameId, 'metadata.vndbId')
+  const [igdbId] = useGameState(gameId, 'metadata.igdbId')
+  const [ymgalId] = useGameState(gameId, 'metadata.ymgalId')
+
+  async function handleFileSelect(type: GameMediaType): Promise<void> {
     try {
       const filePath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
       if (!filePath) return
@@ -109,9 +117,7 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     }
   }
 
-  async function handleClipboardImport(
-    type: 'cover' | 'background' | 'icon' | 'logo'
-  ): Promise<void> {
+  async function handleClipboardImport(type: GameMediaType): Promise<void> {
     try {
       const filePath = await ipcManager.invoke('utils:save-clipboard-image')
       if (!filePath) {
@@ -130,7 +136,7 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     }
   }
 
-  async function handleResize(type: 'cover' | 'background' | 'icon' | 'logo'): Promise<void> {
+  async function handleResize(type: GameMediaType): Promise<void> {
     try {
       // Get current image path
       const currentPath = await ipcManager.invoke('game:get-media-path', gameId, type)
@@ -150,7 +156,7 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     }
   }
 
-  function setMediaWithUrl(type: 'cover' | 'background' | 'icon' | 'logo', URL: string): void {
+  function setMediaWithUrl(type: GameMediaType, URL: string): void {
     toast.promise(
       async () => {
         setIsUrlDialogOpen({ ...isUrlDialogOpen, [type]: false })
@@ -173,10 +179,7 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     )
   }
 
-  async function handleCropComplete(
-    type: 'cover' | 'background' | 'icon' | 'logo',
-    filePath: string
-  ): Promise<void> {
+  async function handleCropComplete(type: GameMediaType, filePath: string): Promise<void> {
     setCropDialogState({ isOpen: false, type: 'cover', imagePath: null, isResizing: false })
 
     const action = cropDialogState.isResizing
@@ -207,7 +210,7 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     )
   }
 
-  async function handleDeleteMedia(type: 'cover' | 'background' | 'icon' | 'logo'): Promise<void> {
+  async function handleDeleteMedia(type: GameMediaType): Promise<void> {
     toast.promise(
       async () => {
         await ipcManager.invoke('game:remove-media', gameId, type)
@@ -229,11 +232,7 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
     )
   }
 
-  const MediaControls = ({
-    type
-  }: {
-    type: 'cover' | 'background' | 'icon' | 'logo'
-  }): React.JSX.Element => (
+  const MediaControls = ({ type }: { type: GameMediaType }): React.JSX.Element => (
     <div className={cn('flex flex-row gap-2')}>
       <Tooltip>
         <TooltipTrigger>
@@ -364,28 +363,38 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
 
   const MediaCard = ({
     type,
-    aspectRatio
+    previewHeightVh,
+    spanTwoColumns
   }: {
-    type: 'cover' | 'background' | 'icon' | 'logo'
-    aspectRatio: string
+    type: GameMediaType
+    previewHeightVh: number
+    spanTwoColumns?: boolean
   }): React.JSX.Element => (
-    <Card className="h-full flex flex-col">
+    <Card className={cn('flex flex-col', spanTwoColumns && 'col-span-2')}>
       <CardHeader>
         <CardTitle>{t(`detail.properties.media.types.${type}`)}</CardTitle>
       </CardHeader>
-      <CardContent className={cn('-mt-2 flex-1 flex flex-col')}>
-        <div className={cn('flex flex-col gap-2 h-full')}>
-          <MediaControls type={type} />
-          <div className={cn('flex-1 flex items-center justify-center')}>
-            <GameImage
-              gameId={gameId}
-              type={type}
-              className={cn(
-                `aspect-[${aspectRatio}] object-${type === 'logo' ? 'contain' : 'cover'} h-auto max-h-full`
-              )}
-              fallback={<div>{t(`detail.properties.media.empty.${type}`)}</div>}
-            />
-          </div>
+      <CardContent className={cn('-mt-2 flex flex-col gap-2')}>
+        <MediaControls type={type} />
+        <div
+          className={cn(
+            'flex w-full items-center justify-center overflow-hidden rounded-md border bg-muted/15 p-2'
+          )}
+          style={{
+            height: `${previewHeightVh}vh`
+          }}
+        >
+          <GameImage
+            gameId={gameId}
+            type={type}
+            fit="contain"
+            className={cn('h-full w-full rounded-md')}
+            fallback={
+              <div className={cn('flex h-full w-full items-center justify-center text-center')}>
+                {t(`detail.properties.media.empty.${type}`)}
+              </div>
+            }
+          />
         </div>
       </CardContent>
     </Card>
@@ -393,10 +402,11 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
 
   return (
     <div className={cn('grid grid-cols-[1fr_1.5fr] gap-3 w-full h-full')}>
-      <MediaCard type="cover" aspectRatio="2/3" />
-      <MediaCard type="background" aspectRatio="2" />
-      <MediaCard type="icon" aspectRatio="1" />
-      <MediaCard type="logo" aspectRatio="3/2" />
+      <MediaCard type="cover" previewHeightVh={40} />
+      <MediaCard type="background" previewHeightVh={40} />
+      <MediaCard type="icon" previewHeightVh={20} />
+      <MediaCard type="logo" previewHeightVh={20} />
+      <MediaCard type="wideCover" previewHeightVh={40} spanTwoColumns />
 
       <CropDialog
         isOpen={cropDialogState.isOpen}
@@ -410,7 +420,17 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
         isOpen={isSearchDialogOpen}
         onClose={() => setIsSearchDialogOpen(false)}
         type={searchType}
-        gameTitle={originalName}
+        searchContext={{
+          name,
+          originalName,
+          storedIds: {
+            steam: steamId,
+            steamgriddb: steamId,
+            vndb: vndbId,
+            igdb: igdbId,
+            ymgal: ymgalId
+          }
+        }}
         onSelect={async (imagePath) => {
           toast.loading(t('detail.properties.media.notifications.downloading'), {
             id: 'download-image-toast'

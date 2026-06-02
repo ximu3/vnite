@@ -1,10 +1,11 @@
-import { cn } from '~/utils'
-import { Button } from '~/components/ui/button'
-import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog'
-import { Input } from '~/components/ui/input'
+import type { GameMediaType } from '@appTypes/models'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { Button } from '~/components/ui/button'
+import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog'
+import { Input } from '~/components/ui/input'
+import { cn } from '~/utils'
 
 export function UrlDialog({
   setMediaWithUrl,
@@ -12,15 +13,10 @@ export function UrlDialog({
   setIsUrlDialogOpen,
   type
 }: {
-  setMediaWithUrl: (type: 'cover' | 'background' | 'icon' | 'logo', URL: string) => void
-  isUrlDialogOpen: { icon: boolean; cover: boolean; background: boolean; logo: boolean }
-  setIsUrlDialogOpen: (isOpen: {
-    icon: boolean
-    cover: boolean
-    background: boolean
-    logo: boolean
-  }) => void
-  type: 'cover' | 'background' | 'icon' | 'logo'
+  setMediaWithUrl: (type: GameMediaType, URL: string) => void
+  isUrlDialogOpen: Record<GameMediaType, boolean>
+  setIsUrlDialogOpen: (isOpen: Record<GameMediaType, boolean>) => void
+  type: GameMediaType
 }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [mediaUrl, setMediaUrl] = useState<string>('')
