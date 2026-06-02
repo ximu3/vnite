@@ -53,17 +53,16 @@ export function DeleteGameAlert({
         // Optionally add game folders to ignore list before deletion
         try {
           if (addToIgnore) {
-            // Resolve each game's path via renderer local store API
+            // Resolve each game's rootPath via renderer local store API
             const paths: string[] = []
             for (const id of gameIds) {
               const store = getGameLocalStore(id)
-              const gp = store.getState().getValue('path.gamePath') as unknown as string
-              const mp = store.getState().getValue('utils.markPath') as unknown as string
-              const chosen = typeof gp === 'string' && gp.trim().length > 0 ? gp : mp
-              if (typeof chosen === 'string' && chosen.trim().length > 0) paths.push(chosen)
+              const rp = store.getState().getValue('utils.rootPath') as unknown as string
+              if (typeof rp === 'string' && rp.trim().length > 0) paths.push(rp)
             }
             if (paths.length > 0) {
-              const normalize = (p: string): string => p.trim().replace(/\\/g, '/').replace(/\/+$/, '')
+              const normalize = (p: string): string =>
+                p.trim().replace(/\\/g, '/').replace(/\/+$/, '')
               const current = ((scannerConfig?.ignoreList as string[]) || [])
                 .map(normalize)
                 .filter((v) => v.length > 0)

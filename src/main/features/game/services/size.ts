@@ -1,4 +1,3 @@
-import path from 'path'
 import fse from 'fs-extra'
 import log from 'electron-log/main'
 import { v4 as uuidv4 } from 'uuid'
@@ -31,13 +30,8 @@ export function cancelBatchStorageSizeCalculation(): void {
  */
 export async function calculateStorageSize(gameId: string): Promise<number> {
   try {
-    const gamePath = await GameDBManager.getGameLocalValue(gameId, 'path.gamePath')
-    const markPath = await GameDBManager.getGameLocalValue(gameId, 'utils.markPath')
-
-    let targetPath = markPath || ''
-    if (!targetPath && gamePath) {
-      targetPath = path.dirname(gamePath)
-    }
+    const rootPath = await GameDBManager.getGameLocalValue(gameId, 'utils.rootPath')
+    const targetPath = rootPath || ''
 
     if (!targetPath) {
       log.warn(`[StorageSize] No valid path found for game ${gameId}`)

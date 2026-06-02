@@ -242,17 +242,10 @@ export async function searchGameSavePaths(gameId: string): Promise<string[]> {
   const found: string[] = []
 
   //* Tier 1 - search in game local directory
-  const gamePath = await GameDBManager.getGameLocalValue(gameId, 'path.gamePath')
-  const markerPath = await GameDBManager.getGameLocalValue(gameId, 'utils.markPath')
-  const gameLocalRoot = gamePath || markerPath
+  const rootPath = await GameDBManager.getGameLocalValue(gameId, 'utils.rootPath')
 
-  if (await fse.pathExists(gameLocalRoot)) {
-    const st = await fse.stat(gameLocalRoot)
-    if (st.isFile()) {
-      found.push(...(await findInLocalDir(path.dirname(gameLocalRoot))))
-    } else {
-      found.push(...(await findInLocalDir(gameLocalRoot)))
-    }
+  if (rootPath && (await fse.pathExists(rootPath))) {
+    found.push(...(await findInLocalDir(rootPath)))
   }
 
   /*

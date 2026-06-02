@@ -367,6 +367,7 @@
       "path": {
         "title": "게임 & 세이브",
         "gamePath": "게임 경로",
+        "rootPath": "루트 경로",
         "savePath": "세이브 경로",
         "addFolder": "폴더 추가",
         "addFile": "파일 추가",

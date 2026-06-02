@@ -518,6 +518,7 @@
       "path": {
         "title": "Game & Save",
         "gamePath": "Game Path",
+        "rootPath": "Root Path",
         "savePath": "Save Path",
         "screenshotPath": "Screenshot Path",
         "screenshotPathTooltip": "If left empty, the screenshot path configured under \"Settings → Database\" will be used automatically.",

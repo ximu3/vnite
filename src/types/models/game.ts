@@ -137,6 +137,7 @@ export interface gameLocalDoc {
   }
   utils: {
     markPath: string
+    rootPath: string
   }
 }
 
@@ -170,7 +171,8 @@ export const DEFAULT_GAME_LOCAL_VALUES: Readonly<gameLocalDoc> = {
     useMagpie: false
   },
   utils: {
-    markPath: ''
+    markPath: '',
+    rootPath: ''
   }
 } as const
 

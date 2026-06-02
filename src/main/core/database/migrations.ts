@@ -3,6 +3,9 @@ import { getValueByPath, satisfiesSemanticVersion } from '@appUtils'
 import log from 'electron-log/main'
 import type { Get, Paths } from 'type-fest'
 import { ConfigDBManager } from './layers/ConfigDBManager'
+import { GameDBManager } from './layers/GameDBManager'
+import { inferRootPath } from '~/utils'
+import path from 'path'
 
 type DatabaseMigration = {
   key: string
@@ -26,6 +29,13 @@ const DATABASE_MIGRATIONS: DatabaseMigration[] = [
     version: '>4.9.0',
     description: 'Move screenshot storage settings to the local configuration database',
     run: migrateScreenshotStorageLocation
+  },
+  {
+    key: 'game-root-path',
+    version: '>=4.10.0',
+    description:
+      'Infer and populate rootPath for all existing games based on markPath and gamePath',
+    run: migrateGameRootPath
   }
 ]
 
@@ -257,4 +267,25 @@ async function migrateScreenshotStorageLocation(): Promise<void> {
     'config.memory.image.namingRule',
     namingRule
   )
+}
+
+async function migrateGameRootPath(): Promise<void> {
+  const games = await GameDBManager.getAllGamesLocal()
+  const gameArray = Object.values(games)
+  let migrated = 0
+
+  for (const game of gameArray) {
+    if (game.utils?.rootPath) continue
+
+    const markPath = game.utils?.markPath ?? ''
+    const gamePath = game.path?.gamePath ?? ''
+    const inferred = inferRootPath(markPath || (gamePath ? path.dirname(gamePath) : ''))
+
+    if (inferred) {
+      await GameDBManager.setGameLocalValue(game._id, 'utils.rootPath', inferred)
+      migrated++
+    }
+  }
+
+  log.info(`[DatabaseMigration] game-root-path: migrated ${migrated} games`)
 }

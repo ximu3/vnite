@@ -365,6 +365,7 @@
       "path": {
         "title": "",
         "gamePath": "",
+        "rootPath": "",
         "savePath": "",
         "addFolder": "",
         "addFile": "",
