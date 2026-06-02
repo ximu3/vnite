@@ -16,7 +16,8 @@ import {
   AttachmentChange,
   gameDocs,
   gameLocalDocs,
-  gameCollectionDocs
+  gameCollectionDocs,
+  LocalGameFilterMode
 } from '@appTypes/models'
 import { isEqual } from 'lodash'
 
@@ -37,7 +38,16 @@ const DB_INITIALIZERS: Record<string, (data: any) => Promise<void>> = {
     console.log(`[DB] game: initialized ${Object.keys(data).length} game store`)
   },
   'game-local': async (data: gameLocalDocs): Promise<void> => {
-    initializeGameLocalStores(data)
+    const localGameFilterMode = useConfigStore
+      .getState()
+      .getConfigValue('appearances.localGameFilterMode')
+
+    await initializeGameLocalStores(data, {
+      // When the initial view filters by local availability, wait for path checks
+      // before marking games as ready; otherwise the first render treats every
+      // `valid: null` path as non-local and the UI stays empty.
+      awaitPathValidity: localGameFilterMode !== LocalGameFilterMode.All
+    })
     console.log(`[DB] game-local: initialized ${Object.keys(data).length} game-local store`)
   },
   'game-collection': async (data: gameCollectionDocs): Promise<void> => {

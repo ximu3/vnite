@@ -83,7 +83,12 @@ export function getGameLocalStore(gameId: string): GameLocalStore {
 /**
  * Batch initialize game local store
  */
-export function initializeGameLocalStores(documents: Record<string, gameLocalDoc>): void {
+export async function initializeGameLocalStores(
+  documents: Record<string, gameLocalDoc>,
+  options?: {
+    awaitPathValidity?: boolean
+  }
+): Promise<void> {
   Object.entries(documents).forEach(([gameId, gameData]) => {
     const store = getGameLocalStore(gameId)
     store.getState().initialize(gameData)
@@ -93,7 +98,11 @@ export function initializeGameLocalStores(documents: Record<string, gameLocalDoc
     .map((doc) => doc.path?.gamePath)
     .filter((p): p is string => !!p)
   useGamePathStore.getState().addPaths(gamePaths)
-  useGamePathStore.getState().verifyAll()
+
+  const verifyPromise = useGamePathStore.getState().verifyAll()
+  if (options?.awaitPathValidity) {
+    await verifyPromise
+  }
 }
 
 export function deleteGameLocalStore(gameId: string): void {
