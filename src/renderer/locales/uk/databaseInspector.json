@@ -1,0 +1,91 @@
+{
+  "title": "",
+  "description": "",
+  "generatedAt": "",
+  "actions": {
+    "refresh": "",
+    "retry": ""
+  },
+  "messages": {
+    "loading": "",
+    "noAttachments": "",
+    "noMatchingGames": "",
+    "refreshFailedTitle": "",
+    "refreshFailedDescription": ""
+  },
+  "summary": {
+    "physicalBytes": "",
+    "physicalBytesHint": "",
+    "logicalPayloadBytes": "",
+    "logicalPayloadBytesHint": "",
+    "attachmentBytes": "",
+    "attachmentBytesHint": "",
+    "attachmentCount": "",
+    "attachmentCountHint": "",
+    "documents": ""
+  },
+  "charts": {
+    "attachmentDistribution": {
+      "title": "",
+      "description": ""
+    },
+    "largestGames": {
+      "title": "",
+      "description": ""
+    }
+  },
+  "table": {
+    "title": "",
+    "description": "",
+    "searchPlaceholder": "",
+    "columns": {
+      "name": "",
+      "total": "",
+      "attachments": "",
+      "attachmentCount": "",
+      "save": ""
+    }
+  },
+  "detail": {
+    "backToOverview": "",
+    "description": "",
+    "hero": {
+      "total": "",
+      "attachments": "",
+      "documents": ""
+    },
+    "summary": {
+      "totalHint": "",
+      "documentsHint": "",
+      "attachmentsHint": "",
+      "attachmentCountHint": ""
+    },
+    "filters": {
+      "all": ""
+    },
+    "table": {
+      "title": "",
+      "columns": {
+        "type": "",
+        "attachmentId": "",
+        "size": "",
+        "contentType": ""
+      }
+    },
+    "imageActions": {
+      "viewError": "",
+      "deleteImage": "",
+      "deleteConfirmTitle": "",
+      "deleteConfirmDescription": "",
+      "deleteSuccess": "",
+      "deleteError": ""
+    }
+  },
+  "categories": {
+    "memory": "",
+    "save": "",
+    "descriptionImage": "",
+    "media": "",
+    "other": ""
+  }
+}
