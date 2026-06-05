@@ -10,6 +10,7 @@ import { Game } from '~/components/Game'
 import { Showcase } from '~/components/Showcase'
 import { CollectionGames } from '~/components/Showcase/CollectionGames'
 import { CollectionPage } from '~/components/Showcase/CollectionPage'
+import { RouteContentErrorFallback } from '~/components/errors/RouteContentErrorFallback'
 import { Config } from '~/pages/Config'
 import { DatabaseInspector, DatabaseInspectorGameDetail } from '~/pages/DatabaseInspector'
 import { GameScannerManager } from '~/pages/GameScannerManager'
@@ -85,7 +86,8 @@ const indexRoute = createRoute({
 const libraryRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/library',
-  component: Library
+  component: Library,
+  errorComponent: RouteContentErrorFallback
 })
 
 const libraryIndexRoute = createRoute({
@@ -99,18 +101,21 @@ const libraryIndexRoute = createRoute({
 const libraryHomeRoute = createRoute({
   getParentRoute: () => libraryRoute,
   path: '/home',
-  component: Showcase
+  component: Showcase,
+  errorComponent: RouteContentErrorFallback
 })
 
 const libraryCollectionsRoute = createRoute({
   getParentRoute: () => libraryRoute,
   path: '/collections',
-  component: CollectionPage
+  component: CollectionPage,
+  errorComponent: RouteContentErrorFallback
 })
 
 const libraryGameRoute = createRoute({
   getParentRoute: () => libraryRoute,
   path: '/games/$gameId/$groupId',
+  errorComponent: RouteContentErrorFallback,
   component: function GameComponent() {
     const { gameId, groupId: _groupId } = libraryGameRoute.useParams()
     return <Game gameId={gameId} />
@@ -120,6 +125,7 @@ const libraryGameRoute = createRoute({
 const libraryCollectionGamesRoute = createRoute({
   getParentRoute: () => libraryRoute,
   path: '/collections/$collectionId',
+  errorComponent: RouteContentErrorFallback,
   component: function CollectionGamesComponent() {
     const { collectionId } = libraryCollectionGamesRoute.useParams()
     return <CollectionGames collectionId={collectionId} />
@@ -130,6 +136,7 @@ const recordRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/record',
   component: Record,
+  errorComponent: RouteContentErrorFallback,
   validateSearch: (search: { tab?: string; date?: string; year?: string } & SearchSchemaInput) => {
     const dayBoundaryHour = getConfiguredDayBoundaryHour()
     const tab = typeof search.tab === 'string' ? search.tab : 'overview'
@@ -155,24 +162,28 @@ const recordRoute = createRoute({
 const configRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/config',
-  component: Config
+  component: Config,
+  errorComponent: RouteContentErrorFallback
 })
 
 const scannerRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/scanner',
-  component: GameScannerManager
+  component: GameScannerManager,
+  errorComponent: RouteContentErrorFallback
 })
 
 const databaseInspectorRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/database-inspector',
-  component: DatabaseInspector
+  component: DatabaseInspector,
+  errorComponent: RouteContentErrorFallback
 })
 
 const databaseInspectorGameRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/database-inspector/games/$gameId',
+  errorComponent: RouteContentErrorFallback,
   component: function DatabaseInspectorGameComponent() {
     const { gameId } = databaseInspectorGameRoute.useParams()
     return <DatabaseInspectorGameDetail gameId={gameId} />
@@ -182,25 +193,29 @@ const databaseInspectorGameRoute = createRoute({
 const transformerRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/transformer',
-  component: TransformerManager
+  component: TransformerManager,
+  errorComponent: RouteContentErrorFallback
 })
 
 const pluginRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/plugin',
-  component: Plugin
+  component: Plugin,
+  errorComponent: RouteContentErrorFallback
 })
 
 const iconRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/icon',
-  component: Icon
+  component: Icon,
+  errorComponent: RouteContentErrorFallback
 })
 
 const logoRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/logo',
-  component: Logo
+  component: Logo,
+  errorComponent: RouteContentErrorFallback
 })
 
 const routeTree = rootRoute.addChildren([

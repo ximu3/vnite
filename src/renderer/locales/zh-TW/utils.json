@@ -91,5 +91,10 @@
     "checkingForUpdate": "正在檢查更新…",
     "checkForUpdateFailed": "檢查失敗",
     "gameLaunchFailed": "游戲啓動失敗"
+  },
+  "rendererError": {
+    "contentTitle": "當前頁面已停止渲染",
+    "goHome": "返回庫首頁",
+    "location": "出錯位置：{{path}}"
   }
 }

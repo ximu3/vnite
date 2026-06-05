@@ -91,5 +91,10 @@
     "checkingForUpdate": "更新を確認中…",
     "checkForUpdateFailed": "更新の確認に失敗しました",
     "gameLaunchFailed": "ゲームの起動が失敗しました"
+  },
+  "rendererError": {
+    "contentTitle": "このページの描画は停止しました",
+    "goHome": "ライブラリホームへ戻る",
+    "location": "エラー位置: {{path}}"
   }
 }

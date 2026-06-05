@@ -91,5 +91,10 @@
     "checkingForUpdate": "Checking for updates…",
     "checkForUpdateFailed": "Check for updates failed",
     "gameLaunchFailed": "Failed to launch game"
+  },
+  "rendererError": {
+    "contentTitle": "This page stopped rendering",
+    "goHome": "Go to library home",
+    "location": "Location: {{path}}"
   }
 }

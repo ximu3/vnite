@@ -91,5 +91,10 @@
     "checkingForUpdate": "正在检查更新…",
     "checkForUpdateFailed": "检查失败",
     "gameLaunchFailed": "游戏启动失败"
+  },
+  "rendererError": {
+    "contentTitle": "当前页面已停止渲染",
+    "goHome": "返回库首页",
+    "location": "出错位置：{{path}}"
   }
 }
