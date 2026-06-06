@@ -36,6 +36,7 @@ import {
   checkIfDirectoryNeedsAdminRights,
   cleanupPowerShell,
   parseGameIdFromUrl,
+  primeGoogleImageSearchSession,
   restartAppAsAdmin
 } from './utils'
 
@@ -325,6 +326,8 @@ app.whenReady().then(async () => {
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
+
+  void primeGoogleImageSearchSession()
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common
