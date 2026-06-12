@@ -15,11 +15,13 @@ import {
 } from '~/components/ui/dropdown-menu'
 import { Nav } from '~/components/ui/nav'
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
+import { useConfigState } from '~/hooks/useConfigState'
 import { useGameAdderStore } from '~/pages/GameAdder/store'
 import { useGameBatchAdderStore } from '~/pages/GameBatchAdder/store'
 import { useGameScannerStore } from '~/pages/GameScannerManager/store'
 import { useSteamImporterStore } from '~/pages/Importer/SteamImporter/store'
 import { cn } from '~/utils'
+import { ToolboxPopover } from './Toolbox/ToolboxPopover'
 
 export function Sidebar(): React.JSX.Element {
   const router = useRouter()
@@ -27,6 +29,7 @@ export function Sidebar(): React.JSX.Element {
   const gameBatchAdderActions = useGameBatchAdderStore((state) => state.actions)
   const setIsSteamImporterOpen = useSteamImporterStore((state) => state.setIsOpen)
   const setEditingScanner = useGameScannerStore((state) => state.setEditingScanner)
+  const [showToolbox] = useConfigState('appearances.sidebar.showToolbox')
   const { t } = useTranslation('sidebar')
 
   return (
@@ -219,6 +222,8 @@ export function Sidebar(): React.JSX.Element {
             </DropdownMenuSub>
           </DropdownMenuContent>
         </DropdownMenu>
+        {/* Toolbox */}
+        {showToolbox && <ToolboxPopover />}
         {/* Settings Button */}
         <Tooltip>
           <TooltipTrigger>

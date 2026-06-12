@@ -57,5 +57,10 @@
     "idle": "Timer: idle",
     "on": "Timer: on",
     "paused": "Timer: paused"
+  },
+  "toolbox": {
+    "title": "Toolbox",
+    "empty": "No tools",
+    "manage": "Manage Tools"
   }
 }

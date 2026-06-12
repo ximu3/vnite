@@ -587,6 +587,14 @@ export function Appearances(): React.JSX.Element {
                 description={t('appearances.customVisibilityFilter.showButtonDescription')}
                 controlType="switch"
               />
+
+              <ConfigItem
+                hookType="config"
+                path="appearances.sidebar.showToolbox"
+                title={t('appearances.sidebar.showToolbox')}
+                description={t('appearances.sidebar.showToolboxDescription')}
+                controlType="switch"
+              />
             </div>
           </div>
 
