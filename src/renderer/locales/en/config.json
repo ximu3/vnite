@@ -180,7 +180,9 @@
       "showNSFWBlurSwitcher": "Show NSFW Content Switcher",
       "showNSFWBlurSwitcherDescription": "Show NSFW blur toggle in sidebar",
       "showLocalGameFilterSwitcher": "Show Local Game Filter",
-      "showLocalGameFilterSwitcherDescription": "Show local game filter button in titlebar"
+      "showLocalGameFilterSwitcherDescription": "Show local game filter button in titlebar",
+      "showToolbox": "Show Toolbox",
+      "showToolboxDescription": "Show toolbox button in sidebar"
     },
     "customVisibilityFilter": {
       "title": "Custom Visibility Filter",
@@ -261,6 +263,19 @@
         "testSuccess": "Upscaler test passed",
         "testError": "Upscaler test failed: {{message}}"
       }
+    },
+    "toolbox": {
+      "title": "Toolbox",
+      "path": "Path",
+      "args": "Arguments",
+      "workingDirectory": "Working Directory",
+      "namePlaceholder": "Tool name",
+      "pathPlaceholder": "Path to executable",
+      "argsPlaceholder": "Optional startup arguments for the program",
+      "workingDirectoryPlaceholder": "Default: executable directory",
+      "browse": "Browse",
+      "newTool": "New Tool",
+      "selectTool": "Select a tool to configure"
     }
   },
   "theme": {

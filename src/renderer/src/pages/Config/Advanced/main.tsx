@@ -1,11 +1,13 @@
-import { Button } from '@ui/button'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+
+import { Button } from '@ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
 import { ConfigItem } from '~/components/form/ConfigItem'
 import { UpscalerConfigDialog } from '~/components/utils/UpscalerConfigDialog'
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { cn } from '~/utils'
 import { RandomFilter } from './randomFilter'
+import { ToolboxSection } from './ToolboxSection'
 
 export function Advanced(): React.JSX.Element {
   const { t } = useTranslation('config')
@@ -89,6 +91,8 @@ export function Advanced(): React.JSX.Element {
             </div>
           </CardContent>
         </Card>
+
+        <ToolboxSection />
 
         <RandomFilter />
       </div>
