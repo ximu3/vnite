@@ -180,7 +180,9 @@
       "showNSFWBlurSwitcher": "顯示 NSFW 內容開關",
       "showNSFWBlurSwitcherDescription": "在側邊欄顯示 NSFW 模糊切換器",
       "showLocalGameFilterSwitcher": "顯示本地遊戲過濾按鈕",
-      "showLocalGameFilterSwitcherDescription": "在標題欄顯示本地遊戲過濾按鈕"
+      "showLocalGameFilterSwitcherDescription": "在標題欄顯示本地遊戲過濾按鈕",
+      "showToolbox": "顯示工具箱",
+      "showToolboxDescription": "在側邊欄顯示工具箱按鈕"
     },
     "customVisibilityFilter": {
       "title": "自訂可見性過濾",
@@ -261,6 +263,19 @@
         "testSuccess": "超分工具測試通過",
         "testError": "超分工具測試失敗：{{message}}"
       }
+    },
+    "toolbox": {
+      "title": "工具箱",
+      "path": "路徑",
+      "args": "啟動參數",
+      "workingDirectory": "工作目錄",
+      "namePlaceholder": "工具名稱",
+      "pathPlaceholder": "可執行檔案路徑",
+      "argsPlaceholder": "程式可選的啟動參數",
+      "workingDirectoryPlaceholder": "預設：可執行檔案所在目錄",
+      "browse": "瀏覽",
+      "newTool": "新工具",
+      "selectTool": "選擇一個工具進行設定"
     }
   },
   "theme": {
