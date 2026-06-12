@@ -742,7 +742,11 @@ export function getGamePlayTimeByDateRange(
       )
     }
 
-    return dailyPlayTime
+    const sorted: Record<string, number> = {}
+    for (const key of Object.keys(dailyPlayTime).sort()) {
+      sorted[key] = dailyPlayTime[key]
+    }
+    return sorted
   } catch (error) {
     console.error(`Fatal error in getGamePlayTimeByDateRange for ${gameId}:`, error)
     return {}
