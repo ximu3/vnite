@@ -1,23 +1,20 @@
-import {
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuSeparator
-} from '~/components/ui/context-menu'
-import { useRunningGames } from '~/pages/Library/store'
-import { cn, startGame, stopGame } from '~/utils'
-
-import { CollectionMenu } from './CollectionMenu'
-import { ManageMenu } from './ManageMenu'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+
+import { ContextMenuContent, ContextMenuItem, ContextMenuSeparator } from '@ui/context-menu'
 import { ipcManager } from '~/app/ipc'
 import { useLibrarybarStore } from '~/components/Librarybar/store'
+import { useRunningGames } from '~/pages/Library/store'
+import { cn, startGame, stopGame } from '~/utils'
+import { CollectionMenu } from './CollectionMenu'
+import { ManageMenu } from './ManageMenu'
 
 export function GameNavCM({
   gameId,
   openAddCollectionDialog,
   openInformationEditorDialog,
   openPlayTimeEditorDialog,
+  openStorageSizeEditorDialog,
   openPropertiesDialog,
   showRemoveFromRecent = false
 }: {
@@ -25,6 +22,7 @@ export function GameNavCM({
   openAddCollectionDialog: () => void
   openInformationEditorDialog: () => void
   openPlayTimeEditorDialog: () => void
+  openStorageSizeEditorDialog: () => void
   openPropertiesDialog: () => void
   showRemoveFromRecent?: boolean
 }): React.JSX.Element {
@@ -72,6 +70,7 @@ export function GameNavCM({
         gameId={gameId}
         openInformationEditorDialog={openInformationEditorDialog}
         openPlayingTimeEditorDialog={openPlayTimeEditorDialog}
+        openStorageSizeEditorDialog={openStorageSizeEditorDialog}
       />
       <ContextMenuSeparator />
       {/* Open Game Properties Dialog */}

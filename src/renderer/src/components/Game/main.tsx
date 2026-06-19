@@ -21,6 +21,7 @@ import { HeaderCompact } from './HeaderCompact'
 import { Memory } from './Memory'
 import { Overview } from './Overview'
 import { InformationDialog } from './Overview/Information/InformationDialog'
+import { CalculateStorageSizeDialog } from './Overview/Record/CalculateStorageSizeDialog'
 import { Record } from './Record'
 import { Save } from './Save'
 import { useGameDetailStore, useGameDetailTabStore } from './store'
@@ -48,6 +49,8 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   )
   const isScoreEditorDialogOpen = useGameDetailStore((state) => state.isScoreEditorDialogOpen)
   const setIsScoreEditorDialogOpen = useGameDetailStore((state) => state.setIsScoreEditorDialogOpen)
+  const isStorageSizeDialogOpen = useGameDetailStore((state) => state.isStorageSizeDialogOpen)
+  const setIsStorageSizeDialogOpen = useGameDetailStore((state) => state.setIsStorageSizeDialogOpen)
 
   // Reset scroll position when gameId changes
   useEffect(() => {
@@ -211,6 +214,13 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
       )}
       {isScoreEditorDialogOpen && (
         <ScoreEditorDialog gameId={gameId} setIsOpen={setIsScoreEditorDialogOpen} />
+      )}
+      {isStorageSizeDialogOpen && (
+        <CalculateStorageSizeDialog
+          gameId={gameId}
+          isOpen={isStorageSizeDialogOpen}
+          setIsOpen={setIsStorageSizeDialogOpen}
+        />
       )}
     </div>
   )

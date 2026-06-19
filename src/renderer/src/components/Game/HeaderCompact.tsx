@@ -1,3 +1,6 @@
+import React from 'react'
+import { useTranslation } from 'react-i18next'
+
 import { NSFWBlurLevel } from '@appTypes/models'
 import {
   ContextMenu,
@@ -6,13 +9,10 @@ import {
   ContextMenuTrigger
 } from '@ui/context-menu'
 import { GameImage } from '@ui/game-image'
-import React from 'react'
-import { useTranslation } from 'react-i18next'
 import { useConfigState, useGameState } from '~/hooks'
 import { useRunningGames } from '~/pages/Library/store'
 import { cn, copyWithToast, formatStorageSize } from '~/utils'
 import { Config } from './Config'
-import { CalculateStorageSizeAlertDialog } from './Overview/Record/CalculateStorageSizeAlertDialog'
 import { PLAY_STATUS_ICONS } from './Overview/Record/RecordIcon'
 import { StartGame } from './StartGame'
 import { StopGame } from './StopGame'
@@ -40,6 +40,7 @@ export function HeaderCompact({
 
   const openPropertiesDialog = useGameDetailStore((state) => state.openPropertiesDialog)
   const openImageViewerDialog = useGameDetailStore((state) => state.openImageViewerDialog)
+  const setIsStorageSizeDialogOpen = useGameDetailStore((state) => state.setIsStorageSizeDialogOpen)
 
   const stringToBase64 = (str: string): string =>
     btoa(String.fromCharCode(...new TextEncoder().encode(str)))
@@ -138,12 +139,13 @@ export function HeaderCompact({
             </div>
 
             {/* Storage Size */}
-            <CalculateStorageSizeAlertDialog gameId={gameId}>
-              <div className={cn('select-none cursor-pointer flex items-center gap-1')}>
-                <span className="icon-[mdi--harddisk]"></span>
-                {t('detail.overview.record.storageSize')}
-              </div>
-            </CalculateStorageSizeAlertDialog>
+            <div
+              className={cn('select-none cursor-pointer flex items-center gap-1')}
+              onClick={() => setIsStorageSizeDialogOpen(true)}
+            >
+              <span className="icon-[mdi--harddisk]"></span>
+              {t('detail.overview.record.storageSize')}
+            </div>
             <div>
               {formatStorageSize(storageSize, t('detail.overview.record.storageSizeEmpty'))}
             </div>

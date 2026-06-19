@@ -7,6 +7,7 @@ import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
 import { GamePropertiesDialog } from '~/components/Game/Config/Properties'
 import { InformationDialog } from '~/components/Game/Overview/Information/InformationDialog'
+import { CalculateStorageSizeDialog } from '~/components/Game/Overview/Record/CalculateStorageSizeDialog'
 import { BatchGameNavCM } from '~/components/GameBatchEditor/BatchGameNavCM'
 import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
 import { Button } from '~/components/ui/button'
@@ -88,6 +89,7 @@ export function AllGames(): React.JSX.Element {
   const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = useState(false)
   const [isInformationDialogOpen, setIsInformationDialogOpen] = useState(false)
   const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = useState(false)
+  const [isStorageSizeDialogOpen, setIsStorageSizeDialogOpen] = useState(false)
   const isBatchMode = useGameBatchEditorStore((state) => state.isBatchMode)
   const measureFrameRef = useRef<number | null>(null)
   const pendingContextMenuGameIdRef = useRef<string | null>(null)
@@ -333,6 +335,7 @@ export function AllGames(): React.JSX.Element {
                 openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
                 openInformationEditorDialog={() => setIsInformationDialogOpen(true)}
                 openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
+                openStorageSizeEditorDialog={() => setIsStorageSizeDialogOpen(true)}
                 openPropertiesDialog={() => setIsPropertiesDialogOpen(true)}
               />
             )
@@ -364,6 +367,13 @@ export function AllGames(): React.JSX.Element {
           gameId={contextMenuGameId}
           isOpen={isPropertiesDialogOpen}
           setIsOpen={setIsPropertiesDialogOpen}
+        />
+      )}
+      {contextMenuGameId && isStorageSizeDialogOpen && (
+        <CalculateStorageSizeDialog
+          gameId={contextMenuGameId}
+          isOpen={isStorageSizeDialogOpen}
+          setIsOpen={setIsStorageSizeDialogOpen}
         />
       )}
     </div>

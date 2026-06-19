@@ -6,6 +6,7 @@ import { createPortal } from 'react-dom'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
 import { GamePropertiesDialog } from '~/components/Game/Config/Properties'
+import { CalculateStorageSizeDialog } from '~/components/Game/Overview/Record/CalculateStorageSizeDialog'
 import { ContextMenu, ContextMenuTrigger } from '~/components/ui/context-menu'
 import { GameImage } from '~/components/ui/game-image'
 import { useConfigState, useGameLocalState, useGameState } from '~/hooks'
@@ -57,6 +58,7 @@ export function GameNav({
   const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = React.useState(false)
   const [isInformationDialogOpen, setIsInformationDialogOpen] = React.useState(false)
   const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = React.useState(false)
+  const [isStorageSizeDialogOpen, setIsStorageSizeDialogOpen] = React.useState(false)
 
   const isSelected = useGameBatchEditorStore((state) => state.selectedGamesMap[gameId])
   const isBatchMode = useGameBatchEditorStore((state) => state.isBatchMode)
@@ -351,6 +353,7 @@ export function GameNav({
             openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
             openInformationEditorDialog={() => setIsInformationDialogOpen(true)}
             openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
+            openStorageSizeEditorDialog={() => setIsStorageSizeDialogOpen(true)}
             openPropertiesDialog={() => setIsPropertiesDialogOpen(true)}
             showRemoveFromRecent={groupId === 'recentGames'}
           />
@@ -375,6 +378,13 @@ export function GameNav({
           gameId={gameId}
           isOpen={isPropertiesDialogOpen}
           setIsOpen={setIsPropertiesDialogOpen}
+        />
+      )}
+      {isStorageSizeDialogOpen && (
+        <CalculateStorageSizeDialog
+          gameId={gameId}
+          isOpen={isStorageSizeDialogOpen}
+          setIsOpen={setIsStorageSizeDialogOpen}
         />
       )}
     </>

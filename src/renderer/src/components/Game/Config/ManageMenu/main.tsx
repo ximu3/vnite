@@ -15,7 +15,6 @@ import {
 } from '~/components/ui/dropdown-menu'
 import { useConfigState, useGameLocalState, useGameState } from '~/hooks'
 import { useGameAdderStore } from '~/pages/GameAdder/store'
-import { formatStorageSize } from '~/utils'
 import { RecalculateLastRunDateAlertDialog } from '../../Overview/Record/RecalculateLastRunDateAlertDialog'
 import { useGameDetailStore } from '../../store'
 import { DeleteGameAlert } from './DeleteGameAlert'
@@ -41,6 +40,7 @@ export function ManageMenu({
     (state) => state.setIsPlayTimeEditorDialogOpen
   )
   const setIsScoreEditorDialogOpen = useGameDetailStore((state) => state.setIsScoreEditorDialogOpen)
+  const setIsStorageSizeDialogOpen = useGameDetailStore((state) => state.setIsStorageSizeDialogOpen)
   const setIsOpen = useGameAdderStore((state) => state.setIsOpen)
   const setName = useGameAdderStore((state) => state.setName)
   const setDbId = useGameAdderStore((state) => state.setDbId)
@@ -157,26 +157,13 @@ export function ManageMenu({
                 {t('detail.manage.browseLocalFiles')}
               </DropdownMenuItem>
               {/* Calculate Storage Size */}
-              {rootPath && (
-                <DropdownMenuItem
-                  onClick={() => {
-                    toast.promise(ipcManager.invoke('game:calculate-storage-size', gameId), {
-                      loading: t('detail.manage.notifications.calculatingStorageSize'),
-                      success: (size: number) => {
-                        if (size >= 0) {
-                          return t('detail.manage.notifications.storageSizeCalculated', {
-                            size: formatStorageSize(size)
-                          })
-                        }
-                        throw new Error('Calculation failed')
-                      },
-                      error: () => t('detail.manage.notifications.storageSizeError')
-                    })
-                  }}
-                >
-                  {t('detail.manage.calculateStorageSize')}
-                </DropdownMenuItem>
-              )}
+              <DropdownMenuItem
+                onClick={() => {
+                  setIsStorageSizeDialogOpen(true)
+                }}
+              >
+                {t('detail.manage.editStorageSize')}
+              </DropdownMenuItem>
               {/* Recalculate Last Run Date */}
               <RecalculateLastRunDateAlertDialog gameId={gameId}>
                 <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
