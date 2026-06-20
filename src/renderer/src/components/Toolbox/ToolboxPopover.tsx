@@ -6,7 +6,7 @@ import { Button } from '@ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import { ipcManager } from '~/app/ipc'
-import { ToolMonogram } from '~/components/Toolbox/ToolMonogram'
+import { ToolIcon } from '~/components/Toolbox/ToolIcon'
 import { useConfigLocalState } from '~/hooks/useConfigLocalState'
 import { useConfigTabStore } from '~/pages/Config/store'
 import { cn } from '~/utils'
@@ -81,7 +81,7 @@ export function ToolboxPopover(): React.JSX.Element {
                         })
                       }}
                     >
-                      <ToolMonogram name={tool.name} className={cn('h-7 w-7 text-xs')} />
+                      <ToolIcon toolId={id} name={tool.name} className={cn('h-7 w-7 text-xs')} />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>{tool.name}</TooltipContent>

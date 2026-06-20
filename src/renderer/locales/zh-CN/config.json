@@ -275,7 +275,12 @@
       "workingDirectoryPlaceholder": "默认：可执行文件所在目录",
       "browse": "浏览",
       "newTool": "新工具",
-      "selectTool": "选择一个工具进行配置"
+      "selectTool": "选择一个工具进行配置",
+      "notifications": {
+        "iconPathRequired": "请先填写可执行文件路径",
+        "extractIconFailed": "提取程序图标失败：{{message}}",
+        "removeToolFailed": "删除工具失败：{{message}}"
+      }
     }
   },
   "theme": {

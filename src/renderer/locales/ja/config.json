@@ -275,7 +275,12 @@
       "workingDirectoryPlaceholder": "デフォルト: 実行ファイルのディレクトリ",
       "browse": "参照",
       "newTool": "新しいツール",
-      "selectTool": "ツールを選択して設定"
+      "selectTool": "ツールを選択して設定",
+      "notifications": {
+        "iconPathRequired": "先に実行ファイルのパスを入力してください",
+        "extractIconFailed": "プログラムアイコンの取得に失敗しました: {{message}}",
+        "removeToolFailed": "ツールの削除に失敗しました: {{message}}"
+      }
     }
   },
   "theme": {

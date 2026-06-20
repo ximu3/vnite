@@ -275,7 +275,12 @@
       "workingDirectoryPlaceholder": "Default: executable directory",
       "browse": "Browse",
       "newTool": "New Tool",
-      "selectTool": "Select a tool to configure"
+      "selectTool": "Select a tool to configure",
+      "notifications": {
+        "iconPathRequired": "Enter an executable path first",
+        "extractIconFailed": "Failed to extract the program icon: {{message}}",
+        "removeToolFailed": "Failed to remove the tool: {{message}}"
+      }
     }
   },
   "theme": {

@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+
+import { Button } from '@ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
+import { Input } from '@ui/input'
+import { ScrollArea } from '@ui/scroll-area'
 import { ipcManager } from '~/app/ipc'
-import { ToolMonogram } from '~/components/Toolbox/ToolMonogram'
-import { Button } from '~/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
-import { Input } from '~/components/ui/input'
-import { ScrollArea } from '~/components/ui/scroll-area'
+import { ToolIcon } from '~/components/Toolbox/ToolIcon'
 import { useConfigLocalState } from '~/hooks/useConfigLocalState'
 import { cn } from '~/utils'
 
@@ -78,10 +80,17 @@ export function ToolboxSection(): React.JSX.Element {
   }
 
   async function handleRemove(id: string): Promise<void> {
-    const { [id]: _, ...rest } = tools
-    await setToolsAndSave(rest)
-    if (selectedId === id) {
-      setSelectedId(null)
+    try {
+      await ipcManager.invoke('toolbox:remove-tool', id)
+      if (selectedId === id) {
+        setSelectedId(null)
+      }
+    } catch (error) {
+      toast.error(
+        t('advanced.toolbox.notifications.removeToolFailed', {
+          message: error instanceof Error ? error.message : String(error)
+        })
+      )
     }
   }
 
@@ -97,6 +106,25 @@ export function ToolboxSection(): React.JSX.Element {
     if (!result) return
 
     updateSelectedTool((tool) => ({ ...tool, workingDirectory: result }), true)
+  }
+
+  async function handleExtractToolIcon(): Promise<void> {
+    if (!selectedId || !selectedTool) return
+
+    if (!selectedTool.path.trim()) {
+      toast.error(t('advanced.toolbox.notifications.iconPathRequired'))
+      return
+    }
+
+    try {
+      await ipcManager.invoke('toolbox:refresh-tool-icon', selectedId, selectedTool.path)
+    } catch (error) {
+      toast.error(
+        t('advanced.toolbox.notifications.extractIconFailed', {
+          message: error instanceof Error ? error.message : String(error)
+        })
+      )
+    }
   }
 
   return (
@@ -142,7 +170,8 @@ export function ToolboxSection(): React.JSX.Element {
                         }
                       }}
                     >
-                      <ToolMonogram
+                      <ToolIcon
+                        toolId={id}
                         name={tool.name || t('advanced.toolbox.newTool')}
                         className="h-5 w-5 shrink-0 text-[10px]"
                       />
@@ -158,21 +187,31 @@ export function ToolboxSection(): React.JSX.Element {
 
           <div className="h-full p-4">
             {selectedTool ? (
-              <div className="flex h-full flex-col gap-4 justify-between">
+              <div className="flex h-full flex-col gap-4">
                 <div className="flex items-center gap-3">
-                  <ToolMonogram
-                    name={selectedTool.name || t('advanced.toolbox.newTool')}
-                    className="h-9 w-9 shrink-0 text-sm"
-                  />
+                  <div className="group relative shrink-0">
+                    <ToolIcon
+                      toolId={selectedId!}
+                      name={selectedTool.name || t('advanced.toolbox.newTool')}
+                      className="h-12 w-12 text-sm"
+                    />
+                    <div
+                      className={cn(
+                        'absolute inset-0 flex items-center justify-center rounded-md bg-black/55 text-white cursor-pointer',
+                        'opacity-0 transition-opacity group-hover:opacity-100'
+                      )}
+                      onClick={handleExtractToolIcon}
+                    >
+                      <span className="icon-[mdi--refresh] h-4 w-4"></span>
+                    </div>
+                  </div>
                   <Input
                     value={selectedTool.name}
                     onChange={(e) => {
                       const value = e.target.value
                       updateSelectedTool((tool) => ({ ...tool, name: value }))
                     }}
-                    onBlur={() => {
-                      void saveTools()
-                    }}
+                    onBlur={saveTools}
                     placeholder={t('advanced.toolbox.namePlaceholder')}
                     className="flex-1"
                   />
@@ -199,9 +238,7 @@ export function ToolboxSection(): React.JSX.Element {
                         const value = e.target.value
                         updateSelectedTool((tool) => ({ ...tool, path: value }))
                       }}
-                      onBlur={() => {
-                        void saveTools()
-                      }}
+                      onBlur={saveTools}
                       placeholder={t('advanced.toolbox.pathPlaceholder')}
                       className="flex-1"
                     />
@@ -224,9 +261,7 @@ export function ToolboxSection(): React.JSX.Element {
                       const value = e.target.value
                       updateSelectedTool((tool) => ({ ...tool, args: value }))
                     }}
-                    onBlur={() => {
-                      void saveTools()
-                    }}
+                    onBlur={saveTools}
                     placeholder={t('advanced.toolbox.argsPlaceholder')}
                   />
                 </ToolboxField>
@@ -239,9 +274,7 @@ export function ToolboxSection(): React.JSX.Element {
                         const value = e.target.value
                         updateSelectedTool((tool) => ({ ...tool, workingDirectory: value }))
                       }}
-                      onBlur={() => {
-                        void saveTools()
-                      }}
+                      onBlur={saveTools}
                       placeholder={t('advanced.toolbox.workingDirectoryPlaceholder')}
                       className="flex-1"
                     />

@@ -275,7 +275,12 @@
       "workingDirectoryPlaceholder": "預設：可執行檔案所在目錄",
       "browse": "瀏覽",
       "newTool": "新工具",
-      "selectTool": "選擇一個工具進行設定"
+      "selectTool": "選擇一個工具進行設定",
+      "notifications": {
+        "iconPathRequired": "請先填寫可執行檔案路徑",
+        "extractIconFailed": "擷取程式圖示失敗：{{message}}",
+        "removeToolFailed": "刪除工具失敗：{{message}}"
+      }
     }
   },
   "theme": {

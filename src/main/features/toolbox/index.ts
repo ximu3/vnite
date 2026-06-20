@@ -1,2 +1,2 @@
 export { setupToolboxIPC } from './ipc'
-export { launchTool } from './services'
+export { launchTool, refreshToolIcon, removeTool } from './services'
