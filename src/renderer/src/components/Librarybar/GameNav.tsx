@@ -1,13 +1,14 @@
-import { NSFWBlurLevel } from '@appTypes/models'
 import { useLocation, useNavigate } from '@tanstack/react-router'
-import { Nav } from '@ui/nav'
 import React, { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+
+import { NSFWBlurLevel } from '@appTypes/models'
+import { ContextMenu, ContextMenuTrigger } from '@ui/context-menu'
+import { GameImage } from '@ui/game-image'
+import { Nav } from '@ui/nav'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
 import { GamePropertiesDialog } from '~/components/Game/Config/Properties'
-import { ContextMenu, ContextMenuTrigger } from '~/components/ui/context-menu'
-import { GameImage } from '~/components/ui/game-image'
 import { useConfigState, useGameLocalState, useGameState } from '~/hooks'
 import { useLibraryStore } from '~/pages/Library/store'
 import { useGamePathStore } from '~/stores/game/gamePathStore'
@@ -176,6 +177,14 @@ export function GameNav({
       nav.removeEventListener('mouseleave', handleLeave)
     }
   }, [])
+
+  // Collapse the expanded game name when scrolling, to avoid it being stuck in the middle of the screen
+  useEffect(() => {
+    if (!rect) return
+    const dismiss = (): void => setRect(null)
+    window.addEventListener('scroll', dismiss, true)
+    return () => window.removeEventListener('scroll', dismiss, true)
+  }, [rect])
 
   const navLayout: React.ReactNode[] = []
   for (const element of gameNavStyle) {
