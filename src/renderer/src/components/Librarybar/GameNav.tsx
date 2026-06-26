@@ -1,14 +1,13 @@
+import { NSFWBlurLevel } from '@appTypes/models'
 import { useLocation, useNavigate } from '@tanstack/react-router'
+import { Nav } from '@ui/nav'
 import React, { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-
-import { NSFWBlurLevel } from '@appTypes/models'
-import { ContextMenu, ContextMenuTrigger } from '@ui/context-menu'
-import { GameImage } from '@ui/game-image'
-import { Nav } from '@ui/nav'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
 import { GamePropertiesDialog } from '~/components/Game/Config/Properties'
+import { ContextMenu, ContextMenuTrigger } from '~/components/ui/context-menu'
+import { GameImage } from '~/components/ui/game-image'
 import { useConfigState, useGameLocalState, useGameState } from '~/hooks'
 import { useLibraryStore } from '~/pages/Library/store'
 import { useGamePathStore } from '~/stores/game/gamePathStore'
@@ -156,14 +155,14 @@ export function GameNav({
       const measure = nameMeasureRef.current
       if (!display || !measure) return
 
-      const displayRect = display.getBoundingClientRect()
       const navRect = nav.getBoundingClientRect()
 
       if (measure.scrollWidth > display.offsetWidth) {
         setRect({
           top: navRect.top,
-          left: displayRect.left,
-          width: displayRect.width
+          left: navRect.left,
+          width: navRect.width,
+          height: navRect.height
         } as DOMRect) // Only these parts are used
       }
     }
@@ -186,137 +185,136 @@ export function GameNav({
     return () => window.removeEventListener('scroll', dismiss, true)
   }, [rect])
 
-  const navLayout: React.ReactNode[] = []
-  for (const element of gameNavStyle) {
-    switch (element.type) {
-      case 'gameIcon': {
-        navLayout.push(
-          <div key={`${gameId}-icon`} className={cn('flex items-center')}>
-            <GameImage
-              gameId={gameId}
-              type="icon"
-              alt="icon"
-              className={cn('w-[18px] h-[18px] rounded-md object-cover bg-accent shadow-sm')}
-              fallback={
-                <span className={cn('icon-[mdi--gamepad-variant] w-[18px] h-[18px]')}></span>
-              }
-            />
-          </div>
-        )
-        break
-      }
+  const buildNavLayout = (expanded: boolean): React.ReactNode[] => {
+    const navLayout: React.ReactNode[] = []
+    for (const element of gameNavStyle) {
+      switch (element.type) {
+        case 'gameIcon': {
+          navLayout.push(
+            <div key={`${gameId}-icon`} className={cn('flex items-center')}>
+              <GameImage
+                gameId={gameId}
+                type="icon"
+                alt="icon"
+                className={cn('w-[18px] h-[18px] rounded-md object-cover bg-accent shadow-sm')}
+                fallback={
+                  <span className={cn('icon-[mdi--gamepad-variant] w-[18px] h-[18px]')}></span>
+                }
+              />
+            </div>
+          )
+          break
+        }
 
-      case 'gameName': {
-        navLayout.push(
-          <div key={`${gameId}-name`} className={cn('relative flex-1 min-w-0')}>
-            <span ref={nameDisplayRef} className={cn('block truncate')}>
-              {nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImageAndTitle
-                ? obfuscatedGameName
-                : gameName}
-            </span>
-            <span
-              ref={nameMeasureRef}
-              className="absolute invisible whitespace-nowrap pointer-events-none"
-            >
-              {nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImageAndTitle
-                ? 'This is a deliberately long string to ensure the blurred NSFW game name is fully visible when hovered over.'
-                : gameName}
-            </span>
-
-            {rect &&
-              createPortal(
-                <div
-                  style={{
-                    position: 'fixed',
-                    top: rect.top,
-                    left: rect.left,
-                    minWidth: rect.width,
-                    maxWidth: '60vw'
-                  }}
-                  className={cn(
-                    'whitespace-nowrap py-1 pr-1 z-[9999] pointer-events-none',
-                    'text-xs bg-accent/[calc(var(--glass-opacity)*2)]',
-                    highlightLocalGames && 'text-foreground',
-                    highlightLocalGames && gamePath && isPathValid && 'text-accent-foreground',
-                    highlightLocalGames && !gamePath && !isDarkMode && 'text-foreground'
-                  )}
+        case 'gameName': {
+          navLayout.push(
+            expanded ? (
+              <span key={`${gameId}-name`} className={cn('whitespace-nowrap flex-1')}>
+                {gameName}
+              </span>
+            ) : (
+              <div key={`${gameId}-name`} className={cn('relative flex-1 min-w-0')}>
+                <span ref={nameDisplayRef} className={cn('block truncate')}>
+                  {nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImageAndTitle
+                    ? obfuscatedGameName
+                    : gameName}
+                </span>
+                <span
+                  ref={nameMeasureRef}
+                  className="absolute invisible whitespace-nowrap pointer-events-none"
                 >
-                  {gameName}
-                </div>,
-                document.body
-              )}
-          </div>
-        )
-        break
-      }
+                  {nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImageAndTitle
+                    ? 'This is a deliberately long string to ensure the blurred NSFW game name is fully visible when hovered over.'
+                    : gameName}
+                </span>
+              </div>
+            )
+          )
+          break
+        }
 
-      case 'sortInfo': {
-        if (groupId !== 'recentGames') {
-          if (by === 'record.playTime' && playTime > 0) {
+        case 'sortInfo': {
+          if (groupId !== 'recentGames') {
+            if (by === 'record.playTime' && playTime > 0) {
+              navLayout.push(
+                <span
+                  key={`${gameId}-sort-playtime`}
+                  className="flex-shrink-0 text-muted-foreground"
+                >
+                  {formatDurationCompact(playTime)}
+                </span>
+              )
+            } else if (by === 'record.score' && score !== -1) {
+              navLayout.push(
+                <span key={`${gameId}-sort-score`} className="flex-shrink-0 text-muted-foreground">
+                  {score.toFixed(1)}
+                </span>
+              )
+            } else if (by === 'record.storageSize' && storageSize >= 0) {
+              navLayout.push(
+                <span
+                  key={`${gameId}-sort-storage`}
+                  className="flex-shrink-0 text-muted-foreground"
+                >
+                  {formatStorageSize(storageSize)}
+                </span>
+              )
+            }
+          }
+          break
+        }
+
+        case 'localFlag': {
+          if (gamePath && isPathValid) {
             navLayout.push(
-              <span key={`${gameId}-sort-playtime`} className="flex-shrink-0 text-muted-foreground">
-                {formatDurationCompact(playTime)}
-              </span>
+              <span
+                key={`${gameId}-local-flag-valid`}
+                className="icon-[mdi--check-outline] w-[10px] h-[10px] flex-shrink-0"
+              />
             )
-          } else if (by === 'record.score' && score !== -1) {
+          } else if (gamePath && !isPathValid && warnInvalidGamePaths) {
             navLayout.push(
-              <span key={`${gameId}-sort-score`} className="flex-shrink-0 text-muted-foreground">
-                {score.toFixed(1)}
-              </span>
+              <span
+                key={`${gameId}-local-flag-invalid`}
+                className="icon-[mdi--alert-circle-outline] w-[10px] h-[10px] text-destructive flex-shrink-0"
+              />
             )
-          } else if (by === 'record.storageSize' && storageSize >= 0) {
+          } else if (element.reserveSpace) {
             navLayout.push(
-              <span key={`${gameId}-sort-storage`} className="flex-shrink-0 text-muted-foreground">
-                {formatStorageSize(storageSize)}
-              </span>
+              <span
+                key={`${gameId}-local-flag-space`}
+                className="w-[10px] h-[10px] flex-shrink-0"
+              />
             )
           }
+          break
         }
-        break
-      }
 
-      case 'localFlag': {
-        if (gamePath && isPathValid) {
-          navLayout.push(
-            <span
-              key={`${gameId}-local-flag-valid`}
-              className="icon-[mdi--check-outline] w-[10px] h-[10px] flex-shrink-0"
-            />
-          )
-        } else if (gamePath && !isPathValid && warnInvalidGamePaths) {
-          navLayout.push(
-            <span
-              key={`${gameId}-local-flag-invalid`}
-              className="icon-[mdi--alert-circle-outline] w-[10px] h-[10px] text-destructive flex-shrink-0"
-            />
-          )
-        } else if (element.reserveSpace) {
-          navLayout.push(
-            <span key={`${gameId}-local-flag-space`} className="w-[10px] h-[10px] flex-shrink-0" />
-          )
-        }
-        break
-      }
-
-      case 'playStatus': {
-        if (playStatus !== 'unplayed') {
-          navLayout.push(
-            <span
-              key={`${gameId}-play-status-${playStatus}`}
-              className={cn(
-                PLAY_STATUS_ICONS[playStatus],
-                PLAY_STATUS_COLORS[playStatus],
-                'w-[16px] h-[16px] flex-shrink-0'
-              )}
-            />
-          )
-        } else if (element.reserveSpace) {
-          navLayout.push(
-            <span key={`${gameId}-play-status-space`} className="w-[16px] h-[16px] flex-shrink-0" />
-          )
+        case 'playStatus': {
+          if (playStatus !== 'unplayed') {
+            navLayout.push(
+              <span
+                key={`${gameId}-play-status-${playStatus}`}
+                className={cn(
+                  PLAY_STATUS_ICONS[playStatus],
+                  PLAY_STATUS_COLORS[playStatus],
+                  'w-[16px] h-[16px] flex-shrink-0'
+                )}
+              />
+            )
+          } else if (element.reserveSpace) {
+            navLayout.push(
+              <span
+                key={`${gameId}-play-status-space`}
+                className="w-[16px] h-[16px] flex-shrink-0"
+              />
+            )
+          }
+          break
         }
       }
     }
+    return navLayout
   }
 
   return (
@@ -347,7 +345,7 @@ export function GameNav({
                 className={cn('flex flex-row gap-2 items-center w-full')}
                 style={{ width: `${libraryBarWidth - 25}px` }}
               >
-                {navLayout}
+                {buildNavLayout(false)}
               </div>
             </Nav>
           </div>
@@ -365,6 +363,30 @@ export function GameNav({
           />
         )}
       </ContextMenu>
+
+      {rect &&
+        createPortal(
+          <div
+            style={{
+              position: 'fixed',
+              top: rect.top,
+              left: rect.left,
+              height: rect.height,
+              minWidth: rect.width,
+              maxWidth: '60vw'
+            }}
+            className={cn(
+              'flex flex-row items-center gap-2 px-3 overflow-hidden z-[9999] pointer-events-none',
+              'text-xs rounded-none bg-accent text-accent-foreground',
+              highlightLocalGames && 'text-foreground',
+              highlightLocalGames && gamePath && isPathValid && 'text-accent-foreground',
+              highlightLocalGames && !gamePath && !isDarkMode && 'text-foreground'
+            )}
+          >
+            {buildNavLayout(true)}
+          </div>,
+          document.body
+        )}
 
       {isAddCollectionDialogOpen && (
         <AddCollectionDialog gameIds={[gameId]} setIsOpen={setIsAddCollectionDialogOpen} />
