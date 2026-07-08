@@ -211,6 +211,41 @@ export function getRecentGameIds(count = 5, gameIds?: string[]): string[] {
   return sortGames('record.lastRunDate', 'desc', visibleRecentGameIds).slice(0, count)
 }
 
+type FilterMatchMode = 'contains' | 'exact'
+
+const EXACT_MATCH_FILTER_FIELDS = new Set<string>([
+  'record.playStatus',
+  'metadata.developers',
+  'metadata.publishers',
+  'metadata.genres',
+  'metadata.platforms',
+  'metadata.tags'
+])
+
+function getFilterMatchMode(path: string): FilterMatchMode {
+  if (path.startsWith('metadata.extra.') || EXACT_MATCH_FILTER_FIELDS.has(path)) {
+    return 'exact'
+  }
+
+  return 'contains'
+}
+
+function matchesFilterValue(item: unknown, values: string[], mode: FilterMatchMode): boolean {
+  if (item == null) return false
+
+  const itemValue = item.toString()
+
+  return values.some((value) => {
+    if (value === '__empty__') return false
+
+    if (mode === 'exact') {
+      return itemValue === value
+    } else {
+      return itemValue.toLowerCase().includes(value.toLowerCase())
+    }
+  })
+}
+
 export function filterGames(
   criteria: Partial<Record<Paths<gameDoc, { bracketNotation: true }>, string[]>>,
   gameIds?: readonly string[]
@@ -231,6 +266,7 @@ export function filterGames(
           try {
             if (!Array.isArray(values) || values.length === 0) continue
             const allowEmpty = values.includes('__empty__')
+            const matchMode = getFilterMatchMode(path)
 
             // Handling paths in metadata.extra.xxx format
             if (path.startsWith('metadata.extra.')) {
@@ -252,12 +288,8 @@ export function filterGames(
               }
 
               // Check if any value matches the criteria
-              const matches = matchingItem.value.some(
-                (item) =>
-                  item != null &&
-                  values.some((value) =>
-                    item.toString().toLowerCase().includes(value.toLowerCase())
-                  )
+              const matches = matchingItem.value.some((item) =>
+                matchesFilterValue(item, values, matchMode)
               )
 
               if (!matches) {
@@ -362,14 +394,8 @@ export function filterGames(
                   if (isEmptyArray) {
                     matches = allowEmpty
                   } else {
-                    matches = metadataValue.some(
-                      (item) =>
-                        item != null &&
-                        values.some(
-                          (value) =>
-                            value !== '__empty__' &&
-                            item.toString().toLowerCase().includes(value.toLowerCase())
-                        )
+                    matches = metadataValue.some((item) =>
+                      matchesFilterValue(item, values, matchMode)
                     )
                   }
                 } catch (error) {
@@ -381,11 +407,7 @@ export function filterGames(
                   if (metadataValue.toString().trim() === '') {
                     matches = allowEmpty
                   } else {
-                    matches = values.some(
-                      (value) =>
-                        value !== '__empty__' &&
-                        metadataValue.toString().toLowerCase().includes(value.toLowerCase())
-                    )
+                    matches = matchesFilterValue(metadataValue, values, matchMode)
                   }
                 } catch (error) {
                   console.error(`Value filtering error for ${gameId}:`, error)
