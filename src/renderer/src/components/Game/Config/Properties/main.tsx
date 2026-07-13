@@ -38,7 +38,19 @@ export function GamePropertiesDialog({
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={async (open) => {
+        if (!open) {
+          if (activeTab === 'path') {
+            await pathRef.current?.save()
+          } else if (activeTab === 'launcher') {
+            await launcherRef.current?.save()
+          }
+        }
+        setIsOpen(open)
+      }}
+    >
       <DialogContent className={cn('w-[70vw] h-[70vh] lg:h-[80vh] flex flex-col')}>
         <DialogHeader>
           <DialogTitle>{`${gameName} - ${t('detail.properties.title')}`}</DialogTitle>
