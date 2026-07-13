@@ -1,9 +1,11 @@
+import { useRef } from 'react'
+import { useTranslation } from 'react-i18next'
+
 import { ArrayInput } from '@ui/array-input'
 import { DateTimeInput } from '@ui/date-input'
-import { useTranslation } from 'react-i18next'
-import { Dialog, DialogContent } from '~/components/ui/dialog'
-import { Input } from '~/components/ui/input'
-import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
+import { Dialog, DialogContent } from '@ui/dialog'
+import { Input } from '@ui/input'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import { useGameState } from '~/hooks'
 import { cn } from '~/utils'
 
@@ -41,9 +43,54 @@ export function InformationDialog({
   )
   const [genres, setGenres, saveGenres] = useGameState(gameId, 'metadata.genres', true)
   const [platforms, setPlatforms, savePlatforms] = useGameState(gameId, 'metadata.platforms', true)
+  const activeFieldRef = useRef<
+    | 'originalName'
+    | 'name'
+    | 'sortName'
+    | 'developers'
+    | 'publishers'
+    | 'releaseDate'
+    | 'platforms'
+    | 'genres'
+    | null
+  >(null)
+
+  async function handleOpenChange(open: boolean): Promise<void> {
+    if (!open && activeFieldRef.current) {
+      // Save the active field before closing, as clicking outside the dialog may
+      // close it before the input's onBlur handler can persist the latest change.
+      switch (activeFieldRef.current) {
+        case 'originalName':
+          await saveOriginalName()
+          break
+        case 'name':
+          await saveName()
+          break
+        case 'sortName':
+          await saveSortName()
+          break
+        case 'developers':
+          await saveDevelopers()
+          break
+        case 'publishers':
+          await savePublishers()
+          break
+        case 'releaseDate':
+          await saveReleaseDate()
+          break
+        case 'platforms':
+          await savePlatforms()
+          break
+        case 'genres':
+          await saveGenres()
+          break
+      }
+    }
+    setIsOpen(open)
+  }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="w-[500px] p-3">
         <div
           className={cn(
@@ -56,7 +103,10 @@ export function InformationDialog({
           </div>
           <Input
             value={originalName}
-            onChange={(e) => setOriginalName(e.target.value)}
+            onChange={(e) => {
+              activeFieldRef.current = 'originalName'
+              setOriginalName(e.target.value)
+            }}
             onBlur={saveOriginalName}
             placeholder={t('detail.overview.information.empty')}
             className={cn('text-sm')}
@@ -67,7 +117,10 @@ export function InformationDialog({
           </div>
           <Input
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              activeFieldRef.current = 'name'
+              setName(e.target.value)
+            }}
             onBlur={saveName}
             placeholder={t('detail.overview.information.empty')}
             className={cn('text-sm')}
@@ -78,7 +131,10 @@ export function InformationDialog({
           </div>
           <Input
             value={sortName}
-            onChange={(e) => setSortName(e.target.value)}
+            onChange={(e) => {
+              activeFieldRef.current = 'sortName'
+              setSortName(e.target.value)
+            }}
             onBlur={saveSortName}
             placeholder={t('detail.overview.information.empty')}
             className={cn('text-sm')}
@@ -91,7 +147,10 @@ export function InformationDialog({
             <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
               <ArrayInput
                 value={developers}
-                onChange={setDevelopers}
+                onChange={(value) => {
+                  activeFieldRef.current = 'developers'
+                  setDevelopers(value)
+                }}
                 onBlur={saveDevelopers}
                 placeholder={t('detail.overview.information.empty')}
               />
@@ -110,7 +169,10 @@ export function InformationDialog({
             <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
               <ArrayInput
                 value={publishers}
-                onChange={setPublishers}
+                onChange={(value) => {
+                  activeFieldRef.current = 'publishers'
+                  setPublishers(value)
+                }}
                 onBlur={savePublishers}
                 placeholder={t('detail.overview.information.empty')}
               />
@@ -127,7 +189,10 @@ export function InformationDialog({
           </div>
           <DateTimeInput
             value={releaseDate}
-            onChange={(e) => setReleaseDate(e.target.value)}
+            onChange={(e) => {
+              activeFieldRef.current = 'releaseDate'
+              setReleaseDate(e.target.value)
+            }}
             onBlur={saveReleaseDate}
             placeholder={t('detail.overview.information.empty')}
             className={cn('text-sm')}
@@ -140,7 +205,10 @@ export function InformationDialog({
             <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
               <ArrayInput
                 value={platforms}
-                onChange={setPlatforms}
+                onChange={(value) => {
+                  activeFieldRef.current = 'platforms'
+                  setPlatforms(value)
+                }}
                 onBlur={savePlatforms}
                 placeholder={t('detail.overview.information.empty')}
               />
@@ -159,7 +227,10 @@ export function InformationDialog({
             <TooltipTrigger className={cn('p-0 max-w-none m-0 w-full')}>
               <ArrayInput
                 value={genres}
-                onChange={setGenres}
+                onChange={(value) => {
+                  activeFieldRef.current = 'genres'
+                  setGenres(value)
+                }}
                 onBlur={saveGenres}
                 placeholder={t('detail.overview.information.empty')}
               />
