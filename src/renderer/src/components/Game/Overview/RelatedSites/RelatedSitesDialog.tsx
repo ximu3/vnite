@@ -22,7 +22,15 @@ export function RelatedSitesDialog({
   )
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={async (open) => {
+        if (!open) {
+          await saveRelatedSites()
+        }
+        setIsOpen(open)
+      }}
+    >
       <DialogContent className={cn('max-w-none flex flex-col gap-3 w-[60vw]')}>
         <Button
           variant="outline"
@@ -53,7 +61,6 @@ export function RelatedSitesDialog({
                     })
                   )
                 }}
-                onBlur={saveRelatedSites}
                 placeholder={t('detail.overview.relatedSites.nameLabel')}
               />
               <Input
@@ -69,7 +76,6 @@ export function RelatedSitesDialog({
                   )
                 }}
                 placeholder={t('detail.overview.relatedSites.urlLabel')}
-                onBlur={saveRelatedSites}
               />
               <div className={cn('flex flex-row gap-2 grow')}>
                 <Button
