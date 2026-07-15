@@ -142,7 +142,8 @@ function MemoryMasonryItem({
       openCropDialog({
         gameId,
         memoryId,
-        imagePath: filePath
+        imagePath: filePath,
+        imageSource: 'selected-file'
       })
     } catch (error) {
       toast.error(t('detail.memory.notifications.selectFileError', { error }))
@@ -160,7 +161,8 @@ function MemoryMasonryItem({
       openCropDialog({
         gameId,
         memoryId,
-        imagePath: currentPath
+        imagePath: currentPath,
+        imageSource: 'existing-cover'
       })
     } catch (error) {
       toast.error(t('detail.memory.notifications.getImageError', { error }))

@@ -494,6 +494,10 @@
       "title": "儲存至剪貼簿",
       "description": "截圖後自動將圖片儲存至剪貼簿"
     },
+    "autoFillNoteFromFilename": {
+      "title": "使用封面檔名填入內容",
+      "description": "為內容為空的回憶選擇封面時，自動使用移除副檔名後的圖片檔名填入內容"
+    },
     "saveDir": {
       "title": "截圖儲存資料夾",
       "description": "選擇儲存截圖的根資料夾",

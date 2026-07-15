@@ -401,6 +401,15 @@ export class GameDBManager {
     }
   }
 
+  static async setGameMemoryNote(gameId: string, memoryId: string, note: string): Promise<void> {
+    try {
+      await baseDBManager.setValue(this.DB_NAME, gameId, `memory.memoryList.${memoryId}.note`, note)
+    } catch (error) {
+      log.error('[GameDB] Error setting game memory note:', error)
+      throw error
+    }
+  }
+
   static async setGameMemoryInlineImage(
     gameId: string,
     imageId: string,

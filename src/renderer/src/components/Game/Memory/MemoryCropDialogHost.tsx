@@ -14,10 +14,17 @@ export function MemoryCropDialogHost(): React.JSX.Element | null {
   }, [closeCropDialog])
 
   if (!cropDialog.open) return null
-  const { gameId, memoryId, imagePath } = cropDialog
+  const { gameId, memoryId, imagePath, imageSource } = cropDialog
 
-  function handleCropComplete(filePath: string): void {
-    void ipcManager.invoke('game:update-memory-cover', gameId, memoryId, filePath)
+  async function handleCropComplete(filePath: string): Promise<void> {
+    await ipcManager.invoke(
+      'game:update-memory-cover',
+      gameId,
+      memoryId,
+      filePath,
+      imageSource === 'selected-file' ? { originalImagePath: imagePath } : undefined
+    )
+
     closeCropDialog()
   }
 

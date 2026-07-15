@@ -494,6 +494,10 @@
       "title": "Save to Clipboard",
       "description": "Automatically copy the captured image to the clipboard after taking a screenshot"
     },
+    "autoFillNoteFromFilename": {
+      "title": "Use Cover Filename as Content",
+      "description": "When selecting a cover for a memory with empty content, automatically fill it with the image filename without its extension"
+    },
     "saveDir": {
       "title": "Save Directory",
       "description": "Root directory for storing screenshots",

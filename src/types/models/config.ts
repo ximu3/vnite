@@ -240,6 +240,7 @@ export interface configDocs {
   memory: {
     image: {
       saveToClipboard: boolean
+      autoFillNoteFromFilename: boolean
     }
     enableNotificationSound: boolean
   }
@@ -503,7 +504,8 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
   },
   memory: {
     image: {
-      saveToClipboard: false
+      saveToClipboard: false,
+      autoFillNoteFromFilename: false
     },
     enableNotificationSound: true
   },

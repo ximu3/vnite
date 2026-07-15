@@ -1,7 +1,9 @@
-import { generateUUID } from '@appUtils'
-import type { gameDoc } from '@appTypes/models'
-import { GameDBManager } from '~/core/database'
 import log from 'electron-log/main'
+import path from 'path'
+
+import type { gameDoc } from '@appTypes/models'
+import { generateUUID } from '@appUtils'
+import { ConfigDBManager, GameDBManager } from '~/core/database'
 import { eventBus } from '~/core/events'
 
 export async function addGameMemory(
@@ -61,10 +63,24 @@ export async function deleteGameMemory(gameId: string, memoryId: string): Promis
 export async function updateGameMemoryCover(
   gameId: string,
   memoryId: string,
-  imgPath: string
+  imgPath: string,
+  options?: { originalImagePath?: string }
 ): Promise<void> {
   try {
     await GameDBManager.setGameMemoryImage(gameId, memoryId, imgPath)
+
+    if (
+      options?.originalImagePath &&
+      (await ConfigDBManager.getConfigValue('memory.image.autoFillNoteFromFilename'))
+    ) {
+      const memoryList = await GameDBManager.getGameValue(gameId, 'memory.memoryList')
+      const memory = memoryList[memoryId]
+      const filename = path.parse(options.originalImagePath).name
+
+      if (memory && !memory.note.trim() && filename.trim()) {
+        await GameDBManager.setGameMemoryNote(gameId, memoryId, filename)
+      }
+    }
 
     // Emit event after updating memory cover
     eventBus.emit(
