@@ -10,17 +10,22 @@ export function MemoryCardView({
   memoryIds,
   memoryList,
   masonryItemByMemoryId,
+  columnWidth,
   onDelete
 }: {
   gameId: string
   memoryIds: string[]
   memoryList: MemoryList
   masonryItemByMemoryId: Record<string, MemoryMasonryItemInfo>
+  columnWidth: number
   onDelete: (memoryId: string) => void
 }): React.JSX.Element {
   return (
     <div
-      className={cn('grid w-full grid-cols-[repeat(auto-fill,minmax(min(14rem,100%),1fr))] gap-5')}
+      className={cn('grid w-full gap-5')}
+      style={{
+        gridTemplateColumns: `repeat(auto-fill, minmax(min(${columnWidth}px, 100%), 1fr))`
+      }}
     >
       {memoryIds.map((id) => {
         const memory = memoryList[id]

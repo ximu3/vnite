@@ -55,6 +55,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
   const [screenshotPath] = useGameLocalState(gameId, 'path.screenshotPath')
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [rootSaveDir] = useConfigLocalState('memory.image.saveDir')
+  const [gridColumnWidth] = useConfigState('appearances.memory.gridColumnWidth')
   const [masonryColumnWidth] = useConfigState('appearances.memory.masonryColumnWidth')
   const [gridItemsPerPage, setGridItemsPerPage] = useConfigState(
     'appearances.memory.gridItemsPerPage'
@@ -426,6 +427,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
           memoryIds={activePagination.pagedMemoryIds}
           memoryList={memoryList}
           masonryItemByMemoryId={masonryItemByMemoryId}
+          columnWidth={gridColumnWidth}
           onDelete={handleDelete}
         />
       )}

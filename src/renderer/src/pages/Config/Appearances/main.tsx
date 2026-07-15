@@ -541,6 +541,17 @@ export function Appearances(): React.JSX.Element {
             <div className={cn('border-b pb-2')}>{t('appearances.memory.title')}</div>
             <ConfigItem
               hookType="config"
+              path="appearances.memory.gridColumnWidth"
+              title={t('appearances.memory.gridColumnWidth')}
+              description={t('appearances.memory.gridColumnWidthDescription')}
+              controlType="slider"
+              min={120}
+              max={480}
+              step={8}
+              formatValue={(value) => `${value}px`}
+            />
+            <ConfigItem
+              hookType="config"
               path="appearances.memory.masonryColumnWidth"
               title={t('appearances.memory.masonryColumnWidth')}
               description={t('appearances.memory.masonryColumnWidthDescription')}

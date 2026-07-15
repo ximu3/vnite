@@ -129,6 +129,7 @@ export interface configDocs {
       contentTopPadding: number
     }
     memory: {
+      gridColumnWidth: number
       masonryColumnWidth: number
       gridItemsPerPage: number
       masonryItemsPerPage: number
@@ -429,6 +430,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       contentTopPadding: 40 // in vh
     },
     memory: {
+      gridColumnWidth: 280,
       masonryColumnWidth: 220,
       gridItemsPerPage: 12,
       masonryItemsPerPage: 20,

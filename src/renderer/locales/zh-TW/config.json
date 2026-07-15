@@ -170,6 +170,8 @@
     },
     "memory": {
       "title": "回憶",
+      "gridColumnWidth": "卡片欄寬",
+      "gridColumnWidthDescription": "根據回憶區域可用寬度與此像素值自動計算卡片模式欄數",
       "masonryColumnWidth": "照片牆欄寬",
       "masonryColumnWidthDescription": "根據回憶區域可用寬度與此像素值自動計算照片牆欄數"
     },

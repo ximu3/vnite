@@ -170,6 +170,8 @@
     },
     "memory": {
       "title": "Memory",
+      "gridColumnWidth": "Card Column Width",
+      "gridColumnWidthDescription": "Automatically calculate the card view column count from the available width and this pixel value",
       "masonryColumnWidth": "Gallery Column Width",
       "masonryColumnWidthDescription": "Automatically calculate the gallery column count from the available width and this pixel value"
     },
