@@ -1,7 +1,8 @@
-import { DEFAULT_PLAY_STATUS_ORDER } from '@appTypes/models'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+
+import { DEFAULT_PLAY_STATUS_ORDER } from '@appTypes/models'
 import { eventBus } from '~/app/events'
 import { ipcManager } from '~/app/ipc'
 import { DeleteGameAlert } from '~/components/Game/Config/ManageMenu/DeleteGameAlert'
@@ -21,16 +22,18 @@ import { Dialog, DialogContent } from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
 import { useConfigState, useGameLocalState, useGameState } from '~/hooks'
 import { useGameAdderStore } from '~/pages/GameAdder/store'
-import { cn, formatStorageSize } from '~/utils'
+import { cn } from '~/utils'
 
 export function ManageMenu({
   gameId,
   openInformationEditorDialog,
-  openPlayingTimeEditorDialog
+  openPlayingTimeEditorDialog,
+  openStorageSizeEditorDialog
 }: {
   gameId: string
   openInformationEditorDialog: () => void
   openPlayingTimeEditorDialog: () => void
+  openStorageSizeEditorDialog: () => void
 }): React.JSX.Element {
   const [gamePath] = useGameLocalState(gameId, 'path.gamePath')
   const [rootPath] = useGameLocalState(gameId, 'utils.rootPath')
@@ -197,26 +200,9 @@ export function ManageMenu({
                 {t('detail.manage.browseLocalFiles')}
               </ContextMenuItem>
               {/* Calculate Storage Size */}
-              {rootPath && (
-                <ContextMenuItem
-                  onClick={() => {
-                    toast.promise(ipcManager.invoke('game:calculate-storage-size', gameId), {
-                      loading: t('detail.manage.notifications.calculatingStorageSize'),
-                      success: (size: number) => {
-                        if (size >= 0) {
-                          return t('detail.manage.notifications.storageSizeCalculated', {
-                            size: formatStorageSize(size)
-                          })
-                        }
-                        throw new Error('Calculation failed')
-                      },
-                      error: () => t('detail.manage.notifications.storageSizeError')
-                    })
-                  }}
-                >
-                  {t('detail.manage.calculateStorageSize')}
-                </ContextMenuItem>
-              )}
+              <ContextMenuItem onClick={openStorageSizeEditorDialog}>
+                {t('detail.manage.editStorageSize')}
+              </ContextMenuItem>
               {/* Recalculate Last Run Date */}
               <RecalculateLastRunDateAlertDialog gameId={gameId}>
                 <ContextMenuItem onSelect={(e) => e.preventDefault()}>

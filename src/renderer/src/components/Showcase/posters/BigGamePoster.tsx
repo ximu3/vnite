@@ -8,6 +8,7 @@ import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
 import { GamePropertiesDialog } from '~/components/Game/Config/Properties'
 import { InformationDialog } from '~/components/Game/Overview/Information/InformationDialog'
+import { CalculateStorageSizeDialog } from '~/components/Game/Overview/Record/CalculateStorageSizeDialog'
 import { BatchGameNavCM } from '~/components/GameBatchEditor/BatchGameNavCM'
 import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
 import { ContextMenu, ContextMenuTrigger } from '~/components/ui/context-menu'
@@ -42,6 +43,7 @@ export function BigGamePoster({
   const [isPlayTimeEditorDialogOpen, setIsPlayTimeEditorDialogOpen] = useState(false)
   const [isInformationDialogOpen, setIsInformationDialogOpen] = useState(false)
   const [isPropertiesDialogOpen, setIsPropertiesDialogOpen] = useState(false)
+  const [isStorageSizeDialogOpen, setIsStorageSizeDialogOpen] = useState(false)
   const [showPlayButtonOnPoster] = useConfigState('appearances.showcase.showPlayButtonOnPoster')
   const { t } = useTranslation('game')
 
@@ -244,6 +246,7 @@ export function BigGamePoster({
           openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)}
           openInformationEditorDialog={() => setIsInformationDialogOpen(true)}
           openPlayTimeEditorDialog={() => setIsPlayTimeEditorDialogOpen(true)}
+          openStorageSizeEditorDialog={() => setIsStorageSizeDialogOpen(true)}
           openPropertiesDialog={() => setIsPropertiesDialogOpen(true)}
           showRemoveFromRecent={showRemoveFromRecent}
         />
@@ -267,6 +270,13 @@ export function BigGamePoster({
           gameId={gameId}
           isOpen={isPropertiesDialogOpen}
           setIsOpen={setIsPropertiesDialogOpen}
+        />
+      )}
+      {isStorageSizeDialogOpen && (
+        <CalculateStorageSizeDialog
+          gameId={gameId}
+          isOpen={isStorageSizeDialogOpen}
+          setIsOpen={setIsStorageSizeDialogOpen}
         />
       )}
     </ContextMenu>

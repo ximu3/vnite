@@ -17,6 +17,9 @@ export interface GameDetailStore {
   isScoreEditorDialogOpen: boolean
   setIsScoreEditorDialogOpen: (open: boolean) => void
 
+  isStorageSizeDialogOpen: boolean
+  setIsStorageSizeDialogOpen: (open: boolean) => void
+
   isInformationDialogOpen: boolean
   setIsInformationDialogOpen: (open: boolean) => void
 
@@ -47,6 +50,9 @@ export const useGameDetailStore = create<GameDetailStore>((set) => ({
 
   isScoreEditorDialogOpen: false,
   setIsScoreEditorDialogOpen: (open) => set({ isScoreEditorDialogOpen: open }),
+
+  isStorageSizeDialogOpen: false,
+  setIsStorageSizeDialogOpen: (open): void => set({ isStorageSizeDialogOpen: open }),
 
   isInformationDialogOpen: false,
   setIsInformationDialogOpen: (open): void => set({ isInformationDialogOpen: open }),

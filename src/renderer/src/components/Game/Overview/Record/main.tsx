@@ -7,7 +7,6 @@ import { Popover, PopoverContent } from '~/components/ui/popover'
 import { useGameState } from '~/hooks'
 import { cn, formatStorageSize } from '~/utils'
 import { useGameDetailStore } from '../../store'
-import { CalculateStorageSizeAlertDialog } from './CalculateStorageSizeAlertDialog'
 import { RecalculateLastRunDateAlertDialog } from './RecalculateLastRunDateAlertDialog'
 import { RecordCard } from './RecordCard'
 import { PLAY_STATUS_ICONS } from './RecordIcon'
@@ -24,6 +23,7 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
     (state) => state.setIsPlayTimeEditorDialogOpen
   )
   const setIsScoreEditorDialogOpen = useGameDetailStore((state) => state.setIsScoreEditorDialogOpen)
+  const setIsStorageSizeDialogOpen = useGameDetailStore((state) => state.setIsStorageSizeDialogOpen)
 
   const changePlayStatus = (status: typeof playStatus): void => {
     setPlayStatus(status)
@@ -94,14 +94,13 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
         onClick={() => setIsScoreEditorDialogOpen(true)}
       />
       {/* Storage Size */}
-      <CalculateStorageSizeAlertDialog gameId={gameId}>
-        <RecordCard
-          className={cn('')}
-          title={t('detail.overview.record.storageSize')}
-          content={formatStorageSize(storageSize, t('detail.overview.record.storageSizeEmpty'))}
-          icon="icon-[mdi--harddisk] w-[30px] h-[30px]"
-        />
-      </CalculateStorageSizeAlertDialog>
+      <RecordCard
+        className={cn('')}
+        title={t('detail.overview.record.storageSize')}
+        content={formatStorageSize(storageSize, t('detail.overview.record.storageSizeEmpty'))}
+        icon="icon-[mdi--harddisk] w-[30px] h-[30px]"
+        onClick={() => setIsStorageSizeDialogOpen(true)}
+      />
     </div>
   )
 }

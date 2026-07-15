@@ -439,6 +439,16 @@
       "createShortcut": "建立捷徑",
       "browseLocalFiles": "瀏覽本機文件",
       "calculateStorageSize": "計算遊戲大小",
+      "editStorageSize": "設定遊戲大小",
+      "storageSizeDialog": {
+        "title": "設定遊戲大小",
+        "autoTitle": "自動計算",
+        "autoDescription": "根據目前的遊戲根目錄計算大小。",
+        "autoUnavailable": "由於未設定遊戲根目錄，因此無法使用自動計算。",
+        "manualTitle": "手動輸入",
+        "manualDescription": "當無法自動計算，或本機檔案已被移除時，可手動輸入遊戲大小。",
+        "manualInputPlaceholder": "輸入大小"
+      },
       "delete": "刪除",
       "notifications": {
         "shortcutCreated": "已建立捷徑",
@@ -447,8 +457,9 @@
         "calculatingStorageSize": "正在計算遊戲大小...",
         "storageSizeCalculated": "遊戲大小已計算：{{size}}",
         "storageSizeError": "計算遊戲大小失敗",
-        "storageSizeConfirm": "計算遊戲大小？這可能需要一些時間。",
-        "storageSizeRecalculateConfirm": "當前大小：{{currentSize}}。重新計算遊戲大小？",
+        "storageSizeSaved": "已儲存遊戲大小：{{size}}",
+        "storageSizeSaveError": "儲存遊戲大小失敗",
+        "storageSizeNegative": "遊戲大小不能為負數",
         "recalculatingLastRunDate": "正在重新計算最後執行日期…",
         "lastRunDateRecalculated": "最後執行日期已更新為 {{date, niceDate}}",
         "lastRunDateCleared": "沒有有效的計時器，最後執行日期已清除",

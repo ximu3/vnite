@@ -314,9 +314,7 @@
         "gamePathNotSet": "",
         "calculatingStorageSize": "",
         "storageSizeCalculated": "",
-        "storageSizeError": "",
-        "storageSizeConfirm": "",
-        "storageSizeRecalculateConfirm": ""
+        "storageSizeError": ""
       }
     },
     "deleteAlert": {

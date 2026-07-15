@@ -314,9 +314,7 @@
         "gamePathNotSet": "Путь к игре не задан",
         "calculatingStorageSize": "Вычисление размера игры...",
         "storageSizeCalculated": "Размер игры вычислен: {{size}}",
-        "storageSizeError": "Не удалось вычислить размер игры",
-        "storageSizeConfirm": "Вычислить размер игры? Это может занять некоторое время.",
-        "storageSizeRecalculateConfirm": "Текущий размер: {{currentSize}}. Вычислить размер игры заново?"
+        "storageSizeError": "Не удалось вычислить размер игры"
       }
     },
     "deleteAlert": {

@@ -439,6 +439,16 @@
       "createShortcut": "Create Shortcut",
       "browseLocalFiles": "Browse Local Files",
       "calculateStorageSize": "Calculate Game Size",
+      "editStorageSize": "Set Game Size",
+      "storageSizeDialog": {
+        "title": "Set Game Size",
+        "autoTitle": "Automatic Calculation",
+        "autoDescription": "Calculate the size from the current game root folder.",
+        "autoUnavailable": "Automatic calculation is unavailable because the game root folder is not set.",
+        "manualTitle": "Manual Input",
+        "manualDescription": "Enter the game size manually when automatic calculation is unavailable or the local files have been removed.",
+        "manualInputPlaceholder": "Enter size"
+      },
       "delete": "Delete",
       "notifications": {
         "shortcutCreated": "Shortcut created",
@@ -447,8 +457,9 @@
         "calculatingStorageSize": "Calculating game size...",
         "storageSizeCalculated": "Game size calculated: {{size}}",
         "storageSizeError": "Failed to calculate game size",
-        "storageSizeConfirm": "Calculate game size? This may take a moment.",
-        "storageSizeRecalculateConfirm": "Current size: {{currentSize}}. Recalculate game size?",
+        "storageSizeSaved": "Game size saved: {{size}}",
+        "storageSizeSaveError": "Failed to save game size",
+        "storageSizeNegative": "Game size cannot be negative",
         "recalculatingLastRunDate": "Recalculating last played date…",
         "lastRunDateRecalculated": "Last played date updated to {{date, niceDate}}",
         "lastRunDateCleared": "No valid timers found. Last played date cleared",
