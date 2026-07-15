@@ -111,11 +111,11 @@ export function SearchDescriptionDialog({
                       <DescriptionHtmlContent
                         value={item.description}
                         className={cn(
-                          'text-sm',
+                          'prose prose-sm dark:prose-invert max-w-none',
+                          'prose-headings:my-1', // Reduce heading margins for better spacing
                           'prose-a:text-primary', // Link Color
                           'prose-a:no-underline hover:prose-a:underline', // underline effect
                           'space-before-0',
-                          'whitespace-pre-line',
                           'break-words',
                           'leading-7'
                         )}
