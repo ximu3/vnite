@@ -1,16 +1,17 @@
+import { Cross2Icon } from '@radix-ui/react-icons'
+import { useTranslation } from 'react-i18next'
+
+import { METADATA_EXTRA_PREDEFINED_KEYS } from '@appTypes/models'
+import { Button } from '@ui/button'
+import { DateTimeInput } from '@ui/date-input'
+import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
+import { Separator } from '@ui/separator'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
+import { getAllExtraKeys } from '~/stores/game'
 import { cn } from '~/utils'
-import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip'
-import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
-import { Button } from '~/components/ui/button'
-import { DateTimeInput } from '~/components/ui/date-input'
-import { useFilterStore } from './store'
 import { FilterCombobox } from './FilterCombobox'
 import { StorageSizeFilter } from './StorageSizeFilter'
-import { Cross2Icon } from '@radix-ui/react-icons'
-import { Separator } from '~/components/ui/separator'
-import { useTranslation } from 'react-i18next'
-import { getAllExtraKeys } from '~/stores/game'
-import { METADATA_EXTRA_PREDEFINED_KEYS } from '@appTypes/models'
+import { useFilterStore } from './store'
 
 export function Filter({ children }: { children: React.ReactNode }): React.JSX.Element {
   const { isFilterMenuOpen, setIsFilterMenuOpen, clearFilter, filter, updateFilter, deleteFilter } =
@@ -139,7 +140,7 @@ export function Filter({ children }: { children: React.ReactNode }): React.JSX.E
                       : '1970-01-01',
                     e.target.value
                   ]
-                  updateFilter('releaseDate', newReleaseDateFilter)
+                  updateFilter('metadata.releaseDate', newReleaseDateFilter)
                 }}
               />
             </div>

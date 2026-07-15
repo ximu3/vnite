@@ -1,15 +1,9 @@
-import { useState, useEffect } from 'react'
-import { cn } from '~/utils'
-import { Button } from '~/components/ui/button'
-import { Input } from '~/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '~/components/ui/select'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+
+import { Button } from '@ui/button'
+import { StepperInput } from '@ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/select'
 
 interface StorageSizeFilterProps {
   value: string[] | undefined
@@ -18,8 +12,8 @@ interface StorageSizeFilterProps {
 }
 
 // Conversion constants
-const MIB_TO_BYTES = 1048576 // 1024 * 1024
-const GIB_TO_BYTES = 1073741824 // 1024 * 1024 * 1024
+const MIB_TO_BYTES = 1024 * 1024
+const GIB_TO_BYTES = 1024 * 1024 * 1024
 
 type SizeUnit = 'mib' | 'gib'
 
@@ -84,11 +78,16 @@ export function StorageSizeFilter({
     const parsed = parseFilterValue(value)
     if (parsed.minBytes !== null) {
       const divisor = unit === 'gib' ? GIB_TO_BYTES : MIB_TO_BYTES
-      setMinInput(String(parsed.minBytes / divisor))
+      setMinInput((parsed.minBytes / divisor).toFixed(3))
+    } else {
+      setMinInput('')
     }
+
     if (parsed.maxBytes !== null) {
       const divisor = unit === 'gib' ? GIB_TO_BYTES : MIB_TO_BYTES
-      setMaxInput(String(parsed.maxBytes / divisor))
+      setMaxInput((parsed.maxBytes / divisor).toFixed(3))
+    } else {
+      setMaxInput('')
     }
   }, [unit, value])
 
@@ -118,16 +117,6 @@ export function StorageSizeFilter({
     onChange([filterValue])
   }
 
-  const handleMinChange = (newMin: string): void => {
-    setMinInput(newMin)
-    updateFilter(newMin, maxInput, unit)
-  }
-
-  const handleMaxChange = (newMax: string): void => {
-    setMaxInput(newMax)
-    updateFilter(minInput, newMax, unit)
-  }
-
   const handleUnitChange = (newUnit: string): void => {
     const typedUnit = newUnit as SizeUnit
     setUnit(typedUnit)
@@ -146,39 +135,47 @@ export function StorageSizeFilter({
   const hasValue = value && value.length > 0 && value[0].startsWith('range:')
 
   return (
-    <div className={cn('flex flex-col gap-1 items-start justify-start')}>
-      <div className={cn('flex flex-row justify-between items-center w-full')}>
-        <div className={cn('whitespace-nowrap text-sm text-foreground ml-[6px]')}>
+    <div className="flex flex-col gap-1 items-start justify-start">
+      <div className="flex flex-row justify-between items-center w-full">
+        <div className="whitespace-nowrap text-sm text-foreground ml-[6px]">
           {t('filter.panel.storageSize')}
         </div>
         {hasValue && (
-          <Button className={cn('p-0 -mb-2 -mt-2')} variant={'link'} onClick={onClear}>
+          <Button className="p-0 -mb-2 -mt-2" variant={'link'} onClick={onClear}>
             {t('filter.panel.clearFilter')}
           </Button>
         )}
       </div>
-      <div className={cn('flex flex-row gap-2 items-center justify-center w-full')}>
-        <Input
-          type="number"
+      <div className="flex flex-row gap-2 items-center justify-center w-full">
+        <StepperInput
           min={0}
-          step={unit === 'gib' ? 0.1 : 1}
+          steps={
+            unit === 'gib'
+              ? { default: 0.1, shift: 1, alt: 5, ctrl: 10 }
+              : { default: 128, shift: 512, alt: 1024, ctrl: 1024 }
+          }
           placeholder={t('filter.panel.storageSizeMin')}
           value={minInput}
-          onChange={(e) => handleMinChange(e.target.value)}
-          className={cn('w-full h-8 text-sm')}
+          onChange={(e) => updateFilter(e.target.value, maxInput, unit)}
+          inputClassName="pr-4"
+          className="w-full h-8 text-sm"
         />
-        <span className={cn('text-sm text-muted-foreground')}>-</span>
-        <Input
-          type="number"
+        <span className="text-sm text-muted-foreground">-</span>
+        <StepperInput
           min={0}
-          step={unit === 'gib' ? 0.1 : 1}
+          steps={
+            unit === 'gib'
+              ? { default: 0.1, shift: 1, alt: 5, ctrl: 10 }
+              : { default: 128, shift: 512, alt: 1024, ctrl: 1024 }
+          }
           placeholder={t('filter.panel.storageSizeMax')}
           value={maxInput}
-          onChange={(e) => handleMaxChange(e.target.value)}
-          className={cn('w-full h-8 text-sm')}
+          onChange={(e) => updateFilter(minInput, e.target.value, unit)}
+          inputClassName="pr-4"
+          className="w-full h-8 text-sm"
         />
         <Select value={unit} onValueChange={handleUnitChange}>
-          <SelectTrigger className={cn('w-20 h-8')}>
+          <SelectTrigger className="w-20 h-8">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
