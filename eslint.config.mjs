@@ -26,6 +26,7 @@ export default tseslint.config(
       ...eslintPluginReactHooks.configs.recommended.rules,
       'react-hooks/exhaustive-deps': 'off',
       ...eslintPluginReactRefresh.configs.vite.rules,
+      'react/prop-types': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': [
         'error',
