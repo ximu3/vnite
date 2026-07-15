@@ -180,7 +180,9 @@
       "showNSFWBlurSwitcher": "NSFW コンテンツのスイッチャーを表示",
       "showNSFWBlurSwitcherDescription": "サイドバーにNSFWぼかし切り替えを表示",
       "showLocalGameFilterSwitcher": "ローカルゲームフィルターを表示",
-      "showLocalGameFilterSwitcherDescription": "タイトルバーにローカルゲームフィルターボタンを表示"
+      "showLocalGameFilterSwitcherDescription": "タイトルバーにローカルゲームフィルターボタンを表示",
+      "showToolbox": "ツールボックスを表示",
+      "showToolboxDescription": "サイドバーにツールボックスボタンを表示"
     },
     "customVisibilityFilter": {
       "title": "カスタム可視性フィルター",
@@ -260,6 +262,24 @@
         "testing": "アップスケーラーの動作を確認しています…",
         "testSuccess": "アップスケーラーのテストに成功しました",
         "testError": "アップスケーラーのテストに失敗しました: {{message}}"
+      }
+    },
+    "toolbox": {
+      "title": "ツールボックス",
+      "path": "パス",
+      "args": "起動引数",
+      "workingDirectory": "作業ディレクトリ",
+      "namePlaceholder": "ツール名",
+      "pathPlaceholder": "実行ファイルのパス",
+      "argsPlaceholder": "プログラムに渡す任意の起動引数",
+      "workingDirectoryPlaceholder": "デフォルト: 実行ファイルのディレクトリ",
+      "browse": "参照",
+      "newTool": "新しいツール",
+      "selectTool": "ツールを選択して設定",
+      "notifications": {
+        "iconPathRequired": "先に実行ファイルのパスを入力してください",
+        "extractIconFailed": "プログラムアイコンの取得に失敗しました: {{message}}",
+        "removeToolFailed": "ツールの削除に失敗しました: {{message}}"
       }
     }
   },

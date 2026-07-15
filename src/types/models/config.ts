@@ -108,6 +108,7 @@ export interface configDocs {
       showNSFWBlurSwitcher: boolean
       showLocalGameFilterSwitcher: boolean
       showCustomVisibilityFilterSwitcher: boolean
+      showToolbox: boolean
     }
     background: {
       customBackground: boolean
@@ -342,6 +343,16 @@ export interface configLocalDocs {
       bypassRules: string
     }
   }
+  toolbox: {
+    tools: {
+      [id: string]: {
+        name: string
+        path: string
+        args: string
+        workingDirectory: string
+      }
+    }
+  }
 }
 
 export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
@@ -407,7 +418,8 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       showThemeSwitcher: true,
       showNSFWBlurSwitcher: true,
       showLocalGameFilterSwitcher: true,
-      showCustomVisibilityFilterSwitcher: false
+      showCustomVisibilityFilterSwitcher: false,
+      showToolbox: true
     },
     background: {
       customBackground: true
@@ -602,6 +614,16 @@ export const DEFAULT_CONFIG_LOCAL_VALUES: Readonly<configLocalDocs> = {
       host: '',
       port: 0,
       bypassRules: '<local>,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fd00::/8'
+    }
+  },
+  toolbox: {
+    tools: {} as {
+      [id: string]: {
+        name: string
+        path: string
+        args: string
+        workingDirectory: string
+      }
     }
   }
 } as const

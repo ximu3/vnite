@@ -618,7 +618,8 @@ async function convertConfig(basePath: string): Promise<void> {
       showThemeSwitcher: v2Config.appearances.sidebar.showThemeSwitchInSidebar,
       showNSFWBlurSwitcher: true,
       showLocalGameFilterSwitcher: true,
-      showCustomVisibilityFilterSwitcher: false
+      showCustomVisibilityFilterSwitcher: false,
+      showToolbox: true
     })
 
     // Converting Local Configurations - Game Associations

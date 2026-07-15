@@ -8,6 +8,7 @@ import { setupNativeMonitorIPC } from '~/features/monitor'
 import { setupScraperIPC } from '~/features/scraper'
 import { setupSystemIPC } from '~/features/system'
 import { setupThemeIPC } from '~/features/theme'
+import { setupToolboxIPC } from '~/features/toolbox'
 import { setupTransformerIPC } from '~/features/transformer'
 import { setupUpdaterIPC } from '~/features/updater'
 import { setupPluginIPC } from '~/plugins'
@@ -24,6 +25,7 @@ export function setupIPC(): void {
   setupScraperIPC()
   setupSystemIPC()
   setupThemeIPC()
+  setupToolboxIPC()
   setupTransformerIPC()
   setupUpdaterIPC()
   setupPluginIPC()

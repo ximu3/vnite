@@ -180,7 +180,9 @@
       "showNSFWBlurSwitcher": "显示 NSFW 内容开关",
       "showNSFWBlurSwitcherDescription": "在侧边栏显示 NSFW 模糊切换器",
       "showLocalGameFilterSwitcher": "显示本地游戏过滤按钮",
-      "showLocalGameFilterSwitcherDescription": "在标题栏显示本地游戏过滤按钮"
+      "showLocalGameFilterSwitcherDescription": "在标题栏显示本地游戏过滤按钮",
+      "showToolbox": "显示工具箱",
+      "showToolboxDescription": "在侧边栏显示工具箱按钮"
     },
     "customVisibilityFilter": {
       "title": "自定义可见性过滤",
@@ -260,6 +262,24 @@
         "testing": "正在测试超分工具可用性…",
         "testSuccess": "超分工具测试通过",
         "testError": "超分工具测试失败：{{message}}"
+      }
+    },
+    "toolbox": {
+      "title": "工具箱",
+      "path": "路径",
+      "args": "启动参数",
+      "workingDirectory": "工作目录",
+      "namePlaceholder": "工具名称",
+      "pathPlaceholder": "可执行文件路径",
+      "argsPlaceholder": "程序可选的启动参数",
+      "workingDirectoryPlaceholder": "默认：可执行文件所在目录",
+      "browse": "浏览",
+      "newTool": "新工具",
+      "selectTool": "选择一个工具进行配置",
+      "notifications": {
+        "iconPathRequired": "请先填写可执行文件路径",
+        "extractIconFailed": "提取程序图标失败：{{message}}",
+        "removeToolFailed": "删除工具失败：{{message}}"
       }
     }
   },

@@ -255,6 +255,14 @@ type MainIpcEvents =
 
       'launcher:select-preset': (presetName: string, gameId: string, steamId?: string) => void
 
+      'toolbox:launch-tool': (tool: {
+        path: string
+        args: string
+        workingDirectory: string
+      }) => void
+      'toolbox:refresh-tool-icon': (toolId: string, exePath: string) => void
+      'toolbox:remove-tool': (toolId: string) => void
+
       'scraper:search-games': (dataSource: string, gameName: string) => GameList
       'scraper:check-game-exists': (dataSource: string, identifier: ScraperIdentifier) => boolean
       'scraper:get-game-metadata': (
