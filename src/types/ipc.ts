@@ -176,7 +176,12 @@ type MainIpcEvents =
       // Game memory management events
       'game:add-memory': (gameId: string) => gameDoc['memory']['memoryList'][string]
       'game:delete-memory': (gameId: string, memoryId: string) => void
-      'game:update-memory-cover': (gameId: string, memoryId: string, imgPath: string) => void
+      'game:update-memory-cover': (
+        gameId: string,
+        memoryId: string,
+        imgPath: string,
+        options?: { originalImagePath?: string }
+      ) => void
       'game:add-memory-inline-image': (gameId: string, imgPath: string) => string
       'game:export-all-memories': (gameId: string) => 'success' | 'empty' | 'canceled'
 

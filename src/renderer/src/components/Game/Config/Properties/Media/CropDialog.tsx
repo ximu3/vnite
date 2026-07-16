@@ -12,7 +12,7 @@ interface CropDialogProps {
   isOpen: boolean
   onClose: () => void
   imagePath: string | null
-  onCropComplete: (filePath: string) => void
+  onCropComplete: (filePath: string) => void | Promise<void>
 }
 
 export function CropDialog({
@@ -88,7 +88,7 @@ export function CropDialog({
 
       // If it is the original size then it returns directly
       if (actualWidth === imageSize.width && actualHeight === imageSize.height) {
-        onCropComplete(imagePath)
+        await onCropComplete(imagePath)
         return
       }
 
@@ -102,7 +102,7 @@ export function CropDialog({
 
       await new Promise((resolve) => setTimeout(resolve, 1000))
 
-      onCropComplete(filePath)
+      await onCropComplete(filePath)
     } catch (error) {
       console.error('Cropping Failure:', error)
       throw error

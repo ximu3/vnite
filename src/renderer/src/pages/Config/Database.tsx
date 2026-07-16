@@ -292,6 +292,13 @@ export function Database(): React.JSX.Element {
               />
               <ConfigItem
                 hookType="config"
+                path="memory.image.autoFillNoteFromFilename"
+                title={t('memory.autoFillNoteFromFilename.title')}
+                description={t('memory.autoFillNoteFromFilename.description')}
+                controlType="switch"
+              />
+              <ConfigItem
+                hookType="config"
                 path="memory.enableNotificationSound"
                 title={t('memory.enableNotificationSound.title')}
                 description={t('memory.enableNotificationSound.description')}

@@ -1,3 +1,4 @@
+import { CheckIcon } from 'lucide-react'
 import Markdown, { type Components } from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize'
@@ -53,6 +54,29 @@ export function MarkdownPreview({
     )
   }
 
+  // Render task-list checkboxes with theme colors instead of browser disabled styles.
+  const MarkdownInput: Components['input'] = (props) => {
+    if (props.type === 'checkbox') {
+      return (
+        <span
+          className={cn(
+            'absolute top-[0.3em] start-0 inline-flex size-[1em] shrink-0 items-center justify-center rounded-[0.2em] border shadow-xs',
+            props.checked
+              ? 'border-primary bg-primary text-primary-foreground'
+              : 'border-primary bg-transparent text-transparent'
+          )}
+        >
+          <CheckIcon className="size-[0.75em]" strokeWidth={3} />
+        </span>
+      )
+    }
+
+    const inputProps = { ...props }
+    delete inputProps.node
+
+    return <input {...inputProps} />
+  }
+
   return (
     <article
       className={cn(
@@ -62,6 +86,9 @@ export function MarkdownPreview({
         'prose-code:before:content-none prose-code:after:content-none',
         'prose-img:rounded-md prose-img:shadow-sm',
         'prose-a:text-primary prose-a:no-underline hover:prose-a:underline',
+        // Adjust task list styles
+        '[&_ul.contains-task-list]:list-none [&_ul.contains-task-list]:ps-0 [&_ul.contains-task-list]:ms-0',
+        '[&_li.task-list-item]:relative [&_li.task-list-item]:list-none [&_li.task-list-item]:ps-[2em]',
         className
       )}
     >
@@ -72,7 +99,8 @@ export function MarkdownPreview({
         urlTransform={(url) => url}
         components={{
           a: TargetBlankLink,
-          img: MarkdownImage
+          img: MarkdownImage,
+          input: MarkdownInput
         }}
       >
         {value}

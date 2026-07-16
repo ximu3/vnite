@@ -130,6 +130,7 @@ export interface configDocs {
       contentTopPadding: number
     }
     memory: {
+      gridColumnWidth: number
       masonryColumnWidth: number
       gridItemsPerPage: number
       masonryItemsPerPage: number
@@ -240,6 +241,7 @@ export interface configDocs {
   memory: {
     image: {
       saveToClipboard: boolean
+      autoFillNoteFromFilename: boolean
     }
     enableNotificationSound: boolean
   }
@@ -441,6 +443,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       contentTopPadding: 40 // in vh
     },
     memory: {
+      gridColumnWidth: 280,
       masonryColumnWidth: 220,
       gridItemsPerPage: 12,
       masonryItemsPerPage: 20,
@@ -513,7 +516,8 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
   },
   memory: {
     image: {
-      saveToClipboard: false
+      saveToClipboard: false,
+      autoFillNoteFromFilename: false
     },
     enableNotificationSound: true
   },

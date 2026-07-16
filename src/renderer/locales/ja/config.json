@@ -170,6 +170,8 @@
     },
     "memory": {
       "title": "メモリー",
+      "gridColumnWidth": "カード列幅",
+      "gridColumnWidthDescription": "メモリー領域の利用可能な幅とこのピクセル値に基づいて、カード表示の列数を自動計算します",
       "masonryColumnWidth": "ギャラリー列幅",
       "masonryColumnWidthDescription": "メモリー領域の利用可能な幅とこのピクセル値に基づいて、ギャラリーの列数を自動計算します"
     },
@@ -511,6 +513,10 @@
     "saveToClipboard": {
       "title": "クリップボードに保存",
       "description": "スクリーンショット撮影後、自動的に画像をクリップボードにコピーします"
+    },
+    "autoFillNoteFromFilename": {
+      "title": "カバー画像のファイル名を内容に使用",
+      "description": "内容が空のメモリーでカバー画像を選択したとき、拡張子を除いた画像ファイル名を内容に自動入力します"
     },
     "saveDir": {
       "title": "保存フォルダ",

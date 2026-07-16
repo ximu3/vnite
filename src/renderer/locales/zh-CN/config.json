@@ -170,6 +170,8 @@
     },
     "memory": {
       "title": "回忆",
+      "gridColumnWidth": "卡片列宽",
+      "gridColumnWidthDescription": "根据回忆区域可用宽度和该像素值自动计算卡片模式列数",
       "masonryColumnWidth": "照片墙列宽",
       "masonryColumnWidthDescription": "根据回忆区域可用宽度和该像素值自动计算照片墙列数"
     },
@@ -511,6 +513,10 @@
     "saveToClipboard": {
       "title": "保存到剪贴板",
       "description": "截图后自动将图片保存到剪贴板"
+    },
+    "autoFillNoteFromFilename": {
+      "title": "使用封面文件名填充内容",
+      "description": "为内容为空的回忆选择封面时，自动使用去除扩展名后的图片文件名填充内容"
     },
     "saveDir": {
       "title": "截图储存文件夹",
