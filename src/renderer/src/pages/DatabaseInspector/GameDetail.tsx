@@ -33,14 +33,15 @@ import {
   ContextMenuTrigger
 } from '@ui/context-menu'
 import { GameImage } from '@ui/game-image'
+import { ImageViewer } from '@ui/image-viewer'
 import { ScrollArea } from '@ui/scroll-area'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@ui/table'
 import { toast } from 'sonner'
 import { ipcManager } from '~/app/ipc'
 import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
 import { ScrollToTopButton } from '~/components/Showcase/ScrollToTopButton'
-import { ImageViewerDialog } from '~/components/dialog/ImageViewerDialog'
-import { cn, formatStorageSize, scrollToElement } from '~/utils'
+import { cn, createAttachmentUrl, formatStorageSize, scrollToElement } from '~/utils'
+import type { ImageViewerRequest } from '~/utils/image-viewer'
 import { DatabaseInspectorMetricCard } from './MetricCard'
 import {
   DatabaseInspectorErrorCard,
@@ -76,10 +77,7 @@ export function DatabaseInspectorGameDetail({ gameId }: { gameId: string }): Rea
   const refreshGameDetail = useDatabaseInspectorStore((state) => state.refreshGameDetail)
   const invalidateOverview = useDatabaseInspectorStore((state) => state.invalidateOverview)
   const [filter, setFilter] = useState<DetailFilter>('all')
-  const [imageViewer, setImageViewer] = useState<{ open: boolean; path: string | null }>({
-    open: false,
-    path: null
-  })
+  const [imageViewerRequest, setImageViewerRequest] = useState<ImageViewerRequest | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<GameAttachmentEntry | null>(null)
   const setLazyloadMark = usePositionButtonStore((state) => state.setLazyloadMark)
 
@@ -105,25 +103,16 @@ export function DatabaseInspectorGameDetail({ gameId }: { gameId: string }): Rea
     }
   }
 
-  const handleViewAttachment = async (entry: GameAttachmentEntry): Promise<void> => {
-    try {
-      const tempPath = await ipcManager.invoke(
-        'db:get-attachment-temp-file',
-        gameId,
-        entry.attachmentId
-      )
-      if (!tempPath) {
-        toast.error(t('detail.imageActions.viewError', { error: 'File not found' }))
-        return
-      }
-      setImageViewer({ open: true, path: tempPath as string })
-    } catch (error) {
-      toast.error(
-        t('detail.imageActions.viewError', {
-          error: error instanceof Error ? error.message : String(error)
-        })
-      )
-    }
+  const handleViewAttachment = (entry: GameAttachmentEntry): void => {
+    setImageViewerRequest({
+      items: [
+        {
+          key: `database-attachment-${gameId}-${entry.attachmentId}`,
+          src: createAttachmentUrl('game', gameId, entry.attachmentId)
+        }
+      ],
+      initialIndex: 0
+    })
   }
 
   const handleDeleteAttachment = async (): Promise<void> => {
@@ -380,11 +369,12 @@ export function DatabaseInspectorGameDetail({ gameId }: { gameId: string }): Rea
 
       <ScrollToTopButton scrollAreaRef={scrollAreaRef} threshold={500} />
 
-      <ImageViewerDialog
-        isOpen={imageViewer.open}
-        imagePath={imageViewer.path}
-        onClose={() => setImageViewer({ open: false, path: null })}
-      />
+      {imageViewerRequest && (
+        <ImageViewer
+          request={imageViewerRequest}
+          onAfterClose={() => setImageViewerRequest(null)}
+        />
+      )}
       <AlertDialog
         open={deleteTarget !== null}
         onOpenChange={(open) => {

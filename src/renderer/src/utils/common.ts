@@ -8,6 +8,22 @@ import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
 import { useRunningGames } from '~/pages/Library/store'
 import { getGameLocalStore, getGameStore } from '~/stores/game'
 
+function encodeAttachmentPath(value: string): string {
+  return value.split('/').map(encodeURIComponent).join('/')
+}
+
+export function createAttachmentUrl(
+  dbName: string,
+  docId: string,
+  attachmentId: string,
+  cacheKey: string | number = Date.now()
+): string {
+  const encodedDbName = encodeURIComponent(dbName)
+  const encodedDocId = encodeURIComponent(docId)
+  const encodedAttachmentId = encodeAttachmentPath(attachmentId)
+  return `attachment://${encodedDbName}/${encodedDocId}/${encodedAttachmentId}?t=${encodeURIComponent(cacheKey)}`
+}
+
 export function changeFontFamily(
   fontFamily: string | null,
   defaultFallback: string = 'system-ui'

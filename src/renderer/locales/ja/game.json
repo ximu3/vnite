@@ -590,8 +590,6 @@
           "importFromUrl": "URLからインポート",
           "searchImage": "画像を検索",
           "viewLargeImage": "拡大画像で表示",
-          "copyToClipboard": "クリップボードにコピー",
-          "saveAs": "名前を付けて保存",
           "cropImage": "画像を切り抜き",
           "upscaleImage": "背景を超解像",
           "deleteImage": "画像を削除"

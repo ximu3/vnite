@@ -31,6 +31,7 @@ export type MasonryItem = { memoryId: string; itemInfo: MemoryMasonryItemInfo }
 export function MemoryMasonryView({
   gameId,
   memoryIds,
+  viewerMemoryIds,
   masonryItemByMemoryId,
   columnWidth,
   onCoverMissing,
@@ -38,6 +39,7 @@ export function MemoryMasonryView({
 }: {
   gameId: string
   memoryIds: string[]
+  viewerMemoryIds: string[]
   masonryItemByMemoryId: Record<string, MemoryMasonryItemInfo>
   columnWidth: number
   onCoverMissing: (memoryId: string) => void
@@ -105,6 +107,7 @@ export function MemoryMasonryView({
               key={`memory-masonry-${item.memoryId}`}
               gameId={gameId}
               memoryId={item.memoryId}
+              viewerMemoryIds={viewerMemoryIds}
               itemInfo={item.itemInfo}
               onCoverMissing={onCoverMissing}
               onDelete={onDelete}
@@ -119,19 +122,21 @@ export function MemoryMasonryView({
 function MemoryMasonryItem({
   gameId,
   memoryId,
+  viewerMemoryIds,
   itemInfo,
   onCoverMissing,
   onDelete
 }: {
   gameId: string
   memoryId: string
+  viewerMemoryIds: string[]
   itemInfo: MemoryMasonryItemInfo
   onCoverMissing: (memoryId: string) => void
   onDelete: (memoryId: string) => Promise<void>
 }): React.JSX.Element {
   const { t } = useTranslation('game')
   const refreshLight = useLightStore((state) => state.refresh)
-  const openImageViewerDialog = useGameDetailStore((state) => state.openImageViewerDialog)
+  const openImageViewer = useGameDetailStore((state) => state.openImageViewer)
   const openCropDialog = useMemoryStore((state) => state.openCropDialog)
 
   async function handleCoverSelect(): Promise<void> {
@@ -204,7 +209,14 @@ function MemoryMasonryItem({
         <div
           className={cn('block w-full cursor-zoom-in overflow-hidden border-0 bg-transparent p-0')}
           style={{ aspectRatio: `1 / ${itemInfo.heightRatio}` }}
-          onClick={() => void openLargeMemoryImage({ gameId, memoryId, openImageViewerDialog })}
+          onClick={() =>
+            openLargeMemoryImage({
+              gameId,
+              memoryId,
+              memoryIds: viewerMemoryIds,
+              openImageViewer
+            })
+          }
         >
           <GameImage
             type={`memories/${memoryId}`}

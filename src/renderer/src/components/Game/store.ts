@@ -1,11 +1,10 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import type { ImageViewerRequest } from '~/utils/image-viewer'
 
 export type PropertiesDialogTab = 'launcher' | 'path' | 'media'
 type MemoryPageView = 'grid' | 'masonry' | 'list'
 type MemoryPageByView = Record<MemoryPageView, number>
-
-type ImageViewerDialogState = { open: false; imagePath: null } | { open: true; imagePath: string }
 
 export interface GameDetailStore {
   isEditingLogo: boolean
@@ -27,9 +26,9 @@ export interface GameDetailStore {
   openPropertiesDialog: (defaultTab?: PropertiesDialogTab) => void
   closePropertiesDialog: () => void
 
-  imageViewerDialog: ImageViewerDialogState
-  openImageViewerDialog: (imagePath: string) => void
-  closeImageViewerDialog: () => void
+  imageViewerRequest: ImageViewerRequest | null
+  openImageViewer: (request: ImageViewerRequest) => void
+  closeImageViewer: () => void
 
   memoryPageByGameId: Record<string, MemoryPageByView>
   setMemoryPageByView: (gameId: string, view: MemoryPageView, page: number) => void
@@ -62,9 +61,9 @@ export const useGameDetailStore = create<GameDetailStore>((set) => ({
     set({ propertiesDialog: { open: true, defaultTab } }),
   closePropertiesDialog: () => set({ propertiesDialog: { open: false } }),
 
-  imageViewerDialog: { open: false, imagePath: null },
-  openImageViewerDialog: (imagePath) => set({ imageViewerDialog: { open: true, imagePath } }),
-  closeImageViewerDialog: () => set({ imageViewerDialog: { open: false, imagePath: null } }),
+  imageViewerRequest: null,
+  openImageViewer: (request) => set({ imageViewerRequest: request }),
+  closeImageViewer: () => set({ imageViewerRequest: null }),
 
   memoryPageByGameId: {},
   setMemoryPageByView: (gameId, view, page) =>

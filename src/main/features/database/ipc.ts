@@ -9,7 +9,6 @@ import {
   resetAppearancesSettings,
   getLocalStorageReport,
   getGameStorageDetail,
-  getGameAttachmentTempFile,
   removeGameImageAttachment
 } from './services'
 import { baseDBManager, ConfigDBManager } from '~/core/database'
@@ -105,13 +104,6 @@ export function setupDatabaseIPC(): void {
   ipcManager.handle('db:reset-appearances-settings', async () => {
     await resetAppearancesSettings()
   })
-
-  ipcManager.handle(
-    'db:get-attachment-temp-file',
-    async (_, gameId: string, attachmentId: string) => {
-      return await getGameAttachmentTempFile(gameId, attachmentId)
-    }
-  )
 
   ipcManager.handle(
     'db:remove-game-attachment',

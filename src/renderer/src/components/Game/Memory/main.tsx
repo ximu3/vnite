@@ -426,6 +426,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
         <MemoryCardView
           gameId={gameId}
           memoryIds={activePagination.pagedMemoryIds}
+          viewerMemoryIds={masonryMemoryIds}
           memoryList={memoryList}
           masonryItemByMemoryId={masonryItemByMemoryId}
           columnWidth={gridColumnWidth}
@@ -440,6 +441,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
         <MemoryMasonryView
           gameId={gameId}
           memoryIds={activePagination.pagedMemoryIds}
+          viewerMemoryIds={masonryMemoryIds}
           masonryItemByMemoryId={masonryItemByMemoryId}
           columnWidth={masonryColumnWidth}
           onCoverMissing={handleMasonryCoverMissing}
