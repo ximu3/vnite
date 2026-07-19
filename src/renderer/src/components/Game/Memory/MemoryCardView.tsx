@@ -8,6 +8,7 @@ type MemoryList = gameDoc['memory']['memoryList']
 export function MemoryCardView({
   gameId,
   memoryIds,
+  viewerMemoryIds,
   memoryList,
   masonryItemByMemoryId,
   columnWidth,
@@ -15,6 +16,7 @@ export function MemoryCardView({
 }: {
   gameId: string
   memoryIds: string[]
+  viewerMemoryIds: string[]
   memoryList: MemoryList
   masonryItemByMemoryId: Record<string, MemoryMasonryItemInfo>
   columnWidth: number
@@ -39,6 +41,7 @@ export function MemoryCardView({
             key={`memory-${id}`}
             gameId={gameId}
             memoryId={id}
+            viewerMemoryIds={viewerMemoryIds}
             handleDelete={() => onDelete(id)}
             note={memory.note}
             date={memory.date}

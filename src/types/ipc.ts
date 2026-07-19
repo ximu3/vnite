@@ -88,7 +88,6 @@ type MainIpcEvents =
         extensions?: string[],
         defaultPath?: string
       ) => string[] | undefined
-      'system:save-image-as-file-dialog': (sourcePath: string) => boolean
       'system:get-path-size': (paths: string[]) => number
       'system:read-file-buffer': (filePath: string) => Buffer
       'system:open-path-in-explorer': (filePath: string) => void
@@ -101,7 +100,6 @@ type MainIpcEvents =
         hotkeyName: keyof configLocalDocs['hotkeys'],
         hotkey: string
       ) => { success: true } | { success: false; reason: 'registrationFailed' | 'unknown' }
-      'system:delete-temp-file': (path: string) => void
 
       'app:update-language': (language: string) => void
       'app:get-app-version': () => string
@@ -121,10 +119,8 @@ type MainIpcEvents =
       }) => string
       'utils:save-game-icon-by-file': (gameId: string, filePath: string) => void
       'utils:download-temp-image': (url: string) => string
-      'utils:resolve-image-source-to-file-path': (source: string) => string
       'utils:test-upscaler': () => void
       'utils:save-clipboard-image': () => string
-      'utils:write-clipboard-image': (data: string, type: 'path') => boolean
       'utils:get-app-log-contents-in-current-lifetime': () => string
       'utils:copy-app-log-in-current-lifetime-to-clipboard-as-file': () => void
       'utils:open-log-path-in-explorer': () => void
@@ -152,7 +148,6 @@ type MainIpcEvents =
       'db:get-all-docs': (dbName: string) => Record<string, any>
       'db:get-local-storage-report': () => LocalDatabaseStorageReport
       'db:get-game-storage-detail': (gameId: string) => GameDatabaseStorageDetail
-      'db:get-attachment-temp-file': (gameId: string, attachmentId: string) => string | null
       'db:remove-game-attachment': (gameId: string, attachmentId: string) => void
       'db:restart-sync': () => void
       'db:full-sync': () => void

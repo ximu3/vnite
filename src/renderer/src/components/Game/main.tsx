@@ -1,17 +1,18 @@
 import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ImageViewerDialog } from '~/components/dialog/ImageViewerDialog'
+
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger
-} from '~/components/ui/context-menu'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
+} from '@ui/context-menu'
+import { ImageViewer } from '@ui/image-viewer'
+import { ScrollArea } from '@ui/scroll-area'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
 import { useConfigState } from '~/hooks'
 import { cn } from '~/utils'
 import { ScrollToTopButton } from '../Showcase/ScrollToTopButton'
-import { ScrollArea } from '../ui/scroll-area'
 import { PlayTimeEditorDialog } from './Config/ManageMenu/PlayTimeEditorDialog'
 import { ScoreEditorDialog } from './Config/ManageMenu/ScoreEditorDialog'
 import { GamePropertiesDialog } from './Config/Properties'
@@ -40,9 +41,9 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
   const propertiesDialogState = useGameDetailStore((s) => s.propertiesDialog)
   const closePropertiesDialog = useGameDetailStore((s) => s.closePropertiesDialog)
   const openPropertiesDialog = useGameDetailStore((s) => s.openPropertiesDialog)
-  const imageViewerDialogState = useGameDetailStore((s) => s.imageViewerDialog)
-  const openImageViewerDialog = useGameDetailStore((s) => s.openImageViewerDialog)
-  const closeImageViewerDialog = useGameDetailStore((s) => s.closeImageViewerDialog)
+  const imageViewerRequest = useGameDetailStore((s) => s.imageViewerRequest)
+  const openImageViewer = useGameDetailStore((s) => s.openImageViewer)
+  const closeImageViewer = useGameDetailStore((s) => s.closeImageViewer)
   const isPlayTimeEditorDialogOpen = useGameDetailStore((state) => state.isPlayTimeEditorDialogOpen)
   const setIsPlayTimeEditorDialogOpen = useGameDetailStore(
     (state) => state.setIsPlayTimeEditorDialogOpen
@@ -173,7 +174,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
             </ContextMenuItem>
             <ContextMenuItem
               onSelect={() => {
-                void openLargeGameMediaImage({ gameId, type: 'background', openImageViewerDialog })
+                void openLargeGameMediaImage({ gameId, type: 'background', openImageViewer })
               }}
             >
               {t('detail.properties.media.actions.viewLargeImage')}
@@ -195,12 +196,8 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
           defaultTab={propertiesDialogState.defaultTab}
         />
       )}
-      {imageViewerDialogState.open && (
-        <ImageViewerDialog
-          isOpen={imageViewerDialogState.open}
-          imagePath={imageViewerDialogState.imagePath}
-          onClose={closeImageViewerDialog}
-        />
+      {imageViewerRequest && (
+        <ImageViewer request={imageViewerRequest} onAfterClose={closeImageViewer} />
       )}
       {isInformationDialogOpen && (
         <InformationDialog

@@ -50,6 +50,7 @@ const CARD_NOTE_MAX_RATIO = 0.8
 export function MemoryCard({
   gameId,
   memoryId,
+  viewerMemoryIds,
   handleDelete,
   note,
   date,
@@ -57,6 +58,7 @@ export function MemoryCard({
 }: {
   gameId: string
   memoryId: string
+  viewerMemoryIds: string[]
   handleDelete: () => void
   note: string
   date: string
@@ -69,7 +71,7 @@ export function MemoryCard({
   const memoryRef = useRef<HTMLDivElement>(null)
   const noteMeasureRef = useRef<HTMLDivElement>(null)
   const refreshLight = useLightStore((state) => state.refresh)
-  const openImageViewerDialog = useGameDetailStore((state) => state.openImageViewerDialog)
+  const openImageViewer = useGameDetailStore((state) => state.openImageViewer)
   const openCropDialog = useMemoryStore((state) => state.openCropDialog)
   const openNoteDialog = useMemoryStore((state) => state.openNoteDialog)
   const hasNote = Boolean(note?.trim())
@@ -331,7 +333,12 @@ export function MemoryCard({
             '[bottom:var(--memory-overlay-rest)] group-hover:[bottom:var(--memory-overlay-hover)]'
           )}
           onClick={() => {
-            void openLargeMemoryImage({ gameId, memoryId, openImageViewerDialog })
+            openLargeMemoryImage({
+              gameId,
+              memoryId,
+              memoryIds: viewerMemoryIds,
+              openImageViewer
+            })
           }}
         >
           {renderForegroundCoverImage({
@@ -381,7 +388,12 @@ export function MemoryCard({
         <div
           className={cn('absolute inset-0 z-[2] cursor-zoom-in overflow-hidden')}
           onClick={() => {
-            void openLargeMemoryImage({ gameId, memoryId, openImageViewerDialog })
+            openLargeMemoryImage({
+              gameId,
+              memoryId,
+              memoryIds: viewerMemoryIds,
+              openImageViewer
+            })
           }}
         >
           {renderForegroundCoverImage({

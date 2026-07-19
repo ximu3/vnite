@@ -590,8 +590,6 @@
           "importFromUrl": "从链接导入",
           "searchImage": "搜索图片",
           "viewLargeImage": "查看大图",
-          "copyToClipboard": "复制到剪贴板",
-          "saveAs": "另存为",
           "cropImage": "裁剪图片",
           "upscaleImage": "超分背景图",
           "deleteImage": "删除图片"

@@ -1,8 +1,11 @@
-import { SeparatorDashed } from '@ui/separator-dashed'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+
+import { SeparatorDashed } from '@ui/separator-dashed'
 import { useGameState } from '~/hooks'
 import { cn, copyWithToast } from '~/utils'
+import { createImageViewerRequestFromElements } from '~/utils/image-viewer'
+import { useGameDetailStore } from '../../store'
 import { DescriptionDialog } from './DescriptionDialog'
 import { DescriptionHtmlContent } from './DescriptionHtmlContent'
 import { SearchDescriptionDialog } from './SearchDescriptionDialog'
@@ -19,6 +22,7 @@ export function DescriptionCard({
   const [originalName] = useGameState(gameId, 'metadata.originalName')
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const openImageViewer = useGameDetailStore((state) => state.openImageViewer)
 
   const [isCollapsed, setIsCollapsed] = useState(false)
 
@@ -68,6 +72,14 @@ export function DescriptionCard({
         <DescriptionHtmlContent
           value={description}
           emptyLabel={t('detail.overview.description.empty')}
+          onImageClick={(selectedImage, images) => {
+            const request = createImageViewerRequestFromElements(
+              images,
+              selectedImage,
+              `game-description-${gameId}`
+            )
+            if (request) openImageViewer(request)
+          }}
           className={cn(
             'prose prose-sm dark:prose-invert max-w-none',
             'prose-headings:my-1', // Reduce heading margins for better spacing

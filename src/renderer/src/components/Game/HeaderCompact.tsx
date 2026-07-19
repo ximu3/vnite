@@ -37,9 +37,8 @@ export function HeaderCompact({
   const [showCover] = useConfigState('appearances.gameDetail.showCover')
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
   const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
-
   const openPropertiesDialog = useGameDetailStore((state) => state.openPropertiesDialog)
-  const openImageViewerDialog = useGameDetailStore((state) => state.openImageViewerDialog)
+  const openImageViewer = useGameDetailStore((state) => state.openImageViewer)
   const setIsStorageSizeDialogOpen = useGameDetailStore((state) => state.setIsStorageSizeDialogOpen)
 
   const stringToBase64 = (str: string): string =>
@@ -61,19 +60,19 @@ export function HeaderCompact({
                   blur={nsfw && nsfwBlurLevel >= NSFWBlurLevel.BlurImage}
                   className={cn('w-auto h-full object-cover rounded-lg shadow-md')}
                   fallback={<div className="h-full" />}
+                  onClick={() => {
+                    void openLargeGameMediaImage({
+                      gameId,
+                      type: 'cover',
+                      openImageViewer
+                    })
+                  }}
                 />
               </div>
             </ContextMenuTrigger>
             <ContextMenuContent className={cn('w-40')}>
               <ContextMenuItem onSelect={() => openPropertiesDialog('media')}>
                 {t('detail.contextMenu.editMediaProperties')}
-              </ContextMenuItem>
-              <ContextMenuItem
-                onSelect={() => {
-                  void openLargeGameMediaImage({ gameId, type: 'cover', openImageViewerDialog })
-                }}
-              >
-                {t('detail.properties.media.actions.viewLargeImage')}
               </ContextMenuItem>
             </ContextMenuContent>
           </ContextMenu>
