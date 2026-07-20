@@ -152,6 +152,12 @@ export const TimerChart = ({
             <ChartTooltipContent
               {...props}
               formatter={(value: ValueType) => formatGameTime((value as number) * 60 * 1000)}
+              labelFormatter={(label, payload) => {
+                if (granularity !== 'day') return label
+
+                const jumpDate = payload?.[0]?.payload?.jumpDate
+                return typeof jumpDate === 'string' ? jumpDate : label
+              }}
               hideIndicator={false}
               color="var(--primary)"
             />

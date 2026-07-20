@@ -85,7 +85,7 @@
       "playTime": "Время игры: {{time, gameTime}}"
     },
     "chart": {
-      "weeklyPlayTime": "Еженедельное время игры",
+      "dailyPlayTime": "Ежедневное время игры",
       "calendarTitle": "Календарь за месяц",
       "weekFormat": "Неделя {{week}}",
       "weekDateRange": "Нед. {{week}} ({{startDay}}–{{endDay}})"
