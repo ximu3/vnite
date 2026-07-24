@@ -173,7 +173,9 @@
       "gridColumnWidth": "卡片列宽",
       "gridColumnWidthDescription": "根据回忆区域可用宽度和该像素值自动计算卡片模式列数",
       "masonryColumnWidth": "照片墙列宽",
-      "masonryColumnWidthDescription": "根据回忆区域可用宽度和该像素值自动计算照片墙列数"
+      "masonryColumnWidthDescription": "根据回忆区域可用宽度和该像素值自动计算照片墙列数",
+      "fullColumnWidth": "图文列宽",
+      "fullColumnWidthDescription": "根据回忆区域可用宽度和该像素值自动计算图文模式列数"
     },
     "sidebar": {
       "title": "侧边栏",

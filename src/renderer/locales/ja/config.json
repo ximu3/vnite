@@ -173,7 +173,9 @@
       "gridColumnWidth": "カード列幅",
       "gridColumnWidthDescription": "メモリー領域の利用可能な幅とこのピクセル値に基づいて、カード表示の列数を自動計算します",
       "masonryColumnWidth": "ギャラリー列幅",
-      "masonryColumnWidthDescription": "メモリー領域の利用可能な幅とこのピクセル値に基づいて、ギャラリーの列数を自動計算します"
+      "masonryColumnWidthDescription": "メモリー領域の利用可能な幅とこのピクセル値に基づいて、ギャラリーの列数を自動計算します",
+      "fullColumnWidth": "画像・テキスト列幅",
+      "fullColumnWidthDescription": "メモリー領域の利用可能な幅とこのピクセル値に基づいて、画像・テキスト表示の列数を自動計算します"
     },
     "sidebar": {
       "title": "サイドバー",
