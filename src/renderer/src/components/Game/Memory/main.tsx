@@ -59,6 +59,8 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
   const [gridColumnWidth] = useConfigState('appearances.memory.gridColumnWidth')
   const [masonryColumnWidth] = useConfigState('appearances.memory.masonryColumnWidth')
   const [fullColumnWidth] = useConfigState('appearances.memory.fullColumnWidth')
+  const [showAddCoverHoverButton] = useConfigState('appearances.memory.showAddCoverHoverButton')
+  const [showAddNoteHoverButton] = useConfigState('appearances.memory.showAddNoteHoverButton')
   const [gridItemsPerPage, setGridItemsPerPage] = useConfigState(
     'appearances.memory.gridItemsPerPage'
   )
@@ -465,6 +467,8 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
           memoryList={memoryList}
           masonryItemByMemoryId={masonryItemByMemoryId}
           columnWidth={gridColumnWidth}
+          showAddCoverHoverButton={showAddCoverHoverButton}
+          showAddNoteHoverButton={showAddNoteHoverButton}
           onDelete={handleDelete}
         />
       )}
@@ -501,6 +505,8 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
           memoryList={memoryList}
           masonryItemByMemoryId={masonryItemByMemoryId}
           columnWidth={fullColumnWidth}
+          showAddCoverHoverButton={showAddCoverHoverButton}
+          showAddNoteHoverButton={showAddNoteHoverButton}
           onCoverMissing={handleMasonryCoverMissing}
           onDelete={handleDelete}
         />

@@ -572,6 +572,20 @@ export function Appearances(): React.JSX.Element {
               step={8}
               formatValue={(value) => `${value}px`}
             />
+            <ConfigItem
+              hookType="config"
+              path="appearances.memory.showAddCoverHoverButton"
+              title={t('appearances.memory.showAddCoverHoverButton')}
+              description={t('appearances.memory.showAddCoverHoverButtonDescription')}
+              controlType="switch"
+            />
+            <ConfigItem
+              hookType="config"
+              path="appearances.memory.showAddNoteHoverButton"
+              title={t('appearances.memory.showAddNoteHoverButton')}
+              description={t('appearances.memory.showAddNoteHoverButtonDescription')}
+              controlType="switch"
+            />
           </div>
 
           {/* Sidebar Settings */}

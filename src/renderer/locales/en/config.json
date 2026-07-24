@@ -175,7 +175,11 @@
       "masonryColumnWidth": "Gallery Column Width",
       "masonryColumnWidthDescription": "Automatically calculate the gallery column count from the available width and this pixel value",
       "fullColumnWidth": "Text & Image Column Width",
-      "fullColumnWidthDescription": "Automatically calculate the text and image view column count from the available width and this pixel value"
+      "fullColumnWidthDescription": "Automatically calculate the text and image view column count from the available width and this pixel value",
+      "showAddCoverHoverButton": "Show Add Cover Hover Button",
+      "showAddCoverHoverButtonDescription": "Show an add cover shortcut when a memory is missing its cover in card and text and image views",
+      "showAddNoteHoverButton": "Show Add Note Hover Button",
+      "showAddNoteHoverButtonDescription": "Show an add note shortcut when a memory is missing its note in card and text and image views"
     },
     "sidebar": {
       "title": "Sidebar",

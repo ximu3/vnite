@@ -12,6 +12,8 @@ export function MemoryCardView({
   memoryList,
   masonryItemByMemoryId,
   columnWidth,
+  showAddCoverHoverButton,
+  showAddNoteHoverButton,
   onDelete
 }: {
   gameId: string
@@ -20,6 +22,8 @@ export function MemoryCardView({
   memoryList: MemoryList
   masonryItemByMemoryId: Record<string, MemoryMasonryItemInfo>
   columnWidth: number
+  showAddCoverHoverButton: boolean
+  showAddNoteHoverButton: boolean
   onDelete: (memoryId: string) => void
 }): React.JSX.Element {
   return (
@@ -46,6 +50,8 @@ export function MemoryCardView({
             note={memory.note}
             date={memory.date}
             coverHeightRatio={masonryItemByMemoryId[id]?.heightRatio}
+            showAddCoverHoverButton={showAddCoverHoverButton}
+            showAddNoteHoverButton={showAddNoteHoverButton}
           />
         )
       })}

@@ -133,6 +133,8 @@ export interface configDocs {
       gridColumnWidth: number
       masonryColumnWidth: number
       fullColumnWidth: number
+      showAddCoverHoverButton: boolean
+      showAddNoteHoverButton: boolean
       gridItemsPerPage: number
       masonryItemsPerPage: number
       listItemsPerPage: number
@@ -448,6 +450,8 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       gridColumnWidth: 280,
       masonryColumnWidth: 220,
       fullColumnWidth: 320,
+      showAddCoverHoverButton: true,
+      showAddNoteHoverButton: true,
       gridItemsPerPage: 12,
       masonryItemsPerPage: 20,
       listItemsPerPage: 20,
