@@ -175,7 +175,11 @@
       "masonryColumnWidth": "照片牆欄寬",
       "masonryColumnWidthDescription": "根據回憶區域可用寬度與此像素值自動計算照片牆欄數",
       "fullColumnWidth": "圖文欄寬",
-      "fullColumnWidthDescription": "根據回憶區域可用寬度與此像素值自動計算圖文模式欄數"
+      "fullColumnWidthDescription": "根據回憶區域可用寬度與此像素值自動計算圖文模式欄數",
+      "showAddCoverHoverButton": "顯示新增封面懸浮按鈕",
+      "showAddCoverHoverButtonDescription": "當回憶缺少封面時，在卡片和圖文檢視中顯示新增封面的快捷按鈕",
+      "showAddNoteHoverButton": "顯示新增筆記懸浮按鈕",
+      "showAddNoteHoverButtonDescription": "當回憶缺少筆記時，在卡片和圖文檢視中顯示新增筆記的快捷按鈕"
     },
     "sidebar": {
       "title": "側邊欄",

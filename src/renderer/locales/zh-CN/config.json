@@ -175,7 +175,11 @@
       "masonryColumnWidth": "照片墙列宽",
       "masonryColumnWidthDescription": "根据回忆区域可用宽度和该像素值自动计算照片墙列数",
       "fullColumnWidth": "图文列宽",
-      "fullColumnWidthDescription": "根据回忆区域可用宽度和该像素值自动计算图文模式列数"
+      "fullColumnWidthDescription": "根据回忆区域可用宽度和该像素值自动计算图文模式列数",
+      "showAddCoverHoverButton": "显示添加封面悬浮按钮",
+      "showAddCoverHoverButtonDescription": "当回忆缺少封面时，在卡片和图文视图中显示添加封面的快捷按钮",
+      "showAddNoteHoverButton": "显示添加笔记悬浮按钮",
+      "showAddNoteHoverButtonDescription": "当回忆缺少笔记时，在卡片和图文视图中显示添加笔记的快捷按钮"
     },
     "sidebar": {
       "title": "侧边栏",

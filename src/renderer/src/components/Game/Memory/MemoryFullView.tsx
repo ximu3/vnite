@@ -41,6 +41,8 @@ export function MemoryFullView({
   memoryList,
   masonryItemByMemoryId,
   columnWidth,
+  showAddCoverHoverButton,
+  showAddNoteHoverButton,
   onCoverMissing,
   onDelete
 }: {
@@ -50,6 +52,8 @@ export function MemoryFullView({
   memoryList: MemoryList
   masonryItemByMemoryId: Record<string, MemoryMasonryItemInfo>
   columnWidth: number
+  showAddCoverHoverButton: boolean
+  showAddNoteHoverButton: boolean
   onCoverMissing: (memoryId: string) => void
   onDelete: (memoryId: string) => Promise<void>
 }): React.JSX.Element {
@@ -75,6 +79,8 @@ export function MemoryFullView({
               note={memory.note}
               date={memory.date}
               coverHeightRatio={masonryItemByMemoryId[memoryId]?.heightRatio}
+              showAddCoverHoverButton={showAddCoverHoverButton}
+              showAddNoteHoverButton={showAddNoteHoverButton}
               onCoverMissing={() => onCoverMissing(memoryId)}
               onDelete={() => onDelete(memoryId)}
             />
@@ -123,6 +129,8 @@ function MemoryFullCard({
   note,
   date,
   coverHeightRatio,
+  showAddCoverHoverButton,
+  showAddNoteHoverButton,
   onCoverMissing,
   onDelete
 }: {
@@ -132,6 +140,8 @@ function MemoryFullCard({
   note: string
   date: string
   coverHeightRatio?: number
+  showAddCoverHoverButton: boolean
+  showAddNoteHoverButton: boolean
   onCoverMissing: () => void
   onDelete: () => Promise<void>
 }): React.JSX.Element {
@@ -143,6 +153,8 @@ function MemoryFullCard({
   const openCropDialog = useMemoryStore((state) => state.openCropDialog)
   const openNoteDialog = useMemoryStore((state) => state.openNoteDialog)
   const hasNote = Boolean(note?.trim())
+  const showAddCoverHoverAction = !isCoverExist && hasNote && showAddCoverHoverButton
+  const showAddNoteHoverAction = isCoverExist && !hasNote && showAddNoteHoverButton
   const normalizedCoverHeightRatio = coverHeightRatio && coverHeightRatio > 0 ? coverHeightRatio : 1
 
   useEffect(() => {
@@ -281,18 +293,18 @@ function MemoryFullCard({
   }
 
   function renderMissingContentActions(): React.JSX.Element | null {
-    if ((isCoverExist && hasNote) || (!isCoverExist && !hasNote)) return null
+    if (!showAddCoverHoverAction && !showAddNoteHoverAction) return null
 
     return (
       <div
         className={cn(
-          'pointer-events-none absolute top-2 left-2 z-20 flex gap-2 opacity-0 transition-opacity',
+          'pointer-events-none absolute top-2 right-2 z-20 flex gap-2 opacity-0 transition-opacity',
           'group-hover:pointer-events-auto group-hover:opacity-100',
           'group-focus-within:pointer-events-auto group-focus-within:opacity-100'
         )}
       >
-        {!isCoverExist && renderAddCoverButton()}
-        {!hasNote && renderAddNoteButton()}
+        {showAddCoverHoverAction && renderAddCoverButton()}
+        {showAddNoteHoverAction && renderAddNoteButton()}
       </div>
     )
   }
