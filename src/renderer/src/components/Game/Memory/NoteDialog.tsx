@@ -1,11 +1,11 @@
+import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
 import { Card } from '@ui/card'
 import { Dialog, DialogContent } from '@ui/dialog'
 import { Tabs, TabsList, TabsTrigger } from '@ui/tabs'
-import { useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
-import { ipcManager } from '~/app/ipc'
 import { cn } from '~/utils'
+import { createImageViewerRequestFromElements } from '~/utils/image-viewer'
 import { useGameDetailStore } from '../store'
 import { MarkdownEditor, type MarkdownEditorHandle } from './MarkdownEditor'
 import { MarkdownPreview } from './MarkdownPreview'
@@ -29,7 +29,7 @@ export function NoteDialog({
   const [draft, setDraft] = useState(note ?? '')
   const [mode, setMode] = useState<NoteDialogMode>(initialMode)
   const editorRef = useRef<MarkdownEditorHandle>(null)
-  const openImageViewerDialog = useGameDetailStore((state) => state.openImageViewerDialog)
+  const openImageViewer = useGameDetailStore((state) => state.openImageViewer)
 
   useEffect(() => {
     if (mode !== 'edit') return
@@ -56,13 +56,16 @@ export function NoteDialog({
     void closeDialog()
   }
 
-  async function handlePreviewImageClick(source: string): Promise<void> {
-    try {
-      const imagePath = await ipcManager.invoke('utils:resolve-image-source-to-file-path', source)
-      openImageViewerDialog(imagePath)
-    } catch (error) {
-      toast.error(t('detail.memory.notifications.getImageError', { error }))
-    }
+  function handlePreviewImageClick(
+    selectedImage: HTMLImageElement,
+    images: NodeListOf<HTMLImageElement>
+  ): void {
+    const request = createImageViewerRequestFromElements(
+      images,
+      selectedImage,
+      `memory-inline-${gameId}`
+    )
+    if (request) openImageViewer(request)
   }
 
   return (
@@ -101,9 +104,7 @@ export function NoteDialog({
             >
               <MarkdownPreview
                 value={draft}
-                onImageClick={(source) => {
-                  void handlePreviewImageClick(source)
-                }}
+                onImageClick={handlePreviewImageClick}
                 emptyLabel={t('detail.memory.editor.emptyPreview')}
               />
             </Card>

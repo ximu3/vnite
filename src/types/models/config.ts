@@ -132,9 +132,13 @@ export interface configDocs {
     memory: {
       gridColumnWidth: number
       masonryColumnWidth: number
+      fullColumnWidth: number
+      showAddCoverHoverButton: boolean
+      showAddNoteHoverButton: boolean
       gridItemsPerPage: number
       masonryItemsPerPage: number
       listItemsPerPage: number
+      fullItemsPerPage: number
     }
     glass: {
       dark: {
@@ -445,9 +449,13 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     memory: {
       gridColumnWidth: 280,
       masonryColumnWidth: 220,
+      fullColumnWidth: 320,
+      showAddCoverHoverButton: true,
+      showAddNoteHoverButton: true,
       gridItemsPerPage: 12,
       masonryItemsPerPage: 20,
-      listItemsPerPage: 20
+      listItemsPerPage: 20,
+      fullItemsPerPage: 24
     },
     glass: {
       dark: {

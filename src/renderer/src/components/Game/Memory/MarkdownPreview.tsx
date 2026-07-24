@@ -1,4 +1,5 @@
 import { CheckIcon } from 'lucide-react'
+import { useRef } from 'react'
 import Markdown, { type Components } from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize'
@@ -26,8 +27,10 @@ export function MarkdownPreview({
   className?: string
   emptyLabel?: string
   renderImages?: boolean
-  onImageClick?: (src: string) => void
+  onImageClick?: (selectedImage: HTMLImageElement, images: NodeListOf<HTMLImageElement>) => void
 }): React.JSX.Element {
+  const articleRef = useRef<HTMLElement>(null)
+
   if (!value.trim() && emptyLabel) {
     return (
       <div className={cn('text-sm text-muted-foreground select-none', className)}>{emptyLabel}</div>
@@ -46,9 +49,11 @@ export function MarkdownPreview({
       <img
         {...imgProps}
         className={cn(imgProps.className, onImageClick && 'cursor-zoom-in')}
-        onClick={() => {
-          if (!imgProps.src || !onImageClick) return
-          onImageClick(imgProps.src)
+        onClick={(event) => {
+          if (!imgProps.src || !onImageClick || !articleRef.current) return
+          event.preventDefault()
+          event.stopPropagation()
+          onImageClick(event.currentTarget, articleRef.current.querySelectorAll('img'))
         }}
       />
     )
@@ -79,6 +84,7 @@ export function MarkdownPreview({
 
   return (
     <article
+      ref={articleRef}
       className={cn(
         'prose prose-sm dark:prose-invert max-w-none',
         'prose-pre:bg-muted/50 prose-pre:text-foreground prose-pre:rounded-md',

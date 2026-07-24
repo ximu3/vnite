@@ -8,16 +8,22 @@ type MemoryList = gameDoc['memory']['memoryList']
 export function MemoryCardView({
   gameId,
   memoryIds,
+  viewerMemoryIds,
   memoryList,
   masonryItemByMemoryId,
   columnWidth,
+  showAddCoverHoverButton,
+  showAddNoteHoverButton,
   onDelete
 }: {
   gameId: string
   memoryIds: string[]
+  viewerMemoryIds: string[]
   memoryList: MemoryList
   masonryItemByMemoryId: Record<string, MemoryMasonryItemInfo>
   columnWidth: number
+  showAddCoverHoverButton: boolean
+  showAddNoteHoverButton: boolean
   onDelete: (memoryId: string) => void
 }): React.JSX.Element {
   return (
@@ -39,10 +45,13 @@ export function MemoryCardView({
             key={`memory-${id}`}
             gameId={gameId}
             memoryId={id}
+            viewerMemoryIds={viewerMemoryIds}
             handleDelete={() => onDelete(id)}
             note={memory.note}
             date={memory.date}
             coverHeightRatio={masonryItemByMemoryId[id]?.heightRatio}
+            showAddCoverHoverButton={showAddCoverHoverButton}
+            showAddNoteHoverButton={showAddNoteHoverButton}
           />
         )
       })}

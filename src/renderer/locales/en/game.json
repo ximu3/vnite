@@ -353,6 +353,7 @@
       },
       "views": {
         "grid": "Cards",
+        "full": "Text & Image",
         "masonry": "Gallery",
         "list": "List"
       },
@@ -590,8 +591,6 @@
           "importFromUrl": "Import from URL",
           "searchImage": "Search image",
           "viewLargeImage": "View large image",
-          "copyToClipboard": "Copy to Clipboard",
-          "saveAs": "Save As",
           "cropImage": "Crop image",
           "upscaleImage": "Upscale background",
           "deleteImage": "Delete image"

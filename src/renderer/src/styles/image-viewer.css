@@ -1,0 +1,48 @@
+@import 'yet-another-react-lightbox/styles.css';
+@import 'yet-another-react-lightbox/plugins/counter.css';
+
+.vnite-image-viewer {
+  --yarl__color_backdrop: rgb(0 0 0 / 80%);
+  --yarl__navigation_button_padding: 8px;
+  --yarl__counter_color: rgb(255 255 255 / 60%);
+}
+
+.vnite-image-viewer .yarl__toolbar {
+  display: none;
+}
+
+.vnite-image-viewer .yarl__navigation_prev,
+.vnite-image-viewer .yarl__navigation_next {
+  margin-inline: 20px;
+  border: 1px solid rgb(255 255 255 / 16%);
+  border-radius: 9999px;
+  background: rgb(18 18 18 / 52%);
+  transition:
+    background-color 160ms ease,
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+
+.vnite-image-viewer .yarl__navigation_prev:hover:not(:disabled),
+.vnite-image-viewer .yarl__navigation_next:hover:not(:disabled) {
+  background: rgb(28 28 28 / 72%);
+  transform: translateY(-50%) scale(1.04);
+}
+
+.vnite-image-viewer .yarl__navigation_prev:disabled,
+.vnite-image-viewer .yarl__navigation_next:disabled {
+  opacity: 0.28;
+}
+
+/*
+ * Zoom's full-size wrapper otherwise captures clicks outside the image. At a non-default zoom
+ * level, those clicks trigger Zoom gestures instead of closing the lightbox through the backdrop.
+ */
+.vnite-image-viewer .yarl__slide_wrapper {
+  pointer-events: none;
+}
+
+.vnite-image-viewer .yarl__slide_image {
+  pointer-events: auto;
+  user-select: none;
+}

@@ -50,17 +50,23 @@ const CARD_NOTE_MAX_RATIO = 0.8
 export function MemoryCard({
   gameId,
   memoryId,
+  viewerMemoryIds,
   handleDelete,
   note,
   date,
-  coverHeightRatio
+  coverHeightRatio,
+  showAddCoverHoverButton,
+  showAddNoteHoverButton
 }: {
   gameId: string
   memoryId: string
+  viewerMemoryIds: string[]
   handleDelete: () => void
   note: string
   date: string
   coverHeightRatio?: number
+  showAddCoverHoverButton: boolean
+  showAddNoteHoverButton: boolean
 }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [isCoverExist, setIsCoverExist] = useState(true)
@@ -69,10 +75,13 @@ export function MemoryCard({
   const memoryRef = useRef<HTMLDivElement>(null)
   const noteMeasureRef = useRef<HTMLDivElement>(null)
   const refreshLight = useLightStore((state) => state.refresh)
-  const openImageViewerDialog = useGameDetailStore((state) => state.openImageViewerDialog)
+  const openImageViewer = useGameDetailStore((state) => state.openImageViewer)
   const openCropDialog = useMemoryStore((state) => state.openCropDialog)
   const openNoteDialog = useMemoryStore((state) => state.openNoteDialog)
   const hasNote = Boolean(note?.trim())
+  const hasHoverAction =
+    (isCoverExist && !hasNote && showAddNoteHoverButton) ||
+    (!isCoverExist && hasNote && showAddCoverHoverButton)
   const { restOverlayRatio, hoverOverlayRatio } = getCoverWithNoteLayout(
     coverHeightRatio,
     requiredOverlayRatio
@@ -191,7 +200,8 @@ export function MemoryCard({
     return (
       <div
         className={cn(
-          'pointer-events-none absolute top-2 right-2 z-20 rounded-md bg-background/85 px-2 py-1 text-[11px] leading-none text-muted-foreground shadow-sm backdrop-blur'
+          'pointer-events-none absolute top-2 right-2 z-20 rounded-md bg-background/85 px-2 py-1 text-[11px] leading-none text-muted-foreground shadow-sm backdrop-blur',
+          hasHoverAction && 'transition-opacity group-hover:opacity-0 group-focus-within:opacity-0'
         )}
       >
         {t('{{date, niceDate}}', { date })}
@@ -254,7 +264,9 @@ export function MemoryCard({
         type="button"
         size="icon"
         className={cn(
-          'absolute top-2 left-2 z-20 size-8 opacity-0 transition-opacity group-hover:opacity-100'
+          'pointer-events-none absolute top-2 right-2 z-20 size-8 opacity-0 transition-opacity',
+          'group-hover:pointer-events-auto group-hover:opacity-100',
+          'group-focus-within:pointer-events-auto group-focus-within:opacity-100'
         )}
         onClick={(event) => {
           event.stopPropagation()
@@ -273,7 +285,9 @@ export function MemoryCard({
         variant="secondary"
         size="icon"
         className={cn(
-          'absolute top-2 left-2 z-20 size-8 opacity-0 transition-opacity group-hover:opacity-100'
+          'pointer-events-none absolute top-2 right-2 z-20 size-8 opacity-0 transition-opacity',
+          'group-hover:pointer-events-auto group-hover:opacity-100',
+          'group-focus-within:pointer-events-auto group-focus-within:opacity-100'
         )}
         onClick={(event) => {
           event.stopPropagation()
@@ -331,7 +345,12 @@ export function MemoryCard({
             '[bottom:var(--memory-overlay-rest)] group-hover:[bottom:var(--memory-overlay-hover)]'
           )}
           onClick={() => {
-            void openLargeMemoryImage({ gameId, memoryId, openImageViewerDialog })
+            openLargeMemoryImage({
+              gameId,
+              memoryId,
+              memoryIds: viewerMemoryIds,
+              openImageViewer
+            })
           }}
         >
           {renderForegroundCoverImage({
@@ -381,7 +400,12 @@ export function MemoryCard({
         <div
           className={cn('absolute inset-0 z-[2] cursor-zoom-in overflow-hidden')}
           onClick={() => {
-            void openLargeMemoryImage({ gameId, memoryId, openImageViewerDialog })
+            openLargeMemoryImage({
+              gameId,
+              memoryId,
+              memoryIds: viewerMemoryIds,
+              openImageViewer
+            })
           }}
         >
           {renderForegroundCoverImage({
@@ -394,7 +418,7 @@ export function MemoryCard({
           })}
         </div>
 
-        {renderAddNoteButton()}
+        {showAddNoteHoverButton && renderAddNoteButton()}
       </div>
     )
   }
@@ -402,7 +426,7 @@ export function MemoryCard({
   function renderNoteOnly(): React.JSX.Element {
     return (
       <>
-        {renderAddCoverButton()}
+        {showAddCoverHoverButton && renderAddCoverButton()}
 
         <div
           className={cn('h-full w-full cursor-pointer overflow-hidden p-4')}
