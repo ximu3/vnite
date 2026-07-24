@@ -13,6 +13,7 @@ import { cn } from '~/utils'
 import { DEFAULT_MEMORY_PAGE_BY_VIEW, useGameDetailStore, useGameDetailTabStore } from '../store'
 import { MemoryCardView } from './MemoryCardView'
 import { MemoryCropDialogHost } from './MemoryCropDialogHost'
+import { MemoryFullView } from './MemoryFullView'
 import { MemoryListView } from './MemoryListView'
 import { MemoryMasonryItemInfo, MemoryMasonryView } from './MemoryMasonryView'
 import { MemoryNoteDialogHost } from './MemoryNoteDialogHost'
@@ -57,6 +58,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
   const [rootSaveDir] = useConfigLocalState('memory.image.saveDir')
   const [gridColumnWidth] = useConfigState('appearances.memory.gridColumnWidth')
   const [masonryColumnWidth] = useConfigState('appearances.memory.masonryColumnWidth')
+  const [fullColumnWidth] = useConfigState('appearances.memory.fullColumnWidth')
   const [gridItemsPerPage, setGridItemsPerPage] = useConfigState(
     'appearances.memory.gridItemsPerPage'
   )
@@ -65,6 +67,9 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
   )
   const [listItemsPerPage, setListItemsPerPage] = useConfigState(
     'appearances.memory.listItemsPerPage'
+  )
+  const [fullItemsPerPage, setFullItemsPerPage] = useConfigState(
+    'appearances.memory.fullItemsPerPage'
   )
   const pageByView = useGameDetailStore(
     (state) => state.memoryPageByGameId[gameId] ?? DEFAULT_MEMORY_PAGE_BY_VIEW
@@ -190,6 +195,19 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
           setItemsPerPage: setListItemsPerPage
         }
       }
+      case 'full': {
+        const totalPages = getTotalPages(sortedMemoryIds.length, fullItemsPerPage)
+        const currentPage = clampPage(pageByView.full, totalPages)
+
+        return {
+          currentPage,
+          totalPages,
+          itemCount: sortedMemoryIds.length,
+          itemsPerPage: fullItemsPerPage,
+          pagedMemoryIds: paginateMemoryIds(sortedMemoryIds, currentPage, fullItemsPerPage),
+          setItemsPerPage: setFullItemsPerPage
+        }
+      }
     }
   }
 
@@ -204,6 +222,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
     const nextGridPage = clampPage(pageByView.grid, getTotalPagesForView('grid'))
     const nextMasonryPage = clampPage(pageByView.masonry, getTotalPagesForView('masonry'))
     const nextListPage = clampPage(pageByView.list, getTotalPagesForView('list'))
+    const nextFullPage = clampPage(pageByView.full, getTotalPagesForView('full'))
 
     if (nextGridPage !== pageByView.grid) {
       setMemoryPageByView(gameId, 'grid', nextGridPage)
@@ -216,7 +235,12 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
     if (nextListPage !== pageByView.list) {
       setMemoryPageByView(gameId, 'list', nextListPage)
     }
+
+    if (nextFullPage !== pageByView.full) {
+      setMemoryPageByView(gameId, 'full', nextFullPage)
+    }
   }, [
+    fullItemsPerPage,
     gameId,
     gridItemsPerPage,
     listItemsPerPage,
@@ -224,6 +248,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
     masonryMemoryIds.length,
     noteMemoryIds.length,
     pageByView.grid,
+    pageByView.full,
     pageByView.list,
     pageByView.masonry,
     setMemoryPageByView,
@@ -401,8 +426,18 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
             <Tooltip>
               <TooltipTrigger asChild>
                 <span className={cn('inline-flex')}>
+                  <TabsTrigger value="full" className={cn('size-8 px-0 py-0')}>
+                    <span className={cn('icon-[mdi--post-outline] size-4')} />
+                  </TabsTrigger>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">{t('detail.memory.views.full')}</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className={cn('inline-flex')}>
                   <TabsTrigger value="masonry" className={cn('size-8 px-0 py-0')}>
-                    <span className={cn('icon-[mdi--view-quilt-outline] size-4')} />
+                    <span className={cn('icon-[mdi--collage] size-4')} />
                   </TabsTrigger>
                 </span>
               </TooltipTrigger>
@@ -412,7 +447,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
               <TooltipTrigger asChild>
                 <span className={cn('inline-flex')}>
                   <TabsTrigger value="list" className={cn('size-8 px-0 py-0')}>
-                    <span className={cn('icon-[mdi--format-list-text] size-4')} />
+                    <span className={cn('icon-[mdi--format-list-bulleted] size-4')} />
                   </TabsTrigger>
                 </span>
               </TooltipTrigger>
@@ -454,6 +489,19 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
           gameId={gameId}
           memoryIds={activePagination.pagedMemoryIds}
           memoryList={memoryList}
+          onDelete={handleDelete}
+        />
+      )}
+      {viewMode === 'full' && sortedMemoryIds.length === 0 && renderEmptyState()}
+      {viewMode === 'full' && sortedMemoryIds.length > 0 && (
+        <MemoryFullView
+          gameId={gameId}
+          memoryIds={activePagination.pagedMemoryIds}
+          viewerMemoryIds={masonryMemoryIds}
+          memoryList={memoryList}
+          masonryItemByMemoryId={masonryItemByMemoryId}
+          columnWidth={fullColumnWidth}
+          onCoverMissing={handleMasonryCoverMissing}
           onDelete={handleDelete}
         />
       )}

@@ -173,7 +173,9 @@
       "gridColumnWidth": "Card Column Width",
       "gridColumnWidthDescription": "Automatically calculate the card view column count from the available width and this pixel value",
       "masonryColumnWidth": "Gallery Column Width",
-      "masonryColumnWidthDescription": "Automatically calculate the gallery column count from the available width and this pixel value"
+      "masonryColumnWidthDescription": "Automatically calculate the gallery column count from the available width and this pixel value",
+      "fullColumnWidth": "Text & Image Column Width",
+      "fullColumnWidthDescription": "Automatically calculate the text and image view column count from the available width and this pixel value"
     },
     "sidebar": {
       "title": "Sidebar",

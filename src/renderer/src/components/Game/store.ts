@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware'
 import type { ImageViewerRequest } from '~/utils/image-viewer'
 
 export type PropertiesDialogTab = 'launcher' | 'path' | 'media'
-type MemoryPageView = 'grid' | 'masonry' | 'list'
+type MemoryPageView = 'grid' | 'masonry' | 'list' | 'full'
 type MemoryPageByView = Record<MemoryPageView, number>
 
 export interface GameDetailStore {
@@ -37,7 +37,8 @@ export interface GameDetailStore {
 export const DEFAULT_MEMORY_PAGE_BY_VIEW: MemoryPageByView = {
   grid: 1,
   masonry: 1,
-  list: 1
+  list: 1,
+  full: 1
 }
 
 export const useGameDetailStore = create<GameDetailStore>((set) => ({

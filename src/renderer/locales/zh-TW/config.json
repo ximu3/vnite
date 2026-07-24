@@ -173,7 +173,9 @@
       "gridColumnWidth": "卡片欄寬",
       "gridColumnWidthDescription": "根據回憶區域可用寬度與此像素值自動計算卡片模式欄數",
       "masonryColumnWidth": "照片牆欄寬",
-      "masonryColumnWidthDescription": "根據回憶區域可用寬度與此像素值自動計算照片牆欄數"
+      "masonryColumnWidthDescription": "根據回憶區域可用寬度與此像素值自動計算照片牆欄數",
+      "fullColumnWidth": "圖文欄寬",
+      "fullColumnWidthDescription": "根據回憶區域可用寬度與此像素值自動計算圖文模式欄數"
     },
     "sidebar": {
       "title": "側邊欄",

@@ -132,9 +132,11 @@ export interface configDocs {
     memory: {
       gridColumnWidth: number
       masonryColumnWidth: number
+      fullColumnWidth: number
       gridItemsPerPage: number
       masonryItemsPerPage: number
       listItemsPerPage: number
+      fullItemsPerPage: number
     }
     glass: {
       dark: {
@@ -445,9 +447,11 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     memory: {
       gridColumnWidth: 280,
       masonryColumnWidth: 220,
+      fullColumnWidth: 320,
       gridItemsPerPage: 12,
       masonryItemsPerPage: 20,
-      listItemsPerPage: 20
+      listItemsPerPage: 20,
+      fullItemsPerPage: 24
     },
     glass: {
       dark: {

@@ -353,6 +353,7 @@
       },
       "views": {
         "grid": "Cards",
+        "full": "Text & Image",
         "masonry": "Gallery",
         "list": "List"
       },
