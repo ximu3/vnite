@@ -1,3 +1,4 @@
+import md5 from 'crypto-js/md5'
 import DOMPurify from 'dompurify'
 import parse, { Element, type HTMLReactParserOptions, Text } from 'html-react-parser'
 import { Fragment, useMemo } from 'react'
@@ -58,6 +59,7 @@ export function DescriptionHtmlContent({
       ALLOWED_URI_REGEXP: DESCRIPTION_HTML_ALLOWED_URI_REGEXP
     })
   }, [value])
+  const contentHash = useMemo(() => md5(sanitizedHtml).toString(), [sanitizedHtml])
 
   if (!sanitizedHtml.trim() && emptyLabel) {
     return <div className={cn(className)}>{emptyLabel}</div>
@@ -65,6 +67,7 @@ export function DescriptionHtmlContent({
 
   return (
     <div
+      key={contentHash}
       className={cn(className, onImageClick && '[&_img]:cursor-zoom-in')}
       onClick={(event) => {
         if (!onImageClick) return
