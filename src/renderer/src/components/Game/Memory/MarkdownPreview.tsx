@@ -92,6 +92,7 @@ export function MarkdownPreview({
         'prose-code:before:content-none prose-code:after:content-none',
         'prose-img:rounded-md prose-img:shadow-sm',
         'prose-a:text-primary prose-a:no-underline hover:prose-a:underline',
+        'prose-ol:list-inside prose-ol:ps-0',
         // Adjust task list styles
         '[&_ul.contains-task-list]:list-none [&_ul.contains-task-list]:ps-0 [&_ul.contains-task-list]:ms-0',
         '[&_li.task-list-item]:relative [&_li.task-list-item]:list-none [&_li.task-list-item]:ps-[2em]',
