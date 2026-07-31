@@ -7,10 +7,15 @@ export function setupPosterIPC(): void {
   ipcManager.handle(
     'poster:render',
     async <T extends keyof TemplatePayloads>(_, args: PosterRenderArgs<T>) => {
-      const { id, payload, options } = args
-      log.info('[Poster] render request', { id, payload, options })
+      const { id, payload, options, context } = args
+      log.info('[Poster] render request', {
+        id,
+        payload,
+        options,
+        includedGameCount: context?.includedGameIds?.length
+      })
       try {
-        return await PosterRegistrar.render(id, payload, options)
+        return await PosterRegistrar.render(id, payload, options, context)
       } catch (error) {
         log.error('[Poster] render failed', { id, error })
         throw error

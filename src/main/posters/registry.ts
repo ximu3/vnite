@@ -1,4 +1,10 @@
-import { PosterTemplate, RenderOptions, RenderResponse, TemplatePayloads } from '@appTypes/poster'
+import {
+  PosterRenderContext,
+  PosterTemplate,
+  RenderOptions,
+  RenderResponse,
+  TemplatePayloads
+} from '@appTypes/poster'
 import { format } from 'date-fns'
 import path from 'path'
 import { saveCanvas } from './engine/canvas'
@@ -17,12 +23,13 @@ export class PosterRegistrar {
   static async render<T extends keyof TemplatePayloads>(
     id: T,
     payload: TemplatePayloads[T],
-    options: RenderOptions
+    options: RenderOptions,
+    context?: PosterRenderContext
   ): Promise<RenderResponse> {
     const tpl = this.templates.get(id as string)
     if (!tpl) throw new Error(`Unknown template: ${id}`)
 
-    const result = await tpl.render(payload)
+    const result = await tpl.render(payload, context)
 
     const now = new Date()
     const timestamp = format(now, 'yyyyMMdd-HHmmss')

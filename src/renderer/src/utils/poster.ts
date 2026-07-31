@@ -1,5 +1,6 @@
 import {
   defaultPayloadMap,
+  PosterRenderContext,
   RenderResponse,
   type RenderOptions,
   type TemplatePayloads
@@ -9,11 +10,13 @@ import { ipcManager } from '~/app/ipc'
 export async function invokePosterRender<T extends keyof TemplatePayloads>(
   templateId: T,
   payload: Partial<TemplatePayloads[T]>,
-  options: RenderOptions
+  options: RenderOptions,
+  context?: PosterRenderContext
 ): Promise<RenderResponse> {
   return ipcManager.invoke('poster:render', {
     id: templateId,
     payload: { ...defaultPayloadMap[templateId], ...payload },
-    options
+    options,
+    context
   })
 }

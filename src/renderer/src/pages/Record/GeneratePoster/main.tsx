@@ -4,6 +4,7 @@ import { Input } from '@ui/input'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { ipcManager } from '~/app/ipc'
+import { useNSFWFilteredGameIds } from '~/stores/game'
 import { invokePosterRender } from '~/utils'
 import { ConfigForm } from '../Config/GeneratePosterForm'
 import { usePosterTemplateStore } from '../store'
@@ -15,13 +16,19 @@ export function GenerateReport(): React.JSX.Element {
   const renderOptions = usePosterTemplateStore((s) => s.renderOptions)
   const setRenderOption = usePosterTemplateStore((s) => s.setRenderOption)
   const resetScoreReport = usePosterTemplateStore((s) => s.resetPayload)
+  const filteredGameIds = useNSFWFilteredGameIds()
 
   const handleRender = async (): Promise<void> => {
-    toast.promise(invokePosterRender('scoreReport', payload, renderOptions), {
-      loading: t('poster.message.loading'),
-      success: (result) => t('poster.message.success', { file: result.outputFile }),
-      error: t('poster.message.error')
-    })
+    toast.promise(
+      invokePosterRender('scoreReport', payload, renderOptions, {
+        includedGameIds: filteredGameIds
+      }),
+      {
+        loading: t('poster.message.loading'),
+        success: (result) => t('poster.message.success', { file: result.outputFile }),
+        error: t('poster.message.error')
+      }
+    )
   }
   const handleReset = (): void => {
     resetScoreReport('scoreReport')

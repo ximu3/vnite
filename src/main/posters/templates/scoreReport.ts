@@ -112,8 +112,12 @@ function drawScoreCircle(
 export const scoreReportPoster: PosterTemplate<ScoreReportPayload> = {
   id: 'scoreReport',
 
-  async render(payload) {
-    const scoreData = await getAllGameScore()
+  async render(payload, context) {
+    const scoreData = await getAllGameScore(context?.includedGameIds)
+    if (scoreLevels.every((level) => scoreData[level].length === 0)) {
+      throw new Error('No scored games are available for the score report')
+    }
+
     const { height, width, lines, games } = calcCanvasLayout(scoreData, payload)
 
     const { canvas, ctx } = await createCanvas(width, height, payload.backgroundColor)

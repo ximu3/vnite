@@ -3,6 +3,7 @@ import { Trophy } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScoreEditorDialog } from '~/components/Game/Config/ManageMenu/ScoreEditorDialog'
+import { useNSFWFilteredGameIds } from '~/stores/game'
 import { getGamesByScoreRange } from '~/stores/game/recordUtils'
 import { useScoreReportStore } from '../store'
 import { ScoreReportCompactView } from './ScoreReportCompactView'
@@ -13,6 +14,7 @@ import { ScoreCategoryData, ScoreReportView } from './types'
 export function ScoreReport(): React.JSX.Element {
   const { t } = useTranslation('record')
   const [view, setView] = useState<ScoreReportView>('compact')
+  const filteredGameIds = useNSFWFilteredGameIds()
 
   const { scoreEditorState, closeScoreEditor, bumpVersion, scoreReportVersion } =
     useScoreReportStore()
@@ -26,7 +28,7 @@ export function ScoreReport(): React.JSX.Element {
         minScore: 9,
         maxScore: 10,
         className: 'border-primary',
-        games: getGamesByScoreRange(9, 10)
+        games: getGamesByScoreRange(9, 10, filteredGameIds)
       },
       {
         id: 'great',
@@ -35,7 +37,7 @@ export function ScoreReport(): React.JSX.Element {
         minScore: 8,
         maxScore: 8.9,
         className: 'border-secondary',
-        games: getGamesByScoreRange(8, 8.9)
+        games: getGamesByScoreRange(8, 8.9, filteredGameIds)
       },
       {
         id: 'good',
@@ -44,7 +46,7 @@ export function ScoreReport(): React.JSX.Element {
         minScore: 7,
         maxScore: 7.9,
         className: 'border-accent',
-        games: getGamesByScoreRange(7, 7.9)
+        games: getGamesByScoreRange(7, 7.9, filteredGameIds)
       },
       {
         id: 'average',
@@ -53,7 +55,7 @@ export function ScoreReport(): React.JSX.Element {
         minScore: 6,
         maxScore: 6.9,
         className: 'border-muted',
-        games: getGamesByScoreRange(6, 6.9)
+        games: getGamesByScoreRange(6, 6.9, filteredGameIds)
       },
       {
         id: 'notRecommended',
@@ -62,10 +64,10 @@ export function ScoreReport(): React.JSX.Element {
         minScore: 0,
         maxScore: 5.9,
         className: 'border-destructive',
-        games: getGamesByScoreRange(0, 5.9)
+        games: getGamesByScoreRange(0, 5.9, filteredGameIds)
       }
     ],
-    [t, scoreReportVersion]
+    [t, scoreReportVersion, filteredGameIds]
   )
 
   return (

@@ -22,13 +22,18 @@ export interface RenderResponse {
   outputFile: string
 }
 
+export interface PosterRenderContext {
+  includedGameIds?: readonly string[]
+}
+
 export interface PosterTemplate<Payload> {
   id: string
-  render(payload: Payload): Promise<RenderResult>
+  render(payload: Payload, context?: PosterRenderContext): Promise<RenderResult>
 }
 
 export interface PosterRenderArgs<T extends keyof TemplatePayloads> {
   id: T
   payload: TemplatePayloads[T]
   options: RenderOptions
+  context?: PosterRenderContext
 }

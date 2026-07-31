@@ -6,10 +6,15 @@ export type ScoreReportData = {
   [L in (typeof scoreLevels)[number]]: { gameId: string; gameName: string; score: number }[]
 }
 
-export async function getAllGameScore(): Promise<ScoreReportData> {
+export async function getAllGameScore(
+  includedGameIds?: readonly string[]
+): Promise<ScoreReportData> {
   const games = await GameDBManager.getAllGames()
+  const includedGameIdSet = includedGameIds ? new Set(includedGameIds) : null
   const res: ScoreReportData = { level1: [], level2: [], level3: [], level4: [], level5: [] }
   for (const [gameId, game] of Object.entries(games)) {
+    if (includedGameIdSet && !includedGameIdSet.has(gameId)) continue
+
     const score = game.record.score
     const gameName = game.metadata.name
     if (score < 0) continue
