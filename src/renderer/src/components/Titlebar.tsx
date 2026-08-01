@@ -128,6 +128,7 @@ export function Titlebar(): React.JSX.Element {
   }, [])
 
   const isLibraryRoute = location.pathname.startsWith('/library')
+  const isRecordRoute = location.pathname.startsWith('/record')
 
   //* Library Filter Controls Logic *//
   const isLocalGameFilterActive = localGameFilterMode !== LocalGameFilterMode.All
@@ -370,8 +371,12 @@ export function Titlebar(): React.JSX.Element {
             <TooltipContent side="bottom">{t('actions.viewLogs')}</TooltipContent>
           </Tooltip>
 
-          {visibleFilterControls.length > 0 &&
+          {/* Filter controls */}
+          {isLibraryRoute &&
+            /* Show all visible filter controls on the library route */
+            visibleFilterControls.length > 0 &&
             (shouldUseFilterPopover ? (
+              /* Group multiple filters into a single button to save space */
               <Popover>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -384,8 +389,13 @@ export function Titlebar(): React.JSX.Element {
                 </PopoverContent>
               </Popover>
             ) : (
+              /* Display up to two controls directly without a popover */
               visibleFilterControls
             ))}
+          {isRecordRoute &&
+            /* Only the NSFW filter applies to record routes, so hide the other filters to avoid confusion */
+            showNSFWBlurSwitchInSidebar &&
+            renderNsfwFilterControl()}
 
           {/* Theme switch button */}
           {showThemeSwitchInSidebar && (
