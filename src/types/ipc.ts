@@ -91,6 +91,7 @@ type MainIpcEvents =
       'system:save-image-as-file-dialog': (sourcePath: string) => boolean
       'system:get-path-size': (paths: string[]) => number
       'system:read-file-buffer': (filePath: string) => Buffer
+      'system:write-text-file': (filePath: string, content: string) => void
       'system:open-path-in-explorer': (filePath: string) => void
       'system:get-language': () => string
       'system:check-admin-permissions': () => boolean

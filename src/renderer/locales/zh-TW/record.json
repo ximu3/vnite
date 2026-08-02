@@ -208,19 +208,23 @@
       "ratingLabel": "評分"
     }
   },
-  "poster": {
-    "action": {
-      "render": "生成海報",
-      "reset": "重置配置項"
+  "exportReport": {
+    "preset": {
+      "label": "報告預設",
+      "groups": { "poster": "Poster", "json": "JSON" },
+      "posterScoreReport": "評分報告",
+      "jsonGamePlayTime": "遊玩時間"
     },
+    "action": { "export": "匯出報告", "reset": "重設設定項目" },
     "message": {
-      "loading": "渲染中...",
-      "success": "渲染完成：{{file}}",
-      "error": "渲染失敗"
+      "loading": "正在匯出...",
+      "success": "匯出完成：{{file}}",
+      "error": "匯出失敗"
     },
-    "renderOptions": {
-      "outputPath": "輸出資料夾"
-    },
+    "outputPath": "輸出資料夾",
+    "settings": { "empty": "目前預設沒有可設定項目" }
+  },
+  "poster": {
     "templates": {
       "scoreReport": {
         "maxWidth": {

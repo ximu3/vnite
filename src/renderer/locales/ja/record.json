@@ -208,19 +208,23 @@
       "ratingLabel": "評価"
     }
   },
-  "poster": {
-    "action": {
-      "render": "ポスターを生成",
-      "reset": "設定をリセット"
+  "exportReport": {
+    "preset": {
+      "label": "レポートプリセット",
+      "groups": { "poster": "Poster", "json": "JSON" },
+      "posterScoreReport": "評価レポート",
+      "jsonGamePlayTime": "プレイ時間"
     },
+    "action": { "export": "レポートをエクスポート", "reset": "設定をリセット" },
     "message": {
-      "loading": "レンダリング中...",
-      "success": "レンダリング完了：{{file}}",
-      "error": "レンダリングに失敗しました"
+      "loading": "エクスポート中...",
+      "success": "エクスポート完了：{{file}}",
+      "error": "エクスポートに失敗しました"
     },
-    "renderOptions": {
-      "outputPath": "出力フォルダー"
-    },
+    "outputPath": "出力フォルダー",
+    "settings": { "empty": "このプリセットには設定項目がありません" }
+  },
+  "poster": {
     "templates": {
       "scoreReport": {
         "maxWidth": {

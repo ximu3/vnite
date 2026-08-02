@@ -84,7 +84,29 @@ function ConfigFormRow<T extends keyof TemplatePayloads>({
   )
 }
 
-export function ConfigForm<T extends keyof TemplatePayloads>({
+type ConfigFormProps<T extends keyof TemplatePayloads> =
+  | {
+      template: T
+      schema: FieldSchema<TemplatePayloads[T]>[]
+    }
+  | {
+      template: '_empty_'
+      schema?: never
+    }
+
+function EmptyConfigForm(): React.JSX.Element {
+  const { t } = useTranslation('record')
+
+  return (
+    <Card className="mt-4 border-dashed">
+      <CardContent className="flex min-h-32 items-center justify-center text-sm text-muted-foreground">
+        {t('exportReport.settings.empty')}
+      </CardContent>
+    </Card>
+  )
+}
+
+function TemplateConfigForm<T extends keyof TemplatePayloads>({
   template,
   schema
 }: {
@@ -116,4 +138,14 @@ export function ConfigForm<T extends keyof TemplatePayloads>({
       </CardContent>
     </Card>
   )
+}
+
+export function ConfigForm<T extends keyof TemplatePayloads>(
+  props: ConfigFormProps<T>
+): React.JSX.Element {
+  if (props.template === '_empty_') {
+    return <EmptyConfigForm />
+  }
+
+  return <TemplateConfigForm template={props.template} schema={props.schema!} />
 }

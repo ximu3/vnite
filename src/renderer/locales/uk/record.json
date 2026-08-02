@@ -204,19 +204,23 @@
       "ratingLabel": ""
     }
   },
-  "poster": {
-    "action": {
-      "render": "",
-      "reset": ""
+  "exportReport": {
+    "preset": {
+      "label": "",
+      "groups": { "poster": "Poster", "json": "JSON" },
+      "posterScoreReport": "",
+      "jsonGamePlayTime": ""
     },
+    "action": { "export": "", "reset": "" },
     "message": {
       "loading": "",
       "success": "",
       "error": ""
     },
-    "renderOptions": {
-      "outputPath": ""
-    },
+    "outputPath": "",
+    "settings": { "empty": "" }
+  },
+  "poster": {
     "templates": {
       "scoreReport": {
         "maxWidth": {

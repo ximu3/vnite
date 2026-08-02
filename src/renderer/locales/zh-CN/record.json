@@ -208,19 +208,23 @@
       "ratingLabel": "评分"
     }
   },
-  "poster": {
-    "action": {
-      "render": "生成海报",
-      "reset": "重置配置项"
+  "exportReport": {
+    "preset": {
+      "label": "报告预设",
+      "groups": { "poster": "Poster", "json": "JSON" },
+      "posterScoreReport": "评分报告",
+      "jsonGamePlayTime": "游玩时间"
     },
+    "action": { "export": "导出报告", "reset": "重置配置项" },
     "message": {
-      "loading": "渲染中...",
-      "success": "渲染完成：{{file}}",
-      "error": "渲染失败"
+      "loading": "正在导出...",
+      "success": "导出完成：{{file}}",
+      "error": "导出失败"
     },
-    "renderOptions": {
-      "outputPath": "输出文件夹"
-    },
+    "outputPath": "输出文件夹",
+    "settings": { "empty": "当前预设没有可配置项" }
+  },
+  "poster": {
     "templates": {
       "scoreReport": {
         "maxWidth": {

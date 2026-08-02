@@ -191,5 +191,21 @@
       "lastRun": "마지막 플레이: {{date, niceDate}}",
       "ratingLabel": "평가 점수"
     }
+  },
+  "exportReport": {
+    "preset": {
+      "label": "",
+      "groups": { "poster": "Poster", "json": "JSON" },
+      "posterScoreReport": "",
+      "jsonGamePlayTime": ""
+    },
+    "action": { "export": "", "reset": "" },
+    "message": {
+      "loading": "",
+      "success": "",
+      "error": ""
+    },
+    "outputPath": "",
+    "settings": { "empty": "" }
   }
 }

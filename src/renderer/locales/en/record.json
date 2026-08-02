@@ -208,19 +208,23 @@
       "ratingLabel": "Rating"
     }
   },
-  "poster": {
-    "action": {
-      "render": "Render Poster",
-      "reset": "Reset Configuration"
+  "exportReport": {
+    "preset": {
+      "label": "Report Preset",
+      "groups": { "poster": "Poster", "json": "JSON" },
+      "posterScoreReport": "Score Report",
+      "jsonGamePlayTime": "Play Time"
     },
+    "action": { "export": "Export Report", "reset": "Reset Configuration" },
     "message": {
-      "loading": "Rendering...",
-      "success": "Rendered successfully: {{file}}",
-      "error": "Rendering failed"
+      "loading": "Exporting...",
+      "success": "Exported successfully: {{file}}",
+      "error": "Export failed"
     },
-    "renderOptions": {
-      "outputPath": "Output Folder"
-    },
+    "outputPath": "Output Folder",
+    "settings": { "empty": "This preset has no configurable options" }
+  },
+  "poster": {
     "templates": {
       "scoreReport": {
         "maxWidth": {
