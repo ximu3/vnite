@@ -1,0 +1,81 @@
+.score-report-export {
+  padding: 0;
+}
+
+.score-report-export .score-report-categories {
+  gap: 0;
+}
+
+.score-report-export .score-report-category {
+  --table-category-color: #ffffff;
+
+  display: grid;
+  grid-template-columns: 50px minmax(0, 1fr);
+  border: 0;
+  border-bottom: 2px solid hsl(223 30% 75%);
+  border-radius: 0;
+  background: var(--background);
+  box-shadow: none;
+}
+
+.score-report-export .score-report-category[data-category='excellent'] {
+  --table-category-color: #ff0000;
+}
+
+.score-report-export .score-report-category[data-category='great'] {
+  --table-category-color: #ffc000;
+}
+
+.score-report-export .score-report-category[data-category='good'] {
+  --table-category-color: #ffff00;
+}
+
+.score-report-export .score-report-category[data-category='average'] {
+  --table-category-color: #fff2cc;
+}
+
+.score-report-export .score-report-category[data-category='notRecommended'] {
+  --table-category-color: #ffffff;
+}
+
+.score-report-export .score-report-category-header {
+  grid-column: 1;
+  grid-row: 1;
+  justify-content: center;
+  gap: 0;
+  padding: 10px;
+  border: 0;
+  background: var(--table-category-color);
+}
+
+.score-report-export .score-report-count {
+  max-width: 100%;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #1f2937;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.score-report-export .score-report-games {
+  grid-column: 2;
+  grid-row: 1;
+  justify-content: start;
+  gap: 10px;
+  padding: 10px;
+}
+
+.score-report-export .score-report-cover {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.score-report-export .score-report-cover-placeholder {
+  border: 2px solid hsl(223 30% 75%);
+}
+
+.score-report-export .score-report-game-name {
+  display: none;
+}

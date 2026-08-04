@@ -11,7 +11,8 @@ export default defineConfig({
         '~': resolve('src/main'),
         '@locales': resolve('src/main/locales'),
         '@appTypes': resolve('src/types'),
-        '@appUtils': resolve('src/utils')
+        '@appUtils': resolve('src/utils'),
+        '@resources': resolve('resources')
       }
     },
     plugins: [externalizeDepsPlugin({ exclude: ['electron-context-menu'] })]
@@ -26,6 +27,7 @@ export default defineConfig({
         '@ui': resolve('src/renderer/src/components/ui'),
         '@locales': resolve('src/renderer/locales'),
         '@assets': resolve('src/renderer/assets'),
+        '@resources': resolve('resources'),
         '@appTypes': resolve('src/types'),
         '@appUtils': resolve('src/utils')
       }

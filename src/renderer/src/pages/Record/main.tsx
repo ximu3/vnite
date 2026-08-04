@@ -5,7 +5,7 @@ import { ScrollArea } from '~/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { HelpTooltip } from '~/components/ui/tooltip'
 import { cn } from '~/utils'
-import { GenerateReport } from './GeneratePoster/main'
+import { GenerateReport } from './GenerateReport/main'
 import { MonthlyReport } from './MonthlyReport'
 import { RecordOverview } from './RecordOverview'
 import { ScoreReport } from './ScoreReport'
@@ -21,7 +21,7 @@ export function Record({ className }: { className?: string }): React.JSX.Element
     router.navigate({ to: '/record', search: { ...search, tab: value } })
   }
 
-  const TAB_ORDER = ['overview', 'yearly', 'monthly', 'weekly', 'scores', 'poster']
+  const TAB_ORDER = ['overview', 'yearly', 'monthly', 'weekly', 'scores', 'report']
   useEffect(() => {
     const getNextIndex = (currentIndex: number, direction: 'left' | 'right'): number => {
       const length = TAB_ORDER.length
@@ -62,7 +62,7 @@ export function Record({ className }: { className?: string }): React.JSX.Element
               <TabsTrigger value="monthly">{t('tabs.monthly')}</TabsTrigger>
               <TabsTrigger value="weekly">{t('tabs.weekly')}</TabsTrigger>
               <TabsTrigger value="scores">{t('tabs.score')}</TabsTrigger>
-              <TabsTrigger value="poster">{t('tabs.poster')}</TabsTrigger>
+              <TabsTrigger value="report">{t('tabs.report')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview">
@@ -85,7 +85,7 @@ export function Record({ className }: { className?: string }): React.JSX.Element
               <ScoreReport />
             </TabsContent>
 
-            <TabsContent value="poster">
+            <TabsContent value="report">
               <GenerateReport />
             </TabsContent>
           </Tabs>

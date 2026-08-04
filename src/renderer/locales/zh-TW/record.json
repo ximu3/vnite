@@ -7,7 +7,7 @@
     "monthly": "月報",
     "yearly": "年報",
     "score": "評分報告",
-    "poster": "匯出報告"
+    "report": "匯出報告"
   },
   "overview": {
     "title": "總覽",
@@ -211,94 +211,37 @@
   "exportReport": {
     "preset": {
       "label": "報告預設",
-      "groups": { "poster": "Poster", "json": "JSON" },
-      "posterScoreReport": "評分報告",
-      "jsonGamePlayTime": "遊玩時間"
+      "groups": { "report": "報告", "json": "JSON" },
+      "scoreReport": "評分報告",
+      "gamePlayTime": "遊玩時間"
     },
-    "action": { "export": "匯出報告", "reset": "重設設定項目" },
+    "action": {
+      "reset": "重設設定項目",
+      "exportHtml": "匯出 HTML",
+      "exportJson": "匯出 JSON"
+    },
     "message": {
-      "loading": "正在匯出...",
+      "loading": {
+        "html": "正在產生 HTML...",
+        "json": "正在產生 JSON..."
+      },
       "success": "匯出完成：{{file}}",
       "error": "匯出失敗"
     },
+    "emptyScoreReport": "沒有可用於評分報告的已評分遊戲。",
     "outputPath": "輸出資料夾",
-    "settings": { "empty": "目前預設沒有可設定項目" }
-  },
-  "poster": {
-    "templates": {
+    "settings": {
+      "empty": "目前預設沒有可設定項目",
+      "theme": { "current": "目前主題", "light": "亮色", "dark": "暗色" },
       "scoreReport": {
-        "maxWidth": {
-          "title": "最大寬度",
-          "description": "整個畫面的最大寬度限制"
+        "variant": {
+          "title": "樣式變體",
+          "description": "在卡片版面與經典表格版面之間切換",
+          "options": { "A": "A · 卡片", "B": "B · 經典表格" }
         },
-        "titleWidth": {
-          "title": "標題欄寬度"
-        },
-        "gameCoverHeightSmall": {
-          "title": "小封面高度",
-          "description": "小號的遊戲封面高度"
-        },
-        "gameCoverHeightLarge": {
-          "title": "大封面高度",
-          "description": "大號的遊戲封面高度"
-        },
-        "padding": {
-          "title": "內邊距",
-          "description": "每個級別欄的整體內邊距"
-        },
-        "gap": {
-          "title": "間距",
-          "description": "各遊戲海報之間的間距"
-        },
-        "titleColor1": {
-          "title": "級別1標題欄顏色"
-        },
-        "titleColor2": {
-          "title": "級別2標題欄顏色"
-        },
-        "titleColor3": {
-          "title": "級別3標題欄顏色"
-        },
-        "titleColor4": {
-          "title": "級別4標題欄顏色"
-        },
-        "titleColor5": {
-          "title": "級別5標題欄顏色"
-        },
-        "useSmallCover1": {
-          "title": "為級別1使用小封面"
-        },
-        "useSmallCover2": {
-          "title": "為級別2使用小封面"
-        },
-        "useSmallCover3": {
-          "title": "為級別3使用小封面"
-        },
-        "useSmallCover4": {
-          "title": "為級別4使用小封面"
-        },
-        "useSmallCover5": {
-          "title": "為級別5使用小封面"
-        },
-        "splitColor": {
-          "title": "分割線顏色",
-          "description": "每個級別欄之間的分割線"
-        },
-        "splitWidth": {
-          "title": "分割線寬度"
-        },
-        "drawScore": {
-          "title": "繪製評分"
-        },
-        "scoreColor": {
-          "title": "評分背景顏色"
-        },
-        "fontColor": {
-          "title": "字體顏色"
-        },
-        "backgroundColor": {
-          "title": "背景顏色"
-        }
+        "coverWidth": { "title": "封面寬度", "description": "封面高度固定為寬度的 1.5 倍" },
+        "theme": { "title": "報告主題", "description": "目前主題會固定應用程式正在使用的配色" },
+        "showScore": { "title": "顯示評分", "description": "在遊戲封面右下角顯示評分" }
       }
     }
   }

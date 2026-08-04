@@ -197,7 +197,7 @@
       "label": "",
       "groups": { "poster": "Poster", "json": "JSON" },
       "posterScoreReport": "",
-      "jsonGamePlayTime": ""
+      "gamePlayTime": ""
     },
     "action": { "export": "", "reset": "" },
     "message": {

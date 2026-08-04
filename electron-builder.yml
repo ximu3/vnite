@@ -22,6 +22,8 @@ files:
 
 asarUnpack:
   - resources/**
+  # subset-font resolves and reads this WASM file at runtime.
+  - node_modules/harfbuzzjs/hb-subset.wasm
 
 protocols:
   - name: Vnite Protocol

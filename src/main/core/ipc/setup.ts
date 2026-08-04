@@ -12,7 +12,7 @@ import { setupToolboxIPC } from '~/features/toolbox'
 import { setupTransformerIPC } from '~/features/transformer'
 import { setupUpdaterIPC } from '~/features/updater'
 import { setupPluginIPC } from '~/plugins'
-import { setupPosterIPC } from '~/posters'
+import { setupReportIPC } from '~/reports'
 import { setupEventBusIPC } from '../events'
 
 export function setupIPC(): void {
@@ -29,7 +29,7 @@ export function setupIPC(): void {
   setupTransformerIPC()
   setupUpdaterIPC()
   setupPluginIPC()
-  setupPosterIPC()
+  setupReportIPC()
   setupEventBusIPC()
   setupNativeMonitorIPC()
 }

@@ -18,6 +18,8 @@
       "~/*": ["src/main/*"],
       "@locales": ["src/main/locales"],
       "@locales/*": ["src/main/locales/*"],
+      "@resources": ["resources"],
+      "@resources/*": ["resources/*"],
       "@appTypes/*": ["src/types/*"],
       "@appUtils": ["src/utils"],
     }

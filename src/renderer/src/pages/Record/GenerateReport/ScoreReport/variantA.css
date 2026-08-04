@@ -1,0 +1,85 @@
+.score-report-export {
+  padding: 32px;
+}
+
+.score-report-export .score-report-categories {
+  gap: 24px;
+}
+
+.score-report-export .score-report-category {
+  --category-accent: var(--muted);
+
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--category-accent);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--card-foreground);
+  box-shadow:
+    0 2px 5px rgb(0 0 0 / 18%),
+    0 12px 30px rgb(0 0 0 / 20%);
+}
+
+.score-report-export .score-report-category[data-category='excellent'] {
+  --category-accent: var(--primary);
+}
+
+.score-report-export .score-report-category[data-category='great'] {
+  --category-accent: var(--secondary);
+}
+
+.score-report-export .score-report-category[data-category='good'] {
+  --category-accent: var(--accent);
+}
+
+.score-report-export .score-report-category[data-category='average'] {
+  --category-accent: var(--muted);
+}
+
+.score-report-export .score-report-category[data-category='notRecommended'] {
+  --category-accent: var(--destructive);
+}
+
+.score-report-export .score-report-category-header {
+  justify-content: flex-start;
+  gap: 16px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--muted) 30%, transparent);
+}
+
+.score-report-export .score-report-count {
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-foreground);
+  white-space: nowrap;
+}
+
+.score-report-export .score-report-games {
+  justify-content: space-between;
+  gap: 22px 24px;
+  padding: 20px;
+}
+
+.score-report-export .score-report-cover {
+  border-radius: var(--radius);
+  box-shadow: 0 5px 14px rgb(0 0 0 / 25%);
+}
+
+.score-report-export .score-report-cover-placeholder {
+  border: 1px solid var(--border);
+}
+
+.score-report-export .score-report-game-name {
+  margin-top: 8px;
+  padding: 0 4px;
+  overflow: hidden;
+  color: var(--card-foreground);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

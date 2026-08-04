@@ -209,7 +209,7 @@
       "label": "",
       "groups": { "poster": "Poster", "json": "JSON" },
       "posterScoreReport": "",
-      "jsonGamePlayTime": ""
+      "gamePlayTime": ""
     },
     "action": { "export": "", "reset": "" },
     "message": {
@@ -219,83 +219,5 @@
     },
     "outputPath": "",
     "settings": { "empty": "" }
-  },
-  "poster": {
-    "templates": {
-      "scoreReport": {
-        "maxWidth": {
-          "title": "",
-          "description": ""
-        },
-        "titleWidth": {
-          "title": ""
-        },
-        "gameCoverHeightSmall": {
-          "title": "",
-          "description": ""
-        },
-        "gameCoverHeightLarge": {
-          "title": "",
-          "description": ""
-        },
-        "padding": {
-          "title": "",
-          "description": ""
-        },
-        "gap": {
-          "title": "",
-          "description": ""
-        },
-        "titleColor1": {
-          "title": ""
-        },
-        "titleColor2": {
-          "title": ""
-        },
-        "titleColor3": {
-          "title": ""
-        },
-        "titleColor4": {
-          "title": ""
-        },
-        "titleColor5": {
-          "title": ""
-        },
-        "useSmallCover1": {
-          "title": ""
-        },
-        "useSmallCover2": {
-          "title": ""
-        },
-        "useSmallCover3": {
-          "title": ""
-        },
-        "useSmallCover4": {
-          "title": ""
-        },
-        "useSmallCover5": {
-          "title": ""
-        },
-        "splitColor": {
-          "title": "",
-          "description": ""
-        },
-        "splitWidth": {
-          "title": ""
-        },
-        "drawScore": {
-          "title": ""
-        },
-        "scoreColor": {
-          "title": ""
-        },
-        "fontColor": {
-          "title": ""
-        },
-        "backgroundColor": {
-          "title": ""
-        }
-      }
-    }
   }
 }
