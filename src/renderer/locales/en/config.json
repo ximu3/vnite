@@ -18,6 +18,8 @@
     "minimizeToTray": "Minimize to Tray",
     "hideWindowAfterGameStart": "Minimize to tray after game launch",
     "hideWindowAfterGameStartDescription": "Automatically hide main window after launching a game",
+    "showWindowAfterGameExit": "Show main window after game exit",
+    "showWindowAfterGameExitDescription": "Automatically show and focus the Vnite main window after a game exits",
     "timerTitle": "Game Timer",
     "foregroundTimer": {
       "title": "Foreground Timer",

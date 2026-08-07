@@ -34,6 +34,7 @@ export interface configDocs {
     quitToTray: boolean
     language: string
     hideWindowAfterGameStart: boolean
+    showWindowAfterGameExit: boolean
     enableForegroundTimer: boolean
     foregroundWaitTime: number
     ignoreShortInterruptions: number
@@ -363,6 +364,8 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
     quitToTray: false,
     language: '',
     hideWindowAfterGameStart: true,
+    // 默认延续现有版本的退出行为，升级后仍会显示并聚焦主窗口，用户可在设置中关闭。
+    showWindowAfterGameExit: true,
     enableForegroundTimer: true,
     foregroundWaitTime: 10,
     ignoreShortInterruptions: 0,

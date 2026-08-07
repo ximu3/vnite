@@ -18,6 +18,8 @@
     "minimizeToTray": "トレイに最小化",
     "hideWindowAfterGameStart": "ゲーム起動後にトレイに最小化する",
     "hideWindowAfterGameStartDescription": "ゲーム起動後に自動的にメインウィンドウを隠す",
+    "showWindowAfterGameExit": "ゲーム終了後にメインウィンドウを表示",
+    "showWindowAfterGameExitDescription": "ゲームの終了を検出した後、Vnite のメインウィンドウを自動的に表示して前面に切り替える",
     "timerTitle": "ゲームタイマー",
     "foregroundTimer": {
       "title": "フォアグラウンドタイマー",
