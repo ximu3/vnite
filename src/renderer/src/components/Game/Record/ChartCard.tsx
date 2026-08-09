@@ -8,7 +8,7 @@ import { useGameState } from '~/hooks'
 import type { GameRecordCalculationSource } from '~/stores/game'
 import { getGamePlayTimeByDateRange, getGameStartAndEndDate } from '~/stores/game'
 import { cn } from '~/utils'
-import { DailyPlayTime, TimeGranularity, TimerChart } from './TimerChart'
+import { DailyPlayTime, HelpText, TimeGranularity, TimerChart } from './TimerChart'
 
 function recommendGranularity(chartData: DailyPlayTime): TimeGranularity {
   const monthSet = new Set<string>()
@@ -123,21 +123,21 @@ export function ChartCard({
             )}
           </div>
           {!startDate || !endDate ? (
-            t('detail.chart.selectRange')
+            <HelpText info={t('detail.chart.selectRange')} />
           ) : startDate > endDate ? (
-            <div>{t('detail.chart.dateError')}</div>
+            <HelpText info={t('detail.chart.dateError')} />
           ) : !isDateInRange(startDate) || !isDateInRange(endDate) ? (
-            <div>
-              {t('detail.chart.rangeLimit', {
+            <HelpText
+              info={t('detail.chart.rangeLimit', {
                 startDate: availableRange.start,
                 endDate: availableRange.end
               })}
-            </div>
+            />
           ) : (
             <div className={cn('max-h-full rounded-lg py-3', '3xl:max-h-full')}>
               <TimerChart
                 data={playTimeByDateRange}
-                minMinutes={granularity === 'day' ? 0 : minValue}
+                minMinutes={granularity === 'day' ? minValue : 0}
                 className={cn('w-full max-h-[30vh] -ml-3')}
                 granularity={granularity}
               />
@@ -145,7 +145,7 @@ export function ChartCard({
           )}
         </>
       ) : (
-        <div>{t('detail.chart.noData')}</div>
+        <HelpText info={t('detail.chart.noData')} />
       )}
     </div>
   )

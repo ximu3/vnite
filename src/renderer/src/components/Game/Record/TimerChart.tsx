@@ -13,6 +13,10 @@ export interface DailyPlayTime {
 
 export type TimeGranularity = 'day' | 'month'
 
+export function HelpText({ info }: { info: string }): React.JSX.Element {
+  return <div className="py-6 text-center text-sm text-muted-foreground">{info}</div>
+}
+
 interface ChartData {
   jumpDate: string
   label: string
@@ -134,7 +138,9 @@ export const TimerChart = ({
       color: 'var(--primary)'
     }
   }
-  return (
+  return chartData.length === 0 ? (
+    <HelpText info={t('detail.chart.noData')} />
+  ) : (
     <ChartContainer config={chartConfig} className={cn(className)}>
       <BarChart data={chartData}>
         {/* Adding Grid Lines */}
