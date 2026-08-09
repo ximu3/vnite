@@ -1,9 +1,11 @@
-import { DateTimeInput } from '@ui/date-input'
-import { isEqual } from 'lodash'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StepperInput } from '~/components/ui/input'
-import { SeparatorDashed } from '~/components/ui/separator-dashed'
+
+import { DateTimeInput } from '@ui/date-input'
+import { StepperInput } from '@ui/input'
+import { SeparatorDashed } from '@ui/separator-dashed'
+import { useGameState } from '~/hooks'
+import type { GameRecordCalculationSource } from '~/stores/game'
 import { getGamePlayTimeByDateRange, getGameStartAndEndDate } from '~/stores/game'
 import { cn } from '~/utils'
 import { DailyPlayTime, TimeGranularity, TimerChart } from './TimerChart'
@@ -40,43 +42,55 @@ export function ChartCard({
   className?: string
 }): React.JSX.Element {
   const { t } = useTranslation('game')
-  const timers = getGameStartAndEndDate(gameId)
+  const [recordTimers] = useGameState(gameId, 'record.timers')
+  const [dailyPlayTimes] = useGameState(gameId, 'record.dailyPlayTimes')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [minValue, setMinValue] = useState(0)
-  const [playTimeByDateRange, setPlayTimeByDateRange] = useState<Record<string, number>>({})
-  const [granularity, setGranularity] = useState<TimeGranularity>('day')
+
+  const calculationSource = useMemo<GameRecordCalculationSource>(
+    () => ({
+      timers: recordTimers,
+      dailyPlayTimes
+    }),
+    [recordTimers, dailyPlayTimes]
+  )
+
+  const availableRange = useMemo(
+    () => getGameStartAndEndDate(gameId, calculationSource),
+    [gameId, calculationSource]
+  )
 
   useEffect(() => {
-    setStartDate(timers.start)
-    setEndDate(timers.end)
-  }, [timers.start, timers.end])
+    setStartDate(availableRange.start)
+    setEndDate(availableRange.end)
+  }, [availableRange.start, availableRange.end])
 
   const isDateInRange = (date: string): boolean => {
-    if (!date || !timers.start || !timers.end) return false
-    return date >= timers.start && date <= timers.end
+    if (!date || !availableRange.start || !availableRange.end) return false
+    return date >= availableRange.start && date <= availableRange.end
   }
 
-  useEffect(() => {
-    // Get data only if both dates are valid and within the allowed range
-    if (
-      startDate &&
-      endDate &&
+  const playTimeByDateRange = useMemo(
+    () =>
+      Boolean(startDate && endDate) &&
       isDateInRange(startDate) &&
       isDateInRange(endDate) &&
       startDate <= endDate
-    ) {
-      const data = getGamePlayTimeByDateRange(gameId, startDate, endDate)
-      setPlayTimeByDateRange(data)
-      setGranularity(recommendGranularity(data))
-    }
-  }, [startDate, endDate, timers.start, timers.end, gameId])
+        ? getGamePlayTimeByDateRange(gameId, startDate, endDate, calculationSource)
+        : {},
+    [startDate, endDate, gameId, calculationSource]
+  )
+  const granularity = useMemo(
+    () => recommendGranularity(playTimeByDateRange),
+    [playTimeByDateRange]
+  )
 
   return (
     <div className={cn(className, 'flex flex-col')}>
       <div className={cn('font-bold')}>{t('detail.chart.title')}</div>
       <SeparatorDashed />
-      {!isEqual(timers, { start: '', end: '' }) ? (
+      {availableRange.start && availableRange.end ? (
         <>
           <div className={cn('flex flex-row gap-2 items-center')}>
             <DateTimeInput
@@ -114,7 +128,10 @@ export function ChartCard({
             <div>{t('detail.chart.dateError')}</div>
           ) : !isDateInRange(startDate) || !isDateInRange(endDate) ? (
             <div>
-              {t('detail.chart.rangeLimit', { startDate: timers.start, endDate: timers.end })}
+              {t('detail.chart.rangeLimit', {
+                startDate: availableRange.start,
+                endDate: availableRange.end
+              })}
             </div>
           ) : (
             <div className={cn('max-h-full rounded-lg py-3', '3xl:max-h-full')}>
