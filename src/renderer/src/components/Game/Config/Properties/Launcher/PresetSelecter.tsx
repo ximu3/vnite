@@ -1,25 +1,28 @@
 'use client'
 
-import * as React from 'react'
+import { BUILT_IN_LAUNCHER_PRESET_IDS } from '@appTypes/models'
+import { useRouter } from '@tanstack/react-router'
 import { ChevronsUpDown } from 'lucide-react'
+import * as React from 'react'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 
-import { cn } from '~/utils'
-import { Button } from '~/components/ui/button'
+import { Button } from '@ui/button'
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-  CommandList
-} from '~/components/ui/command'
-import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
-import { toast } from 'sonner'
-import { useGameState } from '~/hooks'
-
-import { useSteamIdDialogStore, SteamIdDialog } from './SteamIdDialog'
-import { useTranslation } from 'react-i18next'
+  CommandList,
+  CommandSeparator
+} from '@ui/command'
+import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
 import { ipcManager } from '~/app/ipc'
+import { useConfigLocalState } from '~/hooks'
+import { useConfigTabStore } from '~/pages/Config/store'
+import { cn } from '~/utils'
+import { SteamIdDialog, useSteamIdDialogStore } from './SteamIdDialog'
 
 export function PresetSelecter({
   gameId,
@@ -29,67 +32,38 @@ export function PresetSelecter({
   className?: string
 }): React.JSX.Element {
   const { t } = useTranslation('game')
+  const router = useRouter()
   const [open, setOpen] = React.useState(false)
-  const [steamId] = useGameState(gameId, 'metadata.steamId')
-  const [value] = React.useState('')
-  const { setIsOpen, setGameId } = useSteamIdDialogStore()
+  const [customPresets] = useConfigLocalState('game.launcher.presets')
+  const openSteamIdDialog = useSteamIdDialogStore((state) => state.openDialog)
+  const setLastConfigTab = useConfigTabStore((state) => state.setLastConfigTab)
 
-  const presets = [
-    {
-      value: 'default',
-      label: t('detail.properties.launcher.preset.default')
-    },
-    {
-      value: 'le',
-      label: t('detail.properties.launcher.preset.le')
-    },
-    {
-      value: 'steam',
-      label: t('detail.properties.launcher.preset.steam')
-    },
-    {
-      value: 'vba',
-      label: t('detail.properties.launcher.preset.vba')
-    }
-  ]
-
-  async function setPreset(presetName: string, gameId: string): Promise<void> {
-    if (presetName === 'steam') {
-      // Steam ID is required for this preset
-      if (steamId) {
-        toast.promise(
-          async () => {
-            await ipcManager.invoke('launcher:select-preset', presetName, gameId, steamId)
-          },
-          {
-            loading: t('detail.properties.launcher.preset.notifications.configuring'),
-            success: t('detail.properties.launcher.preset.notifications.success'),
-            error: (error) => `${error}`
-          }
-        )
+  async function applyPreset(presetId: string): Promise<void> {
+    const toastId = toast.loading(t('detail.properties.launcher.preset.notifications.configuring'))
+    try {
+      const result = await ipcManager.invoke('launcher:select-preset', presetId, gameId)
+      if (result.status === 'missing-steam-id') {
+        toast.dismiss(toastId)
+        openSteamIdDialog(gameId, presetId)
+        toast.info(t('detail.properties.launcher.preset.steamIdRequired'))
         return
       }
-      setIsOpen(true)
-      setGameId(gameId)
-      toast.info(t('detail.properties.launcher.preset.steamIdRequired'))
-      return
+      toast.success(t('detail.properties.launcher.preset.notifications.success'), { id: toastId })
+    } catch (error) {
+      toast.error(String(error), { id: toastId })
     }
-    toast.promise(
-      async () => {
-        await ipcManager.invoke('launcher:select-preset', presetName, gameId)
-      },
-      {
-        loading: t('detail.properties.launcher.preset.notifications.configuring'),
-        success: t('detail.properties.launcher.preset.notifications.success'),
-        error: (error) => `${error}`
-      }
-    )
+  }
+
+  function openManagePage(): void {
+    setLastConfigTab('advanced')
+    void router.navigate({ to: '/config' })
+    setOpen(false)
   }
 
   return (
     <>
       <SteamIdDialog />
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover open={open} onOpenChange={setOpen} modal={true}>
         <PopoverTrigger className={cn(className)} asChild>
           <Button
             variant="outline"
@@ -97,31 +71,49 @@ export function PresetSelecter({
             aria-expanded={open}
             className="min-w-[180px] justify-between"
           >
-            {value
-              ? presets.find((preset) => preset.value === value)?.label
-              : t('detail.properties.launcher.preset.title')}
-            <ChevronsUpDown className="w-4 h-4 ml-2 opacity-50 shrink-0" />
+            {t('detail.properties.launcher.preset.title')}
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="max-w-[200px] p-0">
           <Command>
             <CommandInput placeholder={t('detail.properties.launcher.preset.search')} />
-            <CommandList>
-              <CommandEmpty>No preset found.</CommandEmpty>
+            <CommandList className="scrollbar-base-thin">
+              <CommandEmpty>{t('detail.properties.launcher.preset.noResults')}</CommandEmpty>
               <CommandGroup>
-                {presets.map((preset) => (
+                {BUILT_IN_LAUNCHER_PRESET_IDS.map((presetId) => (
                   <CommandItem
-                    key={preset.value}
-                    value={preset.value}
-                    onSelect={(currentValue) => {
-                      setPreset(currentValue, gameId)
+                    key={presetId}
+                    value={presetId}
+                    keywords={[t(`detail.properties.launcher.preset.${presetId}`)]}
+                    onSelect={() => {
+                      void applyPreset(presetId)
                       setOpen(false)
                     }}
-                    className={cn('pl-5')}
                   >
-                    {preset.label}
+                    {t(`detail.properties.launcher.preset.${presetId}`)}
                   </CommandItem>
                 ))}
+                {customPresets.map((preset) => (
+                  <CommandItem
+                    key={preset.id}
+                    value={preset.id}
+                    keywords={[preset.name]}
+                    onSelect={() => {
+                      void applyPreset(preset.id)
+                      setOpen(false)
+                    }}
+                  >
+                    <span className="min-w-0 flex-1 truncate">{preset.name}</span>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+              <CommandSeparator />
+              <CommandGroup>
+                <CommandItem value="manage-launcher-presets" onSelect={openManagePage}>
+                  <span className="icon-[mdi--cog-outline] h-4 w-4"></span>
+                  {t('detail.properties.launcher.preset.manage')}
+                </CommandItem>
               </CommandGroup>
             </CommandList>
           </Command>

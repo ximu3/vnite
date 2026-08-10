@@ -283,6 +283,41 @@
         "extractIconFailed": "提取程序图标失败：{{message}}",
         "removeToolFailed": "删除工具失败：{{message}}"
       }
+    },
+    "launcherPresets": {
+      "title": "启动与追踪预设",
+      "variables": "可用变量（点击复制）",
+      "newPreset": "新预设",
+      "unnamedPreset": "未命名预设",
+      "empty": "暂无自定义预设",
+      "selectPreset": "选择一个预设进行查看或编辑",
+      "duplicate": "复制",
+      "launchMode": "启动模式",
+      "mode": {
+        "file": "文件",
+        "url": "链接",
+        "script": "脚本"
+      },
+      "filePath": "文件路径",
+      "url": "链接地址",
+      "browserPath": "浏览器路径（可选）",
+      "command": "脚本内容",
+      "workingDirectory": "工作目录",
+      "monitorMode": "追踪模式",
+      "monitor": {
+        "folder": "目录",
+        "file": "文件",
+        "process": "进程"
+      },
+      "monitorPath": "追踪路径",
+      "processName": "进程名称",
+      "validation": {
+        "name-required": "预设名称不能为空",
+        "duplicate-name": "自定义预设名称不能重复"
+      },
+      "notifications": {
+        "variableCopied": "变量已复制"
+      }
     }
   },
   "theme": {

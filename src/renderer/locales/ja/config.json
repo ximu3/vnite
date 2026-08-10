@@ -283,6 +283,41 @@
         "extractIconFailed": "プログラムアイコンの取得に失敗しました: {{message}}",
         "removeToolFailed": "ツールの削除に失敗しました: {{message}}"
       }
+    },
+    "launcherPresets": {
+      "title": "ランチャー・追跡プリセット",
+      "variables": "利用可能な変数（クリックしてコピー）",
+      "newPreset": "新しいプリセット",
+      "unnamedPreset": "無名のプリセット",
+      "empty": "カスタムプリセットはありません",
+      "selectPreset": "表示または編集するプリセットを選択してください",
+      "duplicate": "複製",
+      "launchMode": "起動モード",
+      "mode": {
+        "file": "ファイル",
+        "url": "URL",
+        "script": "スクリプト"
+      },
+      "filePath": "ファイルパス",
+      "url": "URL",
+      "browserPath": "ブラウザーパス（任意）",
+      "command": "スクリプト内容",
+      "workingDirectory": "作業ディレクトリ",
+      "monitorMode": "追跡モード",
+      "monitor": {
+        "folder": "フォルダー",
+        "file": "ファイル",
+        "process": "プロセス"
+      },
+      "monitorPath": "追跡パス",
+      "processName": "プロセス名",
+      "validation": {
+        "name-required": "プリセット名を入力してください",
+        "duplicate-name": "カスタムプリセット名は重複できません"
+      },
+      "notifications": {
+        "variableCopied": "変数をコピーしました"
+      }
     }
   },
   "theme": {

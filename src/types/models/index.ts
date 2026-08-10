@@ -1,4 +1,5 @@
 export * from './config'
 export * from './databaseInspector'
 export * from './game'
+export * from './launcherPreset'
 export * from './utils'

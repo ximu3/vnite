@@ -8,6 +8,7 @@ import { UpscalerConfigDialog } from '~/components/utils/UpscalerConfigDialog'
 import { cn } from '~/utils'
 import { RandomFilter } from './randomFilter'
 import { ToolboxSection } from './ToolboxSection'
+import { LauncherPresetSection } from './LauncherPresetSection'
 
 export function Advanced(): React.JSX.Element {
   const { t } = useTranslation('config')
@@ -93,6 +94,8 @@ export function Advanced(): React.JSX.Element {
         </Card>
 
         <ToolboxSection />
+
+        <LauncherPresetSection />
 
         <RandomFilter />
       </div>
