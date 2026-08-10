@@ -147,7 +147,7 @@ export function LauncherPresetSection(): React.JSX.Element {
   }
 
   return (
-    <Card>
+    <Card id="config-section-launcher-presets">
       <CardHeader>
         <CardTitle>{t('advanced.launcherPresets.title')}</CardTitle>
       </CardHeader>

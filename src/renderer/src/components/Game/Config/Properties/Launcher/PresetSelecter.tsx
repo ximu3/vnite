@@ -37,6 +37,7 @@ export function PresetSelecter({
   const [customPresets] = useConfigLocalState('game.launcher.presets')
   const openSteamIdDialog = useSteamIdDialogStore((state) => state.openDialog)
   const setLastConfigTab = useConfigTabStore((state) => state.setLastConfigTab)
+  const setPendingSection = useConfigTabStore((state) => state.setPendingSection)
 
   async function applyPreset(presetId: string): Promise<void> {
     const toastId = toast.loading(t('detail.properties.launcher.preset.notifications.configuring'))
@@ -56,7 +57,8 @@ export function PresetSelecter({
 
   function openManagePage(): void {
     setLastConfigTab('advanced')
-    void router.navigate({ to: '/config' })
+    setPendingSection('launcher-presets')
+    void router.navigate({ to: '/config', resetScroll: false })
     setOpen(false)
   }
 
