@@ -130,6 +130,7 @@ export interface configDocs {
       contentTopPadding: number
     }
     memory: {
+      sortOrder: 'asc' | 'desc'
       gridColumnWidth: number
       masonryColumnWidth: number
       fullColumnWidth: number
@@ -447,6 +448,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       contentTopPadding: 40 // in vh
     },
     memory: {
+      sortOrder: 'desc',
       gridColumnWidth: 280,
       masonryColumnWidth: 220,
       fullColumnWidth: 320,

@@ -63,6 +63,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
   const [screenshotPath] = useGameLocalState(gameId, 'path.screenshotPath')
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [rootSaveDir] = useConfigLocalState('memory.image.saveDir')
+  const [memorySortOrder, setMemorySortOrder] = useConfigState('appearances.memory.sortOrder')
   const [gridColumnWidth] = useConfigState('appearances.memory.gridColumnWidth')
   const [masonryColumnWidth] = useConfigState('appearances.memory.masonryColumnWidth')
   const [fullColumnWidth] = useConfigState('appearances.memory.fullColumnWidth')
@@ -135,12 +136,14 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
       .sort((a, b) => {
         const pinnedOrder =
           Number(Boolean(memoryList[b].pinned)) - Number(Boolean(memoryList[a].pinned))
+        const dateOrder =
+          memorySortOrder === 'asc'
+            ? memoryList[a].date.localeCompare(memoryList[b].date)
+            : memoryList[b].date.localeCompare(memoryList[a].date)
 
-        return (
-          pinnedOrder || memoryList[b].date.localeCompare(memoryList[a].date) || a.localeCompare(b)
-        )
+        return pinnedOrder || dateOrder || a.localeCompare(b)
       })
-  }, [memoryList])
+  }, [memoryList, memorySortOrder])
 
   const sortedMemoryItems = useMemo(() => {
     return sortedMemoryIds.map((memoryId) => {
@@ -367,6 +370,14 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
     await setMemoryListAndSave(newMemoryList)
   }
 
+  function toggleMemorySortOrder(): void {
+    void setMemorySortOrder(memorySortOrder === 'asc' ? 'desc' : 'asc')
+
+    for (const mode of ['grid', 'masonry', 'list', 'full'] as const) {
+      setMemoryPageByView(gameId, mode, 1)
+    }
+  }
+
   function renderEmptyState(): React.JSX.Element {
     return (
       <div
@@ -405,6 +416,21 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
             />
           )}
         </div>
+
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className={cn('size-8 shrink-0')}
+          onClick={toggleMemorySortOrder}
+        >
+          <span
+            className={cn(
+              memorySortOrder === 'asc' ? 'icon-[mdi--arrow-up]' : 'icon-[mdi--arrow-down]',
+              'size-4'
+            )}
+          />
+        </Button>
 
         <Tabs
           value={viewMode}
