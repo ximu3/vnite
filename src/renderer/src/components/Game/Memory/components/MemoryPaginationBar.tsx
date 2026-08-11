@@ -1,5 +1,3 @@
-import { Pagination, PaginationContent, PaginationItem, PaginationLink } from '@ui/pagination'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/select'
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -7,6 +5,9 @@ import {
   ChevronsRightIcon
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+
+import { Pagination, PaginationContent, PaginationItem, PaginationLink } from '@ui/pagination'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/select'
 import { cn } from '~/utils'
 
 function normalizeItemsPerPageOptions(

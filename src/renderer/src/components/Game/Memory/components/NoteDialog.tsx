@@ -6,11 +6,10 @@ import { Dialog, DialogContent } from '@ui/dialog'
 import { Tabs, TabsList, TabsTrigger } from '@ui/tabs'
 import { cn } from '~/utils'
 import { createImageViewerRequestFromElements } from '~/utils/image-viewer'
-import { useGameDetailStore } from '../store'
+import { useGameDetailStore } from '../../store'
+import { NoteDialogMode } from '../type'
 import { MarkdownEditor, type MarkdownEditorHandle } from './MarkdownEditor'
 import { MarkdownPreview } from './MarkdownPreview'
-
-export type NoteDialogMode = 'edit' | 'preview'
 
 export function NoteDialog({
   gameId,

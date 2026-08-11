@@ -67,6 +67,7 @@ export interface gameDoc {
         _id: string
         date: string
         note: string
+        pinned?: boolean
       }
     }
   }

@@ -15,68 +15,52 @@
  * - The computed overlay ratios are written to CSS variables and drive both the foreground
  *   image area and the note overlay height.
  */
+
+import { type CSSProperties, useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
 import { Button } from '@ui/button'
 import { Card } from '@ui/card'
 import {
-  ContextMenu,
-  ContextMenuContent,
   ContextMenuGroup,
   ContextMenuItem,
   ContextMenuPortal,
   ContextMenuSeparator,
   ContextMenuSub,
   ContextMenuSubContent,
-  ContextMenuSubTrigger,
-  ContextMenuTrigger
+  ContextMenuSubTrigger
 } from '@ui/context-menu'
 import { GameImage } from '@ui/game-image'
-import { type CSSProperties, useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { eventBus } from '~/app/events'
-import { ipcManager } from '~/app/ipc'
-import { useLightStore } from '~/pages/Light'
 import { cn } from '~/utils'
-import { useGameDetailStore } from '../store'
-import { openLargeMemoryImage } from '../utils'
-import { MarkdownPreview } from './MarkdownPreview'
-import { exportAllMemories } from './memoryExport'
-import type { NoteDialogMode } from './NoteDialog'
-import { useMemoryStore } from './store'
+import { MarkdownPreview } from '../components/MarkdownPreview'
+import { MemoryItemContextMenu } from '../components/MemoryItemContextMenu'
+import { MemoryPinBadge } from '../components/MemoryPinBadge'
+import { useMemoryStore } from '../store'
+import type { MemoryViewItem, MemoryViewRuntime, NoteDialogMode } from '../type'
 
 const CARD_NOTE_MIN_RATIO = 0.2
 const CARD_NOTE_MAX_RATIO = 0.8
 
 export function MemoryCard({
-  gameId,
-  memoryId,
-  viewerMemoryIds,
-  handleDelete,
-  note,
-  date,
-  coverHeightRatio,
+  item,
+  runtime,
   showAddCoverHoverButton,
   showAddNoteHoverButton
 }: {
-  gameId: string
-  memoryId: string
-  viewerMemoryIds: string[]
-  handleDelete: () => void
-  note: string
-  date: string
-  coverHeightRatio?: number
+  item: MemoryViewItem
+  runtime: MemoryViewRuntime
   showAddCoverHoverButton: boolean
   showAddNoteHoverButton: boolean
 }): React.JSX.Element {
+  const { memoryId, note, date, pinned, coverHeightRatio } = item
+  const { gameId } = runtime
   const { t } = useTranslation('game')
   const [isCoverExist, setIsCoverExist] = useState(true)
   const [coverRefreshKey, setCoverRefreshKey] = useState(0)
   const [requiredOverlayRatio, setRequiredOverlayRatio] = useState(CARD_NOTE_MIN_RATIO)
   const memoryRef = useRef<HTMLDivElement>(null)
   const noteMeasureRef = useRef<HTMLDivElement>(null)
-  const refreshLight = useLightStore((state) => state.refresh)
-  const openImageViewer = useGameDetailStore((state) => state.openImageViewer)
-  const openCropDialog = useMemoryStore((state) => state.openCropDialog)
   const openNoteDialog = useMemoryStore((state) => state.openNoteDialog)
   const hasNote = Boolean(note?.trim())
   const hasHoverAction =
@@ -158,42 +142,6 @@ export function MemoryCard({
 
   function shouldIgnorePreviewClick(event: React.MouseEvent): boolean {
     return Boolean((event.target as HTMLElement).closest('a'))
-  }
-
-  async function handleCoverSelect(): Promise<void> {
-    try {
-      const filePath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
-      if (!filePath) return
-
-      openCropDialog({
-        gameId,
-        memoryId,
-        imagePath: filePath,
-        imageSource: 'selected-file'
-      })
-    } catch (error) {
-      toast.error(t('detail.memory.notifications.selectFileError', { error }))
-    }
-  }
-
-  async function handleResize(): Promise<void> {
-    try {
-      // Get current image path
-      const currentPath = await ipcManager.invoke('game:get-memory-cover-path', gameId, memoryId)
-      if (!currentPath) {
-        toast.error(t('detail.memory.notifications.imageNotFound'))
-        return
-      }
-
-      openCropDialog({
-        gameId,
-        memoryId,
-        imagePath: currentPath,
-        imageSource: 'existing-cover'
-      })
-    } catch (error) {
-      toast.error(t('detail.memory.notifications.getImageError', { error }))
-    }
   }
 
   function renderDateBadge(): React.JSX.Element {
@@ -291,7 +239,7 @@ export function MemoryCard({
         )}
         onClick={(event) => {
           event.stopPropagation()
-          void handleCoverSelect()
+          void runtime.selectCover(memoryId)
         }}
       >
         <span className={cn('icon-[mdi--image-plus] size-4')} />
@@ -344,14 +292,7 @@ export function MemoryCard({
             'transition-[bottom] duration-300 ease-out motion-reduce:transition-none',
             '[bottom:var(--memory-overlay-rest)] group-hover:[bottom:var(--memory-overlay-hover)]'
           )}
-          onClick={() => {
-            openLargeMemoryImage({
-              gameId,
-              memoryId,
-              memoryIds: viewerMemoryIds,
-              openImageViewer
-            })
-          }}
+          onClick={() => runtime.openImage(memoryId)}
         >
           {renderForegroundCoverImage({
             keySuffix: 'with-note',
@@ -399,14 +340,7 @@ export function MemoryCard({
 
         <div
           className={cn('absolute inset-0 z-[2] cursor-zoom-in overflow-hidden')}
-          onClick={() => {
-            openLargeMemoryImage({
-              gameId,
-              memoryId,
-              memoryIds: viewerMemoryIds,
-              openImageViewer
-            })
-          }}
+          onClick={() => runtime.openImage(memoryId)}
         >
           {renderForegroundCoverImage({
             keySuffix: 'cover-only',
@@ -459,7 +393,7 @@ export function MemoryCard({
             size="sm"
             onClick={(event) => {
               event.stopPropagation()
-              void handleCoverSelect()
+              void runtime.selectCover(memoryId)
             }}
           >
             {t('detail.memory.actions.addCover')}
@@ -487,8 +421,10 @@ export function MemoryCard({
   }
 
   return (
-    <ContextMenu>
-      <ContextMenuTrigger asChild className={cn('w-full')}>
+    <MemoryItemContextMenu
+      item={item}
+      runtime={runtime}
+      trigger={
         <Card
           ref={memoryRef}
           key={memoryId}
@@ -496,107 +432,58 @@ export function MemoryCard({
             'group relative aspect-square w-full gap-0 overflow-hidden rounded-lg p-0 shadow-md img-initial'
           )}
         >
+          {pinned && <MemoryPinBadge />}
           {renderDateBadge()}
           {renderCardContent()}
         </Card>
-      </ContextMenuTrigger>
-      <ContextMenuContent>
-        {/* Cover Image */}
-        <ContextMenuItem onSelect={handleCoverSelect}>
-          {isCoverExist
-            ? t('detail.memory.actions.changeCover')
-            : t('detail.memory.actions.addCover')}
+      }
+    >
+      {/* Cover Image */}
+      <ContextMenuItem onSelect={() => void runtime.selectCover(memoryId)}>
+        {isCoverExist
+          ? t('detail.memory.actions.changeCover')
+          : t('detail.memory.actions.addCover')}
+      </ContextMenuItem>
+      {isCoverExist && (
+        <ContextMenuItem onSelect={() => void runtime.resizeCover(memoryId)}>
+          {t('detail.memory.actions.adjustCover')}
         </ContextMenuItem>
-        {isCoverExist && (
-          <ContextMenuItem onSelect={handleResize}>
-            {t('detail.memory.actions.adjustCover')}
-          </ContextMenuItem>
-        )}
+      )}
 
-        {/* Note */}
-        <ContextMenuItem
-          onSelect={() => {
-            openMemoryNoteDialog('edit')
-          }}
-        >
-          {hasNote ? t('detail.memory.actions.editText') : t('detail.memory.actions.addText')}
-        </ContextMenuItem>
-        {/* Set As Game Media */}
-        {isCoverExist && (
-          <>
-            <ContextMenuSeparator />
-            <ContextMenuGroup>
-              <ContextMenuSub>
-                <ContextMenuSubTrigger>{t('detail.memory.setAs.title')}</ContextMenuSubTrigger>
-                <ContextMenuPortal>
-                  <ContextMenuSubContent>
-                    <ContextMenuItem
-                      onSelect={async () => {
-                        try {
-                          const coverPath = await ipcManager.invoke(
-                            'game:get-memory-cover-path',
-                            gameId,
-                            memoryId
-                          )
-                          if (!coverPath) {
-                            toast.error(t('detail.memory.notifications.imageNotFound'))
-                            return
-                          }
-                          await ipcManager.invoke('game:set-image', gameId, 'cover', coverPath)
-                          refreshLight()
-                          toast.success(t('detail.memory.notifications.setCoverSuccess'))
-                        } catch (error) {
-                          toast.error(t('detail.memory.notifications.setCoverError', { error }))
-                        }
-                      }}
-                    >
-                      {t('detail.memory.setAs.cover')}
-                    </ContextMenuItem>
-                    <ContextMenuItem
-                      onSelect={async () => {
-                        try {
-                          const coverPath = await ipcManager.invoke(
-                            'game:get-memory-cover-path',
-                            gameId,
-                            memoryId
-                          )
-                          if (!coverPath) {
-                            toast.error(t('detail.memory.notifications.imageNotFound'))
-                            return
-                          }
-                          await ipcManager.invoke('game:set-image', gameId, 'background', coverPath)
-                          refreshLight()
-                          toast.success(t('detail.memory.notifications.setBackgroundSuccess'))
-                        } catch (error) {
-                          toast.error(
-                            t('detail.memory.notifications.setBackgroundError', { error })
-                          )
-                        }
-                      }}
-                    >
-                      {t('detail.memory.setAs.background')}
-                    </ContextMenuItem>
-                  </ContextMenuSubContent>
-                </ContextMenuPortal>
-              </ContextMenuSub>
-            </ContextMenuGroup>
-          </>
-        )}
-        <ContextMenuSeparator />
-        <ContextMenuItem
-          onSelect={() => {
-            void exportAllMemories(gameId)
-          }}
-        >
-          {t('detail.memory.export.all')}
-        </ContextMenuItem>
-        <ContextMenuSeparator />
-        {/* Delete Memory */}
-        <ContextMenuItem onSelect={handleDelete}>
-          {t('detail.memory.actions.delete')}
-        </ContextMenuItem>
-      </ContextMenuContent>
-    </ContextMenu>
+      {/* Note */}
+      <ContextMenuItem
+        onSelect={() => {
+          openMemoryNoteDialog('edit')
+        }}
+      >
+        {hasNote ? t('detail.memory.actions.editText') : t('detail.memory.actions.addText')}
+      </ContextMenuItem>
+      {/* Set As Game Media */}
+      {isCoverExist && (
+        <>
+          <ContextMenuSeparator />
+          <ContextMenuGroup>
+            <ContextMenuSub>
+              <ContextMenuSubTrigger>{t('detail.memory.setAs.title')}</ContextMenuSubTrigger>
+              <ContextMenuPortal>
+                <ContextMenuSubContent>
+                  <ContextMenuItem
+                    onSelect={() => void runtime.setCoverAsGameMedia(memoryId, 'cover')}
+                  >
+                    {t('detail.memory.setAs.cover')}
+                  </ContextMenuItem>
+                  <ContextMenuItem
+                    onSelect={() => void runtime.setCoverAsGameMedia(memoryId, 'background')}
+                  >
+                    {t('detail.memory.setAs.background')}
+                  </ContextMenuItem>
+                </ContextMenuSubContent>
+              </ContextMenuPortal>
+            </ContextMenuSub>
+          </ContextMenuGroup>
+        </>
+      )}
+    </MemoryItemContextMenu>
   )
 }
 

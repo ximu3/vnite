@@ -1,7 +1,8 @@
-import type { gameDoc } from '@appTypes/models'
 import { useEffect } from 'react'
+
+import type { gameDoc } from '@appTypes/models'
+import { useMemoryStore } from '../store'
 import { NoteDialog } from './NoteDialog'
-import { useMemoryStore } from './store'
 
 type MemoryList = gameDoc['memory']['memoryList']
 

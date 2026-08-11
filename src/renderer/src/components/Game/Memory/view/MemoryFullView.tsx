@@ -1,61 +1,39 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 
-import type { gameDoc } from '@appTypes/models/game'
 import { Button } from '@ui/button'
 import { Card } from '@ui/card'
 import {
-  ContextMenu,
-  ContextMenuContent,
   ContextMenuGroup,
   ContextMenuItem,
   ContextMenuPortal,
   ContextMenuSeparator,
   ContextMenuSub,
   ContextMenuSubContent,
-  ContextMenuSubTrigger,
-  ContextMenuTrigger
+  ContextMenuSubTrigger
 } from '@ui/context-menu'
 import { GameImage } from '@ui/game-image'
 import { eventBus } from '~/app/events'
-import { ipcManager } from '~/app/ipc'
-import { useLightStore } from '~/pages/Light'
 import { cn } from '~/utils'
-import { useGameDetailStore } from '../store'
-import { openLargeMemoryImage } from '../utils'
-import { MarkdownPreview } from './MarkdownPreview'
-import type { MemoryMasonryItemInfo } from './MemoryMasonryView'
-import { exportAllMemories } from './memoryExport'
-import { useMemoryStore } from './store'
+import { MarkdownPreview } from '../components/MarkdownPreview'
+import { MemoryItemContextMenu } from '../components/MemoryItemContextMenu'
+import { MemoryPinBadge } from '../components/MemoryPinBadge'
+import { useMemoryStore } from '../store'
+import type { MemoryViewItem, MemoryViewProps, MemoryViewRuntime } from '../type'
 
 const FULL_VIEW_GAP_PX = 20
 const FULL_VIEW_ROW_HEIGHT_PX = 1
 
-type MemoryList = gameDoc['memory']['memoryList']
-
 export function MemoryFullView({
-  gameId,
-  memoryIds,
-  viewerMemoryIds,
-  memoryList,
-  masonryItemByMemoryId,
+  items,
+  runtime,
   columnWidth,
   showAddCoverHoverButton,
-  showAddNoteHoverButton,
-  onCoverMissing,
-  onDelete
-}: {
-  gameId: string
-  memoryIds: string[]
-  viewerMemoryIds: string[]
-  memoryList: MemoryList
-  masonryItemByMemoryId: Record<string, MemoryMasonryItemInfo>
+  showAddNoteHoverButton
+}: MemoryViewProps & {
   columnWidth: number
   showAddCoverHoverButton: boolean
   showAddNoteHoverButton: boolean
-  onCoverMissing: (memoryId: string) => void
-  onDelete: (memoryId: string) => Promise<void>
 }): React.JSX.Element {
   return (
     <div
@@ -66,23 +44,14 @@ export function MemoryFullView({
         gap: FULL_VIEW_GAP_PX
       }}
     >
-      {memoryIds.map((memoryId) => {
-        const memory = memoryList[memoryId]
-        if (!memory) return null
-
+      {items.map((item) => {
         return (
-          <MasonryGridItem key={`memory-full-${memoryId}`}>
+          <MasonryGridItem key={`memory-full-${item.memoryId}`}>
             <MemoryFullCard
-              gameId={gameId}
-              memoryId={memoryId}
-              viewerMemoryIds={viewerMemoryIds}
-              note={memory.note}
-              date={memory.date}
-              coverHeightRatio={masonryItemByMemoryId[memoryId]?.heightRatio}
+              item={item}
+              runtime={runtime}
               showAddCoverHoverButton={showAddCoverHoverButton}
               showAddNoteHoverButton={showAddNoteHoverButton}
-              onCoverMissing={() => onCoverMissing(memoryId)}
-              onDelete={() => onDelete(memoryId)}
             />
           </MasonryGridItem>
         )
@@ -123,34 +92,21 @@ function MasonryGridItem({ children }: { children: React.ReactNode }): React.JSX
 }
 
 function MemoryFullCard({
-  gameId,
-  memoryId,
-  viewerMemoryIds,
-  note,
-  date,
-  coverHeightRatio,
+  item,
+  runtime,
   showAddCoverHoverButton,
-  showAddNoteHoverButton,
-  onCoverMissing,
-  onDelete
+  showAddNoteHoverButton
 }: {
-  gameId: string
-  memoryId: string
-  viewerMemoryIds: string[]
-  note: string
-  date: string
-  coverHeightRatio?: number
+  item: MemoryViewItem
+  runtime: MemoryViewRuntime
   showAddCoverHoverButton: boolean
   showAddNoteHoverButton: boolean
-  onCoverMissing: () => void
-  onDelete: () => Promise<void>
 }): React.JSX.Element {
+  const { memoryId, note, date, pinned, coverHeightRatio } = item
+  const { gameId } = runtime
   const { t } = useTranslation('game')
   const [isCoverExist, setIsCoverExist] = useState(Boolean(coverHeightRatio))
   const [coverRefreshKey, setCoverRefreshKey] = useState(0)
-  const refreshLight = useLightStore((state) => state.refresh)
-  const openImageViewer = useGameDetailStore((state) => state.openImageViewer)
-  const openCropDialog = useMemoryStore((state) => state.openCropDialog)
   const openNoteDialog = useMemoryStore((state) => state.openNoteDialog)
   const hasNote = Boolean(note?.trim())
   const showAddCoverHoverAction = !isCoverExist && hasNote && showAddCoverHoverButton
@@ -187,70 +143,6 @@ function MemoryFullCard({
     }
   }, [gameId, memoryId])
 
-  async function handleCoverSelect(): Promise<void> {
-    try {
-      const filePath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
-      if (!filePath) return
-
-      openCropDialog({
-        gameId,
-        memoryId,
-        imagePath: filePath,
-        imageSource: 'selected-file'
-      })
-    } catch (error) {
-      toast.error(t('detail.memory.notifications.selectFileError', { error }))
-    }
-  }
-
-  async function handleResize(): Promise<void> {
-    try {
-      const currentPath = await ipcManager.invoke('game:get-memory-cover-path', gameId, memoryId)
-      if (!currentPath) {
-        toast.error(t('detail.memory.notifications.imageNotFound'))
-        return
-      }
-
-      openCropDialog({
-        gameId,
-        memoryId,
-        imagePath: currentPath,
-        imageSource: 'existing-cover'
-      })
-    } catch (error) {
-      toast.error(t('detail.memory.notifications.getImageError', { error }))
-    }
-  }
-
-  async function handleSetAs(type: 'cover' | 'background'): Promise<void> {
-    try {
-      const coverPath = await ipcManager.invoke('game:get-memory-cover-path', gameId, memoryId)
-      if (!coverPath) {
-        toast.error(t('detail.memory.notifications.imageNotFound'))
-        return
-      }
-
-      await ipcManager.invoke('game:set-image', gameId, type, coverPath)
-      refreshLight()
-      toast.success(
-        t(
-          type === 'cover'
-            ? 'detail.memory.notifications.setCoverSuccess'
-            : 'detail.memory.notifications.setBackgroundSuccess'
-        )
-      )
-    } catch (error) {
-      toast.error(
-        t(
-          type === 'cover'
-            ? 'detail.memory.notifications.setCoverError'
-            : 'detail.memory.notifications.setBackgroundError',
-          { error }
-        )
-      )
-    }
-  }
-
   function renderAddCoverButton(iconOnly = true): React.JSX.Element {
     return (
       <Button
@@ -260,7 +152,7 @@ function MemoryFullCard({
         className={cn(iconOnly && 'size-8')}
         onClick={(event) => {
           event.stopPropagation()
-          void handleCoverSelect()
+          void runtime.selectCover(memoryId)
         }}
       >
         {iconOnly ? (
@@ -310,13 +202,16 @@ function MemoryFullCard({
   }
 
   return (
-    <ContextMenu>
-      <ContextMenuTrigger asChild>
+    <MemoryItemContextMenu
+      item={item}
+      runtime={runtime}
+      trigger={
         <Card
           className={cn(
             'group relative w-full gap-0 overflow-hidden rounded-lg p-0 shadow-md img-initial'
           )}
         >
+          {pinned && <MemoryPinBadge />}
           {renderMissingContentActions()}
 
           {isCoverExist && (
@@ -335,16 +230,9 @@ function MemoryFullCard({
                 decoding="async"
                 onError={() => {
                   setIsCoverExist(false)
-                  onCoverMissing()
+                  runtime.markCoverMissing(memoryId)
                 }}
-                onClick={() =>
-                  openLargeMemoryImage({
-                    gameId,
-                    memoryId,
-                    memoryIds: viewerMemoryIds,
-                    openImageViewer
-                  })
-                }
+                onClick={() => runtime.openImage(memoryId)}
                 onUpdated={() => setIsCoverExist(true)}
               />
             </div>
@@ -387,53 +275,46 @@ function MemoryFullCard({
             {t('{{date, niceDate}}', { date })}
           </div>
         </Card>
-      </ContextMenuTrigger>
+      }
+    >
+      <ContextMenuItem onSelect={() => void runtime.selectCover(memoryId)}>
+        {isCoverExist
+          ? t('detail.memory.actions.changeCover')
+          : t('detail.memory.actions.addCover')}
+      </ContextMenuItem>
+      {isCoverExist && (
+        <ContextMenuItem onSelect={() => void runtime.resizeCover(memoryId)}>
+          {t('detail.memory.actions.adjustCover')}
+        </ContextMenuItem>
+      )}
+      <ContextMenuItem onSelect={() => openNoteDialog({ memoryId, initialMode: 'edit' })}>
+        {hasNote ? t('detail.memory.actions.editText') : t('detail.memory.actions.addText')}
+      </ContextMenuItem>
 
-      <ContextMenuContent>
-        <ContextMenuItem onSelect={() => void handleCoverSelect()}>
-          {isCoverExist
-            ? t('detail.memory.actions.changeCover')
-            : t('detail.memory.actions.addCover')}
-        </ContextMenuItem>
-        {isCoverExist && (
-          <ContextMenuItem onSelect={() => void handleResize()}>
-            {t('detail.memory.actions.adjustCover')}
-          </ContextMenuItem>
-        )}
-        <ContextMenuItem onSelect={() => openNoteDialog({ memoryId, initialMode: 'edit' })}>
-          {hasNote ? t('detail.memory.actions.editText') : t('detail.memory.actions.addText')}
-        </ContextMenuItem>
-
-        {isCoverExist && (
-          <>
-            <ContextMenuSeparator />
-            <ContextMenuGroup>
-              <ContextMenuSub>
-                <ContextMenuSubTrigger>{t('detail.memory.setAs.title')}</ContextMenuSubTrigger>
-                <ContextMenuPortal>
-                  <ContextMenuSubContent>
-                    <ContextMenuItem onSelect={() => void handleSetAs('cover')}>
-                      {t('detail.memory.setAs.cover')}
-                    </ContextMenuItem>
-                    <ContextMenuItem onSelect={() => void handleSetAs('background')}>
-                      {t('detail.memory.setAs.background')}
-                    </ContextMenuItem>
-                  </ContextMenuSubContent>
-                </ContextMenuPortal>
-              </ContextMenuSub>
-            </ContextMenuGroup>
-          </>
-        )}
-
-        <ContextMenuSeparator />
-        <ContextMenuItem onSelect={() => void exportAllMemories(gameId)}>
-          {t('detail.memory.export.all')}
-        </ContextMenuItem>
-        <ContextMenuSeparator />
-        <ContextMenuItem onSelect={() => void onDelete()}>
-          {t('detail.memory.actions.delete')}
-        </ContextMenuItem>
-      </ContextMenuContent>
-    </ContextMenu>
+      {isCoverExist && (
+        <>
+          <ContextMenuSeparator />
+          <ContextMenuGroup>
+            <ContextMenuSub>
+              <ContextMenuSubTrigger>{t('detail.memory.setAs.title')}</ContextMenuSubTrigger>
+              <ContextMenuPortal>
+                <ContextMenuSubContent>
+                  <ContextMenuItem
+                    onSelect={() => void runtime.setCoverAsGameMedia(memoryId, 'cover')}
+                  >
+                    {t('detail.memory.setAs.cover')}
+                  </ContextMenuItem>
+                  <ContextMenuItem
+                    onSelect={() => void runtime.setCoverAsGameMedia(memoryId, 'background')}
+                  >
+                    {t('detail.memory.setAs.background')}
+                  </ContextMenuItem>
+                </ContextMenuSubContent>
+              </ContextMenuPortal>
+            </ContextMenuSub>
+          </ContextMenuGroup>
+        </>
+      )}
+    </MemoryItemContextMenu>
   )
 }
