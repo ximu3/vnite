@@ -364,7 +364,8 @@
         "previous": "前のページ",
         "next": "次のページ",
         "last": "最後のページ",
-        "pageStatus": "{{current}} / {{total}}"
+        "pageStatus": "{{current}} / {{total}}",
+        "unpaginated": "ページ分けなし"
       },
       "list": {
         "untitled": "無題のノート",

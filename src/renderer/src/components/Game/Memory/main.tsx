@@ -17,7 +17,11 @@ import { MemoryNoteDialogHost } from './components/MemoryNoteDialogHost'
 import { MemoryPaginationBar } from './components/MemoryPaginationBar'
 import { useMemoryStore } from './store'
 import type { MemoryViewItem } from './type'
-import { MEMORY_ITEMS_PER_PAGE_OPTIONS, type MemoryViewMode } from './type'
+import {
+  MEMORY_ITEMS_PER_PAGE_OPTIONS,
+  MEMORY_ITEMS_PER_PAGE_UNPAGINATED,
+  type MemoryViewMode
+} from './type'
 import { useMemoryViewRuntime } from './useMemoryViewRuntime'
 import { MemoryCardView } from './view/MemoryCardView'
 import { MemoryFullView } from './view/MemoryFullView'
@@ -25,6 +29,8 @@ import { MemoryListView } from './view/MemoryListView'
 import { MemoryMasonryView } from './view/MemoryMasonryView'
 
 function getTotalPages(itemCount: number, itemsPerPage: number): number {
+  if (itemsPerPage === MEMORY_ITEMS_PER_PAGE_UNPAGINATED) return 1
+
   return Math.max(1, Math.ceil(itemCount / itemsPerPage))
 }
 
@@ -37,6 +43,8 @@ function paginateMemoryItems(
   page: number,
   itemsPerPage: number
 ): MemoryViewItem[] {
+  if (itemsPerPage === MEMORY_ITEMS_PER_PAGE_UNPAGINATED) return memoryItems
+
   const startIndex = (page - 1) * itemsPerPage
   return memoryItems.slice(startIndex, startIndex + itemsPerPage)
 }
@@ -411,6 +419,13 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
                 setMemoryPageByView(gameId, viewMode, page)
               }}
               onItemsPerPageChange={(itemsPerPage) => {
+                if (
+                  itemsPerPage === MEMORY_ITEMS_PER_PAGE_UNPAGINATED ||
+                  activePagination.itemsPerPage === MEMORY_ITEMS_PER_PAGE_UNPAGINATED
+                ) {
+                  setMemoryPageByView(gameId, viewMode, 1)
+                }
+
                 void activePagination.setItemsPerPage(itemsPerPage)
               }}
             />

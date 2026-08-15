@@ -136,6 +136,7 @@ export interface configDocs {
       fullColumnWidth: number
       showAddCoverHoverButton: boolean
       showAddNoteHoverButton: boolean
+      /** Number of items per page for each view; 0 disables pagination. */
       gridItemsPerPage: number
       masonryItemsPerPage: number
       listItemsPerPage: number

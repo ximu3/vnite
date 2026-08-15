@@ -9,12 +9,17 @@ import { useTranslation } from 'react-i18next'
 import { Pagination, PaginationContent, PaginationItem, PaginationLink } from '@ui/pagination'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/select'
 import { cn } from '~/utils'
+import { MEMORY_ITEMS_PER_PAGE_UNPAGINATED } from '../type'
 
 function normalizeItemsPerPageOptions(
   itemsPerPageOptions: number[],
   itemsPerPage: number
 ): number[] {
-  return [...new Set([...itemsPerPageOptions, itemsPerPage])].sort((a, b) => a - b)
+  const paginatedOptions = [...new Set([...itemsPerPageOptions, itemsPerPage])]
+    .filter((option) => option !== MEMORY_ITEMS_PER_PAGE_UNPAGINATED)
+    .sort((a, b) => a - b)
+
+  return [...paginatedOptions, MEMORY_ITEMS_PER_PAGE_UNPAGINATED]
 }
 
 export function MemoryPaginationBar({
@@ -37,6 +42,7 @@ export function MemoryPaginationBar({
     itemsPerPageOptions,
     itemsPerPage
   )
+  const isUnpaginated = itemsPerPage === MEMORY_ITEMS_PER_PAGE_UNPAGINATED
 
   function navigateTo(page: number): (event: React.MouseEvent<HTMLAnchorElement>) => void {
     return (event): void => {
@@ -77,57 +83,61 @@ export function MemoryPaginationBar({
 
   return (
     <div className={cn('flex min-w-0 items-center justify-center gap-3')}>
-      <Pagination className={cn('mx-0 w-auto min-w-0 flex-none justify-start')}>
-        <PaginationContent className={cn('min-w-0 flex-nowrap')}>
-          {renderIconLink({
-            page: 1,
-            icon: <ChevronsLeftIcon className={cn('size-4')} />,
-            title: t('detail.memory.pagination.first'),
-            disabled: currentPage <= 1
-          })}
-          {renderIconLink({
-            page: currentPage - 1,
-            icon: <ChevronLeftIcon className={cn('size-4')} />,
-            title: t('detail.memory.pagination.previous'),
-            disabled: currentPage <= 1
-          })}
+      {!isUnpaginated && (
+        <Pagination className={cn('mx-0 w-auto min-w-0 flex-none justify-start')}>
+          <PaginationContent className={cn('min-w-0 flex-nowrap')}>
+            {renderIconLink({
+              page: 1,
+              icon: <ChevronsLeftIcon className={cn('size-4')} />,
+              title: t('detail.memory.pagination.first'),
+              disabled: currentPage <= 1
+            })}
+            {renderIconLink({
+              page: currentPage - 1,
+              icon: <ChevronLeftIcon className={cn('size-4')} />,
+              title: t('detail.memory.pagination.previous'),
+              disabled: currentPage <= 1
+            })}
 
-          <PaginationItem>
-            <div
-              className={cn(
-                'flex h-8 min-w-[3.5rem] items-center justify-center px-2 text-xs tabular-nums text-muted-foreground'
-              )}
-            >
-              {currentPage} / {totalPages}
-            </div>
-          </PaginationItem>
+            <PaginationItem>
+              <div
+                className={cn(
+                  'flex h-8 min-w-[3.5rem] items-center justify-center px-2 text-xs tabular-nums text-muted-foreground'
+                )}
+              >
+                {currentPage} / {totalPages}
+              </div>
+            </PaginationItem>
 
-          {renderIconLink({
-            page: currentPage + 1,
-            icon: <ChevronRightIcon className={cn('size-4')} />,
-            title: t('detail.memory.pagination.next'),
-            disabled: currentPage >= totalPages
-          })}
-          {renderIconLink({
-            page: totalPages,
-            icon: <ChevronsRightIcon className={cn('size-4')} />,
-            title: t('detail.memory.pagination.last'),
-            disabled: currentPage >= totalPages
-          })}
-        </PaginationContent>
-      </Pagination>
+            {renderIconLink({
+              page: currentPage + 1,
+              icon: <ChevronRightIcon className={cn('size-4')} />,
+              title: t('detail.memory.pagination.next'),
+              disabled: currentPage >= totalPages
+            })}
+            {renderIconLink({
+              page: totalPages,
+              icon: <ChevronsRightIcon className={cn('size-4')} />,
+              title: t('detail.memory.pagination.last'),
+              disabled: currentPage >= totalPages
+            })}
+          </PaginationContent>
+        </Pagination>
+      )}
 
       <Select
         value={String(itemsPerPage)}
         onValueChange={(value) => onItemsPerPageChange(Number(value))}
       >
-        <SelectTrigger size="sm" className={cn('h-8 w-[3.5rem] shrink-0 text-xs')}>
+        <SelectTrigger size="sm" className={cn('h-8 min-w-[3.5rem] shrink-0 text-xs')}>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
           {normalizedItemsPerPageOptions.map((option) => (
             <SelectItem key={`memory-items-per-page-${option}`} value={String(option)}>
-              {option}
+              {option === MEMORY_ITEMS_PER_PAGE_UNPAGINATED
+                ? t('detail.memory.pagination.unpaginated')
+                : option}
             </SelectItem>
           ))}
         </SelectContent>

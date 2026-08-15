@@ -364,7 +364,8 @@
         "previous": "上一页",
         "next": "下一页",
         "last": "末页",
-        "pageStatus": "{{current}} / {{total}}"
+        "pageStatus": "{{current}} / {{total}}",
+        "unpaginated": "不分页"
       },
       "list": {
         "untitled": "未命名笔记",

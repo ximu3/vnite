@@ -364,7 +364,8 @@
         "previous": "Previous Page",
         "next": "Next Page",
         "last": "Last Page",
-        "pageStatus": "{{current}} / {{total}}"
+        "pageStatus": "{{current}} / {{total}}",
+        "unpaginated": "No pagination"
       },
       "list": {
         "untitled": "Untitled note",
