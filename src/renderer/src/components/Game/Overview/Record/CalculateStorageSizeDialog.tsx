@@ -40,7 +40,9 @@ export function CalculateStorageSizeDialog({
   const [draftStorageSize, setDraftStorageSize, saveDraftStorageSize, setDraftStorageSizeAndSave] =
     useGameState(gameId, 'record.storageSize', true)
   const [manualUnit, setManualUnit] = useState<SizeUnit>(
-    draftStorageSize >= GIB_TO_BYTES ? 'gib' : 'mib'
+    draftStorageSize === STORAGE_SIZE_NOT_CALCULATED || draftStorageSize >= GIB_TO_BYTES
+      ? 'gib'
+      : 'mib'
   )
 
   const [isCalculating, setIsCalculating] = useState(false)
