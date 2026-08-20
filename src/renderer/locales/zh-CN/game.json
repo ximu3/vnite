@@ -445,6 +445,7 @@
         "autoTitle": "自动计算",
         "autoDescription": "根据当前游戏根目录计算大小。",
         "autoUnavailable": "由于未设置游戏根目录，无法使用自动计算。",
+        "clear": "清空",
         "manualTitle": "手动输入",
         "manualDescription": "当无法自动计算，或本地文件已被移除时，可手动输入游戏大小。",
         "manualInputPlaceholder": "输入大小"
@@ -457,6 +458,8 @@
         "calculatingStorageSize": "正在计算游戏大小...",
         "storageSizeCalculated": "游戏大小已计算：{{size}}",
         "storageSizeError": "计算游戏大小失败",
+        "storageSizeCleared": "游戏大小已清空",
+        "storageSizeClearError": "清空游戏大小失败",
         "storageSizeSaved": "游戏大小已保存：{{size}}",
         "storageSizeSaveError": "保存游戏大小失败",
         "storageSizeNegative": "游戏大小不能为负数",

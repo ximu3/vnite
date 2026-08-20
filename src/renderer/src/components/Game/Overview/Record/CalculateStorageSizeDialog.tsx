@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
+import { STORAGE_SIZE_NOT_CALCULATED } from '@appTypes/models/game'
 import { Button } from '@ui/button'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@ui/dialog'
 import { StepperInput } from '@ui/input'
@@ -36,11 +37,8 @@ export function CalculateStorageSizeDialog({
 }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [rootPath] = useGameLocalState(gameId, 'utils.rootPath')
-  const [draftStorageSize, setDraftStorageSize, saveDraftStorageSize] = useGameState(
-    gameId,
-    'record.storageSize',
-    true
-  )
+  const [draftStorageSize, setDraftStorageSize, saveDraftStorageSize, setDraftStorageSizeAndSave] =
+    useGameState(gameId, 'record.storageSize', true)
   const [manualUnit, setManualUnit] = useState<SizeUnit>(
     draftStorageSize >= GIB_TO_BYTES ? 'gib' : 'mib'
   )
@@ -107,6 +105,20 @@ export function CalculateStorageSizeDialog({
     }
   }
 
+  const handleClear = async (): Promise<void> => {
+    if (isCalculating || draftStorageSize === STORAGE_SIZE_NOT_CALCULATED) {
+      return
+    }
+
+    try {
+      await setDraftStorageSizeAndSave(STORAGE_SIZE_NOT_CALCULATED)
+      toast.success(t('detail.manage.notifications.storageSizeCleared'))
+      setIsOpen(false)
+    } catch {
+      toast.error(t('detail.manage.notifications.storageSizeClearError'))
+    }
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="w-[560px] max-w-[calc(100vw-2rem)]">
@@ -122,13 +134,21 @@ export function CalculateStorageSizeDialog({
                 ? t('detail.manage.storageSizeDialog.autoDescription')
                 : t('detail.manage.storageSizeDialog.autoUnavailable')}
             </div>
-            <Button
-              className="self-start mt-2"
-              onClick={() => void handleCalculate()}
-              disabled={!autoCalculationAvailable || isCalculating}
-            >
-              {t('detail.manage.calculateStorageSize')}
-            </Button>
+            <div className="flex items-center gap-2 mt-2">
+              <Button
+                onClick={() => void handleCalculate()}
+                disabled={!autoCalculationAvailable || isCalculating}
+              >
+                {t('detail.manage.calculateStorageSize')}
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => void handleClear()}
+                disabled={isCalculating || draftStorageSize === STORAGE_SIZE_NOT_CALCULATED}
+              >
+                {t('detail.manage.storageSizeDialog.clear')}
+              </Button>
+            </div>
           </div>
 
           <div className="flex flex-col gap-1 rounded-md border p-4">

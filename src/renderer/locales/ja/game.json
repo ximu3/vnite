@@ -445,6 +445,7 @@
         "autoTitle": "自動計算",
         "autoDescription": "現在のゲームルートフォルダからサイズを計算します。",
         "autoUnavailable": "ゲームのルートフォルダが設定されていないため、自動計算は利用できません。",
+        "clear": "クリア",
         "manualTitle": "手動入力",
         "manualDescription": "自動計算が利用できない場合やローカルファイルが削除されている場合は、ゲームサイズを手動で入力してください。",
         "manualInputPlaceholder": "サイズを入力"
@@ -457,6 +458,8 @@
         "calculatingStorageSize": "ゲームサイズを計算中...",
         "storageSizeCalculated": "ゲームサイズを計算しました：{{size}}",
         "storageSizeError": "ゲームサイズの計算に失敗しました",
+        "storageSizeCleared": "ゲームサイズをクリアしました",
+        "storageSizeClearError": "ゲームサイズのクリアに失敗しました",
         "storageSizeSaved": "ゲームサイズを保存しました：{{size}}",
         "storageSizeSaveError": "ゲームサイズの保存に失敗しました",
         "storageSizeNegative": "ゲームサイズは負の値にできません",

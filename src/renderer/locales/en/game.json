@@ -445,6 +445,7 @@
         "autoTitle": "Automatic Calculation",
         "autoDescription": "Calculate the size from the current game root folder.",
         "autoUnavailable": "Automatic calculation is unavailable because the game root folder is not set.",
+        "clear": "Clear",
         "manualTitle": "Manual Input",
         "manualDescription": "Enter the game size manually when automatic calculation is unavailable or the local files have been removed.",
         "manualInputPlaceholder": "Enter size"
@@ -457,6 +458,8 @@
         "calculatingStorageSize": "Calculating game size...",
         "storageSizeCalculated": "Game size calculated: {{size}}",
         "storageSizeError": "Failed to calculate game size",
+        "storageSizeCleared": "Game size cleared",
+        "storageSizeClearError": "Failed to clear game size",
         "storageSizeSaved": "Game size saved: {{size}}",
         "storageSizeSaveError": "Failed to save game size",
         "storageSizeNegative": "Game size cannot be negative",
