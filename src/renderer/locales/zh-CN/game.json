@@ -359,6 +359,9 @@
         "masonry": "照片墙",
         "list": "列表"
       },
+      "settings": {
+        "independentViewMode": "为此游戏使用独立回忆视图"
+      },
       "pagination": {
         "first": "首页",
         "previous": "上一页",

@@ -3,8 +3,11 @@ import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
+import type { GameMemoryViewMode } from '@appTypes/models'
 import { sanitizeFilenameComponent } from '@appUtils'
 import { Button } from '@ui/button'
+import { SettingsPopover } from '@ui/popover'
+import { Switch } from '@ui/switch'
 import { Tabs, TabsList, TabsTrigger } from '@ui/tabs'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import { eventBus } from '~/app/events'
@@ -17,11 +20,7 @@ import { MemoryNoteDialogHost } from './components/MemoryNoteDialogHost'
 import { MemoryPaginationBar } from './components/MemoryPaginationBar'
 import { useMemoryStore } from './store'
 import type { MemoryViewItem } from './type'
-import {
-  MEMORY_ITEMS_PER_PAGE_OPTIONS,
-  MEMORY_ITEMS_PER_PAGE_UNPAGINATED,
-  type MemoryViewMode
-} from './type'
+import { MEMORY_ITEMS_PER_PAGE_OPTIONS, MEMORY_ITEMS_PER_PAGE_UNPAGINATED } from './type'
 import { useMemoryViewRuntime } from './useMemoryViewRuntime'
 import { MemoryCardView } from './view/MemoryCardView'
 import { MemoryFullView } from './view/MemoryFullView'
@@ -61,6 +60,10 @@ type ViewPaginationState = {
 export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [memoryList, , , setMemoryListAndSave] = useGameState(gameId, 'memory.memoryList', true)
+  const [gameMemoryViewMode, setGameMemoryViewMode] = useGameState(
+    gameId,
+    'memory.preferences.viewMode'
+  )
   const [pendingNoteMemoryId, setPendingNoteMemoryId] = useState<string | null>(null)
   const [coverHeightRatioRefreshKey, setCoverHeightRatioRefreshKey] = useState(0)
   const [hasLoadedCoverHeightRatios, setHasLoadedCoverHeightRatios] = useState(false)
@@ -93,8 +96,10 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
     (state) => state.memoryPageByGameId[gameId] ?? DEFAULT_MEMORY_PAGE_BY_VIEW
   )
   const setMemoryPageByView = useGameDetailStore((state) => state.setMemoryPageByView)
-  const viewMode = useGameDetailTabStore((state) => state.lastMemoryViewMode)
+  const globalMemoryViewMode = useGameDetailTabStore((state) => state.lastMemoryViewMode)
   const setLastMemoryViewMode = useGameDetailTabStore((state) => state.setLastMemoryViewMode)
+  const viewMode = gameMemoryViewMode ?? globalMemoryViewMode
+  const hasIndependentMemoryViewMode = gameMemoryViewMode !== null
   const openNoteDialog = useMemoryStore((state) => state.openNoteDialog)
 
   async function addMemory(): Promise<void> {
@@ -190,7 +195,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
     setCoverHeightRatioByMemoryId
   })
 
-  function getViewPaginationState(mode: MemoryViewMode): ViewPaginationState {
+  function getViewPaginationState(mode: GameMemoryViewMode): ViewPaginationState {
     switch (mode) {
       case 'grid': {
         const totalPages = getTotalPages(sortedMemoryItems.length, gridItemsPerPage)
@@ -247,7 +252,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
     }
   }
 
-  function getTotalPagesForView(mode: MemoryViewMode): number {
+  function getTotalPagesForView(mode: GameMemoryViewMode): number {
     return getViewPaginationState(mode).totalPages
   }
 
@@ -432,6 +437,16 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
           )}
         </div>
 
+        <SettingsPopover className={cn('flex items-center justify-between')}>
+          <p className={cn('text-sm font-medium text-foreground')}>
+            {t('detail.memory.settings.independentViewMode')}
+          </p>
+          <Switch
+            checked={hasIndependentMemoryViewMode}
+            onCheckedChange={(checked) => setGameMemoryViewMode(checked ? viewMode : null)}
+          />
+        </SettingsPopover>
+
         <Button
           type="button"
           variant="ghost"
@@ -449,7 +464,13 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
 
         <Tabs
           value={viewMode}
-          onValueChange={(v) => setLastMemoryViewMode(v as MemoryViewMode)}
+          onValueChange={(v) => {
+            if (hasIndependentMemoryViewMode) {
+              void setGameMemoryViewMode(v as GameMemoryViewMode)
+            } else {
+              setLastMemoryViewMode(v as GameMemoryViewMode)
+            }
+          }}
           className={cn('shrink-0')}
         >
           <TabsList className={cn('gap-1')}>

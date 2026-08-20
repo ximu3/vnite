@@ -359,6 +359,9 @@
         "masonry": "ギャラリー",
         "list": "リスト"
       },
+      "settings": {
+        "independentViewMode": "このゲームで独立したメモリー表示を使用"
+      },
       "pagination": {
         "first": "最初のページ",
         "previous": "前のページ",

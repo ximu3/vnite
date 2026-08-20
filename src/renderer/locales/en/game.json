@@ -359,6 +359,9 @@
         "masonry": "Gallery",
         "list": "List"
       },
+      "settings": {
+        "independentViewMode": "Use an independent memory view for this game"
+      },
       "pagination": {
         "first": "First Page",
         "previous": "Previous Page",

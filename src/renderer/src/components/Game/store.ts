@@ -1,10 +1,11 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+
+import type { GameMemoryViewMode } from '@appTypes/models'
 import type { ImageViewerRequest } from '~/utils/image-viewer'
 
 export type PropertiesDialogTab = 'launcher' | 'path' | 'media'
-type MemoryPageView = 'grid' | 'masonry' | 'list' | 'full'
-type MemoryPageByView = Record<MemoryPageView, number>
+type MemoryPageByView = Record<GameMemoryViewMode, number>
 
 export interface GameDetailStore {
   isEditingLogo: boolean
@@ -31,7 +32,7 @@ export interface GameDetailStore {
   closeImageViewer: () => void
 
   memoryPageByGameId: Record<string, MemoryPageByView>
-  setMemoryPageByView: (gameId: string, view: MemoryPageView, page: number) => void
+  setMemoryPageByView: (gameId: string, view: GameMemoryViewMode, page: number) => void
 }
 
 export const DEFAULT_MEMORY_PAGE_BY_VIEW: MemoryPageByView = {
@@ -82,8 +83,8 @@ export const useGameDetailStore = create<GameDetailStore>((set) => ({
 interface GameDetailTabStore {
   lastDetailTab: 'overview' | 'record' | 'save' | 'memory'
   setLastDetailTab: (tab: 'overview' | 'record' | 'save' | 'memory') => void
-  lastMemoryViewMode: MemoryPageView
-  setLastMemoryViewMode: (mode: MemoryPageView) => void
+  lastMemoryViewMode: GameMemoryViewMode
+  setLastMemoryViewMode: (mode: GameMemoryViewMode) => void
 }
 
 export const useGameDetailTabStore = create<GameDetailTabStore>()(
