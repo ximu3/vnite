@@ -240,14 +240,6 @@ export function setupSystemIPC(): void {
     return updateScreenshotHotkey(hotkeyName, hotkey)
   })
 
-  mainWindow.on('maximize', () => {
-    ipcManager.send('window:maximized')
-  })
-
-  mainWindow.on('unmaximize', () => {
-    ipcManager.send('window:unmaximized')
-  })
-
   ipcManager.on('system:change-process-monitor', async (_, monitor: 'new' | 'legacy') => {
     if (monitor === 'new') {
       await setupNativeMonitor()

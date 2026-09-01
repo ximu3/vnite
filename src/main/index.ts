@@ -3,7 +3,7 @@ import { app, BrowserWindow, ipcMain, net, protocol, shell } from 'electron'
 import log from 'electron-log/main'
 import windowStateKeeper from 'electron-window-state'
 import { join } from 'path'
-import { baseDBManager, GameDBManager, runDatabaseMigrations } from '~/core/database'
+import { baseDBManager, runDatabaseMigrations } from '~/core/database'
 import { startSync } from '~/features/database'
 import {
   getAppRootPath,
@@ -56,40 +56,47 @@ log.initialize()
 
 global.fetch = net.fetch as typeof global.fetch
 
-let launchGameId: string | null = null
-const args = process.argv
-const deepLinkUrl = args.find((arg) => arg.startsWith('vnite://'))
-if (deepLinkUrl) {
-  launchGameId = parseGameIdFromUrl(deepLinkUrl)
+const pendingGameLaunchIds: string[] = []
+
+function drainPendingGameLaunches(): void {
+  if (
+    !gamesLoaded ||
+    !mainWindow ||
+    mainWindow.isDestroyed() ||
+    pendingGameLaunchIds.length === 0
+  ) {
+    return
+  }
+
+  const gameIds = pendingGameLaunchIds.splice(0)
+  gameIds.forEach((gameId) => {
+    ipcManager.sendTo(mainWindow.webContents, 'game:start-from-url', gameId)
+  })
 }
 
-async function handleGameUrl(url: string): Promise<void> {
-  try {
-    const gameId = parseGameIdFromUrl(url)
-    if (!gameId) {
-      console.error('Invalid game URL format')
-      return
+function findGameId(commandLine: string[]): string | null {
+  for (const arg of commandLine) {
+    const gameId = parseGameIdFromUrl(arg)
+    if (gameId) {
+      return gameId
     }
-
-    console.log('Launching game with ID:', gameId)
-
-    if (mainWindow) {
-      // Make sure the window is visible
-      if (mainWindow.isMinimized()) {
-        mainWindow.restore()
-      }
-      if (!mainWindow.isVisible()) {
-        mainWindow.show()
-      }
-      mainWindow.focus()
-
-      mainWindow.webContents.send('start-game-from-url', gameId)
-    } else {
-      launchGameId = gameId
-    }
-  } catch (error) {
-    console.error('Error handling game URL:', error)
   }
+
+  return null
+}
+
+function enqueueGameLaunch(gameId: string): void {
+  if (!pendingGameLaunchIds.includes(gameId)) {
+    log.info('[Protocol] Queuing game launch with ID:', gameId)
+    pendingGameLaunchIds.push(gameId)
+  }
+
+  drainPendingGameLaunches()
+}
+
+const initialGameId = findGameId(process.argv)
+if (initialGameId) {
+  enqueueGameLaunch(initialGameId)
 }
 
 function createWindow(): void {
@@ -121,19 +128,18 @@ function createWindow(): void {
 
   mainWindowState.manage(mainWindow)
 
-  setupIPC()
+  mainWindow.on('maximize', () => {
+    ipcManager.send('window:maximized')
+  })
 
-  mainWindow.once('ready-to-show', async () => {
+  mainWindow.on('unmaximize', () => {
+    ipcManager.send('window:unmaximized')
+  })
+
+  mainWindow.once('ready-to-show', () => {
     const isHidden = process.argv.includes('--hidden')
     if (!isHidden) {
       mainWindow.show()
-    }
-    if (launchGameId) {
-      const gamePath = await GameDBManager.getGameLocalValue(launchGameId, 'path.gamePath')
-      const mode = await GameDBManager.getGameLocalValue(launchGameId, 'launcher.mode')
-      const config = await GameDBManager.getGameLocalValue(launchGameId, `launcher.${mode}Config`)
-      mainWindow.webContents.send('start-game-from-url', launchGameId, gamePath, mode, config)
-      launchGameId = null
     }
   })
 
@@ -244,10 +250,10 @@ app.whenReady().then(async () => {
     }
 
     // Check for protocol URLs
-    const url = commandLine.find((arg) => arg.startsWith('vnite://rungameid'))
-    if (url) {
+    const gameId = findGameId(commandLine)
+    if (gameId) {
       // Processing Protocol URL
-      handleGameUrl(url)
+      enqueueGameLaunch(gameId)
     }
     // Check for auth callback URLs specifically
     const authUrl = commandLine.find((arg) => arg.startsWith('vnite://auth/callback'))
@@ -267,6 +273,28 @@ app.whenReady().then(async () => {
 
   // Setup proxy config
   await setupProxy()
+
+  setupIPC()
+
+  ipcManager.on('db:games-loaded', (event) => {
+    if (!mainWindow || mainWindow.isDestroyed() || event.sender !== mainWindow.webContents) {
+      return
+    }
+
+    const isFirstLoad = !gamesLoaded
+    gamesLoaded = true
+    drainPendingGameLaunches()
+
+    if (!isFirstLoad) {
+      return
+    }
+
+    log.info('[App] Games DB loaded, starting scanner...')
+    GameScannerManager.startScan().catch((err) => {
+      log.error('[Scanner] Startup scan failed:', err)
+    })
+    GameScannerManager.startPeriodicScan()
+  })
 
   createWindow()
 
@@ -301,15 +329,6 @@ app.whenReady().then(async () => {
 
   // Setup auto updater
   setupAutoUpdater()
-
-  ipcManager.on('db:games-loaded', () => {
-    log.info('[App] Games DB loaded, starting scanner...')
-    gamesLoaded = true
-    GameScannerManager.startScan().catch((err) => {
-      log.error('[Scanner] Startup scan failed:', err)
-    })
-    GameScannerManager.startPeriodicScan()
-  })
 
   // Note: Scanner will be started after games are loaded (see db:games-loaded handler above)
 
