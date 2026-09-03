@@ -445,10 +445,7 @@ export function filterGames(
   }
 }
 
-function computeGameSimilarity(
-  a: gameDoc,
-  b: gameDoc
-): { titleSim: number; devSim: number; totalSim: number } {
+function computeGameSimilarity(a: gameDoc, b: gameDoc): { titleSim: number; devSim: number } {
   // ---- name / originalName: Jaro-Winkler Similarity ----
   const hasAName = !!a.metadata.name
   const hasAOri = !!a.metadata.originalName
@@ -461,8 +458,7 @@ function computeGameSimilarity(
   if (hasAName && hasBName) {
     titleScore += jaroWinkler(a.metadata.name.toLowerCase(), b.metadata.name.toLowerCase())
     titleWeightSum += 1
-  }
-  if (hasAOri && hasBOri) {
+  } else if (hasAOri && hasBOri) {
     titleScore += jaroWinkler(
       a.metadata.originalName.toLowerCase(),
       b.metadata.originalName.toLowerCase()
@@ -487,10 +483,7 @@ function computeGameSimilarity(
     if (union !== 0) devSim = intersection / union
   }
 
-  const nameWeight = 0.7
-  const devWeight = 0.3
-
-  return { titleSim, devSim, totalSim: titleSim * nameWeight + devSim * devWeight }
+  return { titleSim, devSim }
 }
 
 export function getSimilarGames(
@@ -518,6 +511,10 @@ export function getSimilarGames(
   const targetGame = getGameStore(targetId).getState().data
   if (!checkGameDocValid(targetGame)) return results
 
+  const weightedScore = (dev: number, title: number): number => 0.4 * dev + 0.6 * title
+  const devThreshold = 0.5
+  const titleThreshold = 0.4
+
   for (const id of gameIds) {
     if (id === targetId) continue
 
@@ -527,10 +524,15 @@ export function getSimilarGames(
 
     try {
       const score = computeGameSimilarity(targetGame, game)
-      if (score.totalSim >= 0.3) {
-        // At minimum, games sharing the same developers should be accepted.
+      const { devSim, titleSim } = score
+      const totalScore = weightedScore(devSim, titleSim)
+      if (devSim >= devThreshold || titleSim >= titleThreshold) {
         const displayName = (game.metadata.name || game.metadata.originalName) ?? ''
-        results.push({ gameId: id, gameName: displayName, score: score.totalSim })
+        results.push({
+          gameId: id,
+          gameName: displayName,
+          score: totalScore
+        })
       }
     } catch (error) {
       console.error(`Error computing similarity for ${targetId} and ${id}:`, error)
