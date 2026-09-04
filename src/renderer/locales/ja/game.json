@@ -218,11 +218,11 @@
         "tags": "タグ",
         "basicInfo": "基本情報",
         "extraInfo": "追加情報",
-        "relatedGames": "関連ゲーム",
+        "recommendedGames": "おすすめゲーム",
         "relatedSites": "関連サイト"
       },
-      "relatedGames": {
-        "empty": "関連ゲームはありません"
+      "recommendedGames": {
+        "empty": "おすすめのゲームはありません"
       },
       "description": {
         "empty": "説明はありません",

@@ -218,11 +218,11 @@
         "tags": "Tags",
         "basicInfo": "Basic Information",
         "extraInfo": "Additional Information",
-        "relatedGames": "Related Games",
+        "recommendedGames": "Recommended Games",
         "relatedSites": "Related Sites"
       },
-      "relatedGames": {
-        "empty": "No related games"
+      "recommendedGames": {
+        "empty": "No recommended games"
       },
       "description": {
         "empty": "No description available",

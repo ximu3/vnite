@@ -2,7 +2,7 @@ import { cn } from '~/utils'
 import { Description } from './description'
 import { ExtraInformation } from './extraInformation'
 import { Information } from './Information'
-import { RelatedGamesCard } from './RelatedGames'
+import { RecommendedGamesCard } from './RecommendedGames'
 import { RelatedSites } from './RelatedSites'
 import { Tags } from './Tags'
 
@@ -24,7 +24,7 @@ export function Overview({ gameId }: { gameId: string }): React.JSX.Element {
       <div className={cn('flex flex-col gap-5', 'col-span-1')}>
         <Information gameId={gameId} />
         <ExtraInformation gameId={gameId} />
-        <RelatedGamesCard gameId={gameId} />
+        <RecommendedGamesCard gameId={gameId} />
         <RelatedSites gameId={gameId} />
       </div>
     </div>
