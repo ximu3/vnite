@@ -10,18 +10,28 @@ files:
   - '!dev/*'
   - '!app/*'
   - '!docs/*'
+  - '!native/**'
+  - '!patches/**'
   - '!electron.vite.config.{js,ts,mjs,cjs}'
   - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
-  - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
+  - '!{.env,.env.*,.npmrc,pnpm-lock.yaml,pnpm-workspace.yaml}'
   - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
   # rust build files
   - '!**/Cargo.toml'
   - '!**/Cargo.lock'
   - '!**/target/**'
   - '!**/*.rs'
+  # Copy the workspace package explicitly; electron-builder 25 filters its linked source path.
+  - from: native
+    to: node_modules/vnite-native
+    filter:
+      - package.json
+      - browser.js
+      - dist/**/*
 
 asarUnpack:
   - resources/**
+  - '**/*.node'
   # subset-font resolves and reads this WASM file at runtime.
   - node_modules/harfbuzzjs/hb-subset.wasm
 

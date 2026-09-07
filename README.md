@@ -39,6 +39,25 @@ Vnite is a versatile game management software designed to provide a unified inte
 - Support for launching games via system links
 - Complete separation of data and program for easy backup and customization
 
+## Development
+
+Use Node.js 20.19+ (20.x) or 22.12+, and the pnpm version pinned in `package.json`.
+See the [pnpm installation guide](https://pnpm.io/installation) for setup.
+Building the Windows native module also requires the Rust MSVC toolchain and Visual Studio C++ Build Tools with the Windows SDK.
+
+Run these commands from the repository root:
+
+```sh
+pnpm install --frozen-lockfile
+pnpm build:native
+pnpm dev
+```
+
+The application and `native` package share a workspace and the root `pnpm-lock.yaml`.
+Use `pnpm typecheck` to check types, `pnpm build` to compile, and `pnpm build:win` to create the Windows installer.
+`pnpm build` and `pnpm build:win` build the native module automatically.
+Dependency patches in `patches/` are applied by pnpm during installation.
+
 ## 📸 Screenshots
 
 <details>

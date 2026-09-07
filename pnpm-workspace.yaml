@@ -1,0 +1,21 @@
+packages:
+  - native
+
+# electron-builder 25 expects a flat node_modules tree when collecting dependencies.
+nodeLinker: hoisted
+
+# Keep the native prebuild hook when running the application build.
+enablePrePostScripts: true
+
+allowBuilds:
+  '@tailwindcss/oxide': true
+  electron: true
+  esbuild: true
+  fsevents: true
+  get-windows: true
+  koffi: true
+  leveldown: true
+  sharp: true
+
+patchedDependencies:
+  pouchdb@9.0.0: patches/pouchdb@9.0.0.patch

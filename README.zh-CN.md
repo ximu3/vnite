@@ -39,6 +39,25 @@ Vnite 是一个多功能的游戏管理软件，旨在提供一个统一的用�
 - 支持通过系统链接唤醒并启动游戏
 - 数据与程序完全分离，便于备份和自定义
 
+## 本地开发
+
+使用 Node.js 20.19+（20.x）或 22.12+，以及 `package.json` 中指定版本的 pnpm。
+安装方式见 [pnpm 安装文档](https://pnpm.io/installation)。
+构建 Windows 原生模块还需要 Rust MSVC 工具链，以及包含 Windows SDK 的 Visual Studio C++ 生成工具。
+
+在项目根目录运行：
+
+```sh
+pnpm install --frozen-lockfile
+pnpm build:native
+pnpm dev
+```
+
+主应用与 `native` 包共用 workspace 和根目录的 `pnpm-lock.yaml`。
+使用 `pnpm typecheck` 检查类型，`pnpm build` 编译项目，`pnpm build:win` 生成 Windows 安装包。
+`pnpm build` 和 `pnpm build:win` 会自动构建原生模块。
+`patches/` 中的依赖补丁由 pnpm 在安装时应用。
+
 ## 📸 截图
 
 <details>

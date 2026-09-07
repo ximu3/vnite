@@ -8,8 +8,7 @@
   "browser": "browser.js",
   "license": "GPL-3.0",
   "files": [
-    "index.d.ts",
-    "index.js",
+    "dist",
     "browser.js"
   ],
   "napi": {
@@ -38,6 +37,5 @@
     "emnapi": "^1.5.0",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2"
-  },
-  "packageManager": "pnpm@10.17.0"
+  }
 }
