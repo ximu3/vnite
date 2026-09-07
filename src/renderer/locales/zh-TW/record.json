@@ -92,7 +92,7 @@
       "playTime": "遊戲時長：{{time, gameTime}}"
     },
     "chart": {
-      "weeklyPlayTime": "每週遊戲時長",
+      "dailyPlayTime": "每日遊戲時長",
       "calendarTitle": "月度遊戲日曆",
       "weekFormat": "第{{week}}周",
       "weekDateRange": "{{week}}（{{startDay}}日-{{endDay}}日）",

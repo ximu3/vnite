@@ -1,6 +1,9 @@
+import { useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { SeparatorDashed } from '~/components/ui/separator-dashed'
+
+import { SeparatorDashed } from '@ui/separator-dashed'
 import { useGameState } from '~/hooks'
+import type { GameRecordCalculationSource } from '~/stores/game'
 import { getGameMaxPlayTimeDay, getGamePlayDays } from '~/stores/game'
 import { cn } from '~/utils'
 
@@ -13,11 +16,26 @@ export function RecordCard({
 }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [addDate] = useGameState(gameId, 'record.addDate')
-  const playDays = getGamePlayDays(gameId)
   const [playingTime] = useGameState(gameId, 'record.playTime')
   const [lastRunDate] = useGameState(gameId, 'record.lastRunDate')
+  const [recordTimers] = useGameState(gameId, 'record.timers')
+  const [dailyPlayTimes] = useGameState(gameId, 'record.dailyPlayTimes')
+
+  const calculationSource = useMemo<GameRecordCalculationSource>(
+    () => ({
+      timers: recordTimers,
+      dailyPlayTimes
+    }),
+    [recordTimers, dailyPlayTimes]
+  )
+  const { playDays, maxPlayTimeDay } = useMemo(
+    () => ({
+      playDays: getGamePlayDays(gameId, calculationSource),
+      maxPlayTimeDay: getGameMaxPlayTimeDay(gameId, calculationSource)
+    }),
+    [gameId, calculationSource]
+  )
   const equalPlayingTime = playingTime / playDays
-  const maxPlayTimeDay = getGameMaxPlayTimeDay(gameId)
   const hasDatedPlayData = playDays > 0
 
   return (

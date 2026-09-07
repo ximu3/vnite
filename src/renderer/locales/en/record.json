@@ -92,7 +92,7 @@
       "playTime": "Play Time: {{time, gameTime}}"
     },
     "chart": {
-      "weeklyPlayTime": "Weekly Play Time",
+      "dailyPlayTime": "Daily Play Time",
       "calendarTitle": "Monthly Gaming Calendar",
       "weekFormat": "Week {{week}}",
       "weekDateRange": "{{week}} ({{startDay}}-{{endDay}})",

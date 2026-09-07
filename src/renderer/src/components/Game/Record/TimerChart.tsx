@@ -13,6 +13,10 @@ export interface DailyPlayTime {
 
 export type TimeGranularity = 'day' | 'month'
 
+export function HelpText({ info }: { info: string }): React.JSX.Element {
+  return <div className="py-6 text-center text-sm text-muted-foreground">{info}</div>
+}
+
 interface ChartData {
   jumpDate: string
   label: string
@@ -134,7 +138,9 @@ export const TimerChart = ({
       color: 'var(--primary)'
     }
   }
-  return (
+  return chartData.length === 0 ? (
+    <HelpText info={t('detail.chart.noData')} />
+  ) : (
     <ChartContainer config={chartConfig} className={cn(className)}>
       <BarChart data={chartData}>
         {/* Adding Grid Lines */}
@@ -152,6 +158,12 @@ export const TimerChart = ({
             <ChartTooltipContent
               {...props}
               formatter={(value: ValueType) => formatGameTime((value as number) * 60 * 1000)}
+              labelFormatter={(label, payload) => {
+                if (granularity !== 'day') return label
+
+                const jumpDate = payload?.[0]?.payload?.jumpDate
+                return typeof jumpDate === 'string' ? jumpDate : label
+              }}
               hideIndicator={false}
               color="var(--primary)"
             />

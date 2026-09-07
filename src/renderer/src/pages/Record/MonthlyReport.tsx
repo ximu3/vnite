@@ -314,10 +314,10 @@ export function MonthlyReport(): React.JSX.Element {
       </div>
 
       <div className="grid gap-4 xl:grid-cols-[1fr_auto]">
-        {/* Weekly Play Time Chart */}
+        {/* Daily Play Time Chart */}
         <Card>
           <CardHeader className="flex flex-row">
-            <CardTitle>{t('monthly.chart.weeklyPlayTime')}</CardTitle>
+            <CardTitle>{t('monthly.chart.dailyPlayTime')}</CardTitle>
             <SettingsPopover className="flex justify-between">
               <p className="text-sm font-medium text-foreground">
                 {t('monthly.chart.useAlternateColor')}

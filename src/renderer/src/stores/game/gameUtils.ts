@@ -20,6 +20,24 @@ import { useGameRegistry } from './gameRegistry'
 import { getGameStore } from './gameStoreFactory'
 import { useGameCollectionStore } from './useGameCollectionStore'
 
+export interface GameRecordCalculationSource {
+  timers: gameDoc['record']['timers']
+  dailyPlayTimes: gameDoc['record']['dailyPlayTimes']
+}
+
+function resolveGameRecordCalculationSource(
+  gameId: string,
+  source?: GameRecordCalculationSource
+): GameRecordCalculationSource {
+  if (source) return source
+
+  const store = getGameStore(gameId)
+  return {
+    timers: store.getState().getValue('record.timers') || [],
+    dailyPlayTimes: store.getState().getValue('record.dailyPlayTimes') || []
+  }
+}
+
 // Search Functions
 export function searchGames(query: string, gameIds?: readonly string[]): string[] {
   if (!query.trim()) return gameIds ? [...gameIds] : useGameRegistry.getState().gameIds
@@ -709,12 +727,14 @@ export function getGamePlayTime(gameId: string): number {
 export function getGamePlayTimeByDateRange(
   gameId: string,
   startDate: string,
-  endDate: string
+  endDate: string,
+  source?: GameRecordCalculationSource
 ): { [date: string]: number } {
   try {
-    const store = getGameStore(gameId)
-    const timers = store.getState().getValue('record.timers') || []
-    const recordedDailyPlayTimes = store.getState().getValue('record.dailyPlayTimes') || []
+    const { timers, dailyPlayTimes: recordedDailyPlayTimes } = resolveGameRecordCalculationSource(
+      gameId,
+      source
+    )
     if (timers.length === 0 && recordedDailyPlayTimes.length === 0) return {}
 
     const dayBoundaryHour = getConfiguredDayBoundaryHour()
@@ -776,13 +796,17 @@ export function getGamePlayTimeByDateRange(
 }
 
 // Get the dates the game has been played (stored in Set)
-export function getGamePlayedDates(gameId: string): Set<string> {
+export function getGamePlayedDates(
+  gameId: string,
+  source?: GameRecordCalculationSource
+): Set<string> {
   const playDays = new Set<string>()
 
   try {
-    const store = getGameStore(gameId)
-    const timers = store.getState().getValue('record.timers')
-    const recordedDailyPlayTimes = store.getState().getValue('record.dailyPlayTimes')
+    const { timers, dailyPlayTimes: recordedDailyPlayTimes } = resolveGameRecordCalculationSource(
+      gameId,
+      source
+    )
     const dayBoundaryHour = getConfiguredDayBoundaryHour()
     let abnormalTimerCount = 0
 
@@ -790,7 +814,7 @@ export function getGamePlayedDates(gameId: string): Set<string> {
       playDays.add(item.date)
     }
 
-    for (const timer of timers || []) {
+    for (const timer of timers) {
       const startMs = new Date(timer.start).getTime()
       const endMs = new Date(timer.end).getTime()
       if (isNaN(startMs) || isNaN(endMs) || endMs <= startMs) {
@@ -819,16 +843,20 @@ export function getGamePlayedDates(gameId: string): Set<string> {
 }
 
 // Get the number of days the game has been played
-export function getGamePlayDays(gameId: string): number {
-  return getGamePlayedDates(gameId).size
+export function getGamePlayDays(gameId: string, source?: GameRecordCalculationSource): number {
+  return getGamePlayedDates(gameId, source).size
 }
 
 // Get the date of the game's maximum play time
-export function getGameMaxPlayTimeDay(gameId: string): MaxPlayTimeDay | null {
+export function getGameMaxPlayTimeDay(
+  gameId: string,
+  source?: GameRecordCalculationSource
+): MaxPlayTimeDay | null {
   try {
-    const store = getGameStore(gameId)
-    const timers = store.getState().getValue('record.timers') || []
-    const recordedDailyPlayTimes = store.getState().getValue('record.dailyPlayTimes') || []
+    const { timers, dailyPlayTimes: recordedDailyPlayTimes } = resolveGameRecordCalculationSource(
+      gameId,
+      source
+    )
     const dayBoundaryHour = getConfiguredDayBoundaryHour()
     if (timers.length === 0 && recordedDailyPlayTimes.length === 0) return null
 
@@ -912,11 +940,15 @@ export function getGameRecord(gameId: string): gameDoc['record'] {
 }
 
 // Get game start and end dates
-export function getGameStartAndEndDate(gameId: string): { start: string; end: string } {
+export function getGameStartAndEndDate(
+  gameId: string,
+  source?: GameRecordCalculationSource
+): { start: string; end: string } {
   try {
-    const store = getGameStore(gameId)
-    const timers = store.getState().getValue('record.timers') || []
-    const recordedDailyPlayTimes = store.getState().getValue('record.dailyPlayTimes') || []
+    const { timers, dailyPlayTimes: recordedDailyPlayTimes } = resolveGameRecordCalculationSource(
+      gameId,
+      source
+    )
     const dayBoundaryHour = getConfiguredDayBoundaryHour()
     const dateKeys: string[] = []
 
