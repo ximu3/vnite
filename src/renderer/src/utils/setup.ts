@@ -1,14 +1,14 @@
-import { ipcManager } from '~/app/ipc'
-import { useCloudSyncStore, SyncStatus } from '~/pages/Config/CloudSync/store'
-import { startGame } from '~/utils'
-import { toast } from 'sonner'
-import { useRunningGames } from '~/pages/Library/store'
-import { setupDBSync } from '~/stores/sync'
-import { useUpdaterStore } from '~/pages/Updater/store'
-import { useLibrarybarStore } from '~/components/Librarybar/store'
-import i18next from 'i18next'
 import { useRouter } from '@tanstack/react-router'
-import { getGameStore } from '~/stores/game'
+import i18next from 'i18next'
+import { toast } from 'sonner'
+import { ipcManager } from '~/app/ipc'
+import { useLibrarybarStore } from '~/components/Librarybar/store'
+import { SyncStatus, useCloudSyncStore } from '~/pages/Config/CloudSync/store'
+import { useRunningGames } from '~/pages/Library/store'
+import { useUpdaterStore } from '~/pages/Updater/store'
+import { getGameStore, useGameRegistry } from '~/stores/game'
+import { setupDBSync } from '~/stores/sync'
+import { startGame } from '~/utils'
 
 /**
  * Setting the game URL startup listener
@@ -16,7 +16,15 @@ import { getGameStore } from '~/stores/game'
  */
 export function setupGameUrlListener(router: ReturnType<typeof useRouter>): () => void {
   const handleStartGameFromUrl = (_event: any, gameId: string): void => {
-    startGame(gameId, router.navigate)
+    const { gamesLoaded, gameIds } = useGameRegistry.getState()
+    if (!gamesLoaded || !gameIds.includes(gameId)) {
+      toast.error(i18next.t('utils:game.starting.gameNotFound'))
+      return
+    }
+
+    void startGame(gameId, router.navigate).catch((_error) => {
+      toast.error(i18next.t('utils:notifications.gameLaunchFailed'))
+    })
   }
 
   return ipcManager.on('game:start-from-url', handleStartGameFromUrl)

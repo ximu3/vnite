@@ -63,7 +63,8 @@
       "configuringLauncher": "Configuring launcher…",
       "configSuccess": "Launcher configured successfully",
       "configError": "Configuration error: {{message}}",
-      "runtimeError": "Runtime configuration error, please check!"
+      "runtimeError": "Runtime configuration error, please check!",
+      "gameNotFound": "Game not found"
     },
     "playStatus": {
       "unplayed": "Unplayed",

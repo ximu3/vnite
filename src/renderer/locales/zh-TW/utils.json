@@ -63,7 +63,8 @@
       "configuringLauncher": "正在配置啟動器…",
       "configSuccess": "啟動器配置成功",
       "configError": "配置錯誤: {{message}}",
-      "runtimeError": "執行配置錯誤，請檢查！"
+      "runtimeError": "執行配置錯誤，請檢查！",
+      "gameNotFound": "找不到遊戲"
     },
     "playStatus": {
       "unplayed": "未開始",

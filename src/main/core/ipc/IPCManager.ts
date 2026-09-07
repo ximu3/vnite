@@ -51,7 +51,17 @@ export class IPCManager {
       console.warn('No main window found to send IPC message')
       return
     }
-    this.emitter.send(mainWindow.webContents, channel, ...args)
+    this.sendTo(mainWindow.webContents, channel, ...args)
+  }
+
+  // Some flows temporarily create a hidden window for Google bot challenges.
+  // Use this method when a message must target a specific renderer process.
+  sendTo<E extends keyof IpcRendererEvents>(
+    webContents: Electron.WebContents,
+    channel: Extract<E, string>,
+    ...args: IpcRendererEvents[E]
+  ): void {
+    this.emitter.send(webContents, channel, ...args)
   }
 
   removeHandler<E extends keyof IpcMainEvents>(channel: Extract<E, string>): void {

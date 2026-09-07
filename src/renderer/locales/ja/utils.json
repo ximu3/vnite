@@ -63,7 +63,8 @@
       "configuringLauncher": "ランチャーを設定中…",
       "configSuccess": "ランチャーの設定に成功しました",
       "configError": "設定エラー: {{message}}",
-      "runtimeError": "実行設定エラー、ご確認ください！"
+      "runtimeError": "実行設定エラー、ご確認ください！",
+      "gameNotFound": "ゲームが見つかりません"
     },
     "playStatus": {
       "unplayed": "未プレイ",

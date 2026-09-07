@@ -220,20 +220,20 @@ export async function setupDBSync(): Promise<void> {
   console.log('[DB] Phase 1 complete, UI ready')
 
   // Phase 2: Load game data in background (can be large)
-  Promise.all(
+  void Promise.all(
     DB_PHASE2.map(async (dbName) => {
-      try {
-        const data = await ipcManager.invoke('db:get-all-docs', dbName)
-        await DB_INITIALIZERS[dbName](data)
-      } catch (error) {
-        console.error(`[DB] ${dbName} Initialization Failure:`, error)
-      }
+      const data = await ipcManager.invoke('db:get-all-docs', dbName)
+      await DB_INITIALIZERS[dbName](data)
     })
-  ).then(() => {
-    useGameRegistry.getState().setGamesLoaded(true)
-    ipcManager.send('db:games-loaded')
-    console.log('[DB] Phase 2 complete, games ready')
-  })
+  )
+    .then(() => {
+      useGameRegistry.getState().setGamesLoaded(true)
+      ipcManager.send('db:games-loaded')
+      console.log('[DB] Phase 2 complete, games ready')
+    })
+    .catch((error) => {
+      console.error('[DB] Phase 2 Initialization Failure:', error)
+    })
 
   // Listening to database changes
   ipcManager.on('db:doc-changed', (_, change: DocChange) => {
