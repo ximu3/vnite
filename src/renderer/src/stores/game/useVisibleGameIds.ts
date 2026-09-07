@@ -49,6 +49,31 @@ function matchesExcludedPath(
   })
 }
 
+/**
+ * Keep NSFW filtering semantics shared between the library and record reports.
+ *
+ * Registry metadata can be temporarily unavailable while games are loading. In
+ * that case, keep the game visible until its NSFW flag is known.
+ */
+export function matchesNSFWFilter(
+  metaInfo: GameMetaInfo | undefined,
+  nsfwFilterMode: NSFWFilterMode
+): boolean {
+  if (metaInfo?.nsfw === undefined || nsfwFilterMode === NSFWFilterMode.All) {
+    return true
+  }
+
+  if (nsfwFilterMode === NSFWFilterMode.HideNSFW) {
+    return !metaInfo.nsfw
+  }
+
+  if (nsfwFilterMode === NSFWFilterMode.OnlyNSFW) {
+    return metaInfo.nsfw
+  }
+
+  return true
+}
+
 function checkGameVisibility(
   metaInfo: GameMetaInfo | undefined,
   paths: Record<string, GamePathInfo>,
@@ -58,14 +83,8 @@ function checkGameVisibility(
   excludedNames: Set<string>,
   normalizedExcludedPathPrefixes: readonly string[]
 ): boolean {
-  if (metaInfo?.nsfw !== undefined && nsfwFilterMode !== NSFWFilterMode.All) {
-    if (nsfwFilterMode === NSFWFilterMode.HideNSFW && metaInfo.nsfw) {
-      return false
-    }
-
-    if (nsfwFilterMode === NSFWFilterMode.OnlyNSFW && !metaInfo.nsfw) {
-      return false
-    }
+  if (!matchesNSFWFilter(metaInfo, nsfwFilterMode)) {
+    return false
   }
 
   const gamePath = metaInfo?.gamePath || ''
@@ -88,6 +107,18 @@ function checkGameVisibility(
   }
 
   return true
+}
+
+export function useNSFWFilteredGameIds(sourceGameIds?: readonly string[]): string[] {
+  const registryGameIds = useGameRegistry((state) => state.gameIds)
+  const gameMetaIndex = useGameRegistry((state) => state.gameMetaIndex)
+  const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
+
+  return useMemo(() => {
+    const gameIds = sourceGameIds ? Array.from(sourceGameIds) : registryGameIds
+
+    return gameIds.filter((gameId) => matchesNSFWFilter(gameMetaIndex[gameId], nsfwFilterMode))
+  }, [sourceGameIds, registryGameIds, gameMetaIndex, nsfwFilterMode])
 }
 
 export function useVisibleGameIds(sourceGameIds?: readonly string[]): string[] {

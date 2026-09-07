@@ -1001,9 +1001,9 @@ export function getSortedGameIds(order: 'asc' | 'desc' = 'asc'): string[] {
 }
 
 // Get annual play days
-export function getPlayedDaysYearly(): { [date: string]: number } {
+export function getPlayedDaysYearly(gameIds?: readonly string[]): { [date: string]: number } {
   try {
-    const { gameIds } = useGameRegistry.getState()
+    const sourceGameIds = gameIds ?? useGameRegistry.getState().gameIds
     const dayBoundaryHour = getConfiguredDayBoundaryHour()
 
     const oneYearAgo = new Date()
@@ -1020,7 +1020,7 @@ export function getPlayedDaysYearly(): { [date: string]: number } {
     }
     let abnormalTimerCount = 0
 
-    for (const gameId of gameIds) {
+    for (const gameId of sourceGameIds) {
       const store = getGameStore(gameId)
       const timers = store.getState().getValue('record.timers') || []
       const recordedDailyPlayTimes = store.getState().getValue('record.dailyPlayTimes') || []
@@ -1074,11 +1074,11 @@ export function getPlayedDaysYearly(): { [date: string]: number } {
 }
 
 // Get Total Playtime
-export function getTotalplayTime(): number {
+export function getTotalplayTime(gameIds?: readonly string[]): number {
   try {
-    const { gameIds } = useGameRegistry.getState()
+    const sourceGameIds = gameIds ?? useGameRegistry.getState().gameIds
 
-    return gameIds.reduce((total, gameId) => {
+    return sourceGameIds.reduce((total, gameId) => {
       return total + getGamePlayTime(gameId)
     }, 0)
   } catch (error) {
@@ -1088,11 +1088,11 @@ export function getTotalplayTime(): number {
 }
 
 // Get Total Play
-export function getTotalPlayedTimes(): number {
+export function getTotalPlayedTimes(gameIds?: readonly string[]): number {
   try {
-    const { gameIds } = useGameRegistry.getState()
+    const sourceGameIds = gameIds ?? useGameRegistry.getState().gameIds
 
-    return gameIds.reduce((total, gameId) => {
+    return sourceGameIds.reduce((total, gameId) => {
       const store = getGameStore(gameId)
       const timers = store.getState().getValue('record.timers')
       return total + (timers?.length || 0)
@@ -1104,12 +1104,12 @@ export function getTotalPlayedTimes(): number {
 }
 
 // Get Total Days of Play
-export function getTotalPlayedDays(): number {
+export function getTotalPlayedDays(gameIds?: readonly string[]): number {
   try {
-    const { gameIds } = useGameRegistry.getState()
+    const sourceGameIds = gameIds ?? useGameRegistry.getState().gameIds
     const allDates = new Set<string>()
 
-    for (const gameId of gameIds) {
+    for (const gameId of sourceGameIds) {
       for (const date of getGamePlayedDates(gameId)) {
         allDates.add(date)
       }

@@ -205,7 +205,10 @@ export function calculateDailyPlayTime({
 /**
  * Get play data for a given week
  */
-export function getWeeklyPlayData(date = new Date()): {
+export function getWeeklyPlayData(
+  date = new Date(),
+  gameIds?: readonly string[]
+): {
   dates: string[]
   totalTime: number
   dailyPlayTime: { [date: string]: number }
@@ -243,14 +246,14 @@ export function getWeeklyPlayData(date = new Date()): {
     let mostPlayedDay: WeeklyMostPlayedDay | null = null
     const gamePlayTime: { [gameId: string]: number } = {}
 
-    const { gameIds } = useGameRegistry.getState()
+    const sourceGameIds = gameIds ?? useGameRegistry.getState().gameIds
 
     // Every day
     for (const dateStr of dates) {
       let dayTotal = 0
 
       // Iterate through all the games
-      for (const gameId of gameIds) {
+      for (const gameId of sourceGameIds) {
         const store = getGameStore(gameId)
         const timers = store.getState().getValue('record.timers') || []
         const dailyPlayTimes = store.getState().getValue('record.dailyPlayTimes') || []
@@ -352,7 +355,10 @@ export function getWeeklyPlayData(date = new Date()): {
 /**
  * Get play data for a given month
  */
-export function getMonthlyPlayData(date = new Date()): {
+export function getMonthlyPlayData(
+  date = new Date(),
+  gameIds?: readonly string[]
+): {
   totalTime: number
   dailyPlayTime: { [date: string]: number }
   dailyWeekNumber: { [date: string]: number } // The key is the same as the above variable
@@ -386,7 +392,7 @@ export function getMonthlyPlayData(date = new Date()): {
     let mostPlayedDay: MonthlyMostPlayedDay | null = null
     const gamePlayTime: { [gameId: string]: number } = {}
 
-    const { gameIds } = useGameRegistry.getState()
+    const sourceGameIds = gameIds ?? useGameRegistry.getState().gameIds
 
     // Every day
     for (const dateStr of dates) {
@@ -400,7 +406,7 @@ export function getMonthlyPlayData(date = new Date()): {
       const weekOfMonth = Math.ceil((dayDate.getDate() + weekOfFirstDay) / 7)
 
       // Iterate through all the games
-      for (const gameId of gameIds) {
+      for (const gameId of sourceGameIds) {
         const store = getGameStore(gameId)
         const timers = store.getState().getValue('record.timers') || []
         const dailyPlayTimes = store.getState().getValue('record.dailyPlayTimes') || []
@@ -469,7 +475,10 @@ export function getMonthlyPlayData(date = new Date()): {
 /**
  * Get play data for a given year
  */
-export function getYearlyPlayData(year = new Date().getFullYear()): {
+export function getYearlyPlayData(
+  year = new Date().getFullYear(),
+  gameIds?: readonly string[]
+): {
   totalTime: number
   monthlyPlayTime: { month: number; playTime: number }[]
   monthlyPlayDays: { month: number; days: number }[]
@@ -499,7 +508,7 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
       [type: string]: { detail: { gameId: string; playTime: number }[]; summary: number }
     } = {}
 
-    const { gameIds } = useGameRegistry.getState()
+    const sourceGameIds = gameIds ?? useGameRegistry.getState().gameIds
 
     // Initialize monthly data
     for (let month = 0; month < 12; month++) {
@@ -507,7 +516,7 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
       monthlyPlayDays[month] = new Set()
     }
 
-    for (const gameId of gameIds) {
+    for (const gameId of sourceGameIds) {
       const store = getGameStore(gameId)
       const timers = store.getState().getValue('record.timers') || []
       const dailyPlayTimes = store.getState().getValue('record.dailyPlayTimes') || []
@@ -638,9 +647,11 @@ export function getYearlyPlayData(year = new Date().getFullYear()): {
 /**
  * Get tour time distribution (by hour)
  */
-export function getPlayTimeDistribution(): { hour: number; value: number }[] {
+export function getPlayTimeDistribution(
+  gameIds?: readonly string[]
+): { hour: number; value: number }[] {
   try {
-    const { gameIds } = useGameRegistry.getState()
+    const sourceGameIds = gameIds ?? useGameRegistry.getState().gameIds
     const distribution: { [hour: number]: number } = {}
 
     // Initialize hourly data
@@ -649,7 +660,7 @@ export function getPlayTimeDistribution(): { hour: number; value: number }[] {
     }
 
     // Iterate through each game
-    for (const gameId of gameIds) {
+    for (const gameId of sourceGameIds) {
       const store = getGameStore(gameId)
       const timers = store.getState().getValue('record.timers')
 
@@ -838,13 +849,17 @@ export function getRecentMemoryGames(
 }
 
 // 按评分区间获取游戏
-export function getGamesByScoreRange(minScore: number, maxScore: number): string[] {
+export function getGamesByScoreRange(
+  minScore: number,
+  maxScore: number,
+  gameIds?: readonly string[]
+): string[] {
   try {
-    const { gameIds } = useGameRegistry.getState()
+    const sourceGameIds = gameIds ?? useGameRegistry.getState().gameIds
     const gamesInRange: string[] = []
 
     // Iterate through each game
-    for (const gameId of gameIds) {
+    for (const gameId of sourceGameIds) {
       const store = getGameStore(gameId)
       const score = store.getState().getValue('record.score')
 

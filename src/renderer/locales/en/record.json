@@ -7,7 +7,7 @@
     "monthly": "Monthly Report",
     "yearly": "Annual Report",
     "score": "Score Report",
-    "poster": "Export Report"
+    "report": "Export Report"
   },
   "overview": {
     "title": "Overview",
@@ -208,92 +208,48 @@
       "ratingLabel": "Rating"
     }
   },
-  "poster": {
+  "exportReport": {
+    "preset": {
+      "label": "Report Preset",
+      "groups": { "report": "Report", "json": "JSON" },
+      "scoreReport": "Score Report",
+      "gamePlayTime": "Play Time"
+    },
     "action": {
-      "render": "Render Poster",
-      "reset": "Reset Configuration"
+      "reset": "Reset Configuration",
+      "exportHtml": "Export HTML",
+      "exportJson": "Export JSON"
     },
     "message": {
-      "loading": "Rendering...",
-      "success": "Rendered successfully: {{file}}",
-      "error": "Rendering failed"
+      "loading": {
+        "html": "Generating HTML...",
+        "json": "Generating JSON..."
+      },
+      "success": "Exported successfully: {{file}}",
+      "error": "Export failed"
     },
-    "renderOptions": {
-      "outputPath": "Output Folder"
-    },
-    "templates": {
+    "emptyScoreReport": "There are no scored games available for the score report.",
+    "outputPath": "Output Folder",
+    "settings": {
+      "empty": "This preset has no configurable options",
+      "theme": { "current": "Current theme", "light": "Light", "dark": "Dark" },
       "scoreReport": {
-        "maxWidth": {
-          "title": "Max Width",
-          "description": "Maximum width of the entire canvas"
+        "variant": {
+          "title": "Style variant",
+          "description": "Choose between the card and classic table layouts",
+          "options": { "A": "A · Cards", "B": "B · Classic table" }
         },
-        "titleWidth": {
-          "title": "Title Width"
+        "coverWidth": {
+          "title": "Cover width",
+          "description": "Cover height is fixed at 1.5 times its width"
         },
-        "gameCoverHeightSmall": {
-          "title": "Small Cover Height",
-          "description": "Height of small game cover"
+        "theme": {
+          "title": "Report theme",
+          "description": "Current theme freezes the colors currently used by the app"
         },
-        "gameCoverHeightLarge": {
-          "title": "Large Cover Height",
-          "description": "Height of large game cover"
-        },
-        "padding": {
-          "title": "Padding",
-          "description": "Overall padding for each level row"
-        },
-        "gap": {
-          "title": "Gap",
-          "description": "Spacing between game posters"
-        },
-        "titleColor1": {
-          "title": "Level 1 Title Color"
-        },
-        "titleColor2": {
-          "title": "Level 2 Title Color"
-        },
-        "titleColor3": {
-          "title": "Level 3 Title Color"
-        },
-        "titleColor4": {
-          "title": "Level 4 Title Color"
-        },
-        "titleColor5": {
-          "title": "Level 5 Title Color"
-        },
-        "useSmallCover1": {
-          "title": "Use Small Cover for Level 1"
-        },
-        "useSmallCover2": {
-          "title": "Use Small Cover for Level 2"
-        },
-        "useSmallCover3": {
-          "title": "Use Small Cover for Level 3"
-        },
-        "useSmallCover4": {
-          "title": "Use Small Cover for Level 4"
-        },
-        "useSmallCover5": {
-          "title": "Use Small Cover for Level 5"
-        },
-        "splitColor": {
-          "title": "Split Line Color",
-          "description": "Split line between each level row"
-        },
-        "splitWidth": {
-          "title": "Split Line Width"
-        },
-        "drawScore": {
-          "title": "Draw Score"
-        },
-        "scoreColor": {
-          "title": "Score Background Color"
-        },
-        "fontColor": {
-          "title": "Font Color"
-        },
-        "backgroundColor": {
-          "title": "Background Color"
+        "showScore": {
+          "title": "Show score",
+          "description": "Show the score at the lower-right of each cover"
         }
       }
     }

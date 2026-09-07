@@ -1,0 +1,1 @@
+export { setupReportIPC } from './ipc'

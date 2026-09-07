@@ -7,7 +7,7 @@
     "monthly": "月間レポート",
     "yearly": "年間レポート",
     "score": "評価レポート",
-    "poster": "レポートをエクスポート"
+    "report": "レポートをエクスポート"
   },
   "overview": {
     "title": "概要",
@@ -208,93 +208,43 @@
       "ratingLabel": "評価"
     }
   },
-  "poster": {
+  "exportReport": {
+    "preset": {
+      "label": "レポートプリセット",
+      "groups": { "report": "レポート", "json": "JSON" },
+      "scoreReport": "評価レポート",
+      "gamePlayTime": "プレイ時間"
+    },
     "action": {
-      "render": "ポスターを生成",
-      "reset": "設定をリセット"
+      "reset": "設定をリセット",
+      "exportHtml": "HTML をエクスポート",
+      "exportJson": "JSON をエクスポート"
     },
     "message": {
-      "loading": "レンダリング中...",
-      "success": "レンダリング完了：{{file}}",
-      "error": "レンダリングに失敗しました"
+      "loading": {
+        "html": "HTML を生成中...",
+        "json": "JSON を生成中..."
+      },
+      "success": "エクスポート完了：{{file}}",
+      "error": "エクスポートに失敗しました"
     },
-    "renderOptions": {
-      "outputPath": "出力フォルダー"
-    },
-    "templates": {
+    "emptyScoreReport": "評価レポートに使用できる評価済みゲームがありません。",
+    "outputPath": "出力フォルダー",
+    "settings": {
+      "empty": "このプリセットには設定項目がありません",
+      "theme": { "current": "現在のテーマ", "light": "ライト", "dark": "ダーク" },
       "scoreReport": {
-        "maxWidth": {
-          "title": "最大幅",
-          "description": "キャンバス全体の最大幅"
+        "variant": {
+          "title": "スタイルバリエーション",
+          "description": "カードレイアウトと従来の表レイアウトを切り替えます",
+          "options": { "A": "A · カード", "B": "B · 従来の表" }
         },
-        "titleWidth": {
-          "title": "タイトル幅"
+        "coverWidth": { "title": "カバー幅", "description": "カバーの高さは幅の 1.5 倍です" },
+        "theme": {
+          "title": "レポートテーマ",
+          "description": "現在のテーマはアプリで使用中の配色を固定します"
         },
-        "gameCoverHeightSmall": {
-          "title": "小カバー高さ",
-          "description": "小サイズのゲームカバー高さ"
-        },
-        "gameCoverHeightLarge": {
-          "title": "大カバー高さ",
-          "description": "大サイズのゲームカバー高さ"
-        },
-        "padding": {
-          "title": "パディング",
-          "description": "各レベル行の全体パディング"
-        },
-        "gap": {
-          "title": "間隔",
-          "description": "ゲームポスター間の間隔"
-        },
-        "titleColor1": {
-          "title": "レベル1タイトルカラー"
-        },
-        "titleColor2": {
-          "title": "レベル2タイトルカラー"
-        },
-        "titleColor3": {
-          "title": "レベル3タイトルカラー"
-        },
-        "titleColor4": {
-          "title": "レベル4タイトルカラー"
-        },
-        "titleColor5": {
-          "title": "レベル5タイトルカラー"
-        },
-        "useSmallCover1": {
-          "title": "レベル1に小カバーを使用"
-        },
-        "useSmallCover2": {
-          "title": "レベル2に小カバーを使用"
-        },
-        "useSmallCover3": {
-          "title": "レベル3に小カバーを使用"
-        },
-        "useSmallCover4": {
-          "title": "レベル4に小カバーを使用"
-        },
-        "useSmallCover5": {
-          "title": "レベル5に小カバーを使用"
-        },
-        "splitColor": {
-          "title": "区切り線の色",
-          "description": "各レベル行の区切り線"
-        },
-        "splitWidth": {
-          "title": "区切り線の幅"
-        },
-        "drawScore": {
-          "title": "スコアを描く"
-        },
-        "scoreColor": {
-          "title": "スコアの背景色"
-        },
-        "fontColor": {
-          "title": "文字の色"
-        },
-        "backgroundColor": {
-          "title": "背景色"
-        }
+        "showScore": { "title": "評価を表示", "description": "各カバーの右下に評価を表示します" }
       }
     }
   }

@@ -1,15 +1,16 @@
+import { useRouter, useSearch } from '@tanstack/react-router'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
 import { NSFWBlurLevel } from '@appTypes/models'
 import { generateUUID } from '@appUtils'
-import { useRouter, useSearch } from '@tanstack/react-router'
 import { Button } from '@ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/card'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@ui/dialog'
 import { ScrollArea } from '@ui/scroll-area'
 import { Separator } from '@ui/separator'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import {
   Area,
   AreaChart,
@@ -25,7 +26,7 @@ import stringWidth from 'string-width'
 import { usePositionButtonStore } from '~/components/Librarybar/PositionButton'
 import { useConfigState } from '~/hooks'
 import { useConfigStore } from '~/stores/config'
-import { getGameStore } from '~/stores/game'
+import { getGameStore, useNSFWFilteredGameIds } from '~/stores/game'
 import {
   getBusinessDateKey,
   getBusinessDayStartFromKey,
@@ -150,6 +151,7 @@ export function WeeklyReport(): React.JSX.Element {
   const search = useSearch({ from: '/record' })
   const selectedDate = new Date(search.date)
   const dateTs = selectedDate.getTime()
+  const filteredGameIds = useNSFWFilteredGameIds()
 
   const setSelectedDate = (newDate: Date, businessYear: string): void => {
     router.navigate({
@@ -162,7 +164,10 @@ export function WeeklyReport(): React.JSX.Element {
     })
   }
 
-  const weekData = useMemo(() => getWeeklyPlayData(selectedDate), [dateTs])
+  const weekData = useMemo(
+    () => getWeeklyPlayData(selectedDate, filteredGameIds),
+    [dateTs, filteredGameIds]
+  )
 
   const goToPreviousWeek = (): void => {
     const prevWeek = new Date(dateTs)
@@ -236,21 +241,19 @@ export function WeeklyReport(): React.JSX.Element {
   }
 
   // Converting daily game time to graphical data
-  const dailyChartData = useMemo(() => {
-    return weekData.dates.map((date) => {
-      const dayDate = parseLocalDate(date)
-      return {
-        date,
-        weekday: getLocalizedWeekday(dayDate.getDay()),
-        playTime: (weekData.dailyPlayTime[date] || 0) / 60000, // Convert to minutes
-        fullDate: date
-      }
-    })
-  }, [dateTs])
+  const dailyChartData = weekData.dates.map((date) => {
+    const dayDate = parseLocalDate(date)
+    return {
+      date,
+      weekday: getLocalizedWeekday(dayDate.getDay()),
+      playTime: (weekData.dailyPlayTime[date] || 0) / 60000, // Convert to minutes
+      fullDate: date
+    }
+  })
   const [mergeInterval, setMergeInterval] = useConfigState('record.weekly.mergeInterval')
   const timeLineChartDataFlat = useMemo(() => {
     return buildTimeLineChartData(weekData, weekStartTime, nextWeekStartTime, mergeInterval)
-  }, [dateTs, mergeInterval, nsfwBlurLevel])
+  }, [weekData, mergeInterval, nsfwBlurLevel])
 
   const handleSliderCommit = useCallback(
     (value: number) => {

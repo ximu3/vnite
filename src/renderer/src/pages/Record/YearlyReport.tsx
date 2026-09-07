@@ -1,4 +1,8 @@
 import { useRouter, useSearch } from '@tanstack/react-router'
+import { CalendarIcon, ChevronLeft, ChevronRight, Clock, Trophy } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
 import { Button } from '@ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/card'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
@@ -6,9 +10,6 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { SettingsPopover } from '@ui/popover'
 import { ScrollArea } from '@ui/scroll-area'
 import { Switch } from '@ui/switch'
-import { CalendarIcon, ChevronLeft, ChevronRight, Clock, Trophy } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import {
   Bar,
   BarChart,
@@ -24,6 +25,7 @@ import {
 } from 'recharts'
 import type { ValueType } from 'recharts/types/component/DefaultTooltipContent'
 import { useConfigState } from '~/hooks'
+import { useNSFWFilteredGameIds } from '~/stores/game'
 import { getBusinessDateKey, getConfiguredDayBoundaryHour } from '~/stores/game/dayBoundaryUtils'
 import { getYearlyPlayData } from '~/stores/game/recordUtils'
 import { GameRankingItem } from './GameRankingItem'
@@ -43,6 +45,7 @@ export function YearlyReport(): React.JSX.Element {
   const router = useRouter()
   const search = useSearch({ from: '/record' })
   const selectedYear = Number(search.year)
+  const filteredGameIds = useNSFWFilteredGameIds()
   const parsedBusinessYear = Number(getBusinessDateKey(new Date(), dayBoundaryHour).slice(0, 4))
   const currentBusinessYear = Number.isFinite(parsedBusinessYear)
     ? parsedBusinessYear
@@ -90,7 +93,10 @@ export function YearlyReport(): React.JSX.Element {
     })
   }
 
-  const yearData = useMemo(() => getYearlyPlayData(selectedYear), [selectedYear])
+  const yearData = useMemo(
+    () => getYearlyPlayData(selectedYear, filteredGameIds),
+    [selectedYear, filteredGameIds]
+  )
 
   const goToPreviousYear = (): void => setSelectedYear(selectedYear - 1)
   const goToNextYear = (): void => setSelectedYear(selectedYear + 1)

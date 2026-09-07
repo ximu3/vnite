@@ -20,6 +20,7 @@ import {
   openDatabasePathInExplorer,
   openPathInExplorer,
   readFileBuffer,
+  writeTextFile,
   saveClipboardImage,
   selectMultiplePathDialog,
   selectPathDialog
@@ -157,6 +158,13 @@ export function setupSystemIPC(): void {
   ipcManager.handle('system:read-file-buffer', async (_, filePath: string) => {
     return await readFileBuffer(filePath)
   })
+
+  ipcManager.handle(
+    'system:write-text-file',
+    async (_, filePath: string, content: string): Promise<void> => {
+      await writeTextFile(filePath, content)
+    }
+  )
 
   ipcManager.handle('system:get-language', async () => {
     return getLanguage()

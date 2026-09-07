@@ -1,5 +1,7 @@
 import { exec } from 'child_process'
-import { app, shell } from 'electron'
+import { format, isValid, parse, parseISO } from 'date-fns'
+import { enUS, zhCN } from 'date-fns/locale'
+import { app, net, shell } from 'electron'
 import log from 'electron-log/main'
 import { fileTypeFromBuffer } from 'file-type'
 import fse from 'fs-extra'
@@ -10,9 +12,6 @@ import sharp from 'sharp'
 import { promisify } from 'util'
 import { getAppTempPath, getDataPath } from '~/features/system'
 import { psManager } from './powershell'
-import { net } from 'electron'
-import { parse, isValid, format, parseISO } from 'date-fns'
-import { zhCN, enUS } from 'date-fns/locale'
 
 const execAsync = promisify(exec)
 
@@ -478,6 +477,20 @@ export async function readFileBuffer(filePath: string): Promise<Buffer> {
   } catch (error) {
     console.error('Error reading file buffer:', error)
     throw error
+  }
+}
+
+export async function writeTextFile(filePath: string, content: string): Promise<void> {
+  try {
+    await fse.writeFile(filePath, content, { encoding: 'utf-8', flag: 'wx' })
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'EEXIST') {
+      log.error('[System] Refused to overwrite existing text file:', filePath)
+    } else {
+      log.error('[System] Failed to write text file:', { filePath, error })
+    }
+
+    throw new Error('Failed to write text file')
   }
 }
 

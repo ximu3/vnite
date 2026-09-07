@@ -5,7 +5,7 @@ import {
   EventHistoryQuery,
   EventType
 } from '@appTypes/event'
-import { PosterRenderArgs, RenderResponse, TemplatePayloads } from '@appTypes/poster'
+import { ReportExportRequest, ReportExportResponse } from '@appTypes/report'
 import { BatchUpdateGameMetadataProgress, OverallScanProgress } from '@appTypes/utils'
 import { ProgressInfo, UpdateCheckResult } from 'electron-updater'
 import type { GameMediaType } from './models'
@@ -90,6 +90,7 @@ type MainIpcEvents =
       ) => string[] | undefined
       'system:get-path-size': (paths: string[]) => number
       'system:read-file-buffer': (filePath: string) => Buffer
+      'system:write-text-file': (filePath: string, content: string) => void
       'system:open-path-in-explorer': (filePath: string) => void
       'system:get-language': () => string
       'system:check-admin-permissions': () => boolean
@@ -377,9 +378,9 @@ type MainIpcEvents =
       'plugin:get-stats': () => PluginStatsData
       'plugin:get-plugin-configuration': (pluginId: string) => PluginConfiguration[]
 
-      'poster:render': <T extends keyof TemplatePayloads>(
-        args: PosterRenderArgs<T>
-      ) => RenderResponse
+      'report:create-font-subset': (text: string) => { dataUrl: string }
+
+      'report:export': (request: ReportExportRequest) => ReportExportResponse
     }
 
 // Renderer process IPC events - handled by renderer process

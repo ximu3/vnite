@@ -1,12 +1,12 @@
 import { create } from 'zustand'
 
-interface AttachmentInfo {
+export interface AttachmentInfo {
   timestamp: number
   error?: boolean
   errorMessage?: string
 }
 
-interface AttachmentState {
+export interface AttachmentState {
   // Three-level nested structure: database name -> document ID -> attachment ID -> attachment information
   attachments: Record<string, Record<string, Record<string, AttachmentInfo>>>
 

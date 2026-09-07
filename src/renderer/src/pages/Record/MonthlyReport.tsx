@@ -1,4 +1,9 @@
 import { useRouter, useSearch } from '@tanstack/react-router'
+import { CalendarIcon, ChevronLeft, ChevronRight, Clock, Trophy } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from 'recharts'
+
 import { Button, buttonVariants } from '@ui/button'
 import { Calendar } from '@ui/calendar'
 import { Card, CardContent, CardHeader, CardTitle } from '@ui/card'
@@ -8,11 +13,8 @@ import { SettingsPopover } from '@ui/popover'
 import { ScrollArea } from '@ui/scroll-area'
 import { Separator } from '@ui/separator'
 import { Switch } from '@ui/switch'
-import { CalendarIcon, ChevronLeft, ChevronRight, Clock, Trophy } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from 'recharts'
 import { useConfigState } from '~/hooks'
+import { useNSFWFilteredGameIds } from '~/stores/game'
 import {
   getBusinessDateKey,
   getConfiguredDayBoundaryHour,
@@ -37,6 +39,7 @@ export function MonthlyReport(): React.JSX.Element {
   const selectedDate = new Date(search.date)
   const selectedBusinessDateKey = getBusinessDateKey(selectedDate, dayBoundaryHour)
   const selectedBusinessDate = parseLocalDate(selectedBusinessDateKey)
+  const filteredGameIds = useNSFWFilteredGameIds()
 
   const setSelectedDate = (newDate: Date, businessYear: string): void => {
     router.navigate({
@@ -81,7 +84,7 @@ export function MonthlyReport(): React.JSX.Element {
   }
 
   // const [selectedDate, setSelectedDate] = useState<Date>(new Date())
-  const monthData = getMonthlyPlayData(selectedDate)
+  const monthData = getMonthlyPlayData(selectedDate, filteredGameIds)
 
   const getTargetMonthDate = (offset: number): Date => {
     const targetMonth = new Date(

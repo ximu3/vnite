@@ -3,8 +3,9 @@ import { Trophy } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScoreEditorDialog } from '~/components/Game/Config/ManageMenu/ScoreEditorDialog'
-import { getGamesByScoreRange } from '~/stores/game/recordUtils'
+import { useGameRegistry, useNSFWFilteredGameIds } from '~/stores/game'
 import { useScoreReportStore } from '../store'
+import { createScoreReportCategories } from './data'
 import { ScoreReportCompactView } from './ScoreReportCompactView'
 import { ScoreReportDetailedView } from './ScoreReportDetailedView'
 import { ScoreCategoryData, ScoreReportView } from './types'
@@ -13,59 +14,15 @@ import { ScoreCategoryData, ScoreReportView } from './types'
 export function ScoreReport(): React.JSX.Element {
   const { t } = useTranslation('record')
   const [view, setView] = useState<ScoreReportView>('compact')
+  const filteredGameIds = useNSFWFilteredGameIds()
+  const gameMetaIndex = useGameRegistry((state) => state.gameMetaIndex)
 
   const { scoreEditorState, closeScoreEditor, bumpVersion, scoreReportVersion } =
     useScoreReportStore()
 
   const categories = useMemo<ScoreCategoryData[]>(
-    () => [
-      {
-        id: 'excellent',
-        title: t('score.categories.excellent.title'),
-        description: t('score.categories.excellent.description'),
-        minScore: 9,
-        maxScore: 10,
-        className: 'border-primary',
-        games: getGamesByScoreRange(9, 10)
-      },
-      {
-        id: 'great',
-        title: t('score.categories.great.title'),
-        description: t('score.categories.great.description'),
-        minScore: 8,
-        maxScore: 8.9,
-        className: 'border-secondary',
-        games: getGamesByScoreRange(8, 8.9)
-      },
-      {
-        id: 'good',
-        title: t('score.categories.good.title'),
-        description: t('score.categories.good.description'),
-        minScore: 7,
-        maxScore: 7.9,
-        className: 'border-accent',
-        games: getGamesByScoreRange(7, 7.9)
-      },
-      {
-        id: 'average',
-        title: t('score.categories.average.title'),
-        description: t('score.categories.average.description'),
-        minScore: 6,
-        maxScore: 6.9,
-        className: 'border-muted',
-        games: getGamesByScoreRange(6, 6.9)
-      },
-      {
-        id: 'notRecommended',
-        title: t('score.categories.notRecommended.title'),
-        description: t('score.categories.notRecommended.description'),
-        minScore: 0,
-        maxScore: 5.9,
-        className: 'border-destructive',
-        games: getGamesByScoreRange(0, 5.9)
-      }
-    ],
-    [t, scoreReportVersion]
+    () => createScoreReportCategories(t, filteredGameIds, gameMetaIndex),
+    [t, scoreReportVersion, filteredGameIds, gameMetaIndex]
   )
 
   return (

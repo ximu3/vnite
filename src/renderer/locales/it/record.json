@@ -191,5 +191,21 @@
       "lastRun": "",
       "ratingLabel": ""
     }
+  },
+  "exportReport": {
+    "preset": {
+      "label": "",
+      "groups": { "poster": "Poster", "json": "JSON" },
+      "posterScoreReport": "",
+      "gamePlayTime": ""
+    },
+    "action": { "export": "", "reset": "" },
+    "message": {
+      "loading": "",
+      "success": "",
+      "error": ""
+    },
+    "outputPath": "",
+    "settings": { "empty": "" }
   }
 }

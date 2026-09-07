@@ -1,4 +1,5 @@
 import { DEFAULT_LOCAL_UPSCALER_CONFIG, type LocalUpscalerConfig } from '../utils/upscaler'
+import { defaultReportExportOptions, type ReportExportOptions } from '../report'
 
 export enum NSFWBlurLevel {
   Off = 0,
@@ -266,6 +267,7 @@ export interface configDocs {
 }
 
 export interface configLocalDocs {
+  report: ReportExportOptions
   userInfo: {
     name: string
     email: string
@@ -547,6 +549,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
 } as const
 
 export const DEFAULT_CONFIG_LOCAL_VALUES: Readonly<configLocalDocs> = {
+  report: defaultReportExportOptions,
   database: {
     defaultBackupPath: '',
     migrationCompleted: []

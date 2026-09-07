@@ -2,24 +2,12 @@ import { ActivitySquare, Calendar as CalendarIcon, Clock, Trophy } from 'lucide-
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Area, AreaChart, Bar, BarChart, Brush, CartesianGrid, XAxis, YAxis } from 'recharts'
-import { Button } from '~/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '~/components/ui/card'
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '~/components/ui/chart'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle
-} from '~/components/ui/dialog'
-import { ScrollArea } from '~/components/ui/scroll-area'
+
+import { Button } from '@ui/button'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@ui/card'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@ui/chart'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@ui/dialog'
+import { ScrollArea } from '@ui/scroll-area'
 
 import {
   getGamePlayTime,
@@ -28,7 +16,8 @@ import {
   getTotalPlayedTimes,
   getTotalplayTime,
   sortGames,
-  useGameRegistry
+  useGameRegistry,
+  useNSFWFilteredGameIds
 } from '~/stores/game'
 import { getPlayTimeDistribution } from '~/stores/game/recordUtils'
 import { GameRankingItem } from './GameRankingItem'
@@ -41,17 +30,18 @@ export function RecordOverview(): React.JSX.Element {
   const [showMoreScoreGames, setShowMoreScoreGames] = useState(false)
 
   const gameMetaIndex = useGameRegistry((state) => state.gameMetaIndex)
-  const totalGames = Object.keys(gameMetaIndex).length
-  const totalTime = getTotalplayTime()
-  const totalDays = getTotalPlayedDays()
-  const totalTimes = getTotalPlayedTimes()
-  const playedDaysYearly = getPlayedDaysYearly()
+  const filteredGameIds = useNSFWFilteredGameIds()
+  const totalGames = filteredGameIds.length
+  const totalTime = getTotalplayTime(filteredGameIds)
+  const totalDays = getTotalPlayedDays(filteredGameIds)
+  const totalTimes = getTotalPlayedTimes(filteredGameIds)
+  const playedDaysYearly = getPlayedDaysYearly(filteredGameIds)
 
   // Get all game sorting data, unlimited number of games
-  const allTimeGames = sortGames('record.playTime', 'desc').filter(
+  const allTimeGames = sortGames('record.playTime', 'desc', filteredGameIds).filter(
     (gameId) => getGamePlayTime(gameId) > 0
   )
-  const allScoreGames = sortGames('record.score', 'desc').filter(
+  const allScoreGames = sortGames('record.score', 'desc', filteredGameIds).filter(
     (gameId) => gameMetaIndex[gameId].score !== -1
   )
 
@@ -60,7 +50,7 @@ export function RecordOverview(): React.JSX.Element {
   const topScoreGames = allScoreGames.slice(0, 5)
 
   // Get game time distribution data and make sure it exists 24/7
-  const rawTimeDistribution = getPlayTimeDistribution()
+  const rawTimeDistribution = getPlayTimeDistribution(filteredGameIds)
 
   // Ensure that all hourly data exists, even if it is a value of 0
   const timeDistribution = Array.from({ length: 24 }, (_, hour) => {
