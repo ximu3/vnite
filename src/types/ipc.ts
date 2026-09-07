@@ -8,7 +8,7 @@ import {
 import { ReportExportRequest, ReportExportResponse } from '@appTypes/report'
 import { BatchUpdateGameMetadataProgress, OverallScanProgress } from '@appTypes/utils'
 import { ProgressInfo, UpdateCheckResult } from 'electron-updater'
-import type { GameMediaType } from './models'
+import type { GameMediaType, LauncherPresetApplyResult } from './models'
 import { BatchGameInfo, configDocs, configLocalDocs, gameDoc, GameTimerStatus } from './models'
 import { GameDatabaseStorageDetail, LocalDatabaseStorageReport } from './models/databaseInspector'
 import {
@@ -254,7 +254,7 @@ type MainIpcEvents =
       'importer:get-steam-games': (steamId: string) => SteamFormattedGameInfo[]
       'importer:import-selected-steam-games': (games: SteamFormattedGameInfo[]) => number
 
-      'launcher:select-preset': (presetName: string, gameId: string, steamId?: string) => void
+      'launcher:select-preset': (presetId: string, gameId: string) => LauncherPresetApplyResult
 
       'toolbox:launch-tool': (tool: {
         path: string

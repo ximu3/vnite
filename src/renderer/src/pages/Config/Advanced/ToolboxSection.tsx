@@ -128,7 +128,7 @@ export function ToolboxSection(): React.JSX.Element {
   }
 
   return (
-    <Card>
+    <Card id="config-section-toolbox">
       <CardHeader>
         <CardTitle>{t('advanced.toolbox.title')}</CardTitle>
       </CardHeader>

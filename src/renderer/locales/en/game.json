@@ -695,7 +695,12 @@
           "le": "LE Region Launch",
           "steam": "Steam Launch",
           "vba": "VBA Launch",
+          "noResults": "No presets found",
+          "manage": "Manage Presets",
           "steamIdRequired": "Please enter Steam ID",
+          "steamIdTitle": "Add Steam ID",
+          "steamIdDescription": "The Steam ID will be saved to the game's metadata before the selected preset is applied again.",
+          "invalidSteamId": "Steam ID must contain digits only",
           "notifications": {
             "configuring": "Configuring preset…",
             "success": "Preset configured successfully"

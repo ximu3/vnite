@@ -1,3 +1,4 @@
+import type { LauncherPresetApplyResult } from '@appTypes/models'
 import { BrowserWindow } from 'electron'
 import log from 'electron-log/main.js'
 import { ConfigDBManager, GameDBManager } from '~/core/database'
@@ -5,26 +6,14 @@ import { eventBus } from '~/core/events'
 import { ipcManager } from '~/core/ipc'
 import { delay } from '~/utils'
 import { fileLauncher, scriptLauncher, urlLauncher } from './launcher'
-import { defaultPreset, lePreset, steamPreset, vbaPreset } from './preset'
+import { applyLauncherPreset } from './preset'
 
 export async function launcherPreset(
-  presetName: string,
-  gameId: string,
-  steamId?: string
-): Promise<void> {
+  presetId: string,
+  gameId: string
+): Promise<LauncherPresetApplyResult> {
   try {
-    if (presetName === 'default') {
-      await defaultPreset(gameId)
-    } else if (presetName === 'le') {
-      await lePreset(gameId)
-    } else if (presetName === 'steam') {
-      if (!steamId) {
-        throw new Error('Steam ID is required for steam preset')
-      }
-      await steamPreset(gameId, steamId)
-    } else if (presetName === 'vba') {
-      await vbaPreset(gameId)
-    }
+    return await applyLauncherPreset(presetId, gameId)
   } catch (error) {
     log.error(`[Launcher] Failed to set preset for ${gameId}`, error)
     throw error

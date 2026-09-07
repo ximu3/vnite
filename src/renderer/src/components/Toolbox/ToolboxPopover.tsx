@@ -17,6 +17,7 @@ export function ToolboxPopover(): React.JSX.Element {
   const [tools] = useConfigLocalState('toolbox.tools')
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
   const setLastConfigTab = useConfigTabStore((state) => state.setLastConfigTab)
+  const setPendingSection = useConfigTabStore((state) => state.setPendingSection)
 
   const toolEntries = Object.entries(tools)
 
@@ -31,7 +32,8 @@ export function ToolboxPopover(): React.JSX.Element {
 
   function openManagePage(): void {
     setLastConfigTab('advanced')
-    router.navigate({ to: '/config' })
+    setPendingSection('toolbox')
+    router.navigate({ to: '/config', resetScroll: false })
     setIsPopoverOpen(false)
   }
 

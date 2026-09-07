@@ -695,7 +695,12 @@
           "le": "LE转区启动",
           "steam": "Steam启动",
           "vba": "VBA启动",
+          "noResults": "未找到预设",
+          "manage": "管理预设",
           "steamIdRequired": "请输入Steam ID",
+          "steamIdTitle": "补充 Steam ID",
+          "steamIdDescription": "Steam ID 将保存到游戏元数据，然后重新应用所选预设。",
+          "invalidSteamId": "Steam ID 必须为数字",
           "notifications": {
             "configuring": "正在配置预设…",
             "success": "预设配置成功"

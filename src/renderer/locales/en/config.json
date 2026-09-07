@@ -289,6 +289,41 @@
         "extractIconFailed": "Failed to extract the program icon: {{message}}",
         "removeToolFailed": "Failed to remove the tool: {{message}}"
       }
+    },
+    "launcherPresets": {
+      "title": "Launcher & Tracker Presets",
+      "variables": "Available variables (click to copy)",
+      "newPreset": "New Preset",
+      "unnamedPreset": "Unnamed Preset",
+      "empty": "No custom presets",
+      "selectPreset": "Select a preset to view or edit",
+      "duplicate": "Duplicate",
+      "launchMode": "Launch Mode",
+      "mode": {
+        "file": "File",
+        "url": "URL",
+        "script": "Script"
+      },
+      "filePath": "File Path",
+      "url": "URL",
+      "browserPath": "Browser Path (Optional)",
+      "command": "Script Commands",
+      "workingDirectory": "Working Directory",
+      "monitorMode": "Tracking Mode",
+      "monitor": {
+        "folder": "Folder",
+        "file": "File",
+        "process": "Process"
+      },
+      "monitorPath": "Tracking Path",
+      "processName": "Process Name",
+      "validation": {
+        "name-required": "Preset name is required",
+        "duplicate-name": "Custom preset names must be unique"
+      },
+      "notifications": {
+        "variableCopied": "Variable copied"
+      }
     }
   },
   "theme": {

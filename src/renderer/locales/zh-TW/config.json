@@ -289,6 +289,41 @@
         "extractIconFailed": "擷取程式圖示失敗：{{message}}",
         "removeToolFailed": "刪除工具失敗：{{message}}"
       }
+    },
+    "launcherPresets": {
+      "title": "啟動與追蹤預設",
+      "variables": "可用變數（點擊複製）",
+      "newPreset": "新預設",
+      "unnamedPreset": "未命名預設",
+      "empty": "暫無自訂預設",
+      "selectPreset": "選擇一個預設進行檢視或編輯",
+      "duplicate": "複製",
+      "launchMode": "啟動模式",
+      "mode": {
+        "file": "檔案",
+        "url": "連結",
+        "script": "腳本"
+      },
+      "filePath": "檔案路徑",
+      "url": "連結地址",
+      "browserPath": "瀏覽器路徑（可選）",
+      "command": "腳本內容",
+      "workingDirectory": "工作目錄",
+      "monitorMode": "追蹤模式",
+      "monitor": {
+        "folder": "目錄",
+        "file": "檔案",
+        "process": "程序"
+      },
+      "monitorPath": "追蹤路徑",
+      "processName": "程序名稱",
+      "validation": {
+        "name-required": "預設名稱不能為空",
+        "duplicate-name": "自訂預設名稱不能重複"
+      },
+      "notifications": {
+        "variableCopied": "變數已複製"
+      }
     }
   },
   "theme": {

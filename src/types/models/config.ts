@@ -1,3 +1,4 @@
+import type { LauncherPreset } from './launcherPreset'
 import { DEFAULT_LOCAL_UPSCALER_CONFIG, type LocalUpscalerConfig } from '../utils/upscaler'
 import { defaultReportExportOptions, type ReportExportOptions } from '../report'
 
@@ -298,6 +299,9 @@ export interface configLocalDocs {
     captureFullscreen: string
   }
   game: {
+    launcher: {
+      presets: LauncherPreset[]
+    }
     linkage: {
       localeEmulator: {
         path: string
@@ -591,6 +595,9 @@ export const DEFAULT_CONFIG_LOCAL_VALUES: Readonly<configLocalDocs> = {
     captureFullscreen: ''
   },
   game: {
+    launcher: {
+      presets: [] as LauncherPreset[]
+    },
     linkage: {
       localeEmulator: {
         path: ''

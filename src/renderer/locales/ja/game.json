@@ -695,7 +695,12 @@
           "le": "LE地域起動",
           "steam": "Steam起動",
           "vba": "VBA起動",
+          "noResults": "プリセットが見つかりません",
+          "manage": "プリセットを管理",
           "steamIdRequired": "Steam IDを入力してください",
+          "steamIdTitle": "Steam IDを追加",
+          "steamIdDescription": "Steam IDをゲームのメタデータに保存してから、選択したプリセットを再適用します。",
+          "invalidSteamId": "Steam IDには数字のみ入力できます",
           "notifications": {
             "configuring": "プリセットを構成中…",
             "success": "プリセットの構成に成功しました"

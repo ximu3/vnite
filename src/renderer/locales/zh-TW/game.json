@@ -695,7 +695,12 @@
           "le": "LE轉區啟動",
           "steam": "Steam啟動",
           "vba": "VBA啟動",
+          "noResults": "未找到預設",
+          "manage": "管理預設",
           "steamIdRequired": "請輸入Steam ID",
+          "steamIdTitle": "補充 Steam ID",
+          "steamIdDescription": "Steam ID 將儲存到遊戲中繼資料，然後重新套用所選預設。",
+          "invalidSteamId": "Steam ID 必須為數字",
           "notifications": {
             "configuring": "正在配置預設…",
             "success": "預設配置成功"

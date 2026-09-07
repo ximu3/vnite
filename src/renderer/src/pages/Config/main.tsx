@@ -1,7 +1,8 @@
 import { ScrollArea } from '@ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs'
+import { useLayoutEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { cn } from '~/utils'
+import { cn, scrollToElement } from '~/utils'
 import { About } from './About'
 import { Advanced } from './Advanced'
 import { Appearances } from './Appearances/main'
@@ -18,7 +19,16 @@ import { Theme } from './Theme'
 export function Config({ className }: { className?: string }): React.JSX.Element {
   const { t } = useTranslation('config')
   const tab = useConfigTabStore((state) => state.lastConfigTab)
+  const pendingSection = useConfigTabStore((state) => state.pendingSection)
   const setTab = useConfigTabStore((state) => state.setLastConfigTab)
+  const setPendingSection = useConfigTabStore((state) => state.setPendingSection)
+
+  useLayoutEffect(() => {
+    if (!pendingSection) return
+
+    scrollToElement({ selector: `#config-section-${pendingSection}` })
+    setPendingSection(null)
+  }, [pendingSection, setPendingSection, tab])
 
   return (
     <div className={cn('w-full h-full bg-transparent', className)}>
@@ -28,7 +38,10 @@ export function Config({ className }: { className?: string }): React.JSX.Element
 
           <Tabs
             value={tab}
-            onValueChange={(value) => setTab(value as ConfigTab)}
+            onValueChange={(value) => {
+              setPendingSection(null)
+              setTab(value as ConfigTab)
+            }}
             className="w-full"
           >
             <TabsList className="mb-4">
