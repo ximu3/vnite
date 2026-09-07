@@ -21,11 +21,24 @@
     "timerTitle": "Ігровий таймер",
     "foregroundTimer": {
       "title": "Таймер переднього плану",
-      "description": "Виберіть, чи призупиняти таймер, коли вікно гри переходить у фоновий режим. Доступно лише за умови ввімкненого автоматичного моніторингу.\nНеможливо змінити під час роботи ігор"
+      "description": "Виберіть, чи призупиняти таймер, коли вікно гри переходить у фоновий режим.\nНеможливо змінити під час роботи ігор"
     },
     "foregroundWaitTime": {
       "title": "Час очікування",
       "description": "Призупинити / відновити таймер після того, як гра працювала у фоновому / активному режимі протягом цього часу (с)\nНеможливо змінити, поки запущені ігри"
+    },
+    "ignoreShortInterruptions": {
+      "title": "Ігнорувати короткі переривання",
+      "description": "Об’єднати два записи відтворення, якщо розрив менший за вказаний поріг (у секундах). Встановіть 0, щоб вимкнути цю функцію."
+    },
+    "ignoreShortSessions": {
+      "title": "Ігнорувати короткі сеанси",
+      "description": "Відкидати сеанси, коротші за порогове значення (у секундах). Застосовується після функції «Ігнорувати короткі переривання». Встановіть 0, щоб вимкнути цю функцію."
+    },
+    "statisticsTitle": "Статистика",
+    "dayBoundaryHour": {
+      "title": "Межа доби",
+      "description": "Щоденна статистика розділяється в цей час. Якщо встановлено 4:00, то період з 0:00 до 3:59 зараховується як попередній день."
     }
   },
   "appearances": {
@@ -48,73 +61,85 @@
       "manageFontDescription": "Змінити шрифт застосунку",
       "manage": "Керувати",
       "size": "Розмір шрифту",
-      "sizeDescription": "",
-      "weight": "",
-      "weightDescription": "",
+      "sizeDescription": "Налаштуйте розмір шрифту для застосунку",
+      "weight": "Ширина шрифту",
+      "weightDescription": "Налаштуйте насиченість шрифту для застосунку",
       "dialog": {
-        "title": "",
-        "description": "",
-        "currentFont": "",
-        "systemDefaultFonts": "",
-        "searchFont": "",
-        "preview": "",
-        "resetToDefault": "",
-        "resetToSystem": "",
-        "finish": ""
+        "title": "Налаштування шрифту",
+        "description": "Виберіть шрифт для застосунку, зміни набудуть чинності негайно",
+        "currentFont": "Поточний шрифт",
+        "systemDefaultFonts": "Системний типовий шрифт",
+        "searchFont": "Знайти шрифти…",
+        "preview": "Передперегляд",
+        "resetToDefault": "Скинути типовий шрифт",
+        "resetToSystem": "Синхронізувати із системним шрифтом",
+        "finish": "Завершити"
       }
     },
     "background": {
-      "title": "",
-      "customBackground": "",
-      "customBackgroundDescription": "",
-      "image": "",
-      "imageDescription": "",
-      "selectImage": "",
-      "currentBackground": "",
-      "noBackground": "",
-      "removeImage": ""
+      "title": "Тло",
+      "customBackground": "Власне тло",
+      "customBackgroundDescription": "Увімкнути власне тлове зображення",
+      "image": "Зображення",
+      "imageDescription": "Оберіть власне тлове зображення",
+      "selectImage": "Вибрати зображення",
+      "currentBackground": "Поточне тлове зображення",
+      "noBackground": "Тлове зображення не встановлено",
+      "removeImage": "Видалити зображення"
     },
     "showcase": {
-      "title": "",
-      "showPlayButtonOnPoster": "",
-      "showPlayButtonOnPosterDescription": ""
+      "title": "Вітрина",
+      "showPlayButtonOnPoster": "Показувати кнопку відтворення на постері",
+      "showPlayButtonOnPosterDescription": "Показує кнопку відтворення на постері"
     },
     "scrollbar": {
-      "title": "",
-      "blur": "",
-      "blurDescription": "",
-      "opacity": "",
-      "opacityDescription": ""
+      "title": "Смуга гортання",
+      "blur": "Розмиття",
+      "blurDescription": "Рівень розмиття на смузі гортання",
+      "opacity": "Непрозорість",
+      "opacityDescription": "Непрозорість смуги гортання"
     },
     "glass": {
-      "title": "",
-      "blur": "",
-      "blurDescription": "",
-      "opacity": "",
-      "opacityDescription": ""
+      "title": "Матове скло",
+      "blur": "Розмиття",
+      "blurDescription": "Рівень розмиття ефекту матового скла",
+      "opacity": "Непрозорість",
+      "opacityDescription": "Рівень непрозорості ефекту матового скла"
     },
     "gameList": {
-      "title": "",
-      "showRecentGames": "",
-      "showRecentGamesDescription": "",
-      "showAllGamesInGroup": "",
-      "showAllGamesInGroupDescription": "",
-      "highlightLocalGames": "",
-      "highlightLocalGamesDescription": "",
-      "warnInvalidGamePaths": "",
-      "warnInvalidGamePathsDescription": "",
+      "title": "Список ігор",
+      "showRecentGames": "Показати розділ нещодавніх ігор",
+      "showRecentGamesDescription": "Показувати нещодавно зіграні ігри у списку ігор",
+      "showAllGamesInGroup": "Показати всі ігри в розділі груп",
+      "showAllGamesInGroupDescription": "Показати всі ігри в групах у списку ігор",
+      "highlightLocalGames": "Виділити локальні ігри",
+      "highlightLocalGamesDescription": "Виділяти локальні ігри у списку ігор",
+      "warnInvalidGamePaths": "Попереджати про недійсні шляхи до гри",
+      "warnInvalidGamePathsDescription": "Показувати попередження для ігор, шляхи до яких стали недійсними через зміни в системних файлах (потребує ввімкненого локального прапорця у «Стилі екрана»)",
       "gameNavStyle": {
-        "title": "",
-        "description": "",
-        "gameIcon": "",
-        "gameName": "",
-        "sortInfo": "",
-        "localFlag": "",
-        "playStatus": "",
-        "gameIconDescription": "",
-        "sortInfoDescription": "",
-        "playStatusDescription": "",
-        "localFlagDescription": ""
+        "title": "Стиль екрана",
+        "description": "Налаштуйте стиль показу списку ігор. Перетягуйте елементи, щоб змінити їхній порядок, і натискайте, щоб увімкнути або вимкнути видимість кожного з них.\n\nПро стан гри та локальну мітку:\nСуцільна лінія: навіть якщо значок не показується, порожнє місце резервується для збереження візуального вирівнювання.\nПунктирна лінія: порожнє місце не резервується.",
+        "gameIcon": "Значок гри",
+        "gameName": "Назва гри",
+        "sortInfo": "Інформація про сортування",
+        "localFlag": "Локальний прапорець",
+        "playStatus": "Стан гри",
+        "gameIconDescription": "Значок ігрового застосунку",
+        "sortInfoDescription": "Показує інформацію про сортування при сортуванні за часом гри або рейтингом",
+        "playStatusDescription": "Показує стан гри за допомогою значка",
+        "localFlagDescription": "Вказує за допомогою значка, чи є шлях до гри правильним"
+      },
+      "groupSortSummary": {
+        "title": "Звіт із групуванням та сортуванням",
+        "description": "Виберіть типовий підсумок, який показуватиметься в заголовках згрупованих списків ігор",
+        "followSort": "Згрупований підсумок іде після поля сортування списку ігор",
+        "followSortDescription": "Якщо цей параметр увімкнено, сортування за часом гри, рахунком і обсягом пам’яті має пріоритет над стандартним групованим підсумком",
+        "options": {
+          "none": "Не показувати",
+          "storageSize": "Розмір сховища",
+          "playTime": "Час гри",
+          "score": "Рахунок"
+        }
       }
     },
     "gameDetail": {
