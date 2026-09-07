@@ -2,53 +2,47 @@
  * Compute the Jaro similarity between two strings.
  */
 export function jaro(s1: string, s2: string): number {
-  const len1 = s1.length
-  const len2 = s2.length
+  const [shorter, longer] = s1.length <= s2.length ? [s1, s2] : [s2, s1]
+  const shorterLength = shorter.length
+  const longerLength = longer.length
 
-  const matchWindow = Math.max(Math.floor(Math.max(len1, len2) / 2) - 1, 0)
-  const offsets: number[] = []
-  for (let d = 0; d <= matchWindow; d++) {
-    if (d === 0) offsets.push(0)
-    else {
-      offsets.push(d)
-      offsets.push(-d)
-    }
-  }
+  const matchWindow = Math.max(Math.floor(longerLength / 2) - 1, 0)
 
-  const s1Matches: number[] = []
-  const s2Matches: number[] = []
-  const s2Used: boolean[] = new Array(len2).fill(false)
+  const shorterMatches: number[] = []
+  const longerMatches: number[] = []
+  const longerUsed: boolean[] = new Array(longerLength).fill(false)
 
   // --- Count matches ---
-  for (let i = 0; i < len1; i++) {
+  for (let i = 0; i < shorterLength; i++) {
     const start = Math.max(0, i - matchWindow)
-    const end = Math.min(len2 - 1, i + matchWindow)
+    const end = Math.min(longerLength - 1, i + matchWindow)
 
-    for (const off of offsets) {
-      const j = i + off
-      if (j < start || j > end) continue
-      if (s2Used[j]) continue // has been matched
-      if (s1[i] === s2[j]) {
-        s1Matches.push(i)
-        s2Matches.push(j)
-        s2Used[j] = true
-        break // extremely important: pick the nearest matching j
+    for (let j = start; j <= end; j++) {
+      if (longerUsed[j]) continue // has been matched
+      if (shorter[i] === longer[j]) {
+        shorterMatches.push(i)
+        longerMatches.push(j)
+        longerUsed[j] = true
+        break // pick the leftmost available matching j
       }
     }
   }
-  const matches = s1Matches.length
+  const matches = shorterMatches.length
   if (matches === 0) return 0
 
   // --- Count transpositions ---
+  const longerMatchesInOrder = [...longerMatches].sort((a, b) => a - b)
   let transpositions = 0
   for (let k = 0; k < matches; k++) {
-    if (s1[s1Matches[k]] !== s2[s2Matches[k]]) {
+    if (shorter[shorterMatches[k]] !== longer[longerMatchesInOrder[k]]) {
       transpositions++
     }
   }
   transpositions /= 2
 
-  return (matches / len1 + matches / len2 + (matches - transpositions) / matches) / 3
+  return (
+    (matches / shorterLength + matches / longerLength + (matches - transpositions) / matches) / 3
+  )
 }
 
 /**
