@@ -19,7 +19,16 @@ const STEAM_URLS = {
 
 // `cc` only affects store visibility, so no i18n-specific handling is needed.
 const STEAM_FALLBACK_COUNTRY_CODES = ['HK', 'US', 'JP']
+const STEAM_APP_DETAILS_CACHE_TTL = 5 * 60 * 1000
+const STEAM_APP_DETAILS_CACHE_LIMIT = 100
+
+type SteamAppDetailsCacheEntry = {
+  data: SteamAppDetailsData
+  expiresAt: number
+}
+
 const steamAppCountryCodeCache: Record<string, string> = {}
+const steamAppDetailsCache: Record<string, SteamAppDetailsCacheEntry> = {}
 
 async function fetchWithTimeout(
   url: string,
@@ -59,10 +68,53 @@ function getCandidateCountryCodes(
   )
 }
 
+function getCachedSteamAppDetails(
+  appId: string,
+  language: string
+): SteamAppDetailsData | undefined {
+  const cacheKey = `${appId}:${language}`
+  const cachedDetails = steamAppDetailsCache[cacheKey]
+
+  if (!cachedDetails) return undefined
+
+  if (cachedDetails.expiresAt <= Date.now()) {
+    delete steamAppDetailsCache[cacheKey]
+    return undefined
+  }
+
+  return cachedDetails.data
+}
+
+function cacheSteamAppDetails(appId: string, language: string, data: SteamAppDetailsData): void {
+  const now = Date.now()
+  const cacheKey = `${appId}:${language}`
+  steamAppDetailsCache[cacheKey] = {
+    data,
+    expiresAt: now + STEAM_APP_DETAILS_CACHE_TTL
+  }
+
+  Object.entries(steamAppDetailsCache).forEach(([key, cachedDetails]) => {
+    if (cachedDetails.expiresAt <= now) {
+      delete steamAppDetailsCache[key]
+    }
+  })
+
+  const cacheEntries = Object.entries(steamAppDetailsCache)
+  if (cacheEntries.length <= STEAM_APP_DETAILS_CACHE_LIMIT) return
+
+  cacheEntries
+    .sort(([, first], [, second]) => first.expiresAt - second.expiresAt)
+    .slice(0, cacheEntries.length - STEAM_APP_DETAILS_CACHE_LIMIT)
+    .forEach(([key]) => delete steamAppDetailsCache[key])
+}
+
 async function resolveSteamAppDetails(
   appId: string,
   language: string
 ): Promise<SteamAppDetailsData | null> {
+  const cachedDetails = getCachedSteamAppDetails(appId, language)
+  if (cachedDetails) return cachedDetails
+
   const langConfig = i18next.t('scraper:steam.config', {
     returnObjects: true
   }) as SteamLanguageConfig
@@ -76,6 +128,7 @@ async function resolveSteamAppDetails(
 
       if (result?.success && result.data) {
         steamAppCountryCodeCache[appId] = countryCode
+        cacheSteamAppDetails(appId, language, result.data)
         return result.data
       }
 
