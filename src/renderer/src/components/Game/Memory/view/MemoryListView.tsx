@@ -1,31 +1,14 @@
-import type { gameDoc } from '@appTypes/models/game'
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuSeparator,
-  ContextMenuTrigger
-} from '@ui/context-menu'
+import { ContextMenuItem } from '@ui/context-menu'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@ui/table'
 import { useTranslation } from 'react-i18next'
 import { cn } from '~/utils'
-import { exportAllMemories } from './memoryExport'
-import { getMemoryNoteDisplay } from './memoryNoteDisplay'
-import { useMemoryStore } from './store'
+import { MemoryItemContextMenu } from '../components/MemoryItemContextMenu'
+import { MemoryPinBadge } from '../components/MemoryPinBadge'
+import { useMemoryStore } from '../store'
+import type { MemoryViewProps } from '../type'
+import { getMemoryNoteDisplay } from '../utils'
 
-type MemoryList = gameDoc['memory']['memoryList']
-
-export function MemoryListView({
-  gameId,
-  memoryIds,
-  memoryList,
-  onDelete
-}: {
-  gameId: string
-  memoryIds: string[]
-  memoryList: MemoryList
-  onDelete: (memoryId: string) => Promise<void>
-}): React.JSX.Element {
+export function MemoryListView({ items, runtime }: MemoryViewProps): React.JSX.Element {
   const { t } = useTranslation('game')
   const openNoteDialog = useMemoryStore((state) => state.openNoteDialog)
 
@@ -47,36 +30,32 @@ export function MemoryListView({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {memoryIds.map((id) => {
-            const memory = memoryList[id]
-
-            if (!memory) {
-              return null
-            }
-
-            const { title, summary } = getMemoryNoteDisplay(
-              memory.note,
-              t('detail.memory.list.untitled')
-            )
-            const dateLabel = t('{{date, niceDateSeconds}}', { date: memory.date })
+          {items.map((item) => {
+            const { memoryId, note, date, pinned } = item
+            const { title, summary } = getMemoryNoteDisplay(note, t('detail.memory.list.untitled'))
+            const dateLabel = t('{{date, niceDateSeconds}}', { date })
 
             return (
-              <ContextMenu key={`memory-list-${id}`}>
-                <ContextMenuTrigger asChild>
+              <MemoryItemContextMenu
+                key={`memory-list-${memoryId}`}
+                item={item}
+                runtime={runtime}
+                trigger={
                   <TableRow
                     role="button"
                     tabIndex={0}
                     className={cn(
                       'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset'
                     )}
-                    onClick={() => openPreview(id)}
+                    onClick={() => openPreview(memoryId)}
                     onKeyDown={(event) => {
                       if (event.key !== 'Enter' && event.key !== ' ') return
                       event.preventDefault()
-                      openPreview(id)
+                      openPreview(memoryId)
                     }}
                   >
-                    <TableCell>
+                    <TableCell className={cn('relative')}>
+                      {pinned && <MemoryPinBadge />}
                       <div className={cn('flex min-w-0 items-baseline gap-3 overflow-hidden')}>
                         <span className={cn('shrink-0 text-sm font-semibold text-foreground')}>
                           {title}
@@ -94,24 +73,12 @@ export function MemoryListView({
                       {dateLabel}
                     </TableCell>
                   </TableRow>
-                </ContextMenuTrigger>
-                <ContextMenuContent>
-                  <ContextMenuItem onSelect={() => openEditor(id)}>
-                    {t('detail.memory.actions.editText')}
-                  </ContextMenuItem>
-                  <ContextMenuItem
-                    onSelect={() => {
-                      void exportAllMemories(gameId)
-                    }}
-                  >
-                    {t('detail.memory.export.all')}
-                  </ContextMenuItem>
-                  <ContextMenuSeparator />
-                  <ContextMenuItem onSelect={() => void onDelete(id)}>
-                    {t('detail.memory.actions.delete')}
-                  </ContextMenuItem>
-                </ContextMenuContent>
-              </ContextMenu>
+                }
+              >
+                <ContextMenuItem onSelect={() => openEditor(memoryId)}>
+                  {t('detail.memory.actions.editText')}
+                </ContextMenuItem>
+              </MemoryItemContextMenu>
             )
           })}
         </TableBody>

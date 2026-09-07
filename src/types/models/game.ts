@@ -2,6 +2,8 @@ import { Paths } from 'type-fest'
 
 export type GameMediaType = 'cover' | 'background' | 'icon' | 'logo' | 'wideCover'
 
+export type GameMemoryViewMode = 'grid' | 'full' | 'masonry' | 'list'
+
 export type gameDocs = {
   [gameId: string]: gameDoc
 }
@@ -62,11 +64,15 @@ export interface gameDoc {
     autoRestoreSave: boolean
   }
   memory: {
+    preferences: {
+      viewMode: GameMemoryViewMode | null
+    }
     memoryList: {
       [memoryId: string]: {
         _id: string
         date: string
         note: string
+        pinned?: boolean
       }
     }
   }
@@ -229,6 +235,9 @@ export const DEFAULT_GAME_VALUES: Readonly<gameDoc> = {
     autoRestoreSave: false
   },
   memory: {
+    preferences: {
+      viewMode: null
+    },
     memoryList: {}
   },
   apperance: {

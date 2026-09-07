@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
+
 import { ipcManager } from '~/app/ipc'
-import { CropDialog } from '../Config/Properties/Media/CropDialog'
-import { useMemoryStore } from './store'
+import { CropDialog } from '../../Config/Properties/Media/CropDialog'
+import { useMemoryStore } from '../store'
 
 export function MemoryCropDialogHost(): React.JSX.Element | null {
   const cropDialog = useMemoryStore((state) => state.cropDialog)

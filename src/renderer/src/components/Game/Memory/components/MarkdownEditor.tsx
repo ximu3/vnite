@@ -9,12 +9,13 @@ import {
   type DecorationSet,
   type ViewUpdate
 } from '@codemirror/view'
-import { Button } from '@ui/button'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import CodeMirror, { type ReactCodeMirrorRef } from '@uiw/react-codemirror'
 import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+
+import { Button } from '@ui/button'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import { ipcManager } from '~/app/ipc'
 import { useTheme } from '~/components/ThemeProvider'
 import { cn } from '~/utils'

@@ -1,26 +1,35 @@
-import { sanitizeFilenameComponent } from '@appUtils'
-import { Button } from '@ui/button'
-import { Tabs, TabsList, TabsTrigger } from '@ui/tabs'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import i18next from 'i18next'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+
+import type { GameMemoryViewMode } from '@appTypes/models'
+import { sanitizeFilenameComponent } from '@appUtils'
+import { Button } from '@ui/button'
+import { SettingsPopover } from '@ui/popover'
+import { Switch } from '@ui/switch'
+import { Tabs, TabsList, TabsTrigger } from '@ui/tabs'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
 import { eventBus } from '~/app/events'
 import { ipcManager } from '~/app/ipc'
 import { useConfigLocalState, useConfigState, useGameLocalState, useGameState } from '~/hooks'
 import { cn } from '~/utils'
 import { DEFAULT_MEMORY_PAGE_BY_VIEW, useGameDetailStore, useGameDetailTabStore } from '../store'
-import { MemoryCardView } from './MemoryCardView'
-import { MemoryCropDialogHost } from './MemoryCropDialogHost'
-import { MemoryListView } from './MemoryListView'
-import { MemoryMasonryItemInfo, MemoryMasonryView } from './MemoryMasonryView'
-import { MemoryNoteDialogHost } from './MemoryNoteDialogHost'
-import { MemoryPaginationBar } from './MemoryPaginationBar'
-import { MEMORY_ITEMS_PER_PAGE_OPTIONS, type MemoryViewMode } from './paginationOptions'
+import { MemoryCropDialogHost } from './components/MemoryCropDialogHost'
+import { MemoryNoteDialogHost } from './components/MemoryNoteDialogHost'
+import { MemoryPaginationBar } from './components/MemoryPaginationBar'
 import { useMemoryStore } from './store'
+import type { MemoryViewItem } from './type'
+import { MEMORY_ITEMS_PER_PAGE_OPTIONS, MEMORY_ITEMS_PER_PAGE_UNPAGINATED } from './type'
+import { useMemoryViewRuntime } from './useMemoryViewRuntime'
+import { MemoryCardView } from './view/MemoryCardView'
+import { MemoryFullView } from './view/MemoryFullView'
+import { MemoryListView } from './view/MemoryListView'
+import { MemoryMasonryView } from './view/MemoryMasonryView'
 
 function getTotalPages(itemCount: number, itemsPerPage: number): number {
+  if (itemsPerPage === MEMORY_ITEMS_PER_PAGE_UNPAGINATED) return 1
+
   return Math.max(1, Math.ceil(itemCount / itemsPerPage))
 }
 
@@ -28,9 +37,15 @@ function clampPage(page: number, totalPages: number): number {
   return Math.min(Math.max(page, 1), totalPages)
 }
 
-function paginateMemoryIds(memoryIds: string[], page: number, itemsPerPage: number): string[] {
+function paginateMemoryItems(
+  memoryItems: MemoryViewItem[],
+  page: number,
+  itemsPerPage: number
+): MemoryViewItem[] {
+  if (itemsPerPage === MEMORY_ITEMS_PER_PAGE_UNPAGINATED) return memoryItems
+
   const startIndex = (page - 1) * itemsPerPage
-  return memoryIds.slice(startIndex, startIndex + itemsPerPage)
+  return memoryItems.slice(startIndex, startIndex + itemsPerPage)
 }
 
 type ViewPaginationState = {
@@ -38,25 +53,33 @@ type ViewPaginationState = {
   totalPages: number
   itemCount: number
   itemsPerPage: number
-  pagedMemoryIds: string[]
+  pagedItems: MemoryViewItem[]
   setItemsPerPage: (itemsPerPage: number) => Promise<void>
 }
 
 export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [memoryList, , , setMemoryListAndSave] = useGameState(gameId, 'memory.memoryList', true)
+  const [gameMemoryViewMode, setGameMemoryViewMode] = useGameState(
+    gameId,
+    'memory.preferences.viewMode'
+  )
   const [pendingNoteMemoryId, setPendingNoteMemoryId] = useState<string | null>(null)
-  const [masonryRefreshKey, setMasonryRefreshKey] = useState(0)
-  const [hasLoadedMasonryItems, setHasLoadedMasonryItems] = useState(false)
-  const [masonryItemByMemoryId, setMasonryItemByMemoryId] = useState<
-    Record<string, MemoryMasonryItemInfo>
+  const [coverHeightRatioRefreshKey, setCoverHeightRatioRefreshKey] = useState(0)
+  const [hasLoadedCoverHeightRatios, setHasLoadedCoverHeightRatios] = useState(false)
+  const [coverHeightRatioByMemoryId, setCoverHeightRatioByMemoryId] = useState<
+    Record<string, number>
   >({})
 
   const [screenshotPath] = useGameLocalState(gameId, 'path.screenshotPath')
   const [gameName] = useGameState(gameId, 'metadata.name')
   const [rootSaveDir] = useConfigLocalState('memory.image.saveDir')
+  const [memorySortOrder, setMemorySortOrder] = useConfigState('appearances.memory.sortOrder')
   const [gridColumnWidth] = useConfigState('appearances.memory.gridColumnWidth')
   const [masonryColumnWidth] = useConfigState('appearances.memory.masonryColumnWidth')
+  const [fullColumnWidth] = useConfigState('appearances.memory.fullColumnWidth')
+  const [showAddCoverHoverButton] = useConfigState('appearances.memory.showAddCoverHoverButton')
+  const [showAddNoteHoverButton] = useConfigState('appearances.memory.showAddNoteHoverButton')
   const [gridItemsPerPage, setGridItemsPerPage] = useConfigState(
     'appearances.memory.gridItemsPerPage'
   )
@@ -66,30 +89,18 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
   const [listItemsPerPage, setListItemsPerPage] = useConfigState(
     'appearances.memory.listItemsPerPage'
   )
+  const [fullItemsPerPage, setFullItemsPerPage] = useConfigState(
+    'appearances.memory.fullItemsPerPage'
+  )
   const pageByView = useGameDetailStore(
     (state) => state.memoryPageByGameId[gameId] ?? DEFAULT_MEMORY_PAGE_BY_VIEW
   )
   const setMemoryPageByView = useGameDetailStore((state) => state.setMemoryPageByView)
-  const viewMode = useGameDetailTabStore((state) => state.lastMemoryViewMode)
+  const globalMemoryViewMode = useGameDetailTabStore((state) => state.lastMemoryViewMode)
   const setLastMemoryViewMode = useGameDetailTabStore((state) => state.setLastMemoryViewMode)
-  const openCropDialog = useMemoryStore((state) => state.openCropDialog)
+  const viewMode = gameMemoryViewMode ?? globalMemoryViewMode
+  const hasIndependentMemoryViewMode = gameMemoryViewMode !== null
   const openNoteDialog = useMemoryStore((state) => state.openNoteDialog)
-
-  async function promptMemoryCoverSelection(memoryId: string): Promise<void> {
-    try {
-      const filePath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
-      if (!filePath) return
-
-      openCropDialog({
-        gameId,
-        memoryId,
-        imagePath: filePath,
-        imageSource: 'selected-file'
-      })
-    } catch (error) {
-      toast.error(t('detail.memory.notifications.selectFileError', { error }))
-    }
-  }
 
   async function addMemory(): Promise<void> {
     try {
@@ -97,7 +108,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
       setMemoryPageByView(gameId, viewMode, 1)
 
       if (viewMode === 'masonry') {
-        await promptMemoryCoverSelection(memory._id)
+        await viewRuntime.selectCover(memory._id)
         return
       }
 
@@ -135,65 +146,113 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
   const sortedMemoryIds = useMemo(() => {
     return Object.keys(memoryList)
       .filter((id) => memoryList[id] && memoryList[id].date) // Filter out invalid data
-      .sort((a, b) => memoryList[b].date.localeCompare(memoryList[a].date))
-  }, [memoryList])
+      .sort((a, b) => {
+        const pinnedOrder =
+          Number(Boolean(memoryList[b].pinned)) - Number(Boolean(memoryList[a].pinned))
+        const dateOrder =
+          memorySortOrder === 'asc'
+            ? memoryList[a].date.localeCompare(memoryList[b].date)
+            : memoryList[b].date.localeCompare(memoryList[a].date)
 
-  const noteMemoryIds = useMemo(() => {
-    return sortedMemoryIds.filter((id) => Boolean(memoryList[id]?.note?.trim()))
-  }, [memoryList, sortedMemoryIds])
+        return pinnedOrder || dateOrder || a.localeCompare(b)
+      })
+  }, [memoryList, memorySortOrder])
 
-  const masonryMemoryIds = useMemo(() => {
-    return sortedMemoryIds.filter((id) => {
-      const itemInfo = masonryItemByMemoryId[id]
-      return Boolean(itemInfo && itemInfo.heightRatio > 0)
+  const sortedMemoryItems = useMemo(() => {
+    return sortedMemoryIds.map((memoryId) => {
+      const memory = memoryList[memoryId]
+
+      return {
+        memoryId,
+        date: memory.date,
+        note: memory.note ?? '',
+        pinned: Boolean(memory.pinned),
+        coverHeightRatio: coverHeightRatioByMemoryId[memoryId]
+      }
     })
-  }, [masonryItemByMemoryId, sortedMemoryIds])
+  }, [coverHeightRatioByMemoryId, memoryList, sortedMemoryIds])
 
-  function getViewPaginationState(mode: MemoryViewMode): ViewPaginationState {
+  const noteMemoryItems = useMemo(() => {
+    return sortedMemoryItems.filter((item) => Boolean(item.note.trim()))
+  }, [sortedMemoryItems])
+
+  const masonryMemoryItems = useMemo(() => {
+    return sortedMemoryItems.filter(
+      (item) => item.coverHeightRatio !== undefined && item.coverHeightRatio > 0
+    )
+  }, [sortedMemoryItems])
+
+  const viewerMemoryIds = useMemo(
+    () => masonryMemoryItems.map((item) => item.memoryId),
+    [masonryMemoryItems]
+  )
+
+  const viewRuntime = useMemoryViewRuntime({
+    gameId,
+    memoryList,
+    viewerMemoryIds,
+    setMemoryListAndSave,
+    setCoverHeightRatioByMemoryId
+  })
+
+  function getViewPaginationState(mode: GameMemoryViewMode): ViewPaginationState {
     switch (mode) {
       case 'grid': {
-        const totalPages = getTotalPages(sortedMemoryIds.length, gridItemsPerPage)
+        const totalPages = getTotalPages(sortedMemoryItems.length, gridItemsPerPage)
         const currentPage = clampPage(pageByView.grid, totalPages)
 
         return {
           currentPage,
           totalPages,
-          itemCount: sortedMemoryIds.length,
+          itemCount: sortedMemoryItems.length,
           itemsPerPage: gridItemsPerPage,
-          pagedMemoryIds: paginateMemoryIds(sortedMemoryIds, currentPage, gridItemsPerPage),
+          pagedItems: paginateMemoryItems(sortedMemoryItems, currentPage, gridItemsPerPage),
           setItemsPerPage: setGridItemsPerPage
         }
       }
       case 'masonry': {
-        const totalPages = getTotalPages(masonryMemoryIds.length, masonryItemsPerPage)
+        const totalPages = getTotalPages(masonryMemoryItems.length, masonryItemsPerPage)
         const currentPage = clampPage(pageByView.masonry, totalPages)
 
         return {
           currentPage,
           totalPages,
-          itemCount: masonryMemoryIds.length,
+          itemCount: masonryMemoryItems.length,
           itemsPerPage: masonryItemsPerPage,
-          pagedMemoryIds: paginateMemoryIds(masonryMemoryIds, currentPage, masonryItemsPerPage),
+          pagedItems: paginateMemoryItems(masonryMemoryItems, currentPage, masonryItemsPerPage),
           setItemsPerPage: setMasonryItemsPerPage
         }
       }
       case 'list': {
-        const totalPages = getTotalPages(noteMemoryIds.length, listItemsPerPage)
+        const totalPages = getTotalPages(noteMemoryItems.length, listItemsPerPage)
         const currentPage = clampPage(pageByView.list, totalPages)
 
         return {
           currentPage,
           totalPages,
-          itemCount: noteMemoryIds.length,
+          itemCount: noteMemoryItems.length,
           itemsPerPage: listItemsPerPage,
-          pagedMemoryIds: paginateMemoryIds(noteMemoryIds, currentPage, listItemsPerPage),
+          pagedItems: paginateMemoryItems(noteMemoryItems, currentPage, listItemsPerPage),
           setItemsPerPage: setListItemsPerPage
+        }
+      }
+      case 'full': {
+        const totalPages = getTotalPages(sortedMemoryItems.length, fullItemsPerPage)
+        const currentPage = clampPage(pageByView.full, totalPages)
+
+        return {
+          currentPage,
+          totalPages,
+          itemCount: sortedMemoryItems.length,
+          itemsPerPage: fullItemsPerPage,
+          pagedItems: paginateMemoryItems(sortedMemoryItems, currentPage, fullItemsPerPage),
+          setItemsPerPage: setFullItemsPerPage
         }
       }
     }
   }
 
-  function getTotalPagesForView(mode: MemoryViewMode): number {
+  function getTotalPagesForView(mode: GameMemoryViewMode): number {
     return getViewPaginationState(mode).totalPages
   }
 
@@ -204,6 +263,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
     const nextGridPage = clampPage(pageByView.grid, getTotalPagesForView('grid'))
     const nextMasonryPage = clampPage(pageByView.masonry, getTotalPagesForView('masonry'))
     const nextListPage = clampPage(pageByView.list, getTotalPagesForView('list'))
+    const nextFullPage = clampPage(pageByView.full, getTotalPagesForView('full'))
 
     if (nextGridPage !== pageByView.grid) {
       setMemoryPageByView(gameId, 'grid', nextGridPage)
@@ -216,32 +276,38 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
     if (nextListPage !== pageByView.list) {
       setMemoryPageByView(gameId, 'list', nextListPage)
     }
+
+    if (nextFullPage !== pageByView.full) {
+      setMemoryPageByView(gameId, 'full', nextFullPage)
+    }
   }, [
+    fullItemsPerPage,
     gameId,
     gridItemsPerPage,
     listItemsPerPage,
     masonryItemsPerPage,
-    masonryMemoryIds.length,
-    noteMemoryIds.length,
+    masonryMemoryItems.length,
+    noteMemoryItems.length,
     pageByView.grid,
+    pageByView.full,
     pageByView.list,
     pageByView.masonry,
     setMemoryPageByView,
     sortedMemoryIds.length
   ])
 
-  // Load masonry cover metadata used by both the gallery layout and grid cards.
+  // Load cover height ratios used by both the gallery layout and grid cards.
   useEffect(() => {
     let cancelled = false
 
-    async function loadMemoryMasonryItems(): Promise<void> {
+    async function loadMemoryCoverHeightRatios(): Promise<void> {
       if (sortedMemoryIds.length === 0) {
-        setMasonryItemByMemoryId({})
-        setHasLoadedMasonryItems(true)
+        setCoverHeightRatioByMemoryId({})
+        setHasLoadedCoverHeightRatios(true)
         return
       }
 
-      setHasLoadedMasonryItems(false)
+      setHasLoadedCoverHeightRatios(false)
 
       try {
         const masonryItems = await ipcManager.invoke(
@@ -249,36 +315,39 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
           gameId,
           sortedMemoryIds
         )
+        const nextCoverHeightRatioByMemoryId = Object.fromEntries(
+          Object.entries(masonryItems).map(([memoryId, { heightRatio }]) => [memoryId, heightRatio])
+        )
 
         if (cancelled) return
-        setMasonryItemByMemoryId(masonryItems)
-        setHasLoadedMasonryItems(true)
+        setCoverHeightRatioByMemoryId(nextCoverHeightRatioByMemoryId)
+        setHasLoadedCoverHeightRatios(true)
       } catch (error) {
         if (cancelled) return
-        setHasLoadedMasonryItems(true)
+        setHasLoadedCoverHeightRatios(true)
         toast.error(i18next.t('game:detail.memory.notifications.getImageError', { error }))
       }
     }
 
-    void loadMemoryMasonryItems()
+    void loadMemoryCoverHeightRatios()
 
     return (): void => {
       cancelled = true
     }
-  }, [gameId, masonryRefreshKey, sortedMemoryIds])
+  }, [coverHeightRatioRefreshKey, gameId, sortedMemoryIds])
 
-  // Refresh masonry metadata when memory items are created or their covers change.
+  // Refresh cover height ratios when memory items are created or their covers change.
   useEffect(() => {
-    const refreshMasonryItems = ({ gameId: changedGameId }: { gameId: string }): void => {
+    const refreshCoverHeightRatios = ({ gameId: changedGameId }: { gameId: string }): void => {
       if (changedGameId !== gameId) return
 
-      setMasonryRefreshKey((current) => current + 1)
+      setCoverHeightRatioRefreshKey((current) => current + 1)
     }
 
-    const unsubscribeMemoryCreated = eventBus.on('game:memory-created', refreshMasonryItems)
+    const unsubscribeMemoryCreated = eventBus.on('game:memory-created', refreshCoverHeightRatios)
     const unsubscribeMemoryCoverUpdated = eventBus.on(
       'game:memory-cover-updated',
-      refreshMasonryItems
+      refreshCoverHeightRatios
     )
 
     return (): void => {
@@ -300,35 +369,6 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
     setPendingNoteMemoryId(null)
   }, [memoryList, openNoteDialog, pendingNoteMemoryId])
 
-  function handleMasonryCoverMissing(memoryId: string): void {
-    setMasonryItemByMemoryId((prev) => {
-      if (!prev[memoryId]) return prev
-
-      const next = { ...prev }
-      delete next[memoryId]
-      return next
-    })
-  }
-
-  async function handleDelete(memoryId: string): Promise<void> {
-    toast.promise(
-      async () => {
-        // update the memoryList
-        const newMemoryList = { ...memoryList }
-        delete newMemoryList[memoryId]
-        await setMemoryListAndSave(newMemoryList)
-
-        // Finally, perform a back-end delete operation
-        await ipcManager.invoke('game:delete-memory', gameId, memoryId)
-      },
-      {
-        loading: t('detail.memory.notifications.deleting'),
-        success: t('detail.memory.notifications.deleteSuccess'),
-        error: (err) => t('detail.memory.notifications.deleteError', { error: err })
-      }
-    )
-  }
-
   async function saveNote(memoryId: string, note: string): Promise<void> {
     const currentMemory = memoryList[memoryId]
     if (!currentMemory) return
@@ -341,6 +381,14 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
       }
     }
     await setMemoryListAndSave(newMemoryList)
+  }
+
+  function toggleMemorySortOrder(): void {
+    void setMemorySortOrder(memorySortOrder === 'asc' ? 'desc' : 'asc')
+
+    for (const mode of ['grid', 'masonry', 'list', 'full'] as const) {
+      setMemoryPageByView(gameId, mode, 1)
+    }
   }
 
   function renderEmptyState(): React.JSX.Element {
@@ -376,15 +424,53 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
                 setMemoryPageByView(gameId, viewMode, page)
               }}
               onItemsPerPageChange={(itemsPerPage) => {
+                if (
+                  itemsPerPage === MEMORY_ITEMS_PER_PAGE_UNPAGINATED ||
+                  activePagination.itemsPerPage === MEMORY_ITEMS_PER_PAGE_UNPAGINATED
+                ) {
+                  setMemoryPageByView(gameId, viewMode, 1)
+                }
+
                 void activePagination.setItemsPerPage(itemsPerPage)
               }}
             />
           )}
         </div>
 
+        <SettingsPopover className={cn('flex items-center justify-between')}>
+          <p className={cn('text-sm font-medium text-foreground')}>
+            {t('detail.memory.settings.independentViewMode')}
+          </p>
+          <Switch
+            checked={hasIndependentMemoryViewMode}
+            onCheckedChange={(checked) => setGameMemoryViewMode(checked ? viewMode : null)}
+          />
+        </SettingsPopover>
+
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className={cn('size-8 shrink-0')}
+          onClick={toggleMemorySortOrder}
+        >
+          <span
+            className={cn(
+              memorySortOrder === 'asc' ? 'icon-[mdi--arrow-up]' : 'icon-[mdi--arrow-down]',
+              'size-4'
+            )}
+          />
+        </Button>
+
         <Tabs
           value={viewMode}
-          onValueChange={(v) => setLastMemoryViewMode(v as MemoryViewMode)}
+          onValueChange={(v) => {
+            if (hasIndependentMemoryViewMode) {
+              void setGameMemoryViewMode(v as GameMemoryViewMode)
+            } else {
+              setLastMemoryViewMode(v as GameMemoryViewMode)
+            }
+          }}
           className={cn('shrink-0')}
         >
           <TabsList className={cn('gap-1')}>
@@ -401,8 +487,18 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
             <Tooltip>
               <TooltipTrigger asChild>
                 <span className={cn('inline-flex')}>
+                  <TabsTrigger value="full" className={cn('size-8 px-0 py-0')}>
+                    <span className={cn('icon-[mdi--post-outline] size-4')} />
+                  </TabsTrigger>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">{t('detail.memory.views.full')}</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className={cn('inline-flex')}>
                   <TabsTrigger value="masonry" className={cn('size-8 px-0 py-0')}>
-                    <span className={cn('icon-[mdi--view-quilt-outline] size-4')} />
+                    <span className={cn('icon-[mdi--collage] size-4')} />
                   </TabsTrigger>
                 </span>
               </TooltipTrigger>
@@ -412,7 +508,7 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
               <TooltipTrigger asChild>
                 <span className={cn('inline-flex')}>
                   <TabsTrigger value="list" className={cn('size-8 px-0 py-0')}>
-                    <span className={cn('icon-[mdi--format-list-text] size-4')} />
+                    <span className={cn('icon-[mdi--format-list-bulleted] size-4')} />
                   </TabsTrigger>
                 </span>
               </TooltipTrigger>
@@ -421,38 +517,39 @@ export function Memory({ gameId }: { gameId: string }): React.JSX.Element {
           </TabsList>
         </Tabs>
       </div>
-      {viewMode === 'grid' && sortedMemoryIds.length === 0 && renderEmptyState()}
-      {viewMode === 'grid' && sortedMemoryIds.length > 0 && (
+      {viewMode === 'grid' && sortedMemoryItems.length === 0 && renderEmptyState()}
+      {viewMode === 'grid' && sortedMemoryItems.length > 0 && (
         <MemoryCardView
-          gameId={gameId}
-          memoryIds={activePagination.pagedMemoryIds}
-          memoryList={memoryList}
-          masonryItemByMemoryId={masonryItemByMemoryId}
+          items={activePagination.pagedItems}
+          runtime={viewRuntime}
           columnWidth={gridColumnWidth}
-          onDelete={handleDelete}
+          showAddCoverHoverButton={showAddCoverHoverButton}
+          showAddNoteHoverButton={showAddNoteHoverButton}
         />
       )}
       {viewMode === 'masonry' &&
-        hasLoadedMasonryItems &&
-        masonryMemoryIds.length === 0 &&
+        hasLoadedCoverHeightRatios &&
+        masonryMemoryItems.length === 0 &&
         renderEmptyState()}
-      {viewMode === 'masonry' && masonryMemoryIds.length > 0 && (
+      {viewMode === 'masonry' && masonryMemoryItems.length > 0 && (
         <MemoryMasonryView
-          gameId={gameId}
-          memoryIds={activePagination.pagedMemoryIds}
-          masonryItemByMemoryId={masonryItemByMemoryId}
+          items={activePagination.pagedItems}
+          runtime={viewRuntime}
           columnWidth={masonryColumnWidth}
-          onCoverMissing={handleMasonryCoverMissing}
-          onDelete={handleDelete}
         />
       )}
-      {viewMode === 'list' && noteMemoryIds.length === 0 && renderEmptyState()}
-      {viewMode === 'list' && noteMemoryIds.length > 0 && (
-        <MemoryListView
-          gameId={gameId}
-          memoryIds={activePagination.pagedMemoryIds}
-          memoryList={memoryList}
-          onDelete={handleDelete}
+      {viewMode === 'list' && noteMemoryItems.length === 0 && renderEmptyState()}
+      {viewMode === 'list' && noteMemoryItems.length > 0 && (
+        <MemoryListView items={activePagination.pagedItems} runtime={viewRuntime} />
+      )}
+      {viewMode === 'full' && sortedMemoryItems.length === 0 && renderEmptyState()}
+      {viewMode === 'full' && sortedMemoryItems.length > 0 && (
+        <MemoryFullView
+          items={activePagination.pagedItems}
+          runtime={viewRuntime}
+          columnWidth={fullColumnWidth}
+          showAddCoverHoverButton={showAddCoverHoverButton}
+          showAddNoteHoverButton={showAddNoteHoverButton}
         />
       )}
       <MemoryCropDialogHost />

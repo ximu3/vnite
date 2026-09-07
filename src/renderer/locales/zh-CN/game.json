@@ -348,20 +348,27 @@
         "adjustCover": "调整封面",
         "addText": "添加文字",
         "editText": "修改文字",
+        "pin": "置顶",
+        "unpin": "取消置顶",
         "delete": "删除",
         "openScreenshotDir": "打开截图目录"
       },
       "views": {
         "grid": "卡片",
+        "full": "图文",
         "masonry": "照片墙",
         "list": "列表"
+      },
+      "settings": {
+        "independentViewMode": "为此游戏使用独立回忆视图"
       },
       "pagination": {
         "first": "首页",
         "previous": "上一页",
         "next": "下一页",
         "last": "末页",
-        "pageStatus": "{{current}} / {{total}}"
+        "pageStatus": "{{current}} / {{total}}",
+        "unpaginated": "不分页"
       },
       "list": {
         "untitled": "未命名笔记",
@@ -382,6 +389,10 @@
         "deleting": "正在删除…",
         "deleteSuccess": "删除成功",
         "deleteError": "删除失败: {{error}}",
+        "pinSuccess": "已置顶回忆",
+        "pinError": "置顶回忆失败: {{error}}",
+        "unpinSuccess": "已取消置顶回忆",
+        "unpinError": "取消置顶回忆失败: {{error}}",
         "selectFileError": "选择文件失败: {{error}}",
         "insertImageError": "插入图片失败: {{error}}",
         "imageNotFound": "未找到当前图片",
@@ -590,8 +601,6 @@
           "importFromUrl": "从链接导入",
           "searchImage": "搜索图片",
           "viewLargeImage": "查看大图",
-          "copyToClipboard": "复制到剪贴板",
-          "saveAs": "另存为",
           "cropImage": "裁剪图片",
           "upscaleImage": "超分背景图",
           "deleteImage": "删除图片"

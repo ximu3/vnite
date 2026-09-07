@@ -295,6 +295,9 @@ async function convertGame(gameId: string, gamePath: string): Promise<void> {
         autoRestoreSave: false
       },
       memory: {
+        preferences: {
+          viewMode: null
+        },
         memoryList: {}
       },
       apperance: {
@@ -326,7 +329,14 @@ async function convertGame(gameId: string, gamePath: string): Promise<void> {
     // Handling of memorized data
     if (memory && memory.memoryList) {
       Object.keys(memory.memoryList).forEach((memoryId) => {
-        if (!gameDoc.memory) gameDoc.memory = { memoryList: {} }
+        if (!gameDoc.memory) {
+          gameDoc.memory = {
+            preferences: {
+              viewMode: null
+            },
+            memoryList: {}
+          }
+        }
         gameDoc.memory.memoryList[memoryId] = {
           _id: memory.memoryList[memoryId].id,
           date: memory.memoryList[memoryId].date,

@@ -14,7 +14,7 @@ export async function addGameMemory(
     const memoryList = await GameDBManager.getGameValue(gameId, 'memory.memoryList')
     const memoryId = generateUUID()
     const date = new Date().toISOString()
-    const memory = { _id: memoryId, date, note: '' }
+    const memory = { _id: memoryId, date, note: '', pinned: false }
     memoryList[memoryId] = memory
     await GameDBManager.setGameValue(gameId, 'memory.memoryList', memoryList)
     if (img) {

@@ -348,20 +348,27 @@
         "adjustCover": "Adjust Cover",
         "addText": "Add Text",
         "editText": "Edit Text",
+        "pin": "Pin",
+        "unpin": "Unpin",
         "delete": "Delete",
         "openScreenshotDir": "Open Screenshot Directory"
       },
       "views": {
         "grid": "Cards",
+        "full": "Text & Image",
         "masonry": "Gallery",
         "list": "List"
+      },
+      "settings": {
+        "independentViewMode": "Use an independent memory view for this game"
       },
       "pagination": {
         "first": "First Page",
         "previous": "Previous Page",
         "next": "Next Page",
         "last": "Last Page",
-        "pageStatus": "{{current}} / {{total}}"
+        "pageStatus": "{{current}} / {{total}}",
+        "unpaginated": "No pagination"
       },
       "list": {
         "untitled": "Untitled note",
@@ -382,6 +389,10 @@
         "deleting": "Deleting…",
         "deleteSuccess": "Deleted successfully",
         "deleteError": "Delete failed: {{error}}",
+        "pinSuccess": "Memory pinned",
+        "pinError": "Failed to pin memory: {{error}}",
+        "unpinSuccess": "Memory unpinned",
+        "unpinError": "Failed to unpin memory: {{error}}",
         "selectFileError": "Failed to select file: {{error}}",
         "insertImageError": "Failed to insert image: {{error}}",
         "imageNotFound": "Current image not found",
@@ -590,8 +601,6 @@
           "importFromUrl": "Import from URL",
           "searchImage": "Search image",
           "viewLargeImage": "View large image",
-          "copyToClipboard": "Copy to Clipboard",
-          "saveAs": "Save As",
           "cropImage": "Crop image",
           "upscaleImage": "Upscale background",
           "deleteImage": "Delete image"

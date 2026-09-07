@@ -22,7 +22,7 @@ import { UpscalerConfigDialog } from '~/components/utils/UpscalerConfigDialog'
 export function Media({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
   const refreshLight = useLightStore((state) => state.refresh)
-  const openImageViewerDialog = useGameDetailStore((state) => state.openImageViewerDialog)
+  const openImageViewer = useGameDetailStore((state) => state.openImageViewer)
   const [upscalerPath] = useConfigLocalState('game.linkage.upscaler.path')
   const [upscalerConfig] = useConfigLocalState('game.linkage.upscaler.config')
   const activeUpscalerBackend = getUpscalerBackendByPath(upscalerPath)
@@ -298,7 +298,13 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
       <Tooltip>
         <TooltipTrigger>
           <Button
-            onClick={() => openLargeGameMediaImage({ gameId, type, openImageViewerDialog })}
+            onClick={() =>
+              void openLargeGameMediaImage({
+                gameId,
+                type,
+                openImageViewer
+              })
+            }
             variant={'outline'}
             size={'icon'}
             className={cn('w-7 h-7')}

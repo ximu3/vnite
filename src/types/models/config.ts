@@ -130,11 +130,17 @@ export interface configDocs {
       contentTopPadding: number
     }
     memory: {
+      sortOrder: 'asc' | 'desc'
       gridColumnWidth: number
       masonryColumnWidth: number
+      fullColumnWidth: number
+      showAddCoverHoverButton: boolean
+      showAddNoteHoverButton: boolean
+      /** Number of items per page for each view; 0 disables pagination. */
       gridItemsPerPage: number
       masonryItemsPerPage: number
       listItemsPerPage: number
+      fullItemsPerPage: number
     }
     glass: {
       dark: {
@@ -443,11 +449,16 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       contentTopPadding: 40 // in vh
     },
     memory: {
+      sortOrder: 'desc',
       gridColumnWidth: 280,
       masonryColumnWidth: 220,
+      fullColumnWidth: 320,
+      showAddCoverHoverButton: true,
+      showAddNoteHoverButton: true,
       gridItemsPerPage: 12,
       masonryItemsPerPage: 20,
-      listItemsPerPage: 20
+      listItemsPerPage: 20,
+      fullItemsPerPage: 24
     },
     glass: {
       dark: {

@@ -1,8 +1,10 @@
 import { CheckIcon } from 'lucide-react'
+import { useRef } from 'react'
 import Markdown, { type Components } from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize'
 import remarkGfm from 'remark-gfm'
+
 import { TargetBlankLink } from '~/components/utils/TargetBlankLink'
 import { cn } from '~/utils'
 
@@ -26,8 +28,10 @@ export function MarkdownPreview({
   className?: string
   emptyLabel?: string
   renderImages?: boolean
-  onImageClick?: (src: string) => void
+  onImageClick?: (selectedImage: HTMLImageElement, images: NodeListOf<HTMLImageElement>) => void
 }): React.JSX.Element {
+  const articleRef = useRef<HTMLElement>(null)
+
   if (!value.trim() && emptyLabel) {
     return (
       <div className={cn('text-sm text-muted-foreground select-none', className)}>{emptyLabel}</div>
@@ -46,9 +50,11 @@ export function MarkdownPreview({
       <img
         {...imgProps}
         className={cn(imgProps.className, onImageClick && 'cursor-zoom-in')}
-        onClick={() => {
-          if (!imgProps.src || !onImageClick) return
-          onImageClick(imgProps.src)
+        onClick={(event) => {
+          if (!imgProps.src || !onImageClick || !articleRef.current) return
+          event.preventDefault()
+          event.stopPropagation()
+          onImageClick(event.currentTarget, articleRef.current.querySelectorAll('img'))
         }}
       />
     )
@@ -79,6 +85,7 @@ export function MarkdownPreview({
 
   return (
     <article
+      ref={articleRef}
       className={cn(
         'prose prose-sm dark:prose-invert max-w-none',
         'prose-pre:bg-muted/50 prose-pre:text-foreground prose-pre:rounded-md',
@@ -86,6 +93,7 @@ export function MarkdownPreview({
         'prose-code:before:content-none prose-code:after:content-none',
         'prose-img:rounded-md prose-img:shadow-sm',
         'prose-a:text-primary prose-a:no-underline hover:prose-a:underline',
+        'prose-ol:list-inside prose-ol:ps-0',
         // Adjust task list styles
         '[&_ul.contains-task-list]:list-none [&_ul.contains-task-list]:ps-0 [&_ul.contains-task-list]:ms-0',
         '[&_li.task-list-item]:relative [&_li.task-list-item]:list-none [&_li.task-list-item]:ps-[2em]',

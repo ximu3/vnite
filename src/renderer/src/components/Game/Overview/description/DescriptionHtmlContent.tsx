@@ -1,3 +1,4 @@
+import md5 from 'crypto-js/md5'
 import DOMPurify from 'dompurify'
 import parse, { Element, type HTMLReactParserOptions, Text } from 'html-react-parser'
 import { Fragment, useMemo } from 'react'
@@ -42,11 +43,13 @@ const DESCRIPTION_HTML_PARSER_OPTIONS: HTMLReactParserOptions = {
 export function DescriptionHtmlContent({
   value,
   className,
-  emptyLabel
+  emptyLabel,
+  onImageClick
 }: {
   value: string
   className?: string
   emptyLabel?: string
+  onImageClick?: (selectedImage: HTMLImageElement, images: NodeListOf<HTMLImageElement>) => void
 }): React.JSX.Element {
   const sanitizedHtml = useMemo(() => {
     if (!value.trim()) return ''
@@ -56,12 +59,30 @@ export function DescriptionHtmlContent({
       ALLOWED_URI_REGEXP: DESCRIPTION_HTML_ALLOWED_URI_REGEXP
     })
   }, [value])
+  const contentHash = useMemo(() => md5(sanitizedHtml).toString(), [sanitizedHtml])
 
   if (!sanitizedHtml.trim() && emptyLabel) {
     return <div className={cn(className)}>{emptyLabel}</div>
   }
 
   return (
-    <div className={cn(className)}>{parse(sanitizedHtml, DESCRIPTION_HTML_PARSER_OPTIONS)}</div>
+    <div
+      key={contentHash}
+      className={cn(className, onImageClick && '[&_img]:cursor-zoom-in')}
+      onClick={(event) => {
+        if (!onImageClick) return
+        const target = event.target
+        if (!(target instanceof HTMLElement)) return
+
+        const selectedImage = target.closest('img')
+        if (!(selectedImage instanceof HTMLImageElement)) return
+
+        event.preventDefault()
+        event.stopPropagation()
+        onImageClick(selectedImage, event.currentTarget.querySelectorAll('img'))
+      }}
+    >
+      {parse(sanitizedHtml, DESCRIPTION_HTML_PARSER_OPTIONS)}
+    </div>
   )
 }

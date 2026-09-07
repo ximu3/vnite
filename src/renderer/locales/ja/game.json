@@ -348,20 +348,27 @@
         "adjustCover": "カバーを調整",
         "addText": "テキストを追加",
         "editText": "テキストを編集",
+        "pin": "ピン留め",
+        "unpin": "ピン留めを解除",
         "delete": "削除",
         "openScreenshotDir": "スクリーンショットフォルダを開く"
       },
       "views": {
         "grid": "カード",
+        "full": "画像とテキスト",
         "masonry": "ギャラリー",
         "list": "リスト"
+      },
+      "settings": {
+        "independentViewMode": "このゲームで独立したメモリー表示を使用"
       },
       "pagination": {
         "first": "最初のページ",
         "previous": "前のページ",
         "next": "次のページ",
         "last": "最後のページ",
-        "pageStatus": "{{current}} / {{total}}"
+        "pageStatus": "{{current}} / {{total}}",
+        "unpaginated": "ページ分けなし"
       },
       "list": {
         "untitled": "無題のノート",
@@ -382,6 +389,10 @@
         "deleting": "削除中…",
         "deleteSuccess": "削除に成功しました",
         "deleteError": "削除に失敗しました: {{error}}",
+        "pinSuccess": "メモリーをピン留めしました",
+        "pinError": "メモリーのピン留めに失敗しました: {{error}}",
+        "unpinSuccess": "メモリーのピン留めを解除しました",
+        "unpinError": "メモリーのピン留め解除に失敗しました: {{error}}",
         "selectFileError": "ファイルの選択に失敗しました: {{error}}",
         "insertImageError": "画像の挿入に失敗しました: {{error}}",
         "imageNotFound": "画像が見つかりません",
@@ -590,8 +601,6 @@
           "importFromUrl": "URLからインポート",
           "searchImage": "画像を検索",
           "viewLargeImage": "拡大画像で表示",
-          "copyToClipboard": "クリップボードにコピー",
-          "saveAs": "名前を付けて保存",
           "cropImage": "画像を切り抜き",
           "upscaleImage": "背景を超解像",
           "deleteImage": "画像を削除"

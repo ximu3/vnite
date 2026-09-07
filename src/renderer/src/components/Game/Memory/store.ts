@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { NoteDialogMode } from './NoteDialog'
+import type { NoteDialogMode } from './type'
 
 export type MemoryCropImageSource = 'selected-file' | 'existing-cover'
 
