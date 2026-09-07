@@ -560,6 +560,8 @@ async function convertConfig(basePath: string): Promise<void> {
       quitToTray: v2Config.general.quitToTray,
       language: '',
       hideWindowAfterGameStart: true,
+      // 旧版本没有该开关，迁移时保持原有的退出后唤起行为，避免升级改变用户体验。
+      showWindowAfterGameExit: true,
       enableForegroundTimer: true,
       foregroundWaitTime: 10,
       ignoreShortInterruptions: 0,

@@ -546,6 +546,26 @@ export class GameMonitor {
     }
   }
 
+  private async restoreWindowAfterGameExit(): Promise<void> {
+    try {
+      const showWindowAfterGameExit = await ConfigDBManager.getConfigValue(
+        'general.showWindowAfterGameExit'
+      )
+      if (!showWindowAfterGameExit) {
+        return
+      }
+
+      const mainWindow = BrowserWindow.getAllWindows()[0]
+      if (mainWindow) {
+        mainWindow.show()
+        mainWindow.focus()
+      }
+    } catch (error) {
+      // 窗口恢复属于非关键体验；读取或显示失败不能阻断退出事件和时长保存。
+      log.warn('[Monitor] Failed to restore the window after game exit:', error)
+    }
+  }
+
   // Do not require mutex in this method, this will result in a dead lock
   private async handleGameExit(): Promise<void> {
     if (this.exiting) {
@@ -561,10 +581,8 @@ export class GameMonitor {
     // Record end time
     this.endTime = new Date().toISOString()
 
-    const mainWindow = BrowserWindow.getAllWindows()[0]
-
-    mainWindow.show()
-    mainWindow.focus()
+    // 窗口恢复与退出收尾并行执行，避免非关键配置读取拖住退出事件和时长保存。
+    void this.restoreWindowAfterGameExit()
 
     ipcManager.send('game:exiting', this.options.gameId)
 

@@ -18,6 +18,8 @@
     "minimizeToTray": "Згорнути в лоток",
     "hideWindowAfterGameStart": "Згортати в лоток після запуску гри",
     "hideWindowAfterGameStartDescription": "Автоматично ховати головне вікно після запуску гри",
+    "showWindowAfterGameExit": "Показувати головне вікно після завершення гри",
+    "showWindowAfterGameExitDescription": "Автоматично показувати головне вікно Vnite та переводити його на передній план після завершення гри",
     "timerTitle": "Ігровий таймер",
     "foregroundTimer": {
       "title": "Таймер переднього плану",

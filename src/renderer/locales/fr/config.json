@@ -13,7 +13,9 @@
     "quitApp": "",
     "minimizeToTray": "",
     "languageDescription": "Choisissez la langue d'affichage pour l'application",
-    "openAtLoginDescription": "Ouvrir automatiquement l'application au démarrage du système"
+    "openAtLoginDescription": "Ouvrir automatiquement l'application au démarrage du système",
+    "showWindowAfterGameExit": "Afficher la fenêtre principale après la fermeture du jeu",
+    "showWindowAfterGameExitDescription": "Afficher automatiquement la fenêtre principale de Vnite et la mettre au premier plan après la fermeture d'un jeu"
   },
   "appearances": {
     "title": "",

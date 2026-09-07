@@ -12,7 +12,9 @@
     "action": "",
     "quitApp": "",
     "minimizeToTray": "",
-    "hideWindowAfterGameStart": ""
+    "hideWindowAfterGameStart": "",
+    "showWindowAfterGameExit": "Mostra la finestra principale dopo l'uscita dal gioco",
+    "showWindowAfterGameExitDescription": "Mostra automaticamente la finestra principale di Vnite e portala in primo piano dopo l'uscita da un gioco"
   },
   "appearances": {
     "title": "",

@@ -18,6 +18,8 @@
     "minimizeToTray": "最小化到托盘",
     "hideWindowAfterGameStart": "启动游戏后最小化到托盘",
     "hideWindowAfterGameStartDescription": "启动游戏后自动隐藏主窗口",
+    "showWindowAfterGameExit": "游戏退出后显示主窗口",
+    "showWindowAfterGameExitDescription": "检测到游戏退出后，自动显示 Vnite 并将其切换到前台",
     "timerTitle": "游戏计时器",
     "foregroundTimer": {
       "title": "前台计时",

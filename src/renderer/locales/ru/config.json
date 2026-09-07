@@ -11,7 +11,9 @@
     "closeMainPanel": "Закрывать главное окно",
     "action": "Действие",
     "quitApp": "Выйти из Vnite",
-    "minimizeToTray": "Свернуть в трей"
+    "minimizeToTray": "Свернуть в трей",
+    "showWindowAfterGameExit": "Показывать главное окно после выхода из игры",
+    "showWindowAfterGameExitDescription": "Автоматически показывать главное окно Vnite и переводить его на передний план после выхода из игры"
   },
   "appearances": {
     "title": "Внешний вид",
