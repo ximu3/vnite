@@ -1,21 +1,40 @@
-import { ScraperProvider, ScraperCapabilities } from './types'
 import {
+  GameDescriptionList,
+  GameDevelopersList,
+  GameExtraInfoList,
+  GameGenresList,
+  GameInformationList,
   GameList,
   GameMetadata,
-  ScraperIdentifier,
-  GameDescriptionList,
-  GameTagsList,
-  GameExtraInfoList,
-  GameDevelopersList,
-  GamePublishersList,
-  GameGenresList,
   GamePlatformsList,
+  GamePublishersList,
   GameRelatedSitesList,
-  GameInformationList
+  GameTagsList,
+  ScraperIdentifier
 } from '@appTypes/utils'
-import { withTimeout } from '~/utils'
 import { Transformer } from '~/features/transformer'
-import log from 'electron-log/main'
+import { ScraperError, logScraperError } from '../errors'
+import { ScraperCapabilities, ScraperProvider } from './types'
+
+const SCRAPER_AGGREGATION_TIMEOUT = 5_000
+
+async function withAggregationTimeout<T>(
+  request: Promise<T>,
+  timeout = SCRAPER_AGGREGATION_TIMEOUT
+): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined
+
+  try {
+    return await Promise.race([
+      request,
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(new ScraperError('timeout')), timeout)
+      })
+    ])
+  } finally {
+    clearTimeout(timer)
+  }
+}
 
 export class ScraperManager {
   private providers: Map<string, ScraperProvider> = new Map()
@@ -57,10 +76,9 @@ export class ScraperManager {
       if (!provider.searchGames) {
         throw new Error(`Provider '${providerId}' does not support searching games`)
       }
-      return provider.searchGames(gameName, gamePath)
+      return await provider.searchGames(gameName, gamePath)
     } catch (error) {
-      log.error(`[Scraper] Failed to search games using provider '${providerId}': ${error}`)
-      throw error
+      throw logScraperError(error, this.getProvider(providerId)?.name || providerId, 'search games')
     }
   }
 
@@ -76,17 +94,20 @@ export class ScraperManager {
       if (!provider.checkGameExists) {
         throw new Error(`Provider '${providerId}' does not support checking game existence`)
       }
-      return provider.checkGameExists(identifier)
+      return await provider.checkGameExists(identifier)
     } catch (error) {
-      log.error(`[Scraper] Failed to check game existence using provider '${providerId}': ${error}`)
-      return false
+      throw logScraperError(
+        error,
+        this.getProvider(providerId)?.name || providerId,
+        'check game existence'
+      )
     }
   }
 
   public async getGameMetadata(
     providerId: string,
     identifier: ScraperIdentifier
-  ): Promise<GameMetadata> {
+  ): Promise<GameMetadata | null> {
     try {
       const provider = this.getProvider(providerId)
       if (!provider) {
@@ -96,10 +117,14 @@ export class ScraperManager {
         throw new Error(`Provider '${providerId}' does not support getting game metadata`)
       }
       const metadata = await provider.getGameMetadata(identifier)
+      if (metadata === null) return null
       return Transformer.transformMetadata(metadata, '#all')
     } catch (error) {
-      log.error(`[Scraper] Failed to get game metadata using provider '${providerId}': ${error}`)
-      throw error
+      throw logScraperError(
+        error,
+        this.getProvider(providerId)?.name || providerId,
+        'get game metadata'
+      )
     }
   }
 
@@ -115,11 +140,13 @@ export class ScraperManager {
       if (!provider.getGameBackgrounds) {
         throw new Error(`Provider '${providerId}' does not support getting game backgrounds`)
       }
-      return provider.getGameBackgrounds(identifier)
+      return await provider.getGameBackgrounds(identifier)
     } catch (error) {
-      log.error(`[Scraper] Failed to get game backgrounds using provider '${providerId}': ${error}`)
-      // Return an empty array on error, preventing interruptions
-      return []
+      throw logScraperError(
+        error,
+        this.getProvider(providerId)?.name || providerId,
+        'get game backgrounds'
+      )
     }
   }
 
@@ -135,10 +162,13 @@ export class ScraperManager {
       if (!provider.getGameWideCovers) {
         throw new Error(`Provider '${providerId}' does not support getting game wide covers`)
       }
-      return provider.getGameWideCovers(identifier)
+      return await provider.getGameWideCovers(identifier)
     } catch (error) {
-      log.error(`[Scraper] Failed to get game wide covers using provider '${providerId}': ${error}`)
-      return []
+      throw logScraperError(
+        error,
+        this.getProvider(providerId)?.name || providerId,
+        'get game wide covers'
+      )
     }
   }
 
@@ -151,11 +181,13 @@ export class ScraperManager {
       if (!provider.getGameCovers) {
         throw new Error(`Provider '${providerId}' does not support getting game covers`)
       }
-      return provider.getGameCovers(identifier)
+      return await provider.getGameCovers(identifier)
     } catch (error) {
-      log.error(`[Scraper] Failed to get game covers using provider '${providerId}': ${error}`)
-      // Return an empty array on error, preventing interruptions
-      return []
+      throw logScraperError(
+        error,
+        this.getProvider(providerId)?.name || providerId,
+        'get game covers'
+      )
     }
   }
 
@@ -168,11 +200,13 @@ export class ScraperManager {
       if (!provider.getGameLogos) {
         throw new Error(`Provider '${providerId}' does not support getting game logos`)
       }
-      return provider.getGameLogos(identifier)
+      return await provider.getGameLogos(identifier)
     } catch (error) {
-      log.error(`[Scraper] Failed to get game logos using provider '${providerId}': ${error}`)
-      // Return an empty array on error, preventing interruptions
-      return []
+      throw logScraperError(
+        error,
+        this.getProvider(providerId)?.name || providerId,
+        'get game logos'
+      )
     }
   }
 
@@ -185,11 +219,13 @@ export class ScraperManager {
       if (!provider.getGameIcons) {
         throw new Error(`Provider '${providerId}' does not support getting game icons`)
       }
-      return provider.getGameIcons(identifier)
+      return await provider.getGameIcons(identifier)
     } catch (error) {
-      log.error(`[Scraper] Failed to get game icons using provider '${providerId}': ${error}`)
-      // Return an empty array on error, preventing interruptions
-      return []
+      throw logScraperError(
+        error,
+        this.getProvider(providerId)?.name || providerId,
+        'get game icons'
+      )
     }
   }
 
@@ -255,20 +291,16 @@ export class ScraperManager {
   public async getGameDescriptionList(identifier: ScraperIdentifier): Promise<GameDescriptionList> {
     try {
       const providerIds = this.getProviderIdsWithCapabilities(['getGameMetadata'])
-      const TIMEOUT_MS = 5000
-
       // Execute all requests in parallel
       const metadataResults = await Promise.allSettled(
         providerIds.map(async (providerId) => {
           try {
-            const metadata = await withTimeout(
-              this.getGameMetadata(providerId, identifier),
-              TIMEOUT_MS,
-              providerId
+            const metadata = await withAggregationTimeout(
+              this.getGameMetadata(providerId, identifier)
             )
-            return { dataSource: providerId, description: metadata.description || '' }
+            return { dataSource: providerId, description: metadata?.description || '' }
           } catch (error) {
-            log.warn(`[Scraper] Failed to get metadata from ${providerId}: ${error}`)
+            logScraperError(error, providerId, 'getGameMetadata', 'warn')
             return { dataSource: providerId, description: '' }
           }
         })
@@ -286,28 +318,23 @@ export class ScraperManager {
       const descriptionList = candidates as GameDescriptionList
       return await Transformer.transformDescriptionList(descriptionList)
     } catch (error) {
-      log.error(`[Scraper] Failed to get game description list: ${error}`)
-      throw error
+      throw logScraperError(error, 'aggregate', 'description list')
     }
   }
 
   public async getGameTagsList(identifier: ScraperIdentifier): Promise<GameTagsList> {
     try {
       const providerIds = this.getProviderIdsWithCapabilities(['getGameMetadata'])
-      const TIMEOUT_MS = 5000
-
       // Execute all requests in parallel
       const metadataResults = await Promise.allSettled(
         providerIds.map(async (providerId) => {
           try {
-            const metadata = await withTimeout(
-              this.getGameMetadata(providerId, identifier),
-              TIMEOUT_MS,
-              providerId
+            const metadata = await withAggregationTimeout(
+              this.getGameMetadata(providerId, identifier)
             )
-            return { dataSource: providerId, tags: metadata.tags || [] }
+            return { dataSource: providerId, tags: metadata?.tags || [] }
           } catch (error) {
-            log.warn(`[Scraper] Failed to get metadata from ${providerId}: ${error}`)
+            logScraperError(error, providerId, 'getGameMetadata', 'warn')
             return { dataSource: providerId, tags: [] }
           }
         })
@@ -325,28 +352,23 @@ export class ScraperManager {
       const tagsList = candidates as GameTagsList
       return await Transformer.transformTagsList(tagsList)
     } catch (error) {
-      log.error(`[Scraper] Failed to get game tags list: ${error}`)
-      throw error
+      throw logScraperError(error, 'aggregate', 'tags list')
     }
   }
 
   public async getGameExtraInfoList(identifier: ScraperIdentifier): Promise<GameExtraInfoList> {
     try {
       const providerIds = this.getProviderIdsWithCapabilities(['getGameMetadata'])
-      const TIMEOUT_MS = 5000
-
       // Execute all requests in parallel
       const metadataResults = await Promise.allSettled(
         providerIds.map(async (providerId) => {
           try {
-            const metadata = await withTimeout(
-              this.getGameMetadata(providerId, identifier),
-              TIMEOUT_MS,
-              providerId
+            const metadata = await withAggregationTimeout(
+              this.getGameMetadata(providerId, identifier)
             )
-            return { dataSource: providerId, extra: metadata.extra || [] }
+            return { dataSource: providerId, extra: metadata?.extra || [] }
           } catch (error) {
-            log.warn(`[Scraper] Failed to get metadata from ${providerId}: ${error}`)
+            logScraperError(error, providerId, 'getGameMetadata', 'warn')
             return { dataSource: providerId, extra: [] }
           }
         })
@@ -364,28 +386,23 @@ export class ScraperManager {
       const extraInfoList = candidates as GameExtraInfoList
       return await Transformer.transformExtraInfoList(extraInfoList)
     } catch (error) {
-      log.error(`[Scraper] Failed to get game extra info list: ${error}`)
-      throw error
+      throw logScraperError(error, 'aggregate', 'extra info list')
     }
   }
 
   public async getGameDevelopersList(identifier: ScraperIdentifier): Promise<GameDevelopersList> {
     try {
       const providerIds = this.getProviderIdsWithCapabilities(['getGameMetadata'])
-      const TIMEOUT_MS = 5000
-
       // Execute all requests in parallel
       const metadataResults = await Promise.allSettled(
         providerIds.map(async (providerId) => {
           try {
-            const metadata = await withTimeout(
-              this.getGameMetadata(providerId, identifier),
-              TIMEOUT_MS,
-              providerId
+            const metadata = await withAggregationTimeout(
+              this.getGameMetadata(providerId, identifier)
             )
-            return { dataSource: providerId, developers: metadata.developers || [] }
+            return { dataSource: providerId, developers: metadata?.developers || [] }
           } catch (error) {
-            log.warn(`[Scraper] Failed to get metadata from ${providerId}: ${error}`)
+            logScraperError(error, providerId, 'getGameMetadata', 'warn')
             return { dataSource: providerId, developers: [] }
           }
         })
@@ -405,28 +422,23 @@ export class ScraperManager {
       const developersList = candidates as GameDevelopersList
       return await Transformer.transformDevelopersList(developersList)
     } catch (error) {
-      log.error(`[Scraper] Failed to get game developers list: ${error}`)
-      throw error
+      throw logScraperError(error, 'aggregate', 'developers list')
     }
   }
 
   public async getGamePublishersList(identifier: ScraperIdentifier): Promise<GamePublishersList> {
     try {
       const providerIds = this.getProviderIdsWithCapabilities(['getGameMetadata'])
-      const TIMEOUT_MS = 5000
-
       // Execute all requests in parallel
       const metadataResults = await Promise.allSettled(
         providerIds.map(async (providerId) => {
           try {
-            const metadata = await withTimeout(
-              this.getGameMetadata(providerId, identifier),
-              TIMEOUT_MS,
-              providerId
+            const metadata = await withAggregationTimeout(
+              this.getGameMetadata(providerId, identifier)
             )
-            return { dataSource: providerId, publishers: metadata.publishers || [] }
+            return { dataSource: providerId, publishers: metadata?.publishers || [] }
           } catch (error) {
-            log.warn(`[Scraper] Failed to get metadata from ${providerId}: ${error}`)
+            logScraperError(error, providerId, 'getGameMetadata', 'warn')
             return { dataSource: providerId, publishers: [] }
           }
         })
@@ -446,28 +458,23 @@ export class ScraperManager {
       const publishersList = candidates as GamePublishersList
       return await Transformer.transformPublishersList(publishersList)
     } catch (error) {
-      log.error(`[Scraper] Failed to get game publishers list: ${error}`)
-      throw error
+      throw logScraperError(error, 'aggregate', 'publishers list')
     }
   }
 
   public async getGameGenresList(identifier: ScraperIdentifier): Promise<GameGenresList> {
     try {
       const providerIds = this.getProviderIdsWithCapabilities(['getGameMetadata'])
-      const TIMEOUT_MS = 5000
-
       // Execute all requests in parallel
       const metadataResults = await Promise.allSettled(
         providerIds.map(async (providerId) => {
           try {
-            const metadata = await withTimeout(
-              this.getGameMetadata(providerId, identifier),
-              TIMEOUT_MS,
-              providerId
+            const metadata = await withAggregationTimeout(
+              this.getGameMetadata(providerId, identifier)
             )
-            return { dataSource: providerId, genres: metadata.genres || [] }
+            return { dataSource: providerId, genres: metadata?.genres || [] }
           } catch (error) {
-            log.warn(`[Scraper] Failed to get metadata from ${providerId}: ${error}`)
+            logScraperError(error, providerId, 'getGameMetadata', 'warn')
             return { dataSource: providerId, genres: [] }
           }
         })
@@ -485,28 +492,23 @@ export class ScraperManager {
       const genresList = candidates as GameGenresList
       return await Transformer.transformGenresList(genresList)
     } catch (error) {
-      log.error(`[Scraper] Failed to get game genres list: ${error}`)
-      throw error
+      throw logScraperError(error, 'aggregate', 'genres list')
     }
   }
 
   public async getGamePlatformsList(identifier: ScraperIdentifier): Promise<GamePlatformsList> {
     try {
       const providerIds = this.getProviderIdsWithCapabilities(['getGameMetadata'])
-      const TIMEOUT_MS = 5000
-
       // Execute all requests in parallel
       const metadataResults = await Promise.allSettled(
         providerIds.map(async (providerId) => {
           try {
-            const metadata = await withTimeout(
-              this.getGameMetadata(providerId, identifier),
-              TIMEOUT_MS,
-              providerId
+            const metadata = await withAggregationTimeout(
+              this.getGameMetadata(providerId, identifier)
             )
-            return { dataSource: providerId, platforms: metadata.platforms || [] }
+            return { dataSource: providerId, platforms: metadata?.platforms || [] }
           } catch (error) {
-            log.warn(`[Scraper] Failed to get metadata from ${providerId}: ${error}`)
+            logScraperError(error, providerId, 'getGameMetadata', 'warn')
             return { dataSource: providerId, platforms: [] }
           }
         })
@@ -524,8 +526,7 @@ export class ScraperManager {
       const platformsList = candidates as GamePlatformsList
       return await Transformer.transformPlatformsList(platformsList)
     } catch (error) {
-      log.error(`[Scraper] Failed to get game platforms list: ${error}`)
-      throw error
+      throw logScraperError(error, 'aggregate', 'platforms list')
     }
   }
 
@@ -534,20 +535,16 @@ export class ScraperManager {
   ): Promise<GameRelatedSitesList> {
     try {
       const providerIds = this.getProviderIdsWithCapabilities(['getGameMetadata'])
-      const TIMEOUT_MS = 5000
-
       // Execute all requests in parallel
       const metadataResults = await Promise.allSettled(
         providerIds.map(async (providerId) => {
           try {
-            const metadata = await withTimeout(
-              this.getGameMetadata(providerId, identifier),
-              TIMEOUT_MS,
-              providerId
+            const metadata = await withAggregationTimeout(
+              this.getGameMetadata(providerId, identifier)
             )
-            return { dataSource: providerId, relatedSites: metadata.relatedSites || [] }
+            return { dataSource: providerId, relatedSites: metadata?.relatedSites || [] }
           } catch (error) {
-            log.warn(`[Scraper] Failed to get metadata from ${providerId}: ${error}`)
+            logScraperError(error, providerId, 'getGameMetadata', 'warn')
             return { dataSource: providerId, relatedSites: [] }
           }
         })
@@ -565,25 +562,27 @@ export class ScraperManager {
       const relatedSitesList = candidates as GameRelatedSitesList
       return await Transformer.transformRelatedSitesList(relatedSitesList)
     } catch (error) {
-      log.error(`[Scraper] Failed to get game related sites list: ${error}`)
-      throw error
+      throw logScraperError(error, 'aggregate', 'related sites list')
     }
   }
 
   public async getGameInformationList(identifier: ScraperIdentifier): Promise<GameInformationList> {
     try {
       const providerIds = this.getProviderIdsWithCapabilities(['getGameMetadata'])
-      const TIMEOUT_MS = 5000
-
       // Execute all requests in parallel
       const metadataResults = await Promise.allSettled(
         providerIds.map(async (providerId) => {
           try {
-            const metadata = await withTimeout(
-              this.getGameMetadata(providerId, identifier),
-              TIMEOUT_MS,
-              providerId
+            const metadata = await withAggregationTimeout(
+              this.getGameMetadata(providerId, identifier)
             )
+            if (metadata === null) {
+              return {
+                dataSource: providerId,
+                information: {}
+              }
+            }
+
             return {
               dataSource: providerId,
               information: {
@@ -606,7 +605,7 @@ export class ScraperManager {
               }
             }
           } catch (error) {
-            log.warn(`[Scraper] Failed to get metadata from ${providerId}: ${error}`)
+            logScraperError(error, providerId, 'getGameMetadata', 'warn')
             return {
               dataSource: providerId,
               information: {}
@@ -643,8 +642,7 @@ export class ScraperManager {
       const informationList = candidates as GameInformationList
       return await Transformer.transformInformationList(informationList)
     } catch (error) {
-      log.error(`[Scraper] Failed to get game information list: ${error}`)
-      throw error
+      throw logScraperError(error, 'aggregate', 'information list')
     }
   }
 }

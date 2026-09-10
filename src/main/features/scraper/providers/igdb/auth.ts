@@ -1,5 +1,7 @@
-import { net } from 'electron'
-import { IGDBAuthResponse, IGDBAuthConfig } from './types'
+import { createScraperFetch, readScraperJson } from '../../request'
+import { IGDBAuthConfig, IGDBAuthResponse } from './types'
+
+const fetch = createScraperFetch()
 
 export class IGDBAuthManager {
   private clientId: string
@@ -31,32 +33,23 @@ export class IGDBAuthManager {
 
   // Refresh Access Token
   private async refreshToken(): Promise<void> {
-    try {
-      const response = await net.fetch(
-        'https://id.twitch.tv/oauth2/token?' +
-          new URLSearchParams({
-            client_id: this.clientId,
-            client_secret: this.clientSecret,
-            grant_type: 'client_credentials'
-          }),
-        {
-          method: 'POST'
-        }
-      )
-
-      if (!response.ok) {
-        throw new Error(`authentication failure: ${response.status} ${response.statusText}`)
+    const response = await fetch(
+      'https://id.twitch.tv/oauth2/token?' +
+        new URLSearchParams({
+          client_id: this.clientId,
+          client_secret: this.clientSecret,
+          grant_type: 'client_credentials'
+        }),
+      {
+        method: 'POST'
       }
+    )
 
-      const data = (await response.json()) as IGDBAuthResponse
+    const data = (await readScraperJson(response)) as IGDBAuthResponse
 
-      this.accessToken = data.access_token
-      // Calculate token expiration time
-      this.tokenExpiration = new Date(Date.now() + data.expires_in * 1000)
-    } catch (error) {
-      console.error('Failed to get IGDB access token:', error)
-      throw error
-    }
+    this.accessToken = data.access_token
+    // Calculate token expiration time
+    this.tokenExpiration = new Date(Date.now() + data.expires_in * 1000)
   }
 
   // Get request header
@@ -82,22 +75,13 @@ export class IGDBClient {
 
   // Send API request
   async request<T>(endpoint: string, query: string): Promise<T> {
-    try {
-      const headers = await this.authManager.getHeaders()
-      const response = await net.fetch(`${this.baseUrl}/${endpoint}`, {
-        method: 'POST',
-        headers,
-        body: query
-      })
+    const headers = await this.authManager.getHeaders()
+    const response = await fetch(`${this.baseUrl}/${endpoint}`, {
+      method: 'POST',
+      headers,
+      body: query
+    })
 
-      if (!response.ok) {
-        throw new Error(`IGDB API Error: ${response.status} ${response.statusText}`)
-      }
-
-      return response.json()
-    } catch (error) {
-      console.error(`IGDB API request failed (${endpoint}):`, error)
-      throw error
-    }
+    return await readScraperJson<T>(response)
   }
 }

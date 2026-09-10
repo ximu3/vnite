@@ -1,7 +1,10 @@
-import { BrowserWindow, net } from 'electron'
+import { BrowserWindow } from 'electron'
 import log from 'electron-log/main'
+import { normalizeScraperError, ScraperError } from '~/features/scraper/errors'
+import { createScraperFetch } from '~/features/scraper/request'
+import { delay } from '~/utils/common'
 
-import { delay } from './common'
+const fetch = createScraperFetch()
 
 const REGEX = /\["(\bhttps?:\/\/[^"]+)",(\d+),(\d+)\],null/g
 const GOOGLE_IMAGE_SEARCH_BASE_URL = 'https://www.google.com/search'
@@ -19,6 +22,77 @@ const GOOGLE_IMAGE_SEARCH_CHALLENGE_URL = `${GOOGLE_IMAGE_SEARCH_BASE_URL}?${new
 }).toString()}`
 
 let googleChallengePromise: Promise<void> | null = null
+
+export async function searchGameImages(
+  gameName: string,
+  promptTerms: string | string[],
+  limit: number = 30
+): Promise<string[]> {
+  try {
+    const normalizedTerms = normalizePromptTerms(promptTerms)
+    const queries =
+      normalizedTerms.length > 0
+        ? normalizedTerms.map((term) => `"${normalizeGoogleSearchTerm(gameName)}" ${term}`)
+        : [`"${normalizeGoogleSearchTerm(gameName)}"`]
+
+    const validQueries = queries.filter(Boolean)
+    if (validQueries.length === 0) {
+      return []
+    }
+
+    // Google Search officially documents quotes, but we did not find reliable, detailed
+    // Web Search documentation for composing stable mixed boolean expressions such as
+    // AND + OR with parentheses. To avoid relying on brittle query parsing rules, run
+    // one simple query per media hint term and merge the results afterward.
+    const resultsByQuery = await Promise.all(validQueries.map((query) => gis(query)))
+    const rankedUrls: Record<string, { hitCount: number; seenOrder: number }> = {}
+
+    for (const results of resultsByQuery) {
+      let seenOrder = 0
+      for (const result of results.slice(0, limit)) {
+        const url = result.url || ''
+        if (!url) continue
+
+        const existing = rankedUrls[url]
+        if (existing) {
+          existing.hitCount += 1
+          existing.seenOrder = Math.min(existing.seenOrder, seenOrder)
+        } else {
+          rankedUrls[url] = { hitCount: 1, seenOrder: seenOrder }
+        }
+
+        seenOrder += 1
+      }
+    }
+
+    return Object.entries(rankedUrls)
+      .sort(
+        ([_aUrl, aRank], [_bUrl, bRank]) =>
+          bRank.hitCount - aRank.hitCount || aRank.seenOrder - bRank.seenOrder
+      )
+      .slice(0, limit)
+      .map(([url]) => url)
+  } catch (error) {
+    throw normalizeScraperError(error)
+  }
+}
+
+function normalizePromptTerms(promptTerms: string | string[]): string[] {
+  const uniqueTerms = new Set<string>()
+
+  for (const term of Array.isArray(promptTerms) ? promptTerms : [promptTerms]) {
+    const normalizedTerm = normalizeGoogleSearchTerm(term)
+    if (!normalizedTerm) continue
+
+    uniqueTerms.add(normalizedTerm)
+  }
+
+  return Array.from(uniqueTerms)
+}
+
+function normalizeGoogleSearchTerm(term: string): string {
+  return term.replace(/"/g, ' ').replace(/\s+/g, ' ').trim()
+}
 
 const unicodeToString = (content: string): string =>
   content.replace(/\\u[\dA-F]{4}/gi, (match) =>
@@ -53,10 +127,7 @@ export async function gis(searchTerm: string, options: Options = {}): Promise<Re
     q: searchTerm
   }).toString()}`
 
-  let { response, body } = await fetchGoogleImageSearchPage(searchUrl)
-  if (!response.ok) {
-    throw new Error(`Google image search request failed with status ${response.status}`)
-  }
+  let body = await fetchGoogleImageSearchPage(searchUrl)
 
   let results = extractGoogleImageSearchResults(body)
   if (results.length === 0) {
@@ -65,7 +136,7 @@ export async function gis(searchTerm: string, options: Options = {}): Promise<Re
     )
     await ensureGoogleChallengeResolved()
     await delay(GOOGLE_IMAGE_SEARCH_POST_VERIFY_DELAY_MS)
-    ;({ response, body } = await fetchGoogleImageSearchPage(searchUrl))
+    body = await fetchGoogleImageSearchPage(searchUrl)
     results = extractGoogleImageSearchResults(body)
   }
 
@@ -74,14 +145,7 @@ export async function gis(searchTerm: string, options: Options = {}): Promise<Re
 
 export async function primeGoogleImageSearchSession(): Promise<void> {
   try {
-    const { response, body } = await fetchGoogleImageSearchPage(GOOGLE_IMAGE_SEARCH_CHALLENGE_URL)
-
-    if (!response.ok) {
-      log.warn(
-        `[GIS] Google image search warm-up request returned status ${response.status}. Skipping verification.`
-      )
-      return
-    }
+    const body = await fetchGoogleImageSearchPage(GOOGLE_IMAGE_SEARCH_CHALLENGE_URL)
 
     const results = extractGoogleImageSearchResults(body)
     if (results.length > 0) {
@@ -97,19 +161,14 @@ export async function primeGoogleImageSearchSession(): Promise<void> {
   }
 }
 
-async function fetchGoogleImageSearchPage(
-  url: string
-): Promise<{ response: Response; body: string }> {
-  const response = await net.fetch(url, {
+async function fetchGoogleImageSearchPage(url: string): Promise<string> {
+  const response = await fetch(url, {
     headers: {
       'User-Agent': GOOGLE_IMAGE_SEARCH_USER_AGENT
     }
   })
 
-  return {
-    response,
-    body: await response.text()
-  }
+  return await response.text()
 }
 
 function extractGoogleImageSearchResults(content: string): Result[] {
@@ -179,7 +238,10 @@ async function resolveGoogleChallenge(): Promise<void> {
       await delay(GOOGLE_IMAGE_SEARCH_CHALLENGE_POLL_INTERVAL_MS)
     }
 
-    throw new Error(`Timed out waiting for Google challenge page to resolve.`)
+    throw new ScraperError(
+      'timeout',
+      new Error(`Timed out waiting for Google challenge page to resolve.`)
+    )
   } finally {
     if (!helperWindow.isDestroyed()) {
       helperWindow.close()

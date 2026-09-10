@@ -22,6 +22,7 @@ import { GameDBManager } from '~/core/database'
 import { ipcManager } from '~/core/ipc'
 import { tryUpscaleGameImage } from '~/features/game'
 import { scraperManager } from '~/features/scraper'
+import { ScraperError, logScraperError } from '~/features/scraper/errors'
 import { cacheDescriptionImages } from '~/features/scraper/services/descriptionImageCache'
 
 export async function batchUpdateGameMetadata({
@@ -344,6 +345,7 @@ export async function updateGameMetadata({
       type: 'id',
       value: dataSourceId
     })
+    if (baseMetadata === null) throw new Error('No matching data was found.')
 
     // Prepare image fetching tasks
     const imageFetchTasks: Array<{ type: GameMetadataField; promise: Promise<string[]> }> = []
@@ -403,7 +405,14 @@ export async function updateGameMetadata({
 
     // Process image fetching results
     const imageResults = await Promise.all(
-      imageFetchTasks.map((task) => task.promise.then((urls) => ({ type: task.type, urls })))
+      imageFetchTasks.map((task) =>
+        task.promise
+          .then((urls) => ({ type: task.type, urls }))
+          .catch((error) => {
+            logScraperError(error, dataSource, 'optional image update', 'warn')
+            return { type: task.type, urls: [] }
+          })
+      )
     )
 
     // Update metadata object
@@ -727,7 +736,14 @@ export async function updateGameMetadata({
         }
 
         // Execute additional fetch tasks
-        const specialResults = await Promise.all(Object.values(specialFetchPromises))
+        const specialResults = await Promise.all(
+          Object.values(specialFetchPromises).map((request) =>
+            request.catch((error) => {
+              logScraperError(error, 'aggregate', 'optional metadata update', 'warn')
+              return []
+            })
+          )
+        )
         const specialResultsMap: {
           description?: GameDescriptionList
           tags?: GameTagsList
@@ -979,7 +995,8 @@ export async function updateGameMetadata({
 
     await cacheDescriptionImages(updatedMetadata.description, dbId)
   } catch (error) {
-    log.error('[MetadataUpdater] Failed to update game metadata:', error)
+    if (!(error instanceof ScraperError))
+      log.error('[MetadataUpdater] Failed to update game metadata:', error)
     throw error
   }
 }

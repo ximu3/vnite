@@ -1,39 +1,19 @@
-import { net } from 'electron'
+import { isHttpError } from '../../errors'
+import { createScraperFetch, readScraperJson } from '../../request'
 import {
-  getGameBackgrounds as getGameBackgroundsFromSteam,
   getGameBackgroundsByName as getGameBackgroundsByNameFromSteam,
-  getGameCover as getGameCoverFromSteam,
+  getGameBackgrounds as getGameBackgroundsFromSteam,
   getGameCoverByName as getGameCoverByNameFromSteam,
-  getGameLogo as getGameLogoFromSteam,
-  getGameLogoByName as getGameLogoByNameFromSteam
+  getGameCover as getGameCoverFromSteam,
+  getGameLogoByName as getGameLogoByNameFromSteam,
+  getGameLogo as getGameLogoFromSteam
 } from '../steam/common'
 
+const fetch = createScraperFetch()
+
 const STEAMGRIDDB_API_KEY = import.meta.env.VITE_STEAMGRIDDB_API_KEY || ''
-const TIMEOUT = 10000
 
 const API_ENDPOINT = 'https://www.steamgriddb.com/api/v2'
-
-// Timeout-controlled fetch function
-const fetchWithTimeout = async (
-  url: string,
-  options: RequestInit,
-  timeout: number
-): Promise<any> => {
-  const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), timeout)
-
-  try {
-    const response = await net.fetch(url, {
-      ...options,
-      signal: controller.signal
-    })
-    clearTimeout(timeoutId)
-    return response
-  } catch (error) {
-    clearTimeout(timeoutId)
-    throw error
-  }
-}
 
 async function fetchSteamGridDb(
   endpoint: string,
@@ -42,26 +22,13 @@ async function fetchSteamGridDb(
   const params = new URLSearchParams(queryParams)
   const url = `${API_ENDPOINT}/${endpoint}${queryParams ? `?${params.toString()}` : ''}`
 
-  try {
-    const response = await fetchWithTimeout(
-      url,
-      {
-        headers: {
-          Authorization: `Bearer ${STEAMGRIDDB_API_KEY}`
-        }
-      },
-      TIMEOUT
-    )
-
-    if (!response.ok) {
-      throw new Error(`API request failed: ${response.status} ${response.statusText}`)
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${STEAMGRIDDB_API_KEY}`
     }
+  })
 
-    return response.json()
-  } catch (error) {
-    console.error(`API request failed:`, error)
-    throw error
-  }
+  return await readScraperJson(response)
 }
 
 export async function getGameCovers(steamId: string): Promise<string[]> {
@@ -87,8 +54,8 @@ export async function getGameCovers(steamId: string): Promise<string[]> {
     }
     return urls
   } catch (error) {
-    console.error(`Error getting SteamGridDB cover:`, error)
-    return []
+    if (isHttpError(error, 404)) return []
+    throw error
   }
 }
 
@@ -115,8 +82,8 @@ export async function getGameCoversByName(gameName: string): Promise<string[]> {
     }
     return urls
   } catch (error) {
-    console.error(`Error getting SteamGridDB cover:`, error)
-    return []
+    if (isHttpError(error, 404)) return []
+    throw error
   }
 }
 
@@ -143,8 +110,8 @@ export async function getGameBackgrounds(steamId: string): Promise<string[]> {
     }
     return urls
   } catch (error) {
-    console.error(`Error Getting SteamGridDB Background:`, error)
-    return []
+    if (isHttpError(error, 404)) return []
+    throw error
   }
 }
 
@@ -171,8 +138,8 @@ export async function getGameBackgroundsByName(gameName: string): Promise<string
     }
     return urls
   } catch (error) {
-    console.error(`Error Getting SteamGridDB Background:`, error)
-    return []
+    if (isHttpError(error, 404)) return []
+    throw error
   }
 }
 
@@ -199,8 +166,8 @@ export async function getGameLogos(steamId: string): Promise<string[]> {
     }
     return urls
   } catch (error) {
-    console.error(`Error Getting SteamGridDB Logo:`, error)
-    return []
+    if (isHttpError(error, 404)) return []
+    throw error
   }
 }
 
@@ -227,8 +194,8 @@ export async function getGameLogosByName(gameName: string): Promise<string[]> {
     }
     return urls
   } catch (error) {
-    console.error(`Error Getting SteamGridDB Logo:`, error)
-    return []
+    if (isHttpError(error, 404)) return []
+    throw error
   }
 }
 
@@ -250,8 +217,8 @@ export async function getGameIcons(steamId: string): Promise<string[]> {
 
     return urls
   } catch (error) {
-    console.error(`Error getting SteamGridDB icons:`, error)
-    return []
+    if (isHttpError(error, 404)) return []
+    throw error
   }
 }
 
@@ -273,7 +240,7 @@ export async function getGameIconsByName(gameName: string): Promise<string[]> {
 
     return urls
   } catch (error) {
-    console.error(`Error getting SteamGridDB icons:`, error)
-    return []
+    if (isHttpError(error, 404)) return []
+    throw error
   }
 }

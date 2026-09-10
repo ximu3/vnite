@@ -1,4 +1,10 @@
 {
+  "errors": {
+    "network": "ネットワーク接続に失敗しました。",
+    "timeout": "リクエストがタイムアウトしました。",
+    "httpError": "リクエストエラー（HTTP {{httpStatus}}）。",
+    "unknown": "不明なエラー。"
+  },
   "dlsite": {
     "workType": "作品形式",
     "releaseDate": "販売日",

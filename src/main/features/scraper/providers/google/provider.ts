@@ -1,6 +1,6 @@
 import { ScraperIdentifier } from '@appTypes/utils'
-import { searchGameImages } from '~/utils'
 import { ScraperProvider } from '../../services/types'
+import { searchGameImages } from './common'
 
 export const googleProvider: ScraperProvider = {
   id: 'google',

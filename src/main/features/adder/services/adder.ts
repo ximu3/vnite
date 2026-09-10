@@ -24,8 +24,9 @@ import {
 } from '~/features/game'
 import { launcherPreset } from '~/features/launcher'
 import { scraperManager } from '~/features/scraper'
+import { ScraperError, logScraperError } from '~/features/scraper/errors'
 import { cacheDescriptionImages } from '~/features/scraper/services/descriptionImageCache'
-import { getGameFolders, selectPathDialog, inferRootPath } from '~/utils'
+import { getGameFolders, inferRootPath, selectPathDialog } from '~/utils'
 
 export async function addGameToDB({
   dataSource,
@@ -62,6 +63,7 @@ export async function addGameToDB({
       type: 'id',
       value: dataSourceId
     })
+    if (baseMetadata === null) throw new Error('No matching data was found.')
 
     // Create a copy of the base metadata to avoid modifying the original
     const metadata = JSON.parse(JSON.stringify(baseMetadata)) as GameMetadata
@@ -78,7 +80,7 @@ export async function addGameToDB({
             value: metadata.originalName || metadata.name
           })
           .catch((err) => {
-            console.warn(`Failed to get game description: ${err.message}`)
+            logScraperError(err, 'aggregate', 'optional game description', 'warn')
             return []
           })
       )
@@ -95,7 +97,7 @@ export async function addGameToDB({
             value: metadata.originalName || metadata.name
           })
           .catch((err) => {
-            console.warn(`Failed to get game tags: ${err.message}`)
+            logScraperError(err, 'aggregate', 'optional game tags', 'warn')
             return []
           })
       )
@@ -112,8 +114,8 @@ export async function addGameToDB({
             value: metadata.originalName || metadata.name
           })
           .catch((err) => {
-            console.warn(`Failed to get game extra information: ${err.message}`)
-            return {}
+            logScraperError(err, 'aggregate', 'optional game extra information', 'warn')
+            return []
           })
       )
     } else {
@@ -129,7 +131,7 @@ export async function addGameToDB({
             value: metadata.originalName || metadata.name
           })
           .catch((err) => {
-            console.warn(`Failed to get game developers: ${err.message}`)
+            logScraperError(err, 'aggregate', 'optional game developers', 'warn')
             return []
           })
       )
@@ -146,7 +148,7 @@ export async function addGameToDB({
             value: metadata.originalName || metadata.name
           })
           .catch((err) => {
-            console.warn(`Failed to get game publishers: ${err.message}`)
+            logScraperError(err, 'aggregate', 'optional game publishers', 'warn')
             return []
           })
       )
@@ -163,7 +165,7 @@ export async function addGameToDB({
             value: metadata.originalName || metadata.name
           })
           .catch((err) => {
-            console.warn(`Failed to get game genres: ${err.message}`)
+            logScraperError(err, 'aggregate', 'optional game genres', 'warn')
             return []
           })
       )
@@ -180,7 +182,7 @@ export async function addGameToDB({
             value: metadata.originalName || metadata.name
           })
           .catch((err) => {
-            console.warn(`Failed to get game platforms: ${err.message}`)
+            logScraperError(err, 'aggregate', 'optional game platforms', 'warn')
             return []
           })
       )
@@ -197,7 +199,7 @@ export async function addGameToDB({
             value: metadata.originalName || metadata.name
           })
           .catch((err) => {
-            console.warn(`Failed to get game related sites: ${err.message}`)
+            logScraperError(err, 'aggregate', 'optional game related sites', 'warn')
             return []
           })
       )
@@ -288,7 +290,7 @@ export async function addGameToDB({
       covers: scraperManager
         .getGameCovers(dataSource, { type: 'id', value: dataSourceId })
         .catch((err) => {
-          console.warn(`Failed to get game covers: ${err.message}`)
+          logScraperError(err, 'aggregate', 'optional game covers', 'warn')
           return []
         }),
       // Use backgroundUrl if provided, otherwise fetch from scraper
@@ -296,7 +298,7 @@ export async function addGameToDB({
         ? scraperManager
             .getGameBackgrounds(dataSource, { type: 'id', value: dataSourceId })
             .catch((err) => {
-              console.warn(`Failed to get game backgrounds: ${err.message}`)
+              logScraperError(err, 'aggregate', 'optional game backgrounds', 'warn')
               return []
             })
         : Promise.resolve([])
@@ -315,7 +317,7 @@ export async function addGameToDB({
           value: dataSourceId
         })
         .catch((err) => {
-          console.warn(`Failed to get game icons: ${err.message}`)
+          logScraperError(err, 'aggregate', 'optional game icons', 'warn')
           return []
         })
     } else {
@@ -328,7 +330,7 @@ export async function addGameToDB({
             : { type: 'name', value: metadata.originalName || metadata.name }
         )
         .catch((err) => {
-          console.warn(`Failed to get game icons: ${err.message}`)
+          logScraperError(err, 'aggregate', 'optional game icons', 'warn')
           return []
         })
     }
@@ -342,7 +344,7 @@ export async function addGameToDB({
           value: dataSourceId
         })
         .catch((err) => {
-          console.warn(`Failed to get game logos: ${err.message}`)
+          logScraperError(err, 'aggregate', 'optional game logos', 'warn')
           return []
         })
     } else {
@@ -355,7 +357,7 @@ export async function addGameToDB({
             : { type: 'name', value: metadata.originalName || metadata.name }
         )
         .catch((err) => {
-          console.warn(`Failed to get game logos: ${err.message}`)
+          logScraperError(err, 'aggregate', 'optional game logos', 'warn')
           return []
         })
     }
@@ -457,7 +459,8 @@ export async function addGameToDB({
 
     return dbId
   } catch (error) {
-    log.error('[Adder] Failed to add game to database:', error)
+    if (!(error instanceof ScraperError))
+      log.error('[Adder] Failed to add game to database:', error)
     throw error
   }
 }

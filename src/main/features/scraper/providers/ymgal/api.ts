@@ -11,53 +11,33 @@ import {
 import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
 
 export async function searchGamesFromYMGal(gameName: string): Promise<GameList> {
-  try {
-    const games = await searchYMGalGames(gameName)
-    return games
-  } catch (error) {
-    console.error('Error searching for games:', error)
-    throw error
-  }
+  const games = await searchYMGalGames(gameName)
+  return games
 }
 
 export async function getGameMetadataFromYMGal(
   identifier: ScraperIdentifier
-): Promise<GameMetadata> {
-  try {
-    const metadata =
-      identifier.type === 'id'
-        ? await getYMGalMetadata(identifier.value)
-        : await getYMGalMetadataByName(identifier.value)
-    return metadata
-  } catch (error) {
-    console.error('Error fetching game metadata:', error)
-    throw error
-  }
+): Promise<GameMetadata | null> {
+  const metadata =
+    identifier.type === 'id'
+      ? await getYMGalMetadata(identifier.value)
+      : await getYMGalMetadataByName(identifier.value)
+  return metadata
 }
 
 export async function checkGameExistsOnYMGal(gameId: string): Promise<boolean> {
-  try {
-    const exists = await checkYMGalExists(gameId)
-    return exists
-  } catch (error) {
-    console.error('Error checking if game exists:', error)
-    throw error
-  }
+  const exists = await checkYMGalExists(gameId)
+  return exists
 }
 
 export async function getGameBackgroundsFromYMGal(
   identifier: ScraperIdentifier
 ): Promise<string[]> {
-  try {
-    const images =
-      identifier.type === 'id'
-        ? await getGameBackgrounds(identifier.value)
-        : await getGameBackgroundsByName(identifier.value)
-    return images
-  } catch (error) {
-    console.error('Error fetching game backgrounds:', error)
-    throw error
-  }
+  const images =
+    identifier.type === 'id'
+      ? await getGameBackgrounds(identifier.value)
+      : await getGameBackgroundsByName(identifier.value)
+  return images
 }
 
 /**
@@ -66,14 +46,9 @@ export async function getGameBackgroundsFromYMGal(
  * @returns A cover image
  */
 export async function getGameCoverFromYMGal(identifier: ScraperIdentifier): Promise<string[]> {
-  try {
-    const cover =
-      identifier.type === 'id'
-        ? await getGameCover(identifier.value)
-        : await getGameCoverByName(identifier.value)
-    return cover ? [cover] : []
-  } catch (error) {
-    console.error('Error fetching game cover:', error)
-    return []
-  }
+  const cover =
+    identifier.type === 'id'
+      ? await getGameCover(identifier.value)
+      : await getGameCoverByName(identifier.value)
+  return cover ? [cover] : []
 }

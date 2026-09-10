@@ -1,10 +1,13 @@
-import { net } from 'electron'
-import * as cheerio from 'cheerio'
 import { GameList, GameMetadata } from '@appTypes/utils'
-import { getLanguage } from '~/features/system/services/i18n'
-import { extractReleaseDateWithLibrary } from './i18n'
-import { ConfigDBManager } from '~/core/database'
+import * as cheerio from 'cheerio'
 import i18next from 'i18next'
+import { ConfigDBManager } from '~/core/database'
+import { getLanguage } from '~/features/system/services/i18n'
+import { isHttpError, logScraperError } from '../../errors'
+import { createScraperFetch } from '../../request'
+import { extractReleaseDateWithLibrary } from './i18n'
+
+const fetch = createScraperFetch()
 
 const ID_REGEX = /(rj|re|vj)\d{4,}/gi
 
@@ -27,7 +30,7 @@ export async function searchDlsiteGames(gameName: string, gamePath?: string): Pr
       const dlsiteId = matchIds[i][0].toUpperCase()
       try {
         const gameMetadata = await getDlsiteMetadata(dlsiteId)
-        if (gameMetadata.name && gameMetadata.name.length > 0) {
+        if (gameMetadata?.name && gameMetadata.name.length > 0) {
           const result: GameList = [
             {
               id: dlsiteId,
@@ -39,7 +42,7 @@ export async function searchDlsiteGames(gameName: string, gamePath?: string): Pr
           return result
         }
       } catch (error) {
-        console.info(`Error fetching metadata for extracted ID ${dlsiteId}:`, error)
+        logScraperError(error, 'DLsite', 'extracted ID fallback', 'warn')
       }
     }
   }
@@ -47,7 +50,7 @@ export async function searchDlsiteGames(gameName: string, gamePath?: string): Pr
   const language = await getLanguage()
   const url = `https://www.dlsite.com/maniax/fsr/=/language/jp/keyword/${encodedQuery}/?locale=${language}`
 
-  const response = await net.fetch(url, {
+  const response = await fetch(url, {
     headers: {
       'User-Agent':
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
@@ -94,20 +97,26 @@ export async function searchDlsiteGames(gameName: string, gamePath?: string): Pr
   return results
 }
 
-export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata> {
+export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata | null> {
   // Try to access the work page
   const language = await getLanguage()
   const url = buildDlsiteWorkUrl(dlsiteId, language)
 
-  const response = await net.fetch(url, {
-    headers: {
-      'User-Agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
-      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-      'Accept-Language': 'zh-CN,zh;q=0.9,ja;q=0.8,en;q=0.7',
-      Cookie: `adultchecked=1; locale=${language}`
-    }
-  })
+  let response: Response
+  try {
+    response = await fetch(url, {
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'zh-CN,zh;q=0.9,ja;q=0.8,en;q=0.7',
+        Cookie: `adultchecked=1; locale=${language}`
+      }
+    })
+  } catch (error) {
+    if (isHttpError(error, 404)) return null
+    throw error
+  }
 
   const data = await response.text()
   const $ = cheerio.load(data)
@@ -292,29 +301,14 @@ export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata>
   }
 }
 
-export async function getDlsiteMetadataByName(gameName: string): Promise<GameMetadata> {
-  try {
-    const gameList = await searchDlsiteGames(gameName)
+export async function getDlsiteMetadataByName(gameName: string): Promise<GameMetadata | null> {
+  const gameList = await searchDlsiteGames(gameName)
 
-    if (gameList.length === 0) {
-      return {
-        name: gameName,
-        originalName: gameName,
-        releaseDate: '',
-        description: '',
-        developers: [],
-        relatedSites: [],
-        tags: []
-      }
-    }
+  if (gameList.length === 0) return null
 
-    // Use the first match
-    const firstMatch = gameList[0]
-    return getDlsiteMetadata(firstMatch.id)
-  } catch (error) {
-    console.error(`Error fetching metadata for game ${gameName}:`, error)
-    throw error
-  }
+  // Use the first match
+  const firstMatch = gameList[0]
+  return getDlsiteMetadata(firstMatch.id)
 }
 
 export async function getGameBackgrounds(dlsiteId: string): Promise<string[]> {
@@ -322,7 +316,7 @@ export async function getGameBackgrounds(dlsiteId: string): Promise<string[]> {
     const url = buildDlsiteWorkUrl(dlsiteId)
     const language = await getLanguage()
 
-    const response = await net.fetch(url, {
+    const response = await fetch(url, {
       headers: {
         'User-Agent':
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
@@ -354,8 +348,8 @@ export async function getGameBackgrounds(dlsiteId: string): Promise<string[]> {
 
     return screenshots
   } catch (error) {
-    console.error(`Error fetching game backgrounds for work ${dlsiteId}:`, error)
-    return []
+    if (isHttpError(error, 404)) return []
+    throw error
   }
 }
 
@@ -372,8 +366,8 @@ export async function getGameBackgroundsByName(gameName: string): Promise<string
     const firstMatch = gameList[0]
     return getGameBackgrounds(firstMatch.id)
   } catch (error) {
-    console.error(`Error fetching game backgrounds for game ${gameName}:`, error)
-    return []
+    if (isHttpError(error, 404)) return []
+    throw error
   }
 }
 
@@ -382,7 +376,7 @@ export async function getGameCover(dlsiteId: string): Promise<string> {
     const url = buildDlsiteWorkUrl(dlsiteId)
     const language = await getLanguage()
 
-    const response = await net.fetch(url, {
+    const response = await fetch(url, {
       headers: {
         'User-Agent':
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
@@ -425,8 +419,8 @@ export async function getGameCover(dlsiteId: string): Promise<string> {
 
     return ''
   } catch (error) {
-    console.error(`Error fetching cover image for work ${dlsiteId}:`, error)
-    return ''
+    if (isHttpError(error, 404)) return ''
+    throw error
   }
 }
 
@@ -443,8 +437,8 @@ export async function getGameCoverByName(gameName: string): Promise<string> {
     const firstMatch = gameList[0]
     return getGameCover(firstMatch.id)
   } catch (error) {
-    console.error(`Error fetching cover image for work ${gameName}:`, error)
-    return ''
+    if (isHttpError(error, 404)) return ''
+    throw error
   }
 }
 
@@ -452,7 +446,7 @@ export async function checkGameExists(dlsiteId: string): Promise<boolean> {
   try {
     const url = buildDlsiteWorkUrl(dlsiteId)
 
-    const response = await net.fetch(url, {
+    const response = await fetch(url, {
       headers: {
         'User-Agent':
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
@@ -469,8 +463,8 @@ export async function checkGameExists(dlsiteId: string): Promise<boolean> {
       !data.includes('該当作品はございません') &&
       !data.includes('作品は存在しません')
     )
-  } catch (_error) {
-    // Request failed, possibly with a 404 or other error
-    return false
+  } catch (error) {
+    if (isHttpError(error, 404)) return false
+    throw error
   }
 }

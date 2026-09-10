@@ -20,7 +20,7 @@ export const vndbProvider: ScraperProvider = {
     return await checkGameExistsOnVNDB(identifier)
   },
 
-  async getGameMetadata(identifier: ScraperIdentifier): Promise<GameMetadata> {
+  async getGameMetadata(identifier: ScraperIdentifier): Promise<GameMetadata | null> {
     return await getGameMetadataFromVNDB(identifier)
   },
 
