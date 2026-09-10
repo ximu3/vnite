@@ -1,8 +1,16 @@
 import { GameList, GameMetadata } from '@appTypes/utils'
-import { net } from 'electron'
 import i18next from 'i18next'
 import { formatDate } from '~/utils'
-import { SteamAppDetailsResponse, SteamLanguageConfig, SteamStoreSearchResponse } from './types'
+import { isHttpError, logScraperError } from '../../errors'
+import { createScraperFetch, readScraperJson } from '../../request'
+import {
+  SteamAppDetailsData,
+  SteamAppDetailsResponse,
+  SteamLanguageConfig,
+  SteamStoreSearchResponse
+} from './types'
+
+const fetch = createScraperFetch()
 
 // Define base URL constants
 const STEAM_URLS = {
@@ -12,90 +20,172 @@ const STEAM_URLS = {
   CLOUDFLARE: 'https://cdn.cloudflare.steamstatic.com'
 }
 
-async function fetchWithTimeout(
-  url: string,
-  options: RequestInit = {},
-  timeout = 10000
-): Promise<Response> {
-  const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), timeout)
+// `cc` only affects store visibility, so no i18n-specific handling is needed.
+const STEAM_FALLBACK_COUNTRY_CODES = ['HK', 'US', 'JP']
+const STEAM_APP_DETAILS_CACHE_TTL = 5 * 60 * 1000
+const STEAM_APP_DETAILS_CACHE_LIMIT = 100
 
-  try {
-    const response = await net.fetch(url, {
-      ...options,
-      signal: controller.signal
-    })
-    clearTimeout(timeoutId)
-    return response
-  } catch (error) {
-    clearTimeout(timeoutId)
-    throw error
-  }
+type SteamAppDetailsCacheEntry = {
+  data: SteamAppDetailsData
+  expiresAt: number
 }
 
+const steamAppCountryCodeCache: Record<string, string> = {}
+const steamAppDetailsCache: Record<string, SteamAppDetailsCacheEntry> = {}
+
 async function fetchSteamAPI(url: string): Promise<any> {
-  const response = await fetchWithTimeout(url)
-  return response.json()
+  const response = await fetch(url)
+  return readScraperJson(response)
+}
+
+function getCandidateCountryCodes(
+  preferredCountryCodes: readonly (string | undefined)[]
+): string[] {
+  return Array.from(
+    new Set(
+      [...preferredCountryCodes, ...STEAM_FALLBACK_COUNTRY_CODES].filter(
+        (countryCode): countryCode is string => Boolean(countryCode)
+      )
+    )
+  )
+}
+
+function getCachedSteamAppDetails(
+  appId: string,
+  language: string
+): SteamAppDetailsData | undefined {
+  const cacheKey = `${appId}:${language}`
+  const cachedDetails = steamAppDetailsCache[cacheKey]
+
+  if (!cachedDetails) return undefined
+
+  if (cachedDetails.expiresAt <= Date.now()) {
+    delete steamAppDetailsCache[cacheKey]
+    return undefined
+  }
+
+  return cachedDetails.data
+}
+
+function cacheSteamAppDetails(appId: string, language: string, data: SteamAppDetailsData): void {
+  const now = Date.now()
+  const cacheKey = `${appId}:${language}`
+  steamAppDetailsCache[cacheKey] = {
+    data,
+    expiresAt: now + STEAM_APP_DETAILS_CACHE_TTL
+  }
+
+  Object.entries(steamAppDetailsCache).forEach(([key, cachedDetails]) => {
+    if (cachedDetails.expiresAt <= now) {
+      delete steamAppDetailsCache[key]
+    }
+  })
+
+  const cacheEntries = Object.entries(steamAppDetailsCache)
+  if (cacheEntries.length <= STEAM_APP_DETAILS_CACHE_LIMIT) return
+
+  cacheEntries
+    .sort(([, first], [, second]) => first.expiresAt - second.expiresAt)
+    .slice(0, cacheEntries.length - STEAM_APP_DETAILS_CACHE_LIMIT)
+    .forEach(([key]) => delete steamAppDetailsCache[key])
+}
+
+async function resolveSteamAppDetails(
+  appId: string,
+  language: string
+): Promise<SteamAppDetailsData | null> {
+  const cachedDetails = getCachedSteamAppDetails(appId, language)
+  if (cachedDetails) return cachedDetails
+
+  const langConfig = i18next.t('scraper:steam.config', {
+    returnObjects: true
+  }) as SteamLanguageConfig
+  const cachedCountryCode = steamAppCountryCodeCache[appId]
+  const errors: unknown[] = []
+
+  for (const countryCode of getCandidateCountryCodes([cachedCountryCode, langConfig.countryCode])) {
+    try {
+      const url = `${STEAM_URLS.STORE}/api/appdetails?appids=${appId}&l=${language}&cc=${countryCode}`
+      const response = (await fetchSteamAPI(url)) as SteamAppDetailsResponse
+      const result = response[appId]
+
+      if (result?.success && result.data) {
+        steamAppCountryCodeCache[appId] = countryCode
+        cacheSteamAppDetails(appId, language, result.data)
+        errors.forEach((error) => logScraperError(error, 'Steam', 'region fallback', 'warn'))
+        return result.data
+      }
+
+      if (countryCode === cachedCountryCode) {
+        delete steamAppCountryCodeCache[appId]
+      }
+    } catch (error) {
+      // Try the next region without treating a failed request as an unavailable app.
+      errors.push(error)
+    }
+  }
+
+  if (errors.length) throw errors[errors.length - 1]
+  return null
 }
 
 export async function searchSteamGames(gameName: string): Promise<GameList> {
-  try {
-    const langConfig = i18next.t('scraper:steam.config', {
-      returnObjects: true
-    }) as SteamLanguageConfig
+  const langConfig = i18next.t('scraper:steam.config', {
+    returnObjects: true
+  }) as SteamLanguageConfig
 
-    const candidateCC = new Set([langConfig.countryCode, 'HK', 'US', 'JP'].filter(Boolean))
-    const urlBase = `${STEAM_URLS.STORE}/api/storesearch/?term=${encodeURIComponent(
-      gameName
-    )}&l=${langConfig.apiLanguageCode || 'english'}`
+  const candidateCountryCodes = getCandidateCountryCodes([langConfig.countryCode])
+  const urlBase = `${STEAM_URLS.STORE}/api/storesearch/?term=${encodeURIComponent(
+    gameName
+  )}&l=${langConfig.apiLanguageCode || 'english'}`
 
-    const resultsPerRegion = await Promise.all(
-      Array.from(candidateCC).map(async (cc) => {
-        const url = `${urlBase}&cc=${cc}`
-        try {
-          const response = (await fetchSteamAPI(url)) as SteamStoreSearchResponse
-          if (!response.items || response.items.length === 0) return []
-          return response.items
-        } catch (err) {
-          console.error(`Error fetching region ${cc}:`, err)
-          return []
+  const errors: unknown[] = []
+  const resultsPerRegion = await Promise.all(
+    candidateCountryCodes.map(async (countryCode) => {
+      const url = `${urlBase}&cc=${countryCode}`
+      try {
+        const response = (await fetchSteamAPI(url)) as SteamStoreSearchResponse
+        return {
+          countryCode,
+          items: response.items || []
         }
+      } catch (err) {
+        errors.push(err)
+        return { countryCode, items: [] }
+      }
+    })
+  )
+
+  const merged: Record<number, SteamStoreSearchResponse['items'][number]> = {}
+  resultsPerRegion.forEach(({ countryCode, items }) => {
+    items.forEach((game) => {
+      if (!merged[game.id]) {
+        merged[game.id] = game
+        steamAppCountryCodeCache[game.id.toString()] = countryCode
+      }
+    })
+  })
+
+  if (Object.keys(merged).length === 0) {
+    if (errors.length) throw errors[errors.length - 1]
+    return []
+  }
+
+  errors.forEach((error) => logScraperError(error, 'Steam', 'search region fallback', 'warn'))
+  const gamesMetadata = await Promise.all(
+    Object.values(merged).map((game) =>
+      getSteamMetadata(game.id.toString()).catch((error) => {
+        logScraperError(error, 'Steam', 'search enrichment', 'warn')
       })
     )
+  )
 
-    const merged: Record<number, SteamStoreSearchResponse['items'][number]> = {}
-    resultsPerRegion.flat().forEach((game) => {
-      if (!merged[game.id]) merged[game.id] = game
-    })
-
-    if (Object.keys(merged).length === 0) {
-      throw new Error('No games found')
-    }
-
-    const gamesMetadata = await Promise.all(
-      Object.values(merged).map((game) =>
-        getSteamMetadata(game.id.toString()).catch((error) => {
-          console.error(`Error fetching metadata for game ${game.id}:`, error)
-        })
-      )
-    )
-
-    return Object.values(merged).map((game, index) => ({
-      id: game.id.toString(),
-      name: game.name,
-      releaseDate: gamesMetadata[index]?.releaseDate || '',
-      developers: gamesMetadata[index]?.developers || []
-    }))
-  } catch (error) {
-    if (error instanceof Error) {
-      if (error.message === 'No games found') {
-        return []
-      }
-      console.error('Error fetching Steam games:', error.message)
-      throw error
-    }
-    throw new Error('An unknown error occurred')
-  }
+  return Object.values(merged).map((game, index) => ({
+    id: game.id.toString(),
+    name: game.name,
+    releaseDate: gamesMetadata[index]?.releaseDate || '',
+    developers: gamesMetadata[index]?.developers || []
+  }))
 }
 
 async function fetchStoreTags(appId: string): Promise<string[]> {
@@ -106,7 +196,7 @@ async function fetchStoreTags(appId: string): Promise<string[]> {
 
     const url = `${STEAM_URLS.STORE}/app/${appId}`
 
-    const response = await fetchWithTimeout(url, {
+    const response = await fetch(url, {
       headers: {
         'Accept-Language': langConfig.acceptLanguageHeader || 'en-US,en;q=0.9'
       }
@@ -130,116 +220,76 @@ async function fetchStoreTags(appId: string): Promise<string[]> {
 
     return tags
   } catch (error) {
-    console.error('Error fetching store tags:', error)
+    logScraperError(error, 'Steam', 'store tags', 'warn')
     return []
   }
 }
 
-export async function getSteamMetadata(appId: string): Promise<GameMetadata> {
-  try {
-    const langConfig = i18next.t('scraper:steam.config', {
-      returnObjects: true
-    }) as SteamLanguageConfig
+export async function getSteamMetadata(appId: string): Promise<GameMetadata | null> {
+  const langConfig = i18next.t('scraper:steam.config', {
+    returnObjects: true
+  }) as SteamLanguageConfig
 
-    // Get data in the current language
-    const urlLocal = `${STEAM_URLS.STORE}/api/appdetails?appids=${appId}&l=${langConfig.apiLanguageCode || 'english'}`
+  const language = langConfig.apiLanguageCode || 'english'
 
-    // Determine if we need to get the original English name (if current language is not English)
-    const needsOriginalName = langConfig.apiLanguageCode !== 'english'
+  // Determine if we need to get the original English name (if current language is not English)
+  const needsOriginalName = language !== 'english'
+  const localResult = await resolveSteamAppDetails(appId, language)
 
-    let localData: SteamAppDetailsResponse
-    let englishData: SteamAppDetailsResponse | null = null
+  if (!localResult) return null
 
-    if (needsOriginalName) {
-      // Fetch local language and English data in parallel
-      ;[localData, englishData] = await Promise.all([
-        fetchSteamAPI(urlLocal),
-        fetchSteamAPI(`${STEAM_URLS.STORE}/api/appdetails?appids=${appId}&l=english`)
-      ])
-    } else {
-      // Only fetch one language
-      localData = await fetchSteamAPI(urlLocal)
-      englishData = localData // Reuse if current language is English
-    }
+  const gameData = localResult
+  const englishResult = needsOriginalName
+    ? await resolveSteamAppDetails(appId, 'english')
+    : localResult
+  const originalName = englishResult?.name || gameData.name
 
-    if (!localData[appId].success) {
-      throw new Error(`No game found with ID: ${appId}`)
-    }
+  const tags = await fetchStoreTags(appId)
 
-    const gameData = localData[appId].data
-    const originalName =
-      englishData && englishData[appId].success ? englishData[appId].data.name : gameData.name
-
-    const tags = await fetchStoreTags(appId)
-
-    return {
-      name: gameData.name,
-      originalName,
-      releaseDate: formatDate(gameData?.release_date?.date || ''),
-      description:
-        gameData.detailed_description ||
-        gameData.about_the_game ||
-        gameData.short_description ||
-        '',
-      developers: gameData.developers || [],
-      publishers: gameData.publishers,
-      genres: gameData.genres?.map((genre) => genre.description) || [],
-      relatedSites: [
-        ...(gameData.website
-          ? [{ label: i18next.t('scraper:steam.officialWebsite'), url: gameData.website }]
-          : []),
-        ...(gameData.metacritic?.url
-          ? [{ label: 'Metacritic', url: gameData.metacritic.url }]
-          : []),
-        {
-          label: i18next.t('scraper:steam.steamStore'),
-          url: `${STEAM_URLS.STORE}/app/${appId}`
-        }
-      ],
-      tags: tags.length > 0 ? tags : gameData.genres?.map((genre) => genre.description) || [],
-      platforms: gameData.platforms
-        ? Object.keys(gameData.platforms).filter(
-            (platform) => gameData.platforms && gameData.platforms[platform]
-          )
-        : []
-    }
-  } catch (error) {
-    console.error(`Error fetching metadata for game ${appId}:`, error)
-    throw error
-  }
-}
-
-export async function getSteamMetadataByName(gameName: string): Promise<GameMetadata> {
-  try {
-    const games = await searchSteamGames(gameName)
-    if (games.length === 0) {
-      return {
-        name: gameName,
-        originalName: gameName,
-        releaseDate: '',
-        description: '',
-        developers: [],
-        relatedSites: [],
-        tags: []
+  return {
+    name: gameData.name,
+    originalName,
+    releaseDate: formatDate(gameData?.release_date?.date || ''),
+    description:
+      gameData.detailed_description || gameData.about_the_game || gameData.short_description || '',
+    developers: gameData.developers || [],
+    publishers: gameData.publishers,
+    genres: gameData.genres?.map((genre) => genre.description) || [],
+    relatedSites: [
+      ...(gameData.website
+        ? [{ label: i18next.t('scraper:steam.officialWebsite'), url: gameData.website }]
+        : []),
+      ...(gameData.metacritic?.url ? [{ label: 'Metacritic', url: gameData.metacritic.url }] : []),
+      {
+        label: i18next.t('scraper:steam.steamStore'),
+        url: `${STEAM_URLS.STORE}/app/${appId}`
       }
-    }
-    return await getSteamMetadata(games[0].id)
-  } catch (error) {
-    console.error(`Error fetching metadata for game ${gameName}:`, error)
-    throw error
+    ],
+    tags: tags.length > 0 ? tags : gameData.genres?.map((genre) => genre.description) || [],
+    platforms: gameData.platforms
+      ? Object.keys(gameData.platforms).filter(
+          (platform) => gameData.platforms && gameData.platforms[platform]
+        )
+      : []
   }
 }
 
-export async function checkImageExists(url: string): Promise<boolean> {
+export async function getSteamMetadataByName(gameName: string): Promise<GameMetadata | null> {
+  const games = await searchSteamGames(gameName)
+  if (games.length === 0) return null
+  return await getSteamMetadata(games[0].id)
+}
+
+async function isSteamImageAvailable(url: string): Promise<boolean> {
   try {
-    const response = await net.fetch(url, {
+    const response = await fetch(url, {
       method: 'HEAD' // Only get header information, don't download the actual image content
     })
-
-    // Check if status code is 200
     return response.status === 200
   } catch (error) {
-    console.error(`Failed to check image: ${url}`, error)
+    if (!isHttpError(error, 404)) {
+      logScraperError(error, 'Steam', 'check image', 'warn')
+    }
     return false
   }
 }
@@ -251,7 +301,7 @@ export async function getGameHero(appId: string): Promise<string> {
   ]
 
   for (const url of candidateUrls) {
-    if (await checkImageExists(url)) {
+    if (await isSteamImageAvailable(url)) {
       return url
     }
   }
@@ -264,13 +314,8 @@ export async function getGameScreenshots(appId: string): Promise<string[]> {
     returnObjects: true
   }) as SteamLanguageConfig
 
-  // Get data in the current language
-  const urlLocal = `${STEAM_URLS.STORE}/api/appdetails?appids=${appId}&l=${langConfig.apiLanguageCode || 'english'}`
-
-  const data = (await fetchSteamAPI(urlLocal)) as SteamAppDetailsResponse
-  return data[appId]?.success
-    ? data[appId].data.screenshots?.map((screenshot) => screenshot.path_full) || []
-    : []
+  const result = await resolveSteamAppDetails(appId, langConfig.apiLanguageCode || 'english')
+  return result?.screenshots?.map((screenshot) => screenshot.path_full) || []
 }
 
 export async function getGameHeader(appId: string): Promise<string> {
@@ -278,11 +323,10 @@ export async function getGameHeader(appId: string): Promise<string> {
     returnObjects: true
   }) as SteamLanguageConfig
 
-  const urlLocal = `${STEAM_URLS.STORE}/api/appdetails?appids=${appId}&l=${langConfig.apiLanguageCode || 'english'}`
-  const data = (await fetchSteamAPI(urlLocal)) as SteamAppDetailsResponse
+  const result = await resolveSteamAppDetails(appId, langConfig.apiLanguageCode || 'english')
 
   // Steam appdetails exposes the store header capsule URL as header_image.
-  return data[appId]?.success ? data[appId].data.header_image || '' : ''
+  return result?.header_image || ''
 }
 
 export async function getGameBackgrounds(appId: string): Promise<string[]> {
@@ -310,9 +354,7 @@ export async function getGameCover(appId: string): Promise<string> {
 
   // Try all candidate URLs and return the first one that exists
   for (const url of candidateUrl) {
-    if (await checkImageExists(url)) {
-      return url
-    }
+    if (await isSteamImageAvailable(url)) return url
   }
 
   // Some newer games use hashed asset paths rather than the standard Steam CDN
@@ -340,65 +382,36 @@ export async function getGameLogo(appId: string): Promise<string> {
 
   // Try all candidate URLs and return the first one that exists
   for (const url of candidateUrl) {
-    if (await checkImageExists(url)) {
-      return url
-    }
+    if (await isSteamImageAvailable(url)) return url
   }
 
   return ''
 }
 
 export async function checkSteamGameExists(appId: string): Promise<boolean> {
-  try {
-    const url = `${STEAM_URLS.STORE}/api/appdetails?appids=${appId}`
-    const data = (await fetchSteamAPI(url)) as SteamAppDetailsResponse
-    return data[appId]?.success || false
-  } catch (error) {
-    console.error(`Error checking game existence for ID ${appId}:`, error)
-    throw error
-  }
+  return Boolean(await resolveSteamAppDetails(appId, 'english'))
 }
 
 export async function getGameCoverByName(gameName: string): Promise<string> {
-  try {
-    const games = await searchSteamGames(gameName)
-    if (games.length === 0) return ''
-    return getGameCover(games[0].id)
-  } catch (error) {
-    console.error(`Error fetching cover for game ${gameName}:`, error)
-    return ''
-  }
+  const games = await searchSteamGames(gameName)
+  if (games.length === 0) return ''
+  return getGameCover(games[0].id)
 }
 
 export async function getGameBackgroundsByName(gameName: string): Promise<string[]> {
-  try {
-    const games = await searchSteamGames(gameName)
-    if (games.length === 0) return []
-    return getGameBackgrounds(games[0].id)
-  } catch (error) {
-    console.error(`Error fetching screenshots for game ${gameName}:`, error)
-    return []
-  }
+  const games = await searchSteamGames(gameName)
+  if (games.length === 0) return []
+  return getGameBackgrounds(games[0].id)
 }
 
 export async function getGameHeaderByName(gameName: string): Promise<string> {
-  try {
-    const games = await searchSteamGames(gameName)
-    if (games.length === 0) return ''
-    return getGameHeader(games[0].id)
-  } catch (error) {
-    console.error(`Error fetching header for game ${gameName}:`, error)
-    return ''
-  }
+  const games = await searchSteamGames(gameName)
+  if (games.length === 0) return ''
+  return getGameHeader(games[0].id)
 }
 
 export async function getGameLogoByName(gameName: string): Promise<string> {
-  try {
-    const games = await searchSteamGames(gameName)
-    if (games.length === 0) return ''
-    return getGameLogo(games[0].id)
-  } catch (error) {
-    console.error(`Error fetching logo for game ${gameName}:`, error)
-    return ''
-  }
+  const games = await searchSteamGames(gameName)
+  if (games.length === 0) return ''
+  return getGameLogo(games[0].id)
 }

@@ -269,7 +269,7 @@ type MainIpcEvents =
       'scraper:get-game-metadata': (
         dataSource: string,
         identifier: ScraperIdentifier
-      ) => GameMetadata
+      ) => GameMetadata | null
       'scraper:get-game-backgrounds': (
         dataSource: string,
         identifier: ScraperIdentifier

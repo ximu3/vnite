@@ -37,11 +37,7 @@ export function SearchTagsDialog({
 
   useEffect(() => {
     if (isOpen) {
-      toast.promise(handleSearch(), {
-        loading: t('detail.overview.tags.search.loading'),
-        success: t('detail.overview.tags.search.success'),
-        error: (err) => t('detail.overview.tags.search.error', { message: err.message })
-      })
+      void handleSearch()
     }
     setTagsList([])
   }, [isOpen, t])
@@ -56,6 +52,9 @@ export function SearchTagsDialog({
   async function handleSearch(): Promise<void> {
     if (isLoading) return
     setIsLoading(true)
+    setTagsList([])
+    setSelectedTags(initialTags)
+    const toastId = toast.loading(t('detail.overview.tags.search.loading'))
 
     try {
       const result = await ipcManager.invoke('scraper:get-game-tags-list', {
@@ -64,13 +63,19 @@ export function SearchTagsDialog({
       })
 
       if (!result || result.length === 0) {
-        toast.error(t('detail.overview.tags.search.notFound'))
+        toast.error(t('detail.overview.tags.search.notFound'), { id: toastId })
         return
       }
 
       setTagsList(result)
+      toast.success(t('detail.overview.tags.search.success'), { id: toastId })
     } catch (error) {
-      toast.error(t('detail.overview.tags.search.searchError', { error }))
+      toast.error(
+        t('detail.overview.tags.search.error', {
+          message: error instanceof Error ? error.message : ''
+        }),
+        { id: toastId }
+      )
     } finally {
       setIsLoading(false)
     }
@@ -155,11 +160,7 @@ export function SearchTagsDialog({
             />
             <Button
               onClick={() => {
-                toast.promise(handleSearch(), {
-                  loading: t('detail.overview.tags.search.loading'),
-                  success: t('detail.overview.tags.search.success'),
-                  error: (err) => t('detail.overview.tags.search.error', { message: err.message })
-                })
+                void handleSearch()
               }}
               size={'icon'}
               className={cn('shrink-0')}

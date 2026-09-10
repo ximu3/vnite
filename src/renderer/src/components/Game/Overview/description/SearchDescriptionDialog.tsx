@@ -37,11 +37,7 @@ export function SearchDescriptionDialog({
 
   useEffect(() => {
     if (isOpen) {
-      toast.promise(handleSearch(), {
-        loading: t('detail.overview.description.search.loading'),
-        success: t('detail.overview.description.search.success'),
-        error: (err) => t('detail.overview.description.search.error', { message: err.message })
-      })
+      void handleSearch()
     }
     setDescriptionList([])
   }, [isOpen, t])
@@ -49,6 +45,9 @@ export function SearchDescriptionDialog({
   async function handleSearch(): Promise<void> {
     if (isLoading) return
     setIsLoading(true)
+    setDescriptionList([])
+    setSelectedDescription('')
+    const toastId = toast.loading(t('detail.overview.description.search.loading'))
 
     try {
       const result = await ipcManager.invoke('scraper:get-game-description-list', {
@@ -57,14 +56,20 @@ export function SearchDescriptionDialog({
       })
 
       if (result.length === 0) {
-        toast.error(t('detail.overview.description.search.notFound'))
+        toast.error(t('detail.overview.description.search.notFound'), { id: toastId })
         return
       }
 
       setDescriptionList(result)
       setSelectedDescription(result[0].description)
+      toast.success(t('detail.overview.description.search.success'), { id: toastId })
     } catch (error) {
-      toast.error(t('detail.overview.description.search.searchError', { error }))
+      toast.error(
+        t('detail.overview.description.search.error', {
+          message: error instanceof Error ? error.message : ''
+        }),
+        { id: toastId }
+      )
     } finally {
       setIsLoading(false)
     }
@@ -144,12 +149,7 @@ export function SearchDescriptionDialog({
             />
             <Button
               onClick={() => {
-                toast.promise(handleSearch(), {
-                  loading: t('detail.overview.description.search.loading'),
-                  success: t('detail.overview.description.search.success'),
-                  error: (err) =>
-                    t('detail.overview.description.search.error', { message: err.message })
-                })
+                void handleSearch()
               }}
               size={'icon'}
               className={cn('shrink-0')}

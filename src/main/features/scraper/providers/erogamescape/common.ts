@@ -1,26 +1,28 @@
 import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
 import * as cheerio from 'cheerio'
-import { net } from 'electron'
-import log from 'electron-log/main.js'
 import { Readable } from 'stream'
 import { ReadableStream } from 'stream/web'
-import { UnArray } from './types'
+import { isHttpError, ScraperError } from '../../errors'
+import { createScraperFetch } from '../../request'
+import { fanzaProvider } from '../fanza'
 import { getchuProvider } from '../getchu'
 import { vndbProvider } from '../vndb'
-import { fanzaProvider } from '../fanza'
+import { UnArray } from './types'
+
+const fetch = createScraperFetch(30_000)
 
 const esUrl = 'https://erogamescape.org/~ap2/ero/toukei_kaiseki'
 
 async function fetchFromEs(
   endpoint: string,
   params: Record<string, string | number> = {}
-): Promise<[number, Readable]> {
+): Promise<Readable> {
   const url = new URL(`${esUrl}${endpoint}`)
   Object.entries(params).forEach(([key, value]) => {
     url.searchParams.append(key, String(value))
   })
 
-  const response = await net.fetch(url.toString(), {
+  const response = await fetch(url.toString(), {
     headers: {
       Accept:
         'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
@@ -30,8 +32,10 @@ async function fetchFromEs(
       'Accept-Encoding': 'br, gzip, deflate'
     }
   })
-  const bodyReader = Readable.fromWeb(response.body as ReadableStream<Uint8Array>)
-  return [response.status, bodyReader]
+  if (response.status !== 200) {
+    throw new ScraperError('httpError', undefined, response.status)
+  }
+  return Readable.fromWeb(response.body as ReadableStream<Uint8Array>)
 }
 
 async function ensureEsId(identifier: ScraperIdentifier): Promise<string> {
@@ -75,15 +79,12 @@ export async function searchEsGames(gameName: string): Promise<GameList> {
     return []
   }
   const encodedGameName = name.replace(/\s+/g, ' ')
-  const [status, bodyStream] = await fetchFromEs('/kensaku.php', {
+  const bodyStream = await fetchFromEs('/kensaku.php', {
     category: 'game',
     word_category: 'name',
     mode: 'normal',
     word: encodedGameName
   })
-  if (status !== 200) {
-    throw new Error(`HTTP error! status: ${status}`)
-  }
   return pipeToCheerio(bodyStream, ($, resolve) => {
     const result: GameList = []
     // retrieves all table rows
@@ -145,38 +146,28 @@ export async function searchEsGames(gameName: string): Promise<GameList> {
 }
 
 export async function checkEsGameExists(gameId: string): Promise<boolean> {
-  const [status] = await fetchFromEs('/game.php', { game: gameId })
-  if (status === 200) {
+  try {
+    await fetchFromEs('/game.php', { game: gameId })
     return true
+  } catch (error) {
+    if (isHttpError(error, 404)) return false
+    throw error
   }
-  if (status === 404) {
-    return false
-  }
-  log.error(`Error checking game existence for ID ${gameId}: HTTP status: ${status}`)
-  return false
 }
 
-export async function getEsGameMetadata(identifier: ScraperIdentifier): Promise<GameMetadata> {
+export async function getEsGameMetadata(
+  identifier: ScraperIdentifier
+): Promise<GameMetadata | null> {
   const id = await ensureEsId(identifier)
-  if (id === '') {
-    return {
-      name: identifier.value,
-      originalName: identifier.value,
-      releaseDate: '',
-      description: '',
-      developers: [],
-      relatedSites: [],
-      tags: [],
-      extra: []
-    }
+  if (id === '') return null
+  let bodyStream: Readable
+  try {
+    bodyStream = await fetchFromEs('/game.php', { game: id })
+  } catch (error) {
+    if (isHttpError(error, 404)) return null
+    throw error
   }
-  const [status, bodyStream] = await fetchFromEs('/game.php', {
-    game: id
-  })
-  if (status !== 200) {
-    throw new Error(`HTTP error! status: ${status}`)
-  }
-  return pipeToCheerio(bodyStream, async ($, resolve) => {
+  return pipeToCheerio<GameMetadata | null>(bodyStream, async ($, resolve) => {
     // name
     const name = $('div#soft-title > span.bold:first').text()
     // brand
@@ -322,11 +313,11 @@ export async function getEsGameMetadata(identifier: ScraperIdentifier): Promise<
     let description = ''
     if (fanzaProvider.getGameMetadata) {
       const fanzaMeta = await fanzaProvider.getGameMetadata({ type: 'name', value: name })
-      description = fanzaMeta.description
+      description = fanzaMeta?.description || ''
     }
     if (description === '' && getchuProvider.getGameMetadata) {
       const getchuMeta = await getchuProvider.getGameMetadata({ type: 'name', value: name })
-      description = getchuMeta.description
+      description = getchuMeta?.description || ''
     }
     resolve({
       name,
@@ -352,10 +343,10 @@ export async function getEsGameBackgrounds(identifier: ScraperIdentifier): Promi
   }
 
   const fetchBackground = async (path: string): Promise<void> => {
-    const [status, bodyStream] = await fetchFromEs(path, {
-      game: id
-    })
-    if (status === 200) {
+    try {
+      const bodyStream = await fetchFromEs(path, {
+        game: id
+      })
       await pipeToCheerio(bodyStream, ($, resolve) => {
         $('div#images img').each((_, el) => {
           let src = $(el).attr('src')
@@ -368,8 +359,10 @@ export async function getEsGameBackgrounds(identifier: ScraperIdentifier): Promi
         })
         resolve(images)
       })
-    } else if (status !== 404) {
-      throw new Error(`HTTP error! status: ${status}`)
+    } catch (error) {
+      if (!isHttpError(error, 404)) {
+        throw error
+      }
     }
   }
   // fetching order: FANZA > DLSite > VNDB
@@ -384,8 +377,9 @@ export async function getEsGameBackgrounds(identifier: ScraperIdentifier): Promi
     if (identifier.type === 'name') {
       return await vndbProvider.getGameBackgrounds(identifier)
     } else {
-      const gameName = (await getEsGameMetadata(identifier)).name
-      return await vndbProvider.getGameBackgrounds({ type: 'name', value: gameName })
+      const metadata = await getEsGameMetadata(identifier)
+      if (!metadata) return []
+      return await vndbProvider.getGameBackgrounds({ type: 'name', value: metadata.name })
     }
   }
 
@@ -397,11 +391,12 @@ export async function getEsGameCovers(identifier: ScraperIdentifier): Promise<st
   if (id === '') {
     return []
   }
-  const [status, bodyStream] = await fetchFromEs('/game.php', {
-    game: id
-  })
-  if (status !== 200) {
-    throw new Error(`HTTP error! status: ${status}`)
+  let bodyStream: Readable
+  try {
+    bodyStream = await fetchFromEs('/game.php', { game: id })
+  } catch (error) {
+    if (isHttpError(error, 404)) return []
+    throw error
   }
   return pipeToCheerio(bodyStream, ($, resolve) => {
     const imgUrl = $('div#main_image img').attr('src')

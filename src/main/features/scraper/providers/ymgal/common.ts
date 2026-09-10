@@ -1,15 +1,18 @@
-import { GameList, GameMetadata } from '@appTypes/utils'
-import {
-  GameListResponse,
-  GameDetailResponse,
-  OrganizationResponse,
-  Organization,
-  YMGalResponse,
-  TokenResponse
-} from './types'
-import { getGameBackgroundsFromVNDB, getGameCoverFromVNDB } from '../vndb/api'
 import { METADATA_EXTRA_PREDEFINED_KEYS } from '@appTypes/models'
-import { net } from 'electron'
+import { GameList, GameMetadata } from '@appTypes/utils'
+import { isHttpError, logScraperError } from '../../errors'
+import { createScraperFetch, readScraperJson } from '../../request'
+import { getGameBackgroundsFromVNDB, getGameCoverFromVNDB } from '../vndb/api'
+import {
+  GameDetailResponse,
+  GameListResponse,
+  Organization,
+  OrganizationResponse,
+  TokenResponse,
+  YMGalResponse
+} from './types'
+
+const fetch = createScraperFetch()
 
 // YMGal job titles mapped to predefined roles
 const YMGAL_ROLE_MAPPING: Record<string, string> = {
@@ -79,17 +82,9 @@ async function getAccessToken(): Promise<string> {
     scope: 'public'
   })
 
-  try {
-    const response = await net.fetch(`${tokenEndpoint}?${params}`)
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-    const data = (await response.json()) as TokenResponse
-    return data.access_token
-  } catch (error) {
-    console.error('Error fetching access token:', error)
-    throw error
-  }
+  const response = await fetch(`${tokenEndpoint}?${params}`)
+  const data = (await readScraperJson(response)) as TokenResponse
+  return data.access_token
 }
 
 async function fetchYMGal<T>(endpoint: string, params?: Record<string, string>): Promise<T> {
@@ -101,7 +96,7 @@ async function fetchYMGal<T>(endpoint: string, params?: Record<string, string>):
     })
   }
 
-  const response = await net.fetch(url.toString(), {
+  const response = await fetch(url.toString(), {
     headers: {
       Accept: 'application/json;charset=utf-8',
       Authorization: `Bearer ${token}`,
@@ -109,11 +104,7 @@ async function fetchYMGal<T>(endpoint: string, params?: Record<string, string>):
     }
   })
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`)
-  }
-
-  const data = (await response.json()) as YMGalResponse<T>
+  const data = (await readScraperJson(response)) as YMGalResponse<T>
   if (!data.success) {
     throw new Error(data.msg || `API error! code: ${data.code}`)
   }
@@ -122,25 +113,20 @@ async function fetchYMGal<T>(endpoint: string, params?: Record<string, string>):
 }
 
 export async function searchYMGalGames(gameName: string): Promise<GameList> {
-  try {
-    const data = await fetchYMGal<GameListResponse>('/open/archive/search-game', {
-      mode: 'list',
-      keyword: gameName,
-      pageNum: '1',
-      pageSize: '20'
-    })
+  const data = await fetchYMGal<GameListResponse>('/open/archive/search-game', {
+    mode: 'list',
+    keyword: gameName,
+    pageNum: '1',
+    pageSize: '20'
+  })
 
-    return data.result.map((game: any) => ({
-      id: game.id.toString(),
-      name: game.name,
-      chineseName: game.chineseName,
-      releaseDate: game.releaseDate || '',
-      developers: [game.orgName].filter(Boolean)
-    }))
-  } catch (error) {
-    console.error('Error searching YMGal games:', error)
-    throw error
-  }
+  return data.result.map((game: any) => ({
+    id: game.id.toString(),
+    name: game.name,
+    chineseName: game.chineseName,
+    releaseDate: game.releaseDate || '',
+    developers: [game.orgName].filter(Boolean)
+  }))
 }
 
 async function getOrganizationDetail(orgId: number): Promise<Organization> {
@@ -150,130 +136,107 @@ async function getOrganizationDetail(orgId: number): Promise<Organization> {
   return data.org
 }
 
-export async function getYMGalMetadata(gameId: string): Promise<GameMetadata> {
+export async function getYMGalMetadata(gameId: string): Promise<GameMetadata | null> {
+  let data: GameDetailResponse
   try {
-    const data = await fetchYMGal<GameDetailResponse>('/open/archive', {
+    data = await fetchYMGal<GameDetailResponse>('/open/archive', {
       gid: gameId
     })
-
-    const game = data.game
-
-    // Get Developer Details
-    let developerName = ''
-    if (game.developerId) {
-      try {
-        const orgData = await getOrganizationDetail(game.developerId)
-        developerName = orgData.chineseName || orgData.name
-      } catch (error) {
-        console.warn(`Failed to fetch developer info for ID ${game.developerId}:`, error)
-      }
-    }
-
-    // Process staff data
-    const staffData = game.staff ? processYMGalStaffData(game.staff) : []
-
-    return {
-      name: game.chineseName || game.name,
-      originalName: game.name,
-      releaseDate: game.releaseDate || '',
-      description: game.introduction || '',
-      developers: developerName ? [developerName] : [],
-      relatedSites: [
-        ...(game.website?.map((site) => ({
-          label: site.title,
-          url: site.link
-        })) || []),
-        { label: '月幕Galgame', url: `https://www.ymgal.games/ga${gameId}` }
-      ],
-      tags: game.tags || [],
-      extra: staffData
-    }
   } catch (error) {
-    console.error(`Error fetching YMGal metadata for game ${gameId}:`, error)
+    if (isHttpError(error, 404)) return null
     throw error
+  }
+
+  const game = data.game
+
+  // Get Developer Details
+  let developerName = ''
+  if (game.developerId) {
+    try {
+      const orgData = await getOrganizationDetail(game.developerId)
+      developerName = orgData.chineseName || orgData.name
+    } catch (error) {
+      logScraperError(error, 'YMGal', 'developer enrichment', 'warn')
+    }
+  }
+
+  // Process staff data
+  const staffData = game.staff ? processYMGalStaffData(game.staff) : []
+
+  return {
+    name: game.chineseName || game.name,
+    originalName: game.name,
+    releaseDate: game.releaseDate || '',
+    description: game.introduction || '',
+    developers: developerName ? [developerName] : [],
+    relatedSites: [
+      ...(game.website?.map((site) => ({
+        label: site.title,
+        url: site.link
+      })) || []),
+      { label: '月幕Galgame', url: `https://www.ymgal.games/ga${gameId}` }
+    ],
+    tags: game.tags || [],
+    extra: staffData
   }
 }
 
-export async function getYMGalMetadataByName(gameName: string): Promise<GameMetadata> {
-  try {
-    const game = (await searchYMGalGames(gameName))[0]
-    if (!game) {
-      return {
-        name: gameName,
-        originalName: gameName,
-        developers: [],
-        tags: [],
-        relatedSites: [],
-        releaseDate: '',
-        description: '',
-        extra: []
-      }
-    }
-    return await getYMGalMetadata(game.id)
-  } catch (error) {
-    console.error(`Error fetching YMGal metadata for game ${gameName}:`, error)
-    throw error
-  }
+export async function getYMGalMetadataByName(gameName: string): Promise<GameMetadata | null> {
+  const game = (await searchYMGalGames(gameName))[0]
+  if (!game) return null
+  return await getYMGalMetadata(game.id)
 }
 
 export async function getGameBackgrounds(gameId: string): Promise<string[]> {
+  let data: GameDetailResponse
   try {
-    const data = await fetchYMGal<GameDetailResponse>('/open/archive', {
+    data = await fetchYMGal<GameDetailResponse>('/open/archive', {
       gid: gameId
     })
-
-    const gameName = data.game.name
-
-    return await getGameBackgroundsFromVNDB({
-      type: 'name',
-      value: gameName
-    })
   } catch (error) {
-    console.error(`Error fetching YMGal game backgrounds for ID ${gameId}:`, error)
+    if (isHttpError(error, 404)) return []
     throw error
   }
+
+  const gameName = data.game.name
+
+  return await getGameBackgroundsFromVNDB({
+    type: 'name',
+    value: gameName
+  })
 }
 
 export async function getGameBackgroundsByName(gameName: string): Promise<string[]> {
-  try {
-    return await getGameBackgroundsFromVNDB({
-      type: 'name',
-      value: gameName
-    })
-  } catch (error) {
-    console.error(`Error fetching YMGal game backgrounds for name ${gameName}:`, error)
-    throw error
-  }
+  return await getGameBackgroundsFromVNDB({
+    type: 'name',
+    value: gameName
+  })
 }
 
 export async function getGameCover(gameId: string): Promise<string> {
+  let data: GameDetailResponse
   try {
-    const data = await fetchYMGal<GameDetailResponse>('/open/archive', {
+    data = await fetchYMGal<GameDetailResponse>('/open/archive', {
       gid: gameId
     })
-    const gameName = data.game.name
-    const covers = await getGameCoverFromVNDB({
-      type: 'name',
-      value: gameName
-    })
-    return covers[0] || ''
   } catch (error) {
-    console.error(`Error fetching YMGal game cover for ID ${gameId}:`, error)
-    return ''
+    if (isHttpError(error, 404)) return ''
+    throw error
   }
+  const gameName = data.game.name
+  const covers = await getGameCoverFromVNDB({
+    type: 'name',
+    value: gameName
+  })
+  return covers[0] || ''
 }
 
 export async function getGameCoverByName(gameName: string): Promise<string> {
-  try {
-    const covers = await getGameCoverFromVNDB({
-      type: 'name',
-      value: gameName
-    })
-    return covers[0] || ''
-  } catch (error) {
-    console.error(`Error fetching YMGal game cover for name ${gameName}:`, error)
-    return ''
-  }
+  const covers = await getGameCoverFromVNDB({
+    type: 'name',
+    value: gameName
+  })
+  return covers[0] || ''
 }
 
 export async function checkYMGalExists(gameId: string): Promise<boolean> {
@@ -283,7 +246,7 @@ export async function checkYMGalExists(gameId: string): Promise<boolean> {
     })
     return true
   } catch (error) {
-    console.error(`Error checking YMGal game existence for ID ${gameId}:`, error)
-    return false
+    if (isHttpError(error, 404)) return false
+    throw error
   }
 }

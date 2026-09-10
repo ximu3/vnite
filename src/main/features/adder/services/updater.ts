@@ -1,18 +1,10 @@
 import {
   BatchUpdateResult,
   BatchUpdateResults,
-  GameDescriptionList,
-  GameDevelopersList,
-  GameExtraInfoList,
-  GameGenresList,
   GameMetadata,
   GameMetadataField,
   GameMetadataUpdateMode,
   GameMetadataUpdateOptions,
-  GamePlatformsList,
-  GamePublishersList,
-  GameRelatedSitesList,
-  GameTagsList,
   ScraperCapabilities,
   ScraperIdentifier,
   type GameImageUpscaleOptions
@@ -21,8 +13,19 @@ import log from 'electron-log/main'
 import { GameDBManager } from '~/core/database'
 import { ipcManager } from '~/core/ipc'
 import { tryUpscaleGameImage } from '~/features/game'
-import { scraperManager } from '~/features/scraper'
+import { scraperManager, type GameMetadataAggregationResult } from '~/features/scraper'
+import { ScraperError, logScraperError } from '~/features/scraper/errors'
 import { cacheDescriptionImages } from '~/features/scraper/services/descriptionImageCache'
+
+type SupplementalMetadataField =
+  | 'description'
+  | 'tags'
+  | 'extra'
+  | 'developers'
+  | 'publishers'
+  | 'genres'
+  | 'platforms'
+  | 'relatedSites'
 
 export async function batchUpdateGameMetadata({
   gameIds,
@@ -344,6 +347,7 @@ export async function updateGameMetadata({
       type: 'id',
       value: dataSourceId
     })
+    if (baseMetadata === null) throw new Error('No matching data was found.')
 
     // Prepare image fetching tasks
     const imageFetchTasks: Array<{ type: GameMetadataField; promise: Promise<string[]> }> = []
@@ -403,7 +407,14 @@ export async function updateGameMetadata({
 
     // Process image fetching results
     const imageResults = await Promise.all(
-      imageFetchTasks.map((task) => task.promise.then((urls) => ({ type: task.type, urls })))
+      imageFetchTasks.map((task) =>
+        task.promise
+          .then((urls) => ({ type: task.type, urls }))
+          .catch((error) => {
+            logScraperError(error, dataSource, 'optional image update', 'warn')
+            return { type: task.type, urls: [] }
+          })
+      )
     )
 
     // Update metadata object
@@ -502,7 +513,7 @@ export async function updateGameMetadata({
 
     // Step 2: Process special fields (description, tags, extra)
     // Prepare a list of special fields that need to be fetched
-    const needFetchSpecialFields: GameMetadataField[] = []
+    const needFetchSpecialFields: SupplementalMetadataField[] = []
 
     // Process description field
     if (updateAll || fieldsToUpdate.includes('description')) {
@@ -682,68 +693,45 @@ export async function updateGameMetadata({
       if (gameName) {
         // Use game name as identifier
         const nameIdentifier = { type: 'name', value: gameName } as ScraperIdentifier
-        const specialFetchPromises: {
-          description?: Promise<GameDescriptionList>
-          tags?: Promise<GameTagsList>
-          extra?: Promise<GameExtraInfoList>
-          developers?: Promise<GameDevelopersList>
-          publishers?: Promise<GamePublishersList>
-          genres?: Promise<GameGenresList>
-          platforms?: Promise<GamePlatformsList>
-          relatedSites?: Promise<GameRelatedSitesList>
-        } = {}
-
-        // Prepare additional fetch tasks
-        if (needFetchSpecialFields.includes('description')) {
-          specialFetchPromises.description = scraperManager.getGameDescriptionList(nameIdentifier)
-        }
-
-        if (needFetchSpecialFields.includes('tags')) {
-          specialFetchPromises.tags = scraperManager.getGameTagsList(nameIdentifier)
-        }
-
-        if (needFetchSpecialFields.includes('extra')) {
-          specialFetchPromises.extra = scraperManager.getGameExtraInfoList(nameIdentifier)
-        }
-
-        if (needFetchSpecialFields.includes('developers')) {
-          specialFetchPromises.developers = scraperManager.getGameDevelopersList(nameIdentifier)
-        }
-
-        if (needFetchSpecialFields.includes('publishers')) {
-          specialFetchPromises.publishers = scraperManager.getGamePublishersList(nameIdentifier)
-        }
-
-        if (needFetchSpecialFields.includes('genres')) {
-          specialFetchPromises.genres = scraperManager.getGameGenresList(nameIdentifier)
-        }
-
-        if (needFetchSpecialFields.includes('platforms')) {
-          specialFetchPromises.platforms = scraperManager.getGamePlatformsList(nameIdentifier)
-        }
-
-        if (needFetchSpecialFields.includes('relatedSites')) {
-          specialFetchPromises.relatedSites = scraperManager.getGameRelatedSitesList(nameIdentifier)
-        }
 
         // Execute additional fetch tasks
-        const specialResults = await Promise.all(Object.values(specialFetchPromises))
-        const specialResultsMap: {
-          description?: GameDescriptionList
-          tags?: GameTagsList
-          extra?: GameExtraInfoList
-          developers?: GameDevelopersList
-          publishers?: GamePublishersList
-          genres?: GameGenresList
-          platforms?: GamePlatformsList
-          relatedSites?: GameRelatedSitesList
-        } = {}
-
-        // Map results
-        let resultIndex = 0
-        Object.keys(specialFetchPromises).forEach((key) => {
-          specialResultsMap[key] = specialResults[resultIndex++]
-        })
+        const specialMetadataList: GameMetadataAggregationResult<SupplementalMetadataField> =
+          await scraperManager
+            .getGameMetadataList(nameIdentifier, needFetchSpecialFields, {
+              [dataSource]: baseMetadata
+            })
+            .catch((error) => {
+              logScraperError(error, 'aggregate', 'optional metadata update', 'warn')
+              return []
+            })
+        const specialResultsMap = {
+          description: specialMetadataList.flatMap(({ dataSource, metadata }) =>
+            metadata.description ? [{ dataSource, description: metadata.description }] : []
+          ),
+          tags: specialMetadataList.flatMap(({ dataSource, metadata }) =>
+            metadata.tags?.length ? [{ dataSource, tags: metadata.tags }] : []
+          ),
+          extra: specialMetadataList.flatMap(({ dataSource, metadata }) =>
+            metadata.extra?.length ? [{ dataSource, extra: metadata.extra }] : []
+          ),
+          developers: specialMetadataList.flatMap(({ dataSource, metadata }) =>
+            metadata.developers?.length ? [{ dataSource, developers: metadata.developers }] : []
+          ),
+          publishers: specialMetadataList.flatMap(({ dataSource, metadata }) =>
+            metadata.publishers?.length ? [{ dataSource, publishers: metadata.publishers }] : []
+          ),
+          genres: specialMetadataList.flatMap(({ dataSource, metadata }) =>
+            metadata.genres?.length ? [{ dataSource, genres: metadata.genres }] : []
+          ),
+          platforms: specialMetadataList.flatMap(({ dataSource, metadata }) =>
+            metadata.platforms?.length ? [{ dataSource, platforms: metadata.platforms }] : []
+          ),
+          relatedSites: specialMetadataList.flatMap(({ dataSource, metadata }) =>
+            metadata.relatedSites?.length
+              ? [{ dataSource, relatedSites: metadata.relatedSites }]
+              : []
+          )
+        }
 
         // Process additional fetched descriptions
         if (specialResultsMap.description) {
@@ -979,7 +967,8 @@ export async function updateGameMetadata({
 
     await cacheDescriptionImages(updatedMetadata.description, dbId)
   } catch (error) {
-    log.error('[MetadataUpdater] Failed to update game metadata:', error)
+    if (!(error instanceof ScraperError))
+      log.error('[MetadataUpdater] Failed to update game metadata:', error)
     throw error
   }
 }

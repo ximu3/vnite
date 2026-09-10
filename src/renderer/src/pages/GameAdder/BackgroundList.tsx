@@ -38,6 +38,8 @@ export function BackgroundList(): React.JSX.Element {
 
   useEffect(() => {
     const fetchBackgrounds = async (): Promise<void> => {
+      setBackgroundList([])
+      setBackgroundUrl('')
       try {
         toast.loading(t('gameAdder.backgrounds.notifications.loading'), {
           id: 'loading-backgrounds'
@@ -59,9 +61,14 @@ export function BackgroundList(): React.JSX.Element {
           id: 'loading-backgrounds'
         })
       } catch (error) {
-        toast.error(t('gameAdder.backgrounds.notifications.error', { message: String(error) }), {
-          id: 'loading-backgrounds'
-        })
+        toast.error(
+          t('gameAdder.backgrounds.notifications.error', {
+            message: error instanceof Error ? error.message : ''
+          }),
+          {
+            id: 'loading-backgrounds'
+          }
+        )
       }
     }
     fetchBackgrounds()
@@ -137,9 +144,14 @@ export function BackgroundList(): React.JSX.Element {
       }
     } catch (error) {
       setIsAdding(false)
-      toast.error(t('gameAdder.backgrounds.notifications.addError', { message: String(error) }), {
-        id: 'adding-game'
-      })
+      toast.error(
+        t('gameAdder.backgrounds.notifications.addError', {
+          message: error instanceof Error ? error.message : ''
+        }),
+        {
+          id: 'adding-game'
+        }
+      )
     }
   }
 

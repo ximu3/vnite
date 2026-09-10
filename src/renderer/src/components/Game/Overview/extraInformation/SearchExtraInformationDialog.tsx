@@ -38,11 +38,7 @@ export function SearchExtraInformationDialog({
 
   useEffect(() => {
     if (isOpen) {
-      toast.promise(handleSearch(), {
-        loading: t('detail.overview.extraInformation.search.loading'),
-        success: t('detail.overview.extraInformation.search.success'),
-        error: (err) => t('detail.overview.extraInformation.search.error', { message: err.message })
-      })
+      void handleSearch()
     }
     setExtraInfoList([])
   }, [isOpen, t])
@@ -57,6 +53,9 @@ export function SearchExtraInformationDialog({
   async function handleSearch(): Promise<void> {
     if (isLoading) return
     setIsLoading(true)
+    setExtraInfoList([])
+    setSelectedExtraInfo(initialExtraInfo)
+    const toastId = toast.loading(t('detail.overview.extraInformation.search.loading'))
 
     try {
       const result = await ipcManager.invoke('scraper:get-game-extra-info-list', {
@@ -65,13 +64,19 @@ export function SearchExtraInformationDialog({
       })
 
       if (!result || result.length === 0) {
-        toast.error(t('detail.overview.extraInformation.search.notFound'))
+        toast.error(t('detail.overview.extraInformation.search.notFound'), { id: toastId })
         return
       }
 
       setExtraInfoList(result)
+      toast.success(t('detail.overview.extraInformation.search.success'), { id: toastId })
     } catch (error) {
-      toast.error(t('detail.overview.extraInformation.search.searchError', { error }))
+      toast.error(
+        t('detail.overview.extraInformation.search.error', {
+          message: error instanceof Error ? error.message : ''
+        }),
+        { id: toastId }
+      )
     } finally {
       setIsLoading(false)
     }
@@ -168,12 +173,7 @@ export function SearchExtraInformationDialog({
             />
             <Button
               onClick={() => {
-                toast.promise(handleSearch(), {
-                  loading: t('detail.overview.extraInformation.search.loading'),
-                  success: t('detail.overview.extraInformation.search.success'),
-                  error: (err) =>
-                    t('detail.overview.extraInformation.search.error', { message: err.message })
-                })
+                void handleSearch()
               }}
               size={'icon'}
               className={cn('shrink-0')}

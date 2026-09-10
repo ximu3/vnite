@@ -1,16 +1,5 @@
 import { BatchGameInfo, DEFAULT_GAME_LOCAL_VALUES, DEFAULT_GAME_VALUES } from '@appTypes/models'
-import {
-  GameDescriptionList,
-  GameDevelopersList,
-  GameExtraInfoList,
-  GameGenresList,
-  GameMetadata,
-  GamePlatformsList,
-  GamePublishersList,
-  GameRelatedSitesList,
-  GameTagsList,
-  type GameImageUpscaleOptions
-} from '@appTypes/utils'
+import { GameMetadata, type GameImageUpscaleOptions } from '@appTypes/utils'
 import { generateUUID } from '@appUtils'
 import log from 'electron-log/main'
 import path from 'path'
@@ -23,9 +12,20 @@ import {
   tryUpscaleGameImage
 } from '~/features/game'
 import { launcherPreset } from '~/features/launcher'
-import { scraperManager } from '~/features/scraper'
+import { scraperManager, type GameMetadataAggregationResult } from '~/features/scraper'
+import { ScraperError, logScraperError } from '~/features/scraper/errors'
 import { cacheDescriptionImages } from '~/features/scraper/services/descriptionImageCache'
-import { getGameFolders, selectPathDialog, inferRootPath } from '~/utils'
+import { getGameFolders, inferRootPath, selectPathDialog } from '~/utils'
+
+type SupplementalMetadataField =
+  | 'description'
+  | 'tags'
+  | 'extra'
+  | 'developers'
+  | 'publishers'
+  | 'genres'
+  | 'platforms'
+  | 'relatedSites'
 
 export async function addGameToDB({
   dataSource,
@@ -62,193 +62,116 @@ export async function addGameToDB({
       type: 'id',
       value: dataSourceId
     })
+    if (baseMetadata === null) throw new Error('No matching data was found.')
 
     // Create a copy of the base metadata to avoid modifying the original
     const metadata = JSON.parse(JSON.stringify(baseMetadata)) as GameMetadata
 
     // Prepare tasks to fetch missing data
-    const enhancementTasks: Promise<any>[] = []
+    const enhancementFields: SupplementalMetadataField[] = []
 
     // Check and fetch missing description information
     if (!metadata.description || metadata.description.trim() === '') {
-      enhancementTasks.push(
-        scraperManager
-          .getGameDescriptionList?.({
-            type: 'name',
-            value: metadata.originalName || metadata.name
-          })
-          .catch((err) => {
-            console.warn(`Failed to get game description: ${err.message}`)
-            return []
-          })
-      )
-    } else {
-      enhancementTasks.push(Promise.resolve(null))
+      enhancementFields.push('description')
     }
 
     // Check and fetch missing tags information
     if (!metadata.tags || metadata.tags.length === 0) {
-      enhancementTasks.push(
-        scraperManager
-          .getGameTagsList?.({
-            type: 'name',
-            value: metadata.originalName || metadata.name
-          })
-          .catch((err) => {
-            console.warn(`Failed to get game tags: ${err.message}`)
-            return []
-          })
-      )
-    } else {
-      enhancementTasks.push(Promise.resolve(null))
+      enhancementFields.push('tags')
     }
 
     // Check and fetch missing extra information
     if (!metadata.extra || Object.keys(metadata.extra).length === 0) {
-      enhancementTasks.push(
-        scraperManager
-          .getGameExtraInfoList?.({
-            type: 'name',
-            value: metadata.originalName || metadata.name
-          })
-          .catch((err) => {
-            console.warn(`Failed to get game extra information: ${err.message}`)
-            return {}
-          })
-      )
-    } else {
-      enhancementTasks.push(Promise.resolve(null))
+      enhancementFields.push('extra')
     }
 
     // Check and fetch missing developers information
     if (!metadata.developers || metadata.developers.length === 0) {
-      enhancementTasks.push(
-        scraperManager
-          .getGameDevelopersList?.({
-            type: 'name',
-            value: metadata.originalName || metadata.name
-          })
-          .catch((err) => {
-            console.warn(`Failed to get game developers: ${err.message}`)
-            return []
-          })
-      )
-    } else {
-      enhancementTasks.push(Promise.resolve(null))
+      enhancementFields.push('developers')
     }
 
     // Check and fetch missing publishers information
     if (!metadata.publishers || metadata.publishers.length === 0) {
-      enhancementTasks.push(
-        scraperManager
-          .getGamePublishersList?.({
-            type: 'name',
-            value: metadata.originalName || metadata.name
-          })
-          .catch((err) => {
-            console.warn(`Failed to get game publishers: ${err.message}`)
-            return []
-          })
-      )
-    } else {
-      enhancementTasks.push(Promise.resolve(null))
+      enhancementFields.push('publishers')
     }
 
     // Check and fetch missing genres information
     if (!metadata.genres || metadata.genres.length === 0) {
-      enhancementTasks.push(
-        scraperManager
-          .getGameGenresList?.({
-            type: 'name',
-            value: metadata.originalName || metadata.name
-          })
-          .catch((err) => {
-            console.warn(`Failed to get game genres: ${err.message}`)
-            return []
-          })
-      )
-    } else {
-      enhancementTasks.push(Promise.resolve(null))
+      enhancementFields.push('genres')
     }
 
     // Check and fetch missing platforms information
     if (!metadata.platforms || metadata.platforms.length === 0) {
-      enhancementTasks.push(
-        scraperManager
-          .getGamePlatformsList?.({
-            type: 'name',
-            value: metadata.originalName || metadata.name
-          })
-          .catch((err) => {
-            console.warn(`Failed to get game platforms: ${err.message}`)
-            return []
-          })
-      )
-    } else {
-      enhancementTasks.push(Promise.resolve(null))
+      enhancementFields.push('platforms')
     }
 
     // Check and fetch missing related sites information
     if (!metadata.relatedSites || metadata.relatedSites.length === 0) {
-      enhancementTasks.push(
-        scraperManager
-          .getGameRelatedSitesList?.({
-            type: 'name',
-            value: metadata.originalName || metadata.name
-          })
-          .catch((err) => {
-            console.warn(`Failed to get game related sites: ${err.message}`)
-            return []
-          })
-      )
-    } else {
-      enhancementTasks.push(Promise.resolve(null))
+      enhancementFields.push('relatedSites')
     }
 
     // Execute all enhancement tasks
-    const [descriptions, tags, extra, developers, publishers, genres, platforms, relatedSites] =
-      (await Promise.all(enhancementTasks)) as [
-        GameDescriptionList,
-        GameTagsList,
-        GameExtraInfoList,
-        GameDevelopersList,
-        GamePublishersList,
-        GameGenresList,
-        GamePlatformsList,
-        GameRelatedSitesList
-      ]
+    const enhancementResult: GameMetadataAggregationResult<SupplementalMetadataField> =
+      enhancementFields.length
+        ? await scraperManager
+            .getGameMetadataList(
+              {
+                type: 'name',
+                value: metadata.originalName || metadata.name
+              },
+              enhancementFields,
+              { [dataSource]: baseMetadata }
+            )
+            .catch((err) => {
+              logScraperError(err, 'aggregate', 'optional game metadata', 'warn')
+              return []
+            })
+        : []
 
     // Merge fetched data into metadata
-    if (descriptions && descriptions.length > 0) {
-      metadata.description = descriptions[0].description
-    }
-
-    if (tags && tags.length > 0) {
-      metadata.tags = tags[0].tags
-    }
-
-    if (extra && Object.keys(extra).length > 0) {
-      metadata.extra = extra[0].extra
-    }
-
-    if (developers && developers.length > 0) {
-      metadata.developers = developers[0].developers
-    }
-
-    if (publishers && publishers.length > 0) {
-      metadata.publishers = publishers[0].publishers
-    }
-
-    if (genres && genres.length > 0) {
-      metadata.genres = genres[0].genres
-    }
-
-    if (platforms && platforms.length > 0) {
-      metadata.platforms = platforms[0].platforms
-    }
-
-    if (relatedSites && relatedSites.length > 0) {
-      metadata.relatedSites = relatedSites[0].relatedSites
+    for (const { metadata: enhancementMetadata } of enhancementResult) {
+      if (
+        (!metadata.description || metadata.description.trim() === '') &&
+        enhancementMetadata.description
+      ) {
+        metadata.description = enhancementMetadata.description
+      }
+      if ((!metadata.tags || metadata.tags.length === 0) && enhancementMetadata.tags?.length) {
+        metadata.tags = enhancementMetadata.tags
+      }
+      if ((!metadata.extra || metadata.extra.length === 0) && enhancementMetadata.extra?.length) {
+        metadata.extra = enhancementMetadata.extra
+      }
+      if (
+        (!metadata.developers || metadata.developers.length === 0) &&
+        enhancementMetadata.developers?.length
+      ) {
+        metadata.developers = enhancementMetadata.developers
+      }
+      if (
+        (!metadata.publishers || metadata.publishers.length === 0) &&
+        enhancementMetadata.publishers?.length
+      ) {
+        metadata.publishers = enhancementMetadata.publishers
+      }
+      if (
+        (!metadata.genres || metadata.genres.length === 0) &&
+        enhancementMetadata.genres?.length
+      ) {
+        metadata.genres = enhancementMetadata.genres
+      }
+      if (
+        (!metadata.platforms || metadata.platforms.length === 0) &&
+        enhancementMetadata.platforms?.length
+      ) {
+        metadata.platforms = enhancementMetadata.platforms
+      }
+      if (
+        (!metadata.relatedSites || metadata.relatedSites.length === 0) &&
+        enhancementMetadata.relatedSites?.length
+      ) {
+        metadata.relatedSites = enhancementMetadata.relatedSites
+      }
     }
 
     // Prepare game document, deep copy to avoid mutation
@@ -288,7 +211,7 @@ export async function addGameToDB({
       covers: scraperManager
         .getGameCovers(dataSource, { type: 'id', value: dataSourceId })
         .catch((err) => {
-          console.warn(`Failed to get game covers: ${err.message}`)
+          logScraperError(err, 'aggregate', 'optional game covers', 'warn')
           return []
         }),
       // Use backgroundUrl if provided, otherwise fetch from scraper
@@ -296,7 +219,7 @@ export async function addGameToDB({
         ? scraperManager
             .getGameBackgrounds(dataSource, { type: 'id', value: dataSourceId })
             .catch((err) => {
-              console.warn(`Failed to get game backgrounds: ${err.message}`)
+              logScraperError(err, 'aggregate', 'optional game backgrounds', 'warn')
               return []
             })
         : Promise.resolve([])
@@ -315,7 +238,7 @@ export async function addGameToDB({
           value: dataSourceId
         })
         .catch((err) => {
-          console.warn(`Failed to get game icons: ${err.message}`)
+          logScraperError(err, 'aggregate', 'optional game icons', 'warn')
           return []
         })
     } else {
@@ -328,7 +251,7 @@ export async function addGameToDB({
             : { type: 'name', value: metadata.originalName || metadata.name }
         )
         .catch((err) => {
-          console.warn(`Failed to get game icons: ${err.message}`)
+          logScraperError(err, 'aggregate', 'optional game icons', 'warn')
           return []
         })
     }
@@ -342,7 +265,7 @@ export async function addGameToDB({
           value: dataSourceId
         })
         .catch((err) => {
-          console.warn(`Failed to get game logos: ${err.message}`)
+          logScraperError(err, 'aggregate', 'optional game logos', 'warn')
           return []
         })
     } else {
@@ -355,7 +278,7 @@ export async function addGameToDB({
             : { type: 'name', value: metadata.originalName || metadata.name }
         )
         .catch((err) => {
-          console.warn(`Failed to get game logos: ${err.message}`)
+          logScraperError(err, 'aggregate', 'optional game logos', 'warn')
           return []
         })
     }
@@ -457,7 +380,8 @@ export async function addGameToDB({
 
     return dbId
   } catch (error) {
-    log.error('[Adder] Failed to add game to database:', error)
+    if (!(error instanceof ScraperError))
+      log.error('[Adder] Failed to add game to database:', error)
     throw error
   }
 }
