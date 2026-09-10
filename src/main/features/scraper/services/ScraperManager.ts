@@ -14,9 +14,20 @@ import {
 } from '@appTypes/utils'
 import { Transformer } from '~/features/transformer'
 import { ScraperError, logScraperError } from '../errors'
-import { ScraperCapabilities, ScraperProvider } from './types'
+import {
+  GameMetadataAggregationField,
+  GameMetadataAggregationResult,
+  GameMetadataAggregationSeed,
+  ScraperCapabilities,
+  ScraperProvider
+} from './types'
 
 const SCRAPER_AGGREGATION_TIMEOUT = 5_000
+
+type AggregatedMetadataSource = {
+  dataSource: string
+  metadata: GameMetadata
+}
 
 async function withAggregationTimeout<T>(
   request: Promise<T>,
@@ -288,343 +299,182 @@ export class ScraperManager {
     )
   }
 
-  public async getGameDescriptionList(identifier: ScraperIdentifier): Promise<GameDescriptionList> {
+  private async getAggregatedMetadataSources(
+    identifier: ScraperIdentifier,
+    preloadedMetadata: GameMetadataAggregationSeed = {}
+  ): Promise<AggregatedMetadataSource[]> {
+    const providerIds = this.getProviderIdsWithCapabilities(['getGameMetadata'])
+
+    // Execute all requests in parallel
+    const metadataSources = await Promise.all(
+      providerIds.map(async (providerId): Promise<AggregatedMetadataSource | null> => {
+        try {
+          const metadata = Object.hasOwn(preloadedMetadata, providerId)
+            ? (preloadedMetadata[providerId] ?? null)
+            : await withAggregationTimeout(this.getGameMetadata(providerId, identifier))
+
+          return metadata ? { dataSource: providerId, metadata } : null
+        } catch (error) {
+          logScraperError(error, providerId, 'getGameMetadata', 'warn')
+          return null
+        }
+      })
+    )
+
+    // Extract successful results
+    return metadataSources.filter((source): source is AggregatedMetadataSource => source !== null)
+  }
+
+  /**
+   * Fetch selected metadata fields with at most one metadata request per provider.
+   * Preloaded metadata is reused instead of requesting the matching provider again.
+   */
+  public async getGameMetadataList<Fields extends GameMetadataAggregationField>(
+    identifier: ScraperIdentifier,
+    fields: readonly Fields[],
+    preloadedMetadata: GameMetadataAggregationSeed = {}
+  ): Promise<GameMetadataAggregationResult<Fields>> {
     try {
-      const providerIds = this.getProviderIdsWithCapabilities(['getGameMetadata'])
-      // Execute all requests in parallel
-      const metadataResults = await Promise.allSettled(
-        providerIds.map(async (providerId) => {
-          try {
-            const metadata = await withAggregationTimeout(
-              this.getGameMetadata(providerId, identifier)
-            )
-            return { dataSource: providerId, description: metadata?.description || '' }
-          } catch (error) {
-            logScraperError(error, providerId, 'getGameMetadata', 'warn')
-            return { dataSource: providerId, description: '' }
-          }
-        })
-      )
+      const requestedFields = new Set(fields)
 
-      // Extract successful results
-      const candidates = metadataResults
-        .filter(
-          (result): result is PromiseFulfilledResult<{ dataSource: string; description: string }> =>
-            result.status === 'fulfilled'
-        )
-        .map((result) => result.value)
-        .filter((item) => item.description)
+      if (requestedFields.size === 0) {
+        return []
+      }
 
-      const descriptionList = candidates as GameDescriptionList
-      return await Transformer.transformDescriptionList(descriptionList)
+      const metadataSources = await this.getAggregatedMetadataSources(identifier, preloadedMetadata)
+
+      return metadataSources.map(({ dataSource, metadata }) => ({
+        dataSource,
+        metadata: Object.fromEntries(
+          Array.from(requestedFields).map((field) => [field, metadata[field]])
+        ) as Pick<GameMetadata, Fields>
+      }))
     } catch (error) {
-      throw logScraperError(error, 'aggregate', 'description list')
+      throw logScraperError(error, 'aggregate', 'metadata list')
     }
+  }
+
+  public async getGameDescriptionList(identifier: ScraperIdentifier): Promise<GameDescriptionList> {
+    const metadataList = await this.getGameMetadataList(identifier, ['description'])
+    const candidates = metadataList
+      .map(({ dataSource, metadata }) => ({
+        dataSource,
+        description: metadata.description || ''
+      }))
+      .filter((item) => item.description)
+    return await Transformer.transformDescriptionList(candidates)
   }
 
   public async getGameTagsList(identifier: ScraperIdentifier): Promise<GameTagsList> {
-    try {
-      const providerIds = this.getProviderIdsWithCapabilities(['getGameMetadata'])
-      // Execute all requests in parallel
-      const metadataResults = await Promise.allSettled(
-        providerIds.map(async (providerId) => {
-          try {
-            const metadata = await withAggregationTimeout(
-              this.getGameMetadata(providerId, identifier)
-            )
-            return { dataSource: providerId, tags: metadata?.tags || [] }
-          } catch (error) {
-            logScraperError(error, providerId, 'getGameMetadata', 'warn')
-            return { dataSource: providerId, tags: [] }
-          }
-        })
-      )
-
-      // Extract successful results
-      const candidates = metadataResults
-        .filter(
-          (result): result is PromiseFulfilledResult<{ dataSource: string; tags: string[] }> =>
-            result.status === 'fulfilled'
-        )
-        .map((result) => result.value)
-        .filter((item) => item.tags.length > 0)
-
-      const tagsList = candidates as GameTagsList
-      return await Transformer.transformTagsList(tagsList)
-    } catch (error) {
-      throw logScraperError(error, 'aggregate', 'tags list')
-    }
+    const metadataList = await this.getGameMetadataList(identifier, ['tags'])
+    const candidates = metadataList
+      .map(({ dataSource, metadata }) => ({
+        dataSource,
+        tags: metadata.tags || []
+      }))
+      .filter((item) => item.tags.length > 0)
+    return await Transformer.transformTagsList(candidates)
   }
 
   public async getGameExtraInfoList(identifier: ScraperIdentifier): Promise<GameExtraInfoList> {
-    try {
-      const providerIds = this.getProviderIdsWithCapabilities(['getGameMetadata'])
-      // Execute all requests in parallel
-      const metadataResults = await Promise.allSettled(
-        providerIds.map(async (providerId) => {
-          try {
-            const metadata = await withAggregationTimeout(
-              this.getGameMetadata(providerId, identifier)
-            )
-            return { dataSource: providerId, extra: metadata?.extra || [] }
-          } catch (error) {
-            logScraperError(error, providerId, 'getGameMetadata', 'warn')
-            return { dataSource: providerId, extra: [] }
-          }
-        })
-      )
-
-      // Extract successful results
-      const candidates = metadataResults
-        .filter(
-          (result): result is PromiseFulfilledResult<{ dataSource: string; extra: any[] }> =>
-            result.status === 'fulfilled'
-        )
-        .map((result) => result.value)
-        .filter((item) => item.extra && item.extra.length > 0)
-
-      const extraInfoList = candidates as GameExtraInfoList
-      return await Transformer.transformExtraInfoList(extraInfoList)
-    } catch (error) {
-      throw logScraperError(error, 'aggregate', 'extra info list')
-    }
+    const metadataList = await this.getGameMetadataList(identifier, ['extra'])
+    const candidates = metadataList
+      .map(({ dataSource, metadata }) => ({
+        dataSource,
+        extra: metadata.extra || []
+      }))
+      .filter((item) => item.extra.length > 0)
+    return await Transformer.transformExtraInfoList(candidates)
   }
 
   public async getGameDevelopersList(identifier: ScraperIdentifier): Promise<GameDevelopersList> {
-    try {
-      const providerIds = this.getProviderIdsWithCapabilities(['getGameMetadata'])
-      // Execute all requests in parallel
-      const metadataResults = await Promise.allSettled(
-        providerIds.map(async (providerId) => {
-          try {
-            const metadata = await withAggregationTimeout(
-              this.getGameMetadata(providerId, identifier)
-            )
-            return { dataSource: providerId, developers: metadata?.developers || [] }
-          } catch (error) {
-            logScraperError(error, providerId, 'getGameMetadata', 'warn')
-            return { dataSource: providerId, developers: [] }
-          }
-        })
-      )
-
-      // Extract successful results
-      const candidates = metadataResults
-        .filter(
-          (
-            result
-          ): result is PromiseFulfilledResult<{ dataSource: string; developers: string[] }> =>
-            result.status === 'fulfilled'
-        )
-        .map((result) => result.value)
-        .filter((item) => item.developers && item.developers.length > 0)
-
-      const developersList = candidates as GameDevelopersList
-      return await Transformer.transformDevelopersList(developersList)
-    } catch (error) {
-      throw logScraperError(error, 'aggregate', 'developers list')
-    }
+    const metadataList = await this.getGameMetadataList(identifier, ['developers'])
+    const candidates = metadataList
+      .map(({ dataSource, metadata }) => ({
+        dataSource,
+        developers: metadata.developers || []
+      }))
+      .filter((item) => item.developers.length > 0)
+    return await Transformer.transformDevelopersList(candidates)
   }
 
   public async getGamePublishersList(identifier: ScraperIdentifier): Promise<GamePublishersList> {
-    try {
-      const providerIds = this.getProviderIdsWithCapabilities(['getGameMetadata'])
-      // Execute all requests in parallel
-      const metadataResults = await Promise.allSettled(
-        providerIds.map(async (providerId) => {
-          try {
-            const metadata = await withAggregationTimeout(
-              this.getGameMetadata(providerId, identifier)
-            )
-            return { dataSource: providerId, publishers: metadata?.publishers || [] }
-          } catch (error) {
-            logScraperError(error, providerId, 'getGameMetadata', 'warn')
-            return { dataSource: providerId, publishers: [] }
-          }
-        })
-      )
-
-      // Extract successful results
-      const candidates = metadataResults
-        .filter(
-          (
-            result
-          ): result is PromiseFulfilledResult<{ dataSource: string; publishers: string[] }> =>
-            result.status === 'fulfilled'
-        )
-        .map((result) => result.value)
-        .filter((item) => item.publishers && item.publishers.length > 0)
-
-      const publishersList = candidates as GamePublishersList
-      return await Transformer.transformPublishersList(publishersList)
-    } catch (error) {
-      throw logScraperError(error, 'aggregate', 'publishers list')
-    }
+    const metadataList = await this.getGameMetadataList(identifier, ['publishers'])
+    const candidates = metadataList
+      .map(({ dataSource, metadata }) => ({
+        dataSource,
+        publishers: metadata.publishers || []
+      }))
+      .filter((item) => item.publishers.length > 0)
+    return await Transformer.transformPublishersList(candidates)
   }
 
   public async getGameGenresList(identifier: ScraperIdentifier): Promise<GameGenresList> {
-    try {
-      const providerIds = this.getProviderIdsWithCapabilities(['getGameMetadata'])
-      // Execute all requests in parallel
-      const metadataResults = await Promise.allSettled(
-        providerIds.map(async (providerId) => {
-          try {
-            const metadata = await withAggregationTimeout(
-              this.getGameMetadata(providerId, identifier)
-            )
-            return { dataSource: providerId, genres: metadata?.genres || [] }
-          } catch (error) {
-            logScraperError(error, providerId, 'getGameMetadata', 'warn')
-            return { dataSource: providerId, genres: [] }
-          }
-        })
-      )
-
-      // Extract successful results
-      const candidates = metadataResults
-        .filter(
-          (result): result is PromiseFulfilledResult<{ dataSource: string; genres: string[] }> =>
-            result.status === 'fulfilled'
-        )
-        .map((result) => result.value)
-        .filter((item) => item.genres && item.genres.length > 0)
-
-      const genresList = candidates as GameGenresList
-      return await Transformer.transformGenresList(genresList)
-    } catch (error) {
-      throw logScraperError(error, 'aggregate', 'genres list')
-    }
+    const metadataList = await this.getGameMetadataList(identifier, ['genres'])
+    const candidates = metadataList
+      .map(({ dataSource, metadata }) => ({
+        dataSource,
+        genres: metadata.genres || []
+      }))
+      .filter((item) => item.genres.length > 0)
+    return await Transformer.transformGenresList(candidates)
   }
 
   public async getGamePlatformsList(identifier: ScraperIdentifier): Promise<GamePlatformsList> {
-    try {
-      const providerIds = this.getProviderIdsWithCapabilities(['getGameMetadata'])
-      // Execute all requests in parallel
-      const metadataResults = await Promise.allSettled(
-        providerIds.map(async (providerId) => {
-          try {
-            const metadata = await withAggregationTimeout(
-              this.getGameMetadata(providerId, identifier)
-            )
-            return { dataSource: providerId, platforms: metadata?.platforms || [] }
-          } catch (error) {
-            logScraperError(error, providerId, 'getGameMetadata', 'warn')
-            return { dataSource: providerId, platforms: [] }
-          }
-        })
-      )
-
-      // Extract successful results
-      const candidates = metadataResults
-        .filter(
-          (result): result is PromiseFulfilledResult<{ dataSource: string; platforms: string[] }> =>
-            result.status === 'fulfilled'
-        )
-        .map((result) => result.value)
-        .filter((item) => item.platforms && item.platforms.length > 0)
-
-      const platformsList = candidates as GamePlatformsList
-      return await Transformer.transformPlatformsList(platformsList)
-    } catch (error) {
-      throw logScraperError(error, 'aggregate', 'platforms list')
-    }
+    const metadataList = await this.getGameMetadataList(identifier, ['platforms'])
+    const candidates = metadataList
+      .map(({ dataSource, metadata }) => ({
+        dataSource,
+        platforms: metadata.platforms || []
+      }))
+      .filter((item) => item.platforms.length > 0)
+    return await Transformer.transformPlatformsList(candidates)
   }
 
   public async getGameRelatedSitesList(
     identifier: ScraperIdentifier
   ): Promise<GameRelatedSitesList> {
-    try {
-      const providerIds = this.getProviderIdsWithCapabilities(['getGameMetadata'])
-      // Execute all requests in parallel
-      const metadataResults = await Promise.allSettled(
-        providerIds.map(async (providerId) => {
-          try {
-            const metadata = await withAggregationTimeout(
-              this.getGameMetadata(providerId, identifier)
-            )
-            return { dataSource: providerId, relatedSites: metadata?.relatedSites || [] }
-          } catch (error) {
-            logScraperError(error, providerId, 'getGameMetadata', 'warn')
-            return { dataSource: providerId, relatedSites: [] }
-          }
-        })
-      )
-
-      // Extract successful results
-      const candidates = metadataResults
-        .filter(
-          (result): result is PromiseFulfilledResult<{ dataSource: string; relatedSites: any[] }> =>
-            result.status === 'fulfilled'
-        )
-        .map((result) => result.value)
-        .filter((item) => item.relatedSites && item.relatedSites.length > 0)
-
-      const relatedSitesList = candidates as GameRelatedSitesList
-      return await Transformer.transformRelatedSitesList(relatedSitesList)
-    } catch (error) {
-      throw logScraperError(error, 'aggregate', 'related sites list')
-    }
+    const metadataList = await this.getGameMetadataList(identifier, ['relatedSites'])
+    const candidates = metadataList
+      .map(({ dataSource, metadata }) => ({
+        dataSource,
+        relatedSites: metadata.relatedSites || []
+      }))
+      .filter((item) => item.relatedSites.length > 0)
+    return await Transformer.transformRelatedSitesList(candidates)
   }
 
   public async getGameInformationList(identifier: ScraperIdentifier): Promise<GameInformationList> {
     try {
-      const providerIds = this.getProviderIdsWithCapabilities(['getGameMetadata'])
-      // Execute all requests in parallel
-      const metadataResults = await Promise.allSettled(
-        providerIds.map(async (providerId) => {
-          try {
-            const metadata = await withAggregationTimeout(
-              this.getGameMetadata(providerId, identifier)
-            )
-            if (metadata === null) {
-              return {
-                dataSource: providerId,
-                information: {}
-              }
-            }
-
-            return {
-              dataSource: providerId,
-              information: {
-                name: metadata.name || undefined,
-                originalName: metadata.originalName || undefined,
-                releaseDate: metadata.releaseDate || undefined,
-                developers:
-                  metadata.developers && metadata.developers.length > 0
-                    ? metadata.developers
-                    : undefined,
-                publishers:
-                  metadata.publishers && metadata.publishers.length > 0
-                    ? metadata.publishers
-                    : undefined,
-                genres: metadata.genres && metadata.genres.length > 0 ? metadata.genres : undefined,
-                platforms:
-                  metadata.platforms && metadata.platforms.length > 0
-                    ? metadata.platforms
-                    : undefined
-              }
-            }
-          } catch (error) {
-            logScraperError(error, providerId, 'getGameMetadata', 'warn')
-            return {
-              dataSource: providerId,
-              information: {}
-            }
+      const metadataList = await this.getGameMetadataList(identifier, [
+        'name',
+        'originalName',
+        'releaseDate',
+        'developers',
+        'publishers',
+        'genres',
+        'platforms'
+      ])
+      const candidates = metadataList
+        .map(({ dataSource, metadata }) => ({
+          dataSource,
+          information: {
+            name: metadata.name || undefined,
+            originalName: metadata.originalName || undefined,
+            releaseDate: metadata.releaseDate || undefined,
+            developers:
+              metadata.developers && metadata.developers.length > 0
+                ? metadata.developers
+                : undefined,
+            publishers:
+              metadata.publishers && metadata.publishers.length > 0
+                ? metadata.publishers
+                : undefined,
+            genres: metadata.genres && metadata.genres.length > 0 ? metadata.genres : undefined,
+            platforms:
+              metadata.platforms && metadata.platforms.length > 0 ? metadata.platforms : undefined
           }
-        })
-      )
-
-      // Extract successful results
-      const candidates = metadataResults
-        .filter(
-          (
-            result
-          ): result is PromiseFulfilledResult<{
-            dataSource: string
-            information: any
-          }> => result.status === 'fulfilled'
-        )
-        .map((result) => result.value)
+        }))
         .filter((item) => {
           const info = item.information
           return (
@@ -639,8 +489,7 @@ export class ScraperManager {
           )
         })
 
-      const informationList = candidates as GameInformationList
-      return await Transformer.transformInformationList(informationList)
+      return await Transformer.transformInformationList(candidates)
     } catch (error) {
       throw logScraperError(error, 'aggregate', 'information list')
     }
