@@ -10,7 +10,7 @@ import { eventBus } from '~/core/events'
 import { ipcManager } from '~/core/ipc'
 import { ActiveGameInfo, backupGameSave } from '~/features/game'
 import { updateRecentGamesInTray } from '~/features/system'
-import { psManager, simulateHotkey } from '~/utils'
+import { psManager, simulateHotkey, toPowerShellStringLiteral } from '~/utils'
 import { removeMonitorStub } from './nativeMonitor'
 
 async function getProcessList(): Promise<
@@ -194,17 +194,14 @@ export class GameMonitor {
       } else {
         // Normalize the path
         const normalizedPath = this.normalizePath(process.path)
-        // PowerShell treats the following five characters as single-quote tokens, so all must be escaped.
-        const escapedPath = normalizedPath.replace(/['\u2018\u2019\u201a\u201b]/g, (quote) =>
-          quote.repeat(2)
-        )
+        const pathLiteral = toPowerShellStringLiteral(normalizedPath)
         const processName = path.basename(normalizedPath)
 
         console.log(`Try to terminate process: ${normalizedPath}`)
 
         try {
           // Use PowerShell to terminate the process by exact path
-          const psCommand = `Get-Process | Where-Object {$_.Path -eq '${escapedPath}'} | Stop-Process -Force`
+          const psCommand = `Get-Process | Where-Object {$_.Path -eq ${pathLiteral}} | Stop-Process -Force`
           await psManager.executeCommand(psCommand)
           console.log(`Process ${processName} has been terminated successfully.`)
           return true

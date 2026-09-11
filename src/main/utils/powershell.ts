@@ -1,6 +1,16 @@
 import { ChildProcess, spawn } from 'child_process'
 import log from 'electron-log/main'
 
+/**
+ * Escapes PowerShell single-quote tokens and returns the value as a single-quoted string literal.
+ */
+export function toPowerShellStringLiteral(value: string): string {
+  // PowerShell treats the following five characters as single-quote tokens, so all must be escaped.
+  const escapedValue = value.replace(/['\u2018\u2019\u201a\u201b]/g, (quote) => quote.repeat(2))
+
+  return `'${escapedValue}'`
+}
+
 class PowerShellManager {
   private psProcess: ChildProcess | null = null
   private isInitialized = false
