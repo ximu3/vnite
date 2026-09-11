@@ -115,6 +115,7 @@
     "@electron-toolkit/tsconfig": "^1.0.1",
     "@iconify/json": "^2.2.357",
     "@iconify/tailwind4": "^1.0.6",
+    "@jsquash/avif": "2.1.1",
     "@tailwindcss/typography": "^0.5.16",
     "@types/adm-zip": "^0.5.7",
     "@types/archiver": "^6.0.3",
