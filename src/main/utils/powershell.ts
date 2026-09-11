@@ -1,5 +1,15 @@
-import { spawn, ChildProcess } from 'child_process'
+import { ChildProcess, spawn } from 'child_process'
 import log from 'electron-log/main'
+
+/**
+ * Escapes PowerShell single-quote tokens and returns the value as a single-quoted string literal.
+ */
+export function toPowerShellStringLiteral(value: string): string {
+  // PowerShell treats the following five characters as single-quote tokens, so all must be escaped.
+  const escapedValue = value.replace(/['\u2018\u2019\u201a\u201b]/g, (quote) => quote.repeat(2))
+
+  return `'${escapedValue}'`
+}
 
 class PowerShellManager {
   private psProcess: ChildProcess | null = null
@@ -140,9 +150,20 @@ class PowerShellManager {
       this.psProcess.stdout.on('data', onData)
       this.psProcess.stderr?.on('data', onError)
 
-      // Process the command and add the delimiter
-      const fullCommand = `${command}; Write-Host "${delimiter}"\n`
-      this.psProcess.stdin?.write(fullCommand)
+      // Encode the command so only ASCII characters are sent through PowerShell's stdin.
+      // PowerShell explicitly decodes it as UTF-8 before execution, avoiding console code page issues.
+      const encodedCommand = Buffer.from(command, 'utf8').toString('base64')
+      const fullCommand = `
+        & (
+          [ScriptBlock]::Create(
+            [Text.Encoding]::UTF8.GetString(
+              [Convert]::FromBase64String('${encodedCommand}')
+            )
+          )
+        );
+        Write-Host "${delimiter}"
+      `
+      this.psProcess.stdin?.write(`${fullCommand}\n`)
     })
   }
 
