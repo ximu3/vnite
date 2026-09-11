@@ -1,4 +1,6 @@
 import { getUpscalerBackendByPath, type GameImageUpscaleOptions } from '@appTypes/utils'
+import avifDecoderWasmPath from '@jsquash/avif/codec/dec/avif_dec.wasm?asset'
+import decodeAvif, { init as initAvifDecoder } from '@jsquash/avif/decode.js'
 import { Mutex } from 'async-mutex'
 import { spawn } from 'child_process'
 import { clipboard, net } from 'electron'
@@ -128,6 +130,40 @@ export async function convertToWebP(
         .toBuffer()
     }
 
+    const fileType = await fileTypeFromBuffer(imageBuffer as Uint8Array)
+
+    // Under ISO BMFF, AVIF may be declared as either the major brand or a compatible
+    // brand. When AVIF appears only as a compatible brand, file-type reports generic HEIF.
+    // Although generic HEIF may also represent HEIC, but there is no current need to support it.
+    if (fileType?.mime === 'image/avif' || fileType?.mime === 'image/heif') {
+      // Some images in Steam descriptions use 10-bit AVIF, which Sharp cannot decode.
+      // To keep this conversion path simple, route all AVIF input through @jsquash/avif.
+      // This API exposes only a single frame, so animated AVIF is not preserved.
+      await ensureAvifDecoder()
+      const imageData = await decodeAvif(imageBuffer)
+      if (!imageData) {
+        throw new Error('Failed to decode image as AVIF')
+      }
+
+      const pixels = Buffer.from(
+        imageData.data.buffer,
+        imageData.data.byteOffset,
+        imageData.data.byteLength
+      )
+
+      return await sharp(pixels, {
+        raw: {
+          width: imageData.width,
+          height: imageData.height,
+          channels: 4
+        }
+      })
+        .webp({
+          quality: options.quality ?? 100
+        })
+        .toBuffer()
+    }
+
     const metadata = await sharp(imageBuffer).metadata()
 
     let isAnimated = false
@@ -182,6 +218,21 @@ function isIcoFormat(buffer: Buffer): boolean {
     return buffer[0] === 0 && buffer[1] === 0 && buffer[2] === 1 && buffer[3] === 0
   }
   return false
+}
+
+let avifDecoderInitialization: Promise<void> | undefined
+
+async function ensureAvifDecoder(): Promise<void> {
+  avifDecoderInitialization ??= (async () => {
+    const wasmBuffer = await fse.readFile(avifDecoderWasmPath)
+    const wasmModule = await WebAssembly.compile(Uint8Array.from(wasmBuffer))
+
+    // Follow jSquash's Node integration pattern by loading and compiling WASM explicitly:
+    // https://github.com/jamsinclair/jSquash/blob/main/examples/with-node/index.js
+    await initAvifDecoder(wasmModule)
+  })()
+
+  return avifDecoderInitialization
 }
 
 export async function cropImage({
