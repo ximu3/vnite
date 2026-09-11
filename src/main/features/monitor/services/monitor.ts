@@ -1,19 +1,17 @@
-import path from 'path'
-import fse from 'fs-extra'
-import { ipcMain, BrowserWindow } from 'electron'
-import { simulateHotkey } from '~/utils'
-import { updateRecentGamesInTray } from '~/features/system'
-import { GameDBManager, ConfigDBManager } from '~/core/database'
-import log from 'electron-log/main.js'
-import { backupGameSave } from '~/features/game'
-import { spawn } from 'child_process'
-import { psManager } from '~/utils'
-import { ipcManager } from '~/core/ipc'
-import { eventBus } from '~/core/events'
-import { ActiveGameInfo } from '~/features/game'
-import { Mutex } from 'async-mutex'
-import { removeMonitorStub } from './nativeMonitor'
 import { TimerStatus } from '@appTypes/models'
+import { Mutex } from 'async-mutex'
+import { spawn } from 'child_process'
+import { BrowserWindow, ipcMain } from 'electron'
+import log from 'electron-log/main.js'
+import fse from 'fs-extra'
+import path from 'path'
+import { ConfigDBManager, GameDBManager } from '~/core/database'
+import { eventBus } from '~/core/events'
+import { ipcManager } from '~/core/ipc'
+import { ActiveGameInfo, backupGameSave } from '~/features/game'
+import { updateRecentGamesInTray } from '~/features/system'
+import { psManager, simulateHotkey } from '~/utils'
+import { removeMonitorStub } from './nativeMonitor'
 
 async function getProcessList(): Promise<
   Array<{
@@ -165,6 +163,7 @@ export class GameMonitor {
       const isProcessNameMode = process.isProcessNameMode === true
 
       if (isProcessNameMode) {
+        // NOTE: This legacy branch is unused by native monitoring; its command safety is unchecked.
         // Process name mode, use the process name directly
         const processName = process.path
         console.log(`Try to terminate process by name: ${processName}`)
@@ -195,13 +194,17 @@ export class GameMonitor {
       } else {
         // Normalize the path
         const normalizedPath = this.normalizePath(process.path)
+        // PowerShell treats the following five characters as single-quote tokens, so all must be escaped.
+        const escapedPath = normalizedPath.replace(/['\u2018\u2019\u201a\u201b]/g, (quote) =>
+          quote.repeat(2)
+        )
         const processName = path.basename(normalizedPath)
 
         console.log(`Try to terminate process: ${normalizedPath}`)
 
         try {
           // Use PowerShell to terminate the process by exact path
-          const psCommand = `Get-Process | Where-Object {$_.Path -eq '${normalizedPath}'} | Stop-Process -Force`
+          const psCommand = `Get-Process | Where-Object {$_.Path -eq '${escapedPath}'} | Stop-Process -Force`
           await psManager.executeCommand(psCommand)
           console.log(`Process ${processName} has been terminated successfully.`)
           return true

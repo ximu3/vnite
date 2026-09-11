@@ -1,4 +1,4 @@
-import { spawn, ChildProcess } from 'child_process'
+import { ChildProcess, spawn } from 'child_process'
 import log from 'electron-log/main'
 
 class PowerShellManager {
@@ -140,9 +140,20 @@ class PowerShellManager {
       this.psProcess.stdout.on('data', onData)
       this.psProcess.stderr?.on('data', onError)
 
-      // Process the command and add the delimiter
-      const fullCommand = `${command}; Write-Host "${delimiter}"\n`
-      this.psProcess.stdin?.write(fullCommand)
+      // Encode the command so only ASCII characters are sent through PowerShell's stdin.
+      // PowerShell explicitly decodes it as UTF-8 before execution, avoiding console code page issues.
+      const encodedCommand = Buffer.from(command, 'utf8').toString('base64')
+      const fullCommand = `
+        & (
+          [ScriptBlock]::Create(
+            [Text.Encoding]::UTF8.GetString(
+              [Convert]::FromBase64String('${encodedCommand}')
+            )
+          )
+        );
+        Write-Host "${delimiter}"
+      `
+      this.psProcess.stdin?.write(`${fullCommand}\n`)
     })
   }
 
