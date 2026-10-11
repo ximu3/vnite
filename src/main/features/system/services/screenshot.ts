@@ -141,8 +141,9 @@ async function captureByMode(mode: ScreenshotMode): Promise<void> {
   let shouldReset = true
 
   try {
-    // Get the active window to determine the game memory context
-    const activeWin = await activeWindow()
+    // Get the active window only when needed to distinguish multiple active games
+    const activeGameCount = ActiveGameInfo.infos.length
+    const activeWin = activeGameCount >= 2 ? await activeWindow() : undefined
 
     switch (mode) {
       case 'rectangle': {
@@ -227,14 +228,14 @@ async function captureToPersistenceLayer(
     }
   }
   if (shouldCaptureToDatabase) {
-    const succeeded = await captureGameMemory(activeWin, buffer)
+    const succeeded = await persistToGameMemory(activeWin, buffer)
     // returns immediately if failed to avoid send notification
     if (!succeeded && !shouldCaptureToFilesystem) {
       return
     }
   }
   if (shouldCaptureToFilesystem) {
-    imagePath = await captureToFileSystem(activeWin, buffer)
+    imagePath = await persistToFileSystem(activeWin, buffer)
     // returns immediately if failed to avoid send notification
     if (!imagePath) {
       return
@@ -266,7 +267,7 @@ async function captureToPersistenceLayer(
   )
 }
 
-async function captureGameMemory(
+async function persistToGameMemory(
   activeWin: ActiveWinResult | undefined,
   buffer: Buffer
 ): Promise<boolean> {
@@ -333,7 +334,7 @@ async function captureFullScreen(): Promise<Buffer | undefined> {
   return
 }
 
-async function captureToFileSystem(
+async function persistToFileSystem(
   activeWin: ActiveWinResult | undefined,
   buffer: Buffer
 ): Promise<string | undefined> {
