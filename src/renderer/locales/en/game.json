@@ -577,6 +577,7 @@
           "error": "Search failed: {{message}}"
         },
         "maxBackups": "Maximum Save Backups",
+        "autoBackupSave": "Automatic Save Backup",
         "autoRestoreSave": "Automatically restore the latest save on launch",
         "notifications": {
           "configuring": "Configuring preset…",

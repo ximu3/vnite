@@ -1,23 +1,23 @@
 import type { GameMediaType } from '@appTypes/models'
-import { baseDBManager } from '../BaseDBManager'
-import { convertToWebP, isPathWithinRoot } from '~/utils'
-import path from 'path'
 import {
-  gameDoc,
-  gameDocs,
+  DEFAULT_GAME_COLLECTION_VALUES,
+  DEFAULT_GAME_LOCAL_VALUES,
+  DEFAULT_GAME_VALUES,
   gameCollectionDoc,
   gameCollectionDocs,
+  gameDoc,
+  gameDocs,
   gameLocalDoc,
   gameLocalDocs,
-  DEFAULT_GAME_VALUES,
-  DEFAULT_GAME_LOCAL_VALUES,
-  DEFAULT_GAME_COLLECTION_VALUES,
   SortConfig
 } from '@appTypes/models'
 import { getValueByPath } from '@appUtils'
-import type { Get, Paths } from 'type-fest'
 import log from 'electron-log/main'
+import path from 'path'
+import type { Get, Paths } from 'type-fest'
 import { eventBus } from '~/core/events'
+import { convertToWebP, isPathWithinRoot } from '~/utils'
+import { baseDBManager } from '../BaseDBManager'
 
 export class GameDBManager {
   private static readonly DB_NAME = 'game'
@@ -66,6 +66,15 @@ export class GameDBManager {
       return await baseDBManager.getValue(this.DB_NAME, gameId, '#all', {} as gameDoc)
     } catch (error) {
       log.error('[GameDB] Error getting game:', error)
+      throw error
+    }
+  }
+
+  static async getExistingGame(gameId: string): Promise<gameDoc | null> {
+    try {
+      return await baseDBManager.getExistingDoc<gameDoc>(this.DB_NAME, gameId)
+    } catch (error) {
+      log.error('[GameDB] Error getting existing game:', error)
       throw error
     }
   }

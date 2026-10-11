@@ -61,6 +61,7 @@ export interface gameDoc {
       }
     }
     maxBackups: number
+    autoBackupSave: boolean
     autoRestoreSave: boolean
   }
   memory: {
@@ -232,6 +233,7 @@ export const DEFAULT_GAME_VALUES: Readonly<gameDoc> = {
   save: {
     saveList: {},
     maxBackups: 7,
+    autoBackupSave: true,
     autoRestoreSave: false
   },
   memory: {

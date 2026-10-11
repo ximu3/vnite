@@ -577,6 +577,7 @@
           "error": "検索失敗：{{message}}"
         },
         "maxBackups": "セーブバックアップの最大数",
+        "autoBackupSave": "セーブデータの自動バックアップ",
         "autoRestoreSave": "起動時に最新のセーブを自動で復元する",
         "notifications": {
           "configuring": "プリセットを設定中…",

@@ -577,6 +577,7 @@
           "error": "搜尋失敗：{{message}}"
         },
         "maxBackups": "最大存檔備份數量",
+        "autoBackupSave": "自動備份存檔",
         "autoRestoreSave": "啟動時自動還原最新存檔",
         "notifications": {
           "configuring": "正在配置預設…",
