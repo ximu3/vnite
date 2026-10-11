@@ -1,4 +1,4 @@
-import { isHttpError } from '../../errors'
+import { isHttpError, logScraperError } from '../../errors'
 import { createScraperFetch, readScraperJson } from '../../request'
 import {
   getGameBackgroundsByName as getGameBackgroundsByNameFromSteam,
@@ -48,7 +48,10 @@ export async function getGameCovers(steamId: string): Promise<string[]> {
     const urls = data?.data?.map((grid: any) => grid.url) || []
 
     // Put the steam official cover at the beginning of the array
-    const coverUrl = await getGameCoverFromSteam(steamId)
+    const coverUrl = await getGameCoverFromSteam(steamId).catch((error) => {
+      logScraperError(error, 'Steam', 'optional cover', 'warn')
+      return ''
+    })
     if (coverUrl) {
       urls.unshift(coverUrl)
     }
@@ -76,7 +79,10 @@ export async function getGameCoversByName(gameName: string): Promise<string[]> {
     const urls = data?.data?.map((grid: any) => grid.url) || []
 
     // Put the steam official cover at the beginning of the array
-    const coverUrl = await getGameCoverByNameFromSteam(gameName)
+    const coverUrl = await getGameCoverByNameFromSteam(gameName).catch((error) => {
+      logScraperError(error, 'Steam', 'optional cover', 'warn')
+      return ''
+    })
     if (coverUrl) {
       urls.unshift(coverUrl)
     }
@@ -104,7 +110,10 @@ export async function getGameBackgrounds(steamId: string): Promise<string[]> {
     const urls = data?.data?.map((hero: any) => hero.url) || []
 
     // Put the steam official background at the beginning of the array
-    const heroUrl = await getGameBackgroundsFromSteam(steamId)
+    const heroUrl = await getGameBackgroundsFromSteam(steamId).catch((error) => {
+      logScraperError(error, 'Steam', 'optional background', 'warn')
+      return []
+    })
     if (heroUrl[0]) {
       urls.unshift(heroUrl[0])
     }
@@ -132,7 +141,10 @@ export async function getGameBackgroundsByName(gameName: string): Promise<string
     const urls = data?.data?.map((hero: any) => hero.url) || []
 
     // Put the steam official background at the beginning of the array
-    const heroUrl = await getGameBackgroundsByNameFromSteam(gameName)
+    const heroUrl = await getGameBackgroundsByNameFromSteam(gameName).catch((error) => {
+      logScraperError(error, 'Steam', 'optional background', 'warn')
+      return []
+    })
     if (heroUrl[0]) {
       urls.unshift(heroUrl[0])
     }
@@ -160,7 +172,10 @@ export async function getGameLogos(steamId: string): Promise<string[]> {
     const urls = data?.data?.map((logo: any) => logo.url) || []
 
     // Put the steam official logo at the beginning of the array
-    const logoUrl = await getGameLogoFromSteam(steamId)
+    const logoUrl = await getGameLogoFromSteam(steamId).catch((error) => {
+      logScraperError(error, 'Steam', 'optional logo', 'warn')
+      return ''
+    })
     if (logoUrl) {
       urls.unshift(logoUrl)
     }
@@ -188,7 +203,10 @@ export async function getGameLogosByName(gameName: string): Promise<string[]> {
     const urls = data?.data?.map((logo: any) => logo.url) || []
 
     // Put the steam official logo at the beginning of the array
-    const logoUrl = await getGameLogoByNameFromSteam(gameName)
+    const logoUrl = await getGameLogoByNameFromSteam(gameName).catch((error) => {
+      logScraperError(error, 'Steam', 'optional logo', 'warn')
+      return ''
+    })
     if (logoUrl) {
       urls.unshift(logoUrl)
     }
