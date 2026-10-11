@@ -1,6 +1,6 @@
-import { resolve } from 'path'
-import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import react from '@vitejs/plugin-react'
+import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
+import { resolve } from 'path'
 // @ts-ignore moduleResolution problem with tailwindcss
 import tailwindcss from '@tailwindcss/vite'
 
@@ -15,7 +15,21 @@ export default defineConfig({
         '@resources': resolve('resources')
       }
     },
-    plugins: [externalizeDepsPlugin({ exclude: ['electron-context-menu'] })]
+    plugins: [
+      externalizeDepsPlugin({
+        exclude: [
+          'electron-context-menu',
+          // @jsquash/avif is kept as a devDependency so electron-builder does not copy
+          // the entire package. Rollup instead bundles only the imported decoder code
+          // and WASM asset.
+          //
+          // The package is ESM-only and must be bundled for the CJS main-process output.
+          // Although devDependencies are not normally externalized, keep this exclusion
+          // explicitly to ensure it remains bundled if its dependency classification changes.
+          '@jsquash/avif'
+        ]
+      })
+    ]
   },
   preload: {
     plugins: [externalizeDepsPlugin()]
