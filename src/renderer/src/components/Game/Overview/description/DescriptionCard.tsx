@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { SeparatorDashed } from '@ui/separator-dashed'
+import { ipcManager } from '~/app/ipc'
 import { useGameState } from '~/hooks'
 import { cn, copyWithToast } from '~/utils'
 import { createImageViewerRequestFromElements } from '~/utils/image-viewer'
@@ -18,7 +19,7 @@ export function DescriptionCard({
   className?: string
 }): React.JSX.Element {
   const { t } = useTranslation('game')
-  const [description, setDescription] = useGameState(gameId, 'metadata.description')
+  const [description] = useGameState(gameId, 'metadata.description')
   const [originalName] = useGameState(gameId, 'metadata.originalName')
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
@@ -26,8 +27,8 @@ export function DescriptionCard({
 
   const [isCollapsed, setIsCollapsed] = useState(false)
 
-  const handleSelectDescription = (newDescription: string): void => {
-    setDescription(newDescription)
+  const handleSelectDescription = async (newDescription: string): Promise<void> => {
+    await ipcManager.invoke('scraper:apply-game-description', gameId, newDescription)
   }
 
   return (

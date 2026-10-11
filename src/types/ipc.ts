@@ -282,6 +282,7 @@ type MainIpcEvents =
       'scraper:get-game-icons': (dataSource: string, identifier: ScraperIdentifier) => string[]
       'scraper:get-game-logos': (dataSource: string, identifier: ScraperIdentifier) => string[]
       'scraper:get-game-description-list': (identifier: ScraperIdentifier) => GameDescriptionList
+      'scraper:apply-game-description': (gameId: string, description: string) => void
       'scraper:get-game-tags-list': (identifier: ScraperIdentifier) => GameTagsList
       'scraper:get-game-extra-info-list': (identifier: ScraperIdentifier) => GameExtraInfoList
       'scraper:get-game-developers-list': (identifier: ScraperIdentifier) => GameDevelopersList

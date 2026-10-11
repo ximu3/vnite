@@ -490,7 +490,7 @@ export class GameDBManager {
   static async listGameDescriptionImageHashes(gameId: string): Promise<string[]> {
     try {
       const attachments = await baseDBManager.listAttachmentNames(this.DB_NAME, gameId)
-      return Object.keys(attachments)
+      return attachments
         .filter((key) => key.startsWith('images/description/') && key.endsWith('.webp'))
         .map((key) => key.substring(19, key.length - 5)) // Extract hash from attachment id
     } catch (error) {

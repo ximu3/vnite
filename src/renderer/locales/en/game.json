@@ -246,6 +246,9 @@
           "error": "Search failed: {{message}}",
           "notFound": "No related descriptions found",
           "searchError": "Search error: {{error}}",
+          "applyLoading": "Applying description…",
+          "applySuccess": "Description applied successfully",
+          "applyError": "Failed to apply description: {{message}}",
           "selectRequired": "Please select a description"
         }
       },

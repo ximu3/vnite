@@ -14,7 +14,7 @@ interface SearchDescriptionDialogProps {
   isOpen: boolean
   onClose: () => void
   gameTitle: string
-  onSelect: (description: string) => void
+  onSelect: (description: string) => Promise<void>
 }
 
 export function SearchDescriptionDialog({
@@ -30,6 +30,7 @@ export function SearchDescriptionDialog({
   >([])
   const [selectedDescription, setSelectedDescription] = useState<string>('')
   const [isLoading, setIsLoading] = useState(false)
+  const [isApplying, setIsApplying] = useState(false)
 
   useEffect(() => {
     setSearchTitle(gameTitle)
@@ -75,13 +76,25 @@ export function SearchDescriptionDialog({
     }
   }
 
-  function handleConfirm(): void {
+  async function handleConfirm(): Promise<void> {
     if (!selectedDescription) {
       toast.error(t('detail.overview.description.search.selectRequired'))
       return
     }
-    onSelect(selectedDescription)
-    handleClose()
+    if (isApplying) return
+
+    setIsApplying(true)
+    const applyPromise = onSelect(selectedDescription)
+    toast.promise(applyPromise, {
+      loading: t('detail.overview.description.search.applyLoading'),
+      success: t('detail.overview.description.search.applySuccess'),
+      error: (error) =>
+        t('detail.overview.description.search.applyError', {
+          message: error instanceof Error ? error.message : String(error)
+        })
+    })
+    await applyPromise.then(handleClose, () => undefined)
+    setIsApplying(false)
   }
 
   function handleClose(): void {
@@ -91,7 +104,12 @@ export function SearchDescriptionDialog({
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open && !isApplying) handleClose()
+      }}
+    >
       <DialogContent
         showCloseButton={false}
         className={cn('w-[50vw] h-[80vh] max-w-none flex flex-col gap-3')}
@@ -146,6 +164,7 @@ export function SearchDescriptionDialog({
               onChange={(e) => setSearchTitle(e.target.value)}
               placeholder={t('detail.overview.search.placeholder')}
               className={cn('flex-grow')}
+              disabled={isApplying}
             />
             <Button
               onClick={() => {
@@ -153,12 +172,14 @@ export function SearchDescriptionDialog({
               }}
               size={'icon'}
               className={cn('shrink-0')}
-              disabled={isLoading}
+              disabled={isLoading || isApplying}
             >
               <span className={cn('icon-[mdi--magnify] w-[20px] h-[20px]')}></span>
             </Button>
-            <Button onClick={handleConfirm}>{t('utils:common.confirm')}</Button>
-            <Button variant="outline" onClick={handleClose}>
+            <Button onClick={handleConfirm} disabled={isLoading || isApplying}>
+              {t('utils:common.confirm')}
+            </Button>
+            <Button variant="outline" onClick={handleClose} disabled={isApplying}>
               {t('utils:common.cancel')}
             </Button>
           </div>

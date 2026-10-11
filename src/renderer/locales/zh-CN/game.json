@@ -246,6 +246,9 @@
           "error": "搜索失败: {{message}}",
           "notFound": "没有找到相关描述",
           "searchError": "搜索出错: {{error}}",
+          "applyLoading": "正在应用简介…",
+          "applySuccess": "简介应用成功",
+          "applyError": "应用简介失败: {{message}}",
           "selectRequired": "请选择一个描述"
         }
       },

@@ -246,6 +246,9 @@
           "error": "搜尋失敗: {{message}}",
           "notFound": "沒有找到相關描述",
           "searchError": "搜尋出錯: {{error}}",
+          "applyLoading": "正在套用簡介…",
+          "applySuccess": "簡介套用成功",
+          "applyError": "套用簡介失敗: {{message}}",
           "selectRequired": "請選擇一個描述"
         }
       },

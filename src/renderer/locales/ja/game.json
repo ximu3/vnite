@@ -246,6 +246,9 @@
           "error": "検索失敗: {{message}}",
           "notFound": "関連する説明が見つかりません",
           "searchError": "検索エラー: {{error}}",
+          "applyLoading": "説明を適用しています…",
+          "applySuccess": "説明を適用しました",
+          "applyError": "説明の適用に失敗しました: {{message}}",
           "selectRequired": "説明を選択してください"
         }
       },

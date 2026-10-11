@@ -361,7 +361,7 @@ export async function addGameToDB({
     // Execute all database operations (in parallel)
     await Promise.all(dbPromises)
 
-    await cacheDescriptionImages(metadata.description, dbId)
+    await cacheDescriptionImages(dbId, metadata.description)
 
     // Set the launcher preset
     if (gamePath) await launcherPreset('default', dbId)
