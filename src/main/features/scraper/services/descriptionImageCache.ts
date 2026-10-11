@@ -18,7 +18,7 @@ function extractDescriptionMediaUrls($: cheerio.CheerioAPI): Set<string> {
   for (const [tagName, attribute] of Object.entries(DESCRIPTION_MEDIA_ATTRIBUTES)) {
     $(`${tagName}[${attribute}]`).each((_, element) => {
       const url = $(element).attr(attribute)
-      if (!url || url.startsWith('data:') || url.startsWith('attachment://')) return
+      if (!url || url.startsWith('data:')) return
 
       urls.add(url)
     })
@@ -55,11 +55,7 @@ function replaceDescriptionMediaUrls(
 }
 
 /**
- * Cache media referenced by the raw HTML or plain-text description returned directly by a scraper.
- *
- * **NOTE**: This function is not idempotent. The description must not contain URLs previously rewritten to
- * the `attachment://` scheme, because such cached media are excluded from extraction and may be
- * removed as orphaned attachments.
+ * Cache external media and retain cached attachments still referenced by the description.
  */
 export async function cacheDescriptionImages(gameId: string, description: string): Promise<void> {
   const cacheEnabled = await ConfigDBManager.getConfigValue(
@@ -78,8 +74,16 @@ export async function cacheDescriptionImages(gameId: string, description: string
   const newImageEntries: Array<{ originalUrl: string; hash: string }> = []
   const cachedUrlHashes = new Map<string, string>()
   const neededHashes = new Set<string>()
+  const attachmentPrefix = `attachment://game/${gameId}/images/description/`
 
   for (const originalUrl of descriptionMediaUrls) {
+    if (originalUrl.startsWith('attachment://')) {
+      if (originalUrl.startsWith(attachmentPrefix) && originalUrl.endsWith('.webp')) {
+        neededHashes.add(originalUrl.slice(attachmentPrefix.length, -5))
+      }
+      continue
+    }
+
     const hash = getUrlHash(originalUrl)
     neededHashes.add(hash)
     if (existingHashes.has(hash)) {
