@@ -118,10 +118,15 @@ export async function searchBangumiGames(gameName: string): Promise<GameList> {
   // URL encoding of game names
   const encodedGameName = encodeURIComponent(gameName)
 
-  const data = await fetchBangumi<BangumiSearchResult>(`search/subject/${encodedGameName}`, {
-    type: 4,
-    max_results: 25
-  })
+  const data = await fetchBangumi<BangumiSearchResult | { code: number; error: string }>(
+    `search/subject/${encodedGameName}`,
+    { type: 4, max_results: 25 }
+  )
+
+  if ('code' in data) {
+    if (data.code === 404) return []
+    throw new Error(data.error)
+  }
 
   return data.list.map((game) => ({
     id: game.id.toString(),
