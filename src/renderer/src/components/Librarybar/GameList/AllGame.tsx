@@ -13,10 +13,9 @@ export function AllGameComponent({
 }: {
   scrollPosition: { x: number; y: number }
 }): React.JSX.Element {
-  const [by] = useConfigState('game.gameList.sort.by')
-  const [order] = useConfigState('game.gameList.sort.order')
+  const [sort] = useConfigState('game.gameList.sort')
   const visibleGameIds = useVisibleGameIds()
-  const games = sortGames(by, order, visibleGameIds)
+  const games = sortGames(sort, visibleGameIds)
   const { t } = useTranslation('game')
 
   return (
@@ -24,7 +23,7 @@ export function AllGameComponent({
       <AccordionTrigger className={cn('text-xs p-1 pl-2')}>
         <div className={cn('flex flex-row items-center justify-start gap-1')}>
           <div className={cn('text-xs')}>{t('list.all.title')}</div>
-          <GroupSortSummary gameIds={games} by={by} />
+          <GroupSortSummary gameIds={games} sort={sort} />
         </div>
       </AccordionTrigger>
       <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>

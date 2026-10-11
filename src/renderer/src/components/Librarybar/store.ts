@@ -1,4 +1,4 @@
-import { DEFAULT_PLAY_STATUS_ORDER } from '@appTypes/models/game'
+import { DEFAULT_PLAY_STATUS_ORDER, type gameDoc } from '@appTypes/models/game'
 import { debounce } from 'lodash'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
@@ -95,15 +95,15 @@ export const useGameListStore = create<GameListStore>()(
 )
 
 interface PlayStatusOrderStore {
-  playStatusOrder: string[]
-  setPlayStatusOrder: (order: string[]) => void
+  playStatusOrder: gameDoc['record']['playStatus'][]
+  setPlayStatusOrder: (order: gameDoc['record']['playStatus'][]) => void
 }
 
 export const usePlayStatusOrderStore = create<PlayStatusOrderStore>()(
   persist(
     (set) => ({
       playStatusOrder: DEFAULT_PLAY_STATUS_ORDER,
-      setPlayStatusOrder: (order: string[]) => {
+      setPlayStatusOrder: (order: gameDoc['record']['playStatus'][]) => {
         set({ playStatusOrder: order })
       }
     }),

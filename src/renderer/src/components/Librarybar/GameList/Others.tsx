@@ -19,8 +19,7 @@ function OthersComponent({
   fieldName: 'metadata.developers' | 'metadata.genres' // It can also be 'none'
   scrollPosition: { x: number; y: number }
 }): React.JSX.Element {
-  const [by] = useConfigState('game.gameList.sort.by')
-  const [order] = useConfigState('game.gameList.sort.order')
+  const [sort] = useConfigState('game.gameList.sort')
   const [showAllGamesInGroup] = useConfigState('game.gameList.showAllGamesInGroup')
   const visibleGameIds = useVisibleGameIds()
   const { t } = useTranslation('game')
@@ -64,11 +63,11 @@ function OthersComponent({
                       <div className={cn('text-xs')}>
                         {field !== '__empty__' ? field : emptyAccordionName[fieldName]}
                       </div>
-                      <GroupSortSummary gameIds={gameIds} by={by} />
+                      <GroupSortSummary gameIds={gameIds} sort={sort} />
                     </div>
                   </AccordionTrigger>
                   <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
-                    {sortGames(by, order, gameIds).map((game) => (
+                    {sortGames(sort, gameIds).map((game) => (
                       <LazyLoadComponent
                         key={`${game}`}
                         threshold={300}

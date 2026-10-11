@@ -528,6 +528,24 @@
   },
   "metadata": {
     "title": "元数据",
+    "sorting": {
+      "sectionTitle": "排序"
+    },
+    "sortNameFallback": {
+      "title": "排序名称缺失时使用",
+      "description": "游戏未设置排序名称时，选择用于排序的替代值。所选值同样缺失时，将使用名称。",
+      "options": {
+        "name": "名称",
+        "originalName": "原名",
+        "folderName": "目录名"
+      }
+    },
+    "playStatusSortOrder": {
+      "title": "游玩状态排序顺序",
+      "description": "配置按游玩状态排序时各状态的排列顺序。",
+      "button": "配置",
+      "popoverTitle": "游玩状态顺序"
+    },
     "transformer": {
       "title": "转换器",
       "enable": "启用转换器",

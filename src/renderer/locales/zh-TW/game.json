@@ -7,7 +7,7 @@
       "tooltip": "支援透過遊戲名、開發者、發行日期等中繼資料進行搜尋"
     },
     "gameListSettings": "遊戲列表設定",
-    "collapseAllGroups": "收起全部分組",
+    "groupExpandCollapse": "L：收起全部\nR：展開全部",
     "groupBy": "分組依據",
     "groups": {
       "none": "無分組",
@@ -16,6 +16,10 @@
       "genres": "類別",
       "playStatus": "遊玩狀態"
     }
+  },
+  "sortingControls": {
+    "secondary": "二級排序",
+    "none": "無"
   },
   "list": {
     "search": {
@@ -37,18 +41,7 @@
       "noResults": "沒有找到符合條件的遊戲"
     },
     "all": {
-      "title": "所有遊戲",
-      "sortBy": "排序依據",
-      "sortOptions": {
-        "name": "名稱",
-        "sortName": "排序名稱",
-        "releaseDate": "發布日期",
-        "lastRunDate": "最後執行日期",
-        "addDate": "添加日期",
-        "playTime": "遊玩時間",
-        "score": "評分",
-        "storageSize": "遊戲大小"
-      }
+      "title": "所有遊戲"
     },
     "playStatus": {
       "adjustOrder": "調整順序"
@@ -100,13 +93,15 @@
       "options": {
         "name": "名稱",
         "sortName": "排序名稱",
+        "developers": "開發商",
         "releaseDate": "發布日期",
         "lastRunDate": "最後執行日期",
         "addDate": "添加日期",
         "playTime": "遊玩時間",
         "score": "評分",
         "custom": "自訂順序",
-        "storageSize": "遊戲大小"
+        "storageSize": "遊戲大小",
+        "playStatus": "遊玩狀態"
       }
     },
     "gameCard": {

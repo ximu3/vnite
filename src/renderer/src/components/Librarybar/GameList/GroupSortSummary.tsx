@@ -6,6 +6,7 @@ import { getGameStore, type SingleGameState } from '~/stores/game'
 import { cn, formatDurationCompact, formatStorageSize } from '~/utils'
 
 type GameListSortBy = configDocs['game']['gameList']['sort']['by']
+type GameListSort = configDocs['game']['gameList']['sort']
 type GroupSortSummaryConfigBy = configDocs['game']['gameList']['groupSortSummary']['by']
 type SummarySortBy = Exclude<GroupSortSummaryConfigBy, 'none'>
 
@@ -186,12 +187,18 @@ function useGroupSortSummary(gameIds: string[], by: SummarySortBy | null): Group
 }
 
 function resolveSummarySortBy(
-  currentSortBy: GameListSortBy,
+  currentSort: GameListSort,
   configuredBy: GroupSortSummaryConfigBy,
   followSort: boolean
 ): SummarySortBy | null {
-  if (followSort && isSummarySortBy(currentSortBy)) {
-    return currentSortBy
+  if (followSort) {
+    if (isSummarySortBy(currentSort.by)) {
+      return currentSort.by
+    }
+
+    if (currentSort.secondary && isSummarySortBy(currentSort.secondary.by)) {
+      return currentSort.secondary.by
+    }
   }
 
   return configuredBy === 'none' ? null : configuredBy
@@ -199,16 +206,16 @@ function resolveSummarySortBy(
 
 export function GroupSortSummary({
   gameIds,
-  by,
+  sort,
   className
 }: {
   gameIds: string[]
-  by: GameListSortBy
+  sort: GameListSort
   className?: string
 }): React.JSX.Element | null {
   const [configuredBy] = useConfigState('game.gameList.groupSortSummary.by')
   const [followSort] = useConfigState('game.gameList.groupSortSummary.followSort')
-  const effectiveBy = resolveSummarySortBy(by, configuredBy, followSort)
+  const effectiveBy = resolveSummarySortBy(sort, configuredBy, followSort)
 
   const summary = useGroupSortSummary(gameIds, effectiveBy)
   const totalCount = gameIds.length

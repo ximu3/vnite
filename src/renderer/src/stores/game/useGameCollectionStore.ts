@@ -187,6 +187,7 @@ export const useGameCollectionStore = create<GameCollectionState>((set, get) => 
         sort: newSort,
         sortBy: 'custom',
         sortOrder: 'asc',
+        secondarySort: null,
         games: gameIds ? [...gameIds] : []
       }
 

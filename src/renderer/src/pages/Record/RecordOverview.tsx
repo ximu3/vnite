@@ -38,12 +38,14 @@ export function RecordOverview(): React.JSX.Element {
   const playedDaysYearly = getPlayedDaysYearly(filteredGameIds)
 
   // Get all game sorting data, unlimited number of games
-  const allTimeGames = sortGames('record.playTime', 'desc', filteredGameIds).filter(
-    (gameId) => getGamePlayTime(gameId) > 0
-  )
-  const allScoreGames = sortGames('record.score', 'desc', filteredGameIds).filter(
-    (gameId) => gameMetaIndex[gameId].score !== -1
-  )
+  const allTimeGames = sortGames(
+    { by: 'record.playTime', order: 'desc', secondary: null },
+    filteredGameIds
+  ).filter((gameId) => getGamePlayTime(gameId) > 0)
+  const allScoreGames = sortGames(
+    { by: 'record.score', order: 'desc', secondary: null },
+    filteredGameIds
+  ).filter((gameId) => gameMetaIndex[gameId].score !== -1)
 
   // Card display only shows the top 5
   const topTimeGames = allTimeGames.slice(0, 5)

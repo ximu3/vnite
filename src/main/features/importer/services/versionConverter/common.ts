@@ -589,6 +589,8 @@ async function convertConfig(basePath: string): Promise<void> {
 
     // Converting game-related configurations
     await ConfigDBManager.setConfigValue('game', {
+      sortNameFallback: DEFAULT_CONFIG_VALUES.game.sortNameFallback,
+      playStatusSortOrder: DEFAULT_CONFIG_VALUES.game.playStatusSortOrder,
       scraper: {
         common: {
           defaultDataSource: mapDataSourceName(v2Config.scraper.defaultDataSource),
@@ -605,13 +607,15 @@ async function convertConfig(basePath: string): Promise<void> {
       showcase: {
         sort: {
           by: mapSortField(v2Config.others.showcase.sort.by),
-          order: v2Config.others.showcase.sort.order
+          order: v2Config.others.showcase.sort.order,
+          secondary: null
         }
       },
       gameList: {
         sort: {
           by: mapSortField(v2Config.others.gameList.sort.by),
-          order: v2Config.others.gameList.sort.order
+          order: v2Config.others.gameList.sort.order,
+          secondary: null
         },
         groupSortSummary: DEFAULT_CONFIG_VALUES.game.gameList.groupSortSummary,
         overrideCollectionSort: false,

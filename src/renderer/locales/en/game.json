@@ -7,7 +7,7 @@
       "tooltip": "Supports searching by game name, developer, release date and other metadata"
     },
     "gameListSettings": "Game List Settings",
-    "collapseAllGroups": "Collapse All Groups",
+    "groupExpandCollapse": "L: Collapse all groups\nR: Expand all groups",
     "groupBy": "Group by",
     "groups": {
       "none": "No Grouping",
@@ -16,6 +16,10 @@
       "genres": "Genres",
       "playStatus": "Play Status"
     }
+  },
+  "sortingControls": {
+    "secondary": "Secondary Sort",
+    "none": "None"
   },
   "list": {
     "search": {
@@ -37,18 +41,7 @@
       "noResults": "No games found matching your criteria"
     },
     "all": {
-      "title": "All Games",
-      "sortBy": "Sort by",
-      "sortOptions": {
-        "name": "Name",
-        "sortName": "Sort Name",
-        "releaseDate": "Release Date",
-        "lastRunDate": "Last Played Date",
-        "addDate": "Date Added",
-        "playTime": "Play Time",
-        "score": "Score",
-        "storageSize": "Game Size"
-      }
+      "title": "All Games"
     },
     "playStatus": {
       "adjustOrder": "Adjust Order"
@@ -100,13 +93,15 @@
       "options": {
         "name": "Name",
         "sortName": "Sort Name",
+        "developers": "Developer",
         "releaseDate": "Release Date",
         "lastRunDate": "Last Played Date",
         "addDate": "Date Added",
         "playTime": "Play Time",
         "score": "Score",
         "custom": "Custom Order",
-        "storageSize": "Game Size"
+        "storageSize": "Game Size",
+        "playStatus": "Play Status"
       }
     },
     "gameCard": {

@@ -7,7 +7,7 @@
       "tooltip": "支持通过游戏名、开发者、发行日期等元数据进行搜索"
     },
     "gameListSettings": "游戏列表设置",
-    "collapseAllGroups": "折叠所有分组",
+    "groupExpandCollapse": "L：折叠全部\nR：展开全部",
     "groupBy": "分组依据",
     "groups": {
       "none": "无分组",
@@ -16,6 +16,10 @@
       "genres": "类别",
       "playStatus": "游玩状态"
     }
+  },
+  "sortingControls": {
+    "secondary": "二级排序",
+    "none": "无"
   },
   "list": {
     "search": {
@@ -37,18 +41,7 @@
       "noResults": "没有找到符合条件的游戏"
     },
     "all": {
-      "title": "所有游戏",
-      "sortBy": "排序依据",
-      "sortOptions": {
-        "name": "名称",
-        "sortName": "排序名称",
-        "releaseDate": "发布日期",
-        "lastRunDate": "最后运行日期",
-        "addDate": "添加日期",
-        "playTime": "游玩时间",
-        "score": "评分",
-        "storageSize": "游戏大小"
-      }
+      "title": "所有游戏"
     },
     "playStatus": {
       "adjustOrder": "调整顺序"
@@ -100,13 +93,15 @@
       "options": {
         "name": "名称",
         "sortName": "排序名称",
+        "developers": "开发商",
         "releaseDate": "发布日期",
         "lastRunDate": "最后运行日期",
         "addDate": "添加日期",
         "playTime": "游玩时间",
         "score": "评分",
         "custom": "自定义顺序",
-        "storageSize": "游戏大小"
+        "storageSize": "游戏大小",
+        "playStatus": "游玩状态"
       }
     },
     "gameCard": {

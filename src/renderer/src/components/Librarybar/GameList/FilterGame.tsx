@@ -15,10 +15,9 @@ export function FilterGameComponent({
 }: {
   scrollPosition: { x: number; y: number }
 }): React.JSX.Element {
-  const [by] = useConfigState('game.gameList.sort.by')
-  const [order] = useConfigState('game.gameList.sort.order')
+  const [sort] = useConfigState('game.gameList.sort')
   const { filter } = useFilterStore()
-  const games = sortGames(by, order, filterGames(filter))
+  const games = sortGames(sort, filterGames(filter))
   const { t } = useTranslation('game')
   return (
     <ScrollArea className={cn('w-full h-full pr-3 -mr-3 pb-1')}>
@@ -31,7 +30,7 @@ export function FilterGameComponent({
           <AccordionTrigger className={cn('text-xs p-1 pl-2')}>
             <div className={cn('flex flex-row items-center justify-start gap-1')}>
               <div className={cn('text-xs')}>{t('list.filter.results')}</div>
-              <GroupSortSummary gameIds={games} by={by} />
+              <GroupSortSummary gameIds={games} sort={sort} />
             </div>
           </AccordionTrigger>
           <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>

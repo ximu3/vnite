@@ -1,4 +1,4 @@
-import { NSFWBlurLevel } from '@appTypes/models'
+import { NSFWBlurLevel, type configDocs } from '@appTypes/models'
 import { useLocation, useNavigate } from '@tanstack/react-router'
 import { Nav } from '@ui/nav'
 import React, { useEffect, useRef, useState } from 'react'
@@ -19,6 +19,18 @@ import { PLAY_STATUS_COLORS, PLAY_STATUS_ICONS } from '../Game/Overview/Record/R
 import { BatchGameNavCM } from '../GameBatchEditor/BatchGameNavCM'
 import { useGameBatchEditorStore } from '../GameBatchEditor/store'
 import { useTheme } from '../ThemeProvider'
+
+type SortInfoBy = 'record.playTime' | 'record.score' | 'record.storageSize'
+
+function isSortInfoBy(by: configDocs['game']['gameList']['sort']['by']): by is SortInfoBy {
+  return by === 'record.playTime' || by === 'record.score' || by === 'record.storageSize'
+}
+
+function resolveSortInfoBy(sort: configDocs['game']['gameList']['sort']): SortInfoBy | null {
+  if (isSortInfoBy(sort.by)) return sort.by
+  if (sort.secondary && isSortInfoBy(sort.secondary.by)) return sort.secondary.by
+  return null
+}
 
 export function GameNav({
   gameId,
@@ -46,7 +58,8 @@ export function GameNav({
   const [warnInvalidGamePaths] = useConfigState('game.gameList.warnInvalidGamePaths')
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
   const [nsfwBlurLevel] = useConfigState('appearances.nsfwBlurLevel')
-  const [by] = useConfigState('game.gameList.sort.by')
+  const [sort] = useConfigState('game.gameList.sort')
+  const sortInfoBy = resolveSortInfoBy(sort)
   const isDarkMode = useTheme().isDark
   const location = useLocation()
   const navigate = useNavigate()
@@ -237,7 +250,7 @@ export function GameNav({
 
         case 'sortInfo': {
           if (groupId !== 'recentGames') {
-            if (by === 'record.playTime' && playTime > 0) {
+            if (sortInfoBy === 'record.playTime' && playTime > 0) {
               navLayout.push(
                 <span
                   key={`${gameId}-sort-playtime`}
@@ -246,13 +259,13 @@ export function GameNav({
                   {formatDurationCompact(playTime)}
                 </span>
               )
-            } else if (by === 'record.score' && score !== -1) {
+            } else if (sortInfoBy === 'record.score' && score !== -1) {
               navLayout.push(
                 <span key={`${gameId}-sort-score`} className="flex-shrink-0 text-muted-foreground">
                   {score.toFixed(1)}
                 </span>
               )
-            } else if (by === 'record.storageSize' && storageSize >= 0) {
+            } else if (sortInfoBy === 'record.storageSize' && storageSize >= 0) {
               navLayout.push(
                 <span
                   key={`${gameId}-sort-storage`}

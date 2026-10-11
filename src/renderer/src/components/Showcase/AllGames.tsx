@@ -1,3 +1,4 @@
+import { GAME_SORT_FIELDS } from '@appTypes/models'
 import { observeElementOffset, useVirtualizer, type Virtualizer } from '@tanstack/react-virtual'
 import { SeparatorDashed } from '@ui/separator-dashed'
 import { useLayoutEffect, useMemo, useRef, useState } from 'react'
@@ -6,21 +7,16 @@ import { GameNavCM } from '~/components/contextMenu/GameNavCM'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
 import { GamePropertiesDialog } from '~/components/Game/Config/Properties'
+import {
+  GameSortFieldSelect,
+  SecondarySortControl,
+  SortDirectionButton
+} from '~/components/Game/GameSortControl'
 import { InformationDialog } from '~/components/Game/Overview/Information/InformationDialog'
 import { CalculateStorageSizeDialog } from '~/components/Game/Overview/Record/CalculateStorageSizeDialog'
 import { BatchGameNavCM } from '~/components/GameBatchEditor/BatchGameNavCM'
 import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
-import { Button } from '~/components/ui/button'
 import { ContextMenu, ContextMenuTrigger } from '~/components/ui/context-menu'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue
-} from '~/components/ui/select'
 import { useConfigState } from '~/hooks'
 import { sortGames, useVisibleGameIds } from '~/stores/game'
 import { cn } from '~/utils'
@@ -67,13 +63,9 @@ function observeScrollViewportOffset(
 }
 
 export function AllGames(): React.JSX.Element {
-  const [by, setBy] = useConfigState('game.showcase.sort.by')
-  const [order, setOrder] = useConfigState('game.showcase.sort.order')
+  const [sort, setSort] = useConfigState('game.showcase.sort')
   const visibleGameIds = useVisibleGameIds()
-  const games = sortGames(by, order, visibleGameIds)
-  const toggleOrder = (): void => {
-    setOrder(order === 'asc' ? 'desc' : 'asc')
-  }
+  const games = sortGames(sort, visibleGameIds)
   const { t } = useTranslation('game')
 
   const [gridLayoutState, setGridLayoutState] = useState<{
@@ -212,54 +204,35 @@ export function AllGames(): React.JSX.Element {
           <div className={cn('flex flex-row gap-1 items-center justify-center select-none')}>
             <div className={cn('text-sm')}>{t('showcase.sorting.title')}</div>
             {/* Sort By */}
-            <Select value={by} onValueChange={setBy} defaultValue="name">
-              <SelectTrigger className={cn('w-[130px] h-[26px] text-xs border-0')}>
-                <SelectValue placeholder="Select a fruit" className={cn('text-xs')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>{t('showcase.sorting.label')}</SelectLabel>
-                  <SelectItem value="metadata.name">
-                    {t('showcase.sorting.options.name')}
-                  </SelectItem>
-                  <SelectItem value="metadata.sortName">
-                    {t('showcase.sorting.options.sortName')}
-                  </SelectItem>
-                  <SelectItem value="metadata.releaseDate">
-                    {t('showcase.sorting.options.releaseDate')}
-                  </SelectItem>
-                  <SelectItem value="record.lastRunDate">
-                    {t('showcase.sorting.options.lastRunDate')}
-                  </SelectItem>
-                  <SelectItem value="record.addDate">
-                    {t('showcase.sorting.options.addDate')}
-                  </SelectItem>
-                  <SelectItem value="record.playTime">
-                    {t('showcase.sorting.options.playTime')}
-                  </SelectItem>
-                  <SelectItem value="record.score">
-                    {t('showcase.sorting.options.score')}
-                  </SelectItem>
-                  <SelectItem value="record.storageSize">
-                    {t('showcase.sorting.options.storageSize')}
-                  </SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+            <GameSortFieldSelect
+              value={sort.by}
+              fields={GAME_SORT_FIELDS}
+              triggerClassName={cn('w-[130px] h-[26px] text-xs border-0')}
+              onValueChange={(by) => {
+                void setSort({
+                  ...sort,
+                  by,
+                  secondary: sort.secondary?.by === by ? null : sort.secondary
+                })
+              }}
+            />
           </div>
           {/* Toggle Order */}
-          <Button
-            variant={'thirdary'}
-            size={'icon'}
+          <SortDirectionButton
+            order={sort.order}
             className={cn('h-[26px] w-[26px] -ml-3')}
-            onClick={toggleOrder}
-          >
-            {order === 'asc' ? (
-              <span className={cn('icon-[mdi--arrow-up] w-4 h-4')}></span>
-            ) : (
-              <span className={cn('icon-[mdi--arrow-down] w-4 h-4')}></span>
-            )}
-          </Button>
+            onOrderChange={(order) => {
+              void setSort({ ...sort, order })
+            }}
+          />
+          <SecondarySortControl
+            primaryBy={sort.by}
+            value={sort.secondary}
+            fields={GAME_SORT_FIELDS}
+            onValueChange={(secondary) => {
+              void setSort({ ...sort, secondary })
+            }}
+          />
         </div>
 
         <SeparatorDashed className="border-border" />

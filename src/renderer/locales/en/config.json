@@ -528,6 +528,24 @@
   },
   "metadata": {
     "title": "Metadata",
+    "sorting": {
+      "sectionTitle": "Sorting"
+    },
+    "sortNameFallback": {
+      "title": "Sort Name Fallback",
+      "description": "Choose the value used for sorting when a game has no Sort Name. If the selected value is also missing, Name is used.",
+      "options": {
+        "name": "Name",
+        "originalName": "Original Name",
+        "folderName": "Folder Name"
+      }
+    },
+    "playStatusSortOrder": {
+      "title": "Play Status Sort Order",
+      "description": "Configure the status order used when sorting games by Play Status.",
+      "button": "Configure",
+      "popoverTitle": "Play Status Order"
+    },
     "transformer": {
       "title": "Transformer",
       "enable": "Enable Transformer",

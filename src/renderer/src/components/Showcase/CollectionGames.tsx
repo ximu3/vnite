@@ -1,20 +1,16 @@
-import { NSFWFilterMode } from '@appTypes/models'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue
-} from '@ui/select'
-import { SeparatorDashed } from '@ui/separator-dashed'
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
+
+import { GAME_SORT_FIELDS, NSFWFilterMode } from '@appTypes/models'
+import { ScrollArea } from '@ui/scroll-area'
+import { SeparatorDashed } from '@ui/separator-dashed'
+import {
+  GameSortFieldSelect,
+  SecondarySortControl,
+  SortDirectionButton
+} from '~/components/Game/GameSortControl'
 import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
-import { Button } from '~/components/ui/button'
-import { ScrollArea } from '~/components/ui/scroll-area'
 import { useConfigState } from '~/hooks'
 import { useGameCollectionState } from '~/hooks/useGameCollectionState'
 import { useGameCollectionStore } from '~/stores'
@@ -51,14 +47,13 @@ export function CollectionGamesComponent({
 }): React.JSX.Element {
   const [by, setBy] = useGameCollectionState(collectionId, 'sortBy')
   const [order, setOrder] = useGameCollectionState(collectionId, 'sortOrder')
-  const toggleOrder = (): void => {
-    setOrder(order === 'asc' ? 'desc' : 'asc')
-  }
+  const [secondarySort, setSecondarySort] = useGameCollectionState(collectionId, 'secondarySort')
   const { t } = useTranslation('game')
   const collections = useGameCollectionStore((state) => state.documents)
   const [nsfwFilterMode] = useConfigState('appearances.nsfwFilterMode')
   const games = useVisibleGameIds(collections[collectionId]?.games)
-  const sortedGames = by === 'custom' ? games : sortGames(by, order, games)
+  const sortedGames =
+    by === 'custom' ? games : sortGames({ by, order, secondary: secondarySort }, games)
   const collectionName = collections[collectionId]?.name
 
   const [gap, setGap] = useState<number>(0)
@@ -138,50 +133,39 @@ export function CollectionGamesComponent({
           <div className={cn('flex flex-row gap-1 items-center justify-center select-none')}>
             <div className={cn('text-sm')}>{t('showcase.sorting.title')}</div>
             {/* Sort By */}
-            <Select value={by} onValueChange={setBy} defaultValue="name">
-              <SelectTrigger className={cn('w-[130px] h-[26px] text-xs border-0')}>
-                <SelectValue placeholder="Select a fruit" className={cn('text-xs')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>{t('showcase.sorting.label')}</SelectLabel>
-                  <SelectItem value="metadata.name">
-                    {t('showcase.sorting.options.name')}
-                  </SelectItem>
-                  <SelectItem value="metadata.sortName">
-                    {t('showcase.sorting.options.sortName')}
-                  </SelectItem>
-                  <SelectItem value="metadata.releaseDate">
-                    {t('showcase.sorting.options.releaseDate')}
-                  </SelectItem>
-                  <SelectItem value="record.lastRunDate">
-                    {t('showcase.sorting.options.lastRunDate')}
-                  </SelectItem>
-                  <SelectItem value="record.addDate">
-                    {t('showcase.sorting.options.addDate')}
-                  </SelectItem>
-                  <SelectItem value="record.playTime">
-                    {t('showcase.sorting.options.playTime')}
-                  </SelectItem>
-                  <SelectItem value="custom">{t('showcase.sorting.options.custom')}</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+            <GameSortFieldSelect
+              value={by}
+              fields={[...GAME_SORT_FIELDS, 'custom']}
+              triggerClassName={cn('w-[130px] h-[26px] text-xs border-0')}
+              onValueChange={(nextBy) => {
+                void (async () => {
+                  await setBy(nextBy)
+                  if (nextBy === 'custom' || secondarySort?.by === nextBy) {
+                    await setSecondarySort(null)
+                  }
+                })()
+              }}
+            />
           </div>
           {/* Toggle Order */}
           {by !== 'custom' && (
-            <Button
-              variant={'thirdary'}
-              size={'icon'}
+            <SortDirectionButton
+              order={order}
               className={cn('h-[26px] w-[26px] -ml-3')}
-              onClick={toggleOrder}
-            >
-              {order === 'asc' ? (
-                <span className={cn('icon-[mdi--arrow-up] w-4 h-4')}></span>
-              ) : (
-                <span className={cn('icon-[mdi--arrow-down] w-4 h-4')}></span>
-              )}
-            </Button>
+              onOrderChange={(nextOrder) => {
+                void setOrder(nextOrder)
+              }}
+            />
+          )}
+          {by !== 'custom' && (
+            <SecondarySortControl
+              primaryBy={by}
+              value={secondarySort}
+              fields={GAME_SORT_FIELDS}
+              onValueChange={(value) => {
+                void setSecondarySort(value)
+              }}
+            />
           )}
           <SeparatorDashed className="border-border" />
         </div>

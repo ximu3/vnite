@@ -528,6 +528,24 @@
   },
   "metadata": {
     "title": "メタデータ",
+    "sorting": {
+      "sectionTitle": "並び替え"
+    },
+    "sortNameFallback": {
+      "title": "ソート名が未設定の場合",
+      "description": "ゲームにソート名が設定されていない場合に、並び替えに使用する値を選択します。選択した値も未設定の場合は名前を使用します。",
+      "options": {
+        "name": "名前",
+        "originalName": "原題",
+        "folderName": "フォルダー名"
+      }
+    },
+    "playStatusSortOrder": {
+      "title": "プレイ状態の並び順",
+      "description": "プレイ状態でゲームを並び替える際の状態の順序を設定します。",
+      "button": "設定",
+      "popoverTitle": "プレイ状態の順序"
+    },
     "transformer": {
       "title": "トランスフォーマー",
       "enable": "トランスフォーマーを有効化",

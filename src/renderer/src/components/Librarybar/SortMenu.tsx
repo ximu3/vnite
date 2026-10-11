@@ -1,19 +1,22 @@
+import React from 'react'
+import { useTranslation } from 'react-i18next'
+
+import { GAME_SORT_FIELDS } from '@appTypes/models'
 import { Button } from '@ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@ui/select'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/select'
 import { Separator } from '@ui/separator'
 import { Switch } from '@ui/switch'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@ui/tooltip'
-import React from 'react'
-import { useTranslation } from 'react-i18next'
+import {
+  GameSortFieldSelect,
+  SecondarySortFields,
+  SortDirectionButton
+} from '~/components/Game/GameSortControl'
+import { PlayStatusOrderEditor } from '~/components/Game/PlayStatusOrderEditor'
 import { useConfigState } from '~/hooks'
+import { useGameCollectionStore } from '~/stores'
+import { filterGames, getAllValuesInKey, useVisibleGameIds } from '~/stores/game'
 import { cn } from '~/utils'
 import { useGameListStore, usePlayStatusOrderStore } from './store'
 
@@ -28,29 +31,50 @@ export function SortMenu({
 }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [selectedGroup, setSelectedGroup] = useConfigState('game.gameList.selectedGroup')
-  const [by, setBy] = useConfigState('game.gameList.sort.by')
-  const [order, setOrder] = useConfigState('game.gameList.sort.order')
+  const [sort, setSort] = useConfigState('game.gameList.sort')
   const setOpenValues = useGameListStore((s) => s.setOpenValues)
   const [overrideCollectionSort, setOverrideCollectionSort] = useConfigState(
     'game.gameList.overrideCollectionSort'
   )
-
-  const toggleOrder = (): void => {
-    setOrder(order === 'asc' ? 'desc' : 'asc')
-  }
+  const visibleGameIds = useVisibleGameIds()
+  const collections = useGameCollectionStore((s) => s.documents)
 
   const { playStatusOrder, setPlayStatusOrder } = usePlayStatusOrderStore()
-  const handleMoveUp = (index: number): void => {
-    if (index === 0) return
-    const newOrder: string[] = [...playStatusOrder]
-    ;[newOrder[index], newOrder[index - 1]] = [newOrder[index - 1], newOrder[index]]
-    setPlayStatusOrder([...newOrder])
-  }
-  const handleMoveDown = (index: number): void => {
-    if (index === playStatusOrder.length - 1) return
-    const newOrder: string[] = [...playStatusOrder]
-    ;[newOrder[index], newOrder[index + 1]] = [newOrder[index + 1], newOrder[index]]
-    setPlayStatusOrder([...newOrder])
+
+  const expandAllGroups = (): void => {
+    let values: string[] = []
+
+    if (selectedGroup === 'collection') {
+      const visibleGameIdSet = new Set(visibleGameIds)
+      const collectedGameIds = new Set<string>()
+      values = Object.entries(collections)
+        .filter(([, collection]) =>
+          collection.games.some((gameId) => {
+            if (!visibleGameIdSet.has(gameId)) return false
+            collectedGameIds.add(gameId)
+            return true
+          })
+        )
+        .map(([collectionId]) => collectionId)
+
+      if (visibleGameIds.some((gameId) => !collectedGameIds.has(gameId))) {
+        values.push('__empty__')
+      }
+    } else if (selectedGroup === 'record.playStatus') {
+      values = getAllValuesInKey('record.playStatus', visibleGameIds)
+    } else if (selectedGroup === 'metadata.developers' || selectedGroup === 'metadata.genres') {
+      const groupField = selectedGroup
+      values = getAllValuesInKey(groupField, visibleGameIds)
+      if (filterGames({ [groupField]: ['__empty__'] }, visibleGameIds).length > 0) {
+        values.push('__empty__')
+      }
+    }
+
+    // Exclude "Recent Games" and "All Games" from "Expand All".
+    // The action is intended for browsing regular groups, meanwhile:
+    // - "Recent Games" is already easily accessible at the top
+    // - "All Games" mostly duplicates content from the individual groups.
+    setOpenValues(selectedGroup, values)
   }
 
   return (
@@ -64,50 +88,42 @@ export function SortMenu({
       <PopoverContent side="bottom">
         <div className={cn('flex flex-col gap-5')}>
           {/* Sort By Select */}
-          <div className={cn('flex flex-row gap-1 items-center justify-center')}>
-            <div className={cn('text-sm whitespace-nowrap')}>{t('list.all.sortBy')}：</div>
-            <Select value={by} onValueChange={setBy} defaultValue="name">
-              <SelectTrigger className={cn('flex-grow h-[26px] text-xs min-h-0')}>
-                <SelectValue placeholder="Select a fruit" className={cn('text-xs')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="metadata.name">{t('list.all.sortOptions.name')}</SelectItem>
-                  <SelectItem value="metadata.sortName">
-                    {t('list.all.sortOptions.sortName')}
-                  </SelectItem>
-                  <SelectItem value="metadata.releaseDate">
-                    {t('list.all.sortOptions.releaseDate')}
-                  </SelectItem>
-                  <SelectItem value="record.lastRunDate">
-                    {t('list.all.sortOptions.lastRunDate')}
-                  </SelectItem>
-                  <SelectItem value="record.addDate">
-                    {t('list.all.sortOptions.addDate')}
-                  </SelectItem>
-                  <SelectItem value="record.playTime">
-                    {t('list.all.sortOptions.playTime')}
-                  </SelectItem>
-                  <SelectItem value="record.score">{t('list.all.sortOptions.score')}</SelectItem>
-                  <SelectItem value="record.storageSize">
-                    {t('list.all.sortOptions.storageSize')}
-                  </SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+          <div
+            className={cn('grid grid-cols-[auto_minmax(0,1fr)_26px] gap-x-1 gap-y-5 items-center')}
+          >
+            <div className={cn('text-sm whitespace-nowrap')}>{t('showcase.sorting.label')}：</div>
+            <GameSortFieldSelect
+              value={sort.by}
+              fields={GAME_SORT_FIELDS}
+              triggerClassName={cn('w-full h-[26px] text-xs min-h-0')}
+              onValueChange={(by) => {
+                void setSort({
+                  ...sort,
+                  by,
+                  secondary: sort.secondary?.by === by ? null : sort.secondary
+                })
+              }}
+            />
             {/* Toggle Order Button */}
-            <Button
-              variant={'thirdary'}
-              size={'icon'}
-              className={cn('h-[26px] w-[26px] ml-1')}
-              onClick={toggleOrder}
-            >
-              {order === 'asc' ? (
-                <span className={cn('icon-[mdi--arrow-up] w-4 h-4')}></span>
-              ) : (
-                <span className={cn('icon-[mdi--arrow-down] w-4 h-4')}></span>
-              )}
-            </Button>
+            <SortDirectionButton
+              order={sort.order}
+              className={cn('h-[26px] w-[26px]')}
+              onOrderChange={(order) => {
+                void setSort({ ...sort, order })
+              }}
+            />
+            <div className={cn('text-sm whitespace-nowrap')}>
+              {t('sortingControls.secondary')}：
+            </div>
+            <SecondarySortFields
+              primaryBy={sort.by}
+              value={sort.secondary}
+              fields={GAME_SORT_FIELDS}
+              layout="inline"
+              onValueChange={(secondary) => {
+                void setSort({ ...sort, secondary })
+              }}
+            />
           </div>
 
           {/* Group by select */}
@@ -129,19 +145,26 @@ export function SortMenu({
                 </SelectItem>
               </SelectContent>
             </Select>
-            {/* Quickly collapse Button */}
+            {/* Quickly collapse/expand groups Button */}
             <Tooltip>
               <TooltipTrigger>
                 <Button
                   variant={'thirdary'}
                   size={'icon'}
                   className={cn('h-[26px] w-[26px] ml-1')}
+                  aria-label={t('librarybar.groupExpandCollapse')}
                   onClick={() => setOpenValues(selectedGroup, [])}
+                  onContextMenu={(event) => {
+                    event.preventDefault()
+                    expandAllGroups()
+                  }}
                 >
-                  <span className={cn('icon-[mdi--collapse-all-outline] w-4 h-4')}></span>
+                  <span className={cn('icon-[mdi--animation-outline] w-4 h-4')}></span>
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom">{t('librarybar.collapseAllGroups')}</TooltipContent>
+              <TooltipContent side="bottom" className="whitespace-pre-line text-center">
+                {t('librarybar.groupExpandCollapse')}
+              </TooltipContent>
             </Tooltip>
           </div>
 
@@ -149,44 +172,7 @@ export function SortMenu({
           {selectedGroup === 'record.playStatus' && (
             <>
               <Separator />
-              <div className="flex flex-col gap-3">
-                {playStatusOrder.map((value, index) => (
-                  <React.Fragment key={value}>
-                    <div className="flex flex-col gap-1">
-                      <div
-                        className={cn(
-                          'flex flex-row gap-3 items-center justify-between',
-                          'ml-5 mr-5'
-                        )}
-                      >
-                        <div className={cn('text-sm whitespace-nowrap')}>
-                          {t(`utils:game.playStatus.${value}`)}
-                        </div>
-                        <div className="flex flex-row gap-1">
-                          <Button
-                            variant="outline"
-                            size={'icon'}
-                            className={cn('h-[26px] w-[26px] ml-1')}
-                            disabled={index === 0}
-                            onClick={() => handleMoveUp(index)}
-                          >
-                            <span className={cn('icon-[mdi--keyboard-arrow-up] w-4 h-4')}></span>
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size={'icon'}
-                            className={cn('h-[26px] w-[26px] ml-1')}
-                            disabled={index === playStatusOrder.length - 1}
-                            onClick={() => handleMoveDown(index)}
-                          >
-                            <span className={cn('icon-[mdi--keyboard-arrow-down] w-4 h-4')}></span>
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </React.Fragment>
-                ))}
-              </div>
+              <PlayStatusOrderEditor order={playStatusOrder} onOrderChange={setPlayStatusOrder} />
             </>
           )}
 

@@ -20,8 +20,7 @@ export function CollectionComponent({
 }: {
   scrollPosition: { x: number; y: number }
 }): React.JSX.Element {
-  const [by] = useConfigState('game.gameList.sort.by')
-  const [order] = useConfigState('game.gameList.sort.order')
+  const [sort] = useConfigState('game.gameList.sort')
   const [overrideCollectionSort] = useConfigState('game.gameList.overrideCollectionSort')
   const collections = useGameCollectionStore((state) => state.documents)
   const visibleGameIds = useVisibleGameIds()
@@ -74,23 +73,21 @@ export function CollectionComponent({
                   <AccordionTrigger className={cn('text-xs p-1 pl-2')}>
                     <div className={cn('flex flex-row items-center justify-start gap-1')}>
                       <div className={cn('text-xs')}>{value.name}</div>
-                      <GroupSortSummary gameIds={gameIds} by={by} />
+                      <GroupSortSummary gameIds={gameIds} sort={sort} />
                     </div>
                   </AccordionTrigger>
                 </CollectionCM>
                 <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1 w-full')}>
-                  {(overrideCollectionSort ? sortGames(by, order, gameIds) : gameIds).map(
-                    (game) => (
-                      <LazyLoadComponent
-                        key={game}
-                        threshold={300}
-                        scrollPosition={scrollPosition}
-                        placeholder={<PlaceHolder gameId={game} groupId={`collection:${key}`} />}
-                      >
-                        <GameNav key={game} gameId={game} groupId={`collection:${key}`} />
-                      </LazyLoadComponent>
-                    )
-                  )}
+                  {(overrideCollectionSort ? sortGames(sort, gameIds) : gameIds).map((game) => (
+                    <LazyLoadComponent
+                      key={game}
+                      threshold={300}
+                      scrollPosition={scrollPosition}
+                      placeholder={<PlaceHolder gameId={game} groupId={`collection:${key}`} />}
+                    >
+                      <GameNav key={game} gameId={game} groupId={`collection:${key}`} />
+                    </LazyLoadComponent>
+                  ))}
                 </AccordionContent>
               </AccordionItem>
             )
@@ -100,11 +97,11 @@ export function CollectionComponent({
               <AccordionTrigger className={cn('text-xs p-1 pl-2')}>
                 <div className={cn('flex flex-row items-center justify-start gap-1')}>
                   <div className={cn('text-xs')}>{t('list.empty.collection')}</div>
-                  <GroupSortSummary gameIds={uncollectedGameIds} by={by} />
+                  <GroupSortSummary gameIds={uncollectedGameIds} sort={sort} />
                 </div>
               </AccordionTrigger>
               <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1 w-full')}>
-                {sortGames(by, order, uncollectedGameIds).map((game) => (
+                {sortGames(sort, uncollectedGameIds).map((game) => (
                   <LazyLoadComponent
                     key={game}
                     threshold={300}

@@ -17,8 +17,7 @@ export function PlayStatusGamesComponent({
 }: {
   scrollPosition: { x: number; y: number }
 }): React.JSX.Element {
-  const [by] = useConfigState('game.gameList.sort.by')
-  const [order] = useConfigState('game.gameList.sort.order')
+  const [sort] = useConfigState('game.gameList.sort')
   const [showAllGamesInGroup] = useConfigState('game.gameList.showAllGamesInGroup')
   const playStatusOrder = usePlayStatusOrderStore((s) => s.playStatusOrder)
   const visibleGameIds = useVisibleGameIds()
@@ -56,11 +55,11 @@ export function PlayStatusGamesComponent({
                 <AccordionTrigger className={cn('text-xs p-1 pl-2')}>
                   <div className={cn('flex flex-row items-center justify-start gap-1')}>
                     <div className={cn('text-xs')}>{t(`utils:game.playStatus.${field}`)}</div>
-                    <GroupSortSummary gameIds={gameIds} by={by} />
+                    <GroupSortSummary gameIds={gameIds} sort={sort} />
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
-                  {sortGames(by, order, gameIds).map((game) => (
+                  {sortGames(sort, gameIds).map((game) => (
                     <LazyLoadComponent
                       key={game}
                       threshold={300}

@@ -7,7 +7,7 @@
       "tooltip": "ゲーム名、開発者、リリース日などのメタデータで検索できます"
     },
     "gameListSettings": "ゲームリスト設定",
-    "collapseAllGroups": "すべてのグループを折りたたむ",
+    "groupExpandCollapse": "L：すべて折りたたむ\nR：すべて展開",
     "groupBy": "グループ分け",
     "groups": {
       "none": "グループなし",
@@ -16,6 +16,10 @@
       "genres": "ジャンル",
       "playStatus": "プレイ状況"
     }
+  },
+  "sortingControls": {
+    "secondary": "第2ソート",
+    "none": "なし"
   },
   "list": {
     "search": {
@@ -37,18 +41,7 @@
       "noResults": "条件に一致するゲームが見つかりません"
     },
     "all": {
-      "title": "すべてのゲーム",
-      "sortBy": "並び順",
-      "sortOptions": {
-        "name": "名前",
-        "sortName": "ソート名",
-        "releaseDate": "リリース日",
-        "lastRunDate": "最終プレイ日",
-        "addDate": "追加日",
-        "playTime": "プレイ時間",
-        "score": "スコア",
-        "storageSize": "ゲームサイズ"
-      }
+      "title": "すべてのゲーム"
     },
     "playStatus": {
       "adjustOrder": "順序を調整"
@@ -100,13 +93,15 @@
       "options": {
         "name": "名前",
         "sortName": "ソート名",
+        "developers": "開発元",
         "releaseDate": "リリース日",
         "lastRunDate": "最終プレイ日",
         "addDate": "追加日",
         "playTime": "プレイ時間",
         "score": "スコア",
         "custom": "カスタム順序",
-        "storageSize": "ゲームサイズ"
+        "storageSize": "ゲームサイズ",
+        "playStatus": "プレイ状態"
       }
     },
     "gameCard": {
