@@ -102,6 +102,7 @@ export function Search({ className }: { className?: string }): React.JSX.Element
     }
     toast.promise(
       (async (): Promise<GameList> => {
+        setGameList([])
         const result = await ipcManager.invoke('scraper:search-games', dataSource, inputName)
         if (result.length === 0) {
           throw new Error(t('gameAdder.search.notifications.notFound'))
@@ -114,7 +115,10 @@ export function Search({ className }: { className?: string }): React.JSX.Element
       {
         loading: t('gameAdder.search.notifications.searching'),
         success: (data) => t('gameAdder.search.notifications.found', { count: data.length }),
-        error: (err) => t('gameAdder.search.notifications.searchError', { message: err.message })
+        error: (err) =>
+          t('gameAdder.search.notifications.searchError', {
+            message: err instanceof Error ? err.message : ''
+          })
       }
     )
   }
@@ -139,7 +143,10 @@ export function Search({ className }: { className?: string }): React.JSX.Element
       {
         loading: t('gameAdder.search.notifications.recognizing'),
         success: t('gameAdder.search.notifications.recognized'),
-        error: (err) => t('gameAdder.search.notifications.recognizeError', { message: err.message })
+        error: (err) =>
+          t('gameAdder.search.notifications.recognizeError', {
+            message: err instanceof Error ? err.message : ''
+          })
       }
     )
   }

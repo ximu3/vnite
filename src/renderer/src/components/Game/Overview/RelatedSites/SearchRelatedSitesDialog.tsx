@@ -38,11 +38,7 @@ export function SearchRelatedSitesDialog({
 
   useEffect(() => {
     if (isOpen) {
-      toast.promise(handleSearch(), {
-        loading: t('detail.overview.relatedSites.search.loading'),
-        success: t('detail.overview.relatedSites.search.success'),
-        error: (err) => t('detail.overview.relatedSites.search.error', { message: err.message })
-      })
+      void handleSearch()
     }
     setRelatedSitesList([])
   }, [isOpen, t])
@@ -57,6 +53,9 @@ export function SearchRelatedSitesDialog({
   async function handleSearch(): Promise<void> {
     if (isLoading) return
     setIsLoading(true)
+    setRelatedSitesList([])
+    setSelectedRelatedSites(initialRelatedSites)
+    const toastId = toast.loading(t('detail.overview.relatedSites.search.loading'))
 
     try {
       const result = await ipcManager.invoke('scraper:get-game-related-sites-list', {
@@ -65,13 +64,19 @@ export function SearchRelatedSitesDialog({
       })
 
       if (!result || result.length === 0) {
-        toast.error(t('detail.overview.relatedSites.search.notFound'))
+        toast.error(t('detail.overview.relatedSites.search.notFound'), { id: toastId })
         return
       }
 
       setRelatedSitesList(result)
+      toast.success(t('detail.overview.relatedSites.search.success'), { id: toastId })
     } catch (error) {
-      toast.error(t('detail.overview.relatedSites.search.searchError', { error }))
+      toast.error(
+        t('detail.overview.relatedSites.search.error', {
+          message: error instanceof Error ? error.message : ''
+        }),
+        { id: toastId }
+      )
     } finally {
       setIsLoading(false)
     }
@@ -156,12 +161,7 @@ export function SearchRelatedSitesDialog({
             />
             <Button
               onClick={() => {
-                toast.promise(handleSearch(), {
-                  loading: t('detail.overview.relatedSites.search.loading'),
-                  success: t('detail.overview.relatedSites.search.success'),
-                  error: (err) =>
-                    t('detail.overview.relatedSites.search.error', { message: err.message })
-                })
+                void handleSearch()
               }}
               size={'icon'}
               className={cn('shrink-0')}

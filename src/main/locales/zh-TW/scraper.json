@@ -1,4 +1,10 @@
 {
+  "errors": {
+    "network": "網路連線失敗。",
+    "timeout": "請求逾時。",
+    "httpError": "請求錯誤（HTTP {{httpStatus}}）。",
+    "unknown": "未知錯誤。"
+  },
   "dlsite": {
     "workType": "作品形式",
     "releaseDate": "販賣日",

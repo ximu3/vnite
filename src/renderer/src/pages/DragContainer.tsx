@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { ipcManager } from '~/app/ipc'
-import { useConfigState } from '~/hooks'
+import { useConfigStore } from '~/stores'
 import { cn } from '~/utils'
 import { useGameAdderStore } from './GameAdder/store'
 import { useGameBatchAdderStore } from './GameBatchAdder/store'
@@ -13,7 +13,6 @@ export function DragContainer({ children }: { children: React.ReactNode }): Reac
   const [isDragging, setIsDragging] = useState(false)
   const { setIsOpen: setGameAdderIsOpen, setName, setDirPath, setGamePath } = useGameAdderStore()
   const { actions: gameBatchAdderActions } = useGameBatchAdderStore()
-  const [defaultDataSource] = useConfigState('game.scraper.common.defaultDataSource')
 
   const isFileDrag = (event: DragEvent): boolean => {
     if (!event.dataTransfer) return false
@@ -88,6 +87,9 @@ export function DragContainer({ children }: { children: React.ReactNode }): Reac
         toast.loading(t('notifications.gettingBatchGames'), {
           id: 'getting-batch-games'
         })
+        const defaultDataSource = useConfigStore
+          .getState()
+          .getConfigValue('game.scraper.common.defaultDataSource')
         const games = gameInfo.map(async (info) => ({
           dataId: generateUUID(),
           name: info.name,

@@ -1,9 +1,12 @@
-import { GameList, GameMetadata } from '@appTypes/utils'
-import { BangumiSearchResult, BangumiSubject } from './types'
-import { getGameBackgroundsFromVNDB } from '../vndb/api'
-import i18next from 'i18next'
-import { net } from 'electron'
 import { METADATA_EXTRA_PREDEFINED_KEYS } from '@appTypes/models'
+import { GameList, GameMetadata } from '@appTypes/utils'
+import i18next from 'i18next'
+import { isHttpError } from '../../errors'
+import { createScraperFetch, readScraperJson } from '../../request'
+import { getGameBackgroundsFromVNDB } from '../vndb/api'
+import { BangumiSearchResult, BangumiSubject } from './types'
+
+const fetch = createScraperFetch()
 
 // Mapping table from Bangumi fields to predefined roles
 const BANGUMI_ROLE_MAPPING: Record<string, string> = {
@@ -100,7 +103,7 @@ async function fetchBangumi<T>(
 
   const apiKey = import.meta.env.VITE_BANGUMI_API_KEY || ''
 
-  const response = await net.fetch(url.toString(), {
+  const response = await fetch(url.toString(), {
     headers: {
       Accept: 'application/json',
       'User-Agent': 'ximu3/vnite/4.0.0-alpha.0 (https://github.com/ximu3/vnite)',
@@ -108,33 +111,24 @@ async function fetchBangumi<T>(
     }
   })
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`)
-  }
-
-  return response.json()
+  return readScraperJson<T>(response)
 }
 
 export async function searchBangumiGames(gameName: string): Promise<GameList> {
-  try {
-    // URL encoding of game names
-    const encodedGameName = encodeURIComponent(gameName)
+  // URL encoding of game names
+  const encodedGameName = encodeURIComponent(gameName)
 
-    const data = await fetchBangumi<BangumiSearchResult>(`search/subject/${encodedGameName}`, {
-      type: 4,
-      max_results: 25
-    })
+  const data = await fetchBangumi<BangumiSearchResult>(`search/subject/${encodedGameName}`, {
+    type: 4,
+    max_results: 25
+  })
 
-    return data.list.map((game) => ({
-      id: game.id.toString(),
-      name: game?.name_cn || game.name,
-      releaseDate: game.air_date || '',
-      developers: game.staff?.filter((s) => s.role === 'developer').map((s) => s.name) || []
-    }))
-  } catch (error) {
-    console.error('Error fetching Bangumi:', error)
-    throw error
-  }
+  return data.list.map((game) => ({
+    id: game.id.toString(),
+    name: game?.name_cn || game.name,
+    releaseDate: game.air_date || '',
+    developers: game.staff?.filter((s) => s.role === 'developer').map((s) => s.name) || []
+  }))
 }
 
 function getInfoboxField<T = string[]>(
@@ -208,54 +202,39 @@ function getGenres(infobox: { key: string; value: any }[] | undefined): string[]
   return getInfoboxField(infobox, GENRE_FIELDS, { separator: ' / ' })
 }
 
-export async function getBangumiMetadata(gameId: string): Promise<GameMetadata> {
+export async function getBangumiMetadata(gameId: string): Promise<GameMetadata | null> {
+  let game: BangumiSubject
   try {
-    const game = await fetchBangumi<BangumiSubject>(`v0/subjects/${gameId}`)
-
-    // Process staff data from infobox
-    const staffData = processBangumiStaffData(game.infobox)
-
-    return {
-      name: game?.name_cn || game.name,
-      originalName: game.name,
-      releaseDate: game.date || '',
-      description: game.summary || '',
-      genres: getGenres(game.infobox),
-      publishers: getPublishers(game.infobox),
-      developers: getDevelopers(game.infobox),
-      relatedSites: [
-        ...getRelatedSites(game.infobox),
-        { label: 'Bangumi', url: `https://bgm.tv/subject/${gameId}` }
-      ],
-      tags: game.tags?.map((tag) => tag.name) || [],
-      extra: staffData
-    }
+    game = await fetchBangumi<BangumiSubject>(`v0/subjects/${gameId}`)
   } catch (error) {
-    console.error(`Error fetching metadata for game ${gameId}:`, error)
+    if (isHttpError(error, 404)) return null
     throw error
+  }
+
+  // Process staff data from infobox
+  const staffData = processBangumiStaffData(game.infobox)
+
+  return {
+    name: game?.name_cn || game.name,
+    originalName: game.name,
+    releaseDate: game.date || '',
+    description: game.summary || '',
+    genres: getGenres(game.infobox),
+    publishers: getPublishers(game.infobox),
+    developers: getDevelopers(game.infobox),
+    relatedSites: [
+      ...getRelatedSites(game.infobox),
+      { label: 'Bangumi', url: `https://bgm.tv/subject/${gameId}` }
+    ],
+    tags: game.tags?.map((tag) => tag.name) || [],
+    extra: staffData
   }
 }
 
-export async function getBangumiMetadataByName(gameName: string): Promise<GameMetadata> {
-  try {
-    const games = await searchBangumiGames(gameName)
-    if (games.length === 0) {
-      return {
-        name: gameName,
-        originalName: gameName,
-        releaseDate: '',
-        description: '',
-        developers: [],
-        relatedSites: [],
-        tags: [],
-        extra: []
-      }
-    }
-    return await getBangumiMetadata(games[0].id)
-  } catch (error) {
-    console.error(`Error fetching metadata for game ${gameName}:`, error)
-    throw error
-  }
+export async function getBangumiMetadataByName(gameName: string): Promise<GameMetadata | null> {
+  const games = await searchBangumiGames(gameName)
+  if (games.length === 0) return null
+  return await getBangumiMetadata(games[0].id)
 }
 
 export async function checkGameExists(gameId: string): Promise<boolean> {
@@ -263,8 +242,8 @@ export async function checkGameExists(gameId: string): Promise<boolean> {
     await fetchBangumi<BangumiSubject>(`v0/subjects/${gameId}`)
     return true
   } catch (error) {
-    console.error(`Error checking game existence for ID ${gameId}:`, error)
-    return false
+    if (isHttpError(error, 404)) return false
+    throw error
   }
 }
 
@@ -276,8 +255,8 @@ export async function getGameBackgrounds(gameId: string): Promise<string[]> {
       value: data.name
     })
   } catch (error) {
-    console.error(`Error fetching backgrounds for game ${gameId}:`, error)
-    return []
+    if (isHttpError(error, 404)) return []
+    throw error
   }
 }
 
@@ -288,8 +267,8 @@ export async function getGameBackgroundsByName(gameName: string): Promise<string
       value: gameName
     })
   } catch (error) {
-    console.error(`Error fetching backgrounds for game ${gameName}:`, error)
-    return []
+    if (isHttpError(error, 404)) return []
+    throw error
   }
 }
 
@@ -298,8 +277,8 @@ export async function getGameCover(gameId: string): Promise<string> {
     const game = await fetchBangumi<BangumiSubject>(`v0/subjects/${gameId}`)
     return game.images.large || ''
   } catch (error) {
-    console.error(`Error fetching cover for game ${gameId}:`, error)
-    return ''
+    if (isHttpError(error, 404)) return ''
+    throw error
   }
 }
 
@@ -311,7 +290,7 @@ export async function getGameCoverByName(gameName: string): Promise<string> {
     }
     return await getGameCover(games[0].id)
   } catch (error) {
-    console.error(`Error fetching cover for game ${gameName}:`, error)
-    return ''
+    if (isHttpError(error, 404)) return ''
+    throw error
   }
 }

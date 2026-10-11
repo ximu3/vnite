@@ -1,6 +1,5 @@
 export * from './common'
 export * from './image'
-export * from './gis'
 export * from './archiver'
 export * from './powershell'
 export * from './robot'

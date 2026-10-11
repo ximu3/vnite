@@ -1,4 +1,10 @@
 {
+  "errors": {
+    "network": "网络连接失败。",
+    "timeout": "请求超时。",
+    "httpError": "请求错误（HTTP {{httpStatus}}）。",
+    "unknown": "未知错误。"
+  },
   "dlsite": {
     "workType": "作品形式",
     "releaseDate": "发售日",

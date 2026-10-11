@@ -12,7 +12,8 @@ export interface SteamStoreSearchResponse {
   total: number
 }
 
-type SteamAppDetailsData = {
+export type SteamAppDetailsData = {
+  steam_appid: number
   name: string
   detailed_description?: string
   short_description?: string
@@ -51,7 +52,7 @@ type SteamAppDetailsData = {
 export type SteamAppDetailsResponse = {
   [key: string]: {
     success: boolean
-    data: SteamAppDetailsData
+    data?: SteamAppDetailsData
   }
 }
 

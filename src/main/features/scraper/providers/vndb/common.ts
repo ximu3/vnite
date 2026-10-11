@@ -1,20 +1,22 @@
+import { METADATA_EXTRA_PREDEFINED_KEYS } from '@appTypes/models'
+import { GameMetadata } from '@appTypes/utils'
+import i18next from 'i18next'
+import { ConfigDBManager } from '~/core/database'
+import { createScraperFetch, readScraperJson } from '../../request'
 import { formatDescription } from './parser'
 import {
+  SimpleGameInfo,
+  VNBasicInfo,
   VNDBRequestParams,
   VNDBResponse,
-  VNBasicInfo,
   VNDetailInfo,
-  VNWithScreenshots,
-  VNWithCover,
-  SimpleGameInfo,
+  VNStaff,
   VNTitle,
-  VNStaff
+  VNWithCover,
+  VNWithScreenshots
 } from './types'
-import { GameMetadata } from '@appTypes/utils'
-import { METADATA_EXTRA_PREDEFINED_KEYS } from '@appTypes/models'
-import { net } from 'electron'
-import { ConfigDBManager } from '~/core/database'
-import i18next from 'i18next'
+
+const fetch = createScraperFetch()
 
 const VNDB_SEARCH_SORT = 'searchrank'
 
@@ -29,7 +31,6 @@ const VNDB_ROLE_MAPPING: Record<string, string> = {
 
 async function fetchVNDB<T>(params: VNDBRequestParams): Promise<VNDBResponse<T>> {
   const endpoint = 'https://api.vndb.org/kana/vn'
-  const TIMEOUT_MS = 10000
 
   const fields = Array.isArray(params.fields) ? params.fields.join(',') : params.fields
 
@@ -44,31 +45,8 @@ async function fetchVNDB<T>(params: VNDBRequestParams): Promise<VNDBResponse<T>>
     })
   }
 
-  try {
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS)
-
-    const response = await net.fetch(endpoint, {
-      ...requestConfig,
-      signal: controller.signal
-    })
-
-    clearTimeout(timeoutId)
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-
-    return (await response.json()) as VNDBResponse<T>
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error)
-
-    if (errorMessage.includes('abort')) {
-      throw new Error(`Timeout exceeded (${TIMEOUT_MS}ms) for ${endpoint}`)
-    } else {
-      throw new Error(`Failed to fetch from ${endpoint}: ${errorMessage}`)
-    }
-  }
+  const response = await fetch(endpoint, requestConfig)
+  return await readScraperJson<VNDBResponse<T>>(response)
 }
 
 function processStaffData(staff: VNStaff[]): Array<{ key: string; value: string[] }> {
@@ -99,27 +77,22 @@ function processStaffData(staff: VNStaff[]): Array<{ key: string; value: string[
 export async function searchVNDBGames(gameName: string): Promise<SimpleGameInfo[]> {
   const fields = ['titles{main,title}', 'released', 'developers{name}', 'id']
 
-  try {
-    const data = await fetchVNDB<VNBasicInfo>({
-      filters: ['search', '=', gameName],
-      fields,
-      sort: VNDB_SEARCH_SORT,
-      results: 30
-    })
+  const data = await fetchVNDB<VNBasicInfo>({
+    filters: ['search', '=', gameName],
+    fields,
+    sort: VNDB_SEARCH_SORT,
+    results: 30
+  })
 
-    return data.results.map((game) => ({
-      id: game.id,
-      name: game.titles.find((t) => t.main)?.title || game.titles[0].title,
-      releaseDate: game?.released || '',
-      developers: game.developers?.map((d) => d.name) || ['']
-    }))
-  } catch (error) {
-    console.error('Error fetching VNDB ', error)
-    throw error
-  }
+  return data.results.map((game) => ({
+    id: game.id,
+    name: game.titles.find((t) => t.main)?.title || game.titles[0].title,
+    releaseDate: game?.released || '',
+    developers: game.developers?.map((d) => d.name) || ['']
+  }))
 }
 
-export async function getVNMetadata(vnId: string): Promise<GameMetadata> {
+export async function getVNMetadata(vnId: string): Promise<GameMetadata | null> {
   const formattedId = vnId.startsWith('v') ? vnId : `v${vnId}`
 
   const fields = [
@@ -132,56 +105,49 @@ export async function getVNMetadata(vnId: string): Promise<GameMetadata> {
     'staff{role,name,original}'
   ]
 
-  try {
-    const data = await fetchVNDB<VNDetailInfo>({
-      filters: ['id', '=', formattedId],
-      fields
-    })
+  const data = await fetchVNDB<VNDetailInfo>({
+    filters: ['id', '=', formattedId],
+    fields
+  })
 
-    if (!data.results.length) {
-      throw new Error(`No visual novel found with ID: ${vnId}`)
-    }
+  if (!data.results.length) {
+    return null
+  }
 
-    const vn = data.results[0]
-    const staffData = processStaffData(vn.staff)
+  const vn = data.results[0]
+  const staffData = processStaffData(vn.staff)
 
-    const spoilerTagsLevel = await ConfigDBManager.getConfigValue(
-      'game.scraper.vndb.tagSpoilerLevel'
-    )
+  const spoilerTagsLevel = await ConfigDBManager.getConfigValue('game.scraper.vndb.tagSpoilerLevel')
 
-    if (spoilerTagsLevel === 0) {
-      vn.tags = vn.tags?.filter((tag) => tag.spoiler === 0)
-    } else if (spoilerTagsLevel === 1) {
-      vn.tags = vn.tags?.filter((tag) => tag.spoiler <= 1)
-    } else {
-      vn.tags = vn.tags?.filter((tag) => tag.spoiler <= 2)
-    }
+  if (spoilerTagsLevel === 0) {
+    vn.tags = vn.tags?.filter((tag) => tag.spoiler === 0)
+  } else if (spoilerTagsLevel === 1) {
+    vn.tags = vn.tags?.filter((tag) => tag.spoiler <= 1)
+  } else {
+    vn.tags = vn.tags?.filter((tag) => tag.spoiler <= 2)
+  }
 
-    const languageCode = i18next.t('scraper:vndb.languageCode')
+  const languageCode = i18next.t('scraper:vndb.languageCode')
 
-    return {
-      name:
-        vn.titles.find((t) => t.lang === languageCode)?.title ||
-        vn.titles.find((t) => t.main)?.title ||
-        vn.titles[0].title,
-      originalName: vn.titles.find((t) => t.main)?.title || vn.titles[0].title,
-      releaseDate: vn.released || '',
-      description: formatDescription(vn.description),
-      developers: vn.developers?.map((d) => d.original || d.name) || [''],
-      relatedSites: [
-        ...(vn.extlinks?.map((link) => ({ label: link.label, url: link.url })) || []),
-        { label: 'VNDB', url: `https://vndb.org/${formattedId}` }
-      ],
-      tags: vn.tags?.sort((a, b) => b.rating - a.rating).map((tag) => tag.name) ?? [],
-      extra: staffData
-    }
-  } catch (error) {
-    console.error(`Error fetching metadata for VN ${vnId}:`, error)
-    throw error
+  return {
+    name:
+      vn.titles.find((t) => t.lang === languageCode)?.title ||
+      vn.titles.find((t) => t.main)?.title ||
+      vn.titles[0].title,
+    originalName: vn.titles.find((t) => t.main)?.title || vn.titles[0].title,
+    releaseDate: vn.released || '',
+    description: formatDescription(vn.description),
+    developers: vn.developers?.map((d) => d.original || d.name) || [''],
+    relatedSites: [
+      ...(vn.extlinks?.map((link) => ({ label: link.label, url: link.url })) || []),
+      { label: 'VNDB', url: `https://vndb.org/${formattedId}` }
+    ],
+    tags: vn.tags?.sort((a, b) => b.rating - a.rating).map((tag) => tag.name) ?? [],
+    extra: staffData
   }
 }
 
-export async function getVNMetadataByName(vnName: string): Promise<GameMetadata> {
+export async function getVNMetadataByName(vnName: string): Promise<GameMetadata | null> {
   const fields = [
     'id',
     'titles{main,title}',
@@ -193,57 +159,41 @@ export async function getVNMetadataByName(vnName: string): Promise<GameMetadata>
     'staff{role,name,original}'
   ]
 
-  try {
-    const data = await fetchVNDB<VNDetailInfo>({
-      filters: ['search', '=', vnName],
-      fields,
-      sort: VNDB_SEARCH_SORT
-    })
+  const data = await fetchVNDB<VNDetailInfo>({
+    filters: ['search', '=', vnName],
+    fields,
+    sort: VNDB_SEARCH_SORT
+  })
 
-    if (!data.results.length) {
-      return {
-        name: vnName,
-        originalName: vnName,
-        releaseDate: '',
-        description: '',
-        developers: [],
-        relatedSites: [],
-        tags: [],
-        extra: []
-      }
-    }
+  if (!data.results.length) {
+    return null
+  }
 
-    const vn = data.results[0]
-    const staffData = processStaffData(vn.staff)
+  const vn = data.results[0]
+  const staffData = processStaffData(vn.staff)
 
-    const spoilerTagsLevel = await ConfigDBManager.getConfigValue(
-      'game.scraper.vndb.tagSpoilerLevel'
-    )
+  const spoilerTagsLevel = await ConfigDBManager.getConfigValue('game.scraper.vndb.tagSpoilerLevel')
 
-    if (spoilerTagsLevel === 0) {
-      vn.tags = vn.tags?.filter((tag) => tag.spoiler === 0)
-    } else if (spoilerTagsLevel === 1) {
-      vn.tags = vn.tags?.filter((tag) => tag.spoiler <= 1)
-    } else {
-      vn.tags = vn.tags?.filter((tag) => tag.spoiler <= 2)
-    }
+  if (spoilerTagsLevel === 0) {
+    vn.tags = vn.tags?.filter((tag) => tag.spoiler === 0)
+  } else if (spoilerTagsLevel === 1) {
+    vn.tags = vn.tags?.filter((tag) => tag.spoiler <= 1)
+  } else {
+    vn.tags = vn.tags?.filter((tag) => tag.spoiler <= 2)
+  }
 
-    return {
-      name: vn.titles.find((t) => t.main)?.title || vn.titles[0].title,
-      originalName: vn.titles.find((t) => t.main)?.title || vn.titles[0].title,
-      releaseDate: vn.released || '',
-      description: formatDescription(vn.description),
-      developers: vn.developers?.map((d) => d.original || d.name) || [''],
-      relatedSites: [
-        ...(vn.extlinks?.map((link) => ({ label: link.label, url: link.url })) || []),
-        { label: 'VNDB', url: `https://vndb.org/${vn.id}` }
-      ],
-      tags: vn.tags?.sort((a, b) => b.rating - a.rating).map((tag) => tag.name) ?? [],
-      extra: staffData
-    }
-  } catch (error) {
-    console.error(`Error fetching metadata for VN ${vnName}:`, error)
-    throw error
+  return {
+    name: vn.titles.find((t) => t.main)?.title || vn.titles[0].title,
+    originalName: vn.titles.find((t) => t.main)?.title || vn.titles[0].title,
+    releaseDate: vn.released || '',
+    description: formatDescription(vn.description),
+    developers: vn.developers?.map((d) => d.original || d.name) || [''],
+    relatedSites: [
+      ...(vn.extlinks?.map((link) => ({ label: link.label, url: link.url })) || []),
+      { label: 'VNDB', url: `https://vndb.org/${vn.id}` }
+    ],
+    tags: vn.tags?.sort((a, b) => b.rating - a.rating).map((tag) => tag.name) ?? [],
+    extra: staffData
   }
 }
 
@@ -251,36 +201,26 @@ export async function checkVNExists(vnId: string): Promise<boolean> {
   const formattedId = vnId.startsWith('v') ? vnId : `v${vnId}`
   const fields = ['title']
 
-  try {
-    const data = await fetchVNDB<{ title: string }>({
-      filters: ['id', '=', formattedId],
-      fields,
-      results: 1
-    })
+  const data = await fetchVNDB<{ title: string }>({
+    filters: ['id', '=', formattedId],
+    fields,
+    results: 1
+  })
 
-    return data.results.length > 0
-  } catch (error) {
-    console.error(`Error checking VN existence for ID ${vnId}:`, error)
-    return false
-  }
+  return data.results.length > 0
 }
 
 export async function getGameBackgrounds(vnId: string): Promise<string[]> {
   const formattedId = vnId.startsWith('v') ? vnId : `v${vnId}`
   const fields = ['screenshots{url}']
 
-  try {
-    const data = await fetchVNDB<VNWithScreenshots>({
-      filters: ['id', '=', formattedId],
-      fields,
-      results: 1
-    })
+  const data = await fetchVNDB<VNWithScreenshots>({
+    filters: ['id', '=', formattedId],
+    fields,
+    results: 1
+  })
 
-    return data.results[0].screenshots.map((screenshot) => screenshot.url)
-  } catch (error) {
-    console.error(`Error fetching images for VN ${vnId}:`, error)
-    return []
-  }
+  return data.results[0]?.screenshots.map((screenshot) => screenshot.url) || []
 }
 
 export async function getGameBackgroundsByName(name: string): Promise<string[]> {
@@ -290,60 +230,45 @@ export async function getGameBackgroundsByName(name: string): Promise<string[]> 
     titles: VNTitle[]
   }
 
-  try {
-    const data = await fetchVNDB<VNWithScreenshotsAndTitles>({
-      filters: ['search', '=', name],
-      fields,
-      sort: VNDB_SEARCH_SORT
-    })
+  const data = await fetchVNDB<VNWithScreenshotsAndTitles>({
+    filters: ['search', '=', name],
+    fields,
+    sort: VNDB_SEARCH_SORT
+  })
 
-    if (data.results.length > 0) {
-      let vn = data.results.find((result) =>
-        result.titles.some((titleJson) => titleJson.title.toLowerCase() === name.toLowerCase())
-      )
-      vn = vn || data.results[0]
+  if (data.results.length > 0) {
+    let vn = data.results.find((result) =>
+      result.titles.some((titleJson) => titleJson.title.toLowerCase() === name.toLowerCase())
+    )
+    vn = vn || data.results[0]
 
-      return vn.screenshots.map((screenshot) => screenshot.url)
-    }
-    return []
-  } catch (error) {
-    console.error(`Error fetching images for VN ${name}:`, error)
-    return []
+    return vn.screenshots.map((screenshot) => screenshot.url)
   }
+  return []
 }
 
 export async function getGameCover(vnId: string): Promise<string> {
   const formattedId = vnId.startsWith('v') ? vnId : `v${vnId}`
   const fields = ['image{url}']
 
-  try {
-    const data = await fetchVNDB<VNWithCover>({
-      filters: ['id', '=', formattedId],
-      fields,
-      results: 1
-    })
+  const data = await fetchVNDB<VNWithCover>({
+    filters: ['id', '=', formattedId],
+    fields,
+    results: 1
+  })
 
-    return data.results[0].image.url
-  } catch (error) {
-    console.error(`Error fetching cover for VN ${vnId}:`, error)
-    return ''
-  }
+  return data.results[0]?.image?.url || ''
 }
 
 export async function getGameCoverByName(name: string): Promise<string> {
   const fields = ['image{url}']
 
-  try {
-    const data = await fetchVNDB<VNWithCover>({
-      filters: ['search', '=', name],
-      fields,
-      sort: VNDB_SEARCH_SORT,
-      results: 1
-    })
+  const data = await fetchVNDB<VNWithCover>({
+    filters: ['search', '=', name],
+    fields,
+    sort: VNDB_SEARCH_SORT,
+    results: 1
+  })
 
-    return data.results[0].image.url
-  } catch (error) {
-    console.error(`Error fetching cover for VN ${name}:`, error)
-    return ''
-  }
+  return data.results[0]?.image?.url || ''
 }

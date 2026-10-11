@@ -1,4 +1,10 @@
 {
+  "errors": {
+    "network": "Network connection failed.",
+    "timeout": "Request timed out.",
+    "httpError": "Request error (HTTP {{httpStatus}}).",
+    "unknown": "Unknown error."
+  },
   "dlsite": {
     "workType": "Product format",
     "releaseDate": "Release date",

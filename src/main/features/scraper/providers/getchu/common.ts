@@ -1,10 +1,13 @@
-import { net } from 'electron'
-import { Readable } from 'stream'
-import { ReadableStream } from 'stream/web'
-import * as cheerio from 'cheerio'
 import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
+import * as cheerio from 'cheerio'
 import Encoding from 'encoding-japanese'
+import { Readable } from 'stream'
 import { text } from 'stream/consumers'
+import { ReadableStream } from 'stream/web'
+import { isHttpError, ScraperError } from '../../errors'
+import { createScraperFetch } from '../../request'
+
+const fetch = createScraperFetch(30_000)
 
 const getchuUrl = 'https://www.getchu.com'
 
@@ -18,12 +21,12 @@ const searchCache = {
 async function fetchFromGetchu(
   endpoint: string,
   params: Record<string, string | number> = {}
-): Promise<[number, Readable]> {
+): Promise<Readable> {
   const url = new URL(`${getchuUrl}${endpoint}`)
   Object.entries(params).forEach(([key, value]) => {
     url.searchParams.append(key, String(value))
   })
-  const response = await net.fetch(url.toString(), {
+  const response = await fetch(url.toString(), {
     headers: {
       Accept:
         'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
@@ -34,8 +37,10 @@ async function fetchFromGetchu(
       'Accept-Encoding': 'br, gzip, deflate'
     }
   })
-  const bodyReader = Readable.fromWeb(response.body as ReadableStream<Uint8Array>)
-  return [response.status, bodyReader]
+  if (response.status !== 200) {
+    throw new ScraperError('httpError', undefined, response.status)
+  }
+  return Readable.fromWeb(response.body as ReadableStream<Uint8Array>)
 }
 
 async function pipeToCheerio<T>(
@@ -96,12 +101,9 @@ export async function searchGetchuGames(gameName: string): Promise<GameList> {
   })
   const encodedGameName = Encoding.urlEncode(eucjpArray)
   if (!searchCache.body || searchCache.encodedName !== encodedGameName) {
-    const [status, bodyStream] = await fetchFromGetchu(
+    const bodyStream = await fetchFromGetchu(
       `/php/search.phtml?search_title=${encodedGameName}&list_count=30&sort=title&sort2=down&genre=pc_soft&list_type=list&search=search`
     )
-    if (status !== 200) {
-      throw new Error(`HTTP error! status: ${status}`)
-    }
     searchCache.body = await text(bodyStream)
     searchCache.encodedName = encodedGameName
   }
@@ -139,37 +141,28 @@ export async function searchGetchuGames(gameName: string): Promise<GameList> {
 }
 
 export async function checkGetchuGameExists(gameId: string): Promise<boolean> {
-  const [status] = await fetchFromGetchu('/soft.phtml', { id: gameId })
-  if (status === 200) {
+  try {
+    await fetchFromGetchu('/soft.phtml', { id: gameId })
     return true
+  } catch (error) {
+    if (isHttpError(error, 404)) return false
+    throw error
   }
-  if (status === 404) {
-    return false
-  }
-  throw new Error(`Error checking game existence for ID ${gameId}: HTTP status: ${status}`)
 }
 
-export async function getGetchuGameMetadata(identifier: ScraperIdentifier): Promise<GameMetadata> {
+export async function getGetchuGameMetadata(
+  identifier: ScraperIdentifier
+): Promise<GameMetadata | null> {
   const id = await ensureGetchuId(identifier)
-  if (id === '') {
-    return {
-      name: identifier.value,
-      originalName: identifier.value,
-      releaseDate: '',
-      description: '',
-      developers: [],
-      relatedSites: [],
-      tags: [],
-      extra: []
-    }
+  if (id === '') return null
+  let bodyStream: Readable
+  try {
+    bodyStream = await fetchFromGetchu('/soft.phtml', { id })
+  } catch (error) {
+    if (isHttpError(error, 404)) return null
+    throw error
   }
-  const [status, bodyStream] = await fetchFromGetchu('/soft.phtml', {
-    id
-  })
-  if (status !== 200) {
-    throw new Error(`HTTP error! status: ${status}`)
-  }
-  return pipeToCheerio(bodyStream, ($, resolve) => {
+  return pipeToCheerio<GameMetadata | null>(bodyStream, ($, resolve) => {
     // name
     const name = $('h1#soft-title').text().trim()
     // brand

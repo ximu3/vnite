@@ -21,15 +21,11 @@ export const ymgalProvider: ScraperProvider = {
       return await checkGameExistsOnYMGal(identifier.value)
     }
     // For name-based checks, try to search and see if we get results
-    try {
-      const games = await searchGamesFromYMGal(identifier.value)
-      return games.length > 0
-    } catch {
-      return false
-    }
+    const games = await searchGamesFromYMGal(identifier.value)
+    return games.length > 0
   },
 
-  async getGameMetadata(identifier: ScraperIdentifier): Promise<GameMetadata> {
+  async getGameMetadata(identifier: ScraperIdentifier): Promise<GameMetadata | null> {
     return await getGameMetadataFromYMGal(identifier)
   },
 

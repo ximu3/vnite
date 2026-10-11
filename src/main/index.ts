@@ -18,6 +18,7 @@ import { nativeCleanup, setupNativeModule } from './core/native'
 import { AuthManager, handleAuthCallback } from './features/account'
 import { GameScannerManager } from './features/adder'
 import { setupScraper } from './features/scraper'
+import { primeGoogleImageSearchSession } from './features/scraper/providers/google/common'
 import {
   checkPortableMode,
   initI18n,
@@ -36,7 +37,6 @@ import {
   checkIfDirectoryNeedsAdminRights,
   cleanupPowerShell,
   parseGameIdFromUrl,
-  primeGoogleImageSearchSession,
   restartAppAsAdmin
 } from './utils'
 

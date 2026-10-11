@@ -1,8 +1,12 @@
-import { net, session } from 'electron'
+import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
+import * as cheerio from 'cheerio'
+import { session } from 'electron'
 import { Readable } from 'stream'
 import { ReadableStream } from 'stream/web'
-import * as cheerio from 'cheerio'
-import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
+import { isHttpError, ScraperError } from '../../errors'
+import { createScraperFetch } from '../../request'
+
+const fetch = createScraperFetch(30_000)
 
 const fanzaUrl = 'https://dlsoft.dmm.co.jp'
 
@@ -21,7 +25,7 @@ function generateRandomFanzaId(): string {
 async function fetchFromFanza(
   endpoint: string,
   params: Record<string, string | number> = {}
-): Promise<[number, Readable]> {
+): Promise<Readable> {
   const url = new URL(`${fanzaUrl}${endpoint}`)
   Object.entries(params).forEach(([key, value]) => {
     url.searchParams.append(key, String(value))
@@ -47,9 +51,11 @@ async function fetchFromFanza(
     name: 'guest_id',
     value: generateRandomFanzaId()
   })
-  const response = await net.fetch(url.toString(), { headers })
-  const bodyReader = Readable.fromWeb(response.body as ReadableStream<Uint8Array>)
-  return [response.status, bodyReader]
+  const response = await fetch(url.toString(), { headers })
+  if (response.status !== 200) {
+    throw new ScraperError('httpError', undefined, response.status)
+  }
+  return Readable.fromWeb(response.body as ReadableStream<Uint8Array>)
 }
 
 async function pipeToCheerio<T>(
@@ -92,13 +98,10 @@ export async function searchFanzaGames(gameName: string): Promise<GameList> {
   if (name === '') {
     return []
   }
-  const [status, bodyStream] = await fetchFromFanza('/search', {
+  const bodyStream = await fetchFromFanza('/search', {
     service: 'pcgame',
     searchstr: name
   })
-  if (status !== 200) {
-    throw new Error(`HTTP error! status: ${status}`)
-  }
   return pipeToCheerio(bodyStream, ($, resolve) => {
     const result: GameList = []
     const items = $('ul.component-legacy-productTile > li.component-legacy-productTile__item')
@@ -126,35 +129,28 @@ export async function searchFanzaGames(gameName: string): Promise<GameList> {
 }
 
 export async function checkFanzaGameExists(gameId: string): Promise<boolean> {
-  const [status] = await fetchFromFanza(`/detail/${gameId}`)
-  if (status === 200) {
+  try {
+    await fetchFromFanza(`/detail/${gameId}`)
     return true
+  } catch (error) {
+    if (isHttpError(error, 404)) return false
+    throw error
   }
-  if (status === 404) {
-    return false
-  }
-  throw new Error(`Error checking game existence for ID ${gameId}: HTTP status: ${status}`)
 }
 
-export async function getFanzaGameMetadata(identifier: ScraperIdentifier): Promise<GameMetadata> {
+export async function getFanzaGameMetadata(
+  identifier: ScraperIdentifier
+): Promise<GameMetadata | null> {
   const id = await ensureFanzaId(identifier)
-  if (id === '') {
-    return {
-      name: identifier.value,
-      originalName: identifier.value,
-      releaseDate: '',
-      description: '',
-      developers: [],
-      relatedSites: [],
-      tags: [],
-      extra: []
-    }
+  if (id === '') return null
+  let bodyStream: Readable
+  try {
+    bodyStream = await fetchFromFanza(`/detail/${id}`)
+  } catch (error) {
+    if (isHttpError(error, 404)) return null
+    throw error
   }
-  const [status, bodyStream] = await fetchFromFanza(`/detail/${id}`)
-  if (status !== 200) {
-    throw new Error(`HTTP error! status: ${status}`)
-  }
-  return pipeToCheerio(bodyStream, ($, resolve) => {
+  return pipeToCheerio<GameMetadata | null>(bodyStream, ($, resolve) => {
     // name
     const name = $('h1.productTitle__item').text().trim()
     // brand

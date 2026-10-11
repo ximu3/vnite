@@ -148,6 +148,9 @@ export function SearchMediaDialog({
       return
     }
     setIsLoading(true)
+    setImageList([])
+    setSelectedImage('')
+    const toastId = toast.loading(t('detail.properties.media.notifications.searching'))
 
     try {
       const identifier: ScraperIdentifier = {
@@ -182,15 +185,21 @@ export function SearchMediaDialog({
       }
 
       if (result.length === 0) {
-        toast.error(t('detail.properties.media.notifications.noResultsFound'))
+        toast.error(t('detail.properties.media.notifications.noResultsFound'), { id: toastId })
         return
       }
 
       const uniqueResult = [...new Set(result)]
       setImageList(uniqueResult)
       setSelectedImage(uniqueResult[0])
+      toast.success(t('detail.properties.media.notifications.searchSuccess'), { id: toastId })
     } catch (error) {
-      toast.error(t('detail.properties.media.notifications.searchError', { message: error }))
+      toast.error(
+        t('detail.properties.media.notifications.searchError', {
+          message: error instanceof Error ? error.message : ''
+        }),
+        { id: toastId }
+      )
     } finally {
       setIsLoading(false)
     }
@@ -205,12 +214,7 @@ export function SearchMediaDialog({
       return
     }
 
-    toast.promise(handleSearch(normalizedValue, mode), {
-      loading: t('detail.properties.media.notifications.searching'),
-      success: t('detail.properties.media.notifications.searchSuccess'),
-      error: (err) =>
-        t('detail.properties.media.notifications.searchError', { message: err.message })
-    })
+    void handleSearch(normalizedValue, mode)
   }
 
   function handleSearchPresetChange(value: SearchPresetValue): void {

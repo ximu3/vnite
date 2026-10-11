@@ -1,13 +1,14 @@
-import React, { useState } from 'react'
 import { Loader2 } from 'lucide-react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { ipcManager } from '~/app/ipc'
-import { Button } from '~/components/ui/button'
-import { Input } from '~/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
-import { cn } from '~/utils'
+
 import { GameList } from '@appTypes/utils'
+import { Button } from '@ui/button'
+import { Input } from '@ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/select'
+import { ipcManager } from '~/app/ipc'
+import { cn } from '~/utils'
 
 interface GameSearchProps {
   className?: string
@@ -16,41 +17,48 @@ interface GameSearchProps {
   onPick?: (gameId: string, game: GameList[number]) => void
 }
 
-export function GameSearch({ className, dataSource, defaultName, onPick }: GameSearchProps): React.JSX.Element {
+export function GameSearch({
+  className,
+  dataSource,
+  defaultName,
+  onPick
+}: GameSearchProps): React.JSX.Element {
   const { t } = useTranslation('adder')
   const [name, setName] = useState<string>(defaultName || '')
   const [results, setResults] = useState<GameList>([])
   const [selectedId, setSelectedId] = useState<string>('')
   const [isSearching, setIsSearching] = useState<boolean>(false)
 
-  async function handleSearch(): Promise<void> {
+  function handleSearch(): void {
     if (!name) {
       toast.warning(t('gameAdder.search.notifications.enterName'))
       return
     }
     if (isSearching) return
     setIsSearching(true)
-    try {
-      await toast.promise(
-        (async () => {
-          const list = await ipcManager.invoke('scraper:search-games', dataSource, name)
-          setResults(list)
-          if (list.length === 0) {
-            throw new Error(t('gameAdder.search.notifications.notFound'))
-          }
-          setSelectedId(list[0].id)
-          onPick?.(list[0].id, list[0])
-          return list
-        })(),
-        {
-          loading: t('gameAdder.search.notifications.searching'),
-          success: (data: GameList) => t('gameAdder.search.notifications.found', { count: data.length }),
-          error: (err) => t('gameAdder.search.notifications.searchError', { message: err.message })
-        }
-      )
-    } finally {
-      setIsSearching(false)
-    }
+    setResults([])
+    setSelectedId('')
+
+    toast.promise(
+      async () => {
+        const list = await ipcManager.invoke('scraper:search-games', dataSource, name)
+        if (!list.length) throw new Error(t('gameAdder.search.notifications.notFound'))
+
+        setResults(list)
+        setSelectedId(list[0].id)
+        onPick?.(list[0].id, list[0])
+        return list
+      },
+      {
+        loading: t('gameAdder.search.notifications.searching'),
+        success: (list) => t('gameAdder.search.notifications.found', { count: list.length }),
+        error: (error) =>
+          t('gameAdder.search.notifications.searchError', {
+            message: error instanceof Error ? error.message : ''
+          }),
+        finally: () => setIsSearching(false)
+      }
+    )
   }
 
   return (
@@ -64,10 +72,10 @@ export function GameSearch({ className, dataSource, defaultName, onPick }: GameS
           className="flex-grow"
           disabled={isSearching}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') void handleSearch()
+            if (e.key === 'Enter') handleSearch()
           }}
         />
-        <Button onClick={() => void handleSearch()} disabled={isSearching}>
+        <Button onClick={handleSearch} disabled={isSearching}>
           {isSearching ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
