@@ -1,3 +1,4 @@
+mod icon;
 mod notification;
 mod nt_path;
 mod privilege;
@@ -15,6 +16,10 @@ pub fn get_all_process_pid() -> Vec<u32> {
 
 pub fn get_process_full_path_by_pid(pid: u32) -> String {
   process::get_process_full_path_by_pid(pid)
+}
+
+pub fn extract_executable_icon(path: &str) -> Result<Vec<u8>, String> {
+  icon::extract_executable_icon(path)
 }
 
 pub fn is_elevated_privilege() -> bool {

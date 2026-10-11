@@ -1,3 +1,4 @@
+use napi::bindgen_prelude::Buffer;
 use napi_derive::napi;
 
 use crate::win32;
@@ -16,6 +17,13 @@ pub fn get_all_process() -> Vec<ProcessInfo> {
 #[napi(js_name = "isElevatedPrivilege")]
 pub fn is_elevated_privilege() -> bool {
   win32::is_elevated_privilege()
+}
+
+#[napi(js_name = "extractExecutableIcon")]
+pub async fn extract_executable_icon(path: String) -> napi::Result<Buffer> {
+  win32::extract_executable_icon(&path)
+    .map(Buffer::from)
+    .map_err(napi::Error::from_reason)
 }
 
 #[napi(js_name = "sendSystemNotification")]

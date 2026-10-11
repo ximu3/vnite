@@ -118,7 +118,6 @@ type MainIpcEvents =
         width: number
         height: number
       }) => string
-      'utils:save-game-icon-by-file': (gameId: string, filePath: string) => void
       'utils:download-temp-image': (url: string) => string
       'utils:test-upscaler': () => void
       'utils:save-clipboard-image': () => string
@@ -183,6 +182,7 @@ type MainIpcEvents =
 
       // Game media management events
       'game:set-image': (gameId: string, type: GameMediaType, image: string) => void
+      'game:save-icon-by-file': (gameId: string, filePath: string) => void
       'game:get-media-path': (gameId: string, type: GameMediaType) => string | null
       'game:remove-media': (gameId: string, type: GameMediaType) => void
       'game:get-memory-cover-path': (gameId: string, memoryId: string) => string | null

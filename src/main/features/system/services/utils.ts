@@ -138,21 +138,6 @@ export async function updateOpenAtLogin(): Promise<void> {
   }
 }
 
-export async function saveGameIconByFile(gameId: string, filePath: string): Promise<void> {
-  try {
-    // Get file icon
-    const icon = await app.getFileIcon(filePath)
-
-    // Save icon
-    await GameDBManager.setGameImage(gameId, 'icon', icon.toPNG())
-
-    console.log('Save Icon Successful:', filePath)
-  } catch (error) {
-    console.error('Failed to save icon:', error)
-    throw error
-  }
-}
-
 export async function createGameShortcut(gameId: string, targetPath: string): Promise<void> {
   try {
     // Get game information

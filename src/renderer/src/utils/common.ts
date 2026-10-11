@@ -222,7 +222,7 @@ export async function startGame(
       'images/icon.webp'
     )
     if (!isIconAccessible) {
-      await ipcManager.invoke('utils:save-game-icon-by-file', gameId, filePath)
+      await ipcManager.invoke('game:save-icon-by-file', gameId, filePath)
     }
 
     toast.promise(

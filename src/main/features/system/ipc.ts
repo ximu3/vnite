@@ -35,7 +35,6 @@ import {
   getSystemFonts,
   openLogPathInExplorer,
   portableStore,
-  saveGameIconByFile,
   switchDatabaseMode,
   testUpscalerAvailability,
   updateLanguage,
@@ -207,10 +206,6 @@ export function setupSystemIPC(): void {
       return await cropImage({ sourcePath, x, y, width, height })
     }
   )
-
-  ipcManager.handle('utils:save-game-icon-by-file', async (_, gameId: string, filePath: string) => {
-    return await saveGameIconByFile(gameId, filePath)
-  })
 
   ipcManager.handle('utils:download-temp-image', async (_, url: string) => {
     return await downloadTempImage(url)

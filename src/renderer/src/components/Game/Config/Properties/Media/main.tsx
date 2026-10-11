@@ -100,9 +100,9 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
       const filePath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
       if (!filePath) return
 
-      // If the selected file is an executable and the type is icon, set it directly, will get the icon from the executable
-      if (filePath.endsWith('.exe') && type == 'icon') {
-        await ipcManager.invoke('game:set-image', gameId, type, filePath)
+      // If the selected file is an executable and the type is icon, extract its file icon
+      if (type === 'icon' && /\.exe$/i.test(filePath)) {
+        await ipcManager.invoke('game:save-icon-by-file', gameId, filePath)
         return
       }
 
