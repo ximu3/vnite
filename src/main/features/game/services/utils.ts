@@ -1,10 +1,14 @@
+import { app } from 'electron'
 import * as native from 'vnite-native'
 import { GameDBManager } from '~/core/database'
 
 export async function saveGameIconByFile(gameId: string, filePath: string): Promise<void> {
   try {
-    // Extract the largest image from the executable's primary icon group
-    const icon = await native.extractExecutableIcon(filePath)
+    // Prefer the embedded icon, falling back to the shell icon for scripts and iconless executables.
+    const icon = await native.extractExecutableIcon(filePath).catch(async () => {
+      const fileIcon = await app.getFileIcon(filePath)
+      return fileIcon.toPNG()
+    })
 
     // Save icon
     await GameDBManager.setGameImage(gameId, 'icon', icon)
