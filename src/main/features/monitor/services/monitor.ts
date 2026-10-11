@@ -676,6 +676,9 @@ export class GameMonitor {
       await GameDBManager.setGameValue(this.options.gameId, 'record.hideFromRecentGames', false)
       await GameDBManager.setGameValue(this.options.gameId, 'record.playTime', playTime)
 
+      // Release the IPC handler before backup so a restarted game can be monitored.
+      this.stop()
+
       const autoBackupSave = await GameDBManager.getGameValue(
         this.options.gameId,
         'save.autoBackupSave'
