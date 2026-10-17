@@ -189,6 +189,20 @@ export async function addGameToDB({
     }
     gameDoc.record.addDate = new Date().toISOString()
 
+    // Fetch the score from the selected source only when explicitly enabled.
+    const fetchScoreOnAdd = await ConfigDBManager.getConfigValue(
+      'game.scraper.common.fetchScoreOnAdd'
+    )
+    const scorePromise =
+      fetchScoreOnAdd && providerCapabilities.includes('getGameScore')
+        ? scraperManager
+            .getGameScore(dataSource, { type: 'id', value: dataSourceId })
+            .catch((err) => {
+              logScraperError(err, dataSource, 'optional game score', 'warn')
+              return null
+            })
+        : Promise.resolve(null)
+
     const gameLocalDoc = JSON.parse(JSON.stringify(DEFAULT_GAME_LOCAL_VALUES))
     gameLocalDoc._id = dbId
     gameLocalDoc.utils.markPath = dirPath ?? ''
@@ -283,15 +297,21 @@ export async function addGameToDB({
         })
     }
 
-    // Fetch all image resources in parallel
+    // Fetch all image resources and the optional score in parallel
     const imageResults = await Promise.all([
       imagePromises.covers,
       imagePromises.backgrounds,
       imagePromises.icons,
-      imagePromises.logos
+      imagePromises.logos,
+      scorePromise
     ])
 
-    const [covers, backgrounds, icons, logos] = imageResults
+    const [covers, backgrounds, icons, logos, score] = imageResults
+
+    if (score !== null) {
+      gameDoc.record.score = score.score
+      gameDoc.record.scoreSource = score.source
+    }
 
     // Prepare all database write operations
     const dbPromises: Promise<unknown>[] = [

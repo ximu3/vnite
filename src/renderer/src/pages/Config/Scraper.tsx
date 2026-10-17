@@ -85,6 +85,16 @@ export function Scraper(): React.JSX.Element {
             <div className={cn('space-y-4')}>
               <ConfigItem
                 hookType="config"
+                path="game.scraper.common.fetchScoreOnAdd"
+                title={t('scraper.common.fetchScoreOnAdd')}
+                controlType="switch"
+                description={t('scraper.common.fetchScoreOnAddDescription')}
+              />
+            </div>
+
+            <div className={cn('space-y-4')}>
+              <ConfigItem
+                hookType="config"
                 path="game.scraper.common.cacheDescriptionImages"
                 title={t('scraper.common.cacheDescriptionImages')}
                 controlType="switch"

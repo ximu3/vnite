@@ -50,6 +50,7 @@ function extractMetaInfo(data: gameDoc): GameMetaInfo {
     lastRunDate: getGameValueWithFallback(data, 'record.lastRunDate'),
     hideFromRecentGames: getGameValueWithFallback(data, 'record.hideFromRecentGames'),
     score: getGameValueWithFallback(data, 'record.score'),
+    scoreSource: getGameValueWithFallback(data, 'record.scoreSource'),
     nsfw: getGameValueWithFallback(data, 'apperance.nsfw')
   }
 }
@@ -100,7 +101,8 @@ export function getGameStore(gameId: string): GameStore {
           'record.addDate',
           'record.lastRunDate',
           'record.hideFromRecentGames',
-          'record.score'
+          'record.score',
+          'record.scoreSource'
         ]
         if (metaFields.includes(path as string)) {
           useGameRegistry.getState().updateGameMeta(gameId, extractMetaInfo(currentData))

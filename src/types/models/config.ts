@@ -50,6 +50,7 @@ export interface configDocs {
       common: {
         defaultDataSource: 'steam' | 'vndb' | 'bangumi' | 'ymgal' | 'igdb' | 'dlsite' | string
         defaultMediaDataSource: 'google' | string
+        fetchScoreOnAdd: boolean
         cacheDescriptionImages: boolean
       }
       vndb: {
@@ -384,6 +385,7 @@ export const DEFAULT_CONFIG_VALUES: Readonly<configDocs> = {
       common: {
         defaultDataSource: 'steam',
         defaultMediaDataSource: 'google',
+        fetchScoreOnAdd: false,
         cacheDescriptionImages: false
       },
       vndb: {

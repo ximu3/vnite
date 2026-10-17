@@ -17,7 +17,7 @@ import { PLAY_STATUS_ICONS } from './Overview/Record/RecordIcon'
 import { StartGame } from './StartGame'
 import { StopGame } from './StopGame'
 import { useGameDetailStore } from './store'
-import { openLargeGameMediaImage } from './utils'
+import { formatGameScore, openLargeGameMediaImage } from './utils'
 
 export function HeaderCompact({
   gameId,
@@ -30,6 +30,7 @@ export function HeaderCompact({
   const { t } = useTranslation('game')
   const [lastRunDate] = useGameState(gameId, 'record.lastRunDate')
   const [score] = useGameState(gameId, 'record.score')
+  const [scoreSource] = useGameState(gameId, 'record.scoreSource')
   const [playingTime] = useGameState(gameId, 'record.playTime')
   const [playStatus] = useGameState(gameId, 'record.playStatus')
   const [storageSize] = useGameState(gameId, 'record.storageSize')
@@ -124,7 +125,11 @@ export function HeaderCompact({
               <span className="icon-[mdi--starburst-outline]"></span>
               {t('detail.overview.record.rating')}
             </div>
-            <div>{score === -1 ? t('detail.overview.information.empty') : score.toFixed(1)}</div>
+            <div>
+              {score === -1
+                ? t('detail.overview.information.empty')
+                : formatGameScore(score, scoreSource)}
+            </div>
 
             {/* Last Run Date */}
             <div className={cn('select-none cursor-pointer flex items-center gap-1')}>

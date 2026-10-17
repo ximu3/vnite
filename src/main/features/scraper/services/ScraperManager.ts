@@ -139,7 +139,7 @@ export class ScraperManager {
     }
   }
 
-  /** Attach the actual rating source, which may differ from the scraper (e.g. metacritic). */
+  /** Attach the actual rating source name, which may differ from the scraper (e.g. Metacritic). */
   public async getGameScore(
     providerId: string,
     identifier: ScraperIdentifier
@@ -160,7 +160,7 @@ export class ScraperManager {
 
       return {
         score: Number(score.toFixed(1)),
-        source: providerId === 'steam' ? 'metacritic' : providerId
+        source: providerId === 'steam' ? 'Metacritic' : provider.name
       }
     } catch (error) {
       throw logScraperError(
