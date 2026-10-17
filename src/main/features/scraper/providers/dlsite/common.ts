@@ -1,11 +1,12 @@
-import { GameList, GameMetadata } from '@appTypes/utils'
+import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
 import * as cheerio from 'cheerio'
 import i18next from 'i18next'
 import { ConfigDBManager } from '~/core/database'
 import { getLanguage } from '~/features/system/services/i18n'
 import { isHttpError, logScraperError } from '../../errors'
-import { createScraperFetch } from '../../request'
+import { createScraperFetch, readScraperJson } from '../../request'
 import { extractReleaseDateWithLibrary } from './i18n'
+import { DLsiteRatingResponse } from './types'
 
 const fetch = createScraperFetch()
 
@@ -95,6 +96,30 @@ export async function searchDlsiteGames(gameName: string, gamePath?: string): Pr
 
   console.log(`Search for "${gameName}" found ${results.length} results`)
   return results
+}
+
+export async function getDlsiteScore(identifier: ScraperIdentifier): Promise<number | null> {
+  const gameId =
+    identifier.type === 'id'
+      ? identifier.value.trim().toUpperCase()
+      : (await searchDlsiteGames(identifier.value))[0]?.id
+  if (!gameId) return null
+
+  const section = gameId.startsWith('VJ') ? 'pro' : 'maniax'
+  const url = new URL(`https://www.dlsite.com/${section}/product/info/ajax`)
+  url.searchParams.set('product_id', gameId)
+
+  try {
+    const response = await fetch(url.toString())
+    const data = await readScraperJson<DLsiteRatingResponse>(response)
+    const rating = data[gameId]
+    if (!rating || !(rating.rate_count > 0)) return null
+    const score = rating.rate_average_2dp ?? rating.rate_average
+    return typeof score === 'number' ? score * 2 : null
+  } catch (error) {
+    if (isHttpError(error, 404)) return null
+    throw error
+  }
 }
 
 export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata | null> {

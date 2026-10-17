@@ -270,6 +270,10 @@ type MainIpcEvents =
         dataSource: string,
         identifier: ScraperIdentifier
       ) => GameMetadata | null
+      'scraper:get-game-score': (
+        dataSource: string,
+        identifier: ScraperIdentifier
+      ) => { score: number; source: string } | null
       'scraper:get-game-backgrounds': (
         dataSource: string,
         identifier: ScraperIdentifier

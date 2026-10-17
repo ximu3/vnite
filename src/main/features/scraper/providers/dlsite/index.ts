@@ -3,6 +3,7 @@ import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
 import {
   searchDlsiteGames,
   getDlsiteMetadata,
+  getDlsiteScore,
   getDlsiteMetadataByName,
   checkGameExists,
   getGameBackgrounds,
@@ -43,6 +44,10 @@ export const dlsiteProvider: ScraperProvider = {
     } else {
       return await getGameBackgroundsByName(identifier.value)
     }
+  },
+
+  async getGameScore(identifier: ScraperIdentifier): Promise<number | null> {
+    return await getDlsiteScore(identifier)
   },
 
   async getGameCovers(identifier: ScraperIdentifier): Promise<string[]> {

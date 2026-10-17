@@ -93,6 +93,7 @@ export type ScraperCapabilities =
   | 'searchGames'
   | 'checkGameExists'
   | 'getGameMetadata'
+  | 'getGameScore'
   | 'getGameWideCovers'
   | 'getGameBackgrounds'
   | 'getGameCovers'

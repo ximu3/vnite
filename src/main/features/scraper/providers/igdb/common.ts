@@ -1,4 +1,4 @@
-import { GameList, GameMetadata } from '@appTypes/utils'
+import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
 import { formatDate } from '~/utils'
 import { IGDBClient } from './auth'
 import {
@@ -48,6 +48,22 @@ export async function searchIGDBGames(gameName: string): Promise<GameList> {
         ?.filter((company) => company.developer)
         .map((company) => company.company.name) || []
   }))
+}
+
+export async function getIGDBScore(identifier: ScraperIdentifier): Promise<number | null> {
+  const gameId =
+    identifier.type === 'id' ? identifier.value : (await searchIGDBGames(identifier.value))[0]?.id
+  if (!gameId) return null
+
+  const client = createIGDBClient()
+  const response = await client.request<{ rating?: number }[]>(
+    'games',
+    `fields rating; where id = ${gameId};`
+  )
+  const rating = Array.isArray(response) ? response[0]?.rating : undefined
+
+  // Use IGDB user ratings consistently; do not fall back to critic or combined ratings.
+  return typeof rating === 'number' ? rating / 10 : null
 }
 
 export async function getIGDBMetadata(gameId: string): Promise<GameMetadata | null> {
