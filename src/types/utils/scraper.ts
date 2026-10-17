@@ -108,6 +108,9 @@ export type GameMetadataField =
   | 'releaseDate'
   | 'description'
 
+  // Rating
+  | 'score'
+
   // Development and release information
   | 'developers'
   | 'publishers'
@@ -144,7 +147,8 @@ export const AllGameMetadataUpdateFields: (GameMetadataField | GameMetadataUpdat
   'cover',
   'background',
   'logo',
-  'icon'
+  'icon',
+  'score'
 ]
 
 // Special update modes

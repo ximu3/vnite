@@ -313,13 +313,7 @@ export class ScraperManager {
           return capabilities.some((capability) => providerCapabilities.includes(capability))
         }
       })
-      .map((provider) => ({
-        id: provider.id,
-        name: provider.name,
-        capabilities: capabilities.filter((capability) =>
-          this.getProviderCapabilities(provider).includes(capability)
-        )
-      }))
+      .map((provider) => this.getProviderInfo(provider.id))
   }
 
   private getProviderIdsWithCapabilities(
