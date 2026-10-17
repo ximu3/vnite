@@ -6,8 +6,7 @@ import {
   IGDBCoverResponse,
   IGDBGameResponse,
   IGDBScreenshotResponse,
-  IGDBSearchResponse,
-  IGDBWebsiteCategory
+  IGDBSearchResponse
 } from './types'
 
 // Create a client instance (no global state)
@@ -71,7 +70,7 @@ export async function getIGDBMetadata(gameId: string): Promise<GameMetadata | nu
       fields name,summary,first_release_date,
       involved_companies.company.name,involved_companies.developer,involved_companies.publisher,
       genres.name,
-      websites.*,
+      websites.url,websites.type.type,
       themes.name;
       where id = ${gameId};
     `
@@ -86,7 +85,7 @@ export async function getIGDBMetadata(gameId: string): Promise<GameMetadata | nu
 
   const relatedSites =
     gameData.websites?.map((site) => ({
-      label: IGDBWebsiteCategory[site.category] || 'Other',
+      label: site.type?.type || 'Other',
       url: site.url
     })) || []
 
