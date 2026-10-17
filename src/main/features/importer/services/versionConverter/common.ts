@@ -282,6 +282,7 @@ async function convertGame(gameId: string, gamePath: string): Promise<void> {
         addDate: record.addDate || '',
         lastRunDate: record.lastRunDate || '',
         score: record.score || -1,
+        scoreSource: null,
         playTime: record.playingTime || 0,
         playStatus: record.playStatus || 'unplayed',
         hideFromRecentGames: false,
@@ -595,6 +596,7 @@ async function convertConfig(basePath: string): Promise<void> {
         common: {
           defaultDataSource: mapDataSourceName(v2Config.scraper.defaultDataSource),
           defaultMediaDataSource: 'google',
+          fetchScoreOnAdd: false,
           cacheDescriptionImages: false
         },
         vndb: {

@@ -93,6 +93,7 @@ export type ScraperCapabilities =
   | 'searchGames'
   | 'checkGameExists'
   | 'getGameMetadata'
+  | 'getGameScore'
   | 'getGameWideCovers'
   | 'getGameBackgrounds'
   | 'getGameCovers'
@@ -106,6 +107,9 @@ export type GameMetadataField =
   | 'originalName'
   | 'releaseDate'
   | 'description'
+
+  // Rating
+  | 'score'
 
   // Development and release information
   | 'developers'
@@ -143,7 +147,8 @@ export const AllGameMetadataUpdateFields: (GameMetadataField | GameMetadataUpdat
   'cover',
   'background',
   'logo',
-  'icon'
+  'icon',
+  'score'
 ]
 
 // Special update modes

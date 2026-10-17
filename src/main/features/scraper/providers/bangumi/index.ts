@@ -3,6 +3,7 @@ import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
 import {
   searchBangumiGames,
   getBangumiMetadata,
+  getBangumiScore,
   getBangumiMetadataByName,
   checkGameExists,
   getGameBackgrounds,
@@ -43,6 +44,10 @@ export const bangumiProvider: ScraperProvider = {
     } else {
       return await getGameBackgroundsByName(identifier.value)
     }
+  },
+
+  async getGameScore(identifier: ScraperIdentifier): Promise<number | null> {
+    return await getBangumiScore(identifier)
   },
 
   async getGameCovers(identifier: ScraperIdentifier): Promise<string[]> {

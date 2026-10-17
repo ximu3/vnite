@@ -1,5 +1,5 @@
 import { METADATA_EXTRA_PREDEFINED_KEYS } from '@appTypes/models'
-import { GameList, GameMetadata } from '@appTypes/utils'
+import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
 import i18next from 'i18next'
 import { isHttpError } from '../../errors'
 import { createScraperFetch, readScraperJson } from '../../request'
@@ -205,6 +205,23 @@ function getRelatedSites(
 
 function getGenres(infobox: { key: string; value: any }[] | undefined): string[] {
   return getInfoboxField(infobox, GENRE_FIELDS, { separator: ' / ' })
+}
+
+export async function getBangumiScore(identifier: ScraperIdentifier): Promise<number | null> {
+  const gameId =
+    identifier.type === 'id'
+      ? identifier.value
+      : (await searchBangumiGames(identifier.value))[0]?.id
+  if (!gameId) return null
+
+  try {
+    const game = await fetchBangumi<BangumiSubject>(`v0/subjects/${gameId}`)
+    if (!game.rating || !(game.rating.total > 0)) return null
+    return game.rating.score ?? null
+  } catch (error) {
+    if (isHttpError(error, 404)) return null
+    throw error
+  }
 }
 
 export async function getBangumiMetadata(gameId: string): Promise<GameMetadata | null> {

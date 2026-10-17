@@ -1,4 +1,4 @@
-import { GameList, GameMetadata } from '@appTypes/utils'
+import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
 import i18next from 'i18next'
 import { formatDate } from '~/utils'
 import { isHttpError, logScraperError } from '../../errors'
@@ -149,6 +149,20 @@ async function resolveSteamAppDetails(
 
   if (errors.length) throw errors[errors.length - 1]
   return null
+}
+
+export async function getSteamScore(identifier: ScraperIdentifier): Promise<number | null> {
+  const appId =
+    identifier.type === 'id' ? identifier.value : (await searchSteamGames(identifier.value))[0]?.id
+  if (!appId) return null
+
+  const langConfig = i18next.t('scraper:steam.config', {
+    returnObjects: true
+  }) as SteamLanguageConfig
+  const game = await resolveSteamAppDetails(appId, langConfig.apiLanguageCode || 'english')
+  // Steam is the transport; the rating itself belongs to Metacritic, not Steam reviews.
+  const score = game?.metacritic?.score
+  return typeof score === 'number' ? score / 10 : null
 }
 
 export async function searchSteamGames(gameName: string): Promise<GameList> {

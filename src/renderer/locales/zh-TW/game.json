@@ -796,6 +796,7 @@
     "fields": {
       "#all": "所有欄位",
       "#missing": "缺失欄位",
+      "score": "評分",
       "name": "名稱",
       "originalName": "原始名稱",
       "releaseDate": "發行日期",

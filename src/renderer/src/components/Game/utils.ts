@@ -8,6 +8,11 @@ import type { ImageViewerRequest } from '~/utils/image-viewer'
 
 type OpenImageViewer = (request: ImageViewerRequest) => void
 
+export function formatGameScore(score: number, source: string | null): string {
+  const value = score.toFixed(1)
+  return source ? `${value} (${source})` : value
+}
+
 export async function openLargeGameMediaImage({
   gameId,
   type,

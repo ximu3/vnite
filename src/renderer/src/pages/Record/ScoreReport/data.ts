@@ -18,8 +18,14 @@ export function createScoreReportCategories(
   return SCORE_CATEGORIES.map((category) => {
     const games = gameIds
       .filter((gameId) => {
-        const score = gameMetaIndex[gameId]?.score
-        return typeof score === 'number' && score >= category.minScore && score <= category.maxScore
+        const game = gameMetaIndex[gameId]
+        const score = game?.score
+        return (
+          game?.scoreSource == null &&
+          typeof score === 'number' &&
+          score >= category.minScore &&
+          score <= category.maxScore
+        )
       })
       .sort((a, b) => {
         const scoreA = gameMetaIndex[a]?.score ?? -1

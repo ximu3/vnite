@@ -796,6 +796,7 @@
     "fields": {
       "#all": "すべてのフィールド",
       "#missing": "欠落フィールド",
+      "score": "評価",
       "name": "名前",
       "originalName": "原名",
       "releaseDate": "発売日",
