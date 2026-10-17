@@ -1,5 +1,6 @@
 import { METADATA_EXTRA_PREDEFINED_KEYS } from '@appTypes/models'
 import { GameList, GameMetadata } from '@appTypes/utils'
+import * as cheerio from 'cheerio'
 import { isHttpError, logScraperError } from '../../errors'
 import { createScraperFetch, readScraperJson } from '../../request'
 import { getGameBackgroundsFromVNDB, getGameCoverFromVNDB } from '../vndb/api'
@@ -9,6 +10,7 @@ import {
   Organization,
   OrganizationResponse,
   TokenResponse,
+  YMGalGameStructuredData,
   YMGalResponse
 } from './types'
 
@@ -185,6 +187,35 @@ export async function getYMGalMetadataByName(gameName: string): Promise<GameMeta
   const game = (await searchYMGalGames(gameName))[0]
   if (!game) return null
   return await getYMGalMetadata(game.id)
+}
+
+export async function getYMGalScore(gameId: string): Promise<number | null> {
+  try {
+    const response = await fetch(`${BASE_URL}/ga${gameId}`)
+    const $ = cheerio.load(await response.text())
+
+    // The game page exposes its 100-point rating through JSON-LD.
+    for (const script of $('script[type="application/ld+json"]').toArray()) {
+      const data = JSON.parse($(script).text()) as YMGalGameStructuredData
+      if (data['@type'] !== 'VideoGame') continue
+
+      const rating = data.aggregateRating
+      return rating && rating.ratingCount > 0 && typeof rating.ratingValue === 'number'
+        ? rating.ratingValue / 10
+        : null
+    }
+
+    return null
+  } catch (error) {
+    if (isHttpError(error, 404)) return null
+    throw error
+  }
+}
+
+export async function getYMGalScoreByName(gameName: string): Promise<number | null> {
+  const game = (await searchYMGalGames(gameName))[0]
+  if (!game) return null
+  return await getYMGalScore(game.id)
 }
 
 export async function getGameBackgrounds(gameId: string): Promise<string[]> {

@@ -2,6 +2,8 @@ import {
   searchYMGalGames,
   getYMGalMetadata,
   getYMGalMetadataByName,
+  getYMGalScore,
+  getYMGalScoreByName,
   getGameBackgrounds,
   getGameBackgroundsByName,
   getGameCover,
@@ -28,6 +30,12 @@ export async function getGameMetadataFromYMGal(
 export async function checkGameExistsOnYMGal(gameId: string): Promise<boolean> {
   const exists = await checkYMGalExists(gameId)
   return exists
+}
+
+export async function getGameScoreFromYMGal(identifier: ScraperIdentifier): Promise<number | null> {
+  return identifier.type === 'id'
+    ? await getYMGalScore(identifier.value)
+    : await getYMGalScoreByName(identifier.value)
 }
 
 export async function getGameBackgroundsFromYMGal(

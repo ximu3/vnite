@@ -37,6 +37,15 @@ export interface GameDetailResponse {
   game: GameDetail
 }
 
+// Structured rating data embedded in the game page
+export interface YMGalGameStructuredData {
+  '@type': string
+  aggregateRating: {
+    ratingValue: number
+    ratingCount: number
+  } | null
+}
+
 // Developer Organization Details Interface
 export interface Organization {
   orgId: number
