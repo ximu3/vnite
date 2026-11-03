@@ -49,7 +49,8 @@ export async function searchDlsiteGames(gameName: string, gamePath?: string): Pr
   }
   const encodedQuery = encodeURIComponent(gameName.trim()).replace(/%20/g, '+')
   const language = await getLanguage()
-  const url = `https://www.dlsite.com/maniax/fsr/=/language/jp/keyword/${encodedQuery}/?locale=${language}`
+  // Restrict keyword searches to games to avoid matching other work categories.
+  const url = `https://www.dlsite.com/maniax/fsr/=/language/jp/work_type_category%5B0%5D/game/keyword/${encodedQuery}/?locale=${language}`
 
   const response = await fetch(url, {
     headers: {
