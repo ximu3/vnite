@@ -2,6 +2,7 @@ import { ConfigDBManager, GameDBManager } from '~/core/database'
 import { EventBus } from '~/core/events'
 import { IPCManager } from '~/core/ipc'
 import { ScraperManager } from '~/features/scraper/services/ScraperManager'
+import type { PluginDetailTab } from '@appTypes/plugin/gameDetail'
 
 export interface IPluginAPI {
   readonly pluginId: string
@@ -14,6 +15,7 @@ export interface IPluginAPI {
   readonly eventBus: EventBus
   readonly ipc: IPCManager
   readonly scraper: ScraperManager
+  readonly gameDetail: { registerTab(tab: PluginDetailTab): () => void }
 }
 
 export interface IPlugin {

@@ -3,6 +3,7 @@ import { promises as fs } from 'fs'
 import AdmZip from 'adm-zip'
 import { net } from 'electron'
 import { VnitePluginAPI } from '../api'
+import { gameDetailTabs } from '../api/gameDetailTabsInstance'
 import { PluginDBManager } from '~/core/database'
 import { eventBus } from '~/core/events'
 import log from 'electron-log/main'
@@ -201,6 +202,7 @@ export class PluginManager {
       eventBus.emit('plugin:enabled', { pluginId }, { source: 'PluginManager' })
     } catch (error) {
       log.error(`[Plugin] Failed to activate plugin ${pluginId}:`, error)
+      gameDetailTabs.removePlugin(pluginId)
       const errorMessage = error instanceof Error ? error.message : String(error)
       this.updatePluginStatus(pluginId, PluginStatus.ERROR, errorMessage)
       throw error
@@ -219,6 +221,7 @@ export class PluginManager {
         return
       }
 
+      gameDetailTabs.removePlugin(pluginId)
       const pluginModule = this.loadedModules.get(pluginId)
       if (pluginModule && pluginModule.deactivate) {
         // Create API instance for deactivate to use

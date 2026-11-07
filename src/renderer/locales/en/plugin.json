@@ -118,6 +118,13 @@
     "next": "Next",
     "page": "Page {page}"
   },
+  "detailTab": {
+    "loading": "Loading…",
+    "collapse": "Collapse",
+    "expand": "Read more",
+    "original": "View original",
+    "loadMore": "Load more"
+  },
   "categories": {
     "common": "Common",
     "scraper": "Scraper"

@@ -1,8 +1,16 @@
 import { ipcManager } from '~/core/ipc'
 import { pluginService } from './services'
 import { PluginInstallOptions, PluginSearchOptions } from '@appTypes/plugin'
+import { gameDetailTabs } from './api/gameDetailTabsInstance'
 
 export function setupPluginIPC(): void {
+  ipcManager.handle('plugin:get-detail-tabs', () => gameDetailTabs.list())
+  ipcManager.handle('plugin:load-detail-tab', (_, pluginId, id, request) =>
+    gameDetailTabs.load(pluginId, id, request)
+  )
+  ipcManager.handle('plugin:detail-tab-action', (_, pluginId, id, request, itemId, actionId) =>
+    gameDetailTabs.action(pluginId, id, request, itemId, actionId)
+  )
   ipcManager.handle('plugin:get-all-plugins', async () => {
     return pluginService.getSerializablePlugins()
   })
