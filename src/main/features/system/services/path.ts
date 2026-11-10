@@ -55,6 +55,15 @@ export function getPluginPath(): string {
   }
 }
 
+export function getShortcutIconPath(file = ''): string {
+  try {
+    return path.join(app.getPath('userData'), 'shortcut-icons', file)
+  } catch (error) {
+    log.error('[System] Failed to get shortcut icon path:', error)
+    throw error
+  }
+}
+
 export function getAppTempPath(file?: string): string {
   try {
     // Use electron's app.getPath('temp') to get the system temp directory.

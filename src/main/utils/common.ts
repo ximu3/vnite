@@ -7,8 +7,8 @@ import { fileTypeFromBuffer } from 'file-type'
 import fse from 'fs-extra'
 import koffi from 'koffi'
 import path from 'path'
-import pngToIco from 'png-to-ico'
 import sharp from 'sharp'
+import ico from 'sharp-ico'
 import { promisify } from 'util'
 import { getAppTempPath, getDataPath } from '~/features/system'
 import { psManager, toPowerShellStringLiteral } from './powershell'
@@ -404,7 +404,6 @@ export async function createUrlShortcut(options: UrlShortcutOptions): Promise<st
 
 interface IconConversionOptions {
   sizes?: number[]
-  quality?: number
   background?: sharp.Color
 }
 
@@ -414,7 +413,7 @@ export async function convertToIcon(
   options: IconConversionOptions = {}
 ): Promise<string> {
   try {
-    const { sizes = [32], quality = 100, background = { r: 0, g: 0, b: 0, alpha: 0 } } = options
+    const { sizes = [32], background = { r: 0, g: 0, b: 0, alpha: 0 } } = options
 
     // Make sure the output directory exists
     await fse.ensureDir(path.dirname(outputPath))
@@ -424,32 +423,38 @@ export async function convertToIcon(
       throw new Error(`Input file not found: ${inputPath}`)
     }
 
-    // Creating a Temporary PNG File Path
-    const tempPngPaths = await Promise.all(
-      sizes.map(async (size) => {
-        const tempPngPath = getAppTempPath(`icon_${size}.png`)
-        await sharp(inputPath)
+    const { width, height } = await sharp(inputPath).metadata()
+    if (!width || !height) {
+      throw new Error('Cannot determine the original image dimensions')
+    }
+
+    // Only include valid ICO sizes that fit within both dimensions of the original image.
+    const iconSizes = [...new Set(sizes)].filter(
+      (size) =>
+        Number.isInteger(size) && size >= 1 && size <= 256 && size <= width && size <= height
+    )
+    if (iconSizes.length === 0) {
+      // Fall back to a native size without enlarging the source image.
+      iconSizes.push(Math.min(width, height, 256))
+    }
+
+    const pngBuffers = await Promise.all(
+      iconSizes.map((size) =>
+        sharp(inputPath)
           .resize(size, size, {
             fit: 'contain',
             background
           })
-          .png({ quality })
-          .toFile(tempPngPath)
-        return tempPngPath
-      })
+          .toColourspace('srgb')
+          .ensureAlpha()
+          .png({ palette: false, compressionLevel: 9 })
+          .toBuffer()
+      )
     )
 
-    // Convert PNG files to ICO format
-    const icoBuffer = await pngToIco(tempPngPaths)
+    // Preserve PNG compression inside the ICO instead of expanding images to bitmaps.
+    const icoBuffer = ico.encode(pngBuffers)
     await fse.writeFile(outputPath, icoBuffer)
-
-    // Deleting Temporary PNG Files
-    try {
-      await Promise.all(tempPngPaths.map((tempPath) => fse.remove(tempPath)))
-    } catch (cleanupError) {
-      console.warn('Error clearing temporary files:', cleanupError)
-      // Continued implementation as the main tasks have been completed
-    }
 
     return outputPath
   } catch (error) {
