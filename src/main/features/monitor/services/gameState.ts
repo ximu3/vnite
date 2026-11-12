@@ -82,7 +82,7 @@ export function observeProcess(message: {
 }): GameEvent[] {
   const changes: GameEvent[] = []
   if (message.status === 'started') {
-    const path = message.path.toLowerCase()
+    const path = normalizeGamePath(message.path)
     const id = match(path)
     const key = `${path}-${message.pid}`
     if (!id || running.has(key)) return changes
