@@ -148,10 +148,16 @@ export function CropDialog({
       const scaleY = image.naturalHeight / image.height
 
       // Calculate actual cut size
-      const actualWidth = Math.round(completedCrop.width * scaleX)
-      const actualHeight = Math.round(completedCrop.height * scaleY)
       const actualX = Math.max(0, Math.round(completedCrop.x * scaleX))
       const actualY = Math.max(0, Math.round(completedCrop.y * scaleY))
+      const actualWidth = Math.min(
+        Math.round(completedCrop.width * scaleX),
+        image.naturalWidth - actualX
+      )
+      const actualHeight = Math.min(
+        Math.round(completedCrop.height * scaleY),
+        image.naturalHeight - actualY
+      )
 
       // If it is the original size then it returns directly
       if (actualWidth === imageSize.width && actualHeight === imageSize.height) {
