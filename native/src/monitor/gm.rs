@@ -221,7 +221,7 @@ impl GameManager {
 
   #[allow(dead_code)]
   pub fn handle_wmi_message(&mut self, msg: ProcessMessage) {
-    let l_path = msg.path.to_lowercase();
+    let l_path = msg.path.to_ascii_lowercase();
     // check directory & fullpath & process name
     let game_id = match self.get_known_game_id(&l_path) {
       Some(id) => id.clone(),
@@ -305,7 +305,7 @@ impl GameManager {
   }
 
   pub fn handle_process_message(&mut self, msg: ProcessMessage) {
-    let l_path = msg.path.to_lowercase();
+    let l_path = msg.path.to_ascii_lowercase();
     match msg.status {
       ProcessStatus::Started => {
         // check directory & fullpath & process name
