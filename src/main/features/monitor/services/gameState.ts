@@ -15,7 +15,7 @@ export interface GameEvent {
 
 function normalizeGamePath(path: string): string {
   return path
-    .replace(/[A-Z]/g, (letter) => letter.toLowerCase())
+    .toLowerCase()
     .replace(/[\\/]+$/, '')
     .replaceAll('/', '\\')
 }
