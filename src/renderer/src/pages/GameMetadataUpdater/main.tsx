@@ -123,6 +123,9 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
   }, [])
 
   const isBatchMode = gameIds.length > 1
+  const supportsScore = availableDataSources
+    .find((source) => source.id === dataSource)
+    ?.capabilities.includes('getGameScore')
 
   // Listen for batch update progress events
   useEffect(() => {
@@ -332,7 +335,16 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
                   <Label htmlFor="dataSource" className="">
                     {t('updater.dialog.dataSource')}
                   </Label>
-                  <Select value={dataSource} onValueChange={setDataSource}>
+                  <Select
+                    value={dataSource}
+                    onValueChange={(value) => {
+                      setDataSource(value)
+                      const source = availableDataSources.find((source) => source.id === value)
+                      if (!source?.capabilities.includes('getGameScore')) {
+                        setSelectedFields((fields) => fields.filter((field) => field !== 'score'))
+                      }
+                    }}
+                  >
                     <SelectTrigger id="dataSource">
                       <SelectValue placeholder={t('updater.dialog.selectDataSource')} />
                     </SelectTrigger>
@@ -356,6 +368,7 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
                       <Checkbox
                         id={`field-${field}`}
                         checked={selectedFields.includes(field)}
+                        disabled={field === 'score' && !supportsScore}
                         onCheckedChange={() => toggleField(field)}
                       />
                       <Label

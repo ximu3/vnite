@@ -1,6 +1,8 @@
 import {
   searchVNDBGames,
   getVNMetadata,
+  getVNScore,
+  getVNScoreByName,
   getVNMetadataByName,
   checkVNExists,
   getGameBackgrounds,
@@ -24,6 +26,14 @@ export async function getGameMetadataFromVNDB(
       ? await getVNMetadata(identifier.value)
       : await getVNMetadataByName(identifier.value)
   return metadata
+}
+
+export async function getGameScoreFromVNDB(identifier: ScraperIdentifier): Promise<number | null> {
+  const score =
+    identifier.type === 'id'
+      ? await getVNScore(identifier.value)
+      : await getVNScoreByName(identifier.value)
+  return score
 }
 
 export async function checkGameExistsOnVNDB(identifier: ScraperIdentifier): Promise<boolean> {

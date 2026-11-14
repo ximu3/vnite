@@ -16,12 +16,14 @@ export function ScoreEditorDialog({
 }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [score, setScore] = useGameState(gameId, 'record.score')
+  const [, setScoreSource] = useGameState(gameId, 'record.scoreSource')
   const [preScore, setPreScore] = useState(score === -1 ? '' : score.toString())
   const resetPreScore = (): void => setPreScore(score === -1 ? '' : score.toString())
 
-  function confirmScore(): void {
+  async function confirmScore(): Promise<void> {
     if (preScore === '') {
-      setScore(-1)
+      await setScore(-1)
+      await setScoreSource(null)
       setIsOpen(false)
       toast.success(t('detail.header.rating.cleared'))
       return
@@ -53,7 +55,8 @@ export function ScoreEditorDialog({
       toast.warning(t('detail.header.rating.warning'))
     }
 
-    setScore(Number(formattedScore))
+    await setScore(Number(formattedScore))
+    await setScoreSource(null)
     setPreScore(Number(formattedScore).toString())
     setIsOpen(false)
     toast.success(t('detail.header.rating.success'))

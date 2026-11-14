@@ -7,6 +7,7 @@ import { Popover, PopoverContent } from '~/components/ui/popover'
 import { useGameState } from '~/hooks'
 import { cn, formatStorageSize } from '~/utils'
 import { useGameDetailStore } from '../../store'
+import { formatGameScore } from '../../utils'
 import { RecalculateLastRunDateAlertDialog } from './RecalculateLastRunDateAlertDialog'
 import { RecordCard } from './RecordCard'
 import { PLAY_STATUS_ICONS } from './RecordIcon'
@@ -15,6 +16,7 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [lastRunDate] = useGameState(gameId, 'record.lastRunDate')
   const [score] = useGameState(gameId, 'record.score')
+  const [scoreSource] = useGameState(gameId, 'record.scoreSource')
   const [playingTime] = useGameState(gameId, 'record.playTime')
   const [playStatus, setPlayStatus] = useGameState(gameId, 'record.playStatus')
   const [storageSize] = useGameState(gameId, 'record.storageSize')
@@ -89,7 +91,11 @@ export function Record({ gameId }: { gameId: string }): React.JSX.Element {
       <RecordCard
         className={cn('')}
         title={t('detail.overview.record.rating')}
-        content={score === -1 ? t('detail.overview.information.empty') : score.toFixed(1)}
+        content={
+          score === -1
+            ? t('detail.overview.information.empty')
+            : formatGameScore(score, scoreSource)
+        }
         icon="icon-[mdi--starburst-outline] w-[30px] h-[30px]"
         onClick={() => setIsScoreEditorDialogOpen(true)}
       />

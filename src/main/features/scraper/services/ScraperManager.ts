@@ -139,6 +139,38 @@ export class ScraperManager {
     }
   }
 
+  /** Attach the actual rating source name, which may differ from the scraper (e.g. Metacritic). */
+  public async getGameScore(
+    providerId: string,
+    identifier: ScraperIdentifier
+  ): Promise<{ score: number; source: string } | null> {
+    try {
+      const provider = this.getProvider(providerId)
+      if (!provider) {
+        throw new Error(`Provider '${providerId}' not found`)
+      }
+      if (!provider.getGameScore) {
+        throw new Error(`Provider '${providerId}' does not support getting game scores`)
+      }
+      const score = await provider.getGameScore(identifier)
+      // Reject missing, malformed or out-of-range values without treating them as zero.
+      if (typeof score !== 'number' || !Number.isFinite(score) || score < 0 || score > 10) {
+        return null
+      }
+
+      return {
+        score: Number(score.toFixed(1)),
+        source: providerId === 'steam' ? 'Metacritic' : provider.name
+      }
+    } catch (error) {
+      throw logScraperError(
+        error,
+        this.getProvider(providerId)?.name || providerId,
+        'get game score'
+      )
+    }
+  }
+
   public async getGameBackgrounds(
     providerId: string,
     identifier: ScraperIdentifier
@@ -281,13 +313,7 @@ export class ScraperManager {
           return capabilities.some((capability) => providerCapabilities.includes(capability))
         }
       })
-      .map((provider) => ({
-        id: provider.id,
-        name: provider.name,
-        capabilities: capabilities.filter((capability) =>
-          this.getProviderCapabilities(provider).includes(capability)
-        )
-      }))
+      .map((provider) => this.getProviderInfo(provider.id))
   }
 
   private getProviderIdsWithCapabilities(

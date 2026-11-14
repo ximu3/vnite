@@ -309,7 +309,8 @@ export async function updateGameMetadata({
           'cover',
           'background',
           'logo',
-          'icon'
+          'icon',
+          'score'
         ]
       : updateMissingOnly
         ? [] // Missing fields will be determined after fetching metadata
@@ -328,6 +329,7 @@ export async function updateGameMetadata({
 
     // Fields that need to be fetched via additional API calls
     const specialFetchFields: GameMetadataField[] = [
+      'score',
       'description',
       'tags',
       'extra',
@@ -422,6 +424,10 @@ export async function updateGameMetadata({
 
     // Determine which fields need to be updated in the case of missing fields
     if (updateMissingOnly) {
+      if (gameDoc.record.score === -1) {
+        fieldsToUpdate.push('score')
+      }
+
       // Check which fields are missing in the base metadata
       Object.keys(baseMetadata).forEach((key) => {
         const typedKey = key as keyof GameMetadata
@@ -932,6 +938,20 @@ export async function updateGameMetadata({
 
     // Update game document
     gameDoc.metadata = updatedMetadata
+
+    // Update the score and its source together when the rating field is selected.
+    if (fieldsToUpdate.includes('score') && providerCapabilities.includes('getGameScore')) {
+      const score = await scraperManager
+        .getGameScore(dataSource, { type: 'id', value: dataSourceId })
+        .catch((error) => {
+          logScraperError(error, dataSource, 'optional game score update', 'warn')
+          return null
+        })
+      if (score !== null) {
+        gameDoc.record.score = score.score
+        gameDoc.record.scoreSource = score.source
+      }
+    }
 
     // Prepare all database write operations
     const dbPromises: Promise<unknown>[] = [GameDBManager.setGame(dbId, gameDoc)]

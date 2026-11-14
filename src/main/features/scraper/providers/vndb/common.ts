@@ -92,6 +92,35 @@ export async function searchVNDBGames(gameName: string): Promise<SimpleGameInfo[
   }))
 }
 
+export async function getVNScore(vnId: string): Promise<number | null> {
+  const formattedId = vnId.startsWith('v') ? vnId : `v${vnId}`
+  const fields = ['rating']
+
+  const data = await fetchVNDB<{ rating: number | null }>({
+    filters: ['id', '=', formattedId],
+    fields,
+    results: 1
+  })
+  const rating = data.results[0]?.rating
+
+  // VNDB's Bayesian rating is returned on a 10–100 scale.
+  return typeof rating === 'number' ? rating / 10 : null
+}
+
+export async function getVNScoreByName(vnName: string): Promise<number | null> {
+  const fields = ['rating']
+
+  const data = await fetchVNDB<{ rating: number | null }>({
+    filters: ['search', '=', vnName],
+    fields,
+    sort: VNDB_SEARCH_SORT,
+    results: 1
+  })
+  const rating = data.results[0]?.rating
+
+  return typeof rating === 'number' ? rating / 10 : null
+}
+
 export async function getVNMetadata(vnId: string): Promise<GameMetadata | null> {
   const formattedId = vnId.startsWith('v') ? vnId : `v${vnId}`
 

@@ -796,6 +796,7 @@
     "fields": {
       "#all": "所有字段",
       "#missing": "缺失字段",
+      "score": "评分",
       "name": "名称",
       "originalName": "原始名称",
       "releaseDate": "发行日期",

@@ -3,6 +3,7 @@ import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
 import {
   searchGamesFromSteam,
   getGameMetadataFromSteam,
+  getGameScoreFromSteam,
   checkGameExistsOnSteam,
   getGameBackgroundsFromSteam,
   getGameWideCoversFromSteam,
@@ -29,6 +30,10 @@ export const steamProvider: ScraperProvider = {
 
   async getGameMetadata(identifier: ScraperIdentifier): Promise<GameMetadata | null> {
     return await getGameMetadataFromSteam(identifier)
+  },
+
+  async getGameScore(identifier: ScraperIdentifier): Promise<number | null> {
+    return await getGameScoreFromSteam(identifier)
   },
 
   async getGameBackgrounds(identifier: ScraperIdentifier): Promise<string[]> {

@@ -45,7 +45,10 @@ export function RecordOverview(): React.JSX.Element {
   const allScoreGames = sortGames(
     { by: 'record.score', order: 'desc', secondary: null },
     filteredGameIds
-  ).filter((gameId) => gameMetaIndex[gameId].score !== -1)
+  ).filter((gameId) => {
+    const game = gameMetaIndex[gameId]
+    return game?.scoreSource == null && typeof game?.score === 'number' && game.score >= 0
+  })
 
   // Card display only shows the top 5
   const topTimeGames = allTimeGames.slice(0, 5)

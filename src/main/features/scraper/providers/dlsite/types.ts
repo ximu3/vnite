@@ -1,3 +1,8 @@
+export type DLsiteRatingResponse = Record<
+  string,
+  { rate_average_2dp: number; rate_average: number; rate_count: number }
+>
+
 export interface DLsiteSearchResult {
   id: string
   name: string

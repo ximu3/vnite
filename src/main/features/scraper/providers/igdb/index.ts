@@ -3,6 +3,7 @@ import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
 import {
   searchIGDBGames,
   getIGDBMetadata,
+  getIGDBScore,
   getIGDBMetadataByName,
   checkIGDBGameExists,
   getGameBackgrounds,
@@ -43,6 +44,10 @@ export const igdbProvider: ScraperProvider = {
     } else {
       return await getGameBackgroundsByName(identifier.value)
     }
+  },
+
+  async getGameScore(identifier: ScraperIdentifier): Promise<number | null> {
+    return await getIGDBScore(identifier)
   },
 
   async getGameCovers(identifier: ScraperIdentifier): Promise<string[]> {

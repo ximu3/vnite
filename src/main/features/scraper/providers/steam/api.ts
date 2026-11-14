@@ -10,6 +10,7 @@ import {
   getGameLogo,
   getGameLogoByName,
   getSteamMetadata,
+  getSteamScore,
   getSteamMetadataByName,
   searchSteamGames
 } from './common'
@@ -27,6 +28,10 @@ export async function getGameMetadataFromSteam(
       ? await getSteamMetadata(identifier.value)
       : await getSteamMetadataByName(identifier.value)
   return metadata
+}
+
+export async function getGameScoreFromSteam(identifier: ScraperIdentifier): Promise<number | null> {
+  return await getSteamScore(identifier)
 }
 
 export async function checkGameExistsOnSteam(appId: string): Promise<boolean> {

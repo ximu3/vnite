@@ -25,6 +25,13 @@ export function setupScraperIPC(): void {
   )
 
   ipcManager.handle(
+    'scraper:get-game-score',
+    async (_, dataSource: string, identifier: ScraperIdentifier) => {
+      return await scraperManager.getGameScore(dataSource, identifier)
+    }
+  )
+
+  ipcManager.handle(
     'scraper:get-game-backgrounds',
     async (_, dataSource: string, identifier: ScraperIdentifier) => {
       return await scraperManager.getGameBackgrounds(dataSource, identifier)

@@ -9,6 +9,7 @@ export interface GameMetaInfo {
   lastRunDate?: string
   hideFromRecentGames?: boolean
   score?: number
+  scoreSource?: string | null
   nsfw?: boolean
   gamePath?: string
 }

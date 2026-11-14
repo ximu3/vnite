@@ -796,6 +796,7 @@
     "fields": {
       "#all": "All Fields",
       "#missing": "Missing Fields",
+      "score": "Score",
       "name": "Name",
       "originalName": "Original Name",
       "releaseDate": "Release Date",

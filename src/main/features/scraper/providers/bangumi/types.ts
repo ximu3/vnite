@@ -1,4 +1,8 @@
 export interface BangumiSubject {
+  rating: {
+    score: number
+    total: number
+  }
   id: number
   type: number
   name: string

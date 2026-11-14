@@ -41,6 +41,7 @@ export function ManageMenu({
   const [nsfw, setNsfw] = useGameState(gameId, 'apperance.nsfw')
   const [playStatus, setPlayStatus] = useGameState(gameId, 'record.playStatus')
   const [score, setScore] = useGameState(gameId, 'record.score')
+  const [, setScoreSource] = useGameState(gameId, 'record.scoreSource')
   const [preScore, setPreScore] = useState(score === -1 ? '' : score.toString())
   const [selectedGroup] = useConfigState('game.gameList.selectedGroup')
   const [isScoreDialogOpen, setIsScoreDialogOpen] = useState(false)
@@ -62,9 +63,10 @@ export function ManageMenu({
   }
 
   // Score submission handler function
-  function confirmScore(): void {
+  async function confirmScore(): Promise<void> {
     if (preScore === '') {
-      setScore(-1)
+      await setScore(-1)
+      await setScoreSource(null)
       setIsScoreDialogOpen(false)
       toast.success(t('detail.header.rating.cleared'))
       return
@@ -96,7 +98,8 @@ export function ManageMenu({
       toast.warning(t('detail.header.rating.warning'))
     }
 
-    setScore(Number(formattedScore))
+    await setScore(Number(formattedScore))
+    await setScoreSource(null)
     setPreScore(Number(formattedScore).toString())
     setIsScoreDialogOpen(false)
     toast.success(t('detail.header.rating.success'))

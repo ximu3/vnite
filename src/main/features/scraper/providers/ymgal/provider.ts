@@ -3,6 +3,7 @@ import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
 import {
   searchGamesFromYMGal,
   getGameMetadataFromYMGal,
+  getGameScoreFromYMGal,
   checkGameExistsOnYMGal,
   getGameBackgroundsFromYMGal,
   getGameCoverFromYMGal
@@ -27,6 +28,10 @@ export const ymgalProvider: ScraperProvider = {
 
   async getGameMetadata(identifier: ScraperIdentifier): Promise<GameMetadata | null> {
     return await getGameMetadataFromYMGal(identifier)
+  },
+
+  async getGameScore(identifier: ScraperIdentifier): Promise<number | null> {
+    return await getGameScoreFromYMGal(identifier)
   },
 
   async getGameBackgrounds(identifier: ScraperIdentifier): Promise<string[]> {

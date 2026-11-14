@@ -63,6 +63,7 @@ export interface gameDoc {
     addDate: string
     lastRunDate: string
     score: number
+    scoreSource: string | null
     playTime: number
     playStatus: 'unplayed' | 'playing' | 'partial' | 'finished' | 'multiple' | 'shelved'
     hideFromRecentGames: boolean
@@ -245,6 +246,7 @@ export const DEFAULT_GAME_VALUES: Readonly<gameDoc> = {
     addDate: '',
     lastRunDate: '',
     score: -1,
+    scoreSource: null,
     playTime: 0,
     playStatus: 'unplayed',
     hideFromRecentGames: false,
