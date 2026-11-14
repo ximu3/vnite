@@ -32,8 +32,18 @@ export async function restoreDatabase(sourcePath: string): Promise<void> {
     const dataPath = getDataPath()
     // Stop all database operations before restore
     await baseDBManager.closeAllDatabases()
+    // Extract next to the data directory first so a failed restore does not wipe existing data
+    const restorePath = `${dataPath}.restore-tmp`
+    await fse.remove(restorePath)
+    try {
+      await unzipFile(sourcePath, restorePath)
+    } catch (error) {
+      await fse.remove(restorePath)
+      baseDBManager.initAllDatabases()
+      throw error
+    }
     await fse.remove(dataPath)
-    await unzipFile(sourcePath, dataPath)
+    await fse.move(restorePath, dataPath)
     eventBus.emit('db:restore-completed', { sourcePath }, { source: 'backup-service' })
     // Restart the application
     app.relaunch()

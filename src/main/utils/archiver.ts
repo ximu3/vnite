@@ -1,7 +1,10 @@
 import fse from 'fs-extra'
 import archiver from 'archiver'
 import path from 'path'
-import AdmZip from 'adm-zip'
+import yauzl from 'yauzl'
+import { Transform } from 'stream'
+import { pipeline } from 'stream/promises'
+import { crc32 } from 'zlib'
 import log from 'electron-log/main'
 
 interface ZipOptions {
@@ -96,6 +99,25 @@ export async function zipFolder(
   }
 }
 
+// yauzl does not verify CRC-32, so compare the extracted bytes with the
+// checksum recorded in the central directory (like adm-zip did).
+function crc32Check(entry: yauzl.Entry): Transform {
+  let crc = 0
+  return new Transform({
+    transform(chunk: Buffer, _encoding, callback): void {
+      crc = crc32(chunk, crc)
+      callback(null, chunk)
+    },
+    flush(callback): void {
+      if (crc >>> 0 !== entry.crc32 >>> 0) {
+        callback(new Error(`CRC-32 mismatch for zip entry: ${entry.fileName}`))
+      } else {
+        callback()
+      }
+    }
+  })
+}
+
 interface UnzipOptions {
   // Whether to overwrite existing files, default is true.
   overwrite?: boolean
@@ -108,25 +130,40 @@ export async function unzipFile(
 ): Promise<string[]> {
   try {
     const { overwrite = true } = options
-    await fse.ensureDir(targetDir)
+    const normalizedTargetDir = path.resolve(targetDir)
+    await fse.ensureDir(normalizedTargetDir)
 
+    // Stream entries one by one so archives larger than 2 GiB (Node's Buffer limit) can be extracted
+    const zip = await yauzl.openPromise(zipPath, { autoClose: true })
     const extractedFiles: string[] = []
-    const zip = new AdmZip(zipPath)
 
-    const entries = zip.getEntries()
-
-    for (const entry of entries) {
-      const filePath = path.join(targetDir, entry.entryName)
-
-      if (entry.isDirectory) {
-        await fse.ensureDir(filePath)
-      } else {
-        if (overwrite || !(await fse.pathExists(filePath))) {
-          await fse.ensureDir(path.dirname(filePath))
-          zip.extractEntryTo(entry, targetDir, true, overwrite)
-          extractedFiles.push(filePath)
-        }
+    for await (const entry of zip.eachEntry()) {
+      const filePath = path.resolve(normalizedTargetDir, entry.fileName)
+      if (
+        filePath !== normalizedTargetDir &&
+        !filePath.startsWith(normalizedTargetDir + path.sep)
+      ) {
+        throw new Error(`Zip entry is outside the target directory: ${entry.fileName}`)
       }
+
+      if (/\/$/.test(entry.fileName)) {
+        await fse.ensureDir(filePath)
+        continue
+      }
+
+      if (!overwrite && (await fse.pathExists(filePath))) {
+        continue
+      }
+
+      await fse.ensureDir(path.dirname(filePath))
+      const readStream = await zip.openReadStreamPromise(entry)
+      try {
+        await pipeline(readStream, crc32Check(entry), fse.createWriteStream(filePath))
+      } catch (error) {
+        await fse.remove(filePath)
+        throw error
+      }
+      extractedFiles.push(filePath)
     }
 
     return extractedFiles

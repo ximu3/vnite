@@ -105,6 +105,7 @@
     "type-fest": "^4.41.0",
     "vaul": "^1.1.2",
     "vnite-native": "workspace:*",
+    "yauzl": "^3.4.0",
     "yet-another-react-lightbox": "^3.32.1",
     "zod": "^3.25.74",
     "zustand": "^5.0.6"
@@ -133,6 +134,7 @@
     "@types/semver": "^7.7.0",
     "@types/subset-font": "^2.3.0",
     "@types/uuid": "^10.0.0",
+    "@types/yauzl": "^3.4.0",
     "@vitejs/plugin-react": "^4.7.0",
     "electron": "^35.7.2",
     "electron-builder": "^25.1.8",
