@@ -1,6 +1,7 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@ui/accordion'
 import { ScrollArea } from '@ui/scroll-area'
 import { useTranslation } from 'react-i18next'
+import { GameSelectionProvider } from '~/components/GameBatchEditor/GameSelectionProvider'
 import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
 import { useConfigState } from '~/hooks'
 import { filterGames, sortGames } from '~/stores/game'
@@ -34,20 +35,22 @@ export function FilterGameComponent({
             </div>
           </AccordionTrigger>
           <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
-            {games.length !== 0 ? (
-              games.map((game) => (
-                <LazyLoadComponent
-                  key={game}
-                  threshold={300}
-                  scrollPosition={scrollPosition}
-                  placeholder={<PlaceHolder gameId={game} groupId={'0'} />}
-                >
-                  <GameNav key={game} gameId={game} groupId={'0'} />
-                </LazyLoadComponent>
-              ))
-            ) : (
-              <div className={cn('text-center text-xs mt-2')}>{t('list.filter.noResults')}</div>
-            )}
+            <GameSelectionProvider scopeId="sidebar:filter" orderedGameIds={games}>
+              {games.length !== 0 ? (
+                games.map((game) => (
+                  <LazyLoadComponent
+                    key={game}
+                    threshold={300}
+                    scrollPosition={scrollPosition}
+                    placeholder={<PlaceHolder gameId={game} groupId={'0'} />}
+                  >
+                    <GameNav key={game} gameId={game} groupId={'0'} />
+                  </LazyLoadComponent>
+                ))
+              ) : (
+                <div className={cn('text-center text-xs mt-2')}>{t('list.filter.noResults')}</div>
+              )}
+            </GameSelectionProvider>
           </AccordionContent>
         </AccordionItem>
       </Accordion>

@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { GameSelectionProvider } from '~/components/GameBatchEditor/GameSelectionProvider'
 import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
 
 import { GAME_SORT_FIELDS, NSFWFilterMode } from '@appTypes/models'
@@ -61,7 +62,7 @@ export function CollectionGamesComponent({
   const gridContainerRef = useRef<HTMLDivElement | null>(null)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
 
-  const selectGames = useGameBatchEditorStore((state) => state.selectGames)
+  const updateSelection = useGameBatchEditorStore((state) => state.updateSelection)
 
   // Keyboard shortcut handling
   useEffect(() => {
@@ -80,13 +81,13 @@ export function CollectionGamesComponent({
       // Ctrl + A select all games
       if (e.ctrlKey && e.key === 'a') {
         e.preventDefault()
-        selectGames(games)
+        updateSelection({ gameIds: games, mode: 'add' })
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [selectGames, games])
+  }, [updateSelection, games])
 
   useEffect(() => {
     const calculateGap = (): void => {
@@ -125,97 +126,102 @@ export function CollectionGamesComponent({
 
   return (
     <DragContext.Provider value={{ isDraggingGlobal, setIsDraggingGlobal }}>
-      <div className={cn('flex flex-col gap-3 h-full bg-transparent pt-4')}>
-        <div className={cn('flex flex-row gap-5 items-center justify-center pl-5 pt-2')}>
-          <div className={cn('text-accent-foreground select-none flex-shrink-0')}>
-            {collectionName}
-          </div>
-          <div className={cn('flex flex-row gap-1 items-center justify-center select-none')}>
-            <div className={cn('text-sm')}>{t('showcase.sorting.title')}</div>
-            {/* Sort By */}
-            <GameSortFieldSelect
-              value={by}
-              fields={[...GAME_SORT_FIELDS, 'custom']}
-              triggerClassName={cn('w-[130px] h-[26px] text-xs border-0')}
-              onValueChange={(nextBy) => {
-                void (async () => {
-                  await setBy(nextBy)
-                  if (nextBy === 'custom' || secondarySort?.by === nextBy) {
-                    await setSecondarySort(null)
-                  }
-                })()
-              }}
-            />
-          </div>
-          {/* Toggle Order */}
-          {by !== 'custom' && (
-            <SortDirectionButton
-              order={order}
-              className={cn('h-[26px] w-[26px] -ml-3')}
-              onOrderChange={(nextOrder) => {
-                void setOrder(nextOrder)
-              }}
-            />
-          )}
-          {by !== 'custom' && (
-            <SecondarySortControl
-              primaryBy={by}
-              value={secondarySort}
-              fields={GAME_SORT_FIELDS}
-              onValueChange={(value) => {
-                void setSecondarySort(value)
-              }}
-            />
-          )}
-          <SeparatorDashed className="border-border" />
-        </div>
-        <ScrollArea ref={scrollAreaRef} className={cn('w-full flex-1 min-h-0 pb-2')}>
-          <div className={cn('w-full flex flex-col gap-1')}>
-            {/* Game List Container */}
-            <div
-              ref={gridContainerRef}
-              className={cn(
-                'grid grid-cols-[repeat(auto-fill,148px)]',
-                // '3xl:grid-cols-[repeat(auto-fill,176px)]',
-                'justify-between gap-6 gap-y-[30px] w-full',
-                'pt-2 pb-6 pl-5 pr-5' // Add inner margins to show shadows
-              )}
-            >
-              {sortedGames?.map((gameId, index) => (
-                <div
-                  key={`${gameId}_${nsfwFilterMode}`}
-                  className={cn(
-                    'flex-shrink-0' // Preventing compression
-                  )}
-                >
-                  <LazyLoadComponent
-                    threshold={300}
-                    scrollPosition={scrollPosition}
-                    placeholder={<PlaceHolder />} // Necessary for scroll restoration
-                  >
-                    <GamePoster
-                      gameId={gameId}
-                      groupId={`collection:${collectionId}`}
-                      dragScenario={
-                        by === 'custom' && nsfwFilterMode === NSFWFilterMode.All
-                          ? 'reorder-games-in-collection'
-                          : undefined
-                      }
-                      parentGap={gap}
-                      position={
-                        (index % columns === 0 && 'left') ||
-                        (index % columns === columns - 1 && 'right') ||
-                        'center'
-                      }
-                    />
-                  </LazyLoadComponent>
-                </div>
-              ))}
+      <GameSelectionProvider
+        scopeId={`showcase:collection:${collectionId}`}
+        orderedGameIds={sortedGames}
+      >
+        <div className={cn('flex flex-col gap-3 h-full bg-transparent pt-4')}>
+          <div className={cn('flex flex-row gap-5 items-center justify-center pl-5 pt-2')}>
+            <div className={cn('text-accent-foreground select-none flex-shrink-0')}>
+              {collectionName}
             </div>
+            <div className={cn('flex flex-row gap-1 items-center justify-center select-none')}>
+              <div className={cn('text-sm')}>{t('showcase.sorting.title')}</div>
+              {/* Sort By */}
+              <GameSortFieldSelect
+                value={by}
+                fields={[...GAME_SORT_FIELDS, 'custom']}
+                triggerClassName={cn('w-[130px] h-[26px] text-xs border-0')}
+                onValueChange={(nextBy) => {
+                  void (async () => {
+                    await setBy(nextBy)
+                    if (nextBy === 'custom' || secondarySort?.by === nextBy) {
+                      await setSecondarySort(null)
+                    }
+                  })()
+                }}
+              />
+            </div>
+            {/* Toggle Order */}
+            {by !== 'custom' && (
+              <SortDirectionButton
+                order={order}
+                className={cn('h-[26px] w-[26px] -ml-3')}
+                onOrderChange={(nextOrder) => {
+                  void setOrder(nextOrder)
+                }}
+              />
+            )}
+            {by !== 'custom' && (
+              <SecondarySortControl
+                primaryBy={by}
+                value={secondarySort}
+                fields={GAME_SORT_FIELDS}
+                onValueChange={(value) => {
+                  void setSecondarySort(value)
+                }}
+              />
+            )}
+            <SeparatorDashed className="border-border" />
           </div>
-        </ScrollArea>
-        <ScrollToTopButton scrollAreaRef={scrollAreaRef} />
-      </div>
+          <ScrollArea ref={scrollAreaRef} className={cn('w-full flex-1 min-h-0 pb-2')}>
+            <div className={cn('w-full flex flex-col gap-1')}>
+              {/* Game List Container */}
+              <div
+                ref={gridContainerRef}
+                className={cn(
+                  'grid grid-cols-[repeat(auto-fill,148px)]',
+                  // '3xl:grid-cols-[repeat(auto-fill,176px)]',
+                  'justify-between gap-6 gap-y-[30px] w-full',
+                  'pt-2 pb-6 pl-5 pr-5' // Add inner margins to show shadows
+                )}
+              >
+                {sortedGames?.map((gameId, index) => (
+                  <div
+                    key={`${gameId}_${nsfwFilterMode}`}
+                    className={cn(
+                      'flex-shrink-0' // Preventing compression
+                    )}
+                  >
+                    <LazyLoadComponent
+                      threshold={300}
+                      scrollPosition={scrollPosition}
+                      placeholder={<PlaceHolder />} // Necessary for scroll restoration
+                    >
+                      <GamePoster
+                        gameId={gameId}
+                        groupId={`collection:${collectionId}`}
+                        dragScenario={
+                          by === 'custom' && nsfwFilterMode === NSFWFilterMode.All
+                            ? 'reorder-games-in-collection'
+                            : undefined
+                        }
+                        parentGap={gap}
+                        position={
+                          (index % columns === 0 && 'left') ||
+                          (index % columns === columns - 1 && 'right') ||
+                          'center'
+                        }
+                      />
+                    </LazyLoadComponent>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </ScrollArea>
+          <ScrollToTopButton scrollAreaRef={scrollAreaRef} />
+        </div>
+      </GameSelectionProvider>
     </DragContext.Provider>
   )
 }

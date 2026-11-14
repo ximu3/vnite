@@ -1,6 +1,7 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@ui/accordion'
 import { ScrollArea } from '@ui/scroll-area'
 import { useTranslation } from 'react-i18next'
+import { GameSelectionProvider } from '~/components/GameBatchEditor/GameSelectionProvider'
 import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
 import { useConfigState } from '~/hooks'
 import { filterGames, getAllValuesInKey, sortGames, useVisibleGameIds } from '~/stores/game'
@@ -49,6 +50,7 @@ export function PlayStatusGamesComponent({
           {fields.map((field) => {
             const gameIds = filterGames({ ['record.playStatus']: [field] }, visibleGameIds)
             if (gameIds.length === 0) return <></>
+            const sortedGameIds = sortGames(sort, gameIds)
 
             return (
               <AccordionItem key={field} value={field}>
@@ -59,18 +61,23 @@ export function PlayStatusGamesComponent({
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
-                  {sortGames(sort, gameIds).map((game) => (
-                    <LazyLoadComponent
-                      key={game}
-                      threshold={300}
-                      scrollPosition={scrollPosition}
-                      placeholder={
-                        <PlaceHolder gameId={game} groupId={`record.playStatus:${field}`} />
-                      }
-                    >
-                      <GameNav key={game} gameId={game} groupId={`record.playStatus:${field}`} />
-                    </LazyLoadComponent>
-                  ))}
+                  <GameSelectionProvider
+                    scopeId={`sidebar:record.playStatus:${field}`}
+                    orderedGameIds={sortedGameIds}
+                  >
+                    {sortedGameIds.map((game) => (
+                      <LazyLoadComponent
+                        key={game}
+                        threshold={300}
+                        scrollPosition={scrollPosition}
+                        placeholder={
+                          <PlaceHolder gameId={game} groupId={`record.playStatus:${field}`} />
+                        }
+                      >
+                        <GameNav key={game} gameId={game} groupId={`record.playStatus:${field}`} />
+                      </LazyLoadComponent>
+                    ))}
+                  </GameSelectionProvider>
                 </AccordionContent>
               </AccordionItem>
             )

@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { GameSelectionProvider } from '~/components/GameBatchEditor/GameSelectionProvider'
 import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
 import { AccordionContent, AccordionItem, AccordionTrigger } from '~/components/ui/accordion'
 import { useConfigState } from '~/hooks'
@@ -27,16 +28,18 @@ export function AllGameComponent({
         </div>
       </AccordionTrigger>
       <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
-        {games.map((gameId) => (
-          <LazyLoadComponent
-            key={gameId}
-            threshold={300}
-            scrollPosition={scrollPosition}
-            placeholder={<PlaceHolder gameId={gameId} groupId="all" />}
-          >
-            <GameNav gameId={gameId} groupId="all" />
-          </LazyLoadComponent>
-        ))}
+        <GameSelectionProvider scopeId="sidebar:all" orderedGameIds={games}>
+          {games.map((gameId) => (
+            <LazyLoadComponent
+              key={gameId}
+              threshold={300}
+              scrollPosition={scrollPosition}
+              placeholder={<PlaceHolder gameId={gameId} groupId="all" />}
+            >
+              <GameNav gameId={gameId} groupId="all" />
+            </LazyLoadComponent>
+          ))}
+        </GameSelectionProvider>
       </AccordionContent>
     </AccordionItem>
   )

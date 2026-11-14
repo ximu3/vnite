@@ -1,6 +1,7 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@ui/accordion'
 import { ScrollArea } from '@ui/scroll-area'
 import { useTranslation } from 'react-i18next'
+import { GameSelectionProvider } from '~/components/GameBatchEditor/GameSelectionProvider'
 import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
 import { useConfigState } from '~/hooks'
 import { searchGames, sortGames } from '~/stores/game'
@@ -34,16 +35,18 @@ export function SearchComponent({
             </div>
           </AccordionTrigger>
           <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
-            {games.map((game) => (
-              <LazyLoadComponent
-                key={game}
-                threshold={300}
-                scrollPosition={scrollPosition}
-                placeholder={<PlaceHolder gameId={game} groupId={'0'} />}
-              >
-                <GameNav key={game} gameId={game} groupId={'0'} />
-              </LazyLoadComponent>
-            ))}
+            <GameSelectionProvider scopeId="sidebar:search" orderedGameIds={games}>
+              {games.map((game) => (
+                <LazyLoadComponent
+                  key={game}
+                  threshold={300}
+                  scrollPosition={scrollPosition}
+                  placeholder={<PlaceHolder gameId={game} groupId={'0'} />}
+                >
+                  <GameNav key={game} gameId={game} groupId={'0'} />
+                </LazyLoadComponent>
+              ))}
+            </GameSelectionProvider>
           </AccordionContent>
         </AccordionItem>
       </Accordion>

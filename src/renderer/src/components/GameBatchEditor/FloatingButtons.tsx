@@ -1,23 +1,22 @@
-import { Button } from '~/components/ui/button'
-import { cn } from '~/utils'
+import { useLocation } from '@tanstack/react-router'
+import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useGameBatchEditorStore } from './store'
+
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
-import { InformationDialog } from './BatchGameNavCM/InformationDialog'
-import { DeleteGameAlert } from './BatchGameNavCM/DeleteGameAlert'
-import { CalculateStorageSizeDialog } from './BatchGameNavCM/CalculateStorageSizeDialog'
+import { Button } from '~/components/ui/button'
 import { useGameMetadataUpdaterStore } from '~/pages/GameMetadataUpdater'
-import { useEffect } from 'react'
-import { useGameRegistry } from '~/stores/game'
-import { useLocation } from '@tanstack/react-router'
-import { useGameCollectionStore } from '~/stores/game'
 import { useBatchStorageSizeStore } from '~/stores/batchStorageSizeStore'
-import { Loader2 } from 'lucide-react'
+import { useGameCollectionStore, useGameRegistry } from '~/stores/game'
+import { cn } from '~/utils'
+import { CalculateStorageSizeDialog } from './BatchGameNavCM/CalculateStorageSizeDialog'
+import { DeleteGameAlert } from './BatchGameNavCM/DeleteGameAlert'
+import { InformationDialog } from './BatchGameNavCM/InformationDialog'
+import { useGameBatchEditorStore } from './store'
 
 export function FloatingButtons(): React.JSX.Element {
   const { t } = useTranslation('game')
-  const { selectedGamesMap, clearSelection, isBatchMode, selectGames } = useGameBatchEditorStore()
+  const { selectedGamesMap, clearSelection, updateSelection } = useGameBatchEditorStore()
   const selectedGameIds = Object.keys(selectedGamesMap)
   const [isAddCollectionDialogOpen, setIsAddCollectionDialogOpen] = useState(false)
   const [isInformationDialogOpen, setIsInformationDialogOpen] = useState(false)
@@ -47,21 +46,8 @@ export function FloatingButtons(): React.JSX.Element {
       // If not in a collection page, get all games from the registry
       currentAllGameIds = allGameIds
     }
-    selectGames(currentAllGameIds)
+    updateSelection({ gameIds: currentAllGameIds, mode: 'add' })
   }
-
-  // Set up a keydown listener
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent): void => {
-      if (e.key === 'Escape' && isBatchMode) {
-        // If in batch mode, clear selection on Escape key
-        clearSelection()
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isBatchMode, clearSelection])
 
   const handleBatchCalculateStorageSize = async (gameIds: string[]): Promise<void> => {
     await startCalculation(gameIds, t)

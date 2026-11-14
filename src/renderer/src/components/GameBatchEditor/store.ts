@@ -1,132 +1,86 @@
 import { create } from 'zustand'
 
-interface GameBatchEditorStore {
-  // core state
-  selectedGamesMap: Record<string, boolean>
-  isBatchMode: boolean
-  lastSelectedId: string | null
-
-  // Operating Methods
-  selectGame: (gameId: string) => void
-  selectGames: (gameIds: string[]) => void
-  unselectGame: (gameId: string) => void
-  unselectGames: (gameIds: string[]) => void
-  clearSelection: () => void
-  setLastSelectedId: (id: string | null) => void
-
-  // Compatible with older interfaces
-  addGameId: (gameId: string) => void
-  removeGameId: (gameId: string) => void
-  clearGameIds: () => void
-
-  // Calculating properties
-  get gameIds(): string[]
+export interface SelectionAnchor {
+  scopeId: string
+  gameId: string
 }
 
-export const useGameBatchEditorStore = create<GameBatchEditorStore>((set, get) => ({
+export interface SelectionScope {
+  scopeId: string
+  orderedGameIds: readonly string[]
+}
+
+export type SelectionMode = 'add' | 'remove' | 'replace' | 'toggle'
+
+export interface SelectionUpdate {
+  gameIds: readonly string[]
+  mode: SelectionMode
+  // Omit to preserve the anchor; null clears it; an object sets a new anchor.
+  anchor?: SelectionAnchor | null
+}
+
+interface GameBatchEditorStore {
+  // core state
+  selectedGamesMap: Partial<Record<string, true>>
+  selectionAnchor: SelectionAnchor | null
+
+  // Operating Methods
+  updateSelection: (update: SelectionUpdate) => void
+  clearSelection: () => void
+  setSelectionAnchor: (anchor: SelectionAnchor) => void
+  clearSelectionAnchor: (scopeId: string) => void
+}
+
+// Calculate batch mode from the selected games instead of maintaining duplicate state.
+export const selectIsBatchMode = (state: GameBatchEditorStore): boolean =>
+  Object.keys(state.selectedGamesMap).length > 1
+
+export const useGameBatchEditorStore = create<GameBatchEditorStore>((set) => ({
   selectedGamesMap: {},
-  isBatchMode: false,
-  lastSelectedId: null,
+  selectionAnchor: null,
 
-  // Calculated Properties - Compatible with old code
-  get gameIds(): string[] {
-    return Object.keys(get().selectedGamesMap)
-  },
-
-  // Select a game
-  selectGame: (gameId: string): void => {
+  // Add, remove, replace or toggle games and commit any anchor change in the same update.
+  updateSelection: ({ gameIds, mode, anchor }: SelectionUpdate): void => {
     set((state) => {
-      // If already checked, no need to change
-      if (state.selectedGamesMap[gameId]) return state
-
-      const newMap = { ...state.selectedGamesMap, [gameId]: true }
-      const selectedCount = Object.keys(newMap).length
-
-      return {
-        selectedGamesMap: newMap,
-        isBatchMode: selectedCount > 1
-      }
-    })
-    console.warn(`[DEBUG] Select game: ${gameId}`)
-  },
-  // Select multiple games
-  selectGames: (gameIds: string[]): void => {
-    set((state) => {
-      const newMap: Record<string, boolean> = { ...state.selectedGamesMap }
-      gameIds.forEach((gameId) => {
-        if (!newMap[gameId]) {
-          newMap[gameId] = true
+      const selectedGamesMap: Partial<Record<string, true>> =
+        mode === 'replace' ? {} : { ...state.selectedGamesMap }
+      // Repeated IDs represent one game, including when toggling a group.
+      for (const gameId of new Set(gameIds)) {
+        if (mode === 'remove' || (mode === 'toggle' && selectedGamesMap[gameId])) {
+          delete selectedGamesMap[gameId]
+        } else {
+          selectedGamesMap[gameId] = true
         }
-      })
-      const selectedCount = Object.keys(newMap).length
-      return {
-        selectedGamesMap: newMap,
-        isBatchMode: selectedCount > 1
       }
-    })
-    console.warn(`[DEBUG] Select games: ${gameIds.join(', ')}`)
-  },
 
-  // Unselect a game
-  unselectGame: (gameId: string): void => {
-    set((state) => {
-      // If unselected, no change is necessary
-      if (!state.selectedGamesMap[gameId]) return state
+      const selectionAnchor = anchor === undefined ? state.selectionAnchor : anchor
 
-      const newMap = { ...state.selectedGamesMap }
-      delete newMap[gameId]
-
-      const selectedCount = Object.keys(newMap).length
+      // Keep unchanged selections stable, as selecting an already checked game is a no-op.
+      const selectionUnchanged =
+        Object.keys(selectedGamesMap).length === Object.keys(state.selectedGamesMap).length &&
+        Object.keys(selectedGamesMap).every((gameId) => state.selectedGamesMap[gameId])
+      if (selectionUnchanged && selectionAnchor === state.selectionAnchor) return state
 
       return {
-        selectedGamesMap: newMap,
-        isBatchMode: selectedCount > 1
+        selectedGamesMap: selectionUnchanged ? state.selectedGamesMap : selectedGamesMap,
+        selectionAnchor
       }
     })
-    console.warn(`[DEBUG] Unselect game: ${gameId}`)
+    console.warn('[DEBUG] Update selection (' + mode + '): ' + gameIds.join(', '))
   },
 
-  // Unselect multiple games
-  unselectGames: (gameIds: string[]): void => {
-    set((state) => {
-      const newMap: Record<string, boolean> = { ...state.selectedGamesMap }
-      gameIds.forEach((gameId) => {
-        if (newMap[gameId]) {
-          delete newMap[gameId]
-        }
-      })
-      const selectedCount = Object.keys(newMap).length
-      return {
-        selectedGamesMap: newMap,
-        isBatchMode: selectedCount > 1
-      }
-    })
-    console.warn(`[DEBUG] Unselect games: ${gameIds.join(', ')}`)
-  },
-
-  // Clear all selections
+  // Clear all selections and the range anchor.
   clearSelection: (): void => {
-    set({
-      selectedGamesMap: {},
-      isBatchMode: false
-    })
+    set({ selectedGamesMap: {}, selectionAnchor: null })
   },
 
-  // Setting the last selected ID
-  setLastSelectedId: (id: string | null): void => {
-    set({ lastSelectedId: id })
+  // Setting the range anchor independently of the selected games
+  setSelectionAnchor: (anchor: SelectionAnchor): void => {
+    set({ selectionAnchor: anchor })
   },
 
-  // Compatible with old methods
-  addGameId: (gameId: string): void => {
-    get().selectGame(gameId)
-  },
-
-  removeGameId: (gameId: string): void => {
-    get().unselectGame(gameId)
-  },
-
-  clearGameIds: (): void => {
-    get().clearSelection()
+  // Only the list owning the anchor may clear it during teardown.
+  clearSelectionAnchor: (scopeId: string): void => {
+    set((state) => (state.selectionAnchor?.scopeId === scopeId ? { selectionAnchor: null } : state))
   }
 }))

@@ -2,6 +2,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@u
 import { ScrollArea } from '@ui/scroll-area'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { GameSelectionProvider } from '~/components/GameBatchEditor/GameSelectionProvider'
 import { LazyLoadComponent, trackWindowScroll } from 'react-lazy-load-image-component'
 import { CollectionCM } from '~/components/contextMenu/CollectionCM'
 import { useConfigState } from '~/hooks'
@@ -50,6 +51,8 @@ export function CollectionComponent({
     return visibleGameIds.filter((id) => !collectedGameIds.has(id))
   }, [visibleGameIds, collectedGameIds])
 
+  const sortedUncollectedGameIds = sortGames(sort, uncollectedGameIds)
+
   return (
     <ScrollArea className={cn('w-full h-full pr-3 -mr-3 pt-1 pb-1')}>
       {defaultValues.length > 2 ? (
@@ -66,6 +69,7 @@ export function CollectionComponent({
           {sortedCollections.map(([key, value]) => {
             const gameIds = value.games.filter((gameId) => visibleGameIdSet.has(gameId))
             if (gameIds.length === 0) return <></>
+            const sortedGameIds = overrideCollectionSort ? sortGames(sort, gameIds) : gameIds
 
             return (
               <AccordionItem key={key} value={key}>
@@ -78,16 +82,21 @@ export function CollectionComponent({
                   </AccordionTrigger>
                 </CollectionCM>
                 <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1 w-full')}>
-                  {(overrideCollectionSort ? sortGames(sort, gameIds) : gameIds).map((game) => (
-                    <LazyLoadComponent
-                      key={game}
-                      threshold={300}
-                      scrollPosition={scrollPosition}
-                      placeholder={<PlaceHolder gameId={game} groupId={`collection:${key}`} />}
-                    >
-                      <GameNav key={game} gameId={game} groupId={`collection:${key}`} />
-                    </LazyLoadComponent>
-                  ))}
+                  <GameSelectionProvider
+                    scopeId={`sidebar:collection:${key}`}
+                    orderedGameIds={sortedGameIds}
+                  >
+                    {sortedGameIds.map((game) => (
+                      <LazyLoadComponent
+                        key={game}
+                        threshold={300}
+                        scrollPosition={scrollPosition}
+                        placeholder={<PlaceHolder gameId={game} groupId={`collection:${key}`} />}
+                      >
+                        <GameNav key={game} gameId={game} groupId={`collection:${key}`} />
+                      </LazyLoadComponent>
+                    ))}
+                  </GameSelectionProvider>
                 </AccordionContent>
               </AccordionItem>
             )
@@ -101,16 +110,21 @@ export function CollectionComponent({
                 </div>
               </AccordionTrigger>
               <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1 w-full')}>
-                {sortGames(sort, uncollectedGameIds).map((game) => (
-                  <LazyLoadComponent
-                    key={game}
-                    threshold={300}
-                    scrollPosition={scrollPosition}
-                    placeholder={<PlaceHolder gameId={game} groupId={'all'} />}
-                  >
-                    <GameNav key={game} gameId={game} groupId={'all'} />
-                  </LazyLoadComponent>
-                ))}
+                <GameSelectionProvider
+                  scopeId="sidebar:uncollected"
+                  orderedGameIds={sortedUncollectedGameIds}
+                >
+                  {sortedUncollectedGameIds.map((game) => (
+                    <LazyLoadComponent
+                      key={game}
+                      threshold={300}
+                      scrollPosition={scrollPosition}
+                      placeholder={<PlaceHolder gameId={game} groupId={'all'} />}
+                    >
+                      <GameNav key={game} gameId={game} groupId={'all'} />
+                    </LazyLoadComponent>
+                  ))}
+                </GameSelectionProvider>
               </AccordionContent>
             </AccordionItem>
           )}

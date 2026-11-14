@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { GameSelectionProvider } from '~/components/GameBatchEditor/GameSelectionProvider'
 import { AccordionContent, AccordionItem, AccordionTrigger } from '~/components/ui/accordion'
 import {
   ContextMenu,
@@ -37,15 +38,17 @@ export function RecentGames(): React.JSX.Element {
             </ContextMenuContent>
           </ContextMenu>
           <AccordionContent className={cn('rounded-none pt-1 flex flex-col gap-1')}>
-            {/* If there are no recent games, show a message */}
-            {games.length === 0 && (
-              <div className="flex items-center justify-center text-xs text-muted-foreground">
-                {t('list.recent.empty')}
-              </div>
-            )}
-            {games.map((gameId) => (
-              <GameNav key={gameId} gameId={gameId} groupId="recentGames" />
-            ))}
+            <GameSelectionProvider scopeId="sidebar:recent" orderedGameIds={games}>
+              {/* If there are no recent games, show a message */}
+              {games.length === 0 && (
+                <div className="flex items-center justify-center text-xs text-muted-foreground">
+                  {t('list.recent.empty')}
+                </div>
+              )}
+              {games.map((gameId) => (
+                <GameNav key={gameId} gameId={gameId} groupId="recentGames" />
+              ))}
+            </GameSelectionProvider>
           </AccordionContent>
         </AccordionItem>
       )}

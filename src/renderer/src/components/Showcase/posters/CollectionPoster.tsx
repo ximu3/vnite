@@ -3,7 +3,7 @@ import { useRouter } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react'
 import { HoverCardAnimation } from '~/components/animations/HoverCard'
 import { CollectionCM } from '~/components/contextMenu/CollectionCM'
-import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
+import { selectIsBatchMode, useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
 import { GameImage } from '~/components/ui/game-image'
 import { useConfigState, useGameState } from '~/hooks'
 import { useGameCollectionStore } from '~/stores'
@@ -83,7 +83,8 @@ export function CollectionPoster({
   const [nsfw] = useGameState(gameId, 'apperance.nsfw')
 
   // Batch mode and selection state
-  const { selectedGamesMap, selectGames, unselectGames, isBatchMode } = useGameBatchEditorStore()
+  const { selectedGamesMap, updateSelection } = useGameBatchEditorStore()
+  const isBatchMode = useGameBatchEditorStore(selectIsBatchMode)
 
   // Check if all games in the collection are selected
   const isCollectionFullySelected = (): boolean => {
@@ -109,20 +110,13 @@ export function CollectionPoster({
   const handleSelect = (e: React.MouseEvent): void => {
     e.stopPropagation()
 
-    if (isSelected) {
-      // If all games are selected, unselect
-      unselectGames(collectionGames)
-    } else {
-      // Select all games in the collection
-      selectGames(collectionGames)
-    }
+    // If all games are selected, unselect; otherwise select all games in the collection.
+    updateSelection({ gameIds: collectionGames, mode: isSelected ? 'remove' : 'add' })
   }
 
   const handleCollectionClick = (e: React.MouseEvent): void => {
-    if (e.ctrlKey || e.metaKey) {
-      handleSelect(e)
-    } else if (isBatchMode && !e.ctrlKey && !e.metaKey) {
-      // In batch mode, select the collection on click
+    if (e.ctrlKey || isBatchMode) {
+      // Ctrl-click or a click in batch mode selects the collection.
       handleSelect(e)
     } else {
       // Default behavior: navigate to collection page

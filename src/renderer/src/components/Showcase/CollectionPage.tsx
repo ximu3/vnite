@@ -19,7 +19,7 @@ export function CollectionPage(): React.JSX.Element {
   const [columns, setColumns] = useState<number>(0)
   const gridContainerRef = useRef<HTMLDivElement | null>(null)
 
-  const selectGames = useGameBatchEditorStore((state) => state.selectGames)
+  const updateSelection = useGameBatchEditorStore((state) => state.updateSelection)
 
   const libraryBarWidth = useLibraryStore((state) => state.libraryBarWidth)
 
@@ -40,13 +40,13 @@ export function CollectionPage(): React.JSX.Element {
       // Ctrl + A select all games
       if (e.ctrlKey && e.key === 'a') {
         e.preventDefault()
-        selectGames(visibleGameIds)
+        updateSelection({ gameIds: visibleGameIds, mode: 'add' })
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [selectGames, visibleGameIds])
+  }, [updateSelection, visibleGameIds])
 
   const visibleGameIdSet = useMemo(() => new Set(visibleGameIds), [visibleGameIds])
 

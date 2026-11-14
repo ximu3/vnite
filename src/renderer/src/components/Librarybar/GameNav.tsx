@@ -1,7 +1,7 @@
 import { NSFWBlurLevel, type configDocs } from '@appTypes/models'
 import { useLocation, useNavigate } from '@tanstack/react-router'
 import { Nav } from '@ui/nav'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { AddCollectionDialog } from '~/components/dialog/AddCollectionDialog'
 import { PlayTimeEditorDialog } from '~/components/Game/Config/ManageMenu/PlayTimeEditorDialog'
@@ -17,7 +17,8 @@ import { GameNavCM } from '../contextMenu/GameNavCM'
 import { InformationDialog } from '../Game/Overview/Information/InformationDialog'
 import { PLAY_STATUS_COLORS, PLAY_STATUS_ICONS } from '../Game/Overview/Record/RecordIcon'
 import { BatchGameNavCM } from '../GameBatchEditor/BatchGameNavCM'
-import { useGameBatchEditorStore } from '../GameBatchEditor/store'
+import { selectIsBatchMode, useGameBatchEditorStore } from '../GameBatchEditor/store'
+import { GameSelectionContext, useGameSelection } from '../GameBatchEditor/useGameSelection'
 import { useTheme } from '../ThemeProvider'
 
 type SortInfoBy = 'record.playTime' | 'record.score' | 'record.storageSize'
@@ -74,7 +75,11 @@ export function GameNav({
   const [isStorageSizeDialogOpen, setIsStorageSizeDialogOpen] = React.useState(false)
 
   const isSelected = useGameBatchEditorStore((state) => state.selectedGamesMap[gameId])
-  const isBatchMode = useGameBatchEditorStore((state) => state.isBatchMode)
+  const isBatchMode = useGameBatchEditorStore(selectIsBatchMode)
+  const selectionScope = useContext(GameSelectionContext)
+  const { handleGameClick: handleSelectionClick } = useGameSelection(gameId, {
+    clearOnNormalClick: true
+  })
 
   console.warn('[DEBUG] GameNav')
 
@@ -85,74 +90,30 @@ export function GameNav({
   const handleDoubleClick = (event: React.MouseEvent): void => {
     event.preventDefault()
     event.stopPropagation()
+    if (event.shiftKey || event.ctrlKey) return
     startGame(gameId, navigate, groupId)
   }
 
   const handleGameClick = (event: React.MouseEvent): void => {
-    const store = useGameBatchEditorStore.getState()
-    const { addGameId, removeGameId, clearGameIds, lastSelectedId, setLastSelectedId, gameIds } =
-      store
+    const routerGameId = location.pathname.includes('/library/games/')
+      ? location.pathname.split('/')[3]
+      : undefined
 
-    if (location.pathname.includes(`/library/games/`)) {
-      // If the current route is already a game detail page, add the gameId to the batch editor store
-      const routerGameId = location.pathname.split('/')[3]
-      addGameId(routerGameId)
+    if (routerGameId) {
+      const store = useGameBatchEditorStore.getState()
+      // Shift ranges use the current detail game when no anchor has been established.
+      if (event.shiftKey && !store.selectionAnchor && selectionScope) {
+        store.setSelectionAnchor({ scopeId: selectionScope.scopeId, gameId: routerGameId })
+      }
     }
 
-    // If special operations are performed in batch selection mode, prevent default navigation
-    if (event.shiftKey || event.ctrlKey || event.metaKey) {
-      event.preventDefault()
+    // Normal click clears batch selection and allows the link to navigate.
+    handleSelectionClick(event)
 
-      if (event.shiftKey && lastSelectedId) {
-        // Get all games in the currently visible AccordionContent
-        const accordionContent = (event.currentTarget as HTMLElement).closest('.accordion-content')
-
-        if (accordionContent) {
-          const visibleGameElements = Array.from(
-            accordionContent.querySelectorAll('[data-game-id]')
-          ) as HTMLElement[]
-
-          const currentGameIds = visibleGameElements
-            .map((el) => el.dataset.gameId)
-            .filter(Boolean) as string[]
-
-          const currentIndex = currentGameIds.indexOf(gameId)
-          const lastSelectedIndex = currentGameIds.indexOf(lastSelectedId)
-
-          if (currentIndex !== -1 && lastSelectedIndex !== -1) {
-            const start = Math.min(currentIndex, lastSelectedIndex)
-            const end = Math.max(currentIndex, lastSelectedIndex)
-
-            const selectedRange = currentGameIds.slice(start, end + 1)
-
-            if (event.ctrlKey || event.metaKey) {
-              // Shift + Ctrl/Cmd: Add to existing selection
-              selectedRange.forEach((id) => {
-                if (!gameIds.includes(id)) {
-                  addGameId(id)
-                }
-              })
-            } else {
-              // Shift: Replacement of existing options
-              clearGameIds()
-              selectedRange.forEach((id) => addGameId(id))
-            }
-          }
-        }
-      } else if (event.ctrlKey || event.metaKey) {
-        // Ctrl/Cmd Click
-        if (isSelected) {
-          removeGameId(gameId)
-        } else {
-          addGameId(gameId)
-        }
-      }
-
-      setLastSelectedId(gameId)
-    } else {
-      // Normal click - allow navigation to occur
-      // If not in batch mode, clear the selected games
-      clearGameIds()
+    // Nav automatically highlights the current game based on the route, even if it is deselected.
+    // Restore its selection after Ctrl/Shift operations to avoid misleading UI feedback.
+    if ((event.ctrlKey || event.shiftKey) && routerGameId) {
+      useGameBatchEditorStore.getState().updateSelection({ gameIds: [routerGameId], mode: 'add' })
     }
   }
 

@@ -1,14 +1,27 @@
+import { Outlet } from '@tanstack/react-router'
+import { useEffect, useRef, useState } from 'react'
+import { FloatingButtons } from '~/components/GameBatchEditor/FloatingButtons'
+import { selectIsBatchMode, useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
 import { Librarybar } from '~/components/Librarybar'
 import { cn } from '~/utils'
-import { Outlet } from '@tanstack/react-router'
-import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
-import { FloatingButtons } from '~/components/GameBatchEditor/FloatingButtons'
-import { useRef, useState, useEffect } from 'react'
 import { useLibraryStore } from './store'
 
 export function Library({ className }: { className?: string }): React.JSX.Element {
   console.warn('[DEBUG] Library')
-  const isBatchMode = useGameBatchEditorStore((state) => state.isBatchMode)
+  const isBatchMode = useGameBatchEditorStore(selectIsBatchMode)
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent): void => {
+      // Radix overlays call preventDefault() on Escape without stopping propagation.
+      // Respect it so closing an overlay does not also clear the game selection.
+      if (event.key === 'Escape' && !event.defaultPrevented) {
+        useGameBatchEditorStore.getState().clearSelection()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   const libraryBarWidth = useLibraryStore((state) => state.libraryBarWidth)
   const setLibraryBarWidth = useLibraryStore((state) => state.setLibraryBarWidth)

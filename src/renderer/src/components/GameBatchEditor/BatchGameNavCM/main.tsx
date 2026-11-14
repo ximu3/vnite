@@ -7,8 +7,7 @@ import { cn } from '~/utils'
 import { CollectionMenu } from './CollectionMenu'
 import { InformationDialog } from './InformationDialog'
 import { DeleteGameAlert } from './DeleteGameAlert'
-import { useState, useEffect } from 'react'
-import { useLocation } from '@tanstack/react-router'
+import { useState } from 'react'
 import { useGameBatchEditorStore } from '../store'
 import { useTranslation } from 'react-i18next'
 import { useGameMetadataUpdaterStore } from '~/pages/GameMetadataUpdater'
@@ -20,20 +19,13 @@ export function BatchGameNavCM({
 }): React.JSX.Element {
   const { t } = useTranslation('game')
   const [isInformationDialogOpen, setIsInformationDialogOpen] = useState(false)
-  const { clearGameIds, selectedGamesMap } = useGameBatchEditorStore()
+  // This menu only mounts in batch mode; fewer than two selected games unmount it.
+  const { selectedGamesMap } = useGameBatchEditorStore()
   const {
     setGameIds: setGameMetadataUpdaterGameIds,
     setIsOpen: setIsGameMetadataUpdaterDialogOpen
   } = useGameMetadataUpdaterStore()
   const gameIds = Object.keys(selectedGamesMap)
-  const location = useLocation()
-
-  useEffect(() => {
-    // clear batchEditor gameList when switching to a non-game-detail page and not in batchMode
-    if (!location.pathname.includes(`/library/games/`) && gameIds.length < 2) {
-      clearGameIds()
-    }
-  }, [location.pathname])
 
   return (
     <ContextMenuContent className={cn('w-[180px]')}>

@@ -10,7 +10,8 @@ import { GamePropertiesDialog } from '~/components/Game/Config/Properties'
 import { InformationDialog } from '~/components/Game/Overview/Information/InformationDialog'
 import { CalculateStorageSizeDialog } from '~/components/Game/Overview/Record/CalculateStorageSizeDialog'
 import { BatchGameNavCM } from '~/components/GameBatchEditor/BatchGameNavCM'
-import { useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
+import { selectIsBatchMode, useGameBatchEditorStore } from '~/components/GameBatchEditor/store'
+import { useGameSelection } from '~/components/GameBatchEditor/useGameSelection'
 import { ContextMenu, ContextMenuTrigger } from '~/components/ui/context-menu'
 import { GameImage } from '~/components/ui/game-image'
 import { useConfigState, useGameState } from '~/hooks'
@@ -23,14 +24,12 @@ export function BigGamePoster({
   gameId,
   groupId,
   className,
-  showRemoveFromRecent = false,
-  inViewGames = [] // TODO: Support shift selection in BigGamePoster
+  showRemoveFromRecent = false
 }: {
   gameId: string
   groupId?: string
   className?: string
   showRemoveFromRecent?: boolean
-  inViewGames?: string[]
 }): React.JSX.Element {
   const navigate = useNavigate()
   const gameData = useGameRegistry((state) => state.gameMetaIndex[gameId])
@@ -66,56 +65,14 @@ export function BigGamePoster({
     </div>
   )
 
-  // Batch selection state
-  const {
-    selectedGamesMap,
-    selectGame,
-    unselectGame,
-    lastSelectedId,
-    setLastSelectedId,
-    isBatchMode
-  } = useGameBatchEditorStore()
+  // Batch selection state and shared range-selection handling
+  const isSelected = useGameBatchEditorStore((state) => !!state.selectedGamesMap[gameId])
+  const isBatchMode = useGameBatchEditorStore(selectIsBatchMode)
 
-  const isSelected = !!selectedGamesMap[gameId]
-
-  const handleSelect = (e: React.MouseEvent): void => {
-    e.stopPropagation()
-
-    if (e.shiftKey && lastSelectedId && inViewGames.length > 0) {
-      // Shift+click to select a range of games
-      const lastIndex = inViewGames.indexOf(lastSelectedId)
-      const currentIndex = inViewGames.indexOf(gameId)
-
-      if (lastIndex !== -1 && currentIndex !== -1) {
-        const startIndex = Math.min(lastIndex, currentIndex)
-        const endIndex = Math.max(lastIndex, currentIndex)
-
-        for (let i = startIndex; i <= endIndex; i++) {
-          selectGame(inViewGames[i])
-        }
-      } else {
-        // If the index is not found, just select the current game
-        selectGame(gameId)
-      }
-    } else {
-      // Normal click selection
-      if (isSelected) {
-        unselectGame(gameId)
-      } else {
-        selectGame(gameId)
-        setLastSelectedId(gameId)
-      }
-    }
-  }
-
-  // Ctrl+click to select multiple games, instead of navigating to the game detail page
-  const handleGameClick = (e: React.MouseEvent): void => {
-    if (e.ctrlKey || e.metaKey) {
-      handleSelect(e)
-    } else {
-      navigateToGame(navigate, gameId, groupId)
-    }
-  }
+  // Modifier clicks select games; normal clicks keep the existing navigation.
+  const { handleSelect, handleGameClick } = useGameSelection(gameId, {
+    onNormalClick: () => navigateToGame(navigate, gameId, groupId || 'all')
+  })
 
   return (
     <ContextMenu>
@@ -137,7 +94,6 @@ export function BigGamePoster({
             >
               <HoverCardAnimation>
                 <GameImage
-                  onClick={handleGameClick}
                   gameId={gameId}
                   type="wideCover"
                   forceSmartCrop
@@ -147,7 +103,6 @@ export function BigGamePoster({
                   className={posterImageClassName}
                   fallback={
                     <GameImage
-                      onClick={handleGameClick}
                       gameId={gameId}
                       type="background"
                       forceSmartCrop

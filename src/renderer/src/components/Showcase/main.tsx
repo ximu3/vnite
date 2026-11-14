@@ -26,7 +26,7 @@ export function Showcase(): React.JSX.Element {
   const gamesLoaded = useGameRegistry((state) => state.gamesLoaded)
   const setEditingScanner = useGameScannerStore((state) => state.setEditingScanner)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
-  const selectGames = useGameBatchEditorStore((state) => state.selectGames)
+  const updateSelection = useGameBatchEditorStore((state) => state.updateSelection)
   const navigate = useNavigate()
   const displayedGameIds = useMemo(() => {
     if (!isEqual(filter, {})) {
@@ -57,13 +57,13 @@ export function Showcase(): React.JSX.Element {
       // Ctrl + A select all games
       if (e.ctrlKey && e.key === 'a') {
         e.preventDefault()
-        selectGames(displayedGameIds)
+        updateSelection({ gameIds: displayedGameIds, mode: 'add' })
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [displayedGameIds, selectGames])
+  }, [displayedGameIds, updateSelection])
 
   // Show loading state while games are being loaded
   if (!gamesLoaded) {
