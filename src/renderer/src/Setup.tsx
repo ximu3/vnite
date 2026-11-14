@@ -53,7 +53,7 @@ export function Setup(): React.JSX.Element {
   const [addGameHotkey] = useConfigState('hotkeys.addGame')
   const [randomGameHotkey] = useConfigState('hotkeys.randomGame')
 
-  const setIsGameAdderOpen = useGameAdderStore((state) => state.setIsOpen)
+  const openGameAdder = useGameAdderStore((state) => state.open)
 
   function randomGameDetail(): void {
     let randomGameId: string | null = null
@@ -74,7 +74,7 @@ export function Setup(): React.JSX.Element {
   useHotkeys(
     addGameHotkey,
     () => {
-      setIsGameAdderOpen(true)
+      openGameAdder()
     },
     {
       preventDefault: true

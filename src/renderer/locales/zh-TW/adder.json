@@ -3,9 +3,6 @@
     "dialog": {
       "title": "添加遊戲"
     },
-    "notifications": {
-      "loading": "請等待遊戲添加完成"
-    },
     "gameList": {
       "columns": {
         "name": "遊戲名稱",
@@ -14,6 +11,10 @@
       },
       "unknown": "未知",
       "selected": "已選擇遊戲: {{name}}"
+    },
+    "duplicates": {
+      "title": "可能重複的遊戲",
+      "continueAnyway": "繼續新增"
     },
     "backgrounds": {
       "title": "背景圖片",
@@ -77,7 +78,8 @@
       "success": "添加成功",
       "error": "添加失敗",
       "waiting": "等待添加",
-      "existed": "已存在"
+      "existed": "已存在",
+      "review": "待確認"
     },
     "table": {
       "columns": {
@@ -98,19 +100,21 @@
       "add": "添加",
       "delete": "刪除",
       "addAll": "全部添加",
-      "adding": "添加中…"
+      "adding": "添加中…",
+      "review": "檢視"
     },
     "notifications": {
       "addingGame": "正在添加遊戲 {{name}}…",
       "gameAdded": "遊戲 {{name}} 添加成功",
       "addingGames": "正在添加遊戲…",
-      "gamesAdded": "添加遊戲成功",
+      "gamesAdded": "批次處理完成",
       "gameAddFailed": "添加遊戲失敗"
     },
     "errors": {
       "gameNotFound": "未找到遊戲: {{name}}",
       "gameIsBeingAdded": "遊戲正在添加中",
-      "gameAlreadyAdded": "遊戲已添加"
+      "gameAlreadyAdded": "遊戲已添加",
+      "metadataUnavailable": "無法取得遊戲資訊，請重試。"
     }
   }
 }

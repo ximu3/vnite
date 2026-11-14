@@ -2,7 +2,6 @@ import { BatchGameInfo } from '@appTypes/models'
 import { create } from 'zustand'
 
 export type DataSource = 'vndb' | 'igdb' | 'steam' | 'bangumi' | 'ymgal' | 'dlsite' | string
-export type GameStatus = 'idle' | 'loading' | 'success' | 'error' | 'existed'
 
 interface GameBatchAdderState {
   isOpen: boolean
@@ -31,7 +30,24 @@ export const useGameBatchAdderStore = create<GameBatchAdderState>((set) => ({
     setEnableUpscale: (enableUpscale): void => set({ enableUpscale }),
     updateGame: (dataId, updates): void =>
       set((state) => ({
-        games: state.games.map((game) => (game.dataId === dataId ? { ...game, ...updates } : game))
+        games: state.games.map((game) => {
+          if (game.dataId !== dataId) return game
+
+          const updated = { ...game, ...updates }
+          if (updated.dataSource !== game.dataSource) {
+            updated.id = ''
+          }
+          if (
+            game.duplicateIds &&
+            (updated.dataSource !== game.dataSource ||
+              updated.name !== game.name ||
+              updated.id !== game.id)
+          ) {
+            updated.duplicateIds = undefined
+            updated.status = 'idle'
+          }
+          return updated
+        })
       })),
     removeGame: (dataId): void =>
       set((state) => ({

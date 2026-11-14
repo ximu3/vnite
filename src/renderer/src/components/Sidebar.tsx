@@ -25,7 +25,7 @@ import { ToolboxPopover } from './Toolbox/ToolboxPopover'
 
 export function Sidebar(): React.JSX.Element {
   const router = useRouter()
-  const setIsGameAdderOpen = useGameAdderStore((state) => state.setIsOpen)
+  const openGameAdder = useGameAdderStore((state) => state.open)
   const gameBatchAdderActions = useGameBatchAdderStore((state) => state.actions)
   const setIsSteamImporterOpen = useSteamImporterStore((state) => state.setIsOpen)
   const setEditingScanner = useGameScannerStore((state) => state.setEditingScanner)
@@ -155,7 +155,7 @@ export function Sidebar(): React.JSX.Element {
                 <DropdownMenuSubContent>
                   <DropdownMenuItem
                     onClick={() => {
-                      setIsGameAdderOpen(true)
+                      openGameAdder()
                     }}
                   >
                     <div>{t('adder.addSingle')}</div>

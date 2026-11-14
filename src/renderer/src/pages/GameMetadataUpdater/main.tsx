@@ -207,39 +207,28 @@ export function GameMetadataUpdaterDialog(): React.JSX.Element {
     }
   }
 
-  const handleSingleUpdate = async (): Promise<void> => {
+  const handleSingleUpdate = (): void => {
     if (!gameIds[0]) return
 
-    setIsUpdating(true)
-    toast.loading(t('updater.notifications.updating'), { id: 'single-update' })
+    const params = {
+      dbId: gameIds[0],
+      dataSource,
+      dataSourceId,
+      fields: selectedFields,
+      backgroundUrl,
+      upscaleEnabled: enableUpscale,
+      options: options
+    }
 
-    try {
-      const params = {
-        dbId: gameIds[0],
-        dataSource: dataSource!,
-        dataSourceId: dataSourceId!,
-        fields: selectedFields,
-        backgroundUrl,
-        upscaleEnabled: enableUpscale,
-        options
-      }
-
-      await ipcManager.invoke('adder:update-game-metadata', params)
-
-      toast.success(t('updater.notifications.success'), { id: 'single-update' })
-      handleClose()
-    } catch (error) {
-      toast.error(
+    toast.promise(ipcManager.invoke('adder:update-game-metadata', params), {
+      loading: t('updater.notifications.updating'),
+      success: () => t('updater.notifications.success'),
+      error: (error) =>
         t('updater.notifications.error', {
           message: error instanceof Error ? error.message : t('unknown')
-        }),
-        {
-          id: 'single-update'
-        }
-      )
-    } finally {
-      setIsUpdating(false)
-    }
+        })
+    })
+    handleClose()
   }
 
   const handleBatchUpdate = async (): Promise<void> => {

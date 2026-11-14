@@ -11,7 +11,7 @@ import { useGameBatchAdderStore } from './GameBatchAdder/store'
 export function DragContainer({ children }: { children: React.ReactNode }): React.JSX.Element {
   const { t } = useTranslation('sidebar')
   const [isDragging, setIsDragging] = useState(false)
-  const { setIsOpen: setGameAdderIsOpen, setName, setDirPath, setGamePath } = useGameAdderStore()
+  const openGameAdder = useGameAdderStore((state) => state.open)
   const { actions: gameBatchAdderActions } = useGameBatchAdderStore()
 
   const isFileDrag = (event: DragEvent): boolean => {
@@ -105,11 +105,8 @@ export function DragContainer({ children }: { children: React.ReactNode }): Reac
         toast.success(t('notifications.getBatchGamesSuccess'), {
           id: 'getting-batch-games'
         })
-      } else {
-        setName(gameInfo[0].name)
-        setDirPath(gameInfo[0].dirPath)
-        setGamePath(gameInfo[0].gamePath)
-        setGameAdderIsOpen(true)
+      } else if (gameInfo[0]) {
+        openGameAdder(gameInfo[0])
       }
     }
 

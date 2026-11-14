@@ -3,9 +3,6 @@
     "dialog": {
       "title": "Add Game"
     },
-    "notifications": {
-      "loading": "Please wait for game addition to complete"
-    },
     "gameList": {
       "columns": {
         "name": "Game Name",
@@ -14,6 +11,10 @@
       },
       "unknown": "Unknown",
       "selected": "Selected game: {{name}}"
+    },
+    "duplicates": {
+      "title": "Possible duplicates",
+      "continueAnyway": "Continue"
     },
     "backgrounds": {
       "title": "Background Image",
@@ -77,7 +78,8 @@
       "success": "Added successfully",
       "error": "Addition failed",
       "waiting": "Waiting to add",
-      "existed": "Already exists"
+      "existed": "Already exists",
+      "review": "Needs confirmation"
     },
     "table": {
       "columns": {
@@ -98,19 +100,21 @@
       "add": "Add",
       "delete": "Delete",
       "addAll": "Add All",
-      "adding": "Adding…"
+      "adding": "Adding…",
+      "review": "Review"
     },
     "notifications": {
       "addingGame": "Adding game {{name}}…",
       "gameAdded": "Game {{name}} added successfully",
       "addingGames": "Adding games…",
-      "gamesAdded": "Games added successfully",
+      "gamesAdded": "Batch processing complete",
       "gameAddFailed": "Failed to add game"
     },
     "errors": {
       "gameNotFound": "Game not found: {{name}}",
       "gameIsBeingAdded": "Game is already being added",
-      "gameAlreadyAdded": "Game already added"
+      "gameAlreadyAdded": "Game already added",
+      "metadataUnavailable": "Could not retrieve game information. Please retry."
     }
   }
 }

@@ -41,9 +41,7 @@ export function ManageMenu({
   )
   const setIsScoreEditorDialogOpen = useGameDetailStore((state) => state.setIsScoreEditorDialogOpen)
   const setIsStorageSizeDialogOpen = useGameDetailStore((state) => state.setIsStorageSizeDialogOpen)
-  const setIsOpen = useGameAdderStore((state) => state.setIsOpen)
-  const setName = useGameAdderStore((state) => state.setName)
-  const setDbId = useGameAdderStore((state) => state.setDbId)
+  const openGameAdder = useGameAdderStore((state) => state.open)
 
   const changePlayStatus = (value: typeof playStatus): void => {
     setPlayStatus(value)
@@ -111,9 +109,7 @@ export function ManageMenu({
               {/* Update Metadata */}
               <DropdownMenuItem
                 onClick={() => {
-                  setDbId(gameId)
-                  setName(gameName)
-                  setIsOpen(true)
+                  openGameAdder({ dbId: gameId, name: gameName })
                 }}
               >
                 {t('detail.manage.downloadMetadata')}

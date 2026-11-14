@@ -3,9 +3,6 @@
     "dialog": {
       "title": "ゲームを追加"
     },
-    "notifications": {
-      "loading": "ゲームの追加が完了するまでお待ちください"
-    },
     "gameList": {
       "columns": {
         "name": "ゲーム名",
@@ -14,6 +11,10 @@
       },
       "unknown": "不明",
       "selected": "選択されたゲーム: {{name}}"
+    },
+    "duplicates": {
+      "title": "重複の可能性があるゲーム",
+      "continueAnyway": "続ける"
     },
     "backgrounds": {
       "title": "背景画像",
@@ -77,7 +78,8 @@
       "success": "追加成功",
       "error": "追加失敗",
       "waiting": "追加待ち",
-      "existed": "既存"
+      "existed": "既存",
+      "review": "確認待ち"
     },
     "table": {
       "columns": {
@@ -98,19 +100,21 @@
       "add": "追加",
       "delete": "削除",
       "addAll": "すべて追加",
-      "adding": "追加中…"
+      "adding": "追加中…",
+      "review": "確認"
     },
     "notifications": {
       "addingGame": "ゲーム「{{name}}」を追加中…",
       "gameAdded": "ゲーム「{{name}}」の追加に成功しました",
       "addingGames": "ゲームを追加中…",
-      "gamesAdded": "ゲームの追加に成功しました",
+      "gamesAdded": "一括処理が完了しました",
       "gameAddFailed": "ゲームの追加に失敗しました"
     },
     "errors": {
       "gameNotFound": "ゲームが見つかりません: {{name}}",
       "gameIsBeingAdded": "ゲームは既に追加中です",
-      "gameAlreadyAdded": "ゲームは既に追加されています"
+      "gameAlreadyAdded": "ゲームは既に追加されています",
+      "metadataUnavailable": "ゲーム情報を取得できませんでした。再試行してください。"
     }
   }
 }

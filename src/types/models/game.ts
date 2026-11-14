@@ -322,8 +322,9 @@ export interface BatchGameInfo {
   dataSource: string
   name: string
   id: string
-  status: 'idle' | 'loading' | 'success' | 'error' | 'existed'
+  status: 'idle' | 'loading' | 'success' | 'error' | 'existed' | 'review'
   dirPath: string
+  duplicateIds?: string[]
 }
 
 export enum TimerStatus {

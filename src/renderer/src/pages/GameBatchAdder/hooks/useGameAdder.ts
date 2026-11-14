@@ -1,27 +1,29 @@
 // hooks/useGameAdder.ts
 import { BatchGameInfo } from '@appTypes/models'
+import i18next from 'i18next'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ipcManager } from '~/app/ipc'
+import { getLibraryDuplicateIds } from '~/utils/gameDuplicates'
 import { useGameBatchAdderStore } from '../store'
 
+async function searchGame(game: BatchGameInfo): Promise<string> {
+  const result = await ipcManager.invoke('scraper:search-games', game.dataSource, game.name)
+  if (result.length === 0) {
+    throw new Error(i18next.t('adder:gameBatchAdder.errors.gameNotFound', { name: game.name }))
+  }
+  return result[0].id
+}
+
 export const useGameAdder = (): {
-  addGame: (dataId: string) => Promise<void>
+  addGame: (dataId: string, skipDuplicateCheck?: boolean) => Promise<'review' | void>
   addAllGames: () => Promise<void>
 } => {
   const { t } = useTranslation('adder')
-  const { games, enableUpscale, actions } = useGameBatchAdderStore()
-
-  const searchGame = async (game: BatchGameInfo): Promise<string> => {
-    const result = await ipcManager.invoke('scraper:search-games', game.dataSource, game.name)
-    if (result.length === 0) {
-      throw new Error(t('gameBatchAdder.errors.gameNotFound', { name: game.name }))
-    }
-    return result[0].id
-  }
 
   const addGame = useCallback(
-    async (dataId: string) => {
+    async (dataId: string, skipDuplicateCheck = false): Promise<'review' | void> => {
+      const { games, enableUpscale, actions } = useGameBatchAdderStore.getState()
       const game = games.find((g) => g.dataId === dataId)
       if (!game) return
 
@@ -36,6 +38,7 @@ export const useGameAdder = (): {
       if (game.status === 'success') {
         throw new Error(t('gameBatchAdder.errors.gameAlreadyAdded'))
       }
+      if (game.duplicateIds && !skipDuplicateCheck) return 'review'
 
       try {
         actions.updateGame(dataId, { status: 'loading' })
@@ -46,6 +49,24 @@ export const useGameAdder = (): {
           actions.updateGame(dataId, { id: gameId })
         }
 
+        if (!skipDuplicateCheck) {
+          const metadata = await ipcManager.invoke('scraper:get-game-metadata', game.dataSource, {
+            type: 'id',
+            value: gameId
+          })
+          if (!metadata) throw new Error(t('gameBatchAdder.errors.metadataUnavailable'))
+          const duplicateIds = getLibraryDuplicateIds({
+            name: metadata.name,
+            originalName: metadata.originalName,
+            dataSource: game.dataSource,
+            dataSourceId: gameId
+          })
+          if (duplicateIds.length) {
+            actions.updateGame(dataId, { status: 'review', duplicateIds })
+            return 'review'
+          }
+        }
+
         await ipcManager.invoke('adder:add-game-to-db', {
           dataSource: game.dataSource,
           dataSourceId: gameId,
@@ -53,17 +74,18 @@ export const useGameAdder = (): {
           dirPath: game.dirPath
         })
 
-        actions.updateGame(dataId, { status: 'success' })
+        actions.updateGame(dataId, { status: 'success', duplicateIds: undefined })
       } catch (error) {
         actions.updateGame(dataId, { status: 'error' })
         throw error
       }
     },
-    [games, actions, t, enableUpscale]
+    [t]
   )
 
   const addAllGames = useCallback(async () => {
-    const pendingGames = games.filter((g) => g.status !== 'success')
+    const { games } = useGameBatchAdderStore.getState()
+    const pendingGames = games.filter((g) => g.status !== 'success' && !g.duplicateIds)
     for (const game of pendingGames) {
       try {
         await addGame(game.dataId)
@@ -71,7 +93,7 @@ export const useGameAdder = (): {
         console.error(`Failed to add game ${game.name}:`, error)
       }
     }
-  }, [games, addGame])
+  }, [addGame])
 
   return { addGame, addAllGames }
 }

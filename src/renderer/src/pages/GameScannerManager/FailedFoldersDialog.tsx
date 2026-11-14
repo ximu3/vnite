@@ -131,8 +131,9 @@ export const FailedFoldersDialog: React.FC<FailedFoldersDialogProps> = ({ isOpen
     if (!selectedFolder || !dataSourceId) return
 
     try {
-      await fixFailedFolder(selectedFolder.path, dataSourceId, dataSource)
-      handleBack() // Return after success
+      const request = fixFailedFolder(selectedFolder.path, dataSourceId, dataSource)
+      handleBack() // Return immediately while the repair continues in the background.
+      await request
     } catch (error) {
       console.error(t('errors.fixFolder'), error)
     }

@@ -1,9 +1,12 @@
-import { useGameAdder } from './hooks/useGameAdder'
-import { useGameBatchAdderStore, DataSource } from './store'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+
 import { BatchGameInfo } from '@appTypes/models'
-import { StatusBadge } from './StatusBadge'
-import { Button } from '~/components/ui/button'
-import { Input } from '~/components/ui/input'
+import { ScraperCapabilities } from '@appTypes/utils'
+import { Button } from '@ui/button'
+import { Dialog, DialogContent } from '@ui/dialog'
+import { Input } from '@ui/input'
 import {
   Select,
   SelectContent,
@@ -12,28 +15,42 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue
-} from '~/components/ui/select'
-import { TableRow, TableCell } from '~/components/ui/table'
-import { toast } from 'sonner'
-import { TABLE_COLUMN_WIDTHS } from './GameListTable'
-import { cn } from '~/utils'
-import { useEffect, useState } from 'react'
-import { ScraperCapabilities } from '@appTypes/utils'
-import { useTranslation } from 'react-i18next'
+} from '@ui/select'
+import { TableCell, TableRow } from '@ui/table'
 import { ipcManager } from '~/app/ipc'
+import { DuplicateReview } from '~/components/Game/DuplicateReview'
+import { cn } from '~/utils'
+import { TABLE_COLUMN_WIDTHS } from './GameListTable'
+import { useGameAdder } from './hooks/useGameAdder'
+import { StatusBadge } from './StatusBadge'
+import { DataSource, useGameBatchAdderStore } from './store'
 
 export function GameListItem({ game }: { game: BatchGameInfo }): React.JSX.Element {
   const { t } = useTranslation('adder')
   const { actions } = useGameBatchAdderStore()
   const { addGame } = useGameAdder()
+  const [reviewOpen, setReviewOpen] = useState(false)
   const [availableDataSources, setAvailableDataSources] = useState<
     { id: string; name: string; capabilities: ScraperCapabilities[] }[]
   >([])
 
-  const handleAddGame = (): void => {
-    toast.promise(() => addGame(game.dataId), {
+  const handleAddGame = (skipDuplicateCheck = false): void => {
+    if (game.duplicateIds && !skipDuplicateCheck) {
+      setReviewOpen(true)
+      return
+    }
+    setReviewOpen(false)
+    toast.promise(() => addGame(game.dataId, skipDuplicateCheck), {
       loading: t('gameBatchAdder.notifications.addingGame', { name: game.name }),
-      success: t('gameBatchAdder.notifications.gameAdded', { name: game.name }),
+      success: (status) => {
+        return {
+          type: status === 'review' ? 'info' : 'success',
+          message:
+            status === 'review'
+              ? t('gameBatchAdder.status.review')
+              : t('gameBatchAdder.notifications.gameAdded', { name: game.name })
+        }
+      },
       error: (error) => error.message
     })
   }
@@ -63,6 +80,7 @@ export function GameListItem({ game }: { game: BatchGameInfo }): React.JSX.Eleme
     <TableRow className={cn('w-full relative')}>
       <TableCell className={cn(TABLE_COLUMN_WIDTHS.dataSource)}>
         <Select
+          disabled={game.status === 'loading'}
           value={game.dataSource}
           onValueChange={(value) =>
             actions.updateGame(game.dataId, {
@@ -87,6 +105,7 @@ export function GameListItem({ game }: { game: BatchGameInfo }): React.JSX.Eleme
       </TableCell>
       <TableCell className={cn(TABLE_COLUMN_WIDTHS.name)}>
         <Input
+          disabled={game.status === 'loading'}
           value={game.name}
           onChange={(e) =>
             actions.updateGame(game.dataId, {
@@ -98,6 +117,7 @@ export function GameListItem({ game }: { game: BatchGameInfo }): React.JSX.Eleme
       </TableCell>
       <TableCell className={cn(TABLE_COLUMN_WIDTHS.id)}>
         <Input
+          disabled={game.status === 'loading'}
           value={game.id}
           onChange={(e) =>
             actions.updateGame(game.dataId, {
@@ -116,16 +136,25 @@ export function GameListItem({ game }: { game: BatchGameInfo }): React.JSX.Eleme
             disabled={
               game.status === 'loading' || game.status === 'success' || game.status === 'existed'
             }
-            onClick={handleAddGame}
+            onClick={() => handleAddGame()}
           >
-            {game.status === 'error'
-              ? t('gameBatchAdder.actions.retry')
-              : t('gameBatchAdder.actions.add')}
+            {game.duplicateIds
+              ? t('gameBatchAdder.actions.review')
+              : game.status === 'error'
+                ? t('gameBatchAdder.actions.retry')
+                : t('gameBatchAdder.actions.add')}
           </Button>
           <Button variant="outline" onClick={() => actions.removeGame(game.dataId)}>
             {t('gameBatchAdder.actions.delete')}
           </Button>
         </div>
+        {game.duplicateIds && (
+          <Dialog open={reviewOpen} onOpenChange={setReviewOpen}>
+            <DialogContent>
+              <DuplicateReview gameIds={game.duplicateIds} onConfirm={() => handleAddGame(true)} />
+            </DialogContent>
+          </Dialog>
+        )}
       </TableCell>
     </TableRow>
   )
