@@ -1,10 +1,10 @@
 import {
   DEFAULT_CONFIG_LOCAL_VALUES,
   DEFAULT_CONFIG_VALUES,
-  GameMediaType,
   gameCollectionDoc,
   gameDoc,
   gameLocalDoc,
+  GameMediaType,
   STORAGE_SIZE_NOT_CALCULATED
 } from '@appTypes/models'
 import { app } from 'electron'
@@ -569,9 +569,9 @@ async function convertConfig(basePath: string): Promise<void> {
       quitToTray: v2Config.general.quitToTray,
       language: '',
       hideWindowAfterGameStart: true,
-      // 旧版本没有该开关，迁移时保持原有的退出后唤起行为，避免升级改变用户体验。
       showWindowAfterGameExit: true,
       enableForegroundTimer: true,
+      enhancedProcessMonitoring: false,
       foregroundWaitTime: 10,
       ignoreShortInterruptions: 0,
       ignoreShortSessions: 0

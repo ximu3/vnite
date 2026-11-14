@@ -4,7 +4,7 @@ import { setupDatabaseIPC } from '~/features/database'
 import { setupGameIPC } from '~/features/game/ipc'
 import { setupImporterIPC } from '~/features/importer'
 import { setupLauncherIPC } from '~/features/launcher'
-import { setupNativeMonitorIPC } from '~/features/monitor'
+import { setupProcessMonitorIPC } from '~/features/monitor'
 import { setupScraperIPC } from '~/features/scraper'
 import { setupSystemIPC } from '~/features/system'
 import { setupThemeIPC } from '~/features/theme'
@@ -31,5 +31,5 @@ export function setupIPC(): void {
   setupPluginIPC()
   setupReportIPC()
   setupEventBusIPC()
-  setupNativeMonitorIPC()
+  setupProcessMonitorIPC()
 }

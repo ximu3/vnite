@@ -25,7 +25,7 @@ export function General(): React.JSX.Element {
   const { t } = useTranslation('config')
   const { i18n } = useTranslation()
   const [enableForegroundTimer] = useConfigState('general.enableForegroundTimer')
-  const { runningGames } = useRunningGames.getState()
+  const runningGames = useRunningGames((state) => state.runningGames)
 
   const languageOptions = [
     { value: 'zh-CN', label: '简体中文' },
@@ -143,14 +143,19 @@ export function General(): React.JSX.Element {
             <div className={cn(' space-y-4')}>
               <ConfigItem
                 hookType="config"
+                path="general.enhancedProcessMonitoring"
+                title={t('general.enhancedMonitoring.title')}
+                description={t('general.enhancedMonitoring.description')}
+                controlType="switch"
+                disabled={runningGames.length > 0}
+              />
+              <ConfigItem
+                hookType="config"
                 path="general.enableForegroundTimer"
                 title={t('general.foregroundTimer.title')}
                 description={t('general.foregroundTimer.description')}
                 controlType="switch"
                 disabled={runningGames.length > 0}
-                onChange={(value: boolean) => {
-                  ipcManager.send('system:change-foreground-timer', value)
-                }}
               />
 
               <ConfigItem
@@ -163,9 +168,6 @@ export function General(): React.JSX.Element {
                 min={0}
                 steps={{ default: 1, shift: 5 }}
                 disabled={runningGames.length > 0 || !enableForegroundTimer}
-                onChange={(value: string) => {
-                  ipcManager.send('system:change-foreground-timer-wait-time', Number(value))
-                }}
               />
 
               <ConfigItem

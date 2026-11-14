@@ -28,6 +28,7 @@ files:
       - package.json
       - browser.js
       - dist/**/*
+      - '!dist/vnite-process-monitor.exe'
 
 asarUnpack:
   - resources/**
@@ -42,6 +43,9 @@ protocols:
 
 win:
   executableName: Vnite
+  extraResources:
+    - from: native/dist/vnite-process-monitor.exe
+      to: monitor/vnite-process-monitor.exe
 
 nsis:
   artifactName: ${name}-${version}-setup.${ext}

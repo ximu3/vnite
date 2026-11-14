@@ -158,16 +158,11 @@ export function scrollToElement(options: {
 }
 
 export function stopGame(gameId: string): void {
-  toast.promise(
-    (async (): Promise<void> => {
-      await window.electron.ipcRenderer.invoke(`stop-game-${gameId}`, gameId)
-    })(),
-    {
-      loading: i18next.t('utils:game.stopping.loading'),
-      success: i18next.t('utils:game.stopping.success'),
-      error: (err) => i18next.t('utils:game.stopping.error', { message: err.message })
-    }
-  )
+  toast.promise(window.electron.ipcRenderer.invoke(`stop-game-${gameId}`, gameId), {
+    loading: i18next.t('utils:game.stopping.loading'),
+    success: i18next.t('utils:game.stopping.success'),
+    error: (err) => i18next.t('utils:game.stopping.error', { message: err.message })
+  })
 }
 
 /**

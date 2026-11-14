@@ -26,9 +26,6 @@ function ScriptLauncherComponent(
   ref: React.Ref<ScriptLauncherHandle>
 ): React.JSX.Element {
   const { t } = useTranslation('game')
-  const updateKnownGame = useCallback(() => {
-    ipcManager.send('native-monitor:update-local-game', gameId)
-  }, [gameId])
   const [command, setCommand, saveCommand] = useGameLocalState(
     gameId,
     'launcher.scriptConfig.command',
@@ -63,7 +60,6 @@ function ScriptLauncherComponent(
         return
       }
       await setMonitorPathAndSave(monitorPath)
-      updateKnownGame()
     }
     if (monitorMode === 'folder') {
       const monitorPath = await ipcManager.invoke('system:select-path-dialog', ['openDirectory'])
@@ -71,14 +67,12 @@ function ScriptLauncherComponent(
         return
       }
       await setMonitorPathAndSave(monitorPath)
-      updateKnownGame()
     }
   }
 
   const saveAll = useCallback(async () => {
     await Promise.all([saveCommand(), saveWorkingDirectory(), saveMonitorPath()])
-    updateKnownGame()
-  }, [saveCommand, saveWorkingDirectory, saveMonitorPath, updateKnownGame])
+  }, [saveCommand, saveWorkingDirectory, saveMonitorPath])
   useImperativeHandle(ref, () => ({ save: saveAll }), [saveAll])
 
   return (
@@ -153,9 +147,7 @@ function ScriptLauncherComponent(
           className={cn('flex-1')}
           value={monitorPath}
           onChange={(e) => setMonitorPath(e.target.value)}
-          onBlur={() => {
-            saveMonitorPath().then(updateKnownGame)
-          }}
+          onBlur={saveMonitorPath}
         />
         {['folder', 'file'].includes(monitorMode) && (
           <Button variant={'outline'} size={'icon'} onClick={selectMonitorPath}>

@@ -13,6 +13,7 @@ import {
   createOfficialRemoteDBWithPermissions
 } from '~/utils'
 import { AttachmentReturnType, SyncOptions } from './types'
+import type { DocChange } from '@appTypes/models'
 
 PouchDB.plugin(upsertPlugin)
 
@@ -20,9 +21,15 @@ export class BaseDBManager {
   private dbInstances: { [key: string]: PouchDB.Database } = {}
   private changeListeners: { [key: string]: PouchDB.Core.Changes<object> | null } = {}
   private syncHandlers: { [key: string]: PouchDB.Replication.Sync<object> | null } = {}
+  private documentListeners = new Set<(change: DocChange) => void>()
 
   constructor() {
     // Wait for the call from main process initialization
+  }
+
+  onDocChange(listener: (change: DocChange) => void): () => void {
+    this.documentListeners.add(listener)
+    return () => this.documentListeners.delete(listener)
   }
 
   public initAllDatabases(): void {
@@ -620,13 +627,22 @@ export class BaseDBManager {
           if (!change.doc) return
 
           const { _id: docId, _rev, ...data } = change.doc
-          // Notify the renderer about the change to sync the document
-          ipcManager.send('db:doc-changed', {
+          const documentChange: DocChange = {
             dbName,
             docId,
             data: { _id: docId, ...data },
             timestamp: Date.now()
-          })
+          }
+          // Reuse the database change feed for main-process consumers as well.
+          for (const listener of this.documentListeners) {
+            try {
+              listener(documentChange)
+            } catch (error) {
+              log.error('[BaseDB] Document change listener failed:', error)
+            }
+          }
+          // Notify the renderer about the change to sync the document
+          ipcManager.send('db:doc-changed', documentChange)
 
           if (appendChangeListener) {
             await appendChangeListener(change)

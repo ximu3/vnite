@@ -5,6 +5,7 @@ import {
   NSFWFilterMode,
   TimerStatus
 } from '@appTypes/models'
+import type { MonitorStatus } from '@appTypes/monitor'
 import { useRouter, useRouterState } from '@tanstack/react-router'
 import { Button } from '@ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
@@ -103,12 +104,26 @@ export function Titlebar(): React.JSX.Element {
 
   // timer status indicator
   const [timerStatusList, setTimerStatusList] = useState<GameTimerStatus[]>([])
+  const [monitorStatus, setMonitorStatus] = useState<MonitorStatus>()
   const timerStatus: 'on' | 'idle' | 'paused' =
     timerStatusList.length === 0
       ? 'idle'
       : timerStatusList.some((x) => x.status === TimerStatus.Resumed)
         ? 'on'
         : 'paused'
+  const monitorState = !monitorStatus
+    ? 'loading'
+    : monitorStatus.state === 'ready'
+      ? (monitorStatus.mode ?? 'unavailable')
+      : monitorStatus.state
+  const monitorLabel = t(`monitorStatus.${monitorState}`)
+  const indicatorLabel = timerStatus === 'idle' ? monitorLabel : timerStatusTooltips[timerStatus]
+  const indicatorColor =
+    timerStatus === 'on'
+      ? 'bg-emerald-600/50'
+      : timerStatus === 'idle' && (monitorState === 'normal' || monitorState === 'enhanced')
+        ? 'bg-sky-700/50'
+        : 'bg-amber-700/50'
 
   useEffect(() => {
     const removeMaximizeListener = ipcManager.on('window:maximized', () => setIsmaximize(true))
@@ -119,11 +134,22 @@ export function Titlebar(): React.JSX.Element {
         setTimerStatusList(statusList)
       }
     )
+    const removeMonitorStatusListener = ipcManager.on('monitor:status-changed', (_, status) => {
+      setMonitorStatus(status)
+    })
+    void ipcManager
+      .invoke('monitor:get-status')
+      .then(setMonitorStatus)
+      .catch((error) => {
+        console.error('[Monitor] Failed to load monitoring status', error)
+        setMonitorStatus({ state: 'unavailable', mode: null })
+      })
 
     return (): void => {
       removeMaximizeListener()
       removeUnmaximizeListener()
       removeTimerStatusListener()
+      removeMonitorStatusListener()
     }
   }, [])
 
@@ -324,7 +350,7 @@ export function Titlebar(): React.JSX.Element {
 
         {/* Right: Function button area */}
         <div className="flex flex-row items-center gap-2 px-3 overflow-hidden shrink-0 h-full">
-          {/* Timer status indicator */}
+          {/* Timer status indicator; show the collector status while idle. */}
           <Tooltip>
             <TooltipTrigger>
               <div
@@ -332,15 +358,13 @@ export function Titlebar(): React.JSX.Element {
                   `flex items-center justify-start shadow-sm px-2 py-1 gap-2 mr-3 rounded-md bg-input/[calc(var(--glass-opacity)/2)] cursor-pointer non-draggable`
                 )}
               >
-                <span
-                  className={`w-2 h-2 rounded-full ${timerStatus === 'idle' ? 'bg-sky-700/50' : timerStatus === 'on' ? 'bg-emerald-600/50' : 'bg-amber-700/50'}`}
-                />
-                <span className="text-xs">{timerStatusTooltips[timerStatus]}</span>
+                <span className={cn('w-2 h-2 rounded-full', indicatorColor)} />
+                <span className="text-xs">{indicatorLabel}</span>
               </div>
             </TooltipTrigger>
             <TooltipContent side="bottom">
               {timerStatusList.length === 0 ? (
-                <span className="text-xs">{timerStatusTooltips[timerStatus]}</span>
+                <span className="text-xs">{monitorLabel}</span>
               ) : (
                 timerStatusList.map((status, idx) => {
                   return (
