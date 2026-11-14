@@ -42,6 +42,10 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }): Reac
 
   useEffect(() => {
     localStorage.setItem('theme-setting', themeSetting)
+    ipcManager
+      .invoke('theme:set-mode', themeSetting === 'follow-system' ? 'system' : themeSetting)
+      .catch((error) => console.error('Failed to sync theme mode:', error))
+
     if (themeSetting === 'follow-system') {
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
       setIsDark(mediaQuery.matches)

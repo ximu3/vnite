@@ -305,6 +305,7 @@ type MainIpcEvents =
       }[]
 
       // Theme events
+      'theme:set-mode': (mode: 'system' | 'dark' | 'light') => void
       'theme:save': (cssContent: string) => void
       'theme:load': () => string | null
       'theme:select-preset': (preset: string) => string
