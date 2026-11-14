@@ -621,6 +621,8 @@
           "empty": "Please enter a link address"
         },
         "crop": {
+          "lockWideCoverAspect": "Lock aspect ratio",
+          "backgroundGuideHelp": "The dashed line indicates where the detail page header background fully fades out in the current window layout. This is only a guide; changing layout settings will also affect the displayed result.",
           "title": "Adjust Image Size",
           "size": "{{width}} × {{height}} px"
         },

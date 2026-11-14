@@ -621,6 +621,8 @@
           "empty": "请输入链接地址"
         },
         "crop": {
+          "lockWideCoverAspect": "锁定宽高比",
+          "backgroundGuideHelp": "虚线表示在当前窗口布局下，详情页顶部背景完全淡出的位置。仅供参考，各项布局配置变化后展示效果也会有所变化。",
           "title": "调整图片大小",
           "size": "{{width}} × {{height}} px"
         },

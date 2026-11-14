@@ -414,14 +414,17 @@ export function Media({ gameId }: { gameId: string }): React.JSX.Element {
       <MediaCard type="logo" previewHeightVh={20} />
       <MediaCard type="wideCover" previewHeightVh={40} spanTwoColumns />
 
-      <CropDialog
-        isOpen={cropDialogState.isOpen}
-        onClose={() =>
-          setCropDialogState({ isOpen: false, type: 'cover', imagePath: null, isResizing: false })
-        }
-        imagePath={cropDialogState.imagePath}
-        onCropComplete={(filePath) => handleCropComplete(cropDialogState.type, filePath)}
-      />
+      {cropDialogState.isOpen && (
+        <CropDialog
+          isOpen={cropDialogState.isOpen}
+          onClose={() =>
+            setCropDialogState({ isOpen: false, type: 'cover', imagePath: null, isResizing: false })
+          }
+          imagePath={cropDialogState.imagePath}
+          mediaType={cropDialogState.type}
+          onCropComplete={(filePath) => handleCropComplete(cropDialogState.type, filePath)}
+        />
+      )}
       <SearchMediaDialog
         isOpen={isSearchDialogOpen}
         onClose={() => setIsSearchDialogOpen(false)}

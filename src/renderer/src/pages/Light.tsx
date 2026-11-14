@@ -10,6 +10,11 @@ import { useLibraryStore } from '~/pages/Library/store'
 import { useAttachmentStore } from '~/stores'
 import { getRecentGameIds, useGameCollectionStore, useGameRegistry } from '~/stores/game'
 import { cn } from '~/utils'
+import {
+  GAME_DETAIL_BACKGROUND_FADE_END,
+  GAME_DETAIL_BACKGROUND_TOP,
+  getGameDetailBackgroundLeft
+} from '~/utils/game-background'
 
 // eslint-disable-next-line
 export const useLightStore = create<{
@@ -212,10 +217,10 @@ export function Light(): React.JSX.Element {
           ref={detailBackgroundRef}
           className={cn('absolute overflow-hidden', 'will-change-transform')}
           style={{
-            left: `${libraryBarWidth + 57 - (libraryBarWidth === 0 ? 1 : 0)}px`,
-            top: '50px',
-            width: `calc(100% - ${libraryBarWidth + 57 - (libraryBarWidth === 0 ? 1 : 0)}px)`,
-            height: 'calc(100% - 50px)',
+            left: `${getGameDetailBackgroundLeft(libraryBarWidth)}px`,
+            top: `${GAME_DETAIL_BACKGROUND_TOP}px`,
+            width: `calc(100% - ${getGameDetailBackgroundLeft(libraryBarWidth)}px)`,
+            height: `calc(100% - ${GAME_DETAIL_BACKGROUND_TOP}px)`,
             zIndex: 15,
             clipPath: 'inset(0 0 0 0)' // Ensure content does not overflow this container
           }}
@@ -226,7 +231,7 @@ export function Light(): React.JSX.Element {
             style={{
               width: '100%',
               height: '100%',
-              maskImage: 'linear-gradient(to bottom, black 30%, transparent 70%)'
+              maskImage: `linear-gradient(to bottom, black 30%, transparent ${GAME_DETAIL_BACKGROUND_FADE_END * 100}%)`
             }}
           >
             {showHeaderImage ? (

@@ -621,6 +621,8 @@
           "empty": "請輸入連結地址"
         },
         "crop": {
+          "lockWideCoverAspect": "鎖定長寬比",
+          "backgroundGuideHelp": "虛線表示在目前視窗版面下，詳情頁頂部背景完全淡出的位置。僅供參考，各項版面配置變更後，顯示效果也會有所變化。",
           "title": "調整圖片大小",
           "size": "{{width}} × {{height}} px"
         },
