@@ -14,7 +14,7 @@ import {
   upscaleImage
 } from '~/utils'
 import icon from '../../../../../resources/icon.png?asset'
-import { getAppTempPath, getLogsPath } from './path'
+import { getAppTempPath, getLogsPath, getShortcutIconPath } from './path'
 
 export async function setupContextMenu(): Promise<void> {
   contextMenu({
@@ -146,14 +146,13 @@ export async function createGameShortcut(gameId: string, targetPath: string): Pr
 
     const originalIconPath = await GameDBManager.getGameImage(gameId, 'icon', 'file')
 
-    // ico icon path
-    const iconPath = getAppTempPath(`icon_${gameId}_${Date.now()}.ico`)
+    // The stable game ID determines the icon path, which can be referenced even if the file is missing.
+    const iconPath = getShortcutIconPath(`${sanitizeFilenameComponent(gameId)}.ico`)
 
     // Convert icons to ico format
     if (originalIconPath) {
       await convertToIcon(originalIconPath, iconPath, {
-        sizes: [32],
-        quality: 100
+        sizes: [16, 24, 32, 48, 64, 128, 256]
       })
     }
     // Creating URL shortcuts
@@ -167,6 +166,7 @@ export async function createGameShortcut(gameId: string, targetPath: string): Pr
     })
   } catch (error) {
     log.error('[Utils] Error creating game shortcut:', error)
+    throw error
   }
 }
 
