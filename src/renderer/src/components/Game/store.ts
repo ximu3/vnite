@@ -81,8 +81,8 @@ export const useGameDetailStore = create<GameDetailStore>((set) => ({
 }))
 
 interface GameDetailTabStore {
-  lastDetailTab: 'overview' | 'record' | 'save' | 'memory'
-  setLastDetailTab: (tab: 'overview' | 'record' | 'save' | 'memory') => void
+  lastDetailTab: string
+  setLastDetailTab: (tab: string) => void
   lastMemoryViewMode: GameMemoryViewMode
   setLastMemoryViewMode: (mode: GameMemoryViewMode) => void
 }

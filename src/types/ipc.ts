@@ -20,6 +20,11 @@ import {
   PluginStatsData,
   PluginUpdateInfo
 } from './plugin'
+import type {
+  PluginDetailRequest,
+  PluginDetailTabInfo,
+  PluginDetailView
+} from './plugin/gameDetail'
 import {
   GameDescriptionList,
   GameDevelopersList,
@@ -366,6 +371,19 @@ type MainIpcEvents =
       'scanner:ignore-failed-folder': (scannerId: string, folderPath: string) => OverallScanProgress
 
       // Plugin events
+      'plugin:get-detail-tabs': () => PluginDetailTabInfo[]
+      'plugin:load-detail-tab': (
+        pluginId: string,
+        id: string,
+        request: PluginDetailRequest
+      ) => PluginDetailView
+      'plugin:detail-tab-action': (
+        pluginId: string,
+        id: string,
+        request: PluginDetailRequest,
+        itemId: string,
+        actionId: string
+      ) => string
       'plugin:get-all-plugins': () => Omit<PluginInfo, 'instance'>[]
       'plugin:get-plugin': (pluginId: string) => Omit<PluginInfo, 'instance'> | undefined
       'plugin:search-plugins': (options: PluginSearchOptions) => PluginSearchResult
@@ -391,6 +409,7 @@ type MainIpcEvents =
 
 // Renderer process IPC events - handled by renderer process
 type RendererIpcEvents = {
+  'plugin:detail-tabs-changed': []
   // Events sent from main to renderer
 
   // Database events
