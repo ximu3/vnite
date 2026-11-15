@@ -1,6 +1,10 @@
 {
   "title": "Vnite Settings",
   "general": {
+    "enhancedMonitoring": {
+      "title": "Enhanced process monitoring",
+      "description": "Prefer enhanced monitoring, requesting administrator access only for the background collector.\nIf authorization is cancelled or startup fails, normal mode is used without changing this preference.\nCannot be changed while games are running."
+    },
     "title": "General",
     "language": "Language",
     "languageDescription": "Choose the display language for the application",

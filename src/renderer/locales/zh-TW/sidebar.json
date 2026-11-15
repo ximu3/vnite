@@ -58,6 +58,15 @@
     "on": "計時器: 運行中",
     "paused": "計時器: 暫停"
   },
+  "monitorStatus": {
+    "loading": "監控器: 載入中",
+    "starting": "監控器: 啟動中",
+    "recovering": "監控器: 恢復中",
+    "normal": "監控器: 普通模式",
+    "enhanced": "監控器: 增強模式",
+    "unavailable": "監控器: 無法使用",
+    "stopped": "監控器: 已停止"
+  },
   "toolbox": {
     "title": "工具箱",
     "empty": "暫無工具",

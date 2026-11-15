@@ -1,6 +1,10 @@
 {
   "title": "Vnite 設定",
   "general": {
+    "enhancedMonitoring": {
+      "title": "增強程序監聽",
+      "description": "優先使用增強監控，僅為背景採集程式請求管理員權限。\n授權取消或啟動失敗時自動使用普通模式，保留此偏好。\n遊戲執行中無法變更此設定"
+    },
     "title": "通用",
     "language": "語言",
     "languageDescription": "選擇應用程式的顯示語言",

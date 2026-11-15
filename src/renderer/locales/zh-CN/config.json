@@ -1,6 +1,10 @@
 {
   "title": "Vnite 设置",
   "general": {
+    "enhancedMonitoring": {
+      "title": "增强进程监听",
+      "description": "优先使用增强监控，仅为后台采集程序请求管理员权限。\n授权取消或启动失败时自动使用普通模式，保留此偏好；游戏运行中无法变更此设置"
+    },
     "title": "通用",
     "language": "语言",
     "languageDescription": "选择应用程序的显示语言",

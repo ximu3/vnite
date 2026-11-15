@@ -58,6 +58,15 @@
     "on": "タイマー: 作動中",
     "paused": "タイマー: 一時停止"
   },
+  "monitorStatus": {
+    "loading": "監視: 読み込み中",
+    "starting": "監視: 起動中",
+    "recovering": "監視: 復旧中",
+    "normal": "監視: 通常モード",
+    "enhanced": "監視: 拡張モード",
+    "unavailable": "監視: 利用不可",
+    "stopped": "監視: 停止中"
+  },
   "toolbox": {
     "title": "ツールボックス",
     "empty": "ツールはありません",

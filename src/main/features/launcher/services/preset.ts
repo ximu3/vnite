@@ -8,7 +8,6 @@ import type {
 import { isBuiltInLauncherPresetId, LAUNCHER_PRESET_VARIABLES } from '@appTypes/models'
 import path from 'path'
 import { ConfigDBManager, GameDBManager } from '~/core/database'
-import { updateKnownGame } from '~/features/monitor/services/nativeMonitor'
 
 const TEMPLATE_VARIABLE_PATTERN = /\$\{vnite\.(gamePath|gameDirectory|steamId)\}/g
 
@@ -209,7 +208,6 @@ export async function applyLauncherPreset(
     'launcher',
     createNextLauncher(currentLauncher, resolvedPreset)
   )
-  await updateKnownGame(gameId)
 
   return { status: 'applied' }
 }

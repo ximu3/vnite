@@ -1,0 +1,11 @@
+[package]
+name = "vnite-win32"
+version = "0.1.0"
+edition = "2021"
+license = "GPL-3.0"
+
+[dependencies]
+windows = { version = "0.62", features = [
+  "Win32_Foundation",
+  "Win32_System_Threading"
+] }

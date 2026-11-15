@@ -1,42 +1,331 @@
-import { TimerStatus } from '@appTypes/models'
+import {
+  DEFAULT_CONFIG_VALUES,
+  TimerStatus,
+  type configDocs,
+  type gameLocalDoc,
+  type GameTimerStatus
+} from '@appTypes/models'
 import { Mutex } from 'async-mutex'
 import { spawn } from 'child_process'
 import { BrowserWindow, ipcMain } from 'electron'
 import log from 'electron-log/main.js'
-import fse from 'fs-extra'
-import path from 'path'
-import { ConfigDBManager, GameDBManager } from '~/core/database'
+import * as native from 'vnite-native'
+import { baseDBManager, ConfigDBManager, GameDBManager } from '~/core/database'
 import { eventBus } from '~/core/events'
 import { ipcManager } from '~/core/ipc'
 import { ActiveGameInfo, backupGameSave } from '~/features/game'
 import { updateRecentGamesInTray } from '~/features/system'
-import { psManager, simulateHotkey, toPowerShellStringLiteral } from '~/utils'
-import { removeMonitorStub } from './nativeMonitor'
+import { simulateHotkey } from '~/utils'
+import {
+  refreshCollector,
+  setEnhancedMonitoring,
+  startCollector,
+  stopCollector,
+  type CollectorEvent
+} from './connection'
+import type { GameEvent } from './gameState'
+import * as games from './gameState'
 
-async function getProcessList(): Promise<
-  Array<{
-    name: string
-    pid: number
-    executablePath: string
-    cmd: string
-  }>
-> {
+// Monitoring starts with the application and stops during shutdown.
+let monitorStarted = false
+let unsubscribeChanges: (() => void) | undefined
+
+// Keep one GameSession per running game; multiple processes share its timer.
+// Remove it after the last process exits or the game is stopped manually.
+const sessions: Map<string, GameSession> = new Map()
+const timerStatusMutex = new Mutex()
+
+let foregroundTimer: ReturnType<typeof setTimeout> | undefined
+let foregroundWaitTime = DEFAULT_CONFIG_VALUES.general.foregroundWaitTime
+let foregroundPid = 0
+let foregroundEnabled = false
+let foregroundUpdate: Promise<void> = Promise.resolve()
+
+let pendingEvents: GameEvent[] = []
+let flushing: Promise<void> | undefined
+
+// Setup monitoring with local game documents and observe later database changes.
+// A path can be either a folder or a file depends on `launcher.mode`.
+// Normalization is performed by gameState. We can hand over the path as it is.
+export async function setupProcessMonitor(): Promise<void> {
+  if (monitorStarted) return
+  monitorStarted = true
+
   try {
-    const command =
-      'Get-CimInstance Win32_Process | Select-Object Name,ProcessId,ExecutablePath,CommandLine | ConvertTo-Json'
-    const stdout = await psManager.executeCommand(command)
+    const [allLocalGames, general] = await Promise.all([
+      GameDBManager.getAllGamesLocal(),
+      ConfigDBManager.getConfigValue('general')
+    ])
 
-    const processes = JSON.parse(stdout)
-    return processes.map((proc: any) => ({
-      name: proc.Name || '',
-      pid: proc.ProcessId || 0,
-      executablePath: (proc.ExecutablePath || '').replace(/^["']|["']$/g, '').replace(/\\+/g, '\\'),
-      cmd: proc.CommandLine || ''
-    }))
+    // Apply the initial snapshot before subscribing to subsequent database changes.
+    games.replace(Object.values(allLocalGames))
+
+    foregroundWaitTime =
+      general.foregroundWaitTime ?? DEFAULT_CONFIG_VALUES.general.foregroundWaitTime
+
+    await syncForegroundHook(
+      general.enableForegroundTimer ?? DEFAULT_CONFIG_VALUES.general.enableForegroundTimer
+    )
+
+    const unwatch = baseDBManager.onDocChange((change) => {
+      if (change.dbName === 'game-local') {
+        const doc = change.data._deleted ? undefined : (change.data as gameLocalDoc)
+        games.updateKnownGame(change.docId, doc)
+      } else if (change.dbName === 'config' && change.docId === 'general') {
+        const config = change.data as configDocs['general']
+
+        foregroundWaitTime =
+          config.foregroundWaitTime ?? DEFAULT_CONFIG_VALUES.general.foregroundWaitTime
+        void syncForegroundHook(
+          config.enableForegroundTimer ?? DEFAULT_CONFIG_VALUES.general.enableForegroundTimer
+        ).catch((error) => log.error('[Monitor] Foreground hook update failed', error))
+
+        void setEnhancedMonitoring(config.enhancedProcessMonitoring ?? false).catch((error) =>
+          log.error('[Monitor] Monitoring mode update failed', error)
+        )
+      }
+    })
+
+    const removeDeletionListener = eventBus.on('game:deleted', async ({ gameId }) => {
+      games.remove(gameId, false)
+      pendingEvents = pendingEvents.filter((event) => event.id !== gameId)
+      removeGameSession(gameId)
+      await refreshTimerStatus()
+    })
+    unsubscribeChanges = () => {
+      unwatch()
+      removeDeletionListener()
+    }
+
+    await startCollector(general.enhancedProcessMonitoring ?? false, handleCollectorEvent)
   } catch (error) {
-    console.error('Failed to get process list:', error)
+    if (monitorStarted) await stopProcessMonitor()
     throw error
   }
+}
+
+function handleCollectorEvent(event: CollectorEvent): void {
+  switch (event.type) {
+    case 'connected':
+      applyChanges(games.reconcile(event.processes))
+      break
+    case 'snapshot':
+      applyChanges(games.reconcile(event.processes))
+      break
+    case 'process':
+      applyChanges(games.observeProcess(event))
+      break
+    case 'disconnected':
+      // The foreground hook stays active across collector reconnections.
+      // Preserve pending transitions and their original wait time.
+      break
+  }
+}
+
+// Stop the independent collector; timer state is owned by the TypeScript host.
+export async function stopProcessMonitor(): Promise<void> {
+  monitorStarted = false
+  unsubscribeChanges?.()
+  unsubscribeChanges = undefined
+  invalidateForeground()
+  stopCollector()
+  await syncForegroundHook(false)
+}
+
+// Start recording immediately after a launch; the collector supplies the process details.
+export async function startMonitor(gameId: string): Promise<void> {
+  if (await startGameSession(gameId)) {
+    // immediately update process status for polling monitor
+    refreshCollector()
+  }
+}
+
+// Hook installation is a resource operation. Serialize configuration changes
+// and skip pending installations after monitoring stops.
+function syncForegroundHook(nextEnabled: boolean): Promise<void> {
+  const update = foregroundUpdate.then(async () => {
+    if ((!monitorStarted && nextEnabled) || nextEnabled === foregroundEnabled) return
+    if (nextEnabled) {
+      await native.installForegroundHook((error, pid) => {
+        if (!monitorStarted || !foregroundEnabled) return
+        if (error) {
+          log.error('[Monitor] Foreground hook failed', error)
+          return
+        }
+        observeForeground(pid)
+      })
+      foregroundEnabled = true
+    } else {
+      foregroundEnabled = false
+      invalidateForeground()
+      await native.uninstallForegroundHook()
+    }
+  })
+  // Keep later configuration changes runnable while returning this operation's failure to its caller.
+  foregroundUpdate = update.catch(() => {})
+  return update
+}
+
+function observeForeground(pid: number): void {
+  // Same-PID and Magpie observations leave the existing timer running.
+  const game = games.find(pid)
+  const path = game?.path ?? (pid === 0 ? '' : native.getProcessPath(pid))
+  if (path.toLowerCase().endsWith('magpie.exe')) return
+  const nextPid = game ? pid : 0
+  if (nextPid === foregroundPid) return
+  foregroundPid = nextPid
+  invalidateForeground()
+  foregroundTimer = setTimeout(
+    async () => {
+      foregroundTimer = undefined
+      try {
+        for (const [id, session] of sessions) {
+          session.pushForegroundChange(game?.id === id ? TimerStatus.Resumed : TimerStatus.Paused)
+        }
+        await refreshTimerStatus()
+      } catch (error) {
+        log.error('[Monitor] Foreground handling failed', error)
+      }
+    },
+    Math.max(0, foregroundWaitTime) * 1000
+  )
+}
+
+function invalidateForeground(): void {
+  clearTimeout(foregroundTimer)
+  foregroundTimer = undefined
+}
+
+// Observation updates are synchronous. Business effects are delivered in order
+// separately; a failed event must not block subsequent game events.
+function applyChanges(changes: GameEvent[]): void {
+  for (const event of changes) {
+    // A pending foreground observation takes precedence over process discovery,
+    // including processes first reported by a reconnect snapshot.
+    if (event.status === 'started' && !foregroundTimer) {
+      foregroundPid = event.pid
+    }
+  }
+  pendingEvents.push(...changes)
+  if (flushing || !pendingEvents.length) return
+  flushing = (async () => {
+    while (pendingEvents.length) {
+      const event = pendingEvents[0]
+      try {
+        await handleGameEvent(event)
+      } catch (error) {
+        log.error('[Monitor] Game event handling failed', error)
+      } finally {
+        if (pendingEvents[0] === event) pendingEvents.shift()
+      }
+    }
+  })().finally(() => {
+    flushing = undefined
+  })
+}
+
+// Callback function get invoked only when a known game is started or stopped
+async function handleGameEvent(event: GameEvent): Promise<void> {
+  const gameId = event.id
+
+  switch (event.status) {
+    // a known game process is started...
+    case 'started': {
+      if (!(await GameDBManager.getExistingGame(gameId))) return
+      if (pendingEvents[0] !== event) return
+      await startGameSession(gameId, event.path, event.pid)
+      break
+    }
+    // a known game process is stopped...
+    case 'terminated': {
+      await handleProcessExit(gameId, event.pid)
+      break
+    }
+  }
+}
+
+// Session registration and IPC ownership stay together in the coordinator.
+function removeGameSession(gameId: string, session = sessions.get(gameId)): boolean {
+  if (!session || sessions.get(gameId) !== session) return false
+  sessions.delete(gameId)
+  ipcMain.removeHandler(`stop-game-${gameId}`)
+  session.dispose()
+  ActiveGameInfo.removeGameInfo(gameId)
+  return true
+}
+
+function finishGameSession(gameId: string, session: GameSession): void {
+  if (!removeGameSession(gameId, session)) return
+  // Persistence and backup must not prevent a new session from being registered.
+  void session.finish().catch((error) => log.error('[Monitor] Game finalization failed', error))
+}
+
+async function handleProcessExit(gameId: string, pid: number): Promise<void> {
+  const session = sessions.get(gameId)
+  if (session && (await session.processExited(pid))) finishGameSession(gameId, session)
+  await refreshTimerStatus()
+}
+
+// Record game time from a launch request or a collected process event.
+// If the game is being launched from main window, the `path` and `pid` is supposed to be `undefined`,
+// if this function is invoked from a process event callback, the `path` and `pid` is supposed to be set.
+async function startGameSession(gameId: string, path?: string, pid?: number): Promise<boolean> {
+  let session = sessions.get(gameId)
+  const created = !session
+  if (!session) {
+    session = new GameSession(gameId)
+    const registered = session
+    ipcMain.handle(`stop-game-${gameId}`, async (_event, requestedGameId: string) => {
+      if (requestedGameId !== gameId || sessions.get(gameId) !== registered) return
+      try {
+        if (!(await registered.terminateProcesses())) return
+      } catch (error) {
+        // Process termination failure must not interrupt the remaining finalization steps.
+        // Manual stop is the user's last resort for ending the timer when normal exit handling fails.
+        log.warn(`[Monitor] Process termination failed for game ${gameId}`, error)
+      }
+      finishGameSession(gameId, registered)
+      await refreshTimerStatus()
+    })
+    sessions.set(gameId, session)
+  }
+
+  session.begin()
+  if (path && pid) await session.processStarted(path, pid)
+  // A deleted or stopped session cannot publish a late start notification.
+  if (sessions.get(gameId) !== session) return false
+
+  // a new game is just started
+  if (created) {
+    // send message to notify renderer thread
+    ipcManager.send('game:started', gameId)
+    // Emit event after launching the game
+    eventBus.emit('game:launched', { gameId }, { source: 'monitorCoordinator' })
+  }
+  await refreshTimerStatus()
+  return created
+}
+
+async function refreshTimerStatus(): Promise<void> {
+  await timerStatusMutex.runExclusive(async () => {
+    const gameTimerStatus: GameTimerStatus[] = []
+    for (const [gameId, session] of sessions) {
+      // Check if game exists before accessing properties.
+      const game = await GameDBManager.getExistingGame(gameId)
+      if (sessions.get(gameId) !== session) continue
+      if (!game) {
+        log.warn(`[Monitor] Removing monitor for non-existent game ID: ${gameId}`)
+        removeGameSession(gameId, session)
+        continue
+      }
+
+      gameTimerStatus.push({
+        name: game.metadata.name,
+        status: session.getTimerStatus()
+      })
+    }
+    ipcManager.send('monitor:timer-status-change', gameTimerStatus)
+  })
 }
 
 async function checkIfProcessRunning(processName: string): Promise<boolean> {
@@ -75,220 +364,46 @@ async function startMagpie(): Promise<void> {
   }
 }
 
-interface GameMonitorOptions {
-  gameId: string
-  config: {
-    mode: 'file' | 'folder' | 'process'
-    path: string
-  }
-  magpieHotkey?: string
-  checkInterval?: number
-  executableExtensions?: string[]
-}
-
 interface MonitoredProcess {
   path: string
   isRunning: boolean
-  pid?: number
-  isScaled?: boolean
-  isProcessNameMode?: boolean
+  pid: number
 }
 
-interface GameStatus {
-  gameId: string
-  isRunning: boolean
-  processes: MonitoredProcess[]
-  startTime?: string // Start time in ISO format
-  endTime?: string // End time of ISO format
-}
-
-export class GameMonitor {
-  private options: Required<GameMonitorOptions>
-  private isRunning: boolean = false
-  private intervalId?: NodeJS.Timeout
+class GameSession {
   private monitoredProcesses: MonitoredProcess[] = []
-  private ipcHandler?: (_event: Electron.IpcMainInvokeEvent, gameId: string) => Promise<void>
   private startTime?: string
   private endTime?: string
   private foregroundChanges: { time: string; eventType: TimerStatus }[] = []
-  private exiting: boolean = false
   private stopping: boolean = false
   // a mutex for operations which need to write `monitoredProcesses`
-  private mutex: Mutex
+  private mutex = new Mutex()
 
-  constructor(options: GameMonitorOptions) {
-    this.options = {
-      checkInterval: 5000,
-      executableExtensions: ['.exe', '.bat', '.cmd'],
-      magpieHotkey: 'win+alt+a',
-      ...options
-    }
-    this.mutex = new Mutex()
-    this.setupIpcListener()
+  constructor(private gameId: string) {}
+
+  public begin(): void {
+    // When users launch a game from Vnite, the launcher calls this method before
+    // the process collector has reported its path and pid, so we record the start
+    // time now and wait for processStarted() to register the process details.
+    // If the user is unlucky enough to encounter an event loss case, they can still manually
+    // stop the game from the Vnite main window to ensure the play time is recorded properly.
+    if (!this.startTime) this.startTime = new Date().toISOString()
   }
 
-  private setupIpcListener(): void {
-    this.ipcHandler = async (
-      _event: Electron.IpcMainInvokeEvent,
-      gameId: string
-    ): Promise<void> => {
-      if (this.exiting || gameId !== this.options.gameId || this.stopping) {
-        return
-      }
-      this.stopping = true
-      await this.terminateProcesses()
-    }
-    ipcMain.handle(`stop-game-${this.options.gameId}`, this.ipcHandler)
+  public dispose(): void {
+    // Prevent unfinished process registration from continuing after removal.
+    this.stopping = true
   }
 
-  private cleanupIpcListener(): void {
-    if (this.ipcHandler) {
-      ipcMain.removeHandler(`stop-game-${this.options.gameId}`)
-      this.ipcHandler = undefined
-    }
-  }
-
-  private async terminateProcesses(): Promise<void> {
-    for (const monitored of this.monitoredProcesses) {
-      if (monitored.isRunning) {
-        await this.terminateProcess(monitored)
-      }
-    }
-    removeMonitorStub(this.options.gameId)
-    this.handleGameExit()
-  }
-
-  private async terminateProcess(process: MonitoredProcess): Promise<boolean> {
-    try {
-      const isProcessNameMode = process.isProcessNameMode === true
-
-      if (isProcessNameMode) {
-        // NOTE: This legacy branch is unused by native monitoring; its command safety is unchecked.
-        // Process name mode, use the process name directly
-        const processName = process.path
-        console.log(`Try to terminate process by name: ${processName}`)
-
-        try {
-          // Use PowerShell to terminate the process by name
-          const psCommand = `Get-Process -Name "${processName.replace('.exe', '')}" | Stop-Process -Force`
-          await psManager.executeCommand(psCommand)
-          console.log(`Process ${processName} has been terminated successfully.`)
-          return true
-        } catch (error) {
-          const errorMessage = (error as any)?.message?.toLowerCase() || ''
-
-          // If the process does not exist, consider it terminated successfully
-          if (
-            errorMessage.includes('不存在') ||
-            errorMessage.includes('找不到') ||
-            errorMessage.includes('no process') ||
-            errorMessage.includes('cannot find a process')
-          ) {
-            console.log(`Process ${processName} does not exist anymore.`)
-            return true
-          }
-
-          console.error(`Failed to terminate process ${processName}:`, error)
-          return false
-        }
-      } else {
-        // Normalize the path
-        const normalizedPath = this.normalizePath(process.path)
-        const pathLiteral = toPowerShellStringLiteral(normalizedPath)
-        const processName = path.basename(normalizedPath)
-
-        console.log(`Try to terminate process: ${normalizedPath}`)
-
-        try {
-          // Use PowerShell to terminate the process by exact path
-          const psCommand = `Get-Process | Where-Object {$_.Path -eq ${pathLiteral}} | Stop-Process -Force`
-          await psManager.executeCommand(psCommand)
-          console.log(`Process ${processName} has been terminated successfully.`)
-          return true
-        } catch (error) {
-          const errorMessage = (error as any)?.message?.toLowerCase() || ''
-
-          // If the process does not exist, consider it terminated successfully
-          if (
-            errorMessage.includes('不存在') ||
-            errorMessage.includes('找不到') ||
-            errorMessage.includes('no process') ||
-            errorMessage.includes('cannot find') ||
-            errorMessage.includes('没有找到进程')
-          ) {
-            console.log(`Process ${processName} does not exist anymore.`)
-            return true
-          }
-
-          console.error(`Failed to terminate process ${processName}:`, error)
-          return false
-        }
-      }
-    } catch (error) {
-      console.error('Failed to terminate process:', error)
-      return false
-    }
-  }
-
-  public async init(): Promise<void> {
-    try {
-      await this.mutex.runExclusive(async () => {
-        if (this.options.config.mode === 'folder') {
-          const files = await this.getExecutableFiles(this.options.config.path)
-          this.monitoredProcesses = files.map((file) => ({
-            path: file,
-            isRunning: false
-          }))
-        } else if (this.options.config.mode === 'file') {
-          this.monitoredProcesses = [
-            {
-              path: this.options.config.path,
-              isRunning: false
-            }
-          ]
-        } else if (this.options.config.mode === 'process') {
-          this.monitoredProcesses = [
-            {
-              path: this.options.config.path,
-              isRunning: false,
-              isProcessNameMode: true // Mark as process name monitoring mode
-            }
-          ]
-        }
-      })
-    } catch (error) {
-      log.error(`[Monitor] Failed to initialize monitor for game ${this.options.gameId}:`, error)
-    }
-  }
-
-  private async getExecutableFiles(dirPath: string): Promise<string[]> {
-    const executableFiles: string[] = []
-    const extensions = this.options.executableExtensions
-
-    const scan = async (currentPath: string): Promise<void> => {
-      const entries = await fse.readdir(currentPath, { withFileTypes: true })
-
-      for (const entry of entries) {
-        const fullPath = path.join(currentPath, entry.name)
-
-        if (entry.isDirectory()) {
-          await scan(fullPath)
-        } else if (entry.isFile()) {
-          const ext = path.extname(entry.name).toLowerCase()
-          if (extensions.includes(ext)) {
-            executableFiles.push(fullPath)
-          }
-        }
-      }
-    }
-
-    await scan(dirPath)
-    return executableFiles
-  }
-
-  // Compare the given gameId with its own
-  public isGame(gameId: string): boolean {
-    return this.options.gameId === gameId
+  public async terminateProcesses(): Promise<boolean> {
+    if (this.stopping) return false
+    this.stopping = true
+    // Snapshot under the lock, then release it before the native call can show UAC.
+    const paths = await this.mutex.runExclusive(() =>
+      this.monitoredProcesses.filter((process) => process.isRunning).map((process) => process.path)
+    )
+    await native.terminateProcesses([...new Set(paths)])
+    return true
   }
 
   public pushForegroundChange(eventType: TimerStatus): void {
@@ -297,94 +412,59 @@ export class GameMonitor {
   }
 
   public getTimerStatus(): TimerStatus {
-    if (this.foregroundChanges.length === 0) {
-      if (this.endTime) {
-        return TimerStatus.Paused
-      }
-      return TimerStatus.Resumed
-    }
-    return this.foregroundChanges.at(-1)!.eventType
+    return this.foregroundChanges.at(-1)?.eventType ?? TimerStatus.Resumed
   }
 
-  // return value
-  // 0 stands for no change
-  // 1 stands for resumption
-  // -1 stands for pause
-  public diffForegroundChange(): number {
-    if (this.foregroundChanges.length < 2) {
-      return 0
-    }
-    const prev = this.foregroundChanges.at(-2)!.eventType
-    const cur = this.foregroundChanges.at(-1)!.eventType
-    if (prev === TimerStatus.Paused && cur === TimerStatus.Resumed) {
-      return 1
-    }
-    if (prev === TimerStatus.Resumed && cur === TimerStatus.Paused) {
-      return -1
-    }
-    return 0
-  }
-
-  // Imitate monitoring behaviours to preserve compatibility.
-  // This function may be invoked multiple times in a single GameMonitor object if the
+  // This function may be invoked multiple times in a single GameSession object if the
   // monitoring mode is `folder` and there are more than one executables inside that folder
   // are launched.
-  public async phantomStart(gameId: string, fullpath?: string, pid?: number): Promise<void> {
+  public async processStarted(fullpath: string, pid: number): Promise<void> {
     await this.mutex.runExclusive(async () => {
-      if (pid && this.monitoredProcesses.some((process) => process.pid === pid)) {
-        return
-      }
-      // When users launch game from Vnite, this method will be invoked by a main thread IPC
-      // listener, which in turn is notified by the renderer thread.
-      // In that case, the renderer has no prior knowledge of the path and pid, so we just
-      // record the start time and return, waiting for the message from the native monitor so
-      // this method is get invoked again with the path and pid present.
-      // If the user is unlucky enough to encounter an event loss case, they can still manually
-      // stop the game from the Vnite main window to ensure the play time is recorded properly.
-      if (!this.startTime) {
-        this.startTime = new Date().toISOString()
-      }
-      if (!fullpath || !pid) {
+      if (this.stopping || this.monitoredProcesses.some((process) => process.pid === pid)) {
         return
       }
       const monitoredProcess = {
         path: fullpath,
         pid: pid,
-        isRunning: true,
-        isScaled: false
+        isRunning: true
       }
-      this.isRunning = true
 
-      ActiveGameInfo.updateGameInfo(gameId, {
+      ActiveGameInfo.updateGameInfo(this.gameId, {
         pid: pid,
         path: fullpath
       })
-
-      // Check if Magpie scaling is enabled
-      const useMagpie = await GameDBManager.getGameLocalValue(gameId, 'launcher.useMagpie')
-      const magpiePath = await ConfigDBManager.getConfigLocalValue('game.linkage.magpie.path')
-
-      if (useMagpie && !monitoredProcess.isScaled && magpiePath) {
-        await startMagpie()
-        // Wait a while for the game window to fully load
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-        // Simulate pressing the Magpie shortcut
-        const magpieHotkey = await ConfigDBManager.getConfigLocalValue('game.linkage.magpie.hotkey')
-        simulateHotkey(magpieHotkey)
-        monitoredProcess.isScaled = true
-      }
-
+      // Register before asynchronous linkage so a manual stop can still find this process.
       this.monitoredProcesses.push(monitoredProcess)
+      try {
+        // Check if Magpie scaling is enabled
+        const useMagpie = await GameDBManager.getGameLocalValue(this.gameId, 'launcher.useMagpie')
+        const magpiePath = await ConfigDBManager.getConfigLocalValue('game.linkage.magpie.path')
+        if (this.stopping) return
+
+        if (useMagpie && magpiePath) {
+          await startMagpie()
+          // Wait a while for the game window to fully load
+          await new Promise((resolve) => setTimeout(resolve, 1000))
+          // Simulate pressing the Magpie shortcut
+          const magpieHotkey = await ConfigDBManager.getConfigLocalValue(
+            'game.linkage.magpie.hotkey'
+          )
+          if (this.stopping) return
+          simulateHotkey(magpieHotkey)
+        }
+      } catch (error) {
+        // Optional linkage failure must not undo process registration or interrupt game timing.
+        log.error(`[Monitor] Magpie linkage failed for game ${this.gameId}`, error)
+      }
     })
   }
 
-  // Imitate monitoring behaviours to preserve compatibility.
-  // This function may be invoked multiple times in a single GameMonitor object if the
+  // This function may be invoked multiple times in a single GameSession object if the
   // monitoring mode is `folder` and there are more than one executables inside that folder
   // are terminated.
   // Return `true` if all the processes are stopped, `false` if there are still some processes
   // keep running.
-  public async phantomStop(pid: number): Promise<boolean> {
+  public async processExited(pid: number): Promise<boolean> {
     const isAllExited = await this.mutex.runExclusive(() => {
       const process = this.monitoredProcesses.find((process) => process.pid === pid)
       if (process) {
@@ -395,155 +475,11 @@ export class GameMonitor {
         this.monitoredProcesses.length === 0 ||
         this.monitoredProcesses.every((x) => !x.isRunning)
       ) {
-        this.handleGameExit()
         return true
       }
       return false
     })
     return isAllExited
-  }
-
-  public async start(): Promise<void> {
-    if (this.isRunning) {
-      return
-    }
-
-    if (this.monitoredProcesses.length === 0) {
-      await this.init()
-    }
-
-    this.isRunning = true
-    // Record start time
-    this.startTime = new Date().toISOString()
-    this.endTime = undefined
-
-    ActiveGameInfo.updateGameInfo(this.options.gameId)
-
-    await this.checkProcesses()
-
-    this.intervalId = setInterval(async () => {
-      await this.checkProcesses()
-    }, this.options.checkInterval)
-
-    log.info(`Start monitoring the game ${this.options.gameId}`)
-  }
-
-  public stop(): void {
-    if (this.intervalId) {
-      clearInterval(this.intervalId)
-      this.intervalId = undefined
-    }
-
-    // If it was stopped manually and there is no end time, record the end time
-    if (this.isRunning && !this.endTime) {
-      this.endTime = new Date().toISOString()
-    }
-
-    this.isRunning = false
-    this.cleanupIpcListener()
-  }
-
-  private async checkProcesses(): Promise<void> {
-    if (this.stopping || this.exiting) {
-      return
-    }
-    try {
-      const processes = await getProcessList()
-      const previousStates = this.monitoredProcesses.map((p) => p.isRunning)
-
-      for (const monitored of this.monitoredProcesses) {
-        // Check if it is process name monitoring mode
-        const isProcessNameMode = monitored.isProcessNameMode === true
-
-        const processInfo = processes.find((proc) => {
-          if (isProcessNameMode) {
-            // Match by process name
-            return proc.name.toLowerCase() === monitored.path.toLowerCase()
-          } else {
-            if (!proc.executablePath) return false
-
-            // Path normalization
-            const normalizedMonitoredPath = this.normalizePath(monitored.path)
-            const normalizedExecPath = this.normalizePath(proc.executablePath)
-            const normalizedCmdPath = this.normalizePath(proc.cmd)
-
-            // Path Matching Check
-            return (
-              normalizedExecPath === normalizedMonitoredPath ||
-              normalizedCmdPath === normalizedMonitoredPath
-            )
-          }
-        })
-
-        if (processInfo) {
-          ActiveGameInfo.updateGameInfo(this.options.gameId, {
-            pid: processInfo.pid,
-            name: processInfo.name,
-            path: processInfo.executablePath
-          })
-          console.log(
-            `Game ${this.options.gameId} process ${isProcessNameMode ? processInfo.name : processInfo.executablePath} running`
-          )
-        }
-
-        const wasRunning = monitored.isRunning
-        monitored.isRunning = !!processInfo
-        monitored.pid = processInfo?.pid || monitored.pid
-
-        // If the process has just been started (not running before, running now)
-        if (!wasRunning && monitored.isRunning) {
-          console.log(`Game ${this.options.gameId} process has been started`)
-
-          // Check if Magpie scaling is enabled
-          const useMagpie = await GameDBManager.getGameLocalValue(
-            this.options.gameId,
-            'launcher.useMagpie'
-          )
-
-          const magpiePath = await ConfigDBManager.getConfigLocalValue('game.linkage.magpie.path')
-
-          const magpieHotkey = await ConfigDBManager.getConfigLocalValue(
-            'game.linkage.magpie.hotkey'
-          )
-
-          if (useMagpie && !monitored.isScaled && magpiePath) {
-            await startMagpie()
-            // Wait a while for the game window to fully load
-            await new Promise((resolve) => setTimeout(resolve, 1000))
-
-            // Simulate pressing the Magpie shortcut
-            simulateHotkey(magpieHotkey)
-            monitored.isScaled = true
-          }
-        } else if (!monitored.isRunning) {
-          // Reset the zoom state if the process stops running
-          monitored.isScaled = false
-        }
-      }
-
-      // Check if the game exits
-      const allStopped = this.monitoredProcesses.every((p) => !p.isRunning)
-      const wasSomeRunning = previousStates.some((state) => state)
-
-      if (allStopped && wasSomeRunning) {
-        await this.handleGameExit()
-      }
-    } catch (error) {
-      log.error('[Monitor] Process checking error:', error)
-    }
-  }
-
-  // Adding a path normalization method
-  private normalizePath(filePath: string): string {
-    try {
-      return path
-        .normalize(filePath)
-        .toLowerCase()
-        .replace(/\\+/g, '\\') // Normalized backslash
-        .replace(/^["']|["']$/g, '') // Remove opening and closing quotation marks
-    } catch {
-      return filePath.toLowerCase()
-    }
   }
 
   private async restoreWindowAfterGameExit(): Promise<void> {
@@ -565,19 +501,12 @@ export class GameMonitor {
     }
   }
 
-  // Do not require mutex in this method, this will result in a dead lock
-  private async handleGameExit(): Promise<void> {
-    if (this.exiting) {
-      return
-    }
-
-    this.exiting = true
+  // Finalization runs after removal and does not hold the process mutex during persistence or backup.
+  public async finish(): Promise<void> {
     let playTime = 0
 
     try {
-      log.info(`Game ${this.options.gameId} Exit`)
-
-      ActiveGameInfo.removeGameInfo(this.options.gameId)
+      log.info(`Game ${this.gameId} Exit`)
 
       // Record end time
       this.endTime = new Date().toISOString()
@@ -585,10 +514,10 @@ export class GameMonitor {
       // Restore the window in parallel so non-critical config reads do not delay exit handling or playtime persistence.
       void this.restoreWindowAfterGameExit()
 
-      ipcManager.send('game:exiting', this.options.gameId)
+      ipcManager.send('game:exiting', this.gameId)
 
       /**
-       * Exit notifications originate from an external native monitor and must not be trusted by
+       * Exit notifications originate from an external process collector and must not be trusted by
        * default, given the complexity of keeping its state synchronized with the application.
        *
        * A past (now fixed) synchronization issue caused it to report exits for games that had
@@ -597,10 +526,10 @@ export class GameMonitor {
        *
        * Do not place any database helper that may insert data before this read-only existence check.
        */
-      const game = await GameDBManager.getExistingGame(this.options.gameId)
+      const game = await GameDBManager.getExistingGame(this.gameId)
 
       if (!game) {
-        log.info(`Skip exit persistence for deleted game ${this.options.gameId}`)
+        log.info(`Skip exit persistence for deleted game ${this.gameId}`)
         return
       }
 
@@ -664,59 +593,40 @@ export class GameMonitor {
         })
       }
 
-      const dbTimers = await GameDBManager.getGameValue(this.options.gameId, 'record.timers')
-      playTime = await GameDBManager.getGameValue(this.options.gameId, 'record.playTime')
+      const dbTimers = await GameDBManager.getGameValue(this.gameId, 'record.timers')
+      playTime = await GameDBManager.getGameValue(this.gameId, 'record.playTime')
       for (const timer of filteredTimers) {
         dbTimers.push(timer)
         playTime += new Date(timer.end).getTime() - new Date(timer.start).getTime()
       }
 
-      await GameDBManager.setGameValue(this.options.gameId, 'record.timers', dbTimers)
-      await GameDBManager.setGameValue(this.options.gameId, 'record.lastRunDate', this.endTime)
-      await GameDBManager.setGameValue(this.options.gameId, 'record.hideFromRecentGames', false)
-      await GameDBManager.setGameValue(this.options.gameId, 'record.playTime', playTime)
+      await GameDBManager.setGameValue(this.gameId, 'record.timers', dbTimers)
+      await GameDBManager.setGameValue(this.gameId, 'record.lastRunDate', this.endTime)
+      await GameDBManager.setGameValue(this.gameId, 'record.hideFromRecentGames', false)
+      await GameDBManager.setGameValue(this.gameId, 'record.playTime', playTime)
 
-      // Release the IPC handler before backup so a restarted game can be monitored.
-      this.stop()
+      // The coordinator has already released the IPC handler so a restarted game can be monitored.
 
-      const autoBackupSave = await GameDBManager.getGameValue(
-        this.options.gameId,
-        'save.autoBackupSave'
-      )
-      const savePaths = await GameDBManager.getGameLocalValue(this.options.gameId, 'path.savePaths')
+      const autoBackupSave = await GameDBManager.getGameValue(this.gameId, 'save.autoBackupSave')
+      const savePaths = await GameDBManager.getGameLocalValue(this.gameId, 'path.savePaths')
 
       if (autoBackupSave && filteredTimers.length > 0 && savePaths.some(Boolean)) {
-        await backupGameSave(this.options.gameId)
+        await backupGameSave(this.gameId)
       }
     } finally {
-      // Stop monitoring
-      this.stop()
+      // Finish exit notifications after persistence and backup.
 
       updateRecentGamesInTray()
 
-      ipcManager.send('game:exited', this.options.gameId)
+      ipcManager.send('game:exited', this.gameId)
       eventBus.emit(
         'game:stopped',
         {
-          gameId: this.options.gameId,
+          gameId: this.gameId,
           duration: playTime
         },
         { source: 'monitor' }
       )
     }
-  }
-
-  public getStatus(): GameStatus {
-    return {
-      gameId: this.options.gameId,
-      isRunning: this.isRunning,
-      processes: [...this.monitoredProcesses],
-      startTime: this.startTime,
-      endTime: this.endTime
-    }
-  }
-
-  public getMonitorPath(): string {
-    return this.options.config.path
   }
 }

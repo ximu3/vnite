@@ -22,11 +22,12 @@
   },
   "scripts": {
     "artifacts": "napi artifacts",
-    "build": "napi build --platform --release -o dist",
-    "build:debug": "napi build --platform -o dist",
-    "format:rs": "cargo fmt",
+    "build": "napi build --package vnite_native --platform --release -o dist && cargo build --package vnite-process-monitor --bin vnite-process-monitor --release && node -e \"require('fs').copyFileSync('target/release/vnite-process-monitor.exe', 'dist/vnite-process-monitor.exe')\"",
+    "build:debug": "napi build --package vnite_native --platform -o dist && cargo build --package vnite-process-monitor --bin vnite-process-monitor && node -e \"require('fs').copyFileSync('target/debug/vnite-process-monitor.exe', 'dist/vnite-process-monitor.exe')\"",
+    "format:rs": "cargo fmt --all",
     "version": "napi version",
-    "test": "tsx test.ts"
+    "test": "tsx test.ts",
+    "test:rs": "cargo test --workspace"
   },
   "devDependencies": {
     "@emnapi/core": "^1.5.0",

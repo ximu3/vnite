@@ -30,7 +30,9 @@ export function ConfigItemPure({
       <CardContent className="flex items-center justify-between">
         <div className="flex-col flex items-start justify-center gap-1">
           <div className="text-sm font-medium leading-none">{title}</div>
-          {description && <div className="text-sm text-muted-foreground">{description}</div>}
+          {description && (
+            <div className="text-sm text-muted-foreground whitespace-pre-line">{description}</div>
+          )}
         </div>
         <div className={cn('flex-shrink-0 ml-6', controlClassName)}>{children}</div>
       </CardContent>

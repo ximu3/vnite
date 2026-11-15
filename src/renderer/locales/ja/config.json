@@ -1,6 +1,10 @@
 {
   "title": "Vnite 設定",
   "general": {
+    "enhancedMonitoring": {
+      "title": "拡張プロセス監視",
+      "description": "拡張監視を優先し、バックグラウンド収集プログラムのみに管理者権限を要求します。\n承認のキャンセルや起動失敗時は、この設定を保持したまま通常モードを使用します。\nゲーム実行中はこの設定を変更できません。"
+    },
     "title": "一般",
     "language": "言語",
     "languageDescription": "アプリケーションの表示言語を選択",

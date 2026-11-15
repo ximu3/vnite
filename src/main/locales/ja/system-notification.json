@@ -1,5 +1,5 @@
 {
   "screenshotSaved": "スクリーンショット画像が保存されました",
   "unableToDetectProcess": "ゲームプロセスを検出できませんでした",
-  "unableToDetectProcessDetail": "ゲームプロセスを検知できないため、プレイタイムを計算することができません。管理者として Vnite を再起動することで問題を解消できるかもしれません"
+  "unableToDetectProcessDetail": "ゲームプロセスが検出されなかったため、プレイ時間を自動記録できません。ゲームに高い権限が必要な場合は、設定で拡張プロセス監視を有効にしてください。"
 }

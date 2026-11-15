@@ -58,6 +58,15 @@
     "on": "计时器: 运行中",
     "paused": "计时器: 暂停"
   },
+  "monitorStatus": {
+    "loading": "监控器: 加载中",
+    "starting": "监控器: 启动中",
+    "recovering": "监控器: 恢复中",
+    "normal": "监控器: 普通",
+    "enhanced": "监控器: 增强",
+    "unavailable": "监控器: 不可用",
+    "stopped": "监控器: 已停止"
+  },
   "toolbox": {
     "title": "工具箱",
     "empty": "暂无工具",

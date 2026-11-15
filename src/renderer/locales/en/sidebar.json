@@ -58,6 +58,15 @@
     "on": "Timer: on",
     "paused": "Timer: paused"
   },
+  "monitorStatus": {
+    "loading": "Monitor: Loading",
+    "starting": "Monitor: Starting",
+    "recovering": "Monitor: Recovering",
+    "normal": "Monitor: Normal mode",
+    "enhanced": "Monitor: Enhanced mode",
+    "unavailable": "Monitor: Unavailable",
+    "stopped": "Monitor: Stopped"
+  },
   "toolbox": {
     "title": "Toolbox",
     "empty": "No tools",

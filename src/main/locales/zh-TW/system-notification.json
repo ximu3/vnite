@@ -1,5 +1,5 @@
 {
   "screenshotSaved": "截圖已儲存",
   "unableToDetectProcess": "未檢測到游戲進程",
-  "unableToDetectProcessDetail": "由於未檢測到游戲進程，Vnite 無法自動統計游戲時間。這可能是由於 Vnite 權限不足所導致，請嘗試以管理員權限重新啓動 Vnite"
+  "unableToDetectProcessDetail": "未偵測到遊戲程序，無法自動統計遊戲時間。如果遊戲需要較高權限，請在設定中啟用增強程序監聽。"
 }

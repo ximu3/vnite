@@ -1,14 +1,6 @@
 import { generateUUID } from '@appUtils'
 import { app, OpenDialogOptions } from 'electron'
-import { ConfigDBManager } from '~/core/database'
 import { ipcManager } from '~/core/ipc'
-import {
-  changeForegroundWaitTime,
-  disableForegroundHook,
-  enableForegroundHook,
-  setupNativeMonitor,
-  stopNativeMonitor
-} from '~/features/monitor'
 import { mainWindow } from '~/index'
 import {
   checkAdminPermissions,
@@ -221,27 +213,5 @@ export function setupSystemIPC(): void {
 
   ipcManager.handle('system:update-screenshot-hotkey', (_, hotkeyName, hotkey) => {
     return updateScreenshotHotkey(hotkeyName, hotkey)
-  })
-
-  ipcManager.on('system:change-process-monitor', async (_, monitor: 'new' | 'legacy') => {
-    if (monitor === 'new') {
-      await setupNativeMonitor()
-    } else if (monitor === 'legacy') {
-      await stopNativeMonitor()
-      await ConfigDBManager.setConfigValue('general.enableForegroundTimer', false)
-      await disableForegroundHook()
-    }
-  })
-
-  ipcManager.on('system:change-foreground-timer', async (_, isEnabled: boolean) => {
-    if (isEnabled) {
-      await enableForegroundHook()
-    } else {
-      await disableForegroundHook()
-    }
-  })
-
-  ipcManager.on('system:change-foreground-timer-wait-time', async (_, waitTime: number) => {
-    changeForegroundWaitTime(waitTime)
   })
 }
