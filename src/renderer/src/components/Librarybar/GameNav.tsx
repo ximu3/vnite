@@ -17,7 +17,7 @@ import { GameNavCM } from '../contextMenu/GameNavCM'
 import { InformationDialog } from '../Game/Overview/Information/InformationDialog'
 import { PLAY_STATUS_COLORS, PLAY_STATUS_ICONS } from '../Game/Overview/Record/RecordIcon'
 import { BatchGameNavCM } from '../GameBatchEditor/BatchGameNavCM'
-import { selectIsBatchMode, useGameBatchEditorStore } from '../GameBatchEditor/store'
+import { useGameBatchEditorStore } from '../GameBatchEditor/store'
 import { GameSelectionContext, useGameSelection } from '../GameBatchEditor/useGameSelection'
 import { useTheme } from '../ThemeProvider'
 
@@ -75,7 +75,9 @@ export function GameNav({
   const [isStorageSizeDialogOpen, setIsStorageSizeDialogOpen] = React.useState(false)
 
   const isSelected = useGameBatchEditorStore((state) => state.selectedGamesMap[gameId])
-  const isBatchMode = useGameBatchEditorStore(selectIsBatchMode)
+  const selectionCount = useGameBatchEditorStore(
+    (state) => Object.keys(state.selectedGamesMap).length
+  )
   const selectionScope = useContext(GameSelectionContext)
   const { handleGameClick: handleSelectionClick } = useGameSelection(gameId, {
     clearOnNormalClick: true
@@ -104,17 +106,14 @@ export function GameNav({
       // Shift ranges use the current detail game when no anchor has been established.
       if (event.shiftKey && !store.selectionAnchor && selectionScope) {
         store.setSelectionAnchor({ scopeId: selectionScope.scopeId, gameId: routerGameId })
+      } else if (event.ctrlKey && !event.shiftKey && selectionCount === 0) {
+        // A first Ctrl-click extends the current detail game's implicit selection.
+        store.updateSelection({ gameIds: [routerGameId], mode: 'add' })
       }
     }
 
     // Normal click clears batch selection and allows the link to navigate.
     handleSelectionClick(event)
-
-    // Nav automatically highlights the current game based on the route, even if it is deselected.
-    // Restore its selection after Ctrl/Shift operations to avoid misleading UI feedback.
-    if ((event.ctrlKey || event.shiftKey) && routerGameId) {
-      useGameBatchEditorStore.getState().updateSelection({ gameIds: [routerGameId], mode: 'add' })
-    }
   }
 
   // Automatically expand too long game names on hover
@@ -306,6 +305,7 @@ export function GameNav({
             <Nav
               ref={navRef}
               variant="gameList"
+              {...(selectionCount > 0 && { activeProps: {} })}
               className={cn(
                 'text-xs p-3 h-5 rounded-none transition-none w-full',
                 highlightLocalGames && 'text-foreground',
@@ -326,7 +326,7 @@ export function GameNav({
             </Nav>
           </div>
         </ContextMenuTrigger>
-        {isBatchMode ? (
+        {selectionCount > 1 ? (
           <BatchGameNavCM openAddCollectionDialog={() => setIsAddCollectionDialogOpen(true)} />
         ) : (
           <GameNavCM
