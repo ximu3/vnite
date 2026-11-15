@@ -27,6 +27,7 @@ export function Database(): React.JSX.Element {
   const { t } = useTranslation('config')
   const [isPortable, setIsPortable] = useState<boolean>(false)
   const [isAdmin, setIsAdmin] = useState<boolean>(false)
+  const [isRestoring, setIsRestoring] = useState(false)
   const [switchDialogOpen, setSwitchDialogOpen] = useState<boolean>(false)
   const [imgStorageBackend] = useConfigLocalState('memory.image.storageBackend')
   const [defaultBackupPath] = useConfigLocalState('database.defaultBackupPath')
@@ -69,6 +70,7 @@ export function Database(): React.JSX.Element {
   }
 
   const restore = async (): Promise<void> => {
+    setIsRestoring(true)
     toast.promise(
       async () => {
         const sourcePath = await ipcManager.invoke('system:select-path-dialog', ['openFile'])
@@ -78,7 +80,8 @@ export function Database(): React.JSX.Element {
       {
         loading: t('database.notifications.importing'),
         success: t('database.notifications.importSuccess'),
-        error: t('database.notifications.importError')
+        error: t('database.notifications.importError'),
+        finally: () => setIsRestoring(false)
       }
     )
   }
@@ -211,7 +214,7 @@ export function Database(): React.JSX.Element {
                   <Button onClick={backup}>{t('database.backup')}</Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button>{t('database.import')}</Button>
+                      <Button disabled={isRestoring}>{t('database.import')}</Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
