@@ -112,25 +112,21 @@ export function setupGameLaunchFailedListeners(): () => void {
 }
 
 export function setupGameExitListeners(): () => void {
-  const { setRunningGames } = useRunningGames.getState()
   const { refreshGameList } = useLibrarybarStore.getState()
 
-  // Game is exiting listener
+  // The process has stopped. Saving this session may outlast the next launch.
   const exitingListener = ipcManager.on('game:exiting', (_, gameId: string) => {
+    const { runningGames, setRunningGames } = useRunningGames.getState()
+    setRunningGames(runningGames.filter((id) => id !== gameId))
     toast.loading(i18next.t('utils:notifications.gameExiting'), { id: `${gameId}-exiting` })
   })
 
-  // Game is exited listener
   const exitedListener = ipcManager.on('game:exited', (_, gameId: string) => {
-    const { runningGames } = useRunningGames.getState()
-    const newRunningGames = runningGames.filter((id) => id !== gameId)
-
-    // Update the list of running games
-    setRunningGames(newRunningGames)
-
-    // Refresh the game list
     refreshGameList()
-
+    if (useRunningGames.getState().runningGames.includes(gameId)) {
+      toast.dismiss(`${gameId}-exiting`)
+      return
+    }
     toast.success(i18next.t('utils:notifications.gameExited'), {
       id: `${gameId}-exiting`
     })
