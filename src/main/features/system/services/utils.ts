@@ -145,20 +145,19 @@ export async function createGameShortcut(gameId: string, targetPath: string): Pr
     const shortcutName = sanitizeFilenameComponent(gameName)
 
     const originalIconPath = await GameDBManager.getGameImage(gameId, 'icon', 'file')
-
-    // The stable game ID determines the icon path, which can be referenced even if the file is missing.
-    const iconPath = getShortcutIconPath(`${sanitizeFilenameComponent(gameId)}.ico`)
-
-    // Convert icons to ico format
-    if (originalIconPath) {
-      await convertToIcon(originalIconPath, iconPath, {
-        sizes: [16, 24, 32, 48, 64, 128, 256]
-      })
-    }
+    const iconPath = originalIconPath
+      ? await convertToIcon(
+          originalIconPath,
+          getShortcutIconPath(`${sanitizeFilenameComponent(gameId)}.ico`),
+          {
+            sizes: [16, 24, 32, 48, 64, 128, 256]
+          }
+        )
+      : undefined
     // Creating URL shortcuts
     await createUrlShortcut({
       url: `vnite://rungameid/${gameId}`,
-      iconPath: iconPath,
+      iconPath,
       targetPath: targetPath,
       name: shortcutName,
       description: `Launch ${gameName} in Vnite`,
