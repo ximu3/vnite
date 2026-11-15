@@ -12,42 +12,37 @@ import { useGameAdderStore } from './store'
 
 export function BackgroundList(): React.JSX.Element {
   const { t } = useTranslation(['adder', 'game'])
-  const { draft, backgroundList, updateDraft } = useGameAdderStore()
-  const { backgroundUrl, dbId, enableUpscale } = draft
+  const { sessionId, draft, backgroundList, updateDraft } = useGameAdderStore()
+  const { backgroundUrl, dbId, enableUpscale, dataSource, dataSourceId } = draft
   const pageRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    const state = useGameAdderStore.getState()
-    toast.promise(
-      async (): Promise<string[]> => {
-        const images = await ipcManager.invoke(
-          'scraper:get-game-backgrounds',
-          state.draft.dataSource,
-          {
-            type: 'id',
-            value: state.draft.dataSourceId
-          }
-        )
+    let active = true
+    const isCurrent = (): boolean => active && useGameAdderStore.getState().sessionId === sessionId
+    const id = toast.loading(i18next.t('adder:gameAdder.backgrounds.notifications.loading'))
+    ipcManager
+      .invoke('scraper:get-game-backgrounds', dataSource, { type: 'id', value: dataSourceId })
+      .then((images) => {
+        if (!isCurrent()) return
         useGameAdderStore.setState({ backgroundList: images })
         updateDraft({ backgroundUrl: images[0] || '' })
-        return images
-      },
-      {
-        loading: i18next.t('adder:gameAdder.backgrounds.notifications.loading'),
-        success: (images) => ({
-          type: images.length ? 'success' : 'error',
-          message: i18next.t(
-            images.length
-              ? 'adder:gameAdder.backgrounds.notifications.success'
-              : 'adder:gameAdder.backgrounds.notifications.noImages'
-          )
-        }),
-        error: (error) =>
+        if (images.length)
+          toast.success(i18next.t('adder:gameAdder.backgrounds.notifications.success'), { id })
+        else toast.error(i18next.t('adder:gameAdder.backgrounds.notifications.noImages'), { id })
+      })
+      .catch((error) => {
+        if (!isCurrent()) return
+        toast.error(
           i18next.t('adder:gameAdder.backgrounds.notifications.error', {
             message: error instanceof Error ? error.message : String(error)
-          })
-      }
-    )
-  }, [])
+          }),
+          { id }
+        )
+      })
+    return () => {
+      active = false
+      toast.dismiss(id)
+    }
+  }, [sessionId, dataSource, dataSourceId, updateDraft])
 
   useEffect(() => {
     pageRef.current?.focus()

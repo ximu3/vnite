@@ -22,6 +22,29 @@ import { gameAdderFlow } from './flow'
 import { GameList } from './GameList'
 import { useGameAdderStore } from './store'
 
+async function runSearchRequest<T>(
+  load: () => Promise<T>,
+  apply: (result: T) => void,
+  loading: string | undefined,
+  errorMessage: (error: unknown) => string
+): Promise<void> {
+  const { draft, sessionId, pending } = useGameAdderStore.getState()
+  if (sessionId === null || pending) return
+  useGameAdderStore.setState({ pending: true })
+  const toastId = loading ? toast.loading(loading) : undefined
+  try {
+    const result = await load()
+    if (useGameAdderStore.getState().draft === draft) apply(result)
+  } catch (error) {
+    if (useGameAdderStore.getState().draft === draft) toast.error(errorMessage(error))
+  } finally {
+    if (toastId !== undefined) toast.dismiss(toastId)
+    if (useGameAdderStore.getState().sessionId === sessionId) {
+      useGameAdderStore.setState({ pending: false })
+    }
+  }
+}
+
 function PathRowWithDb({ gameId }: { gameId: string }): React.JSX.Element | null {
   const { t } = useTranslation('adder')
   const [dbGamePath] = useGameLocalState(gameId, 'path.gamePath')
@@ -61,102 +84,82 @@ export function Search(): React.JSX.Element {
   }, [dataSourceId, dataSource])
 
   const searchGames = (): void => {
-    const state = useGameAdderStore.getState()
-    if (state.pending) return
     if (!inputName) {
       toast.warning(t('gameAdder.search.notifications.enterName'))
       return
     }
-    // Lock synchronously before the first asynchronous request.
-    useGameAdderStore.setState({ pending: true })
-    toast.promise(
-      async (): Promise<number> => {
-        const result = await ipcManager.invoke(
-          'scraper:search-games',
-          state.draft.dataSource,
-          inputName
-        )
+    void runSearchRequest(
+      () => ipcManager.invoke('scraper:search-games', dataSource, inputName),
+      (result) => {
         if (!result.length) throw new Error(t('gameAdder.search.notifications.notFound'))
-        updateDraft({ name: inputName, dataSource: state.draft.dataSource })
+        updateDraft({ name: inputName })
         useGameAdderStore.setState({ gameList: result })
-        return result.length
+        toast.success(t('gameAdder.search.notifications.found', { count: result.length }))
       },
-      {
-        loading: t('gameAdder.search.notifications.searching'),
-        success: (count) => t('gameAdder.search.notifications.found', { count }),
-        error: (error) =>
-          t('gameAdder.search.notifications.searchError', {
-            message: error instanceof Error ? error.message : String(error)
-          }),
-        finally: () => useGameAdderStore.setState({ pending: false })
-      }
+      t('gameAdder.search.notifications.searching'),
+      (error) =>
+        t('gameAdder.search.notifications.searchError', {
+          message: error instanceof Error ? error.message : String(error)
+        })
     )
   }
 
   const confirmCandidate = (): void => {
-    const state = useGameAdderStore.getState()
-    if (state.pending) return
-    const draft = { ...state.draft, dataSourceId: inputId }
-    if (draft.dataSource === 'none' ? !draft.dirPath : !draft.dataSourceId) {
+    if (dataSource === 'none' ? !dirPath : !inputId) {
       toast.warning(
         t(
-          draft.dataSource === 'none'
+          dataSource === 'none'
             ? 'gameAdder.search.notifications.selectGamePath'
             : 'gameAdder.search.notifications.enterId'
         )
       )
       return
     }
-    useGameAdderStore.setState({ pending: true })
-    toast.promise(
-      async (): Promise<void> => {
-        let candidate: DuplicateCheckInput | null = null
-        if (draft.dbId) {
-          const exists = await ipcManager.invoke('scraper:check-game-exists', draft.dataSource, {
-            type: 'id',
-            value: draft.dataSourceId
-          })
+    void runSearchRequest(
+      async (): Promise<DuplicateCheckInput | null> => {
+        const identifier = { type: 'id' as const, value: inputId }
+        if (dbId) {
+          const exists = await ipcManager.invoke(
+            'scraper:check-game-exists',
+            dataSource,
+            identifier
+          )
           if (!exists) throw new Error(t('gameAdder.search.notifications.invalidId'))
-        } else if (draft.dataSource === 'none') {
-          const name = window.api.path.basename(draft.dirPath || draft.gamePath)
-          candidate = { name, originalName: name }
-        } else {
-          const metadata = await ipcManager.invoke('scraper:get-game-metadata', draft.dataSource, {
-            type: 'id',
-            value: draft.dataSourceId
-          })
-          if (!metadata) throw new Error()
-          candidate = {
-            name: metadata.name,
-            originalName: metadata.originalName,
-            dataSource: draft.dataSource,
-            dataSourceId: draft.dataSourceId
-          }
+          return null
         }
-        // Commit the selection used by this request before advancing the flow.
-        updateDraft({
-          dataSource: draft.dataSource,
-          dataSourceId: draft.dataSourceId,
-          dirPath: draft.dirPath,
-          gamePath: draft.gamePath
-        })
+        if (dataSource === 'none') {
+          const name = window.api.path.basename(dirPath || gamePath)
+          return { name, originalName: name }
+        }
+        const metadata = await ipcManager.invoke(
+          'scraper:get-game-metadata',
+          dataSource,
+          identifier
+        )
+        if (!metadata) throw new Error()
+        return {
+          name: metadata.name,
+          originalName: metadata.originalName,
+          dataSource,
+          dataSourceId: inputId
+        }
+      },
+      (candidate) => {
+        updateDraft({ dataSourceId: inputId })
         gameAdderFlow.confirmCandidate(candidate)
       },
-      {
-        loading:
-          draft.dataSource !== 'none' ? t('gameAdder.search.notifications.recognizing') : undefined,
-        error: (error) => {
-          const message = error instanceof Error ? error.message : String(error)
-          return draft.dataSource === 'none'
-            ? t('gameAdder.search.notifications.addError')
-            : t('gameAdder.search.notifications.recognizeError', { message })
-        },
-        finally: () => useGameAdderStore.setState({ pending: false })
+      dataSource === 'none' ? undefined : t('gameAdder.search.notifications.recognizing'),
+      (error) => {
+        const message = error instanceof Error ? error.message : String(error)
+        return dataSource === 'none'
+          ? t('gameAdder.search.notifications.addError')
+          : t('gameAdder.search.notifications.recognizeError', { message })
       }
     )
   }
 
   const selectPath = async (): Promise<void> => {
+    const { sessionId } = useGameAdderStore.getState()
     try {
       const path = await ipcManager.invoke(
         'system:select-path-dialog',
@@ -164,9 +167,12 @@ export function Search(): React.JSX.Element {
         undefined,
         gamePath || dirPath
       )
+      if (useGameAdderStore.getState().sessionId !== sessionId) return
       if (path) updateDraft({ dirPath: window.api.path.dirname(path), gamePath: path })
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : String(error))
+      if (useGameAdderStore.getState().sessionId === sessionId) {
+        toast.error(error instanceof Error ? error.message : String(error))
+      }
     }
   }
 

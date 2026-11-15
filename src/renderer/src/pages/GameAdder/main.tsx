@@ -7,7 +7,8 @@ import { Search } from './Search'
 import { useGameAdderStore } from './store'
 
 export function GameAdder(): React.JSX.Element {
-  const { isOpen, currentPage, reviewIds, close } = useGameAdderStore()
+  const { sessionId, currentPage, reviewIds, close } = useGameAdderStore()
+  const isOpen = sessionId !== null
   const { t } = useTranslation('adder')
 
   const renderPage = (): React.JSX.Element => {
@@ -25,6 +26,7 @@ export function GameAdder(): React.JSX.Element {
     <Dialog open={isOpen}>
       {isOpen && (
         <DialogContent
+          key={sessionId}
           className="flex h-auto w-auto max-w-none flex-col gap-5 outline-none"
           onClose={close}
           onInteractOutside={(event) => event.preventDefault()}

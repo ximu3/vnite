@@ -29,7 +29,7 @@ export interface GameAdderDraft {
 type InitialGame = Partial<Pick<GameAdderDraft, 'dbId' | 'name' | 'dirPath' | 'gamePath'>>
 
 interface GameAdderSession {
-  isOpen: boolean
+  sessionId: number | null
   currentPage: GameAdderPage
   pending: boolean
   draft: GameAdderDraft
@@ -49,7 +49,7 @@ export interface GameAdderState extends GameAdderSession {
 
 function emptySession(): GameAdderSession {
   return {
-    isOpen: false,
+    sessionId: null,
     currentPage: 'search',
     pending: false,
     draft: {
@@ -69,18 +69,21 @@ function emptySession(): GameAdderSession {
   }
 }
 
+let nextSessionId = 0
+
 export const useGameAdderStore = create<GameAdderState>((set, get) => ({
   ...emptySession(),
   open: async (game = {}): Promise<void> => {
     // Reopening an active dialog must not discard its draft.
-    if (get().isOpen) return
+    if (get().sessionId !== null) return
     const session = emptySession()
+    const sessionId = ++nextSessionId
     const dataSource = useConfigStore
       .getState()
       .getConfigValue('game.scraper.common.defaultDataSource')
     set({
       ...session,
-      isOpen: true,
+      sessionId,
       draft: {
         ...session.draft,
         dataSource,
@@ -95,6 +98,7 @@ export const useGameAdderStore = create<GameAdderState>((set, get) => ({
         'getGameBackgrounds',
         'getGameCovers'
       ])
+      if (get().sessionId !== sessionId) return
       set({ providers })
       const { draft, updateDraft } = get()
       // Fall back to an available provider, preserving the no-source option for new games.
@@ -106,6 +110,7 @@ export const useGameAdderStore = create<GameAdderState>((set, get) => ({
         updateDraft({ dataSource: providers[0].id })
       }
     } catch (error) {
+      if (get().sessionId !== sessionId) return
       set({ providers: [] })
       toast.error(
         i18next.t('adder:gameAdder.search.notifications.searchError', {
@@ -122,7 +127,7 @@ export const useGameAdderStore = create<GameAdderState>((set, get) => ({
   },
   updateDraft: (patch): void => {
     const state = get()
-    if (!state.isOpen) return
+    if (state.sessionId === null) return
     if (
       (Object.keys(patch) as (keyof typeof patch)[]).every((key) => state.draft[key] === patch[key])
     )
