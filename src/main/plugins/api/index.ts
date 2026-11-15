@@ -2,6 +2,8 @@ import { ConfigDBManager, GameDBManager, PluginDBManager } from '~/core/database
 import { eventBus } from '~/core/events'
 import { ipcManager } from '~/core/ipc'
 import { scraperManager } from '~/features/scraper/services/ScraperManager'
+import type { PluginDetailTab } from '@appTypes/plugin/gameDetail'
+import { gameDetailTabs } from './gameDetailTabsInstance'
 
 export class VnitePluginAPI {
   public readonly pluginId: string
@@ -14,6 +16,9 @@ export class VnitePluginAPI {
   public readonly eventBus = eventBus
   public readonly ipc = ipcManager
   public readonly scraper = scraperManager
+  public readonly gameDetail = {
+    registerTab: (tab: PluginDetailTab): (() => void) => gameDetailTabs.register(this.pluginId, tab)
+  }
 
   constructor(pluginId: string) {
     this.pluginId = pluginId

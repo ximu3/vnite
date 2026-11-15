@@ -1,4 +1,7 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import type { PluginDetailTabInfo } from '@appTypes/plugin/gameDetail'
+import { ipcManager } from '~/app/ipc'
+import { PluginDetailTab } from './PluginDetailTab'
 import { useTranslation } from 'react-i18next'
 
 import {
@@ -29,6 +32,21 @@ import { useGameDetailStore, useGameDetailTabStore } from './store'
 import { openLargeGameMediaImage } from './utils'
 
 export function Game({ gameId }: { gameId: string }): React.JSX.Element {
+  const [pluginTabs, setPluginTabs] = useState<PluginDetailTabInfo[]>([])
+  useEffect(() => {
+    let mounted = true
+    const refresh = (): void => {
+      void ipcManager.invoke('plugin:get-detail-tabs').then((tabs) => {
+        if (mounted) setPluginTabs(tabs)
+      })
+    }
+    refresh()
+    const off = ipcManager.on('plugin:detail-tabs-changed', refresh)
+    return () => {
+      mounted = false
+      off()
+    }
+  }, [])
   const { t } = useTranslation('game')
   const headerRef = useRef<HTMLDivElement>(null)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
@@ -36,6 +54,11 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
 
   const lastDetailTab = useGameDetailTabStore((s) => s.lastDetailTab)
   const setLastDetailTab = useGameDetailTabStore((s) => s.setLastDetailTab)
+  const activeTab =
+    lastDetailTab.startsWith('plugin:') &&
+    !pluginTabs.some((tab) => `plugin:${tab.pluginId}:${tab.id}` === lastDetailTab)
+      ? 'overview'
+      : lastDetailTab
   const isInformationDialogOpen = useGameDetailStore((s) => s.isInformationDialogOpen)
   const setIsInformationDialogOpen = useGameDetailStore((s) => s.setIsInformationDialogOpen)
   const propertiesDialogState = useGameDetailStore((s) => s.propertiesDialog)
@@ -126,7 +149,7 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
                 {/* Content Area */}
                 <div className={cn('p-7 pt-4 h-full')}>
                   <Tabs
-                    value={lastDetailTab}
+                    value={activeTab}
                     onValueChange={(value) => setLastDetailTab(value as typeof lastDetailTab)}
                     className={cn('w-full')}
                   >
@@ -134,18 +157,28 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
                       className={cn('w-full justify-start bg-transparent')}
                       variant="underline"
                     >
-                      <TabsTrigger className={cn('w-1/4')} value="overview" variant="underline">
+                      <TabsTrigger className={cn('flex-1')} value="overview" variant="underline">
                         {t('detail.tabs.overview')}
                       </TabsTrigger>
-                      <TabsTrigger className={cn('w-1/4')} value="record" variant="underline">
+                      <TabsTrigger className={cn('flex-1')} value="record" variant="underline">
                         {t('detail.tabs.record')}
                       </TabsTrigger>
-                      <TabsTrigger className={cn('w-1/4')} value="save" variant="underline">
+                      <TabsTrigger className={cn('flex-1')} value="save" variant="underline">
                         {t('detail.tabs.save')}
                       </TabsTrigger>
-                      <TabsTrigger className={cn('w-1/4')} value="memory" variant="underline">
+                      <TabsTrigger className={cn('flex-1')} value="memory" variant="underline">
                         {t('detail.tabs.memory')}
                       </TabsTrigger>
+                      {pluginTabs.map((tab) => (
+                        <TabsTrigger
+                          key={`${tab.pluginId}:${tab.id}`}
+                          className="flex-1"
+                          value={`plugin:${tab.pluginId}:${tab.id}`}
+                          variant="underline"
+                        >
+                          {tab.title}
+                        </TabsTrigger>
+                      ))}
                     </TabsList>
 
                     <TabsContent value="overview">
@@ -160,6 +193,18 @@ export function Game({ gameId }: { gameId: string }): React.JSX.Element {
                     <TabsContent value="memory">
                       <Memory gameId={gameId} />
                     </TabsContent>
+                    {pluginTabs.map((tab) => (
+                      <TabsContent
+                        key={`${tab.pluginId}:${tab.id}`}
+                        value={`plugin:${tab.pluginId}:${tab.id}`}
+                      >
+                        <PluginDetailTab
+                          key={`${gameId}:${tab.pluginId}:${tab.id}`}
+                          gameId={gameId}
+                          tab={tab}
+                        />
+                      </TabsContent>
+                    ))}
                   </Tabs>
                 </div>
               </div>
